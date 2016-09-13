@@ -13,8 +13,8 @@ struct StateInfo {
     QSharedPointer<QIcon> icon;
     StateInfo( QSharedPointer<QIcon> _icon,
                bool _blink_on_repeat_set):
-    icon(_icon),
-    blink_on_repeat_set(_blink_on_repeat_set){}
+        blink_on_repeat_set(_blink_on_repeat_set),
+        icon(_icon){}
 };
 
 class StateImageIndicatorWidget :

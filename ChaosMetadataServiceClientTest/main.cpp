@@ -75,7 +75,7 @@ int main(int argc, char *argv[]){
     
     ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>("monitor-timeout",
                                                                                                      "Specify the time that we need to monitor the device in seconds",
-                                                                                                     10,
+                                                                                                     100,
                                                                                                      & wait_seconds);
     try{
         
@@ -113,13 +113,13 @@ int main(int argc, char *argv[]){
             case 2:{
                 std::cout << "Start node monitor library test" << std::endl;
                 {
-                    std::auto_ptr<NodeMonitorHandlerTest> nmt[2];
+                    std::auto_ptr<NodeMonitorHandlerTest> nmt;
 
-                    nmt[0].reset(new NodeMonitorHandlerTest(device_id, chaos::metadata_service_client::node_monitor::ControllerTypeNode));
-                    nmt[1].reset(new NodeMonitorHandlerTest(device_id, chaos::metadata_service_client::node_monitor::ControllerTypeNodeControlUnit));
+                    //nmt[0].reset(new NodeMonitorHandlerTest(device_id, chaos::metadata_service_client::node_monitor::ControllerTypeNode));
+                    nmt.reset(new NodeMonitorHandlerTest(device_id, chaos::metadata_service_client::node_monitor::ControllerTypeNodeControlUnit));
                     sleep(wait_seconds);
-                    nmt[0].reset();
-                    nmt[1].reset();
+                    //nmt[0].reset();
+                    nmt.reset();
                     
                 }
                 std::cout << "End node monitor library test" << std::endl;

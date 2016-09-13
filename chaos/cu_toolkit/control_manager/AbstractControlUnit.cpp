@@ -88,6 +88,7 @@ attribute_value_shared_cache(NULL),
 attribute_shared_cache_wrapper(NULL),
 timestamp_acq_cached_value(NULL),
 thread_schedule_daly_cached_value(NULL),
+storage_type_cached_value(NULL),
 key_data_storage(NULL){
     //initialize check list
     _initChecklist();
@@ -110,6 +111,7 @@ attribute_value_shared_cache(NULL),
 attribute_shared_cache_wrapper(NULL),
 timestamp_acq_cached_value(NULL),
 thread_schedule_daly_cached_value(NULL),
+storage_type_cached_value(NULL),
 key_data_storage(NULL){
     
     //copy array
@@ -1240,10 +1242,14 @@ void AbstractControlUnit::initSystemAttributeOnSharedAttributeCache() {
     ACULDBG_ << "Adding syste attribute on shared cache";
     domain_attribute_setting.addAttribute(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, 0, DataType::TYPE_INT64);
     thread_schedule_daly_cached_value = domain_attribute_setting.getValueSettingForIndex(domain_attribute_setting.getIndexForName(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY));
-    
+    //add unit type
+    domain_attribute_setting.addAttribute(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE, 0, DataType::TYPE_INT32);
+    storage_type_cached_value = domain_attribute_setting.getValueSettingForIndex(domain_attribute_setting.getIndexForName(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE));
+
     //add unit type
     domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_UNIT_TYPE, (uint32_t)control_unit_type.size(), DataType::TYPE_STRING);
-    domain_attribute_setting.setValueForAttribute(domain_attribute_setting.getNumberOfAttributes()-1, control_unit_type.c_str(),  (uint32_t)control_unit_type.size());
+    char * str_ptr = domain_attribute_setting.getValueSettingForIndex(domain_attribute_setting.getIndexForName(DataPackSystemKey::DP_SYS_UNIT_TYPE))->getValuePtr<char>();
+    strncpy(str_ptr, control_unit_type.c_str(), control_unit_type.size());
 }
 
 /*
@@ -1461,7 +1467,9 @@ CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* updatePack
     
     //forward property change pack to the data driver
     key_data_storage->updateConfiguration(updatePack);
-    
+    *storage_type_cached_value->getValuePtr<int32_t>() = key_data_storage->getStorageType();
+    storage_type_cached_value->markAsChanged();
+    pushSystemDataset();
     return NULL;
 }
 
@@ -1623,7 +1631,7 @@ void AbstractControlUnit::fillCDatawrapperWithCachedValue(std::vector<AttributeV
                 dataset.addDoubleValue((*it)->name, *(*it)->getValuePtr<double>());
                 break;
             case DataType::TYPE_STRING:
-                dataset.addStringValue((*it)->name, (*it)->getValuePtr<const char>());
+                dataset.addStringValue((*it)->name, std::string((*it)->getValuePtr<const char>(), (*it)->size));
                 break;
             case DataType::TYPE_BYTEARRAY:
                 dataset.addBinaryValue((*it)->name, (*it)->getValuePtr<char>(), (*it)->size);

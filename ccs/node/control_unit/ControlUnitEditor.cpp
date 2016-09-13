@@ -173,7 +173,9 @@ void ControlUnitEditor::initUI() {
 
     //thread schedule update
     ui->lineEditRunScheduleDelay->setValidator(new QIntValidator(0,60000000));
-    // ui->listWidgetCommandList->setItemDelegate(new CommandItemDelegate(ui->listWidgetCommandList));
+
+    //storage type
+    ui->widgetStorageType->setNodeUID(control_unit_unique_id);
 
     //start monitoring
     manageMonitoring(true);
@@ -225,6 +227,7 @@ void ControlUnitEditor::manageMonitoring(bool start) {
         ui->labelRunScheduleDelaySet->initChaosContent();
         ui->ledIndicatorHealtTSControlUnit->initChaosContent();
         ui->chaosLabelDSOutputPushRate->initChaosContent();
+        ui->widgetStorageType->initChaosContent();
     }else{
         if(unit_server_parent_unique_id.size()) {
             //remove old unit server for healt
@@ -234,6 +237,7 @@ void ControlUnitEditor::manageMonitoring(bool start) {
                                                                                   this);
             ui->ledIndicatorHealtTSUnitServer->deinitChaosContent();
         }
+        ui->widgetStorageType->deinitChaosContent();
         ui->labelControlUnitState->deinitChaosContent();
         ChaosMetadataServiceClient::getInstance()->removeHandlerToNodeMonitor(control_unit_unique_id.toStdString(),
                                                                               node_monitor::ControllerTypeNode,
@@ -491,12 +495,9 @@ void ControlUnitEditor::on_pushButtonSetRunScheduleDelay_clicked() {
     chaos::metadata_service_client::api_proxy::node::NodePropertyGroupList property_list;
     boost::shared_ptr<chaos::common::data::CDataWrapperKeyValueSetter> thread_run_schedule(new chaos::common::data::CDataWrapperInt64KeyValueSetter(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY,
                                                                                                                                                     ui->lineEditRunScheduleDelay->text().toLongLong()));
-    boost::shared_ptr<chaos::common::data::CDataWrapperKeyValueSetter> storage_type(new chaos::common::data::CDataWrapperInt32KeyValueSetter(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_TYPE,
-                                                                                                                                             ui->comboBoxStorageType->currentIndex()));
     boost::shared_ptr<chaos::metadata_service_client::api_proxy::node::NodePropertyGroup> cu_property_group(new chaos::metadata_service_client::api_proxy::node::NodePropertyGroup());
     cu_property_group->group_name = "property_abstract_control_unit";
     cu_property_group->group_property_list.push_back(thread_run_schedule);
-    cu_property_group->group_property_list.push_back(storage_type);
 
     property_list.push_back(cu_property_group);
 

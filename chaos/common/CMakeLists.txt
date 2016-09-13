@@ -157,7 +157,7 @@ SET(common_lib_src ${common_lib_src}
 SET(common_lib_src ${common_lib_src}
         io/IODataDriver.cpp
         io/IODirectIODriver.cpp
-        io/QueryFuture.cpp)
+        io/QueryCursor.cpp)
 
 SET(common_lib_src ${common_lib_src}
         message/DeviceMessageChannel.cpp

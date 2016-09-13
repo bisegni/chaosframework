@@ -156,9 +156,10 @@ void KeyDataStorage::pushDataSet(KeyDataStorageDomain domain,
                                              storage_type);
             break;
         case KeyDataStorageDomainSystem:
-            pushDataWithControlOnHistoryTime(system_key,
-                                             dataset,
-                                             storage_type);
+            //system channel need to be push ever either in live and in history
+            io_data_driver->storeData(system_key,
+                                      dataset,
+                                      DataServiceNodeDefinitionType::DSStorageTypeLiveHistory);
             break;
         case KeyDataStorageDomainCustom:
             pushDataWithControlOnHistoryTime(custom_key,
@@ -297,4 +298,8 @@ CDataWrapper* KeyDataStorage::updateConfiguration(CDataWrapper *newConfiguration
         KeyDataStorageLAPP << CHAOS_FORMAT("Set storage type to %1%", %storage_type);
     }
     return NULL;
+}
+
+DataServiceNodeDefinitionType::DSStorageType KeyDataStorage::getStorageType() {
+    return storage_type;
 }

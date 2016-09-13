@@ -191,6 +191,8 @@ namespace chaos{
                 //! fast access for thread scheduledaly cached value
                 AttributeValue *thread_schedule_daly_cached_value;
                 
+                AttributeValue *storage_type_cached_value;
+                
                 //! check list of services for initialization and start state
                 chaos::common::utility::AggregatedCheckList check_list_sub_service;
                 

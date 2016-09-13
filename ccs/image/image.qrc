@@ -7,5 +7,7 @@
         <file>green_circle_indicator.png</file>
         <file>red_circle_indicator.png</file>
         <file>white_circle_indicator.png</file>
+        <file>led_green.png</file>
+        <file>led_red.png</file>
     </qresource>
 </RCC>

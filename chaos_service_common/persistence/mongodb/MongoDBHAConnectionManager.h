@@ -37,14 +37,24 @@ namespace chaos {
     namespace service_common {
         namespace persistence {
             namespace mongodb {
+                
+                struct ConnectionInfo {
+                    int service_index;
+                    std::string user;
+                    std::string password;
+                    std::string db;
+                    mongo::ConnectionString conn_str;
+                };
+                
                 /*!
                  Class that encapsulat ethe mongodb conenction for safe deallocation
                  */
                 class DriverScopedConnection:
-                public mongo::DBClientConnection  {
+                public mongo::ScopedDbConnection  {
                 public:
                     int service_index;
-                    DriverScopedConnection();
+                    DriverScopedConnection(mongo::ConnectionString& conn_str,
+                                           double timeout);
                     ~DriverScopedConnection();
                 };
                 
@@ -81,7 +91,7 @@ namespace chaos {
                     
                     inline bool canRetry();
                     
-                    inline DriverScopedConnection* getConnection();
+                    inline std::auto_ptr<DriverScopedConnection> getConnection();
                     
                     inline bool isConnectionError(int error);
                     

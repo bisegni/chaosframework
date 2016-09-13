@@ -133,7 +133,9 @@ SOURCES += main.cpp\
     GlobalServices.cpp \
     script/ScriptInstanceManagerWidget.cpp \
     data/ScriptInstanceListModel.cpp \
-    utility/WidgetUtility.cpp
+    utility/WidgetUtility.cpp \
+    widget/ChaosStorageTypeWidget.cpp \
+    widget/OnOffImageIndicator.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -248,7 +250,9 @@ HEADERS  += \
     GlobalServices.h \
     script/ScriptInstanceManagerWidget.h \
     data/ScriptInstanceListModel.h \
-    utility/WidgetUtility.h
+    utility/WidgetUtility.h \
+    widget/ChaosStorageTypeWidget.h \
+    widget/OnOffImageIndicator.h
 
 FORMS    += \
     search/searchnoderesult.ui \
@@ -280,7 +284,8 @@ FORMS    += \
     data/editor/dataset/EditableDatasetTableModelEditDialog.ui \
     data/editor/script/EditableScriptVariableTableModelEditDialog.ui \
     data/editor/common/EditableSubtypeListWidget.ui \
-    script/ScriptInstanceManagerWidget.ui
+    script/ScriptInstanceManagerWidget.ui \
+    widget/ChaosStorageTypeWidget.ui
 
 DISTFILES += \
     dark_orange.stylesheet \

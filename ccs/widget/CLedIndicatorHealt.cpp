@@ -40,12 +40,15 @@ void CLedIndicatorHealt::updateUIStatus() {
     case chaos::metadata_service_client::node_monitor::OnlineStateNotFound:
     case chaos::metadata_service_client::node_monitor::OnlineStateUnknown:
         setState(0);
+        qDebug()<< "OnlineStateUnknown or OnlineStateNotFound for" << nodeUID();
         break;
     case chaos::metadata_service_client::node_monitor::OnlineStateOFF:
         setState(1);
+        qDebug()<< "OnlineStateOFF for" << nodeUID();
         break;
     case chaos::metadata_service_client::node_monitor::OnlineStateON:
         setState(2);
+        qDebug()<< "OnlineStateON for" << nodeUID();
         break;
     }
 }

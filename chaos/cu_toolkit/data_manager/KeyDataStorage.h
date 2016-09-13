@@ -102,7 +102,8 @@ namespace chaos{
 				 Permit to be live configurable
 				 */
 				chaos_data::CDataWrapper* updateConfiguration(chaos_data::CDataWrapper *);
-				
+                
+                DataServiceNodeDefinitionType::DSStorageType getStorageType();
 			};
 		}
     }
