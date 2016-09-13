@@ -21,6 +21,8 @@ SET(wp_src ${wp_src}	api/AbstractApi.cpp
 						api/producer/ProducerGroup.cpp
 						api/producer/ProducerRegisterDatasetApi.cpp
 						api/producer/ProducerInsertDatasetApi.cpp
+                        api/producer/ProducerRegisterJsonApi.cpp
+                        api/producer/ProducerInsertJsonApi.cpp
 						api/producer/ProducerGetLastDatasetApi.cpp)
 
 SET(wp_src ${wp_src}	persistence/AbstractPersistenceDriver.cpp

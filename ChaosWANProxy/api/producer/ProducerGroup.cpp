@@ -21,6 +21,9 @@
 #include "ProducerRegisterDatasetApi.h"
 #include "ProducerGetLastDatasetApi.h"
 #include "ProducerInsertDatasetApi.h"
+#include "ProducerInsertJsonApi.h"
+#include "ProducerRegisterJsonApi.h"
+
 
 using namespace chaos::wan_proxy::api::producer;
 
@@ -31,6 +34,8 @@ AbstractApiGroup("producer",
 	//ad api to group
 	addApi<ProducerRegisterDatasetApi>();
 	addApi<ProducerInsertDatasetApi>();
+    addApi<ProducerInsertJsonApi>();
+    addApi<ProducerRegisterJsonApi>();
 	addApi<ProducerGetLastDatasetApi>();
 
 }
