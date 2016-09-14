@@ -22,7 +22,7 @@
 #ifndef __CHAOSFramework__B2D2009_02A2_468B_9C5C_1D184ECB470F_MongoDBObjectStorageDataAccess_h
 #define __CHAOSFramework__B2D2009_02A2_468B_9C5C_1D184ECB470F_MongoDBObjectStorageDataAccess_h
 
-#include "ObjectStorageDataAccess.h"
+#include "../abstraction/ObjectStorageDataAccess.h"
 #include <chaos/common/utility/ObjectInstancer.h>
 #include <chaos_service_common/persistence/mongodb/MongoDBAccessor.h>
 

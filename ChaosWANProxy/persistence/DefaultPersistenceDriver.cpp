@@ -197,7 +197,7 @@ int DefaultPersistenceDriver::pushNewDataset(const std::string& producer_key,
 		if((err =(int)next_client->device_client_channel->storeAndCacheDataOutputChannel(producer_key,
 																						 (void*)serialization->getBufferPtr(),
 																						 (uint32_t)serialization->getBufferLen(),
-																						 (DirectIODeviceClientChannelPutMode)store_hint))) {
+                                                                                         (chaos::DataServiceNodeDefinitionType::DSStorageType)store_hint))) {
 			DPD_LERR << "Error storing dataset with code:" << err;
 		}
 	} else {
