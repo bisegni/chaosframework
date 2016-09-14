@@ -160,7 +160,7 @@ int MongoDBSnapshotDataAccess::getAllSnapshot(chaos::metadata_service::persisten
         mongo::BSONObj prj = BSON("snap_name" << 1 << "snap_ts" << 1 << "job_concurency" << 1);
         
         DEBUG_CODE(MDBDSDA_DBG<<log_message("getAllSnapshot",
-                                            "qury",
+                                            "query",
                                             DATA_ACCESS_LOG_2_ENTRY("Query",
                                                                     "prj",
                                                                     q.jsonString(),

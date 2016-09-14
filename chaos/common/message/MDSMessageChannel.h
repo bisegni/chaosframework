@@ -139,6 +139,60 @@ namespace chaos {
                  */
                 int getDataDriverBestConfiguration(CDataWrapper** deviceDefinition, uint32_t millisec_to_wait=5000);
                 
+                //!Create a new snapshot
+                /*!
+                 Start snapshot creation into the mds service
+                 \param snapshot_name snapshot name
+                 \param node_list node to includ ewithin snapshot
+                 \param millisec_to_wait delay after wich the wait is interrupt
+                 \return error code
+                 */
+                int createNewSnapshot(const std::string& snapshot_name,
+                                      const ChaosStringVector& node_list,
+                                      uint32_t millisec_to_wait=5000);
+                
+                //!Restore a snapshot
+                /*!
+                 Start the restore operation of snapshot tag. MDS
+                 will fire restore action to all node included into the snapshot, then
+                 every control unit will perform restore by itself
+                 \param snapshot_name snapshot name
+                 \param millisec_to_wait delay after wich the wait is interrupt
+                 \return error code
+                 */
+                int restoreSnapshot(const std::string& snapshot_name,
+                                    uint32_t millisec_to_wait=5000);
+                
+                //! Delete a snapshoot
+                /*!
+                 \param snapshot_name snapshot name
+                 \param millisec_to_wait delay after wich the wait is interrupt
+                 \return error code
+                 */
+                int deleteSnapshot(const std::string& snapshot_name,
+                                   uint32_t millisec_to_wait=5000);
+                
+                //! Search on snapshot
+                /*!
+                 \param query_filter filter the node that need to be returned
+                 \param snapshot_found contains the found snapshot
+                 \param millisec_to_wait delay after wich the wait is interrupt
+                 \return error code
+                 */
+                int searchSnapshot(const std::string& query_filter,
+                                   ChaosStringVector& snapshot_found,
+                                   uint32_t millisec_to_wait=5000);
+                
+                //! Search node for snapshot
+                /*!
+                \param snapshot_name tha name of the snapshot
+                \param node_found contains the node that are included into the snapshot
+                \param millisec_to_wait delay after wich the wait is interrupt
+                \return error code
+                 */
+                int searchNodeForSnapshot(const std::string& snapshot_name,
+                                          ChaosStringVector node_found,
+                                          uint32_t millisec_to_wait=5000);
                 
                 //! send custom message to the servers
                 /*!
