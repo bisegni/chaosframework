@@ -135,7 +135,8 @@ SOURCES += main.cpp\
     data/ScriptInstanceListModel.cpp \
     utility/WidgetUtility.cpp \
     widget/ChaosStorageTypeWidget.cpp \
-    widget/OnOffImageIndicator.cpp
+    widget/OnOffImageIndicator.cpp \
+    widget/CStateVisiblePushButton.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -252,7 +253,8 @@ HEADERS  += \
     data/ScriptInstanceListModel.h \
     utility/WidgetUtility.h \
     widget/ChaosStorageTypeWidget.h \
-    widget/OnOffImageIndicator.h
+    widget/OnOffImageIndicator.h \
+    widget/CStateVisiblePushButton.h
 
 FORMS    += \
     search/searchnoderesult.ui \

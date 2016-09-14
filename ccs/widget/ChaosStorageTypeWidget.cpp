@@ -72,10 +72,10 @@ void ChaosStorageTypeWidget::updateUIStatus() {
     setEnabled(online_status == OnlineStateON);
 
     //take on off ccording to storage type
-    ui->widgetOnOffLledIndicatorLive->setState(storage_type == DSStorageTypeLive);
-    ui->widgetOnOffLledIndicatorHistory->setState(storage_type == DSStorageTypeHistory);
-    ui->widgetOnOffLledIndicatorLiveAndHistory->setState(storage_type == DSStorageTypeLiveHistory);
-    ui->widgetOnOffLledIndicatorUndefined->setState(storage_type == DSStorageTypeUndefined);
+    ui->pushButtonLive->setButtonState(storage_type == DSStorageTypeLive);
+    ui->pushButtonHistory->setButtonState(storage_type == DSStorageTypeHistory);
+    ui->pushButtonLiveAndHistory->setButtonState(storage_type == DSStorageTypeLiveHistory);
+    ui->pushButtonUndefined->setButtonState(storage_type == DSStorageTypeUndefined);
 }
 
 void ChaosStorageTypeWidget::on_pushButtonLive_clicked() {

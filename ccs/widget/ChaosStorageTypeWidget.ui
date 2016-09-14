@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>80</width>
-    <height>32</height>
+    <height>20</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,13 +19,13 @@
   <property name="minimumSize">
    <size>
     <width>80</width>
-    <height>30</height>
+    <height>20</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>80</width>
-    <height>32</height>
+    <height>20</height>
    </size>
   </property>
   <property name="font">
@@ -57,24 +57,8 @@
      <property name="spacing">
       <number>0</number>
      </property>
-     <item row="0" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-      <widget class="OnOffImageIndicator" name="widgetOnOffLledIndicatorLiveAndHistory" native="true">
-       <property name="minimumSize">
-        <size>
-         <width>10</width>
-         <height>10</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>10</width>
-         <height>10</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QPushButton" name="pushButtonHistory">
+     <item row="0" column="1">
+      <widget class="CStateVisiblePushButton" name="pushButtonHistory">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -103,8 +87,8 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="2">
-      <widget class="QPushButton" name="pushButtonLiveAndHistory">
+     <item row="0" column="2">
+      <widget class="CStateVisiblePushButton" name="pushButtonLiveAndHistory">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -113,13 +97,13 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>16</width>
+         <width>22</width>
          <height>16</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>16</width>
+         <width>22</width>
          <height>16</height>
         </size>
        </property>
@@ -133,8 +117,8 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QPushButton" name="pushButtonLive">
+     <item row="0" column="0">
+      <widget class="CStateVisiblePushButton" name="pushButtonLive">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -163,56 +147,8 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="0" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-      <widget class="OnOffImageIndicator" name="widgetOnOffLledIndicatorLive" native="true">
-       <property name="minimumSize">
-        <size>
-         <width>10</width>
-         <height>10</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>10</width>
-         <height>10</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-      <widget class="OnOffImageIndicator" name="widgetOnOffLledIndicatorHistory" native="true">
-       <property name="minimumSize">
-        <size>
-         <width>10</width>
-         <height>10</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>10</width>
-         <height>10</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="3" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-      <widget class="OnOffImageIndicator" name="widgetOnOffLledIndicatorUndefined" native="true">
-       <property name="minimumSize">
-        <size>
-         <width>10</width>
-         <height>10</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>10</width>
-         <height>10</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="3">
-      <widget class="QPushButton" name="pushButtonUndefined">
+     <item row="0" column="3">
+      <widget class="CStateVisiblePushButton" name="pushButtonUndefined">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -247,10 +183,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>OnOffImageIndicator</class>
-   <extends>QWidget</extends>
-   <header>widget/OnOffImageIndicator.h</header>
-   <container>1</container>
+   <class>CStateVisiblePushButton</class>
+   <extends>QPushButton</extends>
+   <header>widget/CStateVisiblePushButton.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
