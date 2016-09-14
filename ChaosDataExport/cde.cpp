@@ -86,6 +86,9 @@ chaos::common::data::SerializationBuffer *getCSVDecoding( DeviceController& cont
     std::stringstream csv_lin;
     chaos::common::data::RangeValueInfo attribute_info;
     
+    //write timetamp before all field
+    csv_lin << data_pack.getInt64Value((chaos::DataPackCommonKey::DPCK_TIMESTAMP))<< ",";
+    
     int idx = 0;
     for(std::vector<std::string>::const_iterator it = output_element_name.begin();
         it < output_element_name.end();
@@ -274,6 +277,7 @@ int main(int argc, char* argv[]) {
             
             //write header
             int idx = 0;
+            (*destination_stream) << chaos::DataPackCommonKey::DPCK_TIMESTAMP << ",";
             for(std::vector<std::string>::const_iterator it = output_element_name.begin();
                 it < output_element_name.end();
                 it++){

@@ -618,7 +618,7 @@ int DeviceController::echoTest(CDataWrapper * const echo_data,
 
 //---------------------------------------------------------------------------------------------------
 std::auto_ptr<MessageRequestFuture> DeviceController::sendCustomRequestWithFuture(const std::string& action_name,
-                                                   common::data::CDataWrapper *request_date) {
+                                                                                  common::data::CDataWrapper *request_date) {
     return deviceChannel->sendCustomRequestWithFuture(action_name,
                                                       request_date);
 }
@@ -962,23 +962,22 @@ void DeviceController::fetchCurrentDeviceValue() {
 }
 
 CDataWrapper *DeviceController::getCurrentData(){
-    return current_dataset[DatasetDomainOutput].
-    get();
+    return current_dataset[DatasetDomainOutput].get();
 }
 
 //! get profile info
 cu_prof_t DeviceController::getProfileInfo(){
-  chaos::common::data::CDataWrapper *prof=  fetchCurrentDatatasetFromDomain(DatasetDomainHealth);
-  cu_prof_t p;
-  bzero(&p,sizeof(cu_prof_t));
-  if(prof){
-    p.push_rate=prof->getDoubleValue(ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_PUSH_RATE);
-    p.sys_time =prof->getDoubleValue(NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME);
-    p.usr_time = prof->getDoubleValue(NodeHealtDefinitionKey::NODE_HEALT_USER_TIME);
-    p.upt_time = prof->getInt64Value(NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME);
-    p.metric_time = prof->getInt64Value(NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP_LAST_METRIC);
-  }
-  return p;
+    chaos::common::data::CDataWrapper *prof=  fetchCurrentDatatasetFromDomain(DatasetDomainHealth);
+    cu_prof_t p;
+    bzero(&p,sizeof(cu_prof_t));
+    if(prof){
+        p.push_rate=prof->getDoubleValue(ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_PUSH_RATE);
+        p.sys_time =prof->getDoubleValue(NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME);
+        p.usr_time = prof->getDoubleValue(NodeHealtDefinitionKey::NODE_HEALT_USER_TIME);
+        p.upt_time = prof->getInt64Value(NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME);
+        p.metric_time = prof->getInt64Value(NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP_LAST_METRIC);
+    }
+    return p;
 }
 
 //! get datapack between time itervall
@@ -994,4 +993,25 @@ void DeviceController::executeTimeIntervallQuery(DatasetDomain domain,
 //! release a query
 void DeviceController::releaseQuery(QueryCursor *query_cursor) {
     ioLiveDataDriver->releaseQuery(query_cursor);
+}
+
+int DeviceController::loadDatasetTypeFromSnapshotTag(const std::string& snapshot_tag,
+                                                     DatasetDomain dataset_type,
+                                                     chaos_data::CDataWrapper **cdatawrapper_handler) {
+    return ioLiveDataDriver->loadDatasetTypeFromSnapshotTag(snapshot_tag,
+                                                            device_id,
+                                                            dataset_type,
+                                                            cdatawrapper_handler);
+}
+
+int DeviceController::createNewSnapshot(const std::string& snapshot_tag,
+                                        const std::vector<std::string>& other_snapped_device) {
+    std::vector<std::string> device_id_in_snap = other_snapped_device;
+    device_id_in_snap.push_back(device_id);
+    return ioLiveDataDriver->createNewSnapshot(snapshot_tag,
+                                               device_id_in_snap);
+}
+
+int DeviceController::deleteSnapshot(const std::string& snapshot_tag) {
+    return ioLiveDataDriver->deleteSnapshot(snapshot_tag);
 }

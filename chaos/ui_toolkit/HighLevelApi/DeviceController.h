@@ -429,9 +429,19 @@ namespace chaos {
             
             //! release a query
             void releaseQuery(chaos::common::io::QueryCursor *query_cursor);
-
-	    //! get profile info
-	    cu_prof_t getProfileInfo();
+            
+            //! get profile info
+            cu_prof_t getProfileInfo();
+            
+            //! restore from a tag a dataset associated to a key
+            int loadDatasetTypeFromSnapshotTag(const std::string& snapshot_tag,
+                                               DatasetDomain dataset_type,
+                                               chaos_data::CDataWrapper **cdatawrapper_handler);
+            //! restore from a tag a dataset associated to a key
+            int createNewSnapshot(const std::string& snapshot_tag,
+                                  const std::vector<std::string>& other_snapped_device);
+            //!delete the snapshot
+            int deleteSnapshot(const std::string& snapshot_tag);
         };
     }
 }
