@@ -162,28 +162,28 @@ int ProducerRegisterJsonApi::scanDatasetElement(const Json::Value& dataset_json_
             if(value.isBool()){
                 //default is double
                 element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE,
-                                       chaos::DataType::BinarySubtype::SUB_TYPE_BOOLEAN);
+                                       chaos::DataType::SUB_TYPE_BOOLEAN);
                 PRA_LDBG<<"Boolean array ["<<size<<"]";
             } else if(value.isInt()){
                 //default is double
                 element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE,
-                                       chaos::DataType::BinarySubtype::SUB_TYPE_INT32);
+                                       chaos::DataType::SUB_TYPE_INT32);
                 PRA_LDBG<<"Int32 array ["<<size<<"]";
 
             } else if(value.isInt64()){
                 //default is double
                 element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE,
-                                       chaos::DataType::BinarySubtype::SUB_TYPE_INT64);
+                                       chaos::DataType::SUB_TYPE_INT64);
             } else if(value.isString()){
                 //default is double
                 element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE,
-                                       chaos::DataType::BinarySubtype::SUB_TYPE_STRING);
+                                       chaos::DataType::SUB_TYPE_STRING);
                 PRA_LDBG<<"String array ["<<size<<"]";
 
             }else {
                 //default is double
                 element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE,
-                                       chaos::DataType::BinarySubtype::SUB_TYPE_DOUBLE);
+                                       chaos::DataType::SUB_TYPE_DOUBLE);
                 PRA_LDBG<<"Double array ["<<size<<"]";
 
             }
@@ -191,7 +191,7 @@ int ProducerRegisterJsonApi::scanDatasetElement(const Json::Value& dataset_json_
             // uknown type
             //default is double
             element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE,
-                                   chaos::DataType::BinarySubtype::SUB_TYPE_DOUBLE);
+                                   chaos::DataType::SUB_TYPE_DOUBLE);
             PRA_LDBG<<"Uknown array, setting default type to double";
 
         }

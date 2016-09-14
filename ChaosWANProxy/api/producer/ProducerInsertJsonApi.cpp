@@ -114,7 +114,7 @@ int ProducerInsertJsonApi::execute(std::vector<std::string>& api_tokens,
         //get current value
         const Json::Value& dataset_element = input_data[*it];
         if(dataset_element.isArray()){
-            chaos::DataType::BinarySubtype sub_type;
+	  int sub_type;
             int type_size=4;
             int size=dataset_element.size();
             if(size>0){
@@ -124,40 +124,40 @@ int ProducerInsertJsonApi::execute(std::vector<std::string>& api_tokens,
                 if(value.isBool()){
                     //default is double
                     type_size=sizeof(bool);
-                    sub_type = chaos::DataType::BinarySubtype::SUB_TYPE_BOOLEAN;
+                    sub_type = chaos::DataType::SUB_TYPE_BOOLEAN;
                 } else if(value.isInt()){
                     type_size=sizeof(int32_t);
-                    sub_type = chaos::DataType::BinarySubtype::SUB_TYPE_INT32;
+                    sub_type = chaos::DataType::SUB_TYPE_INT32;
                     
                 } else if(value.isInt64()){
                     type_size=sizeof(int64_t);
-                    sub_type = chaos::DataType::BinarySubtype::SUB_TYPE_INT64;
+                    sub_type = chaos::DataType::SUB_TYPE_INT64;
                 } else if(value.isString()){
                     type_size=1024;
-                    sub_type = chaos::DataType::BinarySubtype::SUB_TYPE_STRING;
+                    sub_type = chaos::DataType::SUB_TYPE_STRING;
                     
                 }else {
                     type_size=sizeof(double);
-                    sub_type = chaos::DataType::BinarySubtype::SUB_TYPE_DOUBLE;
+                    sub_type = chaos::DataType::SUB_TYPE_DOUBLE;
                 }
                 char bytearray[type_size*size];
                 for(int cnt=0;cnt<size;cnt++){
                     const Json::Value&value=dataset_element[cnt];
                     switch(sub_type){
-                        case chaos::DataType::BinarySubtype::SUB_TYPE_DOUBLE:{
+                        case chaos::DataType::SUB_TYPE_DOUBLE:{
                             double val=value.asDouble();
                             output_dataset->appendDoubleToArray(val);
                             double *ptr=(double*)bytearray;
                             ptr[cnt]=val;
                             break;
                         }
-                        case chaos::DataType::BinarySubtype::SUB_TYPE_INT32:{
+                        case chaos::DataType::SUB_TYPE_INT32:{
                             int32_t val=value.asInt();
                             int32_t *ptr=(int32_t *)bytearray;
                             ptr[cnt]=val;
                             break;
                         }
-                        case chaos::DataType::BinarySubtype::SUB_TYPE_UNSIGNED:{
+                        case chaos::DataType::SUB_TYPE_UNSIGNED:{
                             uint32_t val=value.asUInt();
                             uint32_t *ptr=(uint32_t *)bytearray;
                             ptr[cnt]=val;
@@ -169,26 +169,26 @@ int ProducerInsertJsonApi::execute(std::vector<std::string>& api_tokens,
                             ptr[cnt]=val;
                             break;
                         }
-                        case chaos::DataType::BinarySubtype::SUB_TYPE_INT16:{
+                        case chaos::DataType::SUB_TYPE_INT16:{
                             int16_t val=value.asInt()&0xffff;
                             int16_t *ptr=(int16_t *)bytearray;
                             ptr[cnt]=val;
                             break;
                         }
 
-                        case chaos::DataType::BinarySubtype::SUB_TYPE_INT64:{
+                        case chaos::DataType::SUB_TYPE_INT64:{
                             int64_t val=value.asInt64();
                             int64_t *ptr=(int64_t *)bytearray;
                             ptr[cnt]=val;
                             break;
                         }
-                        case chaos::DataType::BinarySubtype::SUB_TYPE_BOOLEAN:{
+                        case chaos::DataType::SUB_TYPE_BOOLEAN:{
                             bool val=value.asBool();
                             bool *ptr=(bool *)bytearray;
                             ptr[cnt]=val;
                             break;
                         }
-                        case chaos::DataType::BinarySubtype::SUB_TYPE_STRING:{
+                        case chaos::DataType::SUB_TYPE_STRING:{
                             std::string val=value.asString();
                             strncpy(&bytearray[cnt],val.c_str(),1024);
                             break;
@@ -207,7 +207,7 @@ int ProducerInsertJsonApi::execute(std::vector<std::string>& api_tokens,
                 output_dataset->addInt32Value(*it, dataset_element.asInt());
                 
             } else if(dataset_element.isInt64()){
-                output_dataset->addInt64Value(*it, dataset_element.asInt64());
+	      output_dataset->addInt64Value(*it, (int64_t)dataset_element.asInt64());
                 
             } else if(dataset_element.isString()){
                 output_dataset->addStringValue(*it, dataset_element.asString());
