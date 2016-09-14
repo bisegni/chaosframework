@@ -1,21 +1,26 @@
-run_mode = 1
+run-mode=1
 log-on-console=yes
 log-level=debug
+metadata-server=hostname:5000
 data-io-impl=IODirect
-cache_servers=couchbase01
-cache_servers=couchbase02
-cache_servers=couchbase03
-cache_driver=Couchbase
-cache_worker_thread=1
-qdc_vfile_mantain_delay = 60
-answer_worker_thread=1
-indexer_worker_num=1
-indexer_scan_delay = 60
-vfs_storage_drvr_impl=Posix
-vfs_storage_domain=test_mac_domain
-vfs_storage_driver_kvp=posix_root_path:/Volumes/MegaAppo/chaos_domain_test
-db_drvr_impl=Mongo
-db_servers=mongodb01:27017
-db_servers =mongodb02:27017
-db_servers =mongodb03:27017
-db_driver_kvp=user:chaos_admin-pwd:chaos_admin-db:chaos
+cache-servers=hostname
+cache-driver=Couchbase
+cache-driver-kvp=bucket:bucket-name
+cache-driver-kvp=user:bucket-username
+cache-driver-kvp=pwd:bucket-password
+data-worker-thread=1
+query-thread-pool-size = 1
+db-drvr-impl=Mongo
+db-servers=hostname
+db-driver-kvp=user:chaos
+db-driver-kvppwd:chaos
+db-driver-kvp=db:chaos
+obj-storage-driver=MongoDB
+obj-storage-driver-server_url=macbisegni.lnf.infn.it
+obj-storage-kvp=db:chaos
+
+#direct-io-kv-param=ZMQ_IO_THREADS:4
+#direct-io-server-thread-number=4
+
+
+
