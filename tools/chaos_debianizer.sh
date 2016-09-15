@@ -26,11 +26,11 @@ PACKAGE_NAME="chaos"
 CLIENT="true"
 
 Usage(){
-    echo -e "Usage is $0 -i <source dir> [-p <package name > ] [-v <version> ] [-c] [-s] [-d] [-a]\n-i <source dir>: a valid source chaos distribution [$SOURCE_DIR]\n-p <package name>: is the package name prefix [$PACKAGE_NAME]\n-v <version>:a version of the package distribution [$VERSION]\n-c: client distribution (i.e US) [$CLIENT]\n-s: server distribution (CDS,MDS..)\n-a: development with all (client, server and includes)\n-r:copy to remote apt server"
+    echo -e "Usage is $0 -i <source dir> [-p <package name > ] [-v <version> ] [-c] [-s] [-d] [-a]\n-i <source dir>: a valid source chaos distribution [$SOURCE_DIR]\n-p <package name>: is the package name prefix [$PACKAGE_NAME]\n-v <version>:a version of the package distribution [$VERSION]\n-c: client distribution (i.e US) [$CLIENT]\n-s: server distribution (CDS,MDS..)\n-a: development with all (client, server and includes)\n-r:copy to remote apt server\n-d: docker distribution"
     exit 1
 }
 DEPENDS="bash (>= 3), bc"
-while getopts p:i:v:dt:sac,r opt; do
+while getopts p:i:v:dt:sac,d,r opt; do
     case $opt in
 	p) PACKAGE_NAME=$OPTARG
 	    ;;
@@ -40,16 +40,25 @@ while getopts p:i:v:dt:sac,r opt; do
 	    ;;
 	c) CLIENT="true"
 	    SERVER=""
+	    EXT="client"
+	    desc="Client !CHAOS package include libraries and binaries"
 	    ;;
 	s) SERVER="true"
 	    CLIENT=""
+	    EXT="server"
+	    desc="Server !CHAOS package include libraries and binaries"
 	    ;;
 	a) ALL="true"
+	    EXT="devel"
+	    desc="Development package include libraries, includes and tools"
 	    ;;
 	r) COPY_REMOTE="true"
 	    ;;
-#        d) DYNAMIC="true"
-#	    ;;
+        d) DOCKER="true"
+	    EXT="docker"
+	    desc="package include libraries, binaries, includes and tools"
+	    CLIENT=""
+	    ;;
 #        t) ARCH=$OPTARG
 #	    ;;
 	*)
@@ -94,29 +103,14 @@ fi
 if [ "$ARCH" == "x86-64" ]; then
     ARCH="amd64"
 fi
-EXT=""
-if [ -n "$CLIENT" ];then
-    EXT="client"
-    desc="Client !CHAOS package include libraries and binaries"
-fi
-
-if [ -n "$SERVER" ];then
-    EXT="server"
-    desc="Server !CHAOS package include libraries and binaries"
-fi
-
-if [ -n "$ALL" ];then
-    EXT="devel"
-    desc="Development package include libraries, includes and tools"
-fi
 
 if [ -n "$CHAOS_STATIC" ];then
     EXT="static-$EXT"
-    
 else
-    EXT="dyn-$EXT"
     DYNAMIC="true"
 fi
+    
+
 
 NAME=$PACKAGE_NAME-$EXT-$VERSION\_$ARCH
 PACKAGE_DIR="/tmp/$USER/$NAME"
@@ -146,17 +140,16 @@ if [ -n "$CLIENT" ];then
 fi
 
 
-if [ -n "$SERVER" ];then
+if [ -n "$SERVER" ] || [ -n "$DOCKER" ];then
    if mkdir -p $PACKAGE_DEST/bin;then
        copy $SOURCE_DIR/html $PACKAGE_DEST
        copy $SOURCE_DIR/bin $PACKAGE_DEST
+       copy $SOURCE_DIR/etc $PACKAGE_DEST
        DEPENDS="$DEPENDS, apache2(>=2.4), libapache2-mod-php5"
    else
        error_mesg "cannot create directory " "$PACKAGE_DEST/bin"
        exit 1
    fi
-
-
 fi
 
 if [ -n "$ALL" ];then
@@ -166,14 +159,16 @@ if [ -n "$ALL" ];then
     SERVER="true"
 fi
 
+
 copy $SOURCE_DIR/tools $PACKAGE_DEST
 copy $SOURCE_DIR/tools/package_template/etc $PACKAGE_DIR/etc
 
-if [ -n "$DYNAMIC" ]; then
-    copy $SOURCE_DIR/lib $PACKAGE_DEST/
-    mkdir -p $PACKAGE_DIR/etc/ld.so.conf.d/
-    echo "$PACKAGE_INSTALL_ALIAS_DIR/lib" > $PACKAGE_DIR/etc/ld.so.conf.d/chaos-distrib.conf
-fi
+# if [ -n "$DYNAMIC" ]; then
+#     copy $SOURCE_DIR/lib $PACKAGE_DEST/
+#     mkdir -p $PACKAGE_DIR/etc/ld.so.conf.d/
+
+#     echo "$PACKAGE_INSTALL_ALIAS_DIR/lib" > $PACKAGE_DIR/etc/ld.so.conf.d/chaos-distrib.conf
+# fi
 
 PACKAGE_NAME=$PACKAGE_NAME-$EXT
 TS=`date +%s`
@@ -203,26 +198,31 @@ echo "PACKAGE_NAME=$PACKAGE_NAME" >> DEBIAN/postinst
 echo "ln -sf $PACKAGE_INSTALL_DIR $PACKAGE_INSTALL_ALIAS_DIR" >> DEBIAN/postinst
 echo "INSTDIR=$PACKAGE_INSTALL_ALIAS_DIR" >> DEBIAN/postinst
 
-echo "#!/bin/bash" > DEBIAN/config
-#echo "set -e" >> DEBIAN/config
-echo ". /usr/share/debconf/confmodule" >> DEBIAN/config
 
-echo "PACKAGE_NAME=$PACKAGE_NAME" >> DEBIAN/config
-echo "echo \"* configuring \$PACKAGE_NAME\"" >> DEBIAN/config
-
-if [ "$SERVER" == "true" ] || [ "$ALL" == "true" ]; then
-#    echo "SET_SERVERS=true" >> DEBIAN/postinst
-#    echo "SET_SERVERS=true" >> DEBIAN/postrm
-    echo "db_input high \$PACKAGE_NAME/ask_mds || true" >> DEBIAN/config
-    echo "db_input high \$PACKAGE_NAME/ask_cds || true" >> DEBIAN/config
-    echo "db_input high \$PACKAGE_NAME/ask_webui || true" >> DEBIAN/config
-    echo "db_input high \$PACKAGE_NAME/ask_us || true" >> DEBIAN/config
-else
-    echo "db_input high \$PACKAGE_NAME/ask_us || true" >> DEBIAN/config
+if [ -z "$DOCKER" ];then
+    echo "#!/bin/bash" > DEBIAN/config
+    #echo "set -e" >> DEBIAN/config
+    echo ". /usr/share/debconf/confmodule" >> DEBIAN/config
+    
+    echo "PACKAGE_NAME=$PACKAGE_NAME" >> DEBIAN/config
+    echo "echo \"* configuring \$PACKAGE_NAME\"" >> DEBIAN/config
+    if [ "$SERVER" == "true" ] || [ "$ALL" == "true" ]; then
+	#    echo "SET_SERVERS=true" >> DEBIAN/postinst
+	#    echo "SET_SERVERS=true" >> DEBIAN/postrm
+	echo "db_input high \$PACKAGE_NAME/ask_mds || true" >> DEBIAN/config
+	echo "db_input high \$PACKAGE_NAME/ask_cds || true" >> DEBIAN/config
+	echo "db_input high \$PACKAGE_NAME/ask_webui || true" >> DEBIAN/config
+	echo "db_input high \$PACKAGE_NAME/ask_us || true" >> DEBIAN/config
+    else
+	echo "db_input high \$PACKAGE_NAME/ask_us || true" >> DEBIAN/config
+    fi
+    
+    echo "db_go || true" >> DEBIAN/config
+    cat "$SOURCE_DIR/tools/package_template/DEBIAN/config" >> DEBIAN/config
+    chmod 0555 DEBIAN/config
 fi
 
-echo "db_go || true" >> DEBIAN/config
-cat "$SOURCE_DIR/tools/package_template/DEBIAN/config" >> DEBIAN/config
+
 
 cp $SOURCE_DIR/tools/package_template/DEBIAN/templates DEBIAN/
 echo "ln -sf $PACKAGE_INSTALL_DIR/bin/UnitServer $PACKAGE_INSTALL_DIR/bin/cu" >> DEBIAN/postinst
@@ -260,7 +260,7 @@ chmod 0555 DEBIAN/postrm
 chmod 0555 DEBIAN/preinst
 chmod 0555 DEBIAN/prerm
 chmod 0555 DEBIAN/postinst
-chmod 0555 DEBIAN/config
+
 cd - > /dev/null
 info_mesg "packaging $NAME for architecture " "$ARCH .."
 dpkg-deb -b $PACKAGE_DIR > /dev/null
