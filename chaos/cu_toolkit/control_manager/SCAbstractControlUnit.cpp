@@ -396,9 +396,12 @@ void SCAbstractControlUnit::_forwardCommandInstanceByInputAttribute(CDataWrapper
  Event for update some CU configuration
  */
 CDataWrapper* SCAbstractControlUnit::updateConfiguration(CDataWrapper *update_pack, bool& detach_param) throw (CException) {
+    if(update_pack==NULL)
+        return NULL;
     CDataWrapper *result = AbstractControlUnit::updateConfiguration(update_pack, detach_param);
     std::auto_ptr<CDataWrapper> cu_properties;
     CDataWrapper *cu_property_container = NULL;
+    
     if(update_pack->hasKey(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)){
         cu_property_container = update_pack;
     } else  if(update_pack->hasKey("property_abstract_control_unit") &&
@@ -408,7 +411,7 @@ CDataWrapper* SCAbstractControlUnit::updateConfiguration(CDataWrapper *update_pa
     }
     
     if(cu_property_container) {
-        if(cu_properties->hasKey(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)) {
+        if(cu_properties.get() && cu_properties->hasKey(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)) {
             //we need to configure the delay  from a run() call and the next
             uint64_t new_schedule_daly = cu_property_container->getUInt64Value(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY);
             chaos_batch::features::Features features;
