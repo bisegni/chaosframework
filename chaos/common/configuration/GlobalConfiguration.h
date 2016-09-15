@@ -21,6 +21,7 @@
 #define ChaosFramework_GlobalConfiguration_h
 
 #include <chaos/common/global.h>
+#include <chaos/common/chaos_types.h>
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/utility/Singleton.h>
 #include <chaos/common/data/CDataWrapper.h>
@@ -76,6 +77,8 @@ x = getOption<t>(y);\
 bool x;\
 x = hasOption(y);
     
+    CHAOS_DEFINE_MAP_FOR_TYPE(std::string, std::string, MapStrKeyStrValue);
+    
     /*
      Central class for all CHOAS framework configuraitons
      */
@@ -104,10 +107,12 @@ x = hasOption(y);
         int32_t filterLogLevel(string& levelStr) throw (CException);
         
         //! contains the key value pair for the rpc implementation
-        std::map<std::string, std::string> map_kv_param_rpc_impl;
+        MapStrKeyStrValue map_kv_param_rpc_impl;
         
         //! contains the key value pair for the rpc implementation
-        std::map<std::string, std::string> map_kv_param_directio_impl;
+        MapStrKeyStrValue map_kv_param_directio_srv_impl;
+        
+        MapStrKeyStrValue map_kv_param_directio_clnt_impl;
         
         //fill the rpc
         void fillKVParameter(std::map<std::string, std::string>& kvmap,
@@ -280,10 +285,13 @@ x = hasOption(y);
         bool isMEtadataServerConfigured();
         
         //! return the rpc implementation kevy value map
-        std::map<std::string, std::string>& getRpcImplKVParam();
+        MapStrKeyStrValue& getRpcImplKVParam();
         
-        //! return the directio implementation kevy value map
-        std::map<std::string, std::string>& getDirectIOImplKVParam();
+        //! return the directio server implementation kevy value map
+        MapStrKeyStrValue& getDirectIOServerImplKVParam();
+        
+        //! return the directio client implementation key value map
+        MapStrKeyStrValue& getDirectIOClientImplKVParam();
     };
 }
 #endif

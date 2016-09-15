@@ -80,8 +80,10 @@ namespace chaos {
         static const char * const   OPT_DIRECT_IO_SERVICE_SERVER_PORT   = "direct-io-service-server-port";
         //! Specify the number of the thread that the direct io subsystem must use to process the request
         static const char * const   OPT_DIRECT_IO_SERVER_THREAD_NUMBER  = "direct-io-server-thread-number";
-        //! Specify the key/values (string:string) map for implementation parameters
-        static const char * const   OPT_DIRECT_IO_IMPL_KV_PARAM         = "direct-io-kv-param";
+        //! Specify the key/values (string:string) map for direct io server implementation parameters
+        static const char * const   OPT_DIRECT_IO_SERVER_IMPL_KV_PARAM  = "direct-io-server-kv-param";
+        //! Specify the key/values (string:string) map for direct io client implementation parameters
+        static const char * const   OPT_DIRECT_IO_CLIENT_IMPL_KV_PARAM  = "direct-io-client-kv-param";
         //! activate the loggin of metric on rpc system
         static const char * const   OPT_DIRECT_IO_LOG_METRIC            = "direct-io-log-metric";
         //! activate the merged or separate metric on target endpoint

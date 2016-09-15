@@ -23,6 +23,7 @@
 
 #include <chaos/common/direct_io/DirectIODataPack.h>
 #include <chaos/common/direct_io/DirectIOForwarder.h>
+#include <chaos/common/configuration/GlobalConfiguration.h>
 
 #include <string>
 #include <zmq.h>
@@ -34,8 +35,19 @@ namespace chaos {
                 
 #define ZMQ_DO_AGAIN(x) do{x}while(err == EAGAIN);
                 
+                CHAOS_DEFINE_MAP_FOR_TYPE(std::string, std::string, MapZMQConfiguration)
+                
                 class ZMQBaseClass {
                 protected:
+                    
+                    int configureContextWithStartupParameter(void *context,
+                                                             MapZMQConfiguration &default_conf,
+                                                             const MapZMQConfiguration &startup_conf,
+                                                             const std::string& domain);
+                    int configureSocketWithStartupParameter(void *socket,
+                                                            MapZMQConfiguration &default_conf,
+                                                            const MapZMQConfiguration &startup_conf,
+                                                            const std::string& domain);
                     //!
                     int closeSocketNoWhait (void *socket);
                     

@@ -53,6 +53,105 @@ boost::str(boost::format("zmq error %1% [%2%]")%err%zmq_strerror(err))
 
 const char * const EmptyMessage = "";
 
+#define MESSAGE_GOOD_CONTEXT(sc) "ZMQ " #sc " for %1% configured with %2%=%3%"
+#define MESSAGE_ERR_CONTEXT(sc) "Error setting ZMQ " #sc "for %1% with %2%=%3%"
+
+#define SUCCESS_STRING_ON_CONTEXT(x) CHAOS_FORMAT(MESSAGE_GOOD_CONTEXT(Context),%domain%x%prop_value)
+#define SUCCESS_STRING_ON_SOCKET(x) CHAOS_FORMAT(MESSAGE_GOOD_CONTEXT(Socket),%domain%x%prop_value)
+
+#define ERROR_STRING_ON_CONTEXT(x) CHAOS_FORMAT(MESSAGE_ERR_CONTEXT(Context),%domain%x%prop_value)
+#define ERROR_STRING_ON_SOCKET(x) CHAOS_FORMAT(MESSAGE_ERR_CONTEXT(Socket),%domain%x%prop_value)
+
+#define SET_CONTEXT_OPTION(x,s) \
+if(hasZMQProperty(default_conf,\
+startup_conf,\
+s,\
+prop_value)) {\
+err = zmq_ctx_set(context, x, prop_value);\
+if(err) {\
+ZMQDIO_BASE_LERR_ << ERROR_STRING_ON_CONTEXT(s);\
+return err;\
+} else {\
+ZMQDIO_BASE_LAPP_ << SUCCESS_STRING_ON_CONTEXT(s);\
+}\
+return 0;\
+}
+
+#define SET_SOCKET_OPTION(x,s)\
+if((err = setSocketOption(socket, default_conf, startup_conf, x, s, domain))){return err;}
+
+inline bool hasZMQProperty(MapZMQConfiguration &default_conf,
+                           const MapZMQConfiguration &startup_conf,
+                           std::string prop_name,
+                           int& prop_value) {
+    MapZMQConfigurationConstIterator it_def_conf = default_conf.find(prop_name);
+    MapZMQConfigurationConstIterator it_str_conf = startup_conf.find(prop_name);
+    
+    bool def_conf_has =  it_def_conf != default_conf.end();
+    bool startup_conf_has =  it_str_conf != startup_conf.end();
+    
+    if(startup_conf_has) {
+        prop_value = boost::lexical_cast<int>(it_str_conf->second);
+    } else if(def_conf_has){
+        prop_value = boost::lexical_cast<int>(it_def_conf->second);
+    }
+    
+    return (def_conf_has || startup_conf_has);
+}
+
+inline int setSocketOption(void *socket,
+                           MapZMQConfiguration &default_conf,
+                           const MapZMQConfiguration &startup_conf,
+                           int socket_option,
+                           const std::string& socket_option_name,
+                           const std::string& domain) {
+    int err = 0;
+    int prop_value = 0;
+    if(hasZMQProperty(default_conf,
+                      startup_conf,
+                      socket_option_name,
+                      prop_value)) {
+        err = zmq_setsockopt(socket, socket_option, &prop_value, sizeof(int));
+        if(err) {
+            ZMQDIO_BASE_LERR_ << ERROR_STRING_ON_SOCKET(socket_option_name);
+            return err;
+        } else {
+             ZMQDIO_BASE_LAPP_ << SUCCESS_STRING_ON_SOCKET(socket_option_name);
+        }
+    }
+    return 0;
+}
+
+int ZMQBaseClass::configureContextWithStartupParameter(void *context,
+                                                       ::MapZMQConfiguration &default_conf,
+                                                       const ::MapZMQConfiguration &startup_conf,
+                                                       const std::string& domain) {
+    int err = 0;
+    int prop_value = 0;
+    SET_CONTEXT_OPTION(ZMQ_IO_THREADS,"ZMQ_IO_THREADS");
+    SET_CONTEXT_OPTION(ZMQ_MAX_SOCKETS,"ZMQ_MAX_SOCKETS");
+    
+    return 0;
+}
+
+int ZMQBaseClass::configureSocketWithStartupParameter(void *socket,
+                                                      ::MapZMQConfiguration &default_conf,
+                                                      const ::MapZMQConfiguration &startup_conf,
+                                                      const std::string& domain) {
+    
+    int err = 0;
+    SET_SOCKET_OPTION(ZMQ_LINGER,"ZMQ_LINGER");
+    SET_SOCKET_OPTION(ZMQ_RCVHWM,"ZMQ_RCVHWM");
+    SET_SOCKET_OPTION(ZMQ_SNDHWM,"ZMQ_SNDHWM");
+    SET_SOCKET_OPTION(ZMQ_RCVTIMEO,"ZMQ_RCVTIMEO");
+    SET_SOCKET_OPTION(ZMQ_SNDTIMEO,"ZMQ_SNDTIMEO");
+    SET_SOCKET_OPTION(ZMQ_SNDBUF,"ZMQ_SNDBUF");
+    SET_SOCKET_OPTION(ZMQ_RCVBUF,"ZMQ_RCVBUF");
+    SET_SOCKET_OPTION(ZMQ_RECONNECT_IVL,"ZMQ_RECONNECT_IVL");
+    SET_SOCKET_OPTION(ZMQ_RECONNECT_IVL_MAX,"ZMQ_RECONNECT_IVL_MAX");
+    return 0;
+}
+
 int ZMQBaseClass::closeSocketNoWhait (void *socket) {
     int linger = 0;
     int rc = zmq_setsockopt (socket, ZMQ_LINGER, &linger, sizeof(linger));
