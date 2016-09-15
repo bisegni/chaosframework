@@ -193,7 +193,7 @@ DirectIOClientConnection *ZMQDirectIOClient::_getNewConnectionImpl(std::string s
     default_configuration["ZMQ_LINGER"] = "0";
     default_configuration["ZMQ_RCVHWM"] = "1";
     default_configuration["ZMQ_SNDHWM"] = "1";
-    default_configuration["ZMQ_RCVTIMEO"] = "-1";
+    default_configuration["ZMQ_RCVTIMEO"] = "2000";
     default_configuration["ZMQ_SNDTIMEO"] = "5000";
     default_configuration["ZMQ_RECONNECT_IVL"] = "5000";
     default_configuration["ZMQ_RECONNECT_IVL_MAX"] = "10000";
