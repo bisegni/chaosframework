@@ -137,11 +137,22 @@ ZMQDirectIOClient::~ZMQDirectIOClient(){};
 
 //! Initialize instance
 void ZMQDirectIOClient::init(void *init_data) throw(chaos::CException) {
+    int err = 0;
+    MapZMQConfiguration default_configuration;
+    default_configuration["ZMQ_IO_THREADS"] = "1";
+    
     DirectIOClient::init(init_data);
     ZMQDIOLAPP_ << "Allocating zmq context";
     thread_run= true;
     zmq_context = zmq_ctx_new();
     if(zmq_context == NULL) throw chaos::CException(0, "Error creating zmq context", __FUNCTION__);
+    if((err = ZMQBaseClass::configureContextWithStartupParameter(zmq_context,
+                                                                 default_configuration,
+                                                                 chaos::GlobalConfiguration::getInstance()->getDirectIOClientImplKVParam(),
+                                                                 "ZMQ DirectIO Client"))) {
+        throw chaos::CException(2, "Error configuring service socket", __FUNCTION__);
+    }
+    
     
     ZMQDIOLAPP_ << "Inizilizing zmq implementation with zmq lib version = " << ZMQ_VERSION;
     ZMQDIOLAPP_ << "Set number of thread for the contex";
@@ -169,23 +180,23 @@ void ZMQDirectIOClient::deinit() throw(chaos::CException) {
 
 DirectIOClientConnection *ZMQDirectIOClient::_getNewConnectionImpl(std::string server_description, uint16_t endpoint) {
     int err = 0;
-    const int output_buffer_dim = 1;
-    const int linger_period = 0;
-    const int timeout = 5000;
-    const int min_reconnection_ivl = 5000;
-    const int max_reconnection_ivl = 10000;
-    
-    void *socket_priority = NULL;
-    void *socket_service = NULL;
-    
     std::string url;
     std::string error_str;
     std::string priority_endpoint;
     std::string service_endpoint;
-    
+    void *socket_priority = NULL;
+    void *socket_service = NULL;
     std::vector<std::string> resolved_ip;
-    
     ZMQDirectIOClientConnection *result = NULL;
+    
+    MapZMQConfiguration default_configuration;
+    default_configuration["ZMQ_LINGER"] = "0";
+    default_configuration["ZMQ_RCVHWM"] = "1";
+    default_configuration["ZMQ_SNDHWM"] = "1";
+    default_configuration["ZMQ_RCVTIMEO"] = "-1";
+    default_configuration["ZMQ_SNDTIMEO"] = "5000";
+    default_configuration["ZMQ_RECONNECT_IVL"] = "5000";
+    default_configuration["ZMQ_RECONNECT_IVL_MAX"] = "10000";
     
     try {
         
@@ -193,56 +204,24 @@ DirectIOClientConnection *ZMQDirectIOClient::_getNewConnectionImpl(std::string s
         socket_priority = zmq_socket (zmq_context, ZMQ_DEALER);
         if(socket_priority == NULL) throw chaos::CException(1, "Error creating priority socket", __FUNCTION__);
         
-        //---------------------------------------------------------------------------------------------------------------
-        err = zmq_setsockopt (socket_priority, ZMQ_LINGER, &linger_period, sizeof(int));
-        if(err) throw chaos::CException(err, "Error setting linger on priority socket option", __FUNCTION__);
-        //set output queue dime
-        err = zmq_setsockopt (socket_priority, ZMQ_SNDHWM, &output_buffer_dim, sizeof(int));
-        if(err) throw chaos::CException(err, "Error setting ZMQ_SNDHWM on priority socket option", __FUNCTION__);
-        
-        //set input queue dime
-        err = zmq_setsockopt (socket_priority, ZMQ_RCVHWM, &output_buffer_dim, sizeof(int));
-        if(err) throw chaos::CException(err, "Error setting ZMQ_SNDHWM on priority socket option", __FUNCTION__);
-        
-        err = zmq_setsockopt (socket_priority, ZMQ_RCVTIMEO, &timeout, sizeof(int));
-        if(err) throw chaos::CException(err, "Error setting ZMQ_RCVTIMEO on priority socket option", __FUNCTION__);
-        
-        err = zmq_setsockopt (socket_priority, ZMQ_SNDTIMEO, &timeout, sizeof(int));
-        if(err) throw chaos::CException(err, "Error setting ZMQ_SNDTIMEO on priority socket option", __FUNCTION__);
-        
-        err = zmq_setsockopt (socket_priority, ZMQ_RECONNECT_IVL, &min_reconnection_ivl, sizeof(int));
-        if(err) throw chaos::CException(err, "Error setting ZMQ_RECONNECT_IVL on priority socket option", __FUNCTION__);
-        
-        err = zmq_setsockopt (socket_priority, ZMQ_RECONNECT_IVL_MAX, &max_reconnection_ivl, sizeof(int));
-        if(err) throw chaos::CException(err, "Error setting ZMQ_RECONNECT_IVL on priority socket option", __FUNCTION__);
+        if((err = ZMQBaseClass::configureSocketWithStartupParameter(socket_priority,
+                                                                    default_configuration,
+                                                                    chaos::GlobalConfiguration::getInstance()->getDirectIOClientImplKVParam(),
+                                                                    "ZMQ DirectIO Client service socket"))) {
+            throw chaos::CException(2, "Error configuring service socket", __FUNCTION__);
+        }
         
         //---------------------------------------------------------------------------------------------------------------
         DEBUG_CODE(ZMQDIOLDBG_ << "Allocating service socket";)
         socket_service = zmq_socket (zmq_context, ZMQ_DEALER);
         if(socket_service == NULL) throw chaos::CException(2, "Error creating service socket", __FUNCTION__);
+        if((err = ZMQBaseClass::configureSocketWithStartupParameter(socket_service,
+                                                                    default_configuration,
+                                                                    chaos::GlobalConfiguration::getInstance()->getDirectIOClientImplKVParam(),
+                                                                    "ZMQ DirectIO Client service socket"))) {
+            throw chaos::CException(2, "Error configuring service socket", __FUNCTION__);
+        }
         
-        err = zmq_setsockopt (socket_service, ZMQ_LINGER, &linger_period, sizeof(int));
-        if(err) throw chaos::CException(err, "Error setting linger on service socket option", __FUNCTION__);
-        //set output queue dime
-        err = zmq_setsockopt (socket_service, ZMQ_SNDHWM, &output_buffer_dim, sizeof(int));
-        if(err) throw chaos::CException(err, "Error setting ZMQ_SNDHWM on service socket option", __FUNCTION__);
-        
-        //set input queue dime
-        err = zmq_setsockopt (socket_service, ZMQ_RCVHWM, &output_buffer_dim, sizeof(int));
-        if(err) throw chaos::CException(err, "Error setting ZMQ_SNDHWM on service socket option", __FUNCTION__);
-        
-        err = zmq_setsockopt (socket_service, ZMQ_RCVTIMEO, &timeout, sizeof(int));
-        if(err) throw chaos::CException(err, "Error setting ZMQ_RCVTIMEO on service socket option", __FUNCTION__);
-        
-        err = zmq_setsockopt (socket_service, ZMQ_SNDTIMEO, &timeout, sizeof(int));
-        if(err) throw chaos::CException(err, "Error setting ZMQ_SNDTIMEO on service socket option", __FUNCTION__);
-        
-        err = zmq_setsockopt (socket_service, ZMQ_RECONNECT_IVL, &min_reconnection_ivl, sizeof(int));
-        if(err) throw chaos::CException(err, "Error setting ZMQ_RECONNECT_IVL on service socket option", __FUNCTION__);
-        
-        err = zmq_setsockopt (socket_service, ZMQ_RECONNECT_IVL_MAX, &max_reconnection_ivl, sizeof(int));
-        if(err) throw chaos::CException(err, "Error setting ZMQ_RECONNECT_IVL on service socket option", __FUNCTION__);
-        //---------------------------------------------------------------------------------------------------------------
         //allocate client
         result = new ZMQDirectIOClientConnection(server_description, socket_priority, socket_service, endpoint);
         err = setAndReturnID(socket_priority, result->priority_identity);
@@ -332,7 +311,7 @@ void ZMQDirectIOClient::_releaseConnectionImpl(DirectIOClientConnection *connect
     
     err = zmq_close(conn->socket_priority);
     if(err) ZMQDIOLERR_ << "Error disconnecting priority socket for " << conn->getServerDescription();
-
+    
     ZMQDIOLAPP_ << "Close service socket for" << conn->getServerDescription();
     err = zmq_close(conn->socket_service);
     if(err) ZMQDIOLERR_ << "Error closing service socket for " << conn->getServerDescription();

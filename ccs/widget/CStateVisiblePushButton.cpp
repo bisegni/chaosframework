@@ -6,7 +6,7 @@
 #include <QApplication>
 #include <QStylePainter>
 #include <QStyleOptionButton>
-#define BORDER_OFFSET 3
+#define BORDER_OFFSET 4
 
 CStateVisiblePushButton::CStateVisiblePushButton(QWidget *parent):
 state_on(false){
@@ -30,7 +30,7 @@ void CStateVisiblePushButton::paintEvent(QPaintEvent *p_event) {
     painter.setRenderHint(QPainter::Antialiasing, true);
 
     QPainterPath path;
-    path.addRect(3, 3, render_width, 2);
+    path.addRect(3, 3, render_width, 3);
 
     QPen border_pen(Qt::gray, 1);
     painter.setPen(border_pen);
@@ -38,7 +38,7 @@ void CStateVisiblePushButton::paintEvent(QPaintEvent *p_event) {
     painter.drawPath(path);
     painter.setPen(QPen(isEnabled()?QApplication::palette().buttonText().color():Qt::lightGray));
     QFont font = painter.font();
-    font.setPointSize(8);
+    font.setPointSize(9);
     font.setWeight(QFont::Bold);
     painter.setFont(font);
 

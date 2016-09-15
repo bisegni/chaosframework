@@ -65,7 +65,8 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException){
         addOption(InitOption::OPT_DIRECT_IO_PRIORITY_SERVER_PORT, po::value<int>()->default_value(_DIRECT_IO_PRIORITY_PORT), "DirectIO priority server port");
         addOption(InitOption::OPT_DIRECT_IO_SERVICE_SERVER_PORT, po::value<int>()->default_value(_DIRECT_IO_SERVICE_PORT), "DirectIO service server port");
         addOption(InitOption::OPT_DIRECT_IO_SERVER_THREAD_NUMBER, po::value<int>()->default_value(2),"DirectIO server thread number");
-        addOption(InitOption::OPT_DIRECT_IO_IMPL_KV_PARAM, po::value< std::vector<std::string> >(),"DirectIO implementation key value parameters[k|v]");
+        addOption(InitOption::OPT_DIRECT_IO_SERVER_IMPL_KV_PARAM, po::value< std::vector<std::string> >(),"DirectIO implementation key value parameters[k|v]");
+        addOption(InitOption::OPT_DIRECT_IO_CLIENT_IMPL_KV_PARAM, po::value< std::vector<std::string> >(),"DirectIO implementation key value parameters[k|v]");
         addOption(InitOption::OPT_DIRECT_IO_LOG_METRIC, po::value< bool >()->default_value(false), "Enable the logging of the DirectIO metric");
         addOption(InitOption::OPT_DIRECT_IO_LOG_METRIC_UPDATE_INTERVAL, po::value< uint64_t >()->default_value(5), "The time intervall between metric samples");
         addOption(InitOption::OPT_DIRECT_IO_CLIENT_LOG_METRIC_MERGED_ENDPOINT, po::value< bool >()->default_value(true), "Merge the metric values(of all endpoint) together");
@@ -281,12 +282,17 @@ void GlobalConfiguration::checkDefaultOption() throw (CException) {
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(int, direct_io_server_thread_number, InitOption::OPT_DIRECT_IO_SERVER_THREAD_NUMBER, 2)
     configuration.addInt32Value(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_SERVER_THREAD_NUMBER, direct_io_server_thread_number);
     
-    CHECK_AND_DEFINE_OPTION(std::vector<std::string>, directio_impl_kv_param, InitOption::OPT_DIRECT_IO_IMPL_KV_PARAM)
+    CHECK_AND_DEFINE_OPTION(std::vector<std::string>, directio_srv_impl_kv_param, InitOption::OPT_DIRECT_IO_SERVER_IMPL_KV_PARAM)
     //fill the key value list
-    if(directio_impl_kv_param.size()) {
-        fillKVParameter(map_kv_param_directio_impl, directio_impl_kv_param, "");
+    if(directio_srv_impl_kv_param.size()) {
+        fillKVParameter(map_kv_param_directio_srv_impl, directio_srv_impl_kv_param, "");
     }
     
+    CHECK_AND_DEFINE_OPTION(std::vector<std::string>, directio_clnt_impl_kv_param, InitOption::OPT_DIRECT_IO_CLIENT_IMPL_KV_PARAM)
+    //fill the key value list
+    if(directio_clnt_impl_kv_param.size()) {
+        fillKVParameter(map_kv_param_directio_clnt_impl, directio_clnt_impl_kv_param, "");
+    }
     CHECK_AND_DEFINE_OPTION(string, direct_io_server_impl, InitOption::OPT_DIRECT_IO_IMPLEMENTATION)
     configuration.addStringValue(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_IMPL_TYPE, direct_io_server_impl);
     
@@ -512,10 +518,14 @@ bool GlobalConfiguration::isMEtadataServerConfigured() {
     return configuration.hasKey(InitOption::OPT_METADATASERVER_ADDRESS);
 }
 
-std::map<std::string, std::string>& GlobalConfiguration::getRpcImplKVParam() {
+MapStrKeyStrValue& GlobalConfiguration::getRpcImplKVParam() {
     return map_kv_param_rpc_impl;
 }
 
-std::map<std::string, std::string>& GlobalConfiguration::getDirectIOImplKVParam() {
-    return map_kv_param_directio_impl;
+MapStrKeyStrValue& GlobalConfiguration::getDirectIOServerImplKVParam() {
+    return map_kv_param_directio_srv_impl;
+}
+
+MapStrKeyStrValue& GlobalConfiguration::getDirectIOClientImplKVParam() {
+    return map_kv_param_directio_clnt_impl;
 }

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>80</width>
-    <height>20</height>
+    <width>115</width>
+    <height>22</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -18,14 +18,14 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>80</width>
-    <height>20</height>
+    <width>110</width>
+    <height>22</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>80</width>
-    <height>20</height>
+    <width>3200</width>
+    <height>3200</height>
    </size>
   </property>
   <property name="font">
@@ -38,7 +38,7 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <property name="spacing">
-    <number>2</number>
+    <number>0</number>
    </property>
    <property name="leftMargin">
     <number>0</number>
@@ -53,6 +53,19 @@
     <number>0</number>
    </property>
    <item>
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
     <widget class="CStateVisiblePushButton" name="pushButtonLive">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -62,19 +75,19 @@
      </property>
      <property name="minimumSize">
       <size>
-       <width>16</width>
-       <height>16</height>
+       <width>20</width>
+       <height>20</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
-       <width>16</width>
-       <height>16</height>
+       <width>20</width>
+       <height>20</height>
       </size>
      </property>
      <property name="font">
       <font>
-       <pointsize>9</pointsize>
+       <pointsize>8</pointsize>
       </font>
      </property>
      <property name="text">
@@ -92,19 +105,19 @@
      </property>
      <property name="minimumSize">
       <size>
-       <width>16</width>
-       <height>16</height>
+       <width>20</width>
+       <height>20</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
-       <width>16</width>
-       <height>16</height>
+       <width>20</width>
+       <height>20</height>
       </size>
      </property>
      <property name="font">
       <font>
-       <pointsize>9</pointsize>
+       <pointsize>8</pointsize>
       </font>
      </property>
      <property name="text">
@@ -122,19 +135,19 @@
      </property>
      <property name="minimumSize">
       <size>
-       <width>22</width>
-       <height>16</height>
+       <width>30</width>
+       <height>20</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
-       <width>22</width>
-       <height>16</height>
+       <width>30</width>
+       <height>20</height>
       </size>
      </property>
      <property name="font">
       <font>
-       <pointsize>9</pointsize>
+       <pointsize>8</pointsize>
       </font>
      </property>
      <property name="text">
@@ -152,19 +165,19 @@
      </property>
      <property name="minimumSize">
       <size>
-       <width>16</width>
-       <height>16</height>
+       <width>20</width>
+       <height>20</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
-       <width>16</width>
-       <height>16</height>
+       <width>20</width>
+       <height>20</height>
       </size>
      </property>
      <property name="font">
       <font>
-       <pointsize>9</pointsize>
+       <pointsize>8</pointsize>
       </font>
      </property>
      <property name="text">
