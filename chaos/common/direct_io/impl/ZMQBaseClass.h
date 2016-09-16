@@ -48,6 +48,11 @@ namespace chaos {
                                                             MapZMQConfiguration &default_conf,
                                                             const MapZMQConfiguration &startup_conf,
                                                             const std::string& domain);
+                    
+                    int connectSocket(void *socket,
+                                      const std::string& connect_url,
+                                      const std::string& domain);
+                    
                     //!
                     int closeSocketNoWhait (void *socket);
                     

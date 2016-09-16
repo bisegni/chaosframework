@@ -116,7 +116,7 @@ inline int setSocketOption(void *socket,
             ZMQDIO_BASE_LERR_ << ERROR_STRING_ON_SOCKET(socket_option_name);
             return err;
         } else {
-             ZMQDIO_BASE_LAPP_ << SUCCESS_STRING_ON_SOCKET(socket_option_name);
+            ZMQDIO_BASE_LAPP_ << SUCCESS_STRING_ON_SOCKET(socket_option_name);
         }
     }
     return 0;
@@ -150,6 +150,18 @@ int ZMQBaseClass::configureSocketWithStartupParameter(void *socket,
     SET_SOCKET_OPTION(ZMQ_RECONNECT_IVL,"ZMQ_RECONNECT_IVL");
     SET_SOCKET_OPTION(ZMQ_RECONNECT_IVL_MAX,"ZMQ_RECONNECT_IVL_MAX");
     return 0;
+}
+
+int ZMQBaseClass::connectSocket(void *socket,
+                                const std::string& connect_url,
+                                const std::string& domain) {
+    int err = 0;
+    if((err = zmq_connect(socket,
+                          connect_url.c_str()))) {
+        err = zmq_errno();
+        ZMQDIO_BASE_LERR_ << CHAOS_FORMAT("Error connecting socket for %1% with error %2%[%3%]",%domain%zmq_strerror(err)%err);
+    }
+    return err;
 }
 
 int ZMQBaseClass::closeSocketNoWhait (void *socket) {

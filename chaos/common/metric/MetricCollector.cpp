@@ -40,12 +40,12 @@ current_slot_index(0),
 last_stat_call(0),
 stat_intervall(update_time_in_sec*1000){
     
-    if(GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_LOG_METRIC_ON_CONSOLE)) {
-        //set the time interval to one second of default
+    if(GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_LOG_METRIC_ON_CONSOLE)) {
+        //set the metric manager to print metrics on console
         addBackend(metric::MetricBackendPointer(new metric::ConsoleMetricBackend(collector_name)));
     }
     
-    if(GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_LOG_METRIC_ON_FILE)) {
+    if(GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_LOG_METRIC_ON_FILE)) {
         const std::string file_path = GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_LOG_METRIC_ON_FILE_PATH);
         //set the time interval to one second of default
         addBackend(metric::MetricBackendPointer(new metric::CVSFileMetricBackend(collector_name,
@@ -132,7 +132,7 @@ void MetricCollector::timeout() {
                                    vector_metric_backend,
                                    (*it)->preMetric();
                                    (*it)->addMetric((*it_metric)->name,
-                                                    (*it_metric)->toString());
+                                                    (*it_metric)->toString(2));
                                    (*it)->postMetric();)
     }
     CHAOS_SCAN_VECTOR_ITERATOR(VectorMetricBackendIterator, vector_metric_backend, (*it)->flush();)

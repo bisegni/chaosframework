@@ -214,6 +214,21 @@ x = hasOption(y);
                 throw CException(0, e.what(), "GlobalConfiguration::addOption");
             }
         }
+        
+        /*
+         Add a custom option
+         */
+        template<typename T>
+        void addOptionZeroToken(const char* name,
+                                const char* description)  throw (CException) {
+            try{
+                const po::value_semantic* s = po::value<T>()->zero_tokens();
+                desc.add_options()(name, s, description);
+            }catch (po::error &e) {
+                throw CException(0, e.what(), "GlobalConfiguration::addOption");
+            }
+        }
+        
         /*
          return the presence of the option name
          */
@@ -221,6 +236,9 @@ x = hasOption(y);
             return vm.count(optName)>0;
         }
         
+        bool isZeroTokensOptions(const std::string& option_name) {
+            return vm.count(option_name)>0 && vm.find(option_name)->second.empty();
+        }
         
         template<typename T>
         T getOption(const char* optName) throw (CException){

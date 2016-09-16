@@ -79,7 +79,7 @@ DirectIOClientConnection *DirectIOClient::getNewConnection(const std::string& se
         result = _getNewConnectionImpl(server_description,
                                        endpoint);
         
-        if(result && GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_DIRECT_IO_LOG_METRIC)) {
+        if(result && GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_DIRECT_IO_LOG_METRIC)) {
             //lock the map
             boost::unique_lock<boost::mutex> wl(mutex_map_shared_collectors);
             
@@ -117,7 +117,7 @@ DirectIOClientConnection *DirectIOClient::getNewConnection(const std::string& se
 
 //! Release the connection
 void DirectIOClient::releaseConnection(DirectIOClientConnection *connection_to_release) {
-    if(connection_to_release && GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_DIRECT_IO_LOG_METRIC)) {
+    if(connection_to_release && GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_DIRECT_IO_LOG_METRIC)) {
         //the metric allocator of direct io is a direct subclass of DirectIODispatcher
         DirectIOClientConnectionMetricCollector *metric_collector = dynamic_cast<DirectIOClientConnectionMetricCollector*>(connection_to_release);
         if(metric_collector) {

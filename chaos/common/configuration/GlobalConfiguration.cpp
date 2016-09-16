@@ -56,8 +56,8 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException){
         addOption(InitOption::OPT_LOG_FILE, po::value< string >()->default_value("chaos_frameowrk.log"), "Specify when the file path of the log");
         addOption(InitOption::OPT_LOG_LEVEL, po::value< string >()->default_value("info"), "Specify the level of the log using the value [debug, info, notice, warning, fatal]");
         addOption(InitOption::OPT_LOG_MAX_SIZE_MB, po::value< uint32_t >()->default_value(10), "Specify the max size in megabytes fo the file log");
-        addOption(InitOption::OPT_LOG_METRIC_ON_CONSOLE, po::value< bool >()->default_value(true), "Enable the logging metric on console");
-        addOption(InitOption::OPT_LOG_METRIC_ON_FILE, po::value< bool >()->default_value(false), "Enable the logging metric on file");
+        addOption(InitOption::OPT_LOG_METRIC_ON_CONSOLE, po::value< bool >()->zero_tokens(), "Enable the logging metric on console");
+        addOption(InitOption::OPT_LOG_METRIC_ON_FILE, po::value< bool >()->zero_tokens(), "Enable the logging metric on file");
         addOption(InitOption::OPT_LOG_METRIC_ON_FILE_PATH, po::value< string >()->default_value("./"), "Specify the path of metric logs");
         addOption(InitOption::OPT_METADATASERVER_ADDRESS, po::value< std::vector< std::string > >(), "Metadataserver server:port address");
         addOption(InitOption::OPT_DATA_IO_IMPL, po::value< string >()->default_value("IODirect"), "Specify the data io implementation");
@@ -67,13 +67,13 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException){
         addOption(InitOption::OPT_DIRECT_IO_SERVER_THREAD_NUMBER, po::value<int>()->default_value(2),"DirectIO server thread number");
         addOption(InitOption::OPT_DIRECT_IO_SERVER_IMPL_KV_PARAM, po::value< std::vector<std::string> >(),"DirectIO implementation key value parameters[k|v]");
         addOption(InitOption::OPT_DIRECT_IO_CLIENT_IMPL_KV_PARAM, po::value< std::vector<std::string> >(),"DirectIO implementation key value parameters[k|v]");
-        addOption(InitOption::OPT_DIRECT_IO_LOG_METRIC, po::value< bool >()->default_value(false), "Enable the logging of the DirectIO metric");
+        addOption(InitOption::OPT_DIRECT_IO_LOG_METRIC, po::value< bool >()->zero_tokens(), "Enable the logging of the DirectIO metric");
         addOption(InitOption::OPT_DIRECT_IO_LOG_METRIC_UPDATE_INTERVAL, po::value< uint64_t >()->default_value(5), "The time intervall between metric samples");
         addOption(InitOption::OPT_DIRECT_IO_CLIENT_LOG_METRIC_MERGED_ENDPOINT, po::value< bool >()->default_value(true), "Merge the metric values(of all endpoint) together");
         addOption(InitOption::OPT_RPC_SYNC_ENABLE, po::value< bool >()->default_value(false), "Enable the sync wrapper to rpc protocol");
         addOption(InitOption::OPT_RPC_SYNC_IMPLEMENTATION, po::value< string >()->default_value("HTTP"), "Specify the synchronous rpc implementation");
 		addOption(InitOption::OPT_RPC_SYNC_PORT, po::value< int >()->default_value(_SYNC_RPC_PORT), "Port where is published the syncrhonous rpc interface");
-        addOption(InitOption::OPT_RPC_LOG_METRIC, po::value< bool >()->default_value(false), "Enable the logging of the mrpc metric");
+        addOption(InitOption::OPT_RPC_LOG_METRIC, po::value< bool >()->zero_tokens(), "Enable the logging of the mrpc metric");
         addOption(InitOption::OPT_RPC_LOG_METRIC_UPDATE_INTERVAL, po::value< uint64_t >()->default_value(5), "The time intervall between metric samples");
         addOption(InitOption::OPT_RPC_IMPLEMENTATION, po::value< string >()->default_value("ZMQ"), "Specify the rpc implementation");
         addOption(InitOption::OPT_RPC_SERVER_PORT, po::value<int>()->default_value(_RPC_PORT), "RPC server port");
@@ -214,10 +214,10 @@ void GlobalConfiguration::checkDefaultOption() throw (CException) {
     CHECK_AND_DEFINE_BOOL_ZERO_TOKEN_OPTION(logOnFile, InitOption::OPT_LOG_ON_FILE)
     configuration.addBoolValue(InitOption::OPT_LOG_ON_FILE, logOnFile);
     
-    CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(bool, log_metric_on_console, InitOption::OPT_LOG_METRIC_ON_CONSOLE, true)
+    CHECK_AND_DEFINE_BOOL_ZERO_TOKEN_OPTION(log_metric_on_console, InitOption::OPT_LOG_METRIC_ON_CONSOLE)
     configuration.addBoolValue(InitOption::OPT_LOG_METRIC_ON_CONSOLE, log_metric_on_console);
     
-    CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(bool, log_metric_on_file, InitOption::OPT_LOG_METRIC_ON_FILE, false)
+    CHECK_AND_DEFINE_BOOL_ZERO_TOKEN_OPTION(log_metric_on_file, InitOption::OPT_LOG_METRIC_ON_FILE)
     configuration.addBoolValue(InitOption::OPT_LOG_METRIC_ON_FILE, log_metric_on_file);
     
     CHECK_AND_DEFINE_OPTION(string, log_metric_file_path, InitOption::OPT_LOG_METRIC_ON_FILE_PATH)

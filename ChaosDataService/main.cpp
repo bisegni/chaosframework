@@ -86,17 +86,7 @@ int main(int argc, char * argv[]) {
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::vector<std::string> >(OPT_CACHE_DRIVER_KVP,
 																												 "The key value parameter for cache implementation driver (ex k:v-k1:v1)");
 		
-		//query consumer
-		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_QUERY_CONSUMER_VFILE_MANTAINANCE_DELAY,
-																								 "Repeat time for virtual file mantainer in query consumer in seconds",
-																								 QUERY_CONSUMER_VFILE_MANTAINANCE_DEFAULT_DELAY,
-																								 &ChaosDataService::getInstance()->setting.vfile_mantainer_delay);
-		
-		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_QUERY_CONSUMER_QM_THREAD_POOL_SIZE,
-																									 "Number ofthread in the pool of query consumer",
-																									 QUERY_CONSUMER_QM_THREAD_POOL_SIZE,
-																									 &ChaosDataService::getInstance()->setting.query_manager_thread_poll_size);
-		//indexer
+		/*
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_INDEXER_WORKER_NUM,
 																								 "The number of the indexer worker",
 																								 INDEXER_DEFAULT_WORKER_NUMBER,
@@ -106,6 +96,7 @@ int main(int argc, char * argv[]) {
 																								 "The repeat delay for virtual system scan in seconds",
 																								 INDEXER_DEFAULT_SCAN_DELAY,
 																								 &ChaosDataService::getInstance()->setting.indexer_scan_delay);
+         */
         //object storage
         ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_OBJ_STORAGE_DRIVER,
                                                                                                     "Object storage driver implementation",
