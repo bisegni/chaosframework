@@ -96,6 +96,7 @@ control_unit_implementation(""),
 auto_load(false),
 auto_init(false),
 auto_start(false),
+storage_type(DataServiceNodeDefinitionType::DSStorageTypeLive),
 load_parameter(""){}
 
 SetInstanceDescriptionHelper::~SetInstanceDescriptionHelper() {}
