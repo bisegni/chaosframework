@@ -35,7 +35,7 @@ KeyDataStorage::KeyDataStorage(const std::string& _key,
                                chaos_io::IODataDriver *_io_data_driver):
 key(_key),
 io_data_driver(_io_data_driver),
-storage_type(DataServiceNodeDefinitionType::DSStorageTypeUndefined),
+storage_type(DataServiceNodeDefinitionType::DSStorageTypeLive),
 storage_history_time(0),
 storage_history_time_last_push(0){
     output_key	= _key + DataPackPrefixID::OUTPUT_DATASE_PREFIX;
