@@ -115,6 +115,9 @@ namespace chaos{
                         //! 
                     std::string toString();
                     
+                    //!
+                    std::string toString(int double_precision);
+                    
                         //! check if attribute buffer is good
                     bool isGood();
                     

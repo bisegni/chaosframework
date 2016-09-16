@@ -39,8 +39,6 @@ void DeviceSharedDataWorkerMetricCollector::executeJob(WorkerJobPtr job_info,
                                                        void* cookie) {
     int tag = reinterpret_cast<DeviceSharedWorkerJob*>(job_info)->request_header->tag;
     uint32_t total_data = reinterpret_cast<DeviceSharedWorkerJob*>(job_info)->data_pack_len + reinterpret_cast<DeviceSharedWorkerJob*>(job_info)->request_header->key_len;
-    //increment metric that has been removed from queue
-    data_worker_metric->decrementQueueSize(total_data);
     DeviceSharedDataWorker::executeJob(job_info, cookie);
     switch(tag) {
         case 0:// storicize only
@@ -53,6 +51,8 @@ void DeviceSharedDataWorkerMetricCollector::executeJob(WorkerJobPtr job_info,
             break;
         }
     }
+    //decrement metric that this packet has been removed from queue
+    data_worker_metric->decrementQueueSize(total_data);
 }
 
 int DeviceSharedDataWorkerMetricCollector::submitJobInfo(WorkerJobPtr job_info) {

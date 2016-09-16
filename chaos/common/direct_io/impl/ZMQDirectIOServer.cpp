@@ -306,7 +306,6 @@ void ZMQDirectIOServer::worker(const std::string& bind_inproc_url,
                 CHK_AND_DELETE_OBJ_POINTER(data_pack);
                 continue;
             } else {
-                //   DEBUG_CODE(ZMQDIO_SRV_LAPP_ << "Received pack in " << PS_STR(priority_service) << " by " << identity;)
                 //check if we need to sen an answer
                 if((send_synchronous_answer = (bool)data_pack->header.dispatcher_header.fields.synchronous_answer)) {
                     //associate to the pointer the stack allocated data

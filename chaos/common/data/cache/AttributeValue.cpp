@@ -21,8 +21,10 @@
 #include <chaos/common/global.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/data/cache/AttributeValue.h>
-#include <assert.h>
+
 #include <boost/lexical_cast.hpp>
+
+#include <assert.h>
 
 #define AVLAPP_ LAPP_ << "[AttributeValue -" << "] - "
 #define AVLDBG_ LDBG_ << "[AttributeValue -" << "] " << __PRETTY_FUNCTION__ << " - "
@@ -284,6 +286,42 @@ std::string AttributeValue::toString() {
             
         case chaos::DataType::TYPE_DOUBLE:{
             return boost::lexical_cast<std::string>(*getValuePtr<double>());
+        }
+            
+        case chaos::DataType::TYPE_INT32:{
+            return boost::lexical_cast<std::string>(*getValuePtr<int32_t>());
+        }
+            
+        case chaos::DataType::TYPE_INT64:{
+            return boost::lexical_cast<std::string>(*getValuePtr<int64_t>());
+        }
+            
+        default:
+            break;
+    }
+    return "bad type";
+}
+
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
+std::string AttributeValue::toString(int double_precision) {
+    switch(type) {
+        case chaos::DataType::TYPE_BYTEARRAY:{
+            return "binary_data";
+        }
+        case chaos::DataType::TYPE_STRING:{
+            return std::string((const char *)value_buffer, size);
+        }
+            
+        case chaos::DataType::TYPE_BOOLEAN:{
+            return boost::lexical_cast<std::string>(*getValuePtr<bool>());
+        }
+            
+        case chaos::DataType::TYPE_DOUBLE:{
+            stringstream f;
+            f << "%." <<double_precision<< "f";
+            return CHAOS_FORMAT(f.str(), %*getValuePtr<double>());
         }
             
         case chaos::DataType::TYPE_INT32:{

@@ -97,7 +97,8 @@ void NetworkBroker::init(void *initData) throw(CException) {
         
         //allocate the dispatcher
         MB_LAPP  << "Allocate DirectIODispatcher";
-        if(globalConfiguration->getBoolValue(InitOption::OPT_DIRECT_IO_LOG_METRIC)) {
+        if(globalConfiguration->hasKey(InitOption::OPT_DIRECT_IO_LOG_METRIC) &&
+           globalConfiguration->getBoolValue(InitOption::OPT_DIRECT_IO_LOG_METRIC)) {
             //the metric allocator of direct io is a direct subclass of DirectIODispatcher
             direct_io_dispatcher = new direct_io::DirectIODispatcherMetricCollector(direct_io_server->getName());
         } else {

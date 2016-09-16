@@ -33,22 +33,11 @@ namespace chaos{
 #define OPT_CACHE_DRIVER_KVP                    "cache-driver-kvp"
 #define OPT_CACHE_DRIVER_POOL_MIN_INSTANCE      "cache-driver-pool-min-instance"
         
-#define OPT_DATA_WORKER_LOG_METRIC                 "data-worker-log-metric"
-#define OPT_DATA_WORKER_LOG_METRIC_UPDATE_INTERVAL "data-worker-log-metric-update-interval"
-#define OPT_DATA_WORKER_NUM		"data-worker-num"
-#define OPT_DATA_WORKER_THREAD  "data-worker-thread"
-#define DATA_WORKER_NUMBER		1
-	
-		//query data consumer
-#define OPT_QUERY_CONSUMER_VFILE_MANTAINANCE_DELAY		"qdc-vfile-mantain-delay"
-#define QUERY_CONSUMER_VFILE_MANTAINANCE_DEFAULT_DELAY	60
-#define OPT_QUERY_CONSUMER_QM_THREAD_POOL_SIZE			"query-thread-pool-size"
-#define QUERY_CONSUMER_QM_THREAD_POOL_SIZE				1
-		
-		//answer configuration
-//#define OPT_ANSWER_WORKER_NUM		"answer_worker_num"
-//#define OPT_ANSWER_WORKER_THREAD	"answer_worker_thread"
-//#define ANSWER_WORKER_NUMBER		1
+#define OPT_DATA_WORKER_LOG_METRIC                  "data-worker-log-metric"
+#define OPT_DATA_WORKER_LOG_METRIC_UPDATE_INTERVAL  "data-worker-log-metric-update-interval"
+#define OPT_DATA_WORKER_NUM                         "data-worker-num"
+#define OPT_DATA_WORKER_THREAD                      "data-worker-thread"
+#define DATA_WORKER_NUMBER                          1
 		
 		//stage data indexer
 #define OPT_INDEXER_WORKER_NUM			"indexer-worker-num"
