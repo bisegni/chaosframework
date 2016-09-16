@@ -31,18 +31,19 @@
 #include <zmq.h>
 
 namespace chaos {
-	namespace common {
-		namespace direct_io {
+    namespace common {
+        namespace direct_io {
             namespace impl {
-				
-                DECLARE_CLASS_FACTORY(ZMQDirectIOServer, DirectIOServer) , private ZMQBaseClass {
+                
+                typedef enum WorkerType {
+                    WorkerTypePriority = 1,
+                    WorkerTypeService = 2
+                } WorkerType;
+                
+                DECLARE_CLASS_FACTORY(ZMQDirectIOServer, DirectIOServer),
+                private ZMQBaseClass {
                     REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(ZMQDirectIOServer)
                     void *zmq_context;
-                    
-                    void *priority_socket;
-                    void *priority_proxy;
-                    void *service_socket;
-                    void *service_proxy;
                     
                     boost::thread_group server_threads_group;
                     
@@ -52,12 +53,13 @@ namespace chaos {
                     
                     std::string service_socket_bind_str;
                     
-                    void worker(const std::string& bind_inproc_url,
+                    void poller(const std::string& public_url,
+                                const std::string& inproc_url);
+                    void worker(unsigned int w_type,
                                 DirectIOHandlerPtr delegate);
-                    void poolerService();
-                    void poolerPriority();
-                    ZMQDirectIOServer(std::string alias);
                     
+                    
+                    ZMQDirectIOServer(std::string alias);
                     ~ZMQDirectIOServer();
                 public:
                     

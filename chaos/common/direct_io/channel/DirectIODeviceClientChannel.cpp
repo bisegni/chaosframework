@@ -90,8 +90,8 @@ int64_t DirectIODeviceClientChannel::storeAndCacheDataOutputChannel(const std::s
     //set the header
     DIRECT_IO_SET_CHANNEL_HEADER(data_pack, put_opcode_header, (uint32_t)PUT_HEADER_LEN(key))
     //set data if the have some
-    if(buffer_len)DIRECT_IO_SET_CHANNEL_DATA(data_pack, buffer, buffer_len)
-        return sendPriorityData(data_pack);
+    if(buffer_len){DIRECT_IO_SET_CHANNEL_DATA(data_pack, buffer, buffer_len);}
+    return sendPriorityData(data_pack);
 }
 
 //! Send device serialization with priority
@@ -180,7 +180,7 @@ int64_t DirectIODeviceClientChannel::queryDataCloud(const std::string& key,
     //set header and data for the query
     DIRECT_IO_SET_CHANNEL_HEADER(data_pack, query_data_cloud_header, sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloud))
     DIRECT_IO_SET_CHANNEL_DATA(data_pack, (void*)buffer->getBufferPtr(), (uint32_t)buffer->getBufferLen());
-    if((err = sendServiceData(data_pack, &answer))) {
+    if((err = sendPriorityData(data_pack, &answer))) {
         //error getting last value
         DIODCCLERR_ << CHAOS_FORMAT("Error executing query for key %1%",%key);
     } else {
