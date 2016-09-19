@@ -95,6 +95,16 @@ namespace chaos {
                         //! return the data service associater to control unit
                     virtual int getDataServiceAssociated(const std::string& cu_uid,
                                                          std::vector<std::string>& associated_ds) = 0;
+                    //!return the oldest checkd control unit that has ageing expiration time
+                    virtual int getControlUnitOutOfAgeingTime(uint64_t last_sequence_id,
+                                                              std::string& control_unit_found) = 0;
+                    //!Remove all data befor the unit_ts timestamp
+                    /*!
+                     \param control_unit_id the unique id of the control unit
+                     \param unit_ts is the timestamp befor wich we want to erase all data(included it)
+                     */
+                    virtual int eraseControlUnitDataBeforeTS(const std::string& control_unit_id,
+                                                              uint64_t unit_ts);
                 };
                 
             }

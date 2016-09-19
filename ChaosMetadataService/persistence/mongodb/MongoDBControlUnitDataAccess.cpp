@@ -426,6 +426,8 @@ int MongoDBControlUnitDataAccess::setInstanceDescription(const std::string& cu_u
         
         if(instance_description.hasKey(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING)) {
             updated_field << DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING << instance_description.getInt32Value(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING);
+            //insert the last check time to now
+            updated_field << MONGODB_COLLECTION_NODES_AGEING_LAST_CHECK_DATA << mongo::Date_t(common::utility::TimingUtil::getTimeStamp());
         }
         
         if(instance_description.hasKey(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME)) {
@@ -841,6 +843,35 @@ int MongoDBControlUnitDataAccess::getDataServiceAssociated(const std::string& cu
                 MDBCUDA_ERR << "no node description found for data service:" << ds_unique_id;
             }
         }
+    } catch (const mongo::DBException &e) {
+        MDBCUDA_ERR << e.what();
+        err = -1;
+    } catch (const CException &e) {
+        MDBCUDA_ERR << e.what();
+        err = e.errorCode;
+    }
+    return err;
+}
+
+int MongoDBControlUnitDataAccess::getControlUnitOutOfAgeingTime(uint64_t last_sequence_id,
+                                                                std::string& control_unit_found) {
+    int err = 0;
+    SearchResult paged_result;
+    try {
+        mongo::BSONObjBuilder query_builder;
+        
+        //get all node where ageing is > of 0
+        query_builder << CHAOS_FORMAT("instance_description.%1%",%DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING) << BSON("$gt" << 0);
+        query_builder << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_CONTROL_UNIT;
+        query_builder << "seq" << BSON("$gt" << (long long)last_sequence_id);
+        mongo::Query query = query_builder.obj();
+        mongo::Query order_by = BSON(MONGODB_COLLECTION_NODES_AGEING_LAST_CHECK_DATA << -1);
+//        DEBUG_CODE(MDBCUDA_DBG<<log_message("checkDatasetPresence",
+//                                            "performPagedQuery",
+//                                            DATA_ACCESS_LOG_1_ENTRY("query",
+//                                                                    query.toString()));)
+        //remove the field of the document
+        
     } catch (const mongo::DBException &e) {
         MDBCUDA_ERR << e.what();
         err = -1;

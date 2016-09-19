@@ -32,3 +32,13 @@ AbstractDataAccess("ControlUnitDataAccess") {
 ControlUnitDataAccess::~ControlUnitDataAccess() {
     
 }
+
+//!Remove all data befor the unit_ts timestamp
+/*!
+ \param control_unit_id the unique id of the control unit
+ \param unit_ts is the timestamp befor wich we want to erase all data(included it)
+ */
+int ControlUnitDataAccess::eraseControlUnitDataBeforeTS(const std::string& control_unit_id,
+                                                        uint64_t unit_ts) {
+    return 0;
+}

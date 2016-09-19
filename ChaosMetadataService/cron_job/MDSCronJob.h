@@ -36,6 +36,12 @@ namespace chaos {
                 friend class MDSCronousManager;
                 //dataaccess abstract driver
                 chaos::service_common::persistence::data_access::AbstractPersistenceDriver *abstract_persistance_driver;
+            protected:
+                template<typename T>
+                T* getDataAccess() {
+                    CHAOS_ASSERT(abstract_persistance_driver)
+                    return abstract_persistance_driver->getDataAccess<T>();
+                }
             };
             
         }
