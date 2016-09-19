@@ -19,6 +19,7 @@
  *    	limitations under the License.
  */
 
+#include <chaos/common/global.h>
 #include <chaos/common/status_manager/StatusFlagCatalog.h>
 
 using namespace chaos::common::data;

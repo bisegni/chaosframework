@@ -58,7 +58,10 @@ namespace chaos {
 				// Deinit the implementation
 				void deinit() throw(chaos::CException);
 			public:
-				int addTimer(TimerHandler *timer_handler, uint64_t timeout, uint64_t repeat);
+                //!ad a timer specifying the timeout and repeat time in milliseconds
+				int addTimer(TimerHandler *timer_handler,
+                             uint64_t timeout,
+                             uint64_t repeat);
 				
 				int removeTimer(TimerHandler *timer_handler);
 			};

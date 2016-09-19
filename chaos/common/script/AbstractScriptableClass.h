@@ -22,6 +22,7 @@
 #ifndef __CHAOSFramework__AbstractScriptableClass_h
 #define __CHAOSFramework__AbstractScriptableClass_h
 
+#include <chaos/common/global.h>
 #include <chaos/common/chaos_types.h>
 #include <chaos/common/data/CDataVariant.h>
 #include <chaos/common/script/script_types.h>

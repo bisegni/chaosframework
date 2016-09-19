@@ -18,6 +18,7 @@
  *    	limitations under the License.
  */
 
+#include <chaos/common/global.h>
 #include <chaos/common/metric/FileMetricBackend.h>
 
 #include <boost/format.hpp>

@@ -30,6 +30,7 @@
 #include <chaos/common/trigger/AbstractSubject.h>
 
 #include <boost/thread.hpp>
+#include <boost/make_shared.hpp>
 
 #include <boost/multi_index/member.hpp>
 #include <boost/multi_index_container.hpp>

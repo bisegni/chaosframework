@@ -24,10 +24,6 @@
 #include <string>
 
 #include <boost/dynamic_bitset.hpp>
-#include <chaos/common/data/CDataWrapper.h>
-#include <chaos/common/pqueue/CObjectProcessingPriorityQueue.h>
-
-namespace chaos_data = chaos::common::data;
 
 namespace chaos {
     namespace common {

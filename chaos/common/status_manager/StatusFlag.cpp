@@ -19,6 +19,7 @@
  *    	limitations under the License.
  */
 
+#include <chaos/common/global.h>
 #include <chaos/common/utility/UUIDUtil.h>
 #include <chaos/common/status_manager/StatusFlag.h>
 

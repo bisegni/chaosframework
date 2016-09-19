@@ -274,7 +274,7 @@ namespace chaos{
                  \param data CDatawrapper object taht containing a set of initial data for the command
                  \return the mask for the runnign state
                  */
-                virtual void setHandler(chaos_data::CDataWrapper *data);
+                virtual void setHandler(chaos::common::data::CDataWrapper *data);
                 
                 //! Aquire the necessary data for the command
                 /*!

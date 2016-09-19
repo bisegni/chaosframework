@@ -275,7 +275,7 @@ bool CDataWrapper::isVector(const std::string& key) {
 }
 
 //return all key contained into the object
-void CDataWrapper::getAllKey(std::vector<std::string>& contained_key) {
+void CDataWrapper::getAllKey(ChaosStringVector& contained_key) {
     BSONObjIterator obj_iterator(bsonBuilder->asTempObj());
     while(obj_iterator.more()) {
         //we have another key

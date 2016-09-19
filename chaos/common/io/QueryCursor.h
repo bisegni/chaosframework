@@ -23,6 +23,7 @@
 #define __CHAOSFramework__CE8768D_5BB0_4EF2_A186_7685A0C31B3F_QueryCursor_h
 
 #include <chaos/common/chaos_types.h>
+#include <chaos/common/exception/CException.h>
 #include <chaos/common/network/URLServiceFeeder.h>
 #include <chaos/common/direct_io/channel/DirectIODeviceClientChannel.h>
 
@@ -56,7 +57,7 @@ namespace chaos {
                     
                     const bool hasNext() const;
                     
-                    boost::shared_ptr<chaos::common::data::CDataWrapper> next()  throw (CException);
+                    boost::shared_ptr<chaos::common::data::CDataWrapper> next()  throw (chaos::CException);
                 };
                 
                 const std::string query_id;

@@ -6,6 +6,7 @@
 //  Copyright (c) 2012 INFN. All rights reserved.
 //
 
+#include <chaos/common/global.h>
 #include <chaos/common/io/IODataDriver.h>
 
 #define IODataDriverLOG_HEAD "[IODataDriver] - "

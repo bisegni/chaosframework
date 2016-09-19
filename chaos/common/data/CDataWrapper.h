@@ -21,12 +21,10 @@
 #define CDataWrapper_H
 
 #include <chaos/common/bson/bson.h>
+#include <chaos/common/chaos_types.h>
 #include <chaos/common/data/CDataBuffer.h>
 
 #include <boost/scoped_ptr.hpp>
-
-#include <string>
-#include <vector>
 
 namespace chaos {
     namespace common {
@@ -237,7 +235,7 @@ namespace chaos {
                 bool isVector(const std::string& key);
                 
                 //return all key contained into the object
-                void getAllKey(std::vector<std::string>& contained_key);
+                void getAllKey(ChaosStringVector& contained_key);
                 
                 //return all key contained into the object
                 uint32_t getValueSize(const std::string& key);

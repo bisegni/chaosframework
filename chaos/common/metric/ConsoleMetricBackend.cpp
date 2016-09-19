@@ -18,6 +18,7 @@
  *    	limitations under the License.
  */
 
+#include <chaos/common/global.h>
 #include <chaos/common/metric/ConsoleMetricBackend.h>
 
 using namespace chaos::common::metric;
