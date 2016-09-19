@@ -20,6 +20,8 @@
 
 #include "TreeGroupDataAccess.h"
 
+#include <chaos/common/global.h>
+
 #include <boost/regex.hpp>
 #include <boost/algorithm/string.hpp>
 

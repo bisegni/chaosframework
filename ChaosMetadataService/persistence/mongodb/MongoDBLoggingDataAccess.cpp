@@ -22,6 +22,7 @@
 #include "mongo_db_constants.h"
 #include "MongoDBLoggingDataAccess.h"
 
+#include <chaos/common/global.h>
 #include <mongo/client/dbclient.h>
 
 #include <boost/lexical_cast.hpp>

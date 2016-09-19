@@ -21,6 +21,8 @@
 #include "mongo_db_constants.h"
 #include "MongoDBTreeGroupDataAccess.h"
 
+#include <chaos/common/global.h>
+
 #include <mongo/client/dbclient.h>
 
 #include <boost/regex.hpp>

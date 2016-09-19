@@ -1,5 +1,5 @@
 /*
- *	CronExecutionTask.h
+ *	MDSHistoryAgeingManagement.cpp
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
@@ -19,9 +19,10 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework_BF3BE668_749A_46D5_9C8B_9A12E988DDB9_CronExecutionTask_h
-#define __CHAOSFramework_BF3BE668_749A_46D5_9C8B_9A12E988DDB9_CronExecutionTask_h
+#include "MDSHistoryAgeingManagement.h"
 
-#include <stdio.h>
+using namespace chaos::metadata_service::cron_job;
 
-#endif /* __CHAOSFramework_BF3BE668_749A_46D5_9C8B_9A12E988DDB9_CronExecutionTask_h */
+bool MDSHistoryAgeingManagement::execute(const common::cronous_manager::MapKeyVariant& job_parameter) {
+    
+}

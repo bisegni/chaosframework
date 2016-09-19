@@ -40,6 +40,7 @@ namespace chaos {
             
             //!define map for job parameter
             CHAOS_DEFINE_MAP_FOR_TYPE(std::string, chaos::common::data::CDataVariant, MapKeyVariant);
+
             
             //! abstraction of a job that can be execution to a specifi intervall of time
             class CronJob {
@@ -47,6 +48,7 @@ namespace chaos {
                 //!keep track of cron job state
                 CronJobState run_state;
                 MapKeyVariant job_parameter;
+                const std::string job_index;
                 
                 //!is the timestamp for the next job start
                 uint64_t next_ts_start;
@@ -54,13 +56,19 @@ namespace chaos {
                 //!parse a cdatawrpper to create a parameter map
                 void parserCDataWrapperForMapParameter(chaos::common::data::CDataWrapper *param);
             protected:
-                virtual void execute(const MapKeyVariant& job_parameter) = 0;
+                //!execute the job
+                /*!
+                 \param job_parameter the parametter of the job
+                 \return true if job has finisched, false otherwhise
+                 */
+                virtual bool execute(const MapKeyVariant& job_parameter) = 0;
+                void threadEntry();
                 
+                void log(const std::string& log_message);
             public:
                 CronJob(chaos::common::data::CDataWrapper *job_parameter);
                 ~CronJob();
             };
-            
         }
     }
 }

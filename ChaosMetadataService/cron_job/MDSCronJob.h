@@ -1,5 +1,5 @@
 /*
- *	cronous_manager_types.h
+ *	MDSCronJob.h
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
@@ -19,20 +19,27 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework_DC7885B6_A0C1_4F90_AAFD_D06435CF95CB_cronous_manager_types_h
-#define __CHAOSFramework_DC7885B6_A0C1_4F90_AAFD_D06435CF95CB_cronous_manager_types_h
+#ifndef __CHAOSFramework_C21113B7_23E7_40DF_8C69_818E440F920C_MDSCronJob_h
+#define __CHAOSFramework_C21113B7_23E7_40DF_8C69_818E440F920C_MDSCronJob_h
+
+#include <chaos/common/cronous_manager/CronJob.h>
+#include <chaos_service_common/persistence/data_access/AbstractPersistenceDriver.h>
 
 namespace chaos {
-    namespace common {
-        namespace cronous_manager {
+    namespace metadata_service {
+        namespace cron_job {
             
-            //!describe an interval of time
-            struct CronousSpec {
-                
+            class MDSCronousManager;
+            
+            class MDSCronJob:
+            public chaos::common::cronous_manager::CronJob {
+                friend class MDSCronousManager;
+                //dataaccess abstract driver
+                chaos::service_common::persistence::data_access::AbstractPersistenceDriver *abstract_persistance_driver;
             };
             
         }
     }
 }
 
-#endif /* __CHAOSFramework_DC7885B6_A0C1_4F90_AAFD_D06435CF95CB_cronous_manager_types_h */
+#endif /* __CHAOSFramework_C21113B7_23E7_40DF_8C69_818E440F920C_MDSCronJob_h */

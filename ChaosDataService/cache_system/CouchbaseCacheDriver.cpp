@@ -20,6 +20,8 @@
 
 #include "CouchbaseCacheDriver.h"
 
+#include <chaos/common/global.h>
+
 #include <string>
 
 #include <boost/regex.hpp>

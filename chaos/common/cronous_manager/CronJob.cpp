@@ -19,19 +19,50 @@
  *    	limitations under the License.
  */
 
+#include <chaos/common/global.h>
+#include <chaos/common/utility/UUIDUtil.h>
 #include <chaos/common/cronous_manager/CronJob.h>
 
 using namespace chaos::common::cronous_manager;
 
-#pragma mark Public Methos
+#define ILOG INFO_LOG(CronJob);
+#define DBG  DBG_LOG(CronJob);
+#define ERR  ERR_LOG(CronJob);
+
+using namespace chaos::common::utility;
+
+#pragma mark Public Methods
 CronJob::CronJob(chaos::common::data::CDataWrapper *job_parameter):
 run_state(CronJobStateWaiting),
-next_ts_start(0){
+next_ts_start(0),
+job_index(UUIDUtil::generateUUIDLite()) {
     //inizilize job map
     parserCDataWrapperForMapParameter(job_parameter);
 }
 
 CronJob::~CronJob() {}
+
+#pragma mark Protected Methos
+void CronJob::threadEntry() {
+    INFO_LOG(CronJob) << CHAOS_FORMAT("Entry thread for job %1%", %job_index);
+    try{
+        do{
+            //check for interruption point
+            boost::this_thread::interruption_point();
+        }while(execute(job_parameter));
+    } catch (boost::thread_interrupted& ex) {
+        ERR_LOG(CronJob) << CHAOS_FORMAT("Job %1% has been interrupted", %job_index);
+    } catch(...) {
+        ERR_LOG(CronJob) << CHAOS_FORMAT("Job %1% has been interrupted", %job_index);
+    }
+    //reset running state
+    run_state = CronJobStateWaiting;
+    INFO_LOG(CronJob) << CHAOS_FORMAT("Leaving thread for job %1%", %job_index);
+}
+
+void CronJob::log(const std::string& log_message) {
+   INFO_LOG(CronJob) << CHAOS_FORMAT("[%1%] %2%", %job_index%log_message);
+}
 
 #pragma mark Private Methos
 void CronJob::parserCDataWrapperForMapParameter(chaos::common::data::CDataWrapper *param) {

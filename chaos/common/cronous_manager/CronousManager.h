@@ -23,7 +23,6 @@
 #define __CHAOSFramework__C047152_14CC_43E5_8093_CD4B770A75C4_cronous_manager_h
 
 #include <chaos/common/chaos_types.h>
-#include <chaos/common/utility/Singleton.h>
 #include <chaos/common/utility/LockableObject.h>
 #include <chaos/common/cronous_manager/CronJob.h>
 #include <chaos/common/async_central/async_central.h>
@@ -33,36 +32,35 @@
 
 namespace chaos {
     namespace common {
-
-        //! define  avector for the running job
-        typedef boost::shared_ptr<boost::thread> ThreadJobShrdPtr;
-        CHAOS_DEFINE_VECTOR_FOR_TYPE(ThreadJobShrdPtr, VectorJobThread);
-        
-        //!define vector for job instances
-        typedef boost::shared_ptr<cronous_manager::CronJob> JobInstanceShrdPtr;
-        CHAOS_DEFINE_VECTOR_FOR_TYPE(JobInstanceShrdPtr, VectorJobInstance);
-        
         namespace cronous_manager {
+            
+            //! define  avector for the running job
+            typedef boost::shared_ptr<boost::thread> ThreadJobShrdPtr;
+            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ThreadJobShrdPtr, MapJobThread);
+            
+            //!define vector for job instances
+            
+            //!defin eth eshared ptr for CronJob
+            typedef boost::shared_ptr<cronous_manager::CronJob> JobInstanceShrdPtr;
+            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, JobInstanceShrdPtr, MapJobInstance);
             
             //!Manager class for launch batch job a specific time intervall
             class CronousManager:
             public chaos::common::async_central::TimerHandler,
-            public chaos::common::utility::InizializableService,
-            public chaos::common::utility::Singleton<CronousManager> {
-                friend class chaos::common::utility::Singleton<CronousManager>;
+            public chaos::common::utility::InizializableService {
                 
                 //!job tracking structures
-                chaos::common::utility::LockableObject<VectorJobInstance> vector_job_instance;
-                VectorJobThread vector_job_in_execution;
+                chaos::common::utility::LockableObject<MapJobInstance> map_job_instance;
+                chaos::common::utility::LockableObject<MapJobThread> map_job_in_execution;
                 
-                CronousManager();
-                ~CronousManager();
-                void clearCompletedJob();
-                void scanForJobToLaunch();
+                void clearCompletedJob(bool timed_wait,
+                                       unsigned int max_element_to_scan = 0);
             protected:
                 //!intherited by @chaos::common::async_central::TimerHandler
-                void timout();
+                void timeout();
             public:
+                CronousManager();
+                ~CronousManager();
                 //!intherited by @chaos::common::utility::InizializableService
                 void init(void *init_data) throw (chaos::CException);
                 
@@ -70,10 +68,15 @@ namespace chaos {
                 void deinit() throw (chaos::CException);
                 
                 //! add a new job to the cron manager
-                void addJob(CronJob *new_job,
+                /*!
+                 \return the uinique id of the job
+                 */
+                virtual bool addJob(CronJob *new_job,
+                            std::string& job_index,
                             uint64_t repeat_delay,
                             uint64_t offset = 0);
-                
+                //!remove a job
+                bool removeJob(const std::string& job_index);
             };
             
         }
