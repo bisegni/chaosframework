@@ -152,6 +152,14 @@ if [ -n "$SERVER" ] || [ -n "$DOCKER" ];then
    fi
 fi
 
+if [ -n "$DOCKER" ];then
+    pushd $PACKAGE_DEST/etc
+    ln -sf ../tools/docker/cds.cfg cds.cfg
+    ln -sf ../tools/docker/mds.cfg mds.cfg
+    ln -sf ../tools/docker/webui.cfg webui.cfg
+    ln -sf ../tools/docker/wan.cfg wan.cfg
+fi
+
 if [ -n "$ALL" ];then
     copy $SOURCE_DIR $PACKAGE_DEST
     rm -rf $PACKAGE_DEST/etc
@@ -161,14 +169,15 @@ fi
 
 
 copy $SOURCE_DIR/tools $PACKAGE_DEST
+copy $SOURCE_DIR/chaos_env.sh $PACKAGE_DEST
 copy $SOURCE_DIR/tools/package_template/etc $PACKAGE_DIR/etc
 
-# if [ -n "$DYNAMIC" ]; then
-#     copy $SOURCE_DIR/lib $PACKAGE_DEST/
+ if [ -n "$DYNAMIC" ]; then
+     copy $SOURCE_DIR/lib $PACKAGE_DEST/
 #     mkdir -p $PACKAGE_DIR/etc/ld.so.conf.d/
 
 #     echo "$PACKAGE_INSTALL_ALIAS_DIR/lib" > $PACKAGE_DIR/etc/ld.so.conf.d/chaos-distrib.conf
-# fi
+ fi
 
 PACKAGE_NAME=$PACKAGE_NAME-$EXT
 TS=`date +%s`

@@ -185,6 +185,21 @@ IF (NOT CACHE_DIR)
       WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/etc
       )
 
+    execute_process(
+      COMMAND ln -sf ./localhost/wan.cfg ./wan.cfg
+      WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/etc
+      )
+
+    execute_process(
+      COMMAND ln -sf ./ChaosWANProxy ./wan
+      WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin
+      )
+
+    execute_process(
+      COMMAND ln -sf ./CUIserver ./webui
+      WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin
+      )
+
     IF(CHAOS_BUILD_UNITSERVER)
 
       if( EXISTS "${CHAOS_BUNDLE}/driver")

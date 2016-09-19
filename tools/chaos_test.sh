@@ -27,9 +27,9 @@ export CHAOS_RUNTYPE=""
 export CHAOS_TEST_REPORT=""
 export CHAOS_TEST_DEBUG=""
 usage(){
-    echo -e "Usage :$0 [-t <testlist0> .. -t <testlistN>] [-d <directory of testlists> [$testdir]] [-r csv report_file] [-v] [-k]\n-t <testlist>: choose a particular testlist\n-d <dir>: execute all the testlist in a given directory\n-r <report>:create a CSV file with test summary\n-s:stop on error\n-v:enable callgrind\n-g:activate debug log"
+    echo -e "Usage :$0 [-t <testlist0> .. -t <testlistN>] [-m <mdsserver> ] [-d <directory of testlists> [$testdir]] [-r csv report_file] [-v] [-k]\n-t <testlist>: choose a particular testlist\n-d <dir>: execute all the testlist in a given directory\n-r <report>:create a CSV file with test summary\n-s:stop on error\n-v:enable callgrind\n-g:activate debug log"
 }
-while getopts t:d:r:kvg opt; do
+while getopts m:t:d:r:kvg opt; do
     case $opt in
 	t) 
 	if [ ! -f "$OPTARG" ]; then
@@ -51,6 +51,10 @@ while getopts t:d:r:kvg opt; do
 	    export CHAOS_TEST_REPORT=$report_file
 	    echo "test group;test name; status; exec time (s); %cpu ; %mem; desc" > $report_file
 	    info_mesg "enable report in " "$CHAOS_TEST_REPORT"
+	    ;;
+	m)
+	    export CHAOS_MDS=$OPTARG
+	    info_mesg "using MDS " "$CHAOS_MDS"
 	    ;;
 	d)
 	    if [ -d "$OPTARG" ]; then
