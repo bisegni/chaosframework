@@ -31,7 +31,7 @@ mongo::BSONObj _error = c->getLastErrorDetailed(); \
 e = MONGO_DB_CHECK_ERROR_CODE(_error);\
 m = MONGO_DB_CHECK_ERROR_MESSAGE(_error);
 
-#define EXECUTE_MONGOAPI(x) {x}break;
+#define EXECUTE_MONGOAPI(x) {if(conn->get()) {x}}break;
 
 #define CONTINUE_ON_NEXT_CONNECTION(x) \
 if(isConnectionError(err)) {\
@@ -211,6 +211,7 @@ int MongoDBHAConnectionManager::insert( const std::string &ns,
     int err = 0;
     GET_CONNECTION()
         try {
+            
             EXECUTE_MONGOAPI(conn->get()->insert(ns, obj, flags, &wc););
         } catch (std::exception& ex) {
             MDBHAC_LERR_ << "MongoDBHAConnectionManager::insert" << " -> " << ex.what();
