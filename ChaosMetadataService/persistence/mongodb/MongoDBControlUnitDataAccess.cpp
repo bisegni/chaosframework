@@ -34,8 +34,8 @@
 using namespace chaos;
 using namespace chaos::common::data;
 
+using namespace chaos::common::utility;
 using namespace chaos::service_common::persistence::mongodb;
-
 using namespace chaos::metadata_service::persistence::mongodb;
 
 MongoDBControlUnitDataAccess::MongoDBControlUnitDataAccess(const boost::shared_ptr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
@@ -43,6 +43,43 @@ MongoDBAccessor(_connection),
 node_data_access(NULL){}
 
 MongoDBControlUnitDataAccess::~MongoDBControlUnitDataAccess() {}
+
+
+int MongoDBControlUnitDataAccess::compeleteControlUnitForAgeingManagement(const std::string& control_unit_id) {
+    int err = 0;
+    try {
+        uint64_t current_ts = TimingUtil::getTimeStamp();
+        const std::string key_processing_ageing = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_PROCESSING_AGEING);
+        const std::string key_last_checing_time = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_AGEING_LAST_CHECK_DATA);
+        const std::string key_last_performed_time = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_PERFORMED_AGEING);
+        
+        mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << control_unit_id
+                                    << MONGODB_COLLECTION_NODES_AGEING_INFO << BSON("$exists" << false ));
+        
+        mongo::BSONObj update = BSON(key_last_checing_time << mongo::Date_t(current_ts) <<
+                                     key_last_performed_time << mongo::Date_t(current_ts) <<
+                                     key_processing_ageing << false);
+        DEBUG_CODE(MDBCUDA_DBG<<log_message("compeleteControlUnitForAgeingManagement",
+                                            "update",
+                                            DATA_ACCESS_LOG_2_ENTRY("query",
+                                                                    "update",
+                                                                    query.jsonString(),
+                                                                    update.jsonString()));)
+        //remove the field of the document
+        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                     query,
+                                     update))) {
+            MDBCUDA_ERR << CHAOS_FORMAT("Error %1% completing control unit %2% with ageing management information", %err%control_unit_id);
+        }
+    } catch (const mongo::DBException &e) {
+        MDBCUDA_ERR << e.what();
+        err = -1;
+    } catch (const CException &e) {
+        MDBCUDA_ERR << e.what();
+        err = e.errorCode;
+    }
+    return err;
+}
 
 int MongoDBControlUnitDataAccess::checkPresence(const std::string& unit_server_unique_id,
                                                 bool& presence) {
@@ -120,6 +157,9 @@ int MongoDBControlUnitDataAccess::insertNewControlUnit(CDataWrapper& control_uni
     }
     if((err = node_data_access->insertNewNode(control_unit_description))) {
         MDBCUDA_ERR << "Error:" << err << " adding new node for control unit";
+    } else {
+        //compelte control unit with ageing managment information
+        err = compeleteControlUnitForAgeingManagement(control_unit_description.getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID));
     }
     return err;
 }
@@ -853,25 +893,110 @@ int MongoDBControlUnitDataAccess::getDataServiceAssociated(const std::string& cu
     return err;
 }
 
-int MongoDBControlUnitDataAccess::getControlUnitOutOfAgeingTime(uint64_t last_sequence_id,
-                                                                std::string& control_unit_found) {
+int MongoDBControlUnitDataAccess::reserveControlUnitForAgeingManagement(std::string& control_unit_found,
+                                                                        uint32_t& control_unit_ageing_time,
+                                                                        uint64_t& last_ageing_perform_time) {
     int err = 0;
     SearchResult paged_result;
     try {
+        mongo::BSONObj result_found;
         mongo::BSONObjBuilder query_builder;
+        mongo::BSONArrayBuilder query_ageing_and;
+        mongo::BSONArrayBuilder query_ageing_or;
+        
+        const std::string key_processing_ageing = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_PROCESSING_AGEING);
+        const std::string key_last_checking_time = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_AGEING_LAST_CHECK_DATA);
         
         //get all node where ageing is > of 0
         query_builder << CHAOS_FORMAT("instance_description.%1%",%DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING) << BSON("$gt" << 0);
-        query_builder << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_CONTROL_UNIT;
-        query_builder << "seq" << BSON("$gt" << (long long)last_sequence_id);
-        mongo::Query query = query_builder.obj();
-        mongo::Query order_by = BSON(MONGODB_COLLECTION_NODES_AGEING_LAST_CHECK_DATA << -1);
-//        DEBUG_CODE(MDBCUDA_DBG<<log_message("checkDatasetPresence",
-//                                            "performPagedQuery",
-//                                            DATA_ACCESS_LOG_1_ENTRY("query",
-//                                                                    query.toString()));)
-        //remove the field of the document
         
+        //get all control unit
+        query_builder << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_CONTROL_UNIT;);
+        
+        //select control unit also if it is in checking managemnt but data checking time is old than one minute(it is gone in timeout)
+        query_ageing_and << BSON(key_processing_ageing << true) << BSON(key_last_checking_time << mongo::Date_t(TimingUtil::getTimeStamp()-1000000));
+        
+        //or on previous condition and on checking management == false
+        query_ageing_or << BSON("$and" << query_ageing_and.arr()) << BSON(key_processing_ageing << false);
+        
+        query_builder << "$or" << query_ageing_or.arr();
+        
+        
+        mongo::BSONObj  query = query_builder.obj();
+        // set atomicalli processing ageing to true
+        mongo::BSONObj  update = BSON(key_processing_ageing << true <<
+                                      key_last_checking_time << mongo::Date_t(TimingUtil::getTimeStamp()));
+        // order getting first cu being the last processed one
+        mongo::BSONObj  order_by = BSON(key_last_checking_time << 1);
+        DEBUG_CODE(MDBCUDA_DBG<<log_message("getControlUnitOutOfAgeingTime",
+                                            "findAndUpdate",
+                                            DATA_ACCESS_LOG_3_ENTRY("query",
+                                                                    "update",
+                                                                    "order_by",
+                                                                    query.jsonString(),
+                                                                    update.jsonString(),
+                                                                    order_by.jsonString()));)
+        //find the control unit
+        if((err = connection->findAndModify(result_found,
+                                            MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                            query,
+                                            update,
+                                            false,
+                                            false,
+                                            order_by))){
+            MDBCUDA_ERR << CHAOS_FORMAT("Error %1% fetching the next cheable control unit for ageing", %err);
+        } else if(result_found.isEmpty() == false && (result_found.hasField(NodeDefinitionKey::NODE_UNIQUE_ID) &&
+                                                      result_found.hasField(key_last_checking_time))) {
+            //we have control unit
+            control_unit_found = result_found.getField(NodeDefinitionKey::NODE_UNIQUE_ID).String();
+            control_unit_ageing_time = (uint32_t)result_found.getFieldDotted(CHAOS_FORMAT("instance_description.%1%",%DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING)).numberInt();
+            last_ageing_check_time = (uint64_t)result_found.getFieldDotted(key_last_checking_time).Long();
+        } else {
+            control_unit_found.clear();
+            last_ageing_check_time = 0;
+        }
+        
+    } catch (const mongo::DBException &e) {
+        MDBCUDA_ERR << e.what();
+        err = -1;
+    } catch (const CException &e) {
+        MDBCUDA_ERR << e.what();
+        err = e.errorCode;
+    }
+    return err;
+}
+
+int MongoDBControlUnitDataAccess::releaseControlUnitForAgeingManagement(std::string& control_unit_found,
+                                                                        bool performed) {
+    int err = 0;
+    SearchResult paged_result;
+    try {
+        mongo::BSONObj result_found;
+        uint64_t current_ts = TimingUtil::getTimeStamp();
+        const std::string key_processing_ageing = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_PROCESSING_AGEING);
+        const std::string key_last_checking_time = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_AGEING_LAST_CHECK_DATA);
+        const std::string key_last_performed_time = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_PERFORMED_AGEING);
+        
+        mongo::BSONObj  query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << control_unit_found);
+        // set atomicalli processing ageing to true
+        mongo::BSONObj  update = performed?BSON(key_processing_ageing << false <<
+                                                key_last_checking_time << mongo::Date_t(current_ts) <<
+                                                key_last_performed_time << mongo::Date_t(current_ts)):
+                                            BSON(key_processing_ageing << false <<
+                                                 key_last_checking_time << mongo::Date_t(current_ts));
+        
+        DEBUG_CODE(MDBCUDA_DBG<<log_message("releaseControlUnitForAgeingManagement",
+                                            "update",
+                                            DATA_ACCESS_LOG_2_ENTRY("query",
+                                                                    "update",
+                                                                    query.jsonString(),
+                                                                    update.jsonString()));)
+        //find the control unit
+        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                     query,
+                                     update))){
+            MDBCUDA_ERR << CHAOS_FORMAT("Error %1% fetching the next cheable control unit for ageing", %err);
+        }
     } catch (const mongo::DBException &e) {
         MDBCUDA_ERR << e.what();
         err = -1;

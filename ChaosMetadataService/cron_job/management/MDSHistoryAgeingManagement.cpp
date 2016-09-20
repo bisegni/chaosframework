@@ -21,8 +21,38 @@
 
 #include "MDSHistoryAgeingManagement.h"
 
+#include <chaos/common/utility/TimingUtil.h>
+
+using namespace chaos::common::utility;
 using namespace chaos::metadata_service::cron_job;
 
 bool MDSHistoryAgeingManagement::execute(const common::cronous_manager::MapKeyVariant& job_parameter) {
+    int err = 0;
+    bool need_another_step = true;
+    std::string control_unit_found = "";
+    //in seconds
+    uint32_t control_unit_ageing_time = 0;
+    uint64_t last_ageing_perform_time = 0;
+
+    uint64_t now = TimingUtil::getTimeStamp();
+    uint64_t next_aged_time = (last_ageing_perform_time + (control_unit_ageing_time*1000));
+    bool aged =  next_aged_time > now;
     
+    if((err = getDataAccess<persistence::data_access::ControlUnitDataAccess>()->reserveControlUnitForAgeingManagement(control_unit_found,
+                                                                                                                      control_unit_ageing_time,
+                                                                                                                      last_ageing_perform_time))){
+        log(CHAOS_FORMAT("Error %1% reserving control unit for ageing management", %err));
+    } else if(control_unit_found.size()){
+        log(CHAOS_FORMAT("Processing ageing for control unit %1%", %control_unit_found));
+        if(aged) {
+            log(CHAOS_FORMAT("Control unit %1% is gone out of ageing time[%2% seconds], we perform agein trigger", %control_unit_found%control_unit_ageing_time));
+            getDataAccess<persistence::data_access::ControlUnitDataAccess>()->eraseControlUnitDataBeforeTS(control_unit_found,
+                                                                                                           next_aged_time);
+        }
+        getDataAccess<persistence::data_access::ControlUnitDataAccess>()->releaseControlUnitForAgeingManagement(control_unit_found, aged);
+    } else {
+        //we have finisched the work
+        need_another_step = false;
+    }
+    return need_another_step;
 }

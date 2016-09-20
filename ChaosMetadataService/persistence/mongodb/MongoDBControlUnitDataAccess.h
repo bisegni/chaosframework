@@ -47,6 +47,8 @@ namespace chaos {
                 protected:
                     MongoDBControlUnitDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
                     ~MongoDBControlUnitDataAccess();
+                    
+                    int compeleteControlUnitForAgeingManagement(const std::string& control_unit_id);
                 public:
                     
                     int checkPresence(const std::string& control_unit_id, bool& presence);
@@ -102,8 +104,12 @@ namespace chaos {
                     int getDataServiceAssociated(const std::string& cu_uid,
                                                  std::vector<std::string>& associated_ds);
                     
-                    int getControlUnitOutOfAgeingTime(uint64_t last_sequence_id,
-                                                      std::string& control_unit_found);
+                    int reserveControlUnitForAgeingManagement(std::string& control_unit_found,
+                                                              uint32_t& control_unit_ageing_time,
+                                                              uint64_t& last_ageing_perform_time);
+                    
+                    int releaseControlUnitForAgeingManagement(std::string& control_unit_found,
+                                                              bool performed);
                 };
                 
                 

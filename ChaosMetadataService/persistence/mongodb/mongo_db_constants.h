@@ -32,9 +32,11 @@ static const char * const MONGODB_COLLECTION_LOGGING                    = "mds_l
 //---------script----------
 static const char * const MONGODB_COLLECTION_SCRIPT                     = "mds_script";
 
-//----------control unit ageing---------
-static const char * const MONGODB_COLLECTION_NODES_AGEING_LAST_CHECK_DATA = "last_ageing_check_time";
-
+//----------control unit ageing filed---------
+static const char * const MONGODB_COLLECTION_NODES_AGEING_INFO              = "ageing_management";
+static const char * const MONGODB_COLLECTION_NODES_AGEING_LAST_CHECK_DATA   = "last_ageing_check_time";
+static const char * const MONGODB_COLLECTION_NODES_PROCESSING_AGEING        = "processing_ageing";
+static const char * const MONGODB_COLLECTION_NODES_PERFORMED_AGEING        = "last_performed_ageing";
 
 
 #endif

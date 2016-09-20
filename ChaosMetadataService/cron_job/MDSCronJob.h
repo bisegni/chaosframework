@@ -22,8 +22,11 @@
 #ifndef __CHAOSFramework_C21113B7_23E7_40DF_8C69_818E440F920C_MDSCronJob_h
 #define __CHAOSFramework_C21113B7_23E7_40DF_8C69_818E440F920C_MDSCronJob_h
 
+#include "../persistence/persistence.h"
+
+#include <chaos/common/global.h>
 #include <chaos/common/cronous_manager/CronJob.h>
-#include <chaos_service_common/persistence/data_access/AbstractPersistenceDriver.h>
+
 
 namespace chaos {
     namespace metadata_service {
