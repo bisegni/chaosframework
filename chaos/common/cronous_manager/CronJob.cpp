@@ -21,6 +21,7 @@
 
 #include <chaos/common/global.h>
 #include <chaos/common/utility/UUIDUtil.h>
+#include <chaos/common/utility/TimingUtil.h>
 #include <chaos/common/cronous_manager/CronJob.h>
 
 using namespace chaos::common::cronous_manager;
@@ -46,6 +47,7 @@ CronJob::~CronJob() {}
 void CronJob::threadEntry() {
     INFO_LOG(CronJob) << CHAOS_FORMAT("Entry thread for job %1%", %job_index);
     try{
+        start();
         do{
             //check for interruption point
             boost::this_thread::interruption_point();
@@ -55,7 +57,11 @@ void CronJob::threadEntry() {
     } catch(...) {
         ERR_LOG(CronJob) << CHAOS_FORMAT("Job %1% has been interrupted", %job_index);
     }
+    try{
+        end();
+    }catch(...){}
     //reset running state
+    next_ts_start = TimingUtil::getTimeStamp()+repeat_delay;
     run_state = CronJobStateWaiting;
     INFO_LOG(CronJob) << CHAOS_FORMAT("Leaving thread for job %1%", %job_index);
 }

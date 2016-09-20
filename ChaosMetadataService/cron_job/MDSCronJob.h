@@ -45,6 +45,9 @@ namespace chaos {
                     CHAOS_ASSERT(abstract_persistance_driver)
                     return abstract_persistance_driver->getDataAccess<T>();
                 }
+            public:
+                MDSCronJob(chaos::common::data::CDataWrapper *param);
+                ~MDSCronJob();
             };
             
         }

@@ -44,6 +44,8 @@ namespace chaos {
                 ~MDSCronousManager();
                 chaos::service_common::persistence::data_access::AbstractPersistenceDriver *abstract_persistance_driver;
             public:
+                void init(void *init_data) throw(chaos::CException);
+                void deinit() throw(chaos::CException);
                 bool addJob(MDSCronJob *new_job,
                             std::string& job_index,
                             uint64_t repeat_delay,

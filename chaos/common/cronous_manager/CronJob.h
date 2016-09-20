@@ -52,16 +52,23 @@ namespace chaos {
                 
                 //!is the timestamp for the next job start
                 uint64_t next_ts_start;
-                
+                uint64_t repeat_delay;
+
                 //!parse a cdatawrpper to create a parameter map
                 void parserCDataWrapperForMapParameter(chaos::common::data::CDataWrapper *param);
             protected:
+                //signal the starting of the job
+                virtual void start() = 0;
                 //!execute the job
                 /*!
                  \param job_parameter the parametter of the job
                  \return true if job has finisched, false otherwhise
                  */
                 virtual bool execute(const MapKeyVariant& job_parameter) = 0;
+                
+                //!signal the end of the job
+                virtual void end() = 0;
+                
                 void threadEntry();
                 
                 void log(const std::string& log_message);

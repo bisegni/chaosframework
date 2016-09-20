@@ -26,6 +26,16 @@
 using namespace chaos::common::utility;
 using namespace chaos::metadata_service::cron_job;
 
+MDSHistoryAgeingManagement::MDSHistoryAgeingManagement(chaos::common::data::CDataWrapper *param):
+MDSCronJob(param){}
+
+MDSHistoryAgeingManagement::~MDSHistoryAgeingManagement() {}
+
+void MDSHistoryAgeingManagement::start() {
+    last_sequence_found = 0;
+    log("Start MDSHistoryAgeingManagement");
+}
+
 bool MDSHistoryAgeingManagement::execute(const common::cronous_manager::MapKeyVariant& job_parameter) {
     int err = 0;
     bool need_another_step = true;
@@ -35,14 +45,14 @@ bool MDSHistoryAgeingManagement::execute(const common::cronous_manager::MapKeyVa
     uint64_t last_ageing_perform_time = 0;
 
     uint64_t now = TimingUtil::getTimeStamp();
-    uint64_t next_aged_time = (last_ageing_perform_time + (control_unit_ageing_time*1000));
-    bool aged =  next_aged_time > now;
-    
-    if((err = getDataAccess<persistence::data_access::ControlUnitDataAccess>()->reserveControlUnitForAgeingManagement(control_unit_found,
+    if((err = getDataAccess<persistence::data_access::ControlUnitDataAccess>()->reserveControlUnitForAgeingManagement(last_sequence_found,
+                                                                                                                      control_unit_found,
                                                                                                                       control_unit_ageing_time,
                                                                                                                       last_ageing_perform_time))){
         log(CHAOS_FORMAT("Error %1% reserving control unit for ageing management", %err));
     } else if(control_unit_found.size()){
+        uint64_t next_aged_time = (last_ageing_perform_time + (control_unit_ageing_time*1000));
+        bool aged =  next_aged_time < now;
         log(CHAOS_FORMAT("Processing ageing for control unit %1%", %control_unit_found));
         if(aged) {
             log(CHAOS_FORMAT("Control unit %1% is gone out of ageing time[%2% seconds], we perform agein trigger", %control_unit_found%control_unit_ageing_time));
@@ -50,9 +60,15 @@ bool MDSHistoryAgeingManagement::execute(const common::cronous_manager::MapKeyVa
                                                                                                            next_aged_time);
         }
         getDataAccess<persistence::data_access::ControlUnitDataAccess>()->releaseControlUnitForAgeingManagement(control_unit_found, aged);
+        
+        need_another_step = true;
     } else {
         //we have finisched the work
         need_another_step = false;
     }
     return need_another_step;
+}
+
+void MDSHistoryAgeingManagement::end() {
+    log("End MDSHistoryAgeingManagement");
 }

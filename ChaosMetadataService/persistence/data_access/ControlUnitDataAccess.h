@@ -97,10 +97,14 @@ namespace chaos {
                                                          std::vector<std::string>& associated_ds) = 0;
                     //!return the oldest checkd control unit that has ageing expiration time
                     /*!
+                     \param last_device_id is an input out parameter, in input it represent last seq id found,
+                            in output it is valorized with the sequence number of found control unit(is equal
+                            to 0 if no control uni thas been found
                      \param control_unit_found uinique id of found control unit, if empty control uni thas not been found
                      \param last_ageing_check_time is the found control unit last time that ageing has been checked
                      */
-                    virtual int reserveControlUnitForAgeingManagement(std::string& control_unit_found,
+                    virtual int reserveControlUnitForAgeingManagement(uint64_t& last_sequence_id,
+                                                                      std::string& control_unit_found,
                                                                       uint32_t& control_unit_ageing_time,
                                                                       uint64_t& last_ageing_perform_time) = 0;
                     

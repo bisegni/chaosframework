@@ -30,7 +30,13 @@ namespace chaos {
             
             class MDSHistoryAgeingManagement:
             public MDSCronJob {
-                bool execute(const common::cronous_manager::MapKeyVariant& job_parameter) = 0;
+                uint64_t last_sequence_found;
+                void start();
+                bool execute(const common::cronous_manager::MapKeyVariant& job_parameter);
+                void end();
+            public:
+                MDSHistoryAgeingManagement(chaos::common::data::CDataWrapper *param);
+                ~MDSHistoryAgeingManagement();
             };
             
         }

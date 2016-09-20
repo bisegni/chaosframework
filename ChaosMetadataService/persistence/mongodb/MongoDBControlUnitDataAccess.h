@@ -104,7 +104,8 @@ namespace chaos {
                     int getDataServiceAssociated(const std::string& cu_uid,
                                                  std::vector<std::string>& associated_ds);
                     
-                    int reserveControlUnitForAgeingManagement(std::string& control_unit_found,
+                    int reserveControlUnitForAgeingManagement(uint64_t& last_sequence_id,
+                                                              std::string& control_unit_found,
                                                               uint32_t& control_unit_ageing_time,
                                                               uint64_t& last_ageing_perform_time);
                     

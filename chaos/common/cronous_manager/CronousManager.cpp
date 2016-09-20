@@ -62,6 +62,7 @@ bool CronousManager::addJob(CronJob *new_job,
     
     LockableObjectWriteLock wl;
     map_job_instance.getWriteLock(wl);
+    new_job->repeat_delay = repeat_delay;
     new_job->next_ts_start = (TimingUtil::getTimeStamp()+offset);
     map_job_instance().insert(MapJobInstancePair(new_job->job_index,
                                                  JobInstanceShrdPtr(new_job)));
@@ -104,7 +105,7 @@ void CronousManager::timeout() {
             it != end;
             it++) {
             if(it->second->run_state == CronJobStateWaiting &&
-               current_ts < (*it->second).next_ts_start) {
+               current_ts >= (*it->second).next_ts_start) {
                 (*it->second).run_state = CronJobStateRunning;
                 
                 //start the execution of the job into a thread
@@ -129,6 +130,8 @@ void CronousManager::clearCompletedJob(bool timed_wait,
                                        unsigned int max_element_to_scan) {
     //check started job to determinate which has finisched
     unsigned int element_count = 0;
+    uint64_t current_ts = TimingUtil::getTimeStamp();
+    
     LockableObjectWriteLock wl_thread;
     map_job_in_execution.getWriteLock(wl_thread);
     MapJobThreadIterator it = map_job_in_execution().begin();
@@ -136,7 +139,6 @@ void CronousManager::clearCompletedJob(bool timed_wait,
     while(it != end) {
         if((*it->second).joinable()){
             if((*it->second).try_join_for(boost::chrono::milliseconds(10))){
-                //remove finisched thread
                 it = map_job_in_execution().erase(it);
             } else {
                 it++;
