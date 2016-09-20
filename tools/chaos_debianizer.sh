@@ -30,7 +30,7 @@ Usage(){
     exit 1
 }
 DEPENDS="bash (>= 3), bc"
-while getopts p:i:v:dt:sac,d,r opt; do
+while getopts lp:i:v:dt:sac,d,r opt; do
     case $opt in
 	p) PACKAGE_NAME=$OPTARG
 	    ;;
@@ -38,7 +38,7 @@ while getopts p:i:v:dt:sac,d,r opt; do
 	    ;;
 	v) VERSION=$OPTARG
 	    ;;
-	) LOCALHOST="true"
+	l) LOCALHOST="true"
 	    desc="localhost configuration"
 	    DEPENDS="$DEPENDS,mongodb"
 	    ;;
