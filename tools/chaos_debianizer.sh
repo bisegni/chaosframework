@@ -26,7 +26,7 @@ PACKAGE_NAME="chaos"
 CLIENT="true"
 
 Usage(){
-    echo -e "Usage is $0 -i <source dir> [-p <package name > ] [-v <version> ] [-c] [-s] [-d] [-a]\n-i <source dir>: a valid source chaos distribution [$SOURCE_DIR]\n-p <package name>: is the package name prefix [$PACKAGE_NAME]\n-v <version>:a version of the package distribution [$VERSION]\n-c: client distribution (i.e US) [$CLIENT]\n-s: server distribution (CDS,MDS..)\n-a: development with all (client, server and includes)\n-r:copy to remote apt server\n-d: docker distribution"
+    echo -e "Usage is $0 -i <source dir> [-p <package name > ] [-v <version> ] [-c] [-s] [-d] [-a] [-l]\n-i <source dir>: a valid source chaos distribution [$SOURCE_DIR]\n-p <package name>: is the package name prefix [$PACKAGE_NAME]\n-v <version>:a version of the package distribution [$VERSION]\n-c: client distribution (i.e US) [$CLIENT]\n-s: server distribution (CDS,MDS..)\n-a: development with all (client, server and includes)\n-r:copy to remote apt server\n-d: docker distribution\n-l:local host configuration"
     exit 1
 }
 DEPENDS="bash (>= 3), bc"
@@ -38,6 +38,10 @@ while getopts p:i:v:dt:sac,d,r opt; do
 	    ;;
 	v) VERSION=$OPTARG
 	    ;;
+	) LOCALHOST="true"
+	    desc="localhost configuration"
+	    DEPENDS="$DEPENDS,mongodb"
+	    ;;
 	c) CLIENT="true"
 	    SERVER=""
 	    EXT="client"
@@ -47,6 +51,7 @@ while getopts p:i:v:dt:sac,d,r opt; do
 	    CLIENT=""
 	    EXT="server"
 	    desc="Server !CHAOS package include libraries and binaries"
+	    
 	    ;;
 	a) ALL="true"
 	    EXT="devel"
@@ -207,10 +212,13 @@ echo "PACKAGE_NAME=$PACKAGE_NAME" >> DEBIAN/postinst
 echo "ln -sf $PACKAGE_INSTALL_DIR $PACKAGE_INSTALL_ALIAS_DIR" >> DEBIAN/postinst
 echo "INSTDIR=$PACKAGE_INSTALL_ALIAS_DIR" >> DEBIAN/postinst
 
+if [ -n "$LOCALHOST" ] && [ -n "$SERVER" ];then
+    echo "LOCALHOST=$SERVER" >> DEBIAN/config
+else
 
-if [ -z "$DOCKER" ];then
-    echo "#!/bin/bash" > DEBIAN/config
-    #echo "set -e" >> DEBIAN/config
+    if [ -z "$DOCKER" ];then
+	echo "#!/bin/bash" > DEBIAN/config
+	#echo "set -e" >> DEBIAN/config
     echo ". /usr/share/debconf/confmodule" >> DEBIAN/config
     
     echo "PACKAGE_NAME=$PACKAGE_NAME" >> DEBIAN/config
@@ -230,7 +238,7 @@ if [ -z "$DOCKER" ];then
     cat "$SOURCE_DIR/tools/package_template/DEBIAN/config" >> DEBIAN/config
     chmod 0555 DEBIAN/config
 fi
-
+fi
 
 
 cp $SOURCE_DIR/tools/package_template/DEBIAN/templates DEBIAN/

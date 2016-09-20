@@ -177,6 +177,11 @@ IF (NOT CACHE_DIR)
       WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/etc/
       )
     execute_process(
+      COMMAND ln -sf ./localhost/cu.cfg ./cu.cfg
+      WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/etc/
+      )
+
+    execute_process(
       COMMAND ln -sf ./localhost/mds.cfg ./mds.cfg
       WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/etc
       )
@@ -200,6 +205,18 @@ IF (NOT CACHE_DIR)
       WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin
       )
 
+    execute_process(
+      COMMAND ln -sf ./ChaosMetadataService ./mds
+      WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin
+      )
+
+    execute_process(
+      COMMAND ln -sf ./ChaosDataService ./cds
+      WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin
+      )
+
+
+
     IF(CHAOS_BUILD_UNITSERVER)
 
       if( EXISTS "${CHAOS_BUNDLE}/driver")
@@ -219,6 +236,12 @@ IF (NOT CACHE_DIR)
 	 add_subdirectory(${TOP_DIRECTORY}/UnitServer)
       ENDIF()
     ENDIF()
+
+    execute_process(
+      COMMAND ln -sf ./UnitServer ./cu
+      WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin
+      )
+
   endmacro()
   macro (GitCheckout arg arg1)
     MESG("Checkout branch ${arg1}")

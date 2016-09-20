@@ -31,7 +31,7 @@ mongo::BSONObj _error = c->getLastErrorDetailed(); \
 e = MONGO_DB_CHECK_ERROR_CODE(_error);\
 m = MONGO_DB_CHECK_ERROR_MESSAGE(_error);
 
-#define EXECUTE_MONGOAPI(x) {if(conn->get()) {x}}break;
+#define EXECUTE_MONGOAPI(x) {if(conn.get()) { x ;break;} else {MDBHAC_LDBG_<<" no connection";}}
 
 #define CONTINUE_ON_NEXT_CONNECTION(x) \
 if(isConnectionError(err)) {\
@@ -175,7 +175,12 @@ std::auto_ptr<DriverScopedConnection> MongoDBHAConnectionManager::getConnection(
     std::auto_ptr<DriverScopedConnection> result;
     ConnectionInfo *conn = static_cast<ConnectionInfo*>(service_feeder.getService());
     if(conn) {
-        result.reset(new DriverScopedConnection(conn->conn_str, 1000));
+      MDBHAC_LDBG_<<"connection db: "<<conn->conn_str.getDatabase()<<" user:"<<conn->conn_str.getUser();
+      result.reset(new DriverScopedConnection(conn->conn_str, 1000));
+    } else {
+      MDBHAC_LERR_<<"connection failed";
+      result.reset(NULL);
+      
     }
     return result;
 }
