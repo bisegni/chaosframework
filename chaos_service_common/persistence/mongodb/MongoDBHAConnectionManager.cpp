@@ -36,14 +36,11 @@ m = MONGO_DB_CHECK_ERROR_MESSAGE(_error);
 #define CONTINUE_ON_NEXT_CONNECTION(x) \
 if(isConnectionError(err)) {\
 service_feeder.setURLOffline(conn->service_index);\
-offline_connection_queue.push(conn->service_index)\
+offline_connection_queue.push(conn->service_index);\
 continue;\
 } else {\
 break;\
 }
-
-
-
 
 using namespace chaos::common::network;
 using namespace chaos::service_common::persistence::mongodb;
