@@ -159,10 +159,10 @@ fi
 
 if [ -n "$DOCKER" ];then
     pushd $PACKAGE_DEST/etc
-    ln -sf ../tools/docker/cds.cfg cds.cfg
-    ln -sf ../tools/docker/mds.cfg mds.cfg
-    ln -sf ../tools/docker/webui.cfg webui.cfg
-    ln -sf ../tools/docker/wan.cfg wan.cfg
+    ln -sf ../tools/config/lnf/docker/cds.cfg cds.cfg
+    ln -sf ../tools/config/lnf/docker/mds.cfg mds.cfg
+    ln -sf ../tools/config/lnf/docker/webui.cfg webui.cfg
+    ln -sf ../tools/config/lnf/docker/wan.cfg wan.cfg
 fi
 
 if [ -n "$ALL" ];then
