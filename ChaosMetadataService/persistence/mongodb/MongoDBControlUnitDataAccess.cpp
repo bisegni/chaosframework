@@ -906,12 +906,12 @@ int MongoDBControlUnitDataAccess::reserveControlUnitForAgeingManagement(std::str
         
         const std::string key_processing_ageing = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_PROCESSING_AGEING);
         const std::string key_last_checking_time = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_AGEING_LAST_CHECK_DATA);
-        
+        const std::string key_last_performed_time = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_PERFORMED_AGEING);
         //get all node where ageing is > of 0
         query_builder << CHAOS_FORMAT("instance_description.%1%",%DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING) << BSON("$gt" << 0);
         
         //get all control unit
-        query_builder << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_CONTROL_UNIT;);
+        query_builder << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_CONTROL_UNIT;
         
         //select control unit also if it is in checking managemnt but data checking time is old than one minute(it is gone in timeout)
         query_ageing_and << BSON(key_processing_ageing << true) << BSON(key_last_checking_time << mongo::Date_t(TimingUtil::getTimeStamp()-1000000));
@@ -950,10 +950,10 @@ int MongoDBControlUnitDataAccess::reserveControlUnitForAgeingManagement(std::str
             //we have control unit
             control_unit_found = result_found.getField(NodeDefinitionKey::NODE_UNIQUE_ID).String();
             control_unit_ageing_time = (uint32_t)result_found.getFieldDotted(CHAOS_FORMAT("instance_description.%1%",%DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING)).numberInt();
-            last_ageing_check_time = (uint64_t)result_found.getFieldDotted(key_last_checking_time).Long();
+            last_ageing_perform_time = (uint64_t)result_found.getFieldDotted(key_last_performed_time).Long();
         } else {
             control_unit_found.clear();
-            last_ageing_check_time = 0;
+            last_ageing_perform_time = 0;
         }
         
     } catch (const mongo::DBException &e) {
