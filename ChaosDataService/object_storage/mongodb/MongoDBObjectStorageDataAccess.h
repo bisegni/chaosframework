@@ -38,20 +38,27 @@ namespace chaos {
                 protected service_common::persistence::mongodb::MongoDBAccessor {
                     friend class MongoDBObjectStorageDriver;
                     
+                    inline void addTimeRange(mongo::BSONObjBuilder& builder,
+                                             const std::string& time_operator,
+                                             uint64_t timestamp);
+                    
                 protected:
                     MongoDBObjectStorageDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
                     ~MongoDBObjectStorageDataAccess();
                 public:
-                    //!Put an object within the object persistence layer
+                    //inhertied method
                     int pushObject(const std::string& key,
                                    const chaos::common::data::CDataWrapper& stored_object);
                     
-                    //!Retrieve an object from the object persistence layer
+                    //inhertied method
                     int getObject(const std::string& key,
                                   const uint64_t& timestamp,
                                   object_storage::abstraction::ObjectSharedPtr& object_ptr_ref);
-                    
-                    //!search object into object persistence layer
+                    //inhertied method
+                    int deleteObject(const std::string& key,
+                                             uint64_t start_timestamp,
+                                             uint64_t end_timestamp);
+                    //inhertied method
                     int findObject(const std::string& key,
                                    const uint64_t timestamp_from,
                                    const uint64_t timestamp_to,

@@ -257,7 +257,7 @@ int QueryDataConsumer::consumeDataCloudQuery(DirectIODeviceChannelHeaderOpcodeQu
                                          query_header->field.record_for_page,
                                          reuslt_object_found,
                                          result_header->last_daq_ts))) {
-        QDCERR_ << CHAOS_FORMAT("Error performing lcoud query with code %1%", %err);
+        QDCERR_ << CHAOS_FORMAT("Error performing cloud query with code %1%", %err);
     } else if(reuslt_object_found.size()){
         //we successfully have perform query
         result_header->result_data_size = 0;
@@ -313,7 +313,16 @@ int QueryDataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *hea
 int QueryDataConsumer::consumeDataCloudDelete(const std::string& search_key,
                                               uint64_t start_ts,
                                               uint64_t end_ts){
-    return 0;
+    int err = 0;
+    //execute the query
+    VectorObject reuslt_object_found;
+    ObjectStorageDataAccess *obj_storage_da = object_storage_driver->getDataAccess<object_storage::abstraction::ObjectStorageDataAccess>();
+    if((err = obj_storage_da->deleteObject(search_key,
+                                           start_ts,
+                                           start_ts))) {
+        QDCERR_ << CHAOS_FORMAT("Error performing lcoud query with code %1%", %err);
+    }
+    return err;
 }
 
 #pragma mark DirectIOSystemAPIServerChannelHandler

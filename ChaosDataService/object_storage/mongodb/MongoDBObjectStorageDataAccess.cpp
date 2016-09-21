@@ -104,8 +104,6 @@ int MongoDBObjectStorageDataAccess::getObject(const std::string& key,
     }
     return err;
 }
-<<<<<<< Updated upstream
-=======
 
 void MongoDBObjectStorageDataAccess::addTimeRange(mongo::BSONObjBuilder& builder,
                                                   const std::string& time_operator,
@@ -149,7 +147,6 @@ int MongoDBObjectStorageDataAccess::deleteObject(const std::string& key,
     return err;
 }
 
->>>>>>> Stashed changes
 int MongoDBObjectStorageDataAccess::findObject(const std::string& key,
                                                const uint64_t timestamp_from,
                                                const uint64_t timestamp_to,

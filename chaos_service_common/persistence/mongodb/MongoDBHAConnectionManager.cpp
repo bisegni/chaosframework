@@ -373,7 +373,10 @@ int MongoDBHAConnectionManager::findAndRemove(mongo::BSONObj& result,
     return err;
 }
 
-int MongoDBHAConnectionManager::remove( const std::string &ns , mongo::Query q , bool justOne, const mongo::WriteConcern& wc) {
+int MongoDBHAConnectionManager::remove( const std::string &ns ,
+                                       mongo::Query q ,
+                                       bool justOne,
+                                       const mongo::WriteConcern& wc) {
     int err = 0;
     GET_CONNECTION()
         try {

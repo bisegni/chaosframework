@@ -58,6 +58,11 @@ namespace chaos {
                                           const uint64_t& timestamp,
                                           ObjectSharedPtr& object_ptr_ref) = 0;
                     
+                    //!delete objects that are contained between intervall (exstreme included)
+                    virtual int deleteObject(const std::string& key,
+                                             uint64_t start_timestamp,
+                                             uint64_t end_timestamp) = 0;
+                    
                     //!search object into object persistence layer
                     virtual int findObject(const std::string& key,
                                            const uint64_t timestamp_from,
