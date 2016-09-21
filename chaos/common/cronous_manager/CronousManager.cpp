@@ -139,10 +139,9 @@ void CronousManager::clearCompletedJob(bool timed_wait,
     while(it != end) {
         if((*it->second).joinable()){
             if((*it->second).try_join_for(boost::chrono::milliseconds(10))){
-                it = map_job_in_execution().erase(it);
-            } else {
-                it++;
-            }
+                map_job_in_execution().erase(it);
+            } 
+	    it++;
         }
         //stop in case we have processed the maximum number of thread
         if(max_element_to_scan &&

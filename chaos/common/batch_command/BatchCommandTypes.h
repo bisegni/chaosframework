@@ -22,7 +22,7 @@
 #define CHAOSFramework_BatchCommandTypes_h
 
 #include <string>
-
+#include <stdint.h>
 #include <boost/dynamic_bitset.hpp>
 
 namespace chaos {
