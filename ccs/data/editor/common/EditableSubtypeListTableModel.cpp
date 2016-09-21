@@ -1,5 +1,7 @@
 #include "EditableSubtypeListTableModel.h"
 
+#include<chaos/common/global.h>
+
 EditableSubtypeListTableModel::EditableSubtypeListTableModel(QObject *parent):
     ChaosAbstractTableModel(parent),
     subtype_list_ptr(NULL){}

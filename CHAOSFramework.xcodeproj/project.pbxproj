@@ -560,6 +560,9 @@
 		32919A0C1764E68F00724874 /* DriverAccessor.h in Headers */ = {isa = PBXBuildFile; fileRef = 32919A0A1764E68F00724874 /* DriverAccessor.h */; };
 		3291D5181D5DEE890077CBB3 /* PublishTarget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3291D5161D5DEE890077CBB3 /* PublishTarget.cpp */; };
 		3291D5191D5DEE890077CBB3 /* PublishTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = 3291D5171D5DEE890077CBB3 /* PublishTarget.h */; };
+		32936C641D9277DC00485F71 /* GetSnapshotForNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32936C621D9277DC00485F71 /* GetSnapshotForNode.cpp */; };
+		32936C671D9280BA00485F71 /* GetSnapshotForNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32936C651D9280BA00485F71 /* GetSnapshotForNode.cpp */; };
+		32936C681D9280BA00485F71 /* GetSnapshotForNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 32936C661D9280BA00485F71 /* GetSnapshotForNode.h */; };
 		3296031E1876B45000CDCADA /* AttributeValueSharedCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3296030F1876B45000CDCADA /* AttributeValueSharedCache.cpp */; };
 		3296031F1876B45000CDCADA /* AttributeValueSharedCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 329603101876B45000CDCADA /* AttributeValueSharedCache.h */; };
 		329603221876B45000CDCADA /* BatchCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329603141876B45000CDCADA /* BatchCommand.cpp */; };
@@ -1737,6 +1740,10 @@
 		32919A0D17650F4500724874 /* DriverTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DriverTypes.h; sourceTree = "<group>"; };
 		3291D5161D5DEE890077CBB3 /* PublishTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PublishTarget.cpp; sourceTree = "<group>"; };
 		3291D5171D5DEE890077CBB3 /* PublishTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PublishTarget.h; sourceTree = "<group>"; };
+		32936C621D9277DC00485F71 /* GetSnapshotForNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetSnapshotForNode.cpp; sourceTree = "<group>"; };
+		32936C631D9277DC00485F71 /* GetSnapshotForNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetSnapshotForNode.h; sourceTree = "<group>"; };
+		32936C651D9280BA00485F71 /* GetSnapshotForNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetSnapshotForNode.cpp; sourceTree = "<group>"; };
+		32936C661D9280BA00485F71 /* GetSnapshotForNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetSnapshotForNode.h; sourceTree = "<group>"; };
 		3294905A159AF4BF00E86BD1 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		3294905B159AF4D700E86BD1 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		3294905C159AF4E600E86BD1 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
@@ -3733,6 +3740,8 @@
 				3239EF551C0F1E190052BE61 /* GetAllSnapshot.h */,
 				32401CB41C18330000E62866 /* GetNodesForSnapshot.cpp */,
 				32401CB51C18330000E62866 /* GetNodesForSnapshot.h */,
+				32936C621D9277DC00485F71 /* GetSnapshotForNode.cpp */,
+				32936C631D9277DC00485F71 /* GetSnapshotForNode.h */,
 			);
 			path = service;
 			sourceTree = "<group>";
@@ -4150,6 +4159,8 @@
 				3239EF581C0F26D90052BE61 /* GetAllSnapshot.h */,
 				32401CB71C183E2600E62866 /* GetNodesForSnapshot.cpp */,
 				32401CB81C183E2600E62866 /* GetNodesForSnapshot.h */,
+				32936C651D9280BA00485F71 /* GetSnapshotForNode.cpp */,
+				32936C661D9280BA00485F71 /* GetSnapshotForNode.h */,
 				3221D7421CF5F368001BE971 /* service.h */,
 			);
 			path = service;
@@ -5153,6 +5164,7 @@
 				327F39C31AEFABB00000C845 /* InitDeinit.h in Headers */,
 				32568C931B42C1690006988C /* QuantumTSTaggedAttributeHandler.h in Headers */,
 				328C87371ADFDD410047C79B /* GetInstance.h in Headers */,
+				32936C681D9280BA00485F71 /* GetSnapshotForNode.h in Headers */,
 				3239EF5A1C0F26D90052BE61 /* GetAllSnapshot.h in Headers */,
 				3252F3591C298743004436A8 /* AddNode.h in Headers */,
 				3208AABE1AC56C1C000860D9 /* GetNodeDescription.h in Headers */,
@@ -5457,6 +5469,7 @@
 				3235FDCA1A6FF45600EC83A9 /* GetDescription.cpp in Sources */,
 				325FC8611AF7C8B200DB9D66 /* GetCurrentDataset.cpp in Sources */,
 				32B299A41BE25ABE000D3716 /* RecoverError.cpp in Sources */,
+				32936C641D9277DC00485F71 /* GetSnapshotForNode.cpp in Sources */,
 				3235FDD91A6FFA6600EC83A9 /* MongoDBPersistenceDriver.cpp in Sources */,
 				327F39A31AEA49C00000C845 /* DeleteDS.cpp in Sources */,
 				32610F931AE671A300779B84 /* InitDeinit.cpp in Sources */,
@@ -5928,6 +5941,7 @@
 				32D745FC1C7338D100F4D719 /* AlertLogEventHandler.cpp in Sources */,
 				327F39AB1AEAA2390000C845 /* UpdateDS.cpp in Sources */,
 				326150951CAAB3120003D0C2 /* NodeMonitorHandler.cpp in Sources */,
+				32936C671D9280BA00485F71 /* GetSnapshotForNode.cpp in Sources */,
 				32B4192C1B0DE55E00C3CA7D /* ChangeNodeState.cpp in Sources */,
 				328C87321ADFDB9A0047C79B /* SearchInstancesByUS.cpp in Sources */,
 				32B2999C1BD92B18000D3716 /* CopyInstance.cpp in Sources */,

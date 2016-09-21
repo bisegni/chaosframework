@@ -36,7 +36,9 @@ SET(mcl_src ${mcl_src}      api_proxy/service/ResetAll.cpp
                             api_proxy/service/RestoreSnapshot.cpp
                             api_proxy/service/DeleteSnapshot.cpp
                             api_proxy/service/GetAllSnapshot.cpp
-                            api_proxy/service/GetNodesForSnapshot.cpp)
+                            api_proxy/service/GetNodesForSnapshot.cpp
+                            api_proxy/service/GetSnapshotForNode.cpp)
+
 
 SET(mcl_src ${mcl_src}      api_proxy/node/GetNodeDescription.cpp
                             api_proxy/node/NodeSearch.cpp

@@ -47,7 +47,7 @@ data_service_da(_data_service_da){}
 SnapshotDataAccess::~SnapshotDataAccess() {}
 
 int SnapshotDataAccess::createNewSnapshot(const std::string& snapshot_name,
-                                          const std::vector<std::string> node_uid_list) {
+                                          const ChaosStringVector& node_uid_list) {
     
     std::auto_ptr<IODataDriver> data_driver(ObjectFactoryRegister<IODataDriver>::getInstance()->getNewInstanceByName("IODirectIODriver"));
     if(data_driver.get() == NULL) return -1;
@@ -74,26 +74,31 @@ int SnapshotDataAccess::createNewSnapshot(const std::string& snapshot_name,
             
             //add endpoint
             const std::string endpoint_addr =  boost::str(boost::format("%1%|%2%")%
-                                                    (*it)->getStringValue(chaos::NodeDefinitionKey::NODE_DIRECT_IO_ADDR)%
-                                                    (*it)->getInt32Value(chaos::DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT));
+                                                          (*it)->getStringValue(chaos::NodeDefinitionKey::NODE_DIRECT_IO_ADDR)%
+                                                          (*it)->getInt32Value(chaos::DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT));
             ((IODirectIODriver*)data_driver.get())->addServerURL(endpoint_addr);
         }
         
         err = data_driver->createNewSnapshot(snapshot_name,
-                                            node_uid_list);
+                                             node_uid_list);
     } catch(CException& ex) {
         err = ex.errorCode;
     } catch(...) {
         err = -10000;
     }
     data_driver->deinit();
-
+    
     return err;
 }
 
 
 int SnapshotDataAccess::getNodeInSnapshot(const std::string& snapshot_name,
-                                          vector<std::string>& node_in_snapshot) {
+                                          ChaosStringVector& node_in_snapshot) {
+    return 0;
+}
+
+int SnapshotDataAccess::getSnapshotForNode(const std::string& node_unique_id,
+                                           ChaosStringVector& snapshot_for_node) {
     return 0;
 }
 
@@ -137,5 +142,5 @@ int SnapshotDataAccess::deleteSnapshot(const std::string& snapshot_name) {
     data_driver->deinit();
     
     return err;
-
+    
 }

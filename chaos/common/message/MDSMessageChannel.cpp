@@ -376,6 +376,39 @@ int MDSMessageChannel::searchNodeForSnapshot(const std::string& snapshot_name,
     return err;
 }
 
+int MDSMessageChannel::searchSnapshotForNode(const std::string& node_uid,
+                                             ChaosStringVector& snapshot_found,
+                                             uint32_t millisec_to_wait){
+    int err = 0;
+    auto_ptr<CDataWrapper> message(new CDataWrapper());
+    message->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_uid);
+    std::auto_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
+                                                                                           "getSnapshotForNode",
+                                                                                           message.release());
+    request_future->setTimeout(millisec_to_wait);
+    if(request_future->wait()) {
+        DECODE_ERROR(request_future)
+        if((err = request_future->getError()) == ErrorCode::EC_NO_ERROR) {
+            
+            if(request_future->getResult() &&
+               request_future->getResult()->hasKey("node_in_snapshot") &&
+               request_future->getResult()->isVectorValue("node_in_snapshot")) {
+                //we have result
+                std::auto_ptr<CMultiTypeDataArrayWrapper> snapshot_desc_list(request_future->getResult()->getVectorValue("snapshot_for_node"));
+                for(int idx = 0;
+                    idx < snapshot_desc_list->size();
+                    idx++) {
+                    const std::string node_uid = snapshot_desc_list->getStringElementAtIndex(idx);
+                    snapshot_found.push_back(node_uid);
+                }
+            }
+        }
+    } else {
+        err = -1;
+    }
+    return err;
+}
+
 std::auto_ptr<MultiAddressMessageRequestFuture> MDSMessageChannel::sendRequestWithFuture(const std::string& action_domain,
                                                                                          const std::string& action_name,
                                                                                          chaos::common::data::CDataWrapper *request_pack,

@@ -44,18 +44,21 @@ namespace chaos {
                                               data_access::DataServiceDataAccess *_data_service_da);
                     ~MongoDBSnapshotDataAccess();
                 public:
-                    // inherited method
+                    //! inherited method
                     int createNewSnapshot(const std::string& snapshot_name,
-                                          const std::vector<std::string> node_uid_list);
+                                          const ChaosStringVector& node_uid_list);
                     
-                    // inherited method
+                    //! inherited method
                     int getNodeInSnapshot(const std::string& snapshot_name,
-                                          std::vector<std::string>& node_in_snapshot);
+                                          ChaosStringVector& node_in_snapshot);
                     
-                    // inherited method
+                    //!inherited method
+                    int getSnapshotForNode(const std::string& node_unique_id,
+                                           ChaosStringVector& snapshot_for_node);
+                    //! inherited method
                     int deleteSnapshot(const std::string& snapshot_name);
                     
-                    // inherited method
+                    //! inherited method
                     int getSnapshotWorkingState(const std::string& snapshot_name,
                                                 bool& work_free);
                     

@@ -185,14 +185,25 @@ namespace chaos {
                 
                 //! Search node for snapshot
                 /*!
-                \param snapshot_name tha name of the snapshot
-                \param node_found contains the node that are included into the snapshot
-                \param millisec_to_wait delay after wich the wait is interrupt
-                \return error code
+                 \param snapshot_name tha name of the snapshot
+                 \param node_found contains the node that are included into the snapshot
+                 \param millisec_to_wait delay after wich the wait is interrupt
+                 \return error code
                  */
                 int searchNodeForSnapshot(const std::string& snapshot_name,
                                           ChaosStringVector node_found,
                                           uint32_t millisec_to_wait=5000);
+                
+                //! Search snapshot for node
+                /*!
+                 \param node_uid tha unique id of the node
+                 \param snapshot_found contains the snapshot that include the node
+                 \param millisec_to_wait delay after wich the wait is interrupt
+                 \return error code
+                 */
+                int searchSnapshotForNode(const std::string& node_uid,
+                                          ChaosStringVector& snapshot_found,
+                                          uint32_t millisec_to_wait);
                 
                 //! send custom message to the servers
                 /*!

@@ -15,6 +15,9 @@ SET(cnd_src  ${cnd_src} ../chaos_service_common/persistence/mongodb/MongoDBHACon
 SET(cnd_src  ${cnd_src} ../chaos_service_common/persistence/data_access/AbstractDataAccess.cpp
 						../chaos_service_common/persistence/data_access/AbstractPersistenceDriver.cpp)
 
+SET(cnd_src  ${cnd_src}	cron_job/MDSCronousManager.cpp
+                        cron_job/MDSCronJob.cpp)
+
 SET(cnd_src  ${cnd_src}	common/CUCommonUtility.cpp
                         common/LogUtility.cpp)
 
@@ -40,7 +43,8 @@ SET(cnd_src  ${cnd_src}	api/service/ServiceApiGroup.cpp
                         api/service/RestoreSnapshot.cpp
                         api/service/CreateNewSnapshot.cpp
                         api/service/DeleteSnapshot.cpp
-                        api/service/GetNodesForSnapshot.cpp)
+                        api/service/GetNodesForSnapshot.cpp
+                        api/service/GetSnapshotForNode.cpp)
 
 SET(cnd_src  ${cnd_src}	api/healt/HealtApiGroup.cpp
                         api/healt/ProcessHello.cpp

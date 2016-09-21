@@ -442,6 +442,9 @@ namespace chaos {
                                   const std::vector<std::string>& other_snapped_device);
             //!delete the snapshot
             int deleteSnapshot(const std::string& snapshot_tag);
+            
+            //!return the snapshot list for device controlled by this isntance
+            int getSnapshotList(ChaosStringVector& snapshot_list);
         };
     }
 }

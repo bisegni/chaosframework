@@ -61,6 +61,10 @@ SET(common_lib_src ${common_lib_src}
         configuration/GlobalConfiguration.cpp)
 
 SET(common_lib_src ${common_lib_src}
+        cronous_manager/CronousManager.cpp
+        cronous_manager/CronJob.cpp)
+
+SET(common_lib_src ${common_lib_src}
         metric/MetricCollector.cpp
         metric/MetricCollectorIO.cpp
         metric/AbstractMetricBackend.cpp

@@ -43,13 +43,13 @@ SnapshotDataAccess(_data_service_da){}
 MongoDBSnapshotDataAccess::~MongoDBSnapshotDataAccess() {}
 
 int MongoDBSnapshotDataAccess::createNewSnapshot(const std::string& snapshot_name,
-                                                 const std::vector<std::string> node_uid_list) {
+                                                 const ChaosStringVector& node_uid_list) {
     return SnapshotDataAccess::createNewSnapshot(snapshot_name,
                                                  node_uid_list);
 }
 
 int MongoDBSnapshotDataAccess::getNodeInSnapshot(const std::string& snapshot_name,
-                                                 vector<std::string>& node_in_snapshot) {
+                                                 ChaosStringVector& node_in_snapshot) {
     int err = 0;
     bool work_free = false;
     std::vector<mongo::BSONObj>     result;
@@ -66,7 +66,7 @@ int MongoDBSnapshotDataAccess::getNodeInSnapshot(const std::string& snapshot_nam
         mongo::BSONObj q = BSON("snap_name" << snapshot_name);
         
         //! project only the node id
-        mongo::BSONObj prj = BSON("producer_id" << 1);
+        mongo::BSONObj prj = BSON("producer_id" << 1 << "_id"<<0);
         
         DEBUG_CODE(MDBDSDA_DBG<<log_message("getNodeInSnapshot",
                                             "find",
@@ -92,7 +92,44 @@ int MongoDBSnapshotDataAccess::getNodeInSnapshot(const std::string& snapshot_nam
         MDBDSDA_ERR << e.what();
         err = e.errorCode;
     }
-    
+    return err;
+}
+
+int MongoDBSnapshotDataAccess::getSnapshotForNode(const std::string& node_unique_id,
+                                                  ChaosStringVector& snapshot_for_node) {
+    int err = 0;
+    std::vector<mongo::BSONObj> result;
+    try {
+        //we first need to fetch all node uid attacched to the snapshot
+        mongo::BSONObj q = BSON("producer_id" << node_unique_id);
+        
+        //! project only the node id
+        mongo::BSONObj prj = BSON("snap_name" << 1 << "_id"<<0);
+        
+        DEBUG_CODE(MDBDSDA_DBG<<log_message("getSnapshotForNode",
+                                            "find",
+                                            DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                                    "prj",
+                                                                    q.jsonString(),
+                                                                    prj.jsonString()));)
+        
+        std::auto_ptr<mongo::DBClientCursor> query_result = connection->query(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SNAPSHOT_DATA),
+                                                                              q,
+                                                                              0,
+                                                                              0,
+                                                                              &prj);
+        while(query_result->more()) {
+            mongo::BSONObj n = query_result->next();
+            snapshot_for_node.push_back(n.getStringField("snap_name"));
+        }
+        
+    } catch (const mongo::DBException &e) {
+        MDBDSDA_ERR << e.what();
+        err = -1;
+    } catch (const chaos::CException &e) {
+        MDBDSDA_ERR << e.what();
+        err = e.errorCode;
+    }
     return err;
 }
 

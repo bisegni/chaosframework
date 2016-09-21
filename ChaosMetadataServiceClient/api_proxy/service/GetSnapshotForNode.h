@@ -1,9 +1,10 @@
 /*
- *	GetNodesForSnapshot.h
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ *	GetSnapshotForNode.h
  *
- *    	Copyright 2015 INFN, National Institute of Nuclear Physics
+ *	!CHAOS [CHAOSFramework]
+ *	Created by bisegni.
+ *
+ *    	Copyright 21/09/2016 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -18,8 +19,8 @@
  *    	limitations under the License.
  */
 
-#ifndef __MetadataServiceClient__GetNodesForSnapshot_h
-#define __MetadataServiceClient__GetNodesForSnapshot_h
+#ifndef __CHAOSFramework_BA15D1C2_31C9_47E4_BEED_93B9DAD674CA_GetSnapshotForNode_h
+#define __CHAOSFramework_BA15D1C2_31C9_47E4_BEED_93B9DAD674CA_GetSnapshotForNode_h
 
 #include <ChaosMetadataServiceClient/api_proxy/ApiProxy.h>
 
@@ -30,32 +31,30 @@ namespace chaos {
         namespace api_proxy {
             namespace service {
                 
-                CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string, NodesInSnapshotList);
-                
-                class GetNodesForSnapshotHelper {
-                    NodesInSnapshotList node_list;
+                class GetSnapshotForNodeHelper {
+                    ChaosStringVector shapshot_list;
                 public:
-                    GetNodesForSnapshotHelper(chaos::common::data::CDataWrapper *api_result);
-                    ~GetNodesForSnapshotHelper();
-                    size_t getNodeListSize();
-                    const NodesInSnapshotList& getNodeList();
+                    GetSnapshotForNodeHelper(chaos::common::data::CDataWrapper *api_result);
+                    ~GetSnapshotForNodeHelper();
+                    size_t getSnapshotListSize();
+                    const ChaosStringVector& getSnapshotList();
                 };
                 
                 //! Reset all metadata service backend database
-                class GetNodesForSnapshot:
+                class GetSnapshotForNode:
                 public chaos::metadata_service_client::api_proxy::ApiProxy {
-                    API_PROXY_CLASS(GetNodesForSnapshot)
+                    API_PROXY_CLASS(GetSnapshotForNode)
                 protected:
-                    API_PROXY_CD_DECLARATION(GetNodesForSnapshot)
+                    API_PROXY_CD_DECLARATION(GetSnapshotForNode)
                 public:
                     
                     ApiProxyResult execute(const std::string& snapshot_name);
                     
-                    static std::auto_ptr<GetNodesForSnapshotHelper> getHelper(chaos::common::data::CDataWrapper *api_result);
+                    static std::auto_ptr<GetSnapshotForNodeHelper> getHelper(chaos::common::data::CDataWrapper *api_result);
                 };
             }
         }
     }
 }
 
-#endif /* GetNodesForSnapshot_h */
+#endif /* __CHAOSFramework_BA15D1C2_31C9_47E4_BEED_93B9DAD674CA_GetSnapshotForNode_h */

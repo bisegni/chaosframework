@@ -1006,6 +1006,7 @@ int DeviceController::loadDatasetTypeFromSnapshotTag(const std::string& snapshot
 
 int DeviceController::createNewSnapshot(const std::string& snapshot_tag,
                                         const std::vector<std::string>& other_snapped_device) {
+    CHAOS_ASSERT(ioLiveDataDriver)
     std::vector<std::string> device_id_in_snap = other_snapped_device;
     device_id_in_snap.push_back(device_id);
     return ioLiveDataDriver->createNewSnapshot(snapshot_tag,
@@ -1013,5 +1014,13 @@ int DeviceController::createNewSnapshot(const std::string& snapshot_tag,
 }
 
 int DeviceController::deleteSnapshot(const std::string& snapshot_tag) {
+    CHAOS_ASSERT(ioLiveDataDriver)
     return ioLiveDataDriver->deleteSnapshot(snapshot_tag);
+}
+
+int DeviceController::getSnapshotList(ChaosStringVector& snapshot_list) {
+    CHAOS_ASSERT(mdsChannel)
+    return mdsChannel->searchSnapshotForNode(device_id,
+                                             snapshot_list,
+                                             millisecToWait);
 }
