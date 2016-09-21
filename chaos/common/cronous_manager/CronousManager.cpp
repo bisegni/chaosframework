@@ -130,18 +130,17 @@ void CronousManager::clearCompletedJob(bool timed_wait,
                                        unsigned int max_element_to_scan) {
     //check started job to determinate which has finisched
     unsigned int element_count = 0;
-    uint64_t current_ts = TimingUtil::getTimeStamp();
     
     LockableObjectWriteLock wl_thread;
     map_job_in_execution.getWriteLock(wl_thread);
     MapJobThreadIterator it = map_job_in_execution().begin();
     MapJobThreadIterator end = map_job_in_execution().end();
     while(it != end) {
-        if((*it->second).joinable()){
-            if((*it->second).try_join_for(boost::chrono::milliseconds(10))){
-                map_job_in_execution().erase(it);
-            } 
-	    it++;
+        //incremente and get current
+        MapJobThreadIterator current = it++;
+        if((*current->second).joinable() &&
+           (*current->second).try_join_for(boost::chrono::milliseconds(10))){
+            map_job_in_execution().erase(current);
         }
         //stop in case we have processed the maximum number of thread
         if(max_element_to_scan &&
