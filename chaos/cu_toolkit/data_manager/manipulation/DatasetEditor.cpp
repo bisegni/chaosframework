@@ -19,7 +19,8 @@
  *    	limitations under the License.
  */
 
-#include "DatasetEditor.h"
+#include <chaos/common/global.h>
+#include <chaos/cu_toolkit/data_manager/manipulation/DatasetEditor.h>
 
 using namespace chaos::common::data::structured;
 using namespace chaos::cu::data_manager::manipulation;

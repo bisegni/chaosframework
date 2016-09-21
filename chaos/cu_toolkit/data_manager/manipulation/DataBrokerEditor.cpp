@@ -19,6 +19,7 @@
  *    	limitations under the License.
  */
 
+#include <chaos/common/global.h>
 #include <chaos/cu_toolkit/data_manager/manipulation/DataBrokerEditor.h>
 
 using namespace chaos::DataType;

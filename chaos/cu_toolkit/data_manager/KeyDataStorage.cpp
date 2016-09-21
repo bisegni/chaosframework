@@ -18,7 +18,9 @@
  *    	limitations under the License.
  */
 
+#include <chaos/common/global.h>
 #include <chaos/common/chaos_constants.h>
+#include <chaos/common/utility/TimingUtil.h>
 #include <chaos/cu_toolkit/data_manager/KeyDataStorage.h>
 using namespace std;
 using namespace chaos;

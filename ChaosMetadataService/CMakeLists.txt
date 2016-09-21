@@ -16,7 +16,8 @@ SET(cnd_src  ${cnd_src} ../chaos_service_common/persistence/data_access/Abstract
 						../chaos_service_common/persistence/data_access/AbstractPersistenceDriver.cpp)
 
 SET(cnd_src  ${cnd_src}	cron_job/MDSCronousManager.cpp
-                        cron_job/MDSCronJob.cpp)
+                        cron_job/MDSCronJob.cpp
+                        cron_job/management/MDSHistoryAgeingManagement.cpp)
 
 SET(cnd_src  ${cnd_src}	common/CUCommonUtility.cpp
                         common/LogUtility.cpp)
