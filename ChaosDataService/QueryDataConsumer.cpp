@@ -192,8 +192,8 @@ int QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *hea
     bool send_to_storage_layer = (storage_type != DataServiceNodeDefinitionType::DSStorageTypeLive &&
                                   storage_type != DataServiceNodeDefinitionType::DSStorageTypeUndefined) && (ChaosDataService::getInstance()->setting.cache_only == false);
     /*QDCAPP_ << CHAOS_FORMAT("Storage for key:%1% and type %2%", %std::string((char*)GET_PUT_OPCODE_KEY_PTR(header),
-                                                                            header->key_len)%storage_type);*/
-
+     header->key_len)%storage_type);*/
+    
     switch(storage_type) {
         case DataServiceNodeDefinitionType::DSStorageTypeLiveHistory:
         case DataServiceNodeDefinitionType::DSStorageTypeLive:{
@@ -275,7 +275,7 @@ int QueryDataConsumer::consumeDataCloudQuery(DirectIODeviceChannelHeaderOpcodeQu
             
             //copy bson elelment in memory location
             char *mem_start_copy = ((char*)*result_value)+result_header->result_data_size;
-
+            
             //copy
             std::memcpy(mem_start_copy, element_bson_mem, element_bson_size);
             
@@ -308,6 +308,12 @@ int QueryDataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *hea
     if(channel_data) free(channel_data);
     if(header) free(header);
     return err;
+}
+
+int QueryDataConsumer::consumeDataCloudDelete(const std::string& search_key,
+                                              uint64_t start_ts,
+                                              uint64_t end_ts){
+    return 0;
 }
 
 #pragma mark DirectIOSystemAPIServerChannelHandler

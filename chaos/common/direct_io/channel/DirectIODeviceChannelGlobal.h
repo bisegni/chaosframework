@@ -26,7 +26,8 @@ namespace chaos {
                     typedef enum DeviceChannelOpcode {
                         DeviceChannelOpcodePutOutput				= 1,	/**< send the output dataset [synchronous]*/
                         DeviceChannelOpcodeGetLastOutput            = 2,	/**< request the last output dataset from live cache [synchronous]*/
-                        DeviceChannelOpcodeQueryDataCloud			= 4,	/**< query the chaos data cloud [synchronous]*/
+                        DeviceChannelOpcodeQueryDataCloud			= 4,	/**< query the chaos data associated to a key [synchronous]*/
+                        DeviceChannelOpcodeDeleteDataCloud			= 8     /**< delete the data associated with a key [synchronous]*/
                     } DeviceChannelOpcode;
                     
                     /*!
@@ -35,7 +36,7 @@ namespace chaos {
                      */
                     typedef enum PerformanceChannelOpcode {
                         PerformanceChannelOpcodeReqRoundTrip			= 1,	/**< forwarda a start of a roundtrip test */
-                        PerformanceChannelOpcodeRespRoundTrip			= 2,	/**< perform an answer to the roundtrip test */
+                        PerformanceChannelOpcodeRespRoundTrip			= 2     /**< perform an answer to the roundtrip test */
                     } PerformanceChannelOpcode;
                     
                     /*!
@@ -46,7 +47,7 @@ namespace chaos {
                     typedef enum SystemAPIChannelOpcode {
                         SystemAPIChannelOpcodeNewSnapshotDataset		= 1,	/**< start new datasets snapshot creation process*/
                         SystemAPIChannelOpcodeDeleteSnapshotDataset		= 2,	/**< delete the snapshot associated to the input tag */
-                        SystemAPIChannelOpcodeGetSnapshotDatasetForAKey	= 3,	/**< return the snapshoted datasets for a determinated producer key*/
+                        SystemAPIChannelOpcodeGetSnapshotDatasetForAKey	= 3     /**< return the snapshoted datasets for a determinated producer key*/
                     } SystemAPIChannelOpcode;
                 }
                 
@@ -126,7 +127,7 @@ namespace chaos {
                     } DirectIODeviceChannelHeaderGetOpcodeResult,
                     *DirectIODeviceChannelHeaderGetOpcodeResultPtr;
                     
-                    //#define QUERY_DATA_CLOUD_OPCODE_HEADER_LEN 24
+                    //#define QUERY_DATA_CLOUD_OPCODE_HEADER_LEN 4
                     //! Header for the DirectIODeviceChannelHeaderOpcodeQueryDataCloud opcode
                     /*!
                      this is the header for query on data cloud. The header contains information to

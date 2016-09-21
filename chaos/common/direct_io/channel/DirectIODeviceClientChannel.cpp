@@ -205,6 +205,37 @@ int64_t DirectIODeviceClientChannel::queryDataCloud(const std::string& key,
     return err;
 }
 
+int64_t DirectIODeviceClientChannel::deleteDataCloud(const std::string& key,
+                                                     uint64_t start_ts,
+                                                     uint64_t end_ts) {
+    int64_t err = 0;
+    CDataWrapper query_description;
+    //allcoate the data to send direct io pack
+    DirectIODataPack *data_pack = (DirectIODataPack*)calloc(sizeof(DirectIODataPack), 1);
+    
+    //fill the query CDataWrapper
+    query_description.addStringValue(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_KEY_STRING, key);
+    query_description.addInt64Value(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_STAR_TS_I64, (int64_t)start_ts);
+    query_description.addInt64Value(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_END_TS_I64, (int64_t)end_ts);
+    
+    //set opcode
+    data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodeDeleteDataCloud);
+    
+    //get the buffer to send
+    auto_ptr<SerializationBuffer> buffer(query_description.getBSONData());
+    
+    //the frre of memeory is managed in this class in async way
+    buffer->disposeOnDelete = false;
+    
+    //set header and data for the query
+    DIRECT_IO_SET_CHANNEL_DATA(data_pack, (void*)buffer->getBufferPtr(), (uint32_t)buffer->getBufferLen());
+    if((err = sendServiceData(data_pack))) {
+        //error getting last value
+        DIODCCLERR_ << CHAOS_FORMAT("Error executing deelte operation for key %1%",%key);
+    }
+    return err;
+}
+
 //! default data deallocator implementation
 void DirectIODeviceClientChannel::DirectIODeviceClientChannelDeallocator::freeSentData(void* sent_data_ptr, DisposeSentMemoryInfo *free_info_ptr) {
     switch(free_info_ptr->sent_part) {
@@ -216,6 +247,7 @@ void DirectIODeviceClientChannel::DirectIODeviceClientChannelDeallocator::freeSe
                     free(sent_data_ptr);
                     break;
                     //these two opcode are header allocated in the stack
+                case opcode::DeviceChannelOpcodeDeleteDataCloud:
                     break;
             }
             break;
@@ -227,6 +259,7 @@ void DirectIODeviceClientChannel::DirectIODeviceClientChannelDeallocator::freeSe
                 case opcode::DeviceChannelOpcodePutOutput:
                 case opcode::DeviceChannelOpcodeGetLastOutput:
                 case opcode::DeviceChannelOpcodeQueryDataCloud:
+                case opcode::DeviceChannelOpcodeDeleteDataCloud:
                     free(sent_data_ptr);
                     break;
             }

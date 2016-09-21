@@ -90,6 +90,10 @@ namespace chaos{
                                       opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult * result_header,
                                       void **result_value);
 			
+            int consumeDataCloudDelete(const std::string& search_key,
+                                       uint64_t start_ts,
+                                       uint64_t end_ts);
+            
 			//---------------- DirectIOSystemAPIServerChannelHandler -----------------------
 			// Manage the creation of a snapshot
 			int consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,

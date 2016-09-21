@@ -94,6 +94,17 @@ namespace chaos {
                                            uint32_t page_dimension,
                                            bool start_is_included,
                                            opcode_headers::DirectIODeviceChannelOpcodeQueryDataCloudResultPtr *result_handler);
+                    
+                    //! Perform a temporal data delete operation on a key
+                    /*!
+                     \param key to search
+                     \param start_ts start of timestamp to search
+                     \param end_ts end of the timestamp where limit the search
+                     \return error
+                     */
+                    int64_t deleteDataCloud(const std::string& key,
+                                            uint64_t start_ts,
+                                            uint64_t end_ts);
                 };
                 
                 

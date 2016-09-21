@@ -105,7 +105,7 @@ int DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack,
                     chaos_data::CDataWrapper query((char *)dataPack->channel_data);
                     opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudResultPtr result_header = (DirectIODeviceChannelHeaderOpcodeQueryDataCloudResultPtr)calloc(sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult), 1);
                     
-                     header->field.record_for_page = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.record_for_page);
+                    header->field.record_for_page = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.record_for_page);
                     
                     //decode the endianes off the data
                     std::string key = CDW_GET_SRT_WITH_DEFAULT(&query, DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_KEY_STRING, "");
@@ -138,6 +138,28 @@ int DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack,
             }
             if(header) free(header);
             if(dataPack->channel_data) free(dataPack->channel_data);
+            break;
+        }
+            
+        case opcode::DeviceChannelOpcodeDeleteDataCloud: {
+            try {
+                if (dataPack &&
+                    dataPack->channel_data) {
+                    chaos_data::CDataWrapper query((char *)dataPack->channel_data);
+                    
+                    //decode the endianes off the data
+                    std::string key = CDW_GET_SRT_WITH_DEFAULT(&query, DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_KEY_STRING, "");
+                    uint64_t start_ts = CDW_GET_VALUE_WITH_DEFAULT(&query, DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_STAR_TS_I64, getUInt64Value, 0);
+                    uint64_t end_ts = CDW_GET_VALUE_WITH_DEFAULT(&query, DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_END_TS_I64, getUInt64Value, 0);
+                    //call server api if we have at least the key
+                    if((key.compare("") != 0)) {
+                        err = handler->consumeDataCloudDelete(key,
+                                                              start_ts,
+                                                              end_ts);
+                    }
+                }
+            } catch (...) {}
+            if(dataPack && dataPack->channel_data) {free(dataPack->channel_data);}
             break;
         }
         default:

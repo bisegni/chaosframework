@@ -74,8 +74,8 @@ namespace chaos {
 						 \param header header containing the information where send the answer
 						 \param key_data the data of the key
 						 \param key_len the size of the key data
-						 \param synchronous_answer the answer structure to return the found value associated to the key
-								on the live system
+						 \param result_header
+                         \param result_value
 						 */
 						virtual int consumeGetEvent(opcode_headers::DirectIODeviceChannelHeaderGetOpcode *header,
                                                     void *key_data,
@@ -83,16 +83,16 @@ namespace chaos {
                                                     opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult *result_header,
                                                     void **result_value)
 						{DELETE_HEADER_DATA(header, key_data) return -1;};
-						
-						//! Receive the query information for search on data cloud
+                        
+						//! Execute a paged query into a time intervall
 						/*!
-							The CData wrapper received contains all the infromation needed to perform query 
-							on chaos data cloud. The answer need to be sent in asynchornous way.
+							Execute a paged query in sinchronous way
 						 \param header of the request containing the naswer information
 						 \param search_key the key that we need to query
 						 \param search_start_ts the start of the time that delimit the lower time stamp of result
 						 \param search_end_ts the end of the time stamp that delimit the upper time stamp of result
-						 \param synchronous_answer the synchronous answer (not used at the moment)
+						 \param start_ts_is_included true if the search_start_ts need to be considere included or not
+                         \param
 						 */
 						virtual int consumeDataCloudQuery(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloud *query_header,
                                                           const std::string& search_key,
@@ -101,7 +101,18 @@ namespace chaos {
                                                           bool start_ts_is_included,
                                                           opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult * result_header,
                                                           void **result_value)
-						{return -1;};
+						{DELETE_HEADER(query_header) return -1;};
+                        
+                        //! Delete the data for a key delimited into a time intervall
+                        /*!                         
+                         \param search_key the key for wich we need to delete data
+                         \param start_ts the timestamp that limit >= the time after wich to delete data (0 means no limit)
+                         \param end_ts the timestamp that limit =< the time before wich wich to delete data (0 means no limit)
+                         */
+                        virtual int consumeDataCloudDelete(const std::string& search_key,
+                                                           uint64_t start_ts,
+                                                           uint64_t end_ts)
+                        {return -1;};
 					} DirectIODeviceServerChannelHandler;
 
                     void setHandler(DirectIODeviceServerChannelHandler *_handler);
