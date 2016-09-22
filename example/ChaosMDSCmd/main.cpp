@@ -83,6 +83,10 @@ bool attr=(what)->getBoolValue( # attr);
 bool attr=def;\
 if((what)->hasKey( # attr)){attr=(what)->getBoolValue( # attr);}
 
+#define GET_CONFIG_DEFAULT_INT(what,attr,def) \
+int32_t attr=def;\
+if((what)->hasKey( # attr)){attr=(what)->getInt32Value( # attr);}
+
 int initialize_from_old_mds(std::string conf){
     std::stringstream stringa;
     std::ifstream f(conf.c_str());
@@ -149,7 +153,8 @@ int initialize_from_old_mds(std::string conf){
                  GET_CONFIG_DEFAULT_BOOL(cuw,auto_load,true);
                  GET_CONFIG_DEFAULT_BOOL(cuw,auto_init,true);
                  GET_CONFIG_DEFAULT_BOOL(cuw,auto_start,true);
-
+		 GET_CONFIG_DEFAULT_INT(cuw,storage_type,1);
+		 GET_CONFIG_DEFAULT_INT(cuw,storage_ageing,3600*24);
                  std::cout<<"\t"<<cu_id<<","<<cu_type<<std::endl;
                  cud.auto_load=auto_load;
                  cud.auto_init=auto_init;
@@ -158,6 +163,8 @@ int initialize_from_old_mds(std::string conf){
                  cud.control_unit_uid=cu_id;
                  cud.unit_server_uid=unit_server_alias;
                  cud.control_unit_implementation=cu_type;
+		 cud.history_ageing=storage_ageing;
+		 cud.storage_type=(chaos::DataServiceNodeDefinitionType::DSStorageType)storage_type;
                  //EXECUTE_CHAOS_API(api_proxy::unit_server::ManageCUType,3000,unit_server_alias,cu_type,1);
                  EXECUTE_CHAOS_API(api_proxy::control_unit::DeleteInstance,3000,unit_server_alias,cu_id);
                  EXECUTE_CHAOS_API(api_proxy::control_unit::Delete,3000,cu_id);
