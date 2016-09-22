@@ -78,6 +78,7 @@ connection_feeder(_connection_feeder),
 node_id(_node_id),
 start_ts(_start_ts),
 end_ts(_end_ts),
+page_len(100),
 phase(QueryPhaseNotStarted),
 api_error(0){}
 
@@ -134,7 +135,7 @@ int64_t QueryCursor::fetchNewPage() {
     if((api_error = next_client->device_client_channel->queryDataCloud(node_id,
                                                                        result_page.last_ts_received,
                                                                        end_ts,
-                                                                       30,
+                                                                       page_len,
                                                                        from_included,
                                                                        &query_result))) {
         ERR << CHAOS_FORMAT("Error during fetchin query page with code %1%", %api_error);
@@ -143,4 +144,12 @@ int64_t QueryCursor::fetchNewPage() {
         result_page.reset(query_result);
     }
     return api_error;
+}
+
+const uint32_t QueryCursor::getPageLen() const {
+    return page_len;
+}
+
+void QueryCursor::setPageDimension(uint32_t new_page_len) {
+    page_len = new_page_len;
 }
