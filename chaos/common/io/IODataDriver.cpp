@@ -50,6 +50,11 @@ void IODataDriver::storeData(const std::string& key,
     delete(dataToStore);
 }
 
+void IODataDriver::removeData(const std::string& key,
+                              uint64_t start_ts,
+                              uint64_t end_ts) throw(CException) {
+    
+}
 
 /*---------------------------------------------------------------------------------
  

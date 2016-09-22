@@ -207,6 +207,25 @@ char* IODirectIODriver::retriveRawData(const std::string& key, size_t *dim)  thr
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
+void IODirectIODriver::removeData(const std::string& key,
+                                  uint64_t start_ts,
+                                  uint64_t end_ts) throw(CException) {
+    boost::shared_lock<boost::shared_mutex>(mutext_feeder);
+    IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
+    if(!next_client) return;
+    
+    uint32_t size =0;
+    int err = (int)next_client->device_client_channel->deleteDataCloud(key,
+                                                                       start_ts,
+                                                                       end_ts);
+    if(err) {
+        IODirectIODriver_LERR_ << CHAOS_ASSERT("Error removing data from data service %1% with code %2% for key %3%",%next_client->connection->getServerDescription()%err%key);
+    }
+}
+
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 //! restore from a tag a dataset associated to a key
 int IODirectIODriver::loadDatasetTypeFromSnapshotTag(const std::string& restore_point_tag_name,
                                                      const std::string& key,
@@ -227,9 +246,9 @@ int IODirectIODriver::loadDatasetTypeFromSnapshotTag(const std::string& restore_
         if(snapshot_result && snapshot_result->channel_data) {
             //we have the dataaset
             try {
-	      *cdatawrapper_handler = new chaos_data::CDataWrapper((const char*)snapshot_result->channel_data);
-	      IODirectIODriver_LINFO_ << "Got dataset type:"<<dataset_type<< " for key:" << key << " from snapshot tag:" <<restore_point_tag_name;
-
+                *cdatawrapper_handler = new chaos_data::CDataWrapper((const char*)snapshot_result->channel_data);
+                IODirectIODriver_LINFO_ << "Got dataset type:"<<dataset_type<< " for key:" << key << " from snapshot tag:" <<restore_point_tag_name;
+                
             } catch (std::exception& ex) {
                 IODirectIODriver_LERR_ << "Error deserializing the dataset type:"<<dataset_type<< " for key:" << key << " from snapshot tag:" <<restore_point_tag_name << " with error:" << ex.what();
             } catch (...) {

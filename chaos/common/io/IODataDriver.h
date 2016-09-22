@@ -67,6 +67,11 @@ namespace chaos{
                                chaos_data::CDataWrapper *dataToStore,
                                DataServiceNodeDefinitionType::DSStorageType storage_type) throw(CException);
                 
+                //!remove data between the time intervall (extreme included) operation is not undoable
+                virtual void removeData(const std::string& key,
+                                        uint64_t start_ts,
+                                        uint64_t end_ts) throw(CException);
+                
                 /*!
                  * This method retrive the cached object by CSDawrapperUsed as query key and
                  * return a pointer to the class ArrayPointer of CDataWrapper type
