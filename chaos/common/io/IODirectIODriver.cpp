@@ -219,7 +219,7 @@ void IODirectIODriver::removeData(const std::string& key,
                                                                        start_ts,
                                                                        end_ts);
     if(err) {
-        IODirectIODriver_LERR_ << CHAOS_ASSERT("Error removing data from data service %1% with code %2% for key %3%",%next_client->connection->getServerDescription()%err%key);
+        IODirectIODriver_LERR_ << CHAOS_FORMAT("Error removing data from data service %1% with code %2% for key %3%",%next_client->connection->getServerDescription()%err%key);
     }
 }
 
