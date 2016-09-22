@@ -10,11 +10,14 @@
 #define CHAOSFramework_mds_constants_h
 
 namespace chaos {
-	namespace metadata_service {
-#define OPT_BATCH_SANDBOX_SIZE          "batch-sandbox-size"		
+    namespace metadata_service {
+#define OPT_BATCH_SANDBOX_SIZE          "batch-sandbox-size"
 #define OPT_PERSITENCE_IMPL				"persistence-impl"
 #define OPT_PERSITENCE_SERVER_ADDR_LIST	"persistence-servers"
 #define OPT_PERSITENCE_KV_PARAMTER		"persistence-kv-param"
-	}
+        
+#define OPT_CRON_JOB_CHECK              "cron-job-check-repeat-time"
+#define OPT_CRON_JOB_AGEING_MANAGEMENT	"cron-job-ageing-management-repeat-time"
+    }
 }
 #endif

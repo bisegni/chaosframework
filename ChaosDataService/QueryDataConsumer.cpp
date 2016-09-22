@@ -319,7 +319,7 @@ int QueryDataConsumer::consumeDataCloudDelete(const std::string& search_key,
     ObjectStorageDataAccess *obj_storage_da = object_storage_driver->getDataAccess<object_storage::abstraction::ObjectStorageDataAccess>();
     if((err = obj_storage_da->deleteObject(search_key,
                                            start_ts,
-                                           start_ts))) {
+                                           end_ts))) {
         QDCERR_ << CHAOS_FORMAT("Error performing lcoud query with code %1%", %err);
     }
     return err;

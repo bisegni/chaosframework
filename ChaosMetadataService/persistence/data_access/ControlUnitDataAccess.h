@@ -31,13 +31,16 @@ namespace chaos {
     namespace metadata_service {
         namespace persistence {
             namespace data_access {
+                class DataServiceDataAccess;
                 
                 class ControlUnitDataAccess:
                 public chaos::service_common::persistence::data_access::AbstractDataAccess {
+                protected:
+                    DataServiceDataAccess *data_service_da;
                 public:
                     DECLARE_DA_NAME
                     //! default constructor
-                    ControlUnitDataAccess();
+                    ControlUnitDataAccess(DataServiceDataAccess *_data_service_da);
                     
                     //!default destructor
                     ~ControlUnitDataAccess();

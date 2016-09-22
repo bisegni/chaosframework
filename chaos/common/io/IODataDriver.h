@@ -68,9 +68,9 @@ namespace chaos{
                                DataServiceNodeDefinitionType::DSStorageType storage_type) throw(CException);
                 
                 //!remove data between the time intervall (extreme included) operation is not undoable
-                virtual void removeData(const std::string& key,
-                                        uint64_t start_ts,
-                                        uint64_t end_ts) throw(CException);
+                virtual int removeData(const std::string& key,
+                                       uint64_t start_ts,
+                                       uint64_t end_ts) throw(CException);
                 
                 /*!
                  * This method retrive the cached object by CSDawrapperUsed as query key and

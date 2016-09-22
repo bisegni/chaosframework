@@ -33,7 +33,7 @@
 namespace chaos {
     namespace common {
         namespace cronous_manager {
-            
+            #define CHECK_TIME 10000
             //! define  avector for the running job
             typedef boost::shared_ptr<boost::thread> ThreadJobShrdPtr;
             CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ThreadJobShrdPtr, MapJobThread);
@@ -48,7 +48,7 @@ namespace chaos {
             class CronousManager:
             public chaos::common::async_central::TimerHandler,
             public chaos::common::utility::InizializableService {
-                
+                uint64_t scheduler_repeat_time;
                 //!job tracking structures
                 chaos::common::utility::LockableObject<MapJobInstance> map_job_instance;
                 chaos::common::utility::LockableObject<MapJobThread> map_job_in_execution;
@@ -59,7 +59,7 @@ namespace chaos {
                 //!intherited by @chaos::common::async_central::TimerHandler
                 void timeout();
             public:
-                CronousManager();
+                CronousManager(uint64_t _scheduler_repeat_time = CHECK_TIME);
                 ~CronousManager();
                 //!intherited by @chaos::common::utility::InizializableService
                 void init(void *init_data) throw (chaos::CException);

@@ -35,6 +35,8 @@ namespace chaos{
 		struct setting {
             //!identify the number of the sandbox to use in the batch system
             unsigned int                        batch_sandbox_size;
+            unsigned int                        cron_job_scheduler_repeat_time;
+            unsigned int                        cron_job_ageing_management_repeat_time;
 			std::string							persistence_implementation;
 			std::vector<std::string>			persistence_server_list;
 			std::map<std::string, std::string>	persistence_kv_param_map;

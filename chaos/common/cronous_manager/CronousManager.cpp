@@ -26,24 +26,21 @@ using namespace chaos::common::utility;
 using namespace chaos::common::async_central;
 using namespace chaos::common::cronous_manager;
 
-#define CHECK_TIME 10000
+
 #define CHECK_THREAD_MAX_ELEMENT 5
 #define MAX_NUMBER_OF_CONCURRENT_EXECUTION 10
 
 #pragma mark Public Methods
-CronousManager::CronousManager(){
-    
-}
+CronousManager::CronousManager(uint64_t _scheduler_repeat_time):
+scheduler_repeat_time(_scheduler_repeat_time){}
 
-CronousManager::~CronousManager() {
-    
-}
+CronousManager::~CronousManager() {}
 
 void CronousManager::init(void *init_data) throw (chaos::CException) {
     //register as timer
     AsyncCentralManager::getInstance()->addTimer(this,
-                                                 CHECK_TIME,
-                                                 CHECK_TIME);
+                                                 scheduler_repeat_time,
+                                                 scheduler_repeat_time);
 }
 
 void CronousManager::deinit() throw (chaos::CException) {

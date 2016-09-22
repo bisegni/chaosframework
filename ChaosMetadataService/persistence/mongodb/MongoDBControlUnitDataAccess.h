@@ -45,7 +45,8 @@ namespace chaos {
                     
                     MongoDBNodeDataAccess *node_data_access;
                 protected:
-                    MongoDBControlUnitDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
+                    MongoDBControlUnitDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection,
+                                                 data_access::DataServiceDataAccess *_data_service_da);
                     ~MongoDBControlUnitDataAccess();
                     
                     int compeleteControlUnitForAgeingManagement(const std::string& control_unit_id);
