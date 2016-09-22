@@ -984,10 +984,10 @@ cu_prof_t DeviceController::getProfileInfo(){
 void DeviceController::executeTimeIntervallQuery(DatasetDomain domain,
                                                  uint64_t start_ts,
                                                  uint64_t end_ts,
-                                                 QueryCursor **query_cursor) {
+                                                 QueryCursor **query_cursor,uint32_t page) {
     *query_cursor = ioLiveDataDriver->performQuery(channel_keys[domain],
                                                    start_ts,
-                                                   end_ts);
+                                                   end_ts,page);
 }
 
 //! release a query

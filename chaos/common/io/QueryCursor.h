@@ -42,6 +42,7 @@ namespace chaos {
             
             CHAOS_DEFINE_VECTOR_FOR_TYPE(boost::shared_ptr<chaos::common::data::CDataWrapper>, ResultPageDecodedPacket);
             
+#define DEFAULT_PAGE_LEN 100
             class QueryCursor {
                 friend class IODirectIODriver;
                 
@@ -75,7 +76,8 @@ namespace chaos {
                             chaos::common::network::URLServiceFeeder& _connection_feeder,
                             const std::string& _node_id,
                             uint64_t _start_ts,
-                            uint64_t _end_ts);
+                            uint64_t _end_ts,
+                            uint32_t page_len=DEFAULT_PAGE_LEN);
                 ~QueryCursor();
                 
                 int64_t fetchNewPage();

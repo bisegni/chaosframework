@@ -56,7 +56,7 @@ namespace chaos{
         namespace io {
             using namespace std;
             using namespace boost;
-            
+
             /*!
              Struct for initialization of the io driver
              */
@@ -165,7 +165,7 @@ namespace chaos{
                 
                 QueryCursor *performQuery(const std::string& key,
                                           uint64_t start_ts,
-                                          uint64_t end_ts);
+                                          uint64_t end_ts,uint32_t page=DEFAULT_PAGE_LEN);
                 
                 void releaseQuery(QueryCursor *query_cursor);
             };

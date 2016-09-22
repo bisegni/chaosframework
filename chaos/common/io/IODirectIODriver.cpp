@@ -444,12 +444,12 @@ void IODirectIODriver::handleEvent(chaos_direct_io::DirectIOClientConnection *cl
  ---------------------------------------------------------------------------------*/
 QueryCursor *IODirectIODriver::performQuery(const std::string& key,
                                             uint64_t start_ts,
-                                            uint64_t end_ts) {
+                                            uint64_t end_ts,uint32_t page_len) {
     QueryCursor *q = new QueryCursor(UUIDUtil::generateUUID(),
                                      connectionFeeder,
                                      key,
                                      start_ts,
-                                     end_ts);
+                                     end_ts,page_len);
     if(q) {
         //add query to map
         boost::unique_lock<boost::shared_mutex> wmap_loc(map_query_future_mutex);

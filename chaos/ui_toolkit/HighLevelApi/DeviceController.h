@@ -425,7 +425,7 @@ namespace chaos {
             void executeTimeIntervallQuery(DatasetDomain domain,
                                            uint64_t start_ts,
                                            uint64_t end_ts,
-                                           chaos::common::io::QueryCursor **query_cursor);
+                                           chaos::common::io::QueryCursor **query_cursor,uint32_t page_len=DEFAULT_PAGE_LEN);
             
             //! release a query
             void releaseQuery(chaos::common::io::QueryCursor *query_cursor);
