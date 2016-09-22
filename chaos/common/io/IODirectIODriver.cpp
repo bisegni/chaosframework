@@ -215,6 +215,7 @@ int IODirectIODriver::loadDatasetTypeFromSnapshotTag(const std::string& restore_
     int err = 0;
     boost::shared_lock<boost::shared_mutex>(mutext_feeder);
     IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
+    *cdatawrapper_handler=NULL;
     if(!next_client) return 0;
     chaos_dio_channel::DirectIOSystemAPIGetDatasetSnapshotResultPtr snapshot_result = NULL;
     if((err = (int)next_client->system_client_channel->getDatasetSnapshotForProducerKey(restore_point_tag_name,
@@ -223,12 +224,16 @@ int IODirectIODriver::loadDatasetTypeFromSnapshotTag(const std::string& restore_
                                                                                         &snapshot_result))) {
         IODirectIODriver_LERR_ << "Error loading the dataset type:"<<dataset_type<< " for key:" << key << " from restor point:" <<restore_point_tag_name;
     } else {
-        if(snapshot_result &&
-           snapshot_result->channel_data) {
+        if(snapshot_result) {
             //we have the dataaset
             try {
-                *cdatawrapper_handler = new chaos_data::CDataWrapper((const char*)snapshot_result->channel_data);
-                IODirectIODriver_LINFO_ << "Got dataset type:"<<dataset_type<< " for key:" << key << " from snapshot tag:" <<restore_point_tag_name;
+                if(snapshot_result->channel_data){
+                    *cdatawrapper_handler = new chaos_data::CDataWrapper((const char*)snapshot_result->channel_data);
+                    IODirectIODriver_LINFO_ << "Got dataset type:"<<dataset_type<< " for key:" << key << " from snapshot tag:" <<restore_point_tag_name;
+                } else {
+                    IODirectIODriver_LERR_ << "Error data is null:"<<dataset_type<< " for key:" << key << " from snapshot tag:" <<restore_point_tag_name;
+                    err= -1;
+                }
             } catch (std::exception& ex) {
                 IODirectIODriver_LERR_ << "Error deserializing the dataset type:"<<dataset_type<< " for key:" << key << " from snapshot tag:" <<restore_point_tag_name << " with error:" << ex.what();
             } catch (...) {
@@ -237,6 +242,7 @@ int IODirectIODriver::loadDatasetTypeFromSnapshotTag(const std::string& restore_
             free(snapshot_result->channel_data);
         }
     }
+    
     //delete the received result if there was one
     if(snapshot_result) free(snapshot_result);
     return err;
