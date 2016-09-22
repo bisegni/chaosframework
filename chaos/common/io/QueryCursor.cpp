@@ -135,7 +135,7 @@ int64_t QueryCursor::fetchNewPage() {
     if((api_error = next_client->device_client_channel->queryDataCloud(node_id,
                                                                        result_page.last_ts_received,
                                                                        end_ts,
-                                                                       30,
+                                                                       page_len,
                                                                        from_included,
                                                                        &query_result))) {
         ERR << CHAOS_FORMAT("Error during fetchin query page with code %1%", %api_error);
