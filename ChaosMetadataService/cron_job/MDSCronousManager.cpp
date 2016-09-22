@@ -20,11 +20,13 @@
  */
 
 #include "MDSCronousManager.h"
+#include "../ChaosMetadataService.h"
 #include "management/MDSHistoryAgeingManagement.h"
 
 using namespace chaos::metadata_service::cron_job;
 
 MDSCronousManager::MDSCronousManager():
+CronousManager(ChaosMetadataService::getInstance()->setting.cron_job_scheduler_repeat_time),
 abstract_persistance_driver(NULL){}
 
 MDSCronousManager::~MDSCronousManager() {}
@@ -34,7 +36,7 @@ void MDSCronousManager::init(void *init_data) throw(chaos::CException) {
     std::string job_string;
     addJob(new MDSHistoryAgeingManagement(NULL),
            job_string,
-           2000);
+           ChaosMetadataService::getInstance()->setting.cron_job_ageing_management_repeat_time);
 }
 
 void MDSCronousManager::deinit() throw(chaos::CException) {

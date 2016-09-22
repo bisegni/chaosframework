@@ -137,9 +137,9 @@ namespace chaos{
                                   chaos_data::SerializationBuffer *serialization,
                                   DataServiceNodeDefinitionType::DSStorageType storage_type)  throw(CException);
                 
-                void removeData(const std::string& key,
-                                uint64_t start_ts,
-                                uint64_t end_ts) throw(CException);
+                int removeData(const std::string& key,
+                               uint64_t start_ts,
+                               uint64_t end_ts) throw(CException);
                 
                 /*
                  * retriveRawData

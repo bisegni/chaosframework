@@ -53,11 +53,12 @@ bool MDSHistoryAgeingManagement::execute(const common::cronous_manager::MapKeyVa
     } else if(control_unit_found.size()){
         uint64_t next_aged_time = (last_ageing_perform_time + (control_unit_ageing_time*1000));
         bool aged =  next_aged_time < now;
+        uint64_t remove_until_ts = now - (control_unit_ageing_time*1000);
         log(CHAOS_FORMAT("Processing ageing for control unit %1%", %control_unit_found));
         if(aged) {
             log(CHAOS_FORMAT("Control unit %1% is gone out of ageing time[%2% seconds], we perform agein trigger", %control_unit_found%control_unit_ageing_time));
             getDataAccess<persistence::data_access::ControlUnitDataAccess>()->eraseControlUnitDataBeforeTS(control_unit_found,
-                                                                                                           next_aged_time);
+                                                                                                           remove_until_ts);
         }
         getDataAccess<persistence::data_access::ControlUnitDataAccess>()->releaseControlUnitForAgeingManagement(control_unit_found, aged);
         

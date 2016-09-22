@@ -119,11 +119,11 @@ int MongoDBObjectStorageDataAccess::deleteObject(const std::string& key,
     mongo::BSONObjBuilder builder;
     mongo::BSONObjBuilder time_query_builder;
     try {
-        
         builder << chaos::DataPackCommonKey::DPCK_DEVICE_ID << key;
         addTimeRange(time_query_builder, "$gte", start_timestamp);
         addTimeRange(time_query_builder, "$lte", end_timestamp);
-        if(time_query_builder.asTempObj().isEmpty() == false) {
+        if(start_timestamp ||
+           end_timestamp) {
             builder << chaos::DataPackCommonKey::DPCK_TIMESTAMP << time_query_builder.obj();
         }
         

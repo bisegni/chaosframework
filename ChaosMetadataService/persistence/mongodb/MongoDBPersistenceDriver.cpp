@@ -58,11 +58,11 @@ void MongoDBPersistenceDriver::init(void *init_data) throw (chaos::CException) {
 													_setting->persistence_kv_param_map));
     
     //register the data access implementations
-    registerDataAccess<data_access::UnitServerDataAccess>(new MongoDBUnitServerDataAccess(connection));
     registerDataAccess<data_access::NodeDataAccess>(new MongoDBNodeDataAccess(connection));
-    registerDataAccess<data_access::ControlUnitDataAccess>(new MongoDBControlUnitDataAccess(connection));
-    registerDataAccess<data_access::UtilityDataAccess>(new MongoDBUtilityDataAccess(connection));
+    registerDataAccess<data_access::UnitServerDataAccess>(new MongoDBUnitServerDataAccess(connection));
     registerDataAccess<data_access::DataServiceDataAccess>(new MongoDBDataServiceDataAccess(connection));
+    registerDataAccess<data_access::ControlUnitDataAccess>(new MongoDBControlUnitDataAccess(connection, getDataAccess<data_access::DataServiceDataAccess>()));
+    registerDataAccess<data_access::UtilityDataAccess>(new MongoDBUtilityDataAccess(connection));
     registerDataAccess<data_access::SnapshotDataAccess>(new MongoDBSnapshotDataAccess(connection, getDataAccess<data_access::DataServiceDataAccess>()));
     registerDataAccess<data_access::TreeGroupDataAccess>(new MongoDBTreeGroupDataAccess(connection));
     registerDataAccess<data_access::LoggingDataAccess>(new MongoDBLoggingDataAccess(connection));

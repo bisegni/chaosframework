@@ -38,8 +38,10 @@ using namespace chaos::common::utility;
 using namespace chaos::service_common::persistence::mongodb;
 using namespace chaos::metadata_service::persistence::mongodb;
 
-MongoDBControlUnitDataAccess::MongoDBControlUnitDataAccess(const boost::shared_ptr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
+MongoDBControlUnitDataAccess::MongoDBControlUnitDataAccess(const boost::shared_ptr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection,
+                                                           data_access::DataServiceDataAccess *_data_service_da):
 MongoDBAccessor(_connection),
+ControlUnitDataAccess(_data_service_da),
 node_data_access(NULL){}
 
 MongoDBControlUnitDataAccess::~MongoDBControlUnitDataAccess() {}
@@ -922,7 +924,7 @@ int MongoDBControlUnitDataAccess::reserveControlUnitForAgeingManagement(uint64_t
         query_builder << "seq" << BSON("$gt" << (long long)last_sequence_id);
         
         //select control unit also if it is in checking managemnt but data checking time is old than one minute(it is gone in timeout)
-        query_ageing_and << BSON(key_processing_ageing << true) << BSON(key_last_checking_time << BSON("$lte" << mongo::Date_t(TimingUtil::getTimeStamp()-1000000)));
+        query_ageing_and << BSON(key_processing_ageing << true) << BSON(key_last_checking_time << BSON("$lte" << mongo::Date_t(TimingUtil::getTimeStamp()-30000)));
         
         //or on previous condition and on checking management == false
         query_ageing_or << BSON("$and" << query_ageing_and.arr()) << BSON(key_processing_ageing << false);

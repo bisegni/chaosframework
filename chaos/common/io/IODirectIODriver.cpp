@@ -207,20 +207,20 @@ char* IODirectIODriver::retriveRawData(const std::string& key, size_t *dim)  thr
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-void IODirectIODriver::removeData(const std::string& key,
+int IODirectIODriver::removeData(const std::string& key,
                                   uint64_t start_ts,
                                   uint64_t end_ts) throw(CException) {
     boost::shared_lock<boost::shared_mutex>(mutext_feeder);
     IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
-    if(!next_client) return;
-    
-    uint32_t size =0;
+    if(!next_client) return -1;
+
     int err = (int)next_client->device_client_channel->deleteDataCloud(key,
                                                                        start_ts,
                                                                        end_ts);
     if(err) {
         IODirectIODriver_LERR_ << CHAOS_FORMAT("Error removing data from data service %1% with code %2% for key %3%",%next_client->connection->getServerDescription()%err%key);
     }
+    return err;
 }
 
 /*---------------------------------------------------------------------------------
