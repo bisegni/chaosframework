@@ -56,9 +56,13 @@ int MongoDBControlUnitDataAccess::compeleteControlUnitForAgeingManagement(const 
         mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << control_unit_id
                                     << MONGODB_COLLECTION_NODES_AGEING_INFO << BSON("$exists" << false ));
         
-        mongo::BSONObj update = BSON(key_last_checing_time << mongo::Date_t(current_ts) <<
+        mongo::BSONObj update = BSON("$set" << BSON(key_last_checing_time << mongo::Date_t(current_ts) <<
+                                                    key_last_performed_time << mongo::Date_t(current_ts) <<
+                                                    key_processing_ageing << false));
+
+	/*BSON(key_last_checing_time << mongo::Date_t(current_ts) <<
                                      key_last_performed_time << mongo::Date_t(current_ts) <<
-                                     key_processing_ageing << false);
+                                     key_processing_ageing << false);*/
         DEBUG_CODE(MDBCUDA_DBG<<log_message("compeleteControlUnitForAgeingManagement",
                                             "update",
                                             DATA_ACCESS_LOG_2_ENTRY("query",

@@ -97,6 +97,8 @@ auto_load(false),
 auto_init(false),
 auto_start(false),
 storage_type(DataServiceNodeDefinitionType::DSStorageTypeLive),
+history_ageing(0),
+history_time(0),
 load_parameter(""){}
 
 SetInstanceDescriptionHelper::~SetInstanceDescriptionHelper() {}
