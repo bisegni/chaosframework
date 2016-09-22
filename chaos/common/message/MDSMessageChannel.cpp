@@ -391,8 +391,8 @@ int MDSMessageChannel::searchSnapshotForNode(const std::string& node_uid,
         if((err = request_future->getError()) == ErrorCode::EC_NO_ERROR) {
             
             if(request_future->getResult() &&
-               request_future->getResult()->hasKey("node_in_snapshot") &&
-               request_future->getResult()->isVectorValue("node_in_snapshot")) {
+               request_future->getResult()->hasKey("snapshot_for_node") &&
+               request_future->getResult()->isVectorValue("snapshot_for_node")) {
                 //we have result
                 std::auto_ptr<CMultiTypeDataArrayWrapper> snapshot_desc_list(request_future->getResult()->getVectorValue("snapshot_for_node"));
                 for(int idx = 0;
