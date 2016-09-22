@@ -64,7 +64,8 @@ namespace chaos {
                 const std::string node_id;
                 uint64_t start_ts;
                 uint64_t end_ts;
-                
+                //!is the reuslt page dimension
+                uint32_t page_len;
                 QueryPhase phase;
                 ResultPage result_page;
                 int64_t api_error;
@@ -85,6 +86,10 @@ namespace chaos {
                 const bool hasNext();
                 
                 boost::shared_ptr<chaos::common::data::CDataWrapper> next() throw (CException);
+                
+                const uint32_t getPageLen() const;
+                
+                void setPageDimension(uint32_t new_page_len);
             };
             
         }
