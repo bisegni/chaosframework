@@ -104,6 +104,52 @@ int MongoDBObjectStorageDataAccess::getObject(const std::string& key,
     }
     return err;
 }
+<<<<<<< Updated upstream
+=======
+
+void MongoDBObjectStorageDataAccess::addTimeRange(mongo::BSONObjBuilder& builder,
+                                                  const std::string& time_operator,
+                                                  uint64_t timestamp) {
+    if(timestamp == 0) return;
+    builder << time_operator << mongo::Date_t(timestamp);
+}
+
+int MongoDBObjectStorageDataAccess::deleteObject(const std::string& key,
+                                                 uint64_t start_timestamp,
+                                                 uint64_t end_timestamp) {
+    int err = 0;
+    mongo::BSONObjBuilder builder;
+    mongo::BSONObjBuilder time_query_builder;
+    try {
+        
+        builder << chaos::DataPackCommonKey::DPCK_DEVICE_ID << key;
+        addTimeRange(time_query_builder, "$gte", start_timestamp);
+        addTimeRange(time_query_builder, "$lte", end_timestamp);
+        if(time_query_builder.asTempObj().isEmpty() == false) {
+            builder << chaos::DataPackCommonKey::DPCK_TIMESTAMP << time_query_builder.obj();
+        }
+        
+        mongo::BSONObj q = builder.obj();
+        
+        DEBUG_CODE(DBG<<log_message("deleteObject",
+                                    "delete",
+                                    DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                            q.jsonString()));)
+        //remove in unacknowledge way if something goes wrong successive query will delete it
+        if((err = connection->remove(MONGO_DB_COLLECTION_NAME(MONGODB_DAQ_COLL_NAME),
+                                     q,
+                                     false,
+                                     mongo::WriteConcern::unacknowledged))){
+            ERR << CHAOS_FORMAT("Error erasing stored object data for key %1% from %2% to %3%", %key%start_timestamp%end_timestamp);
+        }
+    } catch (const mongo::DBException &e) {
+        ERR << e.what();
+        err = e.getCode();
+    }
+    return err;
+}
+
+>>>>>>> Stashed changes
 int MongoDBObjectStorageDataAccess::findObject(const std::string& key,
                                                const uint64_t timestamp_from,
                                                const uint64_t timestamp_to,
@@ -114,14 +160,36 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string& key,
     int err = 0;
     std::vector<mongo::BSONObj> object_found;
     try {
-        mongo::BSONObj q = BSON(chaos::DataPackCommonKey::DPCK_DEVICE_ID << key <<
-                                chaos::DataPackCommonKey::DPCK_TIMESTAMP << BSON((from_is_included?"$gte":"$gt") << mongo::Date_t(timestamp_from) <<
-                                                                                 "$lte" << mongo::Date_t(timestamp_to)));
+        bool reverse_order = false;
+        
+        mongo::BSONObjBuilder time_query;
+        
+        if(timestamp_from &&
+           timestamp_to) {
+            //we have the intervall
+            reverse_order = timestamp_from>timestamp_to;
+            if(reverse_order == false) {
+                time_query << (from_is_included?"$gte":"$gt") << mongo::Date_t(timestamp_from) <<
+                "$lte" << mongo::Date_t(timestamp_to);
+            } else {
+                time_query << (from_is_included?"$lte":"$lt") << mongo::Date_t(timestamp_from) <<
+                "$gte" << mongo::Date_t(timestamp_to);
+            }
+        }
+        
+        mongo::Query q = BSON(chaos::DataPackCommonKey::DPCK_DEVICE_ID << key <<
+                              chaos::DataPackCommonKey::DPCK_TIMESTAMP << time_query.obj());
+        
+        if(reverse_order) {
+            q = q.sort(BSON(chaos::DataPackCommonKey::DPCK_TIMESTAMP<<-1));
+        } else {
+            q = q.sort(BSON(chaos::DataPackCommonKey::DPCK_TIMESTAMP<<1));
+        }
         
         DEBUG_CODE(DBG<<log_message("findObject",
                                     "findN",
                                     DATA_ACCESS_LOG_1_ENTRY("Query",
-                                                            q.jsonString()));)
+                                                            q.toString()));)
         
         connection->findN(object_found,
                           MONGO_DB_COLLECTION_NAME(MONGODB_DAQ_COLL_NAME),
