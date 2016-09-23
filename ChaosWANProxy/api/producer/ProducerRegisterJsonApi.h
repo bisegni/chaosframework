@@ -34,7 +34,7 @@ namespace chaos {
 				
 				class ProducerRegisterJsonApi:
 				public AbstractApi {
-					int scanDatasetElement(const Json::Value& dataset_json_element,
+                    int scanDatasetElement(const Json::Value& dataset_json_element,std::string& name,
 										   std::string& err_msg,
 										   boost::shared_ptr<chaos::common::data::CDataWrapper>& element);
 				public:

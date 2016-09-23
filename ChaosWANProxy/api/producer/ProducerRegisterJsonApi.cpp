@@ -91,13 +91,15 @@ int ProducerRegisterJsonApi::execute(std::vector<std::string>& api_tokens,
     boost::posix_time::ptime pt=boost::posix_time::microsec_clock::local_time();
     dataset_pack.addInt64Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP,
                                         (int64_t)pt.time_of_day().total_milliseconds());
-	
+    
+  
+    
 		//we have a dataset, perhaps empty...
-	for (Json::ValueConstIterator it = input_data.begin();
-		 it != input_data.end();
-		 ++it) {
+    Json::Value::Members members=input_data.getMemberNames();
+ for(Json::Value::Members::iterator i =members.begin();i!=members.end();i++){
+
 		boost::shared_ptr<CDataWrapper> element;
-		if((err = scanDatasetElement(*it, err_msg, element))) {
+		if((err = scanDatasetElement(input_data[*i],*i, err_msg, element))) {
 			PRA_LERR << err_msg;
 			
 			PRODUCER_REGISTER_ERR(output_data, err, err_msg);
@@ -129,14 +131,14 @@ int ProducerRegisterJsonApi::execute(std::vector<std::string>& api_tokens,
 }
 
 //scan a json elemenot of the dataset creating the respective CDataWrapper
-int ProducerRegisterJsonApi::scanDatasetElement(const Json::Value& dataset_json_element,
+int ProducerRegisterJsonApi::scanDatasetElement(const Json::Value& dataset_json_element,std::string &name,
 												   std::string& err_msg,
 												   boost::shared_ptr<chaos::common::data::CDataWrapper>& element) {
 	element.reset(new CDataWrapper());
 	/*-the name of the attribute
 	 "ds_attr_name": string,
 	 */
-    std::string attribute_name =dataset_json_element.getMemberNames()[0];
+    std::string attribute_name =name;
 	if(attribute_name.empty()) {
 		err_msg = "no attribute name found";
 		return -6;

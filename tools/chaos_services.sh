@@ -93,11 +93,11 @@ start_wan(){
     port=8082
     info_mesg "starting WAN Server on port " "$port"
     check_proc_then_kill "$WAN_EXEC"
-    if [ ! -e "$CHAOS_PREFIX/etc/WanProxy.conf" ]; then
+    if [ ! -e "$CHAOS_PREFIX/etc/wan.cfg" ]; then
 	     warn_mesg "Wan proxy configuration file not found in \"$CHAOS_PREFIX/etc/WanProxy.conf\" " "start skipped"
 	      return
     fi
-    run_proc "$CHAOS_PREFIX/bin/$WAN_EXEC --conf-file $CHAOS_PREFIX/etc/WanProxy.conf $CHAOS_OVERALL_OPT --log-on-file $CHAOS_PREFIX/log/$WAN_EXEC.log > $CHAOS_PREFIX/log/$WAN_EXEC.std.out 2>&1 &" "$WAN_EXEC"
+    run_proc "$CHAOS_PREFIX/bin/$WAN_EXEC --conf-file $CHAOS_PREFIX/etc/wan.cfg $CHAOS_OVERALL_OPT --log-on-file $CHAOS_PREFIX/log/$WAN_EXEC.log > $CHAOS_PREFIX/log/$WAN_EXEC.std.out 2>&1 &" "$WAN_EXEC"
 }
 
 ui_stop()
