@@ -88,8 +88,8 @@ void DeviceSharedDataWorkerMetric::fetchMetricForTimeDiff(uint64_t time_diff) {
     double in_bw = ((input_badnwith/sec)/1024); input_badnwith = 0;
     double out_pc = output_data_pack/sec; output_data_pack = 0;
     double out_bw = ((output_badnwith/sec)/1024); output_badnwith = 0;
-    int64_t q_pc = queued_data_pack;
-    double q_size = ((queued_size)/1024);
+    int64_t q_pc = queued_data_pack;queued_data_pack=0;
+    double q_size = ((queued_size)/1024);queued_size=0;
 
     //update local variable cache
     updateMetricValue(METRIC_KEY_INPUT_PACKET_COUNT,
