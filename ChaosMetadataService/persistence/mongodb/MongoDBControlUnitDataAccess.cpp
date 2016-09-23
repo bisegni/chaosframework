@@ -902,7 +902,9 @@ int MongoDBControlUnitDataAccess::getDataServiceAssociated(const std::string& cu
 int MongoDBControlUnitDataAccess::reserveControlUnitForAgeingManagement(uint64_t& last_sequence_id,
                                                                         std::string& control_unit_found,
                                                                         uint32_t& control_unit_ageing_time,
-                                                                        uint64_t& last_ageing_perform_time) {
+                                                                        uint64_t& last_ageing_perform_time,
+                                                                        uint64_t timeout_for_checking,
+                                                                        uint64_t delay_next_check) {
     int err = 0;
     SearchResult paged_result;
     try {
@@ -924,10 +926,10 @@ int MongoDBControlUnitDataAccess::reserveControlUnitForAgeingManagement(uint64_t
         query_builder << "seq" << BSON("$gt" << (long long)last_sequence_id);
         
         //select control unit also if it is in checking managemnt but data checking time is old than one minute(it is gone in timeout)
-        query_ageing_and << BSON(key_processing_ageing << true) << BSON(key_last_checking_time << BSON("$lte" << mongo::Date_t(TimingUtil::getTimeStamp()-30000)));
+        query_ageing_or << BSON(key_processing_ageing << true << key_last_checking_time << BSON("$lte" << mongo::Date_t(TimingUtil::getTimeStamp()-timeout_for_checking)));
         
-        //or on previous condition and on checking management == false
-        query_ageing_or << BSON("$and" << query_ageing_and.arr()) << BSON(key_processing_ageing << false);
+        //or on previous condition and on checking management == false the last checking date need to be greater that noral chack timeout
+        query_ageing_or << BSON(key_processing_ageing << false << key_last_checking_time << BSON("$lte" << mongo::Date_t(TimingUtil::getTimeStamp()-delay_next_check)));
         
         query_builder << "$or" << query_ageing_or.arr();
         

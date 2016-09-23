@@ -45,12 +45,14 @@ int main(int argc, char * argv[]) {
 																													 "The key value parameter for storage implementation driver (ex k:v-k1:v1)");
         
         ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_CRON_JOB_CHECK,
-                                                                                                         "Specify the check time (in seconds )for the cron job scheduler",
-                                                                                                         3600);
+                                                                                                         "Specify the check time (in seconds ) for the cron job scheduler",
+                                                                                                         3600,
+                                                                                                         &ChaosMetadataService::getInstance()->setting.cron_job_scheduler_repeat_time);
         
         ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_CRON_JOB_AGEING_MANAGEMENT,
-                                                                                                         "Specify the check time for ageing management (default is one day of delay)",
-                                                                                                         86400);
+                                                                                                         "Specify the check time (in seconds ) for ageing management (default is one day of delay)",
+                                                                                                         86400,
+                                                                                                         &ChaosMetadataService::getInstance()->setting.cron_job_ageing_management_repeat_time);
 		ChaosMetadataService::getInstance()->init(argc, argv);
 		
 		ChaosMetadataService::getInstance()->start();

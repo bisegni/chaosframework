@@ -108,7 +108,9 @@ namespace chaos {
                     int reserveControlUnitForAgeingManagement(uint64_t& last_sequence_id,
                                                               std::string& control_unit_found,
                                                               uint32_t& control_unit_ageing_time,
-                                                              uint64_t& last_ageing_perform_time);
+                                                              uint64_t& last_ageing_perform_time,
+                                                              uint64_t timeout_for_checking = 30000,
+                                                              uint64_t delay_next_check = 3600000);
                     
                     int releaseControlUnitForAgeingManagement(std::string& control_unit_found,
                                                               bool performed);
