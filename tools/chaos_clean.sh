@@ -34,3 +34,4 @@ if [ -n "$CHAOS_PREFIX" ]; then
 fi
 find $chaos_bundle -name "CMakeFiles" -exec rm -rf \{\} \; >& /dev/null
 find $chaos_bundle -name "CMakeCache.txt" -exec rm -rf \{\} \; >& /dev/null
+find $chaos_bundle -name "cmake_install.cmake" -exec rm -rf \{\} \; >& /dev/null

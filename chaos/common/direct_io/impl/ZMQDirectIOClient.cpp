@@ -256,9 +256,8 @@ DirectIOClientConnection *ZMQDirectIOClient::_getNewConnectionImpl(std::string s
         DEBUG_CODE(ZMQDIOLDBG_ << "connect to priority endpoint " << url;)
         err = zmq_connect(socket_priority, url.c_str());
         if(err) {
-            error_str = boost::str( boost::format("Error connecting priority socket to %1%") % priority_endpoint);
-            ZMQDIOLERR_ << error_str;
-            throw chaos::CException(err, error_str, __FUNCTION__);
+            error_str = boost::str( boost::format("Error connecting priority socket to %1%") % priority_endpoint);	 
+	    throw chaos::CException(err, error_str, __FUNCTION__);
         }
         
         //add monitor on priority socket
@@ -267,23 +266,25 @@ DirectIOClientConnection *ZMQDirectIOClient::_getNewConnectionImpl(std::string s
         err = zmq_connect(socket_service, url.c_str());
         if(err) {
             error_str = boost::str( boost::format("Error connecting service socket to %1%") % service_endpoint);
-            ZMQDIOLERR_ << error_str;
-            throw chaos::CException(err, error_str, __FUNCTION__);
+     	    throw chaos::CException(err, error_str, __FUNCTION__);
         }
     } catch(chaos::CException& ex) {
-        
+      ZMQDIOLERR_ << ex.what();
         if(socket_priority) {
             err = zmq_close(socket_priority);
             if(err) ZMQDIOLERR_ << "Error closing service socket";
+	    socket_priority=NULL;
         }
         if(socket_service) {
             err = zmq_close(socket_service);
             if(err) ZMQDIOLERR_ << "Error closing service socket";
+	    socket_service=NULL;
         }
         if(result) {
             map_connections.deregisterElementKey(result->getUniqueUUID());
             delete(result);
         }
+	result = NULL;
     }
     return result;
 }
