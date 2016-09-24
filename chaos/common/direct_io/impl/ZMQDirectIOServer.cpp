@@ -125,8 +125,7 @@ void ZMQDirectIOServer::start() throw(chaos::CException) {
         server_threads_group.add_thread(new boost::thread(boost::bind(&ZMQDirectIOServer::worker,
                                                                       this,
                                                                       WorkerTypeService,
-                                                                      &DirectIOHandler::serviceDataReceived)));
-
+                                                                      &DirectIOHandler::priorityDataReceived)));
         //threads for priority worker
         for(int idx_thrd = 0;
             idx_thrd < direct_io_thread_number;
@@ -138,7 +137,7 @@ void ZMQDirectIOServer::start() throw(chaos::CException) {
             server_threads_group.add_thread(new boost::thread(boost::bind(&ZMQDirectIOServer::worker,
                                                                           this,
                                                                           WorkerTypeService,
-                                                                          &DirectIOHandler::serviceDataReceived)));
+                                                                          &DirectIOHandler::priorityDataReceived)));
         }
         ZMQDIO_SRV_LAPP_ << CHAOS_FORMAT("ZMQ high priority socket managed by %1% threads", %direct_io_thread_number);
     } catch(boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::lock_error> >& lock_error_exception) {
@@ -263,11 +262,7 @@ void ZMQDirectIOServer::worker(unsigned int w_type,
     MapZMQConfiguration         worker_socket_configuration;
     worker_socket_configuration["ZMQ_LINGER"] = "0";
     worker_socket_configuration["ZMQ_RCVHWM"] = "6";
-<<<<<<< HEAD
     worker_socket_configuration["ZMQ_SNDHWM"] = "1000";
-=======
-    worker_socket_configuration["ZMQ_SNDHWM"] = "6";
->>>>>>> fix
     worker_socket_configuration["ZMQ_RCVTIMEO"] = "-1";
     worker_socket_configuration["ZMQ_SNDTIMEO"] = "1000";
     

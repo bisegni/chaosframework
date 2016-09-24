@@ -121,7 +121,7 @@ int64_t DirectIODeviceClientChannel::requestLastOutputData(const std::string& ke
     DIRECT_IO_SET_CHANNEL_HEADER(data_pack, get_opcode_header, sizeof(DirectIODeviceChannelHeaderGetOpcode))
     DIRECT_IO_SET_CHANNEL_DATA(data_pack, data, (uint32_t)key.size())
     //send data with synchronous answer flag
-    if((err = sendPriorityData(data_pack, &answer))) {
+    if((err = sendServiceData(data_pack, &answer))) {
         //error getting last value
         DIODCCLERR_ << "Error getting last value for key:" << key << " with error:" <<err;
     } else {
@@ -180,7 +180,7 @@ int64_t DirectIODeviceClientChannel::queryDataCloud(const std::string& key,
     //set header and data for the query
     DIRECT_IO_SET_CHANNEL_HEADER(data_pack, query_data_cloud_header, sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloud))
     DIRECT_IO_SET_CHANNEL_DATA(data_pack, (void*)buffer->getBufferPtr(), (uint32_t)buffer->getBufferLen());
-    if((err = sendPriorityData(data_pack, &answer))) {
+    if((err = sendServiceData(data_pack, &answer))) {
         //error getting last value
         DIODCCLERR_ << CHAOS_FORMAT("Error executing query for key %1%",%key);
     } else {
