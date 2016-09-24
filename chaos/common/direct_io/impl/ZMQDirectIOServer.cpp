@@ -208,8 +208,6 @@ void ZMQDirectIOServer::poller(const std::string& public_url,
     if((err = zmq_bind(public_socket, public_url.c_str()))){
         return;
     }
-
-    
     //create proxy for priority
     inrpoc_socket = zmq_socket (zmq_context, ZMQ_DEALER);
     if(inrpoc_socket == NULL) {
@@ -273,6 +271,13 @@ void ZMQDirectIOServer::worker(unsigned int w_type,
         return;
     }
 
+    if((err = ZMQBaseClass::configureSocketWithStartupParameter(worker_socket,
+                                                                worker_socket_configuration,
+                                                                worker_empty_default_configuration,
+                                                                "ZMQ DirectIO Server worker"))){
+        return;
+    }
+    
     if((err = ZMQBaseClass::configureSocketWithStartupParameter(worker_socket,
                                                                 worker_socket_configuration,
                                                                 worker_empty_default_configuration,

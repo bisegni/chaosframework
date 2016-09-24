@@ -3124,7 +3124,8 @@
 				32640A08169DCC5800450962 /* caching_thread */,
 				32640A18169DCC5800450962 /* common_buffer */,
 			);
-			path = caching_system;
+			name = caching_system;
+			path = ../caching_system;
 			sourceTree = "<group>";
 		};
 		32640A08169DCC5800450962 /* caching_thread */ = {
@@ -3258,7 +3259,6 @@
 				3296030E1876B45000CDCADA /* batch_command */,
 				326DB3BD14B38BC00018A8D0 /* bson */,
 				326DB3E314B38BC00018A8D0 /* configuration */,
-				32640A07169DCC1B00450962 /* caching_system */,
 				32F9F80F1D8FD4190023948D /* cronous_manager */,
 				326DB3E614B38BC00018A8D0 /* data */,
 				326DB3EF14B38BC00018A8D0 /* dispatcher */,
@@ -3341,6 +3341,7 @@
 		326DB3E314B38BC00018A8D0 /* configuration */ = {
 			isa = PBXGroup;
 			children = (
+				32640A07169DCC1B00450962 /* caching_system */,
 				326DB3E414B38BC00018A8D0 /* GlobalConfiguration.cpp */,
 				326DB3E514B38BC00018A8D0 /* GlobalConfiguration.h */,
 			);
