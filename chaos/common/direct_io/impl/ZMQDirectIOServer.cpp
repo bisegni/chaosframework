@@ -176,11 +176,20 @@ void ZMQDirectIOServer::poller(const std::string& public_url,
     void *inrpoc_socket = NULL;
     MapZMQConfiguration         default_socket_configuration;
     
+    MapZMQConfiguration         proxy_empty_default_configuration;
+    MapZMQConfiguration         proxy_socket_configuration;
+    
     default_socket_configuration["ZMQ_LINGER"] = "500";
-    default_socket_configuration["ZMQ_RCVHWM"] = "1000";
-    default_socket_configuration["ZMQ_SNDHWM"] = "1000";
+    default_socket_configuration["ZMQ_RCVHWM"] = "500";
+    default_socket_configuration["ZMQ_SNDHWM"] = "500";
     default_socket_configuration["ZMQ_RCVTIMEO"] = "-1";
     default_socket_configuration["ZMQ_SNDTIMEO"] = "1000";
+    
+    proxy_socket_configuration["ZMQ_LINGER"] = "0";
+    proxy_socket_configuration["ZMQ_RCVHWM"] = "6";
+    proxy_socket_configuration["ZMQ_SNDHWM"] = "1000";
+    proxy_socket_configuration["ZMQ_RCVTIMEO"] = "-1";
+    proxy_socket_configuration["ZMQ_SNDTIMEO"] = "1000";
     
     ZMQDIO_SRV_LAPP_ << CHAOS_FORMAT("Enter pooler for %1%", %public_url);
     //start creating two socker for service and priority
@@ -192,24 +201,27 @@ void ZMQDirectIOServer::poller(const std::string& public_url,
     if((err = ZMQBaseClass::configureSocketWithStartupParameter(public_socket,
                                                                 default_socket_configuration,
                                                                 chaos::GlobalConfiguration::getInstance()->getDirectIOServerImplKVParam(),
-                                                                "ZMQ DirectIO Server Priority"))){
+                                                                CHAOS_FORMAT("ZMQ DirectIO Server socket bind %1%", %public_url)))){
         return;
     }
+    
     if((err = zmq_bind(public_socket, public_url.c_str()))){
         return;
     }
+
     
     //create proxy for priority
     inrpoc_socket = zmq_socket (zmq_context, ZMQ_DEALER);
     if(inrpoc_socket == NULL) {
         return;
     }
-//    if((err = ZMQBaseClass::configureSocketWithStartupParameter(inrpoc_socket,
-//                                                                proxy_socket_configuration,
-//                                                                proxy_empty_default_configuration,
-//                                                                CHAOS_FORMAT("ZMQ DirectIO Server proxy bind %1%", %inproc_url)))){
-//        return;
-//    }
+    if((err = ZMQBaseClass::configureSocketWithStartupParameter(inrpoc_socket,
+                                                                proxy_socket_configuration,
+                                                                proxy_empty_default_configuration,
+                                                                CHAOS_FORMAT("ZMQ DirectIO Server proxy bind %1%", %inproc_url)))){
+        return;
+    }
+
     if((err = zmq_bind(inrpoc_socket, inproc_url.c_str()))) {
         return;
     }
@@ -247,17 +259,26 @@ void ZMQDirectIOServer::worker(unsigned int w_type,
     DirectIODeallocationHandler *answer_header_deallocation_handler = NULL;
     DirectIODeallocationHandler *answer_data_deallocation_handler   = NULL;
     
+    MapZMQConfiguration         worker_empty_default_configuration;
+    MapZMQConfiguration         worker_socket_configuration;
+    worker_socket_configuration["ZMQ_LINGER"] = "0";
+    worker_socket_configuration["ZMQ_RCVHWM"] = "6";
+    worker_socket_configuration["ZMQ_SNDHWM"] = "1000";
+    worker_socket_configuration["ZMQ_RCVTIMEO"] = "-1";
+    worker_socket_configuration["ZMQ_SNDTIMEO"] = "1000";
+    
     if((worker_socket = zmq_socket(zmq_context,
                                    ZMQ_DEALER)) == NULL) {
         ZMQDIO_SRV_LAPP_ << "Error creating worker socket";
         return;
     }
-//    if((err = ZMQBaseClass::configureSocketWithStartupParameter(worker_socket,
-//                                                                worker_socket_configuration,
-//                                                                worker_empty_default_configuration,
-//                                                                "ZMQ DirectIO Server worker"))){
-//        return;
-//    }
+
+    if((err = ZMQBaseClass::configureSocketWithStartupParameter(worker_socket,
+                                                                worker_socket_configuration,
+                                                                worker_empty_default_configuration,
+                                                                "ZMQ DirectIO Server worker"))){
+        return;
+    }
     
     if((w_type & WorkerTypePriority) == 1) {
         if((err = ZMQBaseClass::connectSocket(worker_socket,
