@@ -61,10 +61,10 @@ int MongoDBControlUnitDataAccess::compeleteControlUnitForAgeingManagement(const 
         mongo::BSONObj update = BSON("$set" << BSON(key_last_checing_time << mongo::Date_t(current_ts) <<
                                                     key_last_performed_time << mongo::Date_t(current_ts) <<
                                                     key_processing_ageing << false));
-
-	/*BSON(key_last_checing_time << mongo::Date_t(current_ts) <<
-                                     key_last_performed_time << mongo::Date_t(current_ts) <<
-                                     key_processing_ageing << false);*/
+        
+        /*BSON(key_last_checing_time << mongo::Date_t(current_ts) <<
+         key_last_performed_time << mongo::Date_t(current_ts) <<
+         key_processing_ageing << false);*/
         DEBUG_CODE(MDBCUDA_DBG<<log_message("compeleteControlUnitForAgeingManagement",
                                             "update",
                                             DATA_ACCESS_LOG_2_ENTRY("query",
@@ -997,8 +997,8 @@ int MongoDBControlUnitDataAccess::releaseControlUnitForAgeingManagement(std::str
         mongo::BSONObj  update = BSON("$set" << (performed?BSON(key_processing_ageing << false <<
                                                                 key_last_checking_time << mongo::Date_t(current_ts) <<
                                                                 key_last_performed_time << mongo::Date_t(current_ts)):
-                                                            BSON(key_processing_ageing << false <<
-                                                                 key_last_checking_time << mongo::Date_t(current_ts))));
+                                                 BSON(key_processing_ageing << false <<
+                                                      key_last_checking_time << mongo::Date_t(current_ts))));
         
         DEBUG_CODE(MDBCUDA_DBG<<log_message("releaseControlUnitForAgeingManagement",
                                             "update",
@@ -1018,6 +1018,31 @@ int MongoDBControlUnitDataAccess::releaseControlUnitForAgeingManagement(std::str
     } catch (const CException &e) {
         MDBCUDA_ERR << e.what();
         err = e.errorCode;
+    }
+    return err;
+}
+
+int MongoDBControlUnitDataAccess::eraseControlUnitDataBeforeTS(const std::string& control_unit_id,
+                                                               uint64_t unit_ts) {
+    int err = 0;
+    try {
+        mongo::BSONObj q = BSON(chaos::DataPackCommonKey::DPCK_DEVICE_ID << control_unit_id <<
+                                "$lte" << mongo::Date_t(unit_ts));
+        
+        DEBUG_CODE(MDBCUDA_DBG<<log_message("eraseControlUnitDataBeforeTS",
+                                    "delete",
+                                    DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                            q.jsonString()));)
+        //remove in unacknowledge way if something goes wrong successive query will delete it
+        if((err = connection->remove(MONGO_DB_COLLECTION_NAME("daq"),
+                                     q,
+                                     false,
+                                     mongo::WriteConcern::unacknowledged))){
+            MDBCUDA_ERR << CHAOS_FORMAT("Error erasing stored object data for key %1% up to %2%", %control_unit_id%unit_ts);
+        }
+    } catch (const mongo::DBException &e) {
+        MDBCUDA_ERR << e.what();
+        err = e.getCode();
     }
     return err;
 }

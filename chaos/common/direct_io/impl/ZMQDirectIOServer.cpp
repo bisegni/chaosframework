@@ -119,9 +119,13 @@ void ZMQDirectIOServer::start() throw(chaos::CException) {
         direct_io_thread_number--;//remove one thread because it is the default one
         server_threads_group.add_thread(new boost::thread(boost::bind(&ZMQDirectIOServer::worker,
                                                                       this,
-                                                                      WorkerTypePriority|WorkerTypeService,
+                                                                      WorkerTypePriority,
                                                                       &DirectIOHandler::priorityDataReceived)));
-        
+        server_threads_group.add_thread(new boost::thread(boost::bind(&ZMQDirectIOServer::worker,
+                                                                      this,
+                                                                      WorkerTypeService,
+                                                                      &DirectIOHandler::serviceDataReceived)));
+
         //threads for priority worker
         for(int idx_thrd = 0;
             idx_thrd < direct_io_thread_number;
@@ -130,6 +134,10 @@ void ZMQDirectIOServer::start() throw(chaos::CException) {
                                                                           this,
                                                                           WorkerTypePriority,
                                                                           &DirectIOHandler::priorityDataReceived)));
+            server_threads_group.add_thread(new boost::thread(boost::bind(&ZMQDirectIOServer::worker,
+                                                                          this,
+                                                                          WorkerTypeService,
+                                                                          &DirectIOHandler::serviceDataReceived)));
         }
         ZMQDIO_SRV_LAPP_ << CHAOS_FORMAT("ZMQ high priority socket managed by %1% threads", %direct_io_thread_number);
     } catch(boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::lock_error> >& lock_error_exception) {
@@ -181,20 +189,27 @@ void ZMQDirectIOServer::poller(const std::string& public_url,
     if(public_socket == NULL){
         return;
     }
-    if((err = zmq_bind(public_socket, public_url.c_str()))){
-        return;
-    }
     if((err = ZMQBaseClass::configureSocketWithStartupParameter(public_socket,
                                                                 default_socket_configuration,
                                                                 chaos::GlobalConfiguration::getInstance()->getDirectIOServerImplKVParam(),
                                                                 "ZMQ DirectIO Server Priority"))){
         return;
     }
+    if((err = zmq_bind(public_socket, public_url.c_str()))){
+        return;
+    }
+    
     //create proxy for priority
     inrpoc_socket = zmq_socket (zmq_context, ZMQ_DEALER);
     if(inrpoc_socket == NULL) {
         return;
     }
+//    if((err = ZMQBaseClass::configureSocketWithStartupParameter(inrpoc_socket,
+//                                                                proxy_socket_configuration,
+//                                                                proxy_empty_default_configuration,
+//                                                                CHAOS_FORMAT("ZMQ DirectIO Server proxy bind %1%", %inproc_url)))){
+//        return;
+//    }
     if((err = zmq_bind(inrpoc_socket, inproc_url.c_str()))) {
         return;
     }
@@ -237,6 +252,12 @@ void ZMQDirectIOServer::worker(unsigned int w_type,
         ZMQDIO_SRV_LAPP_ << "Error creating worker socket";
         return;
     }
+//    if((err = ZMQBaseClass::configureSocketWithStartupParameter(worker_socket,
+//                                                                worker_socket_configuration,
+//                                                                worker_empty_default_configuration,
+//                                                                "ZMQ DirectIO Server worker"))){
+//        return;
+//    }
     
     if((w_type & WorkerTypePriority) == 1) {
         if((err = ZMQBaseClass::connectSocket(worker_socket,

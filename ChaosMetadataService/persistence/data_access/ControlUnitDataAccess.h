@@ -124,7 +124,7 @@ namespace chaos {
                      \param unit_ts is the timestamp befor wich we want to erase all data(included it)
                      */
                     virtual int eraseControlUnitDataBeforeTS(const std::string& control_unit_id,
-                                                             uint64_t unit_ts);
+                                                             uint64_t unit_ts) = 0;
                 };
                 
             }

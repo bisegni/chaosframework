@@ -114,6 +114,9 @@ namespace chaos {
                     
                     int releaseControlUnitForAgeingManagement(std::string& control_unit_found,
                                                               bool performed);
+                    
+                    int eraseControlUnitDataBeforeTS(const std::string& control_unit_id,
+                                                     uint64_t unit_ts);
                 };
                 
                 
