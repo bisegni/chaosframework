@@ -106,7 +106,7 @@ namespace chaos {
                      \param control_unit_found uinique id of found control unit, if empty control uni thas not been found
                      \param last_ageing_check_time is the found control unit last time that ageing has been checked
                      \param timeout_for_checking time that need to pass for considering in serach the element that are already reserverd
-                     \param delay_next_check time to apss for includ einto the reservation check an element that are free to be considered
+                     \param delay_next_check time after we can include into the reservation check an element that are free to be considered
                      */
                     virtual int reserveControlUnitForAgeingManagement(uint64_t& last_sequence_id,
                                                                       std::string& control_unit_found,
