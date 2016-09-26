@@ -161,8 +161,6 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string& key,
         
         mongo::BSONObjBuilder time_query;
         
-        if(timestamp_from &&
-           timestamp_to) {
             //we have the intervall
             reverse_order = timestamp_from>timestamp_to;
             if(reverse_order == false) {
@@ -172,7 +170,7 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string& key,
                 time_query << (from_is_included?"$lte":"$lt") << mongo::Date_t(timestamp_from) <<
                 "$gte" << mongo::Date_t(timestamp_to);
             }
-        }
+        
         
         mongo::Query q = BSON(chaos::DataPackCommonKey::DPCK_DEVICE_ID << key <<
                               chaos::DataPackCommonKey::DPCK_TIMESTAMP << time_query.obj());
