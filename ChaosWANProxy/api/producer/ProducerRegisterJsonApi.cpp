@@ -121,7 +121,7 @@ int ProducerRegisterJsonApi::execute(std::vector<std::string>& api_tokens,
 												  mds_registration_pack))) {
 		err_msg = "Error in the dataset registration";
 		PRA_LERR << err_msg;
-		PRODUCER_REGISTER_ERR(output_data, -18, err_msg);
+		PRODUCER_REGISTER_ERR(output_data, -19, err_msg);
 		return err;
 	}else {
 		output_data["producer_register_err"] = 0;

@@ -184,7 +184,7 @@ chaos::common::data::CDataWrapper *NodeRegister::controlUnitRegistration(chaos::
                                 api_data->getStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN));
     
     try {
-        //check if the cu has bene loaded from unit server
+        //check if the cu has been loaded from unit server
         if(api_data->hasKey("mds_control_key")) {
             const std::string mds_ctrl_key = api_data->getStringValue("mds_control_key");
             loaded_from_unit_server = (mds_ctrl_key.compare("mds") == 0);
@@ -194,12 +194,13 @@ chaos::common::data::CDataWrapper *NodeRegister::controlUnitRegistration(chaos::
         //we need to check if the control unit is assocaite to an unit server
         if((err = us_da->getUnitserverForControlUnitID(cu_uid,
                                                        us_host))){
-            LOG_AND_TROW_FORMATTED(USRA_ERR, -6, "Error searchin unit server for control unit %1% with code %2%",%cu_uid%err);
+            LOG_AND_TROW_FORMATTED(USRA_ERR, -6, "Error searching unit server for control unit %1% with code %2%",%cu_uid%err);
         }
         has_an_unit_server = (us_host.size()>0);
         
         if(has_an_unit_server) {
-            if(loaded_from_unit_server == false) {LOG_AND_TROW_FORMATTED(USRA_ERR, -7, "The control unit %1% need to be loaded from the unit server %2%",%cu_uid%us_host);}
+            //@TODO removed this check that is wrong for WAN dataset registration
+          //  if(loaded_from_unit_server == false) {LOG_AND_TROW_FORMATTED(USRA_ERR, -7, "The control unit %1% need to be loaded from the unit server %2%",%cu_uid%us_host);}
         }
         
         //check if the node is present
