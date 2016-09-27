@@ -1027,7 +1027,7 @@ int MongoDBControlUnitDataAccess::eraseControlUnitDataBeforeTS(const std::string
     int err = 0;
     try {
         mongo::BSONObj q = BSON(chaos::DataPackCommonKey::DPCK_DEVICE_ID << control_unit_id <<
-                                "$lte" << mongo::Date_t(unit_ts));
+                                DataPackCommonKey::DPCK_TIMESTAMP << BSON( "$lte" << mongo::Date_t(unit_ts)));
         
         DEBUG_CODE(MDBCUDA_DBG<<log_message("eraseControlUnitDataBeforeTS",
                                     "delete",
