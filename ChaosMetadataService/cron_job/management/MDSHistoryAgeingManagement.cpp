@@ -43,7 +43,7 @@ bool MDSHistoryAgeingManagement::execute(const common::cronous_manager::MapKeyVa
     //in seconds
     uint32_t control_unit_ageing_time = 0;
     uint64_t last_ageing_perform_time = 0;
-
+    
     uint64_t now = TimingUtil::getTimeStamp();
     if((err = getDataAccess<persistence::data_access::ControlUnitDataAccess>()->reserveControlUnitForAgeingManagement(last_sequence_found,
                                                                                                                       control_unit_found,
@@ -57,8 +57,30 @@ bool MDSHistoryAgeingManagement::execute(const common::cronous_manager::MapKeyVa
         log(CHAOS_FORMAT("Processing ageing for control unit %1%", %control_unit_found));
         if(aged) {
             log(CHAOS_FORMAT("Control unit %1% is gone out of ageing time[%2% seconds], we perform agein trigger", %control_unit_found%control_unit_ageing_time));
-            getDataAccess<persistence::data_access::ControlUnitDataAccess>()->eraseControlUnitDataBeforeTS(control_unit_found,
-                                                                                                           remove_until_ts);
+            
+            
+            const std::string output_key	= control_unit_found + DataPackPrefixID::OUTPUT_DATASE_PREFIX;
+            const std::string input_key     = control_unit_found + DataPackPrefixID::INPUT_DATASE_PREFIX;
+            const std::string system_key	= control_unit_found + DataPackPrefixID::SYSTEM_DATASE_PREFIX;
+            const std::string custom_key	= control_unit_found + DataPackPrefixID::CUSTOM_DATASE_PREFIX;
+            const std::string health_key    = control_unit_found + NodeHealtDefinitionKey::HEALT_KEY_POSTFIX;
+            
+            if((err = getDataAccess<persistence::data_access::ControlUnitDataAccess>()->eraseControlUnitDataBeforeTS(output_key,
+                                                                                                                     remove_until_ts))){
+                log(CHAOS_FORMAT("Error erasing key %1% for control unit %2% with error %3%", %output_key%control_unit_found%err));
+            }else if((err = getDataAccess<persistence::data_access::ControlUnitDataAccess>()->eraseControlUnitDataBeforeTS(input_key,
+                                                                                                                           remove_until_ts))){
+                log(CHAOS_FORMAT("Error erasing key %1% for control unit %2% with error %3%", %input_key%control_unit_found%err));
+            }else if((err = getDataAccess<persistence::data_access::ControlUnitDataAccess>()->eraseControlUnitDataBeforeTS(system_key,
+                                                                                                                           remove_until_ts))){
+                log(CHAOS_FORMAT("Error erasing key %1% for control unit %2% with error %3%", %system_key%control_unit_found%err));
+            }else if((err = getDataAccess<persistence::data_access::ControlUnitDataAccess>()->eraseControlUnitDataBeforeTS(custom_key,
+                                                                                                                           remove_until_ts))){
+                log(CHAOS_FORMAT("Error erasing key %1% for control unit %2% with error %3%", %custom_key%control_unit_found%err));
+            }else if((err = getDataAccess<persistence::data_access::ControlUnitDataAccess>()->eraseControlUnitDataBeforeTS(health_key,
+                                                                                                                           remove_until_ts))){
+                log(CHAOS_FORMAT("Error erasing key %1% for control unit %2% with error %3%", %health_key%control_unit_found%err));
+            }
         }
         getDataAccess<persistence::data_access::ControlUnitDataAccess>()->releaseControlUnitForAgeingManagement(control_unit_found, aged);
         
