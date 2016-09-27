@@ -191,11 +191,11 @@ mutex_ ## queue_name.unlock();
                 
                 //!groups for thread that make the scanner
                 bool                                    work_on_scan;
-                boost::thread_group                     scanner_threads;
+                boost::shared_ptr<boost::thread_group>  scanner_threads;
                 
                 //!groups for thread that fetch the value for a key
                 bool                                    work_on_fetch;
-                boost::thread_group                     fetcher_threads;
+                boost::shared_ptr<boost::thread_group>  fetcher_threads;
                 
                 //! queue for all the active slot
                 LFQuantumSlotQueue                      queue_active_slot;

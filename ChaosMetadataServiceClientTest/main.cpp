@@ -75,7 +75,7 @@ int main(int argc, char *argv[]){
     
     ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>("monitor-timeout",
                                                                                                      "Specify the time that we need to monitor the device in seconds",
-                                                                                                     100,
+                                                                                                     10,
                                                                                                      & wait_seconds);
     try{
         

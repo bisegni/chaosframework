@@ -1,4 +1,4 @@
- /*
+/*
  *	DirectIOClient.cpp
  *	!CHAOS
  *	Created by Bisegni Claudio.
@@ -46,7 +46,7 @@ namespace b_algo = boost::algorithm;
 DirectIOClient::DirectIOClient(std::string alias):
 NamedService(alias),
 map_connections(this){
-	
+    
 }
 
 DirectIOClient::~DirectIOClient() {
@@ -54,7 +54,7 @@ DirectIOClient::~DirectIOClient() {
 
 void DirectIOClient::forwardEventToClientConnection(DirectIOClientConnection *client,
                                                     DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event_type) {
-	client->lowLevelManageEvent(event_type);
+    client->lowLevelManageEvent(event_type);
 }
 
 //! Initialize instance
@@ -104,30 +104,32 @@ DirectIOClientConnection *DirectIOClient::getNewConnection(const std::string& se
             } else {
                 shared_collector = map_shared_collectors[key];
             }
-
+            
             //the metric allocator of direct io is a direct subclass of DirectIODispatcher
             result = new DirectIOClientConnectionMetricCollector(server_description,
                                                                  endpoint,
                                                                  shared_collector,
                                                                  result);
         }
-
-    }
         
+    }
+    
     return result;
 }
 
 //! Release the connection
 void DirectIOClient::releaseConnection(DirectIOClientConnection *connection_to_release) {
-    if(connection_to_release && GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_DIRECT_IO_LOG_METRIC)) {
-        //the metric allocator of direct io is a direct subclass of DirectIODispatcher
-        DirectIOClientConnectionMetricCollector *metric_collector = dynamic_cast<DirectIOClientConnectionMetricCollector*>(connection_to_release);
-        if(metric_collector) {
-            _releaseConnectionImpl(metric_collector->wrapped_connection);
-            delete(metric_collector);
+    if(connection_to_release) {
+        if(GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_DIRECT_IO_LOG_METRIC)) {
+            //the metric allocator of direct io is a direct subclass of DirectIODispatcher
+            DirectIOClientConnectionMetricCollector *metric_collector = dynamic_cast<DirectIOClientConnectionMetricCollector*>(connection_to_release);
+            if(metric_collector) {
+                _releaseConnectionImpl(metric_collector->wrapped_connection);
+                delete(metric_collector);
+            }
+        } else  {
+            _releaseConnectionImpl(connection_to_release);
         }
-    } else  {
-        _releaseConnectionImpl(connection_to_release);
     }
 }
 

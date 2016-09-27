@@ -71,7 +71,9 @@ void QuantumSlotScheduler::start() throw (chaos::CException) {
     work_on_fetch = true;
     
     //add scanner thread
-    scanner_threads.add_thread(new boost::thread(bind(&QuantumSlotScheduler::scanSlot, this)));
+    scanner_threads.reset(new boost::thread_group());
+    fetcher_threads.reset(new boost::thread_group());
+    scanner_threads->add_thread(new boost::thread(bind(&QuantumSlotScheduler::scanSlot, this)));
     
     //add first fetcher thread
     if(data_driver_endpoint.size()) {
@@ -85,12 +87,14 @@ void QuantumSlotScheduler::stop() throw (chaos::CException) {
     
     QSS_INFO<< "Stop scanner thread";
     condition_scan.notify_all();
-    scanner_threads.join_all();
+    scanner_threads->join_all();
+    scanner_threads.reset();
     QSS_INFO<< "Scanner thread stopped";
     
     QSS_INFO<< "Stop fetcher thread";
     condition_fetch.notify_all();
-    fetcher_threads.join_all();
+    fetcher_threads->join_all();
+    fetcher_threads.reset();
     QSS_INFO<< "Fetcher thread stopped";
 }
 
@@ -123,7 +127,8 @@ void QuantumSlotScheduler::setDataDriverEndpoints(const std::vector<std::string>
     
     data_driver_endpoint = _data_driver_endpoint;
     QSS_INFO<< "New servers has been configured";
-    if(fetcher_threads.size() == 0) return; //no thread are active so never has been started
+    if(fetcher_threads.get() == NULL ||
+       fetcher_threads->size() == 0) return; //no thread are active so never has been started
     
     stop();
     start();
@@ -266,7 +271,7 @@ void QuantumSlotScheduler::addNewfetcherThread() {
         ((IODirectIODriver*)data_driver)->addServerURL(*it);
     }
     
-    fetcher_threads.add_thread(new boost::thread(bind(&QuantumSlotScheduler::fetchValue, this, boost::shared_ptr<IODataDriver>(data_driver))));
+    fetcher_threads->add_thread(new boost::thread(bind(&QuantumSlotScheduler::fetchValue, this, boost::shared_ptr<IODataDriver>(data_driver))));
 }
 
 void QuantumSlotScheduler::dispath_new_value_async(const boost::system::error_code& error,
@@ -336,6 +341,7 @@ void QuantumSlotScheduler::fetchValue(boost::shared_ptr<IODataDriver> data_drive
         }
     }
     data_driver->deinit();
+    data_driver.reset();
     QSS_INFO << "Leaving fetcher thread";
 }
 
