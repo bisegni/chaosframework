@@ -217,7 +217,7 @@ int main(int argc, char* argv[]) {
         if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_END_TIME)){
             //try to check if the string is a number
             try {
-                start_ts = lexical_cast<uint64_t>(end_time);
+                end_ts = lexical_cast<uint64_t>(end_time);
             } catch(bad_lexical_cast &) {
                 if(!TimingUtil::dateWellFormat(end_time)) {
                     throw CException(-3, "Invalid end date format", "check date");

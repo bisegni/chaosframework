@@ -140,9 +140,15 @@ int64_t QueryCursor::fetchNewPage() {
                                                                        from_included,
                                                                        &query_result))) {
         ERR << CHAOS_FORMAT("Error during fetchin query page with code %1%", %api_error);
+        phase = QueryPhaseEnded;
         return api_error;
     } else if(query_result) {
         result_page.reset(query_result);
+        if(result_page.decoded_page.size()  < page_len) {
+            phase = QueryPhaseEnded;
+        }
+    } else {
+        phase = QueryPhaseEnded;
     }
     return api_error;
 }
