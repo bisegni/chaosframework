@@ -199,29 +199,36 @@ int ProducerRegisterJsonApi::scanDatasetElement(const Json::Value& dataset_json_
         }
         
     } else {
-        if(dataset_json_element.isBool()){
+
+      if(dataset_json_element.isDouble()){ 
+            //default is double
+            element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE,
+                                   chaos::DataType::TYPE_DOUBLE);
+            PRA_LDBG<<"Double Type";
+
+        } else if(dataset_json_element.isBool()){
             //default is double
             element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE,
                                    chaos::DataType::TYPE_BOOLEAN);
             PRA_LDBG<<"Boolean Type";
 
+        } else if(dataset_json_element.isInt64()){
+            //default is double
+            element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE,
+                                   chaos::DataType::TYPE_INT64);
         } else if(dataset_json_element.isInt()){
             //default is double
             element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE,
                                    chaos::DataType::TYPE_INT32);
             PRA_LDBG<<"Int32 Type";
 
-        } else if(dataset_json_element.isInt64()){
-            //default is double
-            element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE,
-                                   chaos::DataType::TYPE_INT64);
-        } else if(dataset_json_element.isString()){
+        }  else if(dataset_json_element.isString()){
             //default is double
             element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE,
                                    chaos::DataType::TYPE_STRING);
             PRA_LDBG<<"String Type";
 
-        }else {
+        } else {
             //default is double
             element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE,
                                    chaos::DataType::TYPE_DOUBLE);

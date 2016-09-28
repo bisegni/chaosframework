@@ -34,7 +34,7 @@ MAKE_API_ERR(where, "producer_insert_err", err, "producer_insert_err_msg", msg)
 #define PID_LAPP LAPP_ << "[ProducerInsertJsonApi] - "
 #define PID_LDBG LDBG_ << "[ProducerInsertJsonApi] - "
 #define PID_LERR LERR_ << "[ProducerInsertJsonApi] - " << __PRETTY_FUNCTION__ << "(" << __LINE__ << ") - "
-
+static boost::posix_time::ptime const time_epoch(boost::gregorian::date(1970, 1, 1));
 //! default constructor
 ProducerInsertJsonApi::ProducerInsertJsonApi(persistence::AbstractPersistenceDriver *_persistence_driver):
 AbstractApi("jsoninsert",
@@ -84,8 +84,11 @@ int ProducerInsertJsonApi::execute(std::vector<std::string>& api_tokens,
     const Json::Value& dp_timestamp = const_cast<Json::Value&>(input_data).removeMember(chaos::DataPackCommonKey::DPCK_TIMESTAMP);
     
     if(dp_timestamp.isNull()) {
-        boost::posix_time::ptime pt=boost::posix_time::microsec_clock::local_time();
-        ts =pt.time_of_day().total_milliseconds();
+
+      
+      ts = (boost::posix_time::microsec_clock::universal_time() - time_epoch).total_milliseconds();
+      
+       
         err_msg = "The timestamp is mandatory";
     } else if(!dp_timestamp.isInt64()) {
         err_msg = "The timestamp needs to be an int64 number," + input_data[chaos::DataPackCommonKey::DPCK_TIMESTAMP].asString();
@@ -201,15 +204,15 @@ int ProducerInsertJsonApi::execute(std::vector<std::string>& api_tokens,
                 
             }
         } else {
-            if(dataset_element.isBool()){
+	  if(dataset_element.isDouble()){
+	    output_dataset->addDoubleValue(*it, dataset_element.asDouble());
+	  } else if(dataset_element.isBool()){
                 output_dataset->addBoolValue(*it, dataset_element.asBool());
-            } else if(dataset_element.isInt()){
-                output_dataset->addInt32Value(*it, dataset_element.asInt());
-                
-            } else if(dataset_element.isInt64()){
-	      output_dataset->addInt64Value(*it, (int64_t)dataset_element.asInt64());
-                
-            } else if(dataset_element.isString()){
+	  } else if(dataset_element.isInt64()){
+	    output_dataset->addInt64Value(*it, (int64_t)dataset_element.asInt64());
+	  } else if(dataset_element.isInt()){
+	    output_dataset->addInt32Value(*it, dataset_element.asInt());
+	  } else if(dataset_element.isString()){
                 output_dataset->addStringValue(*it, dataset_element.asString());
             }else {
                 output_dataset->addDoubleValue(*it, dataset_element.asDouble());
