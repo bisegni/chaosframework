@@ -171,9 +171,9 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string& key,
                 "$gte" << mongo::Date_t(timestamp_to);
             }
         
-        
-        mongo::Query q = BSON(chaos::DataPackCommonKey::DPCK_DEVICE_ID << key <<
-                              chaos::DataPackCommonKey::DPCK_TIMESTAMP << time_query.obj());
+        mongo::BSONObj o = BSON(chaos::DataPackCommonKey::DPCK_DEVICE_ID << key <<
+                                chaos::DataPackCommonKey::DPCK_TIMESTAMP << time_query.obj());
+        mongo::Query q = o;
         
         if(reverse_order) {
             q = q.sort(BSON(chaos::DataPackCommonKey::DPCK_TIMESTAMP<<-1));
@@ -184,7 +184,7 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string& key,
         DEBUG_CODE(DBG<<log_message("findObject",
                                     "findN",
                                     DATA_ACCESS_LOG_1_ENTRY("Query",
-                                                            q.toString()));)
+                                                            o.jsonString()));)
         
         connection->findN(object_found,
                           MONGO_DB_COLLECTION_NAME(MONGODB_DAQ_COLL_NAME),

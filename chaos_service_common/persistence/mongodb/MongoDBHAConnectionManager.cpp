@@ -175,12 +175,9 @@ std::auto_ptr<DriverScopedConnection> MongoDBHAConnectionManager::getConnection(
     std::auto_ptr<DriverScopedConnection> result;
     ConnectionInfo *conn = static_cast<ConnectionInfo*>(service_feeder.getService());
     if(conn) {
-      MDBHAC_LDBG_<<"connection db: "<<conn->conn_str.getDatabase()<<" user:"<<conn->conn_str.getUser();
       result.reset(new DriverScopedConnection(conn->conn_str, 1000));
     } else {
-      //      MDBHAC_LERR_<<"connection failed";
       result.reset(NULL);
-      
     }
     return result;
 }
