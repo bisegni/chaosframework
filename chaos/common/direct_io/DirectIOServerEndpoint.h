@@ -21,7 +21,7 @@
 #define __CHAOSFramework__DirectIOServerEndpoint__
 
 #include <string>
-#include <chaos/common/thread/SpinLock.h>
+#include <chaos/common/chaos_types.h>
 #include <chaos/common/exception/exception.h>
 #include <chaos/common/utility/ObjectInstancer.h>
 #include <chaos/common/direct_io/DirectIOHandler.h>
@@ -42,10 +42,11 @@ namespace chaos {
 			
 #define MAX_ENDPOINT_CHANNEL 256
 			
-			class DirectIOServerEndpoint : public DirectIOHandler {
+			class DirectIOServerEndpoint:
+            public DirectIOHandler {
 				friend class DirectIODispatcher;
 				//boost::shared_mutex mutex_channel_slot;
-				chaos::common::thread::Spinlock spinlock;
+                ChaosSharedMutex shared_mutex;
 				channel::DirectIOVirtualServerChannel **channel_slot;
 				
 				//! endpoint route index
