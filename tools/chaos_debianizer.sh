@@ -40,7 +40,8 @@ while getopts lp:i:v:dt:sac,d,r opt; do
 	    ;;
 	l) LOCALHOST="true"
 	    desc="localhost configuration"
-	    DEPENDS="$DEPENDS,mongodb"
+	    DEPENDS="$DEPENDS,mongodb-org"
+	    EXT="localhost"
 	    ;;
 	c) CLIENT="true"
 	    SERVER=""
@@ -145,7 +146,7 @@ if [ -n "$CLIENT" ];then
 fi
 
 
-if [ -n "$SERVER" ] || [ -n "$DOCKER" ];then
+if [ -n "$SERVER" ] || [ -n "$DOCKER" ] || [ -n "$LOCALHOST" ];then
    if mkdir -p $PACKAGE_DEST/bin;then
        copy $SOURCE_DIR/html $PACKAGE_DEST
        copy $SOURCE_DIR/bin $PACKAGE_DEST
@@ -156,6 +157,16 @@ if [ -n "$SERVER" ] || [ -n "$DOCKER" ];then
        exit 1
    fi
 fi
+copy $SOURCE_DIR/tools $PACKAGE_DEST
+copy $SOURCE_DIR/chaos_env.sh $PACKAGE_DEST
+copy $SOURCE_DIR/tools/package_template/etc $PACKAGE_DIR/etc
+
+if [ -n "$ALL" ];then
+    copy $SOURCE_DIR $PACKAGE_DEST
+    rm -rf $PACKAGE_DEST/etc
+    DEPENDS="$DEPENDS, gcc(>=4.8), g++(>=4.8), cmake(>=2.6), apache2(>=2.4), libapache2-mod-php5"
+    SERVER="true"
+fi
 
 if [ -n "$DOCKER" ];then
     pushd $PACKAGE_DEST/etc
@@ -165,17 +176,17 @@ if [ -n "$DOCKER" ];then
     ln -sf ../tools/config/lnf/docker/wan.cfg wan.cfg
 fi
 
-if [ -n "$ALL" ];then
-    copy $SOURCE_DIR $PACKAGE_DEST
-    rm -rf $PACKAGE_DEST/etc
-    DEPENDS="$DEPENDS, gcc(>=4.8), g++(>=4.8), cmake(>=2.6), apache2(>=2.4), libapache2-mod-php5"
-    SERVER="true"
+if [ -n "$LOCALHOST" ];then
+    pushd $PACKAGE_DEST/etc
+    ln -sf ../tools/config/lnf/development/cds.cfg cds.cfg
+    ln -sf ../tools/config/lnf/development/mds.cfg mds.cfg
+    ln -sf ../tools/config/lnf/development/webui.cfg webui.cfg
+    ln -sf ../tools/config/lnf/development/wan.cfg wan.cfg
 fi
 
 
-copy $SOURCE_DIR/tools $PACKAGE_DEST
-copy $SOURCE_DIR/chaos_env.sh $PACKAGE_DEST
-copy $SOURCE_DIR/tools/package_template/etc $PACKAGE_DIR/etc
+
+
 
  if [ -n "$DYNAMIC" ]; then
      copy $SOURCE_DIR/lib $PACKAGE_DEST/
@@ -212,13 +223,14 @@ echo "PACKAGE_NAME=$PACKAGE_NAME" >> DEBIAN/postinst
 echo "ln -sf $PACKAGE_INSTALL_DIR $PACKAGE_INSTALL_ALIAS_DIR" >> DEBIAN/postinst
 echo "INSTDIR=$PACKAGE_INSTALL_ALIAS_DIR" >> DEBIAN/postinst
 
-if [ -n "$LOCALHOST" ] && [ -n "$SERVER" ];then
-    echo "LOCALHOST=$SERVER" >> DEBIAN/config
-else
+echo "#!/bin/bash" > DEBIAN/config
 
-    if [ -z "$DOCKER" ];then
-	echo "#!/bin/bash" > DEBIAN/config
-	#echo "set -e" >> DEBIAN/config
+if [ -n "$LOCALHOST" ];then
+    echo "LOCALHOST=$SERVER" >> DEBIAN/config
+fi
+if [ -z "$DOCKER" ] && [ -z "$LOCALHOST" ];then
+
+    #echo "set -e" >> DEBIAN/config
     echo ". /usr/share/debconf/confmodule" >> DEBIAN/config
     
     echo "PACKAGE_NAME=$PACKAGE_NAME" >> DEBIAN/config
@@ -238,7 +250,7 @@ else
     cat "$SOURCE_DIR/tools/package_template/DEBIAN/config" >> DEBIAN/config
     chmod 0555 DEBIAN/config
 fi
-fi
+
 
 
 cp $SOURCE_DIR/tools/package_template/DEBIAN/templates DEBIAN/
