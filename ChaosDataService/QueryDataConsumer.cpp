@@ -242,7 +242,7 @@ int QueryDataConsumer::consumeDataCloudQuery(DirectIODeviceChannelHeaderOpcodeQu
                                              const std::string& search_key,
                                              uint64_t search_start_ts,
                                              uint64_t search_end_ts,
-                                             bool start_ts_is_included,
+                                             uint64_t last_sequence_id,
                                              DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult * result_header,
                                              void **result_value) {
     
@@ -253,10 +253,9 @@ int QueryDataConsumer::consumeDataCloudQuery(DirectIODeviceChannelHeaderOpcodeQu
     if((err = obj_storage_da->findObject(search_key,
                                          search_start_ts,
                                          search_end_ts,
-                                         start_ts_is_included,
                                          query_header->field.record_for_page,
                                          reuslt_object_found,
-                                         result_header->last_daq_ts))) {
+                                         (result_header->last_found_sequence = last_sequence_id)))) {
         QDCERR_ << CHAOS_FORMAT("Error performing cloud query with code %1%", %err);
     } else if(reuslt_object_found.size()){
         //we successfully have perform query

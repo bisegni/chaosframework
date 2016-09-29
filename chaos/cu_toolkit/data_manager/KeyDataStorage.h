@@ -28,6 +28,7 @@
 #include <chaos/common/utility/ArrayPointer.h>
 
 #include <boost/thread.hpp>
+#include <boost/atomic.hpp>
 
 namespace chaos_data = chaos::common::data;
 namespace chaos_io = chaos::common::io;
@@ -50,6 +51,9 @@ namespace chaos{
 				std::string system_key;
 				std::string custom_key;
 				
+                //is the sequence if
+                boost::atomic<int64_t> sequence_id;
+                
 				//restore poitn map
 				std::map<std::string, std::map<std::string, boost::shared_ptr<chaos_data::CDataWrapper> > > restore_point_map;
 

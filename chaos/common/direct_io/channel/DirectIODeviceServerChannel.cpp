@@ -111,13 +111,13 @@ int DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack,
                     std::string key = CDW_GET_SRT_WITH_DEFAULT(&query, DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_KEY_STRING, "");
                     uint64_t start_ts = CDW_GET_VALUE_WITH_DEFAULT(&query, DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_STAR_TS_I64, getUInt64Value, 0);
                     uint64_t end_ts = CDW_GET_VALUE_WITH_DEFAULT(&query, DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_END_TS_I64, getUInt64Value, 0);
-                    bool start_ts_is_included = CDW_GET_VALUE_WITH_DEFAULT(&query, DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_START_TS_INCLUDED, getBoolValue, false);
+                    uint64_t last_sequence_id = (uint64_t)CDW_GET_VALUE_WITH_DEFAULT(&query, DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_LAST_SEQUENCE_ID, getUInt64Value, std::numeric_limits<int64_t>::min());
                     //call server api if we have at least the key
                     if((key.compare("") != 0)) {err = handler->consumeDataCloudQuery(header,
                                                                                      key,
                                                                                      start_ts,
                                                                                      end_ts,
-                                                                                     start_ts_is_included,
+                                                                                     last_sequence_id,
                                                                                      result_header,
                                                                                      &result_data);}
                     if(err == 0){
@@ -126,7 +126,7 @@ int DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack,
                         DIRECT_IO_SET_CHANNEL_DATA(synchronous_answer, result_data, result_header->result_data_size);
                         result_header->result_data_size = TO_LITTEL_ENDNS_NUM(uint32_t, result_header->result_data_size);
                         result_header->numer_of_record_found = TO_LITTEL_ENDNS_NUM(uint32_t, result_header->numer_of_record_found);
-                        result_header->last_daq_ts = TO_LITTEL_ENDNS_NUM(uint64_t, result_header->last_daq_ts);
+                        result_header->last_found_sequence = TO_LITTEL_ENDNS_NUM(uint64_t, result_header->last_found_sequence);
                     } else {
                         if(result_data) free(result_data);
                         if(result_header) free(result_header);

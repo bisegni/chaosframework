@@ -487,7 +487,7 @@ void HealtManager::_publish(const boost::shared_ptr<NodeHealtSet>& heath_set,
     if(data_pack) {
         io_data_driver->storeData(heath_set->node_key,
                                   data_pack,
-                                  DataServiceNodeDefinitionType::DSStorageTypeLiveHistory);
+                                  DataServiceNodeDefinitionType::DSStorageTypeLive);
     } else {
         HM_ERR << "Error allocating health datapack for node:" << heath_set->node_key;
     }

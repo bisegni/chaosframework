@@ -62,10 +62,9 @@ namespace chaos {
                     int findObject(const std::string& key,
                                    const uint64_t timestamp_from,
                                    const uint64_t timestamp_to,
-                                   const bool from_is_included,
-                                   const int page_len,
+                                   const uint32_t page_len,
                                    object_storage::abstraction::VectorObject& found_object_page,
-                                   uint64_t& last_daq_timestamp);
+                                   uint64_t& last_seq_found);
                 };
             }
         }

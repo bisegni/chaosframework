@@ -1036,7 +1036,8 @@ namespace chaos {
     namespace DataPackCommonKey {
         //!define the device unique key, this represent the primary key of the producer[string]
         static const char * const DPCK_DEVICE_ID                       = chaos::NodeDefinitionKey::NODE_UNIQUE_ID;
-        
+        //!define the device data pack sequence id unique for device
+        static const char * const DPCK_SEQ_ID                          = "dpck_seq_id";
         //!this define the acquisition timestamp of the data represented by the dataset[uint64_t]
         static const char * const DPCK_TIMESTAMP                       = "dpck_ats";//chaos::NodeDefinitionKey::NODE_TIMESTAMP;
         

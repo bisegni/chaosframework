@@ -39,7 +39,8 @@ key(_key),
 io_data_driver(_io_data_driver),
 storage_type(DataServiceNodeDefinitionType::DSStorageTypeLive),
 storage_history_time(0),
-storage_history_time_last_push(0){
+storage_history_time_last_push(0),
+sequence_id(std::numeric_limits<int64_t>::min()){
     output_key	= _key + DataPackPrefixID::OUTPUT_DATASE_PREFIX;
     input_key	= _key + DataPackPrefixID::INPUT_DATASE_PREFIX;
     system_key	= _key + DataPackPrefixID::SYSTEM_DATASE_PREFIX;
@@ -73,6 +74,7 @@ CDataWrapper* KeyDataStorage::getNewOutputAttributeDataWrapper() {
     CDataWrapper *result = new CDataWrapper();
     //add the unique key
     result->addStringValue(DataPackCommonKey::DPCK_DEVICE_ID, key);
+    result->addInt64Value(DataPackCommonKey::DPCK_SEQ_ID, ++sequence_id);
     return result;
 }
 

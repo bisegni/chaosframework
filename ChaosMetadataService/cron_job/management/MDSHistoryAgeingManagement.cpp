@@ -38,7 +38,7 @@ void MDSHistoryAgeingManagement::start() {
 
 bool MDSHistoryAgeingManagement::execute(const common::cronous_manager::MapKeyVariant& job_parameter) {
     int err = 0;
-    bool need_another_step = true;
+    bool need_another_step = false;
     std::string control_unit_found = "";
     //in seconds
     uint32_t control_unit_ageing_time = 0;
@@ -85,10 +85,7 @@ bool MDSHistoryAgeingManagement::execute(const common::cronous_manager::MapKeyVa
         getDataAccess<persistence::data_access::ControlUnitDataAccess>()->releaseControlUnitForAgeingManagement(control_unit_found, aged);
         
         need_another_step = true;
-    } else {
-        //we have finisched the work
-        need_another_step = false;
-    }
+    } else {}
     return need_another_step;
 }
 

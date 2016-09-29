@@ -86,7 +86,7 @@ namespace chaos{
                                       const std::string& search_key,
                                       uint64_t search_start_ts,
                                       uint64_t search_end_ts,
-                                      bool start_ts_is_included,
+                                      uint64_t last_sequence_id,
                                       opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult * result_header,
                                       void **result_value);
 			

@@ -49,7 +49,7 @@ namespace chaos {
                 struct ResultPage {
                     unsigned int current_fetched;
                     ResultPageDecodedPacket decoded_page;
-                    uint64_t last_ts_received;
+                    uint64_t last_received_sequence;
                     chaos::common::direct_io::channel::opcode_headers::DirectIODeviceChannelOpcodeQueryDataCloudResultPtr query_result;
                     
                     ResultPage();

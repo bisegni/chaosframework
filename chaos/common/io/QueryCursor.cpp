@@ -46,7 +46,7 @@ void QueryCursor::ResultPage::reset(DirectIODeviceChannelOpcodeQueryDataCloudRes
     current_fetched = 0;
     decoded_page.clear();
     query_result = new_query_result;
-    last_ts_received = query_result->header.last_daq_ts;
+    last_received_sequence = query_result->header.last_found_sequence;
     //scan all result
     char *current_data_prt = query_result->results;
     boost::shared_ptr<CDataWrapper> last_record;
@@ -99,7 +99,7 @@ const bool QueryCursor::hasNext() {
             return result_page.hasNext();
             break;
         case QueryPhaseEnded:
-            return false;
+            return result_page.hasNext();
     }
 }
 
@@ -119,7 +119,7 @@ int64_t QueryCursor::fetchNewPage() {
     switch(phase) {
         case QueryPhaseNotStarted:
             DBG << "Start Search";
-            result_page.last_ts_received = start_ts;
+            result_page.last_received_sequence = (uint64_t)std::numeric_limits<int64_t>::min();
             //change to the next phase
             phase = QueryPhaseStarted;
             from_included = true;
@@ -134,10 +134,10 @@ int64_t QueryCursor::fetchNewPage() {
     }
     
     if((api_error = next_client->device_client_channel->queryDataCloud(node_id,
-                                                                       result_page.last_ts_received,
+                                                                       start_ts,
                                                                        end_ts,
                                                                        page_len,
-                                                                       from_included,
+                                                                       result_page.last_received_sequence,
                                                                        &query_result))) {
         ERR << CHAOS_FORMAT("Error during fetchin query page with code %1%", %api_error);
         phase = QueryPhaseEnded;

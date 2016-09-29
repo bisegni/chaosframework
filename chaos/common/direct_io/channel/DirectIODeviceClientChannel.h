@@ -83,7 +83,6 @@ namespace chaos {
                      \param key to search
                      \param start_ts start of timestamp to search
                      \param end_ts end of the timestamp where limit the search
-                     \param start_is_included when the start_ts need to be considering including or not
                      \param query_id the newly associated query id is returned.
                      \param result_handler has the found element page
                      \return error
@@ -92,7 +91,7 @@ namespace chaos {
                                            uint64_t start_ts,
                                            uint64_t end_ts,
                                            uint32_t page_dimension,
-                                           bool start_is_included,
+                                           uint64_t last_sequence_id,
                                            opcode_headers::DirectIODeviceChannelOpcodeQueryDataCloudResultPtr *result_handler);
                     
                     //! Perform a temporal data delete operation on a key

@@ -62,7 +62,7 @@ namespace chaos {
                     //!is the node unique id for wich we whant the results
                     static const char * const QUERY_PARAM_SEARCH_KEY_STRING             = "qp_data_cloud_key";
                     //if true the data pack will be '>=' otherwhise '>' in timestamp respect to qp_data_cloud_start_ts key
-                    static const char * const QUERY_PARAM_SEARCH_START_TS_INCLUDED		= "qp_data_cloud_start_ts_included";
+                    static const char * const QUERY_PARAM_SEARCH_LAST_SEQUENCE_ID		= "qp_data_cloud_last_sequence_id";
                 }
                 
                 //! Name space for grupping the varius headers for every DeviceChannelOpcode
@@ -153,8 +153,8 @@ namespace chaos {
                         uint32_t result_data_size;
                         //! The numer of element found
                         uint32_t numer_of_record_found;
-                        //!last acquisition timestamp found in result element
-                        uint64_t last_daq_ts;
+                        //!last sequence found
+                        uint64_t last_found_sequence;
                     } DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult,
                     *DirectIODeviceChannelHeaderOpcodeQueryDataCloudResultPtr;
                     

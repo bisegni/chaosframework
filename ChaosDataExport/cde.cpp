@@ -270,7 +270,8 @@ int main(int argc, char* argv[]) {
         
         std::vector<std::string> output_element_name;
         //fetche the output element of the device
-        controller->getDeviceDatasetAttributesName(output_element_name, DataType::Output);
+        controller->getDeviceDatasetAttributesName(output_element_name,
+                                                   DataType::Output);
         
         //create header
         if(dest_type == 2) {
