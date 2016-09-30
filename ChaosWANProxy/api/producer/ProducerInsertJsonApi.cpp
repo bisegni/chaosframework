@@ -123,9 +123,13 @@ int ProducerInsertJsonApi::execute(std::vector<std::string>& api_tokens,
             if(size>0){
                 
                 const Json::Value&value=dataset_element[0];
-                
-                if(value.isBool()){
+                if(value.isObject()&&value.isMember("$numberLong")){
+		  type_size=sizeof(int64_t);
+		  sub_type = chaos::DataType::SUB_TYPE_INT64;
+
+		} else if(value.isBool()){
                     //default is double
+		  
                     type_size=sizeof(bool);
                     sub_type = chaos::DataType::SUB_TYPE_BOOLEAN;
                 } else if(value.isInt()){
@@ -204,7 +208,9 @@ int ProducerInsertJsonApi::execute(std::vector<std::string>& api_tokens,
                 
             }
         } else {
-	  if(dataset_element.isDouble()){
+	  if(dataset_element.isObject()&&dataset_element.isMember("$numberLong")){
+	    output_dataset->addInt64Value(*it, (int64_t)atoll(dataset_element["$numberLong"].asCString()));
+	  } else if(dataset_element.isDouble()){
 	    output_dataset->addDoubleValue(*it, dataset_element.asDouble());
 	  } else if(dataset_element.isBool()){
                 output_dataset->addBoolValue(*it, dataset_element.asBool());

@@ -157,7 +157,7 @@ copy $SOURCE_DIR/etc $PACKAGE_DEST
 copy $SOURCE_DIR/tools $PACKAGE_DEST
 copy $SOURCE_DIR/chaos_env.sh $PACKAGE_DEST
 copy $SOURCE_DIR/tools/package_template/etc $PACKAGE_DIR/etc
-rm $PACKAGE_DIR/etc/*.cfg
+rm $PACKAGE_DEST/etc/*.cfg
 
 
 
@@ -296,7 +296,7 @@ info_mesg "packaging $NAME for architecture " "$ARCH .."
 
 dpkg-deb -b $PACKAGE_DIR 
 mv $PACKAGE_DIR.deb .
-info_mesg "created in $PWD" "$NAME.deb"
+info_mesg "created in $PWD" " $NAME.deb"
 if [ -n "$COPY_REMOTE" ];then
     info_mesg "copying to APT server " "$APT_DEST"
     scp $NAME.deb $APT_DEST
