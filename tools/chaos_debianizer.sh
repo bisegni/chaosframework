@@ -1,8 +1,8 @@
 #!/bin/bash
 ## must package name, source dir,  version 
-pushd `dirname $0` > /dev/null
+pushd `dirname $0` >& /dev/null
 dir=`pwd -P`
-popd > /dev/null
+popd >& /dev/null
 
 export CHAOS_TOOL=$dir
 
@@ -17,6 +17,8 @@ copy(){
     if ! cp -af $1 $2 >&/dev/null;then
 	error_mesg "cannot copy from $1 to $2"
 	exit 1
+    else
+	info_mesg "transferring " "$1"
     fi
 
 }
@@ -26,11 +28,13 @@ PACKAGE_NAME="chaos"
 CLIENT="true"
 
 Usage(){
-    echo -e "Usage is $0 -i <source dir> [-p <package name > ] [-v <version> ] [-c] [-s] [-d] [-a] [-l]\n-i <source dir>: a valid source chaos distribution [$SOURCE_DIR]\n-p <package name>: is the package name prefix [$PACKAGE_NAME]\n-v <version>:a version of the package distribution [$VERSION]\n-c: client distribution (i.e US) [$CLIENT]\n-s: server distribution (CDS,MDS..)\n-a: development with all (client, server and includes)\n-r:copy to remote apt server\n-d: docker distribution\n-l:local host configuration"
+    echo -e "Usage is $0 -i <source dir> [-p <package name > ] [-v <version> ] [-c] [-r]\n-i <source dir>: a valid source chaos distribution [$SOURCE_DIR]\n-p <package name>: is the package name prefix [$PACKAGE_NAME]\n-v <version>:a version of the package distribution [$VERSION]\n-r:copy to remote apt server\n-t <all,docker,localhost,server,client>"
     exit 1
 }
 DEPENDS="bash (>= 3), bc"
-while getopts lp:i:v:dt:sac,d,r opt; do
+TEMPLATE="localhost"
+
+while getopts p:i:v:t:,r opt; do
     case $opt in
 	p) PACKAGE_NAME=$OPTARG
 	    ;;
@@ -38,33 +42,12 @@ while getopts lp:i:v:dt:sac,d,r opt; do
 	    ;;
 	v) VERSION=$OPTARG
 	    ;;
-	l) LOCALHOST="true"
-	    desc="localhost configuration"
-	    DEPENDS="$DEPENDS,mongodb-org"
-	    EXT="localhost"
-	    ;;
-	c) CLIENT="true"
-	    SERVER=""
-	    EXT="client"
-	    desc="Client !CHAOS package include libraries and binaries"
-	    ;;
-	s) SERVER="true"
-	    CLIENT=""
-	    EXT="server"
-	    desc="Server !CHAOS package include libraries and binaries"
-	    
-	    ;;
-	a) ALL="true"
-	    EXT="devel"
-	    desc="Development package include libraries, includes and tools"
-	    ;;
+	t) TEMPLATE=$OPTARG;
+	   ;;
+
 	r) COPY_REMOTE="true"
-	    ;;
-        d) DOCKER="true"
-	    EXT="docker"
-	    desc="package include libraries, binaries, includes and tools"
-	    CLIENT=""
-	    ;;
+	   ;;
+
 #        t) ARCH=$OPTARG
 #	    ;;
 	*)
@@ -72,6 +55,33 @@ while getopts lp:i:v:dt:sac,d,r opt; do
     esac
 	
 done
+
+COPY_SRC_FILES=""
+
+case $TEMPLATE in
+    docker)
+	desc="docker package, similar to localhost but different backend address"
+	DEPENDS="$DEPENDS,mongodb-org,apache2(>=2.4)"
+	;;
+    client)
+	desc="Client !CHAOS package include libraries and binaries"
+	COPY_SRC_FILES="$SOURCE_DIR/bin/UnitServer"
+	;;
+    server)
+	desc="Server !CHAOS package include libraries and binaries"
+	DEPENDS="$DEPENDS, apache2(>=2.4)"
+	;;
+    dev)
+	desc="Development package include libraries, includes and tools"
+	DEPENDS="$DEPENDS, gcc(>=4.8), g++(>=4.8), cmake(>=2.6), apache2(>=2.4)"
+	;;
+    *)
+	TEMPLATE="localhost"
+	desc="localhost configuration"
+	DEPENDS="$DEPENDS,mongodb-org,apache2(>=2.4)"
+	;;
+esac
+
 if [ -z "$SOURCE_DIR" ] && [ -n "$CHAOS_PREFIX" ];then
     SOURCE_DIR=$CHAOS_PREFIX
 fi
@@ -110,15 +120,13 @@ if [ "$ARCH" == "x86-64" ]; then
     ARCH="amd64"
 fi
 
-if [ -n "$CHAOS_STATIC" ];then
-    EXT="static-$EXT"
-else
+if [ -z "$CHAOS_STATIC" ];then
     DYNAMIC="true"
 fi
     
 
 
-NAME=$PACKAGE_NAME-$EXT-$VERSION\_$ARCH
+NAME=$PACKAGE_NAME-$TEMPLATE-$VERSION\_$ARCH
 PACKAGE_DIR="/tmp/$USER/$NAME"
 
 PACKAGE_INSTALL_PREFIX="/usr/local/chaos"
@@ -128,74 +136,60 @@ PACKAGE_INSTALL_ALIAS_DIR="$PACKAGE_INSTALL_PREFIX/chaos-distrib"
 PACKAGE_DEST="$PACKAGE_DIR/$PACKAGE_INSTALL_DIR"
 DEBIAN_DIR="$PACKAGE_DIR/DEBIAN"
 rm -rf $PACKAGE_DIR >& /dev/null
+info_mesg "using template " "$TEMPLATE ($desc)"
 info_mesg "taking distribution $SOURCE_DIR, building " "$NAME"
 if !(mkdir -p "$DEBIAN_DIR"); then
     echo "## cannot create $DEBIAN_DIR"
     exit 1
 fi;
 
+if !(mkdir -p "$PACKAGE_DEST"); then
+    echo "## cannot create $PACKAGE_DEST"
+    exit 1
+fi;
 
-if [ -n "$CLIENT" ];then
-   if mkdir -p $PACKAGE_DEST/bin;then
-       copy $SOURCE_DIR/bin/UnitServer $PACKAGE_DEST/bin
+###
+copy $SOURCE_DIR/bin $PACKAGE_DEST
 
-   else
-       error_mesg "cannot create directory " "$PACKAGE_DEST/bin"
-       exit 1
-   fi
-fi
-
-
-if [ -n "$SERVER" ] || [ -n "$DOCKER" ] || [ -n "$LOCALHOST" ];then
-   if mkdir -p $PACKAGE_DEST/bin;then
-       copy $SOURCE_DIR/html $PACKAGE_DEST
-       copy $SOURCE_DIR/bin $PACKAGE_DEST
-       copy $SOURCE_DIR/etc $PACKAGE_DEST
-       DEPENDS="$DEPENDS, apache2(>=2.4), libapache2-mod-php5"
-   else
-       error_mesg "cannot create directory " "$PACKAGE_DEST/bin"
-       exit 1
-   fi
-fi
+copy $SOURCE_DIR/html $PACKAGE_DEST
+copy $SOURCE_DIR/bin $PACKAGE_DEST
+copy $SOURCE_DIR/etc $PACKAGE_DEST
 copy $SOURCE_DIR/tools $PACKAGE_DEST
 copy $SOURCE_DIR/chaos_env.sh $PACKAGE_DEST
 copy $SOURCE_DIR/tools/package_template/etc $PACKAGE_DIR/etc
+rm $PACKAGE_DIR/etc/*.cfg
 
-if [ -n "$ALL" ];then
-    copy $SOURCE_DIR $PACKAGE_DEST
-    rm -rf $PACKAGE_DEST/etc
-    DEPENDS="$DEPENDS, gcc(>=4.8), g++(>=4.8), cmake(>=2.6), apache2(>=2.4), libapache2-mod-php5"
-    SERVER="true"
+
+
+if [ "$TEMPLATE" == "dev" ];then
+    copy $SOURCE_DIR/include $PACKAGE_DEST
+    copy $SOURCE_DIR/lib $PACKAGE_DEST
+else
+    if [ -n "$DYNAMIC" ]; then
+	copy $SOURCE_DIR/lib $PACKAGE_DEST
+    fi    
 fi
 
-if [ -n "$DOCKER" ];then
-    pushd $PACKAGE_DEST/etc
+if [ "$TEMPLATE" == "docker" ];then
+    pushd $PACKAGE_DEST/etc >& /dev/null
     ln -sf ../tools/config/lnf/docker/cds.cfg cds.cfg
     ln -sf ../tools/config/lnf/docker/mds.cfg mds.cfg
     ln -sf ../tools/config/lnf/docker/webui.cfg webui.cfg
     ln -sf ../tools/config/lnf/docker/wan.cfg wan.cfg
+    popd >& /dev/null
 fi
 
-if [ -n "$LOCALHOST" ];then
-    pushd $PACKAGE_DEST/etc
+if [ "$TEMPLATE" == "localhost" ] || [ "$TEMPLATE" == "dev" ];then
+    pushd $PACKAGE_DEST/etc >& /dev/null
     ln -sf ../tools/config/lnf/development/cds.cfg cds.cfg
     ln -sf ../tools/config/lnf/development/mds.cfg mds.cfg
     ln -sf ../tools/config/lnf/development/webui.cfg webui.cfg
     ln -sf ../tools/config/lnf/development/wan.cfg wan.cfg
+    popd >& /dev/null
 fi
 
 
-
-
-
- if [ -n "$DYNAMIC" ]; then
-     copy $SOURCE_DIR/lib $PACKAGE_DEST/
-#     mkdir -p $PACKAGE_DIR/etc/ld.so.conf.d/
-
-#     echo "$PACKAGE_INSTALL_ALIAS_DIR/lib" > $PACKAGE_DIR/etc/ld.so.conf.d/chaos-distrib.conf
- fi
-
-PACKAGE_NAME=$PACKAGE_NAME-$EXT
+PACKAGE_NAME=$PACKAGE_NAME-$TEMPLATE
 TS=`date +%s`
 echo "Package: $PACKAGE_NAME" > $DEBIAN_DIR/control
 echo "Filename: $NAME.deb" >> $DEBIAN_DIR/control
@@ -209,50 +203,57 @@ echo "Maintainer: Claudio Bisegni claudio.bisegni@lnf.infn.it, Andrea Michelotti
 echo "Description: $desc" >> $DEBIAN_DIR/control
 APT_DEST="$APT_DEST$ARCH"
 
-cd $PACKAGE_DIR
+pushd $PACKAGE_DIR >& /dev/null
 echo "#!/bin/bash" > DEBIAN/postrm
 echo "#!/bin/bash" > DEBIAN/prerm
-
 echo "#!/bin/bash" > DEBIAN/postinst
-# echo "set -e" >> DEBIAN/postinst
-echo "INSTDIR=$PACKAGE_INSTALL_DIR" >> DEBIAN/postrm
-echo "INSTDIR_ALIAS=$PACKAGE_INSTALL_ALIAS_DIR" >> DEBIAN/postrm
+echo "#!/bin/bash" > DEBIAN/config
+echo "TEMPLATE=$TEMPLATE" >> DEBIAN/postrm
+echo "TEMPLATE=$TEMPLATE" >> DEBIAN/postinst
+echo "TEMPLATE=$TEMPLATE" >> DEBIAN/prerm
+echo "TEMPLATE=$TEMPLATE" >> DEBIAN/config
+echo ". /usr/share/debconf/confmodule" >> DEBIAN/config    
+echo "PACKAGE_NAME=$PACKAGE_NAME" >> DEBIAN/config
 echo "PACKAGE_NAME=$PACKAGE_NAME" >> DEBIAN/postrm
 echo "PACKAGE_NAME=$PACKAGE_NAME" >> DEBIAN/prerm
 echo "PACKAGE_NAME=$PACKAGE_NAME" >> DEBIAN/postinst
+
+# echo "set -e" >> DEBIAN/postinst
+echo "INSTDIR=$PACKAGE_INSTALL_DIR" >> DEBIAN/postrm
+echo "INSTDIR_ALIAS=$PACKAGE_INSTALL_ALIAS_DIR" >> DEBIAN/postrm
+
 echo "ln -sf $PACKAGE_INSTALL_DIR $PACKAGE_INSTALL_ALIAS_DIR" >> DEBIAN/postinst
 echo "INSTDIR=$PACKAGE_INSTALL_ALIAS_DIR" >> DEBIAN/postinst
 
-echo "#!/bin/bash" > DEBIAN/config
-
-if [ -n "$LOCALHOST" ];then
-    echo "LOCALHOST=$SERVER" >> DEBIAN/config
+if [ "$TEMPLATE"=="server" ] || [ "$TEMPLATE" == "dev" ];then
+    echo "db_input high \$PACKAGE_NAME/ask_mds || true" >> DEBIAN/config
+    echo "db_input high \$PACKAGE_NAME/ask_cds || true" >> DEBIAN/config
+    echo "db_input high \$PACKAGE_NAME/ask_webui || true" >> DEBIAN/config
+    echo "db_input high \$PACKAGE_NAME/ask_us || true" >> DEBIAN/config
 fi
-if [ -z "$DOCKER" ] && [ -z "$LOCALHOST" ];then
-
-    #echo "set -e" >> DEBIAN/config
-    echo ". /usr/share/debconf/confmodule" >> DEBIAN/config
-    
-    echo "PACKAGE_NAME=$PACKAGE_NAME" >> DEBIAN/config
-    echo "echo \"* configuring \$PACKAGE_NAME\"" >> DEBIAN/config
-    if [ "$SERVER" == "true" ] || [ "$ALL" == "true" ]; then
-	#    echo "SET_SERVERS=true" >> DEBIAN/postinst
-	#    echo "SET_SERVERS=true" >> DEBIAN/postrm
-	echo "db_input high \$PACKAGE_NAME/ask_mds || true" >> DEBIAN/config
-	echo "db_input high \$PACKAGE_NAME/ask_cds || true" >> DEBIAN/config
-	echo "db_input high \$PACKAGE_NAME/ask_webui || true" >> DEBIAN/config
-	echo "db_input high \$PACKAGE_NAME/ask_us || true" >> DEBIAN/config
-    else
-	echo "db_input high \$PACKAGE_NAME/ask_us || true" >> DEBIAN/config
+if [ "$TEMPLATE"=="localhost" ] || [ "$TEMPLATE" == "docker" ];then
+    echo "db_set  \$PACKAGE_NAME/ask_mds" >> DEBIAN/config
+    echo "db_set  \$PACKAGE_NAME/ask_cds" >> DEBIAN/config
+    echo "db_set  \$PACKAGE_NAME/ask_webui" >> DEBIAN/config
+    if [ "$TEMPLATE"=="localhost" ];then
+	echo "db_set  \$PACKAGE_NAME/ask_us" >> DEBIAN/config
     fi
-    
-    echo "db_go || true" >> DEBIAN/config
-    cat "$SOURCE_DIR/tools/package_template/DEBIAN/config" >> DEBIAN/config
-    chmod 0555 DEBIAN/config
+    echo "db_set \$PACKAGE_NAME/ask_mongo \"localhost\"" >> DEBIAN/config 
+    echo "db_set \$PACKAGE_NAME/ask_dbuser \"chaos\" " >> DEBIAN/config
+    echo "db_set \$PACKAGE_NAME/ask_dbpass \"chaos\" " >> DEBIAN/config
+    echo "db_set \$PACKAGE_NAME/ask_couchbase \"localhost\"" >> DEBIAN/config
+    echo "db_set \$PACKAGE_NAME/ask_mdsurl \"localhost:5000\"" >> DEBIAN/config
+
 fi
 
+if [ "$TEMPLATE" != "docker" ];then
+    echo "db_input high \$PACKAGE_NAME/ask_us || true" >> DEBIAN/config
+    echo "db_go || true" >> DEBIAN/config
+fi
 
-
+    
+cat "$SOURCE_DIR/tools/package_template/DEBIAN/config" >> DEBIAN/config
+chmod 0555 DEBIAN/config
 cp $SOURCE_DIR/tools/package_template/DEBIAN/templates DEBIAN/
 echo "ln -sf $PACKAGE_INSTALL_DIR/bin/UnitServer $PACKAGE_INSTALL_DIR/bin/cu" >> DEBIAN/postinst
 
@@ -290,11 +291,12 @@ chmod 0555 DEBIAN/preinst
 chmod 0555 DEBIAN/prerm
 chmod 0555 DEBIAN/postinst
 
-cd - > /dev/null
+popd >& /dev/null
 info_mesg "packaging $NAME for architecture " "$ARCH .."
-dpkg-deb -b $PACKAGE_DIR > /dev/null
+
+dpkg-deb -b $PACKAGE_DIR 
 mv $PACKAGE_DIR.deb .
-info_mesg "created " "$NAME.deb"
+info_mesg "created in $PWD" "$NAME.deb"
 if [ -n "$COPY_REMOTE" ];then
     info_mesg "copying to APT server " "$APT_DEST"
     scp $NAME.deb $APT_DEST
