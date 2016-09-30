@@ -61,7 +61,7 @@ COPY_SRC_FILES=""
 case $TEMPLATE in
     docker)
 	desc="docker package, similar to localhost but different backend address"
-	DEPENDS="$DEPENDS,mongodb-org,apache2(>=2.4)"
+	DEPENDS="$DEPENDS,apache2(>=2.4)"
 	;;
     client)
 	desc="Client !CHAOS package include libraries and binaries"

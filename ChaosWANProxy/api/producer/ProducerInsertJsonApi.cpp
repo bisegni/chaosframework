@@ -35,7 +35,7 @@ MAKE_API_ERR(where, "producer_insert_err", err, "producer_insert_err_msg", msg)
 #define PID_LDBG LDBG_ << "[ProducerInsertJsonApi] - "
 #define PID_LERR LERR_ << "[ProducerInsertJsonApi] - " << __PRETTY_FUNCTION__ << "(" << __LINE__ << ") - "
 static boost::posix_time::ptime const time_epoch(boost::gregorian::date(1970, 1, 1));
-static uint64_t pktid=0;
+static uint64_t pktid=1;
 //! default constructor
 ProducerInsertJsonApi::ProducerInsertJsonApi(persistence::AbstractPersistenceDriver *_persistence_driver):
 AbstractApi("jsoninsert",

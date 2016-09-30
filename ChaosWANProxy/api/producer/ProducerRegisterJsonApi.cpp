@@ -92,7 +92,7 @@ int ProducerRegisterJsonApi::execute(std::vector<std::string>& api_tokens,
 
     int64_t ts = (boost::posix_time::microsec_clock::universal_time() - time_epoch).total_milliseconds();
     dataset_pack.addInt64Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP,ts);
-    dataset_pack.addInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID,(int64_t)0);
+
   
     
 		//we have a dataset, perhaps empty...
@@ -116,6 +116,7 @@ int ProducerRegisterJsonApi::execute(std::vector<std::string>& api_tokens,
     
     mds_registration_pack.addCSDataValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION, dataset_pack);
     mds_registration_pack.addStringValue(NodeDefinitionKey::NODE_TYPE, NodeType::NODE_TYPE_CONTROL_UNIT);
+    dataset_pack.addInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID,(int64_t)0);
 	DEBUG_CODE(PRA_LDBG << mds_registration_pack.getJSONString());
 	
 	if((err = persistence_driver->registerDataset(producer_name,
