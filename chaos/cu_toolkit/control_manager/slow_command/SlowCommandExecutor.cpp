@@ -108,7 +108,7 @@ void SlowCommandExecutor::deinit() throw(chaos::CException) {
         command_logging_channel = NULL;
     }
     LDBG_ << "No implementation on deinit";
-
+    
     last_ru_id_cache = NULL;
     last_error_code = NULL;
     last_error_message = NULL;
@@ -154,18 +154,19 @@ void SlowCommandExecutor::handleCommandEvent(const std::string& command_alias,
                                              BatchCommandEventType::BatchCommandEventType type,
                                              void* type_value_ptr,
                                              uint32_t type_value_size) {
+    //command has been successfully completed
+    CDataWrapper *command_data = static_cast<CDataWrapper*>(type_value_ptr);
+    
     //let the base class handle the event
     BatchCommandExecutor::handleCommandEvent(command_seq,
                                              type,
                                              type_value_ptr,
                                              type_value_size);
-    
     switch(type) {
         case BatchCommandEventType::EVT_COMPLETED:{
             std::string cached_parameter_name;
             CDataWrapperKeyList all_input_parameter;
-            //command has been successfully completed
-            CDataWrapper *command_data = static_cast<CDataWrapper*>(type_value_ptr);
+
             
             //in this case we need to set the attribute into the dataset for the state reached
             //(for now we update the inptu dataset only)
@@ -196,30 +197,32 @@ void SlowCommandExecutor::handleCommandEvent(const std::string& command_alias,
             //in case we have changed something, the dataset will be pushed
             control_unit_instance->pushInputDataset();
         }
+            break;
             
             
         case BatchCommandEventType::EVT_FAULT: {
-            if(type_value_size == sizeof(FaultDescription)) {
-                FaultDescription *faul_desc = static_cast<FaultDescription*>(type_value_ptr);
-                //TODO doing it in better solution
-                if(faul_desc->code &&
-                   faul_desc->description.size() &&
-                   faul_desc->domain.size()) {
-                    //log error on metadata server
-                    error_logging_channel->logError(control_unit_instance->getCUID(),
-                                                    command_alias,
-                                                    faul_desc->code,
-                                                    faul_desc->description,
-                                                    faul_desc->domain);
-                    CException ex(faul_desc->code, faul_desc->description, faul_desc->domain);
-                    //async go into recoverable error
-                    boost::thread(boost::bind(&AbstractControlUnit::_goInRecoverableError, control_unit_instance, ex)).detach();
-                } else {
-                    SCELERR_ << "Command id " << command_seq << " gone in fault without exception";
-                }
+            CDataWrapper *command_and_fault = static_cast<CDataWrapper*>(type_value_ptr);
+            if(command_and_fault  &&
+               command_and_fault->hasKey(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_CODE) &&
+               command_and_fault->hasKey(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_MESSAGE) &&
+               command_and_fault->hasKey(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_DOMAIN)) {
+                const int32_t code = command_and_fault->getInt32Value(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_CODE);
+                const std::string message = command_and_fault->getStringValue(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_MESSAGE);
+                const std::string domain = command_and_fault->getStringValue(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_DOMAIN);
+                //log error on metadata server
+                error_logging_channel->logError(control_unit_instance->getCUID(),
+                                                command_alias,
+                                                code,
+                                                message,
+                                                domain);
+                CException ex(code, message, domain);
+                //async go into recoverable error
+                boost::thread(boost::bind(&AbstractControlUnit::_goInRecoverableError, control_unit_instance, ex)).detach();
+            } else {
+                SCELERR_ << "Command id " << command_seq << " gone in fault without exception";
             }
-            break;
         }
+            break;
         default:
             break;
     }
@@ -228,7 +231,8 @@ void SlowCommandExecutor::handleCommandEvent(const std::string& command_alias,
     command_logging_channel->logCommandState(control_unit_instance->getCUID(),
                                              command_alias,
                                              command_seq,
-                                             type);
+                                             type,
+                                             command_data);
 }
 
 //! general sandbox event handler
