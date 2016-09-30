@@ -256,7 +256,8 @@ void BatchCommandSandbox::deinit() throw (chaos::CException) {
         if(event_handler) {
             event_handler->handleCommandEvent(current_executing_command->element->cmdImpl->command_alias,
                                               current_executing_command->element->cmdImpl->unique_id,
-                                              BatchCommandEventType::EVT_KILLED, NULL);
+                                              BatchCommandEventType::EVT_KILLED,
+                                              static_cast<void*>(current_executing_command->element->cmdInfo));
         }
         DELETE_OBJ_POINTER(current_executing_command)
     }
@@ -269,9 +270,10 @@ void BatchCommandSandbox::deinit() throw (chaos::CException) {
         if(nextAvailableCommand == NULL) continue;
         if(nextAvailableCommand->element->cmdImpl->sticky == true) continue;
         if (event_handler) {
-            event_handler->handleCommandEvent(current_executing_command->element->cmdImpl->command_alias,
+            event_handler->handleCommandEvent(nextAvailableCommand->element->cmdImpl->command_alias,
                                               nextAvailableCommand->element->cmdImpl->unique_id,
-                                              BatchCommandEventType::EVT_KILLED, NULL);
+                                              BatchCommandEventType::EVT_KILLED,
+                                              static_cast<void*>(nextAvailableCommand->element->cmdInfo));
         }
         DELETE_OBJ_POINTER(nextAvailableCommand);
     }
@@ -281,9 +283,10 @@ void BatchCommandSandbox::deinit() throw (chaos::CException) {
     while (!command_submitted_queue.empty()) {
         nextAvailableCommand = command_submitted_queue.top();
         command_submitted_queue.pop();
-        if (event_handler && current_executing_command) event_handler->handleCommandEvent(current_executing_command->element->cmdImpl->command_alias,
+        if (event_handler && nextAvailableCommand) event_handler->handleCommandEvent(nextAvailableCommand->element->cmdImpl->command_alias,
                                                                                           nextAvailableCommand->element->cmdImpl->unique_id,
-                                                                                          BatchCommandEventType::EVT_KILLED, NULL);
+                                                                                          BatchCommandEventType::EVT_KILLED,
+                                                                                          static_cast<void*>(nextAvailableCommand->element->cmdInfo));
         DELETE_OBJ_POINTER(nextAvailableCommand)
     }
     
@@ -381,7 +384,8 @@ void BatchCommandSandbox::checkNextCommand() {
                         //signal that current handler will has been paused
                         if (event_handler) event_handler->handleCommandEvent(current_executing_command->element->cmdImpl->command_alias,
                                                                              current_executing_command->element->cmdImpl->unique_id,
-                                                                             BatchCommandEventType::EVT_PAUSED, NULL);
+                                                                             BatchCommandEventType::EVT_PAUSED,
+                                                                             static_cast<void*>(current_executing_command->element->cmdInfo));
                         //install next command
                         installHandler(next_available_command);
                         
@@ -401,7 +405,7 @@ void BatchCommandSandbox::checkNextCommand() {
                                 if (event_handler && command_to_delete) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
                                                                                                           command_to_delete->element->cmdImpl->unique_id,
                                                                                                           BatchCommandEventType::EVT_KILLED,
-                                                                                                          NULL);
+                                                                                                          static_cast<void*>(command_to_delete->element->cmdInfo));
                                 break;
                                 
                             case RSR_CURRENT_CMD_HAS_ENDED:
@@ -412,11 +416,17 @@ void BatchCommandSandbox::checkNextCommand() {
                                 break;
                                 
                             case RSR_CURRENT_CMD_HAS_FAULTED:
+                                int size = 0;
+                                CDataWrapper complete_command_and_fault(command_to_delete->element->cmdInfo->getBSONRawData(size));
+                                //add fault data
+                                complete_command_and_fault.addInt32Value(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_CODE, command_to_delete->element->cmdImpl->fault_description.code);
+                                complete_command_and_fault.addStringValue(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_MESSAGE, command_to_delete->element->cmdImpl->fault_description.description);
+                                complete_command_and_fault.addStringValue(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_DOMAIN, command_to_delete->element->cmdImpl->fault_description.domain);
+                                
                                 if (event_handler && command_to_delete) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
                                                                                                           command_to_delete->element->cmdImpl->unique_id,
                                                                                                           BatchCommandEventType::EVT_FAULT,
-                                                                                                          static_cast<FaultDescription*> (&command_to_delete->element->cmdImpl->fault_description),
-                                                                                                          sizeof (FaultDescription));
+                                                                                                          static_cast<void*> (&complete_command_and_fault));
                                 break;
                         }
 #pragma GCC diagnostic pop
@@ -680,7 +690,8 @@ bool BatchCommandSandbox::installHandler(PRIORITY_ELEMENT(CommandInfoAndImplemen
         if (event_handler) {
             event_handler->handleCommandEvent(tmp_impl->command_alias,
                                               tmp_impl->unique_id,
-                                              BatchCommandEventType::EVT_RUNNING, NULL);
+                                              BatchCommandEventType::EVT_RUNNING,
+                                              static_cast<void*>(cmd_to_install->element->cmdInfo));
             //signal the step of the run
             event_handler->handleSandboxEvent(identification,
                                               BatchSandboxEventType::EVT_UPDATE_RUN_DELAY,
@@ -741,8 +752,7 @@ bool BatchCommandSandbox::enqueueCommand(chaos_data::CDataWrapper *command_to_in
     if (event_handler) event_handler->handleCommandEvent(command_impl->command_alias,
                                                          command_impl->unique_id,
                                                          BatchCommandEventType::EVT_QUEUED,
-                                                         (void*) command_impl->command_alias.c_str(),
-                                                         (uint32_t) command_impl->command_alias.size());
+                                                         static_cast<void*>(command_to_info));
     whait_for_next_check.unlock();
     return true;
 }

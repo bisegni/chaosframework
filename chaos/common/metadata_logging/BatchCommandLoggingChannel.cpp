@@ -39,7 +39,8 @@ BatchCommandLoggingChannel::~BatchCommandLoggingChannel() {
 int BatchCommandLoggingChannel::logCommandState(const std::string& log_emitter,
                                                 const std::string& log_subject,
                                                 const uint64_t command_id,
-                                                BatchCommandEventType command_event) {
+                                                BatchCommandEventType command_event,
+                                                CDataWrapper *message_data) {
     CDataWrapper *log_entry = getNewLogEntry(log_emitter,
                                              log_subject,
                                              "command");
@@ -68,7 +69,7 @@ int BatchCommandLoggingChannel::logCommandState(const std::string& log_emitter,
             log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::CommandLogging::PARAM_NODE_LOGGING_LOG_COMMAND_STATE_DESCRIPTION, "Killed");
             break;
     }
-    
+    if(message_data){log_entry->appendAllElement(*message_data);}
     return sendLog(log_entry,
                    0);
 }

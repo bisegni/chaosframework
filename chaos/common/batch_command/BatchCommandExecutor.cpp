@@ -44,6 +44,7 @@ using namespace chaos::common::batch_command;
 
 BatchCommandExecutor::BatchCommandExecutor(const std::string& _executorID):
 executorID(_executorID),
+command_sequence_id(0),
 default_command_stickyness(true),
 default_command_sandbox_instance(COMMAND_BASE_SANDOXX_ID),
 command_state_queue_max_size(COMMAND_STATE_QUEUE_DEFAULT_SIZE) {
@@ -288,8 +289,11 @@ void BatchCommandExecutor::handleCommandEvent(uint64_t command_id,
             ReadLock lock(command_state_rwmutex);
             boost::shared_ptr<CommandState>  cmd_state = getCommandState(command_id);
             if(cmd_state.get()) {
+                
                 cmd_state->last_event = type;
-                cmd_state->fault_description = *static_cast<FaultDescription*>(type_value_ptr);
+                cmd_state->fault_description.code = static_cast<CDataWrapper*>(type_value_ptr)->getInt32Value(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_CODE);
+                cmd_state->fault_description.description = static_cast<CDataWrapper*>(type_value_ptr)->getStringValue(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_MESSAGE);
+                cmd_state->fault_description.domain = static_cast<CDataWrapper*>(type_value_ptr)->getStringValue(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_DOMAIN);
             }
             break;
         }
