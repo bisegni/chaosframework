@@ -35,6 +35,7 @@ MAKE_API_ERR(where, "producer_register_err", err, "producer_register_err_msg", m
 #define PRA_LAPP LAPP_ << "[ProducerRegisterJsonApi] - "
 #define PRA_LDBG LDBG_ << "[ProducerRegisterJsonApi] - "
 #define PRA_LERR LERR_ << "[ProducerRegisterJsonApi] - " << __PRETTY_FUNCTION__ << "(" << __LINE__ << ") - "
+static boost::posix_time::ptime const time_epoch(boost::gregorian::date(1970, 1, 1));
 
 //! default constructor
 ProducerRegisterJsonApi::ProducerRegisterJsonApi(persistence::AbstractPersistenceDriver *_persistence_driver):
@@ -88,10 +89,10 @@ int ProducerRegisterJsonApi::execute(std::vector<std::string>& api_tokens,
 	CDataWrapper mds_registration_pack;
 	CDataWrapper dataset_pack;
 	
-    boost::posix_time::ptime pt=boost::posix_time::microsec_clock::local_time();
-    dataset_pack.addInt64Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP,
-                                        (int64_t)pt.time_of_day().total_milliseconds());
-    
+
+    int64_t ts = (boost::posix_time::microsec_clock::universal_time() - time_epoch).total_milliseconds();
+    dataset_pack.addInt64Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP,ts);
+
   
     
 		//we have a dataset, perhaps empty...
@@ -115,6 +116,7 @@ int ProducerRegisterJsonApi::execute(std::vector<std::string>& api_tokens,
     
     mds_registration_pack.addCSDataValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION, dataset_pack);
     mds_registration_pack.addStringValue(NodeDefinitionKey::NODE_TYPE, NodeType::NODE_TYPE_CONTROL_UNIT);
+    dataset_pack.addInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID,(int64_t)0);
 	DEBUG_CODE(PRA_LDBG << mds_registration_pack.getJSONString());
 	
 	if((err = persistence_driver->registerDataset(producer_name,
@@ -172,7 +174,7 @@ int ProducerRegisterJsonApi::scanDatasetElement(const Json::Value& dataset_json_
                                        chaos::DataType::SUB_TYPE_INT32);
                 PRA_LDBG<<"Int32 array ["<<size<<"]";
 
-            } else if(value.isInt64()){
+            } else if(value.isObject()&&value.isMember("$numberLong")){
                 //default is double
                 element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE,
                                        chaos::DataType::SUB_TYPE_INT64);
@@ -199,8 +201,13 @@ int ProducerRegisterJsonApi::scanDatasetElement(const Json::Value& dataset_json_
         }
         
     } else {
-
-      if(dataset_json_element.isDouble()){ 
+      
+      if(dataset_json_element.isObject()&&dataset_json_element.isMember("$numberLong")){
+            //default is int64
+            element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE,
+                                   chaos::DataType::TYPE_INT64);
+	    PRA_LDBG<<"Int64 Type";
+        } else if(dataset_json_element.isDouble()){ 
             //default is double
             element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE,
                                    chaos::DataType::TYPE_DOUBLE);
@@ -212,10 +219,6 @@ int ProducerRegisterJsonApi::scanDatasetElement(const Json::Value& dataset_json_
                                    chaos::DataType::TYPE_BOOLEAN);
             PRA_LDBG<<"Boolean Type";
 
-        } else if(dataset_json_element.isInt64()){
-            //default is double
-            element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE,
-                                   chaos::DataType::TYPE_INT64);
         } else if(dataset_json_element.isInt()){
             //default is double
             element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE,

@@ -35,6 +35,7 @@ MAKE_API_ERR(where, "producer_insert_err", err, "producer_insert_err_msg", msg)
 #define PID_LDBG LDBG_ << "[ProducerInsertJsonApi] - "
 #define PID_LERR LERR_ << "[ProducerInsertJsonApi] - " << __PRETTY_FUNCTION__ << "(" << __LINE__ << ") - "
 static boost::posix_time::ptime const time_epoch(boost::gregorian::date(1970, 1, 1));
+static uint64_t pktid=1;
 //! default constructor
 ProducerInsertJsonApi::ProducerInsertJsonApi(persistence::AbstractPersistenceDriver *_persistence_driver):
 AbstractApi("jsoninsert",
@@ -109,6 +110,7 @@ int ProducerInsertJsonApi::execute(std::vector<std::string>& api_tokens,
     // add timestamp of the datapack
     output_dataset->addInt64Value(chaos::DataPackCommonKey::DPCK_TIMESTAMP, ts);
     
+    output_dataset->addInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID,pktid++ );
     //scan other memebrs to create the datapack
     Json::Value::Members members = input_data.getMemberNames();
     for(Json::Value::Members::iterator it = members.begin();
@@ -123,9 +125,13 @@ int ProducerInsertJsonApi::execute(std::vector<std::string>& api_tokens,
             if(size>0){
                 
                 const Json::Value&value=dataset_element[0];
-                
-                if(value.isBool()){
+                if(value.isObject()&&value.isMember("$numberLong")){
+		  type_size=sizeof(int64_t);
+		  sub_type = chaos::DataType::SUB_TYPE_INT64;
+
+		} else if(value.isBool()){
                     //default is double
+		  
                     type_size=sizeof(bool);
                     sub_type = chaos::DataType::SUB_TYPE_BOOLEAN;
                 } else if(value.isInt()){
@@ -204,7 +210,9 @@ int ProducerInsertJsonApi::execute(std::vector<std::string>& api_tokens,
                 
             }
         } else {
-	  if(dataset_element.isDouble()){
+	  if(dataset_element.isObject()&&dataset_element.isMember("$numberLong")){
+	    output_dataset->addInt64Value(*it, (int64_t)atoll(dataset_element["$numberLong"].asCString()));
+	  } else if(dataset_element.isDouble()){
 	    output_dataset->addDoubleValue(*it, dataset_element.asDouble());
 	  } else if(dataset_element.isBool()){
                 output_dataset->addBoolValue(*it, dataset_element.asBool());

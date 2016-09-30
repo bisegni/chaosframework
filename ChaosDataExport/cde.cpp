@@ -160,7 +160,7 @@ int main(int argc, char* argv[]) {
     char buf[255];
     uint32_t timeout;
     string device_id;
-    string dst_file;
+    string dst_file="export";
     unsigned int dest_type;
     string start_time;
     string end_time;
@@ -227,24 +227,18 @@ int main(int argc, char* argv[]) {
             std::cout << "Set end data to:"<< end_time << std::endl;
         }
         
-        //get the timestamp for query boundary
-        if(!ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_DST_FILE)){
-            std::cout << "Auto destination file generation" << std::endl;
-            getcwd(buf, 255);
-            dst_file.assign(buf, strlen(buf));
-            dst_file += "/"+device_id;
-            switch(dest_type) {
-                case 0:
-                    dst_file.append(".bin");
-                    break;
-                case 1:
-                    dst_file.append(".json");
-                    break;
-                case 2:
-                    dst_file.append(".cvs");
-                    break;
-            }
-        }
+	switch(dest_type) {
+	case 0:
+	  dst_file.append(".bin");
+	  break;
+	case 1:
+	  dst_file.append(".json");
+	  break;
+	case 2:
+	  dst_file.append(".cvs");
+	  break;
+	}
+
         std::basic_ios<char>::openmode dst_file_mode = ios_base::out;
         if(dest_type) {
             dst_file_mode |= ios_base::binary;
