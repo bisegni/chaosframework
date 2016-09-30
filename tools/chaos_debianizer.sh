@@ -157,7 +157,7 @@ copy $SOURCE_DIR/etc $PACKAGE_DEST
 copy $SOURCE_DIR/tools $PACKAGE_DEST
 copy $SOURCE_DIR/chaos_env.sh $PACKAGE_DEST
 copy $SOURCE_DIR/tools/package_template/etc $PACKAGE_DIR/etc
-rm $PACKAGE_DEST/etc/*.cfg
+rm -f $PACKAGE_DEST/etc/*.cfg >& /dev/null
 
 
 
