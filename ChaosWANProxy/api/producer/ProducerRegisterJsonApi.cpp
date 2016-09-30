@@ -36,6 +36,7 @@ MAKE_API_ERR(where, "producer_register_err", err, "producer_register_err_msg", m
 #define PRA_LDBG LDBG_ << "[ProducerRegisterJsonApi] - "
 #define PRA_LERR LERR_ << "[ProducerRegisterJsonApi] - " << __PRETTY_FUNCTION__ << "(" << __LINE__ << ") - "
 static boost::posix_time::ptime const time_epoch(boost::gregorian::date(1970, 1, 1));
+
 //! default constructor
 ProducerRegisterJsonApi::ProducerRegisterJsonApi(persistence::AbstractPersistenceDriver *_persistence_driver):
 AbstractApi("jsonregister",
@@ -90,9 +91,8 @@ int ProducerRegisterJsonApi::execute(std::vector<std::string>& api_tokens,
 	
 
     int64_t ts = (boost::posix_time::microsec_clock::universal_time() - time_epoch).total_milliseconds();
-    dataset_pack.addInt64Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP,
-                                        ts);
-    
+    dataset_pack.addInt64Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP,ts);
+    dataset_pack.addInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID,(int64_t)0);
   
     
 		//we have a dataset, perhaps empty...

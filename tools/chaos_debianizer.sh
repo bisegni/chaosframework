@@ -232,11 +232,14 @@ if [ "$TEMPLATE"=="server" ] || [ "$TEMPLATE" == "dev" ];then
     echo "db_input high \$PACKAGE_NAME/ask_us || true" >> DEBIAN/config
 fi
 if [ "$TEMPLATE"=="localhost" ] || [ "$TEMPLATE" == "docker" ];then
-    echo "db_set  \$PACKAGE_NAME/ask_mds" >> DEBIAN/config
-    echo "db_set  \$PACKAGE_NAME/ask_cds" >> DEBIAN/config
-    echo "db_set  \$PACKAGE_NAME/ask_webui" >> DEBIAN/config
+    echo "db_set  \$PACKAGE_NAME/ask_mds true" >> DEBIAN/config
+    echo "db_set  \$PACKAGE_NAME/ask_cds true" >> DEBIAN/config
+    echo "db_set  \$PACKAGE_NAME/ask_webui true" >> DEBIAN/config
+    echo "db_set  \$PACKAGE_NAME/ask_wan true" >> DEBIAN/config
     if [ "$TEMPLATE"=="localhost" ];then
-	echo "db_set  \$PACKAGE_NAME/ask_us" >> DEBIAN/config
+	echo "db_set  \$PACKAGE_NAME/ask_us true" >> DEBIAN/config
+    else
+	echo "db_set  \$PACKAGE_NAME/ask_us false" >> DEBIAN/config
     fi
     echo "db_set \$PACKAGE_NAME/ask_mongo \"localhost\"" >> DEBIAN/config 
     echo "db_set \$PACKAGE_NAME/ask_dbuser \"chaos\" " >> DEBIAN/config
@@ -294,7 +297,7 @@ chmod 0555 DEBIAN/postinst
 popd >& /dev/null
 info_mesg "packaging $NAME for architecture " "$ARCH .."
 
-dpkg-deb -b $PACKAGE_DIR 
+dpkg-deb -b $PACKAGE_DIR >& /dev/null
 mv $PACKAGE_DIR.deb .
 info_mesg "created in $PWD" " $NAME.deb"
 if [ -n "$COPY_REMOTE" ];then

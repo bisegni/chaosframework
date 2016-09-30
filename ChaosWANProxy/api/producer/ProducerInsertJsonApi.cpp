@@ -35,6 +35,7 @@ MAKE_API_ERR(where, "producer_insert_err", err, "producer_insert_err_msg", msg)
 #define PID_LDBG LDBG_ << "[ProducerInsertJsonApi] - "
 #define PID_LERR LERR_ << "[ProducerInsertJsonApi] - " << __PRETTY_FUNCTION__ << "(" << __LINE__ << ") - "
 static boost::posix_time::ptime const time_epoch(boost::gregorian::date(1970, 1, 1));
+static uint64_t pktid=0;
 //! default constructor
 ProducerInsertJsonApi::ProducerInsertJsonApi(persistence::AbstractPersistenceDriver *_persistence_driver):
 AbstractApi("jsoninsert",
@@ -109,6 +110,7 @@ int ProducerInsertJsonApi::execute(std::vector<std::string>& api_tokens,
     // add timestamp of the datapack
     output_dataset->addInt64Value(chaos::DataPackCommonKey::DPCK_TIMESTAMP, ts);
     
+    output_dataset->addInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID,pktid++ );
     //scan other memebrs to create the datapack
     Json::Value::Members members = input_data.getMemberNames();
     for(Json::Value::Members::iterator it = members.begin();
