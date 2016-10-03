@@ -426,6 +426,7 @@ IF (NOT CACHE_DIR)
 
   option(CHAOS_FORCE32 "Set to ON to enable 32 bit compilation" OFF)
   option(CHAOS_STATIC "Set static compilation" OFF)
+  option(ENABLE_MEMCACHE "Enable Memcacahe" OFF)
   option(CHAOS_DEBUG "Enable Debug" ON)
   option(CHAOS_DISABLE_EVENTFD "Disable EventFD" OFF)
   option(CHAOS_BUILD_CACHE "Keep third part sources" ON)
@@ -561,6 +562,22 @@ IF (NOT CACHE_DIR)
   SET(CHAOS_BOOST_FLAGS ${CHAOS_BOOST_FLAGS} linkflags=\""${CHAOS_LINKER_FLAGS}"\" cxxflags=\""${CHAOS_CXX_FLAGS}"\" --prefix=${CMAKE_INSTALL_PREFIX} --with-program_options --with-chrono --with-filesystem --with-log --with-regex --with-random --with-system --with-thread --with-atomic --with-timer link=static install "-j ${PROCESSOR_COUNT}" )
 
 
+
+  IF(CHAOS_STATIC)
+    MESG("Enabling Static compilation")
+    SET(BUILD_FORCE_STATIC 1)
+    SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+    ADD_DEFINITIONS(-DCHAOS_STATIC)
+    SET(CHAOS_LINKER_FLAGS "-static")
+    SET(CMAKE_EXE_LINKER_FLAGS "-static")
+    SET(BUILD_SHARED_LIBRARIES OFF)
+    SET(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS)
+    SET(CMAKE_SHARED_LIBRARY_LINK_CC_FLAGS)
+    set(CMAKE_EXE_LINK_DYNAMIC_C_FLAGS)       # remove -Wl,-Bdynamic
+    set(CMAKE_EXE_LINK_DYNAMIC_CXX_FLAGS)
+    SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES LINK_SEARCH_END_STATIC 1)
+  ENDIF()
+
   set (CMAKE_C_FLAGS ${CHAOS_C_FLAGS} CACHE STRING "C flags")
   set (CMAKE_CXX_FLAGS ${CHAOS_CXX_FLAGS} CACHE STRING "C++ flags")
   set (CMAKE_EXE_LINKER_FLAGS ${CHAOS_LINKER_FLAGS} CACHE STRING "Linker flags")
@@ -629,15 +646,6 @@ IF (NOT CACHE_DIR)
   #separate_arguments(FrameworkLib)
 
 
-  IF(CHAOS_STATIC)
-    MESG("Enabling Static compilation")
-    SET(BUILD_FORCE_STATIC 1)
-    ADD_DEFINITIONS(-DCHAOS_STATIC)
-    SET(CHAOS_LINKER_FLAGS "${CHAOS_LINKER_FLAGS} -static")
-    SET(BUILD_SHARED_LIBRARIES OFF)
-    SET(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS)
-    SET(CMAKE_SHARED_LIBRARY_LINK_CC_FLAGS)
-  ENDIF()
 
 
 
