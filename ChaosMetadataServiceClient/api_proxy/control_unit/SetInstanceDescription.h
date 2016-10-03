@@ -85,6 +85,11 @@ namespace chaos {
                      */
                     uint64_t history_time;
                     
+                    /*!
+                     the time that need to pass before store another datapack into the live system
+                     */
+                    uint64_t live_time;
+                    
                     //! the string is passed to the control unit for the load phase
                     std::string load_parameter;
                     

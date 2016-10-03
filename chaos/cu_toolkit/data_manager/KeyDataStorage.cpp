@@ -40,6 +40,8 @@ io_data_driver(_io_data_driver),
 storage_type(DataServiceNodeDefinitionType::DSStorageTypeLive),
 storage_history_time(0),
 storage_history_time_last_push(0),
+storage_live_time(0),
+storage_live_time_last_push(0),
 sequence_id(std::numeric_limits<int64_t>::min()){
     output_key	= _key + DataPackPrefixID::OUTPUT_DATASE_PREFIX;
     input_key	= _key + DataPackPrefixID::INPUT_DATASE_PREFIX;
@@ -107,14 +109,20 @@ ArrayPointer<CDataWrapper>* KeyDataStorage::getLastDataSet(KeyDataStorageDomain 
 void KeyDataStorage::pushDataWithControlOnHistoryTime(const std::string& key,
                                                       CDataWrapper *dataToStore,
                                                       DataServiceNodeDefinitionType::DSStorageType storage_type) {
+    uint64_t now = TimingUtil::getTimeStampInMicrosends();
     switch(storage_type) {
-        case DataServiceNodeDefinitionType::DSStorageTypeLive:
-            io_data_driver->storeData(key,
-                                      dataToStore,
-                                      DataServiceNodeDefinitionType::DSStorageTypeLive);
+        case DataServiceNodeDefinitionType::DSStorageTypeLive: {
+            if((now - storage_live_time_last_push) >= storage_live_time) {
+                io_data_driver->storeData(key,
+                                          dataToStore,
+                                          DataServiceNodeDefinitionType::DSStorageTypeLive);
+                storage_live_time_last_push = now;
+            }
+            
             break;
+        }
         case DataServiceNodeDefinitionType::DSStorageTypeHistory: {
-            uint64_t now = TimingUtil::getTimeStampInMicrosends();
+            
             if((now - storage_history_time_last_push) >= storage_history_time) {
                 io_data_driver->storeData(key,
                                           dataToStore,
@@ -124,16 +132,23 @@ void KeyDataStorage::pushDataWithControlOnHistoryTime(const std::string& key,
             break;
         }
         case DataServiceNodeDefinitionType::DSStorageTypeLiveHistory: {
-            uint64_t now = TimingUtil::getTimeStampInMicrosends();
-            if((now - storage_history_time_last_push) >= storage_history_time) {
+            
+            DataServiceNodeDefinitionType::DSStorageType effective_storage_type = DataServiceNodeDefinitionType::DSStorageTypeLiveHistory;
+            bool push_history = (now - storage_history_time_last_push) >= storage_history_time;
+            bool push_live = (now - storage_live_time_last_push) >= storage_live_time;
+            if(push_live || push_history) {
+                if(push_history && push_live) {
+                    storage_history_time_last_push = storage_live_time_last_push = now;
+                } else if(push_history) {
+                    effective_storage_type = DataServiceNodeDefinitionType::DSStorageTypeHistory;
+                    storage_history_time_last_push = now;
+                } else if(push_live) {
+                    effective_storage_type = DataServiceNodeDefinitionType::DSStorageTypeLive;
+                    storage_live_time_last_push = now;
+                }
                 io_data_driver->storeData(key,
                                           dataToStore,
-                                          DataServiceNodeDefinitionType::DSStorageTypeLiveHistory);
-                storage_history_time_last_push = now;
-            } else {
-                io_data_driver->storeData(key,
-                                          dataToStore,
-                                          DataServiceNodeDefinitionType::DSStorageTypeLive);
+                                          effective_storage_type);
             }
             break;
         }
@@ -141,7 +156,6 @@ void KeyDataStorage::pushDataWithControlOnHistoryTime(const std::string& key,
             break;
     }
 }
-
 
 void KeyDataStorage::pushDataSet(KeyDataStorageDomain domain,
                                  chaos_data::CDataWrapper *dataset) {
@@ -295,6 +309,11 @@ CDataWrapper* KeyDataStorage::updateConfiguration(CDataWrapper *newConfiguration
     if(cu_property_container->isInt64Value(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME)){
         storage_history_time = cu_property_container->getUInt64Value(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME);
         KeyDataStorageLAPP << CHAOS_FORMAT("Set storage history time to %1%", %storage_history_time);
+    }
+    
+    if(cu_property_container->isInt64Value(DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME)){
+        storage_live_time = cu_property_container->getUInt64Value(DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME);
+        KeyDataStorageLAPP << CHAOS_FORMAT("Set storage live time to %1%", %storage_live_time);
     }
     
     if(cu_property_container->hasKey(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE) &&

@@ -584,35 +584,31 @@
           <string>Run Porperty</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
-          <item row="1" column="0" alignment="Qt::AlignRight">
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>Storage Type:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0" alignment="Qt::AlignRight">
-           <widget class="QLabel" name="label_5">
+          <item row="0" column="0" alignment="Qt::AlignRight">
+           <widget class="QLabel" name="label_2">
             <property name="toolTip">
-             <string>Time after which th data is erased form history</string>
+             <string>In microseconds</string>
             </property>
             <property name="text">
-             <string>History Ageing:</string>
+             <string>Step Schedule Time</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="2">
-           <widget class="QLineEdit" name="lineEditDefaultScheduleTime">
-            <property name="text">
-             <string>1000000</string>
+          <item row="4" column="0" alignment="Qt::AlignRight">
+           <widget class="QLabel" name="label_6">
+            <property name="toolTip">
+             <string>Is the time in milliseconds betwheen a storicized packet and the next storicized one. Considered only if storage type is &quot;History&quot; or &quot;Live And History&quot; selected</string>
             </property>
-            <property name="placeholderText">
-             <string>1000000</string>
+            <property name="statusTip">
+             <string>Is the time in milliseconds betwheen a storicized packet  and next</string>
+            </property>
+            <property name="text">
+             <string>History time:</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="2">
-           <widget class="QLineEdit" name="lineEditHistoryAgeing">
+          <item row="4" column="2">
+           <widget class="QLineEdit" name="lineEditHistoryTime">
             <property name="text">
              <string>0</string>
             </property>
@@ -651,30 +647,57 @@
             </item>
            </widget>
           </item>
-          <item row="0" column="0" alignment="Qt::AlignRight">
-           <widget class="QLabel" name="label_2">
-            <property name="toolTip">
-             <string>In microseconds</string>
-            </property>
+          <item row="1" column="0" alignment="Qt::AlignRight">
+           <widget class="QLabel" name="label">
             <property name="text">
-             <string>Step Schedule Time</string>
+             <string>Storage Type:</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="2">
-           <widget class="QLineEdit" name="lineEditHistoryTime">
+          <item row="2" column="0" alignment="Qt::AlignRight">
+           <widget class="QLabel" name="label_5">
+            <property name="toolTip">
+             <string>Time after which th data is erased form history</string>
+            </property>
+            <property name="text">
+             <string>History Ageing:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLineEdit" name="lineEditDefaultScheduleTime">
+            <property name="text">
+             <string>1000000</string>
+            </property>
+            <property name="placeholderText">
+             <string>1000000</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2">
+           <widget class="QLineEdit" name="lineEditHistoryAgeing">
             <property name="text">
              <string>0</string>
             </property>
            </widget>
           </item>
           <item row="3" column="0" alignment="Qt::AlignRight">
-           <widget class="QLabel" name="label_6">
+           <widget class="QLabel" name="label_8">
             <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Is the time betwheen a storicized packet and the next storicized one. COnsidered only if storage type has &amp;quot;History&amp;quot; or &amp;quot;Live And History&amp;quot; selected&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>Is the time in milliseconds betwheen a live packet and the next live one. Considered only if storage type is &quot;Live&quot; or &quot;Live And History&quot; selected</string>
+            </property>
+            <property name="statusTip">
+             <string>Is the time in milliseconds betwheen a live packet and the next live one</string>
             </property>
             <property name="text">
-             <string>History time:</string>
+             <string>Live time:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="2">
+           <widget class="QLineEdit" name="lineEditLiveTime">
+            <property name="text">
+             <string>0</string>
             </property>
            </widget>
           </item>

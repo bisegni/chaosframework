@@ -280,6 +280,12 @@ std::auto_ptr<CDataWrapper> CUCommonUtility::initDataPack(const std::string& cu_
        instance_description->isInt64Value(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME)) {
         instance_description->copyKeyTo(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME, *init_datapack);
     }
+    
+    if(instance_description->hasKey(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME) &&
+       instance_description->isInt64Value(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME)) {
+        instance_description->copyKeyTo(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME, *init_datapack);
+    }
+    
     //set the action type
     init_datapack->addInt32Value("action", (int32_t)0);
     return init_datapack;

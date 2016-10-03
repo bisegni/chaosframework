@@ -480,6 +480,10 @@ int MongoDBControlUnitDataAccess::setInstanceDescription(const std::string& cu_u
             updated_field << DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME << (long long)instance_description.getInt64Value(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME);
         }
         
+        if(instance_description.hasKey(DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME)) {
+            updated_field << DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME << (long long)instance_description.getInt64Value(DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME);
+        }
+        
         if(instance_description.hasKey("control_unit_implementation")) {
             updated_field << "control_unit_implementation" << instance_description.getStringValue("control_unit_implementation");
         }
@@ -678,6 +682,7 @@ int MongoDBControlUnitDataAccess::getInstanceDescription(const std::string& unit
             if(instance_description.hasField(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE))(*result)->addInt32Value(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE, (int32_t)instance_description.getField(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE).numberInt());
             if(instance_description.hasField(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING))(*result)->addInt32Value(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING, (int32_t)instance_description.getField(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING).numberInt());
             if(instance_description.hasField(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME))(*result)->addInt64Value(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME, (int64_t)instance_description.getField(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME).numberInt());
+            if(instance_description.hasField(DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME))(*result)->addInt64Value(DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME, (int64_t)instance_description.getField(DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME).numberInt());
             if(instance_description.hasField("control_unit_implementation"))(*result)->addStringValue("control_unit_implementation", instance_description.getStringField("control_unit_implementation"));
             
             
