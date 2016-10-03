@@ -530,6 +530,11 @@ namespace chaos {
          store another datapack into the history system[uint64]
          */
         static const char * const DS_STORAGE_HISTORY_TIME                           = "dsndk_storage_history_time";
+        /*!
+         storage time [in msecods uint64] the time that need to pass before
+         store another datapack into the live system[uint64]
+         */
+        static const char * const DS_STORAGE_LIVE_TIME                              = "dsndk_storage_live_time";
     }
     /** @} */ // end of DataServiceNodeDefinitionKey
     

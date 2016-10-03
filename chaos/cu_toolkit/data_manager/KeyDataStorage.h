@@ -65,6 +65,8 @@ namespace chaos{
                 //history time
                 uint64_t storage_history_time;
                 uint64_t storage_history_time_last_push;
+                uint64_t storage_live_time;
+                uint64_t storage_live_time_last_push;
 				//mutex to protect access to data io driver
 				boost::mutex mutex_push_data;
                 

@@ -110,6 +110,10 @@ void ControUnitInstanceEditor::initUI() {
         submitApiResult(QString("get_us_description"),
                         GET_CHAOS_API_PTR(unit_server::GetDescription)->execute(ui->labelUnitServer->text().toStdString()));
     }
+    //set limit for ageing field
+    ui->lineEditHistoryAgeing->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
+    ui->lineEditHistoryTime->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
+    ui->lineEditLiveTime->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
 }
 
 control_unit::SetInstanceDescriptionHelper& ControUnitInstanceEditor::prepareSetInstanceApi() {
@@ -134,6 +138,7 @@ control_unit::SetInstanceDescriptionHelper& ControUnitInstanceEditor::prepareSet
     set_instance_api_hepler.storage_type = static_cast<chaos::DataServiceNodeDefinitionType::DSStorageType>(ui->comboBoxStorageType->currentIndex());
     set_instance_api_hepler.history_ageing = ui->lineEditHistoryAgeing->text().toUInt();
     set_instance_api_hepler.history_time = ui->lineEditHistoryTime->text().toULongLong();
+    set_instance_api_hepler.live_time = ui->lineEditLiveTime->text().toULongLong();
     //add all driver description
     set_instance_api_hepler.clearAllDriverDescriptions();
     for(int idx = 0;
@@ -194,6 +199,9 @@ void ControUnitInstanceEditor::fillUIFromInstanceInfo(QSharedPointer<chaos::comm
     }
     if(api_result->hasKey(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME)){
         ui->lineEditHistoryTime->setText(QString::number(api_result->getUInt64Value(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME)));
+    }
+    if(api_result->hasKey(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME)){
+        ui->lineEditLiveTime->setText(QString::number(api_result->getUInt64Value(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME)));
     }
     //add driverdesc
     if(api_result->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION)) {
