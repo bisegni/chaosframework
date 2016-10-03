@@ -78,7 +78,7 @@ case $TEMPLATE in
     *)
 	TEMPLATE="localhost"
 	desc="localhost configuration"
-	DEPENDS="$DEPENDS,mongodb-org,apache2(>=2.4)"
+	DEPENDS="$DEPENDS,apache2(>=2.4),mongodb-org,couchbase-server"
 	;;
 esac
 
@@ -179,12 +179,21 @@ if [ "$TEMPLATE" == "docker" ];then
     popd >& /dev/null
 fi
 
-if [ "$TEMPLATE" == "localhost" ] || [ "$TEMPLATE" == "dev" ];then
+if [ "$TEMPLATE" == "dev" ];then
     pushd $PACKAGE_DEST/etc >& /dev/null
     ln -sf ../tools/config/lnf/development/cds.cfg cds.cfg
     ln -sf ../tools/config/lnf/development/mds.cfg mds.cfg
     ln -sf ../tools/config/lnf/development/webui.cfg webui.cfg
     ln -sf ../tools/config/lnf/development/wan.cfg wan.cfg
+    popd >& /dev/null
+fi
+
+if [ "$TEMPLATE" == "localhost" ];then
+    pushd $PACKAGE_DEST/etc >& /dev/null
+    ln -sf ../tools/config/lnf/localhost/cds.cfg cds.cfg
+    ln -sf ../tools/config/lnf/localhost/mds.cfg mds.cfg
+    ln -sf ../tools/config/lnf/localhost/webui.cfg webui.cfg
+    ln -sf ../tools/config/lnf/localhost/wan.cfg wan.cfg
     popd >& /dev/null
 fi
 
@@ -234,7 +243,8 @@ fi
 if [ "$TEMPLATE"=="localhost" ] || [ "$TEMPLATE" == "docker" ];then
     echo "db_set  \$PACKAGE_NAME/ask_mds true" >> DEBIAN/config
     echo "db_set  \$PACKAGE_NAME/ask_cds true" >> DEBIAN/config
-    echo "db_set  \$PACKAGE_NAME/ask_webui true" >> DEBIAN/config
+
+       echo "db_set  \$PACKAGE_NAME/ask_webui true" >> DEBIAN/config
     echo "db_set  \$PACKAGE_NAME/ask_wan true" >> DEBIAN/config
     if [ "$TEMPLATE"=="localhost" ];then
 	echo "db_set  \$PACKAGE_NAME/ask_us true" >> DEBIAN/config
