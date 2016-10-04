@@ -35,12 +35,15 @@ void ApiSubmitter::asyncApiError(const QString& tag,
     CHAOS_ASSERT(api_handler)
     api_handler->onApiError(tag,
                api_exception);
-    //emit signal that we are finisched the wait on api result
+    api_handler->apiHasEndedWithError(tag,
+                                      api_exception);
     api_handler->apiHasEnded(tag);
 }
 
 void ApiSubmitter::asyncApiTimeout(const QString& tag) {
     CHAOS_ASSERT(api_handler)
     api_handler->onApiTimeout(tag);
+    api_handler->apiHasEndedWithError(tag,
+                                      QSharedPointer<chaos::CException>(new chaos::CException(-1, "ApiTimeout", "ApiSubmitter::asyncApiTimeout")));
     api_handler->apiHasEnded(tag);
 }

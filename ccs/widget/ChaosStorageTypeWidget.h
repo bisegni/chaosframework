@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "ChaosMonitorWidgetCompanion.h"
+#include "CStateVisiblePushButton.h"
 
 namespace Ui {
 class ChaosStorageTypeWidget;
@@ -33,21 +34,24 @@ protected:
                        int dataset_type);
 private slots:
     void updateUIStatus();
-
-    void on_pushButtonLive_clicked();
-    void on_pushButtonHistory_clicked();
-    void on_pushButtonLiveAndHistory_clicked();
-    void on_pushButtonUndefined_clicked();
+    void updateButtonCheckedStatus(QObject *target, bool checked);
+    void resetButtonInError(QObject *target);
+    void updateButtonSetErrorStatus(QObject *target, const QString& error_message);
+    void on_pushButton_clicked(bool clicked);
 
 private:
     bool data_found;
+    QString last_pushbutton_successfull;
     chaos::DataServiceNodeDefinitionType::DSStorageType storage_type;
     chaos::metadata_service_client::node_monitor::OnlineState online_status;
     Ui::ChaosStorageTypeWidget *ui;
 
-    void sendStorageType(chaos::DataServiceNodeDefinitionType::DSStorageType type);
+    void sendStorageType(chaos::DataServiceNodeDefinitionType::DSStorageType type, const QString &event_tag);
     void apiHasStarted(const QString& api_tag);
     void apiHasEnded(const QString& api_tag);
+    void apiHasEndedWithError(const QString& api_tag,
+                              QSharedPointer<chaos::CException> api_exception);
+
 };
 
 #endif // CHAOSSTORAGETYPEWIDGET_H

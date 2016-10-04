@@ -8,9 +8,63 @@
 #include <QStyleOptionButton>
 #define BORDER_OFFSET 4
 
+CStateVisiblePushButton::StateInfo::StateInfo():
+    state_description("Default Tooltip"),
+    state_color(Qt::lightGray){}
+
+CStateVisiblePushButton::StateInfo::StateInfo(const QString& _state_description,
+                                              const QColor& _state_color):
+    state_description(_state_description),
+    state_color(_state_color){}
+
+CStateVisiblePushButton::StateInfo::StateInfo(const CStateVisiblePushButton::StateInfo& _state_info):
+    state_description(_state_info.state_description),
+    state_color(_state_info.state_color){}
+
+
 CStateVisiblePushButton::CStateVisiblePushButton(QWidget *parent):
-state_on(false){
+    current_state(0){
     setStyleSheet("text-align:bottom center;");
+}
+
+unsigned int CStateVisiblePushButton::addState(const CStateVisiblePushButton::StateInfo& new_state) {
+    map_lock.lockForWrite();
+    unsigned int new_id = map_state_info.size();
+    map_state_info.insert(new_id, new_state);
+    map_lock.unlock();
+    return new_id;
+}
+
+void CStateVisiblePushButton::updateStateDescription(unsigned int state,
+                                                     const QString& state_descitpion) {
+    if(map_state_info.contains(state) == false) return;
+    map_lock.lockForRead();
+    map_state_info[state].state_description = state_descitpion;
+    map_lock.unlock();
+    repaint();
+}
+
+void CStateVisiblePushButton::updateStateColor(unsigned int state,
+                                               const QColor& state_color) {
+    if(map_state_info.contains(state) == false) return;
+    map_lock.lockForRead();
+    map_state_info[state].state_color = state_color;
+    map_lock.unlock();
+    repaint();
+}
+
+void CStateVisiblePushButton::setButtonState(unsigned int new_state) {
+
+    if(map_state_info.contains(new_state) == false) return;
+    current_state = new_state;
+    map_lock.lockForRead();
+    setToolTip(map_state_info[current_state].state_description);
+    map_lock.unlock();
+    repaint();
+}
+
+unsigned int CStateVisiblePushButton::currentState() {
+ return current_state;
 }
 
 void CStateVisiblePushButton::paintEvent(QPaintEvent *p_event) {
@@ -34,9 +88,12 @@ void CStateVisiblePushButton::paintEvent(QPaintEvent *p_event) {
 
     QPen border_pen(Qt::gray, 1);
     painter.setPen(border_pen);
-    painter.fillPath(path, state_on?Qt::red:Qt::lightGray);
+    //lock map
+    map_lock.lockForRead();
+    painter.fillPath(path, map_state_info[current_state].state_color);
+    map_lock.unlock();
     painter.drawPath(path);
-    painter.setPen(QPen(isEnabled()?QApplication::palette().buttonText().color():Qt::lightGray));
+    painter.setPen(QPen(isEnabled()?QApplication::palette().Inactive:QApplication::palette().Active));
     QFont font = painter.font();
     font.setPointSize(9);
     font.setWeight(QFont::Bold);
@@ -46,9 +103,4 @@ void CStateVisiblePushButton::paintEvent(QPaintEvent *p_event) {
     const QString printable_string = fm.elidedText(text(), Qt::ElideRight,  render_width);
     qreal text_start_x = (((qreal)width()/(qreal)2) - ((qreal)fm.width(printable_string)/(qreal)2));
     painter.drawText(QPointF(text_start_x, height()-3), printable_string);
-}
-
-void CStateVisiblePushButton::setButtonState(bool new_state) {
-    state_on = new_state;
-    repaint();
 }
