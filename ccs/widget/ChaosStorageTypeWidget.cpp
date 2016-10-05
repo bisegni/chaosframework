@@ -10,14 +10,15 @@ ChaosStorageTypeWidget::ChaosStorageTypeWidget(QWidget *parent) :
     ChaosMonitorWidgetCompanion(chaos::metadata_service_client::node_monitor::ControllerTypeNodeControlUnit, this),
     ui(new Ui::ChaosStorageTypeWidget),
     data_found(false),
-    last_pushbutton_successfull(){
+    last_pushbutton_in_error(),
+    last_error_message(){
     ui->setupUi(this);
 
     //configure state on push button
     ui->pushButtonUndefined->addState(CStateVisiblePushButton::StateInfo("Disabled", Qt::lightGray));
     ui->pushButtonUndefined->addState(CStateVisiblePushButton::StateInfo("Enable", Qt::green));
     ui->pushButtonUndefined->addState(CStateVisiblePushButton::StateInfo("In Error", Qt::red));
-    //ui->pushButtonUndefined->setCheckable(true);
+    ui->pushButtonUndefined->setCheckable(true);
     ui->pushButtonUndefined->setObjectName("DSStorageTypeUndefined");
     ui->pushButtonUndefined->setProperty("storage_code", DSStorageTypeUndefined);
     connect(ui->pushButtonUndefined,
@@ -26,7 +27,7 @@ ChaosStorageTypeWidget::ChaosStorageTypeWidget(QWidget *parent) :
     ui->pushButtonHistory->addState(CStateVisiblePushButton::StateInfo("Disabled", Qt::lightGray));
     ui->pushButtonHistory->addState(CStateVisiblePushButton::StateInfo("Enable", Qt::green));
     ui->pushButtonHistory->addState(CStateVisiblePushButton::StateInfo("In Error", Qt::red));
-    //ui->pushButtonHistory->setCheckable(true);
+    ui->pushButtonHistory->setCheckable(true);
     ui->pushButtonHistory->setObjectName("DSStorageTypeHistory");
     ui->pushButtonHistory->setProperty("storage_code", DSStorageTypeHistory);
     connect(ui->pushButtonHistory,
@@ -36,7 +37,7 @@ ChaosStorageTypeWidget::ChaosStorageTypeWidget(QWidget *parent) :
     ui->pushButtonLive->addState(CStateVisiblePushButton::StateInfo("Disabled", Qt::lightGray));
     ui->pushButtonLive->addState(CStateVisiblePushButton::StateInfo("Enable", Qt::green));
     ui->pushButtonLive->addState(CStateVisiblePushButton::StateInfo("In Error", Qt::red));
-    //ui->pushButtonLive->setCheckable(true);
+    ui->pushButtonLive->setCheckable(true);
     ui->pushButtonLive->setObjectName("DSStorageTypeLive");
     ui->pushButtonLive->setProperty("storage_code", DSStorageTypeLive);
     connect(ui->pushButtonLive,
@@ -46,7 +47,7 @@ ChaosStorageTypeWidget::ChaosStorageTypeWidget(QWidget *parent) :
     ui->pushButtonLiveAndHistory->addState(CStateVisiblePushButton::StateInfo("Disabled", Qt::lightGray));
     ui->pushButtonLiveAndHistory->addState(CStateVisiblePushButton::StateInfo("Enable", Qt::green));
     ui->pushButtonLiveAndHistory->addState(CStateVisiblePushButton::StateInfo("In Error", Qt::red));
-    //ui->pushButtonLiveAndHistory->setCheckable(true);
+    ui->pushButtonLiveAndHistory->setCheckable(true);
     ui->pushButtonLiveAndHistory->setObjectName("DSStorageTypeLiveHistory");
     ui->pushButtonLiveAndHistory->setProperty("storage_code", DSStorageTypeLiveHistory);
     connect(ui->pushButtonLiveAndHistory,
@@ -109,46 +110,52 @@ void ChaosStorageTypeWidget::noDSDataFound(const std::string& control_unit_uid,
                               Qt::QueuedConnection);
 }
 
+#define IS_IN_ERROR(p, e)\
+   ( p->objectName().compare(e) == 0)
+
 void ChaosStorageTypeWidget::updateUIStatus() {
     //set enable according to online status
     setEnabled(online_status == OnlineStateON);
 
     //take on off ccording to storage type
-    ui->pushButtonLive->setButtonState(storage_type == DSStorageTypeLive);
-    ui->pushButtonHistory->setButtonState(storage_type == DSStorageTypeHistory);
-    ui->pushButtonLiveAndHistory->setButtonState(storage_type == DSStorageTypeLiveHistory);
-    ui->pushButtonUndefined->setButtonState(storage_type == DSStorageTypeUndefined);
-}
+    if(IS_IN_ERROR(ui->pushButtonLive, last_pushbutton_in_error)) {
+        ui->pushButtonLive->setButtonState(2);
+        ui->pushButtonLive->updateStateDescription(2, last_error_message);
+    } else {
+        ui->pushButtonLive->setButtonState(storage_type == DSStorageTypeLive);
+    }
+    ui->pushButtonLive->setChecked(storage_type == DSStorageTypeLive);
 
-void ChaosStorageTypeWidget::updateButtonCheckedStatus(QObject *target, bool checked) {
-    CStateVisiblePushButton *_target = (CStateVisiblePushButton*)target;
-    _target->setChecked(checked);
-}
+    if(IS_IN_ERROR(ui->pushButtonHistory, last_pushbutton_in_error)) {
+        ui->pushButtonHistory->setButtonState(2);
+        ui->pushButtonHistory->updateStateDescription(2, last_error_message);
+    } else {
+        ui->pushButtonHistory->setButtonState(storage_type == DSStorageTypeHistory);
+    }
+    ui->pushButtonHistory->setChecked(storage_type == DSStorageTypeHistory);
 
-void ChaosStorageTypeWidget::updateButtonSetErrorStatus(QObject *target, const QString& error_message) {
-    CStateVisiblePushButton *_target = (CStateVisiblePushButton*)target;
-    _target->updateStateDescription(2, error_message);
-    _target->setButtonState(2);
-}
+    if(IS_IN_ERROR(ui->pushButtonLiveAndHistory, last_pushbutton_in_error)) {
+        ui->pushButtonLiveAndHistory->setButtonState(2);
+        ui->pushButtonLiveAndHistory->updateStateDescription(2, last_error_message);
+    } else {
+        ui->pushButtonLiveAndHistory->setButtonState(storage_type == DSStorageTypeLiveHistory);
+    }
+    ui->pushButtonLiveAndHistory->setChecked(storage_type == DSStorageTypeLiveHistory);
 
-void ChaosStorageTypeWidget::resetButtonInError(QObject *target) {
-    CStateVisiblePushButton *_target = (CStateVisiblePushButton*)target;
-    _target->setButtonState(0);
+    if(IS_IN_ERROR(ui->pushButtonUndefined, last_pushbutton_in_error)) {
+        ui->pushButtonUndefined->setButtonState(2);
+        ui->pushButtonUndefined->updateStateDescription(2, last_error_message);
+    } else {
+        ui->pushButtonUndefined->setButtonState(storage_type == DSStorageTypeUndefined);
+    }
+    ui->pushButtonUndefined->setChecked(storage_type == DSStorageTypeUndefined);
 }
 
 void ChaosStorageTypeWidget::on_pushButton_clicked(bool clicked) {
     CStateVisiblePushButton* obj = (CStateVisiblePushButton*)sender();
-
     //if we have a button in error we need to reset it
-    if(last_pushbutton_successfull.size()) {
-        QObject *button_in_success = findChild<QObject*>(last_pushbutton_successfull);
-       /* QMetaObject::invokeMethod(this,
-                                  "updateButtonCheckedStatus",
-                                  Qt::QueuedConnection,
-                                  Q_ARG(QObject*, button_in_success),
-                                  Q_ARG(bool, false));*/
-        last_pushbutton_successfull.clear();
-    }
+    last_pushbutton_in_error.clear();
+    last_error_message.clear();
     sendStorageType((chaos::DataServiceNodeDefinitionType::DSStorageType)obj->property("storage_code").toInt(),
                     obj->objectName());
 }
@@ -174,20 +181,14 @@ void ChaosStorageTypeWidget::apiHasStarted(const QString& api_tag) {
 }
 
 void ChaosStorageTypeWidget::apiHasEnded(const QString& api_tag) {
-    QObject *sender = findChild<QObject*>(last_pushbutton_successfull = api_tag);
+    QObject *sender = findChild<QObject*>(api_tag);
 }
 
 void ChaosStorageTypeWidget::apiHasEndedWithError(const QString& api_tag,
-                                        QSharedPointer<chaos::CException> api_exception) {
-    QObject *sender = findChild<QObject*>(api_tag);
+                                                  QSharedPointer<chaos::CException> api_exception) {
+    last_pushbutton_in_error = api_tag;
+    last_error_message = QString::fromStdString(api_exception->what());
     QMetaObject::invokeMethod(this,
-                              "updateButtonSetErrorStatus",
-                              Qt::QueuedConnection,
-                              Q_ARG(QObject*, sender),
-                              Q_ARG(const QString&, QString::fromStdString(api_exception->what())));
-    /*QMetaObject::invokeMethod(this,
-                              "updateButtonCheckedStatus",
-                              Qt::QueuedConnection,
-                              Q_ARG(QObject*, sender),
-                              Q_ARG(bool, false));*/
+                              "updateUIStatus",
+                              Qt::QueuedConnection);
 }

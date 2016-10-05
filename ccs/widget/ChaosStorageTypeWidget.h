@@ -34,14 +34,12 @@ protected:
                        int dataset_type);
 private slots:
     void updateUIStatus();
-    void updateButtonCheckedStatus(QObject *target, bool checked);
-    void resetButtonInError(QObject *target);
-    void updateButtonSetErrorStatus(QObject *target, const QString& error_message);
     void on_pushButton_clicked(bool clicked);
 
 private:
     bool data_found;
-    QString last_pushbutton_successfull;
+    QString last_pushbutton_in_error;
+    QString last_error_message;
     chaos::DataServiceNodeDefinitionType::DSStorageType storage_type;
     chaos::metadata_service_client::node_monitor::OnlineState online_status;
     Ui::ChaosStorageTypeWidget *ui;
@@ -51,7 +49,6 @@ private:
     void apiHasEnded(const QString& api_tag);
     void apiHasEndedWithError(const QString& api_tag,
                               QSharedPointer<chaos::CException> api_exception);
-
 };
 
 #endif // CHAOSSTORAGETYPEWIDGET_H
