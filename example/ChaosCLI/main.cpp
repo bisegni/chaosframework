@@ -189,15 +189,26 @@ int main (int argc, char* argv[] )
         if(!controller) throw CException(4, "Error allcoating decive controller", "device controller creation");
         
         
+       /* CDataWrapper message_echo;
+        message_echo.addStringValue("echo_message", "echo_test_message");
+        for(int idx = 0; idx < 8000000; idx++) {
+            CDataWrapper *result = NULL;
+            try{
+                if(controller->echoTest(&message_echo, &result) == 0) {
+                    
+                }
+            }catch(...) {
+                
+            }
+            if(result) {
+                std::cout << idx << " - " <<result->getJSONString() << std::endl;
+                delete(result);
+            }
+            usleep(1000);
+        }*/
+        
         controller->fetchCurrentDeviceValue();
-        /**** TODO: system channel must be valorized at load time
-         controller->fetchCurrentDatatasetFromDomain((DatasetDomain)3);
-         if(controller->getCurrentDatasetForDomain((DatasetDomain)3) != NULL) {
-         control_unit_type = controller->getCurrentDatasetForDomain((DatasetDomain)3)->getCStringValue("dp_sys_unit_type");
-         
-         
-         }
-         */
+
         // use the RPC version for the moment
         err = controller->getType(control_unit_type);
         if(err == ErrorCode::EC_TIMEOUT) {

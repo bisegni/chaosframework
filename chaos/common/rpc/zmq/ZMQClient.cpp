@@ -38,7 +38,8 @@ using namespace boost::algorithm;
 #define ZMQC_LERR ERR_LOG(ZMQClient)
 
 #define ZMQ_DO_AGAIN(x) do{x}while(err == EAGAIN);
-
+#define ZMQ_SOCKET_MAINTENANCE_TIMEOUT (1000 * 30)
+#define ZMQ_SOCKET_LIFETIME_TIMEOUT (1000 * 60)
 //-------------------------------------------------------
 DEFINE_CLASS_FACTORY(ZMQClient, RpcClient);
 
@@ -86,7 +87,7 @@ void ZMQClient::init(void *init_data) throw(CException) {
 void ZMQClient::start() throw(CException) {
     int err = 0;
     //start timere after and repeat every one minut
-    if((err = chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this, 60000, 60000))) {LOG_AND_TROW(ZMQC_LERR, err, "Error adding timer")}
+    if((err = chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this, ZMQ_SOCKET_MAINTENANCE_TIMEOUT, ZMQ_SOCKET_MAINTENANCE_TIMEOUT))) {LOG_AND_TROW(ZMQC_LERR, err, "Error adding timer")}
 }
 
 /*
@@ -179,7 +180,7 @@ void* ZMQClient::allocateResource(const std::string& pool_identification, uint32
     int water_mark = 5;
     
     //set the alive time to one minute
-    alive_for_ms = 1000*60;
+    alive_for_ms = ZMQ_SOCKET_LIFETIME_TIMEOUT;
     
     //create zmq socket
     void *new_socket = zmq_socket (zmq_context, ZMQ_REQ);
@@ -196,7 +197,7 @@ void* ZMQClient::allocateResource(const std::string& pool_identification, uint32
         if((err = zmq_connect(new_socket, url.c_str()))) {
             ZMQC_LERR << "Error "<< err <<" connecting socket to " <<pool_identification;
         } else {
-            DEBUG_CODE(ZMQC_LDBG << "New socket for "<<pool_identification;)
+            DEBUG_CODE(ZMQC_LAPP << "New socket for "<<pool_identification;)
         }
     }
     
@@ -214,7 +215,7 @@ void* ZMQClient::allocateResource(const std::string& pool_identification, uint32
 
 void ZMQClient::deallocateResource(const std::string& pool_identification, void* resource_to_deallocate) {
     CHAOS_ASSERT(resource_to_deallocate)
-    DEBUG_CODE(ZMQC_LDBG << "delete socket for "<<pool_identification;)
+    DEBUG_CODE(ZMQC_LAPP << "delete socket for "<<pool_identification;)
     zmq_close(resource_to_deallocate);
 }
 
@@ -223,12 +224,11 @@ void ZMQClient::timeout() {
     boost::unique_lock<boost::shared_mutex> lock_socket_map(map_socket_mutex);
     SocketMapIterator it = map_socket.begin();
     while(it != map_socket.end()){
-        it->second->maintenance();
-        if( it->second->getSize() == 0 ) {
-             DEBUG_CODE(ZMQC_LDBG << "Delete socket pool for:" << it->first;)
-            map_socket.erase( it++ ); // advance before iterator become invalid
-        } else {
-            ++it;
+        SocketMapIterator tmp_it = it++;
+        tmp_it->second->maintenance();
+        if( tmp_it->second->getSize() == 0 ) {
+            DEBUG_CODE(ZMQC_LAPP << "Delete socket pool for:" << it->first;)
+            map_socket.erase( tmp_it );
         }
     }
 }
