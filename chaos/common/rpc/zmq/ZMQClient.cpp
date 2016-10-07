@@ -227,7 +227,7 @@ void ZMQClient::timeout() {
         SocketMapIterator tmp_it = it++;
         tmp_it->second->maintenance();
         if( tmp_it->second->getSize() == 0 ) {
-            DEBUG_CODE(ZMQC_LAPP << "Delete socket pool for:" << it->first;)
+            DEBUG_CODE(ZMQC_LAPP << "Delete socket pool for:" << tmp_it->first;)
             map_socket.erase( tmp_it );
         }
     }
