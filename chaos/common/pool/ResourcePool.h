@@ -199,16 +199,13 @@ delete(x);
                     //create temporare autoPtr for safe operation in case of exception
                     std::auto_ptr<ResourceSlot> _temp_resource_lot;
                     try {
-                        void *new_resource = NULL;
-                        if((new_resource = resource_pooler_helper->allocateResource(pool_identity,
-                                                                                    alive_for_ms))) {
-                            _temp_resource_lot.reset(new ResourceSlot(pool_identity,
-                                                                      new_resource));
+                        R new_resource = resource_pooler_helper->allocateResource(pool_identity,
+                                                                                  alive_for_ms);
+                        _temp_resource_lot.reset(new ResourceSlot(pool_identity,
+                                                                  new_resource));
                             //we have a valid resource wo we need to set his liveness
-                            _temp_resource_lot->valid_until = chaos::common::utility::TimingUtil::getTimeStamp() + alive_for_ms;
+                        _temp_resource_lot->valid_until = chaos::common::utility::TimingUtil::getTimeStamp() + alive_for_ms;
                             created_resources++;
-                            
-                        }
                     } catch (...) {}
                     
                     if(_temp_resource_lot.get() == NULL) {
