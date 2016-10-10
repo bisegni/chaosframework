@@ -25,3 +25,8 @@ void ApiHandler::apiHasStarted(const QString& tag) {
 void ApiHandler::apiHasEnded(const QString& tag) {
     qDebug()<< "ChaosWidgetCompanion-"<<tag<<"-apiHasEnded";
 }
+
+void ApiHandler::apiHasEndedWithError(const QString& tag,
+                                      const QSharedPointer<chaos::CException> api_exception) {
+    qDebug()<< "ChaosWidgetCompanion-"<<tag<<"-apiHasEndedWithError-" << api_exception->what();
+}

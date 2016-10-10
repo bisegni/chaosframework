@@ -24,6 +24,9 @@ public:
     virtual void apiHasStarted(const QString& tag);
 
     virtual void apiHasEnded(const QString& tag);
+
+    virtual void apiHasEndedWithError(const QString& tag,
+                                      const QSharedPointer<chaos::CException> api_exception);
 };
 
 #endif // APIHANDLER_H

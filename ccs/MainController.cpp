@@ -13,6 +13,7 @@
 #include <string>
 
 #include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
+#include "widget/CStateVisiblePushButton.h"
 
 using namespace chaos::metadata_service_client;
 
