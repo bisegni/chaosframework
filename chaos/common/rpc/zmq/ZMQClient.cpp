@@ -151,7 +151,7 @@ bool ZMQClient::submitMessage(NetworkForwardInfo *forwardInfo, bool onThisThread
 }
 
 ResourcePool<void*>::ResourceSlot *ZMQClient::getSocketForNFI(NetworkForwardInfo *nfi) {
-    boost::shared_lock<boost::shared_mutex> lock_socket_map(map_socket_mutex);
+    boost::unique_lock<boost::shared_mutex> lock_socket_map(map_socket_mutex);
     SocketMapIterator it = map_socket.find(nfi->destinationAddr);
     if(it != map_socket.end()){
         return it->second->getNewResource();
@@ -177,7 +177,7 @@ void ZMQClient::deleteSocket(ResourcePool<void*>::ResourceSlot *socket_slot_to_r
 void* ZMQClient::allocateResource(const std::string& pool_identification, uint32_t& alive_for_ms) {
     int err = 0;
     int linger = 0;
-    int water_mark = 5;
+    int water_mark = 2;
     
     //set the alive time to one minute
     alive_for_ms = ZMQ_SOCKET_LIFETIME_TIMEOUT;
@@ -264,7 +264,7 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
                                         ErrorRpcCoce::EC_RPC_NO_SOCKET,
                                         "Socket creation error",
                                         __PRETTY_FUNCTION__);
-            releaseSocket(socket_info);
+            deleteSocket(socket_info);
             return;
         }
         

@@ -4,7 +4,7 @@
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
- *    	Copyright <#date#> INFN, National Institute of Nuclear Physics
+ *    	Copyright 2015 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -25,13 +25,14 @@
 #include <chaos/common/chaos_types.h>
 #include <chaos/common/utility/TimingUtil.h>
 
+
 namespace chaos {
     namespace common {
         namespace pool {
             
 #define CHAOS_RESOURCE_POOL_DELETE_SLOT(x)\
-resource_pooler_helper->deallocateResource(pool_identity, x->resource_pooled);\
 created_resources--;\
+if(x->resource_pooled){resource_pooler_helper->deallocateResource(pool_identity, x->resource_pooled);}\
 delete(x);
             
             //! Abstract resource pool manager
@@ -124,8 +125,6 @@ delete(x);
                         if(r_pool.empty()) {
                             //error creating resource
                             return NULL;
-                        } else {
-                            
                         }
                     }
                     
@@ -138,7 +137,7 @@ delete(x);
                 
                 //! return a resurce to the socket or force it to purge
                 /*!
-                 This methdo perit to retur a resource to his slot  and in 
+                 This methdo perit to retur a resource to his slot  and in
                  ]addition it can be deallocate, so it never retur to user
                  */
                 void releaseResource(ResourceSlot *resource_slot,
@@ -200,10 +199,11 @@ delete(x);
                     //create temporare autoPtr for safe operation in case of exception
                     std::auto_ptr<ResourceSlot> _temp_resource_lot;
                     try {
-                        _temp_resource_lot.reset(new ResourceSlot(pool_identity,
-                                                                  resource_pooler_helper->allocateResource(pool_identity,
-                                                                                                           alive_for_ms)));
-                        if(_temp_resource_lot->resource_pooled) {
+                        void *new_resource = NULL;
+                        if((new_resource = resource_pooler_helper->allocateResource(pool_identity,
+                                                                                    alive_for_ms))) {
+                            _temp_resource_lot.reset(new ResourceSlot(pool_identity,
+                                                                      new_resource));
                             //we have a valid resource wo we need to set his liveness
                             _temp_resource_lot->valid_until = chaos::common::utility::TimingUtil::getTimeStamp() + alive_for_ms;
                             created_resources++;
@@ -211,8 +211,9 @@ delete(x);
                         }
                     } catch (...) {}
                     
-                    if(_temp_resource_lot->resource_pooled == NULL) {
+                    if(_temp_resource_lot.get() == NULL) {
                         //error creating resource
+                        ERR_LOG(ResourcePool) << CHAOS_FORMAT("Error creating new resource for %1%",%pool_identity);
                     } else {
                         //all is gone well so we can release the temp smatr pointer to result pointer
                         r_pool.push_front(_temp_resource_lot.release());
