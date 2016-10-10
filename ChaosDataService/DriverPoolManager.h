@@ -62,7 +62,8 @@ namespace chaos{
         protected:
             //resource pool handler
             chaos::data_service::cache_system::CacheDriver* allocateResource(const std::string& pool_identification,
-                                                                             uint32_t& alive_for_ms);
+                                                                             uint32_t& alive_for_ms,
+                                                                             bool& success);
             void deallocateResource(const std::string& pool_identification,
                                     chaos::data_service::cache_system::CacheDriver* pooled_driver);
 

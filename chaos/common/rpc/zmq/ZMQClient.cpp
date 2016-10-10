@@ -174,7 +174,9 @@ void ZMQClient::deleteSocket(ResourcePool<void*>::ResourceSlot *socket_slot_to_r
 }
 
 //----resource pool handler-----
-void* ZMQClient::allocateResource(const std::string& pool_identification, uint32_t& alive_for_ms) {
+void* ZMQClient::allocateResource(const std::string& pool_identification,
+                                  uint32_t& alive_for_ms,
+                                  bool& success) {
     int err = 0;
     int linger = 0;
     int water_mark = 2;
@@ -210,6 +212,7 @@ void* ZMQClient::allocateResource(const std::string& pool_identification, uint32
         }
     }
     //return socket
+    success = (socket != NULL);
     return new_socket;
 }
 

@@ -53,9 +53,12 @@ delete(x);
                     friend class ResourcePool;
                 protected:
                     //! allocate a new resource
-                    virtual R allocateResource(const std::string& pool_identification, uint32_t& alive_for_ms) = 0;
+                    virtual R allocateResource(const std::string& pool_identification,
+                                               uint32_t& alive_for_ms,
+                                               bool& success) = 0;
                     //!deallocate a resource
-                    virtual void deallocateResource(const std::string& pool_identification, R resource_to_deallocate) = 0;
+                    virtual void deallocateResource(const std::string& pool_identification,
+                                                    R resource_to_deallocate) = 0;
                 };
                 
                 //!Resource pool slot
@@ -194,18 +197,22 @@ delete(x);
                  Performa a new resource allocation and push new one on pool queue
                  */
                 inline void _pushNewResourceinPool() {
+                    bool success = false;
                     uint32_t alive_for_ms = 0;
                     
                     //create temporare autoPtr for safe operation in case of exception
                     std::auto_ptr<ResourceSlot> _temp_resource_lot;
                     try {
                         R new_resource = resource_pooler_helper->allocateResource(pool_identity,
-                                                                                  alive_for_ms);
-                        _temp_resource_lot.reset(new ResourceSlot(pool_identity,
-                                                                  new_resource));
+                                                                                  alive_for_ms,
+                                                                                  success);
+                        if(success) {
+                            _temp_resource_lot.reset(new ResourceSlot(pool_identity,
+                                                                      new_resource));
                             //we have a valid resource wo we need to set his liveness
-                        _temp_resource_lot->valid_until = chaos::common::utility::TimingUtil::getTimeStamp() + alive_for_ms;
+                            _temp_resource_lot->valid_until = chaos::common::utility::TimingUtil::getTimeStamp() + alive_for_ms;
                             created_resources++;
+                        }
                     } catch (...) {}
                     
                     if(_temp_resource_lot.get() == NULL) {

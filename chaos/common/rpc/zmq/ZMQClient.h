@@ -60,8 +60,11 @@ namespace chaos {
         inline void deleteSocket(chaos::common::pool::ResourcePool<void*>::ResourceSlot *socket_slot_to_release);
         
         //resource pool handler
-        void* allocateResource(const std::string& pool_identification, uint32_t& alive_for_ms);
-        void deallocateResource(const std::string& pool_identification, void* resource_to_deallocate);
+        void* allocateResource(const std::string& pool_identification,
+                               uint32_t& alive_for_ms,
+                               bool& success);
+        void deallocateResource(const std::string& pool_identification,
+                                void* resource_to_deallocate);
         
         //timer handler
         void timeout();
