@@ -71,9 +71,10 @@ case $TEMPLATE in
 	desc="Server !CHAOS package include libraries and binaries"
 	DEPENDS="$DEPENDS, apache2(>=2.4)"
 	;;
-    dev)
+    development)
 	desc="Development package include libraries, includes and tools"
 	DEPENDS="$DEPENDS, gcc(>=4.8), g++(>=4.8), cmake(>=2.6), apache2(>=2.4)"
+       
 	;;
     *)
 	TEMPLATE="localhost"
@@ -161,7 +162,7 @@ rm -f $PACKAGE_DEST/etc/*.cfg >& /dev/null
 
 
 
-if [ "$TEMPLATE" == "dev" ];then
+if [ "$TEMPLATE" == "development" ];then
     copy $SOURCE_DIR/include $PACKAGE_DEST
     copy $SOURCE_DIR/lib $PACKAGE_DEST
 else
@@ -170,32 +171,15 @@ else
     fi    
 fi
 
-if [ "$TEMPLATE" == "docker" ];then
-    pushd $PACKAGE_DEST/etc >& /dev/null
-    ln -sf ../tools/config/lnf/docker/cds.cfg cds.cfg
-    ln -sf ../tools/config/lnf/docker/mds.cfg mds.cfg
-    ln -sf ../tools/config/lnf/docker/webui.cfg webui.cfg
-    ln -sf ../tools/config/lnf/docker/wan.cfg wan.cfg
-    popd >& /dev/null
-fi
+pushd $PACKAGE_DEST/etc >& /dev/null
+for i in cds.cfg mds.cfg webui.cfg wan.cfg cu.cfg;do
+    if [ -e ../tools/config/lnf/$TEMPLATE/$i ]; then
+	ln -sf ../tools/config/lnf/$TEMPLATE/$i $i
+    fi
+done
+popd >& /dev/null
 
-if [ "$TEMPLATE" == "dev" ];then
-    pushd $PACKAGE_DEST/etc >& /dev/null
-    ln -sf ../tools/config/lnf/development/cds.cfg cds.cfg
-    ln -sf ../tools/config/lnf/development/mds.cfg mds.cfg
-    ln -sf ../tools/config/lnf/development/webui.cfg webui.cfg
-    ln -sf ../tools/config/lnf/development/wan.cfg wan.cfg
-    popd >& /dev/null
-fi
 
-if [ "$TEMPLATE" == "localhost" ];then
-    pushd $PACKAGE_DEST/etc >& /dev/null
-    ln -sf ../tools/config/lnf/localhost/cds.cfg cds.cfg
-    ln -sf ../tools/config/lnf/localhost/mds.cfg mds.cfg
-    ln -sf ../tools/config/lnf/localhost/webui.cfg webui.cfg
-    ln -sf ../tools/config/lnf/localhost/wan.cfg wan.cfg
-    popd >& /dev/null
-fi
 
 
 PACKAGE_NAME=$PACKAGE_NAME-$TEMPLATE
@@ -234,7 +218,7 @@ echo "INSTDIR_ALIAS=$PACKAGE_INSTALL_ALIAS_DIR" >> DEBIAN/postrm
 echo "ln -sf $PACKAGE_INSTALL_DIR $PACKAGE_INSTALL_ALIAS_DIR" >> DEBIAN/postinst
 echo "INSTDIR=$PACKAGE_INSTALL_ALIAS_DIR" >> DEBIAN/postinst
 
-if [ "$TEMPLATE"=="server" ] || [ "$TEMPLATE" == "dev" ];then
+if [ "$TEMPLATE"=="server" ] || [ "$TEMPLATE" == "development" ];then
     echo "db_input high \$PACKAGE_NAME/ask_mds || true" >> DEBIAN/config
     echo "db_input high \$PACKAGE_NAME/ask_cds || true" >> DEBIAN/config
     echo "db_input high \$PACKAGE_NAME/ask_webui || true" >> DEBIAN/config
