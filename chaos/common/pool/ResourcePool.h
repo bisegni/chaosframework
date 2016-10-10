@@ -53,12 +53,11 @@ delete(x);
                     friend class ResourcePool;
                 protected:
                     //! allocate a new resource
-                    virtual R allocateResource(const std::string& pool_identification,
-                                               uint32_t& alive_for_ms,
-                                               bool& success) = 0;
+                    virtual R* allocateResource(const std::string& pool_identification,
+                                               uint32_t& alive_for_ms) = 0;
                     //!deallocate a resource
                     virtual void deallocateResource(const std::string& pool_identification,
-                                                    R resource_to_deallocate) = 0;
+                                                    R* resource_to_deallocate) = 0;
                 };
                 
                 //!Resource pool slot
@@ -67,14 +66,14 @@ delete(x);
                  manage resource allcoation and deallcoation. All liveness and pool managment is done by this class.
                  */
                 struct ResourceSlot {
-                    R resource_pooled;
+                    R *resource_pooled;
                     //!the timestamp in milliseconds (according to chaos timestamp) that this slot is valid
                     //! after that time, when it is possible the slot will be removed
                     uint64_t valid_until;
                     //! parent pool identification
                     const std::string pool_identification;
                     ResourceSlot(const std::string& _pool_identification,
-                                 R _resource_pooled):
+                                 R *_resource_pooled):
                     valid_until(1000*60),//! default valuew is a time to live of one minuts
                     pool_identification(_pool_identification),
                     resource_pooled(_resource_pooled){}
@@ -203,10 +202,9 @@ delete(x);
                     //create temporare autoPtr for safe operation in case of exception
                     std::auto_ptr<ResourceSlot> _temp_resource_lot;
                     try {
-                        R new_resource = resource_pooler_helper->allocateResource(pool_identity,
-                                                                                  alive_for_ms,
-                                                                                  success);
-                        if(success) {
+                        R *new_resource = NULL;
+                        if((new_resource = resource_pooler_helper->allocateResource(pool_identity,
+                                                                                   alive_for_ms))) {
                             _temp_resource_lot.reset(new ResourceSlot(pool_identity,
                                                                       new_resource));
                             //we have a valid resource wo we need to set his liveness

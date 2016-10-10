@@ -46,8 +46,7 @@ pool("cache_driver",
 CacheDriverPool::~CacheDriverPool() {}
 
 CacheDriver* CacheDriverPool::allocateResource(const std::string& pool_identification,
-                                               uint32_t& alive_for_ms,
-                                               bool& success) {
+                                               uint32_t& alive_for_ms) {
     CacheDriver *pooled_driver = NULL;
     DEBUG_CODE(DP_LOG_INFO << "New pool request allocation for cache driver:" << cache_impl_name;)
     //increment and check instance created
@@ -90,8 +89,6 @@ CacheDriver* CacheDriverPool::allocateResource(const std::string& pool_identific
     } catch(chaos::CException& ex) {
         
     }
-    //return driver
-    success = (pooled_driver != NULL);
     return pooled_driver;
 }
 

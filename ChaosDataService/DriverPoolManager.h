@@ -37,8 +37,9 @@ namespace chaos{
         //! forward declaration
         class DriverPoolManager;
         
-        typedef chaos::common::pool::ResourcePool<chaos::data_service::cache_system::CacheDriver*>::ResourcePoolHelper CachePoolHelper;
-        typedef chaos::common::pool::ResourcePool<chaos::data_service::cache_system::CacheDriver*>::ResourceSlot CachePoolSlot;
+        typedef chaos::common::pool::ResourcePool<chaos::data_service::cache_system::CacheDriver> CachePool;
+        typedef CachePool::ResourcePoolHelper CachePoolHelper;
+        typedef CachePool::ResourceSlot CachePoolSlot;
         
         //! cache driver pool implementation
         class CacheDriverPool:
@@ -55,15 +56,14 @@ namespace chaos{
             std::string cache_impl_name;
             
             //pool container
-            chaos::common::pool::ResourcePool<chaos::data_service::cache_system::CacheDriver*> pool;
+            CachePool pool;
             
             CacheDriverPool();
             ~CacheDriverPool();
         protected:
             //resource pool handler
             chaos::data_service::cache_system::CacheDriver* allocateResource(const std::string& pool_identification,
-                                                                             uint32_t& alive_for_ms,
-                                                                             bool& success);
+                                                                             uint32_t& alive_for_ms);
             void deallocateResource(const std::string& pool_identification,
                                     chaos::data_service::cache_system::CacheDriver* pooled_driver);
 

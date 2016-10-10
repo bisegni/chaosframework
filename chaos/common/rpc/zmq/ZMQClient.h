@@ -33,8 +33,10 @@ namespace chaos {
     class ZMQClient;
     class SocketEndpointPool;
 
+    typedef chaos::common::pool::ResourcePool<void> ZMQSocketPool;
+    
     //define the pool my for every endpoint
-    CHAOS_DEFINE_MAP_FOR_TYPE(std::string, boost::shared_ptr< chaos::common::pool::ResourcePool<void*> >, SocketMap)
+    CHAOS_DEFINE_MAP_FOR_TYPE(std::string, boost::shared_ptr< ZMQSocketPool >, SocketMap)
     
     /*
      Class that implemnt !CHAOS RPC messaggin gusing ZMQ
@@ -43,7 +45,7 @@ namespace chaos {
         key:zmq_timeout value is a stirng that represent the integer used as timeout
      */
     DECLARE_CLASS_FACTORY(ZMQClient, RpcClient),
-    public chaos::common::pool::ResourcePool<void*>::ResourcePoolHelper,
+    public ZMQSocketPool::ResourcePoolHelper,
     public CObjectProcessingQueue<NetworkForwardInfo>,
     public chaos::common::async_central::TimerHandler {
         REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(ZMQClient)
@@ -55,14 +57,13 @@ namespace chaos {
     protected:
         void *zmq_context;
         virtual void processBufferElement(NetworkForwardInfo*, ElementManagingPolicy&) throw(CException);
-        inline chaos::common::pool::ResourcePool<void*>::ResourceSlot *getSocketForNFI(NetworkForwardInfo *nfi);
-        inline void releaseSocket(chaos::common::pool::ResourcePool<void*>::ResourceSlot *socket_slot_to_release);
-        inline void deleteSocket(chaos::common::pool::ResourcePool<void*>::ResourceSlot *socket_slot_to_release);
+        inline ZMQSocketPool::ResourceSlot *getSocketForNFI(NetworkForwardInfo *nfi);
+        inline void releaseSocket(ZMQSocketPool::ResourceSlot *socket_slot_to_release);
+        inline void deleteSocket(ZMQSocketPool::ResourceSlot *socket_slot_to_release);
         
         //resource pool handler
         void* allocateResource(const std::string& pool_identification,
-                               uint32_t& alive_for_ms,
-                               bool& success);
+                               uint32_t& alive_for_ms);
         void deallocateResource(const std::string& pool_identification,
                                 void* resource_to_deallocate);
         

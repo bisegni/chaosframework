@@ -150,41 +150,38 @@ bool ZMQClient::submitMessage(NetworkForwardInfo *forwardInfo, bool onThisThread
     return true;
 }
 
-ResourcePool<void*>::ResourceSlot *ZMQClient::getSocketForNFI(NetworkForwardInfo *nfi) {
+ZMQSocketPool::ResourceSlot *ZMQClient::getSocketForNFI(NetworkForwardInfo *nfi) {
     boost::unique_lock<boost::shared_mutex> lock_socket_map(map_socket_mutex);
     SocketMapIterator it = map_socket.find(nfi->destinationAddr);
     if(it != map_socket.end()){
         return it->second->getNewResource();
     } else {
-        boost::shared_ptr< ResourcePool<void*> > socket_pool(new ResourcePool<void*>(nfi->destinationAddr, this));
-	if(socket_pool.get()){
-	  map_socket.insert(make_pair(nfi->destinationAddr, socket_pool));
-	
-	  return socket_pool->getNewResource();
-	} 
-
+        boost::shared_ptr< ZMQSocketPool > socket_pool(new ZMQSocketPool(nfi->destinationAddr, this));
+        map_socket.insert(make_pair(nfi->destinationAddr, socket_pool));
+        return socket_pool->getNewResource();
     }
-    ZMQC_LERR<<"cannot create socket pool, for :"<<nfi->destinationAddr;
-    return NULL;
 }
 
-void ZMQClient::releaseSocket(ResourcePool<void*>::ResourceSlot *socket_slot_to_release) {
+void ZMQClient::releaseSocket(ZMQSocketPool::ResourceSlot *socket_slot_to_release) {
     boost::unique_lock<boost::shared_mutex> lock_socket_map(map_socket_mutex);
-    if(socket_slot_to_release && map_socket[socket_slot_to_release->pool_identification].get())
-      map_socket[socket_slot_to_release->pool_identification]->releaseResource(socket_slot_to_release);
+    
+    CHAOS_ASSERT(socket_slot_to_release);
+    CHAOS_ASSERT(map_socket.count(socket_slot_to_release->pool_identification));
+    map_socket[socket_slot_to_release->pool_identification]->releaseResource(socket_slot_to_release);
 }
 
-void ZMQClient::deleteSocket(ResourcePool<void*>::ResourceSlot *socket_slot_to_release) {
+void ZMQClient::deleteSocket(ZMQSocketPool::ResourceSlot *socket_slot_to_release) {
     boost::unique_lock<boost::shared_mutex> lock_socket_map(map_socket_mutex);
-        if(socket_slot_to_release && map_socket[socket_slot_to_release->pool_identification].get())
-	  map_socket[socket_slot_to_release->pool_identification]->releaseResource(socket_slot_to_release,
-										   true);
+    
+    CHAOS_ASSERT(socket_slot_to_release);
+    CHAOS_ASSERT(map_socket.count(socket_slot_to_release->pool_identification));
+    map_socket[socket_slot_to_release->pool_identification]->releaseResource(socket_slot_to_release,
+                                                                             true);
 }
 
 //----resource pool handler-----
 void* ZMQClient::allocateResource(const std::string& pool_identification,
-                                  uint32_t& alive_for_ms,
-                                  bool& success) {
+                                  uint32_t& alive_for_ms) {
     int err = 0;
     int linger = 0;
     int water_mark = 2;
@@ -219,8 +216,6 @@ void* ZMQClient::allocateResource(const std::string& pool_identification,
             new_socket = NULL;
         }
     }
-    //return socket
-    success = (socket != NULL);
     return new_socket;
 }
 
@@ -256,7 +251,7 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
     
     //get remote ip
     //serialize the call packet
-    ResourcePool<void*>::ResourceSlot *socket_info = NULL;
+    ZMQSocketPool::ResourceSlot *socket_info = NULL;
     auto_ptr<chaos::common::data::SerializationBuffer> callSerialization(messageInfo->message->getBSONData());
     try{
         socket_info = getSocketForNFI(messageInfo);
