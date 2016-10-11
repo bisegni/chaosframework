@@ -196,6 +196,9 @@ namespace chaos{
                  */
                 void checkNextCommand();
                 
+                //!Lfat the fault information with the command information into a unique CDataWrapper
+                inline std::auto_ptr<CDataWrapper> flatErrorInformationInCommandInfo(CDataWrapper *command_info,
+                                                                                     FaultDescription& command_fault);
             protected:
                 
                 void* sharedSettingPtr;

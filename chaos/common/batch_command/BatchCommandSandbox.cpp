@@ -257,7 +257,7 @@ void BatchCommandSandbox::deinit() throw (chaos::CException) {
             event_handler->handleCommandEvent(current_executing_command->element->cmdImpl->command_alias,
                                               current_executing_command->element->cmdImpl->unique_id,
                                               BatchCommandEventType::EVT_KILLED,
-                                              static_cast<void*>(current_executing_command->element->cmdInfo));
+                                              current_executing_command->element->cmdInfo);
         }
         DELETE_OBJ_POINTER(current_executing_command)
     }
@@ -273,7 +273,7 @@ void BatchCommandSandbox::deinit() throw (chaos::CException) {
             event_handler->handleCommandEvent(nextAvailableCommand->element->cmdImpl->command_alias,
                                               nextAvailableCommand->element->cmdImpl->unique_id,
                                               BatchCommandEventType::EVT_KILLED,
-                                              static_cast<void*>(nextAvailableCommand->element->cmdInfo));
+                                              nextAvailableCommand->element->cmdInfo);
         }
         DELETE_OBJ_POINTER(nextAvailableCommand);
     }
@@ -284,9 +284,9 @@ void BatchCommandSandbox::deinit() throw (chaos::CException) {
         nextAvailableCommand = command_submitted_queue.top();
         command_submitted_queue.pop();
         if (event_handler && nextAvailableCommand) event_handler->handleCommandEvent(nextAvailableCommand->element->cmdImpl->command_alias,
-                                                                                          nextAvailableCommand->element->cmdImpl->unique_id,
-                                                                                          BatchCommandEventType::EVT_KILLED,
-                                                                                          static_cast<void*>(nextAvailableCommand->element->cmdInfo));
+                                                                                     nextAvailableCommand->element->cmdImpl->unique_id,
+                                                                                     BatchCommandEventType::EVT_KILLED,
+                                                                                     nextAvailableCommand->element->cmdInfo);
         DELETE_OBJ_POINTER(nextAvailableCommand)
     }
     
@@ -385,7 +385,7 @@ void BatchCommandSandbox::checkNextCommand() {
                         if (event_handler) event_handler->handleCommandEvent(current_executing_command->element->cmdImpl->command_alias,
                                                                              current_executing_command->element->cmdImpl->unique_id,
                                                                              BatchCommandEventType::EVT_PAUSED,
-                                                                             static_cast<void*>(current_executing_command->element->cmdInfo));
+                                                                             current_executing_command->element->cmdInfo);
                         //install next command
                         installHandler(next_available_command);
                         
@@ -401,33 +401,31 @@ void BatchCommandSandbox::checkNextCommand() {
                         current_executing_command = NULL;
 #pragma GCC diagnostic ignored "-Wswitch"
                         switch (current_check_value) {
-                            case RSR_KILL_KURRENT_COMMAND:
+                            case RSR_KILL_KURRENT_COMMAND:{
                                 if (event_handler && command_to_delete) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
                                                                                                           command_to_delete->element->cmdImpl->unique_id,
                                                                                                           BatchCommandEventType::EVT_KILLED,
-                                                                                                          static_cast<void*>(command_to_delete->element->cmdInfo));
+                                                                                                          command_to_delete->element->cmdInfo);
                                 break;
+                            }
                                 
-                            case RSR_CURRENT_CMD_HAS_ENDED:
+                            case RSR_CURRENT_CMD_HAS_ENDED:{
                                 if (event_handler && command_to_delete) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
                                                                                                           command_to_delete->element->cmdImpl->unique_id,
                                                                                                           BatchCommandEventType::EVT_COMPLETED,
-                                                                                                          static_cast<void*>(command_to_delete->element->cmdInfo));
+                                                                                                          command_to_delete->element->cmdInfo);
                                 break;
+                            }
                                 
-                            case RSR_CURRENT_CMD_HAS_FAULTED:
-                                int size = 0;
-                                CDataWrapper complete_command_and_fault(command_to_delete->element->cmdInfo->getBSONRawData(size));
-                                //add fault data
-                                complete_command_and_fault.addInt32Value(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_CODE, command_to_delete->element->cmdImpl->fault_description.code);
-                                complete_command_and_fault.addStringValue(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_MESSAGE, command_to_delete->element->cmdImpl->fault_description.description);
-                                complete_command_and_fault.addStringValue(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_DOMAIN, command_to_delete->element->cmdImpl->fault_description.domain);
-                                
+                            case RSR_CURRENT_CMD_HAS_FAULTED:{
+                                std::auto_ptr<CDataWrapper> command_and_fault = flatErrorInformationInCommandInfo(command_to_delete->element->cmdInfo,
+                                                                                                                  command_to_delete->element->cmdImpl->fault_description);
                                 if (event_handler && command_to_delete) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
                                                                                                           command_to_delete->element->cmdImpl->unique_id,
                                                                                                           BatchCommandEventType::EVT_FAULT,
-                                                                                                          static_cast<void*> (&complete_command_and_fault));
+                                                                                                          command_and_fault.get());
                                 break;
+                            }
                         }
 #pragma GCC diagnostic pop
                         
@@ -469,20 +467,26 @@ void BatchCommandSandbox::checkNextCommand() {
                         PRIORITY_ELEMENT(CommandInfoAndImplementation) *command_to_delete = current_executing_command;
                         current_executing_command = NULL;
                         switch (command_to_delete->element->cmdImpl->runningProperty) {
-                            case RunningPropertyType::RP_End:
+                            case RunningPropertyType::RP_End:{
                                 if (event_handler) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
                                                                                      command_to_delete->element->cmdImpl->unique_id,
                                                                                      BatchCommandEventType::EVT_COMPLETED,
-                                                                                     static_cast<void*>(command_to_delete->element->cmdInfo));
+                                                                                     command_to_delete->element->cmdInfo);
                                 break;
-                            case RunningPropertyType::RP_Fault:
-                                if (event_handler) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
-                                                                                     command_to_delete->element->cmdImpl->unique_id,
-                                                                                     BatchCommandEventType::EVT_FAULT,
-                                                                                     dynamic_cast<FaultDescription*> (&command_to_delete->element->cmdImpl->fault_description),
-                                                                                     sizeof (FaultDescription));
+                            }
+                            case RunningPropertyType::RP_Fault:{
+                                std::auto_ptr<CDataWrapper> command_and_fault = flatErrorInformationInCommandInfo(command_to_delete->element->cmdInfo,
+                                                                                                                  command_to_delete->element->cmdImpl->fault_description);
+                                if (event_handler &&
+                                    command_and_fault.get()) {
+                                    event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
+                                                                      command_to_delete->element->cmdImpl->unique_id,
+                                                                      BatchCommandEventType::EVT_FAULT,
+                                                                      command_and_fault.get());
+                                }
                                 
                                 break;
+                            }
                         }
                         //manage paused command
                         PRIORITY_ELEMENT(CommandInfoAndImplementation) * nextAvailableCommand = command_stack.top();
@@ -500,20 +504,26 @@ void BatchCommandSandbox::checkNextCommand() {
                         PRIORITY_ELEMENT(CommandInfoAndImplementation) *command_to_delete = current_executing_command;
                         current_executing_command = NULL;
                         switch (command_to_delete->element->cmdImpl->runningProperty) {
-                            case RunningPropertyType::RP_End:
+                            case RunningPropertyType::RP_End:{
                                 if (event_handler) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
                                                                                      command_to_delete->element->cmdImpl->unique_id,
                                                                                      BatchCommandEventType::EVT_COMPLETED,
-                                                                                     static_cast<void*>(command_to_delete->element->cmdInfo));
+                                                                                     command_to_delete->element->cmdInfo);
                                 break;
-                            case RunningPropertyType::RP_Fault:
-                                if (event_handler) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
-                                                                                     command_to_delete->element->cmdImpl->unique_id,
-                                                                                     BatchCommandEventType::EVT_FAULT,
-                                                                                     static_cast<FaultDescription*> (&command_to_delete->element->cmdImpl->fault_description),
-                                                                                     sizeof (FaultDescription));
+                            }
+                            case RunningPropertyType::RP_Fault:{
+                                std::auto_ptr<CDataWrapper> command_and_fault = flatErrorInformationInCommandInfo(command_to_delete->element->cmdInfo,
+                                                                                                                  command_to_delete->element->cmdImpl->fault_description);
+                                if (event_handler &&
+                                    command_and_fault.get()){
+                                    event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
+                                                                      command_to_delete->element->cmdImpl->unique_id,
+                                                                      BatchCommandEventType::EVT_FAULT,
+                                                                      command_and_fault.get());
+                                }
                                 
                                 break;
+                            }
                         }
                         if(command_to_delete->element->cmdImpl->sticky==false){
                             
@@ -534,7 +544,7 @@ void BatchCommandSandbox::checkNextCommand() {
                 //we have no commando so we need to apply the default command
                 installHandler(default_sticky_command.get());
                 thread_scheduler_pause_condition.unlock();
-		//                DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] Use sticky default command " << std::hex << default_sticky_command.get() << std::dec;)
+                //                DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] Use sticky default command " << std::hex << default_sticky_command.get() << std::dec;)
             }
             WAIT_ON_NEXT_CMD
         }
@@ -547,7 +557,21 @@ void BatchCommandSandbox::checkNextCommand() {
     SCSLAPP_ << "[checkNextCommand] Check next command thread ended";
     //notify the end of the thread
     //condition_waith_scheduler_end.notify_one();
-    
+}
+
+
+inline std::auto_ptr<CDataWrapper> BatchCommandSandbox::flatErrorInformationInCommandInfo(CDataWrapper *command_info,
+                                                                                          FaultDescription& command_fault) {
+    int size = 0;
+    std::auto_ptr<CDataWrapper> command_and_fault(new CDataWrapper());
+    if(command_info) {
+        command_and_fault->appendAllElement(*command_info);
+    }
+    //add fault data
+    command_and_fault->addInt32Value(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_CODE, command_fault.code);
+    command_and_fault->addStringValue(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_MESSAGE, command_fault.description);
+    command_and_fault->addStringValue(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_DOMAIN, command_fault.domain);
+    return command_and_fault;
 }
 
 void BatchCommandSandbox::runCommand() {
@@ -691,7 +715,7 @@ bool BatchCommandSandbox::installHandler(PRIORITY_ELEMENT(CommandInfoAndImplemen
             event_handler->handleCommandEvent(tmp_impl->command_alias,
                                               tmp_impl->unique_id,
                                               BatchCommandEventType::EVT_RUNNING,
-                                              static_cast<void*>(cmd_to_install->element->cmdInfo));
+                                              cmd_to_install->element->cmdInfo);
             //signal the step of the run
             event_handler->handleSandboxEvent(identification,
                                               BatchSandboxEventType::EVT_UPDATE_RUN_DELAY,
@@ -731,7 +755,9 @@ void BatchCommandSandbox::killCurrentCommand() {
     current_executing_command->element->cmdImpl->setRunningProperty(RunningPropertyType::RP_End);
 }
 
-bool BatchCommandSandbox::enqueueCommand(chaos_data::CDataWrapper *command_to_info, BatchCommand *command_impl, uint32_t priority) {
+bool BatchCommandSandbox::enqueueCommand(chaos_data::CDataWrapper *command_to_info,
+                                         BatchCommand *command_impl,
+                                         uint32_t priority) {
     CHAOS_ASSERT(command_impl)
     
     if (StartableService::serviceState == CUStateKey::DEINIT) return false;
@@ -752,7 +778,7 @@ bool BatchCommandSandbox::enqueueCommand(chaos_data::CDataWrapper *command_to_in
     if (event_handler) event_handler->handleCommandEvent(command_impl->command_alias,
                                                          command_impl->unique_id,
                                                          BatchCommandEventType::EVT_QUEUED,
-                                                         static_cast<void*>(command_to_info));
+                                                         command_to_info);
     whait_for_next_check.unlock();
     return true;
 }

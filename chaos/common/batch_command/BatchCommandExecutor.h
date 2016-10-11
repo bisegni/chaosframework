@@ -124,8 +124,7 @@ namespace chaos {
                 //command event handler
                 virtual void handleCommandEvent(uint64_t command_seq,
                                                 BatchCommandEventType::BatchCommandEventType type,
-                                                void* type_value_ptr,
-                                                uint32_t type_value_size);
+                                                CDataWrapper *command_info);
 
                 //! general sandbox event handler
                 virtual void handleSandboxEvent(const std::string& sandbox_id,

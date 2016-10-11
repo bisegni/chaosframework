@@ -152,70 +152,61 @@ BatchCommand *SlowCommandExecutor::instanceCommandInfo(const std::string& comman
 void SlowCommandExecutor::handleCommandEvent(const std::string& command_alias,
                                              uint64_t command_seq,
                                              BatchCommandEventType::BatchCommandEventType type,
-                                             void* type_value_ptr,
-                                             uint32_t type_value_size) {
-    //command has been successfully completed
-    CDataWrapper *command_data = static_cast<CDataWrapper*>(type_value_ptr);
+                                             CDataWrapper *command_data) {
     
     //let the base class handle the event
     BatchCommandExecutor::handleCommandEvent(command_seq,
                                              type,
-                                             type_value_ptr,
-                                             type_value_size);
+                                             command_data);
     switch(type) {
         case BatchCommandEventType::EVT_COMPLETED:{
-            std::string cached_parameter_name;
-            CDataWrapperKeyList all_input_parameter;
-
-            
-            //in this case we need to set the attribute into the dataset for the state reached
-            //(for now we update the inptu dataset only)
-            
-            //lock the input domain cache
-            boost::shared_ptr<SharedCacheLockDomain> w_lock = getAttributeSharedCache()->getLockOnDomain(DOMAIN_INPUT, true);
-            w_lock->lock();
-            
-            //get all parameter in command data
-            command_data->getAllKey(all_input_parameter);
-            
-            //iterate all elemento found
-            for(CDataWrapperKeyListIterator it = all_input_parameter.begin(), end = all_input_parameter.end();
-                it!=end;
-                it++) {
-                cached_parameter_name = command_alias + "/" +*it;
+            if(command_data) {
+                std::string cached_parameter_name;
+                CDataWrapperKeyList all_input_parameter;
                 
-                //chec if the parameter is present in cache
-                if(getAttributeSharedCache()->hasAttribute(DOMAIN_INPUT,
-                                                           cached_parameter_name) == false) continue;
                 
-                //get the cached element
-                AttributeValue *cached_element = getAttributeSharedCache()->getAttributeValue(DOMAIN_INPUT, cached_parameter_name);
+                //in this case we need to set the attribute into the dataset for the state reached
+                //(for now we update the inptu dataset only)
                 
-                //update cached value with the input parameter of the command
-                cached_element->setValue(command_data->getRawValuePtr(*it), command_data->getValueSize(*it));
+                //lock the input domain cache
+                boost::shared_ptr<SharedCacheLockDomain> w_lock = getAttributeSharedCache()->getLockOnDomain(DOMAIN_INPUT, true);
+                w_lock->lock();
+                
+                //get all parameter in command data
+                command_data->getAllKey(all_input_parameter);
+                
+                //iterate all elemento found
+                for(CDataWrapperKeyListIterator it = all_input_parameter.begin(), end = all_input_parameter.end();
+                    it!=end;
+                    it++) {
+                    cached_parameter_name = command_alias + "/" +*it;
+                    
+                    //chec if the parameter is present in cache
+                    if(getAttributeSharedCache()->hasAttribute(DOMAIN_INPUT,
+                                                               cached_parameter_name) == false) continue;
+                    
+                    //get the cached element
+                    AttributeValue *cached_element = getAttributeSharedCache()->getAttributeValue(DOMAIN_INPUT, cached_parameter_name);
+                    
+                    //update cached value with the input parameter of the command
+                    cached_element->setValue(command_data->getRawValuePtr(*it), command_data->getValueSize(*it));
+                }
             }
             //in case we have changed something, the dataset will be pushed
             control_unit_instance->pushInputDataset();
-        }
             break;
-            
+        }
             
         case BatchCommandEventType::EVT_FAULT: {
-	  //	  CDataWrapper *command_and_fault = static_cast<CDataWrapper*>((CDataWrapper*)type_value_ptr);
-	  FaultDescription *command_and_fault = static_cast<FaultDescription*>((FaultDescription*)type_value_ptr);
-            if(command_and_fault  /*&&
-	                      command_and_fault->hasKey(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_CODE) &&
-               command_and_fault->hasKey(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_MESSAGE) &&
-               command_and_fault->hasKey(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_DOMAIN)*/
-	       ) {
-	      /*                const int32_t code = command_and_fault->getInt32Value(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_CODE);
-                const std::string message = command_and_fault->getStringValue(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_MESSAGE);
-                const std::string domain = command_and_fault->getStringValue(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_DOMAIN);
-	      */
-	      const int32_t code=command_and_fault->code;
-	      const std::string message = command_and_fault->description;
-	      const std::string domain = command_and_fault->domain;
-
+            
+            if(command_data &&
+               command_data->hasKey(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_CODE) &&
+               command_data->hasKey(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_MESSAGE) &&
+               command_data->hasKey(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_DOMAIN)) {
+                const int32_t code = command_data->getInt32Value(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_CODE);
+                const std::string message = command_data->getStringValue(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_MESSAGE);
+                const std::string domain = command_data->getStringValue(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_DOMAIN);
+                
                 //log error on metadata server
                 error_logging_channel->logError(control_unit_instance->getCUID(),
                                                 command_alias,
@@ -225,7 +216,6 @@ void SlowCommandExecutor::handleCommandEvent(const std::string& command_alias,
                 CException ex(code, message, domain);
                 //async go into recoverable error
                 boost::thread(boost::bind(&AbstractControlUnit::_goInRecoverableError, control_unit_instance, ex)).detach();
-		command_data=NULL;
             } else {
                 SCELERR_ << "Command id " << command_seq << " gone in fault without exception";
             }

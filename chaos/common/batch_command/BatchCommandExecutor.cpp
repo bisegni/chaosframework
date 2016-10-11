@@ -269,8 +269,7 @@ void BatchCommandExecutor::deinit() throw(chaos::CException) {
 //command event handler
 void BatchCommandExecutor::handleCommandEvent(uint64_t command_id,
                                               BatchCommandEventType::BatchCommandEventType type,
-                                              void* type_value_ptr,
-                                              uint32_t type_value_size) {
+                                              CDataWrapper *command_info) {
     DEBUG_CODE(BCELDBG_ << "Received event of type->" << type << " on command id -> "<<command_id;)
     
     switch(type) {
@@ -286,14 +285,15 @@ void BatchCommandExecutor::handleCommandEvent(uint64_t command_id,
         }
             
         case BatchCommandEventType::EVT_FAULT: {
-            ReadLock lock(command_state_rwmutex);
-            boost::shared_ptr<CommandState>  cmd_state = getCommandState(command_id);
-            if(cmd_state.get()) {
-                
-                cmd_state->last_event = type;
-                cmd_state->fault_description.code = static_cast<CDataWrapper*>(type_value_ptr)->getInt32Value(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_CODE);
-                cmd_state->fault_description.description = static_cast<CDataWrapper*>(type_value_ptr)->getStringValue(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_MESSAGE);
-                cmd_state->fault_description.domain = static_cast<CDataWrapper*>(type_value_ptr)->getStringValue(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_DOMAIN);
+            if(command_info != NULL) {
+                ReadLock lock(command_state_rwmutex);
+                boost::shared_ptr<CommandState>  cmd_state = getCommandState(command_id);
+                if(cmd_state.get()) {
+                    cmd_state->last_event = type;
+                    cmd_state->fault_description.code = command_info->getInt32Value(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_CODE);
+                    cmd_state->fault_description.description = command_info->getStringValue(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_MESSAGE);
+                    cmd_state->fault_description.domain = command_info->getStringValue(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_DOMAIN);
+                }
             }
             break;
         }
