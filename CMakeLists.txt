@@ -12,7 +12,7 @@ option(CHAOS_WAN "Chaos Wan Service" ON)
 option(CHAOS_DATA_EXPORT "Chaos Data Export" ON)
 option(CHAOS_EXAMPLES "Chaos Examples" ON)
 option(CHAOS_CCS "Chaos CCS Compile needs qt5.6-static-x86_64 installed" OFF)
-
+set(QMAKE_PATH "Default QT QMAKE PATH" CACHE STRING "/usr/local/chaos/qt-install/5.6/gcc_64/bin")
 
 EXECUTE_PROCESS(
 COMMAND ./version.sh
@@ -140,9 +140,10 @@ ENDIF()
 ENDIF()
   IF(CHAOS_CCS)
     MESG("CCS compilation ENABLED")
-    IF(EXISTS "/usr/local/chaos/qt5.6-static-x86_64/bin/qmake")
+    IF(EXISTS "${QMAKE_PATH}/qmake")
+      MESG("Found 'qmake' in ${QMAKE_PATH}")
       execute_process(
-	COMMAND /usr/local/chaos/qt5.6-static-x86_64/bin/qmake
+	COMMAND ${QMAKE_PATH}/qmake
 	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/ccs
 	RESULT_VARIABLE err
 	OUTPUT_VARIABLE out
@@ -160,11 +161,13 @@ ENDIF()
       if( err)
 	ERROR("error compiling: ${out}")
       endif()
-      FILE(GLOB exe ccs/ccs ccs/ccs.sh)
-      FILE(COPY ${exe} DESTINATION bin/ FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+
     ELSE()
       ERROR("missing /usr/local/chaos/qt5.6-static-x86_64/bin/qmake")
     ENDIF()
   ENDIF()
-
+  IF (EXISTS ccs/ccs)
+    FILE(GLOB exe ccs/ccs ccs/ccs.sh)
+    FILE(COPY ${exe} DESTINATION bin/ FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+  ENDIF()
 #add test

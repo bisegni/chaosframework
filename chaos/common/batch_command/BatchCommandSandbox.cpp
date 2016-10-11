@@ -479,7 +479,7 @@ void BatchCommandSandbox::checkNextCommand() {
                                 if (event_handler) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
                                                                                      command_to_delete->element->cmdImpl->unique_id,
                                                                                      BatchCommandEventType::EVT_FAULT,
-                                                                                     static_cast<FaultDescription*> (&command_to_delete->element->cmdImpl->fault_description),
+                                                                                     dynamic_cast<FaultDescription*> (&command_to_delete->element->cmdImpl->fault_description),
                                                                                      sizeof (FaultDescription));
                                 
                                 break;

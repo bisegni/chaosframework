@@ -201,14 +201,21 @@ void SlowCommandExecutor::handleCommandEvent(const std::string& command_alias,
             
             
         case BatchCommandEventType::EVT_FAULT: {
-            CDataWrapper *command_and_fault = static_cast<CDataWrapper*>(type_value_ptr);
-            if(command_and_fault  &&
-               command_and_fault->hasKey(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_CODE) &&
+	  //	  CDataWrapper *command_and_fault = static_cast<CDataWrapper*>((CDataWrapper*)type_value_ptr);
+	  FaultDescription *command_and_fault = static_cast<FaultDescription*>((FaultDescription*)type_value_ptr);
+            if(command_and_fault  /*&&
+	                      command_and_fault->hasKey(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_CODE) &&
                command_and_fault->hasKey(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_MESSAGE) &&
-               command_and_fault->hasKey(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_DOMAIN)) {
-                const int32_t code = command_and_fault->getInt32Value(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_CODE);
+               command_and_fault->hasKey(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_DOMAIN)*/
+	       ) {
+	      /*                const int32_t code = command_and_fault->getInt32Value(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_CODE);
                 const std::string message = command_and_fault->getStringValue(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_MESSAGE);
                 const std::string domain = command_and_fault->getStringValue(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_DOMAIN);
+	      */
+	      const int32_t code=command_and_fault->code;
+	      const std::string message = command_and_fault->description;
+	      const std::string domain = command_and_fault->domain;
+
                 //log error on metadata server
                 error_logging_channel->logError(control_unit_instance->getCUID(),
                                                 command_alias,
@@ -218,6 +225,7 @@ void SlowCommandExecutor::handleCommandEvent(const std::string& command_alias,
                 CException ex(code, message, domain);
                 //async go into recoverable error
                 boost::thread(boost::bind(&AbstractControlUnit::_goInRecoverableError, control_unit_instance, ex)).detach();
+		command_data=NULL;
             } else {
                 SCELERR_ << "Command id " << command_seq << " gone in fault without exception";
             }
