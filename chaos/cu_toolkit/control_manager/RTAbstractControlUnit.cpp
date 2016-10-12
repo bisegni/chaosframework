@@ -316,3 +316,9 @@ void RTAbstractControlUnit::executeOnThread() {
         }
     }
 }
+
+//!se the sattus flag
+void RTAbstractControlUnit::setSystemFlag(const StatusFlag& status_flag) {
+    AbstractControlUnit::setSystemStatusFlag(status_flag);
+    AbstractControlUnit::pushSystemDataset();
+}

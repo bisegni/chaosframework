@@ -114,6 +114,12 @@ namespace chaos{
                 START_SM_PHASE_STAT_TIMER = 0
             }StartSMPhase;
             
+            typedef struct StatusFlag {
+                bool busy;
+                bool warning;
+                bool error;
+            } StatusFlag;
+            
             CHAOS_DEFINE_VECTOR_FOR_TYPE(boost::shared_ptr<chaos::common::data::CDataWrapper>, ACUStartupCommandList)
             
             //!  Base class for control unit !CHAOS node
@@ -190,8 +196,6 @@ namespace chaos{
                 
                 //! fast access for thread scheduledaly cached value
                 AttributeValue *thread_schedule_daly_cached_value;
-                
-                AttributeValue *storage_type_cached_value;
                 
                 //! check list of services for initialization and start state
                 chaos::common::utility::AggregatedCheckList check_list_sub_service;
@@ -488,7 +492,11 @@ namespace chaos{
                 //!timer for update push metric
                 void timeout();
                 
+                //!check if attribute hase been autorized by handler
                 bool isInputAttributeChangeAuthorizedByHandler(const std::string& attr_name);
+                
+                //!update the system status flag
+                void setSystemStatusFlag(const StatusFlag& status_flag);
             public:
                 
                 //! Default Contructor

@@ -250,12 +250,12 @@ void SCAbstractControlUnit::initSystemAttributeOnSharedAttributeCache() {
     //add sand box identifier for the last system event
     domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_RUN_UNIT_ID, 127, DataType::TYPE_STRING);
     
-    for(std::vector<std::string>::iterator it = all_sandbox_ids.begin();
-        it != all_sandbox_ids.end();
-        it++) {
-        //add timestamp for every single sandbox
-        domain_attribute_setting.addAttribute((*it)+"_hb", 0, DataType::TYPE_INT64);
-    }
+//    for(std::vector<std::string>::iterator it = all_sandbox_ids.begin();
+//        it != all_sandbox_ids.end();
+//        it++) {
+//        //add timestamp for every single sandbox
+//        domain_attribute_setting.addAttribute((*it)+"_hb", 0, DataType::TYPE_INT64);
+//    }
 }
 
 void SCAbstractControlUnit::completeInputAttribute() {

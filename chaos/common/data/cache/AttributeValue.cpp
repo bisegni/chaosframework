@@ -102,6 +102,21 @@ bool AttributeValue::setValue(const void* value_ptr,
     return true;
 }
 
+bool AttributeValue::setStringValue(const std::string& value,
+                                    bool tag_has_changed,
+                                    bool enlarge_memory) {
+    if(enlarge_memory == true &&
+       !grow(value.size())) return false;
+    
+    if(value.size()==0)
+        return true;
+    CHAOS_ASSERT(value_buffer)
+    std::strncpy(static_cast<char*>(value_buffer),
+                 value.c_str(),
+                 size);
+    return true;
+}
+
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
@@ -137,7 +152,7 @@ bool AttributeValue::setValue(const CDataVariant& attribute_value,
                         sizeof(int64_t));
             break;
         }
-
+            
         case DataType::TYPE_STRING: {
             const std::string value = attribute_value.asString();
             if(!grow((uint32_t)value.size())) return false;
@@ -147,7 +162,7 @@ bool AttributeValue::setValue(const CDataVariant& attribute_value,
                         value.size());
             break;
         }
-       
+            
         case DataType::TYPE_BYTEARRAY:{
             const CDataBuffer * byte_array_value = attribute_value.asCDataBuffer();
             if(!grow(byte_array_value->getBufferSize())) return false;
@@ -160,7 +175,7 @@ bool AttributeValue::setValue(const CDataVariant& attribute_value,
         default:
             break;
     }
-
+    
     //set the relative field for set has changed
     if(tag_has_changed) sharedBitmapChangedAttribute->set(index);
     return true;
@@ -240,7 +255,8 @@ void AttributeValue::writeToCDataWrapper(CDataWrapper& data_wrapper) {
             break;
         }
         case chaos::DataType::TYPE_STRING:{
-            data_wrapper.addStringValue(name, std::string((const char *)value_buffer, size));
+            unsigned long str_len = std::strlen((const char *)value_buffer);
+            data_wrapper.addStringValue(name, std::string((const char *)value_buffer, (str_len>size?size:str_len)));
             break;
         }
             

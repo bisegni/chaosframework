@@ -31,9 +31,9 @@
 #include <chaos/common/data/DatasetDB.h>
 #include <chaos/common/batch_command/BatchCommand.h>
 
-#include <chaos/cu_toolkit/control_manager/AttributeSharedCacheWrapper.h>
 #include <chaos/cu_toolkit/data_manager/KeyDataStorage.h>
 #include <chaos/cu_toolkit/driver_manager/DriverErogatorInterface.h>
+#include <chaos/cu_toolkit/control_manager/AttributeSharedCacheWrapper.h>
 
 namespace chaos_data = chaos::common::data;
 

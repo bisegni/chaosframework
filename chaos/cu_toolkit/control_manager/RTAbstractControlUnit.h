@@ -107,11 +107,13 @@ namespace chaos {
 				 Event for update some CU configuration
 				 */
 				virtual chaos_data::CDataWrapper* updateConfiguration(CDataWrapper* update_pack, bool& detach_param) throw (CException);
-				
-				/*!
-				 Thread method for the scheduler
-				 */
-				void executeOnThread();
+                /*!
+                 Thread method for the scheduler
+                 */
+                void executeOnThread();
+                
+                //!se the sattus flag
+                void setSystemFlag(const StatusFlag& status_flag);
 			public:
 				
 				/*! default constructor

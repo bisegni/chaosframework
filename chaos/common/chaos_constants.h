@@ -1081,15 +1081,20 @@ namespace chaos {
         //!is the last error message occurred into data producer
         static const char * const DP_SYS_UNIT_TYPE			= "dp_sys_unit_type";
         
-        //!is the storage type currently used by control unit[int32]
-        static const char * const DP_SYS_STORAGE_TYPE		= "dp_sys_storage_type";
-        
         //!is the number of run unit
         static const char * const DP_SYS_RUN_UNIT_AVAILABLE	= "dp_sys_ru_available";
         
         //!is the run unit identifier
         static const char * const DP_SYS_RUN_UNIT_ID		= "dp_sys_ru_id";
         
+        //!is the busy flag
+        static const char * const DP_SYS_BUSY_FLAG          = "dp_sys_busyf";
+        
+        //!is the warning
+        static const char * const DP_SYS_WARNING_FLAG       = "dp_sys_warningf";
+        
+        //!is the error
+        static const char * const DP_SYS_ERROR_FLAG          = "dp_sys_errorf";
     }
     /** @} */ // end of DataPackSystemKey
     

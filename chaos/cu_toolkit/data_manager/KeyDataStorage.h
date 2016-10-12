@@ -110,6 +110,8 @@ namespace chaos{
 				chaos_data::CDataWrapper* updateConfiguration(chaos_data::CDataWrapper *);
                 
                 DataServiceNodeDefinitionType::DSStorageType getStorageType();
+                uint64_t getStorageLiveTime();
+                uint64_t getStorageHistoryTime();
 			};
 		}
     }

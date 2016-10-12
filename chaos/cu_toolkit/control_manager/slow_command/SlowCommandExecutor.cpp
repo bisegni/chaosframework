@@ -251,7 +251,7 @@ void SlowCommandExecutor::handleSandboxEvent(const std::string& sandbox_id,
     }
     
     //set the last system event sandbox id
-    last_ru_id_cache->setValue(sandbox_id.c_str(), (uint32_t)sandbox_id.size());
+    last_ru_id_cache->setStringValue(sandbox_id);
     
     switch(type) {
         case BatchSandboxEventType::EVT_RUN_START: {
