@@ -25,7 +25,10 @@
 #include "../ChaosMetadataService.h"
 #include "script/script_batch.h"
 
+using namespace chaos::common::data;
+using namespace chaos::common::batch_command;
 using namespace chaos::metadata_service::batch;
+
 #define BCE_INFO INFO_LOG(BatchCommandExecutor)
 #define BCE_DBG  DBG_LOG(BatchCommandExecutor)
 #define BCE_ERR  ERR_LOG(BatchCommandExecutor)
@@ -151,9 +154,8 @@ chaos::common::batch_command::BatchCommand * MDSBatchExecutor::instanceCommandIn
 //overlodaed command event handler
 void MDSBatchExecutor::handleCommandEvent(const std::string& command_alias,
                                           uint64_t command_seq,
-                                          common::batch_command::BatchCommandEventType::BatchCommandEventType type,
-                                          void* type_value_ptr,
-                                          uint32_t type_value_size) {
+                                          BatchCommandEventType::BatchCommandEventType type,
+                                          common::data::CDataWrapper *command_data) {
     std::string type_string;
     switch(type){
         case common::batch_command::BatchCommandEventType::EVT_QUEUED: type_string = "Queued"; break;
