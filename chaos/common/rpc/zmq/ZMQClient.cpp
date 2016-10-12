@@ -160,23 +160,21 @@ ZMQSocketPool::ResourceSlot *ZMQClient::getSocketForNFI(NetworkForwardInfo *nfi)
         map_socket.insert(make_pair(nfi->destinationAddr, socket_pool));
         return socket_pool->getNewResource();
     }
+    ZMQC_LERR<<"cannot create socket pool, for :"<<nfi->destinationAddr;
+    return NULL;
 }
 
 void ZMQClient::releaseSocket(ZMQSocketPool::ResourceSlot *socket_slot_to_release) {
     boost::unique_lock<boost::shared_mutex> lock_socket_map(map_socket_mutex);
-    
-    CHAOS_ASSERT(socket_slot_to_release);
-    CHAOS_ASSERT(map_socket.count(socket_slot_to_release->pool_identification));
-    map_socket[socket_slot_to_release->pool_identification]->releaseResource(socket_slot_to_release);
+    if(socket_slot_to_release && map_socket[socket_slot_to_release->pool_identification].get())
+      map_socket[socket_slot_to_release->pool_identification]->releaseResource(socket_slot_to_release);
 }
 
 void ZMQClient::deleteSocket(ZMQSocketPool::ResourceSlot *socket_slot_to_release) {
     boost::unique_lock<boost::shared_mutex> lock_socket_map(map_socket_mutex);
-    
-    CHAOS_ASSERT(socket_slot_to_release);
-    CHAOS_ASSERT(map_socket.count(socket_slot_to_release->pool_identification));
-    map_socket[socket_slot_to_release->pool_identification]->releaseResource(socket_slot_to_release,
-                                                                             true);
+        if(socket_slot_to_release && map_socket[socket_slot_to_release->pool_identification].get())
+	  map_socket[socket_slot_to_release->pool_identification]->releaseResource(socket_slot_to_release,
+										   true);
 }
 
 //----resource pool handler-----
