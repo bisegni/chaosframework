@@ -256,7 +256,8 @@ void AttributeValue::writeToCDataWrapper(CDataWrapper& data_wrapper) {
         }
         case chaos::DataType::TYPE_STRING:{
             unsigned long str_len = std::strlen((const char *)value_buffer);
-            data_wrapper.addStringValue(name, std::string((const char *)value_buffer, (str_len>size?size:str_len)));
+            str_len = (str_len>=size?size:str_len);
+            data_wrapper.addStringValue(name, std::string(static_cast<const char*>(value_buffer), str_len));
             break;
         }
             

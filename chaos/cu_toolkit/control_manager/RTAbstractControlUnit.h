@@ -112,8 +112,6 @@ namespace chaos {
                  */
                 void executeOnThread();
                 
-                //!se the sattus flag
-                void setSystemFlag(const StatusFlag& status_flag);
 			public:
 				
 				/*! default constructor

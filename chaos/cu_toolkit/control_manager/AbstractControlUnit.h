@@ -83,6 +83,7 @@ namespace chaos{
             class AbstractExecutionUnit;
             
             namespace slow_command {
+                class SlowCommand;
                 class SlowCommandExecutor;
             }
             
@@ -114,6 +115,12 @@ namespace chaos{
                 START_SM_PHASE_STAT_TIMER = 0
             }StartSMPhase;
             
+            typedef enum StatusFlagType{
+                StatusFlagTypeBusy,
+                StatusFlagTypeWarning,
+                StatusFlagTypeError
+            }StatusFlagType;
+            
             typedef struct StatusFlag {
                 bool busy;
                 bool warning;
@@ -141,6 +148,7 @@ namespace chaos{
                 friend class AbstractExecutionUnit;
                 friend class SCAbstractControlUnit;
                 friend class RTAbstractControlUnit;
+                friend class slow_command::SlowCommand;
                 friend class slow_command::SlowCommandExecutor;
                 //enable trace for heap into control unit environment
 #ifdef __CHAOS_DEBUG_MEMORY_CU__
@@ -160,6 +168,9 @@ namespace chaos{
                 
                 //! control unit load param
                 std::string control_unit_param;
+                
+                //!control unti status flag
+                StatusFlag status_flag_control_unit;
                 
                 //!these are the startup command list
                 /*!
@@ -496,7 +507,15 @@ namespace chaos{
                 bool isInputAttributeChangeAuthorizedByHandler(const std::string& attr_name);
                 
                 //!update the system status flag
-                void setSystemStatusFlag(const StatusFlag& status_flag);
+                void setSystemStatusFlag(StatusFlagType flag_type,
+                                         bool new_flag_value);
+                
+                //! return the value of a specific system flag
+                const bool getSystemStatsuFlag(StatusFlagType flag_type);
+                
+                //! update status flag and push
+                void updateAndPusblishStatusFlag(StatusFlagType flag_type,
+                                           bool new_flag_value);
             public:
                 
                 //! Default Contructor
