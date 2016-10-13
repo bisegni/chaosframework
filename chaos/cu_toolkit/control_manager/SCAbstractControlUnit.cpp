@@ -48,7 +48,7 @@ AbstractControlUnit(CUType::SCCU,
                     _control_unit_param),
 slow_command_executor(NULL) {
     //allocate the SlowCommandExecutor, custom implementation of batch command executor engine
-    slow_command_executor = new SlowCommandExecutor(control_unit_instance, this, this);
+    slow_command_executor = new SlowCommandExecutor(control_unit_instance, this);
     //set the driver delegator to the executor
     slow_command_executor->driverAccessorsErogator = this;
     //associate the shared cache of the executor to the asbtract control unit one
@@ -69,7 +69,7 @@ AbstractControlUnit(CUType::SCCU,
                     _control_unit_drivers),
 slow_command_executor(NULL){
     //allocate the SlowCommandExecutor, custom implementation of batch command executor engine
-    slow_command_executor = new SlowCommandExecutor(control_unit_instance, this, this);
+    slow_command_executor = new SlowCommandExecutor(control_unit_instance, this);
     //set the driver delegator to the executor
     slow_command_executor->driverAccessorsErogator = this;
     //associate the shared cache of the executor to the asbtract control unit one
@@ -167,7 +167,7 @@ void SCAbstractControlUnit::init(void *initData) throw(CException) {
     AbstractControlUnit::init(initData);
     
     //control unit is it'self the database
-    slow_command_executor->dataset_attribute_db_ptr = this;
+    slow_command_executor->control_unit_instance = this;
     
     //init executor
     StartableService::initImplementation(slow_command_executor, (void*)NULL, "Slow Command Executor", __PRETTY_FUNCTION__);
@@ -190,7 +190,7 @@ void SCAbstractControlUnit::deinit() throw(CException) {
         SCACU_LAPP_ << "Deinitialize the command executor for " << DatasetDB::getDeviceID();
         StartableService::deinitImplementation(slow_command_executor, "Slow Command Executor", __PRETTY_FUNCTION__);
         //deassociate the data storage
-        slow_command_executor->dataset_attribute_db_ptr = NULL;
+        slow_command_executor->control_unit_instance = NULL;
     } else {
         SCACU_LAPP_ << "No command executor allocated for " << DatasetDB::getDeviceID();
     }
@@ -250,12 +250,12 @@ void SCAbstractControlUnit::initSystemAttributeOnSharedAttributeCache() {
     //add sand box identifier for the last system event
     domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_RUN_UNIT_ID, 127, DataType::TYPE_STRING);
     
-    for(std::vector<std::string>::iterator it = all_sandbox_ids.begin();
-        it != all_sandbox_ids.end();
-        it++) {
-        //add timestamp for every single sandbox
-        domain_attribute_setting.addAttribute((*it)+"_hb", 0, DataType::TYPE_INT64);
-    }
+//    for(std::vector<std::string>::iterator it = all_sandbox_ids.begin();
+//        it != all_sandbox_ids.end();
+//        it++) {
+//        //add timestamp for every single sandbox
+//        domain_attribute_setting.addAttribute((*it)+"_hb", 0, DataType::TYPE_INT64);
+//    }
 }
 
 void SCAbstractControlUnit::completeInputAttribute() {

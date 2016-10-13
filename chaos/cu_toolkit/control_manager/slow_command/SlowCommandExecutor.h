@@ -79,9 +79,6 @@ new chaos::common::utility::TypedObjectInstancer<SlowCommandClass, chaos::cu::co
 
                     friend class chaos::cu::control_manager::SCAbstractControlUnit;
 
-                    //! the reference to the master device database
-                    chaos_data::DatasetDB *dataset_attribute_db_ptr;
-
 					//! The driver erogator
 					chaos::cu::driver_manager::DriverErogatorInterface *driverAccessorsErogator;
 
@@ -103,7 +100,6 @@ new chaos::common::utility::TypedObjectInstancer<SlowCommandClass, chaos::cu::co
 
                     //! Private constructor
                     SlowCommandExecutor(const std::string& _executorID,
-										chaos_data::DatasetDB *_deviceSchemaDbPtr,
 										SCAbstractControlUnit *_control_unit_instance);
 
                     //! Private deconstructor

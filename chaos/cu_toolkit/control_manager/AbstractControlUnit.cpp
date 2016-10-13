@@ -1,4 +1,4 @@
- /*
+/*
  *	ControlUnit.cpp
  *	!CHAOS
  *	Created by Bisegni Claudio.
@@ -88,7 +88,6 @@ attribute_value_shared_cache(NULL),
 attribute_shared_cache_wrapper(NULL),
 timestamp_acq_cached_value(NULL),
 thread_schedule_daly_cached_value(NULL),
-storage_type_cached_value(NULL),
 key_data_storage(NULL){
     //initialize check list
     _initChecklist();
@@ -111,7 +110,6 @@ attribute_value_shared_cache(NULL),
 attribute_shared_cache_wrapper(NULL),
 timestamp_acq_cached_value(NULL),
 thread_schedule_daly_cached_value(NULL),
-storage_type_cached_value(NULL),
 key_data_storage(NULL){
     
     //copy array
@@ -163,7 +161,7 @@ void AbstractControlUnit::_initChecklist() {
     check_list_sub_service.addCheckList("_start");
     check_list_sub_service.getSharedCheckList("_start")->addElement(START_RPC_PHASE_UNIT);
     check_list_sub_service.getSharedCheckList("_start")->addElement(START_RPC_PHASE_IMPLEMENTATION);
- 
+    
     check_list_sub_service.addCheckList("start");
     check_list_sub_service.getSharedCheckList("start")->addElement(START_SM_PHASE_STAT_TIMER);
 }
@@ -336,6 +334,8 @@ void AbstractControlUnit::doInitRpCheckList() throw(CException) {
     CHAOS_CHECK_LIST_START_SCAN_TO_DO(check_list_sub_service, "_init"){
         
         CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_init", INIT_RPC_PHASE_CALL_INIT_STATE){
+            //reset staus flag
+            memset(&status_flag_control_unit, 0, sizeof(StatusFlag));
             //call init sequence
             init(NULL);
             break;
@@ -1238,14 +1238,26 @@ AbstractSharedDomainCache *AbstractControlUnit::_getAttributeCache() {
 void AbstractControlUnit::initSystemAttributeOnSharedAttributeCache() {
     AttributeCache& domain_attribute_setting = attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM);
     
-    //add heart beat attribute
-    ACULDBG_ << "Adding syste attribute on shared cache";
+    //add schedule time
+    ACULDBG_ << "Adding system attribute on shared cache";
     domain_attribute_setting.addAttribute(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, 0, DataType::TYPE_INT64);
     thread_schedule_daly_cached_value = domain_attribute_setting.getValueSettingForIndex(domain_attribute_setting.getIndexForName(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY));
-    //add unit type
+    
+    
+    //status system falg
+    domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_BUSY_FLAG, 0, DataType::TYPE_BOOLEAN);
+    domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_WARNING_FLAG, 0, DataType::TYPE_BOOLEAN);
+    domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_ERROR_FLAG, 0, DataType::TYPE_BOOLEAN);
+    
+    //add storage type
     domain_attribute_setting.addAttribute(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE, 0, DataType::TYPE_INT32);
-    storage_type_cached_value = domain_attribute_setting.getValueSettingForIndex(domain_attribute_setting.getIndexForName(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE));
-
+    
+    //add live time
+    domain_attribute_setting.addAttribute(DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME, 0, DataType::TYPE_INT64);
+    
+    //add history time
+    domain_attribute_setting.addAttribute(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME, 0, DataType::TYPE_INT64);
+    
     //add unit type
     domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_UNIT_TYPE, (uint32_t)control_unit_type.size(), DataType::TYPE_STRING);
     char * str_ptr = domain_attribute_setting.getValueSettingForIndex(domain_attribute_setting.getIndexForName(DataPackSystemKey::DP_SYS_UNIT_TYPE))->getValuePtr<char>();
@@ -1359,7 +1371,7 @@ CDataWrapper* AbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_att
     
     RangeValueInfo attributeInfo;
     std::vector<std::string> in_attribute_name;
-
+    
     try {
         //call pre handler
         unitInputAttributePreChangeHandler();
@@ -1467,8 +1479,14 @@ CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* updatePack
     
     //forward property change pack to the data driver
     key_data_storage->updateConfiguration(updatePack);
-    *storage_type_cached_value->getValuePtr<int32_t>() = key_data_storage->getStorageType();
-    storage_type_cached_value->markAsChanged();
+    
+    *attribute_value_shared_cache->getAttributeValue(DOMAIN_SYSTEM, DataServiceNodeDefinitionKey::DS_STORAGE_TYPE)->getValuePtr<int32_t>() = key_data_storage->getStorageType();
+    *attribute_value_shared_cache->getAttributeValue(DOMAIN_SYSTEM, DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME)->getValuePtr<uint64_t>() = key_data_storage->getStorageLiveTime();
+    *attribute_value_shared_cache->getAttributeValue(DOMAIN_SYSTEM, DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME)->getValuePtr<uint64_t>() = key_data_storage->getStorageHistoryTime();
+    
+    //mark all cache as changed
+    attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM).markAllAsChanged();
+    
     pushSystemDataset();
     return NULL;
 }
@@ -1616,29 +1634,7 @@ void AbstractControlUnit::fillCDatawrapperWithCachedValue(std::vector<AttributeV
     for(std::vector<AttributeValue*>::iterator it = cached_attributes.begin();
         it != cached_attributes.end();
         it++) {
-        
-        switch((*it)->type) {
-            case DataType::TYPE_BOOLEAN:
-                dataset.addBoolValue((*it)->name, *(*it)->getValuePtr<bool>());
-                break;
-            case DataType::TYPE_INT32:
-                dataset.addInt32Value((*it)->name, *(*it)->getValuePtr<int32_t>());
-                break;
-            case DataType::TYPE_INT64:
-                dataset.addInt64Value((*it)->name, *(*it)->getValuePtr<int64_t>());
-                break;
-            case DataType::TYPE_DOUBLE:
-                dataset.addDoubleValue((*it)->name, *(*it)->getValuePtr<double>());
-                break;
-            case DataType::TYPE_STRING:
-                dataset.addStringValue((*it)->name, std::string((*it)->getValuePtr<const char>(), (*it)->size));
-                break;
-            case DataType::TYPE_BYTEARRAY:
-                dataset.addBinaryValue((*it)->name, (*it)->getValuePtr<char>(), (*it)->size);
-                break;
-            default:
-                break;
-        }
+        (*it)->writeToCDataWrapper(dataset);
     }
 }
 
@@ -1650,6 +1646,48 @@ void AbstractControlUnit::timeout() {
 
 bool AbstractControlUnit::isInputAttributeChangeAuthorizedByHandler(const std::string& attr_name){
     return dataset_attribute_manager.getHandlerResult(attr_name);
+}
+
+void AbstractControlUnit::setSystemStatusFlag(StatusFlagType flag_type,
+                                              bool new_flag_value) {
+    
+    switch (flag_type) {
+        case StatusFlagTypeBusy:
+            status_flag_control_unit.busy = new_flag_value;
+            break;
+        case StatusFlagTypeWarning:
+            status_flag_control_unit.warning = new_flag_value;
+            break;
+        case StatusFlagTypeError:
+            status_flag_control_unit.error = new_flag_value;
+            break;
+    }
+    
+    boost::shared_ptr<SharedCacheLockDomain> wrt_lkc = attribute_value_shared_cache->getLockOnDomain(DOMAIN_SYSTEM, true);
+    AttributeCache& systemm_attribute_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM);
+    systemm_attribute_cache.setValueForAttribute(DataPackSystemKey::DP_SYS_BUSY_FLAG, static_cast<const void *>(&status_flag_control_unit.busy), sizeof(bool));
+    systemm_attribute_cache.setValueForAttribute(DataPackSystemKey::DP_SYS_WARNING_FLAG, static_cast<const void *>(&status_flag_control_unit.warning), sizeof(bool));
+    systemm_attribute_cache.setValueForAttribute(DataPackSystemKey::DP_SYS_ERROR_FLAG, static_cast<const void *>(&status_flag_control_unit.error), sizeof(bool));
+}
+
+const bool AbstractControlUnit::getSystemStatsuFlag(StatusFlagType flag_type) {
+    switch (flag_type) {
+        case StatusFlagTypeBusy:
+            return status_flag_control_unit.busy;
+        case StatusFlagTypeWarning:
+            return status_flag_control_unit.warning;
+        case StatusFlagTypeError:
+            return status_flag_control_unit.error;
+    }
+}
+
+
+//!se the sattus flag
+void AbstractControlUnit::updateAndPusblishStatusFlag(StatusFlagType flag_type,
+                                                      bool new_flag_value) {
+    AbstractControlUnit::setSystemStatusFlag(flag_type,
+                                             new_flag_value);
+    AbstractControlUnit::pushSystemDataset();
 }
 
 void AbstractControlUnit::copyInitConfiguraiton(CDataWrapper& copy) {

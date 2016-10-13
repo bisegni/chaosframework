@@ -327,3 +327,11 @@ CDataWrapper* KeyDataStorage::updateConfiguration(CDataWrapper *newConfiguration
 DataServiceNodeDefinitionType::DSStorageType KeyDataStorage::getStorageType() {
     return storage_type;
 }
+
+uint64_t KeyDataStorage::getStorageLiveTime() {
+    return storage_live_time;
+}
+
+uint64_t KeyDataStorage::getStorageHistoryTime() {
+    return storage_history_time;
+}
