@@ -161,7 +161,9 @@ void* URLServiceFeeder::getService(uint32_t idx) {
     boost::unique_lock<boost::mutex> wl(mutex_internal);
     return service_list[idx]->service;
 }
-
+bool URLServiceFeeder::isOnline(uint32_t idx){
+  return service_list[idx]->online;
+}
 void* URLServiceFeeder::getService() {
     boost::unique_lock<boost::mutex> wl(mutex_internal);
     switch (feed_mode) {

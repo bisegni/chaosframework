@@ -116,7 +116,11 @@ namespace chaos {
                  Set the url as online
                  */
                 void setURLOnline(uint32_t idx);
- 
+                /*!
+                 Check if is online
+                 */
+		
+		bool isOnline(uint32_t idx);
                 //! get the service to use according to the feeder node
                 virtual void* getService(uint32_t idx);
                 

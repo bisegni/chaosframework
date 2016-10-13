@@ -433,8 +433,10 @@ void IODirectIODriver::handleEvent(chaos_direct_io::DirectIOClientConnection *cl
             break;
             
         case chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventDisconnected:
+	  if(connectionFeeder.isOnline(service_index)){
             DEBUG_CODE(IODirectIODriver_LINFO_ << "Manage Disconnected event for service with index " << service_index << " and url" << client_connection->getURL();)
-            connectionFeeder.setURLOffline(service_index);
+	      connectionFeeder.setURLOffline(service_index);
+	  }
             break;
     }
 }
