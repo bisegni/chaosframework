@@ -42,7 +42,7 @@ storage_history_time(0),
 storage_history_time_last_push(0),
 storage_live_time(0),
 storage_live_time_last_push(0),
-sequence_id(std::numeric_limits<int64_t>::min()){
+  sequence_id(0 /*std::numeric_limits<int64_t>::min()*/){
     output_key	= _key + DataPackPrefixID::OUTPUT_DATASE_PREFIX;
     input_key	= _key + DataPackPrefixID::INPUT_DATASE_PREFIX;
     system_key	= _key + DataPackPrefixID::SYSTEM_DATASE_PREFIX;
