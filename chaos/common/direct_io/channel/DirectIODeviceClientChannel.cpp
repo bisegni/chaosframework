@@ -75,7 +75,10 @@ void DirectIODeviceClientChannel::setAnswerServerInfo(uint16_t p_server_port, ui
 int64_t DirectIODeviceClientChannel::storeAndCacheDataOutputChannel(const std::string& key,
                                                                     void *buffer,
                                                                     uint32_t buffer_len,
-                                                                    DataServiceNodeDefinitionType::DSStorageType _put_mode) {
+                                                                    DataServiceNodeDefinitionType::DSStorageType _put_mode,
+                                                                    bool wait_result) {
+    int64_t err = 0;
+    DirectIODataPack *answer = NULL;
     DirectIODataPack *data_pack = (DirectIODataPack*)calloc(sizeof(DirectIODataPack), 1);
     DirectIODeviceChannelHeaderPutOpcode *put_opcode_header = (opcode_headers::DirectIODeviceChannelHeaderPutOpcode *)calloc((PUT_HEADER_LEN(key)+key.size()), 1);
     
@@ -91,7 +94,15 @@ int64_t DirectIODeviceClientChannel::storeAndCacheDataOutputChannel(const std::s
     DIRECT_IO_SET_CHANNEL_HEADER(data_pack, put_opcode_header, (uint32_t)PUT_HEADER_LEN(key))
     //set data if the have some
     if(buffer_len){DIRECT_IO_SET_CHANNEL_DATA(data_pack, buffer, buffer_len);}
-    return sendPriorityData(data_pack);
+    if(wait_result) {
+        if((err = sendPriorityData(data_pack, &answer))) {
+            //error getting last value
+            DIODCCLERR_ << "Error storing value for key:" << key << " with error:" <<err;
+        }
+    } else {
+        err = sendPriorityData(data_pack);
+    }
+    return err;
 }
 
 //! Send device serialization with priority
@@ -165,7 +176,7 @@ int64_t DirectIODeviceClientChannel::queryDataCloud(const std::string& key,
     query_description.addInt64Value(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_STAR_TS_I64, (int64_t)start_ts);
     query_description.addInt64Value(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_END_TS_I64, (int64_t)end_ts);
     query_description.addInt64Value(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_LAST_SEQUENCE_ID, last_sequence_id);
-
+    
     //copy the query id on header
     query_data_cloud_header->field.record_for_page = TO_LITTEL_ENDNS_NUM(uint32_t, page_dimension);
     //set opcode
@@ -189,7 +200,7 @@ int64_t DirectIODeviceClientChannel::queryDataCloud(const std::string& key,
             *result_handler = (DirectIODeviceChannelOpcodeQueryDataCloudResultPtr)calloc(sizeof(DirectIODeviceChannelOpcodeQueryDataCloudResult), 1);
             //get the header
             (*result_handler)->header = *static_cast<opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult*>(answer->channel_header_data);
-
+            
             (*result_handler)->header.result_data_size = FROM_LITTLE_ENDNS_NUM(uint32_t, (*result_handler)->header.result_data_size);
             (*result_handler)->header.numer_of_record_found = FROM_LITTLE_ENDNS_NUM(uint32_t, (*result_handler)->header.numer_of_record_found);
             (*result_handler)->header.last_found_sequence = FROM_LITTLE_ENDNS_NUM(uint64_t, (*result_handler)->header.last_found_sequence);

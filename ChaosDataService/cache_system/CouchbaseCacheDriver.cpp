@@ -81,6 +81,9 @@ void CouchbaseCacheDriver::setCallback(lcb_t instance,
 										   lcb_error_t error,
 										   const lcb_store_resp_t *resp) {
 	(void)instance;
+    if (error != LCB_SUCCESS) {
+         CCDLERR_ << lcb_strerror(instance, error);
+    }
 }
 
 CouchbaseCacheDriver::CouchbaseCacheDriver(std::string alias):
@@ -124,6 +127,7 @@ void CouchbaseCacheDriver::deinit() throw (chaos::CException) {
 int CouchbaseCacheDriver::putData(void *element_key, uint8_t element_key_len,  void *value, uint32_t value_len) {
     CHAOS_ASSERT(getServiceState() == CUStateKey::INIT)
 	//boost::shared_lock<boost::shared_mutex> lock(mutex_server);
+    int err = LCB_SUCCESS;
 	lcb_store_cmd_t cmd;
     const lcb_store_cmd_t * const commands[] = { &cmd };
 	
@@ -133,23 +137,18 @@ int CouchbaseCacheDriver::putData(void *element_key, uint8_t element_key_len,  v
     cmd.v.v0.bytes = value;
     cmd.v.v0.nbytes = value_len;
     cmd.v.v0.operation = LCB_SET;
-    if ((last_err = lcb_store(instance, this, 1, commands)) != LCB_SUCCESS) {
+    if ((err = lcb_store(instance, this, 1, commands)) != LCB_SUCCESS) {
 		CCDLERR_<< "Fail to set value -> "<< lcb_strerror(NULL, last_err);
-		return last_err;
+		
     }
-	lcb_wait(instance);
-	if(last_err != LCB_SUCCESS) {
-		CCDLERR_<< "Fail to set value with last_err "<< last_err << " with message " << last_err_str;
-		return last_err;
-	}
-	return 0;
+	return err;
 }
 
 int CouchbaseCacheDriver::getData(void *element_key, uint8_t element_key_len,  void **value, uint32_t& value_len) {
 	//boost::shared_lock<boost::shared_mutex> lock(mutex_server);
 	CHAOS_ASSERT(getServiceState() == CUStateKey::INIT)
     CHAOS_ASSERT(value)
-    
+    int err = LCB_SUCCESS;
 	lcb_get_cmd_t cmd;
 	const lcb_get_cmd_t *commands[1];
 	
@@ -158,22 +157,15 @@ int CouchbaseCacheDriver::getData(void *element_key, uint8_t element_key_len,  v
 	cmd.v.v0.key = element_key;
 	cmd.v.v0.nkey = element_key_len;
 	
-	last_err = lcb_get(instance, (void*)this, 1, commands);
-	if (last_err != LCB_SUCCESS) {
-		CCDLERR_<< "Fail to get value -> "<< lcb_strerror(NULL, last_err);
-		return last_err;
-	}
-	lcb_wait(instance);
-	if(get_result.err == LCB_SUCCESS){
+	err = lcb_get(instance, (void*)this, 1, commands);
+	if (err != LCB_SUCCESS) {
+		CCDLERR_<< "Fail to get value with last_err "<< last_err << " with message " << last_err_str;
+	} else {
         //last_err = result->err;
 		*value = (void*)get_result.value;
 		value_len = get_result.value_len;
-	}
-	if(last_err != LCB_SUCCESS) {
-		CCDLERR_<< "Fail to get value with last_err "<< last_err << " with message " << last_err_str;
-		return last_err;
-	}
-	return 0;
+    }
+	return err;
 }
 
 bool CouchbaseCacheDriver::validateString(std::string& server_description) {
@@ -256,9 +248,12 @@ int CouchbaseCacheDriver::updateConfig() {
         CCDLDBG_ << "session params:"<<create_options.v.v3.connstr;
     }
 	
+    lcb_U32 newval = 2000000; // Set to 4 seconds
+    lcb_cntl(instance, LCB_CNTL_SET, LCB_CNTL_OP_TIMEOUT, &newval);
+    
 	lcb_set_cookie(instance, this);
 	
-	lcb_behavior_set_syncmode(instance, LCB_ASYNCHRONOUS);
+	lcb_behavior_set_syncmode(instance, LCB_SYNCHRONOUS);
 
 	/* Set up the handler to catch all errors! */
 	lcb_set_error_callback(instance, CouchbaseCacheDriver::errorCallback);
