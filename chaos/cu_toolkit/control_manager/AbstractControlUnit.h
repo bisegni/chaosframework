@@ -70,7 +70,6 @@ private:\
 
 using namespace chaos::common::data;
 using namespace chaos::common::data::cache;
-using namespace chaos::cu::driver_manager;
 using namespace chaos::cu::driver_manager::driver;
 
 namespace chaos{
@@ -136,7 +135,7 @@ namespace chaos{
              that needs to be used to create device and his dataset are contained into the DeviceSchemaDB class.
              */
             class AbstractControlUnit :
-            public DriverErogatorInterface,
+            public chaos::cu::driver_manager::DriverErogatorInterface,
             public DeclareAction,
             protected DatasetDB,
             protected chaos::common::async_central::TimerHandler,
