@@ -34,23 +34,18 @@ using namespace chaos::common::data;
 using namespace chaos::cu::control_manager::slow_command;
 using namespace chaos::common::batch_command;
 
-
 CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string, CDataWrapperKeyList);
 
-#define LOG_HEAD_SBE "[SlowCommandExecutor-" << dataset_attribute_db_ptr->getDeviceID() << "] "
-
-#define SCELAPP_ LAPP_ << LOG_HEAD_SBE
-#define SCELDBG_ LDBG_ << LOG_HEAD_SBE
-#define SCELERR_ LERR_ << LOG_HEAD_SBE
+#define SCELAPP_ INFO_LOG_1_P(SlowCommandExecutor, control_unit_instance->getDeviceID())
+#define SCELDBG_ ERR_LOG_1_P(SlowCommandExecutor, control_unit_instance->getDeviceID())
+#define SCELERR_ DBG_LOG_1_P(SlowCommandExecutor, control_unit_instance->getDeviceID())
 using namespace chaos::common::data::cache;
 using namespace chaos::common::batch_command;
 using namespace chaos::common::metadata_logging;
 
 SlowCommandExecutor::SlowCommandExecutor(const std::string& _executorID,
-                                         DatasetDB *_dataset_attribute_db_ptr,
                                          SCAbstractControlUnit *_control_unit_instance):
 BatchCommandExecutor(_executorID),
-dataset_attribute_db_ptr(_dataset_attribute_db_ptr),
 attribute_cache(new AttributeSharedCacheWrapper(getAttributeSharedCache())),
 control_unit_instance(_control_unit_instance),
 last_ru_id_cache(NULL),
@@ -143,7 +138,7 @@ BatchCommand *SlowCommandExecutor::instanceCommandInfo(const std::string& comman
     if(result) {
         //forward the pointers of the needed data
         result->driverAccessorsErogator = driverAccessorsErogator;
-        result->dataset_attribute_db_ptr = dataset_attribute_db_ptr;
+        result->abstract_control_unit = control_unit_instance;
         result->attribute_cache = attribute_cache;
     }
     return result;
@@ -251,7 +246,7 @@ void SlowCommandExecutor::handleSandboxEvent(const std::string& sandbox_id,
     }
     
     //set the last system event sandbox id
-    last_ru_id_cache->setValue(sandbox_id.c_str(), (uint32_t)sandbox_id.size());
+    last_ru_id_cache->setStringValue(sandbox_id);
     
     switch(type) {
         case BatchSandboxEventType::EVT_RUN_START: {

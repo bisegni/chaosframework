@@ -31,9 +31,10 @@
 #include <chaos/common/data/DatasetDB.h>
 #include <chaos/common/batch_command/BatchCommand.h>
 
-#include <chaos/cu_toolkit/control_manager/AttributeSharedCacheWrapper.h>
 #include <chaos/cu_toolkit/data_manager/KeyDataStorage.h>
 #include <chaos/cu_toolkit/driver_manager/DriverErogatorInterface.h>
+#include <chaos/cu_toolkit/control_manager/AttributeSharedCacheWrapper.h>
+#include <chaos/cu_toolkit/control_manager/AbstractControlUnit.h>
 
 namespace chaos_data = chaos::common::data;
 
@@ -89,7 +90,7 @@ new chaos::common::utility::TypedObjectInstancer<n c, chaos::cu::control_manager
 					friend class command::SetAttributeCommand;
                     
                     //! point to the in memory device database
-					chaos::common::data::DatasetDB  *dataset_attribute_db_ptr;
+                    chaos::cu::control_manager::AbstractControlUnit  *abstract_control_unit;
 
 					//redefine the visibility
 					AbstractSharedDomainCache * const getSharedCacheInterface() {
@@ -118,6 +119,17 @@ new chaos::common::utility::TypedObjectInstancer<n c, chaos::cu::control_manager
 					//! return the attribute cache pointer
 					AttributeSharedCacheWrapper * const getAttributeCache();
 
+                    //!update the system status flag
+                    void setSystemStatusFlag(chaos::cu::control_manager::StatusFlagType flag_type,
+                                             bool new_flag_value);
+                    
+                    //! return the value of a specific system flag
+                    const bool getSystemStatsuFlag(chaos::cu::control_manager::StatusFlagType flag_type);
+                    
+                    //! update status flag and push
+                    void updateAndPusblishStatusFlag(chaos::cu::control_manager::StatusFlagType flag_type,
+                                                     bool new_flag_value);
+                    
                 public:
                     
                     //! return the identification of the device

@@ -83,6 +83,7 @@ namespace chaos{
             class AbstractExecutionUnit;
             
             namespace slow_command {
+                class SlowCommand;
                 class SlowCommandExecutor;
             }
             
@@ -114,6 +115,18 @@ namespace chaos{
                 START_SM_PHASE_STAT_TIMER = 0
             }StartSMPhase;
             
+            typedef enum StatusFlagType{
+                StatusFlagTypeBusy,
+                StatusFlagTypeWarning,
+                StatusFlagTypeError
+            }StatusFlagType;
+            
+            typedef struct StatusFlag {
+                bool busy;
+                bool warning;
+                bool error;
+            } StatusFlag;
+            
             CHAOS_DEFINE_VECTOR_FOR_TYPE(boost::shared_ptr<chaos::common::data::CDataWrapper>, ACUStartupCommandList)
             
             //!  Base class for control unit !CHAOS node
@@ -135,6 +148,7 @@ namespace chaos{
                 friend class AbstractExecutionUnit;
                 friend class SCAbstractControlUnit;
                 friend class RTAbstractControlUnit;
+                friend class slow_command::SlowCommand;
                 friend class slow_command::SlowCommandExecutor;
                 //enable trace for heap into control unit environment
 #ifdef __CHAOS_DEBUG_MEMORY_CU__
@@ -154,6 +168,9 @@ namespace chaos{
                 
                 //! control unit load param
                 std::string control_unit_param;
+                
+                //!control unti status flag
+                StatusFlag status_flag_control_unit;
                 
                 //!these are the startup command list
                 /*!
@@ -190,8 +207,6 @@ namespace chaos{
                 
                 //! fast access for thread scheduledaly cached value
                 AttributeValue *thread_schedule_daly_cached_value;
-                
-                AttributeValue *storage_type_cached_value;
                 
                 //! check list of services for initialization and start state
                 chaos::common::utility::AggregatedCheckList check_list_sub_service;
@@ -488,7 +503,19 @@ namespace chaos{
                 //!timer for update push metric
                 void timeout();
                 
+                //!check if attribute hase been autorized by handler
                 bool isInputAttributeChangeAuthorizedByHandler(const std::string& attr_name);
+                
+                //!update the system status flag
+                void setSystemStatusFlag(StatusFlagType flag_type,
+                                         bool new_flag_value);
+                
+                //! return the value of a specific system flag
+                const bool getSystemStatsuFlag(StatusFlagType flag_type);
+                
+                //! update status flag and push
+                void updateAndPusblishStatusFlag(StatusFlagType flag_type,
+                                           bool new_flag_value);
             public:
                 
                 //! Default Contructor

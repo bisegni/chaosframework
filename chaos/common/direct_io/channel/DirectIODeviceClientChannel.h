@@ -71,7 +71,8 @@ namespace chaos {
                     int64_t storeAndCacheDataOutputChannel(const std::string& key,
                                                            void *buffer,
                                                            uint32_t buffer_len,
-                                                           DataServiceNodeDefinitionType::DSStorageType _put_mode);
+                                                           DataServiceNodeDefinitionType::DSStorageType _put_mode,
+                                                           bool wait_result = true);
                     
                     //! Send a request for the last output data
                     int64_t requestLastOutputData(const std::string& key,

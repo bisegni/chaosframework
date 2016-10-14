@@ -31,7 +31,7 @@ using namespace chaos::cu::control_manager::slow_command;
 // default constructor
 SlowCommand::SlowCommand() {
     
-
+    
 }
 
 // default destructor
@@ -40,16 +40,35 @@ SlowCommand::~SlowCommand() {
 }
 
 const string & SlowCommand::getDeviceID() {
-    return dataset_attribute_db_ptr->getDeviceID();
+    return abstract_control_unit->getDeviceID();
 }
 
 /*
  return the device database with the dafualt device information
  */
 chaos::common::data::DatasetDB * const SlowCommand::getDeviceDatabase() {
-    return dataset_attribute_db_ptr;
+    return abstract_control_unit;
 }
 
 AttributeSharedCacheWrapper * const SlowCommand::getAttributeCache() {
-	return attribute_cache;
+    return attribute_cache;
+}
+
+//!update the system status flag
+void SlowCommand::setSystemStatusFlag(StatusFlagType flag_type,
+                                      bool new_flag_value) {
+    abstract_control_unit->setSystemStatusFlag(flag_type,
+                                               new_flag_value);
+}
+
+//! return the value of a specific system flag
+const bool SlowCommand::getSystemStatsuFlag(StatusFlagType flag_type) {
+    return abstract_control_unit->getSystemStatsuFlag(flag_type);
+}
+
+//! update status flag and push
+void SlowCommand::updateAndPusblishStatusFlag(StatusFlagType flag_type,
+                                              bool new_flag_value) {
+    abstract_control_unit->updateAndPusblishStatusFlag(flag_type,
+                                                       new_flag_value);
 }

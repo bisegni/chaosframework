@@ -90,6 +90,10 @@ namespace chaos{
                     bool setValue(const CDataVariant& attribute_value,
                                   bool tag_has_changed = true);
                     
+                    bool setStringValue(const std::string& value,
+                                        bool tag_has_changed = true,
+                                        bool enlarge_memory = false);
+                    
                         //! marck attribute as changed
                     void markAsChanged();
 
