@@ -102,6 +102,7 @@ int64_t DirectIODeviceClientChannel::storeAndCacheDataOutputChannel(const std::s
     } else {
         err = sendPriorityData(data_pack);
     }
+    if(answer) {free(answer);}
     return err;
 }
 

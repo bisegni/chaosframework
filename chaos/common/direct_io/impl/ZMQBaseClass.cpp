@@ -386,7 +386,7 @@ int ZMQBaseClass::reveiceDatapack(void *socket,
     data_pack_ptr = *data_pack_handle = (DirectIODataPack*)calloc(1, sizeof(DirectIODataPack));
     
     //clear all memory
-    std::memset(data_pack_ptr, 0, sizeof(DirectIODataPack));
+    //std::memset(data_pack_ptr, 0, sizeof(DirectIODataPack));
     
     //set dispatch header data
     data_pack_ptr->header.dispatcher_header.raw_data = DIRECT_IO_GET_DISPATCHER_DATA(header_buffer);
