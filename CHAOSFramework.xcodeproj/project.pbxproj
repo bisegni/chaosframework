@@ -822,6 +822,8 @@
 		32C100F8191B6F2900478F40 /* AsyncCentralManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C100F6191B6F2900478F40 /* AsyncCentralManager.h */; };
 		32C100FB191B847800478F40 /* TimerHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C100F9191B847800478F40 /* TimerHandler.cpp */; };
 		32C100FC191B847800478F40 /* TimerHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C100FA191B847800478F40 /* TimerHandler.h */; };
+		32C25DE41DB771D200A46C2B /* AsyncPoolRunner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C25DE21DB771D200A46C2B /* AsyncPoolRunner.cpp */; };
+		32C25DE51DB771D200A46C2B /* AsyncPoolRunner.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C25DE31DB771D200A46C2B /* AsyncPoolRunner.h */; };
 		32C353F21788015B009ED581 /* PluginDiscover.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C353F01788015B009ED581 /* PluginDiscover.cpp */; };
 		32C353F31788015B009ED581 /* PluginDiscover.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C353F11788015B009ED581 /* PluginDiscover.h */; };
 		32C3544E17885A37009ED581 /* common.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 32C3543517885A37009ED581 /* common.hpp */; };
@@ -2077,6 +2079,8 @@
 		32C100FA191B847800478F40 /* TimerHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimerHandler.h; sourceTree = "<group>"; };
 		32C100FD191B84FB00478F40 /* async_central.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = async_central.h; sourceTree = "<group>"; };
 		32C100FE191BC94100478F40 /* TemplateConfigFile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TemplateConfigFile; sourceTree = "<group>"; };
+		32C25DE21DB771D200A46C2B /* AsyncPoolRunner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsyncPoolRunner.cpp; sourceTree = "<group>"; };
+		32C25DE31DB771D200A46C2B /* AsyncPoolRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncPoolRunner.h; sourceTree = "<group>"; };
 		32C353F01788015B009ED581 /* PluginDiscover.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginDiscover.cpp; sourceTree = "<group>"; };
 		32C353F11788015B009ED581 /* PluginDiscover.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginDiscover.h; sourceTree = "<group>"; };
 		32C3543517885A37009ED581 /* common.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = common.hpp; sourceTree = "<group>"; };
@@ -4381,6 +4385,8 @@
 				32C100F9191B847800478F40 /* TimerHandler.cpp */,
 				32C100FA191B847800478F40 /* TimerHandler.h */,
 				32C100FD191B84FB00478F40 /* async_central.h */,
+				32C25DE21DB771D200A46C2B /* AsyncPoolRunner.cpp */,
+				32C25DE31DB771D200A46C2B /* AsyncPoolRunner.h */,
 			);
 			path = async_central;
 			sourceTree = "<group>";
@@ -4863,6 +4869,7 @@
 				32EBDEFB1B4E58F300278C42 /* MetricCollector.h in Headers */,
 				3271B8961D3D0D520035290E /* StatusFlagCatalogSDWrapper.h in Headers */,
 				329603231876B45000CDCADA /* BatchCommand.h in Headers */,
+				32C25DE51DB771D200A46C2B /* AsyncPoolRunner.h in Headers */,
 				326DB49214B38BC00018A8D0 /* ObjectFactoryRegister.h in Headers */,
 				326DB49314B38BC00018A8D0 /* Singleton.h in Headers */,
 				324A4B4C191A41EF00975394 /* bits.h in Headers */,
@@ -5860,6 +5867,7 @@
 				32A88BE71CF8228A001DBAF5 /* ltm.c in Sources */,
 				3214EF241D468209004DB689 /* Lists.cpp in Sources */,
 				32A88BD91CF8228A001DBAF5 /* lopcodes.c in Sources */,
+				32C25DE41DB771D200A46C2B /* AsyncPoolRunner.cpp in Sources */,
 				328E405D17287B82004E5938 /* LFDataCache.cpp in Sources */,
 				324A4B7F191A428500975394 /* safe_num.cpp in Sources */,
 				32A8F7D1172BE3FD0090DB78 /* KeyGroupCache.cpp in Sources */,

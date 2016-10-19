@@ -133,6 +133,33 @@ int MDSMessageChannel::sendNodeRegistration(CDataWrapper& node_description,
     return last_error_code;
 }
 
+int MDSMessageChannel::sentNodeHealthStatus(CDataWrapper& node_health_data,
+                                            bool request_check,
+                                            uint32_t millisec_to_wait) {
+    int size_bson = 0;
+    std::string currentBrokerIpPort;
+    
+    //get rpc receive port
+    std::auto_ptr<CDataWrapper> data(new CDataWrapper(node_health_data.getBSONRawData(size_bson)));
+    
+    if(request_check){
+        std::auto_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture(NodeDomainAndActionRPC::RPC_DOMAIN,
+                                                                                               MetadataServerNodeDefinitionKeyRPC::ACTION_NODE_HEALTH_STATUS,
+                                                                                               data.release());
+        request_future->setTimeout(millisec_to_wait);
+        if(request_future->wait()) {
+            DECODE_ERROR(request_future)
+        } else {
+            last_error_code = -1;
+        }
+    } else {
+        sendMessage(NodeDomainAndActionRPC::RPC_DOMAIN,
+                    MetadataServerNodeDefinitionKeyRPC::ACTION_NODE_LOAD_COMPLETION,
+                    data.get());
+    }
+    return last_error_code;
+}
+
 int MDSMessageChannel::sendNodeLoadCompletion(CDataWrapper& node_information,
                                               bool requestCheck,
                                               uint32_t millisec_to_wait) {

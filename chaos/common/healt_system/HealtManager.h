@@ -69,8 +69,11 @@ namespace chaos {
                 //!save the time when the helat node has been created
                 uint64_t startup_time;
                 
+                //!is the node uinique id
+                std::string   node_uid;
+                
                 //!the key to use for the node publishing operation
-                std::string   node_key;
+                std::string   node_publish_key;
                 
                 //!is the metric node map
                 HealtNodeElementMap map_metric;
@@ -81,9 +84,10 @@ namespace chaos {
                 //!keep track of how is the start valu eof the counter
                 unsigned int fire_slot;
                 
-                NodeHealtSet(const std::string& node_uid):
+                NodeHealtSet(const std::string& _node_uid):
                 has_changed(false),
-                node_key(node_uid + chaos::NodeHealtDefinitionKey::HEALT_KEY_POSTFIX),
+                node_uid(_node_uid),
+                node_publish_key(node_uid + chaos::NodeHealtDefinitionKey::HEALT_KEY_POSTFIX),
                 fire_slot(0),
                 startup_time(chaos::common::utility::TimingUtil::getTimeStamp()){}
                 
@@ -149,8 +153,7 @@ namespace chaos {
                 
                 //! timer handler for check what slot needs to be fired
                 void timeout();
-                chaos::common::data::CDataWrapper* prepareNodeDataPack(HealtNodeElementMap& element_map,
-                                                                       uint64_t node_startup_ts,
+                chaos::common::data::CDataWrapper* prepareNodeDataPack(NodeHealtSet& node_health_set,
                                                                        uint64_t push_timestamp);
                 
                 //!protected mehoto to talk with mds to receive the cds server where publish the data

@@ -421,24 +421,25 @@ void HealtManager::addNodeMetricValue(const std::string& node_uid,
     }CHAOS_BOOST_LOCK_EXCEPTION_CACTH(lock_exception,)
 }
 
-CDataWrapper*  HealtManager::prepareNodeDataPack(HealtNodeElementMap& element_map,
-                                                 uint64_t node_startup_ts,
+CDataWrapper*  HealtManager::prepareNodeDataPack(NodeHealtSet& node_health_set,
                                                  uint64_t push_timestamp) {
     CDataWrapper *node_data_pack = new CDataWrapper();
+    
     if(node_data_pack) {
+        node_data_pack->addStringValue(DataPackCommonKey::DPCK_DEVICE_ID, node_health_set.node_uid);
         //set the push timestamp
-        static_cast<Int64HealtMetric*>(element_map[NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP].get())->value = push_timestamp;
+        static_cast<Int64HealtMetric*>(node_health_set.map_metric[NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP].get())->value = push_timestamp;
         
-        static_cast<Int64HealtMetric*>(element_map[NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP].get())->value = current_proc_info.swap_rsrc;
+        static_cast<Int64HealtMetric*>(node_health_set.map_metric[NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP].get())->value = current_proc_info.swap_rsrc;
 
-        static_cast<DoubleHealtMetric*>(element_map[NodeHealtDefinitionKey::NODE_HEALT_USER_TIME].get())->value = current_proc_info.usr_time;
+        static_cast<DoubleHealtMetric*>(node_health_set.map_metric[NodeHealtDefinitionKey::NODE_HEALT_USER_TIME].get())->value = current_proc_info.usr_time;
 
-        static_cast<DoubleHealtMetric*>(element_map[NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME].get())->value = current_proc_info.sys_time;
+        static_cast<DoubleHealtMetric*>(node_health_set.map_metric[NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME].get())->value = current_proc_info.sys_time;
         //get the uptime in seconds
-        static_cast<Int64HealtMetric*>(element_map[NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME].get())->value = (push_timestamp - node_startup_ts)/1000;
+        static_cast<Int64HealtMetric*>(node_health_set.map_metric[NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME].get())->value = (push_timestamp - node_health_set.startup_time)/1000;
         
         //scan all metrics
-        BOOST_FOREACH(HealtNodeElementMap::value_type map_metric_element, element_map) {
+        BOOST_FOREACH(HealtNodeElementMap::value_type map_metric_element, node_health_set.map_metric) {
             //add metric to cdata wrapper
             map_metric_element.second->addMetricToCD(node_data_pack);
         }
@@ -481,14 +482,13 @@ void HealtManager::_publish(const boost::shared_ptr<NodeHealtSet>& heath_set,
     updateProcInfo();
     
     //send datapack
-    CDataWrapper *data_pack = prepareNodeDataPack(heath_set->map_metric,
-                                                  heath_set->startup_time,
+    CDataWrapper *data_pack = prepareNodeDataPack(*heath_set,
                                                   publish_ts);
     if(data_pack) {
-        io_data_driver->storeData(heath_set->node_key,
+        io_data_driver->storeData(heath_set->node_publish_key,
                                   data_pack,
                                   DataServiceNodeDefinitionType::DSStorageTypeLive);
     } else {
-        HM_ERR << "Error allocating health datapack for node:" << heath_set->node_key;
+        HM_ERR << "Error allocating health datapack for node:" << heath_set->node_uid;
     }
 }
