@@ -526,7 +526,7 @@ namespace chaos {
         //! of 0 mean infinit persistence[uint32_t]
         static const char * const DS_STORAGE_HISTORY_AGEING                         = "dsndk_storage_history_ageing";
         /*!
-         storage time [in msecods uint64] the time that need to pass before 
+         storage time [in msecods uint64] the time that need to pass before
          store another datapack into the history system[uint64]
          */
         static const char * const DS_STORAGE_HISTORY_TIME                           = "dsndk_storage_history_time";
@@ -960,7 +960,10 @@ namespace chaos {
         static const char * const PARAM_REGISTER_NODE_RESULT      = "mdsndk_rpc_p_reg_result";
         
         //! the key for the control unit load completion registration
-        static const char * const ACTION_NODE_LOAD_COMPLETION  = "mdsndk_rpc_a_load_completion_node";
+        static const char * const ACTION_NODE_LOAD_COMPLETION     = "mdsndk_rpc_a_load_completion_node";
+        
+        //! the key for the node health status
+        static const char * const ACTION_NODE_HEALTH_STATUS         = "mdsndk_rpc_a_health_status";
     }
     /** @} */ // end of NodeDomainAndActionRPC
     

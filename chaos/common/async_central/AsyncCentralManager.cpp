@@ -36,23 +36,34 @@ using namespace chaos::common::async_central;
 
 AsyncCentralManager::AsyncCentralManager():
 asio_service(),
-asio_default_work(asio_service) {
-}
+asio_default_work(asio_service) {}
 
-AsyncCentralManager::~AsyncCentralManager() {
-}
+AsyncCentralManager::~AsyncCentralManager() {}
 
 // Initialize instance
 void AsyncCentralManager::init(void *init_data) throw(chaos::CException) {
     ACM_LAPP_ << "Allocating event loop";
     asio_thread_group.create_thread(boost::bind(&boost::asio::io_service::run, &asio_service));
+    
+    ACM_LAPP_ << "Allocating job async runner";
+    async_pool_runner.reset(new AsyncPoolRunner(1));
+    utility::InizializableService::initImplementation(*async_pool_runner,
+                                                      init_data,
+                                                      "AsyncPoolRunner",
+                                                      __PRETTY_FUNCTION__);
 }
 
 // Deinit the implementation
 void AsyncCentralManager::deinit() throw(chaos::CException) {
+    ACM_LAPP_ << "Stop job async runner";
+    utility::InizializableService::deinitImplementation(*async_pool_runner,
+                                                        "AsyncPoolRunner",
+                                                        __PRETTY_FUNCTION__);
+    
     ACM_LAPP_ << "Stop event loop";
     asio_service.stop();
     asio_thread_group.join_all();
+    
 }
 
 int AsyncCentralManager::addTimer(TimerHandler *timer_handler,
@@ -90,4 +101,8 @@ int AsyncCentralManager::removeTimer(TimerHandler *timer_handler) {
         err = -3;
     }
     return err;
+}
+
+void AsyncCentralManager::submitAsyncJob(AsyncRunnable *runnable) {
+    async_pool_runner->submit(runnable);
 }

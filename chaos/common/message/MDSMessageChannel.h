@@ -100,6 +100,11 @@ namespace chaos {
                                            bool requestCheck = false,
                                            uint32_t millisec_to_wait=5000);
                 
+                //!sendNode heartbeat
+                int sentNodeHealthStatus(CDataWrapper& node_health_data,
+                                         bool request_check = false,
+                                         uint32_t millisec_to_wait=5000);
+                
                 //! Get all active device id
                 /*!
                  Return a list of all device id that are active

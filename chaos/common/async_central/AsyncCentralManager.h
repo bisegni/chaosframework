@@ -22,6 +22,8 @@
 #ifndef __CHAOSFramework__AsyncCentralManager__
 #define __CHAOSFramework__AsyncCentralManager__
 
+#include <chaos/common/async_central/AsyncPoolRunner.h>
+
 #include <chaos/common/utility/Singleton.h>
 #include <chaos/common/utility/InizializableService.h>
 #include <chaos/common/utility/Delegate.h>
@@ -44,6 +46,10 @@ namespace chaos {
 			public utility::Singleton<AsyncCentralManager>,
 			public utility::InizializableService {
 			  friend class utility::Singleton<AsyncCentralManager>;
+                //job
+                std::auto_ptr<AsyncPoolRunner>  async_pool_runner;
+                
+                //timer
 				boost::asio::io_service         asio_service;
                 boost::asio::io_service::work   asio_default_work;
                 boost::thread_group             asio_thread_group;
@@ -62,8 +68,11 @@ namespace chaos {
 				int addTimer(TimerHandler *timer_handler,
                              uint64_t timeout,
                              uint64_t repeat);
-				
+				//!stop and remove a timer
 				int removeTimer(TimerHandler *timer_handler);
+                
+                //!submit a runnable
+                void submitAsyncJob(AsyncRunnable *runnable);
 			};
 		}
 	}
