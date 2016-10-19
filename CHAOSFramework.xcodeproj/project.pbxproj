@@ -824,6 +824,8 @@
 		32C100FC191B847800478F40 /* TimerHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C100FA191B847800478F40 /* TimerHandler.h */; };
 		32C25DE41DB771D200A46C2B /* AsyncPoolRunner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C25DE21DB771D200A46C2B /* AsyncPoolRunner.cpp */; };
 		32C25DE51DB771D200A46C2B /* AsyncPoolRunner.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C25DE31DB771D200A46C2B /* AsyncPoolRunner.h */; };
+		32C25DE81DB798A600A46C2B /* NodeHealthStatus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C25DE61DB798A600A46C2B /* NodeHealthStatus.cpp */; };
+		32C25DEC1DB7A4B900A46C2B /* HealthStat.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C25DEA1DB7A4B900A46C2B /* HealthStat.h */; };
 		32C353F21788015B009ED581 /* PluginDiscover.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C353F01788015B009ED581 /* PluginDiscover.cpp */; };
 		32C353F31788015B009ED581 /* PluginDiscover.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C353F11788015B009ED581 /* PluginDiscover.h */; };
 		32C3544E17885A37009ED581 /* common.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 32C3543517885A37009ED581 /* common.hpp */; };
@@ -2081,6 +2083,9 @@
 		32C100FE191BC94100478F40 /* TemplateConfigFile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TemplateConfigFile; sourceTree = "<group>"; };
 		32C25DE21DB771D200A46C2B /* AsyncPoolRunner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsyncPoolRunner.cpp; sourceTree = "<group>"; };
 		32C25DE31DB771D200A46C2B /* AsyncPoolRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncPoolRunner.h; sourceTree = "<group>"; };
+		32C25DE61DB798A600A46C2B /* NodeHealthStatus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeHealthStatus.cpp; sourceTree = "<group>"; };
+		32C25DE71DB798A600A46C2B /* NodeHealthStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeHealthStatus.h; sourceTree = "<group>"; };
+		32C25DEA1DB7A4B900A46C2B /* HealthStat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HealthStat.h; sourceTree = "<group>"; };
 		32C353F01788015B009ED581 /* PluginDiscover.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginDiscover.cpp; sourceTree = "<group>"; };
 		32C353F11788015B009ED581 /* PluginDiscover.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginDiscover.h; sourceTree = "<group>"; };
 		32C3543517885A37009ED581 /* common.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = common.hpp; sourceTree = "<group>"; };
@@ -2558,6 +2563,7 @@
 				3214EF141D467912004DB689 /* DatasetAttribute.h */,
 				3214EF1D1D467FE1004DB689 /* Dataset.cpp */,
 				3214EF1E1D467FE1004DB689 /* Dataset.h */,
+				32C25DEA1DB7A4B900A46C2B /* HealthStat.h */,
 			);
 			path = structured;
 			sourceTree = "<group>";
@@ -3890,6 +3896,8 @@
 				328E77FE1A7A94140008C070 /* NodeGroup.h */,
 				328E78001A7A94810008C070 /* NodeRegister.cpp */,
 				328E78011A7A94810008C070 /* NodeRegister.h */,
+				32C25DE61DB798A600A46C2B /* NodeHealthStatus.cpp */,
+				32C25DE71DB798A600A46C2B /* NodeHealthStatus.h */,
 				32092B3E1BFA353F006A4D06 /* NodeLoadCompletion.cpp */,
 				32092B3F1BFA353F006A4D06 /* NodeLoadCompletion.h */,
 				328D0FEF1A8A034E001A2001 /* NodeSearch.cpp */,
@@ -5037,6 +5045,7 @@
 				32B57203168E02CE0002A198 /* inline_decls.h in Headers */,
 				32B57208168E02D10002A198 /* oid.h in Headers */,
 				32A862231D58CB2300A7D707 /* trigger.h in Headers */,
+				32C25DEC1DB7A4B900A46C2B /* HealthStat.h in Headers */,
 				32F5B0071B5F8EBF00457A63 /* FileMetricBackend.h in Headers */,
 				32B57209168E02D10002A198 /* ordering.h in Headers */,
 				322EC1B81D3406650012467C /* StatusFlag.h in Headers */,
@@ -5591,6 +5600,7 @@
 				32864FD01C294C3100DA9B70 /* AddNode.cpp in Sources */,
 				320530D71AE924ED0064275B /* AssociationControlUnit.cpp in Sources */,
 				32B3E11D1A7A3923007B7802 /* MDSBatchExecutor.cpp in Sources */,
+				32C25DE81DB798A600A46C2B /* NodeHealthStatus.cpp in Sources */,
 				328C872F1ADFC2D60047C79B /* GetInstance.cpp in Sources */,
 				32F9F82E1D903B1D0023948D /* MDSHistoryAgeingManagement.cpp in Sources */,
 				328D0FF11A8A034E001A2001 /* NodeSearch.cpp in Sources */,

@@ -238,6 +238,9 @@ namespace chaos {
                 void getAllKey(ChaosStringVector& contained_key);
                 
                 //return all key contained into the object
+                void getAllKey(ChaosStringSet& contained_key);
+                
+                //return all key contained into the object
                 uint32_t getValueSize(const std::string& key);
                 
                 //! get raw value ptr address

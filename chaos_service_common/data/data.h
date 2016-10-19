@@ -24,6 +24,7 @@
 
 #include <chaos/common/data/TemplatedDataSDWrapper.h>
 #include <chaos/common/data/structured/Lists.h>
+#include <chaos/common/data/structured/HealthStat.h>
 #include <chaos/common/data/structured/DatasetAttribute.h>
 
 #include <chaos_service_common/data/node/Node.h>

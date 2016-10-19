@@ -426,6 +426,7 @@ CDataWrapper*  HealtManager::prepareNodeDataPack(NodeHealtSet& node_health_set,
     CDataWrapper *node_data_pack = new CDataWrapper();
     
     if(node_data_pack) {
+        //add device unique id
         node_data_pack->addStringValue(DataPackCommonKey::DPCK_DEVICE_ID, node_health_set.node_uid);
         //set the push timestamp
         static_cast<Int64HealtMetric*>(node_health_set.map_metric[NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP].get())->value = push_timestamp;

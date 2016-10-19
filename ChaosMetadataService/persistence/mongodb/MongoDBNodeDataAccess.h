@@ -29,13 +29,13 @@ namespace chaos {
             namespace mongodb {
                 //forward declaration
                 class MongoDBPersistenceDriver;
-
+                
                 //! Data Access for producer manipulation data
                 class MongoDBNodeDataAccess:
                 public data_access::NodeDataAccess,
                 protected service_common::persistence::mongodb::MongoDBAccessor {
                     friend class MongoDBPersistenceDriver;
-
+                    
                     MongoDBUtilityDataAccess *utility_data_access;
                 protected:
                     MongoDBNodeDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
@@ -52,6 +52,14 @@ namespace chaos {
                     int checkNodePresence(bool& presence,
                                           const std::string& node_unique_id,
                                           const std::string& node_unique_type = std::string());
+                    // inherited method
+                    int setNodeHealthStatus(const std::string& node_unique_id,
+                                            const common::data::structured::HealthStat& health_stat);
+                    
+                    // inherited methods
+                    int getNodeHealthStatus(const std::string& node_unique_id,
+                                            common::data::structured::HealthStat& health_stat);
+                    
                     //! inherited method
                     int deleteNode(const std::string& node_unique_id,
                                    const std::string& node_type = std::string());
@@ -69,10 +77,10 @@ namespace chaos {
                                              bool& presence);
                     //! inherited method
                     int setCommand(chaos::common::data::CDataWrapper& command);
-
+                    
                     //! inherited method
                     int deleteCommand(const std::string& command_unique_id);
-
+                    
                     //! inherited method
                     int checkCommandTemplatePresence(const std::string& template_name,
                                                      const std::string& command_unique_id,

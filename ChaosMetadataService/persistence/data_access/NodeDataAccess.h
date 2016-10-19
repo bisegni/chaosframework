@@ -24,6 +24,7 @@
 #include "../persistence.h"
 
 #include <chaos/common/data/CDataWrapper.h>
+#include <chaos_service_common/data/data.h>
 
 namespace chaos {
     namespace metadata_service {
@@ -92,6 +93,26 @@ namespace chaos {
                                                   const std::string& node_unique_id,
                                                   const std::string& node_unique_type = std::string()) = 0;
 
+                    //! set node health information
+                    /*!
+                     Set and update the health information for a node.
+                     \param node_unique_id is the unique id of the node that has sent the health information
+                     \param health_stat is the helath stat information
+                     \return 0 for no error otherwhise a negative value
+                     */
+                    virtual int setNodeHealthStatus(const std::string& node_unique_id,
+                                                    const common::data::structured::HealthStat& health_stat) = 0;
+                    
+                    //! get node health information
+                    /*!
+                     get the health information for a node.
+                     \param node_unique_id is the unique id of the node that has sent the health information
+                     \param health_stat is the helath stat information
+                     \return 0 for no error otherwhise a negative value
+                     */
+                    virtual int getNodeHealthStatus(const std::string& node_unique_id,
+                                                    common::data::structured::HealthStat& health_stat) = 0;
+                    
                         //! delete the node description
                     /*
                      The API delete the node description.

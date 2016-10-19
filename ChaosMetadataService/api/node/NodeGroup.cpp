@@ -22,6 +22,7 @@
 #include "NodeLoadCompletion.h"
 #include "NodeCreateUnitServer.h"
 #include "NodeSearch.h"
+#include "NodeHealthStatus.h"
 #include "NodeGetDescription.h"
 #include "ChangeNodeState.h"
 #include "CommandGet.h"
@@ -42,14 +43,15 @@ AbstractApiGroup(NodeDomainAndActionRPC::RPC_DOMAIN){
     //add api for UnitServer registration
     addApi<NodeSearch>();
     addApi<NodeRegister>();
-    addApi<NodeLoadCompletion>();
-    addApi<NodeCreateUnitServer>();
-    addApi<NodeGetDescription>();
-    addApi<ChangeNodeState>();
     addApi<CommandGet>();
     addApi<UpdateProperty>();
+    addApi<ChangeNodeState>();
+    addApi<NodeHealthStatus>();
     addApi<CommandTemplateSet>();
     addApi<CommandTemplateGet>();
+    addApi<NodeLoadCompletion>();
+    addApi<NodeGetDescription>();
+    addApi<NodeCreateUnitServer>();
     addApi<CommandTemplateDelete>();
     addApi<CommandTemplateSearch>();
     addApi<CommandTemplateSubmit>();
