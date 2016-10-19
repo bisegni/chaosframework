@@ -287,6 +287,18 @@ void CDataWrapper::getAllKey(ChaosStringVector& contained_key) {
 }
 
 //return all key contained into the object
+void CDataWrapper::getAllKey(ChaosStringSet& contained_key) {
+    BSONObjIterator obj_iterator(bsonBuilder->asTempObj());
+    while(obj_iterator.more()) {
+        //we have another key
+        BSONElement element = obj_iterator.next();
+        
+        //add key to vector
+        contained_key.insert(element.fieldNameStringData().toString());
+    }
+}
+
+//return all key contained into the object
 uint32_t CDataWrapper::getValueSize(const std::string& key) {
     BSONElement ele  = bsonBuilder->asTempObj().getField(key);
     int bsize = 0;
