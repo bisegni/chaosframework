@@ -33,6 +33,7 @@
 using namespace boost;
 using namespace chaos::common::data;
 using namespace chaos::common::data::structured;
+using namespace chaos::common::utility;
 using namespace chaos::common::batch_command;
 using namespace chaos::service_common::persistence::mongodb;
 using namespace chaos::metadata_service::persistence::mongodb;
@@ -42,6 +43,10 @@ MongoDBAccessor(_connection),
 utility_data_access(NULL){}
 
 MongoDBNodeDataAccess::~MongoDBNodeDataAccess() {}
+
+mongo::BSONObj MongoDBNodeDataAccess::getAliveOption(unsigned int timeout_sec) {
+    return BSON(CHAOS_FORMAT("health_stat.%1%",%NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP) << BSON("$gte" << mongo::Date_t(TimingUtil::getTimeStamp()-(timeout_sec*1000))));
+}
 
 int MongoDBNodeDataAccess::getNodeDescription(const std::string& node_unique_id,
                                               chaos::common::data::CDataWrapper **node_description) {
@@ -347,6 +352,7 @@ int MongoDBNodeDataAccess::deleteNode(const std::string& node_unique_id,
 int MongoDBNodeDataAccess::searchNode(chaos::common::data::CDataWrapper **result,
                                       const std::string& criteria,
                                       uint32_t search_type,
+                                      bool alive_only,
                                       uint32_t last_unique_id,
                                       uint32_t page_length) {
     int err = 0;
@@ -381,21 +387,29 @@ int MongoDBNodeDataAccess::searchNode(chaos::common::data::CDataWrapper **result
         bson_find_and << BSON( chaos::NodeDefinitionKey::NODE_TYPE << type_of_node);
     }
     
+    if(alive_only){bson_find_and << getAliveOption(6);}
+    
     //compose the 'or' condition for all token of unique_id filed
     bson_find_and << BSON("$or" << getSearchTokenOnFiled(criteria, chaos::NodeDefinitionKey::NODE_UNIQUE_ID));
     bson_find.appendArray("$and", bson_find_and.obj());
     mongo::BSONObj q = bson_find.obj();
-    
+    mongo::BSONObj p = BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID << 1 <<
+                            chaos::NodeDefinitionKey::NODE_TYPE << 1 <<
+                            chaos::NodeDefinitionKey::NODE_RPC_ADDR << 1 <<
+                            "seq" << 1 <<
+                            "health_stat" <<1);
     DEBUG_CODE(MDBNDA_DBG<<log_message("searchNode",
                                        "performPagedQuery",
-                                       DATA_ACCESS_LOG_1_ENTRY("Query",
-                                                               q.jsonString()));)
+                                       DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                               "Projection",
+                                                               q.jsonString(),
+                                                               p.jsonString()));)
     
     //perform the search for the query page
     if((err = performPagedQuery(paged_result,
                                 MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                 q,
-                                NULL,
+                                &p,
                                 NULL,
                                 page_length))) {
         MDBNDA_ERR << "Error calling performPagedQuery with error" << err;
@@ -406,7 +420,28 @@ int MongoDBNodeDataAccess::searchNode(chaos::common::data::CDataWrapper **result
             for (SearchResultIterator it = paged_result.begin();
                  it != paged_result.end();
                  it++) {
-                CDataWrapper cd(it->objdata());
+                CDataWrapper cd;
+                
+                cd.addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, it->getField(chaos::NodeDefinitionKey::NODE_UNIQUE_ID).String());
+                cd.addStringValue(chaos::NodeDefinitionKey::NODE_TYPE, it->getField(chaos::NodeDefinitionKey::NODE_TYPE).String());
+                cd.addStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR, it->getField(chaos::NodeDefinitionKey::NODE_RPC_ADDR).String());
+                cd.addInt64Value("seq", it->getField("seq").Long());
+                
+                if(it->hasField("health_stat")) {
+                    mongo::BSONElement health_stat_element = it->getField("health_stat");
+                    if(health_stat_element.type() == mongo::Object) {
+                        mongo::BSONObj o = health_stat_element.embeddedObject();
+                        //we can retrieve the data
+                        CDataWrapper health;
+                        health.addInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP, o.getField(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP).date().asInt64());
+                        health.addInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME, o.getField(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME).Long());
+                        health.addDoubleValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_USER_TIME, o.getField(chaos::NodeHealtDefinitionKey::NODE_HEALT_USER_TIME).Double());
+                        health.addDoubleValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME, o.getField(chaos::NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME).Double());
+                        health.addStringValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS, o.getField(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS).String());
+                        cd.addCSDataValue("health_stat", health);
+                    }
+                }
+                
                 (*result)->appendCDataWrapperToArray(cd);
             }
             (*result)->finalizeArrayForKey("node_search_result_page");

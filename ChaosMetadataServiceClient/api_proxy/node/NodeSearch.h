@@ -43,6 +43,7 @@ namespace chaos {
                      */
                     ApiProxyResult execute(const std::string& unique_id_filter,
                                            unsigned int node_type_filter,
+                                           bool alive_only = false,
                                            unsigned int last_node_sequence_id = 0,
                                            unsigned int page_length = 30);
                 };

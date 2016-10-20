@@ -37,10 +37,13 @@ namespace chaos {
                     friend class MongoDBPersistenceDriver;
                     
                     MongoDBUtilityDataAccess *utility_data_access;
+
                 protected:
                     MongoDBNodeDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
                     ~MongoDBNodeDataAccess();
-                public:
+                    
+                    mongo::BSONObj getAliveOption(unsigned int timeout_sec);
+               public:
                     //inherited method
                     int getNodeDescription(const std::string& node_unique_id,
                                            chaos::common::data::CDataWrapper **node_description);
@@ -67,6 +70,7 @@ namespace chaos {
                     int searchNode(chaos::common::data::CDataWrapper **result,
                                    const std::string& criteria,
                                    uint32_t search_type,
+                                   bool alive_only,
                                    uint32_t last_unique_id,
                                    uint32_t page_length);
                     //! inherited method
