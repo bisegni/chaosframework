@@ -85,6 +85,7 @@ SET(cnd_src  ${cnd_src}	api/node/NodeGroup.cpp
                         api/node/NodeCreateUnitServer.cpp
                         api/node/NodeGetDescription.cpp
                         api/node/NodeRegister.cpp
+                        api/node/NodeHealthStatus.cpp
                         api/node/NodeLoadCompletion.cpp
                         api/node/NodeSearch.cpp
                         api/node/UpdateProperty.cpp
