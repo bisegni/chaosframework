@@ -9,6 +9,7 @@
 #include <QMap>
 #include <QMessageBox>
 #include <QHeaderView>
+#include <QDateTime>
 
 const QString CM_EDIT_NODE      = "Edit Node";
 const QString CM_EDIT_INSTANCE  = "Edit Instance";
@@ -89,6 +90,8 @@ void SearchNodeResult::initUI() {
     table_model = new QStandardItemModel(this);
     table_model->setHorizontalHeaderItem(0, new QStandardItem(QString("Node Unique ID")));
     table_model->setHorizontalHeaderItem(1, new QStandardItem(QString("Node type")));
+    table_model->setHorizontalHeaderItem(2, new QStandardItem(QString("Heartbeat")));
+    table_model->setHorizontalHeaderItem(3, new QStandardItem(QString("Health Status")));
 
     // Attach the model to the view
     ui->tableViewResult->setModel(table_model);
@@ -161,14 +164,30 @@ void SearchNodeResult::onApiDone(const QString& tag,
                     row_item.append(item = new QStandardItem(QString::fromStdString(found_node->getStringValue(chaos::NodeDefinitionKey::NODE_TYPE))));
                     item->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
 
+                    if(found_node->hasKey("health_stat") &&
+                            found_node->isCDataWrapperValue("health_stat")) {
+                        std::auto_ptr<CDataWrapper> health_stat(found_node->getCSDataValue("health_stat"));
+
+                        row_item.append(item = new QStandardItem(QDateTime::fromMSecsSinceEpoch(health_stat->getUInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP), Qt::LocalTime).toString()));
+                        item->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+
+                        row_item.append(item = new QStandardItem(QString::fromStdString(health_stat->getStringValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS))));
+                        item->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+                    } else {
+                        row_item.append(item = new QStandardItem(QString::fromStdString("---")));
+                        item->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+
+                        row_item.append(item = new QStandardItem(QString::fromStdString("---")));
+                        item->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+                    }
                     table_model->appendRow(row_item);
                 }
+            }else{
+                qDebug() << "No data found";
             }
-        }else{
-            qDebug() << "No data found";
         }
+        PresenterWidget::onApiDone(tag, api_result);
     }
-    PresenterWidget::onApiDone(tag, api_result);
 }
 
 void SearchNodeResult::on_tableViewResult_clicked(const QModelIndex &index) {
@@ -190,6 +209,7 @@ void SearchNodeResult::on_pushButtonStartSearch_clicked()
         submitApiResult("search_result",
                         GET_CHAOS_API_PTR(node::NodeSearch)->execute(ui->lineEditSearchCriteria->text().toStdString(),
                                                                      ui->comboBoxSearchType->currentIndex(),
+                                                                     ui->checkBoxAliveOnly->isChecked(),
                                                                      0,
                                                                      current_page_length));
     }

@@ -125,12 +125,14 @@ namespace chaos {
                      perform a simple search on node filtering on type
                      \param result the handle for the reuslt data (is allcoated only if the search has been done with success)
                      \param criteria the string that filter the node (susing * semantic)
+                     \param if true return only node that are actualy alive
                      \param search_type the type of the nodes where search
                      \param last_unique_id is the start of the search page to retrieve
                      */
                     virtual int searchNode(chaos::common::data::CDataWrapper **result,
                                            const std::string& criteria,
                                            uint32_t search_type,
+                                           bool alive_only,
                                            uint32_t last_unique_id,
                                            uint32_t page_length = 100) = 0;
                     
