@@ -24,7 +24,6 @@
 #include <chaos/common/utility/Singleton.h>
 #include <chaos/common/utility/TimingUtil.h>
 #include <chaos/common/data/CDataWrapper.h>
-#include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/healt_system/HealtMetric.h>
 #include <chaos/common/async_central/async_central.h>
@@ -39,6 +38,17 @@
 namespace chaos {
     namespace common{
         namespace healt_system {
+            
+            class SendHealthStatAsyncJob:
+            public chaos::common::async_central::AsyncRunnable {
+
+            protected:
+                void run();
+            public:
+                SendHealthStatAsyncJob(chaos::common::data::CDataWrapper& health_stat);
+                ~SendHealthStatAsyncJob();
+            };
+            
 	  //retry for 12h
 #define HELLO_PHASE_RETRY            12*3600
             struct ProcInfo {

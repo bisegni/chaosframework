@@ -65,7 +65,8 @@ namespace chaos{
                  */
                 void storeData(const std::string& key,
                                chaos_data::CDataWrapper *dataToStore,
-                               DataServiceNodeDefinitionType::DSStorageType storage_type) throw(CException);
+                               DataServiceNodeDefinitionType::DSStorageType storage_type,
+                               bool delete_data_to_store = true) throw(CException);
                 
                 //!remove data between the time intervall (extreme included) operation is not undoable
                 virtual int removeData(const std::string& key,
