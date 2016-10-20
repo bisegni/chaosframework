@@ -1002,6 +1002,21 @@ namespace chaos {
             static const char * const PARAM_NODE_LOGGING_LOG_ERROR_DOMAIN   = "mdsndk_nl_e_ed";
         }
         
+        namespace StandardLogging {
+            //! the key represent the error code [int32_t]
+            static const char * const PARAM_NODE_LOGGING_LOG_LEVEL_CODE              = "mdsndk_nl_l_tc";
+            //! the key represent the error code [string]
+            static const char * const PARAM_NODE_LOGGING_LOG_LEVEL_DESCRIPTION       = "mdsndk_nl_l_tc";
+            //! the key represent the error code [int32_t]
+            static const char * const PARAM_NODE_LOGGING_LOG_CODE                   = "mdsndk_nl_l_c";
+            //! the key represent the error message [string]
+            static const char * const PARAM_NODE_LOGGING_LOG_MESSAGE                = "mdsndk_nl_l_m";
+            //! the key represent the error domain [string]
+            static const char * const PARAM_NODE_LOGGING_LOG_DOMAIN                 = "mdsndk_nl_l_d";
+            //! the key represent the error code [int32_t]
+            static const char * const PARAM_NODE_LOGGING_LOG_REPETITION             = "mdsndk_nl_l_rep";
+        }
+        
         namespace CommandLogging {
             //! the key represent the unique execution id of the command [uint64_t]
             static const char * const PARAM_NODE_LOGGING_LOG_COMMAND_ID     = "mdsndk_nl_c_id";

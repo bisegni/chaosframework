@@ -15,6 +15,7 @@ SET(common_lib_src chaos_errors.cpp
 
 SET(common_lib_src ${common_lib_src}
                     metadata_logging/ErrorLoggingChannel.cpp
+                    metadata_logging/StandardLoggingChannel.cpp
                     metadata_logging/MetadataLoggingManager.cpp
                     metadata_logging/AbstractMetadataLogChannel.cpp
                     metadata_logging/BatchCommandLoggingChannel.cpp)
