@@ -29,6 +29,7 @@ using namespace chaos::common::io;
 using namespace chaos::common::data;
 using namespace chaos::common::utility;
 using namespace chaos::common::message;
+using namespace chaos::common::network;
 using namespace chaos::common::healt_system;
 using namespace chaos::common::async_central;
 
@@ -56,6 +57,20 @@ ts_tmp->value = TimingUtil::getTimeStamp();
 #define HEALT_FIRE_SLOTS 3 //define slot by a seconds
 
 
+#pragma mark SendHealthStatAsyncJob
+SendHealthStatAsyncJob::SendHealthStatAsyncJob(chaos::common::data::CDataWrapper& health_stat):
+AsyncRunnable("SendHealthStatAsyncJob"){
+    //NetworkBroker::getInstance()->getMetadataserverMessageChannel()
+}
+
+SendHealthStatAsyncJob::~SendHealthStatAsyncJob() {
+    
+}
+
+void SendHealthStatAsyncJob::run() {
+    
+}
+#pragma mark HealtManager
 HealtManager::HealtManager():
 mds_message_channel(NULL),
 last_fire_counter_set(0),
@@ -164,7 +179,7 @@ int HealtManager::sayHello() throw (chaos::CException) {
                 } else {
                     //we have result and need to update the driver
                     io_data_driver->updateConfiguration(future->getResult());
-		    return 0;
+                    return 0;
                 }
             }
         } else {
@@ -173,32 +188,32 @@ int HealtManager::sayHello() throw (chaos::CException) {
                                  "Exceed the maximum number of retry  to wait the answer",
                                  __PRETTY_FUNCTION__);
             } else {
-	      HM_INFO << "Retry waiting answer ("<<retry<<")";
-
+                HM_INFO << "Retry waiting answer ("<<retry<<")";
+                
             }
         }
-	sleep(1);
+        sleep(1);
     }while(saying_hello);
     return -1;
 }
 
 void HealtManager::start() throw (chaos::CException) {
     //say hello to mds
-  int32_t retry =HELLO_PHASE_RETRY;
-  while(retry--){
-    try{
-      if(sayHello()==0){
-	HM_INFO << "Found ("<<retry<<")";
-	//add timer to publish all node healt very 5 second
-	AsyncCentralManager::getInstance()->addTimer(this, 0, (HEALT_FIRE_TIMEOUT / HEALT_FIRE_SLOTS)*1000);
-	return;
-      }
-    } catch(chaos::CException& ex) {
-      DECODE_CHAOS_EXCEPTION(ex);
+    int32_t retry =HELLO_PHASE_RETRY;
+    while(retry--){
+        try{
+            if(sayHello()==0){
+                HM_INFO << "Found ("<<retry<<")";
+                //add timer to publish all node healt very 5 second
+                AsyncCentralManager::getInstance()->addTimer(this, 0, (HEALT_FIRE_TIMEOUT / HEALT_FIRE_SLOTS)*1000);
+                return;
+            }
+        } catch(chaos::CException& ex) {
+            DECODE_CHAOS_EXCEPTION(ex);
+        }
+        HM_INFO << "Retry hello again ("<<retry<<")";
     }
-    HM_INFO << "Retry hello again ("<<retry<<")";
-  }
-  throw CException(-4, "Cannot find a valid MDS node" , __PRETTY_FUNCTION__);
+    throw CException(-4, "Cannot find a valid MDS node" , __PRETTY_FUNCTION__);
 }
 
 void HealtManager::stop() throw (chaos::CException) {
@@ -432,9 +447,9 @@ CDataWrapper*  HealtManager::prepareNodeDataPack(NodeHealtSet& node_health_set,
         static_cast<Int64HealtMetric*>(node_health_set.map_metric[NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP].get())->value = push_timestamp;
         
         static_cast<Int64HealtMetric*>(node_health_set.map_metric[NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP].get())->value = current_proc_info.swap_rsrc;
-
+        
         static_cast<DoubleHealtMetric*>(node_health_set.map_metric[NodeHealtDefinitionKey::NODE_HEALT_USER_TIME].get())->value = current_proc_info.usr_time;
-
+        
         static_cast<DoubleHealtMetric*>(node_health_set.map_metric[NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME].get())->value = current_proc_info.sys_time;
         //get the uptime in seconds
         static_cast<Int64HealtMetric*>(node_health_set.map_metric[NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME].get())->value = (push_timestamp - node_health_set.startup_time)/1000;
@@ -486,9 +501,15 @@ void HealtManager::_publish(const boost::shared_ptr<NodeHealtSet>& heath_set,
     CDataWrapper *data_pack = prepareNodeDataPack(*heath_set,
                                                   publish_ts);
     if(data_pack) {
+        //store data on cache
         io_data_driver->storeData(heath_set->node_publish_key,
                                   data_pack,
-                                  DataServiceNodeDefinitionType::DSStorageTypeLive);
+                                  DataServiceNodeDefinitionType::DSStorageTypeLive,
+                                  false);
+        //notify data on mds
+        mds_message_channel->sendMessage(NodeDomainAndActionRPC::RPC_DOMAIN,
+                                         chaos::MetadataServerNodeDefinitionKeyRPC::ACTION_NODE_HEALTH_STATUS,
+                                         data_pack);
     } else {
         HM_ERR << "Error allocating health datapack for node:" << heath_set->node_uid;
     }

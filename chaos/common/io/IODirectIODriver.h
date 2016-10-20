@@ -27,6 +27,7 @@
 
 #include <chaos/common/io/IODataDriver.h>
 #include <chaos/common/thread/WaitSemaphore.h>
+#include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/direct_io/DirectIOClient.h>
 #include <chaos/common/direct_io/DirectIOServerEndpoint.h>
 #include <chaos/common/direct_io/channel/DirectIOSystemAPIClientChannel.h>
@@ -48,11 +49,6 @@ namespace chaos_dio_channel = chaos::common::direct_io::channel;
 
 namespace chaos{
     namespace common {
-        //!forward declaration
-        namespace network {
-            class NetworkBorker;
-        }
-        
         namespace io {
             using namespace std;
             using namespace boost;

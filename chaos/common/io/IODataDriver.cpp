@@ -40,14 +40,15 @@ void IODataDriver::deinit() throw(CException) {
  ---------------------------------------------------------------------------------*/
 void IODataDriver::storeData(const std::string& key,
                              CDataWrapper *dataToStore,
-                             DataServiceNodeDefinitionType::DSStorageType storage_type) throw(CException){
+                             DataServiceNodeDefinitionType::DSStorageType storage_type,
+                             bool delete_data_to_store) throw(CException){
     CHAOS_ASSERT(dataToStore)
     
     SerializationBuffer* serialization = dataToStore->getBSONData();
     
     storeRawData(key, serialization, storage_type);
     
-    delete(dataToStore);
+    if(delete_data_to_store){delete(dataToStore);}
 }
 
 int IODataDriver::removeData(const std::string& key,

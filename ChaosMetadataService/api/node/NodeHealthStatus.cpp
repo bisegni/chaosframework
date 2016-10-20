@@ -41,7 +41,7 @@ chaos::common::data::CDataWrapper *NodeHealthStatus::execute(chaos::common::data
                                                              bool& detach_data) throw (chaos::CException){
     CHECK_CDW_THROW_AND_LOG(api_data, NHS_ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(api_data, DataPackCommonKey::DPCK_DEVICE_ID, NHS_ERR, -2, CHAOS_FORMAT("The %1% key is mandatory",%DataPackCommonKey::DPCK_DEVICE_ID));
-    CHECK_KEY_THROW_AND_LOG(api_data, DataPackCommonKey::DPCK_TIMESTAMP, NHS_ERR, -3, CHAOS_FORMAT("The %1% key is mandatory",%DataPackCommonKey::DPCK_TIMESTAMP));
+    CHECK_KEY_THROW_AND_LOG(api_data, NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP, NHS_ERR, -3, CHAOS_FORMAT("The %1% key is mandatory",%NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP));
     
     GET_DATA_ACCESS(NodeDataAccess, n_da, -3)
     
@@ -52,7 +52,7 @@ chaos::common::data::CDataWrapper *NodeHealthStatus::execute(chaos::common::data
     const std::string node_uid = api_data->getStringValue(DataPackCommonKey::DPCK_DEVICE_ID);
     if((err = n_da->setNodeHealthStatus(node_uid,
                                         attribute_reference_wrapper()))){
-        LOG_AND_TROW(NHS_ERR, -4, CHAOS_FORMAT("Error setting helath stat for node %1%", %node_uid));
+        LOG_AND_TROW(NHS_ERR, -4, CHAOS_FORMAT("Error setting healt stat for node %1%", %node_uid));
         
     }
     return NULL;
