@@ -19,7 +19,6 @@
  *    	limitations under the License.
  */
 
-
 #include <chaos/common/metadata_logging/BatchCommandLoggingChannel.h>
 
 using namespace chaos;

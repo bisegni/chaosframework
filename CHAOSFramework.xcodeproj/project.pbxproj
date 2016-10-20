@@ -826,6 +826,8 @@
 		32C25DE51DB771D200A46C2B /* AsyncPoolRunner.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C25DE31DB771D200A46C2B /* AsyncPoolRunner.h */; };
 		32C25DE81DB798A600A46C2B /* NodeHealthStatus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C25DE61DB798A600A46C2B /* NodeHealthStatus.cpp */; };
 		32C25DEC1DB7A4B900A46C2B /* HealthStat.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C25DEA1DB7A4B900A46C2B /* HealthStat.h */; };
+		32C25DF41DB90C3200A46C2B /* StandardLoggingChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C25DF21DB90C3200A46C2B /* StandardLoggingChannel.cpp */; };
+		32C25DF51DB90C3200A46C2B /* StandardLoggingChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C25DF31DB90C3200A46C2B /* StandardLoggingChannel.h */; };
 		32C353F21788015B009ED581 /* PluginDiscover.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C353F01788015B009ED581 /* PluginDiscover.cpp */; };
 		32C353F31788015B009ED581 /* PluginDiscover.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C353F11788015B009ED581 /* PluginDiscover.h */; };
 		32C3544E17885A37009ED581 /* common.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 32C3543517885A37009ED581 /* common.hpp */; };
@@ -2086,6 +2088,8 @@
 		32C25DE61DB798A600A46C2B /* NodeHealthStatus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeHealthStatus.cpp; sourceTree = "<group>"; };
 		32C25DE71DB798A600A46C2B /* NodeHealthStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeHealthStatus.h; sourceTree = "<group>"; };
 		32C25DEA1DB7A4B900A46C2B /* HealthStat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HealthStat.h; sourceTree = "<group>"; };
+		32C25DF21DB90C3200A46C2B /* StandardLoggingChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StandardLoggingChannel.cpp; sourceTree = "<group>"; };
+		32C25DF31DB90C3200A46C2B /* StandardLoggingChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StandardLoggingChannel.h; sourceTree = "<group>"; };
 		32C353F01788015B009ED581 /* PluginDiscover.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginDiscover.cpp; sourceTree = "<group>"; };
 		32C353F11788015B009ED581 /* PluginDiscover.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginDiscover.h; sourceTree = "<group>"; };
 		32C3543517885A37009ED581 /* common.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = common.hpp; sourceTree = "<group>"; };
@@ -4600,6 +4604,8 @@
 				32B5C9571C6B97590021159C /* ErrorLoggingChannel.h */,
 				32571D9A1C7C901A0001D884 /* BatchCommandLoggingChannel.cpp */,
 				32571D9B1C7C901A0001D884 /* BatchCommandLoggingChannel.h */,
+				32C25DF21DB90C3200A46C2B /* StandardLoggingChannel.cpp */,
+				32C25DF31DB90C3200A46C2B /* StandardLoggingChannel.h */,
 				3270E07C1C6DF19D00105726 /* metadata_logging.h */,
 			);
 			path = metadata_logging;
@@ -5022,6 +5028,7 @@
 				3296032A1876B45000CDCADA /* BatchCommandSandboxEventHandler.h in Headers */,
 				328E36ED1786C00D00C1564D /* PluginDefinition.h in Headers */,
 				32B571ED168E02C30002A198 /* bson_builder_base.h in Headers */,
+				32C25DF51DB90C3200A46C2B /* StandardLoggingChannel.h in Headers */,
 				324A4B28191A405700975394 /* algorithm.h in Headers */,
 				32B571EE168E02C30002A198 /* bson_db.h in Headers */,
 				32B571F0168E02C30002A198 /* bson_field.h in Headers */,
@@ -5744,6 +5751,7 @@
 				324A4B77191A428500975394 /* json.cpp in Sources */,
 				32DD885315E2681F000AF740 /* EventHandler.cpp in Sources */,
 				32A88BCF1CF8228A001DBAF5 /* liolib.c in Sources */,
+				32C25DF41DB90C3200A46C2B /* StandardLoggingChannel.cpp in Sources */,
 				324A4B1B191A402A00975394 /* MurmurHash3.cpp in Sources */,
 				32CFF95B15E4D950005D607E /* EventDescriptor.cpp in Sources */,
 				32EBDEFA1B4E58F300278C42 /* MetricCollector.cpp in Sources */,

@@ -24,6 +24,7 @@
 
 #include <chaos/common/metadata_logging/ErrorLoggingChannel.h>
 #include <chaos/common/metadata_logging/MetadataLoggingManager.h>
+#include <chaos/common/metadata_logging/StandardLoggingChannel.h>
 #include <chaos/common/metadata_logging/AbstractMetadataLogChannel.h>
 #include <chaos/common/metadata_logging/BatchCommandLoggingChannel.h>
 
