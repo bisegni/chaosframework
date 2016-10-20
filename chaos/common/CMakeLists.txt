@@ -21,6 +21,7 @@ SET(common_lib_src ${common_lib_src}
 
 SET(common_lib_src ${common_lib_src}
         async_central/AsyncCentralManager.cpp
+        async_central/AsyncPoolRunner.cpp
         async_central/TimerHandler.cpp)
 
 SET(common_lib_src ${common_lib_src}
