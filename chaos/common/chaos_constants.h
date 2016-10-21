@@ -1004,17 +1004,24 @@ namespace chaos {
         
         namespace StandardLogging {
             //! the key represent the error code [int32_t]
-            static const char * const PARAM_NODE_LOGGING_LOG_LEVEL_CODE              = "mdsndk_nl_l_tc";
+            static const char * const PARAM_NODE_LOGGING_LOG_LEVEL_CODE                 = "mdsndk_nl_l_lc";
             //! the key represent the error code [string]
-            static const char * const PARAM_NODE_LOGGING_LOG_LEVEL_DESCRIPTION       = "mdsndk_nl_l_tc";
-            //! the key represent the error code [int32_t]
-            static const char * const PARAM_NODE_LOGGING_LOG_CODE                   = "mdsndk_nl_l_c";
+            static const char * const PARAM_NODE_LOGGING_LOG_LEVEL_DESCRIPTION          = "mdsndk_nl_l_ld";
             //! the key represent the error message [string]
-            static const char * const PARAM_NODE_LOGGING_LOG_MESSAGE                = "mdsndk_nl_l_m";
-            //! the key represent the error domain [string]
-            static const char * const PARAM_NODE_LOGGING_LOG_DOMAIN                 = "mdsndk_nl_l_d";
+            static const char * const PARAM_NODE_LOGGING_LOG_MESSAGE                    = "mdsndk_nl_l_m";
+        }
+        
+        namespace AlertLogging {
             //! the key represent the error code [int32_t]
-            static const char * const PARAM_NODE_LOGGING_LOG_REPETITION             = "mdsndk_nl_l_rep";
+            static const char * const PARAM_NODE_LOGGING_ALERT_LEVEL_CODE               = "mdsndk_nl_a_lc";
+            //! the key represent the error code [string]
+            static const char * const PARAM_NODE_LOGGING_ALERT_LEVEL_DESCRIPTION        = "mdsndk_nl_a_ld";
+            //! the key represent the error message [int32_t]
+            static const char * const PARAM_NODE_LOGGING_ALERT_CODE                     = "mdsndk_nl_a_c";
+            //! the key represent the error message [string]
+            static const char * const PARAM_NODE_LOGGING_ALERT_DESCRIPTION               = "mdsndk_nl_a_d";
+            //! the key represent the error message [uint32_t]
+            static const char * const PARAM_NODE_LOGGING_ALERT_REPETITION               = "mdsndk_nl_a_rep";
         }
         
         namespace CommandLogging {
