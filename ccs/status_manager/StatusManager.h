@@ -1,7 +1,7 @@
 #ifndef STATUSMANAGER_H
 #define STATUSMANAGER_H
 
-#include <usr/local/include/chaos/common/utility/Singleton.h>
+#include <chaos/common/utility/Singleton.h>
 
 #include <QStatusBar>
 
