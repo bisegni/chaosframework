@@ -40,27 +40,7 @@ namespace chaos {
             //macro fror channel instancer
 #define METADATA_LOGGING_STANDARD_LOGGING_CHANNEL_INSTANCER \
 METADATA_LOGGING_CHANNEL_INSTANCER(StandardLoggingChannel)
-            
-            //! keep the statisti on how much an error code is used
-            struct LogStatistic {
-                //!sign the last timestamp(in milliseconds) that the log code has been fired
-                uint64_t next_fire_ts;
-                //!is the delay in millisecond that the code can be processed
-                uint64_t delay_for_next_message;
-                //!sign the repetition
-                uint32_t repetition;
-                
-                LogStatistic();
-                ~LogStatistic();
-                
-                void prepareForNextFire(uint64_t cur_ts);
-            };
-            
-            //!define the map that will contains the statisti on the fire of a log level-code
-            typedef std::pair<int32_t, int32_t> LogStatisticKey;
-            CHAOS_DEFINE_MAP_FOR_TYPE(LogStatisticKey,
-                                      LogStatistic,
-                                      LogMapStatistic);
+
             
             class StandardLoggingChannel:
             public AbstractMetadataLogChannel {
@@ -74,7 +54,6 @@ METADATA_LOGGING_CHANNEL_INSTANCER(StandardLoggingChannel)
                 } LogLevel;
                 
                 LogLevel current_logging_level;
-                LogMapStatistic map_log_statistic;
                 inline bool loggable(LogLevel log_level);
                 
             public:
@@ -83,17 +62,12 @@ METADATA_LOGGING_CHANNEL_INSTANCER(StandardLoggingChannel)
                 
                 //set the log level
                 void setLogLevel(LogLevel new_log_level);
-                
-                void setFireOffsetForLogLevelAndCode(LogLevel log_level,
-                                                     int code,
-                                                     uint64_t delay);
+
                 //!log an info message
                 int logMessage(const std::string& node_uid,
                                const std::string& log_subject,
                                const LogLevel log_level,
-                               const int32_t code,
-                               const std::string& message,
-                               const std::string& domain);
+                               const std::string& message);
                 
             };
             
