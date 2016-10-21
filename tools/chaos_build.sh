@@ -1,364 +1,200 @@
-#!/bin/bash
-
-separator='-'
-pushd `dirname $0` > /dev/null
-dir=`pwd -P`
-popd > /dev/null
-
-source $dir/common_util.sh
-err=0
-
-prefix_build=chaos
-outbase=$PWD
-create_deb_ver=""
-remove_working="false"
-log="$0.log"
-exclude_dir=()
-compile_target=( "$ARCH" )
-
-if arm-linux-gnueabihf-g++-4.8 -v 2>&1 | grep version >& /dev/null; then
-    compile_target+=("armhf")
-fi
-
-if arm-infn-linux-gnueabi-g++ -v 2>&1 | grep version >& /dev/null;then
-    compile_target+=("arm-linux-2.6")
-fi
-
-if i686-nptl-linux-gnu-g++ -v 2>&1 | grep version >& /dev/null;then
-    compile_target+=("i686-linux26")
-fi
-
-if arm-nilrt-linux-gnueabi-g++ -v 2>&1 | grep version >& /dev/null;then
-      compile_target+=("crio90xx")
-fi
-
-compile_build=("release" "debug" "profile")
-
-if [ "$OS" == "Linux" ]; then
-    compile_type=("dynamic static");
-else
-    compile_type=("dynamic");
-fi
-
-type=${compile_type[0]}
-target=${compile_target[0]}
-build=${compile_build[0]}
-
-while getopts t:o:w:b:p:hd:rsc:kx:n:fei: opt; do
+#!/bin/bash -e
+arch="x86_64 i686 arm armhf"
+build="dynamic static"
+prefix="chaos_bundle"
+branch="development"
+buildtype=""
+currdir=`pwd`
+installdir="$currdir/chaos-build"
+inputdir=""
+nproc="4"
+unset CHAOS_TARGET
+unset CHAOS_PREFIX
+while getopts j:b:o:a:t:r:sfh opt; do
     case $opt in
-	i) DEPLOY_SERVER="$OPTARG"
-	    info_mesg "deploy server " "$DEPLOY_SERVER"
+	t) 
+	    branch=$OPTARG
 	    ;;
-	t)
-	    if [[ ${compile_target[@]} =~ $OPTARG ]]; then 
-		compile_target=($OPTARG);
-		info_mesg "setting target to " "$compile_target";
-	    else
-		error_mesg "compile targets one of: ${compile_target[@]}"
-		exit 1
-	    fi
+	j) 
+	    nproc=$OPTARG
 	    ;;
-	e)
-	    STRIP_SYMBOLS=ON
-	    info_mesg "stripping symbols"
+	o)
+	    installdir=$OPTARG
 	    ;;
-	o) 
-	    if [[ ${compile_type[@]} =~ $OPTARG ]]; then 
-		compile_type=($OPTARG);
-		info_mesg "setting type to " "$compile_type";
-	    else
-		error_mesg "compile type one of: ${compile_type[@]}"
-		exit 1
-	    fi
+	a)
+	    arch=$OPTARG
 	    ;;
 	b) 
-	    if [[ ${compile_build[@]} =~ $OPTARG ]]; then 
-		compile_build=($OPTARG);
-		info_mesg "setting build to " "$compile_build";
-	    else
-		error_mesg "compile build one of ${compile_build[@]}"
-		exit 1
-	    fi
+	    build=$OPTARG
 	    ;;
-	r) 
-	    remove_working=true;
-	    info_mesg "remove working as done";
+	g) 
+	    buildtype=$OPTARG
 	    ;;
-
-	w) 
-	    if [ -d "$OPTARG" ]; then
-		outbase=$OPTARG
-		info_mesg "* Using working directory " "$outbase";
-	    else
-		error_mesg "bad working directory " "$OPTARG"
-		exit -1
-	    fi
-	    ;;
-	p)
-	    prefix_build="$OPTARG"
-	    info_mesg "prefix " "$prefix_build"
-	    ;;
-	k)
-	    perform_test=true
-	    info_mesg "execute test after build"
-	    ;;
-	d)
-	    create_deb_ver="$OPTARG"
-	    info_mesg "create debian package version " "$create_deb_ver"
+	i) 
+	    inputdir=$OPTARG
 	    ;;
 	s)
-	    switch_env=true
-	    info_mesg "switching environment";
+	    fromscratch="true"
 	    ;;
-	c)
-	    config="$OPTARG"
-	    if [ ! -d "$config" ]; then
-		error_mesg "directory $config is invalid"
-		exit 1
-	    else
-		info_mesg "configuring environment in " "$config";
-	    fi
-	    ;;
-	x)
-	    exclude_dir+=("$OPTARG")
-	    ;;
-	f)
-	    force_rebuild="true"
-	    info_mesg "force rebuild" " true"
+	f) 
+	    force_reconf="true"
 	    ;;
 
-	n) export NPROC=$OPTARG
-	    info_mesg "force to use " "$NPROC processors"
-	    ;;
 	h)
-	    echo -e "Usage is $0 [-w <work directory>] [-k] [-s] [-e] [-t <armhf|$ARCH>] [-o <static|dynamic> [-b <debug|release>] [-p <build prefix>] [-d <deb version>] [-r] [-c <>] [-i <dst copy of compilation tree>]\n-w <work directory>: where directories are generated [$outbase]\n-t <target>: cross compilation target [${compile_target[@]}]\n-o <static|dynamic>: enable static or dynamic compilations [${compile_type[@]}]\n-b <build type> build type [${compile_build[@]}]\n-p <build prefix>: prefix to add to working directory [$prefix_build]\n-d <version>: create a deb package of the specified version\n-r: remove working directory after compilation\n-s:switch environment to precompiled one (skip compilation) [$tgt]\n-c <dir>:configure installation directory (etc,env,tools)\n-k:perform test suite after build\n-x <exclude dir>: exclude the specified directory/library from compilation\n-f:force rebuild all\n-e:strip all symbols\n-i <dstcopy>: generate a tar of the distrib and copy on dstcopy";
+	    echo -e "Usage is $0 [-s] [-i <chaos bundle input source dir>] [-t <branch to use> ] [-o <installdir>] [-a <architectures> [$arch]] [-b <build> [$build]] [-g <buildtype> [$buildtype]] [-j <#proc>]\n-j <## proc> number of cpu used in compilation [$nproc]\n-f: force reconfiguration\n-s: from scratch, connects to repo and build\n-t <branch to use>: git branch to use [$branch]\n-r reuse dir, each time use the same directory to compile (needs rebuild all)\n-o <installdir> install into dir [$installdir]\n-a <arch>: compile for the fiven architectures[$arch]\n-b <dynamic|static>: make the binaries static and/or dynamic [$build]\n-g <release type>: choose the output configuration [$buildtype]\n"
 	    exit 0;
 	    ;;
     esac
 done
 
-type=${compile_type[0]}
-target=${compile_target[0]}
-build=${compile_build[0]}
-export CHAOS_EXCLUDE_DIR="${exclude_dir[@]}"
-TEMP_PREFIX="/tmp/""$USER/""$target""$separator""$type""$separator""$build"
-init_tgt_vars(){
-    tgt="$prefix_build""$separator""$target""$separator""$type""$separator""$build"
 
-    PREFIX=`echo "$outbase/$tgt"|sed 's/\/\{2,\}/\//g' | sed 's/\/\w*\/\.\{2\}//g'`
-    log=$outbase/$tgt.log
-}
+if [ -z "$branch" ];then
+    echo "## you should point to a valid branch, try $0 development"
+    exit 1
+fi
 
-
-init_tgt_vars;
-
-
-
-
-function compile(){
-    info_mesg "log on " "$log"
-
-    if [ ! -d "$PREFIX" ] || [ ! -z "$force_rebuild" ];then
-	info_mesg "new configuration $PREFIX " "clean all" 
-	$dir/chaos_clean.sh
-	rm -rf $PREFIX
-	info_mesg "compiling " "$tgt ...."
-
-	echo -e '\n\n' | $dir/init_bundle.sh >& $log;
-    else
-	echo -e '\n\n' | $dir/init_bundle.sh 1 >& $log;
-
+function initialize_bundle(){
+    echo "* initializing repo"
+    if ! repo init -u ssh://git@opensource-stash.infn.it:7999/chaos/chaos_repo_bundle.git -b development >> $log 2>&1;then
+	echo "## repo initialization failed"
+	return 1
     fi
-    grep "error:" $log
+    echo "* synching repo"
+    if ! repo sync >> $log 2>&1 ;then
+	echo "## repo synchronization failed"
+	return 1
+    fi
     return 0
 }
+function compile_bundle(){
 
+    local dir=$1
+    local arch=$2
+    local build=$3
+    log="$currdir"/compile_all-$arch-$build.log
+    echo "=========================================="
+    echo "==== DIR   :$dir"
+    echo "==== ARCH  :$arch"
+    echo "==== BUILD :$build"
+    echo "==== BRANCH:$branch"
+    echo "=========================================="
 
-if [ -n "$switch_env" ]; then
-
-    setEnv $type $target $build $PREFIX 
-    exit 0
-fi
-
-if [ -n "$config" ]; then
-    PREFIX=$config
-
-    if ! setEnv $type $target $build $PREFIX; then
-	error_mesg "error setting environment check " "$log"
+    echo "* entering in $dir checking out \"$branch\""
+    echo "* log file \"$log\""
+    pushd $dir >& $log
+    install_prefix="$installdir/chaos-distrib-$arch-$build"
+    if ! mkdir -p $install_prefix;then
+	echo "## cannot create $install_prefix"
 	exit 1
     fi
-    chaos_configure
-    exit 0
+    cmake_params="-DCMAKE_INSTALL_PREFIX=$install_prefix";
+    echo "* synchronizing with branch \"$branch\"...."
+    
+    if [ ! -d chaosframework ];then
+	if ! initialize_bundle;then
+	    popd >& /dev/null
+	    exit 1
+	fi
+    fi
+    if ! chaosframework/tools/chaos_git.sh -c $branch >> $log 2>&1 ;then
+	echo "## error cannot checkout \"$branch\""
+	popd > /dev/null
+	exit 1;
+    fi
+
+    if ! grep "\+" $log >& /dev/null;then
+	echo "* no source change on \"$dir\""
+
+    else
+	echo "* source changes detected on \"$dir\""
+    fi
+
+    if [ "$build" == "static" ];then
+	cmake_params="-DCHAOS_STATIC=ON"
+    fi
+    case $arch in
+	i686)	    
+	    cmake_params="$cmake_params -DCHAOS_TARGET=i686-linux26"
+	    export PATH=/usr/local/chaos/i686-nptl-linux-gnu/bin:$PATH
+	    ;;
+
+	armhf)
+	    cmake_params="$cmake_params -DCHAOS_TARGET=armhf"
+	    ;;
+
+	arm)
+	    cmake_params="$cmake_params -DCHAOS_TARGET=arm-linux-2.6 -DCHAOS_CDS=OFF -DCHAOS_MDS=OFF -DCHAOS_WAN=OFF -DCHAOS_EXAMPLES=OFF"
+	    export PATH=/usr/local/chaos/gcc-arm-infn-linux26/bin:$PATH
+	    ;;
+	crio90xx)
+	    cmake_params="$cmake_params -DCHAOS_TARGET=crio90xx -DCHAOS_CDS=OFF -DCHAOS_MDS=OFF -DCHAOS_WAN=OFF -DCHAOS_EXAMPLES=OFF"
+	    source /usr/local/chaos/oecore-x86-64/environment-setup-armv7-vfp-neon-nilrt-linux-gnueabi
+	    ;;
+	x86_64)
+	    cmake_params="$cmake_params -DCHAOS_CCS=ON -DQMAKE_PATH=/usr/local/chaos/qt-5.6/bin/"
+	    ;;
+    esac
+
+    if [ -d "$inputdir" ];then
+	chaosframework/tools/chaos_clean.sh . >> $log 2>&1
+	echo "* configuring $dir cmake \"$cmake_params\"...."
+	if ! cmake $cmake_params . >> $log 2>&1;then
+	    echo "## error during cmake configuration \"$cmake_params\""
+	    popd >& /dev/null
+	    return 1
+	fi
+       
+    fi
+    
+    if [ ! -f CMakeCache.txt ]|| [ -n "$force_reconf" ];then
+	echo "* configuring $dir cmake \"$cmake_params\"...."
+	chaosframework/tools/chaos_clean.sh . >> $log 2>&1
+	if ! cmake $cmake_params . >> $log 2>&1;then
+	    echo "## error during cmake configuration \"$cmake_params\""
+	    popd >& /dev/null
+	    return 1
+	fi
+    fi
+
+
+    echo "* compiling $dir with \"$cmake_params\" ...."
+    if ! make -j $nproc install  >> $log 2>&1 ;then
+	echo "## error during compilation"
+	echo "## error during compilation" >> $log 2>&1
+    else
+	echo "* compilation ok"
+    fi
+
+    popd >& /dev/null
+}
+
+if [ -n "$fromscratch" ];then
+    echo "* from scratch"
+    if [ -z "$inputdir" ];then
+	inputdir=$currdir"/build_chaos_bundle"
+    fi
+    if [ -d "$inputdir" ];then
+	echo "* removing $inputdir"
+	rm -rf $inputdir
+    fi
+
+    mkdir -p $inputdir
+    
 fi
+for a in $arch;do
+    for b in $build;do
+	dir="$prefix-$a-$b"
 
-
-
-for target in ${compile_target[@]} ; do
-    for type in ${compile_type[@]} ; do
-	for build in ${compile_build[@]} ; do
-	    error=0
-	    init_tgt_vars;
-
-	    mkdir -p $PREFIX
-	    unSetEnv
-
-	    if ! setEnv $type $target $build $PREFIX; then
-		error_mesg "error setting environment check " "$log"
-		exit 1
+	if [ -d "$inputdir" ];then
+	    compile_bundle $inputdir $a $b 
+	else
+	    echo "* checking for $dir in "`pwd`
+	    if [ -d "$dir" ];then
+		echo "* compiling $dir branch:$branch"
+		compile_bundle $dir $a $b 
 	    fi
-	    start_profile_time
-	    compile $tgt;
-	    if [ $? -ne 0 ]; then 
-		((err++))
-		error_mesg "Error $err compiling $tgt"
-		error=1
-	    else
-		## configure
-		chaos_configure
-		if [ "$OS" == "Linux" ]; then
-		info_mesg "generating " "Unit Server.."
-		echo "==== GENERATING UNIT SERVER ====" >> $log 2>&1 
-		if $dir/chaos_generate_us.sh -i $CHAOS_BUNDLE/driver -o $PREFIX -n UnitServer >> $log 2>&1 ; then
-		    pushd $PREFIX/UnitServer > /dev/null
-		    if cmake . >> $log ; then
-			
-			if  make install >> $log 2>&1 ; then
-			    info_mesg "UnitServer " "successfully installed"
-			else
-			    error_mesg "error compiling UnitServer \"$log\" for details" 
-			    ((err++))
-			    error=1
-			fi
-		    else
-			error_mesg "error during Unit Server makefile generation"
-			((err++))
-			error=1
-		    fi
-		    popd > /dev/null
-		else
-		    error_mesg "error during generation of Unit Server"
-		    ((err++))
-		    error=1
-		fi
-		else
-		    info_mesg "skipping UnitServer on $OS"
-		fi
-
-		for i in sccu rtcu common driver;do
-		    info_mesg "testing template " "$i"
-		    rm -rf $TEMP_PREFIX/_prova_"$i"_
-		    echo "==== TESTING TEMPLATE $i ====" >> $log 2>&1 
-		    if  $dir/chaos_create_template.sh -o "$TEMP_PREFIX" -n _prova_"$i"_ $i >> $log 2>&1 ;then
-			mkdir -p "$TEMP_PREFIX""/_prova_$i"_
-			pushd "$TEMP_PREFIX"/_prova_"$i"_ >/dev/null
-			if cmake .  >> $log 2>&1 ; then
-			    if ! make -j $NPROC >> $log 2>&1 ;then 
-				error_mesg "error during compiling $i template"
-				((err++))
-				error=1
-			    else
-				ok_mesg "template $i"
-
-			    fi
-			else
-			    error_mesg "error  generating makefile for $i"
-			    ((err++))
-			    error=1
-			fi
-			popd >/dev/null
-			rm -rf "$TEMP_PREFIX""/_prova_$i"_
-		    else
-			error_mesg "error during generation of $i template"
-			((err++))
-			error=1
-			
-		    fi
-
-		done
-	    fi
-
-	    if (($error == 0)); then
-		tt=$(end_profile_time)
-		info_mesg "compilation ($tt s) " "$tgt OK"
-		if [ -n "$CHAOS_CROSS_HOST" ]; then
-		    STRIP_CMD=$CHAOS_CROSS_HOST-strip
-		else
-		    STRIP_CMD=strip
-		fi
-		if [ -n "$STRIP_SYMBOLS" ];then
-		    info_mesg "stripping " " $STRIP_CMD $PREFIX/bin"
-		    $STRIP_CMD $PREFIX/bin/* >& /dev/null
-		    info_mesg "stripping " " $STRIP_CMD $PREFIX/lib"
-		    $STRIP_CMD $PREFIX/lib/* >& /dev/null
-		fi
-		if [ -n "$perform_test" ];then
-		    if [ "$ARCH" == "$target" ];then
-			info_mesg "Starting chaos testsuite (it takes some time), test report file " "test-$tgt.csv"
-			start_profile_time
-			echo "===== TESTING ====" >> $log 2>&1 
-			if [ "$build" == "debug" ];then
-			      $PREFIX/tools/chaos_test.sh -g -r test-$tgt.csv >> $log 2>&1 
-			else
-			    $PREFIX/tools/chaos_test.sh -r test-$tgt.csv >> $log 2>&1 
-			fi
-			status=$?
-			tt=$(end_profile_time)
-			if [ $status -eq 0 ];then
-			    ok_mesg "TEST RUN ($tt s)"
-			else
-			    nok_mesg "TEST RUN ($tt s)"
-			fi
-		    else
-			info_mesg "test skipped on cross compilation"
-		    fi
-		fi
-		if [ -n "$create_deb_ver" ]; then
-		    nameok=`echo $tgt | sed s/_/-/g`
-		    extra="-i $PREFIX -v $create_deb_ver -t $target"
-		    if [ -z "$CHAOS_STATIC" ];then
-			extra="$extra -d"
-		    fi
-		    info_mesg "creating debian package " "client"
-		    if $dir/chaos_debianizer.sh $extra  >> $log 2>&1; then
-			ok_mesg "debian package generated"
-		    fi
-		    info_mesg "creating debian package " "server"
-		    if $dir/chaos_debianizer.sh $extra  -s >> $log 2>&1; then
-			ok_mesg "debian package generated"
-		    fi
-		    info_mesg "creating debian package " "devel"
-		    if $dir/chaos_debianizer.sh $extra  -a >> $log 2>&1; then
-			ok_mesg "debian package generated"
-		    fi
-		else
-		    if [ -n "$DEPLOY_SERVER" ];then
-			str=`date +%H-%M-%Y-%h-%d`
-			info_mesg "creating tar " "$PREFIX.$str.tar.gz"
-			if tar cfz $PREFIX.$str.tar.gz $PREFIX;then
-			    if scp $PREFIX.$str.tar.gz "$DEPLOY_SERVER";then
-				ok_mesg "copied to " "$DEPLOY_SERVER"
-			    else
-				nok_mesg "copied to " "$DEPLOY_SERVER"
-			    fi
-			else
-			    nok_mesg "creating tar " "$PREFIX.$str.tar.gz"
-			fi
-		    fi
-		fi
-	    fi
-	
-	    if [ "$remove_working" == "true" ]; then
-		info_mesg "removing " "$nameok"
-		rm -rf $PREFIX
-	    fi
-	    echo 
-	done
+	    
+	fi
+	    
     done
-done;
-
-if [ $err -gt 0 ]; then
-    error_mesg "Number of errors $err"
-    exit $err
-fi 
-ok_mesg "building"
-exit 0
+done
