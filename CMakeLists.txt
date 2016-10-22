@@ -152,15 +152,15 @@ ENDIF()
 	ERROR("error generating QT stubs error: ${out}")
       endif()
 
-      add_custom_target(ccs ALL
-	COMMAND make -j ${PROCESSOR_COUNT}
-	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/ccs
-	DEPENDS chaos_common
-	COMMENT "compiling CCS"
-	)
+      # add_custom_target(ccs ALL
+      # 	COMMAND make -j ${PROCESSOR_COUNT}
+      # 	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/ccs
+      # 	DEPENDS chaos_common
+      # 	COMMENT "compiling CCS"
+      # 	)
 
-      FILE(GLOB exe ccs/ccs.sh ccs/ccs)
-      FILE(COPY ${exe} DESTINATION ${CMAKE_INSTALL_PREFIX}/bin/ FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+      # FILE(GLOB exe ccs/ccs.sh ccs/ccs)
+      # FILE(COPY ${exe} DESTINATION ${CMAKE_INSTALL_PREFIX}/bin/ FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
     ELSE()
       ERROR("missing ${QMAKE_PATH}/qmake")
     ENDIF()
