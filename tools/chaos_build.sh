@@ -1,6 +1,6 @@
 #!/bin/bash -e
 arch="x86_64 i686 arm armhf"
-build="dynamic static"
+build="static dynamic"
 prefix="chaos_bundle"
 branch="development"
 buildtype=""
@@ -82,7 +82,7 @@ function compile_bundle(){
     echo "* entering in $dir checking out \"$branch\""
     echo "* log file \"$log\""
     pushd $dir >& $log
-    install_prefix="$installdir/chaos-distrib-$arch-$build"
+    install_prefix="$installdir/chaos-distrib-$arch-$build-$branch"
     if ! mkdir -p $install_prefix;then
 	echo "## cannot create $install_prefix"
 	exit 1
@@ -110,7 +110,7 @@ function compile_bundle(){
     fi
 
     if [ "$build" == "static" ];then
-	cmake_params="-DCHAOS_STATIC=ON"
+	cmake_params="$cmake_params -DCHAOS_STATIC=ON"
     fi
     case $arch in
 	i686)	    
