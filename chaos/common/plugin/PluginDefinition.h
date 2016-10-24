@@ -90,7 +90,7 @@ return inspector; \
              using the PLuginLoader class
              */
 
-#ifndef CHAOS_STATIC
+#ifdef CHAOS_ENABLE_PLUGIN
 #define OPEN_REGISTER_PLUGIN \
 extern "C" \
 chaos::common::plugin::PluginDiscover* BOOST_EXTENSION_EXPORT_DECL \

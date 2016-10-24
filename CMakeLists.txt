@@ -144,9 +144,6 @@ ENDIF()
     IF(EXISTS "${QMAKE_PATH}/qmake")
       MESG("Found 'qmake' in ${QMAKE_PATH}")
 
-      FILE(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/usr)
-
-
       execute_process(
 	COMMAND ${QMAKE_PATH}/qmake
 	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/ccs
