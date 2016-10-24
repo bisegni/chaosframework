@@ -161,10 +161,10 @@ int CouchbaseCacheDriver::getData(void *element_key, uint8_t element_key_len,  v
 	if (err != LCB_SUCCESS) {
 		CCDLERR_<< "Fail to get value with last_err "<< last_err << " with message " << last_err_str;
 	} else {
-        //last_err = result->err;
 		*value = (void*)get_result.value;
 		value_len = get_result.value_len;
     }
+    get_result.reset(err != LCB_SUCCESS);
 	return err;
 }
 
