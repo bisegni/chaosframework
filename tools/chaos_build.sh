@@ -53,15 +53,20 @@ if [ -z "$branch" ];then
     exit 1
 fi
 
+function printlog(){
+    echo "$1"
+    echo "$1" >> $log 2>&1
+    
+}
 function initialize_bundle(){
-    echo "* initializing repo"
+    printlog "* initializing repo"
     if ! repo init -u ssh://git@opensource-stash.infn.it:7999/chaos/chaos_repo_bundle.git -b development >> $log 2>&1;then
-	echo "## repo initialization failed"
+	printlog "## repo initialization failed"
 	return 1
     fi
-    echo "* synching repo"
+    printlog "* synching repo"
     if ! repo sync >> $log 2>&1 ;then
-	echo "## repo synchronization failed"
+	printlog "## repo synchronization failed"
 	return 1
     fi
     return 0
@@ -72,23 +77,23 @@ function compile_bundle(){
     local arch=$2
     local build=$3
     log="$currdir"/compile_all-$arch-$build.log
-    echo "=========================================="
-    echo "==== DIR   :$dir"
-    echo "==== ARCH  :$arch"
-    echo "==== BUILD :$build"
-    echo "==== BRANCH:$branch"
-    echo "=========================================="
+    printlog "=========================================="
+    printlog "==== DIR   :$dir"
+    printlog "==== ARCH  :$arch"
+    printlog "==== BUILD :$build"
+    printlog "==== BRANCH:$branch"
+    printlog "=========================================="
 
-    echo "* entering in $dir checking out \"$branch\""
-    echo "* log file \"$log\""
+    printlog "* entering in $dir checking out \"$branch\""
+    printlog "* log file \"$log\""
     pushd $dir >& $log
     install_prefix="$installdir/chaos-distrib-$arch-$build-$branch"
     if ! mkdir -p $install_prefix;then
-	echo "## cannot create $install_prefix"
+	printlog "## cannot create $install_prefix"
 	exit 1
     fi
     cmake_params="-DCMAKE_INSTALL_PREFIX=$install_prefix";
-    echo "* synchronizing with branch \"$branch\"...."
+    printlog "* synchronizing with branch \"$branch\"...."
     
     if [ ! -d chaosframework ];then
 	if ! initialize_bundle;then
@@ -97,16 +102,16 @@ function compile_bundle(){
 	fi
     fi
     if ! chaosframework/tools/chaos_git.sh -c $branch >> $log 2>&1 ;then
-	echo "## error cannot checkout \"$branch\""
+	printlog "## error cannot checkout \"$branch\""
 	popd > /dev/null
 	exit 1;
     fi
 
     if ! grep "\+" $log >& /dev/null;then
-	echo "* no source change on \"$dir\""
+	printlog "* no source change on \"$dir\""
 
     else
-	echo "* source changes detected on \"$dir\""
+	printlog "* source changes detected on \"$dir\""
     fi
 
     if [ "$build" == "static" ];then
@@ -132,14 +137,15 @@ function compile_bundle(){
 	    ;;
 	x86_64)
 	    cmake_params="$cmake_params -DCHAOS_CCS=ON -DQMAKE_PATH=/usr/local/chaos/qt-5.6/bin/"
+	    enable_ccs=true
 	    ;;
     esac
 
     if [ -d "$inputdir" ];then
 	chaosframework/tools/chaos_clean.sh . >> $log 2>&1
-	echo "* configuring $dir cmake \"$cmake_params\"...."
+	printlog "* configuring $dir cmake \"$cmake_params\"...."
 	if ! cmake $cmake_params . >> $log 2>&1;then
-	    echo "## error during cmake configuration \"$cmake_params\""
+	    printlog "## error during cmake configuration \"$cmake_params\""
 	    popd >& /dev/null
 	    return 1
 	fi
@@ -147,34 +153,37 @@ function compile_bundle(){
     fi
     
     if [ ! -f CMakeCache.txt ]|| [ -n "$force_reconf" ];then
-	echo "* configuring $dir cmake \"$cmake_params\"...."
+	printlog "* configuring $dir cmake \"$cmake_params\"...."
 	chaosframework/tools/chaos_clean.sh . >> $log 2>&1
 	if ! cmake $cmake_params . >> $log 2>&1;then
-	    echo "## error during cmake configuration \"$cmake_params\""
+	    printlog "## error during cmake configuration \"$cmake_params\""
 	    popd >& /dev/null
 	    return 1
 	fi
     fi
 
 
-    echo "* compiling $dir with \"$cmake_params\" ...."
+    printlog "* compiling $dir with \"$cmake_params\" ...."
     if ! make -j $nproc install  >> $log 2>&1 ;then
-	echo "## error during compilation"
-	echo "## error during compilation" >> $log 2>&1
+	printlog "## error during compilation"
     else
-	echo "* compilation ok"
+	printlog "* compilation ok"
+	if [ -n "$enable_ccs" ];then
+	        if ! make -j $nproc ccs install  >> $log 2>&1 ;then
+		fi
+	fi
     fi
 
     popd >& /dev/null
 }
 
 if [ -n "$fromscratch" ];then
-    echo "* from scratch"
+    printlog "* from scratch"
     if [ -z "$inputdir" ];then
 	inputdir=$currdir"/build_chaos_bundle"
     fi
     if [ -d "$inputdir" ];then
-	echo "* removing $inputdir"
+	printlog "* removing $inputdir"
 	rm -rf $inputdir
     fi
 
@@ -188,9 +197,9 @@ for a in $arch;do
 	if [ -d "$inputdir" ];then
 	    compile_bundle $inputdir $a $b 
 	else
-	    echo "* checking for $dir in "`pwd`
+	    printlog "* checking for $dir in "`pwd`
 	    if [ -d "$dir" ];then
-		echo "* compiling $dir branch:$branch"
+		printlog "* compiling $dir branch:$branch"
 		compile_bundle $dir $a $b 
 	    fi
 	    
