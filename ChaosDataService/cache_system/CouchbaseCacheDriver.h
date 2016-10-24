@@ -44,6 +44,14 @@ namespace chaos {
                 ResultValue():
                 value(NULL),
                 value_len(0){}
+                
+                void reset(bool purge) {
+                    if(value) {
+                        if(purge){ free(value);}
+                        value = NULL;
+                    }
+                    value_len = 0;
+                }
             };
 
                 //! Abstraction of the chache driver
