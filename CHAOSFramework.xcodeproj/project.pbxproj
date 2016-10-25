@@ -828,8 +828,11 @@
 		32C25DEC1DB7A4B900A46C2B /* HealthStat.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C25DEA1DB7A4B900A46C2B /* HealthStat.h */; };
 		32C25DF41DB90C3200A46C2B /* StandardLoggingChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C25DF21DB90C3200A46C2B /* StandardLoggingChannel.cpp */; };
 		32C25DF51DB90C3200A46C2B /* StandardLoggingChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C25DF31DB90C3200A46C2B /* StandardLoggingChannel.h */; };
-		32C25DF81DB9F29200A46C2B /* AlertLoggingChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C25DF61DB9F29200A46C2B /* AlertLoggingChannel.cpp */; };
-		32C25DF91DB9F29200A46C2B /* AlertLoggingChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C25DF71DB9F29200A46C2B /* AlertLoggingChannel.h */; };
+		32C25DF81DB9F29200A46C2B /* AlarmLoggingChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C25DF61DB9F29200A46C2B /* AlarmLoggingChannel.cpp */; };
+		32C25DF91DB9F29200A46C2B /* AlarmLoggingChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C25DF71DB9F29200A46C2B /* AlarmLoggingChannel.h */; };
+		32C25E131DBFB8DC00A46C2B /* alarm.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C25E111DBFB8DB00A46C2B /* alarm.h */; };
+		32C25E161DBFB92900A46C2B /* alarm_types.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C25E141DBFB92900A46C2B /* alarm_types.cpp */; };
+		32C25E171DBFB92900A46C2B /* alarm_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C25E151DBFB92900A46C2B /* alarm_types.h */; };
 		32C353F21788015B009ED581 /* PluginDiscover.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C353F01788015B009ED581 /* PluginDiscover.cpp */; };
 		32C353F31788015B009ED581 /* PluginDiscover.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C353F11788015B009ED581 /* PluginDiscover.h */; };
 		32C3544E17885A37009ED581 /* common.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 32C3543517885A37009ED581 /* common.hpp */; };
@@ -2092,8 +2095,11 @@
 		32C25DEA1DB7A4B900A46C2B /* HealthStat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HealthStat.h; sourceTree = "<group>"; };
 		32C25DF21DB90C3200A46C2B /* StandardLoggingChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StandardLoggingChannel.cpp; sourceTree = "<group>"; };
 		32C25DF31DB90C3200A46C2B /* StandardLoggingChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StandardLoggingChannel.h; sourceTree = "<group>"; };
-		32C25DF61DB9F29200A46C2B /* AlertLoggingChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlertLoggingChannel.cpp; sourceTree = "<group>"; };
-		32C25DF71DB9F29200A46C2B /* AlertLoggingChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlertLoggingChannel.h; sourceTree = "<group>"; };
+		32C25DF61DB9F29200A46C2B /* AlarmLoggingChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlarmLoggingChannel.cpp; sourceTree = "<group>"; };
+		32C25DF71DB9F29200A46C2B /* AlarmLoggingChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlarmLoggingChannel.h; sourceTree = "<group>"; };
+		32C25E111DBFB8DB00A46C2B /* alarm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = alarm.h; sourceTree = "<group>"; };
+		32C25E141DBFB92900A46C2B /* alarm_types.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = alarm_types.cpp; sourceTree = "<group>"; };
+		32C25E151DBFB92900A46C2B /* alarm_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = alarm_types.h; sourceTree = "<group>"; };
 		32C353F01788015B009ED581 /* PluginDiscover.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginDiscover.cpp; sourceTree = "<group>"; };
 		32C353F11788015B009ED581 /* PluginDiscover.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginDiscover.h; sourceTree = "<group>"; };
 		32C3543517885A37009ED581 /* common.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = common.hpp; sourceTree = "<group>"; };
@@ -3274,6 +3280,7 @@
 				326DB42F14B38BC00018A8D0 /* version.sh */,
 				32C100F4191B6EE100478F40 /* async_central */,
 				326DB3B514B38BC00018A8D0 /* action */,
+				32C25E0F1DBFB8B300A46C2B /* alarm */,
 				3296030E1876B45000CDCADA /* batch_command */,
 				326DB3BD14B38BC00018A8D0 /* bson */,
 				326DB3E314B38BC00018A8D0 /* configuration */,
@@ -4407,6 +4414,16 @@
 			path = async_central;
 			sourceTree = "<group>";
 		};
+		32C25E0F1DBFB8B300A46C2B /* alarm */ = {
+			isa = PBXGroup;
+			children = (
+				32C25E141DBFB92900A46C2B /* alarm_types.cpp */,
+				32C25E151DBFB92900A46C2B /* alarm_types.h */,
+				32C25E111DBFB8DB00A46C2B /* alarm.h */,
+			);
+			path = alarm;
+			sourceTree = "<group>";
+		};
 		32C3543317885A36009ED581 /* extension */ = {
 			isa = PBXGroup;
 			children = (
@@ -4610,8 +4627,8 @@
 				32571D9B1C7C901A0001D884 /* BatchCommandLoggingChannel.h */,
 				32C25DF21DB90C3200A46C2B /* StandardLoggingChannel.cpp */,
 				32C25DF31DB90C3200A46C2B /* StandardLoggingChannel.h */,
-				32C25DF61DB9F29200A46C2B /* AlertLoggingChannel.cpp */,
-				32C25DF71DB9F29200A46C2B /* AlertLoggingChannel.h */,
+				32C25DF61DB9F29200A46C2B /* AlarmLoggingChannel.cpp */,
+				32C25DF71DB9F29200A46C2B /* AlarmLoggingChannel.h */,
 				3270E07C1C6DF19D00105726 /* metadata_logging.h */,
 			);
 			path = metadata_logging;
@@ -4951,6 +4968,7 @@
 				3270E07E1C6DF19D00105726 /* metadata_logging.h in Headers */,
 				324A4B7A191A428500975394 /* checksum.h in Headers */,
 				3272FE1715E1053100B096FB /* EventForwarder.h in Headers */,
+				32C25E171DBFB92900A46C2B /* alarm_types.h in Headers */,
 				32DF603815E14C7700312C94 /* NamedService.h in Headers */,
 				32DF603C15E14D5F00312C94 /* AlertEventDescriptor.h in Headers */,
 				32DF604015E14F5A00312C94 /* InstrumentEventDescriptor.h in Headers */,
@@ -5056,6 +5074,7 @@
 				32C3544E17885A37009ED581 /* common.hpp in Headers */,
 				32B57202168E02CE0002A198 /* bsontypes.h in Headers */,
 				32B57203168E02CE0002A198 /* inline_decls.h in Headers */,
+				32C25E131DBFB8DC00A46C2B /* alarm.h in Headers */,
 				32B57208168E02D10002A198 /* oid.h in Headers */,
 				32A862231D58CB2300A7D707 /* trigger.h in Headers */,
 				32C25DEC1DB7A4B900A46C2B /* HealthStat.h in Headers */,
@@ -5085,7 +5104,7 @@
 				32640A29169DCC5800450962 /* DataAggregationInterface.h in Headers */,
 				324A4B99191A55E800975394 /* mutex.h in Headers */,
 				32C100FC191B847800478F40 /* TimerHandler.h in Headers */,
-				32C25DF91DB9F29200A46C2B /* AlertLoggingChannel.h in Headers */,
+				32C25DF91DB9F29200A46C2B /* AlarmLoggingChannel.h in Headers */,
 				32640A2A169DCC5800450962 /* DataFetcherInterface.h in Headers */,
 				32640A2C169DCC5800450962 /* EmbeddedDataTransform.h in Headers */,
 				32640A2D169DCC5800450962 /* AbstractDeviceTracker.h in Headers */,
@@ -5733,7 +5752,7 @@
 				32A88BCA1CF8228A001DBAF5 /* lfunc.c in Sources */,
 				32F5B0061B5F8EBF00457A63 /* FileMetricBackend.cpp in Sources */,
 				329C1EFD1B55286100A84D55 /* RpcServerMetricCollector.cpp in Sources */,
-				32C25DF81DB9F29200A46C2B /* AlertLoggingChannel.cpp in Sources */,
+				32C25DF81DB9F29200A46C2B /* AlarmLoggingChannel.cpp in Sources */,
 				32C100FB191B847800478F40 /* TimerHandler.cpp in Sources */,
 				32A968521D522FB800BD636C /* PropertyGroup.cpp in Sources */,
 				324A4B9E191A569800975394 /* hex.cpp in Sources */,
@@ -5863,6 +5882,7 @@
 				324544F81D4A55ED0081F90B /* AbstractListener.cpp in Sources */,
 				32B1378A189BEC3300B17CA4 /* ZMQDirectIOClient.cpp in Sources */,
 				32A88BDC1CF8228A001DBAF5 /* lparser.c in Sources */,
+				32C25E161DBFB92900A46C2B /* alarm_types.cpp in Sources */,
 				329603221876B45000CDCADA /* BatchCommand.cpp in Sources */,
 				32A88BC11CF8228A001DBAF5 /* lcorolib.c in Sources */,
 				32A91FCA1A49AF0700DCF364 /* RpcSyncServer.cpp in Sources */,

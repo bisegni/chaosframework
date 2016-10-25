@@ -1011,17 +1011,19 @@ namespace chaos {
             static const char * const PARAM_NODE_LOGGING_LOG_MESSAGE                    = "mdsndk_nl_l_m";
         }
         
-        namespace AlertLogging {
+        namespace AlarmLogging {
             //! the key represent the error code [int32_t]
-            static const char * const PARAM_NODE_LOGGING_ALERT_LEVEL_CODE               = "mdsndk_nl_a_lc";
+            static const char * const PARAM_NODE_LOGGING_ALARM_LEVEL_CODE               = "mdsndk_nl_a_lc";
             //! the key represent the error code [string]
-            static const char * const PARAM_NODE_LOGGING_ALERT_LEVEL_DESCRIPTION        = "mdsndk_nl_a_ld";
+            static const char * const PARAM_NODE_LOGGING_ALARM_LEVEL_DESCRIPTION        = "mdsndk_nl_a_ld";
             //! the key represent the error message [int32_t]
-            static const char * const PARAM_NODE_LOGGING_ALERT_CODE                     = "mdsndk_nl_a_c";
+            static const char * const PARAM_NODE_LOGGING_ALARM_CODE                     = "mdsndk_nl_a_c";
             //! the key represent the error message [string]
-            static const char * const PARAM_NODE_LOGGING_ALERT_DESCRIPTION               = "mdsndk_nl_a_d";
+            static const char * const PARAM_NODE_LOGGING_ALARM_NAME                     = "mdsndk_nl_a_n";
+            //! the key represent the error message [string]
+            static const char * const PARAM_NODE_LOGGING_ALARM_DESCRIPTION              = "mdsndk_nl_a_d";
             //! the key represent the error message [uint32_t]
-            static const char * const PARAM_NODE_LOGGING_ALERT_REPETITION               = "mdsndk_nl_a_rep";
+            static const char * const PARAM_NODE_LOGGING_ALARM_REPETITION               = "mdsndk_nl_a_rep";
         }
         
         namespace CommandLogging {

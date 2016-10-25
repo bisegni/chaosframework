@@ -22,6 +22,7 @@
 #include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
 #include <chaos/common/metadata_logging/ErrorLoggingChannel.h>
+#include <chaos/common/metadata_logging/AlarmLoggingChannel.h>
 #include <chaos/common/metadata_logging/StandardLoggingChannel.h>
 #include <chaos/common/metadata_logging/MetadataLoggingManager.h>
 #include <chaos/common/metadata_logging/BatchCommandLoggingChannel.h>
@@ -42,6 +43,8 @@ message_channel(NULL) {
     //add default channels
     registerChannel("StandardLoggingChannel",
                     METADATA_LOGGING_STANDARD_LOGGING_CHANNEL_INSTANCER);
+    registerChannel("AlarmLoggingChannel",
+                    METADATA_LOGGING_ALARM_LOGGING_CHANNEL_INSTANCER);
     registerChannel("ErrorLoggingChannel",
                     METADATA_LOGGING_ERROR_LOGGING_CHANNEL_INSTANCER);
     registerChannel("BatchCommandLoggingChannel",

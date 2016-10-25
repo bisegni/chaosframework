@@ -15,7 +15,7 @@ SET(common_lib_src chaos_errors.cpp
 
 SET(common_lib_src ${common_lib_src}
                     metadata_logging/ErrorLoggingChannel.cpp
-                    metadata_logging/AlertLoggingChannel.cpp
+                    metadata_logging/AlarmLoggingChannel.cpp
                     metadata_logging/StandardLoggingChannel.cpp
                     metadata_logging/MetadataLoggingManager.cpp
                     metadata_logging/AbstractMetadataLogChannel.cpp
@@ -36,6 +36,9 @@ SET(common_lib_src ${common_lib_src}
         action/ActionDescriptor.cpp
         action/DeclareAction.cpp
         action/DomainActions.cpp)
+
+SET(common_lib_src ${common_lib_src}
+        alarm/alarm_types.cpp)
 
 SET(common_lib_src ${common_lib_src}
         bson/oid.cpp
