@@ -425,7 +425,7 @@ int MongoDBNodeDataAccess::searchNode(chaos::common::data::CDataWrapper **result
                 cd.addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, it->getField(chaos::NodeDefinitionKey::NODE_UNIQUE_ID).String());
                 cd.addStringValue(chaos::NodeDefinitionKey::NODE_TYPE, it->getField(chaos::NodeDefinitionKey::NODE_TYPE).String());
                 cd.addStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR, it->getField(chaos::NodeDefinitionKey::NODE_RPC_ADDR).String());
-                cd.addInt64Value("seq", it->getField("seq").Long());
+                cd.addInt64Value("seq", (int64_t)it->getField("seq").Long());
                 
                 if(it->hasField("health_stat")) {
                     mongo::BSONElement health_stat_element = it->getField("health_stat");
@@ -434,7 +434,7 @@ int MongoDBNodeDataAccess::searchNode(chaos::common::data::CDataWrapper **result
                         //we can retrieve the data
                         CDataWrapper health;
                         health.addInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP, o.getField(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP).date().asInt64());
-                        health.addInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME, o.getField(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME).Long());
+                        health.addInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME, (int64_t)o.getField(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME).Long());
                         health.addDoubleValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_USER_TIME, o.getField(chaos::NodeHealtDefinitionKey::NODE_HEALT_USER_TIME).Double());
                         health.addDoubleValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME, o.getField(chaos::NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME).Double());
                         health.addStringValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS, o.getField(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS).String());
