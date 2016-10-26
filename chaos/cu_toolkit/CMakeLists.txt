@@ -53,15 +53,14 @@ SET(cu_lib_src ${cu_lib_src}
 
 SET(cu_lib_src ${cu_lib_src}
         control_manager/execution_pool/ExecutionPool.cpp)
+ IF (BUILD_FORCE_STATIC)
+     ADD_LIBRARY(${PROJECT_NAME} STATIC ${cu_lib_src})
+ ELSE ()
+     ADD_LIBRARY(${PROJECT_NAME} SHARED ${cu_lib_src})
+     set_target_properties(${PROJECT_NAME} PROPERTIES VERSION 1.0.0 SOVERSION 1)
+ ENDIF ()
 
-# IF (BUILD_FORCE_STATIC)
-#     ADD_LIBRARY(${PROJECT_NAME} STATIC ${cu_lib_src})
-# ELSE ()
-#     ADD_LIBRARY(${PROJECT_NAME} SHARED ${cu_lib_src})
-#     set_target_properties(${PROJECT_NAME} PROPERTIES VERSION 1.0.0 SOVERSION 1)
-# ENDIF ()
-
-ADD_LIBRARY(${PROJECT_NAME} ${cu_lib_src})
+#ADD_LIBRARY(${PROJECT_NAME} ${cu_lib_src})
 #SET_TARGET_PROPERTIES(${PROJECT_NAME}_static PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
 
 
