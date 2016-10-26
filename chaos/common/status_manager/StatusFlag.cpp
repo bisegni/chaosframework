@@ -121,15 +121,15 @@ StatusFlag& StatusFlag::operator=(StatusFlag const &rhs) {
     return *this;
 };
 
-const std::string& StatusFlag::getDescription() {
+const std::string& StatusFlag::getDescription() const{
     return description;
 }
 
-const std::string& StatusFlag::getFlagUUID() {
+const std::string& StatusFlag::getFlagUUID() const {
     return flag_uuid;
 }
 
-const std::string& StatusFlag::getName() {
+const std::string& StatusFlag::getName() const {
     return name;
 }
 
@@ -183,7 +183,7 @@ int8_t StatusFlag::getCurrentLevel() const {
     return current_level;
 }
 
-const StateLevel& StatusFlag::getCurrentStateLevel() {
+const StateLevel& StatusFlag::getCurrentStateLevel() const {
     StatusLevelContainerOrderedIndex& local_ordered_index = set_levels.get<ordered_index_tag>();
     StatusLevelContainerOrderedIndexIterator it = local_ordered_index.find(getCurrentLevel());
     return *it;
