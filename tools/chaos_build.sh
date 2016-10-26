@@ -1,6 +1,6 @@
 #!/bin/bash -e
 arch="x86_64 i686 arm armhf"
-build="static dynamic"
+build="dynamic static"
 prefix="chaos_bundle"
 branch="development"
 buildtype=""
@@ -8,6 +8,7 @@ currdir=`pwd`
 installdir="$currdir/chaos-build"
 inputdir=""
 nproc="4"
+log="default"
 unset CHAOS_TARGET
 unset CHAOS_PREFIX
 while getopts j:b:o:a:t:r:sfh opt; do
@@ -77,6 +78,7 @@ function compile_bundle(){
     local arch=$2
     local build=$3
     log="$currdir"/compile_all-$arch-$build.log
+    pushd $dir >& $log
     printlog "=========================================="
     printlog "==== DIR   :$dir"
     printlog "==== ARCH  :$arch"
@@ -86,7 +88,7 @@ function compile_bundle(){
 
     printlog "* entering in $dir checking out \"$branch\""
     printlog "* log file \"$log\""
-    pushd $dir >& $log
+
     install_prefix="$installdir/chaos-distrib-$arch-$build-$branch"
     if ! mkdir -p $install_prefix;then
 	printlog "## cannot create $install_prefix"
@@ -154,12 +156,14 @@ function compile_bundle(){
     
     if [ ! -f CMakeCache.txt ]|| [ -n "$force_reconf" ];then
 	printlog "* configuring $dir cmake \"$cmake_params\"...."
+	rm -rf $install_prefix
 	chaosframework/tools/chaos_clean.sh . >> $log 2>&1
 	if ! cmake $cmake_params . >> $log 2>&1;then
 	    printlog "## error during cmake configuration \"$cmake_params\""
 	    popd >& /dev/null
 	    return 1
 	fi
+	
     fi
 
 
@@ -170,6 +174,9 @@ function compile_bundle(){
 	printlog "* compilation ok"
 	if [ -n "$enable_ccs" ];then
 	        if ! make -j $nproc ccs install  >> $log 2>&1 ;then
+		    printlog "## error compiling CCS"
+		else
+		    printlog "CCS compilation ok"
 		fi
 	fi
     fi
