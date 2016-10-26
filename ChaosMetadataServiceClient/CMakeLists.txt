@@ -92,11 +92,8 @@ SET(mcl_src ${mcl_src}      monitor_system/MonitorManager.cpp
                             monitor_system/AbstractQuantumKeyAttributeHandler.cpp
                             monitor_system/QuantumTSTaggedAttributeHandler.cpp)
 
-IF(BUILD_FORCE_STATIC)
-ADD_LIBRARY(${PROJECT_NAME} STATIC ${mcl_src})
-ELSE()
-ADD_LIBRARY(${PROJECT_NAME} SHARED ${mcl_src})
-ENDIF()
+ADD_LIBRARY(${PROJECT_NAME} ${mcl_src})
+
 
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}  chaos_common ${FrameworkLib})
