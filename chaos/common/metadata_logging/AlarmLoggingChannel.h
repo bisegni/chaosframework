@@ -22,7 +22,7 @@
 #ifndef __CHAOSFramework_C3D81B8D_2073_44DC_85E9_C94F418D5DE9_AllertLoggingChannel_h
 #define __CHAOSFramework_C3D81B8D_2073_44DC_85E9_C94F418D5DE9_AllertLoggingChannel_h
 
-#include <chaos/common/alarm/alarm_types.h>
+#include <chaos/common/alarm/AlarmDescription.h>
 #include <chaos/common/exception/exception.h>
 #include <chaos/common/metadata_logging/AbstractMetadataLogChannel.h>
 

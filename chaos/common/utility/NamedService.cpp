@@ -34,6 +34,6 @@ service_name(_service_name){
 /*
  Return the adapter alias
  */
-const string & NamedService::getName() const{
+const string & NamedService::getName() const {
     return service_name;
 }

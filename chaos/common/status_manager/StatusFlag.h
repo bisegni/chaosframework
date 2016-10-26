@@ -43,10 +43,12 @@ namespace chaos {
              for example; power supply is on/off or local/remote. But the can also
              identify fault situation that can be critical or warning
              */
-            typedef enum StatusFlagServerity{
+            typedef enum StatusFlagServerity {
                 StatusFlagServerityRegular,
-                StatusFlagServerityWarning,
-                StatusFlagServerityCritical,
+                StatusFlagServerityLow,
+                StatusFlagServerityElevated,
+                StatusFlagServerityHigh,
+                StatusFlagServeritySevere,
                 StatusFlagServerityUndefuned
             }StatusFlagServerity;
             
@@ -154,14 +156,14 @@ namespace chaos {
                 boost::shared_mutex mutex_current_level;
                 
                 //! mantains the mapping from level and the state description of that level
-                StateLevelContainer set_levels;
+                mutable StateLevelContainer set_levels;
                 
                 SetListner listener;
                 boost::shared_mutex mutex_listener;
                 
             protected:
                 std::string flag_uuid;
-                //! the name taht identify the flag
+                //! the name that identify the flag
                 std::string name;
                 //! the compelte description of the flag
                 std::string description;
@@ -174,9 +176,9 @@ namespace chaos {
                 
                 StatusFlag& operator=(StatusFlag const &rhs);
                 
-                const std::string& getName();
-                const std::string& getDescription();
-                const std::string& getFlagUUID();
+                const std::string& getName() const;
+                const std::string& getDescription() const;
+                const std::string& getFlagUUID() const;
                 
                 //! add a new level with level state
                 bool addLevel(const StateLevel& level_state);
@@ -190,7 +192,7 @@ namespace chaos {
                 //return the current level of the flag
                 int8_t getCurrentLevel() const;
                 
-                const StateLevel& getCurrentStateLevel();
+                const StateLevel& getCurrentStateLevel() const;
                 
                 
                 void addListener(StatusFlagListener *new_listener);
