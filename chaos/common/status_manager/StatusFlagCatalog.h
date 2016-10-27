@@ -155,6 +155,12 @@ namespace chaos {
                 //!add a new status flag
                 void addFlag(boost::shared_ptr<StatusFlag> flag);
                 
+                //! set state for flag usign his name
+                void setFlagState(const std::string& flag_name, int8_t new_state);
+
+                //! set state for flag usign ordered insertion id
+                void setFlagState(const unsigned int flag_ordered_id, int8_t new_state);
+                
                 //!append an intere status flag map into owned one
                 void appendCatalog(const StatusFlagCatalog& src);
                 

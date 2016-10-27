@@ -118,6 +118,20 @@ void StatusFlagCatalog::addFlag(boost::shared_ptr<StatusFlag> flag) {
     flag->addListener(this);
 }
 
+void StatusFlagCatalog::setFlagState(const std::string& flag_name, int8_t new_state) {
+    StatusFlagElementContainerNameIndex& name_index = catalog_container.get<mitag_name>();
+    StatusFlagElementContainerNameIterator nit = name_index.find(flag_name);
+    if(nit == name_index.end()) return;
+    (*nit)->status_flag->setCurrentLevel(new_state);
+}
+
+void StatusFlagCatalog::setFlagState(const unsigned int flag_ordered_id, int8_t new_state) {
+    StatusFlagElementContainerOrderedIndex& ordered_index = catalog_container.get<mitag_ordered>();
+    StatusFlagElementContainerOrderedIndexIterator nit = ordered_index.find(flag_ordered_id);
+    if(nit == ordered_index.end()) return;
+    (*nit)->status_flag->setCurrentLevel(new_state);
+}
+
 void StatusFlagCatalog::appendCatalog(const StatusFlagCatalog& src) {
     //write loc on loca catalog
     boost::unique_lock<boost::shared_mutex> wl(mutex_catalog);
