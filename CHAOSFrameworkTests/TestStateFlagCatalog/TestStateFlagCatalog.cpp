@@ -22,43 +22,46 @@
 
 #include "TestStateFlagCatalog.h"
 
-#include <chaos/common/status_manager/StatusFlagCatalogSDWrapper.h>
+
+#include <chaos/common/state_flag/StateFlagCatalogSDWrapper.h>
 
 #include <boost/foreach.hpp>
 
 using namespace chaos::common::utility::test;
-using namespace chaos::common::status_manager;
+using namespace chaos::common::state_flag;
+using namespace chaos::common::alarm;
 
 TestStateFlagCatalog::TestStateFlagCatalog():
+alarm_catalog("control_unit_alarm"),
 catalog_a("catalog_a"),
 catalog_b("catalog_b"){}
 
 TestStateFlagCatalog::~TestStateFlagCatalog() {}
 
 bool TestStateFlagCatalog::test() {
-    boost::shared_ptr<StatusFlag> flag;
-    boost::shared_ptr<StatusFlag> flag_powersupply_state;
-    boost::shared_ptr<StatusFlag> flag_serial_comunication;
-    boost::shared_ptr<StatusFlag> flag_serial_port;
+    boost::shared_ptr<StateFlag> flag;
+    boost::shared_ptr<StateFlag> flag_powersupply_state;
+    boost::shared_ptr<StateFlag> flag_serial_comunication;
+    boost::shared_ptr<StateFlag> flag_serial_port;
     
-    flag_powersupply_state.reset(new StatusFlag("powersupply_state",
+    flag_powersupply_state.reset(new StateFlag("powersupply_state",
                                                 "Represent the state of internal power supply"));
-    flag_powersupply_state->addLevel(StateLevel(0, "Off", "Powersupply is off", StatusFlagServerityRegular));
-    flag_powersupply_state->addLevel(StateLevel(1, "Standby", "Power supply can't erogate current", StatusFlagServerityRegular));
-    flag_powersupply_state->addLevel(StateLevel(2, "Operational", "Powersupply erogate current", StatusFlagServerityRegular));
-    flag_powersupply_state->addLevel(StateLevel(3, "faulty", "Powersupply is in faulty", StatusFlagServerityLow));
+    flag_powersupply_state->addLevel(StateLevel(0, "Off", "Powersupply is off", StateFlagServerityRegular));
+    flag_powersupply_state->addLevel(StateLevel(1, "Standby", "Power supply can't erogate current", StateFlagServerityRegular));
+    flag_powersupply_state->addLevel(StateLevel(2, "Operational", "Powersupply erogate current", StateFlagServerityRegular));
+    flag_powersupply_state->addLevel(StateLevel(3, "faulty", "Powersupply is in faulty", StateFlagServerityLow));
     catalog_a.addFlag(flag_powersupply_state);
     
-    flag_serial_comunication.reset(new StatusFlag("serial_comunication",
+    flag_serial_comunication.reset(new StateFlag("serial_comunication",
                                                   "Represente the state of the comunication over the serial port"));
-    flag_serial_comunication->addLevel(StateLevel(0, "Working", "Comunication are OK!", StatusFlagServerityRegular));
-    flag_serial_comunication->addLevel(StateLevel(1, "Timeout", "No answqer over serial port", StatusFlagServerityLow));
+    flag_serial_comunication->addLevel(StateLevel(0, "Working", "Comunication are OK!", StateFlagServerityRegular));
+    flag_serial_comunication->addLevel(StateLevel(1, "Timeout", "No answqer over serial port", StateFlagServerityLow));
     catalog_a.addFlag(flag_serial_comunication);
     
-    flag_serial_port.reset(new StatusFlag("serial_port_state",
+    flag_serial_port.reset(new StateFlag("serial_port_state",
                                           "Represente the state of the serial port"));
-    flag_serial_port->addLevel(StateLevel(0, "Working", "Serial porto working", StatusFlagServerityRegular));
-    flag_serial_port->addLevel(StateLevel(1, "KernelError", "Comunication problem using serial port", StatusFlagServeritySevere));
+    flag_serial_port->addLevel(StateLevel(0, "Working", "Serial porto working", StateFlagServerityRegular));
+    flag_serial_port->addLevel(StateLevel(1, "KernelError", "Comunication problem using serial port", StateFlagServeritySevere));
     catalog_b.addFlag(flag_serial_port);
     
     flag = catalog_a.getFlagByName("powersupply_state");
@@ -94,39 +97,39 @@ bool TestStateFlagCatalog::test() {
     //change some level
     flag_powersupply_state->setCurrentLevel(3);
     flag_serial_port->setCurrentLevel(1);
-    VectorStatusFlag found_flag_for_severity;
+    VectorStateFlag found_flag_for_severity;
     
-    catalog_a.getFlagsForSeverity(StatusFlagServerityRegular, found_flag_for_severity);
-    std::cout << "catalog_a StatusFlagServerityRegular"<<std::endl;
-    BOOST_FOREACH(boost::shared_ptr<StatusFlag> flag, found_flag_for_severity ){std::cout << flag->getName() << std::endl;}
-    
-    found_flag_for_severity.clear();
-    catalog_a.getFlagsForSeverity(StatusFlagServerityLow, found_flag_for_severity);
-    std::cout << "catalog_a StatusFlagServerityWarning"<<std::endl;
-    BOOST_FOREACH(boost::shared_ptr<StatusFlag> flag, found_flag_for_severity ){std::cout << flag->getName()  << std::endl;}
+    catalog_a.getFlagsForSeverity(StateFlagServerityRegular, found_flag_for_severity);
+    std::cout << "catalog_a StateFlagServerityRegular"<<std::endl;
+    BOOST_FOREACH(boost::shared_ptr<StateFlag> flag, found_flag_for_severity ){std::cout << flag->getName() << std::endl;}
     
     found_flag_for_severity.clear();
-    catalog_a.getFlagsForSeverity(StatusFlagServeritySevere, found_flag_for_severity);
-    std::cout << "catalog_a StatusFlagServerityCritical"<<std::endl;
-    BOOST_FOREACH(boost::shared_ptr<StatusFlag> flag, found_flag_for_severity ){std::cout << flag->getName()  << std::endl;}
+    catalog_a.getFlagsForSeverity(StateFlagServerityLow, found_flag_for_severity);
+    std::cout << "catalog_a StateFlagServerityWarning"<<std::endl;
+    BOOST_FOREACH(boost::shared_ptr<StateFlag> flag, found_flag_for_severity ){std::cout << flag->getName()  << std::endl;}
     
     found_flag_for_severity.clear();
-    catalog_b.getFlagsForSeverity(StatusFlagServerityRegular, found_flag_for_severity);
-    std::cout << "catalog_b StatusFlagServerityRegular"<<std::endl;
-    BOOST_FOREACH(boost::shared_ptr<StatusFlag> flag, found_flag_for_severity ){std::cout << flag->getName()  << std::endl;}
+    catalog_a.getFlagsForSeverity(StateFlagServeritySevere, found_flag_for_severity);
+    std::cout << "catalog_a StateFlagServerityCritical"<<std::endl;
+    BOOST_FOREACH(boost::shared_ptr<StateFlag> flag, found_flag_for_severity ){std::cout << flag->getName()  << std::endl;}
     
     found_flag_for_severity.clear();
-    catalog_b.getFlagsForSeverity(StatusFlagServerityLow, found_flag_for_severity);
-    std::cout << "catalog_b StatusFlagServerityWarning"<<std::endl;
-    BOOST_FOREACH(boost::shared_ptr<StatusFlag> flag, found_flag_for_severity ){std::cout << flag->getName()  << std::endl;}
+    catalog_b.getFlagsForSeverity(StateFlagServerityRegular, found_flag_for_severity);
+    std::cout << "catalog_b StateFlagServerityRegular"<<std::endl;
+    BOOST_FOREACH(boost::shared_ptr<StateFlag> flag, found_flag_for_severity ){std::cout << flag->getName()  << std::endl;}
     
     found_flag_for_severity.clear();
-    catalog_b.getFlagsForSeverity(StatusFlagServerityLow, found_flag_for_severity);
-    std::cout << "catalog_b StatusFlagServerityCritical"<<std::endl;
-    BOOST_FOREACH(boost::shared_ptr<StatusFlag> flag, found_flag_for_severity ){std::cout << flag->getName()  << std::endl;}
+    catalog_b.getFlagsForSeverity(StateFlagServerityLow, found_flag_for_severity);
+    std::cout << "catalog_b StateFlagServerityWarning"<<std::endl;
+    BOOST_FOREACH(boost::shared_ptr<StateFlag> flag, found_flag_for_severity ){std::cout << flag->getName()  << std::endl;}
+    
+    found_flag_for_severity.clear();
+    catalog_b.getFlagsForSeverity(StateFlagServerityLow, found_flag_for_severity);
+    std::cout << "catalog_b StateFlagServerityCritical"<<std::endl;
+    BOOST_FOREACH(boost::shared_ptr<StateFlag> flag, found_flag_for_severity ){std::cout << flag->getName()  << std::endl;}
     
     //print serialization
-    StatusFlagCatalogSDWrapper sfcsdw;
+    StateFlagCatalogSDWrapper sfcsdw;
     sfcsdw.dataWrapped() = catalog_b;
     std::cout << sfcsdw.serialize()->getJSONString() << std::endl;
     return true;

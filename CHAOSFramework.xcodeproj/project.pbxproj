@@ -124,10 +124,10 @@
 		322DE35518D467E5006F1551 /* ConcuredUsedItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 322DE35418D467E5006F1551 /* ConcuredUsedItem.h */; };
 		322E157A161B629700C3003C /* NetworkBroker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322E1578161B629700C3003C /* NetworkBroker.cpp */; };
 		322E157D161B62A900C3003C /* NetworkBroker.h in Headers */ = {isa = PBXBuildFile; fileRef = 322E157C161B62A900C3003C /* NetworkBroker.h */; };
-		322EC1B71D3406650012467C /* StatusFlag.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322EC1B51D3406650012467C /* StatusFlag.cpp */; };
-		322EC1B81D3406650012467C /* StatusFlag.h in Headers */ = {isa = PBXBuildFile; fileRef = 322EC1B61D3406650012467C /* StatusFlag.h */; };
-		322EC1BB1D34F2E10012467C /* StatusFlagCatalog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322EC1B91D34F2E10012467C /* StatusFlagCatalog.cpp */; };
-		322EC1BC1D34F2E10012467C /* StatusFlagCatalog.h in Headers */ = {isa = PBXBuildFile; fileRef = 322EC1BA1D34F2E10012467C /* StatusFlagCatalog.h */; };
+		322EC1B71D3406650012467C /* StateFlag.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322EC1B51D3406650012467C /* StateFlag.cpp */; };
+		322EC1B81D3406650012467C /* StateFlag.h in Headers */ = {isa = PBXBuildFile; fileRef = 322EC1B61D3406650012467C /* StateFlag.h */; };
+		322EC1BB1D34F2E10012467C /* StateFlagCatalog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322EC1B91D34F2E10012467C /* StateFlagCatalog.cpp */; };
+		322EC1BC1D34F2E10012467C /* StateFlagCatalog.h in Headers */ = {isa = PBXBuildFile; fileRef = 322EC1BA1D34F2E10012467C /* StateFlagCatalog.h */; };
 		3230BEC2181A6ADB00EA5793 /* DatasetDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3230BEC0181A6ADB00EA5793 /* DatasetDB.cpp */; };
 		3230BEC3181A6ADB00EA5793 /* DatasetDB.h in Headers */ = {isa = PBXBuildFile; fileRef = 3230BEC1181A6ADB00EA5793 /* DatasetDB.h */; };
 		3230DA0A1652C41D00113C93 /* NetworkForwardInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 3230DA091652C41D00113C93 /* NetworkForwardInfo.h */; };
@@ -166,6 +166,8 @@
 		32401CB91C183E2600E62866 /* GetNodesForSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32401CB71C183E2600E62866 /* GetNodesForSnapshot.cpp */; };
 		32401CBA1C183E2600E62866 /* GetNodesForSnapshot.h in Headers */ = {isa = PBXBuildFile; fileRef = 32401CB81C183E2600E62866 /* GetNodesForSnapshot.h */; };
 		32401CBD1C1AD7AA00E62866 /* TreeGroupDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32401CBB1C1AD7AA00E62866 /* TreeGroupDataAccess.cpp */; };
+		32414FD71DC1EEAD00830422 /* AlarmCatalog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32414FD51DC1EEAD00830422 /* AlarmCatalog.cpp */; };
+		32414FD81DC1EEAD00830422 /* AlarmCatalog.h in Headers */ = {isa = PBXBuildFile; fileRef = 32414FD61DC1EEAD00830422 /* AlarmCatalog.h */; };
 		3244C0C6168CB96B007C802C /* Record.h in Headers */ = {isa = PBXBuildFile; fileRef = 3244C0C5168CB96B007C802C /* Record.h */; };
 		3244D11D15ECC25800FE2F86 /* AlertEventChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3244D11B15ECC25800FE2F86 /* AlertEventChannel.cpp */; };
 		3244D11E15ECC25800FE2F86 /* AlertEventChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3244D11C15ECC25800FE2F86 /* AlertEventChannel.h */; };
@@ -461,10 +463,10 @@
 		3270E07E1C6DF19D00105726 /* metadata_logging.h in Headers */ = {isa = PBXBuildFile; fileRef = 3270E07C1C6DF19D00105726 /* metadata_logging.h */; };
 		3270E0821C6DF44F00105726 /* exception.h in Headers */ = {isa = PBXBuildFile; fileRef = 3270E0801C6DF44F00105726 /* exception.h */; };
 		3270E0861C6E37A900105726 /* event.h in Headers */ = {isa = PBXBuildFile; fileRef = 3270E0841C6E37A900105726 /* event.h */; };
-		3271B8911D3CE0B30035290E /* StatusFlagSDWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3271B88F1D3CE0B30035290E /* StatusFlagSDWrapper.cpp */; };
-		3271B8921D3CE0B30035290E /* StatusFlagSDWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 3271B8901D3CE0B30035290E /* StatusFlagSDWrapper.h */; };
-		3271B8951D3D0D520035290E /* StatusFlagCatalogSDWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3271B8931D3D0D520035290E /* StatusFlagCatalogSDWrapper.cpp */; };
-		3271B8961D3D0D520035290E /* StatusFlagCatalogSDWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 3271B8941D3D0D520035290E /* StatusFlagCatalogSDWrapper.h */; };
+		3271B8911D3CE0B30035290E /* StateFlagSDWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3271B88F1D3CE0B30035290E /* StateFlagSDWrapper.cpp */; };
+		3271B8921D3CE0B30035290E /* StateFlagSDWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 3271B8901D3CE0B30035290E /* StateFlagSDWrapper.h */; };
+		3271B8951D3D0D520035290E /* StateFlagCatalogSDWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3271B8931D3D0D520035290E /* StateFlagCatalogSDWrapper.cpp */; };
+		3271B8961D3D0D520035290E /* StateFlagCatalogSDWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 3271B8941D3D0D520035290E /* StateFlagCatalogSDWrapper.h */; };
 		3272152418B006BC005AC8FD /* CacheDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3272152218B006BC005AC8FD /* CacheDriver.cpp */; };
 		3272FE1715E1053100B096FB /* EventForwarder.h in Headers */ = {isa = PBXBuildFile; fileRef = 3272FE1615E1053100B096FB /* EventForwarder.h */; };
 		3274A90C1AC2F214000C6A4D /* ApiProxyManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3274A90A1AC2F214000C6A4D /* ApiProxyManager.cpp */; };
@@ -532,8 +534,8 @@
 		32875F97177634AF00E33D6F /* PluginInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = 32875F96177634AF00E33D6F /* PluginInspector.h */; };
 		3287F7E617B2756C009DD6ED /* DriverManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326D3A5F17B0CD01004601A8 /* DriverManager.cpp */; };
 		3287F7E717B27621009DD6ED /* DriverManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 326D3A6017B0CD01004601A8 /* DriverManager.h */; };
-		328933591D3549DE00FBA95B /* DeclareStatusFlag.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328933571D3549DE00FBA95B /* DeclareStatusFlag.cpp */; };
-		3289335A1D3549DE00FBA95B /* DeclareStatusFlag.h in Headers */ = {isa = PBXBuildFile; fileRef = 328933581D3549DE00FBA95B /* DeclareStatusFlag.h */; };
+		328933591D3549DE00FBA95B /* DeclareStateFlag.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328933571D3549DE00FBA95B /* DeclareStateFlag.cpp */; };
+		3289335A1D3549DE00FBA95B /* DeclareStateFlag.h in Headers */ = {isa = PBXBuildFile; fileRef = 328933581D3549DE00FBA95B /* DeclareStateFlag.h */; };
 		3289F9A5168508460080D93F /* SQLiteEntityDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3289F9A3168508460080D93F /* SQLiteEntityDB.cpp */; };
 		3289F9A6168508460080D93F /* SQLiteEntityDB.h in Headers */ = {isa = PBXBuildFile; fileRef = 3289F9A4168508460080D93F /* SQLiteEntityDB.h */; };
 		328C872C1ADEA45E0047C79B /* SearchInstancesByUS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328C872A1ADEA45E0047C79B /* SearchInstancesByUS.cpp */; };
@@ -1235,10 +1237,10 @@
 		322E1578161B629700C3003C /* NetworkBroker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = NetworkBroker.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		322E157C161B62A900C3003C /* NetworkBroker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = NetworkBroker.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		322E26721AC6E437002E5DA4 /* api.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = api.h; sourceTree = "<group>"; };
-		322EC1B51D3406650012467C /* StatusFlag.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = StatusFlag.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
-		322EC1B61D3406650012467C /* StatusFlag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = StatusFlag.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		322EC1B91D34F2E10012467C /* StatusFlagCatalog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StatusFlagCatalog.cpp; sourceTree = "<group>"; };
-		322EC1BA1D34F2E10012467C /* StatusFlagCatalog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatusFlagCatalog.h; sourceTree = "<group>"; };
+		322EC1B51D3406650012467C /* StateFlag.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = StateFlag.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
+		322EC1B61D3406650012467C /* StateFlag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = StateFlag.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		322EC1B91D34F2E10012467C /* StateFlagCatalog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StateFlagCatalog.cpp; sourceTree = "<group>"; };
+		322EC1BA1D34F2E10012467C /* StateFlagCatalog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StateFlagCatalog.h; sourceTree = "<group>"; };
 		3230BEBB1817A9E100EA5793 /* libchaos_common.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_common.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		3230BEBC1817A9E100EA5793 /* libchaos_cutoolkit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_cutoolkit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		3230BEBD1817A9E100EA5793 /* libchaos_uitoolkit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_uitoolkit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1296,6 +1298,8 @@
 		32401CB81C183E2600E62866 /* GetNodesForSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetNodesForSnapshot.h; sourceTree = "<group>"; };
 		32401CBB1C1AD7AA00E62866 /* TreeGroupDataAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TreeGroupDataAccess.cpp; sourceTree = "<group>"; };
 		32401CBC1C1AD7AA00E62866 /* TreeGroupDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeGroupDataAccess.h; sourceTree = "<group>"; };
+		32414FD51DC1EEAD00830422 /* AlarmCatalog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlarmCatalog.cpp; sourceTree = "<group>"; };
+		32414FD61DC1EEAD00830422 /* AlarmCatalog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlarmCatalog.h; sourceTree = "<group>"; };
 		3244C0C5168CB96B007C802C /* Record.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Record.h; sourceTree = "<group>"; };
 		3244D11B15ECC25800FE2F86 /* AlertEventChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlertEventChannel.cpp; sourceTree = "<group>"; };
 		3244D11C15ECC25800FE2F86 /* AlertEventChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlertEventChannel.h; sourceTree = "<group>"; };
@@ -1626,10 +1630,10 @@
 		3270E0801C6DF44F00105726 /* exception.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = exception.h; sourceTree = "<group>"; };
 		3270E0841C6E37A900105726 /* event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = event.h; sourceTree = "<group>"; };
 		3271063C19A7417000946A8B /* db_system_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = db_system_types.h; sourceTree = "<group>"; };
-		3271B88F1D3CE0B30035290E /* StatusFlagSDWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StatusFlagSDWrapper.cpp; sourceTree = "<group>"; };
-		3271B8901D3CE0B30035290E /* StatusFlagSDWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatusFlagSDWrapper.h; sourceTree = "<group>"; };
-		3271B8931D3D0D520035290E /* StatusFlagCatalogSDWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StatusFlagCatalogSDWrapper.cpp; sourceTree = "<group>"; };
-		3271B8941D3D0D520035290E /* StatusFlagCatalogSDWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatusFlagCatalogSDWrapper.h; sourceTree = "<group>"; };
+		3271B88F1D3CE0B30035290E /* StateFlagSDWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StateFlagSDWrapper.cpp; sourceTree = "<group>"; };
+		3271B8901D3CE0B30035290E /* StateFlagSDWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StateFlagSDWrapper.h; sourceTree = "<group>"; };
+		3271B8931D3D0D520035290E /* StateFlagCatalogSDWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StateFlagCatalogSDWrapper.cpp; sourceTree = "<group>"; };
+		3271B8941D3D0D520035290E /* StateFlagCatalogSDWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StateFlagCatalogSDWrapper.h; sourceTree = "<group>"; };
 		3272152218B006BC005AC8FD /* CacheDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CacheDriver.cpp; sourceTree = "<group>"; };
 		3272152318B006BC005AC8FD /* CacheDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheDriver.h; sourceTree = "<group>"; };
 		3272FE1615E1053100B096FB /* EventForwarder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventForwarder.h; sourceTree = "<group>"; };
@@ -1720,8 +1724,8 @@
 		32875F96177634AF00E33D6F /* PluginInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginInspector.h; sourceTree = "<group>"; };
 		32875F9817763AE200E33D6F /* PluginLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PluginLoader.h; sourceTree = "<group>"; };
 		32875F9917763B0800E33D6F /* AbstractPlugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AbstractPlugin.h; sourceTree = "<group>"; };
-		328933571D3549DE00FBA95B /* DeclareStatusFlag.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = DeclareStatusFlag.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
-		328933581D3549DE00FBA95B /* DeclareStatusFlag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = DeclareStatusFlag.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		328933571D3549DE00FBA95B /* DeclareStateFlag.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = DeclareStateFlag.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
+		328933581D3549DE00FBA95B /* DeclareStateFlag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = DeclareStateFlag.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		3289335B1D3648F000FBA95B /* TemplatedDataSDWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemplatedDataSDWrapper.h; sourceTree = "<group>"; };
 		3289F9A3168508460080D93F /* SQLiteEntityDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLiteEntityDB.cpp; sourceTree = "<group>"; };
 		3289F9A4168508460080D93F /* SQLiteEntityDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLiteEntityDB.h; sourceTree = "<group>"; };
@@ -2664,21 +2668,21 @@
 			path = property;
 			sourceTree = "<group>";
 		};
-		322EC1B41D3405C30012467C /* status_manager */ = {
+		322EC1B41D3405C30012467C /* state_flag */ = {
 			isa = PBXGroup;
 			children = (
-				322EC1B51D3406650012467C /* StatusFlag.cpp */,
-				322EC1B61D3406650012467C /* StatusFlag.h */,
-				322EC1B91D34F2E10012467C /* StatusFlagCatalog.cpp */,
-				322EC1BA1D34F2E10012467C /* StatusFlagCatalog.h */,
-				328933571D3549DE00FBA95B /* DeclareStatusFlag.cpp */,
-				328933581D3549DE00FBA95B /* DeclareStatusFlag.h */,
-				3271B88F1D3CE0B30035290E /* StatusFlagSDWrapper.cpp */,
-				3271B8901D3CE0B30035290E /* StatusFlagSDWrapper.h */,
-				3271B8931D3D0D520035290E /* StatusFlagCatalogSDWrapper.cpp */,
-				3271B8941D3D0D520035290E /* StatusFlagCatalogSDWrapper.h */,
+				322EC1B51D3406650012467C /* StateFlag.cpp */,
+				322EC1B61D3406650012467C /* StateFlag.h */,
+				322EC1B91D34F2E10012467C /* StateFlagCatalog.cpp */,
+				322EC1BA1D34F2E10012467C /* StateFlagCatalog.h */,
+				328933571D3549DE00FBA95B /* DeclareStateFlag.cpp */,
+				328933581D3549DE00FBA95B /* DeclareStateFlag.h */,
+				3271B88F1D3CE0B30035290E /* StateFlagSDWrapper.cpp */,
+				3271B8901D3CE0B30035290E /* StateFlagSDWrapper.h */,
+				3271B8931D3D0D520035290E /* StateFlagCatalogSDWrapper.cpp */,
+				3271B8941D3D0D520035290E /* StateFlagCatalogSDWrapper.h */,
 			);
-			path = status_manager;
+			path = state_flag;
 			sourceTree = "<group>";
 		};
 		323236C9164573C60052CE06 /* ChaosMetadataService */ = {
@@ -3309,7 +3313,7 @@
 				326DB40C14B38BC00018A8D0 /* pqueue */,
 				326DB41114B38BC00018A8D0 /* rpc */,
 				32A91FC71A49AEC300DCF364 /* sync_rpc */,
-				322EC1B41D3405C30012467C /* status_manager */,
+				322EC1B41D3405C30012467C /* state_flag */,
 				32A8620B1D58C70700A7D707 /* trigger */,
 				32AAD78114CD630D005A097C /* message */,
 				326DB41914B38BC00018A8D0 /* network */,
@@ -4422,6 +4426,8 @@
 			isa = PBXGroup;
 			children = (
 				32C25E111DBFB8DB00A46C2B /* alarm.h */,
+				32414FD51DC1EEAD00830422 /* AlarmCatalog.cpp */,
+				32414FD61DC1EEAD00830422 /* AlarmCatalog.h */,
 				3214E73E1DC1081100A67414 /* AlarmDescription.cpp */,
 				3214E73F1DC1081100A67414 /* AlarmDescription.h */,
 				3214E7421DC10B9500A67414 /* MultiSeverityAlarm.cpp */,
@@ -4901,7 +4907,7 @@
 				326DB48514B38BC00018A8D0 /* RpcServer.h in Headers */,
 				324A4B4D191A41EF00975394 /* compiler_gcc.h in Headers */,
 				326DB48614B38BC00018A8D0 /* CNodeNetworkAddress.h in Headers */,
-				322EC1BC1D34F2E10012467C /* StatusFlagCatalog.h in Headers */,
+				322EC1BC1D34F2E10012467C /* StateFlagCatalog.h in Headers */,
 				326DB48814B38BC00018A8D0 /* ChaosThread.h in Headers */,
 				32B159D618B38CA50096B58B /* DirectIODeviceServerChannel.h in Headers */,
 				32995C471BB2D1F700F68148 /* SWEService.h in Headers */,
@@ -4909,9 +4915,9 @@
 				324A4B76191A428500975394 /* jsobj.h in Headers */,
 				322DE35518D467E5006F1551 /* ConcuredUsedItem.h in Headers */,
 				326DB48E14B38BC00018A8D0 /* ArrayPointer.h in Headers */,
-				3289335A1D3549DE00FBA95B /* DeclareStatusFlag.h in Headers */,
+				3289335A1D3549DE00FBA95B /* DeclareStateFlag.h in Headers */,
 				32EBDEFB1B4E58F300278C42 /* MetricCollector.h in Headers */,
-				3271B8961D3D0D520035290E /* StatusFlagCatalogSDWrapper.h in Headers */,
+				3271B8961D3D0D520035290E /* StateFlagCatalogSDWrapper.h in Headers */,
 				329603231876B45000CDCADA /* BatchCommand.h in Headers */,
 				32C25DE51DB771D200A46C2B /* AsyncPoolRunner.h in Headers */,
 				326DB49214B38BC00018A8D0 /* ObjectFactoryRegister.h in Headers */,
@@ -4963,7 +4969,7 @@
 				3230BEC3181A6ADB00EA5793 /* DatasetDB.h in Headers */,
 				32ED648E14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h in Headers */,
 				32E0EF3818CDB37D00CD1808 /* ZMQDirectIOClientConnection.h in Headers */,
-				3271B8921D3CE0B30035290E /* StatusFlagSDWrapper.h in Headers */,
+				3271B8921D3CE0B30035290E /* StateFlagSDWrapper.h in Headers */,
 				324A4B31191A405700975394 /* element.h in Headers */,
 				320C218A151B555A00BD0F41 /* EventServer.h in Headers */,
 				32F158681B7C9D8400B6A5DF /* ResourcePool.h in Headers */,
@@ -5032,6 +5038,7 @@
 				32EBDEFF1B4E6FC700278C42 /* RpcClientMetricCollector.h in Headers */,
 				324A4B2F191A405700975394 /* element-inl.h in Headers */,
 				32B4193F1B18A6EE00C3CA7D /* BatchCommandDescription.h in Headers */,
+				32414FD81DC1EEAD00830422 /* AlarmCatalog.h in Headers */,
 				32F9F8171D8FD7030023948D /* CronJob.h in Headers */,
 				322E157D161B62A900C3003C /* NetworkBroker.h in Headers */,
 				3230DA0A1652C41D00113C93 /* NetworkForwardInfo.h in Headers */,
@@ -5087,7 +5094,7 @@
 				32C25DEC1DB7A4B900A46C2B /* HealthStat.h in Headers */,
 				32F5B0071B5F8EBF00457A63 /* FileMetricBackend.h in Headers */,
 				32B57209168E02D10002A198 /* ordering.h in Headers */,
-				322EC1B81D3406650012467C /* StatusFlag.h in Headers */,
+				322EC1B81D3406650012467C /* StateFlag.h in Headers */,
 				329C1F061B5643EF00A84D55 /* DirectIODispatcherMetricCollector.h in Headers */,
 				324A4B2C191A405700975394 /* document-inl.h in Headers */,
 				32C35467178860E5009ED581 /* extension.hpp in Headers */,
@@ -5733,7 +5740,7 @@
 				32B159D518B38CA50096B58B /* DirectIODeviceServerChannel.cpp in Sources */,
 				32A88BDF1CF8228A001DBAF5 /* lstate.c in Sources */,
 				324A4B52191A41EF00975394 /* process_id.cpp in Sources */,
-				328933591D3549DE00FBA95B /* DeclareStatusFlag.cpp in Sources */,
+				328933591D3549DE00FBA95B /* DeclareStateFlag.cpp in Sources */,
 				3296031E1876B45000CDCADA /* AttributeValueSharedCache.cpp in Sources */,
 				326DB46B14B38BC00018A8D0 /* DefaultCommandDispatcher.cpp in Sources */,
 				32A88BD01CF8228A001DBAF5 /* llex.c in Sources */,
@@ -5785,6 +5792,7 @@
 				32A88BC41CF8228A001DBAF5 /* ldblib.c in Sources */,
 				324A4B77191A428500975394 /* json.cpp in Sources */,
 				32DD885315E2681F000AF740 /* EventHandler.cpp in Sources */,
+				32414FD71DC1EEAD00830422 /* AlarmCatalog.cpp in Sources */,
 				32A88BCF1CF8228A001DBAF5 /* liolib.c in Sources */,
 				32C25DF41DB90C3200A46C2B /* StandardLoggingChannel.cpp in Sources */,
 				324A4B1B191A402A00975394 /* MurmurHash3.cpp in Sources */,
@@ -5803,7 +5811,7 @@
 				32C353F21788015B009ED581 /* PluginDiscover.cpp in Sources */,
 				324A4B96191A557700975394 /* time_support.cpp in Sources */,
 				32A88BBF1CF8228A001DBAF5 /* lcode.c in Sources */,
-				3271B8951D3D0D520035290E /* StatusFlagCatalogSDWrapper.cpp in Sources */,
+				3271B8951D3D0D520035290E /* StateFlagCatalogSDWrapper.cpp in Sources */,
 				32A88BC21CF8228A001DBAF5 /* lctype.c in Sources */,
 				32A88BBD1CF8228A001DBAF5 /* lbaselib.c in Sources */,
 				324A4B15191A3F6A00975394 /* string_data.cpp in Sources */,
@@ -5828,7 +5836,7 @@
 				32A88BE61CF8228A001DBAF5 /* ltablib.c in Sources */,
 				328556A417F2E36000A64ED2 /* DirectIOServer.cpp in Sources */,
 				32B159D118B38C980096B58B /* DirectIODeviceClientChannel.cpp in Sources */,
-				3271B8911D3CE0B30035290E /* StatusFlagSDWrapper.cpp in Sources */,
+				3271B8911D3CE0B30035290E /* StateFlagSDWrapper.cpp in Sources */,
 				32B5C9501C68E2420021159C /* URLHAServiceFeeder.cpp in Sources */,
 				32A88BD41CF8228A001DBAF5 /* lmem.c in Sources */,
 				325DE9F115EC031E00D6F34E /* EventChannel.cpp in Sources */,
@@ -5867,7 +5875,7 @@
 				32AB51CD1A1A69A300BB0BE3 /* DirectIOSystemAPIServerChannel.cpp in Sources */,
 				32A88BF11CF8228A001DBAF5 /* lutf8lib.c in Sources */,
 				325568521AE3A98B00CFA7C9 /* PropertyCollector.cpp in Sources */,
-				322EC1B71D3406650012467C /* StatusFlag.cpp in Sources */,
+				322EC1B71D3406650012467C /* StateFlag.cpp in Sources */,
 				32EFCD6618BDE3A400B5EB77 /* IODirectIODriver.cpp in Sources */,
 				3220F98118A4DBEB00B0A1D4 /* DirectIOVirtualChannel.cpp in Sources */,
 				32B73E9A18D9A8FF00F0B187 /* DirectIOPerformanceServerChannel.cpp in Sources */,
@@ -5896,7 +5904,7 @@
 				32A91FCA1A49AF0700DCF364 /* RpcSyncServer.cpp in Sources */,
 				3270E0791C6DECA000105726 /* MetadataLoggingCException.cpp in Sources */,
 				32BFF90E176C842E00D27A04 /* InizializableService.cpp in Sources */,
-				322EC1BB1D34F2E10012467C /* StatusFlagCatalog.cpp in Sources */,
+				322EC1BB1D34F2E10012467C /* StateFlagCatalog.cpp in Sources */,
 				32C5A42718D9959800C0435C /* DirectIOPerformanceSession.cpp in Sources */,
 				32279F8416F8DEAF009EC7B9 /* DataBroker.cpp in Sources */,
 				32E86E431CD8A75F0038DE76 /* MessageRequestDomain.cpp in Sources */,

@@ -22,14 +22,19 @@
 #ifndef __CHAOSFramework_C540A441_6F28_4F99_9489_7331538962BD_AlarmDescription_h
 #define __CHAOSFramework_C540A441_6F28_4F99_9489_7331538962BD_AlarmDescription_h
 
-#include <chaos/common/status_manager/StatusFlag.h>
+#include <chaos/common/state_flag/StateFlag.h>
+
+#include <boost/shared_ptr.hpp>
 
 namespace chaos{
     namespace common {
         namespace alarm {
+            //!forward decalration
+            class AlarmCatalog;
             
             class AlarmDescription:
-            protected status_manager::StatusFlag {
+            protected state_flag::StateFlag {
+                friend class AlarmCatalog;
             public:
                 AlarmDescription(const std::string alarm_name,
                                  const std::string alarm_description);
@@ -38,7 +43,7 @@ namespace chaos{
                 bool addState(int8_t severity_code,
                                  const std::string& severity_tag,
                                  const std::string& severity_description,
-                                 const chaos::common::status_manager::StatusFlagServerity severity);
+                                 const chaos::common::state_flag::StateFlagServerity severity);
                 
             public:
                 const std::string& getAlarmName() const;
@@ -49,6 +54,8 @@ namespace chaos{
                 const std::string& getCurrentSeverityDescription() const;
             };
             
+            typedef boost::shared_ptr<AlarmDescription> AlarmDescriptionShrdPtr;
+
         }
     }
 }
