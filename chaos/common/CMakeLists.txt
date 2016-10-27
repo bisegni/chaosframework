@@ -233,11 +233,11 @@ SET(common_lib_src ${common_lib_src}
         script/AbstractScriptableClass.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        status_manager/StatusFlagCatalog.cpp
-        status_manager/StatusFlag.cpp
-        status_manager/DeclareStatusFlag.cpp
-        status_manager/StatusFlagSDWrapper.cpp
-        status_manager/StatusFlagCatalogSDWrapper.cpp)
+        state_flag/StateFlagCatalog.cpp
+        state_flag/StateFlag.cpp
+        state_flag/DeclareStateFlag.cpp
+        state_flag/StateFlagSDWrapper.cpp
+        state_flag/StateFlagCatalogSDWrapper.cpp)
 
 SET(common_lib_src ${common_lib_src}
         trigger/AbstractConsumer.cpp

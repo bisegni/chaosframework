@@ -328,11 +328,11 @@ namespace chaos {
     }
     /** @} */ // end of NodeHealtDefinitionValue
     
-    /** @defgroup NodeStatusFlagDefinitionKey constant for serialization of the status flag
+    /** @defgroup NodeStateFlagDefinitionKey constant for serialization of the status flag
      *  @{
      */
     //! This namespace enclose all the constant for serialization of the status flag
-    namespace NodeStatusFlagDefinitionKey {
+    namespace NodeStateFlagDefinitionKey {
         //! flag name[string]
         static const char * const NODE_SF_NAME                  = "nsfdk_name";
         //! flag catalog+name[string]
@@ -363,7 +363,7 @@ namespace chaos {
         //!define a serialization of status flag within the searialization set
         static const char * const NODE_SF_CATALOG_FLAG          = "nsfdk_catalog_flag";
     }
-    /** @} */ // end of NodeStatusFlagDefinitionKey
+    /** @} */ // end of NodeStateFlagDefinitionKey
     
     /** @defgroup ControlUnitHealtDefinitionValue !CHAOS control unit specific key
      *  @{

@@ -21,8 +21,8 @@
 
 #ifndef __CHAOSFrameworkTests_D40485EA_AE3A_461F_818A_4272F4DC9097_TestStateFlagCatalog_h
 #define __CHAOSFrameworkTests_D40485EA_AE3A_461F_818A_4272F4DC9097_TestStateFlagCatalog_h
-
-#include <chaos/common/status_manager/StatusFlagCatalog.h>
+#include <chaos/common/alarm/AlarmCatalog.h>
+#include <chaos/common/state_flag/StateFlagCatalog.h>
 
 namespace chaos {
     namespace common {
@@ -30,8 +30,9 @@ namespace chaos {
             namespace test {
                 
                 class TestStateFlagCatalog {
-                    chaos::common::status_manager::StatusFlagCatalog catalog_a;
-                    chaos::common::status_manager::StatusFlagCatalog catalog_b;
+                    chaos::common::alarm::AlarmCatalog alarm_catalog;
+                    chaos::common::state_flag::StateFlagCatalog catalog_a;
+                    chaos::common::state_flag::StateFlagCatalog catalog_b;
                 public:
                     TestStateFlagCatalog();
                     ~TestStateFlagCatalog();

@@ -22,7 +22,7 @@
 #include <chaos/common/alarm/MultiSeverityAlarm.h>
 
 using namespace chaos::common::alarm;
-using namespace chaos::common::status_manager;
+using namespace chaos::common::state_flag;
 
 MultiSeverityAlarm::MultiSeverityAlarm(const std::string alarm_name,
                                        const std::string alarm_description):
@@ -31,15 +31,15 @@ AlarmDescription(alarm_name,
     addState(MultiSeverityAlarmLevelClear,
              "clear",
              "Alarm is in a regular state",
-             StatusFlagServerityRegular);
+             StateFlagServerityRegular);
     addState(MultiSeverityAlarmLevelLow,
              "low",
              "Low probability that something will fails, attention is needed",
-             StatusFlagServerityLow);
+             StateFlagServerityLow);
     addState(MultiSeverityAlarmLevelHig,
              "Severe",
              "High probability that something is going to fails",
-             StatusFlagServeritySevere);
+             StateFlagServeritySevere);
     
 }
 

@@ -22,11 +22,11 @@
 #include <chaos/common/alarm/AlarmDescription.h>
 
 using namespace chaos::common::alarm;
-using namespace chaos::common::status_manager;
+using namespace chaos::common::state_flag;
 
 AlarmDescription::AlarmDescription(const std::string alarm_name,
                                    const std::string alarm_description):
-StatusFlag(alarm_name,
+StateFlag(alarm_name,
            alarm_description){}
 
 AlarmDescription::~AlarmDescription() {}
@@ -34,32 +34,32 @@ AlarmDescription::~AlarmDescription() {}
 bool AlarmDescription::addState(int8_t severity_code,
                                 const std::string& severity_tag,
                                 const std::string& severity_description,
-                                const StatusFlagServerity severity) {
-    return StatusFlag::addLevel(StateLevel(severity_code,
+                                const StateFlagServerity severity) {
+    return StateFlag::addLevel(StateLevel(severity_code,
                                            severity_tag,
                                            severity_description,
                                            severity));
 }
 
 const std::string& AlarmDescription::getAlarmName() const {
-    return StatusFlag::getName();
+    return StateFlag::getName();
 }
 const std::string& AlarmDescription::getAlarmDescription() const {
-    return StatusFlag::getDescription();
+    return StateFlag::getDescription();
 }
 
 void AlarmDescription::setCurrentSeverity(const uint8_t new_severity_code) {
-    StatusFlag::setCurrentLevel(new_severity_code);
+    StateFlag::setCurrentLevel(new_severity_code);
 }
 
 const int8_t AlarmDescription::getCurrentSeverityCode() const {
-    return StatusFlag::getCurrentStateLevel().getValue();
+    return StateFlag::getCurrentStateLevel().getValue();
 }
 
 const std::string& AlarmDescription::getCurrentSeverityTag() const {
-    return StatusFlag::getCurrentStateLevel().getTag();
+    return StateFlag::getCurrentStateLevel().getTag();
 }
 
 const std::string& AlarmDescription::getCurrentSeverityDescription() const {
-    return StatusFlag::getCurrentStateLevel().getDescription();
+    return StateFlag::getCurrentStateLevel().getDescription();
 }
