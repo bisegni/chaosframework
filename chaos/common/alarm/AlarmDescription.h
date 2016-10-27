@@ -23,6 +23,7 @@
 #define __CHAOSFramework_C540A441_6F28_4F99_9489_7331538962BD_AlarmDescription_h
 
 #include <chaos/common/state_flag/StateFlag.h>
+#include <chaos/common/utility/AbstractListenerContainer.h>
 
 #include <boost/shared_ptr.hpp>
 
@@ -31,8 +32,19 @@ namespace chaos{
         namespace alarm {
             //!forward decalration
             class AlarmCatalog;
+            class AlarmDescription;
+            
+            //!Alarm handler abstraction
+            class AlarmHandler:
+            public chaos::common::utility::AbstractListener {
+                friend class AlarmDescription;
+            protected:
+                virtual void alarmChanged(const std::string& alarm_name,
+                                          const int8_t alarm_severity) = 0;
+            };
             
             class AlarmDescription:
+            protected chaos::common::utility::AbstractListenerContainer,
             protected state_flag::StateFlag {
                 friend class AlarmCatalog;
             public:
@@ -40,10 +52,12 @@ namespace chaos{
                                  const std::string alarm_description);
                 ~AlarmDescription();
             protected:
+                void fireToListener(unsigned int fire_code,
+                                    chaos::common::utility::AbstractListener *listener_to_fire);
                 bool addState(int8_t severity_code,
-                                 const std::string& severity_tag,
-                                 const std::string& severity_description,
-                                 const chaos::common::state_flag::StateFlagServerity severity);
+                              const std::string& severity_tag,
+                              const std::string& severity_description,
+                              const chaos::common::state_flag::StateFlagServerity severity);
                 
             public:
                 const std::string& getAlarmName() const;
@@ -52,10 +66,12 @@ namespace chaos{
                 const int8_t getCurrentSeverityCode() const;
                 const std::string& getCurrentSeverityTag() const;
                 const std::string& getCurrentSeverityDescription() const;
+                void addHandler(AlarmHandler *handler);
+                void removeHandler(AlarmHandler *handler);
             };
             
             typedef boost::shared_ptr<AlarmDescription> AlarmDescriptionShrdPtr;
-
+            
         }
     }
 }

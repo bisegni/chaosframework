@@ -22,12 +22,13 @@
 #include <chaos/common/alarm/AlarmDescription.h>
 
 using namespace chaos::common::alarm;
+using namespace chaos::common::utility;
 using namespace chaos::common::state_flag;
 
 AlarmDescription::AlarmDescription(const std::string alarm_name,
                                    const std::string alarm_description):
 StateFlag(alarm_name,
-           alarm_description){}
+          alarm_description){}
 
 AlarmDescription::~AlarmDescription() {}
 
@@ -36,9 +37,9 @@ bool AlarmDescription::addState(int8_t severity_code,
                                 const std::string& severity_description,
                                 const StateFlagServerity severity) {
     return StateFlag::addLevel(StateLevel(severity_code,
-                                           severity_tag,
-                                           severity_description,
-                                           severity));
+                                          severity_tag,
+                                          severity_description,
+                                          severity));
 }
 
 const std::string& AlarmDescription::getAlarmName() const {
@@ -62,4 +63,18 @@ const std::string& AlarmDescription::getCurrentSeverityTag() const {
 
 const std::string& AlarmDescription::getCurrentSeverityDescription() const {
     return StateFlag::getCurrentStateLevel().getDescription();
+}
+
+void AlarmDescription::fireToListener(unsigned int fire_code,
+                                      AbstractListener *listener_to_fire) {
+    ((AlarmHandler*)listener_to_fire)->alarmChanged(getAlarmName(),
+                                                    getCurrentSeverityCode());
+}
+
+void AlarmDescription::addHandler(AlarmHandler *handler) {
+    AbstractListenerContainer::addListener(handler);
+}
+
+void AlarmDescription::removeHandler(AlarmHandler *handler) {
+    AbstractListenerContainer::removeListener(handler);
 }
