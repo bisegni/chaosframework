@@ -655,7 +655,7 @@ get_timestamp_cu(){
     timestamp_cu=0
     if ! chaos_cli_cmd $meta $cuname "--print-dataset 0";then
 	return 1
-    fi
+    fi 
 
     if [[ "$cli_cmd" =~ \"dpck_ats\"\ \:\ \{\ \"\$[a-zA-Z]+\"\ \:\ \"([0-9]+)\" ]];then
 	timestamp_cu=${BASH_REMATCH[1]}
@@ -820,7 +820,7 @@ launch_us_cu(){
     info_mesg "launching " "$NUS $USNAME with $NCU CU"
 
     for ((us=0;us<$NUS;us++));do
-	if [ $NUS -eq 1 ] && [ "$ALIAS" != "TEST_UNIT" ]; then
+	if [ $NUS -eq 1 ]; then
 	    REAL_ALIAS=$ALIAS
 	else
 	    REAL_ALIAS="$ALIAS"_$us

@@ -4,6 +4,8 @@ build="dynamic static"
 prefix="chaos_bundle"
 branch="development"
 buildtype=""
+mydir=`dirname $0`
+
 currdir=`pwd`
 installdir="$currdir/chaos-build"
 inputdir=""
@@ -11,7 +13,7 @@ nproc="4"
 log="default"
 unset CHAOS_TARGET
 unset CHAOS_PREFIX
-while getopts j:b:o:a:t:r:sfh opt; do
+while getopts j:b:o:a:t:r:sfhd: opt; do
     case $opt in
 	t) 
 	    branch=$OPTARG
@@ -40,9 +42,12 @@ while getopts j:b:o:a:t:r:sfh opt; do
 	f) 
 	    force_reconf="true"
 	    ;;
+	d) 
+	    deploy_mode="$OPTARG"
+	    ;;
 
 	h)
-	    echo -e "Usage is $0 [-s] [-i <chaos bundle input source dir>] [-t <branch to use> ] [-o <installdir>] [-a <architectures> [$arch]] [-b <build> [$build]] [-g <buildtype> [$buildtype]] [-j <#proc>]\n-j <## proc> number of cpu used in compilation [$nproc]\n-f: force reconfiguration\n-s: from scratch, connects to repo and build\n-t <branch to use>: git branch to use [$branch]\n-r reuse dir, each time use the same directory to compile (needs rebuild all)\n-o <installdir> install into dir [$installdir]\n-a <arch>: compile for the fiven architectures[$arch]\n-b <dynamic|static>: make the binaries static and/or dynamic [$build]\n-g <release type>: choose the output configuration [$buildtype]\n"
+	    echo -e "Usage is $0 [-s] [-d] [-i <chaos bundle input source dir>] [-t <branch to use> ] [-o <installdir>] [-a <architectures> [$arch]] [-b <build> [$build]] [-g <buildtype> [$buildtype]] [-j <#proc>]\n-d <deploy mode 0=build and deploy on server, 1=build, test and deploy package>: deploy fo\n-j <## proc> number of cpu used in compilation [$nproc]\n-f: force reconfiguration\n-s: from scratch, connects to repo and build\n-t <branch to use>: git branch to use [$branch]\n-r reuse dir, each time use the same directory to compile (needs rebuild all)\n-o <installdir> install into dir [$installdir]\n-a <arch>: compile for the fiven architectures[$arch]\n-b <dynamic|static>: make the binaries static and/or dynamic [$build]\n-g <release type>: choose the output configuration [$buildtype]\n"
 	    exit 0;
 	    ;;
     esac
@@ -180,7 +185,22 @@ function compile_bundle(){
 		fi
 	fi
     fi
+    a=`uname -m`
+    if [ "$a" == "$arch" ] && [ $deploy_mode -gt 0 ]; then
+	printlog "* testing distribution on architecture \"$arch\""
+	pushd $installdir >& /dev/null
+	export LD_LIBRARY_PATH=$installdir/lib
+	if ./tools/chaos_test.sh -d tools/test >> $log 2>&1 ;then
+	    popd >& /dev/null
+	    printlog "* packaging distribution on architecture \"$arch\""
 
+	    if $mydir/chaos_debianizer.sh -i $installdir -t development -r;then
+		printlog "* packaging ok"
+	    else
+		printlog "## error during packaging"
+	    fi
+	fi
+    fi
     popd >& /dev/null
 }
 

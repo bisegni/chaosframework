@@ -22,7 +22,7 @@ copy(){
     fi
 
 }
-VERSION="0.1"
+VERSION=""
 PACKAGE_NAME="chaos"
 
 CLIENT="true"
@@ -44,7 +44,7 @@ while getopts p:i:v:t:,r opt; do
 	    ;;
 	t) TEMPLATE=$OPTARG;
 	   ;;
-
+	
 	r) COPY_REMOTE="true"
 	   ;;
 
@@ -56,6 +56,24 @@ while getopts p:i:v:t:,r opt; do
 	
 done
 
+if [ -z "$VERSION" ];then
+    if [ -e $SOURCE_DIR/tools/config/ChangeLog ];then
+	info_mesg "ChangeLog " "found"
+	ver=`cat $SOURCE_DIR/tools/config/ChangeLog|grep Version | head -1` 
+	r="Version ([0-9\.]+)"
+	if [[ $ver =~ $r ]]; then
+	    VERSION=${BASH_REMATCH[1]}
+	    info_mesg "getting version from ChangeLog " "$VERSION" 
+	else
+	    error_mesg "malformed Version string into ChangeLog " "$ver"
+	fi
+	
+    fi
+fi
+if [ -z "$VERSION" ];then
+    error_mesg "a valid version must be set, please set " "-v <version>"
+    exit 1
+fi
 COPY_SRC_FILES=""
 
 case $TEMPLATE in
