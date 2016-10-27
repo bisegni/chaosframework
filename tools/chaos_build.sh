@@ -4,7 +4,10 @@ build="dynamic static"
 prefix="chaos_bundle"
 branch="development"
 buildtype=""
-mydir=`dirname $0`
+
+pushd `dirname $0` >& /dev/null
+mydir=`pwd -P`
+popd >& /dev/null
 
 currdir=`pwd`
 installdir="$currdir/chaos-build"
@@ -13,7 +16,7 @@ nproc="4"
 log="default"
 unset CHAOS_TARGET
 unset CHAOS_PREFIX
-while getopts j:b:o:a:t:r:sfhd: opt; do
+while getopts j:b:o:a:t:r:sfhd:i: opt; do
     case $opt in
 	t) 
 	    branch=$OPTARG
@@ -149,7 +152,7 @@ function compile_bundle(){
     esac
 
     if [ -d "$inputdir" ];then
-	chaosframework/tools/chaos_clean.sh . >> $log 2>&1
+#	chaosframework/tools/chaos_clean.sh . >> $log 2>&1
 	printlog "* configuring $dir cmake \"$cmake_params\"...."
 	if ! cmake $cmake_params . >> $log 2>&1;then
 	    printlog "## error during cmake configuration \"$cmake_params\""
@@ -178,19 +181,23 @@ function compile_bundle(){
     else
 	printlog "* compilation ok"
 	if [ -n "$enable_ccs" ];then
-	        if ! make -j $nproc ccs install  >> $log 2>&1 ;then
-		    printlog "## error compiling CCS"
-		else
-		    printlog "CCS compilation ok"
-		fi
+	    printlog "* compiling CCS ..."
+	    if ! make -j $nproc ccs install  >> $log 2>&1 ;then
+		printlog "## error compiling CCS"
+	    else
+		printlog "* CCS compilation ok"
+	    fi
 	fi
     fi
     a=`uname -m`
     if [ "$a" == "$arch" ] && [ $deploy_mode -gt 0 ]; then
 	printlog "* testing distribution on architecture \"$arch\""
-	pushd $installdir >& /dev/null
-	export LD_LIBRARY_PATH=$installdir/lib
+	pushd $install_prefix >& /dev/null
+	export LD_LIBRARY_PATH=$install_prefix/lib
+	export CHAOS_PREFIX=$install_prefix
+	export CHAOS_TOOLS=$CHAOS_PREFIX/tools
 	if ./tools/chaos_test.sh -d tools/test >> $log 2>&1 ;then
+	    printlog "* test OK"
 	    popd >& /dev/null
 	    printlog "* packaging distribution on architecture \"$arch\""
 
@@ -199,7 +206,13 @@ function compile_bundle(){
 	    else
 		printlog "## error during packaging"
 	    fi
+	else
+	    printlog "## test FAILED"
+	    popd >& /dev/null
 	fi
+	unset LD_LIBRARY_PATH
+	unset CHAOS_PREFIX
+	unset CHAOS_TOOLS
     fi
     popd >& /dev/null
 }
