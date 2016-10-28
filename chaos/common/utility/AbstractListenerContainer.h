@@ -33,11 +33,11 @@ namespace chaos {
         namespace utility {
             
             CHAOS_DEFINE_SET_FOR_TYPE(AbstractListener*, SetListner);
+            CHAOS_DEFINE_LOCKABLE_OBJECT(SetListner, SetListnerLO);
             
             //!abstract listener container
             class AbstractListenerContainer {
-                chaos::common::utility::LockableObject<SetListner> listeners;
-
+                SetListnerLO listeners;
             protected:
                 virtual void fireToListener(unsigned int fire_code,
                                             AbstractListener *listener_to_fire) = 0;

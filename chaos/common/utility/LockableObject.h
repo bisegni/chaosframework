@@ -31,26 +31,35 @@ namespace chaos {
             typedef ChaosReadLock   LockableObjectReadLock_t;
             typedef ChaosWriteLock  LockableObjectWriteLock_t;
             
+#define CHAOS_DEFINE_LOCKABLE_OBJECT(x, n)\
+typedef chaos::common::utility::LockableObject<x> n;\
+typedef chaos::common::utility::LockableObject<x>::LockableObjectReadLock n ## ReadLock;\
+typedef chaos::common::utility::LockableObject<x>::LockableObjectWriteLock n ## WriteLock;\
+
+            
             template<typename T>
             class LockableObject  {
                 ChaosSharedMutex mutex_container_dataset;
             public:
                 //!readable lock class
-                class LockableObjectReadLock {
+                class ReadLock {
+                    friend class LockableObject<T>;
                     LockableObjectReadLock_t rl;
-                public:
-                    LockableObjectReadLock(LockableObject<T>& lockable_obj_ref) {
+                    ReadLock(LockableObject<T>& lockable_obj_ref) {
                         lockable_obj_ref.getReadLock(rl);
                     }
                 };
+                typedef boost::shared_ptr<ReadLock> LockableObjectReadLock;
+                
                 //!writeable lock class
-                class LockableObjectWriteLock {
+                class WriteLock {
+                    friend class LockableObject<T>;
                     LockableObjectWriteLock_t wl;
-                public:
-                    LockableObjectWriteLock(LockableObject<T>& lockable_obj_ref) {
+                    WriteLock(LockableObject<T>& lockable_obj_ref) {
                         lockable_obj_ref.getWriteLock(wl);
                     }
                 };
+                typedef boost::shared_ptr<WriteLock> LockableObjectWriteLock;
                 
                 T container_object;
                 
@@ -58,7 +67,7 @@ namespace chaos {
                     read_lock = LockableObjectReadLock_t(mutex_container_dataset);
                 }
                 LockableObjectReadLock getReadLockObject() {
-                    return LockableObjectReadLock(*this);
+                    return LockableObjectReadLock(new ReadLock(*this));
                 }
                 
                 void getWriteLock(LockableObjectWriteLock_t& write_lock) {
@@ -66,7 +75,7 @@ namespace chaos {
                 }
                 
                 LockableObjectWriteLock getWriteLockObject() {
-                    return LockableObjectWriteLock(*this);
+                    return LockableObjectWriteLock(new WriteLock(*this));
                 }
                 
                 T& operator()(){

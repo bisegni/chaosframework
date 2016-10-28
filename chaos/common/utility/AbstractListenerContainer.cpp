@@ -25,24 +25,21 @@ using namespace chaos::common::utility;
 
 AbstractListenerContainer::AbstractListenerContainer() {}
 
-AbstractListenerContainer::~AbstractListenerContainer() {
-    listeners().clear();
-}
+AbstractListenerContainer::~AbstractListenerContainer() {listeners().clear();}
 
 void AbstractListenerContainer::addListener(AbstractListener *new_listener) {
-    LockableObjectWriteLock_t wl;
-    listeners.getWriteLock(wl);
+    SetListnerLOWriteLock wl = listeners.getWriteLockObject();
     listeners().insert(new_listener);
 }
 
 void AbstractListenerContainer::removeListener(AbstractListener *erase_listener) {
-    LockableObjectWriteLock rl = listeners.getReadWriteObject();
-    listeners.getReadLock(rl);
+    SetListnerLOWriteLock rl = listeners.getWriteLockObject();
+
     listeners().erase(erase_listener);
 }
 
 void AbstractListenerContainer::fire(unsigned int fire_code) {
-    LockableObjectReadLock rl = listeners.getReadLockObject();
+    SetListnerLOReadLock rl = listeners.getReadLockObject();
     for(SetListnerIterator it = listeners().begin(),
         end = listeners().end();
         it != end;
