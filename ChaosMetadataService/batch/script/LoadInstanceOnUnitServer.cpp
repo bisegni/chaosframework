@@ -74,10 +74,10 @@ void LoadInstanceOnUnitServer::setHandler(CDataWrapper *data) {
         //set the send command phase
         unit_server_rpc_addr = unit_server_description->getStringValue(NodeDefinitionKey::NODE_RPC_ADDR);
         search_script_phase = SearchScriptPhaseLoadScriptPage;
-        BC_NORMAL_RUNNIG_PROPERTY
+        BC_NORMAL_RUNNING_PROPERTY
     } else {
         DBG << "we have no execution pool so we terminate the command here";
-        BC_END_RUNNIG_PROPERTY
+        BC_END_RUNNING_PROPERTY
     }
     
     //for debug
@@ -109,7 +109,7 @@ void LoadInstanceOnUnitServer::acquireHandler() {
                 search_script_phase = SearchScriptPhaseLoadInstancePage;
             } else {
                 //we have no had script so we finisch here
-                BC_END_RUNNIG_PROPERTY;
+                BC_END_RUNNING_PROPERTY;
                 break;
             }
             

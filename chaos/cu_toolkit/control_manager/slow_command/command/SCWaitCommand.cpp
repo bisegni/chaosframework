@@ -72,14 +72,14 @@ void SCWaitCommand::setHandler(CDataWrapper *data) {
     
     uint32_t delay = data->getUInt32Value(SCWaitCommand_DELAY_KEY);
     setFeatures(features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT, (uint64_t)delay);
-    BC_EXEC_RUNNIG_PROPERTY;
+    BC_EXEC_RUNNING_PROPERTY;
     DEBUG_CODE(SCWC_INFO << "timeout set to " << delay << " milliseconds";)
 }
 
 bool SCWaitCommand::timeoutHandler() {
     uint64_t timeDiff = getStartStepTime() - getSetTime();
     DEBUG_CODE(SCWC_INFO << "timeout after " << timeDiff << " milliseconds";)
-    BC_END_RUNNIG_PROPERTY;
+    BC_END_RUNNING_PROPERTY;
     //move the state machine on fault
     return false;
 }

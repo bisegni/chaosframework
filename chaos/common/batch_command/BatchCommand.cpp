@@ -84,12 +84,12 @@ void BatchCommand::setHandler(CDataWrapper *data) {}
 /*
  implement the data acquisition handler
  */
-void BatchCommand::acquireHandler() {BC_END_RUNNIG_PROPERTY;}
+void BatchCommand::acquireHandler() {BC_END_RUNNING_PROPERTY;}
 
 /*
  implement the data correlation handler
  */
-void BatchCommand::ccHandler() {BC_END_RUNNIG_PROPERTY;}
+void BatchCommand::ccHandler() {BC_END_RUNNING_PROPERTY;}
 
 //timeout handler
 bool BatchCommand::timeoutHandler() {return true;}
@@ -100,7 +100,7 @@ void BatchCommand::commandPre() {
 }
 
 #define SET_FAULT(c, m, d) \
-BC_FAULT_RUNNIG_PROPERTY \
+BC_FAULT_RUNNING_PROPERTY \
 BCLERR_ << "Exception -> err:" << c << " msg: "<<m<<" domain:"<<d; \
 fault_description.code = c; \
 fault_description.description = m; \

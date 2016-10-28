@@ -72,7 +72,7 @@ void SubmitBatchCommand::acquireHandler() {
         case MESSAGE_PHASE_UNSENT: {
             sendMessage(*request,
                         command_instance.get());
-            BC_END_RUNNIG_PROPERTY
+            BC_END_RUNNING_PROPERTY
             break;
         }
             
@@ -99,7 +99,7 @@ void SubmitBatchCommand::ccHandler() {
             
         case MESSAGE_PHASE_COMPLETED:
         case MESSAGE_PHASE_TIMEOUT: {
-            BC_END_RUNNIG_PROPERTY
+            BC_END_RUNNING_PROPERTY
             break;
             
         default:

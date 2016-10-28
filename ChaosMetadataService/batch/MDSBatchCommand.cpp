@@ -64,7 +64,7 @@ void MDSBatchCommand::setHandler(chaos_data::CDataWrapper *data) {
     //set the timeout to 10 seconds
     setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT, (uint64_t)10000000);
     //set in exclusive running property
-    BC_EXEC_RUNNIG_PROPERTY
+    BC_EXEC_RUNNING_PROPERTY
 }
 
 // inherited method
