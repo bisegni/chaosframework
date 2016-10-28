@@ -173,7 +173,7 @@ void StateFlag::setCurrentLevel(int8_t _current_level) {
     if(it == local_ordered_index.end()) return;
     if(current_level != _current_level){
         current_level = _current_level;
-        fireToListener();
+        fire(0);
     } else {
         local_ordered_index.modify(it, increment_counter);
     }
@@ -189,27 +189,17 @@ const StateLevel& StateFlag::getCurrentStateLevel() const {
     return *it;
 }
 
-void StateFlag::addListener(StateFlagListener *new_listener) {
-    boost::shared_lock<boost::shared_mutex> wl(mutex_listener);
-    listener.insert(new_listener);
-}
-
-void StateFlag::removeListener(StateFlagListener *erase_listener) {
-    listener.erase(erase_listener);
-}
-
-void StateFlag::fireToListener() {
-    const StateLevel& level = getCurrentStateLevel();
-    for(SetListnerIterator it = listener.begin(),
-        end = listener.end();
-        it != end;
-        it++){
-        //call listener method to update severity on slistening class
-        (*it)->stateFlagUpdated(flag_uuid,
-                                level.getTag(),
-                                level.getSeverity());
+void StateFlag::fireToListener(unsigned int fire_code,
+                               chaos::common::utility::AbstractListener *listener_to_fire) {
+    StateFlagListener *state_flag_listener_instance = dynamic_cast<StateFlagListener*>(listener_to_fire);
+    if(state_flag_listener_instance){
+        const StateLevel& level = getCurrentStateLevel();
+        state_flag_listener_instance->stateFlagUpdated(flag_uuid,
+                                                       level.getTag(),
+                                                       level.getSeverity());
     }
 }
+
 #pragma mark StateFlagBoolState
 StateFlagBoolState::StateFlagBoolState(const std::string& _name,
                                        const std::string& _description,

@@ -27,36 +27,50 @@
 namespace chaos {
     namespace common {
         namespace utility {
-         
-            typedef ChaosReadLock   LockableObjectReadLock;
-            typedef boost::shared_ptr<LockableObjectReadLock>   LockableObjectReadLockShrdPtr;
             
-            typedef ChaosWriteLock LockableObjectWriteLock;
-            typedef boost::shared_ptr<LockableObjectWriteLock>   LockableObjectWriteLockShrdPtr;
+            typedef ChaosReadLock   LockableObjectReadLock_t;
+            typedef ChaosWriteLock  LockableObjectWriteLock_t;
             
             template<typename T>
             class LockableObject  {
                 ChaosSharedMutex mutex_container_dataset;
             public:
-                T container_dataset;
+                //!readable lock class
+                class LockableObjectReadLock {
+                    LockableObjectReadLock_t rl;
+                public:
+                    LockableObjectReadLock(LockableObject<T>& lockable_obj_ref) {
+                        lockable_obj_ref.getReadLock(rl);
+                    }
+                };
+                //!writeable lock class
+                class LockableObjectWriteLock {
+                    LockableObjectWriteLock_t wl;
+                public:
+                    LockableObjectWriteLock(LockableObject<T>& lockable_obj_ref) {
+                        lockable_obj_ref.getWriteLock(wl);
+                    }
+                };
                 
-                void getReadLock(LockableObjectReadLock& read_lock) {
-                    read_lock = LockableObjectReadLock(mutex_container_dataset);
+                T container_object;
+                
+                void getReadLock(LockableObjectReadLock_t& read_lock) {
+                    read_lock = LockableObjectReadLock_t(mutex_container_dataset);
                 }
-                LockableObjectReadLockShrdPtr getReadLockAsSharedPtr() {
-                    LockableObjectReadLockShrdPtr(new LockableObjectReadLock(mutex_container_dataset));
+                LockableObjectReadLock getReadLockObject() {
+                    return LockableObjectReadLock(*this);
                 }
                 
-                void getWriteLock(LockableObjectWriteLock& write_lock) {
-                    write_lock = LockableObjectWriteLock(mutex_container_dataset);
+                void getWriteLock(LockableObjectWriteLock_t& write_lock) {
+                    write_lock = LockableObjectWriteLock_t(mutex_container_dataset);
                 }
                 
-                LockableObjectWriteLockShrdPtr getWriteLockAsShrdPtr() {
-                    return LockableObjectWriteLockShrdPtr(new LockableObjectWriteLock(mutex_container_dataset));
+                LockableObjectWriteLock getWriteLockObject() {
+                    return LockableObjectWriteLock(*this);
                 }
                 
                 T& operator()(){
-                    return container_dataset;
+                    return container_object;
                 }
             };
         }

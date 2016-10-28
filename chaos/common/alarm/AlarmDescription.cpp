@@ -25,6 +25,15 @@ using namespace chaos::common::alarm;
 using namespace chaos::common::utility;
 using namespace chaos::common::state_flag;
 
+#pragma mark AlarmHandler
+void AlarmHandler::stateFlagUpdated(const std::string& flag_uuid,
+                                    const std::string& flag_name,
+                                    const StateFlagServerity level_severity) {
+    alarmChanged(flag_name,
+                 level_severity);
+}
+
+#pragma mark AlarmDescription
 AlarmDescription::AlarmDescription(const std::string alarm_name,
                                    const std::string alarm_description):
 StateFlag(alarm_name,
@@ -63,18 +72,4 @@ const std::string& AlarmDescription::getCurrentSeverityTag() const {
 
 const std::string& AlarmDescription::getCurrentSeverityDescription() const {
     return StateFlag::getCurrentStateLevel().getDescription();
-}
-
-void AlarmDescription::fireToListener(unsigned int fire_code,
-                                      AbstractListener *listener_to_fire) {
-    ((AlarmHandler*)listener_to_fire)->alarmChanged(getAlarmName(),
-                                                    getCurrentSeverityCode());
-}
-
-void AlarmDescription::addHandler(AlarmHandler *handler) {
-    AbstractListenerContainer::addListener(handler);
-}
-
-void AlarmDescription::removeHandler(AlarmHandler *handler) {
-    AbstractListenerContainer::removeListener(handler);
 }

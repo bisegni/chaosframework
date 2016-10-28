@@ -23,6 +23,7 @@
 #define __CHAOSFramework_E85E5697_253B_41EE_BB6B_274C198201CB_AbstractListenerContainer_h
 
 #include <chaos/common/chaos_types.h>
+#include <chaos/common/utility/LockableObject.h>
 #include <chaos/common/utility/AbstractListener.h>
 
 #include <boost/thread.hpp>
@@ -35,18 +36,18 @@ namespace chaos {
             
             //!abstract listener container
             class AbstractListenerContainer {
-                SetListner listeners;
-                boost::shared_mutex mutex_listener;
+                chaos::common::utility::LockableObject<SetListner> listeners;
 
+            protected:
                 virtual void fireToListener(unsigned int fire_code,
-                                            AbstractListener *listener_to_fire);
+                                            AbstractListener *listener_to_fire) = 0;
+                void fire(unsigned int fire_code);
             public:
                 AbstractListenerContainer();
                 virtual ~AbstractListenerContainer();
                 
                 void addListener(AbstractListener *new_listener);
                 void removeListener(AbstractListener *erase_listener);
-                void fire(unsigned int fire_code);
             };
         }
     }

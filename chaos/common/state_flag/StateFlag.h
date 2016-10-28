@@ -23,6 +23,7 @@
 #define __CHAOSFramework__1AED93A_A280_4ED9_837D_E3A21159FBE1_state_flag_types_h
 
 #include <chaos/common/chaos_constants.h>
+#include <chaos/common/utility/AbstractListenerContainer.h>
 
 #include <boost/thread.hpp>
 #include <boost/multi_index/member.hpp>
@@ -122,7 +123,8 @@ namespace chaos {
             class StateFlag;
             
             //! status flag listener
-            class StateFlagListener {
+            class StateFlagListener:
+            public chaos::common::utility::AbstractListener {
                 friend class StateFlag;
                 const std::string listener_uuid;
             protected:
@@ -137,9 +139,6 @@ namespace chaos {
                 const std::string& getStateFlagListenerUUID();
             };
             
-            
-            CHAOS_DEFINE_SET_FOR_TYPE(StateFlagListener*, SetListner);
-            
             //!forward declaration
             class StateFlagCatalog;
             //!forward declaration
@@ -148,7 +147,8 @@ namespace chaos {
             class StateFlagCatalogSDWrapper;
             
             //! Status Flag description
-            class StateFlag {
+            class StateFlag:
+            public chaos::common::utility::AbstractListenerContainer {
                 friend class StateFlagCatalog;
                 friend class StateFlagSDWrapper;
                 friend class StateFlagCatalogSDWrapper;
@@ -159,9 +159,6 @@ namespace chaos {
                 //! mantains the mapping from level and the state description of that level
                 mutable StateLevelContainer set_levels;
                 
-                SetListner listener;
-                boost::shared_mutex mutex_listener;
-                
             protected:
                 std::string flag_uuid;
                 //! the name that identify the flag
@@ -169,6 +166,8 @@ namespace chaos {
                 //! the compelte description of the flag
                 std::string description;
                 
+                void fireToListener(unsigned int fire_code,
+                                    chaos::common::utility::AbstractListener *listener_to_fire);
             public:
                 StateFlag();
                 StateFlag(const std::string& _name,
@@ -194,11 +193,6 @@ namespace chaos {
                 int8_t getCurrentLevel() const;
                 
                 const StateLevel& getCurrentStateLevel() const;
-                
-                
-                void addListener(StateFlagListener *new_listener);
-                void removeListener(StateFlagListener *erase_listener);
-                void fireToListener();
             };
             
             
