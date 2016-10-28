@@ -91,7 +91,7 @@ void DataWorker::deinit() throw (chaos::CException) {
 }
 
 int DataWorker::submitJobInfo(WorkerJobPtr job_info) {
-    LockableObjectWriteLock wl;
+    LockableObjectWriteLock_t wl;
     job_in_queue.getWriteLock(wl);
     //check if we are out of max element in queue, in other case go out
     if(job_in_queue() > max_element) return -1000;

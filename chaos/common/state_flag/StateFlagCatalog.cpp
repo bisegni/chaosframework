@@ -108,7 +108,7 @@ void StateFlagCatalog::addMemberToSeverityMap(boost::shared_ptr<StateFlag> new_s
 
 void StateFlagCatalog::addFlag(const boost::shared_ptr<StateFlag>& flag) {
     //boost::unique_lock<boost::shared_mutex> wl(mutex_catalog);
-    LockableObjectWriteLock wl;
+    LockableObjectWriteLock_t wl;
     catalog_container.getWriteLock(wl);
     StateFlagElementContainerNameIndex& name_index = catalog_container().get<mitag_name>();
     if(name_index.find(flag->getName()) != name_index.end()) return;
@@ -139,8 +139,8 @@ void StateFlagCatalog::setFlagState(const unsigned int flag_ordered_id, int8_t n
 void StateFlagCatalog::appendCatalog(const StateFlagCatalog& src) {
     //write loc on loca catalog
     //boost::unique_lock<boost::shared_mutex> wl(mutex_catalog);
-    LockableObjectWriteLock wl;
-    LockableObjectReadLock rl_src;
+    LockableObjectWriteLock_t wl;
+    LockableObjectReadLock_t rl_src;
     catalog_container.getWriteLock(wl);
     
     //read lock on source catalog
@@ -193,7 +193,7 @@ void StateFlagCatalog::getFlagsForSeverity(StateFlagServerity severity,
 #pragma mark Serialization Method
 std::auto_ptr<chaos::common::data::CDataBuffer> StateFlagCatalog::getRawFlagsLevel() {
     //read lock on owned catalog
-    LockableObjectReadLock rl;
+    LockableObjectReadLock_t rl;
     catalog_container.getReadLock(rl);
     std::auto_ptr<CDataBuffer> result;
     char * raw_description = (char*)malloc(catalog_container().size());
@@ -218,7 +218,7 @@ void StateFlagCatalog::setApplyRawFlagsValue(std::auto_ptr<chaos::common::data::
     uint32_t buffer_size = raw_level->getBufferSize();
     
     if(buffer_size != catalog_container().size()) return;
-    LockableObjectWriteLock wl;
+    LockableObjectWriteLock_t wl;
     catalog_container.getWriteLock(wl);
     //boost::unique_lock<boost::shared_mutex> wl(mutex_catalog);
     for(int idx = 0;
@@ -236,7 +236,7 @@ void StateFlagCatalog::setApplyRawFlagsValue(std::auto_ptr<chaos::common::data::
 }
 
 const size_t StateFlagCatalog::size() const {
-    LockableObjectWriteLock wl;
+    LockableObjectWriteLock_t wl;
     catalog_container.getWriteLock(wl);
     //boost::unique_lock<boost::shared_mutex> wl(mutex_catalog);
     return catalog_container().size();

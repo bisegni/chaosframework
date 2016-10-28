@@ -57,7 +57,7 @@ bool CronousManager::addJob(CronJob *new_job,
                             uint64_t offset) {
     if(new_job == NULL) return false;
     
-    LockableObjectWriteLock wl;
+    LockableObjectWriteLock_t wl;
     map_job_instance.getWriteLock(wl);
     new_job->repeat_delay = repeat_delay;
     new_job->next_ts_start = (TimingUtil::getTimeStamp()+offset);
@@ -68,7 +68,7 @@ bool CronousManager::addJob(CronJob *new_job,
 }
 
 bool CronousManager::removeJob(const std::string& job_index) {
-    LockableObjectWriteLock wl;
+    LockableObjectWriteLock_t wl;
     map_job_in_execution.getWriteLock(wl);
     
     if(map_job_in_execution().count(job_index) == 0) return false;
@@ -78,7 +78,7 @@ bool CronousManager::removeJob(const std::string& job_index) {
     map_job_in_execution().erase(job_index);
     
     //remove the instance
-    LockableObjectWriteLock wl_instance;
+    LockableObjectWriteLock_t wl_instance;
     map_job_instance().erase(job_index);
     return true;
 }
@@ -88,7 +88,7 @@ void CronousManager::timeout() {
     //scan job to start
     uint64_t current_ts = TimingUtil::getTimeStamp();
     
-    LockableObjectReadLock wl_on_instance;
+    LockableObjectReadLock_t wl_on_instance;
     map_job_instance.getReadLock(wl_on_instance);
     
     //scann instance to determinate wich one need to be started
@@ -106,7 +106,7 @@ void CronousManager::timeout() {
                 (*it->second).run_state = CronJobStateRunning;
                 
                 //start the execution of the job into a thread
-                LockableObjectWriteLock wl_thread;
+                LockableObjectWriteLock_t wl_thread;
                 map_job_in_execution.getWriteLock(wl_thread);
                 map_job_in_execution().insert(MapJobThreadPair(it->first,
                                                                ThreadJobShrdPtr(new boost::thread(boost::bind(&CronJob::threadEntry,
@@ -128,7 +128,7 @@ void CronousManager::clearCompletedJob(bool timed_wait,
     //check started job to determinate which has finisched
     unsigned int element_count = 0;
     
-    LockableObjectWriteLock wl_thread;
+    LockableObjectWriteLock_t wl_thread;
     map_job_in_execution.getWriteLock(wl_thread);
     MapJobThreadIterator it = map_job_in_execution().begin();
     MapJobThreadIterator end = map_job_in_execution().end();

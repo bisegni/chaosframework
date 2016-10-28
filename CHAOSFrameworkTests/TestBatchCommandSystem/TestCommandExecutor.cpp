@@ -51,7 +51,7 @@ BatchCommand *  TestCommandExecutor::instanceCommandInfo(const std::string& comm
     
     //customize the newly create batch command
     if(result) {
-        LockableObjectWriteLock wr;
+        LockableObjectWriteLock_t wr;
         map_id_command.getWriteLock(wr);
         map_id_command().insert(IDCommandMapPair(result->getUID(), TestElement(result)));
     }
@@ -62,7 +62,7 @@ void TestCommandExecutor::handleCommandEvent(const std::string& command_alias,
                                              uint64_t command_seq,
                                              common::batch_command::BatchCommandEventType::BatchCommandEventType type,
                                              chaos::common::data::CDataWrapper *command_data) {
-    LockableObjectWriteLock wl;
+    LockableObjectWriteLock_t wl;
     map_id_command.getWriteLock(wl);
     if(map_id_command().count(command_seq) == 0) return;
     TestElement& element = map_id_command()[command_seq];
@@ -114,13 +114,13 @@ void TestCommandExecutor::handleSandboxEvent(const std::string& sandbox_id,
 }
 
 uint64_t TestCommandExecutor::getRunningElement() {
-    LockableObjectWriteLock wr;
+    LockableObjectWriteLock_t wr;
     map_id_command.getWriteLock(wr);
     return map_id_command().size();
 }
 
 void TestCommandExecutor::resetMap() {
-    LockableObjectWriteLock wr;
+    LockableObjectWriteLock_t wr;
     map_id_command.getWriteLock(wr);
     map_id_command().clear();
 }

@@ -51,7 +51,7 @@ PublishingManager::~PublishingManager(){}
 
 bool PublishingManager::addNewTarget(const std::string& target_name,
                                      bool auto_remove){
-    LockableObjectWriteLock wl;
+    LockableObjectWriteLock_t wl;
     map_name_target.getWriteLock(wl);
     //we can add the new target
     if(map_name_target().count(target_name) != 0) return false;
@@ -65,7 +65,7 @@ bool PublishingManager::addNewTarget(const std::string& target_name,
 }
 
 bool PublishingManager::removeTarget(const std::string& target_name){
-    LockableObjectWriteLock wl;
+    LockableObjectWriteLock_t wl;
     map_name_target.getWriteLock(wl);
     //we can add the new target
     if(map_name_target().count(target_name) == 0) return false;
@@ -78,7 +78,7 @@ bool PublishingManager::removeTarget(const std::string& target_name){
 
 bool PublishingManager::addURLToTarget(const std::string& target_name,
                                        const std::string& server_url_new) {
-    LockableObjectReadLock rl_target;
+    LockableObjectReadLock_t rl_target;
     map_name_target.getReadLock(rl_target);
     INFO << CHAOS_FORMAT("Add new URL[%1%] to target %2%", %server_url_new%target_name);
 
@@ -94,7 +94,7 @@ bool PublishingManager::addURLToTarget(const std::string& target_name,
 
 bool PublishingManager::removeURLServer(const std::string& target_name,
                                         const std::string& server_url_erase) {
-    LockableObjectReadLock rl_target;
+    LockableObjectReadLock_t rl_target;
     map_name_target.getReadLock(rl_target);
     INFO << CHAOS_FORMAT("Remove URL[%1%] to target %2%", %server_url_erase%target_name);
 
@@ -113,8 +113,8 @@ bool PublishingManager::removeURLServer(const std::string& target_name,
 bool PublishingManager::addDatasetToTarget(const std::string& target_name,
                                            const std::string& dataset_name,
                                            const PublishElementAttribute& publishable_attribute){
-    LockableObjectReadLock rl_dataset;
-    LockableObjectReadLock rl_target;
+    LockableObjectReadLock_t rl_dataset;
+    LockableObjectReadLock_t rl_target;
     
     map_name_target.getReadLock(rl_target);
     //search target
@@ -142,8 +142,8 @@ bool PublishingManager::addDatasetToTarget(const std::string& target_name,
 
 bool PublishingManager::removeDatasetFromTarget(const std::string& target_name,
                                                 const std::string& dataset_name){
-    LockableObjectReadLock rl_dataset;
-    LockableObjectReadLock rl_target;
+    LockableObjectReadLock_t rl_dataset;
+    LockableObjectReadLock_t rl_target;
     
     map_name_target.getReadLock(rl_target);
     //search target
@@ -172,7 +172,7 @@ void PublishingManager::setPublishAttributeOnDataset(const std::string& target_n
                                                      const std::string& dataset_name,
                                                      const PublishElementAttribute& publishable_attribute) {
     
-    LockableObjectReadLock rl_target;
+    LockableObjectReadLock_t rl_target;
     map_name_target.getReadLock(rl_target);
     //search target
     PublishableElementNameMapIterator target_found = map_name_target().find(target_name);

@@ -32,7 +32,19 @@ namespace chaos{
                 MultiSeverityAlarmLevelClear,
                 MultiSeverityAlarmLevelLow,
                 MultiSeverityAlarmLevelHig
-            }MultiSeverityAlarmLevel;
+            } MultiSeverityAlarmLevel;
+            
+            //!Alarm handler abstraction
+            class MultiSeverityAlarmHandler:
+            public chaos::common::state_flag::StateFlagListener {
+                friend class AlarmDescription;;
+                void alarmChanged(const std::string& alarm_name,
+                                  const int8_t alarm_severity);
+            protected:
+                virtual void alarmChanged(const std::string& alarm_name,
+                                          const MultiSeverityAlarmLevel alarm_severity) = 0;
+                
+            };
             
             class MultiSeverityAlarm:
             protected AlarmDescription {

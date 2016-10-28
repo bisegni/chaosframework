@@ -36,24 +36,25 @@ namespace chaos{
             
             //!Alarm handler abstraction
             class AlarmHandler:
-            public chaos::common::utility::AbstractListener {
+            public chaos::common::state_flag::StateFlagListener {
                 friend class AlarmDescription;
+                void stateFlagUpdated(const std::string& flag_uuid,
+                                      const std::string& flag_name,
+                                      const chaos::common::state_flag::StateFlagServerity level_severity);
             protected:
                 virtual void alarmChanged(const std::string& alarm_name,
                                           const int8_t alarm_severity) = 0;
             };
             
+            //!base alarm description
             class AlarmDescription:
-            protected chaos::common::utility::AbstractListenerContainer,
             protected state_flag::StateFlag {
                 friend class AlarmCatalog;
             public:
                 AlarmDescription(const std::string alarm_name,
                                  const std::string alarm_description);
                 ~AlarmDescription();
-            protected:
-                void fireToListener(unsigned int fire_code,
-                                    chaos::common::utility::AbstractListener *listener_to_fire);
+            protected:;
                 bool addState(int8_t severity_code,
                               const std::string& severity_tag,
                               const std::string& severity_description,
@@ -66,8 +67,6 @@ namespace chaos{
                 const int8_t getCurrentSeverityCode() const;
                 const std::string& getCurrentSeverityTag() const;
                 const std::string& getCurrentSeverityDescription() const;
-                void addHandler(AlarmHandler *handler);
-                void removeHandler(AlarmHandler *handler);
             };
             
             typedef boost::shared_ptr<AlarmDescription> AlarmDescriptionShrdPtr;
