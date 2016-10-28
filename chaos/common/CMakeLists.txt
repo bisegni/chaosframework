@@ -38,6 +38,7 @@ SET(common_lib_src ${common_lib_src}
         action/DomainActions.cpp)
 
 SET(common_lib_src ${common_lib_src}
+        alarm/AlarmCatalog.cpp
         alarm/AlarmDescription.cpp
         alarm/MultiSeverityAlarm.cpp)
 
