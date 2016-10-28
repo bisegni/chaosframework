@@ -201,7 +201,7 @@ function compile_bundle(){
 	    popd >& /dev/null
 	    printlog "* packaging distribution on architecture \"$arch\""
 
-	    if $mydir/chaos_debianizer.sh -i $installdir -t development -r;then
+	    if $mydir/chaos_debianizer.sh -i $install_prefix -t development -r >> $log 2>&1 ;then
 		printlog "* packaging ok"
 	    else
 		printlog "## error during packaging"
