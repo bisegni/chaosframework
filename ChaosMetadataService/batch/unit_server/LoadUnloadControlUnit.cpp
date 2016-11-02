@@ -104,7 +104,7 @@ void LoadUnloadControlUnit::acquireHandler() {
         case MESSAGE_PHASE_UNSENT:{
             sendMessage(*request,
                         load_unload_pack.get());
-            BC_END_RUNNIG_PROPERTY
+            BC_END_RUNNING_PROPERTY
             break;
         }
         case MESSAGE_PHASE_SENT:
@@ -128,7 +128,7 @@ void LoadUnloadControlUnit::ccHandler() {
             
         case MESSAGE_PHASE_COMPLETED:
         case MESSAGE_PHASE_TIMEOUT:{
-            BC_END_RUNNIG_PROPERTY
+            BC_END_RUNNING_PROPERTY
             break;
         }
     }

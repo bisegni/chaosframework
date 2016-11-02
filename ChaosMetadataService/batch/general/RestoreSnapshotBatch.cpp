@@ -137,7 +137,7 @@ void RestoreSnapshotBatch::ccHandler() {
         }
             
         case NO_MORE_NODE:{
-            BC_END_RUNNIG_PROPERTY
+            BC_END_RUNNING_PROPERTY
             break;
         }
     }

@@ -87,7 +87,7 @@ void RecoverError::ccHandler() {
         //send message without waiting for replay
         sendMessage(*(*it), NULL);
     }
-    BC_END_RUNNIG_PROPERTY
+    BC_END_RUNNING_PROPERTY
 }
 
 // inherited method

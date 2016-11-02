@@ -46,12 +46,12 @@ void TestBatchCommand::acquireHandler() {
 }
 
 void TestBatchCommand::ccHandler() {
-    if(cicle_count > 100) {BC_END_RUNNIG_PROPERTY;}
+    if(cicle_count > 100) {BC_END_RUNNING_PROPERTY;}
 }
 
 bool TestBatchCommand::timeoutHandler() {
     end_ts = TimingUtil::getTimeStampInMicrosends();
-    BC_END_RUNNIG_PROPERTY;
+    BC_END_RUNNING_PROPERTY;
     return false;
 }
 

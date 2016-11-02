@@ -4,6 +4,7 @@ build="dynamic static"
 prefix="chaos_bundle"
 branch="development"
 buildtype=""
+
 pushd `dirname $0` >& /dev/null
 mydir=`pwd -P`
 popd >& /dev/null

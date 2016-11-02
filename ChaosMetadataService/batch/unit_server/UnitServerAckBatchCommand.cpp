@@ -100,7 +100,7 @@ void UnitServerAckCommand::ccHandler() {
                     
                 case MESSAGE_PHASE_TIMEOUT:
                     //terminate job
-                    BC_END_RUNNIG_PROPERTY
+                    BC_END_RUNNING_PROPERTY
                     break;
             }
             break;
@@ -115,7 +115,7 @@ void UnitServerAckCommand::ccHandler() {
                                                                                                                list_autoload_cu))) {
                     if(list_autoload_cu.size() == 0) {
                         //terminate job
-                        BC_END_RUNNIG_PROPERTY
+                        BC_END_RUNNING_PROPERTY
                     } else {
                         //we need to check if
                         list_autoload_cu_current = list_autoload_cu.begin();
@@ -124,7 +124,7 @@ void UnitServerAckCommand::ccHandler() {
                                                                                               getDataAccess<mds_data_access::ControlUnitDataAccess>());
                         if(autoload_pack.get() == NULL){
                             USAC_ERR << "Error creating autoload datapack for:"<<last_worked_cu.node_uid<<" with code:" << err;
-                            BC_END_RUNNIG_PROPERTY
+                            BC_END_RUNNING_PROPERTY
                         } else {
                             USAC_INFO << "Autoload control unit " << last_worked_cu.node_uid;
                             request = createRequest(message_data->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR),
@@ -144,7 +144,7 @@ void UnitServerAckCommand::ccHandler() {
                     }
                 } else {
                     USAC_ERR << "Error fetching the autoload control unit with code:" << err;
-                    BC_END_RUNNIG_PROPERTY
+                    BC_END_RUNNING_PROPERTY
                     break;
                 }
             } else {
@@ -158,7 +158,7 @@ void UnitServerAckCommand::ccHandler() {
                                                                                           getDataAccess<mds_data_access::ControlUnitDataAccess>());
                     if(autoload_pack.get() == NULL){
                         USAC_ERR << "Error creating autoload datapack for:"<<last_worked_cu.node_uid<<" with code:" << err;
-                        BC_END_RUNNIG_PROPERTY
+                        BC_END_RUNNING_PROPERTY
                     } else {
                         USAC_INFO << "Autoload control unit " << last_worked_cu.node_uid;
                         request = createRequest(message_data->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR),
@@ -196,7 +196,7 @@ void UnitServerAckCommand::ccHandler() {
                     
                 case MESSAGE_PHASE_TIMEOUT:
                     //terminate job
-                    BC_END_RUNNIG_PROPERTY
+                    BC_END_RUNNING_PROPERTY
                     USAC_ERR << "Whe have had tomeout error on load a control unit, the job will terminate becaus ethe unit serve ca be down";
                     break;
             }

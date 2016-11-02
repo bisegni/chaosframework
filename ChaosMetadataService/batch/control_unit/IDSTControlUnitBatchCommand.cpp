@@ -122,7 +122,7 @@ void IDSTControlUnitBatchCommand::acquireHandler() {
             //send message for action
             sendMessage(*request,
                         message.get());
-            BC_END_RUNNIG_PROPERTY
+            BC_END_RUNNING_PROPERTY
             break;
         }
         case MESSAGE_PHASE_SENT:
@@ -147,7 +147,7 @@ void IDSTControlUnitBatchCommand::ccHandler() {
             
         case MESSAGE_PHASE_COMPLETED:
         case MESSAGE_PHASE_TIMEOUT: {
-            BC_END_RUNNIG_PROPERTY
+            BC_END_RUNNING_PROPERTY
             break;
         }
     }

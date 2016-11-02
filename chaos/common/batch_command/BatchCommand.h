@@ -48,10 +48,10 @@ namespace chaos{
             //class BatchCommandExecutor;
             
             //!help macro for set the sate
-#define BC_EXEC_RUNNIG_PROPERTY    setRunningProperty(chaos::common::batch_command::RunningPropertyType::RP_Exsc);
-#define BC_NORMAL_RUNNIG_PROPERTY  setRunningProperty(chaos::common::batch_command::RunningPropertyType::RP_Normal);
-#define BC_END_RUNNIG_PROPERTY     setRunningProperty(chaos::common::batch_command::RunningPropertyType::RP_End);
-#define BC_FAULT_RUNNIG_PROPERTY   setRunningProperty(chaos::common::batch_command::RunningPropertyType::RP_Fault);
+#define BC_EXEC_RUNNING_PROPERTY    setRunningProperty(chaos::common::batch_command::RunningPropertyType::RP_Exsc);
+#define BC_NORMAL_RUNNING_PROPERTY  setRunningProperty(chaos::common::batch_command::RunningPropertyType::RP_Normal);
+#define BC_END_RUNNING_PROPERTY     setRunningProperty(chaos::common::batch_command::RunningPropertyType::RP_End);
+#define BC_FAULT_RUNNING_PROPERTY   setRunningProperty(chaos::common::batch_command::RunningPropertyType::RP_Fault);
             
             //help madro to get the state
 #define BC_CHECK_EXEC_RUNNIG_PROPERTY  (getRunningProperty() == chaos::common::batch_command::RunningPropertyType::RP_Exsc)

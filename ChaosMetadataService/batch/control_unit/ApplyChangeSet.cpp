@@ -61,7 +61,7 @@ void ApplyChangeSet::acquireHandler() {
             //send message for action
             sendMessage(*request,
                         message);
-            BC_END_RUNNIG_PROPERTY
+            BC_END_RUNNING_PROPERTY
             break;
         }
         case MESSAGE_PHASE_SENT:
@@ -84,7 +84,7 @@ void ApplyChangeSet::ccHandler() {
             
         case MESSAGE_PHASE_COMPLETED:
         case MESSAGE_PHASE_TIMEOUT: {
-            BC_END_RUNNIG_PROPERTY
+            BC_END_RUNNING_PROPERTY
             break;
         }
     }
