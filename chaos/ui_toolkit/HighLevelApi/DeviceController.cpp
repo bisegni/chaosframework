@@ -46,11 +46,12 @@ datasetDB(true) {
     deviceChannel = NULL;
     ioLiveDataDriver = NULL;
     millisecToWait = MSEC_WAIT_OPERATION;
-    channel_keys.push_back(device_id + DataPackPrefixID::OUTPUT_DATASE_PREFIX);
-    channel_keys.push_back(device_id + DataPackPrefixID::INPUT_DATASE_PREFIX);
-    channel_keys.push_back(device_id + DataPackPrefixID::CUSTOM_DATASE_PREFIX);
-    channel_keys.push_back(device_id + DataPackPrefixID::SYSTEM_DATASE_PREFIX);
-    channel_keys.push_back(device_id + DataPackPrefixID::HEALTH_DATASE_PREFIX);
+    channel_keys.push_back(device_id + DataPackPrefixID::OUTPUT_DATASET_POSTFIX);
+    channel_keys.push_back(device_id + DataPackPrefixID::INPUT_DATASET_POSTFIX);
+    channel_keys.push_back(device_id + DataPackPrefixID::CUSTOM_DATASET_POSTFIX);
+    channel_keys.push_back(device_id + DataPackPrefixID::SYSTEM_DATASET_POSTFIX);
+    channel_keys.push_back(device_id + DataPackPrefixID::HEALTH_DATASET_POSTFIX);
+    channel_keys.push_back(device_id + DataPackPrefixID::ALARM_DATASET_POSTFIX);
     //  current_dataset.push_back(d);
     for(int cnt=0;cnt<channel_keys.size();cnt++)
         current_dataset.push_back(boost::shared_ptr<chaos::common::data::CDataWrapper>());
@@ -889,7 +890,7 @@ chaos::common::data::CDataWrapper *  DeviceController::fetchCurrentDatatasetFrom
 
 //---------------------------------------------------------------------------------------------------
 int DeviceController::getTimeStamp(uint64_t& live){
-    CDataWrapper * d= getLiveCDataWrapperPtr();
+    CDataWrapper * d = current_dataset[DatasetDomainOutput].get();
     live =0;
     if(d){
         live = d->getInt64Value(DataPackCommonKey::DPCK_TIMESTAMP);

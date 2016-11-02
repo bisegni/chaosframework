@@ -42,11 +42,12 @@ storage_history_time(0),
 storage_history_time_last_push(0),
 storage_live_time(0),
 storage_live_time_last_push(0),
-  sequence_id(0 /*std::numeric_limits<int64_t>::min()*/){
-    output_key	= _key + DataPackPrefixID::OUTPUT_DATASE_PREFIX;
-    input_key	= _key + DataPackPrefixID::INPUT_DATASE_PREFIX;
-    system_key	= _key + DataPackPrefixID::SYSTEM_DATASE_PREFIX;
-    custom_key	= _key + DataPackPrefixID::CUSTOM_DATASE_PREFIX;
+sequence_id(0 /*std::numeric_limits<int64_t>::min()*/){
+    output_key	= _key + DataPackPrefixID::OUTPUT_DATASET_POSTFIX;
+    input_key	= _key + DataPackPrefixID::INPUT_DATASET_POSTFIX;
+    system_key	= _key + DataPackPrefixID::SYSTEM_DATASET_POSTFIX;
+    custom_key	= _key + DataPackPrefixID::CUSTOM_DATASET_POSTFIX;
+    alarm_key	= _key + DataPackPrefixID::ALARM_DATASET_POSTFIX;
 }
 
 KeyDataStorage::~KeyDataStorage() {
@@ -101,6 +102,9 @@ ArrayPointer<CDataWrapper>* KeyDataStorage::getLastDataSet(KeyDataStorageDomain 
             break;
         case KeyDataStorageDomainCustom:
             return io_data_driver->retriveData(custom_key);
+            break;
+        case KeyDataStorageDomainAlarm:
+            return io_data_driver->retriveData(alarm_key);
             break;
     }
     
@@ -177,6 +181,12 @@ void KeyDataStorage::pushDataSet(KeyDataStorageDomain domain,
         case KeyDataStorageDomainSystem:
             //system channel need to be push ever either in live and in history
             io_data_driver->storeData(system_key,
+                                      dataset,
+                                      DataServiceNodeDefinitionType::DSStorageTypeLiveHistory);
+            break;
+        case KeyDataStorageDomainAlarm:
+            //system channel need to be push ever either in live and in history
+            io_data_driver->storeData(alarm_key,
                                       dataset,
                                       DataServiceNodeDefinitionType::DSStorageTypeLiveHistory);
             break;

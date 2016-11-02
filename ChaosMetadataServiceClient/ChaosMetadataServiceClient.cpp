@@ -315,23 +315,28 @@ bool ChaosMetadataServiceClient::addKeyAttributeHandlerForDataset(const std::str
         case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT:
             dataset_key = boost::str(boost::format("%1%%2%")%
                                      key_to_monitor%
-                                     DataPackPrefixID::OUTPUT_DATASE_PREFIX);
+                                     DataPackPrefixID::OUTPUT_DATASET_POSTFIX);
             break;
         case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_INPUT:
             dataset_key = boost::str(boost::format("%1%%2%")%
                                      key_to_monitor%
-                                     DataPackPrefixID::INPUT_DATASE_PREFIX);
+                                     DataPackPrefixID::INPUT_DATASET_POSTFIX);
             break;
         case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM:
             dataset_key = boost::str(boost::format("%1%%2%")%
                                      key_to_monitor%
-                                     DataPackPrefixID::CUSTOM_DATASE_PREFIX);
+                                     DataPackPrefixID::CUSTOM_DATASET_POSTFIX);
             break;
             
         case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM:
             dataset_key = boost::str(boost::format("%1%%2%")%
                                      key_to_monitor%
-                                     DataPackPrefixID::SYSTEM_DATASE_PREFIX);
+                                     DataPackPrefixID::SYSTEM_DATASET_POSTFIX);
+            break;
+        case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_ALARM:
+            dataset_key = boost::str(boost::format("%1%%2%")%
+                                     key_to_monitor%
+                                     DataPackPrefixID::ALARM_DATASET_POSTFIX);
             break;
         default:
             return false;
@@ -411,23 +416,28 @@ std::string ChaosMetadataServiceClient::getDatasetKeyFromGeneralKey(const std::s
         case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT:
             return boost::str(boost::format("%1%%2%")%
                               node_uid%
-                              DataPackPrefixID::OUTPUT_DATASE_PREFIX);
+                              DataPackPrefixID::OUTPUT_DATASET_POSTFIX);
             break;
         case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_INPUT:
             return boost::str(boost::format("%1%%2%")%
                               node_uid%
-                              DataPackPrefixID::INPUT_DATASE_PREFIX);
+                              DataPackPrefixID::INPUT_DATASET_POSTFIX);
             break;
         case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM:
             return boost::str(boost::format("%1%%2%")%
                               node_uid%
-                              DataPackPrefixID::CUSTOM_DATASE_PREFIX);
+                              DataPackPrefixID::CUSTOM_DATASET_POSTFIX);
             break;
             
         case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM:
             return boost::str(boost::format("%1%%2%")%
                               node_uid%
-                              DataPackPrefixID::SYSTEM_DATASE_PREFIX);
+                              DataPackPrefixID::SYSTEM_DATASET_POSTFIX);
+            break;
+        case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_ALARM:
+            return boost::str(boost::format("%1%%2%")%
+                              node_uid%
+                              DataPackPrefixID::ALARM_DATASET_POSTFIX);
             break;
         default:
             return "";

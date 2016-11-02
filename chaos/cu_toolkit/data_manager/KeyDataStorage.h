@@ -41,7 +41,8 @@ namespace chaos{
 				KeyDataStorageDomainOutput = 0,
 				KeyDataStorageDomainInput,
 				KeyDataStorageDomainCustom,
-				KeyDataStorageDomainSystem
+				KeyDataStorageDomainSystem,
+                KeyDataStorageDomainAlarm
 			} KeyDataStorageDomain;
 			
 			class KeyDataStorage {
@@ -50,6 +51,7 @@ namespace chaos{
 				std::string input_key;
 				std::string system_key;
 				std::string custom_key;
+                std::string alarm_key;
 				
                 //is the sequence if
                 boost::atomic<int64_t> sequence_id;

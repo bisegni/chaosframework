@@ -609,6 +609,9 @@ namespace chaos{
                 //!push system dataset
                 virtual void pushSystemDataset();
                 
+                //!push alarm dataset
+                virtual void pushAlarmDataset();
+                
                 //!copy into a CDataWrapper last received initialization package
                 void copyInitConfiguraiton(CDataWrapper& copy);
             };

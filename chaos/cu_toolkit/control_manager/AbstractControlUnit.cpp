@@ -1643,6 +1643,31 @@ void AbstractControlUnit::pushSystemDataset() {
     systemm_attribute_cache.resetChangedIndex();
 }
 
+void AbstractControlUnit::pushAlarmDataset() {
+
+    //get the cdatawrapper for the pack
+    CDataWrapper *system_attribute_dataset = key_data_storage->getNewOutputAttributeDataWrapper();
+    if(system_attribute_dataset) {
+        //fill datapack with
+        //! the dataaset can be pushed also in other moment
+        system_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, TimingUtil::getTimeStamp());
+        //add dataset type
+        system_attribute_dataset->addInt32Value(DataPackCommonKey::DPCK_DATASET_TYPE, DataPackCommonKey::DPCK_DATASET_TYPE_ALARM);
+        
+        //scan all alarm ad create the datapack
+        size_t alarm_size = alarm_catalog.size();
+        for(unsigned int idx = 0;
+            idx < alarm_size;
+            idx++) {
+            AlarmDescription *alarm = alarm_catalog.getAlarmByOrderedID(idx);
+            system_attribute_dataset->addInt32Value(alarm->getAlarmName(),
+                                                    (uint32_t)alarm->getCurrentSeverityCode());
+        }
+        //push out the system dataset
+        key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainAlarm, system_attribute_dataset);
+    }
+}
+
 void AbstractControlUnit::fillCDatawrapperWithCachedValue(std::vector<AttributeValue*>& cached_attributes, CDataWrapper& dataset) {
     for(std::vector<AttributeValue*>::iterator it = cached_attributes.begin();
         it != cached_attributes.end();
@@ -1731,6 +1756,8 @@ void AbstractControlUnit::alarmChanged(const std::string& alarm_name,
     alarm_logging_channel->logAlarm(getCUID(),
                                     "AbstractControlUnit",
                                     *alarm);
+    //update dataset alarm on cds
+    pushAlarmDataset();
 }
 
 void AbstractControlUnit::setBusyFlag(bool state) {

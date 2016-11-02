@@ -88,5 +88,9 @@ const bool AlarmCatalog::isCatalogClear() {
     getFlagsForSeverity(StateFlagServerityRegular, sf_list);
     //if flag in regular state are equals to the total dimension of catalog
     // ti mean that are no flag are in some severity state
-    return sf_list.size() == sf_list.size();
+    return StateFlagCatalog::size() == sf_list.size();
+}
+
+const size_t AlarmCatalog::size() {
+    return StateFlagCatalog::size();
 }

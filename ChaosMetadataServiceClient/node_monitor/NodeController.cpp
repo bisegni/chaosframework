@@ -35,7 +35,7 @@ using namespace chaos::metadata_service_client::monitor_system;
 
 NodeController::NodeController(const std::string& _node_uid):
 node_uid(_node_uid),
-node_health_uid(boost::str(boost::format("%1%%2%")%node_uid%chaos::DataPackPrefixID::HEALTH_DATASE_PREFIX)) {
+node_health_uid(boost::str(boost::format("%1%%2%")%node_uid%chaos::DataPackPrefixID::HEALTH_DATASET_POSTFIX)) {
     //add common node dataset
     monitor_key_list.push_back(node_health_uid);
     
@@ -63,7 +63,7 @@ const HealthInformation& NodeController::getHealthInformation() const {
 
 const unsigned int NodeController::getHandlerListSise() {
     boost::unique_lock<boost::mutex> wl(list_handler_mutex);
-    return list_handler.size();
+    return (unsigned int)list_handler.size();
 }
 
 void NodeController::updateData() {

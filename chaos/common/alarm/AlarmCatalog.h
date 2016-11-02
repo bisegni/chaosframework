@@ -81,8 +81,12 @@ namespace chaos {
                 
                 //!deserialize the description of a previously serialized catalog
                 void deserialize(chaos::common::data::CDataWrapper *serialized_data);
+                
                 //!return true if all alarm are in a regular state
                 const bool isCatalogClear();
+                
+                //!return the catalog size
+                const size_t size();
             };
         }
     }

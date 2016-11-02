@@ -30,15 +30,14 @@ using namespace chaos::metadata_service_client::node_monitor;
 
 ControlUnitController::ControlUnitController(const std::string &_node_uid):
 NodeController(_node_uid),
-cu_output_ds_key(boost::str(boost::format("%1%%2%") % getNodeUID() % chaos::DataPackPrefixID::OUTPUT_DATASE_PREFIX)),
-cu_input_ds_key(boost::str(boost::format("%1%%2%") % getNodeUID() % chaos::DataPackPrefixID::INPUT_DATASE_PREFIX)),
-cu_system_ds_key(boost::str(boost::format("%1%%2%") % getNodeUID() % chaos::DataPackPrefixID::SYSTEM_DATASE_PREFIX)) {
-    //add common node dataset
+cu_output_ds_key(boost::str(boost::format("%1%%2%") % getNodeUID() % chaos::DataPackPrefixID::OUTPUT_DATASET_POSTFIX)),
+cu_input_ds_key(boost::str(boost::format("%1%%2%") % getNodeUID() % chaos::DataPackPrefixID::INPUT_DATASET_POSTFIX)),
+cu_system_ds_key(boost::str(boost::format("%1%%2%") % getNodeUID() % chaos::DataPackPrefixID::SYSTEM_DATASET_POSTFIX)),
+cu_alarm_ds_key(boost::str(boost::format("%1%%2%") % getNodeUID() % chaos::DataPackPrefixID::ALARM_DATASET_POSTFIX)){
     monitor_key_list.push_back(cu_output_ds_key);
-    //add common node dataset
     monitor_key_list.push_back(cu_input_ds_key);
-    //add common node dataset
     monitor_key_list.push_back(cu_system_ds_key);
+    monitor_key_list.push_back(cu_alarm_ds_key);
 }
 
 ControlUnitController::~ControlUnitController() { }
@@ -73,6 +72,15 @@ void ControlUnitController::quantumSlotHasData(const std::string &key,
             _fireUpdateDSOnHandler(DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM,
                                    map_ds_sys);
         }
+    } else if (key.compare(cu_alarm_ds_key) == 0) {
+        CHECK_DS_CHANGED(last_ds_alarm, value) {
+            //update input datset key
+            _updateDatsetKeyMapValue((last_ds_alarm = value),
+                                     map_ds_alarm);
+            //call handler
+            _fireUpdateDSOnHandler(DataPackCommonKey::DPCK_DATASET_TYPE_ALARM,
+                                   map_ds_alarm);
+        }
     } else {
         NodeController::quantumSlotHasData(key,
                                            value);
@@ -82,7 +90,8 @@ void ControlUnitController::quantumSlotHasData(const std::string &key,
 void ControlUnitController::quantumSlotHasNoData(const std::string &key) {
     if (key.compare(cu_output_ds_key) == 0 ||
         key.compare(cu_input_ds_key) == 0 ||
-        key.compare(cu_system_ds_key) == 0) {
+        key.compare(cu_system_ds_key) == 0 ||
+        key.compare(cu_alarm_ds_key) == 0) {
     } else {
         NodeController::quantumSlotHasNoData(key);
     }
@@ -174,6 +183,10 @@ bool ControlUnitController::addHandler(NodeMonitorHandler *handler_to_add) {
         cu_handler->updatedDS(getNodeUID(),
                               DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM,
                               map_ds_sys);
+        cu_handler->updatedDS(getNodeUID(),
+                              DataPackCommonKey::DPCK_DATASET_TYPE_ALARM,
+                              map_ds_alarm);
+
     }
     return result;
 }

@@ -1052,11 +1052,12 @@ namespace chaos {
      */
     //! Namespace for the domain for the unique identification key
     namespace DataPackPrefixID {
-        static const char * const OUTPUT_DATASE_PREFIX = "_o";
-        static const char * const INPUT_DATASE_PREFIX = "_i";
-        static const char * const CUSTOM_DATASE_PREFIX = "_c";
-        static const char * const SYSTEM_DATASE_PREFIX = "_s";
-        static const char * const HEALTH_DATASE_PREFIX = NodeHealtDefinitionKey::HEALT_KEY_POSTFIX;
+        static const char * const OUTPUT_DATASET_POSTFIX    = "_o";
+        static const char * const INPUT_DATASET_POSTFIX     = "_i";
+        static const char * const CUSTOM_DATASET_POSTFIX    = "_c";
+        static const char * const SYSTEM_DATASET_POSTFIX    = "_s";
+        static const char * const ALARM_DATASET_POSTFIX     = "_a";
+        static const char * const HEALTH_DATASET_POSTFIX    = NodeHealtDefinitionKey::HEALT_KEY_POSTFIX;
     }
     /** @} */ // end of DataPackPrefixID
     
@@ -1083,6 +1084,8 @@ namespace chaos {
         static const unsigned int DPCK_DATASET_TYPE_CUSTOM             = 2;
         //! the constant that represent the system dataset type
         static const unsigned int DPCK_DATASET_TYPE_SYSTEM             = 3;
+        //! the constant that represent the alarm dataset type
+        static const unsigned int DPCK_DATASET_TYPE_ALARM              = 4;
     }
     /** @} */ // end of DataPackCommonKey
     
