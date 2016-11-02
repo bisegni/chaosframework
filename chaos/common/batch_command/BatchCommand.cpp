@@ -92,7 +92,7 @@ void BatchCommand::acquireHandler() {BC_END_RUNNIG_PROPERTY;}
 void BatchCommand::ccHandler() {BC_END_RUNNIG_PROPERTY;}
 
 //timeout handler
-bool BatchCommand::timeoutHandler() {return true;}
+bool BatchCommand::timeoutHandler() {return false;}
 
 //! called befor the command start the execution
 void BatchCommand::commandPre() {

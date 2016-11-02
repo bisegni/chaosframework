@@ -4,7 +4,9 @@ build="dynamic static"
 prefix="chaos_bundle"
 branch="development"
 buildtype=""
-mydir=`dirname $0`
+pushd `dirname $0` >& /dev/null
+mydir=`pwd -P`
+popd >& /dev/null
 
 currdir=`pwd`
 installdir="$currdir/chaos-build"
@@ -13,7 +15,25 @@ nproc="4"
 log="default"
 unset CHAOS_TARGET
 unset CHAOS_PREFIX
-while getopts j:b:o:a:t:r:sfhd: opt; do
+host=`hostname`
+host_arch=`uname -m`
+host_date=`date`
+
+
+mail_obj="[CHAOS CHECK] ERROR on $host($host_arch) $host_date"
+target=""
+stage=""
+
+
+function send_error_mail(){
+    to=$1
+    obj="$mail_obj [$target] during:$stage"
+    body=`cat $log|grep error`
+
+    mail -s "$obj" -t "$to" < $body
+EOF
+}
+while getopts j:b:o:a:t:r:sfhd:i: opt; do
     case $opt in
 	t) 
 	    branch=$OPTARG
@@ -66,6 +86,7 @@ function printlog(){
 }
 function initialize_bundle(){
     printlog "* initializing repo"
+
     if ! repo init -u ssh://git@opensource-stash.infn.it:7999/chaos/chaos_repo_bundle.git -b development >> $log 2>&1;then
 	printlog "## repo initialization failed"
 	return 1
@@ -93,7 +114,8 @@ function compile_bundle(){
 
     printlog "* entering in $dir checking out \"$branch\""
     printlog "* log file \"$log\""
-
+    stage="initilization $dir $arch $build $branch"
+    target="DIR $dir, ARCH $arch, BUILD:$build, BRANCH:$branch"
     install_prefix="$installdir/chaos-distrib-$arch-$build-$branch"
     if ! mkdir -p $install_prefix;then
 	printlog "## cannot create $install_prefix"
@@ -101,13 +123,15 @@ function compile_bundle(){
     fi
     cmake_params="-DCMAKE_INSTALL_PREFIX=$install_prefix";
     printlog "* synchronizing with branch \"$branch\"...."
-    
+    stage="initilization bundle"    
     if [ ! -d chaosframework ];then
 	if ! initialize_bundle;then
+
 	    popd >& /dev/null
 	    exit 1
 	fi
     fi
+    stage="git access to \"$branch\""
     if ! chaosframework/tools/chaos_git.sh -c $branch >> $log 2>&1 ;then
 	printlog "## error cannot checkout \"$branch\""
 	popd > /dev/null
@@ -147,9 +171,9 @@ function compile_bundle(){
 	    enable_ccs=true
 	    ;;
     esac
-
+    stage="configuration ($cmake_params)"
     if [ -d "$inputdir" ];then
-	chaosframework/tools/chaos_clean.sh . >> $log 2>&1
+#	chaosframework/tools/chaos_clean.sh . >> $log 2>&1
 	printlog "* configuring $dir cmake \"$cmake_params\"...."
 	if ! cmake $cmake_params . >> $log 2>&1;then
 	    printlog "## error during cmake configuration \"$cmake_params\""
@@ -171,35 +195,47 @@ function compile_bundle(){
 	
     fi
 
-
+    stage="compilation ($cmake_params)"
     printlog "* compiling $dir with \"$cmake_params\" ...."
     if ! make -j $nproc install  >> $log 2>&1 ;then
 	printlog "## error during compilation"
     else
 	printlog "* compilation ok"
+	stage="CCS compilation"
 	if [ -n "$enable_ccs" ];then
-	        if ! make -j $nproc ccs install  >> $log 2>&1 ;then
-		    printlog "## error compiling CCS"
-		else
-		    printlog "CCS compilation ok"
-		fi
+	    printlog "* compiling CCS ..."
+	    if ! make -j $nproc ccs install  >> $log 2>&1 ;then
+		printlog "## error compiling CCS"
+	    else
+		printlog "* CCS compilation ok"
+	    fi
 	fi
     fi
-    a=`uname -m`
-    if [ "$a" == "$arch" ] && [ $deploy_mode -gt 0 ]; then
+
+    if [ "$host_arch" == "$arch" ] && [ $deploy_mode -gt 0 ]; then
 	printlog "* testing distribution on architecture \"$arch\""
-	pushd $installdir >& /dev/null
-	export LD_LIBRARY_PATH=$installdir/lib
-	if ./tools/chaos_test.sh -d tools/test >> $log 2>&1 ;then
+	pushd $install_prefix >& /dev/null
+	export LD_LIBRARY_PATH=$install_prefix/lib
+	export CHAOS_PREFIX=$install_prefix
+	export CHAOS_TOOLS=$CHAOS_PREFIX/tools
+	stage="chaos test"
+	if $mydir/chaos_test.sh -d tools/test >> $log 2>&1 ;then
+	    printlog "* test OK"
 	    popd >& /dev/null
 	    printlog "* packaging distribution on architecture \"$arch\""
-
-	    if $mydir/chaos_debianizer.sh -i $installdir -t development -r;then
+	    stage="chaos packaging ($install_prefix)"
+	    if $mydir/chaos_debianizer.sh -i $install_prefix -t development -r >> $log 2>&1 ;then
 		printlog "* packaging ok"
 	    else
 		printlog "## error during packaging"
 	    fi
+	else
+	    printlog "## test FAILED"
+	    popd >& /dev/null
 	fi
+	unset LD_LIBRARY_PATH
+	unset CHAOS_PREFIX
+	unset CHAOS_TOOLS
     fi
     popd >& /dev/null
 }

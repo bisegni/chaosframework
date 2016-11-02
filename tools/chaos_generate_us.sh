@@ -112,7 +112,7 @@ function to_skip(){
 }
 for c in $listah; do
     if to_skip $c; then
-#	echo "* skipping $c"
+	echo "* skipping $c"
 	continue;
     fi
     
