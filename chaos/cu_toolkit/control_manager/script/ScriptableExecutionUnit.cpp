@@ -75,7 +75,6 @@ void ScriptableExecutionUnit::addAttributeToDataSet(const std::string& attribute
 }
 
 void ScriptableExecutionUnit::unitDefineActionAndDataset() throw(CException) {
-    AbstractExecutionUnit::unitDefineActionAndDataset();
     int err = 0;
     bool exists = false;
     //clear bitet for implemented lagorithm handler

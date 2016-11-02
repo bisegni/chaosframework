@@ -33,8 +33,8 @@ void MultiSeverityAlarmHandler::alarmChanged(const std::string& alarm_name,
 
 
 #pragma MultiSeverityAlarm
-MultiSeverityAlarm::MultiSeverityAlarm(const std::string alarm_name,
-                                       const std::string alarm_description):
+MultiSeverityAlarm::MultiSeverityAlarm(const std::string& alarm_name,
+                                       const std::string& alarm_description):
 
 AlarmDescription(alarm_name,
                  alarm_description){
@@ -42,20 +42,18 @@ AlarmDescription(alarm_name,
              "clear",
              "Alarm is in a regular state",
              StateFlagServerityRegular);
-    addState(MultiSeverityAlarmLevelLow,
-             "low",
+    addState(MultiSeverityAlarmLevelWarning,
+             "Warning",
              "Low probability that something will fails, attention is needed",
-             StateFlagServerityLow);
-    addState(MultiSeverityAlarmLevelHig,
-             "Severe",
+             StateFlagServerityWarning);
+    addState(MultiSeverityAlarmLevelHigh,
+             "High",
              "High probability that something is going to fails",
-             StateFlagServeritySevere);
+             StateFlagServerityHigh);
     
 }
 
-MultiSeverityAlarm::~MultiSeverityAlarm() {
-    
-}
+MultiSeverityAlarm::~MultiSeverityAlarm() {}
 
 void MultiSeverityAlarm::setNewSeverity(const MultiSeverityAlarmLevel new_severity) {
     setCurrentLevel(new_severity);

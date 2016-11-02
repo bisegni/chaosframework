@@ -54,12 +54,6 @@ namespace chaos{
                 AlarmDescription(const std::string alarm_name,
                                  const std::string alarm_description);
                 ~AlarmDescription();
-            protected:;
-                bool addState(int8_t severity_code,
-                              const std::string& severity_tag,
-                              const std::string& severity_description,
-                              const chaos::common::state_flag::StateFlagServerity severity);
-                
             public:
                 const std::string& getAlarmName() const;
                 const std::string& getAlarmDescription() const;
@@ -67,6 +61,10 @@ namespace chaos{
                 const int8_t getCurrentSeverityCode() const;
                 const std::string& getCurrentSeverityTag() const;
                 const std::string& getCurrentSeverityDescription() const;
+                bool addState(int8_t severity_code,
+                              const std::string& severity_tag,
+                              const std::string& severity_description,
+                              const chaos::common::state_flag::StateFlagServerity severity);
             };
             
             typedef boost::shared_ptr<AlarmDescription> AlarmDescriptionShrdPtr;

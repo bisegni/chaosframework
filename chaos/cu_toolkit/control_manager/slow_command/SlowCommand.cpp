@@ -21,6 +21,7 @@
 #include <chaos/cu_toolkit/control_manager/slow_command/SlowCommand.h>
 using namespace chaos;
 using namespace chaos::common::data;
+using namespace chaos::common::alarm;
 using namespace chaos::cu::control_manager;
 using namespace chaos::cu::control_manager::slow_command;
 #define SCLOG_HEAD_SL "[SlowCommand-" << device_id << "-" << unique_id << "] "
@@ -54,21 +55,36 @@ AttributeSharedCacheWrapper * const SlowCommand::getAttributeCache() {
     return attribute_cache;
 }
 
-//!update the system status flag
-void SlowCommand::setSystemStatusFlag(StatusFlagType flag_type,
-                                      bool new_flag_value) {
-    abstract_control_unit->setSystemStatusFlag(flag_type,
-                                               new_flag_value);
+#pragma mark Alarm API
+
+bool SlowCommand::setAlarmSeverity(const std::string& alarm_name,
+                                   const MultiSeverityAlarmLevel alarm_severity) {
+    return abstract_control_unit->setAlarmSeverity(alarm_name,
+                                                   alarm_severity);
 }
 
-//! return the value of a specific system flag
-const bool SlowCommand::getSystemStatsuFlag(StatusFlagType flag_type) {
-    return abstract_control_unit->getSystemStatsuFlag(flag_type);
+bool SlowCommand::setAlarmSeverity(const unsigned int alarm_ordered_id,
+                                   const chaos::common::alarm:: MultiSeverityAlarmLevel alarm_severity) {
+    return abstract_control_unit->setAlarmSeverity(alarm_ordered_id,
+                                                   alarm_severity);
 }
 
-//! update status flag and push
-void SlowCommand::updateAndPusblishStatusFlag(StatusFlagType flag_type,
-                                              bool new_flag_value) {
-    abstract_control_unit->updateAndPusblishStatusFlag(flag_type,
-                                                       new_flag_value);
+bool SlowCommand::getAlarmSeverity(const std::string& alarm_name,
+                                   MultiSeverityAlarmLevel& alarm_severity) {
+    return abstract_control_unit->getAlarmSeverity(alarm_name,
+                                                   alarm_severity);
+}
+
+bool SlowCommand::getAlarmSeverity(const unsigned int alarm_ordered_id,
+                                   MultiSeverityAlarmLevel& alarm_severity) {
+    return abstract_control_unit->getAlarmSeverity(alarm_ordered_id,
+                                                   alarm_severity);
+}
+
+void SlowCommand::setBusyFlag(bool state) {
+    return abstract_control_unit->setBusyFlag(state);
+}
+
+bool SlowCommand::getBusyFlag() {
+    return abstract_control_unit->getBusyFlag();
 }

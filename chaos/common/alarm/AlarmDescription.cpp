@@ -73,3 +73,5 @@ const std::string& AlarmDescription::getCurrentSeverityTag() const {
 const std::string& AlarmDescription::getCurrentSeverityDescription() const {
     return StateFlag::getCurrentStateLevel().getDescription();
 }
+
+

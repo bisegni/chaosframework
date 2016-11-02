@@ -21,7 +21,6 @@
 #include <chaos/common/global.h>
 #include <chaos/common/utility/UUIDUtil.h>
 #include <chaos/common/healt_system/HealtManager.h>
-#include <chaos/common/metadata_logging/metadata_logging.h>
 #include <chaos/common/event/channel/InstrumentEventChannel.h>
 
 #include <chaos/cu_toolkit/data_manager/DataManager.h>
@@ -41,6 +40,7 @@
 
 using namespace boost::uuids;
 using namespace chaos::common::data;
+using namespace chaos::common::alarm;
 using namespace chaos::common::utility;
 using namespace chaos::common::exception;
 using namespace chaos::common::data::cache;
@@ -82,6 +82,8 @@ control_unit_instance(UUIDUtil::generateUUIDLite()),
 control_unit_type(_control_unit_type),
 control_unit_id(_control_unit_id),
 control_unit_param(_control_unit_param),
+alarm_logging_channel(NULL),
+alarm_catalog(_control_unit_id),
 push_dataset_counter(0),
 last_push_rate_grap_ts(0),
 attribute_value_shared_cache(NULL),
@@ -104,6 +106,8 @@ control_unit_instance(UUIDUtil::generateUUIDLite()),
 control_unit_type(_control_unit_type),
 control_unit_id(_control_unit_id),
 control_unit_param(_control_unit_param),
+alarm_logging_channel(NULL),
+alarm_catalog(_control_unit_id),
 push_dataset_counter(0),
 last_push_rate_grap_ts(0),
 attribute_value_shared_cache(NULL),
@@ -293,10 +297,6 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configurat
     getActionDescrionsInDataWrapper(setup_configuration);
 }
 
-void AbstractControlUnit::unitDefineActionAndDataset() throw(CException) {
-    
-}
-
 void AbstractControlUnit::unitDefineDriver(std::vector<DrvRequestInfo>& neededDriver) {
     
     for(ControlUnitDriverListIterator iter = control_unit_drivers.begin();
@@ -334,8 +334,6 @@ void AbstractControlUnit::doInitRpCheckList() throw(CException) {
     CHAOS_CHECK_LIST_START_SCAN_TO_DO(check_list_sub_service, "_init"){
         
         CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_init", INIT_RPC_PHASE_CALL_INIT_STATE){
-            //reset staus flag
-            memset(&status_flag_control_unit, 0, sizeof(StatusFlag));
             //call init sequence
             init(NULL);
             break;
@@ -1020,6 +1018,10 @@ CDataWrapper* AbstractControlUnit::_setDatasetAttribute(CDataWrapper *dataset_at
 #pragma mark State Machine method
 // Startable Service method
 void AbstractControlUnit::init(void *init_data) throw(CException) {
+    //allocate metadata loggin channel for alarm
+    alarm_logging_channel = (AlarmLoggingChannel*)MetadataLoggingManager::getInstance()->getChannel("AlarmLoggingChannel");
+    if(alarm_logging_channel) {LOG_AND_TROW(ACULERR_, -1, "Alarm logging channel not found");}
+    
     //the init of the implementation unit goes after the infrastructure one
     doInitSMCheckList();
 }
@@ -1037,6 +1039,10 @@ void AbstractControlUnit::stop() throw(CException) {
 // Startable Service method
 void AbstractControlUnit::deinit() throw(CException) {
     redoInitSMCheckList();
+    if(alarm_logging_channel) {
+        MetadataLoggingManager::getInstance()->releaseChannel(alarm_logging_channel);
+        alarm_logging_channel = NULL;
+    }
 }
 
 //! State machine is gone into recoverable error
@@ -1331,7 +1337,17 @@ void AbstractControlUnit::_goInFatalError(chaos::CException recoverable_exceptio
 }
 
 void AbstractControlUnit::_completeDatasetAttribute() {
+    //add busy flag
+    DatasetDB::addAttributeToDataSet("busy",
+                                     "Notify when a control unit is doing some usefull work",
+                                     DataType::TYPE_BOOLEAN,
+                                     DataType::Output);
     
+    //add global alarm checn
+    DatasetDB::addAttributeToDataSet("alarm_catalog",
+                                     "Notify when some alarm has been issued",
+                                     DataType::TYPE_BOOLEAN,
+                                     DataType::Output);
 }
 
 //!handler calledfor restor a control unit to a determinate point
@@ -1460,9 +1476,6 @@ CDataWrapper* AbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_att
         
         throw ex;
     }
-    
-    //at this time notify the wel gone setting of comand
-    //if(deviceEventChannel) deviceEventChannel->notifyForAttributeSetting(DatasetDB::getDeviceID(), 0);
     return NULL;
 }
 
@@ -1644,50 +1657,8 @@ void AbstractControlUnit::timeout() {
     _updatePushRateMetric();
 }
 
-bool AbstractControlUnit::isInputAttributeChangeAuthorizedByHandler(const std::string& attr_name){
+bool AbstractControlUnit::isInputAttributeChangeAuthorizedByHandler(const std::string& attr_name) {
     return dataset_attribute_manager.getHandlerResult(attr_name);
-}
-
-void AbstractControlUnit::setSystemStatusFlag(StatusFlagType flag_type,
-                                              bool new_flag_value) {
-    
-    switch (flag_type) {
-        case StatusFlagTypeBusy:
-            status_flag_control_unit.busy = new_flag_value;
-            break;
-        case StatusFlagTypeWarning:
-            status_flag_control_unit.warning = new_flag_value;
-            break;
-        case StatusFlagTypeError:
-            status_flag_control_unit.error = new_flag_value;
-            break;
-    }
-    
-    boost::shared_ptr<SharedCacheLockDomain> wrt_lkc = attribute_value_shared_cache->getLockOnDomain(DOMAIN_SYSTEM, true);
-    AttributeCache& systemm_attribute_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM);
-    systemm_attribute_cache.setValueForAttribute(DataPackSystemKey::DP_SYS_BUSY_FLAG, static_cast<const void *>(&status_flag_control_unit.busy), sizeof(bool));
-    systemm_attribute_cache.setValueForAttribute(DataPackSystemKey::DP_SYS_WARNING_FLAG, static_cast<const void *>(&status_flag_control_unit.warning), sizeof(bool));
-    systemm_attribute_cache.setValueForAttribute(DataPackSystemKey::DP_SYS_ERROR_FLAG, static_cast<const void *>(&status_flag_control_unit.error), sizeof(bool));
-}
-
-const bool AbstractControlUnit::getSystemStatsuFlag(StatusFlagType flag_type) {
-    switch (flag_type) {
-        case StatusFlagTypeBusy:
-            return status_flag_control_unit.busy;
-        case StatusFlagTypeWarning:
-            return status_flag_control_unit.warning;
-        case StatusFlagTypeError:
-            return status_flag_control_unit.error;
-    }
-}
-
-
-//!se the sattus flag
-void AbstractControlUnit::updateAndPusblishStatusFlag(StatusFlagType flag_type,
-                                                      bool new_flag_value) {
-    AbstractControlUnit::setSystemStatusFlag(flag_type,
-                                             new_flag_value);
-    AbstractControlUnit::pushSystemDataset();
 }
 
 void AbstractControlUnit::copyInitConfiguraiton(CDataWrapper& copy) {
@@ -1695,4 +1666,85 @@ void AbstractControlUnit::copyInitConfiguraiton(CDataWrapper& copy) {
     
     //copy all key
     init_configuration->copyAllTo(copy);
+}
+
+#pragma mark Abstract Control Unit API
+void AbstractControlUnit::addAlarm(const std::string& alarm_name,
+                                   const std::string& alarm_description) {
+    alarm_catalog.addAlarm(new MultiSeverityAlarm(alarm_name,
+                                                  alarm_description));
+    //add this instance as
+    alarm_catalog.addAlarmHandler(alarm_name,
+                                  this);
+}
+
+bool AbstractControlUnit::setAlarmSeverity(const std::string& alarm_name,
+                                           const MultiSeverityAlarmLevel alarm_severity) {
+    
+    AlarmDescription *alarm = alarm_catalog.getAlarmByName(alarm_name);
+    if(alarm == NULL) return false;
+    alarm->setCurrentSeverity(alarm_severity);
+    
+    //update global alarm output attribute
+    AttributeCache& output_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT);
+    if(output_cache.hasName("alarm_catalog")) {
+        output_cache.getValueSettingByName("alarm_catalog")->setValue(CDataVariant(alarm_catalog.isCatalogClear()==false));
+    }
+    return true;
+}
+
+bool AbstractControlUnit::setAlarmSeverity(const unsigned int alarm_ordered_id,
+                                           const MultiSeverityAlarmLevel alarm_severity) {
+    AlarmDescription *alarm = alarm_catalog.getAlarmByOrderedID(alarm_ordered_id);
+    if(alarm == NULL) return false;
+    alarm->setCurrentSeverity(alarm_severity);
+    
+    //update global alarm output attribute
+    AttributeCache& output_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT);
+    if(output_cache.hasName("alarm_catalog")) {
+        output_cache.getValueSettingByName("alarm_catalog")->setValue(CDataVariant(alarm_catalog.isCatalogClear()==false));
+    }
+    return true;
+}
+
+bool AbstractControlUnit::getAlarmSeverity(const std::string& alarm_name,
+                                           MultiSeverityAlarmLevel& alarm_severity) {
+    AlarmDescription *alarm = alarm_catalog.getAlarmByName(alarm_name);
+    if(alarm == NULL) return false;
+    alarm_severity = static_cast<MultiSeverityAlarmLevel>(alarm->getCurrentSeverityCode());
+    return true;
+}
+
+bool AbstractControlUnit::getAlarmSeverity(const unsigned int alarm_ordered_id,
+                                           MultiSeverityAlarmLevel& alarm_severity) {
+    AlarmDescription *alarm = alarm_catalog.getAlarmByOrderedID(alarm_ordered_id);
+    if(alarm == NULL) return false;
+    alarm_severity = static_cast<MultiSeverityAlarmLevel>(alarm->getCurrentSeverityCode());
+    return true;
+}
+
+void AbstractControlUnit::alarmChanged(const std::string& alarm_name,
+                                       const int8_t alarm_severity) {
+    AlarmDescription *alarm = alarm_catalog.getAlarmByName(alarm_name);
+    CHAOS_ASSERT(alarm);
+    //update alarm log
+    alarm_logging_channel->logAlarm(getCUID(),
+                                    "AbstractControlUnit",
+                                    *alarm);
+}
+
+void AbstractControlUnit::setBusyFlag(bool state) {
+    AttributeCache& output_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT);
+    if(output_cache.hasName("busy")) {
+        output_cache.getValueSettingByName("busy")->setValue(CDataVariant(state));
+    }
+}
+
+const bool AbstractControlUnit::getBusyFlag() const {
+    AttributeCache& output_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT);
+    if(output_cache.hasName("busy")) {
+        return output_cache.getValueSettingByName("busy")->getAsVariant().asBool();
+    }else {
+        return false;
+    }
 }

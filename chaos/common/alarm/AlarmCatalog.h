@@ -43,6 +43,12 @@ namespace chaos {
                  */
                 void addAlarm(AlarmDescription *new_alarm);
                 
+                bool addAlarmHandler(const std::string& alarm_name,
+                                     AlarmHandler *alarm_handler);
+                
+                bool removeAlarmHandler(const std::string& alarm_name,
+                                        AlarmHandler *alarm_handler);
+                
                 //!return a pointer to the alarm description
                 /*!
                  The ownerhip of the instance will not be passed to the caller
@@ -56,13 +62,27 @@ namespace chaos {
                  */
                 AlarmDescription *getAlarmByOrderedID(const unsigned int alarm_ordered_id);
                 
+                //!Return the raw alarm current state
+                /*!
+                 all byte describe the current state of an alarm so the rtrsulting
+                 memory as size = num of alarm * char)
+                 */
                 std::auto_ptr<chaos::common::data::CDataBuffer> getRawFlagsLevel();
                 
+                //!Set the raw alarm state of alarm current state
+                /*!
+                 all byte describe the current state of an alarm so the rtrsulting
+                 memory as size = num of alarm * char)
+                 */
                 void setApplyRawFlagsValue(std::auto_ptr<chaos::common::data::CDataBuffer>& raw_level);
                 
+                //!return the serialization of description of alarm catalog
                 std::auto_ptr<chaos::common::data::CDataWrapper> serialize();
                 
+                //!deserialize the description of a previously serialized catalog
                 void deserialize(chaos::common::data::CDataWrapper *serialized_data);
+                //!return true if all alarm are in a regular state
+                const bool isCatalogClear();
             };
         }
     }

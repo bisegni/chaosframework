@@ -19,6 +19,7 @@
  *    	limitations under the License.
  */
 
+#include <chaos/common/global.h>
 #include <chaos/common/alarm/AlarmCatalog.h>
 
 using namespace chaos::common::data;
@@ -31,8 +32,27 @@ StateFlagCatalog(catalog_name){}
 AlarmCatalog::~AlarmCatalog() {}
 
 void AlarmCatalog::addAlarm(AlarmDescription *new_alarm) {
+    CHAOS_ASSERT(new_alarm);
     StateFlag *state_flag_ptr = dynamic_cast<StateFlag*>(new_alarm);
     StateFlagCatalog::addFlag(boost::shared_ptr<StateFlag>(state_flag_ptr));
+}
+
+bool AlarmCatalog::addAlarmHandler(const std::string& alarm_name,
+                     AlarmHandler *alarm_handler) {
+    CHAOS_ASSERT(alarm_handler);
+    AlarmDescription *alarm = getAlarmByName(alarm_name);
+    if(alarm == NULL) return false;
+    alarm->addListener(alarm_handler);
+    return true;
+}
+
+bool AlarmCatalog::removeAlarmHandler(const std::string& alarm_name,
+                        AlarmHandler *alarm_handler) {
+    CHAOS_ASSERT(alarm_handler);
+    AlarmDescription *alarm = getAlarmByName(alarm_name);
+    if(alarm == NULL) return false;
+    alarm->removeListener(alarm_handler);
+    return true;
 }
 
 AlarmDescription *AlarmCatalog::getAlarmByName(const std::string& alarm_name) {
@@ -61,4 +81,12 @@ std::auto_ptr<CDataWrapper> AlarmCatalog::serialize() {
 void AlarmCatalog::deserialize(CDataWrapper *serialized_data) {
     StateFlagCatalogSDWrapper sd_wrap(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(StateFlagCatalog, *this));
     return sd_wrap.deserialize(serialized_data);
+}
+
+const bool AlarmCatalog::isCatalogClear() {
+    VectorStateFlag sf_list;
+    getFlagsForSeverity(StateFlagServerityRegular, sf_list);
+    //if flag in regular state are equals to the total dimension of catalog
+    // ti mean that are no flag are in some severity state
+    return sf_list.size() == sf_list.size();
 }

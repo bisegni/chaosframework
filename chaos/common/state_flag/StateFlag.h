@@ -46,8 +46,7 @@ namespace chaos {
              */
             typedef enum StateFlagServerity {
                 StateFlagServerityRegular,
-                StateFlagServerityLow,
-                StateFlagServerityElevated,
+                StateFlagServerityWarning,
                 StateFlagServerityHigh,
                 StateFlagServeritySevere,
                 StateFlagServerityUndefuned

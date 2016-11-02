@@ -31,18 +31,21 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 
+#include <chaos/common/chaos_types.h>
+#include <chaos/common/data/DatasetDB.h>
+#include <chaos/common/data/CDataWrapper.h>
+#include <chaos/common/utility/SWEService.h>
+#include <chaos/common/alarm/AlarmCatalog.h>
+#include <chaos/common/alarm/MultiSeverityAlarm.h>
 #include <chaos/common/exception/exception.h>
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/utility/ArrayPointer.h>
 #include <chaos/common/general/Configurable.h>
 #include <chaos/common/action/ActionDescriptor.h>
-#include <chaos/common/utility/SWEService.h>
 #include <chaos/common/utility/AggregatedCheckList.h>
 #include <chaos/common/async_central/async_central.h>
+#include <chaos/common/metadata_logging/metadata_logging.h>
 #include <chaos/common/data/cache/AttributeValueSharedCache.h>
-#include <chaos/common/data/CDataWrapper.h>
-#include <chaos/common/data/DatasetDB.h>
-#include <chaos/common/chaos_types.h>
 
 #include <chaos/cu_toolkit/data_manager/KeyDataStorage.h>
 #include <chaos/cu_toolkit/control_manager/handler/handler.h>
@@ -97,34 +100,22 @@ namespace chaos{
                 INIT_RPC_PHASE_CALL_UNIT_INIT,
                 INIT_RPC_PHASE_UPDATE_CONFIGURATION,
                 INIT_RPC_PHASE_PUSH_DATASET
-            }InitRPCPhase;
+            } InitRPCPhase;
             
             typedef enum {
                 INIT_SM_PHASE_INIT_DB = 0,
                 INIT_SM_PHASE_CREATE_DATA_STORAGE,
-            }InitSMPhase;
+            } InitSMPhase;
             
             
             typedef enum {
                 START_RPC_PHASE_UNIT = 0,
                 START_RPC_PHASE_IMPLEMENTATION
-            }StartRPCPhase;
+            } StartRPCPhase;
             
             typedef enum {
                 START_SM_PHASE_STAT_TIMER = 0
-            }StartSMPhase;
-            
-            typedef enum StatusFlagType{
-                StatusFlagTypeBusy,
-                StatusFlagTypeWarning,
-                StatusFlagTypeError
-            }StatusFlagType;
-            
-            typedef struct StatusFlag {
-                bool busy;
-                bool warning;
-                bool error;
-            } StatusFlag;
+            } StartSMPhase;
             
             CHAOS_DEFINE_VECTOR_FOR_TYPE(boost::shared_ptr<chaos::common::data::CDataWrapper>, ACUStartupCommandList)
             
@@ -134,7 +125,8 @@ namespace chaos{
              class that permit to publish rpc method for control the control unit life cycle. Most of the API
              that needs to be used to create device and his dataset are contained into the DeviceSchemaDB class.
              */
-            class AbstractControlUnit :
+            class AbstractControlUnit:
+            public chaos::common::alarm::AlarmHandler,
             public chaos::cu::driver_manager::DriverErogatorInterface,
             public DeclareAction,
             protected DatasetDB,
@@ -168,8 +160,9 @@ namespace chaos{
                 //! control unit load param
                 std::string control_unit_param;
                 
-                //!control unti status flag
-                StatusFlag status_flag_control_unit;
+                //!control unit alarm group
+                chaos::common::metadata_logging::AlarmLoggingChannel    *alarm_logging_channel;
+                chaos::common::alarm::AlarmCatalog                      alarm_catalog;
                 
                 //!these are the startup command list
                 /*!
@@ -399,7 +392,7 @@ namespace chaos{
                  Subclass, in this method can call the api to create the dataset, after this method
                  this class will collet all the information and send all to the MDS server.
                  */
-                virtual void unitDefineActionAndDataset() throw(CException);
+                virtual void unitDefineActionAndDataset() throw(CException) = 0;
                 
                 //! Abstract method for the definition of the driver
                 /*!
@@ -505,45 +498,31 @@ namespace chaos{
                 //!check if attribute hase been autorized by handler
                 bool isInputAttributeChangeAuthorizedByHandler(const std::string& attr_name);
                 
-                //!update the system status flag
-                void setSystemStatusFlag(StatusFlagType flag_type,
-                                         bool new_flag_value);
+                //---------------alarm api-------------
+                //!create a new alarm into the catalog
+                void addAlarm(const std::string& alarm_name,
+                              const std::string& alarm_description);
+                //!set the alarm state
+                bool setAlarmSeverity(const std::string& alarm_name,
+                                      const common::alarm::MultiSeverityAlarmLevel alarm_severity);
+                //!set the alarm state
+                bool setAlarmSeverity(const unsigned int alarm_ordered_id,
+                                      const common::alarm::MultiSeverityAlarmLevel alarm_severity);
+                //!get the current alarm state
+                bool getAlarmSeverity(const std::string& alarm_name,
+                                      common::alarm::MultiSeverityAlarmLevel& alarm_severity);
+                //!get the current alarm state
+                bool getAlarmSeverity(const unsigned int alarm_ordered_id,
+                                      common::alarm::MultiSeverityAlarmLevel& alarm_severity);
                 
-                //! return the value of a specific system flag
-                const bool getSystemStatsuFlag(StatusFlagType flag_type);
+                void setBusyFlag(bool state);
                 
-                //! update status flag and push
-                void updateAndPusblishStatusFlag(StatusFlagType flag_type,
-                                           bool new_flag_value);
-            public:
+                const bool getBusyFlag() const;
                 
-                //! Default Contructor
-                /*!
-                 \param _control_unit_type the superclass need to set the control unit type for his implementation
-                 \param _control_unit_id unique id for the control unit
-                 \param _control_unit_param is a string that contains parameter to pass during the contorl unit creation
-                 */
-                AbstractControlUnit(const std::string& _control_unit_type,
-                                    const std::string& _control_unit_id,
-                                    const std::string& _control_unit_param);
+                void alarmChanged(const std::string& alarm_name,
+                                  const int8_t alarm_severity);
                 
-                //! Default Contructor
-                /*!
-                 \param _control_unit_type the superclass need to set the control unit type for his implementation
-                 \param _control_unit_id unique id for the control unit
-                 \param _control_unit_param is a string that contains parameter to pass during the contorl unit creation
-                 \param _control_unit_drivers driver information
-                 */
-                AbstractControlUnit(const std::string& _control_unit_type,
-                                    const std::string& _control_unit_id,
-                                    const std::string& _control_unit_param,
-                                    const ControlUnitDriverList& _control_unit_drivers);
-                
-                //! default destructor
-                virtual ~AbstractControlUnit();
-                
-                
-                //![API] Api for publish a lass method as RPC action
+                //![API] Api for publish a class method as RPC action
                 /*!
                  This is a convenient method to register actiona associated to this instance of the class, class pointer
                  is associated directly to the current instance of this class and domain is fixed to the Control Unit instance.
@@ -579,6 +558,32 @@ namespace chaos{
                 bool removeHandlerOnAttributeName(const std::string& attribute_name) {
                     return dataset_attribute_manager.removeHandlerOnAttributeName(attribute_name);
                 }
+            public:
+                
+                //! Default Contructor
+                /*!
+                 \param _control_unit_type the superclass need to set the control unit type for his implementation
+                 \param _control_unit_id unique id for the control unit
+                 \param _control_unit_param is a string that contains parameter to pass during the contorl unit creation
+                 */
+                AbstractControlUnit(const std::string& _control_unit_type,
+                                    const std::string& _control_unit_id,
+                                    const std::string& _control_unit_param);
+                
+                //! Default Contructor
+                /*!
+                 \param _control_unit_type the superclass need to set the control unit type for his implementation
+                 \param _control_unit_id unique id for the control unit
+                 \param _control_unit_param is a string that contains parameter to pass during the contorl unit creation
+                 \param _control_unit_drivers driver information
+                 */
+                AbstractControlUnit(const std::string& _control_unit_type,
+                                    const std::string& _control_unit_id,
+                                    const std::string& _control_unit_param,
+                                    const ControlUnitDriverList& _control_unit_drivers);
+                
+                //! default destructor
+                virtual ~AbstractControlUnit();
                 
                 //! Return the control unit instance
                 const char * getCUInstance();

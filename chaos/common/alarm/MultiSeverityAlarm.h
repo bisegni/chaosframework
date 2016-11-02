@@ -30,8 +30,8 @@ namespace chaos{
             
             typedef enum MultiSeverityAlarmLevel {
                 MultiSeverityAlarmLevelClear,
-                MultiSeverityAlarmLevelLow,
-                MultiSeverityAlarmLevelHig
+                MultiSeverityAlarmLevelWarning,
+                MultiSeverityAlarmLevelHigh
             } MultiSeverityAlarmLevel;
             
             //!Alarm handler abstraction
@@ -47,10 +47,11 @@ namespace chaos{
             };
             
             class MultiSeverityAlarm:
-            protected AlarmDescription {
+            public AlarmDescription {
+                
             public:
-                MultiSeverityAlarm(const std::string alarm_name,
-                                   const std::string alarm_description);
+                MultiSeverityAlarm(const std::string& alarm_name,
+                                   const std::string& alarm_description);
                 ~MultiSeverityAlarm();
                 
                 void setNewSeverity(const MultiSeverityAlarmLevel new_severity);
