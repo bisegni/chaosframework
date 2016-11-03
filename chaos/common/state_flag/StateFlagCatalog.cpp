@@ -64,6 +64,7 @@ StateFlagCatalog::~StateFlagCatalog(){
 
 void StateFlagCatalog::stateFlagUpdated(const std::string& flag_uuid,
                                         const std::string& flag_name,
+                                        const std::string& level_name,
                                         const StateFlagServerity current_level_severity) {
     StateFlagElementContainerFlaUUIDIndex& uuid_index = catalog_container().get<mitag_flag_uuid>();
     StateFlagElementContainerFlaUUIDIndexItarator src_flag_it = uuid_index.find(flag_uuid);

@@ -85,13 +85,13 @@ private slots:
 
     void on_pushButtonSetRunScheduleDelay_clicked();
 
-    void on_pushButton_clicked();
-
     void on_pushButtonRecoverError_clicked();
 
     void on_pushButtonOpenInstanceEditor_clicked();
 
     void tabIndexChanged(int new_index);
+
+    void on_pushButtonShowPlot_clicked();
 
 private:
     QString getStatusString(int status);

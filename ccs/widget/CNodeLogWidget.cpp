@@ -125,10 +125,6 @@ void CNodeLogWidget::logEntriesTableSelectionChanged(const QModelIndex& current_
     }
 }
 
-void CNodeLogWidget::on_pushButtonUpdateLogTypes_clicked() {
-    domain_list_model.updateDomainListForUID(nodeUID());
-}
-
 void CNodeLogWidget::on_lineEditMaxNumberOfResult_returnPressed() {
     setMaxResultItem(ui->lineEditMaxNumberOfResult->text().toUInt());
     updateEntryList();
@@ -141,10 +137,17 @@ void CNodeLogWidget::on_lineEditRefreshUpdate_editingFinished() {
 
 void CNodeLogWidget::timeoutUpdateTimer() {
     updateEntryList();
-    qDebug() << "Timer timout";
 }
 
 void CNodeLogWidget::on_checkBoxAutoUpdate_clicked() {
     bool enable = ui->checkBoxAutoUpdate->isChecked();
     if(enable){refresh_timer.start();} else {refresh_timer.stop();}
+}
+
+void CNodeLogWidget::on_pushButtonUpdateDomain_clicked() {
+    domain_list_model.updateDomainListForUID(nodeUID());
+}
+
+void CNodeLogWidget::on_pushButtonUpdateLog_clicked() {
+     updateEntryList();
 }

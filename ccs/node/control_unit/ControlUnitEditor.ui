@@ -1094,7 +1094,7 @@
       <number>4</number>
      </property>
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="pushButtonShowPlot">
        <property name="font">
         <font>
          <pointsize>11</pointsize>

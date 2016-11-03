@@ -103,9 +103,7 @@ void AttributeCache::setValueForAttribute(const std::string& name,
 }
 
 VariableIndexType AttributeCache::getIndexForName(const std::string& name ) {
-    if(!mapAttributeNameIndex.count(name)) {
-        throw chaos::CException(-1, boost::str(boost::format("No \"%1%\" name present in Attribute cache") %name), __PRETTY_FUNCTION__);
-    }
+    CHAOS_ASSERT(mapAttributeNameIndex.count(name));
     return mapAttributeNameIndex[name];
 }
 
@@ -114,16 +112,12 @@ bool AttributeCache::hasName(const std::string& name) {
 }
 
 AttributeValue *AttributeCache::getValueSettingForIndex(VariableIndexType index) {
-    if(index>=vector_attribute_value.size()) {
-        throw chaos::CException(-1, boost::str(boost::format("No \"%1%\" index present in Attribute cache") %index), __PRETTY_FUNCTION__);
-    }
+    CHAOS_ASSERT(index<vector_attribute_value.size());
     return vector_attribute_value[index].get();
 }
 
 AttributeValue *AttributeCache::getValueSettingByName(const std::string& name) {
-    if(index>=vector_attribute_value.size()) {
-        throw chaos::CException(-1, boost::str(boost::format("No \"%1%\" index present in Attribute cache") %index), __PRETTY_FUNCTION__);
-    }
+    CHAOS_ASSERT(mapAttributeNameIndex.count(name));
     return vector_attribute_value[mapAttributeNameIndex[name]].get();
 }
 

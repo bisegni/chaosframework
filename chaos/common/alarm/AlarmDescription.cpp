@@ -28,9 +28,10 @@ using namespace chaos::common::state_flag;
 #pragma mark AlarmHandler
 void AlarmHandler::stateFlagUpdated(const std::string& flag_uuid,
                                     const std::string& flag_name,
-                                    const StateFlagServerity level_severity) {
+                                    const std::string& level_name,
+                                    const StateFlagServerity current_level_severity) {
     alarmChanged(flag_name,
-                 level_severity);
+                 current_level_severity);
 }
 
 #pragma mark AlarmDescription

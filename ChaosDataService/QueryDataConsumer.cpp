@@ -403,17 +403,19 @@ int QueryDataConsumer::consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSy
     //trduce int to postfix channel type
     switch(header->field.channel_type) {
         case 0:
-            channel_type = DataPackPrefixID::OUTPUT_DATASE_PREFIX;
+            channel_type = DataPackPrefixID::OUTPUT_DATASET_POSTFIX
+            ;
             break;
         case 1:
-            channel_type = DataPackPrefixID::INPUT_DATASE_PREFIX;
+            channel_type = DataPackPrefixID::INPUT_DATASET_POSTFIX;
             break;
         case 2:
-            channel_type = DataPackPrefixID::CUSTOM_DATASE_PREFIX;
+            channel_type = DataPackPrefixID::CUSTOM_DATASET_POSTFIX;
             break;
         case 3:
-            channel_type = DataPackPrefixID::SYSTEM_DATASE_PREFIX;
+            channel_type = DataPackPrefixID::SYSTEM_DATASET_POSTFIX;
             break;
+            
     }
     
     if((err = db_driver->snapshotGetDatasetForProducerKey(header->field.snap_name,

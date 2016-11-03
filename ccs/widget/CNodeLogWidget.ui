@@ -246,9 +246,14 @@
       <number>4</number>
      </property>
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="pushButtonUpdateDomain">
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
        <property name="text">
-        <string>PushButton</string>
+        <string>Update Domain List</string>
        </property>
        <property name="autoExclusive">
         <bool>false</bool>
@@ -269,14 +274,14 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButtonUpdateLogTypes">
+      <widget class="QPushButton" name="pushButtonUpdateLog">
        <property name="font">
         <font>
          <pointsize>11</pointsize>
         </font>
        </property>
        <property name="text">
-        <string>update</string>
+        <string>Update Log</string>
        </property>
       </widget>
      </item>

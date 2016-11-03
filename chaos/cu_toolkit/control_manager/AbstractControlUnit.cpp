@@ -415,6 +415,7 @@ void AbstractControlUnit::doInitRpCheckList() throw(CException) {
             pushCustomDataset();
             attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM).markAllAsChanged();
             pushSystemDataset();
+            pushAlarmDataset();
             break;
         }
         
@@ -1020,7 +1021,7 @@ CDataWrapper* AbstractControlUnit::_setDatasetAttribute(CDataWrapper *dataset_at
 void AbstractControlUnit::init(void *init_data) throw(CException) {
     //allocate metadata loggin channel for alarm
     alarm_logging_channel = (AlarmLoggingChannel*)MetadataLoggingManager::getInstance()->getChannel("AlarmLoggingChannel");
-    if(alarm_logging_channel) {LOG_AND_TROW(ACULERR_, -1, "Alarm logging channel not found");}
+    if(alarm_logging_channel == NULL) {LOG_AND_TROW(ACULERR_, -1, "Alarm logging channel not found");}
     
     //the init of the implementation unit goes after the infrastructure one
     doInitSMCheckList();

@@ -138,7 +138,7 @@ int CouchbaseCacheDriver::putData(void *element_key, uint8_t element_key_len,  v
     cmd.v.v0.nbytes = value_len;
     cmd.v.v0.operation = LCB_SET;
     if ((err = lcb_store(instance, this, 1, commands)) != LCB_SUCCESS) {
-		CCDLERR_<< "Fail to set value -> "<< lcb_strerror(NULL, last_err);
+		CCDLERR_<< "Fail to set value -> "<< lcb_errmap_default(instance, err);
 		
     }
 	return err;
@@ -156,11 +156,14 @@ int CouchbaseCacheDriver::getData(void *element_key, uint8_t element_key_len,  v
 	memset(&cmd, 0, sizeof(cmd));
 	cmd.v.v0.key = element_key;
 	cmd.v.v0.nkey = element_key_len;
-	
 	err = lcb_get(instance, (void*)this, 1, commands);
-	if (err != LCB_SUCCESS) {
-		CCDLERR_<< "Fail to get value with last_err "<< last_err << " with message " << last_err_str;
+	if (err != LCB_SUCCESS &&
+        err != LCB_KEY_ENOENT) {
+        CCDLERR_<< "Fail to get value "<<std::string((char*)element_key, element_key_len) <<" for with err "<< err << "(" << lcb_errmap_default(instance, err) << ")";
 	} else {
+        if(err == LCB_KEY_ENOENT) {
+            err = 0;
+        }
 		*value = (void*)get_result.value;
 		value_len = get_result.value_len;
     }

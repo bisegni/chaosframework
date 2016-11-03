@@ -127,7 +127,7 @@ bool AttributeValue::setValue(const CDataVariant& attribute_value,
     
     if(type != attribute_value.getType()) return false;
     switch (attribute_value.getType()) {
-        case DataType::TYPE_DOUBLE: {
+        case DataType::TYPE_BOOLEAN: {
             bool bv = attribute_value.asBool();
             //copy string to buffer
             std::memcpy(value_buffer,
@@ -143,7 +143,6 @@ bool AttributeValue::setValue(const CDataVariant& attribute_value,
                         sizeof(int32_t));
             break;
         }
-            
         case DataType::TYPE_INT64: {
             int64_t i64v = attribute_value.asInt64();
             //copy string to buffer
@@ -152,7 +151,14 @@ bool AttributeValue::setValue(const CDataVariant& attribute_value,
                         sizeof(int64_t));
             break;
         }
-            
+        case DataType::TYPE_DOUBLE: {
+            bool bv = attribute_value.asBool();
+            //copy string to buffer
+            std::memcpy(value_buffer,
+                        &bv,
+                        sizeof(bool));
+            break;
+        }
         case DataType::TYPE_STRING: {
             const std::string value = attribute_value.asString();
             if(!grow((uint32_t)value.size())) return false;

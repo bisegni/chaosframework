@@ -40,7 +40,8 @@ namespace chaos{
                 friend class AlarmDescription;
                 void stateFlagUpdated(const std::string& flag_uuid,
                                       const std::string& flag_name,
-                                      const chaos::common::state_flag::StateFlagServerity level_severity);
+                                      const std::string& level_name,
+                                      const chaos::common::state_flag::StateFlagServerity current_level_severity);
             protected:
                 virtual void alarmChanged(const std::string& alarm_name,
                                           const int8_t alarm_severity) = 0;

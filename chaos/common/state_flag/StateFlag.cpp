@@ -195,6 +195,7 @@ void StateFlag::fireToListener(unsigned int fire_code,
     if(state_flag_listener_instance){
         const StateLevel& level = getCurrentStateLevel();
         state_flag_listener_instance->stateFlagUpdated(flag_uuid,
+                                                       name,
                                                        level.getTag(),
                                                        level.getSeverity());
     }

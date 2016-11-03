@@ -506,11 +506,6 @@ void ControlUnitEditor::on_pushButtonSetRunScheduleDelay_clicked() {
                                                                      property_list));
 }
 
-void ControlUnitEditor::on_pushButton_clicked() {
-    NodeAttributePlotting *plot_viewer = new NodeAttributePlotting(control_unit_unique_id, NULL);
-    plot_viewer->show();
-}
-
 void ControlUnitEditor::on_pushButtonRecoverError_clicked() {
     //recover error api call
     std::vector<std::string> uids;
@@ -582,4 +577,9 @@ void ControlUnitEditor::nodeHasBeenRestarted(const std::string& node_uid) {
         restarted = true;
         updateAllControlUnitInfomration();
     }
+}
+
+void ControlUnitEditor::on_pushButtonShowPlot_clicked() {
+    NodeAttributePlotting *plot_viewer = new NodeAttributePlotting(control_unit_unique_id, NULL);
+    plot_viewer->show();
 }

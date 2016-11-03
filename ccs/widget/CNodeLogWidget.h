@@ -43,13 +43,16 @@ private slots:
 
     void logEntriesTableSelectionChanged(const QModelIndex& current_selection,
                                          const QModelIndex& previous_selection);
-    void on_pushButtonUpdateLogTypes_clicked();
 
     void on_lineEditMaxNumberOfResult_returnPressed();
 
     void on_lineEditRefreshUpdate_editingFinished();
 
     void on_checkBoxAutoUpdate_clicked();
+
+    void on_pushButtonUpdateDomain_clicked();
+
+    void on_pushButtonUpdateLog_clicked();
 
 private:
     QTimer              refresh_timer;

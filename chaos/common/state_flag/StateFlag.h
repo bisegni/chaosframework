@@ -132,6 +132,7 @@ namespace chaos {
                 //!signal the change of the current selected level severity
                 virtual void stateFlagUpdated(const std::string& flag_uuid,
                                               const std::string& flag_name,
+                                              const std::string& level_name,
                                               const StateFlagServerity current_level_severity) = 0;
                 
             public:

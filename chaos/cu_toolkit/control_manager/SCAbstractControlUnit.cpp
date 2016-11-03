@@ -147,8 +147,10 @@ void SCAbstractControlUnit::_completeDatasetAttribute() {
                                   DataType::Input,
                                   1);
         }
-        
     }
+    
+    //call super class definition
+    AbstractControlUnit::_completeDatasetAttribute();
 }
 
 AbstractSharedDomainCache *SCAbstractControlUnit::_getAttributeCache() {

@@ -169,19 +169,19 @@ void SnapshotCreationWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
 			 it++) {
 			
 			//snap output channel
-			if((err = storeDatasetTypeInSnapsnot(job_ptr->job_work_code, job_ptr->snapshot_name, *it, DataPackPrefixID::OUTPUT_DATASE_PREFIX))) {
+			if((err = storeDatasetTypeInSnapsnot(job_ptr->job_work_code, job_ptr->snapshot_name, *it, DataPackPrefixID::OUTPUT_DATASET_POSTFIX))) {
 				
 			}
 			//snap input channel
-			if((err = storeDatasetTypeInSnapsnot(job_ptr->job_work_code, job_ptr->snapshot_name, *it, DataPackPrefixID::INPUT_DATASE_PREFIX))) {
+			if((err = storeDatasetTypeInSnapsnot(job_ptr->job_work_code, job_ptr->snapshot_name, *it, DataPackPrefixID::INPUT_DATASET_POSTFIX))) {
 				
 			}
 			//snap custom channel
-			if((err = storeDatasetTypeInSnapsnot(job_ptr->job_work_code, job_ptr->snapshot_name, *it, DataPackPrefixID::CUSTOM_DATASE_PREFIX))){
+			if((err = storeDatasetTypeInSnapsnot(job_ptr->job_work_code, job_ptr->snapshot_name, *it, DataPackPrefixID::CUSTOM_DATASET_POSTFIX))){
 				
 			}
 			//snap system channel
-			if((err = storeDatasetTypeInSnapsnot(job_ptr->job_work_code, job_ptr->snapshot_name, *it, DataPackPrefixID::SYSTEM_DATASE_PREFIX))) {
+			if((err = storeDatasetTypeInSnapsnot(job_ptr->job_work_code, job_ptr->snapshot_name, *it, DataPackPrefixID::SYSTEM_DATASET_POSTFIX))) {
 				
 			}
 		}

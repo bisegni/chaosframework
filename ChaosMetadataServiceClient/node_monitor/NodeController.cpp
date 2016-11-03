@@ -183,7 +183,9 @@ void NodeController::quantumSlotHasData(const std::string& key,
 }
 
 void NodeController::quantumSlotHasNoData(const std::string& key) {
-    _setOnlineState(OnlineStateNotFound);
+    if(key.compare(node_health_uid) == 0) {
+        _setOnlineState(OnlineStateNotFound);
+    }
 }
 
 void NodeController::_resetHealth() {
