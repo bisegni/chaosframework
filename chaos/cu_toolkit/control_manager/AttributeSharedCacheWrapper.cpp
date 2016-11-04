@@ -37,6 +37,11 @@ void AttributeSharedCacheWrapper::setOutputDomainAsChanged() {
 	attribute_setting.markAllAsChanged();
 }
 
+void AttributeSharedCacheWrapper::setInputDomainAsChanged() {
+	AttributeCache& attribute_setting = attribute_value_shared_cache->getSharedDomain(DOMAIN_INPUT);
+	attribute_setting.markAllAsChanged();
+}
+
 // Set the value for a determinated variable in a determinate domain
 void AttributeSharedCacheWrapper::setOutputAttributeValue(const std::string& attribute_name,
 														  void * value,

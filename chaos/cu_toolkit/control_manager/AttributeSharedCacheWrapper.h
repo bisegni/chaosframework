@@ -47,7 +47,8 @@ namespace chaos{
 					CHAOS_ASSERT(attribute_value_shared_cache)
 					switch(domain) {
 						case DOMAIN_INPUT:
-							throw CException(-1, "Input variable domain can't be used as read write pointer", __PRETTY_FUNCTION__);
+						  /*	throw CException(-1, "Input variable domain can't be used as read write pointer", __PRETTY_FUNCTION__);
+						   */
 							break;
 						case DOMAIN_SYSTEM:
 							throw CException(-1, "System variable domain can't be used as read write pointer", __PRETTY_FUNCTION__);
@@ -152,7 +153,9 @@ namespace chaos{
 													uint32_t size);
 				//! set output domain changed
 				void setOutputDomainAsChanged();
-				
+
+				//! set input domain changed
+				void setInputDomainAsChanged();
 				//!
 				bool setOutputAttributeNewSize(const std::string& attribute_name,
 											   uint32_t new_size,

@@ -65,7 +65,7 @@ mds_checks(){
 
 
 usage(){
-    info_mesg "Usage :$0 {start|stop|status|start mds | start uis| start cds | start wan| stop uis|stop mds | stop cds |stop wan}"
+    info_mesg "Usage :$0 {start|stop|status|start mds | start uis| start cds | start wan| |start devel | stop uis|stop mds | stop cds |stop wan}"
 }
 start_mds(){
     mds_checks;
@@ -98,6 +98,23 @@ start_wan(){
 	      return
     fi
     run_proc "$CHAOS_PREFIX/bin/$WAN_EXEC --conf-file $CHAOS_PREFIX/etc/wan.cfg $CHAOS_OVERALL_OPT --log-on-file $CHAOS_PREFIX/log/$WAN_EXEC.log > $CHAOS_PREFIX/log/$WAN_EXEC.std.out 2>&1 &" "$WAN_EXEC"
+}
+
+start_us(){
+    info_mesg "starting Unit Server " "$US_EXEC"
+    check_proc_then_kill "$US_EXEC"
+    if [ ! -e "$CHAOS_PREFIX/etc/cu.cfg" ]; then
+	     warn_mesg "UnitServer configuration file not found in \"$CHAOS_PREFIX/etc/cu.cfg\" " "start skipped"
+	      return
+    fi
+    if [ ! -e "$CHAOS_PREFIX/etc/localhost/MDSConfig.cfg" ]; then
+	     warn_mesg "localhost configuration file not found in \"$CHAOS_PREFIX/etc/localhost/MDSConfig.cfg\" " "start skipped"
+	      return
+    fi
+    info_mesg "transferring configuration to MDS " "$CHAOS_PREFIX/etc/localhost/MDSConfig.cfg"
+    run_proc "$CHAOS_PREFIX/bin/ChaosMDSCmd --mds-conf $CHAOS_PREFIX/etc/localhost/MDSConfig.cfg -r 1 --log-on-file $CHAOS_PREFIX/log/ChaosMDSCmd.log > $CHAOS_PREFIX/log/ChaosMDSCmd.std.out 2>&1 &" "ChaosMDSCmd"
+    
+    run_proc "$CHAOS_PREFIX/bin/$US_EXEC --conf-file $CHAOS_PREFIX/etc/cu.cfg $CHAOS_OVERALL_OPT --log-on-file $CHAOS_PREFIX/log/$US_EXEC.log > $CHAOS_PREFIX/log/$US_EXEC.std.out 2>&1 &" "$US_EXEC"
 }
 
 ui_stop()
@@ -202,6 +219,11 @@ case "$cmd" in
 		    ;;
 	       wan)
 		    start_wan
+		    exit 0
+		    ;;
+	       devel)
+		   start_all
+		   start_us
 		    exit 0
 		    ;;
 		*)
