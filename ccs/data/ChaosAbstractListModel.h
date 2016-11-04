@@ -11,6 +11,8 @@ protected:
     virtual int getRowCount() const = 0;
     virtual QVariant getRowData(int row) const = 0;
     virtual QVariant getUserData(int row) const = 0;
+    virtual QVariant getBackgroudColor(int row) const;
+    virtual QVariant getTextColor(int row) const;
     virtual Qt::CheckState getCheckableState(int row)const;
     virtual bool isRowCheckable(int row) const;
     virtual bool isRowEditable(int row) const;

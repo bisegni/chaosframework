@@ -22,6 +22,8 @@
 #ifndef __CHAOSFramework__921A239_F726_482F_B2D7_55E3C138661B_alarm_h
 #define __CHAOSFramework__921A239_F726_482F_B2D7_55E3C138661B_alarm_h
 
-#include <stdio.h>
+#include <chaos/common/alarm/AlarmCatalog.h>
+#include <chaos/common/alarm/AlarmDescription.h>
+#include <chaos/common/alarm/MultiSeverityAlarm.h>
 
 #endif /* __CHAOSFramework__921A239_F726_482F_B2D7_55E3C138661B_alarm_h */

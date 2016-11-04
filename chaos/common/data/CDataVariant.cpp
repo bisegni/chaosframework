@@ -23,6 +23,10 @@
 
 using namespace chaos;
 using namespace chaos::common::data;
+
+#define SAFE_LEXICAL_WITH_DEFAULT(x, d)\
+try{return x;}catch(...){return d;}
+
 #pragma mark boolvisitor
 bool bool_visitor::operator()(bool bv) const {return bv;}
 bool bool_visitor::operator()(int32_t i32v) const {return (bool)i32v;}
@@ -30,7 +34,7 @@ bool bool_visitor::operator()(uint32_t ui32v) const {return (bool)ui32v;}
 bool bool_visitor::operator()(int64_t i64v) const {return (bool)i64v;}
 bool bool_visitor::operator()(uint64_t ui64v) const {return (bool)ui64v;}
 bool bool_visitor::operator()(double dv) const {return (bool)dv;}
-bool bool_visitor::operator()(const std::string& str) const {return boost::lexical_cast<bool>(str);}
+bool bool_visitor::operator()(const std::string& str) const {SAFE_LEXICAL_WITH_DEFAULT(boost::lexical_cast<bool>(str),false)}
 bool bool_visitor::operator()(boost::shared_ptr<CDataBuffer> buffer) const {return (bool)buffer->getBufferSize();}
 
 #pragma mark i32visitor
@@ -40,7 +44,7 @@ int32_t int32_t_visitor::operator()(uint32_t ui32v) const {return (int32_t)ui32v
 int32_t int32_t_visitor::operator()(int64_t i64v) const {return (int32_t)i64v;}
 int32_t int32_t_visitor::operator()(uint64_t ui64v) const {return (int32_t)ui64v;}
 int32_t int32_t_visitor::operator()(double dv) const {return (int32_t)dv;}
-int32_t int32_t_visitor::operator()(const std::string& str) const {return boost::lexical_cast<int32_t>(str);}
+int32_t int32_t_visitor::operator()(const std::string& str) const {SAFE_LEXICAL_WITH_DEFAULT(boost::lexical_cast<int32_t>(str),0)}
 int32_t int32_t_visitor::operator()(boost::shared_ptr<CDataBuffer> buffer) const {return (int32_t)buffer->getBufferSize();}
 
 #pragma mark ui32visitor
@@ -50,7 +54,7 @@ uint32_t uint32_t_visitor::operator()(uint32_t ui32v) const {return ui32v;}
 uint32_t uint32_t_visitor::operator()(int64_t i64v) const {return (uint32_t)i64v;}
 uint32_t uint32_t_visitor::operator()(uint64_t ui64v) const {return (uint32_t)ui64v;}
 uint32_t uint32_t_visitor::operator()(double dv) const {return (uint32_t)dv;}
-uint32_t uint32_t_visitor::operator()(const std::string& str) const {return boost::lexical_cast<uint32_t>(str);}
+uint32_t uint32_t_visitor::operator()(const std::string& str) const {SAFE_LEXICAL_WITH_DEFAULT(boost::lexical_cast<uint32_t>(str),0)}
 uint32_t uint32_t_visitor::operator()(boost::shared_ptr<CDataBuffer> buffer) const {return buffer->getBufferSize();}
 
 #pragma mark i64visitor
@@ -60,7 +64,7 @@ int64_t int64_t_visitor::operator()(uint32_t ui32v) const {return (int64_t)ui32v
 int64_t int64_t_visitor::operator()(int64_t i64v) const {return i64v;}
 int64_t int64_t_visitor::operator()(uint64_t ui64v) const {return (int64_t)ui64v;}
 int64_t int64_t_visitor::operator()(double dv) const {return (int64_t)dv;}
-int64_t int64_t_visitor::operator()(const std::string& str) const {return boost::lexical_cast<int64_t>(str);}
+int64_t int64_t_visitor::operator()(const std::string& str) const {SAFE_LEXICAL_WITH_DEFAULT(boost::lexical_cast<int64_t>(str),0)}
 int64_t int64_t_visitor::operator()(boost::shared_ptr<CDataBuffer> buffer) const {return (int64_t)buffer->getBufferSize();}
 
 #pragma mark ui64visitor
@@ -70,7 +74,7 @@ uint64_t uint64_t_visitor::operator()(uint32_t ui32v) const {return (uint64_t)ui
 uint64_t uint64_t_visitor::operator()(int64_t i64v) const {return (uint64_t)i64v;}
 uint64_t uint64_t_visitor::operator()(uint64_t ui64v) const {return ui64v;}
 uint64_t uint64_t_visitor::operator()(double dv) const {return (uint64_t)dv;}
-uint64_t uint64_t_visitor::operator()(const std::string& str) const {return boost::lexical_cast<uint64_t>(str);}
+uint64_t uint64_t_visitor::operator()(const std::string& str) const {SAFE_LEXICAL_WITH_DEFAULT(boost::lexical_cast<uint64_t>(str),0)}
 uint64_t uint64_t_visitor::operator()(boost::shared_ptr<CDataBuffer> buffer) const {return (uint64_t)buffer->getBufferSize();}
 
 #pragma mark doublevisitor
@@ -80,16 +84,16 @@ double double_visitor::operator()(uint32_t ui32v) const {return (double)ui32v;}
 double double_visitor::operator()(int64_t i64v) const {return (double)i64v;}
 double double_visitor::operator()(uint64_t ui64v) const {return (double)ui64v;}
 double double_visitor::operator()(double dv) const {return dv;}
-double double_visitor::operator()(const std::string& str) const {return boost::lexical_cast<double>(str);}
+double double_visitor::operator()(const std::string& str) const {SAFE_LEXICAL_WITH_DEFAULT(boost::lexical_cast<double>(str), false)}
 double double_visitor::operator()(boost::shared_ptr<CDataBuffer> buffer) const {return (double)buffer->getBufferSize();}
 
 #pragma mark stringvisitor
-std::string string_visitor::operator()(bool bv) const {return boost::lexical_cast<std::string>(bv);}
-std::string string_visitor::operator()(int32_t i32v) const {return boost::lexical_cast<std::string>(i32v);}
-std::string string_visitor::operator()(uint32_t ui32v) const {return boost::lexical_cast<std::string>(ui32v);}
-std::string string_visitor::operator()(int64_t i64v) const {return boost::lexical_cast<std::string>(i64v);}
-std::string string_visitor::operator()(uint64_t ui64v) const {return boost::lexical_cast<std::string>(ui64v);}
-std::string string_visitor::operator()(double dv) const {return boost::lexical_cast<std::string>(dv);}
+std::string string_visitor::operator()(bool bv) const {SAFE_LEXICAL_WITH_DEFAULT(boost::lexical_cast<std::string>(bv), "false")}
+std::string string_visitor::operator()(int32_t i32v) const {SAFE_LEXICAL_WITH_DEFAULT(boost::lexical_cast<std::string>(i32v), "0")}
+std::string string_visitor::operator()(uint32_t ui32v) const {SAFE_LEXICAL_WITH_DEFAULT(boost::lexical_cast<std::string>(ui32v), "0")}
+std::string string_visitor::operator()(int64_t i64v) const {SAFE_LEXICAL_WITH_DEFAULT(boost::lexical_cast<std::string>(i64v), "0")}
+std::string string_visitor::operator()(uint64_t ui64v) const {SAFE_LEXICAL_WITH_DEFAULT(boost::lexical_cast<std::string>(ui64v), "0")}
+std::string string_visitor::operator()(double dv) const {SAFE_LEXICAL_WITH_DEFAULT(boost::lexical_cast<std::string>(dv), "0")}
 std::string string_visitor::operator()(const std::string& str) const {return str;}
 std::string string_visitor::operator()(boost::shared_ptr<CDataBuffer> buffer) const {return std::string(buffer->getBuffer(), buffer->getBufferSize());}
 

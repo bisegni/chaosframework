@@ -11,6 +11,14 @@ QVariant ChaosAbstractListModel::getRowData(int row) const {
     return QVariant();
 }
 
+QVariant ChaosAbstractListModel::getBackgroudColor(int row) const {
+    return QVariant();
+}
+
+QVariant ChaosAbstractListModel::getTextColor(int row) const {
+    return QVariant();
+}
+
 QVariant ChaosAbstractListModel::getTooltipTextForData(int row) const {
     return QVariant();
 }
@@ -53,6 +61,12 @@ QVariant  ChaosAbstractListModel::data(const QModelIndex &index, int role) const
         break;
     case Qt::UserRole:
         result = getUserData(row);
+        break;
+    case Qt::BackgroundColorRole:
+        result = getBackgroudColor(row);
+        break;
+    case Qt::TextColorRole:
+        result = getTextColor(row);
         break;
     case Qt::CheckStateRole:
         if(isRowCheckable(row)){

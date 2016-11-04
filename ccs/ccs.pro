@@ -137,7 +137,8 @@ SOURCES += main.cpp\
     widget/ChaosStorageTypeWidget.cpp \
     widget/OnOffImageIndicator.cpp \
     widget/CStateVisiblePushButton.cpp \
-    status_manager/StatusManager.cpp
+    status_manager/StatusManager.cpp \
+    data/AlarmListModel.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -256,7 +257,8 @@ HEADERS  += \
     widget/ChaosStorageTypeWidget.h \
     widget/OnOffImageIndicator.h \
     widget/CStateVisiblePushButton.h \
-    status_manager/StatusManager.h
+    status_manager/StatusManager.h \
+    data/AlarmListModel.h
 
 FORMS    += \
     search/searchnoderesult.ui \

@@ -33,6 +33,7 @@ ControlUnitEditor::ControlUnitEditor(const QString &_control_unit_unique_id) :
     restarted(false),
     last_online_state(false),
     control_unit_unique_id(_control_unit_unique_id),
+    alarm_list_model(control_unit_unique_id),
     ui(new Ui::ControlUnitEditor),
     dataset_output_table_model(control_unit_unique_id,
                                chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT),
@@ -190,6 +191,10 @@ void ControlUnitEditor::initUI() {
     //enable
     ui->widgetNodeResource->setNodeUID(control_unit_unique_id);
     ui->widgetNodeResource->initChaosContent();
+
+    //manage  alarm list
+    ui->listViewAlarm->setVisible(false);
+    ui->listViewAlarm->setModel(&alarm_list_model);
 }
 
 void ControlUnitEditor::updateTemplateSearch() {
@@ -559,8 +564,6 @@ void ControlUnitEditor::nodeChangedInternalState(const std::string& node_uid,
             qDebug() << "Load dataset for Node" << QString::fromStdString(node_uid) << " that has been restarted";
             //update
             updateAllControlUnitInfomration();
-            //            submitApiResult(QString(TAG_CU_DATASET),
-            //                            GET_CHAOS_API_PTR(control_unit::GetCurrentDataset)->execute(control_unit_unique_id.toStdString()));
             restarted = false;
         }
 
@@ -582,4 +585,9 @@ void ControlUnitEditor::nodeHasBeenRestarted(const std::string& node_uid) {
 void ControlUnitEditor::on_pushButtonShowPlot_clicked() {
     NodeAttributePlotting *plot_viewer = new NodeAttributePlotting(control_unit_unique_id, NULL);
     plot_viewer->show();
+}
+
+void ControlUnitEditor::on_checkBoxShowAlarm_clicked() {
+    ui->listViewAlarm->setVisible(ui->checkBoxShowAlarm->isChecked());
+    if(ui->checkBoxShowAlarm->isChecked()){alarm_list_model.track();}else{alarm_list_model.untrack();}
 }

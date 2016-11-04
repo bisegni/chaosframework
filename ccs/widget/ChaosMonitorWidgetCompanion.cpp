@@ -32,7 +32,6 @@ bool ChaosMonitorWidgetCompanion::untrackNode() {
 QString ChaosMonitorWidgetCompanion::datasetValueToLabel(const QString& attribute,
                                                         MapDatasetKeyValues& map_health_dataset,
                                                          unsigned int double_precision) {
-
     QString result = "-----";
     if(map_health_dataset.count(attribute.toStdString())) {
         CDataVariant custom_attribute_variant = map_health_dataset[attribute.toStdString()];
