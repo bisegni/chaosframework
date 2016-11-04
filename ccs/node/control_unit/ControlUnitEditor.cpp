@@ -264,6 +264,7 @@ bool ControlUnitEditor::isClosing() {
     dataset_output_table_model.setAttributeMonitoring(false);
     //remove monitoring on cu and us
     manageMonitoring(false);
+    alarm_list_model.untrack();
     return true;
 }
 

@@ -20,9 +20,9 @@ void AlarmListModel::track() {
 }
 
 void AlarmListModel::untrack() {
-    ChaosMetadataServiceClient::getInstance()->addHandlerToNodeMonitor(control_unit_id.toStdString(),
-                                                                       chaos::metadata_service_client::node_monitor::ControllerTypeNodeControlUnit,
-                                                                       this);
+    ChaosMetadataServiceClient::getInstance()->removeHandlerToNodeMonitor(control_unit_id.toStdString(),
+                                                                          chaos::metadata_service_client::node_monitor::ControllerTypeNodeControlUnit,
+                                                                          this);
 }
 
 QVariant AlarmListModel::getBackgroudColor(int row) const {
