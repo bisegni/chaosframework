@@ -50,19 +50,19 @@
 		    ],
 		    "AttrDesc": [
 			{
-			    "ds_attr_name": "currentSP",
+			    "ds_attr_name": "current",
 			    "ds_max_range": "700",
 			    "ds_min_range": "0",
 			    "ds_default_value": "0"
 			},
 			{
-			    "ds_attr_name": "slope_down",
+			    "ds_attr_name": "rampDownRate",
 			    "ds_max_range": "70",
 			    "ds_min_range": "1",
 			    "ds_default_value": "35"
 			},
 			{
-			    "ds_attr_name": "slope_up",
+			    "ds_attr_name": "rampUpRate",
 			    "ds_max_range": "70",
 			    "ds_min_range": "1",
 			    "ds_default_value": "35"
@@ -88,19 +88,19 @@
 		    ],
 		    "AttrDesc": [
 			{
-			    "ds_attr_name": "currentSP",
+			    "ds_attr_name": "current",
 			    "ds_max_range": "700",
 			    "ds_min_range": "0",
 			    "ds_default_value": "0"
 			},
 			{
-			    "ds_attr_name": "slope_down",
+			    "ds_attr_name": "rampDownRate",
 			    "ds_max_range": "70",
 			    "ds_min_range": "1",
 			    "ds_default_value": "35"
 			},
 			{
-			    "ds_attr_name": "slope_up",
+			    "ds_attr_name": "rampUpRate",
 			    "ds_max_range": "70",
 			    "ds_min_range": "1",
 			    "ds_default_value": "35"
@@ -127,19 +127,19 @@
 		    ],
 		    "AttrDesc": [
 			{
-			    "ds_attr_name": "currentSP",
+			    "ds_attr_name": "current",
 			    "ds_max_range": "100",
 			    "ds_min_range": "0",
 			    "ds_default_value": "0"
 			},
 			{
-			    "ds_attr_name": "slope_down",
+			    "ds_attr_name": "rampDownRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "1",
 			    "ds_default_value": "5"
 			},
 			{
-			    "ds_attr_name": "slope_up",
+			    "ds_attr_name": "rampUpRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "1",
 			    "ds_default_value": "5"
@@ -165,19 +165,19 @@
 		    ],
 		    "AttrDesc": [
 			{
-			    "ds_attr_name": "currentSP",
+			    "ds_attr_name": "current",
 			    "ds_max_range": "100",
 			    "ds_min_range": "0",
 			    "ds_default_value": "0"
 			},
 			{
-			    "ds_attr_name": "slope_down",
+			    "ds_attr_name": "rampDownRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "1",
 			    "ds_default_value": "5"
 			},
 			{
-			    "ds_attr_name": "slope_up",
+			    "ds_attr_name": "rampUpRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "1",
 			    "ds_default_value": "5"
@@ -203,19 +203,19 @@
 		    ],
 		    "AttrDesc": [
 			{
-			    "ds_attr_name": "currentSP",
+			    "ds_attr_name": "current",
 			    "ds_max_range": "100",
 			    "ds_min_range": "0",
 			    "ds_default_value": "0"
 			},
 			{
-			    "ds_attr_name": "slope_down",
+			    "ds_attr_name": "rampDownRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "5",
 			    "ds_default_value": "1"
 			},
 			{
-			    "ds_attr_name": "slope_up",
+			    "ds_attr_name": "rampUpRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "5",
 			    "ds_default_value": "1"
@@ -241,19 +241,19 @@
 		    ],
 		    "AttrDesc": [
 			{
-			    "ds_attr_name": "currentSP",
+			    "ds_attr_name": "current",
 			    "ds_max_range": "100",
 			    "ds_min_range": "0",
 			    "ds_default_value": "0"
 			},
 			{
-			    "ds_attr_name": "slope_down",
+			    "ds_attr_name": "rampDownRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "5",
 			    "ds_default_value": "1"
 			},
 			{
-			    "ds_attr_name": "slope_up",
+			    "ds_attr_name": "rampUpRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "5",
 			    "ds_default_value": "1"
@@ -279,19 +279,19 @@
 		    ],
 		    "AttrDesc": [
 			{
-			    "ds_attr_name": "currentSP",
+			    "ds_attr_name": "current",
 			    "ds_max_range": "100",
 			    "ds_min_range": "0",
 			    "ds_default_value": "0"
 			},
 			{
-			    "ds_attr_name": "slope_down",
+			    "ds_attr_name": "rampDownRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "5",
 			    "ds_default_value": "1"
 			},
 			{
-			    "ds_attr_name": "slope_up",
+			    "ds_attr_name": "rampUpRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "5",
 			    "ds_default_value": "1"
@@ -317,19 +317,19 @@
 		    ],
 		    "AttrDesc": [
 			{
-			    "ds_attr_name": "currentSP",
+			    "ds_attr_name": "current",
 			    "ds_max_range": "100",
 			    "ds_min_range": "0",
 			    "ds_default_value": "0"
 			},
 			{
-			    "ds_attr_name": "slope_down",
+			    "ds_attr_name": "rampDownRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "5",
 			    "ds_default_value": "1"
 			},
 			{
-			    "ds_attr_name": "slope_up",
+			    "ds_attr_name": "rampUpRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "5",
 			    "ds_default_value": "1"
@@ -355,19 +355,19 @@
 		    ],
 		    "AttrDesc": [
 			{
-			    "ds_attr_name": "currentSP",
+			    "ds_attr_name": "current",
 			    "ds_max_range": "9.995",
 			    "ds_min_range": "-10",
 			    "ds_default_value": "0"
 			},
 			{
-			    "ds_attr_name": "slope_down",
+			    "ds_attr_name": "rampDownRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "1",
 			    "ds_default_value": "1"
 			},
 			{
-			    "ds_attr_name": "slope_up",
+			    "ds_attr_name": "rampUpRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "1",
 			    "ds_default_value": "1"
@@ -393,19 +393,19 @@
 		    ],
 		    "AttrDesc": [
 			{
-			    "ds_attr_name": "currentSP",
+			    "ds_attr_name": "current",
 			    "ds_max_range": "9.995",
 			    "ds_min_range": "-10",
 			    "ds_default_value": "0"
 			},
 			{
-			    "ds_attr_name": "slope_down",
+			    "ds_attr_name": "rampDownRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "1",
 			    "ds_default_value": "1"
 			},
 			{
-			    "ds_attr_name": "slope_up",
+			    "ds_attr_name": "rampUpRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "1",
 			    "ds_default_value": "1"
@@ -431,19 +431,19 @@
 		    ],
 		    "AttrDesc": [
 			{
-			    "ds_attr_name": "currentSP",
+			    "ds_attr_name": "current",
 			    "ds_max_range": "9.995",
 			    "ds_min_range": "-10",
 			    "ds_default_value": "0"
 			},
 			{
-			    "ds_attr_name": "slope_down",
+			    "ds_attr_name": "rampDownRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "1",
 			    "ds_default_value": "1"
 			},
 			{
-			    "ds_attr_name": "slope_up",
+			    "ds_attr_name": "rampUpRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "1",
 			    "ds_default_value": "1"
@@ -469,19 +469,19 @@
 		    ],
 		    "AttrDesc": [
 			{
-			    "ds_attr_name": "currentSP",
+			    "ds_attr_name": "current",
 			    "ds_max_range": "9.995",
 			    "ds_min_range": "-10",
 			    "ds_default_value": "0"
 			},
 			{
-			    "ds_attr_name": "slope_down",
+			    "ds_attr_name": "rampDownRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "1",
 			    "ds_default_value": "1"
 			},
 			{
-			    "ds_attr_name": "slope_up",
+			    "ds_attr_name": "rampUpRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "1",
 			    "ds_default_value": "1"
@@ -507,19 +507,19 @@
 		    ],
 		    "AttrDesc": [
 			{
-			    "ds_attr_name": "currentSP",
+			    "ds_attr_name": "current",
 			    "ds_max_range": "0",
 			    "ds_min_range": "0",
 			    "ds_default_value": "0"
 			},
 			{
-			    "ds_attr_name": "slope_down",
+			    "ds_attr_name": "rampDownRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "1",
 			    "ds_default_value": "1"
 			},
 			{
-			    "ds_attr_name": "slope_up",
+			    "ds_attr_name": "rampUpRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "1",
 			    "ds_default_value": "1"
@@ -1905,19 +1905,19 @@
 		    ],
 		    "AttrDesc": [
 			{
-			    "ds_attr_name": "currentSP",
+			    "ds_attr_name": "current",
 			    "ds_max_range": "700",
 			    "ds_min_range": "0",
 			    "ds_default_value": "0"
 			},
 			{
-			    "ds_attr_name": "slope_down",
+			    "ds_attr_name": "rampDownRate",
 			    "ds_max_range": "70",
 			    "ds_min_range": "1",
 			    "ds_default_value": "35"
 			},
 			{
-			    "ds_attr_name": "slope_up",
+			    "ds_attr_name": "rampUpRate",
 			    "ds_max_range": "70",
 			    "ds_min_range": "1",
 			    "ds_default_value": "35"
@@ -1943,19 +1943,19 @@
 		    ],
 		    "AttrDesc": [
 			{
-			    "ds_attr_name": "currentSP",
+			    "ds_attr_name": "current",
 			    "ds_max_range": "700",
 			    "ds_min_range": "0",
 			    "ds_default_value": "0"
 			},
 			{
-			    "ds_attr_name": "slope_down",
+			    "ds_attr_name": "rampDownRate",
 			    "ds_max_range": "70",
 			    "ds_min_range": "1",
 			    "ds_default_value": "35"
 			},
 			{
-			    "ds_attr_name": "slope_up",
+			    "ds_attr_name": "rampUpRate",
 			    "ds_max_range": "70",
 			    "ds_min_range": "1",
 			    "ds_default_value": "35"
@@ -1982,19 +1982,19 @@
 		    ],
 		    "AttrDesc": [
 			{
-			    "ds_attr_name": "currentSP",
+			    "ds_attr_name": "current",
 			    "ds_max_range": "100",
 			    "ds_min_range": "0",
 			    "ds_default_value": "0"
 			},
 			{
-			    "ds_attr_name": "slope_down",
+			    "ds_attr_name": "rampDownRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "1",
 			    "ds_default_value": "5"
 			},
 			{
-			    "ds_attr_name": "slope_up",
+			    "ds_attr_name": "rampUpRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "1",
 			    "ds_default_value": "5"
@@ -2020,19 +2020,19 @@
 		    ],
 		    "AttrDesc": [
 			{
-			    "ds_attr_name": "currentSP",
+			    "ds_attr_name": "current",
 			    "ds_max_range": "100",
 			    "ds_min_range": "0",
 			    "ds_default_value": "0"
 			},
 			{
-			    "ds_attr_name": "slope_down",
+			    "ds_attr_name": "rampDownRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "1",
 			    "ds_default_value": "5"
 			},
 			{
-			    "ds_attr_name": "slope_up",
+			    "ds_attr_name": "rampUpRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "1",
 			    "ds_default_value": "5"
@@ -2058,19 +2058,19 @@
 		    ],
 		    "AttrDesc": [
 			{
-			    "ds_attr_name": "currentSP",
+			    "ds_attr_name": "current",
 			    "ds_max_range": "100",
 			    "ds_min_range": "0",
 			    "ds_default_value": "0"
 			},
 			{
-			    "ds_attr_name": "slope_down",
+			    "ds_attr_name": "rampDownRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "5",
 			    "ds_default_value": "1"
 			},
 			{
-			    "ds_attr_name": "slope_up",
+			    "ds_attr_name": "rampUpRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "5",
 			    "ds_default_value": "1"
@@ -2096,19 +2096,19 @@
 		    ],
 		    "AttrDesc": [
 			{
-			    "ds_attr_name": "currentSP",
+			    "ds_attr_name": "current",
 			    "ds_max_range": "100",
 			    "ds_min_range": "0",
 			    "ds_default_value": "0"
 			},
 			{
-			    "ds_attr_name": "slope_down",
+			    "ds_attr_name": "rampDownRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "5",
 			    "ds_default_value": "1"
 			},
 			{
-			    "ds_attr_name": "slope_up",
+			    "ds_attr_name": "rampUpRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "5",
 			    "ds_default_value": "1"
@@ -2134,19 +2134,19 @@
 		    ],
 		    "AttrDesc": [
 			{
-			    "ds_attr_name": "currentSP",
+			    "ds_attr_name": "current",
 			    "ds_max_range": "100",
 			    "ds_min_range": "0",
 			    "ds_default_value": "0"
 			},
 			{
-			    "ds_attr_name": "slope_down",
+			    "ds_attr_name": "rampDownRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "5",
 			    "ds_default_value": "1"
 			},
 			{
-			    "ds_attr_name": "slope_up",
+			    "ds_attr_name": "rampUpRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "5",
 			    "ds_default_value": "1"
@@ -2172,19 +2172,19 @@
 		    ],
 		    "AttrDesc": [
 			{
-			    "ds_attr_name": "currentSP",
+			    "ds_attr_name": "current",
 			    "ds_max_range": "100",
 			    "ds_min_range": "0",
 			    "ds_default_value": "0"
 			},
 			{
-			    "ds_attr_name": "slope_down",
+			    "ds_attr_name": "rampDownRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "5",
 			    "ds_default_value": "1"
 			},
 			{
-			    "ds_attr_name": "slope_up",
+			    "ds_attr_name": "rampUpRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "5",
 			    "ds_default_value": "1"
@@ -2210,19 +2210,19 @@
 		    ],
 		    "AttrDesc": [
 			{
-			    "ds_attr_name": "currentSP",
+			    "ds_attr_name": "current",
 			    "ds_max_range": "9.995",
 			    "ds_min_range": "-10",
 			    "ds_default_value": "0"
 			},
 			{
-			    "ds_attr_name": "slope_down",
+			    "ds_attr_name": "rampDownRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "1",
 			    "ds_default_value": "1"
 			},
 			{
-			    "ds_attr_name": "slope_up",
+			    "ds_attr_name": "rampUpRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "1",
 			    "ds_default_value": "1"
@@ -2248,19 +2248,19 @@
 		    ],
 		    "AttrDesc": [
 			{
-			    "ds_attr_name": "currentSP",
+			    "ds_attr_name": "current",
 			    "ds_max_range": "9.995",
 			    "ds_min_range": "-10",
 			    "ds_default_value": "0"
 			},
 			{
-			    "ds_attr_name": "slope_down",
+			    "ds_attr_name": "rampDownRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "1",
 			    "ds_default_value": "1"
 			},
 			{
-			    "ds_attr_name": "slope_up",
+			    "ds_attr_name": "rampUpRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "1",
 			    "ds_default_value": "1"
@@ -2286,19 +2286,19 @@
 		    ],
 		    "AttrDesc": [
 			{
-			    "ds_attr_name": "currentSP",
+			    "ds_attr_name": "current",
 			    "ds_max_range": "9.995",
 			    "ds_min_range": "-10",
 			    "ds_default_value": "0"
 			},
 			{
-			    "ds_attr_name": "slope_down",
+			    "ds_attr_name": "rampDownRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "1",
 			    "ds_default_value": "1"
 			},
 			{
-			    "ds_attr_name": "slope_up",
+			    "ds_attr_name": "rampUpRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "1",
 			    "ds_default_value": "1"
@@ -2324,19 +2324,19 @@
 		    ],
 		    "AttrDesc": [
 			{
-			    "ds_attr_name": "currentSP",
+			    "ds_attr_name": "current",
 			    "ds_max_range": "9.995",
 			    "ds_min_range": "-10",
 			    "ds_default_value": "0"
 			},
 			{
-			    "ds_attr_name": "slope_down",
+			    "ds_attr_name": "rampDownRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "1",
 			    "ds_default_value": "1"
 			},
 			{
-			    "ds_attr_name": "slope_up",
+			    "ds_attr_name": "rampUpRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "1",
 			    "ds_default_value": "1"
@@ -2362,19 +2362,19 @@
 		    ],
 		    "AttrDesc": [
 			{
-			    "ds_attr_name": "currentSP",
+			    "ds_attr_name": "current",
 			    "ds_max_range": "0",
 			    "ds_min_range": "0",
 			    "ds_default_value": "0"
 			},
 			{
-			    "ds_attr_name": "slope_down",
+			    "ds_attr_name": "rampDownRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "1",
 			    "ds_default_value": "1"
 			},
 			{
-			    "ds_attr_name": "slope_up",
+			    "ds_attr_name": "rampUpRate",
 			    "ds_max_range": "10",
 			    "ds_min_range": "1",
 			    "ds_default_value": "1"
