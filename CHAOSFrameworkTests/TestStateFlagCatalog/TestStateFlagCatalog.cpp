@@ -49,13 +49,13 @@ bool TestStateFlagCatalog::test() {
     flag_powersupply_state->addLevel(StateLevel(0, "Off", "Powersupply is off", StateFlagServerityRegular));
     flag_powersupply_state->addLevel(StateLevel(1, "Standby", "Power supply can't erogate current", StateFlagServerityRegular));
     flag_powersupply_state->addLevel(StateLevel(2, "Operational", "Powersupply erogate current", StateFlagServerityRegular));
-    flag_powersupply_state->addLevel(StateLevel(3, "faulty", "Powersupply is in faulty", StateFlagServerityLow));
+    flag_powersupply_state->addLevel(StateLevel(3, "faulty", "Powersupply is in faulty", StateFlagServeritySevere));
     catalog_a.addFlag(flag_powersupply_state);
     
     flag_serial_comunication.reset(new StateFlag("serial_comunication",
                                                   "Represente the state of the comunication over the serial port"));
     flag_serial_comunication->addLevel(StateLevel(0, "Working", "Comunication are OK!", StateFlagServerityRegular));
-    flag_serial_comunication->addLevel(StateLevel(1, "Timeout", "No answqer over serial port", StateFlagServerityLow));
+    flag_serial_comunication->addLevel(StateLevel(1, "Timeout", "No answqer over serial port", StateFlagServeritySevere));
     catalog_a.addFlag(flag_serial_comunication);
     
     flag_serial_port.reset(new StateFlag("serial_port_state",
@@ -104,7 +104,7 @@ bool TestStateFlagCatalog::test() {
     BOOST_FOREACH(boost::shared_ptr<StateFlag> flag, found_flag_for_severity ){std::cout << flag->getName() << std::endl;}
     
     found_flag_for_severity.clear();
-    catalog_a.getFlagsForSeverity(StateFlagServerityLow, found_flag_for_severity);
+    catalog_a.getFlagsForSeverity(StateFlagServerityWarning, found_flag_for_severity);
     std::cout << "catalog_a StateFlagServerityWarning"<<std::endl;
     BOOST_FOREACH(boost::shared_ptr<StateFlag> flag, found_flag_for_severity ){std::cout << flag->getName()  << std::endl;}
     
@@ -119,12 +119,12 @@ bool TestStateFlagCatalog::test() {
     BOOST_FOREACH(boost::shared_ptr<StateFlag> flag, found_flag_for_severity ){std::cout << flag->getName()  << std::endl;}
     
     found_flag_for_severity.clear();
-    catalog_b.getFlagsForSeverity(StateFlagServerityLow, found_flag_for_severity);
+    catalog_b.getFlagsForSeverity(StateFlagServerityWarning, found_flag_for_severity);
     std::cout << "catalog_b StateFlagServerityWarning"<<std::endl;
     BOOST_FOREACH(boost::shared_ptr<StateFlag> flag, found_flag_for_severity ){std::cout << flag->getName()  << std::endl;}
     
     found_flag_for_severity.clear();
-    catalog_b.getFlagsForSeverity(StateFlagServerityLow, found_flag_for_severity);
+    catalog_b.getFlagsForSeverity(StateFlagServerityWarning, found_flag_for_severity);
     std::cout << "catalog_b StateFlagServerityCritical"<<std::endl;
     BOOST_FOREACH(boost::shared_ptr<StateFlag> flag, found_flag_for_severity ){std::cout << flag->getName()  << std::endl;}
     
