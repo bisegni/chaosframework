@@ -607,7 +607,7 @@
              <number>18</number>
             </attribute>
            </widget>
-           <widget class="QListView" name="listViewAlarm">
+           <widget class="CQListView" name="listViewAlarm">
             <property name="font">
              <font>
               <pointsize>11</pointsize>
@@ -1267,6 +1267,11 @@
    <extends>QWidget</extends>
    <header>widget/ChaosStorageTypeWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CQListView</class>
+   <extends>QListView</extends>
+   <header>widget/CQListView.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

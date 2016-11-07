@@ -138,7 +138,8 @@ SOURCES += main.cpp\
     widget/OnOffImageIndicator.cpp \
     widget/CStateVisiblePushButton.cpp \
     status_manager/StatusManager.cpp \
-    data/AlarmListModel.cpp
+    data/AlarmListModel.cpp \
+    widget/CQListView.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -258,7 +259,8 @@ HEADERS  += \
     widget/OnOffImageIndicator.h \
     widget/CStateVisiblePushButton.h \
     status_manager/StatusManager.h \
-    data/AlarmListModel.h
+    data/AlarmListModel.h \
+    widget/CQListView.h
 
 FORMS    += \
     search/searchnoderesult.ui \
