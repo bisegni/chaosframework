@@ -44,43 +44,47 @@ ControlUnitController::~ControlUnitController() { }
 
 void ControlUnitController::quantumSlotHasData(const std::string &key,
                                                const monitor_system::KeyValue &value) {
+    bool changed = false;
     if (key.compare(cu_output_ds_key) == 0) {
-        CHECK_DS_CHANGED(last_ds_output, value) {
+        if((changed = CHECK_DS_CHANGED(last_ds_output, value))) {
             //update output datset key
             _updateDatsetKeyMapValue((last_ds_output = value),
                                      map_ds_out);
-            
-            //call handler
-            _fireUpdateDSOnHandler(DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT,
-                                   map_ds_out);
         }
+        //call handler
+        _fireUpdateDSOnHandler(DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT,
+                               map_ds_out,
+                               changed);
     } else if (key.compare(cu_input_ds_key) == 0) {
-        CHECK_DS_CHANGED(last_ds_input, value) {
+        if((changed = CHECK_DS_CHANGED(last_ds_input, value))) {
             //update input datset key
             _updateDatsetKeyMapValue((last_ds_input = value),
                                      map_ds_in);
-            //call handler
-            _fireUpdateDSOnHandler(DataPackCommonKey::DPCK_DATASET_TYPE_INPUT,
-                                   map_ds_in);
         }
+        //call handler
+        _fireUpdateDSOnHandler(DataPackCommonKey::DPCK_DATASET_TYPE_INPUT,
+                               map_ds_in,
+                               changed);
     } else if (key.compare(cu_system_ds_key) == 0) {
-        CHECK_DS_CHANGED(last_ds_system, value) {
+        if((changed = CHECK_DS_CHANGED(last_ds_system, value))) {
             //update input datset key
             _updateDatsetKeyMapValue((last_ds_system = value),
                                      map_ds_sys);
-            //call handler
-            _fireUpdateDSOnHandler(DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM,
-                                   map_ds_sys);
         }
+        //call handler
+        _fireUpdateDSOnHandler(DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM,
+                               map_ds_sys,
+                               changed);
     } else if (key.compare(cu_alarm_ds_key) == 0) {
-        CHECK_DS_CHANGED(last_ds_alarm, value) {
+        if((changed = CHECK_DS_CHANGED(last_ds_alarm, value))){
             //update input datset key
             _updateDatsetKeyMapValue((last_ds_alarm = value),
                                      map_ds_alarm);
-            //call handler
-            _fireUpdateDSOnHandler(DataPackCommonKey::DPCK_DATASET_TYPE_ALARM,
-                                   map_ds_alarm);
         }
+        //call handler
+        _fireUpdateDSOnHandler(DataPackCommonKey::DPCK_DATASET_TYPE_ALARM,
+                               map_ds_alarm,
+                               changed);
     } else {
         NodeController::quantumSlotHasData(key,
                                            value);
@@ -134,7 +138,8 @@ void ControlUnitController::_updateDatsetKeyMapValue(chaos::metadata_service_cli
 }
 
 void ControlUnitController::_fireUpdateDSOnHandler(int dataset_type,
-                                                   MapDatasetKeyValues &map) {
+                                                   MapDatasetKeyValues &map,
+                                                   bool changed) {
     boost::unique_lock<boost::mutex> wl(list_handler_mutex);
     for (MonitoHandlerListIterator it = list_handler.begin(),
          it_end = list_handler.end();
@@ -144,6 +149,8 @@ void ControlUnitController::_fireUpdateDSOnHandler(int dataset_type,
         if (hndlr == NULL) {
             continue;
         }
+        if(hndlr->signalOnChange() == true && changed == false) {continue;}
+        
         //notify listers that online status has been changed
         hndlr->updatedDS(getNodeUID(),
                          dataset_type,
@@ -186,7 +193,7 @@ bool ControlUnitController::addHandler(NodeMonitorHandler *handler_to_add) {
         cu_handler->updatedDS(getNodeUID(),
                               DataPackCommonKey::DPCK_DATASET_TYPE_ALARM,
                               map_ds_alarm);
-
+        
     }
     return result;
 }

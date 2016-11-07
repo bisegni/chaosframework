@@ -11,6 +11,36 @@ static const QString TAG_CU_GET_DATASET = "cu_get_dataset";
 using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::api_proxy;
 
+PlotInfo::PlotInfo(NodeAttributePlotting& _plotting_class_ref):
+plotting_class_ref(_plotting_class_ref),
+last_received_value(0.0){
+    ControlUnitMonitorHandler::setSignalOnChange(false);
+}
+
+void PlotInfo::updatedDS(const std::string& control_unit_uid,
+               int dataset_type_signal,
+               chaos::metadata_service_client::node_monitor::MapDatasetKeyValues& dataset_key_values) {
+    if(dataset_type != dataset_type_signal) return;
+    plotting_class_ref.lock_read_write_for_plot.lockForRead();
+    double key = (QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0);
+    double key_for_old = key-plotting_class_ref.plot_ageing;
+    graph->addData(key, last_received_value = dataset_key_values[attribute_name.toStdString()].asDouble());
+            qDebug()<<"Attribute:"<<attribute_name<<" key:"<<key<<" value:"<<last_received_value << " keyold:" << key_for_old;
+    graph->removeDataBefore(key_for_old);
+    plotting_class_ref.lock_read_write_for_plot.unlock();
+}
+
+void PlotInfo::noDSDataFound(const std::string& control_unit_uid,
+                   int dataset_type_signal) {
+    if(dataset_type != dataset_type_signal) return;
+    plotting_class_ref.lock_read_write_for_plot.lockForRead();
+    double key = (QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0);
+    double key_for_old = key-plotting_class_ref.plot_ageing;
+    graph->addData(key, last_received_value);
+    graph->removeDataBefore(key_for_old);
+    plotting_class_ref.lock_read_write_for_plot.unlock();
+}
+
 NodeAttributePlotting::NodeAttributePlotting(const QString& _node_uid,
                                              QWidget *parent) :
     QWidget(parent),
@@ -19,10 +49,6 @@ NodeAttributePlotting::NodeAttributePlotting(const QString& _node_uid,
     rng((const uint_fast32_t) std::time(0) ),
     zero_to_255( 0, 255 ),
     random_color_component(rng, zero_to_255),
-    node_uid_output_dataset(QString::fromStdString(ChaosMetadataServiceClient::getInstance()->getDatasetKeyFromGeneralKey(_node_uid.toStdString(),
-                                                                                                                          chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT))),
-    node_uid_input_dataset(QString::fromStdString(ChaosMetadataServiceClient::getInstance()->getDatasetKeyFromGeneralKey(_node_uid.toStdString(),
-                                                                                                                         chaos::DataPackCommonKey::DPCK_DATASET_TYPE_INPUT))),
     ui(new Ui::NodeAttributePlotting) {
     ui->setupUi(this);
     if(parent == NULL) {
@@ -45,9 +71,9 @@ NodeAttributePlotting::NodeAttributePlotting(const QString& _node_uid,
     ui->qCustomPlotTimed->legend->setFont(QFont(QFont().family(), 8));
 
     ui->qCustomPlotTimed->xAxis->setTickLabelType(QCPAxis::ltDateTime);
-    ui->qCustomPlotTimed->xAxis->setDateTimeFormat("hh:mm:ss");
     ui->qCustomPlotTimed->xAxis->setTickLabelFont(QFont(QFont().family(), 8));
-    ui->qCustomPlotTimed->xAxis->setLabel("Timespamp");
+    ui->qCustomPlotTimed->xAxis->setDateTimeFormat("hh:mm:ss");
+    ui->qCustomPlotTimed->xAxis->setLabel("Time");
     ui->qCustomPlotTimed->xAxis->setAutoTickStep(true);
 
     ui->qCustomPlotTimed->yAxis->setTickLabelType(QCPAxis::ltNumber);
@@ -166,26 +192,24 @@ void NodeAttributePlotting::addTimedGraphFor(QSharedPointer<DatasetAttributeRead
     if(map_plot_info.contains(attribute_name)) return;
 
     if(attribute_reader->getType() == chaos::DataType::TYPE_BYTEARRAY ||
-            attribute_reader->getType() == chaos::DataType::TYPE_BOOLEAN ||
             attribute_reader->getType() == chaos::DataType::TYPE_STRING) {
         QMessageBox::information(this, tr("Create plot error"), QString("The type for attribute %1 can't be added to timed plot").arg( attribute_name));
         return;
     }
 
     bool ok = false;
-    QSharedPointer<PlotInfo> plot_info(new PlotInfo());
-    //get monitor handler for attribute
-    plot_info->monitor_handler = getChaosAttributeHandlerForType(attribute_name,
-                                                                 (plot_info->attribute_type = (chaos::DataType::DataType)attribute_reader->getType()),
-                                                                 ok);
-    if(!ok) {
-        QMessageBox::information(this, tr("Create plot error"), QString("Error creating monitor for attrbiute %1").arg(attribute_name));
-        return;
-    }
-
-    plot_info->quantum_multiplier = 10;
+    QSharedPointer<PlotInfo> plot_info(new PlotInfo(*this));
     plot_info->attribute_name = attribute_name;
-    plot_info->direction = attribute_reader->getDirection();
+    switch(attribute_reader->getDirection()) {
+    case chaos::DataType::Input:
+        plot_info->dataset_type = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_INPUT;
+        break;
+
+    case chaos::DataType::Output:
+        plot_info->dataset_type = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT;
+        break;
+
+    }
     plot_info->graph = ui->qCustomPlotTimed->addGraph();
     plot_info->graph->setLineStyle(QCPGraph::lsLine);
     plot_info->graph->setName(attribute_name);
@@ -205,38 +229,17 @@ void NodeAttributePlotting::removedTimedGraphFor(const QString& attribute_name) 
 
 void NodeAttributePlotting::_addRemoveToPlot(QSharedPointer<PlotInfo> plot_info, bool add) {
     const QString attribute_name = plot_info->attribute_name;
-
-    //general check
-    unsigned int dataset_type = 0;
-    switch(plot_info->direction) {
-    case chaos::DataType::Input:
-        dataset_type = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_INPUT;
-        break;
-
-    case chaos::DataType::Output:
-        dataset_type = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT;
-        break;
-
-    }
-
     if(add) {
-        //ad plot to graph
-        connect(plot_info->monitor_handler.data(),
-                SIGNAL(valueUpdated(QString,QString,uint64_t,QVariant)),
-                SLOT(valueUpdated(QString,QString,uint64_t,QVariant)));
-
         //activate monitoring
-        ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForDataset(node_uid.toStdString(),
-                                                                                    dataset_type,
-                                                                                    plot_info->quantum_multiplier,
-                                                                                    plot_info->monitor_handler.data()->getQuantumAttributeHandler());
+        ChaosMetadataServiceClient::getInstance()->addHandlerToNodeMonitor(node_uid.toStdString(),
+                                                                           chaos::metadata_service_client::node_monitor::ControllerTypeNodeControlUnit,
+                                                                           plot_info.data());
         map_plot_info.insert(attribute_name, plot_info);
     } else {
         //remove plot from monitor
-        ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForDataset(node_uid.toStdString(),
-                                                                                       dataset_type,
-                                                                                       plot_info->quantum_multiplier,
-                                                                                       plot_info->monitor_handler.data()->getQuantumAttributeHandler());
+        ChaosMetadataServiceClient::getInstance()->removeHandlerToNodeMonitor(node_uid.toStdString(),
+                                                                              chaos::metadata_service_client::node_monitor::ControllerTypeNodeControlUnit,
+                                                                              plot_info.data());
 
         //we can remove the plot from graph and map
         ui->qCustomPlotTimed->removeGraph(plot_info->graph);
@@ -276,61 +279,8 @@ void NodeAttributePlotting::asyncApiTimeout(const QString& tag) {
     QMessageBox::information(this, "Api call timeout", QString("Timeout on tag:%1").arg(tag));
 }
 
-void NodeAttributePlotting::on_pushButtonStartMonitoring_clicked() {
-
-}
-
-void NodeAttributePlotting::on_pushButtonStopMonitoring_clicked() {
-
-}
-
-QSharedPointer<AbstractTSTaggedAttributeHandler>
-NodeAttributePlotting::getChaosAttributeHandlerForType(const QString& attribute_name, chaos::DataType::DataType chaos_type, bool& ok) {
-    ok = true;
-    switch(chaos_type) {
-    case chaos::DataType::TYPE_BOOLEAN:
-        return QSharedPointer<AbstractTSTaggedAttributeHandler>(new MonitorTSTaggedBoolAttributeHandler(attribute_name,
-                                                                                                        chaos::DataPackCommonKey::DPCK_TIMESTAMP));
-    case chaos::DataType::TYPE_INT32:
-        return QSharedPointer<AbstractTSTaggedAttributeHandler>(new MonitorTSTaggedInt32AttributeHandler(attribute_name,
-                                                                                                         chaos::DataPackCommonKey::DPCK_TIMESTAMP));
-    case chaos::DataType::TYPE_INT64:
-        return QSharedPointer<AbstractTSTaggedAttributeHandler>(new MonitorTSTaggedInt64AttributeHandler(attribute_name,
-                                                                                                         chaos::DataPackCommonKey::DPCK_TIMESTAMP));
-    case chaos::DataType::TYPE_DOUBLE:
-        return QSharedPointer<AbstractTSTaggedAttributeHandler>(new MonitorTSTaggedDoubleAttributeHandler(attribute_name,
-                                                                                                          chaos::DataPackCommonKey::DPCK_TIMESTAMP));
-    case chaos::DataType::TYPE_STRING:
-        return QSharedPointer<AbstractTSTaggedAttributeHandler>(new MonitorTSTaggedStringAttributeHandler(attribute_name,
-                                                                                                          chaos::DataPackCommonKey::DPCK_TIMESTAMP));
-    case chaos::DataType::TYPE_BYTEARRAY:
-        return QSharedPointer<AbstractTSTaggedAttributeHandler>(new MonitorTSTaggedBinaryAttributeHandler(attribute_name,
-                                                                                                          chaos::DataPackCommonKey::DPCK_TIMESTAMP));
-    default:
-        ok = false;
-        return QSharedPointer<AbstractTSTaggedAttributeHandler>();
-        break;
-    }
-}
-
-void NodeAttributePlotting::valueUpdated(const QString& node_uid,
-                                         const QString& attribute_name,
-                                         uint64_t timestamp,
-                                         const QVariant& attribute_value) {
-
-    lock_read_write_for_plot.lockForRead();
-    bool local_ts = node_uid.compare(node_uid_input_dataset) == 0;
-    double key = local_ts ?(QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0):(timestamp/1000.0);
-    double key_for_old = key-plot_ageing;
-    map_plot_info[attribute_name]->graph->addData(key, attribute_value.toDouble());
-    map_plot_info[attribute_name]->graph->removeDataBefore(key_for_old);
-    //qDebug() << "add value to plot for :" <<  attribute_name << " with value:" << attribute_value.toString() << " plot point size:" << map_plot_info[attribute_name]->graph->data()->size();
-    lock_read_write_for_plot.unlock();
-}
-
 void NodeAttributePlotting::updatePlot() {
     lock_read_write_for_plot.lockForWrite();
-    // make key axis range scroll with the data (at a constant range size of 8):
     double now = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
     double key_min = QDateTime::currentDateTime().addSecs(-plot_ageing).toMSecsSinceEpoch()/1000.0;
     ui->qCustomPlotTimed->xAxis->setRange(key_min, now);

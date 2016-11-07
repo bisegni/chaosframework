@@ -219,57 +219,58 @@ void NodeController::_fireHealthDatasetChanged(){
 }
 
 void NodeController::_setOnlineState(const OnlineState new_online_state) {
-    if(health_info.online_state != new_online_state) {
-        boost::unique_lock<boost::mutex> wl(list_handler_mutex);
-        for(MonitoHandlerListIterator it = list_handler.begin(),
-            it_end = list_handler.end();
-            it != it_end;
-            it++) {
-            //notify listers that online status has been changed
-            CHAOS_NOT_THROW((*it)->nodeChangedOnlineState(node_uid,
-                                                          health_info.online_state,
-                                                          new_online_state););
-        }
-        health_info.online_state = new_online_state;
-        //add online state into map
-        map_ds_health[NodeMonitorHandler::MAP_KEY_ONLINE_STATE] = CDataVariant((int32_t)new_online_state);
+    bool changed = health_info.online_state != new_online_state;
+    
+    boost::unique_lock<boost::mutex> wl(list_handler_mutex);
+    for(MonitoHandlerListIterator it = list_handler.begin(),
+        it_end = list_handler.end();
+        it != it_end;
+        it++) {
+        if((*it)->signalOnChange() == true && changed == false) {continue;}
+        //notify listers that online status has been changed
+        CHAOS_NOT_THROW((*it)->nodeChangedOnlineState(node_uid,
+                                                      health_info.online_state,
+                                                      new_online_state););
     }
+    health_info.online_state = new_online_state;
+    //add online state into map
+    map_ds_health[NodeMonitorHandler::MAP_KEY_ONLINE_STATE] = CDataVariant((int32_t)new_online_state);
 }
 
 
 void NodeController::_setNodeInternalState(const std::string& new_internal_state) {
-    if(health_info.internal_state.compare(new_internal_state) != 0) {
-        boost::unique_lock<boost::mutex> wl(list_handler_mutex);
-        for(MonitoHandlerListIterator it = list_handler.begin(),
-            it_end = list_handler.end();
-            it != it_end;
-            it++) {
-            //notify listers that online status has been changed
-            CHAOS_NOT_THROW((*it)->nodeChangedInternalState(node_uid,
-                                                            health_info.internal_state,
-                                                            new_internal_state););
-        }
-        health_info.internal_state = new_internal_state;
+    bool changed = health_info.internal_state.compare(new_internal_state) != 0;
+    boost::unique_lock<boost::mutex> wl(list_handler_mutex);
+    for(MonitoHandlerListIterator it = list_handler.begin(),
+        it_end = list_handler.end();
+        it != it_end;
+        it++) {
+        if((*it)->signalOnChange() == true && changed == false) {continue;}
+        //notify listers that online status has been changed
+        CHAOS_NOT_THROW((*it)->nodeChangedInternalState(node_uid,
+                                                        health_info.internal_state,
+                                                        new_internal_state););
     }
+    health_info.internal_state = new_internal_state;
+    
 }
 
 void NodeController::_setError(const ErrorInformation& new_error_information) {
     bool changed = (health_info.error_information.error_code != new_error_information.error_code) ||
     (health_info.error_information.error_message.compare(new_error_information.error_message) != 0) ||
     (health_info.error_information.error_domain.compare(new_error_information.error_domain) != 0);
-    if(changed) {
-        boost::unique_lock<boost::mutex> wl(list_handler_mutex);
-        for(MonitoHandlerListIterator it = list_handler.begin(),
-            it_end = list_handler.end();
-            it != it_end;
-            it++) {
-            //notify listers that online status has been changed
-            CHAOS_NOT_THROW((*it)->nodeChangedErrorInformation(node_uid,
-                                                               health_info.error_information,
-                                                               new_error_information););
-        }
-        health_info.error_information = new_error_information;
+    boost::unique_lock<boost::mutex> wl(list_handler_mutex);
+    for(MonitoHandlerListIterator it = list_handler.begin(),
+        it_end = list_handler.end();
+        it != it_end;
+        it++) {
+        if((*it)->signalOnChange() == true && changed == false) {continue;}
+        //notify listers that online status has been changed
+        CHAOS_NOT_THROW((*it)->nodeChangedErrorInformation(node_uid,
+                                                           health_info.error_information,
+                                                           new_error_information););
     }
+    health_info.error_information = new_error_information;
 }
 
 void NodeController::_setProcessResource(const ProcessResource& new_process_resource) {
@@ -280,24 +281,22 @@ void NodeController::_setProcessResource(const ProcessResource& new_process_reso
     
     bool restarted = changed && health_info.process_resource.uptime > new_process_resource.uptime;
     
-    if(changed) {
-        
-        boost::unique_lock<boost::mutex> wl(list_handler_mutex);
-        for(MonitoHandlerListIterator it = list_handler.begin(),
-            it_end = list_handler.end();
-            it != it_end;
-            it++) {
-            if(restarted) {
-                //notify listers that online status has been changed
-                CHAOS_NOT_THROW((*it)->nodeHasBeenRestarted(node_uid););
-            }
+    boost::unique_lock<boost::mutex> wl(list_handler_mutex);
+    for(MonitoHandlerListIterator it = list_handler.begin(),
+        it_end = list_handler.end();
+        it != it_end;
+        it++) {
+        if(restarted) {
             //notify listers that online status has been changed
-            CHAOS_NOT_THROW((*it)->nodeChangedProcessResource(node_uid,
-                                                              health_info.process_resource,
-                                                              new_process_resource););
+            CHAOS_NOT_THROW((*it)->nodeHasBeenRestarted(node_uid););
         }
-        health_info.process_resource = new_process_resource;
+        if((*it)->signalOnChange() == true && changed == false) {continue;}
+       //notify listers that online status has been changed
+        CHAOS_NOT_THROW((*it)->nodeChangedProcessResource(node_uid,
+                                                          health_info.process_resource,
+                                                          new_process_resource););
     }
+    health_info.process_resource = new_process_resource;
 }
 
 bool NodeController::addHandler(NodeMonitorHandler *handler_to_add) {

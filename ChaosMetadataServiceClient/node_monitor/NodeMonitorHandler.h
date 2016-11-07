@@ -35,6 +35,7 @@ namespace chaos {
                 friend class NodeMonitorHandlerComparator;
                 friend class NodeFetcher;
                 const std::string handler_uuid;
+                bool signal_on_change;
             public:
                 static const char * const MAP_KEY_ONLINE_STATE;
                 NodeMonitorHandler();
@@ -61,6 +62,10 @@ namespace chaos {
                 
                 virtual void nodeChangedHealthDataset(const std::string& node_uid,
                                                       MapDatasetKeyValues& map_health_dataset);
+                
+                void setSignalOnChange(bool new_change_on_signal);
+                
+                bool signalOnChange();
             };
             
             struct NodeMonitorHandlerComparator {

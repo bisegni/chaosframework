@@ -30,7 +30,7 @@
 #include <boost/thread.hpp>
 
 #define CHECK_DS_CHANGED(x, v)\
-if((x.get() == NULL) || \
+((x.get() == NULL) || \
 ((x.get() != NULL) && (x->toHash().compare(v->toHash()) != 0)))
 
 namespace chaos {

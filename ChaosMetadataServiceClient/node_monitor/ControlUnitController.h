@@ -60,7 +60,8 @@ namespace chaos {
                                               MapDatasetKeyValues& map);
                 
                 void _fireUpdateDSOnHandler(int dataset_type,
-                                            MapDatasetKeyValues& map);
+                                            MapDatasetKeyValues& map,
+                                            bool changed);
                 void _fireNoDSDataFoundOnHandler(int dataset_type);
             protected:
                 ControlUnitController(const std::string& _node_uid);

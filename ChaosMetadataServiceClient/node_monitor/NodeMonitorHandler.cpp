@@ -26,7 +26,8 @@ using namespace chaos::metadata_service_client::node_monitor;
 const char * const NodeMonitorHandler::MAP_KEY_ONLINE_STATE = "OnlineState";
 
 NodeMonitorHandler::NodeMonitorHandler():
-handler_uuid(chaos::common::utility::UUIDUtil::generateUUIDLite()){}
+handler_uuid(chaos::common::utility::UUIDUtil::generateUUIDLite()),
+signal_on_change(true){}
 
 NodeMonitorHandler::~NodeMonitorHandler() {}
 
@@ -61,4 +62,12 @@ void NodeMonitorHandler::nodeChangedErrorInformation(const std::string& node_uid
 void NodeMonitorHandler::nodeChangedHealthDataset(const std::string& node_uid,
                                                   MapDatasetKeyValues& map_health_dataset) {
     
+}
+
+void NodeMonitorHandler::setSignalOnChange(bool new_change_on_signal) {
+    signal_on_change = new_change_on_signal;
+}
+
+bool NodeMonitorHandler::signalOnChange() {
+    return signal_on_change;
 }

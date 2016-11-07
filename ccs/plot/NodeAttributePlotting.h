@@ -19,14 +19,25 @@ namespace Ui {
 class NodeAttributePlotting;
 }
 
-struct PlotInfo {
+class NodeAttributePlotting;
+
+struct PlotInfo:
+        public chaos::metadata_service_client::node_monitor::ControlUnitMonitorHandler {
     int graph_index;
-    int direction;
-    int quantum_multiplier;
-    QSharedPointer<AbstractTSTaggedAttributeHandler> monitor_handler;
     QCPGraph *graph;
     QString attribute_name;
+    double last_received_value;
+    int dataset_type;
+    NodeAttributePlotting& plotting_class_ref;
     chaos::DataType::DataType attribute_type;
+
+    PlotInfo(NodeAttributePlotting& _plotting_class_ref);
+    void updatedDS(const std::string& control_unit_uid,
+                   int dataset_type_signal,
+                   chaos::metadata_service_client::node_monitor::MapDatasetKeyValues& dataset_key_values);
+
+    void noDSDataFound(const std::string& control_unit_uid,
+                       int dataset_type_signal);
 };
 
 class NodeAttributePlotting :
@@ -39,8 +50,6 @@ public:
     ~NodeAttributePlotting();
 
 protected:
-    QSharedPointer<AbstractTSTaggedAttributeHandler>
-    getChaosAttributeHandlerForType(const QString &attribute_name, chaos::DataType::DataType chaos_type, bool& ok);
     void addTimedGraphFor(QSharedPointer<DatasetAttributeReader>& attribute_reader);
     void removedTimedGraphFor(const QString &attribute_name);
 private slots:
@@ -50,29 +59,16 @@ private slots:
     void asyncApiResult(const QString& tag, QSharedPointer<chaos::common::data::CDataWrapper> api_result);
     void asyncApiError(const QString&  tag, QSharedPointer<chaos::CException> api_exception);
     void asyncApiTimeout(const QString& tag);
-    void on_pushButtonStartMonitoring_clicked();
-    void on_pushButtonStopMonitoring_clicked();
-    void valueUpdated(const QString& node_uid,
-                      const QString& attribute_name,
-                      uint64_t timestamp,
-                      const QVariant& attribute_value);
     void on_lineEditTimeInterval_editingFinished();
-
     void on_lineEditRangeTo_editingFinished();
-
     void on_lineEditRangeFrom_editingFinished();
-
     void on_checkBoxLogScaleEnable_clicked();
-
     void onMouseMoveGraph(QMouseEvent *event);
-
     void contextMenuRequest(const QPoint& point);
-
     void moveLegend();
 private:
+    friend struct PlotInfo;
     const QString node_uid;
-    const QString node_uid_output_dataset;
-    const QString node_uid_input_dataset;
     uint64_t plot_ageing;
     boost::mt19937 rng;
     boost::uniform_int<> zero_to_255;
