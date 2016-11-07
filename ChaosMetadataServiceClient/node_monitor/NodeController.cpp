@@ -232,9 +232,11 @@ void NodeController::_setOnlineState(const OnlineState new_online_state) {
                                                       health_info.online_state,
                                                       new_online_state););
     }
-    health_info.online_state = new_online_state;
-    //add online state into map
-    map_ds_health[NodeMonitorHandler::MAP_KEY_ONLINE_STATE] = CDataVariant((int32_t)new_online_state);
+    if(changed) {
+        health_info.online_state = new_online_state;
+        //add online state into map
+        map_ds_health[NodeMonitorHandler::MAP_KEY_ONLINE_STATE] = CDataVariant((int32_t)new_online_state);
+    }
 }
 
 
@@ -251,8 +253,7 @@ void NodeController::_setNodeInternalState(const std::string& new_internal_state
                                                         health_info.internal_state,
                                                         new_internal_state););
     }
-    health_info.internal_state = new_internal_state;
-    
+    if(changed){health_info.internal_state = new_internal_state;}
 }
 
 void NodeController::_setError(const ErrorInformation& new_error_information) {
@@ -270,7 +271,7 @@ void NodeController::_setError(const ErrorInformation& new_error_information) {
                                                            health_info.error_information,
                                                            new_error_information););
     }
-    health_info.error_information = new_error_information;
+    if(changed){health_info.error_information = new_error_information;}
 }
 
 void NodeController::_setProcessResource(const ProcessResource& new_process_resource) {
@@ -291,12 +292,12 @@ void NodeController::_setProcessResource(const ProcessResource& new_process_reso
             CHAOS_NOT_THROW((*it)->nodeHasBeenRestarted(node_uid););
         }
         if((*it)->signalOnChange() == true && changed == false) {continue;}
-       //notify listers that online status has been changed
+        //notify listers that online status has been changed
         CHAOS_NOT_THROW((*it)->nodeChangedProcessResource(node_uid,
                                                           health_info.process_resource,
                                                           new_process_resource););
     }
-    health_info.process_resource = new_process_resource;
+    if(changed){health_info.process_resource = new_process_resource;}
 }
 
 bool NodeController::addHandler(NodeMonitorHandler *handler_to_add) {
