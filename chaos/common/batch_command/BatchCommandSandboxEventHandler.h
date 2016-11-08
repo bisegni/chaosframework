@@ -19,6 +19,14 @@ namespace chaos{
             class BatchCommandSandbox;
             
             
+            struct BatchCommandStat {
+                uint32_t queued_commands;
+                uint32_t stacked_commands;
+                BatchCommandStat():
+                queued_commands(0),
+                stacked_commands(0){}
+            };
+            
             //! Handler interface for slow command sandbox event
             class BatchCommandSandboxEventHandler {
                 
@@ -35,7 +43,8 @@ namespace chaos{
                 virtual void handleCommandEvent(const std::string& command_alias,
                                                 uint64_t command_seq,
                                                 BatchCommandEventType::BatchCommandEventType type,
-                                                CDataWrapper *command_info) = 0;
+                                                CDataWrapper *command_info,
+                                                const BatchCommandStat& commands_stats) = 0;
 				
 				//! general sandbox event handler
 				/*!

@@ -116,7 +116,7 @@ AbstractSharedDomainCache *BatchCommandExecutor::getAttributeSharedCache() {
 //! Add a number of sandobx to this instance of executor
 void BatchCommandExecutor::addSandboxInstance(unsigned int _sandbox_number) {
     //lock for map modification
-    WriteLock       lock(sandbox_map_mutex);
+    WriteLock lock(sandbox_map_mutex);
     
     //! add new instances
     for(unsigned int idx = 0; idx < _sandbox_number; idx++) {
@@ -269,7 +269,9 @@ void BatchCommandExecutor::deinit() throw(chaos::CException) {
 //command event handler
 void BatchCommandExecutor::handleCommandEvent(uint64_t command_id,
                                               BatchCommandEventType::BatchCommandEventType type,
-                                              CDataWrapper *command_info) {
+                                              CDataWrapper *command_info,
+                                              const BatchCommandStat& commands_stats) {
+    DEBUG_CODE(BCELDBG_ << "Received event of type->" << type << " on command id -> "<<command_id;)
     switch(type) {
         case BatchCommandEventType::EVT_QUEUED: {
             // get upgradable access
@@ -277,8 +279,8 @@ void BatchCommandExecutor::handleCommandEvent(uint64_t command_id,
             
             // get exclusive access
             boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
-              DEBUG_CODE(BCELDBG_ << "Received event of type-> Command QUEUED" << " command id -> "<<command_id);
-
+            DEBUG_CODE(BCELDBG_ << "Received event of type-> Command QUEUED" << " command id -> "<<command_id);
+            
             addComamndState(command_id);
             
             return;
@@ -286,7 +288,7 @@ void BatchCommandExecutor::handleCommandEvent(uint64_t command_id,
             
         case BatchCommandEventType::EVT_FAULT: {
             DEBUG_CODE(BCELDBG_ << "Received event of type-> Command FAULT" << " command id -> "<<command_id);
-
+            
             if(command_info != NULL) {
                 ReadLock lock(command_state_rwmutex);
                 boost::shared_ptr<CommandState>  cmd_state = getCommandState(command_id);
@@ -302,16 +304,16 @@ void BatchCommandExecutor::handleCommandEvent(uint64_t command_id,
             
         case BatchCommandEventType::EVT_COMPLETED: {
             DEBUG_CODE(BCELDBG_ << "Received event of type-> Command Completed" << " command id -> "<<command_id);
-
+            
             break;
         }
             
-    
+            
     }
-     ReadLock lock(command_state_rwmutex);
-     boost::shared_ptr<CommandState>  cmd_state = getCommandState(command_id);
-     if(cmd_state.get()) {
-           cmd_state->last_event = type;
+    ReadLock lock(command_state_rwmutex);
+    boost::shared_ptr<CommandState>  cmd_state = getCommandState(command_id);
+    if(cmd_state.get()) {
+        cmd_state->last_event = type;
     }
 }
 
@@ -419,7 +421,7 @@ void BatchCommandExecutor::setDefaultCommand(const string& command_alias,
     }
     
     default_command_alias = command_alias;
-    WriteLock       lock(sandbox_map_mutex);
+    ReadLock       lock(sandbox_map_mutex);
     BCELAPP_ << "Install the default command ->"<<"\""<<default_command_alias<<"\"";
     BatchCommand * def_cmd_impl = instanceCommandInfo(default_command_alias, (CDataWrapper*)NULL);
     if(def_cmd_impl) {
@@ -506,7 +508,7 @@ BatchCommand *BatchCommandExecutor::instanceCommandInfo(const std::string& comma
         boost::shared_ptr<BatchCommandDescription> description = map_command_description[command_alias];
         instance = description->instancer->getInstance();
         DEBUG_CODE(BCELDBG_ << "Instancing command \"" << command_alias<<"\" sticky/default:"<<instance->sticky;)
-
+        
         //forward the pointer of the driver accessor
         //result->driverAccessorsErogator = driverAccessorsErogator;
         if(instance) {
@@ -549,7 +551,7 @@ void BatchCommandExecutor::submitCommand(const std::string& batch_command_alias,
        CUStateKey::START)
         throw CException(-2, "Slow command executor is not started", "BatchCommandExecutor::submitCommand");
     
-    WriteLock       lock(sandbox_map_mutex);
+    WriteLock lock(sandbox_map_mutex);
     
     //get execution channel if submitted
     uint32_t execution_channel = commandDescription->hasKey(BatchCommandSubmissionKey::COMMAND_EXECUTION_CHANNEL) ? commandDescription->getUInt32Value(BatchCommandSubmissionKey::COMMAND_EXECUTION_CHANNEL):COMMAND_BASE_SANDOXX_ID;
@@ -562,15 +564,15 @@ void BatchCommandExecutor::submitCommand(const std::string& batch_command_alias,
     
     //get priority if submitted
     uint32_t priority = commandDescription->hasKey(BatchCommandSubmissionKey::SUBMISSION_PRIORITY_UI32) ? commandDescription->getUInt32Value(BatchCommandSubmissionKey::SUBMISSION_PRIORITY_UI32):50;
+    <<<<<<< HEAD
     
     BCELDBG_ << "Submit new command \""<<batch_command_alias << "\" with info:" << commandDescription->getJSONString();
-    
-    //add unique id for command
-    //command_id = ++command_sequence_id;
-    //commandDescription->addInt64Value(BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64, command_id);
-    
-    //queue the command
-    BatchCommand *cmd_instance = instanceCommandInfo(batch_command_alias, commandDescription);
+    =======
+    BCELDBG_ << "Submit new command "<<batch_command_alias << "with info:" << commandDescription->getJSONString();
+    >>>>>>> added the number of queue and stacked command into the sys dataset for the slow control execution unit
+        
+        //queue the command
+        BatchCommand *cmd_instance = instanceCommandInfo(batch_command_alias, commandDescription);
     if(cmd_instance) {
         //report unique id
         command_id = cmd_instance->unique_id;
@@ -579,7 +581,6 @@ void BatchCommandExecutor::submitCommand(const std::string& batch_command_alias,
         tmp_ptr->enqueueCommand(commandDescription, cmd_instance, priority);
     } else {
         throw CException(-4, "Command instantiation failed", "BatchCommandExecutor::submitCommand");
-        
     }
 }
 
@@ -594,7 +595,7 @@ void BatchCommandExecutor::submitCommand(const std::string& batch_command_alias,
     if(sandbox_map.count(execution_channel) == 0)
         throw CException(-3, "Execution channel not found", "BatchCommandExecutor::submitCommand");
     
-    WriteLock       lock(sandbox_map_mutex);
+    WriteLock lock(sandbox_map_mutex);
     
     boost::shared_ptr<BatchCommandSandbox> sandbox_ptr = sandbox_map[execution_channel];
     
@@ -655,7 +656,7 @@ CDataWrapper* BatchCommandExecutor::setCommandFeatures(CDataWrapper *params, boo
     if(!params || sandbox_map.size()==0)
         throw CException(-1, "Invalid parameter", "BatchCommandExecutor::setCommandFeatures");
     
-    ReadLock       lock(sandbox_map_mutex);
+    ReadLock   lock(sandbox_map_mutex);
     
     BCELAPP_ << "Set command feature on current command into the executor with id: " << executorID;
     //get execution channel if submitted

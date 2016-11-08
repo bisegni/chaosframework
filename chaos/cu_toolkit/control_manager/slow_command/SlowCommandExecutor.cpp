@@ -147,12 +147,14 @@ BatchCommand *SlowCommandExecutor::instanceCommandInfo(const std::string& comman
 void SlowCommandExecutor::handleCommandEvent(const std::string& command_alias,
                                              uint64_t command_seq,
                                              BatchCommandEventType::BatchCommandEventType type,
-                                             CDataWrapper *command_data) {
+                                             CDataWrapper *command_data,
+                                             const BatchCommandStat& commands_stats) {
     
     //let the base class handle the event
     BatchCommandExecutor::handleCommandEvent(command_seq,
                                              type,
-                                             command_data);
+                                             command_data,
+                                             commands_stats);
     switch(type) {
         case BatchCommandEventType::EVT_COMPLETED:{
             if(command_data) {
@@ -191,7 +193,7 @@ void SlowCommandExecutor::handleCommandEvent(const std::string& command_alias,
             control_unit_instance->pushInputDataset();
             break;
         }
-            
+
         case BatchCommandEventType::EVT_FAULT: {
             
             if(command_data &&
@@ -226,6 +228,11 @@ void SlowCommandExecutor::handleCommandEvent(const std::string& command_alias,
                                              command_seq,
                                              type,
                                              command_data);
+    //update queued and stacked command on system dataset
+    AttributeCache& sys_cache = getAttributeSharedCache()->getSharedDomain(DOMAIN_SYSTEM);
+    sys_cache.getValueSettingByName(DataPackSystemKey::DP_SYS_QUEUED_CMD)->setValue(CDataVariant(commands_stats.queued_commands));
+    sys_cache.getValueSettingByName(DataPackSystemKey::DP_SYS_STACK_CMD)->setValue(CDataVariant(commands_stats.stacked_commands));
+    control_unit_instance->pushSystemDataset();
 }
 
 //! general sandbox event handler

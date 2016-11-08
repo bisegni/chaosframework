@@ -124,7 +124,8 @@ namespace chaos {
                 //command event handler
                 virtual void handleCommandEvent(uint64_t command_seq,
                                                 BatchCommandEventType::BatchCommandEventType type,
-                                                CDataWrapper *command_info);
+                                                chaos::common::data::CDataWrapper *command_info,
+                                                const BatchCommandStat& commands_stats);
 
                 //! general sandbox event handler
                 virtual void handleSandboxEvent(const std::string& sandbox_id,
@@ -193,7 +194,7 @@ namespace chaos {
                  non ended command state, will be remove from the history.
                  */
                 chaos_data::CDataWrapper* flushCommandStates(chaos_data::CDataWrapper *params, bool& detachParam) throw (CException);
-
+                
                 //!Inherited by TimerHandler for capper operation
                 void timeout();
             public:

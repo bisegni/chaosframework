@@ -115,7 +115,8 @@ new chaos::common::utility::TypedObjectInstancer<SlowCommandClass, chaos::cu::co
 					void handleCommandEvent(const std::string& command_alias,
                                             uint64_t command_seq,
 											chaos_batch::BatchCommandEventType::BatchCommandEventType type,
-                                            chaos::common::data::CDataWrapper *command_data);
+                                            chaos::common::data::CDataWrapper *command_data,
+                                            const chaos_batch::BatchCommandStat& commands_stats);
 
 					//! general sandbox event handler
 					void handleSandboxEvent(const std::string& sandbox_id,

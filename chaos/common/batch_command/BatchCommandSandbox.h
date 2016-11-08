@@ -98,7 +98,7 @@ namespace chaos{
                 friend struct CorrelationFunctor;
                 //stat for the single step of the command execution
                 SandboxStat stat;
-                
+                BatchCommandStat cmd_stat;
                 //sandbox identification string
                 std::string identification;
                 

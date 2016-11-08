@@ -257,7 +257,8 @@ void BatchCommandSandbox::deinit() throw (chaos::CException) {
             event_handler->handleCommandEvent(current_executing_command->element->cmdImpl->command_alias,
                                               current_executing_command->element->cmdImpl->unique_id,
                                               BatchCommandEventType::EVT_KILLED,
-                                              current_executing_command->element->cmdInfo);
+                                              current_executing_command->element->cmdInfo,
+                                              cmd_stat);
         }
         DELETE_OBJ_POINTER(current_executing_command)
     }
@@ -267,13 +268,15 @@ void BatchCommandSandbox::deinit() throw (chaos::CException) {
     while (!command_stack.empty()) {
         nextAvailableCommand = command_stack.top();
         command_stack.pop();
+        cmd_stat.stacked_commands = (uint32_t)command_stack.size();
         if(nextAvailableCommand == NULL) continue;
         if(nextAvailableCommand->element->cmdImpl->sticky == true) continue;
         if (event_handler) {
             event_handler->handleCommandEvent(nextAvailableCommand->element->cmdImpl->command_alias,
                                               nextAvailableCommand->element->cmdImpl->unique_id,
                                               BatchCommandEventType::EVT_KILLED,
-                                              nextAvailableCommand->element->cmdInfo);
+                                              nextAvailableCommand->element->cmdInfo,
+                                              cmd_stat);
         }
         DELETE_OBJ_POINTER(nextAvailableCommand);
     }
@@ -283,10 +286,12 @@ void BatchCommandSandbox::deinit() throw (chaos::CException) {
     while (!command_submitted_queue.empty()) {
         nextAvailableCommand = command_submitted_queue.top();
         command_submitted_queue.pop();
+        cmd_stat.queued_commands = (uint32_t)command_submitted_queue.size();
         if (event_handler && nextAvailableCommand) event_handler->handleCommandEvent(nextAvailableCommand->element->cmdImpl->command_alias,
                                                                                      nextAvailableCommand->element->cmdImpl->unique_id,
                                                                                      BatchCommandEventType::EVT_KILLED,
-                                                                                     nextAvailableCommand->element->cmdInfo);
+                                                                                     nextAvailableCommand->element->cmdInfo,
+                                                                                     cmd_stat);
         DELETE_OBJ_POINTER(nextAvailableCommand)
     }
     
@@ -383,6 +388,8 @@ void BatchCommandSandbox::checkNextCommand() {
                         //the stack feature need that the
                         DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] RSR_STACK_CURRENT_COMMAND";)
                         command_submitted_queue.pop();
+                        cmd_stat.queued_commands = (uint32_t)command_submitted_queue.size();
+                        
                         lock_next_command_queue.unlock();
                         if(current_executing_command->element->cmdImpl->sticky != true) {
                            DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] stacking current command:\" " << current_executing_command->element->cmdImpl->getAlias());
@@ -394,7 +401,8 @@ void BatchCommandSandbox::checkNextCommand() {
                         if (event_handler) event_handler->handleCommandEvent(current_executing_command->element->cmdImpl->command_alias,
                                                                              current_executing_command->element->cmdImpl->unique_id,
                                                                              BatchCommandEventType::EVT_PAUSED,
-                                                                             current_executing_command->element->cmdInfo);
+                                                                             current_executing_command->element->cmdInfo,
+                                                                             cmd_stat);
                         //install next command
                         installHandler(next_available_command);
                         
@@ -418,7 +426,8 @@ void BatchCommandSandbox::checkNextCommand() {
                                 if (event_handler && command_to_delete) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
                                                                                                           command_to_delete->element->cmdImpl->unique_id,
                                                                                                           BatchCommandEventType::EVT_KILLED,
-                                                                                                          command_to_delete->element->cmdInfo);
+                                                                                                          command_to_delete->element->cmdInfo,
+                                                                                                          cmd_stat);
                                 break;
                             }
                                 
@@ -428,7 +437,8 @@ void BatchCommandSandbox::checkNextCommand() {
                                 if (event_handler && command_to_delete) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
                                                                                                           command_to_delete->element->cmdImpl->unique_id,
                                                                                                           BatchCommandEventType::EVT_COMPLETED,
-                                                                                                          command_to_delete->element->cmdInfo);
+                                                                                                          command_to_delete->element->cmdInfo,
+                                                                                                          cmd_stat);
                                 break;
                             }
                                 
@@ -440,13 +450,15 @@ void BatchCommandSandbox::checkNextCommand() {
                                 if (event_handler && command_to_delete) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
                                                                                                           command_to_delete->element->cmdImpl->unique_id,
                                                                                                           BatchCommandEventType::EVT_FAULT,
-                                                                                                          command_and_fault.get());
+                                                                                                          command_and_fault.get(),
+                                                                                                          cmd_stat);
                                 break;
                             }
                         }
 #pragma GCC diagnostic pop
                         
                         command_submitted_queue.pop();
+                        cmd_stat.queued_commands = (uint32_t)command_submitted_queue.size();
                         lock_next_command_queue.unlock();
                         DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] element in command_submitted_queue " << command_submitted_queue.size();)
                         
@@ -471,6 +483,8 @@ void BatchCommandSandbox::checkNextCommand() {
                 PRIORITY_ELEMENT(CommandInfoAndImplementation) *nextAvailableCommand = command_submitted_queue.top();
                 installHandler(nextAvailableCommand);
                 command_submitted_queue.pop();
+                //increment command stat
+                cmd_stat.queued_commands = (uint32_t)command_submitted_queue.size();
                 //lock the command queue access
                 lock_next_command_queue.unlock();
                 thread_scheduler_pause_condition.unlock();
@@ -488,7 +502,8 @@ void BatchCommandSandbox::checkNextCommand() {
                                 if (event_handler) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
                                                                                      command_to_delete->element->cmdImpl->unique_id,
                                                                                      BatchCommandEventType::EVT_COMPLETED,
-                                                                                     command_to_delete->element->cmdInfo);
+                                                                                     command_to_delete->element->cmdInfo,
+                                                                                     cmd_stat);
                                 break;
                             }
                             case RunningPropertyType::RP_Fault:{
@@ -499,7 +514,8 @@ void BatchCommandSandbox::checkNextCommand() {
                                     event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
                                                                       command_to_delete->element->cmdImpl->unique_id,
                                                                       BatchCommandEventType::EVT_FAULT,
-                                                                      command_and_fault.get());
+                                                                      command_and_fault.get(),
+                                                                      cmd_stat);
                                 }
                                 
                                 break;
@@ -511,6 +527,7 @@ void BatchCommandSandbox::checkNextCommand() {
                         removeHandler(command_to_delete);
                         installHandler(nextAvailableCommand);
                         command_stack.pop();
+                        cmd_stat.stacked_commands = (uint32_t)command_stack.size();
                         thread_scheduler_pause_condition.unlock();
                         if(command_to_delete->element->cmdImpl->sticky == false){
                             
@@ -525,7 +542,8 @@ void BatchCommandSandbox::checkNextCommand() {
                                 if (event_handler) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
                                                                                      command_to_delete->element->cmdImpl->unique_id,
                                                                                      BatchCommandEventType::EVT_COMPLETED,
-                                                                                     command_to_delete->element->cmdInfo);
+                                                                                     command_to_delete->element->cmdInfo,
+                                                                                     cmd_stat);
                                 break;
                             }
                             case RunningPropertyType::RP_Fault:{
@@ -536,7 +554,8 @@ void BatchCommandSandbox::checkNextCommand() {
                                     event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
                                                                       command_to_delete->element->cmdImpl->unique_id,
                                                                       BatchCommandEventType::EVT_FAULT,
-                                                                      command_and_fault.get());
+                                                                      command_and_fault.get(),
+                                                                      cmd_stat);
                                 }
                                 
                                 break;
@@ -734,7 +753,8 @@ bool BatchCommandSandbox::installHandler(PRIORITY_ELEMENT(CommandInfoAndImplemen
             event_handler->handleCommandEvent(tmp_impl->command_alias,
                                               tmp_impl->unique_id,
                                               BatchCommandEventType::EVT_RUNNING,
-                                              cmd_to_install->element->cmdInfo);
+                                              cmd_to_install->element->cmdInfo,
+                                              cmd_stat);
             //signal the step of the run
             event_handler->handleSandboxEvent(identification,
                                               BatchSandboxEventType::EVT_UPDATE_RUN_DELAY,
@@ -795,11 +815,14 @@ bool BatchCommandSandbox::enqueueCommand(chaos_data::CDataWrapper *command_to_in
         SCSLDBG_ << "Queue size:" << command_submitted_queue.size();
         
     }
+    //increment command stat
+    cmd_stat.queued_commands = (uint32_t)command_submitted_queue.size();
     //fire the waiting command
     if (event_handler) event_handler->handleCommandEvent(command_impl->command_alias,
                                                          command_impl->unique_id,
                                                          BatchCommandEventType::EVT_QUEUED,
-                                                         command_to_info);
+                                                         command_to_info,
+                                                         cmd_stat);
     whait_for_next_check.unlock();
     return true;
 }

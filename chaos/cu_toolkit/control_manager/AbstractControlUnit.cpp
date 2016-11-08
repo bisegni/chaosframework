@@ -1250,12 +1250,6 @@ void AbstractControlUnit::initSystemAttributeOnSharedAttributeCache() {
     domain_attribute_setting.addAttribute(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, 0, DataType::TYPE_INT64);
     thread_schedule_daly_cached_value = domain_attribute_setting.getValueSettingForIndex(domain_attribute_setting.getIndexForName(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY));
     
-    
-    //status system falg
-    domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_BUSY_FLAG, 0, DataType::TYPE_BOOLEAN);
-    domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_WARNING_FLAG, 0, DataType::TYPE_BOOLEAN);
-    domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_ERROR_FLAG, 0, DataType::TYPE_BOOLEAN);
-    
     //add storage type
     domain_attribute_setting.addAttribute(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE, 0, DataType::TYPE_INT32);
     

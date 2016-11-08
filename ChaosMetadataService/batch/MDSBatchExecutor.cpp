@@ -155,7 +155,8 @@ chaos::common::batch_command::BatchCommand * MDSBatchExecutor::instanceCommandIn
 void MDSBatchExecutor::handleCommandEvent(const std::string& command_alias,
                                           uint64_t command_seq,
                                           BatchCommandEventType::BatchCommandEventType type,
-                                          common::data::CDataWrapper *command_data) {
+                                          common::data::CDataWrapper *command_data,
+                                          const common::batch_command::BatchCommandStat& commands_stat) {
     std::string type_string;
     switch(type){
         case common::batch_command::BatchCommandEventType::EVT_QUEUED: type_string = "Queued"; break;

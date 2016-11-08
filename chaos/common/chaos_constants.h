@@ -1118,13 +1118,10 @@ namespace chaos {
         static const char * const DP_SYS_RUN_UNIT_ID		= "dp_sys_ru_id";
         
         //!is the busy flag
-        static const char * const DP_SYS_BUSY_FLAG          = "dp_sys_busyf";
+        static const char * const DP_SYS_QUEUED_CMD          = "dp_sys_que_cmd";
         
         //!is the warning
-        static const char * const DP_SYS_WARNING_FLAG       = "dp_sys_warningf";
-        
-        //!is the error
-        static const char * const DP_SYS_ERROR_FLAG          = "dp_sys_errorf";
+        static const char * const DP_SYS_STACK_CMD         = "dp_sys_stack_cmd";
     }
     /** @} */ // end of DataPackSystemKey
     

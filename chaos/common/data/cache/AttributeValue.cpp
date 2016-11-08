@@ -124,8 +124,7 @@ bool AttributeValue::setStringValue(const std::string& value,
 bool AttributeValue::setValue(const CDataVariant& attribute_value,
                               bool tag_has_changed) {
     CHAOS_ASSERT(value_buffer)
-    
-    if(type != attribute_value.getType()) return false;
+    //if(type != attribute_value.getType()) return false;
     switch (attribute_value.getType()) {
         case DataType::TYPE_BOOLEAN: {
             bool bv = attribute_value.asBool();
