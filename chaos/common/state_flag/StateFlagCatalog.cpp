@@ -137,6 +137,17 @@ void StateFlagCatalog::setFlagState(const unsigned int flag_ordered_id, int8_t n
     (*nit)->status_flag->setCurrentLevel(new_state);
 }
 
+void StateFlagCatalog::setAllFlagState(int8_t new_state) {
+    StateFlagElementContainerOrderedIndex& ordered_index = catalog_container().get<mitag_ordered>();
+    //set the state into all flag
+    for(StateFlagElementContainerOrderedIndexIterator nit = ordered_index.begin(),
+        nit_end = ordered_index.end();
+        nit != nit_end;
+        nit++) {
+        (*nit)->status_flag->setCurrentLevel(new_state);
+    }
+}
+
 void StateFlagCatalog::appendCatalog(const StateFlagCatalog& src) {
     //write loc on loca catalog
     //boost::unique_lock<boost::shared_mutex> wl(mutex_catalog);

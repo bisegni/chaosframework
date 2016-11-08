@@ -65,6 +65,10 @@ AlarmDescription *AlarmCatalog::getAlarmByOrderedID(const unsigned int alarm_ord
     return static_cast<AlarmDescription*>(alarm.get());
 }
 
+void AlarmCatalog::setAllAlarmSeverity(int8_t new_severity) {
+    StateFlagCatalog::setAllFlagState(new_severity);
+}
+
 std::auto_ptr<chaos::common::data::CDataBuffer> AlarmCatalog::getRawFlagsLevel() {
     return StateFlagCatalog::getRawFlagsLevel();
 }

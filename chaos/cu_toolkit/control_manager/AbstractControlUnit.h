@@ -502,6 +502,10 @@ namespace chaos{
                 //!create a new alarm into the catalog
                 void addAlarm(const std::string& alarm_name,
                               const std::string& alarm_description);
+                
+                //!set the severity on all alarm
+                void setAlarmSeverity(const common::alarm::MultiSeverityAlarmLevel alarm_severity);
+                
                 //!set the alarm state
                 bool setAlarmSeverity(const std::string& alarm_name,
                                       const common::alarm::MultiSeverityAlarmLevel alarm_severity);
@@ -515,10 +519,13 @@ namespace chaos{
                 bool getAlarmSeverity(const unsigned int alarm_ordered_id,
                                       common::alarm::MultiSeverityAlarmLevel& alarm_severity);
                 
+                //! set the value on the busy flag
                 void setBusyFlag(bool state);
                 
+                //!return the current value of the busi flag
                 const bool getBusyFlag() const;
                 
+                //!called when an alarm has been modified in his severity
                 void alarmChanged(const std::string& alarm_name,
                                   const int8_t alarm_severity);
                 

@@ -62,6 +62,9 @@ namespace chaos {
                  */
                 AlarmDescription *getAlarmByOrderedID(const unsigned int alarm_ordered_id);
                 
+                //!set the severity on all alarm
+                void setAllAlarmSeverity(int8_t new_severity);
+                
                 //!Return the raw alarm current state
                 /*!
                  all byte describe the current state of an alarm so the rtrsulting

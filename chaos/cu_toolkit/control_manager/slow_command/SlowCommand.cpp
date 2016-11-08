@@ -56,6 +56,9 @@ AttributeSharedCacheWrapper * const SlowCommand::getAttributeCache() {
 }
 
 #pragma mark Alarm API
+void SlowCommand::setAlarmSeverity(const common::alarm::MultiSeverityAlarmLevel alarm_severity) {
+    abstract_control_unit->setAlarmSeverity(alarm_severity);
+}
 
 bool SlowCommand::setAlarmSeverity(const std::string& alarm_name,
                                    const MultiSeverityAlarmLevel alarm_severity) {

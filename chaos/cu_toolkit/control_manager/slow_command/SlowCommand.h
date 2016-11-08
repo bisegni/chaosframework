@@ -120,6 +120,8 @@ new chaos::common::utility::TypedObjectInstancer<n c, chaos::cu::control_manager
                     AttributeSharedCacheWrapper * const getAttributeCache();
                     
                     //---------------alarm api-------------
+                    //!set the severity on all alarm
+                    void setAlarmSeverity(const common::alarm::MultiSeverityAlarmLevel alarm_severity);
                     
                     //!set the alarm state
                     bool setAlarmSeverity(const std::string& alarm_name,

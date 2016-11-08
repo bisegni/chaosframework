@@ -1698,13 +1698,19 @@ void AbstractControlUnit::addAlarm(const std::string& alarm_name,
                                   this);
 }
 
+void AbstractControlUnit::setAlarmSeverity(const common::alarm::MultiSeverityAlarmLevel alarm_severity) {
+    alarm_catalog.setAllAlarmSeverity(alarm_severity);
+    AttributeCache& output_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT);
+    if(output_cache.hasName("alarm_catalog")) {
+        output_cache.getValueSettingByName("alarm_catalog")->setValue(CDataVariant(alarm_catalog.isCatalogClear()==false));
+    }
+}
+
 bool AbstractControlUnit::setAlarmSeverity(const std::string& alarm_name,
                                            const MultiSeverityAlarmLevel alarm_severity) {
-    
     AlarmDescription *alarm = alarm_catalog.getAlarmByName(alarm_name);
     if(alarm == NULL) return false;
     alarm->setCurrentSeverity(alarm_severity);
-    
     //update global alarm output attribute
     AttributeCache& output_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT);
     if(output_cache.hasName("alarm_catalog")) {
@@ -1718,7 +1724,6 @@ bool AbstractControlUnit::setAlarmSeverity(const unsigned int alarm_ordered_id,
     AlarmDescription *alarm = alarm_catalog.getAlarmByOrderedID(alarm_ordered_id);
     if(alarm == NULL) return false;
     alarm->setCurrentSeverity(alarm_severity);
-    
     //update global alarm output attribute
     AttributeCache& output_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT);
     if(output_cache.hasName("alarm_catalog")) {
@@ -1747,6 +1752,7 @@ void AbstractControlUnit::alarmChanged(const std::string& alarm_name,
                                        const int8_t alarm_severity) {
     AlarmDescription *alarm = alarm_catalog.getAlarmByName(alarm_name);
     CHAOS_ASSERT(alarm);
+    
     //update alarm log
     alarm_logging_channel->logAlarm(getCUID(),
                                     "AbstractControlUnit",

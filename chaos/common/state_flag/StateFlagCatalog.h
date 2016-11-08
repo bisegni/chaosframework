@@ -165,6 +165,9 @@ namespace chaos {
                 //! set state for flag usign ordered insertion id
                 void setFlagState(const unsigned int flag_ordered_id, int8_t new_state);
                 
+                //!set the state for all alarm
+                void setAllFlagState(int8_t new_state);
+                
                 //!append an intere status flag map into owned one
                 void appendCatalog(const StateFlagCatalog& src);
                 
