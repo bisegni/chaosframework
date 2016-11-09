@@ -9,6 +9,7 @@
 #ifndef CHAOSFramework_BatchCommandSandboxEventHandler_h
 #define CHAOSFramework_BatchCommandSandboxEventHandler_h
 
+#include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/batch_command/BatchCommandTypes.h>
 
 namespace chaos{
@@ -43,7 +44,7 @@ namespace chaos{
                 virtual void handleCommandEvent(const std::string& command_alias,
                                                 uint64_t command_seq,
                                                 BatchCommandEventType::BatchCommandEventType type,
-                                                CDataWrapper *command_info,
+                                                chaos::common::data::CDataWrapper *command_info,
                                                 const BatchCommandStat& commands_stats) = 0;
 				
 				//! general sandbox event handler

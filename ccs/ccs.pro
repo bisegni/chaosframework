@@ -139,7 +139,8 @@ SOURCES += main.cpp\
     widget/CStateVisiblePushButton.cpp \
     status_manager/StatusManager.cpp \
     data/AlarmListModel.cpp \
-    widget/CQListView.cpp
+    widget/CQListView.cpp \
+    widget/CCommandStatisticWidget.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -260,7 +261,8 @@ HEADERS  += \
     widget/CStateVisiblePushButton.h \
     status_manager/StatusManager.h \
     data/AlarmListModel.h \
-    widget/CQListView.h
+    widget/CQListView.h \
+    widget/CCommandStatisticWidget.h
 
 FORMS    += \
     search/searchnoderesult.ui \
@@ -293,7 +295,8 @@ FORMS    += \
     data/editor/script/EditableScriptVariableTableModelEditDialog.ui \
     data/editor/common/EditableSubtypeListWidget.ui \
     script/ScriptInstanceManagerWidget.ui \
-    widget/ChaosStorageTypeWidget.ui
+    widget/ChaosStorageTypeWidget.ui \
+    widget/CCommandStatisticWidget.ui
 
 DISTFILES += \
     dark_orange.stylesheet \

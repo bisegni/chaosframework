@@ -30,7 +30,7 @@ private:
 
     const chaos::metadata_service_client::node_monitor::ControllerType monitor_controller_type;
 
-    bool isTracking;
+    bool is_tracking;
 
 };
 

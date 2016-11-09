@@ -195,6 +195,9 @@ void ControlUnitEditor::initUI() {
     //manage  alarm list
     ui->listViewAlarm->setVisible(false);
     ui->listViewAlarm->setModel(&alarm_list_model);
+
+    //manage command stat
+    ui->widgetCommandStatistic->setVisible(false);
 }
 
 void ControlUnitEditor::updateTemplateSearch() {
@@ -265,6 +268,9 @@ bool ControlUnitEditor::isClosing() {
     //remove monitoring on cu and us
     manageMonitoring(false);
     alarm_list_model.untrack();
+    if(control_unit_subtype.compare(chaos::NodeType::NODE_SUBTYPE_BATCH_CONTROL_UNIT) == 0){
+        ui->widgetCommandStatistic->deinitChaosContent();
+    }
     return true;
 }
 
@@ -337,6 +343,15 @@ void ControlUnitEditor::onApiDone(const QString& tag,
 }
 
 void ControlUnitEditor::fillInfo(const QSharedPointer<chaos::common::data::CDataWrapper>& node_info) {
+    //check control unit type
+    if(node_info->hasKey(chaos::NodeDefinitionKey::NODE_SUB_TYPE)) {
+        control_unit_subtype = QString::fromStdString(node_info->getStringValue(chaos::NodeDefinitionKey::NODE_SUB_TYPE));
+        if(control_unit_subtype.compare(chaos::NodeType::NODE_SUBTYPE_BATCH_CONTROL_UNIT) == 0){
+            ui->widgetCommandStatistic->setVisible(true);
+            ui->widgetCommandStatistic->setNodeUID(control_unit_unique_id);
+            ui->widgetCommandStatistic->initChaosContent();
+        }
+    }
     if(node_info->hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR)) {
         ui->labelRemoteAddress->setText(QString::fromStdString(node_info->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR)));
     } else {

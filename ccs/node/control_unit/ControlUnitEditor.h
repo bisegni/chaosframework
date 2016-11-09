@@ -108,6 +108,7 @@ private:
     //keep track of the last relevated online state
     bool restarted;
     bool last_online_state;
+    QString                 control_unit_subtype;
     const QString           control_unit_unique_id;
     QString                 unit_server_parent_unique_id;
     SwitchAggregator        logic_switch_aggregator;

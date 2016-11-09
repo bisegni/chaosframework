@@ -7,17 +7,11 @@ ChaosWidgetCompanion::ChaosWidgetCompanion():
 
 ChaosWidgetCompanion::~ChaosWidgetCompanion() {}
 
-void ChaosWidgetCompanion::initChaosContent() {
+void ChaosWidgetCompanion::initChaosContent() {}
 
-}
+void ChaosWidgetCompanion::deinitChaosContent() {}
 
-void ChaosWidgetCompanion::deinitChaosContent() {
-
-}
-
-void ChaosWidgetCompanion::updateChaosContent() {
-
-}
+void ChaosWidgetCompanion::updateChaosContent() {}
 
 void ChaosWidgetCompanion::setNodeUID(const QString& node_uid) {
     p_node_uid = node_uid;
@@ -48,14 +42,8 @@ void ChaosWidgetCompanion::onApiError(const QString& tag,
 }
 
 //! api has gone in timeout
-void ChaosWidgetCompanion::onApiTimeout(const QString& tag) {
+void ChaosWidgetCompanion::onApiTimeout(const QString& tag) {}
 
-}
+void ChaosWidgetCompanion::apiHasStarted(const QString& api_tag) {}
 
-void ChaosWidgetCompanion::apiHasStarted(const QString& api_tag) {
-
-}
-
-void ChaosWidgetCompanion::apiHasEnded(const QString& api_tag) {
-
-}
+void ChaosWidgetCompanion::apiHasEnded(const QString& api_tag) {}

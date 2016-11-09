@@ -60,6 +60,7 @@ int MongoDBNodeDataAccess::getNodeDescription(const std::string& node_unique_id,
         mongo::BSONObj q = query_builder.obj();
         mongo::BSONObj p = BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID << 1 <<
                                 chaos::NodeDefinitionKey::NODE_TYPE << 1 <<
+                                chaos::NodeDefinitionKey::NODE_SUB_TYPE << 1 <<
                                 chaos::NodeDefinitionKey::NODE_RPC_ADDR << 1 <<
                                 chaos::NodeDefinitionKey::NODE_RPC_DOMAIN << 1 <<
                                 chaos::NodeDefinitionKey::NODE_DIRECT_IO_ADDR << 1 <<
@@ -141,6 +142,9 @@ int MongoDBNodeDataAccess::updateNode(chaos::common::data::CDataWrapper& node_de
         bson_find << chaos::NodeDefinitionKey::NODE_UNIQUE_ID << node_description.getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID);
         if(node_description.hasKey(chaos::NodeDefinitionKey::NODE_TYPE)) {
             bson_find << chaos::NodeDefinitionKey::NODE_TYPE << node_description.getStringValue(chaos::NodeDefinitionKey::NODE_TYPE);
+        }
+        if(node_description.hasKey(chaos::NodeDefinitionKey::NODE_SUB_TYPE)) {
+            updated_field << chaos::NodeDefinitionKey::NODE_SUB_TYPE << node_description.getStringValue(chaos::NodeDefinitionKey::NODE_SUB_TYPE);
         }
         if(node_description.hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR)) {
             updated_field << chaos::NodeDefinitionKey::NODE_RPC_ADDR << node_description.getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR);

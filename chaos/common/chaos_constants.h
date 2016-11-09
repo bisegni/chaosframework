@@ -258,7 +258,7 @@ namespace chaos {
          */
         static const char * const NODE_SUBTYPE_SCRIPTABLE_EXECUTION_UNIT    = "nt_script_eu";
         static const char * const NODE_SUBTYPE_REALTIME_CONTROL_UNIT        = "nt_rt_cu";
-        static const char * const NODE_SUBTYPE_BATCH_CONTROL_UNIT           = "nt_batch_cu";
+        static const char * const NODE_SUBTYPE_BATCH_CONTROL_UNIT           = "nt_sc_cu";
     }
     /** @} */ // end of NodeType
     

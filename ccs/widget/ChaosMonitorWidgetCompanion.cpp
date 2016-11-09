@@ -13,20 +13,22 @@ ChaosMonitorWidgetCompanion::ChaosMonitorWidgetCompanion(chaos::metadata_service
     ChaosWidgetCompanion(),
     monitor_handler(_monitor_handler),
     monitor_controller_type(_monitor_controller_type),
-    isTracking(false) {}
+    is_tracking(false) {}
 
 ChaosMonitorWidgetCompanion::~ChaosMonitorWidgetCompanion() {}
 
 bool ChaosMonitorWidgetCompanion::trackNode() {
-    return ChaosMetadataServiceClient::getInstance()->addHandlerToNodeMonitor(nodeUID().toStdString(),
+    if(is_tracking) return true;
+    return (is_tracking = ChaosMetadataServiceClient::getInstance()->addHandlerToNodeMonitor(nodeUID().toStdString(),
                                                                               monitor_controller_type,
-                                                                              monitor_handler);
+                                                                              monitor_handler));
 }
 
 bool ChaosMonitorWidgetCompanion::untrackNode() {
-    return ChaosMetadataServiceClient::getInstance()->removeHandlerToNodeMonitor(nodeUID().toStdString(),
+    if(!is_tracking) return true;
+    return (is_tracking = !ChaosMetadataServiceClient::getInstance()->removeHandlerToNodeMonitor(nodeUID().toStdString(),
                                                                                  monitor_controller_type,
-                                                                                 monitor_handler);
+                                                                                 monitor_handler));
 }
 
 QString ChaosMonitorWidgetCompanion::datasetValueToLabel(const QString& attribute,

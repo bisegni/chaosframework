@@ -505,7 +505,7 @@
           </layout>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="1,1,0,0">
+          <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="1,1,0,0,0">
            <property name="spacing">
             <number>4</number>
            </property>
@@ -574,6 +574,9 @@
               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
              </property>
             </widget>
+           </item>
+           <item>
+            <widget class="CCommandStatisticWidget" name="widgetCommandStatistic" native="true"/>
            </item>
           </layout>
          </item>
@@ -1272,6 +1275,12 @@
    <class>CQListView</class>
    <extends>QListView</extends>
    <header>widget/CQListView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>CCommandStatisticWidget</class>
+   <extends>QWidget</extends>
+   <header>widget/CCommandStatisticWidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>
