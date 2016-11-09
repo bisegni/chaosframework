@@ -71,7 +71,7 @@ command_state_queue_max_size(COMMAND_STATE_QUEUE_DEFAULT_SIZE) {
                                                                      &BatchCommandExecutor::killCurrentCommand,
                                                                      rpcActionDomain.c_str(),
                                                                      BatchCommandExecutorRpcActionKey::RPC_KILL_CURRENT_COMMAND,
-                                                                     "Set the features of the running command");
+                                                                     "Kill the running command");
     BCELAPP_ << "Register flushCommandStates action";
     DeclareAction::addActionDescritionInstance<BatchCommandExecutor>(this,
                                                                      &BatchCommandExecutor::flushCommandStates,
@@ -564,15 +564,9 @@ void BatchCommandExecutor::submitCommand(const std::string& batch_command_alias,
     
     //get priority if submitted
     uint32_t priority = commandDescription->hasKey(BatchCommandSubmissionKey::SUBMISSION_PRIORITY_UI32) ? commandDescription->getUInt32Value(BatchCommandSubmissionKey::SUBMISSION_PRIORITY_UI32):50;
-    <<<<<<< HEAD
-    
-    BCELDBG_ << "Submit new command \""<<batch_command_alias << "\" with info:" << commandDescription->getJSONString();
-    =======
     BCELDBG_ << "Submit new command "<<batch_command_alias << "with info:" << commandDescription->getJSONString();
-    >>>>>>> added the number of queue and stacked command into the sys dataset for the slow control execution unit
-        
-        //queue the command
-        BatchCommand *cmd_instance = instanceCommandInfo(batch_command_alias, commandDescription);
+    //queue the command
+    BatchCommand *cmd_instance = instanceCommandInfo(batch_command_alias, commandDescription);
     if(cmd_instance) {
         //report unique id
         command_id = cmd_instance->unique_id;
