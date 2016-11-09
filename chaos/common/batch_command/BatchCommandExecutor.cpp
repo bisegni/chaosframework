@@ -270,8 +270,6 @@ void BatchCommandExecutor::deinit() throw(chaos::CException) {
 void BatchCommandExecutor::handleCommandEvent(uint64_t command_id,
                                               BatchCommandEventType::BatchCommandEventType type,
                                               CDataWrapper *command_info) {
-    DEBUG_CODE(BCELDBG_ << "Received event of type->" << type << " on command id -> "<<command_id;)
-    
     switch(type) {
         case BatchCommandEventType::EVT_QUEUED: {
             // get upgradable access
@@ -279,12 +277,16 @@ void BatchCommandExecutor::handleCommandEvent(uint64_t command_id,
             
             // get exclusive access
             boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
-            
+              DEBUG_CODE(BCELDBG_ << "Received event of type-> Command QUEUED" << " command id -> "<<command_id);
+
             addComamndState(command_id);
-            break;
+            
+            return;
         }
             
         case BatchCommandEventType::EVT_FAULT: {
+            DEBUG_CODE(BCELDBG_ << "Received event of type-> Command FAULT" << " command id -> "<<command_id);
+
             if(command_info != NULL) {
                 ReadLock lock(command_state_rwmutex);
                 boost::shared_ptr<CommandState>  cmd_state = getCommandState(command_id);
@@ -299,17 +301,17 @@ void BatchCommandExecutor::handleCommandEvent(uint64_t command_id,
         }
             
         case BatchCommandEventType::EVT_COMPLETED: {
+            DEBUG_CODE(BCELDBG_ << "Received event of type-> Command Completed" << " command id -> "<<command_id);
+
             break;
         }
             
-        default: {
-            ReadLock lock(command_state_rwmutex);
-            boost::shared_ptr<CommandState>  cmd_state = getCommandState(command_id);
-            if(cmd_state.get()) {
-                cmd_state->last_event = type;
-            }
-            break;
-        }
+    
+    }
+     ReadLock lock(command_state_rwmutex);
+     boost::shared_ptr<CommandState>  cmd_state = getCommandState(command_id);
+     if(cmd_state.get()) {
+           cmd_state->last_event = type;
     }
 }
 
@@ -455,7 +457,7 @@ void BatchCommandExecutor::installCommand(const string& alias, chaos::common::ut
 
 //! Install a command by his description
 void BatchCommandExecutor::installCommand(boost::shared_ptr<BatchCommandDescription> command_description) {
-    BCELAPP_ << "Install new command with alias -> " << command_description->getAlias();
+    BCELAPP_ << "Install new command with alias -> \"" << command_description->getAlias()<<"\"";
     map_command_description.insert(make_pair<string,
                                    boost::shared_ptr<BatchCommandDescription> >(command_description->getAlias(), command_description));
 }
@@ -499,11 +501,12 @@ BatchCommand *BatchCommandExecutor::instanceCommandInfo(const std::string& comma
                                                         uint32_t submission_rule,
                                                         uint32_t submission_retry_delay,
                                                         uint64_t scheduler_step_delay) {
-    DEBUG_CODE(BCELDBG_ << "Instancing command " << command_alias;)
     BatchCommand *instance = NULL;
     if(map_command_description.count(command_alias)) {
         boost::shared_ptr<BatchCommandDescription> description = map_command_description[command_alias];
         instance = description->instancer->getInstance();
+        DEBUG_CODE(BCELDBG_ << "Instancing command \"" << command_alias<<"\" sticky/default:"<<instance->sticky;)
+
         //forward the pointer of the driver accessor
         //result->driverAccessorsErogator = driverAccessorsErogator;
         if(instance) {
@@ -513,7 +516,7 @@ BatchCommand *BatchCommandExecutor::instanceCommandInfo(const std::string& comma
             //instance->setCommandAlias(command_alias);
             
             instance->submissionRule = submission_rule;
-            DEBUG_CODE(BCELDBG_ << "Submission rule for command " << command_alias << " is: " << ((uint16_t)instance->submissionRule);)
+            DEBUG_CODE(BCELDBG_ << "Submission rule for command \"" << command_alias << "\" is: " << ((uint16_t)instance->submissionRule);)
             
             instance->commandFeatures.featuresFlag |= features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY;
             instance->commandFeatures.featureSchedulerStepsDelay = scheduler_step_delay;
@@ -560,7 +563,7 @@ void BatchCommandExecutor::submitCommand(const std::string& batch_command_alias,
     //get priority if submitted
     uint32_t priority = commandDescription->hasKey(BatchCommandSubmissionKey::SUBMISSION_PRIORITY_UI32) ? commandDescription->getUInt32Value(BatchCommandSubmissionKey::SUBMISSION_PRIORITY_UI32):50;
     
-    BCELDBG_ << "Submit new command "<<batch_command_alias << "with info:" << commandDescription->getJSONString();
+    BCELDBG_ << "Submit new command \""<<batch_command_alias << "\" with info:" << commandDescription->getJSONString();
     
     //add unique id for command
     //command_id = ++command_sequence_id;
@@ -625,7 +628,7 @@ void BatchCommandExecutor::submitCommand(const std::string& batch_command_alias,
  Return the number and the infromation of the queued command via RPC
  */
 CDataWrapper* BatchCommandExecutor::getCommandState(CDataWrapper *params, bool& detachParam) throw (CException) {
-    BCELAPP_ << "Get command state fromthe executor with id: " << executorID;
+    BCELAPP_ << "Get command state from the executor with id: " << executorID;
     //boost::mutex::scoped_lock lock(mutextQueueManagment);
     ReadLock lock(command_state_rwmutex);
     uint64_t command_id = params->getUInt64Value(BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64);

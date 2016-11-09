@@ -388,7 +388,7 @@
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "SimPSupply:/dev/ttyr08,5,2,-10:9.995,0:10,100:200,200:300,0"
+			    "DriverDescriptionInitParam": "SimPSupply:/dev/ttyr78,5,2,-10:9.995,0:10,100:200,200:300,0"
 			}
 		    ],
 		    "AttrDesc": [
@@ -426,7 +426,7 @@
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "SimPSupply:/dev/ttyr08,6,2,-10:9.995,0:10,100:200,200:300,0"
+			    "DriverDescriptionInitParam": "SimPSupply:/dev/ttyr98,6,2,-10:9.995,0:10,100:200,200:300,0"
 			}
 		    ],
 		    "AttrDesc": [
@@ -502,7 +502,7 @@
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "SimPSupply:/dev/ttyr08,13,2,-10:9.995,0:10,100:200,200:300,0"
+			    "DriverDescriptionInitParam": "SimPSupply:/dev/ttyr38,13,2,-10:9.995,0:10,100:200,200:300,0"
 			}
 		    ],
 		    "AttrDesc": [
@@ -1900,7 +1900,7 @@
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "SimPSupply:/dev/ttyr08,4,1,0:700,0:10,100:200,200:300,0"
+			    "DriverDescriptionInitParam": "SimPSupply:/dev/ttyr18,4,1,0:700,0:10,100:200,200:300,0"
 			}
 		    ],
 		    "AttrDesc": [
