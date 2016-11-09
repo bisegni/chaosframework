@@ -40,7 +40,7 @@ public:\
     t operator()(uint64_t ui64v) const;\
     t operator()(double dv) const;\
     t operator()(const std::string& str) const;\
-    t operator()(boost::shared_ptr<chaos::common::data::CDataBuffer> buffer) const;\
+    t operator()(boost::shared_ptr<chaos::common::data::CDataBuffer>& buffer) const;\
 };
 
 #define CHAOS_VARIANT_DEFINE_VISITOR_WITH_TYPE(t) CHAOS_VARIANT_DEFINE_VISITOR_WITH_NAME_TYPE(t,t)
@@ -54,8 +54,8 @@ namespace chaos {
             CHAOS_VARIANT_DEFINE_VISITOR_WITH_TYPE(int64_t);
             CHAOS_VARIANT_DEFINE_VISITOR_WITH_TYPE(uint64_t);
             CHAOS_VARIANT_DEFINE_VISITOR_WITH_TYPE(double);
-            CHAOS_VARIANT_DEFINE_VISITOR_WITH_NAME_TYPE(string,std::string);
-            CHAOS_VARIANT_DEFINE_VISITOR_WITH_NAME_TYPE(CDataBuffer,boost::shared_ptr<chaos::common::data::CDataBuffer>);
+            CHAOS_VARIANT_DEFINE_VISITOR_WITH_NAME_TYPE(string, std::string);
+            CHAOS_VARIANT_DEFINE_VISITOR_WITH_NAME_TYPE(CDataBuffer, boost::shared_ptr<chaos::common::data::CDataBuffer>);
             
             /*!
              * Chaos variant implementation that host all dataset CHAOS data type
@@ -99,6 +99,7 @@ namespace chaos {
                 bool asBool() const;
                 const std::string asString() const;
                 const chaos::common::data::CDataBuffer *const asCDataBuffer() const;
+                boost::shared_ptr<CDataBuffer> asCDataBufferShrdPtr();
             };
         }
     }

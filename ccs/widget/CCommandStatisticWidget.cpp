@@ -47,11 +47,11 @@ void CCommandStatisticWidget::updatedDS(const std::string& control_unit_uid,
     data_found = true;
     if(dataset_type == DatasetTypeSystem) {
         if(dataset_key_values.count(chaos::DataPackSystemKey::DP_SYS_QUEUED_CMD)) {
-            cmd_stat.queued_commands = (uint32_t)dataset_key_values[chaos::DataPackSystemKey::DP_SYS_QUEUED_CMD].asInt32();
+            cmd_stat.queued_commands = dataset_key_values[chaos::DataPackSystemKey::DP_SYS_QUEUED_CMD].asUInt32();
         }
 
         if(dataset_key_values.count(chaos::DataPackSystemKey::DP_SYS_STACK_CMD)) {
-            cmd_stat.stacked_commands = (uint32_t)dataset_key_values[chaos::DataPackSystemKey::DP_SYS_STACK_CMD].asInt32();
+            cmd_stat.stacked_commands = (uint32_t)dataset_key_values[chaos::DataPackSystemKey::DP_SYS_STACK_CMD].asUInt32();
         }
     }
     QMetaObject::invokeMethod(this,

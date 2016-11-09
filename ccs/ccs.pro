@@ -140,7 +140,8 @@ SOURCES += main.cpp\
     status_manager/StatusManager.cpp \
     data/AlarmListModel.cpp \
     widget/CQListView.cpp \
-    widget/CCommandStatisticWidget.cpp
+    widget/CCommandStatisticWidget.cpp \
+    plot/AbstractBinaryPlotAdapter.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -262,7 +263,8 @@ HEADERS  += \
     status_manager/StatusManager.h \
     data/AlarmListModel.h \
     widget/CQListView.h \
-    widget/CCommandStatisticWidget.h
+    widget/CCommandStatisticWidget.h \
+    plot/AbstractBinaryPlotAdapter.h
 
 FORMS    += \
     search/searchnoderesult.ui \
