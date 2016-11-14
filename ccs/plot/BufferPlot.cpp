@@ -4,6 +4,25 @@
 
 #define RANDOM_COMPONENT() (qrand() % 256)
 
+AttributeScanner::AttributeScanner(QCustomPlot *_master_plot,
+                                   QReadWriteLock& _global_lock):
+master_plot(_master_plot),
+global_lock(_global_lock){}
+
+void AttributeScanner::updateData(boost::shared_ptr<chaos::common::data::CDataBuffer>& _buffer_to_plot) {
+
+}
+
+void AttributeScanner::setBinaryType(std::vector<chaos::DataType::BinarySubtype>& _bin_type) {
+
+}
+
+void AttributeScanner::channelElement(const unsigned int channel_index,
+                                      const unsigned int element_index,
+                                      const double &element_value) {
+
+}
+
 BufferPlot::BufferPlot(QWidget *parent) :
     QWidget(parent),
     SingleTypeBinaryPlotAdapter<double>(),
@@ -28,6 +47,20 @@ BufferPlot::BufferPlot(QWidget *parent) :
 
 BufferPlot::~BufferPlot() {
     delete ui;
+}
+
+void BufferPlot::addAttribute(const QString& channel_name,
+                              std::vector<chaos::DataType::BinarySubtype>& _bin_type) {
+
+}
+
+void BufferPlot::updateAttributeData(const QString& channel_name,
+                                     boost::shared_ptr<chaos::common::data::CDataBuffer>& _buffer_to_plot) {
+
+}
+
+void BufferPlot::removeAttribute(const QString& channel_name) {
+
 }
 
 void BufferPlot::setChannelData(boost::shared_ptr<chaos::common::data::CDataBuffer>& _buffer_to_plot,
