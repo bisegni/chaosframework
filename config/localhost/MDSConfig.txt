@@ -109,7 +109,7 @@
 		},
 		{
 		    "unit_server_alias": "TEST",
-		    "cu_id": "BTF/QUADPOLE/QUATB001",
+		    "cu_id": "BTF/QUADRUPOLE/QUATB001",
 		    "cu_type": "::driver::powersupply::SCPowerSupplyControlUnit",
 		    "cu_param": "",
 		    "auto_load": true,
@@ -148,7 +148,7 @@
 		},
 		{
 		    "unit_server_alias": "TEST",
-		    "cu_id": "BTF/QUADPOLE/QUATB002",
+		    "cu_id": "BTF/QUADRUPOLE/QUATB002",
 		    "cu_type": "::driver::powersupply::SCPowerSupplyControlUnit",
 		    "cu_param": "",
 		    "auto_load": true,
@@ -186,7 +186,7 @@
 		},
 		{
 		    "unit_server_alias": "TEST",
-		    "cu_id": "BTF/QUADPOLE/QUATB003",
+		    "cu_id": "BTF/QUADRUPOLE/QUATB003",
 		    "cu_type": "::driver::powersupply::SCPowerSupplyControlUnit",
 		    "cu_param": "",
 		    "auto_load": true,
@@ -224,7 +224,7 @@
 		},
 		{
 		    "unit_server_alias": "TEST",
-		    "cu_id": "BTF/QUADPOLE/QUATB004",
+		    "cu_id": "BTF/QUADRUPOLE/QUATB004",
 		    "cu_type": "::driver::powersupply::SCPowerSupplyControlUnit",
 		    "cu_param": "",
 		    "auto_load": true,
@@ -262,7 +262,7 @@
 		},
 		{
 		    "unit_server_alias": "TEST",
-		    "cu_id": "BTF/QUADPOLE/QUATB101",
+		    "cu_id": "BTF/QUADRUPOLE/QUATB101",
 		    "cu_type": "::driver::powersupply::SCPowerSupplyControlUnit",
 		    "cu_param": "",
 		    "auto_load": true,
@@ -300,7 +300,7 @@
 		},
 		{
 		    "unit_server_alias": "TEST",
-		    "cu_id": "BTF/QUADPOLE/QUATB102",
+		    "cu_id": "BTF/QUADRUPOLE/QUATB102",
 		    "cu_type": "::driver::powersupply::SCPowerSupplyControlUnit",
 		    "cu_param": "",
 		    "auto_load": true,
@@ -1964,7 +1964,7 @@
 		},
 		{
 		    "unit_server_alias": "TEST_DEVEL",
-		    "cu_id": "TEST_DEVEL/BTF/QUADPOLE/QUATB001",
+		    "cu_id": "TEST_DEVEL/BTF/QUADRUPOLE/QUATB001",
 		    "cu_type": "::driver::powersupply::SCPowerSupplyControlUnit",
 		    "cu_param": "",
 		    "auto_load": true,
@@ -2003,7 +2003,7 @@
 		},
 		{
 		    "unit_server_alias": "TEST_DEVEL",
-		    "cu_id": "TEST_DEVEL/BTF/QUADPOLE/QUATB002",
+		    "cu_id": "TEST_DEVEL/BTF/QUADRUPOLE/QUATB002",
 		    "cu_type": "::driver::powersupply::SCPowerSupplyControlUnit",
 		    "cu_param": "",
 		    "auto_load": true,
@@ -2041,7 +2041,7 @@
 		},
 		{
 		    "unit_server_alias": "TEST_DEVEL",
-		    "cu_id": "TEST_DEVEL/BTF/QUADPOLE/QUATB003",
+		    "cu_id": "TEST_DEVEL/BTF/QUADRUPOLE/QUATB003",
 		    "cu_type": "::driver::powersupply::SCPowerSupplyControlUnit",
 		    "cu_param": "",
 		    "auto_load": true,
@@ -2079,7 +2079,7 @@
 		},
 		{
 		    "unit_server_alias": "TEST_DEVEL",
-		    "cu_id": "TEST_DEVEL/BTF/QUADPOLE/QUATB004",
+		    "cu_id": "TEST_DEVEL/BTF/QUADRUPOLE/QUATB004",
 		    "cu_type": "::driver::powersupply::SCPowerSupplyControlUnit",
 		    "cu_param": "",
 		    "auto_load": true,
@@ -2117,7 +2117,7 @@
 		},
 		{
 		    "unit_server_alias": "TEST_DEVEL",
-		    "cu_id": "TEST_DEVEL/BTF/QUADPOLE/QUATB101",
+		    "cu_id": "TEST_DEVEL/BTF/QUADRUPOLE/QUATB101",
 		    "cu_type": "::driver::powersupply::SCPowerSupplyControlUnit",
 		    "cu_param": "",
 		    "auto_load": true,
@@ -2155,7 +2155,7 @@
 		},
 		{
 		    "unit_server_alias": "TEST_DEVEL",
-		    "cu_id": "TEST_DEVEL/BTF/QUADPOLE/QUATB102",
+		    "cu_id": "TEST_DEVEL/BTF/QUADRUPOLE/QUATB102",
 		    "cu_type": "::driver::powersupply::SCPowerSupplyControlUnit",
 		    "cu_param": "",
 		    "auto_load": true,

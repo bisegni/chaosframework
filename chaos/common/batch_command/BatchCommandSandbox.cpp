@@ -417,7 +417,7 @@ void BatchCommandSandbox::checkNextCommand() {
 
                         //execute the handler
                         command_to_delete = current_executing_command;
-                        current_executing_command = NULL;
+
 #pragma GCC diagnostic ignored "-Wswitch"
                         switch (current_check_value) {
                             case RSR_KILL_KURRENT_COMMAND:{
@@ -463,7 +463,7 @@ void BatchCommandSandbox::checkNextCommand() {
                         DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] element in command_submitted_queue " << command_submitted_queue.size();)
                         
                         removeHandler(command_to_delete);
-                        
+
                         if (installHandler(next_available_command)) {
                             DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] installed command with pointer " << std::hex << next_available_command << std::dec;)
                         }
