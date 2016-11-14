@@ -278,7 +278,7 @@ int MDSMessageChannel::getDataDriverBestConfiguration(CDataWrapper** deviceDefin
 int MDSMessageChannel::createNewSnapshot(const std::string& snapshot_name,
                                          const ChaosStringVector& node_list,
                                          uint32_t millisec_to_wait) {
-    int err = 0;
+    int err = ErrorCode::EC_NO_ERROR;
     std::auto_ptr<CDataWrapper> message(new CDataWrapper());
     message->addStringValue("snapshot_name", snapshot_name);
     
@@ -303,7 +303,7 @@ int MDSMessageChannel::createNewSnapshot(const std::string& snapshot_name,
 
 int MDSMessageChannel::restoreSnapshot(const std::string& snapshot_name,
                                        uint32_t millisec_to_wait) {
-    int err = 0;
+    int err = ErrorCode::EC_NO_ERROR;
     std::auto_ptr<CDataWrapper> message(new CDataWrapper());
     message->addStringValue("snapshot_name", snapshot_name);
     std::auto_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
@@ -320,7 +320,7 @@ int MDSMessageChannel::restoreSnapshot(const std::string& snapshot_name,
 
 int MDSMessageChannel::deleteSnapshot(const std::string& snapshot_name,
                                       uint32_t millisec_to_wait) {
-    int err = 0;
+    int err = ErrorCode::EC_NO_ERROR;
     std::auto_ptr<CDataWrapper> message(new CDataWrapper());
     message->addStringValue("snapshot_name", snapshot_name);
     std::auto_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
@@ -338,7 +338,7 @@ int MDSMessageChannel::deleteSnapshot(const std::string& snapshot_name,
 int MDSMessageChannel::searchSnapshot(const std::string& query_filter,
                                       ChaosStringVector& snapshot_found,
                                       uint32_t millisec_to_wait) {
-    int err = 0;
+    int err = ErrorCode::EC_NO_ERROR;
     
     std::auto_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
                                                                                            "getAllSnapshot",
@@ -372,7 +372,7 @@ int MDSMessageChannel::searchSnapshot(const std::string& query_filter,
 int MDSMessageChannel::searchNodeForSnapshot(const std::string& snapshot_name,
                                              ChaosStringVector node_found,
                                              uint32_t millisec_to_wait) {
-    int err = 0;
+    int err = ErrorCode::EC_NO_ERROR;
     auto_ptr<CDataWrapper> message(new CDataWrapper());
     message->addStringValue("snapshot_name", snapshot_name);
     
@@ -406,7 +406,7 @@ int MDSMessageChannel::searchNodeForSnapshot(const std::string& snapshot_name,
 int MDSMessageChannel::searchSnapshotForNode(const std::string& node_uid,
                                              ChaosStringVector& snapshot_found,
                                              uint32_t millisec_to_wait){
-    int err = 0;
+    int err = ErrorCode::EC_NO_ERROR;
     auto_ptr<CDataWrapper> message(new CDataWrapper());
     message->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_uid);
     std::auto_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
@@ -418,8 +418,8 @@ int MDSMessageChannel::searchSnapshotForNode(const std::string& node_uid,
         if((err = request_future->getError()) == ErrorCode::EC_NO_ERROR) {
             
             if(request_future->getResult() &&
-               request_future->getResult()->hasKey("snapshot_for_node") &&
-               request_future->getResult()->isVectorValue("snapshot_for_node")) {
+               request_future->getResult()->hasKey("node_search_result_page") &&
+               request_future->getResult()->isVectorValue("node_search_result_page")) {
                 //we have result
                 std::auto_ptr<CMultiTypeDataArrayWrapper> snapshot_desc_list(request_future->getResult()->getVectorValue("snapshot_for_node"));
                 for(int idx = 0;
@@ -435,6 +435,51 @@ int MDSMessageChannel::searchSnapshotForNode(const std::string& node_uid,
     }
     return err;
 }
+
+int MDSMessageChannel::searchNode(const std::string& unique_id_filter,
+                                  unsigned int node_type_filter,
+                                  bool alive_only,
+                                  unsigned int last_node_sequence_id,
+                                  unsigned int page_length,
+                                  ChaosStringVector& node_found,
+                                  uint32_t millisec_to_wait) {
+    int err = ErrorCode::EC_NO_ERROR;
+    auto_ptr<CDataWrapper> message(new CDataWrapper());
+    message->addStringValue("unique_id_filter", unique_id_filter);
+    message->addInt32Value("node_type_filter", node_type_filter);
+    message->addInt32Value("last_node_sequence_id", last_node_sequence_id);
+    message->addBoolValue("alive_only", alive_only);
+    message->addInt32Value("result_page_length", page_length);
+    std::auto_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("system",
+                                                                                           "nodeSearch",
+                                                                                           message.release());
+    request_future->setTimeout(millisec_to_wait);
+    if(request_future->wait()) {
+        DECODE_ERROR(request_future)
+        if((err = request_future->getError()) == ErrorCode::EC_NO_ERROR) {
+            
+            if(request_future->getResult() &&
+               request_future->getResult()->hasKey("node_search_result_page") &&
+               request_future->getResult()->isVectorValue("node_search_result_page")) {
+                //we have result
+                std::auto_ptr<CMultiTypeDataArrayWrapper> snapshot_desc_list(request_future->getResult()->getVectorValue("node_search_result_page"));
+                for(int idx = 0;
+                    idx < snapshot_desc_list->size();
+                    idx++) {
+                    std::auto_ptr<CDataWrapper> element(snapshot_desc_list->getCDataWrapperElementAtIndex(idx));
+                    if(element.get() &&
+                       element->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID)) {
+                        node_found.push_back(element->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID));
+                    }
+                }
+            }
+        }
+    } else {
+        err = -1;
+    }
+    return err;
+}
+
 
 std::auto_ptr<MultiAddressMessageRequestFuture> MDSMessageChannel::sendRequestWithFuture(const std::string& action_domain,
                                                                                          const std::string& action_name,

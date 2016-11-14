@@ -1027,3 +1027,20 @@ int DeviceController::getSnapshotList(ChaosStringVector& snapshot_list) {
                                              snapshot_list,
                                              millisecToWait);
 }
+
+int DeviceController::searchNode(const std::string& unique_id_filter,
+                                 unsigned int node_type_filter,
+                                 bool alive_only,
+                                 unsigned int last_node_sequence_id,
+                                 unsigned int page_length,
+                                 ChaosStringVector& node_found) {
+    
+    return mdsChannel->searchNode(unique_id_filter,
+                                  node_type_filter,
+                                  alive_only,
+                                  last_node_sequence_id,
+                                  page_length,
+                                  node_found,
+                                  millisecToWait);
+}
+
