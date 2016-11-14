@@ -141,7 +141,8 @@ SOURCES += main.cpp\
     data/AlarmListModel.cpp \
     widget/CQListView.cpp \
     widget/CCommandStatisticWidget.cpp \
-    plot/AbstractBinaryPlotAdapter.cpp
+    plot/AbstractBinaryPlotAdapter.cpp \
+    plot/BufferPlot.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -264,7 +265,8 @@ HEADERS  += \
     data/AlarmListModel.h \
     widget/CQListView.h \
     widget/CCommandStatisticWidget.h \
-    plot/AbstractBinaryPlotAdapter.h
+    plot/AbstractBinaryPlotAdapter.h \
+    plot/BufferPlot.h
 
 FORMS    += \
     search/searchnoderesult.ui \
@@ -298,7 +300,8 @@ FORMS    += \
     data/editor/common/EditableSubtypeListWidget.ui \
     script/ScriptInstanceManagerWidget.ui \
     widget/ChaosStorageTypeWidget.ui \
-    widget/CCommandStatisticWidget.ui
+    widget/CCommandStatisticWidget.ui \
+    plot/BufferPlot.ui
 
 DISTFILES += \
     dark_orange.stylesheet \
