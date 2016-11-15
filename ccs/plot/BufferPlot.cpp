@@ -23,9 +23,11 @@ void AttributeScanner::channelElement(const unsigned int channel_index,
 
 }
 
-BufferPlot::BufferPlot(QWidget *parent) :
+BufferPlot::BufferPlot(QReadWriteLock& _global_lock,
+                       QWidget *parent):
     QWidget(parent),
     SingleTypeBinaryPlotAdapter<double>(),
+    global_lock(_global_lock),
     ui(new Ui::BufferPlot) {
     ui->setupUi(this);
     ui->widgetBufferPlot->setBackground(this->palette().background().color());
@@ -65,7 +67,7 @@ void BufferPlot::removeAttribute(const QString& channel_name) {
 
 void BufferPlot::setChannelData(boost::shared_ptr<chaos::common::data::CDataBuffer>& _buffer_to_plot,
                                 std::vector<chaos::DataType::BinarySubtype>& _bin_type) {
-    lock_read_write_for_plot.lockForWrite();
+    global_lock.lockForWrite();
     //set data into scanner
     SingleTypeBinaryPlotAdapter<double>::setData(_buffer_to_plot, _bin_type);
 
@@ -102,7 +104,7 @@ void BufferPlot::setChannelData(boost::shared_ptr<chaos::common::data::CDataBuff
     //set graph range
     ui->widgetBufferPlot->xAxis->setRange(0, SingleTypeBinaryPlotAdapter<double>::getNumberOfElementPerChannel());
     ui->widgetBufferPlot->yAxis->setRange(global_y_range);
-    lock_read_write_for_plot.unlock();
+    global_lock.unlock();
 }
 
 void BufferPlot::channelElement(const unsigned int channel_index,
@@ -119,7 +121,7 @@ void BufferPlot::channelElement(const unsigned int channel_index,
 }
 
 void BufferPlot::updatePlot() {
-    lock_read_write_for_plot.lockForRead();
+    global_lock.lockForRead();
     ui->widgetBufferPlot->replot();
-    lock_read_write_for_plot.unlock();
+    global_lock.unlock();
 }

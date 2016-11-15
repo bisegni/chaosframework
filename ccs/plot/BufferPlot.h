@@ -26,6 +26,7 @@ protected:
                         const unsigned int element_index,
                         const double &element_value);
 private:
+    QReadWriteLock& global_lock;
     QCustomPlot *master_plot;
     QVector<QCPGraph*> graph_vector;
     std::vector<chaos::DataType::BinarySubtype> bin_type;
@@ -37,7 +38,8 @@ class BufferPlot:
     Q_OBJECT
 
 public:
-    explicit BufferPlot(QWidget *parent = 0);
+    explicit BufferPlot(QReadWriteLock& _global_lock,
+                        QWidget *parent = 0);
     ~BufferPlot();
     void addAttribute(const QString& channel_name,
                       std::vector<chaos::DataType::BinarySubtype>& _bin_type);
@@ -60,7 +62,7 @@ private:
     QMap<QString, QSharedPointer<AttributeScanner> > map_attribute_scanners;
 
     QVector<QCPGraph*> graph_vector;
-    QReadWriteLock lock_read_write_for_plot;
+    QReadWriteLock& global_lock;
 };
 
 #endif // BUFFERPLOT_H
