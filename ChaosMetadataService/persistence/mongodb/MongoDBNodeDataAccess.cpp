@@ -424,29 +424,31 @@ int MongoDBNodeDataAccess::searchNode(chaos::common::data::CDataWrapper **result
             for (SearchResultIterator it = paged_result.begin();
                  it != paged_result.end();
                  it++) {
-                CDataWrapper cd;
-                
-                cd.addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, it->getField(chaos::NodeDefinitionKey::NODE_UNIQUE_ID).String());
-                cd.addStringValue(chaos::NodeDefinitionKey::NODE_TYPE, it->getField(chaos::NodeDefinitionKey::NODE_TYPE).String());
-                cd.addStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR, it->getField(chaos::NodeDefinitionKey::NODE_RPC_ADDR).String());
-                cd.addInt64Value("seq", (int64_t)it->getField("seq").Long());
-                
-                if(it->hasField("health_stat")) {
-                    mongo::BSONElement health_stat_element = it->getField("health_stat");
-                    if(health_stat_element.type() == mongo::Object) {
-                        mongo::BSONObj o = health_stat_element.embeddedObject();
-                        //we can retrieve the data
-                        CDataWrapper health;
-                        health.addInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP, o.getField(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP).date().asInt64());
-                        health.addInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME, (int64_t)o.getField(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME).Long());
-                        health.addDoubleValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_USER_TIME, o.getField(chaos::NodeHealtDefinitionKey::NODE_HEALT_USER_TIME).Double());
-                        health.addDoubleValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME, o.getField(chaos::NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME).Double());
-                        health.addStringValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS, o.getField(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS).String());
-                        cd.addCSDataValue("health_stat", health);
+                try {
+                    CDataWrapper cd;
+                    cd.addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, node_uid_found = it->getField(chaos::NodeDefinitionKey::NODE_UNIQUE_ID).String());
+                    cd.addStringValue(chaos::NodeDefinitionKey::NODE_TYPE, it->getField(chaos::NodeDefinitionKey::NODE_TYPE).String());
+                    cd.addStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR, it->getField(chaos::NodeDefinitionKey::NODE_RPC_ADDR).String());
+                    cd.addInt64Value("seq", (int64_t)it->getField("seq").Long());
+                    
+                    if(it->hasField("health_stat")) {
+                        mongo::BSONElement health_stat_element = it->getField("health_stat");
+                        if(health_stat_element.type() == mongo::Object) {
+                            mongo::BSONObj o = health_stat_element.embeddedObject();
+                            //we can retrieve the data
+                            CDataWrapper health;
+                            health.addInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP, o.getField(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP).date().asInt64());
+                            health.addInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME, (int64_t)o.getField(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME).Long());
+                            health.addDoubleValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_USER_TIME, o.getField(chaos::NodeHealtDefinitionKey::NODE_HEALT_USER_TIME).Double());
+                            health.addDoubleValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME, o.getField(chaos::NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME).Double());
+                            health.addStringValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS, o.getField(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS).String());
+                            cd.addCSDataValue("health_stat", health);
+                        }
                     }
+                    (*result)->appendCDataWrapperToArray(cd);
+                } catch(...) {
+                    MDBNDA_ERR << "Exception during scan of found node:" << node_uid_found;
                 }
-                
-                (*result)->appendCDataWrapperToArray(cd);
             }
             (*result)->finalizeArrayForKey("node_search_result_page");
         }
