@@ -31,6 +31,25 @@ int32_t DatasetAttributeReader::getType() {
     return attribute_description->getInt32Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE);
 }
 
+std::vector<unsigned int> DatasetAttributeReader::getSubtype() {
+    std::vector<unsigned int> sub_type;
+    if(!attribute_description->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE) ||
+            !attribute_description->isInt32Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE) ||
+            !attribute_description->isVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE) ) return sub_type;
+    //we have subtype
+    if(attribute_description->isInt32Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE)) {
+        //one subtype
+        sub_type.push_back(attribute_description->getInt32Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE));
+    } else {
+        std::auto_ptr<CMultiTypeDataArrayWrapper> subtype_array(attribute_description->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE));
+        for(int idx = 0;
+            idx < subtype_array->size();
+            idx++) {
+            sub_type.push_back(subtype_array->getInt32ElementAtIndex(idx));
+        }
+    }
+}
+
 bool DatasetAttributeReader::isMandatory() {
     return false;
 }

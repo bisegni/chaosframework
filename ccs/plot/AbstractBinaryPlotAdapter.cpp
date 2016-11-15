@@ -8,14 +8,16 @@ AbstractBinaryPlotAdapter::AbstractBinaryPlotAdapter():
 
 AbstractBinaryPlotAdapter::~AbstractBinaryPlotAdapter() {}
 
-void AbstractBinaryPlotAdapter::setData(boost::shared_ptr<chaos::common::data::CDataBuffer>& _buffer_to_plot,
-                                        std::vector<chaos::DataType::BinarySubtype>& _bin_type) {
-    buffer_to_plot = _buffer_to_plot,
-            bin_type = _bin_type,
-            channel_number = _bin_type.size();
+void AbstractBinaryPlotAdapter::setBinaryType(std::vector<chaos::DataType::BinarySubtype>& _bin_type) {
+    bin_type = _bin_type;
+    channel_offset = 0;
+    channel_number = _bin_type.size();
     for(unsigned int idx = 0; idx < channel_number; idx++) {channel_offset += getChannelSize(idx);}
-
     element_per_channel = (_bin_type.size()/channel_offset);
+}
+
+void AbstractBinaryPlotAdapter::setData(boost::shared_ptr<chaos::common::data::CDataBuffer>& _buffer_to_plot) {
+    buffer_to_plot = _buffer_to_plot;
 }
 
 unsigned int AbstractBinaryPlotAdapter::getChannelNumber() {
