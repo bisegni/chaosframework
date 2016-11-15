@@ -424,6 +424,7 @@ int MongoDBNodeDataAccess::searchNode(chaos::common::data::CDataWrapper **result
             for (SearchResultIterator it = paged_result.begin();
                  it != paged_result.end();
                  it++) {
+                std::string node_uid_found;
                 try {
                     CDataWrapper cd;
                     cd.addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, node_uid_found = it->getField(chaos::NodeDefinitionKey::NODE_UNIQUE_ID).String());
