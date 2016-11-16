@@ -10,8 +10,8 @@ class AbstractBinaryPlotAdapter {
 public:
     AbstractBinaryPlotAdapter();
     ~AbstractBinaryPlotAdapter();
-    void setBinaryType(std::vector<chaos::DataType::BinarySubtype>& _bin_type);
-    void setData(boost::shared_ptr<chaos::common::data::CDataBuffer>& _buffer_to_plot);
+    void setBinaryType(const std::vector<unsigned int> &_bin_type);
+    void setData(const boost::shared_ptr<chaos::common::data::CDataBuffer> &_buffer_to_plot);
     unsigned int getChannelNumber();
     unsigned int getNumberOfElementPerChannel();
     void iterOnChannel(const unsigned int channel_index);
@@ -29,7 +29,7 @@ private:
     unsigned int channel_offset;
     unsigned int element_per_channel;
     boost::shared_ptr<chaos::common::data::CDataBuffer> buffer_to_plot;
-    std::vector<chaos::DataType::BinarySubtype> bin_type;
+    std::vector<unsigned int> bin_type;
 };
 
 

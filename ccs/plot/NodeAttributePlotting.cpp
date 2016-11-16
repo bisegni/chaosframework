@@ -27,7 +27,6 @@ void PlotInfo::updatedDS(const std::string& control_unit_uid,
     double key = (QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0);
     double key_for_old = key-plotting_class_ref.plot_ageing;
     graph->addData(key, last_received_value = dataset_key_values[attribute_name.toStdString()].asDouble());
-    qDebug()<<"Attribute:"<<attribute_name<<" key:"<<key<<" value:"<<last_received_value << " keyold:" << key_for_old;
     graph->removeDataBefore(key_for_old);
     plotting_class_ref.lock_read_write_for_plot.unlock();
 }
@@ -199,7 +198,19 @@ void NodeAttributePlotting::addTimedGraphFor(QSharedPointer<DatasetAttributeRead
         QMessageBox::information(this, tr("Create plot error"), QString("The type for attribute %1 can't be added to timed plot").arg( attribute_name));
         return;
     } else if(attribute_reader->getType() == chaos::DataType::TYPE_BYTEARRAY){
-//add buffer attribute to buffer plot
+        const std::vector<unsigned int> sub_types = attribute_reader->getSubtype();
+        if(sub_types.size() == 0) {
+            QMessageBox::information(this, tr("Create plot error"), QString("The binary attribute %1 has not subtype defined").arg( attribute_name));
+            return;
+        }
+        //add buffer attribute to buffer plot
+        ui->plotBuffer->setVisible(true);
+        if(ui->plotBuffer->hasAttribute(attribute_name) == false){
+            ui->plotBuffer->addAttribute(node_uid,
+                                         attribute_name);
+            ui->plotBuffer->updateAttributeDataType(attribute_name,
+                                                    sub_types);
+        }
     } else {
 
         bool ok = false;
@@ -292,6 +303,7 @@ void NodeAttributePlotting::updatePlot() {
     ui->qCustomPlotTimed->xAxis->setRange(key_min, now);
     ui->qCustomPlotTimed->replot();
     lock_read_write_for_plot.unlock();
+    ui->plotBuffer->updatePlot();
 }
 
 void NodeAttributePlotting::on_lineEditTimeInterval_editingFinished() {

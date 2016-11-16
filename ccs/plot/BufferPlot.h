@@ -4,6 +4,9 @@
 #include "../external_lib/qcustomplot.h"
 #include "AbstractBinaryPlotAdapter.h"
 
+#include <chaos/common/utility/LockableObject.h>
+#include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
+
 #include <QMap>
 #include <QWidget>
 #include <QSharedPointer>
@@ -14,25 +17,33 @@ class BufferPlot;
 }
 
 class AttributeScanner:
+        public chaos::metadata_service_client::node_monitor::ControlUnitMonitorHandler,
         protected SingleTypeBinaryPlotAdapter<double> {
 public:
-    AttributeScanner(const QString& _attribute_name,
+    AttributeScanner(const QString &_node_uid,
+                     const QString& _attribute_name,
                      QCustomPlot *_master_plot,
                      QReadWriteLock& _global_lock,
                      QCPRange& _global_y_range);
     ~AttributeScanner();
     //update attribute graph data
-    void updateData(boost::shared_ptr<chaos::common::data::CDataBuffer>& _buffer_to_plot);
+    void updateData(const boost::shared_ptr<chaos::common::data::CDataBuffer> &_buffer_to_plot);
     //update attribute data type
-    void setBinaryType(std::vector<chaos::DataType::BinarySubtype>& _bin_type);
+    void setBinaryType(const std::vector<unsigned int>& _bin_type);
     //get the max element
     unsigned int getMaxXAxisSize();
 protected:
     void channelElement(const unsigned int channel_index,
                         const unsigned int element_index,
                         const double &element_value);
+    void updatedDS(const std::string& control_unit_uid,
+                   int dataset_type_signal,
+                   chaos::metadata_service_client::node_monitor::MapDatasetKeyValues& dataset_key_values);
+    void noDSDataFound(const std::string& control_unit_uid,
+                       int dataset_type_signal);
 private:
-    const QString& attribute_name;
+    const QString node_uid;
+    const QString attribute_name;
     QCPRange& global_y_range;
     QReadWriteLock& global_lock;
     QCustomPlot *master_plot;
@@ -40,30 +51,35 @@ private:
     std::vector<chaos::DataType::BinarySubtype> bin_type;
 };
 
+typedef chaos::common::utility::LockableObject< QMap<QString, QSharedPointer<AttributeScanner> > > LockableAttributeMap;
+
 class BufferPlot:
         public QWidget {
     Q_OBJECT
 
 public:
-    explicit BufferPlot(QReadWriteLock& _global_lock,
-                        QWidget *parent = 0);
+    explicit BufferPlot(QWidget *parent = 0);
     ~BufferPlot();
-    void addAttribute(const QString& channel_name);
-    void updateAttributeData(const QString& channel_name,
-                             boost::shared_ptr<chaos::common::data::CDataBuffer>& _buffer_to_plot);
-    void removeAttribute(const QString& channel_name);
+    void addAttribute(const QString& node_uid,
+                      const QString& attribute_name);
 
-    void updateAttributeDataType(const QString& channel_name,
-                            std::vector<chaos::DataType::BinarySubtype>& _bin_type);
+    bool hasAttribute(const QString& attribute_name);
+
+    void updateAttributeData(const QString& attribute_name,
+                             boost::shared_ptr<chaos::common::data::CDataBuffer>& _buffer_to_plot);
+    void removeAttribute(const QString& attribute_name);
+
+    void updateAttributeDataType(const QString& attribute_name,
+                                 const std::vector<unsigned int> &_bin_type);
     void updatePlot();
 private:
     Ui::BufferPlot *ui;
     QCPRange global_y_range;
     QCPRange global_x_range;
     //contains all attribute scanners
-    QMap<QString, QSharedPointer<AttributeScanner> > map_attribute_scanners;
+    LockableAttributeMap map_attribute_scanners;
     QVector<QCPGraph*> graph_vector;
-    QReadWriteLock& global_lock;
+    QReadWriteLock global_lock;
 };
 
 #endif // BUFFERPLOT_H
