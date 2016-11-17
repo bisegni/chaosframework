@@ -24,7 +24,7 @@ public:
                      const QString& _attribute_name,
                      QCustomPlot *_master_plot,
                      QReadWriteLock& _global_lock,
-                     QCPRange& _global_y_range);
+                     QCPRange& _global_y_range, QCPRange &_global_x_range);
     ~AttributeScanner();
     //update attribute graph data
     void updateData(const boost::shared_ptr<chaos::common::data::CDataBuffer> &_buffer_to_plot);
@@ -45,13 +45,16 @@ private:
     const QString node_uid;
     const QString attribute_name;
     QCPRange& global_y_range;
+    QCPRange& global_x_range;
     QReadWriteLock& global_lock;
     QCustomPlot *master_plot;
     QVector<QCPGraph*> graph_vector;
     std::vector<chaos::DataType::BinarySubtype> bin_type;
 };
 
-typedef chaos::common::utility::LockableObject< QMap<QString, QSharedPointer<AttributeScanner> > > LockableAttributeMap;
+typedef QPair<QString,QString> AttributeMapKey;
+typedef QMap< AttributeMapKey, QSharedPointer<AttributeScanner> > AttributeMap;
+typedef chaos::common::utility::LockableObject< AttributeMap > LockableAttributeMap;
 
 class BufferPlot:
         public QWidget {
@@ -63,15 +66,21 @@ public:
     void addAttribute(const QString& node_uid,
                       const QString& attribute_name);
 
-    bool hasAttribute(const QString& attribute_name);
+    bool hasAttribute(const QString& node_uid,
+                      const QString& attribute_name);
 
-    void updateAttributeData(const QString& attribute_name,
+    void updateAttributeData(const QString& node_uid,
+                             const QString& attribute_name,
                              boost::shared_ptr<chaos::common::data::CDataBuffer>& _buffer_to_plot);
-    void removeAttribute(const QString& attribute_name);
+    void removeAttribute(const QString& node_uid,
+                         const QString& attribute_name);
 
-    void updateAttributeDataType(const QString& attribute_name,
+    void updateAttributeDataType(const QString& node_uid,
+                                 const QString& attribute_name,
                                  const std::vector<unsigned int> &_bin_type);
     void updatePlot();
+
+    bool isEmpty();
 private:
     Ui::BufferPlot *ui;
     QCPRange global_y_range;

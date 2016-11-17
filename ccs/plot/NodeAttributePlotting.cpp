@@ -205,10 +205,12 @@ void NodeAttributePlotting::addTimedGraphFor(QSharedPointer<DatasetAttributeRead
         }
         //add buffer attribute to buffer plot
         ui->plotBuffer->setVisible(true);
-        if(ui->plotBuffer->hasAttribute(attribute_name) == false){
+        if(ui->plotBuffer->hasAttribute(node_uid,
+                                        attribute_name) == false){
             ui->plotBuffer->addAttribute(node_uid,
                                          attribute_name);
-            ui->plotBuffer->updateAttributeDataType(attribute_name,
+            ui->plotBuffer->updateAttributeDataType(node_uid,
+                                                    attribute_name,
                                                     sub_types);
         }
     } else {
@@ -239,9 +241,15 @@ void NodeAttributePlotting::addTimedGraphFor(QSharedPointer<DatasetAttributeRead
 
 
 void NodeAttributePlotting::removedTimedGraphFor(const QString& attribute_name) {
-    if(!map_plot_info.contains(attribute_name)) return;
+    if(ui->plotBuffer->hasAttribute(node_uid,
+                                    attribute_name) == true){
+        ui->plotBuffer->removeAttribute(node_uid,
+                                        attribute_name);
+    } else {
+        if(!map_plot_info.contains(attribute_name)) return;
 
-    _addRemoveToPlot(map_plot_info[attribute_name], false);
+        _addRemoveToPlot(map_plot_info[attribute_name], false);
+    }
 }
 
 void NodeAttributePlotting::_addRemoveToPlot(QSharedPointer<PlotInfo> plot_info, bool add) {
