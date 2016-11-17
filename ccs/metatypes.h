@@ -10,6 +10,7 @@
 #include "data/CommandParameterReader.h"
 #include "data/DatasetReader.h"
 #include "data/DatasetAttributeReader.h"
+#include "data/delegate/TwoLineInformationItem.h"
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/data/CDataWrapper.h>
 
