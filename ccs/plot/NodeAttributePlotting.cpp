@@ -214,28 +214,58 @@ void NodeAttributePlotting::addTimedGraphFor(QSharedPointer<DatasetAttributeRead
                                                     sub_types);
         }
     } else {
-
         bool ok = false;
-        QSharedPointer<PlotInfo> plot_info(new PlotInfo(*this));
-        plot_info->attribute_name = attribute_name;
         switch(attribute_reader->getDirection()) {
-        case chaos::DataType::Input:
+        case chaos::DataType::Input:{
+            QSharedPointer<PlotInfo> plot_info(new PlotInfo(*this));
             plot_info->dataset_type = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_INPUT;
+            plot_info->attribute_name = attribute_name;
+            plot_info->graph = ui->qCustomPlotTimed->addGraph();
+            plot_info->graph->setLineStyle(QCPGraph::lsLine);
+            plot_info->graph->setName(attribute_name);
+            plot_info->graph->setPen(QPen(QColor(random_color_component(), random_color_component(), random_color_component())));
+            plot_info->graph->setAntialiased(true);
+            plot_info->graph->addToLegend();
+            _addRemoveToPlot(plot_info, true);
             break;
-
-        case chaos::DataType::Output:
-            plot_info->dataset_type = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT;
-            break;
-
         }
-        plot_info->graph = ui->qCustomPlotTimed->addGraph();
-        plot_info->graph->setLineStyle(QCPGraph::lsLine);
-        plot_info->graph->setName(attribute_name);
-        plot_info->graph->setPen(QPen(QColor(random_color_component(), random_color_component(), random_color_component())));
-        plot_info->graph->setAntialiased(true);
-        plot_info->graph->addToLegend();
-
-        _addRemoveToPlot(plot_info, true);
+        case chaos::DataType::Output:{
+            QSharedPointer<PlotInfo> plot_info(new PlotInfo(*this));
+            plot_info->dataset_type = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT;
+            plot_info->attribute_name = attribute_name;
+            plot_info->graph = ui->qCustomPlotTimed->addGraph();
+            plot_info->graph->setLineStyle(QCPGraph::lsLine);
+            plot_info->graph->setName(attribute_name);
+            plot_info->graph->setPen(QPen(QColor(random_color_component(), random_color_component(), random_color_component())));
+            plot_info->graph->setAntialiased(true);
+            plot_info->graph->addToLegend();
+            _addRemoveToPlot(plot_info, true);
+            break;
+        }
+        case chaos::DataType::Bidirectional: {
+            QSharedPointer<PlotInfo> plot_info_in(new PlotInfo(*this));
+            plot_info_in->attribute_name = attribute_name;
+            plot_info_in->dataset_type = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_INPUT;
+            plot_info_in->graph = ui->qCustomPlotTimed->addGraph();
+            plot_info_in->graph->setLineStyle(QCPGraph::lsLine);
+            plot_info_in->graph->setName(attribute_name+"_in");
+            plot_info_in->graph->setPen(QPen(QColor(random_color_component(), random_color_component(), random_color_component())));
+            plot_info_in->graph->setAntialiased(true);
+            plot_info_in->graph->addToLegend();
+            _addRemoveToPlot(plot_info_in, true);
+            QSharedPointer<PlotInfo> plot_info_out(new PlotInfo(*this));
+            plot_info_out->attribute_name = attribute_name;
+            plot_info_out->dataset_type = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT;
+            plot_info_out->graph = ui->qCustomPlotTimed->addGraph();
+            plot_info_out->graph->setLineStyle(QCPGraph::lsLine);
+            plot_info_out->graph->setName(attribute_name+"_out");
+            plot_info_out->graph->setPen(QPen(QColor(random_color_component(), random_color_component(), random_color_component())));
+            plot_info_out->graph->setAntialiased(true);
+            plot_info_out->graph->addToLegend();
+            _addRemoveToPlot(plot_info_out, true);
+            break;
+        }
+        }
     }
 }
 
@@ -245,6 +275,7 @@ void NodeAttributePlotting::removedTimedGraphFor(const QString& attribute_name) 
                                     attribute_name) == true){
         ui->plotBuffer->removeAttribute(node_uid,
                                         attribute_name);
+        ui->plotBuffer->setVisible(ui->plotBuffer->isEmpty() == false);
     } else {
         if(!map_plot_info.contains(attribute_name)) return;
 
@@ -253,13 +284,12 @@ void NodeAttributePlotting::removedTimedGraphFor(const QString& attribute_name) 
 }
 
 void NodeAttributePlotting::_addRemoveToPlot(QSharedPointer<PlotInfo> plot_info, bool add) {
-    const QString attribute_name = plot_info->attribute_name;
     if(add) {
         //activate monitoring
         ChaosMetadataServiceClient::getInstance()->addHandlerToNodeMonitor(node_uid.toStdString(),
                                                                            chaos::metadata_service_client::node_monitor::ControllerTypeNodeControlUnit,
                                                                            plot_info.data());
-        map_plot_info.insert(attribute_name, plot_info);
+        map_plot_info.insert(plot_info->graph->name(), plot_info);
     } else {
         //remove plot from monitor
         ChaosMetadataServiceClient::getInstance()->removeHandlerToNodeMonitor(node_uid.toStdString(),
@@ -267,8 +297,8 @@ void NodeAttributePlotting::_addRemoveToPlot(QSharedPointer<PlotInfo> plot_info,
                                                                               plot_info.data());
 
         //we can remove the plot from graph and map
+        map_plot_info.remove(plot_info->graph->name());
         ui->qCustomPlotTimed->removeGraph(plot_info->graph);
-        map_plot_info.remove(attribute_name);
     }
 
 }
@@ -285,7 +315,19 @@ void NodeAttributePlotting::removePlot() {
     QModelIndexList selected_row = ui->listViewPlottableAttribute->selectionModel()->selectedRows();
     foreach (QModelIndex row, selected_row) {
         QSharedPointer<DatasetAttributeReader> attribute_reader = row.data(Qt::UserRole).value< QSharedPointer<DatasetAttributeReader> >();
-        removedTimedGraphFor(attribute_reader->getName());
+        switch(attribute_reader->getDirection()) {
+        case chaos::DataType::Input:
+        case chaos::DataType::Output:
+            removedTimedGraphFor(attribute_reader->getName());
+            break;
+        case chaos::DataType::Bidirectional:
+            removedTimedGraphFor(attribute_reader->getName()+"_in");
+            removedTimedGraphFor(attribute_reader->getName()+"_out");
+            break;
+
+        }
+
+
     }
 }
 

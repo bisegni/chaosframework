@@ -24,5 +24,18 @@ QVariant DatasetAttributeListModel::getUserData(int row) const {
 
 QVariant DatasetAttributeListModel::getRowData(int row) const {
     if(attribute_name_list.size()==0) return QVariant();
-    return dataset_reader->getAttribute(attribute_name_list[row])->getName();
+    QString direction;
+    switch (dataset_reader->getAttribute(attribute_name_list[row])->getDirection()) {
+    case chaos::DataType::Input:
+        direction = "Input";
+        break;
+    case chaos::DataType::Output:
+        direction = "Output";
+        break;
+    case chaos::DataType::Bidirectional:
+        direction = "Bidirectional";
+        break;
+    }
+    const QString attribute_name = QString("%1[%2]").arg(dataset_reader->getAttribute(attribute_name_list[row])->getName(),direction);
+    return attribute_name;
 }
