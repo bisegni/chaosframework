@@ -126,22 +126,30 @@ void MainWindow::reconfigure() {
     QSettings settings;
     try{
         ChaosMetadataServiceClient::getInstance()->clearServerList();
-        settings.beginGroup("network");
-        int mds_address_size = settings.beginReadArray("mds_address");
+        settings.beginGroup(PREFERENCE_NETWORK_GROUP_NAME);
 
-        for (int i = 0; i < mds_address_size; ++i) {
-            settings.setArrayIndex(i);
-            ChaosMetadataServiceClient::getInstance()->addServerAddress(settings.value("address").toString().toStdString());
+        const QString current_setting = settings.value("active_configuration").toString();
+        if(settings.childGroups().contains(current_setting)) {
+            settings.beginGroup(current_setting);
+
+            int mds_address_size = settings.beginReadArray("mds_address");
+            for (int i = 0; i < mds_address_size; ++i) {
+                settings.setArrayIndex(i);
+                ChaosMetadataServiceClient::getInstance()->addServerAddress(settings.value("address").toString().toStdString());
+            }
+            settings.endArray();
+            settings.endGroup();
+            //check if monitoring is started
+            if(mds_address_size &&
+                    !ChaosMetadataServiceClient::getInstance()->monitoringIsStarted()) {
+                //try to start it
+                on_actionEnable_Monitoring_triggered();
+            }
+            ChaosMetadataServiceClient::getInstance()->reconfigureMonitor();
+        } else {
+            //mds are not configured so we need to configure it
+            on_actionPreferences_triggered();
         }
-        settings.endArray();
-        settings.endGroup();
-        //check if monitoring is started
-        if(mds_address_size &&
-                !ChaosMetadataServiceClient::getInstance()->monitoringIsStarted()) {
-            //try to start it
-            on_actionEnable_Monitoring_triggered();
-        }
-        ChaosMetadataServiceClient::getInstance()->reconfigureMonitor();
     }catch(...) {
 
     }

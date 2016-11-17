@@ -19,6 +19,7 @@ public:
     QString getName();
     QString getDescription();
     int32_t getType();
+    std::vector<unsigned int> getSubtype();
     bool isMandatory();
     int getDirection();
 signals:

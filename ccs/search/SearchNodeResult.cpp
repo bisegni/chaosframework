@@ -33,7 +33,7 @@ SearchNodeResult::SearchNodeResult(bool _selection_mode,
 SearchNodeResult::SearchNodeResult(bool _selection_mode,
                                    const QList<SearchNodeType>& _selectable_types,
                                    const QString& _tag):
-    current_page_length(200),
+    current_page_length(1000),
     selection_mode(_selection_mode),
     tag(_tag),
     selectable_types(_selectable_types) {

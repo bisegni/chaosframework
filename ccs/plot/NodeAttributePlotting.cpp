@@ -12,26 +12,27 @@ using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::api_proxy;
 
 PlotInfo::PlotInfo(NodeAttributePlotting& _plotting_class_ref):
-plotting_class_ref(_plotting_class_ref),
-last_received_value(0.0){
+    plotting_class_ref(_plotting_class_ref),
+    last_received_value(0.0) {
+    //let this handler to be update atevery read done by mnitor
+    //also if dataset has not changed
     ControlUnitMonitorHandler::setSignalOnChange(false);
 }
 
 void PlotInfo::updatedDS(const std::string& control_unit_uid,
-               int dataset_type_signal,
-               chaos::metadata_service_client::node_monitor::MapDatasetKeyValues& dataset_key_values) {
+                         int dataset_type_signal,
+                         chaos::metadata_service_client::node_monitor::MapDatasetKeyValues& dataset_key_values) {
     if(dataset_type != dataset_type_signal) return;
     plotting_class_ref.lock_read_write_for_plot.lockForRead();
     double key = (QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0);
     double key_for_old = key-plotting_class_ref.plot_ageing;
     graph->addData(key, last_received_value = dataset_key_values[attribute_name.toStdString()].asDouble());
-            qDebug()<<"Attribute:"<<attribute_name<<" key:"<<key<<" value:"<<last_received_value << " keyold:" << key_for_old;
     graph->removeDataBefore(key_for_old);
     plotting_class_ref.lock_read_write_for_plot.unlock();
 }
 
 void PlotInfo::noDSDataFound(const std::string& control_unit_uid,
-                   int dataset_type_signal) {
+                             int dataset_type_signal) {
     if(dataset_type != dataset_type_signal) return;
     plotting_class_ref.lock_read_write_for_plot.lockForRead();
     double key = (QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0);
@@ -105,6 +106,8 @@ NodeAttributePlotting::NodeAttributePlotting(const QString& _node_uid,
             SLOT(removePlot()));
     ui->listViewPlottableAttribute->addAction(remove_plot_action);
 
+    ui->plotBuffer->setVisible(false);
+
     //load current dataset
     api_processor.submitApiResult(TAG_CU_GET_DATASET,
                                   GET_CHAOS_API_PTR(control_unit::GetCurrentDataset)->execute(node_uid.toStdString()),
@@ -152,10 +155,10 @@ void NodeAttributePlotting::moveLegend() {
             ui->qCustomPlotTimed->axisRect()->insetLayout()->setInsetAlignment(0, (Qt::Alignment)dataInt);
             ui->qCustomPlotTimed->replot();
         }else {
-             QString action_string = contextAction->data().toString();
-             if(action_string.compare("show/hide") == 0){
-                 ui->qCustomPlotTimed->legend->setVisible(!ui->qCustomPlotTimed->legend->visible());
-             }
+            QString action_string = contextAction->data().toString();
+            if(action_string.compare("show/hide") == 0){
+                ui->qCustomPlotTimed->legend->setVisible(!ui->qCustomPlotTimed->legend->visible());
+            }
         }
     }
 }
@@ -191,40 +194,62 @@ void NodeAttributePlotting::addTimedGraphFor(QSharedPointer<DatasetAttributeRead
     const QString attribute_name = attribute_reader->getName();
     if(map_plot_info.contains(attribute_name)) return;
 
-    if(attribute_reader->getType() == chaos::DataType::TYPE_BYTEARRAY ||
-            attribute_reader->getType() == chaos::DataType::TYPE_STRING) {
+    if(attribute_reader->getType() == chaos::DataType::TYPE_STRING) {
         QMessageBox::information(this, tr("Create plot error"), QString("The type for attribute %1 can't be added to timed plot").arg( attribute_name));
         return;
+    } else if(attribute_reader->getType() == chaos::DataType::TYPE_BYTEARRAY){
+        const std::vector<unsigned int> sub_types = attribute_reader->getSubtype();
+        if(sub_types.size() == 0) {
+            QMessageBox::information(this, tr("Create plot error"), QString("The binary attribute %1 has not subtype defined").arg( attribute_name));
+            return;
+        }
+        //add buffer attribute to buffer plot
+        ui->plotBuffer->setVisible(true);
+        if(ui->plotBuffer->hasAttribute(node_uid,
+                                        attribute_name) == false){
+            ui->plotBuffer->addAttribute(node_uid,
+                                         attribute_name);
+            ui->plotBuffer->updateAttributeDataType(node_uid,
+                                                    attribute_name,
+                                                    sub_types);
+        }
+    } else {
+
+        bool ok = false;
+        QSharedPointer<PlotInfo> plot_info(new PlotInfo(*this));
+        plot_info->attribute_name = attribute_name;
+        switch(attribute_reader->getDirection()) {
+        case chaos::DataType::Input:
+            plot_info->dataset_type = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_INPUT;
+            break;
+
+        case chaos::DataType::Output:
+            plot_info->dataset_type = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT;
+            break;
+
+        }
+        plot_info->graph = ui->qCustomPlotTimed->addGraph();
+        plot_info->graph->setLineStyle(QCPGraph::lsLine);
+        plot_info->graph->setName(attribute_name);
+        plot_info->graph->setPen(QPen(QColor(random_color_component(), random_color_component(), random_color_component())));
+        plot_info->graph->setAntialiased(true);
+        plot_info->graph->addToLegend();
+
+        _addRemoveToPlot(plot_info, true);
     }
-
-    bool ok = false;
-    QSharedPointer<PlotInfo> plot_info(new PlotInfo(*this));
-    plot_info->attribute_name = attribute_name;
-    switch(attribute_reader->getDirection()) {
-    case chaos::DataType::Input:
-        plot_info->dataset_type = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_INPUT;
-        break;
-
-    case chaos::DataType::Output:
-        plot_info->dataset_type = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT;
-        break;
-
-    }
-    plot_info->graph = ui->qCustomPlotTimed->addGraph();
-    plot_info->graph->setLineStyle(QCPGraph::lsLine);
-    plot_info->graph->setName(attribute_name);
-    plot_info->graph->setPen(QPen(QColor(random_color_component(), random_color_component(), random_color_component())));
-    plot_info->graph->setAntialiased(true);
-    plot_info->graph->addToLegend();
-
-    _addRemoveToPlot(plot_info, true);
 }
 
 
 void NodeAttributePlotting::removedTimedGraphFor(const QString& attribute_name) {
-    if(!map_plot_info.contains(attribute_name)) return;
+    if(ui->plotBuffer->hasAttribute(node_uid,
+                                    attribute_name) == true){
+        ui->plotBuffer->removeAttribute(node_uid,
+                                        attribute_name);
+    } else {
+        if(!map_plot_info.contains(attribute_name)) return;
 
-    _addRemoveToPlot(map_plot_info[attribute_name], false);
+        _addRemoveToPlot(map_plot_info[attribute_name], false);
+    }
 }
 
 void NodeAttributePlotting::_addRemoveToPlot(QSharedPointer<PlotInfo> plot_info, bool add) {
@@ -286,6 +311,7 @@ void NodeAttributePlotting::updatePlot() {
     ui->qCustomPlotTimed->xAxis->setRange(key_min, now);
     ui->qCustomPlotTimed->replot();
     lock_read_write_for_plot.unlock();
+    ui->plotBuffer->updatePlot();
 }
 
 void NodeAttributePlotting::on_lineEditTimeInterval_editingFinished() {

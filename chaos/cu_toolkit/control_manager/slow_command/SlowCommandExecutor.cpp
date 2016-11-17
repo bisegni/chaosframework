@@ -210,9 +210,9 @@ void SlowCommandExecutor::handleCommandEvent(const std::string& command_alias,
                                                 code,
                                                 message,
                                                 domain);
-                CException ex(code, message, domain);
+                //CException ex(code, message, domain);
                 //async go into recoverable error
-                boost::thread(boost::bind(&AbstractControlUnit::_goInRecoverableError, control_unit_instance, ex)).detach();
+                //boost::thread(boost::bind(&AbstractControlUnit::_goInRecoverableError, control_unit_instance, ex)).detach();
             } else {
                 SCELERR_ << "Command id " << command_seq << " gone in fault without exception";
             }

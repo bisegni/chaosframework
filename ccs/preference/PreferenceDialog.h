@@ -6,6 +6,10 @@
 #include <QDialog>
 #include <QSettings>
 #include <QAbstractButton>
+
+
+#define PREFERENCE_NETWORK_GROUP_NAME "net:preference:1_0"
+
 namespace Ui {
 class PreferenceDialog;
 }
@@ -27,10 +31,18 @@ private slots:
     void loadAllPreference();
     void saveAllPreference();
     void clicked(QAbstractButton *clicked_button);
+    void loadMDSConfiguration(const QString& configuration_name);
+    void updateMDSConfiguration();
+    void on_pushButtonAddNewConfiguration_clicked();
+    void on_pushButtonRemoveConfiguration_clicked();
+    void on_comboBoxConfigurations_currentTextChanged(const QString &selected_configuration);
+
 private:
     QSettings settings;
     PreferenceMDSHostListModel list_model_mds_address;
     Ui::PreferenceDialog *ui;
+
+    void updatePreverence();
 };
 
 #endif // PREFERENCEDIALOG_H

@@ -1,6 +1,9 @@
 #include "PreferenceDialog.h"
 #include "ui_PreferenceDialog.h"
 
+#include <QInputDialog>
+
+
 PreferenceDialog::PreferenceDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::PreferenceDialog) {
@@ -17,6 +20,7 @@ PreferenceDialog::PreferenceDialog(QWidget *parent) :
     connect(ui->buttonBox,
             SIGNAL(clicked(QAbstractButton*)),
             SLOT(clicked(QAbstractButton*)));
+    updatePreverence();
     loadAllPreference();
 }
 
@@ -31,10 +35,48 @@ void PreferenceDialog::clicked(QAbstractButton *clicked_button) {
     }
 }
 
+void PreferenceDialog::updatePreverence() {
+    if (settings.childGroups().contains("network", Qt::CaseInsensitive)){
+        //we have old network preference
+        //convertion
+        settings.beginGroup("network");
+        settings.remove("");
+        settings.endGroup();
+        settings.sync();
+    }
+}
+
 void PreferenceDialog::loadAllPreference() {
     QStringList cy_type_list;
+    settings.beginGroup(PREFERENCE_NETWORK_GROUP_NAME);
+    QString current_configuration;
+    QStringList configurations = settings.childGroups();
+    //write current configurations
+    ui->comboBoxConfigurations->clear();
+    ui->comboBoxConfigurations->addItems(configurations);
+    current_configuration = settings.value("active_configuration").toString();
+    ui->comboBoxConfigurations->setCurrentText(current_configuration);
+    settings.endGroup();
 
-    settings.beginGroup("network");
+    loadMDSConfiguration(current_configuration);
+}
+
+void PreferenceDialog::saveAllPreference() {
+    settings.beginGroup(PREFERENCE_NETWORK_GROUP_NAME);
+    if(ui->comboBoxConfigurations->currentIndex()>= 0) {
+        settings.setValue("active_configuration", ui->comboBoxConfigurations->currentText());
+    } else {
+        settings.setValue("active_configuration", QVariant());
+    }
+    settings.sync();
+    //emit signal for changed preference
+    emit changedConfiguration();
+}
+
+void PreferenceDialog::loadMDSConfiguration(const QString& configuration_name) {
+    settings.beginGroup(QString("%1/%2").arg(QString(PREFERENCE_NETWORK_GROUP_NAME), configuration_name));
+    //read current configurations
+    QStringList cy_type_list;
     int size = settings.beginReadArray("mds_address");
     for (int i = 0; i < size; ++i) {
         settings.setArrayIndex(i);
@@ -45,8 +87,12 @@ void PreferenceDialog::loadAllPreference() {
     settings.endGroup();
 }
 
-void PreferenceDialog::saveAllPreference() {
-    settings.beginGroup("network");
+void PreferenceDialog::updateMDSConfiguration() {
+    if(ui->comboBoxConfigurations->currentIndex() < 0) return;
+    const QString configuration_name = ui->comboBoxConfigurations->currentText();
+    //write configuration
+    settings.beginGroup(QString("%1/%2").arg(QString(PREFERENCE_NETWORK_GROUP_NAME), configuration_name));
+    //scan all mds ip
     settings.beginWriteArray("mds_address");
     const QStringList& cy_type_list = list_model_mds_address.stringList();
     for (int i = 0; i < cy_type_list.size(); ++i) {
@@ -54,16 +100,25 @@ void PreferenceDialog::saveAllPreference() {
         settings.setValue("address", cy_type_list.at(i));
     }
     settings.endArray();
+    //close group
     settings.endGroup();
     settings.sync();
-    //emit signal for changed preference
-    emit changedConfiguration();
 }
 
 void PreferenceDialog::on_pushButtonAddNewMDSRpcEndpoint_clicked() {
-    list_model_mds_address.insertRow(list_model_mds_address.rowCount());
-    QModelIndex index = list_model_mds_address.index(list_model_mds_address.rowCount()-1);
-    list_model_mds_address.setData(index, tr("127.0.0.1:5000"));
+    bool ok;
+    const QString new_mds_address = QInputDialog::getText(this, tr("New metadata server address"),
+                                                        tr("MDS address:"),
+                                                        QLineEdit::Normal,
+                                                          tr("127.0.0.1:5000"),
+                                                        &ok);
+    if (ok && !new_mds_address.isEmpty()) {
+        list_model_mds_address.insertRow(list_model_mds_address.rowCount());
+        QModelIndex index = list_model_mds_address.index(list_model_mds_address.rowCount()-1);
+        list_model_mds_address.setData(index, new_mds_address);
+        updateMDSConfiguration();
+    }
+
 }
 
 void PreferenceDialog::on_pushButtonRemoveSelectedMDSRpcEndpoint_clicked() {
@@ -71,4 +126,31 @@ void PreferenceDialog::on_pushButtonRemoveSelectedMDSRpcEndpoint_clicked() {
     foreach(QModelIndex selected, selected_row) {
         list_model_mds_address.removeRow(selected.row());
     }
+    updateMDSConfiguration();
+}
+
+void PreferenceDialog::on_pushButtonAddNewConfiguration_clicked() {
+    bool ok;
+    const QString configuration_name = QInputDialog::getText(this, tr("New configuration name"),
+                                                        tr("MDS Configuration:"),
+                                                        QLineEdit::Normal,
+                                                        tr("New MDS Configuration"),
+                                                        &ok);
+    if (ok && !configuration_name.isEmpty()) {
+        settings.beginGroup(QString("%1/%2").arg(QString(PREFERENCE_NETWORK_GROUP_NAME), configuration_name));
+        settings.endGroup();
+        settings.sync();
+        ui->comboBoxConfigurations->addItem(configuration_name);
+    }
+}
+
+void PreferenceDialog::on_pushButtonRemoveConfiguration_clicked() {
+    if(ui->comboBoxConfigurations->currentIndex() < 0) return;
+    settings.beginGroup(QString("%1/%2").arg(QString(PREFERENCE_NETWORK_GROUP_NAME), ui->comboBoxConfigurations->currentText()));
+    settings.remove(""); //removes the group, and all it keys
+    settings.endGroup();
+}
+
+void PreferenceDialog::on_comboBoxConfigurations_currentTextChanged(const QString &selected_configuration) {
+    loadMDSConfiguration(selected_configuration);
 }
