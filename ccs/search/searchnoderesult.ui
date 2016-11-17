@@ -125,7 +125,7 @@
         <enum>QAbstractItemView::DragOnly</enum>
        </property>
        <property name="wordWrap">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <attribute name="horizontalHeaderMinimumSectionSize">
         <number>20</number>

@@ -1,12 +1,13 @@
 #include "TwoLineInformationItem.h"
 
 TwoLineInformationItem::TwoLineInformationItem(const QString& _title,
-                                               const QString& _description, QSharedPointer<chaos::common::data::CDataWrapper> _raw_data,
+                                               const QString& _description,
+                                               QVariant _data,
                                                QObject *parent):
     QObject(parent),
     title(_title),
     description(_description),
-    raw_data(_raw_data){}
+    data(_data){}
 
 TwoLineInformationItem::TwoLineInformationItem(QObject *parent):
     QObject(parent),

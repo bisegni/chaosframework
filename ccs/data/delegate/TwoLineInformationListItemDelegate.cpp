@@ -40,10 +40,8 @@ void TwoLineInformationListItemDelegate::paint(QPainter* painter,
         QSharedPointer<TwoLineInformationItem> item_to_show = index.data().value< QSharedPointer<TwoLineInformationItem> >();
 
         painter->save();
-
         //painter->setRenderHint(QPainter::Antialiasing);
         //painter->setRenderHint(QPainter::HighQualityAntialiasing);
-
         drawBackground(painter, option, index);
 
         QStyleOptionViewItem alias_option = option;
@@ -74,43 +72,16 @@ void TwoLineInformationListItemDelegate::paint(QPainter* painter,
 QWidget *TwoLineInformationListItemDelegate::createEditor(QWidget *parent,
                                                           const QStyleOptionViewItem &option,
                                                           const QModelIndex &index) const {
-    //    if (index.data().canConvert<StarRating>()) {
-    //        StarEditor *editor = new StarEditor(parent);
-    //        connect(editor, SIGNAL(editingFinished()),
-    //                this, SLOT(commitAndCloseEditor()));
-    //        return editor;
-    //    } else {
-    //        return QItemDelegate::createEditor(parent, option, index);
-    //    }
     return QItemDelegate::createEditor(parent, option, index);
 }
 
-//void TwoLineInformationListItemDelegate::commitAndCloseEditor() {
-//    // StarEditor *editor = qobject_cast<StarEditor *>(sender());
-//    // emit commitData(editor);
-//    // emit closeEditor(editor);
-//}
-
 void TwoLineInformationListItemDelegate::setEditorData(QWidget *editor,
                                                        const QModelIndex &index) const {
-    //    if (index.data().canConvert<StarRating>()) {
-    //        StarRating starRating = qvariant_cast<StarRating>(index.data());
-    //        StarEditor *starEditor = qobject_cast<StarEditor *>(editor);
-    //        starEditor->setStarRating(starRating);
-    //    } else {
-    //        QItemDelegate::setEditorData(editor, index);
-    //    }
     QItemDelegate::setEditorData(editor, index);
 }
 
 void TwoLineInformationListItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
                                                       const QModelIndex &index) const {
-    //    if (index.data().canConvert<StarRating>()) {
-    //        StarEditor *starEditor = qobject_cast<StarEditor *>(editor);
-    //        model->setData(index, QVariant::fromValue(starEditor->starRating()));
-    //    } else {
-    //        QItemDelegate::setModelData(editor, model, index);
-    //    }
     QItemDelegate::setModelData(editor, model, index);
 }
 

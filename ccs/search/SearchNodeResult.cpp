@@ -97,7 +97,8 @@ void SearchNodeResult::initUI() {
     ui->tableViewResult->setModel(table_model);
 
     QHeaderView *headerView = ui->tableViewResult->horizontalHeader();
-    headerView->setSectionResizeMode(QHeaderView::Stretch);
+    headerView->setSectionResizeMode(QHeaderView::Interactive);
+    headerView->setStretchLastSection(true);
 
     //finisch to configure table
     ui->tableViewResult->setEditTriggers(QAbstractItemView::NoEditTriggers);

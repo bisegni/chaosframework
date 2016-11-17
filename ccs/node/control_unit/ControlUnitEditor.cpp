@@ -4,6 +4,7 @@
 #include "CommandTemplateInstanceEditor.h"
 #include "../../data/delegate/TwoLineInformationListItemDelegate.h"
 #include "../../plot/NodeAttributePlotting.h"
+#include "../../metatypes.h"
 
 #include <QDebug>
 #include <QDateTime>
@@ -467,13 +468,16 @@ void ControlUnitEditor::on_pushButtonAddNewCommadInstance_clicked() {
 
     //! open tempalte editor for new instance creation
     QSharedPointer<TwoLineInformationItem> item = selected_list.first().data().value< QSharedPointer<TwoLineInformationItem> >();
-    ControlUnitCommandTemplateEditor    *template_editor= new ControlUnitCommandTemplateEditor(QString::fromStdString(item->raw_data->getStringValue(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID)));
-    //connect tempalte editor
-    connect(template_editor,
-            SIGNAL(templateSaved(QString,QString)),
-            SLOT(templateSaved(QString,QString)));
+    if(item->data.canConvert< QSharedPointer<CDataWrapper> >() ){
+        QSharedPointer<CDataWrapper> raw_data = item->data.value< QSharedPointer<CDataWrapper> >();
+        ControlUnitCommandTemplateEditor  *template_editor= new ControlUnitCommandTemplateEditor(QString::fromStdString(raw_data->getStringValue(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID)));
+        //connect tempalte editor
+        connect(template_editor,
+                SIGNAL(templateSaved(QString,QString)),
+                SLOT(templateSaved(QString,QString)));
 
-    addWidgetToPresenter(template_editor);
+        addWidgetToPresenter(template_editor);
+    }
 }
 
 void ControlUnitEditor::on_pushButtonUpdateTemaplteList_clicked() {

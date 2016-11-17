@@ -1,6 +1,6 @@
 #include "CommandListModel.h"
 #include "../data/delegate/TwoLineInformationItem.h"
-
+#include "../metatypes.h"
 #include <chaos/common/chaos_constants.h>
 using namespace chaos::common::data;
 using namespace chaos::metadata_service_client::api_proxy::node;
@@ -49,8 +49,9 @@ QVariant CommandListModel::getUserData(int row) const {
 
 QVariant CommandListModel::getRowData(int row) const {
     if(command_description_array.size()==0) return QVariant();
+    QSharedPointer<chaos::common::data::CDataWrapper> data = command_description_array[row];
     QSharedPointer<TwoLineInformationItem> cmd_desc(new TwoLineInformationItem(QString::fromStdString(command_description_array[row]->getStringValue(chaos::common::batch_command::BatchCommandAndParameterDescriptionkey::BC_ALIAS)),
                                                                                QString::fromStdString(command_description_array[row]->getStringValue(chaos::common::batch_command::BatchCommandAndParameterDescriptionkey::BC_DESCRIPTION)),
-                                                                               command_description_array[row]));
+                                                                               QVariant::fromValue(data)));
     return QVariant::fromValue(cmd_desc);
 }

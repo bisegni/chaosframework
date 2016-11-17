@@ -3,20 +3,20 @@
 
 #include <QObject>
 #include <QSharedPointer>
-#include <chaos/common/data/CDataWrapper.h>
+#include <QVariant>
 
 class TwoLineInformationItem :
         public QObject {
 
     Q_OBJECT
 public:
-    QString title;
-    QString description;
-    QSharedPointer<chaos::common::data::CDataWrapper> raw_data;
+    QString     title;
+    QString     description;
+    QVariant    data;
 
     explicit TwoLineInformationItem(const QString& _title,
                                     const QString& _description,
-                                    QSharedPointer<chaos::common::data::CDataWrapper> _raw_data,
+                                    QVariant _data,
                                     QObject *parent = 0);
     explicit TwoLineInformationItem(QObject *parent = 0);
 };

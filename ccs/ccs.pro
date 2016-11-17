@@ -268,7 +268,8 @@ HEADERS  += \
     widget/CCommandStatisticWidget.h \
     plot/AbstractBinaryPlotAdapter.h \
     plot/BufferPlot.h \
-    widget/WidgetDynamicList.h
+    widget/WidgetDynamicList.h \
+    metatypes.h
 
 FORMS    += \
     search/searchnoderesult.ui \
