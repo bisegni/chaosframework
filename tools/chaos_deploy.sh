@@ -7,7 +7,8 @@ popd > /dev/null
 
 source $dir/common_util.sh
 TMPDIR="/tmp/$USER/chaos_deploy"
-dest_prefix=chaos-x86_64-distrib
+dest_prefix=chaos-distrib
+DEPLOY_FILE=$TMPDIR/deployTargets
 
 Usage(){
     echo "$0 <deploy configuration>"
@@ -29,6 +30,16 @@ cudir=`dirname $1`
 cuconfig=`basename $cudir`
 
 
+deployServer(){
+    serv=$1
+    if ! grep "$serv" $DEPLOY_FILE;then
+	echo "$serv" >> $DEPLOY_FILE
+	echo "* including $serv"
+    else
+	echo "* skipping $serv"
+    fi
+}
+
 ## MDS ##
 if [ -z "$MDS_SERVER" ]; then
     info_mesg "MDS_SERVER " "not specified"
@@ -46,8 +57,9 @@ else
   #  pushd $CHAOS_PREFIX/etc > /dev/null
   #  ln -sf cu-$mds.cfg cu.cfg
   #  ln -sf cuiserver-$mds.cfg cuiserver.cfg
-  #  popd > /dev/null
-    echo "$MDS_SERVER" >> $TMPDIR/deployTargets
+    #  popd > /dev/null
+    deployServer $MDS_SERVER
+
 fi
 
 ## WEBUI ##
@@ -67,11 +79,8 @@ else
     find $CHAOS_PREFIX/www-$webui -name "*" -exec  sed -i s/__template__webuiulr__/$webui/g \{\} >& /dev/null \; 
 
     popd > /dev/null
-    if [ "$MDS_SERVER" != "$WEBUI_SERVER" ]; then
-	echo "$WEBUI_SERVER" >> $TMPDIR/deployTargets
-	
-     
-    fi
+    deployServer $WAN_SERVER
+
 fi
 
 
@@ -88,11 +97,8 @@ else
     fi
 
 
-    if [ "$MDS_SERVER" != "$WAN_SERVER" ]; then
-	echo "$WEBUI_SERVER" >> $TMPDIR/deployTargets
-	
-     
-    fi
+    deployServer $WAN_SERVER
+
 fi
 
 
@@ -110,11 +116,10 @@ else
 	info_mesg "using configuration " "$cudir/cds.cfg"
     fi
 
-    if [ "$CDS_SERVERS" != "$WEBUI_SERVER" ]; then
-	for i in "$CDS_SERVERS";do
-	    echo "$i" >> $TMPDIR/deployTargets
-	done
-    fi
+    for i in "$CDS_SERVERS";do
+	deployServer $i	
+    done
+
 fi
 
 
@@ -138,26 +143,26 @@ if [ -n "$CU_SERVERS" ]; then
     else
 	info_mesg "using configuration " "$cudir/cu.cfg"
     fi
-    if [ "$CU_SERVERS" != "$MDS_SERVER" ]; then
-	for i in "$CU_SERVERS";do
-	    echo "$i" >> $TMPDIR/deployTargets
-	done
-    fi
+
+    for i in "$CU_SERVERS";do
+	deployServer $i	
+    done
+
 fi
 
 if [ -n "$DEPLOY_SERVERS" ];then
     for i in "$DEPLOY_SERVERS";do
-	echo "$i" >> $TMPDIR/deployTargets
+	deployServer $i	
     done
 fi
 
-servers=`cat $TMPDIR/deployTargets`
+servers=`cat $DEPLOY_FILE`
 info_mesg "copy on the destination servers: " "$servers"
 
 
 
 
-if $dir/chaos_remote_copy.sh -u chaos -s $TMPDIR/$name.tgz $TMPDIR/deployTargets;then
+if $dir/chaos_remote_copy.sh -u chaos -s $TMPDIR/$name.tgz $DEPLOY_FILE;then
     ok_mesg "copy done"
 else
     nok_mesg "copy done"
