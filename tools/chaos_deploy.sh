@@ -116,7 +116,7 @@ else
 	info_mesg "using configuration " "$cudir/cds.cfg"
     fi
 
-    for i in "$CDS_SERVERS";do
+    for i in $CDS_SERVERS;do
 	deployServer $i	
     done
 
@@ -124,6 +124,9 @@ fi
 
 
 
+for i in $CU_SERVERS;do
+    deployServer $i	
+done
 
 
 name=`basename $CHAOS_PREFIX`
@@ -144,14 +147,11 @@ if [ -n "$CU_SERVERS" ]; then
 	info_mesg "using configuration " "$cudir/cu.cfg"
     fi
 
-    for i in "$CU_SERVERS";do
-	deployServer $i	
-    done
 
 fi
 
 if [ -n "$DEPLOY_SERVERS" ];then
-    for i in "$DEPLOY_SERVERS";do
+    for i in $DEPLOY_SERVERS;do
 	deployServer $i	
     done
 fi
@@ -177,20 +177,27 @@ start_stop_service(){
     type=$2
     op=$3
 ## new 
-    if ssh chaos@$host "test -f /etc/init/chaos-service.conf";then
-	if ssh chaos@$host "sudo service chaos-service $op NODE=$type" ;then
-	    ok_mesg "[$host] chaos-service $op NODE=$type"
-	else
-	    nok_mesg "[$host] chaos-service $op NODE=$type"
-	fi
-    else
 	if ssh chaos@$host "sudo service chaos-$type $op" ;then
 	    ok_mesg "[$host] chaos-$type $op"
 	else
 	    nok_mesg "[$host] chaos-$type $op"
 	fi  
+
+
+    # if ssh chaos@$host "test -f /etc/init/chaos-service.conf";then
+    # 	if ssh chaos@$host "sudo service chaos-service $op NODE=$type" ;then
+    # 	    ok_mesg "[$host] chaos-service $op NODE=$type"
+    # 	else
+    # 	    nok_mesg "[$host] chaos-service $op NODE=$type"
+    # 	fi
+    # else
+    # 	if ssh chaos@$host "sudo service chaos-$type $op" ;then
+    # 	    ok_mesg "[$host] chaos-$type $op"
+    # 	else
+    # 	    nok_mesg "[$host] chaos-$type $op"
+    # 	fi  
 	
-    fi
+#    fi
 }
 
 extract(){
