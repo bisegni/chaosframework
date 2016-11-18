@@ -21,7 +21,7 @@ ControUnitInstanceEditor::ControUnitInstanceEditor(const QString& unit_server_ui
     is_in_editing(false),
     ui(new Ui::ControUnitInstanceEditor) {
     ui->setupUi(this);
-    ui->labelUnitServer->setText(unit_server_uid);
+    ui->labelUnitServerUID->setText(unit_server_uid);
     ui->labelControlUnitType->setText(control_unit_type);
 }
 
@@ -33,7 +33,7 @@ ControUnitInstanceEditor::ControUnitInstanceEditor(const QString& unit_server_ui
     is_in_editing(edit_instance),
     ui(new Ui::ControUnitInstanceEditor) {
     ui->setupUi(this);
-    ui->labelUnitServer->setText(unit_server_uid);
+    ui->labelUnitServerUID->setText(unit_server_uid);
     ui->lineEditControlUnitUniqueID->setText(control_unit_uid);
     ui->lineEditControlUnitUniqueID->setEnabled(false);
 }
@@ -103,12 +103,9 @@ void ControUnitInstanceEditor::initUI() {
     }
 
     //get unit server informationi
-    ui->labelUnitServer->setEnabled(ui->labelUnitServer->text().size() > 0);
-    ui->labelUnitServer->setEnabled(ui->labelUnitServerUID->text().size() > 0);
-    ui->labelUnitServer->setEnabled(ui->pushButtonChooseControlUnitType->text().size() > 0);
     if(ui->labelUnitServerUID->text().size() > 0) {
         submitApiResult(QString("get_us_description"),
-                        GET_CHAOS_API_PTR(unit_server::GetDescription)->execute(ui->labelUnitServer->text().toStdString()));
+                        GET_CHAOS_API_PTR(unit_server::GetDescription)->execute(ui->labelUnitServerUID->text().toStdString()));
     }
     //set limit for ageing field
     ui->lineEditHistoryAgeing->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
@@ -120,7 +117,7 @@ control_unit::SetInstanceDescriptionHelper& ControUnitInstanceEditor::prepareSet
     //cu id
     set_instance_api_hepler.control_unit_uid = ui->lineEditControlUnitUniqueID->text().toStdString();
     //us id
-    set_instance_api_hepler.unit_server_uid = ui->labelUnitServer->text().toStdString();
+    set_instance_api_hepler.unit_server_uid = ui->labelUnitServerUID->text().toStdString();
     //cu implementation
     set_instance_api_hepler.control_unit_implementation = ui->labelControlUnitType->text().toStdString();
     //autoload
@@ -181,7 +178,7 @@ void ControUnitInstanceEditor::fillUIFromInstanceInfo(QSharedPointer<chaos::comm
             api_result->isStringValue("control_unit_implementation")) {
         ui->textEditLoadParameter->setEnabled(api_result->getStringValue("control_unit_implementation").compare("ScriptableExecutionUnit") != 0);
     }
-    CHECK_AND_SET_LABEL(chaos::NodeDefinitionKey::NODE_PARENT, ui->labelUnitServer)
+    CHECK_AND_SET_LABEL(chaos::NodeDefinitionKey::NODE_PARENT, ui->labelUnitServerUID)
             CHECK_AND_SET_LABEL(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, ui->lineEditControlUnitUniqueID)
             CHECK_AND_SET_LABEL("control_unit_implementation", ui->labelControlUnitType)
             CHECK_AND_SET_CHECK("auto_load", ui->checkBoxAutoLoad)

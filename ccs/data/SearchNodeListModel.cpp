@@ -33,7 +33,7 @@ QVariant SearchNodeListModel::getRowData(int row) const {
                                                                                QString("Type:%1 Heartbeat:%2 status:%3").arg(node_type,
                                                                                                                              node_health_ts,
                                                                                                                              node_health_status),
-                                                                               QVariant()));
+                                                                               QVariant::fromValue(found_node)));
     return QVariant::fromValue(cmd_desc);
 }
 
@@ -56,6 +56,7 @@ bool SearchNodeListModel::setRowCheckState(const int row, const QVariant& value)
 void SearchNodeListModel::onApiDone(const QString& tag,
                                     QSharedPointer<chaos::common::data::CDataWrapper> api_result) {
     if(tag.compare("search_node") != 0) return;
+    beginResetModel();
     //reset current page
     result_found.clear();
 
@@ -76,6 +77,7 @@ void SearchNodeListModel::onApiDone(const QString& tag,
             qDebug() << "No data found";
         }
     }
+    endResetModel();
 }
 
 void SearchNodeListModel::searchNode(const QString& search_string,
