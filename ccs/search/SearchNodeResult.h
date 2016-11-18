@@ -2,6 +2,7 @@
 #define SEARCHNODERESULT_H
 
 #include "../presenter/PresenterWidget.h"
+#include "../data/SearchNodeListModel.h"
 
 #include <QTimer>
 #include <QWidget>
@@ -54,20 +55,20 @@ signals:
     void selectedNodes(const QString& tag,
                        const QVector<QPair<QString,QString> >& selected_nodes);
 private slots:
-    void on_tableViewResult_clicked(const QModelIndex &index);
+    void on_listViewResult_clicked(const QModelIndex &index);
 
     void on_pushButtonStartSearch_clicked();
 
     void on_pushButtonActionOnSelected_clicked();
 
-    void on_tableViewResult_doubleClicked(const QModelIndex &index);
+    void on_listViewResult_doubleClicked(const QModelIndex &index);
 
     void on_lineEditSearchCriteria_textEdited(const QString &search_string);
 
 private:
     QTimer search_timer;
     Ui::SearchNodeResult *ui;
-    QStandardItemModel *table_model;
+    SearchNodeListModel search_list_model;
 };
 
 #endif // SEARCHNODERESULT_H

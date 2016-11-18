@@ -15,29 +15,11 @@
 #include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
 #include "widget/CStateVisiblePushButton.h"
 
+#include "metatypes.h"
+
 using namespace chaos::metadata_service_client;
 
 //declare metatype used in chaos
-Q_DECLARE_METATYPE(std::string)
-Q_DECLARE_METATYPE(int32_t)
-Q_DECLARE_METATYPE(int64_t)
-Q_DECLARE_METATYPE(uint64_t)
-Q_DECLARE_METATYPE(QSharedPointer<ChaosByteArray>)
-Q_DECLARE_METATYPE(QSharedPointer<CommandReader>)
-Q_DECLARE_METATYPE(QSharedPointer<CommandParameterReader>)
-Q_DECLARE_METATYPE(QSharedPointer<DatasetReader>)
-Q_DECLARE_METATYPE(QSharedPointer<DatasetAttributeReader>)
-Q_DECLARE_METATYPE(QSharedPointer<chaos::CException>)
-Q_DECLARE_METATYPE(QSharedPointer<chaos::common::data::CDataWrapper>)
-Q_DECLARE_METATYPE(QSharedPointer<TwoLineInformationItem>)
-Q_DECLARE_METATYPE(QSharedPointer<chaos::metadata_service_client::api_proxy::node::CommandTemplate>)
-Q_DECLARE_METATYPE(boost::shared_ptr<chaos::metadata_service_client::api_proxy::node::CommandTemplate>)
-Q_DECLARE_METATYPE(boost::shared_ptr<chaos::common::data::SerializationBuffer>)
-Q_DECLARE_METATYPE(boost::shared_ptr<chaos::common::data::CDataWrapper>)
-Q_DECLARE_METATYPE(boost::shared_ptr<chaos::CException>)
-Q_DECLARE_METATYPE(chaos::metadata_service_client::node_monitor::OnlineState)
-Q_DECLARE_METATYPE(chaos::service_common::data::node::NodeInstance)
-
 MainController::MainController() {
 }
 

@@ -44,7 +44,7 @@
       <item>
        <layout class="QGridLayout" name="gridLayout">
         <item row="0" column="0" alignment="Qt::AlignRight|Qt::AlignVCenter">
-         <widget class="QLabel" name="labelUnitServer">
+         <widget class="QLabel" name="labelUS">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
             <horstretch>0</horstretch>
@@ -70,38 +70,6 @@
           </property>
           <property name="text">
            <string>Unique ID:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="2" alignment="Qt::AlignLeft|Qt::AlignVCenter">
-         <widget class="QLabel" name="labelUnitServerUID">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>203</width>
-            <height>13</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>203</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>11</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string/>
           </property>
          </widget>
         </item>
@@ -132,38 +100,6 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="2">
-         <widget class="QLabel" name="labelControlUnitType">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>203</width>
-            <height>13</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>203</width>
-            <height>20</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>11</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
         <item row="1" column="3">
          <widget class="QPushButton" name="pushButtonChooseControlUnitType">
           <property name="sizePolicy">
@@ -179,6 +115,20 @@
           </property>
           <property name="text">
            <string>Change Type</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QLabel" name="labelUnitServerUID">
+          <property name="text">
+           <string>unit server id</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QLabel" name="labelControlUnitType">
+          <property name="text">
+           <string>control unit type</string>
           </property>
          </widget>
         </item>
