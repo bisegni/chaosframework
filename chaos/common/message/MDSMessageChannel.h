@@ -188,6 +188,17 @@ namespace chaos {
                                    ChaosStringVector& snapshot_found,
                                    uint32_t millisec_to_wait=5000);
                 
+                
+                //! Search on snapshot
+                /*!
+                 \param query_filter filter the node that need to be returned
+                 \param snapshot_found contains the found snapshot
+                 \param millisec_to_wait delay after wich the wait is interrupt
+                 \return error code
+                 */
+                int searchSnapshot(const std::string& query_filter,
+                                   std::map<uint64_t,std::string>& snapshot_found,uint32_t millisec_to_wait=5000);
+                
                 //! Search node for snapshot
                 /*!
                  \param snapshot_name tha name of the snapshot

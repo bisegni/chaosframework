@@ -334,10 +334,9 @@ int MDSMessageChannel::deleteSnapshot(const std::string& snapshot_name,
     }
     return err;
 }
-
 int MDSMessageChannel::searchSnapshot(const std::string& query_filter,
-                                      ChaosStringVector& snapshot_found,
-                                      uint32_t millisec_to_wait) {
+                                   std::map<uint64_t,std::string>& snapshot_found,
+                                   uint32_t millisec_to_wait){
     int err = ErrorCode::EC_NO_ERROR;
     
     std::auto_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
@@ -359,7 +358,19 @@ int MDSMessageChannel::searchSnapshot(const std::string& query_filter,
                 std::auto_ptr<CDataWrapper> tmp_desc(snapshot_desc_list->getCDataWrapperElementAtIndex(idx));
                 
                 if(tmp_desc->hasKey("snap_name")) {
-                    snapshot_found.push_back(tmp_desc->getStringValue("snap_name"));
+                    if(!query_filter.empty()){
+                        std::string cmp=tmp_desc->getStringValue("snap_name");
+                        // TODO: implement filter in DB query
+                        if(strstr(cmp.c_str(),query_filter.c_str())){
+                            uint64_t tm=tmp_desc->getInt64Value("snap_ts");
+                            snapshot_found[tm]=cmp;
+
+                        }
+                    } else {
+                         uint64_t tm=tmp_desc->getInt64Value("snap_ts");
+                            snapshot_found[tm]=tmp_desc->getStringValue("snap_name");
+
+                    }
                 }
             }
         }
@@ -367,7 +378,23 @@ int MDSMessageChannel::searchSnapshot(const std::string& query_filter,
         err = -1;
     }
     return err;
+    
 }
+int MDSMessageChannel::searchSnapshot(const std::string& query_filter,
+                                      ChaosStringVector& snapshot_found,
+                                      uint32_t millisec_to_wait) {
+    std::map<uint64_t,std::string> found;
+    int ret=searchSnapshot(query_filter,
+                                   found,millisec_to_wait);
+
+if(ret==0){
+    for(std::map<uint64_t,std::string>::iterator i=found.begin();i!=found.end();i++){
+        snapshot_found.push_back(i->second);
+    }
+}
+return ret;    
+}
+
 
 int MDSMessageChannel::searchNodeForSnapshot(const std::string& snapshot_name,
                                              ChaosStringVector node_found,
