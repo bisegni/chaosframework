@@ -26,6 +26,9 @@
 using namespace chaos::common::data;
 using namespace chaos::common::utility;
 using namespace chaos::common::message;
+#define MSG_INFO INFO_LOG(MDSMessageChannel)
+#define MSG_DBG DBG_LOG(MDSMessageChannel)
+#define MSG_ERR ERR_LOG(MDSMessageChannel)
 
 #define DECODE_ERROR(x) \
 if((last_error_code = x->getError())){\
@@ -397,7 +400,7 @@ return ret;
 
 
 int MDSMessageChannel::searchNodeForSnapshot(const std::string& snapshot_name,
-                                             ChaosStringVector node_found,
+                                             ChaosStringVector& node_found,
                                              uint32_t millisec_to_wait) {
     int err = ErrorCode::EC_NO_ERROR;
     auto_ptr<CDataWrapper> message(new CDataWrapper());
@@ -420,9 +423,10 @@ int MDSMessageChannel::searchNodeForSnapshot(const std::string& snapshot_name,
                     idx < snapshot_desc_list->size();
                     idx++) {
                     const std::string node_uid = snapshot_desc_list->getStringElementAtIndex(idx);
+                    
                     node_found.push_back(node_uid);
                 }
-            }
+            } 
         }
     } else {
         err = -1;

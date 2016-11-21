@@ -207,7 +207,7 @@ namespace chaos {
                  \return error code
                  */
                 int searchNodeForSnapshot(const std::string& snapshot_name,
-                                          ChaosStringVector node_found,
+                                          ChaosStringVector& node_found,
                                           uint32_t millisec_to_wait=5000);
                 
                 //! Search snapshot for node
