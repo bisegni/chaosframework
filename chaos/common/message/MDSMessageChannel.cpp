@@ -434,6 +434,7 @@ int MDSMessageChannel::searchNodeForSnapshot(const std::string& snapshot_name,
     return err;
 }
 
+
 int MDSMessageChannel::searchSnapshotForNode(const std::string& node_uid,
                                              ChaosStringVector& snapshot_found,
                                              uint32_t millisec_to_wait){

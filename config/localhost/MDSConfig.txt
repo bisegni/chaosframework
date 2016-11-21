@@ -13,6 +13,1802 @@
 	    "private_key": null,
 	    "public_key": null,
 	    "cu_desc": [
+		 {		
+		    "unit_server_alias": "TEST",
+		    "cu_id": "BTF/SCRAPER/SLTB004R",
+		    "cu_type": "::driver::actuator::SCActuatorControlUnit",
+		    "cu_param": "",
+		    "auto_load": true,
+		    "auto_start":true,
+		    "auto_init":true,
+		    "storage_type": 2,
+		    "storage_ageing": 36000,
+		    "DriverDescription": [
+			{
+			    "DriverDescriptionName": "ActuatorSim",
+			    "DriverDescriptionVersion": "1.0.0",
+			    "DriverDescriptionInitParam": "0,0,115200,/dev/ttyr1c"
+			}
+		    ],
+		    "AttrDesc": [
+		    {		    
+			    "ds_attr_name": "bypass",
+			    "ds_max_range": "1",
+			    "ds_min_range": "0",
+			    "ds_default_value": "1"
+		    },
+		    {		    
+			    "ds_attr_name": "ConfigString",
+			    "ds_max_range": "",
+			    "ds_min_range": "",
+			    "ds_default_value": "3,/home/chaos/chaos-distrib/etc/common_actuators_technosoft/asse3.t.zip"
+		    },
+		    {
+			    "ds_attr_name": "axisID",
+			    "ds_max_range": "255",
+			    "ds_min_range": "0",
+			    "ds_default_value": "3"
+	            },
+	            {
+			    "ds_attr_name": "fileTable",
+			    "ds_max_range": "",
+			    "ds_min_range": "",
+			    "ds_default_value": "asse3.t.zip"
+	            },
+		    {
+			    "ds_attr_name": "fixednumberofrounds",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "20"
+	            },
+		    {
+			    "ds_attr_name": "lineardisplacement[mm]",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "1.5"
+	            },
+	            {
+			    "ds_attr_name": "numencoderlines",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "800"
+	            },
+	 	    {
+			    "ds_attr_name": "range_slit[mm]",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "28.5"
+	            },
+		    {
+			    "ds_attr_name": "speed",
+			    "ds_max_range": "600",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "200"
+	            },
+		    {
+			    "ds_attr_name": "maxspeed",
+			    "ds_max_range": "600",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "600"
+	            },
+		    {
+			    "ds_attr_name": "acceleration",
+			    "ds_max_range": "5",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "1"
+	            },
+		    {
+			    "ds_attr_name": "maxacceleration",
+			    "ds_max_range": "5",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "5"
+	            },
+		    {
+			    "ds_attr_name": "highspeedhoming",
+			    "ds_max_range": "25",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "10"
+	            },
+		    {
+			    "ds_attr_name": "maxhighspeedhoming",
+			    "ds_max_range": "25",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "25"
+	            },
+	            {
+			    "ds_attr_name": "lowspeedhoming",
+			    "ds_max_range": "7",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "3"
+	            },
+		    {
+			    "ds_attr_name": "maxlowspeedhoming",
+			    "ds_max_range": "7",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "7"
+	            },
+		    {
+			    "ds_attr_name": "accelerationhoming",
+			    "ds_max_range": "0.6",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "0.3"
+	            },
+		    {
+			    "ds_attr_name": "maxaccelerationhoming",
+			    "ds_max_range": "0.6",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "0.6"
+	            },
+		    {
+			    "ds_attr_name": "nummicrostepsperstep",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "256"
+	            },
+		    {
+			    "ds_attr_name": "stepsperround",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "200"
+	            },
+		    {
+			    "ds_attr_name": "isadditive",
+			    "ds_max_range": "1",
+			    "ds_min_range": "0",
+			    "ds_default_value": "0"
+	            },
+	            {
+			    "ds_attr_name": "movement",
+			    "ds_max_range": "1",
+			    "ds_min_range": "-1",
+			    "ds_default_value": "1"
+	            },
+		    {
+			    "ds_attr_name": "referenceBase",
+			    "ds_max_range": "1",
+			    "ds_min_range": "0",
+			    "ds_default_value": "1"
+	            },
+		    {
+			    "ds_attr_name": "voltage_LNS[V]",
+			    "ds_max_range": "1000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "30"
+	            },
+		    {
+			    "ds_attr_name": "voltage_LPS[V]",
+			    "ds_max_range": "1000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "10"
+	            },
+		    {
+			    "ds_attr_name": "fullscalePot",
+			    "ds_max_range": "2000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "20"
+	            }
+		    ]
+		},
+		{		
+		    "unit_server_alias": "TEST",
+		    "cu_id": "BTF/SCRAPER/SIMUL",
+		    "cu_type": "::driver::actuator::SCActuatorControlUnit",
+		    "cu_param": "",
+		    "auto_load": true,
+		    "auto_start":true,
+		    "auto_init":true,
+		    "storage_type": 2,
+		    "storage_ageing": 36000,
+		    "DriverDescription": [
+			{
+			    "DriverDescriptionName": "ActuatorSim",
+			    "DriverDescriptionVersion": "1.0.0",
+			    "DriverDescriptionInitParam": "0,0,115200,/dev/ttyr1c"
+			}
+		    ],
+		    "AttrDesc": [
+		    {		    
+			    "ds_attr_name": "bypass",
+			    "ds_max_range": "1",
+			    "ds_min_range": "0",
+			    "ds_default_value": "0"
+		    },
+		    {		    
+			    "ds_attr_name": "ConfigString",
+			    "ds_max_range": "",
+			    "ds_min_range": "",
+			    "ds_default_value": "3,asse3.t.zip"
+		    },
+		    {
+			    "ds_attr_name": "axisID",
+			    "ds_max_range": "255",
+			    "ds_min_range": "0",
+			    "ds_default_value": "3"
+	            },
+	            {
+			    "ds_attr_name": "fileTable",
+			    "ds_max_range": "",
+			    "ds_min_range": "",
+			    "ds_default_value": "asse3.t.zip"
+	            },
+		    {
+			    "ds_attr_name": "fixednumberofrounds",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "20"
+	            },
+		    {
+			    "ds_attr_name": "lineardisplacement[mm]",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "1.5"
+	            },
+	            {
+			    "ds_attr_name": "numencoderlines",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "800"
+	            },
+	 	    {
+			    "ds_attr_name": "range_slit[mm]",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "28.5"
+	            },
+		    {
+			    "ds_attr_name": "speed",
+			    "ds_max_range": "600",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "200"
+	            },
+		    {
+			    "ds_attr_name": "maxspeed",
+			    "ds_max_range": "600",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "600"
+	            },
+		    {
+			    "ds_attr_name": "acceleration",
+			    "ds_max_range": "5",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "1"
+	            },
+		    {
+			    "ds_attr_name": "maxacceleration",
+			    "ds_max_range": "5",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "5"
+	            },
+		    {
+			    "ds_attr_name": "highspeedhoming",
+			    "ds_max_range": "25",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "10"
+	            },
+		    {
+			    "ds_attr_name": "maxhighspeedhoming",
+			    "ds_max_range": "25",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "25"
+	            },
+	            {
+			    "ds_attr_name": "lowspeedhoming",
+			    "ds_max_range": "7",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "3"
+	            },
+		    {
+			    "ds_attr_name": "maxlowspeedhoming",
+			    "ds_max_range": "7",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "7"
+	            },
+		    {
+			    "ds_attr_name": "accelerationhoming",
+			    "ds_max_range": "0.6",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "0.3"
+	            },
+		    {
+			    "ds_attr_name": "maxaccelerationhoming",
+			    "ds_max_range": "0.6",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "0.6"
+	            },
+		    {
+			    "ds_attr_name": "nummicrostepsperstep",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "256"
+	            },
+		    {
+			    "ds_attr_name": "stepsperround",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "200"
+	            },
+		    {
+			    "ds_attr_name": "isadditive",
+			    "ds_max_range": "1",
+			    "ds_min_range": "0",
+			    "ds_default_value": "0"
+	            },
+	            {
+			    "ds_attr_name": "movement",
+			    "ds_max_range": "1",
+			    "ds_min_range": "-1",
+			    "ds_default_value": "1"
+	            },
+		    {
+			    "ds_attr_name": "referenceBase",
+			    "ds_max_range": "1",
+			    "ds_min_range": "0",
+			    "ds_default_value": "1"
+	            },
+		    {
+			    "ds_attr_name": "voltage_LNS[V]",
+			    "ds_max_range": "1000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "30"
+	            },
+		    {
+			    "ds_attr_name": "voltage_LPS[V]",
+			    "ds_max_range": "1000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "10"
+	            },
+		    {
+			    "ds_attr_name": "fullscalePot",
+			    "ds_max_range": "2000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "20"
+	            }
+		    ]
+		},
+		{		
+		    "unit_server_alias": "TEST",
+		    "cu_id": "BTF/SCRAPER/SLTB004L",
+		    "cu_type": "::driver::actuator::SCActuatorControlUnit",
+		    "cu_param": "",
+		    "auto_load": true,
+		    "auto_start":false,
+		    "auto_init":false,
+		    "storage_type": 2,
+		    "storage_ageing": 36000,
+		    "DriverDescription": [
+			{
+			    "DriverDescriptionName": "ActuatorSim",
+			    "DriverDescriptionVersion": "1.0.0",
+			    "DriverDescriptionInitParam": "0,0,115200,/dev/ttyr1c"
+			}
+		    ],
+		    "AttrDesc": [
+			{		    
+			    "ds_attr_name": "bypass",
+			    "ds_max_range": "1",
+			    "ds_min_range": "0",
+			    "ds_default_value": "1"
+		    },
+
+
+		    {		    
+			    "ds_attr_name": "ConfigString",
+			    "ds_max_range": "",
+			    "ds_min_range": "",
+			    "ds_default_value": "4,2008_03_27Asse4BtfApp.t.zip"
+			},
+			{
+			    "ds_attr_name": "axisID",
+			    "ds_max_range": "255",
+			    "ds_min_range": "0",
+			    "ds_default_value": "4"
+			},
+			{
+			    "ds_attr_name": "fileTable",
+			    "ds_max_range": "",
+			    "ds_min_range": "",
+			    "ds_default_value": "2008_03_27Asse4BtfApp.t.zip"
+	            	},
+		    	{
+			    "ds_attr_name": "fixednumberofrounds",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "20"
+	            	},
+		    	{
+			    "ds_attr_name": "lineardisplacement[mm]",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "1.5"
+	            	},
+	            	{
+			    "ds_attr_name": "numencoderlines",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "800"
+	            	},
+	 	    	{
+			    "ds_attr_name": "range_slit[mm]",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "24"
+	            	},
+		    	{
+			    "ds_attr_name": "speed",
+			    "ds_max_range": "600",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "200"
+	            	},
+		    	{
+			    "ds_attr_name": "maxspeed",
+			    "ds_max_range": "600",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "600"
+	            	},
+		    	{
+			    "ds_attr_name": "acceleration",
+			    "ds_max_range": "5",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "1"
+	            	},
+		    	{
+			    "ds_attr_name": "maxacceleration",
+			    "ds_max_range": "5",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "5"
+	            	},
+		    	{
+			    "ds_attr_name": "highspeedhoming",
+			    "ds_max_range": "25",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "10"
+	            	},
+		    	{
+			    "ds_attr_name": "maxhighspeedhoming",
+			    "ds_max_range": "25",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "25"
+	            	},
+	            	{
+			    "ds_attr_name": "lowspeedhoming",
+			    "ds_max_range": "7",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "3"
+	            	},
+		    	{
+			    "ds_attr_name": "maxlowspeedhoming",
+			    "ds_max_range": "7",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "7"
+	            	},
+		    	{
+			    "ds_attr_name": "accelerationhoming",
+			    "ds_max_range": "0.6",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "0.3"
+	            	},
+		    	{
+			    "ds_attr_name": "maxaccelerationhoming",
+			    "ds_max_range": "0.6",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "0.6"
+	            	},
+		    	{
+			    "ds_attr_name": "nummicrostepsperstep",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "256"
+	            	},
+		    	{
+			    "ds_attr_name": "stepsperround",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "200"
+	            	},
+		    	{
+			    "ds_attr_name": "isadditive",
+			    "ds_max_range": "1",
+			    "ds_min_range": "0",
+			    "ds_default_value": "0"
+	            	},
+	            	{
+			    "ds_attr_name": "movement",
+			    "ds_max_range": "1",
+			    "ds_min_range": "-1",
+			    "ds_default_value": "1"
+	            	},
+		    	{
+			    "ds_attr_name": "referenceBase",
+			    "ds_max_range": "1",
+			    "ds_min_range": "0",
+			    "ds_default_value": "1"
+	            	},
+		    	{
+			    "ds_attr_name": "voltage_LNS[V]",
+			    "ds_max_range": "1000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "30"
+	            	},
+		    	{
+			    "ds_attr_name": "voltage_LPS[V]",
+			    "ds_max_range": "1000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "10"
+	            	},
+		    	{
+			    "ds_attr_name": "fullscalePot",
+			    "ds_max_range": "2000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "20"
+	            	}
+		    ]
+		},{		
+		    "unit_server_alias": "TEST",
+		    "cu_id": "BTF/SCRAPER/SLTB002R",
+		    "cu_type": "::driver::actuator::SCActuatorControlUnit",
+		    "cu_param": "",
+		    "auto_load": true,
+		    "auto_start":false,
+		    "auto_init":false,
+		    "storage_type": 2,
+		    "storage_ageing": 36000,
+		    "DriverDescription": [
+		  	{
+			    "DriverDescriptionName": "ActuatorSim",
+			    "DriverDescriptionVersion": "1.0.0",
+			    "DriverDescriptionInitParam": "0,0,115200,/dev/ttyr1c"
+			}
+		    ],
+		    "AttrDesc": [
+			  		    {		    
+			    "ds_attr_name": "bypass",
+			    "ds_max_range": "1",
+			    "ds_min_range": "0",
+			    "ds_default_value": "0"
+		    },
+
+		    {		    
+			    "ds_attr_name": "ConfigString",
+			    "ds_max_range": "",
+			    "ds_min_range": "",
+			    "ds_default_value": "5,2008_03_26Asse5BtfApp.t.zip"
+			},
+			{
+			    "ds_attr_name": "axisID",
+			    "ds_max_range": "255",
+			    "ds_min_range": "0",
+			    "ds_default_value": "5"
+			},
+			{
+			    "ds_attr_name": "fileTable",
+			    "ds_max_range": "",
+			    "ds_min_range": "",
+			    "ds_default_value": "2008_03_26Asse5BtfApp.t.zip"
+	            	},
+		    	{
+			    "ds_attr_name": "fixednumberofrounds",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "20"
+	            	},
+		    	{
+			    "ds_attr_name": "lineardisplacement[mm]",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "1.5"
+	            	},
+	            	{
+			    "ds_attr_name": "numencoderlines",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "800"
+	            	},
+	 	    	{
+			    "ds_attr_name": "range_slit[mm]",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "27.5"
+	            	},
+		    	{
+			    "ds_attr_name": "speed",
+			    "ds_max_range": "600",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "200"
+	            	},
+		    	{
+			    "ds_attr_name": "maxspeed",
+			    "ds_max_range": "600",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "600"
+	            	},
+		    	{
+			    "ds_attr_name": "acceleration",
+			    "ds_max_range": "5",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "1"
+	            	},
+		    	{
+			    "ds_attr_name": "maxacceleration",
+			    "ds_max_range": "5",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "5"
+	            	},
+		    	{
+			    "ds_attr_name": "highspeedhoming",
+			    "ds_max_range": "25",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "10"
+	            	},
+		    	{
+			    "ds_attr_name": "maxhighspeedhoming",
+			    "ds_max_range": "25",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "25"
+	            	},
+	            	{
+			    "ds_attr_name": "lowspeedhoming",
+			    "ds_max_range": "7",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "3"
+	            	},
+		    	{
+			    "ds_attr_name": "maxlowspeedhoming",
+			    "ds_max_range": "7",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "7"
+	            	},
+		    	{
+			    "ds_attr_name": "accelerationhoming",
+			    "ds_max_range": "0.6",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "0.3"
+	            	},
+		    	{
+			    "ds_attr_name": "maxaccelerationhoming",
+			    "ds_max_range": "0.6",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "0.6"
+	            	},
+		    	{
+			    "ds_attr_name": "nummicrostepsperstep",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "256"
+	            	},
+		    	{
+			    "ds_attr_name": "stepsperround",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "200"
+	            	},
+		    	{
+			    "ds_attr_name": "isadditive",
+			    "ds_max_range": "1",
+			    "ds_min_range": "0",
+			    "ds_default_value": "0"
+	            	},
+	            	{
+			    "ds_attr_name": "movement",
+			    "ds_max_range": "1",
+			    "ds_min_range": "-1",
+			    "ds_default_value": "1"
+	            	},
+		    	{
+			    "ds_attr_name": "referenceBase",
+			    "ds_max_range": "1",
+			    "ds_min_range": "0",
+			    "ds_default_value": "1"
+	            	},
+		    	{
+			    "ds_attr_name": "voltage_LNS[V]",
+			    "ds_max_range": "1000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "30"
+	            	},
+		    	{
+			    "ds_attr_name": "voltage_LPS[V]",
+			    "ds_max_range": "1000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "10"
+	            	},
+		    	{
+			    "ds_attr_name": "fullscalePot",
+			    "ds_max_range": "2000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "20"
+	            	}
+		    ]
+		},
+{		
+		    "unit_server_alias": "TEST",
+		    "cu_id": "BTF/SCRAPER/SLTB002L",
+		    "cu_type": "::driver::actuator::SCActuatorControlUnit",
+		    "cu_param": "",
+		    "auto_load": true,
+		    "auto_start":false,
+		    "auto_init":false,
+		    "storage_type": 2,
+		    "storage_ageing": 36000,
+		    "DriverDescription": [
+			{
+			    "DriverDescriptionName": "ActuatorSim",
+			    "DriverDescriptionVersion": "1.0.0",
+			    "DriverDescriptionInitParam": "0,0,115200,/dev/ttyr1c"
+			}
+
+		    ],
+		    "AttrDesc": [
+		    		    {		    
+			    "ds_attr_name": "bypass",
+			    "ds_max_range": "1",
+			    "ds_min_range": "0",
+			    "ds_default_value": "1"
+		    },
+
+		    {		    
+			    "ds_attr_name": "ConfigString",
+			    "ds_max_range": "",
+			    "ds_min_range": "",
+			    "ds_default_value": "6,2008_03_26Asse6BtfApp.t.zip"
+			},
+			{
+			    "ds_attr_name": "axisID",
+			    "ds_max_range": "255",
+			    "ds_min_range": "0",
+			    "ds_default_value": "6"
+			},
+			{
+			    "ds_attr_name": "fileTable",
+			    "ds_max_range": "",
+			    "ds_min_range": "",
+			    "ds_default_value": "2008_03_26Asse6BtfApp.t.zip"
+	            	},
+		    	{
+			    "ds_attr_name": "fixednumberofrounds",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "20"
+	            	},
+		    	{
+			    "ds_attr_name": "lineardisplacement[mm]",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "1.5"
+	            	},
+	            	{
+			    "ds_attr_name": "numencoderlines",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "800"
+	            	},
+	 	    	{
+			    "ds_attr_name": "range_slit[mm]",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "27.4"
+	            	},
+		    	{
+			    "ds_attr_name": "speed",
+			    "ds_max_range": "600",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "200"
+	            	},
+		    	{
+			    "ds_attr_name": "maxspeed",
+			    "ds_max_range": "600",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "600"
+	            	},
+		    	{
+			    "ds_attr_name": "acceleration",
+			    "ds_max_range": "5",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "1"
+	            	},
+		    	{
+			    "ds_attr_name": "maxacceleration",
+			    "ds_max_range": "5",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "5"
+	            	},
+		    	{
+			    "ds_attr_name": "highspeedhoming",
+			    "ds_max_range": "25",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "10"
+	            	},
+		    	{
+			    "ds_attr_name": "maxhighspeedhoming",
+			    "ds_max_range": "25",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "25"
+	            	},
+	            	{
+			    "ds_attr_name": "lowspeedhoming",
+			    "ds_max_range": "7",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "3"
+	            	},
+		    	{
+			    "ds_attr_name": "maxlowspeedhoming",
+			    "ds_max_range": "7",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "7"
+	            	},
+		    	{
+			    "ds_attr_name": "accelerationhoming",
+			    "ds_max_range": "0.6",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "0.3"
+	            	},
+		    	{
+			    "ds_attr_name": "maxaccelerationhoming",
+			    "ds_max_range": "0.6",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "0.6"
+	            	},
+		    	{
+			    "ds_attr_name": "nummicrostepsperstep",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "256"
+	            	},
+		    	{
+			    "ds_attr_name": "stepsperround",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "200"
+	            	},
+		    	{
+			    "ds_attr_name": "isadditive",
+			    "ds_max_range": "1",
+			    "ds_min_range": "0",
+			    "ds_default_value": "0"
+	            	},
+	            	{
+			    "ds_attr_name": "movement",
+			    "ds_max_range": "1",
+			    "ds_min_range": "-1",
+			    "ds_default_value": "1"
+	            	},
+		    	{
+			    "ds_attr_name": "referenceBase",
+			    "ds_max_range": "1",
+			    "ds_min_range": "0",
+			    "ds_default_value": "1"
+	            	},
+		    	{
+			    "ds_attr_name": "voltage_LNS[V]",
+			    "ds_max_range": "1000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "30"
+	            	},
+		    	{
+			    "ds_attr_name": "voltage_LPS[V]",
+			    "ds_max_range": "1000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "10"
+	            	},
+		    	{
+			    "ds_attr_name": "fullscalePot",
+			    "ds_max_range": "2000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "20"
+	            	}
+		    ]
+		},
+{		
+		    "unit_server_alias": "TEST",
+		    "cu_id": "BTF/SCRAPER/SLTB003U",
+		    "cu_type": "::driver::actuator::SCActuatorControlUnit",
+		    "cu_param": "",
+		    "auto_load": true,
+		    "auto_start":false,
+		    "auto_init":false,
+		    "storage_type": 2,
+		    "storage_ageing": 36000,
+		    "DriverDescription": [
+			{
+			    "DriverDescriptionName": "ActuatorSim",
+			    "DriverDescriptionVersion": "1.0.0",
+			    "DriverDescriptionInitParam": "0,0,115200,/dev/ttyr1c"
+			}
+
+		    ],
+		    "AttrDesc": [
+		    		    {		    
+			    "ds_attr_name": "bypass",
+			    "ds_max_range": "1",
+			    "ds_min_range": "0",
+			    "ds_default_value": "1"
+		    },
+		    {		    
+			    "ds_attr_name": "ConfigString",
+			    "ds_max_range": "",
+			    "ds_min_range": "",
+			    "ds_default_value": "7,TB03UP_21.t.zip"
+			},
+			{
+			    "ds_attr_name": "axisID",
+			    "ds_max_range": "255",
+			    "ds_min_range": "0",
+			    "ds_default_value": "7"
+			},
+			{
+			    "ds_attr_name": "fileTable",
+			    "ds_max_range": "",
+			    "ds_min_range": "",
+			    "ds_default_value": "TB03UP_21.t.zip"
+	            	},
+		    	{
+			    "ds_attr_name": "fixednumberofrounds",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "1"
+	            	},
+		    	{
+			    "ds_attr_name": "lineardisplacement[mm]",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "1"
+	            	},
+	            	{
+			    "ds_attr_name": "numencoderlines",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "1600"
+	            	},
+	 	    	{
+			    "ds_attr_name": "range_slit[mm]",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "26.2"
+	            	},
+		    	{
+			    "ds_attr_name": "speed",
+			    "ds_max_range": "600",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "100"
+	            	},
+		    	{
+			    "ds_attr_name": "maxspeed",
+			    "ds_max_range": "600",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "600"
+	            	},
+		    	{
+			    "ds_attr_name": "acceleration",
+			    "ds_max_range": "5",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "1"
+	            	},
+		    	{
+			    "ds_attr_name": "maxacceleration",
+			    "ds_max_range": "5",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "5"
+	            	},
+		    	{
+			    "ds_attr_name": "highspeedhoming",
+			    "ds_max_range": "25",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "10"
+	            	},
+		    	{
+			    "ds_attr_name": "maxhighspeedhoming",
+			    "ds_max_range": "25",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "25"
+	            	},
+	            	{
+			    "ds_attr_name": "lowspeedhoming",
+			    "ds_max_range": "7",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "3"
+	            	},
+		    	{
+			    "ds_attr_name": "maxlowspeedhoming",
+			    "ds_max_range": "7",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "7"
+	            	},
+		    	{
+			    "ds_attr_name": "accelerationhoming",
+			    "ds_max_range": "0.6",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "0.3"
+	            	},
+		    	{
+			    "ds_attr_name": "maxaccelerationhoming",
+			    "ds_max_range": "0.6",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "0.6"
+	            	},
+		    	{
+			    "ds_attr_name": "nummicrostepsperstep",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "256"
+	            	},
+		    	{
+			    "ds_attr_name": "stepsperround",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "200"
+	            	},
+		    	{
+			    "ds_attr_name": "isadditive",
+			    "ds_max_range": "1",
+			    "ds_min_range": "0",
+			    "ds_default_value": "0"
+	            	},
+	            	{
+			    "ds_attr_name": "movement",
+			    "ds_max_range": "1",
+			    "ds_min_range": "-1",
+			    "ds_default_value": "1"
+	            	},
+		    	{
+			    "ds_attr_name": "referenceBase",
+			    "ds_max_range": "1",
+			    "ds_min_range": "0",
+			    "ds_default_value": "1"
+	            	},
+		    	{
+			    "ds_attr_name": "voltage_LNS[V]",
+			    "ds_max_range": "1000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "30"
+	            	},
+		    	{
+			    "ds_attr_name": "voltage_LPS[V]",
+			    "ds_max_range": "1000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "10"
+	            	},
+		    	{
+			    "ds_attr_name": "fullscalePot",
+			    "ds_max_range": "2000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "20"
+	            	}     
+		    ]
+		},
+{		
+		    "unit_server_alias": "TEST",
+		    "cu_id": "BTF/SCRAPER/SLTB003D",
+		    "cu_type": "::driver::actuator::SCActuatorControlUnit",
+		    "cu_param": "",
+		    "auto_load": true,
+		    "auto_start":false,
+		    "auto_init":false,
+		    "storage_type": 2,
+		    "storage_ageing": 36000,
+		    "DriverDescription": [
+			{
+			    "DriverDescriptionName": "ActuatorSim",
+			    "DriverDescriptionVersion": "1.0.0",
+			    "DriverDescriptionInitParam": "0,0,115200,/dev/ttyr1c"
+			}
+		    ],
+		    "AttrDesc": [
+		    		    {		    
+			    "ds_attr_name": "bypass",
+			    "ds_max_range": "1",
+			    "ds_min_range": "0",
+			    "ds_default_value": "1"
+		    },
+		    {		    
+			    "ds_attr_name": "ConfigString",
+			    "ds_max_range": "",
+			    "ds_min_range": "",
+			    "ds_default_value": "8,TB03DW_0606.t.zip"
+			},
+			{
+			    "ds_attr_name": "axisID",
+			    "ds_max_range": "255",
+			    "ds_min_range": "0",
+			    "ds_default_value": "8"
+			},
+			{
+			    "ds_attr_name": "fileTable",
+			    "ds_max_range": "",
+			    "ds_min_range": "",
+			    "ds_default_value": "TB03DW_0606.t.zip"
+	            	},
+		    	{
+			    "ds_attr_name": "fixednumberofrounds",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "1"
+	            	},
+		    	{
+			    "ds_attr_name": "lineardisplacement[mm]",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "1"
+	            	},
+	            	{
+			    "ds_attr_name": "numencoderlines",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "1600"
+	            	},
+	 	    	{
+			    "ds_attr_name": "range_slit[mm]",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "27.3"
+	            	},
+		    	{
+			    "ds_attr_name": "speed",
+			    "ds_max_range": "600",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "100"
+	            	},
+		    	{
+			    "ds_attr_name": "maxspeed",
+			    "ds_max_range": "600",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "600"
+	            	},
+		    	{
+			    "ds_attr_name": "acceleration",
+			    "ds_max_range": "5",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "1"
+	            	},
+		    	{
+			    "ds_attr_name": "maxacceleration",
+			    "ds_max_range": "5",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "5"
+	            	},
+		    	{
+			    "ds_attr_name": "highspeedhoming",
+			    "ds_max_range": "25",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "10"
+	            	},
+		    	{
+			    "ds_attr_name": "maxhighspeedhoming",
+			    "ds_max_range": "25",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "25"
+	            	},
+	            	{
+			    "ds_attr_name": "lowspeedhoming",
+			    "ds_max_range": "7",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "3"
+	            	},
+		    	{
+			    "ds_attr_name": "maxlowspeedhoming",
+			    "ds_max_range": "7",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "7"
+	            	},
+		    	{
+			    "ds_attr_name": "accelerationhoming",
+			    "ds_max_range": "0.6",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "0.3"
+	            	},
+		    	{
+			    "ds_attr_name": "maxaccelerationhoming",
+			    "ds_max_range": "0.6",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "0.6"
+	            	},
+		    	{
+			    "ds_attr_name": "nummicrostepsperstep",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "256"
+	            	},
+		    	{
+			    "ds_attr_name": "stepsperround",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "200"
+	            	},
+		    	{
+			    "ds_attr_name": "isadditive",
+			    "ds_max_range": "1",
+			    "ds_min_range": "0",
+			    "ds_default_value": "0"
+	            	},
+	            	{
+			    "ds_attr_name": "movement",
+			    "ds_max_range": "1",
+			    "ds_min_range": "-1",
+			    "ds_default_value": "1"
+	            	},
+		    	{
+			    "ds_attr_name": "referenceBase",
+			    "ds_max_range": "1",
+			    "ds_min_range": "0",
+			    "ds_default_value": "1"
+	            	},
+		    	{
+			    "ds_attr_name": "voltage_LNS[V]",
+			    "ds_max_range": "1000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "30"
+	            	},
+		    	{
+			    "ds_attr_name": "voltage_LPS[V]",
+			    "ds_max_range": "1000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "10"
+	            	},
+		    	{
+			    "ds_attr_name": "fullscalePot",
+			    "ds_max_range": "2000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "20"
+	            	}    
+          	    ]
+		},
+{		
+		    "unit_server_alias": "TEST",
+		    "cu_id": "BTF/SCRAPER/SLTB001U",
+		    "cu_type": "::driver::actuator::SCActuatorControlUnit",
+		    "cu_param": "",
+		    "auto_load": true,
+		    "auto_start":false,
+		    "auto_init":false,
+		    "storage_type": 2,
+		    "storage_ageing": 36000,
+		    "DriverDescription": [
+			{
+			    "DriverDescriptionName": "ActuatorSim",
+			    "DriverDescriptionVersion": "1.0.0",
+			    "DriverDescriptionInitParam": "0,0,115200,/dev/ttyr1c"
+			}
+		    ],
+		    "AttrDesc": [
+		    		    {		    
+			    "ds_attr_name": "bypass",
+			    "ds_max_range": "1",
+			    "ds_min_range": "0",
+			    "ds_default_value": "1"
+		    },
+
+		    	{		    
+			    "ds_attr_name": "ConfigString",
+			    "ds_max_range": "",
+			    "ds_min_range": "",
+			    "ds_default_value": "9,asse9_20080604.t.zip"
+			},
+			{
+			    "ds_attr_name": "axisID",
+			    "ds_max_range": "255",
+			    "ds_min_range": "0",
+			    "ds_default_value": "9"
+			},
+			{
+			    "ds_attr_name": "fileTable",
+			    "ds_max_range": "",
+			    "ds_min_range": "",
+			    "ds_default_value": "asse9_20080604.t.zip"
+	            	},
+		    	{
+			    "ds_attr_name": "fixednumberofrounds",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "1"
+	            	},
+		    	{
+			    "ds_attr_name": "lineardisplacement[mm]",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "1"
+	            	},
+	            	{
+			    "ds_attr_name": "numencoderlines",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "1600"
+	            	},
+	 	    	{
+			    "ds_attr_name": "range_slit[mm]",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "25"
+	            	},
+		    	{
+			    "ds_attr_name": "speed",
+			    "ds_max_range": "600",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "50"
+	            	},
+		    	{
+			    "ds_attr_name": "maxspeed",
+			    "ds_max_range": "600",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "600"
+	            	},
+		    	{
+			    "ds_attr_name": "acceleration",
+			    "ds_max_range": "5",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "1"
+	            	},
+		    	{
+			    "ds_attr_name": "maxacceleration",
+			    "ds_max_range": "5",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "5"
+	            	},
+		    	{
+			    "ds_attr_name": "highspeedhoming",
+			    "ds_max_range": "25",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "10"
+	            	},
+		    	{
+			    "ds_attr_name": "maxhighspeedhoming",
+			    "ds_max_range": "25",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "25"
+	            	},
+	            	{
+			    "ds_attr_name": "lowspeedhoming",
+			    "ds_max_range": "7",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "3"
+	            	},
+		    	{
+			    "ds_attr_name": "maxlowspeedhoming",
+			    "ds_max_range": "7",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "7"
+	            	},
+		    	{
+			    "ds_attr_name": "accelerationhoming",
+			    "ds_max_range": "0.6",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "0.3"
+	            	},
+		    	{
+			    "ds_attr_name": "maxaccelerationhoming",
+			    "ds_max_range": "0.6",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "0.6"
+	            	},
+		    	{
+			    "ds_attr_name": "nummicrostepsperstep",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "256"
+	            	},
+		    	{
+			    "ds_attr_name": "stepsperround",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "200"
+	            	},
+		    	{
+			    "ds_attr_name": "isadditive",
+			    "ds_max_range": "1",
+			    "ds_min_range": "0",
+			    "ds_default_value": "0"
+	            	},
+	            	{
+			    "ds_attr_name": "movement",
+			    "ds_max_range": "1",
+			    "ds_min_range": "-1",
+			    "ds_default_value": "1"
+	            	},
+		    	{
+			    "ds_attr_name": "referenceBase",
+			    "ds_max_range": "1",
+			    "ds_min_range": "0",
+			    "ds_default_value": "1"
+	            	},
+		    	{
+			    "ds_attr_name": "voltage_LNS[V]",
+			    "ds_max_range": "1000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "30"
+	            	},
+		    	{
+			    "ds_attr_name": "voltage_LPS[V]",
+			    "ds_max_range": "1000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "10"
+	            	},
+		    	{
+			    "ds_attr_name": "fullscalePot",
+			    "ds_max_range": "2000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "20"
+	            	}          
+		    ]
+},{		
+		    "unit_server_alias": "TEST",
+		    "cu_id": "BTF/SCRAPER/SLTB001D",
+		    "cu_type": "::driver::actuator::SCActuatorControlUnit",
+		    "cu_param": "",
+		    "auto_load": true,
+		    "auto_start":false,
+		    "auto_init":false,
+		    "storage_type": 2,
+		    "storage_ageing": 36000,
+		    "DriverDescription": [
+			{
+			    "DriverDescriptionName": "ActuatorSim",
+			    "DriverDescriptionVersion": "1.0.0",
+			    "DriverDescriptionInitParam": "0,0,115200,/dev/ttyr1c"
+			}
+		    ],
+		    "AttrDesc": [
+		    		    {		    
+			    "ds_attr_name": "bypass",
+			    "ds_max_range": "1",
+			    "ds_min_range": "0",
+			    "ds_default_value": "1"
+		    },
+
+		    	{		    
+			    "ds_attr_name": "ConfigString",
+			    "ds_max_range": "",
+			    "ds_min_range": "",
+			    "ds_default_value": "10,TB01_Dw_17.t.zip"
+			},
+			{
+			    "ds_attr_name": "axisID",
+			    "ds_max_range": "255",
+			    "ds_min_range": "0",
+			    "ds_default_value": "10"
+			},
+			{
+			    "ds_attr_name": "fileTable",
+			    "ds_max_range": "",
+			    "ds_min_range": "",
+			    "ds_default_value": "TB01_Dw_17.t.zip"
+	            	},
+		    	{
+			    "ds_attr_name": "fixednumberofrounds",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "1"
+	            	},
+		    	{
+			    "ds_attr_name": "lineardisplacement[mm]",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "1"
+	            	},
+	            	{
+			    "ds_attr_name": "numencoderlines",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "1600"
+	            	},
+	 	    	{
+			    "ds_attr_name": "range_slit[mm]",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "24.2"
+	            	},
+		    	{
+			    "ds_attr_name": "speed",
+			    "ds_max_range": "600",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "50"
+	            	},
+		    	{
+			    "ds_attr_name": "maxspeed",
+			    "ds_max_range": "600",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "600"
+	            	},
+		    	{
+			    "ds_attr_name": "acceleration",
+			    "ds_max_range": "5",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "1"
+	            	},
+		    	{
+			    "ds_attr_name": "maxacceleration",
+			    "ds_max_range": "5",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "5"
+	            	},
+		    	{
+			    "ds_attr_name": "highspeedhoming",
+			    "ds_max_range": "25",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "10"
+	            	},
+		    	{
+			    "ds_attr_name": "maxhighspeedhoming",
+			    "ds_max_range": "25",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "25"
+	            	},
+	            	{
+			    "ds_attr_name": "lowspeedhoming",
+			    "ds_max_range": "7",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "3"
+	            	},
+		    	{
+			    "ds_attr_name": "maxlowspeedhoming",
+			    "ds_max_range": "7",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "7"
+	            	},
+		    	{
+			    "ds_attr_name": "accelerationhoming",
+			    "ds_max_range": "0.6",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "0.3"
+	            	},
+		    	{
+			    "ds_attr_name": "maxaccelerationhoming",
+			    "ds_max_range": "0.6",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "0.6"
+	            	},
+		    	{
+			    "ds_attr_name": "nummicrostepsperstep",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "256"
+	            	},
+		    	{
+			    "ds_attr_name": "stepsperround",
+			    "ds_max_range": "10000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "200"
+	            	},
+		    	{
+			    "ds_attr_name": "isadditive",
+			    "ds_max_range": "1",
+			    "ds_min_range": "0",
+			    "ds_default_value": "0"
+	            	},
+	            	{
+			    "ds_attr_name": "movement",
+			    "ds_max_range": "1",
+			    "ds_min_range": "-1",
+			    "ds_default_value": "1"
+	            	},
+		    	{
+			    "ds_attr_name": "referenceBase",
+			    "ds_max_range": "1",
+			    "ds_min_range": "0",
+			    "ds_default_value": "1"
+	            	},
+		    	{
+			    "ds_attr_name": "voltage_LNS[V]",
+			    "ds_max_range": "1000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "30"
+	            	},
+		    	{
+			    "ds_attr_name": "voltage_LPS[V]",
+			    "ds_max_range": "1000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "10"
+	            	},
+		    	{
+			    "ds_attr_name": "fullscalePot",
+			    "ds_max_range": "2000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "20"
+	            	}   
+		    ]
+},{		
+		    "unit_server_alias": "TEST",
+		    "cu_id": "BTF/SCRAPER/TARGET",
+		    "cu_type": "::driver::actuator::SCActuatorControlUnit",
+		    "cu_param": "",
+		    "auto_load": true,
+		    "auto_start":false,
+		    "auto_init":false,
+		    "storage_type": 2,
+		    "storage_ageing": 36000,
+		    "DriverDescription": [
+			{
+			    "DriverDescriptionName": "ActuatorSim",
+			    "DriverDescriptionVersion": "1.0.0",
+			    "DriverDescriptionInitParam": "0,0,115200,/dev/ttyr1c"
+			}
+		    ],
+		    "AttrDesc": [
+		    		    {		    
+			    "ds_attr_name": "bypass",
+			    "ds_max_range": "1",
+			    "ds_min_range": "0",
+			    "ds_default_value": "1"
+		    },
+
+		    	{		    
+			    "ds_attr_name": "ConfigString",
+			    "ds_max_range": "",
+			    "ds_min_range": "",
+			    "ds_default_value": "11,Target_17.t.zip"
+			},
+			{
+			    "ds_attr_name": "axisID",
+			    "ds_max_range": "255",
+			    "ds_min_range": "0",
+			    "ds_default_value": "11"
+			},
+			{
+			    "ds_attr_name": "fileTable",
+			    "ds_max_range": "",
+			    "ds_min_range": "",
+			    "ds_default_value": "Target_17.t.zip"
+	            	},
+		    	{
+			    "ds_attr_name": "fixednumberofrounds",
+			    "ds_max_range": "4294967295",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "1"
+	            	},
+		    	{
+			    "ds_attr_name": "lineardisplacement[mm]",
+			    "ds_max_range": "4294967295",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "1"
+	            	},
+	            	{
+			    "ds_attr_name": "numencoderlines",
+			    "ds_max_range": "4294967295",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "1600"
+	            	},
+	 	    	{
+			    "ds_attr_name": "range_slit[mm]",
+			    "ds_max_range": "4294967295",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "150"
+	            	},
+		    	{
+			    "ds_attr_name": "speed",
+			    "ds_max_range": "600",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "100"
+	            	},
+		    	{
+			    "ds_attr_name": "maxspeed",
+			    "ds_max_range": "600",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "600"
+	            	},
+		    	{
+			    "ds_attr_name": "acceleration",
+			    "ds_max_range": "5",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "1"
+	            	},
+		    	{
+			    "ds_attr_name": "maxacceleration",
+			    "ds_max_range": "5",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "5"
+	            	},
+		    	{
+			    "ds_attr_name": "highspeedhoming",
+			    "ds_max_range": "25",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "10"
+	            	},
+		    	{
+			    "ds_attr_name": "maxhighspeedhoming",
+			    "ds_max_range": "25",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "25"
+	            	},
+	            	{
+			    "ds_attr_name": "lowspeedhoming",
+			    "ds_max_range": "7",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "3"
+	            	},
+		    	{
+			    "ds_attr_name": "maxlowspeedhoming",
+			    "ds_max_range": "7",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "7"
+	            	},
+		    	{
+			    "ds_attr_name": "accelerationhoming",
+			    "ds_max_range": "0.6",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "0.3"
+	            	},
+		    	{
+			    "ds_attr_name": "maxaccelerationhoming",
+			    "ds_max_range": "0.6",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "0.6"
+	            	},
+		    	{
+			    "ds_attr_name": "nummicrostepsperstep",
+			    "ds_max_range": "4294967295",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "256"
+	            	},
+		    	{
+			    "ds_attr_name": "stepsperround",
+			    "ds_max_range": "4294967295",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "200"
+	            	},
+		    	{
+			    "ds_attr_name": "isadditive",
+			    "ds_max_range": "1",
+			    "ds_min_range": "0",
+			    "ds_default_value": "0"
+	            	},
+	            	{
+			    "ds_attr_name": "movement",
+			    "ds_max_range": "1",
+			    "ds_min_range": "-1",
+			    "ds_default_value": "1"
+	            	},
+		    	{
+			    "ds_attr_name": "referenceBase",
+			    "ds_max_range": "1",
+			    "ds_min_range": "0",
+			    "ds_default_value": "1"
+	            	},
+		    	{
+			    "ds_attr_name": "voltage_LNS[V]",
+			    "ds_max_range": "1000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "30"
+	            	},
+		    	{
+			    "ds_attr_name": "voltage_LPS[V]",
+			    "ds_max_range": "1000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "10"
+	            	},
+		    	{
+			    "ds_attr_name": "fullscalePot",
+			    "ds_max_range": "2000000",
+			    "ds_min_range": "0.000000001",
+			    "ds_default_value": "20"
+	            	}        
+		    ]
+},{		
+		    "unit_server_alias": "TEST",
+		    "cu_id": "BTF/SCRAPERS/SIM_SCRAPER",
+		    "cu_type": "::driver::actuator::SCActuatorControlUnit",
+		    "cu_param": "",
+		    "auto_load": true,
+		    "storage_type": 2,
+		    "storage_ageing": 36000,
+		    "DriverDescription": [
+			{
+			    "DriverDescriptionName": "ActuatorSim",
+			    "DriverDescriptionVersion": "1.0.0",
+			    "DriverDescriptionInitParam": "16,0,115200,/dev/ttyr1c"
+			}
+		    ],
+		    "AttrDesc": [
+			{		    
+			    "ds_attr_name": "ConfigString",
+			    "ds_max_range": "",
+			    "ds_min_range": "",
+			    "ds_default_value": "16,/home/chaos/chaos-distrib/etc/common_actuators_technosoft/1setup001.t.zip"
+			},
+			{
+			    "ds_attr_name": "axisID",
+			    "ds_max_range": "255",
+			    "ds_min_range": "0",
+			    "ds_default_value": "16"
+			}
+			
+		    ]
+},
 		{
 		    "unit_server_alias": "TEST",
 		    "cu_id": "BENCHMARK_UNIT_0/TEST_CU_0",
@@ -42,6 +1838,11 @@
 		    "storage_type": 2,
 		    "storage_ageing": 3600,
 		    "DriverDescription": [
+					    {
+			"DriverDescriptionName": "OcemDD",
+			"DriverDescriptionVersion": "1.0.0",
+			"DriverDescriptionInitParam": "OcemE642X:/dev/ttyr08,4,700:10"
+					    },
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
@@ -77,7 +1878,7 @@
 			    "ds_attr_name": "bypass",
 			    "ds_max_range": "1",
 			    "ds_min_range": "0",
-			    "ds_default_value": "0"
+			    "ds_default_value": "1"
 			},
 			{
 			    "ds_attr_name": "unit",
@@ -176,6 +1977,13 @@
 		    "storage_type": 2,
 		    "storage_ageing": 3600,
 		    "DriverDescription": [
+					{
+		    "DriverDescriptionName": "OcemDD",
+		    "DriverDescriptionVersion": "1.0.0",
+		    "DriverDescriptionInitParam": "OcemE642X:/dev/ttyr16,6,700:10"
+
+					},
+
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
@@ -211,7 +2019,7 @@
 			    "ds_attr_name": "bypass",
 			    "ds_max_range": "1",
 			    "ds_min_range": "0",
-			    "ds_default_value": "0"
+			    "ds_default_value": "1"
 			},
 			{
 			    "ds_attr_name": "unit",
@@ -311,6 +2119,12 @@
 		    "storage_ageing": 3600,
 
 		    "DriverDescription": [
+		    		    		    {
+			"DriverDescriptionName": "OcemDD",
+			"DriverDescriptionVersion": "1.0.0",
+			"DriverDescriptionInitParam": "OcemE642X:/dev/ttyr08,9,100:10"
+		    },
+
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
@@ -318,7 +2132,7 @@
 			}
 		    ],
 		    "AttrDesc": [
-		    		    {
+		    	{
 			    "ds_attr_name": "polFromSet",
 			    "ds_max_range": "1",
 			    "ds_min_range": "0",
@@ -346,7 +2160,7 @@
 			    "ds_attr_name": "bypass",
 			    "ds_max_range": "1",
 			    "ds_min_range": "0",
-			    "ds_default_value": "0"
+			    "ds_default_value": "1"
 			},
 			{
 			    "ds_attr_name": "unit",
@@ -445,6 +2259,11 @@
 		    "storage_type": 2,
 		    "storage_ageing": 3600,
 		    "DriverDescription": [
+		    		    		    {
+			"DriverDescriptionName": "OcemDD",
+			"DriverDescriptionVersion": "1.0.0",
+			"DriverDescriptionInitParam":  "OcemE642X:/dev/ttyr08,11,100:10"
+		    },
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
@@ -480,7 +2299,7 @@
 			    "ds_attr_name": "bypass",
 			    "ds_max_range": "1",
 			    "ds_min_range": "0",
-			    "ds_default_value": "0"
+			    "ds_default_value": "1"
 			},
 			{
 			    "ds_attr_name": "unit",
@@ -579,6 +2398,11 @@
 		    "storage_type": 2,
 		    "storage_ageing": 3600,
 		    "DriverDescription": [
+		    		    		{
+		    "DriverDescriptionName": "OcemDD",
+		    "DriverDescriptionVersion": "1.0.0",
+		    "DriverDescriptionInitParam":  "OcemE642X:/dev/ttyr16,5,100:10"
+		},
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
@@ -614,7 +2438,7 @@
 			    "ds_attr_name": "bypass",
 			    "ds_max_range": "1",
 			    "ds_min_range": "0",
-			    "ds_default_value": "0"
+			    "ds_default_value": "1"
 			},
 			{
 			    "ds_attr_name": "unit",
@@ -713,6 +2537,11 @@
 		    "storage_type": 2,
 		    "storage_ageing": 3600,
 		    "DriverDescription": [
+		    		    		{
+		    "DriverDescriptionName": "OcemDD",
+		    "DriverDescriptionVersion": "1.0.0",
+		    "DriverDescriptionInitParam": "OcemE642X:/dev/ttyr16,4,100:10"
+		},
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
@@ -748,7 +2577,7 @@
 			    "ds_attr_name": "bypass",
 			    "ds_max_range": "1",
 			    "ds_min_range": "0",
-			    "ds_default_value": "0"
+			    "ds_default_value": "1"
 			},
 			{
 			    "ds_attr_name": "unit",
@@ -847,6 +2676,11 @@
 		    "storage_type": 2,
 		    "storage_ageing": 3600,
 		    "DriverDescription": [
+		    		    		    {
+			"DriverDescriptionName": "OcemDD",
+			"DriverDescriptionVersion": "1.0.0",
+			"DriverDescriptionInitParam": "OcemE642X:/dev/ttyr08,3,100:10"
+		    },
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
@@ -882,7 +2716,7 @@
 			    "ds_attr_name": "bypass",
 			    "ds_max_range": "1",
 			    "ds_min_range": "0",
-			    "ds_default_value": "0"
+			    "ds_default_value": "1"
 			},
 			{
 			    "ds_attr_name": "unit",
@@ -981,6 +2815,11 @@
 		    "storage_type": 2,
 		    "storage_ageing": 3600,
 		    "DriverDescription": [
+		    		    		    {
+			"DriverDescriptionName": "OcemDD",
+			"DriverDescriptionVersion": "1.0.0",
+			"DriverDescriptionInitParam": "OcemE642X:/dev/ttyr08,0,100:10"
+		    },
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
@@ -1016,7 +2855,7 @@
 			    "ds_attr_name": "bypass",
 			    "ds_max_range": "1",
 			    "ds_min_range": "0",
-			    "ds_default_value": "0"
+			    "ds_default_value": "1"
 			},
 			{
 			    "ds_attr_name": "unit",
@@ -1106,7 +2945,7 @@
 		},
 		{
 		    "unit_server_alias": "TEST",
-		    "cu_id": "BTF/BIPOLE/CHHTB001",
+		    "cu_id": "BTF/CORRECTOR/CHHTB001",
 		    "cu_type": "::driver::powersupply::SCPowerSupplyControlUnit",
 		    "cu_param": "",
 		    "auto_load": true,
@@ -1115,6 +2954,12 @@
 		    "storage_type": 2,
 		    "storage_ageing": 3600,
 		    "DriverDescription": [
+		    		{
+		    "DriverDescriptionName": "C_AL250",
+		    "DriverDescriptionVersion": "1.0.0",
+		    "DriverDescriptionInitParam": "HazemeyerAL250:/dev/ttyr0f,2,9600,N,8,1:1"
+		},
+
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
@@ -1143,7 +2988,7 @@
 		    ]
 		},{
 		    "unit_server_alias": "TEST",
-		    "cu_id": "BTF/BIPOLE/CVVTB001",
+		    "cu_id": "BTF/CORRECTOR/CVVTB001",
 		    "cu_type": "::driver::powersupply::SCPowerSupplyControlUnit",
 		    "cu_param": "",
 		    "auto_load": true,
@@ -1153,6 +2998,11 @@
 		    "storage_ageing": 3600,
 
 		    "DriverDescription": [
+		    		{
+		    "DriverDescriptionName": "C_AL250",
+		    "DriverDescriptionVersion": "1.0.0",
+		    "DriverDescriptionInitParam": "HazemeyerAL250:/dev/ttyr0f,2,9600,N,8,1:2"
+		},
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
@@ -1181,7 +3031,7 @@
 		    ]
 		},{
 		    "unit_server_alias": "TEST",
-		    "cu_id": "BTF/BIPOLE/CHHTB002",
+		    "cu_id": "BTF/CORRECTOR/CHHTB002",
 		    "cu_type": "::driver::powersupply::SCPowerSupplyControlUnit",
 		    "cu_param": "",
 		    "auto_load": true,
@@ -1191,6 +3041,12 @@
 		    "storage_ageing": 3600,
 
 		    "DriverDescription": [
+		    		{
+		    "DriverDescriptionName": "C_AL250",
+		    "DriverDescriptionVersion": "1.0.0",
+		    "DriverDescriptionInitParam": "HazemeyerAL250:/dev/ttyr0f,2,9600,N,8,1:2"
+		},
+
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
@@ -1219,7 +3075,7 @@
 		    ]
 		},{
 		    "unit_server_alias": "TEST",
-		    "cu_id": "BTF/BIPOLE/CVVTB002",
+		    "cu_id": "BTF/CORRECTOR/CVVTB002",
 		    "cu_type": "::driver::powersupply::SCPowerSupplyControlUnit",
 		    "cu_param": "",
 		    "auto_load": true,
@@ -1229,6 +3085,12 @@
 		    "storage_ageing": 3600,
 
 		    "DriverDescription": [
+		    		{
+		    "DriverDescriptionName": "C_AL250",
+		    "DriverDescriptionVersion": "1.0.0",
+		    "DriverDescriptionInitParam": "HazemeyerAL250:/dev/ttyr0f,2,9600,N,8,1:2"
+		},
+
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
@@ -1257,7 +3119,7 @@
 		    ]
 		},{
 		    "unit_server_alias": "TEST",
-		    "cu_id": "BTF/BIPOLE/CTMAIN0",
+		    "cu_id": "BTF/CORRECTOR/CTMAIN0",
 		    "cu_type": "::driver::powersupply::SCPowerSupplyControlUnit",
 		    "cu_param": "",
 		    "auto_load": true,
@@ -1267,6 +3129,12 @@
 		    "storage_ageing": 3600,
 
 		    "DriverDescription": [
+		    		{
+		    "DriverDescriptionName": "C_AL250",
+		    "DriverDescriptionVersion": "1.0.0",
+		    "DriverDescriptionInitParam": "HazemeyerAL250:/dev/ttyr0f,2,9600,N,8,1:2"
+		},
+
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
@@ -2552,37 +4420,8 @@
 			}
 		    ],
 		    "AttrDesc": []
-		},{		
-		    "unit_server_alias": "TEST",
-		    "cu_id": "BTF/SCRAPERS/SIM_SCRAPER",
-		    "cu_type": "::driver::actuator::SCActuatorControlUnit",
-		    "cu_param": "",
-		    "auto_load": true,
-		    "storage_type": 2,
-		    "storage_ageing": 36000,
-		    "DriverDescription": [
-			{
-			    "DriverDescriptionName": "ActuatorSim",
-			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "16,0,115200,/dev/ttyr1c"
-			}
-		    ],
-		    "AttrDesc": [
-			{		    
-			    "ds_attr_name": "ConfigString",
-			    "ds_max_range": "",
-			    "ds_min_range": "",
-			    "ds_default_value": "16,/home/chaos/chaos-distrib/etc/common_actuators_technosoft/1setup001.t.zip"
-			},
-			{
-			    "ds_attr_name": "axisID",
-			    "ds_max_range": "255",
-			    "ds_min_range": "0",
-			    "ds_default_value": "16"
-			}
-			
-		    ]
-		},{		
+		},
+	   {		
 		    "unit_server_alias": "TEST",
 		    "cu_id": "BTF/MOTOR",
 		    "cu_type": "::driver::actuator::SCActuatorControlUnit",
@@ -2592,7 +4431,7 @@
 		    "storage_ageing": 36000,
 		    "DriverDescription": [
 			{
-			    "DriverDescriptionName": "TechnosoftMotor",
+			    "DriverDescriptionName": "ActuatorSim",
 			    "DriverDescriptionVersion": "1.0.0",
 			    "DriverDescriptionInitParam": "14,0,115200,/dev/ttyr1c"
 			}
@@ -2631,7 +4470,7 @@
 		    ]
 		}
 	    ]
-	} , {
+	}, {
 	    "unit_server_alias": "TEST_DEVEL",
 	    "private_key": null,
 	    "public_key": null,
@@ -2777,7 +4616,7 @@
 			    "ds_attr_name": "bypass",
 			    "ds_max_range": "1",
 			    "ds_min_range": "0",
-			    "ds_default_value": "0"
+			    "ds_default_value": "1"
 			},
 			{
 			    "ds_attr_name": "unit",
@@ -2911,7 +4750,7 @@
 			    "ds_attr_name": "bypass",
 			    "ds_max_range": "1",
 			    "ds_min_range": "0",
-			    "ds_default_value": "0"
+			    "ds_default_value": "1"
 			},
 			{
 			    "ds_attr_name": "unit",
@@ -3045,7 +4884,7 @@
 			    "ds_attr_name": "bypass",
 			    "ds_max_range": "1",
 			    "ds_min_range": "0",
-			    "ds_default_value": "0"
+			    "ds_default_value": "1"
 			},
 			{
 			    "ds_attr_name": "unit",
@@ -3179,7 +5018,7 @@
 			    "ds_attr_name": "bypass",
 			    "ds_max_range": "1",
 			    "ds_min_range": "0",
-			    "ds_default_value": "0"
+			    "ds_default_value": "1"
 			},
 			{
 			    "ds_attr_name": "unit",
@@ -3313,7 +5152,7 @@
 			    "ds_attr_name": "bypass",
 			    "ds_max_range": "1",
 			    "ds_min_range": "0",
-			    "ds_default_value": "0"
+			    "ds_default_value": "1"
 			},
 			{
 			    "ds_attr_name": "unit",
@@ -3447,7 +5286,7 @@
 			    "ds_attr_name": "bypass",
 			    "ds_max_range": "1",
 			    "ds_min_range": "0",
-			    "ds_default_value": "0"
+			    "ds_default_value": "1"
 			},
 			{
 			    "ds_attr_name": "unit",
@@ -3537,7 +5376,7 @@
 		},
 		{
 		    "unit_server_alias": "TEST_DEVEL",
-		    "cu_id": "TEST_DEVEL/BTF/BIPOLE/CHHTB001",
+		    "cu_id": "TEST_DEVEL/BTF/CORRECTOR/CHHTB001",
 		    "cu_type": "::driver::powersupply::SCPowerSupplyControlUnit",
 		    "cu_param": "",
 		    "auto_load": true,
@@ -3546,6 +5385,11 @@
 		    "storage_type": 2,
 		    "storage_ageing": 3600,
 		    "DriverDescription": [
+		    		{
+		    "DriverDescriptionName": "C_AL250",
+		    "DriverDescriptionVersion": "1.0.0",
+		    "DriverDescriptionInitParam": "HazemeyerAL250:/dev/ttyr0f,2,9600,N,8,1:2"
+		},
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
@@ -3574,7 +5418,7 @@
 		    ]
 		},{
 		    "unit_server_alias": "TEST_DEVEL",
-		    "cu_id": "TEST_DEVEL/BTF/BIPOLE/CVVTB001",
+		    "cu_id": "TEST_DEVEL/BTF/CORRECTOR/CVVTB001",
 		    "cu_type": "::driver::powersupply::SCPowerSupplyControlUnit",
 		    "cu_param": "",
 		    "auto_load": true,
@@ -3584,6 +5428,12 @@
 		    "storage_ageing": 3600,
 
 		    "DriverDescription": [
+		    		{
+		    "DriverDescriptionName": "C_AL250",
+		    "DriverDescriptionVersion": "1.0.0",
+		    "DriverDescriptionInitParam": "HazemeyerAL250:/dev/ttyr0f,2,9600,N,8,1:2"
+		},
+
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
@@ -3612,7 +5462,7 @@
 		    ]
 		},{
 		    "unit_server_alias": "TEST_DEVEL",
-		    "cu_id": "TEST_DEVEL/BTF/BIPOLE/CHHTB002",
+		    "cu_id": "TEST_DEVEL/BTF/CORRECTOR/CHHTB002",
 		    "cu_type": "::driver::powersupply::SCPowerSupplyControlUnit",
 		    "cu_param": "",
 		    "auto_load": true,
@@ -3622,6 +5472,12 @@
 		    "storage_ageing": 3600,
 
 		    "DriverDescription": [
+		    		{
+		    "DriverDescriptionName": "C_AL250",
+		    "DriverDescriptionVersion": "1.0.0",
+		    "DriverDescriptionInitParam": "HazemeyerAL250:/dev/ttyr0f,2,9600,N,8,1:2"
+		},
+
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
@@ -3650,7 +5506,7 @@
 		    ]
 		},{
 		    "unit_server_alias": "TEST_DEVEL",
-		    "cu_id": "TEST_DEVEL/BTF/BIPOLE/CVVTB002",
+		    "cu_id": "TEST_DEVEL/BTF/CORRECTOR/CVVTB002",
 		    "cu_type": "::driver::powersupply::SCPowerSupplyControlUnit",
 		    "cu_param": "",
 		    "auto_load": true,
@@ -3660,6 +5516,12 @@
 		    "storage_ageing": 3600,
 
 		    "DriverDescription": [
+		    		{
+		    "DriverDescriptionName": "C_AL250",
+		    "DriverDescriptionVersion": "1.0.0",
+		    "DriverDescriptionInitParam": "HazemeyerAL250:/dev/ttyr0f,2,9600,N,8,1:2"
+		},
+
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
@@ -3688,7 +5550,7 @@
 		    ]
 		},{
 		    "unit_server_alias": "TEST_DEVEL",
-		    "cu_id": "TEST_DEVEL/BTF/BIPOLE/CTMAIN0",
+		    "cu_id": "TEST_DEVEL/BTF/CORRECTOR/CTMAIN0",
 		    "cu_type": "::driver::powersupply::SCPowerSupplyControlUnit",
 		    "cu_param": "",
 		    "auto_load": true,
@@ -3698,6 +5560,12 @@
 		    "storage_ageing": 3600,
 
 		    "DriverDescription": [
+		    		{
+		    "DriverDescriptionName": "C_AL250",
+		    "DriverDescriptionVersion": "1.0.0",
+		    "DriverDescriptionInitParam": "HazemeyerAL250:/dev/ttyr0f,2,9600,N,8,1:2"
+		},
+
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
@@ -4985,7 +6853,7 @@
 		    "AttrDesc": []
 		},{		
 		    "unit_server_alias": "TEST_DEVEL",
-		    "cu_id": "TEST_DEVEL/BTF/SCRAPERS/SIM_SCRAPER",
+		    "cu_id": "TEST_DEVEL/BTF/SCRAPER/SIM_SCRAPER",
 		    "cu_type": "::driver::actuator::SCActuatorControlUnit",
 		    "cu_param": "",
 		    "auto_load": true,
@@ -5023,7 +6891,7 @@
 		    "storage_ageing": 36000,
 		    "DriverDescription": [
 			{
-			    "DriverDescriptionName": "TechnosoftMotor",
+			    "DriverDescriptionName": "ActuatorSim",
 			    "DriverDescriptionVersion": "1.0.0",
 			    "DriverDescriptionInitParam": "14,0,115200,/dev/ttyr1c"
 			}

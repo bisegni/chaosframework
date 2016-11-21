@@ -112,7 +112,7 @@ start_us(){
 	      return
     fi
     info_mesg "transferring configuration to MDS " "$CHAOS_PREFIX/etc/localhost/MDSConfig.cfg"
-    if ! run_proc "$CHAOS_PREFIX/bin/ChaosMDSCmd --mds-conf $CHAOS_PREFIX/etc/localhost/MDSConfig.txt $CHAOS_OVERALL_OPT -r 1 --log-on-file $CHAOS_PREFIX/log/ChaosMDSCmd.log > $CHAOS_PREFIX/log/ChaosMDSCmd.std.out 2>&1 &" "ChaosMDSCmd";then
+    if ! run_proc "$CHAOS_PREFIX/bin/ChaosMDSCmd --mds-conf $CHAOS_PREFIX/etc/localhost/MDSConfig.txt $CHAOS_OVERALL_OPT -r 1 --log-on-file $CHAOS_PREFIX/log/ChaosMDSCmd.log > $CHAOS_PREFIX/log/ChaosMDSCmd.std.out 2>&1 " "ChaosMDSCmd";then
 	error_mesg "failed initialization of " "MDS"
 	exit 1
     fi
