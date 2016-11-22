@@ -52,9 +52,11 @@ using namespace chaos::cu::control_manager;
 using namespace chaos::cu::driver_manager;
 using namespace chaos::cu::driver_manager::driver;
 
-#define ACULAPP_ LAPP_ << "[Control Unit:"<<control_unit_instance<<"-"<<control_unit_id<<"] -"<<__FUNCTION__<<"-"
-#define ACULDBG_ LDBG_ << "[Control Unit:"<<control_unit_instance<<"-"<<control_unit_id<<"] -"<<__FUNCTION__<<"-"
-#define ACULERR_ LERR_ << "[Control Unit:"<<control_unit_instance<<"-"<<control_unit_id<<"](-"<<__FUNCTION__<<"-"<<__LINE__<<") - "
+#define ACULAPP_    LAPP_ << "[Control Unit:"<<control_unit_instance<<"-"<<control_unit_id<<"] -"
+#define ACULNOTE_   LNOTE_ << "[Control Unit:"<<control_unit_instance<<"-"<<control_unit_id<<"] -"
+#define ACULWRN_    LWRN_ << "[Control Unit:"<<control_unit_instance<<"-"<<control_unit_id<<"] -"
+#define ACULDBG_    LDBG_ << "[Control Unit:"<<control_unit_instance<<"-"<<control_unit_id<<"] -"<<__FUNCTION__<<"-"
+#define ACULERR_    LERR_ << "[Control Unit:"<<control_unit_instance<<"-"<<control_unit_id<<"](-"<<__FUNCTION__<<"-"<<__LINE__<<") - "
 
 #define S(x) #x
 #define S_(x) S(x)
@@ -1032,7 +1034,7 @@ void AbstractControlUnit::init(void *init_data) throw(CException) {
     
     standard_logging_channel = (StandardLoggingChannel*)MetadataLoggingManager::getInstance()->getChannel("StandardLoggingChannel");
     if(standard_logging_channel == NULL) {LOG_AND_TROW(ACULERR_, -2, "Standard logging channel not found");}
-    
+    standard_logging_channel->setLogLevel(common::metadata_logging::StandardLoggingChannel::LogLevelInfo);
     //the init of the implementation unit goes after the infrastructure one
     doInitSMCheckList();
 }

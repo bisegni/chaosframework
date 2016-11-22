@@ -159,7 +159,7 @@ BatchCommandExecutor::~BatchCommandExecutor() {
 void BatchCommandExecutor::init(void *initData) throw(chaos::CException) {
     
     //reset the command sequence on initialization(id 0 is used for stiky command by sandboxes)
-    command_sequence_id = 0;
+    //command_sequence_id = 0;
     
     //broadcast init sequence to base class
     StartableService::init(initData);
@@ -306,7 +306,10 @@ void BatchCommandExecutor::handleCommandEvent(uint64_t command_id,
             ReadLock lock(command_state_rwmutex);
             boost::shared_ptr<CommandState>  cmd_state = getCommandState(command_id);
             if(cmd_state.get()) {
+                DEBUG_CODE(BCELAPP_ << "Set running type event on command id:"<<command_id);
                 cmd_state->last_event = type;
+            } else {
+                DEBUG_CODE(BCELERR_ << "No command found for id:"<<command_id);
             }
             break;
         }
@@ -424,7 +427,6 @@ void BatchCommandExecutor::setDefaultCommand(const string& command_alias,
     BCELAPP_ << "Install the default command ->"<<"\""<<default_command_alias<<"\"";
     BatchCommand * def_cmd_impl = instanceCommandInfo(default_command_alias, (CDataWrapper*)NULL);
     if(def_cmd_impl) {
-        def_cmd_impl->unique_id = ++command_sequence_id;
         sandbox_map[default_command_sandbox_instance]->setDefaultStickyCommand(def_cmd_impl);
         DEBUG_CODE(BCELDBG_ << "Command \"" << default_command_alias << "\" successfully installed";)
     }else {
