@@ -82,6 +82,7 @@ control_unit_instance(UUIDUtil::generateUUIDLite()),
 control_unit_type(_control_unit_type),
 control_unit_id(_control_unit_id),
 control_unit_param(_control_unit_param),
+standard_logging_channel(NULL),
 alarm_logging_channel(NULL),
 alarm_catalog(_control_unit_id),
 push_dataset_counter(0),
@@ -106,6 +107,7 @@ control_unit_instance(UUIDUtil::generateUUIDLite()),
 control_unit_type(_control_unit_type),
 control_unit_id(_control_unit_id),
 control_unit_param(_control_unit_param),
+standard_logging_channel(NULL),
 alarm_logging_channel(NULL),
 alarm_catalog(_control_unit_id),
 push_dataset_counter(0),
@@ -931,7 +933,8 @@ CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreP
     //get tag alias
     const std::string restore_snapshot_tag = restoreParam->getStringValue(NodeDomainAndActionRPC::ACTION_NODE_RESTORE_PARAM_TAG);
     
-    ACULDBG_ << "Start restoring snapshot tag for: " << restore_snapshot_tag;
+    metadataLogging(chaos::common::metadata_logging::StandardLoggingChannel::LogLevel::LogLevelInfo,
+                    CHAOS_FORMAT("Start restoring snapshot tag for: %1%", %restore_snapshot_tag));
     
     //load snapshot to restore
     if((err = key_data_storage->loadRestorePoint(restore_snapshot_tag))) {
@@ -956,9 +959,11 @@ CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreP
         try {
             //unitRestoreToSnapshot
             if(unitRestoreToSnapshot(restore_cache.get())){
-                ACULERR_ << "Restore has been run successfully";
+                metadataLogging(chaos::common::metadata_logging::StandardLoggingChannel::LogLevel::LogLevelInfo,
+                                CHAOS_FORMAT("Restore for %1% has been run successfully", %restore_snapshot_tag));
             } else {
-                ACULERR_ << "Restore has not been run successfully";
+                metadataLogging(chaos::common::metadata_logging::StandardLoggingChannel::LogLevel::LogLevelError,
+                                CHAOS_FORMAT("Restore for %1% has been faulted", %restore_snapshot_tag));
             }
         } catch (MetadataLoggingCException& ex) {
             throw ex;
@@ -989,6 +994,8 @@ CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreP
         //! clear snapshoted dataset to free memeory
         key_data_storage->clearRestorePoint(restore_snapshot_tag);
     }
+    metadataLogging(chaos::common::metadata_logging::StandardLoggingChannel::LogLevel::LogLevelInfo,
+                    CHAOS_FORMAT("End restoring snapshot tag for: %1%", %restore_snapshot_tag));
     return NULL;
 }
 
@@ -1023,6 +1030,9 @@ void AbstractControlUnit::init(void *init_data) throw(CException) {
     alarm_logging_channel = (AlarmLoggingChannel*)MetadataLoggingManager::getInstance()->getChannel("AlarmLoggingChannel");
     if(alarm_logging_channel == NULL) {LOG_AND_TROW(ACULERR_, -1, "Alarm logging channel not found");}
     
+    standard_logging_channel = (StandardLoggingChannel*)MetadataLoggingManager::getInstance()->getChannel("StandardLoggingChannel");
+    if(standard_logging_channel == NULL) {LOG_AND_TROW(ACULERR_, -2, "Standard logging channel not found");}
+    
     //the init of the implementation unit goes after the infrastructure one
     doInitSMCheckList();
 }
@@ -1043,6 +1053,11 @@ void AbstractControlUnit::deinit() throw(CException) {
     if(alarm_logging_channel) {
         MetadataLoggingManager::getInstance()->releaseChannel(alarm_logging_channel);
         alarm_logging_channel = NULL;
+    }
+    
+    if(standard_logging_channel) {
+        MetadataLoggingManager::getInstance()->releaseChannel(standard_logging_channel);
+        standard_logging_channel = NULL;
     }
 }
 
@@ -1639,7 +1654,7 @@ void AbstractControlUnit::pushSystemDataset() {
 }
 
 void AbstractControlUnit::pushAlarmDataset() {
-
+    
     //get the cdatawrapper for the pack
     CDataWrapper *system_attribute_dataset = key_data_storage->getNewOutputAttributeDataWrapper();
     if(system_attribute_dataset) {
@@ -1775,4 +1790,14 @@ const bool AbstractControlUnit::getBusyFlag() const {
     }else {
         return false;
     }
+}
+
+void AbstractControlUnit::metadataLogging(const chaos::common::metadata_logging::StandardLoggingChannel::LogLevel log_level,
+                                          const std::string& message) {
+    if(standard_logging_channel == NULL) return;
+    
+    standard_logging_channel->logMessage(getCUID(),
+                                         "AbstractControlUnit",
+                                         log_level,
+                                         message);
 }

@@ -41,10 +41,9 @@ namespace chaos {
 #define METADATA_LOGGING_STANDARD_LOGGING_CHANNEL_INSTANCER \
 METADATA_LOGGING_CHANNEL_INSTANCER(StandardLoggingChannel)
 
-            
             class StandardLoggingChannel:
             public AbstractMetadataLogChannel {
-                
+            public:
                 typedef enum LogLevel {
                     LogLevelDebug = 0,
                     LogLevelInfo,
@@ -52,11 +51,7 @@ METADATA_LOGGING_CHANNEL_INSTANCER(StandardLoggingChannel)
                     LogLevelError,
                     LogLevelFatal
                 } LogLevel;
-                
-                LogLevel current_logging_level;
-                inline bool loggable(LogLevel log_level);
-                
-            public:
+
                 StandardLoggingChannel();
                 ~StandardLoggingChannel();
                 
@@ -68,7 +63,9 @@ METADATA_LOGGING_CHANNEL_INSTANCER(StandardLoggingChannel)
                                const std::string& log_subject,
                                const LogLevel log_level,
                                const std::string& message);
-                
+            private:
+                LogLevel current_logging_level;
+                inline bool loggable(LogLevel log_level);
             };
             
         }

@@ -302,19 +302,17 @@ void BatchCommandExecutor::handleCommandEvent(uint64_t command_id,
             break;
         }
             
-        case BatchCommandEventType::EVT_COMPLETED: {
-            DEBUG_CODE(BCELDBG_ << "Received event of type-> Command Completed" << " command id -> "<<command_id);
-            
+        default:{
+            boost::shared_ptr<CommandState>  cmd_state = getCommandState(command_id);
+            if(cmd_state.get()) {
+                cmd_state->last_event = type;
+            }
             break;
         }
             
             
     }
-    ReadLock lock(command_state_rwmutex);
-    boost::shared_ptr<CommandState>  cmd_state = getCommandState(command_id);
-    if(cmd_state.get()) {
-        cmd_state->last_event = type;
-    }
+
 }
 
 //! general sandbox event handler

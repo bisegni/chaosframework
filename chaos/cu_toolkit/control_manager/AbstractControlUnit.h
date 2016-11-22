@@ -160,6 +160,9 @@ namespace chaos{
                 //! control unit load param
                 std::string control_unit_param;
                 
+                //!logging channel
+                chaos::common::metadata_logging::StandardLoggingChannel *standard_logging_channel;
+                
                 //!control unit alarm group
                 chaos::common::metadata_logging::AlarmLoggingChannel    *alarm_logging_channel;
                 chaos::common::alarm::AlarmCatalog                      alarm_catalog;
@@ -528,6 +531,10 @@ namespace chaos{
                 //!called when an alarm has been modified in his severity
                 void alarmChanged(const std::string& alarm_name,
                                   const int8_t alarm_severity);
+                
+                //!logging api
+                void metadataLogging(const chaos::common::metadata_logging::StandardLoggingChannel::LogLevel log_level,
+                                     const std::string& message);
                 
                 //![API] Api for publish a class method as RPC action
                 /*!
