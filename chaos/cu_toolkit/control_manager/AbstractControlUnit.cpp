@@ -933,7 +933,7 @@ CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreP
     //get tag alias
     const std::string restore_snapshot_tag = restoreParam->getStringValue(NodeDomainAndActionRPC::ACTION_NODE_RESTORE_PARAM_TAG);
     
-    metadataLogging(chaos::common::metadata_logging::StandardLoggingChannel::LogLevel::LogLevelInfo,
+    metadataLogging(chaos::common::metadata_logging::StandardLoggingChannel::LogLevelInfo,
                     CHAOS_FORMAT("Start restoring snapshot tag for: %1%", %restore_snapshot_tag));
     
     //load snapshot to restore
@@ -959,10 +959,10 @@ CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreP
         try {
             //unitRestoreToSnapshot
             if(unitRestoreToSnapshot(restore_cache.get())){
-                metadataLogging(chaos::common::metadata_logging::StandardLoggingChannel::LogLevel::LogLevelInfo,
+                metadataLogging(chaos::common::metadata_logging::StandardLoggingChannel::LogLevelInfo,
                                 CHAOS_FORMAT("Restore for %1% has been run successfully", %restore_snapshot_tag));
             } else {
-                metadataLogging(chaos::common::metadata_logging::StandardLoggingChannel::LogLevel::LogLevelError,
+                metadataLogging(chaos::common::metadata_logging::StandardLoggingChannel::LogLevelError,
                                 CHAOS_FORMAT("Restore for %1% has been faulted", %restore_snapshot_tag));
             }
         } catch (MetadataLoggingCException& ex) {
@@ -994,7 +994,7 @@ CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreP
         //! clear snapshoted dataset to free memeory
         key_data_storage->clearRestorePoint(restore_snapshot_tag);
     }
-    metadataLogging(chaos::common::metadata_logging::StandardLoggingChannel::LogLevel::LogLevelInfo,
+    metadataLogging(chaos::common::metadata_logging::StandardLoggingChannel::LogLevelInfo,
                     CHAOS_FORMAT("End restoring snapshot tag for: %1%", %restore_snapshot_tag));
     return NULL;
 }
