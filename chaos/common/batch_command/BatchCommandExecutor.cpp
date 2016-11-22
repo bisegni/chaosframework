@@ -398,6 +398,7 @@ boost::shared_ptr<CommandState> BatchCommandExecutor::getCommandState(uint64_t c
 //! return the state of a command
 std::auto_ptr<CommandState> BatchCommandExecutor::getStateForCommandID(uint64_t command_id) {
     // get upgradable access
+    std::auto_ptr<CommandState> result;
     ReadLock lock(command_state_rwmutex);
     boost::shared_ptr<CommandState> _internal_state = getCommandState(command_id);
     if(_internal_state.get()) {
