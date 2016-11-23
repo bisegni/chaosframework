@@ -307,6 +307,11 @@ namespace chaos{
                 void fillRestoreCacheWithDatasetFromTag(data_manager::KeyDataStorageDomain domain,
                                                         CDataWrapper& dataset,
                                                         AbstractSharedDomainCache& restore_cache);
+                
+                //!logging api
+                void metadataLogging(const std::string& subject,
+                                     const chaos::common::metadata_logging::StandardLoggingChannel::LogLevel log_level,
+                                     const std::string& message);
             protected:
                 //  It's is the dynamically assigned instance of the CU. it will be used
                 // as domain for the rpc action.

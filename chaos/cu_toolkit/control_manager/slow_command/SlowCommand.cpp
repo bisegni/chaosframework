@@ -96,6 +96,7 @@ bool SlowCommand::getBusyFlag() {
 
 void SlowCommand::metadataLogging(const StandardLoggingChannel::LogLevel log_level,
                     const std::string& message) {
-    abstract_control_unit->metadataLogging(log_level,
+    abstract_control_unit->metadataLogging(getAlias(),
+                                           log_level,
                                            message);
 }

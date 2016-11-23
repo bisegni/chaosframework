@@ -1794,12 +1794,13 @@ const bool AbstractControlUnit::getBusyFlag() const {
     }
 }
 
-void AbstractControlUnit::metadataLogging(const StandardLoggingChannel::LogLevel log_level,
-                                          const std::string& message) {
+void AbstractControlUnit::metadataLogging(const std::string& subject,
+                     const chaos::common::metadata_logging::StandardLoggingChannel::LogLevel log_level,
+                     const std::string& message) {
     if(standard_logging_channel == NULL) return;
     
     standard_logging_channel->logMessage(getCUID(),
-                                         "AbstractControlUnit",
+                                         subject,
                                          log_level,
                                          message);
     switch (log_level) {
@@ -1819,4 +1820,11 @@ void AbstractControlUnit::metadataLogging(const StandardLoggingChannel::LogLevel
             ACULNOTE_ << log_level;
             break;
     }
+}
+
+void AbstractControlUnit::metadataLogging(const StandardLoggingChannel::LogLevel log_level,
+                                          const std::string& message) {
+    metadataLogging("AbstractControlUnit",
+                    log_level,
+                    message);
 }
