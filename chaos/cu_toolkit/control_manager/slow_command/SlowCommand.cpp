@@ -22,6 +22,8 @@
 using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::common::alarm;
+using namespace chaos::common::metadata_logging;
+
 using namespace chaos::cu::control_manager;
 using namespace chaos::cu::control_manager::slow_command;
 #define SCLOG_HEAD_SL "[SlowCommand-" << device_id << "-" << unique_id << "] "
@@ -90,4 +92,10 @@ void SlowCommand::setBusyFlag(bool state) {
 
 bool SlowCommand::getBusyFlag() {
     return abstract_control_unit->getBusyFlag();
+}
+
+void SlowCommand::metadataLogging(const StandardLoggingChannel::LogLevel log_level,
+                    const std::string& message) {
+    abstract_control_unit->metadataLogging(log_level,
+                                           message);
 }

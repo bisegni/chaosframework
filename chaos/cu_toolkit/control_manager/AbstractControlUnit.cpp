@@ -1794,7 +1794,7 @@ const bool AbstractControlUnit::getBusyFlag() const {
     }
 }
 
-void AbstractControlUnit::metadataLogging(const chaos::common::metadata_logging::StandardLoggingChannel::LogLevel log_level,
+void AbstractControlUnit::metadataLogging(const StandardLoggingChannel::LogLevel log_level,
                                           const std::string& message) {
     if(standard_logging_channel == NULL) return;
     
@@ -1802,4 +1802,21 @@ void AbstractControlUnit::metadataLogging(const chaos::common::metadata_logging:
                                          "AbstractControlUnit",
                                          log_level,
                                          message);
+    switch (log_level) {
+        case StandardLoggingChannel::LogLevelInfo:
+            ACULAPP_ << log_level;
+            break;
+        case StandardLoggingChannel::LogLevelDebug:
+            ACULDBG_ << log_level;
+            break;
+        case StandardLoggingChannel::LogLevelWarning:
+            ACULWRN_ << log_level;
+            break;
+        case StandardLoggingChannel::LogLevelError:
+            ACULERR_ << log_level;
+            break;
+        case StandardLoggingChannel::LogLevelFatal:
+            ACULNOTE_ << log_level;
+            break;
+    }
 }
