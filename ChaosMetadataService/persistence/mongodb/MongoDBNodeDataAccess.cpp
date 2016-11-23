@@ -429,7 +429,9 @@ int MongoDBNodeDataAccess::searchNode(chaos::common::data::CDataWrapper **result
                     CDataWrapper cd;
                     cd.addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, node_uid_found = it->getField(chaos::NodeDefinitionKey::NODE_UNIQUE_ID).String());
                     cd.addStringValue(chaos::NodeDefinitionKey::NODE_TYPE, it->getField(chaos::NodeDefinitionKey::NODE_TYPE).String());
-                    cd.addStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR, it->getField(chaos::NodeDefinitionKey::NODE_RPC_ADDR).String());
+                    if(cd.hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR)) {
+                        cd.addStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR, it->getField(chaos::NodeDefinitionKey::NODE_RPC_ADDR).String());
+                    }
                     cd.addInt64Value("seq", (int64_t)it->getField("seq").Long());
                     
                     if(it->hasField("health_stat")) {
