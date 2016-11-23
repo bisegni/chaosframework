@@ -725,6 +725,15 @@ bool BatchCommandSandbox::installHandler(PRIORITY_ELEMENT(CommandInfoAndImplemen
         //set the shared stat befor cal set handler
         tmp_impl->shared_stat = &stat;
         
+        //fire the running event
+        if (event_handler) {
+            event_handler->handleCommandEvent(tmp_impl->command_alias,
+                                              tmp_impl->unique_id,
+                                              BatchCommandEventType::EVT_RUNNING,
+                                              cmd_to_install->element->cmdInfo,
+                                              cmd_stat);
+        }
+        
         //check set handler
         if (!tmp_impl->already_setupped && (handlerMask & HandlerType::HT_Set)) {
             try {
@@ -750,11 +759,6 @@ bool BatchCommandSandbox::installHandler(PRIORITY_ELEMENT(CommandInfoAndImplemen
         
         //fire the running event
         if (event_handler) {
-            event_handler->handleCommandEvent(tmp_impl->command_alias,
-                                              tmp_impl->unique_id,
-                                              BatchCommandEventType::EVT_RUNNING,
-                                              cmd_to_install->element->cmdInfo,
-                                              cmd_stat);
             //signal the step of the run
             event_handler->handleSandboxEvent(identification,
                                               BatchSandboxEventType::EVT_UPDATE_RUN_DELAY,
