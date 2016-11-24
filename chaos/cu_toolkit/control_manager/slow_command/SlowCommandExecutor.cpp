@@ -156,44 +156,6 @@ void SlowCommandExecutor::handleCommandEvent(const std::string& command_alias,
                                              command_data,
                                              commands_stats);
     switch(type) {
-        case BatchCommandEventType::EVT_COMPLETED:{
-            if(command_data) {
-                std::string cached_parameter_name;
-                CDataWrapperKeyList all_input_parameter;
-                
-                
-                //in this case we need to set the attribute into the dataset for the state reached
-                //(for now we update the inptu dataset only)
-                
-                //lock the input domain cache
-                boost::shared_ptr<SharedCacheLockDomain> w_lock = getAttributeSharedCache()->getLockOnDomain(DOMAIN_INPUT, true);
-                w_lock->lock();
-                
-                //get all parameter in command data
-                command_data->getAllKey(all_input_parameter);
-                
-                //iterate all elemento found
-                for(CDataWrapperKeyListIterator it = all_input_parameter.begin(), end = all_input_parameter.end();
-                    it!=end;
-                    it++) {
-                    cached_parameter_name = command_alias + "/" +*it;
-                    
-                    //chec if the parameter is present in cache
-                    if(getAttributeSharedCache()->hasAttribute(DOMAIN_INPUT,
-                                                               cached_parameter_name) == false) continue;
-                    
-                    //get the cached element
-                    AttributeValue *cached_element = getAttributeSharedCache()->getAttributeValue(DOMAIN_INPUT, cached_parameter_name);
-                    
-                    //update cached value with the input parameter of the command
-                    cached_element->setValue(command_data->getRawValuePtr(*it), command_data->getValueSize(*it));
-                }
-            }
-            //in case we have changed something, the dataset will be pushed
-            control_unit_instance->pushInputDataset();
-            break;
-        }
-
         case BatchCommandEventType::EVT_FAULT: {
             
             if(command_data &&
@@ -213,11 +175,10 @@ void SlowCommandExecutor::handleCommandEvent(const std::string& command_alias,
                 //CException ex(code, message, domain);
                 //async go into recoverable error
                 //boost::thread(boost::bind(&AbstractControlUnit::_goInRecoverableError, control_unit_instance, ex)).detach();
-            } else {
-                SCELERR_ << "Command id " << command_seq << " gone in fault without exception";
             }
-        }
             break;
+        }
+
         default:
             break;
     }
@@ -264,8 +225,8 @@ void SlowCommandExecutor::handleSandboxEvent(const std::string& sandbox_id,
             
         case BatchSandboxEventType::EVT_RUN_END: {
             //push output dataset specifingthat the ts has been already updated in casche directly
-	  //	  control_unit_instance->pushInputDataset();
-	  control_unit_instance->pushOutputDataset(true);
+            //	  control_unit_instance->pushInputDataset();
+            control_unit_instance->pushOutputDataset(true);
             break;
         }
             

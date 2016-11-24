@@ -114,45 +114,6 @@ void SCAbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configur
     }
 }
 
-void SCAbstractControlUnit::_completeDatasetAttribute() {
-    std::string command_alias;
-    std::string iattr_constructed;
-    std::string parameter_description;
-    chaos::DataType::DataType parameter_type;
-    BatchCommandParameterNameList parameter_name_list;
-    BatchCommandDescriptionList command_descriptions;
-    slow_command_executor->getCommandsDescriptions(command_descriptions);
-    
-    for(BatchCommandDescriptionListIterator it = command_descriptions.begin();
-        it != command_descriptions.end();
-        it++) {
-        boost::shared_ptr<BatchCommandDescription> current_description = *it;
-        
-        command_alias = current_description->getAlias();
-        
-        parameter_name_list.clear();
-        current_description->getParameters(parameter_name_list);
-        for(BatchCommandParameterNameListIterator it_param = parameter_name_list.begin();
-            it_param != parameter_name_list.end();
-            it_param++) {
-            current_description->getParameterType(*it_param, parameter_type);
-            current_description->getParameterDescription(*it_param, parameter_description);
-            
-            iattr_constructed = command_alias+"/"+*it_param;
-            
-            //add input dataset
-            addAttributeToDataSet(iattr_constructed,
-                                  parameter_description,
-                                  parameter_type,
-                                  DataType::Input,
-                                  1);
-        }
-    }
-    
-    //call super class definition
-    AbstractControlUnit::_completeDatasetAttribute();
-}
-
 AbstractSharedDomainCache *SCAbstractControlUnit::_getAttributeCache() {
     return AbstractControlUnit::_getAttributeCache();
 }
@@ -303,9 +264,6 @@ CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_a
     //cal first the superclass method because the dataset_attribute_values is not detached
     CDataWrapper *result = AbstractControlUnit::setDatasetAttribute(dataset_attribute_values, detachParam);
     
-    //auto forward command instance using input attribute
-    _forwardCommandInstanceByInputAttribute(dataset_attribute_values);
-    
     //check if we have a command
     if(dataset_attribute_values->hasKey(chaos_batch::BatchCommandAndParameterDescriptionkey::BC_ALIAS)) {
         CHAOS_ASSERT(slow_command_executor)
@@ -325,70 +283,6 @@ CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_a
         result->addInt64Value(chaos_batch::BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64, command_id);
     }
     return result;
-}
-
-void SCAbstractControlUnit::_forwardCommandInstanceByInputAttribute(CDataWrapper *dataset_attribute_values) throw (CException) {
-    uint64_t command_id = 0;
-    bool can_submit_command = false;
-    std::string command_alias;
-    std::string iattr_constructed;
-    std::string parameter_description;
-    chaos::DataType::DataType parameter_type;
-    BatchCommandParameterNameList parameter_name_list;
-    BatchCommandDescriptionList command_descriptions;
-    slow_command_executor->getCommandsDescriptions(command_descriptions);
-    
-    for(BatchCommandDescriptionListIterator it = command_descriptions.begin();
-        it != command_descriptions.end();
-        it++) {
-        
-        can_submit_command = false;
-        boost::shared_ptr<BatchCommandDescription> current_description = *it;
-        
-        command_alias = current_description->getAlias();
-        DEBUG_CODE(SCACU_LDBG_ << " Compose command with alias:" << command_alias;);
-        parameter_name_list.clear();
-        current_description->getParameters(parameter_name_list);
-        if(parameter_name_list.size() == 0) {
-            //command without paramete can be submited using input parameter
-            continue;
-        }
-        
-        std::auto_ptr<CDataWrapper> command_datapack(new CDataWrapper());
-        for(BatchCommandParameterNameListIterator it_param = parameter_name_list.begin();
-            it_param != parameter_name_list.end();
-            it_param++) {
-            current_description->getParameterType(*it_param, parameter_type);
-            current_description->getParameterDescription(*it_param, parameter_description);
-            
-            iattr_constructed = command_alias+"/"+*it_param;
-            
-            //check if user has forwarded the attribute for taht command
-            if(dataset_attribute_values->hasKey(iattr_constructed)){
-                if(isInputAttributeChangeAuthorizedByHandler(iattr_constructed)){
-                    //at least on input parameter for command as been found so we can forward it
-                    can_submit_command = true;
-                    dataset_attribute_values->copyKeyToNewKey(iattr_constructed,
-                                                              *it_param,
-                                                              *command_datapack);
-                    SCACU_LDBG_ << " Compose parameter:"<< *it_param << " for command:" << command_alias;
-                } else {
-                    SCACU_LERR_ << " Attribute"<< iattr_constructed << " for command:" << command_alias << " not autorized by handler";
-                }
-            }
-            
-        }
-        if(can_submit_command) {
-            submitBatchCommand(command_alias,
-                               command_datapack.release(),
-                               command_id,
-                               0,
-                               50,
-                               SubmissionRuleType::SUBMIT_AND_Stack);
-            
-            SCACU_LAPP_ << "Command "<< command_alias<<" submitted with id " << command_id;
-        }
-    }
 }
 
 /*

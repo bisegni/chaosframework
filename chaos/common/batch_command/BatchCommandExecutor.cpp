@@ -343,14 +343,13 @@ void BatchCommandExecutor::addComamndState(uint64_t command_id) {
 
 //! Thanke care to limit the size of the queue to the max size permitted
 void BatchCommandExecutor::capCommanaQueue() {
-    if(command_state_queue.size() <= command_state_queue_max_size) return;
-    std::vector< boost::shared_ptr<CommandState> > cmd_state_to_reinsert;
     
     // get upgradable access
     boost::upgrade_lock<boost::shared_mutex> lock(command_state_rwmutex);
-    
+    if(command_state_queue.size() <= command_state_queue_max_size) return;
     // get exclusive access
     boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
+    std::vector< boost::shared_ptr<CommandState> > cmd_state_to_reinsert;
     
     //we need to cap the queue
     size_t idx = command_state_queue.size()-1;

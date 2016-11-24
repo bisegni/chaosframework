@@ -1474,7 +1474,6 @@ CDataWrapper* AbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_att
                     }
                 }
             }
-            
             //push the input attribute dataset
             pushInputDataset();
         }

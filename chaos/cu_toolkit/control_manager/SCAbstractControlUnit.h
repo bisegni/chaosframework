@@ -78,11 +78,6 @@ namespace chaos {
 				 */
 				CDataWrapper* updateConfiguration(CDataWrapper *update_pack, bool& detach_param) throw (CException);
                 
-                //! add dinamically all command as input attribute
-                void _completeDatasetAttribute();
-                
-                //! send command instance using the input attribute
-                void _forwardCommandInstanceByInputAttribute(CDataWrapper *dataset_attribute_values) throw (CException);
 			protected:
 				//! Get all managem declare action instance
 				void _getDeclareActionInstance(std::vector<const DeclareAction *>& declareActionInstance);
