@@ -1610,6 +1610,7 @@ void AbstractControlUnit::pushInputDataset() {
         //push out the system dataset
         key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainInput, input_attribute_dataset);
     }
+    input_attribute_cache.resetChangedIndex();
 }
 
 //push system dataset
