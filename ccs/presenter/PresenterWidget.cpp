@@ -1,5 +1,4 @@
 #include "PresenterWidget.h"
-#include "CommandPresenter.h"
 
 #include <QMenu>
 #include <QDebug>
@@ -14,29 +13,25 @@ using namespace chaos::metadata_service_client::api_proxy;
 
 PresenterWidget::PresenterWidget(QWidget *parent) :
     QWidget(parent),
-    editor_subwindow(NULL),
     submitted_api(0),
     api_submitter(this){
     setAttribute(Qt::WA_DeleteOnClose);
 }
 
-PresenterWidget::~PresenterWidget() {
+PresenterWidget::~PresenterWidget() {}
 
+void PresenterWidget::showEvent( QShowEvent* event ) {
+    QWidget::showEvent( event );
+    //init ui of the widget
+    initUI();
 }
 
-void PresenterWidget::setSubWindow(QMdiSubWindow *_editor_subwindow) {
-    if(editor_subwindow) return;
-    editor_subwindow = _editor_subwindow;
-}
-
-void PresenterWidget::setTabTitle(const QString& title) {
-    if(!editor_subwindow) return;
-    editor_subwindow->setWindowTitle(title);
+void PresenterWidget::setTitle(const QString& title) {
+    setWindowTitle(title);
 }
 
 void PresenterWidget::closeTab() {
-    if(!editor_subwindow) return;
-    editor_subwindow->close();
+    close();
 }
 
 void PresenterWidget::closeEvent(QCloseEvent *event) {
@@ -46,19 +41,16 @@ void PresenterWidget::closeEvent(QCloseEvent *event) {
     }
 }
 
-void PresenterWidget::addWidgetToPresenter(PresenterWidget *p_w) {
-    assert(presenter_instance);
-    presenter_instance->showCommandPresenter(p_w);
+void PresenterWidget::launchPresenterWidget(PresenterWidget *p_w) {
+    p_w->show();
 }
 
 void PresenterWidget::addNodeToHealtMonitor(const QString& node) {
-    assert(presenter_instance);
-    presenter_instance->addMonitorHealtForNode(node);
+    //presenter_instance->addMonitorHealtForNode(node);
 }
 
 void PresenterWidget::removeNodeToHealtMonitor(const QString& node) {
-    assert(presenter_instance);
-    presenter_instance->removeMonitorHealtForNode(node);
+    //presenter_instance->removeMonitorHealtForNode(node);
 }
 
 void PresenterWidget::manageWidgetStateOnForValue(const QString& value) {

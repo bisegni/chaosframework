@@ -476,7 +476,7 @@ void ControlUnitEditor::on_pushButtonAddNewCommadInstance_clicked() {
                 SIGNAL(templateSaved(QString,QString)),
                 SLOT(templateSaved(QString,QString)));
 
-        addWidgetToPresenter(template_editor);
+        launchPresenterWidget(template_editor);
     }
 }
 
@@ -495,7 +495,7 @@ void ControlUnitEditor::on_pushButtonEditInstance_clicked() {
                 SIGNAL(templateSaved(QString,QString)),
                 SLOT(templateSaved(QString,QString)));
 
-        addWidgetToPresenter(template_editor);
+        launchPresenterWidget(template_editor);
     }
 }
 
@@ -510,9 +510,9 @@ void ControlUnitEditor::on_pushButtonRemoveInstance_clicked() {
 
 void ControlUnitEditor::on_pushButtonCreateInstance_clicked() {
     foreach(QModelIndex index,  ui->listViewCommandInstance->selectionModel()->selectedRows()) {
-        addWidgetToPresenter(new CommandTemplateInstanceEditor(control_unit_unique_id,
-                                                               index.data().toString(),
-                                                               index.data(Qt::UserRole).toString()));
+        launchPresenterWidget(new CommandTemplateInstanceEditor(control_unit_unique_id,
+                                                                index.data().toString(),
+                                                                index.data(Qt::UserRole).toString()));
     }
 }
 
@@ -540,7 +540,7 @@ void ControlUnitEditor::on_pushButtonRecoverError_clicked() {
 }
 
 void ControlUnitEditor::on_pushButtonOpenInstanceEditor_clicked() {
-    addWidgetToPresenter(new ControUnitInstanceEditor(unit_server_parent_unique_id,
+    launchPresenterWidget(new ControUnitInstanceEditor(unit_server_parent_unique_id,
                                                       control_unit_unique_id,
                                                       true));
 }

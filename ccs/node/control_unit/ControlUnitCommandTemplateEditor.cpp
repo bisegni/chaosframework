@@ -38,7 +38,7 @@ ControlUnitCommandTemplateEditor::~ControlUnitCommandTemplateEditor() {
 }
 
 void ControlUnitCommandTemplateEditor::initUI() {
-    setTabTitle("Command Tempalte Editor");
+    setTitle("Command Tempalte Editor");
     ui->lineEditTemplateName->setValidator(new QRegExpValidator(QRegExp(tr("[a-zA-z0-9_]{8,255}"))));
     ui->lineEditSubmissionPriority->setValidator(new QIntValidator(0, 100, this));
     ui->lineEditSubmissionRunStepDelay->setValidator(new QIntValidator(0, 60000000, this));

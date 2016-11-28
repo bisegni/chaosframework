@@ -61,7 +61,7 @@ void SnapshotManager::executeSearch() {
 }
 
 void SnapshotManager::on_pushButtonNewSnapshot_clicked() {
-    addWidgetToPresenter(new NewSnapshot());
+    launchPresenterWidget(new NewSnapshot());
 }
 
 void SnapshotManager::on_pushButtonDeleteSnapshot_clicked() {

@@ -1,6 +1,5 @@
 #include "ScriptDescriptionWidget.h"
 #include "ui_ScriptDescriptionWidget.h"
-#include "../MainWindow.h"
 #include "../GlobalServices.h"
 #include "../language_editor/LuaHighlighter.h"
 #include "../tree_group/TreeGroupManager.h"
@@ -18,6 +17,9 @@ const QString CM_ADD_START_PHASE    = "Add start handler";
 const QString CM_ADD_STEP_PHASE     = "Add step handler";
 const QString CM_ADD_STOP_PHASE     = "Add stop handler";
 const QString CM_ADD_DEINIT_PHASE   = "Add deinit handler";
+
+#define SHOW_WIDGET(x)\
+{if(x){x->show();}}
 
 ScriptDescriptionWidget::ScriptDescriptionWidget(QWidget *parent) :
     QWidget(parent),
@@ -128,7 +130,7 @@ void ScriptDescriptionWidget::onApiDone(const QString& tag,
                                   Qt::QueuedConnection);
     }else if(tag.compare("ScriptDescriptionWidget::updateScript") == 0) {
         //set on statu bar that the save operation hase been achieved
-        ((MainWindow*)window())->statusBar()->showMessage(QString("%1 has been saved").arg(QString::fromStdString(script_wrapper.dataWrapped().script_description.name)), 5000);
+        //((MainWindow*)window())->statusBar()->showMessage(QString("%1 has been saved").arg(QString::fromStdString(script_wrapper.dataWrapped().script_description.name)), 5000);
     }
 }
 
@@ -272,7 +274,7 @@ void ScriptDescriptionWidget::on_pushButtonSelectClass_clicked() {
         connect(selection_group_presenter,
                 SIGNAL(selectedPath(QString,QStringList)),
                 SLOT(selectedGroupPath(QString,QStringList)));
-        GlobalServices::getInstance()->presenter()->showCommandPresenter(selection_group_presenter);
+        SHOW_WIDGET(selection_group_presenter)
     }
 }
 
@@ -303,7 +305,7 @@ void ScriptDescriptionWidget::on_pushButtonSelectExecutionPools_clicked() {
         connect(selection_group_presenter,
                 SIGNAL(selectedPath(QString,QStringList)),
                 SLOT(selectedGroupPath(QString,QStringList)));
-        GlobalServices::getInstance()->presenter()->showCommandPresenter(selection_group_presenter);
+        SHOW_WIDGET(selection_group_presenter)
     }
 }
 

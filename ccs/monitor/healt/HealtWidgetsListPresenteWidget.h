@@ -10,8 +10,8 @@ namespace Ui {
 class HealtWidgetsListPresenteWidget;
 }
 
-class HealtWidgetsListPresenteWidget : public QWidget
-{
+class HealtWidgetsListPresenteWidget :
+        public QWidget {
     Q_OBJECT
 
 public:

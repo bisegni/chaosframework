@@ -69,7 +69,7 @@ void NewSnapshot::on_pushButtonAddNode_clicked() {
         connect(search_node,
                 SIGNAL(destroyed(QObject*)),
                 SLOT(destroyed(QObject*)));
-        addWidgetToPresenter(search_node);
+        launchPresenterWidget(search_node);
     }
 }
 

@@ -28,9 +28,6 @@ class PresenterWidget:
     Q_OBJECT
     friend class CommandPresenter;
 
-    QMdiSubWindow *editor_subwindow;
-    CommandPresenter *presenter_instance;
-
     unsigned int submitted_api;
     ApiSubmitter api_submitter;
 public:
@@ -56,8 +53,8 @@ public slots:
     void closeTab();
 
 private:
+    void showEvent( QShowEvent* event ) Q_DECL_OVERRIDE;
     void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;
-    void setSubWindow(QMdiSubWindow *_editor_subwindow);
     void addDefaultNodeAction(QWidget *contextual_menu_parent);
 private slots:
     void generalContextualMenuActionTrigger();
@@ -70,9 +67,9 @@ protected slots:
 protected:
     ApiAsyncProcessor api_processor;
 
-    void setTabTitle(const QString& title);
+    void setTitle(const QString& title);
 
-    void addWidgetToPresenter(PresenterWidget *p_w);
+    void launchPresenterWidget(PresenterWidget *p_w);
 
     void showInformation(const QString& title,
                          const QString& sub_title,

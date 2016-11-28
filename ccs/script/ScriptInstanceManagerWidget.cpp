@@ -50,9 +50,10 @@ void ScriptInstanceManagerWidget::cmActionTrigger(const QString& cm_title,
     if(cm_title.compare(CM_EDIT_INSTANCE) == 0) {
         QModelIndexList selected_index = cm_data.value<QModelIndexList>();
         foreach (QModelIndex index, selected_index) {
-            GlobalServices::getInstance()->presenter()->showCommandPresenter(new ControUnitInstanceEditor(QString(),
-                                                                                                          index.data().toString(),
-                                                                                                          true));
+            ControUnitInstanceEditor *w=new ControUnitInstanceEditor(QString(),
+                                                                     index.data().toString(),
+                                                                     true);
+            if(w){w->show();}
         }
 
     }

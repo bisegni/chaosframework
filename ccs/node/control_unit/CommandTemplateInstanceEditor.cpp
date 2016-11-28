@@ -70,7 +70,7 @@ bool CommandTemplateInstanceEditor::eventFilter(QObject *object, QEvent *event) 
 }
 
 void CommandTemplateInstanceEditor::initUI() {
-    setTabTitle("Instance creation");
+    setTitle("Instance creation");
     ui->labelNodeUniqueID->setText(node_uid);
     ui->labelTemplateName->setText(template_name);
     //load template

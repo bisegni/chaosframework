@@ -4,10 +4,10 @@ GlobalServices::GlobalServices() {
 
 }
 
-CommandPresenter *GlobalServices::presenter() {
-    return current_presenter;
+HealtMonitorWidget *GlobalServices::currentNodeMonitor() {
+    return current_node_monitor;
 }
 
-void GlobalServices::setPresenter(CommandPresenter *presenter) {
-    current_presenter = presenter;
+void GlobalServices::setCurrentNodeMonitor(HealtMonitorWidget *monitor) {
+    current_node_monitor = monitor;
 }

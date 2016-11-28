@@ -45,9 +45,9 @@ ControUnitInstanceEditor::~ControUnitInstanceEditor() {
 void ControUnitInstanceEditor::initUI() {
     //setting the default info
     if(is_in_editing) {
-        setTabTitle(tr("Control unit instance editing"));
+        setTitle(tr("Control unit instance editing"));
     }else{
-        setTabTitle(tr("Control unit instance creation"));
+        setTitle(tr("Control unit instance creation"));
     }
 
     // configure driver table
@@ -491,7 +491,7 @@ void ControUnitInstanceEditor::on_pushButton_clicked() {
         connect(script_enditor, SIGNAL(saveScript(ScriptEditor::Script&)), SLOT(saveScriptEditing(ScriptEditor::Script&)));
         connect(script_enditor, SIGNAL(cancel()), SLOT(cancelScriptEditing()));
         connect(script_enditor, SIGNAL(presenterWidgetClosed()), SLOT(scriptEditorClosed()));
-        addWidgetToPresenter(script_enditor);
+        launchPresenterWidget(script_enditor);
     }
     ScriptEditor::Script script(ui->textEditLoadParameter->toPlainText());
     script_enditor->setScript(script);

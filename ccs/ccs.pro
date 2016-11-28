@@ -46,7 +46,6 @@ LIBS +=     -ljsoncpp\
 SOURCES += main.cpp\
     search/SearchNodeResult.cpp \
     presenter/PresenterWidget.cpp \
-    presenter/CommandPresenter.cpp \
     api_async_processor/ApiAsyncProcessor.cpp \
     api_async_processor/ApiAsyncRunnable.cpp \
     MainController.cpp \
@@ -57,7 +56,6 @@ SOURCES += main.cpp\
     node/data_service/DataServiceEditor.cpp \
     node/data_service/CreateEditDataService.cpp \
     preference/PreferenceDialog.cpp \
-    MainWindow.cpp \
     monitor/healt/HealtMonitorWidget.cpp \
     monitor/healt/HealtPresenterWidget.cpp \
     monitor/healt/HealtWidgetsListPresenteWidget.cpp \
@@ -149,7 +147,6 @@ SOURCES += main.cpp\
 HEADERS  += \
     search/SearchNodeResult.h \
     presenter/PresenterWidget.h \
-    presenter/CommandPresenter.h \
     api_async_processor/ApiAsyncProcessor.h \
     api_async_processor/ApiAsyncRunnable.h \
     MainController.h \
@@ -160,7 +157,6 @@ HEADERS  += \
     node/data_service/DataServiceEditor.h \
     node/data_service/CreateEditDataService.h \
     preference/PreferenceDialog.h \
-    MainWindow.h \
     monitor/healt/HealtMonitorWidget.h \
     monitor/healt/HealtPresenterWidget.h \
     monitor/healt/HealtWidgetsListPresenteWidget.h \
