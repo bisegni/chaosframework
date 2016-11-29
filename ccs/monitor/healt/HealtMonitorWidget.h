@@ -13,10 +13,10 @@ public:
 protected:
     void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;
 protected slots:
+    void actionSearchNode();
     void startMonitoringNode(const QString& node_key);
     void stopMonitoringNode(const QString& node_key);
     void closeAllMonitor();
-    void actionSearchNode();
     void selectedNodes(QString tag,
                        QVector<QPair<QString,QString> > selected_nodes);
 private:

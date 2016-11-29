@@ -19,7 +19,7 @@ HealtMonitorWidget::HealtMonitorWidget(QWidget * parent):
 
     QMenu* menu_tools = menuBar()->addMenu("Tools");
     menu_tools->addAction("Search Node", this, SLOT(actionSearchNode()));
-
+    menu_tools->addAction("Remove All", this, SLOT(closeAllMonitor()));
     QWidget *central_widget = new QWidget(this);
     QVBoxLayout *vertical_layout = new QVBoxLayout(central_widget);
 

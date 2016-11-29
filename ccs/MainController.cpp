@@ -12,6 +12,8 @@
 #include <QString>
 #include <string>
 #include <QInputDialog>
+#include <QTextStream>
+#include <QFile>
 
 #include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
 
@@ -91,8 +93,14 @@ void MainController::init(int argc, char **argv, QApplication& a) {
     a.setStyleSheet("QWidget {font-family: Monospace; font-size: 9pt;}"
                     "QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }");
 #elif defined(Q_OS_DARWIN)
+    //    QFile style_files(":/dark_orange/style.qss");
+    //    if (!style_files.open(QFile::ReadOnly | QFile::Text)) {
     a.setStyleSheet("QWidget {font-size: 11pt;}"
                     "QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }");
+    //    }else{
+    //        QTextStream in(&style_files);
+    //        a.setStyleSheet(in.readAll());
+    //    }
 #else
 
 #endif

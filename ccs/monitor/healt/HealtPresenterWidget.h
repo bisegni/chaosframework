@@ -17,8 +17,8 @@ class HealtPresenterWidget :
 protected:
 
     //!Api has ben called successfully
-    void asyncApiResult(const QString& tag,
-                        QSharedPointer<chaos::common::data::CDataWrapper> api_result);
+    void onApiDone(const QString& tag,
+                   QSharedPointer<chaos::common::data::CDataWrapper> api_result);
 
 public:
     explicit HealtPresenterWidget(const QString& node_to_check,

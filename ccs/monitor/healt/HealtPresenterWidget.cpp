@@ -18,9 +18,9 @@ static const QString TAG_NODE_INFO = "tag_node_info";
 HealtPresenterWidget::HealtPresenterWidget(const QString &node_to_check,
                                            QWidget *parent) :
     QFrame(parent),
+    node_uid(node_to_check),
     api_submitter(this),
-    ui(new Ui::HealtPresenterWidget),
-    node_uid(node_to_check){
+    ui(new Ui::HealtPresenterWidget){
     ui->setupUi(this);
     //enable contextual menu on the widget
     setContextMenuPolicy(Qt::ActionsContextMenu);
@@ -67,8 +67,8 @@ void HealtPresenterWidget::on_pushButtonOpenNodeEditor_clicked() {
 }
 
 //!Api has ben called successfully
-void HealtPresenterWidget::asyncApiResult(const QString& api_tag,
-                                          QSharedPointer<chaos::common::data::CDataWrapper> api_result) {
+void HealtPresenterWidget::onApiDone(const QString& api_tag,
+                                     QSharedPointer<chaos::common::data::CDataWrapper> api_result) {
     if(api_tag.compare(TAG_NODE_INFO) == 0) {
         //we have faound the node description
         if(api_result->hasKey(chaos::NodeDefinitionKey::NODE_TYPE)) {
