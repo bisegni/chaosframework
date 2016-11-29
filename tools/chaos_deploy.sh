@@ -160,7 +160,15 @@ servers=`cat $DEPLOY_FILE`
 info_mesg "copy on the destination servers: " "$servers"
 
 
+for host in `cat $DEPLOY_FILE`;do
+    info_mesg "removing chaos-* " "$host"
+    if ssh chaos@$host "rm -rf chaos-*;rm $name.tgz;echo \"$ver\" > README.install"; then
+	ok_mesg "removing chaos-* in $host"
+    else
+	nok_mesg "removing chaos-* in $host"
+    fi
 
+done  
 
 if $dir/chaos_remote_copy.sh -u chaos -s $TMPDIR/$name.tgz $DEPLOY_FILE;then
     ok_mesg "copy done"
@@ -202,7 +210,7 @@ start_stop_service(){
 
 extract(){
     host=$1
-    info_mesg "extracting $name in " "$host"
+
     if ssh chaos@$host "test -f $name.tgz"; then
 	ver="installed "`date`" MD5:$md5"
 	if ssh chaos@$host "tar xfz $name.tgz;ln -sf $name $dest_prefix;rm $name.tgz;echo \"$ver\" > README.install"; then
