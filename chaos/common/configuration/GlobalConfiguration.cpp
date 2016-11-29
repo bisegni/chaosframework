@@ -82,6 +82,7 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException){
         addOption(InitOption::OPT_EVENT_DISABLE, po::value< bool >()->default_value(false), "Disable the event system [by default it is enable]");
         addOption(InitOption::OPT_PUBLISHING_IP, po::value< string >(), "Specify the ip address where to publish the framework rpc system");
         addOption(InitOption::OPT_PUBLISHING_INTERFACE, po::value< string >(), "Specify the interface where to publish the framework rpc system");
+
     }catch (po::error &e) {
         throw CException(0, e.what(), "GlobalConfiguration::preParseStartupParameters");
     }
@@ -128,6 +129,7 @@ void GlobalConfiguration::loadStartupParameter(int argc, char* argv[]) throw (CE
     try{
         //
         po::store(po::parse_command_line(argc, argv, desc), vm);
+	po::notify(vm);
     }catch (po::error &e) {
         //write error also on cerr
         std::cerr << e.what();
@@ -139,6 +141,7 @@ void GlobalConfiguration::loadStreamParameter(std::istream &config_file)  throw 
     try{
         //
         po::store(po::parse_config_file(config_file, desc), vm);
+	po::notify(vm);
     }catch (po::error &e) {
         //write error also on cerr
         std::cerr << e.what();
@@ -149,7 +152,15 @@ void GlobalConfiguration::loadStreamParameter(std::istream &config_file)  throw 
 
 void GlobalConfiguration::scanOption()  throw (CException) {
     try{
-        po::notify(vm);
+
+
+	if (hasOption(InitOption::OPT_HELP)) {
+	  std::cout << desc;
+	  exit(0);
+	  return;
+        
+	}
+
     }catch (po::error &e) {
         //write error also on cerr
         std::cerr << e.what();
@@ -157,12 +168,7 @@ void GlobalConfiguration::scanOption()  throw (CException) {
         
     }
     
-    if (hasOption(InitOption::OPT_HELP)) {
-        std::cout << desc;
-        exit(0);
-        return;
-        
-    }
+
 }
 
 /*
@@ -176,6 +182,7 @@ void GlobalConfiguration::parseParameter(const po::basic_parsed_options<char>& o
     try{
         //
         po::store(optionsParser, vm);
+	po::notify(vm);
     }catch (po::error &e) {
         //write error also on cerr
         std::cerr << e.what();

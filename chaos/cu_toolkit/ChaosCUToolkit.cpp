@@ -43,7 +43,8 @@ using namespace chaos::common::metadata_logging;
 chaos::WaitSemaphore ChaosCUToolkit::waitCloseSemaphore;
 
 ChaosCUToolkit::ChaosCUToolkit() {
-    GlobalConfiguration::getInstance()->addOption<bool>(CU_OPT_IN_MEMORY_DATABASE,
+    
+GlobalConfiguration::getInstance()->addOption<bool>(CU_OPT_IN_MEMORY_DATABASE,
                                                         "Specify when to use in memory or on disc contorl unit internal database",
                                                         true);
     //
@@ -101,15 +102,23 @@ void ChaosCUToolkit::init(void *init_data)  throw(CException) {
         ChaosCommon<ChaosCUToolkit>::init(init_data);
         LAPP_ << "Initializing !CHAOS Control Unit System";
         if (signal((int) SIGINT, ChaosCUToolkit::signalHanlder) == SIG_ERR){
-            LERR_ << "SIGINT Signal handler registraiton error";
+            LERR_ << "SIGINT Signal handler registration error";
         }
         
         if (signal((int) SIGQUIT, ChaosCUToolkit::signalHanlder) == SIG_ERR){
-            LERR_ << "SIGQUIT Signal handler registraiton error";
+            LERR_ << "SIGQUIT Signal handler registration error";
         }
         
         if (signal((int) SIGTERM, ChaosCUToolkit::signalHanlder) == SIG_ERR){
-            LERR_ << "SIGTERM Signal handler registraiton error";
+            LERR_ << "SIGTERM Signal handler registration error";
+        }
+
+        if (signal((int) SIGSEGV, ChaosCUToolkit::signalHanlder) == SIG_ERR){
+            LERR_ << "SIGSEGV Signal handler registration error";
+        }
+
+        if (signal((int) SIGABRT, ChaosCUToolkit::signalHanlder) == SIG_ERR){
+            LERR_ << "SIGABRT Signal handler registration error";
         }
         
         //force first allocation of metadata logging
