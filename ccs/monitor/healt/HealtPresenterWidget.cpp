@@ -75,6 +75,7 @@ void HealtPresenterWidget::onApiDone(const QString& api_tag,
             //we have type
             type = QString::fromStdString(api_result->getStringValue(chaos::NodeDefinitionKey::NODE_TYPE));
             bool is_cu = (type.compare(chaos::NodeType::NODE_TYPE_CONTROL_UNIT) == 0);
+            bool is_sc_cu = api_result->getStringValue(chaos::NodeDefinitionKey::NODE_SUB_TYPE).compare(chaos::CUType::SCCU);
             bool is_ds = (type.compare(chaos::NodeType::NODE_TYPE_UNIT_SERVER) == 0);
             if(is_cu ||
                     is_ds) {
