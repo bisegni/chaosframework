@@ -278,7 +278,6 @@ FORMS    += \
     node/data_service/DataServiceEditor.ui \
     node/data_service/CreateEditDataService.ui \
     preference/PreferenceDialog.ui \
-    MainWindow.ui \
     monitor/healt/HealtPresenterWidget.ui \
     monitor/healt/HealtWidgetsListPresenteWidget.ui \
     node/control_unit/ControlUnitEditor.ui \
