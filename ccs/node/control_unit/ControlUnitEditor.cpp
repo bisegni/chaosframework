@@ -182,9 +182,6 @@ void ControlUnitEditor::initUI() {
     //start monitoring
     manageMonitoring(true);
 
-    //launch api for control unit information
-    //updateAllControlUnitInfomration();
-
     //enable log widget
     ui->widgetChaosNodeLog->setNodeUID(control_unit_unique_id);
     ui->widgetChaosNodeLog->initChaosContent();

@@ -39,31 +39,29 @@ namespace chaos {
     namespace metadata_service {
             //! Chaos Node Directory base class
         /*!
-         
+
          */
         class ChaosMetadataService :
 		public ChaosCommon<ChaosMetadataService>,
 		public ServerDelegator {
             friend class common::utility::Singleton<ChaosMetadataService>;
-            
+
             static WaitSemaphore waitCloseSemaphore;
-			
+
             //! subsystem needed by the api
             ApiSubserviceAccessor api_subsystem_accessor;
-            
+
 			//!persistence driver instance
 			common::utility::InizializableServiceContainer<api::ApiManagment> api_managment_service;
 
-			
-            
             ChaosMetadataService(){};
             ~ChaosMetadataService(){};
             static void signalHanlder(int);
-            
+
 			//! convert param_key to a string of string hash map
 			void fillKVParameter(std::map<std::string, std::string>& kvmap,
 								 const std::vector<std::string>& multitoken_param);
-        public:			
+        public:
 			struct setting	setting;
 
             typedef boost::mutex::scoped_lock lock;
