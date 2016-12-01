@@ -59,10 +59,7 @@ chaos::common::data::CDataWrapper *GetSnapshotDatasetsForNode::execute(chaos::co
     for(VectorStrCDWShrdPtrIterator it = saved_dataset.begin();
         it != saved_dataset.end();
         it++) {
-        CDataWrapper dataset_element;
-        if(!dataset_element.hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_NAME) &&
-           !dataset_element.hasKey("dataset_value")) continue;
-        
+        CDataWrapper dataset_element;        
         dataset_element.addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_NAME, it->first);
         dataset_element.addCSDataValue("dataset_value", *it->second);
         result->appendCDataWrapperToArray(dataset_element);
