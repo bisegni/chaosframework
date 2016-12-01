@@ -198,7 +198,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <widget class="QLabel" name="label_4">
@@ -218,7 +218,20 @@
           <enum>Qt::Horizontal</enum>
          </property>
          <widget class="QListView" name="listViewSnapshotNodeDataset"/>
-         <widget class="QTableView" name="tableViewSnappedDatasetAttributes"/>
+         <widget class="QTableView" name="tableViewSnappedDatasetAttributes">
+          <attribute name="horizontalHeaderStretchLastSection">
+           <bool>true</bool>
+          </attribute>
+          <attribute name="verticalHeaderDefaultSectionSize">
+           <number>18</number>
+          </attribute>
+          <attribute name="verticalHeaderMinimumSectionSize">
+           <number>18</number>
+          </attribute>
+          <attribute name="verticalHeaderStretchLastSection">
+           <bool>false</bool>
+          </attribute>
+         </widget>
         </widget>
        </item>
       </layout>

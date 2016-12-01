@@ -11,7 +11,8 @@ class LiveDatasetTableModel:
         public ChaosAbstractTableModel {
 public:
     LiveDatasetTableModel(QObject *parent=0);
-    void setDatasetAttributeList(chaos::common::data::CDataWrapper &live_dataset);
+    void setDataset(chaos::common::data::CDWShrdPtr live_dataset);
+    void clear();
 protected:
     int getRowCount() const;
     int getColumnCount() const;

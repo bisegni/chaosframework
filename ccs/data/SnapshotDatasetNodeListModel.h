@@ -16,6 +16,7 @@ public:
     //update the list with all the domain emitted by source uid
     void updateDatasetListFor(const QString& node_name,
                               const QString& snapshot_name);
+    void clear();
 protected:
     int getRowCount() const;
     QVariant getRowData(int row) const;

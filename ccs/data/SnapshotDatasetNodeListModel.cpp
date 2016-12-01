@@ -21,6 +21,12 @@ void SnapshotDatasetNodeListModel::updateDatasetListFor(const QString& node_name
     endResetModel();
 }
 
+void SnapshotDatasetNodeListModel::clear() {
+    beginResetModel();
+    dataset_in_snapshot.clear();
+    endResetModel();
+}
+
 int SnapshotDatasetNodeListModel::getRowCount() const {
     return dataset_in_snapshot.size();
 }
