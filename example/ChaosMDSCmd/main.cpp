@@ -155,12 +155,14 @@ int initialize_from_old_mds(std::string conf){
                  GET_CONFIG_DEFAULT_BOOL(cuw,auto_start,true);
 		 GET_CONFIG_DEFAULT_INT(cuw,storage_type,1);
 		 GET_CONFIG_DEFAULT_INT(cuw,storage_ageing,3600*24);
-                 std::cout<<"\t"<<cu_id<<","<<cu_type<<std::endl;
+		 GET_CONFIG_DEFAULT_INT(cuw,default_schedule_delay,1000000);
+                 std::cout<<"\t =="<<((auto_load)?"L":"=")<<((auto_init)?"I":"=")<<((auto_start)?"S":"=")<<"== \""<< cu_id<<"\",\""<<cu_type<<"\" schedule:"<<default_schedule_delay<<std::endl;
                  cud.auto_load=auto_load;
                  cud.auto_init=auto_init;
                  cud.auto_start=auto_start;
                  cud.load_parameter = cu_param;
                  cud.control_unit_uid=cu_id;
+		 cud.default_schedule_delay=default_schedule_delay;
                  cud.unit_server_uid=unit_server_alias;
                  cud.control_unit_implementation=cu_type;
 		 cud.history_ageing=storage_ageing;

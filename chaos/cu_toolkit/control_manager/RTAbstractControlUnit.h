@@ -50,7 +50,7 @@ namespace chaos {
                 friend class AbstractExecutionUnit;
 
                 bool scheduler_run;
-				uint64_t schedule_dalay;
+				uint64_t schedule_delay;
 				boost::scoped_ptr<boost::thread>  scheduler_thread;
 
 				/*!

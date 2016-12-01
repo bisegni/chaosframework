@@ -102,6 +102,7 @@ storage_type(DataServiceNodeDefinitionType::DSStorageTypeLive),
 history_ageing(0),
 history_time(0),
 live_time(0),
+default_schedule_delay(1000000),
 load_parameter(""){}
 
 SetInstanceDescriptionHelper::~SetInstanceDescriptionHelper() {}
