@@ -4,7 +4,7 @@
 #include "../presenter/PresenterWidget.h"
 #include "SnapshotTableModel.h"
 #include "NodeInSnapshotTableModel.h"
-#include "SnapshotContentsModel.h"
+#include "../data/SnapshotDatasetNodeListModel.h"
 
 #include <QWidget>
 #include <QItemSelection>
@@ -36,12 +36,15 @@ private slots:
     void tableSelectionChanged(const QItemSelection & from, const QItemSelection & to);
     void on_pushButtonSearchSnapshot_clicked();
 
+    void on_listViewNodesInSnapshot_doubleClicked(const QModelIndex &index);
+
 private:
     void executeSearch();
-
+    QString current_snapshot_name;
     SnapshotTableModel snapshot_table_model;
-    SnapshotContentsModel snapshot_contents_model;
     NodeInSnapshotTableModel node_in_snapshot_list_model;
+    //shanpstho node information
+    SnapshotDatasetNodeListModel lm_dataset_for_node_snapshot;
     Ui::SnapshotManager *ui;
 };
 

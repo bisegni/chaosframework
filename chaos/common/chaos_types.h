@@ -109,4 +109,5 @@ typedef struct {
   uint64_t upt_time; // uptime seconds
   uint64_t metric_time; // timestamp of the metric
 } cu_prof_t;
+
 #endif

@@ -32,9 +32,9 @@ namespace chaos {
                 
                 class DataServiceDataAccess;
                 
-                typedef boost::shared_ptr<common::data::CDataWrapper> SnapshotElementPtr;
-                CHAOS_DEFINE_VECTOR_FOR_TYPE(SnapshotElementPtr, SnapshotList)
-                
+                typedef common::data::CDWShrdPtr                SnapshotElementPtr;
+                typedef common::data::VectorCDWShrdPtr          SnapshotList;
+                typedef common::data::VectorCDWShrdPtrIterator  SnapshotListIterator;
                 class SnapshotDataAccess:
                 public chaos::service_common::persistence::data_access::AbstractDataAccess {
                 protected:
@@ -73,7 +73,7 @@ namespace chaos {
                     //!return all dataset in snapshot for a node
                     virtual int getDatasetInSnapshotForNode(const std::string& node_unique_id,
                                                             const std::string& snapshot_name,
-                                                            SnapshotList& snapshot_for_node) = 0;
+                                                            common::data::VectorStrCDWShrdPtr& snapshot_for_node) = 0;
                     
                     //! delete a snapshot
                     /*!

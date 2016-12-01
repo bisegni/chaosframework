@@ -26,6 +26,7 @@
 #include "CreateNewSnapshot.h"
 #include "GetSnapshotForNode.h"
 #include "GetNodesForSnapshot.h"
+#include "GetSnapshotDatasetsForNode.h"
 
 using namespace chaos::metadata_service::api::service;
 
@@ -41,6 +42,7 @@ AbstractApiGroup("service"){
     addApi<CreateNewSnapshot>();
     addApi<GetSnapshotForNode>();
     addApi<GetNodesForSnapshot>();
+    addApi<GetSnapshotDatasetsForNode>();
 }
 
 ServiceApiGroup::~ServiceApiGroup() {}

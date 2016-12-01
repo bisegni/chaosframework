@@ -21,6 +21,8 @@
 #include "mongo_db_constants.h"
 #include "MongoDBSnapshotDataAccess.h"
 
+#include <chaos/common/data/CDataWrapper.h>
+
 #include <chaos/common/utility/TimingUtil.h>
 #include <chaos/common/network/NetworkBroker.h>
 
@@ -230,7 +232,7 @@ int MongoDBSnapshotDataAccess::getAllSnapshot(SnapshotList& snapshot_desriptions
 
 int MongoDBSnapshotDataAccess::getDatasetInSnapshotForNode(const std::string& node_unique_id,
                                                            const std::string& snapshot_name,
-                                                           data_access::SnapshotList& snapshot_for_node) {
+                                                           VectorStrCDWShrdPtr& snapshot_for_node) {
     int err = 0;
     try {
         mongo::BSONObj result;
@@ -253,7 +255,8 @@ int MongoDBSnapshotDataAccess::getDatasetInSnapshotForNode(const std::string& no
                     if(element.type() != mongo::Object) continue;
                     
                     //we get only object element that are the dataset of the snapshot
-                    snapshot_for_node.push_back(SnapshotElementPtr(new CDataWrapper(element.Obj().objdata())));
+                    PairStrCDWShrdPtr ds_element(element.fieldNameStringData().toString(), CDWShrdPtr(new CDataWrapper(element.Obj().objdata())));
+                    snapshot_for_node.push_back(ds_element);
                 }
             }
         }

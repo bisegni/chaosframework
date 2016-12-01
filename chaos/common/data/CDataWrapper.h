@@ -26,6 +26,10 @@
 
 #include <boost/scoped_ptr.hpp>
 
+#include <boost/shared_ptr.hpp>
+
+#include <utility>
+
 namespace chaos {
     namespace common {
         namespace data {
@@ -329,6 +333,11 @@ namespace chaos {
 #define CDW_GET_DOUBLE_WITH_DEFAULT(c, k, d) ((c)->hasKey(k)?(c)->getDoubleValue(k):d)
 #define CDW_GET_VALUE_WITH_DEFAULT(c, k, t, d) ((c)->hasKey(k)?(c)->t(k):d)
             
+            typedef boost::shared_ptr<chaos::common::data::CDataWrapper> CDWShrdPtr;
+            CHAOS_DEFINE_VECTOR_FOR_TYPE(CDWShrdPtr, VectorCDWShrdPtr);
+            
+            typedef std::pair<std::string, CDWShrdPtr> PairStrCDWShrdPtr;
+            CHAOS_DEFINE_VECTOR_FOR_TYPE(PairStrCDWShrdPtr, VectorStrCDWShrdPtr);
         }
     }
 }

@@ -32,7 +32,7 @@ using namespace chaos::metadata_service::api::service;
 using namespace chaos::metadata_service::persistence::data_access;
 
 GetSnapshotDatasetsForNode::GetSnapshotDatasetsForNode():
-AbstractApi("getSettingForNodeSnapshot"){}
+AbstractApi("getSnapshotDatasetForNode"){}
 
 GetSnapshotDatasetsForNode::~GetSnapshotDatasetsForNode() {}
 
@@ -40,26 +40,34 @@ chaos::common::data::CDataWrapper *GetSnapshotDatasetsForNode::execute(chaos::co
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found");
     CHECK_KEY_THROW_AND_LOG(api_data, NodeDefinitionKey::NODE_UNIQUE_ID, ERR, -2, "The node unique id key is mandatory");
     CHECK_ASSERTION_THROW_AND_LOG(api_data->isStringValue(NodeDefinitionKey::NODE_UNIQUE_ID), ERR, -3, "The node unique id needs to be a string");
-    CHECK_KEY_THROW_AND_LOG(api_data, "snapshot_name", ERR, -2, "The snpshot name is mandatory");
-    CHECK_ASSERTION_THROW_AND_LOG(api_data->isStringValue("snapshot_name"), ERR, -3, "The snapshot name needs to be a string");
+    CHECK_KEY_THROW_AND_LOG(api_data, "snapshot_name", ERR, -4, "The snpshot name is mandatory");
+    CHECK_ASSERTION_THROW_AND_LOG(api_data->isStringValue("snapshot_name"), ERR, -5, "The snapshot name needs to be a string");
     int err = 0;
-    ChaosStringVector snapshot_for_node;
+    VectorStrCDWShrdPtr saved_dataset;
     std::auto_ptr<CDataWrapper> result(new CDataWrapper());
     const std::string node_uid = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
+    const std::string snapshot_name = api_data->getStringValue("snapshot_name");
     
-    GET_DATA_ACCESS(SnapshotDataAccess, s_da, -4);
+    GET_DATA_ACCESS(SnapshotDataAccess, s_da, -6);
     
-    if((err = s_da->getSnapshotForNode(node_uid,
-                                       snapshot_for_node))){
-        LOG_AND_TROW(ERR, -5, "Error getting the node list");
+    if((err = s_da->getDatasetInSnapshotForNode(node_uid,
+                                                snapshot_name,
+                                                saved_dataset))){
+        LOG_AND_TROW(ERR, -5, CHAOS_FORMAT("Error retrieving saved dataset for node %1% and dataset %2%",%node_uid%snapshot_name));
     }
     
-    for(ChaosStringVectorIterator it = snapshot_for_node.begin();
-        it != snapshot_for_node.end();
+    for(VectorStrCDWShrdPtrIterator it = saved_dataset.begin();
+        it != saved_dataset.end();
         it++) {
-        result->appendStringToArray(*it);
+        CDataWrapper dataset_element;
+        if(!dataset_element.hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_NAME) &&
+           !dataset_element.hasKey("dataset_value")) continue;
+        
+        dataset_element.addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_NAME, it->first);
+        dataset_element.addCSDataValue("dataset_value", *it->second);
+        result->appendCDataWrapperToArray(dataset_element);
     }
-    
-    result->finalizeArrayForKey("snapshot_for_node");
+
+    result->finalizeArrayForKey("dataset_list");
     return result.release();
 }

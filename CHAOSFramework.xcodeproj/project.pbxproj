@@ -976,6 +976,8 @@
 		32EE8980191A792000DE2F29 /* stringutils.h in Headers */ = {isa = PBXBuildFile; fileRef = 32EE897E191A792000DE2F29 /* stringutils.h */; };
 		32EFCD6618BDE3A400B5EB77 /* IODirectIODriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32EFCD6418BDE3A400B5EB77 /* IODirectIODriver.cpp */; };
 		32EFCD6718BDE3A400B5EB77 /* IODirectIODriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 32EFCD6518BDE3A400B5EB77 /* IODirectIODriver.h */; };
+		32F135A31DF05E4F00890AFC /* GetSnapshotDatasetForNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F135A11DF05E4F00890AFC /* GetSnapshotDatasetForNode.cpp */; };
+		32F135A41DF05E4F00890AFC /* GetSnapshotDatasetForNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F135A21DF05E4F00890AFC /* GetSnapshotDatasetForNode.h */; };
 		32F158641B7B4B5400B6A5DF /* CacheDriverSharedMetricIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F158631B7B4B5400B6A5DF /* CacheDriverSharedMetricIO.cpp */; };
 		32F158681B7C9D8400B6A5DF /* ResourcePool.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F158661B7C9D8400B6A5DF /* ResourcePool.h */; };
 		32F2241B179AE3BC00853F62 /* RTAbstractControlUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F22419179AE3BC00853F62 /* RTAbstractControlUnit.cpp */; };
@@ -2289,6 +2291,8 @@
 		32EE897E191A792000DE2F29 /* stringutils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stringutils.h; sourceTree = "<group>"; };
 		32EFCD6418BDE3A400B5EB77 /* IODirectIODriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IODirectIODriver.cpp; sourceTree = "<group>"; };
 		32EFCD6518BDE3A400B5EB77 /* IODirectIODriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IODirectIODriver.h; sourceTree = "<group>"; };
+		32F135A11DF05E4F00890AFC /* GetSnapshotDatasetForNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetSnapshotDatasetForNode.cpp; sourceTree = "<group>"; };
+		32F135A21DF05E4F00890AFC /* GetSnapshotDatasetForNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetSnapshotDatasetForNode.h; sourceTree = "<group>"; };
 		32F158621B7B459100B6A5DF /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		32F158631B7B4B5400B6A5DF /* CacheDriverSharedMetricIO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CacheDriverSharedMetricIO.cpp; sourceTree = "<group>"; };
 		32F158661B7C9D8400B6A5DF /* ResourcePool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourcePool.h; sourceTree = "<group>"; };
@@ -4222,6 +4226,8 @@
 				32401CB81C183E2600E62866 /* GetNodesForSnapshot.h */,
 				32936C651D9280BA00485F71 /* GetSnapshotForNode.cpp */,
 				32936C661D9280BA00485F71 /* GetSnapshotForNode.h */,
+				32F135A11DF05E4F00890AFC /* GetSnapshotDatasetForNode.cpp */,
+				32F135A21DF05E4F00890AFC /* GetSnapshotDatasetForNode.h */,
 				3221D7421CF5F368001BE971 /* service.h */,
 			);
 			path = service;
@@ -5299,6 +5305,7 @@
 				3261509A1CAAB5920003D0C2 /* ControlUnitMonitorHandler.h in Headers */,
 				32D745FD1C7338D100F4D719 /* AlertLogEventHandler.h in Headers */,
 				3239EF4B1C0EFE910052BE61 /* RestoreSnapshot.h in Headers */,
+				32F135A41DF05E4F00890AFC /* GetSnapshotDatasetForNode.h in Headers */,
 				32610F8D1AE6560A00779B84 /* GetDescription.h in Headers */,
 				3211CCDE1B03402800F9B80E /* QuantumKeyConsumer.h in Headers */,
 				32D745F91C73388900F4D719 /* AlertEventHandler.h in Headers */,
@@ -6075,6 +6082,7 @@
 				32A116501D11A19200FF44ED /* ManageScriptInstance.cpp in Sources */,
 				32AE8BA31B678C1500FAC528 /* ResetAll.cpp in Sources */,
 				3239EF4A1C0EFE910052BE61 /* RestoreSnapshot.cpp in Sources */,
+				32F135A31DF05E4F00890AFC /* GetSnapshotDatasetForNode.cpp in Sources */,
 				328C87361ADFDD410047C79B /* GetInstance.cpp in Sources */,
 				32D745FC1C7338D100F4D719 /* AlertLogEventHandler.cpp in Sources */,
 				327F39AB1AEAA2390000C845 /* UpdateDS.cpp in Sources */,

@@ -31,9 +31,9 @@ void SnapshotManager::initUI() {
     ui->listViewNodesInSnapshot->setModel(&node_in_snapshot_list_model);
 
     ui->tableViewSnapshotList->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-
-    ui->columnViewSnapshotValue->setModel(&snapshot_contents_model);
-
+    //snapshot dataset values visualization
+    ui->listViewSnapshotNodeDataset->setModel(&lm_dataset_for_node_snapshot);
+    //ui->tableViewSnappedDatasetAttributes->setModel(&sn);
     connect(ui->tableViewSnapshotList->selectionModel(),
             SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
             SLOT(tableSelectionChanged(QItemSelection,QItemSelection)));
@@ -96,14 +96,21 @@ void SnapshotManager::tableSelectionChanged(const QItemSelection & from, const Q
     node_in_snapshot_list_model.reset();
     if(ui->tableViewSnapshotList->selectionModel()->selectedRows().size() == 1) {
         //load nodes for selection
-       QModelIndex row_selected =  ui->tableViewSnapshotList->selectionModel()->selectedRows().first();
-       QVariant snap_name_item = snapshot_table_model.data(row_selected);
-       QString snap_name = snap_name_item.toString();
-       submitApiResult(TAG_LOAD_NODE_IN_SNAPSHOT,
-                       GET_CHAOS_API_PTR(service::GetNodesForSnapshot)->execute(snap_name.toStdString()));
+        QModelIndex row_selected =  ui->tableViewSnapshotList->selectionModel()->selectedRows().first();
+        QVariant snap_name_item = snapshot_table_model.data(row_selected);
+        current_snapshot_name = snap_name_item.toString();
+        submitApiResult(TAG_LOAD_NODE_IN_SNAPSHOT,
+                        GET_CHAOS_API_PTR(service::GetNodesForSnapshot)->execute(current_snapshot_name.toStdString()));
     }
 }
 
 void SnapshotManager::on_pushButtonSearchSnapshot_clicked() {
     executeSearch();
+}
+
+void SnapshotManager::on_listViewNodesInSnapshot_doubleClicked(const QModelIndex &index) {
+    //got double clik on node in snapshot
+    const QString selected_node = index.data().toString();
+    lm_dataset_for_node_snapshot.updateDatasetListFor(selected_node,
+                                                      current_snapshot_name);
 }

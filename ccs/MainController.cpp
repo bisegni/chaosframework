@@ -219,7 +219,7 @@ void MainController::initApplicationMenuBar() {
     //Data
     menu = main_menu_bar.addMenu("&Tools");
     menu->addAction("Node Monitor", this, SLOT(actionNewNodeMonitor()),QKeySequence(Qt::CTRL + Qt::Key_P));
-
+    menu->addAction("Preferenes", this, SLOT(actionPreferences()));
     main_menu_bar.show();
 }
 

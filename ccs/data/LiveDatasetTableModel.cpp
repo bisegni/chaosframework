@@ -3,6 +3,8 @@
 
 #include <chaos/common/chaos_constants.h>
 
+using namespace chaos::common::data;
+
 LiveDatasetTableModel::LiveDatasetTableModel(QObject *parent):
     ChaosAbstractTableModel(parent){}
 
@@ -49,7 +51,7 @@ QVariant LiveDatasetTableModel::getCellData(int row, int column) const {
         result = dataset_values[row].first;
         break;
     case 2:
-        result = dataset_values[row].second;
+        result = QString::fromStdString(dataset_values[row].second.asString());
         break;
     default:
         break;
