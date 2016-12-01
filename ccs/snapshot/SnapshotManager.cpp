@@ -31,6 +31,9 @@ void SnapshotManager::initUI() {
     ui->listViewNodesInSnapshot->setModel(&node_in_snapshot_list_model);
 
     ui->tableViewSnapshotList->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
+    ui->columnViewSnapshotValue->setModel(&snapshot_contents_model);
+
     connect(ui->tableViewSnapshotList->selectionModel(),
             SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
             SLOT(tableSelectionChanged(QItemSelection,QItemSelection)));

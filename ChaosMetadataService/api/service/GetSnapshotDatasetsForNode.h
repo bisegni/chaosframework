@@ -1,5 +1,5 @@
 /*
- *	GetSnapshotForNode.h
+ *	GetSnapshotDatasetsForNode.h
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
@@ -19,8 +19,8 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__D12C0AE_833D_4BC5_B5F6_76CF1D4950A0_GetSnapshotForNode_h
-#define __CHAOSFramework__D12C0AE_833D_4BC5_B5F6_76CF1D4950A0_GetSnapshotForNode_h
+#ifndef __CHAOSFramework__D12C0AE_833D_4BC5_B5F6_76CF1D4950A0_GetSnapshotDatasetsForNode_hpp
+#define __CHAOSFramework__D12C0AE_833D_4BC5_B5F6_76CF1D4950A0_GetSnapshotDatasetsForNode_hpp
 
 #include "../AbstractApi.h"
 
@@ -33,11 +33,11 @@ namespace chaos {
                 /*!
                  
                  */
-                class GetSnapshotForNode:
+                class GetSnapshotDatasetsForNode:
                 public AbstractApi {
                 public:
-                    GetSnapshotForNode();
-                    ~GetSnapshotForNode();
+                    GetSnapshotDatasetsForNode();
+                    ~GetSnapshotDatasetsForNode();
                     chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
                                                                bool& detach_data);
                 };
@@ -46,4 +46,4 @@ namespace chaos {
     }
 }
 
-#endif /* __CHAOSFramework__D12C0AE_833D_4BC5_B5F6_76CF1D4950A0_GetSnapshotForNode_h */
+#endif /* GetSnapshotDatasetsForNode_hpp */

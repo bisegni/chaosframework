@@ -306,6 +306,7 @@
 		32571DA11C7C91090001D884 /* batch_command.h in Headers */ = {isa = PBXBuildFile; fileRef = 32571D9F1C7C91090001D884 /* batch_command.h */; };
 		3258AEEA1935C34000A66D44 /* URL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3258AEE81935C34000A66D44 /* URL.cpp */; };
 		3258AEEB1935C34000A66D44 /* URL.h in Headers */ = {isa = PBXBuildFile; fileRef = 3258AEE91935C34000A66D44 /* URL.h */; };
+		3258D4811DF0332300D9C8D0 /* GetSnapshotDatasetsForNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3258D47F1DF0332300D9C8D0 /* GetSnapshotDatasetsForNode.cpp */; };
 		325963981D216BD800D94853 /* LoadInstanceOnUnitServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325963961D216BD800D94853 /* LoadInstanceOnUnitServer.cpp */; };
 		325B421E1C8854820038E0C2 /* HandlerMonitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325B421C1C8854820038E0C2 /* HandlerMonitor.cpp */; };
 		325CA6BB15EE10B3007FCC12 /* EventAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325CA6B915EE10B3007FCC12 /* EventAction.cpp */; };
@@ -1451,6 +1452,8 @@
 		32571D9F1C7C91090001D884 /* batch_command.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = batch_command.h; sourceTree = "<group>"; };
 		3258AEE81935C34000A66D44 /* URL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URL.cpp; sourceTree = "<group>"; };
 		3258AEE91935C34000A66D44 /* URL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URL.h; sourceTree = "<group>"; };
+		3258D47F1DF0332300D9C8D0 /* GetSnapshotDatasetsForNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetSnapshotDatasetsForNode.cpp; sourceTree = "<group>"; };
+		3258D4801DF0332300D9C8D0 /* GetSnapshotDatasetsForNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetSnapshotDatasetsForNode.h; sourceTree = "<group>"; };
 		325963961D216BD800D94853 /* LoadInstanceOnUnitServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadInstanceOnUnitServer.cpp; sourceTree = "<group>"; };
 		325963971D216BD800D94853 /* LoadInstanceOnUnitServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadInstanceOnUnitServer.h; sourceTree = "<group>"; };
 		325B421C1C8854820038E0C2 /* HandlerMonitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HandlerMonitor.cpp; sourceTree = "<group>"; };
@@ -3796,6 +3799,8 @@
 				32401CB51C18330000E62866 /* GetNodesForSnapshot.h */,
 				32936C621D9277DC00485F71 /* GetSnapshotForNode.cpp */,
 				32936C631D9277DC00485F71 /* GetSnapshotForNode.h */,
+				3258D47F1DF0332300D9C8D0 /* GetSnapshotDatasetsForNode.cpp */,
+				3258D4801DF0332300D9C8D0 /* GetSnapshotDatasetsForNode.h */,
 			);
 			path = service;
 			sourceTree = "<group>";
@@ -5584,6 +5589,7 @@
 				3270E0701C6CBBE600105726 /* SubmitEntry.cpp in Sources */,
 				328E77FF1A7A94140008C070 /* NodeGroup.cpp in Sources */,
 				320E773E1A7FBD84001FB8BC /* UnitServerAckBatchCommand.cpp in Sources */,
+				3258D4811DF0332300D9C8D0 /* GetSnapshotDatasetsForNode.cpp in Sources */,
 				32B1E8191B2FFCE500221E49 /* CommandCommonUtility.cpp in Sources */,
 				3270E0761C6CC05100105726 /* MongoDBLoggingDataAccess.cpp in Sources */,
 				3235FDCA1A6FF45600EC83A9 /* GetDescription.cpp in Sources */,

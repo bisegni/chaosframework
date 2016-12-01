@@ -62,6 +62,7 @@ void MainController::init(int argc, char **argv, QApplication& a) {
     qRegisterMetaType<boost::shared_ptr<chaos::common::data::CDataWrapper> >("chaos::metadata_service_client::monitor_system::KeyValue");
     qRegisterMetaType<chaos::metadata_service_client::node_monitor::OnlineState>("chaos::metadata_service_client::node_monitor::OnlineState");
     qRegisterMetaType<chaos::service_common::data::node::NodeInstance>("chaos::service_common::data::node::NodeInstance");
+    qRegisterMetaType<chaos::common::data::CDataVariant>("chaos::common::data::CDataVariant");
 
     a.setStyle(QStyleFactory::create("Fusion"));
     QColor dark_main(95,95,95);
@@ -208,6 +209,7 @@ void MainController::initApplicationMenuBar() {
     //Data
     menu = main_menu_bar.addMenu("&Data");
     menu->addAction("Snapshot manager", this, SLOT(actionSnaptshotManager()),QKeySequence(Qt::CTRL + Qt::Key_S));
+    menu->addAction("Group manager", this, SLOT(actionTreeGroupManager()),QKeySequence(Qt::CTRL + Qt::Key_G));
     menu->addAction("Log Browser", this, SLOT(actionLogBrowser()),QKeySequence(Qt::CTRL + Qt::Key_L));
 
     //Data

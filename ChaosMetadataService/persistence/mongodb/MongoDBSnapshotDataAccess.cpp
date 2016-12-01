@@ -34,6 +34,7 @@ using namespace chaos::common::data;
 using namespace chaos::common::network;
 using namespace chaos::service_common::persistence::mongodb;
 using namespace chaos::metadata_service::persistence::mongodb;
+using namespace chaos::metadata_service::persistence::data_access;
 
 MongoDBSnapshotDataAccess::MongoDBSnapshotDataAccess(const boost::shared_ptr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection,
                                                      data_access::DataServiceDataAccess *_data_service_da):
@@ -186,7 +187,7 @@ int MongoDBSnapshotDataAccess::getSnapshotWorkingState(const std::string& snapsh
     return err;
 }
 
-int MongoDBSnapshotDataAccess::getAllSnapshot(chaos::metadata_service::persistence::data_access::SnapshotList& snapshot_desriptions) {
+int MongoDBSnapshotDataAccess::getAllSnapshot(SnapshotList& snapshot_desriptions) {
     int err = 0;
     try {
         
@@ -211,7 +212,7 @@ int MongoDBSnapshotDataAccess::getAllSnapshot(chaos::metadata_service::persisten
         if(query_result.get()) {
             while(query_result->more()) {
                 mongo::BSONObj n = query_result->next();
-                snapshot_desriptions.push_back(chaos::metadata_service::persistence::data_access::SnapshotElementPtr(new CDataWrapper(n.objdata())));
+                snapshot_desriptions.push_back(SnapshotElementPtr(new CDataWrapper(n.objdata())));
             }
         }else{
             err = -10000;
@@ -224,6 +225,45 @@ int MongoDBSnapshotDataAccess::getAllSnapshot(chaos::metadata_service::persisten
         MDBDSDA_ERR << e.what();
         err = e.errorCode;
     }
-    
+    return err;
+}
+
+int MongoDBSnapshotDataAccess::getDatasetInSnapshotForNode(const std::string& node_unique_id,
+                                                           const std::string& snapshot_name,
+                                                           data_access::SnapshotList& snapshot_for_node) {
+    int err = 0;
+    try {
+        mongo::BSONObj result;
+        //we first need to fetch all node uid attacched to the snapshot
+        mongo::BSONObj q = BSON("snap_name" << snapshot_name << "producer_id" << node_unique_id);
+        
+        
+        DEBUG_CODE(MDBDSDA_DBG<<log_message("getDatasetInSnapshotForNode",
+                                            "query",
+                                            DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                    q.jsonString()));)
+        
+        if((err = connection->findOne(result,
+                                      MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SNAPSHOT_DATA),
+                                      q)) == 0) {
+            if(result.isEmpty() == false) {
+                mongo::BSONObjIterator it = result.begin();
+                while(it.more()) {
+                    mongo::BSONElement element = it.next();
+                    if(element.type() != mongo::Object) continue;
+                    
+                    //we get only object element that are the dataset of the snapshot
+                    snapshot_for_node.push_back(SnapshotElementPtr(new CDataWrapper(element.Obj().objdata())));
+                }
+            }
+        }
+        
+    } catch (const mongo::DBException &e) {
+        MDBDSDA_ERR << e.what();
+        err = -1;
+    } catch (const chaos::CException &e) {
+        MDBDSDA_ERR << e.what();
+        err = e.errorCode;
+    }
     return err;
 }

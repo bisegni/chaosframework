@@ -142,7 +142,9 @@ SOURCES += main.cpp\
     plot/AbstractBinaryPlotAdapter.cpp \
     plot/BufferPlot.cpp \
     widget/WidgetDynamicList.cpp \
-    data/SearchNodeListModel.cpp
+    data/SearchNodeListModel.cpp \
+    data/LiveDatasetTableModel.cpp \
+    data/SnapshotDatasetNodeListModel.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -267,7 +269,9 @@ HEADERS  += \
     plot/BufferPlot.h \
     widget/WidgetDynamicList.h \
     metatypes.h \
-    data/SearchNodeListModel.h
+    data/SearchNodeListModel.h \
+    data/LiveDatasetTableModel.h \
+    data/SnapshotDatasetNodeListModel.h
 
 FORMS    += \
     search/searchnoderesult.ui \

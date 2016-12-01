@@ -70,6 +70,11 @@ namespace chaos {
                     virtual int getSnapshotForNode(const std::string& node_unique_id,
                                                    ChaosStringVector& snapshot_for_node);
                     
+                    //!return all dataset in snapshot for a node
+                    virtual int getDatasetInSnapshotForNode(const std::string& node_unique_id,
+                                                            const std::string& snapshot_name,
+                                                            SnapshotList& snapshot_for_node) = 0;
+                    
                     //! delete a snapshot
                     /*!
                      remove interelly the snapshot.

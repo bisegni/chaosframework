@@ -64,6 +64,10 @@ namespace chaos {
                     
                     //! Return all shapshot
                     int getAllSnapshot(chaos::metadata_service::persistence::data_access::SnapshotList& snapshot_desriptions);
+                    
+                    int getDatasetInSnapshotForNode(const std::string& node_unique_id,
+                                                    const std::string& snapshot_name,
+                                                    data_access::SnapshotList& snapshot_for_node);
                 };
                 
             }
