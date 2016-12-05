@@ -58,7 +58,7 @@ void testInfrastructure() {
         idx < 1000;
         idx++) {
         
-        executor.submitCommand("TestCommandComplete", NULL, command_id, 0, 100, chaos::common::batch_command::SubmissionRuleType::SUBMIT_AND_Stack);
+        executor.submitCommand("TestCommandComplete", NULL, command_id, 0, 100, chaos::common::batch_command::SubmissionRuleType::SUBMIT_AND_STACK);
     }
     
     //test random

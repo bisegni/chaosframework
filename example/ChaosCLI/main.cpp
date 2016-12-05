@@ -102,9 +102,9 @@ int checkSubmissionRule(std::string scSubmissionRule) {
     if( scSubmissionRule.compare("normal") == 0) {
         return chaos_batch::SubmissionRuleType::SUBMIT_NORMAL;
     } else if( scSubmissionRule.compare("stack")  == 0) {
-        return chaos_batch::SubmissionRuleType::SUBMIT_AND_Stack;
+        return chaos_batch::SubmissionRuleType::SUBMIT_AND_STACK;
     } else if( scSubmissionRule.compare("kill")  == 0) {
-        return chaos_batch::SubmissionRuleType::SUBMIT_AND_Kill;
+        return chaos_batch::SubmissionRuleType::SUBMIT_AND_KILL;
     } else return -1;
 }
 

@@ -99,9 +99,9 @@ namespace chaos {
                  * \brief Describe the state in which the command can be found
                  */
                 typedef enum SubmissionRule {
-                    SUBMIT_AND_Stack    = 0,    /**< The new command wil stack the current executing command that consist in
+                    SUBMIT_AND_STACK    = 0,    /**< The new command wil stack the current executing command that consist in
                                                  install all implemented handler of the new one without touch the handler that are not implemented */
-                    SUBMIT_AND_Kill     = 1,    /**< The new command will kill the current command, all hadnler ol killed one are erased and substituted */
+                    SUBMIT_AND_KILL     = 1,    /**< The new command will kill the current command, all hadnler ol killed one are erased and substituted */
                     SUBMIT_NORMAL       = 2     /**< The new command will waith the end of the current executed command and if an handler is implemented it is installed*/
                 } SubmissionRule;
             }

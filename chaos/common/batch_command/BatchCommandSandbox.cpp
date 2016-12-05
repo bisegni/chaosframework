@@ -93,8 +93,8 @@ void CommandInfoAndImplementation::deleteImpl() {
 
 
 //------------------------------------------------------------------------------------------------------------
-//SUBMIT_AND_Stack    = 0,
-//SUBMIT_AND_Kill     = 1,
+//SUBMIT_AND_STACK    = 0,
+//SUBMIT_AND_KILL     = 1,
 //SUBMIT_NORMAL       = 2
 
 //RS_Exsc     = 0,
