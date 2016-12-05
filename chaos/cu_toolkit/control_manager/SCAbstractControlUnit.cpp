@@ -333,3 +333,40 @@ void SCAbstractControlUnit::installCommand(boost::shared_ptr<BatchCommandDescrip
                           sandbox);
     }
 }
+bool SCAbstractControlUnit::waitOnCommandID(uint64_t& cmd_id) {
+    std::auto_ptr<CommandState> cmd_state;
+    do {
+        cmd_state = getStateForCommandID(cmd_id);
+        if (!cmd_state.get()) break;
+
+        switch (cmd_state->last_event) {
+            case BatchCommandEventType::EVT_QUEUED:
+                SCACU_LDBG_ << cmd_id << " -> QUEUED";
+                break;
+            case BatchCommandEventType::EVT_RUNNING:
+                SCACU_LDBG_ << cmd_id << " -> RUNNING";
+                break;
+            case BatchCommandEventType::EVT_WAITING:
+                SCACU_LDBG_ << cmd_id << " -> WAITING";
+                break;
+            case BatchCommandEventType::EVT_PAUSED:
+                SCACU_LDBG_ << cmd_id << " -> PAUSED";
+                break;
+            case BatchCommandEventType::EVT_KILLED:
+                SCACU_LDBG_ << cmd_id << " -> KILLED";
+                break;
+            case BatchCommandEventType::EVT_COMPLETED:
+                SCACU_LDBG_ << cmd_id << " -> COMPLETED";
+                break;
+            case BatchCommandEventType::EVT_FAULT:
+                SCACU_LDBG_ << cmd_id << " -> FAULT";
+                break;
+        }
+        //whait some times
+        usleep(500000);
+    } while (cmd_state->last_event != BatchCommandEventType::EVT_COMPLETED &&
+            cmd_state->last_event != BatchCommandEventType::EVT_FAULT &&
+            cmd_state->last_event != BatchCommandEventType::EVT_KILLED);
+    return (cmd_state.get() &&
+            cmd_state->last_event == BatchCommandEventType::EVT_COMPLETED);
+}

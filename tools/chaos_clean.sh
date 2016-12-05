@@ -22,7 +22,8 @@ if [ -n "$CHAOS_TARGET" ];then
     cleandir $chaos_bundle/build-${CHAOS_TARGET}
 else
     cleandir $chaos_bundle/chaosframwork/external-$sys-$mac
-        cleandir $chaos_bundle/build-$sys-$mac
+    cleandir $chaos_bundle/build-$sys-$mac
+    cleandir $chaos_bundle/chaosframework/chaos-distrib-$sys-$mac
 fi
 cleandir $chaos_bundle/chaosframwork/usr
 cleandir $chaos_bundle/chaosframework/bin

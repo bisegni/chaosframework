@@ -162,6 +162,8 @@ namespace chaos {
                                     bool is_default = false,
                                     bool sticky = true,
                                     unsigned int sandbox = 0);
+                
+                bool waitOnCommandID(uint64_t& cmd_id);
 			};
 		}
     }
