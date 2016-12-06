@@ -58,7 +58,7 @@ void SearchNodeResult::initUI() {
             SIGNAL(timeout()),
             SLOT(on_pushButtonStartSearch_clicked()));
 
-    setTabTitle("Search Nodes");
+    setTitle("Search Nodes");
 
     if(selection_mode){
         ui->pushButtonActionOnSelected->setText(tr("select"));
@@ -110,9 +110,9 @@ void SearchNodeResult::contextualMenuActionTrigger(const QString& cm_title,
         if(cm_title.compare(CM_EDIT_NODE) == 0) {
             //edit node
 
-            addWidgetToPresenter(new ControlUnitEditor(element_data->title));
+            launchPresenterWidget(new ControlUnitEditor(element_data->title));
         } else if(cm_title.compare(CM_EDIT_INSTANCE) == 0) {
-            addWidgetToPresenter(new ControUnitInstanceEditor("",
+            launchPresenterWidget(new ControUnitInstanceEditor("",
                                                               element_data->title,
                                                               true));
         }
@@ -169,10 +169,10 @@ void SearchNodeResult::on_listViewResult_doubleClicked(const QModelIndex &index)
     } else {
         if(node_type.compare(chaos::NodeType::NODE_TYPE_UNIT_SERVER) == 0) {
             qDebug() << "Open unit server editor for" << node_uid;
-            addWidgetToPresenter(new UnitServerEditor(node_uid));
+            launchPresenterWidget(new UnitServerEditor(node_uid));
         }else if(node_type.compare(chaos::NodeType::NODE_TYPE_CONTROL_UNIT) == 0) {
             qDebug() << "Open control unit editor for" << node_uid;
-            addWidgetToPresenter(new ControlUnitEditor(node_uid));
+            launchPresenterWidget(new ControlUnitEditor(node_uid));
         }
     }
 }

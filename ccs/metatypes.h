@@ -12,7 +12,7 @@
 #include "data/DatasetAttributeReader.h"
 #include "data/delegate/TwoLineInformationItem.h"
 #include <chaos/common/data/CDataWrapper.h>
-#include <chaos/common/data/CDataWrapper.h>
+#include <chaos/common/data/CDataVariant.h>
 
 Q_DECLARE_METATYPE(std::string)
 Q_DECLARE_METATYPE(int32_t)
@@ -33,5 +33,6 @@ Q_DECLARE_METATYPE(boost::shared_ptr<chaos::common::data::CDataWrapper>)
 Q_DECLARE_METATYPE(boost::shared_ptr<chaos::CException>)
 Q_DECLARE_METATYPE(chaos::metadata_service_client::node_monitor::OnlineState)
 Q_DECLARE_METATYPE(chaos::service_common::data::node::NodeInstance)
+Q_DECLARE_METATYPE(chaos::common::data::CDataVariant)
 
 #endif // METATYPES_H

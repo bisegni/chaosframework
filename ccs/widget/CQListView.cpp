@@ -1,9 +1,7 @@
 #include "CQListView.h"
 
 CQListView::CQListView(QWidget *parent):
-    QListView(parent) {
-    setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-}
+    QListView(parent) {}
 
 void CQListView::setResizeOnModelReset(bool new_resize_on_reset) {
     resize_on_reset = new_resize_on_reset;
@@ -28,5 +26,6 @@ void CQListView::setModel(QAbstractItemModel *model) {
 }
 
 void CQListView::modelResetEvent() {
+    setMinimumHeight(0);
     setMaximumWidth(sizeHintForColumn(0)+5);
 }

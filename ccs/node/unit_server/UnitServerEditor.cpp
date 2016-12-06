@@ -52,7 +52,7 @@ UnitServerEditor::~UnitServerEditor() {
 }
 
 void UnitServerEditor::initUI() {
-    setTabTitle(node_unique_id);
+    setTitle(node_unique_id);
     ui->labelUnitServerUID->setText(node_unique_id);
 
     //create cu type list model
@@ -280,7 +280,7 @@ void UnitServerEditor::on_pushButtonCreateNewInstance_clicked()
         return;
     }
     //we can start instance editor
-    addWidgetToPresenter(new ControUnitInstanceEditor(node_unique_id,
+    launchPresenterWidget(new ControUnitInstanceEditor(node_unique_id,
                                                       selected_index.first().data().toString()));
 }
 
@@ -305,7 +305,7 @@ void UnitServerEditor::on_pushButtonEditInstance_clicked() {
     foreach (QModelIndex element, ui->tableView->selectionModel()->selectedRows()) {
         QString cu_inst_id = table_model->item(element.row(), 0)->text();
         qDebug() << "Edit " << cu_inst_id << " instance";
-        addWidgetToPresenter(new ControUnitInstanceEditor(node_unique_id,
+        launchPresenterWidget(new ControUnitInstanceEditor(node_unique_id,
                                                           cu_inst_id,
                                                           true));
     }
@@ -425,7 +425,7 @@ void UnitServerEditor::moveToUnitServer() {
     tag.resize(tag.size()-1);
     move_copy_search_instance = new SearchNodeResult(true, tag);
     connect(move_copy_search_instance, SIGNAL(selectedNodes(QString,QVector<QPair<QString,QString> >)), SLOT(selectedUnitServer(QString,QVector<QPair<QString,QString> >)));
-    addWidgetToPresenter(move_copy_search_instance);
+    launchPresenterWidget(move_copy_search_instance);
 }
 
 void UnitServerEditor::copyToUnitServer() {
@@ -444,7 +444,7 @@ void UnitServerEditor::copyToUnitServer() {
     tag.resize(tag.size()-1);
     move_copy_search_instance = new SearchNodeResult(true, tag);
     connect(move_copy_search_instance, SIGNAL(selectedNodes(QString,QVector<QPair<QString,QString> >)), SLOT(selectedUnitServer(QString,QVector<QPair<QString,QString> >)));
-    addWidgetToPresenter(move_copy_search_instance);
+    launchPresenterWidget(move_copy_search_instance);
 }
 
 void UnitServerEditor::selectedUnitServer(const QString& tag, const QVector< QPair<QString,QString> >& selected_item) {
@@ -537,5 +537,5 @@ void UnitServerEditor::changedNodeOnlineStatus(const QString& node_uid,
 void UnitServerEditor::on_tableView_doubleClicked(const QModelIndex &index) {
     QStandardItem *node_uid = table_model->item(index.row(), 0);
     qDebug() << "Open control unit editor for" << node_uid->text();
-    addWidgetToPresenter(new ControlUnitEditor(node_uid->text()));
+    launchPresenterWidget(new ControlUnitEditor(node_uid->text()));
 }

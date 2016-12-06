@@ -20,9 +20,7 @@
 
 #ifndef __CHAOSFramework__ChaosDataService__
 #define __CHAOSFramework__ChaosDataService__
-
 #pragma GCC diagnostic ignored "-Woverloaded-virtual"
-
 #include "dataservice_global.h"
 #include "QueryDataConsumer.h"
 #include "worker/DataWorker.h"
@@ -31,65 +29,58 @@
 #include <map>
 #include <string>
 #include <vector>
-
 #include <boost/thread/condition.hpp>
-
 #include <chaos/common/global.h>
 #include <chaos/common/ChaosCommon.h>
 #include <chaos/common/thread/WaitSemaphore.h>
 #include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/utility/StartableService.h>
-
-
 namespace common_utility = chaos::common::utility;
-
 namespace chaos{
-    namespace data_service {
+  namespace data_service{
+    typedef enum RunMode{
+      QUERY   = 1,
+      INDEXER = 2,
+      BOTH    = 3
+    } RunMode;
 
-		typedef enum RunMode {
-			QUERY = 1,
-			INDEXER = 2,
-			BOTH = 3
-		} RunMode;
-		
-        //! Chaos Data Service singleton
-        /*!
-         */
-        class ChaosDataService : public ChaosCommon<ChaosDataService> {
-            friend class Singleton<ChaosDataService>;
-			RunMode run_mode;
-            static WaitSemaphore waitCloseSemaphore;
-    
-            ChaosDataService();
-            ~ChaosDataService();
-            static void signalHanlder(int);
-			
-			//! CDS data consumer that respond to data api
-			common::utility::StartableServiceContainer<QueryDataConsumer> data_consumer;
-			
-			//! convert param_key to a string of string hash map
-			void fillKVParameter(std::map<std::string, std::string>& kvmap,
-								 const std::vector<std::string>& multitoken_parameter);
-        public:
-			
-			ChaosDataServiceSetting setting;
-			
-            //! C and C++ attribute parser
-            /*!
-             Specialized option for startup c and cpp program main options parameter
-             */
-            void init(int argc, char* argv[]) throw (CException);
-            //!stringbuffer parser
-            /*
-             specialized option for string stream buffer with boost semantics
-             */
-            void init(istringstream &initStringStream) throw (CException);
-            void init(void *init_data)  throw(CException);
-            void start() throw(CException);
-            void stop() throw(CException);
-            void deinit() throw(CException);
-        };
-    }
+    //! Chaos Data Service singleton
+    /*!
+     */
+    class ChaosDataService:public ChaosCommon<ChaosDataService>{
+      friend class Singleton<ChaosDataService>;
+      RunMode              run_mode;
+      static WaitSemaphore waitCloseSemaphore;
+
+      ChaosDataService();
+      ~ChaosDataService();
+      static void signalHanlder(int);
+
+      //! CDS data consumer that respond to data api
+      common::utility::StartableServiceContainer<QueryDataConsumer> data_consumer;
+
+      //! convert param_key to a string of string hash map
+      void fillKVParameter(std::map<std::string,
+                                    std::string> &kvmap,
+                           const std::vector<std::string> &multitoken_parameter);
+    public:
+      ChaosDataServiceSetting setting;
+
+      //! C and C++ attribute parser
+      /*!
+       Specialized option for startup c and cpp program main options parameter
+       */
+      void init(int argc, char *argv[]) throw(CException);
+      //!stringbuffer parser
+      /*
+       specialized option for string stream buffer with boost semantics
+       */
+      void init(istringstream &initStringStream) throw(CException);
+      void init(void *init_data)  throw(CException);
+      void start() throw(CException);
+      void stop() throw(CException);
+      void deinit() throw(CException);
+    };
+  }
 }
-
 #endif /* defined(__CHAOSFramework__ChaosDataProxy__) */

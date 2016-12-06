@@ -1,6 +1,7 @@
 #include "SnapshotManager.h"
 #include "ui_SnapshotManager.h"
 #include "NewSnapshot.h"
+#include "../metatypes.h"
 
 #include <QStandardItem>
 
@@ -9,6 +10,7 @@ static QString TAG_DELETE_SNAPSHOT  = "t_a_ds";
 static QString TAG_RESTORE_SNAPSHOT = "t_a_rs";
 static QString TAG_LOAD_NODE_IN_SNAPSHOT = "t_a_lnis";
 
+using namespace chaos::common::data;
 using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::api_proxy;
 
@@ -31,6 +33,10 @@ void SnapshotManager::initUI() {
     ui->listViewNodesInSnapshot->setModel(&node_in_snapshot_list_model);
 
     ui->tableViewSnapshotList->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    //snapshot dataset values visualization
+    ui->listViewSnapshotNodeDataset->setModel(&lm_dataset_for_node_snapshot);
+    ui->tableViewSnappedDatasetAttributes->setModel(&tm_snapshot_dataset_view);
+
     connect(ui->tableViewSnapshotList->selectionModel(),
             SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
             SLOT(tableSelectionChanged(QItemSelection,QItemSelection)));
@@ -61,7 +67,7 @@ void SnapshotManager::executeSearch() {
 }
 
 void SnapshotManager::on_pushButtonNewSnapshot_clicked() {
-    addWidgetToPresenter(new NewSnapshot());
+    launchPresenterWidget(new NewSnapshot());
 }
 
 void SnapshotManager::on_pushButtonDeleteSnapshot_clicked() {
@@ -92,15 +98,31 @@ void SnapshotManager::tableSelectionChanged(const QItemSelection & from, const Q
     //reset node list
     node_in_snapshot_list_model.reset();
     if(ui->tableViewSnapshotList->selectionModel()->selectedRows().size() == 1) {
+        //clear node and dataset for node
+        lm_dataset_for_node_snapshot.clear();
+        tm_snapshot_dataset_view.clear();
         //load nodes for selection
-       QModelIndex row_selected =  ui->tableViewSnapshotList->selectionModel()->selectedRows().first();
-       QVariant snap_name_item = snapshot_table_model.data(row_selected);
-       QString snap_name = snap_name_item.toString();
-       submitApiResult(TAG_LOAD_NODE_IN_SNAPSHOT,
-                       GET_CHAOS_API_PTR(service::GetNodesForSnapshot)->execute(snap_name.toStdString()));
+        QModelIndex row_selected =  ui->tableViewSnapshotList->selectionModel()->selectedRows().first();
+        QVariant snap_name_item = snapshot_table_model.data(row_selected);
+        current_snapshot_name = snap_name_item.toString();
+        submitApiResult(TAG_LOAD_NODE_IN_SNAPSHOT,
+                        GET_CHAOS_API_PTR(service::GetNodesForSnapshot)->execute(current_snapshot_name.toStdString()));
     }
 }
 
 void SnapshotManager::on_pushButtonSearchSnapshot_clicked() {
     executeSearch();
+}
+
+void SnapshotManager::on_listViewNodesInSnapshot_clicked(const QModelIndex &index) {
+    //got double clik on node in snapshot
+    const QString selected_node = index.data().toString();
+    tm_snapshot_dataset_view.clear();
+    lm_dataset_for_node_snapshot.updateDatasetListFor(selected_node,
+                                                      current_snapshot_name);
+}
+
+void SnapshotManager::on_listViewSnapshotNodeDataset_clicked(const QModelIndex &index) {
+    CDWShrdPtr selected_dataset = index.data(Qt::UserRole).value<CDWShrdPtr>();
+    tm_snapshot_dataset_view.setDataset(selected_dataset);
 }

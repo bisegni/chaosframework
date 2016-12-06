@@ -132,7 +132,7 @@ void DataServiceEditor::on_pushButtonAssociateNewControlUnit_clicked() {
             SIGNAL(selectedNodes(QString, QVector<QPair<QString,QString> >)),
             SLOT(handleSelectedNodes(QString, QVector<QPair<QString,QString> >)));
     //show the search panel
-    addWidgetToPresenter(search_node);
+    launchPresenterWidget(search_node);
 }
 
 

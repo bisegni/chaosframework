@@ -20,7 +20,7 @@ LogBrowser::~LogBrowser() {
 }
 
 void LogBrowser::initUI() {
-    setTabTitle("Log Browser");
+    setTitle("Log Browser");
     //configure domain list
     ui->listViewAllLogDomain->setModel(&log_domain_list_model);
     connect(&log_domain_list_model,

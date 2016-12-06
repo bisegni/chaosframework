@@ -40,7 +40,8 @@ Qt::ItemFlags GroupTreeModel::flags(const QModelIndex &index) const {
     return QAbstractItemModel::flags(index);
 }
 
-QVariant GroupTreeModel::headerData(int section, Qt::Orientation orientation,
+QVariant GroupTreeModel::headerData(int section,
+                                    Qt::Orientation orientation,
                                     int role) const {
     if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
         return root_item->data(section);

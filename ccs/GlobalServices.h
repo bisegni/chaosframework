@@ -1,22 +1,22 @@
 #ifndef GLOBALSERVICES_H
 #define GLOBALSERVICES_H
 
-#include "presenter/CommandPresenter.h"
+#include "monitor/healt/HealtMonitorWidget.h"
 
 #include <chaos/common/utility/Singleton.h>
 
 class GlobalServices:
         public chaos::common::utility::Singleton<GlobalServices> {
     friend class Singleton<GlobalServices>;
-    friend class MainWindow;
+    friend class MainController;
 public:
-    CommandPresenter *presenter();
+    HealtMonitorWidget *currentNodeMonitor();
 private:
     GlobalServices();
 
-    void setPresenter(CommandPresenter *presenter);
+    void setCurrentNodeMonitor(HealtMonitorWidget *monitor);
 
-    CommandPresenter *current_presenter;
+    HealtMonitorWidget *current_node_monitor;
 };
 
 #endif // GLOBALSERVICES_H

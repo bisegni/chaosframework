@@ -28,5 +28,5 @@
 #include <ChaosMetadataServiceClient/api_proxy/service/RestoreSnapshot.h>
 #include <ChaosMetadataServiceClient/api_proxy/service/CreateNewSnapshot.h>
 #include <ChaosMetadataServiceClient/api_proxy/service/GetNodesForSnapshot.h>
-
+#include <ChaosMetadataServiceClient/api_proxy/service/GetSnapshotDatasetForNode.h>
 #endif /* __CHAOSFramework__FAF6B9C_755D_4F4B_9951_29252A834468_service_h */
