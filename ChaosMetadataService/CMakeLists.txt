@@ -45,6 +45,7 @@ SET(cnd_src  ${cnd_src}	api/service/ServiceApiGroup.cpp
                         api/service/CreateNewSnapshot.cpp
                         api/service/DeleteSnapshot.cpp
                         api/service/GetNodesForSnapshot.cpp
+                        api/service/GetSnapshotDatasetsForNode.cpp
                         api/service/GetSnapshotForNode.cpp)
 
 SET(cnd_src  ${cnd_src}	api/healt/HealtApiGroup.cpp
