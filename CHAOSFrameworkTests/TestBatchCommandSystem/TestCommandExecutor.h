@@ -76,7 +76,8 @@ namespace chaos{
                     void handleCommandEvent(const std::string& command_alias,
                                             uint64_t command_seq,
                                             BatchCommandEventType::BatchCommandEventType type,
-                                            chaos::common::data::CDataWrapper *command_data);
+                                            chaos::common::data::CDataWrapper *command_info,
+                                            const BatchCommandStat& commands_stats);
                     
                     //! general sandbox event handler
                     void handleSandboxEvent(const std::string& sandbox_id,

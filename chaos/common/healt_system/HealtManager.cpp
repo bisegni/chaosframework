@@ -498,18 +498,18 @@ void HealtManager::_publish(const boost::shared_ptr<NodeHealtSet>& heath_set,
     updateProcInfo();
     
     //send datapack
-    CDataWrapper *data_pack = prepareNodeDataPack(*heath_set,
-                                                  publish_ts);
-    if(data_pack) {
+    std::auto_ptr<CDataWrapper> data_pack(prepareNodeDataPack(*heath_set,
+                                                              publish_ts));
+    if(data_pack.get()) {
         //store data on cache
         io_data_driver->storeData(heath_set->node_publish_key,
-                                  data_pack,
+                                  data_pack.get(),
                                   DataServiceNodeDefinitionType::DSStorageTypeLive,
                                   false);
         //notify data on mds
         mds_message_channel->sendMessage(NodeDomainAndActionRPC::RPC_DOMAIN,
                                          chaos::MetadataServerNodeDefinitionKeyRPC::ACTION_NODE_HEALTH_STATUS,
-                                         data_pack);
+                                         data_pack.get());
     } else {
         HM_ERR << "Error allocating health datapack for node:" << heath_set->node_uid;
     }
