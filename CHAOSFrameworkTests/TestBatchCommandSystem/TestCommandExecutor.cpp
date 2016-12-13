@@ -60,8 +60,9 @@ BatchCommand *  TestCommandExecutor::instanceCommandInfo(const std::string& comm
 
 void TestCommandExecutor::handleCommandEvent(const std::string& command_alias,
                                              uint64_t command_seq,
-                                             common::batch_command::BatchCommandEventType::BatchCommandEventType type,
-                                             chaos::common::data::CDataWrapper *command_data) {
+                                             BatchCommandEventType::BatchCommandEventType type,
+                                             chaos::common::data::CDataWrapper *command_info,
+                                             const BatchCommandStat& commands_stats) {
     LockableObjectWriteLock_t wl;
     map_id_command.getWriteLock(wl);
     if(map_id_command().count(command_seq) == 0) return;
