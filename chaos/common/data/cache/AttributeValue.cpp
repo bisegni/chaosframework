@@ -158,6 +158,7 @@ bool AttributeValue::setValue(const CDataVariant& attribute_value,
                         sizeof(bool));
             break;
         }
+        case DataType::TYPE_JSONOBJ:
         case DataType::TYPE_STRING: {
             const std::string value = attribute_value.asString();
             if(!grow((uint32_t)value.size())) return false;
@@ -259,6 +260,15 @@ void AttributeValue::writeToCDataWrapper(CDataWrapper& data_wrapper) {
             data_wrapper.addBinaryValue(name, (const char *)value_buffer, size);
             break;
         }
+        case chaos::DataType::TYPE_JSONOBJ:{
+           
+            unsigned long str_len = std::strlen((const char *)value_buffer);
+            str_len = (str_len>=size?size:str_len);
+             std::string tt=std::string(static_cast<const char*>(value_buffer), str_len);
+           
+            data_wrapper.addJsonValue(name,tt);
+            break;
+        }
         case chaos::DataType::TYPE_STRING:{
             unsigned long str_len = std::strlen((const char *)value_buffer);
             str_len = (str_len>=size?size:str_len);
@@ -298,6 +308,7 @@ std::string AttributeValue::toString() {
         case chaos::DataType::TYPE_BYTEARRAY:{
             return "binary_data";
         }
+        case chaos::DataType::TYPE_JSONOBJ:
         case chaos::DataType::TYPE_STRING:{
             return std::string((const char *)value_buffer, size);
         }
@@ -332,6 +343,8 @@ std::string AttributeValue::toString(int double_precision) {
         case chaos::DataType::TYPE_BYTEARRAY:{
             return "binary_data";
         }
+        
+        case chaos::DataType::TYPE_JSONOBJ:
         case chaos::DataType::TYPE_STRING:{
             return std::string((const char *)value_buffer, size);
         }

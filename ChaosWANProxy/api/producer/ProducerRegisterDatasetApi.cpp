@@ -207,7 +207,10 @@ int ProducerRegisterDatasetApi::scanDatasetElement(const Json::Value& dataset_js
 	}else if(type.compare("string") == 0) {
 		element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE,
 							   chaos::DataType::TYPE_STRING);
-	}else if(type.compare("binary") == 0) {
+	}else if(type.compare("json") == 0) {
+		element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE,
+							   chaos::DataType::TYPE_JSONOBJ);
+	} else if(type.compare("binary") == 0) {
 		element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE,
 							   chaos::DataType::TYPE_BYTEARRAY);
 	}else if(type.compare("boolean") == 0) {

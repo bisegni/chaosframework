@@ -1225,6 +1225,8 @@ void AbstractControlUnit::initAttributeOnSharedAttributeCache(SharedCacheDomain 
                     int64_t val = strtoll(attributeInfo.defaultValue.c_str(),0,0);//boost::lexical_cast<int64_t>(attributeInfo.defaultValue);
                     attribute_setting.setValueForAttribute(idx, &val, sizeof(int64_t));
                     break;}
+                
+                case DataType::TYPE_JSONOBJ:
                 case DataType::TYPE_STRING : {
                     const char * val = attributeInfo.defaultValue.c_str();
                     attribute_setting.setValueForAttribute(idx, val, (uint32_t)attributeInfo.defaultValue.size());
@@ -1457,6 +1459,17 @@ CDataWrapper* AbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_att
                             attribute_cache_value->setValue(&dv, sizeof(double));
                             break;
                         }
+                        
+                        case DataType::TYPE_JSONOBJ: {
+                            std::string str = dataset_attribute_values->getStringValue(attr_name);
+                            try{
+                               attribute_cache_value->setValue(str.c_str(), (uint32_t)str.size());
+
+                            } catch(...){
+                                throw MetadataLoggingCException(getCUID(), -1, boost::str(boost::format("Invalid Json format '%1%'")  %str).c_str(),__PRETTY_FUNCTION__);
+                            }
+                            break;
+                        }
                         case DataType::TYPE_STRING: {
                             std::string str = dataset_attribute_values->getStringValue(attr_name);
                             CHECK_FOR_STRING_RANGE_VALUE(str, attr_name)
@@ -1572,6 +1585,16 @@ void AbstractControlUnit::pushOutputDataset(bool ts_already_set) {
             case DataType::TYPE_DOUBLE:
                 output_attribute_dataset->addDoubleValue(value_set->name, *value_set->getValuePtr<double>());
                 break;
+            case DataType::TYPE_JSONOBJ:{
+                
+                try{
+                    output_attribute_dataset->addJsonValue(value_set->name,value_set->getValuePtr<const char>());
+                } catch(...){
+                    throw MetadataLoggingCException(getCUID(), -101, boost::str(boost::format("Invalid Json format for attribute '%1%' :'%2%")  % value_set->name %value_set->getValuePtr<const char>()).c_str(),__PRETTY_FUNCTION__);
+
+                }
+                break;
+            }
             case DataType::TYPE_STRING:
                 //DEBUG_CODE(ACULAPP_ << value_set->name<<"-"<<value_set->getValuePtr<const char>();)
                 output_attribute_dataset->addStringValue(value_set->name, value_set->getValuePtr<const char>());

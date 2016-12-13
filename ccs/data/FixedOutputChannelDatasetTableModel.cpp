@@ -112,6 +112,9 @@ QVariant FixedOutputChannelDatasetTableModel::getCellData(int row, int column) c
             case chaos::DataType::TYPE_INT64:
                 result = QString("Int64");
                 break;
+            case chaos::DataType::TYPE_JSONOBJ:
+                result = QString("json");
+                break;
             case chaos::DataType::TYPE_STRING:
                 result = QString("String");
                 break;

@@ -23,6 +23,7 @@
 #include <chaos/common/bson/bson.h>
 #include <chaos/common/chaos_types.h>
 #include <chaos/common/data/CDataBuffer.h>
+#include <json/json.h>
 
 #include <boost/scoped_ptr.hpp>
 
@@ -124,6 +125,12 @@ namespace chaos {
                 //add a string value
                 void addStringValue(const std::string&, const string&);
                 
+                //add a json value
+                void addJsonValue(const std::string&, const string&);
+                
+                //add a json value
+                void addJsonValue(const std::string&, Json::Value&);
+                
                 //add a string to array
                 void appendStringToArray(const char *);
                 
@@ -190,6 +197,11 @@ namespace chaos {
                 //get a bool value
                 bool getBoolValue(const std::string&);
                 
+
+                //get a json value
+                std::string getJsonValue(const std::string&);
+
+
                 template<typename T>
                 T getValue(const std::string& key) {
                     T v;
@@ -292,6 +304,8 @@ namespace chaos {
                 bool isCDataWrapperValue(const std::string& key);
                 
                 bool isVectorValue(const std::string& key);
+                
+                bool isJsonValue(const std::string& key);
                 
                 CDataWrapperType getValueType(const std::string& key);
             };

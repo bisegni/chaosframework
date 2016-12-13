@@ -68,6 +68,9 @@ void CDSAttrQLineEdit::chaosValueTypeChanged(int new_type) {
         setValidator(validator);
         break;
     }
+    case chaos::DataType::TYPE_JSONOBJ:
+        // TODO handle this case
+        break;
     case chaos::DataType::TYPE_STRING:
         break;
     default:
