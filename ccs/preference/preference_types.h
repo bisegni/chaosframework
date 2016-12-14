@@ -1,0 +1,6 @@
+#ifndef PREFERENCE_TYPES_
+#define PREFERENCE_TYPES_
+
+#define PREFERENCE_NETWORK_GROUP_NAME "net:preference:1_0"
+
+#endif // PREFERENCE_TYPES_

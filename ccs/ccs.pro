@@ -144,7 +144,8 @@ SOURCES += main.cpp\
     widget/WidgetDynamicList.cpp \
     data/SearchNodeListModel.cpp \
     data/LiveDatasetTableModel.cpp \
-    data/SnapshotDatasetNodeListModel.cpp
+    data/SnapshotDatasetNodeListModel.cpp \
+    preference/PreferenceManager.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -271,7 +272,9 @@ HEADERS  += \
     metatypes.h \
     data/SearchNodeListModel.h \
     data/LiveDatasetTableModel.h \
-    data/SnapshotDatasetNodeListModel.h
+    data/SnapshotDatasetNodeListModel.h \
+    preference/PreferenceManager.h \
+    preference/preference_types.h
 
 FORMS    += \
     search/searchnoderesult.ui \
