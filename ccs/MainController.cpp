@@ -254,7 +254,7 @@ void MainController::actionNewNodeMonitor() {
 void MainController::actionSwitchNetworkConfiguration() {
     QAction* action_network_configuration = dynamic_cast<QAction*>(sender());
     if(action_network_configuration == NULL) return;
-    qDebug() << action_network_configuration->text();
+    PreferenceManager::getInstance()->activerNetworkConfiguration(action_network_configuration->text());
 }
 
 void MainController::actionNewUnitServer() {
