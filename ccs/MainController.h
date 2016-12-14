@@ -27,6 +27,7 @@ private slots:
     void actionDataService();
     void actionNewUnitServer();
     void actionNewNodeMonitor();
+    void actionSwitchNetworkConfiguration();
     void lastWindowClosed();
 private:
     QMenuBar main_menu_bar;
@@ -36,6 +37,7 @@ private:
     bool reconfigure();
     void openInWindow(QWidget *w);
     void initApplicationMenuBar();
+    void initConfigurationsMenu(QMenu *menu_configurations);
 };
 
 #endif // MAINCONTROLLER_H

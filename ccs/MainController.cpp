@@ -8,12 +8,12 @@
 #include <QTextStream>
 #include <QDebug>
 #include <QFile>
-#include <QSettings>
 #include <QString>
 #include <string>
 #include <QInputDialog>
 #include <QTextStream>
 #include <QFile>
+#include <QMenu>
 
 #include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
 
@@ -21,6 +21,7 @@
 #include "node/data_service/DataServiceEditor.h"
 #include "search/SearchNodeResult.h"
 #include "preference/PreferenceDialog.h"
+#include "preference/PreferenceManager.h"
 #include "snapshot/SnapshotManager.h"
 #include "tree_group/TreeGroupManager.h"
 #include "log_browser/LogBrowser.h"
@@ -165,33 +166,8 @@ void MainController::deinit() {
 
 bool MainController::reconfigure() {
     bool configured = true;
-    QSettings settings;
     try{
-        ChaosMetadataServiceClient::getInstance()->clearServerList();
-        settings.beginGroup(PREFERENCE_NETWORK_GROUP_NAME);
-
-        const QString current_setting = settings.value("active_configuration").toString();
-        if(settings.childGroups().contains(current_setting)) {
-            settings.beginGroup(current_setting);
-
-            int mds_address_size = settings.beginReadArray("mds_address");
-            for (int i = 0; i < mds_address_size; ++i) {
-                settings.setArrayIndex(i);
-                ChaosMetadataServiceClient::getInstance()->addServerAddress(settings.value("address").toString().toStdString());
-            }
-            settings.endArray();
-            settings.endGroup();
-            //check if monitoring is started
-            if(mds_address_size &&
-                    !ChaosMetadataServiceClient::getInstance()->monitoringIsStarted()) {
-                //try to start it
-                ChaosMetadataServiceClient::getInstance()->enableMonitor();
-            }
-            ChaosMetadataServiceClient::getInstance()->reconfigureMonitor();
-        } else {
-            //mds are not configured so we need to configure it
-            configured = false;
-        }
+        configured = PreferenceManager::getInstance()->activerNetworkConfiguration(PreferenceManager::getInstance()->getActiveConfigurationName());
     }catch(...) {
         configured = false;
     }
@@ -219,8 +195,23 @@ void MainController::initApplicationMenuBar() {
     //Data
     menu = main_menu_bar.addMenu("&Tools");
     menu->addAction("Node Monitor", this, SLOT(actionNewNodeMonitor()),QKeySequence(Qt::CTRL + Qt::Key_P));
+    menu->addSeparator();
+    initConfigurationsMenu(menu->addMenu("Network Configurations"));
     menu->addAction("Preferenes", this, SLOT(actionPreferences()));
     main_menu_bar.show();
+}
+
+void MainController::initConfigurationsMenu(QMenu *menu_configurations) {
+    QAction *action_configuration = NULL;
+    QActionGroup* group_configuration = new QActionGroup(this);
+    QStringList networ_configurations = PreferenceManager::getInstance()->getNetowrkConfigurationsNames();
+    const QString current_setting = PreferenceManager::getInstance()->getActiveConfigurationName();
+    foreach (QString configuration, networ_configurations) {
+        action_configuration = menu_configurations->addAction(configuration, this, SLOT(actionSwitchNetworkConfiguration()));
+        action_configuration->setCheckable(true);
+        action_configuration->setChecked(current_setting.compare(configuration) == 0);
+        action_configuration->setActionGroup(group_configuration);
+    }
 }
 
 void MainController::openInWindow(QWidget *w) {
@@ -258,6 +249,12 @@ void MainController::actionDataService() {
 
 void MainController::actionNewNodeMonitor() {
     openInWindow(new HealtMonitorWidget());
+}
+
+void MainController::actionSwitchNetworkConfiguration() {
+    QAction* action_network_configuration = dynamic_cast<QAction*>(sender());
+    if(action_network_configuration == NULL) return;
+    PreferenceManager::getInstance()->activerNetworkConfiguration(action_network_configuration->text());
 }
 
 void MainController::actionNewUnitServer() {
