@@ -1424,6 +1424,7 @@
 		324A4B9D191A569800975394 /* hex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hex.h; sourceTree = "<group>"; };
 		324C76881E01A5C500BA57E1 /* ProcStat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcStat.cpp; sourceTree = "<group>"; };
 		324C76891E01A5C500BA57E1 /* ProcStat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcStat.h; sourceTree = "<group>"; };
+		324C768C1E01C75E00BA57E1 /* ConfigurationTemplate */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ConfigurationTemplate; sourceTree = "<group>"; };
 		324EF3DB1AE92379000837AF /* NewDS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NewDS.cpp; sourceTree = "<group>"; };
 		324EF3DC1AE92379000837AF /* NewDS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewDS.h; sourceTree = "<group>"; };
 		324EF3DE1AE9238B000837AF /* UpdateDS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UpdateDS.cpp; sourceTree = "<group>"; };
@@ -2778,6 +2779,7 @@
 			isa = PBXGroup;
 			children = (
 				3230D9E81652AAF100113C93 /* CMakeLists.txt */,
+				324C768C1E01C75E00BA57E1 /* ConfigurationTemplate */,
 				323236CA164573C60052CE06 /* main.cpp */,
 				32E9F48B16485012006EAF37 /* ChaosMetadataService.cpp */,
 				32E9F48C16485012006EAF37 /* ChaosMetadataService.h */,
