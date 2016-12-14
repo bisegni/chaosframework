@@ -1,9 +1,10 @@
 /*
- *	persistence.h
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ *	ObjStorage.h
  *
- *    	Copyright 2015 INFN, National Institute of Nuclear Physics
+ *	!CHAOS [CHAOSFramework]
+ *	Created by bisegni.
+ *
+ *    	Copyright 02/09/16 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -18,14 +19,14 @@
  *    	limitations under the License.
  */
 
-#ifndef CHAOSFramework_persistence_h
-#define CHAOSFramework_persistence_h
+#ifndef __CHAOSFramework_F38A8109_6D3D_4252_B4D9_8B3ABEC1274C_ObjStorage_h
+#define __CHAOSFramework_F38A8109_6D3D_4252_B4D9_8B3ABEC1274C_ObjStorage_h
 
-#include "PeristenceManager.h"
-#include "data_access/DataAccess.h"
-#include "persistence_types.h"
+#include "object_storage_types.h"
 
-#include <chaos_service_common/persistence/data_access/AbstractPersistenceDriver.h>
-#include <chaos_service_common/persistence/data_access/AbstractDataAccess.h>
+#include "mongodb/MongoDBObjectStorageDriver.h"
+#include "mongodb/MongoDBObjectStorageDataAccess.h"
 
-#endif
+#include "abstraction/ObjectStorageDataAccess.h"
+
+#endif /* __CHAOSFramework_F38A8109_6D3D_4252_B4D9_8B3ABEC1274C_ObjStorage_h */

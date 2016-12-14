@@ -1,9 +1,9 @@
 /*
- *	persistence.h
+ *	cache_system.h
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
- *    	Copyright 2015 INFN, National Institute of Nuclear Physics
+ *    	Copyright 2014 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -17,15 +17,10 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-
-#ifndef CHAOSFramework_persistence_h
-#define CHAOSFramework_persistence_h
-
-#include "PeristenceManager.h"
-#include "data_access/DataAccess.h"
-#include "persistence_types.h"
-
-#include <chaos_service_common/persistence/data_access/AbstractPersistenceDriver.h>
-#include <chaos_service_common/persistence/data_access/AbstractDataAccess.h>
-
+#ifndef CHAOSFramework_cache_sytem_h
+#define CHAOSFramework_cache_sytem_h
+//#include "MemcachedCacheDriver.h"
+#include "CouchbaseCacheDriver.h"
+#include "CacheDriverMetricCollector.h"
+#include "cache_system_types.h"
 #endif

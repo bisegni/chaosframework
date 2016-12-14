@@ -62,12 +62,39 @@ namespace chaos {
                     int getSnapshotWorkingState(const std::string& snapshot_name,
                                                 bool& work_free);
                     
-                    //! Return all shapshot
+                    //! inherited method
                     int getAllSnapshot(chaos::metadata_service::persistence::data_access::SnapshotList& snapshot_desriptions);
                     
                     int getDatasetInSnapshotForNode(const std::string& node_unique_id,
                                                     const std::string& snapshot_name,
                                                     common::data::VectorStrCDWShrdPtr& snapshot_for_node);
+                    
+                    //! inherited method
+                    int snapshotCreateNewWithName(const std::string& snapshot_name,
+                                                  std::string& working_job_unique_id);
+                    
+                    //! inherited method
+                    int snapshotAddElementToSnapshot(const std::string& working_job_unique_id,
+                                                     const std::string& snapshot_name,
+                                                     const std::string& producer_unique_key,
+                                                     const std::string& dataset_type,
+                                                     void* data,
+                                                     uint32_t data_len);
+                    
+                    //! inherited method
+                    int snapshotIncrementJobCounter(const std::string& working_job_unique_id,
+                                                    const std::string& snapshot_name,
+                                                    bool add);
+                    
+                    //! inherited method
+                    virtual int snapshotGetDatasetForProducerKey(const std::string& snapshot_name,
+                                                                 const std::string& producer_unique_key,
+                                                                 const std::string& dataset_type,
+                                                                 void **channel_data,
+                                                                 uint32_t& channel_data_size);
+                    
+                    //! inherited method
+                    virtual int snapshotDeleteWithName(const std::string& snapshot_name);
                 };
                 
             }

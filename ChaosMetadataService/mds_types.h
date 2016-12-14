@@ -26,21 +26,31 @@
 
 #include "batch/mds_service_batch.h"
 #include "persistence/persistence.h"
+#include "cache_system/cache_system_types.h"
+#include "object_storage/object_storage_types.h"
 
 #include <chaos/common/utility/StartableService.h>
 
 namespace chaos{
-	namespace metadata_service {
-		
-		struct setting {
+    namespace metadata_service {
+        struct setting {
+            bool                                metadata_service_run_mode;
+            bool                                data_service_run_mode;
             //!identify the number of the sandbox to use in the batch system
             unsigned int                        batch_sandbox_size;
             unsigned int                        cron_job_scheduler_repeat_time;
             unsigned int                        cron_job_ageing_management_repeat_time;
-			std::string							persistence_implementation;
-			std::vector<std::string>			persistence_server_list;
-			std::map<std::string, std::string>	persistence_kv_param_map;
-		};
+            std::string							persistence_implementation;
+            std::vector<std::string>			persistence_server_list;
+            std::map<std::string, std::string>	persistence_kv_param_map;
+            
+            //!cache configuration
+            chaos::data_service::cache_system::CacheDriverSetting cache_driver_setting;
+            
+            //----------object storage configuration----------------
+            chaos::data_service::object_storage::ObjStorageSetting  object_storage_setting;
+            
+        };
         
         struct ApiSubserviceAccessor {
             //! network broker for talk with others chaos node
@@ -52,7 +62,7 @@ namespace chaos{
             //! persistence driver instance
             common::utility::InizializableServiceContainer<chaos::service_common::persistence::data_access::AbstractPersistenceDriver> persistence_driver;
         };
-		
-	}
+        
+    }
 }
 #endif

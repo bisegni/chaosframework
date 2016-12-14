@@ -1,9 +1,9 @@
 /*
- *	persistence.h
+ *	CacheDriver.cpp
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
- *    	Copyright 2015 INFN, National Institute of Nuclear Physics
+ *    	Copyright 2014 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -17,15 +17,25 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
+#include "CacheDriver.h"
 
-#ifndef CHAOSFramework_persistence_h
-#define CHAOSFramework_persistence_h
+using namespace chaos::data_service::cache_system;
 
-#include "PeristenceManager.h"
-#include "data_access/DataAccess.h"
-#include "persistence_types.h"
+CacheDriver::CacheDriver(std::string alias):
+NamedService(alias),
+cache_settings(NULL){}
 
-#include <chaos_service_common/persistence/data_access/AbstractPersistenceDriver.h>
-#include <chaos_service_common/persistence/data_access/AbstractDataAccess.h>
+CacheDriver::~CacheDriver() {}
 
-#endif
+//! init
+/*!
+ Need a point to a structure DBDriverSetting for the setting
+ */
+void CacheDriver::init(void *init_data) throw (chaos::CException) {
+	cache_settings = static_cast<CacheDriverSetting*>(init_data);
+}
+
+//! deinit
+void CacheDriver::deinit() throw (chaos::CException) {
+	
+}

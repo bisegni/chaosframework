@@ -26,51 +26,58 @@
 #include "mds_types.h"
 #include "api/ApiManagment.h"
 #include "cron_job/MDSCronousManager.h"
+#include "QueryDataConsumer.h"
 
 #include <boost/thread/condition.hpp>
 
 #include <chaos/common/global.h>
 #include <chaos/common/ChaosCommon.h>
+#include <chaos/common/async_central/async_central.h>
 #include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/thread/WaitSemaphore.h>
 #include <chaos/common/utility/StartableService.h>
-
+#include <chaos/common/utility/ProcStat.h>
 namespace chaos {
     namespace metadata_service {
-            //! Chaos Node Directory base class
-        /*!
-
-         */
+        //! Chaos Node Directory base class
         class ChaosMetadataService :
-		public ChaosCommon<ChaosMetadataService>,
-		public ServerDelegator {
+        public ChaosCommon<ChaosMetadataService>,
+        public chaos::common::async_central::TimerHandler,
+        public ServerDelegator {
             friend class common::utility::Singleton<ChaosMetadataService>;
-
+            
             static WaitSemaphore waitCloseSemaphore;
-
+            
             //! subsystem needed by the api
             ApiSubserviceAccessor api_subsystem_accessor;
-
-			//!persistence driver instance
-			common::utility::InizializableServiceContainer<api::ApiManagment> api_managment_service;
-
+            
+            //!persistence driver instance
+            common::utility::InizializableServiceContainer<api::ApiManagment> api_managment_service;
+            //! CDS data consumer that respond to data api
+            common::utility::StartableServiceContainer<data_service::QueryDataConsumer> data_consumer;
+            
+            //keep track of process resource usage
+            ProcStat service_proc_stat;
+            
             ChaosMetadataService(){};
             ~ChaosMetadataService(){};
             static void signalHanlder(int);
-
-			//! convert param_key to a string of string hash map
-			void fillKVParameter(std::map<std::string, std::string>& kvmap,
-								 const std::vector<std::string>& multitoken_param);
+            
+            //! convert param_key to a string of string hash map
+            void fillKVParameter(std::map<std::string, std::string>& kvmap,
+                                 const std::vector<std::string>& multitoken_param);
+            //inherited by chaos::common::async_central::TimerHandler
+            void timeout();
         public:
-			struct setting	setting;
-
+            struct setting	setting;
+            
             typedef boost::mutex::scoped_lock lock;
-                //! C and C++ attribute parser
+            //! C and C++ attribute parser
             /*!
              Specialized option for startup c and cpp program main options parameter
              */
             void init(int argc, char* argv[]) throw (CException);
-                //!stringbuffer parser
+            //!stringbuffer parser
             /*
              specialized option for string stream buffer with boost semantics
              */
@@ -82,5 +89,5 @@ namespace chaos {
         };
     }
 }
-    //#pragma GCC visibility pop
+//#pragma GCC visibility pop
 #endif

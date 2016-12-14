@@ -17,14 +17,16 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include "ChaosMetadataService.h"
+
 #include "mds_constants.h"
+#include "ChaosMetadataService.h"
+#include "DriverPoolManager.h"
+#include "QueryDataConsumer.h"
 
 #include <csignal>
 #include <chaos/common/exception/CException.h>
 #include <boost/format.hpp>
 #include <boost/algorithm/string.hpp>
-
 
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 
@@ -33,8 +35,10 @@ static const boost::regex KVParamRegex("[a-zA-Z0-9/_-]+:[a-zA-Z0-9/_-]+");
 
 using namespace std;
 using namespace chaos;
+using namespace chaos::data_service;
 using namespace chaos::metadata_service;
 using namespace chaos::common::utility;
+using namespace chaos::common::async_central;
 using namespace chaos::metadata_service::api;
 using namespace chaos::metadata_service::batch;
 using namespace chaos::service_common::persistence::data_access;
@@ -74,16 +78,20 @@ void ChaosMetadataService::init(void *init_data)  throw(CException) {
         }
         
         if (signal((int) SIGQUIT, ChaosMetadataService::signalHanlder) == SIG_ERR) {
-            throw CException(2, "Error registering SIG_ERR signal", __PRETTY_FUNCTION__);
+            throw CException(-2, "Error registering SIG_ERR signal", __PRETTY_FUNCTION__);
+        }
+        
+        if (signal((int) SIGTERM, ChaosMetadataService::signalHanlder) == SIG_ERR) {
+            throw CException(-3, "Error registering SIGTERM signal", __PRETTY_FUNCTION__);
         }
         
         //scan the setting
-        if(!getGlobalConfigurationInstance()->hasOption(OPT_PERSITENCE_IMPL)) {
+        if(!setting.persistence_implementation.size()) {
             //no cache server provided
             throw chaos::CException(-3, "No persistence implementation provided", __PRETTY_FUNCTION__);
         }
         
-        if(!getGlobalConfigurationInstance()->hasOption(OPT_PERSITENCE_SERVER_ADDR_LIST)) {
+        if(!setting.persistence_server_list.size()) {
             //no cache server provided
             throw chaos::CException(-4, "No persistence's server list provided", __PRETTY_FUNCTION__);
         }
@@ -92,6 +100,12 @@ void ChaosMetadataService::init(void *init_data)  throw(CException) {
             fillKVParameter(setting.persistence_kv_param_map,
                             getGlobalConfigurationInstance()->getOption< std::vector< std::string> >(OPT_PERSITENCE_KV_PARAMTER));
         }
+        
+        //initilize the persistence managert
+        InizializableService::initImplementation(persistence::PersistenceManager::getInstance(),
+                                                 NULL,
+                                                 "PersistenceManager",
+                                                 __PRETTY_FUNCTION__);
         
         //! batch system
         api_subsystem_accessor.batch_executor.reset(new MDSBatchExecutor("MDSBatchExecutor",
@@ -113,12 +127,43 @@ void ChaosMetadataService::init(void *init_data)  throw(CException) {
         //connect persistence driver to batch system
         api_subsystem_accessor.batch_executor->abstract_persistance_driver = api_subsystem_accessor.persistence_driver.get();
         
+        //check for mandatory configuration
+        if(!getGlobalConfigurationInstance()->hasOption(OPT_CACHE_SERVER_LIST)) {
+            //no cache server provided
+            throw chaos::CException(-3, "No cache server provided", __PRETTY_FUNCTION__);
+        }
+        
+        
+        if(getGlobalConfigurationInstance()->hasOption(OPT_CACHE_DRIVER_KVP)) {
+            fillKVParameter(setting.cache_driver_setting.key_value_custom_param,
+                            getGlobalConfigurationInstance()->getOption< std::vector<std::string> >(OPT_CACHE_DRIVER_KVP));
+        }
+        
+        if(getGlobalConfigurationInstance()->hasOption(OPT_OBJ_STORAGE_DRIVER_KVP)) {
+            fillKVParameter(setting.object_storage_setting.key_value_custom_param,
+                            getGlobalConfigurationInstance()->getOption< std::vector<std::string> >(OPT_OBJ_STORAGE_DRIVER_KVP));
+        }
+        
+        //initilize driver pool manager
+        InizializableService::initImplementation(DriverPoolManager::getInstance(), NULL, "DriverPoolManager", __PRETTY_FUNCTION__);
+        
+        data_consumer.reset(new QueryDataConsumer(), "QueryDataConsumer");
+        if(!data_consumer.get()) throw chaos::CException(-7, "Error instantiating data consumer", __PRETTY_FUNCTION__);
+        data_consumer.init(NULL, __PRETTY_FUNCTION__);
+        
         //initialize cron manager
         cron_job::MDSCronousManager::getInstance()->abstract_persistance_driver = api_subsystem_accessor.persistence_driver.get();
         InizializableService::initImplementation(cron_job::MDSCronousManager::getInstance(),
                                                  NULL,
                                                  "MDSConousManager",
                                                  __PRETTY_FUNCTION__);
+        
+        persistence::data_access::DataServiceDataAccess *ds_da = persistence::PersistenceManager::getInstance()->getDataAccess<persistence::data_access::DataServiceDataAccess>();
+        
+        //register this process on persistence database
+        ds_da->registerNode(api_subsystem_accessor.network_broker_service->getRPCUrl(),
+                            api_subsystem_accessor.network_broker_service->getDirectIOUrl(),
+                            0);
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
         exit(1);
@@ -136,14 +181,20 @@ void ChaosMetadataService::start()  throw(CException) {
         
         //start batch system
         api_subsystem_accessor.batch_executor.start(__PRETTY_FUNCTION__);
+        data_consumer.start( __PRETTY_FUNCTION__);
         
-        LAPP_ << "-----------------------------------------";
-        LAPP_ << "!CHAOS Metadata service started";
-        LAPP_ << "RPC Server address: "	<< api_subsystem_accessor.network_broker_service->getRPCUrl();
-        LAPP_ << "DirectIO Server address: " << api_subsystem_accessor.network_broker_service->getDirectIOUrl();
-        LAPP_ << "Sync RPC URL: "	<< api_subsystem_accessor.network_broker_service->getSyncRPCUrl();
-        LAPP_ << "-----------------------------------------";
+        LAPP_ <<"\n----------------------------------------------------------------------"<<
+        "\n!CHAOS Metadata service started" <<
+        "\nRPC Server address: "	<< api_subsystem_accessor.network_broker_service->getRPCUrl() <<
+        "\nDirectIO Server address: " << api_subsystem_accessor.network_broker_service->getDirectIOUrl() <<
+        "\nData Service published with url: " << NetworkBroker::getInstance()->getDirectIOUrl() << "|0" <<
+        "\nSync RPC URL: "	<< api_subsystem_accessor.network_broker_service->getSyncRPCUrl() <<
+        "\n----------------------------------------------------------------------";
+        
         //at this point i must with for end signal
+        chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this,
+                                                                                   5000,
+                                                                                   5000);
         waitCloseSemaphore.wait();
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
@@ -162,10 +213,23 @@ void ChaosMetadataService::start()  throw(CException) {
     }
 }
 
+void ChaosMetadataService::timeout() {
+    ProcStatCalculator::update(service_proc_stat);
+    persistence::data_access::DataServiceDataAccess *ds_da = persistence::PersistenceManager::getInstance()->getDataAccess<persistence::data_access::DataServiceDataAccess>();
+    ds_da->updateNodeStatistic(api_subsystem_accessor.network_broker_service->getRPCUrl(),
+                               service_proc_stat);
+    
+}
+
 /*
  Stop the toolkit execution
  */
 void ChaosMetadataService::stop() throw(CException) {
+    chaos::common::async_central::AsyncCentralManager::getInstance()->removeTimer(this);
+    
+    //stop data consumer
+    data_consumer.stop( __PRETTY_FUNCTION__);
+    
     //stop batch system
     api_subsystem_accessor.batch_executor.stop(__PRETTY_FUNCTION__);
     
@@ -190,6 +254,16 @@ void ChaosMetadataService::deinit() throw(CException) {
     //deinit persistence driver system
     CHAOS_NOT_THROW(api_subsystem_accessor.persistence_driver.deinit(__PRETTY_FUNCTION__);)
     
+    if(data_consumer.get()) {
+        data_consumer.deinit(__PRETTY_FUNCTION__);
+    }
+    
+    //deinitilize driver pool manager
+    InizializableService::deinitImplementation(DriverPoolManager::getInstance(), "DriverPoolManager", __PRETTY_FUNCTION__);
+    
+    InizializableService::deinitImplementation(persistence::PersistenceManager::getInstance(),
+                                               "PersistenceManager",
+                                               __PRETTY_FUNCTION__);
     
     ChaosCommon<ChaosMetadataService>::stop();
     LAPP_ << "-----------------------------------------";
