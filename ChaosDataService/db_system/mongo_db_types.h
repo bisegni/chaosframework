@@ -31,7 +31,7 @@ namespace chaos {
 #define MONGO_DB_COLLECTION_SNAPSHOT		"snapshot"
 #define MONGO_DB_COLLECTION_SNAPSHOT_DATA	"snapshot_data"
 			
-#define MONGO_DB_COLLECTION_NAME(db,coll)	boost::str(boost::format("%1%.%2%") % db % coll)
+#define MONGO_DB_COLLECTION_NAME_COL(db,coll)	boost::str(boost::format("%1%.%2%") % db % coll)
 			
 			//domains field---------------------------------------------------
 #define MONGO_DB_FIELD_DOMAIN_NAME			"domain_name"

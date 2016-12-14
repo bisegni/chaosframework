@@ -32,12 +32,12 @@ using namespace chaos::common::batch_command;
 
 #define FUNCTORLERR_ LERR_ << "[BatchCommandSandbox-" << sandbox_identifier <<"] "
 
-#define SET_FAULT(l, c, m, d) \
-SET_NAMED_FAULT(l, cmd_instance, c , m , d)
+#define SET_FAULT(l, c, m, d,f) \
+SET_NAMED_FAULT(l, cmd_instance, c , m , d,f)
 
-#define SET_NAMED_FAULT(l, n, c, m, d) \
+#define SET_NAMED_FAULT(l, n, c, m, d,f) \
 l << c << m << d; \
-n->setRunningProperty(RunningPropertyType::RP_Fault); \
+n->setRunningProperty(f); \
 n->fault_description.code = c; \
 n->fault_description.description = m; \
 n->fault_description.domain = d;
@@ -45,25 +45,31 @@ n->fault_description.domain = d;
 
 void AcquireFunctor::operator()() {
     try {
-        if (cmd_instance && (cmd_instance->runningProperty < RunningPropertyType::RP_End)) cmd_instance->acquireHandler();
+        if (cmd_instance && (cmd_instance->runningProperty < RunningPropertyType::RP_END)) cmd_instance->acquireHandler();
+    } catch (chaos::CFatalException&ex) {
+        SET_FAULT(FUNCTORLERR_, ex.errorCode, ex.errorMessage, ex.errorDomain,RunningPropertyType::RP_FATAL_FAULT)
+
     } catch (chaos::CException& ex) {
-        SET_FAULT(FUNCTORLERR_, ex.errorCode, ex.errorMessage, ex.errorDomain)
+        SET_FAULT(FUNCTORLERR_, ex.errorCode, ex.errorMessage, ex.errorDomain,RunningPropertyType::RP_FAULT)
     } catch (std::exception& ex) {
-        SET_FAULT(FUNCTORLERR_, -1, ex.what(), "Acquisition Handler:"+cmd_instance->getAlias());
+        SET_FAULT(FUNCTORLERR_, -1, ex.what(), "Acquisition Handler:"+cmd_instance->getAlias(),RunningPropertyType::RP_FATAL_FAULT);
     } catch (...) {
-        SET_FAULT(FUNCTORLERR_, -2, "Unmanaged exception", "Acquisition Handler:"+cmd_instance->getAlias());
+        SET_FAULT(FUNCTORLERR_, -2, "Unmanaged exception", "Acquisition Handler:"+cmd_instance->getAlias(),RunningPropertyType::RP_FATAL_FAULT);
     }
 }
 
 void CorrelationFunctor::operator()() {
     try {
-        if (cmd_instance && (cmd_instance->runningProperty < RunningPropertyType::RP_End)) (cmd_instance->ccHandler());
+        if (cmd_instance && (cmd_instance->runningProperty < RunningPropertyType::RP_END)) (cmd_instance->ccHandler());
+    } catch (chaos::CFatalException&ex) {
+        SET_FAULT(FUNCTORLERR_, ex.errorCode, ex.errorMessage, ex.errorDomain,RunningPropertyType::RP_FATAL_FAULT)
+
     } catch (chaos::CException& ex) {
-        SET_FAULT(FUNCTORLERR_, ex.errorCode, ex.errorMessage, ex.errorDomain)
+        SET_FAULT(FUNCTORLERR_, ex.errorCode, ex.errorMessage, ex.errorDomain,RunningPropertyType::RP_FAULT)
     } catch (std::exception& ex) {
-        SET_FAULT(FUNCTORLERR_, -1, ex.what(), "Correlation Handler");
+        SET_FAULT(FUNCTORLERR_, -1, ex.what(), "Correlation Handler",RunningPropertyType::RP_FATAL_FAULT);
     } catch (...) {
-        SET_FAULT(FUNCTORLERR_, -2, "Unmanaged exception", "Correlation Handler");
+        SET_FAULT(FUNCTORLERR_, -2, "Unmanaged exception", "Correlation Handler",RunningPropertyType::RP_FATAL_FAULT);
     }
 }
 
@@ -491,14 +497,14 @@ void BatchCommandSandbox::checkNextCommand() {
             }
         } else {
             if(current_executing_command) {
-                if (current_executing_command->element->cmdImpl->runningProperty >= RunningPropertyType::RP_End) {
+                if (current_executing_command->element->cmdImpl->runningProperty >= RunningPropertyType::RP_END) {
                     boost::mutex::scoped_lock lockForCurrentCommandMutex(mutext_access_current_command);
                     if (!command_stack.empty()) {
                         //keep track of running property that needs to be deleted
                         PRIORITY_ELEMENT(CommandInfoAndImplementation) *command_to_delete = current_executing_command;
                         current_executing_command = NULL;
                         switch (command_to_delete->element->cmdImpl->runningProperty) {
-                            case RunningPropertyType::RP_End:{
+                            case RunningPropertyType::RP_END:{
                                 if (event_handler) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
                                                                                      command_to_delete->element->cmdImpl->unique_id,
                                                                                      BatchCommandEventType::EVT_COMPLETED,
@@ -506,14 +512,15 @@ void BatchCommandSandbox::checkNextCommand() {
                                                                                      cmd_stat);
                                 break;
                             }
-                            case RunningPropertyType::RP_Fault:{
+                            case RunningPropertyType::RP_FAULT:
+                            case RunningPropertyType::RP_FATAL_FAULT:{
                                 std::auto_ptr<CDataWrapper> command_and_fault = flatErrorInformationInCommandInfo(command_to_delete->element->cmdInfo,
                                                                                                                   command_to_delete->element->cmdImpl->fault_description);
                                 if (event_handler &&
                                     command_and_fault.get()) {
                                     event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
                                                                       command_to_delete->element->cmdImpl->unique_id,
-                                                                      BatchCommandEventType::EVT_FAULT,
+																	  (command_to_delete->element->cmdImpl->runningProperty==RunningPropertyType::RP_FAULT)?BatchCommandEventType::EVT_FAULT:BatchCommandEventType::EVT_FATAL_FAULT,
                                                                       command_and_fault.get(),
                                                                       cmd_stat);
                                 }
@@ -538,7 +545,7 @@ void BatchCommandSandbox::checkNextCommand() {
                         PRIORITY_ELEMENT(CommandInfoAndImplementation) *command_to_delete = current_executing_command;
                         current_executing_command = NULL;
                         switch (command_to_delete->element->cmdImpl->runningProperty) {
-                            case RunningPropertyType::RP_End:{
+                            case RunningPropertyType::RP_END:{
                                 if (event_handler) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
                                                                                      command_to_delete->element->cmdImpl->unique_id,
                                                                                      BatchCommandEventType::EVT_COMPLETED,
@@ -546,14 +553,15 @@ void BatchCommandSandbox::checkNextCommand() {
                                                                                      cmd_stat);
                                 break;
                             }
-                            case RunningPropertyType::RP_Fault:{
+                            case RunningPropertyType::RP_FAULT:
+                            case RunningPropertyType::RP_FATAL_FAULT:{
                                 std::auto_ptr<CDataWrapper> command_and_fault = flatErrorInformationInCommandInfo(command_to_delete->element->cmdInfo,
                                                                                                                   command_to_delete->element->cmdImpl->fault_description);
                                 if (event_handler &&
                                     command_and_fault.get()){
                                     event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
                                                                       command_to_delete->element->cmdImpl->unique_id,
-                                                                      BatchCommandEventType::EVT_FAULT,
+																	  (command_to_delete->element->cmdImpl->runningProperty==RunningPropertyType::RP_FAULT)?BatchCommandEventType::EVT_FAULT:BatchCommandEventType::EVT_FATAL_FAULT,
                                                                       command_and_fault.get(),
                                                                       cmd_stat);
                                 }
@@ -664,8 +672,8 @@ void BatchCommandSandbox::runCommand() {
                 canWork = false;
             } else {
                 switch (curr_executing_impl->runningProperty) {
-                    case RunningPropertyType::RP_Exsc:
-                    case RunningPropertyType::RP_Normal:
+                    case RunningPropertyType::RP_EXSC:
+                    case RunningPropertyType::RP_NORMAL:
                     {
                         int64_t timeToWaith = (curr_executing_impl->commandFeatures.featureSchedulerStepsDelay) - (stat.last_cmd_step_duration_usec + next_prediction_error);
                         //adjust a little bit the jitter
@@ -679,8 +687,9 @@ void BatchCommandSandbox::runCommand() {
                         break;
                     }
                         
-                    case RunningPropertyType::RP_Fault:
-                    case RunningPropertyType::RP_End:
+                    case RunningPropertyType::RP_FAULT:
+                    case RunningPropertyType::RP_FATAL_FAULT:
+                    case RunningPropertyType::RP_END:
                         //put this at null because someone can change it
                         curr_executing_impl = NULL;
                         whait_for_next_check.unlock();
@@ -740,12 +749,14 @@ bool BatchCommandSandbox::installHandler(PRIORITY_ELEMENT(CommandInfoAndImplemen
                 tmp_impl->commandPre();
                 tmp_impl->setHandler(tmp_info);
                 tmp_impl->already_setupped = true;
+            } catch (chaos::CFatalException& ex) {
+                SET_NAMED_FAULT(SCSLERR_, tmp_impl, ex.errorCode, ex.errorMessage, ex.errorDomain,RunningPropertyType::RP_FATAL_FAULT);
             } catch (chaos::CException& ex) {
-                SET_NAMED_FAULT(SCSLERR_, tmp_impl, ex.errorCode, ex.errorMessage, ex.errorDomain)
+                SET_NAMED_FAULT(SCSLERR_, tmp_impl, ex.errorCode, ex.errorMessage, ex.errorDomain,RunningPropertyType::RP_FAULT)
             } catch (std::exception& ex) {
-                SET_NAMED_FAULT(SCSLERR_, tmp_impl, -1, ex.what(), "Acquisition Handler");
+                SET_NAMED_FAULT(SCSLERR_, tmp_impl, -1, ex.what(), "Acquisition Handler",RunningPropertyType::RP_FATAL_FAULT);
             } catch (...) {
-                SET_NAMED_FAULT(SCSLERR_, tmp_impl, -2, "Unmanaged exception", "Acquisition Handler");
+                SET_NAMED_FAULT(SCSLERR_, tmp_impl, -2, "Unmanaged exception", "Acquisition Handler",RunningPropertyType::RP_FATAL_FAULT);
             }
         }
         
@@ -797,7 +808,7 @@ void BatchCommandSandbox::killCurrentCommand() {
     boost::mutex::scoped_lock lockForCurrentCommand(mutext_access_current_command);
     
     // terminate the current command
-    current_executing_command->element->cmdImpl->setRunningProperty(RunningPropertyType::RP_End);
+    current_executing_command->element->cmdImpl->setRunningProperty(RunningPropertyType::RP_END);
 }
 
 bool BatchCommandSandbox::enqueueCommand(chaos_data::CDataWrapper *command_to_info,

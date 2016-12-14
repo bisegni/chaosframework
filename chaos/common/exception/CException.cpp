@@ -56,3 +56,8 @@ void CException::composeMsg() {
     ss << "-----------Exception------------"<<std::endl;
     msg = ss.str();
 }
+
+const char* CFatalException::what() const throw() {
+	std::string ret="FATAL:"+msg;
+    return ret.c_str();
+}

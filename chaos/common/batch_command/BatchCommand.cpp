@@ -35,7 +35,7 @@ using namespace chaos::common::batch_command;
 BatchCommand::BatchCommand():
 sticky(false),
 already_setupped(false),
-runningProperty(RunningPropertyType::RP_Normal),
+runningProperty(RunningPropertyType::RP_NORMAL),
 submissionRule(SubmissionRuleType::SUBMIT_NORMAL){
 	//reset all lock flag
     lockFeaturePropertyFlag.reset();

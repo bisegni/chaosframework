@@ -156,11 +156,11 @@ int MetadataLoggingManager::sendLogEntry(chaos::common::data::CDataWrapper *log_
     //wait for ack
     if(log_future->wait()) {
         //we have got semthing
-        DEBUG_CODE(MLM_DBG << "Submition log entry has received ack with error\n " << log_future->getError() <<
+        /*DEBUG_CODE(MLM_DBG << "Submition log entry has received ack with error\n " << log_future->getError() <<
                    "\n" << log_future->getErrorMessage() << "\n" <<
-                   log_future->getErrorDomain(););
+                   log_future->getErrorDomain(););*/
         if((err = log_future->getError())) {
-            MLM_ERR << "Error forwarding log entry with code:" << err;
+            MLM_ERR << "Error forwarding log entry with code:" << err<<"Domain:"<<log_future->getErrorDomain()<<" msg:"<<log_future->getErrorMessage();
         } else {
             //log has been successfully forwarded
             DEBUG_CODE(MLM_DBG << "Log has been successfully forwarded");

@@ -32,6 +32,7 @@
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/utility/TimingUtil.h>
 
+#define CUSCHEMA_DEFAULT_STRING_LENGHT 4096
 namespace chaos {
     namespace common {
         namespace data {

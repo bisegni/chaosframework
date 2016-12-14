@@ -39,6 +39,9 @@ using namespace chaos::common::data;
 #define MAKE_KEY(key, tmp) entityDB->getIDForKey(key, tmp);\
 mapDatasetKeyForID.insert(make_pair<const char *, uint32_t>(key, tmp));
 
+#define CUSCHEMALDBG LDBG_ << "[CUSchemaDB] - "<<__PRETTY_FUNCTION__<<":"
+#define CUSCHEMALERR LERR_ << "[CUSchemaDB] - ## Error "<<__PRETTY_FUNCTION__<<":"
+
 void RangeValueInfo::reset() {
     defaultValue.clear();
     maxRange.clear();
@@ -234,13 +237,16 @@ void CUSchemaDB::addAttributeToDataSet(const std::string& node_uid,
             break;
         case DataType::TYPE_JSONOBJ:
         case DataType::TYPE_STRING:
-            if(maxDimension == 0)
-                throw CException(1, "for string type need to be specified the max value", "CUSchemaDB::addAttributeToDataSet");
+        	if(maxDimension == 0){
+        		CUSCHEMALDBG<<"WARNING: not json/string max length given setting to:"<<CUSCHEMA_DEFAULT_STRING_LENGHT;
+        		maxDimension = CUSCHEMA_DEFAULT_STRING_LENGHT;
+        	}
+
             typeMaxDimension = maxDimension;
             break;
         case DataType::TYPE_BYTEARRAY:
             if(maxDimension == 0)
-                throw CException(1, "for byte array type need to be specified the max value", "CUSchemaDB::addAttributeToDataSet");
+                throw CException(1, "for byte array type need to be specified the max  string lenght", "CUSchemaDB::addAttributeToDataSet");
             typeMaxDimension = maxDimension;
             break;
         default:

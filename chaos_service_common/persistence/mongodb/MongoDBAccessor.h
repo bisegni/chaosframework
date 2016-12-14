@@ -29,6 +29,7 @@
 
 
 //#define MONGO_DB_COLLECTION_NAME(db,coll)	boost::str(boost::format("%1%.%2%") % db % coll)
+#undef MONGO_DB_COLLECTION_NAME
 #define MONGO_DB_COLLECTION_NAME(coll)	boost::str(boost::format("%1%.%2%") % getDatabaseName() % coll)
 //! add a regex on a field
 /*!

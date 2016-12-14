@@ -63,7 +63,7 @@ namespace chaos {
 					
 					typedef boost::msm::front::Row <  Deinit   ,  EventType::init    , Init, boost::msm::front::none   , boost::msm::front::none > deinit_init_row;
 					typedef boost::msm::front::Row <  Init     ,  EventType::deinit  , Deinit, boost::msm::front::none , boost::msm::front::none > init_deinit_row;
-					
+
 					// Transition table for initialization services
 					struct transition_table : boost::mpl::vector<
 					deinit_init_row,

@@ -98,12 +98,17 @@ void AttributeCache::setValueForAttribute(VariableIndexType n,
 void AttributeCache::setValueForAttribute(const std::string& name,
                                           const void * value,
                                           uint32_t size) {
-    CHAOS_ASSERT(mapAttributeNameIndex.count(name));
+    if(mapAttributeNameIndex.count(name)==0){
+        throw chaos::CFatalException(-1, boost::str(boost::format("No name '%1%' present in Attribute cache") %name), __PRETTY_FUNCTION__);
+
+    }
     vector_attribute_value[mapAttributeNameIndex[name]]->setValue(value, size);
 }
 
 VariableIndexType AttributeCache::getIndexForName(const std::string& name ) {
-    CHAOS_ASSERT(mapAttributeNameIndex.count(name));
+    if(mapAttributeNameIndex.count(name)==0){
+        throw chaos::CFatalException(-1, boost::str(boost::format("No name '%1%' present in Attribute cache") %name), __PRETTY_FUNCTION__);
+    }
     return mapAttributeNameIndex[name];
 }
 
@@ -112,12 +117,15 @@ bool AttributeCache::hasName(const std::string& name) {
 }
 
 AttributeValue *AttributeCache::getValueSettingForIndex(VariableIndexType index) {
-    CHAOS_ASSERT(index<vector_attribute_value.size());
-    return vector_attribute_value[index].get();
+    if(index<vector_attribute_value.size())
+    	return vector_attribute_value[index].get();
+    throw chaos::CFatalException(-1, boost::str(boost::format("Attribute index '%1%' out of bounds max '%2%'") %index %vector_attribute_value.size()), __PRETTY_FUNCTION__);
 }
 
 AttributeValue *AttributeCache::getValueSettingByName(const std::string& name) {
-    CHAOS_ASSERT(mapAttributeNameIndex.count(name));
+    if(mapAttributeNameIndex.count(name)==0){
+        throw chaos::CFatalException(-1, boost::str(boost::format("No name '%1%' present in Attribute cache") %name), __PRETTY_FUNCTION__);
+    }
     return vector_attribute_value[mapAttributeNameIndex[name]].get();
 }
 
@@ -150,7 +158,7 @@ bool AttributeCache::setNewSize(VariableIndexType attribute_index,
                                 uint32_t new_size,
                                 bool clear_mem) {
     if(attribute_index>=vector_attribute_value.size()) {
-        throw chaos::CException(-1, boost::str(boost::format("No \"%1%\" index present in Attribute cache") %index), __PRETTY_FUNCTION__);
+        throw chaos::CFatalException(-1, boost::str(boost::format("No %1% index present in Attribute cache") %index), __PRETTY_FUNCTION__);
     }
     return vector_attribute_value[attribute_index]->setNewSize(new_size,
                                                           clear_mem);
@@ -160,7 +168,7 @@ bool AttributeCache::setNewSize(const std::string& attribute_name,
                                 uint32_t new_size,
                                 bool clear_mem) {
     if(!mapAttributeNameIndex.count(attribute_name)) {
-        throw chaos::CException(-1, boost::str(boost::format("No \"%1%\" name present in Attribute cache") %index), __PRETTY_FUNCTION__);
+        throw chaos::CFatalException(-1, boost::str(boost::format("No '%1%' name present in Attribute cache") %index), __PRETTY_FUNCTION__);
     }
     return vector_attribute_value[mapAttributeNameIndex[attribute_name]]->setNewSize(new_size,
                                                           clear_mem);

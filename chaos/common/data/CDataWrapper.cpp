@@ -394,7 +394,7 @@ const char* CDataWrapper::getBSONRawData(int& size) const {
 
 const int CDataWrapper::getBSONRawSize() const {
     //finalize the bson object
-    if( bsonBuilder->len()==0 ) return NULL;
+    if( bsonBuilder->len()==0 ) return 0;
     
     return bsonBuilder->asTempObj().objsize();
 }

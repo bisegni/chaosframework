@@ -83,7 +83,7 @@ void SlowCommandExecutor::start() throw(chaos::CException) {
 
 // Start the implementation
 void SlowCommandExecutor::stop() throw(chaos::CException) {
-    LDBG_ << "No implementation on stop";
+	SCELDBG_ << "stopping";
     //initialize superclass
     BatchCommandExecutor::stop();
 }
@@ -102,7 +102,7 @@ void SlowCommandExecutor::deinit() throw(chaos::CException) {
         MetadataLoggingManager::getInstance()->releaseChannel(command_logging_channel);
         command_logging_channel = NULL;
     }
-    LDBG_ << "No implementation on deinit";
+    SCELDBG_ << "deinitialized";
     
     last_ru_id_cache = NULL;
     last_error_code = NULL;
@@ -156,6 +156,7 @@ void SlowCommandExecutor::handleCommandEvent(const std::string& command_alias,
                                              command_data,
                                              commands_stats);
     switch(type) {
+    case BatchCommandEventType::EVT_FATAL_FAULT:
         case BatchCommandEventType::EVT_FAULT: {
             
             if(command_data &&
@@ -172,9 +173,11 @@ void SlowCommandExecutor::handleCommandEvent(const std::string& command_alias,
                                                 code,
                                                 message,
                                                 domain);
-                //CException ex(code, message, domain);
+                if(type==BatchCommandEventType::EVT_FATAL_FAULT){
+                	CFatalException ex(code, message, domain);
                 //async go into recoverable error
-                //boost::thread(boost::bind(&AbstractControlUnit::_goInRecoverableError, control_unit_instance, ex)).detach();
+                	boost::thread(boost::bind(&AbstractControlUnit::_goInRecoverableError, control_unit_instance, ex)).detach();
+                }
             }
             break;
         }
@@ -208,7 +211,7 @@ void SlowCommandExecutor::handleSandboxEvent(const std::string& sandbox_id,
         last_ru_id_cache = getAttributeSharedCache()->getAttributeValue(DOMAIN_SYSTEM,
                                                                         DataPackSystemKey::DP_SYS_RUN_UNIT_ID);
         if(!last_ru_id_cache) {
-            SCELERR_ << "Error getting cache slot for unit id";
+        	SCELERR_ << "Error getting cache slot for unit id";
             return;
         }
     }

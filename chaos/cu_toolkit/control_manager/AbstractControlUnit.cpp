@@ -66,10 +66,10 @@ using namespace chaos::cu::driver_manager::driver;
 try{ \
 code \
 }catch(chaos::CException& ex){ \
-ACULAPP_ <<"CHAOS Exception on "<< DatasetDB::getDeviceID()<< ":\n"<<ex.what(); \
+ACULERR_ <<"CHAOS Exception on "<< DatasetDB::getDeviceID()<< ":\n"<<ex.what(); \
 if(flag) throw chaos::common::exception::MetadataLoggingCException(getCUID(), ex.errorCode, ex.errorMessage, ex.errorDomain);\
 }catch(...){\
-ACULAPP_ <<"Unknown exception on"<< DatasetDB::getDeviceID(); \
+ACULERR_ <<"Unknown exception on"<< DatasetDB::getDeviceID(); \
 if(flag) throw chaos::common::exception::MetadataLoggingCException(getCUID(), -1000, S__LINE__, __PRETTY_FUNCTION__); \
 }
 
@@ -719,13 +719,15 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam,
         return NULL;
     }
     try {
-        if(getServiceState() == CUStateKey::RECOVERABLE_ERROR) {
+      /*
+       * stop transition is possible with recoverable error
+       *  if(getServiceState() == CUStateKey::RECOVERABLE_ERROR) {
             LOG_AND_TROW_FORMATTED(ACULERR_, -1, "Recoverable error state need to be recovered for %1%", %__PRETTY_FUNCTION__)
         }
-        
+        */
         //first we start the deinitializaiton of the implementation unit
         if(!SWEService::stopImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__)) {
-            LOG_AND_TROW_FORMATTED(ACULERR_, -1, "Control Unit %1% can't be stoped [state mismatch]!", %DatasetDB::getDeviceID());
+            LOG_AND_TROW_FORMATTED(ACULERR_, -1, "Control Unit %1% can't be stopped [state mismatch]!", %DatasetDB::getDeviceID());
         }
     }  catch (MetadataLoggingCException& ex) {
         SWEService::goInFatalError(this,
@@ -773,7 +775,7 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam,
 }
 
 
-/*
+/*go
  deinit all datastorage
  */
 CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam,
@@ -782,10 +784,12 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam,
         return NULL;
     }
     try {
-        if(getServiceState() == CUStateKey::RECOVERABLE_ERROR) {
+      /*
+       * deinit transition is possible with recoverable error
+       *  if(getServiceState() == CUStateKey::RECOVERABLE_ERROR) {
             LOG_AND_TROW_FORMATTED(ACULERR_, -1, "Recoverable error state need to be recovered for %1%", %__PRETTY_FUNCTION__)
         }
-        
+        */
         if(!SWEService::deinitImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__)) {
             LOG_AND_TROW_FORMATTED(ACULERR_, -1, "Control Unit %1% can't be deinitilized [state mismatch]!", %DatasetDB::getDeviceID());
         }

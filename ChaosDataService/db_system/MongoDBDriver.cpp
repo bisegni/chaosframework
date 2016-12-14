@@ -75,7 +75,7 @@ int MongoDBDriver::snapshotCreateNewWithName(const std::string& snapshot_name,
 		DEBUG_CODE(MDBID_LDBG_ << q;)
 		DEBUG_CODE(MDBID_LDBG_ << "snapshotCreateNewWithName insert ---------------------------------------------";)
 		
-		err = ha_connection_pool->insert(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_COLLECTION_SNAPSHOT), q);
+		err = ha_connection_pool->insert(MONGO_DB_COLLECTION_NAME_COL(db_name, MONGO_DB_COLLECTION_SNAPSHOT), q);
 		if(err == 11000) {
 			//already exis a snapshot with that name so no error need to be throw
 			err = 1;
@@ -113,7 +113,7 @@ int MongoDBDriver::snapshotAddElementToSnapshot(const std::string& working_job_u
 		DEBUG_CODE(MDBID_LDBG_ << "snapshotCreateNewWithName insert ---------------------------------------------";)
 		
 		//update and waith until the data is on the server
-		err = ha_connection_pool->update(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_COLLECTION_SNAPSHOT_DATA), q, u, true, false);
+		err = ha_connection_pool->update(MONGO_DB_COLLECTION_NAME_COL(db_name, MONGO_DB_COLLECTION_SNAPSHOT_DATA), q, u, true, false);
 	} catch( const mongo::DBException &e ) {
 		MDBID_LERR_ << e.what();
 		err = -1;
@@ -142,7 +142,7 @@ int MongoDBDriver::snapshotIncrementJobCounter(const std::string& working_job_un
 		DEBUG_CODE(MDBID_LDBG_ << "snapshotIncrementJobCounter insert ---------------------------------------------";)
 		
 		//update and waith until the data is on the server
-		err = ha_connection_pool->update(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_COLLECTION_SNAPSHOT), q, u, false, false);
+		err = ha_connection_pool->update(MONGO_DB_COLLECTION_NAME_COL(db_name, MONGO_DB_COLLECTION_SNAPSHOT), q, u, false, false);
 	} catch( const mongo::DBException &e ) {
 		MDBID_LERR_ << e.what();
 		err = -1;
@@ -170,7 +170,7 @@ int MongoDBDriver::snapshotGetDatasetForProducerKey(const std::string& snapshot_
 		DEBUG_CODE(MDBID_LDBG_ << "snapshotGetDatasetForProducerKey findOne ---------------------------------------------";)
 		
 		//update and waith until the data is on the server
-		if((err = ha_connection_pool->findOne(result, MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_COLLECTION_SNAPSHOT_DATA), q))) {
+		if((err = ha_connection_pool->findOne(result, MONGO_DB_COLLECTION_NAME_COL(db_name, MONGO_DB_COLLECTION_SNAPSHOT_DATA), q))) {
 			MDBID_LERR_ << "Errore finding the snapshot "<< snapshot_name << " for the unique key "<< producer_unique_key <<"with error "<<err;
 		} else {
 			std::string channel_unique_key = producer_unique_key+dataset_type;
@@ -207,20 +207,20 @@ int MongoDBDriver::snapshotDeleteWithName(const std::string& snapshot_name) {
 		DEBUG_CODE(MDBID_LDBG_ << "snapshotDeleteWithName count ---------------------------------------------";)
 		
 		//update and waith until the data is on the server
-		if((err = ha_connection_pool->findOne(result, MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_COLLECTION_SNAPSHOT), q))) {
+		if((err = ha_connection_pool->findOne(result, MONGO_DB_COLLECTION_NAME_COL(db_name, MONGO_DB_COLLECTION_SNAPSHOT), q))) {
 			MDBID_LERR_ << "Errore finding the snapshot "<< snapshot_name << "with error "<<err;
 			return err;
 		}
 		
 		//the snapshot to delete is present, so we delete it
-		if((err = ha_connection_pool->remove(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_COLLECTION_SNAPSHOT), q))){
+		if((err = ha_connection_pool->remove(MONGO_DB_COLLECTION_NAME_COL(db_name, MONGO_DB_COLLECTION_SNAPSHOT), q))){
 			MDBID_LERR_ << "Errore deleting the snapshot "<< snapshot_name << "with error "<<err;
 			return err;
 		}
 		
 		
 		//no we need to delete all dataset associated to it
-		if((err = ha_connection_pool->remove(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_COLLECTION_SNAPSHOT_DATA), q))){
+		if((err = ha_connection_pool->remove(MONGO_DB_COLLECTION_NAME_COL(db_name, MONGO_DB_COLLECTION_SNAPSHOT_DATA), q))){
 			MDBID_LERR_ << "Errore deleting the snapshot data "<< snapshot_name << "with error "<<err;
 		}
 	} catch( const mongo::DBException &e ) {

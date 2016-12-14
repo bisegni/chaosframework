@@ -48,16 +48,19 @@ namespace chaos{
             //class BatchCommandExecutor;
             
             //!help macro for set the sate
-#define BC_EXEC_RUNNING_PROPERTY    setRunningProperty(chaos::common::batch_command::RunningPropertyType::RP_Exsc);
-#define BC_NORMAL_RUNNING_PROPERTY  setRunningProperty(chaos::common::batch_command::RunningPropertyType::RP_Normal);
-#define BC_END_RUNNING_PROPERTY     setRunningProperty(chaos::common::batch_command::RunningPropertyType::RP_End);
-#define BC_FAULT_RUNNING_PROPERTY   setRunningProperty(chaos::common::batch_command::RunningPropertyType::RP_Fault);
-            
+#define BC_EXEC_RUNNING_PROPERTY    setRunningProperty(chaos::common::batch_command::RunningPropertyType::RP_EXSC);
+#define BC_NORMAL_RUNNING_PROPERTY  setRunningProperty(chaos::common::batch_command::RunningPropertyType::RP_NORMAL);
+#define BC_END_RUNNING_PROPERTY     setRunningProperty(chaos::common::batch_command::RunningPropertyType::RP_END);
+#define BC_FAULT_RUNNING_PROPERTY   setRunningProperty(chaos::common::batch_command::RunningPropertyType::RP_FAULT);
+#define BC_FATAL_FAULT_RUNNING_PROPERTY   setRunningProperty(chaos::common::batch_command::RunningPropertyType::RP_FATAL_FAULT);
+
             //help madro to get the state
-#define BC_CHECK_EXEC_RUNNING_PROPERTY  (getRunningProperty() == chaos::common::batch_command::RunningPropertyType::RP_Exsc)
-#define BC_CHECK_NORMAL_RUNNING_PROPERTY (getRunningProperty() == chaos::common::batch_command::RunningPropertyType::RP_Normal)
-#define BC_CHECK_END_RUNNING_PROPERTY   (getRunningProperty() == chaos::common::batch_command::RunningPropertyType::RP_End)
-#define BC_CHECK_FAULT_RUNNING_PROPERTY (getRunningProperty() == chaos::common::batch_command::RunningPropertyType::RP_Fault)
+#define BC_CHECK_EXEC_RUNNING_PROPERTY  (getRunningProperty() == chaos::common::batch_command::RunningPropertyType::RP_EXSC)
+#define BC_CHECK_NORMAL_RUNNING_PROPERTY (getRunningProperty() == chaos::common::batch_command::RunningPropertyType::RP_NORMAL)
+#define BC_CHECK_END_RUNNING_PROPERTY   (getRunningProperty() == chaos::common::batch_command::RunningPropertyType::RP_END)
+#define BC_CHECK_FAULT_RUNNING_PROPERTY (getRunningProperty() == chaos::common::batch_command::RunningPropertyType::RP_FAULT)
+#define BC_CHECK_FATAL_FAULT_RUNNING_PROPERTY (getRunningProperty() == chaos::common::batch_command::RunningPropertyType::RP_FATAL_FAULT)
+
             
             //! Collect the command timing stats
             typedef struct CommandTimingStats {

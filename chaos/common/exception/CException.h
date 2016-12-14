@@ -33,9 +33,11 @@ namespace chaos{
      */
     class CException : public std::exception {
         //! string stream for compose the "what" message
+    	 void composeMsg();
+    protected:
         std::string msg;
         
-        void composeMsg();
+
     public:
         //! identify the number for the error
         const int errorCode;
@@ -51,6 +53,12 @@ namespace chaos{
         virtual ~CException() throw();
         
         virtual const char* what() const throw();
+    };
+
+    class CFatalException:public CException {
+    	public:
+    	 CFatalException(int eCode, std::string eMessage,  std::string eDomain):CException(eCode,eMessage,eDomain) {};
+    	 virtual const char* what() const throw();
     };
 }
 #endif

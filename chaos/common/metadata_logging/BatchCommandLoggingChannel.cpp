@@ -62,8 +62,11 @@ int BatchCommandLoggingChannel::logCommandState(const std::string& log_emitter,
             log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::CommandLogging::PARAM_NODE_LOGGING_LOG_COMMAND_STATE_DESCRIPTION, "Completed");
             break;
         case EVT_FAULT:
-            log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::CommandLogging::PARAM_NODE_LOGGING_LOG_COMMAND_STATE_DESCRIPTION, "Faulted");
+            log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::CommandLogging::PARAM_NODE_LOGGING_LOG_COMMAND_STATE_DESCRIPTION, "Fault");
             break;
+        case EVT_FATAL_FAULT:
+		   log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::CommandLogging::PARAM_NODE_LOGGING_LOG_COMMAND_STATE_DESCRIPTION, "Fatal Fault");
+		   break;
         case EVT_KILLED:
             log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::CommandLogging::PARAM_NODE_LOGGING_LOG_COMMAND_STATE_DESCRIPTION, "Killed");
             break;
@@ -85,17 +88,20 @@ int BatchCommandLoggingChannel::logCommandRunningProperty(const std::string& log
 
     switch(rprop) {
 
-        case chaos::common::batch_command::RunningPropertyType::RP_Exsc:
+        case chaos::common::batch_command::RunningPropertyType::RP_EXSC:
             log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::CommandLogging::PARAM_NODE_LOGGING_LOG_COMMAND_RUN_PROPERTY_DESCRIPTION, "Exclusive");
             break;
-        case chaos::common::batch_command::RunningPropertyType::RP_Normal:
+        case chaos::common::batch_command::RunningPropertyType::RP_NORMAL:
             log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::CommandLogging::PARAM_NODE_LOGGING_LOG_COMMAND_RUN_PROPERTY_DESCRIPTION, "Normal");
             break;
-        case chaos::common::batch_command::RunningPropertyType::RP_End:
+        case chaos::common::batch_command::RunningPropertyType::RP_END:
             log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::CommandLogging::PARAM_NODE_LOGGING_LOG_COMMAND_RUN_PROPERTY_DESCRIPTION, "End");
             break;
-        case chaos::common::batch_command::RunningPropertyType::RP_Fault:
+        case chaos::common::batch_command::RunningPropertyType::RP_FAULT:
             log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::CommandLogging::PARAM_NODE_LOGGING_LOG_COMMAND_RUN_PROPERTY_DESCRIPTION, "Fault");
+            break;
+        case chaos::common::batch_command::RunningPropertyType::RP_FATAL_FAULT:
+            log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::CommandLogging::PARAM_NODE_LOGGING_LOG_COMMAND_RUN_PROPERTY_DESCRIPTION, "Fatal");
             break;
     }
     return sendLog(log_entry,

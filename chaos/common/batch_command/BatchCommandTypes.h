@@ -43,7 +43,8 @@ namespace chaos {
                     EVT_PAUSED=3,			/**< The command is paused */
                     EVT_COMPLETED=4,		/**< The command has completed is work successfully */
                     EVT_FAULT=5,			/**< The command has fault */
-                    EVT_KILLED=6			/**< The command has been killed */
+                    EVT_KILLED=6,			/**< The command has been killed */
+					EVT_FATAL_FAULT=7       /**< The command has a fatal fault */
                 } BatchCommandEventType;
             }
 
@@ -184,10 +185,11 @@ namespace chaos {
                  * \brief Describe the state in which the command can be found
                  */
                 typedef enum RunningProperty {
-                    RP_Exsc     = 0,    /**< The command cannot be killed or removed, it need to run */
-                    RP_Normal   = 1,    /**< The command can be stacked (paused) or killed*/
-                    RP_End      = 2,    /**< The command has ended his work */
-                    RP_Fault    = 3    /**< The command has had a fault */
+                    RP_EXSC     = 0,    /**< The command cannot be killed or removed, it need to run */
+                    RP_NORMAL   = 1,    /**< The command can be stacked (paused) or killed*/
+                    RP_END      = 2,    /**< The command has ended his work */
+                    RP_FAULT    = 3,    /**< The command has had a fault */
+					RP_FATAL_FAULT    = 4    /**< The command has had a fatal fault */
                 } RunningProperty;
             }
             
