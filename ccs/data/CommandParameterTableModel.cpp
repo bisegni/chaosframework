@@ -70,6 +70,8 @@ void CommandParameterTableModel::fillTemplate(chaos::metadata_service_client::ap
                 kv_setter = boost::shared_ptr<CDataWrapperKeyValueSetter>(new CDataWrapperInt64KeyValueSetter(attribute->attribute_name.toStdString(),
                                                                                                               attribute->current_value.toLongLong()));
                 break;
+                
+                case chaos::DataType::TYPE_JSONOBJ:
             case chaos::DataType::TYPE_STRING:
                 kv_setter = boost::shared_ptr<CDataWrapperKeyValueSetter>(new CDataWrapperStringKeyValueSetter(attribute->attribute_name.toStdString(),
                                                                                                                attribute->current_value.toString().toStdString()));
@@ -108,7 +110,9 @@ void CommandParameterTableModel::applyTemplate(const QSharedPointer<chaos::commo
                 case chaos::DataType::TYPE_INT64:
                     attribute->current_value = (qlonglong)command_template->getInt64Value(attribute_name);
                     break;
+                case chaos::DataType::TYPE_JSONOBJ:
                 case chaos::DataType::TYPE_STRING:
+                 
                     attribute->current_value = QString::fromStdString(command_template->getStringValue(attribute_name));
                     break;
                 case chaos::DataType::TYPE_DOUBLE:
@@ -194,6 +198,9 @@ QVariant CommandParameterTableModel::getCellData(int row, int column) const {
             break;
         case chaos::DataType::TYPE_INT64:
             result = QString("Int64");
+            break;
+        case chaos::DataType::TYPE_JSONOBJ:
+             result = QString("json");
             break;
         case chaos::DataType::TYPE_STRING:
             result = QString("String");
@@ -340,6 +347,18 @@ bool CommandParameterTableModel::setCellData(const QModelIndex& index, const QVa
                     error_message = tr("The value is not convertible to double");
                     break;
                 }
+            }
+            case chaos::DataType::TYPE_JSONOBJ:{
+                CDataWrapper tmp;
+                try {
+                    tmp.setSerializedJsonData(value.toString().toStdString().c_str());
+                    result = true;
+                } catch(...){
+                    result = false;
+                     error_message = tr("The value is not convertible to a json string");
+
+                }
+                break;
             }
             case chaos::DataType::TYPE_STRING:{
                 CHECKTYPE(result, std::string, value)

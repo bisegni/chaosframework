@@ -108,8 +108,14 @@ void CommandCommonUtility::validateCommandTemplateToDescription(CDataWrapper *co
                 case chaos::DataType::TYPE_DOUBLE:
                     is_correct_type = command_template->isDoubleValue(attribute_name);
                     break;
+                    
+               
                 case chaos::DataType::TYPE_STRING:
                     is_correct_type = command_template->isStringValue(attribute_name);
+                    break;
+                    
+                case chaos::DataType::TYPE_JSONOBJ:
+                    is_correct_type = command_template->isJsonValue(attribute_name);
                     break;
                 case chaos::DataType::TYPE_BYTEARRAY:
                     is_correct_type = command_template->isBinaryValue(attribute_name);
@@ -182,6 +188,10 @@ std::auto_ptr<chaos::common::data::CDataWrapper> CommandCommonUtility::createCom
                 break;
             case chaos::DataType::TYPE_DOUBLE:
                 is_correct_type = command_submission->isDoubleValue(it->first);
+                break;
+                
+             case chaos::DataType::TYPE_JSONOBJ:
+                is_correct_type = command_submission->isJsonValue(it->first);
                 break;
             case chaos::DataType::TYPE_STRING:
                 is_correct_type = command_submission->isStringValue(it->first);

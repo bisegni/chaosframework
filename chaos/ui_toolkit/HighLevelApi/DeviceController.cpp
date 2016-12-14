@@ -187,7 +187,8 @@ int DeviceController::getAttributeStrValue(string attribute_name, string& attrib
                 case DataType::TYPE_DOUBLE:
                     attribute_value = boost::lexical_cast<string>(dataWrapper->getDoubleValue(attribute_name.c_str()));
                     break;
-                    
+                
+                case DataType::TYPE_JSONOBJ:
                 case DataType::TYPE_STRING:
                     attribute_value = boost::lexical_cast<string>(dataWrapper->getStringValue(attribute_name.c_str()));
                     break;
@@ -353,6 +354,11 @@ int DeviceController::setAttributeToValue(const char *attributeName, const char 
             attributeValuePack.addBoolValue(attributeName, boolValuePtr);
             break;
         }
+        case DataType::TYPE_JSONOBJ:
+        attributeValuePack.addJsonValue(attributeName, attributeValue);
+        break;
+      
+            
         case DataType::TYPE_STRING:{
             attributeValuePack.addStringValue(attributeName, attributeValue);
             break;
@@ -400,6 +406,11 @@ int DeviceController::setAttributeToValue(const char *attributeName, DataType::D
         case DataType::TYPE_BOOLEAN: {
             bool *boolValuePtr = static_cast<bool *>(attributeValue);
             attributeValuePack.addBoolValue(attributeName, *boolValuePtr);
+            break;
+        }
+        case DataType::TYPE_JSONOBJ:{
+         
+            attributeValuePack.addJsonValue(attributeName,static_cast<const char *>(attributeValue));
             break;
         }
         case DataType::TYPE_STRING:{
@@ -651,7 +662,7 @@ int DeviceController::setAttributeValue(string& attributeName, const char* attri
     
     if(attributeValueMap[attributeName].dir==DataType::Output)
         return ErrorCode::EC_ATTRIBUTE_BAD_DIR;
-    
+
     switch (attributeValueMap[attributeName].valueType) {
             
         case DataType::TYPE_INT64:
@@ -669,7 +680,12 @@ int DeviceController::setAttributeValue(string& attributeName, const char* attri
         case DataType::TYPE_BYTEARRAY:
             attributeValuePack.addBinaryValue(attrname,attributeValue,size);
             return deviceChannel->setAttributeValue(attributeValuePack,millisecToWait);
+        case DataType::TYPE_JSONOBJ:{
+           
+            attributeValuePack.addJsonValue(attrname,attributeValue);
             
+            return deviceChannel->setAttributeValue(attributeValuePack,millisecToWait);
+        }
         case DataType::TYPE_STRING:
             attributeValuePack.addStringValue(attrname,attributeValue);
             return deviceChannel->setAttributeValue(attributeValuePack,millisecToWait);

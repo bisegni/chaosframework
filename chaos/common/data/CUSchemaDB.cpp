@@ -232,6 +232,7 @@ void CUSchemaDB::addAttributeToDataSet(const std::string& node_uid,
         case DataType::TYPE_INT64:
             typeMaxDimension = sizeof(int64_t);
             break;
+        case DataType::TYPE_JSONOBJ:
         case DataType::TYPE_STRING:
             if(maxDimension == 0)
                 throw CException(1, "for string type need to be specified the max value", "CUSchemaDB::addAttributeToDataSet");

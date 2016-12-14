@@ -50,6 +50,7 @@ QString ChaosMonitorWidgetCompanion::datasetValueToLabel(const QString& attribut
         case DataType::TYPE_DOUBLE:
             result = QString::number(custom_attribute_variant.asDouble(), 'f', double_precision);
             break;
+            case DataType::TYPE_JSONOBJ:
         case DataType::TYPE_STRING:
             result = QString::fromStdString(custom_attribute_variant.asString());
             break;

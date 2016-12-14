@@ -142,6 +142,11 @@ CDataWrapper *SetInputDatasetAttributeValues::execute(CDataWrapper *api_data,
                         batch_message_per_cu->addDoubleValue(attribute_name,
                                                              boost::lexical_cast<double>(change->getStringValue("change_value")));
                         break;
+                    case chaos::DataType::TYPE_JSONOBJ:{
+                       
+                        batch_message_per_cu->addJsonValue(attribute_name,change->getStringValue("change_value"));
+                    }
+                        break;
                     case chaos::DataType::TYPE_STRING:
                         batch_message_per_cu->addStringValue(attribute_name,
                                                              change->getStringValue("change_value"));

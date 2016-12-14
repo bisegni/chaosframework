@@ -20,6 +20,7 @@
  */
 
 #include <chaos/common/data/CDataVariant.h>
+#include <chaos/common/data/CDataWrapper.h>
 
 using namespace chaos;
 using namespace chaos::common::data;
@@ -133,9 +134,16 @@ CDataVariant::CDataVariant(bool bool_value):
 type(DataType::TYPE_BOOLEAN),
 _internal_variant(bool_value) { }
 
-CDataVariant::CDataVariant(const std::string& string_value):
-type(DataType::TYPE_STRING),
-_internal_variant(string_value) { }
+CDataVariant::CDataVariant(const std::string& string_value):_internal_variant(string_value){
+    CDataWrapper tmp;
+    try{
+        tmp.setSerializedJsonData(string_value.c_str());
+        type=DataType::TYPE_JSONOBJ;
+    } catch(...){
+        type=DataType::TYPE_STRING;
+    }
+}
+
 
 CDataVariant::CDataVariant(CDataBuffer *buffer_value)
 :
@@ -167,6 +175,8 @@ type(_type){
         case DataType::TYPE_DOUBLE:
             _internal_variant = *static_cast<const double*>(_value_pointer);
             break;
+            
+        case DataType::TYPE_JSONOBJ:
         case DataType::TYPE_STRING:
             _internal_variant = std::string(static_cast<const char*>(_value_pointer),
                                             _value_size);

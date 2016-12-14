@@ -178,6 +178,17 @@ CDataWrapper *CDataWrapper::getCSDataValue(const std::string& key) {
     }
     return result;
 }
+std::string CDataWrapper::getJsonValue(const std::string& key) {
+	CDataWrapper *tmp;
+	std::string ret;
+	tmp = getCSDataValue(key);
+	if(tmp){
+		ret=tmp->getJSONString();
+		delete tmp;
+	}
+
+	return ret;
+}
 
 //get string value
 string  CDataWrapper::getStringValue(const std::string& key) {
@@ -242,6 +253,11 @@ void CDataWrapper::addVariantValue(const std::string& key,
         case DataType::TYPE_DOUBLE:
             addDoubleValue(key, variant_value.asDouble());
             break;
+        case DataType::TYPE_JSONOBJ:{
+            addJsonValue(key,variant_value.asString());
+         
+            break;
+        }
         case DataType::TYPE_STRING:
             addStringValue(key, variant_value.asString());
             break;
@@ -513,6 +529,29 @@ bool CDataWrapper::isDoubleValue(const std::string& key){
     return bsonBuilder->asTempObj().getField(key).type()==NumberDouble;
 }
 
+bool  CDataWrapper::isJsonValue(const std::string& key){
+    CDataWrapper tmp;
+    
+    try {
+        tmp.setSerializedJsonData(getRawValuePtr(key));
+        return true;
+    } catch(...){
+    }
+    
+    return false;
+}
+void CDataWrapper::addJsonValue(const std::string& key, const string& val){
+    CDataWrapper tmp;
+    tmp.setSerializedJsonData(val.c_str());
+    addCSDataValue(key,tmp);
+}
+                
+void CDataWrapper::addJsonValue(const std::string& key, Json::Value& val){
+    Json::FastWriter fastWriter;
+    std::string output = fastWriter.write(val);
+    addJsonValue(key,output);
+}
+                
 bool CDataWrapper::isStringValue(const std::string& key){
     return bsonBuilder->asTempObj().getField(key).type()==String;
 }

@@ -149,6 +149,7 @@ int KeyGroupCache::addKeyInfo(const char * key, chaos::DataType::DataType type, 
         case chaos::DataType::TYPE_INT64:
             chInfo->maxLength = sizeof(int64_t);
             break;
+        case chaos::DataType::TYPE_JSONOBJ:
         case chaos::DataType::TYPE_STRING:
         case chaos::DataType::TYPE_BYTEARRAY:
             chInfo->maxLength = channelMaxLength;
