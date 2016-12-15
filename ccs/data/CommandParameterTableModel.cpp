@@ -200,7 +200,7 @@ QVariant CommandParameterTableModel::getCellData(int row, int column) const {
             result = QString("Int64");
             break;
         case chaos::DataType::TYPE_CLUSTER:
-             result = QString("json");
+             result = QString("cluster");
             break;
         case chaos::DataType::TYPE_STRING:
             result = QString("String");
