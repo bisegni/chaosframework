@@ -90,13 +90,13 @@ namespace chaos {
                                             uint32_t page_length);
                     
                     int getBestNDataService(std::vector<boost::shared_ptr<common::data::CDataWrapper> >&  best_available_data_service,
-                                            unsigned int numerb_of_result = 3);
+                                            unsigned int number_of_result = 3);
                     
                     int getBestNDataService(std::vector<std::string >&  best_available_data_service,
-                                            unsigned int numerb_of_result = 3);
+                                            unsigned int number_of_result = 3);
                     
                     int getBestNDataServiceEndpoint(std::vector<std::string >&  best_available_data_service_endpoint,
-                                                    unsigned int numerb_of_result =3);
+                                                    unsigned int number_of_result =3);
                 };
                 
                 

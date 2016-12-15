@@ -432,106 +432,66 @@ int MongoDBDataServiceDataAccess::searchAllDataAccess(std::vector<boost::shared_
 }
 
 int MongoDBDataServiceDataAccess::getBestNDataService(std::vector<boost::shared_ptr<common::data::CDataWrapper> >&  best_available_data_service,
-                                                      unsigned int numerb_of_result) {
+                                                      unsigned int number_of_result) {
     int err = 0;
     SearchResult            paged_result;
     
-    unsigned long long      number_of_total_ds = 0;
     //almost we need toreturn one data service
-    if(numerb_of_result == 0) return -1;
-    
-    mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_DATA_SERVICE);
-    //filter on sequence
-    mongo::BSONObj projection = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << 1 <<
-                                     NodeDefinitionKey::NODE_RPC_ADDR << 1 <<
-                                     NodeDefinitionKey::NODE_RPC_DOMAIN << 1 <<
-                                     NodeDefinitionKey::NODE_DIRECT_IO_ADDR << 1 <<
-                                     DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT << 1);
-    
-    DEBUG_CODE(MDBDSDA_DBG<<log_message("getBestNDataService",
-                                        "count",
-                                        DATA_ACCESS_LOG_1_ENTRY("Query",
-                                                                query.toString()));)
-    
-    if((err = connection->count(number_of_total_ds,
-                                MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
-                                query))) {
-        MDBDSDA_ERR << "Error countin all data services with error:" << err;
-    } else if(number_of_total_ds == 0) {
-        MDBDSDA_ERR << "No dataservice found.";
-    } else {
-        std::vector<int>                index_to_skip;
-        std::vector<mongo::BSONObj>     result;
-        //find all needed server
-        int rnd = 0;
-        int iter = 0;
-        if(number_of_total_ds > numerb_of_result) {
-            //more dataservice of many the user whant
-            while(true){
-                rnd = rand()%number_of_total_ds;
-                if(std::find(index_to_skip.begin(), index_to_skip.end(), rnd) == index_to_skip.end()) {
-                    index_to_skip.push_back(rnd);
-                }
-                if((iter++ >= 100) ||
-                   (index_to_skip.size() >= 3)) break;
-            }
-        }else {
-            //add all index
-            for(int idx = 0; idx < number_of_total_ds; idx++) {
-                index_to_skip.push_back(idx);
-            }
-        }
-        //fetch the desidered number of random data service
-        for(int idx = 0;
-            idx < index_to_skip.size();
-            idx++) {
-            result.clear();
-            
-            DEBUG_CODE(MDBDSDA_DBG<<log_message("getBestNDataService",
-                                                "findOne",
-                                                DATA_ACCESS_LOG_1_ENTRY("Query",
-                                                                        query.toString()));)
-            
-            //perform the search for the query page
-            connection->findN(result,
-                              MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
-                              query,
-                              1,
-                              index_to_skip[idx]);
-            //fill reuslt
-            if(result.size()==0) {
-                break;
-            } else {
-                //has been found
-                boost::shared_ptr<common::data::CDataWrapper> element(new CDataWrapper());
-                if(result.front().hasField(NodeDefinitionKey::NODE_UNIQUE_ID)) {
-                    element->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID,
-                                            result.front().getStringField(NodeDefinitionKey::NODE_UNIQUE_ID));
-                }
-                if(result.front().hasField(NodeDefinitionKey::NODE_DIRECT_IO_ADDR)) {
-                    element->addStringValue(NodeDefinitionKey::NODE_DIRECT_IO_ADDR,
-                                            result.front().getStringField(NodeDefinitionKey::NODE_DIRECT_IO_ADDR));
-                }
-                if(result.front().hasField(DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT)) {
-                    element->addInt32Value(DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT,
-                                           result.front().getIntField(DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT));
-                }
-                
+    if(number_of_result == 0) return 0;
+    try{
+        mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_DATA_SERVICE <<
+                                    NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP << BSON("$gte" << mongo::Date_t(TimingUtil::getTimestampWithDelay(5000, false))));
+        //filter on sequence
+        mongo::BSONObj projection = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << 1 <<
+                                         NodeDefinitionKey::NODE_RPC_ADDR << 1 <<
+                                         NodeDefinitionKey::NODE_RPC_DOMAIN << 1 <<
+                                         NodeDefinitionKey::NODE_DIRECT_IO_ADDR << 1 <<
+                                         DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT << 1);
+        
+        
+        DEBUG_CODE(MDBDSDA_DBG<<log_message("getBestNDataService",
+                                            "findOne",
+                                            DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                                    "Projection",
+                                                                    query.toString(),
+                                                                    projection.toString()));)
+        
+        //perform the search for the query page
+        connection->findN(paged_result,
+                          MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                          query,
+                          number_of_result);
+        //fill reuslt
+        if(paged_result.size()>0) {
+            //has been found
+            for(SearchResultIterator it = paged_result.begin(),
+                end = paged_result.end();
+                it != end;
+                it++) {
                 //add element to result
-                best_available_data_service.push_back(element);
+                best_available_data_service.push_back(boost::shared_ptr<common::data::CDataWrapper>(new CDataWrapper(it->objdata())));
             }
+           
         }
+        
+    } catch (const mongo::DBException &e) {
+        MDBDSDA_ERR << e.what();
+        err = -1;
+    } catch (const chaos::CException &e) {
+        MDBDSDA_ERR << e.what();
+        err = e.errorCode;
     }
+    
     return err;
 }
 
 int MongoDBDataServiceDataAccess::getBestNDataService(std::vector<std::string >&  best_available_data_service,
-                                                      unsigned int numerb_of_result) {
+                                                      unsigned int number_of_result) {
     int err = 0;
     std::vector<boost::shared_ptr<common::data::CDataWrapper> > best_available_server;
     
     if((err = getBestNDataService(best_available_server,
-                                  numerb_of_result))) {
+                                  number_of_result))) {
         return err;
     }
     
@@ -552,12 +512,12 @@ int MongoDBDataServiceDataAccess::getBestNDataService(std::vector<std::string >&
 }
 
 int MongoDBDataServiceDataAccess::getBestNDataServiceEndpoint(std::vector<std::string>&  best_available_data_service_endpoint,
-                                                              unsigned int numerb_of_result) {
+                                                              unsigned int number_of_result) {
     int err = 0;
     std::vector<boost::shared_ptr<common::data::CDataWrapper> > best_available_server;
     
     if((err = getBestNDataService(best_available_server,
-                                  numerb_of_result))) {
+                                  number_of_result))) {
         return err;
     }
     
