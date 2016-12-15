@@ -732,7 +732,6 @@ namespace chaos {
             TYPE_BYTEARRAY,
             
             TYPE_CLUSTER,
-            TYPE_JSONOBJ,
             //!modifier to be ored to normal data types
             TYPE_ACCESS_ARRAY=0x100,
             TYPE_UNDEFINED
@@ -758,8 +757,8 @@ namespace chaos {
                 case TYPE_STRING:
                     return "String";
                     //!byte array variable length
-                case TYPE_JSONOBJ:
-                    return "json";
+                case TYPE_CLUSTER:
+                    return "cluster";
                     //!byte array variable length
                     
                 case TYPE_BYTEARRAY:
@@ -783,8 +782,8 @@ namespace chaos {
                 return TYPE_BOOLEAN;
             } else if(type_description.compare("string") == 0) {
                 return TYPE_STRING;
-            } else if(type_description.compare("json") == 0) {
-                return TYPE_JSONOBJ;
+            } else if(type_description.compare("cluster") == 0) {
+                return TYPE_CLUSTER;
             } else if(type_description.compare("binary") == 0) {
                 return TYPE_BYTEARRAY;
             } else {

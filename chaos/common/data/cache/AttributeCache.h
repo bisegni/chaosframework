@@ -69,6 +69,8 @@ namespace chaos{
                                               const void * value,
                                               uint32_t size);
 
+                    void setValueForAttribute(VariableIndexType n, CDataWrapper& value);
+
                     void setValueForAttribute(const std::string& name,
                                               const void * value,
                                               uint32_t size);

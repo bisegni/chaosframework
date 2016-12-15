@@ -28,6 +28,7 @@
 
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/data/CDataVariant.h>
+#include <chaos/common/data/CDataWrapper.h>
 
 namespace chaos{
     namespace common {
@@ -36,7 +37,16 @@ namespace chaos{
             class CDataWrapper;
 
             namespace cache {
-
+            	namespace spec {
+            	 template<typename T>
+            	       inline  T* getValuePtr(void* value_buffer,CDataWrapper *cd) {
+            	                   return reinterpret_cast<T*>(value_buffer);
+            	           }
+            	   template<>
+            	     inline  CDataWrapper* getValuePtr<CDataWrapper>(void* value_buffer,CDataWrapper *cd){
+            	                   return cd;
+            	               }
+            	}
                     //! the dimensio of the block for the boost::dynamic_bitset class
                 typedef  uint8_t BitBlockDimension;
 
@@ -60,6 +70,7 @@ namespace chaos{
 
                         //!main buffer
                     void								*value_buffer;
+                    CDataWrapper						cdvalue;
 
                         //global index bitmap for infom that this value(using index) has been changed
                     boost::dynamic_bitset<BitBlockDimension> * sharedBitmapChangedAttribute;
@@ -87,9 +98,10 @@ namespace chaos{
                                   uint32_t value_size,
                                   bool tag_has_changed = true);
                     
-                    bool setValue(const CDataVariant& attribute_value,
+                    bool setValue(CDataWrapper& attribute_value,
                                   bool tag_has_changed = true);
-                    
+                    bool setValue(const CDataVariant& attribute_value,
+                                                      bool tag_has_changed = true);
                     bool setStringValue(const std::string& value,
                                         bool tag_has_changed = true,
                                         bool enlarge_memory = false);
@@ -103,10 +115,11 @@ namespace chaos{
                         //! the value is returned has handle because the pointer can change it size ans so
                         //! the pointer can be relocated
                     template<typename T>
-                    inline T* getValuePtr() {
-                        return reinterpret_cast<T*>(value_buffer);
+                     inline T* getValuePtr() {
+                        //return reinterpret_cast<T*>(value_buffer);
+                    	return spec::getValuePtr<T>(value_buffer,&cdvalue);
                     }
-                    
+
                         //! return the buffer as cdatawrapper
                     /*!
                      This will work only if the contained data is a cdata buffer serialization

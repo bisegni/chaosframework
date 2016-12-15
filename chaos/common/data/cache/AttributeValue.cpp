@@ -120,7 +120,14 @@ bool AttributeValue::setStringValue(const std::string& value,
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
+bool AttributeValue::setValue(CDataWrapper& attribute_value,
+                              bool tag_has_changed) {
+	attribute_value.copyAllTo(cdvalue);
+	//set the relative field for set has changed
+	if(tag_has_changed) sharedBitmapChangedAttribute->set(index);
+	 return true;
 
+}
 bool AttributeValue::setValue(const CDataVariant& attribute_value,
                               bool tag_has_changed) {
     CHAOS_ASSERT(value_buffer)
@@ -158,7 +165,7 @@ bool AttributeValue::setValue(const CDataVariant& attribute_value,
                         sizeof(bool));
             break;
         }
-        case DataType::TYPE_JSONOBJ:
+        case DataType::TYPE_CLUSTER:
         case DataType::TYPE_STRING: {
             const std::string value = attribute_value.asString();
             if(!grow((uint32_t)value.size())) return false;
@@ -260,7 +267,7 @@ void AttributeValue::writeToCDataWrapper(CDataWrapper& data_wrapper) {
             data_wrapper.addBinaryValue(name, (const char *)value_buffer, size);
             break;
         }
-        case chaos::DataType::TYPE_JSONOBJ:{
+        case chaos::DataType::TYPE_CLUSTER:{
            
             unsigned long str_len = std::strlen((const char *)value_buffer);
             str_len = (str_len>=size?size:str_len);
@@ -308,7 +315,7 @@ std::string AttributeValue::toString() {
         case chaos::DataType::TYPE_BYTEARRAY:{
             return "binary_data";
         }
-        case chaos::DataType::TYPE_JSONOBJ:
+        case chaos::DataType::TYPE_CLUSTER:
         case chaos::DataType::TYPE_STRING:{
             return std::string((const char *)value_buffer, size);
         }
@@ -344,7 +351,7 @@ std::string AttributeValue::toString(int double_precision) {
             return "binary_data";
         }
         
-        case chaos::DataType::TYPE_JSONOBJ:
+        case chaos::DataType::TYPE_CLUSTER:
         case chaos::DataType::TYPE_STRING:{
             return std::string((const char *)value_buffer, size);
         }

@@ -1230,7 +1230,11 @@ void AbstractControlUnit::initAttributeOnSharedAttributeCache(SharedCacheDomain 
                     attribute_setting.setValueForAttribute(idx, &val, sizeof(int64_t));
                     break;}
                 
-                case DataType::TYPE_JSONOBJ:
+                case DataType::TYPE_CLUSTER:{
+                	CDataWrapper tmp;
+                	tmp.setSerializedJsonData(attributeInfo.defaultValue.c_str());
+                	attribute_setting.setValueForAttribute(idx, tmp);
+                }
                 case DataType::TYPE_STRING : {
                     const char * val = attributeInfo.defaultValue.c_str();
                     attribute_setting.setValueForAttribute(idx, val, (uint32_t)attributeInfo.defaultValue.size());
@@ -1464,10 +1468,12 @@ CDataWrapper* AbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_att
                             break;
                         }
                         
-                        case DataType::TYPE_JSONOBJ: {
+                        case DataType::TYPE_CLUSTER: {
                             std::string str = dataset_attribute_values->getStringValue(attr_name);
                             try{
-                               attribute_cache_value->setValue(str.c_str(), (uint32_t)str.size());
+                            	CDataWrapper tmp;
+                            	tmp.setSerializedJsonData(str.c_str());
+                               attribute_cache_value->setValue(tmp);
 
                             } catch(...){
                                 throw MetadataLoggingCException(getCUID(), -1, boost::str(boost::format("Invalid Json format '%1%'")  %str).c_str(),__PRETTY_FUNCTION__);
@@ -1589,10 +1595,10 @@ void AbstractControlUnit::pushOutputDataset(bool ts_already_set) {
             case DataType::TYPE_DOUBLE:
                 output_attribute_dataset->addDoubleValue(value_set->name, *value_set->getValuePtr<double>());
                 break;
-            case DataType::TYPE_JSONOBJ:{
+            case DataType::TYPE_CLUSTER:{
                 
                 try{
-                    output_attribute_dataset->addJsonValue(value_set->name,value_set->getValuePtr<const char>());
+                    output_attribute_dataset->addCSDataValue(value_set->name,*value_set->getValuePtr<CDataWrapper>());
                 } catch(...){
                     throw MetadataLoggingCException(getCUID(), -101, boost::str(boost::format("Invalid Json format for attribute '%1%' :'%2%")  % value_set->name %value_set->getValuePtr<const char>()).c_str(),__PRETTY_FUNCTION__);
 

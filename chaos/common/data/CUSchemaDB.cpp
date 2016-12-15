@@ -235,7 +235,7 @@ void CUSchemaDB::addAttributeToDataSet(const std::string& node_uid,
         case DataType::TYPE_INT64:
             typeMaxDimension = sizeof(int64_t);
             break;
-        case DataType::TYPE_JSONOBJ:
+        case DataType::TYPE_CLUSTER:
         case DataType::TYPE_STRING:
         	if(maxDimension == 0){
         		CUSCHEMALDBG<<"WARNING: not json/string max length given setting to:"<<CUSCHEMA_DEFAULT_STRING_LENGHT;

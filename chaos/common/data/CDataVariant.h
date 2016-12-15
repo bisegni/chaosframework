@@ -24,6 +24,7 @@
 
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/data/CDataBuffer.h>
+#include <chaos/common/data/CDataWrapper.h>
 
 #include <boost/variant.hpp>
 #include <boost/shared_ptr.hpp>
@@ -41,6 +42,7 @@ public:\
     t operator()(double dv) const;\
     t operator()(const std::string& str) const;\
     t operator()(boost::shared_ptr<chaos::common::data::CDataBuffer>& buffer) const;\
+    t operator()(boost::shared_ptr<chaos::common::data::CDataWrapper>& buffer) const;\
 };
 
 #define CHAOS_VARIANT_DEFINE_VISITOR_WITH_TYPE(t) CHAOS_VARIANT_DEFINE_VISITOR_WITH_NAME_TYPE(t,t)
@@ -56,6 +58,8 @@ namespace chaos {
             CHAOS_VARIANT_DEFINE_VISITOR_WITH_TYPE(double);
             CHAOS_VARIANT_DEFINE_VISITOR_WITH_NAME_TYPE(string, std::string);
             CHAOS_VARIANT_DEFINE_VISITOR_WITH_NAME_TYPE(CDataBuffer, boost::shared_ptr<chaos::common::data::CDataBuffer>);
+            CHAOS_VARIANT_DEFINE_VISITOR_WITH_NAME_TYPE(CDataWrapper, boost::shared_ptr<chaos::common::data::CDataWrapper>);
+
             
             /*!
              * Chaos variant implementation that host all dataset CHAOS data type
@@ -69,7 +73,8 @@ namespace chaos {
                 double,
                 bool,
                 std::string,
-                boost::shared_ptr<chaos::common::data::CDataBuffer> > _internal_variant;
+                boost::shared_ptr<chaos::common::data::CDataBuffer>,
+				boost::shared_ptr<chaos::common::data::CDataWrapper> > _internal_variant;
             public:
                 explicit CDataVariant(DataType::DataType _type,
                                       const void *_value_pointer,
@@ -83,7 +88,10 @@ namespace chaos {
                 explicit CDataVariant(const std::string& string_value);
                 //! take the ownership of the object
                 explicit CDataVariant(CDataBuffer *buffer_value);
+                explicit CDataVariant(CDataWrapper *buffer_value);
+
                 CDataVariant(const CDataVariant& to_copy);
+
                 CDataVariant();
                 
                 CDataVariant& operator=(const CDataVariant& arg);
@@ -100,6 +108,9 @@ namespace chaos {
                 const std::string asString() const;
                 const chaos::common::data::CDataBuffer *const asCDataBuffer() const;
                 boost::shared_ptr<CDataBuffer> asCDataBufferShrdPtr();
+
+                const chaos::common::data::CDataWrapper *const asCDataWrapper() const;
+                boost::shared_ptr<CDataWrapper> asCDataWrapperShrdPtr();
             };
         }
     }

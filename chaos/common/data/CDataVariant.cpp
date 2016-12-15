@@ -21,7 +21,7 @@
 
 #include <chaos/common/data/CDataVariant.h>
 #include <chaos/common/data/CDataWrapper.h>
-
+#include <chaos/common/exception/CException.h>
 using namespace chaos;
 using namespace chaos::common::data;
 
@@ -97,6 +97,7 @@ std::string string_visitor::operator()(uint64_t ui64v) const {SAFE_LEXICAL_WITH_
 std::string string_visitor::operator()(double dv) const {SAFE_LEXICAL_WITH_DEFAULT(boost::lexical_cast<std::string>(dv), "0")}
 std::string string_visitor::operator()(const std::string& str) const {return str;}
 std::string string_visitor::operator()(boost::shared_ptr<CDataBuffer>& buffer) const {return std::string(buffer->getBuffer(), buffer->getBufferSize());}
+std::string string_visitor::operator()(boost::shared_ptr<CDataWrapper>& buffer) const {return buffer->getJSONString();}
 
 
 #pragma mark CDataBuffervisitor
@@ -108,6 +109,19 @@ boost::shared_ptr<CDataBuffer> CDataBuffer_visitor::operator()(uint64_t ui64v) c
 boost::shared_ptr<CDataBuffer> CDataBuffer_visitor::operator()(double dv) const {return boost::shared_ptr<CDataBuffer>(new CDataBuffer());}
 boost::shared_ptr<CDataBuffer> CDataBuffer_visitor::operator()(const std::string& str) const {return boost::shared_ptr<CDataBuffer>(new CDataBuffer(str.c_str(), (uint32_t)str.size(), true));}
 boost::shared_ptr<CDataBuffer> CDataBuffer_visitor::operator()(boost::shared_ptr<CDataBuffer>& buffer) const {return buffer;}
+boost::shared_ptr<CDataBuffer> CDataBuffer_visitor::operator()(boost::shared_ptr<CDataWrapper>& buffer) const {return boost::shared_ptr<CDataBuffer>(new CDataBuffer(buffer->getJSONString().c_str(), (uint32_t)buffer->getJSONString().size(), true));;}
+
+#pragma mark CDataWrappervisitor
+boost::shared_ptr<CDataWrapper> CDataWrapper_visitor::operator()(bool bv) const {throw CFatalException(-1,"invalid conversion to CDataWrapper from bool",__PRETTY_FUNCTION__);return boost::shared_ptr<CDataWrapper>(new CDataWrapper());}
+boost::shared_ptr<CDataWrapper> CDataWrapper_visitor::operator()(int32_t i32v) const {throw CFatalException(-1,"invalid conversion to CDataWrapper from int32_t",__PRETTY_FUNCTION__);return boost::shared_ptr<CDataWrapper>(new CDataWrapper());}
+boost::shared_ptr<CDataWrapper> CDataWrapper_visitor::operator()(uint32_t ui32v) const{throw CFatalException(-1,"invalid conversion to CDataWrapper from uint32_t",__PRETTY_FUNCTION__);return boost::shared_ptr<CDataWrapper>(new CDataWrapper());}
+boost::shared_ptr<CDataWrapper> CDataWrapper_visitor::operator()(int64_t i64v) const{throw CFatalException(-1,"invalid conversion to CDataWrapper from int64_t",__PRETTY_FUNCTION__);return boost::shared_ptr<CDataWrapper>(new CDataWrapper());}
+boost::shared_ptr<CDataWrapper> CDataWrapper_visitor::operator()(uint64_t ui64v) const {throw CFatalException(-1,"invalid conversion to CDataWrapper from uint64_t",__PRETTY_FUNCTION__);return boost::shared_ptr<CDataWrapper>(new CDataWrapper());}
+boost::shared_ptr<CDataWrapper> CDataWrapper_visitor::operator()(double dv) const {throw CFatalException(-1,"invalid conversion to CDataWrapper from double",__PRETTY_FUNCTION__);return boost::shared_ptr<CDataWrapper>(new CDataWrapper());}
+boost::shared_ptr<CDataWrapper> CDataWrapper_visitor::operator()(const std::string& str) const {return boost::shared_ptr<CDataWrapper>(new CDataWrapper(str.c_str()));}
+boost::shared_ptr<CDataWrapper> CDataWrapper_visitor::operator()(boost::shared_ptr<CDataBuffer>& buffer) const {return boost::shared_ptr<CDataWrapper>(new CDataWrapper(buffer->getBuffer()));}
+boost::shared_ptr<CDataWrapper> CDataWrapper_visitor::operator()(boost::shared_ptr<CDataWrapper>& buffer) const {return boost::shared_ptr<CDataWrapper>(new CDataWrapper(buffer->getBSONData()->getBufferPtr()));}
+
 
 #pragma mark CDatavariant implementation
 CDataVariant::CDataVariant(int32_t int32_value):
@@ -138,7 +152,7 @@ CDataVariant::CDataVariant(const std::string& string_value):_internal_variant(st
     CDataWrapper tmp;
     try{
         tmp.setSerializedJsonData(string_value.c_str());
-        type=DataType::TYPE_JSONOBJ;
+        type=DataType::TYPE_CLUSTER;
     } catch(...){
         type=DataType::TYPE_STRING;
     }
@@ -149,6 +163,12 @@ CDataVariant::CDataVariant(CDataBuffer *buffer_value)
 :
 type(DataType::TYPE_BYTEARRAY),
 _internal_variant(boost::shared_ptr<CDataBuffer>(buffer_value)) { }
+
+CDataVariant::CDataVariant(CDataWrapper *buffer_value)
+:
+type(DataType::TYPE_CLUSTER),
+_internal_variant(boost::shared_ptr<CDataWrapper>(buffer_value)) { }
+
 
 CDataVariant::CDataVariant(const CDataVariant& to_copy):
 type(to_copy.type),
@@ -176,7 +196,10 @@ type(_type){
             _internal_variant = *static_cast<const double*>(_value_pointer);
             break;
             
-        case DataType::TYPE_JSONOBJ:
+        case DataType::TYPE_CLUSTER:{
+          _internal_variant = boost::shared_ptr<CDataWrapper>(new CDataWrapper(static_cast<const char*>(_value_pointer)));
+        	break;
+        }
         case DataType::TYPE_STRING:
             _internal_variant = std::string(static_cast<const char*>(_value_pointer),
                                             _value_size);
@@ -231,4 +254,11 @@ const CDataBuffer * const CDataVariant::asCDataBuffer() const {
 }
 boost::shared_ptr<CDataBuffer> CDataVariant::asCDataBufferShrdPtr() {
     return boost::apply_visitor( CDataBuffer_visitor(), _internal_variant);
+}
+
+const CDataWrapper * const CDataVariant::asCDataWrapper() const {
+    return boost::apply_visitor( CDataWrapper_visitor(), _internal_variant ).get();
+}
+boost::shared_ptr<CDataWrapper> CDataVariant::asCDataWrapperShrdPtr() {
+    return boost::apply_visitor( CDataWrapper_visitor(), _internal_variant);
 }

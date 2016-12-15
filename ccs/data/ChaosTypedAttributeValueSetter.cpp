@@ -98,7 +98,7 @@ boost::shared_ptr<CDataWrapperKeyValueSetter> ChaosTypedAttributeValueSetter::ge
         return boost::shared_ptr<CDataWrapperKeyValueSetter>(new CDataWrapperDoubleKeyValueSetter(chaosAttributeName().toStdString(), chaos_attribute_value_.toDouble(ok)));
         break;
         
-    case chaos::DataType::TYPE_JSONOBJ:{
+    case chaos::DataType::TYPE_CLUSTER:{
         CDataWrapper tmp;
         try{
             tmp.setSerializedJsonData(chaos_attribute_value_.toString().toStdString().c_str());

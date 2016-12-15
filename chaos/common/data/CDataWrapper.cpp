@@ -253,7 +253,7 @@ void CDataWrapper::addVariantValue(const std::string& key,
         case DataType::TYPE_DOUBLE:
             addDoubleValue(key, variant_value.asDouble());
             break;
-        case DataType::TYPE_JSONOBJ:{
+        case DataType::TYPE_CLUSTER:{
             addJsonValue(key,variant_value.asString());
          
             break;

@@ -112,7 +112,7 @@ int ChaosLuaWrapperInterface::callApi(lua_State *ls) {
                 case DataType::TYPE_DOUBLE:
                     lua_pushnumber(ls, it->asDouble());
                     break;
-                case DataType::TYPE_JSONOBJ:
+                case DataType::TYPE_CLUSTER:
                 case DataType::TYPE_STRING:
                     lua_pushstring(ls, it->asString().c_str());
                     break;
@@ -240,7 +240,7 @@ int LuaScriptVM::callFunction(const std::string& function_name,
                 lua_pushnumber(ls, it->asDouble());
                 break;
                 
-            case DataType::TYPE_JSONOBJ:
+            case DataType::TYPE_CLUSTER:
             case DataType::TYPE_STRING:
                 lua_pushstring(ls, it->asString().c_str());
                 break;
@@ -312,7 +312,7 @@ int LuaScriptVM::callProcedure(const std::string& function_name,
             case DataType::TYPE_DOUBLE:
                 lua_pushnumber(ls, it->asDouble());
                 break;
-            case DataType::TYPE_JSONOBJ:
+            case DataType::TYPE_CLUSTER:
             case DataType::TYPE_STRING:
                 lua_pushstring(ls, it->asString().c_str());
                 break;

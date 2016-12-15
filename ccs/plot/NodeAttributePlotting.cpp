@@ -194,7 +194,7 @@ void NodeAttributePlotting::addTimedGraphFor(QSharedPointer<DatasetAttributeRead
     const QString attribute_name = attribute_reader->getName();
     if(map_plot_info.contains(attribute_name)) return;
 
-    if((attribute_reader->getType() == chaos::DataType::TYPE_STRING)||(attribute_reader->getType() == chaos::DataType::TYPE_JSONOBJ)) {
+    if((attribute_reader->getType() == chaos::DataType::TYPE_STRING)||(attribute_reader->getType() == chaos::DataType::TYPE_CLUSTER)) {
         QMessageBox::information(this, tr("Create plot error"), QString("The type for attribute %1 can't be added to timed plot").arg( attribute_name));
         return;
     } else if(attribute_reader->getType() == chaos::DataType::TYPE_BYTEARRAY){

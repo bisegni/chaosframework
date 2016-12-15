@@ -95,6 +95,13 @@ void AttributeCache::setValueForAttribute(VariableIndexType n,
     vector_attribute_value[n]->setValue(value, size);
 }
 
+void AttributeCache::setValueForAttribute(VariableIndexType n,
+                                           CDataWrapper& value) {
+    CHAOS_ASSERT(n<vector_attribute_value.size());
+    CHAOS_ASSERT(vector_attribute_value[n].get());
+    vector_attribute_value[n]->setValue(value);
+}
+
 void AttributeCache::setValueForAttribute(const std::string& name,
                                           const void * value,
                                           uint32_t size) {

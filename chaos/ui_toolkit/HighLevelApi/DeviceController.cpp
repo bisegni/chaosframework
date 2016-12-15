@@ -188,7 +188,7 @@ int DeviceController::getAttributeStrValue(string attribute_name, string& attrib
                     attribute_value = boost::lexical_cast<string>(dataWrapper->getDoubleValue(attribute_name.c_str()));
                     break;
                 
-                case DataType::TYPE_JSONOBJ:
+                case DataType::TYPE_CLUSTER:
                 case DataType::TYPE_STRING:
                     attribute_value = boost::lexical_cast<string>(dataWrapper->getStringValue(attribute_name.c_str()));
                     break;
@@ -354,7 +354,7 @@ int DeviceController::setAttributeToValue(const char *attributeName, const char 
             attributeValuePack.addBoolValue(attributeName, boolValuePtr);
             break;
         }
-        case DataType::TYPE_JSONOBJ:
+        case DataType::TYPE_CLUSTER:
         attributeValuePack.addJsonValue(attributeName, attributeValue);
         break;
       
@@ -408,7 +408,7 @@ int DeviceController::setAttributeToValue(const char *attributeName, DataType::D
             attributeValuePack.addBoolValue(attributeName, *boolValuePtr);
             break;
         }
-        case DataType::TYPE_JSONOBJ:{
+        case DataType::TYPE_CLUSTER:{
          
             attributeValuePack.addJsonValue(attributeName,static_cast<const char *>(attributeValue));
             break;
@@ -680,7 +680,7 @@ int DeviceController::setAttributeValue(string& attributeName, const char* attri
         case DataType::TYPE_BYTEARRAY:
             attributeValuePack.addBinaryValue(attrname,attributeValue,size);
             return deviceChannel->setAttributeValue(attributeValuePack,millisecToWait);
-        case DataType::TYPE_JSONOBJ:{
+        case DataType::TYPE_CLUSTER:{
            
             attributeValuePack.addJsonValue(attrname,attributeValue);
             
