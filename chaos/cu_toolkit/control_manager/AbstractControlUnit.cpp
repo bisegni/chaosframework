@@ -1469,12 +1469,12 @@ CDataWrapper* AbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_att
                         }
                         
                         case DataType::TYPE_CLUSTER: {
-                            std::string str = dataset_attribute_values->getStringValue(attr_name);
+                            CDataWrapper* str = dataset_attribute_values->getCSDataValue(attr_name);
                             try{
-                            	CDataWrapper tmp;
-                            	tmp.setSerializedJsonData(str.c_str());
-                               attribute_cache_value->setValue(tmp);
-
+                            if(str){
+                               attribute_cache_value->setValue(*str);
+                               delete str;
+                            }
                             } catch(...){
                                 throw MetadataLoggingCException(getCUID(), -1, boost::str(boost::format("Invalid Json format '%1%'")  %str).c_str(),__PRETTY_FUNCTION__);
                             }

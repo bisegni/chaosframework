@@ -268,12 +268,8 @@ void AttributeValue::writeToCDataWrapper(CDataWrapper& data_wrapper) {
             break;
         }
         case chaos::DataType::TYPE_CLUSTER:{
-           
-            unsigned long str_len = std::strlen((const char *)value_buffer);
-            str_len = (str_len>=size?size:str_len);
-             std::string tt=std::string(static_cast<const char*>(value_buffer), str_len);
-           
-            data_wrapper.addJsonValue(name,tt);
+
+            data_wrapper.addCSDataValue(name,cdvalue);
             break;
         }
         case chaos::DataType::TYPE_STRING:{
