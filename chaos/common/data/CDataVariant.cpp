@@ -101,12 +101,12 @@ std::string string_visitor::operator()(boost::shared_ptr<CDataWrapper>& buffer) 
 
 
 #pragma mark CDataBuffervisitor
-boost::shared_ptr<CDataBuffer> CDataBuffer_visitor::operator()(bool bv) const {return boost::shared_ptr<CDataBuffer>(new CDataBuffer());}
-boost::shared_ptr<CDataBuffer> CDataBuffer_visitor::operator()(int32_t i32v) const {return boost::shared_ptr<CDataBuffer>(new CDataBuffer());}
-boost::shared_ptr<CDataBuffer> CDataBuffer_visitor::operator()(uint32_t ui32v) const {return boost::shared_ptr<CDataBuffer>(new CDataBuffer());}
-boost::shared_ptr<CDataBuffer> CDataBuffer_visitor::operator()(int64_t i64v) const {return boost::shared_ptr<CDataBuffer>(new CDataBuffer());}
-boost::shared_ptr<CDataBuffer> CDataBuffer_visitor::operator()(uint64_t ui64v) const {return boost::shared_ptr<CDataBuffer>(new CDataBuffer());}
-boost::shared_ptr<CDataBuffer> CDataBuffer_visitor::operator()(double dv) const {return boost::shared_ptr<CDataBuffer>(new CDataBuffer());}
+boost::shared_ptr<CDataBuffer> CDataBuffer_visitor::operator()(bool bv) const {return boost::shared_ptr<CDataBuffer>(new CDataBuffer((const char*)&bv,sizeof(bool),true));}
+boost::shared_ptr<CDataBuffer> CDataBuffer_visitor::operator()(int32_t i32v) const {return boost::shared_ptr<CDataBuffer>(new CDataBuffer((const char*)&i32v,sizeof(int32_t),true));}
+boost::shared_ptr<CDataBuffer> CDataBuffer_visitor::operator()(uint32_t ui32v) const {return boost::shared_ptr<CDataBuffer>(new CDataBuffer((const char*)&ui32v,sizeof(uint32_t),true));}
+boost::shared_ptr<CDataBuffer> CDataBuffer_visitor::operator()(int64_t i64v) const {return boost::shared_ptr<CDataBuffer>(new CDataBuffer((const char*)&i64v,sizeof(int64_t),true));}
+boost::shared_ptr<CDataBuffer> CDataBuffer_visitor::operator()(uint64_t ui64v) const {return boost::shared_ptr<CDataBuffer>(new CDataBuffer((const char*)&ui64v,sizeof(uint64_t),true));}
+boost::shared_ptr<CDataBuffer> CDataBuffer_visitor::operator()(double dv) const {return boost::shared_ptr<CDataBuffer>(new CDataBuffer((const char*)&dv,sizeof(double),true));}
 boost::shared_ptr<CDataBuffer> CDataBuffer_visitor::operator()(const std::string& str) const {return boost::shared_ptr<CDataBuffer>(new CDataBuffer(str.c_str(), (uint32_t)str.size(), true));}
 boost::shared_ptr<CDataBuffer> CDataBuffer_visitor::operator()(boost::shared_ptr<CDataBuffer>& buffer) const {return buffer;}
 boost::shared_ptr<CDataBuffer> CDataBuffer_visitor::operator()(boost::shared_ptr<CDataWrapper>& buffer) const {return boost::shared_ptr<CDataBuffer>(new CDataBuffer(buffer->getJSONString().c_str(), (uint32_t)buffer->getJSONString().size(), true));;}
