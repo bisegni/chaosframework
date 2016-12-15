@@ -439,7 +439,7 @@ int MongoDBDataServiceDataAccess::getBestNDataService(std::vector<boost::shared_
     //almost we need toreturn one data service
     if(number_of_result == 0) return 0;
     try{
-        mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_DATA_SERVICE <<
+        mongo::Query query = BSON(NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_DATA_SERVICE <<
                                     NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP << BSON("$gte" << mongo::Date_t(TimingUtil::getTimestampWithDelay(5000, false))));
         //filter on sequence
         mongo::BSONObj projection = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << 1 <<
@@ -459,7 +459,8 @@ int MongoDBDataServiceDataAccess::getBestNDataService(std::vector<boost::shared_
         //perform the search for the query page
         connection->findN(paged_result,
                           MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
-                          query,
+                          query.sort(BSON(NodeHealtDefinitionKey::NODE_HEALT_USER_TIME << -1 <<
+                                          NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME << -1)),
                           number_of_result);
         //fill reuslt
         if(paged_result.size()>0) {
