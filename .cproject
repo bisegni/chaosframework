@@ -31,6 +31,11 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
+					<fileInfo id="0.703661786.208982607" name="AbstractControlUnit.cpp" rcbsApplicability="disable" resourcePath="chaos/cu_toolkit/control_manager/AbstractControlUnit.cpp" toolsToInvoke="org.eclipse.cdt.build.core.settings.holder.1991680329.808596203">
+						<tool id="org.eclipse.cdt.build.core.settings.holder.1991680329.808596203" name="GNU C++" superClass="org.eclipse.cdt.build.core.settings.holder.1991680329">
+							<inputType id="org.eclipse.cdt.build.core.settings.holder.inType.312479032" languageId="org.eclipse.cdt.core.g++" languageName="GNU C++" sourceContentType="org.eclipse.cdt.core.cxxSource,org.eclipse.cdt.core.cxxHeader" superClass="org.eclipse.cdt.build.core.settings.holder.inType"/>
+						</tool>
+					</fileInfo>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>

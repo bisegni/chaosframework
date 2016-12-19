@@ -633,6 +633,7 @@ namespace chaos{
                 
                 //!copy into a CDataWrapper last received initialization package
                 void copyInitConfiguraiton(CDataWrapper& copy);
+
             };
         }
     }

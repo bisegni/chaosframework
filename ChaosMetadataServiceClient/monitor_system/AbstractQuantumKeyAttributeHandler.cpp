@@ -85,7 +85,18 @@ void QuantumKeyAttributeStringHandler::_consumeValue(const std::string& key,
                  value->getStringValue(attribute));
 
 }
+QuantumKeyAttributeHandlerIMPL_CONST_DIST(QuantumKeyAttributeCDataWrapperHandler)
+void QuantumKeyAttributeCDataWrapperHandler::_consumeValue(const std::string& key,
+                                                     const KeyValue& value) {
+	CDataWrapper * tmp=value->getCSDataValue(attribute);
+	if(tmp){
+		consumeValue(key,
+                 attribute,
+                 tmp->getJSONString());
+		delete tmp;
+	}
 
+}
 QuantumKeyAttributeHandlerIMPL_CONST_DIST(QuantumKeyAttributeBinaryHandler)
 void QuantumKeyAttributeBinaryHandler::_consumeValue(const std::string& key,
                                                      const KeyValue& value) {

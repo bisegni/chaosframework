@@ -490,6 +490,43 @@ int MDSMessageChannel::setVariable(const std::string& variable_name,
     return err;
 }
 
+int MDSMessageChannel::searchVariable(const std::string& variable_name,ChaosStringVector& variable_found,
+                                                uint32_t millisec_to_wait){
+	 int err = ErrorCode::EC_NO_ERROR;
+	    auto_ptr<CDataWrapper> message(new CDataWrapper());
+	    message->addStringValue("variable_name",
+	                            variable_name);
+
+	    std::auto_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
+	                                                                                           "searchVariable",
+	                                                                                           message.release());
+	    request_future->setTimeout(millisec_to_wait);
+
+	    if(request_future->wait()) {
+	           DECODE_ERROR(request_future)
+	           if((err = request_future->getError()) == ErrorCode::EC_NO_ERROR) {
+
+	               if(request_future->getResult() &&
+	                  request_future->getResult()->hasKey("varlist") &&
+	                  request_future->getResult()->isVectorValue("varlist")) {
+	                   //we have result
+	                   std::auto_ptr<CMultiTypeDataArrayWrapper> snapshot_desc_list(request_future->getResult()->getVectorValue("varlist"));
+	                   for(int idx = 0;
+	                       idx < snapshot_desc_list->size();
+	                       idx++) {
+	                       const std::string node_uid = snapshot_desc_list->getStringElementAtIndex(idx);
+
+	                       variable_found.push_back(node_uid);
+	                   }
+	               }
+	           }
+	       } else {
+	           err = -1;
+	       }
+	       return err;
+	   }
+
+
 int MDSMessageChannel::getVariable(const std::string& variable_name,
                                    chaos::common::data::CDataWrapper **variable_value,
                                    uint32_t millisec_to_wait) {
