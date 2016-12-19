@@ -19,7 +19,7 @@
  */
 
 #include <chaos/common/exception/CException.h>
-
+#include <boost/exception/all.hpp>
 using namespace chaos;
 
 CException::CException(int eCode,
@@ -58,6 +58,13 @@ void CException::composeMsg() {
 }
 
 const char* CFatalException::what() const throw() {
-	std::string ret="FATAL:"+msg;
-    return ret.c_str();
+	std::stringstream ret;
+	std::string stack;
+	ret<<"FATAL:\""+msg<<"\"";
+	stack =boost::diagnostic_information(*this);
+	 if (stack.size() ) {
+	        ret <<" stack:"<< stack;
+	    }
+
+    return ret.str().c_str();
 }

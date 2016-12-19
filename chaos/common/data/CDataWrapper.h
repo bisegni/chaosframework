@@ -174,7 +174,21 @@ namespace chaos {
                 
                 //set a binary data value
                 void addBinaryValue(const std::string&, const char *, int);
+                template<typename T>
+                void addVectorValue(const std::string &key,T v[]){
+                	for(int cnt=0;cnt<sizeof(v)/sizeof(T);cnt++){
+                		bsonArrayBuilder->append(v[cnt]);
+                	}
+                	finalizeArrayForKey(key);
+                }
                 
+                template<typename T>
+                void addVectorValue(const std::string &key,std::vector<T> v){
+                                	for(typename std::vector<T>::iterator cnt=v.begin();cnt!=v.end();cnt++){
+                                		bsonArrayBuilder->append(*cnt);
+                                	}
+                                	finalizeArrayForKey(key);
+                                }
                 //!add a value from variant
                 void addVariantValue(const std::string& key,
                                      const CDataVariant& variant_value);

@@ -559,7 +559,7 @@ IF (NOT CACHE_DIR)
       project(config)
     ENDIF()
 
-  SET(CHAOS_BOOST_FLAGS ${CHAOS_BOOST_FLAGS} linkflags=\""${CHAOS_LINKER_FLAGS}"\" cxxflags=\""${CHAOS_CXX_FLAGS}"\" --prefix=${CMAKE_INSTALL_PREFIX} --with-program_options --with-chrono --with-filesystem --with-log --with-regex --with-random --with-system --with-thread --with-atomic --with-timer link=static install "-j ${PROCESSOR_COUNT}" )
+  SET(CHAOS_BOOST_FLAGS ${CHAOS_BOOST_FLAGS} linkflags=\""${CHAOS_LINKER_FLAGS}"\" cxxflags=\""${CHAOS_CXX_FLAGS}"\" --prefix=${CMAKE_INSTALL_PREFIX} --with-program_options --with-exception --with-chrono --with-filesystem --with-log --with-regex --with-random --with-system --with-thread --with-atomic --with-timer link=static install "-j ${PROCESSOR_COUNT}" )
 
 
 

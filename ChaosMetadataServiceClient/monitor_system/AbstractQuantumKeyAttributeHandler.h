@@ -135,7 +135,18 @@ x::~x(){}
                                           const std::string& attribute,
                                           const std::string& value) = 0;
             };
-            
+            class QuantumKeyAttributeCDataWrapperHandler:
+                       public AbstractQuantumKeyAttributeHandler {
+                           std::string last_value;
+                           void _consumeValue(const std::string& key, const KeyValue& value);
+                       public:
+                           QuantumKeyAttributeCDataWrapperHandler(const std::string& _attribute,
+                                                            bool _event_on_value_change = false);
+                           ~QuantumKeyAttributeCDataWrapperHandler();
+                           virtual void consumeValue(const std::string& key,
+                                                     const std::string& attribute,
+                                                     const std::string& value) = 0;
+                       };
             class QuantumKeyAttributeBinaryHandler:
             public AbstractQuantumKeyAttributeHandler {
                 void _consumeValue(const std::string& key, const KeyValue& value);

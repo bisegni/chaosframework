@@ -155,6 +155,24 @@ namespace chaos {
                                         attribute_value);
                 }
             };
+            class CDataWrapperClusterKeyValueSetter:
+                        public TypedCDataWrapperKeyValueSetter<std::string> {
+                        public:
+                            CDataWrapperClusterKeyValueSetter(const std::string& _attribute_name,
+                                                             const std::string& _attribute_value):
+                            TypedCDataWrapperKeyValueSetter<std::string>(_attribute_name) {
+                                attribute_value =_attribute_value;
+                            }
+
+                            CDataWrapperClusterKeyValueSetter(const std::string& _attribute_name):
+                            TypedCDataWrapperKeyValueSetter<std::string>(_attribute_name)
+                            {attribute_value = "";}
+
+                            void setTo(chaos::common::data::CDataWrapper& data) {
+                                data.addJsonValue(attribute_name,
+                                                    attribute_value);
+                            }
+                        };
             
             
         }

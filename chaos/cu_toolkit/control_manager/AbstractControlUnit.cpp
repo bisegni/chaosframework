@@ -22,7 +22,6 @@
 #include <chaos/common/utility/UUIDUtil.h>
 #include <chaos/common/healt_system/HealtManager.h>
 #include <chaos/common/event/channel/InstrumentEventChannel.h>
-
 #include <chaos/cu_toolkit/data_manager/DataManager.h>
 #include <chaos/cu_toolkit/driver_manager/DriverManager.h>
 #include <chaos/cu_toolkit/command_manager/CommandManager.h>
@@ -233,13 +232,14 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configurat
     //LCU_ << "Check if as been setup a json file path to configura CU:" << CU_IDENTIFIER_C_STREAM;
     //loadCDataWrapperForJsonFile(setup_configuration);
     
+    //call method to dinamically add other things to the dataset
+        _completeDatasetAttribute();
     //first call the setup abstract method used by the implementing CU to define action, dataset and other
     //usefull value
     unitDefineActionAndDataset();
     
-    //call method to dinamically add other things to the dataset
-    _completeDatasetAttribute();
     
+
     //for now we need only to add custom action for expose to rpc
     //input element of the dataset
     AbstActionDescShrPtr
@@ -1359,6 +1359,7 @@ void AbstractControlUnit::_goInFatalError(chaos::CException recoverable_exceptio
 }
 
 void AbstractControlUnit::_completeDatasetAttribute() {
+
     //add busy flag
     DatasetDB::addAttributeToDataSet("busy",
                                      "Notify when a control unit is doing some usefull work",
