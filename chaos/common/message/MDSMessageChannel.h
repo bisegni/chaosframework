@@ -197,7 +197,8 @@ namespace chaos {
                  \return error code
                  */
                 int searchSnapshot(const std::string& query_filter,
-                                   std::map<uint64_t,std::string>& snapshot_found,uint32_t millisec_to_wait=5000);
+                                   std::map<uint64_t,std::string>& snapshot_found,
+                                   uint32_t millisec_to_wait=5000);
                 
                 //! Search node for snapshot
                 /*!
@@ -209,6 +210,20 @@ namespace chaos {
                 int searchNodeForSnapshot(const std::string& snapshot_name,
                                           ChaosStringVector& node_found,
                                           uint32_t millisec_to_wait=5000);
+                
+                //! create or update a variable
+                int setVariable(const std::string& variable_name,
+                                chaos::common::data::CDataWrapper& variable_value,
+                                uint32_t millisec_to_wait=5000);
+                
+                //! retrieve a variable value
+                int getVariable(const std::string& variable_name,
+                                chaos::common::data::CDataWrapper **variable_value,
+                                uint32_t millisec_to_wait=5000);
+                
+                //!remove a variable
+                int removeVariable(const std::string& variable_name,
+                                   uint32_t millisec_to_wait=5000);
                 
                 //! Search snapshot for node
                 /*!

@@ -43,9 +43,20 @@ namespace chaos {
                 public:
                     //inherited method
                     int getNextSequenceValue(const std::string& sequence_name, uint64_t& next_value);
-
+                    
                     //inherited method
                     int resetAllData();
+                    
+                    //inherited method
+                    int setVariable(const std::string& variable_name,
+                                    chaos::common::data::CDataWrapper& cdw);
+                    
+                    //inherited method
+                    int getVariable(const std::string& variable_name,
+                                    chaos::common::data::CDataWrapper **cdw);
+                    
+                    //inherited method
+                    int deleteVariable(const std::string& variable_name);
                 };
                 
                 

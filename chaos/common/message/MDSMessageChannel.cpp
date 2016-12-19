@@ -468,6 +468,68 @@ int MDSMessageChannel::searchSnapshotForNode(const std::string& node_uid,
     return err;
 }
 
+int MDSMessageChannel::setVariable(const std::string& variable_name,
+                                   chaos::common::data::CDataWrapper& variable_value,
+                                   uint32_t millisec_to_wait) {
+    int err = ErrorCode::EC_NO_ERROR;
+    auto_ptr<CDataWrapper> message(new CDataWrapper());
+    message->addStringValue("variable_name",
+                            variable_name);
+    message->addCSDataValue("variable_value",
+                            variable_value);
+    std::auto_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
+                                                                                           "setVariable",
+                                                                                           message.release());
+    request_future->setTimeout(millisec_to_wait);
+    if(request_future->wait()) {
+        DECODE_ERROR(request_future)
+        err = request_future->getError();
+    } else {
+        err = -1;
+    }
+    return err;
+}
+
+int MDSMessageChannel::getVariable(const std::string& variable_name,
+                                   chaos::common::data::CDataWrapper **variable_value,
+                                   uint32_t millisec_to_wait) {
+    int err = ErrorCode::EC_NO_ERROR;
+    auto_ptr<CDataWrapper> message(new CDataWrapper());
+    message->addStringValue("variable_name",
+                            variable_name);
+    std::auto_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
+                                                                                           "getVariable",
+                                                                                           message.release());
+    request_future->setTimeout(millisec_to_wait);
+    if(request_future->wait()) {
+        DECODE_ERROR(request_future)
+        err = request_future->getError();
+        *variable_value = request_future->detachResult();
+    } else {
+        err = -1;
+    }
+    return err;
+}
+
+int MDSMessageChannel::removeVariable(const std::string& variable_name,
+                                      uint32_t millisec_to_wait) {
+    int err = ErrorCode::EC_NO_ERROR;
+    auto_ptr<CDataWrapper> message(new CDataWrapper());
+    message->addStringValue("variable_name",
+                            variable_name);
+    std::auto_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
+                                                                                           "removeVariable",
+                                                                                           message.release());
+    request_future->setTimeout(millisec_to_wait);
+    if(request_future->wait()) {
+        DECODE_ERROR(request_future)
+        err = request_future->getError();
+    } else {
+        err = -1;
+    }
+    return err;
+}
+
 int MDSMessageChannel::searchNode(const std::string& unique_id_filter,
                                   unsigned int node_type_filter,
                                   bool alive_only,

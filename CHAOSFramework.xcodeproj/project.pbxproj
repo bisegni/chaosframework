@@ -1017,6 +1017,15 @@
 		32FB20211A3F2E7300307A86 /* AbstractSharedDomainCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FB201F1A3F2E7300307A86 /* AbstractSharedDomainCache.h */; };
 		32FBC78E1D7F2BEC001F9170 /* TimingUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FBC78D1D7F2BEC001F9170 /* TimingUtil.cpp */; };
 		32FC2EA91D09864F00475B25 /* service_error.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FC2EA71D09864F00475B25 /* service_error.h */; };
+		32FC499E1E07EBD40087D82C /* SetVariable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FC499C1E07EBD40087D82C /* SetVariable.cpp */; };
+		32FC49A11E07F8DB0087D82C /* RemoveVariable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FC499F1E07F8DB0087D82C /* RemoveVariable.cpp */; };
+		32FC49A41E0807F70087D82C /* GetVariable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FC49A21E0807F70087D82C /* GetVariable.cpp */; };
+		32FC49A71E080F900087D82C /* SetVariable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FC49A51E080F900087D82C /* SetVariable.cpp */; };
+		32FC49A81E080F900087D82C /* SetVariable.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FC49A61E080F900087D82C /* SetVariable.h */; };
+		32FC49AB1E080FA80087D82C /* RemoveVariable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FC49A91E080FA80087D82C /* RemoveVariable.cpp */; };
+		32FC49AC1E080FA80087D82C /* RemoveVariable.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FC49AA1E080FA80087D82C /* RemoveVariable.h */; };
+		32FC49AF1E080FB80087D82C /* GetVariable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FC49AD1E080FB80087D82C /* GetVariable.cpp */; };
+		32FC49B01E080FB80087D82C /* GetVariable.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FC49AE1E080FB80087D82C /* GetVariable.h */; };
 		32FC7EE51A70FDB70029C2A2 /* ApiManagment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FC7EE31A70FDB70029C2A2 /* ApiManagment.cpp */; };
 		32FFA3EC1B00D43900C57E07 /* QuantumSlot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FFA3EA1B00D43900C57E07 /* QuantumSlot.cpp */; };
 		32FFA3ED1B00D43900C57E07 /* QuantumSlot.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FFA3EB1B00D43900C57E07 /* QuantumSlot.h */; };
@@ -2338,6 +2347,18 @@
 		32FB201F1A3F2E7300307A86 /* AbstractSharedDomainCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractSharedDomainCache.h; sourceTree = "<group>"; };
 		32FBC78D1D7F2BEC001F9170 /* TimingUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TimingUtil.cpp; sourceTree = "<group>"; };
 		32FC2EA71D09864F00475B25 /* service_error.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = service_error.h; sourceTree = "<group>"; };
+		32FC499C1E07EBD40087D82C /* SetVariable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SetVariable.cpp; sourceTree = "<group>"; };
+		32FC499D1E07EBD40087D82C /* SetVariable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetVariable.h; sourceTree = "<group>"; };
+		32FC499F1E07F8DB0087D82C /* RemoveVariable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoveVariable.cpp; sourceTree = "<group>"; };
+		32FC49A01E07F8DB0087D82C /* RemoveVariable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoveVariable.h; sourceTree = "<group>"; };
+		32FC49A21E0807F70087D82C /* GetVariable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetVariable.cpp; sourceTree = "<group>"; };
+		32FC49A31E0807F70087D82C /* GetVariable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetVariable.h; sourceTree = "<group>"; };
+		32FC49A51E080F900087D82C /* SetVariable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SetVariable.cpp; sourceTree = "<group>"; };
+		32FC49A61E080F900087D82C /* SetVariable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetVariable.h; sourceTree = "<group>"; };
+		32FC49A91E080FA80087D82C /* RemoveVariable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoveVariable.cpp; sourceTree = "<group>"; };
+		32FC49AA1E080FA80087D82C /* RemoveVariable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoveVariable.h; sourceTree = "<group>"; };
+		32FC49AD1E080FB80087D82C /* GetVariable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetVariable.cpp; sourceTree = "<group>"; };
+		32FC49AE1E080FB80087D82C /* GetVariable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetVariable.h; sourceTree = "<group>"; };
 		32FC7EDF1A7008780029C2A2 /* mds_constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mds_constants.h; sourceTree = "<group>"; };
 		32FC7EE01A7008FA0029C2A2 /* mds_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mds_types.h; sourceTree = "<group>"; };
 		32FC7EE11A701BE40029C2A2 /* AbstractApi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AbstractApi.h; sourceTree = "<group>"; };
@@ -3805,6 +3826,12 @@
 				32936C631D9277DC00485F71 /* GetSnapshotForNode.h */,
 				3258D47F1DF0332300D9C8D0 /* GetSnapshotDatasetsForNode.cpp */,
 				3258D4801DF0332300D9C8D0 /* GetSnapshotDatasetsForNode.h */,
+				32FC499C1E07EBD40087D82C /* SetVariable.cpp */,
+				32FC499D1E07EBD40087D82C /* SetVariable.h */,
+				32FC499F1E07F8DB0087D82C /* RemoveVariable.cpp */,
+				32FC49A01E07F8DB0087D82C /* RemoveVariable.h */,
+				32FC49A21E0807F70087D82C /* GetVariable.cpp */,
+				32FC49A31E0807F70087D82C /* GetVariable.h */,
 			);
 			path = service;
 			sourceTree = "<group>";
@@ -4228,6 +4255,12 @@
 				32936C661D9280BA00485F71 /* GetSnapshotForNode.h */,
 				32F135A11DF05E4F00890AFC /* GetSnapshotDatasetForNode.cpp */,
 				32F135A21DF05E4F00890AFC /* GetSnapshotDatasetForNode.h */,
+				32FC49A51E080F900087D82C /* SetVariable.cpp */,
+				32FC49A61E080F900087D82C /* SetVariable.h */,
+				32FC49A91E080FA80087D82C /* RemoveVariable.cpp */,
+				32FC49AA1E080FA80087D82C /* RemoveVariable.h */,
+				32FC49AD1E080FB80087D82C /* GetVariable.cpp */,
+				32FC49AE1E080FB80087D82C /* GetVariable.h */,
 				3221D7421CF5F368001BE971 /* service.h */,
 			);
 			path = service;
@@ -5329,6 +5362,7 @@
 				32D745F21C7332FC00F4D719 /* EventDispatchManager.h in Headers */,
 				3239EF4F1C0EFEA60052BE61 /* CreateNewSnapshot.h in Headers */,
 				3221D7481CF5F38E001BE971 /* groups.h in Headers */,
+				32FC49AC1E080FA80087D82C /* RemoveVariable.h in Headers */,
 				32B4192D1B0DE55E00C3CA7D /* ChangeNodeState.h in Headers */,
 				32B419381B16236300C3CA7D /* SetInputDatasetAttributeValues.h in Headers */,
 				32A1164D1D11A17D00FF44ED /* SearchInstancesForScript.h in Headers */,
@@ -5352,7 +5386,9 @@
 				3211CCDA1B021B8D00F9B80E /* GetBestEndpoints.h in Headers */,
 				32661C6E1AA741D000F1A721 /* ChaosMetadataServiceClient.h in Headers */,
 				32B299AB1BE27945000D3716 /* RecoverError.h in Headers */,
+				32FC49B01E080FB80087D82C /* GetVariable.h in Headers */,
 				32A13EB91C2014170010F3FC /* Delete.h in Headers */,
+				32FC49A81E080F900087D82C /* SetVariable.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5599,12 +5635,14 @@
 				3258D4811DF0332300D9C8D0 /* GetSnapshotDatasetsForNode.cpp in Sources */,
 				32B1E8191B2FFCE500221E49 /* CommandCommonUtility.cpp in Sources */,
 				3270E0761C6CC05100105726 /* MongoDBLoggingDataAccess.cpp in Sources */,
+				32FC49A41E0807F70087D82C /* GetVariable.cpp in Sources */,
 				3235FDCA1A6FF45600EC83A9 /* GetDescription.cpp in Sources */,
 				325FC8611AF7C8B200DB9D66 /* GetCurrentDataset.cpp in Sources */,
 				32B299A41BE25ABE000D3716 /* RecoverError.cpp in Sources */,
 				32936C641D9277DC00485F71 /* GetSnapshotForNode.cpp in Sources */,
 				3235FDD91A6FFA6600EC83A9 /* MongoDBPersistenceDriver.cpp in Sources */,
 				327F39A31AEA49C00000C845 /* DeleteDS.cpp in Sources */,
+				32FC499E1E07EBD40087D82C /* SetVariable.cpp in Sources */,
 				32610F931AE671A300779B84 /* InitDeinit.cpp in Sources */,
 				327C6A251C747E4A002DA5A6 /* GetLogDomainForSourceUID.cpp in Sources */,
 				32809C7F1A9C847400C02C12 /* ControlUnitDataAccess.cpp in Sources */,
@@ -5627,6 +5665,7 @@
 				32C067BD1AEFE5DD000B1ED9 /* IDSTControlUnitBatchCommand.cpp in Sources */,
 				32A116441D116F8C00FF44ED /* SearchInstancesForScript.cpp in Sources */,
 				328C872C1ADEA45E0047C79B /* SearchInstancesByUS.cpp in Sources */,
+				32FC49A11E07F8DB0087D82C /* RemoveVariable.cpp in Sources */,
 				325D2FDF1AFB65DE00B2A706 /* ProcessHello.cpp in Sources */,
 				32B1E7E51B297A6100221E49 /* CommandTemplateSet.cpp in Sources */,
 				320CA9511C29D16D00894AAA /* DeleteUS.cpp in Sources */,
@@ -6043,9 +6082,11 @@
 				327F39B31AEAA2680000C845 /* GetAssociationByDS.cpp in Sources */,
 				32B224CA1CFC830600B24B58 /* LoadFullScript.cpp in Sources */,
 				32F7AB141C9960A700E18D3E /* NodeMonitor.cpp in Sources */,
+				32FC49AF1E080FB80087D82C /* GetVariable.cpp in Sources */,
 				328C873E1AE01A590047C79B /* DeleteInstance.cpp in Sources */,
 				32362C211ADD0C45000CA079 /* SetInstanceDescription.cpp in Sources */,
 				3239EF521C0EFEB20052BE61 /* DeleteSnapshot.cpp in Sources */,
+				32FC49AB1E080FA80087D82C /* RemoveVariable.cpp in Sources */,
 				327C6A281C74E255002DA5A6 /* GetLogDomainForSourceUID.cpp in Sources */,
 				32EBDF0E1B53A32600278C42 /* ManageCUType.cpp in Sources */,
 				32B1E8061B2EA07200221E49 /* CommandTemplateDelete.cpp in Sources */,
@@ -6071,6 +6112,7 @@
 				3256C9B21CB649710019A108 /* NodeFetcher.cpp in Sources */,
 				3211CCDD1B03402800F9B80E /* QuantumKeyConsumer.cpp in Sources */,
 				32CAC9E81AE69F4400DC6AAB /* LoadUnloadControlUnit.cpp in Sources */,
+				32FC49A71E080F900087D82C /* SetVariable.cpp in Sources */,
 				32D746001C73399900F4D719 /* AbstractEventHandler.cpp in Sources */,
 				32F7AB281C9991B000E18D3E /* ControlUnitController.cpp in Sources */,
 				3221D74F1CF606BC001BE971 /* SearchScript.cpp in Sources */,
@@ -6505,6 +6547,7 @@
 					"-lboost_log",
 					"-lboost_log_setup",
 					"-lzmq",
+					"-ljsoncpp",
 					"-lmongoose",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -6548,6 +6591,7 @@
 					"-lboost_log",
 					"-lboost_log_setup",
 					"-lzmq",
+					"-ljsoncpp",
 					"-lmongoose",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
