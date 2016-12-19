@@ -74,6 +74,13 @@ namespace chaos {
                                                            DataServiceNodeDefinitionType::DSStorageType _put_mode,
                                                            bool wait_result = true);
                     
+                    //! Send device serialization with priority
+                    int64_t storeAndCacheHealthData(const std::string& key,
+                                                    void *buffer,
+                                                    uint32_t buffer_len,
+                                                    DataServiceNodeDefinitionType::DSStorageType _put_mode,
+                                                    bool wait_result = true);
+                    
                     //! Send a request for the last output data
                     int64_t requestLastOutputData(const std::string& key,
                                                   void **result, uint32_t &size);

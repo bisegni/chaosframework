@@ -238,6 +238,24 @@ int QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *hea
     return err;
 }
 
+int QueryDataConsumer::consumeHealthDataEvent(DirectIODeviceChannelHeaderPutOpcode *header,
+                                              void *channel_data,
+                                              uint32_t channel_data_len) {
+    int err = 0;
+    const std::string storage_key((const char *)GET_PUT_OPCODE_KEY_PTR(header),
+                                  header->key_len);
+    
+    CDataWrapper health_data_pack((char *)channel_data);
+
+    if((err = db_driver->setNodeHealthData(storage_key,
+                                           health_data_pack))) {
+        QDCERR_ << "error storing health data into database for key " << storage_key;
+    }
+    return consumePutEvent(header,
+                           channel_data,
+                           channel_data_len);
+}
+
 int QueryDataConsumer::consumeDataCloudQuery(DirectIODeviceChannelHeaderOpcodeQueryDataCloud *query_header,
                                              const std::string& search_key,
                                              uint64_t search_start_ts,

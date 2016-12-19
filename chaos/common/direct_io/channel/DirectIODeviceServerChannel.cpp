@@ -61,22 +61,28 @@ int DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack,
             opcode_headers::DirectIODeviceChannelHeaderPutOpcode *header = reinterpret_cast< opcode_headers::DirectIODeviceChannelHeaderPutOpcode* >(dataPack->channel_header_data);
             //reallign the pointer to the start of the key
             header->tag = FROM_LITTLE_ENDNS_NUM(uint32_t, header->tag);
-            err = handler->consumePutEvent(header, dataPack->channel_data, dataPack->header.channel_data_size);
+            err = handler->consumePutEvent(header,
+                                           dataPack->channel_data,
+                                           dataPack->header.channel_data_size);
             break;
         }
+            
+        case opcode::DeviceChannelOpcodePutHeathData: {
+            opcode_headers::DirectIODeviceChannelHeaderPutOpcode *header = reinterpret_cast< opcode_headers::DirectIODeviceChannelHeaderPutOpcode* >(dataPack->channel_header_data);
+            //reallign the pointer to the start of the key
+            header->tag = FROM_LITTLE_ENDNS_NUM(uint32_t, header->tag);
+            err = handler->consumeHealthDataEvent(header,
+                                                  dataPack->channel_data,
+                                                  dataPack->header.channel_data_size);
+            break;
+        }
+            
         case opcode::DeviceChannelOpcodeGetLastOutput: {
             if(synchronous_answer == NULL) return -1000;
             //allocate variable for result
             void *result_data = NULL;
             opcode_headers::DirectIODeviceChannelHeaderGetOpcode *header = reinterpret_cast< opcode_headers::DirectIODeviceChannelHeaderGetOpcode* >(dataPack->channel_header_data);
             opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult *result_header = (DirectIODeviceChannelHeaderGetOpcodeResult*)calloc(sizeof(DirectIODeviceChannelHeaderGetOpcodeResult), 1);
-            
-            //decode the endianes off the data
-            //TODO: this need to be removed because answer is synchronous
-            header->field.endpoint = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.endpoint);
-            header->field.p_port = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.p_port);
-            header->field.s_port = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.s_port);
-            header->field.address = FROM_LITTLE_ENDNS_NUM(uint64_t, header->field.address);
             
             err = handler->consumeGetEvent(header,
                                            dataPack->channel_data,
@@ -94,6 +100,7 @@ int DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack,
             }
             break;
         }
+
         case opcode::DeviceChannelOpcodeQueryDataCloud: {
             if(synchronous_answer == NULL) return -1000;
             opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudPtr header = reinterpret_cast< opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloud*>(dataPack->channel_header_data);

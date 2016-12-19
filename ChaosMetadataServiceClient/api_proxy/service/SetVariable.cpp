@@ -33,7 +33,7 @@ API_PROXY_CD_DEFINITION(SetVariable,
  
  */
 ApiProxyResult SetVariable::execute(const std::string& variable_name,
-                                    const chaos::common::data::CDataWrapper& variable_value) {
+                                    chaos::common::data::CDataWrapper& variable_value) {
     CDataWrapper *message = new CDataWrapper();
     message->addStringValue("variable_name", variable_name);
     message->addCSDataValue("variable_value", variable_value);

@@ -106,6 +106,40 @@ int64_t DirectIODeviceClientChannel::storeAndCacheDataOutputChannel(const std::s
     return err;
 }
 
+int64_t DirectIODeviceClientChannel::storeAndCacheHealthData(const std::string& key,
+                                                             void *buffer,
+                                                             uint32_t buffer_len,
+                                                             DataServiceNodeDefinitionType::DSStorageType _put_mode,
+                                                             bool wait_result) {
+    int64_t err = 0;
+    DirectIODataPack *answer = NULL;
+    DirectIODataPack *data_pack = (DirectIODataPack*)calloc(sizeof(DirectIODataPack), 1);
+    DirectIODeviceChannelHeaderPutOpcode *put_opcode_header = (opcode_headers::DirectIODeviceChannelHeaderPutOpcode *)calloc((PUT_HEADER_LEN(key)+key.size()), 1);
+    
+    put_opcode_header->tag = (uint8_t) _put_mode;
+    put_opcode_header->key_len = key.size();
+    //put_opcode_header->key_data
+    std::memcpy(GET_PUT_OPCODE_KEY_PTR(put_opcode_header), key.c_str(), put_opcode_header->key_len);
+    
+    //set opcode
+    data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodePutHeathData);
+    
+    //set the header
+    DIRECT_IO_SET_CHANNEL_HEADER(data_pack, put_opcode_header, (uint32_t)PUT_HEADER_LEN(key))
+    //set data if the have some
+    if(buffer_len){DIRECT_IO_SET_CHANNEL_DATA(data_pack, buffer, buffer_len);}
+    if(wait_result) {
+        if((err = sendPriorityData(data_pack, &answer))) {
+            //error getting last value
+            DIODCCLERR_ << "Error storing value for key:" << key << " with error:" <<err;
+        }
+    } else {
+        err = sendPriorityData(data_pack);
+    }
+    if(answer) {free(answer);}
+    return err;
+}
+
 //! Send device serialization with priority
 int64_t DirectIODeviceClientChannel::requestLastOutputData(const std::string& key,
                                                            void **result,

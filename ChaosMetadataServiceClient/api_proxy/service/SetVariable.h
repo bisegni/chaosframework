@@ -39,7 +39,7 @@ namespace chaos {
                 public:
                     
                     ApiProxyResult execute(const std::string& variable_name,
-                                           const chaos::common::data::CDataWrapper& variable_value);
+                                           chaos::common::data::CDataWrapper& variable_value);
                 };
             }
         }

@@ -185,6 +185,30 @@ void IODirectIODriver::storeRawData(const std::string& key,
     delete(serialization);
 }
 
+
+void IODirectIODriver::storeHealthData(const std::string& key,
+                                       chaos_data::CDataWrapper& dataToStore,
+                                       DataServiceNodeDefinitionType::DSStorageType storage_type) throw(CException) {
+    int err = 0;
+    boost::shared_lock<boost::shared_mutex>(mutext_feeder);
+    IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
+    
+    std::auto_ptr<chaos::common::data::SerializationBuffer> serialization(dataToStore.getBSONData());
+    
+    if(next_client &&
+       serialization.get()) {
+        serialization->disposeOnDelete = false;
+        if((err = (int)next_client->device_client_channel->storeAndCacheHealthData(key,
+                                                                                   (void*)serialization->getBufferPtr(),
+                                                                                   (uint32_t)serialization->getBufferLen(),
+                                                                                   storage_type))) {
+            IODirectIODriver_LERR_ << "Error storing health data into data service "<<next_client->connection->getServerDescription()<<" with code:" << err;
+        }
+    } else {
+        DEBUG_CODE(IODirectIODriver_DLDBG_ << "No available socket->loose packet");
+    }
+}
+
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
@@ -208,12 +232,12 @@ char* IODirectIODriver::retriveRawData(const std::string& key, size_t *dim)  thr
  
  ---------------------------------------------------------------------------------*/
 int IODirectIODriver::removeData(const std::string& key,
-                                  uint64_t start_ts,
-                                  uint64_t end_ts) throw(CException) {
+                                 uint64_t start_ts,
+                                 uint64_t end_ts) throw(CException) {
     boost::shared_lock<boost::shared_mutex>(mutext_feeder);
     IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
     if(!next_client) return -1;
-
+    
     int err = (int)next_client->device_client_channel->deleteDataCloud(key,
                                                                        start_ts,
                                                                        end_ts);
@@ -434,10 +458,10 @@ try {
             break;
             
         case chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventDisconnected:
-	  if(connectionFeeder.isOnline(service_index)){
-            DEBUG_CODE(IODirectIODriver_LINFO_ << "Manage Disconnected event for service with index " << service_index << " and url" << client_connection->getURL();)
-	      connectionFeeder.setURLOffline(service_index);
-	  }
+            if(connectionFeeder.isOnline(service_index)){
+                DEBUG_CODE(IODirectIODriver_LINFO_ << "Manage Disconnected event for service with index " << service_index << " and url" << client_connection->getURL();)
+                connectionFeeder.setURLOffline(service_index);
+            }
             break;
     }
 } catch(...){

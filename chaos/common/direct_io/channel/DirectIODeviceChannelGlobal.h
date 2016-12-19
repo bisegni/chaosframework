@@ -27,7 +27,8 @@ namespace chaos {
                         DeviceChannelOpcodePutOutput				= 1,	/**< send the output dataset [synchronous]*/
                         DeviceChannelOpcodeGetLastOutput            = 2,	/**< request the last output dataset from live cache [synchronous]*/
                         DeviceChannelOpcodeQueryDataCloud			= 4,	/**< query the chaos data associated to a key [synchronous]*/
-                        DeviceChannelOpcodeDeleteDataCloud			= 8     /**< delete the data associated with a key [synchronous]*/
+                        DeviceChannelOpcodeDeleteDataCloud			= 8,     /**< delete the data associated with a key [synchronous]*/
+                        DeviceChannelOpcodePutHeathData				= 16	/**< send the health dataset [synchronous]*/
                     } DeviceChannelOpcode;
                     
                     /*!

@@ -76,6 +76,10 @@ namespace chaos{
 								void *channel_data,
 								uint32_t channel_data_len);
 			
+            int consumeHealthDataEvent(DirectIODeviceChannelHeaderPutOpcode *header,
+                                       void *channel_data,
+                                       uint32_t channel_data_len);
+            
             int consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *header,
 								void *channel_data,
 								uint32_t channel_data_len,
