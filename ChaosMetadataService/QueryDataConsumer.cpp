@@ -42,6 +42,7 @@ using namespace chaos::data_service::object_storage::abstraction;
 using namespace chaos::metadata_service::persistence;
 using namespace chaos::metadata_service::persistence::data_access;
 
+using namespace chaos::common::data::structured;
 using namespace chaos::common::utility;
 using namespace chaos::common::network;
 using namespace chaos::common::direct_io;
@@ -220,6 +221,26 @@ int QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *hea
         free(channel_data);
     }
     return err;
+}
+
+int QueryDataConsumer::consumeHealthDataEvent(DirectIODeviceChannelHeaderPutOpcode *header,
+                                              void *channel_data,
+                                              uint32_t channel_data_len) {
+    int err = 0;
+    
+    CDataWrapper health_data_pack((char *)channel_data);
+    
+    NodeDataAccess *s_da = PersistenceManager::getInstance()->getDataAccess<NodeDataAccess>();
+    
+    HealthStatSDWrapper attribute_reference_wrapper;
+    attribute_reference_wrapper.deserialize(&health_data_pack);
+    if((err = s_da->setNodeHealthStatus(attribute_reference_wrapper().node_uid,
+                                        attribute_reference_wrapper()))) {
+        QDCERR_ << "error storing health data into database for key " << attribute_reference_wrapper().node_uid;
+    }
+    return consumePutEvent(header,
+                           channel_data,
+                           channel_data_len);
 }
 
 int QueryDataConsumer::consumeDataCloudQuery(DirectIODeviceChannelHeaderOpcodeQueryDataCloud *query_header,
@@ -403,10 +424,10 @@ int QueryDataConsumer::consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSy
     }
     
     if((err = s_da->snapshotGetDatasetForProducerKey(header->field.snap_name,
-                                                          producer_id,
-                                                          channel_type,
-                                                          channel_found_data,
-                                                          channel_found_data_length))) {
+                                                     producer_id,
+                                                     channel_type,
+                                                     channel_found_data,
+                                                     channel_found_data_length))) {
         api_result.error = err;
         std::strcpy(api_result.error_message, "Error retriving the snapshoted dataaset for producer key");
         QDCERR_ << api_result.error_message << "[" << header->field.snap_name << "/" << producer_id<<"]";

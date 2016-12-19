@@ -49,34 +49,38 @@ namespace chaos{
         class ChaosDataService;
         
         class QueryDataConsumer:
-		protected DirectIODeviceServerChannel::DirectIODeviceServerChannelHandler,
-		protected DirectIOSystemAPIServerChannel::DirectIOSystemAPIServerChannelHandler,
-		public StartableService {
+        protected DirectIODeviceServerChannel::DirectIODeviceServerChannelHandler,
+        protected DirectIOSystemAPIServerChannel::DirectIOSystemAPIServerChannelHandler,
+        public StartableService {
             friend class ChaosDataService;
-
-			std::string cache_impl_name;
-			std::string db_impl_name;
+            
+            std::string cache_impl_name;
+            std::string db_impl_name;
             service_common::persistence::data_access::AbstractPersistenceDriver *object_storage_driver;
             DirectIOServerEndpoint					*server_endpoint;
-			DirectIODeviceServerChannel				*device_channel;
-			DirectIOSystemAPIServerChannel			*system_api_channel;
-			
+            DirectIODeviceServerChannel				*device_channel;
+            DirectIOSystemAPIServerChannel			*system_api_channel;
             
-			boost::atomic<uint16_t>                 device_data_worker_index;
-			chaos::data_service::worker::DataWorker	**device_data_worker;
-			chaos::data_service::worker::DataWorker	*snapshot_data_worker;
-			
-			//---------------- DirectIODeviceServerChannelHandler -----------------------
+            
+            boost::atomic<uint16_t>                 device_data_worker_index;
+            chaos::data_service::worker::DataWorker	**device_data_worker;
+            chaos::data_service::worker::DataWorker	*snapshot_data_worker;
+            
+            //---------------- DirectIODeviceServerChannelHandler -----------------------
             int consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *header,
-								void *channel_data,
-								uint32_t channel_data_len);
-			
+                                void *channel_data,
+                                uint32_t channel_data_len);
+            
+            int consumeHealthDataEvent(DirectIODeviceChannelHeaderPutOpcode *header,
+                                       void *channel_data,
+                                       uint32_t channel_data_len);
+            
             int consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *header,
-								void *channel_data,
-								uint32_t channel_data_len,
+                                void *channel_data,
+                                uint32_t channel_data_len,
                                 opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult *result_header,
                                 void **result_value);
-			
+            
             int consumeDataCloudQuery(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloud *query_header,
                                       const std::string& search_key,
                                       uint64_t search_start_ts,
@@ -84,36 +88,36 @@ namespace chaos{
                                       uint64_t last_sequence_id,
                                       opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult * result_header,
                                       void **result_value);
-			
+            
             int consumeDataCloudDelete(const std::string& search_key,
                                        uint64_t start_ts,
                                        uint64_t end_ts);
             
-			//---------------- DirectIOSystemAPIServerChannelHandler -----------------------
-			// Manage the creation of a snapshot
-			int consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,
-										void *concatenated_unique_id_memory,
-										uint32_t concatenated_unique_id_memory_size,
-										DirectIOSystemAPISnapshotResultHeader& api_result);
-			
-			// Manage the delete operation on an existing snapshot
-			int consumeDeleteSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,
-										   DirectIOSystemAPISnapshotResultHeader& api_result);
-			
-			// Return the dataset for a producerkey ona specific snapshot
-			int consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,
-											   const std::string& producer_id,
-											   void **channel_found_data,
-											   uint32_t& channel_found_data_length,
-											   DirectIOSystemAPISnapshotResultHeader& api_result);
+            //---------------- DirectIOSystemAPIServerChannelHandler -----------------------
+            // Manage the creation of a snapshot
+            int consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,
+                                        void *concatenated_unique_id_memory,
+                                        uint32_t concatenated_unique_id_memory_size,
+                                        DirectIOSystemAPISnapshotResultHeader& api_result);
+            
+            // Manage the delete operation on an existing snapshot
+            int consumeDeleteSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,
+                                           DirectIOSystemAPISnapshotResultHeader& api_result);
+            
+            // Return the dataset for a producerkey ona specific snapshot
+            int consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,
+                                               const std::string& producer_id,
+                                               void **channel_found_data,
+                                               uint32_t& channel_found_data_length,
+                                               DirectIOSystemAPISnapshotResultHeader& api_result);
         public:
-			QueryDataConsumer();
+            QueryDataConsumer();
             ~QueryDataConsumer();
             void init(void *init_data) throw (chaos::CException);
             void start() throw (chaos::CException);
             void stop() throw (chaos::CException);
             void deinit() throw (chaos::CException);
-
+            
         };
     }
 }
