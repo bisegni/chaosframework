@@ -28,6 +28,10 @@
 #include "GetNodesForSnapshot.h"
 #include "GetSnapshotDatasetsForNode.h"
 
+#include "SetVariable.h"
+#include "GetVariable.h"
+#include "RemoveVariable.h"
+
 using namespace chaos::metadata_service::api::service;
 
 DEFINE_CLASS_FACTORY_NO_ALIAS(ServiceApiGroup,
@@ -43,6 +47,10 @@ AbstractApiGroup("service"){
     addApi<GetSnapshotForNode>();
     addApi<GetNodesForSnapshot>();
     addApi<GetSnapshotDatasetsForNode>();
+    
+    addApi<SetVariable>();
+    addApi<GetVariable>();
+    addApi<RemoveVariable>();
 }
 
 ServiceApiGroup::~ServiceApiGroup() {}

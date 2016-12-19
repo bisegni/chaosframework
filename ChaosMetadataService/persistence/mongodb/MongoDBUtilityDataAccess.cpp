@@ -21,6 +21,7 @@
 #include "mongo_db_constants.h"
 #include "MongoDBUtilityDataAccess.h"
 
+#include <chaos/common/global.h>
 #include <chaos/common/utility/TimingUtil.h>
 
 #include <mongo/client/dbclient.h>
@@ -29,14 +30,16 @@
 #define MDBUDA_DBG  DBG_LOG(MongoDBUtilityDataAccess)
 #define MDBUDA_ERR  ERR_LOG(MongoDBUtilityDataAccess)
 
+using namespace chaos::common::data;
 using namespace chaos::metadata_service::persistence::mongodb;
+
 MongoDBUtilityDataAccess::MongoDBUtilityDataAccess(const boost::shared_ptr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
 MongoDBAccessor(_connection){
-
+    
 }
 
 MongoDBUtilityDataAccess::~MongoDBUtilityDataAccess() {
-
+    
 }
 
 
@@ -48,30 +51,30 @@ int MongoDBUtilityDataAccess::getNextSequenceValue(const std::string& sequence_n
     try {
         query << "seq" << sequence_name;
         mongo::BSONObj q = query.obj();
-
-            //try to sse if we need to initialize
+        
+        //try to sse if we need to initialize
         mongo::BSONObj ui = BSON("$setOnInsert" << BSON("value" << (int32_t)1));
-
+        
         DEBUG_CODE(MDBUDA_DBG<<log_message("getNextSequenceValue",
                                            "update",
                                            DATA_ACCESS_LOG_2_ENTRY("Query",
                                                                    "Update[upsert]",
                                                                    q.toString(),
                                                                    ui.toString()));)
-
+        
         if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SEQUENCES), q, ui, true))) {
             MDBUDA_ERR << "Error initilizing ";
         } else {
             update << "$inc" << BSON("value" << 1);
             mongo::BSONObj u = update.obj();
-
+            
             DEBUG_CODE(MDBUDA_DBG<<log_message("getNextSequenceValue",
                                                "findAndModify",
                                                DATA_ACCESS_LOG_2_ENTRY("Query",
                                                                        "Update",
                                                                        q.toString(),
                                                                        u.toString()));)
-
+            
             if((err = connection->findAndModify(result, MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SEQUENCES), q, u, false, false))) {
                 MDBUDA_ERR << "Error updating ";
             } else if (!result.hasField("value")){
@@ -110,6 +113,88 @@ int MongoDBUtilityDataAccess::resetAllData() {
             }
         }
     } catch (const mongo::DBException &e) {
+        MDBUDA_ERR << e.what();
+        err = -1;
+    }
+    return err;
+}
+
+int MongoDBUtilityDataAccess::setVariable(const std::string& variable_name,
+                                          chaos::common::data::CDataWrapper& cdw){
+    int err = 0;
+    int variable_size = 0;
+    try {
+        mongo::BSONObj q = BSON("variable_name" << variable_name);
+        mongo::BSONObj u = BSON("variable_value" << mongo::BSONObj(cdw.getBSONRawData(variable_size)));
+        
+        DEBUG_CODE(MDBUDA_DBG<<log_message("setVariable",
+                                           "update",
+                                           DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                                   "Update",
+                                                                   q.toString(),
+                                                                   u.toString()));)
+        
+        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_VARIABLES),
+                                     q,
+                                     u,
+                                     true))) {
+            MDBUDA_ERR << CHAOS_FORMAT("Error setting the variable %1% with error %2%", %variable_name%err);
+        }
+    }catch (const mongo::DBException &e) {
+        MDBUDA_ERR << e.what();
+        err = -1;
+    }
+    return err;
+}
+
+int MongoDBUtilityDataAccess::getVariable(const std::string& variable_name,
+                                          chaos::common::data::CDataWrapper **cdw){
+    int err = 0;
+    try {
+        mongo::BSONObj result;
+        mongo::BSONObj q = BSON("variable_name" << variable_name);
+        
+        DEBUG_CODE(MDBUDA_DBG<<log_message("getVariable",
+                                           "findOne",
+                                           DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                   q.toString()));)
+        if((err = connection->findOne(result,
+                                      MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_VARIABLES),
+                                      q))) {
+            MDBUDA_ERR << CHAOS_FORMAT("Error find the variable %1% with error %2%", %variable_name%err);
+        } else if(result.isEmpty() == false ||
+                  result.hasField("variable_value")){
+            mongo::BSONElement e = result.getField("variable_value");
+            if(e.type() == mongo::Object) {
+                int buffer_len = 0;
+                const char * bin_data = e.binData(buffer_len);
+                if(buffer_len) {
+                    *cdw = new CDataWrapper(bin_data);
+                }
+            }
+        }
+    }catch (const mongo::DBException &e) {
+        MDBUDA_ERR << e.what();
+        err = -1;
+    }
+    return err;
+}
+
+int MongoDBUtilityDataAccess::deleteVariable(const std::string& variable_name) {
+    int err = 0;
+    try {
+        mongo::BSONObj q = BSON("variable_name" << variable_name);
+        
+        DEBUG_CODE(MDBUDA_DBG<<log_message("deleteVariable",
+                                           "delete",
+                                           DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                   q.toString()));)
+        
+        if((err = connection->remove(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_VARIABLES),
+                                     q))) {
+            MDBUDA_ERR << CHAOS_FORMAT("Error deleting the variable %1% with error %2%", %variable_name%err);
+        }
+    }catch (const mongo::DBException &e) {
         MDBUDA_ERR << e.what();
         err = -1;
     }

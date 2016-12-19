@@ -19,7 +19,6 @@
  *    	limitations under the License.
  */
 
-
 #include <ChaosMetadataServiceClient/api_proxy/service/GetSnapshotDatasetForNode.h>
 
 using namespace chaos;

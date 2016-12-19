@@ -23,6 +23,8 @@
 
 #include "../persistence.h"
 
+#include <chaos/common/data/CDataWrapper.h>
+
 namespace chaos {
     namespace metadata_service {
         namespace persistence {
@@ -44,7 +46,36 @@ namespace chaos {
                      The sequced are named by a key, when thi api is called and the sequence not exists, a new entry is create
                      and initilized to first value that is euql to 1, and it is returned.
                      */
-                    virtual int getNextSequenceValue(const std::string& sequence_name, uint64_t& next_value) = 0;
+                    virtual int getNextSequenceValue(const std::string& sequence_name,
+                                                     uint64_t& next_value) = 0;
+                    
+                    //! Create or update a named variable with a value
+                    /*!
+                     A variabl eis a global accessible variable that can be used anywhere and for general purpose,
+                     it content is a buffer and is independent to it's content types
+                     \param variable_name the name of the variable
+                     \param cdw  object that store variable values
+                     */
+                    virtual int setVariable(const std::string& variable_name,
+                                            chaos::common::data::CDataWrapper& cdw) = 0;
+                    
+                    //! Return, if has been set, the value of a variable
+                    /*!
+                     return the value stored into a variable,
+                     if it has not been set, the buffer will be NULL 
+                     with 0 size reported.
+                     \param variable_name the name of the variable
+                     \param cdw  object that store variable values
+                     */
+                    virtual int getVariable(const std::string& variable_name,
+                                            chaos::common::data::CDataWrapper **cdw) = 0;
+                    
+                    //! delete the variable
+                    /*!
+                     \param variable_name the name of the variable
+                     */
+                    virtual int deleteVariable(const std::string& variable_name) = 0;
+
                     
                     //!reset al metadata service backend data
                     /*!
