@@ -114,7 +114,7 @@ namespace chaos {
                 
                 CDataWrapper *clone();
                 //add a csdata value
-                void addCSDataValue(const std::string&, CDataWrapper&);
+                void addCSDataValue(const std::string&, const CDataWrapper&);
                 
                 //get a csdata value
                 CDataWrapper *getCSDataValue(const std::string&);

@@ -225,6 +225,9 @@ namespace chaos {
                 int removeVariable(const std::string& variable_name,
                                    uint32_t millisec_to_wait=5000);
                 
+                //!remove a variable
+                int searchVariable(const std::string& variable_name,ChaosStringVector& variable_found,
+                                                   uint32_t millisec_to_wait=5000);
                 //! Search snapshot for node
                 /*!
                  \param node_uid tha unique id of the node

@@ -74,7 +74,7 @@ CDataWrapper *CDataWrapper::clone() {
 
 
 //add a csdata value
-void CDataWrapper::addCSDataValue(const std::string& key, CDataWrapper& csData) {
+void CDataWrapper::addCSDataValue(const std::string& key, const CDataWrapper& csData) {
     if(csData.bsonBuilder->len()==0) return;
     bsonBuilder->append(key, csData.bsonBuilder->asTempObj());
 }
