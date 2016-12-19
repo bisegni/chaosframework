@@ -68,6 +68,10 @@ namespace chaos{
                                DataServiceNodeDefinitionType::DSStorageType storage_type,
                                bool delete_data_to_store = true) throw(CException);
                 
+                virtual void storeHealthData(const std::string& key,
+                                             chaos_data::CDataWrapper& dataToStore,
+                                             DataServiceNodeDefinitionType::DSStorageType storage_type) throw(CException) = 0;
+                
                 //!remove data between the time intervall (extreme included) operation is not undoable
                 virtual int removeData(const std::string& key,
                                        uint64_t start_ts,

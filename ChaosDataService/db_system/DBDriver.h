@@ -25,6 +25,7 @@
 #include <string>
 #include <vector>
 
+#include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/utility/NamedService.h>
 #include <chaos/common/utility/InizializableService.h>
 
@@ -130,6 +131,9 @@ namespace chaos {
 				 \param snapshot_name the name of the snapshot to delete
 				 */
 				virtual int snapshotDeleteWithName(const std::string& snapshot_name) = 0;
+                
+                virtual int setNodeHealthData(const std::string& node_uid,
+                                              chaos::common::data::CDataWrapper &helath_data) = 0;
 
 			};
 		}

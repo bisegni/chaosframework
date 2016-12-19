@@ -52,7 +52,7 @@ namespace chaos{
         namespace io {
             using namespace std;
             using namespace boost;
-
+            
             /*!
              Struct for initialization of the io driver
              */
@@ -125,6 +125,10 @@ namespace chaos{
                  * Deinit method
                  */
                 void deinit() throw(CException);
+                
+                void storeHealthData(const std::string& key,
+                                     chaos_data::CDataWrapper & dataToStore,
+                                     DataServiceNodeDefinitionType::DSStorageType storage_type) throw(CException);
                 
                 /*
                  * storeRawData
