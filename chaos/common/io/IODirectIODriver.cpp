@@ -425,6 +425,7 @@ void IODirectIODriver::handleEvent(chaos_direct_io::DirectIOClientConnection *cl
                                    chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event) {
     //if the channel has bee disconnected turn the relative index offline, if onli reput it online
     boost::unique_lock<boost::shared_mutex>(mutext_feeder);
+try {
     uint32_t service_index = boost::lexical_cast<uint32_t>(client_connection->getCustomStringIdentification());
     switch(event) {
         case chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventConnected:
@@ -439,6 +440,9 @@ void IODirectIODriver::handleEvent(chaos_direct_io::DirectIOClientConnection *cl
 	  }
             break;
     }
+} catch(...){
+	IODirectIODriver_LERR_ << "exception handling event identification:" << client_connection->getCustomStringIdentification() << " and url:" << client_connection->getURL();
+}
 }
 
 /*---------------------------------------------------------------------------------
