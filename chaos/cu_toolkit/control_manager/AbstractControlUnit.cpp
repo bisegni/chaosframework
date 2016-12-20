@@ -232,13 +232,13 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configurat
     //LCU_ << "Check if as been setup a json file path to configura CU:" << CU_IDENTIFIER_C_STREAM;
     //loadCDataWrapperForJsonFile(setup_configuration);
     
-    //call method to dinamically add other things to the dataset
-        _completeDatasetAttribute();
+
     //first call the setup abstract method used by the implementing CU to define action, dataset and other
     //usefull value
     unitDefineActionAndDataset();
     
-    
+    //call method to dinamically add other things to the dataset
+     _completeDatasetAttribute();
 
     //for now we need only to add custom action for expose to rpc
     //input element of the dataset
@@ -1362,7 +1362,7 @@ void AbstractControlUnit::_completeDatasetAttribute() {
 
     //add busy flag
     DatasetDB::addAttributeToDataSet("busy",
-                                     "Notify when a control unit is doing some usefull work",
+                                     "Notify that the control unit is busy",
                                      DataType::TYPE_BOOLEAN,
                                      DataType::Output);
     
@@ -1742,8 +1742,7 @@ void AbstractControlUnit::copyInitConfiguraiton(CDataWrapper& copy) {
 #pragma mark Abstract Control Unit API
 void AbstractControlUnit::addAlarm(const std::string& alarm_name,
                                    const std::string& alarm_description) {
-    alarm_catalog.addAlarm(new MultiSeverityAlarm(alarm_name,
-                                                  alarm_description));
+	alarm_catalog.addAlarm(new MultiSeverityAlarm(alarm_name,alarm_description));
     //add this instance as
     alarm_catalog.addAlarmHandler(alarm_name,
                                   this);
