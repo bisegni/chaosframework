@@ -174,5 +174,5 @@ void CommandTemplateInstanceEditor::configureForTemplate(QSharedPointer<CDataWra
         }
     }
     setMinimumHeight(minimumHeight()+heigh_to_add);
-    parentWidget()->setGeometry(parentWidget()->geometry().adjusted(0,0,0,heigh_to_add));
+    setGeometry(geometry().adjusted(0,0,0,heigh_to_add));
 }
