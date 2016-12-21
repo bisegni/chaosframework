@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="chaos_uitoolkit"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="clang"/>
+		<Option virtualFolders="CMake Files\;CMake Files\ChaosDataService\;CMake Files\ChaosMetadataService\;CMake Files\chaos\;CMake Files\chaos\common\;CMake Files\chaos\cu_toolkit\;CMake Files\chaos\ui_toolkit\;CMake Files\ChaosMetadataServiceClient\;CMake Files\config\;CMake Files\ChaosMetadataServiceClientTest\;CMake Files\ChaosWANProxy\;CMake Files\ChaosDataExport\;CMake Files\example\;CMake Files\example\ChaosCLI\;CMake Files\example\ChaosMDSCmd\;CMake Files\example\ChaosPerformanceTester\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/Users/bisegni/source/chaos_development/chaosframework/chaos/ui_toolkit"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/bisegni/source/chaos_development/chaosframework/chaos/ui_toolkit/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/bisegni/source/chaos_development/chaosframework/chaos/ui_toolkit/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/bisegni/source/chaos_development/chaosframework/chaos/ui_toolkit/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/bisegni/source/chaos_development/chaosframework/chaos/ui_toolkit/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="chaos_uitoolkit">
+				<Option output="/Users/bisegni/source/chaos_development/chaosframework/build-x86_64-Darwin/libchaos_uitoolkit.dylib" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/bisegni/source/chaos_development/chaosframework/chaos/ui_toolkit"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add option="-DDEBUG"/>
+					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/config/.."/>
+					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/."/>
+					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/../.."/>
+					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/.."/>
+					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/config/../chaos-distrib-x86_64-Darwin/include"/>
+					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/chaos/ui_toolkit/chaos/ui_toolkit"/>
+					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/chaos/ui_toolkit/../.."/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/bisegni/source/chaos_development/chaosframework/chaos/ui_toolkit/Makefile&quot;  VERBOSE=1 chaos_uitoolkit"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/bisegni/source/chaos_development/chaosframework/chaos/ui_toolkit/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/bisegni/source/chaos_development/chaosframework/chaos/ui_toolkit/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/bisegni/source/chaos_development/chaosframework/chaos/ui_toolkit/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="chaos_uitoolkit/fast">
+				<Option output="/Users/bisegni/source/chaos_development/chaosframework/build-x86_64-Darwin/libchaos_uitoolkit.dylib" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/bisegni/source/chaos_development/chaosframework/chaos/ui_toolkit"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add option="-DDEBUG"/>
+					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/config/.."/>
+					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/."/>
+					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/../.."/>
+					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/.."/>
+					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/config/../chaos-distrib-x86_64-Darwin/include"/>
+					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/chaos/ui_toolkit/chaos/ui_toolkit"/>
+					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/chaos/ui_toolkit/../.."/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/bisegni/source/chaos_development/chaosframework/chaos/ui_toolkit/Makefile&quot;  VERBOSE=1 chaos_uitoolkit/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/bisegni/source/chaos_development/chaosframework/chaos/ui_toolkit/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/bisegni/source/chaos_development/chaosframework/chaos/ui_toolkit/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/bisegni/source/chaos_development/chaosframework/chaos/ui_toolkit/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/ui_toolkit/ChaosUIToolkit.cpp">
+			<Option target="chaos_uitoolkit"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/ui_toolkit/ChaosUIToolkit.h">
+			<Option target="chaos_uitoolkit"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/ui_toolkit/ChaosUIToolkitCWrapper.cc">
+			<Option target="chaos_uitoolkit"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/ui_toolkit/ChaosUIToolkitCWrapper.h">
+			<Option target="chaos_uitoolkit"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/ui_toolkit/HighLevelApi/DeviceController.cpp">
+			<Option target="chaos_uitoolkit"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/ui_toolkit/HighLevelApi/DeviceController.h">
+			<Option target="chaos_uitoolkit"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/ui_toolkit/HighLevelApi/HLDataApi.cpp">
+			<Option target="chaos_uitoolkit"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/ui_toolkit/HighLevelApi/HLDataApi.h">
+			<Option target="chaos_uitoolkit"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/ui_toolkit/HighLevelApi/HLInfrastructureApi.cpp">
+			<Option target="chaos_uitoolkit"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/ui_toolkit/HighLevelApi/HLInfrastructureApi.h">
+			<Option target="chaos_uitoolkit"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/ui_toolkit/LowLevelApi/LLDataApi.cpp">
+			<Option target="chaos_uitoolkit"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/ui_toolkit/LowLevelApi/LLDataApi.h">
+			<Option target="chaos_uitoolkit"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/ui_toolkit/LowLevelApi/LLRpcApi.cpp">
+			<Option target="chaos_uitoolkit"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/ui_toolkit/LowLevelApi/LLRpcApi.h">
+			<Option target="chaos_uitoolkit"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosDataService/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\ChaosDataService\"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosDataService/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\ChaosDataService\"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\ChaosMetadataService\"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\ChaosMetadataService\"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\chaos\common\"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\chaos\common\"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/cu_toolkit/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\chaos\cu_toolkit\"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/cu_toolkit/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\chaos\cu_toolkit\"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/ui_toolkit/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\chaos\ui_toolkit\"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/ui_toolkit/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\chaos\ui_toolkit\"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataServiceClient/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\ChaosMetadataServiceClient\"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataServiceClient/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\ChaosMetadataServiceClient\"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/config/CMakeChaos.txt">
+			<Option virtualFolder="CMake Files\config\"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataServiceClientTest/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\ChaosMetadataServiceClientTest\"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosWANProxy/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\ChaosWANProxy\"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosDataExport/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\ChaosDataExport\"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/example/ChaosCLI/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\example\ChaosCLI\"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/example/ChaosMDSCmd/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\example\ChaosMDSCmd\"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/example/ChaosPerformanceTester/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\example\ChaosPerformanceTester\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

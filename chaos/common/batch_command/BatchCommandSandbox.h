@@ -20,13 +20,9 @@
 #include <chaos/common/exception/exception.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/data/cache/AttributeValueSharedCache.h>
-#include <chaos/common/utility/StartableService.h>
 #include <chaos/common/thread/WaitSemaphore.h>
-#include <chaos/common/pqueue/CObjectProcessingPriorityQueue.h>
 
-#include <chaos/common/batch_command/BatchCommand.h>
-#include <chaos/common/batch_command/BatchCommandTypes.h>
-#include <chaos/common/batch_command/BatchCommandSandboxEventHandler.h>
+#include <chaos/common/batch_command/AbstractSandbox.h>
 
 namespace chaos{
     namespace common {
@@ -34,7 +30,6 @@ namespace chaos{
 			
 			using namespace chaos::common::data;
 			using namespace chaos::common::data::cache;
-			
             //forward declaration
             class BatchCommand;
             class BatchCommandExecutor;
@@ -54,37 +49,7 @@ namespace chaos{
                 void operator()();
             };
             
-            
-            /*!
-             Type used for the next available command impl and description
-             into the sandbox
-             */
-            struct CommandInfoAndImplementation {
-                CDataWrapper *cmdInfo;
-                BatchCommand *cmdImpl;
-                
-                CommandInfoAndImplementation(CDataWrapper *_cmdInfo, BatchCommand *_cmdImpl);
-                ~CommandInfoAndImplementation();
-                
-                void deleteInfo();
-                void deleteImpl();
-                
-            };
-            
-            // pulic class used into the sandbox for use the priority set into the lement that are pointer and not rela reference
-            struct PriorityCommandCompare {
-                bool operator() (const PRIORITY_ELEMENT(CommandInfoAndImplementation)* lhs, const PRIORITY_ELEMENT(CommandInfoAndImplementation)* rhs) const {
-                    if(lhs->priority < rhs->priority) {
-                        return true;
-                    } else if(lhs->priority == rhs->priority) {
-                        return  lhs->sequence_id >= rhs->sequence_id;
-                    } else {
-                        return false;
-                    }
-                }
-            };
-            
-            //! SAndbox fo the slow command execution
+            //! Sandbox fo the slow command execution
             /*!
              This is the sandbox where the command are executed. Here are checked the
              submission rule of the incoming command and the execution state of the current one.
@@ -92,18 +57,13 @@ namespace chaos{
              come in.
              */
             class BatchCommandSandbox:
-			public utility::StartableService {
+            public AbstractSandbox {
                 friend class BatchCommandExecutor;
                 friend struct AcquireFunctor;
                 friend struct CorrelationFunctor;
                 //stat for the single step of the command execution
                 SandboxStat stat;
                 BatchCommandStat cmd_stat;
-                //sandbox identification string
-                std::string identification;
-                
-                //handler for sandbox event
-                BatchCommandSandboxEventHandler *event_handler;
                 
                 //-------shared data beetwen scheduler and checker thread------
                 bool            schedule_work_flag;
@@ -223,14 +183,18 @@ namespace chaos{
                  this comamnd is the one that is run when no other command
                  are presente neither into commadn queue or command stack
                  */
-                void setDefaultStickyCommand(BatchCommand *instance);
+                void setDefaultStickyCommand(BatchCommand *command_impl);
             public:
                 ~BatchCommandSandbox();
                 //! Command features modification rpc action
                 /*!
                  Updat ethe modiable features of the running command
                  */
-                void setCommandFeatures(features::Features& features) throw (CException);
+                void setCurrentCommandFeatures(features::Features& features) throw (CException);
+                
+                void setCurrentCommandScheduerStepDelay(uint64_t scheduler_step_delay);
+                
+                void lockCurrentCommandFeature(bool lock);
             };
         }
     }

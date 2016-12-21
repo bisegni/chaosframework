@@ -1,0 +1,1393 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="chaos_common"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="clang"/>
+		<Option virtualFolders="CMake Files\;CMake Files\ChaosDataService\;CMake Files\ChaosMetadataService\;CMake Files\chaos\;CMake Files\chaos\common\;CMake Files\chaos\cu_toolkit\;CMake Files\chaos\ui_toolkit\;CMake Files\ChaosMetadataServiceClient\;CMake Files\config\;CMake Files\ChaosMetadataServiceClientTest\;CMake Files\ChaosWANProxy\;CMake Files\ChaosDataExport\;CMake Files\example\;CMake Files\example\ChaosCLI\;CMake Files\example\ChaosMDSCmd\;CMake Files\example\ChaosPerformanceTester\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/Users/bisegni/source/chaos_development/chaosframework/chaos/common"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/bisegni/source/chaos_development/chaosframework/chaos/common/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/bisegni/source/chaos_development/chaosframework/chaos/common/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/bisegni/source/chaos_development/chaosframework/chaos/common/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/bisegni/source/chaos_development/chaosframework/chaos/common/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="chaos_common">
+				<Option output="/Users/bisegni/source/chaos_development/chaosframework/build-x86_64-Darwin/libchaos_common.dylib" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/bisegni/source/chaos_development/chaosframework/chaos/common"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add option="-DDEBUG"/>
+					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/config/.."/>
+					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/."/>
+					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/../.."/>
+					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/.."/>
+					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/config/../chaos-distrib-x86_64-Darwin/include"/>
+					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core"/>
+					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/./chaos/common"/>
+					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/./chaos/common/metadata_logging"/>
+					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/../.."/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/bisegni/source/chaos_development/chaosframework/chaos/common/Makefile&quot;  VERBOSE=1 chaos_common"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/bisegni/source/chaos_development/chaosframework/chaos/common/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/bisegni/source/chaos_development/chaosframework/chaos/common/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/bisegni/source/chaos_development/chaosframework/chaos/common/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="chaos_common/fast">
+				<Option output="/Users/bisegni/source/chaos_development/chaosframework/build-x86_64-Darwin/libchaos_common.dylib" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/bisegni/source/chaos_development/chaosframework/chaos/common"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add option="-DDEBUG"/>
+					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/config/.."/>
+					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/."/>
+					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/../.."/>
+					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/.."/>
+					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/config/../chaos-distrib-x86_64-Darwin/include"/>
+					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core"/>
+					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/./chaos/common"/>
+					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/./chaos/common/metadata_logging"/>
+					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/../.."/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/bisegni/source/chaos_development/chaosframework/chaos/common/Makefile&quot;  VERBOSE=1 chaos_common/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/bisegni/source/chaos_development/chaosframework/chaos/common/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/bisegni/source/chaos_development/chaosframework/chaos/common/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/bisegni/source/chaos_development/chaosframework/chaos/common/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/action/ActionDescriptor.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/action/ActionDescriptor.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/action/ActionExecutionSafetySystem.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/action/ActionExecutionSafetySystem.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/action/DeclareAction.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/action/DeclareAction.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/action/DomainActions.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/action/DomainActions.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/action/EventAction.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/action/EventAction.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/alarm/AlarmCatalog.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/alarm/AlarmCatalog.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/alarm/AlarmDescription.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/alarm/AlarmDescription.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/alarm/MultiSeverityAlarm.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/alarm/MultiSeverityAlarm.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/async_central/AsyncCentralManager.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/async_central/AsyncCentralManager.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/async_central/AsyncPoolRunner.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/async_central/AsyncPoolRunner.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/async_central/TimerHandler.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/async_central/TimerHandler.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/batch_command/AbstractSandbox.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/batch_command/AbstractSandbox.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/batch_command/BatchCommand.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/batch_command/BatchCommand.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/batch_command/BatchCommandDescription.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/batch_command/BatchCommandDescription.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/batch_command/BatchCommandExecutor.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/batch_command/BatchCommandExecutor.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/batch_command/BatchCommandSandbox.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/batch_command/BatchCommandSandbox.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/base/error_codes.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/base/error_codes.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/base/parse_number.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/base/parse_number.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/base/status.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/base/status.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/base/string_data.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/base/string_data.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/base/stringutils.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/base/stringutils.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/bson_validate.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/bson_validate.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/murmurhash3/MurmurHash3.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/murmurhash3/MurmurHash3.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/mutable/document.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/mutable/document.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/mutable/element.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/mutable/element.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/oid.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/oid.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/platform/process_id.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/platform/process_id.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/platform/random.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/platform/random.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/util/assert_util.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/util/assert_util.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/util/base64.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/util/base64.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/util/bson_extract.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/util/bson_extract.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/util/hex.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/util/hex.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/util/jsobj.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/util/jsobj.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/util/json.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/util/json.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/util/md5.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/util/md5.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/util/safe_num.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/util/safe_num.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/util/time_support.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/bson/util/time_support.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/chaos_errors.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/chaos_errors.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/configuration/GlobalConfiguration.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/configuration/GlobalConfiguration.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/cronous_manager/CronJob.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/cronous_manager/CronJob.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/cronous_manager/CronousManager.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/cronous_manager/CronousManager.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/CDataBuffer.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/CDataBuffer.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/CDataVariant.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/CDataVariant.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/CDataWrapper.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/CDataWrapper.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/CUSchemaDB.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/CUSchemaDB.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/DatasetDB.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/DatasetDB.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/broker/DataBroker.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/broker/DataBroker.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/broker/publisher/PublisherDataService.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/broker/publisher/PublisherDataService.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/broker/reader/ReaderDataService.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/broker/reader/ReaderDataService.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/cache/AbstractSharedDomainCache.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/cache/AbstractSharedDomainCache.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/cache/AttributeCache.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/cache/AttributeCache.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/cache/AttributeValue.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/cache/AttributeValue.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/cache/AttributeValueSharedCache.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/cache/AttributeValueSharedCache.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/cache/ChannelValueAccessor.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/cache/ChannelValueAccessor.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/cache/DataCache.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/cache/DataCache.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/cache/FastHash.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/cache/FastHash.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/cache/KeyGroupCache.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/cache/KeyGroupCache.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/cache/LFDataCache.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/cache/LFDataCache.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/entity/Entity.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/entity/Entity.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/entity_db/EntityDB.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/entity_db/EntityDB.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/entity_db/sqlite_impl/SQLiteEntityDB.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/entity_db/sqlite_impl/SQLiteEntityDB.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/entity_db/sqlite_impl/sqlite3.c">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/entity_db/sqlite_impl/sqlite3.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/structured/Dataset.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/structured/Dataset.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/structured/DatasetAttribute.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/structured/DatasetAttribute.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/structured/Lists.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/data/structured/Lists.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/debug/tracey.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/debug/tracey.hpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/DirectIOClient.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/DirectIOClient.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/DirectIOClientConnection.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/DirectIOClientConnection.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/DirectIOClientConnectionMetricCollector.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/DirectIOClientConnectionMetricCollector.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/DirectIOClientConnectionSharedMetricIO.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/DirectIOClientConnectionSharedMetricIO.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/DirectIODispatcher.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/DirectIODispatcher.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/DirectIODispatcherMetricCollector.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/DirectIODispatcherMetricCollector.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/DirectIOPerformanceSession.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/DirectIOPerformanceSession.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/DirectIOServer.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/DirectIOServer.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/DirectIOServerEndpoint.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/DirectIOServerEndpoint.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/DirectIOURLManagment.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/DirectIOURLManagment.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/channel/DirectIODeviceClientChannel.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/channel/DirectIODeviceClientChannel.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/channel/DirectIODeviceServerChannel.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/channel/DirectIODeviceServerChannel.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/channel/DirectIOPerformanceClientChannel.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/channel/DirectIOPerformanceClientChannel.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/channel/DirectIOPerformanceServerChannel.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/channel/DirectIOPerformanceServerChannel.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/channel/DirectIOSystemAPIClientChannel.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/channel/DirectIOSystemAPIClientChannel.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/channel/DirectIOSystemAPIServerChannel.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/channel/DirectIOSystemAPIServerChannel.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/channel/DirectIOVirtualChannel.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/channel/DirectIOVirtualChannel.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/channel/DirectIOVirtualClientChannel.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/channel/DirectIOVirtualClientChannel.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/channel/DirectIOVirtualServerChannel.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/channel/DirectIOVirtualServerChannel.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/impl/ZMQBaseClass.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/impl/ZMQBaseClass.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/impl/ZMQDirectIOClient.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/impl/ZMQDirectIOClient.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/impl/ZMQDirectIOClientConnection.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/impl/ZMQDirectIOClientConnection.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/impl/ZMQDirectIOServer.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/impl/ZMQDirectIOServer.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/dispatcher/AbstractCommandDispatcher.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/dispatcher/AbstractCommandDispatcher.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/dispatcher/AbstractEventDispatcher.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/dispatcher/AbstractEventDispatcher.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/dispatcher/DefaultCommandDispatcher.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/dispatcher/DefaultCommandDispatcher.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/dispatcher/DefaultEventDispatcher.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/dispatcher/DefaultEventDispatcher.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/dispatcher/DomainActionsScheduler.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/dispatcher/DomainActionsScheduler.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/dispatcher/EventTypeScheduler.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/dispatcher/EventTypeScheduler.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/event/AsioEventForwarder.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/event/AsioEventForwarder.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/event/AsioEventHandler.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/event/AsioEventHandler.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/event/AsioImplEventClient.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/event/AsioImplEventClient.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/event/AsioImplEventServer.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/event/AsioImplEventServer.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/event/EventClient.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/event/EventClient.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/event/EventServer.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/event/EventServer.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/event/channel/AlertEventChannel.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/event/channel/AlertEventChannel.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/event/channel/EventChannel.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/event/channel/EventChannel.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/event/channel/InstrumentEventChannel.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/event/channel/InstrumentEventChannel.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/event/evt_desc/AlertEventDescriptor.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/event/evt_desc/AlertEventDescriptor.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/event/evt_desc/CommandEventDescriptor.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/event/evt_desc/CommandEventDescriptor.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/event/evt_desc/CustomEventDescriptor.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/event/evt_desc/CustomEventDescriptor.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/event/evt_desc/EventDescriptor.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/event/evt_desc/EventDescriptor.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/event/evt_desc/InstrumentEventDescriptor.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/event/evt_desc/InstrumentEventDescriptor.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/exception/CException.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/exception/CException.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/exception/MetadataLoggingCException.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/exception/MetadataLoggingCException.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/healt_system/HealtManager.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/healt_system/HealtManager.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/healt_system/HealtMetric.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/healt_system/HealtMetric.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/io/IODataDriver.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/io/IODataDriver.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/io/IODirectIODriver.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/io/IODirectIODriver.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/io/QueryCursor.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/io/QueryCursor.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/log/LogManager.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/log/LogManager.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/memory/ManagedMemory.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/memory/ManagedMemory.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/message/DeviceMessageChannel.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/message/DeviceMessageChannel.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/message/MDSMessageChannel.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/message/MDSMessageChannel.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/message/MessageChannel.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/message/MessageChannel.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/message/MessageRequestDomain.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/message/MessageRequestDomain.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/message/MessageRequestFuture.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/message/MessageRequestFuture.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/message/MultiAddressMessageChannel.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/message/MultiAddressMessageChannel.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/message/MultiAddressMessageRequestFuture.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/message/MultiAddressMessageRequestFuture.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/message/NodeMessageChannel.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/message/NodeMessageChannel.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/message/PerformanceNodeChannel.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/message/PerformanceNodeChannel.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/metadata_logging/AbstractMetadataLogChannel.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/metadata_logging/AbstractMetadataLogChannel.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/metadata_logging/AlarmLoggingChannel.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/metadata_logging/AlarmLoggingChannel.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/metadata_logging/BatchCommandLoggingChannel.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/metadata_logging/BatchCommandLoggingChannel.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/metadata_logging/ErrorLoggingChannel.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/metadata_logging/ErrorLoggingChannel.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/metadata_logging/MetadataLoggingManager.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/metadata_logging/MetadataLoggingManager.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/metadata_logging/StandardLoggingChannel.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/metadata_logging/StandardLoggingChannel.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/metric/AbstractMetricBackend.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/metric/AbstractMetricBackend.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/metric/CSVFileMetricBackend.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/metric/CSVFileMetricBackend.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/metric/ConsoleMetricBackend.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/metric/ConsoleMetricBackend.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/metric/FileMetricBackend.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/metric/FileMetricBackend.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/metric/MetricCollector.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/metric/MetricCollector.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/metric/MetricCollectorIO.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/metric/MetricCollectorIO.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/network/NetworkBroker.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/network/NetworkBroker.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/network/PerformanceManagment.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/network/PerformanceManagment.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/network/URL.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/network/URL.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/network/URLHAServiceFeeder.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/network/URLHAServiceFeeder.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/network/URLServiceFeeder.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/network/URLServiceFeeder.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/plugin/AbstractPlugin.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/plugin/AbstractPlugin.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/plugin/PluginDiscover.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/plugin/PluginDiscover.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/plugin/PluginInspector.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/plugin/PluginInspector.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/plugin/PluginLoader.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/plugin/PluginLoader.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/property/PropertyCollector.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/property/PropertyCollector.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/property/PropertyDescription.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/property/PropertyDescription.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/property/PropertyGroup.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/property/PropertyGroup.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/rpc/RpcClient.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/rpc/RpcClient.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/rpc/RpcClientMetricCollector.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/rpc/RpcClientMetricCollector.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/rpc/RpcServer.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/rpc/RpcServer.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/rpc/RpcServerMetricCollector.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/rpc/RpcServerMetricCollector.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/rpc/zmq/ZMQClient.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/rpc/zmq/ZMQClient.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/rpc/zmq/ZMQServer.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/rpc/zmq/ZMQServer.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/AbstractScriptVM.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/AbstractScriptVM.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/AbstractScriptableClass.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/AbstractScriptableClass.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/ScriptManager.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/ScriptManager.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/LuaScriptVM.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/LuaScriptVM.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/lapi.c">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/lapi.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/lauxlib.c">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/lauxlib.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/lbaselib.c">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/lbitlib.c">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/lcode.c">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/lcode.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/lcorolib.c">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/lctype.c">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/lctype.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/ldblib.c">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/ldebug.c">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/ldebug.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/ldo.c">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/ldo.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/ldump.c">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/lfunc.c">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/lfunc.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/lgc.c">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/lgc.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/linit.c">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/liolib.c">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/llex.c">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/llex.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/lmathlib.c">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/lmem.c">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/lmem.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/loadlib.c">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/lobject.c">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/lobject.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/lopcodes.c">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/lopcodes.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/loslib.c">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/lparser.c">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/lparser.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/lstate.c">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/lstate.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/lstring.c">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/lstring.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/lstrlib.c">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/ltable.c">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/ltable.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/ltablib.c">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/ltm.c">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/ltm.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/lundump.c">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/lundump.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/lutf8lib.c">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/lvm.c">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/lvm.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/lzio.c">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/script/lua/core/lzio.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/state_flag/DeclareStateFlag.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/state_flag/DeclareStateFlag.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/state_flag/StateFlag.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/state_flag/StateFlag.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/state_flag/StateFlagCatalog.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/state_flag/StateFlagCatalog.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/state_flag/StateFlagCatalogSDWrapper.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/state_flag/StateFlagCatalogSDWrapper.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/state_flag/StateFlagSDWrapper.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/state_flag/StateFlagSDWrapper.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/sync_rpc/HTTPRpcSyncServer.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/sync_rpc/HTTPRpcSyncServer.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/sync_rpc/RpcSyncServer.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/sync_rpc/RpcSyncServer.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/trigger/AbstractConsumer.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/trigger/AbstractConsumer.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/trigger/AbstractEvent.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/trigger/AbstractEvent.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/trigger/AbstractSubject.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/trigger/AbstractSubject.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/trigger/TriggerExecutionEnviroment.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/trigger/TriggerExecutionEnviroment.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/trigger/trigger_types.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/trigger/trigger_types.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/utility/AbstractListener.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/utility/AbstractListener.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/utility/AbstractListenerContainer.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/utility/AbstractListenerContainer.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/utility/AggregatedCheckList.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/utility/AggregatedCheckList.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/utility/CheckList.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/utility/CheckList.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/utility/InizializableService.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/utility/InizializableService.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/utility/NamedService.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/utility/NamedService.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/utility/SWEService.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/utility/SWEService.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/utility/StartableService.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/utility/StartableService.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/utility/TimingUtil.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/utility/TimingUtil.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosDataService/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\ChaosDataService\"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosDataService/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\ChaosDataService\"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\ChaosMetadataService\"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\ChaosMetadataService\"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\chaos\common\"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\chaos\common\"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/cu_toolkit/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\chaos\cu_toolkit\"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/cu_toolkit/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\chaos\cu_toolkit\"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/ui_toolkit/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\chaos\ui_toolkit\"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/ui_toolkit/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\chaos\ui_toolkit\"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataServiceClient/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\ChaosMetadataServiceClient\"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataServiceClient/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\ChaosMetadataServiceClient\"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/config/CMakeChaos.txt">
+			<Option virtualFolder="CMake Files\config\"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataServiceClientTest/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\ChaosMetadataServiceClientTest\"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosWANProxy/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\ChaosWANProxy\"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosDataExport/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\ChaosDataExport\"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/example/ChaosCLI/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\example\ChaosCLI\"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/example/ChaosMDSCmd/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\example\ChaosMDSCmd\"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/example/ChaosPerformanceTester/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\example\ChaosPerformanceTester\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

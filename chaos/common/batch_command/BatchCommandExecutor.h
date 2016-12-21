@@ -80,8 +80,6 @@ namespace chaos {
                 //! executor identifier
                 std::string executorID;
 
-                boost::atomic_uint64_t command_sequence_id;
-
                 //!point to the current executing command
                 std::string     default_command_alias;
                 bool            default_command_stickyness;

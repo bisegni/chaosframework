@@ -48,7 +48,6 @@ void AcquireFunctor::operator()() {
         if (cmd_instance && (cmd_instance->runningProperty < RunningPropertyType::RP_END)) cmd_instance->acquireHandler();
     } catch (chaos::CFatalException&ex) {
         SET_FAULT(FUNCTORLERR_, ex.errorCode, ex.errorMessage, ex.errorDomain,RunningPropertyType::RP_FATAL_FAULT)
-
     } catch (chaos::CException& ex) {
         SET_FAULT(FUNCTORLERR_, ex.errorCode, ex.errorMessage, ex.errorDomain,RunningPropertyType::RP_FAULT)
     } catch (std::exception& ex) {
@@ -71,30 +70,6 @@ void CorrelationFunctor::operator()() {
     } catch (...) {
         SET_FAULT(FUNCTORLERR_, -2, "Unmanaged exception", "Correlation Handler",RunningPropertyType::RP_FATAL_FAULT);
     }
-}
-
-//------------------------------------------------------------------------------------------------------------
-
-CommandInfoAndImplementation::CommandInfoAndImplementation(chaos_data::CDataWrapper *_cmdInfo, BatchCommand *_cmdImpl) {
-    cmdInfo = _cmdInfo;
-    cmdImpl = _cmdImpl;
-}
-
-CommandInfoAndImplementation::~CommandInfoAndImplementation() {
-    deleteInfo();
-    deleteImpl();
-}
-
-void CommandInfoAndImplementation::deleteInfo() {
-    if (!cmdInfo) return;
-    delete(cmdInfo);
-    cmdInfo = NULL;
-}
-
-void CommandInfoAndImplementation::deleteImpl() {
-    if (!cmdImpl) return;
-    delete(cmdImpl);
-    cmdImpl = NULL;
 }
 
 
@@ -306,10 +281,13 @@ void BatchCommandSandbox::deinit() throw (chaos::CException) {
     correlation_handler_functor.cmd_instance = NULL;
 }
 
-void BatchCommandSandbox::setDefaultStickyCommand(BatchCommand *instance) {
-    if(instance != NULL) {
-        default_sticky_command.reset(new PriorityQueuedElement<CommandInfoAndImplementation>(new CommandInfoAndImplementation(NULL, instance),
-                                                                                             instance->unique_id,
+void BatchCommandSandbox::setDefaultStickyCommand(BatchCommand *command_impl) {
+    if(command_impl != NULL) {
+        //get the assigned id
+        command_impl->unique_id = ++command_sequence_id;
+        
+        default_sticky_command.reset(new PriorityQueuedElement<CommandInfoAndImplementation>(new CommandInfoAndImplementation(NULL, command_impl),
+                                                                                             command_impl->unique_id,
                                                                                              0,
                                                                                              true));
         
@@ -822,6 +800,10 @@ bool BatchCommandSandbox::enqueueCommand(chaos_data::CDataWrapper *command_to_in
     {
         DEBUG_CODE(SCSLDBG_ << "Try to lock for command enqueue for:\"" << command_impl->command_alias.c_str()) << "\"";
         boost::unique_lock<boost::mutex> lock_next_command_queue(mutex_next_command_queue);
+        
+        //get the assigned id
+        command_impl->unique_id = ++command_sequence_id;
+        
         command_submitted_queue.push(new PriorityQueuedElement<CommandInfoAndImplementation>(new CommandInfoAndImplementation(command_to_info, command_impl),
                                                                                              command_impl->unique_id,
                                                                                              priority,
@@ -844,7 +826,7 @@ bool BatchCommandSandbox::enqueueCommand(chaos_data::CDataWrapper *command_to_in
 
 //! Command features modification rpc action
 
-void BatchCommandSandbox::setCommandFeatures(features::Features& features) throw (CException) {
+void BatchCommandSandbox::setCurrentCommandFeatures(features::Features& features) throw (CException) {
     uint64_t thread_step_delay = 0;
     //lock the scheduler
     boost::mutex::scoped_lock lockForCurrentCommand(mutext_access_current_command);
@@ -863,4 +845,34 @@ void BatchCommandSandbox::setCommandFeatures(features::Features& features) throw
                                           BatchSandboxEventType::EVT_UPDATE_RUN_DELAY,
                                           &thread_step_delay, sizeof (uint64_t));
     }
+}
+
+void BatchCommandSandbox::setCurrentCommandScheduerStepDelay(uint64_t scheduler_step_delay) {
+    //lock the scheduler
+    boost::mutex::scoped_lock lockForCurrentCommand(mutext_access_current_command);
+    
+    if(!current_executing_command) return;
+    
+    current_executing_command->element->cmdImpl->commandFeatures.featureSchedulerStepsDelay = scheduler_step_delay;
+    if (event_handler) {
+        //signal the step of the run
+        event_handler->handleSandboxEvent(identification,
+                                          BatchSandboxEventType::EVT_UPDATE_RUN_DELAY,
+                                          &scheduler_step_delay, sizeof (uint64_t));
+    }
+    
+    lockForCurrentCommand.unlock();
+    thread_scheduler_pause_condition.unlock();
+}
+
+void BatchCommandSandbox::lockCurrentCommandFeature(bool lock) {
+    //lock the scheduler
+    boost::mutex::scoped_lock lockForCurrentCommand(mutext_access_current_command);
+    
+    if(!current_executing_command) return;
+    
+    current_executing_command->element->cmdImpl->lockFeaturePropertyFlag[0] = lock;
+    
+    lockForCurrentCommand.unlock();
+    thread_scheduler_pause_condition.unlock();
 }

@@ -1026,6 +1026,8 @@
 		32FC49AC1E080FA80087D82C /* RemoveVariable.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FC49AA1E080FA80087D82C /* RemoveVariable.h */; };
 		32FC49AF1E080FB80087D82C /* GetVariable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FC49AD1E080FB80087D82C /* GetVariable.cpp */; };
 		32FC49B01E080FB80087D82C /* GetVariable.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FC49AE1E080FB80087D82C /* GetVariable.h */; };
+		32FC49B31E0AAFBE0087D82C /* AbstractSandbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FC49B11E0AAFBE0087D82C /* AbstractSandbox.cpp */; };
+		32FC49B41E0AAFBE0087D82C /* AbstractSandbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FC49B21E0AAFBE0087D82C /* AbstractSandbox.h */; };
 		32FC7EE51A70FDB70029C2A2 /* ApiManagment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FC7EE31A70FDB70029C2A2 /* ApiManagment.cpp */; };
 		32FFA3EC1B00D43900C57E07 /* QuantumSlot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FFA3EA1B00D43900C57E07 /* QuantumSlot.cpp */; };
 		32FFA3ED1B00D43900C57E07 /* QuantumSlot.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FFA3EB1B00D43900C57E07 /* QuantumSlot.h */; };
@@ -2359,6 +2361,8 @@
 		32FC49AA1E080FA80087D82C /* RemoveVariable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoveVariable.h; sourceTree = "<group>"; };
 		32FC49AD1E080FB80087D82C /* GetVariable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetVariable.cpp; sourceTree = "<group>"; };
 		32FC49AE1E080FB80087D82C /* GetVariable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetVariable.h; sourceTree = "<group>"; };
+		32FC49B11E0AAFBE0087D82C /* AbstractSandbox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractSandbox.cpp; sourceTree = "<group>"; };
+		32FC49B21E0AAFBE0087D82C /* AbstractSandbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractSandbox.h; sourceTree = "<group>"; };
 		32FC7EDF1A7008780029C2A2 /* mds_constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mds_constants.h; sourceTree = "<group>"; };
 		32FC7EE01A7008FA0029C2A2 /* mds_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mds_types.h; sourceTree = "<group>"; };
 		32FC7EE11A701BE40029C2A2 /* AbstractApi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AbstractApi.h; sourceTree = "<group>"; };
@@ -4014,6 +4018,8 @@
 				329603191876B45000CDCADA /* BatchCommandExecutor.h */,
 				3296031A1876B45000CDCADA /* BatchCommandSandbox.cpp */,
 				3296031B1876B45000CDCADA /* BatchCommandSandbox.h */,
+				32FC49B11E0AAFBE0087D82C /* AbstractSandbox.cpp */,
+				32FC49B21E0AAFBE0087D82C /* AbstractSandbox.h */,
 				3296031C1876B45000CDCADA /* BatchCommandSandboxEventHandler.h */,
 				3296031D1876B45000CDCADA /* BatchCommandTypes.h */,
 				329603161876B45000CDCADA /* BatchCommandConstants.h */,
@@ -5144,6 +5150,7 @@
 				324A4B91191A527D00975394 /* base64.h in Headers */,
 				32AF7D4118DAEAF300537DE6 /* PerformanceNodeChannel.h in Headers */,
 				324A4B2A191A405700975394 /* const_element.h in Headers */,
+				32FC49B41E0AAFBE0087D82C /* AbstractSandbox.h in Headers */,
 				324A4B0D191A3F6A00975394 /* disallow_copying.h in Headers */,
 				32983F7517896FE1004599A3 /* ObjectInstancer.h in Headers */,
 				32D09FE61BBC1EA30059A926 /* ProcInfo.h in Headers */,
@@ -5813,6 +5820,7 @@
 				329C1F091B567C8400A84D55 /* DirectIOClientConnectionMetricCollector.cpp in Sources */,
 				32A88BD71CF8228A001DBAF5 /* lobject.c in Sources */,
 				327967B515DF99FB0003C6DA /* RpcClient.cpp in Sources */,
+				32FC49B31E0AAFBE0087D82C /* AbstractSandbox.cpp in Sources */,
 				32EA501618A15BF000782435 /* DirectIODispatcher.cpp in Sources */,
 				32A88BCA1CF8228A001DBAF5 /* lfunc.c in Sources */,
 				32F5B0061B5F8EBF00457A63 /* FileMetricBackend.cpp in Sources */,

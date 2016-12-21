@@ -217,7 +217,8 @@ SET(common_lib_src ${common_lib_src}
         batch_command/BatchCommandExecutor.cpp
         batch_command/BatchCommandSandbox.cpp
         batch_command/BatchCommand.cpp
-        batch_command/BatchCommandDescription.cpp)
+        batch_command/BatchCommandDescription.cpp
+        batch_command/AbstractSandbox.cpp)
 
 SET(common_lib_src ${common_lib_src}
         plugin/AbstractPlugin.cpp

@@ -44,7 +44,6 @@ using namespace chaos::common::batch_command;
 
 BatchCommandExecutor::BatchCommandExecutor(const std::string& _executorID):
 executorID(_executorID),
-command_sequence_id(0),
 default_command_stickyness(true),
 default_command_sandbox_instance(COMMAND_BASE_SANDOXX_ID),
 command_state_queue_max_size(COMMAND_STATE_QUEUE_DEFAULT_SIZE) {
@@ -527,9 +526,6 @@ BatchCommand *BatchCommandExecutor::instanceCommandInfo(const std::string& comma
             instance->commandFeatures.featuresFlag |= features::FeaturesFlagTypes::FF_SET_SUBMISSION_RETRY;
             instance->commandFeatures.featureSubmissionRetryDelay = submission_retry_delay;
             DEBUG_CODE(BCELDBG_ << "Set custom  SUBMISSION_RETRY_DELAY to " << instance->commandFeatures.featureSubmissionRetryDelay << " milliseconds";)
-            
-            //get the assigned id
-            instance->unique_id = ++command_sequence_id;
         } else {
             DEBUG_CODE(BCELDBG_ << "Error instantiating the command " << command_alias;)
         }
@@ -568,11 +564,11 @@ void BatchCommandExecutor::submitCommand(const std::string& batch_command_alias,
     //queue the command
     BatchCommand *cmd_instance = instanceCommandInfo(batch_command_alias, commandDescription);
     if(cmd_instance) {
-        //report unique id
-        command_id = cmd_instance->unique_id;
-        
         //enqueue command insandbox
         tmp_ptr->enqueueCommand(commandDescription, cmd_instance, priority);
+        
+        //report unique id
+        command_id = cmd_instance->unique_id;
     } else {
         throw CException(-4, "Command instantiation failed", "BatchCommandExecutor::submitCommand");
     }
@@ -606,11 +602,11 @@ void BatchCommandExecutor::submitCommand(const std::string& batch_command_alias,
                                                      submission_retry_delay,
                                                      scheduler_step_delay);
     if(cmd_instance) {
-        //report unique id
-        command_id = cmd_instance->unique_id;
-        
         //enqueue command insandbox
         sandbox_ptr->enqueueCommand(command_data, cmd_instance, priority);
+        
+        //report unique id
+        command_id = cmd_instance->unique_id;
     } else {
         throw CException(-4, "Command instantiation failed", "BatchCommandExecutor::submitCommand");
         
@@ -658,30 +654,17 @@ CDataWrapper* BatchCommandExecutor::setCommandFeatures(CDataWrapper *params, boo
     
     boost::shared_ptr<BatchCommandSandbox> tmp_ptr = sandbox_map[execution_channel];
     
-    //lock the scheduler
-    boost::mutex::scoped_lock lockForCurrentCommand(tmp_ptr->mutext_access_current_command);
-    
-    if(!tmp_ptr->current_executing_command)
-        throw CException(2, "No Current running command", "BatchCommandExecutor::setCommandFeatures");
-    
     //check wath feature we need to setup
     if(params->hasKey(BatchCommandExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_LOCK_BOOL)) {
         //has lock information to setup
-        tmp_ptr->current_executing_command->element->cmdImpl->lockFeaturePropertyFlag[0] = params->getBoolValue(BatchCommandExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_LOCK_BOOL);
+        tmp_ptr->lockCurrentCommandFeature(params->getBoolValue(BatchCommandExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_LOCK_BOOL));
     }
     
     if(params->hasKey(BatchCommandExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI64)) {
         //has scheduler step wait
-        tmp_ptr->current_executing_command->element->cmdImpl->commandFeatures.featureSchedulerStepsDelay = params->getUInt64Value(BatchCommandExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI64);
+        tmp_ptr->setCurrentCommandScheduerStepDelay(params->getUInt64Value(BatchCommandExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI64));
     }
-    
-    //recheck current command
-    if(!tmp_ptr->current_executing_command) return NULL;
-    
-    
-    lockForCurrentCommand.unlock();
-    if(tmp_ptr->thread_scheduler_pause_condition.isInWait())
-        tmp_ptr->thread_scheduler_pause_condition.unlock();
+
     return NULL;
 }
 
@@ -693,7 +676,7 @@ void BatchCommandExecutor::setCommandFeatures(features::Features& features) thro
     ReadLock       lock(sandbox_map_mutex);
     
     boost::shared_ptr<BatchCommandSandbox> tmp_ptr = sandbox_map[0];
-    tmp_ptr->setCommandFeatures(features);
+    tmp_ptr->setCurrentCommandFeatures(features);
 }
 
 //! Kill current command rpc action
