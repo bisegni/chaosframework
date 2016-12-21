@@ -331,22 +331,25 @@ bool CommandParameterTableModel::setCellData(const QModelIndex& index, const QVa
                 CHECKTYPE(result, int32_t, value)
                         if(!result) {
                     error_message = tr("The value is not convertible to int32");
-                    break;
                 }
+                break;
+
             }
             case chaos::DataType::TYPE_INT64:{
                 CHECKTYPE(result, int64_t, value)
                         if(!result) {
                     error_message = tr("The value is not convertible to int64_t");
-                    break;
                 }
+                break;
+
             }
             case chaos::DataType::TYPE_DOUBLE:{
                 CHECKTYPE(result, double, value)
                         if(!result) {
                     error_message = tr("The value is not convertible to double");
-                    break;
                 }
+                break;
+
             }
             case chaos::DataType::TYPE_CLUSTER:{
                 CDataWrapper tmp;
