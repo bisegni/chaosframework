@@ -542,6 +542,7 @@ int MDSMessageChannel::getVariable(const std::string& variable_name,
         DECODE_ERROR(request_future)
         err = request_future->getError();
         *variable_value = request_future->detachResult();
+
     } else {
         err = -1;
     }

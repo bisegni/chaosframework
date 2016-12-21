@@ -125,8 +125,7 @@ int MongoDBUtilityDataAccess::setVariable(const std::string& variable_name,
     int variable_size = 0;
     try {
         mongo::BSONObj q = BSON("variable_name" << variable_name);
-        mongo::BSONObj u = BSON("variable_value" << mongo::BSONObj(cdw.getBSONRawData(variable_size)));
-        
+        mongo::BSONObj u = BSON("$set" << BSON("variable_value" << mongo::BSONObj(cdw.getBSONRawData(variable_size))));
         DEBUG_CODE(MDBUDA_DBG<<log_message("setVariable",
                                            "update",
                                            DATA_ACCESS_LOG_2_ENTRY("Query",
@@ -161,14 +160,14 @@ int MongoDBUtilityDataAccess::getVariable(const std::string& variable_name,
         if((err = connection->findOne(result,
                                       MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_VARIABLES),
                                       q))) {
-            MDBUDA_ERR << CHAOS_FORMAT("Error find the variable %1% with error %2%", %variable_name%err);
-        } else if(result.isEmpty() == false ||
+            MDBUDA_ERR << CHAOS_FORMAT("Error find the variable '%1%' with error %2%", %variable_name%err);
+        } else if((result.isEmpty() == false)&&
                   result.hasField("variable_value")){
-            mongo::BSONElement e = result.getField("variable_value");
+            mongo::BSONElement e = result["variable_value"];
             if(e.type() == mongo::Object) {
                 int buffer_len = 0;
-                const char * bin_data = e.binData(buffer_len);
-                if(buffer_len) {
+                const char * bin_data = (const char * ) e.Obj().objdata();
+                if(bin_data) {
                     *cdw = new CDataWrapper(bin_data);
                 }
             }
