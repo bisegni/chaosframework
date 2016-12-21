@@ -43,8 +43,8 @@ chaos::common::data::CDataWrapper *DeleteSnapshot::execute(chaos::common::data::
     GET_DATA_ACCESS(SnapshotDataAccess, s_da, -5);
     int err = 0;
     const std::string snapshot_name = api_data->getStringValue("snapshot_name");
-    if((err = s_da->deleteSnapshot(snapshot_name))){
-        LOG_AND_TROW_FORMATTED(S_DS_ERR, -6, "Error erasing the snapshot %1% with code %2%", %snapshot_name%err)
-    }
+//    if((err = s_da->deleteSnapshot(snapshot_name))){
+//        LOG_AND_TROW_FORMATTED(S_DS_ERR, -6, "Error erasing the snapshot %1% with code %2%", %snapshot_name%err)
+//    }
     return NULL;
 }

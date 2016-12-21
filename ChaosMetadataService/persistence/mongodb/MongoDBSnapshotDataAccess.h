@@ -44,9 +44,31 @@ namespace chaos {
                                               data_access::DataServiceDataAccess *_data_service_da);
                     ~MongoDBSnapshotDataAccess();
                 public:
-                    //! inherited method
-                    int createNewSnapshot(const std::string& snapshot_name,
-                                          const ChaosStringVector& node_uid_list);
+                    //! Create a new snapshot
+                    int snapshotCreateNewWithName(const std::string& snapshot_name,
+                                                  std::string& working_job_unique_id);
+                    
+                    //! Add an element to a named snapshot
+                    int snapshotAddElementToSnapshot(const std::string& working_job_unique_id,
+                                                     const std::string& snapshot_name,
+                                                     const std::string& producer_unique_key,
+                                                     const std::string& dataset_type,
+                                                     void* data,
+                                                     uint32_t data_len);
+                    
+                    int snapshotIncrementJobCounter(const std::string& working_job_unique_id,
+                                                    const std::string& snapshot_name,
+                                                    bool add);
+                    
+                    //! get the dataset from a snapshot
+                    int snapshotGetDatasetForProducerKey(const std::string& snapshot_name,
+                                                         const std::string& producer_unique_key,
+                                                         const std::string& dataset_type,
+                                                         void **channel_data,
+                                                         uint32_t& channel_data_size);
+                    
+                    //! Delete a snapshot where no job is working
+                    int snapshotDeleteWithName(const std::string& snapshot_name);
                     
                     //! inherited method
                     int getNodeInSnapshot(const std::string& snapshot_name,
@@ -55,8 +77,6 @@ namespace chaos {
                     //!inherited method
                     int getSnapshotForNode(const std::string& node_unique_id,
                                            ChaosStringVector& snapshot_for_node);
-                    //! inherited method
-                    int deleteSnapshot(const std::string& snapshot_name);
                     
                     //! inherited method
                     int getSnapshotWorkingState(const std::string& snapshot_name,
@@ -68,33 +88,6 @@ namespace chaos {
                     int getDatasetInSnapshotForNode(const std::string& node_unique_id,
                                                     const std::string& snapshot_name,
                                                     common::data::VectorStrCDWShrdPtr& snapshot_for_node);
-                    
-                    //! inherited method
-                    int snapshotCreateNewWithName(const std::string& snapshot_name,
-                                                  std::string& working_job_unique_id);
-                    
-                    //! inherited method
-                    int snapshotAddElementToSnapshot(const std::string& working_job_unique_id,
-                                                     const std::string& snapshot_name,
-                                                     const std::string& producer_unique_key,
-                                                     const std::string& dataset_type,
-                                                     void* data,
-                                                     uint32_t data_len);
-                    
-                    //! inherited method
-                    int snapshotIncrementJobCounter(const std::string& working_job_unique_id,
-                                                    const std::string& snapshot_name,
-                                                    bool add);
-                    
-                    //! inherited method
-                    virtual int snapshotGetDatasetForProducerKey(const std::string& snapshot_name,
-                                                                 const std::string& producer_unique_key,
-                                                                 const std::string& dataset_type,
-                                                                 void **channel_data,
-                                                                 uint32_t& channel_data_size);
-                    
-                    //! inherited method
-                    virtual int snapshotDeleteWithName(const std::string& snapshot_name);
                 };
                 
             }
