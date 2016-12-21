@@ -50,3 +50,7 @@ command_sequence_id(0){}
 
 AbstractSandbox::~AbstractSandbox(){}
 
+void AbstractSandbox::addCommandID(BatchCommand *command_impl) {
+    if(command_impl == NULL) return;
+    command_impl->unique_id = ++command_sequence_id;
+}

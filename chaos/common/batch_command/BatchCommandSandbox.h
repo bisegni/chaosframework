@@ -40,13 +40,27 @@ namespace chaos{
                 BatchCommand *cmd_instance;
             };
             
-            //! Functor implementation
+            //! Acquisition Functor implementation
             struct AcquireFunctor : public BaseFunctor {
                 void operator()();
             };
             
+            //! Correlation function implementation
             struct CorrelationFunctor : public BaseFunctor {
                 void operator()();
+            };
+            
+            //! pulic class used into the sandbox for use the priority set into the lement that are pointer and not rela reference
+            struct PriorityCommandCompare {
+                bool operator() (const PRIORITY_ELEMENT(CommandInfoAndImplementation)* lhs, const PRIORITY_ELEMENT(CommandInfoAndImplementation)* rhs) const {
+                    if(lhs->priority < rhs->priority) {
+                        return true;
+                    } else if(lhs->priority == rhs->priority) {
+                        return  lhs->sequence_id >= rhs->sequence_id;
+                    } else {
+                        return false;
+                    }
+                }
             };
             
             //! Sandbox fo the slow command execution

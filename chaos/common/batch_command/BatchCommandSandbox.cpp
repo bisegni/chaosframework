@@ -284,7 +284,7 @@ void BatchCommandSandbox::deinit() throw (chaos::CException) {
 void BatchCommandSandbox::setDefaultStickyCommand(BatchCommand *command_impl) {
     if(command_impl != NULL) {
         //get the assigned id
-        command_impl->unique_id = ++command_sequence_id;
+        addCommandID(command_impl);
         
         default_sticky_command.reset(new PriorityQueuedElement<CommandInfoAndImplementation>(new CommandInfoAndImplementation(NULL, command_impl),
                                                                                              command_impl->unique_id,
@@ -802,7 +802,7 @@ bool BatchCommandSandbox::enqueueCommand(chaos_data::CDataWrapper *command_to_in
         boost::unique_lock<boost::mutex> lock_next_command_queue(mutex_next_command_queue);
         
         //get the assigned id
-        command_impl->unique_id = ++command_sequence_id;
+        addCommandID(command_impl);
         
         command_submitted_queue.push(new PriorityQueuedElement<CommandInfoAndImplementation>(new CommandInfoAndImplementation(command_to_info, command_impl),
                                                                                              command_impl->unique_id,

@@ -43,7 +43,7 @@ namespace chaos{
         
         //! The name space that group all foundamental class need by slow control !CHAOS implementation
         namespace batch_command {
-            
+            class AbstractSandbox;
             //forward declaration
             //class BatchCommandExecutor;
             
@@ -81,6 +81,7 @@ namespace chaos{
             class BatchCommand {
                 friend class BatchCommandSandbox;
                 friend class BatchCommandExecutor;
+                friend class AbstractSandbox;
                 friend struct AcquireFunctor;
                 friend struct CorrelationFunctor;
                 friend struct CommandInfoAndImplementation;
