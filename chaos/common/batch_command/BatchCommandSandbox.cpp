@@ -32,47 +32,6 @@ using namespace chaos::common::batch_command;
 
 #define FUNCTORLERR_ LERR_ << "[BatchCommandSandbox-" << sandbox_identifier <<"] "
 
-#define SET_FAULT(l, c, m, d,f) \
-SET_NAMED_FAULT(l, cmd_instance, c , m , d,f)
-
-#define SET_NAMED_FAULT(l, n, c, m, d,f) \
-l << c << m << d; \
-n->setRunningProperty(f); \
-n->fault_description.code = c; \
-n->fault_description.description = m; \
-n->fault_description.domain = d;
-//! Functor implementation
-
-void AcquireFunctor::operator()() {
-    try {
-        if (cmd_instance && (cmd_instance->runningProperty < RunningPropertyType::RP_END)) cmd_instance->acquireHandler();
-    } catch (chaos::CFatalException&ex) {
-        SET_FAULT(FUNCTORLERR_, ex.errorCode, ex.errorMessage, ex.errorDomain,RunningPropertyType::RP_FATAL_FAULT)
-    } catch (chaos::CException& ex) {
-        SET_FAULT(FUNCTORLERR_, ex.errorCode, ex.errorMessage, ex.errorDomain,RunningPropertyType::RP_FAULT)
-    } catch (std::exception& ex) {
-        SET_FAULT(FUNCTORLERR_, -1, ex.what(), "Acquisition Handler:"+cmd_instance->getAlias(),RunningPropertyType::RP_FATAL_FAULT);
-    } catch (...) {
-        SET_FAULT(FUNCTORLERR_, -2, "Unmanaged exception", "Acquisition Handler:"+cmd_instance->getAlias(),RunningPropertyType::RP_FATAL_FAULT);
-    }
-}
-
-void CorrelationFunctor::operator()() {
-    try {
-        if (cmd_instance && (cmd_instance->runningProperty < RunningPropertyType::RP_END)) (cmd_instance->ccHandler());
-    } catch (chaos::CFatalException&ex) {
-        SET_FAULT(FUNCTORLERR_, ex.errorCode, ex.errorMessage, ex.errorDomain,RunningPropertyType::RP_FATAL_FAULT)
-
-    } catch (chaos::CException& ex) {
-        SET_FAULT(FUNCTORLERR_, ex.errorCode, ex.errorMessage, ex.errorDomain,RunningPropertyType::RP_FAULT)
-    } catch (std::exception& ex) {
-        SET_FAULT(FUNCTORLERR_, -1, ex.what(), "Correlation Handler",RunningPropertyType::RP_FATAL_FAULT);
-    } catch (...) {
-        SET_FAULT(FUNCTORLERR_, -2, "Unmanaged exception", "Correlation Handler",RunningPropertyType::RP_FATAL_FAULT);
-    }
-}
-
-
 //------------------------------------------------------------------------------------------------------------
 //SUBMIT_AND_STACK    = 0,
 //SUBMIT_AND_KILL     = 1,

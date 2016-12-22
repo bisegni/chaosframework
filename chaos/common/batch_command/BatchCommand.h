@@ -80,6 +80,8 @@ namespace chaos{
              */
             class BatchCommand {
                 friend class BatchCommandSandbox;
+                friend class RunningCommandStat;
+                friend class BatchCommandParallelSandbox;
                 friend class BatchCommandExecutor;
                 friend class AbstractSandbox;
                 friend struct AcquireFunctor;

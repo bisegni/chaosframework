@@ -34,7 +34,7 @@ namespace chaos{
                 // let sand box be friend of this class to use interface method
                 friend class BatchCommandSandbox;
                 
-            protected:
+            public:
                 //! general command event handler
                 /*!
                  \param command_seq sequence code that identify a command

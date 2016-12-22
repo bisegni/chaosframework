@@ -40,7 +40,7 @@ new chaos::common::utility::TypedObjectInstancer<BatchCommandClass, MDSBatchComm
 
 MDSBatchExecutor::MDSBatchExecutor(const std::string& executor_id,
                                    chaos::common::network::NetworkBroker *_network_broker):
-BatchCommandExecutor(executor_id),
+BatchCommandExecutor(executor_id, false),
 network_broker(_network_broker),
 message_channel_for_job(NULL),
 multiaddress_message_channel_for_job(NULL),
@@ -68,9 +68,7 @@ last_used_sb_idx(3){
     
     //add all sandbox instances
     if(ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_BATCH_SANDBOX_SIZE)) {
-        addSandboxInstance(ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->getOption<unsigned int>(OPT_BATCH_SANDBOX_SIZE));
-    } else {
-        addSandboxInstance(MDS_DEFAULT_BATCH_SANDBOX_COUNT);
+        addSandboxInstance(ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->getOption<unsigned int>(OPT_BATCH_SANDBOX_SIZE) - 1);
     }
 }
 

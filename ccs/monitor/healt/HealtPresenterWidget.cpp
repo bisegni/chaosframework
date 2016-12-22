@@ -30,7 +30,9 @@ HealtPresenterWidget::HealtPresenterWidget(const QString &node_to_check,
 
     ui->ledIndicatorHealt->setNodeUID(node_uid);
     ui->ledIndicatorHealt->initChaosContent();
-
+    connect(ui->ledIndicatorHealt,
+            SIGNAL(changedOnlineStatus(QString,chaos::metadata_service_client::node_monitor::OnlineState)),
+            SLOT(changedOnlineStatus(QString,chaos::metadata_service_client::node_monitor::OnlineState)));
     ui->labelStatus->setHealthAttribute(CNodeHealthLabel::HealthOperationalState);
     ui->labelStatus->setNodeUID(node_uid);
     ui->labelStatus->initChaosContent();
@@ -41,9 +43,6 @@ HealtPresenterWidget::HealtPresenterWidget(const QString &node_to_check,
     setLineWidth(2);
     setMidLineWidth(2);
 
-    //lauch api that permi to retrive the type of the node
-    api_submitter.submitApiResult(TAG_NODE_INFO,
-                                  GET_CHAOS_API_PTR(chaos::metadata_service_client::api_proxy::node::GetNodeDescription)->execute(node_uid.toStdString()));
     ui->nodeResourceWidget->setNodeUID(node_uid);
     ui->nodeResourceWidget->initChaosContent();
     ui->nodeResourceWidget->updateChaosContent();
@@ -71,7 +70,8 @@ void HealtPresenterWidget::onApiDone(const QString& api_tag,
                                      QSharedPointer<chaos::common::data::CDataWrapper> api_result) {
     if(api_tag.compare(TAG_NODE_INFO) == 0) {
         //we have faound the node description
-        if(api_result->hasKey(chaos::NodeDefinitionKey::NODE_TYPE)) {
+        if(api_result->hasKey(chaos::NodeDefinitionKey::NODE_TYPE) &&
+                api_result->hasKey(chaos::NodeDefinitionKey::NODE_SUB_TYPE)) {
             //we have type
             type = QString::fromStdString(api_result->getStringValue(chaos::NodeDefinitionKey::NODE_TYPE));
             bool is_cu = (type.compare(chaos::NodeType::NODE_TYPE_CONTROL_UNIT) == 0);
@@ -163,5 +163,14 @@ void HealtPresenterWidget::cuContextualmenuTrigger() {
     }else if(cm_action->text().compare("Plot") == 0) {
         NodeAttributePlotting *plot_viewer = new NodeAttributePlotting(node_uid, NULL);
         plot_viewer->show();
+    }
+}
+
+void HealtPresenterWidget::changedOnlineStatus(const QString& node_uid,
+                                               chaos::metadata_service_client::node_monitor::OnlineState online_state) {
+    if(online_state == chaos::metadata_service_client::node_monitor::OnlineStateON) {
+        //lauch api that permi to retrive the type of the node
+        api_submitter.submitApiResult(TAG_NODE_INFO,
+                                      GET_CHAOS_API_PTR(chaos::metadata_service_client::api_proxy::node::GetNodeDescription)->execute(node_uid.toStdString()));
     }
 }

@@ -37,6 +37,7 @@ namespace chaos{
         namespace batch_command {
             
             struct RunningCommandStat {
+                SandboxStat stat;
                 //!is the timestamp after with command can run another step
                 uint64_t next_exec_timestamp;
                 
@@ -49,6 +50,8 @@ namespace chaos{
                 ~RunningCommandStat();
                 
                 void computeNextRun(uint64_t current_ts);
+                
+                bool canRun(uint64_t current_ts);
             };
             
             
@@ -58,6 +61,7 @@ namespace chaos{
             
             class BatchCommandParallelSandbox:
             public AbstractSandbox {
+                BatchCommandStat cmd_stat;
             protected:
                 
                 bool thread_run;
@@ -71,13 +75,13 @@ namespace chaos{
                 
                 //contains command that are submited to be executed
                 LockableSubmissionQueue submition_command_queue;
-              
+                
                 //schedule command step
                 void runCommand();
                 
                 bool processCommand(bool set_handler_call,
                                     RunningCommandStat& command_stat,
-                                    uint64_t current_timestamp);
+                                    uint64_t& current_timestamp);
             public:
                 BatchCommandParallelSandbox();
                 
@@ -101,7 +105,7 @@ namespace chaos{
                 
                 void setDefaultStickyCommand(BatchCommand *sticky_command);
                 
-                bool enqueueCommand(chaos::common::data::CDataWrapper *command_to_info,
+                bool enqueueCommand(chaos::common::data::CDataWrapper *command_data,
                                     BatchCommand *command_impl,
                                     uint32_t priority);
             };

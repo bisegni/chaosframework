@@ -29,6 +29,9 @@ public slots:
     void on_pushButtonOpenNodeEditor_clicked();
 
     void cuContextualmenuTrigger();
+    private slots:
+    void changedOnlineStatus(const QString& node_uid,
+                             chaos::metadata_service_client::node_monitor::OnlineState online_state);
 private:
     QString type;
     const QString node_uid;

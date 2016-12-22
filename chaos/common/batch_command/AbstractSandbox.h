@@ -31,8 +31,35 @@
 namespace chaos{
     namespace common {
         namespace batch_command {
-            
             class BatchCommandExecutor;
+            
+#define SET_FAULT(l, c, m, d,f) \
+SET_NAMED_FAULT(l, cmd_instance, c , m , d,f)
+            
+#define SET_NAMED_FAULT(l, n, c, m, d,f) \
+l << c << m << d; \
+n->setRunningProperty(f); \
+n->fault_description.code = c; \
+n->fault_description.description = m; \
+n->fault_description.domain = d;
+            
+            //! Base functor for the command handler
+            struct BaseFunctor {
+                std::string sandbox_identifier;
+                BatchCommand *cmd_instance;
+            };
+            
+            //! Acquisition Functor implementation
+            struct AcquireFunctor:
+            public BaseFunctor {
+                void operator()();
+            };
+            
+            //! Correlation function implementation
+            struct CorrelationFunctor:
+            public BaseFunctor {
+                void operator()();
+            };
             
             /*!
              Type used for the next available command impl and description

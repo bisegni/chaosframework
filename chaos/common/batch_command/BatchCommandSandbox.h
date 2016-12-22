@@ -34,22 +34,6 @@ namespace chaos{
             class BatchCommand;
             class BatchCommandExecutor;
             
-            //! Base functor for the command handler
-            struct BaseFunctor {
-                std::string sandbox_identifier;
-                BatchCommand *cmd_instance;
-            };
-            
-            //! Acquisition Functor implementation
-            struct AcquireFunctor : public BaseFunctor {
-                void operator()();
-            };
-            
-            //! Correlation function implementation
-            struct CorrelationFunctor : public BaseFunctor {
-                void operator()();
-            };
-            
             //! pulic class used into the sandbox for use the priority set into the lement that are pointer and not rela reference
             struct PriorityCommandCompare {
                 bool operator() (const PRIORITY_ELEMENT(CommandInfoAndImplementation)* lhs, const PRIORITY_ELEMENT(CommandInfoAndImplementation)* rhs) const {
@@ -148,9 +132,6 @@ namespace chaos{
 				
 				//kill the current running command without rule(like -9)
                 void killCurrentCommand();
-				
-				//default private constructor and destructor
-                BatchCommandSandbox();
                 
                 //! execute a complete step of the command (acquire -> correlation) and check if the new command can be installed
                 /*!
@@ -199,6 +180,7 @@ namespace chaos{
                  */
                 void setDefaultStickyCommand(BatchCommand *command_impl);
             public:
+                BatchCommandSandbox();
                 ~BatchCommandSandbox();
                 //! Command features modification rpc action
                 /*!
