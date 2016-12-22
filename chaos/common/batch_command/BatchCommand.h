@@ -48,7 +48,7 @@ namespace chaos{
             //class BatchCommandExecutor;
             
             //!help macro for set the sate
-#define BC_EXEC_RUNNING_PROPERTY    setRunningProperty(chaos::common::batch_command::RunningPropertyType::RP_EXSC);
+#define BC_EXCLUSIVE_RUNNING_PROPERTY    setRunningProperty(chaos::common::batch_command::RunningPropertyType::RP_EXSC);
 #define BC_NORMAL_RUNNING_PROPERTY  setRunningProperty(chaos::common::batch_command::RunningPropertyType::RP_NORMAL);
 #define BC_END_RUNNING_PROPERTY     setRunningProperty(chaos::common::batch_command::RunningPropertyType::RP_END);
 #define BC_FAULT_RUNNING_PROPERTY   setRunningProperty(chaos::common::batch_command::RunningPropertyType::RP_FAULT);

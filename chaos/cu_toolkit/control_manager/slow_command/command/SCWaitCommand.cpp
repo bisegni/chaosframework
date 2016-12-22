@@ -72,7 +72,7 @@ void SCWaitCommand::setHandler(CDataWrapper *data) {
     
     uint32_t delay = data->getUInt32Value(SCWaitCommand_DELAY_KEY);
     setFeatures(features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT, (uint64_t)delay);
-    BC_EXEC_RUNNING_PROPERTY;
+    BC_EXCLUSIVE_RUNNING_PROPERTY;
     DEBUG_CODE(SCWC_INFO << "timeout set to " << delay << " milliseconds";)
 }
 

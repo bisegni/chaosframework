@@ -62,6 +62,8 @@ namespace chaos {
                     
                     virtual int checkDatasetPresence(const std::string& cu_unique_id,
                                                      bool& presence) = 0;
+                    virtual int getFullDescription(const std::string& cu_unique_id,
+                                                              chaos::common::data::CDataWrapper **dataset_description) = 0;
                     
                     virtual int getDataset(const std::string& cu_unique_id,
                                            chaos::common::data::CDataWrapper **dataset_description) = 0;

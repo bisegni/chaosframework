@@ -392,6 +392,34 @@ int MongoDBControlUnitDataAccess::checkDatasetPresence(const std::string& cu_uni
     return err;
 }
 
+int MongoDBControlUnitDataAccess::getFullDescription(const std::string& cu_unique_id,
+                                                     chaos::common::data::CDataWrapper **dataset_description){
+	int err = 0;
+	mongo::BSONObj result;
+	try {
+		mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << cu_unique_id
+									<< NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_CONTROL_UNIT);
+
+		//remove the field of the document
+			   if((err = connection->findOne(result,
+											 MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+											 query))) {
+				   MDBCUDA_ERR << "Error fetching dataset";
+			   } else if(result.isEmpty()) {
+				   MDBCUDA_ERR << "No element found";
+			   } else {
+				   //we have dataset so set it directly within the cdsta wrapper
+				   *dataset_description = new CDataWrapper(result.objdata());
+			   }
+		   } catch (const mongo::DBException &e) {
+			   MDBCUDA_ERR << e.what();
+			   err = -1;
+		   } catch (const CException &e) {
+			   MDBCUDA_ERR << e.what();
+			   err = e.errorCode;
+		   }
+	return err;
+}
 int MongoDBControlUnitDataAccess::getDataset(const std::string& cu_unique_id,
                                              chaos::common::data::CDataWrapper **dataset_description) {
     int err = 0;

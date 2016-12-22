@@ -50,9 +50,21 @@ CDataWrapper *GetFullDescription::execute(CDataWrapper *api_data,
     bool                presence    = false;
     CDataWrapper        *result     = NULL;
     const   std::string cu_uid      = api_data->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID);
-    
+    bool 	return_all=false;
+    if( api_data->hasKey("all")){
+    	return_all=api_data->getBoolValue("all");
+    }
     GET_DATA_ACCESS(ControlUnitDataAccess, cu_da, -3)
     GET_DATA_ACCESS(DataServiceDataAccess, ds_da, -4)
+    if(return_all){
+        if((err = cu_da->getFullDescription(cu_uid, &result))||(result==NULL)) {
+               LOG_AND_TROW(CU_GCD_ERR, err, boost::str(boost::format("Error fetching the dataset for the node  unit uid:%1% with error %2%") % cu_uid % err));
+        }
+        std::auto_ptr<CDataWrapper> dataset(result);
+        return dataset.release();
+
+     }
+
     
     //get default control unit node description
     if((err = cu_da->checkPresence(cu_uid, presence))) {
@@ -66,6 +78,8 @@ CDataWrapper *GetFullDescription::execute(CDataWrapper *api_data,
     } else if(!presence) {
         LOG_AND_TROW(CU_GCD_ERR, -10000, boost::str(boost::format("No dataset found for control unit with uid id:%1%") % cu_uid));
     }
+
+
     if((err = cu_da->getDataset(cu_uid, &result))) {
         LOG_AND_TROW(CU_GCD_ERR, err, boost::str(boost::format("Error fetching the dataset for the control unit uid:%1% with error %2%") % cu_uid % err));
     }
@@ -74,7 +88,7 @@ CDataWrapper *GetFullDescription::execute(CDataWrapper *api_data,
     }
     //we have data set and now we need to update the input attribute
     std::auto_ptr<CDataWrapper> dataset(result);
-    
+
     std::auto_ptr<CDataWrapper> init_datapack(new CDataWrapper());
     std::auto_ptr<CDataWrapper> init_dataset(new CDataWrapper());
     
@@ -111,8 +125,8 @@ CDataWrapper *GetFullDescription::execute(CDataWrapper *api_data,
     init_dataset->finalizeArrayForKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION);
     
     init_datapack->addCSDataValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION, *init_dataset);
-    
-    //now search for data service associated
+
+    		//now search for data service associated
     std::vector<std::string> associated_ds;
     //load the asosciated dataservice
     if((err = cu_da->getDataServiceAssociated(cu_uid,

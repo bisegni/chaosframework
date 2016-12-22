@@ -137,7 +137,18 @@ namespace chaos {
                 int getLastDatasetForDevice(const std::string& identificationID,
                                             CDataWrapper** deviceDefinition,
                                             uint32_t millisec_to_wait=5000);
-                
+
+                //! Get full node description
+			   /*!
+				Return the full description of the node
+				\param identificationID id for wich we need to get the network address information
+				\param deviceDefinition this is the handle to the pointer representing the description
+				\param millisec_to_wait delay after wich the wait is interrupt
+				\return error code
+				*/
+			   int getFullNodeDescription(const std::string& identificationID,
+										   CDataWrapper** deviceDefinition,
+										   uint32_t millisec_to_wait=5000);
                 //! return the configuration for the data driver
                 /*!
                  Return the besta available data service at the monent within the configuraiton for data driver
