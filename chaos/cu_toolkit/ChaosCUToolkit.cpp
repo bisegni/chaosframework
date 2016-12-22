@@ -263,5 +263,7 @@ void ChaosCUToolkit::signalHanlder(int signalNumber) {
     //unlock the condition for end start method
     //endWaithCondition.notify_one();
     waitCloseSemaphore.unlock();
-    throw CFatalException(signalNumber,"trapped signal",__PRETTY_FUNCTION__);
+    if((signalNumber==SIGABRT) || (signalNumber==SIGSEGV)){
+    	throw CFatalException(signalNumber,"trapped signal",__PRETTY_FUNCTION__);
+    }
 }
