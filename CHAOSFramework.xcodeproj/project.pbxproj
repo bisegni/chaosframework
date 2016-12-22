@@ -552,6 +552,7 @@
 		32875F97177634AF00E33D6F /* PluginInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = 32875F96177634AF00E33D6F /* PluginInspector.h */; };
 		3287F7E617B2756C009DD6ED /* DriverManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326D3A5F17B0CD01004601A8 /* DriverManager.cpp */; };
 		3287F7E717B27621009DD6ED /* DriverManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 326D3A6017B0CD01004601A8 /* DriverManager.h */; };
+		3288CE541E0C3243002B04F9 /* CreateSnapshotBatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3288CE521E0C3243002B04F9 /* CreateSnapshotBatch.cpp */; };
 		328933591D3549DE00FBA95B /* DeclareStateFlag.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328933571D3549DE00FBA95B /* DeclareStateFlag.cpp */; };
 		3289335A1D3549DE00FBA95B /* DeclareStateFlag.h in Headers */ = {isa = PBXBuildFile; fileRef = 328933581D3549DE00FBA95B /* DeclareStateFlag.h */; };
 		3289F9A5168508460080D93F /* SQLiteEntityDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3289F9A3168508460080D93F /* SQLiteEntityDB.cpp */; };
@@ -1796,6 +1797,8 @@
 		32875F96177634AF00E33D6F /* PluginInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginInspector.h; sourceTree = "<group>"; };
 		32875F9817763AE200E33D6F /* PluginLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PluginLoader.h; sourceTree = "<group>"; };
 		32875F9917763B0800E33D6F /* AbstractPlugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AbstractPlugin.h; sourceTree = "<group>"; };
+		3288CE521E0C3243002B04F9 /* CreateSnapshotBatch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CreateSnapshotBatch.cpp; sourceTree = "<group>"; };
+		3288CE531E0C3243002B04F9 /* CreateSnapshotBatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateSnapshotBatch.h; sourceTree = "<group>"; };
 		328933571D3549DE00FBA95B /* DeclareStateFlag.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = DeclareStateFlag.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		328933581D3549DE00FBA95B /* DeclareStateFlag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = DeclareStateFlag.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		3289335B1D3648F000FBA95B /* TemplatedDataSDWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemplatedDataSDWrapper.h; sourceTree = "<group>"; };
@@ -4856,6 +4859,8 @@
 			children = (
 				32E09CF21C0DE2890069752F /* RestoreSnapshotBatch.cpp */,
 				32E09CF31C0DE2890069752F /* RestoreSnapshotBatch.h */,
+				3288CE521E0C3243002B04F9 /* CreateSnapshotBatch.cpp */,
+				3288CE531E0C3243002B04F9 /* CreateSnapshotBatch.h */,
 				32E09CF81C0DF19E0069752F /* general_batch.h */,
 			);
 			path = general;
@@ -5777,6 +5782,7 @@
 				327F39A01AEA47980000C845 /* GetAssociationByDS.cpp in Sources */,
 				3270E0701C6CBBE600105726 /* SubmitEntry.cpp in Sources */,
 				328E77FF1A7A94140008C070 /* NodeGroup.cpp in Sources */,
+				3288CE541E0C3243002B04F9 /* CreateSnapshotBatch.cpp in Sources */,
 				326ACFAB1E0159C600AD011E /* DeviceSharedDataWorkerMetricCollector.cpp in Sources */,
 				320E773E1A7FBD84001FB8BC /* UnitServerAckBatchCommand.cpp in Sources */,
 				3258D4811DF0332300D9C8D0 /* GetSnapshotDatasetsForNode.cpp in Sources */,

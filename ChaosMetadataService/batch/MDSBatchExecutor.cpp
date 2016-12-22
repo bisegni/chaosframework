@@ -62,7 +62,8 @@ last_used_sb_idx(3){
     
     //general batch command
     installCommand(general::RestoreSnapshotBatch::command_alias, MDS_BATCH_COMMAND_INSTANCER(general::RestoreSnapshotBatch));
-   
+    installCommand(general::RestoreSnapshotBatch::command_alias, MDS_BATCH_COMMAND_INSTANCER(general::CreateSnapshotBatch));
+    
     //general batch command
     installCommand(script::LoadInstanceOnUnitServer::command_alias, MDS_BATCH_COMMAND_INSTANCER(script::LoadInstanceOnUnitServer));
     

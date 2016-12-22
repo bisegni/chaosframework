@@ -1,9 +1,10 @@
 /*
- *	RestoreSnapshotBatch.hpp
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ *	CreateSnapshotBatch.h
  *
- *    	Copyright 2015 INFN, National Institute of Nuclear Physics
+ *	!CHAOS [CHAOSFramework]
+ *	Created by bisegni.
+ *
+ *    	Copyright 22/12/2016 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -18,8 +19,8 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__RestoreSnapshotBatch_h
-#define __CHAOSFramework__RestoreSnapshotBatch_h
+#ifndef __CHAOSFramework__88C5D13_DAD7_419F_ACBA_190123A754B0_CreateSnapshotBatch_h
+#define __CHAOSFramework__88C5D13_DAD7_419F_ACBA_190123A754B0_CreateSnapshotBatch_h
 
 #include "../mds_service_batch.h"
 
@@ -29,27 +30,23 @@ namespace chaos {
             class MDSBatchExcecutor;
             namespace general {
                 
-                typedef enum RestorePhase {
-                    NEW_RESTORE_REQUEST,
-                    MANAGE_RESTORE_REQUEST,
-                    NO_MORE_NODE
-                } RestorePhase;
-                
                 //!batch command for submit batch command within a node
-                class RestoreSnapshotBatch:
+                class CreateSnapshotBatch:
                 public metadata_service::batch::MDSBatchCommand {
                     DECLARE_MDS_COMMAND_ALIAS
                     //request for the command submission
-                    std::auto_ptr<RequestInfo> restore_request;
-                    std::auto_ptr<CDataWrapper> restore_message;
                     std::vector<std::string> list_node_in_snapshot;
                     
                     std::string snapshot_name;
-                    unsigned int node_index;
-                    RestorePhase restore_phase;
+                    int64_t curren_node_id;
+                    
+                    int storeDatasetTypeInSnapsnot(const std::string& job_work_code,
+                                                   const std::string& snapshot_name,
+                                                   const std::string& unique_id,
+                                                   const std::string& dataset_type);
                 public:
-                    RestoreSnapshotBatch();
-                    ~RestoreSnapshotBatch();
+                    CreateSnapshotBatch();
+                    ~CreateSnapshotBatch();
                 protected:
                     // inherited method
                     void setHandler(chaos_data::CDataWrapper *data);
@@ -68,4 +65,4 @@ namespace chaos {
     }
 }
 
-#endif /* RestoreSnapshotBatch_hpp */
+#endif /* __CHAOSFramework__88C5D13_DAD7_419F_ACBA_190123A754B0_CreateSnapshotBatch_h */
