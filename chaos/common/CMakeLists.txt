@@ -219,7 +219,7 @@ SET(common_lib_src ${common_lib_src}
         batch_command/BatchCommand.cpp
         batch_command/BatchCommandDescription.cpp
         batch_command/AbstractSandbox.cpp
-      batch_command/BatchCommandParallelSandBox.cpp)
+        batch_command/BatchCommandParallelSandbox.cpp)
 
 SET(common_lib_src ${common_lib_src}
         plugin/AbstractPlugin.cpp
