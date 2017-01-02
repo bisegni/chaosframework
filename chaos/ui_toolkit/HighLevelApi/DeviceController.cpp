@@ -1028,13 +1028,13 @@ int DeviceController::createNewSnapshot(const std::string& snapshot_tag,
     CHAOS_ASSERT(ioLiveDataDriver)
     std::vector<std::string> device_id_in_snap = other_snapped_device;
     device_id_in_snap.push_back(device_id);
-    return ioLiveDataDriver->createNewSnapshot(snapshot_tag,
-                                               device_id_in_snap);
+    return mdsChannel->createNewSnapshot(snapshot_tag,
+                                         other_snapped_device);
 }
 
 int DeviceController::deleteSnapshot(const std::string& snapshot_tag) {
     CHAOS_ASSERT(ioLiveDataDriver)
-    return ioLiveDataDriver->deleteSnapshot(snapshot_tag);
+    return mdsChannel->deleteSnapshot(snapshot_tag);
 }
 
 int DeviceController::getSnapshotList(ChaosStringVector& snapshot_list) {

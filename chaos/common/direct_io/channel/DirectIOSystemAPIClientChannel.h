@@ -52,28 +52,6 @@ namespace chaos {
 					//static deallocator forthis channel
 					static DirectIOSystemAPIClientChannelDeallocator STATIC_DirectIOSystemAPIClientChannelDeallocator;
 				public:
-					//! perform the creation of new named Snapshot
-					/*!
-					 The creation of the new snapshot is started in the chaos data service after received 
-					 the request. The API return in async way if the creation is started
-					 \param snapshot_name the name of the snapshot
-					 \param producer_keys the list of the producer key to include in the snapshot, if it is empty
-					 all producer key are included.
-					 \api_result is the result of the api execution
-					 \return the error of the directio client in the forwarding message operation
-					 */
-					int64_t makeNewDatasetSnapshot(const std::string& snapshot_name,
-												   const std::vector<std::string>& producer_keys,
-												   DirectIOSystemAPIGetDatasetSnapshotResult **api_result_handle);
-					
-					//! delete the snapshot identified by name
-					/*!
-					 Delete the entry of the snapshot and all dataset associated to it
-					 \param snapshot_name the name of the snapshot to delete
-					 */
-					int64_t deleteDatasetSnapshot(const std::string& snapshot_name,
-												  DirectIOSystemAPIGetDatasetSnapshotResult **api_result_handle);
-					
 					//! get the snapshot for one or more producer key
 					/*!
 					 Retrieve the dataset form the snapshot for one or more producer key.

@@ -53,34 +53,6 @@ namespace chaos {
 					//! System API DirectIO server handler
 					typedef class DirectIOSystemAPIServerChannelHandler {
 					public:
-						//! Manage the creation of a snapshot
-						/*!
-						 The creation for a new snapshot has been requested, all information
-						 on the live cache will be stored into database layer creating a
-						 reference to this snapshot.
-						 \param header header of the new snapshot api
-						 \param snapped_producer_key the list of the producer, identfied the
-						 unique key, to include into the snaphsoot
-						 \param api_result the result of the api
-						 \return error on the forwading of the event
-						 */
-						virtual int consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,
-															void *concatenated_unique_id_memory,
-															uint32_t concatenated_unique_id_memory_size,
-															DirectIOSystemAPISnapshotResultHeader &result_header)
-						{DELETE_HEADER_DATA(header, concatenated_unique_id_memory) return 0;};
-						
-						//! Manage the delete operation on an existing snapshot
-						/*!
-						 Perform the delete operation on the snpashot and all dataset associated to it.
-						\param header of the snapshot to delete
-						\param api_result the result of the api
-						\return error on the forwading of the event
-						 */
-						virtual int consumeDeleteSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,
-															   DirectIOSystemAPISnapshotResultHeader &result_header)
-						{DELETE_HEADER(header) return 0;};
-						
 						//! Return the dataset for a producerkey ona specific snapshot
 						/*!
 						\param header of the snapshot where to fetch the dataasets
