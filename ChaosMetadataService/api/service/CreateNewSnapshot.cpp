@@ -36,7 +36,7 @@ AbstractApi("createNewSnapshot"){}
 CreateNewSnapshot::~CreateNewSnapshot() {}
 
 chaos::common::data::CDataWrapper *CreateNewSnapshot::execute(chaos::common::data::CDataWrapper *api_data, bool& detach_data) {
-    uint32_t command_id = 0;
+    uint64_t command_id = 0;
     CHECK_CDW_THROW_AND_LOG(api_data, S_CNS_ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(api_data, "snapshot_name", S_CNS_ERR, -2, "The snapshot_name key is mandatory")
     CHECK_KEY_THROW_AND_LOG(api_data, "node_list", S_CNS_ERR, -3, "The node_list key is mandatory")
@@ -44,9 +44,8 @@ chaos::common::data::CDataWrapper *CreateNewSnapshot::execute(chaos::common::dat
     
     GET_DATA_ACCESS(SnapshotDataAccess, s_da, -5);
 
-    
-    std::auto_ptr<CDataWrapper> batch_data(new CDataWrapper());
     command_id = getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::general::CreateSnapshotBatch),
-                                                   batch_data.release());
+                                                   api_data);
+    detach_data = true;
     return NULL;
 }

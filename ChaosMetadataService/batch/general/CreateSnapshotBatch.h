@@ -30,20 +30,29 @@ namespace chaos {
             class MDSBatchExcecutor;
             namespace general {
                 
+                typedef enum SnapshotCreationPhase {
+                    SnapshotCreationPhaseFetchDataset,
+                    SnapshotCreationPhaseStoreDataset,
+                    SnapshotCreationPhaseEnd
+                } SnapshotCreationPhase;
+                
                 //!batch command for submit batch command within a node
                 class CreateSnapshotBatch:
                 public metadata_service::batch::MDSBatchCommand {
                     DECLARE_MDS_COMMAND_ALIAS
+                    std::string work_id;
                     //request for the command submission
                     std::vector<std::string> list_node_in_snapshot;
                     
                     std::string snapshot_name;
                     int64_t curren_node_id;
+                    SnapshotCreationPhase phase;
                     
                     int storeDatasetTypeInSnapsnot(const std::string& job_work_code,
                                                    const std::string& snapshot_name,
                                                    const std::string& unique_id,
                                                    const std::string& dataset_type);
+                    int storeDatasetForDeviceID(const std::string& device_id);
                 public:
                     CreateSnapshotBatch();
                     ~CreateSnapshotBatch();
