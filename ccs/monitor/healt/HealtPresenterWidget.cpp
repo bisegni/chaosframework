@@ -46,6 +46,12 @@ HealtPresenterWidget::HealtPresenterWidget(const QString &node_to_check,
     ui->nodeResourceWidget->setNodeUID(node_uid);
     ui->nodeResourceWidget->initChaosContent();
     ui->nodeResourceWidget->updateChaosContent();
+
+    ui->widgetCommandStatistic->setNodeUID(node_uid);
+
+    //force start refresh also if node is down
+    changedOnlineStatus(node_uid,
+                        chaos::metadata_service_client::node_monitor::OnlineStateON);
 }
 
 HealtPresenterWidget::~HealtPresenterWidget() {
@@ -74,16 +80,25 @@ void HealtPresenterWidget::onApiDone(const QString& api_tag,
                 api_result->hasKey(chaos::NodeDefinitionKey::NODE_SUB_TYPE)) {
             //we have type
             type = QString::fromStdString(api_result->getStringValue(chaos::NodeDefinitionKey::NODE_TYPE));
+            subtype =  QString::fromStdString(api_result->getStringValue(chaos::NodeDefinitionKey::NODE_SUB_TYPE));
             bool is_cu = (type.compare(chaos::NodeType::NODE_TYPE_CONTROL_UNIT) == 0);
-            bool is_sc_cu = api_result->getStringValue(chaos::NodeDefinitionKey::NODE_SUB_TYPE).compare(chaos::CUType::SCCU);
+            bool is_sc_cu = subtype.compare(chaos::CUType::SCCU) == 0;
             bool is_ds = (type.compare(chaos::NodeType::NODE_TYPE_UNIT_SERVER) == 0);
+
+            ui->widgetCommandStatistic->setVisible(is_sc_cu);
+            if(ui->widgetCommandStatistic->isVisible()) {
+                ui->widgetCommandStatistic->initChaosContent();
+            } else {
+                ui->widgetCommandStatistic->deinitChaosContent();
+            }
+
             if(is_cu ||
                     is_ds) {
                 ui->pushButtonOpenNodeEditor->setEnabled((type.compare(chaos::NodeType::NODE_TYPE_CONTROL_UNIT) == 0) ||
                                                          (type.compare(chaos::NodeType::NODE_TYPE_UNIT_SERVER) == 0));
                 //update string
                 ui->labelUID->setText(node_uid);
-                ui->labelNodeType->setText(type);
+                ui->labelNodeType->setText(QString("%1[%2]").arg(type).arg(subtype));
                 if(is_cu) {
                     QAction *action = new QAction("Load", this);
                     addAction(action);
