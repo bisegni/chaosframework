@@ -52,7 +52,7 @@ using namespace boost;
 #define OPT_DST_TARGET      "dest-target"
 #define OPT_DST_FILE        "dest-file"
 #define OPT_DST_TYPE        "dest-type"
-
+#define OPT_PAGE_LENGHT     "page-lenght"
 #define OPT_START_TIME      "start-time"
 #define OPT_END_TIME		"end-time"
 
@@ -161,7 +161,8 @@ int main(int argc, char* argv[]) {
     uint32_t timeout;
     string device_id;
     string dst_file="export";
-    unsigned int dest_type;
+    uint32_t dest_type;
+    uint32_t page_len;
     string start_time;
     string end_time;
     std::string err_str;
@@ -186,10 +187,11 @@ int main(int argc, char* argv[]) {
         //! [UIToolkit Attribute Init]
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_CU_ID, "The identification string of the device", &device_id);
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>(OPT_TIMEOUT, "Timeout for wait the answer in milliseconds", 2000, &timeout);
-        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<unsigned int>(OPT_DST_TYPE, "Destination date type [binary(0), JSON(1), CSV(2)]", 0, &dest_type);
+        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>(OPT_DST_TYPE, "Destination date type [binary(0), JSON(1), CSV(2)]", 0, &dest_type);
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_DST_FILE, "Destination file for save found datapack", &dst_file);
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_START_TIME, "Time for first datapack to find [format from %Y-%m-%dT%H:%M:%S.%f to %Y]", &start_time);
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_END_TIME, "Time for last datapack to find [format from %Y-%m-%dT%H:%M:%S.%f to %Y]", &end_time);
+        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>(OPT_PAGE_LENGHT, "query page lenght", 1, &page_len);
         //! [UIToolkit Attribute Init]
         
         //! [UIToolkit Init]
@@ -227,18 +229,18 @@ int main(int argc, char* argv[]) {
             std::cout << "Set end data to:"<< end_time << std::endl;
         }
         
-	switch(dest_type) {
-	case 0:
-	  dst_file.append(".bin");
-	  break;
-	case 1:
-	  dst_file.append(".json");
-	  break;
-	case 2:
-	  dst_file.append(".cvs");
-	  break;
-	}
-
+        switch(dest_type) {
+            case 0:
+                dst_file.append(".bin");
+                break;
+            case 1:
+                dst_file.append(".json");
+                break;
+            case 2:
+                dst_file.append(".cvs");
+                break;
+        }
+        
         std::basic_ios<char>::openmode dst_file_mode = ios_base::out;
         if(dest_type) {
             dst_file_mode |= ios_base::binary;
@@ -260,7 +262,10 @@ int main(int argc, char* argv[]) {
         
         chaos::common::io::QueryCursor *query_cursor = NULL;
         controller->executeTimeIntervallQuery(DatasetDomainOutput,
-                                              start_ts, end_ts, &query_cursor);
+                                              start_ts,
+                                              end_ts,
+                                              &query_cursor,
+                                              page_len);
         
         std::vector<std::string> output_element_name;
         //fetche the output element of the device

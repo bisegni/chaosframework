@@ -198,11 +198,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
 				CLANG_CXX_LIBRARY = "libc++";
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../usr/local/bin";
-				HEADER_SEARCH_PATHS = (
-					../../,
-					/usr/local/include,
-					../../usr/local/include,
-				);
+				HEADER_SEARCH_PATHS = ../../usr/local/include;
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/lib,
 					"$(SRCROOT)/../../usr/local/lib",
@@ -221,11 +217,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
 				CLANG_CXX_LIBRARY = "libc++";
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../usr/local/bin";
-				HEADER_SEARCH_PATHS = (
-					../../,
-					/usr/local/include,
-					../../usr/local/include,
-				);
+				HEADER_SEARCH_PATHS = ../../usr/local/include;
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/lib,
 					"$(SRCROOT)/../../usr/local/lib",
