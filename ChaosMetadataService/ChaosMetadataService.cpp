@@ -190,7 +190,7 @@ void ChaosMetadataService::start()  throw(CException) {
         "\n!CHAOS Metadata service started" <<
         "\nRPC Server address: "	<< api_subsystem_accessor.network_broker_service->getRPCUrl() <<
         "\nDirectIO Server address: " << api_subsystem_accessor.network_broker_service->getDirectIOUrl() <<
-        "\nData Service published with url: " << NetworkBroker::getInstance()->getDirectIOUrl() << "|0" <<
+        (setting.data_service_run_mode?CHAOS_FORMAT("\nData Service published with url: %1%|0", %NetworkBroker::getInstance()->getDirectIOUrl()):"") <<
         "\nSync RPC URL: "	<< api_subsystem_accessor.network_broker_service->getSyncRPCUrl() <<
         "\n----------------------------------------------------------------------";
         
