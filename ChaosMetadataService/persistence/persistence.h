@@ -21,7 +21,7 @@
 #ifndef CHAOSFramework_persistence_h
 #define CHAOSFramework_persistence_h
 
-#include "PeristenceManager.h"
+#include "PersistenceManager.h"
 #include "data_access/DataAccess.h"
 #include "persistence_types.h"
 

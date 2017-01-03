@@ -121,7 +121,8 @@ SET(cnd_src  ${cnd_src}	worker/DataWorker.cpp
                         worker/SnapshotCreationWorker.cpp)
 
 #Persistence
-SET(cnd_src  ${cnd_src}	persistence/data_access/UnitServerDataAccess.cpp
+SET(cnd_src  ${cnd_src} persistence/PersistenceManager.cpp
+                        persistence/data_access/UnitServerDataAccess.cpp
                         persistence/data_access/NodeDataAccess.cpp
                         persistence/data_access/UtilityDataAccess.cpp
                         persistence/data_access/ControlUnitDataAccess.cpp
@@ -170,12 +171,16 @@ SET(cnd_src  ${cnd_src}	batch/control_unit/RegistrationAckBatchCommand.cpp
 
 SET(cnd_src  ${cnd_src}	batch/script/LoadInstanceOnUnitServer.cpp)
 
-SET(cnd_src  ${cnd_src}	batch/general/RestoreSnapshotBatch.cpp)
+SET(cnd_src  ${cnd_src}	batch/general/RestoreSnapshotBatch.cpp
+                        batch/general/CreateSnapshotBatch.cpp)
 
 ADD_EXECUTABLE(${PROJECT_NAME} ${cnd_src})
+
+CheckConfigureBuild(couchbaseS libcouchbase:chaos-0.1 "-DLCB_NO_SSL=true;-DLCB_NO_TESTS=true;-DLCB_NO_TOOLS=true;-DLCB_NO_PLUGINS=true" https://github.com/amichelotti)
 
 IF(BUILD_FORCE_STATIC)
   SET(CMAKE_EXE_LINKER_FLAGS "-static -Wl,--whole-archive -lchaos_common -Wl,--no-whole-archive")
 ENDIF()
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} chaos_common mongoclient ${FrameworkLib})
+
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} chaos_common mongoclient couchbaseS ${FrameworkLib})
 INSTALL_TARGETS(/bin ${PROJECT_NAME})

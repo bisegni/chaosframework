@@ -878,6 +878,18 @@
 		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/ChaosMetadataService.h">
 			<Option target="ChaosMetadataService"/>
 		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/DriverPoolManager.cpp">
+			<Option target="ChaosMetadataService"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/DriverPoolManager.h">
+			<Option target="ChaosMetadataService"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/QueryDataConsumer.cpp">
+			<Option target="ChaosMetadataService"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/QueryDataConsumer.h">
+			<Option target="ChaosMetadataService"/>
+		</Unit>
 		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/api/AbstractApi.cpp">
 			<Option target="ChaosMetadataService"/>
 		</Unit>
@@ -1394,6 +1406,12 @@
 		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/batch/control_unit/RegistrationAckBatchCommand.h">
 			<Option target="ChaosMetadataService"/>
 		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/batch/general/CreateSnapshotBatch.cpp">
+			<Option target="ChaosMetadataService"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/batch/general/CreateSnapshotBatch.h">
+			<Option target="ChaosMetadataService"/>
+		</Unit>
 		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/batch/general/RestoreSnapshotBatch.cpp">
 			<Option target="ChaosMetadataService"/>
 		</Unit>
@@ -1430,6 +1448,30 @@
 		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/batch/unit_server/UnitServerAckBatchCommand.h">
 			<Option target="ChaosMetadataService"/>
 		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/cache_system/CacheDriver.cpp">
+			<Option target="ChaosMetadataService"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/cache_system/CacheDriver.h">
+			<Option target="ChaosMetadataService"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/cache_system/CacheDriverMetricCollector.cpp">
+			<Option target="ChaosMetadataService"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/cache_system/CacheDriverMetricCollector.h">
+			<Option target="ChaosMetadataService"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/cache_system/CacheDriverSharedMetricIO.cpp">
+			<Option target="ChaosMetadataService"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/cache_system/CacheDriverSharedMetricIO.h">
+			<Option target="ChaosMetadataService"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/cache_system/CouchbaseCacheDriver.cpp">
+			<Option target="ChaosMetadataService"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/cache_system/CouchbaseCacheDriver.h">
+			<Option target="ChaosMetadataService"/>
+		</Unit>
 		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/common/CUCommonUtility.cpp">
 			<Option target="ChaosMetadataService"/>
 		</Unit>
@@ -1461,6 +1503,30 @@
 			<Option target="ChaosMetadataService"/>
 		</Unit>
 		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/main.cpp">
+			<Option target="ChaosMetadataService"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/object_storage/abstraction/ObjectStorageDataAccess.cpp">
+			<Option target="ChaosMetadataService"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/object_storage/abstraction/ObjectStorageDataAccess.h">
+			<Option target="ChaosMetadataService"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/object_storage/mongodb/MongoDBObjectStorageDataAccess.cpp">
+			<Option target="ChaosMetadataService"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/object_storage/mongodb/MongoDBObjectStorageDataAccess.h">
+			<Option target="ChaosMetadataService"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/object_storage/mongodb/MongoDBObjectStorageDriver.cpp">
+			<Option target="ChaosMetadataService"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/object_storage/mongodb/MongoDBObjectStorageDriver.h">
+			<Option target="ChaosMetadataService"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/persistence/PersistenceManager.cpp">
+			<Option target="ChaosMetadataService"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/persistence/PersistenceManager.h">
 			<Option target="ChaosMetadataService"/>
 		</Unit>
 		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/persistence/data_access/ControlUnitDataAccess.cpp">
@@ -1575,6 +1641,36 @@
 			<Option target="ChaosMetadataService"/>
 		</Unit>
 		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/persistence/mongodb/MongoDBUtilityDataAccess.h">
+			<Option target="ChaosMetadataService"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/worker/DataWorker.cpp">
+			<Option target="ChaosMetadataService"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/worker/DataWorker.h">
+			<Option target="ChaosMetadataService"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/worker/DeviceSharedDataWorker.cpp">
+			<Option target="ChaosMetadataService"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/worker/DeviceSharedDataWorker.h">
+			<Option target="ChaosMetadataService"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/worker/DeviceSharedDataWorkerMetric.cpp">
+			<Option target="ChaosMetadataService"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/worker/DeviceSharedDataWorkerMetric.h">
+			<Option target="ChaosMetadataService"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/worker/DeviceSharedDataWorkerMetricCollector.cpp">
+			<Option target="ChaosMetadataService"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/worker/DeviceSharedDataWorkerMetricCollector.h">
+			<Option target="ChaosMetadataService"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/worker/SnapshotCreationWorker.cpp">
+			<Option target="ChaosMetadataService"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataService/worker/SnapshotCreationWorker.h">
 			<Option target="ChaosMetadataService"/>
 		</Unit>
 		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataServiceClient/ChaosMetadataServiceClient.cpp">
@@ -2271,6 +2367,12 @@
 			<Option target="chaos_common"/>
 		</Unit>
 		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/batch_command/BatchCommandExecutor.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/batch_command/BatchCommandParallelSandbox.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/batch_command/BatchCommandParallelSandbox.h">
 			<Option target="chaos_common"/>
 		</Unit>
 		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/batch_command/BatchCommandSandbox.cpp">
@@ -3414,6 +3516,12 @@
 			<Option target="chaos_common"/>
 		</Unit>
 		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/utility/NamedService.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/utility/ProcStat.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/utility/ProcStat.h">
 			<Option target="chaos_common"/>
 		</Unit>
 		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/utility/SWEService.cpp">

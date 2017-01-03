@@ -34,8 +34,6 @@
 namespace chaos{
     namespace metadata_service {
         struct setting {
-            bool                                metadata_service_run_mode;
-            bool                                data_service_run_mode;
             //!identify the number of the sandbox to use in the batch system
             unsigned int                        batch_sandbox_size;
             unsigned int                        cron_job_scheduler_repeat_time;

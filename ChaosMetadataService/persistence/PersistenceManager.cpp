@@ -1,5 +1,5 @@
 /*
- *	PeristenceManager.cpp
+ *	PersistenceManager.cpp
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
@@ -19,7 +19,7 @@
  *    	limitations under the License.
  */
 
-#include "PeristenceManager.h"
+#include "PersistenceManager.h"
 #include "../ChaosMetadataService.h"
 
 using namespace chaos::common::utility;

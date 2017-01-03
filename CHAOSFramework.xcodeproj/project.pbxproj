@@ -401,7 +401,7 @@
 		326ACFAA1E0159C600AD011E /* DeviceSharedDataWorkerMetric.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326ACFA21E0159C600AD011E /* DeviceSharedDataWorkerMetric.cpp */; };
 		326ACFAB1E0159C600AD011E /* DeviceSharedDataWorkerMetricCollector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326ACFA41E0159C600AD011E /* DeviceSharedDataWorkerMetricCollector.cpp */; };
 		326ACFAC1E0159C700AD011E /* SnapshotCreationWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326ACFA61E0159C600AD011E /* SnapshotCreationWorker.cpp */; };
-		326ACFAF1E016D9000AD011E /* PeristenceManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326ACFAD1E016D9000AD011E /* PeristenceManager.cpp */; };
+		326ACFAF1E016D9000AD011E /* PersistenceManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326ACFAD1E016D9000AD011E /* PersistenceManager.cpp */; };
 		326CD5AB1D66F975003AD071 /* PublishingManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326CD5A91D66F975003AD071 /* PublishingManager.cpp */; };
 		326CD5AC1D66F975003AD071 /* PublishingManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 326CD5AA1D66F975003AD071 /* PublishingManager.h */; };
 		326CDBB718D860430054EF19 /* SpinLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 326CDBB518D860430054EF19 /* SpinLock.h */; };
@@ -1612,8 +1612,8 @@
 		326ACFA51E0159C600AD011E /* DeviceSharedDataWorkerMetricCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceSharedDataWorkerMetricCollector.h; sourceTree = "<group>"; };
 		326ACFA61E0159C600AD011E /* SnapshotCreationWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SnapshotCreationWorker.cpp; sourceTree = "<group>"; };
 		326ACFA71E0159C600AD011E /* SnapshotCreationWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnapshotCreationWorker.h; sourceTree = "<group>"; };
-		326ACFAD1E016D9000AD011E /* PeristenceManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PeristenceManager.cpp; sourceTree = "<group>"; };
-		326ACFAE1E016D9000AD011E /* PeristenceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PeristenceManager.h; sourceTree = "<group>"; };
+		326ACFAD1E016D9000AD011E /* PersistenceManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PersistenceManager.cpp; sourceTree = "<group>"; };
+		326ACFAE1E016D9000AD011E /* PersistenceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersistenceManager.h; sourceTree = "<group>"; };
 		326CD5A91D66F975003AD071 /* PublishingManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PublishingManager.cpp; sourceTree = "<group>"; };
 		326CD5AA1D66F975003AD071 /* PublishingManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PublishingManager.h; sourceTree = "<group>"; };
 		326CD5AE1D673EB5003AD071 /* LockableObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LockableObject.h; sourceTree = "<group>"; };
@@ -4705,8 +4705,8 @@
 		32C7EAE01A5EC0D60008DFE8 /* persistence */ = {
 			isa = PBXGroup;
 			children = (
-				326ACFAD1E016D9000AD011E /* PeristenceManager.cpp */,
-				326ACFAE1E016D9000AD011E /* PeristenceManager.h */,
+				326ACFAD1E016D9000AD011E /* PersistenceManager.cpp */,
+				326ACFAE1E016D9000AD011E /* PersistenceManager.h */,
 				32809C761A97647F00C02C12 /* persistence_types.h */,
 				3235FDCB1A6FF51D00EC83A9 /* persistence.h */,
 				3235FDCC1A6FF53600EC83A9 /* mongodb */,
@@ -5870,7 +5870,7 @@
 				326ACFAA1E0159C600AD011E /* DeviceSharedDataWorkerMetric.cpp in Sources */,
 				32401CB61C18330000E62866 /* GetNodesForSnapshot.cpp in Sources */,
 				328E78061A7A9FE40008C070 /* AbstractApi.cpp in Sources */,
-				326ACFAF1E016D9000AD011E /* PeristenceManager.cpp in Sources */,
+				326ACFAF1E016D9000AD011E /* PersistenceManager.cpp in Sources */,
 				32ED0DDA1C72152700B9581A /* GetLogForSourceUID.cpp in Sources */,
 				325D2FE21AFB9C2100B2A706 /* ProcessBye.cpp in Sources */,
 				32B9F3F31AC3E74C00380FE9 /* AbstractDataAccess.cpp in Sources */,

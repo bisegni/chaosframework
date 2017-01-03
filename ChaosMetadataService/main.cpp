@@ -28,17 +28,6 @@ using namespace chaos::metadata_service;
 
 int main(int argc, char * argv[]) {
     try {
-        ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->addOption< bool >(OPT_ENABLE_DATA_SERVICE,
-                                                                                                 "Enable the data service functionality",
-                                                                                                 false,
-                                                                                                 &ChaosMetadataService::getInstance()->setting.data_service_run_mode);
-        
-        ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->addOption< bool >(OPT_ENABLE_METADATA_SERVICE,
-                                                                                                 "Enable the data service functionality",
-                                                                                                 true,
-                                                                                                 &ChaosMetadataService::getInstance()->setting.metadata_service_run_mode);
-
-
         //data worker
         ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->addOption< bool >(OPT_DATA_WORKER_LOG_METRIC,
                                                                                                  "Enable log metric for data worker",

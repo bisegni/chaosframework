@@ -1,5 +1,5 @@
 /*
- *	PeristenceManager.h
+ *	PersistenceManager.h
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.

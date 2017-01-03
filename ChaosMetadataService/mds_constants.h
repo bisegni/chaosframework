@@ -19,10 +19,6 @@ namespace chaos {
 #define OPT_CRON_JOB_CHECK              "cron-job-check-repeat-time"
 #define OPT_CRON_JOB_AGEING_MANAGEMENT	"cron-job-ageing-management-repeat-time"
         
-        
-#define OPT_ENABLE_DATA_SERVICE                 "enable-dataservice"
-#define OPT_ENABLE_METADATA_SERVICE				"enable-metadata-service"
-        
         //cache configuration
 #define OPT_CACHE_LOG_METRIC                    "cache-log-metric"
 #define OPT_CACHE_LOG_METRIC_UPDATE_INTERVAL    "cache-log-metric-update-interval"

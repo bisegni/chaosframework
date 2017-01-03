@@ -168,6 +168,12 @@
 		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/batch_command/BatchCommandExecutor.h">
 			<Option target="chaos_common"/>
 		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/batch_command/BatchCommandParallelSandbox.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/batch_command/BatchCommandParallelSandbox.h">
+			<Option target="chaos_common"/>
+		</Unit>
 		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/batch_command/BatchCommandSandbox.cpp">
 			<Option target="chaos_common"/>
 		</Unit>
@@ -1309,6 +1315,12 @@
 			<Option target="chaos_common"/>
 		</Unit>
 		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/utility/NamedService.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/utility/ProcStat.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/utility/ProcStat.h">
 			<Option target="chaos_common"/>
 		</Unit>
 		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/utility/SWEService.cpp">

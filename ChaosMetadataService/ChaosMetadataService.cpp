@@ -147,25 +147,24 @@ void ChaosMetadataService::init(void *init_data)  throw(CException) {
         //initilize driver pool manager
         InizializableService::initImplementation(DriverPoolManager::getInstance(), NULL, "DriverPoolManager", __PRETTY_FUNCTION__);
         
-        if(setting.data_service_run_mode) {
-            data_consumer.reset(new QueryDataConsumer(), "QueryDataConsumer");
-            if(!data_consumer.get()) throw chaos::CException(-7, "Error instantiating data consumer", __PRETTY_FUNCTION__);
-            data_consumer.init(NULL, __PRETTY_FUNCTION__);
-            
-            //initialize cron manager
-            cron_job::MDSCronousManager::getInstance()->abstract_persistance_driver = api_subsystem_accessor.persistence_driver.get();
-            InizializableService::initImplementation(cron_job::MDSCronousManager::getInstance(),
-                                                     NULL,
-                                                     "MDSConousManager",
-                                                     __PRETTY_FUNCTION__);
-            
-            persistence::data_access::DataServiceDataAccess *ds_da = persistence::PersistenceManager::getInstance()->getDataAccess<persistence::data_access::DataServiceDataAccess>();
-            
-            //register this process on persistence database
-            ds_da->registerNode(api_subsystem_accessor.network_broker_service->getRPCUrl(),
-                                api_subsystem_accessor.network_broker_service->getDirectIOUrl(),
-                                0);
-        }
+        data_consumer.reset(new QueryDataConsumer(), "QueryDataConsumer");
+        if(!data_consumer.get()) throw chaos::CException(-7, "Error instantiating data consumer", __PRETTY_FUNCTION__);
+        data_consumer.init(NULL, __PRETTY_FUNCTION__);
+        
+        //initialize cron manager
+        cron_job::MDSCronousManager::getInstance()->abstract_persistance_driver = api_subsystem_accessor.persistence_driver.get();
+        InizializableService::initImplementation(cron_job::MDSCronousManager::getInstance(),
+                                                 NULL,
+                                                 "MDSConousManager",
+                                                 __PRETTY_FUNCTION__);
+        
+        persistence::data_access::DataServiceDataAccess *ds_da = persistence::PersistenceManager::getInstance()->getDataAccess<persistence::data_access::DataServiceDataAccess>();
+        
+        //register this process on persistence database
+        ds_da->registerNode(api_subsystem_accessor.network_broker_service->getRPCUrl(),
+                            api_subsystem_accessor.network_broker_service->getDirectIOUrl(),
+                            0);
+        
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
         exit(1);
@@ -183,23 +182,19 @@ void ChaosMetadataService::start()  throw(CException) {
         
         //start batch system
         api_subsystem_accessor.batch_executor.start(__PRETTY_FUNCTION__);
-        if(setting.data_service_run_mode) {
-            data_consumer.start( __PRETTY_FUNCTION__);
-        }
+        data_consumer.start( __PRETTY_FUNCTION__);
         LAPP_ <<"\n----------------------------------------------------------------------"<<
         "\n!CHAOS Metadata service started" <<
         "\nRPC Server address: "	<< api_subsystem_accessor.network_broker_service->getRPCUrl() <<
         "\nDirectIO Server address: " << api_subsystem_accessor.network_broker_service->getDirectIOUrl() <<
-        (setting.data_service_run_mode?CHAOS_FORMAT("\nData Service published with url: %1%|0", %NetworkBroker::getInstance()->getDirectIOUrl()):"") <<
+        CHAOS_FORMAT("\nData Service published with url: %1%|0", %NetworkBroker::getInstance()->getDirectIOUrl()) <<
         "\nSync RPC URL: "	<< api_subsystem_accessor.network_broker_service->getSyncRPCUrl() <<
         "\n----------------------------------------------------------------------";
         
-        if(setting.data_service_run_mode) {
-            //at this point i must with for end signal
-            chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this,
-                                                                                       5000,
-                                                                                       5000);
-        }
+        //at this point i must with for end signal
+        chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this,
+                                                                                   5000,
+                                                                                   5000);
         waitCloseSemaphore.wait();
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
@@ -230,13 +225,10 @@ void ChaosMetadataService::timeout() {
  Stop the toolkit execution
  */
 void ChaosMetadataService::stop() throw(CException) {
-    if(setting.data_service_run_mode) {
-        chaos::common::async_central::AsyncCentralManager::getInstance()->removeTimer(this);
-    }
-    if(setting.data_service_run_mode) {
-        //stop data consumer
-        data_consumer.stop( __PRETTY_FUNCTION__);
-    }
+    chaos::common::async_central::AsyncCentralManager::getInstance()->removeTimer(this);
+    
+    //stop data consumer
+    data_consumer.stop( __PRETTY_FUNCTION__);
     
     //stop batch system
     api_subsystem_accessor.batch_executor.stop(__PRETTY_FUNCTION__);
@@ -262,11 +254,9 @@ void ChaosMetadataService::deinit() throw(CException) {
     //deinit persistence driver system
     CHAOS_NOT_THROW(api_subsystem_accessor.persistence_driver.deinit(__PRETTY_FUNCTION__);)
     
-    if(setting.data_service_run_mode &&
-       data_consumer.get()) {
+    if(data_consumer.get()) {
         data_consumer.deinit(__PRETTY_FUNCTION__);
     }
-    
     //deinitilize driver pool manager
     InizializableService::deinitImplementation(DriverPoolManager::getInstance(), "DriverPoolManager", __PRETTY_FUNCTION__);
     
