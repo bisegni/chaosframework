@@ -32,6 +32,16 @@ using namespace chaos::common::batch_command;
 
 #define FUNCTORLERR_ LERR_ << "[BatchCommandSandbox-" << sandbox_identifier <<"] "
 
+#define SET_FAULT(l, c, m, d,f) \
+SET_NAMED_FAULT(l, cmd_instance, c , m , d,f)
+
+#define SET_NAMED_FAULT(l, n, c, m, d,f) \
+l << c << m << d; \
+n->setRunningProperty(f); \
+n->fault_description.code = c; \
+n->fault_description.description = m; \
+n->fault_description.domain = d;
+
 //------------------------------------------------------------------------------------------------------------
 //SUBMIT_AND_STACK    = 0,
 //SUBMIT_AND_KILL     = 1,

@@ -118,11 +118,6 @@ namespace chaos{
                                                            const std::string& key,
                                                            uint32_t dataset_type,
                                                            chaos_data::CDataWrapper **cdatawrapper_handler) = 0;
-                
-                virtual int createNewSnapshot(const std::string& snapshot_tag,
-                                              const std::vector<std::string>& node_list) = 0;
-                
-                virtual int deleteSnapshot(const std::string& snapshot_tag) = 0;
                 /*!
                  Update the driver configuration
                  */

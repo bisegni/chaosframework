@@ -34,6 +34,7 @@ public slots:
                              chaos::metadata_service_client::node_monitor::OnlineState online_state);
 private:
     QString type;
+    QString subtype;
     const QString node_uid;
     ApiSubmitter api_submitter;
     Ui::HealtPresenterWidget *ui;

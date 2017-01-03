@@ -22,6 +22,9 @@
 #define __CHAOSFramework__DataServiceDataAccess__
 
 #include "../persistence.h"
+
+#include <chaos/common/utility/ProcStat.h>
+
 #include <boost/shared_ptr.hpp>
 
 namespace chaos {
@@ -53,7 +56,14 @@ namespace chaos {
                     virtual int updateExisting(const std::string& ds_unique_id,
                                                const std::string& ds_direct_io_addr,
                                                uint32_t endpoint) = 0;
-
+                    
+                    virtual int registerNode(const std::string& ds_unique_id,
+                                             const std::string& ds_direct_io_addr,
+                                             uint32_t endpoint) = 0;
+                    
+                    virtual int updateNodeStatistic(const std::string& ds_unique_id,
+                                                    const chaos::common::utility::ProcStat& process_resuorce_usage) = 0;
+                    
                     virtual int deleteDataService(const std::string& ds_unique_id) = 0;
 
                     virtual int associateNode(const std::string& ds_unique_id,
@@ -77,6 +87,8 @@ namespace chaos {
                     
                     virtual int getBestNDataServiceEndpoint(std::vector<std::string >&  best_available_data_service_endpoint,
                                                             unsigned int numerb_of_result = 3) = 0;
+                    
+                    
                 };
 
             }

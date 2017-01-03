@@ -59,46 +59,12 @@ int DirectIOSystemAPIServerChannel::consumeDataPack(DirectIODataPack *dataPack,
     
     switch (channel_opcode) {
         case opcode::SystemAPIChannelOpcodeNewSnapshotDataset: {
-            if(synchronous_answer == NULL) return -1000;
-            
-            //get the header
-            DirectIOSystemAPISnapshotResultHeader *result_header = (DirectIOSystemAPISnapshotResultHeader*)calloc(sizeof(DirectIOSystemAPISnapshotResultHeader), 1);
-            opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeaderPtr header = reinterpret_cast< opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeaderPtr >(dataPack->channel_header_data);
-            header->field.producer_key_set_len = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.producer_key_set_len);
-            
-            //call the handler
-            err = handler->consumeNewSnapshotEvent(header,
-                                                   dataPack->channel_data,
-                                                   dataPack->header.channel_data_size,
-                                                   *result_header);
-            
-            if(err == 0){
-                //set the result header
-                //fix endianes into api result
-                result_header->error = TO_LITTEL_ENDNS_NUM(int32_t, result_header->error);
-                DIRECT_IO_SET_CHANNEL_HEADER(synchronous_answer, result_header, sizeof(DirectIOSystemAPISnapshotResultHeader))
-            }
+            return -10000;
             break;
         }
             
         case opcode::SystemAPIChannelOpcodeDeleteSnapshotDataset: {
-            if(synchronous_answer == NULL) return -1000;
-            //set the answer pointer
-            DirectIOSystemAPISnapshotResultHeader *result_header = (DirectIOSystemAPISnapshotResultHeader*)calloc(sizeof(DirectIOSystemAPISnapshotResultHeader), 1);
-            
-            //get the header
-            opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeaderPtr header = reinterpret_cast< opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeaderPtr >(dataPack->channel_header_data);
-            header->field.producer_key_set_len = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.producer_key_set_len);
-            
-            //call the handler
-            err = handler->consumeDeleteSnapshotEvent(header,
-                                                      *result_header);
-            if(err == 0){
-                //set the result header
-                //fix endianes into api result
-                result_header->error = TO_LITTEL_ENDNS_NUM(int32_t, result_header->error);
-                DIRECT_IO_SET_CHANNEL_HEADER(synchronous_answer, result_header, sizeof(DirectIOSystemAPISnapshotResultHeader))
-            }
+            return -10000;
             break;
         }
             

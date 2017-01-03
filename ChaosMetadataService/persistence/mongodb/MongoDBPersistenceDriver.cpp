@@ -17,6 +17,8 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
+
+#include "../../ChaosMetadataService.h"
 #include "MongoDBPersistenceDriver.h"
 #include "MongoDBNodeDataAccess.h"
 #include "MongoDBUtilityDataAccess.h"
@@ -50,12 +52,11 @@ void MongoDBPersistenceDriver::init(void *init_data) throw (chaos::CException) {
     //call sublcass
     AbstractPersistenceDriver::init(init_data);
     
-	struct setting *_setting = static_cast<struct setting *>(init_data);
-	if(!_setting) throw CException(-1, "No setting forwarded", __PRETTY_FUNCTION__);
+    struct setting& _setting = ChaosMetadataService::getInstance()->setting;
 	
 	//we can configura the connection
-	connection.reset(new MongoDBHAConnectionManager(_setting->persistence_server_list,
-													_setting->persistence_kv_param_map));
+	connection.reset(new MongoDBHAConnectionManager(_setting.persistence_server_list,
+													_setting.persistence_kv_param_map));
     
     //register the data access implementations
     registerDataAccess<data_access::NodeDataAccess>(new MongoDBNodeDataAccess(connection));

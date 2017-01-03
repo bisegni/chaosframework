@@ -211,7 +211,8 @@ SET(common_lib_src ${common_lib_src}
         utility/AggregatedCheckList.cpp
         utility/TimingUtil.cpp
         utility/AbstractListener.cpp
-        utility/AbstractListenerContainer.cpp)
+        utility/AbstractListenerContainer.cpp
+        utility/ProcStat.cpp)
 
 SET(common_lib_src ${common_lib_src}
         batch_command/BatchCommandExecutor.cpp

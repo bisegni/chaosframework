@@ -955,6 +955,7 @@ CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreP
             dataset_at_tag = key_data_storage->getDatasetFromRestorePoint(restore_snapshot_tag,
                                                                           (KeyDataStorageDomain)idx);
             if(dataset_at_tag.get()) {
+                ACULDBG_ << CHAOS_FORMAT("Dataset restored from tag %1% -> %2%",%restore_snapshot_tag%dataset_at_tag->getJSONString());
                 //fill cache with dataset key/value
                 fillRestoreCacheWithDatasetFromTag((KeyDataStorageDomain)idx,
                                                    *dataset_at_tag.get(),

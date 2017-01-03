@@ -21,6 +21,7 @@
 #ifndef general_batch_h
 #define general_batch_h
 
+#include "CreateSnapshotBatch.h"
 #include "RestoreSnapshotBatch.h"
 
 #endif /* general_batch_h */

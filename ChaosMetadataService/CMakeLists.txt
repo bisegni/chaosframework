@@ -7,7 +7,9 @@ ENDIF()
 INCLUDE_DIRECTORIES(chaos/common ../)
 
 SET(cnd_src				main.cpp
-						ChaosMetadataService.cpp)
+						ChaosMetadataService.cpp
+                        DriverPoolManager.cpp
+                        QueryDataConsumer.cpp)
 
 SET(cnd_src  ${cnd_src} ../chaos_service_common/persistence/mongodb/MongoDBHAConnectionManager.cpp
                         ../chaos_service_common/persistence/mongodb/MongoDBAccessor.cpp)
@@ -111,7 +113,14 @@ SET(cnd_src  ${cnd_src}	api/script/ScriptGroupApi.cpp
                         api/script/SearchInstancesForScript.cpp
                         api/script/ManageScriptInstance.cpp
                         api/script/ExecutionPoolHeartbeat.cpp)
+#Worker
+SET(cnd_src  ${cnd_src}	worker/DataWorker.cpp
+                        worker/DeviceSharedDataWorker.cpp
+                        worker/DeviceSharedDataWorkerMetric.cpp
+                        worker/DeviceSharedDataWorkerMetricCollector.cpp
+                        worker/SnapshotCreationWorker.cpp)
 
+#Persistence
 SET(cnd_src  ${cnd_src}	persistence/data_access/UnitServerDataAccess.cpp
                         persistence/data_access/NodeDataAccess.cpp
                         persistence/data_access/UtilityDataAccess.cpp
@@ -132,6 +141,18 @@ SET(cnd_src  ${cnd_src}	persistence/mongodb/MongoDBPersistenceDriver.cpp
                         persistence/mongodb/MongoDBTreeGroupDataAccess.cpp
                         persistence/mongodb/MongoDBLoggingDataAccess.cpp
 						persistence/mongodb/MongoDBScriptDataAccess.cpp)
+#Caching
+SET(cnd_src  ${cnd_src}	cache_system/CacheDriver.cpp
+                        cache_system/CacheDriverMetricCollector.cpp
+                        cache_system/CacheDriverSharedMetricIO.cpp
+                        cache_system/CouchbaseCacheDriver.cpp)
+
+
+#Object Storage
+SET(cnd_src  ${cnd_src}	object_storage/abstraction/ObjectStorageDataAccess.cpp)
+
+SET(cnd_src  ${cnd_src}	object_storage/mongodb/MongoDBObjectStorageDataAccess.cpp
+                        object_storage/mongodb/MongoDBObjectStorageDriver.cpp)
 
 SET(cnd_src  ${cnd_src}	batch/MDSBatchExecutor.cpp
                         batch/MDSBatchCommand.cpp)

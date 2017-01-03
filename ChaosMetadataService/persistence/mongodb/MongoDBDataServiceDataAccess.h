@@ -31,10 +31,10 @@ namespace chaos {
     namespace metadata_service {
         namespace persistence {
             namespace mongodb {
-                    //forward declaration
+                //forward declaration
                 class MongoDBPersistenceDriver;
-
-                    //! Data Access for producer manipulation data
+                
+                //! Data Access for producer manipulation data
                 class MongoDBDataServiceDataAccess:
                 public data_access::DataServiceDataAccess,
                 protected service_common::persistence::mongodb::MongoDBAccessor {
@@ -44,53 +44,62 @@ namespace chaos {
                     MongoDBDataServiceDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
                     ~MongoDBDataServiceDataAccess();
                 public:
-                        //inherited method
+                    //inherited method
                     int checkPresence(const std::string& ds_unique_id,
                                       bool& presence);
-
-                        //inherited method
+                    
+                    //inherited method
                     int insertNew(const std::string& ds_unique_id,
                                   const std::string& ds_direct_io_addr,
                                   uint32_t endpoint);
-
+                    
                     int getDescription(const std::string& ds_unique_id,
                                        chaos::common::data::CDataWrapper **node_description);
-
-                        //inherited method
+                    
+                    //inherited method
                     int updateExisting(const std::string& ds_unique_id,
                                        const std::string& ds_direct_io_addr,
                                        uint32_t endpoint);
-
-                        //inherited method
+                    
+                    //inherited method
+                    int registerNode(const std::string& ds_unique_id,
+                                     const std::string& ds_direct_io_addr,
+                                     uint32_t endpoint);
+                    
+                    //inherited method
+                    int updateNodeStatistic(const std::string& ds_unique_id,
+                                            const chaos::common::utility::ProcStat& process_resuorce_usage);
+                    
+                    //inherited method
                     int deleteDataService(const std::string& ds_unique_id);
-
-                        //inherited method
+                    
+                    //inherited method
                     int associateNode(const std::string& ds_unique_id,
                                       const std::string& associated_node_unique_id);
-
-                        //inherited method
+                    
+                    //inherited method
                     int removeNode(const std::string& ds_unique_id,
                                    const std::string& associated_node_unique_id);
-
-                        //inherited method
+                    
+                    //inherited method
                     int searchAssociationForUID(const std::string& ds_unique_id,
                                                 std::vector<boost::shared_ptr<common::data::CDataWrapper> >& node_associated);
-
+                    
                     int searchAllDataAccess(std::vector<boost::shared_ptr<common::data::CDataWrapper> >&  node_associated,
                                             uint32_t last_unique_id,
                                             uint32_t page_length);
-
+                    
                     int getBestNDataService(std::vector<boost::shared_ptr<common::data::CDataWrapper> >&  best_available_data_service,
-                                            unsigned int numerb_of_result = 3);
+                                            unsigned int number_of_result = 3);
                     
                     int getBestNDataService(std::vector<std::string >&  best_available_data_service,
-                                            unsigned int numerb_of_result = 3);
+                                            unsigned int number_of_result = 3);
                     
                     int getBestNDataServiceEndpoint(std::vector<std::string >&  best_available_data_service_endpoint,
-                                                    unsigned int numerb_of_result =3);
+                                                    unsigned int number_of_result =3);
                 };
-
-
+                
+                
             }
         }
     }

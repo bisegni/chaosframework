@@ -68,5 +68,4 @@ namespace chaos {
     }
 }
 
-
 #endif /* RestoreSnapshotBatch_hpp */
