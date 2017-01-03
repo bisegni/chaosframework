@@ -3416,18 +3416,6 @@
 		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/state_flag/StateFlagSDWrapper.h">
 			<Option target="chaos_common"/>
 		</Unit>
-		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/sync_rpc/HTTPRpcSyncServer.cpp">
-			<Option target="chaos_common"/>
-		</Unit>
-		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/sync_rpc/HTTPRpcSyncServer.h">
-			<Option target="chaos_common"/>
-		</Unit>
-		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/sync_rpc/RpcSyncServer.cpp">
-			<Option target="chaos_common"/>
-		</Unit>
-		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/sync_rpc/RpcSyncServer.h">
-			<Option target="chaos_common"/>
-		</Unit>
 		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/trigger/AbstractConsumer.cpp">
 			<Option target="chaos_common"/>
 		</Unit>

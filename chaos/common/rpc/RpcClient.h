@@ -1,8 +1,8 @@
-/*	
+/*
  *	RpcClient.h
  *	!CHAOS
  *	Created by Bisegni Claudio.
- *	
+ *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,7 +38,7 @@ namespace chaos_data = chaos::common::data;
 
 namespace chaos {
 #define RPC_CLIENT_SET_ERROR_OFFSET 100000
-
+    
     /*!
      Define the information for send a message to some server
      */
@@ -48,26 +48,28 @@ namespace chaos {
         //message to forward to remote server
         chaos_data::CDataWrapper *message;
     } MessageForwardingInfo;
-	
-	namespace common {
-		namespace network {
-			    class NetworkBroker;
-		}
-	}
+    
+    namespace common {
+        namespace network {
+            class NetworkBroker;
+        }
+    }
     
     /*!
      Abstract class for standard adapter method for permit, to CommandManager
      the correct initialization for the adapter instance
      */
     class RpcClient:
-	public RpcMessageForwarder,
-	public common::utility::StartableService,
-	public common::utility::NamedService {
-		//friend class chaos::common::network::NetworkBroker;
+    public RpcMessageForwarder,
+    public common::utility::StartableService,
+    public common::utility::NamedService {
+        //friend class chaos::common::network::NetworkBroker;
         //! handler to the dispatcher to forward error on data forwarding
         RpcServerHandler *server_handler;
     protected:
-        
+        void forwadSubmissionResult(const std::string& channel_node_id,
+                                    uint32_t message_request_id,
+                                    chaos::common::data::CDataWrapper *submission_result);
         /*!
          Forward to dispatcher the error durngi the forwarding of the request message
          */

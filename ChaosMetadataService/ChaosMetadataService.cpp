@@ -188,7 +188,6 @@ void ChaosMetadataService::start()  throw(CException) {
         "\nRPC Server address: "	<< api_subsystem_accessor.network_broker_service->getRPCUrl() <<
         "\nDirectIO Server address: " << api_subsystem_accessor.network_broker_service->getDirectIOUrl() <<
         CHAOS_FORMAT("\nData Service published with url: %1%|0", %NetworkBroker::getInstance()->getDirectIOUrl()) <<
-        "\nSync RPC URL: "	<< api_subsystem_accessor.network_broker_service->getSyncRPCUrl() <<
         "\n----------------------------------------------------------------------";
         
         //at this point i must with for end signal

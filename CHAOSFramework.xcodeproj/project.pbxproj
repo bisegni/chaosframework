@@ -721,10 +721,6 @@
 		32A88BF51CF8228A001DBAF5 /* lzio.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A88BB81CF8228A001DBAF5 /* lzio.h */; };
 		32A8F7D1172BE3FD0090DB78 /* KeyGroupCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A8F7CF172BE3FD0090DB78 /* KeyGroupCache.cpp */; };
 		32A8F7D2172BE3FD0090DB78 /* KeyGroupCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A8F7D0172BE3FD0090DB78 /* KeyGroupCache.h */; };
-		32A91FCA1A49AF0700DCF364 /* RpcSyncServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A91FC81A49AF0700DCF364 /* RpcSyncServer.cpp */; };
-		32A91FCB1A49AF0700DCF364 /* RpcSyncServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A91FC91A49AF0700DCF364 /* RpcSyncServer.h */; };
-		32A91FCE1A49B37300DCF364 /* HTTPRpcSyncServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A91FCC1A49B37300DCF364 /* HTTPRpcSyncServer.cpp */; };
-		32A91FCF1A49B37300DCF364 /* HTTPRpcSyncServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A91FCD1A49B37300DCF364 /* HTTPRpcSyncServer.h */; };
 		32A968521D522FB800BD636C /* PropertyGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A968501D522FB800BD636C /* PropertyGroup.cpp */; };
 		32A968531D522FB800BD636C /* PropertyGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A968511D522FB800BD636C /* PropertyGroup.h */; };
 		32AAD78814CD660B005A097C /* RpcClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 32AAD78714CD660B005A097C /* RpcClient.h */; };
@@ -2001,10 +1997,6 @@
 		32A88BB81CF8228A001DBAF5 /* lzio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lzio.h; sourceTree = "<group>"; };
 		32A8F7CF172BE3FD0090DB78 /* KeyGroupCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeyGroupCache.cpp; sourceTree = "<group>"; };
 		32A8F7D0172BE3FD0090DB78 /* KeyGroupCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyGroupCache.h; sourceTree = "<group>"; };
-		32A91FC81A49AF0700DCF364 /* RpcSyncServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RpcSyncServer.cpp; sourceTree = "<group>"; };
-		32A91FC91A49AF0700DCF364 /* RpcSyncServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcSyncServer.h; sourceTree = "<group>"; };
-		32A91FCC1A49B37300DCF364 /* HTTPRpcSyncServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPRpcSyncServer.cpp; sourceTree = "<group>"; };
-		32A91FCD1A49B37300DCF364 /* HTTPRpcSyncServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPRpcSyncServer.h; sourceTree = "<group>"; };
 		32A968501D522FB800BD636C /* PropertyGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PropertyGroup.cpp; sourceTree = "<group>"; };
 		32A968511D522FB800BD636C /* PropertyGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PropertyGroup.h; sourceTree = "<group>"; };
 		32AAD78714CD660B005A097C /* RpcClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcClient.h; sourceTree = "<group>"; };
@@ -2267,7 +2259,6 @@
 		32DBAFCA1C9C1745003E2769 /* NodeMonitorHandlerTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeMonitorHandlerTest.h; sourceTree = "<group>"; };
 		32DBF9CF18E1845E0095B289 /* CouchbaseCacheDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CouchbaseCacheDriver.cpp; sourceTree = "<group>"; };
 		32DBF9D018E1845E0095B289 /* CouchbaseCacheDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CouchbaseCacheDriver.h; sourceTree = "<group>"; };
-		32DC4AE51A51B5D80093ABA0 /* ChaosSyncRpc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChaosSyncRpc.h; sourceTree = "<group>"; };
 		32DD7F6F1C60F97C003032DE /* MetadataLoggingManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MetadataLoggingManager.cpp; sourceTree = "<group>"; };
 		32DD7F701C60F97C003032DE /* MetadataLoggingManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetadataLoggingManager.h; sourceTree = "<group>"; };
 		32DD884D15E2663B000AF740 /* DefaultEventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultEventDispatcher.h; sourceTree = "<group>"; };
@@ -3458,7 +3449,6 @@
 				326DB40814B38BC00018A8D0 /* pool */,
 				326DB40C14B38BC00018A8D0 /* pqueue */,
 				326DB41114B38BC00018A8D0 /* rpc */,
-				32A91FC71A49AEC300DCF364 /* sync_rpc */,
 				322EC1B41D3405C30012467C /* state_flag */,
 				32A8620B1D58C70700A7D707 /* trigger */,
 				32AAD78114CD630D005A097C /* message */,
@@ -4323,18 +4313,6 @@
 			path = core;
 			sourceTree = "<group>";
 		};
-		32A91FC71A49AEC300DCF364 /* sync_rpc */ = {
-			isa = PBXGroup;
-			children = (
-				32A91FC81A49AF0700DCF364 /* RpcSyncServer.cpp */,
-				32A91FC91A49AF0700DCF364 /* RpcSyncServer.h */,
-				32A91FCC1A49B37300DCF364 /* HTTPRpcSyncServer.cpp */,
-				32A91FCD1A49B37300DCF364 /* HTTPRpcSyncServer.h */,
-				32DC4AE51A51B5D80093ABA0 /* ChaosSyncRpc.h */,
-			);
-			path = sync_rpc;
-			sourceTree = "<group>";
-		};
 		32AAD78114CD630D005A097C /* message */ = {
 			isa = PBXGroup;
 			children = (
@@ -5047,7 +5025,6 @@
 				324A4B4A191A41EF00975394 /* atomic_word.h in Headers */,
 				326DB46814B38BC00018A8D0 /* AbstractCommandDispatcher.h in Headers */,
 				3283B88A1C7E0CCE0019255B /* Bimap.h in Headers */,
-				32A91FCF1A49B37300DCF364 /* HTTPRpcSyncServer.h in Headers */,
 				329603251876B45000CDCADA /* BatchCommandException.h in Headers */,
 				326DB46C14B38BC00018A8D0 /* DefaultCommandDispatcher.h in Headers */,
 				326DB46E14B38BC00018A8D0 /* DomainActionsScheduler.h in Headers */,
@@ -5334,7 +5311,6 @@
 				327F51DF1952E81D00BA3D01 /* DirectIOURLManagment.h in Headers */,
 				32A88BEB1CF8228A001DBAF5 /* lua.hpp in Headers */,
 				329CFCF318CDEE2F002C37CF /* ObjectSlot.h in Headers */,
-				32A91FCB1A49AF0700DCF364 /* RpcSyncServer.h in Headers */,
 				32279F8516F8DEAF009EC7B9 /* DataBroker.h in Headers */,
 				32279F8C16FA36B6009EC7B9 /* PublisherDataService.h in Headers */,
 				324A4B7C191A428500975394 /* html.h in Headers */,
@@ -6078,7 +6054,6 @@
 				32B571F2168E02C30002A198 /* bson_validate.cpp in Sources */,
 				32B57207168E02D10002A198 /* oid.cpp in Sources */,
 				329603261876B45000CDCADA /* BatchCommandExecutor.cpp in Sources */,
-				32A91FCE1A49B37300DCF364 /* HTTPRpcSyncServer.cpp in Sources */,
 				32B159CD18AE08720096B58B /* ZMQSocketFeeder.cpp in Sources */,
 				32460520179C55FC00B075DA /* sqlite3.c in Sources */,
 				32FBC78E1D7F2BEC001F9170 /* TimingUtil.cpp in Sources */,
@@ -6097,7 +6072,6 @@
 				32A88BDC1CF8228A001DBAF5 /* lparser.c in Sources */,
 				329603221876B45000CDCADA /* BatchCommand.cpp in Sources */,
 				32A88BC11CF8228A001DBAF5 /* lcorolib.c in Sources */,
-				32A91FCA1A49AF0700DCF364 /* RpcSyncServer.cpp in Sources */,
 				3270E0791C6DECA000105726 /* MetadataLoggingCException.cpp in Sources */,
 				32BFF90E176C842E00D27A04 /* InizializableService.cpp in Sources */,
 				322EC1BB1D34F2E10012467C /* StateFlagCatalog.cpp in Sources */,
