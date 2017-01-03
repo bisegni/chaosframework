@@ -118,7 +118,7 @@ SET(cnd_src  ${cnd_src}	worker/DataWorker.cpp
                         worker/DeviceSharedDataWorker.cpp
                         worker/DeviceSharedDataWorkerMetric.cpp
                         worker/DeviceSharedDataWorkerMetricCollector.cpp
-                        worker/SnapshotCreationWorker.cpp)
+                        )
 
 #Persistence
 SET(cnd_src  ${cnd_src} persistence/PersistenceManager.cpp
