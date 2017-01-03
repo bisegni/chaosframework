@@ -209,11 +209,12 @@ int MongoDBDataServiceDataAccess::updateNodeStatistic(const std::string& ds_uniq
         mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << ds_unique_id
                                     << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_DATA_SERVICE);
         
-        mongo::BSONObj update = BSON("$set" << BSON(NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME << (int64_t)process_resuorce_usage.uptime <<
-                                                    NodeHealtDefinitionKey::NODE_HEALT_USER_TIME << process_resuorce_usage.usr_time <<
-                                                    NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME << process_resuorce_usage.sys_time <<
-                                                    NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP << process_resuorce_usage.swap_rsrc <<
-                                                    NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP << mongo::Date_t(TimingUtil::getTimeStamp())));
+        mongo::BSONObj update = BSON("$set" << BSON(
+        											NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME <<(long long )process_resuorce_usage.uptime <<
+													NodeHealtDefinitionKey::NODE_HEALT_USER_TIME << (uint32_t)process_resuorce_usage.usr_time <<
+													NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME <<(uint32_t) process_resuorce_usage.sys_time <<
+													NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP << (uint32_t)process_resuorce_usage.swap_rsrc <<
+													NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP << mongo::Date_t(TimingUtil::getTimeStamp())));
         
         DEBUG_CODE(MDBDSDA_DBG<<log_message("updateExisting",
                                             "update",

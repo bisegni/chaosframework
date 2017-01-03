@@ -213,7 +213,7 @@ function compile_bundle(){
 	fi
     fi
 
-    if [ "$host_arch" == "$arch" ] && [ $deploy_mode -gt 0 ]; then
+    if [ "$host_arch" == "$arch" ] && [ "$deploy_mode" -gt 0 ]; then
 	printlog "* testing distribution on architecture \"$arch\""
 	pushd $install_prefix >& /dev/null
 	export LD_LIBRARY_PATH=$install_prefix/lib

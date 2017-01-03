@@ -19,7 +19,7 @@
  *    	limitations under the License.
  */
 
-#include <chaos/common/batch_command/BatchCommandParallelsandbox.h>
+#include <chaos/common/batch_command/BatchCommandParallelSandbox.h>
 
 #include <chaos/common/utility/TimingUtil.h>
 
