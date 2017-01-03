@@ -122,7 +122,8 @@ void ZMQClient::deinit() throw(CException) {
 /*
  
  */
-bool ZMQClient::submitMessage(NetworkForwardInfo *forwardInfo, bool onThisThread) throw(CException) {
+bool ZMQClient::submitMessage(NetworkForwardInfo *forwardInfo,
+                              bool onThisThread) throw(CException) {
     CHAOS_ASSERT(forwardInfo);
     ElementManagingPolicy ePolicy;
     try{
@@ -167,14 +168,14 @@ ZMQSocketPool::ResourceSlot *ZMQClient::getSocketForNFI(NetworkForwardInfo *nfi)
 void ZMQClient::releaseSocket(ZMQSocketPool::ResourceSlot *socket_slot_to_release) {
     boost::unique_lock<boost::shared_mutex> lock_socket_map(map_socket_mutex);
     if(socket_slot_to_release && map_socket[socket_slot_to_release->pool_identification].get())
-      map_socket[socket_slot_to_release->pool_identification]->releaseResource(socket_slot_to_release);
+        map_socket[socket_slot_to_release->pool_identification]->releaseResource(socket_slot_to_release);
 }
 
 void ZMQClient::deleteSocket(ZMQSocketPool::ResourceSlot *socket_slot_to_release) {
     boost::unique_lock<boost::shared_mutex> lock_socket_map(map_socket_mutex);
-        if(socket_slot_to_release && map_socket[socket_slot_to_release->pool_identification].get())
-	  map_socket[socket_slot_to_release->pool_identification]->releaseResource(socket_slot_to_release,
-										   true);
+    if(socket_slot_to_release && map_socket[socket_slot_to_release->pool_identification].get())
+        map_socket[socket_slot_to_release->pool_identification]->releaseResource(socket_slot_to_release,
+                                                                                 true);
 }
 
 //----resource pool handler-----
@@ -250,6 +251,8 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
     //get remote ip
     //serialize the call packet
     ZMQSocketPool::ResourceSlot *socket_info = NULL;
+    messageInfo->message->addBoolValue("syncrhonous_call", RpcClient::syncrhonous_call);
+    
     auto_ptr<chaos::common::data::SerializationBuffer> callSerialization(messageInfo->message->getBSONData());
     try{
         socket_info = getSocketForNFI(messageInfo);
@@ -298,6 +301,7 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
                                                 error_message,
                                                 __PRETTY_FUNCTION__);
                 }
+                
                 //delete socket
                 deleteSocket(socket_info);
                 socket_info = NULL;
@@ -322,11 +326,16 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
                     //decode result of the posting message operation
                     if(messageInfo->is_request) {
                         if(zmq_msg_size(&reply)>0){
-                            ZMQC_LDBG << "ACK Received for request";
-                            //there is a reply so we need to check if all ok or in case answer to request
-                            forwadSubmissionResultError(messageInfo->sender_node_id,
-                                                        messageInfo->sender_request_id,
-                                                        new CDataWrapper(static_cast<const char *>(zmq_msg_data(&reply))));
+                            if(RpcClient::syncrhonous_call) {
+                                forwadSubmissionResult(messageInfo,
+                                                       new CDataWrapper(static_cast<const char *>(zmq_msg_data(&reply))));
+                            } else {
+                                ZMQC_LDBG << "ACK Received for request";
+                                //there is a reply so we need to check if all ok or in case answer to request
+                                forwadSubmissionResultError(messageInfo->sender_node_id,
+                                                            messageInfo->sender_request_id,
+                                                            new CDataWrapper(static_cast<const char *>(zmq_msg_data(&reply))));
+                            }
                         } else {
                             ZMQC_LDBG << "Bad ACK received";
                             forwadSubmissionResultError(messageInfo,

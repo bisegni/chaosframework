@@ -17,6 +17,7 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
+
 #ifndef ChaosFramework_RPCClient_h
 #define ChaosFramework_RPCClient_h
 
@@ -67,8 +68,10 @@ namespace chaos {
         //! handler to the dispatcher to forward error on data forwarding
         RpcServerHandler *server_handler;
     protected:
-        void forwadSubmissionResult(const std::string& channel_node_id,
-                                    uint32_t message_request_id,
+        
+        bool syncrhonous_call;
+        
+        void forwadSubmissionResult(NetworkForwardInfo *message_info,
                                     chaos::common::data::CDataWrapper *submission_result);
         /*!
          Forward to dispatcher the error durngi the forwarding of the request message

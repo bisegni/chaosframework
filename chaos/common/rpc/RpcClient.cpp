@@ -1,13 +1,26 @@
-//
-//  RpcClient.cpp
-//  CHAOSFramework
-//
-//  Created by Claudio Bisegni on 18/08/12.
-//  Copyright (c) 2012 INFN. All rights reserved.
-//
+/*
+ *	RpcClient.cpp
+ *	!CHAOS
+ *	Created by Bisegni Claudio.
+ *
+ *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ *
+ *    	Licensed under the Apache License, Version 2.0 (the "License");
+ *    	you may not use this file except in compliance with the License.
+ *    	You may obtain a copy of the License at
+ *
+ *    	http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    	Unless required by applicable law or agreed to in writing, software
+ *    	distributed under the License is distributed on an "AS IS" BASIS,
+ *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    	See the License for the specific language governing permissions and
+ *    	limitations under the License.
+ */
 
 #include "RpcClient.h"
 #include <chaos/common/global.h>
+#include <chaos/common/configuration/GlobalConfiguration.h>
 
 #define RPCC_LAPP INFO_LOG(RpcClient)
 #define RPCC_LDBG DBG_LOG(RpcClient)
@@ -21,31 +34,29 @@ using namespace chaos::common::data;
  */
 RpcClient::RpcClient(const std::string& alias):
 NamedService(alias),
-server_handler(NULL){
-};
+syncrhonous_call(GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_RPC_SYNC_ENABLE)),
+server_handler(NULL){}
 
 /*!
  Forward to dispatcher the error during the forwarding of the request message
  */
-void RpcClient::forwadSubmissionResult(const std::string& channel_node_id,
-                                       uint32_t message_request_id,
+void RpcClient::forwadSubmissionResult(NetworkForwardInfo *message_info,
                                        CDataWrapper *submission_result) {
     CHAOS_ASSERT(server_handler && submission_result)
     //! chec if it is a request
-    if(channel_node_id.size() == 0) {
+    if(message_info->sender_node_id.size() == 0) {
         CHK_AND_DELETE_OBJ_POINTER(submission_result)
         return;
     }
-    
     RPCC_LDBG << "ACK received:" <<submission_result->getJSONString();
     
     //set the request id
-    submission_result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID, message_request_id);
+    submission_result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID, message_info->sender_request_id);
     
     //! there is an error during submission so we need to answer to request with this error
     CDataWrapper *answer_to_send = new CDataWrapper();
     //set the domain and action name
-    answer_to_send->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, channel_node_id);
+    answer_to_send->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, message_info->sender_node_id);
     answer_to_send->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, "response");
     // add reuslt to answer
     if(submission_result) {answer_to_send->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *submission_result);}
