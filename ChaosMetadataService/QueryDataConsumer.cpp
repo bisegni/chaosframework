@@ -21,7 +21,6 @@
 #include "QueryDataConsumer.h"
 #include "DriverPoolManager.h"
 #include "worker/DeviceSharedDataWorker.h"
-#include "worker/SnapshotCreationWorker.h"
 #include "worker/DeviceSharedDataWorkerMetric.h"
 #include "worker/DeviceSharedDataWorkerMetricCollector.h"
 #include "persistence/persistence.h"
@@ -60,7 +59,6 @@ server_endpoint(NULL),
 device_channel(NULL),
 system_api_channel(NULL),
 device_data_worker_index(0),
-snapshot_data_worker(NULL),
 object_storage_driver(NULL){}
 
 QueryDataConsumer::~QueryDataConsumer() {}
@@ -110,26 +108,12 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
         tmp->init(NULL);
         tmp->start();
     }
-    
-    QDCAPP_ << "Allocating Snapshot worker";
-    snapshot_data_worker = new chaos::data_service::worker::SnapshotCreationWorker();
-    if(!snapshot_data_worker) throw chaos::CException(-6, "Error allocating snapshot worker", __FUNCTION__);
-    StartableService::initImplementation(snapshot_data_worker, init_data, "SnapshotCreationWorker", __PRETTY_FUNCTION__);
 }
 
 void QueryDataConsumer::start() throw (chaos::CException) {
-    
-    //! start the snapshot creation worker
-    if(snapshot_data_worker) {
-        StartableService::startImplementation(snapshot_data_worker, "SnapshotCreationWorker", __PRETTY_FUNCTION__);
-    }
 }
 
 void QueryDataConsumer::stop() throw (chaos::CException) {
-    //! stop the snapshot creation worker
-    if(snapshot_data_worker) {
-        StartableService::stopImplementation(snapshot_data_worker, "SnapshotCreationWorker", __PRETTY_FUNCTION__);
-    }
 }
 
 void QueryDataConsumer::deinit() throw (chaos::CException) {
@@ -153,17 +137,6 @@ void QueryDataConsumer::deinit() throw (chaos::CException) {
     if(object_storage_driver){
         InizializableService::deinitImplementation(object_storage_driver, object_storage_driver->getName(), __PRETTY_FUNCTION__);
         delete(object_storage_driver);
-    }
-    
-    //! deinit the snapshot creation worker
-    if(snapshot_data_worker) {
-        try{
-            StartableService::deinitImplementation(snapshot_data_worker, "SnapshotCreationWorker", __PRETTY_FUNCTION__);
-        } catch(...) {
-        }
-        QDCAPP_ << "Deallocating Snapshot data worker";
-        delete(snapshot_data_worker);
-        snapshot_data_worker = NULL;
     }
 }
 
@@ -330,68 +303,6 @@ int QueryDataConsumer::consumeDataCloudDelete(const std::string& search_key,
 }
 
 #pragma mark DirectIOSystemAPIServerChannelHandler
-// Manage the creation of a snapshot
-int QueryDataConsumer::consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,
-                                               void *concatenated_unique_id_memory,
-                                               uint32_t concatenated_unique_id_memory_size,
-                                               DirectIOSystemAPISnapshotResultHeader& api_result) {
-    int err = 0;
-    //debug check
-    CHAOS_ASSERT(snapshot_data_worker)
-    //CHAOS_ASSERT(api_result)
-    //prepare and submit the job into worker
-    chaos::data_service::worker::SnapshotCreationJob *job = new chaos::data_service::worker::SnapshotCreationJob();
-    //copy snapshot name
-    job->snapshot_name = header->field.snap_name;
-    //! copy the vector in job configuration
-    if(concatenated_unique_id_memory_size && concatenated_unique_id_memory) {
-        job->concatenated_unique_id_memory = (char*)concatenated_unique_id_memory;
-        job->concatenated_unique_id_memory_size = concatenated_unique_id_memory_size;
-    }
-    if((err = snapshot_data_worker->submitJobInfo(job))) {
-        api_result.error = err;
-        switch (err) {
-            case 1: {
-                //there is already a snapshot with same name managed tha other job
-                std::strncpy(api_result.error_message, "There is already a snapshot with same name managed tha other job", 255);
-                break;
-            }
-            default:
-                //other errors
-                std::strncpy(api_result.error_message, "Error creating new snapshot", 255);
-                break;
-        }
-        //print error also on log
-        DEBUG_CODE(QDCDBG_ << api_result.error_message << "[" << job->snapshot_name << "]");
-        
-        if(concatenated_unique_id_memory) free(concatenated_unique_id_memory);
-        delete job;
-    } else {
-        api_result.error = 0;
-        std::strcpy(api_result.error_message, "Creation submitted");
-    }
-    if(header) free(header);
-    return 0;
-}
-
-// Manage the delete operation on an existing snapshot
-int QueryDataConsumer::consumeDeleteSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,
-                                                  DirectIOSystemAPISnapshotResultHeader& api_result) {
-    int err = 0;
-    //debug check
-    SnapshotDataAccess *s_da = PersistenceManager::getInstance()->getDataAccess<SnapshotDataAccess>();
-    //CHAOS_ASSERT(api_result)
-    if((err = s_da->snapshotDeleteWithName(header->field.snap_name))) {
-        api_result.error = err;
-        std::strcpy(api_result.error_message, "Error deleteing the snapshot");
-        QDCERR_ << api_result.error_message << "->" << header->field.snap_name;
-    } else {
-        api_result.error = 0;
-        std::strcpy(api_result.error_message, "Snapshot deleted");
-    }
-    return err;
-}
-
 // Return the dataset for a producerkey ona specific snapshot
 int QueryDataConsumer::consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,
                                                       const std::string& producer_id,

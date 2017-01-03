@@ -64,7 +64,6 @@ namespace chaos{
             
             boost::atomic<uint16_t>                 device_data_worker_index;
             chaos::data_service::worker::DataWorker	**device_data_worker;
-            chaos::data_service::worker::DataWorker	*snapshot_data_worker;
             
             //---------------- DirectIODeviceServerChannelHandler -----------------------
             int consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *header,
@@ -94,16 +93,6 @@ namespace chaos{
                                        uint64_t end_ts);
             
             //---------------- DirectIOSystemAPIServerChannelHandler -----------------------
-            // Manage the creation of a snapshot
-            int consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,
-                                        void *concatenated_unique_id_memory,
-                                        uint32_t concatenated_unique_id_memory_size,
-                                        DirectIOSystemAPISnapshotResultHeader& api_result);
-            
-            // Manage the delete operation on an existing snapshot
-            int consumeDeleteSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,
-                                           DirectIOSystemAPISnapshotResultHeader& api_result);
-            
             // Return the dataset for a producerkey ona specific snapshot
             int consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,
                                                const std::string& producer_id,
