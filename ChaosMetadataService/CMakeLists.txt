@@ -65,9 +65,6 @@ SET(cnd_src  ${cnd_src}	api/unit_server/UnitServerApiGroup.cpp
                         api/unit_server/ManageCUType.cpp)
 
 SET(cnd_src  ${cnd_src}	api/data_service/DataServiceApiGroup.cpp
-                        api/data_service/NewDS.cpp
-                        api/data_service/UpdateDS.cpp
-                        api/data_service/DeleteDS.cpp
                         api/data_service/AssociationControlUnit.cpp
                         api/data_service/GetAssociationByDS.cpp
                         api/data_service/GetAllDataService.cpp
@@ -117,8 +114,7 @@ SET(cnd_src  ${cnd_src}	api/script/ScriptGroupApi.cpp
 SET(cnd_src  ${cnd_src}	worker/DataWorker.cpp
                         worker/DeviceSharedDataWorker.cpp
                         worker/DeviceSharedDataWorkerMetric.cpp
-                        worker/DeviceSharedDataWorkerMetricCollector.cpp
-                        )
+                        worker/DeviceSharedDataWorkerMetricCollector.cpp)
 
 #Persistence
 SET(cnd_src  ${cnd_src} persistence/PersistenceManager.cpp
