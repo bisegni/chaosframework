@@ -19,9 +19,6 @@
  */
 
 #include "DataServiceApiGroup.h"
-#include "NewDS.h"
-#include "UpdateDS.h"
-#include "DeleteDS.h"
 #include "AssociationControlUnit.h"
 #include "GetAssociationByDS.h"
 #include "GetAllDataService.h"
@@ -32,9 +29,6 @@ DEFINE_CLASS_FACTORY_NO_ALIAS(DataServiceApiGroup, chaos::metadata_service::api:
 DataServiceApiGroup::DataServiceApiGroup():
 AbstractApiGroup(DataServiceNodeDomainAndActionRPC::RPC_DOMAIN){
         //add api for DataService api
-    addApi<NewDS>();
-    addApi<UpdateDS>();
-    addApi<DeleteDS>();
     addApi<GetAllDataService>();
     addApi<GetAssociationByDS>();
     addApi<AssociationControlUnit>();

@@ -216,7 +216,9 @@ void ChaosMetadataService::start()  throw(CException) {
 void ChaosMetadataService::timeout() {
     ProcStatCalculator::update(service_proc_stat);
     persistence::data_access::DataServiceDataAccess *ds_da = persistence::PersistenceManager::getInstance()->getDataAccess<persistence::data_access::DataServiceDataAccess>();
-    ds_da->updateNodeStatistic(api_subsystem_accessor.network_broker_service->getRPCUrl(),
+    ds_da->updateNodeStatistic(NetworkBroker::getInstance()->getRPCUrl(),
+                               NetworkBroker::getInstance()->getDirectIOUrl(),
+                               0,
                                service_proc_stat);
     
 }

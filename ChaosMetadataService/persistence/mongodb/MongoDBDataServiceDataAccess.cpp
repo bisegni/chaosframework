@@ -50,34 +50,6 @@ int MongoDBDataServiceDataAccess::checkPresence(const std::string& ds_unique_id,
     
 }
 
-//inherited method
-int MongoDBDataServiceDataAccess::insertNew(const std::string& ds_unique_id,
-                                            const std::string& ds_direct_io_addr,
-                                            uint32_t endpoint) {
-    CHAOS_ASSERT(node_data_access)
-    int err = 0;
-    try {
-        //first update thenode part then the unit server
-        //we can insert new node
-        CDataWrapper node_description;
-        node_description.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, ds_unique_id);
-        node_description.addStringValue(NodeDefinitionKey::NODE_TYPE, NodeType::NODE_TYPE_DATA_SERVICE);
-        node_description.addStringValue(NodeDefinitionKey::NODE_DIRECT_IO_ADDR, ds_direct_io_addr);
-        node_description.addInt32Value(DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT, endpoint);
-        
-        if((err = node_data_access->insertNewNode(node_description))){
-            MDBDSDA_ERR << "Error creating new node for" << ds_unique_id << " with error:" << err;
-        }
-    } catch (const mongo::DBException &e) {
-        MDBDSDA_ERR << e.what();
-        err = -1;
-    } catch (const chaos::CException &e) {
-        MDBDSDA_ERR << e.what();
-        err = e.errorCode;
-    }
-    return err;
-}
-
 int MongoDBDataServiceDataAccess::getDescription(const std::string& ds_unique_id,
                                                  chaos::common::data::CDataWrapper **node_description) {
     CHAOS_ASSERT(node_data_access)
@@ -120,51 +92,6 @@ int MongoDBDataServiceDataAccess::getDescription(const std::string& ds_unique_id
     return err;
 }
 
-//inherited method
-int MongoDBDataServiceDataAccess::updateExisting(const std::string& ds_unique_id,
-                                                 const std::string& ds_direct_io_addr,
-                                                 uint32_t endpoint) {
-    CHAOS_ASSERT(node_data_access)
-    int err = 0;
-    try {
-        //we can update the node node
-        CDataWrapper node_description;
-        node_description.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, ds_unique_id);
-        node_description.addStringValue(NodeDefinitionKey::NODE_TYPE, NodeType::NODE_TYPE_DATA_SERVICE);
-        node_description.addStringValue(NodeDefinitionKey::NODE_DIRECT_IO_ADDR, ds_direct_io_addr);
-        
-        if((err = node_data_access->updateNode(node_description))){
-            MDBDSDA_ERR << "Error updating data service:" << ds_unique_id << " with error:" << err;
-        } else {
-            //now update proprietary fields
-            mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << ds_unique_id
-                                        << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_DATA_SERVICE);
-            
-            mongo::BSONObj update = BSON("$set" << BSON(DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT << endpoint));
-            
-            DEBUG_CODE(MDBDSDA_DBG<<log_message("updateExisting",
-                                                "update",
-                                                DATA_ACCESS_LOG_2_ENTRY("Query",
-                                                                        "Update",
-                                                                        query.toString(),
-                                                                        update.jsonString()));)
-            
-            if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
-                                         query,
-                                         update))){
-                MDBDSDA_ERR << "Error updating proprietary field for data service:" << ds_unique_id << " with error:" << err;
-            }
-        }
-    } catch (const mongo::DBException &e) {
-        MDBDSDA_ERR << e.what();
-        err = -1;
-    } catch (const chaos::CException &e) {
-        MDBDSDA_ERR << e.what();
-        err = e.errorCode;
-    }
-    return err;
-}
-
 int MongoDBDataServiceDataAccess::registerNode(const std::string& ds_unique_id,
                                                const std::string& ds_direct_io_addr,
                                                uint32_t endpoint) {
@@ -201,6 +128,8 @@ int MongoDBDataServiceDataAccess::registerNode(const std::string& ds_unique_id,
 }
 
 int MongoDBDataServiceDataAccess::updateNodeStatistic(const std::string& ds_unique_id,
+                                                      const std::string& ds_direct_io_addr,
+                                                      const uint32_t endpoint,
                                                       const ProcStat& process_resuorce_usage) {
     CHAOS_ASSERT(node_data_access)
     int err = 0;
@@ -209,11 +138,12 @@ int MongoDBDataServiceDataAccess::updateNodeStatistic(const std::string& ds_uniq
         mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << ds_unique_id
                                     << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_DATA_SERVICE);
         
-        mongo::BSONObj update = BSON("$set" << BSON(
-        											NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME <<(long long )process_resuorce_usage.uptime <<
-													NodeHealtDefinitionKey::NODE_HEALT_USER_TIME << (uint32_t)process_resuorce_usage.usr_time <<
-													NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME <<(uint32_t) process_resuorce_usage.sys_time <<
-													NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP << (uint32_t)process_resuorce_usage.swap_rsrc <<
+        mongo::BSONObj update = BSON("$set" << BSON(NodeDefinitionKey::NODE_DIRECT_IO_ADDR << ds_direct_io_addr <<
+                                                    DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT << endpoint <<
+                                                    NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME <<(long long )process_resuorce_usage.uptime <<
+													NodeHealtDefinitionKey::NODE_HEALT_USER_TIME << process_resuorce_usage.usr_time <<
+													NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME << process_resuorce_usage.sys_time <<
+													NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP << process_resuorce_usage.swap_rsrc <<
 													NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP << mongo::Date_t(TimingUtil::getTimeStamp())));
         
         DEBUG_CODE(MDBDSDA_DBG<<log_message("updateExisting",
@@ -225,7 +155,9 @@ int MongoDBDataServiceDataAccess::updateNodeStatistic(const std::string& ds_uniq
         
         if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                      query,
-                                     update))){
+                                     update,
+                                     true,
+                                     false))){
             MDBDSDA_ERR << "Error updating proprietary field for data service:" << ds_unique_id << " with error:" << err;
         }
     } catch (const mongo::DBException &e) {
@@ -460,8 +392,8 @@ int MongoDBDataServiceDataAccess::getBestNDataService(std::vector<boost::shared_
         //perform the search for the query page
         connection->findN(paged_result,
                           MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
-                          query.sort(BSON(NodeHealtDefinitionKey::NODE_HEALT_USER_TIME << -1 <<
-                                          NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME << -1)),
+                          query.sort(BSON(NodeHealtDefinitionKey::NODE_HEALT_USER_TIME << 1 <<
+                                          NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME << 1)),
                           number_of_result);
         //fill reuslt
         if(paged_result.size()>0) {

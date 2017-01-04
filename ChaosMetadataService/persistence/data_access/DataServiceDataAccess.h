@@ -31,54 +31,48 @@ namespace chaos {
     namespace metadata_service {
         namespace persistence {
             namespace data_access {
-
+                
                 class DataServiceDataAccess:
                 public chaos::service_common::persistence::data_access::AbstractDataAccess{
                 public:
                     DECLARE_DA_NAME
-
-                        //! default constructor
+                    
+                    //! default constructor
                     DataServiceDataAccess();
-
-                        //!default destructor
+                    
+                    //!default destructor
                     ~DataServiceDataAccess();
-
+                    
                     virtual int checkPresence(const std::string& ds_unique_id,
                                               bool& presence) = 0;
-
-                    virtual int insertNew(const std::string& ds_unique_id,
-                                          const std::string& ds_direct_io_addr,
-                                          uint32_t endpoint) = 0;
-
+                    
                     virtual int getDescription(const std::string& ds_unique_id,
                                                chaos::common::data::CDataWrapper **node_description) = 0;
-
-                    virtual int updateExisting(const std::string& ds_unique_id,
-                                               const std::string& ds_direct_io_addr,
-                                               uint32_t endpoint) = 0;
                     
                     virtual int registerNode(const std::string& ds_unique_id,
                                              const std::string& ds_direct_io_addr,
                                              uint32_t endpoint) = 0;
                     
                     virtual int updateNodeStatistic(const std::string& ds_unique_id,
+                                                    const std::string& ds_direct_io_addr,
+                                                    const uint32_t endpoint,
                                                     const chaos::common::utility::ProcStat& process_resuorce_usage) = 0;
                     
                     virtual int deleteDataService(const std::string& ds_unique_id) = 0;
-
+                    
                     virtual int associateNode(const std::string& ds_unique_id,
                                               const std::string& associated_node_unique_id) = 0;
-
+                    
                     virtual int removeNode(const std::string& ds_unique_id,
                                            const std::string& associated_node_unique_id) = 0;
-
+                    
                     virtual int searchAssociationForUID(const std::string& ds_unique_id,
                                                         std::vector<boost::shared_ptr<common::data::CDataWrapper> >&  node_associated) = 0;
-
+                    
                     virtual int searchAllDataAccess(std::vector<boost::shared_ptr<common::data::CDataWrapper> >&  node_associated,
                                                     uint32_t last_unique_id,
                                                     uint32_t page_length) = 0;
-
+                    
                     virtual int getBestNDataService(std::vector<boost::shared_ptr<common::data::CDataWrapper> >&  best_available_data_service,
                                                     unsigned int numerb_of_result = 3) = 0;
                     
@@ -90,7 +84,7 @@ namespace chaos {
                     
                     
                 };
-
+                
             }
         }
     }

@@ -48,18 +48,8 @@ namespace chaos {
                     int checkPresence(const std::string& ds_unique_id,
                                       bool& presence);
                     
-                    //inherited method
-                    int insertNew(const std::string& ds_unique_id,
-                                  const std::string& ds_direct_io_addr,
-                                  uint32_t endpoint);
-                    
                     int getDescription(const std::string& ds_unique_id,
                                        chaos::common::data::CDataWrapper **node_description);
-                    
-                    //inherited method
-                    int updateExisting(const std::string& ds_unique_id,
-                                       const std::string& ds_direct_io_addr,
-                                       uint32_t endpoint);
                     
                     //inherited method
                     int registerNode(const std::string& ds_unique_id,
@@ -68,6 +58,8 @@ namespace chaos {
                     
                     //inherited method
                     int updateNodeStatistic(const std::string& ds_unique_id,
+                                            const std::string& ds_direct_io_addr,
+                                            const uint32_t endpoint,
                                             const chaos::common::utility::ProcStat& process_resuorce_usage);
                     
                     //inherited method

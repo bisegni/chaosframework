@@ -255,8 +255,6 @@
 		324A4B9F191A569800975394 /* hex.h in Headers */ = {isa = PBXBuildFile; fileRef = 324A4B9D191A569800975394 /* hex.h */; };
 		324C768A1E01A5C500BA57E1 /* ProcStat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324C76881E01A5C500BA57E1 /* ProcStat.cpp */; };
 		324C768B1E01A5C500BA57E1 /* ProcStat.h in Headers */ = {isa = PBXBuildFile; fileRef = 324C76891E01A5C500BA57E1 /* ProcStat.h */; };
-		324EF3DD1AE92379000837AF /* NewDS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324EF3DB1AE92379000837AF /* NewDS.cpp */; };
-		324EF3E01AE9238B000837AF /* UpdateDS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324EF3DE1AE9238B000837AF /* UpdateDS.cpp */; };
 		324EF3E31AE923F9000837AF /* DataServiceApiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324EF3E11AE923F9000837AF /* DataServiceApiGroup.cpp */; };
 		324FD0811B00ACEF003800BA /* MonitorManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324FD07F1B00ACEF003800BA /* MonitorManager.cpp */; };
 		324FD0821B00ACEF003800BA /* MonitorManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 324FD0801B00ACEF003800BA /* MonitorManager.h */; };
@@ -510,7 +508,6 @@
 		327D5E49192DE3430043ED21 /* DBDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327D5E43192DE3430043ED21 /* DBDriver.cpp */; };
 		327D5E4B192DE3430043ED21 /* MongoDBDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327D5E47192DE3430043ED21 /* MongoDBDriver.cpp */; };
 		327F39A01AEA47980000C845 /* GetAssociationByDS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327F399E1AEA47980000C845 /* GetAssociationByDS.cpp */; };
-		327F39A31AEA49C00000C845 /* DeleteDS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327F39A11AEA49C00000C845 /* DeleteDS.cpp */; };
 		327F39A71AEAA2290000C845 /* NewDS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327F39A51AEAA2290000C845 /* NewDS.cpp */; };
 		327F39A81AEAA2290000C845 /* NewDS.h in Headers */ = {isa = PBXBuildFile; fileRef = 327F39A61AEAA2290000C845 /* NewDS.h */; };
 		327F39AB1AEAA2390000C845 /* UpdateDS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327F39A91AEAA2380000C845 /* UpdateDS.cpp */; };
@@ -1425,10 +1422,6 @@
 		324C76881E01A5C500BA57E1 /* ProcStat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcStat.cpp; sourceTree = "<group>"; };
 		324C76891E01A5C500BA57E1 /* ProcStat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcStat.h; sourceTree = "<group>"; };
 		324C768C1E01C75E00BA57E1 /* ConfigurationTemplate */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ConfigurationTemplate; sourceTree = "<group>"; };
-		324EF3DB1AE92379000837AF /* NewDS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NewDS.cpp; sourceTree = "<group>"; };
-		324EF3DC1AE92379000837AF /* NewDS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewDS.h; sourceTree = "<group>"; };
-		324EF3DE1AE9238B000837AF /* UpdateDS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UpdateDS.cpp; sourceTree = "<group>"; };
-		324EF3DF1AE9238B000837AF /* UpdateDS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UpdateDS.h; sourceTree = "<group>"; };
 		324EF3E11AE923F9000837AF /* DataServiceApiGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataServiceApiGroup.cpp; sourceTree = "<group>"; };
 		324EF3E21AE923F9000837AF /* DataServiceApiGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataServiceApiGroup.h; sourceTree = "<group>"; };
 		324FD07F1B00ACEF003800BA /* MonitorManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MonitorManager.cpp; sourceTree = "<group>"; };
@@ -1740,8 +1733,6 @@
 		327D83D91AF1185700AD7000 /* batch_impl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = batch_impl.h; sourceTree = "<group>"; };
 		327F399E1AEA47980000C845 /* GetAssociationByDS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetAssociationByDS.cpp; sourceTree = "<group>"; };
 		327F399F1AEA47980000C845 /* GetAssociationByDS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetAssociationByDS.h; sourceTree = "<group>"; };
-		327F39A11AEA49C00000C845 /* DeleteDS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeleteDS.cpp; sourceTree = "<group>"; };
-		327F39A21AEA49C00000C845 /* DeleteDS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeleteDS.h; sourceTree = "<group>"; };
 		327F39A51AEAA2290000C845 /* NewDS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NewDS.cpp; sourceTree = "<group>"; };
 		327F39A61AEAA2290000C845 /* NewDS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewDS.h; sourceTree = "<group>"; };
 		327F39A91AEAA2380000C845 /* UpdateDS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UpdateDS.cpp; sourceTree = "<group>"; };
@@ -3040,12 +3031,6 @@
 			children = (
 				324EF3E11AE923F9000837AF /* DataServiceApiGroup.cpp */,
 				324EF3E21AE923F9000837AF /* DataServiceApiGroup.h */,
-				324EF3DB1AE92379000837AF /* NewDS.cpp */,
-				324EF3DC1AE92379000837AF /* NewDS.h */,
-				324EF3DE1AE9238B000837AF /* UpdateDS.cpp */,
-				324EF3DF1AE9238B000837AF /* UpdateDS.h */,
-				327F39A11AEA49C00000C845 /* DeleteDS.cpp */,
-				327F39A21AEA49C00000C845 /* DeleteDS.h */,
 				320530D51AE924ED0064275B /* AssociationControlUnit.cpp */,
 				320530D61AE924ED0064275B /* AssociationControlUnit.h */,
 				327F399E1AEA47980000C845 /* GetAssociationByDS.cpp */,
@@ -5790,7 +5775,6 @@
 				32B299A41BE25ABE000D3716 /* RecoverError.cpp in Sources */,
 				32936C641D9277DC00485F71 /* GetSnapshotForNode.cpp in Sources */,
 				3235FDD91A6FFA6600EC83A9 /* MongoDBPersistenceDriver.cpp in Sources */,
-				327F39A31AEA49C00000C845 /* DeleteDS.cpp in Sources */,
 				32FC499E1E07EBD40087D82C /* SetVariable.cpp in Sources */,
 				32610F931AE671A300779B84 /* InitDeinit.cpp in Sources */,
 				327C6A251C747E4A002DA5A6 /* GetLogDomainForSourceUID.cpp in Sources */,
@@ -5804,7 +5788,6 @@
 				32B299991BD900F1000D3716 /* CopyInstance.cpp in Sources */,
 				326ACF841E01525D00AD011E /* ObjectStorageDataAccess.cpp in Sources */,
 				32B419301B0DE68800C3CA7D /* ChangeNodeState.cpp in Sources */,
-				324EF3DD1AE92379000837AF /* NewDS.cpp in Sources */,
 				32B9F3FA1AC4460A00380FE9 /* NodeGetDescription.cpp in Sources */,
 				32568C881B3D3B270006988C /* UpdateProperty.cpp in Sources */,
 				328E78021A7A94810008C070 /* NodeRegister.cpp in Sources */,
@@ -5827,7 +5810,6 @@
 				32809C7C1A9C7DDD00C02C12 /* MongoDBUtilityDataAccess.cpp in Sources */,
 				323386B71AD3C4C6008863DC /* MongoDBAccessor.cpp in Sources */,
 				32CAC9E41AE6991500DC6AAB /* LoadUnloadControlUnit.cpp in Sources */,
-				324EF3E01AE9238B000837AF /* UpdateDS.cpp in Sources */,
 				3211CCD61B0205C700F9B80E /* GetBestEndpoints.cpp in Sources */,
 				325963981D216BD800D94853 /* LoadInstanceOnUnitServer.cpp in Sources */,
 				32A13EBF1C2019080010F3FC /* MongoDBTreeGroupDataAccess.cpp in Sources */,
