@@ -2795,6 +2795,12 @@
 		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/direct_io/impl/ZMQDirectIOServer.h">
 			<Option target="chaos_common"/>
 		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/dispatcher/AbstractActionScheduler.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/dispatcher/AbstractActionScheduler.h">
+			<Option target="chaos_common"/>
+		</Unit>
 		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/dispatcher/AbstractCommandDispatcher.cpp">
 			<Option target="chaos_common"/>
 		</Unit>
@@ -2829,6 +2835,18 @@
 			<Option target="chaos_common"/>
 		</Unit>
 		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/dispatcher/EventTypeScheduler.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/dispatcher/SharedActionScheduler.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/dispatcher/SharedActionScheduler.h">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/dispatcher/SharedCommandDispatcher.cpp">
+			<Option target="chaos_common"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/dispatcher/SharedCommandDispatcher.h">
 			<Option target="chaos_common"/>
 		</Unit>
 		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/common/event/AsioEventForwarder.cpp">

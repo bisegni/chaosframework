@@ -156,7 +156,17 @@ void NetworkBroker::init(void *initData) throw(CException) {
     if(globalConfiguration->hasKey(InitOption::OPT_RPC_IMPLEMENTATION)){
         //get the dispatcher
         MB_LAPP  << "Setup RPC sublayer";
-        rpc_dispatcher = ObjectFactoryRegister<AbstractCommandDispatcher>::getInstance()->getNewInstanceByName("DefaultCommandDispatcher");
+        uint32_t dispatcher_type = globalConfiguration->getUInt32Value(InitOption::OPT_RPC_DOMAIN_SCHEDULER_TYPE);
+        switch(dispatcher_type) {
+            case 1:
+                rpc_dispatcher = ObjectFactoryRegister<AbstractCommandDispatcher>::getInstance()->getNewInstanceByName("SharedCommandDispatcher");
+                break;
+                
+            default:
+                rpc_dispatcher = ObjectFactoryRegister<AbstractCommandDispatcher>::getInstance()->getNewInstanceByName("DefaultCommandDispatcher");
+                break;
+        }
+        
         if(!rpc_dispatcher)
             throw CException(-6, "Command dispatcher implementation not found", __PRETTY_FUNCTION__);
         

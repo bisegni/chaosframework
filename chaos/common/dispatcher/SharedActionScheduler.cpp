@@ -1,9 +1,10 @@
 /*
- *	DomainActionsScheduler.cpp
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ *	SharedActionScheduler.cpp
  *
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ *	!CHAOS [CHAOSFramework]
+ *	Created by bisegni.
+ *
+ *    	Copyright 05/01/2017 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -17,87 +18,77 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include "../global.h"
-#include "DomainActionsScheduler.h"
-#include <chaos/common/chaos_constants.h>
+
+#include <chaos/common/dispatcher/SharedActionScheduler.h>
+
+#include <chaos/common/configuration/GlobalConfiguration.h>
 
 using namespace chaos;
 using namespace chaos::common::data;
+using namespace chaos::common::utility;
 
-DomainActionsScheduler::DomainActionsScheduler(boost::shared_ptr<DomainActions> _domainActionsContainer):
-armed(false),
-dispatcher(NULL){
-    domainActionsContainer = _domainActionsContainer;
+/*!
+ Default constructor
+ */
+SharedActionScheduler::SharedActionScheduler() {
+    
 }
 
 /*!
- Default destructor
+ Default constructor
  */
-DomainActionsScheduler::~DomainActionsScheduler() {
+SharedActionScheduler::~SharedActionScheduler() {
     
 }
-/*
- Initialization method for output buffer
- */
-void DomainActionsScheduler::init(int threadNumber) throw(CException) {
-    LAPP_ << "Initializing Domain Actions Scheduler for domain:" << domainActionsContainer->getDomainName();
-    CObjectProcessingQueue<CDataWrapper>::init(threadNumber);
-    armed = true;
+
+void SharedActionScheduler::addActionDomain(boost::shared_ptr<DomainActions> new_action_domain) {
+    MapDomainActionsLockedWriteLock wr = map_domain_actions.getWriteLockObject();
+    const std::string& domain_name = new_action_domain->getDomainName();
+    map_domain_actions().insert(MapDomainActionsPair(domain_name, new_action_domain));
 }
 
-/*
- Deinitialization method for output buffer
- */
-void DomainActionsScheduler::deinit() throw(CException) {
-    LAPP_ << "Deinitializing Domain Actions Scheduler for domain:" << domainActionsContainer->getDomainName();
-    //mutex::scoped_lock lockAction(actionAccessMutext);
+void SharedActionScheduler::removeActionDomain(boost::shared_ptr<DomainActions> new_action_domain) {
+    MapDomainActionsLockedWriteLock wr = map_domain_actions.getWriteLockObject();
+    const std::string& domain_name = new_action_domain->getDomainName();
+    map_domain_actions().erase(domain_name);
+    
+}
+
+void SharedActionScheduler::init(int) throw(CException) {
+    CObjectProcessingQueue<chaos_data::CDataWrapper>::init(GlobalConfiguration::getInstance()->getConfiguration()->getUInt32Value(InitOption::OPT_RPC_DOMAIN_QUEUE_THREAD));
+}
+
+void SharedActionScheduler::deinit() throw(CException) {
     CObjectProcessingQueue<CDataWrapper>::clear();
-    CObjectProcessingQueue<CDataWrapper>::deinit();
-    armed = false;
+    CObjectProcessingQueue<chaos_data::CDataWrapper>::deinit();
 }
 
-/*
- override the push method for ObjectProcessingQueue<CDataWrapper> superclass
- */
-bool DomainActionsScheduler::push(CDataWrapper *actionParam) throw(CException) {
-    if(!armed) throw CException(-1, "Action can't be submitted, scheduler is not armed", "DomainActionsScheduler::push");
-    if(!domainActionsContainer->hasActionName(actionParam->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME))) throw CException(-2, "The action requested is not present in the domain", __PRETTY_FUNCTION__);
-    return CObjectProcessingQueue<CDataWrapper>::push(actionParam);
+bool SharedActionScheduler::push(chaos_data::CDataWrapper *action_submission_pack) throw(CException) {
+    if(!map_domain_actions().count(action_submission_pack->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME))) throw CException(-2, "The action requested is not present in the domain", __PRETTY_FUNCTION__);
+    return CObjectProcessingQueue<CDataWrapper>::push(action_submission_pack);
 }
 
-/*
- 
- */
-const string& DomainActionsScheduler::getManagedDomainName() {
-    return domainActionsContainer->getDomainName();
-}
-
-/*
- 
- */
-void DomainActionsScheduler::setDispatcher(AbstractCommandDispatcher *newDispatcher) {
-    dispatcher = newDispatcher;
-}
-
-uint32_t DomainActionsScheduler::getQueuedActionSize() {
-    return CObjectProcessingQueue<CDataWrapper>::queueSize();
-}
-
-void DomainActionsScheduler::synchronousCall(const std::string& action,
-                                             chaos_data::CDataWrapper *message,
-                                             chaos_data::CDataWrapper *result) {
+void SharedActionScheduler::synchronousCall(chaos_data::CDataWrapper *message,
+                                            chaos_data::CDataWrapper *result) {
+    MapDomainActionsLockedReadLock wr = map_domain_actions.getReadLockObject();
     bool message_has_been_detached = false;
     auto_ptr<CDataWrapper>  action_message(message);
+    
+    const std::string domain_name = message->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN);
+    const std::string action_name = message->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME);
     std::auto_ptr<CDataWrapper> message_data(message->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
-    if(!domainActionsContainer->hasActionName(action)) {
-        LAPP_ << "The action " << action << " is not present for domain " << domainActionsContainer->getDomainName();
+    
+    boost::shared_ptr<DomainActions> domain_action = map_domain_actions()[domain_name];
+    if(domain_action.get() == NULL ||
+       !domain_action->hasActionName(action_name)) {
+        LAPP_ << "The action " << action_name << " is not present for domain " << domain_name;
         result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, -1);
         result->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_DOMAIN, __PRETTY_FUNCTION__);
         result->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE, "Action is nto present in the domain");
         return;
     }
     //get the action reference
-    AbstActionDescShrPtr action_desc_ptr = domainActionsContainer->getActionDescriptornFormActionName(action);
+    AbstActionDescShrPtr action_desc_ptr = domain_action->getActionDescriptornFormActionName(action_name);
     
     //lock the action for write, so we can schedule it
     ActionReadLock read_lock_for_action_execution(action_desc_ptr->actionAccessMutext);
@@ -111,7 +102,6 @@ void DomainActionsScheduler::synchronousCall(const std::string& action,
         result->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_DOMAIN, __PRETTY_FUNCTION__);
         result->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE, "Action can't be fired");
     } else {
-        
         //call and return
         try {
             auto_ptr<CDataWrapper> action_result(action_desc_ptr->call(message_data.get(), message_has_been_detached));
@@ -138,12 +128,18 @@ void DomainActionsScheduler::synchronousCall(const std::string& action,
     
     //return the result
     return;
+    
+}
+
+uint32_t SharedActionScheduler::getQueuedActionSize() {
+    return 0;
 }
 
 /*
  process the element action to be executed
  */
-void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescription, ElementManagingPolicy& elementPolicy) throw(CException) {
+void SharedActionScheduler::processBufferElement(CDataWrapper *actionDescription,
+                                                 ElementManagingPolicy& elementPolicy) throw(CException) {
     //the domain is securely the same is is mandatory for submition so i need to get the name of the action
     CDataWrapper            *responsePack = NULL;
     CDataWrapper            *subCommand = NULL;
@@ -154,18 +150,22 @@ void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescriptio
     ElementManagingPolicy               action_elementPolicy = {false};
     bool    needAnswer = false;
     //bool    detachParam = false;
-    int     answerID;
-    string  answerIP;
-    string  answerDomain;
-    string  answerAction;
-    string  actionName = actionDescription->getStringValue( RpcActionDefinitionKey::CS_CMDM_ACTION_NAME );
+    int     answer_id;
+    string  answer_ip;
+    string  answer_domain;
+    string  answer_action;
+    string  domain_name = actionDescription->getStringValue( RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN);
+    string  action_name = actionDescription->getStringValue( RpcActionDefinitionKey::CS_CMDM_ACTION_NAME);
     
-    if(!domainActionsContainer->hasActionName(actionName)) {
-        LAPP_ << "The action " << actionName << " is not present for domain " << domainActionsContainer->getDomainName();
+    boost::shared_ptr<DomainActions> domain_action = map_domain_actions()[domain_name];
+    //if(!domain_action->hasActionName(action_name)) {
+    if(domain_action.get() == NULL ||
+       !domain_action->hasActionName(action_name)) {
+        LAPP_ << "The action " << action_name << " is not present for domain " << domain_name;
         return;
     }
     //get the action reference
-    AbstActionDescShrPtr actionDescriptionPtr = domainActionsContainer->getActionDescriptornFormActionName(actionName);
+    AbstActionDescShrPtr actionDescriptionPtr = domain_action->getActionDescriptornFormActionName(action_name);
     
     //lock the action for write, so we can schedule it
     ActionReadLock readLockForActionExecution(actionDescriptionPtr->actionAccessMutext);
@@ -194,22 +194,22 @@ void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescriptio
         if(actionDescription->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_ID) &&
            actionDescription->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_HOST_IP) ) {
             //get infor for answer form the request
-            answerID = actionDescription->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ANSWER_ID);
-            answerIP = actionDescription->getStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_HOST_IP);
+            answer_id = actionDescription->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ANSWER_ID);
+            answer_ip = actionDescription->getStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_HOST_IP);
             
             //we must check this only if we have a destination ip to send the answer
             if(actionDescription->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_DOMAIN) &&
                actionDescription->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_ACTION) ) {
                 //fill the action doma and name for the answer
-                answerDomain = actionDescription->getStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_DOMAIN);
-                answerAction = actionDescription->getStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_ACTION);
+                answer_domain = actionDescription->getStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_DOMAIN);
+                answer_action = actionDescription->getStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_ACTION);
                 
                 //answer can be sent
                 needAnswer = true;
             }
         }
         
-        try{
+        try {
             //call function core part
             if(needAnswer){
                 //we need a response, so allocate the memory for it
@@ -251,24 +251,25 @@ void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescriptio
             responsePack = new CDataWrapper();
             
             //fill answer with data for remote ip and request id
-            remoteActionResult->addInt32Value(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID, answerID);
+            remoteActionResult->addInt32Value(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID, answer_id);
             //set the answer host ip as remote ip where to send the answere
-            responsePack->addStringValue(RpcActionDefinitionKey::CS_CMDM_REMOTE_HOST_IP, answerIP);
+            responsePack->addStringValue(RpcActionDefinitionKey::CS_CMDM_REMOTE_HOST_IP, answer_ip);
             
             //check this only if we have a destinantion
-            if(answerDomain.size() && answerAction.size()){
+            if(answer_domain.size() &&
+               answer_action.size()){
                 //set the domain for the answer
-                responsePack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, answerDomain);
+                responsePack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, answer_domain);
                 
                 //set the name of the action for the answer
-                responsePack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, answerAction);
+                responsePack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, answer_action);
             }
             
             //add the action message
             responsePack->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *remoteActionResult.get());
             //in any case this result must be LOG
             //the result of the action action is sent using this thread
-            if(!dispatcher->submitMessage(answerIP, responsePack, false)){
+            if(!dispatcher->submitMessage(answer_ip, responsePack, false)){
                 //the response has not been sent
                 DELETE_OBJ_POINTER(responsePack);
             }

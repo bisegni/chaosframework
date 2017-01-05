@@ -70,7 +70,7 @@ void DomainActions::removeActionDescriptor(AbstActionDescShrPtr actionDescriptor
 /*
  return the domain name
  */
-string& DomainActions::getDomainName() {
+const string& DomainActions::getDomainName() {
     return domainName;
 }
 

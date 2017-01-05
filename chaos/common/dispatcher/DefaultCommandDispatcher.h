@@ -48,20 +48,37 @@ namespace chaos{
          */
         boost::shared_ptr<DomainActionsScheduler>& getSchedulerForDomainName(string&);
         
-    protected:
+        
+        //! Domain name <-> Action name association map
+        /*!Contains the association between the domain name and all action for this domain*/
+        map<string, boost::shared_ptr<DomainActions> >  action_domain_executor_map;
+        
+        //! Accessor to the object that manage the action for a domain
+        /*!
+         \return the instance of DomainActions pointer in relation to name
+         but if the name is not present initialized it and add it to map
+         */
+        boost::shared_ptr<DomainActions> getDomainActionsFromName(const string& domain_name);
+        
+        //! Remove the infromation about a domain
+        /*!
+         \return an isntance of DomainActions pointer and remove
+         it form the map
+         */
+        void  removeDomainActionsFromName(const string& domain_name);
+        
+    public:
+        DefaultCommandDispatcher(string alias);
+        virtual ~DefaultCommandDispatcher();
         /*!
          Initialization method for output buffer
          */
-        void init(chaos::common::data::CDataWrapper *initConfiguration) throw(CException);
+        void init(void *) throw(CException);
         
         /*!
          Deinitialization method for output buffer
          */
         void deinit() throw(CException);
-
-    public:
-        DefaultCommandDispatcher(string alias);
-        virtual ~DefaultCommandDispatcher();
         /*!
          Register actions defined by AbstractActionDescriptor instance contained in the array
          */
@@ -78,12 +95,10 @@ namespace chaos{
 		// inherited method
 		chaos::common::data::CDataWrapper* executeCommandSync(chaos::common::data::CDataWrapper * action_pack);
         
-        // inherited method
-        chaos::common::data::CDataWrapper* executeCommandSync(const std::string& domain,
-                                                              const std::string& action,
-                                                              chaos::common::data::CDataWrapper * message_data);
         //inherited method
         uint32_t domainRPCActionQueued(const std::string& domain_name);
+        
+        bool hasDomain(const std::string& domain_name);
     };
 }
 #endif

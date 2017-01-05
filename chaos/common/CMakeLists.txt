@@ -119,7 +119,10 @@ SET(common_lib_src ${common_lib_src}
         dispatcher/AbstractEventDispatcher.cpp
         dispatcher/AbstractCommandDispatcher.cpp
         dispatcher/DefaultCommandDispatcher.cpp
-        dispatcher/DomainActionsScheduler.cpp)
+        dispatcher/DomainActionsScheduler.cpp
+        dispatcher/AbstractActionScheduler.cpp
+        dispatcher/SharedActionScheduler.cpp
+        dispatcher/SharedCommandDispatcher.cpp)
 
 SET(common_lib_src ${common_lib_src}
         exception/CException.cpp

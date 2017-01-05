@@ -70,6 +70,8 @@ namespace chaos {
         static const char * const   OPT_RPC_SERVER_THREAD_NUMBER        = "rpc-server-thread-number";
         //! Specify the number of the thread that EVERY queue in EVERY action domain has for rpc action consume
         static const char * const   OPT_RPC_DOMAIN_QUEUE_THREAD         = "rpc-domain-queue-thread-number";
+        //! specify the schduler type for the execution of the rcp action(0-default,1-shared)
+        static const char * const   OPT_RPC_DOMAIN_SCHEDULER_TYPE       = "rpc-domain-scheduler-type";
         //! Specify the implementation to use for the direct io subsystem
         static const char * const   OPT_DIRECT_IO_IMPLEMENTATION		= "direct-io-impl";
         //! Specify the network port where the direct io subsystem publish i's priority channel

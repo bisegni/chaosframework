@@ -17,7 +17,7 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include "../global.h"
+#include <chaos/common/global.h>
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/dispatcher/DefaultCommandDispatcher.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
@@ -44,7 +44,7 @@ DefaultCommandDispatcher::~DefaultCommandDispatcher(){}
 /*
  Initialization method for output buffer
  */
-void DefaultCommandDispatcher::init(CDataWrapper *initConfiguration) throw(CException) {
+void DefaultCommandDispatcher::init(void *initConfiguration) throw(CException) {
     LDEF_CMD_DISPTC_APP_ << "Initializing Default Command Dispatcher";
     AbstractCommandDispatcher::init(initConfiguration);
     
@@ -81,7 +81,32 @@ void DefaultCommandDispatcher::deinit() throw(CException) {
     AbstractCommandDispatcher::deinit();
     LDEF_CMD_DISPTC_APP_ << "Deinitilized Default Command Dispatcher";
 }
+/*
+ return an isntance of DomainActions pointer in relation to name
+ but if the name is not present initialized it and add it to map
+ */
+boost::shared_ptr<DomainActions> DefaultCommandDispatcher::getDomainActionsFromName(const string& domain_name) {
+    //check if is not preset, so we can allocate it
+    if(!action_domain_executor_map.count(domain_name)){
+        boost::shared_ptr<DomainActions>  result(new DomainActions(domain_name));
+        if(result){;
+            action_domain_executor_map.insert(make_pair(domain_name, result));
+            DEBUG_CODE(LDEF_CMD_DISPTC_DBG_ << "Allocated new  DomainActions:" << domain_name;);
+        }
+    }
+    //return the domain executor for name
+    return action_domain_executor_map[domain_name];
+}
 
+/*
+ return an isntance of DomainActions pointer and remove
+ it form the map
+ */
+void DefaultCommandDispatcher::removeDomainActionsFromName(const string& domainName) {
+    if(!action_domain_executor_map.count(domainName)){
+        action_domain_executor_map.erase(domainName);
+    }
+}
 
 /*
  Register actions defined by AbstractActionDescriptor instance contained in the array
@@ -89,12 +114,23 @@ void DefaultCommandDispatcher::deinit() throw(CException) {
 void DefaultCommandDispatcher::registerAction(DeclareAction *declareActionClass)  throw(CException)  {
     if(!declareActionClass) return;
     
-    //register the action
-    AbstractCommandDispatcher::registerAction(declareActionClass);
-    
     //we need to allocate the scheduler for every registered domain that doesn't exist
     chaos::common::thread::UpgradeableLock ur_lock(das_map_mutex);
+    
     vector<AbstActionDescShrPtr>::iterator actDescIter = declareActionClass->getActionDescriptors().begin();
+    for (; actDescIter != declareActionClass->getActionDescriptors().end(); actDescIter++) {
+        //get the domain executor for this action descriptor
+        boost::shared_ptr<DomainActions> domainExecutor = getDomainActionsFromName((*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain));
+        
+        //if the domain executor has been returned, add this action to it
+        if(domainExecutor) {
+            domainExecutor->addActionDescriptor(*actDescIter);
+            DEBUG_CODE(LDEF_CMD_DISPTC_DBG_	<< "Registered action [" << (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionName)
+                       << "] for domain [" << (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain) << "]";);
+        }
+    }
+    
+    actDescIter = declareActionClass->getActionDescriptors().begin();
     for (; actDescIter != declareActionClass->getActionDescriptors().end(); actDescIter++) {
         //get the domain executor for this action descriptor
         string domainName = (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain);
@@ -123,13 +159,30 @@ void DefaultCommandDispatcher::registerAction(DeclareAction *declareActionClass)
 void DefaultCommandDispatcher::deregisterAction(DeclareAction *declareActionClass)  throw(CException) {
     if(!declareActionClass) return;
     
-    //call superclass method
-    AbstractCommandDispatcher::deregisterAction(declareActionClass);
-    
     chaos::common::thread::WriteLock w_lock(das_map_mutex);
     
-    //scan all cation to check if we need to remove the scheduler for an empty domain
     vector<AbstActionDescShrPtr>::iterator actDescIter = declareActionClass->getActionDescriptors().begin();
+    for (; actDescIter != declareActionClass->getActionDescriptors().end(); actDescIter++) {
+        //get the domain executor for this action descriptor
+        boost::shared_ptr<DomainActions> domainExecutor = getDomainActionsFromName((*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain));
+        
+        //if the domain executor has been returned, add this action to it
+        if(domainExecutor) {
+            domainExecutor->removeActionDescriptor(*actDescIter);
+            DEBUG_CODE(LDEF_CMD_DISPTC_DBG_	<< "Deregistered action [" << (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionName)
+                       << "] for domain [" << (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain) << "]";);
+            
+            if(!domainExecutor->registeredActions()) {
+                std::string domain_name = domainExecutor->getDomainName();
+                DEBUG_CODE(LDEF_CMD_DISPTC_DBG_ << "No more action in domain " << domain_name << " so it will be destroyed";);
+                action_domain_executor_map.erase(domain_name);
+            }
+        }
+    }
+    
+    
+    //scan all cation to check if we need to remove the scheduler for an empty domain
+    actDescIter = declareActionClass->getActionDescriptors().begin();
     for (; actDescIter != declareActionClass->getActionDescriptors().end(); actDescIter++) {
         
         //get the domain executor for this action descriptor
@@ -199,31 +252,6 @@ CDataWrapper* DefaultCommandDispatcher::executeCommandSync(CDataWrapper * messag
     return result;
 }
 
-CDataWrapper* DefaultCommandDispatcher::executeCommandSync(const std::string& domain,
-                                                           const std::string& action,
-                                                           chaos_data::CDataWrapper * message_data) {
-    CDataWrapper *result = new CDataWrapper();
-    try{
-        //RpcActionDefinitionKey::CS_CMDM_ACTION_NAME
-        if(!das_map.count(domain)) {
-            MANAGE_ERROR_IN_CDATAWRAPPERPTR(result, -1, "Action Domain \""+domain+"\" not registered (action \""+action+"\")", __PRETTY_FUNCTION__)
-            CHK_AND_DELETE_OBJ_POINTER(message_data)
-            return result;
-        }
-        
-        //submit the action(Thread Safe)
-        das_map[domain]->synchronousCall(action,
-                                         message_data,
-                                         result);
-        result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 0);
-    }catch(CException& ex){
-        DECODE_CHAOS_EXCEPTION_IN_CDATAWRAPPERPTR(result, ex)
-    } catch(...){
-        MANAGE_ERROR_IN_CDATAWRAPPERPTR(result, -2, "General exception received", __PRETTY_FUNCTION__)
-    }
-    return result;
-}
-
 /*
  This method sub the pack received by RPC system to the execution queue accordint to the pack domain
  the multithreading push is managed by OBuffer that is the superclass of DomainActionsScheduler. This method
@@ -278,4 +306,9 @@ uint32_t DefaultCommandDispatcher::domainRPCActionQueued(const std::string& doma
     //return the size of the action queue
     if(das_map.count(domain_name) == 0) return -1;
     return das_map[domain_name]->getQueuedActionSize();
+}
+
+bool DefaultCommandDispatcher::hasDomain(const std::string& domain_name) {
+    chaos::common::thread::ReadLock r_lock(das_map_mutex);
+    return das_map.count(domain_name) != 0;
 }

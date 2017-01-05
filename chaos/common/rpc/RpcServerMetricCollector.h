@@ -84,11 +84,6 @@ namespace chaos {
                 
                 // execute an action in synchronous mode
                 chaos_data::CDataWrapper* executeCommandSync(chaos_data::CDataWrapper * action_pack);
-                
-                // execute an action in synchronous mode
-                chaos_data::CDataWrapper* executeCommandSync(const std::string& domain,
-                                                             const std::string& action,
-                                                             chaos_data::CDataWrapper * message_data);
             };
         }
     }
