@@ -20,6 +20,7 @@
 #include "../global.h"
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/dispatcher/DefaultCommandDispatcher.h>
+#include <chaos/common/configuration/GlobalConfiguration.h>
 
 using namespace chaos;
 using namespace chaos::common::data;
@@ -100,7 +101,7 @@ void DefaultCommandDispatcher::registerAction(DeclareAction *declareActionClass)
         
         if(!das_map.count(domainName)){
             boost::shared_ptr<DomainActionsScheduler> das(new DomainActionsScheduler(getDomainActionsFromName(domainName)));
-            das->init(1);
+            das->init(GlobalConfiguration::getInstance()->getConfiguration()->getUInt32Value(InitOption::OPT_RPC_DOMAIN_QUEUE_THREAD));
             DEBUG_CODE(LDEF_CMD_DISPTC_DBG_ << "Initialized actions scheduler for domain:" << domainName;)
             chaos::common::thread::UpgradeReadToWriteLock uw_lock(ur_lock);
             //add the domain scheduler to map

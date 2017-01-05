@@ -25,8 +25,8 @@
 using namespace chaos;
 using namespace boost;
 
-DomainActions::DomainActions(const string & _domain_name):domainName(_domain_name) {
-}
+DomainActions::DomainActions(const string & _domain_name):
+domainName(_domain_name) {}
 
 DomainActions::~DomainActions() {    
     //the pointer into the map need to be deleted
