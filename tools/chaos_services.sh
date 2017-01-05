@@ -9,7 +9,7 @@ if [ -z "$CHAOS_TOOLS" ];then
 fi
 source $scriptdir/common_util.sh
 
-CDS_EXEC=ChaosDataService
+CDS_EXEC=ChaosMetadataService
 CDS_CONF=cds.cfg
 MDS_EXEC=ChaosMetadataService
 UI_EXEC=CUIserver
@@ -87,7 +87,7 @@ start_ui(){
     port=8081
     info_mesg "starting UI Server on port " "$port"
     check_proc_then_kill "$UI_EXEC"
-    run_proc "$CHAOS_PREFIX/bin/$UI_EXEC --direct-io-priority-server-port 1690 --direct-io-service-server-port 30200 --server_port $port --log-on-file --log-file $CHAOS_PREFIX/log/$UI_EXEC.log $CHAOS_OVERALL_OPT --log-level debug > $CHAOS_PREFIX/log/$UI_EXEC.std.out 2>&1 &" "$UI_EXEC"
+    run_proc "$CHAOS_PREFIX/bin/$UI_EXEC --server_port $port --log-on-file --log-file $CHAOS_PREFIX/log/$UI_EXEC.log $CHAOS_OVERALL_OPT --log-level debug > $CHAOS_PREFIX/log/$UI_EXEC.std.out 2>&1 &" "$UI_EXEC"
 }
 start_wan(){
     port=8082

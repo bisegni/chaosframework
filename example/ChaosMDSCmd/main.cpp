@@ -106,7 +106,7 @@ int initialize_from_old_mds(std::string conf){
     //! rest ALL
   //  std::cout<<"json:"<<data.getJSONString()<<std::endl;
     std::auto_ptr<CMultiTypeDataArrayWrapper> data_servers(mdsconf.getVectorValue("data_servers"));
-    if(data_servers.get()){
+  /*  if(data_servers.get()){
          for(int cnt=0;cnt<data_servers->size();cnt++){
              std::basic_string<char>::iterator  pnt;
              int chan=0;
@@ -129,7 +129,7 @@ int initialize_from_old_mds(std::string conf){
 
         }
     }
-
+*/
     CMultiTypeDataArrayWrapper* us=mdsconf.getVectorValue("us");
     if(us){
         for(int cnt=0;(us!=NULL)&&(cnt<us->size());cnt++){
