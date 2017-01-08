@@ -171,20 +171,22 @@ namespace chaos {
 				 All the CDataWrapper is sent as pack for the device attributes values, no check is done
 				 \param attributesValues the container for the values of some dataset attributes
 				 */
-				int setAttributeValue(common::data::CDataWrapper& attributesValues, bool noWait = false, int32_t millisec_to_wait = 1000);
+				int setAttributeValue(common::data::CDataWrapper& attributesValues,
+                                      bool noWait = false,
+                                      int32_t millisec_to_wait = 1000);
 				
 				//!Set the device thread schedule delay
 				/*!
 				 Set the delay between a schedule and the next
 				 */
-				int setScheduleDelay(uint64_t scheduledDealy, int32_t millisec_to_wait = 1000);
+				int setScheduleDelay(uint64_t scheduledDealy,
+                                     int32_t millisec_to_wait = 1000);
 				
 				/*!
 				 \brief send a message to a custom action
 				 */
 				void sendCustomMessage(const std::string& action_name,
-                                       common::data::CDataWrapper* const,
-                                       bool queued = true);
+                                       common::data::CDataWrapper* const);
 				
 				/*!
 				 \brief send a request to a custom action
@@ -192,9 +194,7 @@ namespace chaos {
 				int sendCustomRequest(const std::string& action_name,
                                       common::data::CDataWrapper* const,
                                       common::data::CDataWrapper** result_data,
-                                      uint32_t millisec_to_wait = 1000,
-                                      bool async = false,
-                                      bool queued = true);
+                                      uint32_t millisec_to_wait = 1000);
                 
                 /*!
                  send a request to a custom action

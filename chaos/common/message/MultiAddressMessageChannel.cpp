@@ -118,8 +118,7 @@ bool MultiAddressMessageChannel::serviceOnlineCheck(void *service_ptr) {
     int retry = 3;
     MMCFeederService *service = static_cast<MMCFeederService*>(service_ptr);
     std::auto_ptr<MessageRequestFuture> request = MessageChannel::echoTest(service->ip_port,
-                                                                           NULL,
-                                                                           true);
+                                                                           NULL);
     while(--retry>0) {
         if(request->wait(500)) {
             retry = 0;
@@ -151,8 +150,7 @@ void MultiAddressMessageChannel::sendMessage(const std::string& action_domain,
         MessageChannel::sendMessage(service->ip_port,
                                     action_domain,
                                     action_name,
-                                    message_pack,
-                                    on_this_thread);
+                                    message_pack);
         DEBUG_CODE(MAMC_DBG << "Sent message to:" << service->ip_port;)
     }
     

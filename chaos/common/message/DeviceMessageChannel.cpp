@@ -336,27 +336,21 @@ int DeviceMessageChannel::setScheduleDelay(uint64_t scheduledDealy,
 
 //------------------------------------
 void DeviceMessageChannel::sendCustomMessage(const std::string& action_name,
-                                             CDataWrapper* const message_data,
-                                             bool queued) {
+                                             CDataWrapper* const message_data) {
     sendMessage(device_network_address->node_id,
                 action_name,
-                message_data,
-                !queued);
+                message_data);
 }
 
 //------------------------------------
 int DeviceMessageChannel::sendCustomRequest(const std::string& action_name,
                                             CDataWrapper* const message_data,
                                             CDataWrapper** result_data,
-                                            uint32_t millisec_to_wait,
-                                            bool async,
-                                            bool queued) {
+                                            uint32_t millisec_to_wait) {
     auto_ptr<CDataWrapper> result(sendRequest(device_network_address->node_id,
                                               action_name,
                                               message_data,
-                                              millisec_to_wait,
-                                              async,
-                                              !queued));
+                                              millisec_to_wait));
     if(getLastErrorCode() == ErrorCode::EC_NO_ERROR) {
         *result_data = result.release();
     }

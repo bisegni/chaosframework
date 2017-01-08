@@ -268,8 +268,7 @@ namespace chaos {
 				 \param onThisThread if true the message is forwarded in the same thread of the caller
 				 */
 				bool submitMessage(const string& serverAndPort,
-								   chaos::common::data::CDataWrapper *message,
-								   bool onThisThread=false);
+								   chaos::common::data::CDataWrapper *message);
 				
 				//!message request
 				/*!
@@ -281,8 +280,7 @@ namespace chaos {
 				bool submiteRequest(const string& serverAndPort,
                                     chaos::common::data::CDataWrapper *request,
                                     std::string sender_node_id,
-                                    uint32_t sender_request_id,
-									bool onThisThread=false);
+                                    uint32_t sender_request_id);
 				
                 
                 //!send interparocess message
