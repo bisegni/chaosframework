@@ -183,8 +183,7 @@ SET(common_lib_src ${common_lib_src}
         message/MultiAddressMessageChannel.cpp
         message/MultiAddressMessageRequestFuture.cpp
         message/PerformanceNodeChannel.cpp
-        message/MessageRequestDomain.cpp
-        message/MessageRequestDomain.h)
+        message/MessageRequestDomain.cpp)
 
 SET(common_lib_src ${common_lib_src}
         network/NetworkBroker.cpp
