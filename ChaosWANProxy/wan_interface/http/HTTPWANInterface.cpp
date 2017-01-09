@@ -230,6 +230,8 @@ int HTTPWANInterface::process(struct mg_connection *connection) {
 					 boost::algorithm::token_compress_on);
 
 	if(method == "GET"){
+		HTTWAN_INTERFACE_DBG_ <<"GET url:"<<url<<" api:"<<api_uri<<"content:"<<connection->content<<" query:"<<connection->query_string;
+
 		 if((err = handler->handleCall(1,api_token_list,json_request,
 		                                          response.getHeader(),
 		                                          json_response))) {
