@@ -586,13 +586,17 @@ int DeviceController::flushCommandStateHistory() {
 }
 
 //---------------------------------------------------------------------------------------------------
-int DeviceController::sendCustomRequest(const char * const action, common::data::CDataWrapper * const param, common::data::CDataWrapper**const result, bool async, bool queued) {
-    return deviceChannel->sendCustomRequest(action, param, result, millisecToWait, async, queued);
+int DeviceController::sendCustomRequest(const std::string& action,
+                                        common::data::CDataWrapper * const param,
+                                        common::data::CDataWrapper**const result) {
+    return deviceChannel->sendCustomRequest(action, param, result, millisecToWait);
 }
 
 //---------------------------------------------------------------------------------------------------
-void DeviceController::sendCustomMessage(const char * const action, common::data::CDataWrapper * const param, bool queued) {
-    deviceChannel->sendCustomMessage(action, param, !queued);
+void DeviceController::sendCustomMessage(const std::string& action,
+                                         common::data::CDataWrapper * const param) {
+    deviceChannel->sendCustomMessage(action,
+                                     param);
 }
 
 //---------------------------------------------------------------------------------------------------

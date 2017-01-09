@@ -64,6 +64,7 @@ void BatchCommandParallelSandbox::start() throw(CException) {
 
 void BatchCommandParallelSandbox::stop() throw(CException) {
     thread_run = false;
+    sem_waith_for_job.unlock();
     thread_group.join_all();
 }
 
