@@ -26,7 +26,7 @@
 #include <boost/algorithm/string.hpp>
 
 using namespace chaos::common::data;
-using namespace chaos::wan_proxy::api::producer;
+using namespace chaos::wan_proxy::api::consumer;
 
 #define PRODUCER_INSERT_ERR(where, err, msg)\
 MAKE_API_ERR(where, "producer_insert_err", err, "producer_insert_err_msg", msg)

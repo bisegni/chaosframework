@@ -25,7 +25,7 @@
 namespace chaos {
 	namespace wan_proxy {
 		namespace api {
-			namespace producer {
+			namespace consumer {
 				
 				class ConsumerMDSApi:
 				public AbstractApi {

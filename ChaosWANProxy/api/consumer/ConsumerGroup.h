@@ -25,7 +25,7 @@
 namespace chaos {
 	namespace wan_proxy {
 		namespace api {
-			namespace producer {
+			namespace consumer {
 				
 				//! group for all producer api
 				class ConsumerGroup:

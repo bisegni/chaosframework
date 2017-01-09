@@ -20,6 +20,7 @@
 #include "DefaultWANInterfaceHandler.h"
 
 #include "api/producer/ProducerGroup.h"
+#include "api/consumer/ConsumerGroup.h"
 
 using namespace chaos::wan_proxy;
 
@@ -35,4 +36,5 @@ DefaultWANInterfaceHandler::~DefaultWANInterfaceHandler() {
 void DefaultWANInterfaceHandler::registerGroup() {
 	//add group to the version 1
 	addGroupToVersion<api::producer::ProducerGroup>(1);
+	addGroupToVersion<api::consumer::ConsumerGroup>(1);
 }

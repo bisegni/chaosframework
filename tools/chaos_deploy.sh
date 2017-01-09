@@ -17,9 +17,9 @@ DEPLOY_FILE=$TMPDIR/deployTargets
 rm -rf $TMPDIR
 mkdir -p $TMPDIR
 Usage(){
-	echo -n "$0 [-r <cu|mds|cds|web|all>] [-i <source dir>] -c <configuration>\n-r <cu|mds|cds|web|all>: restart \n-c <configuration>:configuration\n-i <source dir>: distribution dir"
+	echo -e "$0 [-r <cu|mds|cds|web|all>] [-i <source dir>] [-u] -c <configuration>\n-r <cu|mds|cds|web|all>: restart\n-u: update MDS configuration\n-c <configuration>:configuration\n-i <source dir>: distribution dir\n"
 }
-while getopts r:hc:i: opt; do
+while getopts r:hc:i:u opt; do
  case $opt in
 	r) 
 	    restart=$OPTARG
@@ -27,6 +27,9 @@ while getopts r:hc:i: opt; do
 	i) 
 	    sourcedir=$OPTARG
 	    ;;
+	u)
+	    updateconfig="true"
+	;;
 	c) 
 	    conf=$OPTARG
 	    ;;
@@ -94,6 +97,25 @@ else
     #  popd > /dev/null
     deployServer $MDS_SERVER
 
+fi
+
+if [ -n "$updateconfig" ];then
+
+	if [ -z "$CHAOS_PREFIX" ];then
+		error_mesg "you must specify a CHAOS_PREFIX or '-i' to update MDS"
+		exit 1	
+	fi	
+	info_mesg "updating configuration of $MDS_SERVER with " "$cudir/MDSConfig.txt"
+	if [ ! -f  $cudir/MDSConfig.txt ];then
+		error_mesg "cannot find configuration " "$cu_dir/MDSConfig.txt"
+		exit 1
+	fi	
+	if $CHAOS_PREFIX/bin/ChaosMDSCmd --mds-conf $cudir/MDSConfig.txt --metadata-server $MDS_SERVER:5000 >& /dev/null;then
+		ok_mesg "configuration set $cudir/MDSConfig.txt"
+	else
+		nok_mesg "configuration set $cudir/MDSConfig.txt"
+		exit 1
+	fi	
 fi
 
 ## WEBUI ##

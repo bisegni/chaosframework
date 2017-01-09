@@ -22,10 +22,10 @@
 #include "ConsumerMDSApi.h"
 
 
-using namespace chaos::wan_proxy::api::producer;
+using namespace chaos::wan_proxy::api::consumer;
 
 ConsumerGroup::ConsumerGroup(persistence::AbstractPersistenceDriver *_persistence_driver):
-AbstractApiGroup("producer",
+AbstractApiGroup("consumer",
 				 _persistence_driver){
 	
 	//ad api to group

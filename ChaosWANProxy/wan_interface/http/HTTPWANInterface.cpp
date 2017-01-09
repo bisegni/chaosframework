@@ -228,6 +228,28 @@ int HTTPWANInterface::process(struct mg_connection *connection) {
 					 api_uri,
 					 boost::algorithm::is_any_of("/"),
 					 boost::algorithm::token_compress_on);
+
+	if(method == "GET"){
+		 if((err = handler->handleCall(1,api_token_list,json_request,
+		                                          response.getHeader(),
+		                                          json_response))) {
+		                HTTWAN_INTERFACE_ERR_ << "Error on api call :" << connection->uri;
+		                //return the error for the api call
+		                response.setCode(400);
+		                json_response["error"] = err;
+		                json_response["error_message"].append("Call Error");
+		            }else{
+		                //return the infromation of api call success
+		                response.setCode(200);
+		                json_response["error"] = 0;
+		            }
+		 response << json_writer.write(json_response);
+		 	flush_response(connection, &response);
+		     DEBUG_CODE(execution_time_end = TimingUtil::getTimeStampInMicrosends();)
+		     DEBUG_CODE(uint64_t duration = execution_time_end - execution_time_start;)
+		     DEBUG_CODE(HTTWAN_INTERFACE_DBG_ << "Execution time is:" << duration << " microseconds";)
+		 	return 1;//
+	}
 	//check if we havethe domain and api name in the uri and the content is json
 	if(api_token_list.size()>= 2 &&
 	   json) {
