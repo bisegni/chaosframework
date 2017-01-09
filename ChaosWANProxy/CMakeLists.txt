@@ -23,7 +23,11 @@ SET(wp_src ${wp_src}	api/AbstractApi.cpp
 						api/producer/ProducerInsertDatasetApi.cpp
                         api/producer/ProducerRegisterJsonApi.cpp
                         api/producer/ProducerInsertJsonApi.cpp
-						api/producer/ProducerGetLastDatasetApi.cpp)
+						api/producer/ProducerGetLastDatasetApi.cpp
+						api/consumer/ConsumerGroup.cpp
+						api/consumer/ConsumerCUApi.cpp
+						api/consumer/ConsumerMDSApi.cpp
+						)
 
 SET(wp_src ${wp_src}	persistence/AbstractPersistenceDriver.cpp
 						persistence/DefaultPersistenceDriver.cpp)

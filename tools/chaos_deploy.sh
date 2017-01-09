@@ -10,29 +10,63 @@ TMPDIR="/tmp/$USER/chaos_deploy"
 dest_prefix=chaos-distrib
 DEPLOY_FILE=$TMPDIR/deployTargets
 
-Usage(){
-    echo "$0 <deploy configuration>"
-}
 
-if [ ! -e "$1" ]; then
-    nok_mesg "You must specify a valid file for deployment"
-    exit 1
-fi
-if [ -z "$CHAOS_PREFIX" ];then
-    echo "## NO environment CHAOS_PREFIX defined"
-    exit 1
-fi
-source $1
+
+
 
 rm -rf $TMPDIR
 mkdir -p $TMPDIR
-cudir=`dirname $1`
+Usage(){
+	echo -n "$0 [-r <cu|mds|cds|web|all>] [-i <source dir>] -c <configuration>\n-r <cu|mds|cds|web|all>: restart \n-c <configuration>:configuration\n-i <source dir>: distribution dir"
+}
+while getopts r:hc:i: opt; do
+ case $opt in
+	r) 
+	    restart=$OPTARG
+	    ;;
+	i) 
+	    sourcedir=$OPTARG
+	    ;;
+	c) 
+	    conf=$OPTARG
+	    ;;
+	h) 
+		Usage
+	exit 0
+	;;
+	*)
+	Usage
+	exit 1
+	;;
+esac
+	
+done
+
+if [ ! -e "$conf" ]; then
+    nok_mesg "You must specify a valid configuration file"
+    exit 1
+fi
+
+cudir=`dirname $conf`
 cuconfig=`basename $cudir`
 
+if [ -z "$restart" ];then
+	if [ ! -d "$sourcedir" ];then
+		if [ -z "$CHAOS_PREFIX" ];then
+   			echo "## NO environment CHAOS_PREFIX nor '-i' defined"
+	   	 	exit 1
+		fi
+	else
+		export CHAOS_PREFIX=$sourcedir
+	fi
 
+	
+fi
+
+source $conf
 deployServer(){
     serv=$1
-    if ! grep "$serv" $DEPLOY_FILE;then
+    if ! grep "$serv" $DEPLOY_FILE >& /dev/null;then
 	echo "$serv" >> $DEPLOY_FILE
 	echo "* including $serv"
     else
@@ -128,6 +162,91 @@ for i in $CU_SERVERS;do
     deployServer $i	
 done
 
+start_stop_service(){
+    host=$1
+    type=$2
+    op=$3
+## new 
+	if ssh chaos@$host "sudo service chaos-$type $op" ;then
+	    ok_mesg "[$host] chaos-$type $op"
+	else
+	    nok_mesg "[$host] chaos-$type $op"
+	fi  
+
+
+    # if ssh chaos@$host "test -f /etc/init/chaos-service.conf";then
+    # 	if ssh chaos@$host "sudo service chaos-service $op NODE=$type" ;then
+    # 	    ok_mesg "[$host] chaos-service $op NODE=$type"
+    # 	else
+    # 	    nok_mesg "[$host] chaos-service $op NODE=$type"
+    # 	fi
+    # else
+    # 	if ssh chaos@$host "sudo service chaos-$type $op" ;then
+    # 	    ok_mesg "[$host] chaos-$type $op"
+    # 	else
+    # 	    nok_mesg "[$host] chaos-$type $op"
+    # 	fi  
+	
+#    fi
+}
+
+
+net_start_stop(){
+    type=$1
+    op=$2
+    if [ "$type" == "cu" ];then
+	for c in $CU_SERVERS;do
+    		start_stop_service "$c" $type $op
+	done
+	fi
+
+	
+	if [ "$type" == "webui" ];then
+	for c in $WEBUI_SERVER;do
+    		start_stop_service "$c" $type $op
+   
+	done
+    fi
+
+	if [ "$type" == "wan" ];then
+	for c in $WAN_SERVER;do
+    		start_stop_service "$c" $type $op
+   
+	done
+    fi
+
+	if [ "$type" == "mds" ];then
+	for c in $MDS_SERVER;do
+    		start_stop_service "$c" $type $op
+   
+	done
+    fi
+
+	if [ "$type" == "cds" ];then
+	for c in $CDS_SERVER;do
+    		start_stop_service "$c" $type $op
+   
+	done
+    fi
+}
+
+if [ -n "$restart" ];then
+	if [ "$restart" == "all" ];then
+		restart="mds cds webui wan cu" 
+	fi
+	k=0
+	for i in $restart;do
+		info_mesg "stopping all " "$i"
+		net_start_stop $i stop
+	done
+	for i in $restart;do
+		info_mesg "starting all " "$i"
+		net_start_stop $i start
+	done
+
+	exit 0
+	
+fi
 
 name=`basename $CHAOS_PREFIX`
 info_mesg "generating tarball " "$name.tgz"
@@ -162,10 +281,8 @@ info_mesg "copy on the destination servers: " "$servers"
 
 for host in `cat $DEPLOY_FILE`;do
     info_mesg "removing chaos-* " "$host"
-    if ssh chaos@$host "rm -rf chaos-*;rm $name.tgz;echo \"$ver\" > README.install"; then
+    if ssh chaos@$host "rm -rf chaos-*;echo \"$ver\" > README.install"; then
 	ok_mesg "removing chaos-* in $host"
-    else
-	nok_mesg "removing chaos-* in $host"
     fi
 
 done  
@@ -180,43 +297,13 @@ fi
 
 md5=`md5sum $TMPDIR/$name.tgz | cut -d ' ' -f 1`
 
-start_stop_service(){
-    host=$1
-    type=$2
-    op=$3
-## new 
-	if ssh chaos@$host "sudo service chaos-$type $op" ;then
-	    ok_mesg "[$host] chaos-$type $op"
-	else
-	    nok_mesg "[$host] chaos-$type $op"
-	fi  
-
-
-    # if ssh chaos@$host "test -f /etc/init/chaos-service.conf";then
-    # 	if ssh chaos@$host "sudo service chaos-service $op NODE=$type" ;then
-    # 	    ok_mesg "[$host] chaos-service $op NODE=$type"
-    # 	else
-    # 	    nok_mesg "[$host] chaos-service $op NODE=$type"
-    # 	fi
-    # else
-    # 	if ssh chaos@$host "sudo service chaos-$type $op" ;then
-    # 	    ok_mesg "[$host] chaos-$type $op"
-    # 	else
-    # 	    nok_mesg "[$host] chaos-$type $op"
-    # 	fi  
-	
-#    fi
-}
-
 extract(){
     host=$1
 
     if ssh chaos@$host "test -f $name.tgz"; then
 	ver="installed "`date`" MD5:$md5"
-	if ssh chaos@$host "tar xfz $name.tgz;ln -sf $name $dest_prefix;rm $name.tgz;echo \"$ver\" > README.install"; then
+	if ssh chaos@$host "tar xfz $name.tgz;ln -sf $name $dest_prefix;echo \"$ver\" > README.install;rm $name.tgz"; then
 	    ok_mesg "extracting $name in $host"
-	else
-	    nok_mesg "extracting $name in $host"
 	fi
     fi
 
@@ -238,7 +325,7 @@ deploy_install(){
     if ssh chaos@$host "cd $dest_prefix;ln -sf \$PWD/tools/config/lnf/$cuconfig/$type.cfg etc/";then
 	ok_mesg "$type configuration $dest_prefix/tools/config/lnf/$cuconfig/$type.cfg"
     else
-	ok_mesg "$type configuration $dest_prefix/tools/config/lnf/$cuconfig/$type.cfg"
+	nok_mesg "$type configuration $dest_prefix/tools/config/lnf/$cuconfig/$type.cfg"
     fi    
     
 
