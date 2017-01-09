@@ -1029,7 +1029,7 @@ int DeviceController::createNewSnapshot(const std::string& snapshot_tag,
     std::vector<std::string> device_id_in_snap = other_snapped_device;
     device_id_in_snap.push_back(device_id);
     return mdsChannel->createNewSnapshot(snapshot_tag,
-                                         other_snapped_device);
+    		device_id_in_snap);
 }
 
 int DeviceController::deleteSnapshot(const std::string& snapshot_tag) {

@@ -177,7 +177,7 @@ IF (NOT CACHE_DIR)
     ENDIF()	   
 
     execute_process(
-      COMMAND ln -sf ./localhost/cds.cfg ./cds.cfg
+      COMMAND ln -sf ./localhost/mds.cfg ./cds.cfg
       WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/etc/
       )
     execute_process(
@@ -215,7 +215,7 @@ IF (NOT CACHE_DIR)
       )
 
     execute_process(
-      COMMAND ln -sf ./ChaosDataService ./cds
+      COMMAND ln -sf ./ChaosMetadataService ./cds
       WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin
       )
 
