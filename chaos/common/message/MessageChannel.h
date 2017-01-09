@@ -122,6 +122,11 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
                  */
                 NetworkBroker *getBroker();
                 
+                //!promises handler for request results introspection
+                /*!
+                 Repsonse data is received befor it is sent to the metadata server
+                 */
+                virtual void requestPromisesHandler(const FuturePromiseData& response_data);
             public:
                 //! return last sendxxx error code
                 virtual int32_t getLastErrorCode();
@@ -147,8 +152,10 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
                  \param message_pack the data to send, the pointer is not deallocated and i scopied into the pack
                  \param on_this_thread notify when the message need to be sent syncronously or in async  way
                  */
-                void sendMessage(const std::string &remote_host, const std::string &node_id,
-                                 const std::string &action_name, chaos::common::data::CDataWrapper *message_pack);
+                void sendMessage(const std::string &remote_host,
+                                 const std::string &node_id,
+                                 const std::string &action_name,
+                                 chaos::common::data::CDataWrapper *message_pack);
                 
                 
                 //!send an rpc request to a remote node

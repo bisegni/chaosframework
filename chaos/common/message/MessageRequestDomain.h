@@ -49,11 +49,21 @@ namespace chaos {
             
             typedef boost::promise<FuturePromiseData> MessageFuturePromise;
             
-            typedef map<chaos::common::utility::atomic_int_type,
-            boost::shared_ptr<MessageFuturePromise> > MapPromises;
+            typedef boost::function<void(const FuturePromiseData&)> PromisesHandler;
+            
+            class ChaosMessagePromises:
+            public boost::promise<FuturePromiseData> {
+                PromisesHandler promises_handler;
+            public:
+                ChaosMessagePromises(PromisesHandler _promises_handler = NULL);
+                void set_value(const FuturePromiseData& received_data);
+            };
             
             typedef map<chaos::common::utility::atomic_int_type,
-            boost::shared_ptr<MessageFuturePromise> >::iterator MapPromisesIterator;
+            boost::shared_ptr<ChaosMessagePromises> > MapPromises;
+            
+            typedef map<chaos::common::utility::atomic_int_type,
+            boost::shared_ptr<ChaosMessagePromises> >::iterator MapPromisesIterator;
             
             typedef boost::unique_future< FuturePromiseData > MessageUniqueFuture;
             
@@ -87,7 +97,8 @@ namespace chaos {
                 const std::string& getDomainID();
                 
                 std::auto_ptr<MessageRequestFuture> getNewRequestMessageFuture(chaos::common::data::CDataWrapper& new_request_datapack,
-                                                                               uint32_t& new_request_id);
+                                                                               uint32_t& new_request_id,
+                                                                               PromisesHandler promises_handler = NULL);
             };
         }
     }

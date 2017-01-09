@@ -375,3 +375,10 @@ std::auto_ptr<MessageRequestFuture> DeviceMessageChannel::checkRPCInformation() 
 std::auto_ptr<MessageRequestFuture> DeviceMessageChannel::echoTest(chaos::common::data::CDataWrapper *echo_data) {
     return NodeMessageChannel::echoTest(echo_data);
 }
+
+void DeviceMessageChannel::requestPromisesHandler(const FuturePromiseData& response_data) {
+    if(!response_data.get()) return;
+    if(response_data->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE)) {
+        setOnline(!CHAOS_IS_RPC_SERVER_OFFLINE(response_data->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE)));
+    }
+}

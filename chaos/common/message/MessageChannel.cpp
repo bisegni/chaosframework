@@ -128,6 +128,8 @@ CDataWrapper* MessageChannel::sendRequest(const std::string& remote_host,
     
 }
 
+void MessageChannel::requestPromisesHandler(const FuturePromiseData& response_data) {}
+
 //!send an rpc request to a remote node
 /*!
  send a syncronous request and can wait for a determinated number of milliseconds the answer. If it has not
@@ -154,7 +156,9 @@ std::auto_ptr<MessageRequestFuture> MessageChannel::sendRequestWithFuture(const 
     data_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, action_name);
     
     //complete datapack for request and get the unique future
-    result = message_request_domain->getNewRequestMessageFuture(*data_pack, new_request_id);
+    result = message_request_domain->getNewRequestMessageFuture(*data_pack,
+                                                                new_request_id,
+                                                                boost::bind(&MessageChannel::requestPromisesHandler, this, _1));
 
     //if(async) return result;
     //submit the request

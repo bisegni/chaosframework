@@ -31,6 +31,8 @@
 #include <chaos/common/bson/bson.h>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/c_local_time_adjustor.hpp>
+#include <boost/random/random_device.hpp>
+#include <boost/random/uniform_int_distribution.hpp>
 
 using namespace std;
 using namespace chaos;
@@ -64,6 +66,27 @@ namespace chaos_batch = chaos::common::batch_command;
 //--------------rt control unit option--------------------------------------------------
 #define OPT_RT_ATTRIBUTE_VALUE							"rt-attr-val"
 
+const std::string rand_chars("abcdefghijklmnopqrstuvwxyz"
+                             "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                             "1234567890"
+                             "!@#$%^&*()"
+                             "`~-_=+[{]{\\|;:'\",<.>/? "
+                             "abcdefghijklmnopqrstuvwxyz"
+                             "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                             "1234567890"
+                             "!@#$%^&*()"
+                             "`~-_=+[{]{\\|;:'\",<.>/? "
+                             "abcdefghijklmnopqrstuvwxyz"
+                             "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                             "1234567890"
+                             "!@#$%^&*()"
+                             "`~-_=+[{]{\\|;:'\",<.>/? "
+                             "abcdefghijklmnopqrstuvwxyz"
+                             "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                             "1234567890"
+                             "!@#$%^&*()"
+                             "`~-_=+[{]{\\|;:'\",<.>/? ");
+
 inline ptime utcToLocalPTime(ptime utcPTime){
     c_local_adjustor<ptime> utcToLocalAdjustor;
     ptime t11 = utcToLocalAdjustor.utc_to_local(utcPTime);
@@ -88,9 +111,9 @@ void print_state(CUStateKey::ControlUnitState state) {
         case CUStateKey::RECOVERABLE_ERROR:
             std::cout << "Recovable Error:"<<state;
             break;
-           case CUStateKey::FATAL_ERROR:
+        case CUStateKey::FATAL_ERROR:
             std::cout << "Fatal Error:"<<state;
-            break;  
+            break;
         default:
             std::cout << "Uknown:"<<state;
             
@@ -188,10 +211,10 @@ int main (int argc, char* argv[] )
         DeviceController *controller = HLDataApi::getInstance()->getControllerForDeviceID(deviceID, timeout);
         if(!controller) throw CException(4, "Error allcoating decive controller", "device controller creation");
         
-        
-       /* CDataWrapper message_echo;
-        message_echo.addStringValue("echo_message", "echo_test_message");
         for(int idx = 0; idx < 8000000; idx++) {
+            CDataWrapper message_echo;
+            message_echo.addStringValue("echo_message", CHAOS_FORMAT("echo_test_message %1%/n%2%",%idx%rand_chars));
+            
             CDataWrapper *result = NULL;
             try{
                 if(controller->echoTest(&message_echo, &result) == 0) {
@@ -204,17 +227,17 @@ int main (int argc, char* argv[] )
                 std::cout << idx << " - " <<result->getJSONString() << std::endl;
                 delete(result);
             }
-            usleep(1000);
-        }*/
+            usleep(100);
+        }
         
         controller->fetchCurrentDeviceValue();
-
+        
         // use the RPC version for the moment
         err = controller->getType(control_unit_type);
         if(err == ErrorCode::EC_TIMEOUT) {
             control_unit_type="unknown";
         }
-      //  std::cout << "type:"<<control_unit_type<<std::endl;
+        //  std::cout << "type:"<<control_unit_type<<std::endl;
         if((control_unit_type =="rtcu") || (control_unit_type =="sccu")){
             err = controller->getState(deviceState);
             if(err == ErrorCode::EC_TIMEOUT && op!=11) throw CException(5, "Time out on connection", "Get state for device");
@@ -222,14 +245,14 @@ int main (int argc, char* argv[] )
             //print_state(deviceState);
         } else {
             std::cout << "State-less device, type:"<<control_unit_type<<std::endl;
-           // deviceState = CUStateKey::START;
+            // deviceState = CUStateKey::START;
         }
         
         if(printState) {
             uint64_t err;
             //err = controller->getState(deviceState);
             err = controller->getState(deviceState);
-
+            
             if(err == 0) throw CException(5, "Error retrving the state", "Get state for device");
             std::cout << "Current state ["<<err<<"]:";
             print_state(deviceState);
@@ -250,7 +273,7 @@ int main (int argc, char* argv[] )
             if(controller->getCurrentDatasetForDomain((DatasetDomain)print_domain_current_value) != NULL) {
                 std::cout << controller->getCurrentDatasetForDomain((DatasetDomain)print_domain_current_value)->getJSONString() <<std::endl;
             }
-           
+            
         }
         
         switch (op) {
@@ -263,11 +286,11 @@ int main (int argc, char* argv[] )
                 if(err == ErrorCode::EC_TIMEOUT) throw CException(6, "Time out on connection", "Set device to init state");
                 
                 
-              /*  if((deviceState == CUStateKey::START)||(deviceState == CUStateKey::STOP)) {
-                    print_state(deviceState);
-                    throw CException(deviceState, "%% The device is in start or stop state.", "Setting device to init state");
-                    
-                }*/
+                /*  if((deviceState == CUStateKey::START)||(deviceState == CUStateKey::STOP)) {
+                 print_state(deviceState);
+                 throw CException(deviceState, "%% The device is in start or stop state.", "Setting device to init state");
+                 
+                 }*/
                 break;
             case 2:
                 /*
@@ -277,9 +300,9 @@ int main (int argc, char* argv[] )
                 err = controller->startDevice();
                 if(err == ErrorCode::EC_TIMEOUT) throw CException(2, "Time out on connection", "Set device to start state");
                 /*if(deviceState == CUStateKey::DEINIT ) {
-                    print_state(deviceState);
-                    throw CException(deviceState, "%% The device is in deinit state, cannot change state", "Set device to start state");
-                }*/
+                 print_state(deviceState);
+                 throw CException(deviceState, "%% The device is in deinit state, cannot change state", "Set device to start state");
+                 }*/
                 break;
             case 3:
                 /*
@@ -289,10 +312,10 @@ int main (int argc, char* argv[] )
                 
                 err = controller->stopDevice();
                 if(err == ErrorCode::EC_TIMEOUT) throw CException(2, "Time out on connection", "Set device to stop state");
-               /* if((deviceState == CUStateKey::INIT)||(deviceState == CUStateKey::DEINIT)) {
-                    print_state(deviceState);
-                    throw CException(deviceState, "%% The device is not in the start/stop", "Set device to stop state");
-                }*/
+                /* if((deviceState == CUStateKey::INIT)||(deviceState == CUStateKey::DEINIT)) {
+                 print_state(deviceState);
+                 throw CException(deviceState, "%% The device is not in the start/stop", "Set device to stop state");
+                 }*/
                 break;
             case 4:
                 /*
@@ -303,10 +326,10 @@ int main (int argc, char* argv[] )
                 if(err == ErrorCode::EC_TIMEOUT){
                     throw CException(2, "Time out on connection", "Set device to deinit state");
                 }
-               /* if(deviceState == CUStateKey::START){
-                    print_state(deviceState);
-                    throw CException(deviceState, "%% Device is in start cannot change state", "Set device to deinit");
-                }*/
+                /* if(deviceState == CUStateKey::START){
+                 print_state(deviceState);
+                 throw CException(deviceState, "%% Device is in start cannot change state", "Set device to deinit");
+                 }*/
                 
                 break;
             case 5:
@@ -316,10 +339,10 @@ int main (int argc, char* argv[] )
                 
                 err = controller->setScheduleDelay(scheduleTime);
                 if(err == ErrorCode::EC_TIMEOUT) throw CException(2, "Time out on connection", "Set device to deinit state");
-               /* if(deviceState == CUStateKey::DEINIT) {
-                    print_state(deviceState);
-                    throw CException(29, "%% Device can't be in deinit state", "Set device schedule time");
-                }*/
+                /* if(deviceState == CUStateKey::DEINIT) {
+                 print_state(deviceState);
+                 throw CException(29, "%% Device can't be in deinit state", "Set device schedule time");
+                 }*/
                 break;
             case 6: {
                 //check sc

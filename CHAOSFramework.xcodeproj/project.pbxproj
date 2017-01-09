@@ -603,8 +603,6 @@
 		3296032B1876B45000CDCADA /* BatchCommandTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 3296031D1876B45000CDCADA /* BatchCommandTypes.h */; };
 		32963A211AC08F7200FA72FA /* MultiAddressMessageChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32963A1F1AC08F7200FA72FA /* MultiAddressMessageChannel.cpp */; };
 		32963A221AC08F7200FA72FA /* MultiAddressMessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32963A201AC08F7200FA72FA /* MultiAddressMessageChannel.h */; };
-		3297F22614D96F31004FFE4F /* DeviceMessageChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3297F22514D96F31004FFE4F /* DeviceMessageChannel.cpp */; };
-		3297F22914D96F43004FFE4F /* DeviceMessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3297F22814D96F43004FFE4F /* DeviceMessageChannel.h */; };
 		3297F22B14D96F8D004FFE4F /* NodeMessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3297F22A14D96F8D004FFE4F /* NodeMessageChannel.h */; };
 		32983F7517896FE1004599A3 /* ObjectInstancer.h in Headers */ = {isa = PBXBuildFile; fileRef = 32983F7417896FE1004599A3 /* ObjectInstancer.h */; };
 		3298487D1736814700C158DF /* ChannelValueAccessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3298487B1736814700C158DF /* ChannelValueAccessor.cpp */; };
@@ -816,6 +814,8 @@
 		32B5C9591C6B97590021159C /* ErrorLoggingChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B5C9571C6B97590021159C /* ErrorLoggingChannel.h */; };
 		32B6BD341E1E88F800A9F86C /* SharedCommandDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B6BD321E1E88F800A9F86C /* SharedCommandDispatcher.cpp */; };
 		32B6BD351E1E88F800A9F86C /* SharedCommandDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B6BD331E1E88F800A9F86C /* SharedCommandDispatcher.h */; };
+		32B6BD3C1E23CD8900A9F86C /* DeviceMessageChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B6BD3A1E23CD8900A9F86C /* DeviceMessageChannel.cpp */; };
+		32B6BD3D1E23CD8900A9F86C /* DeviceMessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B6BD3B1E23CD8900A9F86C /* DeviceMessageChannel.h */; };
 		32B73E9618D9A74600F0B187 /* DirectIOPerformanceClientChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B73E9418D9A74600F0B187 /* DirectIOPerformanceClientChannel.cpp */; };
 		32B73E9718D9A74600F0B187 /* DirectIOPerformanceClientChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B73E9518D9A74600F0B187 /* DirectIOPerformanceClientChannel.h */; };
 		32B73E9A18D9A8FF00F0B187 /* DirectIOPerformanceServerChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B73E9818D9A8FF00F0B187 /* DirectIOPerformanceServerChannel.cpp */; };
@@ -1865,8 +1865,6 @@
 		3296031D1876B45000CDCADA /* BatchCommandTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BatchCommandTypes.h; sourceTree = "<group>"; };
 		32963A1F1AC08F7200FA72FA /* MultiAddressMessageChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MultiAddressMessageChannel.cpp; sourceTree = "<group>"; };
 		32963A201AC08F7200FA72FA /* MultiAddressMessageChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiAddressMessageChannel.h; sourceTree = "<group>"; };
-		3297F22514D96F31004FFE4F /* DeviceMessageChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = DeviceMessageChannel.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
-		3297F22814D96F43004FFE4F /* DeviceMessageChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = DeviceMessageChannel.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		3297F22A14D96F8D004FFE4F /* NodeMessageChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeMessageChannel.h; sourceTree = "<group>"; };
 		32983F7417896FE1004599A3 /* ObjectInstancer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectInstancer.h; sourceTree = "<group>"; };
 		3298487B1736814700C158DF /* ChannelValueAccessor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChannelValueAccessor.cpp; sourceTree = "<group>"; };
@@ -2134,6 +2132,8 @@
 		32B5C9571C6B97590021159C /* ErrorLoggingChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ErrorLoggingChannel.h; sourceTree = "<group>"; };
 		32B6BD321E1E88F800A9F86C /* SharedCommandDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedCommandDispatcher.cpp; sourceTree = "<group>"; };
 		32B6BD331E1E88F800A9F86C /* SharedCommandDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedCommandDispatcher.h; sourceTree = "<group>"; };
+		32B6BD3A1E23CD8900A9F86C /* DeviceMessageChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceMessageChannel.cpp; sourceTree = "<group>"; };
+		32B6BD3B1E23CD8900A9F86C /* DeviceMessageChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceMessageChannel.h; sourceTree = "<group>"; };
 		32B73E9418D9A74600F0B187 /* DirectIOPerformanceClientChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOPerformanceClientChannel.cpp; sourceTree = "<group>"; };
 		32B73E9518D9A74600F0B187 /* DirectIOPerformanceClientChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOPerformanceClientChannel.h; sourceTree = "<group>"; };
 		32B73E9818D9A8FF00F0B187 /* DirectIOPerformanceServerChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOPerformanceServerChannel.cpp; sourceTree = "<group>"; };
@@ -4363,8 +4363,8 @@
 				323386B91AD3D78E008863DC /* MultiAddressMessageRequestFuture.h */,
 				32A809D714D82E28000F2DF7 /* MDSMessageChannel.cpp */,
 				32A809D514D82E19000F2DF7 /* MDSMessageChannel.h */,
-				3297F22514D96F31004FFE4F /* DeviceMessageChannel.cpp */,
-				3297F22814D96F43004FFE4F /* DeviceMessageChannel.h */,
+				32B6BD3A1E23CD8900A9F86C /* DeviceMessageChannel.cpp */,
+				32B6BD3B1E23CD8900A9F86C /* DeviceMessageChannel.h */,
 				32AF7D3E18DAEAF300537DE6 /* PerformanceNodeChannel.cpp */,
 				32AF7D3F18DAEAF300537DE6 /* PerformanceNodeChannel.h */,
 			);
@@ -5120,6 +5120,7 @@
 				32C353F31788015B009ED581 /* PluginDiscover.h in Headers */,
 				32AAD78E14CD95FD005A097C /* Atomic.h in Headers */,
 				32B5C9551C6B8FDC0021159C /* AbstractMetadataLogChannel.h in Headers */,
+				32B6BD3D1E23CD8900A9F86C /* DeviceMessageChannel.h in Headers */,
 				324A4B53191A41EF00975394 /* process_id.h in Headers */,
 				32EFCD6718BDE3A400B5EB77 /* IODirectIODriver.h in Headers */,
 				32BFF90F176C842E00D27A04 /* InizializableService.h in Headers */,
@@ -5132,7 +5133,6 @@
 				32612ABE1CE209BB00F3B8F3 /* ScriptManager.h in Headers */,
 				32556B0919B5F2FA0004ABC5 /* DBDriver.h in Headers */,
 				32A809D614D82E19000F2DF7 /* MDSMessageChannel.h in Headers */,
-				3297F22914D96F43004FFE4F /* DeviceMessageChannel.h in Headers */,
 				3297F22B14D96F8D004FFE4F /* NodeMessageChannel.h in Headers */,
 				32EE897A191A6CD400DE2F29 /* hash_namespace.h in Headers */,
 				325F86EC14D9E59D00CDF35F /* InetUtility.h in Headers */,
@@ -5961,7 +5961,6 @@
 				32A809D814D82E28000F2DF7 /* MDSMessageChannel.cpp in Sources */,
 				32B5C9541C6B8FDC0021159C /* AbstractMetadataLogChannel.cpp in Sources */,
 				32B73E9618D9A74600F0B187 /* DirectIOPerformanceClientChannel.cpp in Sources */,
-				3297F22614D96F31004FFE4F /* DeviceMessageChannel.cpp in Sources */,
 				320C218C151B556E00BD0F41 /* EventServer.cpp in Sources */,
 				32F466DE155EDBDE00AD3D81 /* IODataDriver.cpp in Sources */,
 				32BE864715A0CEAF00818C39 /* LogManager.cpp in Sources */,
@@ -6076,6 +6075,7 @@
 				324A4B90191A527D00975394 /* base64.cpp in Sources */,
 				324A4B6E191A428500975394 /* assert_util.cpp in Sources */,
 				32EBDF021B4FBD8800278C42 /* AbstractMetricBackend.cpp in Sources */,
+				32B6BD3C1E23CD8900A9F86C /* DeviceMessageChannel.cpp in Sources */,
 				322E157A161B629700C3003C /* NetworkBroker.cpp in Sources */,
 				32BF74AD167CEB57007F8A57 /* EntityDB.cpp in Sources */,
 				3289F9A5168508460080D93F /* SQLiteEntityDB.cpp in Sources */,
