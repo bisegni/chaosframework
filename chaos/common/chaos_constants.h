@@ -1063,6 +1063,7 @@ namespace chaos {
         static const char * const CUSTOM_DATASET_POSTFIX    = "_c";
         static const char * const SYSTEM_DATASET_POSTFIX    = "_s";
         static const char * const ALARM_DATASET_POSTFIX     = "_a";
+        static const char * const WARNING_DATASET_POSTFIX     = "_w";
         static const char * const HEALTH_DATASET_POSTFIX    = NodeHealtDefinitionKey::HEALT_KEY_POSTFIX;
     }
     /** @} */ // end of DataPackPrefixID
@@ -1092,6 +1093,8 @@ namespace chaos {
         static const unsigned int DPCK_DATASET_TYPE_SYSTEM             = 3;
         //! the constant that represent the alarm dataset type
         static const unsigned int DPCK_DATASET_TYPE_ALARM              = 4;
+        //! the constant that represent the alarm dataset type
+        static const unsigned int DPCK_DATASET_TYPE_WARNING            = 5;
     }
     /** @} */ // end of DataPackCommonKey
     

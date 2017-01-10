@@ -121,20 +121,25 @@ new chaos::common::utility::TypedObjectInstancer<n c, chaos::cu::control_manager
                     
                     //---------------alarm api-------------
                     //!set the severity on all alarm
-                    void setAlarmSeverity(const common::alarm::MultiSeverityAlarmLevel alarm_severity);
+                    void setStateVariableSeverity(StateVariableType variable_type,
+                                                  const common::alarm::MultiSeverityAlarmLevel state_variable_severity);
                     
                     //!set the alarm state
-                    bool setAlarmSeverity(const std::string& alarm_name,
-                                          const chaos::common::alarm::MultiSeverityAlarmLevel state_code);
-                    //!set the alarm state
-                    bool setAlarmSeverity(const unsigned int alarm_ordered_id,
-                                          const chaos::common::alarm::MultiSeverityAlarmLevel state_code);
+                    bool setStateVariableSeverity(StateVariableType variable_type,
+                                                  const std::string& state_variable__name,
+                                                  const chaos::common::alarm::MultiSeverityAlarmLevel state_variable_severity);
+                    //!set the alarm state_variable
+                    bool setStateVariableSeverity(StateVariableType variable_type,
+                                                  const unsigned int state_variable__ordered_id,
+                                                  const chaos::common::alarm::MultiSeverityAlarmLevel state_variable_severity);
                     //!get the current alarm state
-                    bool getAlarmSeverity(const std::string& alarm_name,
-                                          chaos::common::alarm::MultiSeverityAlarmLevel& current_state);
+                    bool getStateVariableSeverity(StateVariableType variable_type,
+                                                  const std::string& state_variable__name,
+                                                  chaos::common::alarm::MultiSeverityAlarmLevel& state_variable_severity);
                     //!get the current alarm state
-                    bool getAlarmSeverity(const unsigned int alarm_ordered_id,
-                                          chaos::common::alarm::MultiSeverityAlarmLevel& current_state);
+                    bool getStateVariableSeverity(StateVariableType variable_type,
+                                                  const unsigned int state_variable_ordered_id,
+                                                  chaos::common::alarm::MultiSeverityAlarmLevel& state_variable_severity);
                     //!set the busy flag
                     void setBusyFlag(bool state);
                     

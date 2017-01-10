@@ -38,10 +38,12 @@ namespace chaos{
             class MultiSeverityAlarmHandler:
             public chaos::common::state_flag::StateFlagListener {
                 friend class AlarmDescription;;
-                void alarmChanged(const std::string& alarm_name,
+                void alarmChanged(const std::string& alarm_tag,
+                                  const std::string& alarm_name,
                                   const int8_t alarm_severity);
             protected:
-                virtual void alarmChanged(const std::string& alarm_name,
+                virtual void alarmChanged(const std::string& alarm_tag,
+                                          const std::string& alarm_name,
                                           const MultiSeverityAlarmLevel alarm_severity) = 0;
                 
             };
@@ -50,7 +52,8 @@ namespace chaos{
             public AlarmDescription {
                 
             public:
-                MultiSeverityAlarm(const std::string& alarm_name,
+                MultiSeverityAlarm(const std::string& alarm_tag,
+                                   const std::string& alarm_name,
                                    const std::string& alarm_description);
                 ~MultiSeverityAlarm();
                 

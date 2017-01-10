@@ -117,7 +117,17 @@ namespace chaos{
                 START_SM_PHASE_STAT_TIMER = 0
             } StartSMPhase;
             
-            CHAOS_DEFINE_VECTOR_FOR_TYPE(boost::shared_ptr<chaos::common::data::CDataWrapper>, ACUStartupCommandList)
+            typedef enum {
+                StateVariableTypeWarning,
+                StateVariableTypeAlarm
+            } StateVariableType;
+            
+            static const char * const StateVariableTypeWarningLabel = "warning_catalog";
+            static const char * const StateVariableTypeAlarmLabel   = "alarm_catalog";
+            
+            CHAOS_DEFINE_VECTOR_FOR_TYPE(boost::shared_ptr<chaos::common::data::CDataWrapper>, ACUStartupCommandList);
+            
+            CHAOS_DEFINE_MAP_FOR_TYPE(StateVariableType, chaos::common::alarm::AlarmCatalog, MapStateVariable);
             
             //!  Base class for control unit !CHAOS node
             /*!
@@ -149,6 +159,24 @@ namespace chaos{
                 //! definition of the type for the driver list
                 typedef std::vector<DrvRequestInfo>				ControlUnitDriverList;
                 typedef std::vector<DrvRequestInfo>::iterator	ControlUnitDriverListIterator;
+                
+                inline const char * const stateVariableEnumToName(StateVariableType type) {
+                    switch(type) {
+                        case  StateVariableTypeWarning:
+                            return StateVariableTypeWarningLabel;
+                        case   StateVariableTypeAlarm:
+                            return StateVariableTypeAlarmLabel;
+                    }
+                }
+                
+                inline int stateVariableNameToEnum(const std::string& name) {
+                    if(name.compare(StateVariableTypeWarningLabel) == 0) {return StateVariableTypeWarning;}
+                    if(name.compare(StateVariableTypeAlarmLabel) == 0) {return StateVariableTypeAlarm;}
+                    return -1;
+                }
+                
+                CDataWrapper *writeCatalogOnCDataWrapper(chaos::common::alarm::AlarmCatalog& catalog,
+                                                         int32_t dataset_type);
             private:
                 std::string  control_key;
                 //! contains the description of the type of the control unit
@@ -165,7 +193,7 @@ namespace chaos{
                 
                 //!control unit alarm group
                 chaos::common::metadata_logging::AlarmLoggingChannel    *alarm_logging_channel;
-                chaos::common::alarm::AlarmCatalog                      alarm_catalog;
+                MapStateVariable                                        map_variable_catalog;
                 
                 //!these are the startup command list
                 /*!
@@ -508,24 +536,30 @@ namespace chaos{
                 
                 //---------------alarm api-------------
                 //!create a new alarm into the catalog
-                void addAlarm(const std::string& alarm_name,
-                              const std::string& alarm_description);
+                void addStateVariable(StateVariableType variable_type,
+                                      const std::string& state_variable_name,
+                                      const std::string& state_variable_description);
                 
-                //!set the severity on all alarm
-                void setAlarmSeverity(const common::alarm::MultiSeverityAlarmLevel alarm_severity);
+                //!set the severity on all state_variable
+                void setStateVariableSeverity(StateVariableType variable_type,
+                                              const common::alarm::MultiSeverityAlarmLevel state_variable_severity);
                 
-                //!set the alarm state
-                bool setAlarmSeverity(const std::string& alarm_name,
-                                      const common::alarm::MultiSeverityAlarmLevel alarm_severity);
-                //!set the alarm state
-                bool setAlarmSeverity(const unsigned int alarm_ordered_id,
-                                      const common::alarm::MultiSeverityAlarmLevel alarm_severity);
-                //!get the current alarm state
-                bool getAlarmSeverity(const std::string& alarm_name,
-                                      common::alarm::MultiSeverityAlarmLevel& alarm_severity);
-                //!get the current alarm state
-                bool getAlarmSeverity(const unsigned int alarm_ordered_id,
-                                      common::alarm::MultiSeverityAlarmLevel& alarm_severity);
+                //!set the state_variable state
+                bool setStateVariableSeverity(StateVariableType variable_type,
+                                              const std::string& state_variable_name,
+                                              const common::alarm::MultiSeverityAlarmLevel state_variable_severity);
+                //!set the StateVariable state
+                bool setStateVariableSeverity(StateVariableType variable_type,
+                                              const unsigned int state_variable_ordered_id,
+                                              const common::alarm::MultiSeverityAlarmLevel state_variable_severity);
+                //!get the current StateVariable state
+                bool getStateVariableSeverity(StateVariableType variable_type,
+                                              const std::string& state_variable_name,
+                                              common::alarm::MultiSeverityAlarmLevel& state_variable_severity);
+                //!get the current StateVariable state
+                bool getStateVariableSeverity(StateVariableType variable_type,
+                                              const unsigned int state_variable_ordered_id,
+                                              common::alarm::MultiSeverityAlarmLevel& state_variable_severity);
                 
                 //! set the value on the busy flag
                 void setBusyFlag(bool state);
@@ -534,8 +568,9 @@ namespace chaos{
                 const bool getBusyFlag() const;
                 
                 //!called when an alarm has been modified in his severity
-                void alarmChanged(const std::string& alarm_name,
-                                  const int8_t alarm_severity);
+                void alarmChanged(const std::string& state_variable_tag,
+                                  const std::string& state_variable_name,
+                                  const int8_t state_variable_severity);
                 
                 //!logging api
                 void metadataLogging(const chaos::common::metadata_logging::StandardLoggingChannel::LogLevel log_level,
@@ -631,9 +666,12 @@ namespace chaos{
                 //!push alarm dataset
                 virtual void pushAlarmDataset();
                 
+                //!push alarm dataset
+                virtual void pushWarningDataset();
+                
                 //!copy into a CDataWrapper last received initialization package
                 void copyInitConfiguraiton(CDataWrapper& copy);
-
+                
             };
         }
     }

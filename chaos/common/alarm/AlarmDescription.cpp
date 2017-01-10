@@ -26,19 +26,20 @@ using namespace chaos::common::utility;
 using namespace chaos::common::state_flag;
 
 #pragma mark AlarmHandler
-void AlarmHandler::stateFlagUpdated(const std::string& flag_uuid,
-                                    const std::string& flag_name,
-                                    const std::string& level_name,
-                                    const StateFlagServerity current_level_severity) {
-    alarmChanged(flag_name,
+void AlarmHandler::stateFlagUpdated(const FlagDescription       flag_description,
+                                    const std::string&          level_name,
+                                    const StateFlagServerity    current_level_severity) {
+    alarmChanged(flag_description.tag,
+                 flag_description.name,
                  current_level_severity);
 }
 
 #pragma mark AlarmDescription
-AlarmDescription::AlarmDescription(const std::string alarm_name,
-                                   const std::string alarm_description):
+AlarmDescription::AlarmDescription(const std::string& alarm_tag,
+                                   const std::string& alarm_name,
+                                   const std::string& alarm_description):
 StateFlag(alarm_name,
-          alarm_description){}
+          alarm_description){setTag(alarm_tag);}
 
 AlarmDescription::~AlarmDescription() {}
 

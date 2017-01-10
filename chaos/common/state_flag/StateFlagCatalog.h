@@ -145,15 +145,15 @@ namespace chaos {
                 MapSeverityBitfield map_severity_bf_flag;
                 
                 //!inherited by @StateFlagCatalog
-                void stateFlagUpdated(const std::string& flag_uuid,
-                                      const std::string& flag_name,
-                                      const std::string& level_name,
-                                      const StateFlagServerity current_level_severity);
+                void stateFlagUpdated(const FlagDescription     flag_description,
+                                      const std::string&        level_name,
+                                      const StateFlagServerity  current_level_severity);
                 
                 void addMemberToSeverityMap(boost::shared_ptr<StateFlag> new_status_flag);
             public:
                 StateFlagCatalog();
                 StateFlagCatalog(const std::string& _catalog_name);
+                StateFlagCatalog(const StateFlagCatalog& _catalog);
                 virtual ~StateFlagCatalog();
                 
                 //!add a new status flag

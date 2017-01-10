@@ -61,7 +61,7 @@ void MessageChannel::deinit() throw(CException) {
 /*!
  Return the broker for that channel
  */
-NetworkBroker* MessageChannel::getBroker(){
+NetworkBroker* MessageChannel::getBroker() {
     return broker;
 }
 

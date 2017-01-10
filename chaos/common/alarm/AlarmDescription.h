@@ -38,12 +38,12 @@ namespace chaos{
             class AlarmHandler:
             public chaos::common::state_flag::StateFlagListener {
                 friend class AlarmDescription;
-                void stateFlagUpdated(const std::string& flag_uuid,
-                                      const std::string& flag_name,
-                                      const std::string& level_name,
-                                      const chaos::common::state_flag::StateFlagServerity current_level_severity);
+                void stateFlagUpdated(const chaos::common::state_flag::FlagDescription     flag_description,
+                                      const std::string&                                    level_name,
+                                      const chaos::common::state_flag::StateFlagServerity   current_level_severity);
             protected:
-                virtual void alarmChanged(const std::string& alarm_name,
+                virtual void alarmChanged(const std::string& alarm_tag,
+                                          const std::string& alarm_name,
                                           const int8_t alarm_severity) = 0;
             };
             
@@ -52,8 +52,9 @@ namespace chaos{
             protected state_flag::StateFlag {
                 friend class AlarmCatalog;
             public:
-                AlarmDescription(const std::string alarm_name,
-                                 const std::string alarm_description);
+                AlarmDescription(const std::string& alarm_tag,
+                                 const std::string& alarm_name,
+                                 const std::string& alarm_description);
                 ~AlarmDescription();
             public:
                 const std::string& getAlarmName() const;

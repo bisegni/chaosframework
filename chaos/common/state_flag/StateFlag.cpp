@@ -30,6 +30,21 @@ using namespace chaos::common::state_flag;
 #define SL_DBG DBG_LOG(StateFlag)
 #define SL_ERR ERR_LOG(StateFlag)
 
+FlagDescription::FlagDescription(const std::string& _name,
+                                 const std::string& _description):
+tag(),
+uuid(UUIDUtil::generateUUIDLite()),
+name(_name),
+description(_description) {}
+
+FlagDescription::FlagDescription(const FlagDescription& _description):
+tag(_description.tag),
+uuid(_description.uuid),
+name(_description.name),
+description(_description.description){}
+
+FlagDescription::~FlagDescription() {}
+
 #pragma mark StateLevel
 StateLevel::StateLevel():
 value(0),
@@ -94,45 +109,39 @@ const std::string& StateFlagListener::getStateFlagListenerUUID(){
 
 #pragma mark StateFlag
 StateFlag::StateFlag():
-flag_uuid(UUIDUtil::generateUUIDLite()),
-name(),
-description(),
+flag_description("",""),
 current_level(0){}
 
 
 StateFlag::StateFlag(const std::string& _name,
                      const std::string& _description):
-flag_uuid(UUIDUtil::generateUUIDLite()),
-name(_name),
-description(_description),
+flag_description(_name,
+                 _description),
 current_level(0){}
 
 StateFlag::StateFlag(const StateFlag& src):
-flag_uuid(UUIDUtil::generateUUIDLite()),
-name(src.name),
-description(src.description),
+flag_description(src.flag_description),
 current_level(src.current_level){}
 
 StateFlag& StateFlag::operator=(StateFlag const &rhs) {
-    name = rhs.name;
-    description = rhs.description;
+    flag_description.name = rhs.flag_description.name;
+    flag_description.description = rhs.flag_description.description;
     current_level = rhs.current_level;
     set_levels = rhs.set_levels;
     return *this;
 };
 
 const std::string& StateFlag::getDescription() const{
-    return description;
+    return flag_description.description;
 }
 
 const std::string& StateFlag::getFlagUUID() const {
-    return flag_uuid;
+    return flag_description.uuid;
 }
 
 const std::string& StateFlag::getName() const {
-    return name;
+    return flag_description.name;
 }
-
 
 bool StateFlag::addLevel(const StateLevel& level_state) {
     StatusLevelContainerOrderedIndex& ordered_index = boost::multi_index::get<ordered_index_tag>(set_levels);
@@ -194,11 +203,18 @@ void StateFlag::fireToListener(unsigned int fire_code,
     StateFlagListener *state_flag_listener_instance = dynamic_cast<StateFlagListener*>(listener_to_fire);
     if(state_flag_listener_instance){
         const StateLevel& level = getCurrentStateLevel();
-        state_flag_listener_instance->stateFlagUpdated(flag_uuid,
-                                                       name,
+        state_flag_listener_instance->stateFlagUpdated(flag_description,
                                                        level.getTag(),
                                                        level.getSeverity());
     }
+}
+
+void StateFlag::setTag(const std::string& new_tag) {
+    flag_description.tag = new_tag;
+}
+
+const std::string& StateFlag::getTag() {
+    return flag_description.tag;
 }
 
 #pragma mark StateFlagBoolState

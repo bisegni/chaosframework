@@ -36,6 +36,10 @@ namespace chaos {
             
             //!forward decalration
             class StateFlagCatalog;
+            //!forward declaration
+            class StateFlagSDWrapper;
+            //!forward decalration
+            class StateFlagCatalogSDWrapper;
             
             //! define the level of severity of a status flag
             /*!
@@ -50,7 +54,21 @@ namespace chaos {
                 StateFlagServerityHigh,
                 StateFlagServeritySevere,
                 StateFlagServerityUndefuned
-            }StateFlagServerity;
+            } StateFlagServerity;
+            
+            struct FlagDescription {
+                std::string tag;
+                std::string uuid;
+                //! the name that identify the flag
+                std::string name;
+                //! the compelte description of the flag
+                std::string description;
+                
+                FlagDescription(const std::string& _name,
+                                const std::string& _description);
+                FlagDescription(const FlagDescription& _description);
+                ~FlagDescription();
+            };
             
             class StateLevelSDVWrapper;
             //! define a single level with the tag and a description
@@ -118,6 +136,7 @@ namespace chaos {
                     sl.occurence++;
                 }
             };
+            
             //forward declaration
             class StateFlag;
             
@@ -130,21 +149,13 @@ namespace chaos {
                 StateFlagListener();
                 virtual ~StateFlagListener();
                 //!signal the change of the current selected level severity
-                virtual void stateFlagUpdated(const std::string& flag_uuid,
-                                              const std::string& flag_name,
-                                              const std::string& level_name,
-                                              const StateFlagServerity current_level_severity) = 0;
+                virtual void stateFlagUpdated(const FlagDescription     flag_description,
+                                              const std::string&        level_name,
+                                              const StateFlagServerity  current_level_severity) = 0;
                 
             public:
                 const std::string& getStateFlagListenerUUID();
             };
-            
-            //!forward declaration
-            class StateFlagCatalog;
-            //!forward declaration
-            class StateFlagSDWrapper;
-            //!forward decalration
-            class StateFlagCatalogSDWrapper;
             
             //! Status Flag description
             class StateFlag:
@@ -160,11 +171,7 @@ namespace chaos {
                 mutable StateLevelContainer set_levels;
                 
             protected:
-                std::string flag_uuid;
-                //! the name that identify the flag
-                std::string name;
-                //! the compelte description of the flag
-                std::string description;
+                FlagDescription flag_description;
                 
                 void fireToListener(unsigned int fire_code,
                                     chaos::common::utility::AbstractListener *listener_to_fire);
@@ -193,6 +200,10 @@ namespace chaos {
                 int8_t getCurrentLevel() const;
                 
                 const StateLevel& getCurrentStateLevel() const;
+                
+                void setTag(const std::string& new_tag);
+                
+                const std::string& getTag();
             };
             
             

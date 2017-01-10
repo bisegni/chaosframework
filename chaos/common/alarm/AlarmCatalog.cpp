@@ -26,8 +26,14 @@ using namespace chaos::common::data;
 using namespace chaos::common::alarm;
 using namespace chaos::common::state_flag;
 
+AlarmCatalog::AlarmCatalog():
+StateFlagCatalog("AlarmCatalog"){}
+
 AlarmCatalog::AlarmCatalog(const std::string& catalog_name):
 StateFlagCatalog(catalog_name){}
+
+AlarmCatalog::AlarmCatalog(const AlarmCatalog& catalog):
+StateFlagCatalog(catalog) {}
 
 AlarmCatalog::~AlarmCatalog() {}
 

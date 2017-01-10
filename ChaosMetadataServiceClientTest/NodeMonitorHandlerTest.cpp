@@ -17,15 +17,12 @@ std::string getStatusDesc(chaos::metadata_service_client::node_monitor::OnlineSt
         case chaos::metadata_service_client::node_monitor::OnlineStateUnknown:
             return "Unknown";
             break;
-            
         case chaos::metadata_service_client::node_monitor::OnlineStateON:
             return "Status ON";
             break;
-            
         case chaos::metadata_service_client::node_monitor::OnlineStateOFF:
             return "Status OFF";
             break;
-            
         case chaos::metadata_service_client::node_monitor::OnlineStateNotFound:
             return "No status data found";
             break;
@@ -37,20 +34,20 @@ std::string getDatasetDesc(int dataset_type){
         case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT:
             return "Output";
             break;
-            
         case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_INPUT:
             return "Input";
             break;
-            
         case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM:
             return "System";
             break;
-            
         case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM:
             return "Custom";
             break;
         case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_ALARM:
             return "Alert";
+            break;
+        case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_WARNING:
+            return "Warning";
             break;
     }
     return "";

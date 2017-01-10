@@ -56,6 +56,11 @@ namespace chaos {
                 chaos::metadata_service_client::monitor_system::KeyValue last_ds_alarm;
                 MapDatasetKeyValues                                       map_ds_alarm;
                 
+                std::string cu_warning_ds_key;
+                //!last dataset received for helth data
+                chaos::metadata_service_client::monitor_system::KeyValue last_ds_warning;
+                MapDatasetKeyValues                                       map_ds_warning;
+                
                 void _updateDatsetKeyMapValue(chaos::metadata_service_client::monitor_system::KeyValue dataset,
                                               MapDatasetKeyValues& map);
                 

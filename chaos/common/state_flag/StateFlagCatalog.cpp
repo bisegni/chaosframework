@@ -50,6 +50,10 @@ catalog_name(_catalog_name){
     }
 }
 
+StateFlagCatalog::StateFlagCatalog(const StateFlagCatalog& _catalog) {
+    *this = _catalog;
+}
+
 StateFlagCatalog::~StateFlagCatalog(){
     //!remove listere to all flag
     StateFlagElementContainerOrderedIndex& ordered_index = boost::multi_index::get<mitag_ordered>(catalog_container());
@@ -62,12 +66,11 @@ StateFlagCatalog::~StateFlagCatalog(){
 }
 
 
-void StateFlagCatalog::stateFlagUpdated(const std::string& flag_uuid,
-                                        const std::string& flag_name,
-                                        const std::string& level_name,
-                                        const StateFlagServerity current_level_severity) {
+void StateFlagCatalog::stateFlagUpdated(const FlagDescription       flag_description,
+                                        const std::string&          level_name,
+                                        const StateFlagServerity    current_level_severity) {
     StateFlagElementContainerFlaUUIDIndex& uuid_index = catalog_container().get<mitag_flag_uuid>();
-    StateFlagElementContainerFlaUUIDIndexItarator src_flag_it = uuid_index.find(flag_uuid);
+    StateFlagElementContainerFlaUUIDIndexItarator src_flag_it = uuid_index.find(flag_description.uuid);
     if(src_flag_it == uuid_index.end()) return;
     SLC_DBG << "Signal from " << (*src_flag_it)->flag_name << "with severity" << current_level_severity;
     
@@ -98,11 +101,9 @@ void StateFlagCatalog::addMemberToSeverityMap(boost::shared_ptr<StateFlag> new_s
         } else {
             map_severity_bf_flag[(StateFlagServerity)s].push_back(0);
         }
-        DEBUG_CODE(
-                   std::string buffer;
+        DEBUG_CODE(std::string buffer;
                    boost::to_string(map_severity_bf_flag[(StateFlagServerity)s], buffer);
-                   SLC_DBG << "Bitfiled for severity "<< (StateFlagServerity)s <<"representation:" << buffer;
-                   );
+                   SLC_DBG << "Bitfiled for severity "<< (StateFlagServerity)s <<"representation:" << buffer;);
     }
     
 }
@@ -113,7 +114,6 @@ void StateFlagCatalog::addFlag(const boost::shared_ptr<StateFlag>& flag) {
     catalog_container.getWriteLock(wl);
     StateFlagElementContainerNameIndex& name_index = catalog_container().get<mitag_name>();
     if(name_index.find(flag->getName()) != name_index.end()) return;
-    
     //we can insert flag with unique name
     catalog_container().insert(StateFlagElement::StateFlagElementPtr(new StateFlagElement((unsigned int)catalog_container().size(), flag->getName(), flag)));
     

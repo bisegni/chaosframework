@@ -62,17 +62,17 @@ namespace chaos {
             CHAOS_OPEN_SDWRAPPER(StateFlag)
             void deserialize(chaos::common::data::CDataWrapper *serialized_data) {
                 if(serialized_data == NULL) return;
-                dataWrapped().name = CDW_GET_SRT_WITH_DEFAULT(serialized_data, NodeStateFlagDefinitionKey::NODE_SF_NAME, "");
+                dataWrapped().flag_description.name = CDW_GET_SRT_WITH_DEFAULT(serialized_data, NodeStateFlagDefinitionKey::NODE_SF_NAME, "");
                 //check if we have a catalog name
                 ChaosStringVector splitted_name;
                 boost::split( splitted_name,
-                             dataWrapped().name ,
+                             dataWrapped().flag_description.name ,
                              boost::is_any_of("/"),
                              boost::token_compress_on);
                 if(splitted_name.size() > 1) {
-                    dataWrapped().name = splitted_name[splitted_name.size()-1];
+                    dataWrapped().flag_description.name = splitted_name[splitted_name.size()-1];
                 }
-                dataWrapped().description = CDW_GET_SRT_WITH_DEFAULT(serialized_data, NodeStateFlagDefinitionKey::NODE_SF_DESCRIPTION, "");
+                dataWrapped().flag_description.description = CDW_GET_SRT_WITH_DEFAULT(serialized_data, NodeStateFlagDefinitionKey::NODE_SF_DESCRIPTION, "");
                 
                 //decode the list fo state level
                 StateLevelSDWrapper slsdw;
@@ -94,8 +94,8 @@ namespace chaos {
             
             std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
                 std::auto_ptr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
-                data_serialized->addStringValue(NodeStateFlagDefinitionKey::NODE_SF_NAME, dataWrapped().name);
-                data_serialized->addStringValue(NodeStateFlagDefinitionKey::NODE_SF_DESCRIPTION, dataWrapped().description);
+                data_serialized->addStringValue(NodeStateFlagDefinitionKey::NODE_SF_NAME, dataWrapped().flag_description.name);
+                data_serialized->addStringValue(NodeStateFlagDefinitionKey::NODE_SF_DESCRIPTION, dataWrapped().flag_description.description);
                 if(dataWrapped().set_levels.size()) {
                     StateLevelSDWrapper slsdw;
                     //we have state level to encode

@@ -58,32 +58,42 @@ AttributeSharedCacheWrapper * const SlowCommand::getAttributeCache() {
 }
 
 #pragma mark Alarm API
-void SlowCommand::setAlarmSeverity(const common::alarm::MultiSeverityAlarmLevel alarm_severity) {
-    abstract_control_unit->setAlarmSeverity(alarm_severity);
+void SlowCommand::setStateVariableSeverity(StateVariableType variable_type,
+                                           const common::alarm::MultiSeverityAlarmLevel state_variable_severity) {
+    abstract_control_unit->setStateVariableSeverity(variable_type,
+                                                    state_variable_severity);
 }
 
-bool SlowCommand::setAlarmSeverity(const std::string& alarm_name,
-                                   const MultiSeverityAlarmLevel alarm_severity) {
-    return abstract_control_unit->setAlarmSeverity(alarm_name,
-                                                   alarm_severity);
+bool SlowCommand::setStateVariableSeverity(StateVariableType variable_type,
+                                           const std::string& state_variable_name,
+                                           const MultiSeverityAlarmLevel state_variable_severity) {
+    return abstract_control_unit->setStateVariableSeverity(variable_type,
+                                                           state_variable_name,
+                                                           state_variable_severity);
 }
 
-bool SlowCommand::setAlarmSeverity(const unsigned int alarm_ordered_id,
-                                   const chaos::common::alarm:: MultiSeverityAlarmLevel alarm_severity) {
-    return abstract_control_unit->setAlarmSeverity(alarm_ordered_id,
-                                                   alarm_severity);
+bool SlowCommand::setStateVariableSeverity(StateVariableType variable_type,
+                                           const unsigned int state_variable_ordered_id,
+                                           const chaos::common::alarm:: MultiSeverityAlarmLevel state_variable_severity) {
+    return abstract_control_unit->setStateVariableSeverity(variable_type,
+                                                           state_variable_ordered_id,
+                                                           state_variable_severity);
 }
 
-bool SlowCommand::getAlarmSeverity(const std::string& alarm_name,
-                                   MultiSeverityAlarmLevel& alarm_severity) {
-    return abstract_control_unit->getAlarmSeverity(alarm_name,
-                                                   alarm_severity);
+bool SlowCommand::getStateVariableSeverity(StateVariableType variable_type,
+                                           const std::string& state_variable_name,
+                                           MultiSeverityAlarmLevel& state_variable_severity) {
+    return abstract_control_unit->getStateVariableSeverity(variable_type,
+                                                           state_variable_name,
+                                                           state_variable_severity);
 }
 
-bool SlowCommand::getAlarmSeverity(const unsigned int alarm_ordered_id,
-                                   MultiSeverityAlarmLevel& alarm_severity) {
-    return abstract_control_unit->getAlarmSeverity(alarm_ordered_id,
-                                                   alarm_severity);
+bool SlowCommand::getStateVariableSeverity(StateVariableType variable_type,
+                                           const unsigned int state_variable_ordered_id,
+                                           MultiSeverityAlarmLevel& state_variable_severity) {
+    return abstract_control_unit->getStateVariableSeverity(variable_type,
+                                                           state_variable_ordered_id,
+                                                           state_variable_severity);
 }
 
 void SlowCommand::setBusyFlag(bool state) {
@@ -95,7 +105,7 @@ bool SlowCommand::getBusyFlag() {
 }
 
 void SlowCommand::metadataLogging(const StandardLoggingChannel::LogLevel log_level,
-                    const std::string& message) {
+                                  const std::string& message) {
     abstract_control_unit->metadataLogging(getAlias(),
                                            log_level,
                                            message);

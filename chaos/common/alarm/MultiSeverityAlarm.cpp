@@ -25,18 +25,22 @@ using namespace chaos::common::alarm;
 using namespace chaos::common::state_flag;
 
 #pragma MultiSeverityAlarmHandler
-void MultiSeverityAlarmHandler::alarmChanged(const std::string& alarm_name,
+void MultiSeverityAlarmHandler::alarmChanged(const std::string& alarm_tag,
+                                             const std::string& alarm_name,
                                              const int8_t alarm_severity) {
-    alarmChanged(alarm_name,
+    alarmChanged(alarm_tag,
+                 alarm_name,
                  static_cast<MultiSeverityAlarmLevel>(alarm_severity));
 }
 
 
 #pragma MultiSeverityAlarm
-MultiSeverityAlarm::MultiSeverityAlarm(const std::string& alarm_name,
+MultiSeverityAlarm::MultiSeverityAlarm(const std::string& alarm_tag,
+                                       const std::string& alarm_name,
                                        const std::string& alarm_description):
 
-AlarmDescription(alarm_name,
+AlarmDescription(alarm_tag,
+                 alarm_name,
                  alarm_description){
     addState(MultiSeverityAlarmLevelClear,
              "clear",

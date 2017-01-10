@@ -72,6 +72,9 @@ ACULERR_ <<"Unknown exception on"<< DatasetDB::getDeviceID(); \
 if(flag) throw chaos::common::exception::MetadataLoggingCException(getCUID(), -1000, S__LINE__, __PRETTY_FUNCTION__); \
 }
 
+#define GET_CAT_OR_EXIT(t,rv)\
+if(map_variable_catalog.count(t) == 0) {return rv;}\
+AlarmCatalog& catalog = map_variable_catalog[t];
 
 //! Contructor with type and id
 AbstractControlUnit::AbstractControlUnit(const std::string& _control_unit_type,
@@ -85,7 +88,6 @@ control_unit_id(_control_unit_id),
 control_unit_param(_control_unit_param),
 standard_logging_channel(NULL),
 alarm_logging_channel(NULL),
-alarm_catalog(_control_unit_id),
 push_dataset_counter(0),
 last_push_rate_grap_ts(0),
 attribute_value_shared_cache(NULL),
@@ -110,7 +112,6 @@ control_unit_id(_control_unit_id),
 control_unit_param(_control_unit_param),
 standard_logging_channel(NULL),
 alarm_logging_channel(NULL),
-alarm_catalog(_control_unit_id),
 push_dataset_counter(0),
 last_push_rate_grap_ts(0),
 attribute_value_shared_cache(NULL),
@@ -232,14 +233,14 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configurat
     //LCU_ << "Check if as been setup a json file path to configura CU:" << CU_IDENTIFIER_C_STREAM;
     //loadCDataWrapperForJsonFile(setup_configuration);
     
-
+    
     //first call the setup abstract method used by the implementing CU to define action, dataset and other
     //usefull value
     unitDefineActionAndDataset();
     
     //call method to dinamically add other things to the dataset
-     _completeDatasetAttribute();
-
+    _completeDatasetAttribute();
+    
     //for now we need only to add custom action for expose to rpc
     //input element of the dataset
     AbstActionDescShrPtr
@@ -719,12 +720,12 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam,
         return NULL;
     }
     try {
-      /*
-       * stop transition is possible with recoverable error
-       *  if(getServiceState() == CUStateKey::RECOVERABLE_ERROR) {
-            LOG_AND_TROW_FORMATTED(ACULERR_, -1, "Recoverable error state need to be recovered for %1%", %__PRETTY_FUNCTION__)
-        }
-        */
+        /*
+         * stop transition is possible with recoverable error
+         *  if(getServiceState() == CUStateKey::RECOVERABLE_ERROR) {
+         LOG_AND_TROW_FORMATTED(ACULERR_, -1, "Recoverable error state need to be recovered for %1%", %__PRETTY_FUNCTION__)
+         }
+         */
         //first we start the deinitializaiton of the implementation unit
         if(!SWEService::stopImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__)) {
             LOG_AND_TROW_FORMATTED(ACULERR_, -1, "Control Unit %1% can't be stopped [state mismatch]!", %DatasetDB::getDeviceID());
@@ -784,12 +785,12 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam,
         return NULL;
     }
     try {
-      /*
-       * deinit transition is possible with recoverable error
-       *  if(getServiceState() == CUStateKey::RECOVERABLE_ERROR) {
-            LOG_AND_TROW_FORMATTED(ACULERR_, -1, "Recoverable error state need to be recovered for %1%", %__PRETTY_FUNCTION__)
-        }
-        */
+        /*
+         * deinit transition is possible with recoverable error
+         *  if(getServiceState() == CUStateKey::RECOVERABLE_ERROR) {
+         LOG_AND_TROW_FORMATTED(ACULERR_, -1, "Recoverable error state need to be recovered for %1%", %__PRETTY_FUNCTION__)
+         }
+         */
         if(!SWEService::deinitImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__)) {
             LOG_AND_TROW_FORMATTED(ACULERR_, -1, "Control Unit %1% can't be deinitilized [state mismatch]!", %DatasetDB::getDeviceID());
         }
@@ -1230,11 +1231,11 @@ void AbstractControlUnit::initAttributeOnSharedAttributeCache(SharedCacheDomain 
                     int64_t val = strtoll(attributeInfo.defaultValue.c_str(),0,0);//boost::lexical_cast<int64_t>(attributeInfo.defaultValue);
                     attribute_setting.setValueForAttribute(idx, &val, sizeof(int64_t));
                     break;}
-                
+                    
                 case DataType::TYPE_CLUSTER:{
-                	CDataWrapper tmp;
-                	tmp.setSerializedJsonData(attributeInfo.defaultValue.c_str());
-                	attribute_setting.setValueForAttribute(idx, tmp);
+                    CDataWrapper tmp;
+                    tmp.setSerializedJsonData(attributeInfo.defaultValue.c_str());
+                    attribute_setting.setValueForAttribute(idx, tmp);
                 }
                 case DataType::TYPE_STRING : {
                     const char * val = attributeInfo.defaultValue.c_str();
@@ -1360,7 +1361,7 @@ void AbstractControlUnit::_goInFatalError(chaos::CException recoverable_exceptio
 }
 
 void AbstractControlUnit::_completeDatasetAttribute() {
-
+    
     //add busy flag
     DatasetDB::addAttributeToDataSet("busy",
                                      "Notify that the control unit is busy",
@@ -1368,8 +1369,12 @@ void AbstractControlUnit::_completeDatasetAttribute() {
                                      DataType::Output);
     
     //add global alarm checn
-    DatasetDB::addAttributeToDataSet("alarm_catalog",
-                                     "Notify when some alarm has been issued",
+    DatasetDB::addAttributeToDataSet(stateVariableEnumToName(StateVariableTypeWarning),
+                                     "Activated when some warning has been issued",
+                                     DataType::TYPE_BOOLEAN,
+                                     DataType::Output);
+    DatasetDB::addAttributeToDataSet(stateVariableEnumToName(StateVariableTypeAlarm),
+                                     "Activated when some alarm has been issued",
                                      DataType::TYPE_BOOLEAN,
                                      DataType::Output);
 }
@@ -1469,14 +1474,14 @@ CDataWrapper* AbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_att
                             attribute_cache_value->setValue(&dv, sizeof(double));
                             break;
                         }
-                        
+                            
                         case DataType::TYPE_CLUSTER: {
                             CDataWrapper* str = dataset_attribute_values->getCSDataValue(attr_name);
                             try{
-                            if(str){
-                               attribute_cache_value->setValue(*str);
-                               delete str;
-                            }
+                                if(str){
+                                    attribute_cache_value->setValue(*str);
+                                    delete str;
+                                }
                             } catch(...){
                                 throw MetadataLoggingCException(getCUID(), -1, boost::str(boost::format("Invalid Json format '%1%'")  %str).c_str(),__PRETTY_FUNCTION__);
                             }
@@ -1603,7 +1608,7 @@ void AbstractControlUnit::pushOutputDataset(bool ts_already_set) {
                     output_attribute_dataset->addCSDataValue(value_set->name,*value_set->getValuePtr<CDataWrapper>());
                 } catch(...){
                     throw MetadataLoggingCException(getCUID(), -101, boost::str(boost::format("Invalid Json format for attribute '%1%' :'%2%")  % value_set->name %value_set->getValuePtr<const char>()).c_str(),__PRETTY_FUNCTION__);
-
+                    
                 }
                 break;
             }
@@ -1690,28 +1695,48 @@ void AbstractControlUnit::pushSystemDataset() {
     systemm_attribute_cache.resetChangedIndex();
 }
 
-void AbstractControlUnit::pushAlarmDataset() {
-    
-    //get the cdatawrapper for the pack
-    CDataWrapper *system_attribute_dataset = key_data_storage->getNewOutputAttributeDataWrapper();
-    if(system_attribute_dataset) {
+CDataWrapper *AbstractControlUnit::writeCatalogOnCDataWrapper(AlarmCatalog& catalog,
+                                                              int32_t dataset_type) {
+    CDataWrapper *attribute_dataset = key_data_storage->getNewOutputAttributeDataWrapper();
+    if(attribute_dataset) {
         //fill datapack with
         //! the dataaset can be pushed also in other moment
-        system_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, TimingUtil::getTimeStamp());
+        attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, TimingUtil::getTimeStamp());
         //add dataset type
-        system_attribute_dataset->addInt32Value(DataPackCommonKey::DPCK_DATASET_TYPE, DataPackCommonKey::DPCK_DATASET_TYPE_ALARM);
+        attribute_dataset->addInt32Value(DataPackCommonKey::DPCK_DATASET_TYPE, dataset_type);
         
         //scan all alarm ad create the datapack
-        size_t alarm_size = alarm_catalog.size();
+        size_t alarm_size = catalog.size();
         for(unsigned int idx = 0;
             idx < alarm_size;
             idx++) {
-            AlarmDescription *alarm = alarm_catalog.getAlarmByOrderedID(idx);
-            system_attribute_dataset->addInt32Value(alarm->getAlarmName(),
-                                                    (uint32_t)alarm->getCurrentSeverityCode());
+            AlarmDescription *alarm = catalog.getAlarmByOrderedID(idx);
+            attribute_dataset->addInt32Value(alarm->getAlarmName(),
+                                             (uint32_t)alarm->getCurrentSeverityCode());
         }
+    }
+    return attribute_dataset;
+}
+
+void AbstractControlUnit::pushWarningDataset() {
+    GET_CAT_OR_EXIT(StateVariableTypeWarning, );
+    //get the cdatawrapper for the pack
+    CDataWrapper *attribute_dataset = writeCatalogOnCDataWrapper(catalog,
+                                                                 DataPackCommonKey::DPCK_DATASET_TYPE_WARNING);
+    if(attribute_dataset) {
         //push out the system dataset
-        key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainAlarm, system_attribute_dataset);
+        key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainAlarm, attribute_dataset);
+    }
+}
+
+void AbstractControlUnit::pushAlarmDataset() {
+    GET_CAT_OR_EXIT(StateVariableTypeAlarm, );
+    //get the cdatawrapper for the pack
+    CDataWrapper *attribute_dataset = writeCatalogOnCDataWrapper(catalog,
+                                                                 DataPackCommonKey::DPCK_DATASET_TYPE_ALARM);
+    if(attribute_dataset) {
+        //push out the system dataset
+        key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainAlarm, attribute_dataset);
     }
 }
 
@@ -1741,75 +1766,102 @@ void AbstractControlUnit::copyInitConfiguraiton(CDataWrapper& copy) {
 }
 
 #pragma mark Abstract Control Unit API
-void AbstractControlUnit::addAlarm(const std::string& alarm_name,
-                                   const std::string& alarm_description) {
-	alarm_catalog.addAlarm(new MultiSeverityAlarm(alarm_name,alarm_description));
+void AbstractControlUnit::addStateVariable(StateVariableType variable_type,
+                                           const std::string& state_variable_name,
+                                           const std::string& state_variable_description) {
+    if(map_variable_catalog.count(variable_type) == 0) {
+        //add new catalog
+        map_variable_catalog.insert(MapStateVariablePair(variable_type, AlarmCatalog(stateVariableEnumToName(variable_type))));
+    }
+    AlarmCatalog& catalog = map_variable_catalog[variable_type];
+    catalog.addAlarm(new MultiSeverityAlarm(stateVariableEnumToName(variable_type),
+                                            state_variable_name,
+                                            state_variable_description));
     //add this instance as
-    alarm_catalog.addAlarmHandler(alarm_name,
-                                  this);
+    catalog.addAlarmHandler(state_variable_name,
+                            this);
 }
 
-void AbstractControlUnit::setAlarmSeverity(const common::alarm::MultiSeverityAlarmLevel alarm_severity) {
-    alarm_catalog.setAllAlarmSeverity(alarm_severity);
+void AbstractControlUnit::setStateVariableSeverity(StateVariableType variable_type,
+                                                   const common::alarm::MultiSeverityAlarmLevel state_variable_severity) {
+    GET_CAT_OR_EXIT(variable_type, )
+    catalog.setAllAlarmSeverity(state_variable_severity);
     AttributeCache& output_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT);
-    if(output_cache.hasName("alarm_catalog")) {
-        output_cache.getValueSettingByName("alarm_catalog")->setValue(CDataVariant(alarm_catalog.isCatalogClear()==false));
-    }
+    output_cache.getValueSettingByName(stateVariableEnumToName(variable_type))->setValue(CDataVariant(catalog.isCatalogClear()==false));
 }
 
-bool AbstractControlUnit::setAlarmSeverity(const std::string& alarm_name,
-                                           const MultiSeverityAlarmLevel alarm_severity) {
-    AlarmDescription *alarm = alarm_catalog.getAlarmByName(alarm_name);
+bool AbstractControlUnit::setStateVariableSeverity(StateVariableType variable_type,
+                                                   const std::string& state_variable_name,
+                                                   const MultiSeverityAlarmLevel state_variable_severity) {
+    GET_CAT_OR_EXIT(variable_type, false)
+    AlarmDescription *alarm = catalog.getAlarmByName(state_variable_name);
     if(alarm == NULL) return false;
-    alarm->setCurrentSeverity(alarm_severity);
+    alarm->setCurrentSeverity(state_variable_severity);
     //update global alarm output attribute
     AttributeCache& output_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT);
-    if(output_cache.hasName("alarm_catalog")) {
-        output_cache.getValueSettingByName("alarm_catalog")->setValue(CDataVariant(alarm_catalog.isCatalogClear()==false));
-    }
+    output_cache.getValueSettingByName(stateVariableEnumToName(variable_type))->setValue(CDataVariant(catalog.isCatalogClear()==false));
     return true;
 }
 
-bool AbstractControlUnit::setAlarmSeverity(const unsigned int alarm_ordered_id,
-                                           const MultiSeverityAlarmLevel alarm_severity) {
-    AlarmDescription *alarm = alarm_catalog.getAlarmByOrderedID(alarm_ordered_id);
+bool AbstractControlUnit::setStateVariableSeverity(StateVariableType variable_type,
+                                                   const unsigned int state_variable_ordered_id,
+                                                   const MultiSeverityAlarmLevel state_variable_severity) {
+    GET_CAT_OR_EXIT(variable_type, false)
+    AlarmDescription *alarm = catalog.getAlarmByOrderedID(state_variable_ordered_id);
     if(alarm == NULL) return false;
-    alarm->setCurrentSeverity(alarm_severity);
+    alarm->setCurrentSeverity(state_variable_severity);
     //update global alarm output attribute
     AttributeCache& output_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT);
-    if(output_cache.hasName("alarm_catalog")) {
-        output_cache.getValueSettingByName("alarm_catalog")->setValue(CDataVariant(alarm_catalog.isCatalogClear()==false));
-    }
+    output_cache.getValueSettingByName(stateVariableEnumToName(variable_type))->setValue(CDataVariant(catalog.isCatalogClear()==false));
     return true;
 }
 
-bool AbstractControlUnit::getAlarmSeverity(const std::string& alarm_name,
-                                           MultiSeverityAlarmLevel& alarm_severity) {
-    AlarmDescription *alarm = alarm_catalog.getAlarmByName(alarm_name);
+bool AbstractControlUnit::getStateVariableSeverity(StateVariableType variable_type,
+                                                   const std::string& state_variable_name,
+                                                   MultiSeverityAlarmLevel& state_variable_severity) {
+    GET_CAT_OR_EXIT(variable_type, false)
+    AlarmDescription *alarm = catalog.getAlarmByName(state_variable_name);
     if(alarm == NULL) return false;
-    alarm_severity = static_cast<MultiSeverityAlarmLevel>(alarm->getCurrentSeverityCode());
+    state_variable_severity = static_cast<MultiSeverityAlarmLevel>(alarm->getCurrentSeverityCode());
     return true;
 }
 
-bool AbstractControlUnit::getAlarmSeverity(const unsigned int alarm_ordered_id,
-                                           MultiSeverityAlarmLevel& alarm_severity) {
-    AlarmDescription *alarm = alarm_catalog.getAlarmByOrderedID(alarm_ordered_id);
+bool AbstractControlUnit::getStateVariableSeverity(StateVariableType variable_type,
+                                                   const unsigned int state_variable_ordered_id,
+                                                   MultiSeverityAlarmLevel& state_variable_severity) {
+    GET_CAT_OR_EXIT(variable_type, false)
+    AlarmDescription *alarm = catalog.getAlarmByOrderedID(state_variable_ordered_id);
     if(alarm == NULL) return false;
-    alarm_severity = static_cast<MultiSeverityAlarmLevel>(alarm->getCurrentSeverityCode());
+    state_variable_severity = static_cast<MultiSeverityAlarmLevel>(alarm->getCurrentSeverityCode());
     return true;
 }
 
-void AbstractControlUnit::alarmChanged(const std::string& alarm_name,
-                                       const int8_t alarm_severity) {
-    AlarmDescription *alarm = alarm_catalog.getAlarmByName(alarm_name);
+void AbstractControlUnit::alarmChanged(const std::string& state_variable_tag,
+                                       const std::string& state_variable_name,
+                                       const int8_t state_variable_severity) {
+    int variable_type = stateVariableNameToEnum(state_variable_tag);
+    if(variable_type == -1) return;
+    
+    GET_CAT_OR_EXIT((StateVariableType)variable_type, )
+    AlarmDescription *alarm = catalog.getAlarmByName(state_variable_name);
     CHAOS_ASSERT(alarm);
     
     //update alarm log
     alarm_logging_channel->logAlarm(getCUID(),
                                     "AbstractControlUnit",
                                     *alarm);
-    //update dataset alarm on cds
-    pushAlarmDataset();
+    
+    switch((StateVariableType)variable_type) {
+        case StateVariableTypeWarning:
+            //update dataset alarm on cds
+            pushWarningDataset();
+            break;
+            
+        case StateVariableTypeAlarm:
+            //update dataset alarm on cds
+            pushAlarmDataset();
+            break;
+    }
 }
 
 void AbstractControlUnit::setBusyFlag(bool state) {
@@ -1829,8 +1881,8 @@ const bool AbstractControlUnit::getBusyFlag() const {
 }
 
 void AbstractControlUnit::metadataLogging(const std::string& subject,
-                     const chaos::common::metadata_logging::StandardLoggingChannel::LogLevel log_level,
-                     const std::string& message) {
+                                          const chaos::common::metadata_logging::StandardLoggingChannel::LogLevel log_level,
+                                          const std::string& message) {
     if(standard_logging_channel == NULL) return;
     
     standard_logging_channel->logMessage(getCUID(),

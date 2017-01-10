@@ -338,6 +338,11 @@ bool ChaosMetadataServiceClient::addKeyAttributeHandlerForDataset(const std::str
                                      key_to_monitor%
                                      DataPackPrefixID::ALARM_DATASET_POSTFIX);
             break;
+        case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_WARNING:
+            dataset_key = boost::str(boost::format("%1%%2%")%
+                                     key_to_monitor%
+                                     DataPackPrefixID::WARNING_DATASET_POSTFIX);
+            break;
         default:
             return false;
     }
@@ -438,6 +443,11 @@ std::string ChaosMetadataServiceClient::getDatasetKeyFromGeneralKey(const std::s
             return boost::str(boost::format("%1%%2%")%
                               node_uid%
                               DataPackPrefixID::ALARM_DATASET_POSTFIX);
+            break;
+        case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_WARNING:
+            return boost::str(boost::format("%1%%2%")%
+                              node_uid%
+                              DataPackPrefixID::WARNING_DATASET_POSTFIX);
             break;
         default:
             return "";

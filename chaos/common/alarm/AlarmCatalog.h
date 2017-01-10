@@ -34,7 +34,9 @@ namespace chaos {
             class AlarmCatalog:
             protected chaos::common::state_flag::StateFlagCatalog {
             public:
+                AlarmCatalog();
                 AlarmCatalog(const std::string& catalog_name);
+                AlarmCatalog(const AlarmCatalog& catalog);
                 ~AlarmCatalog();
                 
                 //! add a new alarm to catalog
