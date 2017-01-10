@@ -22,7 +22,7 @@ HealtMonitorWidget::HealtMonitorWidget(QWidget * parent):
     menu_tools->addAction("Remove All", this, SLOT(closeAllMonitor()));
     QWidget *central_widget = new QWidget(this);
     QVBoxLayout *vertical_layout = new QVBoxLayout(central_widget);
-
+    vertical_layout->setMargin(2);
 
     vertical_layout->addWidget(healt_list_presenter = new HealtWidgetsListPresenteWidget(this));
     setCentralWidget(central_widget);
