@@ -24,7 +24,7 @@ host_date=`date`
 mail_obj="[CHAOS CHECK] ERROR on $host($host_arch) $host_date"
 target=""
 stage=""
-
+deploy_mode=0
 
 function send_error_mail(){
     to=$1
@@ -156,7 +156,7 @@ function compile_bundle(){
 	    ;;
 
 	armhf)
-	    cmake_params="$cmake_params -DCHAOS_TARGET=armhf"
+	    cmake_params="$cmake_params -DCHAOS_TARGET=armhf -DCHAOS_CDS=OFF"
 	    ;;
 
 	arm)
@@ -213,7 +213,7 @@ function compile_bundle(){
 	fi
     fi
 
-    if [ "$host_arch" == "$arch" ] && [ "$deploy_mode" -gt 0 ]; then
+    if [ "$host_arch" == "$arch" ] && [ $deploy_mode -gt 0 ]; then
 	printlog "* testing distribution on architecture \"$arch\""
 	pushd $install_prefix >& /dev/null
 	export LD_LIBRARY_PATH=$install_prefix/lib
