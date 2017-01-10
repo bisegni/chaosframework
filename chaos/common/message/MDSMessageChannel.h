@@ -222,6 +222,11 @@ namespace chaos {
                                           ChaosStringVector& node_found,
                                           uint32_t millisec_to_wait=5000);
                 
+                //! retrieve a dataset related to a snapshot name of a given cu
+                int loadSnapshotNodeDataset(const std::string& snapname,
+                						const std::string& cu_name,
+                                              chaos::common::data::CDataWrapper&data_set,
+                                              uint32_t millisec_to_wait=5000);
                 //! create or update a variable
                 int setVariable(const std::string& variable_name,
                                 chaos::common::data::CDataWrapper& variable_value,

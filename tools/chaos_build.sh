@@ -13,7 +13,7 @@ currdir=`pwd`
 installdir="$currdir/chaos-build"
 inputdir=""
 nproc="4"
-log="default"
+log="chaos_build.log"
 unset CHAOS_TARGET
 unset CHAOS_PREFIX
 host=`hostname`
@@ -151,12 +151,12 @@ function compile_bundle(){
     fi
     case $arch in
 	i686)	    
-	    cmake_params="$cmake_params -DCHAOS_TARGET=i686-linux26"
+	    cmake_params="$cmake_params -DCHAOS_TARGET=i686-linux26 -DCHAOS_CDS=OFF -DCHAOS_MDS=OFF -DCHAOS_WAN=OFF -DCHAOS_EXAMPLES=OFF"
 	    export PATH=/usr/local/chaos/i686-nptl-linux-gnu/bin:$PATH
 	    ;;
 
 	armhf)
-	    cmake_params="$cmake_params -DCHAOS_TARGET=armhf -DCHAOS_CDS=OFF"
+	    cmake_params="$cmake_params -DCHAOS_TARGET=armhf -DCHAOS_CDS=OFF -DCHAOS_MDS=OFF -DCHAOS_WAN=OFF -DCHAOS_EXAMPLES=OFF"
 	    ;;
 
 	arm)
@@ -242,16 +242,22 @@ function compile_bundle(){
 }
 
 if [ -n "$fromscratch" ];then
-    printlog "* from scratch"
-    if [ -z "$inputdir" ];then
-	inputdir=$currdir"/build_chaos_bundle"
-    fi
-    if [ -d "$inputdir" ];then
-	printlog "* removing $inputdir"
-	rm -rf $inputdir
+
+for a in $arch;do
+    for b in $build;do
+    printlog "* from scratch arch '$a' build '$b'"
+
+    dir=$currdir"/$prefix-$a-$b"
+
+    if [ -d "$dir" ];then
+	printlog "* removing $dir"
+	rm -rf $dir
     fi
 
-    mkdir -p $inputdir
+    mkdir -p $dir
+    printlog "* creating $dir"
+done
+done
     
 fi
 for a in $arch;do

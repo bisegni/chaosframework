@@ -224,12 +224,13 @@ int HTTPWANInterface::process(struct mg_connection *connection) {
 	
 	//remove the prefix and tokenize the url
 	std::vector<std::string> api_token_list;
-	boost::algorithm::split(api_token_list,
-					 api_uri,
-					 boost::algorithm::is_any_of("/"),
-					 boost::algorithm::token_compress_on);
 
 	if(method == "GET"){
+		boost::algorithm::split(api_token_list,
+				connection->query_string,
+							 boost::algorithm::is_any_of("&"),
+							 boost::algorithm::token_compress_on);
+
 		HTTWAN_INTERFACE_DBG_ <<"GET url:"<<url<<" api:"<<api_uri<<"content:"<<connection->content<<" query:"<<connection->query_string;
 
 		 if((err = handler->handleCall(1,api_token_list,json_request,
@@ -252,6 +253,11 @@ int HTTPWANInterface::process(struct mg_connection *connection) {
 		     DEBUG_CODE(HTTWAN_INTERFACE_DBG_ << "Execution time is:" << duration << " microseconds";)
 		 	return 1;//
 	}
+	boost::algorithm::split(api_token_list,
+						 api_uri,
+						 boost::algorithm::is_any_of("/"),
+						 boost::algorithm::token_compress_on);
+
 	//check if we havethe domain and api name in the uri and the content is json
 	if(api_token_list.size()>= 2 &&
 	   json) {
