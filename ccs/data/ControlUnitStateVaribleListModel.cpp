@@ -1,4 +1,4 @@
-#include "AlarmListModel.h"
+#include "ControlUnitStateVaribleListModel.h"
 
 #include <chaos/common/alarm/alarm.h>
 
@@ -7,25 +7,42 @@
 using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::node_monitor;
 
-AlarmListModel::AlarmListModel(const QString& _control_unit_id,
-                               QObject *parent):
-    control_unit_id(_control_unit_id) {}
+ControlUnitStateVaribleListModel::ControlUnitStateVaribleListModel(const QString& _control_unit_id,
+                                                                   StateVariableType state_variable_type,
+                                                                    QObject *parent):
+    control_unit_id(_control_unit_id) {
+    setStateVariableType(state_variable_type);
 
-AlarmListModel::~AlarmListModel() {}
+}
 
-void AlarmListModel::track() {
+ControlUnitStateVaribleListModel::~ControlUnitStateVaribleListModel() {}
+
+void ControlUnitStateVaribleListModel::track() {
     ChaosMetadataServiceClient::getInstance()->addHandlerToNodeMonitor(control_unit_id.toStdString(),
                                                                        chaos::metadata_service_client::node_monitor::ControllerTypeNodeControlUnit,
                                                                        this);
 }
 
-void AlarmListModel::untrack() {
+void ControlUnitStateVaribleListModel::untrack() {
     ChaosMetadataServiceClient::getInstance()->removeHandlerToNodeMonitor(control_unit_id.toStdString(),
                                                                           chaos::metadata_service_client::node_monitor::ControllerTypeNodeControlUnit,
                                                                           this);
 }
 
-QVariant AlarmListModel::getBackgroudColor(int row) const {
+void ControlUnitStateVaribleListModel::setStateVariableType(StateVariableType type) {
+    switch(type){
+    case StateVariableTypeWarning:
+        chaos_dataset_type = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_WARNING;
+        break;
+    case StateVariableTypeAlarm:
+        chaos_dataset_type = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_ALARM;
+        break;
+    default:
+        chaos_dataset_type = -1;
+    }
+}
+
+QVariant ControlUnitStateVaribleListModel::getBackgroudColor(int row) const {
     const std::string alarm_name = alarm_names[row].toStdString();
     MapDatasetKeyValuesConstIterator it = alarm_dataset.find(alarm_name);
     if(it == alarm_dataset.end()) return QVariant();
@@ -44,7 +61,7 @@ QVariant AlarmListModel::getBackgroudColor(int row) const {
     return QVariant();
 }
 
-QVariant AlarmListModel::getTextColor(int row) const {
+QVariant ControlUnitStateVaribleListModel::getTextColor(int row) const {
     const std::string alarm_name = alarm_names[row].toStdString();
     MapDatasetKeyValuesConstIterator it = alarm_dataset.find(alarm_name);
     if(it == alarm_dataset.end()) return QVariant();
@@ -63,34 +80,34 @@ QVariant AlarmListModel::getTextColor(int row) const {
     return QVariant();
 }
 
-int AlarmListModel::getRowCount() const {
+int ControlUnitStateVaribleListModel::getRowCount() const {
     return alarm_names.size();
 }
 
-QVariant AlarmListModel::getRowData(int row) const {
+QVariant ControlUnitStateVaribleListModel::getRowData(int row) const {
     return alarm_names[row];
 }
 
-QVariant AlarmListModel::getUserData(int row) const {
+QVariant ControlUnitStateVaribleListModel::getUserData(int row) const {
     return alarm_names[row];
 }
 
-bool AlarmListModel::isRowCheckable(int row) const {
+bool ControlUnitStateVaribleListModel::isRowCheckable(int row) const {
     return false;
 }
 
-Qt::CheckState AlarmListModel::getCheckableState(int row)const {
+Qt::CheckState ControlUnitStateVaribleListModel::getCheckableState(int row)const {
     return Qt::Unchecked;
 }
 
-bool AlarmListModel::setRowCheckState(const int row, const QVariant& value) {
+bool ControlUnitStateVaribleListModel::setRowCheckState(const int row, const QVariant& value) {
     return false;
 }
 
-void AlarmListModel::updatedDS(const std::string& control_unit_uid,
+void ControlUnitStateVaribleListModel::updatedDS(const std::string& control_unit_uid,
                                int dataset_type,
                                MapDatasetKeyValues& dataset_key_values) {
-    if(dataset_type != chaos::DataPackCommonKey::DPCK_DATASET_TYPE_ALARM) return;
+    if(dataset_type != chaos_dataset_type) return;
     beginResetModel();
     alarm_names.clear();
     alarm_dataset = dataset_key_values;
@@ -109,7 +126,7 @@ void AlarmListModel::updatedDS(const std::string& control_unit_uid,
     endResetModel();
 }
 
-void AlarmListModel::noDSDataFound(const std::string& control_unit_uid,
+void ControlUnitStateVaribleListModel::noDSDataFound(const std::string& control_unit_uid,
                                    int dataset_type) {
     if(dataset_type != chaos::DataPackCommonKey::DPCK_DATASET_TYPE_ALARM) return;
     beginResetModel();

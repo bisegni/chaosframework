@@ -136,7 +136,6 @@ SOURCES += main.cpp\
     widget/OnOffImageIndicator.cpp \
     widget/CStateVisiblePushButton.cpp \
     status_manager/StatusManager.cpp \
-    data/AlarmListModel.cpp \
     widget/CQListView.cpp \
     widget/CCommandStatisticWidget.cpp \
     plot/AbstractBinaryPlotAdapter.cpp \
@@ -145,7 +144,8 @@ SOURCES += main.cpp\
     data/SearchNodeListModel.cpp \
     data/LiveDatasetTableModel.cpp \
     data/SnapshotDatasetNodeListModel.cpp \
-    preference/PreferenceManager.cpp
+    preference/PreferenceManager.cpp \
+    data/ControlUnitStateVaribleListModel.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -263,7 +263,6 @@ HEADERS  += \
     widget/OnOffImageIndicator.h \
     widget/CStateVisiblePushButton.h \
     status_manager/StatusManager.h \
-    data/AlarmListModel.h \
     widget/CQListView.h \
     widget/CCommandStatisticWidget.h \
     plot/AbstractBinaryPlotAdapter.h \
@@ -274,7 +273,8 @@ HEADERS  += \
     data/LiveDatasetTableModel.h \
     data/SnapshotDatasetNodeListModel.h \
     preference/PreferenceManager.h \
-    preference/preference_types.h
+    preference/preference_types.h \
+    data/ControlUnitStateVaribleListModel.h
 
 FORMS    += \
     search/searchnoderesult.ui \

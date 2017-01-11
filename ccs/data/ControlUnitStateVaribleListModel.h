@@ -7,7 +7,7 @@
 
 #include <QVector>
 
-class AlarmListModel:
+class ControlUnitStateVaribleListModel:
         public ChaosAbstractListModel,
         public chaos::metadata_service_client::node_monitor::ControlUnitMonitorHandler {
 protected:
@@ -25,13 +25,23 @@ protected:
     void noDSDataFound(const std::string& control_unit_uid,
                        int dataset_type);
 public:
-    AlarmListModel(const QString& control_unit_id,
-                   QObject *parent=0);
-    ~AlarmListModel();
+    typedef enum StateVariableType {
+        StateVariableTypeUndefined,
+        StateVariableTypeWarning,
+        StateVariableTypeAlarm
+    } StateVariableType;
+
+    ControlUnitStateVaribleListModel(const QString& control_unit_id,
+                                     StateVariableType state_variable_type,
+                                     QObject *parent=0);
+    ~ControlUnitStateVaribleListModel();
 
     void track();
     void untrack();
+    void setStateVariableType(StateVariableType type);
 private:
+    StateVariableType type;
+    int chaos_dataset_type;
     const QString control_unit_id;
     QVector<QString> alarm_names;
     chaos::metadata_service_client::node_monitor::MapDatasetKeyValues alarm_dataset;

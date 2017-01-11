@@ -31,11 +31,12 @@ using namespace chaos::metadata_service_client::node_monitor;
 
 ControlUnitEditor::ControlUnitEditor(const QString &_control_unit_unique_id) :
     PresenterWidget(NULL),
+    ui(new Ui::ControlUnitEditor),
     restarted(false),
     last_online_state(false),
     control_unit_unique_id(_control_unit_unique_id),
-    alarm_list_model(control_unit_unique_id),
-    ui(new Ui::ControlUnitEditor),
+    alarm_list_model(control_unit_unique_id, ControlUnitStateVaribleListModel::StateVariableTypeAlarm),
+    warning_list_model(control_unit_unique_id, ControlUnitStateVaribleListModel::StateVariableTypeWarning),
     dataset_output_table_model(control_unit_unique_id,
                                chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT),
     dataset_input_table_model(control_unit_unique_id,
@@ -44,7 +45,6 @@ ControlUnitEditor::ControlUnitEditor(const QString &_control_unit_unique_id) :
 }
 
 ControlUnitEditor::~ControlUnitEditor() {
-    //shutdown monitoring of channel
     delete ui;
 }
 
@@ -190,10 +190,12 @@ void ControlUnitEditor::initUI() {
     ui->widgetNodeResource->setNodeUID(control_unit_unique_id);
     ui->widgetNodeResource->initChaosContent();
 
-    //manage  alarm list
-    ui->listViewAlarm->setVisible(false);
+    //manage  alarm and warning list
+    ui->splitterStateVariable->setStretchFactor(1,0);
+    //reset the splitter in mode to hide the lists
+    on_checkBoxShowStateVariable_clicked();
     ui->listViewAlarm->setModel(&alarm_list_model);
-
+    ui->listViewWarning->setModel(&warning_list_model);
     //manage command stat
     ui->widgetCommandStatistic->setVisible(false);
 }
@@ -266,6 +268,7 @@ bool ControlUnitEditor::isClosing() {
     //remove monitoring on cu and us
     manageMonitoring(false);
     alarm_list_model.untrack();
+    warning_list_model.untrack();
     if(control_unit_subtype.compare(chaos::NodeType::NODE_SUBTYPE_BATCH_CONTROL_UNIT) == 0){
         ui->widgetCommandStatistic->deinitChaosContent();
     }
@@ -538,8 +541,8 @@ void ControlUnitEditor::on_pushButtonRecoverError_clicked() {
 
 void ControlUnitEditor::on_pushButtonOpenInstanceEditor_clicked() {
     launchPresenterWidget(new ControUnitInstanceEditor(unit_server_parent_unique_id,
-                                                      control_unit_unique_id,
-                                                      true));
+                                                       control_unit_unique_id,
+                                                       true));
 }
 
 void ControlUnitEditor::tabIndexChanged(int new_index) {
@@ -604,7 +607,18 @@ void ControlUnitEditor::on_pushButtonShowPlot_clicked() {
     plot_viewer->show();
 }
 
-void ControlUnitEditor::on_checkBoxShowAlarm_clicked() {
-    ui->listViewAlarm->setVisible(ui->checkBoxShowAlarm->isChecked());
-    if(ui->checkBoxShowAlarm->isChecked()){alarm_list_model.track();}else{alarm_list_model.untrack();}
+void ControlUnitEditor::on_checkBoxShowStateVariable_clicked() {
+    QList<int> splitter_size;
+    if(ui->checkBoxShowStateVariable->isChecked()) {
+        alarm_list_model.track();
+        warning_list_model.track();
+        splitter_size.push_back(450);
+        splitter_size.push_back(150);
+    } else {
+        alarm_list_model.untrack();
+        warning_list_model.untrack();
+        splitter_size.push_back(600);
+        splitter_size.push_back(0);
+    }
+    ui->splitterStateVariable->setSizes(splitter_size);
 }

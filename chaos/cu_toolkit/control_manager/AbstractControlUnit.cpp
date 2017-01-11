@@ -421,6 +421,7 @@ void AbstractControlUnit::doInitRpCheckList() throw(CException) {
             attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM).markAllAsChanged();
             pushSystemDataset();
             pushAlarmDataset();
+            pushWarningDataset();
             break;
         }
         
@@ -1725,7 +1726,7 @@ void AbstractControlUnit::pushWarningDataset() {
                                                                  DataPackCommonKey::DPCK_DATASET_TYPE_WARNING);
     if(attribute_dataset) {
         //push out the system dataset
-        key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainAlarm, attribute_dataset);
+        key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainWarning, attribute_dataset);
     }
 }
 
