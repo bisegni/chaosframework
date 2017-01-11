@@ -56,7 +56,9 @@ namespace chaos{
                                  const std::string& alarm_name,
                                  const std::string& alarm_description);
                 ~AlarmDescription();
+                
             public:
+                const std::string& getAlarmTag() const;
                 const std::string& getAlarmName() const;
                 const std::string& getAlarmDescription() const;
                 void setCurrentSeverity(const uint8_t);

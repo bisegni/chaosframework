@@ -1018,17 +1018,19 @@ namespace chaos {
         }
         
         namespace AlarmLogging {
-            //! the key represent the error code [int32_t]
+            //! the key represent the alarm level code(an alarm or warning can have more severity) [int32_t]
             static const char * const PARAM_NODE_LOGGING_ALARM_LEVEL_CODE               = "mdsndk_nl_a_lc";
-            //! the key represent the error code [string]
+            //! the key represent the alarm level description [string]
             static const char * const PARAM_NODE_LOGGING_ALARM_LEVEL_DESCRIPTION        = "mdsndk_nl_a_ld";
-            //! the key represent the error message [int32_t]
+            //! the key represent the alarm code [int32_t]
             static const char * const PARAM_NODE_LOGGING_ALARM_CODE                     = "mdsndk_nl_a_c";
-            //! the key represent the error message [string]
+            //! the key represent the specific tagging using by sublayer [string]
+            static const char * const PARAM_NODE_LOGGING_ALARM_TAG                      = "mdsndk_nl_a_t";
+            //! the key represent the the name of the alarm [string]
             static const char * const PARAM_NODE_LOGGING_ALARM_NAME                     = "mdsndk_nl_a_n";
-            //! the key represent the error message [string]
+            //! the key represent the the description of the alarm [string]
             static const char * const PARAM_NODE_LOGGING_ALARM_DESCRIPTION              = "mdsndk_nl_a_d";
-            //! the key represent the error message [uint32_t]
+            //! the key represent the alarms repetition witin samples [uint32_t]
             static const char * const PARAM_NODE_LOGGING_ALARM_REPETITION               = "mdsndk_nl_a_rep";
         }
         

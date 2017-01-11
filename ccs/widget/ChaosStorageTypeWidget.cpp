@@ -176,13 +176,9 @@ void ChaosStorageTypeWidget::sendStorageType(chaos::DataServiceNodeDefinitionTyp
                                                                                                                 property_list));
 }
 
-void ChaosStorageTypeWidget::apiHasStarted(const QString& api_tag) {
-    QObject *sender = findChild<QObject*>(api_tag);
-}
+void ChaosStorageTypeWidget::apiHasStarted(const QString& api_tag) {}
 
-void ChaosStorageTypeWidget::apiHasEnded(const QString& api_tag) {
-    QObject *sender = findChild<QObject*>(api_tag);
-}
+void ChaosStorageTypeWidget::apiHasEnded(const QString& api_tag) {}
 
 void ChaosStorageTypeWidget::apiHasEndedWithError(const QString& api_tag,
                                                   QSharedPointer<chaos::CException> api_exception) {

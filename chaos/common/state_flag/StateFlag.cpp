@@ -213,7 +213,7 @@ void StateFlag::setTag(const std::string& new_tag) {
     flag_description.tag = new_tag;
 }
 
-const std::string& StateFlag::getTag() {
+const std::string& StateFlag::getTag() const {
     return flag_description.tag;
 }
 

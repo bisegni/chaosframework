@@ -40,10 +40,9 @@ int AlarmLoggingChannel::logAlarm(const std::string& node_uid,
     CDataWrapper *log_entry = getNewLogEntry(node_uid,
                                              log_subject,
                                              "alarm");
-    
+    log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::AlarmLogging::PARAM_NODE_LOGGING_ALARM_TAG, alarm_description.getAlarmTag());
     log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::AlarmLogging::PARAM_NODE_LOGGING_ALARM_NAME, alarm_description.getAlarmName());
     log_entry->addInt32Value(MetadataServerLoggingDefinitionKeyRPC::AlarmLogging::PARAM_NODE_LOGGING_ALARM_LEVEL_CODE, alarm_description.getCurrentSeverityCode());
-    //log_entry->addInt32Value(MetadataServerLoggingDefinitionKeyRPC::AlarmLogging::PARAM_NODE_LOGGING_ALARM_REPETITION, alarm_description.stat.repetition);
     //log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::AlarmLogging::PARAM_NODE_LOGGING_ALARM_NAME, alarm_description.alarm_name);
     log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::AlarmLogging::PARAM_NODE_LOGGING_ALARM_DESCRIPTION, alarm_description.getAlarmDescription());
     log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::AlarmLogging::PARAM_NODE_LOGGING_ALARM_LEVEL_DESCRIPTION, alarm_description.getCurrentSeverityDescription());

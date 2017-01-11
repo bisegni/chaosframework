@@ -203,7 +203,7 @@ namespace chaos {
                 
                 void setTag(const std::string& new_tag);
                 
-                const std::string& getTag();
+                const std::string& getTag() const;
             };
             
             
