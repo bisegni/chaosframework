@@ -94,7 +94,7 @@ private slots:
 
     void on_pushButtonShowPlot_clicked();
 
-    void on_checkBoxShowStateVariable_clicked();
+    void on_checkBoxShowAlarms_clicked();
 
 private:
     QString getStatusString(int status);

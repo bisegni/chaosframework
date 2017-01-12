@@ -457,7 +457,7 @@
       <attribute name="title">
        <string>Dataset</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
        <property name="spacing">
         <number>4</number>
        </property>
@@ -523,14 +523,14 @@
           </widget>
          </item>
          <item>
-          <widget class="QCheckBox" name="checkBoxShowStateVariable">
+          <widget class="QCheckBox" name="checkBoxShowAlarms">
            <property name="font">
             <font>
              <pointsize>11</pointsize>
             </font>
            </property>
            <property name="text">
-            <string>Show State Variables</string>
+            <string>Show Alarms</string>
            </property>
           </widget>
          </item>
@@ -579,17 +579,11 @@
         </layout>
        </item>
        <item>
-        <widget class="QSplitter" name="splitter_3">
+        <widget class="QSplitter" name="splitter_2">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
-         <widget class="QSplitter" name="splitterStateVariable">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
+         <widget class="QSplitter" name="splitterOutputDatasets">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -624,45 +618,42 @@
             <number>18</number>
            </attribute>
           </widget>
-          <widget class="QWidget" name="">
-           <layout class="QVBoxLayout" name="verticalLayoutStateVariable">
-            <item>
-             <widget class="QListView" name="listViewAlarm">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>11</pointsize>
-               </font>
-              </property>
-              <property name="selectionMode">
-               <enum>QAbstractItemView::NoSelection</enum>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QListView" name="listViewWarning">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>11</pointsize>
-               </font>
-              </property>
-              <property name="selectionMode">
-               <enum>QAbstractItemView::NoSelection</enum>
-              </property>
-             </widget>
-            </item>
-           </layout>
+          <widget class="QSplitter" name="splitterAlarms">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <widget class="QListView" name="listViewAlarm">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>11</pointsize>
+             </font>
+            </property>
+            <property name="selectionMode">
+             <enum>QAbstractItemView::NoSelection</enum>
+            </property>
+           </widget>
+           <widget class="QListView" name="listViewWarning">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>11</pointsize>
+             </font>
+            </property>
+            <property name="selectionMode">
+             <enum>QAbstractItemView::NoSelection</enum>
+            </property>
+           </widget>
           </widget>
          </widget>
          <widget class="QWidget" name="layoutWidget">
@@ -1024,6 +1015,47 @@
     <layout class="QHBoxLayout" name="horizontalLayoutProperty">
      <item>
       <layout class="QGridLayout" name="gridLayout_3">
+       <item row="0" column="7">
+        <widget class="ChaosStorageTypeWidget" name="widgetStorageType" native="true">
+         <property name="minimumSize">
+          <size>
+           <width>110</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>110</width>
+           <height>20</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="6">
+        <spacer name="horizontalSpacer_5">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_9">
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Run Schedule Delay:</string>
+         </property>
+        </widget>
+       </item>
        <item row="0" column="8">
         <spacer name="horizontalSpacer_7">
          <property name="orientation">
@@ -1113,47 +1145,6 @@
          </property>
          <property name="text">
           <string>0</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_9">
-         <property name="font">
-          <font>
-           <pointsize>11</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>Run Schedule Delay:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="6">
-        <spacer name="horizontalSpacer_5">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="0" column="7">
-        <widget class="ChaosStorageTypeWidget" name="widgetStorageType" native="true">
-         <property name="minimumSize">
-          <size>
-           <width>110</width>
-           <height>20</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>110</width>
-           <height>20</height>
-          </size>
          </property>
         </widget>
        </item>

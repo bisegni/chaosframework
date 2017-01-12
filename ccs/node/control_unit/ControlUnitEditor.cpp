@@ -191,9 +191,9 @@ void ControlUnitEditor::initUI() {
     ui->widgetNodeResource->initChaosContent();
 
     //manage  alarm and warning list
-    ui->splitterStateVariable->setStretchFactor(1,0);
+    ui->splitterOutputDatasets->setStretchFactor(1,0);
     //reset the splitter in mode to hide the lists
-    on_checkBoxShowStateVariable_clicked();
+    on_checkBoxShowAlarms_clicked();
     ui->listViewAlarm->setModel(&alarm_list_model);
     ui->listViewWarning->setModel(&warning_list_model);
     //manage command stat
@@ -607,9 +607,9 @@ void ControlUnitEditor::on_pushButtonShowPlot_clicked() {
     plot_viewer->show();
 }
 
-void ControlUnitEditor::on_checkBoxShowStateVariable_clicked() {
+void ControlUnitEditor::on_checkBoxShowAlarms_clicked() {
     QList<int> splitter_size;
-    if(ui->checkBoxShowStateVariable->isChecked()) {
+    if(ui->checkBoxShowAlarms->isChecked()) {
         alarm_list_model.track();
         warning_list_model.track();
         splitter_size.push_back(450);
@@ -620,5 +620,5 @@ void ControlUnitEditor::on_checkBoxShowStateVariable_clicked() {
         splitter_size.push_back(600);
         splitter_size.push_back(0);
     }
-    ui->splitterStateVariable->setSizes(splitter_size);
+    ui->splitterAlarms->setSizes(splitter_size);
 }
