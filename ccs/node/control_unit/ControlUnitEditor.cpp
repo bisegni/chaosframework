@@ -620,5 +620,5 @@ void ControlUnitEditor::on_checkBoxShowAlarms_clicked() {
         splitter_size.push_back(600);
         splitter_size.push_back(0);
     }
-    ui->splitterAlarms->setSizes(splitter_size);
+    ui->splitterOutputDatasets->setSizes(splitter_size);
 }
