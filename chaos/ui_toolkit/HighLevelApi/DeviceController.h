@@ -45,7 +45,8 @@ namespace chaos {
             DatasetDomainCustom,
             DatasetDomainSystem,
             DatasetDomainHealth,
-            DatasetDomainAlarm
+			DatasetDomainDevAlarm,
+			DatasetDomainCUAlarm
         } DatasetDomain;
         
         //! Controller for a single device instance

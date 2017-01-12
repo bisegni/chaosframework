@@ -31,10 +31,10 @@ void ControlUnitStateVaribleListModel::untrack() {
 
 void ControlUnitStateVaribleListModel::setStateVariableType(StateVariableType type) {
     switch(type){
-    case StateVariableTypeWarning:
+    case StateVariableTypeAlarmCU:
         chaos_dataset_type = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_WARNING;
         break;
-    case StateVariableTypeAlarm:
+    case StateVariableTypeAlarmDEV:
         chaos_dataset_type = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_ALARM;
         break;
     default:

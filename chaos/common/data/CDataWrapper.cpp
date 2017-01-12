@@ -222,7 +222,10 @@ uint64_t CDataWrapper::getUInt64Value(const std::string& key) {
 }
 //add a integer value
 double CDataWrapper::getDoubleValue(const std::string& key) {
-    
+    if(bsonBuilder->asTempObj().getField(key).type()==NumberInt){
+        return (double)bsonBuilder->asTempObj().getField(key).numberInt();
+
+    }
     return bsonBuilder->asTempObj().getField(key).Double();
 }
 

@@ -1370,11 +1370,11 @@ void AbstractControlUnit::_completeDatasetAttribute() {
                                      DataType::Output);
     
     //add global alarm checn
-    DatasetDB::addAttributeToDataSet(stateVariableEnumToName(StateVariableTypeWarning),
+    DatasetDB::addAttributeToDataSet(stateVariableEnumToName(StateVariableTypeAlarmCU),
                                      "Activated when some warning has been issued",
                                      DataType::TYPE_BOOLEAN,
                                      DataType::Output);
-    DatasetDB::addAttributeToDataSet(stateVariableEnumToName(StateVariableTypeAlarm),
+    DatasetDB::addAttributeToDataSet(stateVariableEnumToName(StateVariableTypeAlarmDEV),
                                      "Activated when some alarm has been issued",
                                      DataType::TYPE_BOOLEAN,
                                      DataType::Output);
@@ -1720,7 +1720,7 @@ CDataWrapper *AbstractControlUnit::writeCatalogOnCDataWrapper(AlarmCatalog& cata
 }
 
 void AbstractControlUnit::pushWarningDataset() {
-    GET_CAT_OR_EXIT(StateVariableTypeWarning, );
+    GET_CAT_OR_EXIT(StateVariableTypeAlarmCU, );
     //get the cdatawrapper for the pack
     CDataWrapper *attribute_dataset = writeCatalogOnCDataWrapper(catalog,
                                                                  DataPackCommonKey::DPCK_DATASET_TYPE_WARNING);
@@ -1731,7 +1731,7 @@ void AbstractControlUnit::pushWarningDataset() {
 }
 
 void AbstractControlUnit::pushAlarmDataset() {
-    GET_CAT_OR_EXIT(StateVariableTypeAlarm, );
+    GET_CAT_OR_EXIT(StateVariableTypeAlarmDEV, );
     //get the cdatawrapper for the pack
     CDataWrapper *attribute_dataset = writeCatalogOnCDataWrapper(catalog,
                                                                  DataPackCommonKey::DPCK_DATASET_TYPE_ALARM);
@@ -1853,12 +1853,12 @@ void AbstractControlUnit::alarmChanged(const std::string& state_variable_tag,
                                     *alarm);
     
     switch((StateVariableType)variable_type) {
-        case StateVariableTypeWarning:
+        case StateVariableTypeAlarmCU:
             //update dataset alarm on cds
             pushWarningDataset();
             break;
             
-        case StateVariableTypeAlarm:
+        case StateVariableTypeAlarmDEV:
             //update dataset alarm on cds
             pushAlarmDataset();
             break;

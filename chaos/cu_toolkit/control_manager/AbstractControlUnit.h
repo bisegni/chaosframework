@@ -118,12 +118,12 @@ namespace chaos{
             } StartSMPhase;
             
             typedef enum {
-                StateVariableTypeWarning,
-                StateVariableTypeAlarm
+                StateVariableTypeAlarmCU,
+                StateVariableTypeAlarmDEV
             } StateVariableType;
             
-            static const char * const StateVariableTypeWarningLabel = "warning_catalog";
-            static const char * const StateVariableTypeAlarmLabel   = "alarm_catalog";
+            static const char * const StateVariableTypeAlarmCULabel = "cu_alarm";
+            static const char * const StateVariableTypeAlarmDEVLabel   = "device_alarm";
             
             CHAOS_DEFINE_VECTOR_FOR_TYPE(boost::shared_ptr<chaos::common::data::CDataWrapper>, ACUStartupCommandList);
             
@@ -162,16 +162,16 @@ namespace chaos{
                 
                 inline const char * const stateVariableEnumToName(StateVariableType type) {
                     switch(type) {
-                        case  StateVariableTypeWarning:
-                            return StateVariableTypeWarningLabel;
-                        case   StateVariableTypeAlarm:
-                            return StateVariableTypeAlarmLabel;
+                        case  StateVariableTypeAlarmCU:
+                            return StateVariableTypeAlarmCULabel;
+                        case   StateVariableTypeAlarmDEV:
+                            return StateVariableTypeAlarmDEVLabel;
                     }
                 }
                 
                 inline int stateVariableNameToEnum(const std::string& name) {
-                    if(name.compare(StateVariableTypeWarningLabel) == 0) {return StateVariableTypeWarning;}
-                    if(name.compare(StateVariableTypeAlarmLabel) == 0) {return StateVariableTypeAlarm;}
+                    if(name.compare(StateVariableTypeAlarmCULabel) == 0) {return StateVariableTypeAlarmCU;}
+                    if(name.compare(StateVariableTypeAlarmDEVLabel) == 0) {return StateVariableTypeAlarmDEV;}
                     return -1;
                 }
                 

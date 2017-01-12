@@ -27,8 +27,8 @@ protected:
 public:
     typedef enum StateVariableType {
         StateVariableTypeUndefined,
-        StateVariableTypeWarning,
-        StateVariableTypeAlarm
+        StateVariableTypeAlarmCU,
+        StateVariableTypeAlarmDEV
     } StateVariableType;
 
     ControlUnitStateVaribleListModel(const QString& control_unit_id,

@@ -52,6 +52,8 @@ datasetDB(true) {
     channel_keys.push_back(device_id + DataPackPrefixID::SYSTEM_DATASET_POSTFIX);
     channel_keys.push_back(device_id + DataPackPrefixID::HEALTH_DATASET_POSTFIX);
     channel_keys.push_back(device_id + DataPackPrefixID::ALARM_DATASET_POSTFIX);
+    channel_keys.push_back(device_id + DataPackPrefixID::WARNING_DATASET_POSTFIX);
+
     //  current_dataset.push_back(d);
     for(int cnt=0;cnt<channel_keys.size();cnt++)
         current_dataset.push_back(boost::shared_ptr<chaos::common::data::CDataWrapper>());
