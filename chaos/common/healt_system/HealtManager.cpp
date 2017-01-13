@@ -443,6 +443,8 @@ CDataWrapper*  HealtManager::prepareNodeDataPack(NodeHealtSet& node_health_set,
     if(node_data_pack) {
         //add device unique id
         node_data_pack->addStringValue(DataPackCommonKey::DPCK_DEVICE_ID, node_health_set.node_uid);
+        //add dataset type
+        node_data_pack->addInt32Value(DataPackCommonKey::DPCK_DATASET_TYPE, DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH);
         //set the push timestamp
         static_cast<Int64HealtMetric*>(node_health_set.map_metric[NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP].get())->value = push_timestamp;
         

@@ -1064,8 +1064,8 @@ namespace chaos {
         static const char * const INPUT_DATASET_POSTFIX     = "_i";
         static const char * const CUSTOM_DATASET_POSTFIX    = "_c";
         static const char * const SYSTEM_DATASET_POSTFIX    = "_s";
-        static const char * const DEV_ALARM_DATASET_POSTFIX     = "_a";
-        static const char * const CU_ALARM_DATASET_POSTFIX   = "_w";
+        static const char * const DEV_ALARM_DATASET_POSTFIX = "_a";
+        static const char * const CU_ALARM_DATASET_POSTFIX  = "_w";
         static const char * const HEALTH_DATASET_POSTFIX    = NodeHealtDefinitionKey::HEALT_KEY_POSTFIX;
     }
     /** @} */ // end of DataPackPrefixID
@@ -1082,8 +1082,7 @@ namespace chaos {
         static const char * const DPCK_SEQ_ID                          = "dpck_seq_id";
         //!this define the acquisition timestamp of the data represented by the dataset[uint64_t]
         static const char * const DPCK_TIMESTAMP                       = "dpck_ats";//chaos::NodeDefinitionKey::NODE_TIMESTAMP;
-        
-        //!define the type of the dataset uint32_t [output(0) - input(1) - custom(2) - system(3) int32_t]
+        //!define the type of the dataset uint32_t [output(0) - input(1) - custom(2) - system(3) - ....others int32_t]
         static const char * const DPCK_DATASET_TYPE                    = "dpck_ds_type";
         //! the constant that represent the output dataset type
         static const unsigned int DPCK_DATASET_TYPE_OUTPUT             = 0;
@@ -1094,10 +1093,11 @@ namespace chaos {
         //! the constant that represent the system dataset type
         static const unsigned int DPCK_DATASET_TYPE_SYSTEM             = 3;
         //! the constant that represent the alarm dataset type
-        static const unsigned int DPCK_DATASET_TYPE_DEV_ALARM              = 4;
+        static const unsigned int DPCK_DATASET_TYPE_DEV_ALARM          = 4;
         //! the constant that represent the alarm dataset type
-        static const unsigned int DPCK_DATASET_TYPE_CU_ALARM            = 5;
-        static const unsigned int DPCK_DATASET_TYPE_HEALTH           = 6;
+        static const unsigned int DPCK_DATASET_TYPE_CU_ALARM           = 5;
+        //! the constant that represent the health dataset type
+        static const unsigned int DPCK_DATASET_TYPE_HEALTH             = 6;
     }
     /** @} */ // end of DataPackCommonKey
     
@@ -1136,6 +1136,7 @@ namespace chaos {
         if(ds_postfix.compare(DataPackPrefixID::SYSTEM_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM;}
         if(ds_postfix.compare(DataPackPrefixID::DEV_ALARM_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM;}
         if(ds_postfix.compare(DataPackPrefixID::CU_ALARM_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM;}
+        if(ds_postfix.compare(DataPackPrefixID::HEALTH_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH;}
         return -1;
     }
     
