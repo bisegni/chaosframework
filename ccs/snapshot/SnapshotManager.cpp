@@ -2,6 +2,7 @@
 #include "ui_SnapshotManager.h"
 #include "NewSnapshot.h"
 #include "../metatypes.h"
+#include "../utility/MessageUtility.h"
 
 #include <QStandardItem>
 
@@ -75,8 +76,12 @@ void SnapshotManager::on_pushButtonDeleteSnapshot_clicked() {
     foreach(QModelIndex snap, selected_snapshots) {
         QVariant snap_name_item = snapshot_table_model.data(snap);
         QString snap_name = snap_name_item.toString();
-        submitApiResult(TAG_DELETE_SNAPSHOT,
-                        GET_CHAOS_API_PTR(service::DeleteSnapshot)->execute(snap_name.toStdString()));
+
+        if(MessageUtility::showYNDialog("Delete Operation",
+                                        QString("Proceed with the delete operation of the %1 snapshot?").arg(snap_name))) {
+            submitApiResult(TAG_DELETE_SNAPSHOT,
+                            GET_CHAOS_API_PTR(service::DeleteSnapshot)->execute(snap_name.toStdString()));
+        }
     }
 }
 
@@ -85,8 +90,11 @@ void SnapshotManager::on_pushButtonRestoreSnapshot_clicked() {
     foreach(QModelIndex snap, selected_snapshots) {
         QVariant snap_name_item = snapshot_table_model.data(snap);
         QString snap_name = snap_name_item.toString();
-        submitApiResult(TAG_RESTORE_SNAPSHOT,
-                        GET_CHAOS_API_PTR(service::RestoreSnapshot)->execute(snap_name.toStdString()));
+        if(MessageUtility::showYNDialog("Restore Operation",
+                                        QString("Proceed with the restore operation of the %1 snapshot?").arg(snap_name))) {
+            submitApiResult(TAG_RESTORE_SNAPSHOT,
+                            GET_CHAOS_API_PTR(service::DeleteSnapshot)->execute(snap_name.toStdString()));
+        }
     }
 }
 

@@ -569,8 +569,6 @@ void ControlUnitEditor::nodeChangedOnlineState(const std::string& node_uid,
         //state changed for unit server
         logic_switch_aggregator.broadcastCurrentValueForKey("us_alive", getStatusString(new_state));
     }
-
-
 }
 
 void ControlUnitEditor::nodeChangedInternalState(const std::string& node_uid,
@@ -586,7 +584,6 @@ void ControlUnitEditor::nodeChangedInternalState(const std::string& node_uid,
             updateAllControlUnitInfomration();
             restarted = false;
         }
-
         //broadcast cu status to switch
     } else if(node_uid.compare(unit_server_parent_unique_id.toStdString()) == 0) {
         //state changed for unit server

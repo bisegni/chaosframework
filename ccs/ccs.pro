@@ -145,7 +145,8 @@ SOURCES += main.cpp\
     data/LiveDatasetTableModel.cpp \
     data/SnapshotDatasetNodeListModel.cpp \
     preference/PreferenceManager.cpp \
-    data/ControlUnitStateVaribleListModel.cpp
+    data/ControlUnitStateVaribleListModel.cpp \
+    utility/MessageUtility.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -274,7 +275,8 @@ HEADERS  += \
     data/SnapshotDatasetNodeListModel.h \
     preference/PreferenceManager.h \
     preference/preference_types.h \
-    data/ControlUnitStateVaribleListModel.h
+    data/ControlUnitStateVaribleListModel.h \
+    utility/MessageUtility.h
 
 FORMS    += \
     search/searchnoderesult.ui \
