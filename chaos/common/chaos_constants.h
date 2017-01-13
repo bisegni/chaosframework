@@ -1100,6 +1100,42 @@ namespace chaos {
     }
     /** @} */ // end of DataPackCommonKey
     
+    //! return the postfix of the dataset type
+    static inline const char * const datasetTypeToPostfix(unsigned int ds_type) {
+        switch(ds_type) {
+            case DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT:
+                return DataPackPrefixID::OUTPUT_DATASET_POSTFIX;
+                //!Integer char bit length
+            case DataPackCommonKey::DPCK_DATASET_TYPE_INPUT:
+                return DataPackPrefixID::INPUT_DATASET_POSTFIX;
+                //!Integer 8 bit length
+            case DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM:
+                return DataPackPrefixID::CUSTOM_DATASET_POSTFIX;
+                //!Integer 16 bit length
+            case DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM:
+                return DataPackPrefixID::SYSTEM_DATASET_POSTFIX;
+                //!Integer 32 bit length
+            case DataPackCommonKey::DPCK_DATASET_TYPE_ALARM:
+                return DataPackPrefixID::ALARM_DATASET_POSTFIX;
+                //!Integer 64 bit length
+            case DataPackCommonKey::DPCK_DATASET_TYPE_WARNING:
+                return DataPackPrefixID::WARNING_DATASET_POSTFIX;
+            default:
+                return "";
+        }
+    }
+    
+    //! return the type of the dataset postfix
+    static inline const int datasetTypeToPostfix(const std::string& ds_postfix) {
+        if(ds_postfix.compare(DataPackPrefixID::OUTPUT_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT;}
+        if(ds_postfix.compare(DataPackPrefixID::INPUT_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_INPUT;}
+        if(ds_postfix.compare(DataPackPrefixID::CUSTOM_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM;}
+        if(ds_postfix.compare(DataPackPrefixID::SYSTEM_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM;}
+        if(ds_postfix.compare(DataPackPrefixID::ALARM_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_ALARM;}
+        if(ds_postfix.compare(DataPackPrefixID::WARNING_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_WARNING;}
+        return -1;
+    }
+    
     /** @defgroup DataPackKey Chaos Data Pack output attirbute
      This is the collection of the standard key that are contained into the output
      attribute data pack that describe a producer state
