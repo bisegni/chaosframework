@@ -43,10 +43,10 @@ std::string getDatasetDesc(int dataset_type){
         case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM:
             return "Custom";
             break;
-        case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_ALARM:
+        case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM:
             return "Alert";
             break;
-        case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_WARNING:
+        case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM:
             return "Warning";
             break;
     }

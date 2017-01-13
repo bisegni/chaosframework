@@ -47,8 +47,8 @@ sequence_id(0 /*std::numeric_limits<int64_t>::min()*/){
     input_key	= _key + DataPackPrefixID::INPUT_DATASET_POSTFIX;
     system_key	= _key + DataPackPrefixID::SYSTEM_DATASET_POSTFIX;
     custom_key	= _key + DataPackPrefixID::CUSTOM_DATASET_POSTFIX;
-    alarm_key	= _key + DataPackPrefixID::ALARM_DATASET_POSTFIX;
-    warning_key	= _key + DataPackPrefixID::WARNING_DATASET_POSTFIX;
+    alarm_key	= _key + DataPackPrefixID::DEV_ALARM_DATASET_POSTFIX;
+    warning_key	= _key + DataPackPrefixID::CU_ALARM_DATASET_POSTFIX;
 }
 
 KeyDataStorage::~KeyDataStorage() {

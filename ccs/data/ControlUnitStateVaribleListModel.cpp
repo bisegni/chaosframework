@@ -32,10 +32,10 @@ void ControlUnitStateVaribleListModel::untrack() {
 void ControlUnitStateVaribleListModel::setStateVariableType(StateVariableType type) {
     switch(type){
     case StateVariableTypeAlarmCU:
-        chaos_dataset_type = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_WARNING;
+        chaos_dataset_type = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM;
         break;
     case StateVariableTypeAlarmDEV:
-        chaos_dataset_type = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_ALARM;
+        chaos_dataset_type = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM;
         break;
     default:
         chaos_dataset_type = -1;
@@ -128,7 +128,7 @@ void ControlUnitStateVaribleListModel::updatedDS(const std::string& control_unit
 
 void ControlUnitStateVaribleListModel::noDSDataFound(const std::string& control_unit_uid,
                                    int dataset_type) {
-    if(dataset_type != chaos::DataPackCommonKey::DPCK_DATASET_TYPE_ALARM) return;
+    if(dataset_type != chaos::DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM) return;
     beginResetModel();
     alarm_names.clear();
     alarm_dataset.clear();

@@ -333,15 +333,15 @@ bool ChaosMetadataServiceClient::addKeyAttributeHandlerForDataset(const std::str
                                      key_to_monitor%
                                      DataPackPrefixID::SYSTEM_DATASET_POSTFIX);
             break;
-        case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_ALARM:
+        case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM:
             dataset_key = boost::str(boost::format("%1%%2%")%
                                      key_to_monitor%
-                                     DataPackPrefixID::ALARM_DATASET_POSTFIX);
+                                     DataPackPrefixID::DEV_ALARM_DATASET_POSTFIX);
             break;
-        case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_WARNING:
+        case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM:
             dataset_key = boost::str(boost::format("%1%%2%")%
                                      key_to_monitor%
-                                     DataPackPrefixID::WARNING_DATASET_POSTFIX);
+                                     DataPackPrefixID::CU_ALARM_DATASET_POSTFIX);
             break;
         default:
             return false;
@@ -439,15 +439,15 @@ std::string ChaosMetadataServiceClient::getDatasetKeyFromGeneralKey(const std::s
                               node_uid%
                               DataPackPrefixID::SYSTEM_DATASET_POSTFIX);
             break;
-        case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_ALARM:
+        case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM:
             return boost::str(boost::format("%1%%2%")%
                               node_uid%
-                              DataPackPrefixID::ALARM_DATASET_POSTFIX);
+                              DataPackPrefixID::DEV_ALARM_DATASET_POSTFIX);
             break;
-        case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_WARNING:
+        case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM:
             return boost::str(boost::format("%1%%2%")%
                               node_uid%
-                              DataPackPrefixID::WARNING_DATASET_POSTFIX);
+                              DataPackPrefixID::CU_ALARM_DATASET_POSTFIX);
             break;
         default:
             return "";

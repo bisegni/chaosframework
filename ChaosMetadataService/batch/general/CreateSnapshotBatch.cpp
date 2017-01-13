@@ -195,15 +195,15 @@ int CreateSnapshotBatch::storeDatasetForDeviceID(const std::string& device_id) {
     if((err = storeDatasetTypeInSnapsnot(work_id,
                                          snapshot_name,
                                          device_id,
-                                         DataPackPrefixID::ALARM_DATASET_POSTFIX))) {
-        G_RS_ERR << CHAOS_FORMAT("Error %1% snapping dataset %2% for device %3% in snapshot %4% ",%err%DataPackPrefixID::SYSTEM_DATASET_POSTFIX%device_id%snapshot_name);
+                                         DataPackPrefixID::DEV_ALARM_DATASET_POSTFIX))) {
+        G_RS_ERR << CHAOS_FORMAT("Error %1% snapping dataset %2% for device %3% in snapshot %4% ",%err%DataPackPrefixID::DEV_ALARM_DATASET_POSTFIX%device_id%snapshot_name);
     }
     //snap warning channel
     if((err = storeDatasetTypeInSnapsnot(work_id,
                                          snapshot_name,
                                          device_id,
-                                         DataPackPrefixID::WARNING_DATASET_POSTFIX))) {
-        G_RS_ERR << CHAOS_FORMAT("Error %1% snapping dataset %2% for device %3% in snapshot %4% ",%err%DataPackPrefixID::WARNING_DATASET_POSTFIX%device_id%snapshot_name);
+                                         DataPackPrefixID::CU_ALARM_DATASET_POSTFIX))) {
+        G_RS_ERR << CHAOS_FORMAT("Error %1% snapping dataset %2% for device %3% in snapshot %4% ",%err%DataPackPrefixID::CU_ALARM_DATASET_POSTFIX%device_id%snapshot_name);
     }
     return err;
 }

@@ -1064,8 +1064,8 @@ namespace chaos {
         static const char * const INPUT_DATASET_POSTFIX     = "_i";
         static const char * const CUSTOM_DATASET_POSTFIX    = "_c";
         static const char * const SYSTEM_DATASET_POSTFIX    = "_s";
-        static const char * const ALARM_DATASET_POSTFIX     = "_a";
-        static const char * const WARNING_DATASET_POSTFIX   = "_w";
+        static const char * const DEV_ALARM_DATASET_POSTFIX     = "_a";
+        static const char * const CU_ALARM_DATASET_POSTFIX   = "_w";
         static const char * const HEALTH_DATASET_POSTFIX    = NodeHealtDefinitionKey::HEALT_KEY_POSTFIX;
     }
     /** @} */ // end of DataPackPrefixID
@@ -1094,9 +1094,10 @@ namespace chaos {
         //! the constant that represent the system dataset type
         static const unsigned int DPCK_DATASET_TYPE_SYSTEM             = 3;
         //! the constant that represent the alarm dataset type
-        static const unsigned int DPCK_DATASET_TYPE_ALARM              = 4;
+        static const unsigned int DPCK_DATASET_TYPE_DEV_ALARM              = 4;
         //! the constant that represent the alarm dataset type
-        static const unsigned int DPCK_DATASET_TYPE_WARNING            = 5;
+        static const unsigned int DPCK_DATASET_TYPE_CU_ALARM            = 5;
+        static const unsigned int DPCK_DATASET_TYPE_HEALTH           = 6;
     }
     /** @} */ // end of DataPackCommonKey
     
@@ -1114,12 +1115,14 @@ namespace chaos {
                 //!Integer 16 bit length
             case DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM:
                 return DataPackPrefixID::SYSTEM_DATASET_POSTFIX;
+            case DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH:
+                    return DataPackPrefixID::HEALTH_DATASET_POSTFIX;
                 //!Integer 32 bit length
-            case DataPackCommonKey::DPCK_DATASET_TYPE_ALARM:
-                return DataPackPrefixID::ALARM_DATASET_POSTFIX;
+            case DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM:
+                return DataPackPrefixID::DEV_ALARM_DATASET_POSTFIX;
                 //!Integer 64 bit length
-            case DataPackCommonKey::DPCK_DATASET_TYPE_WARNING:
-                return DataPackPrefixID::WARNING_DATASET_POSTFIX;
+            case DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM:
+                return DataPackPrefixID::CU_ALARM_DATASET_POSTFIX;
             default:
                 return "";
         }
@@ -1131,11 +1134,31 @@ namespace chaos {
         if(ds_postfix.compare(DataPackPrefixID::INPUT_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_INPUT;}
         if(ds_postfix.compare(DataPackPrefixID::CUSTOM_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM;}
         if(ds_postfix.compare(DataPackPrefixID::SYSTEM_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM;}
-        if(ds_postfix.compare(DataPackPrefixID::ALARM_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_ALARM;}
-        if(ds_postfix.compare(DataPackPrefixID::WARNING_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_WARNING;}
+        if(ds_postfix.compare(DataPackPrefixID::DEV_ALARM_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM;}
+        if(ds_postfix.compare(DataPackPrefixID::CU_ALARM_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM;}
         return -1;
     }
     
+    static inline const char* datasetTypeToHuman(unsigned int domain) {
+    	switch (domain) {
+    	case DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT:
+    		return "output";
+    	case DataPackCommonKey::DPCK_DATASET_TYPE_INPUT:
+    		return "input";
+    	case DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM:
+    		return "custom";
+    	case DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM:
+    		return "system";
+    	case DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH:
+    		return "health";
+    	case DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM:
+    		return "device_alarms";
+    	case DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM:
+    		return "cu_alarms";
+    	default:
+    		return "unknown";
+    	}
+    }
     /** @defgroup DataPackKey Chaos Data Pack output attirbute
      This is the collection of the standard key that are contained into the output
      attribute data pack that describe a producer state

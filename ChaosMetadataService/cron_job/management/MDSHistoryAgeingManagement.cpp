@@ -64,7 +64,7 @@ bool MDSHistoryAgeingManagement::execute(const common::cronous_manager::MapKeyVa
             const std::string system_key	= control_unit_found + DataPackPrefixID::SYSTEM_DATASET_POSTFIX;
             const std::string custom_key	= control_unit_found + DataPackPrefixID::CUSTOM_DATASET_POSTFIX;
             const std::string health_key    = control_unit_found + NodeHealtDefinitionKey::HEALT_KEY_POSTFIX;
-            const std::string alarm_key    = control_unit_found + DataPackPrefixID::ALARM_DATASET_POSTFIX;
+            const std::string alarm_key    = control_unit_found + DataPackPrefixID::DEV_ALARM_DATASET_POSTFIX;
             if((err = getDataAccess<persistence::data_access::ControlUnitDataAccess>()->eraseControlUnitDataBeforeTS(output_key,
                                                                                                                      remove_until_ts))){
                 log(CHAOS_FORMAT("Error erasing key %1% for control unit %2% with error %3%", %output_key%control_unit_found%err));

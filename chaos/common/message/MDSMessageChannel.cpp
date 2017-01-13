@@ -262,35 +262,47 @@ int  MDSMessageChannel::loadSnapshotNodeDataset(const std::string& snapname,
                                           chaos::common::data::CDataWrapper& data_set,
                                           uint32_t millisec_to_wait){
 	int err=0;
-	auto_ptr<CDataWrapper> message(new CDataWrapper());
-	message->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_uid);
-    message->addStringValue("snapshot_name", snapname);
+	std::map<uint64_t,std::string> mapsnap_res;
+	if(searchSnapshot(snapname,mapsnap_res,millisec_to_wait)==0){
+		auto_ptr<CDataWrapper> message(new CDataWrapper());
+		message->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_uid);
+		message->addStringValue("snapshot_name", snapname);
 
-	std::auto_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
-			"getSnapshotDatasetForNode",
-			message.release());
-	request_future->setTimeout(millisec_to_wait);
-	if(request_future->wait()) {
-		DECODE_ERROR(request_future)
-	     err = request_future->getError();
-		if(err==0){
-			std::auto_ptr<CMultiTypeDataArrayWrapper> snapshot_list(request_future->getResult()->getVectorValue("dataset_list"));
+			std::auto_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
+					"getSnapshotDatasetForNode",
+					message.release());
+			request_future->setTimeout(millisec_to_wait);
+			if(request_future->wait()) {
+				DECODE_ERROR(request_future)
+			     err = request_future->getError();
+				if(err==0){
 
-			  for(int idx = 0;
-			        idx < snapshot_list->size();
-			        idx++) {
-			        std::auto_ptr<CDataWrapper> snapshot_dataset_element(snapshot_list->getCDataWrapperElementAtIndex(idx));
-			        const std::string dataset_name = snapshot_dataset_element->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_NAME);
-			        data_set.addCSDataValue(dataset_name,*snapshot_dataset_element->getCSDataValue("dataset_value"));
+					std::auto_ptr<CMultiTypeDataArrayWrapper> snapshot_list(request_future->getResult()->getVectorValue("dataset_list"));
+					data_set.addStringValue("name",node_uid);
+					data_set.addInt64Value("timestamp",mapsnap_res.begin()->first);
 
-			    }
-		}
+					  for(int idx = 0;
+					        idx < snapshot_list->size();
+					        idx++) {
+					        std::auto_ptr<CDataWrapper> snapshot_dataset_element(snapshot_list->getCDataWrapperElementAtIndex(idx));
+
+					        const std::string dataset_name = snapshot_dataset_element->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_NAME);
+					        CDataWrapper *val= snapshot_dataset_element->getCSDataValue("dataset_value");
+					        if(val->hasKey(chaos::DataPackCommonKey::DPCK_DATASET_TYPE)){
+					        	std::string ret=datasetTypeToHuman(val->getUInt32Value(chaos::DataPackCommonKey::DPCK_DATASET_TYPE));
+					        	data_set.addCSDataValue(ret,*val);
+					        }
+
+					    }
+				}
 
 
-		} else {
-			err = -1;
-		}
+				} else {
+					err = -1;
+				}
 
+
+	}
 
 	return err;
 }
