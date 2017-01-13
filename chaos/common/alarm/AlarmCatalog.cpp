@@ -104,3 +104,6 @@ const bool AlarmCatalog::isCatalogClear() {
 const size_t AlarmCatalog::size() {
     return StateFlagCatalog::size();
 }
+const uint8_t AlarmCatalog::max() {
+    return StateFlagCatalog::max();
+}

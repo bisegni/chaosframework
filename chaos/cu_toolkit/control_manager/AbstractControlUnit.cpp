@@ -1372,11 +1372,11 @@ void AbstractControlUnit::_completeDatasetAttribute() {
     //add global alarm checn
     DatasetDB::addAttributeToDataSet(stateVariableEnumToName(StateVariableTypeAlarmCU),
                                      "Activated when some warning has been issued",
-                                     DataType::TYPE_BOOLEAN,
+                                     DataType::TYPE_INT32,
                                      DataType::Output);
     DatasetDB::addAttributeToDataSet(stateVariableEnumToName(StateVariableTypeAlarmDEV),
                                      "Activated when some alarm has been issued",
-                                     DataType::TYPE_BOOLEAN,
+                                     DataType::TYPE_INT32,
                                      DataType::Output);
 }
 
@@ -1788,7 +1788,7 @@ void AbstractControlUnit::setStateVariableSeverity(StateVariableType variable_ty
     GET_CAT_OR_EXIT(variable_type, )
     catalog.setAllAlarmSeverity(state_variable_severity);
     AttributeCache& output_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT);
-    output_cache.getValueSettingByName(stateVariableEnumToName(variable_type))->setValue(CDataVariant(catalog.isCatalogClear()==false));
+    output_cache.getValueSettingByName(stateVariableEnumToName(variable_type))->setValue(CDataVariant(catalog.max()));
 }
 
 bool AbstractControlUnit::setStateVariableSeverity(StateVariableType variable_type,
@@ -1800,7 +1800,7 @@ bool AbstractControlUnit::setStateVariableSeverity(StateVariableType variable_ty
     alarm->setCurrentSeverity(state_variable_severity);
     //update global alarm output attribute
     AttributeCache& output_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT);
-    output_cache.getValueSettingByName(stateVariableEnumToName(variable_type))->setValue(CDataVariant(catalog.isCatalogClear()==false));
+    output_cache.getValueSettingByName(stateVariableEnumToName(variable_type))->setValue(CDataVariant(catalog.max()));
     return true;
 }
 

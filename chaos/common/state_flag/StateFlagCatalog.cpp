@@ -254,6 +254,21 @@ const size_t StateFlagCatalog::size() const {
     return catalog_container().size();
 }
 
+const uint8_t StateFlagCatalog::max() const {
+	uint8_t maxv=0;
+    LockableObjectWriteLock_t wl;
+    catalog_container.getWriteLock(wl);
+    //boost::unique_lock<boost::shared_mutex> wl(mutex_catalog);
+    StateFlagElementContainerOrderedIndex& ordered_index = boost::multi_index::get<mitag_ordered>(catalog_container());
+        for(StateFlagElementContainerOrderedIndexIterator it = ordered_index.begin(),
+            end = ordered_index.end();
+            it != end;
+            it++){
+
+            maxv=(maxv<(*it)->status_flag->getCurrentLevel())?(*it)->status_flag->getCurrentLevel():maxv;
+        }
+    return maxv;
+}
 const std::string& StateFlagCatalog::getName() const {
     return catalog_name;
 }

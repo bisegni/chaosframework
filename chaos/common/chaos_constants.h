@@ -1115,6 +1115,7 @@ namespace chaos {
                 //!Integer 16 bit length
             case DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM:
                 return DataPackPrefixID::SYSTEM_DATASET_POSTFIX;
+
             case DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH:
                     return DataPackPrefixID::HEALTH_DATASET_POSTFIX;
                 //!Integer 32 bit length

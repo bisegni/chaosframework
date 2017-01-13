@@ -278,9 +278,10 @@ int  MDSMessageChannel::loadSnapshotNodeDataset(const std::string& snapname,
 				if(err==0){
 
 					std::auto_ptr<CMultiTypeDataArrayWrapper> snapshot_list(request_future->getResult()->getVectorValue("dataset_list"));
-					data_set.addStringValue("name",node_uid);
-					data_set.addInt64Value("timestamp",mapsnap_res.begin()->first);
-
+					if(snapshot_list->size()){
+						data_set.addStringValue("name",node_uid);
+						data_set.addInt64Value("timestamp",mapsnap_res.begin()->first);
+					}
 					  for(int idx = 0;
 					        idx < snapshot_list->size();
 					        idx++) {

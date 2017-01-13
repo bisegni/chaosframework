@@ -189,6 +189,9 @@ namespace chaos {
                 
                 //!return the number of status flag in the catalog
                 const size_t size() const;
+
+                //!return the max state level of the catalog
+                 const uint8_t max() const;
                 //!return the name fo the catalog
                 const std::string& getName() const;
                 
