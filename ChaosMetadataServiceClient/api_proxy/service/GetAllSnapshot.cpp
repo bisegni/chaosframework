@@ -32,7 +32,9 @@ API_PROXY_CD_DEFINITION(GetAllSnapshot,
  
  */
 ApiProxyResult GetAllSnapshot::execute(const std::string& query_filter) {
-    return callApi();
+    CDataWrapper *message = new CDataWrapper();
+    message->addStringValue("snapshot_query_filter", query_filter);
+    return callApi(message);
 }
 
 std::auto_ptr<GetAllSnapshotHelper> GetAllSnapshot::getHelper(CDataWrapper *api_result) {

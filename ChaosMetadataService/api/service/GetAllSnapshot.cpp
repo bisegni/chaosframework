@@ -40,6 +40,14 @@ chaos::common::data::CDataWrapper *GetAllSnapshot::execute(chaos::common::data::
     std::auto_ptr<CDataWrapper> result(new CDataWrapper());
     SnapshotList snapshots;
 
+    std::string snapshot_query_result;
+    
+    if(api_data &&
+       api_data->hasKey("snapshot_query_filter") &&
+       api_data->isStringValue("snapshot_query_filter")) {
+        snapshot_query_result = api_data->getStringValue("snapshot_query_filter");
+    }
+    
     GET_DATA_ACCESS(SnapshotDataAccess, s_da, -1);
     
     if((err = s_da->getAllSnapshot(snapshots))){

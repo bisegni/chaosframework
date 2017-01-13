@@ -64,7 +64,7 @@ void SnapshotManager::onApiDone(const QString& tag,
 
 void SnapshotManager::executeSearch() {
     submitApiResult(TAG_SEARCH_SNAPSHOT,
-                    GET_CHAOS_API_PTR(service::GetAllSnapshot)->execute());
+                    GET_CHAOS_API_PTR(service::GetAllSnapshot)->execute(ui->lineEdit->text().toStdString()));
 }
 
 void SnapshotManager::on_pushButtonNewSnapshot_clicked() {
@@ -93,7 +93,7 @@ void SnapshotManager::on_pushButtonRestoreSnapshot_clicked() {
         if(MessageUtility::showYNDialog("Restore Operation",
                                         QString("Proceed with the restore operation of the %1 snapshot?").arg(snap_name))) {
             submitApiResult(TAG_RESTORE_SNAPSHOT,
-                            GET_CHAOS_API_PTR(service::DeleteSnapshot)->execute(snap_name.toStdString()));
+                            GET_CHAOS_API_PTR(service::RestoreSnapshot)->execute(snap_name.toStdString()));
         }
     }
 }

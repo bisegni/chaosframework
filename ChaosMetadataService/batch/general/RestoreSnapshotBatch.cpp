@@ -46,6 +46,9 @@ void RestoreSnapshotBatch::setHandler(CDataWrapper *data) {
     CHECK_KEY_THROW_AND_LOG(data, "snapshot_name", G_RS_ERR, -2, "The name of the snapshot is mandatory")
     
     snapshot_name = data->getStringValue("snapshot_name");
+    //set default scheduler delay 0,05 second
+    setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY, (uint64_t)50000);
+    clearFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT);
     
     if((err = getDataAccess<mds_data_access::SnapshotDataAccess>()->getNodeInSnapshot(snapshot_name,
                                                                                       list_node_in_snapshot))) {

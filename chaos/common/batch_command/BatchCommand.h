@@ -242,7 +242,7 @@ namespace chaos{
                     //check if the features are locked for the user modifications
                     if(lockFeaturePropertyFlag.test(0) || lockFeaturePropertyFlag.test(2)) return;
                     
-                    commandFeatures.featuresFlag ^= features;
+                    commandFeatures.featuresFlag &= ~features;
                     switch (features) {
                         case features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY:
                             commandFeatures.featureSchedulerStepsDelay = 0;

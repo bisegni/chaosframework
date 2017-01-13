@@ -241,14 +241,12 @@ int MongoDBSnapshotDataAccess::getNodeInSnapshot(const std::string& snapshot_nam
     bool work_free = false;
     std::vector<mongo::BSONObj>     result;
     try {
-        
-        if((err = getSnapshotWorkingState(snapshot_name, work_free))){
-            return err;
-        } if(work_free == false) {
-            MDBDSDA_ERR << "Snapshot " << snapshot_name << " is still be elaborated";
-            return -10000;
-        }
-        
+//        if((err = getSnapshotWorkingState(snapshot_name, work_free))){
+//            return err;
+//        } if(work_free == false) {
+//            MDBDSDA_ERR << "Snapshot " << snapshot_name << " is still be elaborated";
+//            return -10000;
+//        }
         //we first need to fetch all node uid attacched to the snapshot
         mongo::BSONObj q = BSON("snap_name" << snapshot_name);
         
