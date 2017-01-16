@@ -37,9 +37,9 @@ private slots:
     void tableSelectionChanged(const QItemSelection & from, const QItemSelection & to);
     void on_pushButtonSearchSnapshot_clicked();
 
-    void on_listViewNodesInSnapshot_clicked(const QModelIndex &index);
+    void listViewNodesInSnapshotSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
 
-    void on_listViewSnapshotNodeDataset_clicked(const QModelIndex &index);
+    void listViewSnapshotNodeDatasetSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
 
 private:
     void executeSearch();

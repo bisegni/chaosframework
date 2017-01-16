@@ -32,10 +32,17 @@ void SnapshotManager::initUI() {
 
     ui->tableViewSnapshotList->setModel(&snapshot_table_model);
     ui->listViewNodesInSnapshot->setModel(&node_in_snapshot_list_model);
+    connect(ui->listViewNodesInSnapshot->selectionModel(),
+            SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+            SLOT(listViewNodesInSnapshotSelectionChanged(QItemSelection,QItemSelection)));
 
     ui->tableViewSnapshotList->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     //snapshot dataset values visualization
     ui->listViewSnapshotNodeDataset->setModel(&lm_dataset_for_node_snapshot);
+    connect(ui->listViewSnapshotNodeDataset->selectionModel(),
+            SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+            SLOT(listViewSnapshotNodeDatasetSelectionChanged(QItemSelection,QItemSelection)));
+
     ui->tableViewSnappedDatasetAttributes->setModel(&tm_snapshot_dataset_view);
 
     connect(ui->tableViewSnapshotList->selectionModel(),
@@ -122,15 +129,20 @@ void SnapshotManager::on_pushButtonSearchSnapshot_clicked() {
     executeSearch();
 }
 
-void SnapshotManager::on_listViewNodesInSnapshot_clicked(const QModelIndex &index) {
-    //got double clik on node in snapshot
-    const QString selected_node = index.data().toString();
+void SnapshotManager::listViewNodesInSnapshotSelectionChanged(const QItemSelection &selected,
+                                                              const QItemSelection &deselected) {
     tm_snapshot_dataset_view.clear();
+    lm_dataset_for_node_snapshot.clear();
+    if(selected.indexes().size() == 0) return;
+    const QString selected_node = selected.indexes().first().data().toString();
     lm_dataset_for_node_snapshot.updateDatasetListFor(selected_node,
                                                       current_snapshot_name);
 }
 
-void SnapshotManager::on_listViewSnapshotNodeDataset_clicked(const QModelIndex &index) {
-    CDWShrdPtr selected_dataset = index.data(Qt::UserRole).value<CDWShrdPtr>();
+void SnapshotManager::listViewSnapshotNodeDatasetSelectionChanged(const QItemSelection &selected,
+                                                              const QItemSelection &deselected) {
+    tm_snapshot_dataset_view.clear();
+    if(selected.indexes().size()==0) return;
+    CDWShrdPtr selected_dataset = selected.indexes().first().data(Qt::UserRole).value<CDWShrdPtr>();
     tm_snapshot_dataset_view.setDataset(selected_dataset);
 }

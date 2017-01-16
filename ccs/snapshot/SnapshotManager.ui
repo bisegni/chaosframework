@@ -45,7 +45,7 @@
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <property name="spacing">
         <number>4</number>
@@ -220,7 +220,11 @@
          </widget>
         </item>
         <item>
-         <widget class="QListView" name="listViewNodesInSnapshot"/>
+         <widget class="QListView" name="listViewNodesInSnapshot">
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectRows</enum>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
