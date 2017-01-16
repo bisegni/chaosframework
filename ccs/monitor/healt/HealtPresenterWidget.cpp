@@ -18,12 +18,14 @@ static const QString TAG_NODE_INFO = "tag_node_info";
 HealtPresenterWidget::HealtPresenterWidget(const QString &node_to_check,
                                            QWidget *parent) :
     QFrame(parent),
+    is_cu(false),
+    is_sc_cu(false),
+    is_ds(false),
+    wUtil(this),
     node_uid(node_to_check),
     api_submitter(this),
     ui(new Ui::HealtPresenterWidget){
     ui->setupUi(this);
-    //enable contextual menu on the widget
-    setContextMenuPolicy(Qt::ActionsContextMenu);
 
     ui->labelUID->setTextFormat(Qt::RichText);
     ui->labelUID->setText(node_uid);
@@ -52,12 +54,28 @@ HealtPresenterWidget::HealtPresenterWidget(const QString &node_to_check,
     //force start refresh also if node is down
     changedOnlineStatus(node_uid,
                         chaos::metadata_service_client::node_monitor::OnlineStateON);
+    QMap<QString, QVariant> cm_map;
+    cm_map.insert("Load", QVariant());
+    cm_map.insert("Init", QVariant());
+    cm_map.insert("Start", QVariant());
+    cm_map.insert("Stop", QVariant());
+    cm_map.insert("Deinit", QVariant());
+    cm_map.insert("Plot", QVariant());
+    wUtil.cmRegisterActions(this,
+                            cm_map);
+    node_action = wUtil.cmGetAction(this, "action");
+    chaos::metadata_service_client::ChaosMetadataServiceClient::getInstance()->addHandlerToNodeMonitor(node_uid.toStdString(),
+                                                                                                       node_monitor::ControllerTypeNode,
+                                                                                                       this);
 }
 
 HealtPresenterWidget::~HealtPresenterWidget() {
     ui->nodeResourceWidget->deinitChaosContent();
     ui->ledIndicatorHealt->deinitChaosContent();
     ui->labelStatus->deinitChaosContent();
+    chaos::metadata_service_client::ChaosMetadataServiceClient::getInstance()->removeHandlerToNodeMonitor(node_uid.toStdString(),
+                                                                                                          node_monitor::ControllerTypeNode,
+                                                                                                          this);
     delete ui;
 }
 
@@ -81,9 +99,9 @@ void HealtPresenterWidget::onApiDone(const QString& api_tag,
             //we have type
             type = QString::fromStdString(api_result->getStringValue(chaos::NodeDefinitionKey::NODE_TYPE));
             subtype =  QString::fromStdString(api_result->getStringValue(chaos::NodeDefinitionKey::NODE_SUB_TYPE));
-            bool is_cu = (type.compare(chaos::NodeType::NODE_TYPE_CONTROL_UNIT) == 0);
-            bool is_sc_cu = subtype.compare(chaos::CUType::SCCU) == 0;
-            bool is_ds = (type.compare(chaos::NodeType::NODE_TYPE_UNIT_SERVER) == 0);
+            is_cu = (type.compare(chaos::NodeType::NODE_TYPE_CONTROL_UNIT) == 0);
+            is_sc_cu = subtype.compare(chaos::CUType::SCCU) == 0;
+            is_ds = (type.compare(chaos::NodeType::NODE_TYPE_UNIT_SERVER) == 0);
 
             ui->widgetCommandStatistic->setVisible(is_sc_cu);
             if(ui->widgetCommandStatistic->isVisible()) {
@@ -99,83 +117,55 @@ void HealtPresenterWidget::onApiDone(const QString& api_tag,
                 //update string
                 ui->labelUID->setText(node_uid);
                 ui->labelNodeType->setText(QString("%1[%2]").arg(type).arg(subtype));
-                if(is_cu) {
-                    QAction *action = new QAction("Load", this);
-                    addAction(action);
-                    connect(action,
-                            SIGNAL(triggered()),
-                            this,
-                            SLOT(cuContextualmenuTrigger()));
-                    action = new QAction("Unload", this);
-                    addAction(action);
-                    connect(action,
-                            SIGNAL(triggered()),
-                            this,
-                            SLOT(cuContextualmenuTrigger()));
-                    action = new QAction("Init", this);
-                    addAction(action);
-                    connect(action,
-                            SIGNAL(triggered()),
-                            this,
-                            SLOT(cuContextualmenuTrigger()));
-                    action = new QAction("Deinit", this);
-                    addAction(action);
-                    connect(action,
-                            SIGNAL(triggered()),
-                            this,
-                            SLOT(cuContextualmenuTrigger()));
-                    action = new QAction("Start", this);
-                    addAction(action);
-                    connect(action,
-                            SIGNAL(triggered()),
-                            this,
-                            SLOT(cuContextualmenuTrigger()));
-                    action = new QAction("Stop", this);
-                    addAction(action);
-                    connect(action,
-                            SIGNAL(triggered()),
-                            this,
-                            SLOT(cuContextualmenuTrigger()));
-                    action = new QAction("Plot", this);
-                    addAction(action);
-                    connect(action,
-                            SIGNAL(triggered()),
-                            this,
-                            SLOT(cuContextualmenuTrigger()));
-                }
             }
         }
     }
 }
 
 
-void HealtPresenterWidget::cuContextualmenuTrigger() {
-    QAction* cm_action = qobject_cast<QAction*>(sender());
-    if(cm_action->text().compare("Load") == 0) {
+void HealtPresenterWidget::nodeChangedOnlineState(const std::string& node_uid,
+                                                  chaos::metadata_service_client::node_monitor::OnlineState old_state,
+                                                  chaos::metadata_service_client::node_monitor::OnlineState new_state) {
+
+}
+
+void HealtPresenterWidget::nodeChangedInternalState(const std::string& node_uid,
+                                                    const std::string& old_state,
+                                                    const std::string& new_state) {
+
+}
+
+void HealtPresenterWidget::nodeHasBeenRestarted(const std::string& node_uid) {
+
+}
+
+void HealtPresenterWidget::cmActionTrigger(const QString& cm_title,
+                                           const QVariant& cm_data) {
+    if(cm_title.compare("Load") == 0) {
         api_submitter.submitApiResult(QString("cu_load"),
                                       GET_CHAOS_API_PTR(unit_server::LoadUnloadControlUnit)->execute(node_uid.toStdString(),
                                                                                                      true));
-    }else if(cm_action->text().compare("Unload") == 0) {
+    }else if(cm_title.compare("Unload") == 0) {
         api_submitter.submitApiResult(QString("cu_unload"),
                                       GET_CHAOS_API_PTR(unit_server::LoadUnloadControlUnit)->execute(node_uid.toStdString(),
                                                                                                      false));
-    }else if(cm_action->text().compare("Init") == 0) {
+    }else if(cm_title.compare("Init") == 0) {
         api_submitter.submitApiResult(QString("cu_init"),
                                       GET_CHAOS_API_PTR(control_unit::InitDeinit)->execute(node_uid.toStdString(),
                                                                                            true));
-    }else if(cm_action->text().compare("Deinit") == 0) {
+    }else if(cm_title.compare("Deinit") == 0) {
         api_submitter.submitApiResult(QString("cu_deinit"),
                                       GET_CHAOS_API_PTR(control_unit::InitDeinit)->execute(node_uid.toStdString(),
                                                                                            false));
-    }else if(cm_action->text().compare("Start") == 0) {
+    }else if(cm_title.compare("Start") == 0) {
         api_submitter.submitApiResult(QString("cu_start"),
                                       GET_CHAOS_API_PTR(control_unit::StartStop)->execute(node_uid.toStdString(),
                                                                                           true));
-    }else if(cm_action->text().compare("Stop") == 0) {
+    }else if(cm_title.compare("Stop") == 0) {
         api_submitter.submitApiResult(QString("cu_stop"),
                                       GET_CHAOS_API_PTR(control_unit::StartStop)->execute(node_uid.toStdString(),
                                                                                           false));
-    }else if(cm_action->text().compare("Plot") == 0) {
+    }else if(cm_title.compare("Plot") == 0) {
         NodeAttributePlotting *plot_viewer = new NodeAttributePlotting(node_uid, NULL);
         plot_viewer->show();
     }
