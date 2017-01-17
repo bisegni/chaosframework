@@ -12,6 +12,8 @@ public:
     explicit HealtMonitorWidget(QWidget *parent = 0);
 protected:
     void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;
+    void dragEnterEvent(QDragEnterEvent *event);
+    void dropEvent(QDropEvent *event);
 protected slots:
     void actionSearchNode();
     void startMonitoringNode(const QString& node_key);

@@ -2,14 +2,16 @@
 #include "HealtPresenterWidget.h"
 #include "HealtWidgetsListPresenteWidget.h"
 #include "../../search/SearchNodeResult.h"
-
+#include "data/delegate/TwoLineInformationItem.h"
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QScrollArea>
 #include <QHBoxLayout>
 #include <QCloseEvent>
 #include <QMenuBar>
-
+#include <QDragEnterEvent>
+#include <QDropEvent>
+#include <QMimeData>
 HealtMonitorWidget::HealtMonitorWidget(QWidget * parent):
     QMainWindow(parent) {
     resize(320, 240);
@@ -26,6 +28,7 @@ HealtMonitorWidget::HealtMonitorWidget(QWidget * parent):
 
     vertical_layout->addWidget(healt_list_presenter = new HealtWidgetsListPresenteWidget(this));
     setCentralWidget(central_widget);
+    setAcceptDrops(true);
 }
 
 void HealtMonitorWidget::closeEvent(QCloseEvent *event) {
@@ -73,4 +76,25 @@ void HealtMonitorWidget::closeAllMonitor() {
     foreach (QString node, registered_nodes) {
         stopMonitoringNode(node);
     }
+}
+
+void HealtMonitorWidget::dragEnterEvent(QDragEnterEvent *event) {
+    if(event->mimeData()->hasFormat("application/chaos-node-uid-list") == false) {
+        event->setAccepted(false);
+    } else {
+        event->accept();
+    }
+}
+
+void HealtMonitorWidget::dropEvent(QDropEvent *event) {
+    event->acceptProposedAction();
+    const QMimeData *mime_data = event->mimeData();
+    QByteArray encoded = mime_data->data("application/chaos-node-uid-list");
+    QDataStream stream(&encoded, QIODevice::ReadOnly);
+    while (!stream.atEnd()) {
+        QString node_uid;
+        stream >> node_uid;
+        startMonitoringNode(node_uid);
+    }
+    // QSharedPointer<TwoLineInformationItem>
 }

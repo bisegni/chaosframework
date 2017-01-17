@@ -64,6 +64,7 @@ void MainController::init(int argc, char **argv, QApplication& a) {
     qRegisterMetaType<chaos::metadata_service_client::node_monitor::OnlineState>("chaos::metadata_service_client::node_monitor::OnlineState");
     qRegisterMetaType<chaos::service_common::data::node::NodeInstance>("chaos::service_common::data::node::NodeInstance");
     qRegisterMetaType<chaos::common::data::CDataVariant>("chaos::common::data::CDataVariant");
+    qRegisterMetaType<QSharedPointer<TwoLineInformationItem> >("QSharedPointer<TwoLineInformationItem>");
 
     a.setStyle(QStyleFactory::create("Fusion"));
     QColor dark_main(95,95,95);

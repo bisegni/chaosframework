@@ -4,7 +4,8 @@
 
 #include <QDateTime>
 #include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
-
+#include <QMimeData>
+#include <QDataStream>
 using namespace chaos::common::data;
 using namespace chaos::metadata_service_client::api_proxy;
 
@@ -35,6 +36,36 @@ QVariant SearchNodeListModel::getRowData(int row) const {
                                                                                                                              node_health_status),
                                                                                QVariant::fromValue(found_node)));
     return QVariant::fromValue(cmd_desc);
+}
+
+Qt::ItemFlags SearchNodeListModel::flags(const QModelIndex &index) const {
+    Qt::ItemFlags defaultFlags = QAbstractListModel::flags(index);
+    if (index.isValid())
+        return Qt::ItemIsDragEnabled | defaultFlags;
+    else
+        return Qt::ItemIsDropEnabled | defaultFlags;
+}
+
+QMimeData *SearchNodeListModel::mimeData(const QModelIndexList &indexes) const {
+    QMimeData *result = new QMimeData();
+    QModelIndexList::const_iterator iter = indexes.begin();
+    QModelIndexList::const_iterator iter_end = indexes.end();
+    QByteArray encoded_data;
+    QDataStream stream(&encoded_data, QIODevice::WriteOnly);
+    while(iter != iter_end){
+        if(iter->isValid() == false) continue;
+        QSharedPointer<TwoLineInformationItem> element = iter->data().value<QSharedPointer<TwoLineInformationItem> >();
+        stream << element->title;
+        iter++;
+    }
+    result->setData("application/chaos-node-uid-list", encoded_data);
+    return result;
+}
+
+QStringList SearchNodeListModel::mimeTypes() const {
+    QStringList types;
+    types << "application/chaos-node-uid-list";
+    return types;
 }
 
 QVariant SearchNodeListModel::getUserData(int row) const {
