@@ -53,6 +53,19 @@ void CorrelationFunctor::operator()() {
     }
 }
 
+void EndFunctor::operator()() {
+    try {
+        if (cmd_instance && (cmd_instance->runningProperty >= RunningPropertyType::RP_END)) (cmd_instance->endHandler());
+    } catch (chaos::CFatalException&ex) {
+        SET_FAULT(ERR_LOG(AcquireFunctor), ex.errorCode, ex.errorMessage, ex.errorDomain,RunningPropertyType::RP_FATAL_FAULT)
+    } catch (chaos::CException& ex) {
+        SET_FAULT(ERR_LOG(AcquireFunctor), ex.errorCode, ex.errorMessage, ex.errorDomain,RunningPropertyType::RP_FAULT)
+    } catch (std::exception& ex) {
+        SET_FAULT(ERR_LOG(AcquireFunctor), -1, ex.what(), "Correlation Handler",RunningPropertyType::RP_FATAL_FAULT);
+    } catch (...) {
+        SET_FAULT(ERR_LOG(AcquireFunctor), -2, "Unmanaged exception", "Correlation Handler",RunningPropertyType::RP_FATAL_FAULT);
+    }
+}
 CommandInfoAndImplementation::CommandInfoAndImplementation(chaos::common::data::CDataWrapper *_cmdInfo, BatchCommand *_cmdImpl) {
     cmdInfo = _cmdInfo;
     cmdImpl = _cmdImpl;

@@ -195,6 +195,8 @@ bool BatchCommandParallelSandbox::processCommand(bool set_handler_call,
                                                   cmd_stat);
             }
             result = false;
+            command_stat.command_info.cmdImpl->endHandler();
+
             break;
         case RunningPropertyType::RP_FATAL_FAULT:
             if (event_handler){
@@ -205,6 +207,8 @@ bool BatchCommandParallelSandbox::processCommand(bool set_handler_call,
                                                   cmd_stat);
             }
             result = false;
+            command_stat.command_info.cmdImpl->endHandler();
+
             break;
         case RunningPropertyType::RP_END:
             if (event_handler){
@@ -215,6 +219,8 @@ bool BatchCommandParallelSandbox::processCommand(bool set_handler_call,
                                                   cmd_stat);
             }
             result = false;
+            command_stat.command_info.cmdImpl->endHandler();
+
             break;
         default:
             break;

@@ -61,6 +61,12 @@ n->fault_description.domain = d;
                 void operator()();
             };
             
+
+            struct EndFunctor:
+                        public BaseFunctor {
+                            void operator()();
+                  };
+
             /*!
              Type used for the next available command impl and description
              into the sandbox

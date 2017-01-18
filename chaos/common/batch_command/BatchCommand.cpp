@@ -98,7 +98,8 @@ bool BatchCommand::timeoutHandler() {return false;}
 void BatchCommand::commandPre() {
 	timing_stats.command_set_time_usec = TimingUtil::getTimeStampInMicrosends();
 }
-
+void BatchCommand::endHandler() {;
+}
 #define SET_FAULT(c, m, d) \
 BC_FAULT_RUNNING_PROPERTY \
 BCLERR_ << "Exception -> err:" << c << " msg: "<<m<<" domain:"<<d; \

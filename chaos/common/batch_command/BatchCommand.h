@@ -86,6 +86,8 @@ namespace chaos{
                 friend class AbstractSandbox;
                 friend struct AcquireFunctor;
                 friend struct CorrelationFunctor;
+                friend struct EndFunctor;
+
                 friend struct CommandInfoAndImplementation;
                 bool sticky;
                 //!unique command id
@@ -282,6 +284,14 @@ namespace chaos{
                  */
                 virtual void setHandler(chaos::common::data::CDataWrapper *data);
                 
+
+                //! End the command execution
+                      /*!
+                         This handle is called in command termination has the main purpose to end the command. All the operation need to close the command.
+
+                    */
+               virtual void endHandler();
+
                 //! Aquire the necessary data for the command
                 /*!
                  The acquire handler has the purpose to get all necessary data need the by CC handler.

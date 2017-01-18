@@ -118,6 +118,9 @@ namespace chaos{
                 
                 //! Pointer to the correlation and commit pahse handler's of the current command
                 CorrelationFunctor correlation_handler_functor;
+
+                EndFunctor end_handler_functor;
+
                 //-------------------- handler poiter --------------------
                 
                 //!install the handler of the command

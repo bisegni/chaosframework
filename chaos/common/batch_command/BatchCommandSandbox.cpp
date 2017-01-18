@@ -115,7 +115,9 @@ void BatchCommandSandbox::init(void *initData) throw (chaos::CException) {
     
     correlation_handler_functor.cmd_instance = NULL;
     correlation_handler_functor.sandbox_identifier = identification;
-    
+    end_handler_functor.cmd_instance = NULL;
+    end_handler_functor.sandbox_identifier = identification;
+
     schedule_work_flag = false;
 }
 
@@ -639,6 +641,8 @@ void BatchCommandSandbox::runCommand() {
                     case RunningPropertyType::RP_END:
                         //put this at null because someone can change it
                         curr_executing_impl = NULL;
+                        end_handler_functor();
+
                         whait_for_next_check.unlock();
                         thread_scheduler_pause_condition.wait();
                         break;
@@ -713,6 +717,7 @@ bool BatchCommandSandbox::installHandler(PRIORITY_ELEMENT(CommandInfoAndImplemen
         //correlation commit
         if (handlerMask & HandlerType::HT_Correlation) {correlation_handler_functor.cmd_instance = tmp_impl;}
         
+        end_handler_functor.cmd_instance = tmp_impl;
         current_executing_command = cmd_to_install;
         
         //fire the running event
@@ -726,6 +731,8 @@ bool BatchCommandSandbox::installHandler(PRIORITY_ELEMENT(CommandInfoAndImplemen
         current_executing_command = NULL;
         acquire_handler_functor.cmd_instance = NULL;
         correlation_handler_functor.cmd_instance = NULL;
+        end_handler_functor.cmd_instance = NULL;
+
     }
     return true;
 }
