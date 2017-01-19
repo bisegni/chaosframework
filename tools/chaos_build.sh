@@ -86,7 +86,7 @@ function printlog(){
     
 }
 function initialize_bundle(){
-    printlog "* initializing repo"
+    printlog "* initializing repo in "`pwd`
 
     if ! repo init -u ssh://git@opensource-stash.infn.it:7999/chaos/chaos_repo_bundle.git -b development >> $log 2>&1;then
 	printlog "## repo initialization failed"
@@ -113,7 +113,7 @@ function compile_bundle(){
     printlog "==== BRANCH:$branch"
     printlog "=========================================="
 
-    printlog "* entering in $dir checking out \"$branch\""
+    printlog "* entering in '$dir' checking out \"$branch\""
     printlog "* log file \"$log\""
     stage="initilization $dir $arch $build $branch"
     target="DIR $dir, ARCH $arch, BUILD:$build, BRANCH:$branch"
@@ -133,7 +133,7 @@ function compile_bundle(){
 	fi
     fi
     stage="git access to \"$branch\""
-    if ! chaosframework/tools/chaos_git.sh -c $branch >> $log 2>&1 ;then
+    if ! $mydir/chaos_git.sh -c $branch >> $log 2>&1 ;then
 	printlog "## error cannot checkout \"$branch\""
 	popd > /dev/null
 	exit 1;
@@ -187,7 +187,7 @@ function compile_bundle(){
     if [ ! -f CMakeCache.txt ]|| [ -n "$force_reconf" ];then
 	printlog "* configuring $dir cmake \"$cmake_params\"...."
 	rm -rf $install_prefix
-	chaosframework/tools/chaos_clean.sh . >> $log 2>&1
+	$mydir/chaos_clean.sh . >> $log 2>&1
 	if ! cmake $cmake_params . >> $log 2>&1;then
 	    printlog "## error during cmake configuration \"$cmake_params\""
 	    popd >& /dev/null
