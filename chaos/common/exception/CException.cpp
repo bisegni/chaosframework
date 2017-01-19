@@ -59,12 +59,12 @@ void CException::composeMsg() {
 
 const char* CFatalException::what() const throw() {
 	std::stringstream ret;
-	std::string stack;
+//	std::string stack;
 	ret<<"FATAL:\""+msg<<"\"";
-	stack =boost::diagnostic_information(*this);
+/*	stack =boost::diagnostic_information(*this);
 	 if (stack.size() ) {
 	        ret <<" stack:"<< stack;
 	    }
-
+*/
     return ret.str().c_str();
 }

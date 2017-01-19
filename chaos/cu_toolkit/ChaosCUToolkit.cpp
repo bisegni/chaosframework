@@ -241,7 +241,7 @@ void ChaosCUToolkit::deinit() throw(CException) {
     ChaosCommon<ChaosCUToolkit>::deinit();
     
     LAPP_ << "-----------------------------------------";
-    LAPP_ << "!CHAOS Control Unit System deinitlizied  ";
+    LAPP_ << "!CHAOS Control Unit System deinitialized  ";
     LAPP_ << "-----------------------------------------";
 }
 
@@ -262,8 +262,19 @@ void ChaosCUToolkit::signalHanlder(int signalNumber) {
     //lock lk(monitor);
     //unlock the condition for end start method
     //endWaithCondition.notify_one();
-    waitCloseSemaphore.unlock();
-    if((signalNumber==SIGABRT) || (signalNumber==SIGSEGV)){
-    	throw CFatalException(signalNumber,"trapped signal",__PRETTY_FUNCTION__);
-    }
+    //waitCloseSemaphore.unlock();
+	if((signalNumber==SIGABRT) || (signalNumber==SIGSEGV)){
+		LAPP_ << "INTERNAL ERROR, please provide log, Catch SIGNAL: "<< signalNumber;
+
+	    throw CFatalException(signalNumber,"trapped signal",__PRETTY_FUNCTION__);
+	 } else {
+			LAPP_ << "CATCH SIGNAL "<< signalNumber;
+			if(signalNumber == SIGINT || signalNumber == SIGTERM){
+				LAPP_ << "EXITING THROUGH SIGNAL '"<<signalNumber<<"' ....";
+
+				 exit(0);
+			}
+
+	 }
+
 }

@@ -1,12 +1,4 @@
 {
-    "data_servers": [
-	{
-    	    "hostname": "localhost:1700:32000|0",
-	    "id_server": 0,
-	    "is_live": true
-	}
-
-    ],
     "us": [
 	{
 	    "unit_server_alias": "TEST",
@@ -41,13 +33,13 @@
 			    "ds_attr_name": "ConfigString",
 			    "ds_max_range": "",
 			    "ds_min_range": "",
-			    "ds_default_value": "3,/home/chaos/chaos-distrib/etc/common_actuators_technosoft/asse3.t.zip"
+			    "ds_default_value": "31,/home/chaos/chaos-distrib/etc/common_actuators_technosoft/asse3.t.zip"
 		    },
 		    {
 			    "ds_attr_name": "axisID",
 			    "ds_max_range": "255",
 			    "ds_min_range": "0",
-			    "ds_default_value": "3"
+			    "ds_default_value": "31"
 	            },
 	            {
 			    "ds_attr_name": "fileTable",
@@ -217,13 +209,13 @@
 			    "ds_attr_name": "ConfigString",
 			    "ds_max_range": "",
 			    "ds_min_range": "",
-			    "ds_default_value": "3,asse3.t.zip"
+			    "ds_default_value": "13,asse3.t.zip"
 		    },
 		    {
 			    "ds_attr_name": "axisID",
 			    "ds_max_range": "255",
 			    "ds_min_range": "0",
-			    "ds_default_value": "3"
+			    "ds_default_value": "13"
 	            },
 	            {
 			    "ds_attr_name": "fileTable",
@@ -370,9 +362,9 @@
 		    "cu_id": "BTF/SCRAPER/SLTB004L",
 		    "cu_type": "::driver::actuator::SCActuatorControlUnit",
 		    "cu_param": "",
-		    "auto_load": true,
-		    "auto_start":false,
-		    "auto_init":false,
+		    "auto_load":true,
+		    "auto_start":true,
+		    "auto_init":true,
 		    "storage_type": 2,
 		    "storage_ageing": 36000,
 		    "DriverDescription": [
@@ -548,8 +540,8 @@
 		    "cu_type": "::driver::actuator::SCActuatorControlUnit",
 		    "cu_param": "",
 		    "auto_load": true,
-		    "auto_start":false,
-		    "auto_init":false,
+		    "auto_start":true,
+		    "auto_init":true,
 		    "storage_type": 2,
 		    "storage_ageing": 36000,
 		    "DriverDescription": [
@@ -725,8 +717,8 @@
 		    "cu_type": "::driver::actuator::SCActuatorControlUnit",
 		    "cu_param": "",
 		    "auto_load": true,
-		    "auto_start":false,
-		    "auto_init":false,
+		    "auto_start":true,
+		    "auto_init":true,
 		    "storage_type": 2,
 		    "storage_ageing": 36000,
 		    "DriverDescription": [
@@ -903,8 +895,8 @@
 		    "cu_type": "::driver::actuator::SCActuatorControlUnit",
 		    "cu_param": "",
 		    "auto_load": true,
-		    "auto_start":false,
-		    "auto_init":false,
+		    "auto_start":true,
+		    "auto_init":true,
 		    "storage_type": 2,
 		    "storage_ageing": 36000,
 		    "DriverDescription": [
@@ -1080,8 +1072,8 @@
 		    "cu_type": "::driver::actuator::SCActuatorControlUnit",
 		    "cu_param": "",
 		    "auto_load": true,
-		    "auto_start":false,
-		    "auto_init":false,
+		    "auto_start":true,
+		    "auto_init":true,
 		    "storage_type": 2,
 		    "storage_ageing": 36000,
 		    "DriverDescription": [
@@ -1256,8 +1248,8 @@
 		    "cu_type": "::driver::actuator::SCActuatorControlUnit",
 		    "cu_param": "",
 		    "auto_load": true,
-		    "auto_start":false,
-		    "auto_init":false,
+		    "auto_start":true,
+		    "auto_init":true,
 		    "storage_type": 2,
 		    "storage_ageing": 36000,
 		    "DriverDescription": [
@@ -1432,8 +1424,8 @@
 		    "cu_type": "::driver::actuator::SCActuatorControlUnit",
 		    "cu_param": "",
 		    "auto_load": true,
-		    "auto_start":false,
-		    "auto_init":false,
+		    "auto_start":true,
+		    "auto_init":true,
 		    "storage_type": 2,
 		    "storage_ageing": 36000,
 		    "DriverDescription": [
@@ -1608,8 +1600,8 @@
 		    "cu_type": "::driver::actuator::SCActuatorControlUnit",
 		    "cu_param": "",
 		    "auto_load": true,
-		    "auto_start":false,
-		    "auto_init":false,
+		    "auto_start":true,
+		    "auto_init":true,
 		    "storage_type": 2,
 		    "storage_ageing": 36000,
 		    "DriverDescription": [
@@ -1778,38 +1770,7 @@
 			    "ds_default_value": "20"
 	            	}        
 		    ]
-},{		
-		    "unit_server_alias": "TEST",
-		    "cu_id": "BTF/SCRAPERS/SIM_SCRAPER",
-		    "cu_type": "::driver::actuator::SCActuatorControlUnit",
-		    "cu_param": "",
-		    "auto_load": true,
-		    "storage_type": 2,
-		    "storage_ageing": 36000,
-		    "DriverDescription": [
-			{
-			    "DriverDescriptionName": "ActuatorSim",
-			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "16,0,115200,/dev/ttyr1c"
-			}
-		    ],
-		    "AttrDesc": [
-			{		    
-			    "ds_attr_name": "ConfigString",
-			    "ds_max_range": "",
-			    "ds_min_range": "",
-			    "ds_default_value": "16,/home/chaos/chaos-distrib/etc/common_actuators_technosoft/1setup001.t.zip"
-			},
-			{
-			    "ds_attr_name": "axisID",
-			    "ds_max_range": "255",
-			    "ds_min_range": "0",
-			    "ds_default_value": "16"
-			}
-			
-		    ]
-},
-		{
+},		{
 		    "unit_server_alias": "TEST",
 		    "cu_id": "BENCHMARK_UNIT_0/TEST_CU_0",
 		    "cu_type": "ChaosMESS",
@@ -1838,11 +1799,6 @@
 		    "storage_type": 2,
 		    "storage_ageing": 3600,
 		    "DriverDescription": [
-					    {
-			"DriverDescriptionName": "OcemDD",
-			"DriverDescriptionVersion": "1.0.0",
-			"DriverDescriptionInitParam": "OcemE642X:/dev/ttyr08,4,700:10"
-					    },
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
@@ -1977,13 +1933,6 @@
 		    "storage_type": 2,
 		    "storage_ageing": 3600,
 		    "DriverDescription": [
-					{
-		    "DriverDescriptionName": "OcemDD",
-		    "DriverDescriptionVersion": "1.0.0",
-		    "DriverDescriptionInitParam": "OcemE642X:/dev/ttyr16,6,700:10"
-
-					},
-
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
@@ -2119,11 +2068,6 @@
 		    "storage_ageing": 3600,
 
 		    "DriverDescription": [
-		    		    		    {
-			"DriverDescriptionName": "OcemDD",
-			"DriverDescriptionVersion": "1.0.0",
-			"DriverDescriptionInitParam": "OcemE642X:/dev/ttyr08,9,100:10"
-		    },
 
 			{
 			    "DriverDescriptionName": "PowerSimDD",
@@ -2259,11 +2203,6 @@
 		    "storage_type": 2,
 		    "storage_ageing": 3600,
 		    "DriverDescription": [
-		    		    		    {
-			"DriverDescriptionName": "OcemDD",
-			"DriverDescriptionVersion": "1.0.0",
-			"DriverDescriptionInitParam":  "OcemE642X:/dev/ttyr08,11,100:10"
-		    },
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
@@ -2398,11 +2337,6 @@
 		    "storage_type": 2,
 		    "storage_ageing": 3600,
 		    "DriverDescription": [
-		    		    		{
-		    "DriverDescriptionName": "OcemDD",
-		    "DriverDescriptionVersion": "1.0.0",
-		    "DriverDescriptionInitParam":  "OcemE642X:/dev/ttyr16,5,100:10"
-		},
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
@@ -2538,11 +2472,7 @@
 		    "storage_type": 2,
 		    "storage_ageing": 3600,
 		    "DriverDescription": [
-		    		    		{
-		    "DriverDescriptionName": "OcemDD",
-		    "DriverDescriptionVersion": "1.0.0",
-		    "DriverDescriptionInitParam": "OcemE642X:/dev/ttyr16,4,100:10"
-		},
+
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
@@ -2677,11 +2607,6 @@
 		    "storage_type": 2,
 		    "storage_ageing": 3600,
 		    "DriverDescription": [
-		    		    		    {
-			"DriverDescriptionName": "OcemDD",
-			"DriverDescriptionVersion": "1.0.0",
-			"DriverDescriptionInitParam": "OcemE642X:/dev/ttyr08,3,100:10"
-		    },
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
@@ -2816,11 +2741,7 @@
 		    "storage_type": 2,
 		    "storage_ageing": 3600,
 		    "DriverDescription": [
-		    		    		    {
-			"DriverDescriptionName": "OcemDD",
-			"DriverDescriptionVersion": "1.0.0",
-			"DriverDescriptionInitParam": "OcemE642X:/dev/ttyr08,0,100:10"
-		    },
+
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
