@@ -536,6 +536,14 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
     boost::shared_ptr<AbstractControlUnit> instance(map_cu_alias_instancer[work_unit_type]->getInstance(work_unit_id, load_options, driver_params));
     CHECK_ASSERTION_THROW_AND_LOG(instance.get(), LCMERR_, -7, "Error creating work unit instance");
     
+    //check if is a proxy control unit
+    if(load_handler != NULL &&
+       (instance->getCUType().compare(NodeType::NODE_SUBTYPE_PROXY_CONTROL_UNIT) == 0)){
+        load_handler(true,
+                     instance->getCUID(),
+                     static_cast<ProxyControlUnit*>(instance.get())->getProxyApiInterface());
+    }
+    
     //tag control uinit for mds managed
     instance->control_key = "mds";
     
@@ -570,6 +578,13 @@ CDataWrapper* ControlManager::unloadControlUnit(CDataWrapper *message_data, bool
     LCMAPP_ << "Unload operation for: " << work_unit_id;// << " of type "<<work_unit_type;
     WriteLock write_instancer_lock(mutex_map_cuid_registered_instance);
     IN_ACTION_PARAM_CHECK(!map_cuid_registered_instance.count(work_unit_id), -3, "Work unit not found on registered's map")
+    
+    if(load_handler != NULL &&
+       (map_cuid_registered_instance[work_unit_id]->work_unit_instance->getCUType().compare(NodeType::NODE_SUBTYPE_PROXY_CONTROL_UNIT) == 0)){
+        load_handler(false,
+                     map_cuid_registered_instance[work_unit_id]->work_unit_instance->getCUID(),
+                     boost::shared_ptr<ControlUnitApiInterface>());
+    }
     
     //get the iterator for the work unit managment class
     map<string, boost::shared_ptr<WorkUnitManagement> >::iterator iter = map_cuid_registered_instance.find(work_unit_id);
@@ -778,12 +793,6 @@ CDataWrapper* ControlManager::unitServerRegistrationACK(CDataWrapper *message_da
 }
 
 //! allota a new control unit proxy
-boost::shared_ptr<ControlUnitApiInterface> ControlManager::createNewProxyControlUnit(const std::string& control_unit_id) {
-    boost::shared_ptr<ProxyControlUnit> instance_proxy_ptr(new ProxyControlUnit(control_unit_id));
-    CHECK_ASSERTION_THROW_AND_LOG(instance_proxy_ptr.get(), LCMERR_, -7, "Error creating work unit instance");
-    boost::shared_ptr<ControlUnitApiInterface> instance_interface = instance_proxy_ptr->getProxyApiInterface();
-       
-    //submit contorl unit releaseing the auto_ptr
-    submitControlUnit(instance_proxy_ptr);
-    return instance_interface;
+void ControlManager::setProxyCreationHandler(ProxyLoadHandler _load_handler) {
+    load_handler = _load_handler;
 }

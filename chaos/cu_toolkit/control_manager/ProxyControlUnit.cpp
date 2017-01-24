@@ -42,7 +42,7 @@ using namespace boost::chrono;
 PUBLISHABLE_CONTROL_UNIT_IMPLEMENTATION(ProxyControlUnit)
 
 ProxyControlUnit::ProxyControlUnit(const std::string& _control_unit_id):
-AbstractControlUnit(CUType::RTCU,
+AbstractControlUnit(CUType::PROXY_CU,
                     _control_unit_id,
                     "") {
     attribute_value_shared_cache = new AttributeValueSharedCache();
@@ -51,7 +51,7 @@ AbstractControlUnit(CUType::RTCU,
 ProxyControlUnit::ProxyControlUnit(const std::string& _control_unit_id,
                                    const std::string& _control_unit_param,
                                    const ControlUnitDriverList& _control_unit_drivers):
-AbstractControlUnit(CUType::RTCU,
+AbstractControlUnit(CUType::PROXY_CU,
                     _control_unit_id,
                     _control_unit_param,
                     _control_unit_drivers) {

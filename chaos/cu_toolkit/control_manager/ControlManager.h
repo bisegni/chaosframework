@@ -169,6 +169,9 @@ namespace chaos {
 				mutable boost::shared_mutex mutex_map_cu_instancer;
 				std::map<string, boost::shared_ptr<CUObjectInstancer> > map_cu_alias_instancer;
 				
+                //!hnalder thre proxy creation
+                ProxyLoadHandler load_handler;
+                
 				/*
 				 Constructor
 				 */
@@ -265,7 +268,7 @@ namespace chaos {
 				void deinit() throw(CException);
 				
                 //! allota a new control unit proxy
-                boost::shared_ptr<ControlUnitApiInterface> createNewProxyControlUnit(const std::string& control_unit_id);
+                void setProxyCreationHandler(ProxyLoadHandler load_handler);
                 
 				//! control unit registration
 				/*!

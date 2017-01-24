@@ -255,6 +255,7 @@ namespace chaos {
         static const char * const NODE_SUBTYPE_SCRIPTABLE_EXECUTION_UNIT    = "nt_script_eu";
         static const char * const NODE_SUBTYPE_REALTIME_CONTROL_UNIT        = "nt_rt_cu";
         static const char * const NODE_SUBTYPE_BATCH_CONTROL_UNIT           = "nt_sc_cu";
+        static const char * const NODE_SUBTYPE_PROXY_CONTROL_UNIT           = "nt_proxy_cu";
     }
     /** @} */ // end of NodeType
     
@@ -703,6 +704,7 @@ namespace chaos {
         static const char * const RTCU	= NodeType::NODE_SUBTYPE_REALTIME_CONTROL_UNIT;
         static const char * const SCCU  = NodeType::NODE_SUBTYPE_BATCH_CONTROL_UNIT;
         static const char * const EXUT  = NodeType::NODE_SUBTYPE_SCRIPTABLE_EXECUTION_UNIT;
+        static const char * const PROXY_CU	= NodeType::NODE_SUBTYPE_PROXY_CONTROL_UNIT;
     }
     /** @} */ // end of CUType
     

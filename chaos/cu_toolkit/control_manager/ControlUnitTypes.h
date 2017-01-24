@@ -28,6 +28,8 @@
 namespace  chaos {
     namespace cu {
         namespace control_manager {
+            //!forward declaration
+            class ControlUnitApiInterface;
             
             typedef enum {
                 INIT_RPC_PHASE_CALL_INIT_STATE = 0,
@@ -84,7 +86,10 @@ namespace  chaos {
             typedef boost::function<void(const std::string&,//control unit id
             const ControlUnitProxyEvent)> EventHandlerFunctor;//event type
             
-            
+            typedef boost::function<void(const bool, //true load/false unload
+            const std::string&,//control unit id
+            const boost::shared_ptr<ControlUnitApiInterface>& )> ProxyLoadHandler;//event type
+
         }
     }
 }
