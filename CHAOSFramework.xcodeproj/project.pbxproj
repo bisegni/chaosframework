@@ -68,6 +68,7 @@
 		3212372A1A658BA9002A2D63 /* BaseWANInterfaceHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 321237281A658BA9002A2D63 /* BaseWANInterfaceHandler.cpp */; };
 		3214792D1D7970FF00F6DDA6 /* MongoDBObjectStorageDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3214792B1D7970FF00F6DDA6 /* MongoDBObjectStorageDataAccess.cpp */; };
 		321479301D79711B00F6DDA6 /* MongoDBObjectStorageDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3214792E1D79711B00F6DDA6 /* MongoDBObjectStorageDriver.cpp */; };
+		3214A40D1E375CCF00184C9D /* ControlUnitApiInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3214A40C1E375CCF00184C9D /* ControlUnitApiInterface.cpp */; };
 		3214E7401DC1081100A67414 /* AlarmDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3214E73E1DC1081100A67414 /* AlarmDescription.cpp */; };
 		3214E7411DC1081100A67414 /* AlarmDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 3214E73F1DC1081100A67414 /* AlarmDescription.h */; };
 		3214E7441DC10B9500A67414 /* MultiSeverityAlarm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3214E7421DC10B9500A67414 /* MultiSeverityAlarm.cpp */; };
@@ -399,6 +400,10 @@
 		326ACFAA1E0159C600AD011E /* DeviceSharedDataWorkerMetric.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326ACFA21E0159C600AD011E /* DeviceSharedDataWorkerMetric.cpp */; };
 		326ACFAB1E0159C600AD011E /* DeviceSharedDataWorkerMetricCollector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326ACFA41E0159C600AD011E /* DeviceSharedDataWorkerMetricCollector.cpp */; };
 		326ACFAF1E016D9000AD011E /* PersistenceManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326ACFAD1E016D9000AD011E /* PersistenceManager.cpp */; };
+		326BB29E1E3753DB00BFA602 /* ProxyControlUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 326BB29C1E3753DB00BFA602 /* ProxyControlUnit.h */; };
+		326BB29F1E3753E200BFA602 /* ProxyControlUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326BB29B1E3753DB00BFA602 /* ProxyControlUnit.cpp */; };
+		326BB2A31E37572C00BFA602 /* ControlUnitApiInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 326BB2A11E37572B00BFA602 /* ControlUnitApiInterface.h */; };
+		326BB2A71E375A2E00BFA602 /* ControlUnitTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 326BB2A51E375A2E00BFA602 /* ControlUnitTypes.h */; };
 		326CD5AB1D66F975003AD071 /* PublishingManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326CD5A91D66F975003AD071 /* PublishingManager.cpp */; };
 		326CD5AC1D66F975003AD071 /* PublishingManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 326CD5AA1D66F975003AD071 /* PublishingManager.h */; };
 		326CDBB718D860430054EF19 /* SpinLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 326CDBB518D860430054EF19 /* SpinLock.h */; };
@@ -1194,6 +1199,7 @@
 		3214792C1D7970FF00F6DDA6 /* MongoDBObjectStorageDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MongoDBObjectStorageDataAccess.h; sourceTree = "<group>"; };
 		3214792E1D79711B00F6DDA6 /* MongoDBObjectStorageDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MongoDBObjectStorageDriver.cpp; sourceTree = "<group>"; };
 		3214792F1D79711B00F6DDA6 /* MongoDBObjectStorageDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MongoDBObjectStorageDriver.h; sourceTree = "<group>"; };
+		3214A40C1E375CCF00184C9D /* ControlUnitApiInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ControlUnitApiInterface.cpp; sourceTree = "<group>"; };
 		3214E73E1DC1081100A67414 /* AlarmDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = AlarmDescription.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		3214E73F1DC1081100A67414 /* AlarmDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AlarmDescription.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		3214E7421DC10B9500A67414 /* MultiSeverityAlarm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = MultiSeverityAlarm.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
@@ -1600,6 +1606,10 @@
 		326ACFA51E0159C600AD011E /* DeviceSharedDataWorkerMetricCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceSharedDataWorkerMetricCollector.h; sourceTree = "<group>"; };
 		326ACFAD1E016D9000AD011E /* PersistenceManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PersistenceManager.cpp; sourceTree = "<group>"; };
 		326ACFAE1E016D9000AD011E /* PersistenceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersistenceManager.h; sourceTree = "<group>"; };
+		326BB29B1E3753DB00BFA602 /* ProxyControlUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProxyControlUnit.cpp; sourceTree = "<group>"; };
+		326BB29C1E3753DB00BFA602 /* ProxyControlUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProxyControlUnit.h; sourceTree = "<group>"; };
+		326BB2A11E37572B00BFA602 /* ControlUnitApiInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ControlUnitApiInterface.h; sourceTree = "<group>"; };
+		326BB2A51E375A2E00BFA602 /* ControlUnitTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ControlUnitTypes.h; sourceTree = "<group>"; };
 		326CD5A91D66F975003AD071 /* PublishingManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PublishingManager.cpp; sourceTree = "<group>"; };
 		326CD5AA1D66F975003AD071 /* PublishingManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PublishingManager.h; sourceTree = "<group>"; };
 		326CD5AE1D673EB5003AD071 /* LockableObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LockableObject.h; sourceTree = "<group>"; };
@@ -3756,11 +3766,16 @@
 				32F2241E179AEED500853F62 /* SCAbstractControlUnit.h */,
 				32F22419179AE3BC00853F62 /* RTAbstractControlUnit.cpp */,
 				32F2241A179AE3BC00853F62 /* RTAbstractControlUnit.h */,
+				326BB29B1E3753DB00BFA602 /* ProxyControlUnit.cpp */,
+				326BB29C1E3753DB00BFA602 /* ProxyControlUnit.h */,
+				3214A40C1E375CCF00184C9D /* ControlUnitApiInterface.cpp */,
+				326BB2A11E37572B00BFA602 /* ControlUnitApiInterface.h */,
 				32D72CA8197D196D00512B89 /* WorkUnitManagement.cpp */,
 				32D72CA9197D196D00512B89 /* WorkUnitManagement.h */,
 				326DB4A714B3A3E50018A8D0 /* ControlManager.cpp */,
 				326DB4A814B3A3E50018A8D0 /* ControlManager.h */,
 				32A116B01D25296C00FF44ED /* control_manager_constants.h */,
+				326BB2A51E375A2E00BFA602 /* ControlUnitTypes.h */,
 			);
 			path = control_manager;
 			sourceTree = "<group>";
@@ -5058,6 +5073,7 @@
 				322EC1BC1D34F2E10012467C /* StateFlagCatalog.h in Headers */,
 				326DB48814B38BC00018A8D0 /* ChaosThread.h in Headers */,
 				32B159D618B38CA50096B58B /* DirectIODeviceServerChannel.h in Headers */,
+				326BB29E1E3753DB00BFA602 /* ProxyControlUnit.h in Headers */,
 				32995C471BB2D1F700F68148 /* SWEService.h in Headers */,
 				32A88BE51CF8228A001DBAF5 /* ltable.h in Headers */,
 				324A4B76191A428500975394 /* jsobj.h in Headers */,
@@ -5072,6 +5088,7 @@
 				326DB49314B38BC00018A8D0 /* Singleton.h in Headers */,
 				324A4B4C191A41EF00975394 /* bits.h in Headers */,
 				3270E0821C6DF44F00105726 /* exception.h in Headers */,
+				326BB2A71E375A2E00BFA602 /* ControlUnitTypes.h in Headers */,
 				32FC49B81E0ACB1B0087D82C /* BatchCommandParallelSandbox.h in Headers */,
 				326DB49514B38BC00018A8D0 /* TimingUtil.h in Headers */,
 				32A88BC01CF8228A001DBAF5 /* lcode.h in Headers */,
@@ -5148,6 +5165,7 @@
 				32C3546317885A37009ED581 /* shared_library.hpp in Headers */,
 				32CFF96015E4DBD3005D607E /* EventFactory.h in Headers */,
 				325013BD15E9258C00DCB13E /* EventClient.h in Headers */,
+				326BB2A31E37572C00BFA602 /* ControlUnitApiInterface.h in Headers */,
 				328556A117F2E33A00A64ED2 /* DirectIOClient.h in Headers */,
 				32A88BE01CF8228A001DBAF5 /* lstate.h in Headers */,
 				324A4B70191A428500975394 /* atomic_int.h in Headers */,
@@ -6133,10 +6151,12 @@
 				3215860D178756B40090E7E6 /* AbstractDriverPlugin.cpp in Sources */,
 				324545011D4A676A0081F90B /* EventManager.cpp in Sources */,
 				32C4EF361D4F71370014F3D3 /* DatasetEvent.cpp in Sources */,
+				326BB29F1E3753E200BFA602 /* ProxyControlUnit.cpp in Sources */,
 				3252A30F1C8ED2A800900FF2 /* AbstractAttributeHandler.cpp in Sources */,
 				326DB4C114B3A3E50018A8D0 /* ControlManager.cpp in Sources */,
 				326DB4C814B3A3E50018A8D0 /* DataManager.cpp in Sources */,
 				325168CE1D479BAB00E877DF /* data_manager_types.cpp in Sources */,
+				3214A40D1E375CCF00184C9D /* ControlUnitApiInterface.cpp in Sources */,
 				3215861017875FDB0090E7E6 /* DriverPluginLoader.cpp in Sources */,
 				326DB4CB14B3A3E50018A8D0 /* KeyDataStorage.cpp in Sources */,
 				32CFC5C51AF55FED00E2A0B6 /* IOCU.cpp in Sources */,

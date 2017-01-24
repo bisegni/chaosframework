@@ -51,7 +51,7 @@ MESG("Configure Common Layer")
 ADD_SUBDIRECTORY(chaos/common)
 
 MESG("Configure CUToolkit Layer")
-ADD_SUBDIRECTORY(chaos/cu_toolkit)
+ADD_SUBDIRECTORY(chaos/cu)
 
 MESG("Configure UIToolkit Layer")
 ADD_SUBDIRECTORY(chaos/ui_toolkit)

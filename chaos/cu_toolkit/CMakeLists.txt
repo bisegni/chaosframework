@@ -1,5 +1,5 @@
 project(chaos_cutoolkit)
-INCLUDE_DIRECTORIES(chaos/cu_toolkit ../../)
+INCLUDE_DIRECTORIES(chaos/cu ../../)
 SET(cu_lib_src
         ChaosCUToolkit.cpp
         command_manager/CommandManager.cpp)
@@ -69,7 +69,7 @@ separate_arguments(chaos_cutoolkit_lib)
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} chaos_common ${chaos_cutoolkit_lib})
 
 FILE(GLOB files "*.h")
-INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit)
+INSTALL(FILES ${files} DESTINATION include/chaos/cu)
 
 FILE(GLOB files "driver_manager/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/driver_manager)

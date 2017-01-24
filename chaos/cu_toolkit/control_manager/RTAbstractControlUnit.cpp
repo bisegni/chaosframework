@@ -111,11 +111,6 @@ RTAbstractControlUnit::~RTAbstractControlUnit() {
     if(attribute_value_shared_cache) {
         delete(attribute_value_shared_cache);
     }
-    
-    //release handler engine
-    //if(attributeHandlerEngine) {
-    //    delete attributeHandlerEngine;
-    //}
 }
 
 void RTAbstractControlUnit::setDefaultScheduleDelay(uint64_t _schedule_delay) {

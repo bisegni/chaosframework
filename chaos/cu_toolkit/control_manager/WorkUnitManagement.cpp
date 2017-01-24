@@ -212,7 +212,7 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
             }
 
                 //check if the control unit hase some startup command (every startup command is a boost shared point so we dont need to delete it
-            for(ACUStartupCommandListIterator it = work_unit_instance->list_startup_command.begin();
+            for(chaos::cu::control_manager::ACUStartupCommandListIterator it = work_unit_instance->list_startup_command.begin();
                 it != work_unit_instance->list_startup_command.end();
                 it++) {
                 std::auto_ptr<CDataWrapper> rpc_message(new CDataWrapper);

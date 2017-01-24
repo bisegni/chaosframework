@@ -31,8 +31,6 @@ TDSObjectHandler<T, double> *typedHandler = NULL;\
 typename TDSObjectHandler<T, double>::TDSHandler handlerPointer = objectMethodHandler;\
 abstractPointer = typedHandler = new TDSObjectHandler<T, double>(objectPointer, handlerPointer);
 
-namespace chaos_data = chaos::common::data;
-
 namespace chaos {
 	using namespace boost;
 	using namespace boost::chrono;
@@ -57,7 +55,7 @@ namespace chaos {
 				 Define the control unit DataSet and Action into
 				 a CDataWrapper
 				 */
-				void _defineActionAndDataset(chaos_data::CDataWrapper& setup_configuration) throw(CException);
+				void _defineActionAndDataset(chaos::common::data::CDataWrapper& setup_configuration) throw(CException);
                 
 				//! init rt control unit
 				void init(void *initData) throw(CException);
@@ -106,7 +104,7 @@ namespace chaos {
 				/*!
 				 Event for update some CU configuration
 				 */
-				virtual chaos_data::CDataWrapper* updateConfiguration(CDataWrapper* update_pack, bool& detach_param) throw (CException);
+				virtual chaos::common::data::CDataWrapper* updateConfiguration(CDataWrapper* update_pack, bool& detach_param) throw (CException);
                 /*!
                  Thread method for the scheduler
                  */
@@ -133,7 +131,6 @@ namespace chaos {
 				~RTAbstractControlUnit();
 			};
 		}
-        
     }
 }
 
