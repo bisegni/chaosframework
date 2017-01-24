@@ -248,11 +248,9 @@ void ChaosCUToolkit::deinit() throw(CException) {
 /*
  * Add a new Control Unit Class for execution
  */
-void ChaosCUToolkit::addControlUnit(AbstractControlUnit *newCU) {
+boost::shared_ptr<ControlUnitApiInterface>  ChaosCUToolkit::addProxyControlUnit(const std::string& unique_id) {
     //call command manager to submit Custom Control Unit
-    ControlManager::getInstance()->submitControlUnit(newCU);
-    
-    LAPP_ << "A new Control Unit " << newCU->getCUInstance() << " has been submitted";
+    return ControlManager::getInstance()->createNewProxyControlUnit(unique_id);
 }
 
 /*

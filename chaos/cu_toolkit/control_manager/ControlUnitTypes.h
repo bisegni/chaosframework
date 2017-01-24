@@ -68,6 +68,23 @@ namespace  chaos {
             CHAOS_DEFINE_VECTOR_FOR_TYPE(boost::shared_ptr<chaos::common::data::CDataWrapper>, ACUStartupCommandList);
             
             CHAOS_DEFINE_MAP_FOR_TYPE(StateVariableType, chaos::common::alarm::AlarmCatalog, MapStateVariable);
+            
+            typedef enum {
+                ControlUnitProxyEventDefine,
+                ControlUnitProxyEventInit,
+                ControlUnitProxyEventStart,
+                ControlUnitProxyEventStop,
+                ControlUnitProxyEventDeinit,
+            } ControlUnitProxyEvent;
+            
+            typedef boost::function<bool(const std::string&,//control unit id
+            const std::string&,//attribute name
+            const chaos::common::data::CDataVariant&)> AttributeHandlerFunctor; //value
+            
+            typedef boost::function<void(const std::string&,//control unit id
+            const ControlUnitProxyEvent)> EventHandlerFunctor;//event type
+            
+            
         }
     }
 }

@@ -23,6 +23,7 @@
 #include <chaos/common/healt_system/HealtManager.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
 
+#include <chaos/cu_toolkit/control_manager/ProxyControlUnit.h>
 #include <chaos/cu_toolkit/control_manager/ControlManager.h>
 #include <chaos/cu_toolkit/command_manager/CommandManager.h>
 #include <chaos/cu_toolkit/control_manager/script/ScriptableExecutionUnit.h>
@@ -58,7 +59,8 @@ using namespace std;
  */
 ControlManager::ControlManager():
 publishing_counter_delay(0){
-    //! register scriptable control unit
+    //! register default control unit
+    registerControlUnit<chaos::cu::control_manager::ProxyControlUnit>();
     registerControlUnit<chaos::cu::control_manager::script::ScriptableExecutionUnit>();
 }
 
@@ -307,7 +309,7 @@ void ControlManager::deinit() throw(CException) {
 /*
  Submit a new Control unit for operation
  */
-void ControlManager::submitControlUnit(AbstractControlUnit *control_unit_instance) throw(CException) {
+void ControlManager::submitControlUnit(boost::shared_ptr<AbstractControlUnit> control_unit_instance) throw(CException) {
     CHAOS_ASSERT(control_unit_instance)
     //lock the hastable of cu instance and managmer
     boost::unique_lock<boost::shared_mutex> lock(mutex_queue_submitted_cu);
@@ -531,25 +533,9 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
     }
     
     //submit new instance of the requested control unit
-    std::auto_ptr<AbstractControlUnit> instance(map_cu_alias_instancer[work_unit_type]->getInstance(work_unit_id, load_options, driver_params));
+    boost::shared_ptr<AbstractControlUnit> instance(map_cu_alias_instancer[work_unit_type]->getInstance(work_unit_id, load_options, driver_params));
     CHECK_ASSERTION_THROW_AND_LOG(instance.get(), LCMERR_, -7, "Error creating work unit instance");
     
-    //    //add healt metric for newly create control unit instance
-    //    HealtManager::getInstance()->addNewNode(work_unit_id);
-    //    //! add error code metric for control unit
-    //    HealtManager::getInstance()->addNodeMetric(work_unit_id,
-    //                                               NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE,
-    //                                               chaos::DataType::TYPE_INT32);
-    //    HealtManager::getInstance()->addNodeMetric(work_unit_id,
-    //                                               NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_MESSAGE,
-    //                                               chaos::DataType::TYPE_STRING);
-    //    HealtManager::getInstance()->addNodeMetric(work_unit_id,
-    //                                               NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_DOMAIN,
-    //                                               chaos::DataType::TYPE_STRING);
-    //    //add push rate metric
-    //    HealtManager::getInstance()->addNodeMetric(work_unit_id,
-    //                                               ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_PUSH_RATE,
-    //                                               chaos::DataType::TYPE_DOUBLE);
     //tag control uinit for mds managed
     instance->control_key = "mds";
     
@@ -568,7 +554,7 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
     }
     
     //submit contorl unit releaseing the auto_ptr
-    submitControlUnit(instance.release());
+    submitControlUnit(instance);
     return NULL;
 }
 
@@ -768,7 +754,7 @@ CDataWrapper* ControlManager::unitServerRegistrationACK(CDataWrapper *message_da
                 LCMERR_ << "The " << unit_server_alias << " is invalid";
                 //turn of unit server
                 LCMDBG_ << "Turning of unit server";
-                if(unit_server_sm.process_event(unit_server_state_machine::UnitServerEventType::UnitServerEventTypeFailure()) == boost::msm::back::HANDLED_TRUE){
+                if(unit_server_sm.process_event(unit_server_state_machine::UnitServerEventType::UnitServerEventTypeFailure()) == boost::msm::back::HANDLED_TRUE) {
                     //we have problem
                     HealtManager::getInstance()->addNodeMetricValue(unit_server_alias,
                                                                     NodeHealtDefinitionKey::NODE_HEALT_STATUS,
@@ -789,4 +775,15 @@ CDataWrapper* ControlManager::unitServerRegistrationACK(CDataWrapper *message_da
         throw CException(-3, "No result received", __PRETTY_FUNCTION__);
     }
     return NULL;
+}
+
+//! allota a new control unit proxy
+boost::shared_ptr<ControlUnitApiInterface> ControlManager::createNewProxyControlUnit(const std::string& control_unit_id) {
+    boost::shared_ptr<ProxyControlUnit> instance_proxy_ptr(new ProxyControlUnit(control_unit_id));
+    CHECK_ASSERTION_THROW_AND_LOG(instance_proxy_ptr.get(), LCMERR_, -7, "Error creating work unit instance");
+    boost::shared_ptr<ControlUnitApiInterface> instance_interface = instance_proxy_ptr->getProxyApiInterface();
+       
+    //submit contorl unit releaseing the auto_ptr
+    submitControlUnit(instance_proxy_ptr);
+    return instance_interface;
 }

@@ -73,7 +73,7 @@ namespace chaos{
             void stop()throw(CException);
             void deinit()throw(CException);
 			
-            void addControlUnit(control_manager::AbstractControlUnit*);
+            boost::shared_ptr<chaos::cu::control_manager::ControlUnitApiInterface> addProxyControlUnit(const std::string& unique_id);
 			template<typename ControlUnitClass>
 			void registerControlUnit() {
 				control_manager::ControlManager::getInstance()->registerControlUnit<ControlUnitClass>();

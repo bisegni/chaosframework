@@ -53,7 +53,7 @@ CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string, MessageKeyArray)
 /*---------------------------------------------------------------------------------
 
  ---------------------------------------------------------------------------------*/
-WorkUnitManagement::WorkUnitManagement(AbstractControlUnit *_work_unit_instance):
+WorkUnitManagement::WorkUnitManagement(boost::shared_ptr<AbstractControlUnit>& _work_unit_instance):
 mds_channel(NULL),
 work_unit_instance(_work_unit_instance),
 active(true),

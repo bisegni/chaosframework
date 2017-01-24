@@ -39,60 +39,44 @@ using namespace boost::chrono;
 #define PRXCUDBG    DBG_LOG(ProxyControlUnit)
 #define PRXCUERR    ERR_LOG(ProxyControlUnit)
 
-ProxyControlUnit::ProxyControlUnit(const std::string& _control_unit_id,
-                                   const std::string& _control_unit_param):
+PUBLISHABLE_CONTROL_UNIT_IMPLEMENTATION(ProxyControlUnit)
+
+ProxyControlUnit::ProxyControlUnit(const std::string& _control_unit_id):
 AbstractControlUnit(CUType::RTCU,
                     _control_unit_id,
-                    _control_unit_param),
-ControlUnitApiInterface(this){
+                    "") {
     attribute_value_shared_cache = new AttributeValueSharedCache();
 }
 
-/*!
- Parametrized constructor
- \param _control_unit_id unique id for the control unit
- \param _control_unit_drivers driver information
- */
 ProxyControlUnit::ProxyControlUnit(const std::string& _control_unit_id,
                                    const std::string& _control_unit_param,
                                    const ControlUnitDriverList& _control_unit_drivers):
 AbstractControlUnit(CUType::RTCU,
                     _control_unit_id,
                     _control_unit_param,
-                    _control_unit_drivers),
-ControlUnitApiInterface(this) {
+                    _control_unit_drivers) {
     attribute_value_shared_cache = new AttributeValueSharedCache();
 }
 
-
-ProxyControlUnit::ProxyControlUnit(const std::string& _alternate_type,
-                                   const std::string& _control_unit_id,
-                                   const std::string& _control_unit_param):
-AbstractControlUnit(_alternate_type,
-                    _control_unit_id,
-                    _control_unit_param),
-ControlUnitApiInterface(this) {
-    attribute_value_shared_cache = new AttributeValueSharedCache();
-}
-
-ProxyControlUnit::ProxyControlUnit(const std::string& _alternate_type,
-                                   const std::string& _control_unit_id,
-                                   const std::string& _control_unit_param,
-                                   const ControlUnitDriverList& _control_unit_drivers):
-AbstractControlUnit(_alternate_type,
-                    _control_unit_id,
-                    _control_unit_param,
-                    _control_unit_drivers),
-ControlUnitApiInterface(this) {
-    attribute_value_shared_cache = new AttributeValueSharedCache();
-}
 
 ProxyControlUnit::~ProxyControlUnit() {
     //release attribute shared cache
     if(attribute_value_shared_cache) {
         delete(attribute_value_shared_cache);
     }
+    api_interface_pointer->control_unit_pointer = NULL;
 }
+
+boost::shared_ptr<ControlUnitApiInterface> ProxyControlUnit::getProxyApiInterface() {
+    if(api_interface_pointer.get() == NULL) {
+        api_interface_pointer = boost::shared_ptr<ControlUnitApiInterface>(new ControlUnitApiInterface());
+        api_interface_pointer->control_unit_pointer = this;
+    }
+    return api_interface_pointer;
+}
+
+#define GET_OR_RETURN(x)\
+if(api_interface_pointer.get() == NULL) return x;
 
 /*
  fill the CDataWrapper with AbstractCU system configuration, this method
@@ -101,7 +85,8 @@ ProxyControlUnit::~ProxyControlUnit() {
  */
 void ProxyControlUnit::_defineActionAndDataset(CDataWrapper& setup_configuration)  throw(CException) {
     AbstractControlUnit::_defineActionAndDataset(setup_configuration);
-    //add the scekdule dalay for the sandbox
+    GET_OR_RETURN()
+    api_interface_pointer->fireEvent(ControlUnitProxyEventDefine);
 }
 
 /*!
@@ -112,6 +97,8 @@ void ProxyControlUnit::init(void *initData) throw(CException) {
     AbstractControlUnit::init(initData);
     PRXCUINFO << "Initializing shared attribute cache " << DatasetDB::getDeviceID();
     InizializableService::initImplementation((AttributeValueSharedCache*)attribute_value_shared_cache, (void*)NULL, "attribute_value_shared_cache", __PRETTY_FUNCTION__);
+    GET_OR_RETURN()
+    api_interface_pointer->fireEvent(ControlUnitProxyEventInit);
 }
 
 /*!
@@ -120,6 +107,8 @@ void ProxyControlUnit::init(void *initData) throw(CException) {
 void ProxyControlUnit::start() throw(CException) {
     //call parent impl
     AbstractControlUnit::start();
+    GET_OR_RETURN()
+    api_interface_pointer->fireEvent(ControlUnitProxyEventStart);
 }
 
 /*!
@@ -128,6 +117,8 @@ void ProxyControlUnit::start() throw(CException) {
 void ProxyControlUnit::stop() throw(CException) {
     //call parent impl
     AbstractControlUnit::stop();
+    GET_OR_RETURN()
+    api_interface_pointer->fireEvent(ControlUnitProxyEventStop);
 }
 
 /*!
@@ -139,6 +130,8 @@ void ProxyControlUnit::deinit() throw(CException) {
     
     PRXCUINFO << "Deinitializing shared attribute cache " << DatasetDB::getDeviceID();
     InizializableService::deinitImplementation((AttributeValueSharedCache*)attribute_value_shared_cache, "attribute_value_shared_cache", __PRETTY_FUNCTION__);
+    GET_OR_RETURN()
+    api_interface_pointer->fireEvent(ControlUnitProxyEventDeinit);
 }
 
 /*!
@@ -158,140 +151,26 @@ CDataWrapper* ProxyControlUnit::updateConfiguration(CDataWrapper* update_pack, b
     return result;
 }
 
-////---------------definition api-------------
-//
-//void ProxyControlUnit::addAttributeToDataSet(const std::string& attribute_name,
-//                                             const std::string& attribute_description,
-//                                             DataType::DataType attribute_type,
-//                                             DataType::DataSetAttributeIOAttribute attribute_direction,
-//                                             uint32_t maxSize) {
-//    AbstractControlUnit::addAttributeToDataSet(attribute_name,
-//                                               attribute_description,
-//                                               attribute_type,
-//                                               attribute_direction,
-//                                               maxSize);
-//}
-//
-//void ProxyControlUnit::addBinaryAttributeAsSubtypeToDataSet(const std::string& attribute_name,
-//                                                            const std::string& attribute_description,
-//                                                            DataType::BinarySubtype               subtype,
-//                                                            int32_t    cardinality,
-//                                                            DataType::DataSetAttributeIOAttribute attribute_direction) {
-//    AbstractControlUnit::addBinaryAttributeAsSubtypeToDataSet(attribute_name,
-//                                                              attribute_description,
-//                                                              subtype,
-//                                                              cardinality,
-//                                                              attribute_direction);
-//}
-//
-//void ProxyControlUnit::addBinaryAttributeAsSubtypeToDataSet(const std::string&            attribute_name,
-//                                                            const std::string&            attribute_description,
-//                                                            const std::vector<int32_t>&   subtype_list,
-//                                                            int32_t                       cardinality,
-//                                                            DataType::DataSetAttributeIOAttribute attribute_direction){
-//    AbstractControlUnit::addBinaryAttributeAsSubtypeToDataSet(attribute_name,
-//                                                              attribute_description,
-//                                                              subtype_list,
-//                                                              cardinality,
-//                                                              attribute_direction);
-//}
-//
-//void ProxyControlUnit::addBinaryAttributeAsMIMETypeToDataSet(const std::string& attribute_name,
-//                                                             const std::string& attribute_description,
-//                                                             std::string mime_type,
-//                                                             DataType::DataSetAttributeIOAttribute attribute_direction) {
-//    AbstractControlUnit::addBinaryAttributeAsMIMETypeToDataSet(attribute_name,
-//                                                               attribute_description,
-//                                                               mime_type,
-//                                                               attribute_direction);
-//}
-//
-//void ProxyControlUnit::getDatasetAttributesName(vector<string>& attributesName){
-//    AbstractControlUnit::getDatasetAttributesName(attributesName);
-//}
-//
-//void ProxyControlUnit::getDatasetAttributesName(DataType::DataSetAttributeIOAttribute directionType,
-//                                                vector<string>& attributesName){
-//    AbstractControlUnit::getDatasetAttributesName(directionType,
-//                                                  attributesName);
-//}
-//
-//void ProxyControlUnit::getAttributeDescription(const string& attributesName,
-//                                               string& attributeDescription){
-//    AbstractControlUnit::getAttributeDescription(attributesName,
-//                                                 attributeDescription);
-//}
-//
-//int ProxyControlUnit::getAttributeRangeValueInfo(const string& attributesName,
-//                                                 chaos_data::RangeValueInfo& rangeInfo){
-//    return AbstractControlUnit::getAttributeRangeValueInfo(attributesName,
-//                                                           rangeInfo);
-//}
-//
-//void ProxyControlUnit::setAttributeRangeValueInfo(const string& attributesName,
-//                                                  chaos_data::RangeValueInfo& rangeInfo){
-//    AbstractControlUnit::setAttributeRangeValueInfo(attributesName,
-//                                                    rangeInfo);
-//}
-//
-//int ProxyControlUnit::getAttributeDirection(const string& attributesName,
-//                                            DataType::DataSetAttributeIOAttribute& directionType){
-//    return AbstractControlUnit::getAttributeDirection(attributesName,
-//                                                      directionType);
-//}
-//
-//void ProxyControlUnit::addStateVariable(chaos::cu::control_manager::StateVariableType variable_type,
-//                                        const std::string& state_variable_name,
-//                                        const std::string& state_variable_description){
-//    AbstractControlUnit::addStateVariable(variable_type,
-//                                          state_variable_name,
-//                                          state_variable_description);
-//}
-//
-//void ProxyControlUnit::setStateVariableSeverity(chaos::cu::control_manager::StateVariableType variable_type,
-//                                                const common::alarm::MultiSeverityAlarmLevel state_variable_severity){
-//    AbstractControlUnit::setStateVariableSeverity(variable_type,
-//                                                  state_variable_severity);
-//}
-//
-//bool ProxyControlUnit::setStateVariableSeverity(chaos::cu::control_manager::StateVariableType variable_type,
-//                                                const std::string& state_variable_name,
-//                                                const common::alarm::MultiSeverityAlarmLevel state_variable_severity){
-//    return AbstractControlUnit::setStateVariableSeverity(variable_type,
-//                                                         state_variable_name,
-//                                                         state_variable_severity);
-//}
-//
-//bool ProxyControlUnit::setStateVariableSeverity(chaos::cu::control_manager::StateVariableType variable_type,
-//                                                const unsigned int state_variable_ordered_id,
-//                                                const common::alarm::MultiSeverityAlarmLevel state_variable_severity){
-//    return AbstractControlUnit::setStateVariableSeverity(variable_type,
-//                                                         state_variable_ordered_id,
-//                                                         state_variable_severity);
-//    
-//}
-//
-//bool ProxyControlUnit::getStateVariableSeverity(chaos::cu::control_manager::StateVariableType variable_type,
-//                                                const std::string& state_variable_name,
-//                                                common::alarm::MultiSeverityAlarmLevel& state_variable_severity){
-//    return AbstractControlUnit::getStateVariableSeverity(variable_type,
-//                                                         state_variable_name,
-//                                                         state_variable_severity);
-//    
-//}
-//
-//bool ProxyControlUnit::getStateVariableSeverity(chaos::cu::control_manager::StateVariableType variable_type,
-//                                                const unsigned int state_variable_ordered_id,
-//                                                common::alarm::MultiSeverityAlarmLevel& state_variable_severity){
-//    return AbstractControlUnit::getStateVariableSeverity(variable_type,
-//                                                         state_variable_ordered_id,
-//                                                         state_variable_severity);
-//}
-//
-//void ProxyControlUnit::setBusyFlag(bool state){
-//    AbstractControlUnit::setBusyFlag(state);
-//}
-//
-//const bool ProxyControlUnit::getBusyFlag() const {
-//    return AbstractControlUnit::getBusyFlag();
-//}
+void ProxyControlUnit::unitDefineActionAndDataset() throw(CException) {
+    
+}
+
+void ProxyControlUnit::unitDefineCustomAttribute() {
+    
+}
+
+void ProxyControlUnit::unitInit() throw(CException) {
+    
+}
+
+void ProxyControlUnit::unitStart() throw(CException) {
+    
+}
+
+void ProxyControlUnit::unitStop() throw(CException) {
+    
+}
+
+void ProxyControlUnit::unitDeinit() throw(CException) {
+    
+}
