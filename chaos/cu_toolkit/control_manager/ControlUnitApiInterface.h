@@ -46,6 +46,8 @@ namespace chaos {
             class ControlUnitApiInterface {
                 friend class ProxyControlUnit;
                 friend class ControlManager;
+                
+                std::string dummy_str;
                 AbstractControlUnit *control_unit_pointer;
                 
                 AttributeHandlerFunctor attribute_handler_functor;
@@ -60,6 +62,15 @@ namespace chaos {
             public:
                 
                 virtual ~ControlUnitApiInterface();
+                
+                //! Return the control unit instance
+                const std::string& getCUID();
+                
+                //! get control unit load parameter
+                const std::string& getCUParam();
+                
+                //! return the type of the control unit
+                const std::string& getCUType();
                 
                 void setEventHandlerFunctor(EventHandlerFunctor _functor);
                 
@@ -212,6 +223,7 @@ namespace chaos {
                 
                 //---------------------------handler function------------------------------
                 void pushOutputDataset();
+                void pushInputDataset();
             };
         }
     }

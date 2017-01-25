@@ -28,7 +28,8 @@ using namespace chaos::cu::control_manager;
 if(control_unit_pointer == NULL) return x;
 
 ControlUnitApiInterface::ControlUnitApiInterface():
-control_unit_pointer(NULL){}
+control_unit_pointer(NULL),
+dummy_str("No CU Set"){}
 
 ControlUnitApiInterface::~ControlUnitApiInterface(){}
 
@@ -57,6 +58,22 @@ void ControlUnitApiInterface::setEventHandlerFunctor(EventHandlerFunctor _functo
     event_handler = _functor;
 }
 
+
+const std::string& ControlUnitApiInterface::getCUID() {
+    GET_OR_RETURN(dummy_str);
+    return control_unit_pointer->getCUID();
+}
+
+const std::string& ControlUnitApiInterface::getCUParam() {
+    GET_OR_RETURN(dummy_str);
+    return control_unit_pointer->getCUParam();
+}
+
+const std::string& ControlUnitApiInterface::getCUType() {
+    GET_OR_RETURN(dummy_str);
+    return control_unit_pointer->getCUType();
+}
+
 AttributeSharedCacheWrapper * const ControlUnitApiInterface::getAttributeCache() {
     GET_OR_RETURN(NULL);
     return control_unit_pointer->getAttributeCache();
@@ -69,7 +86,6 @@ bool ControlUnitApiInterface::enableHandlerOnInputAttributeName(const std::strin
                                                                                                 attribute_name);
 }
 
-
 bool ControlUnitApiInterface::removeHandlerOnInputAttributeName(const std::string& attribute_name) {
     GET_OR_RETURN(false);
     return control_unit_pointer->removeHandlerOnAttributeName(attribute_name);
@@ -78,6 +94,11 @@ bool ControlUnitApiInterface::removeHandlerOnInputAttributeName(const std::strin
 void ControlUnitApiInterface::pushOutputDataset() {
     GET_OR_RETURN();
     control_unit_pointer->pushOutputDataset();
+}
+
+void ControlUnitApiInterface::pushInputDataset() {
+    GET_OR_RETURN();
+    control_unit_pointer->pushInputDataset();
 }
 
 void ControlUnitApiInterface::addAttributeToDataSet(const std::string& attribute_name,

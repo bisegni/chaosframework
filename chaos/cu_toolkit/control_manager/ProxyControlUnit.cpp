@@ -85,8 +85,6 @@ if(api_interface_pointer.get() == NULL) return x;
  */
 void ProxyControlUnit::_defineActionAndDataset(CDataWrapper& setup_configuration)  throw(CException) {
     AbstractControlUnit::_defineActionAndDataset(setup_configuration);
-    GET_OR_RETURN()
-    api_interface_pointer->fireEvent(ControlUnitProxyEventDefine);
 }
 
 /*!
@@ -97,8 +95,6 @@ void ProxyControlUnit::init(void *initData) throw(CException) {
     AbstractControlUnit::init(initData);
     PRXCUINFO << "Initializing shared attribute cache " << DatasetDB::getDeviceID();
     InizializableService::initImplementation((AttributeValueSharedCache*)attribute_value_shared_cache, (void*)NULL, "attribute_value_shared_cache", __PRETTY_FUNCTION__);
-    GET_OR_RETURN()
-    api_interface_pointer->fireEvent(ControlUnitProxyEventInit);
 }
 
 /*!
@@ -107,8 +103,6 @@ void ProxyControlUnit::init(void *initData) throw(CException) {
 void ProxyControlUnit::start() throw(CException) {
     //call parent impl
     AbstractControlUnit::start();
-    GET_OR_RETURN()
-    api_interface_pointer->fireEvent(ControlUnitProxyEventStart);
 }
 
 /*!
@@ -117,8 +111,6 @@ void ProxyControlUnit::start() throw(CException) {
 void ProxyControlUnit::stop() throw(CException) {
     //call parent impl
     AbstractControlUnit::stop();
-    GET_OR_RETURN()
-    api_interface_pointer->fireEvent(ControlUnitProxyEventStop);
 }
 
 /*!
@@ -130,8 +122,6 @@ void ProxyControlUnit::deinit() throw(CException) {
     
     PRXCUINFO << "Deinitializing shared attribute cache " << DatasetDB::getDeviceID();
     InizializableService::deinitImplementation((AttributeValueSharedCache*)attribute_value_shared_cache, "attribute_value_shared_cache", __PRETTY_FUNCTION__);
-    GET_OR_RETURN()
-    api_interface_pointer->fireEvent(ControlUnitProxyEventDeinit);
 }
 
 /*!
@@ -152,7 +142,8 @@ CDataWrapper* ProxyControlUnit::updateConfiguration(CDataWrapper* update_pack, b
 }
 
 void ProxyControlUnit::unitDefineActionAndDataset() throw(CException) {
-    
+    GET_OR_RETURN()
+    api_interface_pointer->fireEvent(ControlUnitProxyEventDefine);
 }
 
 void ProxyControlUnit::unitDefineCustomAttribute() {
@@ -160,17 +151,21 @@ void ProxyControlUnit::unitDefineCustomAttribute() {
 }
 
 void ProxyControlUnit::unitInit() throw(CException) {
-    
+    GET_OR_RETURN()
+    api_interface_pointer->fireEvent(ControlUnitProxyEventInit);
 }
 
 void ProxyControlUnit::unitStart() throw(CException) {
-    
+    GET_OR_RETURN()
+    api_interface_pointer->fireEvent(ControlUnitProxyEventStart);
 }
 
 void ProxyControlUnit::unitStop() throw(CException) {
-    
+    GET_OR_RETURN()
+    api_interface_pointer->fireEvent(ControlUnitProxyEventStop);
 }
 
 void ProxyControlUnit::unitDeinit() throw(CException) {
-    
+    GET_OR_RETURN()
+    api_interface_pointer->fireEvent(ControlUnitProxyEventDeinit);
 }
