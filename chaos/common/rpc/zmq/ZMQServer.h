@@ -45,6 +45,8 @@ namespace chaos {
         
         ZMQServer(const std::string& alias);
         virtual ~ZMQServer();
+        //worker that process request in a separate thread
+        void worker();
     public:
 
         /*

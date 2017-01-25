@@ -56,7 +56,6 @@ event_server(NULL),
 event_dispatcher(NULL),
 rpc_server(NULL),
 rpc_client(NULL),
-sync_rpc_server(NULL),
 rpc_dispatcher(NULL),
 direct_io_dispatcher(NULL),
 direct_io_server(NULL),
@@ -201,28 +200,6 @@ void NetworkBroker::init(void *initData) throw(CException) {
     } else {
         throw CException(-10, "No RPC Adapter type found in configuration", __PRETTY_FUNCTION__);
     }
-    //---------------------------- R P C ----------------------------
-    //---------------------------- R P C SYNC ----------------------------
-    if(globalConfiguration->hasKey(InitOption::OPT_RPC_SYNC_ENABLE) &&
-       globalConfiguration->getBoolValue(InitOption::OPT_RPC_SYNC_ENABLE)){
-        //get the dispatcher
-        MB_LAPP  << "Setup RPC Sync implementation";
-        
-        // get the rpc type to instantiate
-        string rpc_sync_impl = globalConfiguration->getStringValue(InitOption::OPT_RPC_SYNC_IMPLEMENTATION);
-        //construct the rpc server and client name
-        string rpc_sync_impl_name = rpc_sync_impl+"RpcSyncServer";
-        
-        MB_LAPP  << "Trying to initilize RPC Server: " << rpc_sync_impl_name;
-        sync_rpc_server = ObjectFactoryRegister<sync_rpc::RpcSyncServer>::getInstance()->getNewInstanceByName(rpc_sync_impl_name);
-        if(!sync_rpc_server) throw CException(-11, "Error allocating rpc sync server implementation", __PRETTY_FUNCTION__);
-        
-        if(StartableService::initImplementation(sync_rpc_server, static_cast<void*>(globalConfiguration), sync_rpc_server->getName(), __PRETTY_FUNCTION__)) {
-            //set the handler on the rpc server
-            sync_rpc_server->setCommandDispatcher(rpc_dispatcher);
-        }
-    }
-    //---------------------------- R P C SYNC ----------------------------
     MB_LAPP  << "Initialize performance session manager";
     StartableService::initImplementation(performance_session_managment, static_cast<void*>(globalConfiguration), "PerformanceManagment",  __PRETTY_FUNCTION__);
     
@@ -285,10 +262,6 @@ void NetworkBroker::deinit() throw(CException) {
     }
     //---------------------------- E V E N T ----------------------------
     
-    //---------------------------- R P C SYNC ----------------------------
-    if(sync_rpc_server) {CHAOS_NOT_THROW(StartableService::deinitImplementation(sync_rpc_server, sync_rpc_server->getName(), __PRETTY_FUNCTION__);)}
-    //---------------------------- R P C SYNC ----------------------------
-    
     //---------------------------- R P C ----------------------------
     MB_LAPP  << "Deallocate all rpc channel";
     for (map<string, MessageChannel*>::iterator it = active_rpc_channel.begin();
@@ -332,7 +305,6 @@ void NetworkBroker::start() throw(CException){
     StartableService::startImplementation(rpc_dispatcher, "DefaultCommandDispatcher", __PRETTY_FUNCTION__);
     StartableService::startImplementation(rpc_server, rpc_server->getName(), __PRETTY_FUNCTION__);
     StartableService::startImplementation(rpc_client, rpc_client->getName(), __PRETTY_FUNCTION__);
-    if(sync_rpc_server){StartableService::startImplementation(sync_rpc_server, sync_rpc_server->getName(), __PRETTY_FUNCTION__);}
     StartableService::startImplementation(performance_session_managment, "PerformanceManagment",  __PRETTY_FUNCTION__);
 }
 
@@ -341,7 +313,6 @@ void NetworkBroker::start() throw(CException){
  */
 void NetworkBroker::stop() throw(CException) {
     CHAOS_NOT_THROW(StartableService::stopImplementation(performance_session_managment, "PerformanceManagment",  __PRETTY_FUNCTION__);)
-    if(sync_rpc_server){CHAOS_NOT_THROW(StartableService::stopImplementation(sync_rpc_server, sync_rpc_server->getName(), __PRETTY_FUNCTION__);)}
     CHAOS_NOT_THROW(StartableService::stopImplementation(rpc_client, rpc_client->getName(), __PRETTY_FUNCTION__);)
     CHAOS_NOT_THROW(StartableService::stopImplementation(rpc_server, rpc_server->getName(), __PRETTY_FUNCTION__);)
     CHAOS_NOT_THROW(StartableService::stopImplementation(rpc_dispatcher, "DefaultCommandDispatcher", __PRETTY_FUNCTION__);)
@@ -381,15 +352,6 @@ std::string NetworkBroker::getRPCUrl() {
 std::string NetworkBroker::getDirectIOUrl() {
     CHAOS_ASSERT(rpc_server);
     return direct_io_server->getUrl();
-}
-
-//!Return the sync rpc url
-std::string NetworkBroker::getSyncRPCUrl() {
-    if(sync_rpc_server) {
-        return sync_rpc_server->getUrl();
-    } else {
-        return string("Sync rpc not started");
-    }
 }
 
 #pragma mark Event Registration and forwarding

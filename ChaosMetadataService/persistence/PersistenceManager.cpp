@@ -43,5 +43,5 @@ void PersistenceManager::init(void* init_data) throw (chaos::CException) {
 }
 
 void PersistenceManager::deinit() throw (chaos::CException) {
-    persistence_driver.deinit(NULL);
+    persistence_driver.deinit(__PRETTY_FUNCTION__);
 }

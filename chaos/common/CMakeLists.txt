@@ -199,10 +199,6 @@ SET(common_lib_src ${common_lib_src}
         rpc/zmq/ZMQServer.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        sync_rpc/RpcSyncServer.cpp
-        sync_rpc/HTTPRpcSyncServer.cpp)
-
-SET(common_lib_src ${common_lib_src}
         utility/NamedService.cpp
         utility/StartableService.cpp
         utility/InizializableService.cpp

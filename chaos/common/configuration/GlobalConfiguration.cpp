@@ -71,8 +71,6 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException){
         addOption(InitOption::OPT_DIRECT_IO_LOG_METRIC_UPDATE_INTERVAL, po::value< uint64_t >()->default_value(5), "The time intervall between metric samples");
         addOption(InitOption::OPT_DIRECT_IO_CLIENT_LOG_METRIC_MERGED_ENDPOINT, po::value< bool >()->default_value(true), "Merge the metric values(of all endpoint) together");
         addOption(InitOption::OPT_RPC_SYNC_ENABLE, po::value< bool >()->default_value(false), "Enable the sync wrapper to rpc protocol");
-        addOption(InitOption::OPT_RPC_SYNC_IMPLEMENTATION, po::value< string >()->default_value("HTTP"), "Specify the synchronous rpc implementation");
-		addOption(InitOption::OPT_RPC_SYNC_PORT, po::value< int >()->default_value(_SYNC_RPC_PORT), "Port where is published the syncrhonous rpc interface");
         addOption(InitOption::OPT_RPC_LOG_METRIC, po::value< bool >()->zero_tokens(), "Enable the logging of the mrpc metric");
         addOption(InitOption::OPT_RPC_LOG_METRIC_UPDATE_INTERVAL, po::value< uint64_t >()->default_value(5), "The time intervall between metric samples");
         addOption(InitOption::OPT_RPC_IMPLEMENTATION, po::value< string >()->default_value("ZMQ"), "Specify the rpc implementation");
@@ -264,21 +262,13 @@ void GlobalConfiguration::checkDefaultOption() throw (CException) {
     }
     configuration.addBoolValue(InitOption::OPT_RPC_SYNC_ENABLE, OPT_RPC_SYNC_ENABLE);
 	
-	CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(int, rpc_sync_port, InitOption::OPT_RPC_SYNC_PORT, 8080)
-	configuration.addInt32Value(InitOption::OPT_RPC_SYNC_PORT, InetUtility::scanForLocalFreePort(rpc_sync_port));
-	
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(bool, rpc_enable_log_metric, InitOption::OPT_RPC_LOG_METRIC, false)
     configuration.addBoolValue(InitOption::OPT_RPC_LOG_METRIC, rpc_enable_log_metric);
     
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(uint64_t, rpc_enable_log_metric_update_sec, InitOption::OPT_RPC_LOG_METRIC_UPDATE_INTERVAL, 5)
     configuration.addInt64Value(InitOption::OPT_RPC_LOG_METRIC_UPDATE_INTERVAL, rpc_enable_log_metric_update_sec);
     
-    
-    CHECK_AND_DEFINE_OPTION(string, rpc_sync_impl, InitOption::OPT_RPC_SYNC_IMPLEMENTATION)
-    configuration.addStringValue(InitOption::OPT_RPC_SYNC_IMPLEMENTATION, rpc_sync_impl);
-    
     CHECK_AND_DEFINE_OPTION(string, rpc_impl_kv_param, InitOption::OPT_RPC_IMPL_KV_PARAM)
-    configuration.addStringValue(InitOption::OPT_RPC_IMPL_KV_PARAM, rpc_sync_impl);
     
     //fill the key value list
     if(rpc_impl_kv_param.size()) {

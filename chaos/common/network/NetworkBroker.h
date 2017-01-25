@@ -25,7 +25,6 @@
 #include <boost/thread/mutex.hpp>
 
 #include <chaos/common/rpc/ChaosRpc.h>
-#include <chaos/common/sync_rpc/ChaosSyncRpc.h>
 #include <chaos/common/direct_io/DirectIO.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/action/DeclareAction.h>
@@ -116,9 +115,6 @@ namespace chaos {
 				
 				//! Rpc server for message listening
                 chaos::RpcServer *rpc_server;
-
-                //! Rpc sync interface
-                chaos::common::sync_rpc::RpcSyncServer *sync_rpc_server;
                 
 				//rpc action dispatcher
 				AbstractCommandDispatcher *rpc_dispatcher;
@@ -195,12 +191,6 @@ namespace chaos {
 				 Return the host and port where rpc server has benn published
 				 */
 				void getPublishedHostAndPort(string&);
-				
-				//!Return the sync rpc url
-				/*!
-				 return the rpc url
-				 */
-				std::string getSyncRPCUrl();
 				
 				//!Return the rpc url
 				/*!

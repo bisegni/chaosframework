@@ -183,23 +183,28 @@ namespace chaos {
             /*!
              Get description for attribute name
              */
-            void getAttributeDescription(const std::string& attributesName, std::string& attributeDescription);
+            void getAttributeDescription(const std::string& attributesName,
+                                         std::string& attributeDescription);
             /*!
              Get all attribute name
              */
-            void getDeviceDatasetAttributesName(std::vector<std::string>& attributesName, DataType::DataSetAttributeIOAttribute directionType);
+            void getDeviceDatasetAttributesName(std::vector<std::string>& attributesName,
+                                                DataType::DataSetAttributeIOAttribute directionType);
             /*!
              Get range valu einfo for attrbiute name
              */
-            void getDeviceAttributeRangeValueInfo(const std::string& attributesName, chaos::common::data::RangeValueInfo& rangeInfo);
+            void getDeviceAttributeRangeValueInfo(const std::string& attributesName,
+                                                  chaos::common::data::RangeValueInfo& rangeInfo);
             /*!
              Get the direction of the attribute
              */
-            int getDeviceAttributeDirection(const std::string& attributesName, DataType::DataSetAttributeIOAttribute& directionType);
+            int getDeviceAttributeDirection(const std::string& attributesName,
+                                            DataType::DataSetAttributeIOAttribute& directionType);
             /*!
              Get the direction of the attribute
              */
-            int getDeviceAttributeType(const std::string& attributesName, DataType::DataType& type);
+            int getDeviceAttributeType(const std::string& attributesName,
+                                       DataType::DataType& type);
             
             /**
              *
@@ -207,7 +212,8 @@ namespace chaos {
              */
             std::vector<chaos::common::data::RangeValueInfo> getDeviceValuesInfo();
             //!
-            int getAttributeStrValue(const std::string attributesName, std::string& attribute_value);
+            int getAttributeStrValue(const std::string attributesName,
+                                     std::string& attribute_value);
             
             //! Get the type of the control unit
             /*!
@@ -405,14 +411,17 @@ namespace chaos {
             chaos::common::data::CDataWrapper *getCurrentData();
             
             //! send custom request to device
-            int sendCustomRequest(const char * const action, common::data::CDataWrapper * const param, common::data::CDataWrapper**const result, bool async = false,  bool queued = true);
+            int sendCustomRequest(const std::string& action,
+                                  common::data::CDataWrapper * const param,
+                                  common::data::CDataWrapper**const result);
             
             //! send custom request to device and return a future
             std::auto_ptr<chaos::common::message::MessageRequestFuture>  sendCustomRequestWithFuture(const std::string& action_name,
                                                                                                      common::data::CDataWrapper *request_date);
             
             //! send custom message to device
-            void sendCustomMessage(const char * const action, common::data::CDataWrapper * const param, bool queued = true);
+            void sendCustomMessage(const std::string& action,
+                                   common::data::CDataWrapper * const param);
             
             //! Send a request for receive RPC information
             int checkRPCInformation(chaos::common::data::CDataWrapper **result_information,

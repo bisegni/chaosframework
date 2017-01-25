@@ -64,10 +64,6 @@ namespace chaos {
         static const char * const   OPT_RPC_IMPLEMENTATION              = "rpc-server-impl";
         //! Specify the implementation to use for rp messaging
         static const char * const   OPT_RPC_SYNC_ENABLE                 = "rpc-syncserver-enable";
-        //! Specify the implementation to use for rp messaging
-        static const char * const   OPT_RPC_SYNC_IMPLEMENTATION         = "rpc-syncserver-impl";
-        //! Specify the implementation to use for rp messaging
-        static const char * const   OPT_RPC_SYNC_PORT					= "rpc-syncserver-port";
         //! Specify the network port where rpc system will publish al the service
         static const char * const   OPT_RPC_SERVER_PORT                 = "rpc-server-port";
         //! Specify the number of the thread that the rpc ssytem must use to process the request
