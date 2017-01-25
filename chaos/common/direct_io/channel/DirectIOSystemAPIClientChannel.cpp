@@ -72,6 +72,9 @@ int64_t DirectIOSystemAPIClientChannel::getDatasetSnapshotForProducerKey(const s
 	//copy the snapshot name to the header
 	std::strncpy(get_snapshot_opcode_header->field.snap_name, snapshot_name.c_str(), 255);
 	get_snapshot_opcode_header->field.channel_type = channel_type;
+	if(api_result_handle){
+		*api_result_handle=NULL;
+	}
 	
 	//set header
 	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, get_snapshot_opcode_header, sizeof(DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader))
@@ -96,18 +99,25 @@ int64_t DirectIOSystemAPIClientChannel::getDatasetSnapshotForProducerKey(const s
             *api_result_handle = (DirectIOSystemAPIGetDatasetSnapshotResult*)calloc(sizeof(DirectIOSystemAPIGetDatasetSnapshotResult), 1);
             //get the header
             opcode_headers::DirectIOSystemAPISnapshotResultHeaderPtr result_header = static_cast<opcode_headers::DirectIOSystemAPISnapshotResultHeaderPtr>(answer->channel_header_data);
-            result_header->channel_data_len = FROM_LITTLE_ENDNS_NUM(uint32_t, result_header->channel_data_len);
-            result_header->error = FROM_LITTLE_ENDNS_NUM(int32_t, result_header->error);
+            if(result_header){
+            	result_header->channel_data_len = FROM_LITTLE_ENDNS_NUM(uint32_t, result_header->channel_data_len);
+            	result_header->error = FROM_LITTLE_ENDNS_NUM(int32_t, result_header->error);
             
-            (*api_result_handle)->api_result = *result_header;
-            (*api_result_handle)->channel_data = answer->channel_data;
+            	(*api_result_handle)->api_result = *result_header;
+            	(*api_result_handle)->channel_data = answer->channel_data;
+            } else {
+            	err=-2;
+        		DIOSCC_ERR << "## INTERNAL ERROR: NO RESULT HEADER";
+
+            }
+
         }
 	}
     if(answer) {
         if(answer->channel_header_data) free(answer->channel_header_data);
         free(answer);
     }
-	return 0;
+	return err;
 }
 
 //! default data deallocator implementation
