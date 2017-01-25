@@ -94,7 +94,10 @@ void ProxyControlUnit::init(void *initData) throw(CException) {
     //call parent impl
     AbstractControlUnit::init(initData);
     PRXCUINFO << "Initializing shared attribute cache " << DatasetDB::getDeviceID();
-    InizializableService::initImplementation((AttributeValueSharedCache*)attribute_value_shared_cache, (void*)NULL, "attribute_value_shared_cache", __PRETTY_FUNCTION__);
+    InizializableService::initImplementation((AttributeValueSharedCache*)attribute_value_shared_cache,
+                                             (void*)NULL,
+                                             "attribute_value_shared_cache",
+                                             __PRETTY_FUNCTION__);
 }
 
 /*!
@@ -121,7 +124,9 @@ void ProxyControlUnit::deinit() throw(CException) {
     AbstractControlUnit::deinit();
     
     PRXCUINFO << "Deinitializing shared attribute cache " << DatasetDB::getDeviceID();
-    InizializableService::deinitImplementation((AttributeValueSharedCache*)attribute_value_shared_cache, "attribute_value_shared_cache", __PRETTY_FUNCTION__);
+    InizializableService::deinitImplementation((AttributeValueSharedCache*)attribute_value_shared_cache,
+                                               "attribute_value_shared_cache",
+                                               __PRETTY_FUNCTION__);
 }
 
 /*!
@@ -129,15 +134,6 @@ void ProxyControlUnit::deinit() throw(CException) {
  */
 CDataWrapper* ProxyControlUnit::updateConfiguration(CDataWrapper* update_pack, bool& detach_param) throw (CException) {
     CDataWrapper *result = AbstractControlUnit::updateConfiguration(update_pack, detach_param);
-    std::auto_ptr<CDataWrapper> cu_properties;
-    CDataWrapper *cu_property_container = NULL;
-    if(update_pack->hasKey(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)){
-        cu_property_container = update_pack;
-    } else if(update_pack->hasKey("property_abstract_control_unit") &&
-              update_pack->isCDataWrapperValue("property_abstract_control_unit")){
-        cu_properties.reset(update_pack->getCSDataValue("property_abstract_control_unit"));
-        cu_property_container = cu_properties.get();
-    }
     return result;
 }
 
