@@ -576,7 +576,7 @@ void ControlUnitEditor::nodeChangedInternalState(const std::string& node_uid,
                                                  const std::string& new_state) {
     if(node_uid.compare(control_unit_unique_id.toStdString()) == 0) {
         logic_switch_aggregator.broadcastCurrentValueForKey("cu_state",  QString::fromStdString(new_state));
-        if(restarted && (new_state.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_LOAD) == 0 ||
+        if(restarted && (/*new_state.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_LOAD) == 0 ||*/
                          new_state.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_INIT) == 0 ||
                          new_state.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_START) == 0 )) {
             qDebug() << "Load dataset for Node" << QString::fromStdString(node_uid) << " that has been restarted";
@@ -618,4 +618,8 @@ void ControlUnitEditor::on_checkBoxShowAlarms_clicked() {
         splitter_size.push_back(0);
     }
     ui->splitterOutputDatasets->setSizes(splitter_size);
+}
+
+void ControlUnitEditor::on_pushButtonUpdateControlUnitInfo_clicked() {
+    updateAllControlUnitInfomration();
 }
