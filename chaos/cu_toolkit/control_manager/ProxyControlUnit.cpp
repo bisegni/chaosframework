@@ -64,13 +64,15 @@ ProxyControlUnit::~ProxyControlUnit() {
     if(attribute_value_shared_cache) {
         delete(attribute_value_shared_cache);
     }
-    api_interface_pointer->control_unit_pointer = NULL;
+    LKControlUnitInstancePtrWriteLock rl = api_interface_pointer->control_unit_pointer.getWriteLockObject();
+    api_interface_pointer->control_unit_pointer() = NULL;
 }
 
 boost::shared_ptr<ControlUnitApiInterface> ProxyControlUnit::getProxyApiInterface() {
     if(api_interface_pointer.get() == NULL) {
         api_interface_pointer = boost::shared_ptr<ControlUnitApiInterface>(new ControlUnitApiInterface());
-        api_interface_pointer->control_unit_pointer = this;
+        LKControlUnitInstancePtrWriteLock rl = api_interface_pointer->control_unit_pointer.getWriteLockObject();
+        api_interface_pointer->control_unit_pointer() = this;
     }
     return api_interface_pointer;
 }

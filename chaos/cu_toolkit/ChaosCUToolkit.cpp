@@ -271,7 +271,9 @@ void ChaosCUToolkit::signalHanlder(int signalNumber) {
 				LAPP_ << "EXITING THROUGH SIGNAL '"<<signalNumber<<"' ....";
 
 				 exit(0);
-			}
+            } else {
+                waitCloseSemaphore.unlock();
+            }
 
 	 }
 

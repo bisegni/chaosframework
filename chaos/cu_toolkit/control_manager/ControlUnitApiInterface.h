@@ -28,6 +28,8 @@
 #include <chaos/common/data/CDataVariant.h>
 #include <chaos/common/alarm/MultiSeverityAlarm.h>
 
+#include <chaos/common/utility/LockableObject.h>
+
 #include <chaos/cu_toolkit/control_manager/AttributeSharedCacheWrapper.h>
 #include <chaos/cu_toolkit/control_manager/ControlUnitTypes.h>
 
@@ -42,13 +44,15 @@ namespace chaos {
             class ProxyControlUnit;
 
             
+            CHAOS_DEFINE_LOCKABLE_OBJECT(AbstractControlUnit*, LKControlUnitInstancePtr)
+            
             //! public interface for all control unit api needed by user
             class ControlUnitApiInterface {
                 friend class ProxyControlUnit;
                 friend class ControlManager;
                 
                 std::string dummy_str;
-                AbstractControlUnit *control_unit_pointer;
+                mutable LKControlUnitInstancePtr control_unit_pointer;
                 
                 AttributeHandlerFunctor attribute_handler_functor;
                 EventHandlerFunctor event_handler;
