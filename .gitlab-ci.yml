@@ -1,7 +1,14 @@
 image: bisegni/chaos
-before_script:
+cache:
+  paths:
+  - /builds/bisegni/chaosframework
 
 build_framework:
   script:
     - echo $PWD
     - cmake .
+    - make ExperimentalStart
+    - make ExperimentalConfigure
+    - make ExperimentalBuild
+    - make ExperimentalTest
+    - make ExperimentalSubmit
