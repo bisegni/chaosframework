@@ -1,3 +1,4 @@
+image: bisegni/chaos
 before_script:
   - docker info
   - mkdir -p $CI_PROJECT_DIR/source
@@ -8,6 +9,5 @@ after_script:
   - rm -rf $CI_PROJECT_DIR/test_result
 
 build_framework:
-  image: docker:latest
   script:
     - docker run -i --rm -v $CI_PROJECT_DIR/source:/tmp/source -v $CI_PROJECT_DIR/test_result:/tmp/test_result bisegni/chaos /tmp/chaos_start.sh -b $CI_BUILD_REF_NAME -c Experimental -s
