@@ -12,3 +12,5 @@ build_framework:
     - make  -j  $(nproc) ExperimentalBuild
     - make  -j  $(nproc) ExperimentalTest
     - make  -j  $(nproc) ExperimentalSubmit
+  only:
+    - development
