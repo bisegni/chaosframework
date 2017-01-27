@@ -1,12 +1,7 @@
 image: bisegni/chaos
 before_script:
-  - mkdir -p $CI_PROJECT_DIR/source
-  - mkdir -p $CI_PROJECT_DIR/test_result
-
-after_script:
-  - rm -rf $CI_PROJECT_DIR/source
-  - rm -rf $CI_PROJECT_DIR/test_result
 
 build_framework:
   script:
     - echo $PWD
+    - cmake .
