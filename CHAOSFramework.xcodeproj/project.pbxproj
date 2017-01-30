@@ -356,6 +356,7 @@
 		32640A3D169DCC5800450962 /* IteratorReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A24169DCC5800450962 /* IteratorReader.h */; };
 		32640A3E169DCC5800450962 /* MemoryAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A25169DCC5800450962 /* MemoryAllocator.h */; };
 		32640A3F169DCC5800450962 /* SmartPointer.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A26169DCC5800450962 /* SmartPointer.h */; };
+		3264138D1E3F658D0035E175 /* ControlUnitApiInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3264138C1E3F658D0035E175 /* ControlUnitApiInterface.cpp */; };
 		3264BBD51784887900E2F5A0 /* AbstractPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3264BBD41784887900E2F5A0 /* AbstractPlugin.cpp */; };
 		3264BBD71784BFE400E2F5A0 /* PluginInspector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3264BBD61784BFE400E2F5A0 /* PluginInspector.cpp */; };
 		3265BF4615D1A9CA00C3CAC6 /* ChaosUIToolkitCWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 3265BF4515D1A9CA00C3CAC6 /* ChaosUIToolkitCWrapper.h */; };
@@ -1518,6 +1519,7 @@
 		32640A24169DCC5800450962 /* IteratorReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IteratorReader.h; sourceTree = "<group>"; };
 		32640A25169DCC5800450962 /* MemoryAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryAllocator.h; sourceTree = "<group>"; };
 		32640A26169DCC5800450962 /* SmartPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartPointer.h; sourceTree = "<group>"; };
+		3264138C1E3F658D0035E175 /* ControlUnitApiInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ControlUnitApiInterface.cpp; sourceTree = "<group>"; };
 		3264BBD41784887900E2F5A0 /* AbstractPlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractPlugin.cpp; sourceTree = "<group>"; };
 		3264BBD61784BFE400E2F5A0 /* PluginInspector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginInspector.cpp; sourceTree = "<group>"; };
 		326573F218CCD365009E9B6B /* TemplatedKeyObjectContainer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TemplatedKeyObjectContainer.h; sourceTree = "<group>"; };
@@ -3664,7 +3666,7 @@
 				32F2241A179AE3BC00853F62 /* RTAbstractControlUnit.h */,
 				326BB29B1E3753DB00BFA602 /* ProxyControlUnit.cpp */,
 				326BB29C1E3753DB00BFA602 /* ProxyControlUnit.h */,
-				3214A40C1E375CCF00184C9D /* ControlUnitApiInterface.cpp */,
+				3264138C1E3F658D0035E175 /* ControlUnitApiInterface.cpp */,
 				326BB2A11E37572B00BFA602 /* ControlUnitApiInterface.h */,
 				32D72CA8197D196D00512B89 /* WorkUnitManagement.cpp */,
 				32D72CA9197D196D00512B89 /* WorkUnitManagement.h */,
@@ -5990,7 +5992,7 @@
 				326DB4C114B3A3E50018A8D0 /* ControlManager.cpp in Sources */,
 				326DB4C814B3A3E50018A8D0 /* DataManager.cpp in Sources */,
 				325168CE1D479BAB00E877DF /* data_manager_types.cpp in Sources */,
-				3214A40D1E375CCF00184C9D /* ControlUnitApiInterface.cpp in Sources */,
+				3264138D1E3F658D0035E175 /* ControlUnitApiInterface.cpp in Sources */,
 				3215861017875FDB0090E7E6 /* DriverPluginLoader.cpp in Sources */,
 				326DB4CB14B3A3E50018A8D0 /* KeyDataStorage.cpp in Sources */,
 				32CFC5C51AF55FED00E2A0B6 /* IOCU.cpp in Sources */,
