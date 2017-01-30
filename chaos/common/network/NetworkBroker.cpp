@@ -159,10 +159,12 @@ void NetworkBroker::init(void *initData) throw(CException) {
         uint32_t dispatcher_type = globalConfiguration->getUInt32Value(InitOption::OPT_RPC_DOMAIN_SCHEDULER_TYPE);
         switch(dispatcher_type) {
             case 1:
+                MB_LAPP  << "Use SharedCommandDispatcher for RPC";
                 rpc_dispatcher = ObjectFactoryRegister<AbstractCommandDispatcher>::getInstance()->getNewInstanceByName("SharedCommandDispatcher");
                 break;
                 
             default:
+                MB_LAPP  << "Use DefaultCommandDispatcher for RPC";
                 rpc_dispatcher = ObjectFactoryRegister<AbstractCommandDispatcher>::getInstance()->getNewInstanceByName("DefaultCommandDispatcher");
                 break;
         }
