@@ -1,4 +1,5 @@
 #include "PresenterWidget.h"
+#include "../error/ErrorManager.h"
 
 #include <QMenu>
 #include <QDebug>
@@ -181,15 +182,15 @@ void PresenterWidget::onApiDone(const QString& tag,
 
 void PresenterWidget::onApiError(const QString& tag,
                                  QSharedPointer<CException> api_exception) {
-    showInformation(tr("Api Error"),
-                    tag,
-                    api_exception->what());
+//    showInformation(tr("Api Error"),
+//                    tag,
+//                    api_exception->what());
+    ErrorManager::getInstance()->submiteError(api_exception);
 }
 
 void PresenterWidget::onApiTimeout(const QString& tag) {
-    showInformation(tr("Api Error"),
-                    tag,
-                    tr("Timeout reached (Possible no server available)!"));
+    QSharedPointer<CException> api_exception(new CException(-1, "Timeout reached (Possible no server available)!", "PresenterWidget::onApiTimeout"));
+    ErrorManager::getInstance()->submiteError(api_exception);
 }
 
 

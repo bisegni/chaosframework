@@ -180,7 +180,7 @@ void KeyDataStorage::pushDataSet(KeyDataStorageDomain domain,
             //input channel need to be push ever either in live and in history
             io_data_driver->storeData(input_key,
                                       dataset,
-                                      storage_type);
+                                      DataServiceNodeDefinitionType::DSStorageTypeLiveHistory);
             break;
         case KeyDataStorageDomainSystem:
             //system channel need to be push ever either in live and in history

@@ -96,6 +96,8 @@ private slots:
 
     void on_checkBoxShowAlarms_clicked();
 
+    void on_pushButtonUpdateControlUnitInfo_clicked();
+
 private:
     QString getStatusString(int status);
 

@@ -287,9 +287,10 @@ void DirectIODeviceClientChannel::DirectIODeviceClientChannelDeallocator::freeSe
     switch(free_info_ptr->sent_part) {
         case DisposeSentMemoryInfo::SentPartHeader:{
             switch(static_cast<opcode::DeviceChannelOpcode>(free_info_ptr->sent_opcode)) {
-                case opcode::DeviceChannelOpcodeQueryDataCloud:
                 case opcode::DeviceChannelOpcodePutOutput:
+                case opcode::DeviceChannelOpcodePutHeathData:
                 case opcode::DeviceChannelOpcodeGetLastOutput:
+                case opcode::DeviceChannelOpcodeQueryDataCloud:
                     free(sent_data_ptr);
                     break;
                     //these two opcode are header allocated in the stack
@@ -303,6 +304,7 @@ void DirectIODeviceClientChannel::DirectIODeviceClientChannelDeallocator::freeSe
             switch(static_cast<opcode::DeviceChannelOpcode>(free_info_ptr->sent_opcode)) {
                     //opcode with data
                 case opcode::DeviceChannelOpcodePutOutput:
+                case opcode::DeviceChannelOpcodePutHeathData:
                 case opcode::DeviceChannelOpcodeGetLastOutput:
                 case opcode::DeviceChannelOpcodeQueryDataCloud:
                 case opcode::DeviceChannelOpcodeDeleteDataCloud:

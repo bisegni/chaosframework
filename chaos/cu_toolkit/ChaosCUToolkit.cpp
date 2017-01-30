@@ -248,11 +248,9 @@ void ChaosCUToolkit::deinit() throw(CException) {
 /*
  * Add a new Control Unit Class for execution
  */
-void ChaosCUToolkit::addControlUnit(AbstractControlUnit *newCU) {
+void ChaosCUToolkit::setProxyCreationHandler(ProxyLoadHandler load_handler) {
     //call command manager to submit Custom Control Unit
-    ControlManager::getInstance()->submitControlUnit(newCU);
-    
-    LAPP_ << "A new Control Unit " << newCU->getCUInstance() << " has been submitted";
+    return ControlManager::getInstance()->setProxyCreationHandler(load_handler);
 }
 
 /*
@@ -273,7 +271,9 @@ void ChaosCUToolkit::signalHanlder(int signalNumber) {
 				LAPP_ << "EXITING THROUGH SIGNAL '"<<signalNumber<<"' ....";
 
 				 exit(0);
-			}
+            } else {
+                waitCloseSemaphore.unlock();
+            }
 
 	 }
 

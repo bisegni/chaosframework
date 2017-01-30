@@ -1,0 +1,16 @@
+image: bisegni/chaos
+cache:
+  paths:
+  - /builds/bisegni/chaosframework
+
+build_framework:
+  script:
+    - echo $PWD
+    - cmake -j  $(nproc) .
+    - make  -j  $(nproc) ExperimentalStart
+    - make  -j  $(nproc) ExperimentalConfigure
+    - make  -j  $(nproc) ExperimentalBuild
+    - make  -j  $(nproc) ExperimentalTest
+    - make  -j  $(nproc) ExperimentalSubmit
+  only:
+    - development

@@ -488,6 +488,18 @@
           </widget>
          </item>
          <item>
+          <widget class="QPushButton" name="pushButtonUpdateControlUnitInfo">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Update Info</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <spacer name="horizontalSpacer_8">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>

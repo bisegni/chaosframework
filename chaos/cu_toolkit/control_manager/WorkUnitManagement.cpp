@@ -53,7 +53,7 @@ CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string, MessageKeyArray)
 /*---------------------------------------------------------------------------------
 
  ---------------------------------------------------------------------------------*/
-WorkUnitManagement::WorkUnitManagement(AbstractControlUnit *_work_unit_instance):
+WorkUnitManagement::WorkUnitManagement(boost::shared_ptr<AbstractControlUnit>& _work_unit_instance):
 mds_channel(NULL),
 work_unit_instance(_work_unit_instance),
 active(true),
@@ -212,7 +212,7 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
             }
 
                 //check if the control unit hase some startup command (every startup command is a boost shared point so we dont need to delete it
-            for(ACUStartupCommandListIterator it = work_unit_instance->list_startup_command.begin();
+            for(chaos::cu::control_manager::ACUStartupCommandListIterator it = work_unit_instance->list_startup_command.begin();
                 it != work_unit_instance->list_startup_command.end();
                 it++) {
                 std::auto_ptr<CDataWrapper> rpc_message(new CDataWrapper);

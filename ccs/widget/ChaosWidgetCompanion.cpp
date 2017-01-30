@@ -1,4 +1,5 @@
 #include "ChaosWidgetCompanion.h"
+#include "../error/ErrorManager.h"
 
 #include <QDebug>
 
@@ -38,7 +39,7 @@ void ChaosWidgetCompanion::onApiDone(const QString& tag,
 //!Api has been give an error
 void ChaosWidgetCompanion::onApiError(const QString& tag,
                                       QSharedPointer<chaos::CException> api_exception) {
-
+    ErrorManager::getInstance()->submiteError(api_exception);
 }
 
 //! api has gone in timeout

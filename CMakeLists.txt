@@ -165,9 +165,9 @@ ENDIF()
     ELSE()
       ERROR("missing ${QMAKE_PATH}/qmake")
     ENDIF()
-    
+
   ENDIF()
-  
+
   IF (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/ccs/ccs)
     MESG("copying ccs to ${CMAKE_INSTALL_PREFIX}/bin")
     FILE(GLOB exe ${CMAKE_CURRENT_SOURCE_DIR}/ccs/ccs.sh ${CMAKE_CURRENT_SOURCE_DIR}/ccs/ccs)

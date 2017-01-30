@@ -36,6 +36,7 @@
 #include <chaos/common/thread/WaitSemaphore.h>
 #include <chaos/common/async_central/async_central.h>
 
+#include <chaos/cu_toolkit/control_manager/ControlUnitApiInterface.h>
 #include <chaos/cu_toolkit/control_manager/WorkUnitManagement.h>
 #include <chaos/cu_toolkit/control_manager/AbstractControlUnit.h>
 #include <chaos/cu_toolkit/control_manager/control_manager_constants.h>
@@ -153,7 +154,7 @@ namespace chaos {
 				
 				//!queue for control unit waiting to be published
 				mutable boost::shared_mutex		mutex_queue_submitted_cu;
-				queue< AbstractControlUnit* >	queue_submitted_cu;
+				queue< boost::shared_ptr<AbstractControlUnit> >	queue_submitted_cu;
 				
 				//! control unit instance mapped with their unique identifier
 				mutable boost::shared_mutex mutex_map_cuid_reg_unreg_instance;
@@ -168,6 +169,9 @@ namespace chaos {
 				mutable boost::shared_mutex mutex_map_cu_instancer;
 				std::map<string, boost::shared_ptr<CUObjectInstancer> > map_cu_alias_instancer;
 				
+                //!hnalder thre proxy creation
+                ProxyLoadHandler load_handler;
+                
 				/*
 				 Constructor
 				 */
@@ -236,6 +240,10 @@ namespace chaos {
 				 */
 				CDataWrapper* updateConfiguration(CDataWrapper  *message_data, bool& detach);
 				
+                /*
+                 Submit a new Control unit instance
+                 */
+                void submitControlUnit(boost::shared_ptr<AbstractControlUnit> control_unit_instance) throw(CException);
 			public:
 				
 				/*
@@ -259,11 +267,9 @@ namespace chaos {
 				 */
 				void deinit() throw(CException);
 				
-				/*
-				 Submit a new Control unit instance
-				 */
-				void submitControlUnit(AbstractControlUnit *control_unit_instance) throw(CException);
-				
+                //! allota a new control unit proxy
+                void setProxyCreationHandler(ProxyLoadHandler load_handler);
+                
 				//! control unit registration
 				/*!
 				 Register a control unit instancer associating it to an alias

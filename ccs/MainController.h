@@ -7,6 +7,7 @@
 #include <QSharedPointer>
 #include <QMenuBar>
 #include "api_async_processor/ApiSubmitter.h"
+#include "log_browser/ApplicationErrorLogging.h"
 
 class MainController:
 public QObject,
@@ -28,8 +29,11 @@ private slots:
     void actionNewUnitServer();
     void actionNewNodeMonitor();
     void actionSwitchNetworkConfiguration();
+    void actionApplicationLogBrowser();
     void lastWindowClosed();
+    void actionCloseWidget(QObject *widget);
 private:
+    ApplicationErrorLogging *application_error_widget;
     QMenuBar main_menu_bar;
     ApiSubmitter api_submitter;
     QSharedPointer<QSplashScreen> splash;

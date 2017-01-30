@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
@@ -146,7 +146,10 @@ SOURCES += main.cpp\
     data/SnapshotDatasetNodeListModel.cpp \
     preference/PreferenceManager.cpp \
     data/ControlUnitStateVaribleListModel.cpp \
-    utility/MessageUtility.cpp
+    utility/MessageUtility.cpp \
+    error/ErrorManager.cpp \
+    log_browser/ApplicationErrorLogging.cpp \
+    data/ApplicationErrorLoggingTableModel.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -276,7 +279,10 @@ HEADERS  += \
     preference/PreferenceManager.h \
     preference/preference_types.h \
     data/ControlUnitStateVaribleListModel.h \
-    utility/MessageUtility.h
+    utility/MessageUtility.h \
+    error/ErrorManager.h \
+    log_browser/ApplicationErrorLogging.h \
+    data/ApplicationErrorLoggingTableModel.h
 
 FORMS    += \
     search/searchnoderesult.ui \
@@ -310,7 +316,8 @@ FORMS    += \
     script/ScriptInstanceManagerWidget.ui \
     widget/ChaosStorageTypeWidget.ui \
     widget/CCommandStatisticWidget.ui \
-    plot/BufferPlot.ui
+    plot/BufferPlot.ui \
+    log_browser/ApplicationErrorLogging.ui
 
 DISTFILES += \
     dark_orange.stylesheet \

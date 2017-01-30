@@ -16,7 +16,7 @@
 #include <QMenu>
 
 #include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
-
+#include "error/ErrorManager.h"
 #include "node/unit_server/UnitServerEditor.h"
 #include "node/data_service/DataServiceEditor.h"
 #include "search/SearchNodeResult.h"
@@ -35,7 +35,12 @@ using namespace chaos::metadata_service_client;
 
 //declare metatype used in chaos
 MainController::MainController():
-    api_submitter(this){}
+    api_submitter(this),
+    application_error_widget(NULL){
+    connect(&ErrorManager::getInstance()->signal_proxy,
+            SIGNAL(errorEntryUpdated()),
+            SLOT(actionApplicationLogBrowser()));
+}
 
 MainController::~MainController() {}
 
@@ -188,6 +193,7 @@ void MainController::initApplicationMenuBar() {
     menu->addAction("Snapshot manager", this, SLOT(actionSnaptshotManager()),QKeySequence(Qt::CTRL + Qt::Key_S));
     menu->addAction("Group manager", this, SLOT(actionTreeGroupManager()),QKeySequence(Qt::CTRL + Qt::Key_G));
     menu->addAction("Log Browser", this, SLOT(actionLogBrowser()),QKeySequence(Qt::CTRL + Qt::Key_L));
+    menu->addAction("Application Error Browser", this, SLOT(actionApplicationLogBrowser()),QKeySequence(Qt::CTRL + Qt::Key_A));
 
     //Data
     menu = main_menu_bar.addMenu("&Algorithm");
@@ -250,6 +256,23 @@ void MainController::actionDataService() {
 
 void MainController::actionNewNodeMonitor() {
     openInWindow(new HealtMonitorWidget());
+}
+
+void MainController::actionApplicationLogBrowser() {
+    if(application_error_widget == NULL) {
+        openInWindow(application_error_widget = new ApplicationErrorLogging());
+        connect(application_error_widget,
+                SIGNAL(destroyed(QObject*)),
+                SLOT(actionCloseWidget(QObject*)));
+    } else {
+        application_error_widget->show();
+        application_error_widget->activateWindow();
+        application_error_widget->raise();
+    }
+}
+
+void MainController::actionCloseWidget(QObject *widget) {
+    application_error_widget = NULL;
 }
 
 void MainController::actionSwitchNetworkConfiguration() {

@@ -140,7 +140,7 @@ namespace chaos {
                 boost::shared_ptr<AbstractControlUnit>	work_unit_instance;
                 
                     //! default constructor adn destructor
-                WorkUnitManagement(AbstractControlUnit *_work_unit_instance);
+                WorkUnitManagement(boost::shared_ptr<AbstractControlUnit>& _work_unit_instance);
                 ~WorkUnitManagement();
                 
                     //! return the state of the unit state machine

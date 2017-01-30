@@ -47,6 +47,7 @@
 #include <chaos/common/metadata_logging/metadata_logging.h>
 #include <chaos/common/data/cache/AttributeValueSharedCache.h>
 
+#include <chaos/cu_toolkit/control_manager/ControlUnitTypes.h>
 #include <chaos/cu_toolkit/data_manager/KeyDataStorage.h>
 #include <chaos/cu_toolkit/control_manager/handler/handler.h>
 #include <chaos/cu_toolkit/driver_manager/DriverErogatorInterface.h>
@@ -81,6 +82,8 @@ namespace chaos{
             
             //forward declaration
             class ControlManager;
+            class ProxyControlUnit;
+            class ControlUnitApiInterface;
             class WorkUnitManagement;
             class AbstractExecutionUnit;
             
@@ -88,46 +91,6 @@ namespace chaos{
                 class SlowCommand;
                 class SlowCommandExecutor;
             }
-            
-            typedef enum {
-                INIT_RPC_PHASE_CALL_INIT_STATE = 0,
-                INIT_RPC_PHASE_INIT_SHARED_CACHE,
-                INIT_RPC_PHASE_COMPLETE_OUTPUT_ATTRIBUTE,
-                INIT_RPC_PHASE_COMPLETE_INPUT_ATTRIBUTE,
-                INIT_RPC_PHASE_INIT_SYSTEM_CACHE,
-                INIT_RPC_PHASE_CALL_UNIT_DEFINE_ATTRIBUTE,
-                INIT_RPC_PHASE_CREATE_FAST_ACCESS_CASCHE_VECTOR,
-                INIT_RPC_PHASE_CALL_UNIT_INIT,
-                INIT_RPC_PHASE_UPDATE_CONFIGURATION,
-                INIT_RPC_PHASE_PUSH_DATASET
-            } InitRPCPhase;
-            
-            typedef enum {
-                INIT_SM_PHASE_INIT_DB = 0,
-                INIT_SM_PHASE_CREATE_DATA_STORAGE,
-            } InitSMPhase;
-            
-            
-            typedef enum {
-                START_RPC_PHASE_UNIT = 0,
-                START_RPC_PHASE_IMPLEMENTATION
-            } StartRPCPhase;
-            
-            typedef enum {
-                START_SM_PHASE_STAT_TIMER = 0
-            } StartSMPhase;
-            
-            typedef enum {
-                StateVariableTypeAlarmCU,
-                StateVariableTypeAlarmDEV
-            } StateVariableType;
-            
-            static const char * const StateVariableTypeAlarmCULabel = "cu_alarm";
-            static const char * const StateVariableTypeAlarmDEVLabel   = "device_alarm";
-            
-            CHAOS_DEFINE_VECTOR_FOR_TYPE(boost::shared_ptr<chaos::common::data::CDataWrapper>, ACUStartupCommandList);
-            
-            CHAOS_DEFINE_MAP_FOR_TYPE(StateVariableType, chaos::common::alarm::AlarmCatalog, MapStateVariable);
             
             //!  Base class for control unit !CHAOS node
             /*!
@@ -144,6 +107,8 @@ namespace chaos{
             public common::utility::SWEService {
                 //friendly class declaration
                 friend class ControlManager;
+                friend class ProxyControlUnit;
+                friend class ControlUnitApiInterface;
                 friend class WorkUnitManagement;
                 friend class DomainActionsScheduler;
                 friend class AbstractExecutionUnit;
@@ -160,18 +125,18 @@ namespace chaos{
                 typedef std::vector<DrvRequestInfo>				ControlUnitDriverList;
                 typedef std::vector<DrvRequestInfo>::iterator	ControlUnitDriverListIterator;
                 
-                inline const char * const stateVariableEnumToName(StateVariableType type) {
+                inline const char * const stateVariableEnumToName(chaos::cu::control_manager::StateVariableType type) {
                     switch(type) {
-                        case  StateVariableTypeAlarmCU:
-                            return StateVariableTypeAlarmCULabel;
-                        case   StateVariableTypeAlarmDEV:
-                            return StateVariableTypeAlarmDEVLabel;
+                        case  chaos::cu::control_manager::StateVariableTypeAlarmCU:
+                            return chaos::cu::control_manager::StateVariableTypeAlarmCULabel;
+                        case   chaos::cu::control_manager::StateVariableTypeAlarmDEV:
+                            return chaos::cu::control_manager::StateVariableTypeAlarmDEVLabel;
                     }
                 }
                 
                 inline int stateVariableNameToEnum(const std::string& name) {
-                    if(name.compare(StateVariableTypeAlarmCULabel) == 0) {return StateVariableTypeAlarmCU;}
-                    if(name.compare(StateVariableTypeAlarmDEVLabel) == 0) {return StateVariableTypeAlarmDEV;}
+                    if(name.compare(chaos::cu::control_manager::StateVariableTypeAlarmCULabel) == 0) {return chaos::cu::control_manager::StateVariableTypeAlarmCU;}
+                    if(name.compare(chaos::cu::control_manager::StateVariableTypeAlarmDEVLabel) == 0) {return chaos::cu::control_manager::StateVariableTypeAlarmDEV;}
                     return -1;
                 }
                 
@@ -193,14 +158,14 @@ namespace chaos{
                 
                 //!control unit alarm group
                 chaos::common::metadata_logging::AlarmLoggingChannel    *alarm_logging_channel;
-                MapStateVariable                                        map_variable_catalog;
+                chaos::cu::control_manager::MapStateVariable           map_variable_catalog;
                 
                 //!these are the startup command list
                 /*!
                  The startup command are a set of command that are sent within the load command and
                  are executed after the control unit is completely load. This are enterely managed by ControlManager.
                  */
-                ACUStartupCommandList list_startup_command;
+                chaos::cu::control_manager::ACUStartupCommandList list_startup_command;
                 
                 //! keep track of how many push has been done for every dataset
                 //! 0 - output, 1-input, 2-custom
@@ -536,28 +501,28 @@ namespace chaos{
                 
                 //---------------alarm api-------------
                 //!create a new alarm into the catalog
-                void addStateVariable(StateVariableType variable_type,
+                void addStateVariable(chaos::cu::control_manager::StateVariableType variable_type,
                                       const std::string& state_variable_name,
                                       const std::string& state_variable_description);
                 
                 //!set the severity on all state_variable
-                void setStateVariableSeverity(StateVariableType variable_type,
+                void setStateVariableSeverity(chaos::cu::control_manager::StateVariableType variable_type,
                                               const common::alarm::MultiSeverityAlarmLevel state_variable_severity);
                 
                 //!set the state_variable state
-                bool setStateVariableSeverity(StateVariableType variable_type,
+                bool setStateVariableSeverity(chaos::cu::control_manager::StateVariableType variable_type,
                                               const std::string& state_variable_name,
                                               const common::alarm::MultiSeverityAlarmLevel state_variable_severity);
                 //!set the StateVariable state
-                bool setStateVariableSeverity(StateVariableType variable_type,
+                bool setStateVariableSeverity(chaos::cu::control_manager::StateVariableType variable_type,
                                               const unsigned int state_variable_ordered_id,
                                               const common::alarm::MultiSeverityAlarmLevel state_variable_severity);
                 //!get the current StateVariable state
-                bool getStateVariableSeverity(StateVariableType variable_type,
+                bool getStateVariableSeverity(chaos::cu::control_manager::StateVariableType variable_type,
                                               const std::string& state_variable_name,
                                               common::alarm::MultiSeverityAlarmLevel& state_variable_severity);
                 //!get the current StateVariable state
-                bool getStateVariableSeverity(StateVariableType variable_type,
+                bool getStateVariableSeverity(chaos::cu::control_manager::StateVariableType variable_type,
                                               const unsigned int state_variable_ordered_id,
                                               common::alarm::MultiSeverityAlarmLevel& state_variable_severity);
                 
@@ -640,10 +605,10 @@ namespace chaos{
                 virtual ~AbstractControlUnit();
                 
                 //! Return the control unit instance
-                const char * getCUInstance();
+                const string& getCUInstance();
                 
                 //! Return the control unit instance
-                const char * getCUID();
+                const string& getCUID();
                 
                 //! get control unit load parameter
                 const string& getCUParam();

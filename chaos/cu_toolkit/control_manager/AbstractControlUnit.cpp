@@ -190,12 +190,12 @@ AbstractControlUnit::~AbstractControlUnit() {
 /*
  return the CU name
  */
-const char * AbstractControlUnit::getCUInstance(){
-    return control_unit_instance.c_str();
+const std::string& AbstractControlUnit::getCUInstance(){
+    return control_unit_instance;
 };
 
-const char * AbstractControlUnit::getCUID() {
-    return control_unit_id.c_str();
+const std::string& AbstractControlUnit::getCUID() {
+    return control_unit_id;
 }
 
 const string& AbstractControlUnit::getCUParam() {
