@@ -21,12 +21,12 @@
 #include <chaos/common/chaos_constants.h>
 
 using namespace chaos::common::message;
+using namespace chaos::common::utility;
 using namespace chaos::common::data;
 
 #define DMCINFO INFO_LOG(DeviceMessageChannel)
 #define DMCDBG DBG_LOG(DeviceMessageChannel)
 #define DMCERR ERR_LOG(DeviceMessageChannel)
-
 
 //------------------------------------
 DeviceMessageChannel::DeviceMessageChannel(NetworkBroker *msg_broker,
@@ -40,7 +40,7 @@ device_network_address(_device_network_address),
 local_mds_channel(NULL),
 online(false),
 self_managed(_self_managed),
-auto_reconnection(false){}
+auto_reconnection(_self_managed){}
 
 /*!
  Initialization phase of the channel
@@ -117,21 +117,33 @@ bool DeviceMessageChannel::udpateNetworkAddress(int32_t millisec_to_wait) {
     return is_changed;
 }
 
+void DeviceMessageChannel::addListener(DeviceMessageChannelListener *new_listener) {
+    AbstractListenerContainer::addListener(new_listener);
+}
+
+void DeviceMessageChannel::removeListener(DeviceMessageChannelListener *listener) {
+    AbstractListenerContainer::removeListener(listener);
+}
+
+const std::string& DeviceMessageChannel::getDeviceID() const {
+    return device_network_address->device_id;
+}
+
 void DeviceMessageChannel::setOnline(bool new_online_state) {
-    if(online == new_online_state) return;
-    
     if(new_online_state == false) {
         online = new_online_state;
-        DMCINFO << "Device " <<device_network_address->device_id<< " is gone offline";
+        DMCINFO << CHAOS_FORMAT("Device %1% is offline",%device_network_address->device_id);
         //enable auto reconnection if we need
         if(auto_reconnection) {async_central::AsyncCentralManager::getInstance()->addTimer(this, 1000, 1000);}
     } else {
-        DMCINFO << "Device " <<device_network_address->device_id<< " is respawned";
+        if(online == new_online_state) return;
+        DMCINFO << CHAOS_FORMAT("Device %1% is respawned",%device_network_address->device_id);
         //disable auto reconnection
         async_central::AsyncCentralManager::getInstance()->removeTimer(this);
-        
         online = new_online_state;
     }
+    //fire listener
+    AbstractListenerContainer::fire(0);
 }
 
 void DeviceMessageChannel::tryToReconnect() {
@@ -190,7 +202,7 @@ int DeviceMessageChannel::initDevice(CDataWrapper *initData, int32_t millisec_to
                                                   NodeDomainAndActionRPC::ACTION_NODE_INIT,
                                                   initData,
                                                   millisec_to_wait));
-    setOnline(!CHAOS_IS_RPC_SERVER_OFFLINE(getLastErrorCode()));
+    //setOnline(!CHAOS_IS_RPC_SERVER_OFFLINE(getLastErrorCode()));
     return getLastErrorCode();
 }
 
@@ -210,7 +222,7 @@ int DeviceMessageChannel::initDeviceToDefaultSetting(int32_t millisec_to_wait) {
                                                   NodeDomainAndActionRPC::ACTION_NODE_INIT,
                                                   device_init_setting.get(),
                                                   millisec_to_wait));
-    setOnline(!CHAOS_IS_RPC_SERVER_OFFLINE(getLastErrorCode()));
+    //setOnline(!CHAOS_IS_RPC_SERVER_OFFLINE(getLastErrorCode()));
     return getLastErrorCode();
 }
 
@@ -223,7 +235,7 @@ int DeviceMessageChannel::deinitDevice(int32_t millisec_to_wait) {
                                               NodeDomainAndActionRPC::ACTION_NODE_DEINIT,
                                               &message_data,
                                               millisec_to_wait));
-    setOnline(!CHAOS_IS_RPC_SERVER_OFFLINE(getLastErrorCode()));
+    //setOnline(!CHAOS_IS_RPC_SERVER_OFFLINE(getLastErrorCode()));
     return getLastErrorCode();
 }
 
@@ -236,7 +248,7 @@ int DeviceMessageChannel::startDevice(int32_t millisec_to_wait) {
                                               NodeDomainAndActionRPC::ACTION_NODE_START,
                                               &message_data,
                                               millisec_to_wait));
-    setOnline(!CHAOS_IS_RPC_SERVER_OFFLINE(getLastErrorCode()));
+    //setOnline(!CHAOS_IS_RPC_SERVER_OFFLINE(getLastErrorCode()));
     return getLastErrorCode();
 }
 
@@ -249,7 +261,7 @@ int DeviceMessageChannel::stopDevice(int32_t millisec_to_wait) {
                                               NodeDomainAndActionRPC::ACTION_NODE_STOP,
                                               &message_data,
                                               millisec_to_wait));
-    setOnline(!CHAOS_IS_RPC_SERVER_OFFLINE(getLastErrorCode()));
+    //setOnline(!CHAOS_IS_RPC_SERVER_OFFLINE(getLastErrorCode()));
     return getLastErrorCode();
 }
 
@@ -263,7 +275,7 @@ int DeviceMessageChannel::restoreDeviceToTag(const std::string& restore_tag, int
                                               NodeDomainAndActionRPC::ACTION_NODE_RESTORE,
                                               &message_data,
                                               millisec_to_wait));
-    setOnline(!CHAOS_IS_RPC_SERVER_OFFLINE(getLastErrorCode()));
+    //setOnline(!CHAOS_IS_RPC_SERVER_OFFLINE(getLastErrorCode()));
     return getLastErrorCode();
 }
 
@@ -279,7 +291,7 @@ int DeviceMessageChannel::getType(std::string& control_unit_type, int32_t millis
             control_unit_type = result->getStringValue(NodeDefinitionKey::NODE_TYPE);
         }
     }
-    setOnline(!CHAOS_IS_RPC_SERVER_OFFLINE(getLastErrorCode()));
+    //setOnline(!CHAOS_IS_RPC_SERVER_OFFLINE(getLastErrorCode()));
     return getLastErrorCode();
 }
 
@@ -297,7 +309,7 @@ int DeviceMessageChannel::getState(CUStateKey::ControlUnitState& deviceState, in
             deviceState = (CUStateKey::ControlUnitState)result->getInt32Value(CUStateKey::CONTROL_UNIT_STATE);
         }
     }
-    setOnline(!CHAOS_IS_RPC_SERVER_OFFLINE(getLastErrorCode()));
+    //setOnline(!CHAOS_IS_RPC_SERVER_OFFLINE(getLastErrorCode()));
     return getLastErrorCode();
 }
 
@@ -315,7 +327,7 @@ int DeviceMessageChannel::setAttributeValue(CDataWrapper& attributesValues,
                                                       &attributesValues,
                                                       millisec_to_wait));
     }
-    setOnline(!CHAOS_IS_RPC_SERVER_OFFLINE(getLastErrorCode()));
+    //setOnline(!CHAOS_IS_RPC_SERVER_OFFLINE(getLastErrorCode()));
     return getLastErrorCode();
 }
 
@@ -329,7 +341,7 @@ int DeviceMessageChannel::setScheduleDelay(uint64_t scheduledDealy,
                                               NodeDomainAndActionRPC::ACTION_UPDATE_PROPERTY,
                                               &message_data,
                                               millisec_to_wait));
-    setOnline(!CHAOS_IS_RPC_SERVER_OFFLINE(getLastErrorCode()));
+    //setOnline(!CHAOS_IS_RPC_SERVER_OFFLINE(getLastErrorCode()));
     return getLastErrorCode();
     
 }
@@ -354,7 +366,7 @@ int DeviceMessageChannel::sendCustomRequest(const std::string& action_name,
     if(getLastErrorCode() == ErrorCode::EC_NO_ERROR) {
         *result_data = result.release();
     }
-    setOnline(!CHAOS_IS_RPC_SERVER_OFFLINE(getLastErrorCode()));
+    //setOnline(!CHAOS_IS_RPC_SERVER_OFFLINE(getLastErrorCode()));
     return getLastErrorCode();
 }
 
@@ -378,7 +390,17 @@ std::auto_ptr<MessageRequestFuture> DeviceMessageChannel::echoTest(chaos::common
 
 void DeviceMessageChannel::requestPromisesHandler(const FuturePromiseData& response_data) {
     if(!response_data.get()) return;
-    if(response_data->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE)) {
+    if(response_data->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE) &&
+       isOnline()) {
         setOnline(!CHAOS_IS_RPC_SERVER_OFFLINE(response_data->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE)));
+    }
+}
+
+void DeviceMessageChannel::fireToListener(unsigned int fire_code,
+                                          AbstractListener *listener_to_fire) {
+    DeviceMessageChannelListener *channel_listener = dynamic_cast<DeviceMessageChannelListener*>(listener_to_fire);
+    if(channel_listener){
+        channel_listener->deviceAvailabilityChanged(device_network_address->node_id,
+                                                    isOnline());
     }
 }

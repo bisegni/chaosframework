@@ -25,19 +25,34 @@
 #include <chaos/common/message/NodeMessageChannel.h>
 #include <chaos/common/network/CNodeNetworkAddress.h>
 #include <chaos/common/async_central/async_central.h>
+#include <chaos/common/utility/AbstractListenerContainer.h>
 
 namespace chaos {
     namespace common {
         namespace message {
             using namespace std;
+            //forward declaration
+            class DeviceMessageChannel;
+            
+            //! status flag listener
+            class DeviceMessageChannelListener:
+            public chaos::common::utility::AbstractListener {
+                friend class DeviceMessageChannel;
+            public:
+                //!signal the change of the current selected level severity
+                virtual void deviceAvailabilityChanged(const std::string& device_id,
+                                                       const bool availability) = 0;
+            };
+            
             
             //! Message Channel specialize for metadataserver comunication
             /*!
              This class represent a message chanel for comunication with a device
              */
-            class DeviceMessageChannel :
+            class DeviceMessageChannel:
             public NodeMessageChannel,
-            public chaos::common::async_central::TimerHandler {
+            public chaos::common::async_central::TimerHandler,
+            protected chaos::common::utility::AbstractListenerContainer {
                 friend class chaos::common::network::NetworkBroker;
                 
                 //!managment variable
@@ -79,7 +94,12 @@ namespace chaos {
                  to determinate if the channel still is online
                  */
                 void requestPromisesHandler(const FuturePromiseData& response_data);
+                
+                //customize abstract handler implementation for fire devi ce channel listener event
+                void fireToListener(unsigned int fire_code,
+                                    chaos::common::utility::AbstractListener *listener_to_fire);
             public:
+                const std::string& getDeviceID() const;
                 //!Update the network address of the node
                 /*!
                  fetch from mds the network address and domain of this device, in case
@@ -88,6 +108,12 @@ namespace chaos {
                  \return true if something on address is changed
                  */
                 bool udpateNetworkAddress(int32_t millisec_to_wait = 1000);
+                
+                //!Add new listener
+                void addListener(DeviceMessageChannelListener *new_listener);
+                
+                //!Remove new listener
+                void removeListener(DeviceMessageChannelListener *listener);
                 
                 //!return true if devce is online
                 bool isOnline();

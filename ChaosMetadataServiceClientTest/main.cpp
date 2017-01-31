@@ -19,6 +19,7 @@
  */
 
 #include <chaos/common/data/CDataWrapper.h>
+#include <chaos/common/utility/TimingUtil.h>
 #include <chaos/common/message/MultiAddressMessageChannel.h>
 #include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
 
@@ -114,7 +115,7 @@ int main(int argc, char *argv[]){
                 std::cout << "Start node monitor library test" << std::endl;
                 {
                     std::auto_ptr<NodeMonitorHandlerTest> nmt;
-
+                    
                     //nmt[0].reset(new NodeMonitorHandlerTest(device_id, chaos::metadata_service_client::node_monitor::ControllerTypeNode));
                     nmt.reset(new NodeMonitorHandlerTest(device_id, chaos::metadata_service_client::node_monitor::ControllerTypeNodeControlUnit));
                     sleep(wait_seconds);
@@ -123,6 +124,29 @@ int main(int argc, char *argv[]){
                     
                 }
                 std::cout << "End node monitor library test" << std::endl;
+            }
+                
+            case 3: {
+                bool work = true;
+                uint64_t start_ts = chaos::common::utility::TimingUtil::getTimeStamp();
+                chaos::metadata_service_client::node_controller::CUController *cu_ctrl = NULL;
+                ChaosMetadataServiceClient::getInstance()->getNewCUController(device_id,
+                                                                              &cu_ctrl);
+                if(cu_ctrl == NULL) throw chaos::CException(-1, CHAOS_FORMAT("No cu controller found for %1%", %device_id), __PRETTY_FUNCTION__);
+                
+                while(work) {
+                    cu_ctrl->initDevice();
+                    sleep(1);
+                    cu_ctrl->startDevice();
+                    sleep(1);
+                    cu_ctrl->stopDevice();
+                    sleep(1);
+                    cu_ctrl->deinitDevice();
+                    sleep(1);
+                    work = ((chaos::common::utility::TimingUtil::getTimeStamp()-start_ts) < (wait_seconds*1000));
+                }
+                
+                ChaosMetadataServiceClient::getInstance()->deleteCUController(cu_ctrl);
             }
         }
         

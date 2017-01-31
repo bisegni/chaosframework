@@ -357,6 +357,8 @@
 		32640A3E169DCC5800450962 /* MemoryAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A25169DCC5800450962 /* MemoryAllocator.h */; };
 		32640A3F169DCC5800450962 /* SmartPointer.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A26169DCC5800450962 /* SmartPointer.h */; };
 		3264138D1E3F658D0035E175 /* ControlUnitApiInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3264138C1E3F658D0035E175 /* ControlUnitApiInterface.cpp */; };
+		326413931E40C7280035E175 /* CUController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3264138F1E40C7230035E175 /* CUController.cpp */; };
+		326413941E40C72C0035E175 /* CUController.h in Headers */ = {isa = PBXBuildFile; fileRef = 326413901E40C7230035E175 /* CUController.h */; };
 		3264BBD51784887900E2F5A0 /* AbstractPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3264BBD41784887900E2F5A0 /* AbstractPlugin.cpp */; };
 		3264BBD71784BFE400E2F5A0 /* PluginInspector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3264BBD61784BFE400E2F5A0 /* PluginInspector.cpp */; };
 		3265BF4615D1A9CA00C3CAC6 /* ChaosUIToolkitCWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 3265BF4515D1A9CA00C3CAC6 /* ChaosUIToolkitCWrapper.h */; };
@@ -1520,6 +1522,8 @@
 		32640A25169DCC5800450962 /* MemoryAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryAllocator.h; sourceTree = "<group>"; };
 		32640A26169DCC5800450962 /* SmartPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartPointer.h; sourceTree = "<group>"; };
 		3264138C1E3F658D0035E175 /* ControlUnitApiInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ControlUnitApiInterface.cpp; sourceTree = "<group>"; };
+		3264138F1E40C7230035E175 /* CUController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CUController.cpp; sourceTree = "<group>"; };
+		326413901E40C7230035E175 /* CUController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CUController.h; sourceTree = "<group>"; };
 		3264BBD41784887900E2F5A0 /* AbstractPlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractPlugin.cpp; sourceTree = "<group>"; };
 		3264BBD61784BFE400E2F5A0 /* PluginInspector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginInspector.cpp; sourceTree = "<group>"; };
 		326573F218CCD365009E9B6B /* TemplatedKeyObjectContainer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TemplatedKeyObjectContainer.h; sourceTree = "<group>"; };
@@ -3202,6 +3206,15 @@
 			path = helper;
 			sourceTree = "<group>";
 		};
+		3264138E1E40C6E80035E175 /* node_controller */ = {
+			isa = PBXGroup;
+			children = (
+				3264138F1E40C7230035E175 /* CUController.cpp */,
+				326413901E40C7230035E175 /* CUController.h */,
+			);
+			path = node_controller;
+			sourceTree = "<group>";
+		};
 		32661C6A1AA73DA200F1A721 /* ChaosMetadataServiceClient */ = {
 			isa = PBXGroup;
 			children = (
@@ -3210,6 +3223,7 @@
 				32661C6C1AA741D000F1A721 /* ChaosMetadataServiceClient.h */,
 				3274A9061AC2EE76000C6A4D /* metadata_service_client_constants.h */,
 				3274A9071AC2EF70000C6A4D /* metadata_service_client_types.h */,
+				3264138E1E40C6E80035E175 /* node_controller */,
 				32F7AB111C995CE500E18D3E /* node_monitor */,
 				32D745EE1C7332D500F4D719 /* event */,
 				3274A9081AC2F18E000C6A4D /* api_proxy */,
@@ -5362,6 +5376,7 @@
 				3211CCDA1B021B8D00F9B80E /* GetBestEndpoints.h in Headers */,
 				32661C6E1AA741D000F1A721 /* ChaosMetadataServiceClient.h in Headers */,
 				32B299AB1BE27945000D3716 /* RecoverError.h in Headers */,
+				326413941E40C72C0035E175 /* CUController.h in Headers */,
 				32FC49B01E080FB80087D82C /* GetVariable.h in Headers */,
 				32A13EB91C2014170010F3FC /* Delete.h in Headers */,
 				32FC49A81E080F900087D82C /* SetVariable.h in Headers */,
@@ -6061,6 +6076,7 @@
 				32FC49AF1E080FB80087D82C /* GetVariable.cpp in Sources */,
 				328C873E1AE01A590047C79B /* DeleteInstance.cpp in Sources */,
 				32362C211ADD0C45000CA079 /* SetInstanceDescription.cpp in Sources */,
+				326413931E40C7280035E175 /* CUController.cpp in Sources */,
 				3239EF521C0EFEB20052BE61 /* DeleteSnapshot.cpp in Sources */,
 				32FC49AB1E080FA80087D82C /* RemoveVariable.cpp in Sources */,
 				327C6A281C74E255002DA5A6 /* GetLogDomainForSourceUID.cpp in Sources */,
