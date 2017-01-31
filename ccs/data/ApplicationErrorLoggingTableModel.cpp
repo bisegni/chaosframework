@@ -3,7 +3,8 @@
 #include "../error/ErrorManager.h"
 
 ApplicationErrorLoggingTableModel::ApplicationErrorLoggingTableModel(QObject *parent):
-    ChaosAbstractTableModel(parent){
+    ChaosAbstractTableModel(parent),
+    record_number(0){
     connect(&ErrorManager::getInstance()->signal_proxy,
             SIGNAL(errorEntryUpdated()),
             SLOT(onErrorEntryUpdated()));
@@ -19,7 +20,6 @@ void ApplicationErrorLoggingTableModel::onErrorEntryUpdated() {
 }
 
 int ApplicationErrorLoggingTableModel::getRowCount() const {
-    uint64_t record_number;
     if(ErrorManager::getInstance()->getErrorCount(record_number) != 0) {
         record_number = 0;
     }
@@ -54,7 +54,7 @@ QString ApplicationErrorLoggingTableModel::getHeaderForColumn(int column) const 
 QVariant ApplicationErrorLoggingTableModel::getCellData(int row, int column) const {
     QVariant result;
     QSharedPointer<ErrorEntry> error_entry;
-    if(ErrorManager::getInstance()->getErrorEntryByPosition(error_entry, row) != 0){
+    if(ErrorManager::getInstance()->getErrorEntryByPosition(error_entry, (record_number-1)-row) != 0){
         return result;
     }
     switch(column) {

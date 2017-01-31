@@ -22,6 +22,8 @@ protected:
     bool isCellCheckable(const QModelIndex &index) const;
 protected slots:
     void onErrorEntryUpdated();
+private:
+    mutable uint64_t record_number;
 };
 
 #endif // APPLICATIONERRORLOGGINGTABLEMODEL_H
