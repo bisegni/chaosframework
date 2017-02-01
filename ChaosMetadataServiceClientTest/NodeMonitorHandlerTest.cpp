@@ -57,7 +57,7 @@ NodeMonitorHandlerTest::NodeMonitorHandlerTest(const std::string& _node_uid,
                                                chaos::metadata_service_client::node_monitor::ControllerType _controller_type):
 node_uid(_node_uid),
 controller_type(_controller_type){
-    setSignalOnChange(false);
+    setSignalOnChange(true);
     ChaosMetadataServiceClient::getInstance()->addHandlerToNodeMonitor(node_uid,
                                                                        controller_type,
                                                                        this);

@@ -143,8 +143,8 @@ void CUController::getDeviceId(string& dId) {
 }
 
 void CUController::deviceAvailabilityChanged(const std::string& device_id,
-                                             const bool availability) {
-    if(availability) {
+                                             const OnlineState availability) {
+    if(availability == OnlineStateOnline) {
         updateChannel();
     }
 }

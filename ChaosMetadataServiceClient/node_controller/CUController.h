@@ -123,7 +123,7 @@ namespace chaos {
                 common::io::IODataDriver *getDataProxyChannelNewInstance() throw(CException);
                 
                 void deviceAvailabilityChanged(const std::string& device_id,
-                                               const bool availability);
+                                               const common::message::OnlineState availability);
             protected:
                 //! Defautl Constructor
                 /*!

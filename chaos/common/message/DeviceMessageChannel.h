@@ -21,6 +21,8 @@
 #define CHAOSFramework_DeviceMessageChannel_h
 
 #include <string>
+
+#include <chaos/common/chaos_types.h>
 #include <chaos/common/message/MDSMessageChannel.h>
 #include <chaos/common/message/NodeMessageChannel.h>
 #include <chaos/common/network/CNodeNetworkAddress.h>
@@ -34,6 +36,12 @@ namespace chaos {
             //forward declaration
             class DeviceMessageChannel;
             
+            typedef enum OnlineState {
+                OnlineStateUnknown,
+                OnlineStateOffline,
+                OnlineStateOnline
+            } OnlineState;
+            
             //! status flag listener
             class DeviceMessageChannelListener:
             public chaos::common::utility::AbstractListener {
@@ -41,9 +49,9 @@ namespace chaos {
             public:
                 //!signal the change of the current selected level severity
                 virtual void deviceAvailabilityChanged(const std::string& device_id,
-                                                       const bool availability) = 0;
+                                                       const OnlineState availability) = 0;
             };
-            
+
             
             //! Message Channel specialize for metadataserver comunication
             /*!
@@ -55,15 +63,16 @@ namespace chaos {
             protected chaos::common::utility::AbstractListenerContainer {
                 friend class chaos::common::network::NetworkBroker;
                 
-                //!managment variable
-                bool online;
                 bool self_managed;
                 bool auto_reconnection;
+                
+                OnlineState online;
+                ChaosSharedMutex mutex_online_state;
                 
                 MDSMessageChannel *local_mds_channel;
                 CDeviceNetworkAddress *device_network_address;
                 
-                void setOnline(bool new_online_state);
+                void setOnline(OnlineState new_online_state);
                 void tryToReconnect();
             protected:
                 //! base constructor
@@ -116,7 +125,7 @@ namespace chaos {
                 void removeListener(DeviceMessageChannelListener *listener);
                 
                 //!return true if devce is online
-                bool isOnline();
+                OnlineState isOnline();
                 
                 //!update the adress of the device
                 void setNewAddress(CDeviceNetworkAddress *_deviceAddress);
@@ -220,8 +229,8 @@ namespace chaos {
                 /*!
                  \brief send a message to a custom action
                  */
-                void sendCustomMessage(const std::string& action_name,
-                                       common::data::CDataWrapper* const);
+                int sendCustomMessage(const std::string& action_name,
+                                      common::data::CDataWrapper* const);
                 
                 /*!
                  \brief send a request to a custom action

@@ -122,7 +122,8 @@ chaos::error::ChaosErrorCodeMapping::getInstance()->getErrorMessage(error_code)
             EC_RPC_NO_DOMAIN_REGISTERED_ON_SERVER = -1005,
             EC_RPC_NO_MORE_SPACE_ON_DOMAIN_QUEUE = -1006,
             EC_RPC_UNMANAGED_ERROR_DURING_FORWARDING = -1007,
-            EC_RPC_IMPL_ERR = -1100
+            EC_RPC_IMPL_ERR = -1100,
+            EC_RPC_CHANNEL_OFFLINE = -1001
         }ErrorRpcCoce;
         
 #define CHAOS_IS_RPC_ERROR_CODE(x)\
