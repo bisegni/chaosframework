@@ -84,17 +84,37 @@ chaos::common::data::CDataWrapper *ExecutionPoolHeartbeat::execute(CDataWrapper 
     
     if(api_data->hasKey(ExecutionUnitNodeDefinitionKey::EXECUTION_POOL_LIST)) {
         CHAOS_LASSERT_EXCEPTION(api_data->isVectorValue(ExecutionUnitNodeDefinitionKey::EXECUTION_POOL_LIST), ERR, -6, "The execution pool list key need to be a vector");
-                //all is gone weel
-        std::auto_ptr<CDataWrapper> batch_data(new CDataWrapper());
-        //copy to batch data unit server name and pool list
-        batch_data->addStringValue(chaos::NodeDefinitionKey::NODE_PARENT, us_uid);
-        api_data->copyKeyTo(ExecutionUnitNodeDefinitionKey::EXECUTION_POOL_LIST, *batch_data);
+        std::vector<chaos::service_common::data::script::ScriptBaseDescription> current_script_page;
         
-        //load operation is done in the batch system
-        getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::script::LoadInstanceOnUnitServer),
-                                          batch_data.release(),
-                                          0,
-                                          1000);
+        std::auto_ptr<CMultiTypeDataArrayWrapper> array(api_data->getVectorValue(ExecutionUnitNodeDefinitionKey::EXECUTION_POOL_LIST));
+        for(int idx = 0;
+            idx < array->size();
+            idx++) {
+            epool_list.push_back(array->getStringElementAtIndex(idx));
+        }
+        
+        //check if we have script to load
+        if(s_da->getScriptForExecutionPoolPathList(epool_list,
+                                                   current_script_page,
+                                                   0,
+                                                   1)){
+            LOG_AND_TROW(ERR, -4, "Error seraching script for epoolist");
+        }
+        //check if we have almost one script to execute.
+        if(current_script_page.size() > 0) {
+            
+            //all is gone weel, we have script to load
+            std::auto_ptr<CDataWrapper> batch_data(new CDataWrapper());
+            //copy to batch data unit server name and pool list
+            batch_data->addStringValue(chaos::NodeDefinitionKey::NODE_PARENT, us_uid);
+            api_data->copyKeyTo(ExecutionUnitNodeDefinitionKey::EXECUTION_POOL_LIST, *batch_data);
+            
+            //load operation is done in the batch system
+            getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::script::LoadInstanceOnUnitServer),
+                                              batch_data.release(),
+                                              0,
+                                              1000);
+        }
     }
     
     return NULL;

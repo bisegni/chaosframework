@@ -90,7 +90,9 @@ attribute_value_shared_cache(NULL),
 attribute_shared_cache_wrapper(NULL),
 timestamp_acq_cached_value(NULL),
 thread_schedule_daly_cached_value(NULL),
-key_data_storage(NULL){
+key_data_storage(NULL) {
+    //!try to decode parameter string has json document
+    is_control_unit_json_param = json_reader.parse(control_unit_param, json_parameter_document);
     //initialize check list
     _initChecklist();
 }
@@ -196,6 +198,14 @@ const std::string& AbstractControlUnit::getCUID() {
 
 const string& AbstractControlUnit::getCUParam() {
     return control_unit_param;
+}
+
+const bool AbstractControlUnit::isCUParamInJson() {
+    return is_control_unit_json_param;
+}
+
+const Json::Value& AbstractControlUnit::getCUParamJsonRootElement() {
+    return json_parameter_document;
 }
 
 const std::string& AbstractControlUnit::getCUType() {

@@ -27,6 +27,8 @@
 #include <string>
 #include <vector>
 
+#include <json/json.h>
+
 #include <boost/chrono.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/thread/recursive_mutex.hpp>
@@ -53,10 +55,11 @@
 #include <chaos/cu_toolkit/driver_manager/DriverErogatorInterface.h>
 #include <chaos/cu_toolkit/control_manager/AttributeSharedCacheWrapper.h>
 
-
 #define CUINFO LAPP_ << "["<<__FUNCTION__<<" - "<< getDeviceID()<<"]"
 #define CUDBG LDBG_ << "[- "<<__FUNCTION__<<" - "<< getDeviceID()<<"]"
 #define CUERR LERR_ << "["<<__PRETTY_FUNCTION__<<" - "<< getDeviceID()<<"]"
+
+
 
 #ifdef __CHAOS_DEBUG_MEMORY_CU__
 #include <chaos/common/debug/tracey.hpp>
@@ -147,7 +150,9 @@ namespace chaos{
                 CDataWrapper *writeCatalogOnCDataWrapper(chaos::common::alarm::AlarmCatalog& catalog,
                                                          int32_t dataset_type);
             private:
-                std::string  control_key;
+                //!load control key
+                std::string control_key;
+                
                 //! contains the description of the type of the control unit
                 std::string control_unit_type;
                 
@@ -156,6 +161,10 @@ namespace chaos{
                 
                 //! control unit load param
                 std::string control_unit_param;
+                //!decode control unit paramete in json if conversion is applicable
+                bool                            is_control_unit_json_param;
+                Json::Reader					json_reader;
+                Json::Value						json_parameter_document;
                 
                 //!logging channel
                 chaos::common::metadata_logging::StandardLoggingChannel *standard_logging_channel;
@@ -616,6 +625,16 @@ namespace chaos{
                 
                 //! get control unit load parameter
                 const string& getCUParam();
+                
+                //!return true if the cu load paramete are in json format
+                const bool isCUParamInJson();
+                
+                //! return the root of the json document
+                /*!
+                 in case isCUParamInJson return false the root json document
+                 will contains NULL value.
+                 */
+                const Json::Value& getCUParamJsonRootElement();
                 
                 //! return the type of the control unit
                 const std::string& getCUType();
