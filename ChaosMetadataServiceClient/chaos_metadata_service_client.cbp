@@ -498,6 +498,12 @@
 		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataServiceClient/monitor_system/QuantumTSTaggedAttributeHandler.h">
 			<Option target="chaos_metadata_service_client"/>
 		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataServiceClient/node_controller/CUController.cpp">
+			<Option target="chaos_metadata_service_client"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataServiceClient/node_controller/CUController.h">
+			<Option target="chaos_metadata_service_client"/>
+		</Unit>
 		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataServiceClient/node_monitor/ControlUnitController.cpp">
 			<Option target="chaos_metadata_service_client"/>
 		</Unit>

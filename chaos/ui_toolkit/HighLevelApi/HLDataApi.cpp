@@ -21,6 +21,7 @@
 using namespace std;
 using namespace chaos;
 using namespace chaos::ui;
+using namespace chaos::common::message;
 
 /*
  * Constructor

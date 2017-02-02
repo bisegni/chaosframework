@@ -27,10 +27,6 @@
 #include <chaos/cu_toolkit/command_manager/CommandManager.h>
 #include <chaos/cu_toolkit/control_manager/AbstractControlUnit.h>
 
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <cstring>
 #include <boost/uuid/uuid.hpp>            // uuid class
 #include <boost/uuid/uuid_generators.hpp> // generators
 #include <boost/uuid/uuid_io.hpp>         // streaming operators etc.

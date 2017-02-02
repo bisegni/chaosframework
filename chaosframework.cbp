@@ -190,7 +190,7 @@
 					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/../.."/>
 					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/.."/>
 					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/config/../chaos-distrib-x86_64-Darwin/include"/>
-					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/chaos/cu_toolkit/chaos/cu_toolkit"/>
+					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/chaos/cu_toolkit/chaos/cu"/>
 					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/chaos/cu_toolkit/../.."/>
 					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
 					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include"/>
@@ -218,7 +218,7 @@
 					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/../.."/>
 					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/.."/>
 					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/config/../chaos-distrib-x86_64-Darwin/include"/>
-					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/chaos/cu_toolkit/chaos/cu_toolkit"/>
+					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/chaos/cu_toolkit/chaos/cu"/>
 					<Add directory="/Users/bisegni/source/chaos_development/chaosframework/chaos/cu_toolkit/../.."/>
 					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
 					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include"/>
@@ -2075,6 +2075,12 @@
 		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataServiceClient/monitor_system/QuantumTSTaggedAttributeHandler.h">
 			<Option target="chaos_metadata_service_client"/>
 		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataServiceClient/node_controller/CUController.cpp">
+			<Option target="chaos_metadata_service_client"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataServiceClient/node_controller/CUController.h">
+			<Option target="chaos_metadata_service_client"/>
+		</Unit>
 		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosMetadataServiceClient/node_monitor/ControlUnitController.cpp">
 			<Option target="chaos_metadata_service_client"/>
 		</Unit>
@@ -2166,6 +2172,24 @@
 			<Option target="ChaosWANProxy"/>
 		</Unit>
 		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosWANProxy/api/PersistenceAccessor.h">
+			<Option target="ChaosWANProxy"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosWANProxy/api/consumer/ConsumerCUApi.cpp">
+			<Option target="ChaosWANProxy"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosWANProxy/api/consumer/ConsumerCUApi.h">
+			<Option target="ChaosWANProxy"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosWANProxy/api/consumer/ConsumerGroup.cpp">
+			<Option target="ChaosWANProxy"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosWANProxy/api/consumer/ConsumerGroup.h">
+			<Option target="ChaosWANProxy"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosWANProxy/api/consumer/ConsumerMDSApi.cpp">
+			<Option target="ChaosWANProxy"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosWANProxy/api/consumer/ConsumerMDSApi.h">
 			<Option target="ChaosWANProxy"/>
 		</Unit>
 		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/ChaosWANProxy/api/producer/ProducerGetLastDatasetApi.cpp">
@@ -3560,10 +3584,22 @@
 		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/cu_toolkit/control_manager/ControlManager.h">
 			<Option target="chaos_cutoolkit"/>
 		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/cu_toolkit/control_manager/ControlUnitApiInterface.cpp">
+			<Option target="chaos_cutoolkit"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/cu_toolkit/control_manager/ControlUnitApiInterface.h">
+			<Option target="chaos_cutoolkit"/>
+		</Unit>
 		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/cu_toolkit/control_manager/IOCU.cpp">
 			<Option target="chaos_cutoolkit"/>
 		</Unit>
 		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/cu_toolkit/control_manager/IOCU.h">
+			<Option target="chaos_cutoolkit"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/cu_toolkit/control_manager/ProxyControlUnit.cpp">
+			<Option target="chaos_cutoolkit"/>
+		</Unit>
+		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/cu_toolkit/control_manager/ProxyControlUnit.h">
 			<Option target="chaos_cutoolkit"/>
 		</Unit>
 		<Unit filename="/Users/bisegni/source/chaos_development/chaosframework/chaos/cu_toolkit/control_manager/RTAbstractControlUnit.cpp">
