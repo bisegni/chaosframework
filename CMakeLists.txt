@@ -58,6 +58,9 @@ ADD_SUBDIRECTORY(chaos/cu_toolkit)
 MESG("Configure UIToolkit Layer")
 ADD_SUBDIRECTORY(chaos/ui_toolkit)
 
+MESG("Configure Chaos Agent")
+ADD_SUBDIRECTORY(ChaosAgent)
+
 IF (CHAOS_MDS)
   MESG("Configure Chaos Metadata Service")
   ADD_SUBDIRECTORY(ChaosMetadataService)
