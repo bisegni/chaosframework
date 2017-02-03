@@ -359,6 +359,9 @@
 		3264138D1E3F658D0035E175 /* ControlUnitApiInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3264138C1E3F658D0035E175 /* ControlUnitApiInterface.cpp */; };
 		326413931E40C7280035E175 /* CUController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3264138F1E40C7230035E175 /* CUController.cpp */; };
 		326413941E40C72C0035E175 /* CUController.h in Headers */ = {isa = PBXBuildFile; fileRef = 326413901E40C7230035E175 /* CUController.h */; };
+		3264139C1E44ACE60035E175 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3264139B1E44ACE60035E175 /* main.cpp */; };
+		326413A21E44AD750035E175 /* ChaosAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326413A01E44AD750035E175 /* ChaosAgent.cpp */; };
+		326413AB1E44C7DD0035E175 /* AgentRegister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326413A91E44C7DD0035E175 /* AgentRegister.cpp */; };
 		3264BBD51784887900E2F5A0 /* AbstractPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3264BBD41784887900E2F5A0 /* AbstractPlugin.cpp */; };
 		3264BBD71784BFE400E2F5A0 /* PluginInspector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3264BBD61784BFE400E2F5A0 /* PluginInspector.cpp */; };
 		3265BF4615D1A9CA00C3CAC6 /* ChaosUIToolkitCWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 3265BF4515D1A9CA00C3CAC6 /* ChaosUIToolkitCWrapper.h */; };
@@ -1111,6 +1114,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
+		326413971E44ACE60035E175 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		32C7EAD21A5D9E450008DFE8 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1524,6 +1536,14 @@
 		3264138C1E3F658D0035E175 /* ControlUnitApiInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ControlUnitApiInterface.cpp; sourceTree = "<group>"; };
 		3264138F1E40C7230035E175 /* CUController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CUController.cpp; sourceTree = "<group>"; };
 		326413901E40C7230035E175 /* CUController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CUController.h; sourceTree = "<group>"; };
+		326413991E44ACE60035E175 /* ChaosAgent */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ChaosAgent; sourceTree = BUILT_PRODUCTS_DIR; };
+		3264139B1E44ACE60035E175 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		326413A01E44AD750035E175 /* ChaosAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChaosAgent.cpp; sourceTree = "<group>"; };
+		326413A11E44AD750035E175 /* ChaosAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChaosAgent.h; sourceTree = "<group>"; };
+		326413A41E44B39F0035E175 /* chaos_agent_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chaos_agent_types.h; sourceTree = "<group>"; };
+		326413A71E44B3F20035E175 /* chaos_agent_constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chaos_agent_constants.h; sourceTree = "<group>"; };
+		326413A91E44C7DD0035E175 /* AgentRegister.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AgentRegister.cpp; sourceTree = "<group>"; };
+		326413AA1E44C7DD0035E175 /* AgentRegister.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AgentRegister.h; sourceTree = "<group>"; };
 		3264BBD41784887900E2F5A0 /* AbstractPlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractPlugin.cpp; sourceTree = "<group>"; };
 		3264BBD61784BFE400E2F5A0 /* PluginInspector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginInspector.cpp; sourceTree = "<group>"; };
 		326573F218CCD365009E9B6B /* TemplatedKeyObjectContainer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TemplatedKeyObjectContainer.h; sourceTree = "<group>"; };
@@ -2424,6 +2444,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		326413961E44ACE60035E175 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		32661C631AA73D5B00F1A721 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -3070,8 +3097,9 @@
 				329C1F101B58F46700A84D55 /* CMakeLists.txt */,
 				326DB3B114B38BC00018A8D0 /* chaos */,
 				32A40D421A9CD4A0000D9A35 /* chaos_service_common */,
-				323236C9164573C60052CE06 /* ChaosMetadataService */,
 				32661C6A1AA73DA200F1A721 /* ChaosMetadataServiceClient */,
+				323236C9164573C60052CE06 /* ChaosMetadataService */,
+				3264139A1E44ACE60035E175 /* ChaosAgent */,
 				322085DB1AC5A0E200F1B71A /* ChaosMetadataServiceClientTest */,
 				32C7EAD51A5D9E450008DFE8 /* ChaosWANProxy */,
 				3230BEBB1817A9E100EA5793 /* libchaos_common.dylib */,
@@ -3082,6 +3110,7 @@
 				32C7EAD41A5D9E450008DFE8 /* ChaosWANProxy */,
 				32661C661AA73D5B00F1A721 /* libchaos_metadata_service_client.dylib */,
 				322085DA1AC5A0E100F1B71A /* ChaosMetadataServiceClientTest */,
+				326413991E44ACE60035E175 /* ChaosAgent */,
 			);
 			sourceTree = "<group>";
 		};
@@ -3213,6 +3242,20 @@
 				326413901E40C7230035E175 /* CUController.h */,
 			);
 			path = node_controller;
+			sourceTree = "<group>";
+		};
+		3264139A1E44ACE60035E175 /* ChaosAgent */ = {
+			isa = PBXGroup;
+			children = (
+				3264139B1E44ACE60035E175 /* main.cpp */,
+				326413A01E44AD750035E175 /* ChaosAgent.cpp */,
+				326413A11E44AD750035E175 /* ChaosAgent.h */,
+				326413A41E44B39F0035E175 /* chaos_agent_types.h */,
+				326413A71E44B3F20035E175 /* chaos_agent_constants.h */,
+				326413A91E44C7DD0035E175 /* AgentRegister.cpp */,
+				326413AA1E44C7DD0035E175 /* AgentRegister.h */,
+			);
+			path = ChaosAgent;
 			sourceTree = "<group>";
 		};
 		32661C6A1AA73DA200F1A721 /* ChaosMetadataServiceClient */ = {
@@ -5487,6 +5530,23 @@
 			productReference = 3230BEBD1817A9E100EA5793 /* libchaos_uitoolkit.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		326413981E44ACE60035E175 /* ChaosAgent */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3264139D1E44ACE60035E175 /* Build configuration list for PBXNativeTarget "ChaosAgent" */;
+			buildPhases = (
+				326413951E44ACE60035E175 /* Sources */,
+				326413961E44ACE60035E175 /* Frameworks */,
+				326413971E44ACE60035E175 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ChaosAgent;
+			productName = ChaosAgent;
+			productReference = 326413991E44ACE60035E175 /* ChaosAgent */;
+			productType = "com.apple.product-type.tool";
+		};
 		32661C651AA73D5B00F1A721 /* chaos_metadata_service_client */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 32661C691AA73D5C00F1A721 /* Build configuration list for PBXNativeTarget "chaos_metadata_service_client" */;
@@ -5536,6 +5596,11 @@
 					322085D91AC5A0E100F1B71A = {
 						CreatedOnToolsVersion = 6.2;
 					};
+					326413981E44ACE60035E175 = {
+						CreatedOnToolsVersion = 8.2.1;
+						DevelopmentTeam = ZZ5BMKV37Y;
+						ProvisioningStyle = Automatic;
+					};
 					32661C651AA73D5B00F1A721 = {
 						CreatedOnToolsVersion = 6.1.1;
 					};
@@ -5559,8 +5624,9 @@
 				326026E814B301F600C906CE /* chaos_common */,
 				3260276514B3068100C906CE /* chaos_cutoolkit */,
 				3260278614B307DA00C906CE /* chaos_uitoolkit */,
-				323236C6164573C60052CE06 /* ChaosMetadataService */,
 				32661C651AA73D5B00F1A721 /* chaos_metadata_service_client */,
+				323236C6164573C60052CE06 /* ChaosMetadataService */,
+				326413981E44ACE60035E175 /* ChaosAgent */,
 				322085D91AC5A0E100F1B71A /* ChaosMetadataServiceClientTest */,
 				32C7EAD31A5D9E450008DFE8 /* ChaosWANProxy */,
 				323236D5164573F50052CE06 /* ChaosDataService */,
@@ -6042,6 +6108,16 @@
 				320DF99114E190BB00251621 /* DeviceController.cpp in Sources */,
 				3265BF4915D1AA9F00C3CAC6 /* ChaosUIToolkitCWrapper.cc in Sources */,
 				3211FD1D1698699D00424A3C /* LiveDataFetcher.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		326413951E44ACE60035E175 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				326413AB1E44C7DD0035E175 /* AgentRegister.cpp in Sources */,
+				326413A21E44AD750035E175 /* ChaosAgent.cpp in Sources */,
+				3264139C1E44ACE60035E175 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6731,6 +6807,120 @@
 			};
 			name = Release;
 		};
+		3264139E1E44ACE60035E175 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/bin";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = ZZ5BMKV37Y;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					.,
+					usr/local/include,
+				);
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = (
+					"-lchaos_common",
+					"-ljsoncpp",
+					"-levent",
+					"-lmongoclient",
+					"-lcouchbase",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		3264139F1E44ACE60035E175 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/bin";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = ZZ5BMKV37Y;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					.,
+					usr/local/include,
+				);
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = (
+					"-lchaos_common",
+					"-ljsoncpp",
+					"-levent",
+					"-lmongoclient",
+					"-lcouchbase",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 		32661C671AA73D5C00F1A721 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -6998,6 +7188,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		3264139D1E44ACE60035E175 /* Build configuration list for PBXNativeTarget "ChaosAgent" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3264139E1E44ACE60035E175 /* Debug */,
+				3264139F1E44ACE60035E175 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		32661C691AA73D5C00F1A721 /* Build configuration list for PBXNativeTarget "chaos_metadata_service_client" */ = {
 			isa = XCConfigurationList;
