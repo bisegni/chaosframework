@@ -949,6 +949,9 @@
 		32E0EF3818CDB37D00CD1808 /* ZMQDirectIOClientConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E0EF3618CDB37D00CD1808 /* ZMQDirectIOClientConnection.h */; };
 		32E2B1B41C32A60D00FCFB42 /* DeleteNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E2B1B21C32A60D00FCFB42 /* DeleteNode.cpp */; };
 		32E2B1B51C32A60D00FCFB42 /* DeleteNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E2B1B31C32A60D00FCFB42 /* DeleteNode.h */; };
+		32E6F4301E44DDBD0068320E /* ConsumerCUApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E6F42A1E44DDBD0068320E /* ConsumerCUApi.cpp */; };
+		32E6F4311E44DDBD0068320E /* ConsumerGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E6F42C1E44DDBD0068320E /* ConsumerGroup.cpp */; };
+		32E6F4321E44DDBD0068320E /* ConsumerMDSApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E6F42E1E44DDBD0068320E /* ConsumerMDSApi.cpp */; };
 		32E86E431CD8A75F0038DE76 /* MessageRequestDomain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E86E411CD8A75F0038DE76 /* MessageRequestDomain.cpp */; };
 		32E86E441CD8A75F0038DE76 /* MessageRequestDomain.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E86E421CD8A75F0038DE76 /* MessageRequestDomain.h */; };
 		32E9A53E1A66A1B100545BB4 /* AbstractApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9A53C1A66A1B100545BB4 /* AbstractApi.cpp */; };
@@ -2275,6 +2278,12 @@
 		32E2B1B21C32A60D00FCFB42 /* DeleteNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeleteNode.cpp; sourceTree = "<group>"; };
 		32E2B1B31C32A60D00FCFB42 /* DeleteNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeleteNode.h; sourceTree = "<group>"; };
 		32E6F4281E44D7D30068320E /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		32E6F42A1E44DDBD0068320E /* ConsumerCUApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConsumerCUApi.cpp; sourceTree = "<group>"; };
+		32E6F42B1E44DDBD0068320E /* ConsumerCUApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConsumerCUApi.h; sourceTree = "<group>"; };
+		32E6F42C1E44DDBD0068320E /* ConsumerGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConsumerGroup.cpp; sourceTree = "<group>"; };
+		32E6F42D1E44DDBD0068320E /* ConsumerGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConsumerGroup.h; sourceTree = "<group>"; };
+		32E6F42E1E44DDBD0068320E /* ConsumerMDSApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConsumerMDSApi.cpp; sourceTree = "<group>"; };
+		32E6F42F1E44DDBD0068320E /* ConsumerMDSApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConsumerMDSApi.h; sourceTree = "<group>"; };
 		32E86E411CD8A75F0038DE76 /* MessageRequestDomain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageRequestDomain.cpp; sourceTree = "<group>"; };
 		32E86E421CD8A75F0038DE76 /* MessageRequestDomain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageRequestDomain.h; sourceTree = "<group>"; };
 		32E977561A6E65B800D89C15 /* api_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = api_types.h; sourceTree = "<group>"; };
@@ -2573,6 +2582,7 @@
 		321237271A658882002A2D63 /* api */ = {
 			isa = PBXGroup;
 			children = (
+				32E6F4291E44DDA60068320E /* consumer */,
 				32E9A5431A67D00A00545BB4 /* producer */,
 				329F406A1A669B6300AC318A /* AbstractApiGroup.cpp */,
 				329F406B1A669B6300AC318A /* AbstractApiGroup.h */,
@@ -4783,6 +4793,19 @@
 			path = script;
 			sourceTree = "<group>";
 		};
+		32E6F4291E44DDA60068320E /* consumer */ = {
+			isa = PBXGroup;
+			children = (
+				32E6F42A1E44DDBD0068320E /* ConsumerCUApi.cpp */,
+				32E6F42B1E44DDBD0068320E /* ConsumerCUApi.h */,
+				32E6F42C1E44DDBD0068320E /* ConsumerGroup.cpp */,
+				32E6F42D1E44DDBD0068320E /* ConsumerGroup.h */,
+				32E6F42E1E44DDBD0068320E /* ConsumerMDSApi.cpp */,
+				32E6F42F1E44DDBD0068320E /* ConsumerMDSApi.h */,
+			);
+			path = consumer;
+			sourceTree = "<group>";
+		};
 		32E727031CE200380094F826 /* script */ = {
 			isa = PBXGroup;
 			children = (
@@ -6213,9 +6236,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				329F40701A669F6C00AC318A /* AbstractPersistenceDriver.cpp in Sources */,
+				32E6F4311E44DDBD0068320E /* ConsumerGroup.cpp in Sources */,
 				3212372A1A658BA9002A2D63 /* BaseWANInterfaceHandler.cpp in Sources */,
 				32033D6F1A651DCC004F1B7D /* HTTPWANInterface.cpp in Sources */,
 				533D1F8B1D86E85100FC7AA5 /* ProducerRegisterJsonApi.cpp in Sources */,
+				32E6F4321E44DDBD0068320E /* ConsumerMDSApi.cpp in Sources */,
 				329F406C1A669B6300AC318A /* AbstractApiGroup.cpp in Sources */,
 				321237261A658404002A2D63 /* DefaultWANInterfaceHandler.cpp in Sources */,
 				32033D741A6524BE004F1B7D /* HTTPWANInterfaceRequest.cpp in Sources */,
@@ -6228,6 +6253,7 @@
 				321237231A657BA0002A2D63 /* AbstractWANInterfaceResponse.cpp in Sources */,
 				32E9A5491A67D6D600545BB4 /* ProducerRegisterDatasetApi.cpp in Sources */,
 				533D1F8C1D86E85100FC7AA5 /* ProducerInsertJsonApi.cpp in Sources */,
+				32E6F4301E44DDBD0068320E /* ConsumerCUApi.cpp in Sources */,
 				32E9A54C1A6800E900545BB4 /* ProducerInsertDatasetApi.cpp in Sources */,
 				32E9A53E1A66A1B100545BB4 /* AbstractApi.cpp in Sources */,
 				32C7EAD71A5D9E450008DFE8 /* main.cpp in Sources */,
