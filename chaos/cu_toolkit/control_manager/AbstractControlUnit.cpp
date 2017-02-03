@@ -117,7 +117,8 @@ attribute_shared_cache_wrapper(NULL),
 timestamp_acq_cached_value(NULL),
 thread_schedule_daly_cached_value(NULL),
 key_data_storage(NULL){
-    
+    //!try to decode parameter string has json document
+    is_control_unit_json_param = json_reader.parse(control_unit_param, json_parameter_document);
     //copy array
     for (int idx = 0; idx < _control_unit_drivers.size(); idx++){
         control_unit_drivers.push_back(_control_unit_drivers[idx]);

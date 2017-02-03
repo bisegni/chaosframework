@@ -146,7 +146,7 @@ int MongoDBScriptDataAccess::searchScript(ScriptBaseDescriptionListWrapper& scri
                                           uint32_t page_length) {
     int err = 0;
     SearchResult paged_result;
-    mongo::BSONObj p = BSON(CHAOS_SBD_NAME<< 1<<CHAOS_SBD_DESCRIPTION<<1);
+    mongo::BSONObj p = BSON("seq"<<1<<CHAOS_SBD_NAME<< 1<<CHAOS_SBD_DESCRIPTION<<1);
     CHAOS_ASSERT(utility_data_access)
     try {
         mongo::Query q = getNextPagedQuery(last_sequence_id,
@@ -172,7 +172,6 @@ int MongoDBScriptDataAccess::searchScript(ScriptBaseDescriptionListWrapper& scri
                      it++) {
                     CDataWrapper element_found(it->objdata());
                     script_list.add(&element_found);
-                    
                 }
             }
         }

@@ -68,7 +68,7 @@ void ScriptableExecutionUnit::addAttributeToDataSet(const std::string& attribute
                                                     DataType::DataType attribute_type,
                                                     DataType::DataSetAttributeIOAttribute attribute_direction,
                                                     uint32_t maxSize) {
-    RTAbstractControlUnit::addAttributeToDataSet(attribute_name,
+    AbstractExecutionUnit::addAttributeToDataSet(attribute_name,
                                                  attribute_description,
                                                  attribute_type,
                                                  attribute_direction);
