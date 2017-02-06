@@ -251,6 +251,14 @@ namespace chaos {
          !CHAOS async one.
          */
         static const char * const NODE_TYPE_WAN_PROXY       = "nt_wan_proxy";
+        
+        //! identify a process agent
+        /*!
+         A process agent is a daemo that run on an host that permit to 
+         manage chaos process whitin that host (start stop uni t server and perform deploy)
+         */
+        static const char * const NODE_TYPE_AGENT       = "nt_agent";
+        
         //! identify an execution unit of type script
         /*!
          A scriptable execution unit consinst of a framework implementaion of the an
@@ -470,8 +478,7 @@ namespace chaos {
         
     }
     /** @} */ // end of UnitServerNodeDefinitionKey
-    
-    
+
     /** @defgroup UnitServerNodeDomainAndActionRPC !CHAOS unit server rpc key description
      *  This is the collection of all key used only by unit server
      *  @{
@@ -509,6 +516,36 @@ namespace chaos {
     }
     /** @} */ // end of UnitServerNodeDomainAndActionRPC
     
+    
+    /** @defgroup AgentNodeDefinitionKey !CHAOS agent node key description
+     *  @{
+     */
+    //! Name space for grupping key for the agent node type
+    namespace AgentNodeDefinitionKey {
+        
+        //! key for the worker contained within the agent
+        /*!
+         very worke can process different work witni the agent
+         */
+        static const char * const HOSTED_WORKER       = "andk_hosted_worker";
+        
+        //!the name that identify the worker
+        static const char * const WORKER_NAME         = "andk_worker_name";
+        
+        //!the description of the worker
+        static const char * const WORKER_DESCRIPTION         = "andk_worker_description";
+    }
+    /** @} */ // end of AgentNodeDefinitionKey
+    
+    /** @defgroup AgentNodeDomainAndActionRPC !CHAOS agent rpc key description
+     *  This is the collection of all key used only by agent
+     *  @{
+     */
+    namespace AgentNodeDomainAndActionRPC {
+        //!identify the error code for the registration
+        static const char * const REGISTRATION_RESULT  = "andk_rpc_registration_result";
+    }
+    /** @} */ // end of AgentNodeDomainAndActionRPC
     
     /** @defgroup DataServiceNodeDefinitionKey !CHAOS data service node key description
      *  This is the collection of the key used to configure the DataProxy server

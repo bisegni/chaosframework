@@ -30,18 +30,21 @@ namespace chaos {
                 //! Implement the api for the node registration
                 /*!
                  The received pack is scanned to find the unique node id and the his type.
-                 If the received node is recognized as belonging to a default type, it is 
-                 forwarded to the method that performs the specific registration for every type. 
-                 Otherwhise the datapack will be saved in node structure without further 
+                 If the received node is recognized as belonging to a default type, it is
+                 forwarded to the method that performs the specific registration for every type.
+                 Otherwhise the datapack will be saved in node structure without further
                  considerations.
                  */
                 class NodeRegister:
                 public AbstractApi {
+                    //!perform te agent registration
+                    chaos::common::data::CDataWrapper *agentRegistration(chaos::common::data::CDataWrapper *api_data,
+                                                                         bool& detach_data) throw(chaos::CException);
                     //! perform registration for specific unit server
                     chaos::common::data::CDataWrapper *unitServerRegistration(chaos::common::data::CDataWrapper *api_data,
                                                                               bool& detach_data) throw(chaos::CException);
                     
-                        //! perform specific registration for control unit
+                    //! perform specific registration for control unit
                     chaos::common::data::CDataWrapper *controlUnitRegistration(chaos::common::data::CDataWrapper *api_data,
                                                                                bool& detach_data) throw(chaos::CException);
                 public:

@@ -22,30 +22,66 @@
 #ifndef __CHAOSFramework__1F03397_993E_4BE7_B812_4C9A5B83310A_AgentRegisterSM_h
 #define __CHAOSFramework__1F03397_993E_4BE7_B812_4C9A5B83310A_AgentRegisterSM_h
 
+#include <chaos/common/chaos_types.h>
 #include <chaos/common/action/DeclareAction.h>
+#include <chaos/common/message/MDSMessageChannel.h>
 #include <chaos/common/async_central/async_central.h>
+#include <chaos/common/utility/StartableService.h>
+
+#include <map>
+#include <boost/shared_ptr.hpp>
 
 namespace chaos {
     namespace agent {
         
+        class AbstractAgent;
+        
+        typedef boost::shared_ptr<AbstractAgent> AgentSharedPtr;
+        CHAOS_DEFINE_MAP_FOR_TYPE(std::string, AgentSharedPtr, MapAgent);
+        
         typedef enum {
-            
+            AgentRegisterStateUnregistered,
+            AgentRegisterStateStartRegistering,
+            AgentRegisterStateRegistering,
+            AgentRegisterStateRegistered,
+            AgentRegisterStateStartUnregistering,
+            AgentRegisterStateUnregistering,
+            AgentRegisterStateFault
         } AgentRegisterState;
         
         class AgentRegister:
         public chaos::DeclareAction,
+        public chaos::common::utility::StartableService,
         public chaos::common::async_central::TimerHandler {
+            const std::string agent_uid;
+            const std::string rpc_domain;
+            //agent container map
+            MapAgent                             map_agent;
+            AgentRegisterState                   registration_state;
+            common::message::MDSMessageChannel   *mds_message_channel;
+            uint32_t                             reg_retry_counter;
+            uint32_t                             max_reg_retry_counter;
+           
         protected:
             AgentRegister();
             ~AgentRegister();
             //!inherited by chaos::common::async_central::TimerHandler
             void timeout();
-        public:
+            std::auto_ptr<chaos::common::data::CDataWrapper> getAgentRegistrationPack();
             
             /*!
              receive the ack package for agent registration on the MDS
              */
             chaos::common::data::CDataWrapper* registrationACK(chaos::common::data::CDataWrapper  *message_data, bool& detach);
+        public:
+            
+            void init(void *init_data) throw (chaos::CException);
+            void start() throw (chaos::CException);
+            void stop() throw (chaos::CException);
+            void deinit() throw (chaos::CException);
+            
+            //!add a new agent
+            void addAgent(AgentSharedPtr new_agent);
         };
         
     }

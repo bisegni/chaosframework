@@ -100,6 +100,7 @@ chaos::error::ChaosErrorCodeMapping::getInstance()->getErrorMessage(error_code)
             EC_MDS_NODE_BAD_SM_STATE,
             //!work unit is not self manageable and need to be loaded within an unit server
             EC_MDS_NODE_ID_NOT_SELF_MANAGEABLE
+            
         } ErrorCode;
     }
     /** @} */ // end of ChaosErrorCode

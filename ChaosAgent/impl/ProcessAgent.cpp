@@ -1,9 +1,10 @@
 /*
- *	DataAccess.h
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ *	ProcessAgent.cpp
  *
- *    	Copyright 2015 INFN, National Institute of Nuclear Physics
+ *	!CHAOS [CHAOSFramework]
+ *	Created by bisegni.
+ *
+ *    	Copyright 06/02/2017 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -17,19 +18,24 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#ifndef CHAOSFramework_DataAccess_h
-#define CHAOSFramework_DataAccess_h
 
-#include <chaos_service_common/service_error.h>
+#include "ProcessAgent.h"
 
-#include "NodeDataAccess.h"
-#include "UtilityDataAccess.h"
-#include "UnitServerDataAccess.h"
-#include "ControlUnitDataAccess.h"
-#include "DataServiceDataAccess.h"
-#include "SnapshotDataAccess.h"
-#include "TreeGroupDataAccess.h"
-#include "LoggingDataAccess.h"
-#include "ScriptDataAccess.h"
-#include "AgentDataAccess.h"
-#endif
+#include <chaos/common/chaos_constants.h>
+
+using namespace chaos::agent::impl;
+
+ProcessAgent::ProcessAgent():
+AbstractAgent("ProcessAgent"){}
+
+ProcessAgent::~ProcessAgent() {
+    
+}
+
+void ProcessAgent::init(void *data) throw(chaos::CException) {
+    
+}
+
+void ProcessAgent::deinit() throw(chaos::CException) {
+    
+}

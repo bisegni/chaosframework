@@ -952,6 +952,10 @@
 		32E6F4301E44DDBD0068320E /* ConsumerCUApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E6F42A1E44DDBD0068320E /* ConsumerCUApi.cpp */; };
 		32E6F4311E44DDBD0068320E /* ConsumerGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E6F42C1E44DDBD0068320E /* ConsumerGroup.cpp */; };
 		32E6F4321E44DDBD0068320E /* ConsumerMDSApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E6F42E1E44DDBD0068320E /* ConsumerMDSApi.cpp */; };
+		32E6F4391E48689E0068320E /* ProcessAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E6F4371E48689E0068320E /* ProcessAgent.cpp */; };
+		32E6F43C1E4869120068320E /* AbstractAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E6F43A1E4869120068320E /* AbstractAgent.cpp */; };
+		32E6F43F1E48B4260068320E /* AgentDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E6F43D1E48B4260068320E /* AgentDataAccess.cpp */; };
+		32E6F4421E48B4B10068320E /* MongoDBAgentDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E6F4401E48B4B10068320E /* MongoDBAgentDataAccess.cpp */; };
 		32E86E431CD8A75F0038DE76 /* MessageRequestDomain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E86E411CD8A75F0038DE76 /* MessageRequestDomain.cpp */; };
 		32E86E441CD8A75F0038DE76 /* MessageRequestDomain.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E86E421CD8A75F0038DE76 /* MessageRequestDomain.h */; };
 		32E9A53E1A66A1B100545BB4 /* AbstractApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9A53C1A66A1B100545BB4 /* AbstractApi.cpp */; };
@@ -2284,6 +2288,14 @@
 		32E6F42D1E44DDBD0068320E /* ConsumerGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConsumerGroup.h; sourceTree = "<group>"; };
 		32E6F42E1E44DDBD0068320E /* ConsumerMDSApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConsumerMDSApi.cpp; sourceTree = "<group>"; };
 		32E6F42F1E44DDBD0068320E /* ConsumerMDSApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConsumerMDSApi.h; sourceTree = "<group>"; };
+		32E6F4371E48689E0068320E /* ProcessAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcessAgent.cpp; sourceTree = "<group>"; };
+		32E6F4381E48689E0068320E /* ProcessAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessAgent.h; sourceTree = "<group>"; };
+		32E6F43A1E4869120068320E /* AbstractAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractAgent.cpp; sourceTree = "<group>"; };
+		32E6F43B1E4869120068320E /* AbstractAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractAgent.h; sourceTree = "<group>"; };
+		32E6F43D1E48B4260068320E /* AgentDataAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AgentDataAccess.cpp; sourceTree = "<group>"; };
+		32E6F43E1E48B4260068320E /* AgentDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AgentDataAccess.h; sourceTree = "<group>"; };
+		32E6F4401E48B4B10068320E /* MongoDBAgentDataAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MongoDBAgentDataAccess.cpp; sourceTree = "<group>"; };
+		32E6F4411E48B4B10068320E /* MongoDBAgentDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MongoDBAgentDataAccess.h; sourceTree = "<group>"; };
 		32E86E411CD8A75F0038DE76 /* MessageRequestDomain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageRequestDomain.cpp; sourceTree = "<group>"; };
 		32E86E421CD8A75F0038DE76 /* MessageRequestDomain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageRequestDomain.h; sourceTree = "<group>"; };
 		32E977561A6E65B800D89C15 /* api_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = api_types.h; sourceTree = "<group>"; };
@@ -2810,6 +2822,8 @@
 				3270E0751C6CC05100105726 /* MongoDBLoggingDataAccess.h */,
 				3221D7241CF5AEDE001BE971 /* MongoDBScriptDataAccess.cpp */,
 				3221D7251CF5AEDE001BE971 /* MongoDBScriptDataAccess.h */,
+				32E6F4401E48B4B10068320E /* MongoDBAgentDataAccess.cpp */,
+				32E6F4411E48B4B10068320E /* MongoDBAgentDataAccess.h */,
 				32D24FB31A7BBD59002D65CE /* mongo_db_constants.h */,
 			);
 			path = mongodb;
@@ -2836,6 +2850,8 @@
 				3270E0721C6CBFDE00105726 /* LoggingDataAccess.h */,
 				3221D7211CF5ADC9001BE971 /* ScriptDataAccess.cpp */,
 				3221D7221CF5ADC9001BE971 /* ScriptDataAccess.h */,
+				32E6F43D1E48B4260068320E /* AgentDataAccess.cpp */,
+				32E6F43E1E48B4260068320E /* AgentDataAccess.h */,
 				32D24FAF1A7AAD15002D65CE /* DataAccess.h */,
 			);
 			path = data_access;
@@ -3266,6 +3282,9 @@
 				326413A71E44B3F20035E175 /* chaos_agent_constants.h */,
 				326413A91E44C7DD0035E175 /* AgentRegister.cpp */,
 				326413AA1E44C7DD0035E175 /* AgentRegister.h */,
+				32E6F43A1E4869120068320E /* AbstractAgent.cpp */,
+				32E6F43B1E4869120068320E /* AbstractAgent.h */,
+				32E6F4361E4868760068320E /* impl */,
 			);
 			path = ChaosAgent;
 			sourceTree = "<group>";
@@ -4806,6 +4825,15 @@
 			path = consumer;
 			sourceTree = "<group>";
 		};
+		32E6F4361E4868760068320E /* impl */ = {
+			isa = PBXGroup;
+			children = (
+				32E6F4371E48689E0068320E /* ProcessAgent.cpp */,
+				32E6F4381E48689E0068320E /* ProcessAgent.h */,
+			);
+			path = impl;
+			sourceTree = "<group>";
+		};
 		32E727031CE200380094F826 /* script */ = {
 			isa = PBXGroup;
 			children = (
@@ -5697,6 +5725,7 @@
 				320530DD1AE930200064275B /* MongoDBDataServiceDataAccess.cpp in Sources */,
 				32B1E8131B2EDB2800221E49 /* CommandTemplateSubmit.cpp in Sources */,
 				328E78041A7A9F430008C070 /* AbstractApiGroup.cpp in Sources */,
+				32E6F4421E48B4B10068320E /* MongoDBAgentDataAccess.cpp in Sources */,
 				32809C791A9C79DE00C02C12 /* UtilityDataAccess.cpp in Sources */,
 				3221D7201CF5AD09001BE971 /* SaveScript.cpp in Sources */,
 				32761A401B37F202006C8719 /* SubmitBatchCommand.cpp in Sources */,
@@ -5804,6 +5833,7 @@
 				32B9F3F31AC3E74C00380FE9 /* AbstractDataAccess.cpp in Sources */,
 				32B1E8031B2E9D1B00221E49 /* CommandTemplateDelete.cpp in Sources */,
 				32FC7EE51A70FDB70029C2A2 /* ApiManagment.cpp in Sources */,
+				32E6F43F1E48B4260068320E /* AgentDataAccess.cpp in Sources */,
 				32B1E7EF1B297E8200221E49 /* CommandTemplateGet.cpp in Sources */,
 				32864FD31C29568D00DA9B70 /* GetNodeChilds.cpp in Sources */,
 				32A13EBC1C2016C60010F3FC /* Delete.cpp in Sources */,
@@ -6141,8 +6171,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				326413AB1E44C7DD0035E175 /* AgentRegister.cpp in Sources */,
+				32E6F4391E48689E0068320E /* ProcessAgent.cpp in Sources */,
 				326413A21E44AD750035E175 /* ChaosAgent.cpp in Sources */,
 				3264139C1E44ACE60035E175 /* main.cpp in Sources */,
+				32E6F43C1E4869120068320E /* AbstractAgent.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

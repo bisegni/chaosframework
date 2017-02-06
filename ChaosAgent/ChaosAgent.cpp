@@ -19,7 +19,7 @@
  *    	limitations under the License.
  */
 
-#include <ChaosAgent/ChaosAgent.h>
+#include "ChaosAgent.h"
 using namespace chaos::agent;
 
 chaos::WaitSemaphore ChaosAgent::wait_close_semaphore;
