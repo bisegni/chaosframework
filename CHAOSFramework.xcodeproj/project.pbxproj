@@ -956,6 +956,7 @@
 		32E6F43C1E4869120068320E /* AbstractAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E6F43A1E4869120068320E /* AbstractAgent.cpp */; };
 		32E6F43F1E48B4260068320E /* AgentDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E6F43D1E48B4260068320E /* AgentDataAccess.cpp */; };
 		32E6F4421E48B4B10068320E /* MongoDBAgentDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E6F4401E48B4B10068320E /* MongoDBAgentDataAccess.cpp */; };
+		32E6F4461E48D28F0068320E /* AgentAckCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E6F4441E48D28F0068320E /* AgentAckCommand.cpp */; };
 		32E86E431CD8A75F0038DE76 /* MessageRequestDomain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E86E411CD8A75F0038DE76 /* MessageRequestDomain.cpp */; };
 		32E86E441CD8A75F0038DE76 /* MessageRequestDomain.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E86E421CD8A75F0038DE76 /* MessageRequestDomain.h */; };
 		32E9A53E1A66A1B100545BB4 /* AbstractApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9A53C1A66A1B100545BB4 /* AbstractApi.cpp */; };
@@ -2296,6 +2297,9 @@
 		32E6F43E1E48B4260068320E /* AgentDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AgentDataAccess.h; sourceTree = "<group>"; };
 		32E6F4401E48B4B10068320E /* MongoDBAgentDataAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MongoDBAgentDataAccess.cpp; sourceTree = "<group>"; };
 		32E6F4411E48B4B10068320E /* MongoDBAgentDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MongoDBAgentDataAccess.h; sourceTree = "<group>"; };
+		32E6F4441E48D28F0068320E /* AgentAckCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AgentAckCommand.cpp; sourceTree = "<group>"; };
+		32E6F4451E48D28F0068320E /* AgentAckCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AgentAckCommand.h; sourceTree = "<group>"; };
+		32E6F4481E48D3A30068320E /* agent_batch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = agent_batch.h; sourceTree = "<group>"; };
 		32E86E411CD8A75F0038DE76 /* MessageRequestDomain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageRequestDomain.cpp; sourceTree = "<group>"; };
 		32E86E421CD8A75F0038DE76 /* MessageRequestDomain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageRequestDomain.h; sourceTree = "<group>"; };
 		32E977561A6E65B800D89C15 /* api_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = api_types.h; sourceTree = "<group>"; };
@@ -4399,6 +4403,7 @@
 				327D83D91AF1185700AD7000 /* batch_impl.h */,
 				32E09CF11C0DE2500069752F /* general */,
 				32761A3D1B37F1DD006C8719 /* node */,
+				32E6F4431E48D2680068320E /* agent */,
 				32610F9A1AE676A400779B84 /* control_unit */,
 				320E773B1A7FBD1E001FB8BC /* unit_server */,
 				325963951D216AE300D94853 /* script */,
@@ -4832,6 +4837,16 @@
 				32E6F4381E48689E0068320E /* ProcessAgent.h */,
 			);
 			path = impl;
+			sourceTree = "<group>";
+		};
+		32E6F4431E48D2680068320E /* agent */ = {
+			isa = PBXGroup;
+			children = (
+				32E6F4441E48D28F0068320E /* AgentAckCommand.cpp */,
+				32E6F4451E48D28F0068320E /* AgentAckCommand.h */,
+				32E6F4481E48D3A30068320E /* agent_batch.h */,
+			);
+			path = agent;
 			sourceTree = "<group>";
 		};
 		32E727031CE200380094F826 /* script */ = {
@@ -5726,6 +5741,7 @@
 				32B1E8131B2EDB2800221E49 /* CommandTemplateSubmit.cpp in Sources */,
 				328E78041A7A9F430008C070 /* AbstractApiGroup.cpp in Sources */,
 				32E6F4421E48B4B10068320E /* MongoDBAgentDataAccess.cpp in Sources */,
+				32E6F4461E48D28F0068320E /* AgentAckCommand.cpp in Sources */,
 				32809C791A9C79DE00C02C12 /* UtilityDataAccess.cpp in Sources */,
 				3221D7201CF5AD09001BE971 /* SaveScript.cpp in Sources */,
 				32761A401B37F202006C8719 /* SubmitBatchCommand.cpp in Sources */,

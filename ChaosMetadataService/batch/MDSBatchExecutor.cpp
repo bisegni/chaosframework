@@ -24,6 +24,7 @@
 #include "general/general_batch.h"
 #include "../ChaosMetadataService.h"
 #include "script/script_batch.h"
+#include "agent/agent_batch.h"
 
 using namespace chaos::common::data;
 using namespace chaos::common::batch_command;
@@ -66,6 +67,9 @@ last_used_sb_idx(3){
     
     //general batch command
     installCommand(script::LoadInstanceOnUnitServer::command_alias, MDS_BATCH_COMMAND_INSTANCER(script::LoadInstanceOnUnitServer));
+    
+    //agent batch command
+    installCommand(agent::AgentAckCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(agent::AgentAckCommand));
     
     //add all sandbox instances
     if(ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_BATCH_SANDBOX_SIZE)) {

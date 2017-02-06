@@ -21,6 +21,7 @@
 
 #include "../../batch/unit_server/UnitServerAckBatchCommand.h"
 #include "../../batch/control_unit/RegistrationAckBatchCommand.h"
+#include "../../batch/agent/AgentAckCommand.h"
 
 #include <boost/algorithm/string/predicate.hpp>
 
@@ -76,20 +77,15 @@ CDataWrapper *NodeRegister::agentRegistration(CDataWrapper *api_data,
     
     int err = 0;
     uint64_t    command_id;
-    bool        is_present = false;
-    uint64_t    nodes_seq = 0;
     //data is used to send answer so we tag it to get ownership
     detach_data = true;
-    
+    const std::string agent_uid = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
     //fetch the unit server data access
-    GET_DATA_ACCESS(UnitServerDataAccess, us_da, -1)
-    GET_DATA_ACCESS(UtilityDataAccess, u_da, -2)
-    
-    const std::string unit_server_alias = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
-    
-    USRA_INFO << "Register unit server " << unit_server_alias;
-    
+    GET_DATA_ACCESS(AgentDataAccess, a_da, -1)
     try {
+        if((err = a_da->insertUpdateAgentDescription(*api_data))) {
+            LOG_AND_TROW(USRA_ERR, -1, CHAOS_FORMAT("Error %1% registering agent %2%", %err%agent_uid));
+        }
         //now we can send back the received message with the ack result
         api_data->addInt32Value(AgentNodeDomainAndActionRPC::REGISTRATION_RESULT,
                                 ErrorCode::EC_MDS_NODE_REGISTRATION_OK);
@@ -102,12 +98,12 @@ CDataWrapper *NodeRegister::agentRegistration(CDataWrapper *api_data,
     }
     
     //manage ack into back command
-    command_id = getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::unit_server::UnitServerAckCommand),
+    command_id = getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::agent::AgentAckCommand),
                                                    api_data,
                                                    0,
                                                    1000);
     
-    USRA_INFO << "Sent ack for registration ok to the unit server " << unit_server_alias;
+    USRA_INFO << CHAOS_FORMAT("Sent ack for agent %1% registration", %agent_uid);
     return NULL;
 }
 

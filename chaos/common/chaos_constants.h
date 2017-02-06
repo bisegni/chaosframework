@@ -542,8 +542,13 @@ namespace chaos {
      *  @{
      */
     namespace AgentNodeDomainAndActionRPC {
+        //! The domain for unit server rpc action
+        static const char * const RPC_DOMAIN                                        = "agent";
+        //! action called for the ack of the agent from mds
+        static const char * const ACTION_AGENT_REGISTRATION_ACK                     = "agentRegistrationAck";
+        
         //!identify the error code for the registration
-        static const char * const REGISTRATION_RESULT  = "andk_rpc_registration_result";
+        static const char * const REGISTRATION_RESULT                               = "andk_rpc_registration_result";
     }
     /** @} */ // end of AgentNodeDomainAndActionRPC
     

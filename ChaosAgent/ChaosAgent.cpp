@@ -20,7 +20,15 @@
  */
 
 #include "ChaosAgent.h"
+
+#include <chaos/common/healt_system/HealtManager.h>
+
+#define INFO    INFO_LOG(ChaosAgent)
+#define ERROR   ERR_LOG(ChaosAgent)
+#define DEBUG   DBG_LOG(ChaosAgent)
+
 using namespace chaos::agent;
+using namespace chaos::common::healt_system;
 
 chaos::WaitSemaphore ChaosAgent::wait_close_semaphore;
 
@@ -49,18 +57,32 @@ void ChaosAgent::init(void *init_data)  throw(CException) {
     if (signal((int) SIGTERM, ChaosAgent::signalHanlder) == SIG_ERR) {
         throw CException(-3, "Error registering SIGTERM signal", __PRETTY_FUNCTION__);
     }
+    
+    //init healt manager singleton
+    StartableService::initImplementation(HealtManager::getInstance(), NULL, "HealthManager", __PRETTY_FUNCTION__);
+    
+    agent_register.reset(new AgentRegister(), "AgentRegister");
+    CHECK_ASSERTION_THROW_AND_LOG(agent_register.get(), ERROR, -1, "AgentRegister instantiation failed");
+    agent_register.init(NULL, __PRETTY_FUNCTION__);
 }
 
 void ChaosAgent::start()throw(CException) {
+    StartableService::startImplementation(HealtManager::getInstance(), "HealthManager", __PRETTY_FUNCTION__);
     ChaosCommon<ChaosAgent>::start();
+    agent_register.start(__PRETTY_FUNCTION__);
+    wait_close_semaphore.wait();
 }
 
 void ChaosAgent::stop()throw(CException) {
-    ChaosCommon<ChaosAgent>::stop();
+    CHAOS_NOT_THROW(ChaosCommon<ChaosAgent>::stop(););
+    CHAOS_NOT_THROW(StartableService::stopImplementation(HealtManager::getInstance(), "HealthManager", __PRETTY_FUNCTION__););
+    agent_register.stop(__PRETTY_FUNCTION__);
 }
 
 void ChaosAgent::deinit()throw(CException) {
-    ChaosCommon<ChaosAgent>::deinit();
+    CHAOS_NOT_THROW(ChaosCommon<ChaosAgent>::deinit(););
+    CHAOS_NOT_THROW(StartableService::deinitImplementation(HealtManager::getInstance(), "HealthManager", __PRETTY_FUNCTION__););
+    agent_register.deinit(__PRETTY_FUNCTION__);
 }
 
 void ChaosAgent::signalHanlder(int signal_number) {

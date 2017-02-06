@@ -26,7 +26,8 @@
 #include <chaos/common/ChaosCommon.h>
 #include <chaos/common/thread/WaitSemaphore.h>
 
-#include <ChaosAgent/chaos_agent_types.h>
+#include "chaos_agent_types.h"
+#include "AgentRegister.h"
 
 namespace chaos {
     namespace agent {
@@ -38,6 +39,7 @@ namespace chaos {
             friend class common::utility::Singleton<ChaosAgent>;
             
             static WaitSemaphore wait_close_semaphore;
+            common::utility::StartableServiceContainer<AgentRegister> agent_register;
         private:
             ChaosAgent();
             ~ChaosAgent();

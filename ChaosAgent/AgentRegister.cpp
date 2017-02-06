@@ -58,6 +58,12 @@ void AgentRegister::addAgent(AgentSharedPtr new_agent) {
 }
 
 void AgentRegister::init(void *init_data) throw (chaos::CException) {
+    //!register RPC action
+    DeclareAction::addActionDescritionInstance<AgentRegister>(this,
+                                                              &AgentRegister::registrationACK,
+                                                              AgentNodeDomainAndActionRPC::RPC_DOMAIN,
+                                                              AgentNodeDomainAndActionRPC::ACTION_AGENT_REGISTRATION_ACK,
+                                                              "Execute the ack for agent registration message");
     //add all agent
     addAgent(AgentSharedPtr(new impl::ProcessAgent()));
     
@@ -67,6 +73,8 @@ void AgentRegister::init(void *init_data) throw (chaos::CException) {
 }
 
 void AgentRegister::start() throw (chaos::CException) {
+    //register rpc action 
+    NetworkBroker::getInstance()->registerAction(this);
     //start the registering state machine
     registration_state = AgentRegisterStateStartRegistering;
     AsyncCentralManager::getInstance()->addTimer(this,
@@ -75,6 +83,9 @@ void AgentRegister::start() throw (chaos::CException) {
 }
 
 void AgentRegister::stop() throw (chaos::CException) {
+    //register rpc action
+    NetworkBroker::getInstance()->deregisterAction(this);
+    
     registration_state = AgentRegisterStateStartUnregistering;
     AsyncCentralManager::getInstance()->addTimer(this,
                                                  0,
@@ -93,8 +104,8 @@ void AgentRegister::deinit() throw (chaos::CException) {
 CDataWrapper* AgentRegister::registrationACK(CDataWrapper  *ack_pack,
                                              bool& detach) {
     CHECK_CDW_THROW_AND_LOG(ack_pack, ERROR, -1, CHAOS_FORMAT("ACK message with no contento for agent %1%", %agent_uid));
-    CHECK_KEY_THROW_AND_LOG(ack_pack, NodeDefinitionKey::NODE_UNIQUE_ID, ERROR, -2, CHAOS_FORMAT("No identification of the device contained into the ack message for agent %1%", %agent_uid))
-    CHECK_ASSERTION_THROW_AND_LOG((ack_pack->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID).compare(agent_uid) == 0), ERROR, -3, CHAOS_FORMAT("ACK message received by agent %1% was for a different agent %2% ", %agent_uid%ack_pack->getStringValue( NodeDefinitionKey::NODE_UNIQUE_ID)))
+    CHECK_KEY_THROW_AND_LOG(ack_pack, NodeDefinitionKey::NODE_UNIQUE_ID, ERROR, -2, CHAOS_FORMAT("No identification of the device contained into the ack message for agent %1%", %agent_uid));
+    CHECK_ASSERTION_THROW_AND_LOG((ack_pack->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID).compare(agent_uid) == 0), ERROR, -3, CHAOS_FORMAT("ACK message received by agent %1% was for a different agent %2% ", %agent_uid%ack_pack->getStringValue( NodeDefinitionKey::NODE_UNIQUE_ID)));
     if(ack_pack->hasKey(AgentNodeDomainAndActionRPC::REGISTRATION_RESULT)) {
         int ack_val=ack_pack->getInt32Value(AgentNodeDomainAndActionRPC::REGISTRATION_RESULT);
         switch(ack_val){
@@ -161,7 +172,7 @@ void AgentRegister::timeout() {
         }
         case AgentRegisterStateRegistering: {
             //send the rigstration pack
-            if(max_reg_retry_counter%(reg_retry_counter++) == 0) {
+            if(((reg_retry_counter++)%max_reg_retry_counter) == 0) {
                 std::auto_ptr<CDataWrapper> reg = getAgentRegistrationPack();
                 mds_message_channel->sendNodeRegistration(*reg);
                 HealtManager::getInstance()->addNewNode(agent_uid);
@@ -202,7 +213,7 @@ void AgentRegister::timeout() {
             for(MapAgentIterator iter = map_agent.begin();
                 iter != map_agent.end();
                 iter++) {
-                NetworkBroker::getInstance()->registerAction(iter->second.get());
+                NetworkBroker::getInstance()->deregisterAction(iter->second.get());
             }
             registration_state = AgentRegisterStateUnregistered;
             break;

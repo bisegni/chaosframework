@@ -33,7 +33,7 @@
 
 namespace chaos {
     namespace agent {
-        
+        //!forward declaration
         class AbstractAgent;
         
         typedef boost::shared_ptr<AbstractAgent> AgentSharedPtr;
@@ -63,8 +63,6 @@ namespace chaos {
             uint32_t                             max_reg_retry_counter;
            
         protected:
-            AgentRegister();
-            ~AgentRegister();
             //!inherited by chaos::common::async_central::TimerHandler
             void timeout();
             std::auto_ptr<chaos::common::data::CDataWrapper> getAgentRegistrationPack();
@@ -74,7 +72,8 @@ namespace chaos {
              */
             chaos::common::data::CDataWrapper* registrationACK(chaos::common::data::CDataWrapper  *message_data, bool& detach);
         public:
-            
+            AgentRegister();
+            ~AgentRegister();
             void init(void *init_data) throw (chaos::CException);
             void start() throw (chaos::CException);
             void stop() throw (chaos::CException);

@@ -22,15 +22,10 @@
 #include "MongoDBAgentDataAccess.h"
 #include "mongo_db_constants.h"
 
-#include <chaos/common/bson/util/base64.h>
+#include <chaos/common/chaos_constants.h>
 #include <chaos/common/utility/TimingUtil.h>
 
-#include <boost/regex.hpp>
-#include <boost/foreach.hpp>
-#include <boost/algorithm/string.hpp>
-
-#include <json/json.h>
-
+using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::common::utility;
 using namespace chaos::service_common::data::node;
@@ -52,6 +47,47 @@ utility_data_access(NULL){}
 MongoDBAgentDataAccess::~MongoDBAgentDataAccess() {}
 
 
-int MongoDBAgentDataAccess::insertUpdateAgentDescription(chaos::common::data::CDataWrapper& agent_description) {
-    return 0;
+int MongoDBAgentDataAccess::insertUpdateAgentDescription(CDataWrapper& agent_description) {
+    int err = 0;
+    int size = 0;
+    try {
+        CHECK_KEY_THROW_AND_LOG((&agent_description), NodeDefinitionKey::NODE_UNIQUE_ID, ERR, -1, CHAOS_FORMAT("The attribute %1% is not found", %NodeDefinitionKey::NODE_UNIQUE_ID));
+        CHECK_KEY_THROW_AND_LOG((&agent_description), AgentNodeDefinitionKey::HOSTED_WORKER, ERR, -1, CHAOS_FORMAT("The attribute %1% is not found", %AgentNodeDefinitionKey::HOSTED_WORKER));
+        //now update proprietary fields
+        const std::string agent_uid = agent_description.getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
+        mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << agent_uid
+                                    << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_AGENT);
+        mongo::BSONArrayBuilder array_descirption_builder;
+        std::auto_ptr<CMultiTypeDataArrayWrapper> description_array(agent_description.getVectorValue(AgentNodeDefinitionKey::HOSTED_WORKER));
+        for(int idx = 0;
+            idx < description_array->size();
+            idx++) {
+            std::auto_ptr<CDataWrapper> worker_desc(description_array->getCDataWrapperElementAtIndex(idx));
+            array_descirption_builder << mongo::BSONObj(worker_desc->getBSONRawData(size));
+        }
+        
+        mongo::BSONObj update = BSON("$set" << BSON(AgentNodeDefinitionKey::HOSTED_WORKER << array_descirption_builder.arr()));
+        
+        DEBUG_CODE(DBG<<log_message("insertUpdateAgentDescription",
+                                    "update",
+                                    DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                            "Update",
+                                                            query.toString(),
+                                                            update.toString()));)
+        
+        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                     query,
+                                     update,
+                                     true,
+                                     false))){
+            ERR << "Error registering agent" << agent_uid << " with error:" << err;
+        }
+    } catch (const mongo::DBException &e) {
+        ERR << e.what();
+        err = -1;
+    } catch (const chaos::CException &e) {
+        ERR << e.what();
+        err = e.errorCode;
+    }
+    return err;
 }

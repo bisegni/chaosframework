@@ -126,7 +126,8 @@ SET(cnd_src  ${cnd_src} persistence/PersistenceManager.cpp
                         persistence/data_access/SnapshotDataAccess.cpp
 						persistence/data_access/TreeGroupDataAccess.cpp
                         persistence/data_access/LoggingDataAccess.cpp
-						persistence/data_access/ScriptDataAccess.cpp)
+						persistence/data_access/ScriptDataAccess.cpp
+                        persistence/data_access/AgentDataAccess.cpp)
 
 SET(cnd_src  ${cnd_src}	persistence/mongodb/MongoDBPersistenceDriver.cpp
                         persistence/mongodb/MongoDBUnitServerDataAccess.cpp
@@ -137,7 +138,8 @@ SET(cnd_src  ${cnd_src}	persistence/mongodb/MongoDBPersistenceDriver.cpp
                         persistence/mongodb/MongoDBSnapshotDataAccess.cpp
                         persistence/mongodb/MongoDBTreeGroupDataAccess.cpp
                         persistence/mongodb/MongoDBLoggingDataAccess.cpp
-						persistence/mongodb/MongoDBScriptDataAccess.cpp)
+						persistence/mongodb/MongoDBScriptDataAccess.cpp
+                        persistence/mongodb/MongoDBAgentDataAccess.cpp)
 #Caching
 SET(cnd_src  ${cnd_src}	cache_system/CacheDriver.cpp
                         cache_system/CacheDriverMetricCollector.cpp
@@ -153,6 +155,8 @@ SET(cnd_src  ${cnd_src}	object_storage/mongodb/MongoDBObjectStorageDataAccess.cp
 
 SET(cnd_src  ${cnd_src}	batch/MDSBatchExecutor.cpp
                         batch/MDSBatchCommand.cpp)
+
+SET(cnd_src  ${cnd_src}	batch/agent/AgentAckCommand.cpp)
 
 SET(cnd_src  ${cnd_src}	batch/node/UpdatePropertyCommand.cpp
                         batch/node/SubmitBatchCommand.cpp)
