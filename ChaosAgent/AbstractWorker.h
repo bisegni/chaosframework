@@ -1,5 +1,5 @@
 /*
- *	AbstractAgent.h
+ *	AbstractWorker.h
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
@@ -19,11 +19,12 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__B8D3722_2599_4337_999F_FADA42E4AC95_AbstractAgent_h
-#define __CHAOSFramework__B8D3722_2599_4337_999F_FADA42E4AC95_AbstractAgent_h
+#ifndef __CHAOSFramework__B8D3722_2599_4337_999F_FADA42E4AC95_AbstractWorker_h
+#define __CHAOSFramework__B8D3722_2599_4337_999F_FADA42E4AC95_AbstractWorker_h
 
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/action/DeclareAction.h>
+#include <chaos/common/utility/NamedService.h>
 #include <chaos/common/utility/InizializableService.h>
 
 #include <memory>
@@ -31,20 +32,18 @@
 namespace chaos {
     namespace agent {
         
-        class AbstractAgent:
+        class AbstractWorker:
         public DeclareAction,
-        public chaos::common::utility::InizializableService{
-            const std::string agent_name;
+        public chaos::common::utility::NamedService,
+        public chaos::common::utility::InizializableService {
         public:
-            AbstractAgent(const std::string& _agent_name);
-            virtual ~AbstractAgent();
+            AbstractWorker(const std::string& _worker_name);
+            virtual ~AbstractWorker();
             
             void init(void *data) throw(chaos::CException);
             void deinit() throw(chaos::CException);
-            
-            const std::string& getAgentName() const;
         };
     }
 }
 
-#endif /* __CHAOSFramework__B8D3722_2599_4337_999F_FADA42E4AC95_AbstractAgent_h */
+#endif /* __CHAOSFramework__B8D3722_2599_4337_999F_FADA42E4AC95_AbstractWorker_h */

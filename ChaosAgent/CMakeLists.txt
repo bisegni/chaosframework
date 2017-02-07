@@ -8,7 +8,10 @@ INCLUDE_DIRECTORIES(chaos/common ../)
 
 SET(agent_src   main.cpp
                 ChaosAgent.cpp
-                AgentRegister.cpp)
+                AgentRegister.cpp
+                AbstractWorker.cpp)
+
+SET(agent_src  ${agent_src}	worker/ProcessWorker.cpp)
 
 ADD_EXECUTABLE(${PROJECT_NAME} ${agent_src})
 

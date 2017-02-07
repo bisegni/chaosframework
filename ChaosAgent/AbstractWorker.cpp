@@ -1,5 +1,5 @@
 /*
- *	ProcessAgent.cpp
+ *	AbstractWorker.cpp
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
@@ -19,23 +19,23 @@
  *    	limitations under the License.
  */
 
-#include "ProcessAgent.h"
+#include "AbstractWorker.h"
 
 #include <chaos/common/chaos_constants.h>
+#include <chaos/common/utility/TimingUtil.h>
 
-using namespace chaos::agent::impl;
+using namespace chaos::agent;
+using namespace chaos::common::data;
 
-ProcessAgent::ProcessAgent():
-AbstractAgent("ProcessAgent"){}
+AbstractWorker::AbstractWorker(const std::string& _worker_name):
+NamedService(_worker_name){}
 
-ProcessAgent::~ProcessAgent() {
+AbstractWorker::~AbstractWorker() {}
+
+void AbstractWorker::init(void *data) throw(chaos::CException) {
     
 }
 
-void ProcessAgent::init(void *data) throw(chaos::CException) {
-    
-}
-
-void ProcessAgent::deinit() throw(chaos::CException) {
+void AbstractWorker::deinit() throw(chaos::CException) {
     
 }

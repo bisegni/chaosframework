@@ -74,15 +74,15 @@ void ChaosAgent::start()throw(CException) {
 }
 
 void ChaosAgent::stop()throw(CException) {
-    CHAOS_NOT_THROW(ChaosCommon<ChaosAgent>::stop(););
     CHAOS_NOT_THROW(StartableService::stopImplementation(HealtManager::getInstance(), "HealthManager", __PRETTY_FUNCTION__););
     agent_register.stop(__PRETTY_FUNCTION__);
+    CHAOS_NOT_THROW(ChaosCommon<ChaosAgent>::stop(););
 }
 
 void ChaosAgent::deinit()throw(CException) {
-    CHAOS_NOT_THROW(ChaosCommon<ChaosAgent>::deinit(););
     CHAOS_NOT_THROW(StartableService::deinitImplementation(HealtManager::getInstance(), "HealthManager", __PRETTY_FUNCTION__););
     agent_register.deinit(__PRETTY_FUNCTION__);
+    CHAOS_NOT_THROW(ChaosCommon<ChaosAgent>::deinit(););
 }
 
 void ChaosAgent::signalHanlder(int signal_number) {

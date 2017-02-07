@@ -20,8 +20,8 @@
  */
 
 #include "AgentRegister.h"
-#include "AbstractAgent.h"
-#include "impl/ProcessAgent.h"
+#include "AbstractWorker.h"
+#include "worker/ProcessWorker.h"
 
 #include <chaos/common/global.h>
 #include <chaos/common/network/NetworkBroker.h>
@@ -46,26 +46,27 @@ rpc_domain("agent"),
 registration_state(AgentRegisterStateUnregistered),
 mds_message_channel(NULL),
 reg_retry_counter(0),
-max_reg_retry_counter(5){}
-
-AgentRegister::~AgentRegister() {}
-
-void AgentRegister::addAgent(AgentSharedPtr new_agent) {
-    if(new_agent.get() == NULL) return;
-    if(map_agent.count(new_agent->getAgentName()) != 0) return;
-    //add agent to map
-    map_agent.insert(MapAgentPair(new_agent->getAgentName(), new_agent));
-}
-
-void AgentRegister::init(void *init_data) throw (chaos::CException) {
+max_reg_retry_counter(5){
     //!register RPC action
     DeclareAction::addActionDescritionInstance<AgentRegister>(this,
                                                               &AgentRegister::registrationACK,
                                                               AgentNodeDomainAndActionRPC::RPC_DOMAIN,
                                                               AgentNodeDomainAndActionRPC::ACTION_AGENT_REGISTRATION_ACK,
                                                               "Execute the ack for agent registration message");
+}
+
+AgentRegister::~AgentRegister() {}
+
+void AgentRegister::addWorker(WorkerSharedPtr new_worker) {
+    if(new_worker.get() == NULL) return;
+    if(map_worker.count(new_worker->getName()) != 0) return;
+    //add agent to map
+    map_worker.insert(MapWorkerPair(new_worker->getName(), new_worker));
+}
+
+void AgentRegister::init(void *init_data) throw (chaos::CException) {
     //add all agent
-    addAgent(AgentSharedPtr(new impl::ProcessAgent()));
+    addWorker(WorkerSharedPtr(new worker::ProcessWorker()));
     
     //!get metadata message channel
     mds_message_channel = NetworkBroker::getInstance()->getMetadataserverMessageChannel();
@@ -76,7 +77,7 @@ void AgentRegister::start() throw (chaos::CException) {
     //register rpc action 
     NetworkBroker::getInstance()->registerAction(this);
     //start the registering state machine
-    registration_state = AgentRegisterStateStartRegistering;
+    registration_state() = AgentRegisterStateStartRegistering;
     AsyncCentralManager::getInstance()->addTimer(this,
                                                  0,
                                                  SM_EXECTION_STEP_MS);
@@ -86,7 +87,7 @@ void AgentRegister::stop() throw (chaos::CException) {
     //register rpc action
     NetworkBroker::getInstance()->deregisterAction(this);
     
-    registration_state = AgentRegisterStateStartUnregistering;
+    registration_state() = AgentRegisterStateStartUnregistering;
     AsyncCentralManager::getInstance()->addTimer(this,
                                                  0,
                                                  SM_EXECTION_STEP_MS);
@@ -107,16 +108,17 @@ CDataWrapper* AgentRegister::registrationACK(CDataWrapper  *ack_pack,
     CHECK_KEY_THROW_AND_LOG(ack_pack, NodeDefinitionKey::NODE_UNIQUE_ID, ERROR, -2, CHAOS_FORMAT("No identification of the device contained into the ack message for agent %1%", %agent_uid));
     CHECK_ASSERTION_THROW_AND_LOG((ack_pack->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID).compare(agent_uid) == 0), ERROR, -3, CHAOS_FORMAT("ACK message received by agent %1% was for a different agent %2% ", %agent_uid%ack_pack->getStringValue( NodeDefinitionKey::NODE_UNIQUE_ID)));
     if(ack_pack->hasKey(AgentNodeDomainAndActionRPC::REGISTRATION_RESULT)) {
+        AgentRegisterStateLockableWriteLock write_lock = registration_state.getWriteLockObject();
         int ack_val=ack_pack->getInt32Value(AgentNodeDomainAndActionRPC::REGISTRATION_RESULT);
         switch(ack_val){
             case ErrorCode::EC_MDS_NODE_REGISTRATION_OK:
-                registration_state = AgentRegisterStateRegistered;
+                registration_state() = AgentRegisterStateRegistered;
                 INFO << CHAOS_FORMAT("Agent %1% has been registered", %agent_uid);
                 break;
                 
             default:
                 INFO << CHAOS_FORMAT("Agent %1% can be run by registration denied", %agent_uid);
-                registration_state = AgentRegisterStateUnregistered;
+                registration_state() = AgentRegisterStateUnregistered;
                 break;
         }
     }
@@ -138,8 +140,8 @@ std::auto_ptr<CDataWrapper> AgentRegister::getAgentRegistrationPack() {
     result->addInt64Value(NodeDefinitionKey::NODE_TIMESTAMP,
                           TimingUtil::getTimeStamp());
     //add control unit alias
-    for(MapAgentIterator iter = map_agent.begin();
-        iter != map_agent.end();
+    for(MapWorkerIterator iter = map_worker.begin();
+        iter != map_worker.end();
         iter++) {
         std::auto_ptr<CDataWrapper> worker_definition(new CDataWrapper());
         CHAOS_ASSERT(worker_definition.get());
@@ -156,7 +158,8 @@ std::auto_ptr<CDataWrapper> AgentRegister::getAgentRegistrationPack() {
 }
 
 void AgentRegister::timeout() {
-    switch(registration_state) {
+    AgentRegisterStateLockableWriteLock write_lock = registration_state.getWriteLockObject();
+    switch(registration_state()) {
         case AgentRegisterStateUnregistered:
             HealtManager::getInstance()->addNodeMetricValue(agent_uid,
                                                             NodeHealtDefinitionKey::NODE_HEALT_STATUS,
@@ -168,7 +171,7 @@ void AgentRegister::timeout() {
             reg_retry_counter = 0;
             //add healt metric for newly create control unit instance
             HealtManager::getInstance()->addNewNode(agent_uid);
-            registration_state = AgentRegisterStateRegistering;
+            registration_state() = AgentRegisterStateRegistering;
         }
         case AgentRegisterStateRegistering: {
             //send the rigstration pack
@@ -191,13 +194,13 @@ void AgentRegister::timeout() {
             
             //register all action
             try{
-                for(MapAgentIterator iter = map_agent.begin();
-                    iter != map_agent.end();
+                for(MapWorkerIterator iter = map_worker.begin();
+                    iter != map_worker.end();
                     iter++) {
                     NetworkBroker::getInstance()->registerAction(iter->second.get());
                 }
             }catch(chaos::CException& ex) {
-                registration_state = AgentRegisterStateFault;
+                registration_state() = AgentRegisterStateFault;
             }
             break;
         }
@@ -205,17 +208,17 @@ void AgentRegister::timeout() {
             HealtManager::getInstance()->addNodeMetricValue(agent_uid,
                                                             NodeHealtDefinitionKey::NODE_HEALT_STATUS,
                                                             NodeHealtDefinitionValue::NODE_HEALT_STATUS_UNLOADING);
-            registration_state = AgentRegisterStateUnregistering;
+            registration_state() = AgentRegisterStateUnregistering;
         }
         case AgentRegisterStateUnregistering:
             reg_retry_counter = 0;
-            registration_state = AgentRegisterStateUnregistered;
-            for(MapAgentIterator iter = map_agent.begin();
-                iter != map_agent.end();
+            registration_state() = AgentRegisterStateUnregistered;
+            for(MapWorkerIterator iter = map_worker.begin();
+                iter != map_worker.end();
                 iter++) {
                 NetworkBroker::getInstance()->deregisterAction(iter->second.get());
             }
-            registration_state = AgentRegisterStateUnregistered;
+            registration_state() = AgentRegisterStateUnregistered;
             break;
             
         case AgentRegisterStateFault:

@@ -254,7 +254,7 @@ namespace chaos {
         
         //! identify a process agent
         /*!
-         A process agent is a daemo that run on an host that permit to 
+         A process agent is a daemo that run on an host that permit to
          manage chaos process whitin that host (start stop uni t server and perform deploy)
          */
         static const char * const NODE_TYPE_AGENT       = "nt_agent";
@@ -478,7 +478,7 @@ namespace chaos {
         
     }
     /** @} */ // end of UnitServerNodeDefinitionKey
-
+    
     /** @defgroup UnitServerNodeDomainAndActionRPC !CHAOS unit server rpc key description
      *  This is the collection of all key used only by unit server
      *  @{
@@ -542,13 +542,29 @@ namespace chaos {
      *  @{
      */
     namespace AgentNodeDomainAndActionRPC {
-        //! The domain for unit server rpc action
+        //! The domain for agent rpc action
         static const char * const RPC_DOMAIN                                        = "agent";
         //! action called for the ack of the agent from mds
         static const char * const ACTION_AGENT_REGISTRATION_ACK                     = "agentRegistrationAck";
         
         //!identify the error code for the registration
         static const char * const REGISTRATION_RESULT                               = "andk_rpc_registration_result";
+        
+        namespace ProcessWorker {
+            static const char * const WORKER_NAME                                   = "HostProcessManagement";
+            static const char * const ACTION_LAUNCH_UNIT_SERVER                     = "startUnitServer";
+            static const char * const ACTION_LAUNCH_UNIT_SERVER_PAR_NAME            = "unit_server_name";
+            static const char * const ACTION_LAUNCH_UNIT_SERVER_PAR_CFG             = "unit_server_init_cfg";
+            
+            static const char * const ACTION_STOP_UNIT_SERVER                     = "stopUnitServer";
+            static const char * const ACTION_STOP_UNIT_SERVER_PAR_NAME            = "unit_server_name";
+            
+            static const char * const ACTION_RESTART_UNIT_SERVER                     = "restartUnitServer";
+            static const char * const ACTION_RESTART_UNIT_SERVER_PAR_NAME            = "unit_server_name";
+            static const char * const ACTION_RESTART_UNIT_SERVER_PAR_KILL            = "kill";
+            
+            static const char * const ACTION_LIST_UNIT_SERVER                     = "listUnitServer";
+        }
     }
     /** @} */ // end of AgentNodeDomainAndActionRPC
     
@@ -1159,9 +1175,9 @@ namespace chaos {
                 //!Integer 16 bit length
             case DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM:
                 return DataPackPrefixID::SYSTEM_DATASET_POSTFIX;
-
+                
             case DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH:
-                    return DataPackPrefixID::HEALTH_DATASET_POSTFIX;
+                return DataPackPrefixID::HEALTH_DATASET_POSTFIX;
                 //!Integer 32 bit length
             case DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM:
                 return DataPackPrefixID::DEV_ALARM_DATASET_POSTFIX;
@@ -1186,24 +1202,24 @@ namespace chaos {
     }
     
     static inline const char* datasetTypeToHuman(unsigned int domain) {
-    	switch (domain) {
-    	case DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT:
-    		return "output";
-    	case DataPackCommonKey::DPCK_DATASET_TYPE_INPUT:
-    		return "input";
-    	case DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM:
-    		return "custom";
-    	case DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM:
-    		return "system";
-    	case DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH:
-    		return "health";
-    	case DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM:
-    		return "device_alarms";
-    	case DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM:
-    		return "cu_alarms";
-    	default:
-    		return "unknown";
-    	}
+        switch (domain) {
+            case DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT:
+                return "output";
+            case DataPackCommonKey::DPCK_DATASET_TYPE_INPUT:
+                return "input";
+            case DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM:
+                return "custom";
+            case DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM:
+                return "system";
+            case DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH:
+                return "health";
+            case DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM:
+                return "device_alarms";
+            case DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM:
+                return "cu_alarms";
+            default:
+                return "unknown";
+        }
     }
     /** @defgroup DataPackKey Chaos Data Pack output attirbute
      This is the collection of the standard key that are contained into the output

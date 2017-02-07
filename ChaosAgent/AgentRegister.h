@@ -27,6 +27,7 @@
 #include <chaos/common/message/MDSMessageChannel.h>
 #include <chaos/common/async_central/async_central.h>
 #include <chaos/common/utility/StartableService.h>
+#include <chaos/common/utility/LockableObject.h>
 
 #include <map>
 #include <boost/shared_ptr.hpp>
@@ -34,10 +35,10 @@
 namespace chaos {
     namespace agent {
         //!forward declaration
-        class AbstractAgent;
+        class AbstractWorker;
         
-        typedef boost::shared_ptr<AbstractAgent> AgentSharedPtr;
-        CHAOS_DEFINE_MAP_FOR_TYPE(std::string, AgentSharedPtr, MapAgent);
+        typedef boost::shared_ptr<AbstractWorker> WorkerSharedPtr;
+        CHAOS_DEFINE_MAP_FOR_TYPE(std::string, WorkerSharedPtr, MapWorker);
         
         typedef enum {
             AgentRegisterStateUnregistered,
@@ -49,6 +50,8 @@ namespace chaos {
             AgentRegisterStateFault
         } AgentRegisterState;
         
+        CHAOS_DEFINE_LOCKABLE_OBJECT(AgentRegisterState, AgentRegisterStateLockable);
+        
         class AgentRegister:
         public chaos::DeclareAction,
         public chaos::common::utility::StartableService,
@@ -56,11 +59,11 @@ namespace chaos {
             const std::string agent_uid;
             const std::string rpc_domain;
             //agent container map
-            MapAgent                             map_agent;
-            AgentRegisterState                   registration_state;
+            MapWorker    map_worker;
+            uint32_t    reg_retry_counter;
+            uint32_t    max_reg_retry_counter;
+            AgentRegisterStateLockable           registration_state;
             common::message::MDSMessageChannel   *mds_message_channel;
-            uint32_t                             reg_retry_counter;
-            uint32_t                             max_reg_retry_counter;
            
         protected:
             //!inherited by chaos::common::async_central::TimerHandler
@@ -80,7 +83,7 @@ namespace chaos {
             void deinit() throw (chaos::CException);
             
             //!add a new agent
-            void addAgent(AgentSharedPtr new_agent);
+            void addWorker(WorkerSharedPtr new_worker);
         };
         
     }

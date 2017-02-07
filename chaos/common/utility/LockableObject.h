@@ -41,6 +41,13 @@ typedef chaos::common::utility::LockableObject<x>::LockableObjectWriteLock n ## 
             class LockableObject  {
                 ChaosSharedMutex mutex_container_dataset;
             public:
+                
+                LockableObject(){}
+                
+                LockableObject(const T& src){
+                    container_object = src;
+                }
+                
                 //!readable lock class
                 class ReadLock {
                     friend class LockableObject<T>;
@@ -80,6 +87,14 @@ typedef chaos::common::utility::LockableObject<x>::LockableObjectWriteLock n ## 
                 
                 T& operator()(){
                     return container_object;
+                }
+                
+                inline bool operator==(const T& lhs) {
+                    return container_object == lhs;
+                }
+                
+                inline bool operator!=(const T& lhs) {
+                    return container_object != lhs;
                 }
             };
         }
