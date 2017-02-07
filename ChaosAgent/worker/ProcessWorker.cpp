@@ -23,17 +23,12 @@
 
 #include <chaos/common/chaos_constants.h>
 
-#include "../process/process.hpp"
 
 #define INFO    INFO_LOG(ProcessWorker)
 #define ERROR   ERR_LOG(ProcessWorker)
 #define DBG   DBG_LOG(ProcessWorker)
 
 using namespace chaos::agent::worker;
-using namespace boost::process;
-using namespace boost::process::initializers;
-
-namespace bp = ::boost::process;
 
 ProcessWorker::ProcessWorker():
 AbstractWorker(AgentNodeDomainAndActionRPC::ProcessWorker::WORKER_NAME) {
