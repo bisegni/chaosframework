@@ -2937,12 +2937,6 @@
 		    "storage_type": 2,
 		    "storage_ageing": 3600,
 		    "DriverDescription": [
-		    		{
-		    "DriverDescriptionName": "C_AL250",
-		    "DriverDescriptionVersion": "1.0.0",
-		    "DriverDescriptionInitParam": "HazemeyerAL250:/dev/ttyr0f,2,9600,N,8,1:1"
-		},
-
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
@@ -2981,11 +2975,6 @@
 		    "storage_ageing": 3600,
 
 		    "DriverDescription": [
-		    		{
-		    "DriverDescriptionName": "C_AL250",
-		    "DriverDescriptionVersion": "1.0.0",
-		    "DriverDescriptionInitParam": "HazemeyerAL250:/dev/ttyr0f,2,9600,N,8,1:2"
-		},
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
@@ -3024,12 +3013,6 @@
 		    "storage_ageing": 3600,
 
 		    "DriverDescription": [
-		    		{
-		    "DriverDescriptionName": "C_AL250",
-		    "DriverDescriptionVersion": "1.0.0",
-		    "DriverDescriptionInitParam": "HazemeyerAL250:/dev/ttyr0f,2,9600,N,8,1:2"
-		},
-
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
@@ -3068,12 +3051,6 @@
 		    "storage_ageing": 3600,
 
 		    "DriverDescription": [
-		    		{
-		    "DriverDescriptionName": "C_AL250",
-		    "DriverDescriptionVersion": "1.0.0",
-		    "DriverDescriptionInitParam": "HazemeyerAL250:/dev/ttyr0f,2,9600,N,8,1:2"
-		},
-
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
@@ -3112,12 +3089,6 @@
 		    "storage_ageing": 3600,
 
 		    "DriverDescription": [
-		    		{
-		    "DriverDescriptionName": "C_AL250",
-		    "DriverDescriptionVersion": "1.0.0",
-		    "DriverDescriptionInitParam": "HazemeyerAL250:/dev/ttyr0f,2,9600,N,8,1:2"
-		},
-
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
@@ -5447,11 +5418,6 @@
 		    "storage_type": 2,
 		    "storage_ageing": 3600,
 		    "DriverDescription": [
-		    		{
-		    "DriverDescriptionName": "C_AL250",
-		    "DriverDescriptionVersion": "1.0.0",
-		    "DriverDescriptionInitParam": "HazemeyerAL250:/dev/ttyr0f,2,9600,N,8,1:2"
-		},
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
@@ -5490,12 +5456,6 @@
 		    "storage_ageing": 3600,
 
 		    "DriverDescription": [
-		    		{
-		    "DriverDescriptionName": "C_AL250",
-		    "DriverDescriptionVersion": "1.0.0",
-		    "DriverDescriptionInitParam": "HazemeyerAL250:/dev/ttyr0f,2,9600,N,8,1:2"
-		},
-
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
@@ -5534,12 +5494,6 @@
 		    "storage_ageing": 3600,
 
 		    "DriverDescription": [
-		    		{
-		    "DriverDescriptionName": "C_AL250",
-		    "DriverDescriptionVersion": "1.0.0",
-		    "DriverDescriptionInitParam": "HazemeyerAL250:/dev/ttyr0f,2,9600,N,8,1:2"
-		},
-
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
@@ -5578,12 +5532,6 @@
 		    "storage_ageing": 3600,
 
 		    "DriverDescription": [
-		    		{
-		    "DriverDescriptionName": "C_AL250",
-		    "DriverDescriptionVersion": "1.0.0",
-		    "DriverDescriptionInitParam": "HazemeyerAL250:/dev/ttyr0f,2,9600,N,8,1:2"
-		},
-
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
@@ -5622,12 +5570,6 @@
 		    "storage_ageing": 3600,
 
 		    "DriverDescription": [
-		    		{
-		    "DriverDescriptionName": "C_AL250",
-		    "DriverDescriptionVersion": "1.0.0",
-		    "DriverDescriptionInitParam": "HazemeyerAL250:/dev/ttyr0f,2,9600,N,8,1:2"
-		},
-
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",

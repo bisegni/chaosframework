@@ -202,9 +202,9 @@ void BatchCommandSandbox::deinit() throw (chaos::CException) {
     SCSLAPP_ << "Scheduler thread deleted";
     
     SCSLAPP_ << "clean all paused and waiting command";
-    SCSLAPP_ << "Clear the executing command";
-    if (current_executing_command &&
-        current_executing_command->element->cmdImpl->sticky == false) {
+    if (current_executing_command && (current_executing_command->element->cmdImpl->sticky == false) ) {
+        SCSLAPP_ << "Clear the executing command :"<<current_executing_command->element->cmdImpl->command_alias;
+
         if(event_handler) {
             event_handler->handleCommandEvent(current_executing_command->element->cmdImpl->command_alias,
                                               current_executing_command->element->cmdImpl->unique_id,
@@ -212,9 +212,10 @@ void BatchCommandSandbox::deinit() throw (chaos::CException) {
                                               current_executing_command->element->cmdInfo,
                                               cmd_stat);
         }
-        DELETE_OBJ_POINTER(current_executing_command)
+     DELETE_OBJ_POINTER(current_executing_command)
+
     }
-    
+
     //free the remained commands into the stack
     SCSLAPP_ << "Remove paused command into the stack - size:" << command_stack.size();
     while (!command_stack.empty()) {
@@ -222,7 +223,7 @@ void BatchCommandSandbox::deinit() throw (chaos::CException) {
         command_stack.pop();
         cmd_stat.stacked_commands = (uint32_t)command_stack.size();
         if(nextAvailableCommand == NULL) continue;
-        if(nextAvailableCommand->element->cmdImpl->sticky == true) continue;
+      //  if(nextAvailableCommand->element->cmdImpl->sticky == true) continue;
         if (event_handler) {
             event_handler->handleCommandEvent(nextAvailableCommand->element->cmdImpl->command_alias,
                                               nextAvailableCommand->element->cmdImpl->unique_id,
@@ -445,6 +446,7 @@ void BatchCommandSandbox::checkNextCommand() {
                 thread_scheduler_pause_condition.unlock();
             }
         } else {
+        	//QUEUE EMPTY
             if(current_executing_command) {
                 if (current_executing_command->element->cmdImpl->runningProperty >= RunningPropertyType::RP_END) {
                     boost::mutex::scoped_lock lockForCurrentCommandMutex(mutext_access_current_command);
@@ -530,11 +532,12 @@ void BatchCommandSandbox::checkNextCommand() {
                     }
                 }
             }
-            //at this point we need to check for the stiky comamnd submission
+            //at this point we need to check for the stiky command submission
             if (current_executing_command == NULL &&
                 default_sticky_command.get() &&
                 default_sticky_command->element->cmdImpl->sticky) {
-                //we have no commando so we need to apply the default command
+                //we have no command so we need to apply the default command
+            	default_sticky_command->element->cmdImpl->already_setupped = false;
                 installHandler(default_sticky_command.get());
                 thread_scheduler_pause_condition.unlock();
                 DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] Use sticky default command " << std::hex << default_sticky_command.get() << std::dec;)

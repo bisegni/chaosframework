@@ -65,6 +65,7 @@ AttributeValue::~AttributeValue() {
         buf_size =0;
         size=0;
         free(value_buffer);
+        value_buffer=NULL;
     }
 }
 

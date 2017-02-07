@@ -16,10 +16,11 @@ DEPLOY_FILE=$TMPDIR/deployTargets
 
 rm -rf $TMPDIR
 mkdir -p $TMPDIR
+echo "" > $DEPLOY_FILE
 Usage(){
-	echo -e "$0 [-r <cu|mds|cds|web|all>] [-i <source dir>] [-u] -c <configuration>\n-r <cu|mds|cds|web|all>: restart\n-u: update MDS configuration\n-c <configuration>:configuration\n-i <source dir>: distribution dir\n"
+	echo -e "$0 [-r <cu|mds|cds|web|all>] [-l <"cu,mds,cds,web,wan">] [-i <source dir>] [-u] -c <configuration>\n-r <cu|mds|cds|web|all>: restart\n-u: update MDS configuration\n-c <configuration>:configuration\n-i <source dir>: distribution dir\n-l:<command separated of servers type to update i.e \"cu,mds\" for cus and mds>"
 }
-while getopts r:hc:i:u opt; do
+while getopts r:hc:i:ul: opt; do
  case $opt in
 	r) 
 	    restart=$OPTARG
@@ -33,6 +34,10 @@ while getopts r:hc:i:u opt; do
 	c) 
 	    conf=$OPTARG
 	    ;;
+	l) 
+	    listupdate=$OPTARG
+	    ;;
+
 	h) 
 		Usage
 	exit 0
@@ -45,6 +50,10 @@ esac
 	
 done
 
+if [ -z "$listupdate" ];then
+    listupdate="all"
+fi
+ 
 if [ ! -e "$conf" ]; then
     nok_mesg "You must specify a valid configuration file"
     exit 1
@@ -95,7 +104,9 @@ else
   #  ln -sf cu-$mds.cfg cu.cfg
   #  ln -sf cuiserver-$mds.cfg cuiserver.cfg
     #  popd > /dev/null
-    deployServer $MDS_SERVER
+    if [ $listupdate == "all" ] || [[ $listupdate =~ mds ]];then 
+	deployServer $MDS_SERVER
+    fi
 
 fi
 
@@ -135,7 +146,11 @@ else
     find $CHAOS_PREFIX/www-$webui -name "*" -exec  sed -i s/__template__webuiulr__/$webui/g \{\} >& /dev/null \; 
 
     popd > /dev/null
-    deployServer $WAN_SERVER
+    if [ $listupdate == "all" ] || [[ $listupdate =~ webui ]];then 
+	deployServer $WEBUI_SERVER
+    fi
+
+
 
 fi
 
@@ -152,8 +167,10 @@ else
 	info_mesg "using configuration " "$cudir/wan.cfg"
     fi
 
+    if [ $listupdate == "all" ] || [[ $listupdate =~ wan ]];then 
+	deployServer $WAN_SERVER
+    fi
 
-    deployServer $WAN_SERVER
 
 fi
 
@@ -172,22 +189,28 @@ else
 	info_mesg "using configuration " "$cudir/cds.cfg"
     fi
 
-    for i in $CDS_SERVERS;do
-	deployServer $i	
-    done
+    if [ $listupdate == "all" ] || [[ $listupdate =~ cds ]];then
+	for i in $CDS_SERVERS;do
+	    deployServer $i	
+	done
+
+    fi
+
 
 fi
 
 
-
-for i in $CU_SERVERS;do
-    deployServer $i	
-done
+if [ $listupdate == "all" ] || [[ $listupdate =~ cu ]];then
+    for i in $CU_SERVERS;do
+	deployServer $i	
+    done
+fi
 
 start_stop_service(){
     host=$1
     type=$2
     op=$3
+    
 ## new 
 	if ssh chaos@$host "sudo service chaos-$type $op" ;then
 	    ok_mesg "[$host] chaos-$type $op"
@@ -272,10 +295,43 @@ fi
 
 name=`basename $CHAOS_PREFIX`
 info_mesg "generating tarball " "$name.tgz"
-if tar -c -C $CHAOS_PREFIX/.. $name | gzip -n > $TMPDIR/$name.tgz;then
+## clean log if exists
+
+
+TMP_DEPLOY=$TMPDIR/$name
+mkdir $TMP_DEPLOY
+mkdir $TMP_DEPLOY/log
+cp -r $CHAOS_PREFIX/lib $TMP_DEPLOY/
+cp -r $CHAOS_PREFIX/tools $TMP_DEPLOY/
+cp -r $CHAOS_PREFIX/etc $TMP_DEPLOY/
+rm $TMP_DEPLOY/etc/*.cfg
+cp $cudir/*.cfg $TMP_DEPLOY/etc/
+cp -r $CHAOS_PREFIX/html $TMP_DEPLOY/
+cp -r $CHAOS_PREFIX/chaos_env.sh $TMP_DEPLOY/
+mkdir $TMP_DEPLOY/bin
+if [ -z "$DEPLOY_BINARIES" ];then
+    DEPLOY_BINARIES="ChaosWANProxy CUIserver ChaosMetadataService UnitServer"
+fi
+
+for i in $DEPLOY_BINARIES;do
+    cp $CHAOS_PREFIX/bin/$i $TMP_DEPLOY/bin
+done
+
+pushd $TMP_DEPLOY/bin >& /dev/null
+ln -sf UnitServer cu
+ln -sf ChaosMetadataService mds
+ln -sf ChaosMetadataService cds
+ln -sf CUIserver webui
+ln -sf ChaosWANProxy wan
+popd >& /dev/null
+
+
+
+if tar -c -C $TMP_DEPLOY/.. $name | gzip -n > $TMPDIR/$name.tgz;then
     ok_mesg "$name created"
 else 
     nok_mesg "$name created"
+
     exit 1
 fi
 
@@ -291,6 +347,10 @@ if [ -n "$CU_SERVERS" ]; then
 
 fi
 
+if [ -n "$DEPLOY_REPO" ];then
+    scp $TMPDIR/$name.tgz $DEPLOY_REPO
+fi
+
 if [ -n "$DEPLOY_SERVERS" ];then
     for i in $DEPLOY_SERVERS;do
 	deployServer $i	
@@ -298,17 +358,23 @@ if [ -n "$DEPLOY_SERVERS" ];then
 fi
 
 servers=`cat $DEPLOY_FILE`
-info_mesg "copy on the destination servers: " "$servers"
+
 
 
 for host in `cat $DEPLOY_FILE`;do
+    info_mesg "stopping all services on" " $host"
+    start_stop_service $host "cu" stop >& /dev/null
+    start_stop_service $host "mds" stop >& /dev/null
+    start_stop_service $host "cds" stop >& /dev/null
+    start_stop_service $host "webui" stop >& /dev/null
+    start_stop_service $host "wan" stop >& /dev/null
     info_mesg "removing chaos-* " "$host"
     if ssh chaos@$host "rm -rf chaos-*;echo \"$ver\" > README.install"; then
 	ok_mesg "removing chaos-* in $host"
     fi
-
+    
 done  
-
+info_mesg "copy on the destination servers: " "$servers"
 if $dir/chaos_remote_copy.sh -u chaos -s $TMPDIR/$name.tgz $DEPLOY_FILE;then
     ok_mesg "copy done"
 else
@@ -343,6 +409,7 @@ deploy_install(){
     ## STOP
     start_stop_service $host $type stop
 
+
     extract $host
     if ssh chaos@$host "cd $dest_prefix;ln -sf \$PWD/tools/config/lnf/$cuconfig/$type.cfg etc/";then
 	ok_mesg "$type configuration $dest_prefix/tools/config/lnf/$cuconfig/$type.cfg"
@@ -366,20 +433,28 @@ deploy_install(){
 
 }
 
-if [ -n "$MDS_SERVER" ]; then
-    deploy_install "$MDS_SERVER" mds
+if [ $listupdate == "all" ] || [[ $listupdate =~ mds ]];then 
+    if [ -n "$MDS_SERVER" ]; then
+	deploy_install "$MDS_SERVER" mds
+    fi
 fi
 
-for i in $CDS_SERVERS;do
-    deploy_install "$i" cds
-done
-
-if [ -n "$WEBUI_SERVER" ]; then
-    deploy_install "$WEBUI_SERVER" webui
+if [ $listupdate == "all" ] || [[ $listupdate =~ cds ]];then 
+    for i in $CDS_SERVERS;do
+	deploy_install "$i" cds
+    done
 fi
 
-if [ -n "$WAN_SERVER" ]; then
-    deploy_install "$WAN_SERVER" wan
+if [ $listupdate == "all" ] || [[ $listupdate =~ webui ]];then 
+    if [ -n "$WEBUI_SERVER" ]; then
+	deploy_install "$WEBUI_SERVER" webui
+    fi
+fi
+
+if [ $listupdate == "all" ] || [[ $listupdate =~ wan ]];then 
+    if [ -n "$WAN_SERVER" ]; then
+	deploy_install "$WAN_SERVER" wan
+    fi
 fi
 
 if [ -f "$cudir/$MDS_CONFIG" ]; then
@@ -394,17 +469,15 @@ fi
 
 
 k=1
-
-for i in $CU_SERVERS;do
-    deploy_install "$i" cu$k
-    ((k++))
-done
+if [ $listupdate == "all" ] || [[ $listupdate =~ cu ]];then 
+    for i in $CU_SERVERS;do
+	deploy_install "$i" cu$k
+	((k++))
+    done
+fi
 
 for i in $DEPLOY_SERVERS;do
     extract "$i"
 done
-
-
-
 
 
