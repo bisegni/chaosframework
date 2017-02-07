@@ -23,7 +23,17 @@
 
 #include <chaos/common/chaos_constants.h>
 
+#include "../process/process.hpp"
+
+#define INFO    INFO_LOG(ProcessWorker)
+#define ERROR   ERR_LOG(ProcessWorker)
+#define DBG   DBG_LOG(ProcessWorker)
+
 using namespace chaos::agent::worker;
+using namespace boost::process;
+using namespace boost::process::initializers;
+
+namespace bp = ::boost::process;
 
 ProcessWorker::ProcessWorker():
 AbstractWorker(AgentNodeDomainAndActionRPC::ProcessWorker::WORKER_NAME) {
@@ -83,6 +93,20 @@ void ProcessWorker::deinit() throw(chaos::CException) {}
 
 chaos::common::data::CDataWrapper *ProcessWorker::launchUnitServer(chaos::common::data::CDataWrapper *data,
                                                                     bool& detach) {
+    CHECK_CDW_THROW_AND_LOG(data,
+                            ERROR, -1,
+                            CHAOS_FORMAT("[%1%] ACK message with no content", %getName()));
+    CHECK_KEY_THROW_AND_LOG(data, AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_UNIT_SERVER_PAR_NAME,
+                            ERROR, -2, CHAOS_FORMAT("[%1%] No unit server name found", %getName()));
+    CHECK_ASSERTION_THROW_AND_LOG((data->isStringValue(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_UNIT_SERVER_PAR_NAME)),
+                                  ERROR, -3,
+                                  CHAOS_FORMAT("[%1%] %2% key need to be a string", %getName()%AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_UNIT_SERVER_PAR_NAME));
+    if(data->hasKey(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_UNIT_SERVER_PAR_CFG)) {
+        CHECK_ASSERTION_THROW_AND_LOG((data->isStringValue(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_UNIT_SERVER_PAR_CFG)),
+                                      ERROR, -3,
+                                      CHAOS_FORMAT("[%1%] %2% key need to be a string", %getName()%AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_UNIT_SERVER_PAR_CFG));
+    }
+    
     return NULL;
 }
 

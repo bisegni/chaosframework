@@ -26,13 +26,14 @@
 #include <chaos/common/global.h>
 #include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/healt_system/HealtManager.h>
+#include <chaos/common/utility/InizializableService.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
 
 #define SM_EXECTION_STEP_MS 1000
 
 #define INFO    INFO_LOG(AgentRegister)
 #define ERROR   ERR_LOG(AgentRegister)
-#define DEBUG   DBG_LOG(AgentRegister)
+#define DBG     DBG_LOG(AgentRegister)
 
 using namespace chaos::agent;
 using namespace chaos::common::data;
@@ -67,6 +68,7 @@ void AgentRegister::addWorker(WorkerSharedPtr new_worker) {
 void AgentRegister::init(void *init_data) throw (chaos::CException) {
     //add all agent
     addWorker(WorkerSharedPtr(new worker::ProcessWorker()));
+    
     
     //!get metadata message channel
     mds_message_channel = NetworkBroker::getInstance()->getMetadataserverMessageChannel();
@@ -197,6 +199,10 @@ void AgentRegister::timeout() {
                 for(MapWorkerIterator iter = map_worker.begin();
                     iter != map_worker.end();
                     iter++) {
+                    InizializableService::initImplementation(iter->second.get(),
+                                                             NULL,
+                                                             iter->first,
+                                                             __PRETTY_FUNCTION__);
                     NetworkBroker::getInstance()->registerAction(iter->second.get());
                 }
             }catch(chaos::CException& ex) {
@@ -217,6 +223,9 @@ void AgentRegister::timeout() {
                 iter != map_worker.end();
                 iter++) {
                 NetworkBroker::getInstance()->deregisterAction(iter->second.get());
+                InizializableService::deinitImplementation(iter->second.get(),
+                                                           iter->first,
+                                                           __PRETTY_FUNCTION__);
             }
             registration_state() = AgentRegisterStateUnregistered;
             break;
