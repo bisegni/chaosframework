@@ -68,22 +68,27 @@ void SearchNodeResult::initUI() {
 
     QStringList search_types;
     if(selectable_types.size() == 0) {
-        search_types << "All types" << "Unit server" << "Control unit";
-    } else {
-        foreach(SearchNodeType searchable_type , selectable_types) {
-            switch(searchable_type) {
-            case SNT_ALL_TYPE:
-                search_types << "All types";
-                break;
-            case SNT_UNIT_SERVER:
-                search_types << "Unit server";
-                break;
-            case SNT_CONTROL_UNIT:
-                search_types << "Control unit";
-                break;
-            }
+        selectable_types.push_back(SNT_ALL_TYPE);
+        selectable_types.push_back(SNT_UNIT_SERVER);
+        selectable_types.push_back(SNT_CONTROL_UNIT);
+        selectable_types.push_back(SNT_AGENT_UNIT);
+    }
+    foreach(SearchNodeType searchable_type , selectable_types) {
+        switch(searchable_type) {
+        case SNT_ALL_TYPE:
+            search_types << "All types";
+            break;
+        case SNT_UNIT_SERVER:
+            search_types << "Unit server";
+            break;
+        case SNT_CONTROL_UNIT:
+            search_types << "Control unit";
+            break;
+        case SNT_AGENT_UNIT:
+            search_types << "Agent";
         }
     }
+
     ui->comboBoxSearchType->addItems(search_types);
 
     // Attach the model to the list
@@ -113,8 +118,8 @@ void SearchNodeResult::contextualMenuActionTrigger(const QString& cm_title,
             launchPresenterWidget(new ControlUnitEditor(element_data->title));
         } else if(cm_title.compare(CM_EDIT_INSTANCE) == 0) {
             launchPresenterWidget(new ControUnitInstanceEditor("",
-                                                              element_data->title,
-                                                              true));
+                                                               element_data->title,
+                                                               true));
         }
     }
 }

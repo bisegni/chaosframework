@@ -822,6 +822,8 @@
 		32BD631A1E1E46F5006FE42C /* SharedActionScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32BD63181E1E46F5006FE42C /* SharedActionScheduler.h */; };
 		32BD631D1E1E4D7F006FE42C /* AbstractActionScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32BD631B1E1E4D7F006FE42C /* AbstractActionScheduler.cpp */; };
 		32BD631E1E1E4D7F006FE42C /* AbstractActionScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32BD631C1E1E4D7F006FE42C /* AbstractActionScheduler.h */; };
+		32BE0ACC1E4B44B90007764C /* AgentApiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32BE0ACA1E4B44B90007764C /* AgentApiGroup.cpp */; };
+		32BE0AD01E4B45DB0007764C /* ListUnitServerForAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32BE0ACE1E4B45DB0007764C /* ListUnitServerForAgent.cpp */; };
 		32BE864715A0CEAF00818C39 /* LogManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32BE864515A0CEAF00818C39 /* LogManager.cpp */; };
 		32BE864815A0CEAF00818C39 /* LogManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 32BE864615A0CEAF00818C39 /* LogManager.h */; };
 		32BF74AD167CEB57007F8A57 /* EntityDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32BF74AB167CEB57007F8A57 /* EntityDB.cpp */; };
@@ -2128,6 +2130,11 @@
 		32BD63181E1E46F5006FE42C /* SharedActionScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedActionScheduler.h; sourceTree = "<group>"; };
 		32BD631B1E1E4D7F006FE42C /* AbstractActionScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractActionScheduler.cpp; sourceTree = "<group>"; };
 		32BD631C1E1E4D7F006FE42C /* AbstractActionScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractActionScheduler.h; sourceTree = "<group>"; };
+		32BE0ACA1E4B44B90007764C /* AgentApiGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AgentApiGroup.cpp; sourceTree = "<group>"; };
+		32BE0ACB1E4B44B90007764C /* AgentApiGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AgentApiGroup.h; sourceTree = "<group>"; };
+		32BE0ACE1E4B45DB0007764C /* ListUnitServerForAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ListUnitServerForAgent.cpp; sourceTree = "<group>"; };
+		32BE0ACF1E4B45DB0007764C /* ListUnitServerForAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListUnitServerForAgent.h; sourceTree = "<group>"; };
+		32BE0AD21E4B48AA0007764C /* Agent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Agent.h; sourceTree = "<group>"; };
 		32BE864515A0CEAF00818C39 /* LogManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LogManager.cpp; sourceTree = "<group>"; };
 		32BE864615A0CEAF00818C39 /* LogManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogManager.h; sourceTree = "<group>"; };
 		32BF74AB167CEB57007F8A57 /* EntityDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntityDB.cpp; sourceTree = "<group>"; };
@@ -4160,6 +4167,7 @@
 			isa = PBXGroup;
 			children = (
 				32A116541D128B9C00FF44ED /* Node.h */,
+				32BE0AD21E4B48AA0007764C /* Agent.h */,
 			);
 			path = node;
 			sourceTree = "<group>";
@@ -4505,6 +4513,17 @@
 			path = data_access;
 			sourceTree = "<group>";
 		};
+		32BE0AC91E4B44870007764C /* agent */ = {
+			isa = PBXGroup;
+			children = (
+				32BE0ACA1E4B44B90007764C /* AgentApiGroup.cpp */,
+				32BE0ACB1E4B44B90007764C /* AgentApiGroup.h */,
+				32BE0ACE1E4B45DB0007764C /* ListUnitServerForAgent.cpp */,
+				32BE0ACF1E4B45DB0007764C /* ListUnitServerForAgent.h */,
+			);
+			path = agent;
+			sourceTree = "<group>";
+		};
 		32BE864415A0CDC200818C39 /* log */ = {
 			isa = PBXGroup;
 			children = (
@@ -4600,6 +4619,7 @@
 				32FC7EE21A701D8E0029C2A2 /* AbstractApiGroup.h */,
 				32FC7EE31A70FDB70029C2A2 /* ApiManagment.cpp */,
 				32FC7EE41A70FDB70029C2A2 /* ApiManagment.h */,
+				32BE0AC91E4B44870007764C /* agent */,
 				3270E06A1C6CBA7D00105726 /* logging */,
 				32864FCA1C294A4600DA9B70 /* groups */,
 				327791DF1B67726200FEDD52 /* service */,
@@ -5820,10 +5840,12 @@
 				32E09CED1C0DB2800069752F /* SnapshotDataAccess.cpp in Sources */,
 				328D0FF41A8A0862001A2001 /* UnitServerDataAccess.cpp in Sources */,
 				32A116491D117F0700FF44ED /* ManageScriptInstance.cpp in Sources */,
+				32BE0AD01E4B45DB0007764C /* ListUnitServerForAgent.cpp in Sources */,
 				32D90D561CF4A4E500996F09 /* ScriptGroupApi.cpp in Sources */,
 				32809C821A9C84F900C02C12 /* MongoDBControlUnitDataAccess.cpp in Sources */,
 				3235FDD61A6FF8A800EC83A9 /* MongoDBUnitServerDataAccess.cpp in Sources */,
 				325D2FDE1AFB65DE00B2A706 /* HealtApiGroup.cpp in Sources */,
+				32BE0ACC1E4B44B90007764C /* AgentApiGroup.cpp in Sources */,
 				32B1E7EC1B297CF800221E49 /* CommandTemplateSearch.cpp in Sources */,
 				32F9F8231D9031E90023948D /* MDSCronJob.cpp in Sources */,
 				32864FCD1C294ADB00DA9B70 /* GroupsApiGroup.cpp in Sources */,

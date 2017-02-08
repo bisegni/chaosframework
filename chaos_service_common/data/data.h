@@ -28,6 +28,8 @@
 #include <chaos/common/data/structured/DatasetAttribute.h>
 
 #include <chaos_service_common/data/node/Node.h>
+#include <chaos_service_common/data/node/Agent.h>
+
 #include <chaos_service_common/data/script/Script.h>
 
 #include <chaos_service_common/data/dataset/AlgorithmVariable.h>

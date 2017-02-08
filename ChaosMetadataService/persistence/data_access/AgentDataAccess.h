@@ -48,6 +48,18 @@ namespace chaos {
                     
                     //! Insert or update an agent descirption
                     virtual int insertUpdateAgentDescription(chaos::common::data::CDataWrapper& agent_description) = 0;
+                    
+                    //! return all unit server associated with agent
+                    virtual int getNodeListForAgent(const std::string& agent_uid,
+                                                    ChaosStringVector& unist_server_associated) = 0;
+                    
+                    //! save(if not preset inser or update) the node association description
+                    virtual int saveNodeAssociationForAgent(const std::string& agent_uid,
+                                                            chaos::service_common::data::agent::AgentAssociation& unist_server_association) = 0;
+                    //! load the node association description
+                    virtual int loadNodeAssociationForAgent(const std::string& agent_uid,
+                                                            const std::string& associated_node_uid,
+                                                            chaos::service_common::data::agent::AgentAssociation& unist_server_association) = 0;
                 };
             }
         }

@@ -385,6 +385,9 @@ int MongoDBNodeDataAccess::searchNode(chaos::common::data::CDataWrapper **result
             case 2:
                 type_of_node = chaos::NodeType::NODE_TYPE_CONTROL_UNIT;
                 break;
+            case 3:
+                type_of_node = chaos::NodeType::NODE_TYPE_AGENT;
+                break;
             default:
                 break;
         }

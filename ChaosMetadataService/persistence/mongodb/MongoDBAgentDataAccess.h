@@ -59,6 +59,17 @@ namespace chaos {
                 public:
                     //! inherited by
                     int insertUpdateAgentDescription(chaos::common::data::CDataWrapper& agent_description);
+                    
+                    //! return the unique id of the nodes
+                    virtual int getNodeListForAgent(const std::string& agent_uid,
+                                                    ChaosStringVector& unist_server_associated);
+                    //! inherited by
+                    virtual int saveNodeAssociationForAgent(const std::string& agent_uid,
+                                                            chaos::service_common::data::agent::AgentAssociation& unist_server_association);
+                    //! inherited by
+                    virtual int loadNodeAssociationForAgent(const std::string& agent_uid,
+                                                            const std::string& associated_node_uid,
+                                                            chaos::service_common::data::agent::AgentAssociation& unist_server_association);
                 };
             }
         }

@@ -533,7 +533,10 @@ namespace chaos {
         static const char * const WORKER_NAME         = "andk_worker_name";
         
         //!the description of the worker
-        static const char * const WORKER_DESCRIPTION         = "andk_worker_description";
+        static const char * const WORKER_DESCRIPTION    = "andk_worker_description";
+        
+        //!the list of node associated with the agent
+        static const char * const NODE_ASSOCIATED       = "andk_node_associated";
     }
     /** @} */ // end of AgentNodeDefinitionKey
     
@@ -555,7 +558,7 @@ namespace chaos {
             static const char * const ACTION_LAUNCH_UNIT_SERVER                     = "startUnitServer";
             static const char * const ACTION_LAUNCH_UNIT_SERVER_PAR_NAME            = "unit_server_name";
             static const char * const ACTION_LAUNCH_UNIT_SERVER_PAR_CFG             = "unit_server_init_cfg";
-            
+            static const char * const ACTION_LAUNCH_UNIT_SERVER_PAR_AUTO_START      = "unit_server_auto_start";
             static const char * const ACTION_STOP_UNIT_SERVER                     = "stopUnitServer";
             static const char * const ACTION_STOP_UNIT_SERVER_PAR_NAME            = "unit_server_name";
             
