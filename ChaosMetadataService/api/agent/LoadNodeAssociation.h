@@ -1,5 +1,5 @@
 /*
- *	ListUnitServerForAgent.h
+ *	LoadNodeAssociation.h
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
@@ -19,8 +19,8 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework_EC610C6F_86DE_41AB_B454_DB4B85C73534_ListUnitServerForAgent_h
-#define __CHAOSFramework_EC610C6F_86DE_41AB_B454_DB4B85C73534_ListUnitServerForAgent_h
+#ifndef __CHAOSFramework__4044339_03FD_46CB_B139_1AEC076B6BEC_LoadNodeAssociation_h
+#define __CHAOSFramework__4044339_03FD_46CB_B139_1AEC076B6BEC_LoadNodeAssociation_h
 
 #include "../AbstractApi.h"
 
@@ -31,16 +31,16 @@ namespace chaos {
         namespace api {
             namespace agent {
                 
-                //! List all unit server configured with agent
+                //! load an association from an angen and a node
                 /*!
                  
                  */
-                class ListUnitServerForAgent:
+                class LoadNodeAssociation:
                 public AbstractApi {
-
+                    
                 public:
-                    ListUnitServerForAgent();
-                    ~ListUnitServerForAgent();
+                    LoadNodeAssociation();
+                    ~LoadNodeAssociation();
                     chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
                                                                bool& detach_data);
                 };
@@ -49,4 +49,4 @@ namespace chaos {
     }
 }
 
-#endif /* __CHAOSFramework_EC610C6F_86DE_41AB_B454_DB4B85C73534_ListUnitServerForAgent_h */
+#endif /* __CHAOSFramework__4044339_03FD_46CB_B139_1AEC076B6BEC_LoadNodeAssociation_h */

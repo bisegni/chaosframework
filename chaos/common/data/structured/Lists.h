@@ -33,12 +33,12 @@ namespace chaos {
                 
                 //! Implementation of a SDWrapepr for a string list
                 CHAOS_OPEN_SDWRAPPER(ChaosStringVector)
-                std::string serialization_postfix;
+                std::string serialization_key;
                 
                 void deserialize(chaos::common::data::CDataWrapper *serialized_data){
                     if(serialized_data == NULL) return;
                     Subclass::dataWrapped().clear();
-                    const std::string ser_key = "std_vector_"+serialization_postfix;
+                    const std::string ser_key = (serialization_key.size()==0)?"std_vector_":serialization_key;
                     if(serialized_data->hasKey(ser_key) &&
                        serialized_data->isVectorValue(ser_key)) {
                         std::auto_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> serialized_array(serialized_data->getVectorValue(ser_key));
@@ -51,9 +51,9 @@ namespace chaos {
                     }
                 }
                 
-                std::auto_ptr<chaos::common::data::CDataWrapper> serialize(const uint64_t sequence = 0) {
+                std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
                     std::auto_ptr<chaos::common::data::CDataWrapper> result(new chaos::common::data::CDataWrapper());
-                    const std::string ser_key = "std_vector_"+serialization_postfix;
+                    const std::string ser_key = (serialization_key.size()==0)?"std_vector_":serialization_key;
                     for(ChaosStringVectorIterator it = Subclass::dataWrapped().begin(),
                         end = Subclass::dataWrapped().end();
                         it != end;

@@ -1,5 +1,5 @@
 /*
- *	ListUnitServerForAgent.cpp
+ *	LoadNodeAssociation.cpp
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
@@ -19,44 +19,45 @@
  *    	limitations under the License.
  */
 
-#include "ListUnitServerForAgent.h"
+#include "LoadNodeAssociation.h"
 
-#include <chaos/common/data/structured/Lists.h>
+#include <chaos_service_common/data/data.h>
 
 using namespace chaos::metadata_service::api::agent;
 
-#define INFO INFO_LOG(ListUnitServerForAgent)
-#define ERR  DBG_LOG(ListUnitServerForAgent)
-#define DBG  ERR_LOG(ListUnitServerForAgent)
+#define INFO INFO_LOG(LoadNodeAssociation)
+#define ERR  DBG_LOG(LoadNodeAssociation)
+#define DBG  ERR_LOG(LoadNodeAssociation)
 
 using namespace chaos::common::data;
-using namespace chaos::common::data::structured;
+using namespace chaos::service_common::data::agent;
 using namespace chaos::metadata_service::api::agent;
 using namespace chaos::metadata_service::persistence::data_access;
 
-ListUnitServerForAgent::ListUnitServerForAgent():
-AbstractApi("listUnitServerForAgent"){
+LoadNodeAssociation::LoadNodeAssociation():
+AbstractApi("loadNodeAssociation"){
 }
 
-ListUnitServerForAgent::~ListUnitServerForAgent() {
+LoadNodeAssociation::~LoadNodeAssociation() {
 }
 
-CDataWrapper *ListUnitServerForAgent::execute(CDataWrapper *api_data, bool& detach_data) {
+CDataWrapper *LoadNodeAssociation::execute(CDataWrapper *api_data, bool& detach_data) {
     //check for mandatory attributes
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found");
     CHECK_KEY_THROW_AND_LOG(api_data, NodeDefinitionKey::NODE_UNIQUE_ID, ERR, -2, CHAOS_FORMAT("The key %1% is mandatory", %NodeDefinitionKey::NODE_UNIQUE_ID));
     CHAOS_LASSERT_EXCEPTION(api_data->isStringValue(NodeDefinitionKey::NODE_UNIQUE_ID), ERR, -3, CHAOS_FORMAT("The key %1% need to be a string", %NodeDefinitionKey::NODE_UNIQUE_ID));
-
+    
+    CHECK_KEY_THROW_AND_LOG(api_data, AgentNodeDefinitionKey::NODE_ASSOCIATED, ERR, -4, CHAOS_FORMAT("The key %1% is mandatory", %AgentNodeDefinitionKey::NODE_ASSOCIATED));
+    CHAOS_LASSERT_EXCEPTION(api_data->isStringValue(AgentNodeDefinitionKey::NODE_ASSOCIATED), ERR, -5, CHAOS_FORMAT("The key %1% need to be a string", %AgentNodeDefinitionKey::NODE_ASSOCIATED));
     //we can rpocessd
-    GET_DATA_ACCESS(AgentDataAccess, a_da, -4);
+    GET_DATA_ACCESS(AgentDataAccess, a_da, -6);
     
     int err = 0;
-    ChaosStringVectorSDWrapper association_list_sd_wrapper;
-    association_list_sd_wrapper.serialization_key = "association_list";
+    AgentAssociationSDWrapper assoc_sd_wrapper;
     const std::string agent_uid = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
-
-    if((err = a_da->getNodeListForAgent(agent_uid, association_list_sd_wrapper()))) {
-        LOG_AND_TROW(ERR, -5, "Error creaating new log entry");
+    const std::string node_associated = api_data->getStringValue(AgentNodeDefinitionKey::NODE_ASSOCIATED);
+    if((err = a_da->loadNodeAssociationForAgent(agent_uid, node_associated, assoc_sd_wrapper()))) {
+        LOG_AND_TROW(ERR, -5, CHAOS_FORMAT("Error loading association for node %1% into agent %2% with error %3%", %node_associated%agent_uid%err));
     }
-    return association_list_sd_wrapper.serialize().release();
+    return assoc_sd_wrapper.serialize().release();
 }

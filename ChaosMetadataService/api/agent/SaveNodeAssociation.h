@@ -1,5 +1,5 @@
 /*
- *	ListUnitServerForAgent.h
+ *	SaveNodeAssociation.h
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
@@ -19,8 +19,8 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework_EC610C6F_86DE_41AB_B454_DB4B85C73534_ListUnitServerForAgent_h
-#define __CHAOSFramework_EC610C6F_86DE_41AB_B454_DB4B85C73534_ListUnitServerForAgent_h
+#ifndef __CHAOSFramework__986C79C_9E11_47B0_9D60_A4568AB5B454_SaveNodeAssociation_h
+#define __CHAOSFramework__986C79C_9E11_47B0_9D60_A4568AB5B454_SaveNodeAssociation_h
 
 #include "../AbstractApi.h"
 
@@ -31,16 +31,16 @@ namespace chaos {
         namespace api {
             namespace agent {
                 
-                //! List all unit server configured with agent
+                //! Save an associtation for a node into an agent
                 /*!
                  
                  */
-                class ListUnitServerForAgent:
+                class SaveNodeAssociation:
                 public AbstractApi {
-
+                    
                 public:
-                    ListUnitServerForAgent();
-                    ~ListUnitServerForAgent();
+                    SaveNodeAssociation();
+                    ~SaveNodeAssociation();
                     chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
                                                                bool& detach_data);
                 };
@@ -49,4 +49,4 @@ namespace chaos {
     }
 }
 
-#endif /* __CHAOSFramework_EC610C6F_86DE_41AB_B454_DB4B85C73534_ListUnitServerForAgent_h */
+#endif /* __CHAOSFramework__986C79C_9E11_47B0_9D60_A4568AB5B454_SaveNodeAssociation_h */

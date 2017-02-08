@@ -150,7 +150,8 @@ SOURCES += main.cpp\
     error/ErrorManager.cpp \
     log_browser/ApplicationErrorLogging.cpp \
     data/ApplicationErrorLoggingTableModel.cpp \
-    node/agent/AgentEditor.cpp
+    node/agent/AgentEditor.cpp \
+    data/AgentNodeAssociatedListModel.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -284,7 +285,8 @@ HEADERS  += \
     error/ErrorManager.h \
     log_browser/ApplicationErrorLogging.h \
     data/ApplicationErrorLoggingTableModel.h \
-    node/agent/AgentEditor.h
+    node/agent/AgentEditor.h \
+    data/AgentNodeAssociatedListModel.h
 
 FORMS    += \
     search/searchnoderesult.ui \

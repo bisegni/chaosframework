@@ -20,6 +20,9 @@
  */
 
 #include "AgentApiGroup.h"
+#include "ListUnitServerForAgent.h"
+#include "LoadNodeAssociation.h"
+#include "SaveNodeAssociation.h"
 
 using namespace chaos::metadata_service::api::agent;
 
@@ -28,6 +31,9 @@ DEFINE_CLASS_FACTORY_NO_ALIAS(AgentApiGroup,
 
 AgentApiGroup::AgentApiGroup():
 AbstractApiGroup(AgentNodeDomainAndActionRPC::RPC_DOMAIN){
+    addApi<ListUnitServerForAgent>();
+    addApi<LoadNodeAssociation>();
+    addApi<SaveNodeAssociation>();
 }
 
 AgentApiGroup::~AgentApiGroup() {}

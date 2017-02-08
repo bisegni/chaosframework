@@ -824,6 +824,8 @@
 		32BD631E1E1E4D7F006FE42C /* AbstractActionScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32BD631C1E1E4D7F006FE42C /* AbstractActionScheduler.h */; };
 		32BE0ACC1E4B44B90007764C /* AgentApiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32BE0ACA1E4B44B90007764C /* AgentApiGroup.cpp */; };
 		32BE0AD01E4B45DB0007764C /* ListUnitServerForAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32BE0ACE1E4B45DB0007764C /* ListUnitServerForAgent.cpp */; };
+		32BE0AD61E4B758D0007764C /* SaveNodeAssociation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32BE0AD41E4B758D0007764C /* SaveNodeAssociation.cpp */; };
+		32BE0AD91E4B75A00007764C /* LoadNodeAssociation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32BE0AD71E4B75A00007764C /* LoadNodeAssociation.cpp */; };
 		32BE864715A0CEAF00818C39 /* LogManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32BE864515A0CEAF00818C39 /* LogManager.cpp */; };
 		32BE864815A0CEAF00818C39 /* LogManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 32BE864615A0CEAF00818C39 /* LogManager.h */; };
 		32BF74AD167CEB57007F8A57 /* EntityDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32BF74AB167CEB57007F8A57 /* EntityDB.cpp */; };
@@ -2135,6 +2137,10 @@
 		32BE0ACE1E4B45DB0007764C /* ListUnitServerForAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ListUnitServerForAgent.cpp; sourceTree = "<group>"; };
 		32BE0ACF1E4B45DB0007764C /* ListUnitServerForAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListUnitServerForAgent.h; sourceTree = "<group>"; };
 		32BE0AD21E4B48AA0007764C /* Agent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Agent.h; sourceTree = "<group>"; };
+		32BE0AD41E4B758D0007764C /* SaveNodeAssociation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SaveNodeAssociation.cpp; sourceTree = "<group>"; };
+		32BE0AD51E4B758D0007764C /* SaveNodeAssociation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SaveNodeAssociation.h; sourceTree = "<group>"; };
+		32BE0AD71E4B75A00007764C /* LoadNodeAssociation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadNodeAssociation.cpp; sourceTree = "<group>"; };
+		32BE0AD81E4B75A00007764C /* LoadNodeAssociation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadNodeAssociation.h; sourceTree = "<group>"; };
 		32BE864515A0CEAF00818C39 /* LogManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LogManager.cpp; sourceTree = "<group>"; };
 		32BE864615A0CEAF00818C39 /* LogManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogManager.h; sourceTree = "<group>"; };
 		32BF74AB167CEB57007F8A57 /* EntityDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntityDB.cpp; sourceTree = "<group>"; };
@@ -4520,6 +4526,10 @@
 				32BE0ACB1E4B44B90007764C /* AgentApiGroup.h */,
 				32BE0ACE1E4B45DB0007764C /* ListUnitServerForAgent.cpp */,
 				32BE0ACF1E4B45DB0007764C /* ListUnitServerForAgent.h */,
+				32BE0AD41E4B758D0007764C /* SaveNodeAssociation.cpp */,
+				32BE0AD51E4B758D0007764C /* SaveNodeAssociation.h */,
+				32BE0AD71E4B75A00007764C /* LoadNodeAssociation.cpp */,
+				32BE0AD81E4B75A00007764C /* LoadNodeAssociation.h */,
 			);
 			path = agent;
 			sourceTree = "<group>";
@@ -5761,6 +5771,7 @@
 				32B1E8131B2EDB2800221E49 /* CommandTemplateSubmit.cpp in Sources */,
 				328E78041A7A9F430008C070 /* AbstractApiGroup.cpp in Sources */,
 				32E6F4421E48B4B10068320E /* MongoDBAgentDataAccess.cpp in Sources */,
+				32BE0AD91E4B75A00007764C /* LoadNodeAssociation.cpp in Sources */,
 				32E6F4461E48D28F0068320E /* AgentAckCommand.cpp in Sources */,
 				32809C791A9C79DE00C02C12 /* UtilityDataAccess.cpp in Sources */,
 				3221D7201CF5AD09001BE971 /* SaveScript.cpp in Sources */,
@@ -5893,6 +5904,7 @@
 				328E78091A7AAA070008C070 /* NodeDataAccess.cpp in Sources */,
 				32B299A71BE26933000D3716 /* RecoverError.cpp in Sources */,
 				326ACF801E01525D00AD011E /* CacheDriverMetricCollector.cpp in Sources */,
+				32BE0AD61E4B758D0007764C /* SaveNodeAssociation.cpp in Sources */,
 				32C7ED161B6F8E480038BD26 /* GetFullDescription.cpp in Sources */,
 				3235FDC71A6FF43000EC83A9 /* UnitServerApiGroup.cpp in Sources */,
 				3221D7231CF5ADC9001BE971 /* ScriptDataAccess.cpp in Sources */,
