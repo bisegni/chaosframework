@@ -128,7 +128,8 @@ int MongoDBAgentDataAccess::getNodeListForAgent(const std::string& agent_uid,
                                       query,
                                       &project))){
             ERR << CHAOS_FORMAT("Error finding associated nodes to agent %1% with error %2%", %agent_uid%err);
-        } else if(result.isEmpty() == false) {
+        } else if(result.isEmpty() == false &&
+                  result.hasField(AgentNodeDefinitionKey::NODE_ASSOCIATED)) {
             mongo::BSONElement ele = result.getField(AgentNodeDefinitionKey::NODE_ASSOCIATED);
             if(ele.type() == mongo::Array) {
                 std::vector<mongo::BSONElement> associated_node_object = ele.Array();
@@ -152,31 +153,42 @@ int MongoDBAgentDataAccess::getNodeListForAgent(const std::string& agent_uid,
 }
 
 int MongoDBAgentDataAccess::saveNodeAssociationForAgent(const std::string& agent_uid,
-                                                        AgentAssociation& unist_server_association) {
+                                                        AgentAssociation& node_association) {
     int err = 0;
+    int size = 0;
     try {
+        //!fir try to delete old association
+        AgentAssociationSDWrapper assoc_wrap(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(AgentAssociation, node_association));
+        std::auto_ptr<CDataWrapper> assoc_ser = assoc_wrap.serialize();
+        
         mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << agent_uid
-                                    << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_AGENT
-                                    << CHAOS_FORMAT("%1%.%2%",%AgentNodeDefinitionKey::NODE_ASSOCIATED%NodeDefinitionKey::NODE_UNIQUE_ID) << unist_server_association.associated_node_uid);
+                                    << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_AGENT);
         
-        
-        
-        mongo::BSONObj update = BSON("$set" << BSON(CHAOS_FORMAT("%1%$%2%",%AgentNodeDefinitionKey::NODE_ASSOCIATED%AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_UNIT_SERVER_PAR_CFG) <<  unist_server_association.configuration_file_content <<
-                                                    CHAOS_FORMAT("%1%$%2%",%AgentNodeDefinitionKey::NODE_ASSOCIATED%AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_UNIT_SERVER_PAR_AUTO_START)<< unist_server_association.auto_start));
+        mongo::BSONObj pull_update = BSON("$pull" << BSON(AgentNodeDefinitionKey::NODE_ASSOCIATED << BSON(NodeDefinitionKey::NODE_UNIQUE_ID << node_association.associated_node_uid)));
+        mongo::BSONObj push_update = BSON("$push" << BSON(AgentNodeDefinitionKey::NODE_ASSOCIATED << mongo::BSONObj(assoc_ser->getBSONRawData(size))));
         
         DEBUG_CODE(DBG<<log_message("saveNodeAssociationForAgent",
-                                    "update",
+                                    "pull",
                                     DATA_ACCESS_LOG_2_ENTRY("Query",
-                                                            "Update",
+                                                            "Pull",
                                                             query.toString(),
-                                                            update.toString()));)
-        
+                                                            pull_update.toString()));)
         if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                      query,
-                                     update,
-                                     true,
-                                     false))){
-            ERR << CHAOS_FORMAT("Error saving association of %3% into the agent %1% with error %2%", %agent_uid%err%unist_server_association.associated_node_uid);
+                                     pull_update))){
+            ERR << CHAOS_FORMAT("Error pulling association of %3% into the agent %1% with error %2%", %agent_uid%err%node_association.associated_node_uid);
+        }
+        
+        DEBUG_CODE(DBG<<log_message("saveNodeAssociationForAgent",
+                                    "push",
+                                    DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                            "Push",
+                                                            query.toString(),
+                                                            push_update.toString()));)
+        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                     query,
+                                     push_update))){
+            ERR << CHAOS_FORMAT("Error pushing association of %3% into the agent %1% with error %2%", %agent_uid%err%node_association.associated_node_uid);
         }
     } catch (const mongo::DBException &e) {
         ERR << e.what();
@@ -190,18 +202,13 @@ int MongoDBAgentDataAccess::saveNodeAssociationForAgent(const std::string& agent
 
 int MongoDBAgentDataAccess::loadNodeAssociationForAgent(const std::string& agent_uid,
                                                         const std::string& associated_node_uid,
-                                                        AgentAssociation& unist_server_association) {
+                                                        AgentAssociation& node_association) {
     int err = 0;
     try {
         mongo::BSONObj result;
         mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << agent_uid
                                     << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_AGENT
                                     << CHAOS_FORMAT("%1%.%2%",%AgentNodeDefinitionKey::NODE_ASSOCIATED%NodeDefinitionKey::NODE_UNIQUE_ID) << associated_node_uid);
-        
-        
-        
-        mongo::BSONObj update = BSON("$set" << BSON(CHAOS_FORMAT("%1%$%2%",%AgentNodeDefinitionKey::NODE_ASSOCIATED%AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_UNIT_SERVER_PAR_CFG) <<  unist_server_association.configuration_file_content <<
-                                                    CHAOS_FORMAT("%1%$%2%",%AgentNodeDefinitionKey::NODE_ASSOCIATED%AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_UNIT_SERVER_PAR_AUTO_START)<< unist_server_association.auto_start));
         
         DEBUG_CODE(DBG<<log_message("loadNodeAssociationForAgent",
                                     "find",
@@ -220,12 +227,42 @@ int MongoDBAgentDataAccess::loadNodeAssociationForAgent(const std::string& agent
                     mongo::BSONObj associate_node_configuration = associated_node_object[0].Obj();
                     //we have found description and need to return all field
                     std::auto_ptr<CDataWrapper> associ_cfg_wrap(new CDataWrapper(associate_node_configuration.objdata()));
-                    AgentAssociationSDWrapper sd_wrap(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(AgentAssociation, unist_server_association));
+                    AgentAssociationSDWrapper sd_wrap(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(AgentAssociation, node_association));
                     sd_wrap.deserialize(associ_cfg_wrap.get());
                 }
             }
             
-                   }
+        }
+    } catch (const mongo::DBException &e) {
+        ERR << e.what();
+        err = -1;
+    } catch (const chaos::CException &e) {
+        ERR << e.what();
+        err = e.errorCode;
+    }
+    return err;
+}
+
+int MongoDBAgentDataAccess::removeNodeAssociationForAgent(const std::string& agent_uid,
+                                                          const std::string& associated_node_uid) {
+    int err = 0;
+    try {
+        mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << agent_uid
+                                    << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_AGENT);
+        
+        mongo::BSONObj pull_update = BSON("$pull" << BSON(AgentNodeDefinitionKey::NODE_ASSOCIATED << BSON(NodeDefinitionKey::NODE_UNIQUE_ID << associated_node_uid)));
+        
+        DEBUG_CODE(DBG<<log_message("saveNodeAssociationForAgent",
+                                    "pull",
+                                    DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                            "Pull",
+                                                            query.toString(),
+                                                            pull_update.toString()));)
+        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                     query,
+                                     pull_update))){
+            ERR << CHAOS_FORMAT("Error pulling association of %3% into the agent %1% with error %2%", %agent_uid%err%associated_node_uid);
+        }
     } catch (const mongo::DBException &e) {
         ERR << e.what();
         err = -1;

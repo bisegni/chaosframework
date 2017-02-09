@@ -1,10 +1,10 @@
 /*
- *	AgentApiGroup.cpp
+ *	agent.h
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
  *
- *    	Copyright 08/02/2017 INFN, National Institute of Nuclear Physics
+ *    	Copyright 09/02/2017 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -19,21 +19,12 @@
  *    	limitations under the License.
  */
 
-#include "AgentApiGroup.h"
-#include "ListNodeForAgent.h"
-#include "LoadNodeAssociation.h"
-#include "SaveNodeAssociation.h"
+#ifndef __CHAOSFramework__57311D4_B841_4942_AEA8_FD8FDA8D6594_agent_h
+#define __CHAOSFramework__57311D4_B841_4942_AEA8_FD8FDA8D6594_agent_h
 
-using namespace chaos::metadata_service::api::agent;
+#include <ChaosMetadataServiceClient/api_proxy/agent/ListNodeForAgent.h>
+#include <ChaosMetadataServiceClient/api_proxy/agent/SaveNodeAssociation.h>
+#include <ChaosMetadataServiceClient/api_proxy/agent/LoadNodeAssociation.h>
+#include <ChaosMetadataServiceClient/api_proxy/agent/RemoveNodeAssociation.h>
 
-DEFINE_CLASS_FACTORY_NO_ALIAS(AgentApiGroup,
-                              chaos::metadata_service::api::AbstractApiGroup);
-
-AgentApiGroup::AgentApiGroup():
-AbstractApiGroup(AgentNodeDomainAndActionRPC::RPC_DOMAIN){
-    addApi<ListNodeForAgent>();
-    addApi<LoadNodeAssociation>();
-    addApi<SaveNodeAssociation>();
-}
-
-AgentApiGroup::~AgentApiGroup() {}
+#endif /* __CHAOSFramework__57311D4_B841_4942_AEA8_FD8FDA8D6594_agent_h */

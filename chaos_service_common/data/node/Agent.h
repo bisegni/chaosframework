@@ -69,14 +69,14 @@ namespace chaos {
                 CHAOS_OPEN_SDWRAPPER(AgentAssociation)
                 void deserialize(chaos::common::data::CDataWrapper *serialized_data) {
                     if(serialized_data == NULL) return;
-                    dataWrapped().associated_node_uid = CDW_GET_SRT_WITH_DEFAULT(serialized_data, NodeDefinitionKey::NODE_UNIQUE_ID, "");
+                    dataWrapped().associated_node_uid = CDW_GET_SRT_WITH_DEFAULT(serialized_data, AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_UNIT_SERVER_PAR_NAME, "");
                     dataWrapped().configuration_file_content = CDW_GET_SRT_WITH_DEFAULT(serialized_data, AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_UNIT_SERVER_PAR_CFG, "");
                     dataWrapped().auto_start = CDW_GET_BOOL_WITH_DEFAULT(serialized_data, AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_UNIT_SERVER_PAR_AUTO_START, false);
                 }
                 
                 std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
                     std::auto_ptr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
-                    data_serialized->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, dataWrapped().associated_node_uid);
+                    data_serialized->addStringValue(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_UNIT_SERVER_PAR_NAME, dataWrapped().associated_node_uid);
                     data_serialized->addStringValue(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_UNIT_SERVER_PAR_CFG, dataWrapped().configuration_file_content);
                     data_serialized->addBoolValue(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_UNIT_SERVER_PAR_AUTO_START, dataWrapped().auto_start);
                     return data_serialized;

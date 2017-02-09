@@ -65,11 +65,14 @@ namespace chaos {
                                                     ChaosStringVector& unist_server_associated);
                     //! inherited by
                     virtual int saveNodeAssociationForAgent(const std::string& agent_uid,
-                                                            chaos::service_common::data::agent::AgentAssociation& unist_server_association);
+                                                            chaos::service_common::data::agent::AgentAssociation& node_association);
                     //! inherited by
                     virtual int loadNodeAssociationForAgent(const std::string& agent_uid,
                                                             const std::string& associated_node_uid,
-                                                            chaos::service_common::data::agent::AgentAssociation& unist_server_association);
+                                                            chaos::service_common::data::agent::AgentAssociation& node_association);
+                    //! inherited by
+                    virtual int removeNodeAssociationForAgent(const std::string& agent_uid,
+                                                              const std::string& associated_node_uid);
                 };
             }
         }

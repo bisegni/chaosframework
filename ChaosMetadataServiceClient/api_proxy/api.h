@@ -24,6 +24,7 @@
 #include <ChaosMetadataServiceClient/api_proxy/ApiProxyManager.h>
 
 //---include all api header
+#include <ChaosMetadataServiceClient/api_proxy/agent/agent.h>
 #include <ChaosMetadataServiceClient/api_proxy/node/node.h>
 #include <ChaosMetadataServiceClient/api_proxy/groups/groups.h>
 #include <ChaosMetadataServiceClient/api_proxy/script/script.h>

@@ -59,7 +59,7 @@ CDataWrapper *SaveNodeAssociation::execute(CDataWrapper *api_data, bool& detach_
     assoc_sd_wrapper.deserialize(assoc_ser.get());
     
     if((err = a_da->saveNodeAssociationForAgent(agent_uid, assoc_sd_wrapper()))) {
-        LOG_AND_TROW(ERR, -5, CHAOS_FORMAT("Error saving association for node %1% into agent %2% with error %3%", %assoc_sd_wrapper().associated_node_uid%agent_uid%err));
+        LOG_AND_TROW(ERR, -7, CHAOS_FORMAT("Error saving association for node %1% into agent %2% with error %3%", %assoc_sd_wrapper().associated_node_uid%agent_uid%err));
     }
     return NULL;
 }

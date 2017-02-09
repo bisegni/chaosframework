@@ -10,15 +10,25 @@ class AgentNodeAssociatedListModel:
 
 public:
     AgentNodeAssociatedListModel();
-    void setAgent(const QString& agent_uid);
+    void setAgent(const QString& _agent_uid);
+    void updateList();
 protected:
-    virtual int getRowCount() const = 0;
-    virtual QVariant getRowData(int row) const = 0;
-    virtual QVariant getUserData(int row) const = 0;
+    virtual int getRowCount() const;
+    virtual QVariant getRowData(int row) const;
+    virtual QVariant getUserData(int row) const;
+    Qt::DropActions supportedDropActions() const;
+    QStringList mimeTypes() const;
+    Qt::ItemFlags flags(const QModelIndex &index) const Q_DECL_OVERRIDE;
     void onApiDone(const QString& tag,
                    QSharedPointer<chaos::common::data::CDataWrapper> api_result);
+    bool dropMimeData(const QMimeData *data,
+                      Qt::DropAction action, int row, int column, const QModelIndex &parent);
+    bool canDropMimeData(const QMimeData *data,
+                         Qt::DropAction action, int row, int column, const QModelIndex &parent);
 private:
+    QString agent_uid;
     ApiSubmitter api_submitter;
+    ChaosStringVector associated_nodes;
 };
 
 #endif // AGENTNODEASSOCIATEDLISTMODEL_H

@@ -55,11 +55,15 @@ namespace chaos {
                     
                     //! save(if not preset inser or update) the node association description
                     virtual int saveNodeAssociationForAgent(const std::string& agent_uid,
-                                                            chaos::service_common::data::agent::AgentAssociation& unist_server_association) = 0;
+                                                            chaos::service_common::data::agent::AgentAssociation& node_association) = 0;
                     //! load the node association description
                     virtual int loadNodeAssociationForAgent(const std::string& agent_uid,
                                                             const std::string& associated_node_uid,
-                                                            chaos::service_common::data::agent::AgentAssociation& unist_server_association) = 0;
+                                                            chaos::service_common::data::agent::AgentAssociation& node_association) = 0;
+                    
+                    //! remove the node association description
+                    virtual int removeNodeAssociationForAgent(const std::string& agent_uid,
+                                                              const std::string& associated_node_uid) = 0;
                 };
             }
         }

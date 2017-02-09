@@ -4,6 +4,7 @@
 #include "node/control_unit/ControlUnitEditor.h"
 #include "../node/control_unit/ControlUnitEditor.h"
 #include "../node/control_unit/ControUnitInstanceEditor.h"
+#include "../node/agent/AgentEditor.h"
 #include "../data/delegate/TwoLineInformationListItemDelegate.h"
 
 #include <QDebug>
@@ -175,9 +176,12 @@ void SearchNodeResult::on_listViewResult_doubleClicked(const QModelIndex &index)
         if(node_type.compare(chaos::NodeType::NODE_TYPE_UNIT_SERVER) == 0) {
             qDebug() << "Open unit server editor for" << node_uid;
             launchPresenterWidget(new UnitServerEditor(node_uid));
-        }else if(node_type.compare(chaos::NodeType::NODE_TYPE_CONTROL_UNIT) == 0) {
+        } else if(node_type.compare(chaos::NodeType::NODE_TYPE_CONTROL_UNIT) == 0) {
             qDebug() << "Open control unit editor for" << node_uid;
             launchPresenterWidget(new ControlUnitEditor(node_uid));
+        } else if(node_type.compare(chaos::NodeType::NODE_TYPE_AGENT) == 0) {
+            qDebug() << "Open anget editor for" << node_uid;
+            launchPresenterWidget(new AgentEditor(node_uid));
         }
     }
 }

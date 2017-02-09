@@ -1,5 +1,5 @@
 /*
- *	ListUnitServerForAgent.h
+ *	ListNodeForAgent.h
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
@@ -19,8 +19,8 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework_EC610C6F_86DE_41AB_B454_DB4B85C73534_ListUnitServerForAgent_h
-#define __CHAOSFramework_EC610C6F_86DE_41AB_B454_DB4B85C73534_ListUnitServerForAgent_h
+#ifndef __CHAOSFramework_EC610C6F_86DE_41AB_B454_DB4B85C73534_ListNodeForAgent_h
+#define __CHAOSFramework_EC610C6F_86DE_41AB_B454_DB4B85C73534_ListNodeForAgent_h
 
 #include "../AbstractApi.h"
 
@@ -35,12 +35,12 @@ namespace chaos {
                 /*!
                  
                  */
-                class ListUnitServerForAgent:
+                class ListNodeForAgent:
                 public AbstractApi {
 
                 public:
-                    ListUnitServerForAgent();
-                    ~ListUnitServerForAgent();
+                    ListNodeForAgent();
+                    ~ListNodeForAgent();
                     chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
                                                                bool& detach_data);
                 };
@@ -49,4 +49,4 @@ namespace chaos {
     }
 }
 
-#endif /* __CHAOSFramework_EC610C6F_86DE_41AB_B454_DB4B85C73534_ListUnitServerForAgent_h */
+#endif /* __CHAOSFramework_EC610C6F_86DE_41AB_B454_DB4B85C73534_ListNodeForAgent_h */
