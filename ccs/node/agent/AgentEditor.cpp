@@ -31,6 +31,14 @@ void AgentEditor::initUI() {
     connect(ui->listViewNodeAssociated,
             SIGNAL(doubleClicked(QModelIndex)),
             SLOT(doubleClicked(QModelIndex)));
+
+    QVector< QPair<QString, QVariant> > cm;
+    cm.push_back(QPair<QString, QVariant>("Start Node", QVariant()));
+    cm.push_back(QPair<QString, QVariant>("Stop Node", QVariant()));
+    cm.push_back(QPair<QString, QVariant>("Restart Node", QVariant()));
+    registerWidgetForContextualMenu(ui->listViewNodeAssociated,
+                                    cm,
+                                    false);
 }
 
 bool AgentEditor::isClosing() {
@@ -57,7 +65,6 @@ void AgentEditor::doubleClicked(const QModelIndex& clickedIndex) {
                                                          clickedIndex.data().toString()));
 }
 
-
 void AgentEditor::on_pushButtonEditAssociatedNode_clicked() {
     foreach(QModelIndex index, ui->listViewNodeAssociated->selectionModel()->selectedIndexes()) {
         launchPresenterWidget(new AgentNodeAssociationEditor(agent_uid,
@@ -74,4 +81,10 @@ void AgentEditor::on_pushButtonRemoveAssociatedNode_clicked() {
     submitApiResult("AgentEditor::remove",
                     GET_CHAOS_API_PTR(agent::RemoveNodeAssociation)->execute(agent_uid.toStdString(),
                                                                              associated_node));
+}
+
+void AgentEditor::contextualMenuActionTrigger(const QString& cm_title,
+                                                  const QVariant& cm_data){
+    Q_UNUSED(cm_data);
+    qDebug() << "CM:" << cm_title;
 }

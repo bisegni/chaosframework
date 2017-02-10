@@ -24,6 +24,8 @@ protected:
     bool isClosing();
     void onApiDone(const QString& tag,
                    QSharedPointer<chaos::common::data::CDataWrapper> api_result);
+    void contextualMenuActionTrigger(const QString& cm_title,
+                                     const QVariant& cm_data);
 private slots:
     void on_pushButtonUpdateList_clicked();
 
