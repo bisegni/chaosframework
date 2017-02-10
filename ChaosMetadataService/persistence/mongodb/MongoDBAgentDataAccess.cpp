@@ -209,6 +209,8 @@ int MongoDBAgentDataAccess::loadNodeAssociationForAgent(const std::string& agent
         mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << agent_uid
                                     << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_AGENT
                                     << CHAOS_FORMAT("%1%.%2%",%AgentNodeDefinitionKey::NODE_ASSOCIATED%NodeDefinitionKey::NODE_UNIQUE_ID) << associated_node_uid);
+        mongo::BSONObj projection = BSON(AgentNodeDefinitionKey::NODE_ASSOCIATED << BSON("$elemMatch" << BSON(NodeDefinitionKey::NODE_UNIQUE_ID << associated_node_uid)));
+        
         
         DEBUG_CODE(DBG<<log_message("loadNodeAssociationForAgent",
                                     "find",
@@ -217,7 +219,8 @@ int MongoDBAgentDataAccess::loadNodeAssociationForAgent(const std::string& agent
         
         if((err = connection->findOne(result,
                                       MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
-                                      query))){
+                                      query,
+                                      &projection))){
             ERR << CHAOS_FORMAT("Error loading the association of %3% into the agent %1% with error %2%", %agent_uid%err%associated_node_uid);
         } else if(result.isEmpty() == false) {
             mongo::BSONElement ele = result.getField(AgentNodeDefinitionKey::NODE_ASSOCIATED);

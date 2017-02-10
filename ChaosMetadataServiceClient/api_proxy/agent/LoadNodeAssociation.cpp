@@ -37,15 +37,12 @@ ApiProxyResult LoadNodeAssociation::execute(const std::string& agent_uid,
                                             const std::string& associated_node_uid) {
     std::auto_ptr<CDataWrapper> pack(new CDataWrapper());
     pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, agent_uid);
+    pack->addStringValue(AgentNodeDefinitionKey::NODE_ASSOCIATED, associated_node_uid);
     return callApi(pack.release());
 }
 
 void LoadNodeAssociation::deserialize(CDataWrapper *api_result,
                                       AgentAssociation& node_association) {
-    if(!api_result ||
-       !api_result->hasKey(AgentNodeDefinitionKey::NODE_ASSOCIATED) ||
-       !api_result->isCDataWrapperValue(AgentNodeDefinitionKey::NODE_ASSOCIATED)) return;
-    std::auto_ptr<CDataWrapper> ser(api_result->getCSDataValue(AgentNodeDefinitionKey::NODE_ASSOCIATED));
     AgentAssociationSDWrapper assoc_sd_wrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(AgentAssociation, node_association));
-    assoc_sd_wrapper.deserialize(ser.get());
+    assoc_sd_wrapper.deserialize(api_result);
 }

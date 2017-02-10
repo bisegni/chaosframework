@@ -25,13 +25,16 @@ protected:
     void onApiDone(const QString& tag,
                    QSharedPointer<chaos::common::data::CDataWrapper> api_result);
 private slots:
-    void on_pushButtonAddUnitServer_clicked();
-
-    void on_pushButtonRemoveUnitServer_clicked();
-
     void on_pushButtonUpdateList_clicked();
 
     void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+
+    void doubleClicked(const QModelIndex& clickedIndex);
+
+    void on_pushButtonEditAssociatedNode_clicked();
+
+    void on_pushButtonRemoveAssociatedNode_clicked();
+
 private:
     QString agent_uid;
     Ui::AgentEditor *ui;
