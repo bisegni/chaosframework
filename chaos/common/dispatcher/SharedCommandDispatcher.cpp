@@ -209,9 +209,16 @@ void SharedCommandDispatcher::processBufferElement(chaos_data::CDataWrapper *act
     string  action_name = actionDescription->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME);
     
     if(!map_domain_actions().count(action_domain)) {
-        ERR_LOG(SharedCommandDispatcher) << "The action " << action_name << " is not present for domain " << action_domain;
+        ERR_LOG(SharedCommandDispatcher) << "The rpc domain " << action_domain << " is not present";
         return;
     }
+    
+    if(!map_domain_actions()[action_domain]->hasActionName(action_name)) {
+        ERR_LOG(SharedCommandDispatcher) << "The action " << action_name << " is not present for rpc domain " << action_domain;
+        return;
+    }
+
+    
     //get the action reference
     AbstActionDescShrPtr actionDescriptionPtr = map_domain_actions()[action_domain]->getActionDescriptornFormActionName(action_name);
     
@@ -355,11 +362,13 @@ CDataWrapper *SharedCommandDispatcher::dispatchCommand(CDataWrapper *commandPack
         
         if(!commandPack->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME))
             throw CException(ErrorRpcCoce::EC_RPC_NO_ACTION_FOUND_IN_MESSAGE, "Action Call with no action name", __PRETTY_FUNCTION__);
-        string actionDomain = commandPack->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN);
-        
+        const string actionDomain = commandPack->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN);
+        const string actionName = commandPack->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME);
         //RpcActionDefinitionKey::CS_CMDM_ACTION_NAME
         if(map_domain_actions().count(actionDomain) == 0) throw CException(ErrorRpcCoce::EC_RPC_NO_DOMAIN_REGISTERED_ON_SERVER, "Action Domain \""+actionDomain+"\" not registered (cmd pack \""+commandPack->getJSONString()+"\")", __PRETTY_FUNCTION__);
         
+        if(map_domain_actions()[actionDomain]->hasActionName(actionName) == false) throw CException(ErrorRpcCoce::EC_RPC_NO_ACTION_FOUND_IN_MESSAGE, "Action \""+actionName+"\" not found (cmd pack \""+commandPack->getJSONString()+"\")", __PRETTY_FUNCTION__);
+
         DEBUG_CODE(DBG_LOG(SharedCommandDispatcher)  << "Received the message content:-----------------------START\n"<<commandPack->getJSONString() << "\nReceived the message content:-------------------------END";)
         
         //submit the action(Thread Safe)

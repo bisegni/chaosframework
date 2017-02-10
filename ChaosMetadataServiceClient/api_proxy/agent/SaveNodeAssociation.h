@@ -47,6 +47,14 @@ namespace chaos {
                      */
                     ApiProxyResult execute(const std::string& agent_uid,
                                            chaos::service_common::data::agent::AgentAssociation& node_association);
+                    
+                    //! Save multiple node association into an agent
+                    /*!
+                     \param agent_uid the agent unique id
+                     \param multiple_node_association a vector of node assocaition description
+                     */
+                    ApiProxyResult execute(const std::string& agent_uid,
+                                           chaos::service_common::data::agent::VectorAgentAssociation& multiple_node_association);
                 };
             }
         }

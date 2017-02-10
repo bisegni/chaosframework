@@ -46,7 +46,14 @@ namespace chaos {
                      \param associated_node_uid the nodeto remove from the agent
                      */
                     ApiProxyResult execute(const std::string& agent_uid,
-                                           const std::string& associated_node_uid);;
+                                           const std::string& associated_node_uid);
+                    //! remove multiple association information that belong to an agent
+                    /*!
+                     \param agent_uid the agent unique id
+                     \param associated_node_uid a vector of node associated to the agent
+                     */
+                    ApiProxyResult execute(const std::string& agent_uid,
+                                           ChaosStringVector& associated_node_uid);
                 };
             }
         }

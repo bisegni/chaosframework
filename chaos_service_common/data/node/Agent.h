@@ -110,6 +110,7 @@ namespace chaos {
                 };
                 
                 //!define the serialization of a std::vector of association
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(AgentAssociation, VectorAgentAssociation)
                 typedef chaos::common::data::structured::StdVectorSDWrapper<AgentAssociation, AgentAssociationSDWrapper> VectorAgentAssociationSDWrapper;
                 
                 //!sd wrapper for agent associateion class

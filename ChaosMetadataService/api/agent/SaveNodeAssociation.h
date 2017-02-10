@@ -37,7 +37,6 @@ namespace chaos {
                  */
                 class SaveNodeAssociation:
                 public AbstractApi {
-                    
                 public:
                     SaveNodeAssociation();
                     ~SaveNodeAssociation();

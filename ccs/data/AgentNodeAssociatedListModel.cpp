@@ -6,6 +6,7 @@
 #include <QMimeData>
 #include <QDataStream>
 
+using namespace chaos::service_common::data::agent;
 using namespace chaos::metadata_service_client::api_proxy;
 
 AgentNodeAssociatedListModel::AgentNodeAssociatedListModel():
@@ -91,16 +92,19 @@ bool AgentNodeAssociatedListModel::dropMimeData(const QMimeData *data,
         QString node_type;
         stream >> node_uid;
         stream >> node_type;
-        //add association with efault values for a unit server only nodes
+
+        //add association with default values for a unit server only nodes
+        VectorAgentAssociation association_vector;
         if(node_type.compare(chaos::NodeType::NODE_TYPE_UNIT_SERVER) == 0) {
             qDebug() << "Associate node " << node_uid << " into agent " << agent_uid;
             //we cna create association
-            chaos::service_common::data::agent::AgentAssociation association;
+            AgentAssociation association;
             association.associated_node_uid = node_uid.toStdString();
-            api_submitter.submitApiResult("AgentNodeAssociatedListModel::setAgent",
-                                          GET_CHAOS_API_PTR(agent::SaveNodeAssociation)->execute(agent_uid.toStdString(),
-                                                                                                 association));
+            association_vector.push_back(association);
         }
+        api_submitter.submitApiResult("AgentNodeAssociatedListModel::update",
+                                      GET_CHAOS_API_PTR(agent::SaveNodeAssociation)->execute(agent_uid.toStdString(),
+                                                                                             association_vector));
     }
     return true;
 }

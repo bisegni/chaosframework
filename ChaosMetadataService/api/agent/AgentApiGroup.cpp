@@ -23,6 +23,7 @@
 #include "ListNodeForAgent.h"
 #include "LoadNodeAssociation.h"
 #include "SaveNodeAssociation.h"
+#include "RemoveNodeAssociation.h"
 
 using namespace chaos::metadata_service::api::agent;
 
@@ -34,6 +35,7 @@ AbstractApiGroup(AgentNodeDomainAndActionRPC::RPC_DOMAIN){
     addApi<ListNodeForAgent>();
     addApi<LoadNodeAssociation>();
     addApi<SaveNodeAssociation>();
+    addApi<RemoveNodeAssociation>();
 }
 
 AgentApiGroup::~AgentApiGroup() {}

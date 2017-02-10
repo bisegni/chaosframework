@@ -18,12 +18,13 @@ AgentEditor::~AgentEditor() {
 }
 
 void AgentEditor::initUI() {
-    connect(ui->listViewNodeAssociated->selectionModel(),
-            SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
-            SLOT(selectionChanged(QItemSelection,QItemSelection)));
+    ui->pushButtonRemoveUnitServer->setEnabled(false);
     ui->listViewNodeAssociated->setModel(&nodeAssociatedListModel);
     ui->listViewNodeAssociated->setAcceptDrops(true);
     ui->listViewNodeAssociated->setDropIndicatorShown(true);
+    connect(ui->listViewNodeAssociated->selectionModel(),
+            SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+            SLOT(selectionChanged(QItemSelection,QItemSelection)));
 }
 
 bool AgentEditor::isClosing() {
@@ -31,17 +32,18 @@ bool AgentEditor::isClosing() {
 }
 
 void AgentEditor::on_pushButtonAddUnitServer_clicked() {
-    QModelIndexList selected_index = ui->listViewNodeAssociated->selectionModel()->selectedIndexes();
-    foreach(QModelIndex index, selected_index){
-        QString associated_node = index.data().toString();
-        submitApiResult("AgentEditor::remove",
-                        GET_CHAOS_API_PTR(agent::RemoveNodeAssociation)->execute(agent_uid.toStdString(),
-                                                                                 associated_node.toStdString()));
-    }
+
 }
 
 void AgentEditor::on_pushButtonRemoveUnitServer_clicked() {
-
+    QModelIndexList selected_index = ui->listViewNodeAssociated->selectionModel()->selectedIndexes();
+    ChaosStringVector associated_node;
+    foreach(QModelIndex index, selected_index){
+        associated_node.push_back(index.data().toString().toStdString());
+    }
+    submitApiResult("AgentEditor::remove",
+                    GET_CHAOS_API_PTR(agent::RemoveNodeAssociation)->execute(agent_uid.toStdString(),
+                                                                             associated_node));
 }
 
 void AgentEditor::on_pushButtonUpdateList_clicked() {

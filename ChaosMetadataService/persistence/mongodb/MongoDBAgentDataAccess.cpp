@@ -138,7 +138,7 @@ int MongoDBAgentDataAccess::getNodeListForAgent(const std::string& agent_uid,
                     it != end;
                     it++) {
                     mongo::BSONObj attribute_config = it->Obj();
-                    unist_server_associated.push_back(attribute_config.getField(NodeDefinitionKey::NODE_UNIQUE_ID));
+                    unist_server_associated.push_back(attribute_config.getField(NodeDefinitionKey::NODE_UNIQUE_ID).String());
                 }
             }
         }
@@ -252,7 +252,7 @@ int MongoDBAgentDataAccess::removeNodeAssociationForAgent(const std::string& age
         
         mongo::BSONObj pull_update = BSON("$pull" << BSON(AgentNodeDefinitionKey::NODE_ASSOCIATED << BSON(NodeDefinitionKey::NODE_UNIQUE_ID << associated_node_uid)));
         
-        DEBUG_CODE(DBG<<log_message("saveNodeAssociationForAgent",
+        DEBUG_CODE(DBG<<log_message("removeNodeAssociationForAgent",
                                     "pull",
                                     DATA_ACCESS_LOG_2_ENTRY("Query",
                                                             "Pull",
