@@ -28,6 +28,8 @@ private slots:
     void updateUI();
     void on_pushButtonUpdateAssociationInformation_clicked();
 
+    void on_pushButtonLaunchNodeOnAgent_clicked();
+
 private:
     QString agent_uid;
     Ui::AgentNodeAssociationEditor *ui;

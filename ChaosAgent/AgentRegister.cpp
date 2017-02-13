@@ -22,6 +22,7 @@
 #include "AgentRegister.h"
 #include "AbstractWorker.h"
 #include "worker/ProcessWorker.h"
+#include "ChaosAgent.h"
 
 #include <chaos/common/global.h>
 #include <chaos/common/network/NetworkBroker.h>
@@ -141,6 +142,8 @@ std::auto_ptr<CDataWrapper> AgentRegister::getAgentRegistrationPack() {
                            rpc_domain);
     result->addInt64Value(NodeDefinitionKey::NODE_TIMESTAMP,
                           TimingUtil::getTimeStamp());
+    result->addStringValue(AgentNodeDefinitionKey::WORKING_DIRECTORY,
+                           ChaosAgent::getInstance()->settings.working_directory);
     //add control unit alias
     for(MapWorkerIterator iter = map_worker.begin();
         iter != map_worker.end();

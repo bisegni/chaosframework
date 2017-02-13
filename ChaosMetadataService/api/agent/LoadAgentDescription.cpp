@@ -1,10 +1,10 @@
 /*
- *	ListNodeForAgent.cpp
+ *	LoadAgentDescription.cpp
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
  *
- *    	Copyright 08/02/2017 INFN, National Institute of Nuclear Physics
+ *    	Copyright 13/02/2017 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -19,29 +19,25 @@
  *    	limitations under the License.
  */
 
-#include "ListNodeForAgent.h"
-
-#include <chaos/common/data/structured/Lists.h>
+#include "LoadAgentDescription.h"
 
 using namespace chaos::metadata_service::api::agent;
 
-#define INFO INFO_LOG(ListNodeForAgent)
-#define ERR  DBG_LOG(ListNodeForAgent)
-#define DBG  ERR_LOG(ListNodeForAgent)
+#define INFO INFO_LOG(LoadAgentDescription)
+#define ERR  DBG_LOG(LoadAgentDescription)
+#define DBG  ERR_LOG(LoadAgentDescription)
 
 using namespace chaos::common::data;
-using namespace chaos::common::data::structured;
+using namespace chaos::service_common::data::agent;
 using namespace chaos::metadata_service::api::agent;
 using namespace chaos::metadata_service::persistence::data_access;
 
-ListNodeForAgent::ListNodeForAgent():
-AbstractApi(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LIST_NODE){
-}
+LoadAgentDescription::LoadAgentDescription():
+AbstractApi("loadAgentDescription"){}
 
-ListNodeForAgent::~ListNodeForAgent() {
-}
+LoadAgentDescription::~LoadAgentDescription(){}
 
-CDataWrapper *ListNodeForAgent::execute(CDataWrapper *api_data, bool& detach_data) {
+CDataWrapper *LoadAgentDescription::execute(CDataWrapper *api_data, bool& detach_data) {
     //check for mandatory attributes
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found");
     CHECK_KEY_THROW_AND_LOG(api_data, NodeDefinitionKey::NODE_UNIQUE_ID, ERR, -2, CHAOS_FORMAT("The key %1% is mandatory", %NodeDefinitionKey::NODE_UNIQUE_ID));
@@ -51,12 +47,11 @@ CDataWrapper *ListNodeForAgent::execute(CDataWrapper *api_data, bool& detach_dat
     GET_DATA_ACCESS(AgentDataAccess, a_da, -4);
     
     int err = 0;
-    ChaosStringVectorSDWrapper association_list_sd_wrapper;
-    association_list_sd_wrapper.serialization_key = AgentNodeDefinitionKey::NODE_ASSOCIATED;
+    AgentInstanceSDWrapper agent_instance_sd_wrapper;
     const std::string agent_uid = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
     
-    if((err = a_da->getNodeListForAgent(agent_uid, association_list_sd_wrapper()))) {
-        LOG_AND_TROW(ERR, -5, CHAOS_FORMAT("Error searching node for agent %1%",%agent_uid));
+    if((err = a_da->loadAgentDescription(agent_uid, agent_instance_sd_wrapper()))) {
+        LOG_AND_TROW(ERR, -5, CHAOS_FORMAT("Error loading full description for agent %1%",%agent_uid));
     }
-    return association_list_sd_wrapper.serialize().release();
+    return agent_instance_sd_wrapper.serialize().release();
 }

@@ -40,6 +40,7 @@ private slots:
 private:
     QString agent_uid;
     Ui::AgentEditor *ui;
+    chaos::service_common::data::agent::AgentInstance agent_insance;
     AgentNodeAssociatedListModel nodeAssociatedListModel;
 };
 

@@ -52,7 +52,9 @@ int MongoDBAgentDataAccess::insertUpdateAgentDescription(CDataWrapper& agent_des
     bool presence = false;
     try {
         CHECK_KEY_THROW_AND_LOG((&agent_description), NodeDefinitionKey::NODE_UNIQUE_ID, ERR, -1, CHAOS_FORMAT("The attribute %1% is not found", %NodeDefinitionKey::NODE_UNIQUE_ID));
+        CHECK_KEY_THROW_AND_LOG((&agent_description), NodeDefinitionKey::NODE_RPC_ADDR, ERR, -1, CHAOS_FORMAT("The attribute %1% is not found", %NodeDefinitionKey::NODE_RPC_ADDR));
         CHECK_KEY_THROW_AND_LOG((&agent_description), AgentNodeDefinitionKey::HOSTED_WORKER, ERR, -1, CHAOS_FORMAT("The attribute %1% is not found", %AgentNodeDefinitionKey::HOSTED_WORKER));
+        CHECK_KEY_THROW_AND_LOG((&agent_description), AgentNodeDefinitionKey::WORKING_DIRECTORY, ERR, -1, CHAOS_FORMAT("The attribute %1% is not found", %AgentNodeDefinitionKey::WORKING_DIRECTORY));
         
         //now update proprietary fields
         const std::string agent_uid = agent_description.getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
@@ -82,7 +84,9 @@ int MongoDBAgentDataAccess::insertUpdateAgentDescription(CDataWrapper& agent_des
             array_descirption_builder << mongo::BSONObj(worker_desc->getBSONRawData(size));
         }
         
-        mongo::BSONObj update = BSON("$set" << BSON(AgentNodeDefinitionKey::HOSTED_WORKER << array_descirption_builder.arr()));
+        mongo::BSONObj update = BSON("$set" << BSON(NodeDefinitionKey::NODE_RPC_ADDR << agent_description.getStringValue(NodeDefinitionKey::NODE_RPC_ADDR) <<
+                                                    AgentNodeDefinitionKey::WORKING_DIRECTORY << agent_description.getStringValue(AgentNodeDefinitionKey::WORKING_DIRECTORY) <<
+                                                    AgentNodeDefinitionKey::HOSTED_WORKER << array_descirption_builder.arr()));
         
         DEBUG_CODE(DBG<<log_message("insertUpdateAgentDescription",
                                     "update",
@@ -97,6 +101,39 @@ int MongoDBAgentDataAccess::insertUpdateAgentDescription(CDataWrapper& agent_des
                                      true,
                                      false))){
             ERR << "Error registering agent" << agent_uid << " with error:" << err;
+        }
+    } catch (const mongo::DBException &e) {
+        ERR << e.what();
+        err = -1;
+    } catch (const chaos::CException &e) {
+        ERR << e.what();
+        err = e.errorCode;
+    }
+    return err;
+}
+
+int MongoDBAgentDataAccess::loadAgentDescription(const std::string& agent_uid,
+                                                 AgentInstance& agent_description) {
+    int err = 0;
+    try {
+        mongo::BSONObj result;
+        mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << agent_uid
+                                    << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_AGENT);
+        
+        DEBUG_CODE(DBG<<log_message("loadAgentDescription",
+                                    "find",
+                                    DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                            query.toString()));)
+        
+        if((err = connection->findOne(result,
+                                      MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                      query))){
+            ERR << CHAOS_FORMAT("Error finding agent %1% with error %2%", %agent_uid%err);
+        } else if(result.isEmpty() == false &&
+                  result.hasField(AgentNodeDefinitionKey::NODE_ASSOCIATED)) {
+            std::auto_ptr<CDataWrapper> full_ser(new CDataWrapper(result.objdata()));
+            AgentInstanceSDWrapper agent_instance_sd_wrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(AgentInstance, agent_description));
+            agent_instance_sd_wrapper.deserialize(full_ser.get());
         }
     } catch (const mongo::DBException &e) {
         ERR << e.what();
@@ -141,6 +178,39 @@ int MongoDBAgentDataAccess::getNodeListForAgent(const std::string& agent_uid,
                     unist_server_associated.push_back(attribute_config.getField(NodeDefinitionKey::NODE_UNIQUE_ID).String());
                 }
             }
+        }
+    } catch (const mongo::DBException &e) {
+        ERR << e.what();
+        err = -1;
+    } catch (const chaos::CException &e) {
+        ERR << e.what();
+        err = e.errorCode;
+    }
+    return err;
+}
+
+int MongoDBAgentDataAccess::getAgentForNode(const std::string& associated_node_uid,
+                                            std::string& agent_uid) {
+    int err = 0;
+    try {
+        mongo::BSONObj result;
+        mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_AGENT <<
+                                    CHAOS_FORMAT("%1%.%2%",%AgentNodeDefinitionKey::NODE_ASSOCIATED%NodeDefinitionKey::NODE_UNIQUE_ID) << associated_node_uid);
+        mongo::BSONObj project = BSON( NodeDefinitionKey::NODE_UNIQUE_ID << 1);
+        
+        DEBUG_CODE(DBG<<log_message("getAgentForNode",
+                                    "find",
+                                    DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                            query.toString()));)
+        
+        if((err = connection->findOne(result,
+                                      MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                      query,
+                                      &project))){
+            ERR << CHAOS_FORMAT("Error searching agent for node %1% with error %2%", %associated_node_uid%err);
+        } else if(result.isEmpty() == false &&
+                  result.hasField(NodeDefinitionKey::NODE_UNIQUE_ID)) {
+            agent_uid = result.getField(NodeDefinitionKey::NODE_UNIQUE_ID).String();
         }
     } catch (const mongo::DBException &e) {
         ERR << e.what();

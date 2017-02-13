@@ -537,6 +537,9 @@ namespace chaos {
         
         //!the list of node associated with the agent
         static const char * const NODE_ASSOCIATED       = "andk_node_associated";
+        
+        //!the working directory of the agent instance
+        static const char * const WORKING_DIRECTORY     = "andk_working_directory";
     }
     /** @} */ // end of AgentNodeDefinitionKey
     
@@ -555,19 +558,21 @@ namespace chaos {
         
         namespace ProcessWorker {
             static const char * const WORKER_NAME                                   = "HostProcessManagement";
-            static const char * const ACTION_LAUNCH_UNIT_SERVER                     = "startUnitServer";
-            static const char * const ACTION_LAUNCH_UNIT_SERVER_PAR_NAME            = NodeDefinitionKey::NODE_UNIQUE_ID;
-            static const char * const ACTION_LAUNCH_UNIT_SERVER_PAR_CFG             = "unit_server_init_cfg";
-            static const char * const ACTION_LAUNCH_UNIT_SERVER_PAR_AUTO_START      = "unit_server_auto_start";
-            static const char * const ACTION_STOP_UNIT_SERVER                       = "stopUnitServer";
-            static const char * const ACTION_STOP_UNIT_SERVER_PAR_NAME              = "unit_server_name";
+            static const char * const ACTION_LAUNCH_NODE                            = "startNode";
+            static const char * const ACTION_LAUNCH_NODE_PAR_NAME            = NodeDefinitionKey::NODE_UNIQUE_ID;
+            static const char * const ACTION_LAUNCH_NODE_CMD_LINE            = "node_launch_cmd_line";
+            static const char * const ACTION_LAUNCH_NODE_PAR_CFG             = "node_init_cfg";
+            static const char * const ACTION_LAUNCH_NODE_PAR_AUTO_START      = "node_auto_start";
             
-            static const char * const ACTION_RESTART_UNIT_SERVER                     = "restartUnitServer";
-            static const char * const ACTION_RESTART_UNIT_SERVER_PAR_NAME            = NodeDefinitionKey::NODE_UNIQUE_ID;
-            static const char * const ACTION_RESTART_UNIT_SERVER_PAR_KILL            = "kill";
+            static const char * const ACTION_STOP_NODE                       = "stopNode";
+            static const char * const ACTION_STOP_NODE_PAR_NAME              = "node_name";
             
-            static const char * const ACTION_LIST_UNIT_SERVER                        = "listUnitServer";
-            static const char * const ACTION_LIST_UNIT_SERVER_PARM_NAME              = NodeDefinitionKey::NODE_UNIQUE_ID;
+            static const char * const ACTION_RESTART_NODE                     = "restartNode";
+            static const char * const ACTION_RESTART_NODE_PAR_NAME            = NodeDefinitionKey::NODE_UNIQUE_ID;
+            static const char * const ACTION_RESTART_NODE_PAR_KILL            = "kill";
+            
+            static const char * const ACTION_LIST_NODE                        = "listNode";
+            static const char * const ACTION_LIST_NODE_PARM_NAME              = NodeDefinitionKey::NODE_UNIQUE_ID;
         }
     }
     /** @} */ // end of AgentNodeDomainAndActionRPC

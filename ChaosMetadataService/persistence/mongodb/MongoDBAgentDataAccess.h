@@ -57,22 +57,31 @@ namespace chaos {
                     MongoDBAgentDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
                     ~MongoDBAgentDataAccess();
                 public:
-                    //! inherited by
+                    //! inherited by data_access::AgentDataAccess
                     int insertUpdateAgentDescription(chaos::common::data::CDataWrapper& agent_description);
                     
-                    //! return the unique id of the nodes
-                    virtual int getNodeListForAgent(const std::string& agent_uid,
-                                                    ChaosStringVector& unist_server_associated);
-                    //! inherited by
-                    virtual int saveNodeAssociationForAgent(const std::string& agent_uid,
-                                                            chaos::service_common::data::agent::AgentAssociation& node_association);
-                    //! inherited by
-                    virtual int loadNodeAssociationForAgent(const std::string& agent_uid,
-                                                            const std::string& associated_node_uid,
-                                                            chaos::service_common::data::agent::AgentAssociation& node_association);
-                    //! inherited by
-                    virtual int removeNodeAssociationForAgent(const std::string& agent_uid,
-                                                              const std::string& associated_node_uid);
+                    //!load full agent description
+                    int loadAgentDescription(const std::string& agent_uid,
+                                             chaos::service_common::data::agent::AgentInstance& agent_description);
+                    
+                    //! inherited by data_access::AgentDataAccess
+                    int getNodeListForAgent(const std::string& agent_uid,
+                                            ChaosStringVector& unist_server_associated);
+                    
+                    //! inherited by data_access::AgentDataAccess
+                    int getAgentForNode(const std::string& associated_node_uid,
+                                        std::string& agent_uid);
+                    
+                    //! inherited by data_access::AgentDataAccess
+                    int saveNodeAssociationForAgent(const std::string& agent_uid,
+                                                    chaos::service_common::data::agent::AgentAssociation& node_association);
+                    //! inherited by data_access::AgentDataAccess
+                    int loadNodeAssociationForAgent(const std::string& agent_uid,
+                                                    const std::string& associated_node_uid,
+                                                    chaos::service_common::data::agent::AgentAssociation& node_association);
+                    //! inherited by data_access::AgentDataAccess
+                    int removeNodeAssociationForAgent(const std::string& agent_uid,
+                                                      const std::string& associated_node_uid);
                 };
             }
         }

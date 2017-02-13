@@ -46,6 +46,7 @@ AgentNodeAssociationEditor::~AgentNodeAssociationEditor() {
 
 void AgentNodeAssociationEditor::on_pushButtonSaveAssociation_clicked() {
     association.auto_start = ui->checkBoxAutoSave->isChecked();
+    association.launch_cmd_line = ui->lineEditCMDLine->text().toStdString();
     association.configuration_file_content = ui->textEditConfigurationFileContent->toPlainText().toStdString();
     submitApiResult("AgentNodeAssociationEditor::saveAssociation",
                     GET_CHAOS_API_PTR(agent::SaveNodeAssociation)->execute(agent_uid.toStdString(),
@@ -54,6 +55,7 @@ void AgentNodeAssociationEditor::on_pushButtonSaveAssociation_clicked() {
 
 void AgentNodeAssociationEditor::updateUI() {
     ui->checkBoxAutoSave->setChecked(association.auto_start);
+    ui->lineEditCMDLine->setText(QString::fromStdString(association.launch_cmd_line));
     ui->textEditConfigurationFileContent->setText(QString::fromStdString(association.configuration_file_content));
 }
 
@@ -61,4 +63,9 @@ void AgentNodeAssociationEditor::on_pushButtonUpdateAssociationInformation_click
     submitApiResult("AgentNodeAssociationEditor::loadAssociation",
                     GET_CHAOS_API_PTR(agent::LoadNodeAssociation)->execute(agent_uid.toStdString(),
                                                                            association.associated_node_uid));
+}
+
+void AgentNodeAssociationEditor::on_pushButtonLaunchNodeOnAgent_clicked() {
+    submitApiResult("AgentNodeAssociationEditor::launchNode",
+                    GET_CHAOS_API_PTR(agent::LaunchNode)->execute(association.associated_node_uid));
 }

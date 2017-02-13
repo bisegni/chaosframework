@@ -54,12 +54,22 @@ CDataWrapper *SaveNodeAssociation::execute(CDataWrapper *api_data, bool& detach_
     
     int err = 0;
     const std::string agent_uid = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
+    std::string current_agent;
+    
     if(api_data->isCDataWrapperValue(AgentNodeDefinitionKey::NODE_ASSOCIATED)) {
         AgentAssociationSDWrapper assoc_sd_wrapper;
         std::auto_ptr<CDataWrapper> assoc_ser(api_data->getCSDataValue(AgentNodeDefinitionKey::NODE_ASSOCIATED));
         assoc_sd_wrapper.deserialize(assoc_ser.get());
+        //check if associated node is assocaited no antother agent
+        if((err = a_da->getAgentForNode(assoc_sd_wrapper().associated_node_uid, current_agent))) {
+            LOG_AND_TROW(ERR, -7, CHAOS_FORMAT("Error finding the agent for the node %1% with error %2%", %assoc_sd_wrapper().associated_node_uid%err));
+        } else if(current_agent.size() > 0 &&
+                  current_agent.compare(agent_uid) != 0) {
+            LOG_AND_TROW(ERR, -8, CHAOS_FORMAT("The node %1% is associated to the agent %2% and can't be assocaited to %3%", %assoc_sd_wrapper().associated_node_uid%current_agent%agent_uid));
+        }
+            
         if((err = a_da->saveNodeAssociationForAgent(agent_uid, assoc_sd_wrapper()))) {
-            LOG_AND_TROW(ERR, -7, CHAOS_FORMAT("Error saving association for node %1% into agent %2% with error %3%", %assoc_sd_wrapper().associated_node_uid%agent_uid%err));
+            LOG_AND_TROW(ERR, -9, CHAOS_FORMAT("Error saving association for node %1% into agent %2% with error %3%", %assoc_sd_wrapper().associated_node_uid%agent_uid%err));
         }
     } else {
         VectorAgentAssociationSDWrapper associationList_sd_wrap;
@@ -69,8 +79,16 @@ CDataWrapper *SaveNodeAssociation::execute(CDataWrapper *api_data, bool& detach_
             end = associationList_sd_wrap().end();
             it != end;
             it++) {
+            current_agent.clear();
+            //check if associated node is assocaited no antother agent
+            if((err = a_da->getAgentForNode(it->associated_node_uid, current_agent))) {
+                LOG_AND_TROW(ERR, -7, CHAOS_FORMAT("Error finding the agent for the node %1% with error %2%", %it->associated_node_uid%err));
+            } else if(current_agent.size() > 0 &&
+                      current_agent.compare(agent_uid) != 0) {
+                LOG_AND_TROW(ERR, -8, CHAOS_FORMAT("The node %1% is associated to the agent %2% and can't be assocaited to %3%", %it->associated_node_uid%current_agent%agent_uid));
+            }
             if((err = a_da->saveNodeAssociationForAgent(agent_uid, *it))) {
-                LOG_AND_TROW(ERR, -8, CHAOS_FORMAT("Error saving association for node %1% into agent %2% with error %3%", %it->associated_node_uid%agent_uid%err));
+                LOG_AND_TROW(ERR, -9, CHAOS_FORMAT("Error saving association for node %1% into agent %2% with error %3%", %it->associated_node_uid%agent_uid%err));
             }
         }
     }

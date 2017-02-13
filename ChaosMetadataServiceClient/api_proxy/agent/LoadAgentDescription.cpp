@@ -1,10 +1,10 @@
 /*
- *	ListNodeForAgent.cpp
+ *	LoadAgentDescription.cpp
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
  *
- *    	Copyright 09/02/2017 INFN, National Institute of Nuclear Physics
+ *    	Copyright 13/02/2017 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -19,29 +19,27 @@
  *    	limitations under the License.
  */
 
-#include <ChaosMetadataServiceClient/api_proxy/agent/ListNodeForAgent.h>
-
-#include <chaos/common/data/structured/Lists.h>
+#include <ChaosMetadataServiceClient/api_proxy/agent/LoadAgentDescription.h>
 
 using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::common::data::structured;
+using namespace chaos::service_common::data::agent;
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::api_proxy::agent;
 
-API_PROXY_CD_DEFINITION(ListNodeForAgent,
+API_PROXY_CD_DEFINITION(LoadAgentDescription,
                         AgentNodeDomainAndActionRPC::ProcessWorker::WORKER_NAME,
-                        AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LIST_NODE);
+                        "loadAgentDescription");
 
-ApiProxyResult ListNodeForAgent::execute(const std::string& agent_uid) {
+ApiProxyResult LoadAgentDescription::execute(const std::string& node_uid) {
     std::auto_ptr<CDataWrapper> pack(new CDataWrapper());
-    pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, agent_uid);
+    pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_uid);
     return callApi(pack.release());
 }
 
-void ListNodeForAgent::deserialize(CDataWrapper *api_result,
-                                   ChaosStringVector& associated_nodes) {
-    ChaosStringVectorSDWrapper association_list_sd_wrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(ChaosStringVector, associated_nodes));
-    association_list_sd_wrapper.serialization_key = AgentNodeDefinitionKey::NODE_ASSOCIATED;
-    association_list_sd_wrapper.deserialize(api_result);
+void LoadAgentDescription::deserialize(CDataWrapper *api_result,
+                                   AgentInstance& agent_instance) {
+    AgentInstanceSDWrapper agent_instance_sd_wrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(AgentInstance, agent_instance));
+    agent_instance_sd_wrapper.deserialize(api_result);
 }

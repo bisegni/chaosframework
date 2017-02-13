@@ -13,6 +13,7 @@ AgentEditor::AgentEditor(const QString& _agent_uid,
     ui->setupUi(this);
     nodeAssociatedListModel.setAgent(agent_uid);
     setWindowTitle(QString("Agen %1 editor").arg(agent_uid));
+
 }
 
 AgentEditor::~AgentEditor() {
@@ -39,6 +40,8 @@ void AgentEditor::initUI() {
     registerWidgetForContextualMenu(ui->listViewNodeAssociated,
                                     cm,
                                     false);
+    submitApiResult("AgentEditor::update",
+                    GET_CHAOS_API_PTR(agent::LoadAgentDescription)->execute(agent_uid.toStdString()));
 }
 
 bool AgentEditor::isClosing() {
@@ -51,7 +54,12 @@ void AgentEditor::on_pushButtonUpdateList_clicked() {
 
 void AgentEditor::onApiDone(const QString& tag,
                             QSharedPointer<chaos::common::data::CDataWrapper> api_result) {
-    nodeAssociatedListModel.updateList();
+    if(tag.compare("AgentEditor::update") == 0) {
+        GET_CHAOS_API_PTR(agent::LoadAgentDescription)->deserialize(api_result.data(),
+                                                                    agent_insance);
+    } else {
+        nodeAssociatedListModel.updateList();
+    }
 }
 
 void AgentEditor::selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) {
@@ -84,7 +92,7 @@ void AgentEditor::on_pushButtonRemoveAssociatedNode_clicked() {
 }
 
 void AgentEditor::contextualMenuActionTrigger(const QString& cm_title,
-                                                  const QVariant& cm_data){
+                                              const QVariant& cm_data){
     Q_UNUSED(cm_data);
     qDebug() << "CM:" << cm_title;
 }

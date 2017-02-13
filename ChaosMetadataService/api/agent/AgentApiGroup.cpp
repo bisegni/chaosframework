@@ -24,18 +24,21 @@
 #include "LoadNodeAssociation.h"
 #include "SaveNodeAssociation.h"
 #include "RemoveNodeAssociation.h"
-
+#include "LaunchNode.h"
+#include "LoadAgentDescription.h"
 using namespace chaos::metadata_service::api::agent;
 
 DEFINE_CLASS_FACTORY_NO_ALIAS(AgentApiGroup,
                               chaos::metadata_service::api::AbstractApiGroup);
 
 AgentApiGroup::AgentApiGroup():
-AbstractApiGroup(AgentNodeDomainAndActionRPC::RPC_DOMAIN){
+AbstractApiGroup(AgentNodeDomainAndActionRPC::ProcessWorker::WORKER_NAME){
     addApi<ListNodeForAgent>();
     addApi<LoadNodeAssociation>();
     addApi<SaveNodeAssociation>();
     addApi<RemoveNodeAssociation>();
+    addApi<LaunchNode>();
+    addApi<LoadAgentDescription>();
 }
 
 AgentApiGroup::~AgentApiGroup() {}

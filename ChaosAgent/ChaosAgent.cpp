@@ -23,6 +23,8 @@
 
 #include <chaos/common/healt_system/HealtManager.h>
 
+#include <boost/filesystem.hpp>
+
 #define INFO    INFO_LOG(ChaosAgent)
 #define ERROR   ERR_LOG(ChaosAgent)
 #define DEBUG   DBG_LOG(ChaosAgent)
@@ -56,6 +58,12 @@ void ChaosAgent::init(void *init_data)  throw(CException) {
     
     if (signal((int) SIGTERM, ChaosAgent::signalHanlder) == SIG_ERR) {
         throw CException(-3, "Error registering SIGTERM signal", __PRETTY_FUNCTION__);
+    }
+    
+    if(settings.working_directory.size() == 0) {
+        //set current directory has working one
+        boost::filesystem::path full_path( boost::filesystem::current_path() );
+        settings.working_directory = full_path.string();
     }
     
     //init healt manager singleton
