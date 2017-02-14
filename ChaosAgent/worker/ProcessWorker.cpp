@@ -248,11 +248,13 @@ bool ProcessWorker::checkProcessAlive(const chaos::service_common::data::agent::
     std::string ps_command = CHAOS_FORMAT("ps -ef | grep '%1%'", %node_association_info.launch_cmd_line);
     FILE *in = popen2(ps_command.c_str(), "r", pid);
     if (!in) {throw chaos::CException(-2, "popen() failed!", __PRETTY_FUNCTION__);}
-
+    
     while(fgets(buff, sizeof(buff), in)!=NULL){
         INFO << buff;
-        found = strstr(buff, node_association_info.launch_cmd_line.c_str()) != NULL;
-        if(found) break;
+        if(strstr(buff, "grep") == NULL) {
+            found = strstr(buff, node_association_info.launch_cmd_line.c_str()) != NULL;
+            if(found) break;
+        }
     }
     pclose2(in, pid);
     return found;
