@@ -47,10 +47,15 @@ CDataWrapper *LoadAgentDescription::execute(CDataWrapper *api_data, bool& detach
     GET_DATA_ACCESS(AgentDataAccess, a_da, -4);
     
     int err = 0;
+    bool load_related_data = false;
     AgentInstanceSDWrapper agent_instance_sd_wrapper;
     const std::string agent_uid = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
-    
-    if((err = a_da->loadAgentDescription(agent_uid, agent_instance_sd_wrapper()))) {
+    if(api_data->hasKey("load_related_data")) {
+        load_related_data = api_data->getBoolValue("load_related_data");
+    }
+    if((err = a_da->loadAgentDescription(agent_uid,
+                                         load_related_data,
+                                         agent_instance_sd_wrapper()))) {
         LOG_AND_TROW(ERR, -5, CHAOS_FORMAT("Error loading full description for agent %1%",%agent_uid));
     }
     return agent_instance_sd_wrapper.serialize().release();

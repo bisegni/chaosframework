@@ -3,6 +3,10 @@
 
 #include "ui_AgentEditor.h"
 
+#define START_NODE "Launch Node"
+#define STOP_NODE "Stop Node"
+#define RESTART_NODE "Restart Node"
+
 using namespace chaos::metadata_service_client::api_proxy;
 
 AgentEditor::AgentEditor(const QString& _agent_uid,
@@ -34,22 +38,27 @@ void AgentEditor::initUI() {
             SLOT(doubleClicked(QModelIndex)));
 
     QVector< QPair<QString, QVariant> > cm;
-    cm.push_back(QPair<QString, QVariant>("Start Node", QVariant()));
-    cm.push_back(QPair<QString, QVariant>("Stop Node", QVariant()));
-    cm.push_back(QPair<QString, QVariant>("Restart Node", QVariant()));
+    cm.push_back(QPair<QString, QVariant>(START_NODE, QVariant()));
+    cm.push_back(QPair<QString, QVariant>(STOP_NODE, QVariant()));
+    cm.push_back(QPair<QString, QVariant>(RESTART_NODE, QVariant()));
     registerWidgetForContextualMenu(ui->listViewNodeAssociated,
                                     cm,
                                     false);
-    submitApiResult("AgentEditor::update",
-                    GET_CHAOS_API_PTR(agent::LoadAgentDescription)->execute(agent_uid.toStdString()));
+    on_pushButtonUpdateList_clicked();
 }
 
 bool AgentEditor::isClosing() {
     return true;
 }
 
+void AgentEditor::updateUI() {
+    ui->labelWorkingDirectory->setText(QString::fromStdString(agent_insance.working_directory));
+    ui->labelWorkingDirectory->setToolTip(QString::fromStdString(agent_insance.working_directory));
+}
+
 void AgentEditor::on_pushButtonUpdateList_clicked() {
-    nodeAssociatedListModel.updateList();
+    submitApiResult("AgentEditor::update",
+                    GET_CHAOS_API_PTR(agent::LoadAgentDescription)->execute(agent_uid.toStdString()));
 }
 
 void AgentEditor::onApiDone(const QString& tag,
@@ -57,8 +66,10 @@ void AgentEditor::onApiDone(const QString& tag,
     if(tag.compare("AgentEditor::update") == 0) {
         GET_CHAOS_API_PTR(agent::LoadAgentDescription)->deserialize(api_result.data(),
                                                                     agent_insance);
-    } else {
         nodeAssociatedListModel.updateList();
+        QMetaObject::invokeMethod(this,
+                                  "updateUI",
+                                  Qt::QueuedConnection);
     }
 }
 
@@ -94,5 +105,11 @@ void AgentEditor::on_pushButtonRemoveAssociatedNode_clicked() {
 void AgentEditor::contextualMenuActionTrigger(const QString& cm_title,
                                               const QVariant& cm_data){
     Q_UNUSED(cm_data);
-    qDebug() << "CM:" << cm_title;
+    if(cm_title.compare(START_NODE) == 0) {
+        QModelIndexList index_list = ui->listViewNodeAssociated->selectionModel()->selectedIndexes();
+        foreach(QModelIndex index, index_list) {
+            submitApiResult("AgentEditor::launch_node",
+                            GET_CHAOS_API_PTR(agent::LaunchNode)->execute(index.data().toString().toStdString()));
+        }
+    }
 }

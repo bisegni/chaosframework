@@ -62,6 +62,7 @@ namespace chaos {
                     
                     //!load full agent description
                     int loadAgentDescription(const std::string& agent_uid,
+                                             const bool load_related_data,
                                              chaos::service_common::data::agent::AgentInstance& agent_description);
                     
                     //! inherited by data_access::AgentDataAccess

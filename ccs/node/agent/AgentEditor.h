@@ -37,6 +37,7 @@ private slots:
 
     void on_pushButtonRemoveAssociatedNode_clicked();
 
+    void updateUI();
 private:
     QString agent_uid;
     Ui::AgentEditor *ui;

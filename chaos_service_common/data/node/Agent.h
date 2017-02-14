@@ -49,19 +49,23 @@ namespace chaos {
                     auto_start(false){}
                     
                     AgentAssociation(const std::string& _associated_node_uid,
+                                     const std::string& _launch_cmd_line,
                                      const std::string& _configuration_file_content,
                                      const bool _auto_start):
                     associated_node_uid(_associated_node_uid),
+                    launch_cmd_line(_launch_cmd_line),
                     configuration_file_content(_configuration_file_content),
                     auto_start(_auto_start){}
                     
                     AgentAssociation(const AgentAssociation& copy_src):
                     associated_node_uid(copy_src.associated_node_uid),
+                    launch_cmd_line(copy_src.launch_cmd_line),
                     configuration_file_content(copy_src.configuration_file_content),
                     auto_start(copy_src.auto_start){}
                     
                     AgentAssociation& operator=(AgentAssociation const &rhs) {
                         associated_node_uid = rhs.associated_node_uid;
+                        launch_cmd_line = rhs.launch_cmd_line;
                         configuration_file_content = rhs.configuration_file_content;
                         auto_start = rhs.auto_start;
                         return *this;
@@ -95,7 +99,7 @@ namespace chaos {
                 struct AgentInstance:
                 public node::NodeInstance {
                     //!working directory of the agent
-                    std::string loadAgentDescription;
+                    std::string working_directory;
                     //!associated node
                     VectorAgentAssociation node_associated;
                     
@@ -108,9 +112,11 @@ namespace chaos {
                                  _instance_name){}
                     
                     AgentInstance(const AgentInstance& copy_src):
-                    NodeInstance(copy_src){}
+                    NodeInstance(copy_src),
+                    working_directory(copy_src.working_directory){}
                     
                     AgentInstance& operator=(AgentInstance const &rhs) {
+                        working_directory = rhs.working_directory;
                         ((NodeInstance*)this)->operator=(rhs);
                         return *this;
                     }
@@ -126,7 +132,7 @@ namespace chaos {
                     if(serialized_data == NULL) return;
                     dataWrapped().instance_seq = (uint64_t)CDW_GET_INT64_WITH_DEFAULT(serialized_data, "seq", 0);
                     dataWrapped().instance_name = CDW_GET_SRT_WITH_DEFAULT(serialized_data, NodeDefinitionKey::NODE_UNIQUE_ID, "");
-                    dataWrapped().loadAgentDescription = CDW_GET_SRT_WITH_DEFAULT(serialized_data, AgentNodeDefinitionKey::WORKING_DIRECTORY, "");
+                    dataWrapped().working_directory = CDW_GET_SRT_WITH_DEFAULT(serialized_data, AgentNodeDefinitionKey::WORKING_DIRECTORY, "");
                     VectorAgentAssociationSDWrapper associationList_sd_wrap(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(VectorAgentAssociation, dataWrapped().node_associated));
                     associationList_sd_wrap.serialization_key = AgentNodeDefinitionKey::NODE_ASSOCIATED;
                     associationList_sd_wrap.deserialize(serialized_data);
@@ -136,7 +142,7 @@ namespace chaos {
                     std::auto_ptr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
                     data_serialized->addInt64Value("seq", dataWrapped().instance_seq);
                     data_serialized->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, dataWrapped().instance_name);
-                    data_serialized->addStringValue(AgentNodeDefinitionKey::WORKING_DIRECTORY, dataWrapped().loadAgentDescription);
+                    data_serialized->addStringValue(AgentNodeDefinitionKey::WORKING_DIRECTORY, dataWrapped().working_directory);
                     VectorAgentAssociationSDWrapper associationList_sd_wrap(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(VectorAgentAssociation, dataWrapped().node_associated));
                     associationList_sd_wrap.serialization_key = AgentNodeDefinitionKey::NODE_ASSOCIATED;
                     std::auto_ptr<chaos::common::data::CDataWrapper> ser_vec = associationList_sd_wrap.serialize();

@@ -113,13 +113,14 @@ int MongoDBAgentDataAccess::insertUpdateAgentDescription(CDataWrapper& agent_des
 }
 
 int MongoDBAgentDataAccess::loadAgentDescription(const std::string& agent_uid,
+                                                 const bool load_related_data,
                                                  AgentInstance& agent_description) {
     int err = 0;
     try {
         mongo::BSONObj result;
         mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << agent_uid
                                     << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_AGENT);
-        
+        mongo::BSONObj project = (load_related_data?BSON("_id"<<-1):BSON("_id" <<-1 << AgentNodeDefinitionKey::NODE_ASSOCIATED<<-1));
         DEBUG_CODE(DBG<<log_message("loadAgentDescription",
                                     "find",
                                     DATA_ACCESS_LOG_1_ENTRY("Query",

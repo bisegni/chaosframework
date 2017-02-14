@@ -45,7 +45,8 @@ namespace chaos {
                      The mds automatically found the agent that contains the node and send request to that agent to start it
                      \param node_uid the node unique id to start
                      */
-                    ApiProxyResult execute(const std::string& node_uid);
+                    ApiProxyResult execute(const std::string& node_uid,
+                                           const bool load_related_data = false);
                     static void deserialize(chaos::common::data::CDataWrapper *api_result,
                                             chaos::service_common::data::agent::AgentInstance& agent_instance);
                 };

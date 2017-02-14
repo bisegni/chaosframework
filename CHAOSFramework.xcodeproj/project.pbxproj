@@ -4590,10 +4590,10 @@
 				32BE0AE41E4C69910007764C /* LoadNodeAssociation.h */,
 				32990B141E4CBAA800A4AF8F /* RemoveNodeAssociation.cpp */,
 				32990B151E4CBAA800A4AF8F /* RemoveNodeAssociation.h */,
-				32990B181E51DD9100A4AF8F /* LaunchNode.cpp */,
-				32990B191E51DD9100A4AF8F /* LaunchNode.h */,
 				32990B261E521F5E00A4AF8F /* LoadAgentDescription.cpp */,
 				32990B271E521F5E00A4AF8F /* LoadAgentDescription.h */,
+				32990B181E51DD9100A4AF8F /* LaunchNode.cpp */,
+				32990B191E51DD9100A4AF8F /* LaunchNode.h */,
 				32990B0E1E4C6F5000A4AF8F /* agent.h */,
 			);
 			path = agent;

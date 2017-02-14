@@ -32,9 +32,11 @@ API_PROXY_CD_DEFINITION(LoadAgentDescription,
                         AgentNodeDomainAndActionRPC::ProcessWorker::WORKER_NAME,
                         "loadAgentDescription");
 
-ApiProxyResult LoadAgentDescription::execute(const std::string& node_uid) {
+ApiProxyResult LoadAgentDescription::execute(const std::string& node_uid,
+                                             const bool load_related_data) {
     std::auto_ptr<CDataWrapper> pack(new CDataWrapper());
     pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_uid);
+    pack->addBoolValue("load_related_data", load_related_data);
     return callApi(pack.release());
 }
 
