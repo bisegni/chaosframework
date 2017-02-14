@@ -25,7 +25,9 @@
 #include <chaos_service_common/data/node/Agent.h>
 
 #include <chaos/common/chaos_constants.h>
+#include <chaos/common/utility/UUIDUtil.h>
 
+#include <boost/filesystem.hpp>
 #include <cstdio>
 #include <iostream>
 #include <memory>
@@ -33,13 +35,15 @@
 #include <string>
 #include <array>
 
-#define INFO    INFO_LOG(ProcessWorker)
-#define ERROR   ERR_LOG(ProcessWorker)
+#define INFO  INFO_LOG(ProcessWorker)
+#define ERROR ERR_LOG(ProcessWorker)
 #define DBG   DBG_LOG(ProcessWorker)
 
 using namespace chaos::agent;
 using namespace chaos::agent::worker;
 using namespace chaos::service_common::data::agent;
+
+using namespace chaos::common::utility;
 
 ProcessWorker::ProcessWorker():
 AbstractWorker(AgentNodeDomainAndActionRPC::ProcessWorker::WORKER_NAME) {
@@ -115,7 +119,12 @@ chaos::common::data::CDataWrapper *ProcessWorker::launchUnitServer(chaos::common
     }
     AgentAssociationSDWrapper assoc_sd_wrapper;
     assoc_sd_wrapper.deserialize(data);
-    launchProcess(assoc_sd_wrapper());
+    assoc_sd_wrapper().launch_cmd_line = launchProcess(assoc_sd_wrapper());
+    if(checkProcessAlive(assoc_sd_wrapper())) {
+        INFO << "Alive";
+    } else {
+        INFO << "Dead";
+    }
     return NULL;
 }
 
@@ -194,14 +203,57 @@ int pclose2(FILE * fp,
     return stat;
 }
 
-void ProcessWorker::launchProcess(const AgentAssociation& node_association_info) {
+std::string ProcessWorker::launchProcess(const AgentAssociation& node_association_info) {
     int pid = 0;
+    bool use_init_file = false;
+    std::string init_file_name;
+    boost::filesystem::path exec_command;
     try{
-        std::string exec_command = CHAOS_FORMAT("%1%/%2%", %ChaosAgent::getInstance()->settings.working_directory%node_association_info.launch_cmd_line);
-        FILE *pipe = popen2(exec_command.c_str(), "r", pid);
-        if (!pipe) throw chaos::CException(-1, "popen() failed!", __PRETTY_FUNCTION__);
+        exec_command = CHAOS_FORMAT("%1%/%2%", %ChaosAgent::getInstance()->settings.working_directory%node_association_info.launch_cmd_line);
+        boost::filesystem::path init_file = CHAOS_FORMAT("%1%/ini_files/%2%", %ChaosAgent::getInstance()->settings.working_directory%(init_file_name = UUIDUtil::generateUUIDLite()+".ini"));
+        boost::filesystem::path init_file_parent_path = init_file.parent_path();
+        
+        if (boost::filesystem::exists(init_file_parent_path) == false &&
+            boost::filesystem::create_directory(init_file_parent_path) == false) {
+            throw chaos::CException(-1, CHAOS_FORMAT("Parent path %1% can't be created",%init_file_parent_path), __PRETTY_FUNCTION__);
+        }
+        //write config file
+        if((use_init_file = node_association_info.configuration_file_content.size() > 0)) {
+            //we have also a configuraiton file
+            
+            //write configuration file
+            std::ofstream init_file_stream;
+            init_file_stream.open(init_file.string().c_str(), std::ofstream::trunc | std::ofstream::out);
+            init_file_stream.write(node_association_info.configuration_file_content.c_str(), node_association_info.configuration_file_content.length());
+            init_file_stream.close();
+            
+            //add parameter to launch comamnd line for read the configuraiton file
+            exec_command += CHAOS_FORMAT(" --conf-file=%1%", %init_file_name);
+        }
+        
+        FILE *pipe = popen2(exec_command.string().c_str(), "r", pid);
+        if (!pipe) {throw chaos::CException(-2, "popen() failed!", __PRETTY_FUNCTION__);}
         pclose2(pipe, pid);
+        if(use_init_file){boost::filesystem::remove(init_file);}
     } catch(std::exception& e) {
         ERROR << e.what();
     }
+    return exec_command.string();
+}
+
+bool ProcessWorker::checkProcessAlive(const chaos::service_common::data::agent::AgentAssociation& node_association_info) {
+    int pid;
+    bool found = false;
+    char buff[512];
+    std::string ps_command = CHAOS_FORMAT("ps -ef | grep '%1%'", %node_association_info.launch_cmd_line);
+    FILE *in = popen2(ps_command.c_str(), "r", pid);
+    if (!in) {throw chaos::CException(-2, "popen() failed!", __PRETTY_FUNCTION__);}
+
+    while(fgets(buff, sizeof(buff), in)!=NULL){
+        INFO << buff;
+        found = strstr(buff, node_association_info.launch_cmd_line.c_str()) != NULL;
+        if(found) break;
+    }
+    pclose2(in, pid);
+    return found;
 }
