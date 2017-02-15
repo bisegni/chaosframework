@@ -53,10 +53,6 @@ namespace chaos {
                                                      const bool load_related_data,
                                                      chaos::service_common::data::agent::AgentInstance& agent_description) = 0;
                     
-                    //! return all unit server associated with agent
-                    virtual int getNodeListForAgent(const std::string& agent_uid,
-                                                    ChaosStringVector& unist_server_associated) = 0;
-                    
                     //! return, if found, the uid of the agent that has the associated node
                     virtual int getAgentForNode(const std::string& associated_node_uid,
                                                 std::string& agent_uid) = 0;
@@ -72,6 +68,13 @@ namespace chaos {
                     //! remove the node association description
                     virtual int removeNodeAssociationForAgent(const std::string& agent_uid,
                                                               const std::string& associated_node_uid) = 0;
+                    
+                    virtual int setNodeAssociationStatus(const std::string& agent_uid,
+                                                         const chaos::service_common::data::agent::AgentAssociationStatus& status) = 0;
+                    
+                    //! return all unit server associated with agent
+                    virtual int getNodeListStatusForAgent(const std::string& agent_uid,
+                                                          chaos::service_common::data::agent::VectorAgentAssociationStatus& node_status_vec) = 0;
                 };
             }
         }

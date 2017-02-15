@@ -1,10 +1,10 @@
 /*
- *	ListNodeForAgent.h
+ *	CheckAgentHostedProcess.h
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
  *
- *    	Copyright 09/02/2017 INFN, National Institute of Nuclear Physics
+ *    	Copyright 15/02/2017 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -19,39 +19,38 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__0BBEA50_92B1_4D03_88AF_F5FD9AEE27FA_ListNodeForAgent_h
-#define __CHAOSFramework__0BBEA50_92B1_4D03_88AF_F5FD9AEE27FA_ListNodeForAgent_h
+#ifndef __CHAOSFramework_B9D7FBA3_13EC_485E_AC0A_2C87D20EC897_CheckAgentHostedProcess_h
+#define __CHAOSFramework_B9D7FBA3_13EC_485E_AC0A_2C87D20EC897_CheckAgentHostedProcess_h
 
 #include <ChaosMetadataServiceClient/api_proxy/ApiProxy.h>
 
 #include <chaos/common/chaos_types.h>
 
-#include <chaos_service_common/data/node/Agent.h>
+#include <chaos_service_common/data/data.h>
 
 namespace chaos {
     namespace metadata_service_client {
         namespace api_proxy {
             namespace agent {
                 
-                //! return all node associated to an agent
-                class ListNodeForAgent:
+                //! Start a batch process cheecking into the agent
+                class CheckAgentHostedProcess:
                 public chaos::metadata_service_client::api_proxy::ApiProxy {
-                    API_PROXY_CLASS(ListNodeForAgent)
+                    API_PROXY_CLASS(CheckAgentHostedProcess)
                 protected:
-                    API_PROXY_CD_DECLARATION(ListNodeForAgent)
+                    API_PROXY_CD_DECLARATION(CheckAgentHostedProcess)
                 public:
-                    //! find all node associated to the agent
+                    //! Start a batch process cheecking into the agent
                     /*!
-                     \param agent_uid the agent unique id
+                     The metadata server load all associated node and ask to the agent for their
+                     alive status
+                     \param agent_uid the agent that need to be asked to check his asosciated node
                      */
                     ApiProxyResult execute(const std::string& agent_uid);
-                    
-                    static void deserialize(chaos::common::data::CDataWrapper *api_result,
-                                            chaos::service_common::data::agent::VectorAgentAssociationStatus& associated_nodes);
                 };
             }
         }
     }
 }
 
-#endif /* __CHAOSFramework__0BBEA50_92B1_4D03_88AF_F5FD9AEE27FA_ListNodeForAgent_h */
+#endif /* __CHAOSFramework_B9D7FBA3_13EC_485E_AC0A_2C87D20EC897_CheckAgentHostedProcess_h */

@@ -127,7 +127,7 @@ namespace chaos {
                 
                 //!assign operation overload with wrapper
                 T& operator()() {
-                    return (*wrapper)();;
+                    return (*wrapper)();
                 }
                 
                 const T& dataWrapped() const {

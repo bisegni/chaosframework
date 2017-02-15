@@ -1,10 +1,10 @@
 /*
- *	ListNodeForAgent.cpp
+ *	CheckAgentHostedProcess.cpp
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
  *
- *    	Copyright 08/02/2017 INFN, National Institute of Nuclear Physics
+ *    	Copyright 15/02/2017 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -19,31 +19,31 @@
  *    	limitations under the License.
  */
 
-#include "ListNodeForAgent.h"
+#include "CheckAgentHostedProcess.h"
+#include "../../batch/agent/AgentCheckAgentProcess.h"
 
-#include <chaos/common/data/structured/Lists.h>
+#include <chaos_service_common/data/data.h>
 
 using namespace chaos::metadata_service::api::agent;
 
-#define INFO INFO_LOG(ListNodeForAgent)
-#define ERR  DBG_LOG(ListNodeForAgent)
-#define DBG  ERR_LOG(ListNodeForAgent)
+#define INFO INFO_LOG(RemoveNodeAssociation)
+#define ERR  DBG_LOG(RemoveNodeAssociation)
+#define DBG  ERR_LOG(RemoveNodeAssociation)
 
 using namespace chaos::common::data;
 using namespace chaos::common::data::structured;
+using namespace chaos::service_common::data::agent;
 using namespace chaos::metadata_service::api::agent;
 using namespace chaos::metadata_service::persistence::data_access;
 
-using namespace chaos::service_common::data::agent;
-
-ListNodeForAgent::ListNodeForAgent():
-AbstractApi(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LIST_NODE){
+CheckAgentHostedProcess::CheckAgentHostedProcess():
+AbstractApi(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_CHECK_NODE){
 }
 
-ListNodeForAgent::~ListNodeForAgent() {
+CheckAgentHostedProcess::~CheckAgentHostedProcess() {
 }
 
-CDataWrapper *ListNodeForAgent::execute(CDataWrapper *api_data, bool& detach_data) {
+CDataWrapper *CheckAgentHostedProcess::execute(CDataWrapper *api_data, bool& detach_data) {
     //check for mandatory attributes
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found");
     CHECK_KEY_THROW_AND_LOG(api_data, NodeDefinitionKey::NODE_UNIQUE_ID, ERR, -2, CHAOS_FORMAT("The key %1% is mandatory", %NodeDefinitionKey::NODE_UNIQUE_ID));
@@ -51,13 +51,12 @@ CDataWrapper *ListNodeForAgent::execute(CDataWrapper *api_data, bool& detach_dat
     
     //we can rpocessd
     GET_DATA_ACCESS(AgentDataAccess, a_da, -4);
-    
-    int err = 0;
-    VectorAgentAssociationStatusSDWrapper association_status_vec_sd_wrap;
-    association_status_vec_sd_wrap.serialization_key = AgentNodeDefinitionKey::NODE_ASSOCIATED;
-    const std::string agent_uid = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
-    if((err = a_da->getNodeListStatusForAgent(agent_uid, association_status_vec_sd_wrap()))) {
-        LOG_AND_TROW(ERR, -5, CHAOS_FORMAT("Error loading association status for agent %1%",%agent_uid));
-    }
-    return association_status_vec_sd_wrap.serialize().release();
+    uint64_t cmd_id = 0;
+    std::auto_ptr<CDataWrapper> batch_data(new CDataWrapper());
+    api_data->copyKeyTo(NodeDefinitionKey::NODE_UNIQUE_ID, *batch_data);
+    cmd_id = getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::agent::AgentCheckAgentProcess),
+                                               batch_data.release(),
+                                               0,
+                                               1000);
+    return NULL;
 }

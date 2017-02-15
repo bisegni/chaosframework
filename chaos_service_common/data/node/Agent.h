@@ -32,8 +32,10 @@ namespace chaos {
         namespace data {
             namespace agent {
                 
-                //!node asscoaited to an agent
+                //!node association to an agent
                 struct AgentAssociation {
+                    //!identify the node of node associated to agent
+                    std::string  association_unique_id;
                     //!identify the node of node associated to agent
                     std::string  associated_node_uid;
                     //!string to pass to the system for launch the process
@@ -52,18 +54,21 @@ namespace chaos {
                                      const std::string& _launch_cmd_line,
                                      const std::string& _configuration_file_content,
                                      const bool _auto_start):
+                    association_unique_id(),
                     associated_node_uid(_associated_node_uid),
                     launch_cmd_line(_launch_cmd_line),
                     configuration_file_content(_configuration_file_content),
                     auto_start(_auto_start){}
                     
                     AgentAssociation(const AgentAssociation& copy_src):
+                    association_unique_id(copy_src.association_unique_id),
                     associated_node_uid(copy_src.associated_node_uid),
                     launch_cmd_line(copy_src.launch_cmd_line),
                     configuration_file_content(copy_src.configuration_file_content),
                     auto_start(copy_src.auto_start){}
                     
                     AgentAssociation& operator=(AgentAssociation const &rhs) {
+                        association_unique_id = rhs.association_unique_id;
                         associated_node_uid = rhs.associated_node_uid;
                         launch_cmd_line = rhs.launch_cmd_line;
                         configuration_file_content = rhs.configuration_file_content;
@@ -76,6 +81,7 @@ namespace chaos {
                 CHAOS_OPEN_SDWRAPPER(AgentAssociation)
                 void deserialize(chaos::common::data::CDataWrapper *serialized_data) {
                     if(serialized_data == NULL) return;
+                    dataWrapped().association_unique_id = CDW_GET_SRT_WITH_DEFAULT(serialized_data, "association_uid", "");
                     dataWrapped().associated_node_uid = CDW_GET_SRT_WITH_DEFAULT(serialized_data, AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_PAR_NAME, "");
                     dataWrapped().launch_cmd_line = CDW_GET_SRT_WITH_DEFAULT(serialized_data, AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_CMD_LINE, "");
                     dataWrapped().configuration_file_content = CDW_GET_SRT_WITH_DEFAULT(serialized_data, AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_PAR_CFG, "");
@@ -84,6 +90,7 @@ namespace chaos {
                 
                 std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
                     std::auto_ptr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
+                    data_serialized->addStringValue("association_uid", dataWrapped().association_unique_id);
                     data_serialized->addStringValue(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_PAR_NAME, dataWrapped().associated_node_uid);
                     data_serialized->addStringValue(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_CMD_LINE, dataWrapped().launch_cmd_line);
                     data_serialized->addStringValue(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_PAR_CFG, dataWrapped().configuration_file_content);
@@ -92,8 +99,61 @@ namespace chaos {
                 }
                 CHAOS_CLOSE_SDWRAPPER()
                 
-                //!define the association
+                
+                //!
+                struct AgentAssociationStatus {
+                    //!associated node uid
+                    std::string     associated_node_uid;
+                    //!alive state
+                    bool            alive;
+                    //!checking timestamp
+                    uint64_t        check_ts;
+                    
+                    AgentAssociationStatus():
+                    alive(false),
+                    check_ts(0){}
+                    
+                    AgentAssociationStatus(const std::string& _associated_node_uid):
+                    associated_node_uid(_associated_node_uid),
+                    check_ts(0){}
+                    
+                    AgentAssociationStatus(const AgentAssociationStatus& copy_src):
+                    associated_node_uid(copy_src.associated_node_uid),
+                    alive(copy_src.alive),
+                    check_ts(copy_src.check_ts){}
+                    
+                    AgentAssociationStatus& operator=(AgentAssociationStatus const &rhs) {
+                        associated_node_uid = rhs.associated_node_uid;
+                        alive = rhs.alive;
+                        check_ts = rhs.check_ts;
+                        return *this;
+                    }
+                };
+                
+                //!sd wrapper for agent association status class
+                CHAOS_OPEN_SDWRAPPER(AgentAssociationStatus)
+                void deserialize(chaos::common::data::CDataWrapper *serialized_data) {
+                    if(serialized_data == NULL) return;
+                    dataWrapped().associated_node_uid = CDW_GET_SRT_WITH_DEFAULT(serialized_data, AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_PAR_NAME, "");
+                    dataWrapped().alive = CDW_GET_BOOL_WITH_DEFAULT(serialized_data, "alive", false);
+                    dataWrapped().check_ts = (uint64_t)CDW_GET_INT64_WITH_DEFAULT(serialized_data, "check_ts", 0);
+                }
+                
+                std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
+                    std::auto_ptr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
+                    data_serialized->addStringValue(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_PAR_NAME, dataWrapped().associated_node_uid);
+                    data_serialized->addBoolValue("alive", dataWrapped().alive);
+                    data_serialized->addInt64Value("check_ts", dataWrapped().check_ts);
+                    return data_serialized;
+                }
+                CHAOS_CLOSE_SDWRAPPER()
+                
+                
+                //!define the vector for association classes
                 CHAOS_DEFINE_VECTOR_FOR_TYPE(AgentAssociation, VectorAgentAssociation);
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(AgentAssociationStatus, VectorAgentAssociationStatus);
+                typedef chaos::common::data::structured::StdVectorSDWrapper<AgentAssociation, AgentAssociationSDWrapper> VectorAgentAssociationSDWrapper;
+                typedef chaos::common::data::structured::StdVectorSDWrapper<AgentAssociationStatus, AgentAssociationStatusSDWrapper> VectorAgentAssociationStatusSDWrapper;
                 
                 //! base node instance description
                 struct AgentInstance:
@@ -121,10 +181,6 @@ namespace chaos {
                         return *this;
                     }
                 };
-                
-                //!define the serialization of a std::vector of association
-                CHAOS_DEFINE_VECTOR_FOR_TYPE(AgentAssociation, VectorAgentAssociation)
-                typedef chaos::common::data::structured::StdVectorSDWrapper<AgentAssociation, AgentAssociationSDWrapper> VectorAgentAssociationSDWrapper;
                 
                 //!sd wrapper for agent associateion class
                 CHAOS_OPEN_SDWRAPPER(AgentInstance)

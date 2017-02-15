@@ -98,6 +98,18 @@
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="pushButtonStartCheckProcess">
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Start Check Process</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>

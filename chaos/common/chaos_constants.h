@@ -573,6 +573,11 @@ namespace chaos {
             
             static const char * const ACTION_LIST_NODE                        = "listNode";
             static const char * const ACTION_LIST_NODE_PARM_NAME              = NodeDefinitionKey::NODE_UNIQUE_ID;
+            
+            static const char * const ACTION_CHECK_NODE                       = "checkNode";
+            static const char * const ACTION_CHECK_NODE_ASSOCIATED_NODES      = AgentNodeDefinitionKey::NODE_ASSOCIATED;
+            static const char * const ACTION_CHECK_NODE_RESULT_NODE_UID       = NodeDefinitionKey::NODE_UNIQUE_ID;
+            static const char * const ACTION_CHECK_NODE_RESULT_NODE_ALIVE     = "alive";
         }
     }
     /** @} */ // end of AgentNodeDomainAndActionRPC

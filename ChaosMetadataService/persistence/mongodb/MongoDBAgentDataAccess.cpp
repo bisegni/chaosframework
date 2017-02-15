@@ -23,6 +23,7 @@
 #include "mongo_db_constants.h"
 
 #include <chaos/common/chaos_constants.h>
+#include <chaos/common/utility/UUIDUtil.h>
 #include <chaos/common/utility/TimingUtil.h>
 
 using namespace chaos;
@@ -61,7 +62,7 @@ int MongoDBAgentDataAccess::insertUpdateAgentDescription(CDataWrapper& agent_des
         
         //!check if node is present
         if((err = node_data_access->checkNodePresence(presence, agent_uid))) {
-            ERR << CHAOS_FORMAT("Error registering agent %1% with error %2%" , %agent_uid%err);
+            ERR << CHAOS_FORMAT("Error checking agent %1% presence with error %2%" , %agent_uid%err);
             return err;
         }
         
@@ -146,50 +147,6 @@ int MongoDBAgentDataAccess::loadAgentDescription(const std::string& agent_uid,
     return err;
 }
 
-int MongoDBAgentDataAccess::getNodeListForAgent(const std::string& agent_uid,
-                                                ChaosStringVector& unist_server_associated) {
-    int err = 0;
-    try {
-        mongo::BSONObj result;
-        mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << agent_uid
-                                    << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_AGENT);
-        mongo::BSONObj project = BSON(CHAOS_FORMAT("%1%.%2%",%AgentNodeDefinitionKey::NODE_ASSOCIATED%NodeDefinitionKey::NODE_UNIQUE_ID) << 1);
-        
-        unist_server_associated.clear();
-        DEBUG_CODE(DBG<<log_message("getNodeListForAgent",
-                                    "find",
-                                    DATA_ACCESS_LOG_1_ENTRY("Query",
-                                                            query.toString()));)
-        
-        if((err = connection->findOne(result,
-                                      MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
-                                      query,
-                                      &project))){
-            ERR << CHAOS_FORMAT("Error finding associated nodes to agent %1% with error %2%", %agent_uid%err);
-        } else if(result.isEmpty() == false &&
-                  result.hasField(AgentNodeDefinitionKey::NODE_ASSOCIATED)) {
-            mongo::BSONElement ele = result.getField(AgentNodeDefinitionKey::NODE_ASSOCIATED);
-            if(ele.type() == mongo::Array) {
-                std::vector<mongo::BSONElement> associated_node_object = ele.Array();
-                for(std::vector<mongo::BSONElement>::iterator it = associated_node_object.begin(),
-                    end = associated_node_object.end();
-                    it != end;
-                    it++) {
-                    mongo::BSONObj attribute_config = it->Obj();
-                    unist_server_associated.push_back(attribute_config.getField(NodeDefinitionKey::NODE_UNIQUE_ID).String());
-                }
-            }
-        }
-    } catch (const mongo::DBException &e) {
-        ERR << e.what();
-        err = -1;
-    } catch (const chaos::CException &e) {
-        ERR << e.what();
-        err = e.errorCode;
-    }
-    return err;
-}
-
 int MongoDBAgentDataAccess::getAgentForNode(const std::string& associated_node_uid,
                                             std::string& agent_uid) {
     int err = 0;
@@ -227,14 +184,25 @@ int MongoDBAgentDataAccess::saveNodeAssociationForAgent(const std::string& agent
                                                         AgentAssociation& node_association) {
     int err = 0;
     int size = 0;
+    AgentAssociation current_association;
     try {
-        //!fir try to delete old association
-        AgentAssociationSDWrapper assoc_wrap(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(AgentAssociation, node_association));
-        std::auto_ptr<CDataWrapper> assoc_ser = assoc_wrap.serialize();
+        //!fetch current assocaition
+        if((err = loadNodeAssociationForAgent(agent_uid,
+                                              node_association.associated_node_uid,
+                                              current_association))) {
+            LOG_AND_TROW(ERR, -1, CHAOS_FORMAT("Error loading association of %3% into the agent %1% with error %2%", %agent_uid%err%node_association.associated_node_uid));
+        } else {
+            if(current_association.association_unique_id.size() != 0) {
+                node_association.association_unique_id = current_association.association_unique_id;
+            } else {
+                node_association.association_unique_id = UUIDUtil::generateUUIDLite();
+            }
+        }
         
         mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << agent_uid
                                     << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_AGENT);
-        
+        AgentAssociationSDWrapper assoc_wrap(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(AgentAssociation, node_association));
+        std::auto_ptr<CDataWrapper> assoc_ser = assoc_wrap.serialize();
         mongo::BSONObj pull_update = BSON("$pull" << BSON(AgentNodeDefinitionKey::NODE_ASSOCIATED << BSON(NodeDefinitionKey::NODE_UNIQUE_ID << node_association.associated_node_uid)));
         mongo::BSONObj push_update = BSON("$push" << BSON(AgentNodeDefinitionKey::NODE_ASSOCIATED << mongo::BSONObj(assoc_ser->getBSONRawData(size))));
         
@@ -336,6 +304,88 @@ int MongoDBAgentDataAccess::removeNodeAssociationForAgent(const std::string& age
                                      query,
                                      pull_update))){
             ERR << CHAOS_FORMAT("Error pulling association of %3% into the agent %1% with error %2%", %agent_uid%err%associated_node_uid);
+        }
+    } catch (const mongo::DBException &e) {
+        ERR << e.what();
+        err = -1;
+    } catch (const chaos::CException &e) {
+        ERR << e.what();
+        err = e.errorCode;
+    }
+    return err;
+}
+
+int MongoDBAgentDataAccess::setNodeAssociationStatus(const std::string& agent_uid,
+                                                     const chaos::service_common::data::agent::AgentAssociationStatus& status) {
+    int err = 0;
+    try {
+        mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << agent_uid
+                                    << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_AGENT
+                                    << CHAOS_FORMAT("%1%.%2%", %AgentNodeDefinitionKey::NODE_ASSOCIATED%NodeDefinitionKey::NODE_UNIQUE_ID) << status.associated_node_uid);
+        
+        mongo::BSONObj update = BSON("$set" << BSON(CHAOS_FORMAT("%1%.$.%2%", %AgentNodeDefinitionKey::NODE_ASSOCIATED%"alive") << status.alive <<
+                                                    CHAOS_FORMAT("%1%.$.%2%", %AgentNodeDefinitionKey::NODE_ASSOCIATED%"check_ts") << mongo::Date_t(TimingUtil::getTimeStamp())));
+        
+        DEBUG_CODE(DBG<<log_message("setNodeAssociationStatus",
+                                    "update",
+                                    DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                            "update",
+                                                            query.toString(),
+                                                            update.toString()));)
+        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                     query,
+                                     update))){
+            ERR << CHAOS_FORMAT("Error setting alive information for node %3% into the agent %1% with error %2%", %agent_uid%err%status.associated_node_uid);
+        }
+    } catch (const mongo::DBException &e) {
+        ERR << e.what();
+        err = -1;
+    } catch (const chaos::CException &e) {
+        ERR << e.what();
+        err = e.errorCode;
+    }
+    return err;
+}
+
+int MongoDBAgentDataAccess::getNodeListStatusForAgent(const std::string& agent_uid,
+                                                      VectorAgentAssociationStatus& node_status_vec) {
+    int err = 0;
+    try {
+        mongo::BSONObj result;
+        mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << agent_uid
+                                    << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_AGENT);
+        mongo::BSONObj project = BSON(CHAOS_FORMAT("%1%.%2%",%AgentNodeDefinitionKey::NODE_ASSOCIATED%NodeDefinitionKey::NODE_UNIQUE_ID) << 1 <<
+                                      CHAOS_FORMAT("%1%.%2%",%AgentNodeDefinitionKey::NODE_ASSOCIATED%"alive") << 1 <<
+                                      CHAOS_FORMAT("%1%.%2%",%AgentNodeDefinitionKey::NODE_ASSOCIATED%"check_ts") << 1);
+        
+        node_status_vec.clear();
+        DEBUG_CODE(DBG<<log_message("getNodeListForAgent",
+                                    "find",
+                                    DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                            query.toString()));)
+        
+        if((err = connection->findOne(result,
+                                      MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                      query,
+                                      &project))){
+            ERR << CHAOS_FORMAT("Error finding associated nodes to agent %1% with error %2%", %agent_uid%err);
+        } else if(result.isEmpty() == false &&
+                  result.hasField(AgentNodeDefinitionKey::NODE_ASSOCIATED)) {
+            mongo::BSONElement ele = result.getField(AgentNodeDefinitionKey::NODE_ASSOCIATED);
+            if(ele.type() == mongo::Array) {
+                std::vector<mongo::BSONElement> associated_node_object = ele.Array();
+                for(std::vector<mongo::BSONElement>::iterator it = associated_node_object.begin(),
+                    end = associated_node_object.end();
+                    it != end;
+                    it++) {
+                    mongo::BSONObj obj = it->Obj();
+                    AgentAssociationStatusSDWrapper status_sd_wrapper;
+                    std::auto_ptr<CDataWrapper> status(new CDataWrapper(obj.objdata()));
+                    status_sd_wrapper.deserialize(status.get());
+                    if(obj.hasField("check_ts")){status_sd_wrapper().check_ts = obj.getField("check_ts").date().millis;}
+                    node_status_vec.push_back(status_sd_wrapper());
+                }
+            }
         }
     } catch (const mongo::DBException &e) {
         ERR << e.what();

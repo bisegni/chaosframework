@@ -110,6 +110,16 @@ SET(cnd_src  ${cnd_src}	api/script/ScriptGroupApi.cpp
                         api/script/SearchInstancesForScript.cpp
                         api/script/ManageScriptInstance.cpp
                         api/script/ExecutionPoolHeartbeat.cpp)
+
+SET(cnd_src  ${cnd_src}	api/agent/AgentGroup.cpp
+                        api/agent/LoadAgentDescription.cpp
+                        api/agent/ListNodeForAgent.cpp
+                        api/agent/SaveNodeAssociation.cpp
+                        api/agent/LoadNodeAssociation.cpp
+                        api/agent/RemoveNodeAssociation.cpp
+                        api/agent/LaunchNode.cpp
+                        api/agent/CheckAgentHostedProcess.cpp)
+
 #Worker
 SET(cnd_src  ${cnd_src}	worker/DataWorker.cpp
                         worker/DeviceSharedDataWorker.cpp
@@ -156,7 +166,9 @@ SET(cnd_src  ${cnd_src}	object_storage/mongodb/MongoDBObjectStorageDataAccess.cp
 SET(cnd_src  ${cnd_src}	batch/MDSBatchExecutor.cpp
                         batch/MDSBatchCommand.cpp)
 
-SET(cnd_src  ${cnd_src}	batch/agent/AgentAckCommand.cpp)
+SET(cnd_src  ${cnd_src}	batch/agent/AgentAckCommand.cpp
+                        batch/agent/AgentProcessController.cpp
+                        batch/agent/AgentCheckAgentProcess.cpp)
 
 SET(cnd_src  ${cnd_src}	batch/node/UpdatePropertyCommand.cpp
                         batch/node/SubmitBatchCommand.cpp)

@@ -3,6 +3,7 @@
 
 #include "ChaosAbstractListModel.h"
 #include "../api_async_processor/ApiSubmitter.h"
+#include <chaos_service_common/data/node/Agent.h>
 
 class AgentNodeAssociatedListModel:
         public ChaosAbstractListModel,
@@ -28,7 +29,7 @@ protected:
 private:
     QString agent_uid;
     ApiSubmitter api_submitter;
-    ChaosStringVector associated_nodes;
+    mutable chaos::service_common::data::agent::VectorAgentAssociationStatus associated_nodes;
 };
 
 #endif // AGENTNODEASSOCIATEDLISTMODEL_H

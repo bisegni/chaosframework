@@ -1,6 +1,6 @@
 #include "AgentEditor.h"
 #include "AgentNodeAssociationEditor.h"
-
+#include "../../data/delegate/TwoLineInformationListItemDelegate.h"
 #include "ui_AgentEditor.h"
 
 #define START_NODE "Launch Node"
@@ -30,6 +30,7 @@ void AgentEditor::initUI() {
     ui->listViewNodeAssociated->setModel(&nodeAssociatedListModel);
     ui->listViewNodeAssociated->setAcceptDrops(true);
     ui->listViewNodeAssociated->setDropIndicatorShown(true);
+    ui->listViewNodeAssociated->setItemDelegate(new TwoLineInformationListItemDelegate(ui->listViewNodeAssociated));
     connect(ui->listViewNodeAssociated->selectionModel(),
             SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
             SLOT(selectionChanged(QItemSelection,QItemSelection)));
@@ -81,13 +82,13 @@ void AgentEditor::selectionChanged(const QItemSelection &selected, const QItemSe
 void AgentEditor::doubleClicked(const QModelIndex& clickedIndex) {
     if(clickedIndex.isValid() == false) return;
     launchPresenterWidget(new AgentNodeAssociationEditor(agent_uid,
-                                                         clickedIndex.data().toString()));
+                                                         clickedIndex.data(Qt::UserRole).toString()));
 }
 
 void AgentEditor::on_pushButtonEditAssociatedNode_clicked() {
     foreach(QModelIndex index, ui->listViewNodeAssociated->selectionModel()->selectedIndexes()) {
         launchPresenterWidget(new AgentNodeAssociationEditor(agent_uid,
-                                                             index.data().toString()));
+                                                             index.data(Qt::UserRole).toString()));
     }
 }
 
@@ -95,7 +96,7 @@ void AgentEditor::on_pushButtonRemoveAssociatedNode_clicked() {
     QModelIndexList selected_index = ui->listViewNodeAssociated->selectionModel()->selectedIndexes();
     ChaosStringVector associated_node;
     foreach(QModelIndex index, selected_index){
-        associated_node.push_back(index.data().toString().toStdString());
+        associated_node.push_back(index.data(Qt::UserRole).toString().toStdString());
     }
     submitApiResult("AgentEditor::remove",
                     GET_CHAOS_API_PTR(agent::RemoveNodeAssociation)->execute(agent_uid.toStdString(),
@@ -109,7 +110,12 @@ void AgentEditor::contextualMenuActionTrigger(const QString& cm_title,
         QModelIndexList index_list = ui->listViewNodeAssociated->selectionModel()->selectedIndexes();
         foreach(QModelIndex index, index_list) {
             submitApiResult("AgentEditor::launch_node",
-                            GET_CHAOS_API_PTR(agent::LaunchNode)->execute(index.data().toString().toStdString()));
+                            GET_CHAOS_API_PTR(agent::LaunchNode)->execute(index.data(Qt::UserRole).toString().toStdString()));
         }
     }
+}
+
+void AgentEditor::on_pushButtonStartCheckProcess_clicked() {
+    submitApiResult("AgentEditor::start_process_scan",
+                    GET_CHAOS_API_PTR(agent::CheckAgentHostedProcess)->execute(agent_uid.toStdString()));
 }

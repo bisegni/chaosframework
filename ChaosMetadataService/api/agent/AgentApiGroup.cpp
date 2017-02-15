@@ -26,6 +26,7 @@
 #include "RemoveNodeAssociation.h"
 #include "LaunchNode.h"
 #include "LoadAgentDescription.h"
+#include "CheckAgentHostedProcess.h"
 using namespace chaos::metadata_service::api::agent;
 
 DEFINE_CLASS_FACTORY_NO_ALIAS(AgentApiGroup,
@@ -39,6 +40,7 @@ AbstractApiGroup(AgentNodeDomainAndActionRPC::ProcessWorker::WORKER_NAME){
     addApi<RemoveNodeAssociation>();
     addApi<LaunchNode>();
     addApi<LoadAgentDescription>();
+    addApi<CheckAgentHostedProcess>();
 }
 
 AgentApiGroup::~AgentApiGroup() {}

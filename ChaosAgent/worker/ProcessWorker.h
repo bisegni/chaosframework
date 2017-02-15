@@ -33,7 +33,7 @@ namespace chaos {
             //! define the agent taht perform operation on the host process
             class ProcessWorker:
             public AbstractWorker {
-                std::string launchProcess(const chaos::service_common::data::agent::AgentAssociation& node_association_info);
+                void launchProcess(const chaos::service_common::data::agent::AgentAssociation& node_association_info);
                 bool checkProcessAlive(const chaos::service_common::data::agent::AgentAssociation& node_association_info);
             protected:
                 //! launch an data service
@@ -46,8 +46,8 @@ namespace chaos {
                 chaos::common::data::CDataWrapper *restartUnitServer(chaos::common::data::CDataWrapper *data,
                                                                      bool& detach);
                 //! list all data service managed by the running instance
-                chaos::common::data::CDataWrapper *listUnitServers(chaos::common::data::CDataWrapper *data,
-                                                                   bool& detach);
+                chaos::common::data::CDataWrapper *checkUnitServers(chaos::common::data::CDataWrapper *data,
+                                                                    bool& detach);
             public:
                 ProcessWorker();
                 ~ProcessWorker();

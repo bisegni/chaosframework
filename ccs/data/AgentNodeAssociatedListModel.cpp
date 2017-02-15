@@ -1,13 +1,16 @@
 #include "AgentNodeAssociatedListModel.h"
+#include "delegate/TwoLineInformationItem.h"
 
 #include <chaos_service_common/data/data.h>
 
 #include <QDebug>
 #include <QMimeData>
+#include <QDateTime>
 #include <QDataStream>
 
 using namespace chaos::service_common::data::agent;
 using namespace chaos::metadata_service_client::api_proxy;
+using namespace chaos::service_common::data::agent;
 
 AgentNodeAssociatedListModel::AgentNodeAssociatedListModel():
     api_submitter(this){
@@ -27,11 +30,15 @@ int AgentNodeAssociatedListModel::getRowCount() const {
     return associated_nodes.size();
 }
 QVariant AgentNodeAssociatedListModel::getRowData(int row) const {
-    return QVariant(QString::fromStdString(associated_nodes[row]));
+    QSharedPointer<TwoLineInformationItem> cmd_desc(new TwoLineInformationItem(QString::fromStdString(associated_nodes[row].associated_node_uid),
+                                                                               QString("Last check:%1 Status:%2").arg(QDateTime::fromMSecsSinceEpoch(associated_nodes[row].check_ts, Qt::LocalTime).toString(),
+                                                                                                                      QString::fromStdString(associated_nodes[row].alive?"Started":"Stopped")),
+                                                                               QVariant()));
+    return QVariant::fromValue(cmd_desc);
 }
 
 QVariant AgentNodeAssociatedListModel::getUserData(int row) const {
-    return QVariant(QString::fromStdString(associated_nodes[row]));
+    return QVariant(QString::fromStdString(associated_nodes[row].associated_node_uid));
 }
 
 Qt::DropActions AgentNodeAssociatedListModel::supportedDropActions() const {

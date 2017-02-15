@@ -66,10 +66,6 @@ namespace chaos {
                                              chaos::service_common::data::agent::AgentInstance& agent_description);
                     
                     //! inherited by data_access::AgentDataAccess
-                    int getNodeListForAgent(const std::string& agent_uid,
-                                            ChaosStringVector& unist_server_associated);
-                    
-                    //! inherited by data_access::AgentDataAccess
                     int getAgentForNode(const std::string& associated_node_uid,
                                         std::string& agent_uid);
                     
@@ -83,6 +79,13 @@ namespace chaos {
                     //! inherited by data_access::AgentDataAccess
                     int removeNodeAssociationForAgent(const std::string& agent_uid,
                                                       const std::string& associated_node_uid);
+                    //! inherited by data_access::AgentDataAccess
+                    int setNodeAssociationStatus(const std::string& agent_uid,
+                                                 const chaos::service_common::data::agent::AgentAssociationStatus& status);
+                    
+                    //! inherited by data_access::AgentDataAccess
+                    int getNodeListStatusForAgent(const std::string& agent_uid,
+                                                  chaos::service_common::data::agent::VectorAgentAssociationStatus& node_status_vec);
                 };
             }
         }

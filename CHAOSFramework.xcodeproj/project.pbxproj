@@ -612,6 +612,9 @@
 		32990B251E521C8400A4AF8F /* LoadAgentDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32990B231E521C8400A4AF8F /* LoadAgentDescription.cpp */; };
 		32990B281E521F5E00A4AF8F /* LoadAgentDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32990B261E521F5E00A4AF8F /* LoadAgentDescription.cpp */; };
 		32990B291E521F5E00A4AF8F /* LoadAgentDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 32990B271E521F5E00A4AF8F /* LoadAgentDescription.h */; };
+		32990B2D1E547D7000A4AF8F /* CheckAgentHostedProcess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32990B2A1E547D5700A4AF8F /* CheckAgentHostedProcess.cpp */; };
+		32990B301E547D8900A4AF8F /* CheckAgentHostedProcess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32990B2E1E547D8900A4AF8F /* CheckAgentHostedProcess.cpp */; };
+		32990B331E547ED900A4AF8F /* AgentCheckAgentProcess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32990B311E547ED900A4AF8F /* AgentCheckAgentProcess.cpp */; };
 		32995C421BAC57A300F68148 /* SCWaitCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32995C401BAC57A300F68148 /* SCWaitCommand.cpp */; };
 		32995C431BAC57A300F68148 /* SCWaitCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 32995C411BAC57A300F68148 /* SCWaitCommand.h */; };
 		32995C461BB2D1F700F68148 /* SWEService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32995C441BB2D1F700F68148 /* SWEService.cpp */; };
@@ -1892,6 +1895,12 @@
 		32990B241E521C8400A4AF8F /* LoadAgentDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadAgentDescription.h; sourceTree = "<group>"; };
 		32990B261E521F5E00A4AF8F /* LoadAgentDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadAgentDescription.cpp; sourceTree = "<group>"; };
 		32990B271E521F5E00A4AF8F /* LoadAgentDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadAgentDescription.h; sourceTree = "<group>"; };
+		32990B2A1E547D5700A4AF8F /* CheckAgentHostedProcess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CheckAgentHostedProcess.cpp; sourceTree = "<group>"; };
+		32990B2B1E547D5700A4AF8F /* CheckAgentHostedProcess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CheckAgentHostedProcess.h; sourceTree = "<group>"; };
+		32990B2E1E547D8900A4AF8F /* CheckAgentHostedProcess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CheckAgentHostedProcess.cpp; sourceTree = "<group>"; };
+		32990B2F1E547D8900A4AF8F /* CheckAgentHostedProcess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CheckAgentHostedProcess.h; sourceTree = "<group>"; };
+		32990B311E547ED900A4AF8F /* AgentCheckAgentProcess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AgentCheckAgentProcess.cpp; sourceTree = "<group>"; };
+		32990B321E547ED900A4AF8F /* AgentCheckAgentProcess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AgentCheckAgentProcess.h; sourceTree = "<group>"; };
 		32995C401BAC57A300F68148 /* SCWaitCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SCWaitCommand.cpp; sourceTree = "<group>"; };
 		32995C411BAC57A300F68148 /* SCWaitCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCWaitCommand.h; sourceTree = "<group>"; };
 		32995C441BB2D1F700F68148 /* SWEService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SWEService.cpp; sourceTree = "<group>"; };
@@ -4575,6 +4584,8 @@
 				32990B121E4CB74C00A4AF8F /* RemoveNodeAssociation.h */,
 				32990B1C1E51DEA300A4AF8F /* LaunchNode.cpp */,
 				32990B1D1E51DEA300A4AF8F /* LaunchNode.h */,
+				32990B2E1E547D8900A4AF8F /* CheckAgentHostedProcess.cpp */,
+				32990B2F1E547D8900A4AF8F /* CheckAgentHostedProcess.h */,
 			);
 			path = agent;
 			sourceTree = "<group>";
@@ -4594,6 +4605,8 @@
 				32990B271E521F5E00A4AF8F /* LoadAgentDescription.h */,
 				32990B181E51DD9100A4AF8F /* LaunchNode.cpp */,
 				32990B191E51DD9100A4AF8F /* LaunchNode.h */,
+				32990B2A1E547D5700A4AF8F /* CheckAgentHostedProcess.cpp */,
+				32990B2B1E547D5700A4AF8F /* CheckAgentHostedProcess.h */,
 				32990B0E1E4C6F5000A4AF8F /* agent.h */,
 			);
 			path = agent;
@@ -4941,6 +4954,8 @@
 				32E6F4451E48D28F0068320E /* AgentAckCommand.h */,
 				32990B201E51E77F00A4AF8F /* AgentProcessController.cpp */,
 				32990B211E51E77F00A4AF8F /* AgentProcessController.h */,
+				32990B311E547ED900A4AF8F /* AgentCheckAgentProcess.cpp */,
+				32990B321E547ED900A4AF8F /* AgentCheckAgentProcess.h */,
 				32E6F4481E48D3A30068320E /* agent_batch.h */,
 			);
 			path = agent;
@@ -5866,6 +5881,7 @@
 				3288CE541E0C3243002B04F9 /* CreateSnapshotBatch.cpp in Sources */,
 				326ACFAB1E0159C600AD011E /* DeviceSharedDataWorkerMetricCollector.cpp in Sources */,
 				320E773E1A7FBD84001FB8BC /* UnitServerAckBatchCommand.cpp in Sources */,
+				32990B331E547ED900A4AF8F /* AgentCheckAgentProcess.cpp in Sources */,
 				3258D4811DF0332300D9C8D0 /* GetSnapshotDatasetsForNode.cpp in Sources */,
 				32B1E8191B2FFCE500221E49 /* CommandCommonUtility.cpp in Sources */,
 				3270E0761C6CC05100105726 /* MongoDBLoggingDataAccess.cpp in Sources */,
@@ -5902,6 +5918,7 @@
 				32C067BD1AEFE5DD000B1ED9 /* IDSTControlUnitBatchCommand.cpp in Sources */,
 				32A116441D116F8C00FF44ED /* SearchInstancesForScript.cpp in Sources */,
 				328C872C1ADEA45E0047C79B /* SearchInstancesByUS.cpp in Sources */,
+				32990B301E547D8900A4AF8F /* CheckAgentHostedProcess.cpp in Sources */,
 				32FC49A11E07F8DB0087D82C /* RemoveVariable.cpp in Sources */,
 				325D2FDF1AFB65DE00B2A706 /* ProcessHello.cpp in Sources */,
 				32B1E7E51B297A6100221E49 /* CommandTemplateSet.cpp in Sources */,
@@ -6365,6 +6382,7 @@
 				324FD0811B00ACEF003800BA /* MonitorManager.cpp in Sources */,
 				320CA9541C29D71A00894AAA /* DeleteUS.cpp in Sources */,
 				32B299AA1BE27945000D3716 /* RecoverError.cpp in Sources */,
+				32990B2D1E547D7000A4AF8F /* CheckAgentHostedProcess.cpp in Sources */,
 				3256C9B21CB649710019A108 /* NodeFetcher.cpp in Sources */,
 				3211CCDD1B03402800F9B80E /* QuantumKeyConsumer.cpp in Sources */,
 				32CAC9E81AE69F4400DC6AAB /* LoadUnloadControlUnit.cpp in Sources */,

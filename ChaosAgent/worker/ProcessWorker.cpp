@@ -43,6 +43,7 @@ using namespace chaos::agent;
 using namespace chaos::agent::worker;
 using namespace chaos::service_common::data::agent;
 
+using namespace chaos::common::data;
 using namespace chaos::common::utility;
 
 ProcessWorker::ProcessWorker():
@@ -84,10 +85,13 @@ AbstractWorker(AgentNodeDomainAndActionRPC::ProcessWorker::WORKER_NAME) {
                                          "Kill the process for stop it");
     
     action_parameter_interface = DeclareAction::addActionDescritionInstance<ProcessWorker>(this,
-                                                                                           &ProcessWorker::listUnitServers,
+                                                                                           &ProcessWorker::checkUnitServers,
                                                                                            getName(),
-                                                                                           AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LIST_NODE,
-                                                                                           "List all unit server");
+                                                                                           AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_CHECK_NODE,
+                                                                                           "Check node status");
+    action_parameter_interface->addParam(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_CHECK_NODE_ASSOCIATED_NODES,
+                                         DataType::TYPE_UNDEFINED,
+                                         "Need to be a vector of node association");
 }
 
 ProcessWorker::~ProcessWorker() {
@@ -119,7 +123,7 @@ chaos::common::data::CDataWrapper *ProcessWorker::launchUnitServer(chaos::common
     }
     AgentAssociationSDWrapper assoc_sd_wrapper;
     assoc_sd_wrapper.deserialize(data);
-    assoc_sd_wrapper().launch_cmd_line = launchProcess(assoc_sd_wrapper());
+    launchProcess(assoc_sd_wrapper());
     if(checkProcessAlive(assoc_sd_wrapper())) {
         INFO << "Alive";
     } else {
@@ -138,9 +142,27 @@ chaos::common::data::CDataWrapper *ProcessWorker::restartUnitServer(chaos::commo
     return NULL;
 }
 
-chaos::common::data::CDataWrapper *ProcessWorker::listUnitServers(chaos::common::data::CDataWrapper *data,
-                                                                  bool& detach) {
-    return NULL;
+chaos::common::data::CDataWrapper *ProcessWorker::checkUnitServers(chaos::common::data::CDataWrapper *data,
+                                                                   bool& detach) {
+    VectorAgentAssociationStatusSDWrapper result_status_vec_sd_wrapper;
+    result_status_vec_sd_wrapper.serialization_key = AgentNodeDefinitionKey::NODE_ASSOCIATED;
+    
+    VectorAgentAssociationSDWrapper associated_node_sd_wrapper;
+    associated_node_sd_wrapper.serialization_key = AgentNodeDefinitionKey::NODE_ASSOCIATED;
+    
+    associated_node_sd_wrapper.deserialize(data);
+    if(associated_node_sd_wrapper().size()) {
+        for(VectorAgentAssociationIterator it = associated_node_sd_wrapper().begin(),
+            end = associated_node_sd_wrapper().end();
+            it != end;
+            it++) {
+            AgentAssociationStatus status;
+            status.associated_node_uid = it->associated_node_uid;
+            status.alive = checkProcessAlive(*it);
+            result_status_vec_sd_wrapper().push_back(status);
+        }
+    }
+    return result_status_vec_sd_wrapper.serialize().release();
 }
 
 #pragma mark Process Utility
@@ -203,49 +225,54 @@ int pclose2(FILE * fp,
     return stat;
 }
 
-std::string ProcessWorker::launchProcess(const AgentAssociation& node_association_info) {
+#define INIT_FILE_NAME(x)\
+CHAOS_FORMAT("%1%.ini",%x.association_unique_id)
+
+#define INIT_FILE_PATH()\
+CHAOS_FORMAT("%1%/ini_files/", %ChaosAgent::getInstance()->settings.working_directory)
+
+#define COMPOSE_NODE_LAUNCH_CMD_LINE(x)\
+CHAOS_FORMAT("%1%/%2% --%3% %4%%5%", %ChaosAgent::getInstance()->settings.working_directory%x.launch_cmd_line%chaos::InitOption::OPT_CONF_FILE%INIT_FILE_PATH()%INIT_FILE_NAME(x))
+
+void ProcessWorker::launchProcess(const AgentAssociation& node_association_info) {
     int pid = 0;
-    bool use_init_file = false;
-    std::string init_file_name;
+    boost::filesystem::path init_file;
     boost::filesystem::path exec_command;
     try{
-        exec_command = CHAOS_FORMAT("%1%/%2%", %ChaosAgent::getInstance()->settings.working_directory%node_association_info.launch_cmd_line);
-        boost::filesystem::path init_file = CHAOS_FORMAT("%1%/ini_files/%2%", %ChaosAgent::getInstance()->settings.working_directory%(init_file_name = UUIDUtil::generateUUIDLite()+".ini"));
-        boost::filesystem::path init_file_parent_path = init_file.parent_path();
+        exec_command = COMPOSE_NODE_LAUNCH_CMD_LINE(node_association_info);
+        init_file = CHAOS_FORMAT("%1%/%2%", %INIT_FILE_PATH()%INIT_FILE_NAME(node_association_info));
+        boost::filesystem::path init_file_parent_path = INIT_FILE_PATH();
         
         if (boost::filesystem::exists(init_file_parent_path) == false &&
             boost::filesystem::create_directory(init_file_parent_path) == false) {
             throw chaos::CException(-1, CHAOS_FORMAT("Parent path %1% can't be created",%init_file_parent_path), __PRETTY_FUNCTION__);
         }
-        //write config file
-        if((use_init_file = node_association_info.configuration_file_content.size() > 0)) {
-            //we have also a configuraiton file
-            
-            //write configuration file
-            std::ofstream init_file_stream;
-            init_file_stream.open(init_file.string().c_str(), std::ofstream::trunc | std::ofstream::out);
-            init_file_stream.write(node_association_info.configuration_file_content.c_str(), node_association_info.configuration_file_content.length());
-            init_file_stream.close();
-            
-            //add parameter to launch comamnd line for read the configuraiton file
-            exec_command += CHAOS_FORMAT(" --conf-file=%1%", %init_file_name);
-        }
+        
+        //write configuration file
+        std::ofstream init_file_stream;
+        init_file_stream.open(init_file.string().c_str(), std::ofstream::trunc | std::ofstream::out);
+        init_file_stream.write(node_association_info.configuration_file_content.c_str(), node_association_info.configuration_file_content.length());
+        init_file_stream.close();
         
         FILE *pipe = popen2(exec_command.string().c_str(), "r", pid);
         if (!pipe) {throw chaos::CException(-2, "popen() failed!", __PRETTY_FUNCTION__);}
+        sleep(1);
         pclose2(pipe, pid);
-        if(use_init_file){boost::filesystem::remove(init_file);}
+        boost::filesystem::remove(init_file);
     } catch(std::exception& e) {
+        boost::filesystem::remove(init_file);
         ERROR << e.what();
+    } catch(chaos::CException& ex) {
+        boost::filesystem::remove(init_file);
+        throw ex;
     }
-    return exec_command.string();
 }
 
 bool ProcessWorker::checkProcessAlive(const chaos::service_common::data::agent::AgentAssociation& node_association_info) {
     int pid;
     bool found = false;
     char buff[512];
-    std::string ps_command = CHAOS_FORMAT("ps -ef | grep '%1%'", %node_association_info.launch_cmd_line);
+    std::string ps_command = CHAOS_FORMAT("ps -ef | grep '%1%'", %COMPOSE_NODE_LAUNCH_CMD_LINE(node_association_info));
     FILE *in = popen2(ps_command.c_str(), "r", pid);
     if (!in) {throw chaos::CException(-2, "popen() failed!", __PRETTY_FUNCTION__);}
     

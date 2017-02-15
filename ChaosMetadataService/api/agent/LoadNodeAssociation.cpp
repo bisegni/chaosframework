@@ -23,7 +23,7 @@
 
 #include <chaos_service_common/data/data.h>
 
-using namespace chaos::metadata_service::api::agent;
+using namespace chaos::metadata_service::api::agent;    
 
 #define INFO INFO_LOG(LoadNodeAssociation)
 #define ERR  DBG_LOG(LoadNodeAssociation)
