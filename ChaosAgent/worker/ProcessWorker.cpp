@@ -131,12 +131,42 @@ chaos::common::data::CDataWrapper *ProcessWorker::launchNode(chaos::common::data
 
 chaos::common::data::CDataWrapper *ProcessWorker::stopNode(chaos::common::data::CDataWrapper *data,
                                                            bool& detach) {
-    
+    AgentAssociationSDWrapper assoc_sd_wrapper;
+    assoc_sd_wrapper.deserialize(data);
+    if(checkProcessAlive(assoc_sd_wrapper()) == true) {
+        quitProcess(assoc_sd_wrapper());
+    } else {
+        INFO << CHAOS_FORMAT("Associated node %1% isn't in execution", %assoc_sd_wrapper().associated_node_uid);
+    }
     return NULL;
 }
 
 chaos::common::data::CDataWrapper *ProcessWorker::restartNode(chaos::common::data::CDataWrapper *data,
                                                               bool& detach) {
+    bool try_to_stop = true;
+    int retry = 0;
+    bool process_alive = false;
+    AgentAssociationSDWrapper assoc_sd_wrapper;
+    assoc_sd_wrapper.deserialize(data);
+    if(checkProcessAlive(assoc_sd_wrapper()) == true) {
+        quitProcess(assoc_sd_wrapper());
+        while((process_alive = checkProcessAlive(assoc_sd_wrapper())) == false &&
+              try_to_stop) {
+            if(retry++ > 3) {
+                try_to_stop = false;
+                //try to kill process
+                quitProcess(assoc_sd_wrapper(), true);
+                //exit without check
+            } else {
+                sleep(1);
+            }
+        }
+    }
+    if((process_alive = process_alive || checkProcessAlive(assoc_sd_wrapper())) == false) {
+        //process has been shutdown, restart it
+        launchProcess(assoc_sd_wrapper());
+    }
+    
     return NULL;
 }
 
@@ -277,7 +307,7 @@ bool ProcessWorker::checkProcessAlive(const chaos::service_common::data::agent::
     int pid;
     bool found = false;
     char buff[512];
-    std::string ps_command = CHAOS_FORMAT("ps -ef | grep '%1%'", %COMPOSE_NODE_LAUNCH_CMD_LINE(node_association_info));
+    std::string ps_command = CHAOS_FORMAT("ps -ef | grep '%1%'", %INIT_FILE_NAME(node_association_info));
     FILE *in = popen2(ps_command.c_str(), "r", pid);
     if (!in) {throw chaos::CException(-2, "popen() failed!", __PRETTY_FUNCTION__);}
     
@@ -295,7 +325,7 @@ bool ProcessWorker::checkProcessAlive(const chaos::service_common::data::agent::
 bool ProcessWorker::quitProcess(const chaos::service_common::data::agent::AgentAssociation& node_association_info,
                                 bool kill) {
     int pid = 0;
-    const std::string exec_command = kill?CHAOS_FORMAT("pkill -SIGKILL -f \"%1%\"",%COMPOSE_NODE_LAUNCH_CMD_LINE(node_association_info)):CHAOS_FORMAT("pkill -SIGTERM -f \"%1%\"",%COMPOSE_NODE_LAUNCH_CMD_LINE(node_association_info));
+    const std::string exec_command = kill?CHAOS_FORMAT("pkill -SIGKILL -f \"%1%\"",%INIT_FILE_NAME(node_association_info)):CHAOS_FORMAT("pkill -SIGTERM -f \"%1%\"",%INIT_FILE_NAME(node_association_info));
     if (!popen2NoPipe(exec_command.c_str(), pid)) {throw chaos::CException(-2, "popen() failed!", __PRETTY_FUNCTION__);}
     return pid != 0;
 }

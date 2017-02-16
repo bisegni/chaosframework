@@ -1,5 +1,5 @@
 /*
- *	LaunchNode.cpp
+ *	NodeOperation.cpp
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
@@ -19,7 +19,7 @@
  *    	limitations under the License.
  */
 
-#include <ChaosMetadataServiceClient/api_proxy/agent/LaunchNode.h>
+#include <ChaosMetadataServiceClient/api_proxy/agent/NodeOperation.h>
 
 using namespace chaos;
 using namespace chaos::common::data;
@@ -28,12 +28,14 @@ using namespace chaos::service_common::data::agent;
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::api_proxy::agent;
 
-API_PROXY_CD_DEFINITION(LaunchNode,
+API_PROXY_CD_DEFINITION(NodeOperation,
                         AgentNodeDomainAndActionRPC::ProcessWorker::WORKER_NAME,
-                        AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE);
+                        "nodeOperation");
 
-ApiProxyResult LaunchNode::execute(const std::string& node_uid) {
+ApiProxyResult NodeOperation::execute(const std::string& node_uid,
+                                      NodeAssociationOperation op) {
     std::auto_ptr<CDataWrapper> pack(new CDataWrapper());
     pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_uid);
+    pack->addInt32Value("node_operation", op);
     return callApi(pack.release());
 }

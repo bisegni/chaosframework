@@ -40,7 +40,7 @@ DEFINE_MDS_COMAMND_ALIAS(AgentProcessController)
 
 AgentProcessController::AgentProcessController():
 MDSBatchCommand(),
-process_op(AgentProcessControllerOPUndefined){}
+process_op(NodeAssociationOperationUndefined){}
 
 AgentProcessController::~AgentProcessController() {}
 
@@ -50,11 +50,11 @@ void AgentProcessController::setHandler(CDataWrapper *data) {
     
     CHECK_CDW_THROW_AND_LOG(data, ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(data, chaos::NodeDefinitionKey::NODE_UNIQUE_ID, ERR, -2, "The unique id of unit server is mandatory")
-    CHECK_KEY_THROW_AND_LOG(data, "process_operation", ERR, -2, "The process_oepration is a mandatory key")
+    CHECK_KEY_THROW_AND_LOG(data, "node_operation", ERR, -2, "The process_oepration is a mandatory key")
     
     int err = 0;
     std::string agent_host;
-    process_op = (AgentProcessControllerOP)data->getInt32Value("process_operation");
+    process_op = (NodeAssociationOperation)data->getInt32Value("node_operation");
     const std::string node_to_launch = data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
     //get the agent that host the node whre execute the ooperation
     if((err = getDataAccess<mds_data_access::AgentDataAccess>()->getAgentForNode(node_to_launch, agent_host))) {
@@ -70,23 +70,27 @@ void AgentProcessController::setHandler(CDataWrapper *data) {
         LOG_AND_TROW(ERR, err, "Error fetching node decription")
     }
     node_information.reset(tmp_ptr);
-    
+    AgentAssociationSDWrapper assoc_sd_wrapper;
+    if((err = getDataAccess<mds_data_access::AgentDataAccess>()->loadNodeAssociationForAgent(agent_host, node_to_launch, assoc_sd_wrapper()))) {
+        LOG_AND_TROW(ERR, -4, CHAOS_FORMAT("Error loading the association for node %1% on agent %2% with error %3%", %node_to_launch%agent_host%err));
+    }
+    message_data = assoc_sd_wrapper.serialize();
     switch(process_op) {
-        case AgentProcessControllerOPLaunch: {
-            AgentAssociationSDWrapper assoc_sd_wrapper;
-            if((err = getDataAccess<mds_data_access::AgentDataAccess>()->loadNodeAssociationForAgent(agent_host, node_to_launch, assoc_sd_wrapper()))) {
-                LOG_AND_TROW(ERR, -4, CHAOS_FORMAT("Error loading the association for node %1% on agent %2% with error %3%", %node_to_launch%agent_host%err));
-            }
-            message_data = assoc_sd_wrapper.serialize();
-            
+        case NodeAssociationOperationLaunch: {
             request = createRequest(node_information->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR),
                                     AgentNodeDomainAndActionRPC::ProcessWorker::WORKER_NAME,
                                     AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE);
             break;
         }
-        case AgentProcessControllerOPStop:
+        case NodeAssociationOperationStop:
+            request = createRequest(node_information->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR),
+                                    AgentNodeDomainAndActionRPC::ProcessWorker::WORKER_NAME,
+                                    AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_STOP_NODE);
             break;
-        case AgentProcessControllerOPRestart:
+        case NodeAssociationOperationRestart:
+            request = createRequest(node_information->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR),
+                                    AgentNodeDomainAndActionRPC::ProcessWorker::WORKER_NAME,
+                                    AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_RESTART_NODE);
             break;
             
         default: {

@@ -22,7 +22,7 @@
 #ifndef __CHAOSFramework__57311D4_B841_4942_AEA8_FD8FDA8D6594_agent_h
 #define __CHAOSFramework__57311D4_B841_4942_AEA8_FD8FDA8D6594_agent_h
 
-#include <ChaosMetadataServiceClient/api_proxy/agent/LaunchNode.h>
+#include <ChaosMetadataServiceClient/api_proxy/agent/NodeOperation.h>
 #include <ChaosMetadataServiceClient/api_proxy/agent/ListNodeForAgent.h>
 #include <ChaosMetadataServiceClient/api_proxy/agent/SaveNodeAssociation.h>
 #include <ChaosMetadataServiceClient/api_proxy/agent/LoadNodeAssociation.h>

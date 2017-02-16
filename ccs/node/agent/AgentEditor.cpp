@@ -8,6 +8,7 @@
 #define RESTART_NODE "Restart Node"
 
 using namespace chaos::metadata_service_client;
+using namespace chaos::service_common::data::agent;
 using namespace chaos::metadata_service_client::api_proxy;
 
 AgentEditor::AgentEditor(const QString& _agent_uid,
@@ -48,12 +49,20 @@ void AgentEditor::initUI() {
                                     false);
     on_pushButtonUpdateList_clicked();
 
+    ui->labelAgentHealthStatus->setNodeUID(agent_uid);
+    ui->ledIndicatorAgentStatus->setNodeUID(agent_uid);
+    ui->labelAgentHealthStatus->setHealthAttribute(CNodeHealthLabel::HealthOperationalState);
+    ui->labelAgentHealthStatus->initChaosContent();
+    ui->ledIndicatorAgentStatus->initChaosContent();
+
     //register for log
     ChaosMetadataServiceClient::getInstance()->registerEventHandler(this);
 }
 
 bool AgentEditor::isClosing() {
     ChaosMetadataServiceClient::getInstance()->deregisterEventHandler(this);
+    ui->ledIndicatorAgentStatus->deinitChaosContent();
+    ui->labelAgentHealthStatus->deinitChaosContent();
     return true;
 }
 
@@ -111,11 +120,17 @@ void AgentEditor::on_pushButtonRemoveAssociatedNode_clicked() {
 void AgentEditor::contextualMenuActionTrigger(const QString& cm_title,
                                               const QVariant& cm_data){
     Q_UNUSED(cm_data);
-    if(cm_title.compare(START_NODE) == 0) {
-        QModelIndexList index_list = ui->listViewNodeAssociated->selectionModel()->selectedIndexes();
-        foreach(QModelIndex index, index_list) {
+    QModelIndexList index_list = ui->listViewNodeAssociated->selectionModel()->selectedIndexes();
+    foreach(QModelIndex index, index_list) {
+        if(cm_title.compare(START_NODE) == 0) {
             submitApiResult("AgentEditor::launch_node",
-                            GET_CHAOS_API_PTR(agent::LaunchNode)->execute(index.data(Qt::UserRole).toString().toStdString()));
+                            GET_CHAOS_API_PTR(agent::NodeOperation)->execute(index.data(Qt::UserRole).toString().toStdString(), NodeAssociationOperationLaunch));
+        } else if(cm_title.compare(STOP_NODE) == 0) {
+            submitApiResult("AgentEditor::launch_node",
+                            GET_CHAOS_API_PTR(agent::NodeOperation)->execute(index.data(Qt::UserRole).toString().toStdString(), NodeAssociationOperationStop));
+        } else if(cm_title.compare(RESTART_NODE) == 0) {
+            submitApiResult("AgentEditor::launch_node",
+                            GET_CHAOS_API_PTR(agent::NodeOperation)->execute(index.data(Qt::UserRole).toString().toStdString(), NodeAssociationOperationRestart));
         }
     }
 }
@@ -124,6 +139,7 @@ void AgentEditor::on_pushButtonStartCheckProcess_clicked() {
     submitApiResult("AgentEditor::start_process_scan",
                     GET_CHAOS_API_PTR(agent::CheckAgentHostedProcess)->execute(agent_uid.toStdString()));
 }
+
 void AgentEditor::handleAgentEvent(const std::string& _agent_uid,
                                    const int32_t& _check_result) {
     //if widget i snot visible we do nothing

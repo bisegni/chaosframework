@@ -32,6 +32,13 @@ namespace chaos {
         namespace data {
             namespace agent {
                 
+                typedef enum {
+                    NodeAssociationOperationUndefined,
+                    NodeAssociationOperationLaunch,
+                    NodeAssociationOperationStop,
+                    NodeAssociationOperationRestart
+                } NodeAssociationOperation;
+                
                 //!node association to an agent
                 struct AgentAssociation {
                     //!identify the node of node associated to agent

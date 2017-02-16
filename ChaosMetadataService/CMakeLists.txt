@@ -117,7 +117,7 @@ SET(cnd_src  ${cnd_src}	api/agent/AgentGroup.cpp
                         api/agent/SaveNodeAssociation.cpp
                         api/agent/LoadNodeAssociation.cpp
                         api/agent/RemoveNodeAssociation.cpp
-                        api/agent/LaunchNode.cpp
+                        api/agent/NodeOperation.cpp
                         api/agent/CheckAgentHostedProcess.cpp)
 
 #Worker

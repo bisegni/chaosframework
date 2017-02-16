@@ -1,6 +1,7 @@
 #include "AgentNodeAssociationEditor.h"
 #include "ui_AgentNodeAssociationEditor.h"
 
+using namespace chaos::service_common::data::agent;
 using namespace chaos::metadata_service_client::api_proxy;
 
 AgentNodeAssociationEditor::AgentNodeAssociationEditor(const QString &_agent_uid,
@@ -67,5 +68,5 @@ void AgentNodeAssociationEditor::on_pushButtonUpdateAssociationInformation_click
 
 void AgentNodeAssociationEditor::on_pushButtonLaunchNodeOnAgent_clicked() {
     submitApiResult("AgentNodeAssociationEditor::launchNode",
-                    GET_CHAOS_API_PTR(agent::LaunchNode)->execute(association.associated_node_uid));
+                    GET_CHAOS_API_PTR(agent::NodeOperation)->execute(association.associated_node_uid, NodeAssociationOperationLaunch));
 }

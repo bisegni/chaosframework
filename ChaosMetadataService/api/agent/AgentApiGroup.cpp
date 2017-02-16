@@ -24,7 +24,7 @@
 #include "LoadNodeAssociation.h"
 #include "SaveNodeAssociation.h"
 #include "RemoveNodeAssociation.h"
-#include "LaunchNode.h"
+#include "NodeOperation.h"
 #include "LoadAgentDescription.h"
 #include "CheckAgentHostedProcess.h"
 using namespace chaos::metadata_service::api::agent;
@@ -38,7 +38,7 @@ AbstractApiGroup(AgentNodeDomainAndActionRPC::ProcessWorker::WORKER_NAME){
     addApi<LoadNodeAssociation>();
     addApi<SaveNodeAssociation>();
     addApi<RemoveNodeAssociation>();
-    addApi<LaunchNode>();
+    addApi<NodeOperation>();
     addApi<LoadAgentDescription>();
     addApi<CheckAgentHostedProcess>();
 }

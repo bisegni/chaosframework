@@ -1,5 +1,5 @@
 /*
- *	LaunchNode.h
+ *	NodeOperation.h
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
@@ -19,8 +19,8 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework_B4233352_30A8_42F0_84AE_39941D11E93D_LaunchNode_h
-#define __CHAOSFramework_B4233352_30A8_42F0_84AE_39941D11E93D_LaunchNode_h
+#ifndef __CHAOSFramework_B4233352_30A8_42F0_84AE_39941D11E93D_NodeOperation_h
+#define __CHAOSFramework_B4233352_30A8_42F0_84AE_39941D11E93D_NodeOperation_h
 
 #include <ChaosMetadataServiceClient/api_proxy/ApiProxy.h>
 
@@ -34,22 +34,23 @@ namespace chaos {
             namespace agent {
                 
                 //! remove the association information for a node that belong to an agent
-                class LaunchNode:
+                class NodeOperation:
                 public chaos::metadata_service_client::api_proxy::ApiProxy {
-                    API_PROXY_CLASS(LaunchNode)
+                    API_PROXY_CLASS(NodeOperation)
                 protected:
-                    API_PROXY_CD_DECLARATION(LaunchNode)
+                    API_PROXY_CD_DECLARATION(NodeOperation)
                 public:
                     //! Start a node usign an agent
                     /*!
                      The mds automatically found the agent that contains the node and send request to that agent to start it
                      \param node_uid the node unique id to start
                      */
-                    ApiProxyResult execute(const std::string& node_uid);
+                    ApiProxyResult execute(const std::string& node_uid,
+                                           chaos::service_common::data::agent::NodeAssociationOperation op);
                 };
             }
         }
     }
 }
 
-#endif /* __CHAOSFramework_B4233352_30A8_42F0_84AE_39941D11E93D_LaunchNode_h */
+#endif /* __CHAOSFramework_B4233352_30A8_42F0_84AE_39941D11E93D_NodeOperation_h */

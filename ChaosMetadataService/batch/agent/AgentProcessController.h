@@ -32,17 +32,10 @@ namespace chaos {
             
             namespace agent {
                 
-                typedef enum {
-                    AgentProcessControllerOPUndefined,
-                    AgentProcessControllerOPLaunch,
-                    AgentProcessControllerOPStop,
-                    AgentProcessControllerOPRestart
-                } AgentProcessControllerOP;
-                
                 class AgentProcessController:
                 public metadata_service::batch::MDSBatchCommand {
                     DECLARE_MDS_COMMAND_ALIAS
-                    AgentProcessControllerOP process_op;
+                    chaos::service_common::data::agent::NodeAssociationOperation process_op;
                     std::auto_ptr<RequestInfo> request;
                     std::auto_ptr<chaos::common::data::CDataWrapper> message_data;
                 public:

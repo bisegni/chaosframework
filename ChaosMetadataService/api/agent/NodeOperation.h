@@ -1,5 +1,5 @@
 /*
- *	LaunchNode.h
+ *	NodeOperation.h
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
@@ -19,8 +19,8 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework_EFEDD110_E100_4081_8C2E_8D22E3C5C5E8_LaunchNode_h
-#define __CHAOSFramework_EFEDD110_E100_4081_8C2E_8D22E3C5C5E8_LaunchNode_h
+#ifndef __CHAOSFramework_EFEDD110_E100_4081_8C2E_8D22E3C5C5E8_NodeOperation_h
+#define __CHAOSFramework_EFEDD110_E100_4081_8C2E_8D22E3C5C5E8_NodeOperation_h
 
 #include "../AbstractApi.h"
 
@@ -35,12 +35,12 @@ namespace chaos {
                 /*!
                  
                  */
-                class LaunchNode:
+                class NodeOperation:
                 public AbstractApi {
                     
                 public:
-                    LaunchNode();
-                    ~LaunchNode();
+                    NodeOperation();
+                    ~NodeOperation();
                     chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
                                                                bool& detach_data);
                 };
@@ -49,4 +49,4 @@ namespace chaos {
     }
 }
 
-#endif /* __CHAOSFramework_EFEDD110_E100_4081_8C2E_8D22E3C5C5E8_LaunchNode_h */
+#endif /* __CHAOSFramework_EFEDD110_E100_4081_8C2E_8D22E3C5C5E8_NodeOperation_h */

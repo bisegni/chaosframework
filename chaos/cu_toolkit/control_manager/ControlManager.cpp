@@ -539,9 +539,9 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
     //check if is a proxy control unit
     if(instance->getCUType().compare(NodeType::NODE_SUBTYPE_PROXY_CONTROL_UNIT) == 0){
         //chec if someoune has attach the handler
-        CHECK_ASSERTION_THROW_AND_LOG((load_handler != NULL), LCMERR_, -8, CHAOS_FORMAT("No work unit instancer's found for type %1%",%work_unit_type));
+        CHECK_ASSERTION_THROW_AND_LOG((load_handler != NULL), LCMERR_, -8, CHAOS_FORMAT("No handler has been set for manage the %1% [of type ProxyControlUnit]",%work_unit_id));
         if(load_handler(true,
-                     instance->getCUID(),
+                        instance->getCUID(),
                         static_cast<ProxyControlUnit*>(instance.get())->getProxyApiInterface()) == false){
             LOG_AND_TROW(LCMERR_, -9, CHAOS_FORMAT("Load for %1% control unit denied by load handler", %work_unit_id));
         }
