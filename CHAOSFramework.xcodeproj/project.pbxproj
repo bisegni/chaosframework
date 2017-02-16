@@ -1071,6 +1071,7 @@
 		32FC7EE51A70FDB70029C2A2 /* ApiManagment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FC7EE31A70FDB70029C2A2 /* ApiManagment.cpp */; };
 		32FF2A501E55A5D700117985 /* AlertAgentCheckProcessHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A4E1E55A5D700117985 /* AlertAgentCheckProcessHandler.cpp */; };
 		32FF2A511E55A5D700117985 /* AlertAgentCheckProcessHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FF2A4F1E55A5D700117985 /* AlertAgentCheckProcessHandler.h */; };
+		32FF2A541E55EC0F00117985 /* AgentRemoveNodeSafety.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A521E55EC0F00117985 /* AgentRemoveNodeSafety.cpp */; };
 		32FFA3EC1B00D43900C57E07 /* QuantumSlot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FFA3EA1B00D43900C57E07 /* QuantumSlot.cpp */; };
 		32FFA3ED1B00D43900C57E07 /* QuantumSlot.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FFA3EB1B00D43900C57E07 /* QuantumSlot.h */; };
 		32FFA3EE1B00F95900C57E07 /* QuantumSlotScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FFA3E61B00CEE100C57E07 /* QuantumSlotScheduler.cpp */; };
@@ -2480,6 +2481,8 @@
 		32FCB0691B00B4D0002894A2 /* monitor_system_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = monitor_system_types.h; sourceTree = "<group>"; };
 		32FF2A4E1E55A5D700117985 /* AlertAgentCheckProcessHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlertAgentCheckProcessHandler.cpp; sourceTree = "<group>"; };
 		32FF2A4F1E55A5D700117985 /* AlertAgentCheckProcessHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlertAgentCheckProcessHandler.h; sourceTree = "<group>"; };
+		32FF2A521E55EC0F00117985 /* AgentRemoveNodeSafety.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AgentRemoveNodeSafety.cpp; sourceTree = "<group>"; };
+		32FF2A531E55EC0F00117985 /* AgentRemoveNodeSafety.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AgentRemoveNodeSafety.h; sourceTree = "<group>"; };
 		32FFA3E61B00CEE100C57E07 /* QuantumSlotScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QuantumSlotScheduler.cpp; sourceTree = "<group>"; };
 		32FFA3E71B00CEE100C57E07 /* QuantumSlotScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuantumSlotScheduler.h; sourceTree = "<group>"; };
 		32FFA3EA1B00D43900C57E07 /* QuantumSlot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QuantumSlot.cpp; sourceTree = "<group>"; };
@@ -4962,6 +4965,8 @@
 				32990B211E51E77F00A4AF8F /* AgentProcessController.h */,
 				32990B311E547ED900A4AF8F /* AgentCheckAgentProcess.cpp */,
 				32990B321E547ED900A4AF8F /* AgentCheckAgentProcess.h */,
+				32FF2A521E55EC0F00117985 /* AgentRemoveNodeSafety.cpp */,
+				32FF2A531E55EC0F00117985 /* AgentRemoveNodeSafety.h */,
 				32E6F4481E48D3A30068320E /* agent_batch.h */,
 			);
 			path = agent;
@@ -5884,6 +5889,7 @@
 				324EF3E31AE923F9000837AF /* DataServiceApiGroup.cpp in Sources */,
 				327F39A01AEA47980000C845 /* GetAssociationByDS.cpp in Sources */,
 				3270E0701C6CBBE600105726 /* SubmitEntry.cpp in Sources */,
+				32FF2A541E55EC0F00117985 /* AgentRemoveNodeSafety.cpp in Sources */,
 				328E77FF1A7A94140008C070 /* NodeGroup.cpp in Sources */,
 				3288CE541E0C3243002B04F9 /* CreateSnapshotBatch.cpp in Sources */,
 				326ACFAB1E0159C600AD011E /* DeviceSharedDataWorkerMetricCollector.cpp in Sources */,

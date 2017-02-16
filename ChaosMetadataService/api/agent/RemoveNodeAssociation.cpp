@@ -20,6 +20,7 @@
  */
 
 #include "RemoveNodeAssociation.h"
+#include "../../batch/agent/AgentRemoveNodeSafety.h"
 
 #include <chaos_service_common/data/data.h>
 
@@ -54,24 +55,29 @@ CDataWrapper *RemoveNodeAssociation::execute(CDataWrapper *api_data, bool& detac
     //we can rpocessd
     GET_DATA_ACCESS(AgentDataAccess, a_da, -6);
     int err = 0;
-    const std::string agent_uid = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
-    if(api_data->isStringValue(AgentNodeDefinitionKey::NODE_ASSOCIATED)) {
-        const std::string node_associated = api_data->getStringValue(AgentNodeDefinitionKey::NODE_ASSOCIATED);
-        if((err = a_da->removeNodeAssociationForAgent(agent_uid, node_associated))) {
-            LOG_AND_TROW(ERR, -7, CHAOS_FORMAT("Error removing association for node %1% into agent %2% with error %3%", %node_associated%agent_uid%err));
-        }
-    } else {
-        ChaosStringVectorSDWrapper assoc_vec_sd_wrap;
-        assoc_vec_sd_wrap.serialization_key = AgentNodeDefinitionKey::NODE_ASSOCIATED;
-        assoc_vec_sd_wrap.deserialize(api_data);
-        for(ChaosStringVectorIterator it = assoc_vec_sd_wrap().begin(),
-            end = assoc_vec_sd_wrap().end();
-            it != end;
-            it++) {
-            if((err = a_da->removeNodeAssociationForAgent(agent_uid, *it))) {
-                LOG_AND_TROW(ERR, -7, CHAOS_FORMAT("Error removing association for node %1% into agent %2% with error %3%", %*it%agent_uid%err));
-            }
-        }
-    }
+    detach_data = true;
+    uint64_t cmd_id = getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::agent::AgentRemoveNodeSafety),
+                                                        api_data,
+                                                        0,
+                                                        1000);
+    //    const std::string agent_uid = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
+    //    if(api_data->isStringValue(AgentNodeDefinitionKey::NODE_ASSOCIATED)) {
+    //        const std::string node_associated = api_data->getStringValue(AgentNodeDefinitionKey::NODE_ASSOCIATED);
+    //        if((err = a_da->removeNodeAssociationForAgent(agent_uid, node_associated))) {
+    //            LOG_AND_TROW(ERR, -7, CHAOS_FORMAT("Error removing association for node %1% into agent %2% with error %3%", %node_associated%agent_uid%err));
+    //        }
+    //    } else {
+    //        ChaosStringVectorSDWrapper assoc_vec_sd_wrap;
+    //        assoc_vec_sd_wrap.serialization_key = AgentNodeDefinitionKey::NODE_ASSOCIATED;
+    //        assoc_vec_sd_wrap.deserialize(api_data);
+    //        for(ChaosStringVectorIterator it = assoc_vec_sd_wrap().begin(),
+    //            end = assoc_vec_sd_wrap().end();
+    //            it != end;
+    //            it++) {
+    //            if((err = a_da->removeNodeAssociationForAgent(agent_uid, *it))) {
+    //                LOG_AND_TROW(ERR, -7, CHAOS_FORMAT("Error removing association for node %1% into agent %2% with error %3%", %*it%agent_uid%err));
+    //            }
+    //        }
+    //    }
     return NULL;
 }

@@ -66,6 +66,7 @@ last_used_sb_idx(3){
     installCommand(agent::AgentAckCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(agent::AgentAckCommand));
     installCommand(agent::AgentProcessController::command_alias, MDS_BATCH_COMMAND_INSTANCER(agent::AgentProcessController));
     installCommand(agent::AgentCheckAgentProcess::command_alias, MDS_BATCH_COMMAND_INSTANCER(agent::AgentCheckAgentProcess));
+    installCommand(agent::AgentRemoveNodeSafety::command_alias, MDS_BATCH_COMMAND_INSTANCER(agent::AgentRemoveNodeSafety));
     
     //add all sandbox instances
     if(ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_BATCH_SANDBOX_SIZE)) {
