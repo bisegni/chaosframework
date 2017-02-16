@@ -92,6 +92,30 @@ void AlertEventDescriptor::getLogAlert(std::string&  indetifier,
     log_domain.assign(getEventValue(),
                       getEventValueSize());
 }
+
+void AlertEventDescriptor::setAgentCheckProcessAlert(const std::string&  indetifier,
+                                                     int32_t check_result) {
+    //2 byte
+    setSubCode(EventAlertAgentCheckProcessSubmitted);
+    //2 byte
+    setSubCodePriority(5);
+    //set the dimension, 10 is the fixed size of all information for alert pack
+    EventDescriptor::setIdentificationAndValueWithType(indetifier,
+                                                       EventDataInt32,
+                                                       &check_result);
+}
+
+void AlertEventDescriptor::getAgentCheckProcessAlert(std::string&  indetifier,
+                                                     int32_t& check_result) {
+    if(getAlertCode() != EventAlertAgentCheckProcessSubmitted) return;
+    
+    if(getEventValueType() != EventDataInt32) return;
+    
+    indetifier.assign(getIdentification(),
+                      getIdentificationlength());
+    check_result = *((int32_t*)getEventValue());
+}
+
 /*!
  Set the Value for the type
  \param valueType the enumeration that descrive the type of the value

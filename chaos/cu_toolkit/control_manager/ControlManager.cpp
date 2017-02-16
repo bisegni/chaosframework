@@ -537,11 +537,14 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
     CHECK_ASSERTION_THROW_AND_LOG(instance.get(), LCMERR_, -7, "Error creating work unit instance");
     
     //check if is a proxy control unit
-    if(load_handler != NULL &&
-       (instance->getCUType().compare(NodeType::NODE_SUBTYPE_PROXY_CONTROL_UNIT) == 0)){
-        load_handler(true,
+    if(instance->getCUType().compare(NodeType::NODE_SUBTYPE_PROXY_CONTROL_UNIT) == 0){
+        //chec if someoune has attach the handler
+        CHECK_ASSERTION_THROW_AND_LOG((load_handler != NULL), LCMERR_, -8, CHAOS_FORMAT("No work unit instancer's found for type %1%",%work_unit_type));
+        if(load_handler(true,
                      instance->getCUID(),
-                     static_cast<ProxyControlUnit*>(instance.get())->getProxyApiInterface());
+                        static_cast<ProxyControlUnit*>(instance.get())->getProxyApiInterface()) == false){
+            LOG_AND_TROW(LCMERR_, -9, CHAOS_FORMAT("Load for %1% control unit denied by load handler", %work_unit_id));
+        }
     }
     
     //tag control uinit for mds managed

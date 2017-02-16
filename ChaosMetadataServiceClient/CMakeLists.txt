@@ -21,7 +21,8 @@ SET(mcl_src ${mcl_src}	    event/EventDispatchManager.cpp
                             event/AbstractEventHandler.cpp)
 
 SET(mcl_src ${mcl_src}	    event/alert/AlertEventHandler.cpp
-                            event/alert/AlertLogEventHandler.cpp)
+                            event/alert/AlertLogEventHandler.cpp
+                            event/alert/AlertAgentCheckProcessHandler.cpp)
 
 SET(mcl_src ${mcl_src}      api_proxy/logging/SearchLogEntry.cpp
                             api_proxy/logging/GetLogForSourceUID.cpp

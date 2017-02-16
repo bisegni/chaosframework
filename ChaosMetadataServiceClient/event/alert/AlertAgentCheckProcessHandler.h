@@ -1,10 +1,10 @@
 /*
- *	AlertLogEventHandler.h
+ *	AlertAgentCheckProcessHandler.h
  *
  *	!CHAOS [CHAOSFramework]
- *	Created by Claudio Bisegni.
+ *	Created by bisegni.
  *
- *    	Copyright 16/02/16 INFN, National Institute of Nuclear Physics
+ *    	Copyright 16/02/2017 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__AlertLogEventHandler_h
-#define __CHAOSFramework__AlertLogEventHandler_h
+#ifndef __CHAOSFramework__CD6CD4D_61F0_4997_83B6_352E72DEFD00_AlertAgentCheckProcessHandler_h
+#define __CHAOSFramework__CD6CD4D_61F0_4997_83B6_352E72DEFD00_AlertAgentCheckProcessHandler_h
 
 #include <ChaosMetadataServiceClient/event/alert/AlertEventHandler.h>
 
@@ -31,19 +31,19 @@ namespace chaos {
         namespace event {
             namespace alert {
                 
-                class AlertLogEventHandler:
+                class AlertAgentCheckProcessHandler:
                 public AlertEventHandler {
                 protected:
                     void handleEvent(const chaos::common::event::EventDescriptor * const event);
                 public:
-                    AlertLogEventHandler();
-                    ~AlertLogEventHandler();
-                    virtual void handleLogEvent(const std::string& source,
-                                                const std::string& domain) = 0;
+                    AlertAgentCheckProcessHandler();
+                    ~AlertAgentCheckProcessHandler();
+                    virtual void handleAgentEvent(const std::string& agent_uid,
+                                                  const int32_t& check_result) = 0;
                 };
             }
         }
     }
 }
 
-#endif /* __CHAOSFramework__AlertLogEventHandler_h */
+#endif /* __CHAOSFramework__CD6CD4D_61F0_4997_83B6_352E72DEFD00_AlertAgentCheckProcessHandler_h */

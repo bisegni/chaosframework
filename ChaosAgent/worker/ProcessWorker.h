@@ -35,19 +35,21 @@ namespace chaos {
             public AbstractWorker {
                 void launchProcess(const chaos::service_common::data::agent::AgentAssociation& node_association_info);
                 bool checkProcessAlive(const chaos::service_common::data::agent::AgentAssociation& node_association_info);
+                bool quitProcess(const chaos::service_common::data::agent::AgentAssociation& node_association_info,
+                                 bool kill = false);
             protected:
                 //! launch an data service
-                chaos::common::data::CDataWrapper *launchUnitServer(chaos::common::data::CDataWrapper *data,
-                                                                    bool& detach);
+                chaos::common::data::CDataWrapper *launchNode(chaos::common::data::CDataWrapper *data,
+                                                              bool& detach);
                 //! stop an data service
-                chaos::common::data::CDataWrapper *stopUnitServer(chaos::common::data::CDataWrapper *data,
-                                                                  bool& detach);
+                chaos::common::data::CDataWrapper *stopNode(chaos::common::data::CDataWrapper *data,
+                                                            bool& detach);
                 //! restart an data service
-                chaos::common::data::CDataWrapper *restartUnitServer(chaos::common::data::CDataWrapper *data,
-                                                                     bool& detach);
+                chaos::common::data::CDataWrapper *restartNode(chaos::common::data::CDataWrapper *data,
+                                                               bool& detach);
                 //! list all data service managed by the running instance
-                chaos::common::data::CDataWrapper *checkUnitServers(chaos::common::data::CDataWrapper *data,
-                                                                    bool& detach);
+                chaos::common::data::CDataWrapper *checkNodes(chaos::common::data::CDataWrapper *data,
+                                                              bool& detach);
             public:
                 ProcessWorker();
                 ~ProcessWorker();

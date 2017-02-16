@@ -24,7 +24,7 @@
 
 #include "../mds_service_batch.h"
 #include <chaos/common/chaos_types.h>
-
+#include <chaos/common/event/event.h>
 namespace chaos {
     namespace metadata_service{
         namespace batch {
@@ -35,11 +35,11 @@ namespace chaos {
                 class AgentCheckAgentProcess:
                 public metadata_service::batch::MDSBatchCommand {
                     DECLARE_MDS_COMMAND_ALIAS
-                    
-                    int try_count;
                     std::string agent_uid;
                     std::auto_ptr<RequestInfo> request;
                     std::auto_ptr<chaos::common::data::CDataWrapper> message_data;
+                    
+                    chaos::common::event::channel::AlertEventChannel *alert_event_channel;
                 public:
                     AgentCheckAgentProcess();
                     ~AgentCheckAgentProcess();

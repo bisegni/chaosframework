@@ -64,6 +64,9 @@ namespace chaos {
                     
                     int sendLogAlert(const std::string& node_uid,
                                      const std::string& log_domain);
+                    
+                    int sendAgentProcessCheckAlert(const std::string& agent_uid,
+                                                   const int32_t check_result);
                 };
                 
             }

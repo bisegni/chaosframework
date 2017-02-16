@@ -50,7 +50,7 @@ ProcessWorker::ProcessWorker():
 AbstractWorker(AgentNodeDomainAndActionRPC::ProcessWorker::WORKER_NAME) {
     //register rpc action
     AbstActionDescShrPtr action_parameter_interface = DeclareAction::addActionDescritionInstance<ProcessWorker>(this,
-                                                                                                                &ProcessWorker::launchUnitServer,
+                                                                                                                &ProcessWorker::launchNode,
                                                                                                                 getName(),
                                                                                                                 AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE,
                                                                                                                 "Start an unit server");
@@ -63,7 +63,7 @@ AbstractWorker(AgentNodeDomainAndActionRPC::ProcessWorker::WORKER_NAME) {
     
     
     action_parameter_interface = DeclareAction::addActionDescritionInstance<ProcessWorker>(this,
-                                                                                           &ProcessWorker::stopUnitServer,
+                                                                                           &ProcessWorker::stopNode,
                                                                                            getName(),
                                                                                            AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_STOP_NODE,
                                                                                            "Stop an unit server");
@@ -72,7 +72,7 @@ AbstractWorker(AgentNodeDomainAndActionRPC::ProcessWorker::WORKER_NAME) {
                                          "The name of the unit server to launch");
     
     action_parameter_interface = DeclareAction::addActionDescritionInstance<ProcessWorker>(this,
-                                                                                           &ProcessWorker::restartUnitServer,
+                                                                                           &ProcessWorker::restartNode,
                                                                                            getName(),
                                                                                            AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_RESTART_NODE,
                                                                                            "Restart an unit server");
@@ -85,7 +85,7 @@ AbstractWorker(AgentNodeDomainAndActionRPC::ProcessWorker::WORKER_NAME) {
                                          "Kill the process for stop it");
     
     action_parameter_interface = DeclareAction::addActionDescritionInstance<ProcessWorker>(this,
-                                                                                           &ProcessWorker::checkUnitServers,
+                                                                                           &ProcessWorker::checkNodes,
                                                                                            getName(),
                                                                                            AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_CHECK_NODE,
                                                                                            "Check node status");
@@ -106,8 +106,8 @@ void ProcessWorker::init(void *data) throw(chaos::CException) {
 void ProcessWorker::deinit() throw(chaos::CException) {}
 
 
-chaos::common::data::CDataWrapper *ProcessWorker::launchUnitServer(chaos::common::data::CDataWrapper *data,
-                                                                   bool& detach) {
+chaos::common::data::CDataWrapper *ProcessWorker::launchNode(chaos::common::data::CDataWrapper *data,
+                                                             bool& detach) {
     CHECK_CDW_THROW_AND_LOG(data,
                             ERROR, -1,
                             CHAOS_FORMAT("[%1%] ACK message with no content", %getName()));
@@ -123,27 +123,25 @@ chaos::common::data::CDataWrapper *ProcessWorker::launchUnitServer(chaos::common
     }
     AgentAssociationSDWrapper assoc_sd_wrapper;
     assoc_sd_wrapper.deserialize(data);
-    launchProcess(assoc_sd_wrapper());
-    if(checkProcessAlive(assoc_sd_wrapper())) {
-        INFO << "Alive";
-    } else {
-        INFO << "Dead";
+    if(checkProcessAlive(assoc_sd_wrapper()) == false) {
+        launchProcess(assoc_sd_wrapper());
     }
     return NULL;
 }
 
-chaos::common::data::CDataWrapper *ProcessWorker::stopUnitServer(chaos::common::data::CDataWrapper *data,
-                                                                 bool& detach) {
+chaos::common::data::CDataWrapper *ProcessWorker::stopNode(chaos::common::data::CDataWrapper *data,
+                                                           bool& detach) {
+    
     return NULL;
 }
 
-chaos::common::data::CDataWrapper *ProcessWorker::restartUnitServer(chaos::common::data::CDataWrapper *data,
-                                                                    bool& detach) {
+chaos::common::data::CDataWrapper *ProcessWorker::restartNode(chaos::common::data::CDataWrapper *data,
+                                                              bool& detach) {
     return NULL;
 }
 
-chaos::common::data::CDataWrapper *ProcessWorker::checkUnitServers(chaos::common::data::CDataWrapper *data,
-                                                                   bool& detach) {
+chaos::common::data::CDataWrapper *ProcessWorker::checkNodes(chaos::common::data::CDataWrapper *data,
+                                                             bool& detach) {
     VectorAgentAssociationStatusSDWrapper result_status_vec_sd_wrapper;
     result_status_vec_sd_wrapper.serialization_key = AgentNodeDefinitionKey::NODE_ASSOCIATED;
     
@@ -208,6 +206,20 @@ FILE * popen2(string command, string type, int & pid) {
     return fdopen(fd[WRITE], "w");
 }
 
+bool popen2NoPipe(string command, int & pid) {
+    if((pid = fork()) == -1)     {
+        return false;
+    }
+    
+    /* child process */
+    if (pid == 0) {
+        setpgid(0, 0); //Needed so negative PIDs can kill children of /bin/sh
+        execl("/bin/sh", "/bin/sh", "-c", command.c_str(), NULL);
+        exit(0);
+    }
+    return true;
+}
+
 int pclose2(FILE * fp,
             pid_t pid,
             bool wait_pid = false) {
@@ -253,17 +265,10 @@ void ProcessWorker::launchProcess(const AgentAssociation& node_association_info)
         init_file_stream.open(init_file.string().c_str(), std::ofstream::trunc | std::ofstream::out);
         init_file_stream.write(node_association_info.configuration_file_content.c_str(), node_association_info.configuration_file_content.length());
         init_file_stream.close();
-        
-        FILE *pipe = popen2(exec_command.string().c_str(), "r", pid);
-        if (!pipe) {throw chaos::CException(-2, "popen() failed!", __PRETTY_FUNCTION__);}
-        sleep(1);
-        pclose2(pipe, pid);
-        boost::filesystem::remove(init_file);
+        if (!popen2NoPipe(exec_command.string().c_str(), pid)) {throw chaos::CException(-2, "popen() failed!", __PRETTY_FUNCTION__);}
     } catch(std::exception& e) {
-        boost::filesystem::remove(init_file);
         ERROR << e.what();
     } catch(chaos::CException& ex) {
-        boost::filesystem::remove(init_file);
         throw ex;
     }
 }
@@ -285,4 +290,12 @@ bool ProcessWorker::checkProcessAlive(const chaos::service_common::data::agent::
     }
     pclose2(in, pid);
     return found;
+}
+
+bool ProcessWorker::quitProcess(const chaos::service_common::data::agent::AgentAssociation& node_association_info,
+                                bool kill) {
+    int pid = 0;
+    const std::string exec_command = kill?CHAOS_FORMAT("pkill -SIGKILL -f \"%1%\"",%COMPOSE_NODE_LAUNCH_CMD_LINE(node_association_info)):CHAOS_FORMAT("pkill -SIGTERM -f \"%1%\"",%COMPOSE_NODE_LAUNCH_CMD_LINE(node_association_info));
+    if (!popen2NoPipe(exec_command.c_str(), pid)) {throw chaos::CException(-2, "popen() failed!", __PRETTY_FUNCTION__);}
+    return pid != 0;
 }

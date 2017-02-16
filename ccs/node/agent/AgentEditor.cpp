@@ -7,6 +7,7 @@
 #define STOP_NODE "Stop Node"
 #define RESTART_NODE "Restart Node"
 
+using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::api_proxy;
 
 AgentEditor::AgentEditor(const QString& _agent_uid,
@@ -46,9 +47,13 @@ void AgentEditor::initUI() {
                                     cm,
                                     false);
     on_pushButtonUpdateList_clicked();
+
+    //register for log
+    ChaosMetadataServiceClient::getInstance()->registerEventHandler(this);
 }
 
 bool AgentEditor::isClosing() {
+    ChaosMetadataServiceClient::getInstance()->deregisterEventHandler(this);
     return true;
 }
 
@@ -118,4 +123,13 @@ void AgentEditor::contextualMenuActionTrigger(const QString& cm_title,
 void AgentEditor::on_pushButtonStartCheckProcess_clicked() {
     submitApiResult("AgentEditor::start_process_scan",
                     GET_CHAOS_API_PTR(agent::CheckAgentHostedProcess)->execute(agent_uid.toStdString()));
+}
+void AgentEditor::handleAgentEvent(const std::string& _agent_uid,
+                                   const int32_t& _check_result) {
+    //if widget i snot visible we do nothing
+    if(isVisible() == false) return;
+
+    if(_agent_uid.compare(agent_uid.toStdString()) == 0) {
+        on_pushButtonUpdateList_clicked();
+    }
 }

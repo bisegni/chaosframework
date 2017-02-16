@@ -23,6 +23,8 @@
 
 #include "../../common/CUCommonUtility.h"
 
+#include <chaos/common/network/NetworkBroker.h>
+
 using namespace chaos::common::data;
 using namespace chaos::common::network;
 
@@ -41,9 +43,13 @@ DEFINE_MDS_COMAMND_ALIAS(AgentCheckAgentProcess)
 AgentCheckAgentProcess::AgentCheckAgentProcess():
 MDSBatchCommand(),
 agent_uid(),
-try_count(0){}
+alert_event_channel(NULL){
+alert_event_channel = NetworkBroker::getInstance()->getNewAlertEventChannel();
+}
 
-AgentCheckAgentProcess::~AgentCheckAgentProcess() {}
+AgentCheckAgentProcess::~AgentCheckAgentProcess() {
+if(alert_event_channel) {NetworkBroker::getInstance()->disposeEventChannel(alert_event_channel);}
+}
 
 // inherited method
 void AgentCheckAgentProcess::setHandler(CDataWrapper *data) {
@@ -87,7 +93,6 @@ void AgentCheckAgentProcess::acquireHandler() {
 
 // inherited method
 void AgentCheckAgentProcess::ccHandler() {
-    try_count++;
     switch(request->phase) {
         case MESSAGE_PHASE_UNSENT: {
             sendRequest(*request,
@@ -111,6 +116,12 @@ void AgentCheckAgentProcess::ccHandler() {
                     getDataAccess<mds_data_access::AgentDataAccess>()->setNodeAssociationStatus(agent_uid, *it);
                 }
 
+            }
+            //send an alerto to inform all listener that hase benn done a cross check
+            //we can send the event
+            if(alert_event_channel){
+                //send broadcast event
+                alert_event_channel->sendAgentProcessCheckAlert(agent_uid, 1);
             }
         }
         case MESSAGE_PHASE_TIMEOUT:

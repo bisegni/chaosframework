@@ -12,7 +12,8 @@ class AgentEditor;
 }
 
 class AgentEditor :
-        public PresenterWidget {
+        public PresenterWidget,
+        protected chaos::metadata_service_client::event::alert::AlertAgentCheckProcessHandler {
     Q_OBJECT
 
 public:
@@ -26,6 +27,8 @@ protected:
                    QSharedPointer<chaos::common::data::CDataWrapper> api_result);
     void contextualMenuActionTrigger(const QString& cm_title,
                                      const QVariant& cm_data);
+    void handleAgentEvent(const std::string& _agent_uid,
+                          const int32_t& _check_result);
 private slots:
     void on_pushButtonUpdateList_clicked();
 

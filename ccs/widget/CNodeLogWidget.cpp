@@ -81,8 +81,8 @@ qint32 CNodeLogWidget::maxResultItem() {
     return p_max_result_item;
 }
 
-void CNodeLogWidget::handleLogEvent(const std::string source,
-                                    const std::string domain) {
+void CNodeLogWidget::handleLogEvent(const std::string& source,
+                                    const std::string& domain) {
     //if widget i snot visible we do nothing
     if(isVisible() == false) return;
 

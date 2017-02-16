@@ -1069,6 +1069,8 @@
 		32FC49B71E0ACB1B0087D82C /* BatchCommandParallelSandbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FC49B51E0ACB1B0087D82C /* BatchCommandParallelSandbox.cpp */; };
 		32FC49B81E0ACB1B0087D82C /* BatchCommandParallelSandbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FC49B61E0ACB1B0087D82C /* BatchCommandParallelSandbox.h */; };
 		32FC7EE51A70FDB70029C2A2 /* ApiManagment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FC7EE31A70FDB70029C2A2 /* ApiManagment.cpp */; };
+		32FF2A501E55A5D700117985 /* AlertAgentCheckProcessHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A4E1E55A5D700117985 /* AlertAgentCheckProcessHandler.cpp */; };
+		32FF2A511E55A5D700117985 /* AlertAgentCheckProcessHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FF2A4F1E55A5D700117985 /* AlertAgentCheckProcessHandler.h */; };
 		32FFA3EC1B00D43900C57E07 /* QuantumSlot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FFA3EA1B00D43900C57E07 /* QuantumSlot.cpp */; };
 		32FFA3ED1B00D43900C57E07 /* QuantumSlot.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FFA3EB1B00D43900C57E07 /* QuantumSlot.h */; };
 		32FFA3EE1B00F95900C57E07 /* QuantumSlotScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FFA3E61B00CEE100C57E07 /* QuantumSlotScheduler.cpp */; };
@@ -2476,6 +2478,8 @@
 		32FC7EE31A70FDB70029C2A2 /* ApiManagment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ApiManagment.cpp; sourceTree = "<group>"; };
 		32FC7EE41A70FDB70029C2A2 /* ApiManagment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApiManagment.h; sourceTree = "<group>"; };
 		32FCB0691B00B4D0002894A2 /* monitor_system_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = monitor_system_types.h; sourceTree = "<group>"; };
+		32FF2A4E1E55A5D700117985 /* AlertAgentCheckProcessHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlertAgentCheckProcessHandler.cpp; sourceTree = "<group>"; };
+		32FF2A4F1E55A5D700117985 /* AlertAgentCheckProcessHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlertAgentCheckProcessHandler.h; sourceTree = "<group>"; };
 		32FFA3E61B00CEE100C57E07 /* QuantumSlotScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QuantumSlotScheduler.cpp; sourceTree = "<group>"; };
 		32FFA3E71B00CEE100C57E07 /* QuantumSlotScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuantumSlotScheduler.h; sourceTree = "<group>"; };
 		32FFA3EA1B00D43900C57E07 /* QuantumSlot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QuantumSlot.cpp; sourceTree = "<group>"; };
@@ -4830,6 +4834,8 @@
 				32D745F71C73388900F4D719 /* AlertEventHandler.h */,
 				32D745FA1C7338D100F4D719 /* AlertLogEventHandler.cpp */,
 				32D745FB1C7338D100F4D719 /* AlertLogEventHandler.h */,
+				32FF2A4E1E55A5D700117985 /* AlertAgentCheckProcessHandler.cpp */,
+				32FF2A4F1E55A5D700117985 /* AlertAgentCheckProcessHandler.h */,
 			);
 			path = alert;
 			sourceTree = "<group>";
@@ -5568,6 +5574,7 @@
 				325FC8651AF7CEE900DB9D66 /* GetCurrentDataset.h in Headers */,
 				32568C8F1B3D7FED0006988C /* UpdateProperty.h in Headers */,
 				3221D74C1CF5F3AE001BE971 /* logging.h in Headers */,
+				32FF2A511E55A5D700117985 /* AlertAgentCheckProcessHandler.h in Headers */,
 				3274A90D1AC2F214000C6A4D /* ApiProxyManager.h in Headers */,
 				32990B291E521F5E00A4AF8F /* LoadAgentDescription.h in Headers */,
 				3234BE801B04CC9400AE6B08 /* HealtStatusAttributeHandler.h in Headers */,
@@ -6348,6 +6355,7 @@
 				32761A381B314697006C8719 /* GetCommandAndTemplateDescription.cpp in Sources */,
 				3208AABD1AC56C1C000860D9 /* GetNodeDescription.cpp in Sources */,
 				3252F3601C298760004436A8 /* GetDomains.cpp in Sources */,
+				32FF2A501E55A5D700117985 /* AlertAgentCheckProcessHandler.cpp in Sources */,
 				32568C921B42C1690006988C /* QuantumTSTaggedAttributeHandler.cpp in Sources */,
 				327F39B31AEAA2680000C845 /* GetAssociationByDS.cpp in Sources */,
 				32B224CA1CFC830600B24B58 /* LoadFullScript.cpp in Sources */,
