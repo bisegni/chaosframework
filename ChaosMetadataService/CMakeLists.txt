@@ -111,7 +111,7 @@ SET(cnd_src  ${cnd_src}	api/script/ScriptGroupApi.cpp
                         api/script/ManageScriptInstance.cpp
                         api/script/ExecutionPoolHeartbeat.cpp)
 
-SET(cnd_src  ${cnd_src}	api/agent/AgentGroup.cpp
+SET(cnd_src  ${cnd_src}	api/agent/AgentApiGroup.cpp
                         api/agent/LoadAgentDescription.cpp
                         api/agent/ListNodeForAgent.cpp
                         api/agent/SaveNodeAssociation.cpp
@@ -168,7 +168,8 @@ SET(cnd_src  ${cnd_src}	batch/MDSBatchExecutor.cpp
 
 SET(cnd_src  ${cnd_src}	batch/agent/AgentAckCommand.cpp
                         batch/agent/AgentProcessController.cpp
-                        batch/agent/AgentCheckAgentProcess.cpp)
+                        batch/agent/AgentCheckAgentProcess.cpp
+                        batch/agent/AgentRemoveNodeSafety.cpp)
 
 SET(cnd_src  ${cnd_src}	batch/node/UpdatePropertyCommand.cpp
                         batch/node/SubmitBatchCommand.cpp)

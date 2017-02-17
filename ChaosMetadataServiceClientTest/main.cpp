@@ -44,8 +44,8 @@ using namespace chaos::metadata_service_client::api_proxy;
 class AlertLogHandlerImpl:
 public chaos::metadata_service_client::event::alert::AlertLogEventHandler {
 public:
-    void handleLogEvent(const std::string source,
-                        const std::string domain) {
+    void handleLogEvent(const std::string& source,
+                        const std::string& domain) {
         MSCT_INFO << source << "-" << domain;
     }
 };
