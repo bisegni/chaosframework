@@ -71,7 +71,13 @@ int MongoDBAgentDataAccess::insertUpdateAgentDescription(CDataWrapper& agent_des
             CDataWrapper new_node;
             new_node.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, agent_uid);
             new_node.addStringValue(NodeDefinitionKey::NODE_TYPE,  NodeType::NODE_TYPE_AGENT);
-            node_data_access->insertNewNode(new_node);
+            if((err = node_data_access->insertNewNode(new_node))) {
+                ERR << CHAOS_FORMAT("Error creating a new node structure for agent %1% with error %2%" , %agent_uid%err);
+                return err;
+            } else if((err = node_data_access->addAgeingManagementDataToNode(agent_uid))) {
+                ERR << CHAOS_FORMAT("Error adding ageing structure to agent %1% with error %2%" , %agent_uid%err);
+                return err;
+            }
         }
         
         mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << agent_uid

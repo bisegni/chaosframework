@@ -34,7 +34,7 @@ namespace chaos {
             namespace mongodb {
                 //forward declaration
                 class MongoDBPersistenceDriver;
-
+                
                 //! Data Access for manage the log
                 /*!
                  */
@@ -42,22 +42,22 @@ namespace chaos {
                 public data_access::LoggingDataAccess,
                 protected service_common::persistence::mongodb::MongoDBAccessor {
                     friend class MongoDBPersistenceDriver;
-
+                    
                     MongoDBUtilityDataAccess *utility_data_access;
                     //return the query for a page
                     mongo::Query getNextPagedQuery(uint64_t last_sequence_before_this_page,
                                                    const std::string& source_uid,
                                                    const std::vector<std::string>& domain);
-
+                    
                     boost::shared_ptr<data_access::LogEntry> getEntryByBSON(const mongo::BSONObj& entry_bson);
                 protected:
                     MongoDBLoggingDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
                     ~MongoDBLoggingDataAccess();
-
+                    
                 public:
                     //! Inherited method
                     int insertNewEntry(data_access::LogEntry& log_entry);
-
+                    
                     //! Inherited method
                     int searchEntryForSource(data_access::LogEntryList& entry_list,
                                              const std::string& source_uid,
@@ -75,6 +75,10 @@ namespace chaos {
                     //! Inherited method
                     int getLogDomainsForSource(data_access::LogDomainList& entry_list,
                                                const data_access::LogSourceList& source_uids);
+                    
+                    //!inherited method
+                    int eraseLogBeforTS(const std::string& source_uid,
+                                        uint64_t unit_ts);
                 };
             }
         }

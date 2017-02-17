@@ -791,3 +791,164 @@ int MongoDBNodeDataAccess::searchCommandTemplate(chaos::common::data::CDataWrapp
     }
     return err;
 }
+
+int MongoDBNodeDataAccess::addAgeingManagementDataToNode(const std::string& control_unit_id) {
+    int err = 0;
+    try {
+        uint64_t current_ts = TimingUtil::getTimeStamp();
+        const std::string key_processing_ageing = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_PROCESSING_AGEING);
+        const std::string key_last_checing_time = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_AGEING_LAST_CHECK_DATA);
+        const std::string key_last_performed_time = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_PERFORMED_AGEING);
+        
+        mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << control_unit_id
+                                    << MONGODB_COLLECTION_NODES_AGEING_INFO << BSON("$exists" << false ));
+        
+        mongo::BSONObj update = BSON("$set" << BSON(key_last_checing_time << mongo::Date_t(current_ts) <<
+                                                    key_last_performed_time << mongo::Date_t(current_ts) <<
+                                                    key_processing_ageing << false));
+        
+        
+        DEBUG_CODE(MDBNDA_DBG<<log_message("completeNodeForAgeingManagement",
+                                           "update",
+                                           DATA_ACCESS_LOG_2_ENTRY("query",
+                                                                   "update",
+                                                                   query.jsonString(),
+                                                                   update.jsonString()));)
+        //remove the field of the document
+        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                     query,
+                                     update))) {
+            MDBNDA_DBG << CHAOS_FORMAT("Error %1% completing control unit %2% with ageing management information", %err%control_unit_id);
+        }
+    } catch (const mongo::DBException &e) {
+        MDBNDA_ERR << e.what();
+        err = -1;
+    } catch (const CException &e) {
+        MDBNDA_ERR << e.what();
+        err = e.errorCode;
+    }
+    return err;
+}
+
+//int MongoDBNodeDataAccess::reserveNodeForAgeingManagement(uint64_t& last_sequence_id,
+//                                                          std::string& node_uid_reserved,
+//                                                          uint32_t& node_ageing_time,
+//                                                          uint64_t& last_ageing_perform_time,
+//                                                          uint64_t timeout_for_checking,
+//                                                          uint64_t delay_next_check) {
+//    int err = 0;
+//    SearchResult paged_result;
+//    try {
+//        mongo::BSONObj result_found;
+//        mongo::BSONObjBuilder query_builder;
+//        mongo::BSONArrayBuilder query_ageing_and;
+//        mongo::BSONArrayBuilder query_ageing_or;
+//        
+//        const std::string key_processing_ageing = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_PROCESSING_AGEING);
+//        const std::string key_last_checking_time = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_AGEING_LAST_CHECK_DATA);
+//        const std::string key_last_performed_time = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_PERFORMED_AGEING);
+//        //get all node where ageing is > of 0
+//        query_builder << CHAOS_FORMAT("instance_description.%1%",%DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING) << BSON("$gt" << 0);
+//        
+//        //get all control unit
+//        query_builder << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_CONTROL_UNIT;
+//        
+//        //condition on sequence
+//        query_builder << "seq" << BSON("$gt" << (long long)last_sequence_id);
+//        
+//        //select control unit also if it is in checking managemnt but data checking time is old than one minute(it is gone in timeout)
+//        query_ageing_or << BSON(key_processing_ageing << true << key_last_checking_time << BSON("$lte" << mongo::Date_t(TimingUtil::getTimeStamp()-timeout_for_checking)));
+//        
+//        //or on previous condition and on checking management == false the last checking date need to be greater that noral chack timeout
+//        query_ageing_or << BSON(key_processing_ageing << false << key_last_checking_time << BSON("$lte" << mongo::Date_t(TimingUtil::getTimeStamp()-delay_next_check)));
+//        
+//        query_builder << "$or" << query_ageing_or.arr();
+//        
+//        
+//        mongo::BSONObj  query = query_builder.obj();
+//        // set atomicalli processing ageing to true
+//        mongo::BSONObj  update =  BSON("$set" << BSON(key_processing_ageing << true <<
+//                                                      key_last_checking_time << mongo::Date_t(TimingUtil::getTimeStamp())));
+//        // order getting first cu being the last processed one
+//        mongo::BSONObj  order_by = BSON(key_last_checking_time << 1);
+//        DEBUG_CODE(MDBNDA_DBG<<log_message("reserveNodeForAgeingManagement",
+//                                           "findAndUpdate",
+//                                           DATA_ACCESS_LOG_3_ENTRY("query",
+//                                                                   "update",
+//                                                                   "order_by",
+//                                                                   query.jsonString(),
+//                                                                   update.jsonString(),
+//                                                                   order_by.jsonString()));)
+//        //find the control unit
+//        if((err = connection->findAndModify(result_found,
+//                                            MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+//                                            query,
+//                                            update,
+//                                            false,
+//                                            false,
+//                                            order_by))){
+//            MDBNDA_DBG << CHAOS_FORMAT("Error %1% fetching the next cheable control unit for ageing", %err);
+//        } else if(result_found.isEmpty() == false && (result_found.hasField(NodeDefinitionKey::NODE_UNIQUE_ID) &&
+//                                                      result_found.hasField(MONGODB_COLLECTION_NODES_AGEING_INFO))) {
+//            //we have control unit
+//            last_sequence_id = (uint64_t)result_found.getField("seq").Long();
+//            node_uid_reserved = result_found.getField(NodeDefinitionKey::NODE_UNIQUE_ID).String();
+//            node_ageing_time = (uint32_t)result_found.getFieldDotted(CHAOS_FORMAT("instance_description.%1%",%DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING)).numberInt();
+//            last_ageing_perform_time = (uint64_t)result_found.getFieldDotted(key_last_performed_time).Date().asInt64();
+//        } else {
+//            last_sequence_id = 0;
+//            node_uid_reserved.clear();
+//            last_ageing_perform_time = 0;
+//            node_ageing_time = 0;
+//        }
+//        
+//    } catch (const mongo::DBException &e) {
+//        MDBNDA_ERR << e.what();
+//        err = -1;
+//    } catch (const CException &e) {
+//        MDBNDA_ERR << e.what();
+//        err = e.errorCode;
+//    }
+//    return err;
+//}
+//
+//int MongoDBNodeDataAccess::releaseNodeForAgeingManagement(std::string& node_uid,
+//                                                          bool performed) {
+//    int err = 0;
+//    SearchResult paged_result;
+//    try {
+//        mongo::BSONObj result_found;
+//        uint64_t current_ts = TimingUtil::getTimeStamp();
+//        const std::string key_processing_ageing = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_PROCESSING_AGEING);
+//        const std::string key_last_checking_time = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_AGEING_LAST_CHECK_DATA);
+//        const std::string key_last_performed_time = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_PERFORMED_AGEING);
+//        
+//        mongo::BSONObj  query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << node_uid);
+//        // set atomicalli processing ageing to true
+//        mongo::BSONObj  update = BSON("$set" << (performed?BSON(key_processing_ageing << false <<
+//                                                                key_last_checking_time << mongo::Date_t(current_ts) <<
+//                                                                key_last_performed_time << mongo::Date_t(current_ts)):
+//                                                 BSON(key_processing_ageing << false <<
+//                                                      key_last_checking_time << mongo::Date_t(current_ts))));
+//        
+//        DEBUG_CODE(MDBNDA_ERR<<log_message("releaseNodeForAgeingManagement",
+//                                           "update",
+//                                           DATA_ACCESS_LOG_2_ENTRY("query",
+//                                                                   "update",
+//                                                                   query.jsonString(),
+//                                                                   update.jsonString()));)
+//        //find the control unit
+//        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+//                                     query,
+//                                     update))) {
+//            MDBNDA_ERR << CHAOS_FORMAT("Error %1% fetching the next cheable control unit for ageing", %err);
+//        }
+//    } catch (const mongo::DBException &e) {
+//        MDBNDA_ERR << e.what();
+//        err = -1;
+//    } catch (const CException &e) {
+//        MDBNDA_ERR << e.what();
+//        err = e.errorCode;
+//    }
+//    return err;
+//}
