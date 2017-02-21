@@ -54,6 +54,10 @@
 #include <chaos/cu_toolkit/control_manager/AttributeSharedCacheWrapper.h>
 
 
+#define CUINFO LAPP_ << "["<<__FUNCTION__<<" - "<< getDeviceID()<<"]"
+#define CUDBG LDBG_ << "[- "<<__FUNCTION__<<" - "<< getDeviceID()<<"]"
+#define CUERR LERR_ << "["<<__PRETTY_FUNCTION__<<" - "<< getDeviceID()<<"]"
+
 #ifdef __CHAOS_DEBUG_MEMORY_CU__
 #include <chaos/common/debug/tracey.hpp>
 #endif

@@ -35,26 +35,31 @@ using namespace chaos::common::direct_io::channel::opcode_headers;
 
 #pragma mark QueryCursor
 QueryCursor::ResultPage::ResultPage():
-query_result(NULL),
+query_result(),
 current_fetched(0){}
 
+QueryCursor::ResultPage::~ResultPage() {}
+
 void QueryCursor::ResultPage::reset(DirectIODeviceChannelOpcodeQueryDataCloudResultPtr new_query_result) {
-    if(query_result) {
-        free(query_result);
-        query_result = NULL;
-    }
     current_fetched = 0;
     decoded_page.clear();
-    query_result = new_query_result;
+    query_result.reset(new_query_result);
     last_received_sequence = query_result->header.last_found_sequence;
     //scan all result
     char *current_data_prt = query_result->results;
     boost::shared_ptr<CDataWrapper> last_record;
+    decoded_page.clear();
     while(decoded_page.size() < new_query_result->header.numer_of_record_found){
+        //!at this time cdata wrapper copy the data
         last_record.reset(new CDataWrapper(current_data_prt));
         decoded_page.push_back(last_record);
+        //clear current record
         current_data_prt += last_record->getBSONRawSize();
     }
+    if(query_result->results){
+    	free(query_result->results);
+    }
+
     
 }
 
@@ -112,7 +117,7 @@ int64_t QueryCursor::fetchNewPage() {
     bool from_included = false;
     IODirectIODriverClientChannels	*next_client = NULL;
     chaos::common::direct_io::channel::opcode_headers::DirectIODeviceChannelOpcodeQueryDataCloudResultPtr query_result = NULL;
-    
+    result_page.decoded_page.clear();
     if((next_client = static_cast<IODirectIODriverClientChannels*>(connection_feeder.getService())) == NULL) return -1;
     
     //fetch the new page
@@ -132,15 +137,20 @@ int64_t QueryCursor::fetchNewPage() {
             ERR << "Cursor ended";
             return 0;
     }
-    
+    query_result=NULL;
     if((api_error = next_client->device_client_channel->queryDataCloud(node_id,
                                                                        start_ts,
                                                                        end_ts,
                                                                        page_len,
                                                                        result_page.last_received_sequence,
                                                                        &query_result))) {
-        ERR << CHAOS_FORMAT("Error during fetchin query page with code %1%", %api_error);
+        ERR << CHAOS_FORMAT("Error during fetching query page with code %1%", %api_error);
         phase = QueryPhaseEnded;
+        if(query_result){
+        	free(query_result);
+        	query_result=NULL;
+
+        }
         return api_error;
     } else if(query_result) {
         result_page.reset(query_result);

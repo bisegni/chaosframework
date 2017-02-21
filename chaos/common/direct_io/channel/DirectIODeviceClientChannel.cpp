@@ -245,9 +245,12 @@ int64_t DirectIODeviceClientChannel::queryDataCloud(const std::string& key,
         }
     }
     if(answer) {
-        if(answer->channel_header_data) free(answer->channel_header_data);
+        if(answer->channel_header_data) {
+        	free(answer->channel_header_data);
+        }
         free(answer);
     }
+
     return err;
 }
 
@@ -279,6 +282,7 @@ int64_t DirectIODeviceClientChannel::deleteDataCloud(const std::string& key,
         //error getting last value
         DIODCCLERR_ << CHAOS_FORMAT("Error executing deelte operation for key %1%",%key);
     }
+
     return err;
 }
 

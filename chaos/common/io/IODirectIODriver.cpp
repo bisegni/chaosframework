@@ -445,4 +445,5 @@ void IODirectIODriver::releaseQuery(QueryCursor *query_cursor) {
     if(map_query_future.count(query_cursor->queryID())) {
         map_query_future.erase(query_cursor->queryID());
     }
+    delete query_cursor;
 }
