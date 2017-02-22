@@ -36,6 +36,7 @@ using namespace chaos::common::direct_io::channel::opcode_headers;
 #pragma mark QueryCursor
 QueryCursor::ResultPage::ResultPage():
 query_result(),
+last_received_sequence(0),
 current_fetched(0){}
 
 QueryCursor::ResultPage::~ResultPage() {}
@@ -124,7 +125,7 @@ int64_t QueryCursor::fetchNewPage() {
     switch(phase) {
         case QueryPhaseNotStarted:
             DBG << "Start Search";
-            result_page.last_received_sequence = (uint64_t)std::numeric_limits<int64_t>::min();
+            result_page.last_received_sequence = 0;
             //change to the next phase
             phase = QueryPhaseStarted;
             from_included = true;
