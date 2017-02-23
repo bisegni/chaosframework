@@ -170,6 +170,20 @@ int64_t DirectIODeviceClientChannel::requestLastOutputData(const std::string& ke
     if((err = sendServiceData(data_pack, &answer))) {
         //error getting last value
         DIODCCLERR_ << "Error getting last value for key:" << key << " with error:" <<err;
+        *result = NULL;
+        if(data){
+        	free(data);
+        }
+        if(get_opcode_header){
+        	free(get_opcode_header);
+        }
+        if(data_pack){
+        	free(data_pack);
+        }
+        if(answer){
+           free(answer);
+        }
+        return err;
     } else {
         //we got answer
         if(answer) {

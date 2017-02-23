@@ -50,8 +50,8 @@ namespace chaos {
                     unsigned int current_fetched;
                     ResultPageDecodedPacket decoded_page;
                     uint64_t last_received_sequence;
-                    std::auto_ptr<chaos::common::direct_io::channel::opcode_headers::DirectIODeviceChannelOpcodeQueryDataCloudResult>query_result;
-                    
+                  //  std::auto_ptr<chaos::common::direct_io::channel::opcode_headers::DirectIODeviceChannelOpcodeQueryDataCloudResult>query_result;
+                    chaos::common::direct_io::channel::opcode_headers::DirectIODeviceChannelOpcodeQueryDataCloudResultPtr query_result;
                     ResultPage();
                     ~ResultPage();
                     void reset(chaos::common::direct_io::channel::opcode_headers::DirectIODeviceChannelOpcodeQueryDataCloudResultPtr new_query_result);
@@ -86,7 +86,7 @@ namespace chaos {
                 const std::string& queryID() const;
                 
                 const bool hasNext();
-                
+                const int32_t getError();
                 boost::shared_ptr<chaos::common::data::CDataWrapper> next() throw (CException);
                 
                 const uint32_t getPageLen() const;

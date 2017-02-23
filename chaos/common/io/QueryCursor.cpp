@@ -35,16 +35,24 @@ using namespace chaos::common::direct_io::channel::opcode_headers;
 
 #pragma mark QueryCursor
 QueryCursor::ResultPage::ResultPage():
-query_result(),
+query_result(NULL),
 last_received_sequence(0),
 current_fetched(0){}
 
-QueryCursor::ResultPage::~ResultPage() {}
+QueryCursor::ResultPage::~ResultPage() {
+	 if(query_result){
+	    	free(query_result);
+	    }
+}
 
 void QueryCursor::ResultPage::reset(DirectIODeviceChannelOpcodeQueryDataCloudResultPtr new_query_result) {
     current_fetched = 0;
     decoded_page.clear();
-    query_result.reset(new_query_result);
+    //query_result.reset(new_query_result);
+    if(query_result){
+    	free(query_result);
+    }
+    query_result = new_query_result;
     last_received_sequence = query_result->header.last_found_sequence;
     //scan all result
     char *current_data_prt = query_result->results;
@@ -60,6 +68,8 @@ void QueryCursor::ResultPage::reset(DirectIODeviceChannelOpcodeQueryDataCloudRes
     if(query_result->results){
     	free(query_result->results);
     }
+    free(query_result);
+    query_result=NULL;
 
     
 }
@@ -94,13 +104,16 @@ QueryCursor::~QueryCursor() {}
 const std::string& QueryCursor::queryID() const {
     return query_id;
 }
-
+const int32_t QueryCursor::getError(){return api_error;}
 const bool QueryCursor::hasNext() {
     switch(phase) {
         case QueryPhaseNotStarted:
         case QueryPhaseStarted:
             if(result_page.hasNext() == false) {
-                fetchNewPage();
+                if(fetchNewPage()!=0){
+                	ERR <<" Fetch returned error:"<<api_error;
+                	return false;
+                }
             }
             return result_page.hasNext();
             break;
