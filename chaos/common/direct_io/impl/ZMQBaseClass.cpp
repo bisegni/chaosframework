@@ -186,6 +186,7 @@ int ZMQBaseClass::readMessage(void * socket,
         //we got an error
         err = zmq_errno();
         ZMQDIO_BASE_LERR_ << "Error receiving data from socket with code:" << PRINT_ZMQ_ERR(err);
+        message_size_read=0;
         return err;
     } else {
         //take the readed byte
