@@ -511,6 +511,7 @@ IF (NOT CACHE_DIR)
       #    SET(CMAKE_FIND_ROOT_PATH  /usr/arm-linux-gnueabihf/)
 
       SET(COMP_FLAGS "-D__BSON_USEMEMCPY__ -mcpu=xscale -D__BSON_USEM")
+      SET(CHAOS_CXX_FLAGS "${CHAOS_CXX_FLAGS} -DBOOST_ASIO_DISABLE_EVENTFD -D__BSON_USEMEMCPY__ -D__BSON_USEMEMCPY__ -DBOOST_ASIO_DISABLE_EVENTFD -mno-unaligned-access -DDISABLE_COMPARE_AND_SWAP -mfloat-abi=soft")
       SET(CHAOS_CROSS_HOST arm-linux-gnueabihf)
     ELSE()
       IF(${CHAOS_TARGET} MATCHES "arm-linux-2.6")
