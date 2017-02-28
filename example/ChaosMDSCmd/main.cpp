@@ -68,6 +68,9 @@ if(r->getError()){\
     ss<<" error in :"<<__FUNCTION__<<"|"<<__LINE__<<"|"<< # api_name <<" " <<r->getErrorMessage()<<std::endl;\
     throw CException(r->getError(),"EXECUTE_CHAOS_API",ss.str());\
 }}
+#define GET_CONFIG_STRING_DEFAULT(what,attr,def) \
+std::string attr=def;\
+if((what)->hasKey( # attr)){attr=(what)->getStringValue( # attr);}
 
 #define GET_CONFIG_STRING(what,attr) \
 std::string attr=(what)->getStringValue( # attr);
@@ -149,7 +152,7 @@ int initialize_from_old_mds(std::string conf){
                  std::auto_ptr<CDataWrapper> cuw(cu_l->getCDataWrapperElementAtIndex(cui));
                  GET_CONFIG_STRING(cuw,cu_id);
                  GET_CONFIG_STRING(cuw,cu_type);
-                 GET_CONFIG_STRING(cuw,cu_param);
+                 GET_CONFIG_STRING_DEFAULT(cuw,cu_param,"");
                  GET_CONFIG_DEFAULT_BOOL(cuw,auto_load,true);
                  GET_CONFIG_DEFAULT_BOOL(cuw,auto_init,true);
                  GET_CONFIG_DEFAULT_BOOL(cuw,auto_start,true);
