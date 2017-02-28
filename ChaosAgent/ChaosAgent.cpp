@@ -21,15 +21,15 @@
 
 #include "ChaosAgent.h"
 
+#include <chaos/common/utility/FSUtility.h>
 #include <chaos/common/healt_system/HealtManager.h>
-
-#include <boost/filesystem.hpp>
 
 #define INFO    INFO_LOG(ChaosAgent)
 #define ERROR   ERR_LOG(ChaosAgent)
 #define DEBUG   DBG_LOG(ChaosAgent)
 
 using namespace chaos::agent;
+using namespace chaos::common::utility;
 using namespace chaos::common::healt_system;
 
 chaos::WaitSemaphore ChaosAgent::wait_close_semaphore;
@@ -61,14 +61,11 @@ void ChaosAgent::init(void *init_data)  throw(CException) {
     }
     
     if(settings.working_directory.size() == 0) {
-        //set current directory has working one
-        boost::filesystem::path full_path( boost::filesystem::current_path() );
-        settings.working_directory = full_path.string();
+        settings.working_directory = FSUtility::getExecutablePath();
     }
     
     //init healt manager singleton
     StartableService::initImplementation(HealtManager::getInstance(), NULL, "HealthManager", __PRETTY_FUNCTION__);
-    
     agent_register.reset(new AgentRegister(), "AgentRegister");
     CHECK_ASSERTION_THROW_AND_LOG(agent_register.get(), ERROR, -1, "AgentRegister instantiation failed");
     agent_register.init(NULL, __PRETTY_FUNCTION__);
