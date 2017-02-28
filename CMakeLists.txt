@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 2.8)
+
 include(config/CMakeChaos.txt)
 project(chaosframework)
-
+     unset(CMAKE_CXX_COMPILER_WORKS CACHE)
+      unset(CMAKE_CXX_COMPILER_WORKS)
 include(CTest)
 
 option(CHAOS_MEMCACHE_TEST "Memcached test" OFF)
