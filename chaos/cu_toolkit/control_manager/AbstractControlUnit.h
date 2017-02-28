@@ -652,10 +652,10 @@ namespace chaos{
                 virtual void pushSystemDataset();
                 
                 //!push alarm dataset
-                virtual void pushAlarmDataset();
+                virtual void pushCUAlarmDataset();
                 
                 //!push alarm dataset
-                virtual void pushWarningDataset();
+                virtual void pushDevAlarmDataset();
                 
                 //!copy into a CDataWrapper last received initialization package
                 void copyInitConfiguraiton(CDataWrapper& copy);

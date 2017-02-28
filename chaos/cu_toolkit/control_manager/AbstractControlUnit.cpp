@@ -427,8 +427,8 @@ void AbstractControlUnit::doInitRpCheckList() throw(CException) {
             pushCustomDataset();
             attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM).markAllAsChanged();
             pushSystemDataset();
-            pushAlarmDataset();
-            pushWarningDataset();
+            pushCUAlarmDataset();
+            pushDevAlarmDataset();
             break;
         }
         
@@ -1572,7 +1572,7 @@ void AbstractControlUnit::pushOutputDataset(bool ts_already_set) {
     //check if something as changed
     if(!output_attribute_cache.hasChanged()) return;
     
-    CDataWrapper *output_attribute_dataset = key_data_storage->getNewOutputAttributeDataWrapper();
+    CDataWrapper *output_attribute_dataset = key_data_storage->getNewDataPackForDomain(KeyDataStorageDomainOutput);
     if(!output_attribute_dataset) return;
     
     //write acq ts for second
@@ -1586,9 +1586,6 @@ void AbstractControlUnit::pushOutputDataset(bool ts_already_set) {
             output_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, *cached_value->getValuePtr<uint64_t>());
         }
     }
-    
-    //add dataset type
-    output_attribute_dataset->addInt32Value(DataPackCommonKey::DPCK_DATASET_TYPE, DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT);
     //add all other output channel
     for(int idx = 0;
         idx < ((int)cache_output_attribute_vector.size())-1; //the device id and timestamp in added out of this list
@@ -1644,7 +1641,7 @@ void AbstractControlUnit::pushInputDataset() {
     AttributeCache& input_attribute_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_INPUT);
     if(!input_attribute_cache.hasChanged()) return;
     //get the cdatawrapper for the pack
-    CDataWrapper *input_attribute_dataset = key_data_storage->getNewOutputAttributeDataWrapper();
+    CDataWrapper *input_attribute_dataset = key_data_storage->getNewDataPackForDomain(KeyDataStorageDomainInput);
     if(input_attribute_dataset) {
         //input dataset timestamp is added only when pushed on cache
         input_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, TimingUtil::getTimeStamp());
@@ -1666,7 +1663,7 @@ void AbstractControlUnit::pushCustomDataset() {
     AttributeCache& custom_attribute_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_CUSTOM);
     if(!custom_attribute_cache.hasChanged()) return;
     //get the cdatawrapper for the pack
-    CDataWrapper *custom_attribute_dataset = key_data_storage->getNewOutputAttributeDataWrapper();
+    CDataWrapper *custom_attribute_dataset = key_data_storage->getNewDataPackForDomain(KeyDataStorageDomainCustom);
     if(custom_attribute_dataset) {
         //custom dataset timestamp is added only when pushed on cache
         custom_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, TimingUtil::getTimeStamp());
@@ -1686,7 +1683,7 @@ void AbstractControlUnit::pushSystemDataset() {
     AttributeCache& systemm_attribute_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM);
     if(!systemm_attribute_cache.hasChanged()) return;
     //get the cdatawrapper for the pack
-    CDataWrapper *system_attribute_dataset = key_data_storage->getNewOutputAttributeDataWrapper();
+    CDataWrapper *system_attribute_dataset = key_data_storage->getNewDataPackForDomain(KeyDataStorageDomainSystem);
     if(system_attribute_dataset) {
         //system dataset timestamp is added when pushed on cache laso if contain the hearbeat field
         //! the dataaset can be pushed also in other moment
@@ -1705,7 +1702,8 @@ void AbstractControlUnit::pushSystemDataset() {
 
 CDataWrapper *AbstractControlUnit::writeCatalogOnCDataWrapper(AlarmCatalog& catalog,
                                                               int32_t dataset_type) {
-    CDataWrapper *attribute_dataset = key_data_storage->getNewOutputAttributeDataWrapper();
+    CDataWrapper *attribute_dataset = key_data_storage->getNewDataPackForDomain((KeyDataStorageDomain)dataset_type);
+    
     if(attribute_dataset) {
         //fill datapack with
         //! the dataaset can be pushed also in other moment
@@ -1726,25 +1724,25 @@ CDataWrapper *AbstractControlUnit::writeCatalogOnCDataWrapper(AlarmCatalog& cata
     return attribute_dataset;
 }
 
-void AbstractControlUnit::pushWarningDataset() {
+void AbstractControlUnit::pushDevAlarmDataset() {
     GET_CAT_OR_EXIT(StateVariableTypeAlarmCU, );
     //get the cdatawrapper for the pack
     CDataWrapper *attribute_dataset = writeCatalogOnCDataWrapper(catalog,
                                                                  DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM);
     if(attribute_dataset) {
         //push out the system dataset
-        key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainWarning, attribute_dataset);
+        key_data_storage->pushDataSet(KeyDataStorageDomainDevAlarm, attribute_dataset);
     }
 }
 
-void AbstractControlUnit::pushAlarmDataset() {
+void AbstractControlUnit::pushCUAlarmDataset() {
     GET_CAT_OR_EXIT(StateVariableTypeAlarmDEV, );
     //get the cdatawrapper for the pack
     CDataWrapper *attribute_dataset = writeCatalogOnCDataWrapper(catalog,
                                                                  DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM);
     if(attribute_dataset) {
         //push out the system dataset
-        key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainAlarm, attribute_dataset);
+        key_data_storage->pushDataSet(KeyDataStorageDomainCUAlarm, attribute_dataset);
     }
 }
 
@@ -1862,12 +1860,12 @@ void AbstractControlUnit::alarmChanged(const std::string& state_variable_tag,
     switch((StateVariableType)variable_type) {
         case StateVariableTypeAlarmCU:
             //update dataset alarm on cds
-            pushWarningDataset();
+            pushCUAlarmDataset();
             break;
             
         case StateVariableTypeAlarmDEV:
             //update dataset alarm on cds
-            pushAlarmDataset();
+            pushDevAlarmDataset();
             break;
     }
 }
