@@ -34,6 +34,8 @@
 #define ZMQDIOLDBG_ LDBG_ << ZMQDIO_LOG_HEAD << __FUNCTION__ << " - "
 #define ZMQDIOLERR_ LERR_ << ZMQDIO_LOG_HEAD
 
+using namespace chaos::common::utility;
+
 using namespace chaos::common::direct_io;
 using namespace chaos::common::direct_io::impl;
 
@@ -178,145 +180,29 @@ void ZMQDirectIOClient::deinit() throw(chaos::CException) {
     DirectIOClient::deinit();
 }
 
-DirectIOClientConnection *ZMQDirectIOClient::_getNewConnectionImpl(std::string server_description, uint16_t endpoint) {
-    int err = 0;
-    std::string url;
-    std::string error_str;
-    std::string priority_endpoint;
-    std::string service_endpoint;
-    void *socket_priority = NULL;
-    void *socket_service = NULL;
-    std::vector<std::string> resolved_ip;
-    ZMQDirectIOClientConnection *result = NULL;
-    
-    MapZMQConfiguration default_configuration;
-    default_configuration["ZMQ_LINGER"] = "0";
-    default_configuration["ZMQ_RCVHWM"] = "3";
-    default_configuration["ZMQ_SNDHWM"] = "3";
-    default_configuration["ZMQ_RCVTIMEO"] = "2000";
-    default_configuration["ZMQ_SNDTIMEO"] = "5000";
-    default_configuration["ZMQ_RECONNECT_IVL"] = "5000";
-    default_configuration["ZMQ_RECONNECT_IVL_MAX"] = "10000";
-    
-    try {
-        
-        DEBUG_CODE(ZMQDIOLDBG_ << "Allocating priority socket";)
-        socket_priority = zmq_socket (zmq_context, ZMQ_DEALER);
-        if(socket_priority == NULL) throw chaos::CException(1, "Error creating priority socket", __FUNCTION__);
-        
-        if((err = ZMQBaseClass::configureSocketWithStartupParameter(socket_priority,
-                                                                    default_configuration,
-                                                                    chaos::GlobalConfiguration::getInstance()->getDirectIOClientImplKVParam(),
-                                                                    "ZMQ DirectIO Client service socket"))) {
-            throw chaos::CException(2, "Error configuring service socket", __FUNCTION__);
-        }
-        
-        //---------------------------------------------------------------------------------------------------------------
-        DEBUG_CODE(ZMQDIOLDBG_ << "Allocating service socket";)
-        socket_service = zmq_socket (zmq_context, ZMQ_DEALER);
-        if(socket_service == NULL) throw chaos::CException(2, "Error creating service socket", __FUNCTION__);
-        if((err = ZMQBaseClass::configureSocketWithStartupParameter(socket_service,
-                                                                    default_configuration,
-                                                                    chaos::GlobalConfiguration::getInstance()->getDirectIOClientImplKVParam(),
-                                                                    "ZMQ DirectIO Client service socket"))) {
-            throw chaos::CException(2, "Error configuring service socket", __FUNCTION__);
-        }
-        
-        //allocate client
-        result = new ZMQDirectIOClientConnection(server_description, socket_priority, socket_service, endpoint);
-        err = setAndReturnID(socket_priority, result->priority_identity);
-        if(err) throw chaos::CException(err, "Error setting identity on priority socket", __FUNCTION__);
-        
-        err = setAndReturnID(socket_service, result->service_identity);
-        if(err) throw chaos::CException(err, "Error setting identity on service socket", __FUNCTION__);
-        
-        //set the server information on socket
-        decoupleServerDescription(server_description, priority_endpoint, service_endpoint);
-        
-        
-        //DEBUG_CODE(ZMQDIOLDBG_ << "Allocating monitor socket thread for monitor url " << monitor_url;)
-        result->monitor_info.run = true;
-        result->monitor_info.monitor_thread = NULL;
-        result->monitor_info.monitor_socket = NULL;
-        result->monitor_info.unique_identification = result->getUniqueUUID();
-        //result->getConnectionHash();
-        
-        //register socket for monitoring
-        result->monitor_info.monitor_url = boost::str( boost::format("inproc://%1%") % result->getUniqueUUID());
-        err = zmq_socket_monitor(socket_priority, result->monitor_info.monitor_url.c_str(), ZMQ_EVENT_ALL);
-        if(err) throw chaos::CException(err, "Error activating monitor on service socket", __FUNCTION__);
-        
-        result->monitor_info.monitor_thread = new boost::thread(boost::bind(&ZMQDirectIOClient::socketMonitor, this, zmq_context, result->monitor_info.monitor_url.c_str(), &result->monitor_info));
-        
+DirectIOClientConnection *ZMQDirectIOClient::_getNewConnectionImpl(std::string server_description,
+                                                                   uint16_t endpoint) {
+    //allocate client
+    ZMQDirectIOClientConnection *connection = new ZMQDirectIOClientConnection(zmq_context,
+                                                                              server_description,
+                                                                              endpoint);
+    if(connection == NULL) return NULL;
+    try{
+        InizializableService::initImplementation(connection, NULL, "ZMQDirectIOClientConnection", __PRETTY_FUNCTION__);
         //register client with the hash of the xzmq decoded endpoint address (tcp://ip:port)
-        DEBUG_CODE(ZMQDIOLDBG_ << "Register client for " << server_description << " with zmq decoded hash " << result->getUniqueUUID();)
-        map_connections.registerElement(result->getUniqueUUID(), result);
-        
-        url = boost::str( boost::format("tcp://%1%") % priority_endpoint);
-        DEBUG_CODE(ZMQDIOLDBG_ << "connect to priority endpoint " << url;)
-        err = zmq_connect(socket_priority, url.c_str());
-        if(err) {
-            error_str = boost::str( boost::format("Error connecting priority socket to %1%") % priority_endpoint);	 
-	    throw chaos::CException(err, error_str, __FUNCTION__);
-        }
-        
-        //add monitor on priority socket
-        url = boost::str( boost::format("tcp://%1%") % service_endpoint);
-        DEBUG_CODE(ZMQDIOLDBG_ << "connect to service endpoint " << url;)
-        err = zmq_connect(socket_service, url.c_str());
-        if(err) {
-            error_str = boost::str( boost::format("Error connecting service socket to %1%") % service_endpoint);
-     	    throw chaos::CException(err, error_str, __FUNCTION__);
-        }
-    } catch(chaos::CException& ex) {
-      ZMQDIOLERR_ << ex.what();
-        if(socket_priority) {
-            err = zmq_close(socket_priority);
-            if(err) ZMQDIOLERR_ << "Error closing service socket";
-	    socket_priority=NULL;
-        }
-        if(socket_service) {
-            err = zmq_close(socket_service);
-            if(err) ZMQDIOLERR_ << "Error closing service socket";
-	    socket_service=NULL;
-        }
-        if(result) {
-            map_connections.deregisterElementKey(result->getUniqueUUID());
-            delete(result);
-        }
-	result = NULL;
-    }
-    return result;
+        DEBUG_CODE(ZMQDIOLDBG_ << "Register client for " << server_description << " with zmq decoded hash " << connection->getUniqueUUID();)
+        map_connections.registerElement(connection->getUniqueUUID(), connection);
+    } catch (...) {}
+    return connection;
 }
 
 void ZMQDirectIOClient::_releaseConnectionImpl(DirectIOClientConnection *connection_to_release) {
-    int err = 0;
     ZMQDirectIOClientConnection *conn=reinterpret_cast<ZMQDirectIOClientConnection*>(connection_to_release);
     if(!conn) return;
+    CHAOS_NOT_THROW(InizializableService::deinitImplementation(conn, "ZMQDirectIOClientConnection", __PRETTY_FUNCTION__););
     //CHAOS_ASSERT(conn->monitor_info)
     //stop the monitor
     ZMQDIOLAPP_ << "Release the connection for: " << connection_to_release->getServerDescription();
-    
-    //disable monitor
-    conn->monitor_info.run = false;
-    //err = zmq_disconnect(conn->socket_priority, "tcp://0.0.0.0.:1111");
-    err = zmq_socket_monitor(conn->socket_priority, NULL, 0);
-    if(err) ZMQDIOLERR_ << "Error closing monitor socket for " << conn->getServerDescription();
-    
-    if(conn->monitor_info.monitor_thread) {
-        if(conn->monitor_info.monitor_thread->joinable())
-            conn->monitor_info.monitor_thread->join();
-        delete(conn->monitor_info.monitor_thread);
-    }
-    ZMQDIOLAPP_ << "Disabled monitor socket for " << conn->getServerDescription();
-    
-    err = zmq_close(conn->socket_priority);
-    if(err) ZMQDIOLERR_ << "Error disconnecting priority socket for " << conn->getServerDescription();
-    
-    ZMQDIOLAPP_ << "Close service socket for" << conn->getServerDescription();
-    err = zmq_close(conn->socket_service);
-    if(err) ZMQDIOLERR_ << "Error closing service socket for " << conn->getServerDescription();
-    
     map_connections.deregisterElementKey(conn->getUniqueUUID());
     delete(connection_to_release);
     
