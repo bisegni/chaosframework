@@ -1074,6 +1074,7 @@
 		32FF2A621E65CCEB00117985 /* AlertAgentCheckProcessHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FF2A601E65CCEB00117985 /* AlertAgentCheckProcessHandler.h */; };
 		32FF2A651E65D17900117985 /* FSUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A631E65D17900117985 /* FSUtility.cpp */; };
 		32FF2A661E65D17900117985 /* FSUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FF2A641E65D17900117985 /* FSUtility.h */; };
+		32FF2A691E672CAA00117985 /* DeployWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A671E672CAA00117985 /* DeployWorker.cpp */; };
 		32FFA3EC1B00D43900C57E07 /* QuantumSlot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FFA3EA1B00D43900C57E07 /* QuantumSlot.cpp */; };
 		32FFA3ED1B00D43900C57E07 /* QuantumSlot.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FFA3EB1B00D43900C57E07 /* QuantumSlot.h */; };
 		32FFA3EE1B00F95900C57E07 /* QuantumSlotScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FFA3E61B00CEE100C57E07 /* QuantumSlotScheduler.cpp */; };
@@ -2487,6 +2488,8 @@
 		32FF2A601E65CCEB00117985 /* AlertAgentCheckProcessHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlertAgentCheckProcessHandler.h; sourceTree = "<group>"; };
 		32FF2A631E65D17900117985 /* FSUtility.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FSUtility.cpp; sourceTree = "<group>"; };
 		32FF2A641E65D17900117985 /* FSUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FSUtility.h; sourceTree = "<group>"; };
+		32FF2A671E672CAA00117985 /* DeployWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeployWorker.cpp; sourceTree = "<group>"; };
+		32FF2A681E672CAA00117985 /* DeployWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeployWorker.h; sourceTree = "<group>"; };
 		32FFA3E61B00CEE100C57E07 /* QuantumSlotScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QuantumSlotScheduler.cpp; sourceTree = "<group>"; };
 		32FFA3E71B00CEE100C57E07 /* QuantumSlotScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuantumSlotScheduler.h; sourceTree = "<group>"; };
 		32FFA3EA1B00D43900C57E07 /* QuantumSlot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QuantumSlot.cpp; sourceTree = "<group>"; };
@@ -4958,6 +4961,8 @@
 			children = (
 				32E6F4371E48689E0068320E /* ProcessWorker.cpp */,
 				32E6F4381E48689E0068320E /* ProcessWorker.h */,
+				32FF2A671E672CAA00117985 /* DeployWorker.cpp */,
+				32FF2A681E672CAA00117985 /* DeployWorker.h */,
 			);
 			path = worker;
 			sourceTree = "<group>";
@@ -6336,6 +6341,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				32FF2A691E672CAA00117985 /* DeployWorker.cpp in Sources */,
 				326413AB1E44C7DD0035E175 /* AgentRegister.cpp in Sources */,
 				32E6F4391E48689E0068320E /* ProcessWorker.cpp in Sources */,
 				326413A21E44AD750035E175 /* ChaosAgent.cpp in Sources */,

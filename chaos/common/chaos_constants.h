@@ -585,6 +585,13 @@ namespace chaos {
             static const char * const ACTION_CHECK_NODE_RESULT_NODE_UID       = NodeDefinitionKey::NODE_UNIQUE_ID;
             static const char * const ACTION_CHECK_NODE_RESULT_NODE_ALIVE     = "alive";
         }
+        
+        namespace DeployWorker {
+            static const char * const WORKER_NAME                             = "DeployWorker";
+            static const char * const ACTION_INIT_DEPLOY_SESSION              = "initDeploySession";
+            static const char * const ACTION_UPLOAD_DEPLOY_CHUNK              = "uploadDeployChunk";
+            static const char * const ACTION_END_DEPLOY_SESSION               = "endDeploySession";
+        }
     }
     /** @} */ // end of AgentNodeDomainAndActionRPC
     
