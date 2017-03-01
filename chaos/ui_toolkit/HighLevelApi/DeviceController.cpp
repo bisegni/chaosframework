@@ -58,6 +58,13 @@ datasetDB(true) {
     for(int cnt=0;cnt<channel_keys.size();cnt++)
         current_dataset.push_back(boost::shared_ptr<chaos::common::data::CDataWrapper>());
     
+    
+    //allocate device channel the memory of the CDeviceNetworkAddress * is managed by channel
+    CDeviceNetworkAddress *address = new CDeviceNetworkAddress(_deviceID);
+    //get a new message channel in a self manage way
+    deviceChannel = LLRpcApi::getInstance()->getNewDeviceMessageChannel(address,
+                                                                        true);
+    if(!deviceChannel) throw CException(-4, "Invalid device channel created", "DeviceController::init");
 }
 
 //---------------------------------------------------------------------------------------------------
@@ -128,15 +135,6 @@ void DeviceController::updateChannel() throw(CException) {
             }
         }
     }
-    
-    
-    //allocate device channel the memory of the CDeviceNetworkAddress * is managed by channel
-    if(!deviceChannel){
-        deviceChannel = LLRpcApi::getInstance()->getNewDeviceMessageChannel(devAddress);
-        if(!deviceChannel) throw CException(-4, "Invalid device channel created", "DeviceController::init");
-    }else{
-        deviceChannel->setNewAddress(devAddress);
-    }
 }
 
 //---------------------------------------------------------------------------------------------------
@@ -189,7 +187,7 @@ int DeviceController::getAttributeStrValue(string attribute_name, string& attrib
                 case DataType::TYPE_DOUBLE:
                     attribute_value = boost::lexical_cast<string>(dataWrapper->getDoubleValue(attribute_name.c_str()));
                     break;
-                
+                    
                 case DataType::TYPE_CLUSTER:
                 case DataType::TYPE_STRING:
                     attribute_value = boost::lexical_cast<string>(dataWrapper->getStringValue(attribute_name.c_str()));
@@ -357,9 +355,9 @@ int DeviceController::setAttributeToValue(const char *attributeName, const char 
             break;
         }
         case DataType::TYPE_CLUSTER:
-        attributeValuePack.addJsonValue(attributeName, attributeValue);
-        break;
-      
+            attributeValuePack.addJsonValue(attributeName, attributeValue);
+            break;
+            
             
         case DataType::TYPE_STRING:{
             attributeValuePack.addStringValue(attributeName, attributeValue);
@@ -411,7 +409,7 @@ int DeviceController::setAttributeToValue(const char *attributeName, DataType::D
             break;
         }
         case DataType::TYPE_CLUSTER:{
-         
+            
             attributeValuePack.addJsonValue(attributeName,static_cast<const char *>(attributeValue));
             break;
         }
@@ -668,7 +666,7 @@ int DeviceController::setAttributeValue(string& attributeName, const char* attri
     
     if(attributeValueMap[attributeName].dir==DataType::Output)
         return ErrorCode::EC_ATTRIBUTE_BAD_DIR;
-
+    
     switch (attributeValueMap[attributeName].valueType) {
             
         case DataType::TYPE_INT64:
@@ -687,7 +685,7 @@ int DeviceController::setAttributeValue(string& attributeName, const char* attri
             attributeValuePack.addBinaryValue(attrname,attributeValue,size);
             return deviceChannel->setAttributeValue(attributeValuePack,millisecToWait);
         case DataType::TYPE_CLUSTER:{
-           
+            
             attributeValuePack.addJsonValue(attrname,attributeValue);
             
             return deviceChannel->setAttributeValue(attributeValuePack,millisecToWait);

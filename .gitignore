@@ -1,3 +1,5 @@
+*.ui.autosave
+*.cbp
 build_*
 ccs/build_*
 DartConfiguration.tcl

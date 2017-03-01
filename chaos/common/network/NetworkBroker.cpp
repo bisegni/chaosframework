@@ -156,7 +156,19 @@ void NetworkBroker::init(void *initData) throw(CException) {
     if(globalConfiguration->hasKey(InitOption::OPT_RPC_IMPLEMENTATION)){
         //get the dispatcher
         MB_LAPP  << "Setup RPC sublayer";
-        rpc_dispatcher = ObjectFactoryRegister<AbstractCommandDispatcher>::getInstance()->getNewInstanceByName("DefaultCommandDispatcher");
+        uint32_t dispatcher_type = globalConfiguration->getUInt32Value(InitOption::OPT_RPC_DOMAIN_SCHEDULER_TYPE);
+        switch(dispatcher_type) {
+            case 1:
+                MB_LAPP  << "Use SharedCommandDispatcher for RPC";
+                rpc_dispatcher = ObjectFactoryRegister<AbstractCommandDispatcher>::getInstance()->getNewInstanceByName("SharedCommandDispatcher");
+                break;
+                
+            default:
+                MB_LAPP  << "Use DefaultCommandDispatcher for RPC";
+                rpc_dispatcher = ObjectFactoryRegister<AbstractCommandDispatcher>::getInstance()->getNewInstanceByName("DefaultCommandDispatcher");
+                break;
+        }
+        
         if(!rpc_dispatcher)
             throw CException(-6, "Command dispatcher implementation not found", __PRETTY_FUNCTION__);
         
@@ -492,14 +504,13 @@ void NetworkBroker::deregisterAction(DeclareAction* declare_action_class) {
  Submit a message specifing the destination
  */
 bool NetworkBroker::submitMessage(const string& host,
-                                  CDataWrapper *message,
-                                  bool on_this_thread) {
+                                  CDataWrapper *message) {
     CHAOS_ASSERT(message && rpc_client)
     NetworkForwardInfo *nfi = new NetworkForwardInfo(false);
     nfi->destinationAddr = host;
     nfi->setMessage(message);
     //add answer id to datawrapper
-    return rpc_client->submitMessage(nfi, on_this_thread);
+    return rpc_client->submitMessage(nfi, false);
 }
 
 //!send interparocess message
@@ -523,8 +534,7 @@ chaos::common::data::CDataWrapper *NetworkBroker::submitInterProcessMessage(chao
 bool NetworkBroker::submiteRequest(const string& host,
                                    CDataWrapper *request,
                                    std::string sender_node_id,
-                                   uint32_t sender_request_id,
-                                   bool on_this_thread) {
+                                   uint32_t sender_request_id) {
     CHAOS_ASSERT(request && rpc_client)
     request->addStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_HOST_IP, published_host_and_port);
     NetworkForwardInfo *nfi = new NetworkForwardInfo(true);
@@ -532,7 +542,7 @@ bool NetworkBroker::submiteRequest(const string& host,
     nfi->sender_node_id = sender_node_id;
     nfi->sender_request_id = sender_request_id;
     nfi->setMessage(request);
-    return rpc_client->submitMessage(nfi, on_this_thread);
+    return rpc_client->submitMessage(nfi, false);
 }
 
 /*

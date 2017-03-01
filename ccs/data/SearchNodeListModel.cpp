@@ -43,7 +43,11 @@ Qt::ItemFlags SearchNodeListModel::flags(const QModelIndex &index) const {
     if (index.isValid())
         return Qt::ItemIsDragEnabled | defaultFlags;
     else
-        return Qt::ItemIsDropEnabled | defaultFlags;
+        return defaultFlags;
+}
+
+Qt::DropActions SearchNodeListModel::supportedDragActions() const {
+    return Qt::CopyAction;
 }
 
 QMimeData *SearchNodeListModel::mimeData(const QModelIndexList &indexes) const {
@@ -51,6 +55,7 @@ QMimeData *SearchNodeListModel::mimeData(const QModelIndexList &indexes) const {
     QModelIndexList::const_iterator iter = indexes.begin();
     QModelIndexList::const_iterator iter_end = indexes.end();
     QByteArray encoded_data;
+    QByteArray encoded_data_node_and_type;
     QDataStream stream(&encoded_data, QIODevice::WriteOnly);
     while(iter != iter_end){
         if(iter->isValid() == false) continue;
@@ -59,6 +64,21 @@ QMimeData *SearchNodeListModel::mimeData(const QModelIndexList &indexes) const {
         iter++;
     }
     result->setData("application/chaos-node-uid-list", encoded_data);
+
+    iter = indexes.begin();
+    iter_end = indexes.end();
+    QDataStream stream_node_type(&encoded_data_node_and_type, QIODevice::WriteOnly);
+    while(iter != iter_end){
+        if(iter->isValid() == false) continue;
+        QSharedPointer<CDataWrapper> found_node = result_found[iter->row()];
+
+        QString node_uid = QString::fromStdString(found_node->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID));
+        QString node_type =  QString::fromStdString(found_node->getStringValue(chaos::NodeDefinitionKey::NODE_TYPE));
+        stream_node_type << node_uid;
+        stream_node_type << node_type;
+        iter++;
+    }
+    result->setData("application/chaos-node-uid-type-list", encoded_data_node_and_type);
     return result;
 }
 

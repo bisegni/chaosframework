@@ -38,8 +38,8 @@ namespace chaos {
                 public:
                     AlertLogEventHandler();
                     ~AlertLogEventHandler();
-                    virtual void handleLogEvent(const std::string source,
-                                                const std::string domain) = 0;
+                    virtual void handleLogEvent(const std::string& source,
+                                                const std::string& domain) = 0;
                 };
             }
         }

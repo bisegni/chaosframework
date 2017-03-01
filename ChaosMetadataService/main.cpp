@@ -121,6 +121,8 @@ int main(int argc, char * argv[]) {
     } catch (chaos::CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
     }
+    CHAOS_NOT_THROW(ChaosMetadataService::getInstance()->stop(););
+    CHAOS_NOT_THROW(ChaosMetadataService::getInstance()->deinit(););
     return 0;
 }
 

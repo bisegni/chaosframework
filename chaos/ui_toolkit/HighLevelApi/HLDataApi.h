@@ -24,10 +24,9 @@
 #include <chaos/ui_toolkit/HighLevelApi/DeviceController.h>
 #include <chaos/common/message/PerformanceNodeChannel.h>
 #include <chaos/common/utility/Singleton.h>
-namespace chaos_message = chaos::common::message;
+
 namespace chaos {
     namespace ui {
-        using namespace std;
         /*
          High level api for maning device datasert
          */
@@ -36,7 +35,7 @@ namespace chaos {
             friend class ChaosUIToolkit;
             friend class common::utility::Singleton<HLDataApi>;
             
-            std::map<string, DeviceController* > controllerMap;
+            std::map<std::string, DeviceController* > controllerMap;
             /*
              LL Rpc Api static initialization it should be called once for application
              */

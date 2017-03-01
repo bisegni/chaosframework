@@ -8,6 +8,8 @@ SET(mcl_src ChaosMetadataServiceClient.cpp)
 SET(mcl_src ${mcl_src}      api_proxy/ApiProxyManager.cpp
                             api_proxy/ApiProxy.cpp)
 
+SET(mcl_src ${mcl_src}	    node_controller/CUController.cpp)
+
 SET(mcl_src ${mcl_src}	    node_monitor/NodeMonitor.cpp
                             node_monitor/NodeFetcher.cpp
                             node_monitor/NodeController.cpp
@@ -19,7 +21,8 @@ SET(mcl_src ${mcl_src}	    event/EventDispatchManager.cpp
                             event/AbstractEventHandler.cpp)
 
 SET(mcl_src ${mcl_src}	    event/alert/AlertEventHandler.cpp
-                            event/alert/AlertLogEventHandler.cpp)
+                            event/alert/AlertLogEventHandler.cpp
+                            event/alert/AlertAgentCheckProcessHandler.cpp)
 
 SET(mcl_src ${mcl_src}      api_proxy/logging/SearchLogEntry.cpp
                             api_proxy/logging/GetLogForSourceUID.cpp
@@ -30,6 +33,14 @@ SET(mcl_src ${mcl_src}	    api_proxy/groups/AddNode.cpp
                             api_proxy/groups/DeleteNode.cpp
                             api_proxy/groups/GetDomains.cpp
                             api_proxy/groups/GetNodeChilds.cpp)
+
+SET(mcl_src ${mcl_src}	    api_proxy/agent/ListNodeForAgent.cpp
+                            api_proxy/agent/SaveNodeAssociation.cpp
+                            api_proxy/agent/LoadNodeAssociation.cpp
+                            api_proxy/agent/RemoveNodeAssociation.cpp
+                            api_proxy/agent/LoadAgentDescription.cpp
+                            api_proxy/agent/NodeOperation.cpp
+                            api_proxy/agent/CheckAgentHostedProcess.cpp)
 
 SET(mcl_src ${mcl_src}      api_proxy/service/ResetAll.cpp
                             api_proxy/service/CreateNewSnapshot.cpp

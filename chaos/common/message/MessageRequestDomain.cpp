@@ -32,6 +32,16 @@ using namespace chaos::common::message;
 #define MRDDBG_ DBG_LOG(MessageRequestDomain)
 #define MRDERR_ ERR_LOG(MessageRequestDomain)
 
+ChaosMessagePromises::ChaosMessagePromises(PromisesHandler _promises_handler):
+promises_handler(_promises_handler){}
+
+void ChaosMessagePromises::set_value(const FuturePromiseData& received_data) {
+    if(promises_handler != NULL) {
+        promises_handler(received_data);
+    }
+    boost::promise<FuturePromiseData>::set_value(received_data);
+}
+
 MessageRequestDomain::MessageRequestDomain():
 domain_id(UUIDUtil::generateUUIDLite()),
 request_id_counter(0){
@@ -96,14 +106,15 @@ CDataWrapper *MessageRequestDomain::response(CDataWrapper *response_data, bool& 
 }
 
 std::auto_ptr<MessageRequestFuture> MessageRequestDomain::getNewRequestMessageFuture(CDataWrapper& new_request_datapack,
-                                                                                     uint32_t& new_request_id) {
+                                                                                     uint32_t& new_request_id,
+                                                                                     PromisesHandler promises_handler) {
     //lock the map
     boost::lock_guard<boost::mutex> lock(mutext_answer_managment);
     //get new request id
     new_request_id = request_id_counter++;
     
     //create future and promises
-    boost::shared_ptr<MessageFuturePromise> promise(new MessageFuturePromise());
+    boost::shared_ptr<ChaosMessagePromises> promise(new ChaosMessagePromises(promises_handler));
     
     //insert into themap the promises
     map_request_id_promises.insert(make_pair(new_request_id, promise));
@@ -115,6 +126,6 @@ std::auto_ptr<MessageRequestFuture> MessageRequestDomain::getNewRequestMessageFu
     DEBUG_CODE(MRDDBG_ << "New MessageRequestFuture create with id " << new_request_id << " on answer domain " << domain_id;);
     //return future
     return std::auto_ptr<MessageRequestFuture>(new  MessageRequestFuture(new_request_id,
-                                                                         boost::shared_future< boost::shared_ptr<CDataWrapper> >(promise->get_future())));
+                                                                         boost::shared_future< FuturePromiseData >(promise->get_future())));
 }
 

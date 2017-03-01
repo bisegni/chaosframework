@@ -42,8 +42,8 @@ namespace chaos{
 				KeyDataStorageDomainInput,
 				KeyDataStorageDomainCustom,
 				KeyDataStorageDomainSystem,
-                KeyDataStorageDomainAlarm,
-                KeyDataStorageDomainWarning
+                KeyDataStorageDomainCUAlarm,
+                KeyDataStorageDomainDevAlarm,
 			} KeyDataStorageDomain;
 			
 			class KeyDataStorage {
@@ -52,8 +52,8 @@ namespace chaos{
 				std::string input_key;
 				std::string system_key;
 				std::string custom_key;
-                std::string alarm_key;
-				std::string warning_key;
+                std::string cu_alarm_key;
+				std::string dev_alarm_key;
                 //is the sequence if
                 boost::atomic<int64_t> sequence_id;
                 
@@ -87,7 +87,7 @@ namespace chaos{
 				/*
 				 Return a new instace for the CSDatawrapped
 				 */
-				chaos_data::CDataWrapper* getNewOutputAttributeDataWrapper();
+				chaos_data::CDataWrapper* getNewDataPackForDomain(const KeyDataStorageDomain domain);
 				
 				/*
 				 Retrive the data from Live Storage

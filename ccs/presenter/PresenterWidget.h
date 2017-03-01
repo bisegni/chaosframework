@@ -117,7 +117,9 @@ protected:
     void registerWidgetForContextualMenu(QWidget *contextual_menu_parent,
                                          QMap<QString, QVariant> *widget_contextual_menu_action,
                                          bool add_default_node_action);
-
+    void registerWidgetForContextualMenu(QWidget *contextual_menu_parent,
+                                         QVector< QPair<QString, QVariant> >& widget_contextual_menu_action,
+                                         bool add_default_node_action);
     virtual void contextualMenuActionTrigger(const QString& cm_title,
                                              const QVariant& cm_data);
 

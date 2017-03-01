@@ -19,6 +19,7 @@
  */
 
 #include <chaos/common/data/CDataWrapper.h>
+#include <chaos/common/utility/TimingUtil.h>
 #include <chaos/common/message/MultiAddressMessageChannel.h>
 #include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
 
@@ -43,8 +44,8 @@ using namespace chaos::metadata_service_client::api_proxy;
 class AlertLogHandlerImpl:
 public chaos::metadata_service_client::event::alert::AlertLogEventHandler {
 public:
-    void handleLogEvent(const std::string source,
-                        const std::string domain) {
+    void handleLogEvent(const std::string& source,
+                        const std::string& domain) {
         MSCT_INFO << source << "-" << domain;
     }
 };
@@ -82,15 +83,14 @@ int main(int argc, char *argv[]){
         ChaosMetadataServiceClient::getInstance()->init(argc, argv);
         
         ChaosMetadataServiceClient::getInstance()->start();
-        
-        ChaosMetadataServiceClient::getInstance()->enableMonitor();
+
         
         //register log allert event
         ChaosMetadataServiceClient::getInstance()->registerEventHandler(&alert_log_handler);
-        
         switch (operation){
             case 0:{
                 
+                ChaosMetadataServiceClient::getInstance()->enableMonitor();
                 if (device_id.size() == 0) {LOG_AND_TROW(MSCT_ERR, -1, "Invalid device id")}
                 if (quantum_multiplier == 0) {LOG_AND_TROW(MSCT_ERR, -2, "Quantum multiplier can't be 0")}
                 //create monitor class
@@ -107,14 +107,16 @@ int main(int argc, char *argv[]){
                 NodeSearchTest ns(5);
                 //try search and waith the termination
                 ns.testSearch(device_id.size()?device_id:"");
+                break;
             }
                 
                 
             case 2:{
+                ChaosMetadataServiceClient::getInstance()->enableMonitor();
                 std::cout << "Start node monitor library test" << std::endl;
                 {
                     std::auto_ptr<NodeMonitorHandlerTest> nmt;
-
+                    
                     //nmt[0].reset(new NodeMonitorHandlerTest(device_id, chaos::metadata_service_client::node_monitor::ControllerTypeNode));
                     nmt.reset(new NodeMonitorHandlerTest(device_id, chaos::metadata_service_client::node_monitor::ControllerTypeNodeControlUnit));
                     sleep(wait_seconds);
@@ -123,6 +125,35 @@ int main(int argc, char *argv[]){
                     
                 }
                 std::cout << "End node monitor library test" << std::endl;
+                break;
+            }
+                
+            case 3: {
+                bool work = true;
+                uint64_t start_ts = chaos::common::utility::TimingUtil::getTimeStamp();
+                chaos::metadata_service_client::node_controller::CUController *cu_ctrl = NULL;
+                ChaosMetadataServiceClient::getInstance()->getNewCUController(device_id,
+                                                                              &cu_ctrl);
+                if(cu_ctrl == NULL) throw chaos::CException(-1, CHAOS_FORMAT("No cu controller found for %1%", %device_id), __PRETTY_FUNCTION__);
+                
+                while(work) {
+                    std::cout << "Call init" << std::endl;
+                    cu_ctrl->initDevice();
+                    sleep(1);
+                    std::cout << "Call start" << std::endl;
+                    cu_ctrl->startDevice();
+                    sleep(1);
+                    std::cout << "Call stop" << std::endl;
+                    cu_ctrl->stopDevice();
+                    sleep(1);
+                    std::cout << "Call deinit" << std::endl;
+                    cu_ctrl->deinitDevice();
+                    sleep(1);
+                    work = ((chaos::common::utility::TimingUtil::getTimeStamp()-start_ts) < (wait_seconds*1000));
+                }
+                
+                ChaosMetadataServiceClient::getInstance()->deleteCUController(cu_ctrl);
+                break;
             }
         }
         

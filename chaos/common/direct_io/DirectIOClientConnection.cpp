@@ -46,7 +46,7 @@ static const boost::regex DirectIOHostNameRegExp("[a-zA-Z0-9]+(.[a-zA-Z0-9]+)+:[
 static const boost::regex DirectIOIPAndPortRegExp("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b:[0-9]{4,5}:[0-9]{4,5}");
 
 
-DirectIOClientConnection::DirectIOClientConnection(std::string _server_description,
+DirectIOClientConnection::DirectIOClientConnection(const std::string& _server_description,
 												   uint16_t _endpoint):
 server_description(_server_description),
 endpoint(_endpoint),

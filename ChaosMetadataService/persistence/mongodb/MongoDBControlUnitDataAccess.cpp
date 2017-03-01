@@ -47,45 +47,45 @@ node_data_access(NULL){}
 MongoDBControlUnitDataAccess::~MongoDBControlUnitDataAccess() {}
 
 
-int MongoDBControlUnitDataAccess::compeleteControlUnitForAgeingManagement(const std::string& control_unit_id) {
-    int err = 0;
-    try {
-        uint64_t current_ts = TimingUtil::getTimeStamp();
-        const std::string key_processing_ageing = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_PROCESSING_AGEING);
-        const std::string key_last_checing_time = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_AGEING_LAST_CHECK_DATA);
-        const std::string key_last_performed_time = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_PERFORMED_AGEING);
-        
-        mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << control_unit_id
-                                    << MONGODB_COLLECTION_NODES_AGEING_INFO << BSON("$exists" << false ));
-        
-        mongo::BSONObj update = BSON("$set" << BSON(key_last_checing_time << mongo::Date_t(current_ts) <<
-                                                    key_last_performed_time << mongo::Date_t(current_ts) <<
-                                                    key_processing_ageing << false));
-        
-        /*BSON(key_last_checing_time << mongo::Date_t(current_ts) <<
-         key_last_performed_time << mongo::Date_t(current_ts) <<
-         key_processing_ageing << false);*/
-        DEBUG_CODE(MDBCUDA_DBG<<log_message("compeleteControlUnitForAgeingManagement",
-                                            "update",
-                                            DATA_ACCESS_LOG_2_ENTRY("query",
-                                                                    "update",
-                                                                    query.jsonString(),
-                                                                    update.jsonString()));)
-        //remove the field of the document
-        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
-                                     query,
-                                     update))) {
-            MDBCUDA_ERR << CHAOS_FORMAT("Error %1% completing control unit %2% with ageing management information", %err%control_unit_id);
-        }
-    } catch (const mongo::DBException &e) {
-        MDBCUDA_ERR << e.what();
-        err = -1;
-    } catch (const CException &e) {
-        MDBCUDA_ERR << e.what();
-        err = e.errorCode;
-    }
-    return err;
-}
+//int MongoDBControlUnitDataAccess::compeleteControlUnitForAgeingManagement(const std::string& control_unit_id) {
+//    int err = 0;
+//    try {
+//        uint64_t current_ts = TimingUtil::getTimeStamp();
+//        const std::string key_processing_ageing = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_PROCESSING_AGEING);
+//        const std::string key_last_checing_time = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_AGEING_LAST_CHECK_DATA);
+//        const std::string key_last_performed_time = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_PERFORMED_AGEING);
+//        
+//        mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << control_unit_id
+//                                    << MONGODB_COLLECTION_NODES_AGEING_INFO << BSON("$exists" << false ));
+//        
+//        mongo::BSONObj update = BSON("$set" << BSON(key_last_checing_time << mongo::Date_t(current_ts) <<
+//                                                    key_last_performed_time << mongo::Date_t(current_ts) <<
+//                                                    key_processing_ageing << false));
+//        
+//        /*BSON(key_last_checing_time << mongo::Date_t(current_ts) <<
+//         key_last_performed_time << mongo::Date_t(current_ts) <<
+//         key_processing_ageing << false);*/
+//        DEBUG_CODE(MDBCUDA_DBG<<log_message("compeleteControlUnitForAgeingManagement",
+//                                            "update",
+//                                            DATA_ACCESS_LOG_2_ENTRY("query",
+//                                                                    "update",
+//                                                                    query.jsonString(),
+//                                                                    update.jsonString()));)
+//        //remove the field of the document
+//        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+//                                     query,
+//                                     update))) {
+//            MDBCUDA_ERR << CHAOS_FORMAT("Error %1% completing control unit %2% with ageing management information", %err%control_unit_id);
+//        }
+//    } catch (const mongo::DBException &e) {
+//        MDBCUDA_ERR << e.what();
+//        err = -1;
+//    } catch (const CException &e) {
+//        MDBCUDA_ERR << e.what();
+//        err = e.errorCode;
+//    }
+//    return err;
+//}
 
 int MongoDBControlUnitDataAccess::checkPresence(const std::string& unit_server_unique_id,
                                                 bool& presence) {
@@ -165,7 +165,7 @@ int MongoDBControlUnitDataAccess::insertNewControlUnit(CDataWrapper& control_uni
         MDBCUDA_ERR << "Error:" << err << " adding new node for control unit";
     } else {
         //compelte control unit with ageing managment information
-        err = compeleteControlUnitForAgeingManagement(control_unit_description.getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID));
+        err = node_data_access->addAgeingManagementDataToNode(control_unit_description.getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID));
     }
     return err;
 }

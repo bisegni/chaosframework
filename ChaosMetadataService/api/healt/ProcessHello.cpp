@@ -50,18 +50,18 @@ chaos::common::data::CDataWrapper *ProcessHello::execute(chaos::common::data::CD
     GET_DATA_ACCESS(DataServiceDataAccess, ds_da, -4);
 
     const std::string h_uid = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
-    if((err = n_da->checkNodePresence(presence, h_uid))) {
-        LOG_AND_TROW(H_NW_ERR, err, boost::str(boost::format("Error fetching the presence of the healt process:%1%") % h_uid));
-    }else if(presence) {
-            //update found node
-        if((err = n_da->updateNode(*api_data))) {
-            LOG_AND_TROW(H_NW_ERR, err, boost::str(boost::format("Error creating the node for the healt process:%1%") % h_uid));
-        }
-    }else {            //create new node
-        if((err = n_da->insertNewNode(*api_data))) {
-            LOG_AND_TROW(H_NW_ERR, err, boost::str(boost::format("Error creating the node for the healt process:%1%") % h_uid));
-        }
-    }
+//    if((err = n_da->checkNodePresence(presence, h_uid))) {
+//        LOG_AND_TROW(H_NW_ERR, err, boost::str(boost::format("Error fetching the presence of the healt process:%1%") % h_uid));
+//    }else if(presence) {
+//            //update found node
+//        if((err = n_da->updateNode(*api_data))) {
+//            LOG_AND_TROW(H_NW_ERR, err, boost::str(boost::format("Error creating the node for the healt process:%1%") % h_uid));
+//        }
+//    }else {            //create new node
+//        if((err = n_da->insertNewNode(*api_data))) {
+//            LOG_AND_TROW(H_NW_ERR, err, boost::str(boost::format("Error creating the node for the healt process:%1%") % h_uid));
+//        }
+//    }
 
     ResultVector best_available_server;
         //no we need to get tbest tree available cds to retun publishable address

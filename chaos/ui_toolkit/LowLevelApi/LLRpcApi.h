@@ -118,7 +118,8 @@ namespace chaos {
             /*!
              Return a new device channel
              */
-            chaos::common::message::DeviceMessageChannel *getNewDeviceMessageChannel(chaos::common::network::CDeviceNetworkAddress *device_network_address);
+            chaos::common::message::DeviceMessageChannel *getNewDeviceMessageChannel(chaos::common::network::CDeviceNetworkAddress *device_network_address,
+                                                                                     bool self_managed = false);
             
             chaos::common::message::PerformanceNodeChannel *getNewPerformanceChannel(chaos::common::network::CNetworkAddress *note_network_address);
             

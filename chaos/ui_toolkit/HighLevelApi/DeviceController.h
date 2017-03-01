@@ -36,7 +36,7 @@
 #include <map>
 
 namespace chaos {
-    namespace ui{
+    namespace ui {
         
         //! identify the domain qhere fetch the data
         typedef enum DatasetDomain {

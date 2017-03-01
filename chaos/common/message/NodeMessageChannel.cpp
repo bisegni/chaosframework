@@ -55,13 +55,11 @@ void NodeMessageChannel::getRpcPublishedHostAndPort(std::string& rpc_published_h
  */
 void NodeMessageChannel::sendMessage(const std::string& node_id,
                                      const std::string& action_name,
-                                     CDataWrapper *message_pack,
-                                     bool on_this_thread) {
+                                     CDataWrapper *message_pack) {
     MessageChannel::sendMessage(nodeAddress->ip_port,
                                 node_id,
                                 action_name,
-                                message_pack,
-                                on_this_thread);
+                                message_pack);
 }
 
 /*!
@@ -77,16 +75,12 @@ void NodeMessageChannel::sendMessage(const std::string& node_id,
 CDataWrapper* NodeMessageChannel::sendRequest(const std::string& node_id,
                                               const std::string& action_name,
                                               CDataWrapper *request_pack,
-                                              int32_t millisec_to_wait,
-                                              bool async,
-                                              bool on_this_thread) {
+                                              int32_t millisec_to_wait) {
     return MessageChannel::sendRequest(nodeAddress->ip_port,
                                        node_id,
                                        action_name,
                                        request_pack,
-                                       millisec_to_wait,
-                                       async,
-                                       on_this_thread);
+                                       millisec_to_wait);
 }
 
 //!send an rpc request to a remote node
@@ -100,19 +94,15 @@ std::auto_ptr<MessageRequestFuture> NodeMessageChannel::sendRequestWithFuture(co
 }
 
 //! Send a request for receive RPC information
-std::auto_ptr<MessageRequestFuture> NodeMessageChannel::checkRPCInformation(const std::string& node_id,
-                                                                            bool on_this_thread) {
+std::auto_ptr<MessageRequestFuture> NodeMessageChannel::checkRPCInformation(const std::string& node_id) {
     return MessageChannel::checkRPCInformation(nodeAddress->ip_port,
-                                               node_id,
-                                               on_this_thread);
+                                               node_id);
 }
 
 //! Send a request for an echo test
-std::auto_ptr<MessageRequestFuture> NodeMessageChannel::echoTest(chaos::common::data::CDataWrapper *echo_data,
-                                                                 bool on_this_thread) {
+std::auto_ptr<MessageRequestFuture> NodeMessageChannel::echoTest(chaos::common::data::CDataWrapper *echo_data) {
     return MessageChannel::echoTest(nodeAddress->ip_port,
-                                    echo_data,
-                                    on_this_thread);
+                                    echo_data);
 }
 
 //! return last sendxxx error code

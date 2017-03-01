@@ -78,7 +78,7 @@ namespace chaos {
                     //!Perform a search on log entries
                     /*!
                      perform a simple search on node filtering on type
-                     \param entry_list tge list of the current page of the entries found
+                     \param entry_list the list of the current page of the entries found
                      \param source_uid is the source that has created the entries
                      \param start_sequence_id is identified the sequence after wich we need to search
                      \param page_length is the maximum number of the element to return
@@ -115,6 +115,10 @@ namespace chaos {
                      */
                     virtual int getLogDomainsForSource(LogDomainList& entry_list,
                                                        const LogSourceList& source_uids) = 0;
+                    
+                    //! remove all log for belog to the source id
+                    virtual int eraseLogBeforTS(const std::string& source_uid,
+                                                uint64_t unit_ts) = 0;
                 };
             }
         }

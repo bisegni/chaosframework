@@ -61,9 +61,9 @@ namespace chaos {
          @param action_pack the CDatawrapper instance pointer received by rpc server taht contain infromatio to execute an action
          @return the response of the called action
          */
-        virtual chaos_data::CDataWrapper* executeCommandSync(const std::string& domain,
-                                                             const std::string& action,
-                                                             chaos_data::CDataWrapper * message_data) = 0;
+//        virtual chaos_data::CDataWrapper* executeCommandSync(const std::string& domain,
+//                                                             const std::string& action,
+//                                                             chaos_data::CDataWrapper * message_data) = 0;
     };
 }
 #endif

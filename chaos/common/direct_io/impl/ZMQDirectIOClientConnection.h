@@ -23,6 +23,8 @@
 
 #include <string>
 
+#include <chaos/common/utility/InizializableService.h>
+
 #include <chaos/common/direct_io/impl/ZMQBaseClass.h>
 #include <chaos/common/direct_io/DirectIODataPack.h>
 #include <chaos/common/direct_io/DirectIOClientConnection.h>
@@ -46,7 +48,7 @@ namespace chaos {
 				typedef struct ConnectionMonitorInfo {
 					bool run;
 					std::string unique_identification;
-					boost::thread *monitor_thread;
+                    std::auto_ptr<boost::thread> monitor_thread;
 					void *monitor_socket;
 					std::string monitor_url;
 				} ConnectionMonitorInfo;
@@ -57,32 +59,55 @@ namespace chaos {
 				 */
 				class ZMQDirectIOClientConnection :
 				protected ZMQBaseClass,
-				public chaos::common::direct_io::DirectIOClientConnection {
+				public chaos::common::direct_io::DirectIOClientConnection,
+                public chaos::common::utility::InizializableService {
 					friend class ZMQDirectIOClient;
-					
+                    void *zmq_context;
+                    
+                    boost::mutex mutext_send_message;
+                    
 					std::string priority_identity;
 					void *socket_priority;
 
 					std::string service_identity;
 					void *socket_service;
-					
+
                     ConnectionMonitorInfo monitor_info;
-					
+                    
                     boost::shared_mutex mutex_socket_manipolation;
 					
-					ZMQDirectIOClientConnection(std::string server_description, void *_socket_priority, void *_socket_service, uint16_t endpoint);
+					ZMQDirectIOClientConnection(void *zmq_context,
+                                                const std::string& server_description,
+                                                uint16_t endpoint);
 					~ZMQDirectIOClientConnection();
 					
+                    inline bool ensureSocket();
+                    
 					inline int64_t writeToSocket(void *socket,
 												 std::string& identity,
 												 DirectIODataPack *data_pack,
 												 DirectIODeallocationHandler *header_deallocation_handler,
 												 DirectIODeallocationHandler *data_deallocation_handler,
 												 DirectIODataPack **synchronous_answer = NULL);
+                    int readMonitorMesg(void* s,
+                                        zmq_event_t* event,
+                                        char* ep);
 					void monitorWorker();
-					
+                    
+                    void socketMonitor();
+                    
+                    //! get new connection
+                    int getNewSocketPair();
+                    
+                    //! release an instantiated connection
+                    int releaseSocketPair();
+                    
 				protected:
 					
+                    void init(void *init_data) throw(chaos::CException);
+                    
+                    void deinit() throw(chaos::CException);
+                    
                     // send the data to the server layer on priority channel
                     int64_t sendPriorityData(DirectIODataPack *data_pack,
 											 DirectIODeallocationHandler *header_deallocation_handler,

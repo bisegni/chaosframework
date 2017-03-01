@@ -122,6 +122,11 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
                  */
                 NetworkBroker *getBroker();
                 
+                //!promises handler for request results introspection
+                /*!
+                 Repsonse data is received befor it is sent to the metadata server
+                 */
+                virtual void requestPromisesHandler(const FuturePromiseData& response_data);
             public:
                 //! return last sendxxx error code
                 virtual int32_t getLastErrorCode();
@@ -147,9 +152,10 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
                  \param message_pack the data to send, the pointer is not deallocated and i scopied into the pack
                  \param on_this_thread notify when the message need to be sent syncronously or in async  way
                  */
-                void sendMessage(const std::string &remote_host, const std::string &node_id,
-                                 const std::string &action_name, chaos::common::data::CDataWrapper *message_pack,
-                                 bool on_this_thread = false);
+                void sendMessage(const std::string &remote_host,
+                                 const std::string &node_id,
+                                 const std::string &action_name,
+                                 chaos::common::data::CDataWrapper *message_pack);
                 
                 
                 //!send an rpc request to a remote node
@@ -168,9 +174,7 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
                                                         const std::string &node_id,
                                                         const std::string &action_name,
                                                         chaos::common::data::CDataWrapper *request_pack,
-                                                        int32_t millisec_to_wait = -1,
-                                                        bool async = false,
-                                                        bool on_this_thread = false);
+                                                        int32_t millisec_to_wait = -1);
                 
                 //!send an rpc request to a remote node
                 /*!
@@ -185,8 +189,7 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
                 virtual std::auto_ptr<MessageRequestFuture> sendRequestWithFuture(const std::string &remote_host,
                                                                                   const std::string &node_id,
                                                                                   const std::string &action_name,
-                                                                                  chaos::common::data::CDataWrapper *request_pack = NULL,
-                                                                                  bool on_this_thread = false);
+                                                                                  chaos::common::data::CDataWrapper *request_pack = NULL);
                 
                 
                 //!Send a request for receive RPC information
@@ -195,12 +198,11 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
                  and the size of the queued actions
                  */
                 std::auto_ptr<MessageRequestFuture> checkRPCInformation(const std::string &remote_host,
-                                                                        const std::string &node_id, bool on_this_thread = false);
+                                                                        const std::string &node_id);
                 
                 //!Send a request for an echo test
                 std::auto_ptr<MessageRequestFuture> echoTest(const std::string &remote_host,
-                                                             chaos::common::data::CDataWrapper *echo_data,
-                                                             bool on_this_thread = false);
+                                                             chaos::common::data::CDataWrapper *echo_data);
                 
                 //! get the rpc published host and port
                 void getRpcPublishedHostAndPort(std::string &rpc_published_host_port);

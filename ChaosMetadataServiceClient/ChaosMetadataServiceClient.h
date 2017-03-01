@@ -20,6 +20,7 @@
 #ifndef __CHAOSFramework__MetadataServiceClient__
 #define __CHAOSFramework__MetadataServiceClient__
 
+#include <ChaosMetadataServiceClient/node_controller/CUController.h>
 #include <ChaosMetadataServiceClient/event/event.h>
 #include <ChaosMetadataServiceClient/api_proxy/api.h>
 #include <ChaosMetadataServiceClient/metadata_service_client_types.h>
@@ -208,6 +209,10 @@ namespace chaos {
             
             //!deregister an event handler
             void deregisterEventHandler(chaos::metadata_service_client::event::AbstractEventHandler *handler);
+            
+            void getNewCUController(const std::string& cu_id, chaos::metadata_service_client::node_controller::CUController **cu_ctrl_handler);
+            
+            void deleteCUController(chaos::metadata_service_client::node_controller::CUController *cu_ctrl_ptr);
         };
     }
 }

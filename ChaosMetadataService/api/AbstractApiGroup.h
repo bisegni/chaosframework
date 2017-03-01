@@ -93,7 +93,8 @@ namespace chaos {
 																	  &T::execute,
 																	  getName().c_str(),
 																	  instance->getName().c_str(),
-																	  instance->getName().c_str());
+																	  instance->getName().c_str(),
+                                                                      true);
 					}
 				}
                 

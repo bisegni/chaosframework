@@ -91,15 +91,14 @@ boost::shared_ptr<MessageRequestDomain> MessageChannel::getMessageRequestDomain(
 void MessageChannel::sendMessage(const std::string& remote_host,
                                  const std::string& node_id,
                                  const std::string& action_name,
-                                 CDataWrapper *message_pack,
-                                 bool on_this_thread) {
+                                 CDataWrapper *message_pack) {
     CDataWrapper *data_pack = new CDataWrapper();
     //add the action and dommain name
     data_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, node_id);
     data_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, action_name);
     if(message_pack)data_pack->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *message_pack);
     //send the request
-    broker->submitMessage(remote_host.c_str(), data_pack, on_this_thread);
+    broker->submitMessage(remote_host.c_str(), data_pack);
 }
 
 /*
@@ -108,9 +107,7 @@ CDataWrapper* MessageChannel::sendRequest(const std::string& remote_host,
                                           const std::string& node_id,
                                           const std::string& action_name,
                                           CDataWrapper *request_pack,
-                                          int32_t millisec_to_wait,
-                                          bool async,
-                                          bool on_this_thread) {
+                                          int32_t millisec_to_wait) {
     CHAOS_ASSERT(broker)    auto_ptr<MessageRequestFuture> request_future(sendRequestWithFuture(remote_host,
                                                                                                 node_id,
                                                                                                 action_name,
@@ -131,6 +128,8 @@ CDataWrapper* MessageChannel::sendRequest(const std::string& remote_host,
     
 }
 
+void MessageChannel::requestPromisesHandler(const FuturePromiseData& response_data) {}
+
 //!send an rpc request to a remote node
 /*!
  send a syncronous request and can wait for a determinated number of milliseconds the answer. If it has not
@@ -144,8 +143,7 @@ CDataWrapper* MessageChannel::sendRequest(const std::string& remote_host,
 std::auto_ptr<MessageRequestFuture> MessageChannel::sendRequestWithFuture(const std::string& remote_host,
                                                                           const std::string& node_id,
                                                                           const std::string& action_name,
-                                                                          CDataWrapper *request_pack,
-                                                                          bool on_this_thread) {
+                                                                          CDataWrapper *request_pack) {
     CHAOS_ASSERT(broker)
     uint32_t new_request_id = 0;
     auto_ptr<MessageRequestFuture> result;
@@ -158,15 +156,16 @@ std::auto_ptr<MessageRequestFuture> MessageChannel::sendRequestWithFuture(const 
     data_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, action_name);
     
     //complete datapack for request and get the unique future
-    result = message_request_domain->getNewRequestMessageFuture(*data_pack, new_request_id);
+    result = message_request_domain->getNewRequestMessageFuture(*data_pack,
+                                                                new_request_id,
+                                                                boost::bind(&MessageChannel::requestPromisesHandler, this, _1));
 
     //if(async) return result;
     //submit the request
     broker->submiteRequest(remote_host,
                            data_pack,
                            message_request_domain->getDomainID(),
-                           new_request_id,
-                           on_this_thread);
+                           new_request_id);
     return result;
 }
 
@@ -176,23 +175,19 @@ void MessageChannel::getRpcPublishedHostAndPort(std::string& rpc_published_host_
 }
 
 std::auto_ptr<MessageRequestFuture> MessageChannel::checkRPCInformation(const std::string& remote_host,
-                                                                        const std::string& node_id,
-                                                                        bool on_this_thread) {
+                                                                        const std::string& node_id) {
     CDataWrapper data_pack;
     data_pack.addStringValue("domain_name", node_id);
     return sendRequestWithFuture(remote_host,
                                  NodeDomainAndActionRPC::RPC_DOMAIN,
                                  NodeDomainAndActionRPC::ACTION_CHECK_DOMAIN,
-                                 &data_pack,
-                                 on_this_thread);
+                                 &data_pack);
 }
 
 std::auto_ptr<MessageRequestFuture> MessageChannel::echoTest(const std::string& remote_host,
-                                                             CDataWrapper *echo_data,
-                                                             bool on_this_thread) {
+                                                             CDataWrapper *echo_data) {
     return sendRequestWithFuture(remote_host,
                                  NodeDomainAndActionRPC::RPC_DOMAIN,
                                  NodeDomainAndActionRPC::ACTION_ECHO_TEST,
-                                 echo_data,
-                                 on_this_thread);
+                                 echo_data);
 }

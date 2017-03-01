@@ -1,8 +1,8 @@
 /*
  *	ActionDescriptor.cpp
  *	!CHAOS
- *	Created by Bisegni Claudio. 
- *	
+ *	Created by Bisegni Claudio.
+ *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,15 +24,12 @@ using namespace boost;
 
 
 
-AbstractActionDescriptor::AbstractActionDescriptor(){
-    fired=false;
-    enabled=true;
-}
+AbstractActionDescriptor::AbstractActionDescriptor(bool shared_execution):
+fired(false),
+enabled(true),
+shared_execution(shared_execution){}
 
-AbstractActionDescriptor::~AbstractActionDescriptor() {
-    fired=false;
-    enabled=false;
-}
+AbstractActionDescriptor::~AbstractActionDescriptor() {}
 
 /*
  set the string value for the determinated type
@@ -63,6 +60,10 @@ bool AbstractActionDescriptor::setFiredWriteLocked(bool _fired){
     return setFired(_fired);
 }
 
+bool AbstractActionDescriptor::isShared() {
+    return shared_execution;
+}
+
 bool AbstractActionDescriptor::setFired(bool _fired){
     fired =_fired && enabled;
     return fired;
@@ -84,7 +85,7 @@ bool AbstractActionDescriptor::setEnabled(bool _enabled){
 /*
  get the string value for the determinated type, a reference
  has been return so keep in mind that string live within object life
- */        
+ */
 const string & AbstractActionDescriptor::getTypeValue(ActionStringType sType)  {
     if (sType == ActionDomain) {
         return actionDomain;

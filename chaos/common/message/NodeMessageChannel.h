@@ -76,8 +76,7 @@ namespace chaos {
                  */
                 void sendMessage(const std::string& node_id,
                                  const std::string& action_name,
-                                 chaos::common::data::CDataWrapper * const message_pack,
-                                 bool on_this_thread = false);
+                                 chaos::common::data::CDataWrapper * const message_pack);
                 /*!
                  \brief send a syncronous request and can wait for a determinated number of milliseconds the answer. If it has not
                  been received the method return with a NULL pointer
@@ -91,9 +90,7 @@ namespace chaos {
                 common::data::CDataWrapper* sendRequest(const std::string& node_id,
                                                         const std::string& action_name,
                                                         chaos::common::data::CDataWrapper *request_pack,
-                                                        int32_t millisec_to_wait=-1,
-                                                        bool async = false,
-                                                        bool on_this_thread = false);
+                                                        int32_t millisec_to_wait=-1);
                 
                 //!send an rpc request to a remote node
                 std::auto_ptr<MessageRequestFuture> sendRequestWithFuture(const std::string& node_id,
@@ -105,12 +102,10 @@ namespace chaos {
                  RPC information contains the alive state of the node within rpc dispacher on the backend size
                  and the size of the queued actions
                  */
-                std::auto_ptr<MessageRequestFuture> checkRPCInformation(const std::string& node_id,
-                                                                        bool on_this_thread = false);
+                std::auto_ptr<MessageRequestFuture> checkRPCInformation(const std::string& node_id);
                 
                 //!Send a request for an echo test
-                std::auto_ptr<MessageRequestFuture> echoTest(chaos::common::data::CDataWrapper *echo_data,
-                                                             bool on_this_thread = false);
+                std::auto_ptr<MessageRequestFuture> echoTest(chaos::common::data::CDataWrapper *echo_data);
                 
                 //! return last sendxxx error code
                 int32_t getLastErrorCode();
