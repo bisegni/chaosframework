@@ -210,7 +210,8 @@ SET(common_lib_src ${common_lib_src}
         utility/TimingUtil.cpp
         utility/AbstractListener.cpp
         utility/AbstractListenerContainer.cpp
-        utility/ProcStat.cpp)
+        utility/ProcStat.cpp
+        utility/FSUtility.cpp)
 
 SET(common_lib_src ${common_lib_src}
         batch_command/BatchCommandExecutor.cpp
