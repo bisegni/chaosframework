@@ -149,7 +149,10 @@ SOURCES += main.cpp\
     utility/MessageUtility.cpp \
     error/ErrorManager.cpp \
     log_browser/ApplicationErrorLogging.cpp \
-    data/ApplicationErrorLoggingTableModel.cpp
+    data/ApplicationErrorLoggingTableModel.cpp \
+    node/agent/AgentEditor.cpp \
+    data/AgentNodeAssociatedListModel.cpp \
+    node/agent/AgentNodeAssociationEditor.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -282,7 +285,10 @@ HEADERS  += \
     utility/MessageUtility.h \
     error/ErrorManager.h \
     log_browser/ApplicationErrorLogging.h \
-    data/ApplicationErrorLoggingTableModel.h
+    data/ApplicationErrorLoggingTableModel.h \
+    node/agent/AgentEditor.h \
+    data/AgentNodeAssociatedListModel.h \
+    node/agent/AgentNodeAssociationEditor.h
 
 FORMS    += \
     search/searchnoderesult.ui \
@@ -317,7 +323,9 @@ FORMS    += \
     widget/ChaosStorageTypeWidget.ui \
     widget/CCommandStatisticWidget.ui \
     plot/BufferPlot.ui \
-    log_browser/ApplicationErrorLogging.ui
+    log_browser/ApplicationErrorLogging.ui \
+    node/agent/AgentEditor.ui \
+    node/agent/AgentNodeAssociationEditor.ui
 
 DISTFILES += \
     dark_orange.stylesheet \

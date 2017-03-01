@@ -30,7 +30,7 @@ namespace chaos {
     namespace metadata_service {
         namespace persistence {
             namespace data_access {
-
+                
                 /*!
                  Perform the basic operation on abstract node infomation
                  */
@@ -38,13 +38,13 @@ namespace chaos {
                 public chaos::service_common::persistence::data_access::AbstractDataAccess {
                 public:
                     DECLARE_DA_NAME
-                        //! default constructor
+                    //! default constructor
                     NodeDataAccess();
-
-                        //! defautl destructor
+                    
+                    //! defautl destructor
                     ~NodeDataAccess();
-
-                        //! return the whole node description
+                    
+                    //! return the whole node description
                     /*!
                      return the whole node description as is on database
                      \param node_unique_id the unique id of the node
@@ -52,8 +52,8 @@ namespace chaos {
                      */
                     virtual int getNodeDescription(const std::string& node_unique_id,
                                                    chaos::common::data::CDataWrapper **node_description) = 0;
-
-                        //! insert a new node
+                    
+                    //! insert a new node
                     /*!
                      The API receive a data pack with one or more key listed in chaos::NodeDefinitionKey namespace,
                      the mandatory key are:
@@ -66,8 +66,8 @@ namespace chaos {
                      \return 0 for no error otherwhise a negative value
                      */
                     virtual int insertNewNode(chaos::common::data::CDataWrapper& node_description) = 0;
-
-                        //! update the node information
+                    
+                    //! update the node information
                     /*!
                      The API receive a data pack with one or more key listed in chaos::NodeDefinitionKey namespace.
                      The mandatory key are the NODE_UNIQUE_ID need to find the description and the only updateable key are:
@@ -79,9 +79,9 @@ namespace chaos {
                      \return 0 for no error otherwhise a negative value
                      */
                     virtual int updateNode(chaos::common::data::CDataWrapper& node_description) = 0;
-
-
-                        //! check if a unit server identified by unique id is preset
+                    
+                    
+                    //! check if a unit server identified by unique id is preset
                     /*!
                      The API check is the description of the node has been created. The variable represent the answer to the
                      request only if the result of the api is 0;
@@ -92,7 +92,7 @@ namespace chaos {
                     virtual int checkNodePresence(bool& presence,
                                                   const std::string& node_unique_id,
                                                   const std::string& node_unique_type = std::string()) = 0;
-
+                    
                     //! set node health information
                     /*!
                      Set and update the health information for a node.
@@ -113,14 +113,14 @@ namespace chaos {
                     virtual int getNodeHealthStatus(const std::string& node_unique_id,
                                                     common::data::structured::HealthStat& health_stat) = 0;
                     
-                        //! delete the node description
+                    //! delete the node description
                     /*
                      The API delete the node description.
                      */
                     virtual int deleteNode(const std::string& node_unique_id,
                                            const std::string& node_type = std::string()) = 0;
-
-                        //!Make simple paged query on node
+                    
+                    //!Make simple paged query on node
                     /*!
                      perform a simple search on node filtering on type
                      \param result the handle for the reuslt data (is allcoated only if the search has been done with success)
@@ -196,8 +196,8 @@ namespace chaos {
                      \param command_unique_id is the unique identifir ther represent the command
                      */
                     virtual int getCommandTemplate(const std::string& template_name,
-                                                      const std::string& command_unique_id,
-                                                      chaos::common::data::CDataWrapper **command_template) = 0;
+                                                   const std::string& command_unique_id,
+                                                   chaos::common::data::CDataWrapper **command_template) = 0;
                     
                     //!Make simple command template query
                     /*!
@@ -210,8 +210,21 @@ namespace chaos {
                                                       const std::vector<std::string>& cmd_uid_to_filter,
                                                       uint32_t last_unique_id,
                                                       uint32_t page_length = 100) = 0;
+                    
+                    //!add data structure to node for permit ageing management
+                    virtual int addAgeingManagementDataToNode(const std::string& control_unit_id) = 0;
+                    
+                    //                    virtual int reserveNodeForAgeingManagement(uint64_t& last_sequence_id,
+                    //                                                               std::string& node_uid_reserved,
+                    //                                                               uint32_t& node_ageing_time,
+                    //                                                               uint64_t& last_ageing_perform_time,
+                    //                                                               uint64_t timeout_for_checking,
+                    //                                                               uint64_t delay_next_check) = 0;
+                    
+                    //                    virtual int releaseNodeForAgeingManagement(std::string& node_uid,
+                    //                                                                      bool performed) = 0;
                 };
-
+                
             }
         }
     }

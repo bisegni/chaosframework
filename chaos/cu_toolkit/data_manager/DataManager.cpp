@@ -193,5 +193,5 @@ chaos::common::utility::ArrayPointer<CDataWrapper> *DataManager::getLastCDataWra
  according to key
  */
 CDataWrapper *DataManager::getNewDataWrapperForDeviceIdKey(const string& device_id) {
-    return deviceIDKeyDataStorageMap[device_id]->getNewOutputAttributeDataWrapper();
+    return deviceIDKeyDataStorageMap[device_id]->getNewDataPackForDomain(KeyDataStorageDomainOutput);
 }

@@ -47,8 +47,8 @@ sequence_id(0 /*std::numeric_limits<int64_t>::min()*/){
     input_key	= _key + DataPackPrefixID::INPUT_DATASET_POSTFIX;
     system_key	= _key + DataPackPrefixID::SYSTEM_DATASET_POSTFIX;
     custom_key	= _key + DataPackPrefixID::CUSTOM_DATASET_POSTFIX;
-    alarm_key	= _key + DataPackPrefixID::DEV_ALARM_DATASET_POSTFIX;
-    warning_key	= _key + DataPackPrefixID::CU_ALARM_DATASET_POSTFIX;
+    cu_alarm_key	= _key + DataPackPrefixID::CU_ALARM_DATASET_POSTFIX;
+    dev_alarm_key	= _key + DataPackPrefixID::DEV_ALARM_DATASET_POSTFIX;
 }
 
 KeyDataStorage::~KeyDataStorage() {
@@ -74,10 +74,32 @@ void KeyDataStorage::deinit() throw (chaos::CException) {
  Return a new instace for the CSDatawrapped filled
  with default madatory data
  */
-CDataWrapper* KeyDataStorage::getNewOutputAttributeDataWrapper() {
+CDataWrapper* KeyDataStorage::getNewDataPackForDomain(const KeyDataStorageDomain domain) {
     CDataWrapper *result = new CDataWrapper();
+    int32_t node_type;
+    switch(domain) {
+        case KeyDataStorageDomainOutput:
+            node_type = DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT;
+            break;
+        case KeyDataStorageDomainInput:
+            node_type = DataPackCommonKey::DPCK_DATASET_TYPE_INPUT;
+            break;
+        case KeyDataStorageDomainSystem:
+            node_type = DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM;
+            break;
+        case KeyDataStorageDomainCustom:
+            node_type = DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM;
+            break;
+        case KeyDataStorageDomainCUAlarm:
+            node_type = DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM;
+            break;
+        case KeyDataStorageDomainDevAlarm:
+            node_type = DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM;
+            break;
+    }
     //add the unique key
     result->addStringValue(DataPackCommonKey::DPCK_DEVICE_ID, key);
+    result->addInt32Value(DataPackCommonKey::DPCK_DATASET_TYPE, node_type);
     result->addInt64Value(DataPackCommonKey::DPCK_SEQ_ID, ++sequence_id);
     return result;
 }
@@ -104,11 +126,11 @@ ArrayPointer<CDataWrapper>* KeyDataStorage::getLastDataSet(KeyDataStorageDomain 
         case KeyDataStorageDomainCustom:
             return io_data_driver->retriveData(custom_key);
             break;
-        case KeyDataStorageDomainAlarm:
-            return io_data_driver->retriveData(alarm_key);
+        case KeyDataStorageDomainCUAlarm:
+            return io_data_driver->retriveData(cu_alarm_key);
             break;
-        case KeyDataStorageDomainWarning:
-            return io_data_driver->retriveData(warning_key);
+        case KeyDataStorageDomainDevAlarm:
+            return io_data_driver->retriveData(dev_alarm_key);
             break;
     }
     
@@ -188,15 +210,15 @@ void KeyDataStorage::pushDataSet(KeyDataStorageDomain domain,
                                       dataset,
                                       DataServiceNodeDefinitionType::DSStorageTypeLiveHistory);
             break;
-        case KeyDataStorageDomainAlarm:
+        case KeyDataStorageDomainCUAlarm:
             //system channel need to be push ever either in live and in history
-            io_data_driver->storeData(alarm_key,
+            io_data_driver->storeData(cu_alarm_key,
                                       dataset,
                                       DataServiceNodeDefinitionType::DSStorageTypeLiveHistory);
             break;
-        case KeyDataStorageDomainWarning:
+        case KeyDataStorageDomainDevAlarm:
             //system channel need to be push ever either in live and in history
-            io_data_driver->storeData(warning_key,
+            io_data_driver->storeData(dev_alarm_key,
                                       dataset,
                                       DataServiceNodeDefinitionType::DSStorageTypeLiveHistory);
             break;

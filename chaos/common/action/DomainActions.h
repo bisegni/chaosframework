@@ -57,7 +57,7 @@ namespace chaos {
         /*
          return the domain name
          */
-        string& getDomainName();
+        const string& getDomainName();
         
         /*
          check for action name presence

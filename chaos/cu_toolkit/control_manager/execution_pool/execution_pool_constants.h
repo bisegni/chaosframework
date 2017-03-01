@@ -29,7 +29,7 @@ namespace chaos{
 #define CONTROL_MANAGER_EXECUTION_POOLS                 "execution_pools"
 #define CONTROL_MANAGER_EXECUTION_POOLS_DESC            "Is the lis tof execution pool to use for request job"
                 
-#define CONTROL_MANAGER_EXECUTION_POOLS_CHECK_TIME      15000
+#define CONTROL_MANAGER_EXECUTION_POOLS_CHECK_TIME      30000
                 
 #define CONTROL_MANAGER_EXECUTION_POOLS_CPU_CAP         "execution_pools_cpu_cap"
 #define CONTROL_MANAGER_EXECUTION_POOLS_CPU_CAP_DEFAULT 70

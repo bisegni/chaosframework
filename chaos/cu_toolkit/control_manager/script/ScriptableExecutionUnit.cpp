@@ -68,7 +68,7 @@ void ScriptableExecutionUnit::addAttributeToDataSet(const std::string& attribute
                                                     DataType::DataType attribute_type,
                                                     DataType::DataSetAttributeIOAttribute attribute_direction,
                                                     uint32_t maxSize) {
-    RTAbstractControlUnit::addAttributeToDataSet(attribute_name,
+    AbstractExecutionUnit::addAttributeToDataSet(attribute_name,
                                                  attribute_description,
                                                  attribute_type,
                                                  attribute_direction);
@@ -82,13 +82,13 @@ void ScriptableExecutionUnit::unitDefineActionAndDataset() throw(CException) {
     
     //scan load parameter
     CHAOS_LASSERT_EXCEPTION((getCUParam().size() > 0), SEU_LERR, -1, "NO JSON script information has been set at load time");
-    ScriptInParam   in_param;
-    Json::Reader    json_reader;
-    Json::Value     json_params;
+    CHAOS_LASSERT_EXCEPTION(isCUParamInJson(), SEU_LERR, -2, "Load parameter are not a json document");
+    
+    //!get root json element
+    const Json::Value&     json_params = getCUParamJsonRootElement();
     
     //scan json option
-    if(json_reader.parse(getCUParam(), json_params) &&
-       json_params.isNull() == false) {
+    if(json_params.isNull() == false) {
         const Json::Value& _script_language = json_params[ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LANGUAGE];
         const Json::Value&  _script_content = json_params[ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_CONTENT];
         const Json::Value&  _script_b64_dataset = json_params[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION];

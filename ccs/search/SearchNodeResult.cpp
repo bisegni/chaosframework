@@ -4,6 +4,7 @@
 #include "node/control_unit/ControlUnitEditor.h"
 #include "../node/control_unit/ControlUnitEditor.h"
 #include "../node/control_unit/ControUnitInstanceEditor.h"
+#include "../node/agent/AgentEditor.h"
 #include "../data/delegate/TwoLineInformationListItemDelegate.h"
 
 #include <QDebug>
@@ -68,22 +69,27 @@ void SearchNodeResult::initUI() {
 
     QStringList search_types;
     if(selectable_types.size() == 0) {
-        search_types << "All types" << "Unit server" << "Control unit";
-    } else {
-        foreach(SearchNodeType searchable_type , selectable_types) {
-            switch(searchable_type) {
-            case SNT_ALL_TYPE:
-                search_types << "All types";
-                break;
-            case SNT_UNIT_SERVER:
-                search_types << "Unit server";
-                break;
-            case SNT_CONTROL_UNIT:
-                search_types << "Control unit";
-                break;
-            }
+        selectable_types.push_back(SNT_ALL_TYPE);
+        selectable_types.push_back(SNT_UNIT_SERVER);
+        selectable_types.push_back(SNT_CONTROL_UNIT);
+        selectable_types.push_back(SNT_AGENT_UNIT);
+    }
+    foreach(SearchNodeType searchable_type , selectable_types) {
+        switch(searchable_type) {
+        case SNT_ALL_TYPE:
+            search_types << "All types";
+            break;
+        case SNT_UNIT_SERVER:
+            search_types << "Unit server";
+            break;
+        case SNT_CONTROL_UNIT:
+            search_types << "Control unit";
+            break;
+        case SNT_AGENT_UNIT:
+            search_types << "Agent";
         }
     }
+
     ui->comboBoxSearchType->addItems(search_types);
 
     // Attach the model to the list
@@ -113,8 +119,8 @@ void SearchNodeResult::contextualMenuActionTrigger(const QString& cm_title,
             launchPresenterWidget(new ControlUnitEditor(element_data->title));
         } else if(cm_title.compare(CM_EDIT_INSTANCE) == 0) {
             launchPresenterWidget(new ControUnitInstanceEditor("",
-                                                              element_data->title,
-                                                              true));
+                                                               element_data->title,
+                                                               true));
         }
     }
 }
@@ -170,9 +176,12 @@ void SearchNodeResult::on_listViewResult_doubleClicked(const QModelIndex &index)
         if(node_type.compare(chaos::NodeType::NODE_TYPE_UNIT_SERVER) == 0) {
             qDebug() << "Open unit server editor for" << node_uid;
             launchPresenterWidget(new UnitServerEditor(node_uid));
-        }else if(node_type.compare(chaos::NodeType::NODE_TYPE_CONTROL_UNIT) == 0) {
+        } else if(node_type.compare(chaos::NodeType::NODE_TYPE_CONTROL_UNIT) == 0) {
             qDebug() << "Open control unit editor for" << node_uid;
             launchPresenterWidget(new ControlUnitEditor(node_uid));
+        } else if(node_type.compare(chaos::NodeType::NODE_TYPE_AGENT) == 0) {
+            qDebug() << "Open anget editor for" << node_uid;
+            launchPresenterWidget(new AgentEditor(node_uid));
         }
     }
 }

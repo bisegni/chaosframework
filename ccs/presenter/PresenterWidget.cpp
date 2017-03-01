@@ -241,6 +241,27 @@ void PresenterWidget::registerWidgetForContextualMenu(QWidget *contextual_menu_p
     if(add_default_node_action)addDefaultNodeAction(contextual_menu_parent);
 }
 
+void PresenterWidget::registerWidgetForContextualMenu(QWidget *contextual_menu_parent,
+                                                      QVector< QPair<QString, QVariant> >& widget_contextual_menu_action,
+                                                      bool add_default_node_action) {
+    if(!contextual_menu_parent) return;
+    contextual_menu_parent->setContextMenuPolicy(Qt::ActionsContextMenu);
+    QVector< QPair<QString, QVariant> >::iterator it = widget_contextual_menu_action.begin();
+    QVector< QPair<QString, QVariant> >::iterator end = widget_contextual_menu_action.end();
+    while(it != end) {
+        const QString action_name = it->first;
+        QAction *action = new QAction(action_name, contextual_menu_parent);
+        action->setData(it->second);
+        contextual_menu_parent->addAction(action);
+        connect(action,
+                SIGNAL(triggered()),
+                this,
+                SLOT(generalContextualMenuActionTrigger()));
+        it++;
+    }
+    if(add_default_node_action)addDefaultNodeAction(contextual_menu_parent);
+}
+
 QAction *PresenterWidget::returnWidgetAction(QWidget *parent,
                                              const QString& action_name) {
     foreach (QAction *act,  parent->actions()) {

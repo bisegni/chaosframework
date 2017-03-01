@@ -72,7 +72,7 @@ namespace chaos {
         /*!
             Return the domain name managed by the sceduler instance
          */
-        string& getManagedDomainName();
+        const string& getManagedDomainName();
         
         /*!
          Initialization method

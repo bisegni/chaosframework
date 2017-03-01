@@ -64,9 +64,17 @@ int AlertEventChannel::sendEvent(const std::string& identification,
 }
 
 int AlertEventChannel::sendLogAlert(const std::string& node_uid,
-                                     const std::string& log_domain) {
+                                    const std::string& log_domain) {
     alert::AlertEventDescriptor *aed = new alert::AlertEventDescriptor();
     aed->setLogAlert(node_uid,
                      log_domain);
+    return EventChannel::sendRawEvent(aed);
+}
+
+int AlertEventChannel::sendAgentProcessCheckAlert(const std::string& agent_uid,
+                                                  const int32_t check_result) {
+    alert::AlertEventDescriptor *aed = new alert::AlertEventDescriptor();
+    aed->setAgentCheckProcessAlert(agent_uid,
+                                   check_result);
     return EventChannel::sendRawEvent(aed);
 }

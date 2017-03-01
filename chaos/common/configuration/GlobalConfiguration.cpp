@@ -53,7 +53,7 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException){
         addOption<std::string>(InitOption::OPT_CONF_FILE,"File configuration path");
         addOption(InitOption::OPT_LOG_ON_CONSOLE, po::value< bool >()->zero_tokens(), "Specify when the log must be forwarded on console");
         addOption(InitOption::OPT_LOG_ON_FILE, po::value< bool >()->zero_tokens(), "Specify when the log must be forwarded on file");
-        addOption(InitOption::OPT_LOG_FILE, po::value< string >()->default_value("chaos_frameowrk.log"), "Specify when the file path of the log");
+        addOption(InitOption::OPT_LOG_FILE, po::value< string >()->default_value("chaos_framework_log_%Y-%m-%d_%H-%M-%S.%N.log"), "Specify when the file path of the log");
         addOption(InitOption::OPT_LOG_LEVEL, po::value< string >()->default_value("info"), "Specify the level of the log using the value [debug, info, notice, warning, fatal]");
         addOption(InitOption::OPT_LOG_MAX_SIZE_MB, po::value< uint32_t >()->default_value(10), "Specify the max size in megabytes fo the file log");
         addOption(InitOption::OPT_LOG_METRIC_ON_CONSOLE, po::value< bool >()->zero_tokens(), "Enable the logging metric on console");
@@ -77,6 +77,8 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException){
         addOption(InitOption::OPT_RPC_SERVER_PORT, po::value<int>()->default_value(_RPC_PORT), "RPC server port");
         addOption(InitOption::OPT_RPC_SERVER_THREAD_NUMBER, po::value<int>()->default_value(2),"RPC server thread number");
         addOption(InitOption::OPT_RPC_IMPL_KV_PARAM, po::value<string>(),"RPC implementation key value parameter[k|v]");
+        addOption(InitOption::OPT_RPC_DOMAIN_QUEUE_THREAD, po::value<uint32_t>()->default_value(1),"RPC domain scheduler queue's thread consumer number");
+        addOption(InitOption::OPT_RPC_DOMAIN_SCHEDULER_TYPE, po::value<uint32_t>()->default_value(0),"RPC domain scheduler type[0-default, 1-shared]");
         addOption(InitOption::OPT_EVENT_DISABLE, po::value< bool >()->default_value(false), "Disable the event system [by default it is enable]");
         addOption(InitOption::OPT_PUBLISHING_IP, po::value< string >(), "Specify the ip address where to publish the framework rpc system");
         addOption(InitOption::OPT_PUBLISHING_INTERFACE, po::value< string >(), "Specify the interface where to publish the framework rpc system");
@@ -274,6 +276,12 @@ void GlobalConfiguration::checkDefaultOption() throw (CException) {
     if(rpc_impl_kv_param.size()) {
         fillKVParameter(map_kv_param_rpc_impl, rpc_impl_kv_param, std::string(RpcConfigurationKey::OPT_RPC_IMPL_KV_PARAM_STRING_REGEX));
     }
+    
+    CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(uint32_t, rpc_domain_queue_thread_number, InitOption::OPT_RPC_DOMAIN_QUEUE_THREAD, 1)
+    configuration.addInt32Value(InitOption::OPT_RPC_DOMAIN_QUEUE_THREAD, rpc_domain_queue_thread_number);
+    
+    CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(uint32_t, rpc_domain_scheduler_type, InitOption::OPT_RPC_DOMAIN_SCHEDULER_TYPE, 0)
+    configuration.addInt32Value(InitOption::OPT_RPC_DOMAIN_SCHEDULER_TYPE, rpc_domain_scheduler_type);
     
     //direct io
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(int, direct_io_server_thread_number, InitOption::OPT_DIRECT_IO_SERVER_THREAD_NUMBER, 2)

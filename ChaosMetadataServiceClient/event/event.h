@@ -26,5 +26,6 @@
 #include <ChaosMetadataServiceClient/event/AbstractEventHandler.h>
 #include <ChaosMetadataServiceClient/event/alert/AlertEventHandler.h>
 #include <ChaosMetadataServiceClient/event/alert/AlertLogEventHandler.h>
+#include <ChaosMetadataServiceClient/event/alert/AlertAgentCheckProcessHandler.h>
 
 #endif /* __CHAOSFramework__event_h */

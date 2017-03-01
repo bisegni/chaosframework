@@ -86,7 +86,7 @@ namespace  chaos {
             typedef boost::function<void(const std::string&,//control unit id
             const ControlUnitProxyEvent)> EventHandlerFunctor;//event type
             
-            typedef boost::function<void(const bool, //true load/false unload
+            typedef boost::function<bool(const bool, //true load/false unload
             const std::string&,//control unit id
             const boost::shared_ptr<ControlUnitApiInterface>& )> ProxyLoadHandler;//event type
 

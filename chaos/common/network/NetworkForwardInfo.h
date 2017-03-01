@@ -35,6 +35,7 @@ namespace chaos {
 			 */
 			typedef struct NetworkForwardInfo {
                 bool is_request;
+                bool is_synchronous_request;
 				//!Define the information ip:port used to reach a remote chaos network broker
 				std::string destinationAddr;
 				//! the message data
@@ -46,8 +47,10 @@ namespace chaos {
                 //! the sender request count
                 uint32_t sender_request_id;
                 
-				NetworkForwardInfo(bool _is_request):
+				NetworkForwardInfo(bool _is_request,
+                                   bool _is_synchronous_request = false):
                 is_request(_is_request),
+                is_synchronous_request(_is_synchronous_request),
 				destinationAddr(""),
 				message(NULL),
 				tag(0),

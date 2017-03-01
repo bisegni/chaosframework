@@ -114,7 +114,8 @@ namespace chaos {
 				
             public:
 				
-				DirectIOClientConnection(std::string _server_description, uint16_t _endpoint);
+				DirectIOClientConnection(const std::string& _server_description,
+                                         uint16_t _endpoint);
                 virtual ~DirectIOClientConnection();
 				
 				//get client ip information

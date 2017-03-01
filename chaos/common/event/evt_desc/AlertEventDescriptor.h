@@ -33,6 +33,7 @@ namespace chaos {
                     EventAlertThresholdCrossing = 0,
                     EventAlertThresholdReset,
                     EventAlertLogSubmitted,
+                    EventAlertAgentCheckProcessSubmitted,
                     EventAlertLastCodeNumber = EventAlertThresholdReset
                 } EventAlertCode;
                 
@@ -82,6 +83,13 @@ namespace chaos {
                     
                     void getLogAlert(std::string&  indetifier,
                                      std::string&  log_domain);
+                    
+                    void setAgentCheckProcessAlert(const std::string&  indetifier,
+                                                   int32_t check_result);
+                    
+                    void getAgentCheckProcessAlert(std::string&  indetifier,
+                                                   int32_t& check_result);
+                    
                     /*!
                      Set the Value for the type
                      \param valueType the enumeration that descrive the type of the value with EventDataType constant

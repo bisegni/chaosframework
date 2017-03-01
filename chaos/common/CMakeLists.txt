@@ -119,7 +119,10 @@ SET(common_lib_src ${common_lib_src}
         dispatcher/AbstractEventDispatcher.cpp
         dispatcher/AbstractCommandDispatcher.cpp
         dispatcher/DefaultCommandDispatcher.cpp
-        dispatcher/DomainActionsScheduler.cpp)
+        dispatcher/DomainActionsScheduler.cpp
+        dispatcher/AbstractActionScheduler.cpp
+        dispatcher/SharedActionScheduler.cpp
+        dispatcher/SharedCommandDispatcher.cpp)
 
 SET(common_lib_src ${common_lib_src}
         exception/CException.cpp
@@ -180,8 +183,7 @@ SET(common_lib_src ${common_lib_src}
         message/MultiAddressMessageChannel.cpp
         message/MultiAddressMessageRequestFuture.cpp
         message/PerformanceNodeChannel.cpp
-        message/MessageRequestDomain.cpp
-        message/MessageRequestDomain.h)
+        message/MessageRequestDomain.cpp)
 
 SET(common_lib_src ${common_lib_src}
         network/NetworkBroker.cpp
@@ -208,7 +210,8 @@ SET(common_lib_src ${common_lib_src}
         utility/TimingUtil.cpp
         utility/AbstractListener.cpp
         utility/AbstractListenerContainer.cpp
-        utility/ProcStat.cpp)
+        utility/ProcStat.cpp
+        utility/FSUtility.cpp)
 
 SET(common_lib_src ${common_lib_src}
         batch_command/BatchCommandExecutor.cpp

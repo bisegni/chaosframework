@@ -99,8 +99,10 @@ MDSMessageChannel *LLRpcApi::getNewMetadataServerChannel() {
 /*!
  Return a new device channel
  */
-DeviceMessageChannel *LLRpcApi::getNewDeviceMessageChannel(CDeviceNetworkAddress *deviceNetworkAddress) {
-    return NetworkBroker::getInstance()->getDeviceMessageChannelFromAddress(deviceNetworkAddress);
+DeviceMessageChannel *LLRpcApi::getNewDeviceMessageChannel(CDeviceNetworkAddress *deviceNetworkAddress,
+                                                           bool self_managed) {
+    return NetworkBroker::getInstance()->getDeviceMessageChannelFromAddress(deviceNetworkAddress,
+                                                                            self_managed);
 }
 
 /*!

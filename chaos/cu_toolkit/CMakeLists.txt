@@ -50,9 +50,8 @@ SET(cu_lib_src ${cu_lib_src}
         control_manager/slow_command/SlowCommand.cpp
         control_manager/slow_command/command/SCWaitCommand.cpp
         control_manager/AttributeSharedCacheWrapper.cpp
-	control_manager/ProxyControlUnit.cpp
-	control_manager/ControlUnitApiInterface.cpp
-	)
+        control_manager/ProxyControlUnit.cpp
+        control_manager/ControlUnitApiInterface.cpp)
 
 SET(cu_lib_src ${cu_lib_src}
         control_manager/execution_pool/ExecutionPool.cpp)

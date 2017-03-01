@@ -63,11 +63,15 @@ namespace chaos {
         //! Specify the implementation to use for rp messaging
         static const char * const   OPT_RPC_IMPLEMENTATION              = "rpc-server-impl";
         //! Specify the implementation to use for rp messaging
-        static const char * const   OPT_RPC_SYNC_ENABLE                 = "rpc-syncserver-enable";
+        static const char * const   OPT_RPC_SYNC_ENABLE                 = "rpc-synchronous-enable";
         //! Specify the network port where rpc system will publish al the service
         static const char * const   OPT_RPC_SERVER_PORT                 = "rpc-server-port";
         //! Specify the number of the thread that the rpc ssytem must use to process the request
         static const char * const   OPT_RPC_SERVER_THREAD_NUMBER        = "rpc-server-thread-number";
+        //! Specify the number of the thread that EVERY queue in EVERY action domain has for rpc action consume
+        static const char * const   OPT_RPC_DOMAIN_QUEUE_THREAD         = "rpc-domain-queue-thread-number";
+        //! specify the schduler type for the execution of the rcp action(0-default,1-shared)
+        static const char * const   OPT_RPC_DOMAIN_SCHEDULER_TYPE       = "rpc-domain-scheduler-type";
         //! Specify the implementation to use for the direct io subsystem
         static const char * const   OPT_DIRECT_IO_IMPLEMENTATION		= "direct-io-impl";
         //! Specify the network port where the direct io subsystem publish i's priority channel
@@ -247,6 +251,14 @@ namespace chaos {
          !CHAOS async one.
          */
         static const char * const NODE_TYPE_WAN_PROXY       = "nt_wan_proxy";
+        
+        //! identify a process agent
+        /*!
+         A process agent is a daemo that run on an host that permit to
+         manage chaos process whitin that host (start stop uni t server and perform deploy)
+         */
+        static const char * const NODE_TYPE_AGENT       = "nt_agent";
+        
         //! identify an execution unit of type script
         /*!
          A scriptable execution unit consinst of a framework implementaion of the an
@@ -467,7 +479,6 @@ namespace chaos {
     }
     /** @} */ // end of UnitServerNodeDefinitionKey
     
-    
     /** @defgroup UnitServerNodeDomainAndActionRPC !CHAOS unit server rpc key description
      *  This is the collection of all key used only by unit server
      *  @{
@@ -505,6 +516,71 @@ namespace chaos {
     }
     /** @} */ // end of UnitServerNodeDomainAndActionRPC
     
+    
+    /** @defgroup AgentNodeDefinitionKey !CHAOS agent node key description
+     *  @{
+     */
+    //! Name space for grupping key for the agent node type
+    namespace AgentNodeDefinitionKey {
+        
+        //! key for the worker contained within the agent
+        /*!
+         very worke can process different work witni the agent
+         */
+        static const char * const HOSTED_WORKER       = "andk_hosted_worker";
+        
+        //!the name that identify the worker
+        static const char * const WORKER_NAME         = "andk_worker_name";
+        
+        //!the description of the worker
+        static const char * const WORKER_DESCRIPTION    = "andk_worker_description";
+        
+        //!the list of node associated with the agent
+        static const char * const NODE_ASSOCIATED       = "andk_node_associated";
+        
+        //!the working directory of the agent instance
+        static const char * const WORKING_DIRECTORY     = "andk_working_directory";
+    }
+    /** @} */ // end of AgentNodeDefinitionKey
+    
+    /** @defgroup AgentNodeDomainAndActionRPC !CHAOS agent rpc key description
+     *  This is the collection of all key used only by agent
+     *  @{
+     */
+    namespace AgentNodeDomainAndActionRPC {
+        //! The domain for agent rpc action
+        static const char * const RPC_DOMAIN                                        = "agent";
+        //! action called for the ack of the agent from mds
+        static const char * const ACTION_AGENT_REGISTRATION_ACK                     = "agentRegistrationAck";
+        
+        //!identify the error code for the registration
+        static const char * const REGISTRATION_RESULT                               = "andk_rpc_registration_result";
+        
+        namespace ProcessWorker {
+            static const char * const WORKER_NAME                                   = "HostProcessManagement";
+            static const char * const ACTION_LAUNCH_NODE                            = "startNode";
+            static const char * const ACTION_LAUNCH_NODE_PAR_NAME            = NodeDefinitionKey::NODE_UNIQUE_ID;
+            static const char * const ACTION_LAUNCH_NODE_CMD_LINE            = "node_launch_cmd_line";
+            static const char * const ACTION_LAUNCH_NODE_PAR_CFG             = "node_init_cfg";
+            static const char * const ACTION_LAUNCH_NODE_PAR_AUTO_START      = "node_auto_start";
+            
+            static const char * const ACTION_STOP_NODE                       = "stopNode";
+            static const char * const ACTION_STOP_NODE_PAR_NAME              = "node_name";
+            
+            static const char * const ACTION_RESTART_NODE                     = "restartNode";
+            static const char * const ACTION_RESTART_NODE_PAR_NAME            = NodeDefinitionKey::NODE_UNIQUE_ID;
+            static const char * const ACTION_RESTART_NODE_PAR_KILL            = "kill";
+            
+            static const char * const ACTION_LIST_NODE                        = "listNode";
+            static const char * const ACTION_LIST_NODE_PARM_NAME              = NodeDefinitionKey::NODE_UNIQUE_ID;
+            
+            static const char * const ACTION_CHECK_NODE                       = "checkNode";
+            static const char * const ACTION_CHECK_NODE_ASSOCIATED_NODES      = AgentNodeDefinitionKey::NODE_ASSOCIATED;
+            static const char * const ACTION_CHECK_NODE_RESULT_NODE_UID       = NodeDefinitionKey::NODE_UNIQUE_ID;
+            static const char * const ACTION_CHECK_NODE_RESULT_NODE_ALIVE     = "alive";
+        }
+    }
+    /** @} */ // end of AgentNodeDomainAndActionRPC
     
     /** @defgroup DataServiceNodeDefinitionKey !CHAOS data service node key description
      *  This is the collection of the key used to configure the DataProxy server
@@ -1113,9 +1189,9 @@ namespace chaos {
                 //!Integer 16 bit length
             case DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM:
                 return DataPackPrefixID::SYSTEM_DATASET_POSTFIX;
-
+                
             case DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH:
-                    return DataPackPrefixID::HEALTH_DATASET_POSTFIX;
+                return DataPackPrefixID::HEALTH_DATASET_POSTFIX;
                 //!Integer 32 bit length
             case DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM:
                 return DataPackPrefixID::DEV_ALARM_DATASET_POSTFIX;
@@ -1140,24 +1216,24 @@ namespace chaos {
     }
     
     static inline const char* datasetTypeToHuman(unsigned int domain) {
-    	switch (domain) {
-    	case DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT:
-    		return "output";
-    	case DataPackCommonKey::DPCK_DATASET_TYPE_INPUT:
-    		return "input";
-    	case DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM:
-    		return "custom";
-    	case DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM:
-    		return "system";
-    	case DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH:
-    		return "health";
-    	case DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM:
-    		return "device_alarms";
-    	case DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM:
-    		return "cu_alarms";
-    	default:
-    		return "unknown";
-    	}
+        switch (domain) {
+            case DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT:
+                return "output";
+            case DataPackCommonKey::DPCK_DATASET_TYPE_INPUT:
+                return "input";
+            case DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM:
+                return "custom";
+            case DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM:
+                return "system";
+            case DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH:
+                return "health";
+            case DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM:
+                return "device_alarms";
+            case DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM:
+                return "cu_alarms";
+            default:
+                return "unknown";
+        }
     }
     /** @defgroup DataPackKey Chaos Data Pack output attirbute
      This is the collection of the standard key that are contained into the output

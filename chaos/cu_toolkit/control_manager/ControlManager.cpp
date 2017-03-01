@@ -496,7 +496,7 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
     LCMAPP_ << "Get new request for instance the work unit with alias:" << work_unit_type;
     
     WriteLock write_instancer_lock(mutex_map_cu_instancer);
-    CHECK_ASSERTION_THROW_AND_LOG(map_cu_alias_instancer.count(work_unit_type), LCMERR_, -2, "No work unit instancer's found for the alias")
+    CHECK_ASSERTION_THROW_AND_LOG(map_cu_alias_instancer.count(work_unit_type), LCMERR_, -2, CHAOS_FORMAT("No work unit instancer's found for type %1%",%work_unit_type));
     
     std::string work_unit_id = message_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
     std::string load_options = CDW_STR_KEY(ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM);
@@ -537,11 +537,14 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
     CHECK_ASSERTION_THROW_AND_LOG(instance.get(), LCMERR_, -7, "Error creating work unit instance");
     
     //check if is a proxy control unit
-    if(load_handler != NULL &&
-       (instance->getCUType().compare(NodeType::NODE_SUBTYPE_PROXY_CONTROL_UNIT) == 0)){
-        load_handler(true,
-                     instance->getCUID(),
-                     static_cast<ProxyControlUnit*>(instance.get())->getProxyApiInterface());
+    if(instance->getCUType().compare(NodeType::NODE_SUBTYPE_PROXY_CONTROL_UNIT) == 0){
+        //chec if someoune has attach the handler
+        CHECK_ASSERTION_THROW_AND_LOG((load_handler != NULL), LCMERR_, -8, CHAOS_FORMAT("No handler has been set for manage the %1% [of type ProxyControlUnit]",%work_unit_id));
+        if(load_handler(true,
+                        instance->getCUID(),
+                        static_cast<ProxyControlUnit*>(instance.get())->getProxyApiInterface()) == false){
+            LOG_AND_TROW(LCMERR_, -9, CHAOS_FORMAT("Load for %1% control unit denied by load handler", %work_unit_id));
+        }
     }
     
     //tag control uinit for mds managed

@@ -57,11 +57,13 @@ namespace chaos {
                                                          typename ActionDescriptor<T>::ActionPointerDef actionHandler,
                                                          const std::string& actionDomainName,
                                                          const std::string& actionAliasName,
-                                                         const std::string& actionDescription) {
+                                                         const std::string& actionDescription,
+                                                         bool shared_execution = false) {
             AbstActionDescShrPtr newActionDesc(new ActionDescriptor<T>(actonObjectPointer,
                                                                        actionHandler,
                                                                        actionDomainName,
-                                                                       actionAliasName));
+                                                                       actionAliasName,
+                                                                       shared_execution));
             newActionDesc->setTypeValue(ActionDescriptor<T>::ActionDescription, actionDescription);
             //add action description to vector
             actionDescriptionVector.push_back(newActionDesc);

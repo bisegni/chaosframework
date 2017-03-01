@@ -124,26 +124,6 @@ chaos_data::CDataWrapper* RpcServerMetricCollector::executeCommandSync(chaos_dat
     return result;
 }
 
-// execute an action in synchronous mode
-chaos_data::CDataWrapper* RpcServerMetricCollector::executeCommandSync(const std::string& domain,
-                                                                       const std::string& action,
-                                                                       chaos_data::CDataWrapper * message_data) {
-    CHAOS_ASSERT(wrapperd_server_handler)
-    int size = 0;
-    chaos_data::CDataWrapper *result = NULL;
-    //inrement packec count
-    pack_count++;
-    result = wrapperd_server_handler->executeCommandSync(domain,
-                                                         action,
-                                                         message_data);
-    //increment packet size
-    if(message_data) {
-        message_data->getBSONRawData(size);
-        bandwith+=size;
-    }
-    return result;
-}
-
 void RpcServerMetricCollector::fetchMetricForTimeDiff(uint64_t time_diff) {
     MetricCollectorIO::fetchMetricForTimeDiff(time_diff);
 }

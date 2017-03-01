@@ -470,3 +470,12 @@ void ChaosMetadataServiceClient::registerEventHandler(AbstractEventHandler *hand
 void ChaosMetadataServiceClient::deregisterEventHandler(AbstractEventHandler *handler) {
     event_dispatch_manager->deregisterEventHandler(handler);
 }
+
+void ChaosMetadataServiceClient::getNewCUController(const std::string& cu_id,
+                                                    node_controller::CUController **cu_ctrl_handler) {
+    *cu_ctrl_handler = new node_controller::CUController(cu_id);
+}
+
+void ChaosMetadataServiceClient::deleteCUController(node_controller::CUController *cu_ctrl_ptr) {
+    if(cu_ctrl_ptr) delete(cu_ctrl_ptr);
+}

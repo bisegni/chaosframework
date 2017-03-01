@@ -6,6 +6,7 @@ ApplicationErrorLogging::ApplicationErrorLogging(QWidget *parent) :
     PresenterWidget(parent),
     ui(new Ui::ApplicationErrorLogging) {
     ui->setupUi(this);
+    setWindowTitle("Application Error Logging");
 }
 
 ApplicationErrorLogging::~ApplicationErrorLogging() {

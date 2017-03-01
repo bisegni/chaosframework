@@ -99,12 +99,13 @@ namespace chaos{
         //! check domain class
         CheckDomainRpcAction check_domain_action;
         
-        //! Domain name <-> Action name association map
-        /*!Contains the association between the domain name and all action for this domain*/
-        map<string, boost::shared_ptr<DomainActions> >  action_domain_executor_map;
+    public:
+        //! Constructor
+        AbstractCommandDispatcher(string alias);
         
-        //! Dispatch initialization with default value
-        virtual void init(void*) throw(CException);
+        ~AbstractCommandDispatcher();
+        
+        virtual void init(void*)  throw(CException);
         
         //-----------------------
         virtual void start() throw(CException);
@@ -112,28 +113,7 @@ namespace chaos{
         //-----------------------
         virtual void stop() throw(CException);
         
-        //! Dispatch deinitialization with default value
-        virtual void deinit() throw(CException);
-        
-        //! Accessor to the object that manage the action for a domain
-        /*!
-         \return the instance of DomainActions pointer in relation to name
-         but if the name is not present initialized it and add it to map
-         */
-        boost::shared_ptr<DomainActions> getDomainActionsFromName(const string & domain_name);
-        
-        //! Remove the infromation about a domain
-        /*!
-         \return an isntance of DomainActions pointer and remove
-         it form the map
-         */
-        void  removeDomainActionsFromName(string&);
-        
-    public:
-        //! Constructor
-        AbstractCommandDispatcher(string alias);
-        
-        ~AbstractCommandDispatcher();
+        virtual void deinit()  throw(CException);
         
         /*
          update the dispatcher configuration
@@ -164,7 +144,7 @@ namespace chaos{
          overrided by subclass for make some thing befor or after the registration
          \param declareActionClass The object that expose the domain and action name
          */
-        virtual void registerAction(DeclareAction *declareActionClass)  throw(CException) ;
+        virtual void registerAction(DeclareAction *declareActionClass)  throw(CException) = 0;
         
         //! Action deregistration
         /*
@@ -172,11 +152,9 @@ namespace chaos{
          overrided by subclass for make some thing befor or after the registration
          \param declareActionClass The object that expose the domain and action name
          */
-        virtual void deregisterAction(DeclareAction *declareActionClass)  throw(CException) ;
+        virtual void deregisterAction(DeclareAction *declareActionClass)  throw(CException) = 0;
         
-        virtual bool hasDomain(const std::string& domain_name);
-        
-        virtual uint32_t domainRPCActionQueued(const std::string& domain_name);
+        virtual bool hasDomain(const std::string& domain_name) = 0;
         
         /*!
          Set the rpc forwarder implementation

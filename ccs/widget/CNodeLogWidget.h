@@ -33,8 +33,8 @@ public:
     void setMaxResultItem(qint32 max_result_item);
     qint32 maxResultItem();
 protected:
-    void handleLogEvent(const std::string source,
-                        const std::string domain);
+    void handleLogEvent(const std::string& source,
+                        const std::string& domain);
 private slots:
     void timeoutUpdateTimer();
     void logTypesDataChanged(const QModelIndex& top_left,

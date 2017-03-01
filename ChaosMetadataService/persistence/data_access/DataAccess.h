@@ -31,4 +31,5 @@
 #include "TreeGroupDataAccess.h"
 #include "LoggingDataAccess.h"
 #include "ScriptDataAccess.h"
+#include "AgentDataAccess.h"
 #endif
