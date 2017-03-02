@@ -7,7 +7,6 @@
 #include <QDebug>
 #include <QSqlError>
 
-
 void ErrorManagerEventSignal::fireEntryUpdate() {
     emit(errorEntryUpdated());
 }
@@ -85,8 +84,8 @@ int ErrorManager::getErrorPage(QVector< QSharedPointer<ErrorEntry> >& page_resul
     db_mutex.lock();
     QSqlQuery query(db);
     query.prepare("select * from error where id > :id  order by id asc limit :max_row");
-    query.bindValue(":id", last_id);
-    query.bindValue(":max_row", page_len);
+    query.bindValue(":id", (qulonglong)last_id);
+    query.bindValue(":max_row", (qulonglong)page_len);
     query.exec();
     while(query.next()) {
         QSharedPointer<ErrorEntry> entry(new ErrorEntry);
