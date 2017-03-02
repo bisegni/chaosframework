@@ -22,7 +22,6 @@
 #ifndef __CHAOSFramework__DA13C6A_2DD1_4295_A51A_AB24EFFA60D8_AgentDataAccess_h
 #define __CHAOSFramework__DA13C6A_2DD1_4295_A51A_AB24EFFA60D8_AgentDataAccess_h
 
-
 #include "../persistence.h"
 
 #include <chaos/common/chaos_types.h>

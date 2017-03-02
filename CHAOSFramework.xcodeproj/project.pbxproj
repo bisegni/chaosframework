@@ -1086,6 +1086,8 @@
 		32FF2A881E68724C00117985 /* EndUploadSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A861E68724C00117985 /* EndUploadSession.cpp */; };
 		32FF2A891E68724C00117985 /* EndUploadSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FF2A871E68724C00117985 /* EndUploadSession.h */; };
 		32FF2A8D1E68726300117985 /* deploy.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FF2A8B1E68726300117985 /* deploy.h */; };
+		32FF2A901E6874B600117985 /* DeployDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A8E1E6874B600117985 /* DeployDataAccess.cpp */; };
+		32FF2A931E6874FF00117985 /* MongoDBDeployDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A911E6874FF00117985 /* MongoDBDeployDataAccess.cpp */; };
 		32FFA3EC1B00D43900C57E07 /* QuantumSlot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FFA3EA1B00D43900C57E07 /* QuantumSlot.cpp */; };
 		32FFA3ED1B00D43900C57E07 /* QuantumSlot.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FFA3EB1B00D43900C57E07 /* QuantumSlot.h */; };
 		32FFA3EE1B00F95900C57E07 /* QuantumSlotScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FFA3E61B00CEE100C57E07 /* QuantumSlotScheduler.cpp */; };
@@ -2516,6 +2518,10 @@
 		32FF2A861E68724C00117985 /* EndUploadSession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EndUploadSession.cpp; sourceTree = "<group>"; };
 		32FF2A871E68724C00117985 /* EndUploadSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EndUploadSession.h; sourceTree = "<group>"; };
 		32FF2A8B1E68726300117985 /* deploy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = deploy.h; sourceTree = "<group>"; };
+		32FF2A8E1E6874B600117985 /* DeployDataAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeployDataAccess.cpp; sourceTree = "<group>"; };
+		32FF2A8F1E6874B600117985 /* DeployDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeployDataAccess.h; sourceTree = "<group>"; };
+		32FF2A911E6874FF00117985 /* MongoDBDeployDataAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MongoDBDeployDataAccess.cpp; sourceTree = "<group>"; };
+		32FF2A921E6874FF00117985 /* MongoDBDeployDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MongoDBDeployDataAccess.h; sourceTree = "<group>"; };
 		32FFA3E61B00CEE100C57E07 /* QuantumSlotScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QuantumSlotScheduler.cpp; sourceTree = "<group>"; };
 		32FFA3E71B00CEE100C57E07 /* QuantumSlotScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuantumSlotScheduler.h; sourceTree = "<group>"; };
 		32FFA3EA1B00D43900C57E07 /* QuantumSlot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QuantumSlot.cpp; sourceTree = "<group>"; };
@@ -2928,6 +2934,8 @@
 				3221D7251CF5AEDE001BE971 /* MongoDBScriptDataAccess.h */,
 				32E6F4401E48B4B10068320E /* MongoDBAgentDataAccess.cpp */,
 				32E6F4411E48B4B10068320E /* MongoDBAgentDataAccess.h */,
+				32FF2A911E6874FF00117985 /* MongoDBDeployDataAccess.cpp */,
+				32FF2A921E6874FF00117985 /* MongoDBDeployDataAccess.h */,
 				32D24FB31A7BBD59002D65CE /* mongo_db_constants.h */,
 			);
 			path = mongodb;
@@ -2956,6 +2964,8 @@
 				3221D7221CF5ADC9001BE971 /* ScriptDataAccess.h */,
 				32E6F43D1E48B4260068320E /* AgentDataAccess.cpp */,
 				32E6F43E1E48B4260068320E /* AgentDataAccess.h */,
+				32FF2A8E1E6874B600117985 /* DeployDataAccess.cpp */,
+				32FF2A8F1E6874B600117985 /* DeployDataAccess.h */,
 				32D24FAF1A7AAD15002D65CE /* DataAccess.h */,
 			);
 			path = data_access;
@@ -6002,6 +6012,7 @@
 				323236CB164573C60052CE06 /* main.cpp in Sources */,
 				32EBDF0B1B538F4B00278C42 /* ManageCUType.cpp in Sources */,
 				327F39BB1AEAB14E0000C845 /* GetAllDataService.cpp in Sources */,
+				32FF2A931E6874FF00117985 /* MongoDBDeployDataAccess.cpp in Sources */,
 				32B1E8001B2B0EB600221E49 /* CommandGet.cpp in Sources */,
 				3210EE1E1AE7DE15006ADC0B /* RegistrationAckBatchCommand.cpp in Sources */,
 				32C067BD1AEFE5DD000B1ED9 /* IDSTControlUnitBatchCommand.cpp in Sources */,
@@ -6046,6 +6057,7 @@
 				32864FCD1C294ADB00DA9B70 /* GroupsApiGroup.cpp in Sources */,
 				326ACFA81E0159C600AD011E /* DataWorker.cpp in Sources */,
 				32864FD01C294C3100DA9B70 /* AddNode.cpp in Sources */,
+				32FF2A901E6874B600117985 /* DeployDataAccess.cpp in Sources */,
 				32990B251E521C8400A4AF8F /* LoadAgentDescription.cpp in Sources */,
 				320530D71AE924ED0064275B /* AssociationControlUnit.cpp in Sources */,
 				32B3E11D1A7A3923007B7802 /* MDSBatchExecutor.cpp in Sources */,
