@@ -42,6 +42,10 @@ SET(mcl_src ${mcl_src}	    api_proxy/agent/ListNodeForAgent.cpp
                             api_proxy/agent/NodeOperation.cpp
                             api_proxy/agent/CheckAgentHostedProcess.cpp)
 
+SET(mcl_src ${mcl_src}	    api_proxy/agent/StartUploadSession.cpp
+                            api_proxy/agent/UploadChunk.cpp
+                            api_proxy/agent/EndUploadSession.cpp)
+
 SET(mcl_src ${mcl_src}      api_proxy/service/ResetAll.cpp
                             api_proxy/service/CreateNewSnapshot.cpp
                             api_proxy/service/RestoreSnapshot.cpp

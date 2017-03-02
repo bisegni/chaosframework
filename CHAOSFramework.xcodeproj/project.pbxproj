@@ -1075,6 +1075,17 @@
 		32FF2A651E65D17900117985 /* FSUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A631E65D17900117985 /* FSUtility.cpp */; };
 		32FF2A661E65D17900117985 /* FSUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FF2A641E65D17900117985 /* FSUtility.h */; };
 		32FF2A691E672CAA00117985 /* DeployWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A671E672CAA00117985 /* DeployWorker.cpp */; };
+		32FF2A731E68654C00117985 /* StartUploadSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A711E68654C00117985 /* StartUploadSession.cpp */; };
+		32FF2A761E68655A00117985 /* DeployApiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A741E68655A00117985 /* DeployApiGroup.cpp */; };
+		32FF2A791E686ABA00117985 /* UploadChunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A771E686ABA00117985 /* UploadChunk.cpp */; };
+		32FF2A7C1E686E8F00117985 /* EndUploadSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A7A1E686E8F00117985 /* EndUploadSession.cpp */; };
+		32FF2A801E68723400117985 /* StartUploadSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A7E1E68723400117985 /* StartUploadSession.cpp */; };
+		32FF2A811E68723400117985 /* StartUploadSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FF2A7F1E68723400117985 /* StartUploadSession.h */; };
+		32FF2A841E68723F00117985 /* UploadChunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A821E68723F00117985 /* UploadChunk.cpp */; };
+		32FF2A851E68723F00117985 /* UploadChunk.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FF2A831E68723F00117985 /* UploadChunk.h */; };
+		32FF2A881E68724C00117985 /* EndUploadSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A861E68724C00117985 /* EndUploadSession.cpp */; };
+		32FF2A891E68724C00117985 /* EndUploadSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FF2A871E68724C00117985 /* EndUploadSession.h */; };
+		32FF2A8D1E68726300117985 /* deploy.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FF2A8B1E68726300117985 /* deploy.h */; };
 		32FFA3EC1B00D43900C57E07 /* QuantumSlot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FFA3EA1B00D43900C57E07 /* QuantumSlot.cpp */; };
 		32FFA3ED1B00D43900C57E07 /* QuantumSlot.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FFA3EB1B00D43900C57E07 /* QuantumSlot.h */; };
 		32FFA3EE1B00F95900C57E07 /* QuantumSlotScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FFA3E61B00CEE100C57E07 /* QuantumSlotScheduler.cpp */; };
@@ -2490,6 +2501,21 @@
 		32FF2A641E65D17900117985 /* FSUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FSUtility.h; sourceTree = "<group>"; };
 		32FF2A671E672CAA00117985 /* DeployWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeployWorker.cpp; sourceTree = "<group>"; };
 		32FF2A681E672CAA00117985 /* DeployWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeployWorker.h; sourceTree = "<group>"; };
+		32FF2A711E68654C00117985 /* StartUploadSession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StartUploadSession.cpp; sourceTree = "<group>"; };
+		32FF2A721E68654C00117985 /* StartUploadSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StartUploadSession.h; sourceTree = "<group>"; };
+		32FF2A741E68655A00117985 /* DeployApiGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeployApiGroup.cpp; sourceTree = "<group>"; };
+		32FF2A751E68655A00117985 /* DeployApiGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeployApiGroup.h; sourceTree = "<group>"; };
+		32FF2A771E686ABA00117985 /* UploadChunk.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UploadChunk.cpp; sourceTree = "<group>"; };
+		32FF2A781E686ABA00117985 /* UploadChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UploadChunk.h; sourceTree = "<group>"; };
+		32FF2A7A1E686E8F00117985 /* EndUploadSession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EndUploadSession.cpp; sourceTree = "<group>"; };
+		32FF2A7B1E686E8F00117985 /* EndUploadSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EndUploadSession.h; sourceTree = "<group>"; };
+		32FF2A7E1E68723400117985 /* StartUploadSession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StartUploadSession.cpp; sourceTree = "<group>"; };
+		32FF2A7F1E68723400117985 /* StartUploadSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StartUploadSession.h; sourceTree = "<group>"; };
+		32FF2A821E68723F00117985 /* UploadChunk.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UploadChunk.cpp; sourceTree = "<group>"; };
+		32FF2A831E68723F00117985 /* UploadChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UploadChunk.h; sourceTree = "<group>"; };
+		32FF2A861E68724C00117985 /* EndUploadSession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EndUploadSession.cpp; sourceTree = "<group>"; };
+		32FF2A871E68724C00117985 /* EndUploadSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EndUploadSession.h; sourceTree = "<group>"; };
+		32FF2A8B1E68726300117985 /* deploy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = deploy.h; sourceTree = "<group>"; };
 		32FFA3E61B00CEE100C57E07 /* QuantumSlotScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QuantumSlotScheduler.cpp; sourceTree = "<group>"; };
 		32FFA3E71B00CEE100C57E07 /* QuantumSlotScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuantumSlotScheduler.h; sourceTree = "<group>"; };
 		32FFA3EA1B00D43900C57E07 /* QuantumSlot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QuantumSlot.cpp; sourceTree = "<group>"; };
@@ -3934,6 +3960,7 @@
 				32CFD5DD1B2704FF0060AED5 /* api_types.h */,
 				322E26721AC6E437002E5DA4 /* api.h */,
 				32BE0ADA1E4C69390007764C /* agent */,
+				32FF2A7D1E68720D00117985 /* deploy */,
 				32D745E91C723B8E00F4D719 /* logging */,
 				3252F3551C298701004436A8 /* groups */,
 				32AE8BA01B678BCA00FAC528 /* service */,
@@ -4586,10 +4613,10 @@
 		32BE0AC91E4B44870007764C /* agent */ = {
 			isa = PBXGroup;
 			children = (
-				32FF2A591E6579A400117985 /* NodeOperation.cpp */,
-				32FF2A5A1E6579A400117985 /* NodeOperation.h */,
 				32BE0ACA1E4B44B90007764C /* AgentApiGroup.cpp */,
 				32BE0ACB1E4B44B90007764C /* AgentApiGroup.h */,
+				32FF2A591E6579A400117985 /* NodeOperation.cpp */,
+				32FF2A5A1E6579A400117985 /* NodeOperation.h */,
 				32990B231E521C8400A4AF8F /* LoadAgentDescription.cpp */,
 				32990B241E521C8400A4AF8F /* LoadAgentDescription.h */,
 				32BE0ACE1E4B45DB0007764C /* ListNodeForAgent.cpp */,
@@ -4724,6 +4751,7 @@
 				32FC7EE31A70FDB70029C2A2 /* ApiManagment.cpp */,
 				32FC7EE41A70FDB70029C2A2 /* ApiManagment.h */,
 				32BE0AC91E4B44870007764C /* agent */,
+				32FF2A6D1E6864E100117985 /* deploy */,
 				3270E06A1C6CBA7D00105726 /* logging */,
 				32864FCA1C294A4600DA9B70 /* groups */,
 				327791DF1B67726200FEDD52 /* service */,
@@ -5098,6 +5126,35 @@
 				32F9F82D1D903B1D0023948D /* MDSHistoryAgeingManagement.h */,
 			);
 			path = management;
+			sourceTree = "<group>";
+		};
+		32FF2A6D1E6864E100117985 /* deploy */ = {
+			isa = PBXGroup;
+			children = (
+				32FF2A741E68655A00117985 /* DeployApiGroup.cpp */,
+				32FF2A751E68655A00117985 /* DeployApiGroup.h */,
+				32FF2A711E68654C00117985 /* StartUploadSession.cpp */,
+				32FF2A721E68654C00117985 /* StartUploadSession.h */,
+				32FF2A771E686ABA00117985 /* UploadChunk.cpp */,
+				32FF2A781E686ABA00117985 /* UploadChunk.h */,
+				32FF2A7A1E686E8F00117985 /* EndUploadSession.cpp */,
+				32FF2A7B1E686E8F00117985 /* EndUploadSession.h */,
+			);
+			path = deploy;
+			sourceTree = "<group>";
+		};
+		32FF2A7D1E68720D00117985 /* deploy */ = {
+			isa = PBXGroup;
+			children = (
+				32FF2A7E1E68723400117985 /* StartUploadSession.cpp */,
+				32FF2A7F1E68723400117985 /* StartUploadSession.h */,
+				32FF2A821E68723F00117985 /* UploadChunk.cpp */,
+				32FF2A831E68723F00117985 /* UploadChunk.h */,
+				32FF2A861E68724C00117985 /* EndUploadSession.cpp */,
+				32FF2A871E68724C00117985 /* EndUploadSession.h */,
+				32FF2A8B1E68726300117985 /* deploy.h */,
+			);
+			path = deploy;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -5556,6 +5613,7 @@
 				327C6A291C74E255002DA5A6 /* GetLogDomainForSourceUID.h in Headers */,
 				3239EF531C0EFEB20052BE61 /* DeleteSnapshot.h in Headers */,
 				32FFA3ED1B00D43900C57E07 /* QuantumSlot.h in Headers */,
+				32FF2A811E68723400117985 /* StartUploadSession.h in Headers */,
 				327F39A81AEAA2290000C845 /* NewDS.h in Headers */,
 				320CA9551C29D71A00894AAA /* DeleteUS.h in Headers */,
 				3221D7501CF606BC001BE971 /* SearchScript.h in Headers */,
@@ -5577,8 +5635,10 @@
 				32D745FD1C7338D100F4D719 /* AlertLogEventHandler.h in Headers */,
 				3239EF4B1C0EFE910052BE61 /* RestoreSnapshot.h in Headers */,
 				32F135A41DF05E4F00890AFC /* GetSnapshotDatasetForNode.h in Headers */,
+				32FF2A851E68723F00117985 /* UploadChunk.h in Headers */,
 				32610F8D1AE6560A00779B84 /* GetDescription.h in Headers */,
 				3211CCDE1B03402800F9B80E /* QuantumKeyConsumer.h in Headers */,
+				32FF2A891E68724C00117985 /* EndUploadSession.h in Headers */,
 				32D745F91C73388900F4D719 /* AlertEventHandler.h in Headers */,
 				32AE8BA41B678C1500FAC528 /* ResetAll.h in Headers */,
 				32761A391B314697006C8719 /* GetCommandAndTemplateDescription.h in Headers */,
@@ -5611,6 +5671,7 @@
 				32362C221ADD0C45000CA079 /* SetInstanceDescription.h in Headers */,
 				323386B21ACD731E008863DC /* NodeSearch.h in Headers */,
 				3221D72B1CF5EB22001BE971 /* SaveScript.h in Headers */,
+				32FF2A8D1E68726300117985 /* deploy.h in Headers */,
 				32D746011C73399900F4D719 /* AbstractEventHandler.h in Headers */,
 				325FC85E1AF7910300DB9D66 /* NewUS.h in Headers */,
 				32B1E7F31B298D2600221E49 /* CommandTemplateSearch.h in Headers */,
@@ -5892,6 +5953,7 @@
 				32D90D591CF4A6DC00996F09 /* SearchScript.cpp in Sources */,
 				3252F3541C29847E004436A8 /* GetDomains.cpp in Sources */,
 				32B224C61CFC626F00B24B58 /* LoadFullScript.cpp in Sources */,
+				32FF2A731E68654C00117985 /* StartUploadSession.cpp in Sources */,
 				32AE8BA71B67B4A100FAC528 /* ResetAll.cpp in Sources */,
 				32401CBD1C1AD7AA00E62866 /* TreeGroupDataAccess.cpp in Sources */,
 				325FC85A1AF77A7900DB9D66 /* NewUS.cpp in Sources */,
@@ -5908,6 +5970,7 @@
 				320E773E1A7FBD84001FB8BC /* UnitServerAckBatchCommand.cpp in Sources */,
 				32990B331E547ED900A4AF8F /* AgentCheckAgentProcess.cpp in Sources */,
 				3258D4811DF0332300D9C8D0 /* GetSnapshotDatasetsForNode.cpp in Sources */,
+				32FF2A761E68655A00117985 /* DeployApiGroup.cpp in Sources */,
 				32B1E8191B2FFCE500221E49 /* CommandCommonUtility.cpp in Sources */,
 				3270E0761C6CC05100105726 /* MongoDBLoggingDataAccess.cpp in Sources */,
 				32FC49A41E0807F70087D82C /* GetVariable.cpp in Sources */,
@@ -5942,6 +6005,7 @@
 				32B1E8001B2B0EB600221E49 /* CommandGet.cpp in Sources */,
 				3210EE1E1AE7DE15006ADC0B /* RegistrationAckBatchCommand.cpp in Sources */,
 				32C067BD1AEFE5DD000B1ED9 /* IDSTControlUnitBatchCommand.cpp in Sources */,
+				32FF2A7C1E686E8F00117985 /* EndUploadSession.cpp in Sources */,
 				32A116441D116F8C00FF44ED /* SearchInstancesForScript.cpp in Sources */,
 				328C872C1ADEA45E0047C79B /* SearchInstancesByUS.cpp in Sources */,
 				32990B301E547D8900A4AF8F /* CheckAgentHostedProcess.cpp in Sources */,
@@ -5971,6 +6035,7 @@
 				32A116491D117F0700FF44ED /* ManageScriptInstance.cpp in Sources */,
 				32BE0AD01E4B45DB0007764C /* ListNodeForAgent.cpp in Sources */,
 				32D90D561CF4A4E500996F09 /* ScriptGroupApi.cpp in Sources */,
+				32FF2A791E686ABA00117985 /* UploadChunk.cpp in Sources */,
 				32809C821A9C84F900C02C12 /* MongoDBControlUnitDataAccess.cpp in Sources */,
 				3235FDD61A6FF8A800EC83A9 /* MongoDBUnitServerDataAccess.cpp in Sources */,
 				32990B131E4CB74C00A4AF8F /* RemoveNodeAssociation.cpp in Sources */,
@@ -6378,6 +6443,7 @@
 				32568C921B42C1690006988C /* QuantumTSTaggedAttributeHandler.cpp in Sources */,
 				327F39B31AEAA2680000C845 /* GetAssociationByDS.cpp in Sources */,
 				32FF2A571E65782200117985 /* NodeOperation.cpp in Sources */,
+				32FF2A881E68724C00117985 /* EndUploadSession.cpp in Sources */,
 				32FF2A611E65CCEB00117985 /* AlertAgentCheckProcessHandler.cpp in Sources */,
 				32B224CA1CFC830600B24B58 /* LoadFullScript.cpp in Sources */,
 				32F7AB141C9960A700E18D3E /* NodeMonitor.cpp in Sources */,
@@ -6401,6 +6467,7 @@
 				32B419371B16236300C3CA7D /* SetInputDatasetAttributeValues.cpp in Sources */,
 				32B1E7F21B298D2600221E49 /* CommandTemplateSearch.cpp in Sources */,
 				327F39C61AEFABBB0000C845 /* StartStop.cpp in Sources */,
+				32FF2A801E68723400117985 /* StartUploadSession.cpp in Sources */,
 				326150991CAAB5920003D0C2 /* ControlUnitMonitorHandler.cpp in Sources */,
 				32B1E7FD1B2B06CE00221E49 /* CommandGet.cpp in Sources */,
 				3221D72A1CF5EB22001BE971 /* SaveScript.cpp in Sources */,
@@ -6439,6 +6506,7 @@
 				328C87321ADFDB9A0047C79B /* SearchInstancesByUS.cpp in Sources */,
 				32B2999C1BD92B18000D3716 /* CopyInstance.cpp in Sources */,
 				323386B11ACD731E008863DC /* NodeSearch.cpp in Sources */,
+				32FF2A841E68723F00117985 /* UploadChunk.cpp in Sources */,
 				32568C8E1B3D7FED0006988C /* UpdateProperty.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

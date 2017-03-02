@@ -124,6 +124,13 @@ if(cdw->hasKey(key) == false) {LOG_AND_TROW_FORMATTED(log, num, frmt, param)}
 #define CHECK_ASSERTION_THROW_AND_LOG(assertion, log, num, msg)\
 if(assertion == false) {LOG_AND_TROW(log, num, msg)}
 
+#define CHECK_MANDATORY_KEY(d, k, el, en)\
+CHECK_KEY_THROW_AND_LOG(d, k, el, en, CHAOS_FORMAT("%1% key is mandatory", %k));
+
+#define CHECK_TYPE_OF_KEY(d, k, type, el, en)\
+CHECK_ASSERTION_THROW_AND_LOG((data->is ## type ## Value(k)), el, en,\
+CHAOS_FORMAT("%1% key need to be of type %2%", %k% #type));
+
     //define for chaos assert macro, it print the basiclay infromation to find
     //the error when the condition is not true
 #ifndef DEBUG

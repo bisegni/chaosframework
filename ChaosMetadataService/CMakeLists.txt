@@ -122,6 +122,11 @@ SET(cnd_src  ${cnd_src}	api/agent/AgentApiGroup.cpp
                         api/agent/NodeOperation.cpp
                         api/agent/CheckAgentHostedProcess.cpp)
 
+SET(cnd_src  ${cnd_src}	api/deploy/AgentApiGroup.cpp
+                        api/deploy/LoadAgentDescription.cpp
+                        api/deploy/ListNodeForAgent.cpp
+                        api/deploy/ListNodeForAgent.cpp)
+
 #Worker
 SET(cnd_src  ${cnd_src}	worker/DataWorker.cpp
                         worker/DeviceSharedDataWorker.cpp

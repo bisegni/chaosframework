@@ -1,10 +1,10 @@
 /*
- *	AgentApiGroup.h
+ *	DeployApiGroup.h
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
  *
- *    	Copyright 08/02/2017 INFN, National Institute of Nuclear Physics
+ *    	Copyright 02/03/2017 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -19,22 +19,22 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__58410B3_3E94_4B8E_9EFE_3ECFC650FBA9_AgentApiGroup_h
-#define __CHAOSFramework__58410B3_3E94_4B8E_9EFE_3ECFC650FBA9_AgentApiGroup_h
+#ifndef __CHAOSFramework__3F277F9_C5C0_4313_AAFA_4454971B6E53_DeployApiGroup_h
+#define __CHAOSFramework__3F277F9_C5C0_4313_AAFA_4454971B6E53_DeployApiGroup_h
 
 #include "../AbstractApiGroup.h"
 
 namespace chaos {
     namespace metadata_service {
         namespace api {
-            namespace agent {
+            namespace deploy {
                 
                 //! api group for the managment of the logging services
-                DECLARE_CLASS_FACTORY(AgentApiGroup, AbstractApiGroup) {
-                    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(AgentApiGroup)
+                DECLARE_CLASS_FACTORY(DeployApiGroup, AbstractApiGroup) {
+                    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(DeployApiGroup)
                 public:
-                    AgentApiGroup();
-                    ~AgentApiGroup();
+                    DeployApiGroup();
+                    ~DeployApiGroup();
                 };
                 
             }
@@ -42,4 +42,4 @@ namespace chaos {
     }
 }
 
-#endif /* __CHAOSFramework__58410B3_3E94_4B8E_9EFE_3ECFC650FBA9_AgentApiGroup_h */
+#endif /* __CHAOSFramework__3F277F9_C5C0_4313_AAFA_4454971B6E53_DeployApiGroup_h */

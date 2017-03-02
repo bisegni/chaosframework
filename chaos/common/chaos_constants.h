@@ -564,33 +564,40 @@ namespace chaos {
         
         namespace ProcessWorker {
             static const char * const WORKER_NAME                                   = "HostProcessManagement";
-            static const char * const ACTION_LAUNCH_NODE                            = "startNode";
-            static const char * const ACTION_LAUNCH_NODE_PAR_NAME            = NodeDefinitionKey::NODE_UNIQUE_ID;
-            static const char * const ACTION_LAUNCH_NODE_CMD_LINE            = "node_launch_cmd_line";
-            static const char * const ACTION_LAUNCH_NODE_PAR_CFG             = "node_init_cfg";
-            static const char * const ACTION_LAUNCH_NODE_PAR_AUTO_START      = "node_auto_start";
+            static const char * const ACTION_LAUNCH_NODE                    = "startNode";
+            static const char * const ACTION_LAUNCH_NODE_PAR_NAME           = NodeDefinitionKey::NODE_UNIQUE_ID;
+            static const char * const ACTION_LAUNCH_NODE_CMD_LINE           = "node_launch_cmd_line";
+            static const char * const ACTION_LAUNCH_NODE_PAR_CFG            = "node_init_cfg";
+            static const char * const ACTION_LAUNCH_NODE_PAR_AUTO_START     = "node_auto_start";
             
-            static const char * const ACTION_STOP_NODE                       = "stopNode";
-            static const char * const ACTION_STOP_NODE_PAR_NAME              = "node_name";
+            static const char * const ACTION_STOP_NODE                      = "stopNode";
+            static const char * const ACTION_STOP_NODE_PAR_NAME             = "node_name";
             
-            static const char * const ACTION_RESTART_NODE                     = "restartNode";
-            static const char * const ACTION_RESTART_NODE_PAR_NAME            = NodeDefinitionKey::NODE_UNIQUE_ID;
-            static const char * const ACTION_RESTART_NODE_PAR_KILL            = "kill";
+            static const char * const ACTION_RESTART_NODE                   = "restartNode";
+            static const char * const ACTION_RESTART_NODE_PAR_NAME          = NodeDefinitionKey::NODE_UNIQUE_ID;
+            static const char * const ACTION_RESTART_NODE_PAR_KILL          = "kill";
             
-            static const char * const ACTION_LIST_NODE                        = "listNode";
-            static const char * const ACTION_LIST_NODE_PARM_NAME              = NodeDefinitionKey::NODE_UNIQUE_ID;
+            static const char * const ACTION_LIST_NODE                      = "listNode";
+            static const char * const ACTION_LIST_NODE_PARM_NAME            = NodeDefinitionKey::NODE_UNIQUE_ID;
             
-            static const char * const ACTION_CHECK_NODE                       = "checkNode";
-            static const char * const ACTION_CHECK_NODE_ASSOCIATED_NODES      = AgentNodeDefinitionKey::NODE_ASSOCIATED;
-            static const char * const ACTION_CHECK_NODE_RESULT_NODE_UID       = NodeDefinitionKey::NODE_UNIQUE_ID;
-            static const char * const ACTION_CHECK_NODE_RESULT_NODE_ALIVE     = "alive";
+            static const char * const ACTION_CHECK_NODE                     = "checkNode";
+            static const char * const ACTION_CHECK_NODE_ASSOCIATED_NODES    = AgentNodeDefinitionKey::NODE_ASSOCIATED;
+            static const char * const ACTION_CHECK_NODE_RESULT_NODE_UID     = NodeDefinitionKey::NODE_UNIQUE_ID;
+            static const char * const ACTION_CHECK_NODE_RESULT_NODE_ALIVE   = "alive";
         }
         
         namespace DeployWorker {
-            static const char * const WORKER_NAME                             = "DeployWorker";
-            static const char * const ACTION_INIT_DEPLOY_SESSION              = "initDeploySession";
-            static const char * const ACTION_UPLOAD_DEPLOY_CHUNK              = "uploadDeployChunk";
-            static const char * const ACTION_END_DEPLOY_SESSION               = "endDeploySession";
+            static const char * const WORKER_NAME                   = "DeployWorker";
+            
+            static const char * const ACTION_INIT_DEPLOY_SESSION    = "initDeploySession";
+            static const char * const ACTION_UPLOAD_DEPLOY_CHUNK    = "uploadDeployChunk";
+            static const char * const ACTION_END_DEPLOY_SESSION     = "endDeploySession";
+            
+            static const char * const ACTION_PARAM_SESSION_ID       = "session_uid";
+            static const char * const ACTION_PARAM_CHUNK_NUMBER     = "chunk_number";
+            static const char * const ACTION_PARAM_CHUNK_OFFSET     = "chunk_offset";
+            static const char * const ACTION_PARAM_CHUNK_DATA       = "chunk_data";
+            static const char * const ACTION_PARAM_SESSION_HASH     = "session_hash";
         }
     }
     /** @} */ // end of AgentNodeDomainAndActionRPC

@@ -1,10 +1,10 @@
 /*
- *	CheckAgentHostedProcess.cpp
+ *	UploadChunk.cpp
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
  *
- *    	Copyright 15/02/2017 INFN, National Institute of Nuclear Physics
+ *    	Copyright 02/03/2017 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -19,21 +19,20 @@
  *    	limitations under the License.
  */
 
-#include <ChaosMetadataServiceClient/api_proxy/agent/CheckAgentHostedProcess.h>
+#include <ChaosMetadataServiceClient/api_proxy/deploy/UploadChunk.h>
 
 using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::common::data::structured;
 using namespace chaos::service_common::data::agent;
 using namespace chaos::metadata_service_client::api_proxy;
-using namespace chaos::metadata_service_client::api_proxy::agent;
+using namespace chaos::metadata_service_client::api_proxy::deploy;
 
-API_PROXY_CD_DEFINITION(CheckAgentHostedProcess,
-                        AgentNodeDomainAndActionRPC::ProcessWorker::WORKER_NAME,
-                        AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_CHECK_NODE);
+API_PROXY_CD_DEFINITION(UploadChunk,
+                        AgentNodeDomainAndActionRPC::DeployWorker::WORKER_NAME,
+                        AgentNodeDomainAndActionRPC::DeployWorker::ACTION_UPLOAD_DEPLOY_CHUNK);
 
-ApiProxyResult CheckAgentHostedProcess::execute(const std::string& agent_uid) {
+ApiProxyResult UploadChunk::execute(const std::string& agent_uid) {
     std::auto_ptr<CDataWrapper> pack(new CDataWrapper());
-    pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, agent_uid);
     return callApi(pack.release());
 }
