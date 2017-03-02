@@ -167,8 +167,8 @@ int initialize_from_old_mds(std::string conf){
 		 cud.history_ageing=storage_ageing;
 		 cud.storage_type=(chaos::DataServiceNodeDefinitionType::DSStorageType)storage_type;
                  //EXECUTE_CHAOS_API(api_proxy::unit_server::ManageCUType,3000,unit_server_alias,cu_type,1);
-                 EXECUTE_CHAOS_API(api_proxy::control_unit::DeleteInstance,3000,unit_server_alias,cu_id);
-                 EXECUTE_CHAOS_API(api_proxy::control_unit::Delete,3000,cu_id);
+              //   EXECUTE_CHAOS_API(api_proxy::control_unit::DeleteInstance,3000,unit_server_alias,cu_id);
+              //   EXECUTE_CHAOS_API(api_proxy::control_unit::Delete,3000,cu_id);
                  EXECUTE_CHAOS_API(api_proxy::unit_server::ManageCUType,3000,unit_server_alias,cu_type,0);
 
                  // drivers

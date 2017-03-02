@@ -34,6 +34,8 @@
 #include <stdexcept>
 #include <string>
 #include <array>
+ #include <sys/types.h>
+ #include <sys/wait.h>
 
 #define INFO  INFO_LOG(ProcessWorker)
 #define ERROR ERR_LOG(ProcessWorker)
