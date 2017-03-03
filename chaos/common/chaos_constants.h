@@ -44,6 +44,10 @@ namespace chaos {
         static const char * const   OPT_LOG_ON_FILE                     = "log-on-file";
         //! Specify when the file path of the log
         static const char * const   OPT_LOG_FILE                        = "log-file";
+        //! enable logging on syslog
+        static const char * const   OPT_LOG_ON_SYSLOG                   = "log-on-syslog";
+        //! enable logging on syslog
+        static const char * const   OPT_LOG_SYSLOG_SERVER               = "log-syslog-server";
         //! Specify the level of the log going
         static const char * const   OPT_LOG_LEVEL                       = "log-level";
         //! Specify the log max size

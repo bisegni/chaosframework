@@ -88,15 +88,12 @@ std::ostream& operator<<(std::ostream& out, const level::LogSeverityLevel& level
 
 void LogManager::init() throw(CException) {
     //get the log configuration
-    level::LogSeverityLevel     logLevel                =   GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_LOG_LEVEL)?
-    static_cast<level::LogSeverityLevel>(GlobalConfiguration::getInstance()->getConfiguration()->getInt32Value(InitOption::OPT_LOG_LEVEL)):
-    level::LSLInfo;
-    bool                        logOnConsole            =	GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_LOG_ON_CONSOLE)?
-    GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_LOG_ON_CONSOLE):false;
-    bool                        logOnFile               =	GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_LOG_ON_CONSOLE)?
-    GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_LOG_ON_FILE):false;
-    string                      logFileName             =   GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_LOG_FILE)?
-    GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_LOG_FILE):"";
+    level::LogSeverityLevel     logLevel                =   GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_LOG_LEVEL)?static_cast<level::LogSeverityLevel>(GlobalConfiguration::getInstance()->getConfiguration()->getInt32Value(InitOption::OPT_LOG_LEVEL)):level::LSLInfo;
+    bool                        logOnConsole            =	GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_LOG_ON_CONSOLE)?GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_LOG_ON_CONSOLE):false;
+    bool                        logOnFile               =	GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_LOG_ON_CONSOLE)?GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_LOG_ON_FILE):false;
+    bool                        logOnSyslog             =	GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_LOG_ON_SYSLOG)?GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_LOG_ON_SYSLOG):false;
+    string                      logFileName             =   GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_LOG_FILE)?GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_LOG_FILE):"";
+    string                      logSyslogSrv            =   GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_LOG_SYSLOG_SERVER)?GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_LOG_SYSLOG_SERVER):"localhost";
     uint32_t                    log_file_max_size_mb    =   GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_LOG_MAX_SIZE_MB)?GlobalConfiguration::getInstance()->getConfiguration()->getUInt32Value(InitOption::OPT_LOG_MAX_SIZE_MB):1;
     
     logging::add_common_attributes();
@@ -136,6 +133,22 @@ void LogManager::init() throw(CException) {
         
     }
     
+    if(logOnSyslog) {
+        // Creating a syslog sink.
+        boost::shared_ptr< sinks::synchronous_sink< sinks::syslog_backend > > sink;
+        sink.reset(new sinks::synchronous_sink< sinks::syslog_backend >
+                   (
+                    //keywords::facility = sinks::syslog::user,
+                    keywords::use_impl = sinks::syslog::udp_socket_based,
+                    keywords::format = EXTENDEND_LOG_FORMAT
+                    )
+                   );
+        // Setting the remote address to sent syslog messages to.
+        sink->locked_backend()->set_target_address(logSyslogSrv, 5140);
+        // Adding the sink to the core.b
+        logger->add_sink(sink);
+    }
+    
     //enable the log in case of needs
-    logger->set_logging_enabled(logOnConsole || logOnFile);
+    logger->set_logging_enabled(logOnConsole || logOnFile || logOnSyslog);
 }
