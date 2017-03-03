@@ -26,6 +26,7 @@
 
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/utility/UUIDUtil.h>
+#include <chaos/common/configuration/GlobalConfiguration.h>
 
 #include <boost/filesystem.hpp>
 #include <cstdio>
@@ -45,8 +46,10 @@ using namespace chaos::agent;
 using namespace chaos::agent::worker;
 using namespace chaos::service_common::data::agent;
 
+using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::common::utility;
+
 
 ProcessWorker::ProcessWorker():
 AbstractWorker(AgentNodeDomainAndActionRPC::ProcessWorker::WORKER_NAME) {
@@ -276,7 +279,7 @@ CHAOS_FORMAT("%1%.ini",%x.association_unique_id)
 CHAOS_FORMAT("%1%/ini_files/", %ChaosAgent::getInstance()->settings.working_directory)
 
 #define COMPOSE_NODE_LAUNCH_CMD_LINE(x)\
-CHAOS_FORMAT("%1%/%2% --unit-server-alias %3% --%4% %5%%6%", %ChaosAgent::getInstance()->settings.working_directory%x.launch_cmd_line%x.associated_node_uid%chaos::InitOption::OPT_CONF_FILE%INIT_FILE_PATH()%INIT_FILE_NAME(x))
+CHAOS_FORMAT("%1%/%2% --%3% %4%%5%", %ChaosAgent::getInstance()->settings.working_directory%x.launch_cmd_line%chaos::InitOption::OPT_CONF_FILE%INIT_FILE_PATH()%INIT_FILE_NAME(x))
 
 void ProcessWorker::launchProcess(const AgentAssociation& node_association_info) {
     int pid = 0;
@@ -295,6 +298,20 @@ void ProcessWorker::launchProcess(const AgentAssociation& node_association_info)
         //write configuration file
         std::ofstream init_file_stream;
         init_file_stream.open(init_file.string().c_str(), std::ofstream::trunc | std::ofstream::out);
+        
+        //append unit server alias
+        init_file_stream << CHAOS_FORMAT("unit-server-alias=%1%",%node_association_info.associated_node_uid) << std::endl;
+        
+        //append metadata server from agent configuration
+        VectorMetadatserver mds_vec = GlobalConfiguration::getInstance()->getMetadataServerAddressList();
+        for(VectorMetadatserverIterator mds_it = mds_vec.begin(),
+            end = mds_vec.end();
+            mds_it != end;
+            mds_it++) {
+            init_file_stream << CHAOS_FORMAT("metadata-server=%1%",%mds_it->ip_port) << std::endl;
+        }
+        
+        //append user defined paramenter
         init_file_stream.write(node_association_info.configuration_file_content.c_str(), node_association_info.configuration_file_content.length());
         init_file_stream.close();
         if (!popen2NoPipe(exec_command.c_str(), pid)) {throw chaos::CException(-2, "popen() failed!", __PRETTY_FUNCTION__);}

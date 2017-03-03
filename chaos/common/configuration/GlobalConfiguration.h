@@ -77,6 +77,7 @@ x = getOption<t>(y);\
 bool x;\
 x = hasOption(y);
     
+    CHAOS_DEFINE_VECTOR_FOR_TYPE(chaos::common::network::CNetworkAddress, VectorMetadatserver);
     CHAOS_DEFINE_MAP_FOR_TYPE(std::string, std::string, MapStrKeyStrValue);
     
     /*
@@ -283,7 +284,7 @@ x = hasOption(y);
         /*
          return the address list of multiple configured metadataserver
          */
-        std::vector<chaos::common::network::CNetworkAddress> getMetadataServerAddressList();
+        VectorMetadatserver getMetadataServerAddressList();
         
         /*
          return the address of metadataserver

@@ -82,7 +82,7 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException){
         addOption(InitOption::OPT_EVENT_DISABLE, po::value< bool >()->default_value(false), "Disable the event system [by default it is enable]");
         addOption(InitOption::OPT_PUBLISHING_IP, po::value< string >(), "Specify the ip address where to publish the framework rpc system");
         addOption(InitOption::OPT_PUBLISHING_INTERFACE, po::value< string >(), "Specify the interface where to publish the framework rpc system");
-
+        
     }catch (po::error &e) {
         throw CException(0, e.what(), "GlobalConfiguration::preParseStartupParameters");
     }
@@ -129,7 +129,7 @@ void GlobalConfiguration::loadStartupParameter(int argc, char* argv[]) throw (CE
     try{
         //
         po::store(po::parse_command_line(argc, argv, desc), vm);
-	po::notify(vm);
+        po::notify(vm);
     }catch (po::error &e) {
         //write error also on cerr
         std::cerr << e.what();
@@ -141,7 +141,7 @@ void GlobalConfiguration::loadStreamParameter(std::istream &config_file)  throw 
     try{
         //
         po::store(po::parse_config_file(config_file, desc), vm);
-	po::notify(vm);
+        po::notify(vm);
     }catch (po::error &e) {
         //write error also on cerr
         std::cerr << e.what();
@@ -152,15 +152,15 @@ void GlobalConfiguration::loadStreamParameter(std::istream &config_file)  throw 
 
 void GlobalConfiguration::scanOption()  throw (CException) {
     try{
-
-
-	if (hasOption(InitOption::OPT_HELP)) {
-	  std::cout << desc;
-	  exit(0);
-	  return;
         
-	}
-
+        
+        if (hasOption(InitOption::OPT_HELP)) {
+            std::cout << desc;
+            exit(0);
+            return;
+            
+        }
+        
     }catch (po::error &e) {
         //write error also on cerr
         std::cerr << e.what();
@@ -168,7 +168,7 @@ void GlobalConfiguration::scanOption()  throw (CException) {
         
     }
     
-
+    
 }
 
 /*
@@ -182,7 +182,7 @@ void GlobalConfiguration::parseParameter(const po::basic_parsed_options<char>& o
     try{
         //
         po::store(optionsParser, vm);
-	po::notify(vm);
+        po::notify(vm);
     }catch (po::error &e) {
         //write error also on cerr
         std::cerr << e.what();
@@ -197,9 +197,9 @@ void GlobalConfiguration::parseParameter(const po::basic_parsed_options<char>& o
     checkDefaultOption();
 }
 struct __file_remover__ {
-  const char*name;
-  __file_remover__(const char*_name):name(_name){}
-  ~__file_remover__(){std::remove(name);}
+    const char*name;
+    __file_remover__(const char*_name):name(_name){}
+    ~__file_remover__(){std::remove(name);}
 };
 void GlobalConfiguration::checkDefaultOption() throw (CException) {
     
@@ -263,7 +263,7 @@ void GlobalConfiguration::checkDefaultOption() throw (CException) {
         OPT_RPC_SYNC_ENABLE = false;
     }
     configuration.addBoolValue(InitOption::OPT_RPC_SYNC_ENABLE, OPT_RPC_SYNC_ENABLE);
-	
+    
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(bool, rpc_enable_log_metric, InitOption::OPT_RPC_LOG_METRIC, false)
     configuration.addBoolValue(InitOption::OPT_RPC_LOG_METRIC, rpc_enable_log_metric);
     
@@ -411,8 +411,8 @@ void GlobalConfiguration::fillKVParameter(std::map<std::string, std::string>& kv
         if(regex.size() &&
            !boost::regex_match(kv_param_value,
                                boost::regex(regex))) {
-            throw chaos::CException(-3, "Malformed kv parameter string", __PRETTY_FUNCTION__);
-        }
+               throw chaos::CException(-3, "Malformed kv parameter string", __PRETTY_FUNCTION__);
+           }
         
         //clear previosly pair
         kv_splitted.clear();
@@ -483,7 +483,7 @@ string GlobalConfiguration::getMetadataServerAddress() {
     return server_array->getStringElementAtIndex(0);
 }
 
-std::vector<CNetworkAddress> GlobalConfiguration::getMetadataServerAddressList() {
+VectorMetadatserver GlobalConfiguration::getMetadataServerAddressList() {
     std::vector<CNetworkAddress> result;
     std::auto_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> server_array(configuration.getVectorValue(InitOption::OPT_METADATASERVER_ADDRESS));
     for(int idx = 0;
