@@ -48,7 +48,7 @@ int ErrorManager::submiteError(QSharedPointer<chaos::CException> new_error) {
     QSqlQuery query(db);
     query.prepare("INSERT INTO error (timestamp, error_code, error_message, error_domain) "
                   "VALUES (:timestamp, :error_code, :error_message, :error_domain)");
-    query.bindValue(":timestamp", QDateTime::currentMSecsSinceEpoch());
+    query.bindValue(":timestamp", (qulonglong)QDateTime::currentMSecsSinceEpoch());
     query.bindValue(":error_code", QVariant(new_error->errorCode));
     query.bindValue(":error_message", QString::fromStdString(new_error->errorMessage));
     query.bindValue(":error_domain", QString::fromStdString(new_error->errorDomain));
@@ -90,7 +90,7 @@ int ErrorManager::getErrorPage(QVector< QSharedPointer<ErrorEntry> >& page_resul
     while(query.next()) {
         QSharedPointer<ErrorEntry> entry(new ErrorEntry);
         entry->seq = query.value(0).toULongLong();
-        entry->date_time = QDateTime::fromMSecsSinceEpoch(query.value(1).toLongLong());
+        entry->date_time = QDateTime::fromMSecsSinceEpoch(query.value(1).toULongLong());
         entry->exception = QSharedPointer<chaos::CException>(new chaos::CException(query.value(2).toInt(),
                                                                                    query.value(3).toString().toStdString(),
                                                                                    query.value(4).toString().toStdString()));
@@ -106,7 +106,7 @@ int ErrorManager::getErrorEntryByPosition(QSharedPointer<ErrorEntry>& page_resul
     db_mutex.lock();
     QSqlQuery query(db);
     query.prepare("select * from error  order by id asc limit 1 offset :start_position");
-    query.bindValue(":start_position", entry_position);
+    query.bindValue(":start_position", (qulonglong)entry_position);
     query.exec();
     if(query.next()) {
         page_result.reset(new ErrorEntry);
