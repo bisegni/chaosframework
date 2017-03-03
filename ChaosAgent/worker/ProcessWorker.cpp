@@ -276,12 +276,12 @@ CHAOS_FORMAT("%1%.ini",%x.association_unique_id)
 CHAOS_FORMAT("%1%/ini_files/", %ChaosAgent::getInstance()->settings.working_directory)
 
 #define COMPOSE_NODE_LAUNCH_CMD_LINE(x)\
-CHAOS_FORMAT("%1%/%2% --%3% %4%%5%", %ChaosAgent::getInstance()->settings.working_directory%x.launch_cmd_line%chaos::InitOption::OPT_CONF_FILE%INIT_FILE_PATH()%INIT_FILE_NAME(x))
+CHAOS_FORMAT("%1%/%2% --unit-server-alias %3% --%4% %5%%6%", %ChaosAgent::getInstance()->settings.working_directory%x.launch_cmd_line%x.associated_node_uid%chaos::InitOption::OPT_CONF_FILE%INIT_FILE_PATH()%INIT_FILE_NAME(x))
 
 void ProcessWorker::launchProcess(const AgentAssociation& node_association_info) {
     int pid = 0;
+    std::string exec_command;
     boost::filesystem::path init_file;
-    boost::filesystem::path exec_command;
     try{
         exec_command = COMPOSE_NODE_LAUNCH_CMD_LINE(node_association_info);
         init_file = CHAOS_FORMAT("%1%/%2%", %INIT_FILE_PATH()%INIT_FILE_NAME(node_association_info));
@@ -297,7 +297,7 @@ void ProcessWorker::launchProcess(const AgentAssociation& node_association_info)
         init_file_stream.open(init_file.string().c_str(), std::ofstream::trunc | std::ofstream::out);
         init_file_stream.write(node_association_info.configuration_file_content.c_str(), node_association_info.configuration_file_content.length());
         init_file_stream.close();
-        if (!popen2NoPipe(exec_command.string().c_str(), pid)) {throw chaos::CException(-2, "popen() failed!", __PRETTY_FUNCTION__);}
+        if (!popen2NoPipe(exec_command.c_str(), pid)) {throw chaos::CException(-2, "popen() failed!", __PRETTY_FUNCTION__);}
     } catch(std::exception& e) {
         ERROR << e.what();
     } catch(chaos::CException& ex) {
