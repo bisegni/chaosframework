@@ -48,6 +48,8 @@ namespace chaos {
         static const char * const   OPT_LOG_ON_SYSLOG                   = "log-on-syslog";
         //! enable logging on syslog
         static const char * const   OPT_LOG_SYSLOG_SERVER               = "log-syslog-server";
+        //! specify the port of syslogerver
+        static const char * const   OPT_LOG_SYSLOG_SERVER_PORT          = "log-syslog-server-port";
         //! Specify the level of the log going
         static const char * const   OPT_LOG_LEVEL                       = "log-level";
         //! Specify the log max size

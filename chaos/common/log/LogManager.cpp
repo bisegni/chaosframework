@@ -94,6 +94,7 @@ void LogManager::init() throw(CException) {
     bool                        logOnSyslog             =	GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_LOG_ON_SYSLOG)?GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_LOG_ON_SYSLOG):false;
     string                      logFileName             =   GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_LOG_FILE)?GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_LOG_FILE):"";
     string                      logSyslogSrv            =   GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_LOG_SYSLOG_SERVER)?GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_LOG_SYSLOG_SERVER):"localhost";
+    int                         logSyslogSrvPort        =   GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_LOG_SYSLOG_SERVER_PORT)?GlobalConfiguration::getInstance()->getConfiguration()->getInt32Value(InitOption::OPT_LOG_SYSLOG_SERVER_PORT):514;
     uint32_t                    log_file_max_size_mb    =   GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_LOG_MAX_SIZE_MB)?GlobalConfiguration::getInstance()->getConfiguration()->getUInt32Value(InitOption::OPT_LOG_MAX_SIZE_MB):1;
     
     logging::add_common_attributes();
@@ -144,7 +145,7 @@ void LogManager::init() throw(CException) {
                     )
                    );
         // Setting the remote address to sent syslog messages to.
-        sink->locked_backend()->set_target_address(logSyslogSrv, 5140);
+        sink->locked_backend()->set_target_address(logSyslogSrv, logSyslogSrvPort);
         // Adding the sink to the core.b
         logger->add_sink(sink);
     }

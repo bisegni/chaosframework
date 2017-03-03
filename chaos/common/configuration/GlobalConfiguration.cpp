@@ -54,6 +54,7 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException){
         addOption(InitOption::OPT_LOG_ON_CONSOLE, po::value< bool >()->zero_tokens(), "Specify when the log must be forwarded on console");
         addOption(InitOption::OPT_LOG_ON_SYSLOG, po::value< bool >()->zero_tokens(), "Specify when the log must be forwarded on syslog server");
         addOption(InitOption::OPT_LOG_SYSLOG_SERVER, po::value< string >()->default_value("localhost"), "Specify the logsrv hostname");
+        addOption(InitOption::OPT_LOG_SYSLOG_SERVER_PORT, po::value< int >()->default_value(514), "Specify the logsrv port");
         addOption(InitOption::OPT_LOG_ON_FILE, po::value< bool >()->zero_tokens(), "Specify when the log must be forwarded on file");
         addOption(InitOption::OPT_LOG_FILE, po::value< string >()->default_value("chaos_framework_log_%Y-%m-%d_%H-%M-%S.%N.log"), "Specify when the file path of the log");
         addOption(InitOption::OPT_LOG_LEVEL, po::value< string >()->default_value("info"), "Specify the level of the log using the value [debug, info, notice, warning, fatal]");
@@ -225,6 +226,9 @@ void GlobalConfiguration::checkDefaultOption() throw (CException) {
     
     CHECK_AND_DEFINE_OPTION(string, logSyslogSrv, InitOption::OPT_LOG_SYSLOG_SERVER)
     configuration.addStringValue(InitOption::OPT_LOG_SYSLOG_SERVER, logSyslogSrv);
+    
+    CHECK_AND_DEFINE_OPTION(int, logSyslogSrvPort, InitOption::OPT_LOG_SYSLOG_SERVER_PORT)
+    configuration.addInt32Value(InitOption::OPT_LOG_SYSLOG_SERVER_PORT, logSyslogSrvPort);
     
     CHECK_AND_DEFINE_BOOL_ZERO_TOKEN_OPTION(logOnFile, InitOption::OPT_LOG_ON_FILE)
     configuration.addBoolValue(InitOption::OPT_LOG_ON_FILE, logOnFile);
