@@ -17,6 +17,7 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
+
 #include <fstream>
 #include <iostream>
 
@@ -45,11 +46,9 @@ namespace po = boost::program_options;
 /*
  
  */
-void GlobalConfiguration::preParseStartupParameters() throw (CException){
-    
+void GlobalConfiguration::preParseStartupParameters() throw (CException) {
     try{
         addOption(InitOption::OPT_HELP, "Produce help message");
-        //cache parameter
         addOption<std::string>(InitOption::OPT_CONF_FILE,"File configuration path");
         addOption(InitOption::OPT_LOG_ON_CONSOLE, po::value< bool >()->zero_tokens(), "Specify when the log must be forwarded on console");
         addOption(InitOption::OPT_LOG_ON_SYSLOG, po::value< bool >()->zero_tokens(), "Specify when the log must be forwarded on syslog server");
@@ -85,8 +84,7 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException){
         addOption(InitOption::OPT_EVENT_DISABLE, po::value< bool >()->default_value(false), "Disable the event system [by default it is enable]");
         addOption(InitOption::OPT_PUBLISHING_IP, po::value< string >(), "Specify the ip address where to publish the framework rpc system");
         addOption(InitOption::OPT_PUBLISHING_INTERFACE, po::value< string >(), "Specify the interface where to publish the framework rpc system");
-        
-    }catch (po::error &e) {
+    } catch (po::error &e) {
         throw CException(0, e.what(), "GlobalConfiguration::preParseStartupParameters");
     }
 }
