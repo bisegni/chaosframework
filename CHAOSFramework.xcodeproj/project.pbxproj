@@ -1090,6 +1090,8 @@
 		32FF2A931E6874FF00117985 /* MongoDBDeployDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A911E6874FF00117985 /* MongoDBDeployDataAccess.cpp */; };
 		32FF2AAA1E6D79EC00117985 /* DataBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FF2AA81E6D79EC00117985 /* DataBuffer.h */; };
 		32FF2AAE1E6D8B6400117985 /* ChaosAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FF2AAC1E6D8B6400117985 /* ChaosAllocator.h */; };
+		32FF2AB11E6DAC7F00117985 /* LogWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2AAF1E6DAC7F00117985 /* LogWorker.cpp */; };
+		32FF2AB41E6DAFA400117985 /* ProcUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2AB21E6DAFA400117985 /* ProcUtil.cpp */; };
 		32FFA3EC1B00D43900C57E07 /* QuantumSlot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FFA3EA1B00D43900C57E07 /* QuantumSlot.cpp */; };
 		32FFA3ED1B00D43900C57E07 /* QuantumSlot.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FFA3EB1B00D43900C57E07 /* QuantumSlot.h */; };
 		32FFA3EE1B00F95900C57E07 /* QuantumSlotScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FFA3E61B00CEE100C57E07 /* QuantumSlotScheduler.cpp */; };
@@ -2526,6 +2528,10 @@
 		32FF2A921E6874FF00117985 /* MongoDBDeployDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MongoDBDeployDataAccess.h; sourceTree = "<group>"; };
 		32FF2AA81E6D79EC00117985 /* DataBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataBuffer.h; sourceTree = "<group>"; };
 		32FF2AAC1E6D8B6400117985 /* ChaosAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChaosAllocator.h; sourceTree = "<group>"; };
+		32FF2AAF1E6DAC7F00117985 /* LogWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LogWorker.cpp; sourceTree = "<group>"; };
+		32FF2AB01E6DAC7F00117985 /* LogWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogWorker.h; sourceTree = "<group>"; };
+		32FF2AB21E6DAFA400117985 /* ProcUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcUtil.cpp; sourceTree = "<group>"; };
+		32FF2AB31E6DAFA400117985 /* ProcUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcUtil.h; sourceTree = "<group>"; };
 		32FFA3E61B00CEE100C57E07 /* QuantumSlotScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QuantumSlotScheduler.cpp; sourceTree = "<group>"; };
 		32FFA3E71B00CEE100C57E07 /* QuantumSlotScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuantumSlotScheduler.h; sourceTree = "<group>"; };
 		32FFA3EA1B00D43900C57E07 /* QuantumSlot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QuantumSlot.cpp; sourceTree = "<group>"; };
@@ -5007,6 +5013,10 @@
 				32E6F4381E48689E0068320E /* ProcessWorker.h */,
 				32FF2A671E672CAA00117985 /* DeployWorker.cpp */,
 				32FF2A681E672CAA00117985 /* DeployWorker.h */,
+				32FF2AAF1E6DAC7F00117985 /* LogWorker.cpp */,
+				32FF2AB01E6DAC7F00117985 /* LogWorker.h */,
+				32FF2AB21E6DAFA400117985 /* ProcUtil.cpp */,
+				32FF2AB31E6DAFA400117985 /* ProcUtil.h */,
 			);
 			path = worker;
 			sourceTree = "<group>";
@@ -6431,7 +6441,9 @@
 				32E6F4391E48689E0068320E /* ProcessWorker.cpp in Sources */,
 				326413A21E44AD750035E175 /* ChaosAgent.cpp in Sources */,
 				3264139C1E44ACE60035E175 /* main.cpp in Sources */,
+				32FF2AB11E6DAC7F00117985 /* LogWorker.cpp in Sources */,
 				32E6F43C1E4869120068320E /* AbstractWorker.cpp in Sources */,
+				32FF2AB41E6DAFA400117985 /* ProcUtil.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

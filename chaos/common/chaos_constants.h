@@ -605,6 +605,13 @@ namespace chaos {
             static const char * const ACTION_PARAM_CHUNK_DATA       = "chunk_data";
             static const char * const ACTION_PARAM_SESSION_HASH     = "session_hash";
         }
+        
+        namespace LogWorker {
+            static const char * const WORKER_NAME                   = "LogWorker";
+            
+            static const char * const ACTION_START_LOGGING_ASSOCIATION  = "startLoggingAssociation";
+            static const char * const ACTION_STOP_LOGGING_ASSOCIATION   = "stopLoggingAssociation";
+        }
     }
     /** @} */ // end of AgentNodeDomainAndActionRPC
     
