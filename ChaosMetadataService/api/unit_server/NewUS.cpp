@@ -57,10 +57,17 @@ CDataWrapper *NewUS::execute(CDataWrapper *api_data,
     if(presence) {
         LOG_AND_TROW(US_NEW_ERR, -5, boost::str(boost::format("There is already another node with the same uid:%1%") % new_us_uid));
     }
-
+    const std::string desc = api_data->hasKey(chaos::NodeDefinitionKey::NODE_DESC)?api_data->getStringValue(chaos::NodeDefinitionKey::NODE_DESC):"";
+    const chaos::common::data::CDataWrapper*custom= api_data->hasKey(chaos::NodeDefinitionKey::NODE_CUSTOM_PARAM)?api_data->getCSDataValue(chaos::NodeDefinitionKey::NODE_CUSTOM_PARAM):NULL;
     std::auto_ptr<CDataWrapper> data_pack(new CDataWrapper());
     data_pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, new_us_uid);
     data_pack->addStringValue(NodeDefinitionKey::NODE_TYPE, NodeType::NODE_TYPE_UNIT_SERVER);
+    data_pack->addStringValue(NodeDefinitionKey::NODE_DESC, desc);
+    if(custom){
+    	data_pack->addCSDataValue(chaos::NodeDefinitionKey::NODE_CUSTOM_PARAM,*custom);
+    	delete custom;
+    }
+
         //we can proceed
     if((err = us_da->insertNewUS(*data_pack.get(), false))) {
         LOG_AND_TROW(US_NEW_ERR, -6, boost::str(boost::format("Error creating a new unit server of id:%1%") % new_us_uid));

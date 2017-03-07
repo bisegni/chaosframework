@@ -33,5 +33,6 @@ API_PROXY_CD_DEFINITION(GetDescription,
 ApiProxyResult GetDescription::execute(const std::string& unitserver_unique_id) {
     chaos::common::data::CDataWrapper *message = new chaos::common::data::CDataWrapper();
     message->addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, unitserver_unique_id);
+
     return callApi(message);
 }

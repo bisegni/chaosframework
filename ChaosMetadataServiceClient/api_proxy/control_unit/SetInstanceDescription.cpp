@@ -53,6 +53,8 @@ ApiProxyResult SetInstanceDescription::execute(SetInstanceDescriptionHelper& api
     instance_description.addBoolValue("auto_init", api_data.auto_init);
         //add the auto start setting
     instance_description.addBoolValue("auto_start", api_data.auto_start);
+    	// add the description field
+    instance_description.addStringValue("desc", api_data.desc);
         // set the load parameter
     instance_description.addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM, api_data.load_parameter);
         //add the deafult scheduler delay
@@ -84,16 +86,33 @@ ApiProxyResult SetInstanceDescription::execute(SetInstanceDescriptionHelper& api
         instance_description.finalizeArrayForKey("attribute_value_descriptions");
     }
 
+    instance_description.addCSDataValue(NodeDefinitionKey::NODE_CUSTOM_PARAM,api_data.control_unit_custom_param);
+
+
         //add instance description to the message
     message->addCSDataValue("instance_description", instance_description);
     return callApi(message);
 }
+
+ApiProxyResult SetInstanceDescription::execute(const std::string& uid,chaos::common::data::CDataWrapper& instance_description){
+	 chaos::common::data::CDataWrapper *message = new chaos::common::data::CDataWrapper();
+	        //add the control unit unique id
+	message->addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, uid);
+	        // set the type for control unit
+	message->addStringValue(chaos::NodeDefinitionKey::NODE_TYPE, chaos::NodeType::NODE_TYPE_CONTROL_UNIT);
+
+
+	message->addCSDataValue("instance_description", instance_description);
+	return callApi(message);
+}
+
 
     //----------------------------------------------------
 
 SetInstanceDescriptionHelper::SetInstanceDescriptionHelper():
 control_unit_uid(""),
 unit_server_uid(""),
+desc("Control Unit"),
 control_unit_implementation(""),
 auto_load(false),
 auto_init(false),

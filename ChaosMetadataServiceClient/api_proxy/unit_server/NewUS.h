@@ -38,8 +38,9 @@ namespace chaos {
                     /*!
                      Return the full description of the unit server
                      \param new_unit_server_uid the unique id of th enew unit server
+                     \param desc description string optional
                      */
-                    ApiProxyResult execute(const std::string& new_unit_server_uid);
+                    ApiProxyResult execute(const std::string& new_unit_server_uid,const std::string desc="",const chaos::common::data::CDataWrapper*custom=NULL);
                 };
 
             }

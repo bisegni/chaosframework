@@ -56,6 +56,7 @@ namespace chaos {
                     std::string control_unit_implementation;
                     //!set the instance autoload flag
                     
+
                     /*!
                      specify if the control unit, hosted by an unit server, need to be loaded after 
                      his parent has been successfully registered.
@@ -71,6 +72,11 @@ namespace chaos {
                     //!define the default value for the scheduler step's delay within the control unit
                     uint64_t default_schedule_delay;
                     
+                    //! description of the cu
+                    std::string desc;
+                    //! custom kv parameters
+                    common::data::CDataWrapper control_unit_custom_param;
+                    //!!
                     //!define the storage type as in @DataServiceNodeDefinitionType::DSStorageType
                     DataServiceNodeDefinitionType::DSStorageType storage_type;
                     
@@ -93,6 +99,7 @@ namespace chaos {
                     //! the string is passed to the control unit for the load phase
                     std::string load_parameter;
                     
+
                     //!add a new driver description
                     void addDriverDescription(const std::string& driver_name,
                                               const std::string& driver_version,
@@ -122,6 +129,8 @@ namespace chaos {
                      Set the isntance
                      */
                     ApiProxyResult execute(SetInstanceDescriptionHelper& api_data);
+                    ApiProxyResult execute(const std::string& uid,chaos::common::data::CDataWrapper& cu);
+
                 };
                 
             }

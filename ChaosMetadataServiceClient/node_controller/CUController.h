@@ -18,8 +18,8 @@
  *    	limitations under the License.
  */
 
-#ifndef CHAOSFramework_DeviceLiveDataFetcher_h
-#define CHAOSFramework_DeviceLiveDataFetcher_h
+#ifndef CHAOSFramework_CUCONTROLLER_h
+#define CHAOSFramework_CUCONTROLLER_h
 
 #include <chaos/common/chaos_types.h>
 #include <chaos/common/data/DatasetDB.h>

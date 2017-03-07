@@ -203,6 +203,12 @@ namespace chaos {
         
         //! is the hartbeat of the node for the current request[uint64]
         static const char * const NODE_TIMESTAMP        = "ndk_heartbeat";
+
+        //! brief node description  [string]
+        static const char * const NODE_DESC       = "ndk_desc";
+
+        //! brief node custom configuration parameters [CDataWrapper]
+        static const char * const NODE_CUSTOM_PARAM       = "ndk_custom_param";
     }
     /** @} */ // end of NodeDefinitionKey
     

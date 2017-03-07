@@ -43,6 +43,15 @@ ApiProxyResult SaveNodeAssociation::execute(const std::string& agent_uid,
 }
 
 ApiProxyResult SaveNodeAssociation::execute(const std::string& agent_uid,
+		chaos::common::data::CDataWrapper& node_association) {
+    std::auto_ptr<CDataWrapper> pack(new CDataWrapper());
+
+    pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, agent_uid);
+    pack->addCSDataValue(AgentNodeDefinitionKey::NODE_ASSOCIATED, node_association);
+    return callApi(pack.release());
+}
+
+ApiProxyResult SaveNodeAssociation::execute(const std::string& agent_uid,
                                             VectorAgentAssociation& multiple_node_association) {
     std::auto_ptr<CDataWrapper> pack(new CDataWrapper());
     VectorAgentAssociationSDWrapper associationList_sd_wrap(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(VectorAgentAssociation, multiple_node_association));
