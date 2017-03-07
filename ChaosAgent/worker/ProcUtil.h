@@ -22,6 +22,8 @@
 #ifndef __CHAOSFramework_D11D47EC_B834_406C_897C_8191C80B6D8B_ProcUtil_h
 #define __CHAOSFramework_D11D47EC_B834_406C_897C_8191C80B6D8B_ProcUtil_h
 
+#include "../ChaosAgent.h"
+
 #include <cstdio>
 #include <string>
 #include <sys/types.h>
@@ -32,6 +34,23 @@
 namespace chaos {
     namespace agent {
         namespace worker {
+            
+            
+#define INIT_FILE_NAME(x)\
+CHAOS_FORMAT("%1%.ini",%x.association_unique_id)
+            
+#define NPIPE_FILE_NAME(x)\
+CHAOS_FORMAT("%1%.pipe",%x.association_unique_id)
+            
+#define INIT_FILE_PATH()\
+CHAOS_FORMAT("%1%/ini_files/", %ChaosAgent::getInstance()->settings.working_directory)
+            
+#define QUEUE_FILE_PATH()\
+CHAOS_FORMAT("%1%/queue/", %ChaosAgent::getInstance()->settings.working_directory)
+            
+#define COMPOSE_NODE_LAUNCH_CMD_LINE(x)\
+CHAOS_FORMAT("%1%/%2% --%3% %4%%5%", %ChaosAgent::getInstance()->settings.working_directory%x.launch_cmd_line%chaos::InitOption::OPT_CONF_FILE%INIT_FILE_PATH()%INIT_FILE_NAME(x))
+            
             class ProcUtil {
             public:
                 static FILE * popen2(const std::string& command,

@@ -19,9 +19,12 @@
  *    	limitations under the License.
  */
 
+#include "LogWorker.h"
+#include "ProcUtil.h"
+
 #include <chaos_service_common/data/node/Agent.h>
 
-#include "LogWorker.h"
+#include <boost/filesystem.hpp>
 
 #define INFO  INFO_LOG(LogWorker)
 #define ERROR ERR_LOG(LogWorker)
@@ -33,6 +36,10 @@ using namespace chaos::service_common::data::agent;
 
 using namespace chaos::common::data;
 using namespace chaos::common::utility;
+using namespace chaos::common::async_central;
+
+#define NUM_OF_LINE_TO_READ 10
+#define SCAN_TIME_INTERVALL 500
 
 LogWorker::LogWorker():
 AbstractWorker(AgentNodeDomainAndActionRPC::LogWorker::RPC_DOMAIN) {
@@ -52,9 +59,15 @@ AbstractWorker(AgentNodeDomainAndActionRPC::LogWorker::RPC_DOMAIN) {
 
 LogWorker::~LogWorker() {}
 
-void LogWorker::init(void *data) throw(chaos::CException) {}
+void LogWorker::init(void *data) throw(chaos::CException) {
+    AsyncCentralManager::getInstance()->addTimer(this,
+                                                 SCAN_TIME_INTERVALL,
+                                                 SCAN_TIME_INTERVALL);
+}
 
-void LogWorker::deinit() throw(chaos::CException) {}
+void LogWorker::deinit() throw(chaos::CException) {
+    AsyncCentralManager::getInstance()->removeTimer(this);
+}
 
 CDataWrapper *LogWorker::starLoggingAssociation(CDataWrapper *data,
                                                 bool& detach) {
@@ -63,12 +76,32 @@ CDataWrapper *LogWorker::starLoggingAssociation(CDataWrapper *data,
                             "Input data is mandatory");
     CHECK_MANDATORY_KEY(data, AgentNodeDefinitionKey::NODE_ASSOCIATED, ERROR, -2);
     CHECK_TYPE_OF_KEY(data, AgentNodeDefinitionKey::NODE_ASSOCIATED, CDataWrapper, ERROR, -3);
-
+    
     std::auto_ptr<CDataWrapper> assoc_ser(data->getCSDataValue(AgentNodeDefinitionKey::NODE_ASSOCIATED));
     
     AgentAssociationSDWrapper node_association;
     node_association.deserialize(assoc_ser.get());
     
+    LockableMapLoggingPipeWriteLock wl = map_logging_file.getWriteLockObject();
+    
+    //! add logging file for association
+    if(map_logging_file().count(node_association().associated_node_uid)) {
+        //logging for node already enabled
+        INFO << CHAOS_FORMAT("Logging for %1% already enabled",%node_association().associated_node_uid);
+        return NULL;
+    }
+    
+    //open named pipe for read logging
+    boost::filesystem::path queue_file = CHAOS_FORMAT("%1%/%2%", %QUEUE_FILE_PATH()%NPIPE_FILE_NAME(node_association()));
+    CHAOS_FORMAT("Start logging for %1% on named pipe %2%",%node_association().associated_node_uid%queue_file.string());
+    
+    if(boost::filesystem::exists(queue_file)) {
+        boost::shared_ptr<std::ifstream> log_stream(new std::ifstream());
+        log_stream->open(queue_file.string());
+        if(log_stream->good()) {
+            map_logging_file().insert(MapLoggingPipePair(node_association().associated_node_uid, log_stream));
+        }
+    }
     return NULL;
 }
 
@@ -85,5 +118,31 @@ CDataWrapper *LogWorker::stopLoggingAssociation(CDataWrapper *data,
     
     AgentAssociationSDWrapper node_association;
     node_association.deserialize(assoc_ser.get());
+    LockableMapLoggingPipeWriteLock wl = map_logging_file.getWriteLockObject();
+    if(map_logging_file().count(node_association().associated_node_uid) == 0) {
+        //logging for node already enabled
+        INFO << CHAOS_FORMAT("Logging for %1% already disabled",%node_association().associated_node_uid);
+        return NULL;
+    }
+    
+    boost::shared_ptr<std::ifstream> log_stream = map_logging_file()[node_association().associated_node_uid];
+    map_logging_file().erase(node_association().associated_node_uid);
+    if(log_stream->good()) {
+        log_stream->close();
+    }
     return NULL;
+}
+
+void LogWorker::timeout() {
+    //!lock table in read mode
+    LockableMapLoggingPipeReadLock rl = map_logging_file.getReadLockObject();
+
+    std::string log_line;
+    for(MapLoggingPipeIterator it = map_logging_file().begin(),
+        end = map_logging_file().end();
+        it != end;
+        it++){
+        //scan each log file reading some amount of line
+        //(*it.second) >> log_line;
+    }
 }

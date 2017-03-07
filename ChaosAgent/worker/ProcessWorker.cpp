@@ -21,7 +21,6 @@
 
 #include "ProcessWorker.h"
 #include "ProcUtil.h"
-#include "../ChaosAgent.h"
 
 #include <chaos_service_common/data/node/Agent.h>
 
@@ -197,21 +196,6 @@ chaos::common::data::CDataWrapper *ProcessWorker::checkNodes(chaos::common::data
 }
 
 #pragma mark Process Utility
-
-#define INIT_FILE_NAME(x)\
-CHAOS_FORMAT("%1%.ini",%x.association_unique_id)
-
-#define NPIPE_FILE_NAME(x)\
-CHAOS_FORMAT("%1%.pipe",%x.association_unique_id)
-
-#define INIT_FILE_PATH()\
-CHAOS_FORMAT("%1%/ini_files/", %ChaosAgent::getInstance()->settings.working_directory)
-
-#define QUEUE_FILE_PATH()\
-CHAOS_FORMAT("%1%/queue/", %ChaosAgent::getInstance()->settings.working_directory)
-
-#define COMPOSE_NODE_LAUNCH_CMD_LINE(x)\
-CHAOS_FORMAT("%1%/%2% --%3% %4%%5%", %ChaosAgent::getInstance()->settings.working_directory%x.launch_cmd_line%chaos::InitOption::OPT_CONF_FILE%INIT_FILE_PATH()%INIT_FILE_NAME(x))
 
 void ProcessWorker::launchProcess(const AgentAssociation& node_association_info) {
     int pid = 0;

@@ -26,19 +26,33 @@
 
 #include <chaos_service_common/data/node/Agent.h>
 
+#include <chaos/common/async_central/async_central.h>
+#include <chaos/common/utility/LockableObject.h>
+
+#include <fstream>
+
 namespace chaos {
     namespace agent {
         namespace worker {
             
+            //map that containes the file accessor for named pipe
+            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, boost::shared_ptr<std::ifstream>, MapLoggingPipe);
+            
+            CHAOS_DEFINE_LOCKABLE_OBJECT(MapLoggingPipe, LockableMapLoggingPipe);
+            
             //! define the worker that permit to deploy chaos executable on host
             class LogWorker:
-            public AbstractWorker {
+            public AbstractWorker,
+            public chaos::common::async_central::TimerHandler {
+                LockableMapLoggingPipe map_logging_file;
             protected:
                 chaos::common::data::CDataWrapper *starLoggingAssociation(chaos::common::data::CDataWrapper *data,
                                                                           bool& detach);
                 
                 chaos::common::data::CDataWrapper *stopLoggingAssociation(chaos::common::data::CDataWrapper *data,
                                                                           bool& detach);
+                //!inherited by @chaos::common::async_central::TimerHandler
+                void timeout();
             public:
                 LogWorker();
                 ~LogWorker();
