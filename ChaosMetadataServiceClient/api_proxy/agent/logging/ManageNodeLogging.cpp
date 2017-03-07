@@ -1,10 +1,10 @@
 /*
- *	LoadAgentDescription.cpp
+ *	ManageNodeLogging.cpp
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
  *
- *    	Copyright 13/02/2017 INFN, National Institute of Nuclear Physics
+ *    	Copyright 07/03/2017 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -19,29 +19,23 @@
  *    	limitations under the License.
  */
 
-#include <ChaosMetadataServiceClient/api_proxy/agent/LoadAgentDescription.h>
+#include <ChaosMetadataServiceClient/api_proxy/agent/logging/ManageNodeLogging.h>
 
 using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::common::data::structured;
 using namespace chaos::service_common::data::agent;
 using namespace chaos::metadata_service_client::api_proxy;
-using namespace chaos::metadata_service_client::api_proxy::agent;
+using namespace chaos::metadata_service_client::api_proxy::agent::logging;
 
-API_PROXY_CD_DEFINITION(LoadAgentDescription,
-                        AgentNodeDomainAndActionRPC::ProcessWorker::RPC_DOMAIN,
-                        "loadAgentDescription");
+API_PROXY_CD_DEFINITION(ManageNodeLogging,
+                        AgentNodeDomainAndActionRPC::LogWorker::RPC_DOMAIN,
+                        "manageNodeLogging");
 
-ApiProxyResult LoadAgentDescription::execute(const std::string& node_uid,
-                                             const bool load_related_data) {
+ApiProxyResult ManageNodeLogging::execute(const std::string& node_uid,
+                                          const NodeAssociationLoggingOperation logging_operation) {
     std::auto_ptr<CDataWrapper> pack(new CDataWrapper());
     pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_uid);
-    pack->addBoolValue("load_related_data", load_related_data);
+    pack->addInt32Value("NodeAssociationLoggingOperation", logging_operation);
     return callApi(pack.release());
-}
-
-void LoadAgentDescription::deserialize(CDataWrapper *api_result,
-                                   AgentInstance& agent_instance) {
-    AgentInstanceSDWrapper agent_instance_sd_wrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(AgentInstance, agent_instance));
-    agent_instance_sd_wrapper.deserialize(api_result);
 }

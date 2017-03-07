@@ -33,7 +33,7 @@ DEFINE_CLASS_FACTORY_NO_ALIAS(AgentApiGroup,
                               chaos::metadata_service::api::AbstractApiGroup);
 
 AgentApiGroup::AgentApiGroup():
-AbstractApiGroup(AgentNodeDomainAndActionRPC::ProcessWorker::WORKER_NAME){
+AbstractApiGroup(AgentNodeDomainAndActionRPC::ProcessWorker::RPC_DOMAIN){
     addApi<ListNodeForAgent>();
     addApi<LoadNodeAssociation>();
     addApi<SaveNodeAssociation>();

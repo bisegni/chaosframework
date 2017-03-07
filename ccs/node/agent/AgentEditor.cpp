@@ -3,9 +3,12 @@
 #include "../../data/delegate/TwoLineInformationListItemDelegate.h"
 #include "ui_AgentEditor.h"
 
-#define START_NODE "Launch Node"
-#define STOP_NODE "Stop Node"
-#define RESTART_NODE "Restart Node"
+#define START_NODE      "Launch Node"
+#define STOP_NODE       "Stop Node"
+#define KILL_NODE       "Kill Node"
+#define RESTART_NODE    "Restart Node"
+#define START_NODE_LOG  "Star Node Logging"
+#define STOP_NODE_LOG   "Stop Node Logging"
 
 using namespace chaos::metadata_service_client;
 using namespace chaos::service_common::data::agent;
@@ -43,7 +46,10 @@ void AgentEditor::initUI() {
     QVector< QPair<QString, QVariant> > cm;
     cm.push_back(QPair<QString, QVariant>(START_NODE, QVariant()));
     cm.push_back(QPair<QString, QVariant>(STOP_NODE, QVariant()));
+    cm.push_back(QPair<QString, QVariant>(KILL_NODE, QVariant()));
     cm.push_back(QPair<QString, QVariant>(RESTART_NODE, QVariant()));
+    cm.push_back(QPair<QString, QVariant>(START_NODE_LOG, QVariant()));
+    cm.push_back(QPair<QString, QVariant>(STOP_NODE_LOG, QVariant()));
     registerWidgetForContextualMenu(ui->listViewNodeAssociated,
                                     cm,
                                     false);
@@ -128,9 +134,18 @@ void AgentEditor::contextualMenuActionTrigger(const QString& cm_title,
         } else if(cm_title.compare(STOP_NODE) == 0) {
             submitApiResult("AgentEditor::launch_node",
                             GET_CHAOS_API_PTR(agent::NodeOperation)->execute(index.data(Qt::UserRole).toString().toStdString(), NodeAssociationOperationStop));
+        } else if(cm_title.compare(KILL_NODE) == 0) {
+            submitApiResult("AgentEditor::launch_node",
+                            GET_CHAOS_API_PTR(agent::NodeOperation)->execute(index.data(Qt::UserRole).toString().toStdString(), NodeAssociationOperationKill));
         } else if(cm_title.compare(RESTART_NODE) == 0) {
             submitApiResult("AgentEditor::launch_node",
                             GET_CHAOS_API_PTR(agent::NodeOperation)->execute(index.data(Qt::UserRole).toString().toStdString(), NodeAssociationOperationRestart));
+        } else if(cm_title.compare(START_NODE_LOG) == 0) {
+            submitApiResult("AgentEditor::launch_node",
+                            GET_CHAOS_API_PTR(agent::logging::ManageNodeLogging)->execute(index.data(Qt::UserRole).toString().toStdString(), NodeAssociationLoggingOperationEnable));
+        } else if(cm_title.compare(STOP_NODE_LOG) == 0) {
+            submitApiResult("AgentEditor::launch_node",
+                            GET_CHAOS_API_PTR(agent::logging::ManageNodeLogging)->execute(index.data(Qt::UserRole).toString().toStdString(), NodeAssociationLoggingOperationDisable));
         }
     }
 }

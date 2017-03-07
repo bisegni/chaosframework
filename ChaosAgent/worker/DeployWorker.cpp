@@ -45,7 +45,7 @@ using namespace chaos::common::data;
 using namespace chaos::common::utility;
 
 DeployWorker::DeployWorker():
-AbstractWorker(AgentNodeDomainAndActionRPC::DeployWorker::WORKER_NAME) {
+AbstractWorker(AgentNodeDomainAndActionRPC::DeployWorker::RPC_DOMAIN) {
     //register rpc action
     DeclareAction::addActionDescritionInstance<DeployWorker>(this,
                                                              &DeployWorker::initDeploySession,

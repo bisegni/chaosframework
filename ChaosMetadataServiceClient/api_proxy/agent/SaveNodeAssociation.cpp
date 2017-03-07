@@ -28,7 +28,7 @@ using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::api_proxy::agent;
 
 API_PROXY_CD_DEFINITION(SaveNodeAssociation,
-                        AgentNodeDomainAndActionRPC::ProcessWorker::WORKER_NAME,
+                        AgentNodeDomainAndActionRPC::ProcessWorker::RPC_DOMAIN,
                         "saveNodeAssociation");
 
 ApiProxyResult SaveNodeAssociation::execute(const std::string& agent_uid,

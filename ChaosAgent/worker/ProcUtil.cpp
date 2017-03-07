@@ -91,7 +91,28 @@ bool ProcUtil::popen2NoPipe(const std::string& command,
 
 bool ProcUtil::popen2ToNamedPipe(const std::string& command,
                                  const std::string& named_pipe) {
-    system(CHAOS_FORMAT("(%1% > %2%)",%command.c_str()%named_pipe.c_str()).c_str());
+    int pid = 0;
+    if((pid = fork()) == -1)     {
+        return false;
+    }
+    
+    /* child process */
+    if (pid == 0) {
+        int fd = 0;
+        setpgid(0, 0); //Needed so negative PIDs can kill children of /bin/sh
+        //redirect standard output and error to the named pipe
+        if((fd = open(named_pipe.c_str(), O_RDWR | O_CREAT))==-1){ /*open the file */
+            perror("open");
+            return 1;
+        }
+        
+        dup2(fd,STDOUT_FILENO); /*copy the file descriptor fd into standard output*/
+        dup2(fd,STDERR_FILENO); /* same, for the standard error */
+        close(fd); /* close the file descriptor as we don't need it more  */
+        
+        execl("/bin/sh", "/bin/sh", "-c", command.c_str(), NULL);
+        exit(0);
+    }
     return true;
 }
 

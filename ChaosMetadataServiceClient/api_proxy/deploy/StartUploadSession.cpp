@@ -29,7 +29,7 @@ using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::api_proxy::deploy;
 
 API_PROXY_CD_DEFINITION(StartUploadSession,
-                        AgentNodeDomainAndActionRPC::DeployWorker::WORKER_NAME,
+                        AgentNodeDomainAndActionRPC::DeployWorker::RPC_DOMAIN,
                         AgentNodeDomainAndActionRPC::DeployWorker::ACTION_INIT_DEPLOY_SESSION);
 
 ApiProxyResult StartUploadSession::execute(const std::string& agent_uid) {

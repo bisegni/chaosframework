@@ -561,7 +561,7 @@ namespace chaos {
      */
     namespace AgentNodeDomainAndActionRPC {
         //! The domain for agent rpc action
-        static const char * const RPC_DOMAIN                                        = "agent";
+        static const char * const RPC_DOMAIN_                                        = "agent";
         //! action called for the ack of the agent from mds
         static const char * const ACTION_AGENT_REGISTRATION_ACK                     = "agentRegistrationAck";
         
@@ -569,7 +569,8 @@ namespace chaos {
         static const char * const REGISTRATION_RESULT                               = "andk_rpc_registration_result";
         
         namespace ProcessWorker {
-            static const char * const WORKER_NAME                                   = "HostProcessManagement";
+            //! The domain for agent rpc action
+            static const char * const RPC_DOMAIN                            = "ProcessWorker";
             static const char * const ACTION_LAUNCH_NODE                    = "startNode";
             static const char * const ACTION_LAUNCH_NODE_PAR_NAME           = NodeDefinitionKey::NODE_UNIQUE_ID;
             static const char * const ACTION_LAUNCH_NODE_CMD_LINE           = "node_launch_cmd_line";
@@ -593,8 +594,7 @@ namespace chaos {
         }
         
         namespace DeployWorker {
-            static const char * const WORKER_NAME                   = "DeployWorker";
-            
+            static const char * const RPC_DOMAIN                    = "DeployWorker";
             static const char * const ACTION_INIT_DEPLOY_SESSION    = "initDeploySession";
             static const char * const ACTION_UPLOAD_DEPLOY_CHUNK    = "uploadDeployChunk";
             static const char * const ACTION_END_DEPLOY_SESSION     = "endDeploySession";
@@ -607,8 +607,7 @@ namespace chaos {
         }
         
         namespace LogWorker {
-            static const char * const WORKER_NAME                   = "LogWorker";
-            
+            static const char * const RPC_DOMAIN                            = "LogWorker";
             static const char * const ACTION_START_LOGGING_ASSOCIATION  = "startLoggingAssociation";
             static const char * const ACTION_STOP_LOGGING_ASSOCIATION   = "stopLoggingAssociation";
         }

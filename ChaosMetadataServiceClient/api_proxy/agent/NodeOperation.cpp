@@ -29,7 +29,7 @@ using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::api_proxy::agent;
 
 API_PROXY_CD_DEFINITION(NodeOperation,
-                        AgentNodeDomainAndActionRPC::ProcessWorker::WORKER_NAME,
+                        AgentNodeDomainAndActionRPC::ProcessWorker::RPC_DOMAIN,
                         "nodeOperation");
 
 ApiProxyResult NodeOperation::execute(const std::string& node_uid,

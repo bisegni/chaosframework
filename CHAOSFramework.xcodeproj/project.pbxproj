@@ -1092,6 +1092,11 @@
 		32FF2AAE1E6D8B6400117985 /* ChaosAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FF2AAC1E6D8B6400117985 /* ChaosAllocator.h */; };
 		32FF2AB11E6DAC7F00117985 /* LogWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2AAF1E6DAC7F00117985 /* LogWorker.cpp */; };
 		32FF2AB41E6DAFA400117985 /* ProcUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2AB21E6DAFA400117985 /* ProcUtil.cpp */; };
+		32FF2ABA1E6EE70300117985 /* AgentLoggingNodeManagement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2AB81E6EE70300117985 /* AgentLoggingNodeManagement.cpp */; };
+		32FF2AC21E6F10A300117985 /* AgentLoggingApiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2AC01E6F10A300117985 /* AgentLoggingApiGroup.cpp */; };
+		32FF2AC51E6F10F400117985 /* ManageNodeLogging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2AC31E6F10F400117985 /* ManageNodeLogging.cpp */; };
+		32FF2AC91E6F117A00117985 /* ManageNodeLogging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2AC71E6F117A00117985 /* ManageNodeLogging.cpp */; };
+		32FF2ACA1E6F117A00117985 /* ManageNodeLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FF2AC81E6F117A00117985 /* ManageNodeLogging.h */; };
 		32FFA3EC1B00D43900C57E07 /* QuantumSlot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FFA3EA1B00D43900C57E07 /* QuantumSlot.cpp */; };
 		32FFA3ED1B00D43900C57E07 /* QuantumSlot.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FFA3EB1B00D43900C57E07 /* QuantumSlot.h */; };
 		32FFA3EE1B00F95900C57E07 /* QuantumSlotScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FFA3E61B00CEE100C57E07 /* QuantumSlotScheduler.cpp */; };
@@ -2532,6 +2537,14 @@
 		32FF2AB01E6DAC7F00117985 /* LogWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogWorker.h; sourceTree = "<group>"; };
 		32FF2AB21E6DAFA400117985 /* ProcUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcUtil.cpp; sourceTree = "<group>"; };
 		32FF2AB31E6DAFA400117985 /* ProcUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcUtil.h; sourceTree = "<group>"; };
+		32FF2AB81E6EE70300117985 /* AgentLoggingNodeManagement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AgentLoggingNodeManagement.cpp; sourceTree = "<group>"; };
+		32FF2AB91E6EE70300117985 /* AgentLoggingNodeManagement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AgentLoggingNodeManagement.h; sourceTree = "<group>"; };
+		32FF2AC01E6F10A300117985 /* AgentLoggingApiGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AgentLoggingApiGroup.cpp; sourceTree = "<group>"; };
+		32FF2AC11E6F10A300117985 /* AgentLoggingApiGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AgentLoggingApiGroup.h; sourceTree = "<group>"; };
+		32FF2AC31E6F10F400117985 /* ManageNodeLogging.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ManageNodeLogging.cpp; sourceTree = "<group>"; };
+		32FF2AC41E6F10F400117985 /* ManageNodeLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManageNodeLogging.h; sourceTree = "<group>"; };
+		32FF2AC71E6F117A00117985 /* ManageNodeLogging.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ManageNodeLogging.cpp; sourceTree = "<group>"; };
+		32FF2AC81E6F117A00117985 /* ManageNodeLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManageNodeLogging.h; sourceTree = "<group>"; };
 		32FFA3E61B00CEE100C57E07 /* QuantumSlotScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QuantumSlotScheduler.cpp; sourceTree = "<group>"; };
 		32FFA3E71B00CEE100C57E07 /* QuantumSlotScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuantumSlotScheduler.h; sourceTree = "<group>"; };
 		32FFA3EA1B00D43900C57E07 /* QuantumSlot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QuantumSlot.cpp; sourceTree = "<group>"; };
@@ -4635,6 +4648,7 @@
 		32BE0AC91E4B44870007764C /* agent */ = {
 			isa = PBXGroup;
 			children = (
+				32FF2ABF1E6F104E00117985 /* logging */,
 				32BE0ACA1E4B44B90007764C /* AgentApiGroup.cpp */,
 				32BE0ACB1E4B44B90007764C /* AgentApiGroup.h */,
 				32FF2A591E6579A400117985 /* NodeOperation.cpp */,
@@ -4658,6 +4672,7 @@
 		32BE0ADA1E4C69390007764C /* agent */ = {
 			isa = PBXGroup;
 			children = (
+				32FF2AC61E6F114200117985 /* logging */,
 				32BE0ADB1E4C69780007764C /* ListNodeForAgent.cpp */,
 				32BE0ADC1E4C69780007764C /* ListNodeForAgent.h */,
 				32BE0ADF1E4C69850007764C /* SaveNodeAssociation.cpp */,
@@ -5032,6 +5047,8 @@
 				32990B321E547ED900A4AF8F /* AgentCheckAgentProcess.h */,
 				32FF2A5C1E6579FC00117985 /* AgentRemoveNodeSafety.cpp */,
 				32FF2A5D1E6579FC00117985 /* AgentRemoveNodeSafety.h */,
+				32FF2AB81E6EE70300117985 /* AgentLoggingNodeManagement.cpp */,
+				32FF2AB91E6EE70300117985 /* AgentLoggingNodeManagement.h */,
 				32E6F4481E48D3A30068320E /* agent_batch.h */,
 			);
 			path = agent;
@@ -5181,6 +5198,26 @@
 				32FF2A8B1E68726300117985 /* deploy.h */,
 			);
 			path = deploy;
+			sourceTree = "<group>";
+		};
+		32FF2ABF1E6F104E00117985 /* logging */ = {
+			isa = PBXGroup;
+			children = (
+				32FF2AC01E6F10A300117985 /* AgentLoggingApiGroup.cpp */,
+				32FF2AC11E6F10A300117985 /* AgentLoggingApiGroup.h */,
+				32FF2AC31E6F10F400117985 /* ManageNodeLogging.cpp */,
+				32FF2AC41E6F10F400117985 /* ManageNodeLogging.h */,
+			);
+			path = logging;
+			sourceTree = "<group>";
+		};
+		32FF2AC61E6F114200117985 /* logging */ = {
+			isa = PBXGroup;
+			children = (
+				32FF2AC71E6F117A00117985 /* ManageNodeLogging.cpp */,
+				32FF2AC81E6F117A00117985 /* ManageNodeLogging.h */,
+			);
+			path = logging;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -5682,6 +5719,7 @@
 				3274A90D1AC2F214000C6A4D /* ApiProxyManager.h in Headers */,
 				32990B291E521F5E00A4AF8F /* LoadAgentDescription.h in Headers */,
 				3234BE801B04CC9400AE6B08 /* HealtStatusAttributeHandler.h in Headers */,
+				32FF2ACA1E6F117A00117985 /* ManageNodeLogging.h in Headers */,
 				32B1E8071B2EA07200221E49 /* CommandTemplateDelete.h in Headers */,
 				328C87331ADFDB9A0047C79B /* SearchInstancesByUS.h in Headers */,
 				32A116561D128B9C00FF44ED /* Node.h in Headers */,
@@ -6022,6 +6060,7 @@
 				326ACF841E01525D00AD011E /* ObjectStorageDataAccess.cpp in Sources */,
 				32B419301B0DE68800C3CA7D /* ChangeNodeState.cpp in Sources */,
 				32B9F3FA1AC4460A00380FE9 /* NodeGetDescription.cpp in Sources */,
+				32FF2ABA1E6EE70300117985 /* AgentLoggingNodeManagement.cpp in Sources */,
 				32568C881B3D3B270006988C /* UpdateProperty.cpp in Sources */,
 				328E78021A7A94810008C070 /* NodeRegister.cpp in Sources */,
 				32FF2A5B1E6579A400117985 /* NodeOperation.cpp in Sources */,
@@ -6082,6 +6121,7 @@
 				32C25DE81DB798A600A46C2B /* NodeHealthStatus.cpp in Sources */,
 				326ACF821E01525D00AD011E /* CouchbaseCacheDriver.cpp in Sources */,
 				328C872F1ADFC2D60047C79B /* GetInstance.cpp in Sources */,
+				32FF2AC21E6F10A300117985 /* AgentLoggingApiGroup.cpp in Sources */,
 				32F9F82E1D903B1D0023948D /* MDSHistoryAgeingManagement.cpp in Sources */,
 				328D0FF11A8A034E001A2001 /* NodeSearch.cpp in Sources */,
 				32E09CFE1C0E05E60069752F /* DeleteSnapshot.cpp in Sources */,
@@ -6114,6 +6154,7 @@
 				32B1E8161B2EDB4700221E49 /* CommandInstanceSubmit.cpp in Sources */,
 				32E09CFB1C0E002F0069752F /* CreateNewSnapshot.cpp in Sources */,
 				327791E21B67728300FEDD52 /* ServiceApiGroup.cpp in Sources */,
+				32FF2AC51E6F10F400117985 /* ManageNodeLogging.cpp in Sources */,
 				32E09CF41C0DE2890069752F /* RestoreSnapshotBatch.cpp in Sources */,
 				32E9F48D16485012006EAF37 /* ChaosMetadataService.cpp in Sources */,
 				328E78091A7AAA070008C070 /* NodeDataAccess.cpp in Sources */,
@@ -6477,6 +6518,7 @@
 				32FF2A571E65782200117985 /* NodeOperation.cpp in Sources */,
 				32FF2A881E68724C00117985 /* EndUploadSession.cpp in Sources */,
 				32FF2A611E65CCEB00117985 /* AlertAgentCheckProcessHandler.cpp in Sources */,
+				32FF2AC91E6F117A00117985 /* ManageNodeLogging.cpp in Sources */,
 				32B224CA1CFC830600B24B58 /* LoadFullScript.cpp in Sources */,
 				32F7AB141C9960A700E18D3E /* NodeMonitor.cpp in Sources */,
 				32FC49AF1E080FB80087D82C /* GetVariable.cpp in Sources */,

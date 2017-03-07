@@ -1,10 +1,10 @@
 /*
- *	agent_batch.h
+ *	AgentLoggingApiGroup.cpp
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
  *
- *    	Copyright 06/02/2017 INFN, National Institute of Nuclear Physics
+ *    	Copyright 07/03/2017 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -19,13 +19,17 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__BC0FF20_DD16_4B3C_B575_9C8449E71AF0_agent_batch_h
-#define __CHAOSFramework__BC0FF20_DD16_4B3C_B575_9C8449E71AF0_agent_batch_h
+#include "AgentLoggingApiGroup.h"
+#include "ManageNodeLogging.h"
 
-#include "AgentAckCommand.h"
-#include "AgentRemoveNodeSafety.h"
-#include "AgentProcessController.h"
-#include "AgentCheckAgentProcess.h"
-#include "AgentLoggingNodeManagement.h"
+using namespace chaos::metadata_service::api::agent::logging;
 
-#endif /* __CHAOSFramework__BC0FF20_DD16_4B3C_B575_9C8449E71AF0_agent_batch_h */
+DEFINE_CLASS_FACTORY_NO_ALIAS(AgentLoggingApiGroup,
+                              chaos::metadata_service::api::AbstractApiGroup);
+
+AgentLoggingApiGroup::AgentLoggingApiGroup():
+AbstractApiGroup(AgentNodeDomainAndActionRPC::LogWorker::RPC_DOMAIN){
+   addApi<ManageNodeLogging>();
+}
+
+AgentLoggingApiGroup::~AgentLoggingApiGroup() {}

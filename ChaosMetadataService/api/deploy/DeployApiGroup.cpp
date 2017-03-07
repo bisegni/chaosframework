@@ -30,7 +30,7 @@ DEFINE_CLASS_FACTORY_NO_ALIAS(DeployApiGroup,
                               chaos::metadata_service::api::AbstractApiGroup);
 
 DeployApiGroup::DeployApiGroup():
-AbstractApiGroup(AgentNodeDomainAndActionRPC::DeployWorker::WORKER_NAME){
+AbstractApiGroup(AgentNodeDomainAndActionRPC::DeployWorker::RPC_DOMAIN){
     addApi<StartUploadSession>();
     addApi<UploadChunk>();
     addApi<EndUploadSession>();

@@ -35,7 +35,7 @@ using namespace chaos::common::data;
 using namespace chaos::common::utility;
 
 LogWorker::LogWorker():
-AbstractWorker(AgentNodeDomainAndActionRPC::LogWorker::WORKER_NAME) {
+AbstractWorker(AgentNodeDomainAndActionRPC::LogWorker::RPC_DOMAIN) {
     //register rpc action
     DeclareAction::addActionDescritionInstance<LogWorker>(this,
                                                           &LogWorker::starLoggingAssociation,
@@ -61,17 +61,14 @@ CDataWrapper *LogWorker::starLoggingAssociation(CDataWrapper *data,
     CHECK_CDW_THROW_AND_LOG(data,
                             ERROR, -1,
                             "Input data is mandatory");
+    CHECK_MANDATORY_KEY(data, AgentNodeDefinitionKey::NODE_ASSOCIATED, ERROR, -2);
+    CHECK_TYPE_OF_KEY(data, AgentNodeDefinitionKey::NODE_ASSOCIATED, CDataWrapper, ERROR, -3);
+
+    std::auto_ptr<CDataWrapper> assoc_ser(data->getCSDataValue(AgentNodeDefinitionKey::NODE_ASSOCIATED));
     
-    VectorAgentAssociationSDWrapper associated_node_sd_wrapper;
-    associated_node_sd_wrapper.serialization_key = AgentNodeDefinitionKey::NODE_ASSOCIATED;
-    associated_node_sd_wrapper.deserialize(data);
-    if(associated_node_sd_wrapper().size()) {
-        for(VectorAgentAssociationIterator it = associated_node_sd_wrapper().begin(),
-            end = associated_node_sd_wrapper().end();
-            it != end;
-            it++) {
-        }
-    }
+    AgentAssociationSDWrapper node_association;
+    node_association.deserialize(assoc_ser.get());
+    
     return NULL;
 }
 
@@ -81,16 +78,12 @@ CDataWrapper *LogWorker::stopLoggingAssociation(CDataWrapper *data,
                             ERROR, -1,
                             "Input data is mandatory");
     
-    VectorAgentAssociationSDWrapper associated_node_sd_wrapper;
-    associated_node_sd_wrapper.serialization_key = AgentNodeDefinitionKey::NODE_ASSOCIATED;
+    CHECK_MANDATORY_KEY(data, AgentNodeDefinitionKey::NODE_ASSOCIATED, ERROR, -2);
+    CHECK_TYPE_OF_KEY(data, AgentNodeDefinitionKey::NODE_ASSOCIATED, CDataWrapper, ERROR, -3);
     
-    associated_node_sd_wrapper.deserialize(data);
-    if(associated_node_sd_wrapper().size()) {
-        for(VectorAgentAssociationIterator it = associated_node_sd_wrapper().begin(),
-            end = associated_node_sd_wrapper().end();
-            it != end;
-            it++) {
-        }
-    }
+    std::auto_ptr<CDataWrapper> assoc_ser(data->getCSDataValue(AgentNodeDefinitionKey::NODE_ASSOCIATED));
+    
+    AgentAssociationSDWrapper node_association;
+    node_association.deserialize(assoc_ser.get());
     return NULL;
 }

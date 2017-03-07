@@ -36,8 +36,15 @@ namespace chaos {
                     NodeAssociationOperationUndefined,
                     NodeAssociationOperationLaunch,
                     NodeAssociationOperationStop,
+                    NodeAssociationOperationKill,
                     NodeAssociationOperationRestart
                 } NodeAssociationOperation;
+                
+                typedef enum {
+                    NodeAssociationLoggingOperationUndefined,
+                    NodeAssociationLoggingOperationDisable,
+                    NodeAssociationLoggingOperationEnable
+                } NodeAssociationLoggingOperation;
                 
                 //!node association to an agent
                 struct AgentAssociation {

@@ -46,7 +46,7 @@ using namespace chaos::common::utility;
 
 
 ProcessWorker::ProcessWorker():
-AbstractWorker(AgentNodeDomainAndActionRPC::ProcessWorker::WORKER_NAME) {
+AbstractWorker(AgentNodeDomainAndActionRPC::ProcessWorker::RPC_DOMAIN) {
     //register rpc action
     AbstActionDescShrPtr action_parameter_interface = DeclareAction::addActionDescritionInstance<ProcessWorker>(this,
                                                                                                                 &ProcessWorker::launchNode,
@@ -133,7 +133,11 @@ chaos::common::data::CDataWrapper *ProcessWorker::stopNode(chaos::common::data::
     AgentAssociationSDWrapper assoc_sd_wrapper;
     assoc_sd_wrapper.deserialize(data);
     if(checkProcessAlive(assoc_sd_wrapper()) == true) {
-        quitProcess(assoc_sd_wrapper());
+        bool kill = false;
+        if(data!=NULL && data->hasKey(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_RESTART_NODE_PAR_KILL)) {
+            kill = data->getBoolValue(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_RESTART_NODE_PAR_KILL);
+        }
+        quitProcess(assoc_sd_wrapper(), kill);
     } else {
         INFO << CHAOS_FORMAT("Associated node %1% isn't in execution", %assoc_sd_wrapper().associated_node_uid);
     }

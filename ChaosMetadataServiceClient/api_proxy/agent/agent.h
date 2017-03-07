@@ -26,8 +26,10 @@
 #include <ChaosMetadataServiceClient/api_proxy/agent/ListNodeForAgent.h>
 #include <ChaosMetadataServiceClient/api_proxy/agent/SaveNodeAssociation.h>
 #include <ChaosMetadataServiceClient/api_proxy/agent/LoadNodeAssociation.h>
-#include <ChaosMetadataServiceClient/api_proxy/agent/RemoveNodeAssociation.h>
 #include <ChaosMetadataServiceClient/api_proxy/agent/LoadAgentDescription.h>
+#include <ChaosMetadataServiceClient/api_proxy/agent/RemoveNodeAssociation.h>
 #include <ChaosMetadataServiceClient/api_proxy/agent/CheckAgentHostedProcess.h>
+
+#include <ChaosMetadataServiceClient/api_proxy/agent/logging/ManageNodeLogging.h>
 
 #endif /* __CHAOSFramework__57311D4_B841_4942_AEA8_FD8FDA8D6594_agent_h */

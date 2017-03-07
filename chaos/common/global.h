@@ -128,7 +128,7 @@ if(assertion == false) {LOG_AND_TROW(log, num, msg)}
 CHECK_KEY_THROW_AND_LOG(d, k, el, en, CHAOS_FORMAT("%1% key is mandatory", %k));
 
 #define CHECK_TYPE_OF_KEY(d, k, type, el, en)\
-CHECK_ASSERTION_THROW_AND_LOG((data->is ## type ## Value(k)), el, en,\
+CHECK_ASSERTION_THROW_AND_LOG((d->is ## type ## Value(k)), el, en,\
 CHAOS_FORMAT("%1% key need to be of type %2%", %k% #type));
 
     //define for chaos assert macro, it print the basiclay infromation to find
