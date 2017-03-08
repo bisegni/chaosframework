@@ -66,12 +66,12 @@ namespace chaos {
                     while( a < new_len ) {
                         a = a * 2;
                     }
-                    data = (char *) allocator.realloc(data, a);
+                    data = (char *) allocator.realloc(data, (size + a));
                     if ( data == NULL ) {
                         //error
                         size = 0;
                     } else {
-                        size = a;
+                        size += a;
                     }
                     return (data != NULL);
                 }
@@ -126,7 +126,7 @@ namespace chaos {
                 void writeByte(const char * start_buf,
                                int32_t memory_len) {
                     CHECK_AND_GROW(memory_len);
-                    memcpy((char *)ChaosBuffer<Allocator>::data, (const void *)start_buf, memory_len);
+                    memcpy((void*)(((char *)ChaosBuffer<Allocator>::data) + cursor), (const void *)start_buf, memory_len);
                     cursor += memory_len;
                 }
                 
@@ -137,7 +137,8 @@ namespace chaos {
                 
                 void writeInt32(const int32_t& number) {
                     CHECK_AND_GROW(sizeof(int32_t));
-                    ((int32_t*)ChaosBuffer<Allocator>::data)[cursor++] = number;
+                    *(int32_t*)(((char*)ChaosBuffer<Allocator>::data) + cursor) = number;
+                    cursor+=sizeof(int32_t);
                 }
                 
                 int32_t readInt32() {

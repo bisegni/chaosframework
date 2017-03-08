@@ -47,9 +47,9 @@ using namespace chaos::common::network;
 using namespace chaos::common::direct_io;
 using namespace chaos::common::direct_io::channel;
 
-#define QDCAPP_ INFO_LOG(QueryDataConsumer)
-#define QDCDBG_ DBG_LOG(QueryDataConsumer)
-#define QDCERR_ ERR_LOG(QueryDataConsumer)
+#define INFO    INFO_LOG(QueryDataConsumer)
+#define DBG     DBG_LOG(QueryDataConsumer)
+#define ERR     ERR_LOG(QueryDataConsumer)
 
 boost::shared_ptr<worker::DeviceSharedDataWorkerMetric> dsdwm_metric;
 
@@ -67,14 +67,14 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
     //get new chaos direct io endpoint
     server_endpoint = NetworkBroker::getInstance()->getDirectIOServerEndpoint();
     if(!server_endpoint) throw chaos::CException(-2, "Invalid server endpoint", __FUNCTION__);
-    QDCAPP_ << "QueryDataConsumer initialized with endpoint "<< server_endpoint->getRouteIndex();
+    INFO << "QueryDataConsumer initialized with endpoint "<< server_endpoint->getRouteIndex();
     
-    QDCAPP_ << "Allocating DirectIODeviceServerChannel";
+    INFO << "Allocating DirectIODeviceServerChannel";
     device_channel = (DirectIODeviceServerChannel*)server_endpoint->getNewChannelInstance("DirectIODeviceServerChannel");
     if(!device_channel) throw chaos::CException(-3, "Error allocating device server channel", __FUNCTION__);
     device_channel->setHandler(this);
     
-    QDCAPP_ << "Allocating DirectIOSystemAPIServerChannel";
+    INFO << "Allocating DirectIOSystemAPIServerChannel";
     system_api_channel = (DirectIOSystemAPIServerChannel*)server_endpoint->getNewChannelInstance("DirectIOSystemAPIServerChannel");
     if(!system_api_channel) throw chaos::CException(-4, "Error allocating system api server channel", __FUNCTION__);
     system_api_channel->setHandler(this);
@@ -86,7 +86,7 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
     
     //Shared data worker
     if(ChaosMetadataService::getInstance()->setting.cache_driver_setting.caching_worker_log_metric) {
-        QDCAPP_ << "Init Device shared data worker metric";
+        INFO << "Init Device shared data worker metric";
         dsdwm_metric.reset(new worker::DeviceSharedDataWorkerMetric("DeviceSharedDataWorkerMetric",
                                                                     ChaosMetadataService::getInstance()->setting.cache_driver_setting.caching_worker_log_metric_update_interval));
     }
@@ -99,7 +99,7 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
         idx++) {
         
         if(ChaosMetadataService::getInstance()->setting.cache_driver_setting.caching_worker_log_metric) {
-            QDCAPP_ << "Enable caching worker log metric";
+            INFO << "Enable caching worker log metric";
             //install the data worker taht grab the metric
             device_data_worker[idx] = tmp = new worker::DeviceSharedDataWorkerMetricCollector(dsdwm_metric);
         } else {
@@ -122,9 +122,9 @@ void QueryDataConsumer::deinit() throw (chaos::CException) {
         NetworkBroker::getInstance()->releaseDirectIOServerEndpoint(server_endpoint);
     }
     
-    QDCAPP_ << "Deallocating device push data worker list";
+    INFO << "Deallocating device push data worker list";
     for(int idx = 0; idx < ChaosMetadataService::getInstance()->setting.cache_driver_setting.caching_worker_num; idx++) {
-        QDCAPP_ << "Release device worker "<< idx;
+        INFO << "Release device worker "<< idx;
         device_data_worker[idx]->stop();
         device_data_worker[idx]->deinit();
         DELETE_OBJ_POINTER(device_data_worker[idx])
@@ -169,7 +169,7 @@ int QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *hea
             break;
             
         default: {
-            QDCERR_ << "Bad storage tag: " << header->tag;
+            ERR << "Bad storage tag: " << header->tag;
             break;
         }
     }
@@ -184,7 +184,7 @@ int QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *hea
         job->data_pack = channel_data;
         job->data_pack_len = channel_data_len;
         if((err = device_data_worker[index_to_use]->submitJobInfo(job))) {
-            DEBUG_CODE(QDCDBG_ << "error pushing data into worker queue");
+            DEBUG_CODE(DBG << "error pushing data into worker queue");
             delete job;
             free(header);
             free(channel_data);
@@ -209,7 +209,7 @@ int QueryDataConsumer::consumeHealthDataEvent(DirectIODeviceChannelHeaderPutOpco
     attribute_reference_wrapper.deserialize(&health_data_pack);
     if((err = s_da->setNodeHealthStatus(attribute_reference_wrapper().node_uid,
                                         attribute_reference_wrapper()))) {
-        QDCERR_ << "error storing health data into database for key " << attribute_reference_wrapper().node_uid;
+        ERR << "error storing health data into database for key " << attribute_reference_wrapper().node_uid;
     }
     return consumePutEvent(header,
                            channel_data,
@@ -234,7 +234,7 @@ int QueryDataConsumer::consumeDataCloudQuery(DirectIODeviceChannelHeaderOpcodeQu
                                          query_header->field.record_for_page,
                                          reuslt_object_found,
                                          (result_header->last_found_sequence = last_sequence_id)))) {
-        QDCERR_ << CHAOS_FORMAT("Error performing cloud query with code %1%", %err);
+        ERR << CHAOS_FORMAT("Error performing cloud query with code %1%", %err);
     } else if(reuslt_object_found.size()){
         //we successfully have perform query
         result_header->result_data_size = 0;
@@ -297,7 +297,7 @@ int QueryDataConsumer::consumeDataCloudDelete(const std::string& search_key,
     if((err = obj_storage_da->deleteObject(search_key,
                                            start_ts,
                                            end_ts))) {
-        QDCERR_ << CHAOS_FORMAT("Error performing lcoud query with code %1%", %err);
+        ERR << CHAOS_FORMAT("Error performing lcoud query with code %1%", %err);
     }
     return err;
 }
@@ -341,7 +341,7 @@ int QueryDataConsumer::consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSy
                                                      channel_found_data_length))) {
         api_result.error = err;
         std::strcpy(api_result.error_message, "Error retriving the snapshoted dataaset for producer key");
-        QDCERR_ << api_result.error_message << "[" << header->field.snap_name << "/" << producer_id<<"]";
+        ERR << api_result.error_message << "[" << header->field.snap_name << "/" << producer_id<<"]";
     } else {
         if(*channel_found_data) {
             api_result.error = 0;
@@ -352,5 +352,12 @@ int QueryDataConsumer::consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSy
             
         }
     }
+    return err;
+}
+
+int QueryDataConsumer::consumeLogEntries(const std::string& node_name,
+                                         const ChaosStringVector& log_entries) {
+    int err = 0;
+    ERR << CHAOS_FORMAT("Consume log for node %1% with %2% entries", %node_name%log_entries.size());
     return err;
 }

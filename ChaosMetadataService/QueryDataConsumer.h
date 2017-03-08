@@ -93,12 +93,14 @@ namespace chaos{
                                        uint64_t end_ts);
             
             //---------------- DirectIOSystemAPIServerChannelHandler -----------------------
-            // Return the dataset for a producerkey ona specific snapshot
             int consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,
                                                const std::string& producer_id,
                                                void **channel_found_data,
                                                uint32_t& channel_found_data_length,
                                                DirectIOSystemAPISnapshotResultHeader& api_result);
+            
+            int consumeLogEntries(const std::string& node_name,
+                                  const ChaosStringVector& log_entries);
         public:
             QueryDataConsumer();
             ~QueryDataConsumer();

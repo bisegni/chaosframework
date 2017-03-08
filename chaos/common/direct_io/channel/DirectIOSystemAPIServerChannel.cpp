@@ -134,7 +134,7 @@ int DirectIOSystemAPIServerChannel::consumeDataPack(DirectIODataPack *dataPack,
             //call the handler
             err = handler->consumeLogEntries(node_name,
                                              log_entry);
-            
+            buffer.release();
             if(header) free(header);
             if(dataPack->channel_data) free(dataPack->channel_data);
             return err;

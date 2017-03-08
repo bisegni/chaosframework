@@ -30,9 +30,9 @@ namespace chaos {
             
             class ChaosAllocator {
             public:
-                void* malloc(size_t sz) { return malloc(sz);}
-                void* realloc(void *p, size_t sz) { return realloc(p, sz);}
-                void free(void *p) { free(p);}
+                void* malloc(size_t sz) { return std::malloc(sz);}
+                void* realloc(void *p, size_t sz) { return std::realloc(p, sz);}
+                void free(void *p) { std::free(p);}
             };
             
         }

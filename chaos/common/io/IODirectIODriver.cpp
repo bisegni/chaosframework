@@ -57,7 +57,7 @@ DEFINE_CLASS_FACTORY(IODirectIODriver, IODataDriver);
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-IODirectIODriver::IODirectIODriver(std::string alias):
+IODirectIODriver::IODirectIODriver(const std::string& alias):
 NamedService(alias),
 current_endpoint_p_port(0),
 current_endpoint_s_port(0),
@@ -83,7 +83,7 @@ IODirectIODriver::~IODirectIODriver() {
  ---------------------------------------------------------------------------------*/
 void IODirectIODriver::setDirectIOParam(IODirectIODriverInitParam& _init_parameter) {
     //store the configuration
-    init_parameter = _init_parameter;
+    //init_parameter = _init_parameter;
 }
 
 /*---------------------------------------------------------------------------------
@@ -94,12 +94,10 @@ void IODirectIODriver::init(void *_init_parameter) throw(CException) {
     
     IODirectIODriver_LINFO_ << "Check init parameter";
     
-    if(!init_parameter.network_broker) throw CException(-1, "No network broker configured", __PRETTY_FUNCTION__);
-    
-    init_parameter.client_instance = init_parameter.network_broker->getSharedDirectIOClientInstance();
+    init_parameter.client_instance = NetworkBroker::getInstance()->getSharedDirectIOClientInstance();
     //if(!init_parameter.client_instance) throw CException(-1, "No client configured", __PRETTY_FUNCTION__);
     
-    init_parameter.endpoint_instance = init_parameter.network_broker->getDirectIOServerEndpoint();
+    init_parameter.endpoint_instance = NetworkBroker::getInstance()->getDirectIOServerEndpoint();
     if(!init_parameter.endpoint_instance) throw CException(-1, "No endpoint configured", __PRETTY_FUNCTION__);
     
     //initialize client
@@ -153,7 +151,7 @@ void IODirectIODriver::deinit() throw(CException) {
     }
     
     if(init_parameter.endpoint_instance) {
-        init_parameter.network_broker->releaseDirectIOServerEndpoint(init_parameter.endpoint_instance);
+        NetworkBroker::getInstance()->releaseDirectIOServerEndpoint(init_parameter.endpoint_instance);
     }
     IODataDriver::deinit();
 }
