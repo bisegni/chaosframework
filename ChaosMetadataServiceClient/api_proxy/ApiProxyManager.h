@@ -79,12 +79,15 @@ namespace chaos {
                     if(instance == NULL) {
                         //allcoate the instsancer for the AbstractApi depending by the template
                         std::auto_ptr<INSTANCER_P2(P, ApiProxy, chaos::common::message::MultiAddressMessageChannel*, int32_t)> i(ALLOCATE_INSTANCER_P2(P, ApiProxy, chaos::common::message::MultiAddressMessageChannel*, int32_t));
-
+                        if(i.get() && mn_message_channel){
                         //get api instance
-                        instance = (P*)i->getInstance(mn_message_channel, timeout_in_milliseconds);
+                        	instance = (P*)i->getInstance(mn_message_channel, timeout_in_milliseconds);
 
                             //add new instance to the list of all instances
-                        api_instance.push_back(instance);
+                        	api_instance.push_back(instance);
+                        } else {
+                        	LERR_<<"CANNOT ALLOCATE API "<<__PRETTY_FUNCTION__;
+                        }
                     }
                     return instance;
                 };

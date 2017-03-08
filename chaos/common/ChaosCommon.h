@@ -75,6 +75,7 @@ namespace chaos {
             //status.resize(0);
     }
 
+
         //! Chaos common engine class
     /*!
      This is the base class for the other toolkit, it thake care to initialize all common
@@ -84,6 +85,9 @@ namespace chaos {
     class ChaosCommon:
     public common::utility::Singleton<T>,
     public common::utility::StartableService {
+
+   static bool initialized,deinitialized;
+
     protected:
             //! Constructor Method
         /*!
@@ -92,6 +96,7 @@ namespace chaos {
          */
         ChaosCommon(){
             GlobalConfiguration::getInstance()->preParseStartupParameters();
+            initialized=deinitialized=false;
         }
 
 
@@ -137,6 +142,7 @@ namespace chaos {
          Specialized option for startup c and cpp program main options parameter
          */
         void init(int argc, char* argv[]) throw (CException) {
+
             preparseCommandOption(argc, argv);
             if(argv != NULL) {
                 GlobalConfiguration::getInstance()->parseStartupParameters(argc, argv);
@@ -160,7 +166,9 @@ namespace chaos {
         void init(void *init_data) throw (CException) {
             int err = 0;
             struct utsname u_name;
-
+            if(initialized)
+                 return;
+            initialized=true;
             if (std::signal((int) SIGUSR1, start_acquiring_memory_allocation) == SIG_ERR){
                 std::cout << "start_acquiring_memory_allocation Signal handler registraiton error";
                 exit(-1);
@@ -211,6 +219,9 @@ namespace chaos {
                 }
 
                 void deinit() throw (CException) {
+                	 if(deinitialized)
+                	            	return;
+                	 deinitialized=true;
                         //dellocate all
                     CHAOS_NOT_THROW(common::utility::StartableService::stopImplementation(chaos::common::network::NetworkBroker::getInstance(),  "NetworkBroker", __PRETTY_FUNCTION__););
                     CHAOS_NOT_THROW(common::utility::StartableService::deinitImplementation(chaos::common::network::NetworkBroker::getInstance(),  "AsyncCentralManager", __PRETTY_FUNCTION__););
@@ -228,6 +239,12 @@ namespace chaos {
                     return GlobalConfiguration::getInstance();
                 }
                 };
+    template <class T> bool  ChaosCommon<T>::initialized=false;
+
+    template <class T> bool  ChaosCommon<T>::deinitialized=false;
+
                 }
-                
+
+
+
 #endif

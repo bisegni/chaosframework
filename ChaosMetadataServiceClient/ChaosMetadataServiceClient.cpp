@@ -65,43 +65,47 @@ void ChaosMetadataServiceClient::init(int argc, char* argv[]) throw (CException)
     ChaosCommon<ChaosMetadataServiceClient>::init(argc, argv);
 }
 
+void ChaosMetadataServiceClient::init()  throw(CException) {
+    //--------------api proxy------------------------
+      api_proxy_manager.reset(new ApiProxyManager(NetworkBroker::getInstance(),
+                                                  &setting),
+                              "ApiProxyManager");
+      api_proxy_manager.init(NULL, __PRETTY_FUNCTION__);
+
+      //--------------event dispatcher-----------------
+      event_dispatch_manager.reset(new EventDispatchManager(&setting),
+                                   "EventDispatchManager");
+      event_dispatch_manager.init(NULL, __PRETTY_FUNCTION__);
+
+      //--------------monitor manager------------------
+      monitor_manager.reset(new MonitorManager(NetworkBroker::getInstance(),
+                                               &setting),
+                            "MonitorManager");
+      monitor_manager.init(NULL, __PRETTY_FUNCTION__);
+
+      //--------------node monitor---------------------
+      node_monitor.reset(new node_monitor::NodeMonitor(monitor_manager.get(),
+                                                       api_proxy_manager.get(),
+                                                       &setting),
+                         "NodeMonitor");
+      node_monitor.init(NULL, __PRETTY_FUNCTION__);
+
+      //configure metadata server got from command line
+      std::vector<chaos::common::network::CNetworkAddress> mds_address_list = GlobalConfiguration::getInstance()->getMetadataServerAddressList();
+      for(std::vector<chaos::common::network::CNetworkAddress>::iterator it = mds_address_list.begin();
+          it != mds_address_list.end();
+          it++) {
+          addServerAddress(it->ip_port);
+      }
+}
 /*
  *
  */
 void ChaosMetadataServiceClient::init(void *init_data)  throw(CException) {
     try {
         ChaosCommon<ChaosMetadataServiceClient>::init(init_data);
-        //--------------api proxy------------------------
-        api_proxy_manager.reset(new ApiProxyManager(NetworkBroker::getInstance(),
-                                                    &setting),
-                                "ApiProxyManager");
-        api_proxy_manager.init(NULL, __PRETTY_FUNCTION__);
-        
-        //--------------event dispatcher-----------------
-        event_dispatch_manager.reset(new EventDispatchManager(&setting),
-                                     "EventDispatchManager");
-        event_dispatch_manager.init(NULL, __PRETTY_FUNCTION__);
-        
-        //--------------monitor manager------------------
-        monitor_manager.reset(new MonitorManager(NetworkBroker::getInstance(),
-                                                 &setting),
-                              "MonitorManager");
-        monitor_manager.init(NULL, __PRETTY_FUNCTION__);
-        
-        //--------------node monitor---------------------
-        node_monitor.reset(new node_monitor::NodeMonitor(monitor_manager.get(),
-                                                         api_proxy_manager.get(),
-                                                         &setting),
-                           "NodeMonitor");
-        node_monitor.init(NULL, __PRETTY_FUNCTION__);
-        
-        //configure metadata server got from command line
-        std::vector<chaos::common::network::CNetworkAddress> mds_address_list = GlobalConfiguration::getInstance()->getMetadataServerAddressList();
-        for(std::vector<chaos::common::network::CNetworkAddress>::iterator it = mds_address_list.begin();
-            it != mds_address_list.end();
-            it++) {
-            addServerAddress(it->ip_port);
-        }
+        init();
+
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
         throw ex;

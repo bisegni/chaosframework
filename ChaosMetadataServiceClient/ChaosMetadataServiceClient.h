@@ -73,7 +73,9 @@ namespace chaos {
              Specialized option for startup c and cpp program main options parameter
              */
             void init(int argc, char* argv[]) throw (CException);
-            
+
+            //! For common methods already initialized
+            void init()  throw(CException);
             //! StartableService inherited method
             void init(void *init_data)  throw(CException);
             //! StartableService inherited method
