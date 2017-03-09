@@ -221,7 +221,7 @@ int MongoDBUnitServerDataAccess::getDescription(const std::string& unit_server_u
     int err = 0;
     if((err = node_data_access->getNodeDescription(unit_server_uid,
                                                    unit_server_description))) {
-        MDBUSDA_ERR << "Error fetching the base ndoe attribute with code:" << err;
+        MDBUSDA_ERR << "Error fetching the base node attribute with code:" << err;
     } else if(!*unit_server_description) {
         MDBUSDA_ERR << "No data basic node attribute found for unit server" << unit_server_uid;
         err = -1;

@@ -52,7 +52,9 @@ using boost::shared_ptr;
 #define CMSC_LERR ERR_LOG(ChaosMetadataServiceClient)
 
 //!default constructor
-ChaosMetadataServiceClient::ChaosMetadataServiceClient(){}
+ChaosMetadataServiceClient::ChaosMetadataServiceClient(){
+	 mds_client_initialized=mds_client_deinitialized=false;
+}
 
 //! default destructor
 ChaosMetadataServiceClient::~ChaosMetadataServiceClient() {}
@@ -66,6 +68,14 @@ void ChaosMetadataServiceClient::init(int argc, char* argv[]) throw (CException)
 }
 
 void ChaosMetadataServiceClient::init()  throw(CException) {
+
+	if(mds_client_initialized){
+		CMSC_LDBG<<"Already initialized";
+		return ;
+	}
+	CMSC_LDBG<<"Initializing";
+
+	mds_client_initialized= true;
     //--------------api proxy------------------------
       api_proxy_manager.reset(new ApiProxyManager(NetworkBroker::getInstance(),
                                                   &setting),
@@ -102,6 +112,7 @@ void ChaosMetadataServiceClient::init()  throw(CException) {
  *
  */
 void ChaosMetadataServiceClient::init(void *init_data)  throw(CException) {
+
     try {
         ChaosCommon<ChaosMetadataServiceClient>::init(init_data);
         init();
@@ -149,6 +160,13 @@ void ChaosMetadataServiceClient::stop()   throw(CException) {
  Deiniti all the manager
  */
 void ChaosMetadataServiceClient::deinit()   throw(CException) {
+
+	if(mds_client_deinitialized){
+		LDBG_<<"Already deinitialized";
+		return;
+	}
+	mds_client_deinitialized= true;
+	mds_client_initialized=false;
     //deinit api system
     CHAOS_NOT_THROW(node_monitor.deinit(__PRETTY_FUNCTION__););
     
@@ -165,6 +183,7 @@ void ChaosMetadataServiceClient::deinit()   throw(CException) {
     CMSC_LAPP << "-------------------------------------------------------------------------";
     CMSC_LAPP << "Metadata service client has been stopped";
     CMSC_LAPP << "-------------------------------------------------------------------------";
+
 }
 
 void ChaosMetadataServiceClient::clearServerList() {

@@ -1,9 +1,9 @@
 /*
- *	NewUS.h
+ *	GetSetFullUnitServer.h
  *	!CHAOS
- *	Created by Bisegni Claudio.
+ *	Created by Andrea Michelotti
  *
- *    	Copyright 2015 INFN, National Institute of Nuclear Physics
+ *    	Copyright 2017 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__NewUS__
-#define __CHAOSFramework__NewUS__
+#ifndef __CHAOSFramework__GetSetFullUnitServer__
+#define __CHAOSFramework__GetSetFullUnitServer__
 
 #include "../AbstractApi.h"
 
@@ -27,14 +27,13 @@ namespace chaos {
     namespace metadata_service {
         namespace api {
             namespace unit_server {
-
-                class NewUS:
+                
+                class GetSetFullUnitServer:
                 public AbstractApi {
-
+                    
                 public:
-                    NewUS();
-                    ~NewUS();
-                   void performQuery(const std::string& uid,const string& desc, const chaos::common::data::CDataWrapper* custom);
+                    GetSetFullUnitServer();
+                    ~GetSetFullUnitServer();
                     chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
                                                                bool& detach_data) throw(chaos::CException);
                 };
@@ -43,4 +42,4 @@ namespace chaos {
     }
 }
 
-#endif /* defined(__CHAOSFramework__NewUS__) */
+#endif /* defined(__CHAOSFramework__GetSetFullUnitServer__) */

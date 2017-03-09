@@ -63,7 +63,7 @@ namespace chaos {
             
             //! default destructor
             ~ChaosMetadataServiceClient();
-            
+            bool mds_client_initialized,mds_client_deinitialized;
         public:
             //! the client setting
             ClientSetting setting;

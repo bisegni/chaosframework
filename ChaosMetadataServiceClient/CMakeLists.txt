@@ -92,7 +92,9 @@ SET(mcl_src ${mcl_src}      api_proxy/unit_server/GetDescription.cpp
                             api_proxy/unit_server/NewUS.cpp
                             api_proxy/unit_server/DeleteUS.cpp
                             api_proxy/unit_server/LoadUnloadControlUnit.cpp
-                            api_proxy/unit_server/ManageCUType.cpp)
+                            api_proxy/unit_server/ManageCUType.cpp
+                            api_proxy/unit_server/GetSetFullUnitServer.cpp
+                            )
 
 SET(mcl_src ${mcl_src}      api_proxy/script/SaveScript.cpp
                             api_proxy/script/SearchScript.cpp

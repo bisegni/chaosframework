@@ -30,14 +30,16 @@ using namespace chaos::metadata_service_client::monitor_system;
 MonitorManager::MonitorManager(chaos::common::network::NetworkBroker *_network_broker,
                                ClientSetting *_setting):
 setting(_setting),
+slot_scheduler(NULL),
 network_broker(_network_broker){}
 
 MonitorManager::~MonitorManager() {}
 
 void MonitorManager::init(void *init_data) throw (chaos::CException) {
     CHAOS_LASSERT_EXCEPTION(network_broker, MM_ERR, -1, "No network broker instance found")
-    
-    slot_scheduler = new QuantumSlotScheduler(network_broker);
+    if(slot_scheduler==NULL){
+    	slot_scheduler = new QuantumSlotScheduler(network_broker);
+    }
     CHAOS_LASSERT_EXCEPTION(slot_scheduler, MM_ERR, -2, "Error allcaoting quantum slot scheduler")
     
     StartableService::initImplementation(slot_scheduler, init_data, "QuantumSlotScheduler", __PRETTY_FUNCTION__);
@@ -65,6 +67,10 @@ void MonitorManager::stop() throw (chaos::CException) {
 
 void MonitorManager::deinit() throw (chaos::CException) {
     StartableService::deinitImplementation(slot_scheduler, "QuantumSlotScheduler", __PRETTY_FUNCTION__);
+    if(slot_scheduler){
+    	delete slot_scheduler;
+    	slot_scheduler=NULL;
+    }
 }
 
 void MonitorManager::resetEndpointList(std::vector<std::string> new_server_list) {

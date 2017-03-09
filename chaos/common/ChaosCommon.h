@@ -86,9 +86,10 @@ namespace chaos {
     public common::utility::Singleton<T>,
     public common::utility::StartableService {
 
-   static bool initialized,deinitialized;
 
     protected:
+    	bool initialized,deinitialized;
+
             //! Constructor Method
         /*!
          Thi method call the \ref GlobalConfiguration::preParseStartupParameters method, starting the
@@ -239,9 +240,7 @@ namespace chaos {
                     return GlobalConfiguration::getInstance();
                 }
                 };
-    template <class T> bool  ChaosCommon<T>::initialized=false;
 
-    template <class T> bool  ChaosCommon<T>::deinitialized=false;
 
                 }
 

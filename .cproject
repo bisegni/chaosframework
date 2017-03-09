@@ -31,11 +31,29 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
-					<fileInfo id="0.703661786.208982607" name="AbstractControlUnit.cpp" rcbsApplicability="disable" resourcePath="chaos/cu_toolkit/control_manager/AbstractControlUnit.cpp" toolsToInvoke="org.eclipse.cdt.build.core.settings.holder.1991680329.808596203">
-						<tool id="org.eclipse.cdt.build.core.settings.holder.1991680329.808596203" name="GNU C++" superClass="org.eclipse.cdt.build.core.settings.holder.1991680329">
-							<inputType id="org.eclipse.cdt.build.core.settings.holder.inType.312479032" languageId="org.eclipse.cdt.core.g++" languageName="GNU C++" sourceContentType="org.eclipse.cdt.core.cxxSource,org.eclipse.cdt.core.cxxHeader" superClass="org.eclipse.cdt.build.core.settings.holder.inType"/>
-						</tool>
-					</fileInfo>
+					<folderInfo id="0.703661786.270969135" name="/" resourcePath="ChaosMetadataService">
+						<toolChain id="org.eclipse.cdt.build.core.prefbase.toolchain.1956497930" name="No ToolChain" superClass="org.eclipse.cdt.build.core.prefbase.toolchain" unusedChildren="">
+							<tool id="org.eclipse.cdt.build.core.settings.holder.libs.336258771" name="holder for library settings" superClass="org.eclipse.cdt.build.core.settings.holder.libs.1624788308"/>
+							<tool id="org.eclipse.cdt.build.core.settings.holder.1983682648" name="Assembly" superClass="org.eclipse.cdt.build.core.settings.holder.779491187">
+								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.1920171692" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/chaosframework/usr/local/include}&quot;"/>
+								</option>
+								<inputType id="org.eclipse.cdt.build.core.settings.holder.inType.1444360972" languageId="org.eclipse.cdt.core.assembly" languageName="Assembly" sourceContentType="org.eclipse.cdt.core.asmSource" superClass="org.eclipse.cdt.build.core.settings.holder.inType"/>
+							</tool>
+							<tool id="org.eclipse.cdt.build.core.settings.holder.1753557213" name="GNU C++" superClass="org.eclipse.cdt.build.core.settings.holder.1991680329">
+								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.623336169" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/chaosframework/usr/local/include}&quot;"/>
+								</option>
+								<inputType id="org.eclipse.cdt.build.core.settings.holder.inType.1608539379" languageId="org.eclipse.cdt.core.g++" languageName="GNU C++" sourceContentType="org.eclipse.cdt.core.cxxSource,org.eclipse.cdt.core.cxxHeader" superClass="org.eclipse.cdt.build.core.settings.holder.inType"/>
+							</tool>
+							<tool id="org.eclipse.cdt.build.core.settings.holder.113867728" name="GNU C" superClass="org.eclipse.cdt.build.core.settings.holder.339388777">
+								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.2096509751" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/chaosframework/usr/local/include}&quot;"/>
+								</option>
+								<inputType id="org.eclipse.cdt.build.core.settings.holder.inType.253633169" languageId="org.eclipse.cdt.core.gcc" languageName="GNU C" sourceContentType="org.eclipse.cdt.core.cSource,org.eclipse.cdt.core.cHeader" superClass="org.eclipse.cdt.build.core.settings.holder.inType"/>
+							</tool>
+						</toolChain>
+					</folderInfo>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
