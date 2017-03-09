@@ -86,6 +86,10 @@ namespace chaos {
                     //! inherited by data_access::AgentDataAccess
                     int getNodeListStatusForAgent(const std::string& agent_uid,
                                                   chaos::service_common::data::agent::VectorAgentAssociationStatus& node_status_vec);
+                    
+                    //! inherited by data_access::AgentDataAccess
+                    int pushLogEntry(const std::string& node_uid,
+                                     const std::string& node_log_entry);
                 };
             }
         }

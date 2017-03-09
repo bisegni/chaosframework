@@ -142,12 +142,15 @@ namespace chaos {
                 }
                 
                 int32_t readInt32() {
-                    return static_cast<int32_t>(((char*)ChaosBuffer<Allocator>::data)[cursor++]);
+                    int32_t result = *(int32_t*)(((char*)ChaosBuffer<Allocator>::data) + cursor);
+                    cursor+=sizeof(int32_t);
+                    return result;
                 }
                 
                 std::string readString(int32_t str_len) {
                     const char * str_start = ((const char *)ChaosBuffer<Allocator>::data) + cursor;
-                    std::string result(str_start, (cursor+=str_len));
+                    std::string result(str_start, str_len);
+                    cursor += str_len;
                     return result;
                 }
                 

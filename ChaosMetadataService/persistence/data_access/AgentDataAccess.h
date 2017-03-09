@@ -74,6 +74,10 @@ namespace chaos {
                     //! return all unit server associated with agent
                     virtual int getNodeListStatusForAgent(const std::string& agent_uid,
                                                           chaos::service_common::data::agent::VectorAgentAssociationStatus& node_status_vec) = 0;
+                    
+                    //! push a log entry received from angent process log system
+                    virtual int pushLogEntry(const std::string& node_uid,
+                                             const std::string& node_log_entry) = 0;
                 };
             }
         }

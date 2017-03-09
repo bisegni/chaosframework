@@ -13,14 +13,15 @@
 #ifndef CHAOSFramework_mongo_db_constants_h
 #define CHAOSFramework_mongo_db_constants_h
 
-static const char * const MONGO_DB_NAME						= "chaos";
-static const char * const MONGO_DB_COLLECTION_VFS_DOMAINS	= 	"domains";
-static const char * const MONGO_DB_COLLECTION_VFS_DOMAINS_URL	= "domains_url";
-static const char * const MONGO_DB_COLLECTION_VFS_VFAT		= "vfat";
-static const char * const MONGO_DB_COLLECTION_VFS_VBLOCK		= "datablock";
-static const char * const MONGO_DB_COLLECTION_IDX_DATA_PACK	= "dp_idx";
-static const char * const MONGO_DB_COLLECTION_SNAPSHOT		= "snapshot";
-static const char * const MONGO_DB_COLLECTION_SNAPSHOT_DATA	= "snapshot_data";
+static const char * const MONGO_DB_NAME                             = "chaos";
+static const char * const MONGO_DB_COLLECTION_VFS_DOMAINS           = 	"domains";
+static const char * const MONGO_DB_COLLECTION_VFS_DOMAINS_URL       = "domains_url";
+static const char * const MONGO_DB_COLLECTION_VFS_VFAT              = "vfat";
+static const char * const MONGO_DB_COLLECTION_VFS_VBLOCK            = "datablock";
+static const char * const MONGO_DB_COLLECTION_IDX_DATA_PACK         = "dp_idx";
+static const char * const MONGO_DB_COLLECTION_SNAPSHOT              = "snapshot";
+static const char * const MONGO_DB_COLLECTION_SNAPSHOT_DATA         = "snapshot_data";
+static const char * const MONGO_DB_COLLECTION_AGENT_PROCESS_LOG     = "agent_process_log";
 //----------------------------------collection naming-------------------------------------------
 static const char * const MONGODB_COLLECTION_NODES                      = "mds_nodes";
 static const char * const MONGODB_COLLECTION_NODES_COMMAND              = "mds_nodes_command";
@@ -80,19 +81,19 @@ static const char * const MONGO_DB_FIELD_IDX_DATA_PACK_SIZE						= "dp_size";
 static const char * const MONGO_DB_FIELD_IDX_DATA_PACK_STATE					= "dp_state";
 
 //snapshot field-------------------------------------------------
-static const char * const MONGO_DB_FIELD_JOB_WORK_UNIQUE_CODE				= "check_code";
+static const char * const MONGO_DB_FIELD_JOB_WORK_UNIQUE_CODE			= "check_code";
 static const char * const MONGO_DB_FIELD_SNAPSHOT_NAME					= "snap_name";
-static const char * const MONGO_DB_FIELD_SNAPSHOT_TS						= "snap_ts";
-static const char * const MONGO_DB_FIELD_SNAPSHOT_TS_DATE                = "snap_ts_date";
-static const char * const MONGO_DB_FIELD_SNAPSHOT_JOB_CONCURRENCY			= "job_concurency";
+static const char * const MONGO_DB_FIELD_SNAPSHOT_TS					= "snap_ts";
+static const char * const MONGO_DB_FIELD_SNAPSHOT_TS_DATE               = "snap_ts_date";
+static const char * const MONGO_DB_FIELD_SNAPSHOT_JOB_CONCURRENCY		= "job_concurency";
 
 
 //snapshot data-------------------------------------------------
 static const char * const MONGO_DB_FIELD_SNAPSHOT_DATA_SNAPSHOT_NAME	= "snap_name";
-static const char * const MONGO_DB_FIELD_SNAPSHOT_DATA_PRODUCER_ID	= "producer_id";
+static const char * const MONGO_DB_FIELD_SNAPSHOT_DATA_PRODUCER_ID      = "producer_id";
 //the key that contains the channel serialization is created at runtine with the semantic producer_key[_o,_i,_c,_s]
 
-
-
-
+//agent process logging data-------------------------------------------------
+static const char * const MONGO_DB_FIELD_AGENT_PROCESS_LOG_TS           = "log_ts";
+static const char * const MONGO_DB_FIELD_AGENT_PROCESS_LOG_ENTRY        = "log_entry";
 #endif

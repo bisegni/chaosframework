@@ -402,3 +402,32 @@ int MongoDBAgentDataAccess::getNodeListStatusForAgent(const std::string& agent_u
     }
     return err;
 }
+
+int MongoDBAgentDataAccess::pushLogEntry(const std::string& node_uid,
+                                         const std::string& node_log_entry) {
+    int err = 0;
+    try {
+        mongo::BSONObj result;
+        mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << node_uid
+                                    << MONGO_DB_FIELD_AGENT_PROCESS_LOG_TS << mongo::Date_t(TimingUtil::getTimeStamp())
+                                    << MONGO_DB_FIELD_AGENT_PROCESS_LOG_ENTRY << node_log_entry);
+
+        
+        DEBUG_CODE(DBG<<log_message("pushLogEntry",
+                                    "inser",
+                                    DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                            query.toString()));)
+        
+        if((err = connection->insert(MONGO_DB_COLLECTION_NAME(MONGO_DB_COLLECTION_AGENT_PROCESS_LOG),
+                                      query))){
+            ERR << CHAOS_FORMAT("Error creating new elog entry for node %1% with error %2%", %node_uid%err);
+        }
+    } catch (const mongo::DBException &e) {
+        ERR << e.what();
+        err = -1;
+    } catch (const chaos::CException &e) {
+        ERR << e.what();
+        err = e.errorCode;
+    }
+    return err;
+}

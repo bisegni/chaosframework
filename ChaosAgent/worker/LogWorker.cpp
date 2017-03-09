@@ -99,14 +99,18 @@ void PipeReader::handleRead(PipeReaderPtr me,
     if (!error) {
         std::string line;
         std::istream is(&me->asio_buffer);
-        while (std::getline(is, line)) {
-           log_line.push_back(line);
+        bool equals = bytes_transferred == me->asio_buffer.size();
+        if (std::getline(is, line)) {
+            log_line.push_back(line);
+            data_driver->storeLogEntries(node_uid,
+                                         log_line);
         }
         
         //me->asio_buffer.consume(bytes_transferred);
         //push line
-        data_driver->storeLogEntries(node_uid,
-                                     log_line);
+        //data_driver->storeLogEntries(node_uid,
+        //log_line);
+        
         //        m_pipe.async_read_some(boost::asio::buffer(me->buf),
         //                               boost::bind(&PipeReader::handleRead,
         //                                           this,

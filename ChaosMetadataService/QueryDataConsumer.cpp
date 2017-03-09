@@ -358,6 +358,14 @@ int QueryDataConsumer::consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSy
 int QueryDataConsumer::consumeLogEntries(const std::string& node_name,
                                          const ChaosStringVector& log_entries) {
     int err = 0;
-    ERR << CHAOS_FORMAT("Consume log for node %1% with %2% entries", %node_name%log_entries.size());
+    for(ChaosStringVectorConstIterator it = log_entries.begin(),
+        end = log_entries.end();
+        it != end;
+        it++) {
+        AgentDataAccess *a_da = PersistenceManager::getInstance()->getDataAccess<AgentDataAccess>();
+        if((err = a_da->pushLogEntry(node_name, *it))){
+            ERR << CHAOS_FORMAT("Error push entry for node %1%", %node_name);
+        }
+    }
     return err;
 }
