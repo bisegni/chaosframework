@@ -90,6 +90,13 @@ namespace chaos {
                     //! inherited by data_access::AgentDataAccess
                     int pushLogEntry(const std::string& node_uid,
                                      const std::string& node_log_entry);
+                    
+                    //! inherited by data_access::AgentDataAccess
+                    int getLogEntry(const std::string& node_uid,
+                                    const int32_t number_of_entries,
+                                    const bool asc,
+                                    const uint64_t start_ts,
+                                    chaos::service_common::data::agent::VectorAgentLogEntry& found_entries);
                 };
             }
         }

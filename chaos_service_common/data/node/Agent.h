@@ -220,6 +220,30 @@ namespace chaos {
                     return data_serialized;
                 }
                 CHAOS_CLOSE_SDWRAPPER()
+                
+                //!identify a log entry grabbed by an agen from a node
+                struct AgentLogEntry {
+                    uint64_t entry_ts;
+                    std::string entry_log_line;
+                };
+                
+                CHAOS_OPEN_SDWRAPPER(AgentLogEntry)
+                void deserialize(chaos::common::data::CDataWrapper *serialized_data) {
+                    if(serialized_data == NULL) return;
+                    dataWrapped().entry_ts = (uint64_t)CDW_GET_INT64_WITH_DEFAULT(serialized_data, "log_ts", 0);
+                    dataWrapped().entry_log_line = CDW_GET_SRT_WITH_DEFAULT(serialized_data, "log_entry", "");
+                }
+                
+                std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
+                    std::auto_ptr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
+                    data_serialized->addInt64Value("log_ts", dataWrapped().entry_ts);
+                    data_serialized->addStringValue("log_entry", dataWrapped().entry_log_line);
+                    return data_serialized;
+                }
+                CHAOS_CLOSE_SDWRAPPER()
+                
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(AgentLogEntry, VectorAgentLogEntry);
+                typedef chaos::common::data::structured::StdVectorSDWrapper<AgentLogEntry, AgentLogEntrySDWrapper> VectorAgentLogEntrySDWrapper;
             }
         }
     }

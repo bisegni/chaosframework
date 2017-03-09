@@ -21,7 +21,7 @@
 
 #include "AgentLoggingApiGroup.h"
 #include "ManageNodeLogging.h"
-
+#include "GetProcessLogEntries.h"
 using namespace chaos::metadata_service::api::agent::logging;
 
 DEFINE_CLASS_FACTORY_NO_ALIAS(AgentLoggingApiGroup,
@@ -29,7 +29,8 @@ DEFINE_CLASS_FACTORY_NO_ALIAS(AgentLoggingApiGroup,
 
 AgentLoggingApiGroup::AgentLoggingApiGroup():
 AbstractApiGroup(AgentNodeDomainAndActionRPC::LogWorker::RPC_DOMAIN){
-   addApi<ManageNodeLogging>();
+    addApi<ManageNodeLogging>();
+    addApi<GetProcessLogEntries>();
 }
 
 AgentLoggingApiGroup::~AgentLoggingApiGroup() {}

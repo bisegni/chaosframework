@@ -655,6 +655,9 @@
 		32A40D471A9CD751000D9A35 /* MongoDBHAConnectionManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A40D451A9CD751000D9A35 /* MongoDBHAConnectionManager.cpp */; };
 		32A51F691E704E8700209E92 /* ManagedDirectIODataDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A51F671E704E8700209E92 /* ManagedDirectIODataDriver.cpp */; };
 		32A51F6A1E704E8700209E92 /* ManagedDirectIODataDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A51F681E704E8700209E92 /* ManagedDirectIODataDriver.h */; };
+		32A51F6D1E71931C00209E92 /* GetProcessLogEntries.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A51F6B1E71931C00209E92 /* GetProcessLogEntries.cpp */; };
+		32A51F701E71968B00209E92 /* GetProcessLogEntries.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A51F6E1E71968B00209E92 /* GetProcessLogEntries.cpp */; };
+		32A51F711E71968B00209E92 /* GetProcessLogEntries.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A51F6F1E71968B00209E92 /* GetProcessLogEntries.h */; };
 		32A5ED6014DBD68B001DC80E /* WaitSemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A5ED5F14DBD68B001DC80E /* WaitSemaphore.h */; };
 		32A809D614D82E19000F2DF7 /* MDSMessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A809D514D82E19000F2DF7 /* MDSMessageChannel.h */; };
 		32A809D814D82E28000F2DF7 /* MDSMessageChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A809D714D82E28000F2DF7 /* MDSMessageChannel.cpp */; };
@@ -1983,6 +1986,10 @@
 		32A40D461A9CD751000D9A35 /* MongoDBHAConnectionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MongoDBHAConnectionManager.h; sourceTree = "<group>"; };
 		32A51F671E704E8700209E92 /* ManagedDirectIODataDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ManagedDirectIODataDriver.cpp; sourceTree = "<group>"; };
 		32A51F681E704E8700209E92 /* ManagedDirectIODataDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManagedDirectIODataDriver.h; sourceTree = "<group>"; };
+		32A51F6B1E71931C00209E92 /* GetProcessLogEntries.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetProcessLogEntries.cpp; sourceTree = "<group>"; };
+		32A51F6C1E71931C00209E92 /* GetProcessLogEntries.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetProcessLogEntries.h; sourceTree = "<group>"; };
+		32A51F6E1E71968B00209E92 /* GetProcessLogEntries.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetProcessLogEntries.cpp; sourceTree = "<group>"; };
+		32A51F6F1E71968B00209E92 /* GetProcessLogEntries.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetProcessLogEntries.h; sourceTree = "<group>"; };
 		32A5ED5F14DBD68B001DC80E /* WaitSemaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaitSemaphore.h; sourceTree = "<group>"; };
 		32A809D514D82E19000F2DF7 /* MDSMessageChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = MDSMessageChannel.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		32A809D714D82E28000F2DF7 /* MDSMessageChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MDSMessageChannel.cpp; sourceTree = "<group>"; };
@@ -5213,6 +5220,8 @@
 				32FF2AC11E6F10A300117985 /* AgentLoggingApiGroup.h */,
 				32FF2AC31E6F10F400117985 /* ManageNodeLogging.cpp */,
 				32FF2AC41E6F10F400117985 /* ManageNodeLogging.h */,
+				32A51F6B1E71931C00209E92 /* GetProcessLogEntries.cpp */,
+				32A51F6C1E71931C00209E92 /* GetProcessLogEntries.h */,
 			);
 			path = logging;
 			sourceTree = "<group>";
@@ -5222,6 +5231,8 @@
 			children = (
 				32FF2AC71E6F117A00117985 /* ManageNodeLogging.cpp */,
 				32FF2AC81E6F117A00117985 /* ManageNodeLogging.h */,
+				32A51F6E1E71968B00209E92 /* GetProcessLogEntries.cpp */,
+				32A51F6F1E71968B00209E92 /* GetProcessLogEntries.h */,
 			);
 			path = logging;
 			sourceTree = "<group>";
@@ -5670,6 +5681,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				32A51F711E71968B00209E92 /* GetProcessLogEntries.h in Headers */,
 				3256C9B31CB649710019A108 /* NodeFetcher.h in Headers */,
 				32AFA9D81C77224F00640BFA /* logging_types.h in Headers */,
 				32B1E7F71B2AD1CC00221E49 /* CommandTemplateGet.h in Headers */,
@@ -6095,6 +6107,7 @@
 				32CAC9E41AE6991500DC6AAB /* LoadUnloadControlUnit.cpp in Sources */,
 				3211CCD61B0205C700F9B80E /* GetBestEndpoints.cpp in Sources */,
 				325963981D216BD800D94853 /* LoadInstanceOnUnitServer.cpp in Sources */,
+				32A51F6D1E71931C00209E92 /* GetProcessLogEntries.cpp in Sources */,
 				32A13EBF1C2019080010F3FC /* MongoDBTreeGroupDataAccess.cpp in Sources */,
 				320530DA1AE92D770064275B /* DataServiceDataAccess.cpp in Sources */,
 				32B299A11BDA7CAA000D3716 /* CUCommonUtility.cpp in Sources */,
@@ -6580,6 +6593,7 @@
 				3239EF4A1C0EFE910052BE61 /* RestoreSnapshot.cpp in Sources */,
 				32F135A31DF05E4F00890AFC /* GetSnapshotDatasetForNode.cpp in Sources */,
 				328C87361ADFDD410047C79B /* GetInstance.cpp in Sources */,
+				32A51F701E71968B00209E92 /* GetProcessLogEntries.cpp in Sources */,
 				32D745FC1C7338D100F4D719 /* AlertLogEventHandler.cpp in Sources */,
 				327F39AB1AEAA2390000C845 /* UpdateDS.cpp in Sources */,
 				326150951CAAB3120003D0C2 /* NodeMonitorHandler.cpp in Sources */,

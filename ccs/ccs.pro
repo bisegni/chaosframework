@@ -104,7 +104,6 @@ SOURCES += main.cpp\
     api_async_processor/ApiSubmitter.cpp \
     widget/ChaosWidgetCompanion.cpp \
     data/LogDomainListModel.cpp \
-    data/LogEntryTableModel.cpp \
     api_async_processor/ApiHandler.cpp \
     data/LogDataTableModel.cpp \
     log_browser/LogBrowser.cpp \
@@ -152,7 +151,9 @@ SOURCES += main.cpp\
     data/ApplicationErrorLoggingTableModel.cpp \
     node/agent/AgentEditor.cpp \
     data/AgentNodeAssociatedListModel.cpp \
-    node/agent/AgentNodeAssociationEditor.cpp
+    node/agent/AgentNodeAssociationEditor.cpp \
+    data/LogEntryTableModel.cpp \
+    data/LogProcessEntriesTableModel.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -238,7 +239,6 @@ HEADERS  += \
     api_async_processor/ApiHandler.h \
     widget/ChaosWidgetCompanion.h \
     data/LogDomainListModel.h \
-    data/LogEntryTableModel.h \
     data/LogDataTableModel.h \
     data/SearchPager.h\
     log_browser/LogBrowser.h \
@@ -288,7 +288,9 @@ HEADERS  += \
     data/ApplicationErrorLoggingTableModel.h \
     node/agent/AgentEditor.h \
     data/AgentNodeAssociatedListModel.h \
-    node/agent/AgentNodeAssociationEditor.h
+    node/agent/AgentNodeAssociationEditor.h \
+    data/LogEntryTableModel.h \
+    data/LogProcessEntriesTableModel.h
 
 FORMS    += \
     search/searchnoderesult.ui \

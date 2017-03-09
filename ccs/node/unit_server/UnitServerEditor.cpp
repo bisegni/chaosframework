@@ -19,6 +19,7 @@
 #include <QDropEvent>
 #include <QMimeData>
 #include <QStringRef>
+#include <QIntValidator>
 
 using namespace chaos;
 using namespace chaos::common::data;
@@ -35,6 +36,7 @@ UnitServerEditor::UnitServerEditor(const QString &_node_unique_id) :
     PresenterWidget(NULL),
     node_unique_id(_node_unique_id),
     move_copy_search_instance(NULL),
+    us_log_entries_tab_model(node_unique_id),
     ui(new Ui::UnitServerEditor) {
     ui->setupUi(this);
     ui->splitterTypeInstances->setStretchFactor(0,0);
@@ -102,6 +104,9 @@ void UnitServerEditor::initUI() {
     ui->chaosLabelHealthState->setHealthAttribute(CNodeHealthLabel::HealthOperationalState);
     ui->chaosLabelHealthState->initChaosContent();
     ui->chaosLedIndicatorHealt->initChaosContent();
+
+    ui->tableViewLogEntries->setModel(&us_log_entries_tab_model);
+    ui->lineEditLogEntriesNumber->setValidator(new QIntValidator(100,10000));
     //load info
     updateAll();
 }
@@ -281,7 +286,7 @@ void UnitServerEditor::on_pushButtonCreateNewInstance_clicked()
     }
     //we can start instance editor
     launchPresenterWidget(new ControUnitInstanceEditor(node_unique_id,
-                                                      selected_index.first().data().toString()));
+                                                       selected_index.first().data().toString()));
 }
 
 void UnitServerEditor::on_pushButtonUpdateAllInfo_clicked() {
@@ -306,8 +311,8 @@ void UnitServerEditor::on_pushButtonEditInstance_clicked() {
         QString cu_inst_id = table_model->item(element.row(), 0)->text();
         qDebug() << "Edit " << cu_inst_id << " instance";
         launchPresenterWidget(new ControUnitInstanceEditor(node_unique_id,
-                                                          cu_inst_id,
-                                                          true));
+                                                           cu_inst_id,
+                                                           true));
     }
 }
 
@@ -472,7 +477,7 @@ void UnitServerEditor::selectedUnitServer(const QString& tag, const QVector< QPa
                                                                   new_cu_uid,
                                                                   &ok);
                 if(ok && destination_cu_id.size()) {
-                   continue;
+                    continue;
                 }
             } else {
                 break;
@@ -538,4 +543,9 @@ void UnitServerEditor::on_tableView_doubleClicked(const QModelIndex &index) {
     QStandardItem *node_uid = table_model->item(index.row(), 0);
     qDebug() << "Open control unit editor for" << node_uid->text();
     launchPresenterWidget(new ControlUnitEditor(node_uid->text()));
+}
+
+void UnitServerEditor::on_pushButtonUpdateLogEntries_clicked() {
+    us_log_entries_tab_model.setMaxResultItem(ui->lineEditLogEntriesNumber->text().toUInt());
+    us_log_entries_tab_model.updateEntriesList();
 }
