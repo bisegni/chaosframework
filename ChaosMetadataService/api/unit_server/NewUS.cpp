@@ -57,7 +57,7 @@ void NewUS::performQuery(const std::string& new_us_uid,const string& desc, std::
     if(custom.get()){
         data_pack->addCSDataValue(chaos::NodeDefinitionKey::NODE_CUSTOM_PARAM,*custom);
     }
-    if((err = us_da->insertNewUS(*data_pack.get(), false))) {
+    if((err = us_da->insertNewUS(*data_pack, false))) {
         LOG_AND_TROW(US_NEW_ERR, -6, boost::str(boost::format("Error creating a new unit server of id:%1%") % new_us_uid));
     }
 }
