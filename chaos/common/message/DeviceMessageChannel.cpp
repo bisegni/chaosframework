@@ -56,11 +56,11 @@ void DeviceMessageChannel::init() throw(CException) {
         }
         DMCINFO<< "Local MDS Channel allocated";
         
-        if(device_network_address->ip_port.size() == 0 ||
-           device_network_address->node_id.size() == 0) {
+//        if(device_network_address->ip_port.size() == 0 ||
+//           device_network_address->node_id.size() == 0) {
             //force to update the network id
-            tryToReconnect();
-        }
+        tryToReconnect();
+//        }
     }
 }
 
