@@ -642,6 +642,7 @@ MultiAddressMessageChannel *NetworkBroker::getMultiMetadataServiceRawMessageChan
  */
 DeviceMessageChannel *NetworkBroker::getDeviceMessageChannelFromAddress(CDeviceNetworkAddress *node_network_address,
                                                                         bool self_managed,
+                                                                        chaos::common::message::DeviceMessageChannelListener *listener,
                                                                         bool use_shared_request_domain) {
     DeviceMessageChannel *channel = (use_shared_request_domain?
                                     new DeviceMessageChannel(this,
@@ -654,6 +655,7 @@ DeviceMessageChannel *NetworkBroker::getDeviceMessageChannelFromAddress(CDeviceN
     
     
     if(channel){
+        channel->addListener(listener);
         channel->init();
         boost::mutex::scoped_lock lock(mutex_map_rpc_channel_acces);
         active_rpc_channel.insert(make_pair(channel->getChannelUUID(), static_cast<MessageChannel*>(channel)));

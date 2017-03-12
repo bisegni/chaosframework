@@ -40,10 +40,10 @@ using namespace chaos::common::batch_command;
 
 //---------------------------------------------------------------------------------------------------
 CUController::CUController(const std::string& _deviceID):
-datasetDB(true) {
-    mdsChannel = NULL;
-    deviceChannel = NULL;
-    ioLiveDataDriver = NULL;
+datasetDB(true),
+mdsChannel(NULL),
+deviceChannel(NULL),
+ioLiveDataDriver(NULL){
     millisecToWait = MSEC_WAIT_OPERATION;
 
     
@@ -54,11 +54,11 @@ datasetDB(true) {
     
     //get a new message channel in a self manage way
     deviceChannel = NetworkBroker::getInstance()->getDeviceMessageChannelFromAddress(new CDeviceNetworkAddress(_deviceID),
-                                                                                     true);
+                                                                                     true,
+                                                                                     this);
     if(!deviceChannel) throw CException(-2,
                                         "Invalid device channel created",
                                         __PRETTY_FUNCTION__);
-    deviceChannel->addListener(this);
     //update live data driver
     ioLiveDataDriver = getDataProxyChannelNewInstance();
     if(!ioLiveDataDriver) throw CException(-3,
