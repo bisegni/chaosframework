@@ -207,7 +207,7 @@ bool HTTPWANInterface::checkForContentType(struct mg_connection *connection,
 int HTTPWANInterface::process(struct mg_connection *connection) {
 	CHAOS_ASSERT(handler)
 	int								err = 0;
-    DEBUG_CODE(uint64_t                        execution_time_start = TimingUtil::getTimeStampInMicrosends();)
+    DEBUG_CODE(uint64_t                        execution_time_start = TimingUtil::getTimeStampInMicroseconds();)
     DEBUG_CODE(uint64_t                        execution_time_end = 0;)
 	Json::Value						json_request;
 	Json::Value						json_response;
@@ -248,7 +248,7 @@ int HTTPWANInterface::process(struct mg_connection *connection) {
 		            }
 		 response << json_writer.write(json_response);
 		 	flush_response(connection, &response);
-		     DEBUG_CODE(execution_time_end = TimingUtil::getTimeStampInMicrosends();)
+		     DEBUG_CODE(execution_time_end = TimingUtil::getTimeStampInMicroseconds();)
 		     DEBUG_CODE(uint64_t duration = execution_time_end - execution_time_start;)
 		     DEBUG_CODE(HTTWAN_INTERFACE_DBG_ << "Execution time is:" << duration << " microseconds";)
 		 	return 1;//
@@ -307,7 +307,7 @@ int HTTPWANInterface::process(struct mg_connection *connection) {
 	
 	response << json_writer.write(json_response);
 	flush_response(connection, &response);
-    DEBUG_CODE(execution_time_end = TimingUtil::getTimeStampInMicrosends();)
+    DEBUG_CODE(execution_time_end = TimingUtil::getTimeStampInMicroseconds();)
     DEBUG_CODE(uint64_t duration = execution_time_end - execution_time_start;)
     DEBUG_CODE(HTTWAN_INTERFACE_DBG_ << "Execution time is:" << duration << " microseconds";)
 	return 1;//

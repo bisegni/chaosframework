@@ -56,8 +56,8 @@ CDataWrapper *GetProcessLogEntries::execute(CDataWrapper *api_data,
     CHECK_MANDATORY_KEY(api_data, "asc_ordered", ERR, -6);
     CHECK_TYPE_OF_KEY(api_data, "asc_ordered", Bool, ERR, -7);
     
-    CHECK_MANDATORY_KEY(api_data, "start_ts", ERR, -8);
-    CHECK_TYPE_OF_KEY(api_data, "start_ts", Int64, ERR, -9);
+    CHECK_MANDATORY_KEY(api_data, "start_seq", ERR, -8);
+    CHECK_TYPE_OF_KEY(api_data, "start_seq", Int64, ERR, -9);
     
     //we can rpocessd
     int err = 0;
@@ -65,10 +65,15 @@ CDataWrapper *GetProcessLogEntries::execute(CDataWrapper *api_data,
     const std::string node_uid = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
     const int32_t number_of_entries = api_data->getInt32Value("number_of_entries");
     const bool asc_ordered = api_data->getBoolValue("asc_ordered");
-    const uint64_t start_ts = api_data->getUInt64Value("start_ts");
+    const uint64_t start_seq = api_data->getUInt64Value("start_seq");
     
     VectorAgentLogEntrySDWrapper lev_w;
-    if((err = a_da->getLogEntry(node_uid, number_of_entries, asc_ordered, start_ts, lev_w()))){
+    lev_w.serialization_key = "log_entries";
+    if((err = a_da->getLogEntry(node_uid,
+                                number_of_entries,
+                                asc_ordered,
+                                start_seq,
+                                lev_w()))){
         LOG_AND_TROW(ERR, -11, CHAOS_FORMAT("Error retrieving log entries for node %1%", %node_uid));
     }
     return lev_w.serialize().release();

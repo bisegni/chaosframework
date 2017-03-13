@@ -224,6 +224,7 @@ namespace chaos {
                 //!identify a log entry grabbed by an agen from a node
                 struct AgentLogEntry {
                     uint64_t entry_ts;
+                    uint64_t entry_seq;
                     std::string entry_log_line;
                 };
                 
@@ -231,12 +232,14 @@ namespace chaos {
                 void deserialize(chaos::common::data::CDataWrapper *serialized_data) {
                     if(serialized_data == NULL) return;
                     dataWrapped().entry_ts = (uint64_t)CDW_GET_INT64_WITH_DEFAULT(serialized_data, "log_ts", 0);
+                    dataWrapped().entry_seq = (uint64_t)CDW_GET_INT64_WITH_DEFAULT(serialized_data, "log_seq", 0);
                     dataWrapped().entry_log_line = CDW_GET_SRT_WITH_DEFAULT(serialized_data, "log_entry", "");
                 }
                 
                 std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
                     std::auto_ptr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
                     data_serialized->addInt64Value("log_ts", dataWrapped().entry_ts);
+                    data_serialized->addInt64Value("log_seq", dataWrapped().entry_seq);
                     data_serialized->addStringValue("log_entry", dataWrapped().entry_log_line);
                     return data_serialized;
                 }

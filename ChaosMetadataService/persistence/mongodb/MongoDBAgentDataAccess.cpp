@@ -408,8 +408,10 @@ int MongoDBAgentDataAccess::pushLogEntry(const std::string& node_uid,
     int err = 0;
     try {
         mongo::BSONObj result;
+        uint64_t cur_ts = TimingUtil::getTimeStampInMicroseconds();
         mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << node_uid
-                                    << MONGO_DB_FIELD_AGENT_PROCESS_LOG_TS << mongo::Date_t(TimingUtil::getTimeStamp())
+                                    << MONGO_DB_FIELD_AGENT_PROCESS_LOG_TS << mongo::Date_t(cur_ts/1000)
+                                    << MONGO_DB_FIELD_AGENT_PROCESS_LOG_SEQ << (long long)cur_ts
                                     << MONGO_DB_FIELD_AGENT_PROCESS_LOG_ENTRY << node_log_entry);
         
         
@@ -435,7 +437,7 @@ int MongoDBAgentDataAccess::pushLogEntry(const std::string& node_uid,
 int MongoDBAgentDataAccess::getLogEntry(const std::string& node_uid,
                                         const int32_t number_of_entries,
                                         const bool asc,
-                                        const uint64_t start_ts,
+                                        const uint64_t start_seq,
                                         VectorAgentLogEntry& found_entries) {
     int err = 0;
     try {
@@ -443,29 +445,34 @@ int MongoDBAgentDataAccess::getLogEntry(const std::string& node_uid,
         std::vector<mongo::BSONObj> result;
         mongo::BSONObjBuilder query_builder;
         query_builder << NodeDefinitionKey::NODE_UNIQUE_ID << node_uid;
-        if(asc) {
-            query_builder << "log_ts" << BSON("gt" << mongo::Date_t(start_ts));
-        } else {
-            query_builder << "log_ts" << BSON("lt" << mongo::Date_t(start_ts));
+        if(start_seq) {
+            if(asc) {
+                query_builder << "log_seq" << BSON("$gt" << (long long)start_seq);
+            } else {
+                query_builder << "log_seq" << BSON("$lt" << (long long)start_seq);
+            }
         }
-        mongo::BSONObj query = query_builder.obj();
+        mongo::Query query = query_builder.obj();
+        query = query.sort(BSON(MONGO_DB_FIELD_AGENT_PROCESS_LOG_TS<<(asc?1:-1)
+                                <<"log_seq"<<(asc?1:-1)));
         DEBUG_CODE(DBG<<log_message("getLogEntry",
                                     "findN",
                                     DATA_ACCESS_LOG_1_ENTRY("Query",
                                                             query.toString()));)
         connection->findN(result,
-                          MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                          MONGO_DB_COLLECTION_NAME(MONGO_DB_COLLECTION_AGENT_PROCESS_LOG),
                           query,
                           number_of_entries);
         if(result.size()) {
-            AgentLogEntrySDWrapper le_w;
             for(std::vector<mongo::BSONObj>::iterator it = result.begin(),
                 end = result.end();
                 it != end;
                 it++) {
-                std::auto_ptr<CDataWrapper> ser(new CDataWrapper(it->objdata()));
-                le_w.deserialize(ser.get());
-                found_entries.push_back(le_w());
+                AgentLogEntry e;
+                e.entry_ts = (uint64_t)(it->hasField("log_ts")?it->getField("log_ts").date().asInt64():0);
+                e.entry_seq = (uint64_t)(it->hasField("log_ts")?it->getField("log_seq").date().asInt64():0);
+                e.entry_log_line = (it->hasField("log_entry")?it->getField("log_entry").String():"");
+                found_entries.push_back(e);
             }
         }
     } catch (const mongo::DBException &e) {

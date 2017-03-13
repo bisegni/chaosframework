@@ -73,7 +73,9 @@ private slots:
                                 chaos::metadata_service_client::node_monitor::OnlineState alive_state);
     void on_tableView_doubleClicked(const QModelIndex &index);
 
-    void on_pushButtonUpdateLogEntries_clicked();
+    void on_pushButtonStartSearchEntry_clicked();
+
+    void on_pushButtonLoadMoreEntries_clicked();
 
 protected:
     void initUI();

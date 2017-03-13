@@ -545,7 +545,12 @@ void UnitServerEditor::on_tableView_doubleClicked(const QModelIndex &index) {
     launchPresenterWidget(new ControlUnitEditor(node_uid->text()));
 }
 
-void UnitServerEditor::on_pushButtonUpdateLogEntries_clicked() {
+void UnitServerEditor::on_pushButtonStartSearchEntry_clicked() {
     us_log_entries_tab_model.setMaxResultItem(ui->lineEditLogEntriesNumber->text().toUInt());
-    us_log_entries_tab_model.updateEntriesList();
+    us_log_entries_tab_model.startSearchEntry();
+}
+
+void UnitServerEditor::on_pushButtonLoadMoreEntries_clicked() {
+    us_log_entries_tab_model.setMaxResultItem(ui->lineEditLogEntriesNumber->text().toUInt());
+    us_log_entries_tab_model.next();
 }

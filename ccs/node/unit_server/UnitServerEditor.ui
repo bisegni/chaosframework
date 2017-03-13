@@ -637,7 +637,7 @@
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="0,0,1,0">
+        <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="0,0,0,1,0">
          <property name="spacing">
           <number>4</number>
          </property>
@@ -649,14 +649,35 @@
             </font>
            </property>
            <property name="text">
-            <string>Number of entries:</string>
+            <string>Entries per fetch:</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QLineEdit" name="lineEditLogEntriesNumber">
+           <property name="maximumSize">
+            <size>
+             <width>50</width>
+             <height>16777215</height>
+            </size>
+           </property>
            <property name="text">
             <string>100</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButtonLoadMoreEntries">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Load Next</string>
            </property>
           </widget>
          </item>
@@ -674,14 +695,14 @@
           </spacer>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButtonUpdateLogEntries">
+          <widget class="QPushButton" name="pushButtonStartSearchEntry">
            <property name="font">
             <font>
              <pointsize>11</pointsize>
             </font>
            </property>
            <property name="text">
-            <string>Update</string>
+            <string>Start Search</string>
            </property>
           </widget>
          </item>

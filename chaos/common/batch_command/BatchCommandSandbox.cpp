@@ -558,7 +558,6 @@ void BatchCommandSandbox::checkNextCommand() {
 
 inline std::auto_ptr<CDataWrapper> BatchCommandSandbox::flatErrorInformationInCommandInfo(CDataWrapper *command_info,
                                                                                           FaultDescription& command_fault) {
-    int size = 0;
     std::auto_ptr<CDataWrapper> command_and_fault(new CDataWrapper());
     if(command_info) {
         command_and_fault->appendAllElement(*command_info);
@@ -584,7 +583,7 @@ void BatchCommandSandbox::runCommand() {
             // count the time we have started a run step
             curr_executing_impl->timing_stats.command_step_counter++;
             
-            stat.last_cmd_step_start_usec = TimingUtil::getTimeStampInMicrosends();
+            stat.last_cmd_step_start_usec = TimingUtil::getTimeStampInMicroseconds();
             if(next_predicted_run) {
                 //are onthe second
                 if((next_prediction_error = stat.last_cmd_step_start_usec - next_predicted_run) < 0){
@@ -606,7 +605,7 @@ void BatchCommandSandbox::runCommand() {
             correlation_handler_functor();
             
             //compute step duration
-            stat.last_cmd_step_duration_usec = TimingUtil::getTimeStampInMicrosends() - stat.last_cmd_step_start_usec;
+            stat.last_cmd_step_duration_usec = TimingUtil::getTimeStampInMicroseconds() - stat.last_cmd_step_start_usec;
             
             //fire post command step
             curr_executing_impl->commandPost();
@@ -630,7 +629,7 @@ void BatchCommandSandbox::runCommand() {
                         int64_t timeToWaith = (curr_executing_impl->commandFeatures.featureSchedulerStepsDelay) - (stat.last_cmd_step_duration_usec + next_prediction_error);
                         //adjust a little bit the jitter
                         if (timeToWaith > 0) {
-                            next_predicted_run = TimingUtil::getTimeStampInMicrosends() + timeToWaith;
+                            next_predicted_run = TimingUtil::getTimeStampInMicroseconds() + timeToWaith;
                             thread_scheduler_pause_condition.waitUSec(timeToWaith);
                         } else {
                             next_predicted_run = 0;

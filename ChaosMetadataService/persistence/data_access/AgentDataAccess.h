@@ -83,7 +83,7 @@ namespace chaos {
                     virtual int getLogEntry(const std::string& node_uid,
                                             const int32_t number_of_entries,
                                             const bool asc,
-                                            const uint64_t start_ts,
+                                            const uint64_t start_seq,
                                             chaos::service_common::data::agent::VectorAgentLogEntry& found_entries) = 0;
                 };
             }

@@ -1,7 +1,10 @@
 #include "AgentEditor.h"
 #include "AgentNodeAssociationEditor.h"
+#include "../unit_server/UnitServerEditor.h"
 #include "../../data/delegate/TwoLineInformationListItemDelegate.h"
 #include "ui_AgentEditor.h"
+
+#include <QFontDatabase>
 
 #define START_NODE      "Launch Node"
 #define STOP_NODE       "Stop Node"
@@ -9,6 +12,7 @@
 #define RESTART_NODE    "Restart Node"
 #define START_NODE_LOG  "Star Node Logging"
 #define STOP_NODE_LOG   "Stop Node Logging"
+#define EDIT_NODE       "Edit Node"
 
 using namespace chaos::metadata_service_client;
 using namespace chaos::service_common::data::agent;
@@ -32,6 +36,9 @@ AgentEditor::~AgentEditor() {
 void AgentEditor::initUI() {
     ui->pushButtonEditAssociatedNode->setEnabled(false);
     ui->pushButtonRemoveAssociatedNode->setEnabled(false);
+
+    const QFont fixedFont = QFontDatabase::systemFont(QFontDatabase::FixedFont);
+    ui->listViewNodeAssociated->setFont(fixedFont);
     ui->listViewNodeAssociated->setModel(&nodeAssociatedListModel);
     ui->listViewNodeAssociated->setAcceptDrops(true);
     ui->listViewNodeAssociated->setDropIndicatorShown(true);
@@ -50,6 +57,7 @@ void AgentEditor::initUI() {
     cm.push_back(QPair<QString, QVariant>(RESTART_NODE, QVariant()));
     cm.push_back(QPair<QString, QVariant>(START_NODE_LOG, QVariant()));
     cm.push_back(QPair<QString, QVariant>(STOP_NODE_LOG, QVariant()));
+    cm.push_back(QPair<QString, QVariant>(EDIT_NODE, QVariant()));
     registerWidgetForContextualMenu(ui->listViewNodeAssociated,
                                     cm,
                                     false);
@@ -146,6 +154,8 @@ void AgentEditor::contextualMenuActionTrigger(const QString& cm_title,
         } else if(cm_title.compare(STOP_NODE_LOG) == 0) {
             submitApiResult("AgentEditor::launch_node",
                             GET_CHAOS_API_PTR(agent::logging::ManageNodeLogging)->execute(index.data(Qt::UserRole).toString().toStdString(), NodeAssociationLoggingOperationDisable));
+        } else if(cm_title.compare(EDIT_NODE) == 0) {
+            launchPresenterWidget(new UnitServerEditor(index.data(Qt::UserRole).toString()));
         }
     }
 }

@@ -11,24 +11,44 @@ LogProcessEntriesTableModel::LogProcessEntriesTableModel(const QString& _node_ui
     ChaosAbstractTableModel(parent),
     ApiHandler(),
     node_uid(_node_uid),
+    first_seq(0),
+    last_seq(0),
     api_submitter(this),
     number_of_max_result(0){}
 
 //!update log entries for node uid as emitter and log domain list to inclue
-void LogProcessEntriesTableModel::updateEntriesList() {
+void LogProcessEntriesTableModel::startSearchEntry() {
+    first_seq = last_seq = 0;
     api_submitter.submitApiResult("LogProcessEntriesTableModel::updateEntriesList",
                                   GET_CHAOS_API_PTR(agent::logging::GetProcessLogEntries)->execute(node_uid.toStdString(),
                                                                                                    number_of_max_result,
                                                                                                    false,
-                                                                                                   std::numeric_limits<int64_t>::max()));
+                                                                                                   0));
+}
+
+void LogProcessEntriesTableModel::next() {
+    api_submitter.submitApiResult("LogProcessEntriesTableModel::updateEntriesList",
+                                  GET_CHAOS_API_PTR(agent::logging::GetProcessLogEntries)->execute(node_uid.toStdString(),
+                                                                                                   number_of_max_result,
+                                                                                                   false,
+                                                                                                   last_seq));
+}
+
+void LogProcessEntriesTableModel::prev() {
+
 }
 
 void LogProcessEntriesTableModel::onApiDone(const QString& tag,
                                      QSharedPointer<CDataWrapper> api_result) {
     //data received
     beginResetModel();
-
-
+    found_entires.clear();
+    GET_CHAOS_API_PTR(agent::logging::GetProcessLogEntries)->deserialize(api_result.data(),
+                                                                         found_entires);
+    if(found_entires.size() > 0) {
+        first_seq = found_entires[0].entry_seq;
+        last_seq = found_entires[found_entires.size()-1].entry_seq;
+    }
     endResetModel();
     //emit signal that model has changed
     emit(dataChanged(LogProcessEntriesTableModel::index(0,0), LogProcessEntriesTableModel::index(found_entires.size(),2)));

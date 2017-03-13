@@ -15,7 +15,9 @@ class LogProcessEntriesTableModel:
 public:
     LogProcessEntriesTableModel(const QString& _node_uid,
                          QObject *parent = 0);
-    void updateEntriesList();
+    void startSearchEntry();
+    void next();
+    void prev();
     virtual void clear();
     void setMaxResultItem(uint32_t _number_of_max_result);
 protected:
@@ -32,6 +34,8 @@ protected:
                    QSharedPointer<chaos::common::data::CDataWrapper> api_result);
 protected:
     const QString node_uid;
+    uint64_t first_seq;
+    uint64_t last_seq;
     uint32_t number_of_max_result;
     ApiSubmitter api_submitter;
     chaos::service_common::data::agent::VectorAgentLogEntry found_entires;

@@ -95,5 +95,6 @@ static const char * const MONGO_DB_FIELD_SNAPSHOT_DATA_PRODUCER_ID      = "produ
 
 //agent process logging data-------------------------------------------------
 static const char * const MONGO_DB_FIELD_AGENT_PROCESS_LOG_TS           = "log_ts";
+static const char * const MONGO_DB_FIELD_AGENT_PROCESS_LOG_SEQ          = "log_seq";
 static const char * const MONGO_DB_FIELD_AGENT_PROCESS_LOG_ENTRY        = "log_entry";
 #endif

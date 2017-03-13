@@ -43,7 +43,7 @@ namespace chaos {
                         ApiProxyResult execute(const std::string& node_uid,
                                                const int32_t number_of_entries,
                                                const bool asc,
-                                               const uint64_t start_ts);
+                                               const uint64_t start_seq);
                         void deserialize(chaos::common::data::CDataWrapper *api_result,
                                          chaos::service_common::data::agent::VectorAgentLogEntry& log_entries_vec);
                     };
