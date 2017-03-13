@@ -312,7 +312,6 @@ namespace chaos {
 				 */
 				chaos::common::message::DeviceMessageChannel *getDeviceMessageChannelFromAddress(chaos::common::network::CDeviceNetworkAddress  *deviceNetworkAddress,
                                                                                                  bool self_managed = false,
-                                                                                                 chaos::common::message::DeviceMessageChannelListener *listener = NULL,
                                                                                                  bool use_shared_request_domain = true);
     
                 //! Return a raw message channel

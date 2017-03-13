@@ -122,6 +122,10 @@ bool DeviceMessageChannel::udpateNetworkAddress(int32_t millisec_to_wait) {
 
 void DeviceMessageChannel::addListener(DeviceMessageChannelListener *new_listener) {
     AbstractListenerContainer::addListener(new_listener);
+    //fire the last state
+    ChaosWriteLock wl(mutex_online_state);
+    //fire listener
+    AbstractListenerContainer::fire(0);
 }
 
 void DeviceMessageChannel::removeListener(DeviceMessageChannelListener *listener) {
@@ -428,7 +432,7 @@ void DeviceMessageChannel::fireToListener(unsigned int fire_code,
                                           AbstractListener *listener_to_fire) {
     DeviceMessageChannelListener *channel_listener = dynamic_cast<DeviceMessageChannelListener*>(listener_to_fire);
     if(channel_listener){
-        channel_listener->deviceAvailabilityChanged(device_network_address->node_id,
+        channel_listener->deviceAvailabilityChanged(device_network_address->device_id,
                                                     online);
     }
 }

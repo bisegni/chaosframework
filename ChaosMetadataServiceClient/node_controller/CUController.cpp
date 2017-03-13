@@ -59,6 +59,8 @@ ioLiveDataDriver(NULL){
     if(!deviceChannel) throw CException(-2,
                                         "Invalid device channel created",
                                         __PRETTY_FUNCTION__);
+    //add me as listener
+    deviceChannel->addListener(this);
     //update live data driver
     ioLiveDataDriver = getDataProxyChannelNewInstance();
     if(!ioLiveDataDriver) throw CException(-3,
@@ -151,6 +153,7 @@ void CUController::deviceAvailabilityChanged(const std::string& device_id,
 
 //---------------------------------------------------------------------------------------------------
 void CUController::updateChannel() throw(CException) {
+    CHAOS_ASSERT(deviceChannel);
     int err = ErrorCode::EC_NO_ERROR;
     CDataWrapper *tmp_data_handler = NULL;
     
