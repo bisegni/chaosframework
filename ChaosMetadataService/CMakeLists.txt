@@ -63,8 +63,7 @@ SET(cnd_src  ${cnd_src}	api/unit_server/UnitServerApiGroup.cpp
                         api/unit_server/NewUS.cpp
                         api/unit_server/DeleteUS.cpp
                         api/unit_server/ManageCUType.cpp
-                        api/unit_server/GetSetFullUnitServer.cpp
-                        )
+                        api/unit_server/GetSetFullUnitServer.cpp)
 
 SET(cnd_src  ${cnd_src}	api/data_service/DataServiceApiGroup.cpp
                         api/data_service/AssociationControlUnit.cpp
@@ -123,6 +122,7 @@ SET(cnd_src  ${cnd_src}	api/agent/AgentApiGroup.cpp
                         api/agent/CheckAgentHostedProcess.cpp)
 
 SET(cnd_src  ${cnd_src}	api/agent/logging/AgentLoggingApiGroup.cpp
+                        api/agent/logging/GetProcessLogEntries.cpp
                         api/agent/logging/ManageNodeLogging.cpp)
 
 #Worker
@@ -174,7 +174,8 @@ SET(cnd_src  ${cnd_src}	batch/MDSBatchExecutor.cpp
 SET(cnd_src  ${cnd_src}	batch/agent/AgentAckCommand.cpp
                         batch/agent/AgentProcessController.cpp
                         batch/agent/AgentCheckAgentProcess.cpp
-                        batch/agent/AgentRemoveNodeSafety.cpp)
+                        batch/agent/AgentRemoveNodeSafety.cpp
+                        batch/agent/AgentLoggingNodeManagement.cpp)
 
 SET(cnd_src  ${cnd_src}	batch/node/UpdatePropertyCommand.cpp
                         batch/node/SubmitBatchCommand.cpp)

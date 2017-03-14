@@ -13,7 +13,10 @@ SET(agent_src   main.cpp
 
 ADD_DEFINITIONS(-std=c++11)
 
-SET(agent_src  ${agent_src}	worker/ProcessWorker.cpp)
+SET(agent_src  ${agent_src}	worker/ProcessWorker.cpp
+                            worker/DeployWorker.cpp
+                            worker/LogWorker.cpp
+                            worker/ProcUtil.cpp)
 
 ADD_EXECUTABLE(${PROJECT_NAME} ${agent_src})
 

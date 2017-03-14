@@ -67,7 +67,7 @@ void ChaosAgent::init(void *init_data)  throw(CException) {
     //init healt manager singleton
     StartableService::initImplementation(HealtManager::getInstance(), NULL, "HealthManager", __PRETTY_FUNCTION__);
     agent_register.reset(new AgentRegister(), "AgentRegister");
-    CHECK_ASSERTION_THROW_AND_LOG(agent_register.get(), ERROR, -1, "AgentRegister instantiation failed");
+    CHECK_ASSERTION_THROW_AND_LOG((agent_register.get() != NULL), ERROR, -1, "AgentRegister instantiation failed");
     agent_register.init(NULL, __PRETTY_FUNCTION__);
 }
 
