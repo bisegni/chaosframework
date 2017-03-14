@@ -83,7 +83,7 @@ void AgentRegister::start() throw (chaos::CException) {
     //start the registering state machine
     registration_state() = AgentRegisterStateStartRegistering;
     AsyncCentralManager::getInstance()->addTimer(this,
-                                                 0,
+    												SM_EXECTION_STEP_MS,
                                                  SM_EXECTION_STEP_MS);
 }
 
@@ -93,7 +93,7 @@ void AgentRegister::stop() throw (chaos::CException) {
     
     registration_state() = AgentRegisterStateStartUnregistering;
     AsyncCentralManager::getInstance()->addTimer(this,
-                                                 0,
+    		SM_EXECTION_STEP_MS,
                                                  SM_EXECTION_STEP_MS);
     while(registration_state != AgentRegisterStateUnregistered &&
           registration_state != AgentRegisterStateFault) {usleep(500000);}

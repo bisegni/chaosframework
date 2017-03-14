@@ -35,9 +35,9 @@ ApiProxyResult GetSetFullUnitServer::execute(const std::string& unit_server_uid,
     chaos::common::data::CDataWrapper *message = new chaos::common::data::CDataWrapper();
     message->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, unit_server_uid);
     if(usdesc){
-    	message->addCSDataValue("fulldesc",*usdesc);
+    	message->addCSDataValue("us_desc",*usdesc);
     }
-    message->addInt32Value("operation", reset);
+    message->addInt32Value("reset", reset);
     return callApi(message);
 }
 

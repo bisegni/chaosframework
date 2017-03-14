@@ -55,7 +55,7 @@ CDataWrapper *GetSetFullUnitServer::execute(CDataWrapper *api_data,
 
 
 
-    bool setop=api_data->hasKey("operation");
+    bool setop=api_data->hasKey("reset");
 
     if((err = us_da->checkPresence(us_uid, presence))) {
         LOG_AND_TROW_FORMATTED(US_ACT_ERR, -6, "Error fetch the presence for the uid:%1%", % us_uid);
@@ -67,7 +67,7 @@ CDataWrapper *GetSetFullUnitServer::execute(CDataWrapper *api_data,
     }
     if(setop){
     	if(presence){
-    		if(api_data->getBoolValue("operation")){
+    		if(api_data->getBoolValue("reset")){
     		    		 if((err = us_da->deleteUS(us_uid))){
     		    		            LOG_AND_TROW(US_ACT_ERR, -6, boost::str(boost::format("Error removing unit server of id:%1%") % us_uid));
     		    		 }
@@ -80,7 +80,7 @@ CDataWrapper *GetSetFullUnitServer::execute(CDataWrapper *api_data,
 
     	// look for UnitServer full description
     	if(api_data->hasKey("us_desc")&& api_data->isCDataWrapperValue("us_desc")){
-    		std::auto_ptr<CDataWrapper> udesc= std::auto_ptr<CDataWrapper>(api_data->getCSDataValue("fulldesc"));
+    		std::auto_ptr<CDataWrapper> udesc= std::auto_ptr<CDataWrapper>(api_data->getCSDataValue("us_desc"));
     		if(udesc->hasKey("cu_desc")&& udesc->isVector("cu_desc")){
     			CMultiTypeDataArrayWrapper* cu_l=udesc->getVectorValue("cu_desc");
     		             for(int cui=0;(cu_l !=NULL) && (cui<cu_l->size());cui++){

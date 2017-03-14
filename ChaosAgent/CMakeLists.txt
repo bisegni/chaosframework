@@ -11,7 +11,6 @@ SET(agent_src   main.cpp
                 AgentRegister.cpp
                 AbstractWorker.cpp)
 
-ADD_DEFINITIONS(-std=c++11)
 
 SET(agent_src  ${agent_src}	worker/ProcessWorker.cpp
                             worker/DeployWorker.cpp

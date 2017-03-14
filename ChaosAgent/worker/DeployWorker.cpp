@@ -26,12 +26,7 @@
 #include <chaos/common/utility/UUIDUtil.h>
 
 #include <boost/filesystem.hpp>
-#include <cstdio>
-#include <iostream>
-#include <memory>
-#include <stdexcept>
-#include <string>
-#include <array>
+
 
 #define INFO  INFO_LOG(DeployWorker)
 #define ERROR ERR_LOG(DeployWorker)
