@@ -16,7 +16,7 @@ class ControUnitInstanceEditor;
 class ControUnitInstanceEditor :
         public PresenterWidget {
     Q_OBJECT
-   //Script editor
+    //Script editor
     ScriptEditor *script_enditor;
 
     bool is_in_editing;
@@ -45,6 +45,8 @@ protected:
     bool isClosing();
     void onApiDone(const QString& tag,
                    QSharedPointer<chaos::common::data::CDataWrapper> api_result);
+    void contextualMenuActionTrigger(const QString& cm_title,
+                                     const QVariant& cm_data);
 private slots:
     void on_pushButtonSaveInstance_clicked();
 

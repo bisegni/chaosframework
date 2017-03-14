@@ -2,6 +2,7 @@
 #include "ui_ControUnitInstanceEditor.h"
 #include "DriverDescriptionInputDialog.h"
 #include "AttributeValueRangeDialog.h"
+#include "../../language_editor/JsonEditor.h"
 
 #include <QDebug>
 #include <QStandardItem>
@@ -9,6 +10,8 @@
 #include <QInputDialog>
 #include <QIntValidator>
 #include <cassert>
+
+#define EDIT_JSON_DOCUMENT "Edit Json Document"
 
 using namespace chaos::common::data;
 using namespace chaos::metadata_service_client;
@@ -111,6 +114,12 @@ void ControUnitInstanceEditor::initUI() {
     ui->lineEditHistoryAgeing->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
     ui->lineEditHistoryTime->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
     ui->lineEditLiveTime->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
+
+    QVector< QPair<QString, QVariant> > cm;
+    cm.push_back(QPair<QString, QVariant>(EDIT_JSON_DOCUMENT, QVariant()));
+    registerWidgetForContextualMenu(ui->textEditLoadParameter,
+                                    cm,
+                                    false);
 }
 
 control_unit::SetInstanceDescriptionHelper& ControUnitInstanceEditor::prepareSetInstanceApi() {
@@ -185,7 +194,7 @@ void ControUnitInstanceEditor::fillUIFromInstanceInfo(QSharedPointer<chaos::comm
             CHECK_AND_SET_CHECK("auto_init", ui->checkBoxAutoInit)
             CHECK_AND_SET_CHECK("auto_start", ui->checkBoxAutoStart)
             CHECK_AND_SET_LABEL(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM, ui->textEditLoadParameter)
-    if(api_result->hasKey(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)){
+            if(api_result->hasKey(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)){
         ui->lineEditDefaultScheduleTime->setText(QString::number(api_result->getUInt64Value(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)));
     }
     if(api_result->hasKey(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_TYPE)){
@@ -512,4 +521,13 @@ void ControUnitInstanceEditor::cancelScriptEditing() {
 
 void ControUnitInstanceEditor::scriptEditorClosed() {
     script_enditor = NULL;
+}
+
+
+void ControUnitInstanceEditor::contextualMenuActionTrigger(const QString& cm_title,
+                                                           const QVariant& cm_data){
+    if(cm_title.compare(EDIT_JSON_DOCUMENT) == 0) {
+        //launch json editor
+        launchPresenterWidget(new JsonEditor());
+    }
 }
