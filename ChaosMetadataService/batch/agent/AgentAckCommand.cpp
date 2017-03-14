@@ -54,7 +54,7 @@ void AgentAckCommand::setHandler(CDataWrapper *data) {
     //CHECK_KEY_THROW_AND_LOG(data, chaos::NodeDefinitionKey::NODE_RPC_DOMAIN, ERR, -4, "The rpc domain of unit server is mandatory")
     
     request = createRequest(data->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR),
-                            AgentNodeDomainAndActionRPC::RPC_DOMAIN,
+                            AgentNodeDomainAndActionRPC::RPC_DOMAIN_,
                             AgentNodeDomainAndActionRPC::ACTION_AGENT_REGISTRATION_ACK);
     message_data = data;
 }

@@ -44,6 +44,12 @@ namespace chaos {
         static const char * const   OPT_LOG_ON_FILE                     = "log-on-file";
         //! Specify when the file path of the log
         static const char * const   OPT_LOG_FILE                        = "log-file";
+        //! enable logging on syslog
+        static const char * const   OPT_LOG_ON_SYSLOG                   = "log-on-syslog";
+        //! enable logging on syslog
+        static const char * const   OPT_LOG_SYSLOG_SERVER               = "log-syslog-server";
+        //! specify the port of syslogerver
+        static const char * const   OPT_LOG_SYSLOG_SERVER_PORT          = "log-syslog-server-port";
         //! Specify the level of the log going
         static const char * const   OPT_LOG_LEVEL                       = "log-level";
         //! Specify the log max size
@@ -555,7 +561,7 @@ namespace chaos {
      */
     namespace AgentNodeDomainAndActionRPC {
         //! The domain for agent rpc action
-        static const char * const RPC_DOMAIN                                        = "agent";
+        static const char * const RPC_DOMAIN_                                        = "agent";
         //! action called for the ack of the agent from mds
         static const char * const ACTION_AGENT_REGISTRATION_ACK                     = "agentRegistrationAck";
         
@@ -563,27 +569,47 @@ namespace chaos {
         static const char * const REGISTRATION_RESULT                               = "andk_rpc_registration_result";
         
         namespace ProcessWorker {
-            static const char * const WORKER_NAME                                   = "HostProcessManagement";
-            static const char * const ACTION_LAUNCH_NODE                            = "startNode";
-            static const char * const ACTION_LAUNCH_NODE_PAR_NAME            = NodeDefinitionKey::NODE_UNIQUE_ID;
-            static const char * const ACTION_LAUNCH_NODE_CMD_LINE            = "node_launch_cmd_line";
-            static const char * const ACTION_LAUNCH_NODE_PAR_CFG             = "node_init_cfg";
-            static const char * const ACTION_LAUNCH_NODE_PAR_AUTO_START      = "node_auto_start";
+            //! The domain for agent rpc action
+            static const char * const RPC_DOMAIN                            = "ProcessWorker";
+            static const char * const ACTION_LAUNCH_NODE                    = "startNode";
+            static const char * const ACTION_LAUNCH_NODE_PAR_NAME           = NodeDefinitionKey::NODE_UNIQUE_ID;
+            static const char * const ACTION_LAUNCH_NODE_CMD_LINE           = "node_launch_cmd_line";
+            static const char * const ACTION_LAUNCH_NODE_PAR_CFG            = "node_init_cfg";
+            static const char * const ACTION_LAUNCH_NODE_PAR_AUTO_START     = "node_auto_start";
             
-            static const char * const ACTION_STOP_NODE                       = "stopNode";
-            static const char * const ACTION_STOP_NODE_PAR_NAME              = "node_name";
+            static const char * const ACTION_STOP_NODE                      = "stopNode";
+            static const char * const ACTION_STOP_NODE_PAR_NAME             = "node_name";
             
-            static const char * const ACTION_RESTART_NODE                     = "restartNode";
-            static const char * const ACTION_RESTART_NODE_PAR_NAME            = NodeDefinitionKey::NODE_UNIQUE_ID;
-            static const char * const ACTION_RESTART_NODE_PAR_KILL            = "kill";
+            static const char * const ACTION_RESTART_NODE                   = "restartNode";
+            static const char * const ACTION_RESTART_NODE_PAR_NAME          = NodeDefinitionKey::NODE_UNIQUE_ID;
+            static const char * const ACTION_RESTART_NODE_PAR_KILL          = "kill";
             
-            static const char * const ACTION_LIST_NODE                        = "listNode";
-            static const char * const ACTION_LIST_NODE_PARM_NAME              = NodeDefinitionKey::NODE_UNIQUE_ID;
+            static const char * const ACTION_LIST_NODE                      = "listNode";
+            static const char * const ACTION_LIST_NODE_PARM_NAME            = NodeDefinitionKey::NODE_UNIQUE_ID;
             
-            static const char * const ACTION_CHECK_NODE                       = "checkNode";
-            static const char * const ACTION_CHECK_NODE_ASSOCIATED_NODES      = AgentNodeDefinitionKey::NODE_ASSOCIATED;
-            static const char * const ACTION_CHECK_NODE_RESULT_NODE_UID       = NodeDefinitionKey::NODE_UNIQUE_ID;
-            static const char * const ACTION_CHECK_NODE_RESULT_NODE_ALIVE     = "alive";
+            static const char * const ACTION_CHECK_NODE                     = "checkNode";
+            static const char * const ACTION_CHECK_NODE_ASSOCIATED_NODES    = AgentNodeDefinitionKey::NODE_ASSOCIATED;
+            static const char * const ACTION_CHECK_NODE_RESULT_NODE_UID     = NodeDefinitionKey::NODE_UNIQUE_ID;
+            static const char * const ACTION_CHECK_NODE_RESULT_NODE_ALIVE   = "alive";
+        }
+        
+        namespace DeployWorker {
+            static const char * const RPC_DOMAIN                    = "DeployWorker";
+            static const char * const ACTION_INIT_DEPLOY_SESSION    = "initDeploySession";
+            static const char * const ACTION_UPLOAD_DEPLOY_CHUNK    = "uploadDeployChunk";
+            static const char * const ACTION_END_DEPLOY_SESSION     = "endDeploySession";
+            
+            static const char * const ACTION_PARAM_SESSION_ID       = "session_uid";
+            static const char * const ACTION_PARAM_CHUNK_NUMBER     = "chunk_number";
+            static const char * const ACTION_PARAM_CHUNK_OFFSET     = "chunk_offset";
+            static const char * const ACTION_PARAM_CHUNK_DATA       = "chunk_data";
+            static const char * const ACTION_PARAM_SESSION_HASH     = "session_hash";
+        }
+        
+        namespace LogWorker {
+            static const char * const RPC_DOMAIN                            = "LogWorker";
+            static const char * const ACTION_START_LOGGING_ASSOCIATION  = "startLoggingAssociation";
+            static const char * const ACTION_STOP_LOGGING_ASSOCIATION   = "stopLoggingAssociation";
         }
     }
     /** @} */ // end of AgentNodeDomainAndActionRPC

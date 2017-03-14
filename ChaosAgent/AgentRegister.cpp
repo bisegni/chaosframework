@@ -21,8 +21,9 @@
 
 #include "AgentRegister.h"
 #include "AbstractWorker.h"
-#include "worker/ProcessWorker.h"
 #include "ChaosAgent.h"
+#include "worker/ProcessWorker.h"
+#include "worker/LogWorker.h"
 
 #include <chaos/common/global.h>
 #include <chaos/common/network/NetworkBroker.h>
@@ -52,7 +53,7 @@ max_reg_retry_counter(5){
     //!register RPC action
     DeclareAction::addActionDescritionInstance<AgentRegister>(this,
                                                               &AgentRegister::registrationACK,
-                                                              AgentNodeDomainAndActionRPC::RPC_DOMAIN,
+                                                              AgentNodeDomainAndActionRPC::RPC_DOMAIN_,
                                                               AgentNodeDomainAndActionRPC::ACTION_AGENT_REGISTRATION_ACK,
                                                               "Execute the ack for agent registration message");
 }
@@ -69,7 +70,7 @@ void AgentRegister::addWorker(WorkerSharedPtr new_worker) {
 void AgentRegister::init(void *init_data) throw (chaos::CException) {
     //add all agent
     addWorker(WorkerSharedPtr(new worker::ProcessWorker()));
-    
+    addWorker(WorkerSharedPtr(new worker::LogWorker()));
     
     //!get metadata message channel
     mds_message_channel = NetworkBroker::getInstance()->getMetadataserverMessageChannel();
@@ -95,9 +96,7 @@ void AgentRegister::stop() throw (chaos::CException) {
                                                  0,
                                                  SM_EXECTION_STEP_MS);
     while(registration_state != AgentRegisterStateUnregistered &&
-          registration_state != AgentRegisterStateFault) {
-        usleep(500000);
-    }
+          registration_state != AgentRegisterStateFault) {usleep(500000);}
     
 }
 

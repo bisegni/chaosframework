@@ -88,7 +88,7 @@ bool QuantumSlot::removeConsumer(QuantumSlotConsumer *_consumer) {
 
 void QuantumSlot::sendNewValueConsumer(const KeyValue& value) {
     boost::unique_lock<boost::shared_mutex> rl(consumer_mutex);
-    uint64_t start_forwardint_time = TimingUtil::getTimeStampInMicrosends();
+    uint64_t start_forwardint_time = TimingUtil::getTimeStampInMicroseconds();
     //temporary quantum slot pointer
     QuantumSlotConsumer *curr_qsc = NULL;
     //set the start iterator
@@ -102,7 +102,7 @@ void QuantumSlot::sendNewValueConsumer(const KeyValue& value) {
     }
     
     //calc time
-    last_send_data_duration =  (TimingUtil::getTimeStampInMicrosends() - start_forwardint_time);
+    last_send_data_duration =  (TimingUtil::getTimeStampInMicroseconds() - start_forwardint_time);
     if((send_data_iteration++ % 100) == 0) {
         //print statistic
         if(send_data_iteration >= 100) {
@@ -117,7 +117,7 @@ void QuantumSlot::sendNewValueConsumer(const KeyValue& value) {
 
 void QuantumSlot::sendNoValueToConsumer() {
     boost::unique_lock<boost::shared_mutex> rl(consumer_mutex);
-    uint64_t start_forwardint_time = TimingUtil::getTimeStampInMicrosends();
+    uint64_t start_forwardint_time = TimingUtil::getTimeStampInMicroseconds();
     //temporary quantum slot pointer
     QuantumSlotConsumer *curr_qsc = NULL;
     //set the start iterator
@@ -131,7 +131,7 @@ void QuantumSlot::sendNoValueToConsumer() {
     }
     
     //calc time
-    last_send_data_duration =  (TimingUtil::getTimeStampInMicrosends() - start_forwardint_time);
+    last_send_data_duration =  (TimingUtil::getTimeStampInMicroseconds() - start_forwardint_time);
     if((send_data_iteration++ % 100) == 0) {
         //print statistic
         if(send_data_iteration >= 100) {

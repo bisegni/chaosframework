@@ -57,7 +57,6 @@ namespace chaos{
              Struct for initialization of the io driver
              */
             typedef struct IODirectIODriverInitParam {
-                chaos::common::network::NetworkBroker	*network_broker;
                 chaos_direct_io::DirectIOClient			*client_instance;
                 chaos_direct_io::DirectIOServerEndpoint *endpoint_instance;
             } IODirectIODriverInitParam, *IODirectIODriverInitParamPtr;
@@ -96,7 +95,6 @@ namespace chaos{
                 boost::shared_mutex mutext_feeder;
                 
                 IODData data_cache;
-                chaos::common::network::URLServiceFeeder connectionFeeder;
                 
                 //query future management
                 boost::shared_mutex				map_query_future_mutex;
@@ -104,13 +102,14 @@ namespace chaos{
                 
                 std::string uuid;
             protected:
+                chaos::common::network::URLServiceFeeder connectionFeeder;
                 void disposeService(void *service_ptr);
                 void* serviceForURL(const common::network::URL& url, uint32_t service_index);
                 void handleEvent(chaos_direct_io::DirectIOClientConnection *client_connection,
                                  chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event);
             public:
                 
-                IODirectIODriver(std::string alias);
+                IODirectIODriver(const std::string& alias);
                 virtual ~IODirectIODriver();
                 
                 void setDirectIOParam(IODirectIODriverInitParam& _init_parameter);

@@ -62,7 +62,7 @@ namespace chaos {
                 }
                 
                 //!Return the current timestamp in milliseconds
-                static inline uint64_t getTimeStampInMicrosends() {
+                static inline uint64_t getTimeStampInMicroseconds() {
                     try{
                         return (boost::posix_time::microsec_clock::universal_time()-EPOCH).total_microseconds();
                     } catch(boost::exception_detail::clone_impl< boost::exception_detail::error_info_injector<boost::gregorian::bad_day_of_month> >& bad_day_exce) {

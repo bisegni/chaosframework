@@ -277,7 +277,7 @@ void RTAbstractControlUnit::executeOnThread() {
     uint64_t duration;
     RTCULAPP_ << "Run Start, schedule delay:"<<schedule_delay<<" us";
     while(scheduler_run) {
-        start_execution = TimingUtil::getTimeStampInMicrosends();
+        start_execution = TimingUtil::getTimeStampInMicroseconds();
         /*
         if(next_predicted_run) {
 	  //are onthe second
@@ -306,9 +306,9 @@ void RTAbstractControlUnit::executeOnThread() {
         // check if the output dataset need to be pushed
         pushOutputDataset(true);
         //calculate the number of microsencods to wait
-        //time_to_sleep = schedule_delay - (((next_predicted_run = TimingUtil::getTimeStampInMicrosends()) - start_execution)+next_prediction_error);
+        //time_to_sleep = schedule_delay - (((next_predicted_run = TimingUtil::getTimeStampInMicroseconds()) - start_execution)+next_prediction_error);
 
-	duration = TimingUtil::getTimeStampInMicrosends() - start_execution;
+	duration = TimingUtil::getTimeStampInMicroseconds() - start_execution;
 	time_to_sleep = schedule_delay - duration;
         if(time_to_sleep>0){
 	  //next_predicted_run = time_to_sleep;

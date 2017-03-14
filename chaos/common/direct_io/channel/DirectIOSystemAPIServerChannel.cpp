@@ -20,10 +20,11 @@
 
 #include <chaos/common/global.h>
 #include <chaos/common/utility/endianess.h>
+#include <chaos/common/utility/DataBuffer.h>
 #include <chaos/common/direct_io/channel/DirectIOSystemAPIServerChannel.h>
 
-
-namespace chaos_data = chaos::common::data;
+using namespace chaos::common::data;
+using namespace chaos::common::utility;
 using namespace chaos::common::direct_io;
 using namespace chaos::common::direct_io::channel;
 using namespace chaos::common::direct_io::channel::opcode_headers;
@@ -107,6 +108,37 @@ int DirectIOSystemAPIServerChannel::consumeDataPack(DirectIODataPack *dataPack,
             }
             break;
         }
+            
+        case opcode::SystemAPIChannelOpcodePushLogEntryForANode: {
+            if(synchronous_answer != NULL) return -1000;
+            ChaosStringVector log_entry;
+            DataBuffer<> buffer(dataPack->channel_data,
+                                dataPack->header.channel_data_size);
+            //read the request header
+            opcode_headers::DirectIOSystemAPIChannelOpcodePushLogEntryForANodeHeaderPtr header = reinterpret_cast< opcode_headers::DirectIOSystemAPIChannelOpcodePushLogEntryForANodeHeaderPtr >(dataPack->channel_header_data);
+            header->field.data_entries_num = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.data_entries_num);
+            
+            //now we can read data
+            uint32_t node_name_size = (uint32_t)FROM_LITTLE_ENDNS_NUM(uint32_t, buffer.readInt32());
+            std::string node_name = buffer.readString(node_name_size);
+            
+            //read all entry
+            uint32_t entry_len = 0;
+            for(int idx = 0;
+                idx < header->field.data_entries_num;
+                idx++) {
+                entry_len = (uint32_t)FROM_LITTLE_ENDNS_NUM(uint32_t, buffer.readInt32());
+                log_entry.push_back(buffer.readString(entry_len));
+            }
+            
+            //call the handler
+            err = handler->consumeLogEntries(node_name,
+                                             log_entry);
+            buffer.release();
+            if(header) free(header);
+            if(dataPack->channel_data) free(dataPack->channel_data);
+            return err;
+        }
         default:
             break;
     }
@@ -126,6 +158,7 @@ void DirectIOSystemAPIServerChannel::DirectIOSystemAPIServerChannelDeallocator::
                 case opcode::SystemAPIChannelOpcodeNewSnapshotDataset:
                 case opcode::SystemAPIChannelOpcodeDeleteSnapshotDataset:
                 case opcode::SystemAPIChannelOpcodeGetSnapshotDatasetForAKey:
+                case opcode::SystemAPIChannelOpcodePushLogEntryForANode:
                     free(sent_data_ptr);
                     break;
                     
@@ -142,6 +175,7 @@ void DirectIOSystemAPIServerChannel::DirectIOSystemAPIServerChannelDeallocator::
                     break;
                     
                 case opcode::SystemAPIChannelOpcodeGetSnapshotDatasetForAKey:
+                case opcode::SystemAPIChannelOpcodePushLogEntryForANode:
                     if(sent_data_ptr) free(sent_data_ptr);
                     break;
                 default:

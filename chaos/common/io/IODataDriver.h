@@ -27,6 +27,7 @@
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/general/Configurable.h>
 #include <chaos/common/utility/ArrayPointer.h>
+#include <chaos/common/utility/InizializableService.h>
 #include <chaos/common/io/QueryCursor.h>
 
 namespace chaos_data = chaos::common::data;
@@ -39,7 +40,9 @@ namespace chaos{
              * History Output driver base abstract classe, that define two method to control
              * the initialization and history persistence of the data
              */
-            class IODataDriver: public Configurable {
+            class IODataDriver:
+            public Configurable,
+            public chaos::common::utility::InizializableService {
             protected:
                 QueryCursor *_getNewQueryFutureForQueryID(const std::string& query_id,
                                                           const std::string& key,
@@ -53,11 +56,11 @@ namespace chaos{
                  * Init method, the has map has all received value for configuration
                  * every implemented driver need to get all needed configuration param
                  */
-                virtual void init(void *init_parameter) throw(CException);
+                void init(void *init_parameter) throw(CException);
                 /*!
                  * DeInit method
                  */
-                virtual void deinit() throw(CException);
+                void deinit() throw(CException);
                 
                 /*!
                  * This method cache all object passed to driver

@@ -23,8 +23,9 @@
 #define __CHAOSFramework__BC0FF20_DD16_4B3C_B575_9C8449E71AF0_agent_batch_h
 
 #include "AgentAckCommand.h"
+#include "AgentRemoveNodeSafety.h"
 #include "AgentProcessController.h"
 #include "AgentCheckAgentProcess.h"
-#include "AgentRemoveNodeSafety.h"
+#include "AgentLoggingNodeManagement.h"
 
 #endif /* __CHAOSFramework__BC0FF20_DD16_4B3C_B575_9C8449E71AF0_agent_batch_h */

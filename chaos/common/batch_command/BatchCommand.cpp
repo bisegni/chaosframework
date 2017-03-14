@@ -96,7 +96,7 @@ bool BatchCommand::timeoutHandler() {return false;}
 
 //! called befor the command start the execution
 void BatchCommand::commandPre() {
-	timing_stats.command_set_time_usec = TimingUtil::getTimeStampInMicrosends();
+	timing_stats.command_set_time_usec = TimingUtil::getTimeStampInMicroseconds();
 }
 void BatchCommand::endHandler() {;
 }

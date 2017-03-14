@@ -82,7 +82,7 @@ void AgentCheckAgentProcess::setHandler(CDataWrapper *data) {
     message_data = node_ass_sd_wrapper.serialize();
     
     request = createRequest(agent_node_information->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR),
-                            AgentNodeDomainAndActionRPC::ProcessWorker::WORKER_NAME,
+                            AgentNodeDomainAndActionRPC::ProcessWorker::RPC_DOMAIN,
                             AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_CHECK_NODE);
 }
 

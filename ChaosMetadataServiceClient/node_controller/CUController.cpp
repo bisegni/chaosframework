@@ -119,8 +119,6 @@ IODataDriver *CUController::getDataProxyChannelNewInstance() throw(CException) {
             //set the information
             IODirectIODriverInitParam init_param;
             std::memset(&init_param, 0, sizeof(IODirectIODriverInitParam));
-            //get client and endpoint
-            init_param.network_broker = NetworkBroker::getInstance();
             init_param.client_instance = NULL;
             init_param.endpoint_instance = NULL;
             ((IODirectIODriver*)result)->setDirectIOParam(init_param);
