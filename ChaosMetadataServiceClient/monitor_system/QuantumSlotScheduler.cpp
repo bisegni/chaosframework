@@ -257,8 +257,6 @@ void QuantumSlotScheduler::addNewfetcherThread() {
     //set the information
     IODirectIODriverInitParam init_param;
     std::memset(&init_param, 0, sizeof(IODirectIODriverInitParam));
-    //get client and endpoint
-    init_param.network_broker = network_broker;
     init_param.client_instance = NULL;
     init_param.endpoint_instance = NULL;
     ((IODirectIODriver*)data_driver)->setDirectIOParam(init_param);

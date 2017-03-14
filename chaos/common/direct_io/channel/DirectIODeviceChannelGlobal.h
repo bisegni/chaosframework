@@ -48,7 +48,8 @@ namespace chaos {
                     typedef enum SystemAPIChannelOpcode {
                         SystemAPIChannelOpcodeNewSnapshotDataset		= 1,	/**< start new datasets snapshot creation process*/
                         SystemAPIChannelOpcodeDeleteSnapshotDataset		= 2,	/**< delete the snapshot associated to the input tag */
-                        SystemAPIChannelOpcodeGetSnapshotDatasetForAKey	= 3     /**< return the snapshoted datasets for a determinated producer key*/
+                        SystemAPIChannelOpcodeGetSnapshotDatasetForAKey	= 3,    /**< return the snapshoted datasets for a determinated producer key*/
+                        SystemAPIChannelOpcodePushLogEntryForANode      = 4     /**< persist log entry for a node within chaos backend*/
                     } SystemAPIChannelOpcode;
                 }
                 
@@ -232,6 +233,33 @@ namespace chaos {
                         char		error_message[256];
                     }DirectIOSystemAPISnapshotResultHeader,
                     *DirectIOSystemAPISnapshotResultHeaderPtr;
+                    
+                    //!header user for push log entries for a node
+                    /*!
+                     
+                     data fragment:
+                        -name size
+                        -name
+                        for each entry:
+                            -entry size
+                            -entry
+                     
+                     the data field for this opcode contains the name and the log entries 
+                     concatenated together. The name is mandatory and it is delimited by
+                     null characted, the number of entries is managed by this header and
+                     starts after name null characted and each entry is terminated by null 
+                     characted
+                     the opcode associated to this header is:
+                     - SystemAPIChannelOpcodePushLogEntryForANode
+                     */
+                    typedef	union DirectIOSystemAPIChannelOpcodePushLogEntryForANodeHeader {
+                        char raw_data[sizeof(uint32_t)];
+                        struct header {
+                            //! the number of entries name+log
+                            uint32_t	data_entries_num;
+                        } field;
+                    } DirectIOSystemAPIChannelOpcodePushLogEntryForANodeHeader,
+                    *DirectIOSystemAPIChannelOpcodePushLogEntryForANodeHeaderPtr;
                     
 #define GET_SYSTEM_API_GET_SNAPSHOT_RESULT_BASE_PTR(h) ((char*)h+sizeof(chaos::common::direct_io::channel::opcode_headers::DirectIOSystemAPISnapshotResult)+4)
                     //!result of the new and delete api

@@ -22,7 +22,6 @@
 #ifndef __CHAOSFramework__DA13C6A_2DD1_4295_A51A_AB24EFFA60D8_AgentDataAccess_h
 #define __CHAOSFramework__DA13C6A_2DD1_4295_A51A_AB24EFFA60D8_AgentDataAccess_h
 
-
 #include "../persistence.h"
 
 #include <chaos/common/chaos_types.h>
@@ -75,6 +74,17 @@ namespace chaos {
                     //! return all unit server associated with agent
                     virtual int getNodeListStatusForAgent(const std::string& agent_uid,
                                                           chaos::service_common::data::agent::VectorAgentAssociationStatus& node_status_vec) = 0;
+                    
+                    //! push a log entry received from angent process log system
+                    virtual int pushLogEntry(const std::string& node_uid,
+                                             const std::string& node_log_entry) = 0;
+                    
+                    //! serach on log entries
+                    virtual int getLogEntry(const std::string& node_uid,
+                                            const int32_t number_of_entries,
+                                            const bool asc,
+                                            const uint64_t start_seq,
+                                            chaos::service_common::data::agent::VectorAgentLogEntry& found_entries) = 0;
                 };
             }
         }

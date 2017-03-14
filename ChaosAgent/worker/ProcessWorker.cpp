@@ -20,7 +20,7 @@
  */
 
 #include "ProcessWorker.h"
-#include "../ChaosAgent.h"
+#include "ProcUtil.h"
 
 #include <chaos_service_common/data/node/Agent.h>
 
@@ -29,14 +29,7 @@
 #include <chaos/common/configuration/GlobalConfiguration.h>
 
 #include <boost/filesystem.hpp>
-#include <cstdio>
-#include <iostream>
-#include <memory>
-#include <stdexcept>
-#include <string>
-#include <array>
-#include <sys/types.h>
-#include <sys/wait.h>
+
 
 #define INFO  INFO_LOG(ProcessWorker)
 #define ERROR ERR_LOG(ProcessWorker)
@@ -52,7 +45,7 @@ using namespace chaos::common::utility;
 
 
 ProcessWorker::ProcessWorker():
-AbstractWorker(AgentNodeDomainAndActionRPC::ProcessWorker::WORKER_NAME) {
+AbstractWorker(AgentNodeDomainAndActionRPC::ProcessWorker::RPC_DOMAIN) {
     //register rpc action
     AbstActionDescShrPtr action_parameter_interface = DeclareAction::addActionDescritionInstance<ProcessWorker>(this,
                                                                                                                 &ProcessWorker::launchNode,
@@ -139,7 +132,11 @@ chaos::common::data::CDataWrapper *ProcessWorker::stopNode(chaos::common::data::
     AgentAssociationSDWrapper assoc_sd_wrapper;
     assoc_sd_wrapper.deserialize(data);
     if(checkProcessAlive(assoc_sd_wrapper()) == true) {
-        quitProcess(assoc_sd_wrapper());
+        bool kill = false;
+        if(data!=NULL && data->hasKey(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_RESTART_NODE_PAR_KILL)) {
+            kill = data->getBoolValue(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_RESTART_NODE_PAR_KILL);
+        }
+        quitProcess(assoc_sd_wrapper(), kill);
     } else {
         INFO << CHAOS_FORMAT("Associated node %1% isn't in execution", %assoc_sd_wrapper().associated_node_uid);
     }
@@ -200,99 +197,26 @@ chaos::common::data::CDataWrapper *ProcessWorker::checkNodes(chaos::common::data
 
 #pragma mark Process Utility
 
-using namespace std;
-//got from http://stackoverflow.com/questions/26852198/getting-the-pid-from-popen
-#define READ   0
-#define WRITE  1
-FILE * popen2(string command, string type, int & pid) {
-    pid_t child_pid;
-    int fd[2];
-    pipe(fd);
-    
-    if((child_pid = fork()) == -1)     {
-        perror("fork");
-        exit(0);
-    }
-    
-    /* child process */
-    if (child_pid == 0) {
-        if (type == "r") {
-            close(fd[READ]);    //Close the READ end of the pipe since the child's fd is write-only
-            dup2(fd[WRITE], 1); //Redirect stdout to pipe
-        } else {
-            close(fd[WRITE]);    //Close the WRITE end of the pipe since the child's fd is read-only
-            dup2(fd[READ], 0);   //Redirect stdin to pipe
-        }
-        setpgid(0, 0); //Needed so negative PIDs can kill children of /bin/sh
-        execl("/bin/sh", "/bin/sh", "-c", command.c_str(), NULL);
-        exit(0);
-    } else {
-        if (type == "r") {
-            close(fd[WRITE]); //Close the WRITE end of the pipe since parent's fd is read-only
-        } else {
-            close(fd[READ]); //Close the READ end of the pipe since parent's fd is write-only
-        }
-    }
-    
-    pid = child_pid;
-    if (type == "r") {
-        return fdopen(fd[READ], "r");
-    }
-    return fdopen(fd[WRITE], "w");
-}
-
-bool popen2NoPipe(string command, int & pid) {
-    if((pid = fork()) == -1)     {
-        return false;
-    }
-    
-    /* child process */
-    if (pid == 0) {
-        setpgid(0, 0); //Needed so negative PIDs can kill children of /bin/sh
-        execl("/bin/sh", "/bin/sh", "-c", command.c_str(), NULL);
-        exit(0);
-    }
-    return true;
-}
-
-int pclose2(FILE * fp,
-            pid_t pid,
-            bool wait_pid = false) {
-    int stat;
-    
-    fclose(fp);
-    if(wait_pid) {
-        while (waitpid(pid, &stat, 0) == -1) {
-            if (errno != EINTR) {
-                stat = -1;
-                break;
-            }
-        }
-    }
-    return stat;
-}
-
-#define INIT_FILE_NAME(x)\
-CHAOS_FORMAT("%1%.ini",%x.association_unique_id)
-
-#define INIT_FILE_PATH()\
-CHAOS_FORMAT("%1%/ini_files/", %ChaosAgent::getInstance()->settings.working_directory)
-
-#define COMPOSE_NODE_LAUNCH_CMD_LINE(x)\
-CHAOS_FORMAT("%1%/%2% --%3% %4%%5%", %ChaosAgent::getInstance()->settings.working_directory%x.launch_cmd_line%chaos::InitOption::OPT_CONF_FILE%INIT_FILE_PATH()%INIT_FILE_NAME(x))
-
 void ProcessWorker::launchProcess(const AgentAssociation& node_association_info) {
     int pid = 0;
     std::string exec_command;
     boost::filesystem::path init_file;
+    boost::filesystem::path queue_file;
     try{
         exec_command = COMPOSE_NODE_LAUNCH_CMD_LINE(node_association_info);
         init_file = CHAOS_FORMAT("%1%/%2%", %INIT_FILE_PATH()%INIT_FILE_NAME(node_association_info));
-        boost::filesystem::path init_file_parent_path = INIT_FILE_PATH();
+        queue_file = CHAOS_FORMAT("%1%/%2%", %QUEUE_FILE_PATH()%NPIPE_FILE_NAME(node_association_info));
         
+        boost::filesystem::path init_file_parent_path = INIT_FILE_PATH();
         if (boost::filesystem::exists(init_file_parent_path) == false &&
             boost::filesystem::create_directory(init_file_parent_path) == false) {
             throw chaos::CException(-1, CHAOS_FORMAT("Parent path %1% can't be created",%init_file_parent_path), __PRETTY_FUNCTION__);
+        }
+        
+        boost::filesystem::path queue_file_parent_path = QUEUE_FILE_PATH();
+        if (boost::filesystem::exists(queue_file_parent_path) == false &&
+            boost::filesystem::create_directory(queue_file_parent_path) == false) {
+            throw chaos::CException(-1, CHAOS_FORMAT("Queue path %1% can't be created",%queue_file_parent_path), __PRETTY_FUNCTION__);
         }
         
         //write configuration file
@@ -314,7 +238,9 @@ void ProcessWorker::launchProcess(const AgentAssociation& node_association_info)
         //append user defined paramenter
         init_file_stream.write(node_association_info.configuration_file_content.c_str(), node_association_info.configuration_file_content.length());
         init_file_stream.close();
-        if (!popen2NoPipe(exec_command.c_str(), pid)) {throw chaos::CException(-2, "popen() failed!", __PRETTY_FUNCTION__);}
+        //create the named pipe
+        ProcUtil::createNamedPipe(queue_file.string());
+        if (!ProcUtil::popen2ToNamedPipe(exec_command.c_str(), queue_file.string())) {throw chaos::CException(-2, "popen() failed!", __PRETTY_FUNCTION__);}
     } catch(std::exception& e) {
         ERROR << e.what();
     } catch(chaos::CException& ex) {
@@ -327,7 +253,7 @@ bool ProcessWorker::checkProcessAlive(const chaos::service_common::data::agent::
     bool found = false;
     char buff[512];
     std::string ps_command = CHAOS_FORMAT("ps -ef | grep '%1%'", %INIT_FILE_NAME(node_association_info));
-    FILE *in = popen2(ps_command.c_str(), "r", pid);
+    FILE *in = ProcUtil::popen2(ps_command.c_str(), "r", pid);
     if (!in) {throw chaos::CException(-2, "popen() failed!", __PRETTY_FUNCTION__);}
     
     while(fgets(buff, sizeof(buff), in)!=NULL){
@@ -337,7 +263,7 @@ bool ProcessWorker::checkProcessAlive(const chaos::service_common::data::agent::
             if(found) break;
         }
     }
-    pclose2(in, pid);
+    ProcUtil::pclose2(in, pid);
     return found;
 }
 
@@ -345,6 +271,6 @@ bool ProcessWorker::quitProcess(const chaos::service_common::data::agent::AgentA
                                 bool kill) {
     int pid = 0;
     const std::string exec_command = kill?CHAOS_FORMAT("pkill -SIGKILL -f \"%1%\"",%INIT_FILE_NAME(node_association_info)):CHAOS_FORMAT("pkill -SIGTERM -f \"%1%\"",%INIT_FILE_NAME(node_association_info));
-    if (!popen2NoPipe(exec_command.c_str(), pid)) {throw chaos::CException(-2, "popen() failed!", __PRETTY_FUNCTION__);}
+    if (!ProcUtil::popen2NoPipe(exec_command.c_str(), pid)) {throw chaos::CException(-2, "popen() failed!", __PRETTY_FUNCTION__);}
     return pid != 0;
 }

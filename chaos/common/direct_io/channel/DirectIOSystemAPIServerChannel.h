@@ -31,15 +31,15 @@
 namespace chaos_data = chaos::common::data;
 
 namespace chaos {
-	namespace common {
-		namespace direct_io {
-			class DirectIODispatcher;
-			namespace channel {
-				using namespace chaos::common::direct_io::channel::opcode_headers;
-				//! serve rimplementation for the System API direct io channel
-				DECLARE_CLASS_FACTORY(DirectIOSystemAPIServerChannel, DirectIOVirtualServerChannel),
-				public chaos::common::direct_io::DirectIOEndpointHandler {
-					REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(DirectIOSystemAPIServerChannel)
+    namespace common {
+        namespace direct_io {
+            class DirectIODispatcher;
+            namespace channel {
+                using namespace chaos::common::direct_io::channel::opcode_headers;
+                //! serve rimplementation for the System API direct io channel
+                DECLARE_CLASS_FACTORY(DirectIOSystemAPIServerChannel, DirectIOVirtualServerChannel),
+                public chaos::common::direct_io::DirectIOEndpointHandler {
+                    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(DirectIOSystemAPIServerChannel)
                     
                     class DirectIOSystemAPIServerChannelDeallocator:
                     public DirectIODeallocationHandler {
@@ -49,41 +49,51 @@ namespace chaos {
                     //static deallocator forthis channel
                     static DirectIOSystemAPIServerChannelDeallocator STATIC_DirectIOSystemAPIServerChannelDeallocator;
                     
-				public:
-					//! System API DirectIO server handler
-					typedef class DirectIOSystemAPIServerChannelHandler {
-					public:
-						//! Return the dataset for a producerkey ona specific snapshot
-						/*!
-						\param header of the snapshot where to fetch the dataasets
-						\param producer_id is the identification of the producre of the returning datasets
-						\return error on the forwading of the event
-						 */
-						virtual int consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,
-																   const std::string& producer_id,
-																   void **channel_found_data,
-																   uint32_t& channel_found_data_length,
-																   DirectIOSystemAPISnapshotResultHeader &result_header)
-						{DELETE_HEADER(header) return 0;};
-					} DirectIOSystemAPIServerChannelHandler;
-					
-					void setHandler(DirectIOSystemAPIServerChannelHandler *_handler);
-				protected:
-					//! Handler for the event
-					DirectIOSystemAPIServerChannelHandler *handler;
-					
-					//!default constructor
-					DirectIOSystemAPIServerChannel(std::string alias);
-					
-					//! endpoint entry method
-					int consumeDataPack(DirectIODataPack *dataPack,
-										DirectIODataPack *synchronous_answer,
+                public:
+                    //! System API DirectIO server handler
+                    typedef class DirectIOSystemAPIServerChannelHandler {
+                    public:
+                        //! Return the dataset for a producerkey ona specific snapshot
+                        /*!
+                         \param header of the snapshot where to fetch the dataasets
+                         \param producer_id is the identification of the producre of the returning datasets
+                         \return error on the forwading of the event
+                         */
+                        virtual int consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,
+                                                                   const std::string& producer_id,
+                                                                   void **channel_found_data,
+                                                                   uint32_t& channel_found_data_length,
+                                                                   DirectIOSystemAPISnapshotResultHeader &result_header)
+                        {DELETE_HEADER(header) return 0;};
+                        
+                        //! Persist log entries for emitted by a node
+                        /*!
+                         \param header of the snapshot where to fetch the dataasets
+                         \param producer_id is the identification of the producre of the returning datasets
+                         \return error on the forwading of the event
+                         */
+                        virtual int consumeLogEntries(const std::string& node_name,
+                                                      const ChaosStringVector& log_entries)
+                        {return 0;};
+                    } DirectIOSystemAPIServerChannelHandler;
+                    
+                    void setHandler(DirectIOSystemAPIServerChannelHandler *_handler);
+                protected:
+                    //! Handler for the event
+                    DirectIOSystemAPIServerChannelHandler *handler;
+                    
+                    //!default constructor
+                    DirectIOSystemAPIServerChannel(std::string alias);
+                    
+                    //! endpoint entry method
+                    int consumeDataPack(DirectIODataPack *dataPack,
+                                        DirectIODataPack *synchronous_answer,
                                         DirectIODeallocationHandler **answer_header_deallocation_handler,
                                         DirectIODeallocationHandler **answer_data_deallocation_handler);
-				};
-			}
-		}
-	}
+                };
+            }
+        }
+    }
 }
 
 #endif /* defined(__CHAOSFramework__DirectIOSystemAPIServerChannel__) */

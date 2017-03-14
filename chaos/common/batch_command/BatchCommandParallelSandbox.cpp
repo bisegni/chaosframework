@@ -81,7 +81,7 @@ void BatchCommandParallelSandbox::runCommand() {
             //signal the step of the run
             event_handler->handleSandboxEvent(identification,
                                               BatchSandboxEventType::EVT_RUN_START,
-                                              &(current_ts=TimingUtil::getTimeStampInMicrosends()), sizeof (uint64_t));
+                                              &(current_ts=TimingUtil::getTimeStampInMicroseconds()), sizeof (uint64_t));
         }
         //execute command step
         std::list< RunningCommandStatShrdPtr >::iterator it = execution_command_list.begin();
@@ -142,7 +142,7 @@ bool BatchCommandParallelSandbox::processCommand(bool set_handler_call,
     bool result = false;
     uint8_t handlerMask = command_stat.command_info.cmdImpl->implementedHandler();
     
-    command_stat.stat.last_cmd_step_start_usec = TimingUtil::getTimeStampInMicrosends();
+    command_stat.stat.last_cmd_step_start_usec = TimingUtil::getTimeStampInMicroseconds();
     try{
         if(set_handler_call) {
             //run set handler
@@ -185,7 +185,7 @@ bool BatchCommandParallelSandbox::processCommand(bool set_handler_call,
     } catch (...) {
         SET_NAMED_FAULT(ERR_LOG(BatchCommandParallelSandbox), command_stat.command_info.cmdImpl, -2, "Unmanaged exception", "Set Handler",RunningPropertyType::RP_FATAL_FAULT);
     }
-    command_stat.stat.last_cmd_step_duration_usec =  (current_timestamp = TimingUtil::getTimeStampInMicrosends()) - command_stat.stat.last_cmd_step_start_usec;
+    command_stat.stat.last_cmd_step_duration_usec =  (current_timestamp = TimingUtil::getTimeStampInMicroseconds()) - command_stat.stat.last_cmd_step_start_usec;
     switch(command_stat.command_info.cmdImpl->runningProperty) {
         case RunningPropertyType::RP_FAULT:
             if (event_handler){

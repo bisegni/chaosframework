@@ -78,18 +78,25 @@ void AgentProcessController::setHandler(CDataWrapper *data) {
     switch(process_op) {
         case NodeAssociationOperationLaunch: {
             request = createRequest(node_information->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR),
-                                    AgentNodeDomainAndActionRPC::ProcessWorker::WORKER_NAME,
+                                    AgentNodeDomainAndActionRPC::ProcessWorker::RPC_DOMAIN,
                                     AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE);
             break;
         }
         case NodeAssociationOperationStop:
             request = createRequest(node_information->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR),
-                                    AgentNodeDomainAndActionRPC::ProcessWorker::WORKER_NAME,
+                                    AgentNodeDomainAndActionRPC::ProcessWorker::RPC_DOMAIN,
+                                    AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_STOP_NODE);
+            break;
+        case NodeAssociationOperationKill:
+            //set kill attribute
+            message_data->addBoolValue(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_RESTART_NODE_PAR_KILL, true);
+            request = createRequest(node_information->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR),
+                                    AgentNodeDomainAndActionRPC::ProcessWorker::RPC_DOMAIN,
                                     AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_STOP_NODE);
             break;
         case NodeAssociationOperationRestart:
             request = createRequest(node_information->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR),
-                                    AgentNodeDomainAndActionRPC::ProcessWorker::WORKER_NAME,
+                                    AgentNodeDomainAndActionRPC::ProcessWorker::RPC_DOMAIN,
                                     AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_RESTART_NODE);
             break;
             

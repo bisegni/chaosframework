@@ -139,7 +139,7 @@ ArrayPointer<CDataWrapper>* KeyDataStorage::getLastDataSet(KeyDataStorageDomain 
 void KeyDataStorage::pushDataWithControlOnHistoryTime(const std::string& key,
                                                       CDataWrapper *dataToStore,
                                                       DataServiceNodeDefinitionType::DSStorageType storage_type) {
-    uint64_t now = TimingUtil::getTimeStampInMicrosends();
+    uint64_t now = TimingUtil::getTimeStampInMicroseconds();
     switch(storage_type) {
         case DataServiceNodeDefinitionType::DSStorageTypeLive: {
             if((now - storage_live_time_last_push) >= storage_live_time) {

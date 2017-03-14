@@ -402,3 +402,85 @@ int MongoDBAgentDataAccess::getNodeListStatusForAgent(const std::string& agent_u
     }
     return err;
 }
+
+int MongoDBAgentDataAccess::pushLogEntry(const std::string& node_uid,
+                                         const std::string& node_log_entry) {
+    int err = 0;
+    try {
+        mongo::BSONObj result;
+        uint64_t cur_ts = TimingUtil::getTimeStampInMicroseconds();
+        mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << node_uid
+                                    << MONGO_DB_FIELD_AGENT_PROCESS_LOG_TS << mongo::Date_t(cur_ts/1000)
+                                    << MONGO_DB_FIELD_AGENT_PROCESS_LOG_SEQ << (long long)cur_ts
+                                    << MONGO_DB_FIELD_AGENT_PROCESS_LOG_ENTRY << node_log_entry);
+        
+        
+        DEBUG_CODE(DBG<<log_message("pushLogEntry",
+                                    "inser",
+                                    DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                            query.toString()));)
+        
+        if((err = connection->insert(MONGO_DB_COLLECTION_NAME(MONGO_DB_COLLECTION_AGENT_PROCESS_LOG),
+                                     query))){
+            ERR << CHAOS_FORMAT("Error creating new elog entry for node %1% with error %2%", %node_uid%err);
+        }
+    } catch (const mongo::DBException &e) {
+        ERR << e.what();
+        err = -1;
+    } catch (const chaos::CException &e) {
+        ERR << e.what();
+        err = e.errorCode;
+    }
+    return err;
+}
+
+int MongoDBAgentDataAccess::getLogEntry(const std::string& node_uid,
+                                        const int32_t number_of_entries,
+                                        const bool asc,
+                                        const uint64_t start_seq,
+                                        VectorAgentLogEntry& found_entries) {
+    int err = 0;
+    try {
+        found_entries.clear();
+        std::vector<mongo::BSONObj> result;
+        mongo::BSONObjBuilder query_builder;
+        query_builder << NodeDefinitionKey::NODE_UNIQUE_ID << node_uid;
+        if(start_seq) {
+            if(asc) {
+                query_builder << "log_seq" << BSON("$gt" << (long long)start_seq);
+            } else {
+                query_builder << "log_seq" << BSON("$lt" << (long long)start_seq);
+            }
+        }
+        mongo::Query query = query_builder.obj();
+        query = query.sort(BSON(MONGO_DB_FIELD_AGENT_PROCESS_LOG_TS<<(asc?1:-1)
+                                <<"log_seq"<<(asc?1:-1)));
+        DEBUG_CODE(DBG<<log_message("getLogEntry",
+                                    "findN",
+                                    DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                            query.toString()));)
+        connection->findN(result,
+                          MONGO_DB_COLLECTION_NAME(MONGO_DB_COLLECTION_AGENT_PROCESS_LOG),
+                          query,
+                          number_of_entries);
+        if(result.size()) {
+            for(std::vector<mongo::BSONObj>::iterator it = result.begin(),
+                end = result.end();
+                it != end;
+                it++) {
+                AgentLogEntry e;
+                e.entry_ts = (uint64_t)(it->hasField("log_ts")?it->getField("log_ts").date().asInt64():0);
+                e.entry_seq = (uint64_t)(it->hasField("log_ts")?it->getField("log_seq").date().asInt64():0);
+                e.entry_log_line = (it->hasField("log_entry")?it->getField("log_entry").String():"");
+                found_entries.push_back(e);
+            }
+        }
+    } catch (const mongo::DBException &e) {
+        ERR << e.what();
+        err = -1;
+    } catch (const chaos::CException &e) {
+        ERR << e.what();
+        err = e.errorCode;
+    }
+    return err;
+}

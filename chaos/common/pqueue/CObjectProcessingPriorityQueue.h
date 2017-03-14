@@ -58,7 +58,7 @@ namespace chaos {
                                       int _priority = 50,
                                       bool _disposeOnDestroy = true):
                 disposeOnDestroy(_disposeOnDestroy),
-                sequence_id(chaos::common::utility::TimingUtil::getTimeStampInMicrosends()),
+                sequence_id(chaos::common::utility::TimingUtil::getTimeStampInMicroseconds()),
                 priority(_priority),
                 element(_element) {}
                 PriorityQueuedElement(T *_element,

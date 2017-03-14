@@ -653,6 +653,11 @@
 		32A273FB1BB7235200572083 /* tracey.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 32A273F91BB7235200572083 /* tracey.hpp */; };
 		32A391C418FE923E001C5A73 /* TemplatedKeyValueHashMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A391C218FE923E001C5A73 /* TemplatedKeyValueHashMap.h */; };
 		32A40D471A9CD751000D9A35 /* MongoDBHAConnectionManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A40D451A9CD751000D9A35 /* MongoDBHAConnectionManager.cpp */; };
+		32A51F691E704E8700209E92 /* ManagedDirectIODataDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A51F671E704E8700209E92 /* ManagedDirectIODataDriver.cpp */; };
+		32A51F6A1E704E8700209E92 /* ManagedDirectIODataDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A51F681E704E8700209E92 /* ManagedDirectIODataDriver.h */; };
+		32A51F6D1E71931C00209E92 /* GetProcessLogEntries.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A51F6B1E71931C00209E92 /* GetProcessLogEntries.cpp */; };
+		32A51F701E71968B00209E92 /* GetProcessLogEntries.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A51F6E1E71968B00209E92 /* GetProcessLogEntries.cpp */; };
+		32A51F711E71968B00209E92 /* GetProcessLogEntries.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A51F6F1E71968B00209E92 /* GetProcessLogEntries.h */; };
 		32A5ED6014DBD68B001DC80E /* WaitSemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A5ED5F14DBD68B001DC80E /* WaitSemaphore.h */; };
 		32A809D614D82E19000F2DF7 /* MDSMessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A809D514D82E19000F2DF7 /* MDSMessageChannel.h */; };
 		32A809D814D82E28000F2DF7 /* MDSMessageChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A809D714D82E28000F2DF7 /* MDSMessageChannel.cpp */; };
@@ -1074,6 +1079,29 @@
 		32FF2A621E65CCEB00117985 /* AlertAgentCheckProcessHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FF2A601E65CCEB00117985 /* AlertAgentCheckProcessHandler.h */; };
 		32FF2A651E65D17900117985 /* FSUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A631E65D17900117985 /* FSUtility.cpp */; };
 		32FF2A661E65D17900117985 /* FSUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FF2A641E65D17900117985 /* FSUtility.h */; };
+		32FF2A691E672CAA00117985 /* DeployWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A671E672CAA00117985 /* DeployWorker.cpp */; };
+		32FF2A731E68654C00117985 /* StartUploadSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A711E68654C00117985 /* StartUploadSession.cpp */; };
+		32FF2A761E68655A00117985 /* DeployApiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A741E68655A00117985 /* DeployApiGroup.cpp */; };
+		32FF2A791E686ABA00117985 /* UploadChunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A771E686ABA00117985 /* UploadChunk.cpp */; };
+		32FF2A7C1E686E8F00117985 /* EndUploadSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A7A1E686E8F00117985 /* EndUploadSession.cpp */; };
+		32FF2A801E68723400117985 /* StartUploadSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A7E1E68723400117985 /* StartUploadSession.cpp */; };
+		32FF2A811E68723400117985 /* StartUploadSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FF2A7F1E68723400117985 /* StartUploadSession.h */; };
+		32FF2A841E68723F00117985 /* UploadChunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A821E68723F00117985 /* UploadChunk.cpp */; };
+		32FF2A851E68723F00117985 /* UploadChunk.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FF2A831E68723F00117985 /* UploadChunk.h */; };
+		32FF2A881E68724C00117985 /* EndUploadSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A861E68724C00117985 /* EndUploadSession.cpp */; };
+		32FF2A891E68724C00117985 /* EndUploadSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FF2A871E68724C00117985 /* EndUploadSession.h */; };
+		32FF2A8D1E68726300117985 /* deploy.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FF2A8B1E68726300117985 /* deploy.h */; };
+		32FF2A901E6874B600117985 /* DeployDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A8E1E6874B600117985 /* DeployDataAccess.cpp */; };
+		32FF2A931E6874FF00117985 /* MongoDBDeployDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A911E6874FF00117985 /* MongoDBDeployDataAccess.cpp */; };
+		32FF2AAA1E6D79EC00117985 /* DataBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FF2AA81E6D79EC00117985 /* DataBuffer.h */; };
+		32FF2AAE1E6D8B6400117985 /* ChaosAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FF2AAC1E6D8B6400117985 /* ChaosAllocator.h */; };
+		32FF2AB11E6DAC7F00117985 /* LogWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2AAF1E6DAC7F00117985 /* LogWorker.cpp */; };
+		32FF2AB41E6DAFA400117985 /* ProcUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2AB21E6DAFA400117985 /* ProcUtil.cpp */; };
+		32FF2ABA1E6EE70300117985 /* AgentLoggingNodeManagement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2AB81E6EE70300117985 /* AgentLoggingNodeManagement.cpp */; };
+		32FF2AC21E6F10A300117985 /* AgentLoggingApiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2AC01E6F10A300117985 /* AgentLoggingApiGroup.cpp */; };
+		32FF2AC51E6F10F400117985 /* ManageNodeLogging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2AC31E6F10F400117985 /* ManageNodeLogging.cpp */; };
+		32FF2AC91E6F117A00117985 /* ManageNodeLogging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2AC71E6F117A00117985 /* ManageNodeLogging.cpp */; };
+		32FF2ACA1E6F117A00117985 /* ManageNodeLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FF2AC81E6F117A00117985 /* ManageNodeLogging.h */; };
 		32FFA3EC1B00D43900C57E07 /* QuantumSlot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FFA3EA1B00D43900C57E07 /* QuantumSlot.cpp */; };
 		32FFA3ED1B00D43900C57E07 /* QuantumSlot.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FFA3EB1B00D43900C57E07 /* QuantumSlot.h */; };
 		32FFA3EE1B00F95900C57E07 /* QuantumSlotScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FFA3E61B00CEE100C57E07 /* QuantumSlotScheduler.cpp */; };
@@ -1956,6 +1984,12 @@
 		32A391C218FE923E001C5A73 /* TemplatedKeyValueHashMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemplatedKeyValueHashMap.h; sourceTree = "<group>"; };
 		32A40D451A9CD751000D9A35 /* MongoDBHAConnectionManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MongoDBHAConnectionManager.cpp; sourceTree = "<group>"; };
 		32A40D461A9CD751000D9A35 /* MongoDBHAConnectionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MongoDBHAConnectionManager.h; sourceTree = "<group>"; };
+		32A51F671E704E8700209E92 /* ManagedDirectIODataDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ManagedDirectIODataDriver.cpp; sourceTree = "<group>"; };
+		32A51F681E704E8700209E92 /* ManagedDirectIODataDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManagedDirectIODataDriver.h; sourceTree = "<group>"; };
+		32A51F6B1E71931C00209E92 /* GetProcessLogEntries.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetProcessLogEntries.cpp; sourceTree = "<group>"; };
+		32A51F6C1E71931C00209E92 /* GetProcessLogEntries.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetProcessLogEntries.h; sourceTree = "<group>"; };
+		32A51F6E1E71968B00209E92 /* GetProcessLogEntries.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetProcessLogEntries.cpp; sourceTree = "<group>"; };
+		32A51F6F1E71968B00209E92 /* GetProcessLogEntries.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetProcessLogEntries.h; sourceTree = "<group>"; };
 		32A5ED5F14DBD68B001DC80E /* WaitSemaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaitSemaphore.h; sourceTree = "<group>"; };
 		32A809D514D82E19000F2DF7 /* MDSMessageChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = MDSMessageChannel.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		32A809D714D82E28000F2DF7 /* MDSMessageChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MDSMessageChannel.cpp; sourceTree = "<group>"; };
@@ -2487,6 +2521,41 @@
 		32FF2A601E65CCEB00117985 /* AlertAgentCheckProcessHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlertAgentCheckProcessHandler.h; sourceTree = "<group>"; };
 		32FF2A631E65D17900117985 /* FSUtility.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FSUtility.cpp; sourceTree = "<group>"; };
 		32FF2A641E65D17900117985 /* FSUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FSUtility.h; sourceTree = "<group>"; };
+		32FF2A671E672CAA00117985 /* DeployWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeployWorker.cpp; sourceTree = "<group>"; };
+		32FF2A681E672CAA00117985 /* DeployWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeployWorker.h; sourceTree = "<group>"; };
+		32FF2A711E68654C00117985 /* StartUploadSession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StartUploadSession.cpp; sourceTree = "<group>"; };
+		32FF2A721E68654C00117985 /* StartUploadSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StartUploadSession.h; sourceTree = "<group>"; };
+		32FF2A741E68655A00117985 /* DeployApiGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeployApiGroup.cpp; sourceTree = "<group>"; };
+		32FF2A751E68655A00117985 /* DeployApiGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeployApiGroup.h; sourceTree = "<group>"; };
+		32FF2A771E686ABA00117985 /* UploadChunk.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UploadChunk.cpp; sourceTree = "<group>"; };
+		32FF2A781E686ABA00117985 /* UploadChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UploadChunk.h; sourceTree = "<group>"; };
+		32FF2A7A1E686E8F00117985 /* EndUploadSession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EndUploadSession.cpp; sourceTree = "<group>"; };
+		32FF2A7B1E686E8F00117985 /* EndUploadSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EndUploadSession.h; sourceTree = "<group>"; };
+		32FF2A7E1E68723400117985 /* StartUploadSession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StartUploadSession.cpp; sourceTree = "<group>"; };
+		32FF2A7F1E68723400117985 /* StartUploadSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StartUploadSession.h; sourceTree = "<group>"; };
+		32FF2A821E68723F00117985 /* UploadChunk.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UploadChunk.cpp; sourceTree = "<group>"; };
+		32FF2A831E68723F00117985 /* UploadChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UploadChunk.h; sourceTree = "<group>"; };
+		32FF2A861E68724C00117985 /* EndUploadSession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EndUploadSession.cpp; sourceTree = "<group>"; };
+		32FF2A871E68724C00117985 /* EndUploadSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EndUploadSession.h; sourceTree = "<group>"; };
+		32FF2A8B1E68726300117985 /* deploy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = deploy.h; sourceTree = "<group>"; };
+		32FF2A8E1E6874B600117985 /* DeployDataAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeployDataAccess.cpp; sourceTree = "<group>"; };
+		32FF2A8F1E6874B600117985 /* DeployDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeployDataAccess.h; sourceTree = "<group>"; };
+		32FF2A911E6874FF00117985 /* MongoDBDeployDataAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MongoDBDeployDataAccess.cpp; sourceTree = "<group>"; };
+		32FF2A921E6874FF00117985 /* MongoDBDeployDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MongoDBDeployDataAccess.h; sourceTree = "<group>"; };
+		32FF2AA81E6D79EC00117985 /* DataBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataBuffer.h; sourceTree = "<group>"; };
+		32FF2AAC1E6D8B6400117985 /* ChaosAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChaosAllocator.h; sourceTree = "<group>"; };
+		32FF2AAF1E6DAC7F00117985 /* LogWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LogWorker.cpp; sourceTree = "<group>"; };
+		32FF2AB01E6DAC7F00117985 /* LogWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogWorker.h; sourceTree = "<group>"; };
+		32FF2AB21E6DAFA400117985 /* ProcUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcUtil.cpp; sourceTree = "<group>"; };
+		32FF2AB31E6DAFA400117985 /* ProcUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcUtil.h; sourceTree = "<group>"; };
+		32FF2AB81E6EE70300117985 /* AgentLoggingNodeManagement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AgentLoggingNodeManagement.cpp; sourceTree = "<group>"; };
+		32FF2AB91E6EE70300117985 /* AgentLoggingNodeManagement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AgentLoggingNodeManagement.h; sourceTree = "<group>"; };
+		32FF2AC01E6F10A300117985 /* AgentLoggingApiGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AgentLoggingApiGroup.cpp; sourceTree = "<group>"; };
+		32FF2AC11E6F10A300117985 /* AgentLoggingApiGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AgentLoggingApiGroup.h; sourceTree = "<group>"; };
+		32FF2AC31E6F10F400117985 /* ManageNodeLogging.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ManageNodeLogging.cpp; sourceTree = "<group>"; };
+		32FF2AC41E6F10F400117985 /* ManageNodeLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManageNodeLogging.h; sourceTree = "<group>"; };
+		32FF2AC71E6F117A00117985 /* ManageNodeLogging.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ManageNodeLogging.cpp; sourceTree = "<group>"; };
+		32FF2AC81E6F117A00117985 /* ManageNodeLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManageNodeLogging.h; sourceTree = "<group>"; };
 		32FFA3E61B00CEE100C57E07 /* QuantumSlotScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QuantumSlotScheduler.cpp; sourceTree = "<group>"; };
 		32FFA3E71B00CEE100C57E07 /* QuantumSlotScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuantumSlotScheduler.h; sourceTree = "<group>"; };
 		32FFA3EA1B00D43900C57E07 /* QuantumSlot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QuantumSlot.cpp; sourceTree = "<group>"; };
@@ -2899,6 +2968,8 @@
 				3221D7251CF5AEDE001BE971 /* MongoDBScriptDataAccess.h */,
 				32E6F4401E48B4B10068320E /* MongoDBAgentDataAccess.cpp */,
 				32E6F4411E48B4B10068320E /* MongoDBAgentDataAccess.h */,
+				32FF2A911E6874FF00117985 /* MongoDBDeployDataAccess.cpp */,
+				32FF2A921E6874FF00117985 /* MongoDBDeployDataAccess.h */,
 				32D24FB31A7BBD59002D65CE /* mongo_db_constants.h */,
 			);
 			path = mongodb;
@@ -2927,6 +2998,8 @@
 				3221D7221CF5ADC9001BE971 /* ScriptDataAccess.h */,
 				32E6F43D1E48B4260068320E /* AgentDataAccess.cpp */,
 				32E6F43E1E48B4260068320E /* AgentDataAccess.h */,
+				32FF2A8E1E6874B600117985 /* DeployDataAccess.cpp */,
+				32FF2A8F1E6874B600117985 /* DeployDataAccess.h */,
 				32D24FAF1A7AAD15002D65CE /* DataAccess.h */,
 			);
 			path = data_access;
@@ -3658,6 +3731,8 @@
 			children = (
 				32F466DD155EDBDE00AD3D81 /* IODataDriver.cpp */,
 				326DB40314B38BC00018A8D0 /* IODataDriver.h */,
+				32A51F671E704E8700209E92 /* ManagedDirectIODataDriver.cpp */,
+				32A51F681E704E8700209E92 /* ManagedDirectIODataDriver.h */,
 				32EFCD6418BDE3A400B5EB77 /* IODirectIODriver.cpp */,
 				32EFCD6518BDE3A400B5EB77 /* IODirectIODriver.h */,
 				320E2FBD1D7EB9CB0077E8FE /* QueryCursor.cpp */,
@@ -3782,6 +3857,8 @@
 				324C76891E01A5C500BA57E1 /* ProcStat.h */,
 				32FF2A631E65D17900117985 /* FSUtility.cpp */,
 				32FF2A641E65D17900117985 /* FSUtility.h */,
+				32FF2AA81E6D79EC00117985 /* DataBuffer.h */,
+				32FF2AAC1E6D8B6400117985 /* ChaosAllocator.h */,
 			);
 			path = utility;
 			sourceTree = "<group>";
@@ -3931,6 +4008,7 @@
 				32CFD5DD1B2704FF0060AED5 /* api_types.h */,
 				322E26721AC6E437002E5DA4 /* api.h */,
 				32BE0ADA1E4C69390007764C /* agent */,
+				32FF2A7D1E68720D00117985 /* deploy */,
 				32D745E91C723B8E00F4D719 /* logging */,
 				3252F3551C298701004436A8 /* groups */,
 				32AE8BA01B678BCA00FAC528 /* service */,
@@ -4583,10 +4661,11 @@
 		32BE0AC91E4B44870007764C /* agent */ = {
 			isa = PBXGroup;
 			children = (
-				32FF2A591E6579A400117985 /* NodeOperation.cpp */,
-				32FF2A5A1E6579A400117985 /* NodeOperation.h */,
+				32FF2ABF1E6F104E00117985 /* logging */,
 				32BE0ACA1E4B44B90007764C /* AgentApiGroup.cpp */,
 				32BE0ACB1E4B44B90007764C /* AgentApiGroup.h */,
+				32FF2A591E6579A400117985 /* NodeOperation.cpp */,
+				32FF2A5A1E6579A400117985 /* NodeOperation.h */,
 				32990B231E521C8400A4AF8F /* LoadAgentDescription.cpp */,
 				32990B241E521C8400A4AF8F /* LoadAgentDescription.h */,
 				32BE0ACE1E4B45DB0007764C /* ListNodeForAgent.cpp */,
@@ -4606,6 +4685,7 @@
 		32BE0ADA1E4C69390007764C /* agent */ = {
 			isa = PBXGroup;
 			children = (
+				32FF2AC61E6F114200117985 /* logging */,
 				32BE0ADB1E4C69780007764C /* ListNodeForAgent.cpp */,
 				32BE0ADC1E4C69780007764C /* ListNodeForAgent.h */,
 				32BE0ADF1E4C69850007764C /* SaveNodeAssociation.cpp */,
@@ -4721,6 +4801,7 @@
 				32FC7EE31A70FDB70029C2A2 /* ApiManagment.cpp */,
 				32FC7EE41A70FDB70029C2A2 /* ApiManagment.h */,
 				32BE0AC91E4B44870007764C /* agent */,
+				32FF2A6D1E6864E100117985 /* deploy */,
 				3270E06A1C6CBA7D00105726 /* logging */,
 				32864FCA1C294A4600DA9B70 /* groups */,
 				327791DF1B67726200FEDD52 /* service */,
@@ -4958,6 +5039,12 @@
 			children = (
 				32E6F4371E48689E0068320E /* ProcessWorker.cpp */,
 				32E6F4381E48689E0068320E /* ProcessWorker.h */,
+				32FF2A671E672CAA00117985 /* DeployWorker.cpp */,
+				32FF2A681E672CAA00117985 /* DeployWorker.h */,
+				32FF2AAF1E6DAC7F00117985 /* LogWorker.cpp */,
+				32FF2AB01E6DAC7F00117985 /* LogWorker.h */,
+				32FF2AB21E6DAFA400117985 /* ProcUtil.cpp */,
+				32FF2AB31E6DAFA400117985 /* ProcUtil.h */,
 			);
 			path = worker;
 			sourceTree = "<group>";
@@ -4973,6 +5060,8 @@
 				32990B321E547ED900A4AF8F /* AgentCheckAgentProcess.h */,
 				32FF2A5C1E6579FC00117985 /* AgentRemoveNodeSafety.cpp */,
 				32FF2A5D1E6579FC00117985 /* AgentRemoveNodeSafety.h */,
+				32FF2AB81E6EE70300117985 /* AgentLoggingNodeManagement.cpp */,
+				32FF2AB91E6EE70300117985 /* AgentLoggingNodeManagement.h */,
 				32E6F4481E48D3A30068320E /* agent_batch.h */,
 			);
 			path = agent;
@@ -5095,6 +5184,59 @@
 			path = management;
 			sourceTree = "<group>";
 		};
+		32FF2A6D1E6864E100117985 /* deploy */ = {
+			isa = PBXGroup;
+			children = (
+				32FF2A741E68655A00117985 /* DeployApiGroup.cpp */,
+				32FF2A751E68655A00117985 /* DeployApiGroup.h */,
+				32FF2A711E68654C00117985 /* StartUploadSession.cpp */,
+				32FF2A721E68654C00117985 /* StartUploadSession.h */,
+				32FF2A771E686ABA00117985 /* UploadChunk.cpp */,
+				32FF2A781E686ABA00117985 /* UploadChunk.h */,
+				32FF2A7A1E686E8F00117985 /* EndUploadSession.cpp */,
+				32FF2A7B1E686E8F00117985 /* EndUploadSession.h */,
+			);
+			path = deploy;
+			sourceTree = "<group>";
+		};
+		32FF2A7D1E68720D00117985 /* deploy */ = {
+			isa = PBXGroup;
+			children = (
+				32FF2A7E1E68723400117985 /* StartUploadSession.cpp */,
+				32FF2A7F1E68723400117985 /* StartUploadSession.h */,
+				32FF2A821E68723F00117985 /* UploadChunk.cpp */,
+				32FF2A831E68723F00117985 /* UploadChunk.h */,
+				32FF2A861E68724C00117985 /* EndUploadSession.cpp */,
+				32FF2A871E68724C00117985 /* EndUploadSession.h */,
+				32FF2A8B1E68726300117985 /* deploy.h */,
+			);
+			path = deploy;
+			sourceTree = "<group>";
+		};
+		32FF2ABF1E6F104E00117985 /* logging */ = {
+			isa = PBXGroup;
+			children = (
+				32FF2AC01E6F10A300117985 /* AgentLoggingApiGroup.cpp */,
+				32FF2AC11E6F10A300117985 /* AgentLoggingApiGroup.h */,
+				32FF2AC31E6F10F400117985 /* ManageNodeLogging.cpp */,
+				32FF2AC41E6F10F400117985 /* ManageNodeLogging.h */,
+				32A51F6B1E71931C00209E92 /* GetProcessLogEntries.cpp */,
+				32A51F6C1E71931C00209E92 /* GetProcessLogEntries.h */,
+			);
+			path = logging;
+			sourceTree = "<group>";
+		};
+		32FF2AC61E6F114200117985 /* logging */ = {
+			isa = PBXGroup;
+			children = (
+				32FF2AC71E6F117A00117985 /* ManageNodeLogging.cpp */,
+				32FF2AC81E6F117A00117985 /* ManageNodeLogging.h */,
+				32A51F6E1E71968B00209E92 /* GetProcessLogEntries.cpp */,
+				32A51F6F1E71968B00209E92 /* GetProcessLogEntries.h */,
+			);
+			path = logging;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -5115,6 +5257,7 @@
 				32EA501718A15BF000782435 /* DirectIODispatcher.h in Headers */,
 				326DB45714B38BC00018A8D0 /* chaos_constants.h in Headers */,
 				32B159CE18AE08720096B58B /* ZMQSocketFeeder.h in Headers */,
+				32A51F6A1E704E8700209E92 /* ManagedDirectIODataDriver.h in Headers */,
 				324A4B14191A3F6A00975394 /* string_data-inl.h in Headers */,
 				326DB45914B38BC00018A8D0 /* ChaosCommon.h in Headers */,
 				326DB45B14B38BC00018A8D0 /* GlobalConfiguration.h in Headers */,
@@ -5379,6 +5522,7 @@
 				32983F7517896FE1004599A3 /* ObjectInstancer.h in Headers */,
 				32D09FE61BBC1EA30059A926 /* ProcInfo.h in Headers */,
 				3296031F1876B45000CDCADA /* AttributeValueSharedCache.h in Headers */,
+				32FF2AAE1E6D8B6400117985 /* ChaosAllocator.h in Headers */,
 				32640A27169DCC5800450962 /* BufferTracker.h in Headers */,
 				329603241876B45000CDCADA /* BatchCommandConstants.h in Headers */,
 				32640A28169DCC5800450962 /* GarbageThread.h in Headers */,
@@ -5454,6 +5598,7 @@
 				328E405E17287B82004E5938 /* LFDataCache.h in Headers */,
 				32A8F7D2172BE3FD0090DB78 /* KeyGroupCache.h in Headers */,
 				32A88BDA1CF8228A001DBAF5 /* lopcodes.h in Headers */,
+				32FF2AAA1E6D79EC00117985 /* DataBuffer.h in Headers */,
 				329C1F0E1B568EA600A84D55 /* DirectIOClientConnectionSharedMetricIO.h in Headers */,
 				32A88BD11CF8228A001DBAF5 /* llex.h in Headers */,
 				3298487E1736814700C158DF /* ChannelValueAccessor.h in Headers */,
@@ -5536,6 +5681,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				32A51F711E71968B00209E92 /* GetProcessLogEntries.h in Headers */,
 				3256C9B31CB649710019A108 /* NodeFetcher.h in Headers */,
 				32AFA9D81C77224F00640BFA /* logging_types.h in Headers */,
 				32B1E7F71B2AD1CC00221E49 /* CommandTemplateGet.h in Headers */,
@@ -5551,6 +5697,7 @@
 				327C6A291C74E255002DA5A6 /* GetLogDomainForSourceUID.h in Headers */,
 				3239EF531C0EFEB20052BE61 /* DeleteSnapshot.h in Headers */,
 				32FFA3ED1B00D43900C57E07 /* QuantumSlot.h in Headers */,
+				32FF2A811E68723400117985 /* StartUploadSession.h in Headers */,
 				327F39A81AEAA2290000C845 /* NewDS.h in Headers */,
 				320CA9551C29D71A00894AAA /* DeleteUS.h in Headers */,
 				3221D7501CF606BC001BE971 /* SearchScript.h in Headers */,
@@ -5572,8 +5719,10 @@
 				32D745FD1C7338D100F4D719 /* AlertLogEventHandler.h in Headers */,
 				3239EF4B1C0EFE910052BE61 /* RestoreSnapshot.h in Headers */,
 				32F135A41DF05E4F00890AFC /* GetSnapshotDatasetForNode.h in Headers */,
+				32FF2A851E68723F00117985 /* UploadChunk.h in Headers */,
 				32610F8D1AE6560A00779B84 /* GetDescription.h in Headers */,
 				3211CCDE1B03402800F9B80E /* QuantumKeyConsumer.h in Headers */,
+				32FF2A891E68724C00117985 /* EndUploadSession.h in Headers */,
 				32D745F91C73388900F4D719 /* AlertEventHandler.h in Headers */,
 				32AE8BA41B678C1500FAC528 /* ResetAll.h in Headers */,
 				32761A391B314697006C8719 /* GetCommandAndTemplateDescription.h in Headers */,
@@ -5589,6 +5738,7 @@
 				3274A90D1AC2F214000C6A4D /* ApiProxyManager.h in Headers */,
 				32990B291E521F5E00A4AF8F /* LoadAgentDescription.h in Headers */,
 				3234BE801B04CC9400AE6B08 /* HealtStatusAttributeHandler.h in Headers */,
+				32FF2ACA1E6F117A00117985 /* ManageNodeLogging.h in Headers */,
 				32B1E8071B2EA07200221E49 /* CommandTemplateDelete.h in Headers */,
 				328C87331ADFDB9A0047C79B /* SearchInstancesByUS.h in Headers */,
 				32A116561D128B9C00FF44ED /* Node.h in Headers */,
@@ -5606,6 +5756,7 @@
 				32362C221ADD0C45000CA079 /* SetInstanceDescription.h in Headers */,
 				323386B21ACD731E008863DC /* NodeSearch.h in Headers */,
 				3221D72B1CF5EB22001BE971 /* SaveScript.h in Headers */,
+				32FF2A8D1E68726300117985 /* deploy.h in Headers */,
 				32D746011C73399900F4D719 /* AbstractEventHandler.h in Headers */,
 				325FC85E1AF7910300DB9D66 /* NewUS.h in Headers */,
 				32B1E7F31B298D2600221E49 /* CommandTemplateSearch.h in Headers */,
@@ -5887,6 +6038,7 @@
 				32D90D591CF4A6DC00996F09 /* SearchScript.cpp in Sources */,
 				3252F3541C29847E004436A8 /* GetDomains.cpp in Sources */,
 				32B224C61CFC626F00B24B58 /* LoadFullScript.cpp in Sources */,
+				32FF2A731E68654C00117985 /* StartUploadSession.cpp in Sources */,
 				32AE8BA71B67B4A100FAC528 /* ResetAll.cpp in Sources */,
 				32401CBD1C1AD7AA00E62866 /* TreeGroupDataAccess.cpp in Sources */,
 				325FC85A1AF77A7900DB9D66 /* NewUS.cpp in Sources */,
@@ -5903,6 +6055,7 @@
 				320E773E1A7FBD84001FB8BC /* UnitServerAckBatchCommand.cpp in Sources */,
 				32990B331E547ED900A4AF8F /* AgentCheckAgentProcess.cpp in Sources */,
 				3258D4811DF0332300D9C8D0 /* GetSnapshotDatasetsForNode.cpp in Sources */,
+				32FF2A761E68655A00117985 /* DeployApiGroup.cpp in Sources */,
 				32B1E8191B2FFCE500221E49 /* CommandCommonUtility.cpp in Sources */,
 				3270E0761C6CC05100105726 /* MongoDBLoggingDataAccess.cpp in Sources */,
 				32FC49A41E0807F70087D82C /* GetVariable.cpp in Sources */,
@@ -5926,6 +6079,7 @@
 				326ACF841E01525D00AD011E /* ObjectStorageDataAccess.cpp in Sources */,
 				32B419301B0DE68800C3CA7D /* ChangeNodeState.cpp in Sources */,
 				32B9F3FA1AC4460A00380FE9 /* NodeGetDescription.cpp in Sources */,
+				32FF2ABA1E6EE70300117985 /* AgentLoggingNodeManagement.cpp in Sources */,
 				32568C881B3D3B270006988C /* UpdateProperty.cpp in Sources */,
 				328E78021A7A94810008C070 /* NodeRegister.cpp in Sources */,
 				32FF2A5B1E6579A400117985 /* NodeOperation.cpp in Sources */,
@@ -5934,9 +6088,11 @@
 				323236CB164573C60052CE06 /* main.cpp in Sources */,
 				32EBDF0B1B538F4B00278C42 /* ManageCUType.cpp in Sources */,
 				327F39BB1AEAB14E0000C845 /* GetAllDataService.cpp in Sources */,
+				32FF2A931E6874FF00117985 /* MongoDBDeployDataAccess.cpp in Sources */,
 				32B1E8001B2B0EB600221E49 /* CommandGet.cpp in Sources */,
 				3210EE1E1AE7DE15006ADC0B /* RegistrationAckBatchCommand.cpp in Sources */,
 				32C067BD1AEFE5DD000B1ED9 /* IDSTControlUnitBatchCommand.cpp in Sources */,
+				32FF2A7C1E686E8F00117985 /* EndUploadSession.cpp in Sources */,
 				32A116441D116F8C00FF44ED /* SearchInstancesForScript.cpp in Sources */,
 				328C872C1ADEA45E0047C79B /* SearchInstancesByUS.cpp in Sources */,
 				32990B301E547D8900A4AF8F /* CheckAgentHostedProcess.cpp in Sources */,
@@ -5951,6 +6107,7 @@
 				32CAC9E41AE6991500DC6AAB /* LoadUnloadControlUnit.cpp in Sources */,
 				3211CCD61B0205C700F9B80E /* GetBestEndpoints.cpp in Sources */,
 				325963981D216BD800D94853 /* LoadInstanceOnUnitServer.cpp in Sources */,
+				32A51F6D1E71931C00209E92 /* GetProcessLogEntries.cpp in Sources */,
 				32A13EBF1C2019080010F3FC /* MongoDBTreeGroupDataAccess.cpp in Sources */,
 				320530DA1AE92D770064275B /* DataServiceDataAccess.cpp in Sources */,
 				32B299A11BDA7CAA000D3716 /* CUCommonUtility.cpp in Sources */,
@@ -5966,6 +6123,7 @@
 				32A116491D117F0700FF44ED /* ManageScriptInstance.cpp in Sources */,
 				32BE0AD01E4B45DB0007764C /* ListNodeForAgent.cpp in Sources */,
 				32D90D561CF4A4E500996F09 /* ScriptGroupApi.cpp in Sources */,
+				32FF2A791E686ABA00117985 /* UploadChunk.cpp in Sources */,
 				32809C821A9C84F900C02C12 /* MongoDBControlUnitDataAccess.cpp in Sources */,
 				3235FDD61A6FF8A800EC83A9 /* MongoDBUnitServerDataAccess.cpp in Sources */,
 				32990B131E4CB74C00A4AF8F /* RemoveNodeAssociation.cpp in Sources */,
@@ -5976,12 +6134,14 @@
 				32864FCD1C294ADB00DA9B70 /* GroupsApiGroup.cpp in Sources */,
 				326ACFA81E0159C600AD011E /* DataWorker.cpp in Sources */,
 				32864FD01C294C3100DA9B70 /* AddNode.cpp in Sources */,
+				32FF2A901E6874B600117985 /* DeployDataAccess.cpp in Sources */,
 				32990B251E521C8400A4AF8F /* LoadAgentDescription.cpp in Sources */,
 				320530D71AE924ED0064275B /* AssociationControlUnit.cpp in Sources */,
 				32B3E11D1A7A3923007B7802 /* MDSBatchExecutor.cpp in Sources */,
 				32C25DE81DB798A600A46C2B /* NodeHealthStatus.cpp in Sources */,
 				326ACF821E01525D00AD011E /* CouchbaseCacheDriver.cpp in Sources */,
 				328C872F1ADFC2D60047C79B /* GetInstance.cpp in Sources */,
+				32FF2AC21E6F10A300117985 /* AgentLoggingApiGroup.cpp in Sources */,
 				32F9F82E1D903B1D0023948D /* MDSHistoryAgeingManagement.cpp in Sources */,
 				328D0FF11A8A034E001A2001 /* NodeSearch.cpp in Sources */,
 				32E09CFE1C0E05E60069752F /* DeleteSnapshot.cpp in Sources */,
@@ -6014,6 +6174,7 @@
 				32B1E8161B2EDB4700221E49 /* CommandInstanceSubmit.cpp in Sources */,
 				32E09CFB1C0E002F0069752F /* CreateNewSnapshot.cpp in Sources */,
 				327791E21B67728300FEDD52 /* ServiceApiGroup.cpp in Sources */,
+				32FF2AC51E6F10F400117985 /* ManageNodeLogging.cpp in Sources */,
 				32E09CF41C0DE2890069752F /* RestoreSnapshotBatch.cpp in Sources */,
 				32E9F48D16485012006EAF37 /* ChaosMetadataService.cpp in Sources */,
 				328E78091A7AAA070008C070 /* NodeDataAccess.cpp in Sources */,
@@ -6125,6 +6286,7 @@
 				32EBDEFA1B4E58F300278C42 /* MetricCollector.cpp in Sources */,
 				329603281876B45000CDCADA /* BatchCommandSandbox.cpp in Sources */,
 				32CFF95F15E4DBD3005D607E /* EventFactory.cpp in Sources */,
+				32A51F691E704E8700209E92 /* ManagedDirectIODataDriver.cpp in Sources */,
 				32661C751AA867E100F1A721 /* MessageRequestFuture.cpp in Sources */,
 				32B4193E1B18A6EE00C3CA7D /* BatchCommandDescription.cpp in Sources */,
 				32EE897F191A792000DE2F29 /* stringutils.cpp in Sources */,
@@ -6336,11 +6498,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				32FF2A691E672CAA00117985 /* DeployWorker.cpp in Sources */,
 				326413AB1E44C7DD0035E175 /* AgentRegister.cpp in Sources */,
 				32E6F4391E48689E0068320E /* ProcessWorker.cpp in Sources */,
 				326413A21E44AD750035E175 /* ChaosAgent.cpp in Sources */,
 				3264139C1E44ACE60035E175 /* main.cpp in Sources */,
+				32FF2AB11E6DAC7F00117985 /* LogWorker.cpp in Sources */,
 				32E6F43C1E4869120068320E /* AbstractWorker.cpp in Sources */,
+				32FF2AB41E6DAFA400117985 /* ProcUtil.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6372,7 +6537,9 @@
 				32568C921B42C1690006988C /* QuantumTSTaggedAttributeHandler.cpp in Sources */,
 				327F39B31AEAA2680000C845 /* GetAssociationByDS.cpp in Sources */,
 				32FF2A571E65782200117985 /* NodeOperation.cpp in Sources */,
+				32FF2A881E68724C00117985 /* EndUploadSession.cpp in Sources */,
 				32FF2A611E65CCEB00117985 /* AlertAgentCheckProcessHandler.cpp in Sources */,
+				32FF2AC91E6F117A00117985 /* ManageNodeLogging.cpp in Sources */,
 				32B224CA1CFC830600B24B58 /* LoadFullScript.cpp in Sources */,
 				32F7AB141C9960A700E18D3E /* NodeMonitor.cpp in Sources */,
 				32FC49AF1E080FB80087D82C /* GetVariable.cpp in Sources */,
@@ -6395,6 +6562,7 @@
 				32B419371B16236300C3CA7D /* SetInputDatasetAttributeValues.cpp in Sources */,
 				32B1E7F21B298D2600221E49 /* CommandTemplateSearch.cpp in Sources */,
 				327F39C61AEFABBB0000C845 /* StartStop.cpp in Sources */,
+				32FF2A801E68723400117985 /* StartUploadSession.cpp in Sources */,
 				326150991CAAB5920003D0C2 /* ControlUnitMonitorHandler.cpp in Sources */,
 				32B1E7FD1B2B06CE00221E49 /* CommandGet.cpp in Sources */,
 				3221D72A1CF5EB22001BE971 /* SaveScript.cpp in Sources */,
@@ -6425,6 +6593,7 @@
 				3239EF4A1C0EFE910052BE61 /* RestoreSnapshot.cpp in Sources */,
 				32F135A31DF05E4F00890AFC /* GetSnapshotDatasetForNode.cpp in Sources */,
 				328C87361ADFDD410047C79B /* GetInstance.cpp in Sources */,
+				32A51F701E71968B00209E92 /* GetProcessLogEntries.cpp in Sources */,
 				32D745FC1C7338D100F4D719 /* AlertLogEventHandler.cpp in Sources */,
 				327F39AB1AEAA2390000C845 /* UpdateDS.cpp in Sources */,
 				326150951CAAB3120003D0C2 /* NodeMonitorHandler.cpp in Sources */,
@@ -6433,6 +6602,7 @@
 				328C87321ADFDB9A0047C79B /* SearchInstancesByUS.cpp in Sources */,
 				32B2999C1BD92B18000D3716 /* CopyInstance.cpp in Sources */,
 				323386B11ACD731E008863DC /* NodeSearch.cpp in Sources */,
+				32FF2A841E68723F00117985 /* UploadChunk.cpp in Sources */,
 				32568C8E1B3D7FED0006988C /* UpdateProperty.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
