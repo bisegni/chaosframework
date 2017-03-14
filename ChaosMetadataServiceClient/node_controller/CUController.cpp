@@ -99,6 +99,7 @@ CUController::~CUController() {
     if(deviceChannel){
         deviceChannel->removeListener(this);
         NetworkBroker::getInstance()->disposeMessageChannel(deviceChannel);
+
     }
     
     if(ioLiveDataDriver){
@@ -153,7 +154,14 @@ void CUController::deviceAvailabilityChanged(const std::string& device_id,
 void CUController::updateChannel() throw(CException) {
     int err = ErrorCode::EC_NO_ERROR;
     CDataWrapper *tmp_data_handler = NULL;
-    
+    CHAOS_ASSERT(deviceChannel)
+   /*
+    *  if(deviceChannel==NULL){
+        LDBG_<<"["<<__PRETTY_FUNCTION__<<"] Device Channel not still ready...";
+        return;
+
+    }
+    */
     err = mdsChannel->getLastDatasetForDevice(deviceChannel->getDeviceID(), &tmp_data_handler, millisecToWait);
     if(err!=ErrorCode::EC_NO_ERROR || !tmp_data_handler) return;
     

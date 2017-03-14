@@ -38,11 +38,11 @@ namespace chaos {
                     /*!
                      Initialize an unit server
                      \param unit_server_uid the uid of the unitserver to initialize
-                     \param usdesc full key/value description
                      \param reset  if true remove all unitserver and cu before initialize
+                     \param usdesc full key/value description, if null just create the node
                      */
-                    ApiProxyResult execute(const std::string& unit_server_uid,
-                                           const chaos::common::data::CDataWrapper& usdesc, int reset);
+                    ApiProxyResult execute(const std::string& unit_server_uid, int reset,
+                                           const chaos::common::data::CDataWrapper* usdesc=NULL);
 
 
                     /*!

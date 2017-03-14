@@ -31,8 +31,9 @@ namespace chaos {
                 class NewUS:
                 public chaos::metadata_service_client::api_proxy::ApiProxy {
                     API_PROXY_CLASS(NewUS)
+
                 protected:
-                    API_PROXY_CD_DECLARATION(NewUS)
+		  API_PROXY_CD_DECLARATION(NewUS)
                 public:
 
                     /*!

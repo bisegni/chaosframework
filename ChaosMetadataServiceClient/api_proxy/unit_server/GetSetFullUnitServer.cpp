@@ -19,7 +19,7 @@
  */
 
 #include <ChaosMetadataServiceClient/api_proxy/unit_server/GetSetFullUnitServer.h>
-
+#include "NewUS.h"
 using namespace chaos;
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::api_proxy::unit_server;
@@ -31,10 +31,12 @@ API_PROXY_CD_DEFINITION(GetSetFullUnitServer,
 /*!
  
  */
-ApiProxyResult GetSetFullUnitServer::execute(const std::string& unit_server_uid, const chaos::common::data::CDataWrapper& usdesc, int reset) {
+ApiProxyResult GetSetFullUnitServer::execute(const std::string& unit_server_uid, int reset, const chaos::common::data::CDataWrapper* usdesc) {
     chaos::common::data::CDataWrapper *message = new chaos::common::data::CDataWrapper();
     message->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, unit_server_uid);
-    message->addCSDataValue("fulldesc",usdesc);
+    if(usdesc){
+    	message->addCSDataValue("fulldesc",*usdesc);
+    }
     message->addInt32Value("operation", reset);
     return callApi(message);
 }

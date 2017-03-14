@@ -24,6 +24,8 @@
 #include "NewUS.h"
 #include "ManageCUType.h"
 #include "DeleteUS.h"
+#include "GetSetFullUnitServer.h"
+
 using namespace chaos::metadata_service::api::unit_server;
 DEFINE_CLASS_FACTORY_NO_ALIAS(UnitServerApiGroup,
                               chaos::metadata_service::api::AbstractApiGroup);
@@ -36,6 +38,7 @@ AbstractApiGroup(UnitServerNodeDomainAndActionRPC::RPC_DOMAIN){
     addApi<NewUS>();
     addApi<DeleteUS>();
     addApi<ManageCUType>();
+    addApi<GetSetFullUnitServer>();
 }
 
 UnitServerApiGroup::~UnitServerApiGroup() {
