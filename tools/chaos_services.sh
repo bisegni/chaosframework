@@ -9,11 +9,12 @@ if [ -z "$CHAOS_TOOLS" ];then
 fi
 source $scriptdir/common_util.sh
 
-CDS_EXEC=ChaosMetadataService
-CDS_CONF=cds.cfg
+# CDS_EXEC=ChaosMetadataService
+#CDS_CONF=cds.cfg
 MDS_EXEC=ChaosMetadataService
 UI_EXEC=CUIserver
 US_EXEC=UnitServer
+AGENT_EXEC=ChaosAgent
 WAN_EXEC=ChaosWANProxy
 if [ -z "$CHAOS_PREFIX" ]; then
     error_mesg "CHAOS_PREFIX environment variables not set"
@@ -22,19 +23,7 @@ fi
 
 
 
-cds_checks(){
-
-    if [ -x "$CHAOS_PREFIX/bin/$CDS_EXEC" ]; then
-	CDS_BIN=$CHAOS_PREFIX/bin/$CDS_EXEC
-    else
-	error_mesg "$CDS_EXEC binary not found in $CHAOS_PREFIX/bin"
-	exit 1
-    fi
-
-     if [ ! -e "$CHAOS_PREFIX/etc/$CDS_CONF" ]; then
-     	error_mesg "# CDS configuration file \"$CDS_CONF\" not found in $CHAOS_PREFIX/etc/$CDS_CONF"
-     	exit 1
-     fi
+backend_checks(){
 
     if ! ps -fe |grep [m]ongod >/dev/null ;then
 	error_mesg "mongod not running" ; exit 1
@@ -65,9 +54,10 @@ mds_checks(){
 
 
 usage(){
-    info_mesg "Usage :$0 {start|stop|status|start mds | start uis| start cds | start wan| |start devel | stop uis|stop mds | stop cds |stop wan}"
+    info_mesg "Usage :$0 {start|stop|status| start agent| start mds | start uis| | start wan| |start devel | stop uis|stop mds |stop wan}"
 }
 start_mds(){
+    backend_checks;
     mds_checks;
     info_mesg "starting MDS..."
     check_proc_then_kill "$MDS_EXEC"
@@ -76,19 +66,27 @@ start_mds(){
     cd - > /dev/null
 }
 
-start_cds(){
-    cds_checks
-    info_mesg "starting CDS..."
-    check_proc_then_kill "$CDS_EXEC"
-    echo "$CDS_BIN --conf-file $CHAOS_PREFIX/etc/$CDS_CONF --log-file $CHAOS_PREFIX/log/cds.log" > $CHAOS_PREFIX/log/$CDS_EXEC.std.out
-    run_proc "$CDS_BIN --conf-file $CHAOS_PREFIX/etc/$CDS_CONF $CHAOS_OVERALL_OPT --log-file $CHAOS_PREFIX/log/$CDS_EXEC.log >> $CHAOS_PREFIX/log/$CDS_EXEC.std.out 2>&1 &" "$CDS_EXEC"
-}
+# start_cds(){
+#     cds_checks
+#     info_mesg "starting CDS..."
+#     check_proc_then_kill "$CDS_EXEC"
+#     echo "$CDS_BIN --conf-file $CHAOS_PREFIX/etc/$CDS_CONF --log-file $CHAOS_PREFIX/log/cds.log" > $CHAOS_PREFIX/log/$CDS_EXEC.std.out
+#     run_proc "$CDS_BIN --conf-file $CHAOS_PREFIX/etc/$CDS_CONF $CHAOS_OVERALL_OPT --log-file $CHAOS_PREFIX/log/$CDS_EXEC.log >> $CHAOS_PREFIX/log/$CDS_EXEC.std.out 2>&1 &" "$CDS_EXEC"
+# }
 start_ui(){
     port=8081
     info_mesg "starting UI Server on port " "$port"
     check_proc_then_kill "$UI_EXEC"
     run_proc "$CHAOS_PREFIX/bin/$UI_EXEC --server_port $port --log-on-file --log-file $CHAOS_PREFIX/log/$UI_EXEC.log $CHAOS_OVERALL_OPT --log-level debug > $CHAOS_PREFIX/log/$UI_EXEC.std.out 2>&1 &" "$UI_EXEC"
 }
+
+start_agent(){
+
+    info_mesg "starting Agent"
+    check_proc_then_kill "$AGENT_EXEC"
+    run_proc "$CHAOS_PREFIX/bin/$AGENT_EXEC --log-on-file --log-file $CHAOS_PREFIX/log/$AGENT_EXEC.log $CHAOS_OVERALL_OPT --log-level debug > $CHAOS_PREFIX/log/$AGENT_EXEC.std.out 2>&1 &" "$AGENT_EXEC"
+}
+
 start_wan(){
     port=8082
     info_mesg "starting WAN Server on port " "$port"
@@ -122,9 +120,16 @@ start_us(){
 
 ui_stop()
 {
-    info_mesg "stopping UI Server..."
+    info_mesg "stopping $UI_EXEC Server..."
     stop_proc "$UI_EXEC"
 }
+
+agent_stop()
+{
+    info_mesg "stopping $AGENT_EXEC Server..."
+    stop_proc "$AGENT_EXEC"
+}
+
 wan_stop()
 {
     info_mesg "stopping WAN Server..."
@@ -137,20 +142,23 @@ mds_stop()
     stop_proc "$MDS_EXEC"
 }
 
-cds_stop(){
-    info_mesg "stopping CDS..."
-    stop_proc "$CDS_EXEC"
-}
+# cds_stop(){
+#     info_mesg "stopping CDS..."
+#     stop_proc "$CDS_EXEC"
+# }
+
 start_all(){
     local status=0
     info_mesg "start all chaos services..."
-    start_cds
-    status=$((status + $?))
+#    start_cds
+#    status=$((status + $?))
     start_mds
     status=$((status + $?))
     start_ui
     status=$((status + $?))
     start_wan
+    status=$((status + $?))
+    start_agent
     status=$((status + $?))
 
     
@@ -164,7 +172,9 @@ stop_all(){
     status=$((status + $?))
     mds_stop
     status=$((status + $?))
-    cds_stop
+#    cds_stop
+#    status=$((status + $?))
+    agent_stop
     status=$((status + $?))
     if [ -n "$(get_pid $US_EXEC)" ];then
 	     stop_proc "$US_EXEC"
@@ -181,9 +191,12 @@ status(){
     status=$((status + $?))
     check_proc "$MDS_EXEC"
     status=$((status + $?))
-    check_proc "$CDS_EXEC"
-    status=$((status + $?))
+#    check_proc "$CDS_EXEC"
+#    status=$((status + $?))
     check_proc "$UI_EXEC"
+    status=$((status + $?))
+
+    check_proc "$AGENT_EXEC"
     status=$((status + $?))
 
 
@@ -212,12 +225,16 @@ case "$cmd" in
 		    start_mds
 		    exit 0
 		    ;;
-		cds)
-		    start_cds
-		    exit 0
-		    ;;
+		# cds)
+		#     start_cds
+		#     exit 0
+		#     ;;
 	       uis)
 		    start_ui
+		    exit 0
+		    ;;
+	       agent)
+		    start_agent
 		    exit 0
 		    ;;
 	       wan)
@@ -247,8 +264,12 @@ case "$cmd" in
 		    mds_stop
 		    exit 0
 		    ;;
-		cds)
-		    cds_stop
+		# cds)
+		#     cds_stop
+		#     exit 0
+		#     ;;
+		agent)
+		    agent_stop
 		    exit 0
 		    ;;
 		uis)
