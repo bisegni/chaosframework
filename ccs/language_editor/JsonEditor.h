@@ -27,7 +27,8 @@ protected:
     bool isClosing();
     void contextualMenuActionTrigger(const QString& cm_title,
                                      const QVariant& cm_data);
-protected slots:
+private slots:
+    void on_pushButtonSaveAction_clicked();
     void selectionChanged(const QItemSelection& selected,
                           const QItemSelection& deselected);
 private:

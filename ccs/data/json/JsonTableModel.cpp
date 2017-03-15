@@ -98,7 +98,7 @@ JsonTreeItem* JsonTreeItem::load(const QJsonValue& value,
 
 JsonTableModel::JsonTableModel(QObject *parent) :
     QAbstractItemModel(parent) {
-    mRootItem = new JsonTreeItem;
+    root_item = new JsonTreeItem();
     mHeaders.append("key");
     mHeaders.append("value");
 
@@ -127,16 +127,15 @@ bool JsonTableModel::loadJson(const QByteArray &json) {
     {
         beginResetModel();
         if (mDocument.isArray()) {
-            mRootItem = JsonTreeItem::load(QJsonValue(mDocument.array()));
+            root_item = JsonTreeItem::load(QJsonValue(mDocument.array()));
         } else {
-            mRootItem = JsonTreeItem::load(QJsonValue(mDocument.object()));
+            root_item = JsonTreeItem::load(QJsonValue(mDocument.object()));
         }
         endResetModel();
         return true;
     }
     return false;
 }
-
 
 QVariant JsonTableModel::data(const QModelIndex &index,
                               int role) const {
@@ -176,7 +175,7 @@ QModelIndex JsonTableModel::index(int row,
     JsonTreeItem *parentItem;
 
     if (!parent.isValid())
-        parentItem = mRootItem;
+        parentItem = root_item;
     else
         parentItem = static_cast<JsonTreeItem*>(parent.internalPointer());
 
@@ -194,7 +193,7 @@ QModelIndex JsonTableModel::parent(const QModelIndex &index) const {
     JsonTreeItem *childItem = static_cast<JsonTreeItem*>(index.internalPointer());
     JsonTreeItem *parentItem = childItem->parent();
 
-    if (parentItem == mRootItem)
+    if (parentItem == root_item)
         return QModelIndex();
 
     return createIndex(parentItem->row(), 0, parentItem);
@@ -206,7 +205,7 @@ int JsonTableModel::rowCount(const QModelIndex &parent) const {
         return 0;
 
     if (!parent.isValid())
-        parentItem = mRootItem;
+        parentItem = root_item;
     else
         parentItem = static_cast<JsonTreeItem*>(parent.internalPointer());
 
@@ -228,7 +227,35 @@ bool JsonTableModel::setData(const QModelIndex& index,
 }
 
 Qt::ItemFlags JsonTableModel::flags(const QModelIndex &index) const {
-    Qt::ItemFlags flags = Qt::ItemIsEnabled;
-    flags |= Qt::ItemIsEditable;
+    Qt::ItemFlags flags = QAbstractItemModel::flags(index);
+    flags |= Qt::ItemIsEnabled | Qt::ItemIsEditable |  Qt::ItemIsSelectable;
     return flags;
+}
+
+
+bool JsonTableModel::insertNewAttribute(const QModelIndex & parent,
+                                        const QString& key,
+                                        const  QJsonValue::Type json_type) {
+    JsonTreeItem *parentItem =  NULL;
+
+    if(parent.isValid()) {
+        parentItem = static_cast<JsonTreeItem*>(parent.internalPointer());
+        int row = parentItem->childCount();
+        beginInsertRows(parent, row, row);
+    } else {
+        parentItem = root_item;
+            beginResetModel();
+    }
+
+    //new attribute
+    JsonTreeItem * child = new JsonTreeItem(parentItem);
+    child->setKey(key);
+    child->setType(json_type);
+    parentItem->appendChild(child);
+    if(parent.isValid()) {
+        endInsertRows();
+    } else {
+        endResetModel();
+    }
+    return true;
 }

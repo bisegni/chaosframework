@@ -39,8 +39,6 @@ private:
     QJsonValue::Type mType;
     QList<JsonTreeItem*> mChilds;
     JsonTreeItem * mParent;
-
-
 };
 
 class JsonTableModel :
@@ -52,15 +50,18 @@ public:
     bool load(QIODevice * device);
     bool loadJson(const QByteArray& json);
     QVariant data(const QModelIndex &index, int role) const Q_DECL_OVERRIDE;
-    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
+    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole)Q_DECL_OVERRIDE;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const Q_DECL_OVERRIDE;
     QModelIndex index(int row, int column,const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
     QModelIndex parent(const QModelIndex &index) const Q_DECL_OVERRIDE;
     int rowCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
     int columnCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
-    Qt::ItemFlags flags(const QModelIndex &index) const;
+    Qt::ItemFlags flags(const QModelIndex &index) const Q_DECL_OVERRIDE;
+    bool insertNewAttribute(const QModelIndex & parent,
+                            const QString& key,
+                            const  QJsonValue::Type json_type);
 private:
-    JsonTreeItem * mRootItem;
+    JsonTreeItem * root_item;
     QJsonDocument mDocument;
     QStringList mHeaders;
 

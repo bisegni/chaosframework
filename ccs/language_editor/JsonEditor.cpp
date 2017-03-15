@@ -14,18 +14,18 @@ JsonEditor::~JsonEditor() {
 }
 
 void JsonEditor::initUI() {
-    ui->tableViewJsonEditor->setModel(&json_tb);
-    QHeaderView *headerView = ui->tableViewJsonEditor->horizontalHeader();
+    ui->treeViewJsonVIew->setModel(&json_tb);
+    QHeaderView *headerView = ui->treeViewJsonVIew->header();
     headerView->setSectionResizeMode(0, QHeaderView::Interactive);
     headerView->setSectionResizeMode(1, QHeaderView::Stretch);
 
-    connect(ui->tableViewJsonEditor->selectionModel(),
+    connect(ui->treeViewJsonVIew->selectionModel(),
             SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
             SLOT(selectionChanged(QItemSelection,QItemSelection)));
 
     QVector< QPair<QString, QVariant> > cm;
     cm.push_back(QPair<QString, QVariant>(ADD_KEY, QVariant()));
-    registerWidgetForContextualMenu(ui->tableViewJsonEditor,
+    registerWidgetForContextualMenu(ui->treeViewJsonVIew,
                                     cm,
                                     false);
 }
@@ -41,14 +41,33 @@ void JsonEditor::loadJSONDocument(const QString& json_document) {
 void JsonEditor::contextualMenuActionTrigger(const QString& cm_title,
                                              const QVariant& cm_data) {
     if(cm_title.compare(ADD_KEY) == 0) {
-
+        QModelIndex parent_index = cm_data.value<QModelIndex>();
+        json_tb.insertNewAttribute(parent_index,
+                                   "test key",
+                                   QJsonValue::String);
+        contextualMenuActionSetData(ui->treeViewJsonVIew,
+                                    ADD_KEY,
+                                    QVariant());
     }
 }
 
 void JsonEditor::selectionChanged(const QItemSelection& selected,
                                   const QItemSelection& deselected) {
-    bool can_add_attribute = (selected.size() == 1);
-    contextualMenuActionSetEnable(ui->tableViewJsonEditor,
+    bool can_add_attribute = (selected.size() == 1) || (selected.size() == 0);
+    if(can_add_attribute) {
+        contextualMenuActionSetData(ui->treeViewJsonVIew,
+                                    ADD_KEY,
+                                    selected.indexes().first());
+    } else {
+        contextualMenuActionSetData(ui->treeViewJsonVIew,
+                                    ADD_KEY,
+                                    QVariant());
+    }
+    contextualMenuActionSetEnable(ui->treeViewJsonVIew,
                                   ADD_KEY,
                                   can_add_attribute);
+}
+
+void JsonEditor::on_pushButtonSaveAction_clicked() {
+
 }
