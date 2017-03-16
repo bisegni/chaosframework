@@ -28,6 +28,17 @@ namespace chaos {
         typedef struct ChaosAgentSettings {
             //!working directory for deploy and execution of chaos binary
             std::string working_directory;
+            
+            //!external command enable state
+            bool ext_cmd_enabled;
+            /*!
+             External command pipe are two named pipe created for receive command(.in)
+             in the .in one and send answer(.out)
+             */
+            //!the path of the ext command pipe
+            std::string ext_cmd_pipe_path;
+            //!the name of the ext command pipe
+            std::string ext_cmd_pipe_name;
         } ChaosAgentSettings;
         
     }

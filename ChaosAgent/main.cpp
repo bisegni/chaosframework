@@ -28,10 +28,21 @@ int main(int argc, char * argv[]) {
     try {
         //data worker
         ChaosAgent::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_WORKING_DIR,
-                                                                                              "Working directory for deploy and porcess management",
+                                                                                              "Working directory for agent",
                                                                                               "",
                                                                                               &ChaosAgent::getInstance()->settings.working_directory);
-        
+        ChaosAgent::getInstance()->getGlobalConfigurationInstance()->addOption< bool >(OPT_ENABLE_EXT_CMD,
+                                                                                              "Enable the external command via pipe",
+                                                                                              false,
+                                                                                              &ChaosAgent::getInstance()->settings.ext_cmd_enabled);
+        ChaosAgent::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_EXT_CMD_PIPE_PATH,
+                                                                                              "Path for the external command pipe",
+                                                                                              "/tmp",
+                                                                                              &ChaosAgent::getInstance()->settings.ext_cmd_pipe_path);
+        ChaosAgent::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_EXT_CMD_PIPE_NAME,
+                                                                                              "The name of the pipe (name.in name.out) for listen for external command",
+                                                                                              "chaos_agent_ext_cmd",
+                                                                                              &ChaosAgent::getInstance()->settings.ext_cmd_pipe_name);
         ChaosAgent::getInstance()->init(argc, argv);
         
         ChaosAgent::getInstance()->start();

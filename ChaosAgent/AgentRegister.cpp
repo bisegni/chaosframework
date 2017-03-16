@@ -101,7 +101,10 @@ void AgentRegister::stop() throw (chaos::CException) {
 }
 
 void AgentRegister::deinit() throw (chaos::CException) {
-    
+    if(mds_message_channel) {
+        NetworkBroker::getInstance()->disposeMessageChannel(mds_message_channel);
+        mds_message_channel = NULL;
+    }
 }
 
 CDataWrapper* AgentRegister::registrationACK(CDataWrapper  *ack_pack,

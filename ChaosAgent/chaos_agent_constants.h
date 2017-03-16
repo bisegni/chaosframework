@@ -24,9 +24,10 @@
 
 namespace chaos {
     namespace agent {
-        
-#define OPT_WORKING_DIR          "working-dir"
-
+#define OPT_WORKING_DIR         "working-dir"
+#define OPT_ENABLE_EXT_CMD      "enable-ext-cmd"
+#define OPT_EXT_CMD_PIPE_PATH   "ext-cmd-pipe-path"
+#define OPT_EXT_CMD_PIPE_NAME   "ext-cmd-pipe-name"
     }
 }
 

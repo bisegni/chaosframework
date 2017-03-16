@@ -69,6 +69,10 @@ void ChaosAgent::init(void *init_data)  throw(CException) {
     agent_register.reset(new AgentRegister(), "AgentRegister");
     CHECK_ASSERTION_THROW_AND_LOG((agent_register.get() != NULL), ERROR, -1, "AgentRegister instantiation failed");
     agent_register.init(NULL, __PRETTY_FUNCTION__);
+    
+    external_cmd_executor.reset(new external_command_pipe::ExternaCommandExecutor(), "ExternaCommandExecutor");
+    CHECK_ASSERTION_THROW_AND_LOG((external_cmd_executor.get() != NULL), ERROR, -2, "ExternaCommandExecutor instantiation failed");
+    external_cmd_executor.init(NULL, __PRETTY_FUNCTION__);
 }
 
 void ChaosAgent::start()throw(CException) {
@@ -85,6 +89,7 @@ void ChaosAgent::stop()throw(CException) {
 }
 
 void ChaosAgent::deinit()throw(CException) {
+    CHAOS_NOT_THROW(external_cmd_executor.deinit(__PRETTY_FUNCTION__););
     CHAOS_NOT_THROW(StartableService::deinitImplementation(HealtManager::getInstance(), "HealthManager", __PRETTY_FUNCTION__););
     agent_register.deinit(__PRETTY_FUNCTION__);
     CHAOS_NOT_THROW(ChaosCommon<ChaosAgent>::deinit(););

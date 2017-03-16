@@ -968,6 +968,8 @@
 		32DF604415E1502700312C94 /* CommandEventDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DF604215E1502700312C94 /* CommandEventDescriptor.h */; };
 		32DF604715E1505F00312C94 /* CustomEventDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DF604515E1505E00312C94 /* CustomEventDescriptor.cpp */; };
 		32DF604815E1505F00312C94 /* CustomEventDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DF604615E1505F00312C94 /* CustomEventDescriptor.h */; };
+		32DF7EFB1E7AF6B800B7FCDD /* ExternaCommandExecutor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DF7EF61E7AF6B800B7FCDD /* ExternaCommandExecutor.cpp */; };
+		32DF7EFC1E7AF6B800B7FCDD /* PipeLineReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DF7EF91E7AF6B800B7FCDD /* PipeLineReader.cpp */; };
 		32E09CED1C0DB2800069752F /* SnapshotDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E09CEB1C0DB2800069752F /* SnapshotDataAccess.cpp */; };
 		32E09CF01C0DC7100069752F /* MongoDBSnapshotDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E09CEE1C0DC7100069752F /* MongoDBSnapshotDataAccess.cpp */; };
 		32E09CF41C0DE2890069752F /* RestoreSnapshotBatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E09CF21C0DE2890069752F /* RestoreSnapshotBatch.cpp */; };
@@ -2367,6 +2369,10 @@
 		32DF604215E1502700312C94 /* CommandEventDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandEventDescriptor.h; sourceTree = "<group>"; };
 		32DF604515E1505E00312C94 /* CustomEventDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CustomEventDescriptor.cpp; sourceTree = "<group>"; };
 		32DF604615E1505F00312C94 /* CustomEventDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomEventDescriptor.h; sourceTree = "<group>"; };
+		32DF7EF61E7AF6B800B7FCDD /* ExternaCommandExecutor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExternaCommandExecutor.cpp; sourceTree = "<group>"; };
+		32DF7EF71E7AF6B800B7FCDD /* ExternaCommandExecutor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExternaCommandExecutor.h; sourceTree = "<group>"; };
+		32DF7EF91E7AF6B800B7FCDD /* PipeLineReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PipeLineReader.cpp; sourceTree = "<group>"; };
+		32DF7EFA1E7AF6B800B7FCDD /* PipeLineReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PipeLineReader.h; sourceTree = "<group>"; };
 		32E09CEB1C0DB2800069752F /* SnapshotDataAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SnapshotDataAccess.cpp; sourceTree = "<group>"; };
 		32E09CEC1C0DB2800069752F /* SnapshotDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnapshotDataAccess.h; sourceTree = "<group>"; };
 		32E09CEE1C0DC7100069752F /* MongoDBSnapshotDataAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MongoDBSnapshotDataAccess.cpp; sourceTree = "<group>"; };
@@ -3443,6 +3449,8 @@
 				326413AA1E44C7DD0035E175 /* AgentRegister.h */,
 				32E6F43A1E4869120068320E /* AbstractWorker.cpp */,
 				32E6F43B1E4869120068320E /* AbstractWorker.h */,
+				32DF7EF51E7AF6B800B7FCDD /* external_command_pipe */,
+				32DF7EF81E7AF6B800B7FCDD /* utility */,
 				32E6F4361E4868760068320E /* worker */,
 			);
 			path = ChaosAgent;
@@ -4999,6 +5007,24 @@
 			path = evt_desc;
 			sourceTree = "<group>";
 		};
+		32DF7EF51E7AF6B800B7FCDD /* external_command_pipe */ = {
+			isa = PBXGroup;
+			children = (
+				32DF7EF61E7AF6B800B7FCDD /* ExternaCommandExecutor.cpp */,
+				32DF7EF71E7AF6B800B7FCDD /* ExternaCommandExecutor.h */,
+			);
+			path = external_command_pipe;
+			sourceTree = "<group>";
+		};
+		32DF7EF81E7AF6B800B7FCDD /* utility */ = {
+			isa = PBXGroup;
+			children = (
+				32DF7EF91E7AF6B800B7FCDD /* PipeLineReader.cpp */,
+				32DF7EFA1E7AF6B800B7FCDD /* PipeLineReader.h */,
+			);
+			path = utility;
+			sourceTree = "<group>";
+		};
 		32E09CF11C0DE2500069752F /* general */ = {
 			isa = PBXGroup;
 			children = (
@@ -6512,10 +6538,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				32FF2A691E672CAA00117985 /* DeployWorker.cpp in Sources */,
+				32DF7EFB1E7AF6B800B7FCDD /* ExternaCommandExecutor.cpp in Sources */,
 				326413AB1E44C7DD0035E175 /* AgentRegister.cpp in Sources */,
 				32E6F4391E48689E0068320E /* ProcessWorker.cpp in Sources */,
 				326413A21E44AD750035E175 /* ChaosAgent.cpp in Sources */,
 				3264139C1E44ACE60035E175 /* main.cpp in Sources */,
+				32DF7EFC1E7AF6B800B7FCDD /* PipeLineReader.cpp in Sources */,
 				32FF2AB11E6DAC7F00117985 /* LogWorker.cpp in Sources */,
 				32E6F43C1E4869120068320E /* AbstractWorker.cpp in Sources */,
 				32FF2AB41E6DAFA400117985 /* ProcUtil.cpp in Sources */,

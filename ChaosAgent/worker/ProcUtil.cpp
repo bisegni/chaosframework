@@ -91,7 +91,7 @@ bool ProcUtil::popen2NoPipe(const std::string& command,
 
 bool ProcUtil::popen2ToNamedPipe(const std::string& command,
                                  const std::string& named_pipe) {
-    int pid = 0;
+    int pid, sid = 0;
     if((pid = fork()) == -1)     {
         return false;
     }
@@ -99,6 +99,13 @@ bool ProcUtil::popen2ToNamedPipe(const std::string& command,
     /* child process */
     if (pid == 0) {
         int fd = 0;
+        
+        /* Create a new SID for the child process */
+        sid = setsid();
+        if (sid < 0) {
+            exit(EXIT_FAILURE);
+        }
+        
         setpgid(0, 0); //Needed so negative PIDs can kill children of /bin/sh
         //redirect standard output and error to the named pipe
         if((fd = open(named_pipe.c_str(), O_RDWR | O_CREAT,S_IRUSR | S_IWUSR))==-1){ /*open the file */

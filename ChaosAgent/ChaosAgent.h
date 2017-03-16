@@ -28,7 +28,7 @@
 
 #include "chaos_agent_types.h"
 #include "AgentRegister.h"
-
+#include "external_command_pipe/ExternaCommandExecutor.h"
 namespace chaos {
     namespace agent {
         
@@ -40,6 +40,7 @@ namespace chaos {
             
             static WaitSemaphore wait_close_semaphore;
             common::utility::StartableServiceContainer<AgentRegister> agent_register;
+            common::utility::InizializableServiceContainer<external_command_pipe::ExternaCommandExecutor> external_cmd_executor;
         private:
             ChaosAgent();
             ~ChaosAgent();
