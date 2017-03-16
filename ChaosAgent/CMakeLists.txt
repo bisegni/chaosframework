@@ -11,7 +11,8 @@ SET(agent_src   main.cpp
                 AgentRegister.cpp
                 AbstractWorker.cpp)
 
-
+SET(agent_src  ${agent_src} external_command_pipe/ExternaCommandExecutor.cpp)
+SET(agent_src  ${agent_src} utility/PipeLineReader.cpp)
 SET(agent_src  ${agent_src}	worker/ProcessWorker.cpp
                             worker/DeployWorker.cpp
                             worker/LogWorker.cpp
