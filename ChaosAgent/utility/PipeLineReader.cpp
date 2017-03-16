@@ -50,7 +50,7 @@ PipeLineReader::PipeLineReader(io_service& io_service,
                                const std::string& path,
                                PipeLineReaderReceiver *_receiver):
 m_pipe(io_service),
-receiver(receiver) {
+receiver(_receiver) {
     int dev = open(path.c_str(), O_RDWR);
     if (dev == -1) {
         std::cout << "failed to open path - " << path << std::endl;

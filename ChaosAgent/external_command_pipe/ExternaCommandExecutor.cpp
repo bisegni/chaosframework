@@ -45,6 +45,9 @@ output_fd(NULL){}
 ExternaCommandExecutor::~ExternaCommandExecutor(){}
 
 void ExternaCommandExecutor::init(void *data) throw(chaos::CException) {
+    //start asio
+    asio_threads.create_thread(bind(&asio::io_service::run, &io_service));
+    
     //create MDS channel
     mds_message_channel = NetworkBroker::getInstance()->getMetadataserverMessageChannel();
     CHECK_ASSERTION_THROW_AND_LOG((mds_message_channel != NULL), ERROR, -1, "Error creating new mds channel");
@@ -56,10 +59,13 @@ void ExternaCommandExecutor::init(void *data) throw(chaos::CException) {
     ProcUtil::createNamedPipe(pipe_in_path.string());
     ProcUtil::createNamedPipe(pipe_out_path.string());
     
-    output_fd = fopen( "pipe_addr", "wa");
+    output_fd = fopen(pipe_out_path.string().c_str(), "wa");
     CHECK_ASSERTION_THROW_AND_LOG((output_fd != NULL), ERROR, -4, CHAOS_FORMAT("Error opening out named pipe %1%",%pipe_out_path.string()));
-    
-    asio_threads.create_thread(bind(&asio::io_service::run, &io_service));
+
+    //read on input pipe
+    pip_line_reader = PipeLineReader::start(new PipeLineReader(io_service,
+                                                               pipe_in_path.string(),
+                                                               this));
 }
 
 void ExternaCommandExecutor::deinit() throw(chaos::CException) {
@@ -77,6 +83,7 @@ void ExternaCommandExecutor::deinit() throw(chaos::CException) {
 
 void ExternaCommandExecutor::readLine(const std::string& new_read_line) {
     INFO << new_read_line;
-    fprintf(output_fd, "test receive data\n[ %d ]\n\n", new_read_line.c_str());
+    fprintf(output_fd, "RESP xyz\n");
+    fprintf(output_fd, "test receive data[ %s ]\n\n", new_read_line.c_str());
     fflush(output_fd);
 }
