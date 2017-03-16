@@ -153,7 +153,9 @@ SOURCES += main.cpp\
     data/AgentNodeAssociatedListModel.cpp \
     node/agent/AgentNodeAssociationEditor.cpp \
     data/LogEntryTableModel.cpp \
-    data/LogProcessEntriesTableModel.cpp
+    data/LogProcessEntriesTableModel.cpp \
+    data/json/JsonTableModel.cpp \
+    language_editor/JsonEditor.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -290,7 +292,9 @@ HEADERS  += \
     data/AgentNodeAssociatedListModel.h \
     node/agent/AgentNodeAssociationEditor.h \
     data/LogEntryTableModel.h \
-    data/LogProcessEntriesTableModel.h
+    data/LogProcessEntriesTableModel.h \
+    data/json/JsonTableModel.h \
+    language_editor/JsonEditor.h
 
 FORMS    += \
     search/searchnoderesult.ui \
@@ -327,7 +331,8 @@ FORMS    += \
     plot/BufferPlot.ui \
     log_browser/ApplicationErrorLogging.ui \
     node/agent/AgentEditor.ui \
-    node/agent/AgentNodeAssociationEditor.ui
+    node/agent/AgentNodeAssociationEditor.ui \
+    language_editor/JsonEditor.ui
 
 DISTFILES += \
     dark_orange.stylesheet \
