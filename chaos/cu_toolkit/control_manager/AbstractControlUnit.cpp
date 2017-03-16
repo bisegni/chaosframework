@@ -1647,7 +1647,7 @@ void AbstractControlUnit::pushInputDataset() {
         input_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, TimingUtil::getTimeStamp());
         
         //add dataset type
-        input_attribute_dataset->addInt32Value(DataPackCommonKey::DPCK_DATASET_TYPE, DataPackCommonKey::DPCK_DATASET_TYPE_INPUT);
+     //   input_attribute_dataset->addInt32Value(DataPackCommonKey::DPCK_DATASET_TYPE, DataPackCommonKey::DPCK_DATASET_TYPE_INPUT);
         
         //fill the dataset
         fillCDatawrapperWithCachedValue(cache_input_attribute_vector, *input_attribute_dataset);
@@ -1669,7 +1669,7 @@ void AbstractControlUnit::pushCustomDataset() {
         custom_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, TimingUtil::getTimeStamp());
         
         //add dataset type
-        custom_attribute_dataset->addInt32Value(DataPackCommonKey::DPCK_DATASET_TYPE, DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM);
+    //    custom_attribute_dataset->addInt32Value(DataPackCommonKey::DPCK_DATASET_TYPE, DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM);
         
         //fill the dataset
         fillCDatawrapperWithCachedValue(cache_custom_attribute_vector, *custom_attribute_dataset);
@@ -1689,7 +1689,7 @@ void AbstractControlUnit::pushSystemDataset() {
         //! the dataaset can be pushed also in other moment
         system_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, TimingUtil::getTimeStamp());
         //add dataset type
-        system_attribute_dataset->addInt32Value(DataPackCommonKey::DPCK_DATASET_TYPE, DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM);
+     //   system_attribute_dataset->addInt32Value(DataPackCommonKey::DPCK_DATASET_TYPE, DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM);
         //fill the dataset
         fillCDatawrapperWithCachedValue(cache_system_attribute_vector, *system_attribute_dataset);
         
@@ -1709,7 +1709,7 @@ CDataWrapper *AbstractControlUnit::writeCatalogOnCDataWrapper(AlarmCatalog& cata
         //! the dataaset can be pushed also in other moment
         attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, TimingUtil::getTimeStamp());
         //add dataset type
-        attribute_dataset->addInt32Value(DataPackCommonKey::DPCK_DATASET_TYPE, dataset_type);
+     //   attribute_dataset->addInt32Value(DataPackCommonKey::DPCK_DATASET_TYPE, dataset_type);
         
         //scan all alarm ad create the datapack
         size_t alarm_size = catalog.size();
