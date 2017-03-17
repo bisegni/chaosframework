@@ -30,7 +30,7 @@
     <number>4</number>
    </property>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1,0">
+    <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1,0,0">
      <property name="spacing">
       <number>4</number>
      </property>
@@ -67,6 +67,18 @@
        </property>
        <property name="text">
         <string>Auto Start</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="checkBoxKeepAlive">
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Keep Alive</string>
        </property>
       </widget>
      </item>

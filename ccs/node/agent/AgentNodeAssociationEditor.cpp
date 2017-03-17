@@ -47,6 +47,7 @@ AgentNodeAssociationEditor::~AgentNodeAssociationEditor() {
 
 void AgentNodeAssociationEditor::on_pushButtonSaveAssociation_clicked() {
     association.auto_start = ui->checkBoxAutoSave->isChecked();
+    association.keep_alive = ui->checkBoxKeepAlive->isChecked();
     association.launch_cmd_line = ui->lineEditCMDLine->text().toStdString();
     association.configuration_file_content = ui->textEditConfigurationFileContent->toPlainText().toStdString();
     submitApiResult("AgentNodeAssociationEditor::saveAssociation",
@@ -56,6 +57,7 @@ void AgentNodeAssociationEditor::on_pushButtonSaveAssociation_clicked() {
 
 void AgentNodeAssociationEditor::updateUI() {
     ui->checkBoxAutoSave->setChecked(association.auto_start);
+    ui->checkBoxKeepAlive->setChecked(association.keep_alive);
     ui->lineEditCMDLine->setText(QString::fromStdString(association.launch_cmd_line));
     ui->textEditConfigurationFileContent->setText(QString::fromStdString(association.configuration_file_content));
 }

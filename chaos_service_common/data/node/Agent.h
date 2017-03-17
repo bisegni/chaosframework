@@ -58,28 +58,34 @@ namespace chaos {
                     std::string  configuration_file_content;
                     //!qgent start automatically this node(also after crash)
                     bool  auto_start;
+                    //!qgent automatically respawn process it it will be killed
+                    bool  keep_alive;
                     
                     AgentAssociation():
                     associated_node_uid(),
                     configuration_file_content(),
-                    auto_start(false){}
+                    auto_start(false),
+                    keep_alive(false){}
                     
                     AgentAssociation(const std::string& _associated_node_uid,
                                      const std::string& _launch_cmd_line,
                                      const std::string& _configuration_file_content,
-                                     const bool _auto_start):
+                                     const bool _auto_start,
+                                     const bool _keep_alive):
                     association_unique_id(),
                     associated_node_uid(_associated_node_uid),
                     launch_cmd_line(_launch_cmd_line),
                     configuration_file_content(_configuration_file_content),
-                    auto_start(_auto_start){}
+                    auto_start(_auto_start),
+                    keep_alive(_keep_alive){}
                     
                     AgentAssociation(const AgentAssociation& copy_src):
                     association_unique_id(copy_src.association_unique_id),
                     associated_node_uid(copy_src.associated_node_uid),
                     launch_cmd_line(copy_src.launch_cmd_line),
                     configuration_file_content(copy_src.configuration_file_content),
-                    auto_start(copy_src.auto_start){}
+                    auto_start(copy_src.auto_start),
+                    keep_alive(copy_src.keep_alive){}
                     
                     AgentAssociation& operator=(AgentAssociation const &rhs) {
                         association_unique_id = rhs.association_unique_id;
@@ -87,6 +93,7 @@ namespace chaos {
                         launch_cmd_line = rhs.launch_cmd_line;
                         configuration_file_content = rhs.configuration_file_content;
                         auto_start = rhs.auto_start;
+                        keep_alive = rhs.keep_alive;
                         return *this;
                     }
                 };
@@ -100,6 +107,7 @@ namespace chaos {
                     dataWrapped().launch_cmd_line = CDW_GET_SRT_WITH_DEFAULT(serialized_data, AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_CMD_LINE, "");
                     dataWrapped().configuration_file_content = CDW_GET_SRT_WITH_DEFAULT(serialized_data, AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_PAR_CFG, "");
                     dataWrapped().auto_start = CDW_GET_BOOL_WITH_DEFAULT(serialized_data, AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_PAR_AUTO_START, false);
+                    dataWrapped().keep_alive = CDW_GET_BOOL_WITH_DEFAULT(serialized_data, AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_PAR_KEEP_ALIVE, false);
                 }
                 
                 std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
@@ -109,6 +117,7 @@ namespace chaos {
                     data_serialized->addStringValue(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_CMD_LINE, dataWrapped().launch_cmd_line);
                     data_serialized->addStringValue(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_PAR_CFG, dataWrapped().configuration_file_content);
                     data_serialized->addBoolValue(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_PAR_AUTO_START, dataWrapped().auto_start);
+                    data_serialized->addBoolValue(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_PAR_KEEP_ALIVE, dataWrapped().keep_alive);
                     return data_serialized;
                 }
                 CHAOS_CLOSE_SDWRAPPER()
