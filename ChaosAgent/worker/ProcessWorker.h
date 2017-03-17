@@ -24,15 +24,25 @@
 
 #include "../AbstractWorker.h"
 
+#include <chaos/common/chaos_types.h>
+#include <chaos/common/utility/LockableObject.h>
+#include <chaos/common/async_central/async_central.h>
+
 #include <chaos_service_common/data/node/Agent.h>
 
 namespace chaos {
     namespace agent {
         namespace worker {
             
+            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, chaos::service_common::data::agent::AgentAssociation, MapRespawnableNode);
+            
+            CHAOS_DEFINE_LOCKABLE_OBJECT(MapRespawnableNode, LockableMapRespawnableNode);
+            
             //! define the agent taht perform operation on the host process
             class ProcessWorker:
-            public AbstractWorker {
+            public AbstractWorker,
+            public chaos::common::async_central::TimerHandler {
+                LockableMapRespawnableNode map_respawnable_node;
             protected:
                 //! launch an data service
                 chaos::common::data::CDataWrapper *launchNode(chaos::common::data::CDataWrapper *data,
@@ -46,6 +56,8 @@ namespace chaos {
                 //! list all data service managed by the running instance
                 chaos::common::data::CDataWrapper *checkNodes(chaos::common::data::CDataWrapper *data,
                                                               bool& detach);
+                //!inherited by @TimerHandler
+                void timeout();
             public:
                 ProcessWorker();
                 ~ProcessWorker();
@@ -55,7 +67,11 @@ namespace chaos {
                 bool checkProcessAlive(const chaos::service_common::data::agent::AgentAssociation& node_association_info);
                 bool quitProcess(const chaos::service_common::data::agent::AgentAssociation& node_association_info,
                                  bool kill = false);
-
+                
+                void addToRespawn(const chaos::service_common::data::agent::AgentAssociation& node_association_info);
+                
+                void removeToRespawn(const std::string& node_uid);
+                
             };
         }
     }

@@ -230,6 +230,9 @@ void AgentRegister::timeout() {
                     if(it->auto_start) {
                         INFO << CHAOS_FORMAT("Autostart node %1%", %it->associated_node_uid);
                         ((worker::ProcessWorker*)wptr.get())->launchProcess(*it);
+                        if(it->keep_alive) {
+                             ((worker::ProcessWorker*)wptr.get())->addToRespawn(*it);
+                        }
                     }
                 }
             }catch(chaos::CException& ex) {

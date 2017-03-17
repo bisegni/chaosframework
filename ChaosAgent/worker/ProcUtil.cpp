@@ -126,7 +126,6 @@ bool ProcUtil::popen2ToNamedPipe(const std::string& command,
         close(fd); /* close the file descriptor as we don't need it more  */
         
         execl("/bin/sh", "/bin/sh", "-c", command.c_str(), NULL);
-        exit(0);
     }
     return true;
 }

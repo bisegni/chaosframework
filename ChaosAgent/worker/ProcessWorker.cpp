@@ -42,7 +42,7 @@ using namespace chaos::service_common::data::agent;
 using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::common::utility;
-
+using namespace chaos::common::async_central;
 
 ProcessWorker::ProcessWorker():
 AbstractWorker(AgentNodeDomainAndActionRPC::ProcessWorker::RPC_DOMAIN) {
@@ -97,10 +97,39 @@ ProcessWorker::~ProcessWorker() {
 }
 
 
-void ProcessWorker::init(void *data) throw(chaos::CException) {}
+void ProcessWorker::init(void *data) throw(chaos::CException) {
+    AsyncCentralManager::getInstance()->addTimer(this, 5000, 5000);
+}
 
-void ProcessWorker::deinit() throw(chaos::CException) {}
+void ProcessWorker::deinit() throw(chaos::CException) {
+    AsyncCentralManager::getInstance()->removeTimer(this);
+}
 
+
+void ProcessWorker::timeout() {
+    LockableMapRespawnableNodeReadLock rl = map_respawnable_node.getReadLockObject();
+    for(MapRespawnableNodeIterator it = map_respawnable_node().begin(),
+        end = map_respawnable_node().end();
+        it != end;
+        it++) {
+        if(checkProcessAlive(it->second) == false) {
+            INFO << CHAOS_FORMAT("Respawn process for node %1%", %it->first);
+            launchProcess(it->second);
+        }
+    }
+}
+
+void ProcessWorker::addToRespawn(const chaos::service_common::data::agent::AgentAssociation& node_association_info) {
+    LockableMapRespawnableNodeWriteLock wr = map_respawnable_node.getWriteLockObject();
+    map_respawnable_node()[node_association_info.associated_node_uid] = node_association_info;
+    INFO << CHAOS_FORMAT("Node %1% added to auto respawn check", %node_association_info.associated_node_uid);
+}
+
+void ProcessWorker::removeToRespawn(const std::string& node_uid) {
+    LockableMapRespawnableNodeWriteLock wr = map_respawnable_node.getWriteLockObject();
+    map_respawnable_node().erase(node_uid);
+    INFO << CHAOS_FORMAT("Node %1% removed from auto respawn check", %node_uid);
+}
 
 chaos::common::data::CDataWrapper *ProcessWorker::launchNode(chaos::common::data::CDataWrapper *data,
                                                              bool& detach) {
@@ -122,6 +151,9 @@ chaos::common::data::CDataWrapper *ProcessWorker::launchNode(chaos::common::data
     if(checkProcessAlive(assoc_sd_wrapper()) == false) {
         launchProcess(assoc_sd_wrapper());
     }
+    if(assoc_sd_wrapper().keep_alive) {
+       addToRespawn(assoc_sd_wrapper());
+    }
     return NULL;
 }
 
@@ -138,6 +170,7 @@ chaos::common::data::CDataWrapper *ProcessWorker::stopNode(chaos::common::data::
     } else {
         INFO << CHAOS_FORMAT("Associated node %1% isn't in execution", %assoc_sd_wrapper().associated_node_uid);
     }
+    removeToRespawn(assoc_sd_wrapper().associated_node_uid);
     return NULL;
 }
 
@@ -146,8 +179,12 @@ chaos::common::data::CDataWrapper *ProcessWorker::restartNode(chaos::common::dat
     bool try_to_stop = true;
     int retry = 0;
     bool process_alive = false;
+    
     AgentAssociationSDWrapper assoc_sd_wrapper;
     assoc_sd_wrapper.deserialize(data);
+    
+    //first remove node to respawn
+    removeToRespawn(assoc_sd_wrapper().associated_node_uid);
     if(checkProcessAlive(assoc_sd_wrapper()) == true) {
         quitProcess(assoc_sd_wrapper());
         while((process_alive = checkProcessAlive(assoc_sd_wrapper())) == false &&
@@ -165,8 +202,11 @@ chaos::common::data::CDataWrapper *ProcessWorker::restartNode(chaos::common::dat
     if((process_alive = process_alive || checkProcessAlive(assoc_sd_wrapper())) == false) {
         //process has been shutdown, restart it
         launchProcess(assoc_sd_wrapper());
+        
+        if(assoc_sd_wrapper().keep_alive) {
+            addToRespawn(assoc_sd_wrapper());
+        }
     }
-    
     return NULL;
 }
 
@@ -201,6 +241,7 @@ void ProcessWorker::launchProcess(const AgentAssociation& node_association_info)
     boost::filesystem::path init_file;
     boost::filesystem::path queue_file;
     try{
+        if(checkProcessAlive(node_association_info) == true) return;
         exec_command = COMPOSE_NODE_LAUNCH_CMD_LINE(node_association_info);
         init_file = CHAOS_FORMAT("%1%/%2%", %INIT_FILE_PATH()%INIT_FILE_NAME(node_association_info));
         queue_file = CHAOS_FORMAT("%1%/%2%", %QUEUE_FILE_PATH()%NPIPE_FILE_NAME(node_association_info));
@@ -256,7 +297,6 @@ bool ProcessWorker::checkProcessAlive(const chaos::service_common::data::agent::
     if (!in) {throw chaos::CException(-2, "popen() failed!", __PRETTY_FUNCTION__);}
     
     while(fgets(buff, sizeof(buff), in)!=NULL){
-        INFO << buff;
         if(strstr(buff, "grep") == NULL) {
             found = strstr(buff, node_association_info.launch_cmd_line.c_str()) != NULL;
             if(found) break;
