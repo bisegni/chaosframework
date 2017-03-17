@@ -25,6 +25,9 @@
 
 using namespace chaos::common::data;
 using namespace chaos::common::network;
+
+using namespace chaos::service_common::data::agent;
+
 using namespace chaos::metadata_service::common;
 using namespace chaos::metadata_service::batch;
 using namespace chaos::metadata_service::batch::agent;
@@ -44,15 +47,22 @@ AgentAckCommand::~AgentAckCommand() {}
 // inherited method
 void AgentAckCommand::setHandler(CDataWrapper *data) {
     MDSBatchCommand::setHandler(data);
-    
-    //override default schedule time for this command
-    //setFeatures(chaos::common::batch_command::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY, (uint64_t)1000);
-    
     CHECK_CDW_THROW_AND_LOG(data, ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(data, chaos::NodeDefinitionKey::NODE_UNIQUE_ID, ERR, -2, "The unique id of unit server is mandatory")
     CHECK_KEY_THROW_AND_LOG(data, chaos::NodeDefinitionKey::NODE_RPC_ADDR, ERR, -3, "The rpc address of unit server is mandatory")
-    //CHECK_KEY_THROW_AND_LOG(data, chaos::NodeDefinitionKey::NODE_RPC_DOMAIN, ERR, -4, "The rpc domain of unit server is mandatory")
     
+    int err = 0;
+    AgentInstanceSDWrapper agent_instance_sd_wrapper;
+    
+    node_uid = data->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID);
+
+    if((err = getDataAccess<mds_data_access::AgentDataAccess>()->loadAgentDescription(node_uid,
+                                                                                      true,
+                                                                                      agent_instance_sd_wrapper()))) {
+        LOG_AND_TROW(ERR, -4, CHAOS_FORMAT("Error loading the full agent description for node %1% error %2%", %node_uid%err));
+    }
+    
+    data->addCSDataValue("agent_description", *agent_instance_sd_wrapper.serialize());
     request = createRequest(data->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR),
                             AgentNodeDomainAndActionRPC::RPC_DOMAIN_,
                             AgentNodeDomainAndActionRPC::ACTION_AGENT_REGISTRATION_ACK);
@@ -68,7 +78,6 @@ void AgentAckCommand::acquireHandler() {
 void AgentAckCommand::ccHandler() {
     switch(request->phase) {
         case MESSAGE_PHASE_UNSENT: {
-            DBG << CHAOS_FORMAT("Send ack to agent %1%",%message_data->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID));
             sendMessage(*request,
                         message_data);
         }

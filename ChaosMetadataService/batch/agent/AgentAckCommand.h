@@ -35,7 +35,7 @@ namespace chaos {
                 class AgentAckCommand:
                 public metadata_service::batch::MDSBatchCommand {
                     DECLARE_MDS_COMMAND_ALIAS
-                    
+                    std::string node_uid;
                     std::auto_ptr<RequestInfo> request;
                     chaos::common::data::CDataWrapper *message_data;
                 public:

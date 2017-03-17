@@ -31,6 +31,7 @@
 #include <chaos/common/utility/InizializableService.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
 
+
 #define SM_EXECTION_STEP_MS 1000
 
 #define INFO    INFO_LOG(AgentRegister)
@@ -42,6 +43,8 @@ using namespace chaos::common::data;
 using namespace chaos::common::utility;
 using namespace chaos::common::healt_system;
 using namespace chaos::common::async_central;
+
+using namespace chaos::service_common::data::agent;
 
 AgentRegister::AgentRegister():
 agent_uid(CHAOS_FORMAT("ChaosAgent_%1%",%chaos::GlobalConfiguration::getInstance()->getLocalServerAddressAnBasePort())),
@@ -78,12 +81,12 @@ void AgentRegister::init(void *init_data) throw (chaos::CException) {
 }
 
 void AgentRegister::start() throw (chaos::CException) {
-    //register rpc action 
+    //register rpc action
     NetworkBroker::getInstance()->registerAction(this);
     //start the registering state machine
     registration_state() = AgentRegisterStateStartRegistering;
     AsyncCentralManager::getInstance()->addTimer(this,
-    												SM_EXECTION_STEP_MS,
+                                                 SM_EXECTION_STEP_MS,
                                                  SM_EXECTION_STEP_MS);
 }
 
@@ -93,7 +96,7 @@ void AgentRegister::stop() throw (chaos::CException) {
     
     registration_state() = AgentRegisterStateStartUnregistering;
     AsyncCentralManager::getInstance()->addTimer(this,
-    		SM_EXECTION_STEP_MS,
+                                                 SM_EXECTION_STEP_MS,
                                                  SM_EXECTION_STEP_MS);
     while(registration_state != AgentRegisterStateUnregistered &&
           registration_state != AgentRegisterStateFault) {usleep(500000);}
@@ -119,6 +122,13 @@ CDataWrapper* AgentRegister::registrationACK(CDataWrapper  *ack_pack,
             case ErrorCode::EC_MDS_NODE_REGISTRATION_OK:
                 registration_state() = AgentRegisterStateRegistered;
                 INFO << CHAOS_FORMAT("Agent %1% has been registered", %agent_uid);
+                
+                //decode the agent descirption
+                if(ack_pack->hasKey("agent_description") &&
+                   ack_pack->isCDataWrapperValue("agent_description")) {
+                    std::auto_ptr<CDataWrapper> aget_desc_ser(ack_pack->getCSDataValue("agent_description"));
+                    agent_instance_sd_wrapper.deserialize(aget_desc_ser.get());
+                }
                 break;
                 
             default:
@@ -210,6 +220,8 @@ void AgentRegister::timeout() {
                                                              __PRETTY_FUNCTION__);
                     NetworkBroker::getInstance()->registerAction(iter->second.get());
                 }
+                
+                //perform autstart
             }catch(chaos::CException& ex) {
                 registration_state() = AgentRegisterStateFault;
             }

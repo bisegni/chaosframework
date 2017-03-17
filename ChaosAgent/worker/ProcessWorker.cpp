@@ -224,6 +224,7 @@ void ProcessWorker::launchProcess(const AgentAssociation& node_association_info)
         init_file_stream.open(init_file.string().c_str(), std::ofstream::trunc | std::ofstream::out);
         
         //append unit server alias
+        init_file_stream << CHAOS_FORMAT("%1%=",%InitOption::OPT_LOG_ON_CONSOLE) << std::endl;
         init_file_stream << CHAOS_FORMAT("unit-server-alias=%1%",%node_association_info.associated_node_uid) << std::endl;
         
         //append metadata server from agent configuration

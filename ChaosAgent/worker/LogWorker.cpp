@@ -63,13 +63,6 @@ PipeReader::PipeReaderWeakPtr PipeReader::create(io_service& io_service,
                                               ptr,
                                               asio::placeholders::error,
                                               boost::asio::placeholders::bytes_transferred));
-    
-    //    ptr->m_pipe.async_read_some(buffer(ptr->buf),
-    //                                boost::bind(&PipeReader::handleRead,
-    //                                            ptr.get(),
-    //                                            ptr,
-    //                                            asio::placeholders::error,
-    //                                            boost::asio::placeholders::bytes_transferred));
     return ptr;
 }
 
@@ -105,18 +98,6 @@ void PipeReader::handleRead(PipeReaderPtr me,
             data_driver->storeLogEntries(node_uid,
                                          log_line);
         }
-        
-        //me->asio_buffer.consume(bytes_transferred);
-        //push line
-        //data_driver->storeLogEntries(node_uid,
-        //log_line);
-        
-        //        m_pipe.async_read_some(boost::asio::buffer(me->buf),
-        //                               boost::bind(&PipeReader::handleRead,
-        //                                           this,
-        //                                           me,
-        //                                           asio::placeholders::error,
-        //                                           boost::asio::placeholders::bytes_transferred));
         log_line.clear();
         boost::asio::async_read_until(me->m_pipe,
                                       me->asio_buffer,

@@ -29,6 +29,8 @@
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/utility/LockableObject.h>
 
+#include <chaos_service_common/data/node/Agent.h>
+
 #include <map>
 #include <boost/shared_ptr.hpp>
 
@@ -62,9 +64,9 @@ namespace chaos {
             MapWorker    map_worker;
             uint32_t    reg_retry_counter;
             uint32_t    max_reg_retry_counter;
-            AgentRegisterStateLockable           registration_state;
-            common::message::MDSMessageChannel   *mds_message_channel;
-           
+            AgentRegisterStateLockable                                      registration_state;
+            common::message::MDSMessageChannel                              *mds_message_channel;
+            chaos::service_common::data::agent::AgentInstanceSDWrapper      agent_instance_sd_wrapper;
         protected:
             //!inherited by chaos::common::async_central::TimerHandler
             void timeout();
