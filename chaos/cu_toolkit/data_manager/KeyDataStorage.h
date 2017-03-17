@@ -38,12 +38,13 @@ namespace chaos{
 		namespace data_manager {
 			
 			typedef enum KeyDataStorageDomain {
-				KeyDataStorageDomainOutput = 0,
-				KeyDataStorageDomainInput,
-				KeyDataStorageDomainCustom,
-				KeyDataStorageDomainSystem,
-                KeyDataStorageDomainCUAlarm,
-                KeyDataStorageDomainDevAlarm,
+				KeyDataStorageDomainOutput = DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT,
+				KeyDataStorageDomainInput = DataPackCommonKey::DPCK_DATASET_TYPE_INPUT,
+				KeyDataStorageDomainCustom = DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM,
+				KeyDataStorageDomainSystem =  DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM,
+				KeyDataStorageDomainHealth = DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH,
+				KeyDataStorageDomainDevAlarm =DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM,
+                KeyDataStorageDomainCUAlarm =DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM
 			} KeyDataStorageDomain;
 			
 			class KeyDataStorage {

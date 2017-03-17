@@ -1198,12 +1198,13 @@ namespace chaos {
         static const unsigned int DPCK_DATASET_TYPE_CUSTOM             = 2;
         //! the constant that represent the system dataset type
         static const unsigned int DPCK_DATASET_TYPE_SYSTEM             = 3;
-        //! the constant that represent the alarm dataset type
-        static const unsigned int DPCK_DATASET_TYPE_DEV_ALARM          = 4;
-        //! the constant that represent the alarm dataset type
-        static const unsigned int DPCK_DATASET_TYPE_CU_ALARM           = 5;
         //! the constant that represent the health dataset type
-        static const unsigned int DPCK_DATASET_TYPE_HEALTH             = 6;
+        static const unsigned int DPCK_DATASET_TYPE_HEALTH             = 4;
+        //! the constant that represent the alarm dataset type
+        static const unsigned int DPCK_DATASET_TYPE_DEV_ALARM          = 5;
+        //! the constant that represent the alarm dataset type
+        static const unsigned int DPCK_DATASET_TYPE_CU_ALARM           = 6;
+
     }
     /** @} */ // end of DataPackCommonKey
     

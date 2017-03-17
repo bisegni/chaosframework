@@ -34,7 +34,7 @@ using namespace chaos::common::utility;
 using namespace chaos::common::network;
 using namespace chaos::common::message;
 using namespace chaos::common::batch_command;
-
+using namespace chaos::cu::data_manager;
 #define MSEC_WAIT_OPERATION 1000
 
 
@@ -74,17 +74,21 @@ ioLiveDataDriver(NULL){
             ioLiveDataDriver->updateConfiguration(best_available_da_ptr.get());
         }
     }
-    
-    channel_keys.push_back(deviceChannel->getDeviceID() + DataPackPrefixID::OUTPUT_DATASET_POSTFIX);
-    channel_keys.push_back(deviceChannel->getDeviceID() + DataPackPrefixID::INPUT_DATASET_POSTFIX);
-    channel_keys.push_back(deviceChannel->getDeviceID() + DataPackPrefixID::CUSTOM_DATASET_POSTFIX);
-    channel_keys.push_back(deviceChannel->getDeviceID() + DataPackPrefixID::SYSTEM_DATASET_POSTFIX);
-    channel_keys.push_back(deviceChannel->getDeviceID() + DataPackPrefixID::DEV_ALARM_DATASET_POSTFIX);
-    channel_keys.push_back(deviceChannel->getDeviceID() + DataPackPrefixID::CU_ALARM_DATASET_POSTFIX);
-    channel_keys.push_back(deviceChannel->getDeviceID() + DataPackPrefixID::HEALTH_DATASET_POSTFIX);
+
+    channel_keys.resize(16);
+    channel_keys[DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT]=(deviceChannel->getDeviceID() + DataPackPrefixID::OUTPUT_DATASET_POSTFIX);
+    channel_keys[DataPackCommonKey::DPCK_DATASET_TYPE_INPUT]=(deviceChannel->getDeviceID() + DataPackPrefixID::INPUT_DATASET_POSTFIX);
+    channel_keys[DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM]=(deviceChannel->getDeviceID() + DataPackPrefixID::CUSTOM_DATASET_POSTFIX);
+    channel_keys[DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM]=(deviceChannel->getDeviceID() + DataPackPrefixID::SYSTEM_DATASET_POSTFIX);
+    channel_keys[DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM]=(deviceChannel->getDeviceID() + DataPackPrefixID::DEV_ALARM_DATASET_POSTFIX);
+    channel_keys[DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM]=(deviceChannel->getDeviceID() + DataPackPrefixID::CU_ALARM_DATASET_POSTFIX);
+    channel_keys[DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH]=(deviceChannel->getDeviceID() + DataPackPrefixID::HEALTH_DATASET_POSTFIX);
     //  current_dataset.push_back(d);
-    for(int cnt=0;cnt<channel_keys.size();cnt++)
-        current_dataset.push_back(boost::shared_ptr<chaos::common::data::CDataWrapper>());
+   for(int cnt=0;cnt<channel_keys.size();cnt++){
+	   boost::shared_ptr<chaos::common::data::CDataWrapper> ch;
+   	   ch.reset(new chaos::common::data::CDataWrapper());
+       current_dataset.push_back(ch);
+   }
     
 }
 
@@ -263,7 +267,7 @@ int CUController::getDeviceAttributeType(const string& attr, DataType::DataType&
 int CUController::getType(std::string& control_unit_type) {
     int err = 0;
     if(cu_type.empty()) {
-        CDataWrapper*tmp=fetchCurrentDatatasetFromDomain(DatasetDomainSystem);
+        CDataWrapper*tmp=fetchCurrentDatatasetFromDomain(KeyDataStorageDomainSystem);
         if(tmp && tmp->hasKey(DataPackSystemKey::DP_SYS_UNIT_TYPE)){
             std::string t=tmp->getCStringValue(DataPackSystemKey::DP_SYS_UNIT_TYPE);
             cu_type = t;
@@ -321,7 +325,7 @@ int CUController::recoverDeviceFromError() {
 //---------------------------------------------------------------------------------------------------
 uint64_t CUController::getState(CUStateKey::ControlUnitState& deviceState) {
     uint64_t ret=0;
-    CDataWrapper*tmp=fetchCurrentDatatasetFromDomain(DatasetDomainHealth);
+    CDataWrapper*tmp=fetchCurrentDatatasetFromDomain(KeyDataStorageDomainHealth);
     deviceState=CUStateKey::UNDEFINED;
     if(tmp && tmp->hasKey(NodeHealtDefinitionKey::NODE_HEALT_STATUS)){
         std::string state=tmp->getCStringValue(NodeHealtDefinitionKey::NODE_HEALT_STATUS);
@@ -912,7 +916,7 @@ void CUController::addAttributeToTrack(string& attr) {
 
 //---------------------------------------------------------------------------------------------------
 CDataWrapper * CUController::getLiveCDataWrapperPtr() {
-    return current_dataset[DatasetDomainOutput].get();
+    return current_dataset[KeyDataStorageDomainOutput].get();
 }
 
 
@@ -944,7 +948,7 @@ chaos::common::data::CDataWrapper *  CUController::fetchCurrentDatatasetFromDoma
 
 //---------------------------------------------------------------------------------------------------
 int CUController::getTimeStamp(uint64_t& live){
-    CDataWrapper * d = current_dataset[DatasetDomainOutput].get();
+    CDataWrapper * d = current_dataset[KeyDataStorageDomainOutput].get();
     live =0;
     if(d){
         live = d->getInt64Value(DataPackCommonKey::DPCK_TIMESTAMP);
@@ -975,10 +979,10 @@ void CUController::fetchCurrentDeviceValue() {
     boost::mutex::scoped_lock lock(trackMutext);
     
     //! fetch the output odmain
-    fetchCurrentDatatasetFromDomain(DatasetDomainOutput);
+    fetchCurrentDatatasetFromDomain(KeyDataStorageDomainOutput);
     
     if(trackingAttribute.size() == 0) return;
-    CDataWrapper *tmpPtr = current_dataset[DatasetDomainOutput].get();
+    CDataWrapper *tmpPtr = current_dataset[KeyDataStorageDomainOutput].get();
     
     //add timestamp value
     int64_t got_ts = tmpPtr->getInt64Value(DataPackCommonKey::DPCK_TIMESTAMP);
@@ -1017,12 +1021,12 @@ void CUController::fetchCurrentDeviceValue() {
 }
 
 CDataWrapper *CUController::getCurrentData(){
-    return current_dataset[DatasetDomainOutput].get();
+    return current_dataset[KeyDataStorageDomainOutput].get();
 }
 
 //! get profile info
 cu_prof_t CUController::getProfileInfo(){
-    chaos::common::data::CDataWrapper *prof=  fetchCurrentDatatasetFromDomain(DatasetDomainHealth);
+    chaos::common::data::CDataWrapper *prof=  fetchCurrentDatatasetFromDomain(KeyDataStorageDomainHealth);
     cu_prof_t p;
     bzero(&p,sizeof(cu_prof_t));
     if(prof){

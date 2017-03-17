@@ -272,7 +272,7 @@ int KeyDataStorage::loadRestorePoint(const std::string& restore_point_tag) {
                                                              key,
                                                              KeyDataStorageDomainCustom,
                                                              &dataset))) {
-        KeyDataStorageLERR << " Error loading dataset of domain KeyDataStorageDomainInput from restore point:" << restore_point_tag << " for the key:" << key;
+        KeyDataStorageLERR << " Error loading dataset of domain KeyDataStorageDomainCustom from restore point:" << restore_point_tag << " for the key:" << key;
         clearRestorePoint(restore_point_tag);
         return err;
     } else {
@@ -286,7 +286,7 @@ int KeyDataStorage::loadRestorePoint(const std::string& restore_point_tag) {
                                                              key,
                                                              KeyDataStorageDomainSystem,
                                                              &dataset))) {
-        KeyDataStorageLERR << " Error loading dataset of domain KeyDataStorageDomainInput from restore point:" << restore_point_tag << " for the key:" << key;
+        KeyDataStorageLERR << " Error loading dataset of domain KeyDataStorageDomainSystem from restore point:" << restore_point_tag << " for the key:" << key;
         clearRestorePoint(restore_point_tag);
         return err;
     } else {

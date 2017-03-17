@@ -1725,10 +1725,10 @@ CDataWrapper *AbstractControlUnit::writeCatalogOnCDataWrapper(AlarmCatalog& cata
 }
 
 void AbstractControlUnit::pushDevAlarmDataset() {
-    GET_CAT_OR_EXIT(StateVariableTypeAlarmCU, );
+    GET_CAT_OR_EXIT(StateVariableTypeAlarmDEV, );
     //get the cdatawrapper for the pack
     CDataWrapper *attribute_dataset = writeCatalogOnCDataWrapper(catalog,
-                                                                 DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM);
+                                                                 DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM);
     if(attribute_dataset) {
         //push out the system dataset
         key_data_storage->pushDataSet(KeyDataStorageDomainDevAlarm, attribute_dataset);
@@ -1736,10 +1736,10 @@ void AbstractControlUnit::pushDevAlarmDataset() {
 }
 
 void AbstractControlUnit::pushCUAlarmDataset() {
-    GET_CAT_OR_EXIT(StateVariableTypeAlarmDEV, );
+    GET_CAT_OR_EXIT(StateVariableTypeAlarmCU, );
     //get the cdatawrapper for the pack
     CDataWrapper *attribute_dataset = writeCatalogOnCDataWrapper(catalog,
-                                                                 DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM);
+                                                                 DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM);
     if(attribute_dataset) {
         //push out the system dataset
         key_data_storage->pushDataSet(KeyDataStorageDomainCUAlarm, attribute_dataset);

@@ -29,7 +29,7 @@
 #include <chaos/common/network/CNodeNetworkAddress.h>
 #include <chaos/common/message/DeviceMessageChannel.h>
 #include <chaos/common/utility/SingleBufferCircularBuffer.h>
-
+#include <chaos/cu_toolkit/data_manager/KeyDataStorage.h>
 #include <boost/thread/mutex.hpp>
 #include <boost/shared_ptr.hpp>
 
@@ -41,16 +41,9 @@ namespace chaos {
         
         namespace node_controller {
             //! identify the domain qhere fetch the data
-            typedef enum DatasetDomain {
-                DatasetDomainOutput = 0,
-                DatasetDomainInput,
-                DatasetDomainCustom,
-                DatasetDomainSystem,
-                DatasetDomainDevAlarm,
-                DatasetDomainCUAlarm,
-                DatasetDomainHealth,
-            } DatasetDomain;
-            
+
+        	typedef chaos::cu::data_manager::KeyDataStorageDomain DatasetDomain;
+
             //! Controller for a single device instance
             /*!
              This represent a global controller for a single device, identified by DEVICE_ID. The contorlle rpermit to
