@@ -27,6 +27,7 @@
 #include <chaos/common/message/MessageRequestFuture.h>
 
 #include <chaos/common/utility/UUIDUtil.h>
+#include <chaos/common/utility/SafeAsyncCall.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/exception/exception.h>
 #include <chaos/common/network/NetworkBroker.h>
@@ -84,7 +85,7 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
 
                     //! unique channel identifier
                 std::string channel_uuid;
-
+                PromisesHandlerSharedPtr safe_promises_handler_caller;
                 /*!
                  Initialization phase of the channel
                  */
@@ -95,6 +96,7 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
                  */
                 virtual void deinit() throw(CException);
                 
+                void _callHandler(const FuturePromiseData& response_data);
             protected:
                 
                 //!last error domain

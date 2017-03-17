@@ -69,6 +69,8 @@ void DeviceMessageChannel::init() throw(CException) {
  */
 void DeviceMessageChannel::deinit() throw(CException) {
     if(self_managed) {
+        async_central::AsyncCentralManager::getInstance()->removeTimer(this);
+
         if(local_mds_channel) {
             DMCINFO<< "Dispose local mds channel";
             getBroker()->disposeMessageChannel(local_mds_channel);
@@ -178,6 +180,8 @@ void DeviceMessageChannel::tryToReconnect() {
             } else {
                 setOnline(OnlineStateOffline);
             }
+        } else {
+            setOnline(OnlineStateOffline);
         }
     }
 }

@@ -26,6 +26,7 @@
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/utility/UUIDUtil.h>
 #include <chaos/common/utility/Atomic.h>
+#include <chaos/common/utility/SafeAsyncCall.h>
 
 #include <boost/atomic.hpp>
 #include <boost/function.hpp>
@@ -49,13 +50,18 @@ namespace chaos {
             
             typedef boost::promise<FuturePromiseData> MessageFuturePromise;
             
-            typedef boost::function<void(const FuturePromiseData&)> PromisesHandler;
+            typedef boost::function<void(const FuturePromiseData&)> PromisesHandlerFunction;
+            
+            
+            typedef chaos::common::utility::SafeAsyncCall<PromisesHandlerFunction> PromisesHandler;
+            typedef boost::shared_ptr< PromisesHandler > PromisesHandlerSharedPtr;
+            typedef boost::weak_ptr< PromisesHandler > PromisesHandlerWeakPtr;
             
             class ChaosMessagePromises:
             public boost::promise<FuturePromiseData> {
-                PromisesHandler promises_handler;
+                PromisesHandlerWeakPtr promises_handler_weak;
             public:
-                ChaosMessagePromises(PromisesHandler _promises_handler = NULL);
+                ChaosMessagePromises(PromisesHandlerWeakPtr _promises_handler_weak);
                 void set_value(const FuturePromiseData& received_data);
             };
             
@@ -98,7 +104,7 @@ namespace chaos {
                 
                 std::auto_ptr<MessageRequestFuture> getNewRequestMessageFuture(chaos::common::data::CDataWrapper& new_request_datapack,
                                                                                uint32_t& new_request_id,
-                                                                               PromisesHandler promises_handler = NULL);
+                                                                               PromisesHandlerWeakPtr promises_handler_weak);
             };
         }
     }

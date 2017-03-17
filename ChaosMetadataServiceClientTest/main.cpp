@@ -136,6 +136,11 @@ int main(int argc, char *argv[]){
                                                                               &cu_ctrl);
                 if(cu_ctrl == NULL) throw chaos::CException(-1, CHAOS_FORMAT("No cu controller found for %1%", %device_id), __PRETTY_FUNCTION__);
                 
+                ChaosMetadataServiceClient::getInstance()->deleteCUController(cu_ctrl);
+                
+                ChaosMetadataServiceClient::getInstance()->getNewCUController(device_id,
+                                                                              &cu_ctrl);
+                
                 while(work) {
                     std::cout << "Call init" << std::endl;
                     cu_ctrl->initDevice();

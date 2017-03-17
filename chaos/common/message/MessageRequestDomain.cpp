@@ -32,12 +32,13 @@ using namespace chaos::common::message;
 #define MRDDBG_ DBG_LOG(MessageRequestDomain)
 #define MRDERR_ ERR_LOG(MessageRequestDomain)
 
-ChaosMessagePromises::ChaosMessagePromises(PromisesHandler _promises_handler):
-promises_handler(_promises_handler){}
+ChaosMessagePromises::ChaosMessagePromises(PromisesHandlerWeakPtr _promises_handler_weak):
+promises_handler_weak(_promises_handler_weak){}
 
 void ChaosMessagePromises::set_value(const FuturePromiseData& received_data) {
-    if(promises_handler != NULL) {
-        promises_handler(received_data);
+    PromisesHandlerSharedPtr shr_ptr = promises_handler_weak.lock();
+    if(shr_ptr.get() != NULL) {
+        shr_ptr->function(received_data);
     }
     boost::promise<FuturePromiseData>::set_value(received_data);
 }
@@ -107,14 +108,14 @@ CDataWrapper *MessageRequestDomain::response(CDataWrapper *response_data, bool& 
 
 std::auto_ptr<MessageRequestFuture> MessageRequestDomain::getNewRequestMessageFuture(CDataWrapper& new_request_datapack,
                                                                                      uint32_t& new_request_id,
-                                                                                     PromisesHandler promises_handler) {
+                                                                                     PromisesHandlerWeakPtr promises_handler_weak) {
     //lock the map
     boost::lock_guard<boost::mutex> lock(mutext_answer_managment);
     //get new request id
     new_request_id = request_id_counter++;
     
     //create future and promises
-    boost::shared_ptr<ChaosMessagePromises> promise(new ChaosMessagePromises(promises_handler));
+    boost::shared_ptr<ChaosMessagePromises> promise(new ChaosMessagePromises(promises_handler_weak));
     
     //insert into themap the promises
     map_request_id_promises.insert(make_pair(new_request_id, promise));

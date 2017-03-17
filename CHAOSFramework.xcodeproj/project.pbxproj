@@ -970,6 +970,7 @@
 		32DF604815E1505F00312C94 /* CustomEventDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DF604615E1505F00312C94 /* CustomEventDescriptor.h */; };
 		32DF7EFB1E7AF6B800B7FCDD /* ExternaCommandExecutor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DF7EF61E7AF6B800B7FCDD /* ExternaCommandExecutor.cpp */; };
 		32DF7EFC1E7AF6B800B7FCDD /* PipeLineReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DF7EF91E7AF6B800B7FCDD /* PipeLineReader.cpp */; };
+		32DF7F001E7C180100B7FCDD /* SafeAsyncCall.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DF7EFE1E7C180100B7FCDD /* SafeAsyncCall.h */; };
 		32E09CED1C0DB2800069752F /* SnapshotDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E09CEB1C0DB2800069752F /* SnapshotDataAccess.cpp */; };
 		32E09CF01C0DC7100069752F /* MongoDBSnapshotDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E09CEE1C0DC7100069752F /* MongoDBSnapshotDataAccess.cpp */; };
 		32E09CF41C0DE2890069752F /* RestoreSnapshotBatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E09CF21C0DE2890069752F /* RestoreSnapshotBatch.cpp */; };
@@ -2373,6 +2374,7 @@
 		32DF7EF71E7AF6B800B7FCDD /* ExternaCommandExecutor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExternaCommandExecutor.h; sourceTree = "<group>"; };
 		32DF7EF91E7AF6B800B7FCDD /* PipeLineReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PipeLineReader.cpp; sourceTree = "<group>"; };
 		32DF7EFA1E7AF6B800B7FCDD /* PipeLineReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PipeLineReader.h; sourceTree = "<group>"; };
+		32DF7EFE1E7C180100B7FCDD /* SafeAsyncCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SafeAsyncCall.h; sourceTree = "<group>"; };
 		32E09CEB1C0DB2800069752F /* SnapshotDataAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SnapshotDataAccess.cpp; sourceTree = "<group>"; };
 		32E09CEC1C0DB2800069752F /* SnapshotDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnapshotDataAccess.h; sourceTree = "<group>"; };
 		32E09CEE1C0DC7100069752F /* MongoDBSnapshotDataAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MongoDBSnapshotDataAccess.cpp; sourceTree = "<group>"; };
@@ -3878,6 +3880,7 @@
 				32FF2A641E65D17900117985 /* FSUtility.h */,
 				32FF2AA81E6D79EC00117985 /* DataBuffer.h */,
 				32FF2AAC1E6D8B6400117985 /* ChaosAllocator.h */,
+				32DF7EFE1E7C180100B7FCDD /* SafeAsyncCall.h */,
 			);
 			path = utility;
 			sourceTree = "<group>";
@@ -5497,6 +5500,7 @@
 				3230DA0A1652C41D00113C93 /* NetworkForwardInfo.h in Headers */,
 				324A4B29191A405700975394 /* const_element-inl.h in Headers */,
 				324A4B49191A41EF00975394 /* atomic_intrinsics.h in Headers */,
+				32DF7F001E7C180100B7FCDD /* SafeAsyncCall.h in Headers */,
 				32C3545E17885A37009ED581 /* shared_library.hpp in Headers */,
 				3230DA0D1652C44B00113C93 /* RpcMessageForwarder.h in Headers */,
 				32612AC61CE20E5000F3B8F3 /* AbstractScriptVM.h in Headers */,

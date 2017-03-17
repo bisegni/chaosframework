@@ -40,7 +40,8 @@ last_error_code(0),
 last_error_message(),
 last_error_domain(),
 message_request_domain(_new_message_request_domain),
-channel_uuid(UUIDUtil::generateUUIDLite()){}
+channel_uuid(UUIDUtil::generateUUIDLite()),
+safe_promises_handler_caller(PromisesHandlerSharedPtr(new PromisesHandler(boost::bind(&MessageChannel::_callHandler, this, _1)))){}
 
 MessageChannel::~MessageChannel() {
     
@@ -56,6 +57,12 @@ void MessageChannel::init() throw(CException) {
  Deinitialization phase
  */
 void MessageChannel::deinit() throw(CException) {
+    //invalidate safety handler
+    safe_promises_handler_caller.reset();
+}
+
+void MessageChannel::_callHandler(const FuturePromiseData& response_data) {
+    requestPromisesHandler(response_data);
 }
 
 /*!
@@ -155,11 +162,12 @@ std::auto_ptr<MessageRequestFuture> MessageChannel::sendRequestWithFuture(const 
     data_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, node_id);
     data_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, action_name);
     
+    
     //complete datapack for request and get the unique future
     result = message_request_domain->getNewRequestMessageFuture(*data_pack,
                                                                 new_request_id,
-                                                                boost::bind(&MessageChannel::requestPromisesHandler, this, _1));
-
+                                                                safe_promises_handler_caller);
+    
     //if(async) return result;
     //submit the request
     broker->submiteRequest(remote_host,
