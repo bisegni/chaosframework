@@ -33,10 +33,6 @@ namespace chaos {
             //! define the agent taht perform operation on the host process
             class ProcessWorker:
             public AbstractWorker {
-                void launchProcess(const chaos::service_common::data::agent::AgentAssociation& node_association_info);
-                bool checkProcessAlive(const chaos::service_common::data::agent::AgentAssociation& node_association_info);
-                bool quitProcess(const chaos::service_common::data::agent::AgentAssociation& node_association_info,
-                                 bool kill = false);
             protected:
                 //! launch an data service
                 chaos::common::data::CDataWrapper *launchNode(chaos::common::data::CDataWrapper *data,
@@ -55,6 +51,11 @@ namespace chaos {
                 ~ProcessWorker();
                 void init(void *data) throw(chaos::CException);
                 void deinit() throw(chaos::CException);
+                void launchProcess(const chaos::service_common::data::agent::AgentAssociation& node_association_info);
+                bool checkProcessAlive(const chaos::service_common::data::agent::AgentAssociation& node_association_info);
+                bool quitProcess(const chaos::service_common::data::agent::AgentAssociation& node_association_info,
+                                 bool kill = false);
+
             };
         }
     }

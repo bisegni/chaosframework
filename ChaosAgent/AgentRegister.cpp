@@ -222,6 +222,16 @@ void AgentRegister::timeout() {
                 }
                 
                 //perform autstart
+                WorkerSharedPtr wptr = map_worker["ProcessWorker"];
+                for(VectorAgentAssociationIterator it = agent_instance_sd_wrapper().node_associated.begin(),
+                    end = agent_instance_sd_wrapper().node_associated.end();
+                    it != end;
+                    it++) {
+                    if(it->auto_start) {
+                        INFO << CHAOS_FORMAT("Autostart node %1%", %it->associated_node_uid);
+                        ((worker::ProcessWorker*)wptr.get())->launchProcess(*it);
+                    }
+                }
             }catch(chaos::CException& ex) {
                 registration_state() = AgentRegisterStateFault;
             }

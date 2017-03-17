@@ -97,9 +97,7 @@ ProcessWorker::~ProcessWorker() {
 }
 
 
-void ProcessWorker::init(void *data) throw(chaos::CException) {
-    
-}
+void ProcessWorker::init(void *data) throw(chaos::CException) {}
 
 void ProcessWorker::deinit() throw(chaos::CException) {}
 
