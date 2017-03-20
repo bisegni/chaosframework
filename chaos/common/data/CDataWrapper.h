@@ -67,6 +67,12 @@ namespace chaos {
                 int64_t getint64ElementAtIndex(const int);
                 CDataWrapper* getCDataWrapperElementAtIndex(const int);
                 
+                bool isStringElementAtIndex(const int);
+                bool isDoubleElementAtIndex(const int);
+                bool isInt32ElementAtIndex(const int);
+                bool isInt64ElementAtIndex(const int);
+                bool isCDataWrapperElementAtIndex(const int);
+                
                 vector<BSONElement>::size_type size() const;
             };
             

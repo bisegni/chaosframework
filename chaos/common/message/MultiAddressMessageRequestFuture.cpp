@@ -61,7 +61,7 @@ void MultiAddressMessageRequestFuture::switchOnOtherServer() {
     //set index offline
     parent_mn_message_channel->setURLAsOffline(last_used_address);
     MAMRF_INFO << "Server " << last_used_address << " put offline";
-
+    
     //retrasmission of the datapack
     current_future = parent_mn_message_channel->_sendRequestWithFuture(action_domain,
                                                                        action_name,
@@ -125,29 +125,39 @@ bool MultiAddressMessageRequestFuture::wait() {
 
 //! try to get the result waiting for a determinate period of time
 chaos::common::data::CDataWrapper *MultiAddressMessageRequestFuture::getResult() {
-    CHAOS_ASSERT(current_future.get())
-    return current_future->getResult();
+    if(current_future.get())
+        return current_future->getResult();
+    else
+        return NULL;
 }
 
 
 chaos::common::data::CDataWrapper *MultiAddressMessageRequestFuture::detachResult() {
-    CHAOS_ASSERT(current_future.get())
-    return current_future->detachResult();
+    if(current_future.get())
+        return current_future->detachResult();
+    else
+        return NULL;
 }
 
 int MultiAddressMessageRequestFuture::getError() const {
-    CHAOS_ASSERT(current_future.get())
-    return current_future->getError();
+    if(current_future.get())
+        return current_future->getError();
+    else
+        return ErrorRpcCoce::EC_RPC_REQUEST_FUTURE_NOT_AVAILABLE;
 }
 
 const std::string& MultiAddressMessageRequestFuture::getErrorDomain() const {
-    CHAOS_ASSERT(current_future.get())
-    return current_future->getErrorDomain();
+    if(current_future.get())
+        return current_future->getErrorDomain();
+    else
+        return ErrorRpcCoce::EC_RPC_ERROR_DOMAIN;
 }
 
 const std::string& MultiAddressMessageRequestFuture::getErrorMessage() const {
-    CHAOS_ASSERT(current_future.get())
-    return current_future->getErrorMessage();
+    if(current_future.get())
+        return current_future->getErrorMessage();
+    else
+        return ErrorRpcCoce::EC_REQUEST_FUTURE_NOT_AVAILABLE;
 }
 
 chaos::common::data::CDataWrapper *MultiAddressMessageRequestFuture::detachMessageData() {

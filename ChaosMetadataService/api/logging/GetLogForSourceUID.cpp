@@ -44,7 +44,7 @@ chaos::common::data::CDataWrapper *GetLogForSourceUID::execute(CDataWrapper *api
     int err = 0;
     
     CDataWrapper *result = NULL;
-
+    
     //check for mandatory attributes
     CHECK_CDW_THROW_AND_LOG(api_data, L_GLFNI_ERR, -1, "No parameter found");
     CHECK_KEY_THROW_AND_LOG(api_data, MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER, L_GLFNI_ERR, -2, "The log timestamp key is mandatory");
@@ -55,7 +55,7 @@ chaos::common::data::CDataWrapper *GetLogForSourceUID::execute(CDataWrapper *api
     //entry list
     LogEntryList entry_list;
     std::vector<std::string> domain_to_include;
-
+    
     uint32_t page_length =  (uint32_t)CDW_GET_INT32_WITH_DEFAULT(api_data, "page_length", 100);
     uint64_t sequence = (uint64_t)CDW_GET_INT64_WITH_DEFAULT(api_data, "seq", 0);
     if(api_data->hasKey(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN)) {
@@ -67,7 +67,9 @@ chaos::common::data::CDataWrapper *GetLogForSourceUID::execute(CDataWrapper *api
             for(int idx = 0;
                 idx < domain_vec->size();
                 idx++){
-                domain_to_include.push_back(domain_vec->getStringElementAtIndex(idx));
+                if(domain_vec->isStringElementAtIndex(idx)) {
+                    domain_to_include.push_back(domain_vec->getStringElementAtIndex(idx));
+                }
             }
         } else {
             LOG_AND_TROW_FORMATTED(L_GLFNI_ERR, -5, "Domain key '%1% 'need to be string or array of string",%MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN);

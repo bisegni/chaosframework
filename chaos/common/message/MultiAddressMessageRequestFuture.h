@@ -35,7 +35,7 @@ namespace chaos{
              NOTE: This class is no more valid after that the MultiAddressMessageChannel from which has been created. If used after parent deallcoation
              memory crash will occur.
              */
-            class MultiAddressMessageRequestFuture{
+            class MultiAddressMessageRequestFuture {
                 //friend class for private constructor
                 friend class chaos::common::message::MultiAddressMessageChannel;
                 

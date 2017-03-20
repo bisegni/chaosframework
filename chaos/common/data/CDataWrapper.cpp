@@ -47,6 +47,26 @@ int64_t CMultiTypeDataArrayWrapper::getint64ElementAtIndex(const int pos) {
     return elementsArray[pos].Long();
 }
 
+bool CMultiTypeDataArrayWrapper::isStringElementAtIndex(const int pos) {
+    return elementsArray[pos].type()==String;
+}
+
+bool CMultiTypeDataArrayWrapper::isDoubleElementAtIndex(const int pos) {
+    return elementsArray[pos].type()==NumberDouble;
+}
+
+bool CMultiTypeDataArrayWrapper::isInt32ElementAtIndex(const int pos) {
+    return elementsArray[pos].type()==NumberInt;
+}
+
+bool CMultiTypeDataArrayWrapper::isInt64ElementAtIndex(const int pos) {
+    return elementsArray[pos].type()==NumberLong;
+}
+
+bool CMultiTypeDataArrayWrapper::isCDataWrapperElementAtIndex(const int pos) {
+    return elementsArray[pos].type()==Object;
+}
+
 CDataWrapper* CMultiTypeDataArrayWrapper::getCDataWrapperElementAtIndex(const int pos) {
     return new CDataWrapper(elementsArray[pos].embeddedObject().objdata());
 }
