@@ -98,7 +98,7 @@ bool MultiAddressMessageRequestFuture::wait() {
             } else {
                 //we can have submission error
                 if(current_future->getError()) {
-                    MAMRF_ERR << "Whe have submisison error:" << current_future->getError() <<
+                    MAMRF_ERR << "We have submission error:" << current_future->getError() <<
                     " message:"<<current_future->getErrorMessage() << " domain:" <<
                     current_future->getErrorDomain();
                     
@@ -111,7 +111,7 @@ bool MultiAddressMessageRequestFuture::wait() {
                 MAMRF_INFO << "Retry to wait on same server";
                 continue;
             } else {
-                MAMRF_INFO << "Whe have retryied " << retry_on_same_server << " times on "<<last_used_address;
+                MAMRF_INFO << "We have retried " << retry_on_same_server << " times on "<<last_used_address;
                 switchOnOtherServer();
             }
         }
