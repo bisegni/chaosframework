@@ -18,8 +18,8 @@
  *    	limitations under the License.
  */
 
-#ifndef IODataDriver_H
-#define IODataDriver_H
+#ifndef _IODataDriver_H
+#define _IODataDriver_H
 #include <map>
 #include <vector>
 #include <boost/shared_ptr.hpp>
@@ -35,7 +35,8 @@ namespace chaos_data = chaos::common::data;
 namespace chaos{
     namespace common {
         namespace io {
-            
+
+
             /*!
              * History Output driver base abstract classe, that define two method to control
              * the initialization and history persistence of the data
@@ -135,6 +136,9 @@ namespace chaos{
                 virtual void releaseQuery(QueryCursor *query) = 0;
             };
             
+        	typedef boost::shared_ptr<chaos::common::io::IODataDriver> ioDataDriver_shr;
+
+
         }
     }
 }

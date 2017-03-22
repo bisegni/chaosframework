@@ -73,6 +73,7 @@ namespace chaos{
                 chaos_dio_channel::DirectIOSystemAPIClientChannel	*system_client_channel;
             } IODirectIODriverClientChannels;
             
+
             /*!
              */
             DECLARE_CLASS_FACTORY(IODirectIODriver, IODataDriver),

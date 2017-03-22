@@ -39,14 +39,14 @@ using namespace chaos::cu::data_manager;
 
 
 //---------------------------------------------------------------------------------------------------
-CUController::CUController(const std::string& _deviceID):
+CUController::CUController(const std::string& _deviceID, chaos::common::io::ioDataDriver_shr _ioLiveDataDriver):
 datasetDB(true),
 mdsChannel(NULL),
-deviceChannel(NULL),
-ioLiveDataDriver(NULL){
+deviceChannel(NULL)
+{
     millisecToWait = MSEC_WAIT_OPERATION;
 
-    
+    ioLiveDataDriver=_ioLiveDataDriver;
     mdsChannel = NetworkBroker::getInstance()->getMetadataserverMessageChannel();
     if(!mdsChannel) throw CException(-1,
                                      "No MDS Channel created",
@@ -62,18 +62,16 @@ ioLiveDataDriver(NULL){
     //add me as listener
     deviceChannel->addListener(this);
     //update live data driver
-    ioLiveDataDriver = getDataProxyChannelNewInstance();
-    if(!ioLiveDataDriver) throw CException(-3,
+
+    if(!ioLiveDataDriver.get()) throw CException(-3,
                                         "Invalid data io driver found",
                                         __PRETTY_FUNCTION__);
-    if(ioLiveDataDriver) {
-        ioLiveDataDriver->init(NULL);
-        CDataWrapper *tmp_data_handler = NULL;
-        if(!mdsChannel->getDataDriverBestConfiguration(&tmp_data_handler, millisecToWait)){
+     CDataWrapper *tmp_data_handler = NULL;
+     if(!mdsChannel->getDataDriverBestConfiguration(&tmp_data_handler, millisecToWait)){
             auto_ptr<CDataWrapper> best_available_da_ptr(tmp_data_handler);
             ioLiveDataDriver->updateConfiguration(best_available_da_ptr.get());
-        }
-    }
+       }
+
 
     channel_keys.resize(16);
     channel_keys[DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT]=(deviceChannel->getDeviceID() + DataPackPrefixID::OUTPUT_DATASET_POSTFIX);
@@ -108,29 +106,11 @@ CUController::~CUController() {
 
     }
     
-    if(ioLiveDataDriver){
-        ioLiveDataDriver->deinit();
-        delete(ioLiveDataDriver);
+    if(ioLiveDataDriver.get()){
+        ioLiveDataDriver.reset();
     }
 }
 
-IODataDriver *CUController::getDataProxyChannelNewInstance() throw(CException) {
-    IODataDriver *result = NULL;
-    const std::string impl_name =  CHAOS_FORMAT("%1%IODriver",%GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_DATA_IO_IMPL));
-    
-    result = ObjectFactoryRegister<IODataDriver>::getInstance()->getNewInstanceByName(impl_name);
-    if(result) {
-        if(impl_name.compare("IODirectIODriver") == 0) {
-            //set the information
-            IODirectIODriverInitParam init_param;
-            std::memset(&init_param, 0, sizeof(IODirectIODriverInitParam));
-            init_param.client_instance = NULL;
-            init_param.endpoint_instance = NULL;
-            ((IODirectIODriver*)result)->setDirectIOParam(init_param);
-        }
-    }
-    return result;
-}
 
 //---------------------------------------------------------------------------------------------------
 void CUController::setRequestTimeWaith(uint32_t newMillisecToWait){
@@ -930,7 +910,7 @@ CDataWrapper * CUController::getCurrentDatasetForDomain(DatasetDomain domain) {
 
 //---------------------------------------------------------------------------------------------------
 chaos::common::data::CDataWrapper *  CUController::fetchCurrentDatatasetFromDomain(DatasetDomain domain) {
-    CHAOS_ASSERT(ioLiveDataDriver)
+    CHAOS_ASSERT(ioLiveDataDriver.get())
     char *value = NULL;
     unsigned long value_len = 0;
     
@@ -1067,7 +1047,7 @@ int CUController::loadDatasetTypeFromSnapshotTag(const std::string& snapshot_tag
 
 int CUController::createNewSnapshot(const std::string& snapshot_tag,
                                     const std::vector<std::string>& other_snapped_device) {
-    CHAOS_ASSERT(ioLiveDataDriver)
+    CHAOS_ASSERT(ioLiveDataDriver.get())
     std::vector<std::string> device_id_in_snap = other_snapped_device;
     device_id_in_snap.push_back(deviceChannel->getDeviceID());
     return mdsChannel->createNewSnapshot(snapshot_tag,
@@ -1075,7 +1055,7 @@ int CUController::createNewSnapshot(const std::string& snapshot_tag,
 }
 
 int CUController::deleteSnapshot(const std::string& snapshot_tag) {
-    CHAOS_ASSERT(ioLiveDataDriver)
+    CHAOS_ASSERT(ioLiveDataDriver.get())
     return mdsChannel->deleteSnapshot(snapshot_tag);
 }
 

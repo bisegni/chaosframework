@@ -77,7 +77,7 @@ start_ui(){
     port=8081
     info_mesg "starting UI Server on port " "$port"
     check_proc_then_kill "$UI_EXEC"
-    run_proc "$CHAOS_PREFIX/bin/$UI_EXEC --server_port $port --log-on-file --log-file $CHAOS_PREFIX/log/$UI_EXEC.log $CHAOS_OVERALL_OPT --log-level debug > $CHAOS_PREFIX/log/$UI_EXEC.std.out 2>&1 &" "$UI_EXEC"
+    run_proc "$CHAOS_PREFIX/bin/$UI_EXEC --rest-port $port --log-on-file --log-file $CHAOS_PREFIX/log/$UI_EXEC.log $CHAOS_OVERALL_OPT --log-level debug > $CHAOS_PREFIX/log/$UI_EXEC.std.out 2>&1 &" "$UI_EXEC"
 }
 
 start_agent(){
