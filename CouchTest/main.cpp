@@ -36,7 +36,20 @@ void getCallback(lcb_t instance,
                  const lcb_get_resp_t *resp) {
     (void)instance;
     if((last_err = error) == LCB_SUCCESS) {
-        std::cout << "Got n:" << resp->v.v0.nbytes << " from server on key " << std::string((char*)resp->v.v0.key, resp->v.v0.nkey) << std::endl;
+        // std::cout << "Got n:" << resp->v.v0.nbytes << " from server on key " << std::string((char*)resp->v.v0.key, resp->v.v0.nkey) << std::endl;
+    } else if(error == LCB_KEY_ENOENT) {
+        std::cerr << "key " << std::string((char*)resp->v.v0.key, resp->v.v0.nkey) << " not found "<< std::endl;
+    }
+}
+
+void setCallback(lcb_t instance,
+                 const void *cookie,
+                 lcb_storage_t operation,
+                 lcb_error_t error,
+                 const lcb_store_resp_t *resp) {
+    (void)instance;
+    if (error != LCB_SUCCESS) {
+        std::cerr << "key " << std::string((char*)resp->v.v0.key, resp->v.v0.nkey) << " not set "<< std::endl;
     }
 }
 
@@ -54,8 +67,9 @@ int initCouchbase() {
     create_options.version = 3;
     create_options.v.v3.username ="chaos";
     create_options.v.v3.passwd = "chaos";
-    
-    all_server_str.assign("couchbase://host;host");
+    all_server_str.assign("couchbase://chaosdev-cb1.chaos.lnf.infn.it;chaosdev-cb2.chaos.lnf.infn.it");
+    //all_server_str.assign("couchbase://macbisegni");
+    //all_server_str.assign("couchbase://vldantemng001.lnf.infn.it");
     all_server_str.append("/");
     all_server_str.append("chaos");
     create_options.v.v3.connstr = all_server_str.c_str();
@@ -91,6 +105,7 @@ int initCouchbase() {
         std::cout << "connection ok" << std::endl;
         /* set up a callback for our get and set requests  */
         lcb_set_get_callback(instance, getCallback);
+        lcb_set_store_callback(instance, setCallback);
     } else {
         std::cerr << "Error connecting -> " << lcb_strerror(NULL, last_err) << std::endl;
         return -2;
@@ -108,7 +123,7 @@ int initCouchbase() {
 }
 
 bool perforGetOperationOnKey(const std::string& key) {
-    int err = LCB_SUCCESS;
+    lcb_error_t err = LCB_SUCCESS;
     lcb_get_cmd_t cmd;
     const lcb_get_cmd_t *commands[1];
     
@@ -117,15 +132,35 @@ bool perforGetOperationOnKey(const std::string& key) {
     cmd.v.v0.key = key.c_str();
     cmd.v.v0.nkey = key.size();
     err = lcb_get(instance, NULL, 1, commands);
+    err = lcb_wait(instance);
     if (err != LCB_SUCCESS &&
         err != LCB_KEY_ENOENT) {
         std::cout << "Fail to get value "<<key<<" for with err "<< err << "(" << lcb_errmap_default(instance, err) << ")" << std::endl;
     } else {
         if(err == LCB_KEY_ENOENT) {
-            err = 0;
+            err = LCB_SUCCESS;
         }
     }
     return err != LCB_SUCCESS;
+}
+
+int perforSetOperationOnKey(const std::string& key, const std::string& value) {
+    lcb_error_t err = LCB_SUCCESS;
+    lcb_store_cmd_t cmd;
+    const lcb_store_cmd_t * const commands[] = { &cmd };
+    
+    memset(&cmd, 0, sizeof(cmd));
+    cmd.v.v0.key = key.c_str();
+    cmd.v.v0.nkey = key.size();
+    cmd.v.v0.bytes = value.c_str();
+    cmd.v.v0.nbytes = value.size();
+    cmd.v.v0.operation = LCB_SET;
+    err = lcb_store(instance, NULL, 1, commands);
+    err = lcb_wait(instance);
+    if (err != LCB_SUCCESS) {
+        std::cout << "Fail to store value "<<key<<" for with err "<< err << "(" << lcb_errmap_default(instance, err) << ")" << std::endl;
+    }
+    return err;
 }
 
 int main(int argc, const char * argv[]) {
@@ -137,9 +172,11 @@ int main(int argc, const char * argv[]) {
     uint64_t start_work = TimingUtil::getTimeStamp();
     uint64_t start_stat_ts = start_work;
     uint64_t last_stat_ts = start_stat_ts;
-    
+    std::string key = "rt_sin_e_o";
+    perforSetOperationOnKey(key, "value for key");
     while(work) {
         start_stat_ts = TimingUtil::getTimeStamp();
+        perforGetOperationOnKey(key);
         counter++;
         if((start_stat_ts - last_stat_ts) >= 1000) {
             std::cout << "Cicle stat = " << counter << std::endl;

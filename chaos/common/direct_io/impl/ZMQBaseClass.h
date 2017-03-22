@@ -144,6 +144,10 @@ namespace chaos {
                                      DirectIODataPack *data_pack,
                                      DirectIODeallocationHandler *header_deallocation_handler,
                                      DirectIODeallocationHandler *data_deallocation_handler);
+                    //!safe delete datapack content using asinc way
+                    int safeDeleteDataPack(DirectIODataPack *data_pack,
+                                           DirectIODeallocationHandler *header_deallocation_handler,
+                                           DirectIODeallocationHandler *data_deallocation_handler);
                 };
                 
             }

@@ -41,8 +41,8 @@ socket_service(NULL){
 ZMQDirectIOClientConnection::~ZMQDirectIOClientConnection() {}
 
 void ZMQDirectIOClientConnection::init(void *init_data) throw(chaos::CException) {
-    int err = getNewSocketPair();
-    if(err) throw CException(-1, "Error configuring socket", __PRETTY_FUNCTION__);
+    //int err = getNewSocketPair();
+    //if(err) throw CException(-1, "Error configuring socket", __PRETTY_FUNCTION__);
 }
 
 void ZMQDirectIOClientConnection::deinit() throw(chaos::CException) {
@@ -248,19 +248,28 @@ int64_t ZMQDirectIOClientConnection::sendPriorityData(DirectIODataPack *data_pac
                                                       DirectIODataPack **synchronous_answer) {
     int64_t err = 0;
     boost::unique_lock<boost::mutex> wl(mutext_send_message);
-    
-    err = writeToSocket(socket_priority,
-                        priority_identity,
-                        completeDataPack(data_pack),
-                        header_deallocation_handler,
-                        data_deallocation_handler,
-                        synchronous_answer);
-    if(err > 0 /*resource not available*/) {
-        //remove socket in case of delay on the answer
-        releaseSocketPair();
-        if(ensureSocket() == false) {
-            err = 100000;
+    if(ensureSocket() == false) {
+        err = ErrorDirectIOCoce::EC_NO_SOCKET;
+        safeDeleteDataPack(data_pack,
+                           header_deallocation_handler,
+                           data_deallocation_handler);
+    } else if(socket_priority &&
+              data_pack){
+        err = writeToSocket(socket_priority,
+                            priority_identity,
+                            completeDataPack(data_pack),
+                            header_deallocation_handler,
+                            data_deallocation_handler,
+                            synchronous_answer);
+        if(err > 0 /*resource not available*/) {
+            //remove socket in case of delay on the answer
+            releaseSocketPair();
         }
+    } else {
+        err = ErrorDirectIOCoce::EC_NO_SOCKET;
+        safeDeleteDataPack(data_pack,
+                           header_deallocation_handler,
+                           data_deallocation_handler);
     }
     return err;
 }
@@ -272,19 +281,28 @@ int64_t ZMQDirectIOClientConnection::sendServiceData(DirectIODataPack *data_pack
                                                      DirectIODataPack **synchronous_answer) {
     int64_t err = 0;
     boost::unique_lock<boost::mutex> wl(mutext_send_message);
-    
-    err = writeToSocket(socket_service,
-                        service_identity,
-                        completeDataPack(data_pack),
-                        header_deallocation_handler,
-                        data_deallocation_handler,
-                        synchronous_answer);
-    if(err > 0 /*resource not available*/) {
-        //remove socket in case of delay on the answer
-        releaseSocketPair();
-        if(ensureSocket() == false) {
-            err = 100000;
+    if(ensureSocket() == false) {
+        err = ErrorDirectIOCoce::EC_NO_SOCKET;
+        safeDeleteDataPack(data_pack,
+                           header_deallocation_handler,
+                           data_deallocation_handler);
+    } else if(socket_service &&
+              data_pack){
+        err = writeToSocket(socket_service,
+                            service_identity,
+                            completeDataPack(data_pack),
+                            header_deallocation_handler,
+                            data_deallocation_handler,
+                            synchronous_answer);
+        if(err > 0 /*resource not available*/) {
+            //remove socket in case of delay on the answer
+            releaseSocketPair();
         }
+    } else {
+        err = ErrorDirectIOCoce::EC_NO_SOCKET;
+        safeDeleteDataPack(data_pack,
+                           header_deallocation_handler,
+                           data_deallocation_handler);
     }
     return err;
 }

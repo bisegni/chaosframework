@@ -41,7 +41,7 @@ namespace chaos{
             ChaosErrorCodeMapping();
             ChaosErrorMap map_error_description;
         public:
-
+            
             //!register the message for the an erorr code that need to be unique
             /*!
              if the error code s present an exception is thrown
@@ -50,23 +50,23 @@ namespace chaos{
             const std::string& getErrorMessage(int error_code);
         };
     }
- 
+    
     
 #define CHAOS_DECLARE_ERROR_CODE_MAPPING(e)\
 const int e
-//class e ## Register {public:e ## Register(int c, const std::string& m);};\
-//extern e ## Register e ## RegisterInstancer;
-
-
+    //class e ## Register {public:e ## Register(int c, const std::string& m);};\
+    //extern e ## Register e ## RegisterInstancer;
+    
+    
 #define CHAOS_DEFINE_ERROR_CODE_MAPPING(e, c, m)
-//const int e = c;\
-//e ## Register  e ## RegisterInstance(c, m);\
-//e ## Register::e ## Register(int _c, const std::string& _m){chaos::error::ChaosErrorCodeMapping::getInstance()->registerErrorDescription(_c,_m);}
+    //const int e = c;\
+    //e ## Register  e ## RegisterInstance(c, m);\
+    //e ## Register::e ## Register(int _c, const std::string& _m){chaos::error::ChaosErrorCodeMapping::getInstance()->registerErrorDescription(_c,_m);}
     
     
 #define ChaosGetErrorMessage(error_code)\
 chaos::error::ChaosErrorCodeMapping::getInstance()->getErrorMessage(error_code)
-
+    
     
     /** @defgroup ChaosErrorCode
      *  This is the collection of the definition of the chaos error code
@@ -140,6 +140,18 @@ chaos::error::ChaosErrorCodeMapping::getInstance()->getErrorMessage(error_code)
 (x == ErrorRpcCoce::EC_RPC_SENDING_DATA) ||\
 (x == ErrorRpcCoce::EC_RPC_NO_SOCKET))
     }
-    /** @} */ // end of ChaosRPCErrorCode
+    
+    /** @defgroup ErrorDirectIOCoce
+     *  This is the collection of the definition of the direct_io error code
+     *  @{
+     */
+    //! This is the collection of the definition of the direct_io error code
+    namespace ErrorDirectIOCoce {
+        typedef enum {
+            //! direct io socket not found
+            EC_NO_SOCKET = -2000,
+        } ErrorDirectIOCoce;
+        /** @} */ // end of ErrorDirectIOCoce
+    }
 }
 #endif /* __CHAOSFramework__chaos_errors_h */

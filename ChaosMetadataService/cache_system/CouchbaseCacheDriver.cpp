@@ -127,7 +127,7 @@ void CouchbaseCacheDriver::deinit() throw (chaos::CException) {
 int CouchbaseCacheDriver::putData(void *element_key, uint8_t element_key_len,  void *value, uint32_t value_len) {
     CHAOS_ASSERT(getServiceState() == CUStateKey::INIT)
 	//boost::shared_lock<boost::shared_mutex> lock(mutex_server);
-    int err = LCB_SUCCESS;
+    lcb_error_t err = LCB_SUCCESS;
 	lcb_store_cmd_t cmd;
     const lcb_store_cmd_t * const commands[] = { &cmd };
 	
@@ -138,8 +138,7 @@ int CouchbaseCacheDriver::putData(void *element_key, uint8_t element_key_len,  v
     cmd.v.v0.nbytes = value_len;
     cmd.v.v0.operation = LCB_SET;
     if ((err = lcb_store(instance, this, 1, commands)) != LCB_SUCCESS) {
-		CCDLERR_<< "Fail to set value -> "<< lcb_errmap_default(instance, err);
-		
+		CCDLERR_<< "Fail to set value -> "<< lcb_errmap_default(instance, err) << " - " << lcb_strerror(instance, err);
     }
 	return err;
 }
@@ -148,7 +147,7 @@ int CouchbaseCacheDriver::getData(void *element_key, uint8_t element_key_len,  v
 	//boost::shared_lock<boost::shared_mutex> lock(mutex_server);
 	CHAOS_ASSERT(getServiceState() == CUStateKey::INIT)
     CHAOS_ASSERT(value)
-    int err = LCB_SUCCESS;
+    lcb_error_t err = LCB_SUCCESS;
 	lcb_get_cmd_t cmd;
 	const lcb_get_cmd_t *commands[1];
 	
@@ -162,7 +161,7 @@ int CouchbaseCacheDriver::getData(void *element_key, uint8_t element_key_len,  v
         CCDLERR_<< "Fail to get value "<<std::string((char*)element_key, element_key_len) <<" for with err "<< err << "(" << lcb_errmap_default(instance, err) << ")";
 	} else {
         if(err == LCB_KEY_ENOENT) {
-            err = 0;
+            err = LCB_SUCCESS;
         }
 		*value = (void*)get_result.value;
 		value_len = get_result.value_len;
