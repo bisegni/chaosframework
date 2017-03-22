@@ -1206,7 +1206,10 @@ namespace chaos {
         //! the constant that represent the alarm dataset type
         static const unsigned int DPCK_DATASET_TYPE_CU_ALARM           = 6;
 
+
     }
+
+	#define DPCK_LAST_DATASET_INDEX	 6
     /** @} */ // end of DataPackCommonKey
     
     //! return the postfix of the dataset type

@@ -28,7 +28,6 @@
 
 #include <ChaosMetadataServiceClient/node_monitor/node_monitor.h>
 #include <boost/thread/condition.hpp>
-
 #include <chaos/common/global.h>
 #include <chaos/common/ChaosCommon.h>
 #include <chaos/common/network/NetworkBroker.h>
@@ -38,6 +37,8 @@
 
 namespace chaos {
     namespace metadata_service_client {
+
+
         //! Chaos Node Directory base class
         /*!
          Singleton class that act as main entry for mds client library
@@ -64,6 +65,9 @@ namespace chaos {
             //! default destructor
             ~ChaosMetadataServiceClient();
             bool mds_client_initialized,mds_client_deinitialized;
+            std::vector<chaos::common::io::ioDataDriver_shr> iopool;
+            int io_pool_req;
+
         public:
             //! the client setting
             ClientSetting setting;
@@ -216,6 +220,9 @@ namespace chaos {
             void getNewCUController(const std::string& cu_id, chaos::metadata_service_client::node_controller::CUController **cu_ctrl_handler);
             
             void deleteCUController(chaos::metadata_service_client::node_controller::CUController *cu_ctrl_ptr);
+
+            chaos::common::io::ioDataDriver_shr getDataProxyChannelNewInstance() throw(CException);
+
         };
     }
 }

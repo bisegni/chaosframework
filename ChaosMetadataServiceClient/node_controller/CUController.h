@@ -32,6 +32,7 @@
 #include <chaos/cu_toolkit/data_manager/KeyDataStorage.h>
 #include <boost/thread/mutex.hpp>
 #include <boost/shared_ptr.hpp>
+#include <chaos/common/io/IODirectIODriver.h>
 
 #include <map>
 
@@ -66,7 +67,7 @@ namespace chaos {
                 //! Device MEssage channel to control via chaos rpc the device
                 chaos::common::message::DeviceMessageChannel *deviceChannel;
                 //! The io driver for accessing live data of the device
-                chaos::common::io::IODataDriver *ioLiveDataDriver;
+                chaos::common::io::ioDataDriver_shr ioLiveDataDriver;
                 //!Dataset database
                 chaos::common::data::DatasetDB datasetDB;
                 //!point to the freashest live value for this device dataset
@@ -113,16 +114,15 @@ namespace chaos {
                  */
                 void allocateNewLiveBufferForAttributeAndType(std::string& attributeName, DataType::DataSetAttributeIOAttribute type, DataType::DataType attrbiuteType);
                 
-                common::io::IODataDriver *getDataProxyChannelNewInstance() throw(CException);
                 
                 void deviceAvailabilityChanged(const std::string& device_id,
                                                const common::message::OnlineState availability);
             protected:
                 //! Defautl Constructor
                 /*!
-                 The visibility of the constructor is private becase it's is isntantiable only via HLDataApi singleton
+                 The visibility of the constructor is private
                  */
-                CUController(const std::string& _deviceID);
+                CUController(const std::string& _deviceID, chaos::common::io::ioDataDriver_shr ioLiveDataDriver);
                 
                 
                 //!Public destructor

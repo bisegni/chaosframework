@@ -29,6 +29,7 @@
 #include <boost/format.hpp>
 #include <boost/algorithm/string.hpp>
 #include <chaos/common/exception/CException.h>
+#include <chaos/common/io/IODirectIODriver.h>
 
 //! Regular expression for check server endpoint with the sintax hostname:[priority_port:service_port]
 static const boost::regex KVParamRegex("[a-zA-Z0-9/_-]+:[a-zA-Z0-9/_-]+");
@@ -51,9 +52,14 @@ using boost::shared_ptr;
 #define CMSC_LDBG DBG_LOG(ChaosMetadataServiceClient)
 #define CMSC_LERR ERR_LOG(ChaosMetadataServiceClient)
 
+#define POOL_SIZE_OPTION "live-channel-pool-size"
 //!default constructor
 ChaosMetadataServiceClient::ChaosMetadataServiceClient(){
 	 mds_client_initialized=mds_client_deinitialized=false;
+	 io_pool_req=0;
+	 GlobalConfiguration::getInstance()->addOption<int>(POOL_SIZE_OPTION,
+	                                                         "number of independent live channels to fetch data",
+															 DPCK_LAST_DATASET_INDEX);
 }
 
 //! default destructor
@@ -199,13 +205,58 @@ void ChaosMetadataServiceClient::addServerAddress(const std::string& server_addr
 void ChaosMetadataServiceClient::enableMonitor() throw(CException) {
     //configure data driver
     reconfigureMonitor();
-    
     //start the monitor manager
     monitor_manager.start(__PRETTY_FUNCTION__);
 }
 
 void ChaosMetadataServiceClient::disableMonitor() throw(CException) {
     CHAOS_NOT_THROW(monitor_manager.stop(__PRETTY_FUNCTION__);)
+}
+
+
+chaos::common::io::ioDataDriver_shr ChaosMetadataServiceClient::getDataProxyChannelNewInstance() throw(CException){
+	int poolsize=DPCK_LAST_DATASET_INDEX+1;
+	chaos::common::io::ioDataDriver_shr shret;
+	if(GlobalConfiguration::getInstance()->hasOption(POOL_SIZE_OPTION)){
+		poolsize=GlobalConfiguration::getInstance()->getOption<int>(POOL_SIZE_OPTION);
+	}
+
+	if(iopool.size()<poolsize){
+
+
+		chaos::common::io::IODataDriver *result = NULL;
+		    const std::string impl_name =  CHAOS_FORMAT("%1%IODriver",%GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_DATA_IO_IMPL));
+		    result = ObjectFactoryRegister<chaos::common::io::IODataDriver>::getInstance()->getNewInstanceByName(impl_name);
+
+		    if(result) {
+		        if(impl_name.compare("IODirectIODriver") == 0) {
+		            //set the information
+		        	chaos::common::io::IODirectIODriverInitParam init_param;
+		            std::memset(&init_param, 0, sizeof(chaos::common::io::IODirectIODriverInitParam));
+		            init_param.client_instance = NULL;
+		            init_param.endpoint_instance = NULL;
+		            ((chaos::common::io::IODirectIODriver*)result)->setDirectIOParam(init_param);
+		        }
+		        result->init(NULL);
+		        shret.reset(result);
+		        iopool.push_back(shret);
+		        io_pool_req++;
+			    CMSC_LDBG<<"Allocating new iolive channel 0x"<<hex<<result<<dec<<", n:"<<iopool.size()<<" tot iorequest:"<<io_pool_req;
+
+		        return shret;
+		    }
+		    if(iopool.size()){
+		    	return iopool[0];
+		    }
+		    return shret;
+	}
+	shret=iopool[io_pool_req%iopool.size()];
+    CMSC_LDBG<<"Retriving iolive channel 0x"<<hex<<shret.get()<<dec<<", id:"<<io_pool_req%iopool.size() <<" tot iorequest:"<<io_pool_req;
+
+	io_pool_req++;
+	return shret;
+
+
 }
 
 void ChaosMetadataServiceClient::reconfigureMonitor() throw(CException) {
@@ -496,7 +547,7 @@ void ChaosMetadataServiceClient::deregisterEventHandler(AbstractEventHandler *ha
 
 void ChaosMetadataServiceClient::getNewCUController(const std::string& cu_id,
                                                     node_controller::CUController **cu_ctrl_handler) {
-    *cu_ctrl_handler = new node_controller::CUController(cu_id);
+    *cu_ctrl_handler = new node_controller::CUController(cu_id,getDataProxyChannelNewInstance());
 }
 
 void ChaosMetadataServiceClient::deleteCUController(node_controller::CUController *cu_ctrl_ptr) {
