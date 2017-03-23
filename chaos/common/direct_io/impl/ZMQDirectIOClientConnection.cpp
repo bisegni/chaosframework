@@ -312,7 +312,8 @@ bool ZMQDirectIOClientConnection::ensureSocket() {
        socket_priority == NULL) {
         getNewSocketPair();
     }
-    return (socket_service && socket_priority);
+    return (socket_service &&
+            socket_priority);
 }
 
 //send data with zmq tech
