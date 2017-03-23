@@ -73,7 +73,7 @@ void EventDispatchManager::registerEventHandler(AbstractEventHandler *handler) {
 }
 
 void EventDispatchManager::deregisterEventHandler(AbstractEventHandler *handler) {
-    if(handler != NULL) return;
+    if(handler == NULL) return;
     
     //write lock the map
     boost::unique_lock<boost::shared_mutex>(map_mutex);
