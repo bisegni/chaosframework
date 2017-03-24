@@ -22,12 +22,16 @@
 #include "AbstractExternalCommand.h"
 
 using namespace chaos::agent::external_command_pipe;
+
+using namespace chaos::common::message;
 using namespace chaos::common::utility;
 
 AbstractExternalCommand::AbstractExternalCommand(const std::string& service_name,
-                                                 AbstractCommandOutputStream& _cmd_ostream):
+                                                 AbstractCommandOutputStream& _cmd_ostream,
+                                                 MDSMessageChannel& _mds_message_channel):
 NamedService(service_name),
-cmd_ostream(_cmd_ostream){}
+cmd_ostream(_cmd_ostream),
+mds_message_channel(_mds_message_channel){}
 
 AbstractExternalCommand::~AbstractExternalCommand() {}
 

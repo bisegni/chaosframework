@@ -1,5 +1,5 @@
 /*
- *	CommandEcho.h
+ *	GetUSStatistic.h
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
@@ -19,24 +19,24 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__6596C3D_7BB5_4DF5_94F5_70AF5CBF589C_CommandEcho_h
-#define __CHAOSFramework__6596C3D_7BB5_4DF5_94F5_70AF5CBF589C_CommandEcho_h
+#ifndef __CHAOSFramework__166D38E_5B79_46A2_9AF1_19E98D69F72A_GetUSStatistic_h
+#define __CHAOSFramework__166D38E_5B79_46A2_9AF1_19E98D69F72A_GetUSStatistic_h
 
 #include "AbstractExternalCommand.h"
 namespace chaos {
     namespace agent {
         namespace external_command_pipe {
             
-            class CommandEcho:
+            class GetUSStatistic:
             public AbstractExternalCommand {
             public:
-                CommandEcho(AbstractCommandOutputStream& _cmd_ostream,
-                            common::message::MDSMessageChannel& _mds_message_channel);
-                ~CommandEcho();
+                GetUSStatistic(AbstractCommandOutputStream& _cmd_ostream,
+                               common::message::MDSMessageChannel& _mds_message_channel);
+                ~GetUSStatistic();
                 int execute(ChaosStringVector input_parameter);
             };
         }
     }
 }
 
-#endif /* __CHAOSFramework__6596C3D_7BB5_4DF5_94F5_70AF5CBF589C_CommandEcho_h */
+#endif /* __CHAOSFramework__166D38E_5B79_46A2_9AF1_19E98D69F72A_GetUSStatistic_h */

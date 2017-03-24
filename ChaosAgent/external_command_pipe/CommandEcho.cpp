@@ -23,9 +23,11 @@
 
 using namespace chaos::agent::external_command_pipe;
 
-CommandEcho::CommandEcho(AbstractCommandOutputStream& _cmd_ostream):
+CommandEcho::CommandEcho(AbstractCommandOutputStream& _cmd_ostream,
+                         common::message::MDSMessageChannel& _mds_message_channel):
 AbstractExternalCommand("ECHO",
-                        _cmd_ostream){}
+                        _cmd_ostream,
+                        _mds_message_channel){}
 
 CommandEcho::~CommandEcho(){}
 

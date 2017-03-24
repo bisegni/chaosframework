@@ -37,6 +37,7 @@
 
 using namespace chaos::agent;
 using namespace chaos::agent::worker;
+using namespace chaos::agent::utility;
 using namespace chaos::service_common::data::agent;
 
 using namespace chaos;

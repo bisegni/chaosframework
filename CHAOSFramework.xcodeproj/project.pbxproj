@@ -599,6 +599,7 @@
 		3296149F1E8521FD00FE33B7 /* CommandEcho.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3296149D1E8521FD00FE33B7 /* CommandEcho.cpp */; };
 		329614A21E85245500FE33B7 /* AbstractCommandOutputStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329614A01E85245500FE33B7 /* AbstractCommandOutputStream.cpp */; };
 		329614A51E8527D900FE33B7 /* FileCommandOutputStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329614A31E8527D900FE33B7 /* FileCommandOutputStream.cpp */; };
+		329614A81E8545F000FE33B7 /* GetUSStatistic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329614A61E8545F000FE33B7 /* GetUSStatistic.cpp */; };
 		32963A211AC08F7200FA72FA /* MultiAddressMessageChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32963A1F1AC08F7200FA72FA /* MultiAddressMessageChannel.cpp */; };
 		32963A221AC08F7200FA72FA /* MultiAddressMessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32963A201AC08F7200FA72FA /* MultiAddressMessageChannel.h */; };
 		3297F22B14D96F8D004FFE4F /* NodeMessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3297F22A14D96F8D004FFE4F /* NodeMessageChannel.h */; };
@@ -1936,6 +1937,8 @@
 		329614A11E85245500FE33B7 /* AbstractCommandOutputStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractCommandOutputStream.h; sourceTree = "<group>"; };
 		329614A31E8527D900FE33B7 /* FileCommandOutputStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileCommandOutputStream.cpp; sourceTree = "<group>"; };
 		329614A41E8527D900FE33B7 /* FileCommandOutputStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileCommandOutputStream.h; sourceTree = "<group>"; };
+		329614A61E8545F000FE33B7 /* GetUSStatistic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetUSStatistic.cpp; sourceTree = "<group>"; };
+		329614A71E8545F000FE33B7 /* GetUSStatistic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetUSStatistic.h; sourceTree = "<group>"; };
 		32963A1F1AC08F7200FA72FA /* MultiAddressMessageChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MultiAddressMessageChannel.cpp; sourceTree = "<group>"; };
 		32963A201AC08F7200FA72FA /* MultiAddressMessageChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiAddressMessageChannel.h; sourceTree = "<group>"; };
 		3297F22A14D96F8D004FFE4F /* NodeMessageChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeMessageChannel.h; sourceTree = "<group>"; };
@@ -5052,6 +5055,8 @@
 				3296149B1E8520A400FE33B7 /* AbstractExternalCommand.h */,
 				3296149D1E8521FD00FE33B7 /* CommandEcho.cpp */,
 				3296149E1E8521FD00FE33B7 /* CommandEcho.h */,
+				329614A61E8545F000FE33B7 /* GetUSStatistic.cpp */,
+				329614A71E8545F000FE33B7 /* GetUSStatistic.h */,
 				329614A01E85245500FE33B7 /* AbstractCommandOutputStream.cpp */,
 				329614A11E85245500FE33B7 /* AbstractCommandOutputStream.h */,
 				329614A31E8527D900FE33B7 /* FileCommandOutputStream.cpp */,
@@ -6618,6 +6623,7 @@
 				3296149F1E8521FD00FE33B7 /* CommandEcho.cpp in Sources */,
 				3296149C1E8520A400FE33B7 /* AbstractExternalCommand.cpp in Sources */,
 				326413AB1E44C7DD0035E175 /* AgentRegister.cpp in Sources */,
+				329614A81E8545F000FE33B7 /* GetUSStatistic.cpp in Sources */,
 				32E6F4391E48689E0068320E /* ProcessWorker.cpp in Sources */,
 				326413A21E44AD750035E175 /* ChaosAgent.cpp in Sources */,
 				3264139C1E44ACE60035E175 /* main.cpp in Sources */,

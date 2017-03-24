@@ -58,7 +58,6 @@ namespace chaos {
         public chaos::DeclareAction,
         public chaos::common::utility::StartableService,
         public chaos::common::async_central::TimerHandler {
-            const std::string agent_uid;
             const std::string rpc_domain;
             //agent container map
             MapWorker    map_worker;

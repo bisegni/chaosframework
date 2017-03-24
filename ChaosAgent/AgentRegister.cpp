@@ -29,7 +29,6 @@
 #include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/healt_system/HealtManager.h>
 #include <chaos/common/utility/InizializableService.h>
-#include <chaos/common/configuration/GlobalConfiguration.h>
 
 
 #define SM_EXECTION_STEP_MS 1000
@@ -47,7 +46,6 @@ using namespace chaos::common::async_central;
 using namespace chaos::service_common::data::agent;
 
 AgentRegister::AgentRegister():
-agent_uid(CHAOS_FORMAT("ChaosAgent_%1%",%chaos::GlobalConfiguration::getInstance()->getLocalServerAddressAnBasePort())),
 rpc_domain("agent"),
 registration_state(AgentRegisterStateUnregistered),
 mds_message_channel(NULL),
@@ -112,6 +110,7 @@ void AgentRegister::deinit() throw (chaos::CException) {
 
 CDataWrapper* AgentRegister::registrationACK(CDataWrapper  *ack_pack,
                                              bool& detach) {
+    const std::string& agent_uid = ChaosAgent::getInstance()->settings.agent_uid;
     CHECK_CDW_THROW_AND_LOG(ack_pack, ERROR, -1, CHAOS_FORMAT("ACK message with no contento for agent %1%", %agent_uid));
     CHECK_KEY_THROW_AND_LOG(ack_pack, NodeDefinitionKey::NODE_UNIQUE_ID, ERROR, -2, CHAOS_FORMAT("No identification of the device contained into the ack message for agent %1%", %agent_uid));
     CHECK_ASSERTION_THROW_AND_LOG((ack_pack->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID).compare(agent_uid) == 0), ERROR, -3, CHAOS_FORMAT("ACK message received by agent %1% was for a different agent %2% ", %agent_uid%ack_pack->getStringValue( NodeDefinitionKey::NODE_UNIQUE_ID)));
@@ -145,7 +144,7 @@ std::auto_ptr<CDataWrapper> AgentRegister::getAgentRegistrationPack() {
     std::auto_ptr<CDataWrapper> result(new CDataWrapper());
     if(result.get() == NULL) return result;
     result->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID,
-                           agent_uid);
+                           ChaosAgent::getInstance()->settings.agent_uid);
     result->addStringValue(chaos::NodeDefinitionKey::NODE_TYPE,
                            chaos::NodeType::NODE_TYPE_AGENT);
     result->addStringValue(NodeDefinitionKey::NODE_RPC_ADDR,
@@ -175,14 +174,15 @@ std::auto_ptr<CDataWrapper> AgentRegister::getAgentRegistrationPack() {
 }
 
 void AgentRegister::timeout() {
+    const std::string& agent_uid = ChaosAgent::getInstance()->settings.agent_uid;
     AgentRegisterStateLockableWriteLock write_lock = registration_state.getWriteLockObject();
     switch(registration_state()) {
         case AgentRegisterStateUnregistered:
-            HealtManager::getInstance()->addNodeMetricValue(agent_uid,
+            HealtManager::getInstance()->addNodeMetricValue(ChaosAgent::getInstance()->settings.agent_uid,
                                                             NodeHealtDefinitionKey::NODE_HEALT_STATUS,
                                                             NodeHealtDefinitionValue::NODE_HEALT_STATUS_UNLOAD);
             AsyncCentralManager::getInstance()->removeTimer(this);
-            HealtManager::getInstance()->removeNode(agent_uid);
+            HealtManager::getInstance()->removeNode(ChaosAgent::getInstance()->settings.agent_uid);
             break;
         case AgentRegisterStateStartRegistering: {
             reg_retry_counter = 0;

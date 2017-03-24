@@ -33,7 +33,7 @@
 
 namespace chaos {
     namespace agent {
-        namespace worker {
+        namespace utility {
             
             
 #define INIT_FILE_NAME(x)\
@@ -70,6 +70,12 @@ CHAOS_FORMAT("%1%/%2% --%3% %4%%5%", %ChaosAgent::getInstance()->settings.workin
                 static int createNamedPipe(const std::string& named_pipe_path);
                 
                 static int removeNamedPipe(const std::string& named_pipe_path);
+                
+                static void launchProcess(const chaos::service_common::data::agent::AgentAssociation& node_association_info);
+                
+                static bool checkProcessAlive(const chaos::service_common::data::agent::AgentAssociation& node_association_info);
+                
+                static bool quitProcess(const chaos::service_common::data::agent::AgentAssociation& node_association_info, bool kill);
             };
         }
     }

@@ -23,6 +23,7 @@
 
 #include <chaos/common/utility/FSUtility.h>
 #include <chaos/common/healt_system/HealtManager.h>
+#include <chaos/common/configuration/GlobalConfiguration.h>
 
 #define INFO    INFO_LOG(ChaosAgent)
 #define ERROR   ERR_LOG(ChaosAgent)
@@ -63,6 +64,9 @@ void ChaosAgent::init(void *init_data)  throw(CException) {
     if(settings.working_directory.size() == 0) {
         settings.working_directory = FSUtility::getExecutablePath();
     }
+    
+    
+    settings.agent_uid = CHAOS_FORMAT("ChaosAgent_%1%",%chaos::GlobalConfiguration::getInstance()->getLocalServerAddressAnBasePort());
     
     //init healt manager singleton
     StartableService::initImplementation(HealtManager::getInstance(), NULL, "HealthManager", __PRETTY_FUNCTION__);

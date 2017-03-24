@@ -26,6 +26,7 @@
 
 #include "FileCommandOutputStream.h"
 #include "CommandEcho.h"
+#include "GetUSStatistic.h"
 
 #include <chaos/common/network/NetworkBroker.h>
 
@@ -38,7 +39,6 @@
 #define DBG   DBG_LOG(ExternaCommandExecutor)
 
 using namespace chaos::agent::utility;
-using namespace chaos::agent::worker;
 using namespace chaos::common::network;
 using namespace chaos::agent::external_command_pipe;
 
@@ -66,10 +66,12 @@ void ExternaCommandExecutor::init(void *data) throw(chaos::CException) {
     //output_fd = fopen(pipe_out_path.string().c_str(), "wa");
     external_cmd_executor.reset(new FileCommandOutputStream(pipe_out_path.string()), "FileCommandOutputStream");
     external_cmd_executor.init(NULL, __PRETTY_FUNCTION__);
-
-    //add command
-    map_command.insert(MapCommandPair("ECHO", AbstractExternalCommandShrdPtr(new CommandEcho(*external_cmd_executor))));
     
+    //add command
+    map_command.insert(MapCommandPair("ECHO", AbstractExternalCommandShrdPtr(new CommandEcho(*external_cmd_executor,
+                                                                                             *mds_message_channel))));
+    map_command.insert(MapCommandPair("US_STAT", AbstractExternalCommandShrdPtr(new GetUSStatistic(*external_cmd_executor,
+                                                                                                   *mds_message_channel))));
     //read on input pipe
     pip_line_reader = PipeLineReader::start(new PipeLineReader(io_service,
                                                                pipe_in_path.string(),

@@ -33,7 +33,8 @@
 #include <sys/types.h>
 
 using namespace std;
-using namespace chaos::agent::worker;
+using namespace chaos::agent::utility;
+using namespace chaos::service_common::data::agent;
 
 FILE * ProcUtil::popen2(const std::string& command,
                         const std::string& type,
@@ -154,4 +155,81 @@ int ProcUtil::createNamedPipe(const std::string& named_pipe_path) {
 int ProcUtil::removeNamedPipe(const std::string& named_pipe_path) {
     unlink(named_pipe_path.c_str());
     return errno;
+}
+
+void ProcUtil::launchProcess(const AgentAssociation& node_association_info) {
+    int pid = 0;
+    std::string exec_command;
+    boost::filesystem::path init_file;
+    boost::filesystem::path queue_file;
+    try{
+        if(checkProcessAlive(node_association_info) == true) return;
+        exec_command = COMPOSE_NODE_LAUNCH_CMD_LINE(node_association_info);
+        init_file = CHAOS_FORMAT("%1%/%2%", %INIT_FILE_PATH()%INIT_FILE_NAME(node_association_info));
+        queue_file = CHAOS_FORMAT("%1%/%2%", %QUEUE_FILE_PATH()%NPIPE_FILE_NAME(node_association_info));
+        
+        boost::filesystem::path init_file_parent_path = INIT_FILE_PATH();
+        if (boost::filesystem::exists(init_file_parent_path) == false &&
+            boost::filesystem::create_directory(init_file_parent_path) == false) {
+            throw chaos::CException(-1, CHAOS_FORMAT("Parent path %1% can't be created",%init_file_parent_path), __PRETTY_FUNCTION__);
+        }
+        
+        boost::filesystem::path queue_file_parent_path = QUEUE_FILE_PATH();
+        if (boost::filesystem::exists(queue_file_parent_path) == false &&
+            boost::filesystem::create_directory(queue_file_parent_path) == false) {
+            throw chaos::CException(-1, CHAOS_FORMAT("Queue path %1% can't be created",%queue_file_parent_path), __PRETTY_FUNCTION__);
+        }
+        
+        //write configuration file
+        std::ofstream init_file_stream;
+        init_file_stream.open(init_file.string().c_str(), std::ofstream::trunc | std::ofstream::out);
+        
+        //append unit server alias
+        init_file_stream << CHAOS_FORMAT("%1%=",%InitOption::OPT_LOG_ON_CONSOLE) << std::endl;
+        init_file_stream << CHAOS_FORMAT("unit-server-alias=%1%",%node_association_info.associated_node_uid) << std::endl;
+        
+        //append metadata server from agent configuration
+        VectorMetadatserver mds_vec = GlobalConfiguration::getInstance()->getMetadataServerAddressList();
+        for(VectorMetadatserverIterator mds_it = mds_vec.begin(),
+            end = mds_vec.end();
+            mds_it != end;
+            mds_it++) {
+            init_file_stream << CHAOS_FORMAT("metadata-server=%1%",%mds_it->ip_port) << std::endl;
+        }
+        
+        //append user defined paramenter
+        init_file_stream.write(node_association_info.configuration_file_content.c_str(), node_association_info.configuration_file_content.length());
+        init_file_stream.close();
+        //create the named pipe
+        ProcUtil::createNamedPipe(queue_file.string());
+        if (!ProcUtil::popen2ToNamedPipe(exec_command.c_str(), queue_file.string())) {throw chaos::CException(-2, "popen() failed!", __PRETTY_FUNCTION__);}
+    } catch(std::exception& e) {
+    } catch(chaos::CException& ex) {
+    }
+}
+
+bool ProcUtil::checkProcessAlive(const AgentAssociation& node_association_info) {
+    int pid;
+    bool found = false;
+    char buff[512];
+    std::string ps_command = CHAOS_FORMAT("ps -ef | grep '%1%'", %INIT_FILE_NAME(node_association_info));
+    FILE *in = ProcUtil::popen2(ps_command.c_str(), "r", pid);
+    if (!in) {throw chaos::CException(-2, "popen() failed!", __PRETTY_FUNCTION__);}
+    
+    while(fgets(buff, sizeof(buff), in)!=NULL){
+        if(strstr(buff, "grep") == NULL) {
+            found = strstr(buff, node_association_info.launch_cmd_line.c_str()) != NULL;
+            if(found) break;
+        }
+    }
+    ProcUtil::pclose2(in, pid);
+    return found;
+}
+
+bool ProcUtil::quitProcess(const AgentAssociation& node_association_info,
+                           bool kill) {
+    int pid = 0;
+    const std::string exec_command = kill?CHAOS_FORMAT("pkill -SIGKILL -f \"%1%\"",%INIT_FILE_NAME(node_association_info)):CHAOS_FORMAT("pkill -SIGTERM -f \"%1%\"",%INIT_FILE_NAME(node_association_info));
+    if (!ProcUtil::popen2NoPipe(exec_command.c_str(), pid)) {throw chaos::CException(-2, "popen() failed!", __PRETTY_FUNCTION__);}
+    return pid != 0;
 }

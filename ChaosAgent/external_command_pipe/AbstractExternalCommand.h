@@ -26,6 +26,7 @@
 
 #include <chaos/common/chaos_types.h>
 #include <chaos/common/utility/NamedService.h>
+#include <chaos/common/message/MDSMessageChannel.h>
 
 #include <boost/shared_ptr.hpp>
 
@@ -36,14 +37,15 @@ namespace chaos {
             //!base class for agent external command
             class AbstractExternalCommand:
             public common::utility::NamedService {
-               AbstractCommandOutputStream& cmd_ostream;
+                AbstractCommandOutputStream& cmd_ostream;
             protected:
-                
+                common::message::MDSMessageChannel& mds_message_channel;
                 void print(const std::string& line);
                 void println(const std::string& line);
             public:
                 AbstractExternalCommand(const std::string& service_name,
-                                        AbstractCommandOutputStream& _cmd_ostream);
+                                        AbstractCommandOutputStream& _cmd_ostream,
+                                        common::message::MDSMessageChannel& _mds_message_channel);
                 virtual ~AbstractExternalCommand();
                 
                 virtual int execute(ChaosStringVector input_parameter) = 0;

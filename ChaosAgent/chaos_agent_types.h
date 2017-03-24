@@ -26,9 +26,9 @@ namespace chaos {
     namespace agent {
  
         typedef struct ChaosAgentSettings {
+            std::string agent_uid;
             //!working directory for deploy and execution of chaos binary
             std::string working_directory;
-            
             //!external command enable state
             bool ext_cmd_enabled;
             /*!
