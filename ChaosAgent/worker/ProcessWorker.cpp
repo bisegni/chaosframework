@@ -20,7 +20,7 @@
  */
 
 #include "ProcessWorker.h"
-#include "ProcUtil.h"
+#include <ChaosAgent/utility/ProcUtil.h>
 
 #include <chaos_service_common/data/node/Agent.h>
 

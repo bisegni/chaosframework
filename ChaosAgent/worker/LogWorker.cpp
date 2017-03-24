@@ -20,8 +20,8 @@
  */
 
 #include "LogWorker.h"
-#include "ProcUtil.h"
 
+#include <ChaosAgent/utility/ProcUtil.h>
 #include <chaos/common/network/NetworkBroker.h>
 
 #include <chaos_service_common/data/node/Agent.h>
