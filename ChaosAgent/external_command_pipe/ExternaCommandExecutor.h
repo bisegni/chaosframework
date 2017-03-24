@@ -23,6 +23,7 @@
 #define __CHAOSFramework__4A9675F_4899_4A01_A6DB_657FAB56B314_ExternaCommandExecutor_h
 
 #include "../utility/PipeLineReader.h"
+#include "AbstractExternalCommand.h"
 
 #include <chaos_service_common/data/node/Agent.h>
 
@@ -36,11 +37,13 @@
 #include <boost/thread.hpp>
 #include <boost/filesystem.hpp>
 
-#include <iostream>
+#include "AbstractCommandOutputStream.h"
 
 namespace chaos {
     namespace agent {
         namespace external_command_pipe {
+            
+            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, AbstractExternalCommandShrdPtr, MapCommand);
             
             //! define the worker that permit to deploy chaos executable on host
             class ExternaCommandExecutor:
@@ -48,7 +51,8 @@ namespace chaos {
             public chaos::common::utility::InizializableService {
                 boost::filesystem::path pipe_in_path;
                 boost::filesystem::path pipe_out_path;
-                 FILE *output_fd;
+                
+                common::utility::InizializableServiceContainer<AbstractCommandOutputStream> external_cmd_executor;
                 
                 boost::thread_group asio_threads;
                 boost::asio::io_service io_service;
@@ -57,6 +61,8 @@ namespace chaos {
                 utility::PipeLineReader::PipeLineReaderWeakPtr pip_line_reader;
                 
                 common::message::MDSMessageChannel *mds_message_channel;
+                
+                MapCommand map_command;
             protected:
                 void readLine(const std::string& new_read_line);
             public:

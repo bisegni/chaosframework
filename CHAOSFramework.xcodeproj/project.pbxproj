@@ -594,6 +594,11 @@
 		329603291876B45000CDCADA /* BatchCommandSandbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 3296031B1876B45000CDCADA /* BatchCommandSandbox.h */; };
 		3296032A1876B45000CDCADA /* BatchCommandSandboxEventHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 3296031C1876B45000CDCADA /* BatchCommandSandboxEventHandler.h */; };
 		3296032B1876B45000CDCADA /* BatchCommandTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 3296031D1876B45000CDCADA /* BatchCommandTypes.h */; };
+		329614991E851FCB00FE33B7 /* ProcUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329614971E851FCB00FE33B7 /* ProcUtil.cpp */; };
+		3296149C1E8520A400FE33B7 /* AbstractExternalCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3296149A1E8520A400FE33B7 /* AbstractExternalCommand.cpp */; };
+		3296149F1E8521FD00FE33B7 /* CommandEcho.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3296149D1E8521FD00FE33B7 /* CommandEcho.cpp */; };
+		329614A21E85245500FE33B7 /* AbstractCommandOutputStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329614A01E85245500FE33B7 /* AbstractCommandOutputStream.cpp */; };
+		329614A51E8527D900FE33B7 /* FileCommandOutputStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329614A31E8527D900FE33B7 /* FileCommandOutputStream.cpp */; };
 		32963A211AC08F7200FA72FA /* MultiAddressMessageChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32963A1F1AC08F7200FA72FA /* MultiAddressMessageChannel.cpp */; };
 		32963A221AC08F7200FA72FA /* MultiAddressMessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32963A201AC08F7200FA72FA /* MultiAddressMessageChannel.h */; };
 		3297F22B14D96F8D004FFE4F /* NodeMessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3297F22A14D96F8D004FFE4F /* NodeMessageChannel.h */; };
@@ -1103,7 +1108,6 @@
 		32FF2AAA1E6D79EC00117985 /* DataBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FF2AA81E6D79EC00117985 /* DataBuffer.h */; };
 		32FF2AAE1E6D8B6400117985 /* ChaosAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FF2AAC1E6D8B6400117985 /* ChaosAllocator.h */; };
 		32FF2AB11E6DAC7F00117985 /* LogWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2AAF1E6DAC7F00117985 /* LogWorker.cpp */; };
-		32FF2AB41E6DAFA400117985 /* ProcUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2AB21E6DAFA400117985 /* ProcUtil.cpp */; };
 		32FF2ABA1E6EE70300117985 /* AgentLoggingNodeManagement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2AB81E6EE70300117985 /* AgentLoggingNodeManagement.cpp */; };
 		32FF2AC21E6F10A300117985 /* AgentLoggingApiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2AC01E6F10A300117985 /* AgentLoggingApiGroup.cpp */; };
 		32FF2AC51E6F10F400117985 /* ManageNodeLogging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2AC31E6F10F400117985 /* ManageNodeLogging.cpp */; };
@@ -1922,6 +1926,16 @@
 		3296031B1876B45000CDCADA /* BatchCommandSandbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BatchCommandSandbox.h; sourceTree = "<group>"; };
 		3296031C1876B45000CDCADA /* BatchCommandSandboxEventHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BatchCommandSandboxEventHandler.h; sourceTree = "<group>"; };
 		3296031D1876B45000CDCADA /* BatchCommandTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BatchCommandTypes.h; sourceTree = "<group>"; };
+		329614971E851FCB00FE33B7 /* ProcUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcUtil.cpp; sourceTree = "<group>"; };
+		329614981E851FCB00FE33B7 /* ProcUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcUtil.h; sourceTree = "<group>"; };
+		3296149A1E8520A400FE33B7 /* AbstractExternalCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractExternalCommand.cpp; sourceTree = "<group>"; };
+		3296149B1E8520A400FE33B7 /* AbstractExternalCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractExternalCommand.h; sourceTree = "<group>"; };
+		3296149D1E8521FD00FE33B7 /* CommandEcho.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommandEcho.cpp; sourceTree = "<group>"; };
+		3296149E1E8521FD00FE33B7 /* CommandEcho.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandEcho.h; sourceTree = "<group>"; };
+		329614A01E85245500FE33B7 /* AbstractCommandOutputStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractCommandOutputStream.cpp; sourceTree = "<group>"; };
+		329614A11E85245500FE33B7 /* AbstractCommandOutputStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractCommandOutputStream.h; sourceTree = "<group>"; };
+		329614A31E8527D900FE33B7 /* FileCommandOutputStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileCommandOutputStream.cpp; sourceTree = "<group>"; };
+		329614A41E8527D900FE33B7 /* FileCommandOutputStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileCommandOutputStream.h; sourceTree = "<group>"; };
 		32963A1F1AC08F7200FA72FA /* MultiAddressMessageChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MultiAddressMessageChannel.cpp; sourceTree = "<group>"; };
 		32963A201AC08F7200FA72FA /* MultiAddressMessageChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiAddressMessageChannel.h; sourceTree = "<group>"; };
 		3297F22A14D96F8D004FFE4F /* NodeMessageChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeMessageChannel.h; sourceTree = "<group>"; };
@@ -2573,8 +2587,6 @@
 		32FF2AAC1E6D8B6400117985 /* ChaosAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChaosAllocator.h; sourceTree = "<group>"; };
 		32FF2AAF1E6DAC7F00117985 /* LogWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LogWorker.cpp; sourceTree = "<group>"; };
 		32FF2AB01E6DAC7F00117985 /* LogWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogWorker.h; sourceTree = "<group>"; };
-		32FF2AB21E6DAFA400117985 /* ProcUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcUtil.cpp; sourceTree = "<group>"; };
-		32FF2AB31E6DAFA400117985 /* ProcUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcUtil.h; sourceTree = "<group>"; };
 		32FF2AB81E6EE70300117985 /* AgentLoggingNodeManagement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AgentLoggingNodeManagement.cpp; sourceTree = "<group>"; };
 		32FF2AB91E6EE70300117985 /* AgentLoggingNodeManagement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AgentLoggingNodeManagement.h; sourceTree = "<group>"; };
 		32FF2AC01E6F10A300117985 /* AgentLoggingApiGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AgentLoggingApiGroup.cpp; sourceTree = "<group>"; };
@@ -5036,6 +5048,14 @@
 			children = (
 				32DF7EF61E7AF6B800B7FCDD /* ExternaCommandExecutor.cpp */,
 				32DF7EF71E7AF6B800B7FCDD /* ExternaCommandExecutor.h */,
+				3296149A1E8520A400FE33B7 /* AbstractExternalCommand.cpp */,
+				3296149B1E8520A400FE33B7 /* AbstractExternalCommand.h */,
+				3296149D1E8521FD00FE33B7 /* CommandEcho.cpp */,
+				3296149E1E8521FD00FE33B7 /* CommandEcho.h */,
+				329614A01E85245500FE33B7 /* AbstractCommandOutputStream.cpp */,
+				329614A11E85245500FE33B7 /* AbstractCommandOutputStream.h */,
+				329614A31E8527D900FE33B7 /* FileCommandOutputStream.cpp */,
+				329614A41E8527D900FE33B7 /* FileCommandOutputStream.h */,
 			);
 			path = external_command_pipe;
 			sourceTree = "<group>";
@@ -5045,6 +5065,8 @@
 			children = (
 				32DF7EF91E7AF6B800B7FCDD /* PipeLineReader.cpp */,
 				32DF7EFA1E7AF6B800B7FCDD /* PipeLineReader.h */,
+				329614971E851FCB00FE33B7 /* ProcUtil.cpp */,
+				329614981E851FCB00FE33B7 /* ProcUtil.h */,
 			);
 			path = utility;
 			sourceTree = "<group>";
@@ -5104,8 +5126,6 @@
 				32FF2A681E672CAA00117985 /* DeployWorker.h */,
 				32FF2AAF1E6DAC7F00117985 /* LogWorker.cpp */,
 				32FF2AB01E6DAC7F00117985 /* LogWorker.h */,
-				32FF2AB21E6DAFA400117985 /* ProcUtil.cpp */,
-				32FF2AB31E6DAFA400117985 /* ProcUtil.h */,
 			);
 			path = worker;
 			sourceTree = "<group>";
@@ -6593,15 +6613,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				32FF2A691E672CAA00117985 /* DeployWorker.cpp in Sources */,
+				329614A21E85245500FE33B7 /* AbstractCommandOutputStream.cpp in Sources */,
 				32DF7EFB1E7AF6B800B7FCDD /* ExternaCommandExecutor.cpp in Sources */,
+				3296149F1E8521FD00FE33B7 /* CommandEcho.cpp in Sources */,
+				3296149C1E8520A400FE33B7 /* AbstractExternalCommand.cpp in Sources */,
 				326413AB1E44C7DD0035E175 /* AgentRegister.cpp in Sources */,
 				32E6F4391E48689E0068320E /* ProcessWorker.cpp in Sources */,
 				326413A21E44AD750035E175 /* ChaosAgent.cpp in Sources */,
 				3264139C1E44ACE60035E175 /* main.cpp in Sources */,
 				32DF7EFC1E7AF6B800B7FCDD /* PipeLineReader.cpp in Sources */,
+				329614A51E8527D900FE33B7 /* FileCommandOutputStream.cpp in Sources */,
+				329614991E851FCB00FE33B7 /* ProcUtil.cpp in Sources */,
 				32FF2AB11E6DAC7F00117985 /* LogWorker.cpp in Sources */,
 				32E6F43C1E4869120068320E /* AbstractWorker.cpp in Sources */,
-				32FF2AB41E6DAFA400117985 /* ProcUtil.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7828,6 +7852,7 @@
 				32F9C79E1E81943F00D4B250 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

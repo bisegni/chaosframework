@@ -22,9 +22,14 @@
 #include "ExternaCommandExecutor.h"
 
 #include "../ChaosAgent.h"
-#include "../worker/ProcUtil.h"
+#include "../utility/ProcUtil.h"
+
+#include "FileCommandOutputStream.h"
+#include "CommandEcho.h"
 
 #include <chaos/common/network/NetworkBroker.h>
+
+#include <boost/algorithm/string.hpp>
 
 #include <fstream>
 
@@ -39,8 +44,7 @@ using namespace chaos::agent::external_command_pipe;
 
 
 ExternaCommandExecutor::ExternaCommandExecutor():
-dummy_work(io_service),
-output_fd(NULL){}
+dummy_work(io_service){}
 
 ExternaCommandExecutor::~ExternaCommandExecutor(){}
 
@@ -59,9 +63,13 @@ void ExternaCommandExecutor::init(void *data) throw(chaos::CException) {
     ProcUtil::createNamedPipe(pipe_in_path.string());
     ProcUtil::createNamedPipe(pipe_out_path.string());
     
-    output_fd = fopen(pipe_out_path.string().c_str(), "wa");
-    CHECK_ASSERTION_THROW_AND_LOG((output_fd != NULL), ERROR, -4, CHAOS_FORMAT("Error opening out named pipe %1%",%pipe_out_path.string()));
+    //output_fd = fopen(pipe_out_path.string().c_str(), "wa");
+    external_cmd_executor.reset(new FileCommandOutputStream(pipe_out_path.string()), "FileCommandOutputStream");
+    external_cmd_executor.init(NULL, __PRETTY_FUNCTION__);
 
+    //add command
+    map_command.insert(MapCommandPair("ECHO", AbstractExternalCommandShrdPtr(new CommandEcho(*external_cmd_executor))));
+    
     //read on input pipe
     pip_line_reader = PipeLineReader::start(new PipeLineReader(io_service,
                                                                pipe_in_path.string(),
@@ -69,9 +77,9 @@ void ExternaCommandExecutor::init(void *data) throw(chaos::CException) {
 }
 
 void ExternaCommandExecutor::deinit() throw(chaos::CException) {
+    CHAOS_NOT_THROW(external_cmd_executor.deinit(__PRETTY_FUNCTION__););
     io_service.stop();
     asio_threads.join_all();
-    fclose(output_fd);
     ProcUtil::removeNamedPipe(pipe_in_path.string());
     ProcUtil::removeNamedPipe(pipe_out_path.string());
     
@@ -82,8 +90,18 @@ void ExternaCommandExecutor::deinit() throw(chaos::CException) {
 }
 
 void ExternaCommandExecutor::readLine(const std::string& new_read_line) {
-    INFO << new_read_line;
-    fprintf(output_fd, "RESP xyz\n");
-    fprintf(output_fd, "test receive data[ %s ]\n\n", new_read_line.c_str());
-    fflush(output_fd);
+    int err = 0;
+    ChaosStringVector tokens;
+    boost::split(tokens,
+                 new_read_line,
+                 boost::is_any_of(" "));
+    INFO << CHAOS_FORMAT("External command received = %1% number fo tockes %2%", %new_read_line%tokens.size());
+    
+    //tokens 0 need to be the command to execute
+    if(map_command.count(tokens[0]) == 0) {
+        //print error
+        *external_cmd_executor.get() << CHAOS_FORMAT("Command %1% is not available\n", %tokens[0]);
+    } else if((err = map_command[tokens[0]]->execute(tokens))){
+        *external_cmd_executor.get() << CHAOS_FORMAT("Command %1% has reported error %2%\n", %tokens[0]%err);
+    }
 }
