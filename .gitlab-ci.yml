@@ -1,4 +1,4 @@
-image: baltig.infn.it:4567/bisegni/chaos-docker-compilation
+image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
 cache:
   paths:
   - /builds/bisegni/chaosframework
