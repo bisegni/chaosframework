@@ -6,7 +6,7 @@ cache:
 build_framework:
   script:
     - echo $PWD
-    - cmake -j  $(nproc) .
+    - cmake -DCHAOS_ARCHITECTURE_TEST=ON .
     - make  -j  $(nproc) ExperimentalStart
     - make  -j  $(nproc) ExperimentalConfigure
     - make  -j  $(nproc) ExperimentalBuild
