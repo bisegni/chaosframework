@@ -66,8 +66,6 @@ namespace chaos {
                     ~ZMQDirectIOClient();
 					
 				protected:
-					int readMesg(void* s, zmq_event_t* event, char* ep);
-					void *socketMonitor(void *s, const char * address, ConnectionMonitorInfo *monitor_info);
 					//overriding ofr free object fuunction for the tempalted key object container superclass
                     void freeObject(const DCKeyObjectContainer::TKOCElement& element);
                     

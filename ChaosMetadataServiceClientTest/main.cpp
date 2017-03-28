@@ -36,6 +36,8 @@ using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::monitor_system;
 using namespace chaos::metadata_service_client::api_proxy;
+using namespace chaos::common::utility;
+using namespace chaos::common::data;
 
 #define MSCT_INFO   INFO_LOG(MetadataServiceClientTest)
 #define MSCT_DBG    INFO_LOG(MetadataServiceClientTest)
@@ -150,6 +152,35 @@ int main(int argc, char *argv[]){
                     cu_ctrl->deinitDevice();
                     sleep(1);
                     work = ((chaos::common::utility::TimingUtil::getTimeStamp()-start_ts) < (wait_seconds*1000));
+                }
+                
+                ChaosMetadataServiceClient::getInstance()->deleteCUController(cu_ctrl);
+                break;
+            }
+                
+            case 4: {
+                bool work = true;
+                CDataWrapper *ds = NULL;
+                uint64_t start_ts = TimingUtil::getTimeStamp();
+                chaos::metadata_service_client::node_controller::CUController *cu_ctrl = NULL;
+                ChaosMetadataServiceClient::getInstance()->getNewCUController(device_id,
+                                                                              &cu_ctrl);
+                if(cu_ctrl == NULL) throw chaos::CException(-1, CHAOS_FORMAT("No cu controller found for %1%", %device_id), __PRETTY_FUNCTION__);
+                uint64_t counter = 0;
+                uint64_t start_stat_ts = TimingUtil::getTimeStamp();
+                uint64_t last_stat_ts = start_stat_ts;
+                while(work) {
+                    start_stat_ts = TimingUtil::getTimeStamp();
+                    ds = cu_ctrl->fetchCurrentDatatasetFromDomain(chaos::cu::data_manager::KeyDataStorageDomainOutput);
+                    if(cu_ctrl) {
+                        counter++;
+                    }
+                    if((start_stat_ts - last_stat_ts) >= 1000) {
+                        std::cout << CHAOS_FORMAT("%1% fetch in %2% milliseconds", %counter%(start_stat_ts - last_stat_ts)) << std::endl;
+                        counter = 0;
+                        last_stat_ts = start_stat_ts;
+                    }
+                    work = ((start_stat_ts-start_ts) < (wait_seconds*1000));
                 }
                 
                 ChaosMetadataServiceClient::getInstance()->deleteCUController(cu_ctrl);

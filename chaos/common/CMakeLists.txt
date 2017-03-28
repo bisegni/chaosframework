@@ -6,7 +6,7 @@ IF( NOT CHAOS_DISABLE_EVENTFD)
 ELSE()
   SET(ZMQ_FLAGS "")
 ENDIF()
-CheckConfigureBuild(zmq zeromq4-x "${ZMQ_FLAGS}" https://github.com/zeromq)
+CheckConfigureBuild(zmq zeromq4-1 "${ZMQ_FLAGS}" https://github.com/zeromq)
 
 ####
 

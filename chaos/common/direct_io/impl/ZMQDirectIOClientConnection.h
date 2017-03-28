@@ -89,9 +89,10 @@ namespace chaos {
 												 DirectIODeallocationHandler *header_deallocation_handler,
 												 DirectIODeallocationHandler *data_deallocation_handler,
 												 DirectIODataPack **synchronous_answer = NULL);
-                    int readMonitorMesg(void* s,
-                                        zmq_event_t* event,
-                                        char* ep);
+                    int readMonitorMesg(void *monitor,
+                                        int *value,
+                                        char *address,
+                                        int address_max_size);
 					void monitorWorker();
                     
                     void socketMonitor();
