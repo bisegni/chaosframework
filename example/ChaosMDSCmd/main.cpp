@@ -240,7 +240,7 @@ int main (int argc, char* argv[] )
 
     }
     if(operation_defined){
-            ChaosMetadataServiceClient::getInstance()->enableMonitor();
+     //       ChaosMetadataServiceClient::getInstance()->enableMonitor();
 
         ChaosMetadataServiceClient::getInstance()->start();
     }

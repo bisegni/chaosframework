@@ -1953,6 +1953,13 @@
 			    "ds_default_value": "10000"
 			},
 			{
+			    "ds_attr_name": "driverTimeout",
+			    "ds_max_range": "1200000000",
+			    "ds_min_range": "0",
+			    "ds_default_value": "10000"
+			},
+
+			{
 			    "ds_attr_name": "conversionFactor",
 			    "ds_max_range": "",
 			    "ds_min_range": "0",
@@ -2089,6 +2096,13 @@
 			    "ds_default_value": "10000"
 			},
 			{
+			    "ds_attr_name": "driverTimeout",
+			    "ds_max_range": "1200000000",
+			    "ds_min_range": "0",
+			    "ds_default_value": "10000"
+			},
+
+			{
 			    "ds_attr_name": "conversionFactor",
 			    "ds_max_range": "",
 			    "ds_min_range": "0",
@@ -2223,6 +2237,13 @@
 			    "ds_default_value": "10000"
 			},
 			{
+			    "ds_attr_name": "driverTimeout",
+			    "ds_max_range": "1200000000",
+			    "ds_min_range": "0",
+			    "ds_default_value": "10000"
+			},
+
+			{
 			    "ds_attr_name": "conversionFactor",
 			    "ds_max_range": "",
 			    "ds_min_range": "0",
@@ -2356,6 +2377,13 @@
 			    "ds_min_range": "0",
 			    "ds_default_value": "10000"
 			},
+			{
+			    "ds_attr_name": "driverTimeout",
+			    "ds_max_range": "1200000000",
+			    "ds_min_range": "0",
+			    "ds_default_value": "10000"
+			},
+
 			{
 			    "ds_attr_name": "conversionFactor",
 			    "ds_max_range": "",
@@ -2493,6 +2521,13 @@
 			    "ds_default_value": "10000"
 			},
 			{
+			    "ds_attr_name": "driverTimeout",
+			    "ds_max_range": "1200000000",
+			    "ds_min_range": "0",
+			    "ds_default_value": "10000"
+			},
+
+			{
 			    "ds_attr_name": "conversionFactor",
 			    "ds_max_range": "",
 			    "ds_min_range": "0",
@@ -2626,6 +2661,13 @@
 			    "ds_min_range": "0",
 			    "ds_default_value": "10000"
 			},
+			{
+			    "ds_attr_name": "driverTimeout",
+			    "ds_max_range": "1200000000",
+			    "ds_min_range": "0",
+			    "ds_default_value": "10000"
+			},
+
 			{
 			    "ds_attr_name": "conversionFactor",
 			    "ds_max_range": "",
@@ -2762,6 +2804,13 @@
 			    "ds_default_value": "10000"
 			},
 			{
+			    "ds_attr_name": "driverTimeout",
+			    "ds_max_range": "1200000000",
+			    "ds_min_range": "0",
+			    "ds_default_value": "10000"
+			},
+
+			{
 			    "ds_attr_name": "conversionFactor",
 			    "ds_max_range": "",
 			    "ds_min_range": "0",
@@ -2897,6 +2946,13 @@
 			    "ds_default_value": "10000"
 			},
 			{
+			    "ds_attr_name": "driverTimeout",
+			    "ds_max_range": "1200000000",
+			    "ds_min_range": "0",
+			    "ds_default_value": "10000"
+			},
+
+			{
 			    "ds_attr_name": "conversionFactor",
 			    "ds_max_range": "",
 			    "ds_min_range": "0",
@@ -3030,6 +3086,13 @@
 			    "ds_min_range": "0",
 			    "ds_default_value": "10000"
 			},
+			{
+			    "ds_attr_name": "driverTimeout",
+			    "ds_max_range": "1200000000",
+			    "ds_min_range": "0",
+			    "ds_default_value": "10000"
+			},
+
 			{
 			    "ds_attr_name": "conversionFactor",
 			    "ds_max_range": "",
@@ -3165,6 +3228,13 @@
 			    "ds_min_range": "0",
 			    "ds_default_value": "10000"
 			},
+			{
+			    "ds_attr_name": "driverTimeout",
+			    "ds_max_range": "1200000000",
+			    "ds_min_range": "0",
+			    "ds_default_value": "10000"
+			},
+
 			{
 			    "ds_attr_name": "conversionFactor",
 			    "ds_max_range": "",
