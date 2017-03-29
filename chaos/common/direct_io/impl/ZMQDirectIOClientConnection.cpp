@@ -52,38 +52,44 @@ void ZMQDirectIOClientConnection::deinit() throw(chaos::CException) {
 }
 
 //------------------------------STATIC METHOD---------------------------------
-int ZMQDirectIOClientConnection::readMonitorMesg(void* s,
-                                                 zmq_event_t* event,
-                                                 char* ep) {
-    int rc ;
-    zmq_msg_t msg1;  // binary part
-    zmq_msg_init (&msg1);
-    zmq_msg_t msg2;  //  address part
-    zmq_msg_init (&msg2);
-    rc = zmq_msg_recv (&msg1, s, 0);
-    if (rc == -1)
-        return 1 ;
-    if(zmq_msg_more(&msg1) == 0) return 1;
-    rc = zmq_msg_recv (&msg2, s, 0);
-    if (rc == -1)
-        return 1;
-    if(zmq_msg_more(&msg2) != 0) return 1;
-    // copy binary data to event struct
-    const char* data = (char*)zmq_msg_data(&msg1);
-    memcpy(&(event->event), data, sizeof(event->event));
-    memcpy(&(event->value), data+sizeof(event->event), sizeof(event->value));
-    // copy address part
-    const size_t len = zmq_msg_size(&msg2) ;
-    ep = (char*)memcpy(ep, zmq_msg_data(&msg2), len);
-    *(ep + len) = 0 ;
-    return 0 ;
-}
+int ZMQDirectIOClientConnection::readMonitorMesg(void *monitor,
+                                                 int *value,
+                                                 char *address,
+                                                 int address_max_size) {
+        // First frame in message contains event number and value
+        zmq_msg_t msg;
+        zmq_msg_init (&msg);
+        if (zmq_msg_recv (&msg, monitor, 0) == -1)
+            return -1; // Interruped, presumably
+        assert (zmq_msg_more (&msg));
+        
+        uint8_t *data = (uint8_t *) zmq_msg_data (&msg);
+        uint16_t event = *(uint16_t *) (data);
+        if (value)
+            *value = *(uint32_t *) (data + 2);
+        
+        // Second frame in message contains event address
+        zmq_msg_init (&msg);
+        if (zmq_msg_recv (&msg, monitor, 0) == -1)
+            return -1; // Interruped, presumably
+        assert (!zmq_msg_more (&msg));
+        
+        if (address) {
+            uint8_t *data = (uint8_t *) zmq_msg_data (&msg);
+            size_t size = zmq_msg_size (&msg);
+            size_t size_to_use = (size>address_max_size?address_max_size:size);
+            memcpy (address, data, size_to_use);
+            address [size_to_use] = 0;
+        }
+        return event;
+    }
 
 void ZMQDirectIOClientConnection::socketMonitor() {
     const int linger_period = 0;
-    zmq_event_t event;
-    static char addr[1025];
-    int rc;
+    char addr[1025];
+    int event = 0;
+    int value = 0;
+    int rc = 0;
     //std::vector<std::string> server_desc_tokens;
     DEBUG_CODE(DBG << "Start monitor for " << monitor_info.monitor_url;)
     
@@ -93,9 +99,12 @@ void ZMQDirectIOClientConnection::socketMonitor() {
     
     rc = zmq_connect (monitor_info.monitor_socket, monitor_info.monitor_url.c_str());
     if(rc) return;
-    while (monitor_info.run &&
-           !readMonitorMesg(monitor_info.monitor_socket, &event, addr)) {
-        switch (event.event) {
+    while (monitor_info.run) {
+        event = readMonitorMesg(monitor_info.monitor_socket,
+                                &value,
+                                addr,
+                                1025);
+        switch (event) {
             case ZMQ_EVENT_CONNECTED:
                 DEBUG_CODE(DBG << "ZMQ_EVENT_CONNECTED to " << getServerDescription();)
                 lowLevelManageEvent(DirectIOClientConnectionStateType::DirectIOClientConnectionEventConnected);

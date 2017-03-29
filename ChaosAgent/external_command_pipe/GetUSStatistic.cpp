@@ -58,9 +58,9 @@ int GetUSStatistic::execute(ChaosStringVector input_parameter) {
     
     
     std::auto_ptr<MultiAddressMessageRequestFuture> request = mds_message_channel.sendRequestWithFuture(AgentNodeDomainAndActionRPC::ProcessWorker::RPC_DOMAIN,
-                                                                                                         "loadAgentDescription",
-                                                                                                         api_data.release(),
-                                                                                                         5000);
+                                                                                                        "loadAgentDescription",
+                                                                                                        api_data.release(),
+                                                                                                        5000);
     if(request->wait() == false ||
        request->getError() != 0) {
         return 2;
@@ -69,12 +69,16 @@ int GetUSStatistic::execute(ChaosStringVector input_parameter) {
     //we have the description
     agent_instance_sd_wrapper.deserialize(request->getResult());
     const VectorAgentAssociation& ass_vec = agent_instance_sd_wrapper().node_associated;
-    for(VectorAgentAssociationConstIterator it = ass_vec.begin(),
-        end = ass_vec.end();
-        it != end;
-        it++) {
-        bool alive = utility::ProcUtil::checkProcessAlive(*it);
-        println(CHAOS_FORMAT("%1% %2%", %it->associated_node_uid%alive));
+    if(ass_vec.size() > 0) {
+        print("|");
+        for(VectorAgentAssociationConstIterator it = ass_vec.begin(),
+            end = ass_vec.end();
+            it != end;
+            it++) {
+            bool alive = utility::ProcUtil::checkProcessAlive(*it);
+            print(CHAOS_FORMAT("%1%|%2%|", %it->associated_node_uid%alive));
+        }
+        println("");
     }
     return 0;
 }

@@ -278,7 +278,6 @@ whait_for_next_check.wait(x);
 
 void BatchCommandSandbox::checkNextCommand() {
     bool queue_empty = false;
-    bool canWork = schedule_work_flag;
     RunningVSSubmissioneResult current_check_value;
     
     
@@ -294,7 +293,7 @@ void BatchCommandSandbox::checkNextCommand() {
     //manage the lock on next command mutex
     boost::unique_lock<boost::mutex> lock_next_command_queue(mutex_next_command_queue, boost::defer_lock_t());
     
-    while (canWork) {
+    while (schedule_work_flag) {
         //lock the command queue access
         lock_next_command_queue.lock();
         queue_empty = command_submitted_queue.empty();
@@ -544,15 +543,8 @@ void BatchCommandSandbox::checkNextCommand() {
             }
             WAIT_ON_NEXT_CMD
         }
-        
-        if (!schedule_work_flag) {
-            canWork = false;
-        }
     }
-    
     SCSLAPP_ << "[checkNextCommand] Check next command thread ended";
-    //notify the end of the thread
-    //condition_waith_scheduler_end.notify_one();
 }
 
 
