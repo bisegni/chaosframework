@@ -85,7 +85,7 @@ int main(int argc, char *argv[]){
         ChaosMetadataServiceClient::getInstance()->init(argc, argv);
         
         ChaosMetadataServiceClient::getInstance()->start();
-
+        
         
         //register log allert event
         ChaosMetadataServiceClient::getInstance()->registerEventHandler(&alert_log_handler);
@@ -172,7 +172,7 @@ int main(int argc, char *argv[]){
                 while(work) {
                     start_stat_ts = TimingUtil::getTimeStamp();
                     ds = cu_ctrl->fetchCurrentDatatasetFromDomain(chaos::cu::data_manager::KeyDataStorageDomainOutput);
-                    if(cu_ctrl) {
+                    if(ds) {
                         counter++;
                     }
                     if((start_stat_ts - last_stat_ts) >= 1000) {
@@ -182,9 +182,21 @@ int main(int argc, char *argv[]){
                     }
                     work = ((start_stat_ts-start_ts) < (wait_seconds*1000));
                 }
-                
                 ChaosMetadataServiceClient::getInstance()->deleteCUController(cu_ctrl);
                 break;
+            }
+                
+            case 5:{
+                bool work = true;
+                CDataWrapper *ds = NULL;
+                uint64_t start_ts = TimingUtil::getTimeStamp();
+                chaos::metadata_service_client::node_controller::CUController *cu_ctrl = NULL;
+                while(work){
+                    ChaosMetadataServiceClient::getInstance()->getNewCUController(device_id,&cu_ctrl);
+                    ds = cu_ctrl->fetchCurrentDatatasetFromDomain(chaos::cu::data_manager::KeyDataStorageDomainOutput);
+                    ChaosMetadataServiceClient::getInstance()->deleteCUController(cu_ctrl);
+                    work = ((chaos::common::utility::TimingUtil::getTimeStamp()-start_ts) < (wait_seconds*1000));
+                }
             }
         }
         

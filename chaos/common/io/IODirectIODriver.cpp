@@ -315,6 +315,10 @@ chaos::common::data::CDataWrapper* IODirectIODriver::updateConfiguration(chaos::
                 IODirectIODriver_DLDBG_ << "Data proxy server description " << serverDesc << " non well formed";
                 continue;
             }
+            if(connectionFeeder.hasURL(serverDesc)) {
+                IODirectIODriver_LERR_ << "Data proxy server description " << serverDesc << " is laredy instaleld in driver";
+                continue;
+            }
             //add new url to connection feeder
             connectionFeeder.addURL(chaos::common::network::URL(serverDesc));
         }

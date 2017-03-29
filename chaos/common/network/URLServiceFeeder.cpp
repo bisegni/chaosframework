@@ -255,6 +255,11 @@ uint32_t URLServiceFeeder::getIndexFromURL(const std::string& url) {
     }
 }
 
+bool URLServiceFeeder::hasURL(const std::string& url) {
+    boost::unique_lock<boost::mutex> wl(mutex_internal);
+    return mapping_url_index.hasLeftKey(url);
+}
+
 void URLServiceFeeder::setFeedMode(URLServiceFeedMode new_feed_mode) {
 	feed_mode = new_feed_mode;
 }

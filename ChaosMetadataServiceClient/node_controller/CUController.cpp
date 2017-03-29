@@ -42,8 +42,7 @@ using namespace chaos::cu::data_manager;
 CUController::CUController(const std::string& _deviceID, chaos::common::io::ioDataDriver_shr _ioLiveDataDriver):
 datasetDB(true),
 mdsChannel(NULL),
-deviceChannel(NULL)
-{
+deviceChannel(NULL) {
     millisecToWait = MSEC_WAIT_OPERATION;
 
     ioLiveDataDriver=_ioLiveDataDriver;
@@ -55,7 +54,7 @@ deviceChannel(NULL)
     //get a new message channel in a self manage way
     deviceChannel = NetworkBroker::getInstance()->getDeviceMessageChannelFromAddress(new CDeviceNetworkAddress(_deviceID),
                                                                                      true,
-                                                                                     this);
+                                                                                     true);
     if(!deviceChannel) throw CException(-2,
                                         "Invalid device channel created",
                                         __PRETTY_FUNCTION__);
@@ -70,7 +69,7 @@ deviceChannel(NULL)
      if(!mdsChannel->getDataDriverBestConfiguration(&tmp_data_handler, millisecToWait)){
             auto_ptr<CDataWrapper> best_available_da_ptr(tmp_data_handler);
             ioLiveDataDriver->updateConfiguration(best_available_da_ptr.get());
-       }
+     }
 
 
     channel_keys.resize(16);
@@ -95,15 +94,13 @@ CUController::~CUController() {
     LDBG_<<"["<<__PRETTY_FUNCTION__<<"] remove Device Controller:"<<deviceChannel->getDeviceID();
     stopTracking();
     
-    if(mdsChannel){
-        NetworkBroker::getInstance()->disposeMessageChannel(mdsChannel);
-    }
-    
-    
     if(deviceChannel){
         deviceChannel->removeListener(this);
         NetworkBroker::getInstance()->disposeMessageChannel(deviceChannel);
-
+    }
+    
+    if(mdsChannel){
+        NetworkBroker::getInstance()->disposeMessageChannel(mdsChannel);
     }
     
     if(ioLiveDataDriver.get()){

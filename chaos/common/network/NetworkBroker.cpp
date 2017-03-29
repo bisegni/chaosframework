@@ -608,7 +608,7 @@ MessageChannel *NetworkBroker::getNewMessageChannelForRemoteHost(CNetworkAddress
  */
 MDSMessageChannel *NetworkBroker::getMetadataserverMessageChannel(MessageRequestDomainSHRDPtr shared_request_domain) {
     MDSMessageChannel *channel = (shared_request_domain.get() == NULL)?
-    (new MDSMessageChannel(this, GlobalConfiguration::getInstance()->getMetadataServerAddressList())):
+    (new MDSMessageChannel(this, GlobalConfiguration::getInstance()->getMetadataServerAddressList(), global_request_domain)):
     (new MDSMessageChannel(this, GlobalConfiguration::getInstance()->getMetadataServerAddressList(), shared_request_domain));
     if(channel){
         channel->init();

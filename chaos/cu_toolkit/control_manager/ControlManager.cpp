@@ -782,7 +782,6 @@ CDataWrapper* ControlManager::unitServerRegistrationACK(CDataWrapper *message_da
                 }
                 break;
         }
-        
         //publish the healt result
         HealtManager::getInstance()->publishNodeHealt(unit_server_alias);
         
