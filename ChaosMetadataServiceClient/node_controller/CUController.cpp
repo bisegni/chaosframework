@@ -1022,10 +1022,12 @@ void CUController::executeTimeIntervallQuery(DatasetDomain domain,
                                              uint64_t end_ts,
                                              QueryCursor **query_cursor,
                                              uint32_t page) {
-    *query_cursor = ioLiveDataDriver->performQuery(channel_keys[domain],
+	if((domain>=0) && (domain<=DPCK_LAST_DATASET_INDEX)){
+		*query_cursor = ioLiveDataDriver->performQuery(channel_keys[domain],
                                                    start_ts,
                                                    end_ts,
                                                    page);
+	}
 }
 
 //! release a query
