@@ -46,7 +46,7 @@ void TimerHandler::timerTimeout(const boost::system::error_code& error) {
         //wait for next call with the delat correct
         wait(delay-spent_time);
     }
-    if(wait_sem.isInWait()){wait_sem.unlock();}
+//    if(wait_sem.isInWait()){wait_sem.unlock();}
 }
 
 void TimerHandler::wait(uint64_t _delay) {
@@ -63,10 +63,10 @@ void TimerHandler::removeTimer() {
     std::size_t remain = 0;
     try{
         remain = timer->cancel();
-        if(remain == 0) {
-            //waith the signal
-            wait_sem.wait();
-        }
+//        if(remain == 0) {
+//            //waith the signal
+//            wait_sem.wait();
+//        }
     } catch(boost::system::system_error& ex) {}
 
     delete(timer);
