@@ -29,6 +29,8 @@
 		32DAABC11D6C79D700464F7A /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DAABC01D6C79D700464F7A /* main.cpp */; };
 		32DAABD51D6C7B2500464F7A /* PluginLibrary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DAABD31D6C7B2500464F7A /* PluginLibrary.cpp */; };
 		32DAABD61D6C7B2500464F7A /* PluginLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DAABD41D6C7B2500464F7A /* PluginLibrary.h */; };
+		32EBC21B1E92507B00785AAC /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32EBC21A1E92507B00785AAC /* main.cpp */; };
+		32EBC2221E9250F900785AAC /* TimerTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32EBC2201E9250F900785AAC /* TimerTask.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -122,6 +124,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
+		32EBC2161E92507B00785AAC /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -179,6 +190,11 @@
 		32DAABD31D6C7B2500464F7A /* PluginLibrary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginLibrary.cpp; sourceTree = "<group>"; };
 		32DAABD41D6C7B2500464F7A /* PluginLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginLibrary.h; sourceTree = "<group>"; };
 		32DAABD71D6C7BF900464F7A /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		32EBC2181E92507B00785AAC /* TestTimer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestTimer; sourceTree = BUILT_PRODUCTS_DIR; };
+		32EBC21A1E92507B00785AAC /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		32EBC21F1E9250AC00785AAC /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		32EBC2201E9250F900785AAC /* TimerTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TimerTask.cpp; sourceTree = "<group>"; };
+		32EBC2211E9250F900785AAC /* TimerTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimerTask.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -259,6 +275,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		32EBC2151E92507B00785AAC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -291,6 +314,7 @@
 				32DAABCA1D6C7A1F00464F7A /* PluginLibrary */,
 				32DAABBF1D6C79D700464F7A /* TestPlugin */,
 				327A28631D71D6D100DFDD2C /* TestBatchCommandSystem */,
+				32EBC2191E92507B00785AAC /* TestTimer */,
 				3299433F1D6B38CC008DBAE9 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -309,6 +333,7 @@
 				32DAABBE1D6C79D700464F7A /* TestPlugin */,
 				32DAABC91D6C7A1F00464F7A /* PluginLibrary.chaos_extension */,
 				327A28621D71D6D100DFDD2C /* TestBatchCommandSystem */,
+				32EBC2181E92507B00785AAC /* TestTimer */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -416,6 +441,17 @@
 				32DAABD41D6C7B2500464F7A /* PluginLibrary.h */,
 			);
 			path = PluginLibrary;
+			sourceTree = "<group>";
+		};
+		32EBC2191E92507B00785AAC /* TestTimer */ = {
+			isa = PBXGroup;
+			children = (
+				32EBC21A1E92507B00785AAC /* main.cpp */,
+				32EBC2201E9250F900785AAC /* TimerTask.cpp */,
+				32EBC2211E9250F900785AAC /* TimerTask.h */,
+				32EBC21F1E9250AC00785AAC /* CMakeLists.txt */,
+			);
+			path = TestTimer;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -619,6 +655,23 @@
 			productReference = 32DAABC91D6C7A1F00464F7A /* PluginLibrary.chaos_extension */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		32EBC2171E92507B00785AAC /* TestTimer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 32EBC21E1E92507B00785AAC /* Build configuration list for PBXNativeTarget "TestTimer" */;
+			buildPhases = (
+				32EBC2141E92507B00785AAC /* Sources */,
+				32EBC2151E92507B00785AAC /* Frameworks */,
+				32EBC2161E92507B00785AAC /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TestTimer;
+			productName = TestTimer;
+			productReference = 32EBC2181E92507B00785AAC /* TestTimer */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -682,6 +735,11 @@
 						DevelopmentTeam = ZZ5BMKV37Y;
 						ProvisioningStyle = Automatic;
 					};
+					32EBC2171E92507B00785AAC = {
+						CreatedOnToolsVersion = 8.3;
+						DevelopmentTeam = ZZ5BMKV37Y;
+						ProvisioningStyle = Automatic;
+					};
 				};
 			};
 			buildConfigurationList = 329943391D6B38CC008DBAE9 /* Build configuration list for PBXProject "CHAOSFrameworkTests" */;
@@ -707,6 +765,7 @@
 				329943781D6B5456008DBAE9 /* TestURLFeeder */,
 				32DAABC81D6C7A1F00464F7A /* PluginLibrary */,
 				32DAABBD1D6C79D700464F7A /* TestPlugin */,
+				32EBC2171E92507B00785AAC /* TestTimer */,
 			);
 		};
 /* End PBXProject section */
@@ -807,6 +866,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				32DAABD51D6C7B2500464F7A /* PluginLibrary.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		32EBC2141E92507B00785AAC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				32EBC2221E9250F900785AAC /* TimerTask.cpp in Sources */,
+				32EBC21B1E92507B00785AAC /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1128,6 +1196,28 @@
 			};
 			name = Release;
 		};
+		32EBC21C1E92507B00785AAC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				DEVELOPMENT_TEAM = ZZ5BMKV37Y;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		32EBC21D1E92507B00785AAC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				DEVELOPMENT_TEAM = ZZ5BMKV37Y;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1238,6 +1328,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		32EBC21E1E92507B00785AAC /* Build configuration list for PBXNativeTarget "TestTimer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				32EBC21C1E92507B00785AAC /* Debug */,
+				32EBC21D1E92507B00785AAC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};
