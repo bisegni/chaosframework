@@ -21,6 +21,7 @@
 #ifndef __CHAOSFramework__TimerHandler__
 #define __CHAOSFramework__TimerHandler__
 #include <boost/asio.hpp>
+#include <chaos/common/thread/WaitSemaphore.h>
 namespace chaos {
 	namespace common {
 		namespace async_central {
@@ -34,6 +35,7 @@ namespace chaos {
             class TimerHandler {
 				friend class AsyncCentralManager;
                 //boost timer
+                WaitSemaphore wait_sem;
                 boost::asio::deadline_timer *timer;
                 uint64_t    delay;
                 void timerTimeout(const boost::system::error_code& error);
