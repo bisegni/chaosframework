@@ -653,7 +653,7 @@ CDataWrapper* ControlManager::updateConfiguration(CDataWrapper *message_data, bo
 
 //---------------unit server state machine managment handler
 void ControlManager::timeout() {
-    //boost::unique_lock<boost::shared_mutex> lock_sm(unit_server_sm_mutex);
+    boost::unique_lock<boost::shared_mutex> lock_sm(unit_server_sm_mutex);
     switch (unit_server_sm.current_state()[0]) {
             //Unpublished
         case 0:
@@ -720,7 +720,7 @@ void ControlManager::sendUnitServerRegistration() {
 // Server registration ack message
 CDataWrapper* ControlManager::unitServerRegistrationACK(CDataWrapper *message_data, bool &detach) throw (CException) {
     //lock the sm access
-    //boost::unique_lock<boost::shared_mutex> lock_sm(unit_server_sm_mutex);
+    boost::unique_lock<boost::shared_mutex> lock_sm(unit_server_sm_mutex);
     LCMAPP_ << "Unit server registration ack message received";
     detach = false;
     if(!message_data->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID))
