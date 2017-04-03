@@ -446,10 +446,10 @@
 		32EBC2191E92507B00785AAC /* TestTimer */ = {
 			isa = PBXGroup;
 			children = (
+				32EBC21F1E9250AC00785AAC /* CMakeLists.txt */,
 				32EBC21A1E92507B00785AAC /* main.cpp */,
 				32EBC2201E9250F900785AAC /* TimerTask.cpp */,
 				32EBC2211E9250F900785AAC /* TimerTask.h */,
-				32EBC21F1E9250AC00785AAC /* CMakeLists.txt */,
 			);
 			path = TestTimer;
 			sourceTree = "<group>";
@@ -1336,6 +1336,7 @@
 				32EBC21D1E92507B00785AAC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

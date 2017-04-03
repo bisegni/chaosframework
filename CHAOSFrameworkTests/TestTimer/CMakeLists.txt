@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 project(TestTimer)
 
-SET(src main.cpp)
+SET(src main.cpp TimerTask.cpp)
 
 ADD_EXECUTABLE(${PROJECT_NAME} ${src})
 

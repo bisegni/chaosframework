@@ -10,5 +10,6 @@ build_framework:
     - make  -j  $(nproc) ExperimentalStart
     - make  -j  $(nproc) ExperimentalConfigure
     - make  -j  $(nproc) ExperimentalBuild
+    - make  -j  $(nproc) ExperimentalTest
   only:
     - development
