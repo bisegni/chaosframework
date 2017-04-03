@@ -35,7 +35,7 @@ namespace chaos {
             class TimerHandler {
 				friend class AsyncCentralManager;
                 //boost timer
-                WaitSemaphore wait_sem;
+                //WaitSemaphore wait_sem;
                 boost::asio::deadline_timer *timer;
                 uint64_t    delay;
                 void timerTimeout(const boost::system::error_code& error);

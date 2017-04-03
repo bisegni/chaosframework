@@ -60,7 +60,10 @@ void ExternaCommandExecutor::init(void *data) throw(chaos::CException) {
     pipe_in_path = CHAOS_FORMAT("%1%/%2%.in",%ChaosAgent::getInstance()->settings.ext_cmd_pipe_path%ChaosAgent::getInstance()->settings.ext_cmd_pipe_name);
     pipe_out_path = CHAOS_FORMAT("%1%/%2%.out",%ChaosAgent::getInstance()->settings.ext_cmd_pipe_path%ChaosAgent::getInstance()->settings.ext_cmd_pipe_name);
     
+    ProcUtil::removeNamedPipe(pipe_in_path.string());
     ProcUtil::createNamedPipe(pipe_in_path.string());
+    
+    ProcUtil::removeNamedPipe(pipe_out_path.string());
     ProcUtil::createNamedPipe(pipe_out_path.string());
     
     //output_fd = fopen(pipe_out_path.string().c_str(), "wa");

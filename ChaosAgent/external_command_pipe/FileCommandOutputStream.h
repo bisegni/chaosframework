@@ -32,7 +32,8 @@ namespace chaos {
             
             class FileCommandOutputStream:
             public AbstractCommandOutputStream {
-                FILE *output_file;
+                int output_file;
+                const std::string file_path;
             public:
                 FileCommandOutputStream(const std::string& file_path);
                 ~FileCommandOutputStream();

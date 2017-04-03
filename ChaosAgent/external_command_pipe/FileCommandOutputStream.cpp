@@ -20,16 +20,17 @@
  */
 
 #include "FileCommandOutputStream.h"
-
+#include <fcntl.h>
 using namespace chaos::agent::external_command_pipe;
 
-FileCommandOutputStream::FileCommandOutputStream(const std::string& file_path):
-output_file(NULL){
-    output_file = fopen(file_path.c_str(), "wa");
+FileCommandOutputStream::FileCommandOutputStream(const std::string& _file_path):
+file_path(_file_path),
+output_file(-1){
+    //output_file = open(file_path.c_str(), O_RDWR|O_NONBLOCK);
 }
 
 FileCommandOutputStream::~FileCommandOutputStream() {
-    fclose(output_file);
+    //close(output_file);
 }
 
 void FileCommandOutputStream::init(void *init_data) throw (chaos::CException) {
@@ -41,13 +42,19 @@ void FileCommandOutputStream::deinit() throw (chaos::CException) {
 }
 
 AbstractCommandOutputStream& FileCommandOutputStream::operator<<(const std::string& string) {
-    fwrite(string.c_str(), sizeof(char), string.size(), output_file);
-    fflush(output_file);
+    ssize_t err  = 0;
+    output_file = open(file_path.c_str(), O_RDWR|O_NONBLOCK);
+    err = write(output_file, string.c_str(), string.size());
+    err = fsync(output_file);
+    close(output_file);
     return *this;
 }
 
 AbstractCommandOutputStream& FileCommandOutputStream::operator<<(const char * string) {
-    fwrite(string, sizeof(char), strlen(string), output_file);
-    fflush(output_file);
+    ssize_t err = 0;
+    output_file = open(file_path.c_str(), O_RDWR|O_NONBLOCK);
+    err = write(output_file, string, strlen(string));
+    err = fsync(output_file);
+    close(output_file);
     return *this;
 }
