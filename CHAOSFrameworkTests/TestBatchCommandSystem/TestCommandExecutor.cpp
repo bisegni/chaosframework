@@ -65,6 +65,7 @@ void TestCommandExecutor::handleCommandEvent(const std::string& command_alias,
                                              const BatchCommandStat& commands_stats) {
     LockableObjectWriteLock_t wl;
     map_id_command.getWriteLock(wl);
+    local_stat = commands_stats;
     if(map_id_command().count(command_seq) == 0) return;
     TestElement& element = map_id_command()[command_seq];
     element.last_event = type;
@@ -117,7 +118,7 @@ void TestCommandExecutor::handleSandboxEvent(const std::string& sandbox_id,
 uint64_t TestCommandExecutor::getRunningElement() {
     LockableObjectWriteLock_t wr;
     map_id_command.getWriteLock(wr);
-    return map_id_command().size();
+    return local_stat.queued_commands+local_stat.stacked_commands;
 }
 
 void TestCommandExecutor::resetMap() {

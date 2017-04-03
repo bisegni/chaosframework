@@ -59,7 +59,7 @@ namespace chaos{
                 class TestCommandExecutor:
                 public BatchCommandExecutor {
                     chaos::common::utility::LockableObject<IDCommandMap> map_id_command;
-                    
+                    BatchCommandStat local_stat;
                     uint64_t last_end_time;
                     uint64_t completed_count;
                     uint64_t fault_count;
