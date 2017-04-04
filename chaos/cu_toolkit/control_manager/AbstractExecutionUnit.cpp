@@ -152,7 +152,7 @@ void AbstractExecutionUnit::setOutputAttributeValue(const std::string& attribute
     CHAOS_ASSERT(attribute_value_shared_cache)
     CDataVariant result;
     AttributeValue *cached_value = NULL;
-    cached_value = attribute_value_shared_cache->getAttributeValue(DOMAIN_INPUT,
+    cached_value = attribute_value_shared_cache->getAttributeValue(DOMAIN_OUTPUT,
                                                                    attribute_name);
     cached_value->setValue(attribute_value);
 }

@@ -364,6 +364,9 @@
 		326413AB1E44C7DD0035E175 /* AgentRegister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326413A91E44C7DD0035E175 /* AgentRegister.cpp */; };
 		3264BBD51784887900E2F5A0 /* AbstractPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3264BBD41784887900E2F5A0 /* AbstractPlugin.cpp */; };
 		3264BBD71784BFE400E2F5A0 /* PluginInspector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3264BBD61784BFE400E2F5A0 /* PluginInspector.cpp */; };
+		32655AC51E93C12E00829266 /* EUDSValueManagement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32655AC31E93C12D00829266 /* EUDSValueManagement.cpp */; };
+		32655AC61E93C12E00829266 /* EUDSValueManagement.h in Headers */ = {isa = PBXBuildFile; fileRef = 32655AC41E93C12E00829266 /* EUDSValueManagement.h */; };
+		32655ACA1E93C30800829266 /* api.h in Headers */ = {isa = PBXBuildFile; fileRef = 32655AC81E93C30800829266 /* api.h */; };
 		3265BF4615D1A9CA00C3CAC6 /* ChaosUIToolkitCWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 3265BF4515D1A9CA00C3CAC6 /* ChaosUIToolkitCWrapper.h */; };
 		3265BF4915D1AA9F00C3CAC6 /* ChaosUIToolkitCWrapper.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3265BF4815D1AA9F00C3CAC6 /* ChaosUIToolkitCWrapper.cc */; };
 		3265F332197E626900F22FBC /* WorkUnitManagement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D72CA8197D196D00512B89 /* WorkUnitManagement.cpp */; };
@@ -1632,6 +1635,9 @@
 		326413AA1E44C7DD0035E175 /* AgentRegister.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AgentRegister.h; sourceTree = "<group>"; };
 		3264BBD41784887900E2F5A0 /* AbstractPlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractPlugin.cpp; sourceTree = "<group>"; };
 		3264BBD61784BFE400E2F5A0 /* PluginInspector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginInspector.cpp; sourceTree = "<group>"; };
+		32655AC31E93C12D00829266 /* EUDSValueManagement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EUDSValueManagement.cpp; sourceTree = "<group>"; };
+		32655AC41E93C12E00829266 /* EUDSValueManagement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EUDSValueManagement.h; sourceTree = "<group>"; };
+		32655AC81E93C30800829266 /* api.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = api.h; sourceTree = "<group>"; };
 		326573F218CCD365009E9B6B /* TemplatedKeyObjectContainer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TemplatedKeyObjectContainer.h; sourceTree = "<group>"; };
 		3265BF4515D1A9CA00C3CAC6 /* ChaosUIToolkitCWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChaosUIToolkitCWrapper.h; sourceTree = "<group>"; };
 		3265BF4815D1AA9F00C3CAC6 /* ChaosUIToolkitCWrapper.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChaosUIToolkitCWrapper.cc; sourceTree = "<group>"; };
@@ -3494,6 +3500,16 @@
 			path = ChaosAgent;
 			sourceTree = "<group>";
 		};
+		32655AC21E93C0FF00829266 /* api */ = {
+			isa = PBXGroup;
+			children = (
+				32655AC31E93C12D00829266 /* EUDSValueManagement.cpp */,
+				32655AC41E93C12E00829266 /* EUDSValueManagement.h */,
+				32655AC81E93C30800829266 /* api.h */,
+			);
+			path = api;
+			sourceTree = "<group>";
+		};
 		32661C6A1AA73DA200F1A721 /* ChaosMetadataServiceClient */ = {
 			isa = PBXGroup;
 			children = (
@@ -4338,6 +4354,7 @@
 		329E434D1CE5D071005E2FAD /* script */ = {
 			isa = PBXGroup;
 			children = (
+				32655AC21E93C0FF00829266 /* api */,
 				322A3BC41CEE1AA900FAD9DA /* EUScriptableWrapper.cpp */,
 				322A3BC51CEE1AA900FAD9DA /* EUScriptableWrapper.h */,
 				322A3BC61CEE1AA900FAD9DA /* ScriptableExecutionUnit.cpp */,
@@ -5736,6 +5753,7 @@
 				3270D5E91CCFAC4F0072017B /* AbstractExecutionUnit.h in Headers */,
 				326933EE1D5089590033D9E9 /* trigger_system.h in Headers */,
 				3252A3141C8ED6BD00900FF2 /* DatasetAttributeHandler.h in Headers */,
+				32655AC61E93C12E00829266 /* EUDSValueManagement.h in Headers */,
 				326DB4CC14B3A3E50018A8D0 /* KeyDataStorage.h in Headers */,
 				3252A31C1C9021DE00900FF2 /* handler.h in Headers */,
 				326933F21D5089C20033D9E9 /* dataset_event.h in Headers */,
@@ -5751,6 +5769,7 @@
 				3214EF111D466F95004DB689 /* DataBroker.h in Headers */,
 				3291D5191D5DEE890077CBB3 /* PublishTarget.h in Headers */,
 				32F2241C179AE3BC00853F62 /* RTAbstractControlUnit.h in Headers */,
+				32655ACA1E93C30800829266 /* api.h in Headers */,
 				32F22420179AEED500853F62 /* SCAbstractControlUnit.h in Headers */,
 				3250106019E2DB4A00809415 /* AttributeSharedCacheWrapper.h in Headers */,
 				326933E61D5088BD0033D9E9 /* manipulation.h in Headers */,
@@ -6558,6 +6577,7 @@
 				3214EF101D466F95004DB689 /* DataBroker.cpp in Sources */,
 				325168CC1D47935D00E877DF /* DataBrokerEditor.cpp in Sources */,
 				3270D5E81CCFAC4F0072017B /* AbstractExecutionUnit.cpp in Sources */,
+				32655AC51E93C12E00829266 /* EUDSValueManagement.cpp in Sources */,
 				326DB4BA14B3A3E50018A8D0 /* CommandManager.cpp in Sources */,
 				32D4ACE71D66010100EF14E4 /* publishing_types.cpp in Sources */,
 				3214EF0A1D466CF6004DB689 /* DataBrokerManager.cpp in Sources */,

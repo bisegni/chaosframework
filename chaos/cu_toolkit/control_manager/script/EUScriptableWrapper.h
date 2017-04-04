@@ -29,7 +29,7 @@ namespace chaos {
         namespace control_manager {
             namespace script {
                 
-#define EUSW_ADD_DATASET_ATTRIBUTE      "addDatasetAttrbiute"
+#define EUSW_ADD_DATASET_ATTRIBUTE      "addDatasetAttribute"
 #define EUSW_GET_OUTPUT_ATTRIBUTE_VALUE "getOutputAttributeValue"
 #define EUSW_SET_OUTPUT_ATTRIBUTE_VALUE "setOutputAttributeValue"
 #define EUSW_GET_INPUT_ATTRIBUTE_VALUE  "getInputAttributeValue"

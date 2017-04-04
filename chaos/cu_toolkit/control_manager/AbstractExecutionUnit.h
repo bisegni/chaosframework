@@ -75,10 +75,9 @@ namespace chaos{
                 //! inherited method
                 void unitDeinit() throw(CException);
                 
+            protected:
                 //!redefine private for protection
                 AbstractSharedDomainCache* _getAttributeCache();
-                
-            protected:
                 
                 /*!
                  Describe the functionality of the execution unit

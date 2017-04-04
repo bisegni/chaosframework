@@ -24,7 +24,7 @@
 
 #include <chaos/common/script/ScriptManager.h>
 
-#include <chaos/cu_toolkit/control_manager/script/EUScriptableWrapper.h>
+#include <chaos/cu_toolkit/control_manager/script/api/api.h>
 #include <chaos/cu_toolkit/control_manager/AbstractExecutionUnit.h>
 
 #include <bitset>
@@ -33,12 +33,15 @@ namespace chaos {
     namespace cu {
         namespace control_manager {
             namespace script {
-                
-#define SEU_ALGORITHM_LAUNCH    "algorithmLaunch"
-#define SEU_ALGORITHM_START     "algorithmStart"
-#define SEU_ALGORITHM_STEP      "algorithmStep"
-#define SEU_ALGORITHM_STOP      "algorithmStop"
-#define SEU_ALGORITHM_END       "algorithmEnd"
+                namespace api {
+                    class EUDSValueManagement;
+                }
+#define SEU_ALGORITHM_LAUNCH        "algorithmLaunch"
+#define SEU_ALGORITHM_START         "algorithmStart"
+#define SEU_ALGORITHM_STEP          "algorithmStep"
+#define SEU_ALGORITHM_STOP          "algorithmStop"
+#define SEU_ALGORITHM_END           "algorithmEnd"
+#define SEU_INPUT_ATTRIBUTE_CHANGED "inputAttributeChanged"
                 
                 //! this class implementa an execution unit defined by a script
                 /*!
@@ -50,7 +53,7 @@ namespace chaos {
                  */
                 class ScriptableExecutionUnit:
                 public AbstractExecutionUnit {
-                    friend class EUScriptableWrapper;
+                    friend class api::EUDSValueManagement;
                     PUBLISHABLE_CONTROL_UNIT_INTERFACE(AbstractExecutionUnit)
                     
                     //! the language to be used for the script
@@ -62,10 +65,10 @@ namespace chaos {
                     //!scrip manger instance initilizated at eu init time
                     std::auto_ptr<common::script::ScriptManager> script_manager;
                     
-                    //! class taht wrap the execution uni to script
-                    EUScriptableWrapper scriptable_wrapper;
+                    //! class that wrap the execution uni to script
+                    api::EUDSValueManagement api_ds_management;
                     
-                    std::bitset<5> alghorithm_handler_implemented;
+                    std::bitset<6> alghorithm_handler_implemented;
                 public:
                     /*! default constructor
                      \param _execution_unit_param is a string that contains parameter to pass during the contorl unit creation
@@ -86,7 +89,7 @@ namespace chaos {
                     //!default destructor
                     ~ScriptableExecutionUnit();
                     
-                protected:
+                public:
                     //! add an attribute to the dataset fo the execution unit
                     void addAttributeToDataSet(const std::string& attribute_name,
                                                const std::string& attribute_description,
@@ -125,9 +128,16 @@ namespace chaos {
                     //! inherithed method
                     void executeAlgorithmEnd() throw (CException);
                     
-                    
                     //! inherithed method
-                    void unitUndefineActionAndDataset() throw(CException);
+                    void unitUndefineActionAndDataset() throw(CException);                    
+                    
+                    //!called when changed on input attribute are detected
+                    /*!
+                     the keys of the map are the attribute names and the valu are the CDataVariant
+                     hosting hte real attribute value
+                     */
+                    bool updatedInputDataset(const std::string& attribute_name,
+                                             const chaos::common::data::CDataVariant& value);
                 };
             }
         }

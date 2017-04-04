@@ -43,7 +43,7 @@ ScriptableExecutionUnit::ScriptableExecutionUnit(const std::string& _execution_u
                                                  const std::string& _execution_unit_param):
 AbstractExecutionUnit(_execution_unit_id,
                       _execution_unit_param),
-scriptable_wrapper(this){}
+api_ds_management(this){}
 
 /*!
  Parametrized constructor
@@ -57,7 +57,7 @@ ScriptableExecutionUnit::ScriptableExecutionUnit(const std::string& _execution_u
 AbstractExecutionUnit(_execution_unit_id,
                       _execution_unit_param,
                       _execution_unit_drivers),
-scriptable_wrapper(this){}
+api_ds_management(this){}
 
 //!default destructor
 ScriptableExecutionUnit::~ScriptableExecutionUnit() {}
@@ -77,6 +77,7 @@ void ScriptableExecutionUnit::addAttributeToDataSet(const std::string& attribute
 void ScriptableExecutionUnit::unitDefineActionAndDataset() throw(CException) {
     int err = 0;
     bool exists = false;
+    ChaosStringVector defined_input_attribute;
     //clear bitet for implemented lagorithm handler
     alghorithm_handler_implemented.reset();
     
@@ -116,9 +117,21 @@ void ScriptableExecutionUnit::unitDefineActionAndDataset() throw(CException) {
             CDataWrapper script_dataset(decoded_bson_dataset.c_str());
             addAttributeToDataSetFromDataWrapper(script_dataset);
         }
-
+        
     } else {
         LOG_AND_TROW(SEU_LERR, -4, "Error decoding JSON load parameter");
+    }
+    
+    //get all input attribut to registr the handler for change event
+    getDatasetAttributesName(DataType::Input,
+                             defined_input_attribute);
+    for(ChaosStringVectorIterator it = defined_input_attribute.begin(),
+        end = defined_input_attribute.end();
+        it != end;
+        it++){
+        addVariantHandlerOnInputAttributeName<ScriptableExecutionUnit>(this,
+                                                                       &ScriptableExecutionUnit::updatedInputDataset,
+                                                                       *it);
     }
     
     //allocate script manager or language
@@ -129,7 +142,7 @@ void ScriptableExecutionUnit::unitDefineActionAndDataset() throw(CException) {
                                              "ScriptManager",
                                              __PRETTY_FUNCTION__);
     SEU_LAPP << "Register api";
-    script_manager->registerApiClass(&scriptable_wrapper);
+    script_manager->registerApiClass(&api_ds_management);
     
     //!load script within the virtual machine
     SEU_LAPP << "Try to load the script";
@@ -172,6 +185,13 @@ void ScriptableExecutionUnit::unitDefineActionAndDataset() throw(CException) {
                      CHAOS_FORMAT("Error checking the presence of the function %1%",%SEU_ALGORITHM_END));
     }
     alghorithm_handler_implemented[4] = exists;
+    
+    if((err = script_manager->getVirtualMachine()->functionExists(SEU_INPUT_ATTRIBUTE_CHANGED, exists)) ){
+        LOG_AND_TROW(SEU_LERR,
+                     -7,
+                     CHAOS_FORMAT("Error checking the presence of the function %1%",%SEU_INPUT_ATTRIBUTE_CHANGED));
+    }
+    alghorithm_handler_implemented[5] = exists;
     
     
     //    if(script_manager->getVirtualMachine()->callProcedure(SEU_ALGORITHM_SETUP,
@@ -238,5 +258,19 @@ void ScriptableExecutionUnit::unitUndefineActionAndDataset() throw(CException) {
         //clear memory
         script_manager.reset();
     }
+}
+
+bool ScriptableExecutionUnit::updatedInputDataset(const std::string& attribute_name,
+                                                  const chaos::common::data::CDataVariant& value) {
+    SEU_DBG << CHAOS_FORMAT("Signal for %1% input dataset attribute with value %2%", %attribute_name%value.asString());
+    if(!alghorithm_handler_implemented[1]) return false;
     
+    bool managed = true;
+    ScriptInParam input_param;
+    if(script_manager->getVirtualMachine()->callProcedure(SEU_INPUT_ATTRIBUTE_CHANGED,
+                                                          input_param)) {
+        SEU_LERR << CHAOS_FORMAT("Error calling function %1% of the script(it maybe not implemented)", %SEU_INPUT_ATTRIBUTE_CHANGED);
+        managed = false;
+    }
+    return managed;
 }

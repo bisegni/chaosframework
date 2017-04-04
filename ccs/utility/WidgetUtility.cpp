@@ -25,6 +25,25 @@ void WidgetUtility::cmRegisterActions(QWidget *contextual_menu_parent,
                 SLOT(cmTriggerHandler()));
     }
 }
+void WidgetUtility::cmRegisterActions(QWidget *contextual_menu_parent,
+                                      const QVector< QPair<QString, QVariant> >& widget_contextual_menu_action) {
+    if(!contextual_menu_parent) return;
+    contextual_menu_parent->setContextMenuPolicy(Qt::ActionsContextMenu);
+
+    QVector< QPair<QString, QVariant> >::const_iterator it = widget_contextual_menu_action.begin();
+    QVector< QPair<QString, QVariant> >::const_iterator end = widget_contextual_menu_action.end();
+    while(it != end) {
+        const QString action_name = it->first;
+        QAction *action = new QAction(action_name, contextual_menu_parent);
+        action->setData(it->second);
+        contextual_menu_parent->addAction(action);
+        connect(action,
+                SIGNAL(triggered()),
+                this,
+                SLOT(cmTriggerHandler()));
+        it++;
+    }
+}
 
 QAction *WidgetUtility::cmGetAction(QWidget *parent,
                                     const QString& action_name) {

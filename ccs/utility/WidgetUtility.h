@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QAction>
 #include <QVariant>
-
+#include <QVector>
 class WidgetUtilityhandler {
 public:
     virtual void cmActionTrigger(const QString& cm_title,
@@ -24,6 +24,9 @@ public:
     ~WidgetUtility();
     void cmRegisterActions(QWidget *contextual_menu_parent,
                            const QMap<QString, QVariant> &cm_map);
+
+    void cmRegisterActions(QWidget *contextual_menu_parent,
+                           const QVector< QPair<QString, QVariant> >& widget_contextual_menu_action);
 
     QAction *cmGetAction(QWidget *parent,
                          const QString& action_name);
