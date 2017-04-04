@@ -22,6 +22,7 @@
 #ifndef __CHAOSFramework_B2279B10_10C2_4207_92E0_420FD530F85A_api_h
 #define __CHAOSFramework_B2279B10_10C2_4207_92E0_420FD530F85A_api_h
 
+#include <chaos/cu_toolkit/control_manager/script/api/EUSearch.h>
 #include <chaos/cu_toolkit/control_manager/script/api/EUDSValueManagement.h>
 
 #endif /* __CHAOSFramework_B2279B10_10C2_4207_92E0_420FD530F85A_api_h */

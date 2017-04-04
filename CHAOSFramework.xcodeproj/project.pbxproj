@@ -365,6 +365,8 @@
 		32655AC51E93C12E00829266 /* EUDSValueManagement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32655AC31E93C12D00829266 /* EUDSValueManagement.cpp */; };
 		32655AC61E93C12E00829266 /* EUDSValueManagement.h in Headers */ = {isa = PBXBuildFile; fileRef = 32655AC41E93C12E00829266 /* EUDSValueManagement.h */; };
 		32655ACA1E93C30800829266 /* api.h in Headers */ = {isa = PBXBuildFile; fileRef = 32655AC81E93C30800829266 /* api.h */; };
+		32655ACD1E93FCF200829266 /* EUSearch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32655ACB1E93FCF200829266 /* EUSearch.cpp */; };
+		32655ACE1E93FCF200829266 /* EUSearch.h in Headers */ = {isa = PBXBuildFile; fileRef = 32655ACC1E93FCF200829266 /* EUSearch.h */; };
 		3265BF4615D1A9CA00C3CAC6 /* ChaosUIToolkitCWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 3265BF4515D1A9CA00C3CAC6 /* ChaosUIToolkitCWrapper.h */; };
 		3265BF4915D1AA9F00C3CAC6 /* ChaosUIToolkitCWrapper.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3265BF4815D1AA9F00C3CAC6 /* ChaosUIToolkitCWrapper.cc */; };
 		3265F332197E626900F22FBC /* WorkUnitManagement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D72CA8197D196D00512B89 /* WorkUnitManagement.cpp */; };
@@ -1634,6 +1636,8 @@
 		32655AC31E93C12D00829266 /* EUDSValueManagement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EUDSValueManagement.cpp; sourceTree = "<group>"; };
 		32655AC41E93C12E00829266 /* EUDSValueManagement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EUDSValueManagement.h; sourceTree = "<group>"; };
 		32655AC81E93C30800829266 /* api.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = api.h; sourceTree = "<group>"; };
+		32655ACB1E93FCF200829266 /* EUSearch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EUSearch.cpp; sourceTree = "<group>"; };
+		32655ACC1E93FCF200829266 /* EUSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EUSearch.h; sourceTree = "<group>"; };
 		326573F218CCD365009E9B6B /* TemplatedKeyObjectContainer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TemplatedKeyObjectContainer.h; sourceTree = "<group>"; };
 		3265BF4515D1A9CA00C3CAC6 /* ChaosUIToolkitCWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChaosUIToolkitCWrapper.h; sourceTree = "<group>"; };
 		3265BF4815D1AA9F00C3CAC6 /* ChaosUIToolkitCWrapper.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChaosUIToolkitCWrapper.cc; sourceTree = "<group>"; };
@@ -3499,9 +3503,11 @@
 		32655AC21E93C0FF00829266 /* api */ = {
 			isa = PBXGroup;
 			children = (
+				32655AC81E93C30800829266 /* api.h */,
+				32655ACB1E93FCF200829266 /* EUSearch.cpp */,
+				32655ACC1E93FCF200829266 /* EUSearch.h */,
 				32655AC31E93C12D00829266 /* EUDSValueManagement.cpp */,
 				32655AC41E93C12E00829266 /* EUDSValueManagement.h */,
-				32655AC81E93C30800829266 /* api.h */,
 			);
 			path = api;
 			sourceTree = "<group>";
@@ -5745,6 +5751,7 @@
 				326DB4CA14B3A3E50018A8D0 /* DataManagerException.h in Headers */,
 				3270D5E91CCFAC4F0072017B /* AbstractExecutionUnit.h in Headers */,
 				326933EE1D5089590033D9E9 /* trigger_system.h in Headers */,
+				32655ACE1E93FCF200829266 /* EUSearch.h in Headers */,
 				3252A3141C8ED6BD00900FF2 /* DatasetAttributeHandler.h in Headers */,
 				32655AC61E93C12E00829266 /* EUDSValueManagement.h in Headers */,
 				326DB4CC14B3A3E50018A8D0 /* KeyDataStorage.h in Headers */,
@@ -6593,6 +6600,7 @@
 				326DB4CB14B3A3E50018A8D0 /* KeyDataStorage.cpp in Sources */,
 				32CFC5C51AF55FED00E2A0B6 /* IOCU.cpp in Sources */,
 				325F8B511763AF2300EFE616 /* SlowCommand.cpp in Sources */,
+				32655ACD1E93FCF200829266 /* EUSearch.cpp in Sources */,
 				328CC9D61763CCC7000B30B6 /* AbstractDriver.cpp in Sources */,
 				32234D3F176E045100525E0C /* SlowCommandExecutor.cpp in Sources */,
 				3252A3181C8EE28E00900FF2 /* DatasetAttributeHandler.cpp in Sources */,

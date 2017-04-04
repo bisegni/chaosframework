@@ -22,7 +22,6 @@
 #ifndef __CHAOSFramework__820DA6A_8242_464B_A93B_22F3F8B08728_EUAbstractApi_h
 #define __CHAOSFramework__820DA6A_8242_464B_A93B_22F3F8B08728_EUAbstractApi_h
 
-
 #include <chaos/common/script/AbstractScriptableClass.h>
 
 namespace chaos {

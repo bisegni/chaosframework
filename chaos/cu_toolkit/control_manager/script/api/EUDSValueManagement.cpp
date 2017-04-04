@@ -30,7 +30,6 @@ using namespace chaos::cu::control_manager::script::api;
 #define EUSW_DBG     DBG_LOG_1_P(EUDSValueManagement, eu_instance->getCUID())
 #define EUSW_LERR    ERR_LOG_1_P(EUDSValueManagement, eu_instance->getCUID())
 
-
 EUDSValueManagement::EUDSValueManagement(ScriptableExecutionUnit *_eu_instance):
 TemplatedAbstractScriptableClass(this,
                                  "eu"),
