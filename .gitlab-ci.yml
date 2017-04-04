@@ -1,14 +1,53 @@
-image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
 cache:
   paths:
   - /builds/bisegni/chaosframework
 
-build_framework:
+stages:
+  - build
+  - deploy
+
+build_framework_x86_64:
+  stage: build
+  image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
   script:
-    - echo $PWD
+    - export NOW=$(date +"%Y%m%d-%H%M%S")
+    - export TAR_NAME_POSTFIX="development_"$NOW
+    - echo "Working directory:"$PWD
+    - echo "Artifact name:"$TAR_NAME_POSTFIX
     - cmake -DCHAOS_ARCHITECTURE_TEST=ON .
     - make  -j  $(nproc) ExperimentalStart
     - make  -j  $(nproc) ExperimentalConfigure
     - make  -j  $(nproc) ExperimentalBuild
+    - tar -zcvf /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux_$TAR_NAME_POSTFIX.tgz /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux
   only:
     - development
+
+build_framework_arm:
+  stage: build
+  image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
+  script:
+    - export NOW=$(date +"%Y%m%d-%H%M%S")
+    - export TAR_NAME_POSTFIX="development_"$NOW
+    - echo "Working directory:"$PWD
+    - echo "Artifact name:"$TAR_NAME_POSTFIX
+    - cmake -DCHAOS_TARGET=armhf
+    - make  -j  $(nproc) ExperimentalStart
+    - make  -j  $(nproc) ExperimentalConfigure
+    - make  -j  $(nproc) ExperimentalBuild
+    - tar -zcvf /builds/bisegni/chaosframework/chaos-distrib-x86_64-armhf_$TAR_NAME_POSTFIX.tgz /builds/bisegni/chaosframework/chaos-distrib-x86_64-armhf
+
+deploy_framework_x86_64:
+    stage: deploy
+    image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
+    script:
+      - export NOW=$(date +"%Y%m%d-%H%M%S")
+      - export TAR_NAME_POSTFIX="development_"$NOW
+      - echo "scp /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux_$TAR_NAME_POSTFIX.tgz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/"
+
+deploy_framework_arm:
+    stage: deploy
+    image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
+    script:
+      - export NOW=$(date +"%Y%m%d-%H%M%S")
+      - export TAR_NAME_POSTFIX="development_"$NOW
+      - echo "scp /builds/bisegni/chaosframework/chaos-distrib-x86_64-arm_$TAR_NAME_POSTFIX.tgz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/"
