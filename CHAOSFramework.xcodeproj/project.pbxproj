@@ -111,8 +111,6 @@
 		322A3BC11CEE1A7F00FAD9DA /* LuaScriptVM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322A3BBE1CEE1A7F00FAD9DA /* LuaScriptVM.cpp */; };
 		322A3BC21CEE1A7F00FAD9DA /* LuaScriptVM.h in Headers */ = {isa = PBXBuildFile; fileRef = 322A3BBF1CEE1A7F00FAD9DA /* LuaScriptVM.h */; };
 		322A3BC31CEE1A7F00FAD9DA /* luna.h in Headers */ = {isa = PBXBuildFile; fileRef = 322A3BC01CEE1A7F00FAD9DA /* luna.h */; };
-		322A3BC81CEE1AA900FAD9DA /* EUScriptableWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322A3BC41CEE1AA900FAD9DA /* EUScriptableWrapper.cpp */; };
-		322A3BC91CEE1AA900FAD9DA /* EUScriptableWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 322A3BC51CEE1AA900FAD9DA /* EUScriptableWrapper.h */; };
 		322A3BCA1CEE1AA900FAD9DA /* ScriptableExecutionUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322A3BC61CEE1AA900FAD9DA /* ScriptableExecutionUnit.cpp */; };
 		322A3BCB1CEE1AA900FAD9DA /* ScriptableExecutionUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 322A3BC71CEE1AA900FAD9DA /* ScriptableExecutionUnit.h */; };
 		322DE35518D467E5006F1551 /* ConcuredUsedItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 322DE35418D467E5006F1551 /* ConcuredUsedItem.h */; };
@@ -1339,8 +1337,6 @@
 		322A3BBE1CEE1A7F00FAD9DA /* LuaScriptVM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LuaScriptVM.cpp; sourceTree = "<group>"; };
 		322A3BBF1CEE1A7F00FAD9DA /* LuaScriptVM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LuaScriptVM.h; sourceTree = "<group>"; };
 		322A3BC01CEE1A7F00FAD9DA /* luna.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = luna.h; sourceTree = "<group>"; };
-		322A3BC41CEE1AA900FAD9DA /* EUScriptableWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EUScriptableWrapper.cpp; sourceTree = "<group>"; };
-		322A3BC51CEE1AA900FAD9DA /* EUScriptableWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EUScriptableWrapper.h; sourceTree = "<group>"; };
 		322A3BC61CEE1AA900FAD9DA /* ScriptableExecutionUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptableExecutionUnit.cpp; sourceTree = "<group>"; };
 		322A3BC71CEE1AA900FAD9DA /* ScriptableExecutionUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptableExecutionUnit.h; sourceTree = "<group>"; };
 		322DE35418D467E5006F1551 /* ConcuredUsedItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConcuredUsedItem.h; sourceTree = "<group>"; };
@@ -4355,8 +4351,6 @@
 			isa = PBXGroup;
 			children = (
 				32655AC21E93C0FF00829266 /* api */,
-				322A3BC41CEE1AA900FAD9DA /* EUScriptableWrapper.cpp */,
-				322A3BC51CEE1AA900FAD9DA /* EUScriptableWrapper.h */,
 				322A3BC61CEE1AA900FAD9DA /* ScriptableExecutionUnit.cpp */,
 				322A3BC71CEE1AA900FAD9DA /* ScriptableExecutionUnit.h */,
 			);
@@ -5740,7 +5734,6 @@
 				3215861117875FDB0090E7E6 /* DriverPluginLoader.h in Headers */,
 				32C43BBB1D65FDE8007F5864 /* publishing_types.h in Headers */,
 				32A116AE1D181D2500FF44ED /* ExecutionPool.h in Headers */,
-				322A3BC91CEE1AA900FAD9DA /* EUScriptableWrapper.h in Headers */,
 				326DB4C014B3A3E50018A8D0 /* AbstractControlUnit.h in Headers */,
 				326DB4C214B3A3E50018A8D0 /* ControlManager.h in Headers */,
 				3232F458177743DC003E1D4A /* AbstractDriverPlugin.h in Headers */,
@@ -6611,7 +6604,6 @@
 				3291D5181D5DEE890077CBB3 /* PublishTarget.cpp in Sources */,
 				32F2241B179AE3BC00853F62 /* RTAbstractControlUnit.cpp in Sources */,
 				32995C421BAC57A300F68148 /* SCWaitCommand.cpp in Sources */,
-				322A3BC81CEE1AA900FAD9DA /* EUScriptableWrapper.cpp in Sources */,
 				32F2241F179AEED500853F62 /* SCAbstractControlUnit.cpp in Sources */,
 				32C4EF251D4BA7060014F3D3 /* DatasetEditor.cpp in Sources */,
 				32C4EF461D4F88ED0014F3D3 /* DatasetSubject.cpp in Sources */,

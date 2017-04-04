@@ -33,13 +33,14 @@ SET(cu_lib_src ${cu_lib_src}
         data_manager/manipulation/DatasetCacheWrapper.cpp
         data_manager/manipulation/DatasetEditor.cpp)
 
+SET(cu_lib_src ${cu_lib_src}
+        control_manager/script/ScriptableExecutionUnit.cpp
+        control_manager/script/api/EUDSValueManagement.cpp)
 
 SET(cu_lib_src ${cu_lib_src}
         control_manager/AbstractControlUnit.cpp
         control_manager/ControlManager.cpp
         control_manager/SCAbstractControlUnit.cpp
-        control_manager/script/ScriptableExecutionUnit.cpp
-        control_manager/script/EUScriptableWrapper.cpp
         control_manager/RTAbstractControlUnit.cpp
         control_manager/AbstractExecutionUnit.cpp
         control_manager/WorkUnitManagement.cpp
