@@ -24,8 +24,12 @@
 
 #include <chaos/common/script/ScriptManager.h>
 
+#include <chaos/common/chaos_types.h>
+
 #include <chaos/cu_toolkit/control_manager/script/api/api.h>
 #include <chaos/cu_toolkit/control_manager/AbstractExecutionUnit.h>
+
+#include <boost/shared_ptr.hpp>
 
 #include <bitset>
 
@@ -36,12 +40,9 @@ namespace chaos {
                 namespace api {
                     class EUDSValueManagement;
                 }
-#define SEU_ALGORITHM_LAUNCH        "algorithmLaunch"
-#define SEU_ALGORITHM_START         "algorithmStart"
-#define SEU_ALGORITHM_STEP          "algorithmStep"
-#define SEU_ALGORITHM_STOP          "algorithmStop"
-#define SEU_ALGORITHM_END           "algorithmEnd"
-#define SEU_INPUT_ATTRIBUTE_CHANGED "inputAttributeChanged"
+                
+                typedef boost::shared_ptr<chaos::common::script::AbstractScriptableClass> ApiClassShrdPtr;
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(ApiClassShrdPtr, VectorApiClass);
                 
                 //! this class implementa an execution unit defined by a script
                 /*!
@@ -53,6 +54,7 @@ namespace chaos {
                  */
                 class ScriptableExecutionUnit:
                 public AbstractExecutionUnit {
+                    friend class api::EUSearch;
                     friend class api::EUDSValueManagement;
                     PUBLISHABLE_CONTROL_UNIT_INTERFACE(AbstractExecutionUnit)
                     
@@ -63,12 +65,15 @@ namespace chaos {
                     std::string script_content;
                     
                     //!scrip manger instance initilizated at eu init time
-                    std::auto_ptr<common::script::ScriptManager> script_manager;
+                    std::auto_ptr<chaos::common::script::ScriptManager> script_manager;
                     
-                    //! class that wrap the execution uni to script
-                    api::EUDSValueManagement api_ds_management;
+                    //!api vector
+                    VectorApiClass api_classes;
                     
                     std::bitset<6> alghorithm_handler_implemented;
+                    
+                    void registerApi();
+                    void unregisterApi();
                 public:
                     /*! default constructor
                      \param _execution_unit_param is a string that contains parameter to pass during the contorl unit creation

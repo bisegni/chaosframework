@@ -29,9 +29,16 @@ using namespace chaos::common::script;
 using namespace chaos::common::utility;
 using namespace chaos::cu::control_manager::script;
 
-#define SEU_LAPP    INFO_LOG(ScriptableExecutionUnit) << getDeviceID() << " - "
-#define SEU_DBG     DBG_LOG(ScriptableExecutionUnit) << getDeviceID() << " - "
-#define SEU_LERR    ERR_LOG(ScriptableExecutionUnit) << getDeviceID() << " - "
+#define SEU_LAPP    INFO_LOG_1_P(ScriptableExecutionUnit, getDeviceID())
+#define SEU_DBG     DBG_LOG_1_P(ScriptableExecutionUnit, getDeviceID())
+#define SEU_LERR    ERR_LOG_1_P(ScriptableExecutionUnit, getDeviceID())
+
+#define SEU_ALGORITHM_LAUNCH        "algorithmLaunch"
+#define SEU_ALGORITHM_START         "algorithmStart"
+#define SEU_ALGORITHM_STEP          "algorithmStep"
+#define SEU_ALGORITHM_STOP          "algorithmStop"
+#define SEU_ALGORITHM_END           "algorithmEnd"
+#define SEU_INPUT_ATTRIBUTE_CHANGED "inputAttributeChanged"
 
 PUBLISHABLE_CONTROL_UNIT_IMPLEMENTATION(ScriptableExecutionUnit)
 
@@ -42,8 +49,7 @@ PUBLISHABLE_CONTROL_UNIT_IMPLEMENTATION(ScriptableExecutionUnit)
 ScriptableExecutionUnit::ScriptableExecutionUnit(const std::string& _execution_unit_id,
                                                  const std::string& _execution_unit_param):
 AbstractExecutionUnit(_execution_unit_id,
-                      _execution_unit_param),
-api_ds_management(this){}
+                      _execution_unit_param){}
 
 /*!
  Parametrized constructor
@@ -56,8 +62,7 @@ ScriptableExecutionUnit::ScriptableExecutionUnit(const std::string& _execution_u
                                                  const ControlUnitDriverList& _execution_unit_drivers):
 AbstractExecutionUnit(_execution_unit_id,
                       _execution_unit_param,
-                      _execution_unit_drivers),
-api_ds_management(this){}
+                      _execution_unit_drivers){}
 
 //!default destructor
 ScriptableExecutionUnit::~ScriptableExecutionUnit() {}
@@ -73,6 +78,29 @@ void ScriptableExecutionUnit::addAttributeToDataSet(const std::string& attribute
                                                  attribute_type,
                                                  attribute_direction);
 }
+
+void ScriptableExecutionUnit::registerApi() {
+    CHAOS_ASSERT(script_manager.get());
+    
+    for(VectorApiClassIterator it = api_classes.begin(),
+        end = api_classes.end();
+        it != end;
+        it++) {
+        script_manager->registerApiClass(*(*it));
+    }
+}
+
+void ScriptableExecutionUnit::unregisterApi() {
+    CHAOS_ASSERT(script_manager.get());
+    
+    for(VectorApiClassIterator it = api_classes.begin(),
+        end = api_classes.end();
+        it != end;
+        it++) {
+        script_manager->deregisterApiClass(*(*it));
+    }
+}
+
 
 void ScriptableExecutionUnit::unitDefineActionAndDataset() throw(CException) {
     int err = 0;
@@ -135,14 +163,16 @@ void ScriptableExecutionUnit::unitDefineActionAndDataset() throw(CException) {
     }
     
     //allocate script manager or language
-    SEU_LAPP << CHAOS_FORMAT("Create script manage for '%1%' language!", %script_language);
+    SEU_LAPP << CHAOS_FORMAT("Create script manager for '%1%' language!", %script_language);
     script_manager.reset(new ScriptManager(script_language));
     InizializableService::initImplementation(script_manager.get(),
                                              NULL,
                                              "ScriptManager",
                                              __PRETTY_FUNCTION__);
     SEU_LAPP << "Register api";
-    script_manager->registerApiClass(&api_ds_management);
+    api_classes.push_back(ApiClassShrdPtr(new api::EUSearch(this)));
+    api_classes.push_back(ApiClassShrdPtr(new api::EUDSValueManagement(this)));
+    registerApi();
     
     //!load script within the virtual machine
     SEU_LAPP << "Try to load the script";
@@ -251,6 +281,9 @@ void ScriptableExecutionUnit::executeAlgorithmEnd() throw (CException) {
 }
 
 void ScriptableExecutionUnit::unitUndefineActionAndDataset() throw(CException) {
+    SEU_LAPP << "Unregister api";
+    unregisterApi();
+    
     if(script_manager.get() != NULL) {
         InizializableService::deinitImplementation(script_manager.get(),
                                                    "ScriptManager",

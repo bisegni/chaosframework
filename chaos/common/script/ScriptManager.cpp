@@ -39,22 +39,22 @@ ScriptManager::~ScriptManager() {
     map_api_class.clear();
 }
 
-void ScriptManager::registerApiClass(AbstractScriptableClass *api_class) {
+void ScriptManager::registerApiClass(AbstractScriptableClass& api_class) {
         //write lock the map
     boost::unique_lock<boost::shared_mutex> rl(map_mutex);
-    if(map_api_class.count(api_class->api_class_name)) return;
+    if(map_api_class.count(api_class.api_class_name)) return;
         //add api class
-    SCRPTMAN_DBG << CHAOS_FORMAT("Register api class for %1% class", %api_class->api_class_name);
-    map_api_class.insert(make_pair(api_class->api_class_name, api_class));
+    SCRPTMAN_DBG << CHAOS_FORMAT("Register api class for %1% class", %api_class.api_class_name);
+    map_api_class.insert(make_pair(api_class.api_class_name, &api_class));
 }
 
-void ScriptManager::deregisterApiClass(AbstractScriptableClass *api_class) {
+void ScriptManager::deregisterApiClass(AbstractScriptableClass& api_class) {
         //write lock on map
     boost::unique_lock<boost::shared_mutex> rl(map_mutex);
-    if(map_api_class.count(api_class->api_class_name) == 0) return;
+    if(map_api_class.count(api_class.api_class_name) == 0) return;
         //remove api class
-    SCRPTMAN_DBG << CHAOS_FORMAT("Deregister api class for %1% class", %api_class->api_class_name);
-    map_api_class.erase(api_class->api_class_name);
+    SCRPTMAN_DBG << CHAOS_FORMAT("Deregister api class for %1% class", %api_class.api_class_name);
+    map_api_class.erase(api_class.api_class_name);
 }
 
     //!entry point of the scirpting for call an exposed api

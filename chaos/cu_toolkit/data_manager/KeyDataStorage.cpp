@@ -230,7 +230,6 @@ void KeyDataStorage::pushDataSet(KeyDataStorageDomain domain,
     }
 }
 
-//! load all dataseet for a restore point
 int KeyDataStorage::loadRestorePoint(const std::string& restore_point_tag) {
     int err = 0;
     chaos_data::CDataWrapper *dataset = NULL;
@@ -299,7 +298,6 @@ int KeyDataStorage::loadRestorePoint(const std::string& restore_point_tag) {
     return err;
 }
 
-//! clear all loaded dataset for a restore point
 int KeyDataStorage::clearRestorePoint(const std::string& restore_point_tag) {
     int err = 0;
     if(restore_point_map.count(restore_point_tag)) {
@@ -309,7 +307,6 @@ int KeyDataStorage::clearRestorePoint(const std::string& restore_point_tag) {
     
 }
 
-//!return the dataset asccoaited to a domain in a determinated restore tag
 boost::shared_ptr<chaos_data::CDataWrapper> KeyDataStorage::getDatasetFromRestorePoint(const std::string& restore_point_tag,
                                                                                        KeyDataStorageDomain domain) {
     if(!restore_point_map.count(restore_point_tag)) {
@@ -332,9 +329,6 @@ boost::shared_ptr<chaos_data::CDataWrapper> KeyDataStorage::getDatasetFromRestor
     }
 }
 
-/*
- 
- */
 CDataWrapper* KeyDataStorage::updateConfiguration(CDataWrapper *newConfiguration) {
     //update the driver configration
     if(io_data_driver) io_data_driver->updateConfiguration(newConfiguration);
@@ -376,4 +370,71 @@ uint64_t KeyDataStorage::getStorageLiveTime() {
 
 uint64_t KeyDataStorage::getStorageHistoryTime() {
     return storage_history_time;
+}
+
+int KeyDataStorage::performSelfQuery(chaos::common::io::QueryCursor **cursor,
+                                     KeyDataStorageDomain dataset_domain,
+                                     const uint64_t start_ts,
+                                     const uint64_t end_ts) {
+    std::string node_dataset;
+    switch(dataset_domain) {
+        case DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT:
+            node_dataset = output_key;
+            break;
+        case DataPackCommonKey::DPCK_DATASET_TYPE_INPUT:
+            node_dataset = input_key;
+            break;
+        case DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM:
+            node_dataset = system_key;
+            break;
+        case DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM:
+            node_dataset = custom_key;
+            break;
+        case DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM:
+            node_dataset = cu_alarm_key;
+            break;
+        case DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM:
+            node_dataset = dev_alarm_key;
+            break;
+    }
+    *cursor = io_data_driver->performQuery(node_dataset,
+                                           start_ts,
+                                           end_ts);
+    return ((*cursor == NULL)?-1:0);
+}
+
+int KeyDataStorage::performGeneralQuery(chaos::common::io::QueryCursor **cursor,
+                                        const std::string& node_id,
+                                        KeyDataStorageDomain dataset_domain,
+                                        const uint64_t start_ts,
+                                        const uint64_t end_ts) {
+    std::string node_dataset;
+    switch(dataset_domain) {
+        case DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT:
+            node_dataset = node_id + DataPackPrefixID::OUTPUT_DATASET_POSTFIX;
+            break;
+        case DataPackCommonKey::DPCK_DATASET_TYPE_INPUT:
+            node_dataset = node_id + DataPackPrefixID::INPUT_DATASET_POSTFIX;
+            break;
+        case DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM:
+            node_dataset = node_id + DataPackPrefixID::SYSTEM_DATASET_POSTFIX;
+            break;
+        case DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM:
+            node_dataset = node_id + DataPackPrefixID::CUSTOM_DATASET_POSTFIX;
+            break;
+        case DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM:
+            node_dataset = node_id + DataPackPrefixID::CU_ALARM_DATASET_POSTFIX;
+            break;
+        case DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM:
+            node_dataset = node_id + DataPackPrefixID::DEV_ALARM_DATASET_POSTFIX;
+            break;
+    }
+    *cursor = io_data_driver->performQuery(node_dataset,
+                                           start_ts,
+                                           end_ts);
+    return ((*cursor == NULL)?-1:0);
+}
+
+void KeyDataStorage::releseQuery(chaos::common::io::QueryCursor *cursor) {
+    io_data_driver->releaseQuery(cursor);
 }

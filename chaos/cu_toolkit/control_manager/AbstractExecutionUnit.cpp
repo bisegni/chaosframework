@@ -37,6 +37,7 @@ using namespace chaos::common::exception;
 using namespace chaos::common::data::cache;
 
 using namespace chaos::cu;
+using namespace chaos::cu::data_manager;
 using namespace chaos::cu::control_manager;
 
 using namespace boost;
@@ -192,4 +193,26 @@ void AbstractExecutionUnit::unitStop() throw(CException) {
 //! inherited method
 void AbstractExecutionUnit::unitDeinit() throw(CException) {
     executeAlgorithmEnd();
+}
+
+int AbstractExecutionUnit::performQuery(chaos::common::io::QueryCursor **cursor,
+                                        const std::string& node_id,
+                                        KeyDataStorageDomain dataset_domain,
+                                        const uint64_t start_ts,
+                                        const uint64_t end_ts,
+                                        const uint32_t page_len) {
+    CHAOS_ASSERT(key_data_storage.get());
+    int err = key_data_storage->performGeneralQuery(cursor,
+                                                    node_id,
+                                                    dataset_domain,
+                                                    start_ts,
+                                                    end_ts);
+    if(!err || *cursor) {
+        (*cursor)->setPageDimension(page_len);
+    }
+    return err;
+}
+
+void AbstractExecutionUnit::releseQuery(chaos::common::io::QueryCursor *cursor) {
+    key_data_storage->releseQuery(cursor);
 }

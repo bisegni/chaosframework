@@ -146,6 +146,25 @@ namespace chaos{
                 void setOutputAttributeValue(const std::string& attribute_name,
                                              const CDataVariant& attribute_value);
                 
+                //! perform a new search
+                /*!
+                 \param cursor is an handle to a QueryCursor structure, if all goes right a new pointer
+                 to this structure is returned. It need to beused ot fetch the results
+                 \param key specify the target of the search operation
+                 \param start_ts is the initial time stamp for search time constraint
+                 \param end_ts is the last time stamp for search time constraint
+                 \param page_len is the total number of element that the page need to be contained
+                 */
+                int performQuery(chaos::common::io::QueryCursor **cursor,
+                                 const std::string& node_id,
+                                 chaos::cu::data_manager::KeyDataStorageDomain dataset_domain,
+                                 const uint64_t start_ts,
+                                 const uint64_t end_ts,
+                                 const uint32_t page_len);
+                
+                //! release a cursor
+                void releseQuery(chaos::common::io::QueryCursor *cursor);
+                
                 //!Event for notify that alghortim is going to be executed
                 virtual void executeAlgorithmLaunch() throw (CException) = 0;
                 

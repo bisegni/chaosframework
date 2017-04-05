@@ -44,9 +44,11 @@ namespace chaos {
                         
                         //execution unit instances
                         ScriptableExecutionUnit *eu_instance;
+                    public:
+                        ~EUDSValueManagement();
                     protected:
                         EUDSValueManagement(ScriptableExecutionUnit *_eu_instance);
-                        ~EUDSValueManagement();
+                        
                         
                         //! Add an attribute to the dataset
                         /*!

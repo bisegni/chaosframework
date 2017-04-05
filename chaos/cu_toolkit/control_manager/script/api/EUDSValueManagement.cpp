@@ -77,8 +77,6 @@ int EUDSValueManagement::setOutputAttributeValue(const common::script::ScriptInP
     } catch(...) {
         return -3;
     }
-    
-    //check number of parameter
     return 0;
 }
 
@@ -96,8 +94,6 @@ int EUDSValueManagement::getOutputAttributeValue(const common::script::ScriptInP
     } catch(...) {
         return -3;
     }
-    
-    //check number of parameter
     return 0;
 }
 
@@ -114,6 +110,5 @@ int EUDSValueManagement::getInputAttributeValue(const common::script::ScriptInPa
     } catch(...) {
         return -3;
     }
-    //check number of parameter
     return 0;
 }

@@ -458,7 +458,7 @@ namespace chaos{
                  */
                 virtual void unitUndefineActionAndDataset() throw(CException);
                 
-                //!handler calledfor restor a control unit to a determinate point
+                //!handler called for restore a control unit to a determinate point
                 /*!
                  On the call of this handler the cache restore part is filled with the dataset
                  that at restore point was pushed by control unit.
@@ -658,8 +658,7 @@ namespace chaos{
                 virtual void pushDevAlarmDataset();
                 
                 //!copy into a CDataWrapper last received initialization package
-                void copyInitConfiguraiton(CDataWrapper& copy);
-                
+                void copyInitConfiguraiton(chaos::common::data::CDataWrapper& copy);
             };
         }
     }
