@@ -28,7 +28,7 @@
 #include <boost/thread.hpp>
 #include <boost/atomic.hpp>
 
-#include <mongoose.h>
+#include "mongoose.h"
 
 namespace chaos {
     
@@ -67,7 +67,7 @@ namespace chaos {
                     boost::atomic<int> thread_index;
                     
                     boost::thread_group http_server_thread;
-                    
+                    std::string basePath;
                     //!poll the http server in a thread
                     void pollHttpServer(struct mg_server *http_server);
                     bool checkForContentType(struct mg_connection *connection,

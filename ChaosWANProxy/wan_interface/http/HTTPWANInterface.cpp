@@ -133,8 +133,8 @@ void HTTPWANInterface::init(void *init_data) throw(CException) {
 		mg_set_option(http_server, "enable_directory_listing", "false");
 		HTTWAN_INTERFACE_APP_ << " Thread " << idx << " configured";
 		//configure handler
-		mg_add_uri_handler(http_server, "/api/", event_handler);
-		mg_server_do_i_handle(http_server, do_i_handle);
+	//	mg_add_uri_handler(http_server, "/api/", event_handler);
+	//	mg_server_do_i_handle(http_server, do_i_handle);
 		HTTWAN_INTERFACE_APP_ << " Thread " << idx << " attached to handler";
 		//add server to the list
 		http_server_list.push_back(http_server);

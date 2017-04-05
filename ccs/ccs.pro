@@ -40,8 +40,7 @@ LIBS +=     -ljsoncpp\
             -lboost_chrono\
             -lboost_filesystem\
             -lboost_log\
-            -lboost_log_setup\
-            -lmongoose
+            -lboost_log_setup
 
 SOURCES += main.cpp\
     search/SearchNodeResult.cpp \

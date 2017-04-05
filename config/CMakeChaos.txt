@@ -190,7 +190,7 @@ IF (NOT CACHE_DIR)
       WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/etc
       )
     execute_process(
-      COMMAND ln -sf ./localhost/webui.cfg ./webui.cfg
+      COMMAND ln -sf ./localhost/wan.cfg ./webui.cfg
       WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/etc
       )
 
@@ -200,12 +200,17 @@ IF (NOT CACHE_DIR)
       )
 
     execute_process(
+      COMMAND ln -sf ./localhost/agent.cfg ./agent.cfg
+      WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/etc
+      )
+
+    execute_process(
       COMMAND ln -sf ./ChaosWANProxy ./wan
       WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin
       )
 
     execute_process(
-      COMMAND ln -sf ./CUIserver ./webui
+      COMMAND ln -sf ./ChaosWANProxy ./webui
       WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin
       )
 
@@ -216,6 +221,10 @@ IF (NOT CACHE_DIR)
 
     execute_process(
       COMMAND ln -sf ./ChaosMetadataService ./cds
+      WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin
+      )
+    execute_process(
+      COMMAND ln -sf ./ChaosAgent ./agent
       WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin
       )
 

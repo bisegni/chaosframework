@@ -252,6 +252,7 @@ SET(common_lib_src ${common_lib_src}
         trigger/TriggerExecutionEnviroment.cpp
         trigger/trigger_types.cpp)
 
+
 #compile lua chaos vm and core files
 INCLUDE_DIRECTORIES(script/lua/core ./chaos/common ./chaos/common/metadata_logging ../../)
 FILE(GLOB LuaCoreSource script/lua/core/*.c)
@@ -276,7 +277,7 @@ ENDIF ()
 #SET_TARGET_PROPERTIES(chaos_common_static PROPERTIES OUTPUT_NAME chaos_common)
 
 
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} mongoose ${FrameworkLib})
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${FrameworkLib})
 
 
 

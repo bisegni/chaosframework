@@ -11,11 +11,10 @@ source $scriptdir/common_util.sh
 
 # CDS_EXEC=ChaosMetadataService
 #CDS_CONF=cds.cfg
-MDS_EXEC=ChaosMetadataService
-UI_EXEC=CUIserver
-US_EXEC=UnitServer
-AGENT_EXEC=ChaosAgent
-WAN_EXEC=ChaosWANProxy
+MDS_EXEC=mds
+UI_EXEC=webui
+US_EXEC=cu
+AGENT_EXEC=agent
 if [ -z "$CHAOS_PREFIX" ]; then
     error_mesg "CHAOS_PREFIX environment variables not set"
     exit 1
@@ -54,16 +53,15 @@ mds_checks(){
 
 
 usage(){
-    info_mesg "Usage :$0 {start|stop|status| start agent| start mds | start uis| | start wan| |start devel | stop uis|stop mds |stop wan}"
+    info_mesg "Usage :$0 {start|stop|status| start agent| start mds | start webui|start devel | stop webui|stop mds}"
 }
 start_mds(){
     backend_checks;
     mds_checks;
     info_mesg "starting MDS..."
-    check_proc_then_kill "$MDS_EXEC"
-    cd "$MDS_DIR"
-    run_proc "$MDS_BIN --conf-file $CHAOS_PREFIX/etc/mds.cfg $CHAOS_OVERALL_OPT --log-file $CHAOS_PREFIX/log/$MDS_EXEC.log > $CHAOS_PREFIX/log/$MDS_EXEC.std.out 2>&1 &" "$MDS_EXEC"
-    cd - > /dev/null
+    check_proc_then_kill "$CHAOS_PREFIX/bin/$MDS_EXEC"
+    run_proc "$CHAOS_PREFIX/bin/$MDS_EXEC --conf-file $CHAOS_PREFIX/etc/mds.cfg $CHAOS_OVERALL_OPT --log-file $CHAOS_PREFIX/log/$MDS_EXEC.log > $CHAOS_PREFIX/log/$MDS_EXEC.std.out 2>&1 &" "$MDS_EXEC"
+
 }
 
 # start_cds(){
@@ -74,33 +72,22 @@ start_mds(){
 #     run_proc "$CDS_BIN --conf-file $CHAOS_PREFIX/etc/$CDS_CONF $CHAOS_OVERALL_OPT --log-file $CHAOS_PREFIX/log/$CDS_EXEC.log >> $CHAOS_PREFIX/log/$CDS_EXEC.std.out 2>&1 &" "$CDS_EXEC"
 # }
 start_ui(){
-    port=8081
-    info_mesg "starting UI Server on port " "$port"
-    check_proc_then_kill "$UI_EXEC"
-    run_proc "$CHAOS_PREFIX/bin/$UI_EXEC --rest-port $port --log-on-file --log-file $CHAOS_PREFIX/log/$UI_EXEC.log $CHAOS_OVERALL_OPT --log-level debug > $CHAOS_PREFIX/log/$UI_EXEC.std.out 2>&1 &" "$UI_EXEC"
+    info_mesg "starting " "webui"
+    check_proc_then_kill "$CHAOS_PREFIX/bin/$UI_EXEC"
+    run_proc "$CHAOS_PREFIX/bin/$UI_EXEC --conf-file $CHAOS_PREFIX/etc/webui.cfg $port $CHAOS_OVERALL_OPT > $CHAOS_PREFIX/log/$UI_EXEC.std.out 2>&1 &" "$UI_EXEC"
 }
 
 start_agent(){
 
-    info_mesg "starting Agent"
-    check_proc_then_kill "$AGENT_EXEC"
-    run_proc "$CHAOS_PREFIX/bin/$AGENT_EXEC --log-on-file --log-file $CHAOS_PREFIX/log/$AGENT_EXEC.log $CHAOS_OVERALL_OPT --log-level debug > $CHAOS_PREFIX/log/$AGENT_EXEC.std.out 2>&1 &" "$AGENT_EXEC"
+    info_mesg "starting " "agent"
+    check_proc_then_kill "$CHAOS_PREFIX/bin/$AGENT_EXEC"
+    run_proc "$CHAOS_PREFIX/bin/$AGENT_EXEC --conf-file  $CHAOS_PREFIX/etc/wan.cfg $CHAOS_OVERALL_OPT > $CHAOS_PREFIX/log/$AGENT_EXEC.std.out 2>&1 &" "$AGENT_EXEC"
 }
 
-start_wan(){
-    port=8082
-    info_mesg "starting WAN Server on port " "$port"
-    check_proc_then_kill "$WAN_EXEC"
-    if [ ! -e "$CHAOS_PREFIX/etc/wan.cfg" ]; then
-	     warn_mesg "Wan proxy configuration file not found in \"$CHAOS_PREFIX/etc/WanProxy.conf\" " "start skipped"
-	      return
-    fi
-    run_proc "$CHAOS_PREFIX/bin/$WAN_EXEC --conf-file $CHAOS_PREFIX/etc/wan.cfg $CHAOS_OVERALL_OPT --log-on-file $CHAOS_PREFIX/log/$WAN_EXEC.log > $CHAOS_PREFIX/log/$WAN_EXEC.std.out 2>&1 &" "$WAN_EXEC"
-}
 
 start_us(){
-    info_mesg "starting Unit Server " "$US_EXEC"
-    check_proc_then_kill "$US_EXEC"
+    info_mesg "starting " "$US_EXEC"
+    check_proc_then_kill "$CHAOS_PREFIX/bin/$US_EXEC"
     if [ ! -e "$CHAOS_PREFIX/etc/cu.cfg" ]; then
 	     warn_mesg "UnitServer configuration file not found in \"$CHAOS_PREFIX/etc/cu.cfg\" " "start skipped"
 	      return
@@ -120,26 +107,21 @@ start_us(){
 
 ui_stop()
 {
-    info_mesg "stopping $UI_EXEC Server..."
-    stop_proc "$UI_EXEC"
+    info_mesg "stopping... " "$UI_EXEC"
+    stop_proc "$CHAOS_PREFIX/bin/$UI_EXEC"
 }
 
 agent_stop()
 {
-    info_mesg "stopping $AGENT_EXEC Server..."
-    stop_proc "$AGENT_EXEC"
+    info_mesg "stopping... " "$AGENT_EXEC"
+    stop_proc "$CHAOS_PREFIX/bin/$AGENT_EXEC"
 }
 
-wan_stop()
-{
-    info_mesg "stopping WAN Server..."
-    stop_proc "$WAN_EXEC"
-}
 
 mds_stop()
 {
-    info_mesg "stopping MDS..."
-    stop_proc "$MDS_EXEC"
+    info_mesg "stopping... " "$MDS_EXEC"
+    stop_proc "$CHAOS_PREFIX/bin/$MDS_EXEC"
 }
 
 # cds_stop(){
@@ -156,8 +138,6 @@ start_all(){
     status=$((status + $?))
     start_ui
     status=$((status + $?))
-    start_wan
-    status=$((status + $?))
     start_agent
     status=$((status + $?))
 
@@ -166,8 +146,7 @@ start_all(){
 stop_all(){
     local status=0
     info_mesg "stopping all chaos services..."
-    wan_stop
-    status=$((status + $?))
+
     ui_stop
     status=$((status + $?))
     mds_stop
@@ -176,8 +155,8 @@ stop_all(){
 #    status=$((status + $?))
     agent_stop
     status=$((status + $?))
-    if [ -n "$(get_pid $US_EXEC)" ];then
-	     stop_proc "$US_EXEC"
+    if [ -n "$(get_pid $CHAOS_PREFIX/bin/$US_EXEC)" ];then
+	     stop_proc "$CHAOS_PREFIX/bin/$US_EXEC"
 	      status=$((status + $?))
     fi
     exit $status
@@ -189,24 +168,21 @@ status(){
     status=$((status + $?))
     check_proc "epmd"
     status=$((status + $?))
-    check_proc "$MDS_EXEC"
+    check_proc "$CHAOS_PREFIX/bin/$MDS_EXEC"
     status=$((status + $?))
 #    check_proc "$CDS_EXEC"
 #    status=$((status + $?))
-    check_proc "$UI_EXEC"
+    check_proc "$CHAOS_PREFIX/bin/$UI_EXEC"
     status=$((status + $?))
 
-    check_proc "$AGENT_EXEC"
+    check_proc "$CHAOS_PREFIX/bin/$AGENT_EXEC"
     status=$((status + $?))
 
 
-    if [ -n "$(get_pid $WAN_EXEC)" ];then
-	check_proc "$WAN_EXEC"
-    fi
 
 
-    if [ -n "$(get_pid $US_EXEC)" ];then
-	check_proc "$US_EXEC"
+    if [ -n "$(get_pid $CHAOS_PREFIX/bin/$US_EXEC)" ];then
+	check_proc "$CHAOS_PREFIX/bin/$US_EXEC"
     fi
 
     exit $status
@@ -225,11 +201,7 @@ case "$cmd" in
 		    start_mds
 		    exit 0
 		    ;;
-		# cds)
-		#     start_cds
-		#     exit 0
-		#     ;;
-	       uis)
+	       webui)
 		    start_ui
 		    exit 0
 		    ;;
@@ -237,10 +209,7 @@ case "$cmd" in
 		    start_agent
 		    exit 0
 		    ;;
-	       wan)
-		    start_wan
-		    exit 0
-		    ;;
+
 	       devel)
 		   start_all
 		   start_us
@@ -272,14 +241,11 @@ case "$cmd" in
 		    agent_stop
 		    exit 0
 		    ;;
-		uis)
+		webui)
 		    ui_stop
 		    exit 0
 		    ;;
-		wan)
-		    ui_stop
-		    exit 0
-		    ;;
+
 		*)
 		    error_mesg "\"$2\" no such service"
 		    usage

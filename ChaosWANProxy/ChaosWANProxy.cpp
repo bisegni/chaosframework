@@ -103,7 +103,7 @@ void ChaosWANProxy::init(void *init_data)  throw(CException) {
 			it != setting.list_wan_interface_to_enable.end();
 			it++) {
 			tmp_interface_name.clear();
-			tmp_interface_name = *it + "WANInterface";
+			tmp_interface_name = *it;
 			wan_interface::AbstractWANInterface *tmp_interface_instance = ObjectFactoryRegister<wan_interface::AbstractWANInterface>::getInstance()->getNewInstanceByName(tmp_interface_name);
 			if(!tmp_interface_instance) {
 				LCND_LERR << "Error allocating " <<tmp_interface_name<< " wan interface";

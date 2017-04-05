@@ -62,6 +62,7 @@ namespace chaos{
 				void setCode(int code);
 				
 				int getCode();
+				
 			protected:
 				int code;
 				std::map<std::string, std::string> headers;
