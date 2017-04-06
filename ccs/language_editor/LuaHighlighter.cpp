@@ -7,7 +7,7 @@ LuaHighlighter::LuaHighlighter(QTextDocument *parent) :
     QStringList keywordPatterns;
     HighlightingRule rule;
 
-    keywordFormat.setForeground(Qt::blue);
+    keywordFormat.setForeground(QColor(187,125,215));
     keywordFormat.setFontWeight(QFont::Bold);
 
     keywordPatterns << "\\bfunction\\b"     << "\\bend\\b"          << "\\bwhile\\b"
@@ -31,11 +31,11 @@ LuaHighlighter::LuaHighlighter(QTextDocument *parent) :
 
     clrUmlauts = Qt::red;
     clrNumbers = Qt::magenta;
-    clrSingleComment = Qt::green;
-    clrMultiComment = Qt::green;
-    clrDoubleQuote = Qt::darkGreen;
-    clrSingeleQuote = Qt::darkGreen;
-    clrFunction = Qt::darkCyan;
+    clrSingleComment = Qt::lightGray;
+    clrMultiComment = Qt::lightGray;
+    clrDoubleQuote = QColor(161,193,127);
+    clrSingeleQuote = QColor(161,193,127);
+    clrFunction = QColor(115,174,233);
 
 
     //These characters aren't good in lua
