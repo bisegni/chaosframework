@@ -296,10 +296,12 @@ void ScriptableExecutionUnit::unitUndefineActionAndDataset() throw(CException) {
 bool ScriptableExecutionUnit::updatedInputDataset(const std::string& attribute_name,
                                                   const chaos::common::data::CDataVariant& value) {
     SEU_DBG << CHAOS_FORMAT("Signal for %1% input dataset attribute with value %2%", %attribute_name%value.asString());
-    if(!alghorithm_handler_implemented[1]) return false;
+    if(!alghorithm_handler_implemented[5]) return false;
     
     bool managed = true;
     ScriptInParam input_param;
+    input_param.push_back(CDataVariant(attribute_name));
+    input_param.push_back(value);
     if(script_manager->getVirtualMachine()->callProcedure(SEU_INPUT_ATTRIBUTE_CHANGED,
                                                           input_param)) {
         SEU_LERR << CHAOS_FORMAT("Error calling function %1% of the script(it maybe not implemented)", %SEU_INPUT_ATTRIBUTE_CHANGED);

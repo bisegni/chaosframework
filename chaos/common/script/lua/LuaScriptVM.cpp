@@ -174,11 +174,10 @@ void LuaScriptVM::init(void *init_data) throw(chaos::CException) {
     luaopen_math(ls);
     luaopen_table(ls);
     luaopen_string(ls);
-    
     lua_getglobal(ls, "_G");
     luaL_setfuncs(ls, chaos_wrap, 0);
     lua_pop(ls, 1);
-    
+
     //register wrapper interface
     Luna<ChaosLuaWrapperInterface>::Register(ls);
     

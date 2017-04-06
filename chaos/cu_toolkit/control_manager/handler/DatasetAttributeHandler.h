@@ -121,7 +121,8 @@ typename chaos::cu::control_manager::handler::DatasetAttributeHandlerDescription
                     
                     
                     bool executeHandler(chaos::common::data::CDataWrapper *attribute_changes_set) {
-                        if(attribute_changes_set == NULL) return false;
+                        if(attribute_changes_set == NULL ||
+                           attribute_changes_set->hasKey(attribute_name) == false) return false;
                         //broadcast the attribute value
                         return ((*object_reference).*handler_pointer)(attribute_name,
                                                                       attribute_changes_set->getVariantValue(attribute_name));
