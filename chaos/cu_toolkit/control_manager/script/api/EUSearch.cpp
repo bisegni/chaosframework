@@ -42,6 +42,7 @@ using namespace chaos::cu::control_manager::script::api;
 #define ALIAS_CLOSE_SEARCH          "close"
 #define ALIAS_HAS_NEXT              "hasNext"
 #define ALIAS_NEXT                  "next"
+#define ALIAS_GET_ATTRIBUTE_VALUE   "getAttributeValue"
 
 #define DEFAULT_PAGE_LEN    100
 
@@ -77,6 +78,7 @@ cursor_count(0){
     addApi(ALIAS_CLOSE_SEARCH, &EUSearch::closeSearch);
     addApi(ALIAS_HAS_NEXT, &EUSearch::hasNext);
     addApi(ALIAS_NEXT, &EUSearch::next);
+    addApi(ALIAS_GET_ATTRIBUTE_VALUE, &EUSearch::getAttributeValue);
 }
 
 EUSearch::~EUSearch() {}
@@ -217,7 +219,7 @@ int EUSearch::getAttributeValue(const common::script::ScriptInParam& input_param
         if(map_cursor.count(cursor_id) == 0) return -2;
         
         QueryInfo qi = map_cursor[cursor_id];
-        if(qi.current_extracted_element.get() != NULL) return -3;
+        if(qi.current_extracted_element.get() == NULL) return -3;
         
         if(qi.current_extracted_element->hasKey(atribute_name)) {
             output_parameter.push_back(qi.current_extracted_element->getVariantValue(atribute_name));

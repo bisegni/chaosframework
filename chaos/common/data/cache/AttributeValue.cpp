@@ -159,11 +159,11 @@ bool AttributeValue::setValue(const CDataVariant& attribute_value,
             break;
         }
         case DataType::TYPE_DOUBLE: {
-            bool bv = attribute_value.asBool();
+            double dv = attribute_value.asDouble();
             //copy string to buffer
             std::memcpy(value_buffer,
-                        &bv,
-                        sizeof(bool));
+                        &dv,
+                        sizeof(double));
             break;
         }
         case DataType::TYPE_CLUSTER:

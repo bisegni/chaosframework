@@ -73,7 +73,7 @@ int ChaosLuaWrapperInterface::callApi(lua_State *ls) {
                 if(lua_isinteger(ls, i)){
                     in_param.push_back(CDataVariant((int64_t)lua_tointeger(ls, i)));
                 } else if (lua_isnumber(ls, i)) {
-                    in_param.push_back(CDataVariant(lua_isnumber(ls, i)));
+                    in_param.push_back(CDataVariant(lua_tonumber(ls, i)));
                 }
                 break;
             case LUA_TBOOLEAN:
