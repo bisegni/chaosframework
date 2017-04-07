@@ -158,14 +158,21 @@ CDataVariant::CDataVariant(const std::string& string_value):_internal_variant(st
     }
 }
 
+CDataVariant::CDataVariant(const char * string_value):_internal_variant(std::string(string_value)){
+    CDataWrapper tmp;
+    try{
+        tmp.setSerializedJsonData(string_value);
+        type=DataType::TYPE_CLUSTER;
+    } catch(...){
+        type=DataType::TYPE_STRING;
+    }
+}
 
-CDataVariant::CDataVariant(CDataBuffer *buffer_value)
-:
+CDataVariant::CDataVariant(CDataBuffer *buffer_value):
 type(DataType::TYPE_BYTEARRAY),
 _internal_variant(boost::shared_ptr<CDataBuffer>(buffer_value)) { }
 
-CDataVariant::CDataVariant(CDataWrapper *buffer_value)
-:
+CDataVariant::CDataVariant(CDataWrapper *buffer_value):
 type(DataType::TYPE_CLUSTER),
 _internal_variant(boost::shared_ptr<CDataWrapper>(buffer_value)) { }
 

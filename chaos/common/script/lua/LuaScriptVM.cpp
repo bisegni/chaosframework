@@ -153,6 +153,18 @@ static int lua_print_wrap(lua_State* ls) {
 }
 
 static const struct luaL_Reg chaos_wrap [] = {
+    {"_G", luaopen_base},
+    {LUA_LOADLIBNAME, luaopen_package},
+    {LUA_COLIBNAME, luaopen_coroutine},
+    {LUA_TABLIBNAME, luaopen_table},
+    {LUA_OSLIBNAME, luaopen_os},
+    {LUA_STRLIBNAME, luaopen_string},
+    {LUA_MATHLIBNAME, luaopen_math},
+    {LUA_UTF8LIBNAME, luaopen_utf8},
+    {NULL, NULL} /* end of array */
+};
+
+static const struct luaL_Reg chaos_custom [] = {
     {"print", lua_print_wrap},
     {NULL, NULL} /* end of array */
 };
@@ -169,13 +181,15 @@ LuaScriptVM::~LuaScriptVM() {
 
 void LuaScriptVM::init(void *init_data) throw(chaos::CException) {
     ls = luaL_newstate();
-    luaopen_os(ls);
-    luaopen_base(ls);
-    luaopen_math(ls);
-    luaopen_table(ls);
-    luaopen_string(ls);
+    const luaL_Reg *lib;
+    /* "require" functions from 'loadedlibs' and set results to global table */
+    for (lib = chaos_wrap; lib->func; lib++) {
+        luaL_requiref(ls, lib->name, lib->func, 1);
+        lua_pop(ls, 1);  /* remove lib */
+    }
+    //luaL_openlibs(ls);
     lua_getglobal(ls, "_G");
-    luaL_setfuncs(ls, chaos_wrap, 0);
+    luaL_setfuncs(ls, chaos_custom, 0);
     lua_pop(ls, 1);
 
     //register wrapper interface
