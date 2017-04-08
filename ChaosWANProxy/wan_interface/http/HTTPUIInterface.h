@@ -27,7 +27,7 @@
 
 #include <boost/thread.hpp>
 #include <boost/atomic.hpp>
-
+#include <boost/thread/mutex.hpp>
 #include "mongoose.h"
 
 namespace chaos {
@@ -77,6 +77,7 @@ namespace chaos {
                     static void removeDevice(std::string);
                     bool checkForContentType(struct mg_connection *connection,
                                                                const std::string& type);
+                    boost::mutex devio_mutex;
                 public:
                     bool handle(struct mg_connection *connection);
 

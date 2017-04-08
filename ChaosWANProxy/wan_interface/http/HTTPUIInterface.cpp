@@ -27,6 +27,8 @@
 #include <boost/regex.hpp>
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string/replace.hpp>
+
 #include <boost/algorithm/string.hpp>
 
 #include <json/json.h>
@@ -56,7 +58,7 @@ std::map<std::string, ::driver::misc::ChaosController*> HTTPUIInterface::devs;
  */
 static int event_handler(struct mg_connection *connection, enum mg_event ev) {
 	if ((ev == MG_REQUEST)&& (connection->server_param != NULL)) {
-		if(((HTTPUIInterface *)connection->server_param)->handle(connection)){
+		if((!strcmp(connection->uri,API_PREFIX_V1))&&((HTTPUIInterface *)connection->server_param)->handle(connection)){
 			((HTTPUIInterface *)connection->server_param)->processRest(connection);
 
 		} else {
@@ -209,7 +211,6 @@ static std::map<std::string, std::string> mappify(std::string const& s)
 				{
 	std::map<std::string, std::string> m;
 	std::vector<std::string> api_token_list0,api_token_list1;
-
 	std::string key, val;
 	std::istringstream iss(s);
 	boost::algorithm::split(api_token_list0,s,boost::algorithm::is_any_of("&"),boost::algorithm::token_compress_on);
@@ -245,7 +246,6 @@ int HTTPUIInterface::process(struct mg_connection *connection) {
 	//const bool        json    = checkForContentType(connection,"application/json");
 
 	//remove the prefix and tokenize the url
-	std::vector<std::string> api_token_list;
 	if(method == "GET"){
 		if(connection->query_string== NULL){
 			HTTWAN_INTERFACE_ERR_<<"Bad query GET params";
@@ -253,8 +253,11 @@ int HTTPUIInterface::process(struct mg_connection *connection) {
 			flush_response(connection, &response);
 			return 1;
 		}
+		HTTWAN_INTERFACE_DBG_<<"GET:"<<connection->query_string;
+		std::string query=connection->query_string;
+		boost::replace_all(query, "%2F", "/");
 
-		request=mappify(std::string(connection->query_string));
+		request=mappify(query);
 	} else if(method == "POST"){
 		if(connection->content==NULL){
 			HTTWAN_INTERFACE_ERR_<<"Bad query POST params";
@@ -262,7 +265,10 @@ int HTTPUIInterface::process(struct mg_connection *connection) {
 			flush_response(connection, &response);
 			return 1;
 		}
+
 		std::string content_data(connection->content, connection->content_len);
+		boost::replace_all(content_data, "%2F", "/");
+		HTTWAN_INTERFACE_DBG_<<"POST:"<<content_data;
 		request=mappify(content_data);
 	}
 	std::string cmd, parm,dev_param;
@@ -292,14 +298,20 @@ int HTTPUIInterface::process(struct mg_connection *connection) {
 		for(std::vector<std::string>::iterator idevname=dev_v.begin();idevname!=dev_v.end();idevname++){
 			std::string ret;
 
-			if (!(*idevname).empty() && !cmd.empty()) {
+			if ((*idevname).empty() || cmd.empty()) {
+			  continue;
+			}
+			boost::mutex::scoped_lock l(devio_mutex);
+			if(devs.count(*idevname)){
 
-				if (devs.count(*idevname) > 0) {
-					controller = devs[*idevname];
+			  controller = devs[*idevname];
 
-				} else {
-					controller = new ::driver::misc::ChaosController();
-					if (controller == NULL) {
+			} else {
+			  
+			  controller = new ::driver::misc::ChaosController();
+
+			  
+			  if (controller == NULL) {
 						response << "{}";
 						response.setCode(400);
 						HTTWAN_INTERFACE_ERR_<<"error creating Chaos Controller";
@@ -316,10 +328,12 @@ int HTTPUIInterface::process(struct mg_connection *connection) {
 						return 1;
 					}
 					addDevice(*idevname,controller);
-				}
 
-				if(controller->get(cmd,(char*)parm.c_str(),0,atoi(cmd_prio.c_str()),atoi(cmd_schedule.c_str()),atoi(cmd_mode.c_str()),0,ret)!=::driver::misc::ChaosController::CHAOS_DEV_OK){
-					HTTWAN_INTERFACE_ERR_<<"An error occurred during get:"<<controller->getJsonState();
+
+			}
+
+			if(controller->get(cmd,(char*)parm.c_str(),0,atoi(cmd_prio.c_str()),atoi(cmd_schedule.c_str()),atoi(cmd_mode.c_str()),0,ret)!=::driver::misc::ChaosController::CHAOS_DEV_OK){
+			  HTTWAN_INTERFACE_ERR_<<"An error occurred during get:"<<controller->getJsonState();
 				}
 
 
@@ -330,10 +344,11 @@ int HTTPUIInterface::process(struct mg_connection *connection) {
 				}
 
 			}
-		}
 		response<<answer_multi.str();
 
-	}
+		}
+
+
 
 
 	flush_response(connection, &response);
