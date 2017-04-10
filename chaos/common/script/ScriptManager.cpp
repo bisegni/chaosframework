@@ -45,6 +45,8 @@ void ScriptManager::registerApiClass(AbstractScriptableClass& api_class) {
     if(map_api_class.count(api_class.api_class_name)) return;
         //add api class
     SCRPTMAN_DBG << CHAOS_FORMAT("Register api class for %1% class", %api_class.api_class_name);
+    
+    api_class.script_manager_ptr = this;
     map_api_class.insert(make_pair(api_class.api_class_name, &api_class));
 }
 
@@ -54,6 +56,8 @@ void ScriptManager::deregisterApiClass(AbstractScriptableClass& api_class) {
     if(map_api_class.count(api_class.api_class_name) == 0) return;
         //remove api class
     SCRPTMAN_DBG << CHAOS_FORMAT("Deregister api class for %1% class", %api_class.api_class_name);
+    
+    api_class.script_manager_ptr = NULL;
     map_api_class.erase(api_class.api_class_name);
 }
 

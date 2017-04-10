@@ -26,12 +26,12 @@
 #include <chaos/common/chaos_types.h>
 #include <chaos/common/data/CDataVariant.h>
 #include <chaos/common/script/script_types.h>
-
+#include <chaos/common/script/AbstractScriptVM.h>
 namespace chaos {
     namespace common{
         namespace script {
             class ScriptManager;
-
+            
                 //! define the abstraction of a scriptable class
             /*!
              Evrey sublcass of this one can expose method that can be callable form
@@ -39,7 +39,7 @@ namespace chaos {
              */
             class AbstractScriptableClass {
                 friend class ScriptManager;
-
+                ScriptManager *script_manager_ptr;
                     //! is the name of the api class
                 const std::string api_class_name;
 
@@ -47,6 +47,9 @@ namespace chaos {
                 virtual int callApi(const std::string& api_name,
                                     const ScriptInParam& input_parameter,
                                     ScriptOutParam& output_parameter) = 0;
+            protected:
+                //return the virtual machine to subclass
+                AbstractScriptVM *getVM();
 
             public:
                 AbstractScriptableClass(const std::string& _api_class_name);

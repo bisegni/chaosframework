@@ -37,12 +37,14 @@ using namespace chaos::cu::control_manager::script::api;
 #define EUSW_DBG     DBG_LOG_1_P(EUDSValueManagement, eu_instance->getCUID())
 #define EUSW_LERR    ERR_LOG_1_P(EUDSValueManagement, eu_instance->getCUID())
 
-#define ALIAS_NEW_SEARCH            "new"
-#define ALIAS_NEW_OFFSET_SEARCH     "newWithOffset"
-#define ALIAS_CLOSE_SEARCH          "close"
-#define ALIAS_HAS_NEXT              "hasNext"
-#define ALIAS_NEXT                  "next"
-#define ALIAS_GET_ATTRIBUTE_VALUE   "getAttributeValue"
+#define ALIAS_NEW_SEARCH                "new"
+#define ALIAS_NEW_OFFSET_SEARCH         "newWithOffset"
+#define ALIAS_CLOSE_SEARCH              "close"
+#define ALIAS_HAS_NEXT                  "hasNext"
+#define ALIAS_NEXT                      "next"
+#define ALIAS_GET_ATTRIBUTE_VALUE       "getAttributeValue"
+#define ALIAS_ALGO_ON_OFFSET_SEARCH     "algoWithOffset"
+
 
 #define DEFAULT_PAGE_LEN    100
 
@@ -79,6 +81,7 @@ cursor_count(0){
     addApi(ALIAS_HAS_NEXT, &EUSearch::hasNext);
     addApi(ALIAS_NEXT, &EUSearch::next);
     addApi(ALIAS_GET_ATTRIBUTE_VALUE, &EUSearch::getAttributeValue);
+    addApi(ALIAS_ALGO_ON_OFFSET_SEARCH, &EUSearch::runAlgoSearchSinceSeconds);
 }
 
 EUSearch::~EUSearch() {}
@@ -226,6 +229,82 @@ int EUSearch::getAttributeValue(const common::script::ScriptInParam& input_param
         } else {return -4;}
     } catch(...) {
         return -5;
+    }
+    return 0;
+}
+
+int EUSearch::runAlgoSearchSinceSeconds(const common::script::ScriptInParam& input_parameter,
+                                        common::script::ScriptOutParam& output_parameter) {
+    QueryCursor *cursor = NULL;
+    uint64_t processed_lement = 0;
+    ChaosStringVector attribute_name;
+    AbstractScriptVM *vm_ptr = getVM();
+    boost::shared_ptr<CDataWrapper> found_element;
+    common::script::ScriptInParam algo_input_parameter;
+    
+    CHAOS_ASSERT(vm_ptr);
+    
+    if(input_parameter.size() < 6) {
+        EUSW_LERR << "Bad number of parameter";
+        return -1;
+    }
+    
+    const std::string node_id = input_parameter[0].asString();
+    const KeyDataStorageDomain search_domain = static_cast<KeyDataStorageDomain>(input_parameter[1].asInt32());
+    const uint64_t seconds_from_now = input_parameter[2].asInt64()*1000;
+    const uint64_t end_ts = TimingUtil::getTimeStamp();
+    const uint64_t start_ts = end_ts - seconds_from_now;
+    
+    const std::string algo_handler = input_parameter[3].asString();
+    const std::string termination_handler = input_parameter[4].asString();
+    
+    //get wich attribute the algoritm need to use
+    for(int idx = 5;
+        idx < input_parameter.size();
+        idx++) {
+        attribute_name.push_back(input_parameter[idx].asString());
+    }
+    
+    int err = eu_instance->performQuery(&cursor,
+                                        node_id,
+                                        search_domain,
+                                        start_ts,
+                                        end_ts,
+                                        DEFAULT_PAGE_LEN);
+    CHAOS_ASSERT(!err &&
+                 cursor != NULL);
+    if(err) return err;
+    try {
+        //we can proceed
+        while(cursor->hasNext()) {
+            processed_lement++;
+            found_element = cursor->next();
+            //fetch attribute as input parater
+            algo_input_parameter.clear();
+            for(ChaosStringVectorIterator it = attribute_name.begin(),
+                end = attribute_name.end();
+                it != end;
+                it++) {
+                algo_input_parameter.push_back(found_element->getVariantValue(*it));
+            }
+            
+            //call algo
+            if((err = vm_ptr->callProcedure(algo_handler,
+                                            algo_input_parameter))) {
+                EUSW_LERR << CHAOS_FORMAT("Error %1% calling algorithm handler %2%", %err%algo_handler);
+                break;
+            }
+        }
+    } catch (...) {}
+    
+    //release the query
+    eu_instance->releseQuery(cursor);
+    
+    algo_input_parameter.clear();
+    algo_input_parameter.push_back(CDataVariant(processed_lement));
+    if((err = vm_ptr->callProcedure(termination_handler,
+                                    algo_input_parameter))) {
+        EUSW_LERR << CHAOS_FORMAT("Error %1% calling algorithm handler %2%", %err%algo_handler);
     }
     return 0;
 }

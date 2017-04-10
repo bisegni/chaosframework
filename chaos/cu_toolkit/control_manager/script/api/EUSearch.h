@@ -130,6 +130,24 @@ namespace chaos {
                          */
                         int getAttributeValue(const common::script::ScriptInParam& input_parameter,
                                               common::script::ScriptOutParam& output_parameter);
+                        
+                        
+                        //! Execute a query on a determinated device id for a time range and run an handler
+                        /*!
+                         An handler is applyed on every found element of the query, another handler is called when
+                         the compute is terminated.
+                         input parameter
+                            node id[string] - the identification of the node
+                            the domain [as KeyDataStorageDomain] - the domain stored by the node id
+                            number of seconds since now[int32_t] - the number of seconds since now the
+                                                                    are idenitfied as start timestamp
+                            algo handler[string] - the name of handler to call for every found element
+                            termination handler[string] - the handler that is called when all element as been processed
+                            attribute name[string](one or more) - the attribute name(s) for we wan't to have the value as parameter in the algo handler
+                         
+                         */
+                        int runAlgoSearchSinceSeconds(const common::script::ScriptInParam& input_parameter,
+                                                      common::script::ScriptOutParam& output_parameter);
                     };
                 }
             }

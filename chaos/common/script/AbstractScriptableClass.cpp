@@ -21,9 +21,16 @@
 
 #include <chaos/common/script/AbstractScriptableClass.h>
 
+#include <chaos/common/script/ScriptManager.h>
+
 using namespace chaos::common::script;
 
 AbstractScriptableClass::AbstractScriptableClass(const std::string& _api_class_name):
 api_class_name(_api_class_name){}
 
 AbstractScriptableClass::~AbstractScriptableClass() {}
+
+AbstractScriptVM *AbstractScriptableClass::getVM() {
+    CHAOS_ASSERT(script_manager_ptr);
+    return script_manager_ptr->getVirtualMachine();
+}
