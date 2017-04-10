@@ -170,6 +170,7 @@ void HTTPUIInterface::start() throw(CException) {
 			it++) {
 		http_server_thread.add_thread(new boost::thread(boost::bind(&HTTPUIInterface::pollHttpServer, this, *it)));
 	}
+	sched_cu.start();
 }
 
 //inherited method
@@ -205,6 +206,7 @@ void HTTPUIInterface::pollHttpServer(struct mg_server *http_server) {
 void HTTPUIInterface::addDevice(std::string name, ::driver::misc::ChaosController*d) {
 
 	devs[name] = d;
+
 }
 
 static std::map<std::string, std::string> mappify(std::string const& s)
@@ -235,7 +237,7 @@ int HTTPUIInterface::process(struct mg_connection *connection) {
 	Json::Value						json_response;
 	Json::StyledWriter				json_writer;
 	Json::Reader					json_reader;
-	HTTPWANInterfaceStringResponse	response("application/json");
+	HTTPWANInterfaceStringResponse	response("text/html");
 	response.addHeaderKeyValue("Access-Control-Allow-Origin","*");
 	::driver::misc::ChaosController* controller = NULL;
 	//scsan for content type request
@@ -253,10 +255,12 @@ int HTTPUIInterface::process(struct mg_connection *connection) {
 			flush_response(connection, &response);
 			return 1;
 		}
-		HTTWAN_INTERFACE_DBG_<<"GET:"<<connection->query_string;
-		std::string query=connection->query_string;
-		boost::replace_all(query, "%2F", "/");
+		int size_query=strlen(connection->query_string)+2;
+		char decoded[size_query];
+		mg_url_decode(connection->query_string, size_query,decoded, size_query,0);
+		HTTWAN_INTERFACE_DBG_<<"GET:"<<decoded;
 
+		std::string query=decoded;
 		request=mappify(query);
 	} else if(method == "POST"){
 		if(connection->content==NULL){
@@ -265,9 +269,9 @@ int HTTPUIInterface::process(struct mg_connection *connection) {
 			flush_response(connection, &response);
 			return 1;
 		}
-
-		std::string content_data(connection->content, connection->content_len);
-		boost::replace_all(content_data, "%2F", "/");
+		char decoded[connection->content_len +2];
+		mg_url_decode(connection->content, connection->content_len,decoded, connection->content_len+2,0);
+		std::string content_data(decoded, connection->content_len);
 		HTTWAN_INTERFACE_DBG_<<"POST:"<<content_data;
 		request=mappify(content_data);
 	}
@@ -301,16 +305,14 @@ int HTTPUIInterface::process(struct mg_connection *connection) {
 			if ((*idevname).empty() || cmd.empty()) {
 			  continue;
 			}
-			boost::mutex::scoped_lock l(devio_mutex);
 			if(devs.count(*idevname)){
+			 boost::mutex::scoped_lock l(devio_mutex);
 
 			  controller = devs[*idevname];
 
 			} else {
-			  
 			  controller = new ::driver::misc::ChaosController();
 
-			  
 			  if (controller == NULL) {
 						response << "{}";
 						response.setCode(400);
@@ -327,7 +329,9 @@ int HTTPUIInterface::process(struct mg_connection *connection) {
 						flush_response(connection, &response);
 						return 1;
 					}
+
 					addDevice(*idevname,controller);
+					sched_cu.add(*idevname,controller);
 
 
 			}

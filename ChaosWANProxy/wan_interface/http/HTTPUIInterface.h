@@ -24,7 +24,7 @@
 #include "../AbstractWANInterface.h"
 
 #include <chaos/common/utility/ObjectFactoryRegister.h>
-
+#include <common/misc/scheduler/Scheduler.h>
 #include <boost/thread.hpp>
 #include <boost/atomic.hpp>
 #include <boost/thread/mutex.hpp>
@@ -73,6 +73,7 @@ namespace chaos {
                     static std::map<std::string,::driver::misc::ChaosController*> devs;
 
                      ::driver::misc::ChaosController* info;
+                     ::common::misc::scheduler::Scheduler sched_cu;
                     static void addDevice(std::string,::driver::misc::ChaosController*);
                     static void removeDevice(std::string);
                     bool checkForContentType(struct mg_connection *connection,

@@ -51,6 +51,7 @@ namespace chaos{
                                                           uint64_t end_ts);
                 
                 void _releaseQueryFuture(QueryCursor *query_future_ptr);
+                //boost::mutex iomutex;
             public:
                 virtual ~IODataDriver(){};
                 /*!
