@@ -37,6 +37,10 @@ int main(int argc, const char * argv[]) {
     in_param.push_back(CDataVariant("test_string"));
     script_manager->getVirtualMachine()->callProcedure("testString", in_param);
     
+    in_param.clear();
+    in_param.push_back(CDataVariant("wrong_string"));
+    script_manager->getVirtualMachine()->callProcedure("testString", in_param);
+    
     InizializableService::deinitImplementation(script_manager.get(),
                                                "ScriptManager",
                                                __PRETTY_FUNCTION__);

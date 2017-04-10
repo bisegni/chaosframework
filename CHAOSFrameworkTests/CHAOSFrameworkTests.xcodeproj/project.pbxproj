@@ -149,6 +149,7 @@
 		321E59301D7457FF00365F57 /* TestBatchDefault.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestBatchDefault.cpp; sourceTree = "<group>"; };
 		321E59311D7457FF00365F57 /* TestBatchDefault.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestBatchDefault.h; sourceTree = "<group>"; };
 		3235DB521D74A46B009D016E /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		32655AD41E9B746600829266 /* test.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test.lua; sourceTree = "<group>"; };
 		327A28621D71D6D100DFDD2C /* TestBatchCommandSystem */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestBatchCommandSystem; sourceTree = BUILT_PRODUCTS_DIR; };
 		327A28641D71D6D100DFDD2C /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		327A28691D71D72700DFDD2C /* TestCommandExecutor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestCommandExecutor.cpp; sourceTree = "<group>"; };
@@ -467,6 +468,7 @@
 		32DF53571E97E191005E2304 /* TestLuaScript */ = {
 			isa = PBXGroup;
 			children = (
+				32655AD41E9B746600829266 /* test.lua */,
 				32DF53581E97E191005E2304 /* main.cpp */,
 			);
 			path = TestLuaScript;
@@ -1411,6 +1413,7 @@
 				32DF535B1E97E191005E2304 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		32EBC21E1E92507B00785AAC /* Build configuration list for PBXNativeTarget "TestTimer" */ = {
 			isa = XCConfigurationList;
