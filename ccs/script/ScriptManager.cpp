@@ -5,6 +5,7 @@
 
 #include <QMap>
 #include <QDebug>
+#include <QFileDialog>
 
 const QString CM_EDIT_INSTANCE = "Instances List";
 
@@ -37,7 +38,7 @@ void ScriptManager::initUI() {
                                     false);
 
     ui->listViewScriptList->setModel(&script_list_model);
-
+    ui->pushButtonExport->setEnabled(false);
     connect(ui->listViewScriptList->selectionModel(),
             SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
             SLOT(on_scriptListSelectionchanged(QItemSelection,QItemSelection)));
@@ -53,7 +54,12 @@ bool ScriptManager::isClosing() {
 
 void ScriptManager::onApiDone(const QString& tag,
                               QSharedPointer<CDataWrapper> api_result) {
-    script_list_model.updateSearch();
+    if(tag.compare("ScriptManager::export") == 0) {
+        int raw_size = 0;
+        qDebug() << "Export script\n" << api_result->getJSONData();
+    } else {
+        script_list_model.updateSearch();
+    }
 }
 
 void ScriptManager::on_pushButtonCreateNewScript_clicked() {
@@ -103,6 +109,8 @@ void ScriptManager::on_scriptListSelectionchanged(const QItemSelection &selected
                                     CM_EDIT_INSTANCE,
                                     QVariant::fromValue<chaos::service_common::data::script::ScriptBaseDescription>(scrpt_desc));
     }
+
+    ui->pushButtonExport->setEnabled(selected.indexes().size()>0);
 }
 
 void ScriptManager::closeScriptEditorTab(int idx) {
@@ -123,5 +131,22 @@ void ScriptManager::contextualMenuActionTrigger(const QString& cm_title,
         ScriptInstanceManagerWidget *new_editor = new ScriptInstanceManagerWidget(scrpt_desc);
         new_editor->setProperty("chaos_widget_type", 1);
         ui->tabWidgetSourcesDocument->addTab(new_editor, QString("Instance Editor for %1").arg(QString::fromStdString(scrpt_desc.name)));
+    }
+}
+
+void ScriptManager::on_pushButtonExport_clicked() {
+    QString selected_path = QFileDialog::getExistingDirectory ( this,
+                                                                "Select export destination folder");
+    if(selected_path.size()) {
+        QModelIndexList selected_script = ui->listViewScriptList->selectionModel()->selectedRows();
+        foreach(QModelIndex index, selected_script) {
+            QVariant script_sequence_id = index.data(Qt::UserRole);
+            QVariant script_name = index.data(Qt::DisplayRole);
+            ScriptBaseDescription script_description;
+            script_description.unique_id = script_sequence_id.toULongLong();
+            script_description.name = script_name.toString().toStdString();
+            submitApiResult("ScriptManager::export",
+                            GET_CHAOS_API_PTR(script::LoadFullScript)->execute(script_description));
+        }
     }
 }

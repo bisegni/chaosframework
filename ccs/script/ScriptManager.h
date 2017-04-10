@@ -38,6 +38,8 @@ private slots:
                                        const QItemSelection &unselected);
 
     void closeScriptEditorTab(int idx);
+    void on_pushButtonExport_clicked();
+
 private:
     void contextualMenuActionTrigger(const QString& cm_title,
                                      const QVariant& cm_data);
