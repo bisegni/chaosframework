@@ -35,6 +35,9 @@ class ErrorManager:
 public:
     ErrorManagerEventSignal signal_proxy;
     int submiteError(QSharedPointer<chaos::CException> new_error);
+    int submiteError(int32_t error_code,
+                     const QString& error_message,
+                     const QString& error_domain);
     int getErrorCount(uint64_t &record_number);
     int getErrorPage(QVector< QSharedPointer<ErrorEntry> >& page_result,
                      uint64_t page_len,

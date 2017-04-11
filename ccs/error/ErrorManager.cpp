@@ -60,6 +60,25 @@ int ErrorManager::submiteError(QSharedPointer<chaos::CException> new_error) {
     return err;
 }
 
+int ErrorManager::submiteError(int32_t error_code, const QString& error_message, const QString& error_domain) {
+    int err = 0;
+    if (db.isOpen() == false) return err;
+    db_mutex.lock();
+    QSqlQuery query(db);
+    query.prepare("INSERT INTO error (timestamp, error_code, error_message, error_domain) "
+                  "VALUES (:timestamp, :error_code, :error_message, :error_domain)");
+    query.bindValue(":timestamp", (qulonglong)QDateTime::currentMSecsSinceEpoch());
+    query.bindValue(":error_code", QVariant(error_code));
+    query.bindValue(":error_message", error_message);
+    query.bindValue(":error_domain", error_domain);
+    query.exec();
+    err = query.lastError().number();
+    db.commit();
+    db_mutex.unlock();
+    signal_proxy.fireEntryUpdate();
+    return err;
+}
+
 int ErrorManager::getErrorCount(uint64_t& record_number) {
     int err = 0;
     if (db.isOpen() == false) {
