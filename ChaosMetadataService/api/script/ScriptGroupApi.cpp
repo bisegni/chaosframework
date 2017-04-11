@@ -21,6 +21,7 @@
 
 #include "SaveScript.h"
 #include "SearchScript.h"
+#include "RemoveScript.h"
 #include "ScriptGroupApi.h"
 #include "LoadFullScript.h"
 #include "ManageScriptInstance.h"
@@ -36,6 +37,7 @@ ScriptGroupApi::ScriptGroupApi():
 AbstractApiGroup("script"){
     addApi<SaveScript>();
     addApi<SearchScript>();
+    addApi<RemoveScript>();
     addApi<LoadFullScript>();
     addApi<ManageScriptInstance>();
     addApi<ExecutionPoolHeartbeat>();

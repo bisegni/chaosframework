@@ -101,6 +101,7 @@ SET(mcl_src ${mcl_src}      api_proxy/unit_server/GetDescription.cpp
                             )
 
 SET(mcl_src ${mcl_src}      api_proxy/script/SaveScript.cpp
+                            api_proxy/script/RemoveScript.cpp
                             api_proxy/script/SearchScript.cpp
                             api_proxy/script/LoadFullScript.cpp
                             api_proxy/script/SearchInstancesForScript.cpp

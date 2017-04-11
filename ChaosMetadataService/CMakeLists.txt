@@ -107,6 +107,7 @@ SET(cnd_src  ${cnd_src}	api/node/NodeGroup.cpp
 SET(cnd_src  ${cnd_src}	api/script/ScriptGroupApi.cpp
                         api/script/SearchScript.cpp
                         api/script/SaveScript.cpp
+                        api/script/RemoveScript.cpp
                         api/script/LoadFullScript.cpp
                         api/script/SearchInstancesForScript.cpp
                         api/script/ManageScriptInstance.cpp
