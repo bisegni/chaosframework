@@ -236,20 +236,13 @@ int MongoDBScriptDataAccess::removeScriptInstance(const uint64_t seq,
     CHAOS_ASSERT(node_data_access)
     int err = 0;
     try {
-        //before delete the instance of the script
-        mongo::Query qi = BSON(chaos::NodeDefinitionKey::NODE_GROUP_SET << script_name <<
-                               chaos::NodeDefinitionKey::NODE_SUB_TYPE << chaos::NodeType::NODE_SUBTYPE_SCRIPTABLE_EXECUTION_UNIT);
+        //now all other part of the script are managed with update
+        mongo::Query q = BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID<< instance_name<<
+                              chaos::NodeDefinitionKey::NODE_GROUP_SET << script_name<<
+                              "script_seq" << (long long)seq);
         if((err = connection->remove(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
-                                     qi))) {
+                                     q))) {
             SDA_ERR << CHAOS_FORMAT("Error removing instance %1% for script %2% with code %3%", %instance_name%script_name%err);
-        } else {
-            mongo::Query q = BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID<< instance_name<<
-                                  chaos::NodeDefinitionKey::NODE_GROUP_SET << script_name<<
-                                  "script_seq" << (long long)seq);
-            if((err = connection->remove(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SCRIPT),
-                                         q))) {
-                SDA_ERR << CHAOS_FORMAT("Error removing instance %1% for script %2% with code %3%", %instance_name%script_name%err);
-            }
         }
     } catch (const mongo::DBException &e) {
         SDA_ERR << e.what();
@@ -362,7 +355,7 @@ int MongoDBScriptDataAccess::deleteScript(const uint64_t unique_id,
                                         DATA_ACCESS_LOG_1_ENTRY("Query",
                                                                 q_instance));)
         //inset on database new script description
-        if((err = connection->remove(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SCRIPT),
+        if((err = connection->remove(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                      q_instance))) {
             SDA_ERR << CHAOS_FORMAT("Error removing instance for script %1%[%2%] with error [%3%]", %unique_id%name%err);
         } else {
