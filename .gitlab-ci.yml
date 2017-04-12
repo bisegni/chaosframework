@@ -6,14 +6,6 @@ stages:
   - build
   - deploy
 
-before_script:
-  # Install ssh-agent if not already installed, it is required by Docker.
-  # (change apt-get to yum if you use a CentOS-based image)
-  - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
-
-  # Run ssh-agent (inside the build environment)
-  - eval $(ssh-agent -s)
-
 build_framework_x86_64:
   stage: build
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
@@ -26,6 +18,10 @@ build_framework_x86_64:
     - make  -j  $(nproc) ExperimentalStart
     - make  -j  $(nproc) ExperimentalConfigure
     - make  -j  $(nproc) ExperimentalBuild
+  artifacts:
+    paths:
+    - /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux
+
   only:
     - development
     - master
@@ -42,6 +38,9 @@ build_framework_arm:
     - make  -j  $(nproc) ExperimentalStart
     - make  -j  $(nproc) ExperimentalConfigure
     - make  -j  $(nproc) ExperimentalBuild
+  artifacts:
+      paths:
+      - /builds/bisegni/chaosframework/chaos-distrib-armhf
   only:
     - development
     - master
