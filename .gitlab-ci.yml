@@ -44,20 +44,22 @@ deploy_framework_x86_64:
     stage: deploy
     image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
     script:
+      - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
       - export NOW=$(date +"%Y%m%d-%H%M%S")
       - export TAR_NAME_POSTFIX="development_"$NOW
       - ssh-add <(echo "$CHAOS_DEPLOY_PRIVATE_KEY")
       - mkdir -p ~/.ssh
-      - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+      - 'echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
       - echo "scp /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux_$TAR_NAME_POSTFIX.tgz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/"
 
 deploy_framework_arm:
     stage: deploy
     image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
     script:
+      - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
       - export NOW=$(date +"%Y%m%d-%H%M%S")
       - export TAR_NAME_POSTFIX="development_"$NOW
       - ssh-add <(echo "$CHAOS_DEPLOY_PRIVATE_KEY")
       - mkdir -p ~/.ssh
-      - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+      - 'echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
       - echo "scp /builds/bisegni/chaosframework/chaos-distrib-armhf_$TAR_NAME_POSTFIX.tgz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/"
