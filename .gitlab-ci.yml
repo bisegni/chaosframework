@@ -6,6 +6,24 @@ stages:
   - build
   - deploy
 
+before_script:
+  # Install ssh-agent if not already installed, it is required by Docker.
+  # (change apt-get to yum if you use a CentOS-based image)
+  - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+
+  # Run ssh-agent (inside the build environment)
+  - eval $(ssh-agent -s)
+
+  # Add the SSH key stored in SSH_PRIVATE_KEY variable to the agent store
+  - ssh-add <(echo "$CHAOS_DEPLOY_PRIVATE_KEY")
+
+  # For Docker builds disable host key checking. Be aware that by adding that
+  # you are suspectible to man-in-the-middle attacks.
+  # WARNING: Use this only with the Docker executor, if you use it with shell
+  # you will overwrite your user's SSH config.
+  - mkdir -p ~/.ssh
+  - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+
 build_framework_x86_64:
   stage: build
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
@@ -47,9 +65,6 @@ deploy_framework_x86_64:
       - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
       - export NOW=$(date +"%Y%m%d-%H%M%S")
       - export TAR_NAME_POSTFIX="development_"$NOW
-      - ssh-add <(echo "$CHAOS_DEPLOY_PRIVATE_KEY")
-      - mkdir -p ~/.ssh
-      - 'echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
       - echo "scp /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux_$TAR_NAME_POSTFIX.tgz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/"
 
 deploy_framework_arm:
@@ -59,7 +74,4 @@ deploy_framework_arm:
       - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
       - export NOW=$(date +"%Y%m%d-%H%M%S")
       - export TAR_NAME_POSTFIX="development_"$NOW
-      - ssh-add <(echo "$CHAOS_DEPLOY_PRIVATE_KEY")
-      - mkdir -p ~/.ssh
-      - 'echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
       - echo "scp /builds/bisegni/chaosframework/chaos-distrib-armhf_$TAR_NAME_POSTFIX.tgz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/"
