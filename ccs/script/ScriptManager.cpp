@@ -97,6 +97,11 @@ void ScriptManager::on_pushButtonDeleteScript_clicked() {
     foreach(QModelIndex index, selected_script) {
         QVariant script_sequence_id = index.data(Qt::UserRole);
         QVariant script_name = index.data(Qt::DisplayRole);
+        ScriptBaseDescription script_desc;
+        script_desc.name = script_name.toString().toStdString();
+        script_desc.unique_id = script_sequence_id.toULongLong();
+        submitApiResult(QString("sm::delete|%1").arg(script_name.toString()),
+                        GET_CHAOS_API_PTR(script::RemoveScript)->execute(script_desc));
     }
 }
 

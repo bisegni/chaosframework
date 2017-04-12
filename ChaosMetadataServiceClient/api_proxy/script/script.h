@@ -23,6 +23,7 @@
 #define __CHAOSFramework_F951FF55_A546_4753_8859_3E5E05C482CA_script_h
 
 #include <ChaosMetadataServiceClient/api_proxy/script/SaveScript.h>
+#include <ChaosMetadataServiceClient/api_proxy/script/RemoveScript.h>
 #include <ChaosMetadataServiceClient/api_proxy/script/SearchScript.h>
 #include <ChaosMetadataServiceClient/api_proxy/script/LoadFullScript.h>
 #include <ChaosMetadataServiceClient/api_proxy/script/ManageScriptInstance.h>
