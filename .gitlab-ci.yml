@@ -20,10 +20,11 @@ build_framework_x86_64:
     - make  -j  $(nproc) ExperimentalStart
     - make  -j  $(nproc) ExperimentalConfigure
     - make  -j  $(nproc) ExperimentalBuild
-    - tar -zcf /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux_$TAR_NAME_POSTFIX.tgz /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux
+    - tar -zcf /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux_${CI_COMMIT_REF_NAME}.tgz /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux
   artifacts:
+    name: "chaos-distrib-x86_64-Linux_${CI_COMMIT_REF_NAME}"
     paths:
-      - /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux_$TAR_NAME_POSTFIX.tgz
+      - /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux_${CI_COMMIT_REF_NAME}.tgz
 
   only:
     - development
@@ -39,10 +40,11 @@ build_framework_arm:
     - make  -j  $(nproc) ExperimentalStart
     - make  -j  $(nproc) ExperimentalConfigure
     - make  -j  $(nproc) ExperimentalBuild
-    - tar -zcf /builds/bisegni/chaosframework/chaos-distrib-armhf_$TAR_NAME_POSTFIX.tgz /builds/bisegni/chaosframework/chaos-distrib-armhf
+    - tar -zcf /builds/bisegni/chaosframework/chaos-distrib-armhf_${TAR_NAME_POSTFIX}.tgz /builds/bisegni/chaosframework/chaos-distrib-armhf
   artifacts:
-      paths:
-       - /builds/bisegni/chaosframework/chaos-distrib-armhf_$TAR_NAME_POSTFIX.tgz
+    name: "chaos-distrib-x86_64-Linux_${TAR_NAME_POSTFIX}"
+    paths:
+      - /builds/bisegni/chaosframework/chaos-distrib-armhf_${TAR_NAME_POSTFIX}.tgz
   only:
     - development
     - master
@@ -52,7 +54,7 @@ deploy_framework_x86_64:
     image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
     script:
       - echo "scp /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux_$TAR_NAME_POSTFIX.tgz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/"
-      
+
 deploy_framework_arm:
     stage: deploy
     image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
