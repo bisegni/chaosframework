@@ -256,7 +256,7 @@ int64_t ZMQDirectIOClientConnection::sendPriorityData(DirectIODataPack *data_pac
                                                       DirectIODeallocationHandler *data_deallocation_handler,
                                                       DirectIODataPack **synchronous_answer) {
     int64_t err = 0;
-    boost::unique_lock<boost::mutex> wl(mutext_send_message);
+    boost::unique_lock<boost::shared_mutex> wl(mutext_send_message);
     if(ensureSocket() == false) {
         err = ErrorDirectIOCoce::EC_NO_SOCKET;
         safeDeleteDataPack(data_pack,
@@ -289,7 +289,7 @@ int64_t ZMQDirectIOClientConnection::sendServiceData(DirectIODataPack *data_pack
                                                      DirectIODeallocationHandler *data_deallocation_handler,
                                                      DirectIODataPack **synchronous_answer) {
     int64_t err = 0;
-    boost::unique_lock<boost::mutex> wl(mutext_send_message);
+    boost::unique_lock<boost::shared_mutex> wl(mutext_send_message);
     if(ensureSocket() == false) {
         err = ErrorDirectIOCoce::EC_NO_SOCKET;
         safeDeleteDataPack(data_pack,

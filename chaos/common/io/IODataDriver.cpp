@@ -43,7 +43,8 @@ void IODataDriver::storeData(const std::string& key,
                              DataServiceNodeDefinitionType::DSStorageType storage_type,
                              bool delete_data_to_store) throw(CException){
     CHAOS_ASSERT(dataToStore)
-    
+//	boost::mutex::scoped_lock l(iomutex);
+
     SerializationBuffer* serialization = dataToStore->getBSONData();
     
     storeRawData(key, serialization, storage_type);
@@ -61,6 +62,8 @@ int IODataDriver::removeData(const std::string& key,
  
  ---------------------------------------------------------------------------------*/
 ArrayPointer<CDataWrapper>*  IODataDriver::retriveData(const std::string& key, CDataWrapper*const)  throw(CException){
+ //   boost::mutex::scoped_lock l(iomutex);
+
     //check for key length
     return retriveData(key);
 }
@@ -69,6 +72,7 @@ ArrayPointer<CDataWrapper>*  IODataDriver::retriveData(const std::string& key, C
  
  ---------------------------------------------------------------------------------*/
 ArrayPointer<CDataWrapper>* IODataDriver::retriveData(const std::string& key)  throw(CException) {
+  //  boost::mutex::scoped_lock l(iomutex);
     
     ArrayPointer<CDataWrapper> *result = new ArrayPointer<CDataWrapper>();
     

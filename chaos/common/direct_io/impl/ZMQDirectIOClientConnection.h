@@ -64,7 +64,7 @@ namespace chaos {
 					friend class ZMQDirectIOClient;
                     void *zmq_context;
                     
-                    boost::mutex mutext_send_message;
+                    boost::shared_mutex mutext_send_message;
                     
 					std::string priority_identity;
 					void *socket_priority;
