@@ -64,8 +64,7 @@ CHAOS_FORMAT("%1%/%2% --%3% %4%%5%", %ChaosAgent::getInstance()->settings.workin
                                               const std::string& named_pipe);
                 
                 static int pclose2(FILE * fp,
-                                   pid_t pid,
-                                   bool wait_pid = false);
+                                   pid_t pid);
                 
                 static int createNamedPipe(const std::string& named_pipe_path);
                 

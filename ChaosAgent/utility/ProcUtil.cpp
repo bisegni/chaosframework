@@ -132,19 +132,18 @@ bool ProcUtil::popen2ToNamedPipe(const std::string& command,
 }
 
 int ProcUtil::pclose2(FILE * fp,
-                      pid_t pid,
-                      bool wait_pid) {
-    int stat;
+                      pid_t pid) {
+    int status;
     fclose(fp);
-    if(wait_pid) {
-        while (waitpid(pid, &stat, 0) == -1) {
+    do {
+        if(waitpid(pid, &status, 0) == -1) {
             if (errno != EINTR) {
-                stat = -1;
+                status = -1;
                 break;
             }
         }
-    }
-    return stat;
+    } while (!WIFEXITED(status));
+    return status;
 }
 
 int ProcUtil::createNamedPipe(const std::string& named_pipe_path) {
