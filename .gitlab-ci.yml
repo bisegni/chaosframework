@@ -11,6 +11,7 @@ before_script:
   - export TAR_NAME_POSTFIX=$NOW
   - env
   - echo $CHAOS_DEPLOY_PRIVATE_KEY >> /builds/bisegni/chaosframework/deploy.key
+  - chmod 600 /builds/bisegni/chaosframework/deploy.key
 
 build_framework_x86_64:
   stage: build
