@@ -22,11 +22,14 @@
 #include <chaos/cu_toolkit/control_manager/script/ScriptableExecutionUnit.h>
 
 #include <chaos/common/bson/util/base64.h>
+#include <chaos/common/exception/MetadataLoggingCException.h>
 
 #include <json/json.h>
 
 using namespace chaos::common::script;
 using namespace chaos::common::utility;
+using namespace chaos::common::exception;
+using namespace chaos::common::metadata_logging;
 using namespace chaos::cu::control_manager::script;
 
 #define SEU_LAPP    INFO_LOG_1_P(ScriptableExecutionUnit, getDeviceID())
@@ -101,6 +104,9 @@ void ScriptableExecutionUnit::unregisterApi() {
     }
 }
 
+#define LOG_AND_TROW_EX(log, num, msg)\
+log << "("<<num<<") " << msg;\
+throw MetadataLoggingCException(getDeviceID(), num, msg, __PRETTY_FUNCTION__);
 
 void ScriptableExecutionUnit::unitDefineActionAndDataset() throw(CException) {
     int err = 0;
@@ -177,49 +183,49 @@ void ScriptableExecutionUnit::unitDefineActionAndDataset() throw(CException) {
     //!load script within the virtual machine
     SEU_LAPP << "Try to load the script";
     if(script_manager->getVirtualMachine()->loadScript(script_content)) {
-        LOG_AND_TROW(SEU_LERR, -5, "Error loading script into virtual machine");
+        LOG_AND_TROW_EX(SEU_LERR, -5, "Error loading script into virtual machine");
     }
     
     //check for implemented handler
     if((err = script_manager->getVirtualMachine()->functionExists(SEU_ALGORITHM_LAUNCH, exists)) ){
-        LOG_AND_TROW(SEU_LERR,
-                     -3,
-                     CHAOS_FORMAT("Error checking the presence of the function %1%",%SEU_ALGORITHM_LAUNCH));
+        LOG_AND_TROW_EX(SEU_LERR,
+                        -3,
+                        CHAOS_FORMAT("Error checking the presence of the function %1%",%SEU_ALGORITHM_LAUNCH));
     }
     alghorithm_handler_implemented[0] = exists;
     
     if((err = script_manager->getVirtualMachine()->functionExists(SEU_ALGORITHM_START, exists)) ){
-        LOG_AND_TROW(SEU_LERR,
-                     -4,
-                     CHAOS_FORMAT("Error checking the presence of the function %1%",%SEU_ALGORITHM_START));
+        LOG_AND_TROW_EX(SEU_LERR,
+                        -4,
+                        CHAOS_FORMAT("Error checking the presence of the function %1%",%SEU_ALGORITHM_START));
     }
     alghorithm_handler_implemented[1] = exists;
     
     if((err = script_manager->getVirtualMachine()->functionExists(SEU_ALGORITHM_STEP, exists)) ){
-        LOG_AND_TROW(SEU_LERR,
-                     -5,
-                     CHAOS_FORMAT("Error checking the presence of the function %1%",%SEU_ALGORITHM_STEP));
+        LOG_AND_TROW_EX(SEU_LERR,
+                        -5,
+                        CHAOS_FORMAT("Error checking the presence of the function %1%",%SEU_ALGORITHM_STEP));
     }
     alghorithm_handler_implemented[2] = exists;
     
     if((err = script_manager->getVirtualMachine()->functionExists(SEU_ALGORITHM_STOP, exists)) ){
-        LOG_AND_TROW(SEU_LERR,
-                     -6,
-                     CHAOS_FORMAT("Error checking the presence of the function %1%",%SEU_ALGORITHM_STOP));
+        LOG_AND_TROW_EX(SEU_LERR,
+                        -6,
+                        CHAOS_FORMAT("Error checking the presence of the function %1%",%SEU_ALGORITHM_STOP));
     }
     alghorithm_handler_implemented[3] = exists;
     
     if((err = script_manager->getVirtualMachine()->functionExists(SEU_ALGORITHM_END, exists)) ){
-        LOG_AND_TROW(SEU_LERR,
-                     -7,
-                     CHAOS_FORMAT("Error checking the presence of the function %1%",%SEU_ALGORITHM_END));
+        LOG_AND_TROW_EX(SEU_LERR,
+                        -7,
+                        CHAOS_FORMAT("Error checking the presence of the function %1%",%SEU_ALGORITHM_END));
     }
     alghorithm_handler_implemented[4] = exists;
     
     if((err = script_manager->getVirtualMachine()->functionExists(SEU_INPUT_ATTRIBUTE_CHANGED, exists)) ){
-        LOG_AND_TROW(SEU_LERR,
-                     -7,
-                     CHAOS_FORMAT("Error checking the presence of the function %1%",%SEU_INPUT_ATTRIBUTE_CHANGED));
+        LOG_AND_TROW_EX(SEU_LERR,
+                        -7,
+                        CHAOS_FORMAT("Error checking the presence of the function %1%",%SEU_INPUT_ATTRIBUTE_CHANGED));
     }
     alghorithm_handler_implemented[5] = exists;
     
@@ -235,7 +241,7 @@ void ScriptableExecutionUnit::executeAlgorithmLaunch() throw (CException) {
     ScriptInParam input_param;
     if(script_manager->getVirtualMachine()->callProcedure(SEU_ALGORITHM_LAUNCH,
                                                           input_param)) {
-        LOG_AND_TROW_FORMATTED(SEU_LERR, -1, "Error calling function %1% of the script(it maybe not implemented)", %SEU_ALGORITHM_LAUNCH);
+        LOG_AND_TROW_EX(SEU_LERR, -1, CHAOS_FORMAT("Error calling function %1% of the script(it maybe not implemented)", %SEU_ALGORITHM_LAUNCH));
     }
 }
 
@@ -244,7 +250,7 @@ void ScriptableExecutionUnit::executeAlgorithmStart() throw (CException) {
     ScriptInParam input_param;
     if(script_manager->getVirtualMachine()->callProcedure(SEU_ALGORITHM_START,
                                                           input_param)) {
-        LOG_AND_TROW_FORMATTED(SEU_LERR, -1, "Error calling function %1% of the script(it maybe not implemented)", %SEU_ALGORITHM_START);
+        LOG_AND_TROW_EX(SEU_LERR, -1, CHAOS_FORMAT("Error calling function %1% of the script(it maybe not implemented)", %SEU_ALGORITHM_START));
     }
 }
 
@@ -258,7 +264,7 @@ void ScriptableExecutionUnit::executeAlgorithmStep(uint64_t step_delay_time) thr
     input_param.push_back(CDataVariant((int64_t)step_delay_time));
     if(script_manager->getVirtualMachine()->callProcedure(SEU_ALGORITHM_STEP,
                                                           input_param)) {
-        LOG_AND_TROW_FORMATTED(SEU_LERR, -1, "Error calling function %1% of the script(it maybe not implemented)", %SEU_ALGORITHM_STEP);
+        LOG_AND_TROW_EX(SEU_LERR, -1, CHAOS_FORMAT("Error calling function %1% of the script(it maybe not implemented)", %SEU_ALGORITHM_STEP));
     }
 }
 
@@ -267,7 +273,7 @@ void ScriptableExecutionUnit::executeAlgorithmStop() throw (CException) {
     ScriptInParam input_param;
     if(script_manager->getVirtualMachine()->callProcedure(SEU_ALGORITHM_STOP,
                                                           input_param)) {
-        LOG_AND_TROW_FORMATTED(SEU_LERR, -1, "Error calling function %1% of the script(it maybe not implemented)", %SEU_ALGORITHM_STOP);
+        LOG_AND_TROW_EX(SEU_LERR, -1, CHAOS_FORMAT("Error calling function %1% of the script(it maybe not implemented)", %SEU_ALGORITHM_STOP));
     }
 }
 
@@ -276,7 +282,7 @@ void ScriptableExecutionUnit::executeAlgorithmEnd() throw (CException) {
     ScriptInParam input_param;
     if(script_manager->getVirtualMachine()->callProcedure(SEU_ALGORITHM_END,
                                                           input_param)) {
-        LOG_AND_TROW_FORMATTED(SEU_LERR, -1, "Error calling function %1% of the script(it maybe not implemented)", %SEU_ALGORITHM_END);
+        LOG_AND_TROW_EX(SEU_LERR, -1, CHAOS_FORMAT("Error calling function %1% of the script(it maybe not implemented)", %SEU_ALGORITHM_END));
     }
 }
 
@@ -304,6 +310,8 @@ bool ScriptableExecutionUnit::updatedInputDataset(const std::string& attribute_n
     input_param.push_back(value);
     if(script_manager->getVirtualMachine()->callProcedure(SEU_INPUT_ATTRIBUTE_CHANGED,
                                                           input_param)) {
+        metadataLogging(StandardLoggingChannel::LogLevelError,
+                        CHAOS_FORMAT("Error calling function %1% of the script(it maybe not implemented)", %SEU_INPUT_ATTRIBUTE_CHANGED));
         SEU_LERR << CHAOS_FORMAT("Error calling function %1% of the script(it maybe not implemented)", %SEU_INPUT_ATTRIBUTE_CHANGED);
         managed = false;
     }
