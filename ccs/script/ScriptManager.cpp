@@ -41,6 +41,7 @@ void ScriptManager::initUI() {
 
     ui->listViewScriptList->setModel(&script_list_model);
     ui->pushButtonExport->setEnabled(false);
+    ui->pushButtonDeleteScript->setEnabled(false);
     connect(ui->listViewScriptList->selectionModel(),
             SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
             SLOT(on_scriptListSelectionchanged(QItemSelection,QItemSelection)));
@@ -139,6 +140,7 @@ void ScriptManager::on_scriptListSelectionchanged(const QItemSelection &selected
     }
 
     ui->pushButtonExport->setEnabled(selected.indexes().size()>0);
+    ui->pushButtonDeleteScript->setEnabled(selected.indexes().size()>0);
 }
 
 void ScriptManager::closeScriptEditorTab(int idx) {
