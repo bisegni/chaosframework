@@ -9,6 +9,7 @@ stages:
 before_script:
   - export NOW=$(date +"%Y%m%d-%H%M%S")
   - export TAR_NAME_POSTFIX=$NOW
+  - env
 
 build_framework_x86_64:
   stage: build
