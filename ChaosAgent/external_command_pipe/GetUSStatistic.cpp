@@ -67,6 +67,7 @@ int GetUSStatistic::execute(ChaosStringVector input_parameter) {
     }
     
     //we have the description
+    std::string tmp_out;
     agent_instance_sd_wrapper.deserialize(request->getResult());
     const VectorAgentAssociation& ass_vec = agent_instance_sd_wrapper().node_associated;
     if(ass_vec.size() > 0) {
@@ -76,9 +77,9 @@ int GetUSStatistic::execute(ChaosStringVector input_parameter) {
             it != end;
             it++) {
             bool alive = utility::ProcUtil::checkProcessAlive(*it);
-            print(CHAOS_FORMAT("%1%|%2%|", %it->associated_node_uid%alive));
+            tmp_out += CHAOS_FORMAT("%1%|%2%|", %it->associated_node_uid%alive);
         }
-        println("");
+        println(tmp_out);
     }
     return 0;
 }
