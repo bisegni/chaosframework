@@ -10,6 +10,7 @@ before_script:
   - export NOW=$(date +"%Y%m%d-%H%M%S")
   - export TAR_NAME_POSTFIX=$NOW
   - env
+  - echo $CHAOS_DEPLOY_PRIVATE_KEY >> /builds/bisegni/chaosframework/deploy.key
 
 build_framework_x86_64:
   stage: build
@@ -22,11 +23,8 @@ build_framework_x86_64:
     - make  -j  $(nproc) ExperimentalConfigure
     - make  -j  $(nproc) ExperimentalBuild
     - make install
-    - tar -zcf /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux.tgz /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux
-  artifacts:
-    name: "chaos-distrib-x86_64-Linux"
-    paths:
-      - /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux.tgz
+    - tar -zcf /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux_$CI_BUILD_REF_SLUG.tgz /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux
+    - scp -i /builds/bisegni/chaosframework/deploy.key -o StrictHostKeyChecking=no /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux_$CI_BUILD_REF_SLUG.tgz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/
   only:
     - development
     - master
@@ -42,11 +40,8 @@ build_framework_arm:
     - make  -j  $(nproc) ExperimentalConfigure
     - make  -j  $(nproc) ExperimentalBuild
     - make install
-    - tar -zcf /builds/bisegni/chaosframework/chaos-distrib-armhf.tgz /builds/bisegni/chaosframework/chaos-distrib-armhf
-  artifacts:
-    name: "chaos-distrib-x86_64-armhf"
-    paths:
-      - /builds/bisegni/chaosframework/chaos-distrib-armhf.tgz
+    - tar -zcf /builds/bisegni/chaosframework/chaos-distrib-armhf_$CI_BUILD_REF_SLUG.tgz /builds/bisegni/chaosframework/chaos-distrib-armhf
+    - scp -i /builds/bisegni/chaosframework/deploy.key -o StrictHostKeyChecking=no /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux_$CI_BUILD_REF_SLUG.tgz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/
   only:
     - development
     - master
@@ -55,7 +50,7 @@ deploy_framework_x86_64:
     stage: deploy
     image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
     script:
-      - echo "scp /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux.tgz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/"
+      - echo "scp /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux_$CI_BUILD_REF_SLUG.tgz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/"
     only:
       - development
       - master
@@ -64,7 +59,7 @@ deploy_framework_arm:
     stage: deploy
     image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
     script:
-      - echo "scp /builds/bisegni/chaosframework/chaos-distrib-armhf.tgz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/"
+      - echo "scp /builds/bisegni/chaosframework/chaos-distrib-armhf_$CI_BUILD_REF_SLUG.tgz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/"
     only:
       - development
       - master
