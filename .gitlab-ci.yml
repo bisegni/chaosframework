@@ -22,10 +22,10 @@ build_framework_x86_64:
     - make  -j  $(nproc) ExperimentalStart
     - make  -j  $(nproc) ExperimentalConfigure
     - make  -j  $(nproc) ExperimentalBuild
-    - make install
-    - tar -zcf /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux_$TAR_NAME_POSTFIX.tgz /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux
-    - ls -la
-    - scp -v -i /builds/bisegni/chaosframework/deploy.key -o StrictHostKeyChecking=no /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux_$TAR_NAME_POSTFIX.tgz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/
+    #- make install
+    #- tar -zcf /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux_$TAR_NAME_POSTFIX.tgz /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux
+    #- ls -la
+    #- scp -v -i /builds/bisegni/chaosframework/deploy.key -o StrictHostKeyChecking=no /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux_$TAR_NAME_POSTFIX.tgz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/
   only:
     - development
     - master
@@ -40,10 +40,10 @@ build_framework_arm:
     - make  -j  $(nproc) ExperimentalStart
     - make  -j  $(nproc) ExperimentalConfigure
     - make  -j  $(nproc) ExperimentalBuild
-    - make install
-    - tar -zcf /builds/bisegni/chaosframework/chaos-distrib-armhf_$TAR_NAME_POSTFIX.tgz /builds/bisegni/chaosframework/chaos-distrib-armhf
-    - ls -la
-    - scp -v -i /builds/bisegni/chaosframework/deploy.key -o StrictHostKeyChecking=no /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux_$TAR_NAME_POSTFIX.tgz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/
+    #- make install
+    #- tar -zcf /builds/bisegni/chaosframework/chaos-distrib-armhf_$TAR_NAME_POSTFIX.tgz /builds/bisegni/chaosframework/chaos-distrib-armhf
+    #- ls -la
+    #- scp -v -i /builds/bisegni/chaosframework/deploy.key -o StrictHostKeyChecking=no /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux_$TAR_NAME_POSTFIX.tgz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/
   only:
     - development
     - master
