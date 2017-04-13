@@ -49,6 +49,8 @@ namespace chaos {
                 static const char * const	OPT_HTTP_PORT			= "HTTP_wi_port";
                 //!
                 static const char * const	OPT_HTTP_THREAD_NUMBER  = "HTTP_wi_thread_number";
+                static const char * const	OPT_CHAOS_THREAD_NUMBER  = "CHAOS_thread_number";
+
                 /*
                  Class that implement the Chaos RPC server using HTTP
                  */
@@ -61,7 +63,7 @@ namespace chaos {
                     bool run;
                     
                     int thread_number;
-                    
+                    int chaos_thread_number;
                     ServerList http_server_list;
                     
                     boost::atomic<int> thread_index;
@@ -73,7 +75,9 @@ namespace chaos {
                     static std::map<std::string,::driver::misc::ChaosController*> devs;
 
                      ::driver::misc::ChaosController* info;
-                     ::common::misc::scheduler::Scheduler sched_cu;
+                     std::vector< ::common::misc::scheduler::Scheduler* > sched_cu_v;
+                     int sched_alloc;
+
                     static void addDevice(std::string,::driver::misc::ChaosController*);
                     static void removeDevice(std::string);
                     bool checkForContentType(struct mg_connection *connection,

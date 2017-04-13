@@ -92,7 +92,7 @@ DEFINE_CLASS_FACTORY(HTTPUIInterface, AbstractWANInterface);
 HTTPUIInterface::HTTPUIInterface(const string& alias):
 				AbstractWANInterface(alias),
 				run(false),
-				thread_number(0) {
+				thread_number(1),chaos_thread_number(1),sched_alloc(0) {
 
 	info = new ::driver::misc::ChaosController();
 
@@ -125,8 +125,15 @@ void HTTPUIInterface::init(void *init_data) throw(CException) {
 		thread_number = getParameter()[OPT_HTTP_THREAD_NUMBER].asInt();
 	}
 
+	if(getParameter()[OPT_CHAOS_THREAD_NUMBER].isNull() ||
+				!getParameter()[OPT_CHAOS_THREAD_NUMBER].isInt()) {
+			chaos_thread_number = 1;
+		} else {
+			chaos_thread_number = getParameter()[OPT_CHAOS_THREAD_NUMBER].asInt();
+		}
 	HTTWAN_INTERFACE_APP_ << "HTTP server listen on port: " << service_port;
 	HTTWAN_INTERFACE_APP_ << "HTTP server thread used: " << thread_number;
+	HTTWAN_INTERFACE_APP_ << "CHAOS client threads used: " << chaos_thread_number;
 
 	//allcoate each server for every thread
 	for(int idx = 1;
@@ -157,6 +164,11 @@ void HTTPUIInterface::init(void *init_data) throw(CException) {
 		}
 	}
 	if(!http_server_list.size()) throw chaos::CException(-1, "No http server has been instantiated", __PRETTY_FUNCTION__);
+	sched_cu_v.resize(chaos_thread_number);
+	for(int cnt=0;cnt<chaos_thread_number;cnt++){
+		sched_cu_v[cnt]=new ::common::misc::scheduler::Scheduler();
+	}
+	sched_alloc=0;
 
 }
 
@@ -170,13 +182,19 @@ void HTTPUIInterface::start() throw(CException) {
 			it++) {
 		http_server_thread.add_thread(new boost::thread(boost::bind(&HTTPUIInterface::pollHttpServer, this, *it)));
 	}
-	sched_cu.start();
+	for(std::vector< ::common::misc::scheduler::Scheduler*>::iterator i=sched_cu_v.begin();i!=sched_cu_v.end();i++){
+		(*i)->start();
+	}
+
 }
 
 //inherited method
 void HTTPUIInterface::stop() throw(CException) {
 	run = false;
 	http_server_thread.join_all();
+	for(std::vector< ::common::misc::scheduler::Scheduler*>::iterator i=sched_cu_v.begin();i!=sched_cu_v.end();i++){
+		(*i)->stop();
+	}
 }
 
 //inherited method
@@ -189,6 +207,13 @@ void HTTPUIInterface::deinit() throw(CException) {
 	http_server_list.clear();
 	//clear the service url
 	service_port = 0;
+	for(int cnt=0;cnt<chaos_thread_number;cnt++){
+		if(sched_cu_v[cnt]){
+			delete (sched_cu_v[cnt]);
+		}
+		sched_cu_v[cnt]=NULL;
+
+	}
 }
 
 void HTTPUIInterface::pollHttpServer(struct mg_server *http_server) {
@@ -270,7 +295,7 @@ int HTTPUIInterface::process(struct mg_connection *connection) {
 			return 1;
 		}
 		char decoded[connection->content_len +2];
-		mg_url_decode(connection->content, connection->content_len,decoded, connection->content_len+2,0);
+		mg_url_decode(connection->content, connection->content_len+2,decoded, connection->content_len+2,0);
 		std::string content_data(decoded, connection->content_len);
 		HTTWAN_INTERFACE_DBG_<<"POST:"<<content_data;
 		request=mappify(content_data);
@@ -288,7 +313,7 @@ int HTTPUIInterface::process(struct mg_connection *connection) {
 	if(dev_param.size()==0){
 		std::string ret;
 		if(info->get(cmd,(char*)parm.c_str(),0,atoi(cmd_prio.c_str()),atoi(cmd_schedule.c_str()),atoi(cmd_mode.c_str()),0,ret)!=::driver::misc::ChaosController::CHAOS_DEV_OK){
-			HTTWAN_INTERFACE_ERR_<<"An error occurred during get:"<<info->getJsonState();
+			HTTWAN_INTERFACE_ERR_<<"An error occurred during get without dev:"<<info->getJsonState();
 			response.setCode(400);
 
 		} else {
@@ -301,12 +326,12 @@ int HTTPUIInterface::process(struct mg_connection *connection) {
 		answer_multi<<"[";
 		for(std::vector<std::string>::iterator idevname=dev_v.begin();idevname!=dev_v.end();idevname++){
 			std::string ret;
+			boost::mutex::scoped_lock l(devio_mutex);
 
 			if ((*idevname).empty() || cmd.empty()) {
 			  continue;
 			}
 			if(devs.count(*idevname)){
-			 boost::mutex::scoped_lock l(devio_mutex);
 
 			  controller = devs[*idevname];
 
@@ -314,43 +339,47 @@ int HTTPUIInterface::process(struct mg_connection *connection) {
 			  controller = new ::driver::misc::ChaosController();
 
 			  if (controller == NULL) {
-						response << "{}";
-						response.setCode(400);
-						HTTWAN_INTERFACE_ERR_<<"error creating Chaos Controller";
-						flush_response(connection, &response);
-						return 1;
-					}
-					if(controller->init(*idevname,DEFAULT_TIMEOUT_FOR_CONTROLLER)!=0){
-						response << controller->getJsonState();
-						HTTWAN_INTERFACE_ERR_<<"cannot init controller for "<<*idevname;
-						response << "{}";
-						response.setCode(400);
-						delete controller;
-						flush_response(connection, &response);
-						return 1;
-					}
+			    response << "{}";
+			    response.setCode(400);
+			    HTTWAN_INTERFACE_ERR_<<"error creating Chaos Controller";
+			    flush_response(connection, &response);
+			    return 1;
+			  }
+			  if(controller->init(*idevname,DEFAULT_TIMEOUT_FOR_CONTROLLER)!=0){
+			    response << controller->getJsonState();
+			    HTTWAN_INTERFACE_ERR_<<"cannot init controller for "<<*idevname<<"\"";
+			    //  response << "{}";
+			    //response.setCode(400);
+			    delete controller;
+			    //flush_response(connection, &response);
+			    //return 1;
+			    if((idevname+1) == dev_v.end()){
+			    	answer_multi<<"{}]";
+			    }else {
+			    	answer_multi<<"{},";
+			    }
+			    continue;
+			  } else{
 
-					addDevice(*idevname,controller);
-					sched_cu.add(*idevname,controller);
-
+			    addDevice(*idevname,controller);
+			    sched_cu_v[sched_alloc++%chaos_thread_number]->add(*idevname,controller);
+			  }
 
 			}
 
 			if(controller->get(cmd,(char*)parm.c_str(),0,atoi(cmd_prio.c_str()),atoi(cmd_schedule.c_str()),atoi(cmd_mode.c_str()),0,ret)!=::driver::misc::ChaosController::CHAOS_DEV_OK){
-			  HTTWAN_INTERFACE_ERR_<<"An error occurred during get:"<<controller->getJsonState();
-				}
-
+			  HTTWAN_INTERFACE_ERR_<<"An error occurred during get of:\""<<*idevname<<"\"";
+			}
 
 				if((idevname+1) == dev_v.end()){
 					answer_multi<<ret<<"]";
 				}else {
 					answer_multi<<ret<<",";
 				}
-
 			}
 		response<<answer_multi.str();
 
-		}
+	}
 
 
 

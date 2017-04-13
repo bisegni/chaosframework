@@ -1,3 +1,4 @@
+
 cmake_minimum_required(VERSION 2.6)
 # IF (DEFINED ENV{CHAOS_BUNDLE} )
 #   include($ENV{CHAOS_BUNDLE}/tools/project_template/CMakeChaos.txt)
@@ -42,5 +43,5 @@ IF(BUILD_FORCE_STATIC)
   SET(CMAKE_EXE_LINKER_FLAGS "-static -Wl,--whole-archive -lchaos_common -Wl,--no-whole-archive")
 ENDIF()
 
-TARGET_LINK_LIBRARIES(ChaosWANProxy chaos_common chaos_metadata_service_client  chaos_driver_misc mongoose ${FrameworkLib})
+TARGET_LINK_LIBRARIES(ChaosWANProxy chaos_common chaos_metadata_service_client  chaos_driver_misc ${FrameworkLib})
 INSTALL_TARGETS(/bin ChaosWANProxy)

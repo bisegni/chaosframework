@@ -244,7 +244,7 @@ int CUController::getDeviceAttributeType(const string& attr, DataType::DataType&
 int CUController::getType(std::string& control_unit_type) {
     int err = 0;
     if(cu_type.empty()) {
-        CDataWrapper*tmp=fetchCurrentDatatasetFromDomain(KeyDataStorageDomainSystem);
+        CDataWrapper*tmp=fetchCurrentDatatasetFromDomain(KeyDataStorageDomainSystem).get();
         if(tmp && tmp->hasKey(DataPackSystemKey::DP_SYS_UNIT_TYPE)){
             std::string t=tmp->getCStringValue(DataPackSystemKey::DP_SYS_UNIT_TYPE);
             cu_type = t;
@@ -302,7 +302,7 @@ int CUController::recoverDeviceFromError() {
 //---------------------------------------------------------------------------------------------------
 uint64_t CUController::getState(CUStateKey::ControlUnitState& deviceState) {
     uint64_t ret=0;
-    CDataWrapper*tmp=fetchCurrentDatatasetFromDomain(KeyDataStorageDomainHealth);
+    CDataWrapper*tmp=fetchCurrentDatatasetFromDomain(KeyDataStorageDomainHealth).get();
     deviceState=CUStateKey::UNDEFINED;
     if(tmp && tmp->hasKey(NodeHealtDefinitionKey::NODE_HEALT_STATUS)){
         std::string state=tmp->getCStringValue(NodeHealtDefinitionKey::NODE_HEALT_STATUS);
@@ -732,7 +732,7 @@ void CUController::initializeAttributeIndexMap() {
         if(datasetDB.getAttributeRangeValueInfo(*iter, attributerangeInfo)!=0){
             LERR_<<"CANNOT RETRIVE attr range info of:"<<*iter;
         }
-        LDBG_<<"IN attr:"<<attributerangeInfo.name<<" type:"<<attributerangeInfo.valueType<<" bin type:"<<attributerangeInfo.binType;
+   //     LDBG_<<"IN attr:"<<attributerangeInfo.name<<" type:"<<attributerangeInfo.valueType<<" bin type:"<<attributerangeInfo.binType;
         attributeValueMap.insert(make_pair(*iter, attributerangeInfo));
         
     }
@@ -748,7 +748,7 @@ void CUController::initializeAttributeIndexMap() {
             LERR_<<"CANNOT RETRIVE attr range info of:"<<*iter;
             
         }
-        LDBG_<<"OUT attr:"<<attributerangeInfo.name<<" type:"<<attributerangeInfo.valueType<<" bin type:"<<attributerangeInfo.binType;
+    //    LDBG_<<"OUT attr:"<<attributerangeInfo.name<<" type:"<<attributerangeInfo.valueType<<" bin type:"<<attributerangeInfo.binType;
         attributeValueMap.insert(make_pair(*iter, attributerangeInfo));
         
     }
@@ -898,29 +898,30 @@ CDataWrapper * CUController::getLiveCDataWrapperPtr() {
 
 
 //---------------------------------------------------------------------------------------------------
-CDataWrapper * CUController::getCurrentDatasetForDomain(DatasetDomain domain) {
+boost::shared_ptr<chaos::common::data::CDataWrapper> CUController::getCurrentDatasetForDomain(DatasetDomain domain) {
+    boost::mutex::scoped_lock lock(trackMutext);
     if(domain<current_dataset.size()){
-        return current_dataset[domain].get();
+        return current_dataset[domain];
     }
-    return NULL;
+    return current_dataset[0];
 }
 
 //---------------------------------------------------------------------------------------------------
-chaos::common::data::CDataWrapper *  CUController::fetchCurrentDatatasetFromDomain(DatasetDomain domain) {
+boost::shared_ptr<chaos::common::data::CDataWrapper>  CUController::fetchCurrentDatatasetFromDomain(DatasetDomain domain) {
     CHAOS_ASSERT(ioLiveDataDriver.get())
     char *value = NULL;
     unsigned long value_len = 0;
-    
+    boost::mutex::scoped_lock lock(trackMutext);
     if(domain<current_dataset.size()){
         value = ioLiveDataDriver->retriveRawData(channel_keys[domain],(size_t*)&value_len);
         if(value){
             chaos::common::data::CDataWrapper *tmp = new CDataWrapper(value);
             current_dataset[domain].reset(tmp);
             free(value);
-            return tmp;
+            return current_dataset[domain];
         }
     }
-    return NULL;
+    return current_dataset[0];
 }
 
 //---------------------------------------------------------------------------------------------------
@@ -1003,7 +1004,7 @@ CDataWrapper *CUController::getCurrentData(){
 
 //! get profile info
 cu_prof_t CUController::getProfileInfo(){
-    chaos::common::data::CDataWrapper *prof=  fetchCurrentDatatasetFromDomain(KeyDataStorageDomainHealth);
+    chaos::common::data::CDataWrapper *prof=  fetchCurrentDatatasetFromDomain(KeyDataStorageDomainHealth).get();
     cu_prof_t p;
     bzero(&p,sizeof(cu_prof_t));
     if(prof){

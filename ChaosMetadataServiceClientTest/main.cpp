@@ -171,7 +171,7 @@ int main(int argc, char *argv[]){
                 uint64_t last_stat_ts = start_stat_ts;
                 while(work) {
                     start_stat_ts = TimingUtil::getTimeStamp();
-                    ds = cu_ctrl->fetchCurrentDatatasetFromDomain(chaos::cu::data_manager::KeyDataStorageDomainOutput);
+                    ds = cu_ctrl->fetchCurrentDatatasetFromDomain(chaos::cu::data_manager::KeyDataStorageDomainOutput).get();
                     if(ds) {
                         counter++;
                     }
@@ -193,7 +193,7 @@ int main(int argc, char *argv[]){
                 chaos::metadata_service_client::node_controller::CUController *cu_ctrl = NULL;
                 while(work){
                     ChaosMetadataServiceClient::getInstance()->getNewCUController(device_id,&cu_ctrl);
-                    ds = cu_ctrl->fetchCurrentDatatasetFromDomain(chaos::cu::data_manager::KeyDataStorageDomainOutput);
+                    ds = cu_ctrl->fetchCurrentDatatasetFromDomain(chaos::cu::data_manager::KeyDataStorageDomainOutput).get();
                     ChaosMetadataServiceClient::getInstance()->deleteCUController(cu_ctrl);
                     work = ((chaos::common::utility::TimingUtil::getTimeStamp()-start_ts) < (wait_seconds*1000));
                 }
