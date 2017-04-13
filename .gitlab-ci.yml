@@ -9,7 +9,6 @@ stages:
 before_script:
   - export NOW=$(date +"%Y%m%d-%H%M%S")
   - export TAR_NAME_POSTFIX=$NOW
-  - env
   - echo $CHAOS_DEPLOY_PRIVATE_KEY >> /builds/bisegni/chaosframework/deploy.key
   - chmod 600 /builds/bisegni/chaosframework/deploy.key
 
@@ -25,6 +24,7 @@ build_framework_x86_64:
     - make  -j  $(nproc) ExperimentalBuild
     - make install
     - tar -zcf /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux_$CI_BUILD_REF_SLUG.tgz /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux
+    - ls -la
     - scp -i /builds/bisegni/chaosframework/deploy.key -o StrictHostKeyChecking=no /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux_$CI_BUILD_REF_SLUG.tgz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/
   only:
     - development
@@ -42,6 +42,7 @@ build_framework_arm:
     - make  -j  $(nproc) ExperimentalBuild
     - make install
     - tar -zcf /builds/bisegni/chaosframework/chaos-distrib-armhf_$CI_BUILD_REF_SLUG.tgz /builds/bisegni/chaosframework/chaos-distrib-armhf
+    - ls -la
     - scp -i /builds/bisegni/chaosframework/deploy.key -o StrictHostKeyChecking=no /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux_$CI_BUILD_REF_SLUG.tgz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/
   only:
     - development
