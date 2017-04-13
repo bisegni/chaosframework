@@ -25,7 +25,6 @@ build_framework_x86_64:
     name: "chaos-distrib-x86_64-Linux_$(TAR_NAME_POSTFIX)"
     paths:
       - /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux_$TAR_NAME_POSTFIX.tgz
-
   only:
     - development
     - master
@@ -54,9 +53,15 @@ deploy_framework_x86_64:
     image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
     script:
       - echo "scp /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux_$TAR_NAME_POSTFIX.tgz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/"
+  only:
+    - development
+    - master
 
 deploy_framework_arm:
     stage: deploy
     image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
     script:
       - echo "scp /builds/bisegni/chaosframework/chaos-distrib-armhf_$TAR_NAME_POSTFIX.tgz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/"
+  only:
+    - development
+    - master
