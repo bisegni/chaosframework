@@ -27,7 +27,10 @@ using namespace chaos::metadata_service_client::api_proxy::script;
 
 API_PROXY_CD_DEFINITION(SaveScript, "script", "saveScript")
 
-ApiProxyResult SaveScript::execute(const Script& script_to_insert) {
+ApiProxyResult SaveScript::execute(const Script& script_to_insert,
+                                   const bool& import) {
     ScriptSDWrapper sh(script_to_insert);
-    return callApi(sh.serialize().release());
+    std::auto_ptr<common::data::CDataWrapper> data_pack = sh.serialize();
+    if(import){data_pack->addBoolValue("import", import);}
+    return callApi(data_pack.release());
 }

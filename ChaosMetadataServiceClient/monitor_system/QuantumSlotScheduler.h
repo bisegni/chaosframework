@@ -173,12 +173,6 @@ mutex_ ## queue_name.unlock();
             class QuantumSlotScheduler:
             public chaos::common::utility::StartableService {
                 friend class MonitorManager;
-                //!asio structure
-                boost::asio::io_service                 ios;
-                boost::shared_ptr<boost::thread>        ios_thread;
-                boost::asio::deadline_timer             async_timer;
-                asio::io_service::work                  async_work;
-                
                 std::vector<std::string>                data_driver_endpoint;
                 chaos::common::network::NetworkBroker   *network_broker;
                 std::string                             data_driver_impl;

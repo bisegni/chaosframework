@@ -93,11 +93,8 @@ int MongoDBScriptDataAccess::insertNewScript(Script& script_entry) {
                                      i))) {
             SDA_ERR << "Error creating new script";
         } else {
-            //now all other part of the script are managed with update
-            if(script_entry.script_content.size()) {
-                //add sccript content
-                err = updateScript(script_entry);
-            }
+            //add sccript content
+            err = updateScript(script_entry);
         }
     } catch (const mongo::DBException &e) {
         SDA_ERR << e.what();

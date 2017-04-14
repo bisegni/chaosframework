@@ -41,7 +41,8 @@ namespace chaos {
                      are name and description from class @chaos::service_common::data::script::ScriptBaseInfo.
                      \param script_to_insert is a description of a new script
                      */
-                    ApiProxyResult execute(const chaos::service_common::data::script::Script& script_to_insert);
+                    ApiProxyResult execute(const chaos::service_common::data::script::Script& script_to_insert,
+                                           const bool& import = false);
                 };
                 
             }

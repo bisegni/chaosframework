@@ -1205,8 +1205,39 @@ namespace bson {
         return builder.obj();
     }
 
+    void fromjsonWithBuilder(const char* jsonString, int* len, BSONObjBuilder *builder) {
+        if(builder == NULL) return;
+        BSON_MONGO_JSON_DEBUG("jsonString: " << jsonString);
+        if (jsonString[0] == '\0') {
+            if (len) *len = 0;
+            return;
+        }
+        JParse jparse(jsonString);
+        Status ret = Status::OK();
+        try {
+            ret = jparse.object("UNUSED", *builder, false);
+        }
+        catch(std::exception& e) {
+            std::ostringstream message;
+            message << "caught exception from within JSON parser: " << e.what();
+            throw MsgAssertionException(17031, message.str());
+        }
+        
+        if (ret != Status::OK()) {
+            ostringstream message;
+            message << "code " << ret.code() << ": " << ret.codeString() << ": " << ret.reason();
+            throw MsgAssertionException(16619, message.str());
+        }
+        if (len) *len = jparse.offset();
+    }
+    
     BSONObj fromjson(const std::string& str) {
         return fromjson( str.c_str() );
+    }
+    
+    void fromjson(const std::string& str,
+                     BSONObjBuilder *builder) {
+        return fromjsonWithBuilder( str.c_str(), NULL, builder);
     }
 
 }  /* namespace bson */

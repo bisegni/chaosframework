@@ -87,6 +87,14 @@ bsonBuilder(new BSONObjBuilder()){
 
 CDataWrapper::~CDataWrapper() {}
 
+std::auto_ptr<CDataWrapper> CDataWrapper::instanceFromJson(const std::string& json_serialization) {
+    std::auto_ptr<CDataWrapper> new_wrapper(new CDataWrapper());
+    try{
+        fromjson(json_serialization, new_wrapper->bsonBuilder.get());
+    }catch(...){}
+    return new_wrapper;
+}
+
 CDataWrapper *CDataWrapper::clone() {
     CDataWrapper *result = new CDataWrapper(bsonBuilder->asTempObj().objdata());
     return result;
@@ -199,15 +207,15 @@ CDataWrapper *CDataWrapper::getCSDataValue(const std::string& key) {
     return result;
 }
 std::string CDataWrapper::getJsonValue(const std::string& key) {
-	CDataWrapper *tmp;
-	std::string ret;
-	tmp = getCSDataValue(key);
-	if(tmp){
-		ret=tmp->getJSONString();
-		delete tmp;
-	}
-
-	return ret;
+    CDataWrapper *tmp;
+    std::string ret;
+    tmp = getCSDataValue(key);
+    if(tmp){
+        ret=tmp->getJSONString();
+        delete tmp;
+    }
+    
+    return ret;
 }
 
 //get string value
@@ -244,7 +252,7 @@ uint64_t CDataWrapper::getUInt64Value(const std::string& key) {
 double CDataWrapper::getDoubleValue(const std::string& key) {
     if(bsonBuilder->asTempObj().getField(key).type()==NumberInt){
         return (double)bsonBuilder->asTempObj().getField(key).numberInt();
-
+        
     }
     return bsonBuilder->asTempObj().getField(key).Double();
 }
@@ -278,7 +286,7 @@ void CDataWrapper::addVariantValue(const std::string& key,
             break;
         case DataType::TYPE_CLUSTER:{
             addJsonValue(key,variant_value.asString());
-         
+            
             break;
         }
         case DataType::TYPE_STRING:
@@ -568,13 +576,13 @@ void CDataWrapper::addJsonValue(const std::string& key, const string& val){
     tmp.setSerializedJsonData(val.c_str());
     addCSDataValue(key,tmp);
 }
-                
+
 void CDataWrapper::addJsonValue(const std::string& key, Json::Value& val){
     Json::FastWriter fastWriter;
     std::string output = fastWriter.write(val);
     addJsonValue(key,output);
 }
-                
+
 bool CDataWrapper::isStringValue(const std::string& key){
     return bsonBuilder->asTempObj().getField(key).type()==String;
 }

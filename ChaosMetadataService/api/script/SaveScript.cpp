@@ -45,24 +45,33 @@ chaos::common::data::CDataWrapper *SaveScript::execute(CDataWrapper *api_data, b
     
     //check for mandatory attributes
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found");
+    
+    bool import = CDW_GET_BOOL_WITH_DEFAULT(api_data, "import", false);
+    
     //get scrip description
     ScriptSDWrapper script_dw(api_data);
-    ScriptBaseDescriptionSDWrapper script_bs_dw;
+    ScriptBaseDescriptionSDWrapper script_bs_result_dw;
     //fetch dataaccess for the script managment
     GET_DATA_ACCESS(ScriptDataAccess, s_da, -2)
 
     //call dataaccesso for insert new script and get the sequence value
-    if(script_dw.dataWrapped().script_description.unique_id == 0) {
+    if(import) {
         if((err = s_da->insertNewScript(script_dw.dataWrapped()))) {
             LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error creating new script %1%[%2%]",%script_dw.dataWrapped().script_description.name%script_dw.dataWrapped().script_description.unique_id));
         }
     } else {
-        if((err = s_da->updateScript(script_dw.dataWrapped()))) {
-            LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error updating script %1%[%2%]", %script_dw.dataWrapped().script_description.name%script_dw.dataWrapped().script_description.unique_id));
+        if(script_dw.dataWrapped().script_description.unique_id == 0) {
+            if((err = s_da->insertNewScript(script_dw.dataWrapped()))) {
+                LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error creating new script %1%[%2%]",%script_dw.dataWrapped().script_description.name%script_dw.dataWrapped().script_description.unique_id));
+            }
+        } else {
+            if((err = s_da->updateScript(script_dw.dataWrapped()))) {
+                LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error updating script %1%[%2%]", %script_dw.dataWrapped().script_description.name%script_dw.dataWrapped().script_description.unique_id));
+            }
         }
     }
-
+    
     //return the script base description
-    script_bs_dw.dataWrapped() = script_dw.dataWrapped().script_description;
-    return script_bs_dw.serialize().release();
+    script_bs_result_dw.dataWrapped() = script_dw.dataWrapped().script_description;
+    return script_bs_result_dw.serialize().release();
 }

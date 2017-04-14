@@ -50,9 +50,13 @@ namespace bson {
      */
     BSONObj fromjson(const std::string& str);
 
+    void fromjson(const std::string& str, BSONObjBuilder *builder);
+    
     /** @param len will be size of JSON object in text chars. */
     BSONObj fromjson(const char* str, int* len=NULL);
 
+    void fromjsonWithBuilder(const char* str, int* len=NULL, BSONObjBuilder * builder = NULL);
+    
     /**
      * Parser class.  A BSONObj is constructed incrementally by passing a
      * BSONObjBuilder to the recursive parsing methods.  The grammar for the

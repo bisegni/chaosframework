@@ -182,14 +182,29 @@ void ScriptManager::on_pushButtonExport_clicked() {
 }
 
 void ScriptManager::on_pushButtonImport_clicked() {
-//    api_submitter.submitApiResult("ScriptDescriptionWidget::updateScript",
-//                                  GET_CHAOS_API_PTR(script::SaveScript)->execute(script_wrapper.dataWrapped()));
+    ScriptSDWrapper swd;
     QStringList fileNames;
     QFileDialog dialog(this);
     dialog.setFileMode(QFileDialog::AnyFile);
     dialog.setNameFilter(tr("Script JSON Export (*.json)"));
     if (dialog.exec()) {
         fileNames = dialog.selectedFiles();
-        qDebug() << fileNames;
+        foreach (QString import_file_path, fileNames) {
+            QFile import_file(import_file_path);
+            if (import_file.open(QFile::ReadOnly)) {
+                QTextStream in(&import_file);
+                std::auto_ptr<CDataWrapper> ser = CDataWrapper::instanceFromJson(in.readAll().toStdString());
+                if(ser.get()) {
+                    swd.deserialize(ser.get());
+                    submitApiResult(QString("sm::import|%1").arg(import_file_path),
+                                    GET_CHAOS_API_PTR(script::SaveScript)->execute(swd(),
+                                                                                   true));
+                }else{
+                    ErrorManager::getInstance()->submiteError(-1,
+                                                              QString("Error decoding file '%1' for import").arg(import_file_path),
+                                                              __PRETTY_FUNCTION__);
+                }
+            }
+        }
     }
 }

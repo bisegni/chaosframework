@@ -118,6 +118,8 @@ namespace chaos {
                 CDataWrapper(const char* serializationBuffer);
                 ~CDataWrapper();
                 
+                static std::auto_ptr<CDataWrapper> instanceFromJson(const std::string& json_serialization);
+                
                 CDataWrapper *clone();
                 //add a csdata value
                 void addCSDataValue(const std::string&, const CDataWrapper&);

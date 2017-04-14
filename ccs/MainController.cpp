@@ -201,7 +201,7 @@ void MainController::initApplicationMenuBar() {
 
     //Data
     menu = main_menu_bar.addMenu("&Tools");
-    menu->addAction("Node Monitor", this, SLOT(actionNewNodeMonitor()),QKeySequence(Qt::CTRL + Qt::Key_P));
+    menu->addAction("Node Monitor", this, SLOT(actionNewNodeMonitor()),QKeySequence(Qt::CTRL + Qt::Key_T));
     menu->addSeparator();
     initConfigurationsMenu(menu->addMenu("Network Configurations"));
     menu->addAction("Preferenes", this, SLOT(actionPreferences()));

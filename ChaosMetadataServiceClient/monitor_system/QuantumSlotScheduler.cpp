@@ -38,32 +38,18 @@ using namespace chaos::common::utility;
 using namespace chaos::metadata_service_client::monitor_system;
 
 QuantumSlotScheduler::QuantumSlotScheduler(chaos::common::network::NetworkBroker *_network_broker):
-ios(),
-async_timer(ios, boost::posix_time::seconds(0)),
-async_work(ios),
 network_broker(_network_broker),
 queue_active_slot(100),
 set_slots_index_quantum(boost::multi_index::get<ss_current_quantum>(set_slots)),
-set_slots_index_key_slot(boost::multi_index::get<ss_quantum_slot_key>(set_slots)) {
-    //launch asio thread
-    //stop asio thread
-    QSS_INFO<< "Put ASIO infrastructure into thread";
-    ios_thread.reset(new boost::thread(boost::bind(&boost::asio::io_service::run, &ios)));
-}
+set_slots_index_key_slot(boost::multi_index::get<ss_quantum_slot_key>(set_slots)) {}
 
-QuantumSlotScheduler::~QuantumSlotScheduler() {
-    //stop asio thread
-    QSS_INFO<< "Stop forwarded ASIO infrastructure";
-    ios.stop();
-    QSS_INFO<< "ASIO Stopped";
-}
+QuantumSlotScheduler::~QuantumSlotScheduler() {}
 
 
 void QuantumSlotScheduler::init(void *init_data) throw (chaos::CException) {
     CHAOS_LASSERT_EXCEPTION(network_broker, QSS_ERR, -1, "No network broker instance found")
     data_driver_impl = GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_DATA_IO_IMPL);
     CHAOS_LASSERT_EXCEPTION((data_driver_impl.compare("IODirect") == 0), QSS_ERR, -2, "Only IODirect implementation is supported")
-    
 }
 
 void QuantumSlotScheduler::start() throw (chaos::CException) {
@@ -326,12 +312,6 @@ void QuantumSlotScheduler::fetchValue(boost::shared_ptr<IODataDriver> data_drive
             dispath_new_value_async(error,
                                     cur_slot,
                                     data_found);
-            
-            //            async_timer.async_wait(boost::bind(&QuantumSlotScheduler::dispath_new_value_async,
-            //                                               this,
-            //                                               boost::asio::placeholders::error,
-            //                                               cur_slot,
-            //                                               data_found));
         } else {
             //we need to sleep untile someone wakeup us
             QSS_DBG << "No more data slot to fetch so i'm going to sleep";

@@ -127,6 +127,15 @@ bool ProcUtil::popen2ToNamedPipe(const std::string& command,
         close(fd); /* close the file descriptor as we don't need it more  */
         
         execl("/bin/sh", "/bin/sh", "-c", command.c_str(), NULL);
+    } else {
+        int status;
+        do {
+            if(waitpid(pid, &status, 0) == -1) {
+                if (errno != EINTR) {
+                    break;
+                }
+            }
+        } while (!WIFEXITED(status));
     }
     return true;
 }
