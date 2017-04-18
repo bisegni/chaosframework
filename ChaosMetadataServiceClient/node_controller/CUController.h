@@ -391,9 +391,13 @@ namespace chaos {
                 //!return the last fetched dataset for the domain
                 boost::shared_ptr<chaos::common::data::CDataWrapper> getCurrentDatasetForDomain(DatasetDomain domain);
                 
+                //!return the last fetched dataset for the domain
+                int getCurrentDatasetForDomain(DatasetDomain domain,chaos::common::data::CDataWrapper* ret);
                 //! fetch from the chaso central cache the dataset associated to the domain
                 boost::shared_ptr<chaos::common::data::CDataWrapper>  fetchCurrentDatatasetFromDomain(DatasetDomain domain);
                 
+                //! fetch from the central cache the dataset
+                int  fetchCurrentDatatasetFromDomain(DatasetDomain domain,chaos::common::data::CDataWrapper* ret);
                 /*!
                  Fetch the current live value form live storage
                  */

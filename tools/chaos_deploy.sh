@@ -310,20 +310,24 @@ cp -r $CHAOS_PREFIX/html $TMP_DEPLOY/
 cp -r $CHAOS_PREFIX/chaos_env.sh $TMP_DEPLOY/
 mkdir $TMP_DEPLOY/bin
 if [ -z "$DEPLOY_BINARIES" ];then
-    DEPLOY_BINARIES="ChaosWANProxy CUIserver ChaosMetadataService UnitServer"
+    DEPLOY_BINARIES="ChaosWANProxy:wan CUIserver:webui ChaosMetadataService:mds ChaosMetadataService:cds UnitServer:cu ChaosAgent:agent"
 fi
 
 for i in $DEPLOY_BINARIES;do
-    cp $CHAOS_PREFIX/bin/$i $TMP_DEPLOY/bin
-done
 
-pushd $TMP_DEPLOY/bin >& /dev/null
-ln -sf UnitServer cu
-ln -sf ChaosMetadataService mds
-ln -sf ChaosMetadataService cds
-ln -sf CUIserver webui
-ln -sf ChaosWANProxy wan
-popd >& /dev/null
+    if [[ "$i" =~ ([a-zA-Z0-9]+):([a-zA-Z0-9]+) ]];then
+	bin=${BASH_REMATCH[1]}
+	link=${BASH_REMATCH[2]}
+	cp $CHAOS_PREFIX/bin/$bin $TMP_DEPLOY/bin
+	pushd $TMP_DEPLOY/bin >& /dev/null
+	ln -sf $bin $link
+	popd >& /dev/null
+    else
+	cp $CHAOS_PREFIX/bin/$i $TMP_DEPLOY/bin
+    fi
+
+
+done
 
 
 

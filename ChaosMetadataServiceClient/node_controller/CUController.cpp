@@ -93,7 +93,7 @@ deviceChannel(NULL) {
 CUController::~CUController() {
     LDBG_<<"["<<__PRETTY_FUNCTION__<<"] remove Device Controller:"<<deviceChannel->getDeviceID();
     stopTracking();
-    
+
     if(deviceChannel){
         deviceChannel->removeListener(this);
         NetworkBroker::getInstance()->disposeMessageChannel(deviceChannel);
@@ -905,14 +905,34 @@ boost::shared_ptr<chaos::common::data::CDataWrapper> CUController::getCurrentDat
     }
     return current_dataset[0];
 }
+int CUController::getCurrentDatasetForDomain(DatasetDomain domain,chaos::common::data::CDataWrapper* ret){
+	boost::mutex::scoped_lock lock(trackMutext);
+	if(ret){
+		//ret->reset();
+		//ret->setSerializedData((const char*)current_dataset[domain]->getBSONData());
+		current_dataset[domain]->copyAllTo(*ret);
+	 return 0;
+	}
+	return -1;
+
+}
+int   CUController::fetchCurrentDatatasetFromDomain(DatasetDomain domain,chaos::common::data::CDataWrapper* ret){
+	 CUController::fetchCurrentDatatasetFromDomain(domain);
+	 boost::mutex::scoped_lock lock(trackMutext);
+	 if(ret){
+		// ret->reset();
+		 current_dataset[domain]->copyAllTo(*ret);
+		 return 0;
+	 }
+	 return 0;
+}
 
 //---------------------------------------------------------------------------------------------------
 boost::shared_ptr<chaos::common::data::CDataWrapper>  CUController::fetchCurrentDatatasetFromDomain(DatasetDomain domain) {
-    CHAOS_ASSERT(ioLiveDataDriver.get())
     char *value = NULL;
     unsigned long value_len = 0;
     boost::mutex::scoped_lock lock(trackMutext);
-    if(domain<current_dataset.size()){
+    if((ioLiveDataDriver.get())&&(domain<current_dataset.size())){
         value = ioLiveDataDriver->retriveRawData(channel_keys[domain],(size_t*)&value_len);
         if(value){
             chaos::common::data::CDataWrapper *tmp = new CDataWrapper(value);
