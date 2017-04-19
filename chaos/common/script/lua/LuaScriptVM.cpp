@@ -231,7 +231,9 @@ int LuaScriptVM::loadScript(const std::string& loadable_script) {
 int LuaScriptVM::callFunction(const std::string& function_name,
                               const ScriptInParam& input_parameter,
                               ScriptOutParam& output_parameter) {
-    int err = 0;
+    last_error = 0;
+    last_error_message.clear();
+    
     // push functions and arguments
     lua_getglobal(ls, function_name.c_str());
     
@@ -268,11 +270,11 @@ int LuaScriptVM::callFunction(const std::string& function_name,
     }
     
     // do the call (2 arguments, 1 result)
-    if ((err = lua_pcall(ls,
+    if ((last_error = lua_pcall(ls,
                          (int)input_parameter.size(),
                          0,
                          1) != 0)) {
-        LSVM_ERR << CHAOS_FORMAT("Error %1% calling script function %2%", %lua_tostring(ls, -1)%function_name);
+        LSVM_ERR << CHAOS_FORMAT("Error %1% calling script function %2%", %(last_error_message = lua_tostring(ls, -1))%function_name);
     } else {
         //result_element = lua_gettop(ls);
         //execution as gone well, we can get the expected result
@@ -299,12 +301,14 @@ int LuaScriptVM::callFunction(const std::string& function_name,
         lua_pop(ls, 1);
         //        }
     }
-    return err;
+    return last_error;
 }
 
 int LuaScriptVM::callProcedure(const std::string& function_name,
                                const ScriptInParam& input_parameter) {
-    int err = 0;
+    last_error = 0;
+    last_error_message.clear();
+    
     // push functions and arguments
     lua_getglobal(ls, function_name.c_str());
     
@@ -340,13 +344,13 @@ int LuaScriptVM::callProcedure(const std::string& function_name,
     }
     
     // do the call (2 arguments, 1 result)
-    if ((err = lua_pcall(ls,
+    if ((last_error = lua_pcall(ls,
                          (int)input_parameter.size(),
                          0,
                          0) != 0)) {
-        LSVM_ERR << CHAOS_FORMAT("Error %1% calling script function %2%", %lua_tostring(ls, -1)%function_name);
+        LSVM_ERR << CHAOS_FORMAT("Error %1% calling script function %2%", %(last_error_message = lua_tostring(ls, -1))%function_name);
     }
-    return err;
+    return last_error;
 }
 
 int LuaScriptVM::functionExists(const std::string& name,

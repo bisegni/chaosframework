@@ -26,6 +26,7 @@ using namespace chaos::common::utility;
 
 AbstractScriptVM::AbstractScriptVM(const std::string& service_name):
 NamedService(service_name),
+last_error(0),
 script_caller(NULL){}
 
 AbstractScriptVM::~AbstractScriptVM() {}
@@ -35,4 +36,12 @@ void AbstractScriptVM::setCaller(ScriptApiCaller *_script_caller) {
 }
 ScriptApiCaller *AbstractScriptVM::getCaller() {
     return script_caller;
+}
+
+const int AbstractScriptVM::getLastError() const {
+    return last_error;
+}
+
+const std::string& AbstractScriptVM::getLastErrorMessage() const {
+    return last_error_message;
 }

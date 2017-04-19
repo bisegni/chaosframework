@@ -36,6 +36,8 @@ namespace chaos {
             public common::utility::NamedService,
             public chaos::common::utility::InizializableService {
             protected:
+                int last_error;
+                std::string last_error_message;
                 ScriptApiCaller *script_caller;
             public:
                 AbstractScriptVM(const std::string& service_name);
@@ -52,6 +54,9 @@ namespace chaos {
                                           const ScriptInParam& input_parameter) = 0;
                 
                 virtual int functionExists(const std::string& name, bool& exists) = 0;
+                
+                const int getLastError() const;
+                const std::string& getLastErrorMessage() const;
             };
 
         }

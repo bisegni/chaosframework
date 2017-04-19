@@ -241,7 +241,9 @@ void ScriptableExecutionUnit::executeAlgorithmLaunch() throw (CException) {
     ScriptInParam input_param;
     if(script_manager->getVirtualMachine()->callProcedure(SEU_ALGORITHM_LAUNCH,
                                                           input_param)) {
-        LOG_AND_TROW_EX(SEU_LERR, -1, CHAOS_FORMAT("Error calling function %1% of the script(it maybe not implemented)", %SEU_ALGORITHM_LAUNCH));
+        LOG_AND_TROW_EX(SEU_LERR,
+                        script_manager->getVirtualMachine()->getLastError(),
+                        script_manager->getVirtualMachine()->getLastErrorMessage());
     }
 }
 
@@ -250,8 +252,9 @@ void ScriptableExecutionUnit::executeAlgorithmStart() throw (CException) {
     ScriptInParam input_param;
     if(script_manager->getVirtualMachine()->callProcedure(SEU_ALGORITHM_START,
                                                           input_param)) {
-        LOG_AND_TROW_EX(SEU_LERR, -1, CHAOS_FORMAT("Error calling function %1% of the script(it maybe not implemented)", %SEU_ALGORITHM_START));
-    }
+        LOG_AND_TROW_EX(SEU_LERR,
+                        script_manager->getVirtualMachine()->getLastError(),
+                        script_manager->getVirtualMachine()->getLastErrorMessage());    }
 }
 
 
@@ -264,7 +267,9 @@ void ScriptableExecutionUnit::executeAlgorithmStep(uint64_t step_delay_time) thr
     input_param.push_back(CDataVariant((int64_t)step_delay_time));
     if(script_manager->getVirtualMachine()->callProcedure(SEU_ALGORITHM_STEP,
                                                           input_param)) {
-        LOG_AND_TROW_EX(SEU_LERR, -1, CHAOS_FORMAT("Error calling function %1% of the script(it maybe not implemented)", %SEU_ALGORITHM_STEP));
+        LOG_AND_TROW_EX(SEU_LERR,
+                        script_manager->getVirtualMachine()->getLastError(),
+                        script_manager->getVirtualMachine()->getLastErrorMessage());
     }
 }
 
@@ -273,7 +278,9 @@ void ScriptableExecutionUnit::executeAlgorithmStop() throw (CException) {
     ScriptInParam input_param;
     if(script_manager->getVirtualMachine()->callProcedure(SEU_ALGORITHM_STOP,
                                                           input_param)) {
-        LOG_AND_TROW_EX(SEU_LERR, -1, CHAOS_FORMAT("Error calling function %1% of the script(it maybe not implemented)", %SEU_ALGORITHM_STOP));
+        LOG_AND_TROW_EX(SEU_LERR,
+                        script_manager->getVirtualMachine()->getLastError(),
+                        script_manager->getVirtualMachine()->getLastErrorMessage());;
     }
 }
 
@@ -282,7 +289,9 @@ void ScriptableExecutionUnit::executeAlgorithmEnd() throw (CException) {
     ScriptInParam input_param;
     if(script_manager->getVirtualMachine()->callProcedure(SEU_ALGORITHM_END,
                                                           input_param)) {
-        LOG_AND_TROW_EX(SEU_LERR, -1, CHAOS_FORMAT("Error calling function %1% of the script(it maybe not implemented)", %SEU_ALGORITHM_END));
+        LOG_AND_TROW_EX(SEU_LERR,
+                        script_manager->getVirtualMachine()->getLastError(),
+                        script_manager->getVirtualMachine()->getLastErrorMessage());
     }
 }
 
@@ -310,9 +319,9 @@ bool ScriptableExecutionUnit::updatedInputDataset(const std::string& attribute_n
     input_param.push_back(value);
     if(script_manager->getVirtualMachine()->callProcedure(SEU_INPUT_ATTRIBUTE_CHANGED,
                                                           input_param)) {
-        metadataLogging(StandardLoggingChannel::LogLevelError,
-                        CHAOS_FORMAT("Error calling function %1% of the script(it maybe not implemented)", %SEU_INPUT_ATTRIBUTE_CHANGED));
-        SEU_LERR << CHAOS_FORMAT("Error calling function %1% of the script(it maybe not implemented)", %SEU_INPUT_ATTRIBUTE_CHANGED);
+        LOG_AND_TROW_EX(SEU_LERR,
+                        script_manager->getVirtualMachine()->getLastError(),
+                        script_manager->getVirtualMachine()->getLastErrorMessage());
         managed = false;
     }
     return managed;
