@@ -43,10 +43,10 @@ using namespace chaos::common;
 using namespace chaos::agent::utility;
 using namespace chaos::service_common::data::agent;
 
-std::string ProcUtil::normalizeNameName(const std::string& node_name) {
+std::string ProcUtil::normalizeName(const std::string& node_name) {
     std::string result = node_name;
     boost::replace_all(result,"/","_");
-    return node_name;
+    return result;
 }
 
 FILE * ProcUtil::popen2(const std::string& command,

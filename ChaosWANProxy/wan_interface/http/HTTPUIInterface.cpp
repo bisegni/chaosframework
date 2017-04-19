@@ -326,18 +326,16 @@ int HTTPUIInterface::process(struct mg_connection *connection) {
 		answer_multi<<"[";
 		for(std::vector<std::string>::iterator idevname=dev_v.begin();idevname!=dev_v.end();idevname++){
 			std::string ret;
+			boost::mutex::scoped_lock l(devio_mutex);
 
 			if ((*idevname).empty() || cmd.empty()) {
 			  continue;
 			}
 			if(devs.count(*idevname)){
-			  boost::mutex::scoped_lock l(devio_mutex);
 
 			  controller = devs[*idevname];
 
 			} else {
-			  boost::mutex::scoped_lock l(devio_mutex);
-
 			  controller = new ::driver::misc::ChaosController();
 
 			  if (controller == NULL) {

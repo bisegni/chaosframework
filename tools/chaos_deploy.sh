@@ -241,7 +241,7 @@ net_start_stop(){
     op=$2
     if [ "$type" == "cu" ];then
 	for c in $CU_SERVERS;do
-    		start_stop_service "$c" $type $op
+    		start_stop_service "$c" agent $op
 	done
 	fi
 
@@ -277,7 +277,7 @@ net_start_stop(){
 
 if [ -n "$restart" ];then
 	if [ "$restart" == "all" ];then
-		restart="mds cds webui wan cu" 
+		restart="mds cds webui wan agent" 
 	fi
 	k=0
 	for i in $restart;do
@@ -368,6 +368,7 @@ servers=`cat $DEPLOY_FILE`
 for host in `cat $DEPLOY_FILE`;do
     info_mesg "stopping all services on" " $host"
     start_stop_service $host "cu" stop >& /dev/null
+    start_stop_service $host "agent" stop >& /dev/null
     start_stop_service $host "mds" stop >& /dev/null
     start_stop_service $host "cds" stop >& /dev/null
     start_stop_service $host "webui" stop >& /dev/null
@@ -412,6 +413,9 @@ deploy_install(){
     info_mesg "installing $type$subtype in " "$host"
     ## STOP
     start_stop_service $host $type stop
+    if [ $type == "cu" ];then
+	start_stop_service $host agent stop
+    fi
 
 
     extract $host
@@ -437,9 +441,11 @@ deploy_install(){
 	fi
     fi
 
-    
-    start_stop_service $host $type start
-
+    if [ $type == "cu" ];then
+	start_stop_service $host agent start
+    else
+	start_stop_service $host $type start
+    fi
 
 }
 

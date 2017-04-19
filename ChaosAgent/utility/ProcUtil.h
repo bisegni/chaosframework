@@ -36,10 +36,10 @@ namespace chaos {
         namespace utility {
             
 #define INIT_FILE_NAME(x)\
-CHAOS_FORMAT("%1%_%2%.ini",%x.association_unique_id%ProcUtil::normalizeNameName(x.associated_node_uid))
+CHAOS_FORMAT("%1%_%2%.ini",%x.association_unique_id%ProcUtil::normalizeName(x.associated_node_uid))
             
 #define LOG_FILE_NAME(x)\
-CHAOS_FORMAT("%1%_%2%_%%Y-%%m-%%d_%%H-%%M-%%S.%%N.log",%x.association_unique_id%x.associated_node_uid)
+CHAOS_FORMAT("%1%_%2%_%%Y-%%m-%%d_%%H-%%M-%%S.%%N.log",%x.association_unique_id%ProcUtil::normalizeName(x.associated_node_uid))
             
 #define NPIPE_FILE_NAME(x)\
 CHAOS_FORMAT("%1%.pipe",%x.association_unique_id)
@@ -58,7 +58,7 @@ CHAOS_FORMAT("%1%/bin/%2% --%3% %4%%5%", %ChaosAgent::getInstance()->settings.wo
             
             class ProcUtil {
             public:
-                static std::string normalizeNameName(const std::string& node_name);
+                static std::string normalizeName(const std::string& node_name);
                 
                 static FILE * popen2(const std::string& command,
                                      const std::string& type,
