@@ -45,13 +45,13 @@ void EventServer::dispatchEventToHandler(const unsigned char * const serializedE
         if(*((uint16_t*)serializedEvent) != 0x4345) throw CException(2, "Bad event signature", "EventServer::dispatchEventToHandler");
         if(length > EVT_DATA_MAX_BYTE_LENGTH)  throw CException(1, "Event memory size exceed the max allowed", "EventServer::dispatchEventToHandler");
         
-            //check the type
+        //check the type
         auto_ptr<EventTypeAndPriority> eventTypeAndHeaderPtr(new EventTypeAndPriority());
         
-            //get header swapped checking endian conversion
-        *((uint16_t*)eventTypeAndHeaderPtr.get()) = byte_swap<little_endian, host_endian, uint16_t>(*((uint16_t*)(serializedEvent+EVT_HEADER_BYTE_LENGTH)));
+        //get header swapped checking endian conversion
+        *((uint8_t*)eventTypeAndHeaderPtr.get()) = byte_swap<little_endian, host_endian, uint8_t>(*((uint8_t*)(serializedEvent+EVT_HEADER_BYTE_LENGTH)));
         
-            //dispatcher the event in the root handler on one of the fourth method
+        //dispatcher the event in the root handler on one of the fourth method
         switch (eventTypeAndHeaderPtr->type) {
             case EventTypeAlert:  {
                 alert::AlertEventDescriptor *result = new alert::AlertEventDescriptor();

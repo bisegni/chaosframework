@@ -48,7 +48,7 @@ public chaos::metadata_service_client::event::alert::AlertLogEventHandler {
 public:
     void handleLogEvent(const std::string& source,
                         const std::string& domain) {
-        MSCT_INFO << source << "-" << domain;
+        MSCT_INFO << "EVENT---->" << source << "-" << domain;
     }
 };
 
