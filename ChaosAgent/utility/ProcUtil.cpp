@@ -24,6 +24,8 @@
 #include <chaos/common/global.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
 
+#include <boost/algorithm/string/replace.hpp>
+
 #define READ   0
 #define WRITE  1
 
@@ -40,6 +42,12 @@ using namespace chaos::common;
 
 using namespace chaos::agent::utility;
 using namespace chaos::service_common::data::agent;
+
+std::string ProcUtil::normalizeNameName(const std::string& node_name) {
+    std::string result = node_name;
+    boost::replace_all(result,"/","_");
+    return node_name;
+}
 
 FILE * ProcUtil::popen2(const std::string& command,
                         const std::string& type,
@@ -209,7 +217,6 @@ void ProcUtil::launchProcess(const AgentAssociation& node_association_info) {
             init_file_stream << CHAOS_FORMAT("%1%=",%InitOption::OPT_LOG_ON_FILE) << std::endl;
             init_file_stream << CHAOS_FORMAT("%1%=%2%/%3%",%InitOption::OPT_LOG_FILE%LOG_FILE_PATH()%LOG_FILE_NAME(node_association_info)) << std::endl;
         }
-
         
         init_file_stream << CHAOS_FORMAT("unit-server-alias=%1%",%node_association_info.associated_node_uid) << std::endl;
         
