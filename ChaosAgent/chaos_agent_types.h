@@ -31,6 +31,10 @@ namespace chaos {
             std::string working_directory;
             //!external command enable state
             bool ext_cmd_enabled;
+            //!enable separate log file for us
+            bool enable_us_logging;
+            //!enable the us logging merged with agent
+            bool enable_us_merge_logging;
             /*!
              External command pipe are two named pipe created for receive command(.in)
              in the .in one and send answer(.out)

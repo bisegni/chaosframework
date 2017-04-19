@@ -24,6 +24,7 @@
 #include "ChaosAgent.h"
 #include "worker/ProcessWorker.h"
 #include "worker/LogWorker.h"
+#include "utility/ProcUtil.h"
 
 #include <chaos/common/global.h>
 #include <chaos/common/network/NetworkBroker.h>
@@ -38,6 +39,8 @@
 #define DBG     DBG_LOG(AgentRegister)
 
 using namespace chaos::agent;
+using namespace chaos::agent::utility;
+
 using namespace chaos::common::data;
 using namespace chaos::common::utility;
 using namespace chaos::common::healt_system;
@@ -72,6 +75,7 @@ void AgentRegister::init(void *init_data) throw (chaos::CException) {
     //add all agent
     addWorker(WorkerSharedPtr(new worker::ProcessWorker()));
     addWorker(WorkerSharedPtr(new worker::LogWorker()));
+    ((worker::ProcessWorker*)map_worker["ProcessWorker"].get())->log_worker_ptr = (worker::LogWorker*)map_worker["LogWorker"].get();
     
     //!get metadata message channel
     mds_message_channel = NetworkBroker::getInstance()->getMetadataserverMessageChannel();
@@ -222,16 +226,18 @@ void AgentRegister::timeout() {
                 }
                 
                 //perform autstart
-                WorkerSharedPtr wptr = map_worker["ProcessWorker"];
+                WorkerSharedPtr pw_ptr = map_worker["ProcessWorker"];
+                WorkerSharedPtr lw_ptr = map_worker["LogWorker"];
                 for(VectorAgentAssociationIterator it = agent_instance_sd_wrapper().node_associated.begin(),
                     end = agent_instance_sd_wrapper().node_associated.end();
                     it != end;
                     it++) {
                     if(it->auto_start) {
                         INFO << CHAOS_FORMAT("Autostart node %1%", %it->associated_node_uid);
-                        ((worker::ProcessWorker*)wptr.get())->launchProcess(*it);
+                        ProcUtil::launchProcess(*it);
+                        ((worker::LogWorker*)lw_ptr.get())->startLogFetcher(*it);
                         if(it->keep_alive) {
-                             ((worker::ProcessWorker*)wptr.get())->addToRespawn(*it);
+                             ((worker::ProcessWorker*)pw_ptr.get())->addToRespawn(*it);
                         }
                     }
                 }

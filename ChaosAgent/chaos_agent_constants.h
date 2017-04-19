@@ -24,10 +24,12 @@
 
 namespace chaos {
     namespace agent {
-#define OPT_WORKING_DIR         "working-dir"
-#define OPT_ENABLE_EXT_CMD      "enable-ext-cmd"
-#define OPT_EXT_CMD_PIPE_PATH   "ext-cmd-pipe-path"
-#define OPT_EXT_CMD_PIPE_NAME   "ext-cmd-pipe-name"
+#define OPT_WORKING_DIR             "working-dir"
+#define OPT_ENABLE_SEPARATE_US_LOG  "enable-separate-us-logging"
+#define OPT_ENABLE_MERGE_US_LOG     "enable-merge-us-log"
+#define OPT_ENABLE_EXT_CMD          "enable-ext-cmd"
+#define OPT_EXT_CMD_PIPE_PATH       "ext-cmd-pipe-path"
+#define OPT_EXT_CMD_PIPE_NAME       "ext-cmd-pipe-name"
     }
 }
 

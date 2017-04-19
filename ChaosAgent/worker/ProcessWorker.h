@@ -23,7 +23,7 @@
 #define __CHAOSFramework_BED84E1E_63AB_431A_9CDD_DC38C4187D19_ProcessWorker_h
 
 #include "../AbstractWorker.h"
-
+#include "LogWorker.h"
 #include <chaos/common/chaos_types.h>
 #include <chaos/common/utility/LockableObject.h>
 #include <chaos/common/async_central/async_central.h>
@@ -32,6 +32,7 @@
 
 namespace chaos {
     namespace agent {
+        class AgentRegister;
         namespace worker {
             
             CHAOS_DEFINE_MAP_FOR_TYPE(std::string, chaos::service_common::data::agent::AgentAssociation, MapRespawnableNode);
@@ -42,6 +43,9 @@ namespace chaos {
             class ProcessWorker:
             public AbstractWorker,
             public chaos::common::async_central::TimerHandler {
+                friend class chaos::agent::AgentRegister;
+                
+                LogWorker *log_worker_ptr;
                 LockableMapRespawnableNode map_respawnable_node;
             protected:
                 //! launch an data service
@@ -63,10 +67,6 @@ namespace chaos {
                 ~ProcessWorker();
                 void init(void *data) throw(chaos::CException);
                 void deinit() throw(chaos::CException);
-                void launchProcess(const chaos::service_common::data::agent::AgentAssociation& node_association_info);
-                bool checkProcessAlive(const chaos::service_common::data::agent::AgentAssociation& node_association_info);
-                bool quitProcess(const chaos::service_common::data::agent::AgentAssociation& node_association_info,
-                                 bool kill = false);
                 
                 void addToRespawn(const chaos::service_common::data::agent::AgentAssociation& node_association_info);
                 

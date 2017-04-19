@@ -45,6 +45,7 @@ using namespace chaos::common::utility;
  implementation got from http://stackoverflow.com/questions/1023306/finding-current-executables-path-without-proc-self-exe
  */
 std::string FSUtility::getExecutablePath() {
+    std::string result;
 #if (BOOST_OS_WINDOWS)
     char *exePath;
     if (_get_pgmptr(&exePath) != 0)
@@ -79,5 +80,8 @@ std::string FSUtility::getExecutablePath() {
     if (sysctl(mib, 4, exePath, &len, NULL, 0) != 0)
         exePath[0] = '\0';
 #endif
-    return (strlen(exePath)>0 ? boost::filesystem::path(exePath).remove_filename().make_preferred().string() : std::string());
+    if(strlen(exePath)>0) {
+        result = boost::filesystem::path(exePath).remove_filename().parent_path().make_preferred().string();
+    }
+    return result;
 }

@@ -44,13 +44,15 @@ namespace chaos {
                 ChaosStringVector log_line;
                 chaos::common::io::ManagedDirectIODataDriver *data_driver;
             public:
+                bool remote_logging;
                 typedef boost::shared_ptr<PipeReader>   PipeReaderPtr;
                 typedef boost::weak_ptr<PipeReader>     PipeReaderWeakPtr;
                 void close();
                 static PipeReaderWeakPtr create(asio::io_service& io_service,
                                                 const std::string node_uid,
                                                 const std::string& path,
-                                                chaos::common::io::ManagedDirectIODataDriver *_data_driver);
+                                                chaos::common::io::ManagedDirectIODataDriver *_data_driver,
+                                                bool enable_remote);
                 
                 void handleRead(PipeReaderPtr me,
                                 const boost::system::error_code &error,
@@ -86,13 +88,16 @@ namespace chaos {
                 
                 chaos::common::data::CDataWrapper *stopLoggingAssociation(chaos::common::data::CDataWrapper *data,
                                                                           bool& detach);
-                //!inherited by @chaos::common::async_central::TimerHandler
-                void timeout();
             public:
                 LogWorker();
                 ~LogWorker();
                 void init(void *data) throw(chaos::CException);
                 void deinit() throw(chaos::CException);
+                bool startLogFetcher(service_common::data::agent::AgentAssociation& agent_association,
+                                     bool enable_remote = false);
+                void enableRemoteLogging(service_common::data::agent::AgentAssociation& agent_association,
+                                         bool enable);
+                void stopLogFetcher(service_common::data::agent::AgentAssociation& agent_association);
             };
         }
     }

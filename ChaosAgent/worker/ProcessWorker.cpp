@@ -20,6 +20,7 @@
  */
 
 #include "ProcessWorker.h"
+#include "../utility/ProcUtil.h"
 #include <ChaosAgent/utility/ProcUtil.h>
 
 #include <chaos_service_common/data/node/Agent.h>
@@ -46,6 +47,7 @@ using namespace chaos::common::utility;
 using namespace chaos::common::async_central;
 
 ProcessWorker::ProcessWorker():
+log_worker_ptr(NULL),
 AbstractWorker(AgentNodeDomainAndActionRPC::ProcessWorker::RPC_DOMAIN) {
     //register rpc action
     AbstActionDescShrPtr action_parameter_interface = DeclareAction::addActionDescritionInstance<ProcessWorker>(this,
@@ -108,14 +110,17 @@ void ProcessWorker::deinit() throw(chaos::CException) {
 
 
 void ProcessWorker::timeout() {
+    CHAOS_ASSERT(log_worker_ptr)
     LockableMapRespawnableNodeReadLock rl = map_respawnable_node.getReadLockObject();
     for(MapRespawnableNodeIterator it = map_respawnable_node().begin(),
         end = map_respawnable_node().end();
         it != end;
         it++) {
-        if(checkProcessAlive(it->second) == false) {
+        if(ProcUtil::checkProcessAlive(it->second) == false) {
             INFO << CHAOS_FORMAT("Respawn process for node %1%", %it->first);
-            launchProcess(it->second);
+            ProcUtil::launchProcess(it->second);
+            log_worker_ptr->startLogFetcher(it->second,
+                                            false);
         }
     }
 }
@@ -149,8 +154,10 @@ chaos::common::data::CDataWrapper *ProcessWorker::launchNode(chaos::common::data
     }
     AgentAssociationSDWrapper assoc_sd_wrapper;
     assoc_sd_wrapper.deserialize(data);
-    if(checkProcessAlive(assoc_sd_wrapper()) == false) {
-        launchProcess(assoc_sd_wrapper());
+    if(ProcUtil::checkProcessAlive(assoc_sd_wrapper()) == false) {
+        ProcUtil::launchProcess(assoc_sd_wrapper());
+        log_worker_ptr->startLogFetcher(assoc_sd_wrapper(),
+                                        false);
     }
     if(assoc_sd_wrapper().keep_alive) {
        addToRespawn(assoc_sd_wrapper());
@@ -162,12 +169,12 @@ chaos::common::data::CDataWrapper *ProcessWorker::stopNode(chaos::common::data::
                                                            bool& detach) {
     AgentAssociationSDWrapper assoc_sd_wrapper;
     assoc_sd_wrapper.deserialize(data);
-    if(checkProcessAlive(assoc_sd_wrapper()) == true) {
+    if(ProcUtil::checkProcessAlive(assoc_sd_wrapper()) == true) {
         bool kill = false;
         if(data!=NULL && data->hasKey(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_RESTART_NODE_PAR_KILL)) {
             kill = data->getBoolValue(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_RESTART_NODE_PAR_KILL);
         }
-        quitProcess(assoc_sd_wrapper(), kill);
+        ProcUtil::quitProcess(assoc_sd_wrapper(), kill);
     } else {
         INFO << CHAOS_FORMAT("Associated node %1% isn't in execution", %assoc_sd_wrapper().associated_node_uid);
     }
@@ -186,23 +193,23 @@ chaos::common::data::CDataWrapper *ProcessWorker::restartNode(chaos::common::dat
     
     //first remove node to respawn
     removeToRespawn(assoc_sd_wrapper().associated_node_uid);
-    if(checkProcessAlive(assoc_sd_wrapper()) == true) {
-        quitProcess(assoc_sd_wrapper());
-        while((process_alive = checkProcessAlive(assoc_sd_wrapper())) == false &&
+    if(ProcUtil::checkProcessAlive(assoc_sd_wrapper()) == true) {
+        ProcUtil::quitProcess(assoc_sd_wrapper());
+        while((process_alive = ProcUtil::checkProcessAlive(assoc_sd_wrapper())) == false &&
               try_to_stop) {
             if(retry++ > 3) {
                 try_to_stop = false;
                 //try to kill process
-                quitProcess(assoc_sd_wrapper(), true);
+                ProcUtil::quitProcess(assoc_sd_wrapper(), true);
                 //exit without check
             } else {
                 sleep(1);
             }
         }
     }
-    if((process_alive = process_alive || checkProcessAlive(assoc_sd_wrapper())) == false) {
+    if((process_alive = process_alive || ProcUtil::checkProcessAlive(assoc_sd_wrapper())) == false) {
         //process has been shutdown, restart it
-        launchProcess(assoc_sd_wrapper());
+        ProcUtil::launchProcess(assoc_sd_wrapper());
         
         if(assoc_sd_wrapper().keep_alive) {
             addToRespawn(assoc_sd_wrapper());
@@ -227,90 +234,9 @@ chaos::common::data::CDataWrapper *ProcessWorker::checkNodes(chaos::common::data
             it++) {
             AgentAssociationStatus status;
             status.associated_node_uid = it->associated_node_uid;
-            status.alive = checkProcessAlive(*it);
+            status.alive = ProcUtil::checkProcessAlive(*it);
             result_status_vec_sd_wrapper().push_back(status);
         }
     }
     return result_status_vec_sd_wrapper.serialize().release();
-}
-
-#pragma mark Process Utility
-
-void ProcessWorker::launchProcess(const AgentAssociation& node_association_info) {
-    int pid = 0;
-    std::string exec_command;
-    boost::filesystem::path init_file;
-    boost::filesystem::path queue_file;
-    try{
-        if(checkProcessAlive(node_association_info) == true) return;
-        exec_command = COMPOSE_NODE_LAUNCH_CMD_LINE(node_association_info);
-        init_file = CHAOS_FORMAT("%1%/%2%", %INIT_FILE_PATH()%INIT_FILE_NAME(node_association_info));
-        queue_file = CHAOS_FORMAT("%1%/%2%", %QUEUE_FILE_PATH()%NPIPE_FILE_NAME(node_association_info));
-        
-        boost::filesystem::path init_file_parent_path = INIT_FILE_PATH();
-        if (boost::filesystem::exists(init_file_parent_path) == false &&
-            boost::filesystem::create_directory(init_file_parent_path) == false) {
-            throw chaos::CException(-1, CHAOS_FORMAT("Parent path %1% can't be created",%init_file_parent_path), __PRETTY_FUNCTION__);
-        }
-        
-        boost::filesystem::path queue_file_parent_path = QUEUE_FILE_PATH();
-        if (boost::filesystem::exists(queue_file_parent_path) == false &&
-            boost::filesystem::create_directory(queue_file_parent_path) == false) {
-            throw chaos::CException(-1, CHAOS_FORMAT("Queue path %1% can't be created",%queue_file_parent_path), __PRETTY_FUNCTION__);
-        }
-        
-        //write configuration file
-        std::ofstream init_file_stream;
-        init_file_stream.open(init_file.string().c_str(), std::ofstream::trunc | std::ofstream::out);
-        
-        //append unit server alias
-        init_file_stream << CHAOS_FORMAT("%1%=",%InitOption::OPT_LOG_ON_CONSOLE) << std::endl;
-        init_file_stream << CHAOS_FORMAT("unit-server-alias=%1%",%node_association_info.associated_node_uid) << std::endl;
-        
-        //append metadata server from agent configuration
-        VectorMetadatserver mds_vec = GlobalConfiguration::getInstance()->getMetadataServerAddressList();
-        for(VectorMetadatserverIterator mds_it = mds_vec.begin(),
-            end = mds_vec.end();
-            mds_it != end;
-            mds_it++) {
-            init_file_stream << CHAOS_FORMAT("metadata-server=%1%",%mds_it->ip_port) << std::endl;
-        }
-        
-        //append user defined paramenter
-        init_file_stream.write(node_association_info.configuration_file_content.c_str(), node_association_info.configuration_file_content.length());
-        init_file_stream.close();
-        //create the named pipe
-        ProcUtil::createNamedPipe(queue_file.string());
-        if (!ProcUtil::popen2ToNamedPipe(exec_command.c_str(), queue_file.string())) {throw chaos::CException(-2, "popen() failed!", __PRETTY_FUNCTION__);}
-    } catch(std::exception& e) {
-        ERROR << e.what();
-    } catch(chaos::CException& ex) {
-        throw ex;
-    }
-}
-
-bool ProcessWorker::checkProcessAlive(const chaos::service_common::data::agent::AgentAssociation& node_association_info) {
-    int pid;
-    bool found = false;
-    char buff[512];
-    std::string ps_command = CHAOS_FORMAT("ps -ef | grep '%1%'", %INIT_FILE_NAME(node_association_info));
-    FILE *in = ProcUtil::popen2(ps_command.c_str(), "r", pid);
-    if (!in) {throw chaos::CException(-2, "popen() failed!", __PRETTY_FUNCTION__);}
-    
-    while(fgets(buff, sizeof(buff), in)!=NULL){
-        if(strstr(buff, "grep") == NULL) {
-            found = strstr(buff, node_association_info.launch_cmd_line.c_str()) != NULL;
-            if(found) break;
-        }
-    }
-    ProcUtil::pclose2(in, pid);
-    return found;
-}
-
-bool ProcessWorker::quitProcess(const chaos::service_common::data::agent::AgentAssociation& node_association_info,
-                                bool kill) {
-    int pid = 0;
-    const std::string exec_command = kill?CHAOS_FORMAT("pkill -SIGKILL -f \"%1%\"",%INIT_FILE_NAME(node_association_info)):CHAOS_FORMAT("pkill -SIGTERM -f \"%1%\"",%INIT_FILE_NAME(node_association_info));
-    if (!ProcUtil::popen2NoPipe(exec_command.c_str(), pid)) {throw chaos::CException(-2, "popen() failed!", __PRETTY_FUNCTION__);}
-    return pid != 0;
 }

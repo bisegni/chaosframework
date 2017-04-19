@@ -35,6 +35,14 @@ int main(int argc, char * argv[]) {
                                                                                               "Enable the external command via pipe",
                                                                                               false,
                                                                                               &ChaosAgent::getInstance()->settings.ext_cmd_enabled);
+        ChaosAgent::getInstance()->getGlobalConfigurationInstance()->addOption< bool >(OPT_ENABLE_SEPARATE_US_LOG,
+                                                                                       "Enable separate file logging of managed us",
+                                                                                       false,
+                                                                                       &ChaosAgent::getInstance()->settings.enable_us_logging);
+        ChaosAgent::getInstance()->getGlobalConfigurationInstance()->addOption< bool >(OPT_ENABLE_MERGE_US_LOG,
+                                                                                       "Merge the us managed log into the agent log",
+                                                                                       false,
+                                                                                       &ChaosAgent::getInstance()->settings.enable_us_merge_logging);
         ChaosAgent::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_EXT_CMD_PIPE_PATH,
                                                                                               "Path for the external command pipe",
                                                                                               "/tmp",

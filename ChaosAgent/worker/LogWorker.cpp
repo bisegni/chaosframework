@@ -21,6 +21,7 @@
 
 #include "LogWorker.h"
 
+#include <ChaosAgent/ChaosAgent.h>
 #include <ChaosAgent/utility/ProcUtil.h>
 #include <chaos/common/network/NetworkBroker.h>
 
@@ -52,8 +53,10 @@ using namespace boost::asio;
 PipeReader::PipeReaderWeakPtr PipeReader::create(io_service& io_service,
                                                  const std::string node_uid,
                                                  const std::string& path,
-                                                 chaos::common::io::ManagedDirectIODataDriver *_data_driver) {
+                                                 chaos::common::io::ManagedDirectIODataDriver *_data_driver,
+                                                 bool enable_remote) {
     PipeReaderPtr ptr(new PipeReader(io_service, node_uid, path, _data_driver));
+    ptr->remote_logging = enable_remote;
     
     boost::asio::async_read_until(ptr->m_pipe,
                                   ptr->asio_buffer,
@@ -72,7 +75,8 @@ PipeReader::PipeReader(io_service& io_service,
                        chaos::common::io::ManagedDirectIODataDriver *_data_driver):
 m_pipe(io_service),
 node_uid(_node_uid),
-data_driver(_data_driver){
+data_driver(_data_driver),
+remote_logging(false){
     int dev = open(path.c_str(), O_RDWR);
     if (dev == -1) {
         std::cout << "failed to open path - " << path << std::endl;
@@ -92,13 +96,21 @@ void PipeReader::handleRead(PipeReaderPtr me,
     if (!error) {
         std::string line;
         std::istream is(&me->asio_buffer);
-        bool equals = bytes_transferred == me->asio_buffer.size();
+        
         if (std::getline(is, line)) {
-            log_line.push_back(line);
-            data_driver->storeLogEntries(node_uid,
-                                         log_line);
+            if(ChaosAgent::getInstance()->settings.enable_us_merge_logging) {
+                //log on standard chaos log
+                INFO << CHAOS_FORMAT("[%1%] - %2%", %node_uid%line);
+            }
+            //chak if remote logging is enabled
+            if (remote_logging) {
+                log_line.push_back(line);
+                data_driver->storeLogEntries(node_uid,
+                                             log_line);
+                log_line.clear();
+            }
+            
         }
-        log_line.clear();
         boost::asio::async_read_until(me->m_pipe,
                                       me->asio_buffer,
                                       "\n",
@@ -146,6 +158,55 @@ void LogWorker::deinit() throw(chaos::CException) {
     CHAOS_NOT_THROW(data_driver.deinit(__PRETTY_FUNCTION__););
 }
 
+bool LogWorker::startLogFetcher(AgentAssociation& agent_association,
+                                bool enable_remote) {
+    LockableMapLoggingPipeWriteLock wl = map_logging_file.getWriteLockObject();
+    
+    //! add logging file for association
+    if(map_logging_file().count(agent_association.associated_node_uid)) {
+        //logging for node already enabled
+        INFO << CHAOS_FORMAT("Logging for %1% already enabled",%agent_association.associated_node_uid);
+        return false;
+    }
+    
+    //open named pipe for read logging
+    boost::filesystem::path queue_file = CHAOS_FORMAT("%1%/%2%", %QUEUE_FILE_PATH()%NPIPE_FILE_NAME(agent_association));
+    INFO << CHAOS_FORMAT("Start logging for %1% on named pipe %2%",%agent_association.associated_node_uid%queue_file.string());
+    
+    PipeReader::PipeReaderWeakPtr pipe_reader_wptr = PipeReader::create(io_service,
+                                                                        agent_association.associated_node_uid,
+                                                                        queue_file.string(),
+                                                                        data_driver.get(),
+                                                                        enable_remote);
+    map_logging_file().insert(MapLoggingPipePair(agent_association.associated_node_uid,
+                                                 pipe_reader_wptr));
+    return true;
+}
+
+void LogWorker::enableRemoteLogging(AgentAssociation& agent_association,
+                                    bool enable) {
+    LockableMapLoggingPipeReadLock wl = map_logging_file.getReadLockObject();
+    PipeReader::PipeReaderWeakPtr pipe_reader_wptr = map_logging_file()[agent_association.associated_node_uid];
+    if(PipeReader::PipeReaderPtr pipe_readr_ptr = pipe_reader_wptr.lock()) {
+        pipe_readr_ptr->remote_logging = enable;
+    }
+}
+
+void LogWorker::stopLogFetcher(AgentAssociation& agent_association) {
+    LockableMapLoggingPipeWriteLock wl = map_logging_file.getWriteLockObject();
+    if(map_logging_file().count(agent_association.associated_node_uid) == 0) {
+        //logging for node already enabled
+        INFO << CHAOS_FORMAT("Logging for %1% already disabled",%agent_association.associated_node_uid);
+        return;
+    }
+    INFO << CHAOS_FORMAT("Disable logging for %1%",%agent_association.associated_node_uid);
+    PipeReader::PipeReaderWeakPtr pipe_reader_wptr = map_logging_file()[agent_association.associated_node_uid];
+    if(PipeReader::PipeReaderPtr pipe_readr_ptr = pipe_reader_wptr.lock()) {
+        pipe_readr_ptr->close();
+    }
+    map_logging_file().erase(agent_association.associated_node_uid);
+}
+
 CDataWrapper *LogWorker::starLoggingAssociation(CDataWrapper *data,
                                                 bool& detach) {
     CHECK_CDW_THROW_AND_LOG(data,
@@ -156,28 +217,14 @@ CDataWrapper *LogWorker::starLoggingAssociation(CDataWrapper *data,
     
     std::auto_ptr<CDataWrapper> assoc_ser(data->getCSDataValue(AgentNodeDefinitionKey::NODE_ASSOCIATED));
     
-    AgentAssociationSDWrapper node_association;
-    node_association.deserialize(assoc_ser.get());
+    AgentAssociationSDWrapper agent_association;
+    agent_association.deserialize(assoc_ser.get());
     
-    LockableMapLoggingPipeWriteLock wl = map_logging_file.getWriteLockObject();
-    
-    //! add logging file for association
-    if(map_logging_file().count(node_association().associated_node_uid)) {
-        //logging for node already enabled
-        INFO << CHAOS_FORMAT("Logging for %1% already enabled",%node_association().associated_node_uid);
-        return NULL;
+    if(startLogFetcher(agent_association(),
+                       true) == false) {
+        enableRemoteLogging(agent_association(),
+                            true);
     }
-    
-    //open named pipe for read logging
-    boost::filesystem::path queue_file = CHAOS_FORMAT("%1%/%2%", %QUEUE_FILE_PATH()%NPIPE_FILE_NAME(node_association()));
-    INFO << CHAOS_FORMAT("Start logging for %1% on named pipe %2%",%node_association().associated_node_uid%queue_file.string());
-    
-    PipeReader::PipeReaderWeakPtr pipe_reader_wptr = PipeReader::create(io_service,
-                                                                        node_association().associated_node_uid,
-                                                                        queue_file.string(),
-                                                                        data_driver.get());
-    map_logging_file().insert(MapLoggingPipePair(node_association().associated_node_uid,
-                                                 pipe_reader_wptr));
     return NULL;
 }
 
@@ -192,35 +239,10 @@ CDataWrapper *LogWorker::stopLoggingAssociation(CDataWrapper *data,
     
     std::auto_ptr<CDataWrapper> assoc_ser(data->getCSDataValue(AgentNodeDefinitionKey::NODE_ASSOCIATED));
     
-    AgentAssociationSDWrapper node_association;
-    node_association.deserialize(assoc_ser.get());
-    LockableMapLoggingPipeWriteLock wl = map_logging_file.getWriteLockObject();
-    if(map_logging_file().count(node_association().associated_node_uid) == 0) {
-        //logging for node already enabled
-        INFO << CHAOS_FORMAT("Logging for %1% already disabled",%node_association().associated_node_uid);
-        return NULL;
-    }
-    INFO << CHAOS_FORMAT("Disable logging for %1%",%node_association().associated_node_uid);
-    PipeReader::PipeReaderWeakPtr pipe_reader_wptr = map_logging_file()[node_association().associated_node_uid];
-    if(PipeReader::PipeReaderPtr pipe_readr_ptr = pipe_reader_wptr.lock()) {
-        pipe_readr_ptr->close();
-    }
-    map_logging_file().erase(node_association().associated_node_uid);
+    AgentAssociationSDWrapper agent_association;
+    agent_association.deserialize(assoc_ser.get());
     
+    enableRemoteLogging(agent_association(),
+                        false);
     return NULL;
-}
-
-void LogWorker::timeout() {
-    //!lock table in read mode
-    LockableMapLoggingPipeReadLock rl = map_logging_file.getReadLockObject();
-    
-    std::string log_line;
-    for(MapLoggingPipeIterator it = map_logging_file().begin(),
-        end = map_logging_file().end();
-        it != end;
-        it++){
-        DBG << CHAOS_FORMAT("Process log for node %1%",%it->first);
-        //scan each log file reading some amount of line
-        //(*it.second) >> log_line;
-    }
 }

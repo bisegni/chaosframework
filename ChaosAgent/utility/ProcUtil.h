@@ -37,7 +37,10 @@ namespace chaos {
             
             
 #define INIT_FILE_NAME(x)\
-CHAOS_FORMAT("%1%.ini",%x.association_unique_id)
+CHAOS_FORMAT("%1%_%2%.ini",%x.association_unique_id%x.associated_node_uid)
+            
+#define LOG_FILE_NAME(x)\
+CHAOS_FORMAT("%1%_%2%_%%Y-%%m-%%d_%%H-%%M-%%S.%%N.log",%x.association_unique_id%x.associated_node_uid)
             
 #define NPIPE_FILE_NAME(x)\
 CHAOS_FORMAT("%1%.pipe",%x.association_unique_id)
@@ -45,11 +48,14 @@ CHAOS_FORMAT("%1%.pipe",%x.association_unique_id)
 #define INIT_FILE_PATH()\
 CHAOS_FORMAT("%1%/ini_files/", %ChaosAgent::getInstance()->settings.working_directory)
             
+#define LOG_FILE_PATH()\
+CHAOS_FORMAT("%1%/log/", %ChaosAgent::getInstance()->settings.working_directory)
+            
 #define QUEUE_FILE_PATH()\
 CHAOS_FORMAT("%1%/queue/", %ChaosAgent::getInstance()->settings.working_directory)
             
 #define COMPOSE_NODE_LAUNCH_CMD_LINE(x)\
-CHAOS_FORMAT("%1%/%2% --%3% %4%%5%", %ChaosAgent::getInstance()->settings.working_directory%x.launch_cmd_line%chaos::InitOption::OPT_CONF_FILE%INIT_FILE_PATH()%INIT_FILE_NAME(x))
+CHAOS_FORMAT("%1%/bin/%2% --%3% %4%%5%", %ChaosAgent::getInstance()->settings.working_directory%x.launch_cmd_line%chaos::InitOption::OPT_CONF_FILE%INIT_FILE_PATH()%INIT_FILE_NAME(x))
             
             class ProcUtil {
             public:
@@ -74,7 +80,7 @@ CHAOS_FORMAT("%1%/%2% --%3% %4%%5%", %ChaosAgent::getInstance()->settings.workin
                 
                 static bool checkProcessAlive(const chaos::service_common::data::agent::AgentAssociation& node_association_info);
                 
-                static bool quitProcess(const chaos::service_common::data::agent::AgentAssociation& node_association_info, bool kill);
+                static bool quitProcess(const chaos::service_common::data::agent::AgentAssociation& node_association_info, bool kill = false);
             };
         }
     }

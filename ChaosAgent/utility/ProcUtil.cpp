@@ -20,7 +20,9 @@
  */
 
 #include "ProcUtil.h"
+#include "../ChaosAgent.h"
 #include <chaos/common/global.h>
+#include <chaos/common/configuration/GlobalConfiguration.h>
 
 #define READ   0
 #define WRITE  1
@@ -33,6 +35,9 @@
 #include <sys/types.h>
 
 using namespace std;
+
+using namespace chaos::common;
+
 using namespace chaos::agent::utility;
 using namespace chaos::service_common::data::agent;
 
@@ -192,8 +197,20 @@ void ProcUtil::launchProcess(const AgentAssociation& node_association_info) {
         std::ofstream init_file_stream;
         init_file_stream.open(init_file.string().c_str(), std::ofstream::trunc | std::ofstream::out);
         
-        //append unit server alias
+        //enable log on console that will be redirected on named pipe
         init_file_stream << CHAOS_FORMAT("%1%=",%InitOption::OPT_LOG_ON_CONSOLE) << std::endl;
+        
+        //check for syslog setting of the agent that will be reflect on managed us
+        if(GlobalConfiguration::getInstance()->hasOption(InitOption::OPT_LOG_ON_SYSLOG)) {
+            init_file_stream << CHAOS_FORMAT("%1%=",%InitOption::OPT_LOG_ON_SYSLOG) << std::endl;
+        }
+        
+        if(ChaosAgent::getInstance()->settings.enable_us_logging) {
+            init_file_stream << CHAOS_FORMAT("%1%=",%InitOption::OPT_LOG_ON_FILE) << std::endl;
+            init_file_stream << CHAOS_FORMAT("%1%=%2%/%3%",%InitOption::OPT_LOG_FILE%LOG_FILE_PATH()%LOG_FILE_NAME(node_association_info)) << std::endl;
+        }
+
+        
         init_file_stream << CHAOS_FORMAT("unit-server-alias=%1%",%node_association_info.associated_node_uid) << std::endl;
         
         //append metadata server from agent configuration
@@ -211,8 +228,10 @@ void ProcUtil::launchProcess(const AgentAssociation& node_association_info) {
         //create the named pipe
         ProcUtil::createNamedPipe(queue_file.string());
         if (!ProcUtil::popen2ToNamedPipe(exec_command.c_str(), queue_file.string())) {throw chaos::CException(-2, "popen() failed!", __PRETTY_FUNCTION__);}
-    } catch(std::exception& e) {
+    } catch(std::exception& ex) {
+        throw ex;
     } catch(chaos::CException& ex) {
+        throw ex;
     }
 }
 
