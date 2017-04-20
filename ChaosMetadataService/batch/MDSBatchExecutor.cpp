@@ -62,6 +62,7 @@ last_used_sb_idx(3){
     installCommand(general::CreateSnapshotBatch::command_alias, MDS_BATCH_COMMAND_INSTANCER(general::CreateSnapshotBatch));
     
     installCommand(script::LoadInstanceOnUnitServer::command_alias, MDS_BATCH_COMMAND_INSTANCER(script::LoadInstanceOnUnitServer));
+    installCommand(script::UpdateScriptOnNode::command_alias, MDS_BATCH_COMMAND_INSTANCER(script::UpdateScriptOnNode));
     
     installCommand(agent::AgentAckCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(agent::AgentAckCommand));
     installCommand(agent::AgentProcessController::command_alias, MDS_BATCH_COMMAND_INSTANCER(agent::AgentProcessController));

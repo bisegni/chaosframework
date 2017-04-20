@@ -191,7 +191,8 @@ namespace chaos{
                  \param _execution_unit_param is a string that contains parameter to pass during the contorl unit creation
                  \param _execution_unit_drivers driver information
                  */
-                AbstractExecutionUnit(const std::string& _execution_unit_id,
+                AbstractExecutionUnit(const std::string& _execution_unit_subtype,
+                                      const std::string& _execution_unit_id,
                                       const std::string& _execution_unit_param);
                 /*!
                  Parametrized constructor
@@ -199,7 +200,8 @@ namespace chaos{
                  \param _execution_unit_param is a string that contains parameter to pass during the contorl unit creation
                  \param _execution_unit_drivers driver information
                  */
-                AbstractExecutionUnit(const std::string& _execution_unit_id,
+                AbstractExecutionUnit(const std::string& _execution_unit_subtype,
+                                      const std::string& _execution_unit_id,
                                       const std::string& _execution_unit_param,
                                       const ControlUnitDriverList& _execution_unit_drivers);
                 

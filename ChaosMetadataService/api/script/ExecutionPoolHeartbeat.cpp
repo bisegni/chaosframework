@@ -50,7 +50,7 @@ chaos::common::data::CDataWrapper *ExecutionPoolHeartbeat::execute(CDataWrapper 
     int err = 0;
     
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found");
-    CHECK_KEY_THROW_AND_LOG(api_data, chaos::NodeDefinitionKey::NODE_PARENT, ERR, -2, "The script seq is mandatory");
+    CHECK_KEY_THROW_AND_LOG(api_data, chaos::NodeDefinitionKey::NODE_PARENT, ERR, -2, CHAOS_FORMAT("The %1% key is mandatory",%chaos::NodeDefinitionKey::NODE_PARENT));
     
     //fetch the unit server that has generated the hertbeat operation
     const std::string us_uid = CDW_GET_VALUE_WITH_DEFAULT(api_data,

@@ -115,6 +115,8 @@ namespace chaos {
 //                    
 //                    int releaseNodeForAgeingManagement(std::string& node_uid,
 //                                                       bool performed);
+                    
+                    int isNodeAlive(const std::string& node_uid, bool& alive);
                 };
             }
         }

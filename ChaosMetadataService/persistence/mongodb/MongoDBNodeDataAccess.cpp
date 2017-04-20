@@ -830,6 +830,32 @@ int MongoDBNodeDataAccess::addAgeingManagementDataToNode(const std::string& cont
     return err;
 }
 
+int MongoDBNodeDataAccess::isNodeAlive(const std::string& node_uid, bool& alive) {
+    int err = 0;
+    try {
+        mongo::BSONObj result;
+        mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << node_uid <<
+                                    CHAOS_FORMAT("health_stat.%1%",%NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP) << BSON("$gte" << mongo::Date_t(TimingUtil::getTimeStamp()-(6*1000))));
+        
+        DEBUG_CODE(MDBNDA_DBG<<log_message("isNodeAlive",
+                                           "findOne",
+                                           DATA_ACCESS_LOG_1_ENTRY("query",
+                                                                   query.jsonString()));)
+        if((err = connection->findOne(result,
+                                      MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                      query))) {
+            MDBNDA_DBG << CHAOS_FORMAT("Error %1% determinating the alive state for node %2%", %err%node_uid);
+        }
+        alive = (result.isEmpty() == false);
+    } catch (const mongo::DBException &e) {
+        MDBNDA_ERR << e.what();
+        err = -1;
+    } catch (const CException &e) {
+        MDBNDA_ERR << e.what();
+        err = e.errorCode;
+    }
+    return err;
+}
 //int MongoDBNodeDataAccess::reserveNodeForAgeingManagement(uint64_t& last_sequence_id,
 //                                                          std::string& node_uid_reserved,
 //                                                          uint32_t& node_ageing_time,
@@ -843,28 +869,28 @@ int MongoDBNodeDataAccess::addAgeingManagementDataToNode(const std::string& cont
 //        mongo::BSONObjBuilder query_builder;
 //        mongo::BSONArrayBuilder query_ageing_and;
 //        mongo::BSONArrayBuilder query_ageing_or;
-//        
+//
 //        const std::string key_processing_ageing = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_PROCESSING_AGEING);
 //        const std::string key_last_checking_time = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_AGEING_LAST_CHECK_DATA);
 //        const std::string key_last_performed_time = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_PERFORMED_AGEING);
 //        //get all node where ageing is > of 0
 //        query_builder << CHAOS_FORMAT("instance_description.%1%",%DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING) << BSON("$gt" << 0);
-//        
+//
 //        //get all control unit
 //        query_builder << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_CONTROL_UNIT;
-//        
+//
 //        //condition on sequence
 //        query_builder << "seq" << BSON("$gt" << (long long)last_sequence_id);
-//        
+//
 //        //select control unit also if it is in checking managemnt but data checking time is old than one minute(it is gone in timeout)
 //        query_ageing_or << BSON(key_processing_ageing << true << key_last_checking_time << BSON("$lte" << mongo::Date_t(TimingUtil::getTimeStamp()-timeout_for_checking)));
-//        
+//
 //        //or on previous condition and on checking management == false the last checking date need to be greater that noral chack timeout
 //        query_ageing_or << BSON(key_processing_ageing << false << key_last_checking_time << BSON("$lte" << mongo::Date_t(TimingUtil::getTimeStamp()-delay_next_check)));
-//        
+//
 //        query_builder << "$or" << query_ageing_or.arr();
-//        
-//        
+//
+//
 //        mongo::BSONObj  query = query_builder.obj();
 //        // set atomicalli processing ageing to true
 //        mongo::BSONObj  update =  BSON("$set" << BSON(key_processing_ageing << true <<
@@ -901,7 +927,7 @@ int MongoDBNodeDataAccess::addAgeingManagementDataToNode(const std::string& cont
 //            last_ageing_perform_time = 0;
 //            node_ageing_time = 0;
 //        }
-//        
+//
 //    } catch (const mongo::DBException &e) {
 //        MDBNDA_ERR << e.what();
 //        err = -1;
@@ -922,7 +948,7 @@ int MongoDBNodeDataAccess::addAgeingManagementDataToNode(const std::string& cont
 //        const std::string key_processing_ageing = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_PROCESSING_AGEING);
 //        const std::string key_last_checking_time = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_AGEING_LAST_CHECK_DATA);
 //        const std::string key_last_performed_time = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_PERFORMED_AGEING);
-//        
+//
 //        mongo::BSONObj  query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << node_uid);
 //        // set atomicalli processing ageing to true
 //        mongo::BSONObj  update = BSON("$set" << (performed?BSON(key_processing_ageing << false <<
@@ -930,7 +956,7 @@ int MongoDBNodeDataAccess::addAgeingManagementDataToNode(const std::string& cont
 //                                                                key_last_performed_time << mongo::Date_t(current_ts)):
 //                                                 BSON(key_processing_ageing << false <<
 //                                                      key_last_checking_time << mongo::Date_t(current_ts))));
-//        
+//
 //        DEBUG_CODE(MDBNDA_ERR<<log_message("releaseNodeForAgeingManagement",
 //                                           "update",
 //                                           DATA_ACCESS_LOG_2_ENTRY("query",

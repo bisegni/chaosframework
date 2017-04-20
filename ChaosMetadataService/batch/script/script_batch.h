@@ -22,6 +22,7 @@
 #ifndef __CHAOSFramework_D12F617D_41D0_413A_9915_A50B8783724D_script_batch_h
 #define __CHAOSFramework_D12F617D_41D0_413A_9915_A50B8783724D_script_batch_h
 
+#include "UpdateScriptOnNode.h"
 #include "LoadInstanceOnUnitServer.h"
 
 #endif /* __CHAOSFramework_D12F617D_41D0_413A_9915_A50B8783724D_script_batch_h */

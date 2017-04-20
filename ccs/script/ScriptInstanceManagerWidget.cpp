@@ -12,6 +12,7 @@ using namespace chaos::service_common::data::script;
 using namespace chaos::metadata_service_client::api_proxy::script;
 
 const QString CM_EDIT_INSTANCE = "Edit Instance";
+const QString CM_UPDATE_SOURCE = "Update Source";
 
 ScriptInstanceManagerWidget::ScriptInstanceManagerWidget(ScriptBaseDescription &script_description, QWidget *parent) :
     QWidget(parent),
@@ -27,10 +28,12 @@ ScriptInstanceManagerWidget::ScriptInstanceManagerWidget(ScriptBaseDescription &
             SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
             SLOT(selectionChanged(QItemSelection,QItemSelection)));
 
-    QMap<QString, QVariant> cm_map;
-    cm_map.insert(CM_EDIT_INSTANCE, QVariant());
+    QVector< QPair<QString, QVariant> > cm_vec;
+    cm_vec.push_back(QPair<QString, QVariant>(CM_EDIT_INSTANCE, QVariant()));
+    cm_vec.push_back(QPair<QString, QVariant>(CM_UPDATE_SOURCE, QVariant()));
+    ui->listView->setContextMenuPolicy(Qt::CustomContextMenu);
     widget_utility.cmRegisterActions(ui->listView,
-                                     cm_map);
+                                     cm_vec);
 
     //start first search
     on_pushButtonSearchInstances_clicked();
@@ -56,6 +59,15 @@ void ScriptInstanceManagerWidget::cmActionTrigger(const QString& cm_title,
             if(w){w->show();}
         }
 
+    } else if(cm_title.compare(CM_UPDATE_SOURCE) == 0) {
+        ChaosStringVector node_vec;
+        QModelIndexList selected_index = cm_data.value<QModelIndexList>();
+        foreach (QModelIndex index, selected_index) {
+            node_vec.push_back(index.data().toString().toStdString());
+        }
+        api_submitter.submitApiResult("update_source_on_node",
+                                      GET_CHAOS_API_PTR(UpdateScriptOnNode)->execute(node_vec,
+                                                                                     instance_list_model.getScriptDescription()));
     }
 }
 
@@ -63,13 +75,19 @@ void ScriptInstanceManagerWidget::selectionChanged(const QItemSelection& selecte
                                                    const QItemSelection& unselected) {
     bool selection = selected.indexes().size();
 
-    widget_utility.cmActionSetVisible(ui->listView,
+    widget_utility.cmActionSetEnable(ui->listView,
                                       CM_EDIT_INSTANCE,
+                                      selection);
+    widget_utility.cmActionSetEnable(ui->listView,
+                                      CM_UPDATE_SOURCE,
                                       selection);
     ui->pushButtonremoveInstance->setEnabled(selection);
     if(selection) {
         widget_utility.cmActionSetData(ui->listView,
                                        CM_EDIT_INSTANCE,
+                                       QVariant::fromValue<QModelIndexList>(selected.indexes()));
+        widget_utility.cmActionSetData(ui->listView,
+                                       CM_UPDATE_SOURCE,
                                        QVariant::fromValue<QModelIndexList>(selected.indexes()));
     }
 }

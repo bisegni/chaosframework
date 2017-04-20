@@ -24,6 +24,7 @@
 #include "RemoveScript.h"
 #include "ScriptGroupApi.h"
 #include "LoadFullScript.h"
+#include "UpdateScriptOnNode.h"
 #include "ManageScriptInstance.h"
 #include "ExecutionPoolHeartbeat.h"
 #include "SearchInstancesForScript.h"
@@ -39,6 +40,7 @@ AbstractApiGroup("script"){
     addApi<SearchScript>();
     addApi<RemoveScript>();
     addApi<LoadFullScript>();
+    addApi<UpdateScriptOnNode>();
     addApi<ManageScriptInstance>();
     addApi<ExecutionPoolHeartbeat>();
     addApi<SearchInstancesForScript>();

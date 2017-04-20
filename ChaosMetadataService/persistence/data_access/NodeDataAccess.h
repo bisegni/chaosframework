@@ -223,6 +223,14 @@ namespace chaos {
                     
                     //                    virtual int releaseNodeForAgeingManagement(std::string& node_uid,
                     //                                                                      bool performed) = 0;
+                    
+                    //!check if a node is alive
+                    /*!
+                     using helat data store on database check if the node i still alive
+                     \param node_uid is the node for wich we want to check the alive state
+                     \param alive contai the state of the node if function doesn't report error
+                     */
+                    virtual int isNodeAlive(const std::string& node_uid, bool& alive) = 0;
                 };
                 
             }

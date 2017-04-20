@@ -109,4 +109,7 @@ void ExternaCommandExecutor::readLine(const std::string& new_read_line) {
     } else if((err = map_command[tokens[0]]->execute(tokens))){
         *external_cmd_executor.get() << CHAOS_FORMAT("Command %1% has reported error %2%\n", %tokens[0]%err);
     }
+    
+    //add exstra return for command termination
+    *external_cmd_executor.get() << "\n";
 }

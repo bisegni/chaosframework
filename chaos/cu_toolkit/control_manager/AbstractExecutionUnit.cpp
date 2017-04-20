@@ -47,9 +47,10 @@ using namespace boost::chrono;
 #define EULDBG_ DBG_LOG_1_P(AbstractExecutionUnit, getCUInstance())
 #define EULERR_ ERR_LOG_1_P(AbstractExecutionUnit, getCUInstance())
 
-AbstractExecutionUnit::AbstractExecutionUnit(const std::string& _execution_unit_id,
+AbstractExecutionUnit::AbstractExecutionUnit(const std::string& _execution_unit_subtype,
+                                             const std::string& _execution_unit_id,
                                              const std::string& _execution_unit_param):
-RTAbstractControlUnit(CUType::EXUT,
+RTAbstractControlUnit(_execution_unit_subtype,
                       _execution_unit_id,
                       _execution_unit_param),
 last_execution_ts(0){}
@@ -59,10 +60,11 @@ last_execution_ts(0){}
  \param _execution_unit_id unique id for the control unit
  \param _execution_unit_drivers driver information
  */
-AbstractExecutionUnit::AbstractExecutionUnit(const std::string& _execution_unit_id,
+AbstractExecutionUnit::AbstractExecutionUnit(const std::string& _execution_unit_subtype,
+                                             const std::string& _execution_unit_id,
                                              const std::string& _execution_unit_param,
                                              const ControlUnitDriverList& _execution_unit_drivers):
-RTAbstractControlUnit(CUType::EXUT,
+RTAbstractControlUnit(_execution_unit_subtype,
                       _execution_unit_id,
                       _execution_unit_param,
                       _execution_unit_drivers),

@@ -780,7 +780,7 @@ namespace chaos {
         static const char * const EXECUTION_UNIT_DESCRIPTION            = "eudk_description";
         //!the list of the pool managed by a unit server
         static const char * const EXECUTION_POOL_LIST                   = "eudk_pool_list";
-        //!the list of the pool managed by a unit server
+        //!the list of the instance (fisical node that identify the xecution unit based on script)
         static const char * const EXECUTION_SCRIPT_INSTANCE_LIST        = "eudk_script_instance_list";
         //!is the language that represent the script of the execution unit
         static const char * const EXECUTION_SCRIPT_INSTANCE_LANGUAGE    = "eudk_script_language";
@@ -812,7 +812,7 @@ namespace chaos {
     namespace CUType {
         static const char * const RTCU	= NodeType::NODE_SUBTYPE_REALTIME_CONTROL_UNIT;
         static const char * const SCCU  = NodeType::NODE_SUBTYPE_BATCH_CONTROL_UNIT;
-        static const char * const EXUT  = NodeType::NODE_SUBTYPE_SCRIPTABLE_EXECUTION_UNIT;
+        static const char * const SEXUT = NodeType::NODE_SUBTYPE_SCRIPTABLE_EXECUTION_UNIT;
         static const char * const PROXY_CU	= NodeType::NODE_SUBTYPE_PROXY_CONTROL_UNIT;
     }
     /** @} */ // end of CUType

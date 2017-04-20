@@ -256,6 +256,10 @@
 		325013D815E980C800DCB13E /* AsioImplEventClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 325013D615E980C800DCB13E /* AsioImplEventClient.h */; };
 		325013DC15E9843D00DCB13E /* AsioEventForwarder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325013DA15E9843D00DCB13E /* AsioEventForwarder.cpp */; };
 		325013DD15E9843D00DCB13E /* AsioEventForwarder.h in Headers */ = {isa = PBXBuildFile; fileRef = 325013DB15E9843D00DCB13E /* AsioEventForwarder.h */; };
+		32514EEF1EA8B81F001FF6B8 /* UpdateScriptOnNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32514EED1EA8B81F001FF6B8 /* UpdateScriptOnNode.cpp */; };
+		32514EF21EA8BA13001FF6B8 /* UpdateScriptOnNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32514EF01EA8BA13001FF6B8 /* UpdateScriptOnNode.cpp */; };
+		32514EF51EA8DEAC001FF6B8 /* UpdateScriptOnNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32514EF31EA8DEAC001FF6B8 /* UpdateScriptOnNode.cpp */; };
+		32514EF61EA8DEAC001FF6B8 /* UpdateScriptOnNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 32514EF41EA8DEAC001FF6B8 /* UpdateScriptOnNode.h */; };
 		325168CC1D47935D00E877DF /* DataBrokerEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3214EF1A1D467E4F004DB689 /* DataBrokerEditor.cpp */; };
 		325168CE1D479BAB00E877DF /* data_manager_types.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325168CD1D479BAB00E877DF /* data_manager_types.cpp */; };
 		3252A30F1C8ED2A800900FF2 /* AbstractAttributeHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3252A30D1C8ED2A800900FF2 /* AbstractAttributeHandler.cpp */; };
@@ -1511,6 +1515,12 @@
 		325013DA15E9843D00DCB13E /* AsioEventForwarder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsioEventForwarder.cpp; sourceTree = "<group>"; };
 		325013DB15E9843D00DCB13E /* AsioEventForwarder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsioEventForwarder.h; sourceTree = "<group>"; };
 		32502C841924FC7E0073E4AB /* Delegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Delegate.h; sourceTree = "<group>"; };
+		32514EED1EA8B81F001FF6B8 /* UpdateScriptOnNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UpdateScriptOnNode.cpp; sourceTree = "<group>"; };
+		32514EEE1EA8B81F001FF6B8 /* UpdateScriptOnNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UpdateScriptOnNode.h; sourceTree = "<group>"; };
+		32514EF01EA8BA13001FF6B8 /* UpdateScriptOnNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UpdateScriptOnNode.cpp; sourceTree = "<group>"; };
+		32514EF11EA8BA13001FF6B8 /* UpdateScriptOnNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UpdateScriptOnNode.h; sourceTree = "<group>"; };
+		32514EF31EA8DEAC001FF6B8 /* UpdateScriptOnNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UpdateScriptOnNode.cpp; sourceTree = "<group>"; };
+		32514EF41EA8DEAC001FF6B8 /* UpdateScriptOnNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UpdateScriptOnNode.h; sourceTree = "<group>"; };
 		325168CD1D479BAB00E877DF /* data_manager_types.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = data_manager_types.cpp; sourceTree = "<group>"; };
 		3252A30D1C8ED2A800900FF2 /* AbstractAttributeHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractAttributeHandler.cpp; sourceTree = "<group>"; };
 		3252A30E1C8ED2A800900FF2 /* AbstractAttributeHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractAttributeHandler.h; sourceTree = "<group>"; };
@@ -2888,6 +2898,8 @@
 				32A1164B1D11A17D00FF44ED /* SearchInstancesForScript.h */,
 				32A1164E1D11A19200FF44ED /* ManageScriptInstance.cpp */,
 				32A1164F1D11A19200FF44ED /* ManageScriptInstance.h */,
+				32514EF31EA8DEAC001FF6B8 /* UpdateScriptOnNode.cpp */,
+				32514EF41EA8DEAC001FF6B8 /* UpdateScriptOnNode.h */,
 				3221D72E1CF5F292001BE971 /* script.h */,
 			);
 			path = script;
@@ -3278,6 +3290,8 @@
 			children = (
 				325963961D216BD800D94853 /* LoadInstanceOnUnitServer.cpp */,
 				325963971D216BD800D94853 /* LoadInstanceOnUnitServer.h */,
+				32514EF01EA8BA13001FF6B8 /* UpdateScriptOnNode.cpp */,
+				32514EF11EA8BA13001FF6B8 /* UpdateScriptOnNode.h */,
 				32A116B81D25596A00FF44ED /* script_batch.h */,
 			);
 			path = script;
@@ -5133,6 +5147,8 @@
 				32A116481D117F0700FF44ED /* ManageScriptInstance.h */,
 				323201881D21591300701B03 /* ExecutionPoolHeartbeat.cpp */,
 				323201891D21591300701B03 /* ExecutionPoolHeartbeat.h */,
+				32514EED1EA8B81F001FF6B8 /* UpdateScriptOnNode.cpp */,
+				32514EEE1EA8B81F001FF6B8 /* UpdateScriptOnNode.h */,
 			);
 			path = script;
 			sourceTree = "<group>";
@@ -5845,6 +5861,7 @@
 				32D745FD1C7338D100F4D719 /* AlertLogEventHandler.h in Headers */,
 				3239EF4B1C0EFE910052BE61 /* RestoreSnapshot.h in Headers */,
 				32F135A41DF05E4F00890AFC /* GetSnapshotDatasetForNode.h in Headers */,
+				32514EF61EA8DEAC001FF6B8 /* UpdateScriptOnNode.h in Headers */,
 				32FF2A851E68723F00117985 /* UploadChunk.h in Headers */,
 				32610F8D1AE6560A00779B84 /* GetDescription.h in Headers */,
 				3211CCDE1B03402800F9B80E /* QuantumKeyConsumer.h in Headers */,
@@ -6184,6 +6201,7 @@
 				32809C791A9C79DE00C02C12 /* UtilityDataAccess.cpp in Sources */,
 				3221D7201CF5AD09001BE971 /* SaveScript.cpp in Sources */,
 				32761A401B37F202006C8719 /* SubmitBatchCommand.cpp in Sources */,
+				32514EEF1EA8B81F001FF6B8 /* UpdateScriptOnNode.cpp in Sources */,
 				32D90D591CF4A6DC00996F09 /* SearchScript.cpp in Sources */,
 				3252F3541C29847E004436A8 /* GetDomains.cpp in Sources */,
 				32B224C61CFC626F00B24B58 /* LoadFullScript.cpp in Sources */,
@@ -6297,6 +6315,7 @@
 				3270E06D1C6CBB7200105726 /* LoggingApiGroup.cpp in Sources */,
 				32362C1A1ADC0FD2000CA079 /* SetInstanceDescription.cpp in Sources */,
 				32B9F3F71AC4186300380FE9 /* NodeCreateUnitServer.cpp in Sources */,
+				32514EF21EA8BA13001FF6B8 /* UpdateScriptOnNode.cpp in Sources */,
 				326ACFAA1E0159C600AD011E /* DeviceSharedDataWorkerMetric.cpp in Sources */,
 				32401CB61C18330000E62866 /* GetNodesForSnapshot.cpp in Sources */,
 				328E78061A7A9FE40008C070 /* AbstractApi.cpp in Sources */,
@@ -6702,6 +6721,7 @@
 				32B224CA1CFC830600B24B58 /* LoadFullScript.cpp in Sources */,
 				32F7AB141C9960A700E18D3E /* NodeMonitor.cpp in Sources */,
 				32FC49AF1E080FB80087D82C /* GetVariable.cpp in Sources */,
+				32514EF51EA8DEAC001FF6B8 /* UpdateScriptOnNode.cpp in Sources */,
 				328C873E1AE01A590047C79B /* DeleteInstance.cpp in Sources */,
 				32362C211ADD0C45000CA079 /* SetInstanceDescription.cpp in Sources */,
 				326413931E40C7280035E175 /* CUController.cpp in Sources */,

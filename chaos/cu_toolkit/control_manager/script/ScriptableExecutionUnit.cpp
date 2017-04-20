@@ -24,6 +24,8 @@
 #include <chaos/common/bson/util/base64.h>
 #include <chaos/common/exception/MetadataLoggingCException.h>
 
+#include <chaos_service_common/data/data.h>
+
 #include <json/json.h>
 
 using namespace chaos::common::script;
@@ -51,7 +53,8 @@ PUBLISHABLE_CONTROL_UNIT_IMPLEMENTATION(ScriptableExecutionUnit)
  */
 ScriptableExecutionUnit::ScriptableExecutionUnit(const std::string& _execution_unit_id,
                                                  const std::string& _execution_unit_param):
-AbstractExecutionUnit(_execution_unit_id,
+AbstractExecutionUnit(CUType::SEXUT,
+                      _execution_unit_id,
                       _execution_unit_param){}
 
 /*!
@@ -63,7 +66,8 @@ AbstractExecutionUnit(_execution_unit_id,
 ScriptableExecutionUnit::ScriptableExecutionUnit(const std::string& _execution_unit_id,
                                                  const std::string& _execution_unit_param,
                                                  const ControlUnitDriverList& _execution_unit_drivers):
-AbstractExecutionUnit(_execution_unit_id,
+AbstractExecutionUnit(CUType::SEXUT,
+                      _execution_unit_id,
                       _execution_unit_param,
                       _execution_unit_drivers){}
 
@@ -83,24 +87,24 @@ void ScriptableExecutionUnit::addAttributeToDataSet(const std::string& attribute
 }
 
 void ScriptableExecutionUnit::registerApi() {
-    CHAOS_ASSERT(script_manager.get());
+    CHAOS_ASSERT(script_manager().get());
     
     for(VectorApiClassIterator it = api_classes.begin(),
         end = api_classes.end();
         it != end;
         it++) {
-        script_manager->registerApiClass(*(*it));
+        script_manager()->registerApiClass(*(*it));
     }
 }
 
 void ScriptableExecutionUnit::unregisterApi() {
-    CHAOS_ASSERT(script_manager.get());
+    CHAOS_ASSERT(script_manager().get());
     
     for(VectorApiClassIterator it = api_classes.begin(),
         end = api_classes.end();
         it != end;
         it++) {
-        script_manager->deregisterApiClass(*(*it));
+        script_manager()->deregisterApiClass(*(*it));
     }
 }
 
@@ -111,6 +115,13 @@ throw MetadataLoggingCException(getDeviceID(), num, msg, __PRETTY_FUNCTION__);
 void ScriptableExecutionUnit::unitDefineActionAndDataset() throw(CException) {
     int err = 0;
     bool exists = false;
+    
+    //define custom action
+    addActionDescritionInstance<ScriptableExecutionUnit>(this,
+                                                         &ScriptableExecutionUnit::updateScriptSource,
+                                                         "updateScriptSource",
+                                                         "Update the source of the script");
+    
     ChaosStringVector defined_input_attribute;
     //clear bitet for implemented lagorithm handler
     alghorithm_handler_implemented.reset();
@@ -170,8 +181,8 @@ void ScriptableExecutionUnit::unitDefineActionAndDataset() throw(CException) {
     
     //allocate script manager or language
     SEU_LAPP << CHAOS_FORMAT("Create script manager for '%1%' language!", %script_language);
-    script_manager.reset(new ScriptManager(script_language));
-    InizializableService::initImplementation(script_manager.get(),
+    script_manager().reset(new ScriptManager(script_language));
+    InizializableService::initImplementation(script_manager().get(),
                                              NULL,
                                              "ScriptManager",
                                              __PRETTY_FUNCTION__);
@@ -182,47 +193,47 @@ void ScriptableExecutionUnit::unitDefineActionAndDataset() throw(CException) {
     
     //!load script within the virtual machine
     SEU_LAPP << "Try to load the script";
-    if(script_manager->getVirtualMachine()->loadScript(script_content)) {
+    if(script_manager()->getVirtualMachine()->loadScript(script_content)) {
         LOG_AND_TROW_EX(SEU_LERR, -5, "Error loading script into virtual machine");
     }
     
     //check for implemented handler
-    if((err = script_manager->getVirtualMachine()->functionExists(SEU_ALGORITHM_LAUNCH, exists)) ){
+    if((err = script_manager()->getVirtualMachine()->functionExists(SEU_ALGORITHM_LAUNCH, exists)) ){
         LOG_AND_TROW_EX(SEU_LERR,
                         -3,
                         CHAOS_FORMAT("Error checking the presence of the function %1%",%SEU_ALGORITHM_LAUNCH));
     }
     alghorithm_handler_implemented[0] = exists;
     
-    if((err = script_manager->getVirtualMachine()->functionExists(SEU_ALGORITHM_START, exists)) ){
+    if((err = script_manager()->getVirtualMachine()->functionExists(SEU_ALGORITHM_START, exists)) ){
         LOG_AND_TROW_EX(SEU_LERR,
                         -4,
                         CHAOS_FORMAT("Error checking the presence of the function %1%",%SEU_ALGORITHM_START));
     }
     alghorithm_handler_implemented[1] = exists;
     
-    if((err = script_manager->getVirtualMachine()->functionExists(SEU_ALGORITHM_STEP, exists)) ){
+    if((err = script_manager()->getVirtualMachine()->functionExists(SEU_ALGORITHM_STEP, exists)) ){
         LOG_AND_TROW_EX(SEU_LERR,
                         -5,
                         CHAOS_FORMAT("Error checking the presence of the function %1%",%SEU_ALGORITHM_STEP));
     }
     alghorithm_handler_implemented[2] = exists;
     
-    if((err = script_manager->getVirtualMachine()->functionExists(SEU_ALGORITHM_STOP, exists)) ){
+    if((err = script_manager()->getVirtualMachine()->functionExists(SEU_ALGORITHM_STOP, exists)) ){
         LOG_AND_TROW_EX(SEU_LERR,
                         -6,
                         CHAOS_FORMAT("Error checking the presence of the function %1%",%SEU_ALGORITHM_STOP));
     }
     alghorithm_handler_implemented[3] = exists;
     
-    if((err = script_manager->getVirtualMachine()->functionExists(SEU_ALGORITHM_END, exists)) ){
+    if((err = script_manager()->getVirtualMachine()->functionExists(SEU_ALGORITHM_END, exists)) ){
         LOG_AND_TROW_EX(SEU_LERR,
                         -7,
                         CHAOS_FORMAT("Error checking the presence of the function %1%",%SEU_ALGORITHM_END));
     }
     alghorithm_handler_implemented[4] = exists;
     
-    if((err = script_manager->getVirtualMachine()->functionExists(SEU_INPUT_ATTRIBUTE_CHANGED, exists)) ){
+    if((err = script_manager()->getVirtualMachine()->functionExists(SEU_INPUT_ATTRIBUTE_CHANGED, exists)) ){
         LOG_AND_TROW_EX(SEU_LERR,
                         -7,
                         CHAOS_FORMAT("Error checking the presence of the function %1%",%SEU_INPUT_ATTRIBUTE_CHANGED));
@@ -230,7 +241,7 @@ void ScriptableExecutionUnit::unitDefineActionAndDataset() throw(CException) {
     alghorithm_handler_implemented[5] = exists;
     
     
-    //    if(script_manager->getVirtualMachine()->callProcedure(SEU_ALGORITHM_SETUP,
+    //    if(script_manager()->getVirtualMachine()->callProcedure(SEU_ALGORITHM_SETUP,
     //                                                          in_param)) {
     //        LOG_AND_TROW_FORMATTED(SEU_LERR, -6, "Error calling function %1% of the script(it maybe not implemented)", %SEU_ALGORITHM_SETUP);
     //    }
@@ -238,60 +249,66 @@ void ScriptableExecutionUnit::unitDefineActionAndDataset() throw(CException) {
 
 void ScriptableExecutionUnit::executeAlgorithmLaunch() throw (CException) {
     if(!alghorithm_handler_implemented[0]) return;
+    LockableScriptManagerReadLock rl = script_manager.getReadLockObject();
     ScriptInParam input_param;
-    if(script_manager->getVirtualMachine()->callProcedure(SEU_ALGORITHM_LAUNCH,
-                                                          input_param)) {
+    if(script_manager()->getVirtualMachine()->callProcedure(SEU_ALGORITHM_LAUNCH,
+                                                            input_param)) {
         LOG_AND_TROW_EX(SEU_LERR,
-                        script_manager->getVirtualMachine()->getLastError(),
-                        script_manager->getVirtualMachine()->getLastErrorMessage());
+                        script_manager()->getVirtualMachine()->getLastError(),
+                        script_manager()->getVirtualMachine()->getLastErrorMessage());
     }
 }
 
 void ScriptableExecutionUnit::executeAlgorithmStart() throw (CException) {
     if(!alghorithm_handler_implemented[1]) return;
+    LockableScriptManagerReadLock rl = script_manager.getReadLockObject();
     ScriptInParam input_param;
-    if(script_manager->getVirtualMachine()->callProcedure(SEU_ALGORITHM_START,
-                                                          input_param)) {
+    if(script_manager()->getVirtualMachine()->callProcedure(SEU_ALGORITHM_START,
+                                                            input_param)) {
         LOG_AND_TROW_EX(SEU_LERR,
-                        script_manager->getVirtualMachine()->getLastError(),
-                        script_manager->getVirtualMachine()->getLastErrorMessage());    }
+                        script_manager()->getVirtualMachine()->getLastError(),
+                        script_manager()->getVirtualMachine()->getLastErrorMessage());
+    }
 }
 
 
 void ScriptableExecutionUnit::executeAlgorithmStep(uint64_t step_delay_time) throw (CException) {
     if(!alghorithm_handler_implemented[2]) return;
+    LockableScriptManagerReadLock rl = script_manager.getReadLockObject();
     ScriptInParam input_param;
     ScriptOutParam output_param;
     
     //add step delay time
     input_param.push_back(CDataVariant((int64_t)step_delay_time));
-    if(script_manager->getVirtualMachine()->callProcedure(SEU_ALGORITHM_STEP,
-                                                          input_param)) {
+    if(script_manager()->getVirtualMachine()->callProcedure(SEU_ALGORITHM_STEP,
+                                                            input_param)) {
         LOG_AND_TROW_EX(SEU_LERR,
-                        script_manager->getVirtualMachine()->getLastError(),
-                        script_manager->getVirtualMachine()->getLastErrorMessage());
+                        script_manager()->getVirtualMachine()->getLastError(),
+                        script_manager()->getVirtualMachine()->getLastErrorMessage());
     }
 }
 
 void ScriptableExecutionUnit::executeAlgorithmStop() throw (CException) {
     if(!alghorithm_handler_implemented[3]) return;
+    LockableScriptManagerReadLock rl = script_manager.getReadLockObject();
     ScriptInParam input_param;
-    if(script_manager->getVirtualMachine()->callProcedure(SEU_ALGORITHM_STOP,
-                                                          input_param)) {
+    if(script_manager()->getVirtualMachine()->callProcedure(SEU_ALGORITHM_STOP,
+                                                            input_param)) {
         LOG_AND_TROW_EX(SEU_LERR,
-                        script_manager->getVirtualMachine()->getLastError(),
-                        script_manager->getVirtualMachine()->getLastErrorMessage());;
+                        script_manager()->getVirtualMachine()->getLastError(),
+                        script_manager()->getVirtualMachine()->getLastErrorMessage());;
     }
 }
 
 void ScriptableExecutionUnit::executeAlgorithmEnd() throw (CException) {
     if(!alghorithm_handler_implemented[4]) return;
+    LockableScriptManagerReadLock rl = script_manager.getReadLockObject();
     ScriptInParam input_param;
-    if(script_manager->getVirtualMachine()->callProcedure(SEU_ALGORITHM_END,
-                                                          input_param)) {
+    if(script_manager()->getVirtualMachine()->callProcedure(SEU_ALGORITHM_END,
+                                                            input_param)) {
         LOG_AND_TROW_EX(SEU_LERR,
-                        script_manager->getVirtualMachine()->getLastError(),
-                        script_manager->getVirtualMachine()->getLastErrorMessage());
+                        script_manager()->getVirtualMachine()->getLastError(),
+                        script_manager()->getVirtualMachine()->getLastErrorMessage());
     }
 }
 
@@ -299,12 +316,12 @@ void ScriptableExecutionUnit::unitUndefineActionAndDataset() throw(CException) {
     SEU_LAPP << "Unregister api";
     unregisterApi();
     
-    if(script_manager.get() != NULL) {
-        InizializableService::deinitImplementation(script_manager.get(),
+    if(script_manager().get() != NULL) {
+        InizializableService::deinitImplementation(script_manager().get(),
                                                    "ScriptManager",
                                                    __PRETTY_FUNCTION__);
         //clear memory
-        script_manager.reset();
+        script_manager().reset();
     }
 }
 
@@ -312,17 +329,64 @@ bool ScriptableExecutionUnit::updatedInputDataset(const std::string& attribute_n
                                                   const chaos::common::data::CDataVariant& value) {
     SEU_DBG << CHAOS_FORMAT("Signal for %1% input dataset attribute with value %2%", %attribute_name%value.asString());
     if(!alghorithm_handler_implemented[5]) return false;
+    LockableScriptManagerWriteLock rl = script_manager.getWriteLockObject();
     
     bool managed = true;
     ScriptInParam input_param;
     input_param.push_back(CDataVariant(attribute_name));
     input_param.push_back(value);
-    if(script_manager->getVirtualMachine()->callProcedure(SEU_INPUT_ATTRIBUTE_CHANGED,
-                                                          input_param)) {
+    if(script_manager()->getVirtualMachine()->callProcedure(SEU_INPUT_ATTRIBUTE_CHANGED,
+                                                            input_param)) {
         LOG_AND_TROW_EX(SEU_LERR,
-                        script_manager->getVirtualMachine()->getLastError(),
-                        script_manager->getVirtualMachine()->getLastErrorMessage());
+                        script_manager()->getVirtualMachine()->getLastError(),
+                        script_manager()->getVirtualMachine()->getLastErrorMessage());
         managed = false;
     }
     return managed;
+}
+
+CDataWrapper* ScriptableExecutionUnit::updateScriptSource(CDataWrapper *data_pack,
+                                                          bool& detachParam) throw(CException) {
+    ScriptInParam input_param;
+    chaos::service_common::data::script::ScriptSDWrapper sdw(data_pack);
+    LockableScriptManagerWriteLock rl = script_manager.getWriteLockObject();
+    
+    if(sdw().script_description.language.compare(script_language) != 0) {
+        LOG_AND_TROW_EX(SEU_LERR,
+                        -1,
+                        "New script language differ from unit virtual machine type");
+    }
+    //store new script
+    script_content = sdw().script_content;
+    if(script_manager()->getVirtualMachine()->loadScript(script_content)) {
+        LOG_AND_TROW_EX(SEU_LERR, -2, "Error loading script into virtual machine");
+    }
+    
+    //now we need to simulate the init and start operation
+    switch(getServiceState()) {
+        case CUStateKey::INIT:
+            if(script_manager()->getVirtualMachine()->callProcedure(SEU_ALGORITHM_LAUNCH,
+                                                                    input_param)) {
+                LOG_AND_TROW_EX(SEU_LERR,
+                                script_manager()->getVirtualMachine()->getLastError(),
+                                script_manager()->getVirtualMachine()->getLastErrorMessage());
+            }
+            break;
+        case CUStateKey::START:
+            if(script_manager()->getVirtualMachine()->callProcedure(SEU_ALGORITHM_LAUNCH,
+                                                                    input_param)) {
+                LOG_AND_TROW_EX(SEU_LERR,
+                                script_manager()->getVirtualMachine()->getLastError(),
+                                script_manager()->getVirtualMachine()->getLastErrorMessage());
+            }
+            if(script_manager()->getVirtualMachine()->callProcedure(SEU_ALGORITHM_START,
+                                                                    input_param)) {
+                LOG_AND_TROW_EX(SEU_LERR,
+                                script_manager()->getVirtualMachine()->getLastError(),
+                                script_manager()->getVirtualMachine()->getLastErrorMessage());
+            }
+            break;
+    }
+    SEU_LAPP << "Script source code update";
+    return NULL;
 }

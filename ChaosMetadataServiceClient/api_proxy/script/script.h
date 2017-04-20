@@ -26,6 +26,7 @@
 #include <ChaosMetadataServiceClient/api_proxy/script/RemoveScript.h>
 #include <ChaosMetadataServiceClient/api_proxy/script/SearchScript.h>
 #include <ChaosMetadataServiceClient/api_proxy/script/LoadFullScript.h>
+#include <ChaosMetadataServiceClient/api_proxy/script/UpdateScriptOnNode.h>
 #include <ChaosMetadataServiceClient/api_proxy/script/ManageScriptInstance.h>
 #include <ChaosMetadataServiceClient/api_proxy/script/SearchInstancesForScript.h>
 

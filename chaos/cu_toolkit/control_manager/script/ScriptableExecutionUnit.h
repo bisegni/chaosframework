@@ -25,6 +25,7 @@
 #include <chaos/common/script/ScriptManager.h>
 
 #include <chaos/common/chaos_types.h>
+#include <chaos/common/utility/LockableObject.h>
 
 #include <chaos/cu_toolkit/control_manager/script/api/api.h>
 #include <chaos/cu_toolkit/control_manager/AbstractExecutionUnit.h>
@@ -43,6 +44,8 @@ namespace chaos {
                 
                 typedef boost::shared_ptr<chaos::common::script::AbstractScriptableClass> ApiClassShrdPtr;
                 CHAOS_DEFINE_VECTOR_FOR_TYPE(ApiClassShrdPtr, VectorApiClass);
+                
+                CHAOS_DEFINE_LOCKABLE_OBJECT(std::auto_ptr<chaos::common::script::ScriptManager>, LockableScriptManager);
                 
                 //! this class implementa an execution unit defined by a script
                 /*!
@@ -65,7 +68,7 @@ namespace chaos {
                     std::string script_content;
                     
                     //!scrip manger instance initilizated at eu init time
-                    std::auto_ptr<chaos::common::script::ScriptManager> script_manager;
+                    LockableScriptManager script_manager;
                     
                     //!api vector
                     VectorApiClass api_classes;
@@ -74,6 +77,14 @@ namespace chaos {
                     
                     void registerApi();
                     void unregisterApi();
+                protected:
+                    //! update runtime the script source code
+                    /*!
+                     defin ean rpc action that permit to update, at runtime, the soruce of the script
+                     */
+                    CDataWrapper* updateScriptSource(CDataWrapper *data_pack,
+                                                     bool& detachParam) throw(CException);
+                    
                 public:
                     /*! default constructor
                      \param _execution_unit_param is a string that contains parameter to pass during the contorl unit creation
@@ -94,7 +105,6 @@ namespace chaos {
                     //!default destructor
                     ~ScriptableExecutionUnit();
                     
-                public:
                     //! add an attribute to the dataset fo the execution unit
                     void addAttributeToDataSet(const std::string& attribute_name,
                                                const std::string& attribute_description,
