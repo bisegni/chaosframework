@@ -105,7 +105,8 @@ SET(mcl_src ${mcl_src}      api_proxy/script/SaveScript.cpp
                             api_proxy/script/SearchScript.cpp
                             api_proxy/script/LoadFullScript.cpp
                             api_proxy/script/SearchInstancesForScript.cpp
-                            api_proxy/script/ManageScriptInstance.cpp)
+                            api_proxy/script/ManageScriptInstance.cpp
+                            api_proxy/script/UpdateScriptOnNode.cpp)
 
 SET(mcl_src ${mcl_src}      monitor_system/MonitorManager.cpp
                             monitor_system/QuantumSlot.cpp

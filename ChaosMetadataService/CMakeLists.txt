@@ -111,7 +111,8 @@ SET(cnd_src  ${cnd_src}	api/script/ScriptGroupApi.cpp
                         api/script/LoadFullScript.cpp
                         api/script/SearchInstancesForScript.cpp
                         api/script/ManageScriptInstance.cpp
-                        api/script/ExecutionPoolHeartbeat.cpp)
+                        api/script/ExecutionPoolHeartbeat.cpp
+                        api/script/UpdateScriptOnNode.cpp)
 
 SET(cnd_src  ${cnd_src}	api/agent/AgentApiGroup.cpp
                         api/agent/LoadAgentDescription.cpp
@@ -189,7 +190,8 @@ SET(cnd_src  ${cnd_src}	batch/control_unit/RegistrationAckBatchCommand.cpp
                         batch/control_unit/ApplyChangeSet.cpp
                         batch/control_unit/RecoverError.cpp)
 
-SET(cnd_src  ${cnd_src}	batch/script/LoadInstanceOnUnitServer.cpp)
+SET(cnd_src  ${cnd_src}	batch/script/LoadInstanceOnUnitServer.cpp
+                        batch/script/UpdateScriptOnNode.cpp)
 
 SET(cnd_src  ${cnd_src}	batch/general/RestoreSnapshotBatch.cpp
                         batch/general/CreateSnapshotBatch.cpp)
