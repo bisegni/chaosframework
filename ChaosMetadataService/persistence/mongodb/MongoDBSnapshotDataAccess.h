@@ -88,6 +88,11 @@ namespace chaos {
                     int getDatasetInSnapshotForNode(const std::string& node_unique_id,
                                                     const std::string& snapshot_name,
                                                     common::data::VectorStrCDWShrdPtr& snapshot_for_node);
+                    
+                    int setDatasetInSnapshotForNode(const std::string& node_unique_id,
+                                                    const std::string& snapshot_name,
+                                                    const std::string& dataset_key,
+                                                    common::data::CDataWrapper& dataset_value);
                 };
                 
             }

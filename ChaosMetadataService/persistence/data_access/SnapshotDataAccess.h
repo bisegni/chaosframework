@@ -91,6 +91,12 @@ namespace chaos {
                                                             const std::string& snapshot_name,
                                                             common::data::VectorStrCDWShrdPtr& snapshot_for_node) = 0;
                     
+                    //!set or update data set in snapshot or node
+                    virtual int setDatasetInSnapshotForNode(const std::string& node_unique_id,
+                                                            const std::string& snapshot_name,
+                                                            const std::string& dataset_key,
+                                                            common::data::CDataWrapper& dataset_value) = 0;
+                    
                     //! check the snapshot work sate
                     /*!
                      The snapshot is created in an asynchronous way so this api return the state of

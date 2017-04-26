@@ -27,6 +27,7 @@
 #include "GetSnapshotForNode.h"
 #include "GetNodesForSnapshot.h"
 #include "GetSnapshotDatasetsForNode.h"
+#include "SetSnapshotDatasetsForNode.h"
 
 #include "SetVariable.h"
 #include "GetVariable.h"
@@ -46,6 +47,7 @@ AbstractApiGroup("service"){
     addApi<CreateNewSnapshot>();
     addApi<GetSnapshotForNode>();
     addApi<GetNodesForSnapshot>();
+    addApi<SetSnapshotDatasetsForNode>();
     addApi<GetSnapshotDatasetsForNode>();
     
     addApi<SetVariable>();

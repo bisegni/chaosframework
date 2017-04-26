@@ -757,6 +757,9 @@
 		32AB51CA1A1A66A300BB0BE3 /* DirectIOSystemAPIClientChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32AB51C81A1A66A300BB0BE3 /* DirectIOSystemAPIClientChannel.h */; };
 		32AB51CD1A1A69A300BB0BE3 /* DirectIOSystemAPIServerChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32AB51CB1A1A69A300BB0BE3 /* DirectIOSystemAPIServerChannel.cpp */; };
 		32AB51CE1A1A69A300BB0BE3 /* DirectIOSystemAPIServerChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32AB51CC1A1A69A300BB0BE3 /* DirectIOSystemAPIServerChannel.h */; };
+		32AC6F021EB0918A00FCCD85 /* SetSnapshotDatasetsForNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32AC6F001EB0918A00FCCD85 /* SetSnapshotDatasetsForNode.cpp */; };
+		32AC6F051EB0BF3F00FCCD85 /* SetSnapshotDatasetsForNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32AC6F031EB0BF3F00FCCD85 /* SetSnapshotDatasetsForNode.cpp */; };
+		32AC6F061EB0BF3F00FCCD85 /* SetSnapshotDatasetsForNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 32AC6F041EB0BF3F00FCCD85 /* SetSnapshotDatasetsForNode.h */; };
 		32AE8BA31B678C1500FAC528 /* ResetAll.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32AE8BA11B678C1500FAC528 /* ResetAll.cpp */; };
 		32AE8BA41B678C1500FAC528 /* ResetAll.h in Headers */ = {isa = PBXBuildFile; fileRef = 32AE8BA21B678C1500FAC528 /* ResetAll.h */; };
 		32AE8BA71B67B4A100FAC528 /* ResetAll.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32AE8BA51B67B4A100FAC528 /* ResetAll.cpp */; };
@@ -2136,6 +2139,10 @@
 		32AB51C81A1A66A300BB0BE3 /* DirectIOSystemAPIClientChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = DirectIOSystemAPIClientChannel.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		32AB51CB1A1A69A300BB0BE3 /* DirectIOSystemAPIServerChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOSystemAPIServerChannel.cpp; sourceTree = "<group>"; };
 		32AB51CC1A1A69A300BB0BE3 /* DirectIOSystemAPIServerChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOSystemAPIServerChannel.h; sourceTree = "<group>"; };
+		32AC6F001EB0918A00FCCD85 /* SetSnapshotDatasetsForNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SetSnapshotDatasetsForNode.cpp; sourceTree = "<group>"; };
+		32AC6F011EB0918A00FCCD85 /* SetSnapshotDatasetsForNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetSnapshotDatasetsForNode.h; sourceTree = "<group>"; };
+		32AC6F031EB0BF3F00FCCD85 /* SetSnapshotDatasetsForNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SetSnapshotDatasetsForNode.cpp; sourceTree = "<group>"; };
+		32AC6F041EB0BF3F00FCCD85 /* SetSnapshotDatasetsForNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetSnapshotDatasetsForNode.h; sourceTree = "<group>"; };
 		32AE8BA11B678C1500FAC528 /* ResetAll.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResetAll.cpp; sourceTree = "<group>"; };
 		32AE8BA21B678C1500FAC528 /* ResetAll.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResetAll.h; sourceTree = "<group>"; };
 		32AE8BA51B67B4A100FAC528 /* ResetAll.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResetAll.cpp; sourceTree = "<group>"; };
@@ -4175,6 +4182,8 @@
 				32936C631D9277DC00485F71 /* GetSnapshotForNode.h */,
 				3258D47F1DF0332300D9C8D0 /* GetSnapshotDatasetsForNode.cpp */,
 				3258D4801DF0332300D9C8D0 /* GetSnapshotDatasetsForNode.h */,
+				32AC6F001EB0918A00FCCD85 /* SetSnapshotDatasetsForNode.cpp */,
+				32AC6F011EB0918A00FCCD85 /* SetSnapshotDatasetsForNode.h */,
 				32FC499C1E07EBD40087D82C /* SetVariable.cpp */,
 				32FC499D1E07EBD40087D82C /* SetVariable.h */,
 				32FC499F1E07F8DB0087D82C /* RemoveVariable.cpp */,
@@ -4596,6 +4605,8 @@
 				32936C661D9280BA00485F71 /* GetSnapshotForNode.h */,
 				32F135A11DF05E4F00890AFC /* GetSnapshotDatasetForNode.cpp */,
 				32F135A21DF05E4F00890AFC /* GetSnapshotDatasetForNode.h */,
+				32AC6F031EB0BF3F00FCCD85 /* SetSnapshotDatasetsForNode.cpp */,
+				32AC6F041EB0BF3F00FCCD85 /* SetSnapshotDatasetsForNode.h */,
 				32FC49A51E080F900087D82C /* SetVariable.cpp */,
 				32FC49A61E080F900087D82C /* SetVariable.h */,
 				32FC49A91E080FA80087D82C /* RemoveVariable.cpp */,
@@ -5888,6 +5899,7 @@
 				32A116561D128B9C00FF44ED /* Node.h in Headers */,
 				3208AABA1AC56A51000860D9 /* ApiProxy.h in Headers */,
 				32FF2A621E65CCEB00117985 /* AlertAgentCheckProcessHandler.h in Headers */,
+				32AC6F061EB0BF3F00FCCD85 /* SetSnapshotDatasetsForNode.h in Headers */,
 				32D745F21C7332FC00F4D719 /* EventDispatchManager.h in Headers */,
 				3239EF4F1C0EFEA60052BE61 /* CreateNewSnapshot.h in Headers */,
 				3221D7481CF5F38E001BE971 /* groups.h in Headers */,
@@ -6352,6 +6364,7 @@
 				32C7ED161B6F8E480038BD26 /* GetFullDescription.cpp in Sources */,
 				3235FDC71A6FF43000EC83A9 /* UnitServerApiGroup.cpp in Sources */,
 				3221D7231CF5ADC9001BE971 /* ScriptDataAccess.cpp in Sources */,
+				32AC6F021EB0918A00FCCD85 /* SetSnapshotDatasetsForNode.cpp in Sources */,
 				32655AD71E9CE0FA00829266 /* RemoveScript.cpp in Sources */,
 				32A51F781E7991C400209E92 /* GetSetFullUnitServer.cpp in Sources */,
 			);
@@ -6773,6 +6786,7 @@
 				32F135A31DF05E4F00890AFC /* GetSnapshotDatasetForNode.cpp in Sources */,
 				328C87361ADFDD410047C79B /* GetInstance.cpp in Sources */,
 				32A51F701E71968B00209E92 /* GetProcessLogEntries.cpp in Sources */,
+				32AC6F051EB0BF3F00FCCD85 /* SetSnapshotDatasetsForNode.cpp in Sources */,
 				32D745FC1C7338D100F4D719 /* AlertLogEventHandler.cpp in Sources */,
 				327F39AB1AEAA2390000C845 /* UpdateDS.cpp in Sources */,
 				326150951CAAB3120003D0C2 /* NodeMonitorHandler.cpp in Sources */,

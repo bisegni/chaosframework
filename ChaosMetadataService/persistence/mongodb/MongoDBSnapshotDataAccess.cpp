@@ -49,7 +49,7 @@ MongoDBSnapshotDataAccess::~MongoDBSnapshotDataAccess() {}
 
 //! Create a new snapshot
 int MongoDBSnapshotDataAccess::snapshotCreateNewWithName(const std::string& snapshot_name,
-                                             std::string& working_job_unique_id) {
+                                                         std::string& working_job_unique_id) {
     int err = 0;
     mongo::BSONObjBuilder	new_snapshot_start;
     
@@ -82,11 +82,11 @@ int MongoDBSnapshotDataAccess::snapshotCreateNewWithName(const std::string& snap
 
 //! Add an element to a named snapshot
 int MongoDBSnapshotDataAccess::snapshotAddElementToSnapshot(const std::string& working_job_unique_id,
-                                                const std::string& snapshot_name,
-                                                const std::string& producer_unique_key,
-                                                const std::string& dataset_type,
-                                                void* data,
-                                                uint32_t data_len) {
+                                                            const std::string& snapshot_name,
+                                                            const std::string& producer_unique_key,
+                                                            const std::string& dataset_type,
+                                                            void* data,
+                                                            uint32_t data_len) {
     int err = 0;
     mongo::BSONObjBuilder	new_dataset;
     mongo::BSONObjBuilder	search_snapshot;
@@ -117,8 +117,8 @@ int MongoDBSnapshotDataAccess::snapshotAddElementToSnapshot(const std::string& w
 }
 
 int MongoDBSnapshotDataAccess::snapshotIncrementJobCounter(const std::string& working_job_unique_id,
-                                               const std::string& snapshot_name,
-                                               bool add) {
+                                                           const std::string& snapshot_name,
+                                                           bool add) {
     int err = 0;
     mongo::BSONObjBuilder	inc_update;
     mongo::BSONObjBuilder	search_snapshot;
@@ -137,7 +137,7 @@ int MongoDBSnapshotDataAccess::snapshotIncrementJobCounter(const std::string& wo
                                                                     "Update",
                                                                     q.jsonString(),
                                                                     u.toString()));)
-
+        
         
         //update and waith until the data is on the server
         err = connection->update(MONGO_DB_COLLECTION_NAME(MONGO_DB_COLLECTION_SNAPSHOT), q, u, false, false);
@@ -150,10 +150,10 @@ int MongoDBSnapshotDataAccess::snapshotIncrementJobCounter(const std::string& wo
 
 //! get the dataset from a snapshot
 int MongoDBSnapshotDataAccess::snapshotGetDatasetForProducerKey(const std::string& snapshot_name,
-                                                    const std::string& producer_unique_key,
-                                                    const std::string& dataset_type,
-                                                    void **channel_data,
-                                                    uint32_t& channel_data_size) {
+                                                                const std::string& producer_unique_key,
+                                                                const std::string& dataset_type,
+                                                                void **channel_data,
+                                                                uint32_t& channel_data_size) {
     int err = 0;
     mongo::BSONObj			result;
     mongo::BSONObjBuilder	search_snapshot;
@@ -241,12 +241,12 @@ int MongoDBSnapshotDataAccess::getNodeInSnapshot(const std::string& snapshot_nam
     bool work_free = false;
     std::vector<mongo::BSONObj>     result;
     try {
-//        if((err = getSnapshotWorkingState(snapshot_name, work_free))){
-//            return err;
-//        } if(work_free == false) {
-//            MDBDSDA_ERR << "Snapshot " << snapshot_name << " is still be elaborated";
-//            return -10000;
-//        }
+        //        if((err = getSnapshotWorkingState(snapshot_name, work_free))){
+        //            return err;
+        //        } if(work_free == false) {
+        //            MDBDSDA_ERR << "Snapshot " << snapshot_name << " is still be elaborated";
+        //            return -10000;
+        //        }
         //we first need to fetch all node uid attacched to the snapshot
         mongo::BSONObj q = BSON("snap_name" << snapshot_name);
         
@@ -429,6 +429,44 @@ int MongoDBSnapshotDataAccess::getDatasetInSnapshotForNode(const std::string& no
                     snapshot_for_node.push_back(ds_element);
                 }
             }
+        }
+        
+    } catch (const mongo::DBException &e) {
+        MDBDSDA_ERR << e.what();
+        err = -1;
+    } catch (const chaos::CException &e) {
+        MDBDSDA_ERR << e.what();
+        err = e.errorCode;
+    }
+    return err;
+}
+
+int MongoDBSnapshotDataAccess::setDatasetInSnapshotForNode(const std::string& node_unique_id,
+                                                           const std::string& snapshot_name,
+                                                           const std::string& dataset_key,
+                                                           common::data::CDataWrapper& dataset_value) {
+    int err = 0;
+    try {
+        int size = 0;
+        mongo::BSONObj result;
+        //search for rigth node snpashot slot
+        mongo::BSONObj q = BSON("snap_name" << snapshot_name << "producer_id" << node_unique_id);
+        mongo::BSONObj u = BSON(dataset_key << mongo::BSONObj(dataset_value.getBSONRawData(size)));
+        
+        DEBUG_CODE(MDBDSDA_DBG<<log_message("getDatasetInSnapshotForNode",
+                                            "query",
+                                            DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                                    "Update",
+                                                                    q.jsonString(),
+                                                                    u.jsonString()));)
+        
+        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SNAPSHOT_DATA),
+                                     q,
+                                     u,
+                                     true,
+                                     false,
+                                     mongo::WriteConcern::acknowledged))) {
+            MDBDSDA_ERR << CHAOS_FORMAT("Error %1% updateting dataset for node %2% in snapshot %3%", %err%node_unique_id%snapshot_name);
         }
         
     } catch (const mongo::DBException &e) {
