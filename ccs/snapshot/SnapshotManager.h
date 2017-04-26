@@ -44,6 +44,7 @@ private slots:
 private:
     void executeSearch();
     QString current_snapshot_name;
+    QString current_node_selected_name;
     SnapshotTableModel snapshot_table_model;
     NodeInSnapshotTableModel node_in_snapshot_list_model;
     //shanpstho node information

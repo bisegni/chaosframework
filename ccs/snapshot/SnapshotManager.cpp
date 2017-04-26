@@ -114,6 +114,7 @@ void SnapshotManager::tableSelectionChanged(const QItemSelection & from, const Q
     node_in_snapshot_list_model.reset();
     if(ui->tableViewSnapshotList->selectionModel()->selectedRows().size() == 1) {
         //clear node and dataset for node
+        current_node_selected_name.clear();
         lm_dataset_for_node_snapshot.clear();
         tm_snapshot_dataset_view.clear();
         //load nodes for selection
@@ -134,8 +135,8 @@ void SnapshotManager::listViewNodesInSnapshotSelectionChanged(const QItemSelecti
     tm_snapshot_dataset_view.clear();
     lm_dataset_for_node_snapshot.clear();
     if(selected.indexes().size() == 0) return;
-    const QString selected_node = selected.indexes().first().data().toString();
-    lm_dataset_for_node_snapshot.updateDatasetListFor(selected_node,
+    current_node_selected_name = selected.indexes().first().data().toString();
+    lm_dataset_for_node_snapshot.updateDatasetListFor(current_node_selected_name,
                                                       current_snapshot_name);
 }
 
@@ -144,5 +145,7 @@ void SnapshotManager::listViewSnapshotNodeDatasetSelectionChanged(const QItemSel
     tm_snapshot_dataset_view.clear();
     if(selected.indexes().size()==0) return;
     CDWShrdPtr selected_dataset = selected.indexes().first().data(Qt::UserRole).value<CDWShrdPtr>();
-    tm_snapshot_dataset_view.setDataset(selected_dataset);
+    tm_snapshot_dataset_view.setDataset(current_node_selected_name,
+                                        selected.indexes().first().data(Qt::DisplayRole).toString(),
+                                        selected_dataset);
 }

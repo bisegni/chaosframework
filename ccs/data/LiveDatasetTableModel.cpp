@@ -3,16 +3,23 @@
 
 #include <chaos/common/chaos_constants.h>
 
+#include <QDebug>
+
 using namespace chaos::common::data;
 
 LiveDatasetTableModel::LiveDatasetTableModel(QObject *parent):
     ChaosAbstractTableModel(parent){}
 
-void LiveDatasetTableModel::setDataset(CDWShrdPtr live_dataset) {
+void LiveDatasetTableModel::setDataset(const QString& _node_uid,
+                                       const QString& _dataset_key,
+                                       CDWShrdPtr live_dataset) {
     ChaosStringVector all_keys;
     live_dataset->getAllKey(all_keys);
     beginResetModel();
     dataset_values.clear();
+    node_uid = _node_uid;
+    dataset_key = _dataset_key;
+    qDebug() << QString("Fill table for node %11 and dataset kery %2").arg(node_uid).arg(dataset_key);
     for(ChaosStringVectorIterator it = all_keys.begin(),
         end = all_keys.end();
         it != end;

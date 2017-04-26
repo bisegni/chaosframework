@@ -11,7 +11,9 @@ class LiveDatasetTableModel:
         public ChaosAbstractTableModel {
 public:
     LiveDatasetTableModel(QObject *parent=0);
-    void setDataset(chaos::common::data::CDWShrdPtr live_dataset);
+    void setDataset(const QString& _node_uid,
+                    const QString& _dataset_key,
+                    chaos::common::data::CDWShrdPtr live_dataset);
     void clear();
 protected:
     int getRowCount() const;
@@ -25,6 +27,8 @@ protected:
     bool setCellData(const QModelIndex &index, const QVariant &value);
 private:
     typedef QPair<QString, chaos::common::data::CDataVariant> DatasetElement;
+    QString node_uid;
+    QString dataset_key;
     QVector< DatasetElement > dataset_values;
 };
 
