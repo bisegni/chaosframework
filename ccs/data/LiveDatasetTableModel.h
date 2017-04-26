@@ -22,6 +22,7 @@ protected:
     QVariant getTooltipTextForData(int row, int column) const;
     QVariant getTextAlignForData(int row, int column) const;
     bool isCellSelectable(const QModelIndex &index) const;
+    bool setCellData(const QModelIndex &index, const QVariant &value);
 private:
     typedef QPair<QString, chaos::common::data::CDataVariant> DatasetElement;
     QVector< DatasetElement > dataset_values;

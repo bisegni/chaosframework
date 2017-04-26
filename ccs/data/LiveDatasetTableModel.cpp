@@ -66,8 +66,44 @@ QVariant LiveDatasetTableModel::getCellData(int row, int column) const {
     return result;
 }
 
+bool LiveDatasetTableModel::setCellData(const QModelIndex &index, const QVariant &value) {
+    CDataVariant new_cvariant_value;
+    bool result = true;
+    switch (value.type()) {
+    case QMetaType::Bool:
+        new_cvariant_value = CDataVariant(value.toBool());
+        break;
+    case QMetaType::Int:
+    case QMetaType::UInt:
+        new_cvariant_value = CDataVariant(value.toInt());
+        break;
+    case QMetaType::Long:
+    case QMetaType::ULong:
+    case QMetaType::LongLong:
+    case QMetaType::ULongLong:
+        new_cvariant_value = CDataVariant(value.toLongLong());
+        break;
+    case QMetaType::Double:
+        new_cvariant_value = CDataVariant(value.toDouble());
+        break;
+    case QMetaType::QString:
+        new_cvariant_value = CDataVariant(value.toString().toStdString());
+        break;
+    default:
+        result = false;
+        break;
+    }
+    if(result){dataset_values[index.row()].second = new_cvariant_value;}
+    return result;
+}
+
 bool LiveDatasetTableModel::isCellEditable(const QModelIndex &index) const {
-    return false;
+    bool can_update = index.isValid() && index.column() == 1;
+    can_update = can_update && (dataset_values[index.row()].first.compare(chaos::DataPackCommonKey::DPCK_DEVICE_ID) != 0);
+    can_update = can_update && (dataset_values[index.row()].first.compare(chaos::DataPackCommonKey::DPCK_SEQ_ID) != 0);
+    can_update = can_update && (dataset_values[index.row()].first.compare(chaos::DataPackCommonKey::DPCK_TIMESTAMP) != 0);
+    can_update = can_update && (dataset_values[index.row()].first.compare(chaos::DataPackCommonKey::DPCK_DATASET_TYPE) != 0);
+    return can_update;
 }
 
 QVariant LiveDatasetTableModel::getTooltipTextForData(int row, int column) const {
