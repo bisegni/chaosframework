@@ -54,6 +54,9 @@ void CreateSnapshotBatch::setHandler(CDataWrapper *data) {
     CHECK_KEY_THROW_AND_LOG(data, "node_list", G_RS_ERR, -2, "The name of the snapshot is mandatory")
     CHECK_ASSERTION_THROW_AND_LOG(data->isVectorValue("node_list"), G_RS_ERR, -3, "snapshot_name need to be a vector type")
     
+    CHECK_KEY_THROW_AND_LOG(data, "work_id", G_RS_ERR, -4, "The work_id of the snapshot is mandatory")
+    CHECK_ASSERTION_THROW_AND_LOG(data->isStringValue("work_id"), G_RS_ERR, -5, "work_id need to be a string type")
+    
     //set default scheduler delay 0,5 second
     setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY, (uint64_t)50000);
     
@@ -71,14 +74,13 @@ void CreateSnapshotBatch::setHandler(CDataWrapper *data) {
         LOG_AND_TROW(G_RS_ERR, -1, "No node as input parameter for snapshot");
     }
     
-    
     persistence::data_access::SnapshotDataAccess *s_da = getDataAccess<mds_data_access::SnapshotDataAccess>();
-    if((err = s_da->snapshotCreateNewWithName(snapshot_name,
-                                              work_id))) {
-        LOG_AND_TROW(G_RS_ERR, err, CHAOS_FORMAT("Error creating the snapshot %1% with error %2%",%snapshot_name%err));
-    } else if((err = s_da->snapshotIncrementJobCounter(work_id,
-                                                       snapshot_name,
-                                                       true))) {
+    
+    //get work id
+    work_id = data->getStringValue("work_id");
+    if((err = s_da->snapshotIncrementJobCounter(work_id,
+                                                snapshot_name,
+                                                true))) {
         LOG_AND_TROW(G_RS_ERR, err, CHAOS_FORMAT("Error incrementing the snapshot job counter for %1% with error %2%",%snapshot_name%err));
     }
     //set start id for node array

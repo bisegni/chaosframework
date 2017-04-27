@@ -52,26 +52,34 @@ int MongoDBSnapshotDataAccess::snapshotCreateNewWithName(const std::string& snap
                                                          std::string& working_job_unique_id) {
     int err = 0;
     mongo::BSONObjBuilder	new_snapshot_start;
-    
+    mongo::BSONObj          check_unique_q;
+    mongo::BSONObj          check_result;
     //----- generate the random code ------ for this snapshot
     working_job_unique_id = UUIDUtil::generateUUIDLite();
     try{
+        
+        check_unique_q = BSON(MONGO_DB_FIELD_SNAPSHOT_NAME << snapshot_name);
+        
         uint64_t ts = TimingUtil::getTimeStamp();
         new_snapshot_start << MONGO_DB_FIELD_SNAPSHOT_NAME << snapshot_name;
         new_snapshot_start << MONGO_DB_FIELD_SNAPSHOT_TS_DATE << mongo::Date_t(ts);
         new_snapshot_start << MONGO_DB_FIELD_SNAPSHOT_TS << (long long)ts;
         new_snapshot_start << MONGO_DB_FIELD_JOB_WORK_UNIQUE_CODE << working_job_unique_id;
-        
         mongo::BSONObj q = new_snapshot_start.obj();
         DEBUG_CODE(MDBDSDA_DBG<<log_message("snapshotCreateNewWithName",
                                             "insert",
                                             DATA_ACCESS_LOG_1_ENTRY("Query",
                                                                     q.jsonString()));)
         
-        err = connection->insert(MONGO_DB_COLLECTION_NAME(MONGO_DB_COLLECTION_SNAPSHOT), q);
-        if(err == 11000) {
-            //already exis a snapshot with that name so no error need to be throw
-            err = 1;
+        if((err = connection->findOne(check_result,
+                                      MONGO_DB_COLLECTION_NAME(MONGO_DB_COLLECTION_SNAPSHOT),
+                                      check_unique_q))) {//check existence
+            MDBDSDA_ERR << CHAOS_FORMAT("Error %1% checking existence snapshot %2%", %err%snapshot_name);
+        } else if(check_result.isEmpty() == false) {//if false means that a document has been found
+            MDBDSDA_ERR << CHAOS_FORMAT("A snapshot for name %1% already exists", %snapshot_name);
+            err = -1;
+        } else if((err = connection->insert(MONGO_DB_COLLECTION_NAME(MONGO_DB_COLLECTION_SNAPSHOT), q))) {//we can proceeed to insert the new snapshot
+            MDBDSDA_ERR << CHAOS_FORMAT("Error %1% creating snapshot %2%", %err%snapshot_name);
         }
     } catch( const mongo::DBException &e ) {
         MDBDSDA_ERR << e.what();
