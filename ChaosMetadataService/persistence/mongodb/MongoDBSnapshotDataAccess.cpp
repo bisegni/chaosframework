@@ -88,6 +88,35 @@ int MongoDBSnapshotDataAccess::snapshotCreateNewWithName(const std::string& snap
     return err;
 }
 
+int MongoDBSnapshotDataAccess::isSnapshotPresent(const std::string& snapshot_name,
+                                                 bool& presence) {
+    int err = 0;
+    try {
+        mongo::BSONObj result;
+        //search for rigth node snpashot slot
+        mongo::BSONObj q = BSON("snap_name" << snapshot_name);
+        
+        DEBUG_CODE(MDBDSDA_DBG<<log_message("getDatasetInSnapshotForNode",
+                                            "query",
+                                            DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                    q.jsonString()));)
+        
+        if((err = connection->findOne(result,
+                                      MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SNAPSHOT),
+                                      q))) {
+            MDBDSDA_ERR << CHAOS_FORMAT("Error %1% searching the snapshot %2%", %err%snapshot_name);
+        }
+        presence = (result.isEmpty() == false);
+    } catch (const mongo::DBException &e) {
+        MDBDSDA_ERR << e.what();
+        err = -1;
+    } catch (const chaos::CException &e) {
+        MDBDSDA_ERR << e.what();
+        err = e.errorCode;
+    }
+    return err;
+}
+
 //! Add an element to a named snapshot
 int MongoDBSnapshotDataAccess::snapshotAddElementToSnapshot(const std::string& working_job_unique_id,
                                                             const std::string& snapshot_name,

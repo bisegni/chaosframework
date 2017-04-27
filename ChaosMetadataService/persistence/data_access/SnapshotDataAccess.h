@@ -52,6 +52,10 @@ namespace chaos {
                     virtual int snapshotCreateNewWithName(const std::string& snapshot_name,
                                                           std::string& working_job_unique_id) = 0;
                     
+                    //! check if a snapshot anme is present in metadata
+                    virtual int isSnapshotPresent(const std::string& snapshot_name,
+                                                  bool& presence) = 0;
+                    
                     //! Add an element to a named snapshot
                     virtual int snapshotAddElementToSnapshot(const std::string& working_job_unique_id,
                                                              const std::string& snapshot_name,

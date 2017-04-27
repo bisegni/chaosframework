@@ -47,28 +47,55 @@ chaos::common::data::CDataWrapper *SetSnapshotDatasetsForNode::execute(chaos::co
     GET_DATA_ACCESS(SnapshotDataAccess, s_da, -8);
     
     int err = 0;
+    bool snap_presence = false;
+    std::string working_job_unique_id;
     const std::string snapshot_name = api_data->getStringValue("snapshot_name");
     const std::string node_uid = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
     std::auto_ptr<CMultiTypeDataArrayWrapper> dataset_vec_ptr(api_data->getVectorValue("dataset"));
     
-    for(int idx = 0;
-        idx < dataset_vec_ptr->size();
-        idx++) {
-        std::auto_ptr<CDataWrapper> dataset_info_ptr(dataset_vec_ptr->getCDataWrapperElementAtIndex(idx));
-        
-        if(dataset_info_ptr->hasKey("dataset_key") == false ||
-           dataset_info_ptr->hasKey("dataset_value") == false) {
-            //
-            continue;
-        }
-        
-        const std::string dataset_key = dataset_info_ptr->getStringValue("dataset_key");
-        const std::auto_ptr<CDataWrapper> dataset_value(dataset_info_ptr->getCSDataValue("dataset_value"));
-        
-        //call api for set the value
-        if((err = s_da->setDatasetInSnapshotForNode(node_uid, snapshot_name, dataset_key, *dataset_value))) {
-            LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error %1% setting the dataset %2% for node %3% in snapshot %4% ",%err%dataset_key%node_uid%snapshot_name));
+    if(s_da->isSnapshotPresent(snapshot_name,
+                               snap_presence)){
+        LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error checking snapshot %1% presences",%snapshot_name));
+    } if(snap_presence == false) {
+        if((err = s_da->snapshotCreateNewWithName(snapshot_name,
+                                                  working_job_unique_id))){
+            LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error creating snapshot %1%",%snapshot_name));
         }
     }
+    
+    if((err = s_da->snapshotIncrementJobCounter(working_job_unique_id,
+                                                snapshot_name,
+                                                true))) {
+        LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error incrementing job counter on snapshot %1%",%snapshot_name));
+    }
+    try{
+        for(int idx = 0;
+            idx < dataset_vec_ptr->size();
+            idx++) {
+            std::auto_ptr<CDataWrapper> dataset_info_ptr(dataset_vec_ptr->getCDataWrapperElementAtIndex(idx));
+            
+            if(dataset_info_ptr->hasKey("dataset_key") == false ||
+               dataset_info_ptr->hasKey("dataset_value") == false) {
+                //
+                continue;
+            }
+            
+            const std::string dataset_key = dataset_info_ptr->getStringValue("dataset_key");
+            const std::auto_ptr<CDataWrapper> dataset_value(dataset_info_ptr->getCSDataValue("dataset_value"));
+            
+            //call api for set the value
+            if((err = s_da->setDatasetInSnapshotForNode(node_uid, snapshot_name, dataset_key, *dataset_value))) {
+                LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error setting the dataset %1% for node %2% in snapshot %3% ",%dataset_key%node_uid%snapshot_name));
+            }
+        }
+    }catch(CException& ex) {
+        if((err = s_da->snapshotIncrementJobCounter(working_job_unique_id,
+                                                    snapshot_name,
+                                                    false))) {
+            LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error incrementing job counter on snapshot %1%",%snapshot_name));
+        }
+        throw ex;
+    }
+    
     return NULL;
 }

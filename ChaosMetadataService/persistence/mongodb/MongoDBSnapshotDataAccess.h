@@ -48,6 +48,10 @@ namespace chaos {
                     int snapshotCreateNewWithName(const std::string& snapshot_name,
                                                   std::string& working_job_unique_id);
                     
+                    //! inherited method
+                    int isSnapshotPresent(const std::string& snapshot_name,
+                                          bool& presence);
+                    
                     //! Add an element to a named snapshot
                     int snapshotAddElementToSnapshot(const std::string& working_job_unique_id,
                                                      const std::string& snapshot_name,
@@ -85,10 +89,12 @@ namespace chaos {
                     //! inherited method
                     int getAllSnapshot(chaos::metadata_service::persistence::data_access::SnapshotList& snapshot_desriptions);
                     
+                    //! inherited method
                     int getDatasetInSnapshotForNode(const std::string& node_unique_id,
                                                     const std::string& snapshot_name,
                                                     common::data::VectorStrCDWShrdPtr& snapshot_for_node);
                     
+                    //! inherited method
                     int setDatasetInSnapshotForNode(const std::string& node_unique_id,
                                                     const std::string& snapshot_name,
                                                     const std::string& dataset_key,
