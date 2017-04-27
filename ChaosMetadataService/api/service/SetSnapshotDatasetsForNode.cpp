@@ -84,7 +84,11 @@ chaos::common::data::CDataWrapper *SetSnapshotDatasetsForNode::execute(chaos::co
             const std::auto_ptr<CDataWrapper> dataset_value(dataset_info_ptr->getCSDataValue("dataset_value"));
             
             //call api for set the value
-            if((err = s_da->setDatasetInSnapshotForNode(node_uid, snapshot_name, dataset_key, *dataset_value))) {
+            if((err = s_da->setDatasetInSnapshotForNode(working_job_unique_id,
+                                                        node_uid,
+                                                        snapshot_name,
+                                                        dataset_key,
+                                                        *dataset_value))) {
                 LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error setting the dataset %1% for node %2% in snapshot %3% ",%dataset_key%node_uid%snapshot_name));
             }
         }

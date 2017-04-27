@@ -95,7 +95,8 @@ namespace chaos {
                                                     common::data::VectorStrCDWShrdPtr& snapshot_for_node);
                     
                     //! inherited method
-                    int setDatasetInSnapshotForNode(const std::string& node_unique_id,
+                    int setDatasetInSnapshotForNode(const std::string& working_job_unique_id,
+                                                    const std::string& node_unique_id,
                                                     const std::string& snapshot_name,
                                                     const std::string& dataset_key,
                                                     common::data::CDataWrapper& dataset_value);
