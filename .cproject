@@ -34,7 +34,7 @@
 							</tool>
 							<tool id="org.eclipse.cdt.build.core.settings.holder.712735746" name="GNU C" superClass="org.eclipse.cdt.build.core.settings.holder">
 								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.894928973" name="Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/chaosframework/usr/local/include}&quot;"/>
+									<listOptionValue builtIn="false" value="/home/michelo/chaos_bundle/chaosframework/usr/local/include"/>
 								</option>
 								<inputType id="org.eclipse.cdt.build.core.settings.holder.inType.160094424" languageId="org.eclipse.cdt.core.gcc" languageName="GNU C" sourceContentType="org.eclipse.cdt.core.cSource,org.eclipse.cdt.core.cHeader" superClass="org.eclipse.cdt.build.core.settings.holder.inType"/>
 							</tool>

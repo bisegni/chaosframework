@@ -50,6 +50,11 @@ ApiProxyResult SetSnapshotDatasetsForNode::execute(const std::string& snapshot_n
     std::auto_ptr<CDataWrapper> message(new CDataWrapper());
     message->addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, node_uid);
     message->addStringValue("snapshot_name", snapshot_name);
+
+    for(VectorDatasetValue::const_iterator i=datasets_value_vec.begin();i!=datasets_value_vec.end();i++){
+    	message->appendCDataWrapperToArray(*(i->get()));
+    }
+    message->finalizeArrayForKey("dataset");
     return callApi(message.release());
 }
 

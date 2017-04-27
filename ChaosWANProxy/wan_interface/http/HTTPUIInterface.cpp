@@ -318,8 +318,9 @@ int HTTPUIInterface::process(struct mg_connection *connection) {
 
 		} else {
 			response.setCode(200);
-			response << ret;
+
 		}
+		response << ret;
 	} else {
 		response.setCode(200);
 
@@ -342,6 +343,7 @@ int HTTPUIInterface::process(struct mg_connection *connection) {
 			    response << "{}";
 			    response.setCode(400);
 			    HTTWAN_INTERFACE_ERR_<<"error creating Chaos Controller";
+			    response<<"error creating Chaos Controller for:"<<*idevname;
 			    flush_response(connection, &response);
 			    return 1;
 			  }

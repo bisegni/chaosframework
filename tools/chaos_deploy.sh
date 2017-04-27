@@ -217,7 +217,13 @@ start_stop_service(){
 	else
 	    nok_mesg "[$host] chaos-$type $op"
 	fi  
-
+	if [ "$type" == "cu" ];then
+	    if ssh chaos@$host "killall -9 UnitServer"; then
+		ok_mesg "[$host] killed UnitServer"
+	    else
+		nok_mesg "[$host] killed UnitServer"
+	    fi
+	fi
 
     # if ssh chaos@$host "test -f /etc/init/chaos-service.conf";then
     # 	if ssh chaos@$host "sudo service chaos-service $op NODE=$type" ;then
