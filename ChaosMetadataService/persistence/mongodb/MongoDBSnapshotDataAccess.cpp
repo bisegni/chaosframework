@@ -55,7 +55,9 @@ int MongoDBSnapshotDataAccess::snapshotCreateNewWithName(const std::string& snap
     mongo::BSONObj          check_unique_q;
     mongo::BSONObj          check_result;
     //----- generate the random code ------ for this snapshot
-    working_job_unique_id = UUIDUtil::generateUUIDLite();
+
+	working_job_unique_id="buttami";
+
     try{
         
         check_unique_q = BSON(MONGO_DB_FIELD_SNAPSHOT_NAME << snapshot_name);
@@ -133,7 +135,7 @@ int MongoDBSnapshotDataAccess::snapshotAddElementToSnapshot(const std::string& w
         //search for snapshot name and producer unique key
         search_snapshot << MONGO_DB_FIELD_SNAPSHOT_DATA_SNAPSHOT_NAME << snapshot_name;
         search_snapshot << MONGO_DB_FIELD_SNAPSHOT_DATA_PRODUCER_ID << producer_unique_key;
-        search_snapshot << MONGO_DB_FIELD_JOB_WORK_UNIQUE_CODE << working_job_unique_id;
+        search_snapshot << MONGO_DB_FIELD_JOB_WORK_UNIQUE_CODE << "buttami";
         
         mongo::BSONObj u = new_dataset.obj();
         mongo::BSONObj q = search_snapshot.obj();
@@ -164,7 +166,7 @@ int MongoDBSnapshotDataAccess::snapshotIncrementJobCounter(const std::string& wo
         
         //search for snapshot name and producer unique key
         search_snapshot << MONGO_DB_FIELD_SNAPSHOT_DATA_SNAPSHOT_NAME << snapshot_name;
-        search_snapshot << MONGO_DB_FIELD_JOB_WORK_UNIQUE_CODE << working_job_unique_id;
+        search_snapshot << MONGO_DB_FIELD_JOB_WORK_UNIQUE_CODE << "buttami";
         
         mongo::BSONObj u = inc_update.obj();
         mongo::BSONObj q = search_snapshot.obj();
@@ -461,6 +463,7 @@ int MongoDBSnapshotDataAccess::getDatasetInSnapshotForNode(const std::string& no
                     mongo::BSONElement element = it.next();
                     if(element.type() != mongo::Object) continue;
                     
+                    DEBUG_CODE(MDBDSDA_DBG<<"found:"<<element.fieldNameStringData().toString());
                     //we get only object element that are the dataset of the snapshot
                     PairStrCDWShrdPtr ds_element(element.fieldNameStringData().toString(), CDWShrdPtr(new CDataWrapper(element.Obj().objdata())));
                     snapshot_for_node.push_back(ds_element);
@@ -487,24 +490,29 @@ int MongoDBSnapshotDataAccess::setDatasetInSnapshotForNode(const std::string& wo
     try {
         int size = 0;
         mongo::BSONObj result;
-        //search for rigth node snpashot slot
-        mongo::BSONObj q = BSON("snap_name" << snapshot_name << "producer_id" << node_unique_id);
-        mongo::BSONObj u = BSON(dataset_key << mongo::BSONObj(dataset_value.getBSONRawData(size)));
-        
-        DEBUG_CODE(MDBDSDA_DBG<<log_message("getDatasetInSnapshotForNode",
-                                            "query",
+        //search for rigth node snapshot slot
+        mongo::BSONObjBuilder	q,u;
+        q<<MONGO_DB_FIELD_SNAPSHOT_DATA_SNAPSHOT_NAME << snapshot_name;
+        q<<MONGO_DB_FIELD_SNAPSHOT_DATA_PRODUCER_ID << node_unique_id;
+        q<< MONGO_DB_FIELD_JOB_WORK_UNIQUE_CODE << "buttami";
+        mongo::BSONObj q_obj=q.obj();
+        u.appendElements(q_obj);
+        u<<dataset_key << mongo::BSONObj(dataset_value.getBSONRawData(size));
+        mongo::BSONObj u_obj=u.obj();
+        DEBUG_CODE(MDBDSDA_DBG<<log_message("setDatasetInSnapshotForNode",
+                                            "update",
                                             DATA_ACCESS_LOG_2_ENTRY("Query",
                                                                     "Update",
-                                                                    q.jsonString(),
-                                                                    u.jsonString()));)
+																	q_obj.jsonString(),
+																	u_obj.jsonString()));)
         
         if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SNAPSHOT_DATA),
-                                     q,
-                                     u,
+        		q_obj,
+				u_obj,
                                      true,
                                      false,
                                      mongo::WriteConcern::acknowledged))) {
-            MDBDSDA_ERR << CHAOS_FORMAT("Error %1% updateting dataset for node %2% in snapshot %3%", %err%node_unique_id%snapshot_name);
+            MDBDSDA_ERR << CHAOS_FORMAT("Error %1% updating dataset for node %2% in snapshot %3%", %err%node_unique_id%snapshot_name);
         }
         
     } catch (const mongo::DBException &e) {
