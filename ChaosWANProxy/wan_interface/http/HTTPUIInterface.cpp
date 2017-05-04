@@ -42,6 +42,7 @@ using namespace chaos::wan_proxy::wan_interface::http;
 #define API_PATH_REGEX_V1(p) API_PREFIX_V1 p
 
 #define HTTWANINTERFACE_LOG_HEAD "["<<getName()<<"] - "
+#define LOG_CONNECTION "["<<connection->remote_ip<<":"<<std::dec<<connection->remote_port<<"] "
 
 #define HTTWAN_INTERFACE_APP_ INFO_LOG(HTTPUIInterface)
 #define HTTWAN_INTERFACE_DBG_ DBG_LOG(HTTPUIInterface)
@@ -62,6 +63,7 @@ static int event_handler(struct mg_connection *connection, enum mg_event ev) {
 			((HTTPUIInterface *)connection->server_param)->processRest(connection);
 
 		} else {
+
 			((HTTPUIInterface *)connection->server_param)->process(connection);
 		}
 		 return MG_TRUE;
@@ -237,21 +239,27 @@ void HTTPUIInterface::addDevice(std::string name, ::driver::misc::ChaosControlle
 static std::map<std::string, std::string> mappify(std::string const& s)
 				{
 	std::map<std::string, std::string> m;
-	std::vector<std::string> api_token_list0,api_token_list1;
-	std::string key, val;
-	std::istringstream iss(s);
+	std::vector<std::string> api_token_list0;
+	boost::regex regx( "([a-zA-Z_]+)=(.+)" );
 	boost::algorithm::split(api_token_list0,s,boost::algorithm::is_any_of("&"),boost::algorithm::token_compress_on);
+	try{
 	for(std::vector<std::string>::iterator i=api_token_list0.begin();i!=api_token_list0.end();i++){
-		boost::algorithm::split(api_token_list1,*i,boost::algorithm::is_any_of("="),boost::algorithm::token_compress_on);
-		if(api_token_list1.size()==2){
-			m[api_token_list1[0]]=api_token_list1[1];
-		}
+        boost::match_results<std::string::const_iterator> what;
+		std::string::const_iterator startPos = (*i).begin();
+		std::string::const_iterator endPos = (*i).end();
+		while(boost::regex_search(startPos,endPos,what,regx)){
+			m[what[1]]=what[2];
+			startPos=what[0].second;
 
+		}
 	}
+	} catch( boost::bad_expression & ex){
+			HTTWAN_INTERFACE_ERR_ << ex.what() ;
+    }
 
 
 	return m;
-				}
+}
 
 int HTTPUIInterface::process(struct mg_connection *connection) {
 	CHAOS_ASSERT(handler)
@@ -275,7 +283,7 @@ int HTTPUIInterface::process(struct mg_connection *connection) {
 	//remove the prefix and tokenize the url
 	if(method == "GET"){
 		if(connection->query_string== NULL){
-			HTTWAN_INTERFACE_ERR_<<"Bad query GET params";
+			HTTWAN_INTERFACE_ERR_<<LOG_CONNECTION<<"Bad query GET params";
 			response.setCode(400);
 			flush_response(connection, &response);
 			return 1;
@@ -283,13 +291,13 @@ int HTTPUIInterface::process(struct mg_connection *connection) {
 		int size_query=strlen(connection->query_string)+2;
 		char decoded[size_query];
 		mg_url_decode(connection->query_string, size_query,decoded, size_query,0);
-		HTTWAN_INTERFACE_DBG_<<"GET:"<<decoded;
+		HTTWAN_INTERFACE_DBG_<<LOG_CONNECTION<<"GET:"<<decoded;
 
 		std::string query=decoded;
 		request=mappify(query);
 	} else if(method == "POST"){
 		if(connection->content==NULL){
-			HTTWAN_INTERFACE_ERR_<<"Bad query POST params";
+			HTTWAN_INTERFACE_ERR_<<LOG_CONNECTION<<"Bad query POST params";
 			response.setCode(400);
 			flush_response(connection, &response);
 			return 1;
@@ -297,7 +305,7 @@ int HTTPUIInterface::process(struct mg_connection *connection) {
 		char decoded[connection->content_len +2];
 		mg_url_decode(connection->content, connection->content_len+2,decoded, connection->content_len+2,0);
 		std::string content_data(decoded, connection->content_len);
-		HTTWAN_INTERFACE_DBG_<<"POST:"<<content_data;
+		HTTWAN_INTERFACE_DBG_<<LOG_CONNECTION<<"POST:"<<content_data;
 		request=mappify(content_data);
 	}
 	std::string cmd, parm,dev_param;
@@ -313,7 +321,7 @@ int HTTPUIInterface::process(struct mg_connection *connection) {
 	if(dev_param.size()==0){
 		std::string ret;
 		if(info->get(cmd,(char*)parm.c_str(),0,atoi(cmd_prio.c_str()),atoi(cmd_schedule.c_str()),atoi(cmd_mode.c_str()),0,ret)!=::driver::misc::ChaosController::CHAOS_DEV_OK){
-			HTTWAN_INTERFACE_ERR_<<"An error occurred during get without dev:"<<info->getJsonState();
+			HTTWAN_INTERFACE_ERR_<<LOG_CONNECTION<<"An error occurred during get without dev:"<<info->getJsonState();
 			response.setCode(400);
 
 		} else {
@@ -342,14 +350,14 @@ int HTTPUIInterface::process(struct mg_connection *connection) {
 			  if (controller == NULL) {
 			    response << "{}";
 			    response.setCode(400);
-			    HTTWAN_INTERFACE_ERR_<<"error creating Chaos Controller";
+			    HTTWAN_INTERFACE_ERR_<<LOG_CONNECTION<<"error creating Chaos Controller";
 			    response<<"error creating Chaos Controller for:"<<*idevname;
 			    flush_response(connection, &response);
 			    return 1;
 			  }
 			  if(controller->init(*idevname,DEFAULT_TIMEOUT_FOR_CONTROLLER)!=0){
 			    response << controller->getJsonState();
-			    HTTWAN_INTERFACE_ERR_<<"cannot init controller for "<<*idevname<<"\"";
+			    HTTWAN_INTERFACE_ERR_<<LOG_CONNECTION<<"cannot init controller for "<<*idevname<<"\"";
 			    //  response << "{}";
 			    //response.setCode(400);
 			    delete controller;
@@ -370,7 +378,7 @@ int HTTPUIInterface::process(struct mg_connection *connection) {
 			}
 
 			if(controller->get(cmd,(char*)parm.c_str(),0,atoi(cmd_prio.c_str()),atoi(cmd_schedule.c_str()),atoi(cmd_mode.c_str()),0,ret)!=::driver::misc::ChaosController::CHAOS_DEV_OK){
-			  HTTWAN_INTERFACE_ERR_<<"An error occurred during get of:\""<<*idevname<<"\"";
+			  HTTWAN_INTERFACE_ERR_<<LOG_CONNECTION<<"An error occurred during get of:\""<<*idevname<<"\"";
 			}
 
 				if((idevname+1) == dev_v.end()){
@@ -389,7 +397,7 @@ int HTTPUIInterface::process(struct mg_connection *connection) {
 	flush_response(connection, &response);
 	DEBUG_CODE(execution_time_end = TimingUtil::getTimeStampInMicroseconds();)
 	DEBUG_CODE(uint64_t duration = execution_time_end - execution_time_start;)
-	DEBUG_CODE(HTTWAN_INTERFACE_DBG_ << "Execution time is:" << duration*1.0/1000.0 << " ms";)
+	DEBUG_CODE(HTTWAN_INTERFACE_DBG_<<LOG_CONNECTION << "Execution time is:" << duration*1.0/1000.0 << " ms";)
 
 	return 1;//
 
