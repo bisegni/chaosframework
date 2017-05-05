@@ -71,7 +71,6 @@ deviceChannel(NULL) {
             ioLiveDataDriver->updateConfiguration(best_available_da_ptr.get());
      }
 
-
     channel_keys.resize(16);
     channel_keys[DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT]=(deviceChannel->getDeviceID() + DataPackPrefixID::OUTPUT_DATASET_POSTFIX);
     channel_keys[DataPackCommonKey::DPCK_DATASET_TYPE_INPUT]=(deviceChannel->getDeviceID() + DataPackPrefixID::INPUT_DATASET_POSTFIX);
@@ -86,7 +85,7 @@ deviceChannel(NULL) {
    	   ch.reset(new chaos::common::data::CDataWrapper());
        current_dataset.push_back(ch);
    }
-    
+   updateChannel();
 }
 
 //---------------------------------------------------------------------------------------------------

@@ -69,7 +69,7 @@ DatasetValueShrdPtr SetSnapshotDatasetsForNode::createDatasetValue(const std::st
 DatasetValueShrdPtr SetSnapshotDatasetsForNode::createDatasetValue(const std::string& dataset_key,
                                                                    const chaos::common::data::CDataWrapper& dataset_value) {
     DatasetValueShrdPtr dataset_value_shrdptr(new CDataWrapper());
-    dataset_value_shrdptr->addStringValue("dataset_key", dataset_key);
+    dataset_value_shrdptr->addStringValue("dataset_key", dataset_key );
     dataset_value_shrdptr->addCSDataValue("dataset_value", dataset_value);
     return dataset_value_shrdptr;
 }

@@ -491,24 +491,24 @@ int MongoDBSnapshotDataAccess::setDatasetInSnapshotForNode(const std::string& wo
         int size = 0;
         mongo::BSONObj result;
         //search for rigth node snapshot slot
-        mongo::BSONObjBuilder	q,u;
+        mongo::BSONObjBuilder	q;
         q<<MONGO_DB_FIELD_SNAPSHOT_DATA_SNAPSHOT_NAME << snapshot_name;
         q<<MONGO_DB_FIELD_SNAPSHOT_DATA_PRODUCER_ID << node_unique_id;
         q<< MONGO_DB_FIELD_JOB_WORK_UNIQUE_CODE << "buttami";
         mongo::BSONObj q_obj=q.obj();
-        u.appendElements(q_obj);
-        u<<dataset_key << mongo::BSONObj(dataset_value.getBSONRawData(size));
-        mongo::BSONObj u_obj=u.obj();
+        //u.appendElements(q_obj);
+        mongo::BSONObj u = BSON("$set"<< BSON(dataset_key << mongo::BSONObj(dataset_value.getBSONRawData(size))));
+
         DEBUG_CODE(MDBDSDA_DBG<<log_message("setDatasetInSnapshotForNode",
                                             "update",
                                             DATA_ACCESS_LOG_2_ENTRY("Query",
                                                                     "Update",
 																	q_obj.jsonString(),
-																	u_obj.jsonString()));)
+																	u.jsonString()));)
         
         if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SNAPSHOT_DATA),
         		q_obj,
-				u_obj,
+				u,
                                      true,
                                      false,
                                      mongo::WriteConcern::acknowledged))) {
