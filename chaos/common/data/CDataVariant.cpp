@@ -28,64 +28,70 @@ using namespace chaos::common::data;
 #define SAFE_LEXICAL_WITH_DEFAULT(x, d)\
 try{return x;}catch(...){return d;}
 
+#define SAFE_STREAM_CONV(t, s)\
+t var;\
+std::istringstream ss(s);\
+ss >> var;\
+return var;
+
 #pragma mark boolvisitor
 bool bool_visitor::operator()(bool bv) const {return bv;}
-bool bool_visitor::operator()(int32_t i32v) const {return (bool)i32v;}
-bool bool_visitor::operator()(uint32_t ui32v) const {return (bool)ui32v;}
-bool bool_visitor::operator()(int64_t i64v) const {return (bool)i64v;}
-bool bool_visitor::operator()(uint64_t ui64v) const {return (bool)ui64v;}
-bool bool_visitor::operator()(double dv) const {return (bool)dv;}
-bool bool_visitor::operator()(const std::string& str) const {SAFE_LEXICAL_WITH_DEFAULT(boost::lexical_cast<bool>(str),false)}
+bool bool_visitor::operator()(int32_t i32v) const {return static_cast<bool>(i32v);}
+bool bool_visitor::operator()(uint32_t ui32v) const {return static_cast<bool>(ui32v);}
+bool bool_visitor::operator()(int64_t i64v) const {return static_cast<bool>(i64v);}
+bool bool_visitor::operator()(uint64_t ui64v) const {return static_cast<bool>(ui64v);}
+bool bool_visitor::operator()(double dv) const {return static_cast<bool>(dv);}
+bool bool_visitor::operator()(const std::string& str) const {SAFE_STREAM_CONV(bool, str);}
 bool bool_visitor::operator()(boost::shared_ptr<CDataBuffer>& buffer) const {return (bool)buffer->getBufferSize();}
 
 #pragma mark i32visitor
-int32_t int32_t_visitor::operator()(bool bv) const {return (int32_t)bv;}
+int32_t int32_t_visitor::operator()(bool bv) const {return static_cast<int32_t>(bv);}
 int32_t int32_t_visitor::operator()(int32_t i32v) const {return i32v;}
-int32_t int32_t_visitor::operator()(uint32_t ui32v) const {return (int32_t)ui32v;}
-int32_t int32_t_visitor::operator()(int64_t i64v) const {return (int32_t)i64v;}
-int32_t int32_t_visitor::operator()(uint64_t ui64v) const {return (int32_t)ui64v;}
-int32_t int32_t_visitor::operator()(double dv) const {return (int32_t)dv;}
-int32_t int32_t_visitor::operator()(const std::string& str) const {SAFE_LEXICAL_WITH_DEFAULT(boost::lexical_cast<int32_t>(str),0)}
+int32_t int32_t_visitor::operator()(uint32_t ui32v) const {return static_cast<int32_t>(ui32v);}
+int32_t int32_t_visitor::operator()(int64_t i64v) const {return static_cast<int32_t>(i64v);}
+int32_t int32_t_visitor::operator()(uint64_t ui64v) const {return static_cast<int32_t>(ui64v);}
+int32_t int32_t_visitor::operator()(double dv) const {return static_cast<int32_t>(dv);}
+int32_t int32_t_visitor::operator()(const std::string& str) const {SAFE_STREAM_CONV(int32_t, str);}
 int32_t int32_t_visitor::operator()(boost::shared_ptr<CDataBuffer>& buffer) const {return (int32_t)buffer->getBufferSize();}
 
 #pragma mark ui32visitor
-uint32_t uint32_t_visitor::operator()(bool bv) const {return (uint32_t)bv;}
-uint32_t uint32_t_visitor::operator()(int32_t i32v) const {return (uint32_t)i32v;}
+uint32_t uint32_t_visitor::operator()(bool bv) const {return static_cast<uint32_t>(bv);}
+uint32_t uint32_t_visitor::operator()(int32_t i32v) const {return static_cast<uint32_t>(i32v);}
 uint32_t uint32_t_visitor::operator()(uint32_t ui32v) const {return ui32v;}
-uint32_t uint32_t_visitor::operator()(int64_t i64v) const {return (uint32_t)i64v;}
-uint32_t uint32_t_visitor::operator()(uint64_t ui64v) const {return (uint32_t)ui64v;}
-uint32_t uint32_t_visitor::operator()(double dv) const {return (uint32_t)dv;}
-uint32_t uint32_t_visitor::operator()(const std::string& str) const {SAFE_LEXICAL_WITH_DEFAULT(boost::lexical_cast<uint32_t>(str),0)}
+uint32_t uint32_t_visitor::operator()(int64_t i64v) const {return static_cast<uint32_t>(i64v);}
+uint32_t uint32_t_visitor::operator()(uint64_t ui64v) const {return static_cast<uint32_t>(ui64v);}
+uint32_t uint32_t_visitor::operator()(double dv) const {return static_cast<uint32_t>(dv);}
+uint32_t uint32_t_visitor::operator()(const std::string& str) const {SAFE_STREAM_CONV(uint32_t, str);}
 uint32_t uint32_t_visitor::operator()(boost::shared_ptr<CDataBuffer>& buffer) const {return buffer->getBufferSize();}
 
 #pragma mark i64visitor
-int64_t int64_t_visitor::operator()(bool bv) const {return (int64_t)bv;}
-int64_t int64_t_visitor::operator()(int32_t i32v) const {return (int64_t)i32v;}
-int64_t int64_t_visitor::operator()(uint32_t ui32v) const {return (int64_t)ui32v;}
+int64_t int64_t_visitor::operator()(bool bv) const {return static_cast<int64_t>(bv);}
+int64_t int64_t_visitor::operator()(int32_t i32v) const {return static_cast<int64_t>(i32v);}
+int64_t int64_t_visitor::operator()(uint32_t ui32v) const {return static_cast<int64_t>(ui32v);}
 int64_t int64_t_visitor::operator()(int64_t i64v) const {return i64v;}
-int64_t int64_t_visitor::operator()(uint64_t ui64v) const {return (int64_t)ui64v;}
-int64_t int64_t_visitor::operator()(double dv) const {return (int64_t)dv;}
-int64_t int64_t_visitor::operator()(const std::string& str) const {SAFE_LEXICAL_WITH_DEFAULT(boost::lexical_cast<int64_t>(str),0)}
+int64_t int64_t_visitor::operator()(uint64_t ui64v) const {return static_cast<int64_t>(ui64v);}
+int64_t int64_t_visitor::operator()(double dv) const {return static_cast<int64_t>(dv);}
+int64_t int64_t_visitor::operator()(const std::string& str) const {SAFE_STREAM_CONV(int64_t, str)}
 int64_t int64_t_visitor::operator()(boost::shared_ptr<CDataBuffer>& buffer) const {return (int64_t)buffer->getBufferSize();}
 
 #pragma mark ui64visitor
-uint64_t uint64_t_visitor::operator()(bool bv) const {return (uint64_t)bv;}
-uint64_t uint64_t_visitor::operator()(int32_t i32v) const {return (uint64_t)i32v;}
-uint64_t uint64_t_visitor::operator()(uint32_t ui32v) const {return (uint64_t)ui32v;}
-uint64_t uint64_t_visitor::operator()(int64_t i64v) const {return (uint64_t)i64v;}
+uint64_t uint64_t_visitor::operator()(bool bv) const {return static_cast<uint64_t>(bv);}
+uint64_t uint64_t_visitor::operator()(int32_t i32v) const {return static_cast<uint64_t>(i32v);}
+uint64_t uint64_t_visitor::operator()(uint32_t ui32v) const {return static_cast<uint64_t>(ui32v);}
+uint64_t uint64_t_visitor::operator()(int64_t i64v) const {return static_cast<uint64_t>(i64v);}
 uint64_t uint64_t_visitor::operator()(uint64_t ui64v) const {return ui64v;}
-uint64_t uint64_t_visitor::operator()(double dv) const {return (uint64_t)dv;}
-uint64_t uint64_t_visitor::operator()(const std::string& str) const {SAFE_LEXICAL_WITH_DEFAULT(boost::lexical_cast<uint64_t>(str),0)}
+uint64_t uint64_t_visitor::operator()(double dv) const {return static_cast<uint64_t>(dv);}
+uint64_t uint64_t_visitor::operator()(const std::string& str) const {SAFE_STREAM_CONV(uint64_t, str)}
 uint64_t uint64_t_visitor::operator()(boost::shared_ptr<CDataBuffer>& buffer) const {return (uint64_t)buffer->getBufferSize();}
 
 #pragma mark doublevisitor
-double double_visitor::operator()(bool bv) const {return (double)bv;}
-double double_visitor::operator()(int32_t i32v) const {return (double)i32v;}
-double double_visitor::operator()(uint32_t ui32v) const {return (double)ui32v;}
-double double_visitor::operator()(int64_t i64v) const {return (double)i64v;}
-double double_visitor::operator()(uint64_t ui64v) const {return (double)ui64v;}
+double double_visitor::operator()(bool bv) const {return static_cast<double>(bv);}
+double double_visitor::operator()(int32_t i32v) const {return static_cast<double>(i32v);}
+double double_visitor::operator()(uint32_t ui32v) const {return static_cast<double>(ui32v);}
+double double_visitor::operator()(int64_t i64v) const {return static_cast<double>(i64v);}
+double double_visitor::operator()(uint64_t ui64v) const {return static_cast<double>(ui64v);}
 double double_visitor::operator()(double dv) const {return dv;}
-double double_visitor::operator()(const std::string& str) const {SAFE_LEXICAL_WITH_DEFAULT(boost::lexical_cast<double>(str), false)}
+double double_visitor::operator()(const std::string& str) const {SAFE_STREAM_CONV(double, str)}
 double double_visitor::operator()(boost::shared_ptr<CDataBuffer>& buffer) const {return (double)buffer->getBufferSize();}
 
 #pragma mark stringvisitor
@@ -238,34 +244,87 @@ CDataVariant& CDataVariant::operator=(const CDataVariant& arg) {
 int32_t CDataVariant::asInt32() const {
     return  boost::apply_visitor( int32_t_visitor(), _internal_variant );
 }
+
+CDataVariant::operator int32_t() const {
+    return asInt32();
+}
+
 uint32_t CDataVariant::asUInt32() const {
     return  boost::apply_visitor( uint32_t_visitor(), _internal_variant );
 }
+
+CDataVariant::operator uint32_t() const {
+    return asUInt32();
+}
+
 int64_t CDataVariant::asInt64() const {
     return  boost::apply_visitor( int64_t_visitor(), _internal_variant );
 }
+
+CDataVariant::operator int64_t() const {
+    return asInt64();
+}
+
 uint64_t CDataVariant::asUInt64() const {
     return  boost::apply_visitor( uint64_t_visitor(), _internal_variant );
 }
+
+CDataVariant::operator uint64_t() const {
+    return asUInt64();
+}
+
 double CDataVariant::asDouble() const {
     return  boost::apply_visitor( double_visitor(), _internal_variant );
 }
+
+CDataVariant::operator double() const {
+    return asDouble();
+}
+
 bool CDataVariant::asBool() const {
     return boost::apply_visitor( bool_visitor(), _internal_variant );
 }
+
+CDataVariant::operator bool() const {
+    return asBool();
+}
+
 const std::string CDataVariant::asString() const {
     return  boost::apply_visitor( string_visitor(), _internal_variant );
 }
+
+CDataVariant::operator std::string() const {
+    return asString();
+}
+
 const CDataBuffer * const CDataVariant::asCDataBuffer() const {
     return boost::apply_visitor( CDataBuffer_visitor(), _internal_variant ).get();
 }
+
+CDataVariant::operator const CDataBuffer*() const {
+    return asCDataBuffer();
+}
+
 boost::shared_ptr<CDataBuffer> CDataVariant::asCDataBufferShrdPtr() {
     return boost::apply_visitor( CDataBuffer_visitor(), _internal_variant);
+}
+
+CDataVariant::operator boost::shared_ptr<CDataBuffer>() {
+    return asCDataBufferShrdPtr();
 }
 
 const CDataWrapper * const CDataVariant::asCDataWrapper() const {
     return boost::apply_visitor( CDataWrapper_visitor(), _internal_variant ).get();
 }
+
+CDataVariant::operator const CDataWrapper * const() const {
+    return asCDataWrapper();
+}
+
 boost::shared_ptr<CDataWrapper> CDataVariant::asCDataWrapperShrdPtr() {
     return boost::apply_visitor( CDataWrapper_visitor(), _internal_variant);
+}
+
+CDataVariant::operator boost::shared_ptr<CDataWrapper>() {
+    return asCDataWrapperShrdPtr();
 }

@@ -101,17 +101,38 @@ namespace chaos {
                 bool isValid() const;
                 
                 int32_t asInt32() const;
+                operator int32_t() const;
+                
                 uint32_t asUInt32() const;
+                operator uint32_t() const;
+                
                 int64_t asInt64() const;
+                operator int64_t() const;
+                
                 uint64_t asUInt64() const;
+                operator uint64_t() const;
+                
                 double asDouble() const;
+                operator double() const;
+                
                 bool asBool() const;
+                operator bool() const;
+                
                 const std::string asString() const;
+                operator std::string() const;
+                
                 const chaos::common::data::CDataBuffer *const asCDataBuffer() const;
+                operator const chaos::common::data::CDataBuffer *() const;
+                
                 boost::shared_ptr<CDataBuffer> asCDataBufferShrdPtr();
-
+                operator boost::shared_ptr<CDataBuffer>();
+                
                 const chaos::common::data::CDataWrapper *const asCDataWrapper() const;
+                operator const chaos::common::data::CDataWrapper *const() const;
+                
                 boost::shared_ptr<CDataWrapper> asCDataWrapperShrdPtr();
+                operator boost::shared_ptr<CDataWrapper>();
+                
             };
         }
     }
