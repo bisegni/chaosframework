@@ -240,7 +240,7 @@ namespace chaos {
 				while (!bufferQueue.empty()) {
 					T* to_delete = bufferQueue.front();
 					bufferQueue.pop();
-					CHK_AND_DELETE_OBJ_POINTER(to_delete)
+					DELETE_OBJ_POINTER(to_delete)
 				}
 			}
 			

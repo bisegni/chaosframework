@@ -45,7 +45,7 @@ void RpcClient::forwadSubmissionResult(NetworkForwardInfo *message_info,
     CHAOS_ASSERT(server_handler && submission_result)
     //! chec if it is a request
     if(message_info->sender_node_id.size() == 0) {
-        CHK_AND_DELETE_OBJ_POINTER(submission_result)
+        DELETE_OBJ_POINTER(submission_result)
         return;
     }
     RPCC_LDBG << "ACK received:" <<submission_result->getJSONString();
@@ -63,7 +63,7 @@ void RpcClient::forwadSubmissionResult(NetworkForwardInfo *message_info,
     //forward answer to channel
     auto_ptr<CDataWrapper> to_delete(server_handler->dispatchCommand(answer_to_send));
     
-    CHK_AND_DELETE_OBJ_POINTER(submission_result)
+    DELETE_OBJ_POINTER(submission_result)
 }
 
 /*!
@@ -75,7 +75,7 @@ void RpcClient::forwadSubmissionResultError(const std::string& channel_node_id,
     CHAOS_ASSERT(server_handler && submission_result)
     //! chec if it is a request
     if(channel_node_id.size() == 0) {
-        CHK_AND_DELETE_OBJ_POINTER(submission_result)
+        DELETE_OBJ_POINTER(submission_result)
         return;
     }
     
@@ -102,7 +102,7 @@ void RpcClient::forwadSubmissionResultError(const std::string& channel_node_id,
         RPCC_LERR <<"NO "<<RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE;
     }
     
-    CHK_AND_DELETE_OBJ_POINTER(submission_result)
+    DELETE_OBJ_POINTER(submission_result)
 }
 
 /*!

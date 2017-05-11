@@ -315,7 +315,7 @@ void ZMQDirectIOServer::worker(unsigned int w_type,
             if((err = reveiceDatapack(worker_socket,
                                       identity,
                                       &data_pack))) {
-                CHK_AND_DELETE_OBJ_POINTER(data_pack);
+                DELETE_OBJ_POINTER(data_pack);
                 continue;
             } else {
                 //check if we need to sen an answer

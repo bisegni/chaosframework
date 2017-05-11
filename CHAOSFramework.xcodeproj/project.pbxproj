@@ -1683,7 +1683,7 @@
 		326ACF691E01525D00AD011E /* cache_system_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cache_system_types.h; sourceTree = "<group>"; };
 		326ACF6A1E01525D00AD011E /* CacheDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CacheDriver.cpp; sourceTree = "<group>"; };
 		326ACF6B1E01525D00AD011E /* CacheDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheDriver.h; sourceTree = "<group>"; };
-		326ACF6C1E01525D00AD011E /* CacheDriverMetricCollector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CacheDriverMetricCollector.cpp; sourceTree = "<group>"; };
+		326ACF6C1E01525D00AD011E /* CacheDriverMetricCollector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = CacheDriverMetricCollector.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		326ACF6D1E01525D00AD011E /* CacheDriverMetricCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheDriverMetricCollector.h; sourceTree = "<group>"; };
 		326ACF6E1E01525D00AD011E /* CacheDriverSharedMetricIO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CacheDriverSharedMetricIO.cpp; sourceTree = "<group>"; };
 		326ACF6F1E01525D00AD011E /* CacheDriverSharedMetricIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheDriverSharedMetricIO.h; sourceTree = "<group>"; };
@@ -1820,7 +1820,7 @@
 		32761A3F1B37F202006C8719 /* SubmitBatchCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubmitBatchCommand.h; sourceTree = "<group>"; };
 		327791E01B67728300FEDD52 /* ServiceApiGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceApiGroup.cpp; sourceTree = "<group>"; };
 		327791E11B67728300FEDD52 /* ServiceApiGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceApiGroup.h; sourceTree = "<group>"; };
-		327967B415DF99FB0003C6DA /* RpcClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RpcClient.cpp; sourceTree = "<group>"; };
+		327967B415DF99FB0003C6DA /* RpcClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = RpcClient.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		327967B715DFAAF40003C6DA /* RpcServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RpcServer.cpp; sourceTree = "<group>"; };
 		327967D315E029C70003C6DA /* AsioImplEventServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsioImplEventServer.cpp; sourceTree = "<group>"; };
 		327967D415E029C70003C6DA /* AsioImplEventServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsioImplEventServer.h; sourceTree = "<group>"; };
@@ -1997,7 +1997,7 @@
 		32995C491BB2FF2600F68148 /* CheckList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CheckList.h; sourceTree = "<group>"; };
 		32995C4C1BB421D400F68148 /* AggregatedCheckList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AggregatedCheckList.cpp; sourceTree = "<group>"; };
 		32995C4D1BB421D400F68148 /* AggregatedCheckList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AggregatedCheckList.h; sourceTree = "<group>"; };
-		329C1EFB1B55286100A84D55 /* RpcServerMetricCollector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RpcServerMetricCollector.cpp; sourceTree = "<group>"; };
+		329C1EFB1B55286100A84D55 /* RpcServerMetricCollector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = RpcServerMetricCollector.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		329C1EFC1B55286100A84D55 /* RpcServerMetricCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcServerMetricCollector.h; sourceTree = "<group>"; };
 		329C1EFF1B5540F900A84D55 /* MetricCollectorIO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MetricCollectorIO.cpp; sourceTree = "<group>"; };
 		329C1F001B5540F900A84D55 /* MetricCollectorIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetricCollectorIO.h; sourceTree = "<group>"; };
@@ -2152,7 +2152,7 @@
 		32AFA9D61C77224F00640BFA /* logging_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = logging_types.h; sourceTree = "<group>"; };
 		32B13788189BEC3300B17CA4 /* ZMQDirectIOClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZMQDirectIOClient.cpp; sourceTree = "<group>"; };
 		32B13789189BEC3300B17CA4 /* ZMQDirectIOClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMQDirectIOClient.h; sourceTree = "<group>"; };
-		32B1378C189BEC4100B17CA4 /* ZMQDirectIOServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZMQDirectIOServer.cpp; sourceTree = "<group>"; };
+		32B1378C189BEC4100B17CA4 /* ZMQDirectIOServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = ZMQDirectIOServer.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		32B1378D189BEC4100B17CA4 /* ZMQDirectIOServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMQDirectIOServer.h; sourceTree = "<group>"; };
 		32B159CB18AE08720096B58B /* ZMQSocketFeeder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZMQSocketFeeder.cpp; sourceTree = "<group>"; };
 		32B159CC18AE08720096B58B /* ZMQSocketFeeder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMQSocketFeeder.h; sourceTree = "<group>"; };
@@ -2248,7 +2248,7 @@
 		32B5C9531C6B8FDC0021159C /* AbstractMetadataLogChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractMetadataLogChannel.h; sourceTree = "<group>"; };
 		32B5C9561C6B97590021159C /* ErrorLoggingChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ErrorLoggingChannel.cpp; sourceTree = "<group>"; };
 		32B5C9571C6B97590021159C /* ErrorLoggingChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ErrorLoggingChannel.h; sourceTree = "<group>"; };
-		32B6BD321E1E88F800A9F86C /* SharedCommandDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedCommandDispatcher.cpp; sourceTree = "<group>"; };
+		32B6BD321E1E88F800A9F86C /* SharedCommandDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = SharedCommandDispatcher.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		32B6BD331E1E88F800A9F86C /* SharedCommandDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedCommandDispatcher.h; sourceTree = "<group>"; };
 		32B6BD3A1E23CD8900A9F86C /* DeviceMessageChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceMessageChannel.cpp; sourceTree = "<group>"; };
 		32B6BD3B1E23CD8900A9F86C /* DeviceMessageChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceMessageChannel.h; sourceTree = "<group>"; };
@@ -2271,7 +2271,7 @@
 		32B9F3F61AC4186300380FE9 /* NodeCreateUnitServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeCreateUnitServer.h; sourceTree = "<group>"; };
 		32B9F3F81AC4460A00380FE9 /* NodeGetDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeGetDescription.cpp; sourceTree = "<group>"; };
 		32B9F3F91AC4460A00380FE9 /* NodeGetDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeGetDescription.h; sourceTree = "<group>"; };
-		32BD63171E1E46F5006FE42C /* SharedActionScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedActionScheduler.cpp; sourceTree = "<group>"; };
+		32BD63171E1E46F5006FE42C /* SharedActionScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = SharedActionScheduler.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		32BD63181E1E46F5006FE42C /* SharedActionScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedActionScheduler.h; sourceTree = "<group>"; };
 		32BD631B1E1E4D7F006FE42C /* AbstractActionScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractActionScheduler.cpp; sourceTree = "<group>"; };
 		32BD631C1E1E4D7F006FE42C /* AbstractActionScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractActionScheduler.h; sourceTree = "<group>"; };
@@ -2494,7 +2494,7 @@
 		32EA501518A15BF000782435 /* DirectIODispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIODispatcher.h; sourceTree = "<group>"; };
 		32EBDEF81B4E58F300278C42 /* MetricCollector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MetricCollector.cpp; sourceTree = "<group>"; };
 		32EBDEF91B4E58F300278C42 /* MetricCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetricCollector.h; sourceTree = "<group>"; };
-		32EBDEFC1B4E6FC700278C42 /* RpcClientMetricCollector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RpcClientMetricCollector.cpp; sourceTree = "<group>"; };
+		32EBDEFC1B4E6FC700278C42 /* RpcClientMetricCollector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = RpcClientMetricCollector.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		32EBDEFD1B4E6FC700278C42 /* RpcClientMetricCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcClientMetricCollector.h; sourceTree = "<group>"; };
 		32EBDF001B4FBD8800278C42 /* AbstractMetricBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractMetricBackend.cpp; sourceTree = "<group>"; };
 		32EBDF011B4FBD8800278C42 /* AbstractMetricBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractMetricBackend.h; sourceTree = "<group>"; };

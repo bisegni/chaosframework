@@ -275,7 +275,7 @@ void SharedActionScheduler::processBufferElement(CDataWrapper *actionDescription
             }
         }
     } catch (CException& ex) {
-        CHK_AND_DELETE_OBJ_POINTER(responsePack);
+        DELETE_OBJ_POINTER(responsePack);
         //these exception need to be logged
         DECODE_CHAOS_EXCEPTION(ex);
     }

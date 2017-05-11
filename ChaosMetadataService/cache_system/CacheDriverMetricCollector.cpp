@@ -42,7 +42,7 @@ wrapped_cache_driver(_wrapped_cache_driver){
 }
 
 CacheDriverMetricCollector::~CacheDriverMetricCollector() {
-    CHK_AND_DELETE_OBJ_POINTER(wrapped_cache_driver)
+    DELETE_OBJ_POINTER(wrapped_cache_driver)
 }
 
 int CacheDriverMetricCollector::putData(void *element_key,

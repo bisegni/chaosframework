@@ -47,7 +47,7 @@ dispose_forwarder_on_exit(_dispose_forwarder_on_exit){
 RpcServerMetricCollector::~RpcServerMetricCollector() {
     RPCSMC_LDBG << "Deallocate collector";
     if(dispose_forwarder_on_exit) {
-        CHK_AND_DELETE_OBJ_POINTER(wrapper_server)
+        DELETE_OBJ_POINTER(wrapper_server)
     }
 }
 

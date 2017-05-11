@@ -194,13 +194,7 @@ dw->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 
 dw->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE, message);
 
 #define DELETE_OBJ_POINTER(x)\
-delete(x); x=NULL;\
-
-
-#define CHK_AND_DELETE_OBJ_POINTER(x)\
-if (x){\
-DELETE_OBJ_POINTER(x)\
-}
+delete(x); x=NULL;
 
 #define PRINT_LIB_HEADER  \
 LAPP_ << "-----------------------------------------";\

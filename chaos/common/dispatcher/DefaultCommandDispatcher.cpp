@@ -212,19 +212,19 @@ CDataWrapper* DefaultCommandDispatcher::executeCommandSync(CDataWrapper * messag
         
         if(!message_data) {
             MANAGE_ERROR_IN_CDATAWRAPPERPTR(result, -1, "Invalid action pack", __PRETTY_FUNCTION__)
-            CHK_AND_DELETE_OBJ_POINTER(message_data)
+            DELETE_OBJ_POINTER(message_data)
             return result;
         }
         if(!message_data->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN)){
             MANAGE_ERROR_IN_CDATAWRAPPERPTR(result, -2, "Action call with no action domain", __PRETTY_FUNCTION__)
-            CHK_AND_DELETE_OBJ_POINTER(message_data)
+            DELETE_OBJ_POINTER(message_data)
             return result;
         }
         string action_domain = message_data->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN);
         
         if(!message_data->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME)) {
             MANAGE_ERROR_IN_CDATAWRAPPERPTR(result, -3, "Action Call with no action name", __PRETTY_FUNCTION__)
-            CHK_AND_DELETE_OBJ_POINTER(message_data)
+            DELETE_OBJ_POINTER(message_data)
             return result;
         }
         string action_name = message_data->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME);
@@ -233,7 +233,7 @@ CDataWrapper* DefaultCommandDispatcher::executeCommandSync(CDataWrapper * messag
         //RpcActionDefinitionKey::CS_CMDM_ACTION_NAME
         if(!das_map.count(action_domain)) {
             MANAGE_ERROR_IN_CDATAWRAPPERPTR(result, -4, "Action Domain \""+action_domain+"\" not registered (data pack \""+message_data->getJSONString()+"\")", __PRETTY_FUNCTION__)
-            CHK_AND_DELETE_OBJ_POINTER(message_data)
+            DELETE_OBJ_POINTER(message_data)
             return result;
         }
         

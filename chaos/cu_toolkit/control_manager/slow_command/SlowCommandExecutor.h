@@ -75,7 +75,8 @@ new chaos::common::utility::TypedObjectInstancer<SlowCommandClass, chaos::cu::co
                 /*!
                     This class is the environment where the exeecution of the slow command handlers take place.
                  */
-                class SlowCommandExecutor : private chaos_batch::BatchCommandExecutor {
+                class SlowCommandExecutor:
+                private chaos_batch::BatchCommandExecutor {
 
                     friend class chaos::cu::control_manager::SCAbstractControlUnit;
 
