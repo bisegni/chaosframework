@@ -32,6 +32,47 @@ namespace chaos {
         namespace data {
             namespace agent {
                 
+                //!describe th server layer managemento for angent data
+                struct AgentManagementSetting {
+                    //!identify the state of expiration of the agent log entry
+                    bool expiration_enabled;
+                    //! define the expiration time in seconds for every log entry
+                    uint32_t log_expiration_in_seconds;
+                    
+                    AgentManagementSetting():
+                    expiration_enabled(false),
+                    log_expiration_in_seconds(0){}
+                    
+                    AgentManagementSetting(const AgentManagementSetting& copy_src):
+                    expiration_enabled(copy_src.expiration_enabled),
+                    log_expiration_in_seconds(copy_src.log_expiration_in_seconds){}
+                    
+                    AgentManagementSetting& operator=(AgentManagementSetting const &rhs) {
+                        if(this == &rhs) return *this;
+                        expiration_enabled = rhs.expiration_enabled;
+                        log_expiration_in_seconds = rhs.log_expiration_in_seconds;
+                        return *this;
+                    }
+                };
+                
+                //!sd wrapper for AgentManagementSetting
+                CHAOS_OPEN_SDWRAPPER(AgentManagementSetting)
+                void deserialize(chaos::common::data::CDataWrapper *serialized_data) {
+                    if(serialized_data == NULL) return;
+                    dataWrapped().expiration_enabled = CDW_GET_BOOL_WITH_DEFAULT(serialized_data, "log_enable_state", false);
+                    dataWrapped().log_expiration_in_seconds = CDW_GET_INT32_WITH_DEFAULT(serialized_data, "log_expiration", 0);
+                    
+                }
+                
+                std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
+                    std::auto_ptr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
+                    data_serialized->addBoolValue("log_enable_state", dataWrapped().expiration_enabled);
+                    data_serialized->addInt32Value("log_expiration", dataWrapped().log_expiration_in_seconds);
+                    return data_serialized;
+                }
+                CHAOS_CLOSE_SDWRAPPER()
+                
+                
                 typedef enum {
                     NodeAssociationOperationUndefined,
                     NodeAssociationOperationLaunch,
@@ -88,6 +129,7 @@ namespace chaos {
                     keep_alive(copy_src.keep_alive){}
                     
                     AgentAssociation& operator=(AgentAssociation const &rhs) {
+                        if(this == &rhs) return *this;
                         association_unique_id = rhs.association_unique_id;
                         associated_node_uid = rhs.associated_node_uid;
                         launch_cmd_line = rhs.launch_cmd_line;

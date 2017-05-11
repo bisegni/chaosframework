@@ -484,3 +484,96 @@ int MongoDBAgentDataAccess::getLogEntry(const std::string& node_uid,
     }
     return err;
 }
+
+int MongoDBAgentDataAccess::setLogEntryExpiration(const bool expiration_active,
+                                                  const uint32_t expiration_in_seconds) {
+    int err = 0;
+    try {
+        mongo::BSONObj result;
+        mongo::BSONObj index_key =  BSON(MONGO_DB_FIELD_AGENT_PROCESS_LOG_TS << 1);
+        
+        if(expiration_active) {
+        
+        if((err = connection->findOne(result,
+                                      MONGO_DB_COLLECTION_NAME(".system.indexes"),
+                                      index_key))) {
+            ERR << CHAOS_FORMAT("Error searching for ttl index with code %1%",%err);
+        } else {
+            if(result.isEmpty() == false) {
+                if((err = connection->ensureIndex(getDatabaseName(),
+                                                  MONGO_DB_COLLECTION_AGENT_PROCESS_LOG,
+                                                  index_key,
+                                                  false,
+                                                  "agent_log_ttl_index",
+                                                  false,
+                                                  true,
+                                                  1,
+                                                  expiration_in_seconds))){
+                    ERR << CHAOS_FORMAT("Error creating new log ttl index with error %1%",%err);
+                }
+                
+            } else {
+                //update index
+                mongo::BSONObj command_result;
+                mongo::BSONObj modCollQuery = BSON("collMod" << MONGO_DB_COLLECTION_AGENT_PROCESS_LOG <<
+                                                   "<flag>" << BSON("keyPattern" << "agent_log_ttl_index" <<
+                                                                    "expireAfterSeconds" << expiration_in_seconds));
+                if((err = connection->runCommand(command_result,
+                                                 getDatabaseName(),
+                                                 modCollQuery))) {
+                    ERR << CHAOS_FORMAT("Error creating new log ttl index with error %1%",%err);
+                }
+            }
+            
+        }
+        } else {
+            //drop index
+            mongo::BSONObj q = BSON("dropIndexes" << MONGO_DB_COLLECTION_AGENT_PROCESS_LOG <<
+                                    "index" << "agent_log_ttl_index");
+            if((err = connection->runCommand(result,
+                                             getDatabaseName(),
+                                             q))) {
+                ERR << CHAOS_FORMAT("Error creating new log ttl index with error %1%",%err);
+            } else {
+                
+            }
+        }
+    } catch (const mongo::DBException &e) {
+        ERR << e.what();
+        err = -1;
+    } catch (const chaos::CException &e) {
+        ERR << e.what();
+        err = e.errorCode;
+    }
+    return err;
+}
+
+int MongoDBAgentDataAccess::getLogEntryExpiration(bool& expiration_active,
+                                                  uint32_t& expiration_in_seconds) {
+    int err = 0;
+    try {
+        mongo::BSONObj r;
+        mongo::BSONObj q = BSON("name" << "agent_log_ttl_index");
+        
+        DEBUG_CODE(DBG<<log_message("getLogEntry",
+                                    "findN",
+                                    DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                            q.toString()));)
+        if((err = connection->findOne(r,
+                                      getDatabaseName()+".system.indexes",
+                                      q))) {
+            
+        } else if(r.isEmpty() == false) {
+            
+        } else {
+          
+        }
+    } catch (const mongo::DBException &e) {
+        ERR << e.what();
+        err = -1;
+    } catch (const chaos::CException &e) {
+        ERR << e.what();
+        err = e.errorCode;
+    }
+    return err;
+}

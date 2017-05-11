@@ -85,6 +85,12 @@ namespace chaos {
                                             const bool asc,
                                             const uint64_t start_seq,
                                             chaos::service_common::data::agent::VectorAgentLogEntry& found_entries) = 0;
+                    
+                    virtual int setLogEntryExpiration(const bool expiration_active,
+                                                      const uint32_t expiration_in_seconds) = 0;
+                    
+                    virtual int getLogEntryExpiration(bool& expiration_active,
+                                                      uint32_t& expiration_in_seconds) = 0;
                 };
             }
         }

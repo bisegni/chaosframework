@@ -181,7 +181,6 @@ CDataVariant::CDataVariant(CDataWrapper *buffer_value):
 type(DataType::TYPE_CLUSTER),
 _internal_variant(boost::shared_ptr<CDataWrapper>(buffer_value)) { }
 
-
 CDataVariant::CDataVariant(const CDataVariant& to_copy):
 type(to_copy.type),
 _internal_variant(to_copy._internal_variant) { }
@@ -195,32 +194,37 @@ CDataVariant::CDataVariant(DataType::DataType _type,
                            uint32_t _value_size):
 type(_type){
     switch (type) {
-        case DataType::TYPE_BOOLEAN:
+        case DataType::TYPE_BOOLEAN:{
             _internal_variant = *static_cast<const bool*>(_value_pointer);
             break;
-        case DataType::TYPE_INT32:
+        }
+        case DataType::TYPE_INT32:{
             _internal_variant = *static_cast<const int32_t*>(_value_pointer);
             break;
-        case DataType::TYPE_INT64:
+        }
+        case DataType::TYPE_INT64:{
             _internal_variant = *static_cast<const int64_t*>(_value_pointer);
             break;
-        case DataType::TYPE_DOUBLE:
+        }
+        case DataType::TYPE_DOUBLE:{
             _internal_variant = *static_cast<const double*>(_value_pointer);
             break;
-            
+        }
         case DataType::TYPE_CLUSTER:{
           _internal_variant = boost::shared_ptr<CDataWrapper>(new CDataWrapper(static_cast<const char*>(_value_pointer)));
         	break;
         }
-        case DataType::TYPE_STRING:
+        case DataType::TYPE_STRING:{
             _internal_variant = std::string(static_cast<const char*>(_value_pointer),
                                             _value_size);
             break;
-        case DataType::TYPE_BYTEARRAY:
+        }
+        case DataType::TYPE_BYTEARRAY:{
             _internal_variant = boost::shared_ptr<CDataBuffer>(new CDataBuffer(static_cast<const char*>(_value_pointer),
                                                                                _value_size,
                                                                                true));
             break;
+        }
         default:
             break;
     }

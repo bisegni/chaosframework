@@ -97,6 +97,14 @@ namespace chaos {
                                     const bool asc,
                                     const uint64_t start_seq,
                                     chaos::service_common::data::agent::VectorAgentLogEntry& found_entries);
+                    
+                    //! inherited by data_access::AgentDataAccess
+                    int setLogEntryExpiration(const bool expiration_active,
+                                              const uint32_t expiration_in_seconds);
+                    
+                    //! inherited by data_access::AgentDataAccess
+                    int getLogEntryExpiration(bool& expiration_active,
+                                              uint32_t& expiration_in_seconds);
                 };
             }
         }

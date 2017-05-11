@@ -27,6 +27,9 @@
 #include "NodeOperation.h"
 #include "LoadAgentDescription.h"
 #include "CheckAgentHostedProcess.h"
+#include "GetManagementConfiguration.h"
+#include "SetManagementConfiguration.h"
+
 using namespace chaos::metadata_service::api::agent;
 
 DEFINE_CLASS_FACTORY_NO_ALIAS(AgentApiGroup,
@@ -41,6 +44,8 @@ AbstractApiGroup(AgentNodeDomainAndActionRPC::ProcessWorker::RPC_DOMAIN){
     addApi<NodeOperation>();
     addApi<LoadAgentDescription>();
     addApi<CheckAgentHostedProcess>();
+    addApi<GetManagementConfiguration>();
+    addApi<SetManagementConfiguration>();
 }
 
 AgentApiGroup::~AgentApiGroup() {}
