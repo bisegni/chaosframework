@@ -32,8 +32,7 @@ API_PROXY_CD_DEFINITION(SetManagementConfiguration,
                         AgentNodeDomainAndActionRPC::ProcessWorker::RPC_DOMAIN,
                         "setManagementConfiguration");
 
-ApiProxyResult SetManagementConfiguration::execute(const chaos::service_common::data::agent::AgentManagementSetting& agent_man_setting) {
-    std::auto_ptr<CDataWrapper> pack(new CDataWrapper());
-    pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, agent_uid);
-    return callApi(pack.release());
+ApiProxyResult SetManagementConfiguration::execute(AgentManagementSetting& agent_man_setting) {
+    AgentManagementSettingSDWrapper a_set_sdw(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(AgentManagementSetting, agent_man_setting));
+    return callApi(a_set_sdw.serialize().release());
 }

@@ -33,11 +33,10 @@ API_PROXY_CD_DEFINITION(GetManagementConfiguration,
                         "getManagementConfiguration");
 
 ApiProxyResult GetManagementConfiguration::execute() {
-    std::auto_ptr<CDataWrapper> pack(new CDataWrapper());
-    pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, agent_uid);
-    return callApi(pack.release());
+    return callApi();
 }
 
 chaos::service_common::data::agent::AgentManagementSetting GetManagementConfiguration::deserialize(ApiProxyResult api_result) {
-    
+    AgentManagementSettingSDWrapper a_set_sdw(api_result->getResult());
+    return a_set_sdw();
 }

@@ -34,11 +34,11 @@ namespace chaos {
             namespace agent {
                 
                 //! Set the managment configuration for agent
-                class SetManagementConfiguration:
+                class GetManagementConfiguration:
                 public chaos::metadata_service_client::api_proxy::ApiProxy {
-                    API_PROXY_CLASS(SetManagementConfiguration)
+                    API_PROXY_CLASS(GetManagementConfiguration)
                 protected:
-                    API_PROXY_CD_DECLARATION(SetManagementConfiguration)
+                    API_PROXY_CD_DECLARATION(GetManagementConfiguration)
                 public:
                     ApiProxyResult execute();
                     static chaos::service_common::data::agent::AgentManagementSetting deserialize(ApiProxyResult api_result);

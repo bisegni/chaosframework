@@ -122,7 +122,9 @@ SET(cnd_src  ${cnd_src}	api/agent/AgentApiGroup.cpp
                         api/agent/LoadNodeAssociation.cpp
                         api/agent/RemoveNodeAssociation.cpp
                         api/agent/NodeOperation.cpp
-                        api/agent/CheckAgentHostedProcess.cpp)
+                        api/agent/CheckAgentHostedProcess.cpp
+                        api/agent/GetManagementConfiguration.cpp
+                        api/agent/SetManagementConfiguration.cpp)
 
 SET(cnd_src  ${cnd_src}	api/agent/logging/AgentLoggingApiGroup.cpp
                         api/agent/logging/GetProcessLogEntries.cpp

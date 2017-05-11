@@ -40,7 +40,7 @@ namespace chaos {
                 protected:
                     API_PROXY_CD_DECLARATION(SetManagementConfiguration)
                 public:
-                    ApiProxyResult execute(const chaos::service_common::data::agent::AgentManagementSetting& agent_man_setting);
+                    ApiProxyResult execute(chaos::service_common::data::agent::AgentManagementSetting& agent_man_setting);
                 };
             }
         }
