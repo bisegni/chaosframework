@@ -89,7 +89,7 @@ void ChaosDataService::fillKVParameter(std::map<std::string, std::string>& kvmap
                                 boost::algorithm::is_any_of(":"),
                                 boost::algorithm::token_compress_on);
         // add key/value pair
-        kvmap.insert(make_pair(kv_splitted[0], kv_splitted[1]));
+        kvmap.insert(std::pair<std::string,std::string>(kv_splitted[0], kv_splitted[1]));
     }
     
 }

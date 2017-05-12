@@ -209,7 +209,7 @@ int CouchbaseCacheDriver::removeServer(std::string server_desc) {
 int CouchbaseCacheDriver::updateConfig() {
 	//lock for other access
 	//boost::unique_lock<boost::shared_mutex> lock(mutex_server);
-	CCDLAPP_ << "Connect to all servers";
+
 	//destroy the instance in case we have used it
 	if(instance) {
 		CCDLAPP_ << "Destroy last session";
@@ -228,6 +228,7 @@ int CouchbaseCacheDriver::updateConfig() {
 	for (ServerIterator iter = all_server_to_use.begin();
 		 iter!=all_server_to_use.end();
 		 iter++) {
+		CCDLAPP_ << "Connecting to \""<<*iter<<"\"...";
 		all_server_str.append(*iter);
 		all_server_str.append(";");
 	}
@@ -251,14 +252,16 @@ int CouchbaseCacheDriver::updateConfig() {
     }
 	
     lcb_U32 newval = 2000000; // Set to 4 seconds
-    lcb_cntl(instance, LCB_CNTL_SET, LCB_CNTL_OP_TIMEOUT, &newval);
+    if((last_err=lcb_cntl(instance, LCB_CNTL_SET, LCB_CNTL_OP_TIMEOUT, &newval))!=LCB_SUCCESS){
+    	CCDLERR_<< "Cannot set OP Timeout -> " << lcb_strerror(NULL, last_err);
+    	return -2;
+    }
     
 	lcb_set_cookie(instance, this);
 	
 	lcb_behavior_set_syncmode(instance, LCB_SYNCHRONOUS);
 
-	/* Set up the handler to catch all errors! */
-	lcb_set_error_callback(instance, CouchbaseCacheDriver::errorCallback);
+
 
 	/* initiate the connect sequence in libcouchbase */
     last_err = lcb_connect(instance);
@@ -266,7 +269,9 @@ int CouchbaseCacheDriver::updateConfig() {
         CCDLERR_<< "Error connecting the session -> " << lcb_strerror(NULL, last_err);
         return -1;
     }
-	
+
+    /* Set up the handler to catch all errors! */
+    lcb_set_error_callback(instance, CouchbaseCacheDriver::errorCallback);
 	/* run the event loop and wait until we've connected */
     last_err = lcb_wait(instance);
 	
@@ -289,5 +294,5 @@ int CouchbaseCacheDriver::updateConfig() {
 	num_events = 500000;
 	lcb_cntl(instance, LCB_CNTL_SET, LCB_CNTL_CONFDELAY_THRESH, &num_events);
 
-	return !(last_err == LCB_SUCCESS);
+	return (last_err != LCB_SUCCESS)?-4:0;
 }

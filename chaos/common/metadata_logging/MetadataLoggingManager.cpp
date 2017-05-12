@@ -89,7 +89,7 @@ void MetadataLoggingManager::deinit() throw(chaos::CException) {
 
 void MetadataLoggingManager::registerChannel(const std::string& channel_alias,
                                              chaos::common::utility::ObjectInstancer<AbstractMetadataLogChannel> *instancer) {
-    map_instancer.insert(make_pair(channel_alias, instancer));
+    map_instancer.insert(std::pair<std::string, boost::shared_ptr< chaos::common::utility::ObjectInstancer<AbstractMetadataLogChannel > > >(channel_alias, boost::shared_ptr< chaos::common::utility::ObjectInstancer<AbstractMetadataLogChannel > > (instancer)));
 }
 
 AbstractMetadataLogChannel *MetadataLoggingManager::getChannel(const std::string channel_alias) {
@@ -101,7 +101,7 @@ AbstractMetadataLogChannel *MetadataLoggingManager::getChannel(const std::string
     
     AbstractMetadataLogChannel *result = map_instancer[channel_alias]->getInstance();
     result->setLoggingManager(this);
-    map_instance.insert(make_pair(result->getInstanceUUID(), result));
+    map_instance.insert(std::pair<std::string, AbstractMetadataLogChannel*> (result->getInstanceUUID(), result));
     
     MLM_INFO << "Creted new channel instance " << result->getInstanceUUID() << " for " << channel_alias;
     return result;
