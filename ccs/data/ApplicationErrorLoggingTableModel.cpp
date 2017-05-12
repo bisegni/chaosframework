@@ -30,6 +30,15 @@ int ApplicationErrorLoggingTableModel::getColumnCount() const {
     return 4;
 }
 
+QVariant ApplicationErrorLoggingTableModel::getTooltipTextForData(int row,
+                                                                  int column) const {
+    QString toolTip = QString("<font>");
+    toolTip += getCellData(row,
+                           column).toString();
+    toolTip += QString("</font>");
+    return toolTip;
+}
+
 QString ApplicationErrorLoggingTableModel::getHeaderForColumn(int column) const {
     QString result;
     switch(column) {

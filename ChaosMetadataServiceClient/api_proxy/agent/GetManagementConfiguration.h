@@ -41,7 +41,7 @@ namespace chaos {
                     API_PROXY_CD_DECLARATION(GetManagementConfiguration)
                 public:
                     ApiProxyResult execute();
-                    static chaos::service_common::data::agent::AgentManagementSetting deserialize(ApiProxyResult api_result);
+                    static chaos::service_common::data::agent::AgentManagementSetting deserialize(chaos::common::data::CDataWrapper& api_result);
                 };
             }
         }

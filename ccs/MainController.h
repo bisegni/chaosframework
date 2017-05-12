@@ -21,6 +21,7 @@ public:
 private slots:
     void actionSearchNode();
     void actionPreferences();
+    void actionAgentSetting();
     void actionSnaptshotManager();
     void actionTreeGroupManager();
     void actionLogBrowser();

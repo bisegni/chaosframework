@@ -154,7 +154,8 @@ SOURCES += main.cpp\
     data/LogEntryTableModel.cpp \
     data/LogProcessEntriesTableModel.cpp \
     data/json/JsonTableModel.cpp \
-    language_editor/JsonEditor.cpp
+    language_editor/JsonEditor.cpp \
+    node/agent/AgentSetting.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -293,7 +294,8 @@ HEADERS  += \
     data/LogEntryTableModel.h \
     data/LogProcessEntriesTableModel.h \
     data/json/JsonTableModel.h \
-    language_editor/JsonEditor.h
+    language_editor/JsonEditor.h \
+    node/agent/AgentSetting.h
 
 FORMS    += \
     search/searchnoderesult.ui \
@@ -331,7 +333,8 @@ FORMS    += \
     log_browser/ApplicationErrorLogging.ui \
     node/agent/AgentEditor.ui \
     node/agent/AgentNodeAssociationEditor.ui \
-    language_editor/JsonEditor.ui
+    language_editor/JsonEditor.ui \
+    node/agent/AgentSetting.ui
 
 DISTFILES += \
     dark_orange.stylesheet \

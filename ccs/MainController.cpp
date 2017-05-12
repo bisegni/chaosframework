@@ -27,6 +27,7 @@
 #include "log_browser/LogBrowser.h"
 #include "script/ScriptManager.h"
 #include "monitor/healt/HealtMonitorWidget.h"
+#include "node/agent/AgentSetting.h"
 #include "GlobalServices.h"
 
 #include "metatypes.h"
@@ -204,7 +205,10 @@ void MainController::initApplicationMenuBar() {
     menu->addAction("Node Monitor", this, SLOT(actionNewNodeMonitor()),QKeySequence(Qt::CTRL + Qt::Key_T));
     menu->addSeparator();
     initConfigurationsMenu(menu->addMenu("Network Configurations"));
-    menu->addAction("Preferences..", this, SLOT(actionPreferences()));
+    menu->addSeparator();
+    menu->addAction("Agent Setting...", this, SLOT(actionAgentSetting()));
+    menu->addSeparator();
+    menu->addAction("Preferences...", this, SLOT(actionPreferences()));
     main_menu_bar.show();
 }
 
@@ -300,4 +304,8 @@ void MainController::actionPreferences() {
             SIGNAL(changedConfiguration()),
             SLOT(reconfigure()));
     pref_dialog.exec();
+}
+
+void MainController::actionAgentSetting() {
+    openInWindow(new AgentSetting());
 }

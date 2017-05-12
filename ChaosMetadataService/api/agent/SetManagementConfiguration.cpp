@@ -46,6 +46,6 @@ CDataWrapper *SetManagementConfiguration::execute(CDataWrapper *api_data, bool& 
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found");
     GET_DATA_ACCESS(AgentDataAccess, a_da, -2);
     AgentManagementSettingSDWrapper set_w(api_data);
-    a_da->setLogEntryExpiration(set_w().expiration_enabled, set_w().log_expiration_in_seconds);
-    return set_w.serialize().release();
+    a_da->setLogEntryExpiration(true, set_w().log_expiration_in_seconds);
+    return NULL;
 }

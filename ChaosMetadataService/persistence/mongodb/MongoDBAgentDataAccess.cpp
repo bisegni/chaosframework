@@ -491,51 +491,20 @@ int MongoDBAgentDataAccess::setLogEntryExpiration(const bool expiration_active,
     try {
         mongo::BSONObj result;
         mongo::BSONObj index_key =  BSON(MONGO_DB_FIELD_AGENT_PROCESS_LOG_TS << 1);
-        
-        if(expiration_active) {
-        
-        if((err = connection->findOne(result,
-                                      MONGO_DB_COLLECTION_NAME(".system.indexes"),
-                                      index_key))) {
-            ERR << CHAOS_FORMAT("Error searching for ttl index with code %1%",%err);
-        } else {
-            if(result.isEmpty() == false) {
-                if((err = connection->ensureIndex(getDatabaseName(),
-                                                  MONGO_DB_COLLECTION_AGENT_PROCESS_LOG,
-                                                  index_key,
-                                                  false,
-                                                  "agent_log_ttl_index",
-                                                  false,
-                                                  true,
-                                                  1,
-                                                  expiration_in_seconds))){
-                    ERR << CHAOS_FORMAT("Error creating new log ttl index with error %1%",%err);
-                }
-                
-            } else {
-                //update index
-                mongo::BSONObj command_result;
-                mongo::BSONObj modCollQuery = BSON("collMod" << MONGO_DB_COLLECTION_AGENT_PROCESS_LOG <<
-                                                   "<flag>" << BSON("keyPattern" << "agent_log_ttl_index" <<
-                                                                    "expireAfterSeconds" << expiration_in_seconds));
-                if((err = connection->runCommand(command_result,
-                                                 getDatabaseName(),
-                                                 modCollQuery))) {
-                    ERR << CHAOS_FORMAT("Error creating new log ttl index with error %1%",%err);
-                }
-            }
-            
-        }
-        } else {
-            //drop index
-            mongo::BSONObj q = BSON("dropIndexes" << MONGO_DB_COLLECTION_AGENT_PROCESS_LOG <<
-                                    "index" << "agent_log_ttl_index");
-            if((err = connection->runCommand(result,
-                                             getDatabaseName(),
-                                             q))) {
+        if((err = connection->dropIndex(MONGO_DB_COLLECTION_NAME(MONGO_DB_COLLECTION_AGENT_PROCESS_LOG),
+                                        "agent_log_ttl_index"))) {
+            ERR << CHAOS_FORMAT("Error dropping for ttl index with code %1%",%err);
+        } else if(expiration_active) {
+            if((err = connection->ensureIndex(getDatabaseName(),
+                                              MONGO_DB_COLLECTION_AGENT_PROCESS_LOG,
+                                              index_key,
+                                              false,
+                                              "agent_log_ttl_index",
+                                              false,
+                                              true,
+                                              1,
+                                              expiration_in_seconds))){
                 ERR << CHAOS_FORMAT("Error creating new log ttl index with error %1%",%err);
-            } else {
-                
             }
         }
     } catch (const mongo::DBException &e) {
@@ -553,20 +522,25 @@ int MongoDBAgentDataAccess::getLogEntryExpiration(bool& expiration_active,
     int err = 0;
     try {
         mongo::BSONObj r;
-        mongo::BSONObj q = BSON("name" << "agent_log_ttl_index");
-        
-        DEBUG_CODE(DBG<<log_message("getLogEntry",
-                                    "findN",
-                                    DATA_ACCESS_LOG_1_ENTRY("Query",
-                                                            q.toString()));)
-        if((err = connection->findOne(r,
-                                      getDatabaseName()+".system.indexes",
-                                      q))) {
+        if((err = connection->getIndex(r,
+                                       MONGO_DB_COLLECTION_AGENT_PROCESS_LOG,
+                                       "agent_log_ttl_index"))) {
             
-        } else if(r.isEmpty() == false) {
-            
+        } else if(r.isEmpty() == true) {
+            ERR << "No expiration found";
+            expiration_active = false;
+            expiration_in_seconds = 0;
         } else {
-          
+            DBG << r.toString();
+            if(r.hasField("expireAfterSeconds") == false) {
+                expiration_active = false;
+                expiration_in_seconds = 0;
+            }
+            mongo::BSONElement e = r.getField("expireAfterSeconds");
+            if(e.type() == mongo::NumberInt) {
+                expiration_active = true;
+                expiration_in_seconds = (uint32_t)e.numberInt();
+            }
         }
     } catch (const mongo::DBException &e) {
         ERR << e.what();

@@ -470,7 +470,7 @@ int MongoDBHAConnectionManager::ensureIndex(const std::string &database,
                          toSave.appendBool( "dropDups", dropDup );
                          
                          
-                         if ( ttl > 0 )
+                         if ( ttl >= 0 )
                          toSave.append( "expireAfterSeconds", ttl );
                          
                          err = insert(database+".system.indexes", toSave.obj()););
@@ -482,3 +482,60 @@ int MongoDBHAConnectionManager::ensureIndex(const std::string &database,
     END_CONNECTION()
     return err;
 }
+
+int MongoDBHAConnectionManager::getIndex(mongo::BSONObj& result,
+                                         const std::string &collection,
+                                         const std::string& index_name) {
+    int err = 0;
+    GET_CONNECTION()
+    try {
+        EXECUTE_MONGOAPI(mongo::BSONObj q = BSON("listIndexes" << collection);
+                         conn->get()->runCommand(getDatabaseName(), q, result);
+                         MDBHAC_LAPP_ << result.toString();
+                         if(result.isEmpty() == false &&
+                            result.hasField("cursor")) {
+                             mongo::BSONObj cur = result.getField("cursor").Obj();
+                             if(cur.hasField("firstBatch")) {
+                                 std::vector<mongo::BSONElement> indexes_found = cur.getField("firstBatch").Array();
+                                 for(std::vector<mongo::BSONElement>::iterator it = indexes_found.begin(),
+                                     end = indexes_found.end();
+                                     it != end;
+                                     it++) {
+                                     MDBHAC_LAPP_ << it->toString();
+                                     if(it->type() != mongo::Object) continue;
+                                     mongo::BSONObj o = it->Obj();
+                                     if(o.hasField("name")) {
+                                         mongo::BSONElement ele_name = o.getField("name");
+                                         if(ele_name.type() != mongo::String) continue;
+                                         if(ele_name.String().compare(index_name) != 0) continue;
+                                         
+                                         result = o.copy();
+                                         break;
+                                     }
+                                 }
+                             }
+                         })
+    } catch (std::exception& ex) {
+        MDBHAC_LERR_ << " -> " << ex.what();
+        MONGO_DB_GET_ERROR(conn->get(), err);
+        CONTINUE_ON_NEXT_CONNECTION(err)
+    }
+    END_CONNECTION()
+    return err;
+}
+
+int MongoDBHAConnectionManager::dropIndex(const std::string &ns,
+                                          const std::string& index_name) {
+    int err = 0;
+    GET_CONNECTION()
+    try {
+        EXECUTE_MONGOAPI(conn->get()->dropIndex(ns, index_name);)
+    } catch (std::exception& ex) {
+        MDBHAC_LERR_ << " -> " << ex.what();
+        MONGO_DB_GET_ERROR(conn->get(), err);
+        CONTINUE_ON_NEXT_CONNECTION(err)
+    }
+    END_CONNECTION()
+    return err;
+}
+

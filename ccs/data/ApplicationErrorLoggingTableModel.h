@@ -20,6 +20,7 @@ protected:
     QVariant getUserData(int row, int column) const;
     bool isCellEditable(const QModelIndex &index) const;
     bool isCellCheckable(const QModelIndex &index) const;
+    QVariant getTooltipTextForData(int row, int column) const;
 protected slots:
     void onErrorEntryUpdated();
 private:

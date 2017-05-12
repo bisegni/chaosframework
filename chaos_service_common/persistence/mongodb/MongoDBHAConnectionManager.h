@@ -185,6 +185,12 @@ namespace chaos {
                               int options=0,
                               int limit=0,
                               int skip=0);
+                    
+                    int dropIndex(const std::string &ns,
+                                  const std::string& index_name);
+                    int getIndex(mongo::BSONObj& result,
+                                 const std::string &collection,
+                                 const std::string& index_name);
                 };
             }
         }

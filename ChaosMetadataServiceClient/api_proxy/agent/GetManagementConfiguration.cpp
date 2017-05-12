@@ -36,7 +36,7 @@ ApiProxyResult GetManagementConfiguration::execute() {
     return callApi();
 }
 
-chaos::service_common::data::agent::AgentManagementSetting GetManagementConfiguration::deserialize(ApiProxyResult api_result) {
-    AgentManagementSettingSDWrapper a_set_sdw(api_result->getResult());
+chaos::service_common::data::agent::AgentManagementSetting GetManagementConfiguration::deserialize(CDataWrapper& api_result) {
+    AgentManagementSettingSDWrapper a_set_sdw(&api_result);
     return a_set_sdw();
 }
