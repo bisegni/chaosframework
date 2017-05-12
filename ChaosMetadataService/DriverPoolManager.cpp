@@ -80,9 +80,13 @@ CacheDriver* CacheDriverPool::allocateResource(const std::string& pool_identific
         }
         
         //fix the update on server
-        pooled_driver->updateConfig();
+        if(pooled_driver->updateConfig()<0){
+        	DP_LOG_ERR<<" cannot complete initialization of cache driver:\""<<cache_impl_name<<"\" removing..";
+        	delete pooled_driver;
+        	return NULL;
+        }
         
-        //incremnt create counter
+        //increment create counter
         instance_created++;
         
         //porint infor debug
