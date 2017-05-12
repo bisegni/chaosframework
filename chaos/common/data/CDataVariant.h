@@ -34,15 +34,15 @@
 class n ## _visitor:\
 public boost::static_visitor< t > {\
 public:\
-    t operator()(bool bv) const;\
-    t operator()(int32_t i32v) const;\
-    t operator()(uint32_t ui32v) const;\
-    t operator()(int64_t i64v) const;\
-    t operator()(uint64_t ui64v) const;\
+    t operator()(const bool bv) const;\
+    t operator()(const int32_t i32v) const;\
+    t operator()(const uint32_t ui32v) const;\
+    t operator()(const int64_t i64v) const;\
+    t operator()(const uint64_t ui64v) const;\
     t operator()(double dv) const;\
     t operator()(const std::string& str) const;\
-    t operator()(boost::shared_ptr<chaos::common::data::CDataBuffer>& buffer) const;\
-    t operator()(boost::shared_ptr<chaos::common::data::CDataWrapper>& buffer) const;\
+    t operator()(const boost::shared_ptr<chaos::common::data::CDataBuffer>& buffer) const;\
+    t operator()(const boost::shared_ptr<chaos::common::data::CDataWrapper>& buffer) const;\
 };
 
 #define CHAOS_VARIANT_DEFINE_VISITOR_WITH_TYPE(t) CHAOS_VARIANT_DEFINE_VISITOR_WITH_NAME_TYPE(t,t)

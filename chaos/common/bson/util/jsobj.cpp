@@ -17,7 +17,7 @@
  *    limitations under the License.
  */
 
-#include <chaos/common/global.h>
+//#include <chaos/common/global.h>
 #include <chaos/common/bson/util/jsobj.h>
 
 #include <limits>
@@ -449,7 +449,7 @@ namespace bson {
                 return LEFT_SUBFIELD;
         }
 
-        LAPP_ << "compareDottedFieldNames ERROR  l: " << l << " r: " << r << "  TOO MANY LOOPS" << endl;
+        //LAPP_ << "compareDottedFieldNames ERROR  l: " << l << " r: " << r << "  TOO MANY LOOPS" << endl;
         verify(0);
         return SAME; // will never get here
     }
@@ -1003,7 +1003,7 @@ namespace bson {
             builder << endl;
             p++;
         }
-		LAPP_ << builder;
+		//LAPP_ << builder;
     }
 
     void nested2dotted(BSONObjBuilder& b, const BSONObj& obj, const string& base) {

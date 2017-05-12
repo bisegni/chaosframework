@@ -432,7 +432,7 @@ QueryCursor *IODirectIODriver::performQuery(const std::string& key,
     if(q) {
         //add query to map
         boost::unique_lock<boost::shared_mutex> wmap_loc(map_query_future_mutex);
-        map_query_future.insert(make_pair<string, QueryCursor*>(q->queryID(), q));
+        map_query_future.insert(make_pair(q->queryID(), q));
     } else {
         releaseQuery(q);
     }

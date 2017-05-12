@@ -459,15 +459,13 @@ void BatchCommandExecutor::installCommand(const string& alias, chaos::common::ut
     boost::shared_ptr<BatchCommandDescription> description(new BatchCommandDescription(alias,
                                                                                        "OLD unsupportd command style"));
     description->setInstancer(instancer);
-    map_command_description.insert(make_pair<string,
-                                   boost::shared_ptr<BatchCommandDescription> >(alias, description));
+    map_command_description.insert(make_pair(alias, description));
 }
 
 //! Install a command by his description
 void BatchCommandExecutor::installCommand(boost::shared_ptr<BatchCommandDescription> command_description) {
     BCELAPP_ << "Install new command with alias -> \"" << command_description->getAlias()<<"\"";
-    map_command_description.insert(make_pair<string,
-                                   boost::shared_ptr<BatchCommandDescription> >(command_description->getAlias(), command_description));
+    map_command_description.insert(make_pair(command_description->getAlias(), command_description));
 }
 
 void BatchCommandExecutor::getAllCommandAlias(std::vector<std::string>& commands_alias) {

@@ -37,7 +37,7 @@ using namespace chaos;
 using namespace chaos::common::data;
 
 #define MAKE_KEY(key, tmp) entityDB->getIDForKey(key, tmp);\
-mapDatasetKeyForID.insert(make_pair<const char *, uint32_t>(key, tmp));
+mapDatasetKeyForID.insert(make_pair(key, tmp));
 
 #define CUSCHEMALDBG LDBG_ << "[CUSchemaDB] - "<<__PRETTY_FUNCTION__<<":"
 #define CUSCHEMALERR LERR_ << "[CUSchemaDB] - ## Error "<<__PRETTY_FUNCTION__<<":"
@@ -174,7 +174,7 @@ void CUSchemaDB::addDeviceId(const string& deviceID) {
     //add the entity for device
     entity::Entity *dsEntity = entityDB->getNewEntityInstance(kiv);
     if(dsEntity) {
-        deviceEntityMap.insert(make_pair<string, entity::Entity*>(deviceID, dsEntity));
+        deviceEntityMap.insert(make_pair(deviceID, dsEntity));
         addUniqueAttributeProperty(dsEntity, mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP], (int64_t)timingUtils.getTimeStamp(), false);
     }
 }
