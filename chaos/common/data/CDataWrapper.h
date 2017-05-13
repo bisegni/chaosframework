@@ -118,7 +118,7 @@ namespace chaos {
                 CDataWrapper(const char* serializationBuffer);
                 ~CDataWrapper();
                 
-                static std::auto_ptr<CDataWrapper> instanceFromJson(const std::string& json_serialization);
+                static std::unique_ptr<CDataWrapper> instanceFromJson(const std::string& json_serialization);
                 
                 CDataWrapper *clone();
                 //add a csdata value
@@ -246,7 +246,7 @@ namespace chaos {
                 //return the binary data value
                 const char* getBinaryValue(const std::string&, int&);
                 
-                std::auto_ptr<CDataBuffer> getBinaryValueAsCDataBuffer(const std::string &key);
+                std::unique_ptr<CDataBuffer> getBinaryValueAsCDataBuffer(const std::string &key);
                 
                 //return the bson data
                 SerializationBuffer* getBSONData();

@@ -56,7 +56,7 @@ void LoadInstanceOnUnitServer::setHandler(CDataWrapper *data) {
     CHAOS_LASSERT_EXCEPTION(data->isVectorValue(ExecutionUnitNodeDefinitionKey::EXECUTION_POOL_LIST), ERR, -5, "ep_pool_list key need to be a vector with the execution pool list");
     
     unit_server = data->getStringValue(chaos::NodeDefinitionKey::NODE_PARENT);
-    std::auto_ptr<CMultiTypeDataArrayWrapper> array(data->getVectorValue(ExecutionUnitNodeDefinitionKey::EXECUTION_POOL_LIST));
+    std::unique_ptr<CMultiTypeDataArrayWrapper> array(data->getVectorValue(ExecutionUnitNodeDefinitionKey::EXECUTION_POOL_LIST));
     for(int idx = 0;
         idx < array->size();
         idx++) {
@@ -64,7 +64,7 @@ void LoadInstanceOnUnitServer::setHandler(CDataWrapper *data) {
     }
     
     err = getDataAccess<mds_data_access::UnitServerDataAccess>()->getDescription(unit_server, &tmp_ptr);
-    std::auto_ptr<CDataWrapper> unit_server_description(tmp_ptr);
+    std::unique_ptr<CDataWrapper> unit_server_description(tmp_ptr);
     if(err){
         LOG_AND_TROW(ERR, err, "Error fetching unit server description");
     }

@@ -66,7 +66,7 @@ namespace chaos {
                                            const uint64_t end_ts,
                                            const uint64_t last_sequence_id,
                                            const uint32_t page_length = 30);
-                    static std::auto_ptr<SearchLogEntryHelper> getHelper(chaos::common::data::CDataWrapper *api_result);
+                    static std::unique_ptr<SearchLogEntryHelper> getHelper(chaos::common::data::CDataWrapper *api_result);
                 };
             }
         }

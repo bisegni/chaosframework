@@ -57,7 +57,7 @@ chaos::common::data::CDataWrapper *SetInstanceDescription::execute(chaos::common
         LOG_AND_TROW(CUCUI_ERR, err, "Error checking node presence")
     }
     if (!presence) {
-        auto_ptr<CDataWrapper> node_min_dec(new CDataWrapper());
+        unique_ptr<CDataWrapper> node_min_dec(new CDataWrapper());
         node_min_dec->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID));
         node_min_dec->addStringValue(NodeDefinitionKey::NODE_TYPE, api_data->getStringValue(NodeDefinitionKey::NODE_TYPE));
             //need to be create a new empty node
@@ -68,7 +68,7 @@ chaos::common::data::CDataWrapper *SetInstanceDescription::execute(chaos::common
 
         //set the instance whiting the control unit node
         //create the subobject for the instance that need to be insert within the global node
-    auto_ptr<CDataWrapper> instance_desc(api_data->getCSDataValue("instance_description"));
+    unique_ptr<CDataWrapper> instance_desc(api_data->getCSDataValue("instance_description"));
         //insert the instance
     if(!instance_desc->hasKey(chaos::NodeDefinitionKey::NODE_PARENT)) {
         LOG_AND_TROW(CUCUI_ERR, -5, "The instance description need to have the unique id of the parent unit server.")

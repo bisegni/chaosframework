@@ -53,8 +53,8 @@ CDataWrapper *CopyInstance::execute(CDataWrapper *api_data,
     std::vector<std::string> keys;
     CDataWrapper *tmp_ptr = NULL;
     
-    std::auto_ptr<CDataWrapper> source_instance;
-    std::auto_ptr<CDataWrapper> destination_instance(new CDataWrapper());
+    std::unique_ptr<CDataWrapper> source_instance;
+    std::unique_ptr<CDataWrapper> destination_instance(new CDataWrapper());
     
     const std::string cu_src = api_data->getStringValue("ndk_uid_cu_src");
     const std::string us_src = api_data->getStringValue("ndk_uid_us_src");
@@ -117,7 +117,7 @@ CDataWrapper *CopyInstance::execute(CDataWrapper *api_data,
     }
     if (!presence) {
         //add new control unit node
-        auto_ptr<CDataWrapper> node_min_dec(new CDataWrapper());
+        unique_ptr<CDataWrapper> node_min_dec(new CDataWrapper());
         node_min_dec->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_dst);
         node_min_dec->addStringValue(NodeDefinitionKey::NODE_TYPE, NodeType::NODE_TYPE_CONTROL_UNIT);
         //need to be create a new empty node

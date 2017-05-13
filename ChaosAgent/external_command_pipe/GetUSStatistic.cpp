@@ -49,7 +49,7 @@ int GetUSStatistic::execute(ChaosStringVector input_parameter) {
     }
     
     AgentInstanceSDWrapper agent_instance_sd_wrapper;
-    std::auto_ptr<CDataWrapper> api_data(new CDataWrapper());
+    std::unique_ptr<CDataWrapper> api_data(new CDataWrapper());
     
     const std::string& agent_uid = ChaosAgent::getInstance()->settings.agent_uid;
     
@@ -57,7 +57,7 @@ int GetUSStatistic::execute(ChaosStringVector input_parameter) {
     api_data->addBoolValue("load_related_data", true);
     
     
-    std::auto_ptr<MultiAddressMessageRequestFuture> request = mds_message_channel.sendRequestWithFuture(AgentNodeDomainAndActionRPC::ProcessWorker::RPC_DOMAIN,
+    std::unique_ptr<MultiAddressMessageRequestFuture> request = mds_message_channel.sendRequestWithFuture(AgentNodeDomainAndActionRPC::ProcessWorker::RPC_DOMAIN,
                                                                                                         "loadAgentDescription",
                                                                                                         api_data.release(),
                                                                                                         5000);

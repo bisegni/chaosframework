@@ -50,7 +50,7 @@ namespace chaos {
                     unsigned int current_fetched;
                     ResultPageDecodedPacket decoded_page;
                     uint64_t last_received_sequence;
-                  //  std::auto_ptr<chaos::common::direct_io::channel::opcode_headers::DirectIODeviceChannelOpcodeQueryDataCloudResult>query_result;
+                  //  std::unique_ptr<chaos::common::direct_io::channel::opcode_headers::DirectIODeviceChannelOpcodeQueryDataCloudResult>query_result;
                     chaos::common::direct_io::channel::opcode_headers::DirectIODeviceChannelOpcodeQueryDataCloudResultPtr query_result;
                     ResultPage();
                     ~ResultPage();

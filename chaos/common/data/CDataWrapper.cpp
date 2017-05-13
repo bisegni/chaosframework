@@ -87,8 +87,8 @@ bsonBuilder(new BSONObjBuilder()){
 
 CDataWrapper::~CDataWrapper() {}
 
-std::auto_ptr<CDataWrapper> CDataWrapper::instanceFromJson(const std::string& json_serialization) {
-    std::auto_ptr<CDataWrapper> new_wrapper(new CDataWrapper());
+std::unique_ptr<CDataWrapper> CDataWrapper::instanceFromJson(const std::string& json_serialization) {
+    std::unique_ptr<CDataWrapper> new_wrapper(new CDataWrapper());
     try{
         fromjson(json_serialization, new_wrapper->bsonBuilder.get());
     }catch(...){}
@@ -306,10 +306,10 @@ const char* CDataWrapper::getBinaryValue(const std::string& key, int& bufLen)  {
     return bsonBuilder->asTempObj().getField(key).binData(bufLen);
 }
 
-auto_ptr<CDataBuffer> CDataWrapper::getBinaryValueAsCDataBuffer(const std::string &key) {
+unique_ptr<CDataBuffer> CDataWrapper::getBinaryValueAsCDataBuffer(const std::string &key) {
     int bufLen = 0;
     const char* buffer = bsonBuilder->asTempObj().getField(key).binData(bufLen);
-    return auto_ptr<CDataBuffer>(new CDataBuffer(buffer, bufLen, true));
+    return unique_ptr<CDataBuffer>(new CDataBuffer(buffer, bufLen, true));
 }
 
 //check if the key is present in data wrapper

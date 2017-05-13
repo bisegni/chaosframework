@@ -203,11 +203,11 @@ void StateFlagCatalog::getFlagsForSeverity(StateFlagServerity severity,
 }
 
 #pragma mark Serialization Method
-std::auto_ptr<chaos::common::data::CDataBuffer> StateFlagCatalog::getRawFlagsLevel() {
+std::unique_ptr<chaos::common::data::CDataBuffer> StateFlagCatalog::getRawFlagsLevel() {
     //read lock on owned catalog
     LockableObjectReadLock_t rl;
     catalog_container.getReadLock(rl);
-    std::auto_ptr<CDataBuffer> result;
+    std::unique_ptr<CDataBuffer> result;
     char * raw_description = (char*)malloc(catalog_container().size());
     if(raw_description) {
         //retrieve the ordered index
@@ -224,7 +224,7 @@ std::auto_ptr<chaos::common::data::CDataBuffer> StateFlagCatalog::getRawFlagsLev
     return result;
 }
 
-void StateFlagCatalog::setApplyRawFlagsValue(std::auto_ptr<chaos::common::data::CDataBuffer>& raw_level) {
+void StateFlagCatalog::setApplyRawFlagsValue(std::unique_ptr<chaos::common::data::CDataBuffer>& raw_level) {
     if(raw_level.get() == NULL) return;
     const char * buffer = raw_level->getBuffer();
     uint32_t buffer_size = raw_level->getBufferSize();

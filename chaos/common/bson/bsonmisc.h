@@ -237,7 +237,7 @@ namespace bson {
 
         bool haveSubobj() const { return _subobj.get() != 0; }
         BSONObjBuilder *subobj();
-        std::auto_ptr< BSONObjBuilder > _subobj;
+        std::unique_ptr< BSONObjBuilder > _subobj;
     };
 
     /**

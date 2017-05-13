@@ -63,7 +63,7 @@ chaos::common::data::CDataWrapper *GetLogForSourceUID::execute(CDataWrapper *api
         if(api_data->isStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN)) {
             domain_to_include.push_back(api_data->getStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN));
         } else if(api_data->isVectorValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN)) {
-            std::auto_ptr<CMultiTypeDataArrayWrapper> domain_vec(api_data->getVectorValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN));
+            std::unique_ptr<CMultiTypeDataArrayWrapper> domain_vec(api_data->getVectorValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN));
             for(int idx = 0;
                 idx < domain_vec->size();
                 idx++){
@@ -86,7 +86,7 @@ chaos::common::data::CDataWrapper *GetLogForSourceUID::execute(CDataWrapper *api
         LOG_AND_TROW_FORMATTED(L_GLFNI_ERR, err, "Error searching for source %1%", %source);
     }
     if(entry_list.size()) {
-        std::auto_ptr<CDataWrapper> tmp_result(new CDataWrapper());
+        std::unique_ptr<CDataWrapper> tmp_result(new CDataWrapper());
         for(LogEntryListIterator it = entry_list.begin();
             it != entry_list.end();
             it++){

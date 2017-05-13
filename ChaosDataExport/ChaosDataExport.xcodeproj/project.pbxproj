@@ -25,7 +25,7 @@
 /* Begin PBXFileReference section */
 		328B4E7F19C9AE35008D1331 /* ChaosDataExport */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ChaosDataExport; sourceTree = BUILT_PRODUCTS_DIR; };
 		328B4E8C19C9AEF9008D1331 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		328B4E8D19C9AEF9008D1331 /* cde.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cde.cpp; sourceTree = SOURCE_ROOT; };
+		328B4E8D19C9AEF9008D1331 /* cde.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = cde.cpp; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */

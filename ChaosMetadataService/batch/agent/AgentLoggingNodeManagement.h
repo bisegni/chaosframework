@@ -34,8 +34,8 @@ namespace chaos {
                 public metadata_service::batch::MDSBatchCommand {
                     DECLARE_MDS_COMMAND_ALIAS
                     std::string managed_node;
-                    std::auto_ptr<RequestInfo> request;
-                    std::auto_ptr<chaos::common::data::CDataWrapper> message_data;
+                    std::unique_ptr<RequestInfo> request;
+                    std::unique_ptr<chaos::common::data::CDataWrapper> message_data;
 
                 public:
                     AgentLoggingNodeManagement();

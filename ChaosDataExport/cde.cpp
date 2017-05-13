@@ -297,7 +297,7 @@ int main(int argc, char* argv[]) {
                 boost::shared_ptr<CDataWrapper> q_result(query_cursor->next());
                 if(q_result.get()) {
                     retry = 0;
-                    auto_ptr<chaos::common::data::SerializationBuffer> ser;
+                    unique_ptr<chaos::common::data::SerializationBuffer> ser;
                     //get serialization buffer by type
                     switch (dest_type) {
                             //BSON

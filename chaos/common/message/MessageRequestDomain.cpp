@@ -106,7 +106,7 @@ CDataWrapper *MessageRequestDomain::response(CDataWrapper *response_data, bool& 
     return NULL;
 }
 
-std::auto_ptr<MessageRequestFuture> MessageRequestDomain::getNewRequestMessageFuture(CDataWrapper& new_request_datapack,
+std::unique_ptr<MessageRequestFuture> MessageRequestDomain::getNewRequestMessageFuture(CDataWrapper& new_request_datapack,
                                                                                      uint32_t& new_request_id,
                                                                                      PromisesHandlerWeakPtr promises_handler_weak) {
     //lock the map
@@ -126,7 +126,7 @@ std::auto_ptr<MessageRequestFuture> MessageRequestDomain::getNewRequestMessageFu
     
     DEBUG_CODE(MRDDBG_ << "New MessageRequestFuture create with id " << new_request_id << " on answer domain " << domain_id;);
     //return future
-    return std::auto_ptr<MessageRequestFuture>(new  MessageRequestFuture(new_request_id,
+    return std::unique_ptr<MessageRequestFuture>(new  MessageRequestFuture(new_request_id,
                                                                          boost::shared_future< FuturePromiseData >(promise->get_future())));
 }
 

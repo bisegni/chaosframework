@@ -53,12 +53,12 @@ CDataWrapper *CommandTemplateSet::execute(CDataWrapper *api_data,
     GET_DATA_ACCESS(NodeDataAccess, n_da, -3)
     GET_DATA_ACCESS(UtilityDataAccess, u_da, -4)
     
-    std::auto_ptr<CMultiTypeDataArrayWrapper> tempalte_list(api_data->getVectorValue("template_list"));
+    std::unique_ptr<CMultiTypeDataArrayWrapper> tempalte_list(api_data->getVectorValue("template_list"));
     for(int idx = 0;
         idx < tempalte_list->size();
         idx++) {
         
-        std::auto_ptr<CDataWrapper> template_element(tempalte_list->getCDataWrapperElementAtIndex(idx));
+        std::unique_ptr<CDataWrapper> template_element(tempalte_list->getCDataWrapperElementAtIndex(idx));
         
         if(!template_element->hasKey("template_name")||
            !template_element->hasKey(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID)) {

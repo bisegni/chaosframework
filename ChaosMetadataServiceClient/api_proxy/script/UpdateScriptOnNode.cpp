@@ -33,7 +33,7 @@ API_PROXY_CD_DEFINITION(UpdateScriptOnNode, "script", "updateScriptOnNode")
 ApiProxyResult UpdateScriptOnNode::execute(const std::string& target_node,
                                            const ScriptBaseDescription& sbd) {
     ScriptBaseDescriptionSDWrapper swd(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(ScriptBaseDescription, const_cast<ScriptBaseDescription&>(sbd)));
-    std::auto_ptr<CDataWrapper> api_data(new CDataWrapper());
+    std::unique_ptr<CDataWrapper> api_data(new CDataWrapper());
     api_data->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, target_node);
     api_data->appendAllElement(*swd.serialize());
     return callApi(api_data.release());
@@ -41,7 +41,7 @@ ApiProxyResult UpdateScriptOnNode::execute(const std::string& target_node,
 
 ApiProxyResult UpdateScriptOnNode::execute(const ChaosStringVector& instance_names,
                                            const ScriptBaseDescription& sbd) {
-    std::auto_ptr<CDataWrapper> api_data(new CDataWrapper());
+    std::unique_ptr<CDataWrapper> api_data(new CDataWrapper());
     ScriptBaseDescriptionSDWrapper swd(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(ScriptBaseDescription, const_cast<ScriptBaseDescription&>(sbd)));
     for(ChaosStringVectorConstIterator it = instance_names.begin(),
         end = instance_names.end();

@@ -37,7 +37,7 @@ namespace chaos {
                     
                     CNetworkAddress * control_unit_address;
                     chaos::common::data::CDataWrapper *message;
-                    std::auto_ptr<RequestInfo> request;
+                    std::unique_ptr<RequestInfo> request;
                     
                     std::string cu_id;
                 public:

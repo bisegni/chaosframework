@@ -142,7 +142,7 @@ namespace chaos {
                 boost::mutex                                        mutex_publishing;
                 
                 //! drive rfor publishing the data
-                std::auto_ptr<chaos::common::io::IODataDriver>      io_data_driver;
+                std::unique_ptr<chaos::common::io::IODataDriver>      io_data_driver;
                 
                 //! private non locked push method for a healt set
                 inline void _publish(const boost::shared_ptr<NodeHealtSet>& heath_set,

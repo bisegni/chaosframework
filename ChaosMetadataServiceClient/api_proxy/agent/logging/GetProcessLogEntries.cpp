@@ -36,7 +36,7 @@ ApiProxyResult GetProcessLogEntries::execute(const std::string& node_uid,
                                              const int32_t number_of_entries,
                                              const bool asc,
                                              const uint64_t start_seq) {
-    std::auto_ptr<CDataWrapper> api_data(new CDataWrapper());
+    std::unique_ptr<CDataWrapper> api_data(new CDataWrapper());
     api_data->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_uid);
     api_data->addInt32Value("number_of_entries", number_of_entries);
     api_data->addBoolValue("asc_ordered", asc);

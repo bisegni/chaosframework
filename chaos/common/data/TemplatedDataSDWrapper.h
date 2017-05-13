@@ -99,14 +99,14 @@ namespace chaos {
             template<typename T>
             class TemplatedDataSDWrapper {
                 //pointer todata wrapper
-                std::auto_ptr< DataWrapperReference<T> > wrapper;
+                std::shared_ptr< DataWrapperReference<T> > wrapper;
             public:
                 //!constructor with the default container
-                TemplatedDataSDWrapper(std::auto_ptr< DataWrapperReference<T> > _wrapper):
+                TemplatedDataSDWrapper(std::shared_ptr< DataWrapperReference<T> >& _wrapper):
                 wrapper(_wrapper){}
                 
                 TemplatedDataSDWrapper(const T& copy_src,
-                                       std::auto_ptr< DataWrapperReference<T> > _wrapper):
+                                       std::shared_ptr< DataWrapperReference<T> >& _wrapper):
                 wrapper(_wrapper){
                     (*wrapper)() = copy_src;
                 }
@@ -118,7 +118,7 @@ namespace chaos {
                 virtual void deserialize(chaos::common::data::CDataWrapper *serialized_data) = 0;
                 
                 //!serialize the container
-                virtual std::auto_ptr<chaos::common::data::CDataWrapper> serialize() = 0;
+                virtual std::unique_ptr<chaos::common::data::CDataWrapper> serialize() = 0;
                 
                 //!return the container
                 T& dataWrapped(){
@@ -147,14 +147,14 @@ namespace chaos {
             
 
 #define CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(x, default_param)\
-std::auto_ptr< chaos::common::data::DataWrapperReference<x> >(new chaos::common::data::DataWrapperReference<x>(default_param))
+std::shared_ptr< chaos::common::data::DataWrapperReference<x> >(new chaos::common::data::DataWrapperReference<x>(default_param))
             
 #define CHAOS_SD_WRAPPER_NAME(x)  x ## SDWrapper
             
 #define CHAOS_SD_WRAPPER_NAME_VAR(x, v)  CHAOS_SD_WRAPPER_NAME(x) v
             
 #define CHAOS_SD_WRAPPER_DEFAULT_PARAMETER(x)\
-std::auto_ptr< chaos::common::data::DataWrapperReference<x> > _data = std::auto_ptr< chaos::common::data::DataWrapperReference<x> >(new chaos::common::data::DataWrapperCopy<x>())
+std::shared_ptr< chaos::common::data::DataWrapperReference<x> > _data = std::shared_ptr< chaos::common::data::DataWrapperReference<x> >(new chaos::common::data::DataWrapperCopy<x>())
             
 #define CHAOS_SD_WRAPPER_DEFAULT_CONSTRUCTOR(x)\
 CHAOS_SD_WRAPPER_NAME(x)(CHAOS_SD_WRAPPER_DEFAULT_PARAMETER(x))
@@ -259,20 +259,20 @@ Subclass(copy_source, _data){}
                     }
                     
                     //we can deserialize data
-                    std::auto_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> serialized_array(serialized_data->getVectorValue(instance_serialization_key));
+                    std::unique_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> serialized_array(serialized_data->getVectorValue(instance_serialization_key));
                     for(int idx = 0;
                         idx < serialized_array->size();
                         idx++) {
-                        std::auto_ptr<chaos::common::data::CDataWrapper> element(serialized_array->getCDataWrapperElementAtIndex(idx));
+                        std::unique_ptr<chaos::common::data::CDataWrapper> element(serialized_array->getCDataWrapperElementAtIndex(idx));
                         serializer_wrap.deserialize(element.get());
                         add(serializer_wrap.dataWrapped());
                     }
                 }
                 
                 //!serialize the list
-                std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
+                std::unique_ptr<chaos::common::data::CDataWrapper> serialize() {
                     DW serializer_wrap;
-                    std::auto_ptr<chaos::common::data::CDataWrapper> result(new chaos::common::data::CDataWrapper());
+                    std::unique_ptr<chaos::common::data::CDataWrapper> result(new chaos::common::data::CDataWrapper());
                     for(WrapListIterator it = TemplatedDataListWrapper<T,DW>::begin(),
                         end = TemplatedDataListWrapper<T,DW>::end();
                         it != end;

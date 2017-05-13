@@ -296,7 +296,7 @@ namespace chaos {
                                    uint64_t scheduler_step_delay = 1000000)  throw (CException);
                 
                 //! return the state of a command
-                std::auto_ptr<CommandState> getStateForCommandID(uint64_t command_id);
+                std::unique_ptr<CommandState> getStateForCommandID(uint64_t command_id);
                 
                 //! Add a number of sandobx to this instance of executor
                 void addSandboxInstance(unsigned int _sandbox_number);

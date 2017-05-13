@@ -215,7 +215,7 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
             for(chaos::cu::control_manager::ACUStartupCommandListIterator it = work_unit_instance->list_startup_command.begin();
                 it != work_unit_instance->list_startup_command.end();
                 it++) {
-                std::auto_ptr<CDataWrapper> rpc_message(new CDataWrapper);
+                std::unique_ptr<CDataWrapper> rpc_message(new CDataWrapper);
                 all_cmd_key.clear();
                 (*it)->getAllKey(all_cmd_key);
 
@@ -231,7 +231,7 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
                 rpc_message->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, work_unit_instance->getCUInstance());
 
                     //submit startup command
-                std::auto_ptr<CDataWrapper> submittion_result(NetworkBroker::getInstance()->submitInterProcessMessage(rpc_message.release()));
+                std::unique_ptr<CDataWrapper> submittion_result(NetworkBroker::getInstance()->submitInterProcessMessage(rpc_message.release()));
 
                 if(submittion_result->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE)) {
                         //error submitting startup command
@@ -334,7 +334,7 @@ int WorkUnitManagement::sendConfPackToMDS(CDataWrapper& dataToSend) {
         // dataToSend can't be sent because it is porperty of the CU
         //so we need to copy it
 
-    auto_ptr<SerializationBuffer> serBuf(dataToSend.getBSONData());
+    unique_ptr<SerializationBuffer> serBuf(dataToSend.getBSONData());
     CDataWrapper mdsPack(serBuf->getBufferPtr());
         //add action for metadata server
         //add local ip and port

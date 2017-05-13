@@ -54,7 +54,7 @@ namespace chaos{
                 const std::string remote_domain;
                 std::string remote_action;
                 RequestPhase   phase;
-                std::auto_ptr<chaos::common::message::MessageRequestFuture> request_future;
+                std::unique_ptr<chaos::common::message::MessageRequestFuture> request_future;
                 RequestInfo(const std::string& _remote_address,
                             const std::string& _remote_domain,
                             const std::string& _remote_action):
@@ -113,7 +113,7 @@ namespace chaos{
                 bool timeoutHandler();
                 
                 //! create a request to a remote rpc action
-                std::auto_ptr<RequestInfo> createRequest(const std::string& remote_address,
+                std::unique_ptr<RequestInfo> createRequest(const std::string& remote_address,
                                                          const std::string& remote_domain,
                                                          const std::string& remote_action) throw (chaos::CException);
                 

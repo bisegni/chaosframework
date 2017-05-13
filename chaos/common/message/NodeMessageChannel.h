@@ -43,7 +43,7 @@ namespace chaos {
 
 			protected:
 				//! node address for metadata server
-				auto_ptr<chaos::common::network::CNodeNetworkAddress> nodeAddress;
+				unique_ptr<chaos::common::network::CNodeNetworkAddress> nodeAddress;
 				
 			public:
 				//!Base constructor
@@ -93,7 +93,7 @@ namespace chaos {
                                                         int32_t millisec_to_wait=-1);
                 
                 //!send an rpc request to a remote node
-                std::auto_ptr<MessageRequestFuture> sendRequestWithFuture(const std::string& node_id,
+                std::unique_ptr<MessageRequestFuture> sendRequestWithFuture(const std::string& node_id,
                                                                           const std::string& action_name,
                                                                           chaos::common::data::CDataWrapper *request_pack);
                 
@@ -102,10 +102,10 @@ namespace chaos {
                  RPC information contains the alive state of the node within rpc dispacher on the backend size
                  and the size of the queued actions
                  */
-                std::auto_ptr<MessageRequestFuture> checkRPCInformation(const std::string& node_id);
+                std::unique_ptr<MessageRequestFuture> checkRPCInformation(const std::string& node_id);
                 
                 //!Send a request for an echo test
-                std::auto_ptr<MessageRequestFuture> echoTest(chaos::common::data::CDataWrapper *echo_data);
+                std::unique_ptr<MessageRequestFuture> echoTest(chaos::common::data::CDataWrapper *echo_data);
                 
                 //! return last sendxxx error code
                 int32_t getLastErrorCode();

@@ -40,8 +40,8 @@ namespace chaos {
                 public metadata_service::batch::MDSBatchCommand {
                     DECLARE_MDS_COMMAND_ALIAS
                     //request for the command submission
-                    std::auto_ptr<RequestInfo> restore_request;
-                    std::auto_ptr<CDataWrapper> restore_message;
+                    std::unique_ptr<RequestInfo> restore_request;
+                    std::unique_ptr<CDataWrapper> restore_message;
                     std::vector<std::string> list_node_in_snapshot;
                     
                     std::string snapshot_name;

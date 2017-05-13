@@ -34,12 +34,12 @@ API_PROXY_CD_DEFINITION(CommandTemplateSubmit,
  
  */
 ApiProxyResult CommandTemplateSubmit::execute(const TemplateSubmissionList& submission_task_list) {
-    std::auto_ptr<CDataWrapper> message(new CDataWrapper());
+    std::unique_ptr<CDataWrapper> message(new CDataWrapper());
     for(TemplateSubmissionListConstIterator it = submission_task_list.begin();
         it != submission_task_list.end();
         it++) {
         //compose submiossion task
-        std::auto_ptr<CDataWrapper> submission_task(new CDataWrapper);
+        std::unique_ptr<CDataWrapper> submission_task(new CDataWrapper);
         submission_task->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, (*it)->node_unique_id);
         submission_task->addStringValue("template_name", (*it)->template_name);
         submission_task->addStringValue(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID, (*it)->command_unique_id);

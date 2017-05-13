@@ -60,7 +60,7 @@ CDataWrapper *GetFullDescription::execute(CDataWrapper *api_data,
         if((err = cu_da->getFullDescription(cu_uid, &result))||(result==NULL)) {
                LOG_AND_TROW(CU_GCD_ERR, err, boost::str(boost::format("Error fetching the dataset for the node  unit uid:%1% with error %2%") % cu_uid % err));
         }
-        std::auto_ptr<CDataWrapper> dataset(result);
+        std::unique_ptr<CDataWrapper> dataset(result);
         return dataset.release();
 
      }
@@ -87,15 +87,15 @@ CDataWrapper *GetFullDescription::execute(CDataWrapper *api_data,
         LOG_AND_TROW(CU_GCD_ERR, -10001, boost::str(boost::format("Dataset not found for control unit '%1%'") % cu_uid));
     }
     //we have data set and now we need to update the input attribute
-    std::auto_ptr<CDataWrapper> dataset(result);
+    std::unique_ptr<CDataWrapper> dataset(result);
 
-    std::auto_ptr<CDataWrapper> init_datapack(new CDataWrapper());
-    std::auto_ptr<CDataWrapper> init_dataset(new CDataWrapper());
+    std::unique_ptr<CDataWrapper> init_datapack(new CDataWrapper());
+    std::unique_ptr<CDataWrapper> init_dataset(new CDataWrapper());
     
     init_datapack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_uid);
     
     if(dataset->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION) && dataset->isVector(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION)) {
-    std:auto_ptr<CMultiTypeDataArrayWrapper> dataset_element_vec(dataset->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
+    std:unique_ptr<CMultiTypeDataArrayWrapper> dataset_element_vec(dataset->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
         for(int idx = 0; idx <
             dataset_element_vec->size();
             idx++) {
@@ -153,7 +153,7 @@ CDataWrapper *GetFullDescription::execute(CDataWrapper *api_data,
             } else if(ds_description == NULL) {
                 CU_GCD_DBG << "No description foudn for data service:" << ds_unique_id;
             } else {
-                std::auto_ptr<CDataWrapper> ds_object(ds_description);
+                std::unique_ptr<CDataWrapper> ds_object(ds_description);
                 if(ds_object->hasKey(NodeDefinitionKey::NODE_DIRECT_IO_ADDR) &&
                    ds_object->hasKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT)) {
                     //we can create the address

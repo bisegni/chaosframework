@@ -38,7 +38,7 @@ SearchScript::~SearchScript() {}
 
 chaos::common::data::CDataWrapper *SearchScript::execute(CDataWrapper *api_data, bool& detach_data) {
     int err = 0;
-    std::auto_ptr<CDataWrapper> result;
+    std::unique_ptr<CDataWrapper> result;
     
     ScriptBaseDescriptionListWrapper found_page_element;
    

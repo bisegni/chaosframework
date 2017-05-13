@@ -34,11 +34,11 @@ API_PROXY_CD_DEFINITION(CommandTemplateSet,
  
  */
 ApiProxyResult CommandTemplateSet::execute(const TemplateList& template_configurations) {
-    std::auto_ptr<CDataWrapper> message(new CDataWrapper());
+    std::unique_ptr<CDataWrapper> message(new CDataWrapper());
     for(TemplateListConstIterator it = template_configurations.begin();
         it != template_configurations.end();
         it++) {
-        std::auto_ptr<CDataWrapper> template_element(new CDataWrapper());
+        std::unique_ptr<CDataWrapper> template_element(new CDataWrapper());
         template_element->addStringValue("template_name", (*it)->template_name);
         template_element->addStringValue(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID, (*it)->command_unique_id);
         //! scan all parameter configuration

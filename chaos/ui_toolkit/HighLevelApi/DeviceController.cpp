@@ -41,7 +41,7 @@ DeviceController::DeviceController(string& _deviceID):
 device_id(_deviceID),
 datasetDB(true) {
     
-    const auto_ptr<chaos::common::data::CDataWrapper> d;
+    const unique_ptr<chaos::common::data::CDataWrapper> d;
     mdsChannel = NULL;
     deviceChannel = NULL;
     ioLiveDataDriver = NULL;
@@ -117,7 +117,7 @@ void DeviceController::updateChannel() throw(CException) {
     err = mdsChannel->getLastDatasetForDevice(device_id, &tmp_data_handler, millisecToWait);
     if(err!=ErrorCode::EC_NO_ERROR || !tmp_data_handler) throw CException(-2, "No device dataset received", "DeviceController::updateChannel");
     
-    auto_ptr<CDataWrapper> lastDeviceDefinition(tmp_data_handler);
+    unique_ptr<CDataWrapper> lastDeviceDefinition(tmp_data_handler);
     
     datasetDB.addAttributeToDataSetFromDataWrapper(*lastDeviceDefinition.get());
     
@@ -130,7 +130,7 @@ void DeviceController::updateChannel() throw(CException) {
         if(ioLiveDataDriver) {
             ioLiveDataDriver->init(NULL);
             if(!mdsChannel->getDataDriverBestConfiguration(&tmp_data_handler, millisecToWait)){
-                auto_ptr<CDataWrapper> best_available_da_ptr(tmp_data_handler);
+                unique_ptr<CDataWrapper> best_available_da_ptr(tmp_data_handler);
                 ioLiveDataDriver->updateConfiguration(best_available_da_ptr.get());
             }
         }
@@ -601,7 +601,7 @@ void DeviceController::sendCustomMessage(const std::string& action,
 int DeviceController::checkRPCInformation(CDataWrapper **result_information,
                                           uint32_t timeout) {
     int err = -1;
-    std::auto_ptr<MessageRequestFuture> result = deviceChannel->checkRPCInformation();
+    std::unique_ptr<MessageRequestFuture> result = deviceChannel->checkRPCInformation();
     if(result.get() == NULL) return -1;
     if(result->wait(timeout)) {
         err = result->getError();
@@ -619,7 +619,7 @@ int DeviceController::echoTest(CDataWrapper * const echo_data,
                                CDataWrapper **echo_data_result,
                                uint32_t timeout) {
     int err = -1;
-    std::auto_ptr<MessageRequestFuture> result = deviceChannel->echoTest(echo_data);
+    std::unique_ptr<MessageRequestFuture> result = deviceChannel->echoTest(echo_data);
     if(result.get() == NULL) return err;
     if(result->wait(timeout)) {
         err = result->getError();
@@ -633,7 +633,7 @@ int DeviceController::echoTest(CDataWrapper * const echo_data,
 }
 
 //---------------------------------------------------------------------------------------------------
-std::auto_ptr<MessageRequestFuture> DeviceController::sendCustomRequestWithFuture(const std::string& action_name,
+std::unique_ptr<MessageRequestFuture> DeviceController::sendCustomRequestWithFuture(const std::string& action_name,
                                                                                   common::data::CDataWrapper *request_date) {
     return deviceChannel->sendCustomRequestWithFuture(action_name,
                                                       request_date);

@@ -139,7 +139,7 @@ int MongoDBUnitServerDataAccess::updateUS(chaos::common::data::CDataWrapper& uni
 
         //get the contained control unit type
         mongo::BSONArrayBuilder bab;
-        auto_ptr<CMultiTypeDataArrayWrapper> cu_type_array(unit_server_description.getVectorValue(UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS));
+        unique_ptr<CMultiTypeDataArrayWrapper> cu_type_array(unit_server_description.getVectorValue(UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS));
         for(int idx = 0;
             idx < cu_type_array->size();
             idx++) {

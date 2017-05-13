@@ -48,7 +48,7 @@ namespace chaos {
                                                                      std::vector<AttributeRequested> *attribute_requested_by_template) throw(chaos::CException);
                     
                     //! create an instance by submission, command and temaplte description
-                    static std::auto_ptr<chaos::common::data::CDataWrapper> createCommandInstanceByTemplateadnSubmissionDescription(const std::string& node_uid,
+                    static std::unique_ptr<chaos::common::data::CDataWrapper> createCommandInstanceByTemplateadnSubmissionDescription(const std::string& node_uid,
                                                                                                                                     chaos::common::data::CDataWrapper *command_submission,
                                                                                                                                     chaos::common::data::CDataWrapper *command_description,
                                                                                                                                     chaos::common::data::CDataWrapper *command_template_description) throw(chaos::CException);

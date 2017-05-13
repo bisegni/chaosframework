@@ -57,7 +57,7 @@ namespace chaos {
                 template<typename T>
                 boost::shared_ptr<T> getNewApiInstance() {
                     //allcoate the instsancer for the AbstractApi depending by the template
-                    std::auto_ptr<INSTANCER(T, AbstractApi)> i(ALLOCATE_INSTANCER(T, AbstractApi));
+                    std::unique_ptr<INSTANCER(T, AbstractApi)> i(ALLOCATE_INSTANCER(T, AbstractApi));
                     
                     //get api instance
                     boost::shared_ptr<T> instance((T*)i->getInstance());
@@ -82,7 +82,7 @@ namespace chaos {
 				template<typename T>
 				void addApi() {
 					//allcoate the instsancer for the AbstractApi depending by the template
-					std::auto_ptr<INSTANCER(T, AbstractApi)> i(ALLOCATE_INSTANCER(T, AbstractApi));
+					std::unique_ptr<INSTANCER(T, AbstractApi)> i(ALLOCATE_INSTANCER(T, AbstractApi));
 					
 					//get api instance
 					T *instance = (T*)i->getInstance();

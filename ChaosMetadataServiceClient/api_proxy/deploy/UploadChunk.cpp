@@ -33,6 +33,6 @@ API_PROXY_CD_DEFINITION(UploadChunk,
                         AgentNodeDomainAndActionRPC::DeployWorker::ACTION_UPLOAD_DEPLOY_CHUNK);
 
 ApiProxyResult UploadChunk::execute(const std::string& agent_uid) {
-    std::auto_ptr<CDataWrapper> pack(new CDataWrapper());
+    std::unique_ptr<CDataWrapper> pack(new CDataWrapper());
     return callApi(pack.release());
 }

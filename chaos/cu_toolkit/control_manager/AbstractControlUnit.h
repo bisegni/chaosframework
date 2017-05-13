@@ -216,7 +216,7 @@ namespace chaos{
                 handler::DatasetAttributeHandler dataset_attribute_manager;
                 
                 //! init configuration
-                std::auto_ptr<CDataWrapper> init_configuration;
+                std::unique_ptr<CDataWrapper> init_configuration;
                 void _initDrivers() throw(CException);
                 void _initChecklist();
                 
@@ -324,7 +324,7 @@ namespace chaos{
                 string control_unit_instance;
                 
                 //! Momentary driver for push data into the central memory
-                std::auto_ptr<data_manager::KeyDataStorage>  key_data_storage;
+                std::unique_ptr<data_manager::KeyDataStorage>  key_data_storage;
                 
                 //! fast cached attribute vector accessor
                 std::vector<AttributeValue*> cache_output_attribute_vector;

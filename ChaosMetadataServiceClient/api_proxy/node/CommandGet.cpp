@@ -34,7 +34,7 @@ API_PROXY_CD_DEFINITION(CommandGet,
  
  */
 ApiProxyResult CommandGet::execute(const std::string& command_unique_id) {
-    std::auto_ptr<CDataWrapper> message(new CDataWrapper());
+    std::unique_ptr<CDataWrapper> message(new CDataWrapper());
     message->addStringValue(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID, command_unique_id);
     //call api
     return callApi(message.release());

@@ -67,7 +67,7 @@ deviceChannel(NULL) {
                                         __PRETTY_FUNCTION__);
      CDataWrapper *tmp_data_handler = NULL;
      if(!mdsChannel->getDataDriverBestConfiguration(&tmp_data_handler, millisecToWait)){
-            auto_ptr<CDataWrapper> best_available_da_ptr(tmp_data_handler);
+            unique_ptr<CDataWrapper> best_available_da_ptr(tmp_data_handler);
             ioLiveDataDriver->updateConfiguration(best_available_da_ptr.get());
      }
 
@@ -146,7 +146,7 @@ void CUController::updateChannel() throw(CException) {
     err = mdsChannel->getLastDatasetForDevice(deviceChannel->getDeviceID(), &tmp_data_handler, millisecToWait);
     if(err!=ErrorCode::EC_NO_ERROR || !tmp_data_handler) return;
     
-    auto_ptr<CDataWrapper> lastDeviceDefinition(tmp_data_handler);
+    unique_ptr<CDataWrapper> lastDeviceDefinition(tmp_data_handler);
     
     datasetDB.addAttributeToDataSetFromDataWrapper(*lastDeviceDefinition.get());
 }
@@ -615,7 +615,7 @@ void CUController::sendCustomMessage(const std::string& action,
 int CUController::checkRPCInformation(CDataWrapper **result_information,
                                       uint32_t timeout) {
     int err = -1;
-    std::auto_ptr<MessageRequestFuture> result = deviceChannel->checkRPCInformation();
+    std::unique_ptr<MessageRequestFuture> result = deviceChannel->checkRPCInformation();
     if(result.get() == NULL) return -1;
     if(result->wait(timeout)) {
         err = result->getError();
@@ -633,7 +633,7 @@ int CUController::echoTest(CDataWrapper * const echo_data,
                            CDataWrapper **echo_data_result,
                            uint32_t timeout) {
     int err = -1;
-    std::auto_ptr<MessageRequestFuture> result = deviceChannel->echoTest(echo_data);
+    std::unique_ptr<MessageRequestFuture> result = deviceChannel->echoTest(echo_data);
     if(result.get() == NULL) return err;
     if(result->wait(timeout)) {
         err = result->getError();
@@ -647,7 +647,7 @@ int CUController::echoTest(CDataWrapper * const echo_data,
 }
 
 //---------------------------------------------------------------------------------------------------
-std::auto_ptr<MessageRequestFuture> CUController::sendCustomRequestWithFuture(const std::string& action_name,
+std::unique_ptr<MessageRequestFuture> CUController::sendCustomRequestWithFuture(const std::string& action_name,
                                                                               common::data::CDataWrapper *request_date) {
     return deviceChannel->sendCustomRequestWithFuture(action_name,
                                                       request_date);

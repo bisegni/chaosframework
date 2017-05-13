@@ -36,7 +36,7 @@ ApiProxyResult GetLogForSourceUID::execute(const std::string& source,
                                            const std::string& domain,
                                            const uint64_t last_sequence_id,
                                            const uint32_t page_length) {
-    std::auto_ptr<CDataWrapper> pack(new CDataWrapper());
+    std::unique_ptr<CDataWrapper> pack(new CDataWrapper());
     pack->addStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER, source);
     if(last_sequence_id) {pack->addInt64Value("seq", last_sequence_id);}
     if(domain.size()) {pack->addStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN, domain);}
@@ -48,7 +48,7 @@ ApiProxyResult GetLogForSourceUID::execute(const std::string& source,
                                            const LogDomainList& domain_list,
                                            const uint64_t last_sequence_id,
                                            const uint32_t page_length) {
-    std::auto_ptr<CDataWrapper> pack(new CDataWrapper());
+    std::unique_ptr<CDataWrapper> pack(new CDataWrapper());
     pack->addStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER, source);
     if(last_sequence_id ) {pack->addInt64Value("seq", last_sequence_id);}
     if(domain_list.size()) {
@@ -63,8 +63,8 @@ ApiProxyResult GetLogForSourceUID::execute(const std::string& source,
     return callApi(pack.release());
 }
 
-std::auto_ptr<GetLogForSourceUIDHelper> GetLogForSourceUID::getHelper(CDataWrapper *api_result) {
-    return std::auto_ptr<GetLogForSourceUIDHelper>(new GetLogForSourceUIDHelper(api_result));
+std::unique_ptr<GetLogForSourceUIDHelper> GetLogForSourceUID::getHelper(CDataWrapper *api_result) {
+    return std::unique_ptr<GetLogForSourceUIDHelper>(new GetLogForSourceUIDHelper(api_result));
 }
 
 GetLogForSourceUIDHelper::GetLogForSourceUIDHelper(CDataWrapper *api_result) {
@@ -73,11 +73,11 @@ GetLogForSourceUIDHelper::GetLogForSourceUIDHelper(CDataWrapper *api_result) {
     if(!api_result || !api_result->hasKey("result_list")) return;
     
     std::vector<std::string> contained_key;
-    std::auto_ptr<CMultiTypeDataArrayWrapper> vec(api_result->getVectorValue("result_list"));
+    std::unique_ptr<CMultiTypeDataArrayWrapper> vec(api_result->getVectorValue("result_list"));
     for(int idx = 0;
         idx < vec->size();
         idx++) {
-        std::auto_ptr<CDataWrapper> entry_dw(vec->getCDataWrapperElementAtIndex(idx));
+        std::unique_ptr<CDataWrapper> entry_dw(vec->getCDataWrapperElementAtIndex(idx));
         
         boost::shared_ptr<LogEntry> entry(new LogEntry());
         

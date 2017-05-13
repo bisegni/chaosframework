@@ -51,7 +51,7 @@ chaos::common::data::CDataWrapper *GetDomains::execute(chaos::common::data::CDat
     }
     
     //compose output
-    std::auto_ptr<CDataWrapper> result(new CDataWrapper());
+    std::unique_ptr<CDataWrapper> result(new CDataWrapper());
     if(domain_list.size()) {
         for(DomainListIterator it = domain_list.begin();
             it != domain_list.end();

@@ -41,7 +41,7 @@ chaos::common::data::CDataWrapper *RestoreSnapshot::execute(chaos::common::data:
     CHECK_CDW_THROW_AND_LOG(api_data, S_RS_ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(api_data, "snapshot_name", S_RS_ERR, -2, "The snapshot_name key is mandatory")
     
-    std::auto_ptr<CDataWrapper> data_pack(new CDataWrapper());
+    std::unique_ptr<CDataWrapper> data_pack(new CDataWrapper());
     api_data->copyKeyTo("snapshot_name", *data_pack);
     
     //launch initilization in background

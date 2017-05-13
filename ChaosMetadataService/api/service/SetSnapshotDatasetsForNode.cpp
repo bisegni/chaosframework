@@ -51,7 +51,7 @@ chaos::common::data::CDataWrapper *SetSnapshotDatasetsForNode::execute(chaos::co
     std::string working_job_unique_id;
     const std::string snapshot_name = api_data->getStringValue("snapshot_name");
     const std::string node_uid = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
-    std::auto_ptr<CMultiTypeDataArrayWrapper> dataset_vec_ptr(api_data->getVectorValue("dataset"));
+    std::unique_ptr<CMultiTypeDataArrayWrapper> dataset_vec_ptr(api_data->getVectorValue("dataset"));
     
     if(s_da->isSnapshotPresent(snapshot_name,
                                snap_presence)){
@@ -72,7 +72,7 @@ chaos::common::data::CDataWrapper *SetSnapshotDatasetsForNode::execute(chaos::co
         for(int idx = 0;
             idx < dataset_vec_ptr->size();
             idx++) {
-            std::auto_ptr<CDataWrapper> dataset_info_ptr(dataset_vec_ptr->getCDataWrapperElementAtIndex(idx));
+            std::unique_ptr<CDataWrapper> dataset_info_ptr(dataset_vec_ptr->getCDataWrapperElementAtIndex(idx));
             
             if(dataset_info_ptr->hasKey("dataset_key") == false ||
                dataset_info_ptr->hasKey("dataset_value") == false) {
@@ -81,7 +81,7 @@ chaos::common::data::CDataWrapper *SetSnapshotDatasetsForNode::execute(chaos::co
             }
             
             const std::string dataset_key = dataset_info_ptr->getStringValue("dataset_key");
-            const std::auto_ptr<CDataWrapper> dataset_value(dataset_info_ptr->getCSDataValue("dataset_value"));
+            const std::unique_ptr<CDataWrapper> dataset_value(dataset_info_ptr->getCSDataValue("dataset_value"));
             
             //call api for set the value
 

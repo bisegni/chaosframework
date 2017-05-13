@@ -555,7 +555,7 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
         CHECK_KEY_THROW_AND_LOG(message_data, UnitServerNodeDomainAndActionRPC::PARAM_CONTROL_UNIT_STARTUP_COMMAND, LCMERR_, -8, "The startup command key need to be a vector of CDataWrapper");
         
         //get the vector value
-        std::auto_ptr<CMultiTypeDataArrayWrapper> vector_values(message_data->getVectorValue(UnitServerNodeDomainAndActionRPC::PARAM_CONTROL_UNIT_STARTUP_COMMAND));
+        std::unique_ptr<CMultiTypeDataArrayWrapper> vector_values(message_data->getVectorValue(UnitServerNodeDomainAndActionRPC::PARAM_CONTROL_UNIT_STARTUP_COMMAND));
         for(int idx = 0;
             idx < vector_values->size();
             idx++) {
@@ -564,7 +564,7 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
         }
     }
     
-    //submit contorl unit releaseing the auto_ptr
+    //submit contorl unit releaseing the unique_ptr
     submitControlUnit(instance);
     return NULL;
 }

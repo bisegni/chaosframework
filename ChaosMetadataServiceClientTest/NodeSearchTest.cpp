@@ -61,14 +61,14 @@ void NodeSearchTest::testSearch(const std::string& search_string){
                     if(search_result->getResult()->hasKey("node_search_result_page")&&
                        search_result->getResult()->isVectorValue("node_search_result_page")){
                         //we have result
-                        std::auto_ptr<CMultiTypeDataArrayWrapper> node_found_vec(search_result->getResult()->getVectorValue("node_search_result_page"));
+                        std::unique_ptr<CMultiTypeDataArrayWrapper> node_found_vec(search_result->getResult()->getVectorValue("node_search_result_page"));
                         if(node_found_vec->size() == 0) {
                             end=true;
                         } else{
                             for (int idx = 0;
                                  idx < node_found_vec->size();
                                  idx++){
-                                std::auto_ptr<CDataWrapper> node_found(node_found_vec->getCDataWrapperElementAtIndex(idx));
+                                std::unique_ptr<CDataWrapper> node_found(node_found_vec->getCDataWrapperElementAtIndex(idx));
                                 
                                 //print the node uid
                                 std::cout << node_found->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID) << std::endl;

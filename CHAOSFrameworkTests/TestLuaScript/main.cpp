@@ -18,7 +18,7 @@ using namespace chaos::common::data;
 using namespace chaos::common::script;
 using namespace chaos::common::utility;
 
-std::auto_ptr<ScriptManager> script_manager;
+std::unique_ptr<ScriptManager> script_manager;
 
 int main(int argc, const char * argv[]) {
     script_manager.reset(new ScriptManager("Lua"));

@@ -72,11 +72,11 @@ void SharedActionScheduler::synchronousCall(chaos_data::CDataWrapper *message,
                                             chaos_data::CDataWrapper *result) {
     MapDomainActionsLockedReadLock wr = map_domain_actions.getReadLockObject();
     bool message_has_been_detached = false;
-    auto_ptr<CDataWrapper>  action_message(message);
+    unique_ptr<CDataWrapper>  action_message(message);
     
     const std::string domain_name = message->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN);
     const std::string action_name = message->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME);
-    std::auto_ptr<CDataWrapper> message_data(message->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
+    std::unique_ptr<CDataWrapper> message_data(message->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
     
     boost::shared_ptr<DomainActions> domain_action = map_domain_actions()[domain_name];
     if(domain_action.get() == NULL ||
@@ -104,7 +104,7 @@ void SharedActionScheduler::synchronousCall(chaos_data::CDataWrapper *message,
     } else {
         //call and return
         try {
-            auto_ptr<CDataWrapper> action_result(action_desc_ptr->call(message_data.get(), message_has_been_detached));
+            unique_ptr<CDataWrapper> action_result(action_desc_ptr->call(message_data.get(), message_has_been_detached));
             if(action_result.get() &&
                action_message->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_DOMAIN) &&
                action_message->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_ACTION)) {
@@ -143,9 +143,9 @@ void SharedActionScheduler::processBufferElement(CDataWrapper *actionDescription
     //the domain is securely the same is is mandatory for submition so i need to get the name of the action
     CDataWrapper            *responsePack = NULL;
     CDataWrapper            *subCommand = NULL;
-    auto_ptr<CDataWrapper>  actionMessage;
-    auto_ptr<CDataWrapper>  remoteActionResult;
-    auto_ptr<CDataWrapper>  actionResult;
+    unique_ptr<CDataWrapper>  actionMessage;
+    unique_ptr<CDataWrapper>  remoteActionResult;
+    unique_ptr<CDataWrapper>  actionResult;
     //keep track for the retain of the message of the aciton description
     ElementManagingPolicy               action_elementPolicy = {false};
     bool    needAnswer = false;
@@ -221,7 +221,7 @@ void SharedActionScheduler::processBufferElement(CDataWrapper *actionDescription
             //check if we need to submit a sub command
             if( subCommand ) {
                 //we can submit sub command
-                auto_ptr<CDataWrapper> dispatchSubCommandResult(dispatcher->dispatchCommand(subCommand));
+                unique_ptr<CDataWrapper> dispatchSubCommandResult(dispatcher->dispatchCommand(subCommand));
             }
             
             if(needAnswer){

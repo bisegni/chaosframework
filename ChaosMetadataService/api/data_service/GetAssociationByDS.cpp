@@ -46,7 +46,7 @@ chaos::common::data::CDataWrapper *GetAssociationByDS::execute(chaos::common::da
                             DS_GET_ASSOC_ERR, -2, "The ndk_unique_id key is mandatory")
 
     int err = 0;
-    auto_ptr<CDataWrapper> result;
+    unique_ptr<CDataWrapper> result;
     std::vector<boost::shared_ptr<CDataWrapper> > node_associated;
 
     GET_DATA_ACCESS(DataServiceDataAccess, ds_da, -3)

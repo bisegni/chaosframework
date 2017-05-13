@@ -76,7 +76,7 @@ namespace chaos {
             //!Dataset database
             chaos::common::data::DatasetDB datasetDB;
             //!point to the freashest live value for this device dataset
-            //auto_ptr<CDataWrapper> lastDeviceDefinition;
+            //unique_ptr<CDataWrapper> lastDeviceDefinition;
             
             //!point to the freashest live value for this device dataset
             std::vector< boost::shared_ptr<chaos::common::data::CDataWrapper> >current_dataset;
@@ -416,7 +416,7 @@ namespace chaos {
                                   common::data::CDataWrapper**const result);
             
             //! send custom request to device and return a future
-            std::auto_ptr<chaos::common::message::MessageRequestFuture>  sendCustomRequestWithFuture(const std::string& action_name,
+            std::unique_ptr<chaos::common::message::MessageRequestFuture>  sendCustomRequestWithFuture(const std::string& action_name,
                                                                                                      common::data::CDataWrapper *request_date);
             
             //! send custom message to device

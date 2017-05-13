@@ -58,7 +58,7 @@ CDataWrapper *SaveNodeAssociation::execute(CDataWrapper *api_data, bool& detach_
     
     if(api_data->isCDataWrapperValue(AgentNodeDefinitionKey::NODE_ASSOCIATED)) {
         AgentAssociationSDWrapper assoc_sd_wrapper;
-        std::auto_ptr<CDataWrapper> assoc_ser(api_data->getCSDataValue(AgentNodeDefinitionKey::NODE_ASSOCIATED));
+        std::unique_ptr<CDataWrapper> assoc_ser(api_data->getCSDataValue(AgentNodeDefinitionKey::NODE_ASSOCIATED));
         assoc_sd_wrapper.deserialize(assoc_ser.get());
         //check if associated node is assocaited no antother agent
         if((err = a_da->getAgentForNode(assoc_sd_wrapper().associated_node_uid, current_agent))) {

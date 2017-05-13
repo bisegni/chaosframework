@@ -92,7 +92,7 @@ void QuantumSlotScheduler::deinit() throw (chaos::CException) {
     
     while(queue_new_quantum_slot_consumer.size()){
         ci = queue_new_quantum_slot_consumer.front(); queue_new_quantum_slot_consumer.pop();
-        std::auto_ptr<SlotConsumerInfo> auto_ci(ci);
+        std::unique_ptr<SlotConsumerInfo> auto_ci(ci);
         try {
             if(ci->operation) {
                 //we need to add it
@@ -210,7 +210,7 @@ uint64_t QuantumSlotScheduler::_checkRemoveAndAddNewConsumer(uint64_t start_time
         new_consumer_info = queue_new_quantum_slot_consumer.front(); queue_new_quantum_slot_consumer.pop();
         has_worked = true;
         try {
-            std::auto_ptr<SlotConsumerInfo> auto_ci(new_consumer_info);
+            std::unique_ptr<SlotConsumerInfo> auto_ci(new_consumer_info);
             if(auto_ci->operation) {
                 //we need to add it
                 DEBUG_CODE(QSS_INFO << boost::str(boost::format("Asynchronously add key consumer [%1%-%2%-%3%]")%auto_ci->key_to_monitor%auto_ci->quantum_multiplier%auto_ci->consumer);)
@@ -361,7 +361,7 @@ bool QuantumSlotScheduler::removeKeyConsumer(const std::string& key_to_monitor,
     //decrement the index to indicate that it has been remove from public layer
     consumer->usage_counter--;
     
-    std::auto_ptr<SlotConsumerInfo> remove_command(new SlotConsumerInfo(false,
+    std::unique_ptr<SlotConsumerInfo> remove_command(new SlotConsumerInfo(false,
                                                                         key_to_monitor,
                                                                         quantum_multiplier,
                                                                         consumer,

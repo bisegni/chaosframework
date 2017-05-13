@@ -74,8 +74,8 @@ namespace chaos {
                     dataWrapped().language = CDW_GET_SRT_WITH_DEFAULT(serialized_data, chaos::ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LANGUAGE, "");
                 }
                 
-                std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
-                    std::auto_ptr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
+                std::unique_ptr<chaos::common::data::CDataWrapper> serialize() {
+                    std::unique_ptr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
                     data_serialized->addInt64Value("seq", dataWrapped().unique_id);
                     data_serialized->addStringValue(CHAOS_SBD_NAME, dataWrapped().name);
                     data_serialized->addStringValue(CHAOS_SBD_DESCRIPTION, dataWrapped().description);
@@ -160,7 +160,7 @@ namespace chaos {
                         //deserialize classificaion list
                         if(serialized_data->hasKey("classification_list")) {
                             //encode classification list into array
-                            std::auto_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> serialized_array(serialized_data->getVectorValue("classification_list"));
+                            std::unique_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> serialized_array(serialized_data->getVectorValue("classification_list"));
                             for(int idx = 0;
                                 idx < serialized_array->size();
                                 idx++) {
@@ -171,7 +171,7 @@ namespace chaos {
                         //deserialize pool list
                         if(serialized_data->hasKey("execution_pool_list")) {
                             //encode classification list into array
-                            std::auto_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> serialized_array(serialized_data->getVectorValue("execution_pool_list"));
+                            std::unique_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> serialized_array(serialized_data->getVectorValue("execution_pool_list"));
                             for(int idx = 0;
                                 idx < serialized_array->size();
                                 idx++) {
@@ -182,11 +182,11 @@ namespace chaos {
                         //deserialize variable
                         if(serialized_data->hasKey(variable_ser_key) &&
                            serialized_data->isVectorValue(variable_ser_key)) {
-                            std::auto_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> serialized_array(serialized_data->getVectorValue(variable_ser_key));
+                            std::unique_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> serialized_array(serialized_data->getVectorValue(variable_ser_key));
                             for(int idx = 0;
                                 idx < serialized_array->size();
                                 idx++) {
-                                std::auto_ptr<chaos::common::data::CDataWrapper> element(serialized_array->getCDataWrapperElementAtIndex(idx));
+                                std::unique_ptr<chaos::common::data::CDataWrapper> element(serialized_array->getCDataWrapperElementAtIndex(idx));
                                 algo_var_dw.deserialize(element.get());
                                 dataWrapped().variable_list.push_back(algo_var_dw.dataWrapped());
                             }
@@ -195,11 +195,11 @@ namespace chaos {
                         //deserialize dataset attribute
                         if(serialized_data->hasKey(ds_attr_ser_key) &&
                            serialized_data->isVectorValue(ds_attr_ser_key)) {
-                            std::auto_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> serialized_array(serialized_data->getVectorValue(ds_attr_ser_key));
+                            std::unique_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> serialized_array(serialized_data->getVectorValue(ds_attr_ser_key));
                             for(int idx = 0;
                                 idx < serialized_array->size();
                                 idx++) {
-                                std::auto_ptr<chaos::common::data::CDataWrapper> element(serialized_array->getCDataWrapperElementAtIndex(idx));
+                                std::unique_ptr<chaos::common::data::CDataWrapper> element(serialized_array->getCDataWrapperElementAtIndex(idx));
                                 ds_attr_dw.deserialize(element.get());
                                 dataWrapped().dataset_attribute_list.push_back(ds_attr_dw.dataWrapped());
                             }
@@ -207,14 +207,14 @@ namespace chaos {
                     }
                     
                     //serialization
-                    std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
+                    std::unique_ptr<chaos::common::data::CDataWrapper> serialize() {
                         ScriptBaseDescriptionSDWrapper  sd_dw;
                         chaos::service_common::data::dataset::AlgorithmVariableSDWrapper algo_var_dw;
                         chaos::common::data::structured::DatasetAttributeSDWrapper ds_attr_dw;
                         
                         sd_dw() = dataWrapped().script_description;
                         
-                        std::auto_ptr<chaos::common::data::CDataWrapper> data_serialized = sd_dw.serialize();
+                        std::unique_ptr<chaos::common::data::CDataWrapper> data_serialized = sd_dw.serialize();
                         
                         //add script content
                         data_serialized->addStringValue(chaos::ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_CONTENT, dataWrapped().script_content);
@@ -244,7 +244,7 @@ namespace chaos {
                         //check for variable
                         if(dataWrapped().variable_list.size()) {
                             //we have some variable defined
-                            std::auto_ptr<chaos::common::data::CDataWrapper> variable_definition(new chaos::common::data::CDataWrapper());
+                            std::unique_ptr<chaos::common::data::CDataWrapper> variable_definition(new chaos::common::data::CDataWrapper());
                             for(chaos::service_common::data::dataset::AlgorithmVariableListIterator it = dataWrapped().variable_list.begin(),
                                 end = dataWrapped().variable_list.end();
                                 it != end;
@@ -258,7 +258,7 @@ namespace chaos {
                         //check for dataset attribute
                         if(dataWrapped().dataset_attribute_list.size()) {
                             //we have some attribute for dataset
-                            std::auto_ptr<chaos::common::data::CDataWrapper> variable_definition(new chaos::common::data::CDataWrapper());
+                            std::unique_ptr<chaos::common::data::CDataWrapper> variable_definition(new chaos::common::data::CDataWrapper());
                             for(chaos::common::data::structured::DatasetAttributeListIterator it = dataWrapped().dataset_attribute_list.begin(),
                                 end = dataWrapped().dataset_attribute_list.end();
                                 it != end;

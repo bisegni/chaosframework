@@ -39,7 +39,7 @@ UpdateProperty::~UpdateProperty(){}
 CDataWrapper *UpdateProperty::execute(CDataWrapper *api_data,
                                       bool& detach_data) throw(chaos::CException) {
     uint64_t command_id;
-    std::auto_ptr<CDataWrapper> node_description;
+    std::unique_ptr<CDataWrapper> node_description;
     CHECK_CDW_THROW_AND_LOG(api_data, N_UP_ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(api_data, NodeDefinitionKey::NODE_UNIQUE_ID, N_UP_ERR, -2, "The node unique id is mandatory")
     CHECK_KEY_THROW_AND_LOG(api_data, "update_property", N_UP_ERR, -3, "Property update pack is mandatory is mandatory")
@@ -51,7 +51,7 @@ CDataWrapper *UpdateProperty::execute(CDataWrapper *api_data,
     const std::string node_unique_id = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
     
     //
-    std::auto_ptr<CDataWrapper> update_property_batch_pack(new CDataWrapper());
+    std::unique_ptr<CDataWrapper> update_property_batch_pack(new CDataWrapper());
     update_property_batch_pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_unique_id);
     api_data->copyKeyTo("update_property", *update_property_batch_pack);
     

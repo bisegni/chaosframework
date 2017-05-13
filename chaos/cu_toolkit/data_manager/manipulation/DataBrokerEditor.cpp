@@ -59,11 +59,11 @@ int DataBrokerEditor::addNewDataset(const std::string& name,
     return 0;
 }
 
-std::auto_ptr<DatasetEditor> DataBrokerEditor::getDatasetEditorFor(const std::string& ds_name) {
+std::unique_ptr<DatasetEditor> DataBrokerEditor::getDatasetEditorFor(const std::string& ds_name) {
     LockableObjectReadLock_t wl;
     container_dataset.getReadLock(wl);
     
-    std::auto_ptr<DatasetEditor> result;
+    std::unique_ptr<DatasetEditor> result;
     DECNameIndexIterator nit = ds_index_name.find(ds_name);
     if(nit == ds_index_name.end()) {
         ERR << CHAOS_FORMAT("No dataset with name %1% found", %ds_name);
@@ -73,10 +73,10 @@ std::auto_ptr<DatasetEditor> DataBrokerEditor::getDatasetEditorFor(const std::st
     return result;
 }
 
-std::auto_ptr<DatasetCacheWrapper> DataBrokerEditor::getDatasetCacheWrapperFor(const std::string& ds_name) {
+std::unique_ptr<DatasetCacheWrapper> DataBrokerEditor::getDatasetCacheWrapperFor(const std::string& ds_name) {
     LockableObjectReadLock_t wl;
     container_dataset.getReadLock(wl);
-    std::auto_ptr<DatasetCacheWrapper> result;
+    std::unique_ptr<DatasetCacheWrapper> result;
     DECNameIndexIterator nit = ds_index_name.find(ds_name);
     if(nit == ds_index_name.end()) {
         ERR << CHAOS_FORMAT("No dataset with name %1% found", %ds_name);
@@ -86,10 +86,10 @@ std::auto_ptr<DatasetCacheWrapper> DataBrokerEditor::getDatasetCacheWrapperFor(c
     return result;
 }
 
-std::auto_ptr<CDataWrapper> DataBrokerEditor::serialize() {
+std::unique_ptr<CDataWrapper> DataBrokerEditor::serialize() {
     LockableObjectReadLock_t wl;
     container_dataset.getReadLock(wl);
-    std::auto_ptr<CDataWrapper> result(new CDataWrapper());
+    std::unique_ptr<CDataWrapper> result(new CDataWrapper());
     //scan all dataset and every serialization will be added to global CDataWrapper as array
     Dataset ds_buff;
     DatasetSDWrapper reference_ser_wrap(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(Dataset, ds_buff));
@@ -113,14 +113,14 @@ void DataBrokerEditor::deserialize(CDataWrapper& serialization) {
        serialization.isVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION)) return;
     
     //get the datawrapper array
-    std::auto_ptr<CMultiTypeDataArrayWrapper> ser_ds_vec(serialization.getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION));
+    std::unique_ptr<CMultiTypeDataArrayWrapper> ser_ds_vec(serialization.getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION));
     if(ser_ds_vec->size() == 0) return;
     
     DatasetSDWrapper ds_wrapper;
     for(int idx = 0;
         idx < ser_ds_vec->size();
         idx++) {
-        std::auto_ptr<CDataWrapper> ds_ser(ser_ds_vec->getCDataWrapperElementAtIndex(idx));
+        std::unique_ptr<CDataWrapper> ds_ser(ser_ds_vec->getCDataWrapperElementAtIndex(idx));
         ds_wrapper.deserialize(ds_ser.get());
         addNewDataset(ds_wrapper.dataWrapped());
     }

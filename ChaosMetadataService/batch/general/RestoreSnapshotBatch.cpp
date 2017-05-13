@@ -85,7 +85,7 @@ void RestoreSnapshotBatch::ccHandler() {
                 break;
             }
             
-            std::auto_ptr<CDataWrapper> node_description(tmp_ptr);
+            std::unique_ptr<CDataWrapper> node_description(tmp_ptr);
             
             if( !node_description->hasKey(NodeDefinitionKey::NODE_RPC_ADDR) ||
                !node_description->hasKey(NodeDefinitionKey::NODE_RPC_DOMAIN)) {

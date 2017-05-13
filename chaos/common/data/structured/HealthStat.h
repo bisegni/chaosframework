@@ -66,8 +66,8 @@ namespace chaos {
                     Subclass::dataWrapped().health_status = CDW_GET_VALUE_WITH_DEFAULT(serialized_data, NodeHealtDefinitionKey::NODE_HEALT_STATUS, getStringValue, "");
                 }
                 
-                std::auto_ptr<CDataWrapper> serialize() {
-                    std::auto_ptr<CDataWrapper> result(new CDataWrapper());
+                std::unique_ptr<CDataWrapper> serialize() {
+                    std::unique_ptr<CDataWrapper> result(new CDataWrapper());
                     result->addStringValue(DataPackCommonKey::DPCK_DEVICE_ID, Subclass::dataWrapped().node_uid);
                     result->addStringValue(NodeHealtDefinitionKey::NODE_HEALT_STATUS, Subclass::dataWrapped().health_status);
                     result->addInt64Value(NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP, Subclass::dataWrapped().timestamp);

@@ -76,13 +76,13 @@ namespace chaos {
                     
                     
                     //!Return editor for the specified dataset
-                    std::auto_ptr<DatasetEditor> getDatasetEditorFor(const std::string& ds_name);
+                    std::unique_ptr<DatasetEditor> getDatasetEditorFor(const std::string& ds_name);
                     
                     //!Return wrapper for the specified dataset cache
-                    std::auto_ptr<DatasetCacheWrapper> getDatasetCacheWrapperFor(const std::string& ds_name);
+                    std::unique_ptr<DatasetCacheWrapper> getDatasetCacheWrapperFor(const std::string& ds_name);
                     
                     //! return a CDataWrapper pointr with the dataset serialization
-                    std::auto_ptr<chaos::common::data::CDataWrapper> serialize();
+                    std::unique_ptr<chaos::common::data::CDataWrapper> serialize();
                     
                     //! fille curren databrocker with serialization
                     void deserialize(chaos::common::data::CDataWrapper& serialization);

@@ -250,7 +250,7 @@ void SCAbstractControlUnit::submitBatchCommand(const std::string& batch_command_
                                          scheduler_step_delay);
 }
 
-std::auto_ptr<CommandState> SCAbstractControlUnit::getStateForCommandID(uint64_t command_id) {
+std::unique_ptr<CommandState> SCAbstractControlUnit::getStateForCommandID(uint64_t command_id) {
     return slow_command_executor->getStateForCommandID(command_id);
 }
 
@@ -259,7 +259,7 @@ std::auto_ptr<CommandState> SCAbstractControlUnit::getStateForCommandID(uint64_t
  */
 CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_attribute_values, bool& detachParam) throw (CException) {
     uint64_t command_id =0;
-    std::auto_ptr<CDataWrapper> result_for_command;
+    std::unique_ptr<CDataWrapper> result_for_command;
     
     //cal first the superclass method because the dataset_attribute_values is not detached
     CDataWrapper *result = AbstractControlUnit::setDatasetAttribute(dataset_attribute_values, detachParam);
@@ -292,7 +292,7 @@ CDataWrapper* SCAbstractControlUnit::updateConfiguration(CDataWrapper *update_pa
     if(update_pack==NULL)
         return NULL;
     CDataWrapper *result = AbstractControlUnit::updateConfiguration(update_pack, detach_param);
-    std::auto_ptr<CDataWrapper> cu_properties;
+    std::unique_ptr<CDataWrapper> cu_properties;
     CDataWrapper *cu_property_container = NULL;
     
     if(update_pack->hasKey(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)){
@@ -334,7 +334,7 @@ void SCAbstractControlUnit::installCommand(boost::shared_ptr<BatchCommandDescrip
     }
 }
 bool SCAbstractControlUnit::waitOnCommandID(uint64_t& cmd_id) {
-    std::auto_ptr<CommandState> cmd_state;
+    std::unique_ptr<CommandState> cmd_state;
     do {
         cmd_state = getStateForCommandID(cmd_id);
         if (!cmd_state.get()) break;

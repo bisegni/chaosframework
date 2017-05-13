@@ -49,7 +49,7 @@ namespace chaos {
                     
                     ApiProxyResult execute();
                     
-                    static std::auto_ptr<GetDomainsHelper> getHelper(chaos::common::data::CDataWrapper *api_result);
+                    static std::unique_ptr<GetDomainsHelper> getHelper(chaos::common::data::CDataWrapper *api_result);
                 };
             }
         }

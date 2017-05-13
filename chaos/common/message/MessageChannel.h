@@ -188,7 +188,7 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
                  \param request_pack the data to send, the pointer is not deallocated and i scopied into the pack
                  \return the future object to inspec and whait the result
                  */
-                virtual std::auto_ptr<MessageRequestFuture> sendRequestWithFuture(const std::string &remote_host,
+                virtual std::unique_ptr<MessageRequestFuture> sendRequestWithFuture(const std::string &remote_host,
                                                                                   const std::string &node_id,
                                                                                   const std::string &action_name,
                                                                                   chaos::common::data::CDataWrapper *request_pack = NULL);
@@ -199,11 +199,11 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
                  RPC information contains the alive state of the node within rpc dispacher on the backend size
                  and the size of the queued actions
                  */
-                std::auto_ptr<MessageRequestFuture> checkRPCInformation(const std::string &remote_host,
+                std::unique_ptr<MessageRequestFuture> checkRPCInformation(const std::string &remote_host,
                                                                         const std::string &node_id);
                 
                 //!Send a request for an echo test
-                std::auto_ptr<MessageRequestFuture> echoTest(const std::string &remote_host,
+                std::unique_ptr<MessageRequestFuture> echoTest(const std::string &remote_host,
                                                              chaos::common::data::CDataWrapper *echo_data);
                 
                 //! get the rpc published host and port

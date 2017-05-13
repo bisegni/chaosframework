@@ -34,7 +34,7 @@ API_PROXY_CD_DEFINITION(CommandTemplateSearch,
  
  */
 ApiProxyResult CommandTemplateSearch::execute(const CommandUIDList& uid_list) {
-    std::auto_ptr<CDataWrapper> message(new CDataWrapper());
+    std::unique_ptr<CDataWrapper> message(new CDataWrapper());
     for(CommandUIDListConstIterator it = uid_list.begin();
         it != uid_list.end();
         it++) {

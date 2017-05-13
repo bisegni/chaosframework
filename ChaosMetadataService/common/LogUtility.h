@@ -32,7 +32,7 @@ namespace chaos {
             
             class LogUtility {
             public:
-                static std::auto_ptr<chaos::common::data::CDataWrapper> convertEntry(persistence::data_access::LogEntry& log_entry);
+                static std::unique_ptr<chaos::common::data::CDataWrapper> convertEntry(persistence::data_access::LogEntry& log_entry);
             };
             
         }

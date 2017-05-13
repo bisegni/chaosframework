@@ -61,8 +61,8 @@ namespace chaos {
                         dataWrapped().instance_name = CDW_GET_SRT_WITH_DEFAULT(serialized_data, "instance_name", "");
                     }
                     
-                    std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
-                        std::auto_ptr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
+                    std::unique_ptr<chaos::common::data::CDataWrapper> serialize() {
+                        std::unique_ptr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
                         data_serialized->addInt64Value("instance_seq", dataWrapped().instance_seq);
                         data_serialized->addStringValue("instance_name", dataWrapped().instance_name);
                         return data_serialized;

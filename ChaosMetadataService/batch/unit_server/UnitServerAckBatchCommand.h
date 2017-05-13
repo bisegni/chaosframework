@@ -46,8 +46,8 @@ namespace chaos {
                     std::string unit_server_uid;
                     UnitServerAckPhase phase;
                     
-                    std::auto_ptr<RequestInfo> request;
-                    std::auto_ptr<CDataWrapper> autoload_pack;
+                    std::unique_ptr<RequestInfo> request;
+                    std::unique_ptr<CDataWrapper> autoload_pack;
                     chaos::common::data::CDataWrapper *message_data;
                     
                     AutoloadCUList          list_autoload_cu;

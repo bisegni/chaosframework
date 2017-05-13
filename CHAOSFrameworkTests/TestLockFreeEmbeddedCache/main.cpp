@@ -106,7 +106,7 @@ int main(int argc, const char * argv[]) {
         std::cout << "Number of reader " << readersNumber << " at rate of " << rUpdateMs << " ms" << std::endl;
         std::cout << "Garbager at rate of " << gUpdateMs << " ms" << std::endl;
         
-        std::auto_ptr<chaos::common::data::cache::KeyGroupCache> dsCache(new chaos::common::data::cache::KeyGroupCache());
+        std::unique_ptr<chaos::common::data::cache::KeyGroupCache> dsCache(new chaos::common::data::cache::KeyGroupCache());
         dsCache->addKeyInfo("ch_i32", chaos::DataType::TYPE_INT32);
         dsCache->init(NULL);
         dsCache->start();

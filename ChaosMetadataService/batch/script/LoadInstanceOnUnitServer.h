@@ -49,8 +49,8 @@ namespace chaos {
                     std::string unit_server_rpc_addr;
                     
                     ChaosStringVector epool_list;
-                    std::auto_ptr<RequestInfo> request;
-                    std::auto_ptr<CDataWrapper> load_datapack;
+                    std::unique_ptr<RequestInfo> request;
+                    std::unique_ptr<CDataWrapper> load_datapack;
                     
                     uint64_t                last_sequence_id;
                     SearchScriptPhase       search_script_phase;

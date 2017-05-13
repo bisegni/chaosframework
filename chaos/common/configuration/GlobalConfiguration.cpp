@@ -488,14 +488,14 @@ void GlobalConfiguration::addLocalServerBasePort(int32_t localDefaultPort) throw
  return the address of metadataserver
  */
 string GlobalConfiguration::getMetadataServerAddress() {
-    std::auto_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> server_array(configuration.getVectorValue(InitOption::OPT_METADATASERVER_ADDRESS));
+    std::unique_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> server_array(configuration.getVectorValue(InitOption::OPT_METADATASERVER_ADDRESS));
     CHAOS_ASSERT(server_array->size());
     return server_array->getStringElementAtIndex(0);
 }
 
 VectorMetadatserver GlobalConfiguration::getMetadataServerAddressList() {
     std::vector<CNetworkAddress> result;
-    std::auto_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> server_array(configuration.getVectorValue(InitOption::OPT_METADATASERVER_ADDRESS));
+    std::unique_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> server_array(configuration.getVectorValue(InitOption::OPT_METADATASERVER_ADDRESS));
     for(int idx = 0;
         idx < server_array->size();
         idx++) {

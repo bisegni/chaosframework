@@ -69,7 +69,7 @@ namespace chaos {
         protected:
             //!inherited by chaos::common::async_central::TimerHandler
             void timeout();
-            std::auto_ptr<chaos::common::data::CDataWrapper> getAgentRegistrationPack();
+            std::unique_ptr<chaos::common::data::CDataWrapper> getAgentRegistrationPack();
             
             /*!
              receive the ack package for agent registration on the MDS

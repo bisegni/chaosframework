@@ -80,11 +80,11 @@ CDataWrapper *GetSetFullUnitServer::execute(CDataWrapper *api_data,
 
     	// look for UnitServer full description
     	if(api_data->hasKey("us_desc")&& api_data->isCDataWrapperValue("us_desc")){
-    		std::auto_ptr<CDataWrapper> udesc= std::auto_ptr<CDataWrapper>(api_data->getCSDataValue("us_desc"));
+    		std::unique_ptr<CDataWrapper> udesc= std::unique_ptr<CDataWrapper>(api_data->getCSDataValue("us_desc"));
     		if(udesc->hasKey("cu_desc")&& udesc->isVector("cu_desc")){
     			CMultiTypeDataArrayWrapper* cu_l=udesc->getVectorValue("cu_desc");
     		             for(int cui=0;(cu_l !=NULL) && (cui<cu_l->size());cui++){
-    		                 std::auto_ptr<CDataWrapper> cuw(cu_l->getCDataWrapperElementAtIndex(cui));
+    		                 std::unique_ptr<CDataWrapper> cuw(cu_l->getCDataWrapperElementAtIndex(cui));
     		                 if(cuw->hasKey("cu_id") && cuw->hasKey("cu_type")){
     		                	 std::string cu_id= cuw->getStringValue("cu_id");
     		                	 std::string cu_type= cuw->getStringValue("cu_type");

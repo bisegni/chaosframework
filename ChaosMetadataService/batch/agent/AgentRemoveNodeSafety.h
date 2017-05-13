@@ -37,8 +37,8 @@ namespace chaos {
                     DECLARE_MDS_COMMAND_ALIAS
                     std::string agent_uid;
                     ChaosStringVector associated_nodes;
-                    std::auto_ptr<RequestInfo> request;
-                    std::auto_ptr<chaos::common::data::CDataWrapper> message_data;
+                    std::unique_ptr<RequestInfo> request;
+                    std::unique_ptr<chaos::common::data::CDataWrapper> message_data;
                     
                     chaos::common::event::channel::AlertEventChannel *alert_event_channel;
                 public:
