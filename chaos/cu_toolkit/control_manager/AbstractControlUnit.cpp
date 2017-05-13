@@ -82,15 +82,15 @@ control_unit_instance(UUIDUtil::generateUUIDLite()),
 control_unit_type(_control_unit_type),
 control_unit_id(_control_unit_id),
 control_unit_param(_control_unit_param),
-standard_logging_channel(NULL),
-alarm_logging_channel(NULL),
-push_dataset_counter(0),
-last_push_rate_grap_ts(0),
-attribute_value_shared_cache(NULL),
-attribute_shared_cache_wrapper(NULL),
-timestamp_acq_cached_value(NULL),
-thread_schedule_daly_cached_value(NULL),
-key_data_storage(NULL) {
+standard_logging_channel{},
+alarm_logging_channel{},
+push_dataset_counter{0},
+last_push_rate_grap_ts{0},
+attribute_value_shared_cache{},
+attribute_shared_cache_wrapper{},
+timestamp_acq_cached_value{},
+thread_schedule_daly_cached_value{},
+key_data_storage{} {
     //!try to decode parameter string has json document
     is_control_unit_json_param = json_reader.parse(control_unit_param, json_parameter_document);
     //initialize check list
@@ -108,15 +108,15 @@ control_unit_instance(UUIDUtil::generateUUIDLite()),
 control_unit_type(_control_unit_type),
 control_unit_id(_control_unit_id),
 control_unit_param(_control_unit_param),
-standard_logging_channel(NULL),
-alarm_logging_channel(NULL),
-push_dataset_counter(0),
-last_push_rate_grap_ts(0),
-attribute_value_shared_cache(NULL),
-attribute_shared_cache_wrapper(NULL),
-timestamp_acq_cached_value(NULL),
-thread_schedule_daly_cached_value(NULL),
-key_data_storage(NULL){
+standard_logging_channel{},
+alarm_logging_channel{},
+push_dataset_counter{0},
+last_push_rate_grap_ts{0},
+attribute_value_shared_cache{},
+attribute_shared_cache_wrapper{},
+timestamp_acq_cached_value{},
+thread_schedule_daly_cached_value{},
+key_data_storage{}{
     //!try to decode parameter string has json document
     is_control_unit_json_param = json_reader.parse(control_unit_param, json_parameter_document);
     //copy array

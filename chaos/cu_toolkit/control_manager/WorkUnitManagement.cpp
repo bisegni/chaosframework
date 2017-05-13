@@ -333,8 +333,7 @@ bool WorkUnitManagement::smNeedToSchedule() {
 int WorkUnitManagement::sendConfPackToMDS(CDataWrapper& dataToSend) {
         // dataToSend can't be sent because it is porperty of the CU
         //so we need to copy it
-
-    unique_ptr<SerializationBuffer> serBuf(dataToSend.getBSONData());
+    std::unique_ptr<SerializationBuffer> serBuf(dataToSend.getBSONData());
     CDataWrapper mdsPack(serBuf->getBufferPtr());
         //add action for metadata server
         //add local ip and port
