@@ -41,7 +41,7 @@ chaos::common::data::CDataWrapper *GetAllDataService::execute(chaos::common::dat
                                                                bool& detach_data) throw(chaos::CException) {
 
     int err = 0;
-    unique_ptr<CDataWrapper> result;
+    std::unique_ptr<CDataWrapper> result;
     std::vector<boost::shared_ptr<CDataWrapper> > data_services;
 
     GET_DATA_ACCESS(DataServiceDataAccess, ds_da, -3)

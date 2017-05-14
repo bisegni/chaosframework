@@ -79,7 +79,7 @@ CDataWrapper *SetInputDatasetAttributeValues::execute(CDataWrapper *api_data,
         }
         
         //we have a descirption for control unit so we need to get the rpc address and domain
-        unique_ptr<CDataWrapper> cu_node_description(cu_node_desc);
+        std::unique_ptr<CDataWrapper> cu_node_description(cu_node_desc);
         if(!cu_node_description->hasKey(NodeDefinitionKey::NODE_RPC_ADDR) ||
            !cu_node_description->hasKey(NodeDefinitionKey::NODE_RPC_DOMAIN)) {
             //we have no node scription for this control unit so we step forward

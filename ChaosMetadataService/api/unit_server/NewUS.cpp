@@ -54,7 +54,7 @@ void NewUS::performQuery(const std::string& new_us_uid,const string& desc, std::
     data_pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, new_us_uid);
     data_pack->addStringValue(NodeDefinitionKey::NODE_TYPE, NodeType::NODE_TYPE_UNIT_SERVER);
     data_pack->addStringValue(NodeDefinitionKey::NODE_DESC, desc);
-    if(custom.get()){
+    if(custom){
         data_pack->addCSDataValue(chaos::NodeDefinitionKey::NODE_CUSTOM_PARAM,*custom);
     }
     if((err = us_da->insertNewUS(*data_pack, false))) {
@@ -77,6 +77,6 @@ CDataWrapper *NewUS::execute(CDataWrapper *api_data,
     std::unique_ptr<chaos::common::data::CDataWrapper> custom(api_data->hasKey(chaos::NodeDefinitionKey::NODE_CUSTOM_PARAM)?api_data->getCSDataValue(chaos::NodeDefinitionKey::NODE_CUSTOM_PARAM):NULL);
     
     //we can proceed
-    performQuery(new_us_uid,desc,custom);
+    performQuery(new_us_uid,desc, std::move(custom));
     return NULL;
 }

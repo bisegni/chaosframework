@@ -117,7 +117,7 @@ CDataWrapper *CopyInstance::execute(CDataWrapper *api_data,
     }
     if (!presence) {
         //add new control unit node
-        unique_ptr<CDataWrapper> node_min_dec(new CDataWrapper());
+        std::unique_ptr<CDataWrapper> node_min_dec(new CDataWrapper());
         node_min_dec->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_dst);
         node_min_dec->addStringValue(NodeDefinitionKey::NODE_TYPE, NodeType::NODE_TYPE_CONTROL_UNIT);
         //need to be create a new empty node

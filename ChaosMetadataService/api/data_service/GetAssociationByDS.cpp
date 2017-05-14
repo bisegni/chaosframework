@@ -30,7 +30,7 @@ using namespace chaos::metadata_service::persistence::data_access;
 
 GetAssociationByDS::GetAssociationByDS():
 AbstractApi("getAssociation"){
-
+    
 }
 
 GetAssociationByDS::~GetAssociationByDS() {
@@ -44,25 +44,24 @@ chaos::common::data::CDataWrapper *GetAssociationByDS::execute(chaos::common::da
     CHECK_KEY_THROW_AND_LOG(api_data,
                             NodeDefinitionKey::NODE_UNIQUE_ID,
                             DS_GET_ASSOC_ERR, -2, "The ndk_unique_id key is mandatory")
-
+    
     int err = 0;
-    unique_ptr<CDataWrapper> result;
     std::vector<boost::shared_ptr<CDataWrapper> > node_associated;
-
+    
     GET_DATA_ACCESS(DataServiceDataAccess, ds_da, -3)
     const std::string ds_unique_id = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
-
+    
     if((err = ds_da->searchAssociationForUID(ds_unique_id,
-                                            node_associated))){
+                                             node_associated))){
         LOG_AND_TROW(DS_GET_ASSOC_ERR, err, boost::str(boost::format("Error fetching the association for data service %1%") % ds_unique_id))
-    }else{
-        result.reset(new CDataWrapper());
-        for(std::vector<boost::shared_ptr<CDataWrapper> >::iterator it = node_associated.begin();
-            it != node_associated.end();
-            it++) {
-            result->appendCDataWrapperToArray(*it->get());
-        }
-        result->finalizeArrayForKey("node_search_result_page");
     }
+    
+    std::unique_ptr<CDataWrapper>  result{new CDataWrapper()};
+    for(std::vector<boost::shared_ptr<CDataWrapper> >::iterator it = node_associated.begin();
+        it != node_associated.end();
+        it++) {
+        result->appendCDataWrapperToArray(*it->get());
+    }
+    result->finalizeArrayForKey("node_search_result_page");
     return result.release();
 }

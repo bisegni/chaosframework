@@ -95,7 +95,7 @@ CDataWrapper *GetFullDescription::execute(CDataWrapper *api_data,
     init_datapack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_uid);
     
     if(dataset->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION) && dataset->isVector(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION)) {
-    std:unique_ptr<CMultiTypeDataArrayWrapper> dataset_element_vec(dataset->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
+        std::unique_ptr<CMultiTypeDataArrayWrapper> dataset_element_vec(dataset->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
         for(int idx = 0; idx <
             dataset_element_vec->size();
             idx++) {
