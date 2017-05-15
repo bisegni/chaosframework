@@ -149,7 +149,7 @@ int MetadataLoggingManager::sendLogEntry(chaos::common::data::CDataWrapper *log_
 
     int err = 0;
     //send message to mds and wait for ack
-    std::unique_ptr<MultiAddressMessageRequestFuture> log_future = message_channel->sendRequestWithFuture(MetadataServerLoggingDefinitionKeyRPC::ACTION_NODE_LOGGING_RPC_DOMAIN,
+    std::auto_ptr<MultiAddressMessageRequestFuture> log_future = message_channel->sendRequestWithFuture(MetadataServerLoggingDefinitionKeyRPC::ACTION_NODE_LOGGING_RPC_DOMAIN,
                                                                                                         MetadataServerLoggingDefinitionKeyRPC::ACTION_NODE_LOGGING_SUBMIT_ENTRY,
                                                                                                         log_entry,
                                                                                                         2000);

@@ -68,7 +68,7 @@ CDataWrapper *CheckDomainRpcAction::checkDomain(CDataWrapper *action_data, bool&
     
     const std::string domain_name = action_data->getStringValue("domain_name");
     
-    std::unique_ptr<CDataWrapper> result(new CDataWrapper());
+    std::auto_ptr<CDataWrapper> result(new CDataWrapper());
     bool alive = dispatcher->hasDomain(domain_name);
     uint32_t queued_action_in_domain = 0;
     //create the result data pack

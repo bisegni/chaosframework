@@ -63,7 +63,7 @@ void CreateSnapshotBatch::setHandler(CDataWrapper *data) {
     clearFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT);
     
     snapshot_name = data->getStringValue("snapshot_name");
-    std::unique_ptr<CMultiTypeDataArrayWrapper> _node_list(data->getVectorValue("node_list"));
+    std::auto_ptr<CMultiTypeDataArrayWrapper> _node_list(data->getVectorValue("node_list"));
     for(int idx =0;
         idx < _node_list->size();
         idx++) {

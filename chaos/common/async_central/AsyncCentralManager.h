@@ -47,7 +47,7 @@ namespace chaos {
 			public utility::InizializableService {
 			  friend class utility::Singleton<AsyncCentralManager>;
                 //job
-                std::unique_ptr<AsyncPoolRunner>  async_pool_runner;
+                std::auto_ptr<AsyncPoolRunner>  async_pool_runner;
                 
                 //timer
 				boost::asio::io_service         asio_service;

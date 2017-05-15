@@ -57,7 +57,7 @@ namespace chaos {
                 boost::shared_future< boost::shared_ptr<chaos::common::data::CDataWrapper> > future;
 
                     //! the result for the request
-                std::unique_ptr<chaos::common::data::CDataWrapper> request_result;
+                std::auto_ptr<chaos::common::data::CDataWrapper> request_result;
                 
                     //!error code
                 int32_t error_code;

@@ -57,7 +57,7 @@ CDataWrapper *CommandTemplateSubmit::execute(CDataWrapper *api_data,
     CommandInstanceList command_instance_list;
     
     N_CTS_DBG << "validate all command instance";
-    std::unique_ptr<CMultiTypeDataArrayWrapper> submission_task_list(api_data->getVectorValue("submission_task"));
+    std::auto_ptr<CMultiTypeDataArrayWrapper> submission_task_list(api_data->getVectorValue("submission_task"));
     for(int idx =0;
         idx < submission_task_list->size();
         idx++) {
@@ -75,7 +75,7 @@ CDataWrapper *CommandTemplateSubmit::execute(CDataWrapper *api_data,
     for(CommandInstanceListIterator it = command_instance_list.begin();
         it != command_instance_list.end();
         it++) {
-        std::unique_ptr<CDataWrapper> instance_pack(new CDataWrapper());
+        std::auto_ptr<CDataWrapper> instance_pack(new CDataWrapper());
         N_CTS_INFO << "Send datapack "<< it->getJSONString();
         instance_pack->addCSDataValue("submission_task", *it);
         command_id = getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::node::SubmitBatchCommand),
@@ -104,7 +104,7 @@ void CommandTemplateSubmit::processSubmissionTask(NodeDataAccess *n_da,
                                                                                           command_unique_id);
     
     //store command instance
-    std::unique_ptr<CDataWrapper> instance = CommandCommonUtility::createCommandInstanceByTemplateadnSubmissionDescription(node_uid,
+    std::auto_ptr<CDataWrapper> instance = CommandCommonUtility::createCommandInstanceByTemplateadnSubmissionDescription(node_uid,
                                                                                                                          submission_task.get(),
                                                                                                                          command_description.get(),
                                                                                                                          template_description.get());

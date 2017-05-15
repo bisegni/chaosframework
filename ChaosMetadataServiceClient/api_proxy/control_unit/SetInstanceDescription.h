@@ -124,7 +124,7 @@ namespace chaos {
                 protected:
                     API_PROXY_CD_DECLARATION(SetInstanceDescription)
                 public:
-                    std::unique_ptr<SetInstanceDescriptionHelper> getNewHelper();
+                    std::auto_ptr<SetInstanceDescriptionHelper> getNewHelper();
                     /*!
                      Set the isntance
                      */

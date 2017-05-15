@@ -17,7 +17,7 @@ int main(int argc, const char * argv[]) {
     std::cout << "----------------------------------Start general plugin test----------------------------------" << std::endl;
     PluginLoader loader("PluginLibrary.chaos_extension");
     if(loader.loaded()) {
-        std::unique_ptr<PluginDiscover> discover(loader.getDiscover());
+        std::auto_ptr<PluginDiscover> discover(loader.getDiscover());
         
         std::cout << "Registered plugin names: " << discover->getNamesSize() << std::endl;
         for (int idx = 0; idx < discover->getNamesSize() ; idx++) {
@@ -25,7 +25,7 @@ int main(int argc, const char * argv[]) {
             const char * registeredName = discover->getNameForIndex(idx);
             
             std::cout << "Found plugin: " << registeredName << std::endl;
-            std::unique_ptr<PluginInspector> inspector(loader.getInspectorForName(registeredName));
+            std::auto_ptr<PluginInspector> inspector(loader.getInspectorForName(registeredName));
             
             size_t numberOfAttributes = inspector->getInputAttributeByNamesSize(registeredName);
             if(numberOfAttributes) {
@@ -51,7 +51,7 @@ int main(int argc, const char * argv[]) {
     std::cout << "----------------------------------Start driver plugin test----------------------------------" << std::endl;
     DriverPluginLoader driverLoader("PluginLibrary.chaos_extension");
     if(driverLoader.loaded()) {
-        std::unique_ptr<PluginInspector> inspector(driverLoader.getInspectorForName("DriverAlias"));
+        std::auto_ptr<PluginInspector> inspector(driverLoader.getInspectorForName("DriverAlias"));
         
         size_t numberOfAttributes = inspector->getInputAttributeByNamesSize("DriverAlias");
         

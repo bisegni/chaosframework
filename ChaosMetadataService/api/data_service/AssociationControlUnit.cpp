@@ -48,7 +48,7 @@ CDataWrapper *AssociationControlUnit::execute(CDataWrapper *api_data,
 
     int err = 0;
     bool presence = false;
-    std::unique_ptr<CMultiTypeDataArrayWrapper> unique_id_vec(api_data->getVectorValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID));
+    std::auto_ptr<CMultiTypeDataArrayWrapper> unique_id_vec(api_data->getVectorValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID));
     const std::string ds_uid = api_data->getStringValue(chaos::NodeDefinitionKey::NODE_PARENT);
     const bool associate = api_data->getBoolValue("associate");
 

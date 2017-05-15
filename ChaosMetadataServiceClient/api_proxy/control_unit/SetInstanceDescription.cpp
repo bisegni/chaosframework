@@ -29,8 +29,8 @@ API_PROXY_CD_DEFINITION(SetInstanceDescription,
                         "setInstanceDescription")
 
 
-std::unique_ptr<SetInstanceDescriptionHelper> SetInstanceDescription::getNewHelper() {
-    return std::unique_ptr<SetInstanceDescriptionHelper>(new SetInstanceDescriptionHelper());
+std::auto_ptr<SetInstanceDescriptionHelper> SetInstanceDescription::getNewHelper() {
+    return std::auto_ptr<SetInstanceDescriptionHelper>(new SetInstanceDescriptionHelper());
 }
 
 /*!

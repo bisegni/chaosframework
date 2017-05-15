@@ -163,7 +163,7 @@ inline bool MongoDBHAConnectionManager::canRetry() {
     return retry;
 }
 
-std::unique_ptr<DriverScopedConnection> MongoDBHAConnectionManager::getConnection() {
+std::auto_ptr<DriverScopedConnection> MongoDBHAConnectionManager::getConnection() {
     //lock the mutex for access to the queue
     if(canRetry() && !offline_connection_queue.empty()) {
         // ad an invalid conneciton string to the end of valid queue
@@ -172,7 +172,7 @@ std::unique_ptr<DriverScopedConnection> MongoDBHAConnectionManager::getConnectio
         //remove invalid connection string to his queue
         offline_connection_queue.pop();
     }
-    std::unique_ptr<DriverScopedConnection> result;
+    std::auto_ptr<DriverScopedConnection> result;
     ConnectionInfo *conn = static_cast<ConnectionInfo*>(service_feeder.getService());
     if(conn) {
         try{
@@ -207,7 +207,7 @@ bool MongoDBHAConnectionManager::isConnectionError(int error) {
 }
 
 #define GET_CONNECTION()\
-std::unique_ptr<DriverScopedConnection> conn;\
+std::auto_ptr<DriverScopedConnection> conn;\
 do {\
 conn = getConnection();
 
@@ -269,7 +269,7 @@ void MongoDBHAConnectionManager::findN(std::vector<mongo::BSONObj>& out,
     END_CONNECTION()
 }
 
-std::unique_ptr<mongo::DBClientCursor> MongoDBHAConnectionManager::query(const std::string &ns,
+std::auto_ptr<mongo::DBClientCursor> MongoDBHAConnectionManager::query(const std::string &ns,
                                                                        mongo::Query query,
                                                                        int nToReturn,
                                                                        int nToSkip,
@@ -277,7 +277,7 @@ std::unique_ptr<mongo::DBClientCursor> MongoDBHAConnectionManager::query(const s
                                                                        int queryOptions,
                                                                        int batchSize) {
     int err = 0;
-    std::unique_ptr<mongo::DBClientCursor> result;
+    std::auto_ptr<mongo::DBClientCursor> result;
     GET_CONNECTION()
     try {
         EXECUTE_MONGOAPI(result = conn->get()->query(ns, query, nToReturn, nToSkip, fieldsToReturn, queryOptions, batchSize););

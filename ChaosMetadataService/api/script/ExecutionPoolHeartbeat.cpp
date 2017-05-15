@@ -67,7 +67,7 @@ chaos::common::data::CDataWrapper *ExecutionPoolHeartbeat::execute(CDataWrapper 
     if(api_data->hasKey(ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LIST)) {
         CHAOS_LASSERT_EXCEPTION(api_data->isVectorValue(ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LIST), ERR, -4, "The running instance list key need to be a vector");
         
-        std::unique_ptr<CMultiTypeDataArrayWrapper> array(api_data->getVectorValue(ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LIST));
+        std::auto_ptr<CMultiTypeDataArrayWrapper> array(api_data->getVectorValue(ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LIST));
         for(int idx = 0;
             idx < array->size();
             idx++) {
@@ -86,7 +86,7 @@ chaos::common::data::CDataWrapper *ExecutionPoolHeartbeat::execute(CDataWrapper 
         CHAOS_LASSERT_EXCEPTION(api_data->isVectorValue(ExecutionUnitNodeDefinitionKey::EXECUTION_POOL_LIST), ERR, -6, "The execution pool list key need to be a vector");
         std::vector<chaos::service_common::data::script::ScriptBaseDescription> current_script_page;
         
-        std::unique_ptr<CMultiTypeDataArrayWrapper> array(api_data->getVectorValue(ExecutionUnitNodeDefinitionKey::EXECUTION_POOL_LIST));
+        std::auto_ptr<CMultiTypeDataArrayWrapper> array(api_data->getVectorValue(ExecutionUnitNodeDefinitionKey::EXECUTION_POOL_LIST));
         for(int idx = 0;
             idx < array->size();
             idx++) {
@@ -104,7 +104,7 @@ chaos::common::data::CDataWrapper *ExecutionPoolHeartbeat::execute(CDataWrapper 
         if(current_script_page.size() > 0) {
             
             //all is gone weel, we have script to load
-            std::unique_ptr<CDataWrapper> batch_data(new CDataWrapper());
+            std::auto_ptr<CDataWrapper> batch_data(new CDataWrapper());
             //copy to batch data unit server name and pool list
             batch_data->addStringValue(chaos::NodeDefinitionKey::NODE_PARENT, us_uid);
             api_data->copyKeyTo(ExecutionUnitNodeDefinitionKey::EXECUTION_POOL_LIST, *batch_data);

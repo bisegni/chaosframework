@@ -115,10 +115,11 @@ CDataWrapper* MessageChannel::sendRequest(const std::string& remote_host,
                                           const std::string& action_name,
                                           CDataWrapper *request_pack,
                                           int32_t millisec_to_wait) {
-    CHAOS_ASSERT(broker)    unique_ptr<MessageRequestFuture> request_future(sendRequestWithFuture(remote_host,
-                                                                                                node_id,
-                                                                                                action_name,
-                                                                                                request_pack));
+    CHAOS_ASSERT(broker)
+    std::auto_ptr<MessageRequestFuture> request_future(sendRequestWithFuture(remote_host,
+                                                                             node_id,
+                                                                             action_name,
+                                                                             request_pack));
     
     
     
@@ -147,13 +148,13 @@ void MessageChannel::requestPromisesHandler(const FuturePromiseData& response_da
  \param request_pack the data to send, the pointer is not deallocated and i scopied into the pack
  \return the future object to inspec and whait the result
  */
-std::unique_ptr<MessageRequestFuture> MessageChannel::sendRequestWithFuture(const std::string& remote_host,
+std::auto_ptr<MessageRequestFuture> MessageChannel::sendRequestWithFuture(const std::string& remote_host,
                                                                           const std::string& node_id,
                                                                           const std::string& action_name,
                                                                           CDataWrapper *request_pack) {
     CHAOS_ASSERT(broker)
     uint32_t new_request_id = 0;
-    unique_ptr<MessageRequestFuture> result;
+    std::auto_ptr<MessageRequestFuture> result;
     CDataWrapper *data_pack = new CDataWrapper();
     
     //lock lk(waith_asnwer_mutex);
@@ -182,7 +183,7 @@ void MessageChannel::getRpcPublishedHostAndPort(std::string& rpc_published_host_
     return broker->getPublishedHostAndPort(rpc_published_host_port);
 }
 
-std::unique_ptr<MessageRequestFuture> MessageChannel::checkRPCInformation(const std::string& remote_host,
+std::auto_ptr<MessageRequestFuture> MessageChannel::checkRPCInformation(const std::string& remote_host,
                                                                         const std::string& node_id) {
     CDataWrapper data_pack;
     data_pack.addStringValue("domain_name", node_id);
@@ -192,7 +193,7 @@ std::unique_ptr<MessageRequestFuture> MessageChannel::checkRPCInformation(const 
                                  &data_pack);
 }
 
-std::unique_ptr<MessageRequestFuture> MessageChannel::echoTest(const std::string& remote_host,
+std::auto_ptr<MessageRequestFuture> MessageChannel::echoTest(const std::string& remote_host,
                                                              CDataWrapper *echo_data) {
     return sendRequestWithFuture(remote_host,
                                  NodeDomainAndActionRPC::RPC_DOMAIN,

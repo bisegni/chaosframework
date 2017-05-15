@@ -164,7 +164,7 @@ void ZMQServer::executeOnThread(){
 
 void ZMQServer::worker() {
     ZMQS_LAPP << CHAOS_FORMAT("Entering worker for %1%", %bind_str.str());
-    std::unique_ptr<CDataWrapper> message_data;
+    std::auto_ptr<CDataWrapper> message_data;
     //data pack pointer
     int err = 0;
     int	linger = 500;
@@ -218,7 +218,7 @@ void ZMQServer::worker() {
             } else {
                 if(zmq_msg_size(&request)>0) {
                     ZMQS_LDBG << "Message Received";
-                    std::unique_ptr<CDataWrapper> result_data_pack;
+                    std::auto_ptr<CDataWrapper> result_data_pack;
                     message_data.reset(new CDataWrapper((const char*)zmq_msg_data(&request)));
                     //dispatch the command
                     if(message_data->hasKey("syncrhonous_call") &&
@@ -228,7 +228,7 @@ void ZMQServer::worker() {
                         result_data_pack.reset(command_handler->dispatchCommand(message_data.release()));
                     }
                     //get serailizaiton
-                    std::unique_ptr<SerializationBuffer> result(result_data_pack->getBSONData());
+                    std::auto_ptr<SerializationBuffer> result(result_data_pack->getBSONData());
                     //create zmq message
                     err = zmq_msg_init_data(&response, (void*)result->getBufferPtr(), result->getBufferLen(), my_free, NULL);
                     if(err == -1) {

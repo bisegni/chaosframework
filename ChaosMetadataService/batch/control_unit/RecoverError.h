@@ -39,7 +39,7 @@ namespace chaos {
                     //array that contain all requests
                     std::vector< boost::shared_ptr<RequestInfo> > requests;
                     
-                    std::unique_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> cu_ids;
+                    std::auto_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> cu_ids;
                 public:
                     RecoverError();
                     ~RecoverError();

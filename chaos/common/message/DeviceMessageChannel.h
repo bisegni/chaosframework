@@ -243,14 +243,14 @@ namespace chaos {
                 /*!
                  send a request to a custom action
                  */
-                std::unique_ptr<MessageRequestFuture>  sendCustomRequestWithFuture(const std::string& action_name,
+                std::auto_ptr<MessageRequestFuture>  sendCustomRequestWithFuture(const std::string& action_name,
                                                                                  common::data::CDataWrapper *request_data);
                 
                 //! Send a request for receive RPC information
-                std::unique_ptr<MessageRequestFuture> checkRPCInformation();
+                std::auto_ptr<MessageRequestFuture> checkRPCInformation();
                 
                 //! Send a request for an echo test
-                std::unique_ptr<MessageRequestFuture> echoTest(chaos::common::data::CDataWrapper *echo_data);
+                std::auto_ptr<MessageRequestFuture> echoTest(chaos::common::data::CDataWrapper *echo_data);
             };
         }
     }

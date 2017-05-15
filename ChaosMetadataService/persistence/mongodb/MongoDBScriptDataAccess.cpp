@@ -116,7 +116,7 @@ int MongoDBScriptDataAccess::updateScript(Script& script) {
         ScriptSDWrapper s_dw;
         s_dw.dataWrapped() = script;
         
-        std::unique_ptr<CDataWrapper> serialization = s_dw.serialize();
+        std::auto_ptr<CDataWrapper> serialization = s_dw.serialize();
         mongo::BSONObj u(serialization->getBSONRawData(size));
         DEBUG_CODE(SDA_DBG<<log_message("updateScriptContent",
                                         "update",

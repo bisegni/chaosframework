@@ -48,7 +48,7 @@ CDataWrapper *SetInputDatasetAttributeValues::execute(CDataWrapper *api_data,
     int err = 0;
     uint64_t command_id = 0;
     //get values array
-    std::unique_ptr<CMultiTypeDataArrayWrapper> value_set_array(api_data->getVectorValue("attribute_set_values"));
+    std::auto_ptr<CMultiTypeDataArrayWrapper> value_set_array(api_data->getVectorValue("attribute_set_values"));
     
     //get the data access
     GET_DATA_ACCESS(NodeDataAccess, n_da, -3)
@@ -56,13 +56,13 @@ CDataWrapper *SetInputDatasetAttributeValues::execute(CDataWrapper *api_data,
     for(int idx = 0;
         idx < value_set_array->size();
         idx++){
-        std::unique_ptr<CDataWrapper> cu_changes_set(value_set_array->getCDataWrapperElementAtIndex(idx));
+        std::auto_ptr<CDataWrapper> cu_changes_set(value_set_array->getCDataWrapperElementAtIndex(idx));
         CHECK_KEY_THROW_AND_LOG(cu_changes_set.get(), NodeDefinitionKey::NODE_UNIQUE_ID, CU_SIDAV_ERR, -4, "The ndk_uid key is mandatory")
         CHECK_KEY_THROW_AND_LOG(cu_changes_set.get(), "change_set", CU_SIDAV_ERR, -5, "The change_set key is mandatory")
         //CHECK_KEY_THROW_AND_LOG(set_element.get(), "set_value", CU_SIDAV_ERR, -6, "The cudk_ds_attr_name key is mandatory")
         
         //compose the batch message per control unit
-        std::unique_ptr<CDataWrapper> batch_message_per_cu(new CDataWrapper);
+        std::auto_ptr<CDataWrapper> batch_message_per_cu(new CDataWrapper);
         
         //get cu uid
         const std::string cu_uid = cu_changes_set->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
@@ -79,7 +79,7 @@ CDataWrapper *SetInputDatasetAttributeValues::execute(CDataWrapper *api_data,
         }
         
         //we have a descirption for control unit so we need to get the rpc address and domain
-        std::unique_ptr<CDataWrapper> cu_node_description(cu_node_desc);
+        std::auto_ptr<CDataWrapper> cu_node_description(cu_node_desc);
         if(!cu_node_description->hasKey(NodeDefinitionKey::NODE_RPC_ADDR) ||
            !cu_node_description->hasKey(NodeDefinitionKey::NODE_RPC_DOMAIN)) {
             //we have no node scription for this control unit so we step forward
@@ -95,12 +95,12 @@ CDataWrapper *SetInputDatasetAttributeValues::execute(CDataWrapper *api_data,
                                              cu_node_description->getStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN));
         
         CU_SIDAV_DBG << "Fetch changes_set for control unit:" << cu_uid;
-        std::unique_ptr<CMultiTypeDataArrayWrapper> change_set(cu_changes_set->getVectorValue("change_set"));
+        std::auto_ptr<CMultiTypeDataArrayWrapper> change_set(cu_changes_set->getVectorValue("change_set"));
         
         for(int idx_change = 0;
             idx_change < change_set->size();
             idx_change++) {
-            std::unique_ptr<CDataWrapper> change(change_set->getCDataWrapperElementAtIndex(idx_change));
+            std::auto_ptr<CDataWrapper> change(change_set->getCDataWrapperElementAtIndex(idx_change));
             if(!change->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME)||
                !change->hasKey("change_value")) {
                 //we need to have either the values

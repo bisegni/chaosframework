@@ -34,7 +34,7 @@ API_PROXY_CD_DEFINITION(LoadAgentDescription,
 
 ApiProxyResult LoadAgentDescription::execute(const std::string& node_uid,
                                              const bool load_related_data) {
-    std::unique_ptr<CDataWrapper> pack(new CDataWrapper());
+    std::auto_ptr<CDataWrapper> pack(new CDataWrapper());
     pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_uid);
     pack->addBoolValue("load_related_data", load_related_data);
     return callApi(pack.release());

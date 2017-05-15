@@ -56,7 +56,7 @@ chaos::common::data::CDataWrapper *GetAssociationByDS::execute(chaos::common::da
         LOG_AND_TROW(DS_GET_ASSOC_ERR, err, boost::str(boost::format("Error fetching the association for data service %1%") % ds_unique_id))
     }
     
-    std::unique_ptr<CDataWrapper>  result{new CDataWrapper()};
+    std::auto_ptr<CDataWrapper>  result(new CDataWrapper());
     for(std::vector<boost::shared_ptr<CDataWrapper> >::iterator it = node_associated.begin();
         it != node_associated.end();
         it++) {

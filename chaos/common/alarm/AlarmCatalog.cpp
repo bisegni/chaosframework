@@ -75,15 +75,15 @@ void AlarmCatalog::setAllAlarmSeverity(int8_t new_severity) {
     StateFlagCatalog::setAllFlagState(new_severity);
 }
 
-std::unique_ptr<chaos::common::data::CDataBuffer> AlarmCatalog::getRawFlagsLevel() {
+std::auto_ptr<chaos::common::data::CDataBuffer> AlarmCatalog::getRawFlagsLevel() {
     return StateFlagCatalog::getRawFlagsLevel();
 }
 
-void AlarmCatalog::setApplyRawFlagsValue(std::unique_ptr<chaos::common::data::CDataBuffer>& raw_level) {
+void AlarmCatalog::setApplyRawFlagsValue(std::auto_ptr<chaos::common::data::CDataBuffer>& raw_level) {
     StateFlagCatalog::setApplyRawFlagsValue(raw_level);
 }
 
-std::unique_ptr<CDataWrapper> AlarmCatalog::serialize() {
+std::auto_ptr<CDataWrapper> AlarmCatalog::serialize() {
     StateFlagCatalogSDWrapper sd_wrap(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(StateFlagCatalog, *this));
     return sd_wrap.serialize();
 }

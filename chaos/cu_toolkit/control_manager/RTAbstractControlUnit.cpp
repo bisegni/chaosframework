@@ -237,7 +237,7 @@ void RTAbstractControlUnit::threadStartStopManagment(bool startAction) throw(CEx
  */
 CDataWrapper* RTAbstractControlUnit::updateConfiguration(CDataWrapper* update_pack, bool& detach_param) throw (CException) {
     CDataWrapper *result = AbstractControlUnit::updateConfiguration(update_pack, detach_param);
-    std::unique_ptr<CDataWrapper> cu_properties;
+    std::auto_ptr<CDataWrapper> cu_properties;
     CDataWrapper *cu_property_container = NULL;
     if(update_pack->hasKey(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)){
         cu_property_container = update_pack;

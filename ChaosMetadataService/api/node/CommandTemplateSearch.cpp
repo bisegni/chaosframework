@@ -63,7 +63,7 @@ CDataWrapper *CommandTemplateSearch::execute(CDataWrapper *api_data,
         N_TCS_DBG << "The length of the page has been set to:" << page_length;
     }
     
-    std::unique_ptr<CMultiTypeDataArrayWrapper> uid_list(api_data->getVectorValue("cmd_uid_fetch_list"));
+    std::auto_ptr<CMultiTypeDataArrayWrapper> uid_list(api_data->getVectorValue("cmd_uid_fetch_list"));
     //we don't accept request for query on all command
     if(uid_list->size()==0) return result;
     

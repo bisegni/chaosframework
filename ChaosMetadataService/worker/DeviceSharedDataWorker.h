@@ -50,7 +50,7 @@ namespace chaos{
             };
             
             struct ThreadCookie {
-                std::unique_ptr<chaos::service_common::persistence::data_access::AbstractPersistenceDriver> object_storage_driver;
+                std::auto_ptr<chaos::service_common::persistence::data_access::AbstractPersistenceDriver> object_storage_driver;
                 chaos::data_service::object_storage::abstraction::ObjectStorageDataAccess *obj_storage_da;
             };
             

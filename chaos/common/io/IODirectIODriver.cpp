@@ -191,7 +191,7 @@ void IODirectIODriver::storeHealthData(const std::string& key,
     boost::shared_lock<boost::shared_mutex>(mutext_feeder);
     IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
     
-    std::unique_ptr<chaos::common::data::SerializationBuffer> serialization(dataToStore.getBSONData());
+    std::auto_ptr<chaos::common::data::SerializationBuffer> serialization(dataToStore.getBSONData());
     
     if(next_client &&
        serialization.get()) {

@@ -36,7 +36,7 @@ ApiProxyResult SearchLogEntry::execute(const std::string& search_string,
                                        const uint64_t end_ts,
                                        const uint64_t last_sequence_id,
                                        const uint32_t page_length) {
-    std::unique_ptr<CDataWrapper> pack(new CDataWrapper());
+    std::auto_ptr<CDataWrapper> pack(new CDataWrapper());
     pack->addStringValue("search_string", search_string);
     if(last_sequence_id ) {pack->addInt64Value("seq", last_sequence_id);}
     if(start_ts){pack->addInt64Value("start_ts", start_ts);}
@@ -53,8 +53,8 @@ ApiProxyResult SearchLogEntry::execute(const std::string& search_string,
     return callApi(pack.release());
 }
 
-std::unique_ptr<SearchLogEntryHelper> SearchLogEntry::getHelper(CDataWrapper *api_result) {
-    return std::unique_ptr<SearchLogEntryHelper>(new SearchLogEntryHelper(api_result));
+std::auto_ptr<SearchLogEntryHelper> SearchLogEntry::getHelper(CDataWrapper *api_result) {
+    return std::auto_ptr<SearchLogEntryHelper>(new SearchLogEntryHelper(api_result));
 }
 
 SearchLogEntryHelper::SearchLogEntryHelper(CDataWrapper *api_result):

@@ -33,12 +33,12 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define CUCU_ERR  ERR_LOG(CUCommonUtility)
 
 
-std::unique_ptr<CDataWrapper> CUCommonUtility::prepareRequestPackForLoadControlUnit(const std::string& cu_uid, ControlUnitDataAccess *cu_da) {
+std::auto_ptr<CDataWrapper> CUCommonUtility::prepareRequestPackForLoadControlUnit(const std::string& cu_uid, ControlUnitDataAccess *cu_da) {
     CUCU_DBG << "Prepare autoload request for:" << cu_uid;
     int err = 0;
     CDataWrapper * tmp_ptr = NULL;
-    std::unique_ptr<CDataWrapper> instance_description;
-    std::unique_ptr<CDataWrapper> result_pack;
+    std::auto_ptr<CDataWrapper> instance_description;
+    std::auto_ptr<CDataWrapper> result_pack;
     if((err = cu_da->getInstanceDescription(cu_uid,
                                             &tmp_ptr))) {
         //we haven't found an instance for the node
@@ -78,28 +78,28 @@ void CUCommonUtility::prepareAutoInitAndStartInAutoLoadControlUnit(const std::st
     if((err = cu_da->getInstanceDescription(cu_uid, &tmp_ptr))) {
         LOG_AND_TROW_FORMATTED(CUCU_ERR, err, "Error %1% durring fetch of instance for unit server %2%", %err%cu_da)
     } else if(tmp_ptr) {
-        std::unique_ptr<CDataWrapper> auto_inst(tmp_ptr);
+        std::auto_ptr<CDataWrapper> auto_inst(tmp_ptr);
         bool auto_init = auto_inst->hasKey("auto_init")?auto_inst->getBoolValue("auto_init"):false;
         bool auto_start = auto_inst->hasKey("auto_start")?auto_inst->getBoolValue("auto_start"):false;
         
         if(auto_init || auto_start) {
             if(auto_init){
-                std::unique_ptr<CDataWrapper> init_datapack = initDataPack(cu_uid,
+                std::auto_ptr<CDataWrapper> init_datapack = initDataPack(cu_uid,
                                                                          n_da,
                                                                          cu_da,
                                                                          ds_da);
                 
-                std::unique_ptr<CDataWrapper> init_message_datapack(new CDataWrapper());
+                std::auto_ptr<CDataWrapper> init_message_datapack(new CDataWrapper());
                 init_message_datapack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, NodeDomainAndActionRPC::ACTION_NODE_INIT);
                 init_message_datapack->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *init_datapack);
                 
                 auto_load_pack->appendCDataWrapperToArray(*init_message_datapack);
             }
             if(auto_start){
-                std::unique_ptr<CDataWrapper> start_datapack(new CDataWrapper());
+                std::auto_ptr<CDataWrapper> start_datapack(new CDataWrapper());
                 start_datapack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_uid);
                 
-                std::unique_ptr<CDataWrapper> start_message_datapack(new CDataWrapper());
+                std::auto_ptr<CDataWrapper> start_message_datapack(new CDataWrapper());
                 start_message_datapack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, NodeDomainAndActionRPC::ACTION_NODE_START);
                 start_message_datapack->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *start_datapack);
                 auto_load_pack->appendCDataWrapperToArray(*start_message_datapack);
@@ -111,15 +111,15 @@ void CUCommonUtility::prepareAutoInitAndStartInAutoLoadControlUnit(const std::st
     }
 }
 
-std::unique_ptr<CDataWrapper> CUCommonUtility::initDataPack(const std::string& cu_uid,
+std::auto_ptr<CDataWrapper> CUCommonUtility::initDataPack(const std::string& cu_uid,
                                                           NodeDataAccess *n_da,
                                                           ControlUnitDataAccess *cu_da,
                                                           DataServiceDataAccess *ds_da) {
     int err = 0;
     CDataWrapper *result = NULL;
-    std::unique_ptr<CDataWrapper> cu_base_description;
-    std::unique_ptr<CDataWrapper> dataset_description;
-    std::unique_ptr<CDataWrapper> init_datapack(new CDataWrapper());
+    std::auto_ptr<CDataWrapper> cu_base_description;
+    std::auto_ptr<CDataWrapper> dataset_description;
+    std::auto_ptr<CDataWrapper> init_datapack(new CDataWrapper());
     
     //set the control unique id in the init datapack
     init_datapack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_uid);
@@ -148,7 +148,7 @@ std::unique_ptr<CDataWrapper> CUCommonUtility::initDataPack(const std::string& c
         LOG_AND_TROW(CUCU_ERR, err, boost::str(boost::format("No instance found for control unit: %1%") % cu_uid));
     }
     //we have the configured instance
-    std::unique_ptr<CDataWrapper> instance_description(result);
+    std::auto_ptr<CDataWrapper> instance_description(result);
     result = NULL;
     
     //get the dataset of the control unit
@@ -160,12 +160,12 @@ std::unique_ptr<CDataWrapper> CUCommonUtility::initDataPack(const std::string& c
         dataset_description.reset(result);    
         
         std:unique_ptr<CMultiTypeDataArrayWrapper> dataset_element_vec(dataset_description->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
-        std::unique_ptr<CDataWrapper> init_dataset(new CDataWrapper());
+        std::auto_ptr<CDataWrapper> init_dataset(new CDataWrapper());
         for(int idx = 0; idx <
             dataset_element_vec->size();
             idx++) {
             //get the dataset element
-            std::unique_ptr<CDataWrapper> element(dataset_element_vec->getCDataWrapperElementAtIndex(idx));
+            std::auto_ptr<CDataWrapper> element(dataset_element_vec->getCDataWrapperElementAtIndex(idx));
             const std::string  ds_attribute_name = element->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME);
             int32_t direction = element->getInt32Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION);
             
@@ -179,7 +179,7 @@ std::unique_ptr<CDataWrapper> CUCommonUtility::initDataPack(const std::string& c
                        direction == chaos::DataType::Bidirectional) &&
                       element_configuration.get() != NULL){
                 //we can retrive the configured attribute
-                std::unique_ptr<CDataWrapper> init_ds_attribute = mergeDatasetAttributeWithSetup(element.get(),
+                std::auto_ptr<CDataWrapper> init_ds_attribute = mergeDatasetAttributeWithSetup(element.get(),
                                                                                                element_configuration.get());
                 init_dataset->appendCDataWrapperToArray(*init_ds_attribute.get());
             } else {
@@ -196,16 +196,16 @@ std::unique_ptr<CDataWrapper> CUCommonUtility::initDataPack(const std::string& c
             LOG_AND_TROW(CUCU_ERR, err, boost::str(boost::format("Error fetching the isntance for control unit %1%") % cu_uid));
         } else if(result != NULL) {
             instance_description.reset(result);
-            std::unique_ptr<CDataWrapper> init_dataset(new CDataWrapper());
+            std::auto_ptr<CDataWrapper> init_dataset(new CDataWrapper());
             if(instance_description->hasKey("attribute_value_descriptions") &&
                instance_description->isVectorValue("attribute_value_descriptions")) {
                 //we have a configuration so we try to send it as dataset
-                std::unique_ptr<CMultiTypeDataArrayWrapper> instance_description_array(result->getVectorValue("attribute_value_descriptions"));
+                std::auto_ptr<CMultiTypeDataArrayWrapper> instance_description_array(result->getVectorValue("attribute_value_descriptions"));
                 for(int aai = 0;
                     aai < instance_description_array->size();
                     aai++) {
                     
-                    std::unique_ptr<CDataWrapper> attribute(instance_description_array->getCDataWrapperElementAtIndex(aai));
+                    std::auto_ptr<CDataWrapper> attribute(instance_description_array->getCDataWrapperElementAtIndex(aai));
                     
                     init_dataset->appendCDataWrapperToArray(*attribute.get());
                 }
@@ -245,7 +245,7 @@ std::unique_ptr<CDataWrapper> CUCommonUtility::initDataPack(const std::string& c
             } else if(ds_description == NULL) {
                 CUCU_DBG << "No description foudn for data service:" << ds_unique_id;
             } else {
-                std::unique_ptr<CDataWrapper> ds_object(ds_description);
+                std::auto_ptr<CDataWrapper> ds_object(ds_description);
                 if(ds_object->hasKey(NodeDefinitionKey::NODE_DIRECT_IO_ADDR) &&
                    ds_object->hasKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT)) {
                     //we can create the address
@@ -291,20 +291,20 @@ std::unique_ptr<CDataWrapper> CUCommonUtility::initDataPack(const std::string& c
     return init_datapack;
 }
 
-std::unique_ptr<CDataWrapper> CUCommonUtility::startDataPack(const std::string& cu_uid) {
-    std::unique_ptr<CDataWrapper> result(new CDataWrapper());
+std::auto_ptr<CDataWrapper> CUCommonUtility::startDataPack(const std::string& cu_uid) {
+    std::auto_ptr<CDataWrapper> result(new CDataWrapper());
     result->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_uid);
     return result;
 }
 
-std::unique_ptr<CDataWrapper> CUCommonUtility::stopDataPack(const std::string& cu_uid) {
-    std::unique_ptr<CDataWrapper> result(new CDataWrapper());
+std::auto_ptr<CDataWrapper> CUCommonUtility::stopDataPack(const std::string& cu_uid) {
+    std::auto_ptr<CDataWrapper> result(new CDataWrapper());
     result->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_uid);
     return result;
 }
 
-std::unique_ptr<CDataWrapper> CUCommonUtility::deinitDataPack(const std::string& cu_uid) {
-    std::unique_ptr<CDataWrapper> result(new CDataWrapper());
+std::auto_ptr<CDataWrapper> CUCommonUtility::deinitDataPack(const std::string& cu_uid) {
+    std::auto_ptr<CDataWrapper> result(new CDataWrapper());
     result->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_uid);
     return result;
 }
@@ -326,9 +326,9 @@ if(src->hasKey(k)) {\
 dst->addInt32Value(k, src->getInt32Value(k));\
 }
 
-std::unique_ptr<CDataWrapper> CUCommonUtility::mergeDatasetAttributeWithSetup(CDataWrapper *element_in_dataset,
+std::auto_ptr<CDataWrapper> CUCommonUtility::mergeDatasetAttributeWithSetup(CDataWrapper *element_in_dataset,
                                                                             CDataWrapper *element_in_setup) {
-    std::unique_ptr<CDataWrapper> result(new CDataWrapper());
+    std::auto_ptr<CDataWrapper> result(new CDataWrapper());
     //move
     MOVE_STRING_VALUE(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME, element_in_dataset, result)
     MOVE_STRING_VALUE(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION, element_in_dataset, result)

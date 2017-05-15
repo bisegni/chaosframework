@@ -215,7 +215,7 @@ CDataWrapper *LogWorker::starLoggingAssociation(CDataWrapper *data,
     CHECK_MANDATORY_KEY(data, AgentNodeDefinitionKey::NODE_ASSOCIATED, ERROR, -2);
     CHECK_TYPE_OF_KEY(data, AgentNodeDefinitionKey::NODE_ASSOCIATED, CDataWrapper, ERROR, -3);
     
-    std::unique_ptr<CDataWrapper> assoc_ser(data->getCSDataValue(AgentNodeDefinitionKey::NODE_ASSOCIATED));
+    std::auto_ptr<CDataWrapper> assoc_ser(data->getCSDataValue(AgentNodeDefinitionKey::NODE_ASSOCIATED));
     
     AgentAssociationSDWrapper agent_association;
     agent_association.deserialize(assoc_ser.get());
@@ -237,7 +237,7 @@ CDataWrapper *LogWorker::stopLoggingAssociation(CDataWrapper *data,
     CHECK_MANDATORY_KEY(data, AgentNodeDefinitionKey::NODE_ASSOCIATED, ERROR, -2);
     CHECK_TYPE_OF_KEY(data, AgentNodeDefinitionKey::NODE_ASSOCIATED, CDataWrapper, ERROR, -3);
     
-    std::unique_ptr<CDataWrapper> assoc_ser(data->getCSDataValue(AgentNodeDefinitionKey::NODE_ASSOCIATED));
+    std::auto_ptr<CDataWrapper> assoc_ser(data->getCSDataValue(AgentNodeDefinitionKey::NODE_ASSOCIATED));
     
     AgentAssociationSDWrapper agent_association;
     agent_association.deserialize(assoc_ser.get());

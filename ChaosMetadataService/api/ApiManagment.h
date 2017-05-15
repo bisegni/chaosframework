@@ -68,7 +68,7 @@ namespace chaos {
 				void addApiAgroup() {
 					CHAOS_ASSERT(subservices)
 					//allcoate the instsancer for the AbstractApi depending by the template
-					std::unique_ptr<INSTANCER(T, AbstractApiGroup)> i(ALLOCATE_INSTANCER(T, AbstractApiGroup));
+					std::auto_ptr<INSTANCER(T, AbstractApiGroup)> i(ALLOCATE_INSTANCER(T, AbstractApiGroup));
 					
 					//get api instance
 					T *instance = (T*)i->getInstance();

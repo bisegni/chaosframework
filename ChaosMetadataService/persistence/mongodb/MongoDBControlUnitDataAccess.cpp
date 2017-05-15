@@ -202,7 +202,7 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
         
         
         
-        std::unique_ptr<CMultiTypeDataArrayWrapper> ds_vec(dataset->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
+        std::auto_ptr<CMultiTypeDataArrayWrapper> ds_vec(dataset->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
         if(!ds_vec.get()) return -7;
         //cicle all dataset attribute
         mongo::BSONArrayBuilder dataset_bson_array;
@@ -238,7 +238,7 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
                         if(dataset_element->isVector(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE)) {
                             //we have multipler value for subtype
                             mongo::BSONArrayBuilder subtype_array_builder;
-                            std::unique_ptr<CMultiTypeDataArrayWrapper> sub_t_vec(dataset_element->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE));
+                            std::auto_ptr<CMultiTypeDataArrayWrapper> sub_t_vec(dataset_element->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE));
                             for(int idx = 0;
                                 idx < sub_t_vec->size();
                                 idx++) {
@@ -290,7 +290,7 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
         
         //check if we have bactch command in the dataset
         if(dataset_description.hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_COMMAND_DESCRIPTION)) {
-            std::unique_ptr<CMultiTypeDataArrayWrapper> bc_vec(dataset_description.getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_COMMAND_DESCRIPTION));
+            std::auto_ptr<CMultiTypeDataArrayWrapper> bc_vec(dataset_description.getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_COMMAND_DESCRIPTION));
             mongo::BSONArrayBuilder batch_command_bson_array;
             for(int idx = 0;
                 idx < bc_vec->size();
@@ -305,7 +305,7 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
                 //check for parameter
                 if(bc_element->hasKey(common::batch_command::BatchCommandAndParameterDescriptionkey::BC_PARAMETERS)){
                     mongo::BSONArrayBuilder batch_command_parameter_bson_array;
-                    std::unique_ptr<CMultiTypeDataArrayWrapper> bc_param_vec(bc_element->getVectorValue(common::batch_command::BatchCommandAndParameterDescriptionkey::BC_PARAMETERS));
+                    std::auto_ptr<CMultiTypeDataArrayWrapper> bc_param_vec(bc_element->getVectorValue(common::batch_command::BatchCommandAndParameterDescriptionkey::BC_PARAMETERS));
                     for(int idx_param = 0;
                         idx_param < bc_param_vec->size();
                         idx_param++) {
@@ -916,7 +916,7 @@ int MongoDBControlUnitDataAccess::getDataServiceAssociated(const std::string& cu
                 MDBCUDA_ERR << "Error fetching node description for data service:" << ds_unique_id;
             } else if(node_description!=NULL){
                 //we have object description
-                std::unique_ptr<CDataWrapper> node_ptr(node_description);
+                std::auto_ptr<CDataWrapper> node_ptr(node_description);
                 associated_ds.push_back(node_ptr->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID));
             } else {
                 MDBCUDA_ERR << "no node description found for data service:" << ds_unique_id;

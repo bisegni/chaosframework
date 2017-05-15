@@ -200,7 +200,7 @@ delete(x);
                     uint32_t alive_for_ms = 0;
                     
                     //create temporare autoPtr for safe operation in case of exception
-                    std::unique_ptr<ResourceSlot> _temp_resource_lot;
+                    std::auto_ptr<ResourceSlot> _temp_resource_lot;
                     try {
                         R *new_resource = NULL;
                         if((new_resource = resource_pooler_helper->allocateResource(pool_identity,

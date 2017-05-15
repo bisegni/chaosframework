@@ -88,7 +88,7 @@ void DomainActionsScheduler::synchronousCall(const std::string& action,
                                              chaos_data::CDataWrapper *result) {
     bool message_has_been_detached = false;
     unique_ptr<CDataWrapper>  action_message(message);
-    std::unique_ptr<CDataWrapper> message_data(message->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
+    std::auto_ptr<CDataWrapper> message_data(message->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
     if(!domainActionsContainer->hasActionName(action)) {
         LAPP_ << "The action " << action << " is not present for domain " << domainActionsContainer->getDomainName();
         result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, -1);

@@ -80,22 +80,23 @@ CDataWrapper *GetSetFullUnitServer::execute(CDataWrapper *api_data,
         
         // look for UnitServer full description
         if(api_data->hasKey("us_desc")&& api_data->isCDataWrapperValue("us_desc")){
-            std::unique_ptr<CDataWrapper> udesc(api_data->getCSDataValue("us_desc"));
+            std::auto_ptr<CDataWrapper> udesc(api_data->getCSDataValue("us_desc"));
             if(udesc->hasKey("cu_desc")&& udesc->isVector("cu_desc")){
-                std::unique_ptr<CMultiTypeDataArrayWrapper> cu_l=udesc->getVectorValue("cu_desc");
-                for(int cui=0;(cu_l !=NULL) && (cui<cu_l->size());cui++){
-                    std::unique_ptr<CDataWrapper> cuw(cu_l->getCDataWrapperElementAtIndex(cui));
+                std::auto_ptr<CMultiTypeDataArrayWrapper> cu_l(udesc->getVectorValue("cu_desc"));
+                for(int cui=0;
+                    (cu_l.get() !=NULL) &&
+                    (cui<cu_l->size());cui++){
+                    std::auto_ptr<CDataWrapper> cuw(cu_l->getCDataWrapperElementAtIndex(cui));
                     if(cuw->hasKey("cu_id") && cuw->hasKey("cu_type")){
-    		                	 std::string cu_id= cuw->getStringValue("cu_id");
-    		                	 std::string cu_type= cuw->getStringValue("cu_type");
-    		                	 US_ACT_DBG<< "adding cu :"<<cu_id<<"("<<cu_type<<") to "<<us_uid;
-    		                	 if((err = us_da->addCUType(us_uid, cu_type))) {
-                                     LOG_AND_TROW_FORMATTED(US_ACT_ERR, err, "Error adding cu '%1%' type: %2% to unit server: %3%", %cu_id%us_uid%cu_type);
-                                 }
-    		                	 chaos::metadata_service::api::control_unit::SetInstanceDescription is;
-    		                	 is.execute(cuw.get(),detach_data);
-    		                	 US_ACT_DBG<< "added "<<cuw->getJSONString();
-                        
+                        std::string cu_id= cuw->getStringValue("cu_id");
+                        std::string cu_type= cuw->getStringValue("cu_type");
+                        US_ACT_DBG<< "adding cu :"<<cu_id<<"("<<cu_type<<") to "<<us_uid;
+                        if((err = us_da->addCUType(us_uid, cu_type))) {
+                            LOG_AND_TROW_FORMATTED(US_ACT_ERR, err, "Error adding cu '%1%' type: %2% to unit server: %3%", %cu_id%us_uid%cu_type);
+                        }
+                        chaos::metadata_service::api::control_unit::SetInstanceDescription is;
+                        is.execute(cuw.get(),detach_data);
+                        US_ACT_DBG<< "added "<<cuw->getJSONString();
                     }
                     
                 }

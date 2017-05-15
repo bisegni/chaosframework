@@ -65,7 +65,7 @@ void AgentProcessController::setHandler(CDataWrapper *data) {
     
     //! fetch the agent information
     CDataWrapper *tmp_ptr;
-    std::unique_ptr<CDataWrapper> node_information;
+    std::auto_ptr<CDataWrapper> node_information;
     if((err = getDataAccess<mds_data_access::NodeDataAccess>()->getNodeDescription(agent_host, &tmp_ptr))) {
         LOG_AND_TROW(ERR, err, "Error fetching node decription")
     }

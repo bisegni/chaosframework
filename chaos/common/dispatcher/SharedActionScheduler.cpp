@@ -76,7 +76,7 @@ void SharedActionScheduler::synchronousCall(chaos_data::CDataWrapper *message,
     
     const std::string domain_name = message->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN);
     const std::string action_name = message->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME);
-    std::unique_ptr<CDataWrapper> message_data(message->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
+    std::auto_ptr<CDataWrapper> message_data(message->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
     
     boost::shared_ptr<DomainActions> domain_action = map_domain_actions()[domain_name];
     if(domain_action.get() == NULL ||

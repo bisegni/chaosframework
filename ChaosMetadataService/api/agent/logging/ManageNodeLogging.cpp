@@ -55,7 +55,7 @@ CDataWrapper *ManageNodeLogging::execute(CDataWrapper *api_data, bool& detach_da
     //we can rpocessd
     GET_DATA_ACCESS(AgentDataAccess, a_da, -4);
     uint64_t cmd_id = 0;
-    std::unique_ptr<CDataWrapper> batch_data(new CDataWrapper());
+    std::auto_ptr<CDataWrapper> batch_data(new CDataWrapper());
     api_data->copyKeyTo(NodeDefinitionKey::NODE_UNIQUE_ID, *batch_data);
     api_data->copyKeyTo("NodeAssociationLoggingOperation", *batch_data);
     cmd_id = getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::agent::AgentLoggingNodeManagement),

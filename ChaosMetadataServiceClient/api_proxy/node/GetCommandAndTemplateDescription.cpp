@@ -35,7 +35,7 @@ API_PROXY_CD_DEFINITION(GetCommandAndTemplateDescription,
  */
 ApiProxyResult GetCommandAndTemplateDescription::execute(const std::string& template_name,
                                            const std::string& command_uid) {
-    std::unique_ptr<CDataWrapper> message(new CDataWrapper());
+    std::auto_ptr<CDataWrapper> message(new CDataWrapper());
     message->addStringValue("template_name", template_name);
     message->addStringValue(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID, command_uid);
     //call api

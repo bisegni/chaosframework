@@ -45,7 +45,7 @@ namespace chaos {
                 typedef boost::shared_ptr<chaos::common::script::AbstractScriptableClass> ApiClassShrdPtr;
                 CHAOS_DEFINE_VECTOR_FOR_TYPE(ApiClassShrdPtr, VectorApiClass);
                 
-                CHAOS_DEFINE_LOCKABLE_OBJECT(std::unique_ptr<chaos::common::script::ScriptManager>, LockableScriptManager);
+                CHAOS_DEFINE_LOCKABLE_OBJECT(std::auto_ptr<chaos::common::script::ScriptManager>, LockableScriptManager);
                 
                 //! this class implementa an execution unit defined by a script
                 /*!

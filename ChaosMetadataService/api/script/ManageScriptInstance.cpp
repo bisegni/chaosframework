@@ -65,7 +65,7 @@ chaos::common::data::CDataWrapper *ManageScriptInstance::execute(CDataWrapper *a
     if(api_data->isStringValue("instance_name")) {
         str_list.push_back(api_data->getStringValue("instance_name"));
     } else if(api_data->isVectorValue("instance_name")) {
-        std::unique_ptr<CMultiTypeDataArrayWrapper> array(api_data->getVectorValue("instance_name"));
+        std::auto_ptr<CMultiTypeDataArrayWrapper> array(api_data->getVectorValue("instance_name"));
         for(int idx = 0;
             idx < array->size();
             idx++) {

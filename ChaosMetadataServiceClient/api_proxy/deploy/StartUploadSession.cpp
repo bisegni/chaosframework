@@ -33,6 +33,6 @@ API_PROXY_CD_DEFINITION(StartUploadSession,
                         AgentNodeDomainAndActionRPC::DeployWorker::ACTION_INIT_DEPLOY_SESSION);
 
 ApiProxyResult StartUploadSession::execute(const std::string& agent_uid) {
-    std::unique_ptr<CDataWrapper> pack(new CDataWrapper());
+    std::auto_ptr<CDataWrapper> pack(new CDataWrapper());
     return callApi(pack.release());
 }

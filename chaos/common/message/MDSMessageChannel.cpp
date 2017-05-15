@@ -68,7 +68,7 @@ const std::string& MDSMessageChannel::getLastErrorDomain() {
  \param identificationID identification id of a device or a client
  */
 void MDSMessageChannel::sendHeartBeatForDeviceID(const std::string& identification_id) {
-    std::unique_ptr<CDataWrapper> hb_message(new CDataWrapper());
+    std::auto_ptr<CDataWrapper> hb_message(new CDataWrapper());
     hb_message->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, identification_id);
     sendMessage(NodeDomainAndActionRPC::RPC_DOMAIN,
                 ChaosSystemDomainAndActionLabel::MDS_CU_HEARTBEAT,
@@ -83,11 +83,11 @@ int MDSMessageChannel::sendUnitServerCUStates(CDataWrapper& deviceDataset,
     int size_bson = 0;
     string currentBrokerIpPort;
     getRpcPublishedHostAndPort(currentBrokerIpPort);
-    std::unique_ptr<CDataWrapper> data(new CDataWrapper(deviceDataset.getBSONRawData(size_bson)));
+    std::auto_ptr<CDataWrapper> data(new CDataWrapper(deviceDataset.getBSONRawData(size_bson)));
     data->addStringValue(NodeDefinitionKey::NODE_RPC_ADDR, currentBrokerIpPort);
     
     if(requestCheck){
-        std::unique_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture(NodeDomainAndActionRPC::RPC_DOMAIN,
+        std::auto_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture(NodeDomainAndActionRPC::RPC_DOMAIN,
                                                                                                ChaosSystemDomainAndActionLabel::UNIT_SERVER_STATES_ANSWER,
                                                                                                data.release());
         request_future->setTimeout(millisec_to_wait);
@@ -112,14 +112,14 @@ int MDSMessageChannel::sendNodeRegistration(CDataWrapper& node_description,
     int size_bson = 0;
     std::string currentBrokerIpPort;
     getRpcPublishedHostAndPort(currentBrokerIpPort);
-    std::unique_ptr<CDataWrapper> data(new CDataWrapper(node_description.getBSONRawData(size_bson)));
+    std::auto_ptr<CDataWrapper> data(new CDataWrapper(node_description.getBSONRawData(size_bson)));
     data->addStringValue(NodeDefinitionKey::NODE_RPC_ADDR, currentBrokerIpPort);
     
     //set our timestamp
     data->addInt64Value(chaos::NodeDefinitionKey::NODE_TIMESTAMP,
                         chaos::common::utility::TimingUtil::getTimeStamp());
     if(requestCheck){
-        std::unique_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture(NodeDomainAndActionRPC::RPC_DOMAIN,
+        std::auto_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture(NodeDomainAndActionRPC::RPC_DOMAIN,
                                                                                                MetadataServerNodeDefinitionKeyRPC::ACTION_REGISTER_NODE,
                                                                                                data.release());
         request_future->setTimeout(millisec_to_wait);
@@ -143,10 +143,10 @@ int MDSMessageChannel::sentNodeHealthStatus(CDataWrapper& node_health_data,
     std::string currentBrokerIpPort;
     
     //get rpc receive port
-    std::unique_ptr<CDataWrapper> data(new CDataWrapper(node_health_data.getBSONRawData(size_bson)));
+    std::auto_ptr<CDataWrapper> data(new CDataWrapper(node_health_data.getBSONRawData(size_bson)));
     
     if(request_check){
-        std::unique_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture(NodeDomainAndActionRPC::RPC_DOMAIN,
+        std::auto_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture(NodeDomainAndActionRPC::RPC_DOMAIN,
                                                                                                MetadataServerNodeDefinitionKeyRPC::ACTION_NODE_HEALTH_STATUS,
                                                                                                data.release());
         request_future->setTimeout(millisec_to_wait);
@@ -171,14 +171,14 @@ int MDSMessageChannel::sendNodeLoadCompletion(CDataWrapper& node_information,
     
     //get rpc receive port
     getRpcPublishedHostAndPort(currentBrokerIpPort);
-    std::unique_ptr<CDataWrapper> data(new CDataWrapper(node_information.getBSONRawData(size_bson)));
+    std::auto_ptr<CDataWrapper> data(new CDataWrapper(node_information.getBSONRawData(size_bson)));
     data->addStringValue(NodeDefinitionKey::NODE_RPC_ADDR, currentBrokerIpPort);
     
     //set our timestamp
     data->addInt64Value(chaos::NodeDefinitionKey::NODE_TIMESTAMP,
                         chaos::common::utility::TimingUtil::getTimeStamp());
     if(requestCheck){
-        std::unique_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture(NodeDomainAndActionRPC::RPC_DOMAIN,
+        std::auto_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture(NodeDomainAndActionRPC::RPC_DOMAIN,
                                                                                                MetadataServerNodeDefinitionKeyRPC::ACTION_NODE_LOAD_COMPLETION,
                                                                                                data.release());
         request_future->setTimeout(millisec_to_wait);
@@ -207,7 +207,7 @@ int MDSMessageChannel::getNetworkAddressForDevice(const std::string& identificat
     unique_ptr<CDataWrapper> data(new CDataWrapper());
     data->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, identification_id);
     
-    std::unique_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture(NodeDomainAndActionRPC::RPC_DOMAIN,
+    std::auto_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture(NodeDomainAndActionRPC::RPC_DOMAIN,
                                                                                            "getNodeDescription",
                                                                                            data.release());
     request_future->setTimeout(millisec_to_wait);
@@ -242,7 +242,7 @@ int MDSMessageChannel::getLastDatasetForDevice(const std::string& identification
     unique_ptr<CDataWrapper> data(new CDataWrapper());
     data->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, identification_id);
     
-    std::unique_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("control_unit",
+    std::auto_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("control_unit",
                                                                                            "getFullDescription",
                                                                                            data.release());
     request_future->setTimeout(millisec_to_wait);
@@ -268,7 +268,7 @@ int  MDSMessageChannel::loadSnapshotNodeDataset(const std::string& snapname,
         message->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_uid);
         message->addStringValue("snapshot_name", snapname);
         
-        std::unique_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
+        std::auto_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
                                                                                                "getSnapshotDatasetForNode",
                                                                                                message.release());
         request_future->setTimeout(millisec_to_wait);
@@ -277,7 +277,7 @@ int  MDSMessageChannel::loadSnapshotNodeDataset(const std::string& snapname,
             err = request_future->getError();
             if(err==0){
                 
-                std::unique_ptr<CMultiTypeDataArrayWrapper> snapshot_list(request_future->getResult()->getVectorValue("dataset_list"));
+                std::auto_ptr<CMultiTypeDataArrayWrapper> snapshot_list(request_future->getResult()->getVectorValue("dataset_list"));
                 if(snapshot_list->size()){
                     data_set.addStringValue("name",node_uid);
                     data_set.addInt64Value("timestamp",mapsnap_res.begin()->first);
@@ -285,10 +285,10 @@ int  MDSMessageChannel::loadSnapshotNodeDataset(const std::string& snapname,
                 for(int idx = 0;
                     idx < snapshot_list->size();
                     idx++) {
-                    std::unique_ptr<CDataWrapper> snapshot_dataset_element(snapshot_list->getCDataWrapperElementAtIndex(idx));
+                    std::auto_ptr<CDataWrapper> snapshot_dataset_element(snapshot_list->getCDataWrapperElementAtIndex(idx));
                     
                     const std::string dataset_name = snapshot_dataset_element->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_NAME);
-                    std::unique_ptr<CDataWrapper> val(snapshot_dataset_element->getCSDataValue("dataset_value"));
+                    std::auto_ptr<CDataWrapper> val(snapshot_dataset_element->getCSDataValue("dataset_value"));
                     if(val->hasKey(chaos::DataPackCommonKey::DPCK_DATASET_TYPE)){
                         std::string ret=datasetTypeToHuman(val->getUInt32Value(chaos::DataPackCommonKey::DPCK_DATASET_TYPE));
                         data_set.addCSDataValue(ret,*val);
@@ -314,7 +314,7 @@ int MDSMessageChannel::getFullNodeDescription(const std::string& identification_
     unique_ptr<CDataWrapper> data(new CDataWrapper());
     data->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, identification_id);
     data->addBoolValue("all",true);
-    std::unique_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("control_unit",
+    std::auto_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("control_unit",
                                                                                            "getFullDescription",
                                                                                            data.release());
     request_future->setTimeout(millisec_to_wait);
@@ -337,7 +337,7 @@ int MDSMessageChannel::getDataDriverBestConfiguration(CDataWrapper** deviceDefin
     int err = ErrorCode::EC_NO_ERROR;
     if(!deviceDefinition) return -1000;
     //send request and wait the response
-    std::unique_ptr<MultiAddressMessageRequestFuture> future = sendRequestWithFuture(DataServiceNodeDomainAndActionRPC::RPC_DOMAIN,
+    std::auto_ptr<MultiAddressMessageRequestFuture> future = sendRequestWithFuture(DataServiceNodeDomainAndActionRPC::RPC_DOMAIN,
                                                                                    "getBestEndpoints",
                                                                                    NULL);
     future->setTimeout(millisec_to_wait);
@@ -355,7 +355,7 @@ int MDSMessageChannel::createNewSnapshot(const std::string& snapshot_name,
                                          const ChaosStringVector& node_list,
                                          uint32_t millisec_to_wait) {
     int err = ErrorCode::EC_NO_ERROR;
-    std::unique_ptr<CDataWrapper> message(new CDataWrapper());
+    std::auto_ptr<CDataWrapper> message(new CDataWrapper());
     message->addStringValue("snapshot_name", snapshot_name);
     
     for(ChaosStringVectorConstIterator it = node_list.begin(),
@@ -365,7 +365,7 @@ int MDSMessageChannel::createNewSnapshot(const std::string& snapshot_name,
         message->appendStringToArray(*it);
     }
     message->finalizeArrayForKey("node_list");
-    std::unique_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
+    std::auto_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
                                                                                            "createNewSnapshot",
                                                                                            message.release());
     request_future->setTimeout(millisec_to_wait);
@@ -380,9 +380,9 @@ int MDSMessageChannel::createNewSnapshot(const std::string& snapshot_name,
 int MDSMessageChannel::restoreSnapshot(const std::string& snapshot_name,
                                        uint32_t millisec_to_wait) {
     int err = ErrorCode::EC_NO_ERROR;
-    std::unique_ptr<CDataWrapper> message(new CDataWrapper());
+    std::auto_ptr<CDataWrapper> message(new CDataWrapper());
     message->addStringValue("snapshot_name", snapshot_name);
-    std::unique_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
+    std::auto_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
                                                                                            "restoreSnapshot",
                                                                                            message.release());
     request_future->setTimeout(millisec_to_wait);
@@ -397,9 +397,9 @@ int MDSMessageChannel::restoreSnapshot(const std::string& snapshot_name,
 int MDSMessageChannel::deleteSnapshot(const std::string& snapshot_name,
                                       uint32_t millisec_to_wait) {
     int err = ErrorCode::EC_NO_ERROR;
-    std::unique_ptr<CDataWrapper> message(new CDataWrapper());
+    std::auto_ptr<CDataWrapper> message(new CDataWrapper());
     message->addStringValue("snapshot_name", snapshot_name);
-    std::unique_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
+    std::auto_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
                                                                                            "deleteSnapshot",
                                                                                            message.release());
     request_future->setTimeout(millisec_to_wait);
@@ -415,7 +415,7 @@ int MDSMessageChannel::searchSnapshot(const std::string& query_filter,
                                       uint32_t millisec_to_wait){
     int err = ErrorCode::EC_NO_ERROR;
     
-    std::unique_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
+    std::auto_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
                                                                                            "getAllSnapshot",
                                                                                            NULL);
     request_future->setTimeout(millisec_to_wait);
@@ -427,11 +427,11 @@ int MDSMessageChannel::searchSnapshot(const std::string& query_filter,
                !request_future->getResult()->hasKey("snapshot_list_result") ||
                !request_future->getResult()->isVectorValue("snapshot_list_result")) return err;
             
-            std::unique_ptr<CMultiTypeDataArrayWrapper> snapshot_desc_list(request_future->getResult()->getVectorValue("snapshot_list_result"));
+            std::auto_ptr<CMultiTypeDataArrayWrapper> snapshot_desc_list(request_future->getResult()->getVectorValue("snapshot_list_result"));
             for(int idx = 0;
                 idx < snapshot_desc_list->size();
                 idx++) {
-                std::unique_ptr<CDataWrapper> tmp_desc(snapshot_desc_list->getCDataWrapperElementAtIndex(idx));
+                std::auto_ptr<CDataWrapper> tmp_desc(snapshot_desc_list->getCDataWrapperElementAtIndex(idx));
                 
                 if(tmp_desc->hasKey("snap_name")) {
                     if(!query_filter.empty()){
@@ -479,7 +479,7 @@ int MDSMessageChannel::searchNodeForSnapshot(const std::string& snapshot_name,
     unique_ptr<CDataWrapper> message(new CDataWrapper());
     message->addStringValue("snapshot_name", snapshot_name);
     
-    std::unique_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
+    std::auto_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
                                                                                            "getNodesForSnapshot",
                                                                                            message.release());
     request_future->setTimeout(millisec_to_wait);
@@ -491,7 +491,7 @@ int MDSMessageChannel::searchNodeForSnapshot(const std::string& snapshot_name,
                request_future->getResult()->hasKey("node_in_snapshot") &&
                request_future->getResult()->isVectorValue("node_in_snapshot")) {
                 //we have result
-                std::unique_ptr<CMultiTypeDataArrayWrapper> snapshot_desc_list(request_future->getResult()->getVectorValue("node_in_snapshot"));
+                std::auto_ptr<CMultiTypeDataArrayWrapper> snapshot_desc_list(request_future->getResult()->getVectorValue("node_in_snapshot"));
                 for(int idx = 0;
                     idx < snapshot_desc_list->size();
                     idx++) {
@@ -514,7 +514,7 @@ int MDSMessageChannel::searchSnapshotForNode(const std::string& node_uid,
     int err = ErrorCode::EC_NO_ERROR;
     unique_ptr<CDataWrapper> message(new CDataWrapper());
     message->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_uid);
-    std::unique_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
+    std::auto_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
                                                                                            "getSnapshotForNode",
                                                                                            message.release());
     request_future->setTimeout(millisec_to_wait);
@@ -526,7 +526,7 @@ int MDSMessageChannel::searchSnapshotForNode(const std::string& node_uid,
                request_future->getResult()->hasKey("snapshot_for_node") &&
                request_future->getResult()->isVectorValue("snapshot_for_node")) {
                 //we have result
-                std::unique_ptr<CMultiTypeDataArrayWrapper> snapshot_desc_list(request_future->getResult()->getVectorValue("snapshot_for_node"));
+                std::auto_ptr<CMultiTypeDataArrayWrapper> snapshot_desc_list(request_future->getResult()->getVectorValue("snapshot_for_node"));
                 for(int idx = 0;
                     idx < snapshot_desc_list->size();
                     idx++) {
@@ -550,7 +550,7 @@ int MDSMessageChannel::setVariable(const std::string& variable_name,
                             variable_name);
     message->addCSDataValue("variable_value",
                             variable_value);
-    std::unique_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
+    std::auto_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
                                                                                            "setVariable",
                                                                                            message.release());
     request_future->setTimeout(millisec_to_wait);
@@ -570,7 +570,7 @@ int MDSMessageChannel::searchVariable(const std::string& variable_name,ChaosStri
     message->addStringValue("variable_name",
                             variable_name);
     
-    std::unique_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
+    std::auto_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
                                                                                            "searchVariable",
                                                                                            message.release());
     request_future->setTimeout(millisec_to_wait);
@@ -583,7 +583,7 @@ int MDSMessageChannel::searchVariable(const std::string& variable_name,ChaosStri
                request_future->getResult()->hasKey("varlist") &&
                request_future->getResult()->isVectorValue("varlist")) {
 	        				   //we have result
-	        				   std::unique_ptr<CMultiTypeDataArrayWrapper> snapshot_desc_list(request_future->getResult()->getVectorValue("varlist"));
+	        				   std::auto_ptr<CMultiTypeDataArrayWrapper> snapshot_desc_list(request_future->getResult()->getVectorValue("varlist"));
 	        				   for(int idx = 0;
                                    idx < snapshot_desc_list->size();
                                    idx++) {
@@ -607,7 +607,7 @@ int MDSMessageChannel::getVariable(const std::string& variable_name,
     unique_ptr<CDataWrapper> message(new CDataWrapper());
     message->addStringValue("variable_name",
                             variable_name);
-    std::unique_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
+    std::auto_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
                                                                                            "getVariable",
                                                                                            message.release());
     request_future->setTimeout(millisec_to_wait);
@@ -628,7 +628,7 @@ int MDSMessageChannel::removeVariable(const std::string& variable_name,
     unique_ptr<CDataWrapper> message(new CDataWrapper());
     message->addStringValue("variable_name",
                             variable_name);
-    std::unique_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
+    std::auto_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
                                                                                            "removeVariable",
                                                                                            message.release());
     request_future->setTimeout(millisec_to_wait);
@@ -655,7 +655,7 @@ int MDSMessageChannel::searchNode(const std::string& unique_id_filter,
     message->addInt32Value("last_node_sequence_id", last_node_sequence_id);
     message->addBoolValue("alive_only", alive_only);
     message->addInt32Value("result_page_length", page_length);
-    std::unique_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("system",
+    std::auto_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("system",
                                                                                            "nodeSearch",
                                                                                            message.release());
     request_future->setTimeout(millisec_to_wait);
@@ -667,11 +667,11 @@ int MDSMessageChannel::searchNode(const std::string& unique_id_filter,
                request_future->getResult()->hasKey("node_search_result_page") &&
                request_future->getResult()->isVectorValue("node_search_result_page")) {
                 //we have result
-                std::unique_ptr<CMultiTypeDataArrayWrapper> snapshot_desc_list(request_future->getResult()->getVectorValue("node_search_result_page"));
+                std::auto_ptr<CMultiTypeDataArrayWrapper> snapshot_desc_list(request_future->getResult()->getVectorValue("node_search_result_page"));
                 for(int idx = 0;
                     idx < snapshot_desc_list->size();
                     idx++) {
-                    std::unique_ptr<CDataWrapper> element(snapshot_desc_list->getCDataWrapperElementAtIndex(idx));
+                    std::auto_ptr<CDataWrapper> element(snapshot_desc_list->getCDataWrapperElementAtIndex(idx));
                     if(element.get() &&
                        element->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID)) {
                         node_found.push_back(element->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID));
@@ -686,7 +686,7 @@ int MDSMessageChannel::searchNode(const std::string& unique_id_filter,
 }
 
 
-std::unique_ptr<MultiAddressMessageRequestFuture> MDSMessageChannel::sendRequestWithFuture(const std::string& action_domain,
+std::auto_ptr<MultiAddressMessageRequestFuture> MDSMessageChannel::sendRequestWithFuture(const std::string& action_domain,
                                                                                          const std::string& action_name,
                                                                                          chaos::common::data::CDataWrapper *request_pack,
                                                                                          int32_t request_timeout) {

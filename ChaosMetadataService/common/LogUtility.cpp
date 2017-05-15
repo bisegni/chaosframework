@@ -31,8 +31,8 @@ it++) {\
 o->m(it->first, it->second);\
 }
 
-std::unique_ptr<CDataWrapper> LogUtility::convertEntry(LogEntry& log_entry) {
-    std::unique_ptr<CDataWrapper> result(new CDataWrapper());
+std::auto_ptr<CDataWrapper> LogUtility::convertEntry(LogEntry& log_entry) {
+    std::auto_ptr<CDataWrapper> result(new CDataWrapper());
     result->addInt64Value("seq", log_entry.sequence);
     result->addInt64Value(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_TIMESTAMP, log_entry.ts);
     result->addStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER, log_entry.source_identifier);

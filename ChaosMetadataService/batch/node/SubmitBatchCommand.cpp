@@ -57,7 +57,7 @@ void SubmitBatchCommand::setHandler(CDataWrapper *data) {
         LOG_AND_TROW_FORMATTED(CU_SBC_ERR, -1, "No description found for node '%1%'", %node_uid)
     }
     
-    std::unique_ptr<CDataWrapper> node_description(tmp_ptr);
+    std::auto_ptr<CDataWrapper> node_description(tmp_ptr);
     const std::string node_rpc_address = node_description->getStringValue(NodeDefinitionKey::NODE_RPC_ADDR);
     const std::string node_rpc_domain = node_description->getStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN);
     request = createRequest(node_rpc_address,

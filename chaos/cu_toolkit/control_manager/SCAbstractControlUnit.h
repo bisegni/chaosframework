@@ -126,7 +126,7 @@ namespace chaos {
                                         uint64_t scheduler_step_delay = 1000000)  throw (CException);
                 
                 //!return a command description for a determinate uid
-                std::unique_ptr<CommandState> getStateForCommandID(uint64_t command_id);
+                std::auto_ptr<CommandState> getStateForCommandID(uint64_t command_id);
 			public:
 				
 				/*! default constructor

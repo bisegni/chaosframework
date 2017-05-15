@@ -84,8 +84,8 @@ namespace chaos {
                 }
             }
             
-            std::unique_ptr<chaos::common::data::CDataWrapper> serialize() {
-                std::unique_ptr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
+            std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
+                std::auto_ptr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
                 data_serialized->addStringValue("property_name", Subclass::dataWrapped().name);
                 data_serialized->addStringValue("property_description", Subclass::dataWrapped().description);
                 data_serialized->addInt32Value("property_type", Subclass::dataWrapped().type);

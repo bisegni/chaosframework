@@ -57,7 +57,7 @@ namespace chaos {
                     return environment_name;
                 }
                 
-                virtual std::unique_ptr<chaos::common::data::CDataWrapper> serialize() = 0;
+                virtual std::auto_ptr<chaos::common::data::CDataWrapper> serialize() = 0;
             };
             
             //!define th emap taht correlata
@@ -333,8 +333,8 @@ namespace chaos {
                                      event_to_fire);
                 }
                 
-                std::unique_ptr<chaos::common::data::CDataWrapper> serialize() {
-                    std::unique_ptr<chaos::common::data::CDataWrapper> result(new chaos::common::data::CDataWrapper());
+                std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
+                    std::auto_ptr<chaos::common::data::CDataWrapper> result(new chaos::common::data::CDataWrapper());
                     
                     common::property::PropertyGroup tmp_property_group;
                     common::property::PropertyGroupSDWrapper group_ref_wrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(common::property::PropertyGroup, tmp_property_group));

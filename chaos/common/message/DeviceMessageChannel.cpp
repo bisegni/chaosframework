@@ -107,7 +107,7 @@ bool DeviceMessageChannel::udpateNetworkAddress(int32_t millisec_to_wait) {
     }
     
     //we can proceed
-    std::unique_ptr<CDeviceNetworkAddress> new_device_network_address(tmp_addr);
+    std::auto_ptr<CDeviceNetworkAddress> new_device_network_address(tmp_addr);
     
     CHAOS_ASSERT((new_device_network_address->device_id.compare(device_network_address->device_id) == 0));
     
@@ -171,7 +171,7 @@ void DeviceMessageChannel::tryToReconnect() {
             return;
         }
         //try to check on device if it is online
-        std::unique_ptr<MessageRequestFuture> check_rpc_for_dev = checkRPCInformation();
+        std::auto_ptr<MessageRequestFuture> check_rpc_for_dev = checkRPCInformation();
         if(check_rpc_for_dev.get() &&
            check_rpc_for_dev->wait(5000)) {
             if(check_rpc_for_dev->getResult() &&
@@ -403,23 +403,23 @@ int DeviceMessageChannel::sendCustomRequest(const std::string& action_name,
 }
 
 //------------------------------------
-std::unique_ptr<MessageRequestFuture>  DeviceMessageChannel::sendCustomRequestWithFuture(const std::string& action_name,
+std::auto_ptr<MessageRequestFuture>  DeviceMessageChannel::sendCustomRequestWithFuture(const std::string& action_name,
                                                                                        common::data::CDataWrapper *request_data) {
-    //CHECK_ONLINE_OR_RETURN(std::unique_ptr<MessageRequestFuture>());
+    //CHECK_ONLINE_OR_RETURN(std::auto_ptr<MessageRequestFuture>());
     return sendRequestWithFuture(device_network_address->node_id,
                                  action_name,
                                  request_data);
 }
 
 //! Send a request for receive RPC information
-std::unique_ptr<MessageRequestFuture> DeviceMessageChannel::checkRPCInformation() {
-    //CHECK_ONLINE_OR_RETURN(std::unique_ptr<MessageRequestFuture>());
+std::auto_ptr<MessageRequestFuture> DeviceMessageChannel::checkRPCInformation() {
+    //CHECK_ONLINE_OR_RETURN(std::auto_ptr<MessageRequestFuture>());
     return NodeMessageChannel::checkRPCInformation(device_network_address->node_id);
 }
 
 //! Send a request for an echo test
-std::unique_ptr<MessageRequestFuture> DeviceMessageChannel::echoTest(chaos::common::data::CDataWrapper *echo_data) {
-    //CHECK_ONLINE_OR_RETURN(std::unique_ptr<MessageRequestFuture>());
+std::auto_ptr<MessageRequestFuture> DeviceMessageChannel::echoTest(chaos::common::data::CDataWrapper *echo_data) {
+    //CHECK_ONLINE_OR_RETURN(std::auto_ptr<MessageRequestFuture>());
     return NodeMessageChannel::echoTest(echo_data);
 }
 

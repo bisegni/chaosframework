@@ -58,7 +58,7 @@ namespace chaos {
                     
                     ApiProxyResult execute(const std::string& query_filter = std::string());
                     
-                    static std::unique_ptr<GetAllSnapshotHelper> getHelper(chaos::common::data::CDataWrapper *api_result);
+                    static std::auto_ptr<GetAllSnapshotHelper> getHelper(chaos::common::data::CDataWrapper *api_result);
                 };
             }
         }

@@ -37,8 +37,8 @@ ApiProxyResult GetNodesForSnapshot::execute(const std::string& snapshot_name) {
     return callApi(message);
 }
 
-std::unique_ptr<GetNodesForSnapshotHelper> GetNodesForSnapshot::getHelper(CDataWrapper *api_result) {
-    return std::unique_ptr<GetNodesForSnapshotHelper>(new GetNodesForSnapshotHelper(api_result));
+std::auto_ptr<GetNodesForSnapshotHelper> GetNodesForSnapshot::getHelper(CDataWrapper *api_result) {
+    return std::auto_ptr<GetNodesForSnapshotHelper>(new GetNodesForSnapshotHelper(api_result));
 }
 
 
@@ -48,7 +48,7 @@ GetNodesForSnapshotHelper::GetNodesForSnapshotHelper(CDataWrapper *api_result) {
     if(!api_result || !api_result->hasKey("node_in_snapshot")) return;
     if(!api_result->isVectorValue("node_in_snapshot")) return;
     
-    std::unique_ptr<CMultiTypeDataArrayWrapper> snapshot_desc_list(api_result->getVectorValue("node_in_snapshot"));
+    std::auto_ptr<CMultiTypeDataArrayWrapper> snapshot_desc_list(api_result->getVectorValue("node_in_snapshot"));
     for(int idx = 0;
         idx < snapshot_desc_list->size();
         idx++) {

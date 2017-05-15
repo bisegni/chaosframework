@@ -102,7 +102,7 @@ namespace chaos {
                 
                 const std::string& getDomainID();
                 
-                std::unique_ptr<MessageRequestFuture> getNewRequestMessageFuture(chaos::common::data::CDataWrapper& new_request_datapack,
+                std::auto_ptr<MessageRequestFuture> getNewRequestMessageFuture(chaos::common::data::CDataWrapper& new_request_datapack,
                                                                                uint32_t& new_request_id,
                                                                                PromisesHandlerWeakPtr promises_handler_weak);
             };

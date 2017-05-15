@@ -32,7 +32,7 @@ ApiProxyResult SearchInstancesForScript::execute(const std::string& script_name,
                                                 const std::string& search_string,
                                                 const uint64_t start_sequence_id,
                                                 const uint32_t page_lenght) {
-    std::unique_ptr<CDataWrapper> api_data(new CDataWrapper());
+    std::auto_ptr<CDataWrapper> api_data(new CDataWrapper());
     api_data->addStringValue("script_name", script_name);
     api_data->addStringValue("search_string", search_string);
     api_data->addInt64Value("last_sequence_id", start_sequence_id);

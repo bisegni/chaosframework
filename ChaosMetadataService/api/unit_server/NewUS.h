@@ -36,7 +36,7 @@ namespace chaos {
                     ~NewUS();
                     void performQuery(const std::string& uid,
                                       const string& desc,
-                                      std::unique_ptr<chaos::common::data::CDataWrapper> custom);
+                                      std::auto_ptr<chaos::common::data::CDataWrapper> custom);
                     chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
                                                                bool& detach_data) throw(chaos::CException);
                 };

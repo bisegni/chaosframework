@@ -35,7 +35,7 @@ namespace chaos {
                     DECLARE_MDS_COMMAND_ALIAS
 
                     CNetworkAddress * control_unit_address;
-                    std::unique_ptr<RequestInfo> request;
+                    std::auto_ptr<RequestInfo> request;
 
                     std::string cu_id;
                     std::string unit_server_addr;

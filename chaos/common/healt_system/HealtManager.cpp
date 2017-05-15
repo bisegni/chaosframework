@@ -152,7 +152,7 @@ int HealtManager::sayHello() throw (chaos::CException) {
                                NodeType::NODE_TYPE_HEALT_PROCESS);
     hello_pack->addInt64Value(NodeDefinitionKey::NODE_TIMESTAMP,
                               TimingUtil::getTimeStamp());
-    std::unique_ptr<MultiAddressMessageRequestFuture> future = mds_message_channel->sendRequestWithFuture(HealtProcessDomainAndActionRPC::RPC_DOMAIN,
+    std::auto_ptr<MultiAddressMessageRequestFuture> future = mds_message_channel->sendRequestWithFuture(HealtProcessDomainAndActionRPC::RPC_DOMAIN,
                                                                                                         HealtProcessDomainAndActionRPC::ACTION_PROCESS_WELCOME,
                                                                                                         hello_pack,
                                                                                                         1000);
@@ -468,7 +468,7 @@ void HealtManager::publishNodeHealt(const std::string& node_uid) {
     if(map_node.count(node_uid) == 0) return;
     
     //allocate the datapack
-    std::unique_ptr<CDataWrapper> data_pack(new CDataWrapper());
+    std::auto_ptr<CDataWrapper> data_pack(new CDataWrapper());
     
     // get metric ptr
     _publish(map_node[node_uid], TimingUtil::getTimeStamp());
@@ -498,7 +498,7 @@ void HealtManager::_publish(const boost::shared_ptr<NodeHealtSet>& heath_set,
     updateProcInfo();
     
     //send datapack
-    std::unique_ptr<CDataWrapper> data_pack(prepareNodeDataPack(*heath_set,
+    std::auto_ptr<CDataWrapper> data_pack(prepareNodeDataPack(*heath_set,
                                                               publish_ts));
     if(data_pack.get()) {
         //store data on cache

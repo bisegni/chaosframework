@@ -39,23 +39,23 @@ namespace chaos {
 				//!Define the information ip:port used to reach a remote chaos network broker
 				std::string destinationAddr;
 				//! the message data
-                std::unique_ptr<chaos::common::data::CDataWrapper> message;
+                std::auto_ptr<chaos::common::data::CDataWrapper> message;
 				//! tag returned in all handler call used by emitter
-				int64_t tag = 0;
+				int64_t tag;
 				//! the ndoe id of the sender channel
                 std::string sender_node_id;
                 //! the sender request count
-                uint32_t sender_request_id = 0;
+                uint32_t sender_request_id;
                 
 				NetworkForwardInfo(bool _is_request,
                                    bool _is_synchronous_request = false):
-                is_request{_is_request},
-                is_synchronous_request{_is_synchronous_request},
-                destinationAddr{},
-                message{},
-                tag{0},
-                sender_node_id{},
-                sender_request_id{0}{}
+                is_request(_is_request),
+                is_synchronous_request(_is_synchronous_request),
+                destinationAddr(),
+                message(),
+                tag(0),
+                sender_node_id(0),
+                sender_request_id(0){}
 
                 ~NetworkForwardInfo(){}
 				

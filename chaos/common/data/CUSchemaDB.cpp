@@ -532,7 +532,7 @@ void CUSchemaDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& attributeDat
     
     if(attributeDataWrapper.hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION)){
         
-        std::unique_ptr<CDataWrapper> dataset_object(attributeDataWrapper.getCSDataValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
+        std::auto_ptr<CDataWrapper> dataset_object(attributeDataWrapper.getCSDataValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
         
         if(dataset_object->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION)) {
             
@@ -757,7 +757,7 @@ void CUSchemaDB::fillCDataWrapperDSAtribute(CDataWrapper *dsAttribute,
             //custom attribute
             if(curKIV->value.numValue == -1) {
                 //we have subtype collected in a separate entity so in this case the attribute value is an array
-                std::unique_ptr<entity::Entity> sub_tyhpe_entity(getBinarySubtypeEntity(dID, attrDecomposed));
+                std::auto_ptr<entity::Entity> sub_tyhpe_entity(getBinarySubtypeEntity(dID, attrDecomposed));
                 if(sub_tyhpe_entity.get()) {
                     ptr_vector<edb::KeyIdAndValue> sub_types_list;
                     //we need to get all rpoperty

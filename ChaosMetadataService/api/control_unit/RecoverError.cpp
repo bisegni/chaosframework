@@ -55,7 +55,7 @@ CDataWrapper *RecoverError::execute(CDataWrapper *api_data,
     uint64_t                                    command_id          = 0;
     bool                                        presence            = false;
     std::string                                 temp_node_uid;
-    std::unique_ptr<CMultiTypeDataArrayWrapper>   control_unit_ids(api_data->getVectorValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID));
+    std::auto_ptr<CMultiTypeDataArrayWrapper>   control_unit_ids(api_data->getVectorValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID));
     std::vector<std::string>                    control_unit_to_recover;
     
     for(int idx = 0; idx < control_unit_ids->size(); idx++) {
@@ -70,7 +70,7 @@ CDataWrapper *RecoverError::execute(CDataWrapper *api_data,
     }
     
     if(control_unit_to_recover.size()) {
-        std::unique_ptr<CDataWrapper> batch_data(new CDataWrapper());
+        std::auto_ptr<CDataWrapper> batch_data(new CDataWrapper());
         //we can launch the batch command to recover all control unit
         for(std::vector<std::string>::iterator it = control_unit_to_recover.begin();
             it != control_unit_to_recover.end();

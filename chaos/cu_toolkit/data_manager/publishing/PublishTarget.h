@@ -110,7 +110,7 @@ namespace chaos {
                     void handleEvent(chaos::common::direct_io::DirectIOClientConnection *client_connection,
                                      chaos::common::direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event);
                     
-                    inline std::unique_ptr<chaos::common::data::CDataWrapper> getDataPack(const chaos::common::data::cache::AttributeCache &ac);
+                    inline std::auto_ptr<chaos::common::data::CDataWrapper> getDataPack(const chaos::common::data::cache::AttributeCache &ac);
                     
                     //!publis the dataset into the target
                     bool publish(const PublishableElement& publishable_dataset);

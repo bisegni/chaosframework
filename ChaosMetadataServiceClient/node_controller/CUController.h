@@ -415,7 +415,7 @@ namespace chaos {
                                       common::data::CDataWrapper**const result);
                 
                 //! send custom request to device and return a future
-                std::unique_ptr<chaos::common::message::MessageRequestFuture>  sendCustomRequestWithFuture(const std::string& action_name,
+                std::auto_ptr<chaos::common::message::MessageRequestFuture>  sendCustomRequestWithFuture(const std::string& action_name,
                                                                                                          common::data::CDataWrapper *request_date);
                 
                 //! send custom message to device

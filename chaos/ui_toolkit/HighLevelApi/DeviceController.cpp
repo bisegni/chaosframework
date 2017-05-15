@@ -601,7 +601,7 @@ void DeviceController::sendCustomMessage(const std::string& action,
 int DeviceController::checkRPCInformation(CDataWrapper **result_information,
                                           uint32_t timeout) {
     int err = -1;
-    std::unique_ptr<MessageRequestFuture> result = deviceChannel->checkRPCInformation();
+    std::auto_ptr<MessageRequestFuture> result = deviceChannel->checkRPCInformation();
     if(result.get() == NULL) return -1;
     if(result->wait(timeout)) {
         err = result->getError();
@@ -619,7 +619,7 @@ int DeviceController::echoTest(CDataWrapper * const echo_data,
                                CDataWrapper **echo_data_result,
                                uint32_t timeout) {
     int err = -1;
-    std::unique_ptr<MessageRequestFuture> result = deviceChannel->echoTest(echo_data);
+    std::auto_ptr<MessageRequestFuture> result = deviceChannel->echoTest(echo_data);
     if(result.get() == NULL) return err;
     if(result->wait(timeout)) {
         err = result->getError();
@@ -633,7 +633,7 @@ int DeviceController::echoTest(CDataWrapper * const echo_data,
 }
 
 //---------------------------------------------------------------------------------------------------
-std::unique_ptr<MessageRequestFuture> DeviceController::sendCustomRequestWithFuture(const std::string& action_name,
+std::auto_ptr<MessageRequestFuture> DeviceController::sendCustomRequestWithFuture(const std::string& action_name,
                                                                                   common::data::CDataWrapper *request_date) {
     return deviceChannel->sendCustomRequestWithFuture(action_name,
                                                       request_date);

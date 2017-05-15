@@ -34,7 +34,7 @@ API_PROXY_CD_DEFINITION(NodeOperation,
 
 ApiProxyResult NodeOperation::execute(const std::string& node_uid,
                                       NodeAssociationOperation op) {
-    std::unique_ptr<CDataWrapper> pack(new CDataWrapper());
+    std::auto_ptr<CDataWrapper> pack(new CDataWrapper());
     pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_uid);
     pack->addInt32Value("node_operation", op);
     return callApi(pack.release());

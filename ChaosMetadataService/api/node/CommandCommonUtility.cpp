@@ -51,12 +51,12 @@ void CommandCommonUtility::validateCommandTemplateToDescription(CDataWrapper *co
     const std::string template_name = command_template->getStringValue("template_name");
     if(command_description->hasKey(BatchCommandAndParameterDescriptionkey::BC_PARAMETERS)) {
         //check parameter for type and mandatory rule
-        std::unique_ptr<CMultiTypeDataArrayWrapper> parameter_list(command_description->getVectorValue(BatchCommandAndParameterDescriptionkey::BC_PARAMETERS));
+        std::auto_ptr<CMultiTypeDataArrayWrapper> parameter_list(command_description->getVectorValue(BatchCommandAndParameterDescriptionkey::BC_PARAMETERS));
         for(int idx = 0;
             idx < parameter_list->size();
             idx++) {
             //scan the single parameter
-            std::unique_ptr<CDataWrapper> parameter_description(parameter_list->getCDataWrapperElementAtIndex(idx));
+            std::auto_ptr<CDataWrapper> parameter_description(parameter_list->getCDataWrapperElementAtIndex(idx));
             //check for mandatory field in command description
             CHECK_KEY_THROW_AND_LOG_FORMATTED(parameter_description,
                                               BatchCommandAndParameterDescriptionkey::BC_PARAMETER_NAME, N_CCU_ERR, -2,
@@ -131,13 +131,13 @@ void CommandCommonUtility::validateCommandTemplateToDescription(CDataWrapper *co
 }
 
 //! create an instance by submission, command and temaplte description
-std::unique_ptr<chaos::common::data::CDataWrapper> CommandCommonUtility::createCommandInstanceByTemplateadnSubmissionDescription(const std::string& node_uid,
+std::auto_ptr<chaos::common::data::CDataWrapper> CommandCommonUtility::createCommandInstanceByTemplateadnSubmissionDescription(const std::string& node_uid,
                                                                                                                                CDataWrapper *command_submission,
                                                                                                                                CDataWrapper *command_description,
                                                                                                                                CDataWrapper *command_template_description) throw(chaos::CException) {
     bool is_correct_type = false;
     ChaosStringVector all_template_key;
-    std::unique_ptr<chaos::common::data::CDataWrapper> result(new CDataWrapper());
+    std::auto_ptr<chaos::common::data::CDataWrapper> result(new CDataWrapper());
     result->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_uid);
     
     std::vector<AttributeRequested> attribute_paramterized;

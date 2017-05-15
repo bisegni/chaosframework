@@ -83,10 +83,10 @@ bool MDSBatchCommand::timeoutHandler() {
 }
 
 //! create a request to a remote rpc action
-std::unique_ptr<RequestInfo> MDSBatchCommand::createRequest(const std::string& remote_address,
+std::auto_ptr<RequestInfo> MDSBatchCommand::createRequest(const std::string& remote_address,
                                                           const std::string& remote_domain,
                                                           const std::string& remote_action) throw (chaos::CException) {
-    return std::unique_ptr<RequestInfo> (new RequestInfo(remote_address,
+    return std::auto_ptr<RequestInfo> (new RequestInfo(remote_address,
                                                        remote_domain,
                                                        remote_action));
 }

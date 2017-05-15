@@ -28,18 +28,15 @@ using namespace chaos::common::message;
 //!private constructor
 MessageRequestFuture::MessageRequestFuture(chaos::common::utility::atomic_int_type _request_id,
                                            boost::shared_future< boost::shared_ptr<chaos::common::data::CDataWrapper> > _future):
-request_id{_request_id},
-future{_future},
-request_result{},
-error_code{0},
-error_message{"no data"},
-error_domain{"no domain"},
-local_result{false} {
-    
-}
-//!private destructor
-MessageRequestFuture::~MessageRequestFuture() {
-}
+request_id(_request_id),
+future(_future),
+request_result(),
+error_code(0),
+error_message("no data"),
+error_domain("no domain"),
+local_result(false) {}
+
+MessageRequestFuture::~MessageRequestFuture() {}
 
 bool MessageRequestFuture::wait(int32_t timeout_in_milliseconds) {
     bool result = false;

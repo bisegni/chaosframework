@@ -67,7 +67,7 @@ namespace chaos{
                 bool            schedule_work_flag;
                 
                 //! default sticky command
-                std::unique_ptr<PRIORITY_ELEMENT(CommandInfoAndImplementation)>   default_sticky_command;
+                std::auto_ptr<PRIORITY_ELEMENT(CommandInfoAndImplementation)>   default_sticky_command;
                 
                 //!point to the current executing command
                 PRIORITY_ELEMENT(CommandInfoAndImplementation)   *current_executing_command;
@@ -78,7 +78,7 @@ namespace chaos{
                 
                 //------------------scheduler---------------------
                 //internal ascheduling thread
-                std::unique_ptr<boost::thread> thread_scheduler;
+                std::auto_ptr<boost::thread> thread_scheduler;
                 //! delay for the next beat of scheduler
                 //uint64_t schedulerStepDelay;
                 //! Thread for whait until the queue is empty
@@ -96,7 +96,7 @@ namespace chaos{
                 boost::mutex          mutex_next_command_queue;
                 
                 //! instance to the checker thread
-                std::unique_ptr<boost::thread>    thread_next_command_checker;
+                std::auto_ptr<boost::thread>    thread_next_command_checker;
                 
                 //! Thread for whait until the queue is empty
                 boost::condition_variable_any  condition_waith_scheduler_end;
@@ -155,7 +155,7 @@ namespace chaos{
                 void checkNextCommand();
                 
                 //!Lfat the fault information with the command information into a unique CDataWrapper
-                inline std::unique_ptr<CDataWrapper> flatErrorInformationInCommandInfo(CDataWrapper *command_info,
+                inline std::auto_ptr<CDataWrapper> flatErrorInformationInCommandInfo(CDataWrapper *command_info,
                                                                                      FaultDescription& command_fault);
             protected:
                 

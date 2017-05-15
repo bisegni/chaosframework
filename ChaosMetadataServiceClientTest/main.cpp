@@ -117,7 +117,7 @@ int main(int argc, char *argv[]){
                 ChaosMetadataServiceClient::getInstance()->enableMonitor();
                 std::cout << "Start node monitor library test" << std::endl;
                 {
-                    std::unique_ptr<NodeMonitorHandlerTest> nmt;
+                    std::auto_ptr<NodeMonitorHandlerTest> nmt;
                     
                     //nmt[0].reset(new NodeMonitorHandlerTest(device_id, chaos::metadata_service_client::node_monitor::ControllerTypeNode));
                     nmt.reset(new NodeMonitorHandlerTest(device_id, chaos::metadata_service_client::node_monitor::ControllerTypeNodeControlUnit));
