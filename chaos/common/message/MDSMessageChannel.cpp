@@ -288,7 +288,7 @@ int  MDSMessageChannel::loadSnapshotNodeDataset(const std::string& snapname,
                     std::unique_ptr<CDataWrapper> snapshot_dataset_element(snapshot_list->getCDataWrapperElementAtIndex(idx));
                     
                     const std::string dataset_name = snapshot_dataset_element->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_NAME);
-                    CDataWrapper *val= snapshot_dataset_element->getCSDataValue("dataset_value");
+                    std::unique_ptr<CDataWrapper> val(snapshot_dataset_element->getCSDataValue("dataset_value"));
                     if(val->hasKey(chaos::DataPackCommonKey::DPCK_DATASET_TYPE)){
                         std::string ret=datasetTypeToHuman(val->getUInt32Value(chaos::DataPackCommonKey::DPCK_DATASET_TYPE));
                         data_set.addCSDataValue(ret,*val);

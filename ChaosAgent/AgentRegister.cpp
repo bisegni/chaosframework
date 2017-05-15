@@ -235,7 +235,7 @@ void AgentRegister::timeout() {
                     if(it->auto_start) {
                         INFO << CHAOS_FORMAT("Autostart node %1%", %it->associated_node_uid);
                         ProcUtil::launchProcess(*it);
-                        ((worker::LogWorker*)lw_ptr.get())->startLogFetcher(*it);
+                        ((worker::LogWorker*)lw_ptr.get())->startLogFetcher(*it, it->log_at_laucnh);
                         if(it->keep_alive) {
                              ((worker::ProcessWorker*)pw_ptr.get())->addToRespawn(*it);
                         }

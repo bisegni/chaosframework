@@ -174,7 +174,7 @@ IF (NOT CACHE_DIR)
     FILE(APPEND ${CMAKE_INSTALL_PREFIX}/chaos_env.sh "export CHAOS_TOOLS=\$CHAOS_PREFIX/tools\n")
     IF ( DEFINED CHAOS_TARGET )
       FILE(APPEND ${CMAKE_INSTALL_PREFIX}/chaos_env.sh "export CHAOS_TARGET=${CHAOS_TARGET}\n")
-    ENDIF()	   
+    ENDIF()
 
     execute_process(
       COMMAND ln -sf ./localhost/mds.cfg ./cds.cfg
@@ -442,7 +442,7 @@ IF (NOT CACHE_DIR)
   option(CHAOS_BUILD_CACHE "Keep third part sources" ON)
   option(CHAOS_BUILD_UNITSERVER "Automatically build an Unit Server that includes all CUs found in distribution" ON)
   IF(CHAOS_ENABLE_C11)
-  set (CHAOS_CXX_FLAGS "${CHAOS_CXX_FLAGS} -std=c++11")	
+  set (CHAOS_CXX_FLAGS "${CHAOS_CXX_FLAGS} -std=c++11")
   ENDIF()
   IF( ( DEFINED ENV{CHAOS32}) OR CHAOS_FORCE_32 )
     MESG("Enabling 32 bit Compilation")
@@ -592,8 +592,8 @@ IF (NOT CACHE_DIR)
     set(CMAKE_EXE_LINK_DYNAMIC_C_FLAGS)       # remove -Wl,-Bdynamic
     set(CMAKE_EXE_LINK_DYNAMIC_CXX_FLAGS)
 #    SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES LINK_SEARCH_END_STATIC 1)
-  ELSE()			
-    SET(BUILD_SHARED_LIBRARIES ON)	  
+  ELSE()
+    SET(BUILD_SHARED_LIBRARIES ON)
   ENDIF()
 
   set (CMAKE_C_FLAGS ${CHAOS_C_FLAGS} CACHE STRING "C flags")
@@ -603,7 +603,6 @@ IF (NOT CACHE_DIR)
   set (CMAKE_C_FLAGS ${CHAOS_C_FLAGS})
   set (CMAKE_CXX_FLAGS ${CHAOS_CXX_FLAGS})
   set (CMAKE_EXE_LINKER_FLAGS ${CHAOS_LINKER_FLAGS})
-  ADD_DEFINITIONS(${CHAOS_C_FLAGS} ${CHAOS_CXX_FLAGS})
 
   IF(CHAOS_CROSS_HOST)
     SET( CROSS_HOST "--host=${CHAOS_CROSS_HOST}")
@@ -626,12 +625,6 @@ IF (NOT CACHE_DIR)
   ENDIF()
 
   #####
-
-
-
-
-
-
 
   INCLUDE_DIRECTORIES(${CHAOS_FRAMEWORK})
   # if( DEFINED ENV{CHAOS_BUNDLE} )
