@@ -1,6 +1,6 @@
 #!/bin/bash -e
-arch="x86_64 i686 arm armhf"
-build="dynamic static"
+arch="arm i686 armhf x86_64"
+build="static dynamic"
 prefix="chaos_bundle"
 branch="development"
 buildtype=""
@@ -133,7 +133,7 @@ function compile_bundle(){
 	fi
     fi
     stage="git access to \"$branch\""
-    if ! $mydir/chaos_git.sh -c $branch >> $log 2>&1 ;then
+    if ! $mydir/chaos_git.sh -y -c $branch >> $log 2>&1 ;then
 	printlog "## error cannot checkout \"$branch\""
 	popd > /dev/null
 	exit 1;

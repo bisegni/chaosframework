@@ -46,10 +46,12 @@ git_checkout(){
 	if git branch |grep "$2";then
 	    check_out_opt="$2"
 	else
-	    echo "branch $2 not found, do you want create?, empty skip:"
-	    read mesg
-	    if [ -z "$mesg" ];then
-		return 1
+	    if [ -z "$yes" ];then
+		echo "branch $2 not found, do you want create?, empty skip:"
+		read mesg
+		if [ -z "$mesg" ];then
+		    return 1
+		fi
 	    fi
 	    check_out_opt="-t -b $2"
 
@@ -76,13 +78,18 @@ git_arg=()
 git_cmd=""
 
 usage(){
-    echo -e "Usage is $0 [-s] [-t <tag name>][ -c <checkout branch> ] [ -p <branch name> ] [-d <directory0>] [-d <directory1>] \n-c <branch name>: check out a given branch name in all subdirs\n-p <branch>:commit and push modifications of a given branch\n-s:retrive the branch status\n-t <tag name>:make an annotated tag to all\n-d <directory>: apply just to the specified directory\n-m <src branch> <dst branch>: merge src into dst branch\n"
+    echo -e "Usage is $0 [-s] [-t <tag name>][ -c <checkout branch> ] [ -p <branch name> ] [-d <directory0>] [-d <directory1>] \n-c <branch name>: check out a given branch name in all subdirs\n-p <branch>:commit and push modifications of a given branch\n-s:retrive the branch status\n-t <tag name>:make an annotated tag to all\n-d <directory>: apply just to the specified directory\n-m <src branch> <dst branch>: merge src into dst branch\n-y:answer yes"
 }
-while getopts t:c:p:hsd:mr:b opt; do
+yes=""
+while getopts t:c:p:hsd:mr:by opt; do
     case $opt in
 	r)
 	    remote=1
 	    ;;
+	y)
+	    yes="1"
+	    ;;
+
 	t)
 	    echo -n "provide a tag message:"
 	    read mesg
