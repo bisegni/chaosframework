@@ -6,7 +6,7 @@ using namespace chaos::metadata_service_client::api_proxy;
 ApiAsyncRunnable::ApiAsyncRunnable(const QString& _tag, ApiProxyResult _async_result):
     QObject(NULL),
     tag(_tag),
-    async_result(_async_result)
+    async_result(std::move(_async_result))
     {setAutoDelete(true);}
 
 ApiAsyncRunnable::~ApiAsyncRunnable(){}
