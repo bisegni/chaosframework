@@ -39,6 +39,7 @@ git_checkout(){
 	if git branch | grep "$2" ;then
 	    check_out_opt="$2"
 	else
+	    info_mesg "[$dir] checking out from remote \"origin/$2\" tracking into " "$2"
 	    check_out_opt="-t -b $2 origin/$2"
 	fi
     else
