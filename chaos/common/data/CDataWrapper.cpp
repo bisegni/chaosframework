@@ -360,7 +360,13 @@ uint32_t CDataWrapper::getValueSize(const std::string& key) {
         case BinData:
             ele.binData(bsize);
             return bsize;
+        case Object:{
+        	   BSONObj subObject = bsonBuilder->asTempObj().getObjectField(key);
+        	        	   //set the serialization data in resul datawrapper
+        	   return subObject.objsize();
+        }
         default:
+
             break;
     }
     return 0;
@@ -380,7 +386,13 @@ const char * CDataWrapper::getRawValuePtr(const std::string& key) {
             return ele.valuestrsafe();
         case BinData:
             return ele.binDataClean(bsize);
+        case Object:{
+        	   BSONObj subObject = bsonBuilder->asTempObj().getObjectField(key);
+        	   //set the serialization data in resul datawrapper
+        	   return subObject.objdata();
+        }
         default:
+
             break;
     }
     return NULL;
