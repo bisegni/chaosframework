@@ -188,7 +188,7 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
         if(!dataset_description.hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION))return -2;
         if(!dataset_description.isCDataWrapperValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION))return -3;
         //checkout the dataset
-        unique_ptr<CDataWrapper> dataset(dataset_description.getCSDataValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
+        UNIQUE_PTR<CDataWrapper> dataset(dataset_description.getCSDataValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
         if(!dataset->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION))return -5;
         if(!dataset->isVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION))return -6;
         if(!dataset->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP))return -4;
@@ -212,7 +212,7 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
             idx++) {
             mongo::BSONObjBuilder dataset_element_builder;
             
-            unique_ptr<CDataWrapper> dataset_element(ds_vec->getCDataWrapperElementAtIndex(idx));
+            UNIQUE_PTR<CDataWrapper> dataset_element(ds_vec->getCDataWrapperElementAtIndex(idx));
             if(dataset_element->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME) &&
                dataset_element->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION)&&
                dataset_element->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE)&&
@@ -297,7 +297,7 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
                 idx++) {
                 mongo::BSONObjBuilder batch_command_builder;
                 
-                unique_ptr<CDataWrapper> bc_element(bc_vec->getCDataWrapperElementAtIndex(idx));
+                UNIQUE_PTR<CDataWrapper> bc_element(bc_vec->getCDataWrapperElementAtIndex(idx));
                 MDB_COPY_STRING_CDWKEY_TO_BUILDER(batch_command_builder, bc_element, common::batch_command::BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID)
                 MDB_COPY_STRING_CDWKEY_TO_BUILDER(batch_command_builder, bc_element, common::batch_command::BatchCommandAndParameterDescriptionkey::BC_ALIAS)
                 MDB_COPY_STRING_CDWKEY_TO_BUILDER(batch_command_builder, bc_element, common::batch_command::BatchCommandAndParameterDescriptionkey::BC_DESCRIPTION)
@@ -310,7 +310,7 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
                         idx_param < bc_param_vec->size();
                         idx_param++) {
                         mongo::BSONObjBuilder batch_command_parameter_builder;
-                        unique_ptr<CDataWrapper> bc_param_element(bc_param_vec->getCDataWrapperElementAtIndex(idx_param));
+                        UNIQUE_PTR<CDataWrapper> bc_param_element(bc_param_vec->getCDataWrapperElementAtIndex(idx_param));
                         MDB_COPY_STRING_CDWKEY_TO_BUILDER(batch_command_parameter_builder, bc_param_element, common::batch_command::BatchCommandAndParameterDescriptionkey::BC_PARAMETER_NAME)
                         MDB_COPY_STRING_CDWKEY_TO_BUILDER(batch_command_parameter_builder, bc_param_element, common::batch_command::BatchCommandAndParameterDescriptionkey::BC_PARAMETER_DESCRIPTION)
                         MDB_COPY_I32_CDWKEY_TO_BUILDER(batch_command_parameter_builder, bc_param_element, common::batch_command::BatchCommandAndParameterDescriptionkey::BC_PARAMETER_TYPE)
@@ -520,11 +520,11 @@ int MongoDBControlUnitDataAccess::setInstanceDescription(const std::string& cu_u
         if(instance_description.hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION)) {
             //get the contained control unit type
             mongo::BSONArrayBuilder bab;
-            unique_ptr<CMultiTypeDataArrayWrapper> drv_array(instance_description.getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION));
+            UNIQUE_PTR<CMultiTypeDataArrayWrapper> drv_array(instance_description.getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION));
             for(int idx = 0;
                 idx < drv_array->size();
                 idx++) {
-                unique_ptr<CDataWrapper> driver_desc(drv_array->getCDataWrapperElementAtIndex(idx));
+                UNIQUE_PTR<CDataWrapper> driver_desc(drv_array->getCDataWrapperElementAtIndex(idx));
                 if(driver_desc->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION_NAME) &&
                    driver_desc->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION_VERSION)&&
                    driver_desc->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION_INIT_PARAMETER)) {
@@ -545,11 +545,11 @@ int MongoDBControlUnitDataAccess::setInstanceDescription(const std::string& cu_u
         if(instance_description.hasKey("attribute_value_descriptions")) {
             //get the contained control unit type
             mongo::BSONArrayBuilder bab;
-            unique_ptr<CMultiTypeDataArrayWrapper> attr_array(instance_description.getVectorValue("attribute_value_descriptions"));
+            UNIQUE_PTR<CMultiTypeDataArrayWrapper> attr_array(instance_description.getVectorValue("attribute_value_descriptions"));
             for(int idx = 0;
                 idx < attr_array->size();
                 idx++) {
-                unique_ptr<CDataWrapper> attr_desc(attr_array->getCDataWrapperElementAtIndex(idx));
+                UNIQUE_PTR<CDataWrapper> attr_desc(attr_array->getCDataWrapperElementAtIndex(idx));
                 if(attr_desc->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME) &&
                    attr_desc->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE)) {
                     int size;

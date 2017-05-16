@@ -67,7 +67,7 @@ deviceChannel(NULL) {
                                         __PRETTY_FUNCTION__);
      CDataWrapper *tmp_data_handler = NULL;
      if(!mdsChannel->getDataDriverBestConfiguration(&tmp_data_handler, millisecToWait)){
-            unique_ptr<CDataWrapper> best_available_da_ptr(tmp_data_handler);
+            UNIQUE_PTR<CDataWrapper> best_available_da_ptr(tmp_data_handler);
             ioLiveDataDriver->updateConfiguration(best_available_da_ptr.get());
      }
 
@@ -146,7 +146,7 @@ void CUController::updateChannel() throw(CException) {
     err = mdsChannel->getLastDatasetForDevice(deviceChannel->getDeviceID(), &tmp_data_handler, millisecToWait);
     if(err!=ErrorCode::EC_NO_ERROR || !tmp_data_handler) return;
     
-    unique_ptr<CDataWrapper> lastDeviceDefinition(tmp_data_handler);
+    UNIQUE_PTR<CDataWrapper> lastDeviceDefinition(tmp_data_handler);
     
     datasetDB.addAttributeToDataSetFromDataWrapper(*lastDeviceDefinition.get());
 }

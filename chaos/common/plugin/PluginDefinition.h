@@ -40,10 +40,8 @@ namespace chaos {
              \param t the type of the plugin
              \param n the name of the class that implement the plugin
              */
-#define DEFINE_PLUGIN_ALLOCATOR(a,v,t,n,r) \
-extern "C" \
-r* BOOST_EXTENSION_EXPORT_DECL \
-a ## _allocator() {\
+#define DEFINE_PLUGIN_ALLOCATOR(a,v,t,n,r) extern "C" \
+r* /*BOOST_EXTENSION_EXPORT_DECL*/  a ## _allocator() {\
 return chaos::common::plugin::PluginInstancer<n>::getInstance(#a,#v,#t);\
 }
 
@@ -51,14 +49,13 @@ return chaos::common::plugin::PluginInstancer<n>::getInstance(#a,#v,#t);\
 #define GET_PLUGIN_CLASS_DEFINITION(a) a ## _inspector()
 	
 			
-#define DEFINE_PLUGIN_DEFINITION_PROTOTYPE(a,r) extern "C" chaos::common::plugin::PluginInspector* BOOST_EXTENSION_EXPORT_DECL a ## _inspector();
+#define DEFINE_PLUGIN_DEFINITION_PROTOTYPE(a,r) extern "C" chaos::common::plugin::PluginInspector* /*BOOST_EXTENSION_EXPORT_DECL*/ a ## _inspector();
 			
             //!
 #define OPEN_GENERAL_PLUGIN_CLASS_DEFINITION(a,v,t,n,r) \
 DEFINE_PLUGIN_ALLOCATOR(a,v,t,n, r) \
 extern "C" \
-chaos::common::plugin::PluginInspector* BOOST_EXTENSION_EXPORT_DECL \
-a ## _inspector() {\
+chaos::common::plugin::PluginInspector* /*BOOST_EXTENSION_EXPORT_DECL*/ a ## _inspector() {\
 chaos::common::plugin::PluginInspector *inspector = new chaos::common::plugin::PluginInspector();\
 inspector->setName(#a); \
 inspector->setType(#t); \
@@ -93,8 +90,7 @@ return inspector; \
 #ifdef CHAOS_ENABLE_PLUGIN
 #define OPEN_REGISTER_PLUGIN \
 extern "C" \
-chaos::common::plugin::PluginDiscover* BOOST_EXTENSION_EXPORT_DECL \
-getDiscover() {\
+chaos::common::plugin::PluginDiscover* /*BOOST_EXTENSION_EXPORT_DECL*/	getDiscover() {\
 chaos::common::plugin::PluginDiscover *discover = new chaos::common::plugin::PluginDiscover();
 
             //! Register a plugin

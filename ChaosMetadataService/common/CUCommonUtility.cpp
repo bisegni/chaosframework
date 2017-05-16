@@ -159,7 +159,7 @@ std::auto_ptr<CDataWrapper> CUCommonUtility::initDataPack(const std::string& cu_
         //we have the published dataset
         dataset_description.reset(result);    
         
-        std:unique_ptr<CMultiTypeDataArrayWrapper> dataset_element_vec(dataset_description->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
+        UNIQUE_PTR<CMultiTypeDataArrayWrapper> dataset_element_vec(dataset_description->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
         std::auto_ptr<CDataWrapper> init_dataset(new CDataWrapper());
         for(int idx = 0; idx <
             dataset_element_vec->size();

@@ -130,7 +130,7 @@ SetInstanceDescriptionHelper::~SetInstanceDescriptionHelper() {}
 void SetInstanceDescriptionHelper::addDriverDescription(const std::string& driver_name,
                                                         const std::string& driver_version,
                                                         const std::string& driver_init_parameter) {
-    unique_ptr<CDataWrapper> dd(new CDataWrapper());
+    UNIQUE_PTR<CDataWrapper> dd(new CDataWrapper());
     dd->addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION_NAME, driver_name);
     dd->addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION_VERSION, driver_version);
     dd->addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION_INIT_PARAMETER, driver_init_parameter);
@@ -147,7 +147,7 @@ void SetInstanceDescriptionHelper::addAttributeConfig(const std::string& attribu
                                                       const std::string& attribute_default_value,
                                                       const std::string& attribute_max_range,
                                                       const std::string& attribute_min_range) {
-    unique_ptr<CDataWrapper> attr(new CDataWrapper());
+    UNIQUE_PTR<CDataWrapper> attr(new CDataWrapper());
     attr->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME, attribute_name);
     attr->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE, attribute_default_value);
     if(attribute_max_range.size()>0)attr->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE, attribute_max_range);

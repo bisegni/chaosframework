@@ -79,6 +79,6 @@ CDataWrapper *NewUS::execute(CDataWrapper *api_data,
     std::auto_ptr<chaos::common::data::CDataWrapper> custom(api_data->hasKey(chaos::NodeDefinitionKey::NODE_CUSTOM_PARAM)?api_data->getCSDataValue(chaos::NodeDefinitionKey::NODE_CUSTOM_PARAM):NULL);
     
     //we can proceed
-    performQuery(new_us_uid,desc, std::move(custom));
+    performQuery(new_us_uid,desc, custom);
     return NULL;
 }

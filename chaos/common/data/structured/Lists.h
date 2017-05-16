@@ -74,7 +74,7 @@ namespace chaos {
                 public:
                     std::string serialization_key;
                     
-                    StdVectorSDWrapper(std::shared_ptr< DataWrapperReference< std::vector<T> > > _data = std::shared_ptr< DataWrapperReference< std::vector<T> > >(new DataWrapperCopy< std::vector<T> >())):
+                    StdVectorSDWrapper(SHARED_PTR< DataWrapperReference< std::vector<T> > > _data =SHARED_PTR< DataWrapperReference< std::vector<T> > >(new DataWrapperCopy< std::vector<T> >())):
                     chaos::common::data::TemplatedDataSDWrapper< std::vector<T> >(_data),
                     serialization_key(){}
 

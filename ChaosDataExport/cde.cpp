@@ -294,10 +294,10 @@ int main(int argc, char* argv[]) {
             std::cout << "Exported " << std::flush;
             while(query_cursor->hasNext()) {
                 exported++;
-                boost::shared_ptr<CDataWrapper> q_result(query_cursor->next());
+                SHARED_PTR<CDataWrapper> q_result(query_cursor->next());
                 if(q_result.get()) {
                     retry = 0;
-                    unique_ptr<chaos::common::data::SerializationBuffer> ser;
+                    UNIQUE_PTR<chaos::common::data::SerializationBuffer> ser;
                     //get serialization buffer by type
                     switch (dest_type) {
                             //BSON

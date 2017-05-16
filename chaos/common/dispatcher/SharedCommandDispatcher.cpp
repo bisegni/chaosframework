@@ -121,7 +121,7 @@ CDataWrapper* SharedCommandDispatcher::executeCommandSync(CDataWrapper * message
             return result;
         }
         string action_name = message_data->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME);
-        unique_ptr<CDataWrapper>  action_message(message_data);
+        UNIQUE_PTR<CDataWrapper>  action_message(message_data);
         
         
         //RpcActionDefinitionKey::CS_CMDM_ACTION_NAME
@@ -155,7 +155,7 @@ CDataWrapper* SharedCommandDispatcher::executeCommandSync(CDataWrapper * message
         } else {
             //call and return
             try {
-                unique_ptr<CDataWrapper> action_result(action_desc_ptr->call(message_data.get(), message_has_been_detached));
+                UNIQUE_PTR<CDataWrapper> action_result(action_desc_ptr->call(message_data.get(), message_has_been_detached));
                 if(action_result.get() &&
                    action_message->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_DOMAIN) &&
                    action_message->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_ACTION)) {
@@ -192,9 +192,9 @@ void SharedCommandDispatcher::processBufferElement(chaos_data::CDataWrapper *act
     //the domain is securely the same is is mandatory for submition so i need to get the name of the action
     CDataWrapper            *responsePack = NULL;
     CDataWrapper            *subCommand = NULL;
-    unique_ptr<CDataWrapper>  actionMessage;
-    unique_ptr<CDataWrapper>  remoteActionResult;
-    unique_ptr<CDataWrapper>  actionResult;
+    UNIQUE_PTR<CDataWrapper>  actionMessage;
+    UNIQUE_PTR<CDataWrapper>  remoteActionResult;
+    UNIQUE_PTR<CDataWrapper>  actionResult;
     MapDomainActionsLockedReadLock wl = map_domain_actions.getReadLockObject();
     
     //keep track for the retain of the message of the aciton description
@@ -276,7 +276,7 @@ void SharedCommandDispatcher::processBufferElement(chaos_data::CDataWrapper *act
             //check if we need to submit a sub command
             if( subCommand ) {
                 //we can submit sub command
-                unique_ptr<CDataWrapper> dispatchSubCommandResult(dispatchCommand(subCommand));
+                UNIQUE_PTR<CDataWrapper> dispatchSubCommandResult(dispatchCommand(subCommand));
             }
             
             if(needAnswer){

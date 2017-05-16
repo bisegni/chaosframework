@@ -258,8 +258,7 @@ int CouchbaseCacheDriver::updateConfig() {
 	
 	lcb_behavior_set_syncmode(instance, LCB_SYNCHRONOUS);
 
-	/* Set up the handler to catch all errors! */
-	lcb_set_error_callback(instance, CouchbaseCacheDriver::errorCallback);
+
 
 	/* initiate the connect sequence in libcouchbase */
     last_err = lcb_connect(instance);
@@ -267,7 +266,8 @@ int CouchbaseCacheDriver::updateConfig() {
         CCDLERR_<< "Error connecting the session -> " << lcb_strerror(NULL, last_err);
         return -1;
     }
-	
+    /* Set up the handler to catch all errors! */
+   lcb_set_error_callback(instance, CouchbaseCacheDriver::errorCallback);
 	/* run the event loop and wait until we've connected */
     last_err = lcb_wait(instance);
 	

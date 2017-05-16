@@ -237,9 +237,7 @@ void ProcUtil::launchProcess(const AgentAssociation& node_association_info) {
         if (!ProcUtil::popen2ToNamedPipe(exec_command.c_str(), queue_file.string())) {throw chaos::CException(-2, "popen() failed!", __PRETTY_FUNCTION__);}
     } catch(std::exception& ex) {
         throw ex;
-    } catch(chaos::CException& ex) {
-        throw ex;
-    }
+    } 
 }
 
 bool ProcUtil::checkProcessAlive(const AgentAssociation& node_association_info) {

@@ -56,14 +56,14 @@ int PerformanceNodeChannel::getPerformanceSession(DirectIOPerformanceSession **p
 												  local_session_endpoint->getUrl());
 	
 	//sent the request and waith the ansewer for startp local session
-	unique_ptr<CDataWrapper> init_session_result(sendRequest(node_network_address->ip_port,
+	UNIQUE_PTR<CDataWrapper> init_session_result(sendRequest(node_network_address->ip_port,
                                                            PerformanceSystemRpcKey::SYSTEM_PERFORMANCE_DOMAIN,
                                                            PerformanceSystemRpcKey::ACTION_PERFORMANCE_INIT_SESSION,
                                                            &init_performance_session_param,
                                                            ms_timeout));
     err = getLastErrorCode();
 	if(err == ErrorCode::EC_NO_ERROR) {
-        unique_ptr<CDataWrapper> info_pack(init_session_result->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
+        UNIQUE_PTR<CDataWrapper> info_pack(init_session_result->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
         if(info_pack.get() && info_pack->hasKey(PerformanceSystemRpcKey::KEY_REQUEST_SERVER_DESCRITPION)){
 			
 			remote_endpoint_url = info_pack->getStringValue(PerformanceSystemRpcKey::KEY_REQUEST_SERVER_DESCRITPION);
@@ -110,7 +110,7 @@ int PerformanceNodeChannel::releasePerformanceSession(DirectIOPerformanceSession
 													  performance_session->server_endpoint->getUrl());
 
 		//sent the request and waith the ansewer for startp local session
-		unique_ptr<CDataWrapper> init_session_result(sendRequest(node_network_address->ip_port,
+		UNIQUE_PTR<CDataWrapper> init_session_result(sendRequest(node_network_address->ip_port,
                                                                PerformanceSystemRpcKey::SYSTEM_PERFORMANCE_DOMAIN,
                                                                PerformanceSystemRpcKey::ACTION_PERFORMANCE_CLOSE_SESSION,
                                                                &init_performance_session_param,

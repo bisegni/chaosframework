@@ -54,7 +54,7 @@ namespace chaos {
                 destinationAddr(),
                 message(),
                 tag(0),
-                sender_node_id(0),
+                sender_node_id(),
                 sender_request_id(0){}
 
                 ~NetworkForwardInfo(){}

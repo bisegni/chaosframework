@@ -61,7 +61,7 @@ void RpcClient::forwadSubmissionResult(NetworkForwardInfo *message_info,
     // add reuslt to answer
     if(submission_result) {answer_to_send->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *submission_result);}
     //forward answer to channel
-    unique_ptr<CDataWrapper> to_delete(server_handler->dispatchCommand(answer_to_send));
+    UNIQUE_PTR<CDataWrapper> to_delete(server_handler->dispatchCommand(answer_to_send));
     
     DELETE_OBJ_POINTER(submission_result)
 }
@@ -96,7 +96,7 @@ void RpcClient::forwadSubmissionResultError(const std::string& channel_node_id,
             // add reuslt to answer
             answer_to_send->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *submission_result);
             //forward answer to channel
-            unique_ptr<CDataWrapper> to_delete(server_handler->dispatchCommand(answer_to_send));
+            UNIQUE_PTR<CDataWrapper> to_delete(server_handler->dispatchCommand(answer_to_send));
         }
     } else{
         RPCC_LERR <<"NO "<<RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE;
@@ -121,7 +121,7 @@ void RpcClient::forwadSubmissionResultError(NetworkForwardInfo *message_info,
     answer->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, "response");
     
     
-    unique_ptr<CDataWrapper> submission_result(new CDataWrapper());
+    UNIQUE_PTR<CDataWrapper> submission_result(new CDataWrapper());
     //set the request id
     submission_result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID, message_info->sender_request_id);
     
@@ -135,7 +135,7 @@ void RpcClient::forwadSubmissionResultError(NetworkForwardInfo *message_info,
     
     answer->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *submission_result.get());
     //forward answer to channel
-    unique_ptr<CDataWrapper> to_delete(server_handler->dispatchCommand(answer));
+    UNIQUE_PTR<CDataWrapper> to_delete(server_handler->dispatchCommand(answer));
 }
 
 

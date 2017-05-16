@@ -21,7 +21,7 @@
 
 #ifndef __CHAOSFramework_EB44C3EB_D602_48B6_A57E_FBF4555A4C6A_TempaltedDataHelper_h
 #define __CHAOSFramework_EB44C3EB_D602_48B6_A57E_FBF4555A4C6A_TempaltedDataHelper_h
-
+#include <chaos/common/chaos_types.h>
 #include <chaos/common/data/CDataWrapper.h>
 #if ! defined(BOOST_NO_TYPEID)
 #define GET_TYPE_NAME(T) typeid(T).name();
@@ -29,6 +29,22 @@
 #include <boost/type_index.hpp>
 #define GET_TYPE_NAME(T) boost::typeindex::type_id<T>().pretty_name();
 #endif
+
+#if __cplusplus >= 201103L
+#define CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(x, default_param)\
+std::shared_ptr< chaos::common::data::DataWrapperReference<x> >(new chaos::common::data::DataWrapperReference<x>(default_param))
+
+#define CHAOS_SD_WRAPPER_DEFAULT_PARAMETER(x)\
+std::shared_ptr< chaos::common::data::DataWrapperReference<x> > _data = std::shared_ptr< chaos::common::data::DataWrapperReference<x> >(new chaos::common::data::DataWrapperCopy<x>())
+#else
+#define CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(x, default_param)\
+boost::shared_ptr< chaos::common::data::DataWrapperReference<x> >(new chaos::common::data::DataWrapperReference<x>(default_param))
+
+#define CHAOS_SD_WRAPPER_DEFAULT_PARAMETER(x)\
+boost::shared_ptr< chaos::common::data::DataWrapperReference<x> > _data = boost::shared_ptr< chaos::common::data::DataWrapperReference<x> >(new chaos::common::data::DataWrapperCopy<x>())
+
+#endif
+
 
 #include <typeinfo>
 #include <vector>
@@ -99,14 +115,15 @@ namespace chaos {
             template<typename T>
             class TemplatedDataSDWrapper {
                 //pointer todata wrapper
-                std::shared_ptr< DataWrapperReference<T> > wrapper;
+
+            	SHARED_PTR < DataWrapperReference<T> > wrapper;
             public:
                 //!constructor with the default container
-                TemplatedDataSDWrapper(std::shared_ptr< DataWrapperReference<T> >& _wrapper):
+                TemplatedDataSDWrapper(SHARED_PTR< DataWrapperReference<T> >& _wrapper):
                 wrapper(_wrapper){}
                 
                 TemplatedDataSDWrapper(const T& copy_src,
-                                       std::shared_ptr< DataWrapperReference<T> >& _wrapper):
+                		SHARED_PTR< DataWrapperReference<T> >& _wrapper):
                 wrapper(_wrapper){
                     (*wrapper)() = copy_src;
                 }
@@ -145,16 +162,11 @@ namespace chaos {
                 }
             };
             
-
-#define CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(x, default_param)\
-std::shared_ptr< chaos::common::data::DataWrapperReference<x> >(new chaos::common::data::DataWrapperReference<x>(default_param))
             
 #define CHAOS_SD_WRAPPER_NAME(x)  x ## SDWrapper
             
 #define CHAOS_SD_WRAPPER_NAME_VAR(x, v)  CHAOS_SD_WRAPPER_NAME(x) v
             
-#define CHAOS_SD_WRAPPER_DEFAULT_PARAMETER(x)\
-std::shared_ptr< chaos::common::data::DataWrapperReference<x> > _data = std::shared_ptr< chaos::common::data::DataWrapperReference<x> >(new chaos::common::data::DataWrapperCopy<x>())
             
 #define CHAOS_SD_WRAPPER_DEFAULT_CONSTRUCTOR(x)\
 CHAOS_SD_WRAPPER_NAME(x)(CHAOS_SD_WRAPPER_DEFAULT_PARAMETER(x))
