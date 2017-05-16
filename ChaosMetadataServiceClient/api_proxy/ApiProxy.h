@@ -46,7 +46,7 @@ x::~x(){}
 x::x(chaos::common::message::MultiAddressMessageChannel *_mn_message, int32_t timeout_in_milliseconds):ApiProxy(group, name, _mn_message, timeout_in_milliseconds){init}\
 x::~x(){}
             //! define the result of an api like shared pointer of @chaos::common::message::MessageRequestFuture
-            typedef auto_ptr<chaos::common::message::MultiAddressMessageRequestFuture> ApiProxyResult;
+            typedef std::auto_ptr<chaos::common::message::MultiAddressMessageRequestFuture> ApiProxyResult;
             
             class ApiResultHelper {
             protected:

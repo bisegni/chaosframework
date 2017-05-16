@@ -25,7 +25,7 @@ QVariant SearchNodeListModel::getRowData(int row) const {
     QString node_health_status("---");
     if(found_node->hasKey("health_stat") &&
             found_node->isCDataWrapperValue("health_stat")) {
-        std::auto_ptr<CDataWrapper> health_stat(found_node->getCSDataValue("health_stat"));
+        std::unique_ptr<CDataWrapper> health_stat(found_node->getCSDataValue("health_stat"));
         node_health_ts = QDateTime::fromMSecsSinceEpoch(health_stat->getUInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP), Qt::LocalTime).toString();
         node_health_status = QString::fromStdString(health_stat->getStringValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS));
     }
@@ -115,7 +115,7 @@ void SearchNodeListModel::onApiDone(const QString& tag,
             api_result->hasKey("node_search_result_page") &&
             api_result->isVectorValue("node_search_result_page")) {
         //we have result
-        std::auto_ptr<CMultiTypeDataArrayWrapper> arr(api_result->getVectorValue("node_search_result_page"));
+        std::unique_ptr<CMultiTypeDataArrayWrapper> arr(api_result->getVectorValue("node_search_result_page"));
 
         if(arr->size()) {
             //get first element seq

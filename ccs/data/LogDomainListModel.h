@@ -34,7 +34,7 @@ public:
 private:
     QBitArray checked_index;
     ApiSubmitter api_submitter;
-    std::auto_ptr<chaos::metadata_service_client::api_proxy::logging::GetLogDomainForSourceUIDHelper> helper;
+    std::unique_ptr<chaos::metadata_service_client::api_proxy::logging::GetLogDomainForSourceUIDHelper> helper;
 };
 
 #endif // LOGDOMAINLISTMODEL_H

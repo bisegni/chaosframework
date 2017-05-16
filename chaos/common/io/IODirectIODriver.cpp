@@ -307,7 +307,7 @@ chaos::common::data::CDataWrapper* IODirectIODriver::updateConfiguration(chaos::
     //checkif someone has passed us the device indetification
     if(newConfigration->hasKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST)){
         IODirectIODriver_LINFO_ << "Get the DataManager LiveData address value";
-        auto_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> liveMemAddrConfig(newConfigration->getVectorValue(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST));
+        unique_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> liveMemAddrConfig(newConfigration->getVectorValue(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST));
         size_t numerbOfserverAddressConfigured = liveMemAddrConfig->size();
         for ( int idx = 0; idx < numerbOfserverAddressConfigured; idx++ ){
             string serverDesc = liveMemAddrConfig->getStringElementAtIndex(idx);
@@ -432,7 +432,7 @@ QueryCursor *IODirectIODriver::performQuery(const std::string& key,
     if(q) {
         //add query to map
         boost::unique_lock<boost::shared_mutex> wmap_loc(map_query_future_mutex);
-        map_query_future.insert(make_pair<string, QueryCursor*>(q->queryID(), q));
+        map_query_future.insert(make_pair(q->queryID(), q));
     } else {
         releaseQuery(q);
     }

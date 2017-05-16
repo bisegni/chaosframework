@@ -38,7 +38,7 @@ protected:
     uint32_t number_of_max_result;
     ApiSubmitter api_submitter;
     chaos::metadata_service_client::api_proxy::logging::LogDomainList domain_list;
-    std::auto_ptr<chaos::metadata_service_client::api_proxy::logging::GetLogForSourceUIDHelper> helper;
+    std::unique_ptr<chaos::metadata_service_client::api_proxy::logging::GetLogForSourceUIDHelper> helper;
 };
 
 #endif // LOGENTRYTABLEMODEL_H

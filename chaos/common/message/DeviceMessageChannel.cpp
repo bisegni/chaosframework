@@ -211,7 +211,7 @@ void DeviceMessageChannel::setSelfManaged(bool _self_managed) {
 int DeviceMessageChannel::recoverDeviceFromError(int32_t millisec_to_wait){
     CDataWrapper message_data;
     message_data.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, device_network_address->device_id);
-    auto_ptr<CDataWrapper> result(sendRequest(device_network_address->node_id,
+    unique_ptr<CDataWrapper> result(sendRequest(device_network_address->node_id,
                                               NodeDomainAndActionRPC::ACTION_NODE_RECOVER,
                                               &message_data,
                                               millisec_to_wait));
@@ -223,7 +223,7 @@ int DeviceMessageChannel::recoverDeviceFromError(int32_t millisec_to_wait){
 int DeviceMessageChannel::initDevice(CDataWrapper *initData, int32_t millisec_to_wait) {
     CHAOS_ASSERT(initData)
     CHECK_ONLINE_OR_RETURN(ErrorRpcCoce::EC_RPC_CHANNEL_OFFLINE);
-    auto_ptr<CDataWrapper> initResult(sendRequest(device_network_address->node_id,
+    unique_ptr<CDataWrapper> initResult(sendRequest(device_network_address->node_id,
                                                   NodeDomainAndActionRPC::ACTION_NODE_INIT,
                                                   initData,
                                                   millisec_to_wait));
@@ -242,9 +242,9 @@ int DeviceMessageChannel::initDeviceToDefaultSetting(int32_t millisec_to_wait) {
         DMCERR << "Error getting device initialization parameter for " << device_network_address->node_id;
         return -101;
     }
-    auto_ptr<CDataWrapper> device_init_setting(tmp_cdw_ptr);
+    unique_ptr<CDataWrapper> device_init_setting(tmp_cdw_ptr);
     //we can proceed wi the initilization
-    auto_ptr<CDataWrapper> initResult(sendRequest(device_network_address->node_id,
+    unique_ptr<CDataWrapper> initResult(sendRequest(device_network_address->node_id,
                                                   NodeDomainAndActionRPC::ACTION_NODE_INIT,
                                                   device_init_setting.get(),
                                                   millisec_to_wait));
@@ -257,7 +257,7 @@ int DeviceMessageChannel::deinitDevice(int32_t millisec_to_wait) {
     CHECK_ONLINE_OR_RETURN(ErrorRpcCoce::EC_RPC_CHANNEL_OFFLINE);
     CDataWrapper message_data;
     message_data.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, device_network_address->device_id);
-    auto_ptr<CDataWrapper> result(sendRequest(device_network_address->node_id,
+    unique_ptr<CDataWrapper> result(sendRequest(device_network_address->node_id,
                                               NodeDomainAndActionRPC::ACTION_NODE_DEINIT,
                                               &message_data,
                                               millisec_to_wait));
@@ -270,7 +270,7 @@ int DeviceMessageChannel::startDevice(int32_t millisec_to_wait) {
     CHECK_ONLINE_OR_RETURN(ErrorRpcCoce::EC_RPC_CHANNEL_OFFLINE);
     CDataWrapper message_data;
     message_data.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, device_network_address->device_id);
-    auto_ptr<CDataWrapper> result(sendRequest(device_network_address->node_id,
+    unique_ptr<CDataWrapper> result(sendRequest(device_network_address->node_id,
                                               NodeDomainAndActionRPC::ACTION_NODE_START,
                                               &message_data,
                                               millisec_to_wait));
@@ -283,7 +283,7 @@ int DeviceMessageChannel::stopDevice(int32_t millisec_to_wait) {
     CHECK_ONLINE_OR_RETURN(ErrorRpcCoce::EC_RPC_CHANNEL_OFFLINE);
     CDataWrapper message_data;
     message_data.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, device_network_address->device_id);
-    auto_ptr<CDataWrapper> result(sendRequest(device_network_address->node_id,
+    unique_ptr<CDataWrapper> result(sendRequest(device_network_address->node_id,
                                               NodeDomainAndActionRPC::ACTION_NODE_STOP,
                                               &message_data,
                                               millisec_to_wait));
@@ -297,7 +297,7 @@ int DeviceMessageChannel::restoreDeviceToTag(const std::string& restore_tag, int
     CDataWrapper message_data;
     message_data.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, device_network_address->device_id);
     message_data.addStringValue(NodeDomainAndActionRPC::ACTION_NODE_RESTORE_PARAM_TAG, restore_tag);
-    auto_ptr<CDataWrapper> result(sendRequest(device_network_address->node_id,
+    unique_ptr<CDataWrapper> result(sendRequest(device_network_address->node_id,
                                               NodeDomainAndActionRPC::ACTION_NODE_RESTORE,
                                               &message_data,
                                               millisec_to_wait));
@@ -308,7 +308,7 @@ int DeviceMessageChannel::restoreDeviceToTag(const std::string& restore_tag, int
 //------------------------------------
 int DeviceMessageChannel::getType(std::string& control_unit_type, int32_t millisec_to_wait) {
     CHECK_ONLINE_OR_RETURN(ErrorRpcCoce::EC_RPC_CHANNEL_OFFLINE);
-    auto_ptr<CDataWrapper> result(sendRequest(device_network_address->node_id,
+    unique_ptr<CDataWrapper> result(sendRequest(device_network_address->node_id,
                                               NodeDomainAndActionRPC::ACTION_CU_GET_INFO,
                                               NULL,
                                               millisec_to_wait));
@@ -327,7 +327,7 @@ int DeviceMessageChannel::getState(CUStateKey::ControlUnitState& deviceState, in
     CDataWrapper message_data;
     deviceState=CUStateKey::UNDEFINED;
     message_data.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, device_network_address->device_id);
-    auto_ptr<CDataWrapper> result(sendRequest(device_network_address->node_id,
+    unique_ptr<CDataWrapper> result(sendRequest(device_network_address->node_id,
                                               NodeDomainAndActionRPC::ACTION_NODE_GET_STATE,
                                               &message_data,
                                               millisec_to_wait));
@@ -350,7 +350,7 @@ int DeviceMessageChannel::setAttributeValue(CDataWrapper& attributesValues,
     if(noWait){
         sendMessage(device_network_address->node_id, ControlUnitNodeDomainAndActionRPC::CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET, &attributesValues);
     } else {
-        auto_ptr<CDataWrapper> initResult(sendRequest(device_network_address->node_id,
+        unique_ptr<CDataWrapper> initResult(sendRequest(device_network_address->node_id,
                                                       ControlUnitNodeDomainAndActionRPC::CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET,
                                                       &attributesValues,
                                                       millisec_to_wait));
@@ -366,7 +366,7 @@ int DeviceMessageChannel::setScheduleDelay(uint64_t scheduledDealy,
     CDataWrapper message_data;
     message_data.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, device_network_address->device_id);
     message_data.addInt64Value(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, scheduledDealy);
-    auto_ptr<CDataWrapper> result(sendRequest(device_network_address->node_id,
+    unique_ptr<CDataWrapper> result(sendRequest(device_network_address->node_id,
                                               NodeDomainAndActionRPC::ACTION_UPDATE_PROPERTY,
                                               &message_data,
                                               millisec_to_wait));
@@ -391,7 +391,7 @@ int DeviceMessageChannel::sendCustomRequest(const std::string& action_name,
                                             CDataWrapper** result_data,
                                             uint32_t millisec_to_wait) {
     CHECK_ONLINE_OR_RETURN(ErrorRpcCoce::EC_RPC_CHANNEL_OFFLINE);
-    auto_ptr<CDataWrapper> result(sendRequest(device_network_address->node_id,
+    unique_ptr<CDataWrapper> result(sendRequest(device_network_address->node_id,
                                               action_name,
                                               message_data,
                                               millisec_to_wait));

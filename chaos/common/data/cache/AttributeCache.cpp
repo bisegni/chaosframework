@@ -48,7 +48,7 @@ void AttributeCache::addAttribute(const string& name,
     VariableIndexType tmpIndex;
 
         //add name nad his index
-    mapAttributeNameIndex.insert(make_pair<string, VariableIndexType>(name, (tmpIndex=index++)));
+    mapAttributeNameIndex.insert(make_pair(name, (tmpIndex=index++)));
 
         //add channel setting
     switch(type) {

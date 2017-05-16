@@ -55,7 +55,7 @@ void EventDescriptor::initData() {
         //use a temp ptr to go forward the buffer
     tmpPtr = eventData + EVT_HEADER_BYTE_LENGTH;
     
-    EventTypeAndPriority typeAndPriority = {instanceType, instancePriority};
+    EventTypeAndPriority typeAndPriority = {static_cast<uint8_t>(instanceType), instancePriority};
     *((uint8_t*)tmpPtr) = byte_swap<host_endian, little_endian, uint8_t>(*((uint8_t*)&typeAndPriority));
 }
 

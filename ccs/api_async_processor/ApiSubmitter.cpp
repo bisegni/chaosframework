@@ -13,7 +13,7 @@ void ApiSubmitter::submitApiResult(const QString& api_tag,
                      chaos::metadata_service_client::api_proxy::ApiProxyResult api_result) {
     CHAOS_ASSERT(api_handler)
     api_processor.submitApiResult(api_tag,
-                                  api_result,
+                                  std::move(api_result),
                                   (QObject*)this,
                                   SLOT(asyncApiResult(QString, QSharedPointer<chaos::common::data::CDataWrapper>)),
                                   SLOT(asyncApiError(QString, QSharedPointer<chaos::CException>)),

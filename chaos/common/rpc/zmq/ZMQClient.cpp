@@ -253,7 +253,7 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
     ZMQSocketPool::ResourceSlot *socket_info = NULL;
     messageInfo->message->addBoolValue("syncrhonous_call", RpcClient::syncrhonous_call);
     
-    auto_ptr<chaos::common::data::SerializationBuffer> callSerialization(messageInfo->message->getBSONData());
+    unique_ptr<chaos::common::data::SerializationBuffer> callSerialization(messageInfo->message->getBSONData());
     try{
         socket_info = getSocketForNFI(messageInfo);
         if(socket_info == NULL){

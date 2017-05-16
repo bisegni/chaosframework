@@ -43,7 +43,7 @@ namespace chaos {
 
 			protected:
 				//! node address for metadata server
-				auto_ptr<chaos::common::network::CNodeNetworkAddress> nodeAddress;
+                std::auto_ptr<chaos::common::network::CNodeNetworkAddress> nodeAddress;
 				
 			public:
 				//!Base constructor

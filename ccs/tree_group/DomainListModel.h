@@ -28,7 +28,7 @@ signals:
 
 private:
     ApiSubmitter api_submitter;
-    std::auto_ptr<chaos::metadata_service_client::api_proxy::groups::GetDomainsHelper> get_domains_helper;
+    std::unique_ptr<chaos::metadata_service_client::api_proxy::groups::GetDomainsHelper> get_domains_helper;
 };
 
 #endif // DOMAINLISTMODEL_H

@@ -240,7 +240,7 @@ void ZMQServer::worker() {
                         //no error on create message
                         //at this time memory is managed by zmq
                         result->disposeOnDelete = false;
-                        //auto_ptr<SerializationBuffer> result(result_data_pack->getBSONData());
+                        //unique_ptr<SerializationBuffer> result(result_data_pack->getBSONData());
                         //result->disposeOnDelete = false;
                         ZMQS_LDBG << "Send ack";
                         err = zmq_sendmsg(receiver, &response, ZMQ_NOBLOCK);

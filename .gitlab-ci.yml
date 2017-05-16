@@ -1,4 +1,5 @@
 cache:
+  key: "$CI_BUILD_REF_NAME"
   paths:
   - /builds/bisegni/chaosframework
 
@@ -18,7 +19,7 @@ build_framework_x86_64:
   script:
     - echo "Working directory:"$PWD
     - echo "Artifact name:"$TAR_NAME_POSTFIX
-    - cmake -DCHAOS_ARCHITECTURE_TEST=ON .
+    - cmake -DCHAOS_ARCHITECTURE_TEST=ON -DCHAOS_ENABLE_C11=ON .
     - make  -j  $(nproc) ExperimentalStart
     - make  -j  $(nproc) ExperimentalConfigure
     - make  -j  $(nproc) ExperimentalBuild

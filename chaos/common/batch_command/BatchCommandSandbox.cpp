@@ -101,11 +101,9 @@ continue; \
 }
 
 BatchCommandSandbox::BatchCommandSandbox():
-default_sticky_command(NULL){}
+default_sticky_command(){}
 
 BatchCommandSandbox::~BatchCommandSandbox() {}
-
-//! Initialize instance
 
 void BatchCommandSandbox::init(void *initData) throw (chaos::CException) {
     current_executing_command = NULL;
@@ -120,8 +118,6 @@ void BatchCommandSandbox::init(void *initData) throw (chaos::CException) {
 
     schedule_work_flag = false;
 }
-
-// Start the implementation
 
 void BatchCommandSandbox::start() throw (chaos::CException) {
     
@@ -166,8 +162,6 @@ void BatchCommandSandbox::start() throw (chaos::CException) {
 #endif
 }
 
-// Start the implementation
-
 void BatchCommandSandbox::stop() throw (chaos::CException) {
     //we ned to get the lock on the scheduler
     
@@ -190,8 +184,6 @@ void BatchCommandSandbox::stop() throw (chaos::CException) {
     }
     SCSLAPP_ << "schedulerThread terminated";
 }
-
-//! Deinit the implementation
 
 void BatchCommandSandbox::deinit() throw (chaos::CException) {
     PRIORITY_ELEMENT(CommandInfoAndImplementation) *nextAvailableCommand = NULL;

@@ -534,7 +534,7 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
     
     //submit new instance of the requested control unit
     boost::shared_ptr<AbstractControlUnit> instance(map_cu_alias_instancer[work_unit_type]->getInstance(work_unit_id, load_options, driver_params));
-    CHECK_ASSERTION_THROW_AND_LOG(instance.get(), LCMERR_, -7, "Error creating work unit instance");
+    CHECK_ASSERTION_THROW_AND_LOG(instance.get() != nullptr, LCMERR_, -7, "Error creating work unit instance");
     
     //check if is a proxy control unit
     if(instance->getCUType().compare(NodeType::NODE_SUBTYPE_PROXY_CONTROL_UNIT) == 0){
@@ -564,7 +564,7 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
         }
     }
     
-    //submit contorl unit releaseing the auto_ptr
+    //submit contorl unit releaseing the unique_ptr
     submitControlUnit(instance);
     return NULL;
 }

@@ -41,7 +41,7 @@ DeviceController::DeviceController(string& _deviceID):
 device_id(_deviceID),
 datasetDB(true) {
     
-    const auto_ptr<chaos::common::data::CDataWrapper> d;
+    const unique_ptr<chaos::common::data::CDataWrapper> d;
     mdsChannel = NULL;
     deviceChannel = NULL;
     ioLiveDataDriver = NULL;
@@ -117,7 +117,7 @@ void DeviceController::updateChannel() throw(CException) {
     err = mdsChannel->getLastDatasetForDevice(device_id, &tmp_data_handler, millisecToWait);
     if(err!=ErrorCode::EC_NO_ERROR || !tmp_data_handler) throw CException(-2, "No device dataset received", "DeviceController::updateChannel");
     
-    auto_ptr<CDataWrapper> lastDeviceDefinition(tmp_data_handler);
+    unique_ptr<CDataWrapper> lastDeviceDefinition(tmp_data_handler);
     
     datasetDB.addAttributeToDataSetFromDataWrapper(*lastDeviceDefinition.get());
     
@@ -130,7 +130,7 @@ void DeviceController::updateChannel() throw(CException) {
         if(ioLiveDataDriver) {
             ioLiveDataDriver->init(NULL);
             if(!mdsChannel->getDataDriverBestConfiguration(&tmp_data_handler, millisecToWait)){
-                auto_ptr<CDataWrapper> best_available_da_ptr(tmp_data_handler);
+                unique_ptr<CDataWrapper> best_available_da_ptr(tmp_data_handler);
                 ioLiveDataDriver->updateConfiguration(best_available_da_ptr.get());
             }
         }

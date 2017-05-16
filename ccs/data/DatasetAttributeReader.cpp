@@ -44,7 +44,7 @@ std::vector<unsigned int> DatasetAttributeReader::getSubtype() {
         //one subtype
         sub_type.push_back(attribute_description->getInt32Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE));
     } else {
-        std::auto_ptr<CMultiTypeDataArrayWrapper> subtype_array(attribute_description->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE));
+        std::unique_ptr<CMultiTypeDataArrayWrapper> subtype_array(attribute_description->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE));
         for(int idx = 0;
             idx < subtype_array->size();
             idx++) {

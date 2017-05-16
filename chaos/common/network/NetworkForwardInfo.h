@@ -51,14 +51,13 @@ namespace chaos {
                                    bool _is_synchronous_request = false):
                 is_request(_is_request),
                 is_synchronous_request(_is_synchronous_request),
-				destinationAddr(""),
-				message(NULL),
-				tag(0),
-                sender_node_id(""),
+                destinationAddr(),
+                message(),
+                tag(0),
+                sender_node_id(0),
                 sender_request_id(0){}
 
-                ~NetworkForwardInfo(){
-				}
+                ~NetworkForwardInfo(){}
 				
                 void setMessage(chaos::common::data::CDataWrapper *_message) {
                     message.reset(_message);

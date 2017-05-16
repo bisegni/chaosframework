@@ -27,7 +27,7 @@ void ChaosWidgetCompanion::submitApiResult(const QString& api_tag,
                                            chaos::metadata_service_client::api_proxy::ApiProxyResult api_result) {
     //call api
     api_submitter.submitApiResult(api_tag,
-                                  api_result);
+                                  std::move(api_result));
 }
 
 //!Api has ben called successfully

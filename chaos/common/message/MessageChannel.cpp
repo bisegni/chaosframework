@@ -115,10 +115,11 @@ CDataWrapper* MessageChannel::sendRequest(const std::string& remote_host,
                                           const std::string& action_name,
                                           CDataWrapper *request_pack,
                                           int32_t millisec_to_wait) {
-    CHAOS_ASSERT(broker)    auto_ptr<MessageRequestFuture> request_future(sendRequestWithFuture(remote_host,
-                                                                                                node_id,
-                                                                                                action_name,
-                                                                                                request_pack));
+    CHAOS_ASSERT(broker)
+    std::auto_ptr<MessageRequestFuture> request_future(sendRequestWithFuture(remote_host,
+                                                                             node_id,
+                                                                             action_name,
+                                                                             request_pack));
     
     
     
@@ -153,7 +154,7 @@ std::auto_ptr<MessageRequestFuture> MessageChannel::sendRequestWithFuture(const 
                                                                           CDataWrapper *request_pack) {
     CHAOS_ASSERT(broker)
     uint32_t new_request_id = 0;
-    auto_ptr<MessageRequestFuture> result;
+    std::auto_ptr<MessageRequestFuture> result;
     CDataWrapper *data_pack = new CDataWrapper();
     
     //lock lk(waith_asnwer_mutex);

@@ -38,7 +38,9 @@ AbstractApi("newUS"){
 NewUS::~NewUS() {
     
 }
-void NewUS::performQuery(const std::string& new_us_uid,const string& desc, std::auto_ptr<chaos::common::data::CDataWrapper> custom){
+void NewUS::performQuery(const std::string& new_us_uid,
+                         const string& desc,
+                         std::auto_ptr<chaos::common::data::CDataWrapper> custom){
     bool presence = false;
     int err = 0;
     GET_DATA_ACCESS(UnitServerDataAccess, us_da, -3);
@@ -77,6 +79,6 @@ CDataWrapper *NewUS::execute(CDataWrapper *api_data,
     std::auto_ptr<chaos::common::data::CDataWrapper> custom(api_data->hasKey(chaos::NodeDefinitionKey::NODE_CUSTOM_PARAM)?api_data->getCSDataValue(chaos::NodeDefinitionKey::NODE_CUSTOM_PARAM):NULL);
     
     //we can proceed
-    performQuery(new_us_uid,desc,custom);
+    performQuery(new_us_uid,desc, std::move(custom));
     return NULL;
 }

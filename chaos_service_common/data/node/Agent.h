@@ -101,24 +101,29 @@ namespace chaos {
                     bool  auto_start;
                     //!qgent automatically respawn process it it will be killed
                     bool  keep_alive;
+                    //!qgent automatically route log to mds for launched process
+                    bool  log_at_laucnh;
                     
                     AgentAssociation():
                     associated_node_uid(),
                     configuration_file_content(),
                     auto_start(false),
-                    keep_alive(false){}
+                    keep_alive(false),
+                    log_at_laucnh(false){}
                     
                     AgentAssociation(const std::string& _associated_node_uid,
                                      const std::string& _launch_cmd_line,
                                      const std::string& _configuration_file_content,
-                                     const bool _auto_start,
-                                     const bool _keep_alive):
+                                     const bool _auto_start = false,
+                                     const bool _keep_alive = false,
+                                     const bool _log_at_launch = false):
                     association_unique_id(),
                     associated_node_uid(_associated_node_uid),
                     launch_cmd_line(_launch_cmd_line),
                     configuration_file_content(_configuration_file_content),
                     auto_start(_auto_start),
-                    keep_alive(_keep_alive){}
+                    keep_alive(_keep_alive),
+                    log_at_laucnh(_log_at_launch){}
                     
                     AgentAssociation(const AgentAssociation& copy_src):
                     association_unique_id(copy_src.association_unique_id),
@@ -126,7 +131,8 @@ namespace chaos {
                     launch_cmd_line(copy_src.launch_cmd_line),
                     configuration_file_content(copy_src.configuration_file_content),
                     auto_start(copy_src.auto_start),
-                    keep_alive(copy_src.keep_alive){}
+                    keep_alive(copy_src.keep_alive),
+                    log_at_laucnh(copy_src.log_at_laucnh){}
                     
                     AgentAssociation& operator=(AgentAssociation const &rhs) {
                         if(this == &rhs) return *this;
@@ -136,6 +142,7 @@ namespace chaos {
                         configuration_file_content = rhs.configuration_file_content;
                         auto_start = rhs.auto_start;
                         keep_alive = rhs.keep_alive;
+                        log_at_laucnh = rhs.log_at_laucnh;
                         return *this;
                     }
                 };
@@ -150,6 +157,7 @@ namespace chaos {
                     dataWrapped().configuration_file_content = CDW_GET_SRT_WITH_DEFAULT(serialized_data, AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_PAR_CFG, "");
                     dataWrapped().auto_start = CDW_GET_BOOL_WITH_DEFAULT(serialized_data, AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_PAR_AUTO_START, false);
                     dataWrapped().keep_alive = CDW_GET_BOOL_WITH_DEFAULT(serialized_data, AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_PAR_KEEP_ALIVE, false);
+                    dataWrapped().log_at_laucnh = CDW_GET_BOOL_WITH_DEFAULT(serialized_data, AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_PAR_LOG_AT_LAUNCH, false);
                 }
                 
                 std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
@@ -160,6 +168,7 @@ namespace chaos {
                     data_serialized->addStringValue(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_PAR_CFG, dataWrapped().configuration_file_content);
                     data_serialized->addBoolValue(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_PAR_AUTO_START, dataWrapped().auto_start);
                     data_serialized->addBoolValue(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_PAR_KEEP_ALIVE, dataWrapped().keep_alive);
+                    data_serialized->addBoolValue(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_PAR_LOG_AT_LAUNCH, dataWrapped().log_at_laucnh);
                     return data_serialized;
                 }
                 CHAOS_CLOSE_SDWRAPPER()

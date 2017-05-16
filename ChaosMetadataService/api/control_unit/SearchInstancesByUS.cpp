@@ -59,7 +59,7 @@ CDataWrapper *SearchInstancesByUS::execute(CDataWrapper *api_data,
     }
 
     if(api_data->hasKey("control_unit_implementation")) {
-        auto_ptr<CMultiTypeDataArrayWrapper> cu_t_arr(api_data->getVectorValue("control_unit_implementation"));
+        std::auto_ptr<CMultiTypeDataArrayWrapper> cu_t_arr(api_data->getVectorValue("control_unit_implementation"));
         for(int idx = 0;
             idx < cu_t_arr->size();
             idx++) {

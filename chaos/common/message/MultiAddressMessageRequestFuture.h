@@ -48,10 +48,10 @@ namespace chaos{
                 std::string last_used_address;
                 std::string action_domain;
                 std::string action_name;
-                auto_ptr<chaos::common::data::CDataWrapper> message_pack;
+                std::auto_ptr<chaos::common::data::CDataWrapper> message_pack;
                 
                 //! point to the current future
-                auto_ptr<MessageRequestFuture> current_future;
+                std::auto_ptr<MessageRequestFuture> current_future;
                 
                 //!private constructor
                 /*!

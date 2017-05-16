@@ -45,7 +45,7 @@ chaos::common::data::CDataWrapper *GetBestEndpoints::execute(chaos::common::data
     
     int err = 0;
     int32_t numner_or_result = 3;
-    auto_ptr<CDataWrapper> result;
+    std::auto_ptr<CDataWrapper> result;
     std::vector<boost::shared_ptr<CDataWrapper> > data_services;
     
     if(api_data && api_data->hasKey("count")) {
