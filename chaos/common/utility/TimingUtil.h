@@ -19,12 +19,18 @@
  */
 #ifndef ChaosFramework_TimingUtil_h
 #define ChaosFramework_TimingUtil_h
+
+#include <stdint.h>
+
 #include <chaos/common/global.h>
+#include <chaos/common/utility/Singleton.h>
+#include <chaos/common/async_central/TimerHandler.h>
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/c_time.hpp>
 #include <boost/date_time/local_time_adjustor.hpp>
 #include <boost/date_time/c_local_time_adjustor.hpp>
+
 #define TU_LAPP INFO_LOG(TimingUtil)
 #define TU_LDBG DBG_LOG(TimingUtil)
 #define TU_LERR ERR_LOG(TimingUtil)
@@ -36,7 +42,13 @@ namespace chaos {
             /*
              Class for give some method util for timing purpose
              */
-            class TimingUtil {
+            class TimingUtil:
+            public chaos::common::async_central::TimerHandler,
+            public chaos::common::utility::Singleton<TimingUtil> {
+                friend class chaos::common::utility::Singleton<TimingUtil>;
+                
+                std::string remote_ntp_server;
+                static int64_t timestamp_calibration_offset;
                 static const char* formats[];
                 static const size_t formats_n;
                 
@@ -47,13 +59,18 @@ namespace chaos {
                     const ptime now = local_adj::utc_to_local(utc_now);
                     return now - utc_now;
                 }
-                
+            protected:
+                void timeout();
+                uint64_t getNTPTS();
             public:
+                
+                void enableTimestampCalibration();
+                void disableTimestampCalibration();
                 
                 //!Return the current timestamp in milliseconds
                 static inline uint64_t getTimeStamp() {
                     try{
-                        return (boost::posix_time::microsec_clock::universal_time()-EPOCH).total_milliseconds();
+                        return (boost::posix_time::microsec_clock::universal_time()- EPOCH + boost::posix_time::milliseconds(timestamp_calibration_offset)).total_milliseconds();
                     } catch(boost::exception_detail::clone_impl< boost::exception_detail::error_info_injector<boost::gregorian::bad_day_of_month> >& bad_day_exce) {
                         TU_LERR << "Bad day exception";
                         return 0;
@@ -64,7 +81,7 @@ namespace chaos {
                 //!Return the current timestamp in milliseconds
                 static inline uint64_t getTimeStampInMicroseconds() {
                     try{
-                        return (boost::posix_time::microsec_clock::universal_time()-EPOCH).total_microseconds();
+                        return (boost::posix_time::microsec_clock::universal_time()- EPOCH + boost::posix_time::milliseconds(timestamp_calibration_offset)).total_microseconds();
                     } catch(boost::exception_detail::clone_impl< boost::exception_detail::error_info_injector<boost::gregorian::bad_day_of_month> >& bad_day_exce) {
                         TU_LERR << "Bad day exception";
                         return 0;
@@ -75,7 +92,7 @@ namespace chaos {
                 //!Return the current utc timestamp in milliseconds
                 static inline uint64_t getLocalTimeStamp() {
                     try{
-                        return (boost::posix_time::microsec_clock::local_time()-EPOCH).total_milliseconds();
+                        return (boost::posix_time::microsec_clock::local_time() - EPOCH  + boost::posix_time::milliseconds(timestamp_calibration_offset)).total_milliseconds();
                     } catch(boost::exception_detail::clone_impl< boost::exception_detail::error_info_injector<boost::gregorian::bad_day_of_month> >& bad_day_exce) {
                         TU_LERR << "Bad day exception";
                         return 0;
@@ -85,7 +102,7 @@ namespace chaos {
                 //!Return the current utc timestamp in milliseconds
                 static inline uint64_t getLocalTimeStampInMicroseconds() {
                     try{
-                        return (boost::posix_time::microsec_clock::local_time()-EPOCH).total_microseconds();
+                        return (boost::posix_time::microsec_clock::local_time() - EPOCH + boost::posix_time::milliseconds(timestamp_calibration_offset)).total_microseconds();
                     } catch(boost::exception_detail::clone_impl< boost::exception_detail::error_info_injector<boost::gregorian::bad_day_of_month> >& bad_day_exce) {
                         TU_LERR << "Bad day exception";
                         return 0;

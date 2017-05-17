@@ -30,6 +30,7 @@
 #include <chaos/common/log/LogManager.h>
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/utility/Singleton.h>
+#include <chaos/common/utility/TimingUtil.h>
 #include <chaos/common/utility/InetUtility.h>
 #include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/utility/StartableService.h>
@@ -217,12 +218,21 @@ namespace chaos {
                 common::utility::InizializableService::initImplementation(chaos::common::async_central::AsyncCentralManager::getInstance(), init_data, "AsyncCentralManager", __PRETTY_FUNCTION__);
                 common::utility::StartableService::initImplementation(chaos::common::network::NetworkBroker::getInstance(), init_data, "NetworkBroker", __PRETTY_FUNCTION__);
                 common::utility::StartableService::startImplementation(chaos::common::network::NetworkBroker::getInstance(),  "NetworkBroker", __PRETTY_FUNCTION__);
+                
+                if(GlobalConfiguration::getInstance()->hasOption(InitOption::OPT_TIME_CALIBRATION)) {
+                    //enable timestamp calibration
+                    chaos::common::utility::TimingUtil::getInstance()->enableTimestampCalibration();
+                }
                 }
 
                 void deinit() throw (CException) {
                 	 if(deinitialized)
                 	            	return;
                 	 deinitialized=true;
+                    if(GlobalConfiguration::getInstance()->hasOption(InitOption::OPT_TIME_CALIBRATION)) {
+                        //enable timestamp calibration
+                        chaos::common::utility::TimingUtil::getInstance()->disableTimestampCalibration();
+                    }
                         //dellocate all
                     CHAOS_NOT_THROW(common::utility::StartableService::stopImplementation(chaos::common::network::NetworkBroker::getInstance(),  "NetworkBroker", __PRETTY_FUNCTION__););
                     CHAOS_NOT_THROW(common::utility::StartableService::deinitImplementation(chaos::common::network::NetworkBroker::getInstance(),  "AsyncCentralManager", __PRETTY_FUNCTION__););

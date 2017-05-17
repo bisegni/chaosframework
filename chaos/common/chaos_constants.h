@@ -106,6 +106,10 @@ namespace chaos {
         static const char * const   OPT_PUBLISHING_INTERFACE            = "publishing-interface";
         //! Specify the ip where publish the framework
         static const char * const   OPT_DATA_IO_IMPL					= "data-io-impl";
+        //! Enable the calibration of the local timestsamp with a remote NTP server
+        static const char * const   OPT_TIME_CALIBRATION                = "time-calibration";
+        //! Enable the calibration of the local timestsamp with a remote NTP server
+        static const char * const   OPT_TIME_CALIBRATION_NTP_SERVER     = "time-calibration-ntp-server";
     }
     /** @} */ // end of ParamOption
     
