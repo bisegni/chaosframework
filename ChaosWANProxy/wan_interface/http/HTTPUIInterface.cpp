@@ -59,7 +59,7 @@ std::map<std::string, ::driver::misc::ChaosController*> HTTPUIInterface::devs;
  */
 static int event_handler(struct mg_connection *connection, enum mg_event ev) {
 	if ((ev == MG_REQUEST)&& (connection->server_param != NULL)) {
-		if((!strcmp(connection->uri,API_PREFIX_V1))&&((HTTPUIInterface *)connection->server_param)->handle(connection)){
+		if((strstr(connection->uri,API_PREFIX_V1))&&((HTTPUIInterface *)connection->server_param)->handle(connection)){
 			((HTTPUIInterface *)connection->server_param)->processRest(connection);
 
 		} else {

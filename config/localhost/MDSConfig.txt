@@ -4850,12 +4850,12 @@
 	    "cu_desc": [
 		{
 		    "unit_server_alias": "IMA",
-		    "cu_id": "IMA/DAQ",
+		    "cu_id": "IMA/ACCELEROMETER/DAQ",
 		    "cu_type": "",
 		    "cu_param": "",
 		    "auto_load": true,
-		    "auto_start": false,
-		    "auto_init": false,
+		    "auto_start": true,
+		    "auto_init": true,
 		    "storage_type": 2,
 		    "storage_ageing": 36000,
 		    "DriverDescription": [],

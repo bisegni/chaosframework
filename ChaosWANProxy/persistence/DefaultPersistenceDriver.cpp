@@ -18,6 +18,7 @@
  *    	limitations under the License.
  */
 #include "DefaultPersistenceDriver.h"
+#include <chaos/common/healt_system/HealtManager.h>
 
 #include <chaos/common/utility/UUIDUtil.h>
 #include <chaos/common/network/URL.h>
@@ -37,6 +38,7 @@ using namespace chaos::common::utility;
 using namespace chaos::common::network;
 using namespace chaos::common::direct_io;
 using namespace chaos::common::direct_io::channel;
+using namespace chaos::common::healt_system;
 
 /*---------------------------------------------------------------------------------
  
@@ -96,8 +98,23 @@ void DefaultPersistenceDriver::clear() {
  ---------------------------------------------------------------------------------*/
 void DefaultPersistenceDriver::addServerList(const std::vector<std::string>& _cds_address_list) {
 	//checkif someone has passed us the device indetification
-	DPD_LAPP << "Scan the directio address";
-	
+	DPD_LAPP << "Scan the direction address";
+	if(_cds_address_list.empty()){
+	    CDataWrapper *tmp_data_handler = NULL;
+
+		 if(!mds_message_channel->getDataDriverBestConfiguration(&tmp_data_handler, 5000)){
+		           UNIQUE_PTR<CDataWrapper> best_available_da_ptr(tmp_data_handler);
+		           DPD_LDBG <<best_available_da_ptr->getJSONString();
+		           UNIQUE_PTR<chaos::common::data::CMultiTypeDataArrayWrapper> liveMemAddrConfig(best_available_da_ptr->getVectorValue(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST));
+		           size_t numerbOfserverAddressConfigured = liveMemAddrConfig->size();
+		            for ( int idx = 0; idx < numerbOfserverAddressConfigured; idx++ ){
+		            	std::string serverDesc = liveMemAddrConfig->getStringElementAtIndex(idx);
+		            	connection_feeder.addURL(serverDesc);
+		            }
+		 }
+		//mds_message_channel->ge
+	//	connection_feeder.addURL()
+	}
 	for (std::vector<std::string>::const_iterator it = _cds_address_list.begin();
 		 it != _cds_address_list.end();
 		 it++ ){
@@ -186,7 +203,6 @@ int DefaultPersistenceDriver::pushNewDataset(const std::string& producer_key,
 	new_dataset->addStringValue(chaos::DataPackCommonKey::DPCK_DEVICE_ID, producer_key);
 	new_dataset->addInt32Value(chaos::DataPackCommonKey::DPCK_DATASET_TYPE, chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT);
 	UNIQUE_PTR<SerializationBuffer> serialization(new_dataset->getBSONData());
-	
 	DirectIOChannelsInfo	*next_client = static_cast<DirectIOChannelsInfo*>(connection_feeder.getService());
 	serialization->disposeOnDelete = !next_client;
 	if(next_client) {
@@ -227,10 +243,26 @@ int DefaultPersistenceDriver::getLastDataset(const std::string& producer_key,
 //! register the dataset of ap roducer
 int DefaultPersistenceDriver::registerDataset(const std::string& producer_key,
 											  chaos::common::data::CDataWrapper& last_dataset) {
-	CHAOS_ASSERT(mds_message_channel)
+	CHAOS_ASSERT(mds_message_channel);
+	int ret;
+
 	last_dataset.addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, producer_key);
 	last_dataset.addStringValue(chaos::NodeDefinitionKey::NODE_RPC_DOMAIN, chaos::common::utility::UUIDUtil::generateUUIDLite());
     last_dataset.addStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR, network_broker->getRPCUrl());
 	last_dataset.addStringValue("mds_control_key","none");
-	return mds_message_channel->sendNodeRegistration(last_dataset, true, 3000);
+	if((ret=mds_message_channel->sendNodeRegistration(last_dataset, true, 3000)) ==0){
+		CDataWrapper mdsPack;
+		mdsPack.addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, producer_key);
+		mdsPack.addStringValue(chaos::NodeDefinitionKey::NODE_TYPE, chaos::NodeType::NODE_TYPE_CONTROL_UNIT);
+		ret = mds_message_channel->sendNodeLoadCompletion(mdsPack, true, 3000);
+        HealtManager::getInstance()->addNewNode(producer_key);
+
+		HealtManager::getInstance()->addNodeMetricValue(producer_key,
+		                                                        NodeHealtDefinitionKey::NODE_HEALT_STATUS,
+		                                                        NodeHealtDefinitionValue::NODE_HEALT_STATUS_START,
+		                                                        true);
+	}
+
+	return ret;
 }
+

@@ -18,6 +18,8 @@
  *    	limitations under the License.
  */
 #include "ChaosWANProxy.h"
+#include <chaos/common/healt_system/HealtManager.h>
+
 #include "global_constant.h"
 #include "DefaultWANInterfaceHandler.h"
 #include "wan_interface/wan_interface.h"
@@ -32,6 +34,7 @@ using namespace std;
 using namespace chaos;
 using namespace chaos::common::network;
 using namespace chaos::common::utility;
+using namespace chaos::common::healt_system;
 
 using namespace chaos::wan_proxy;
 using namespace chaos::wan_proxy::persistence;
@@ -65,6 +68,7 @@ void ChaosWANProxy::init(int argc, char* argv[]) throw (CException) {
  */
 void ChaosWANProxy::init(istringstream &initStringStream) throw (CException) {
 	ChaosCommon<ChaosWANProxy>::init(initStringStream);
+
 }
 
 /*
@@ -74,7 +78,8 @@ void ChaosWANProxy::init(void *init_data)  throw(CException) {
 	std::string tmp_interface_name;
 	try {
 		ChaosCommon<ChaosWANProxy>::init(init_data);
-		   
+       StartableService::initImplementation(HealtManager::getInstance(), NULL, "HealtManager", __PRETTY_FUNCTION__);
+
 		if(!getGlobalConfigurationInstance()->hasOption(setting_options::OPT_INTERFACE_TO_ACTIVATE)) {
 			throw CException(-1, "The interface protocol are mandatory", __PRETTY_FUNCTION__);
 		}
@@ -123,6 +128,7 @@ void ChaosWANProxy::init(void *init_data)  throw(CException) {
 			wan_active_interfaces.push_back(tmp_interface_instance);
 			
 			LCND_LAPP << "Wan interface: " <<tmp_interface_instance->getName()<< " have been installed";
+
 		}
 		
 	} catch (CException& ex) {
@@ -138,6 +144,7 @@ void ChaosWANProxy::init(void *init_data)  throw(CException) {
 void ChaosWANProxy::start()  throw(CException) {
 	//lock o monitor for waith the end
 	try {
+	      StartableService::startImplementation(HealtManager::getInstance(), "HealtManager", __PRETTY_FUNCTION__);
 		//start all wan interface
 		for(WanInterfaceListIterator it = wan_active_interfaces.begin();
 			it != wan_active_interfaces.end();
@@ -150,6 +157,8 @@ void ChaosWANProxy::start()  throw(CException) {
 		
 		//at this point i must with for end signal
 		waitCloseSemaphore.wait();
+
+
 	} catch (CException& ex) {
 		DECODE_CHAOS_EXCEPTION(ex)
 	}
@@ -181,8 +190,11 @@ void ChaosWANProxy::stop()   throw(CException) {
 															 (*it)->getName(),
 															 __PRETTY_FUNCTION__);)
 	}
+	  CHAOS_NOT_THROW(StartableService::stopImplementation(HealtManager::getInstance(), "HealtManager", __PRETTY_FUNCTION__););
 	//endWaithCondition.notify_one();
 	waitCloseSemaphore.unlock();
+
+
 }
 
 /*
@@ -190,6 +202,8 @@ void ChaosWANProxy::stop()   throw(CException) {
  */
 void ChaosWANProxy::deinit()   throw(CException) {
 	//deinit all wan interface
+    CHAOS_NOT_THROW(StartableService::deinitImplementation(HealtManager::getInstance(), "HealtManager", __PRETTY_FUNCTION__););
+
 	for(WanInterfaceListIterator it = wan_active_interfaces.begin();
 		it != wan_active_interfaces.end();
 		it++) {
