@@ -9,14 +9,14 @@ class ChaosByteArray:
         public QObject {
     Q_OBJECT
 public:
-    ChaosByteArray(boost::shared_ptr<chaos::common::data::SerializationBuffer> _source_byte_array,
+    ChaosByteArray(ChaosSharedPtr<chaos::common::data::SerializationBuffer> _source_byte_array,
                    QObject *p = 0);
 
     QByteArray getByteArray();
 
 
 private:
-    boost::shared_ptr<chaos::common::data::SerializationBuffer> source_byte_array;
+    ChaosSharedPtr<chaos::common::data::SerializationBuffer> source_byte_array;
 };
 #endif // CHAOSBYTEARRAY
 

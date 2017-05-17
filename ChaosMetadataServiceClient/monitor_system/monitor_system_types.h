@@ -39,7 +39,7 @@ namespace chaos {
 #define CHAOS_QSS_COMPOSE_QUANTUM_CONSUMER_KEY(k,q,p) boost::str(boost::format("%1%_%2%_%3%")% k % q % reinterpret_cast<uintptr_t>(p))
 #define CHAOS_QSS_COMPOSE_QUANTUM_SLOT_KEY(k,q) boost::str(boost::format("%1%_%2%")% k % q)
             
-            typedef boost::shared_ptr<chaos::common::data::CDataWrapper> KeyValue;
+            typedef ChaosSharedPtr<chaos::common::data::CDataWrapper> KeyValue;
             
             //! Base class for slot consumer
             class QuantumSlotConsumer {

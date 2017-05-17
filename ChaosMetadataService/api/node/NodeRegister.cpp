@@ -201,7 +201,7 @@ CDataWrapper *NodeRegister::controlUnitRegistration(CDataWrapper *api_data,
     GET_DATA_ACCESS(UnitServerDataAccess, us_da, -5)
     
     //allocate datapack for batch command
-    std::auto_ptr<CDataWrapper> ack_command(new CDataWrapper());
+    ChaosUniquePtr<CDataWrapper> ack_command(new CDataWrapper());
     const std::string cu_uid = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
     
     USRA_INFO << "Register control unit " << cu_uid;

@@ -50,7 +50,7 @@ chaos::common::data::CDataWrapper *UpdateScriptOnNode::execute(CDataWrapper *api
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found");
     CHECK_KEY_THROW_AND_LOG(api_data, chaos::NodeDefinitionKey::NODE_UNIQUE_ID, ERR, -2, CHAOS_FORMAT("The %1% key is mandatory",%chaos::NodeDefinitionKey::NODE_UNIQUE_ID));
     
-    std::auto_ptr<CDataWrapper> batch_data(api_data);
+    ChaosUniquePtr<CDataWrapper> batch_data(api_data);
     detach_data = true;
     
     //deserializ base description of the script

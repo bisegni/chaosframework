@@ -41,7 +41,7 @@ namespace chaos {
                     friend class MongoDBPersistenceDriver;
                     MongoDBNodeDataAccess *node_data_access = NULL;
                 protected:
-                    MongoDBDataServiceDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
+                    MongoDBDataServiceDataAccess(const ChaosSharedPtr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
                     ~MongoDBDataServiceDataAccess();
                 public:
                     //inherited method
@@ -75,13 +75,13 @@ namespace chaos {
                     
                     //inherited method
                     int searchAssociationForUID(const std::string& ds_unique_id,
-                                                std::vector<boost::shared_ptr<common::data::CDataWrapper> >& node_associated);
+                                                std::vector<ChaosSharedPtr<common::data::CDataWrapper> >& node_associated);
                     
-                    int searchAllDataAccess(std::vector<boost::shared_ptr<common::data::CDataWrapper> >&  node_associated,
+                    int searchAllDataAccess(std::vector<ChaosSharedPtr<common::data::CDataWrapper> >&  node_associated,
                                             uint32_t last_unique_id,
                                             uint32_t page_length);
                     
-                    int getBestNDataService(std::vector<boost::shared_ptr<common::data::CDataWrapper> >&  best_available_data_service,
+                    int getBestNDataService(std::vector<ChaosSharedPtr<common::data::CDataWrapper> >&  best_available_data_service,
                                             unsigned int number_of_result = 3);
                     
                     int getBestNDataService(std::vector<std::string >&  best_available_data_service,

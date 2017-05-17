@@ -37,7 +37,7 @@ namespace chaos {
 	namespace metadata_service {
 		namespace api {
             
-            CHAOS_DEFINE_VECTOR_FOR_TYPE(boost::shared_ptr<AbstractApi>, ApiList)
+            CHAOS_DEFINE_VECTOR_FOR_TYPE(ChaosSharedPtr<AbstractApi>, ApiList)
 
 			class AbstractApiGroup:
 			public common::utility::NamedService,
@@ -55,12 +55,12 @@ namespace chaos {
                  The alias of the action to be call si got by api itself
                  */
                 template<typename T>
-                boost::shared_ptr<T> getNewApiInstance() {
+                ChaosSharedPtr<T> getNewApiInstance() {
                     //allcoate the instsancer for the AbstractApi depending by the template
-                    std::auto_ptr<INSTANCER(T, AbstractApi)> i(ALLOCATE_INSTANCER(T, AbstractApi));
+                    ChaosUniquePtr<INSTANCER(T, AbstractApi)> i(ALLOCATE_INSTANCER(T, AbstractApi));
                     
                     //get api instance
-                    boost::shared_ptr<T> instance((T*)i->getInstance());
+                    ChaosSharedPtr<T> instance((T*)i->getInstance());
                     if(instance.get()) {
                         //we have an instance so we can initilize it
                         InizializableService::initImplementation(instance.get(),
@@ -82,13 +82,13 @@ namespace chaos {
 				template<typename T>
 				void addApi() {
 					//allcoate the instsancer for the AbstractApi depending by the template
-					std::auto_ptr<INSTANCER(T, AbstractApi)> i(ALLOCATE_INSTANCER(T, AbstractApi));
+					ChaosUniquePtr<INSTANCER(T, AbstractApi)> i(ALLOCATE_INSTANCER(T, AbstractApi));
 					
 					//get api instance
 					T *instance = (T*)i->getInstance();
 					if(instance) {
 						//we have an instance so we can register that action
-						api_instance.push_back(boost::shared_ptr<AbstractApi>(instance));
+						api_instance.push_back(ChaosSharedPtr<AbstractApi>(instance));
 						DeclareAction::addActionDescritionInstance<T>(instance,
 																	  &T::execute,
 																	  getName().c_str(),

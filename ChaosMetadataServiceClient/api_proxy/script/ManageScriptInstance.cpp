@@ -32,7 +32,7 @@ ApiProxyResult ManageScriptInstance::execute(const uint64_t script_seq,
                                              const std::string& script_name,
                                              const std::string& instance_name,
                                              const bool create) {
-    std::auto_ptr<CDataWrapper> api_data(new CDataWrapper());
+    ChaosUniquePtr<CDataWrapper> api_data(new CDataWrapper());
     api_data->addInt64Value("script_seq", script_seq);
     api_data->addStringValue("script_name", script_name);
     api_data->addStringValue("instance_name", instance_name);
@@ -44,7 +44,7 @@ ApiProxyResult ManageScriptInstance::execute(const uint64_t script_seq,
                                              const std::string& script_name,
                                              const ChaosStringVector& instance_names,
                                              const bool create) {
-    std::auto_ptr<CDataWrapper> api_data(new CDataWrapper());
+    ChaosUniquePtr<CDataWrapper> api_data(new CDataWrapper());
     api_data->addInt64Value("script_seq", script_seq);
     api_data->addStringValue("script_name", script_name);
     for(ChaosStringVectorConstIterator it = instance_names.begin(),

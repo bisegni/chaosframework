@@ -51,7 +51,7 @@ namespace chaos {
                 virtual int execute(ChaosStringVector input_parameter) = 0;
             };
 
-            typedef boost::shared_ptr<AbstractExternalCommand> AbstractExternalCommandShrdPtr;
+            typedef ChaosSharedPtr<AbstractExternalCommand> AbstractExternalCommandShrdPtr;
         }
     }
 }

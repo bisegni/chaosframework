@@ -44,7 +44,7 @@ namespace chaos {
                 friend class AbstractExecutionUnit;
                 PUBLISHABLE_CONTROL_UNIT_INTERFACE(ProxyControlUnit)
                 
-                boost::shared_ptr<ControlUnitApiInterface> api_interface_pointer;
+                ChaosSharedPtr<ControlUnitApiInterface> api_interface_pointer;
                 
                 /*!
                  Define the control unit DataSet and Action into
@@ -99,7 +99,7 @@ namespace chaos {
                 
                 ~ProxyControlUnit();
 
-                boost::shared_ptr<ControlUnitApiInterface> getProxyApiInterface();
+                ChaosSharedPtr<ControlUnitApiInterface> getProxyApiInterface();
             };
         }
     }

@@ -154,20 +154,20 @@ namespace chaos {
 				
 				//!queue for control unit waiting to be published
 				mutable boost::shared_mutex		mutex_queue_submitted_cu;
-				queue< boost::shared_ptr<AbstractControlUnit> >	queue_submitted_cu;
+				queue< ChaosSharedPtr<AbstractControlUnit> >	queue_submitted_cu;
 				
 				//! control unit instance mapped with their unique identifier
 				mutable boost::shared_mutex mutex_map_cuid_reg_unreg_instance;
-                map<string, boost::shared_ptr<WorkUnitManagement> > map_cuid_reg_unreg_instance;
+                map<string, ChaosSharedPtr<WorkUnitManagement> > map_cuid_reg_unreg_instance;
 				
 				//map
 				mutable boost::shared_mutex mutex_map_cuid_registered_instance;
-				map<string, boost::shared_ptr<WorkUnitManagement> > map_cuid_registered_instance;
+				map<string, ChaosSharedPtr<WorkUnitManagement> > map_cuid_registered_instance;
 				
 				//! association by alias and control unit instancer
-				typedef std::map<string, boost::shared_ptr<CUObjectInstancer> >::iterator MapCUAliasInstancerIterator;
+				typedef std::map<string, ChaosSharedPtr<CUObjectInstancer> >::iterator MapCUAliasInstancerIterator;
 				mutable boost::shared_mutex mutex_map_cu_instancer;
-				std::map<string, boost::shared_ptr<CUObjectInstancer> > map_cu_alias_instancer;
+				std::map<string, ChaosSharedPtr<CUObjectInstancer> > map_cu_alias_instancer;
 				
                 //!hnalder thre proxy creation
                 ProxyLoadHandler load_handler;
@@ -243,7 +243,7 @@ namespace chaos {
                 /*
                  Submit a new Control unit instance
                  */
-                void submitControlUnit(boost::shared_ptr<AbstractControlUnit> control_unit_instance) throw(CException);
+                void submitControlUnit(ChaosSharedPtr<AbstractControlUnit> control_unit_instance) throw(CException);
 			public:
 				
 				/*
@@ -281,7 +281,7 @@ namespace chaos {
 					WriteLock write_instancer_lock(mutex_map_cu_instancer);
 					
 					map_cu_alias_instancer.insert(make_pair(CONTROL_UNIT_PUBLISH_NAME(ControlUnitClass),
-															boost::shared_ptr<CUObjectInstancer>(ALLOCATE_INSTANCER_P3(ControlUnitClass,										//Control unit implementation
+															ChaosSharedPtr<CUObjectInstancer>(ALLOCATE_INSTANCER_P3(ControlUnitClass,										//Control unit implementation
 																													   AbstractControlUnit,										//Control unit base class
 																													   const std::string&,										//Control Unit unique id param
 																													   const std::string&,										//control unit load param

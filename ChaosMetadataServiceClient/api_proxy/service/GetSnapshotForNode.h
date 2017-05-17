@@ -50,7 +50,7 @@ namespace chaos {
                     
                     ApiProxyResult execute(const std::string& snapshot_name);
                     
-                    static std::auto_ptr<GetSnapshotForNodeHelper> getHelper(chaos::common::data::CDataWrapper *api_result);
+                    static ChaosUniquePtr<GetSnapshotForNodeHelper> getHelper(chaos::common::data::CDataWrapper *api_result);
                 };
             }
         }

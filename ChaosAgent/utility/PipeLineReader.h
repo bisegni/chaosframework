@@ -39,7 +39,7 @@ namespace chaos {
             
             class PipeLineReader {
             public:
-                typedef boost::shared_ptr<PipeLineReader>   PipeLineReaderPtr;
+                typedef ChaosSharedPtr<PipeLineReader>   PipeLineReaderPtr;
                 typedef boost::weak_ptr<PipeLineReader>     PipeLineReaderWeakPtr;
                 
                 explicit PipeLineReader(boost::asio::io_service& io_service,

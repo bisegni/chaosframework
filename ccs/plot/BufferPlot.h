@@ -27,7 +27,7 @@ public:
                      QCPRange& _global_y_range, QCPRange &_global_x_range);
     ~AttributeScanner();
     //update attribute graph data
-    void updateData(const boost::shared_ptr<chaos::common::data::CDataBuffer> &_buffer_to_plot);
+    void updateData(const ChaosSharedPtr<chaos::common::data::CDataBuffer> &_buffer_to_plot);
     //update attribute data type
     void setBinaryType(const std::vector<unsigned int>& _bin_type);
     //get the max element
@@ -71,7 +71,7 @@ public:
 
     void updateAttributeData(const QString& node_uid,
                              const QString& attribute_name,
-                             boost::shared_ptr<chaos::common::data::CDataBuffer>& _buffer_to_plot);
+                             ChaosSharedPtr<chaos::common::data::CDataBuffer>& _buffer_to_plot);
     void removeAttribute(const QString& node_uid,
                          const QString& attribute_name);
 

@@ -31,7 +31,7 @@
 
 using namespace chaos::service_common::persistence::mongodb;
 
-MongoDBAccessor::MongoDBAccessor(const boost::shared_ptr<MongoDBHAConnectionManager>& _connection):
+MongoDBAccessor::MongoDBAccessor(const ChaosSharedPtr<MongoDBHAConnectionManager>& _connection):
 connection(_connection) {
     
 }

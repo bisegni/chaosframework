@@ -24,7 +24,7 @@
 using namespace chaos;
 using namespace chaos::common::data;
 
-DomainActionsScheduler::DomainActionsScheduler(boost::shared_ptr<DomainActions> _domainActionsContainer):
+DomainActionsScheduler::DomainActionsScheduler(ChaosSharedPtr<DomainActions> _domainActionsContainer):
 armed(false),
 dispatcher(NULL){
     domainActionsContainer = _domainActionsContainer;
@@ -87,8 +87,8 @@ void DomainActionsScheduler::synchronousCall(const std::string& action,
                                              chaos_data::CDataWrapper *message,
                                              chaos_data::CDataWrapper *result) {
     bool message_has_been_detached = false;
-    UNIQUE_PTR<CDataWrapper>  action_message(message);
-    std::auto_ptr<CDataWrapper> message_data(message->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
+    ChaosUniquePtr<CDataWrapper>  action_message(message);
+    ChaosUniquePtr<CDataWrapper> message_data(message->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
     if(!domainActionsContainer->hasActionName(action)) {
         LAPP_ << "The action " << action << " is not present for domain " << domainActionsContainer->getDomainName();
         result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, -1);
@@ -114,7 +114,7 @@ void DomainActionsScheduler::synchronousCall(const std::string& action,
         
         //call and return
         try {
-            UNIQUE_PTR<CDataWrapper> action_result(action_desc_ptr->call(message_data.get(), message_has_been_detached));
+            ChaosUniquePtr<CDataWrapper> action_result(action_desc_ptr->call(message_data.get(), message_has_been_detached));
             if(action_result.get() &&
                action_message->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_DOMAIN) &&
                action_message->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_ACTION)) {
@@ -147,9 +147,9 @@ void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescriptio
     //the domain is securely the same is is mandatory for submition so i need to get the name of the action
     CDataWrapper            *responsePack = NULL;
     CDataWrapper            *subCommand = NULL;
-    UNIQUE_PTR<CDataWrapper>  actionMessage;
-    UNIQUE_PTR<CDataWrapper>  remoteActionResult;
-    UNIQUE_PTR<CDataWrapper>  actionResult;
+    ChaosUniquePtr<CDataWrapper>  actionMessage;
+    ChaosUniquePtr<CDataWrapper>  remoteActionResult;
+    ChaosUniquePtr<CDataWrapper>  actionResult;
     //keep track for the retain of the message of the aciton description
     ElementManagingPolicy               action_elementPolicy = {false};
     bool    needAnswer = false;
@@ -221,7 +221,7 @@ void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescriptio
             //check if we need to submit a sub command
             if( subCommand ) {
                 //we can submit sub command
-                UNIQUE_PTR<CDataWrapper> dispatchSubCommandResult(dispatcher->dispatchCommand(subCommand));
+                ChaosUniquePtr<CDataWrapper> dispatchSubCommandResult(dispatcher->dispatchCommand(subCommand));
             }
             
             if(needAnswer){

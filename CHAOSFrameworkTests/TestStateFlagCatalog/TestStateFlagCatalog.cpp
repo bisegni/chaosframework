@@ -39,10 +39,10 @@ catalog_b("catalog_b"){}
 TestStateFlagCatalog::~TestStateFlagCatalog() {}
 
 bool TestStateFlagCatalog::test() {
-    boost::shared_ptr<StateFlag> flag;
-    boost::shared_ptr<StateFlag> flag_powersupply_state;
-    boost::shared_ptr<StateFlag> flag_serial_comunication;
-    boost::shared_ptr<StateFlag> flag_serial_port;
+    ChaosSharedPtr<StateFlag> flag;
+    ChaosSharedPtr<StateFlag> flag_powersupply_state;
+    ChaosSharedPtr<StateFlag> flag_serial_comunication;
+    ChaosSharedPtr<StateFlag> flag_serial_port;
     
     flag_powersupply_state.reset(new StateFlag("powersupply_state",
                                                 "Represent the state of internal power supply"));
@@ -101,32 +101,32 @@ bool TestStateFlagCatalog::test() {
     
     catalog_a.getFlagsForSeverity(StateFlagServerityRegular, found_flag_for_severity);
     std::cout << "catalog_a StateFlagServerityRegular"<<std::endl;
-    BOOST_FOREACH(boost::shared_ptr<StateFlag> flag, found_flag_for_severity ){std::cout << flag->getName() << std::endl;}
+    BOOST_FOREACH(ChaosSharedPtr<StateFlag> flag, found_flag_for_severity ){std::cout << flag->getName() << std::endl;}
     
     found_flag_for_severity.clear();
     catalog_a.getFlagsForSeverity(StateFlagServerityWarning, found_flag_for_severity);
     std::cout << "catalog_a StateFlagServerityWarning"<<std::endl;
-    BOOST_FOREACH(boost::shared_ptr<StateFlag> flag, found_flag_for_severity ){std::cout << flag->getName()  << std::endl;}
+    BOOST_FOREACH(ChaosSharedPtr<StateFlag> flag, found_flag_for_severity ){std::cout << flag->getName()  << std::endl;}
     
     found_flag_for_severity.clear();
     catalog_a.getFlagsForSeverity(StateFlagServeritySevere, found_flag_for_severity);
     std::cout << "catalog_a StateFlagServerityCritical"<<std::endl;
-    BOOST_FOREACH(boost::shared_ptr<StateFlag> flag, found_flag_for_severity ){std::cout << flag->getName()  << std::endl;}
+    BOOST_FOREACH(ChaosSharedPtr<StateFlag> flag, found_flag_for_severity ){std::cout << flag->getName()  << std::endl;}
     
     found_flag_for_severity.clear();
     catalog_b.getFlagsForSeverity(StateFlagServerityRegular, found_flag_for_severity);
     std::cout << "catalog_b StateFlagServerityRegular"<<std::endl;
-    BOOST_FOREACH(boost::shared_ptr<StateFlag> flag, found_flag_for_severity ){std::cout << flag->getName()  << std::endl;}
+    BOOST_FOREACH(ChaosSharedPtr<StateFlag> flag, found_flag_for_severity ){std::cout << flag->getName()  << std::endl;}
     
     found_flag_for_severity.clear();
     catalog_b.getFlagsForSeverity(StateFlagServerityWarning, found_flag_for_severity);
     std::cout << "catalog_b StateFlagServerityWarning"<<std::endl;
-    BOOST_FOREACH(boost::shared_ptr<StateFlag> flag, found_flag_for_severity ){std::cout << flag->getName()  << std::endl;}
+    BOOST_FOREACH(ChaosSharedPtr<StateFlag> flag, found_flag_for_severity ){std::cout << flag->getName()  << std::endl;}
     
     found_flag_for_severity.clear();
     catalog_b.getFlagsForSeverity(StateFlagServerityWarning, found_flag_for_severity);
     std::cout << "catalog_b StateFlagServerityCritical"<<std::endl;
-    BOOST_FOREACH(boost::shared_ptr<StateFlag> flag, found_flag_for_severity ){std::cout << flag->getName()  << std::endl;}
+    BOOST_FOREACH(ChaosSharedPtr<StateFlag> flag, found_flag_for_severity ){std::cout << flag->getName()  << std::endl;}
     
     //print serialization
     StateFlagCatalogSDWrapper sfcsdw;

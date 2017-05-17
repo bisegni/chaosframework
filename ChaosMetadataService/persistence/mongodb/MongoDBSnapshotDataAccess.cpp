@@ -40,7 +40,7 @@ using namespace chaos::service_common::persistence::mongodb;
 using namespace chaos::metadata_service::persistence::mongodb;
 using namespace chaos::metadata_service::persistence::data_access;
 
-MongoDBSnapshotDataAccess::MongoDBSnapshotDataAccess(const boost::shared_ptr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection,
+MongoDBSnapshotDataAccess::MongoDBSnapshotDataAccess(const ChaosSharedPtr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection,
                                                      data_access::DataServiceDataAccess *_data_service_da):
 MongoDBAccessor(_connection),
 SnapshotDataAccess(_data_service_da){}
@@ -299,7 +299,7 @@ int MongoDBSnapshotDataAccess::getNodeInSnapshot(const std::string& snapshot_nam
                                                                     q.jsonString(),
                                                                     prj.jsonString()));)
         
-        std::auto_ptr<mongo::DBClientCursor> query_result = connection->query(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SNAPSHOT_DATA),
+        ChaosUniquePtr<mongo::DBClientCursor> query_result = connection->query(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SNAPSHOT_DATA),
                                                                               q,
                                                                               0,
                                                                               0,
@@ -337,7 +337,7 @@ int MongoDBSnapshotDataAccess::getSnapshotForNode(const std::string& node_unique
                                                                     q.jsonString(),
                                                                     prj.jsonString()));)
         
-        std::auto_ptr<mongo::DBClientCursor> query_result = connection->query(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SNAPSHOT_DATA),
+        ChaosUniquePtr<mongo::DBClientCursor> query_result = connection->query(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SNAPSHOT_DATA),
                                                                               q,
                                                                               0,
                                                                               0,
@@ -415,7 +415,7 @@ int MongoDBSnapshotDataAccess::getAllSnapshot(SnapshotList& snapshot_desriptions
                                                                     q.jsonString(),
                                                                     prj.jsonString()));)
         
-        std::auto_ptr<mongo::DBClientCursor> query_result = connection->query(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SNAPSHOT),
+        ChaosUniquePtr<mongo::DBClientCursor> query_result = connection->query(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SNAPSHOT),
                                                                               q,
                                                                               0,
                                                                               0,

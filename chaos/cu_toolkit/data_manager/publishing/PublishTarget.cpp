@@ -152,7 +152,7 @@ bool PublishTarget::publish(const PublishableElement& publishable_element) {
     //lock feeder
     ChaosReadLock rl(mutext_feeder);
     
-    std::auto_ptr<SerializationBuffer> serialization(getDataPack(publishable_element.dataset_ptr->dataset_value_cache)->getBSONData());
+    ChaosUniquePtr<SerializationBuffer> serialization(getDataPack(publishable_element.dataset_ptr->dataset_value_cache)->getBSONData());
     
     //get next available client
     PublishTargetClientChannel *next_client = static_cast<PublishTargetClientChannel *>(connection_feeder.getService());
@@ -173,11 +173,11 @@ bool PublishTarget::publish(const PublishableElement& publishable_element) {
     return true;
 }
 
-std::auto_ptr<CDataWrapper> PublishTarget::getDataPack(const chaos::common::data::cache::AttributeCache &attribute_cache) {
+ChaosUniquePtr<CDataWrapper> PublishTarget::getDataPack(const chaos::common::data::cache::AttributeCache &attribute_cache) {
     //clock the cache
     ReadSharedCacheLockDomain read_lock_on_cache(attribute_cache.mutex);
     
-    std::auto_ptr<CDataWrapper> data_pack(new CDataWrapper());
+    ChaosUniquePtr<CDataWrapper> data_pack(new CDataWrapper());
     
     //write timestamp
     attribute_cache.exportToCDataWrapper(*data_pack);
@@ -197,7 +197,7 @@ void PublishTarget::disposeService(void *service_ptr) {
 
 void *PublishTarget::serviceForURL(const URL &url, uint32_t service_index) {
     INFO << "try to add connection for " << url.getURL();
-    std::auto_ptr<PublishTargetClientChannel> endpoint_connection(new PublishTargetClientChannel());
+    ChaosUniquePtr<PublishTargetClientChannel> endpoint_connection(new PublishTargetClientChannel());
     endpoint_connection->connection =
     NetworkBroker::getInstance()->getSharedDirectIOClientInstance()->getNewConnection(url.getURL());
     if (endpoint_connection->connection) {

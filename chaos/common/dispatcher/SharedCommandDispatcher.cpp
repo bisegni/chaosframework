@@ -66,7 +66,7 @@ void SharedCommandDispatcher::registerAction(DeclareAction *declareActionClass) 
          actDescIter++) {
         const std::string domain_name = (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain);
         if(map_domain_actions().count(domain_name) == 0) {
-            map_domain_actions().insert(MapDomainActionsPair(domain_name, boost::shared_ptr<DomainActions>(new DomainActions(domain_name))));
+            map_domain_actions().insert(MapDomainActionsPair(domain_name, ChaosSharedPtr<DomainActions>(new DomainActions(domain_name))));
         }
         map_domain_actions()[domain_name]->addActionDescriptor(*actDescIter);
     }
@@ -121,7 +121,7 @@ CDataWrapper* SharedCommandDispatcher::executeCommandSync(CDataWrapper * message
             return result;
         }
         string action_name = message_data->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME);
-        UNIQUE_PTR<CDataWrapper>  action_message(message_data);
+        ChaosUniquePtr<CDataWrapper>  action_message(message_data);
         
         
         //RpcActionDefinitionKey::CS_CMDM_ACTION_NAME
@@ -139,7 +139,7 @@ CDataWrapper* SharedCommandDispatcher::executeCommandSync(CDataWrapper * message
         
         //submit the action(Thread Safe)
         AbstActionDescShrPtr action_desc_ptr = map_domain_actions()[action_domain]->getActionDescriptornFormActionName(action_name);
-        std::auto_ptr<CDataWrapper> message_data(action_message->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
+        ChaosUniquePtr<CDataWrapper> message_data(action_message->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
         
         //lock the action for write, so we can schedule it
         ActionReadLock read_lock_for_action_execution(action_desc_ptr->actionAccessMutext);
@@ -155,7 +155,7 @@ CDataWrapper* SharedCommandDispatcher::executeCommandSync(CDataWrapper * message
         } else {
             //call and return
             try {
-                UNIQUE_PTR<CDataWrapper> action_result(action_desc_ptr->call(message_data.get(), message_has_been_detached));
+                ChaosUniquePtr<CDataWrapper> action_result(action_desc_ptr->call(message_data.get(), message_has_been_detached));
                 if(action_result.get() &&
                    action_message->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_DOMAIN) &&
                    action_message->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_ACTION)) {
@@ -192,9 +192,9 @@ void SharedCommandDispatcher::processBufferElement(chaos_data::CDataWrapper *act
     //the domain is securely the same is is mandatory for submition so i need to get the name of the action
     CDataWrapper            *responsePack = NULL;
     CDataWrapper            *subCommand = NULL;
-    UNIQUE_PTR<CDataWrapper>  actionMessage;
-    UNIQUE_PTR<CDataWrapper>  remoteActionResult;
-    UNIQUE_PTR<CDataWrapper>  actionResult;
+    ChaosUniquePtr<CDataWrapper>  actionMessage;
+    ChaosUniquePtr<CDataWrapper>  remoteActionResult;
+    ChaosUniquePtr<CDataWrapper>  actionResult;
     MapDomainActionsLockedReadLock wl = map_domain_actions.getReadLockObject();
     
     //keep track for the retain of the message of the aciton description
@@ -276,7 +276,7 @@ void SharedCommandDispatcher::processBufferElement(chaos_data::CDataWrapper *act
             //check if we need to submit a sub command
             if( subCommand ) {
                 //we can submit sub command
-                UNIQUE_PTR<CDataWrapper> dispatchSubCommandResult(dispatchCommand(subCommand));
+                ChaosUniquePtr<CDataWrapper> dispatchSubCommandResult(dispatchCommand(subCommand));
             }
             
             if(needAnswer){

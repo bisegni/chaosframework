@@ -43,7 +43,7 @@ namespace chaos {
                                              uint64_t timestamp);
                     
                 protected:
-                    MongoDBObjectStorageDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
+                    MongoDBObjectStorageDataAccess(const ChaosSharedPtr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
                     ~MongoDBObjectStorageDataAccess();
                 public:
                     //inhertied method

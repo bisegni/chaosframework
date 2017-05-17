@@ -50,7 +50,7 @@ namespace chaos{
 				friend class common::utility::Singleton<DataManager>;
 				//mutex for lock operation on service request
 				boost::mutex managing_data_mutex;
-				boost::shared_ptr<chaos_io::IODataDriver> liveDriver;
+				ChaosSharedPtr<chaos_io::IODataDriver> liveDriver;
 				std::map<std::string, KeyDataStorage*>  deviceIDKeyDataStorageMap;
 				
 				/*

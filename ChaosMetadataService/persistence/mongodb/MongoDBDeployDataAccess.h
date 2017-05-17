@@ -46,7 +46,7 @@ namespace chaos {
                     MongoDBUtilityDataAccess *utility_data_access = NULL;
                     MongoDBNodeDataAccess *node_data_access = NULL;
                 protected:
-                    MongoDBDeployDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
+                    MongoDBDeployDataAccess(const ChaosSharedPtr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
                     ~MongoDBDeployDataAccess();
                 public:
                     

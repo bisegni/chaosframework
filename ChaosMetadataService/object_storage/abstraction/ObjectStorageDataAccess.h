@@ -33,7 +33,7 @@ namespace chaos {
         namespace object_storage {
             namespace abstraction {
                 
-                typedef boost::shared_ptr<chaos::common::data::CDataWrapper> ObjectSharedPtr;
+                typedef ChaosSharedPtr<chaos::common::data::CDataWrapper> ObjectSharedPtr;
                 
                 //!Object vector
                 CHAOS_DEFINE_VECTOR_FOR_TYPE(ObjectSharedPtr, VectorObject);

@@ -39,7 +39,7 @@ namespace chaos {
 				//!Define the information ip:port used to reach a remote chaos network broker
 				std::string destinationAddr;
 				//! the message data
-                std::auto_ptr<chaos::common::data::CDataWrapper> message;
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> message;
 				//! tag returned in all handler call used by emitter
 				int64_t tag;
 				//! the ndoe id of the sender channel

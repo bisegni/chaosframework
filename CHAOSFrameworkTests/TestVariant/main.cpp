@@ -33,13 +33,13 @@ int main(int argc, const char * argv[]) {
     assert(35.5 == static_cast<double>(str_v));
     assert(35 == static_cast<int32_t>(str_v));
     assert(true == static_cast<bool>(str_v));
-    assert(strcmp("35.5", static_cast< boost::shared_ptr<CDataBuffer> >(str_v)->getBuffer()) == 0);
+    assert(strcmp("35.5", static_cast< ChaosSharedPtr<CDataBuffer> >(str_v)->getBuffer()) == 0);
     
     //neg str variant
     assert(-35.5 == static_cast<double>(neg_str_v));
     assert(-35 == static_cast<int32_t>(neg_str_v));
     assert(true == static_cast<bool>(neg_str_v));
-    assert(strcmp("-35.5", static_cast< boost::shared_ptr<CDataBuffer> >(neg_str_v)->getBuffer()) == 0);
+    assert(strcmp("-35.5", static_cast< ChaosSharedPtr<CDataBuffer> >(neg_str_v)->getBuffer()) == 0);
 
     //double variant
     assert(35.5 == static_cast<double>(double_v));

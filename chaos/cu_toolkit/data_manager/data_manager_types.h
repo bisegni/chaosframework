@@ -42,13 +42,13 @@ namespace chaos {
             CHAOS_DEFINE_VECTOR_FOR_TYPE(common::data::cache::VariableIndexType, ChangedDatasetAttributeIndexVector)
             
             //!define dataset pointer type
-            typedef boost::shared_ptr<chaos::common::data::structured::Dataset> DatasetPtr;
+            typedef ChaosSharedPtr<chaos::common::data::structured::Dataset> DatasetPtr;
             
             //! define the contaner for the dataset within the boost multi index set
             struct DatasetElement {
                 friend struct extract_key;
                 
-                typedef boost::shared_ptr<DatasetElement> DatasetElementPtr;
+                typedef ChaosSharedPtr<DatasetElement> DatasetElementPtr;
                 //!keep track of ordering id
                 unsigned int seq_id;
                 

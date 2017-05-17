@@ -38,7 +38,7 @@ using namespace chaos::common::batch_command;
 using namespace chaos::service_common::persistence::mongodb;
 using namespace chaos::metadata_service::persistence::mongodb;
 
-MongoDBNodeDataAccess::MongoDBNodeDataAccess(const boost::shared_ptr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
+MongoDBNodeDataAccess::MongoDBNodeDataAccess(const ChaosSharedPtr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
 MongoDBAccessor(_connection),
 utility_data_access(NULL){}
 
@@ -106,7 +106,7 @@ int MongoDBNodeDataAccess::insertNewNode(CDataWrapper& node_description) {
             }
         }
         
-        std::auto_ptr<SerializationBuffer> ser(node_description.getBSONData());
+        ChaosUniquePtr<SerializationBuffer> ser(node_description.getBSONData());
         mongo::BSONObj obj_to_insert(ser->getBufferPtr());
         
         DEBUG_CODE(MDBNDA_DBG<<log_message("insertNewNode",
@@ -159,13 +159,13 @@ int MongoDBNodeDataAccess::updateNode(chaos::common::data::CDataWrapper& node_de
             updated_field << chaos::NodeDefinitionKey::NODE_TIMESTAMP << mongo::Date_t(node_description.getUInt64Value(chaos::NodeDefinitionKey::NODE_TIMESTAMP));
         }
         if(node_description.hasKey(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC)) {
-            std::auto_ptr<CMultiTypeDataArrayWrapper> action_array(node_description.getVectorValue(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC));
+            ChaosUniquePtr<CMultiTypeDataArrayWrapper> action_array(node_description.getVectorValue(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC));
             for(int idx = 0;
                 idx < action_array->size();
                 idx++) {
                 mongo::BSONObjBuilder action_description;
                 mongo::BSONArrayBuilder param_descriptions;
-                std::auto_ptr<CDataWrapper> element(action_array->getCDataWrapperElementAtIndex(idx));
+                ChaosUniquePtr<CDataWrapper> element(action_array->getCDataWrapperElementAtIndex(idx));
                 if(element->hasKey(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_NAME)) {
                     action_description << chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_NAME
                     << element->getStringValue(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_NAME);
@@ -176,12 +176,12 @@ int MongoDBNodeDataAccess::updateNode(chaos::common::data::CDataWrapper& node_de
                 }
                 //check if the action has parameter
                 if(element->hasKey(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PARAM)) {
-                    std::auto_ptr<CMultiTypeDataArrayWrapper> param_array(element->getVectorValue(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PARAM));
+                    ChaosUniquePtr<CMultiTypeDataArrayWrapper> param_array(element->getVectorValue(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PARAM));
                     for(int idx = 0;
                         idx < param_array->size();
                         idx++) {
                         mongo::BSONObjBuilder single_param_desc;
-                        std::auto_ptr<CDataWrapper> param(param_array->getCDataWrapperElementAtIndex(idx));
+                        ChaosUniquePtr<CDataWrapper> param(param_array->getCDataWrapperElementAtIndex(idx));
                         
                         if(param->hasKey(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PAR_NAME)) {
                             single_param_desc << chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PAR_NAME
@@ -505,7 +505,7 @@ int MongoDBNodeDataAccess::setCommand(chaos::common::data::CDataWrapper& command
             return -3;
             MDBNDA_ERR << "No command description found";
         }
-        std::auto_ptr<SerializationBuffer> ser(command.getBSONData());
+        ChaosUniquePtr<SerializationBuffer> ser(command.getBSONData());
         mongo::BSONObj i(ser->getBufferPtr());
         
         mongo::BSONObj query = BSON(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID << command.getStringValue(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID));
@@ -637,7 +637,7 @@ int MongoDBNodeDataAccess::setCommandTemplate(chaos::common::data::CDataWrapper&
                                 BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID << command_unique_id);
         
         //create the update package (all key imnus the first two used before
-        std::auto_ptr<CDataWrapper> to_update(new CDataWrapper());
+        ChaosUniquePtr<CDataWrapper> to_update(new CDataWrapper());
         to_update->addStringValue("type", "template");
         std::vector<std::string> all_keys;
         command_template.getAllKey(all_keys);
@@ -652,7 +652,7 @@ int MongoDBNodeDataAccess::setCommandTemplate(chaos::common::data::CDataWrapper&
             command_template.copyKeyTo(*it, *to_update);
         }
         
-        std::auto_ptr<SerializationBuffer> chaos_bson(to_update->getBSONData());
+        ChaosUniquePtr<SerializationBuffer> chaos_bson(to_update->getBSONData());
         mongo::BSONObj u = BSON("$set" << mongo::BSONObj(chaos_bson->getBufferPtr()));
         
         DEBUG_CODE(MDBNDA_DBG<<log_message("setCommandTemplate",

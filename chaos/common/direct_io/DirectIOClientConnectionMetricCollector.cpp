@@ -32,7 +32,7 @@ static const char * const METRIC_KEY_ENDPOINT_ALIVE = "ndpoint_alive";
 
 DirectIOClientConnectionMetricCollector::DirectIOClientConnectionMetricCollector(const std::string& _server_description,
                                                                                  uint16_t _endpoint,
-                                                                                 boost::shared_ptr<DirectIOClientConnectionSharedMetricIO> _shared_collector,
+                                                                                 ChaosSharedPtr<DirectIOClientConnectionSharedMetricIO> _shared_collector,
                                                                                  DirectIOClientConnection *_wrapped_connection):
 DirectIOClientConnection(_server_description,
                          _endpoint),

@@ -71,10 +71,10 @@ namespace chaos {
                 //!Dataset database
                 chaos::common::data::DatasetDB datasetDB;
                 //!point to the freashest live value for this device dataset
-                //unique_ptr<CDataWrapper> lastDeviceDefinition;
+                //ChaosUniquePtr<CDataWrapper> lastDeviceDefinition;
                 
                 //!point to the freashest live value for this device dataset
-                std::vector< boost::shared_ptr<chaos::common::data::CDataWrapper> >current_dataset;
+                std::vector< ChaosSharedPtr<chaos::common::data::CDataWrapper> >current_dataset;
                 
                 
                 //mutext for multi threading track operation
@@ -389,12 +389,12 @@ namespace chaos {
                 chaos::common::data::CDataWrapper * getLiveCDataWrapperPtr();
                 
                 //!return the last fetched dataset for the domain
-                boost::shared_ptr<chaos::common::data::CDataWrapper> getCurrentDatasetForDomain(DatasetDomain domain);
+                ChaosSharedPtr<chaos::common::data::CDataWrapper> getCurrentDatasetForDomain(DatasetDomain domain);
                 
                 //!return the last fetched dataset for the domain
                 int getCurrentDatasetForDomain(DatasetDomain domain,chaos::common::data::CDataWrapper* ret);
                 //! fetch from the chaso central cache the dataset associated to the domain
-                boost::shared_ptr<chaos::common::data::CDataWrapper>  fetchCurrentDatatasetFromDomain(DatasetDomain domain);
+                ChaosSharedPtr<chaos::common::data::CDataWrapper>  fetchCurrentDatatasetFromDomain(DatasetDomain domain);
                 
                 //! fetch from the central cache the dataset
                 int  fetchCurrentDatatasetFromDomain(DatasetDomain domain,chaos::common::data::CDataWrapper* ret);
@@ -415,7 +415,7 @@ namespace chaos {
                                       common::data::CDataWrapper**const result);
                 
                 //! send custom request to device and return a future
-                std::auto_ptr<chaos::common::message::MessageRequestFuture>  sendCustomRequestWithFuture(const std::string& action_name,
+                ChaosUniquePtr<chaos::common::message::MessageRequestFuture>  sendCustomRequestWithFuture(const std::string& action_name,
                                                                                                          common::data::CDataWrapper *request_date);
                 
                 //! send custom message to device

@@ -48,7 +48,7 @@ namespace chaos {
             //! registration and deregistration
         boost::mutex actionAccessMutext;
             //!pointer to the domain containing action
-        boost::shared_ptr<DomainActions> domainActionsContainer;
+        ChaosSharedPtr<DomainActions> domainActionsContainer;
         
             //!reference to global dispatcher used to resubmit sub command
         AbstractCommandDispatcher *dispatcher;
@@ -64,7 +64,7 @@ namespace chaos {
         /*!
          Default constructor
          */
-        DomainActionsScheduler(boost::shared_ptr<DomainActions>);
+        DomainActionsScheduler(ChaosSharedPtr<DomainActions>);
         /*!
          Default destructor
          */

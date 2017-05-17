@@ -45,7 +45,7 @@ namespace chaos {
                 chaos::common::io::ManagedDirectIODataDriver *data_driver;
             public:
                 bool remote_logging;
-                typedef boost::shared_ptr<PipeReader>   PipeReaderPtr;
+                typedef ChaosSharedPtr<PipeReader>   PipeReaderPtr;
                 typedef boost::weak_ptr<PipeReader>     PipeReaderWeakPtr;
                 void close();
                 static PipeReaderWeakPtr create(asio::io_service& io_service,

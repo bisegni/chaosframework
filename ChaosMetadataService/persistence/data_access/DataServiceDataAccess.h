@@ -67,13 +67,13 @@ namespace chaos {
                                            const std::string& associated_node_unique_id) = 0;
                     
                     virtual int searchAssociationForUID(const std::string& ds_unique_id,
-                                                        std::vector<boost::shared_ptr<common::data::CDataWrapper> >&  node_associated) = 0;
+                                                        std::vector<ChaosSharedPtr<common::data::CDataWrapper> >&  node_associated) = 0;
                     
-                    virtual int searchAllDataAccess(std::vector<boost::shared_ptr<common::data::CDataWrapper> >&  node_associated,
+                    virtual int searchAllDataAccess(std::vector<ChaosSharedPtr<common::data::CDataWrapper> >&  node_associated,
                                                     uint32_t last_unique_id,
                                                     uint32_t page_length) = 0;
                     
-                    virtual int getBestNDataService(std::vector<boost::shared_ptr<common::data::CDataWrapper> >&  best_available_data_service,
+                    virtual int getBestNDataService(std::vector<ChaosSharedPtr<common::data::CDataWrapper> >&  best_available_data_service,
                                                     unsigned int numerb_of_result = 3) = 0;
                     
                     virtual int getBestNDataService(std::vector<std::string >&  best_available_data_service,

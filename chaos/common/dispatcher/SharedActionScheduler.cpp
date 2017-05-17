@@ -41,13 +41,13 @@ SharedActionScheduler::~SharedActionScheduler() {
     
 }
 
-void SharedActionScheduler::addActionDomain(boost::shared_ptr<DomainActions> new_action_domain) {
+void SharedActionScheduler::addActionDomain(ChaosSharedPtr<DomainActions> new_action_domain) {
     MapDomainActionsLockedWriteLock wr = map_domain_actions.getWriteLockObject();
     const std::string& domain_name = new_action_domain->getDomainName();
     map_domain_actions().insert(MapDomainActionsPair(domain_name, new_action_domain));
 }
 
-void SharedActionScheduler::removeActionDomain(boost::shared_ptr<DomainActions> new_action_domain) {
+void SharedActionScheduler::removeActionDomain(ChaosSharedPtr<DomainActions> new_action_domain) {
     MapDomainActionsLockedWriteLock wr = map_domain_actions.getWriteLockObject();
     const std::string& domain_name = new_action_domain->getDomainName();
     map_domain_actions().erase(domain_name);
@@ -72,13 +72,13 @@ void SharedActionScheduler::synchronousCall(chaos_data::CDataWrapper *message,
                                             chaos_data::CDataWrapper *result) {
     MapDomainActionsLockedReadLock wr = map_domain_actions.getReadLockObject();
     bool message_has_been_detached = false;
-    UNIQUE_PTR<CDataWrapper>  action_message(message);
+    ChaosUniquePtr<CDataWrapper>  action_message(message);
     
     const std::string domain_name = message->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN);
     const std::string action_name = message->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME);
-    std::auto_ptr<CDataWrapper> message_data(message->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
+    ChaosUniquePtr<CDataWrapper> message_data(message->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
     
-    boost::shared_ptr<DomainActions> domain_action = map_domain_actions()[domain_name];
+    ChaosSharedPtr<DomainActions> domain_action = map_domain_actions()[domain_name];
     if(domain_action.get() == NULL ||
        !domain_action->hasActionName(action_name)) {
         LAPP_ << "The action " << action_name << " is not present for domain " << domain_name;
@@ -104,7 +104,7 @@ void SharedActionScheduler::synchronousCall(chaos_data::CDataWrapper *message,
     } else {
         //call and return
         try {
-            UNIQUE_PTR<CDataWrapper> action_result(action_desc_ptr->call(message_data.get(), message_has_been_detached));
+            ChaosUniquePtr<CDataWrapper> action_result(action_desc_ptr->call(message_data.get(), message_has_been_detached));
             if(action_result.get() &&
                action_message->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_DOMAIN) &&
                action_message->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_ACTION)) {
@@ -143,9 +143,9 @@ void SharedActionScheduler::processBufferElement(CDataWrapper *actionDescription
     //the domain is securely the same is is mandatory for submition so i need to get the name of the action
     CDataWrapper            *responsePack = NULL;
     CDataWrapper            *subCommand = NULL;
-    UNIQUE_PTR<CDataWrapper>  actionMessage;
-    UNIQUE_PTR<CDataWrapper>  remoteActionResult;
-    UNIQUE_PTR<CDataWrapper>  actionResult;
+    ChaosUniquePtr<CDataWrapper>  actionMessage;
+    ChaosUniquePtr<CDataWrapper>  remoteActionResult;
+    ChaosUniquePtr<CDataWrapper>  actionResult;
     //keep track for the retain of the message of the aciton description
     ElementManagingPolicy               action_elementPolicy = {false};
     bool    needAnswer = false;
@@ -157,7 +157,7 @@ void SharedActionScheduler::processBufferElement(CDataWrapper *actionDescription
     string  domain_name = actionDescription->getStringValue( RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN);
     string  action_name = actionDescription->getStringValue( RpcActionDefinitionKey::CS_CMDM_ACTION_NAME);
     
-    boost::shared_ptr<DomainActions> domain_action = map_domain_actions()[domain_name];
+    ChaosSharedPtr<DomainActions> domain_action = map_domain_actions()[domain_name];
     //if(!domain_action->hasActionName(action_name)) {
     if(domain_action.get() == NULL ||
        !domain_action->hasActionName(action_name)) {
@@ -220,8 +220,8 @@ void SharedActionScheduler::processBufferElement(CDataWrapper *actionDescription
             
             //check if we need to submit a sub command
             if( subCommand ) {
-            	//UNIQUE_PTR can submit sub command
-                UNIQUE_PTR<CDataWrapper> dispatchSubCommandResult(dispatcher->dispatchCommand(subCommand));
+            	//ChaosUniquePtr can submit sub command
+                ChaosUniquePtr<CDataWrapper> dispatchSubCommandResult(dispatcher->dispatchCommand(subCommand));
             }
             
             if(needAnswer){

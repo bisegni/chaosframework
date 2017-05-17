@@ -72,7 +72,7 @@ namespace bson {
 
     private:
         void addBuilder( const string &name ) {
-			boost::shared_ptr< BSONObjBuilder > newBuilder( new BSONObjBuilder( back()->subobjStart( name ) ) );
+			ChaosSharedPtr< BSONObjBuilder > newBuilder( new BSONObjBuilder( back()->subobjStart( name ) ) );
             _builders.push_back( make_pair( name, newBuilder.get() ) );
             _builderStorage.push_back( newBuilder );
         }
@@ -85,7 +85,7 @@ namespace bson {
         BSONObjBuilder *back() { return _builders.back().second; }
 
 	std::vector< std::pair< std::string, BSONObjBuilder * > > _builders;
-	std::vector< boost::shared_ptr< BSONObjBuilder > > _builderStorage;
+	std::vector< ChaosSharedPtr< BSONObjBuilder > > _builderStorage;
 
     };
 

@@ -3488,7 +3488,7 @@ namespace tracey
 		container &init() {
 			//static unsigned char buy[ sizeof( container ) ];
 			//static container *map = new (buy) container();
-			static $cpp11(std::auto_ptr) $cpp03(std::auto_ptr)<container> map( new container() );
+			static $cpp11(ChaosUniquePtr) $cpp03(ChaosUniquePtr)<container> map( new container() );
 
 			static bool once = false; if(! once ) { once = true;
 				kTraceyPrintf( "%s", tracey::settings().c_str() );

@@ -392,7 +392,7 @@ void BatchCommandSandbox::checkNextCommand() {
                             case RSR_CURRENT_CMD_HAS_FAULTED:{
                                 DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] FAULT  command:\""<< current_executing_command->element->cmdImpl->getAlias()<<"\"" );
 
-                                std::auto_ptr<CDataWrapper> command_and_fault = flatErrorInformationInCommandInfo(command_to_delete->element->cmdInfo,
+                                ChaosUniquePtr<CDataWrapper> command_and_fault = flatErrorInformationInCommandInfo(command_to_delete->element->cmdInfo,
                                                                                                                   command_to_delete->element->cmdImpl->fault_description);
                                 if (event_handler && command_to_delete) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
                                                                                                           command_to_delete->element->cmdImpl->unique_id,
@@ -456,7 +456,7 @@ void BatchCommandSandbox::checkNextCommand() {
                             }
                             case RunningPropertyType::RP_FAULT:
                             case RunningPropertyType::RP_FATAL_FAULT:{
-                                std::auto_ptr<CDataWrapper> command_and_fault = flatErrorInformationInCommandInfo(command_to_delete->element->cmdInfo,
+                                ChaosUniquePtr<CDataWrapper> command_and_fault = flatErrorInformationInCommandInfo(command_to_delete->element->cmdInfo,
                                                                                                                   command_to_delete->element->cmdImpl->fault_description);
                                 if (event_handler &&
                                     command_and_fault.get()) {
@@ -497,7 +497,7 @@ void BatchCommandSandbox::checkNextCommand() {
                             }
                             case RunningPropertyType::RP_FAULT:
                             case RunningPropertyType::RP_FATAL_FAULT:{
-                                std::auto_ptr<CDataWrapper> command_and_fault = flatErrorInformationInCommandInfo(command_to_delete->element->cmdInfo,
+                                ChaosUniquePtr<CDataWrapper> command_and_fault = flatErrorInformationInCommandInfo(command_to_delete->element->cmdInfo,
                                                                                                                   command_to_delete->element->cmdImpl->fault_description);
                                 if (event_handler &&
                                     command_and_fault.get()){
@@ -540,9 +540,9 @@ void BatchCommandSandbox::checkNextCommand() {
 }
 
 
-inline std::auto_ptr<CDataWrapper> BatchCommandSandbox::flatErrorInformationInCommandInfo(CDataWrapper *command_info,
+inline ChaosUniquePtr<CDataWrapper> BatchCommandSandbox::flatErrorInformationInCommandInfo(CDataWrapper *command_info,
                                                                                           FaultDescription& command_fault) {
-    std::auto_ptr<CDataWrapper> command_and_fault(new CDataWrapper());
+    ChaosUniquePtr<CDataWrapper> command_and_fault(new CDataWrapper());
     if(command_info) {
         command_and_fault->appendAllElement(*command_info);
     }

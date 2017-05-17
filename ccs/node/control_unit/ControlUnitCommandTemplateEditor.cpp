@@ -132,8 +132,8 @@ void ControlUnitCommandTemplateEditor::setTemplateDescription(QSharedPointer<cha
     parameter_table_model.applyTemplate(_template_description);
 }
 
-boost::shared_ptr<node::CommandTemplate> ControlUnitCommandTemplateEditor::getTemplateDescription() {
-    boost::shared_ptr<node::CommandTemplate> result(new node::CommandTemplate());
+ChaosSharedPtr<node::CommandTemplate> ControlUnitCommandTemplateEditor::getTemplateDescription() {
+    ChaosSharedPtr<node::CommandTemplate> result(new node::CommandTemplate());
     //set base information
 
     result->template_name = ui->lineEditTemplateName->text().toStdString();
@@ -182,7 +182,7 @@ void ControlUnitCommandTemplateEditor::on_pushButtonSave_clicked() {
         return;
     }
 
-    std::vector< boost::shared_ptr<node::CommandTemplate> >template_list;
+    std::vector< ChaosSharedPtr<node::CommandTemplate> >template_list;
     template_list.push_back(getTemplateDescription());
     submitApiResult(TAG_CMD_TEMPLATE_SET,
                     GET_CHAOS_API_PTR(node::CommandTemplateSet)->execute(template_list));

@@ -30,7 +30,7 @@
 
 namespace chaos {
     
-    CHAOS_DEFINE_MAP_FOR_TYPE(std::string, boost::shared_ptr<DomainActions>, MapDomainActions);
+    CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ChaosSharedPtr<DomainActions>, MapDomainActions);
     
     CHAOS_DEFINE_LOCKABLE_OBJECT(MapDomainActions, MapDomainActionsLocked);
     
@@ -58,9 +58,9 @@ namespace chaos {
          */
         virtual ~SharedActionScheduler();
         
-        void addActionDomain(boost::shared_ptr<DomainActions> new_action_domain);
+        void addActionDomain(ChaosSharedPtr<DomainActions> new_action_domain);
         
-        void removeActionDomain(boost::shared_ptr<DomainActions> new_action_domain);
+        void removeActionDomain(ChaosSharedPtr<DomainActions> new_action_domain);
         
         /*!
          Initialization method

@@ -51,7 +51,7 @@ using namespace chaos::common::direct_io::channel;
 #define DBG     DBG_LOG(QueryDataConsumer)
 #define ERR     ERR_LOG(QueryDataConsumer)
 
-boost::shared_ptr<worker::DeviceSharedDataWorkerMetric> dsdwm_metric;
+ChaosSharedPtr<worker::DeviceSharedDataWorkerMetric> dsdwm_metric;
 
 //constructor
 QueryDataConsumer::QueryDataConsumer():

@@ -83,8 +83,8 @@ namespace chaos{
                     
                     //! command queue used for receive DrvMsg pack
                     //boost::interprocess::message_queue *commandQueue;
-                    std::auto_ptr<DriverQueueType> command_queue;
-					std::auto_ptr<boost::thread> thread_message_receiver;
+                    ChaosUniquePtr<DriverQueueType> command_queue;
+					ChaosUniquePtr<boost::thread> thread_message_receiver;
 					
 					
                     // Initialize instance

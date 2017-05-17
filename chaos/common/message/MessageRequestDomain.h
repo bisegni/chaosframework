@@ -31,7 +31,7 @@
 #include <boost/atomic.hpp>
 #include <boost/function.hpp>
 #include <boost/thread.hpp>
-#define BOOST_THREAD_PROVIDES_FUTURE
+//#define BOOST_THREAD_PROVIDES_FUTURE
 #include <boost/thread/future.hpp>
 
 #include <map>
@@ -44,9 +44,9 @@ namespace chaos {
             class MessageRequestFuture;
             class MessageRequestDomain;
             
-            typedef boost::shared_ptr<chaos::common::message::MessageRequestDomain> MessageRequestDomainSHRDPtr;
+            typedef ChaosSharedPtr<chaos::common::message::MessageRequestDomain> MessageRequestDomainSHRDPtr;
             
-            typedef boost::shared_ptr<common::data::CDataWrapper> FuturePromiseData;
+            typedef ChaosSharedPtr<common::data::CDataWrapper> FuturePromiseData;
             
             typedef boost::promise<FuturePromiseData> MessageFuturePromise;
             
@@ -54,7 +54,7 @@ namespace chaos {
             
             
             typedef chaos::common::utility::SafeAsyncCall<PromisesHandlerFunction> PromisesHandler;
-            typedef boost::shared_ptr< PromisesHandler > PromisesHandlerSharedPtr;
+            typedef ChaosSharedPtr< PromisesHandler > PromisesHandlerSharedPtr;
             typedef boost::weak_ptr< PromisesHandler > PromisesHandlerWeakPtr;
             
             class ChaosMessagePromises:
@@ -66,10 +66,10 @@ namespace chaos {
             };
             
             typedef map<chaos::common::utility::atomic_int_type,
-            boost::shared_ptr<ChaosMessagePromises> > MapPromises;
+            ChaosSharedPtr<ChaosMessagePromises> > MapPromises;
             
             typedef map<chaos::common::utility::atomic_int_type,
-            boost::shared_ptr<ChaosMessagePromises> >::iterator MapPromisesIterator;
+            ChaosSharedPtr<ChaosMessagePromises> >::iterator MapPromisesIterator;
             
             typedef boost::unique_future< FuturePromiseData > MessageUniqueFuture;
             
@@ -102,7 +102,7 @@ namespace chaos {
                 
                 const std::string& getDomainID();
                 
-                std::auto_ptr<MessageRequestFuture> getNewRequestMessageFuture(chaos::common::data::CDataWrapper& new_request_datapack,
+                ChaosUniquePtr<MessageRequestFuture> getNewRequestMessageFuture(chaos::common::data::CDataWrapper& new_request_datapack,
                                                                                uint32_t& new_request_id,
                                                                                PromisesHandlerWeakPtr promises_handler_weak);
             };

@@ -61,7 +61,7 @@ void DataManager::init(void *initParameter) throw(CException) {
  * Deinitzialize the datamanager
  */
 void DataManager::deinit() throw(CException) {
-    UNIQUE_PTR<KeyDataStorage> tmpKDS;
+    ChaosUniquePtr<KeyDataStorage> tmpKDS;
     map<string, KeyDataStorage*>::iterator iter = deviceIDKeyDataStorageMap.begin();
     
     for (  ; iter != deviceIDKeyDataStorageMap.end(); iter++ ) {
@@ -156,7 +156,7 @@ void DataManager::deinitDeviceIDKeyDataStorage(const string& device_id) throw(CE
     if(iter == deviceIDKeyDataStorageMap.end()) return;
         
             //get the pointer
-    UNIQUE_PTR<KeyDataStorage> tmpKDS((*iter).second);
+    ChaosUniquePtr<KeyDataStorage> tmpKDS((*iter).second);
     LAPP_ << "Remove in the manager the KeyDataStorage for device id key:" << device_id;
             //remove key from map
     deviceIDKeyDataStorageMap.erase(device_id);

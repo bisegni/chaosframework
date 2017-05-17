@@ -65,8 +65,8 @@ void NodeFetcher::quantumSlotHasNoData(const std::string& key) {
     }
 }
 
-boost::shared_ptr<NodeController>  NodeFetcher::getControllerForType(ControllerType type) {
-    boost::shared_ptr<NodeController> controller;
+ChaosSharedPtr<NodeController>  NodeFetcher::getControllerForType(ControllerType type) {
+    ChaosSharedPtr<NodeController> controller;
     
     if(map_type_controller.count(type) == 0) {
         switch(type){
@@ -146,7 +146,7 @@ void NodeFetcher::managmentKeyToMonitor(const MonitorKeyList& key_to_listen,
 bool NodeFetcher::addHanlderForControllerType(ControllerType type,
                                               NodeMonitorHandler *handler) {
     boost::unique_lock<boost::mutex> wl(maps_mutex);
-    boost::shared_ptr<NodeController>   controller = getControllerForType(type);
+    ChaosSharedPtr<NodeController>   controller = getControllerForType(type);
     return controller->addHandler(handler);
 }
 

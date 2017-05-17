@@ -14,7 +14,7 @@ class LogDataTableModel:
 public:
     LogDataTableModel(QObject *parent = 0);
 
-    void setLogEntry(boost::shared_ptr<chaos::metadata_service_client::api_proxy::logging::LogEntry> _log_entry_ptr);
+    void setLogEntry(ChaosSharedPtr<chaos::metadata_service_client::api_proxy::logging::LogEntry> _log_entry_ptr);
     void clear();
 protected:
     int getRowCount() const;

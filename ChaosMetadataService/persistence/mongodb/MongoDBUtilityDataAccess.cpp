@@ -33,7 +33,7 @@
 using namespace chaos::common::data;
 using namespace chaos::metadata_service::persistence::mongodb;
 
-MongoDBUtilityDataAccess::MongoDBUtilityDataAccess(const boost::shared_ptr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
+MongoDBUtilityDataAccess::MongoDBUtilityDataAccess(const ChaosSharedPtr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
 MongoDBAccessor(_connection){
     
 }

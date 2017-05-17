@@ -101,7 +101,7 @@ namespace chaos {
                 event_description(_event_description),
                 event_code(_event_code){}
                 virtual ~BaseEventInstancerDescription(){}
-                typedef boost::shared_ptr< BaseEventInstancerDescription > AbstractEventShrdPtr;
+                typedef ChaosSharedPtr< BaseEventInstancerDescription > AbstractEventShrdPtr;
                 
             };
             
@@ -126,7 +126,7 @@ namespace chaos {
             public BaseEventInstancerDescription,
             public property::PropertyGroup {
             public:
-                typedef boost::shared_ptr< EventInstancerDescription<EventType, SubjectImpl> > EventInstancerShrdPtr;
+                typedef ChaosSharedPtr< EventInstancerDescription<EventType, SubjectImpl> > EventInstancerShrdPtr;
             public:
                 //tag
                 struct TriggerEventTagCode{};

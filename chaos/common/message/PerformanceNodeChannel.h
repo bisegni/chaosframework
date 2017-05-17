@@ -39,7 +39,7 @@ namespace chaos {
             public MessageChannel {
 				friend class chaos::common::network::NetworkBroker;
                 
-				std::auto_ptr<CNetworkAddress> node_network_address;
+				ChaosUniquePtr<CNetworkAddress> node_network_address;
 				chaos_direct_io::DirectIOClient *client_instance;
 				chaos_direct_io::DirectIOPerformanceSession *local_performance_session;
 			protected:

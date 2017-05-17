@@ -54,10 +54,10 @@ namespace chaos {
                 chaos::common::utility::atomic_int_type request_id;
 
                     //shared future for the answer
-                boost::shared_future< boost::shared_ptr<chaos::common::data::CDataWrapper> > future;
+                boost::shared_future< ChaosSharedPtr<chaos::common::data::CDataWrapper> > message_future;
 
                     //! the result for the request
-                std::auto_ptr<chaos::common::data::CDataWrapper> request_result;
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> request_result;
                 
                     //!error code
                 int32_t error_code;
@@ -75,7 +75,7 @@ namespace chaos {
 
                     //!private constructor
                 MessageRequestFuture(chaos::common::utility::atomic_int_type _request_id,
-                                     boost::shared_future< boost::shared_ptr<chaos::common::data::CDataWrapper> > _future);
+                                     boost::shared_future< ChaosSharedPtr<chaos::common::data::CDataWrapper> > _message_future);
 
             public:
                 //!private destructor

@@ -9,11 +9,10 @@
 #include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
 class ApiAsyncRunnable :
         public QObject,
-        public QRunnable
-{
+        public QRunnable {
     Q_OBJECT
     const QString tag;
-    typedef std::shared_ptr<chaos::common::message::MultiAddressMessageRequestFuture> ApiAsyncRunnableType;
+    typedef ChaosSharedPtr<chaos::common::message::MultiAddressMessageRequestFuture> ApiAsyncRunnableType;
     ApiAsyncRunnableType async_result;
 public:
     explicit ApiAsyncRunnable(const QString& _tag,

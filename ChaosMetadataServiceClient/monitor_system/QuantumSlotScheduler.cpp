@@ -92,7 +92,7 @@ void QuantumSlotScheduler::deinit() throw (chaos::CException) {
     
     while(queue_new_quantum_slot_consumer.size()){
         ci = queue_new_quantum_slot_consumer.front(); queue_new_quantum_slot_consumer.pop();
-        std::auto_ptr<SlotConsumerInfo> auto_ci(ci);
+        ChaosUniquePtr<SlotConsumerInfo> auto_ci(ci);
         try {
             if(ci->operation) {
                 //we need to add it
@@ -210,7 +210,7 @@ uint64_t QuantumSlotScheduler::_checkRemoveAndAddNewConsumer(uint64_t start_time
         new_consumer_info = queue_new_quantum_slot_consumer.front(); queue_new_quantum_slot_consumer.pop();
         has_worked = true;
         try {
-            std::auto_ptr<SlotConsumerInfo> auto_ci(new_consumer_info);
+            ChaosUniquePtr<SlotConsumerInfo> auto_ci(new_consumer_info);
             if(auto_ci->operation) {
                 //we need to add it
                 DEBUG_CODE(QSS_INFO << boost::str(boost::format("Asynchronously add key consumer [%1%-%2%-%3%]")%auto_ci->key_to_monitor%auto_ci->quantum_multiplier%auto_ci->consumer);)
@@ -255,7 +255,7 @@ void QuantumSlotScheduler::addNewfetcherThread() {
         ((IODirectIODriver*)data_driver)->addServerURL(*it);
     }
     
-    fetcher_threads->add_thread(new boost::thread(bind(&QuantumSlotScheduler::fetchValue, this, boost::shared_ptr<IODataDriver>(data_driver))));
+    fetcher_threads->add_thread(new boost::thread(bind(&QuantumSlotScheduler::fetchValue, this, ChaosSharedPtr<IODataDriver>(data_driver))));
 }
 
 void QuantumSlotScheduler::dispath_new_value_async(const boost::system::error_code& error,
@@ -297,7 +297,7 @@ void QuantumSlotScheduler::dispath_new_value_async(const boost::system::error_co
     if(data_found) {free(data_found);}
 }
 
-void QuantumSlotScheduler::fetchValue(boost::shared_ptr<IODataDriver> data_driver) {
+void QuantumSlotScheduler::fetchValue(ChaosSharedPtr<IODataDriver> data_driver) {
     QuantumSlot *cur_slot = NULL;
     boost::system::error_code error;
     QSS_INFO << "Entering fetcher thread";
@@ -361,7 +361,7 @@ bool QuantumSlotScheduler::removeKeyConsumer(const std::string& key_to_monitor,
     //decrement the index to indicate that it has been remove from public layer
     consumer->usage_counter--;
     
-    std::auto_ptr<SlotConsumerInfo> remove_command(new SlotConsumerInfo(false,
+    ChaosUniquePtr<SlotConsumerInfo> remove_command(new SlotConsumerInfo(false,
                                                                         key_to_monitor,
                                                                         quantum_multiplier,
                                                                         consumer,
@@ -396,7 +396,7 @@ void QuantumSlotScheduler::_addKeyConsumer(SlotConsumerInfo *ci) {
     //lock the set
     DEBUG_CODE(QSS_INFO << boost::str(boost::format("Start adding key consumer [%1%-%2%-%3%]")%ci->key_to_monitor%ci->quantum_multiplier%ci->consumer);)
     
-    boost::shared_ptr<QuantumSlot> quantum_slot;
+    ChaosSharedPtr<QuantumSlot> quantum_slot;
     
     std::string quantum_slot_key = CHAOS_QSS_COMPOSE_QUANTUM_SLOT_KEY(ci->key_to_monitor, ci->quantum_multiplier);
     boost::unique_lock<boost::mutex> lock_on_condition(mutex_condition_scan);
@@ -433,7 +433,7 @@ bool QuantumSlotScheduler::_removeKeyConsumer(SlotConsumerInfo *ci) {
     SSSlotTypeQuantumSlotKeyIndexIterator it = set_slots_index_key_slot.find(quantum_slot_key);
     if(it == set_slots_index_key_slot.end()) return true;
     // we already have the slot
-    boost::shared_ptr<QuantumSlot> quantum_slot = it->quantum_slot;
+    ChaosSharedPtr<QuantumSlot> quantum_slot = it->quantum_slot;
     //try to remove the consumer, if we dont have success, it mean that the consumer has been removed directly from quantum sot object
     if(quantum_slot->removeConsumer(ci->consumer)) {
         DEBUG_CODE(QSS_INFO << boost::str(boost::format("we have removed key consumer [%1%-%2%-%3%]")%ci->key_to_monitor%ci->quantum_multiplier%ci->consumer);)

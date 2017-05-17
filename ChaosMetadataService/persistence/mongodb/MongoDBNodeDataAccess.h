@@ -39,7 +39,7 @@ namespace chaos {
                     MongoDBUtilityDataAccess *utility_data_access;
                     
                 protected:
-                    MongoDBNodeDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
+                    MongoDBNodeDataAccess(const ChaosSharedPtr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
                     ~MongoDBNodeDataAccess();
                     
                     mongo::BSONObj getAliveOption(unsigned int timeout_sec);

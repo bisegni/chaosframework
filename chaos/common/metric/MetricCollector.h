@@ -38,7 +38,7 @@ namespace chaos {
     namespace common {
         namespace metric {
             
-            typedef boost::shared_ptr<AbstractMetricBackend> MetricBackendPointer;
+            typedef ChaosSharedPtr<AbstractMetricBackend> MetricBackendPointer;
             CHAOS_DEFINE_VECTOR_FOR_TYPE(MetricBackendPointer, VectorMetricBackend)
             
             CHAOS_DEFINE_MAP_FOR_TYPE(std::string, int, MapMetricNameVecIndex)

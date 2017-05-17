@@ -33,7 +33,7 @@ API_PROXY_CD_DEFINITION(CheckAgentHostedProcess,
                         AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_CHECK_NODE);
 
 ApiProxyResult CheckAgentHostedProcess::execute(const std::string& agent_uid) {
-    std::auto_ptr<CDataWrapper> pack(new CDataWrapper());
+    ChaosUniquePtr<CDataWrapper> pack(new CDataWrapper());
     pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, agent_uid);
     return callApi(pack.release());
 }

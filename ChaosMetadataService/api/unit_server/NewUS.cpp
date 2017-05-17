@@ -40,7 +40,7 @@ NewUS::~NewUS() {
 }
 void NewUS::performQuery(const std::string& new_us_uid,
                          const string& desc,
-                         std::auto_ptr<chaos::common::data::CDataWrapper> custom){
+                         ChaosUniquePtr<chaos::common::data::CDataWrapper> custom){
     bool presence = false;
     int err = 0;
     GET_DATA_ACCESS(UnitServerDataAccess, us_da, -3);
@@ -52,7 +52,7 @@ void NewUS::performQuery(const std::string& new_us_uid,
     if(presence) {
         LOG_AND_TROW(US_NEW_ERR, -5, boost::str(boost::format("There is already another node with the same uid:%1%") % new_us_uid));
     }
-    std::auto_ptr<CDataWrapper> data_pack(new CDataWrapper());
+    ChaosUniquePtr<CDataWrapper> data_pack(new CDataWrapper());
     data_pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, new_us_uid);
     data_pack->addStringValue(NodeDefinitionKey::NODE_TYPE, NodeType::NODE_TYPE_UNIT_SERVER);
     data_pack->addStringValue(NodeDefinitionKey::NODE_DESC, desc);
@@ -76,7 +76,7 @@ CDataWrapper *NewUS::execute(CDataWrapper *api_data,
     const std::string new_us_uid = api_data->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID);
     
     const std::string desc = api_data->hasKey(chaos::NodeDefinitionKey::NODE_DESC)?api_data->getStringValue(chaos::NodeDefinitionKey::NODE_DESC):"";
-    std::auto_ptr<chaos::common::data::CDataWrapper> custom(api_data->hasKey(chaos::NodeDefinitionKey::NODE_CUSTOM_PARAM)?api_data->getCSDataValue(chaos::NodeDefinitionKey::NODE_CUSTOM_PARAM):NULL);
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> custom(api_data->hasKey(chaos::NodeDefinitionKey::NODE_CUSTOM_PARAM)?api_data->getCSDataValue(chaos::NodeDefinitionKey::NODE_CUSTOM_PARAM):NULL);
     
     //we can proceed
     performQuery(new_us_uid,desc, custom);

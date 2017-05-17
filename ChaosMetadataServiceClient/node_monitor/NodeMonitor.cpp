@@ -50,7 +50,7 @@ bool NodeMonitor::addHandlerToNodeMonitor(const std::string& node_uid,
     CHAOS_ASSERT(monitor_manager);
     
     boost::unique_lock<boost::mutex> wl(map_fetcher_mutex);
-    boost::shared_ptr<NodeFetcher> fetcher;
+    ChaosSharedPtr<NodeFetcher> fetcher;
 
     //check if we have the controller installed
     if(map_fetcher.count(node_uid) == 0) {

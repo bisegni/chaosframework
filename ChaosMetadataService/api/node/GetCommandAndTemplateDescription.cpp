@@ -42,8 +42,8 @@ CDataWrapper *GetCommandAndTemplateDescription::execute(CDataWrapper *api_data,
                                                         bool& detach_data) throw(chaos::CException) {
     int err = 0;
     CDataWrapper *tmp_d_ptr = NULL;
-    std::auto_ptr<CDataWrapper> cmd_desc;
-    std::auto_ptr<CDataWrapper> tmplt_cmd_desc;
+    ChaosUniquePtr<CDataWrapper> cmd_desc;
+    ChaosUniquePtr<CDataWrapper> tmplt_cmd_desc;
     CHECK_CDW_THROW_AND_LOG(api_data, N_GCTD_ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(api_data, "template_name", N_GCTD_ERR, -2, "The name of the template is mandatory")
     CHECK_KEY_THROW_AND_LOG(api_data, BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID, N_GCTD_ERR, -3, "The unique id of the command is mandatory")
@@ -80,7 +80,7 @@ CDataWrapper *GetCommandAndTemplateDescription::execute(CDataWrapper *api_data,
     CommandCommonUtility::validateCommandTemplateToDescription(cmd_desc.get(), tmplt_cmd_desc.get(), NULL);
     
     //we have either
-    std::auto_ptr<CDataWrapper> result(new CDataWrapper());
+    ChaosUniquePtr<CDataWrapper> result(new CDataWrapper());
     result->addCSDataValue("command_description", *cmd_desc);
     result->addCSDataValue("template_description", *tmplt_cmd_desc);
     return result.release();

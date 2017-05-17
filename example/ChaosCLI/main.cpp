@@ -347,7 +347,7 @@ int main (int argc, char* argv[] )
             case 6: {
                 //check sc
                 uint64_t command_id = 0;
-                UNIQUE_PTR<CDataWrapper> userData;
+                ChaosUniquePtr<CDataWrapper> userData;
                 bool canBeExecuted = scAlias.size() > 0;
                 canBeExecuted = canBeExecuted && (checkSubmissionRule(scSubmissionRule) != -1);
                 if(canBeExecuted) {

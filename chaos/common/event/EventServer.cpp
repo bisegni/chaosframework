@@ -46,7 +46,7 @@ void EventServer::dispatchEventToHandler(const unsigned char * const serializedE
         if(length > EVT_DATA_MAX_BYTE_LENGTH)  throw CException(1, "Event memory size exceed the max allowed", "EventServer::dispatchEventToHandler");
         
         //check the type
-        UNIQUE_PTR<EventTypeAndPriority> eventTypeAndHeaderPtr(new EventTypeAndPriority());
+        ChaosUniquePtr<EventTypeAndPriority> eventTypeAndHeaderPtr(new EventTypeAndPriority());
         
         //get header swapped checking endian conversion
         *((uint8_t*)eventTypeAndHeaderPtr.get()) = byte_swap<little_endian, host_endian, uint8_t>(*((uint8_t*)(serializedEvent+EVT_HEADER_BYTE_LENGTH)));

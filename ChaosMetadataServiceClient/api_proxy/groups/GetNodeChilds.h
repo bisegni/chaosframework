@@ -54,7 +54,7 @@ namespace chaos {
                     ApiProxyResult execute(const std::string& node_domain,
                                            const std::string& node_path = std::string());
                     
-                    static std::auto_ptr<GetNodeChildsHelper> getHelper(chaos::common::data::CDataWrapper *api_result);
+                    static ChaosUniquePtr<GetNodeChildsHelper> getHelper(chaos::common::data::CDataWrapper *api_result);
                 };
             }
         }

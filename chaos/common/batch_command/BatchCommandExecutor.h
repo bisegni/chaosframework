@@ -62,8 +62,8 @@ namespace chaos {
             class BatchCommandSandbox;
             
             
-            CHAOS_DEFINE_VECTOR_FOR_TYPE(boost::shared_ptr<BatchCommandDescription>, BatchCommandDescriptionList);
-            CHAOS_DEFINE_MAP_FOR_TYPE(string,  boost::shared_ptr<BatchCommandDescription>, MapCommandDescription);
+            CHAOS_DEFINE_VECTOR_FOR_TYPE(ChaosSharedPtr<BatchCommandDescription>, BatchCommandDescriptionList);
+            CHAOS_DEFINE_MAP_FOR_TYPE(string,  ChaosSharedPtr<BatchCommandDescription>, MapCommandDescription);
             
             //! Slow command execution sand box
             /*!
@@ -91,7 +91,7 @@ namespace chaos {
                 RWMutex sandbox_map_mutex;
                 
                 //! map for the sandbox instances
-                std::map<unsigned int, boost::shared_ptr<AbstractSandbox> > sandbox_map;
+                std::map<unsigned int, ChaosSharedPtr<AbstractSandbox> > sandbox_map;
                 
                 //! shared mutext foe the command event history
                 RWMutex								command_state_rwmutex;
@@ -100,9 +100,9 @@ namespace chaos {
                 uint16_t							command_state_queue_max_size;
                 
                 //the queue of the insert state (this permit to have an order by insertion time)
-                std::deque< boost::shared_ptr<CommandState> >			command_state_queue;
+                std::deque< ChaosSharedPtr<CommandState> >			command_state_queue;
                 //the map is used for fast access id/pointer
-                std::map<uint64_t, boost::shared_ptr<CommandState> >	command_state_fast_access_map;
+                std::map<uint64_t, ChaosSharedPtr<CommandState> >	command_state_fast_access_map;
                 
                 //! this map correlate the alias to the object instancer
                 MapCommandDescription map_command_description;
@@ -118,7 +118,7 @@ namespace chaos {
                 inline void capCommanaQueue();
                 
                 //! Return a command stat
-                boost::shared_ptr<CommandState> getCommandState(uint64_t command_sequence);
+                ChaosSharedPtr<CommandState> getCommandState(uint64_t command_sequence);
                 
             protected:
                 //command event handler
@@ -251,7 +251,7 @@ namespace chaos {
                 void installCommand(const string& alias, chaos::common::utility::ObjectInstancer<BatchCommand> *instancer);
                 
                 //! Install a command by his description
-                void installCommand(boost::shared_ptr<BatchCommandDescription> command_description);
+                void installCommand(ChaosSharedPtr<BatchCommandDescription> command_description);
                 
                 //!return all the aliases of the installe batch command
                 /*!
@@ -296,7 +296,7 @@ namespace chaos {
                                    uint64_t scheduler_step_delay = 1000000)  throw (CException);
                 
                 //! return the state of a command
-                std::auto_ptr<CommandState> getStateForCommandID(uint64_t command_id);
+                ChaosUniquePtr<CommandState> getStateForCommandID(uint64_t command_id);
                 
                 //! Add a number of sandobx to this instance of executor
                 void addSandboxInstance(unsigned int _sandbox_number);

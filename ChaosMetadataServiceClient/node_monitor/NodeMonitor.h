@@ -43,7 +43,7 @@ namespace chaos {
         //! name space that enclose all utility for the centralize
         //! node monitor funcitonality
         namespace node_monitor {
-            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, boost::shared_ptr<NodeFetcher>, NodeFetcherMap)
+            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ChaosSharedPtr<NodeFetcher>, NodeFetcherMap)
 
             class NodeMonitor:
             public chaos::common::utility::InizializableService {

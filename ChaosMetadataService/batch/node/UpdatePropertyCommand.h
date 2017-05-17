@@ -34,8 +34,8 @@ namespace chaos {
                 public metadata_service::batch::MDSBatchCommand {
                     DECLARE_MDS_COMMAND_ALIAS
                     //request for the command submission
-                    std::auto_ptr<RequestInfo> request;
-                    std::auto_ptr<CDataWrapper> update_property_pack;
+                    ChaosUniquePtr<RequestInfo> request;
+                    ChaosUniquePtr<CDataWrapper> update_property_pack;
                 public:
                     UpdatePropertyCommand();
                     ~UpdatePropertyCommand();

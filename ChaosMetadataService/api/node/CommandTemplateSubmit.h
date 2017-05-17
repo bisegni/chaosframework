@@ -37,14 +37,14 @@ namespace chaos {
                 class CommandTemplateSubmit:
                 public AbstractApi {
                     
-                    boost::shared_ptr<CDataWrapper> getCommandDescription(chaos::metadata_service::persistence::data_access::NodeDataAccess *n_da,
+                    ChaosSharedPtr<CDataWrapper> getCommandDescription(chaos::metadata_service::persistence::data_access::NodeDataAccess *n_da,
                                                                           const std::string& command_uid);
-                    boost::shared_ptr<CDataWrapper> getCommandTemaplateDescription(chaos::metadata_service::persistence::data_access::NodeDataAccess *n_da,
+                    ChaosSharedPtr<CDataWrapper> getCommandTemaplateDescription(chaos::metadata_service::persistence::data_access::NodeDataAccess *n_da,
                                                                                    const std::string& template_name,
                                                                                    const std::string& command_uid);
                     
                     void processSubmissionTask(chaos::metadata_service::persistence::data_access::NodeDataAccess *n_da,
-                                               boost::shared_ptr<chaos::common::data::CDataWrapper> submission_task,
+                                               ChaosSharedPtr<chaos::common::data::CDataWrapper> submission_task,
                                                CommandInstanceList& command_instance_list);
                 public:
                     CommandTemplateSubmit();

@@ -193,7 +193,7 @@ void ScriptManager::on_pushButtonImport_clicked() {
             QFile import_file(import_file_path);
             if (import_file.open(QFile::ReadOnly)) {
                 QTextStream in(&import_file);
-                std::unique_ptr<CDataWrapper> ser = CDataWrapper::instanceFromJson(in.readAll().toStdString());
+                ChaosUniquePtr<CDataWrapper> ser = CDataWrapper::instanceFromJson(in.readAll().toStdString());
                 if(ser.get()) {
                     swd.deserialize(ser.get());
                     submitApiResult(QString("sm::import|%1").arg(import_file_path),

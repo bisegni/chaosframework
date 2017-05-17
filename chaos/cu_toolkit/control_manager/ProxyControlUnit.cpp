@@ -70,9 +70,9 @@ ProxyControlUnit::~ProxyControlUnit() {
     }
 }
 
-boost::shared_ptr<ControlUnitApiInterface> ProxyControlUnit::getProxyApiInterface() {
+ChaosSharedPtr<ControlUnitApiInterface> ProxyControlUnit::getProxyApiInterface() {
     if(api_interface_pointer.get() == NULL) {
-        api_interface_pointer = boost::shared_ptr<ControlUnitApiInterface>(new ControlUnitApiInterface());
+        api_interface_pointer = ChaosSharedPtr<ControlUnitApiInterface>(new ControlUnitApiInterface());
         LKControlUnitInstancePtrWriteLock rl = api_interface_pointer->control_unit_pointer.getWriteLockObject();
         api_interface_pointer->control_unit_pointer() = this;
     }

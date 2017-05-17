@@ -32,7 +32,7 @@ void DeclareStateFlag::addBoolFlag(const std::string flag_name,
                                     const std::string flag_description,
                                     const StateLevel& off_level,
                                     const StateLevel& on_level) {
-    boost::shared_ptr<StateFlagBoolState> bool_flag(new StateFlagBoolState(flag_name,
+    ChaosSharedPtr<StateFlagBoolState> bool_flag(new StateFlagBoolState(flag_name,
                                                                              flag_description,
                                                                              off_level,
                                                                              on_level));
@@ -42,27 +42,27 @@ void DeclareStateFlag::addBoolFlag(const std::string flag_name,
 void DeclareStateFlag::addLevelFlagWithStates(const std::string flag_name,
                                                const std::string flag_description,
                                                const StateLevelContainer& map_code_level_state) {
-    boost::shared_ptr<StateFlag> level_flag(new StateFlag(flag_name, flag_description));
+    ChaosSharedPtr<StateFlag> level_flag(new StateFlag(flag_name, flag_description));
     level_flag->addLevelsFromSet(map_code_level_state);
     StateFlagCatalog::addFlag(level_flag);
 }
 
 void DeclareStateFlag::addFlag(const std::string flag_name,
                                 const std::string flag_description) {
-    StateFlagCatalog::addFlag(boost::shared_ptr<StateFlag>(new StateFlag(flag_name,
+    StateFlagCatalog::addFlag(ChaosSharedPtr<StateFlag>(new StateFlag(flag_name,
                                                                             flag_description)));
 }
 
 void DeclareStateFlag::addStateToFlag(const std::string flag_name,
                                        const StateLevel& new_state) {
-    boost::shared_ptr<StateFlag> flag = getFlagByName(flag_name);
+    ChaosSharedPtr<StateFlag> flag = getFlagByName(flag_name);
     if(flag.get() == NULL) return;
     flag->addLevel(new_state);
 }
 
 void DeclareStateFlag::setFlagState(const std::string flag_name,
                                      const int8_t set_state) {
-    boost::shared_ptr<StateFlag> flag = getFlagByName(flag_name);
+    ChaosSharedPtr<StateFlag> flag = getFlagByName(flag_name);
     if(flag.get() == NULL) return;
     flag->setCurrentLevel(set_state);
 }

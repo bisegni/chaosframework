@@ -41,7 +41,7 @@ namespace chaos {
                 TriggeredData(int _new_value);
             };
             
-            typedef boost::shared_ptr<TriggeredData> TriggeredDataShrdPtr;
+            typedef ChaosSharedPtr<TriggeredData> TriggeredDataShrdPtr;
             //---------------------------------
             
             class Subject:

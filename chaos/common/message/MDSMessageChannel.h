@@ -280,7 +280,7 @@ namespace chaos {
                 /*!
                  \param request_pack is the data to forward to the rpc request, memory is internally managed by roc subsystem
                  */
-                std::auto_ptr<MultiAddressMessageRequestFuture> sendRequestWithFuture(const std::string& action_domain,
+                ChaosUniquePtr<MultiAddressMessageRequestFuture> sendRequestWithFuture(const std::string& action_domain,
                                                                                       const std::string& action_name,
                                                                                       chaos::common::data::CDataWrapper *request_pack,
                                                                                       int32_t request_timeout = 1000);

@@ -445,7 +445,7 @@ void ControlUnitEditor::on_checkBoxMonitorInputChannels_clicked() {
 }
 
 void ControlUnitEditor::on_pushButtonCommitSet_clicked() {
-    std::vector< boost::shared_ptr< control_unit::ControlUnitInputDatasetChangeSet > > value_set_array;
+    std::vector< ChaosSharedPtr< control_unit::ControlUnitInputDatasetChangeSet > > value_set_array;
     dataset_input_table_model.getAttributeChangeSet(value_set_array);
     if(value_set_array[0]->change_set.size()==0) {
         QMessageBox msgBox;
@@ -518,9 +518,9 @@ void ControlUnitEditor::on_pushButtonCreateInstance_clicked() {
 
 void ControlUnitEditor::on_pushButtonSetRunScheduleDelay_clicked() {
     chaos::metadata_service_client::api_proxy::node::NodePropertyGroupList property_list;
-    boost::shared_ptr<chaos::common::data::CDataWrapperKeyValueSetter> thread_run_schedule(new chaos::common::data::CDataWrapperInt64KeyValueSetter(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY,
+    ChaosSharedPtr<chaos::common::data::CDataWrapperKeyValueSetter> thread_run_schedule(new chaos::common::data::CDataWrapperInt64KeyValueSetter(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY,
                                                                                                                                                     ui->lineEditRunScheduleDelay->text().toLongLong()));
-    boost::shared_ptr<chaos::metadata_service_client::api_proxy::node::NodePropertyGroup> cu_property_group(new chaos::metadata_service_client::api_proxy::node::NodePropertyGroup());
+    ChaosSharedPtr<chaos::metadata_service_client::api_proxy::node::NodePropertyGroup> cu_property_group(new chaos::metadata_service_client::api_proxy::node::NodePropertyGroup());
     cu_property_group->group_name = "property_abstract_control_unit";
     cu_property_group->group_property_list.push_back(thread_run_schedule);
 

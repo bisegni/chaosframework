@@ -49,9 +49,9 @@ namespace chaos {
                                                    const std::string& source_uid,
                                                    const std::vector<std::string>& domain);
                     
-                    boost::shared_ptr<data_access::LogEntry> getEntryByBSON(const mongo::BSONObj& entry_bson);
+                    ChaosSharedPtr<data_access::LogEntry> getEntryByBSON(const mongo::BSONObj& entry_bson);
                 protected:
-                    MongoDBLoggingDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
+                    MongoDBLoggingDataAccess(const ChaosSharedPtr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
                     ~MongoDBLoggingDataAccess();
                     
                 public:

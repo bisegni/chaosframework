@@ -35,7 +35,7 @@
 
 namespace chaos{
     
-    CHAOS_DEFINE_MAP_FOR_TYPE(std::string, boost::shared_ptr<DomainActions>, MapDomainActions);
+    CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ChaosSharedPtr<DomainActions>, MapDomainActions);
     
     CHAOS_DEFINE_LOCKABLE_OBJECT(MapDomainActions, MapDomainActionsLocked);
     

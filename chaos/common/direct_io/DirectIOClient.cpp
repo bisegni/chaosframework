@@ -95,7 +95,7 @@ DirectIOClientConnection *DirectIOClient::getNewConnection(const std::string& se
             }
             //create the collector key
             SharedCollectorKey key(server_key);
-            boost::shared_ptr<DirectIOClientConnectionSharedMetricIO> shared_collector;
+            ChaosSharedPtr<DirectIOClientConnectionSharedMetricIO> shared_collector;
             
             //check if we have already allcoated thecollector
             if(map_shared_collectors.count(key)==0) {

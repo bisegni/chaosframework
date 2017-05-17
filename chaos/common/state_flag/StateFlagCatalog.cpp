@@ -90,7 +90,7 @@ void StateFlagCatalog::stateFlagUpdated(const FlagDescription       flag_descrip
     }
 }
 
-void StateFlagCatalog::addMemberToSeverityMap(boost::shared_ptr<StateFlag> new_status_flag) {
+void StateFlagCatalog::addMemberToSeverityMap(ChaosSharedPtr<StateFlag> new_status_flag) {
     DEBUG_CODE(SLC_DBG << "Add fag to severity bitfield map " << new_status_flag->getName(););
     //iitializethe severity map
     for(int s = StateFlagServerityRegular;
@@ -108,7 +108,7 @@ void StateFlagCatalog::addMemberToSeverityMap(boost::shared_ptr<StateFlag> new_s
     
 }
 
-void StateFlagCatalog::addFlag(const boost::shared_ptr<StateFlag>& flag) {
+void StateFlagCatalog::addFlag(const ChaosSharedPtr<StateFlag>& flag) {
     //boost::unique_lock<boost::shared_mutex> wl(mutex_catalog);
     LockableObjectWriteLock_t wl;
     catalog_container.getWriteLock(wl);
@@ -176,14 +176,14 @@ void StateFlagCatalog::appendCatalog(const StateFlagCatalog& src) {
     }
 }
 
-boost::shared_ptr<StateFlag>& StateFlagCatalog::getFlagByName(const std::string& flag_name) {
+ChaosSharedPtr<StateFlag>& StateFlagCatalog::getFlagByName(const std::string& flag_name) {
     StateFlagElementContainerNameIndex& name_index = catalog_container().get<mitag_name>();
     StateFlagElementContainerNameIterator nit = name_index.find(flag_name);
     if(nit == name_index.end()) return empty_flag;
     return (*nit)->status_flag;
 }
 
-boost::shared_ptr<StateFlag>& StateFlagCatalog::getFlagByOrderedID(const unsigned int flag_ordered_id) {
+ChaosSharedPtr<StateFlag>& StateFlagCatalog::getFlagByOrderedID(const unsigned int flag_ordered_id) {
     StateFlagElementContainerOrderedIndex& ordered_index = catalog_container().get<mitag_ordered>();
     StateFlagElementContainerOrderedIndexIterator nit = ordered_index.find(flag_ordered_id);
     if(nit == ordered_index.end()) return empty_flag;
@@ -203,11 +203,11 @@ void StateFlagCatalog::getFlagsForSeverity(StateFlagServerity severity,
 }
 
 #pragma mark Serialization Method
-std::auto_ptr<chaos::common::data::CDataBuffer> StateFlagCatalog::getRawFlagsLevel() {
+ChaosUniquePtr<chaos::common::data::CDataBuffer> StateFlagCatalog::getRawFlagsLevel() {
     //read lock on owned catalog
     LockableObjectReadLock_t rl;
     catalog_container.getReadLock(rl);
-    std::auto_ptr<CDataBuffer> result;
+    ChaosUniquePtr<CDataBuffer> result;
     char * raw_description = (char*)malloc(catalog_container().size());
     if(raw_description) {
         //retrieve the ordered index
@@ -224,7 +224,7 @@ std::auto_ptr<chaos::common::data::CDataBuffer> StateFlagCatalog::getRawFlagsLev
     return result;
 }
 
-void StateFlagCatalog::setApplyRawFlagsValue(std::auto_ptr<chaos::common::data::CDataBuffer>& raw_level) {
+void StateFlagCatalog::setApplyRawFlagsValue(ChaosUniquePtr<chaos::common::data::CDataBuffer>& raw_level) {
     if(raw_level.get() == NULL) return;
     const char * buffer = raw_level->getBuffer();
     uint32_t buffer_size = raw_level->getBufferSize();

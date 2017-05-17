@@ -54,7 +54,7 @@ chaos::common::data::CDataWrapper *GetLogDomainForSourceUID::execute(CDataWrappe
         if(api_data->isStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER)) {
             source_id_to_include.push_back(api_data->getStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER));
         } else if(api_data->isVectorValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER)) {
-            std::auto_ptr<CMultiTypeDataArrayWrapper> domain_vec(api_data->getVectorValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER));
+            ChaosUniquePtr<CMultiTypeDataArrayWrapper> domain_vec(api_data->getVectorValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER));
             for(int idx = 0;
                 idx < domain_vec->size();
                 idx++){
@@ -71,7 +71,7 @@ chaos::common::data::CDataWrapper *GetLogDomainForSourceUID::execute(CDataWrappe
         LOG_AND_TROW(L_GLTFS_ERR, err, "Error searching log types");
     }
     if(domain_list.size()) {
-        std::auto_ptr<CDataWrapper> tmp_result(new CDataWrapper());
+        ChaosUniquePtr<CDataWrapper> tmp_result(new CDataWrapper());
         for(LogDomainListIterator it = domain_list.begin();
             it != domain_list.end();
             it++){

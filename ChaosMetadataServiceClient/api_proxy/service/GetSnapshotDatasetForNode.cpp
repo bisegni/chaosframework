@@ -47,11 +47,11 @@ void GetSnapshotDatasetForNode::getAsMap(chaos::common::data::CDataWrapper& api_
     if(!api_result.hasKey("dataset_list")) return;
     if(!api_result.isVectorValue("dataset_list")) return;
     
-    std::auto_ptr<CMultiTypeDataArrayWrapper> snapshot_list(api_result.getVectorValue("dataset_list"));
+    ChaosUniquePtr<CMultiTypeDataArrayWrapper> snapshot_list(api_result.getVectorValue("dataset_list"));
     for(int idx = 0;
         idx < snapshot_list->size();
         idx++) {
-        std::auto_ptr<CDataWrapper> snapshot_dataset_element(snapshot_list->getCDataWrapperElementAtIndex(idx));
+        ChaosUniquePtr<CDataWrapper> snapshot_dataset_element(snapshot_list->getCDataWrapperElementAtIndex(idx));
         const std::string dataset_name = snapshot_dataset_element->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_NAME);
         CDWShrdPtr saved_dataset(snapshot_dataset_element->getCSDataValue("dataset_value"));
         

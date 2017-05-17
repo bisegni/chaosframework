@@ -89,8 +89,8 @@ void DriverManager::deinit() throw(chaos::CException) {
 }
 
 // Register a new driver
-void DriverManager::registerDriver(boost::shared_ptr<ObjectInstancer<AbstractDriver> > instancer,
-                                   boost::shared_ptr<PluginInspector> description) throw(chaos::CException) {
+void DriverManager::registerDriver(ChaosSharedPtr<ObjectInstancer<AbstractDriver> > instancer,
+                                   ChaosSharedPtr<PluginInspector> description) throw(chaos::CException) {
   boost::unique_lock<boost::shared_mutex> lock(mutextMapAccess);
 
   if (!instancer) {
@@ -112,7 +112,7 @@ void DriverManager::registerDriver(boost::shared_ptr<ObjectInstancer<AbstractDri
     return;
   }
 
-  boost::shared_ptr<DriverPluginInfo> driver_plugin_info(new DriverPluginInfo());
+  ChaosSharedPtr<DriverPluginInfo> driver_plugin_info(new DriverPluginInfo());
   driver_plugin_info->sp_inspector = description;
   driver_plugin_info->sp_instancer = instancer;
   mapDriverAliasVersionInstancer.insert(make_pair(composedDriverName, driver_plugin_info));
@@ -158,7 +158,7 @@ DriverAccessor *DriverManager::getNewAccessorForDriverInstance(DrvRequestInfo &r
   //the instance of the driver need to be created
   if (mapDriverAliasVersionInstancer.count(composedDriverName) == 0) {
     std::map<std::string,
-             boost::shared_ptr<DriverPluginInfo> >::iterator i;
+             ChaosSharedPtr<DriverPluginInfo> >::iterator i;
     DMLDBG_ << boost::str(boost::format("Driver %1% not found, here a list of possible driver names and versions")%driverInfo);
     for (i = mapDriverAliasVersionInstancer.begin();
          i != mapDriverAliasVersionInstancer.end();

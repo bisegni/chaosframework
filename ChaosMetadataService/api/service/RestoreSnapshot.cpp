@@ -29,7 +29,7 @@ using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::service;
 using namespace chaos::metadata_service::persistence::data_access;
 
-typedef std::vector< boost::shared_ptr<CDataWrapper> > ResultVector;
+typedef std::vector< ChaosSharedPtr<CDataWrapper> > ResultVector;
 
 RestoreSnapshot::RestoreSnapshot():
 AbstractApi("restoreSnapshot"){}
@@ -41,7 +41,7 @@ chaos::common::data::CDataWrapper *RestoreSnapshot::execute(chaos::common::data:
     CHECK_CDW_THROW_AND_LOG(api_data, S_RS_ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(api_data, "snapshot_name", S_RS_ERR, -2, "The snapshot_name key is mandatory")
     
-    std::auto_ptr<CDataWrapper> data_pack(new CDataWrapper());
+    ChaosUniquePtr<CDataWrapper> data_pack(new CDataWrapper());
     api_data->copyKeyTo("snapshot_name", *data_pack);
     
     //launch initilization in background

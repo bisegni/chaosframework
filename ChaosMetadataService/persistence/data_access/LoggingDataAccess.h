@@ -51,7 +51,7 @@ namespace chaos {
                     LoggingKeyValueBoolMap      map_bool_value;
                 };
                 
-                CHAOS_DEFINE_VECTOR_FOR_TYPE(boost::shared_ptr<LogEntry>, LogEntryList);
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(ChaosSharedPtr<LogEntry>, LogEntryList);
                 
                 CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string, LogDomainList);
                 

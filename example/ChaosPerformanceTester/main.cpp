@@ -142,7 +142,7 @@ int main (int argc, char* argv[] ) {
 void performRTTTest(chaos::common::direct_io::DirectIOPerformanceSession *session, uint32_t iteration, uint32_t timeout) {
 	//ok
 	RttStat stat;
-	boost::shared_ptr<boost::thread> thread(new boost::thread(performRTTTestFetcher, session->getRttResultQueue(), iteration, &stat));
+	ChaosSharedPtr<boost::thread> thread(new boost::thread(performRTTTestFetcher, session->getRttResultQueue(), iteration, &stat));
 	for (uint32_t idx = 0; idx < iteration; idx++) {
 		if(session->sendRttTest(timeout) == -1){
 				std::cout << "Err sending message";

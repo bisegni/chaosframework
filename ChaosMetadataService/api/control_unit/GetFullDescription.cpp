@@ -60,7 +60,7 @@ CDataWrapper *GetFullDescription::execute(CDataWrapper *api_data,
         if((err = cu_da->getFullDescription(cu_uid, &result))||(result==NULL)) {
                LOG_AND_TROW(CU_GCD_ERR, err, boost::str(boost::format("Error fetching the dataset for the node  unit uid:%1% with error %2%") % cu_uid % err));
         }
-        std::auto_ptr<CDataWrapper> dataset(result);
+        ChaosUniquePtr<CDataWrapper> dataset(result);
         return dataset.release();
 
      }
@@ -87,24 +87,24 @@ CDataWrapper *GetFullDescription::execute(CDataWrapper *api_data,
         LOG_AND_TROW(CU_GCD_ERR, -10001, boost::str(boost::format("Dataset not found for control unit '%1%'") % cu_uid));
     }
     //we have data set and now we need to update the input attribute
-    std::auto_ptr<CDataWrapper> dataset(result);
+    ChaosUniquePtr<CDataWrapper> dataset(result);
 
-    std::auto_ptr<CDataWrapper> init_datapack(new CDataWrapper());
-    std::auto_ptr<CDataWrapper> init_dataset(new CDataWrapper());
+    ChaosUniquePtr<CDataWrapper> init_datapack(new CDataWrapper());
+    ChaosUniquePtr<CDataWrapper> init_dataset(new CDataWrapper());
     
     init_datapack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_uid);
     
     if(dataset->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION) && dataset->isVector(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION)) {
-        std::auto_ptr<CMultiTypeDataArrayWrapper> dataset_element_vec(dataset->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
+        ChaosUniquePtr<CMultiTypeDataArrayWrapper> dataset_element_vec(dataset->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
         for(int idx = 0; idx <
             dataset_element_vec->size();
             idx++) {
             //get the dataset element
-            boost::shared_ptr<CDataWrapper> element(dataset_element_vec->getCDataWrapperElementAtIndex(idx));
+            ChaosSharedPtr<CDataWrapper> element(dataset_element_vec->getCDataWrapperElementAtIndex(idx));
             const std::string  ds_attribute_name = element->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME);
             int32_t direction = element->getInt32Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION);
             
-            boost::shared_ptr<CDataWrapper> element_configuration;
+            ChaosSharedPtr<CDataWrapper> element_configuration;
             //get the dataset element setup
             if((err = cu_da->getInstanceDatasetAttributeConfiguration(cu_uid,
                                                                       ds_attribute_name,
@@ -114,7 +114,7 @@ CDataWrapper *GetFullDescription::execute(CDataWrapper *api_data,
                        direction == chaos::DataType::Bidirectional) &&
                       element_configuration.get() != NULL){
                 //we can retrive the configured attribute
-                boost::shared_ptr<CDataWrapper> init_ds_attribute = mergeDatasetAttributeWithSetup(element,
+                ChaosSharedPtr<CDataWrapper> init_ds_attribute = mergeDatasetAttributeWithSetup(element,
                                                                                                    element_configuration);
                 init_dataset->appendCDataWrapperToArray(*init_ds_attribute.get());
             } else {
@@ -153,7 +153,7 @@ CDataWrapper *GetFullDescription::execute(CDataWrapper *api_data,
             } else if(ds_description == NULL) {
                 CU_GCD_DBG << "No description foudn for data service:" << ds_unique_id;
             } else {
-                std::auto_ptr<CDataWrapper> ds_object(ds_description);
+                ChaosUniquePtr<CDataWrapper> ds_object(ds_description);
                 if(ds_object->hasKey(NodeDefinitionKey::NODE_DIRECT_IO_ADDR) &&
                    ds_object->hasKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT)) {
                     //we can create the address
@@ -171,9 +171,9 @@ CDataWrapper *GetFullDescription::execute(CDataWrapper *api_data,
     return init_datapack.release();
 }
 
-boost::shared_ptr<CDataWrapper> GetFullDescription::mergeDatasetAttributeWithSetup(boost::shared_ptr<CDataWrapper> element_in_dataset,
-                                                                                  boost::shared_ptr<CDataWrapper> element_in_setup) {
-    boost::shared_ptr<CDataWrapper> result(new CDataWrapper());
+ChaosSharedPtr<CDataWrapper> GetFullDescription::mergeDatasetAttributeWithSetup(ChaosSharedPtr<CDataWrapper> element_in_dataset,
+                                                                                  ChaosSharedPtr<CDataWrapper> element_in_setup) {
+    ChaosSharedPtr<CDataWrapper> result(new CDataWrapper());
     //move
     MOVE_STRING_VALUE(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME, element_in_dataset, result)
     MOVE_STRING_VALUE(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION, element_in_dataset, result)

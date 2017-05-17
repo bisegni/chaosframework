@@ -18,6 +18,7 @@
  *    	limitations under the License.
  */
 
+#include <chaos/common/chaos_types.h>
 #include <chaos/common/utility/endianess.h>
 #include <chaos/common/event/evt_desc/EventFactory.h>
 #include <chaos/common/event/evt_desc/AlertEventDescriptor.h>
@@ -40,7 +41,7 @@ EventDescriptor *EventFactory::getEventInstance(const unsigned char * serialized
     if(*((uint16_t*)serializedEvent) != 0x4345) throw CException(2, "Bad event signature", "EventFactory::getEventInstance");
     
         //check the type
-	std::auto_ptr<EventTypeAndPriority> eventTypeAndHeaderPtr(new EventTypeAndPriority);
+	ChaosUniquePtr<EventTypeAndPriority> eventTypeAndHeaderPtr(new EventTypeAndPriority);
         
         //get header swapped checking endian conversion
     *((uint16_t*)eventTypeAndHeaderPtr.get()) = byte_swap<little_endian, host_endian, uint16_t>(*((uint16_t*)(serializedEvent+EVT_HEADER_BYTE_LENGTH)));

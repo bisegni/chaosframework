@@ -239,10 +239,10 @@ void ControlManager::deinit() throw(CException) {
     
     
     LCMAPP_  << "Deinit all the submitted Control Unit";
-    for (map<string, boost::shared_ptr<WorkUnitManagement> >::iterator cuIter = map_cuid_registered_instance.begin();
+    for (map<string, ChaosSharedPtr<WorkUnitManagement> >::iterator cuIter = map_cuid_registered_instance.begin();
          cuIter != map_cuid_registered_instance.end();
          cuIter++ ){
-        boost::shared_ptr<WorkUnitManagement> cu = (*cuIter).second;
+        ChaosSharedPtr<WorkUnitManagement> cu = (*cuIter).second;
         
         cu_identification_temp = WU_IDENTIFICATION(cu->work_unit_instance);
         LCMAPP_  << "Start deregistration for control unit " << cu_identification_temp;
@@ -309,7 +309,7 @@ void ControlManager::deinit() throw(CException) {
 /*
  Submit a new Control unit for operation
  */
-void ControlManager::submitControlUnit(boost::shared_ptr<AbstractControlUnit> control_unit_instance) throw(CException) {
+void ControlManager::submitControlUnit(ChaosSharedPtr<AbstractControlUnit> control_unit_instance) throw(CException) {
     CHAOS_ASSERT(control_unit_instance)
     //lock the hastable of cu instance and managmer
     boost::unique_lock<boost::shared_mutex> lock(mutex_queue_submitted_cu);
@@ -353,7 +353,7 @@ void ControlManager::migrateStableAndUnstableSMCUInstance() {
     
     //used the Mark Ransom Technique for avoid the temporary iterator
     //http://stackoverflow.com/questions/180516/how-to-filter-items-from-a-stdmap/180616#180616
-    for (map<string, boost::shared_ptr<WorkUnitManagement> >::iterator i = map_cuid_reg_unreg_instance.begin();
+    for (map<string, ChaosSharedPtr<WorkUnitManagement> >::iterator i = map_cuid_reg_unreg_instance.begin();
          i != map_cuid_reg_unreg_instance.end();) {
         
         if(!i->second->smNeedToSchedule()) {
@@ -406,7 +406,7 @@ void ControlManager::makeSMSteps() {
     //lock for read the registering map
     ReadLock read_registering_lock(mutex_map_cuid_reg_unreg_instance);
     
-    for (map<string, boost::shared_ptr<WorkUnitManagement> >::iterator i = map_cuid_reg_unreg_instance.begin();
+    for (map<string, ChaosSharedPtr<WorkUnitManagement> >::iterator i = map_cuid_reg_unreg_instance.begin();
          i != map_cuid_reg_unreg_instance.end();
          i++ ){
         //make step
@@ -431,7 +431,7 @@ void ControlManager::manageControlUnit() {
         //try to consume all the submitted control unit instance (after the lock no other thread can submit new on)
         while(!queue_submitted_cu.empty()) {
             //we have new instance to manage
-            boost::shared_ptr<WorkUnitManagement> wui(new WorkUnitManagement(queue_submitted_cu.front()));
+            ChaosSharedPtr<WorkUnitManagement> wui(new WorkUnitManagement(queue_submitted_cu.front()));
             LCMAPP_  << "We have a new control unit instance:" << WU_IDENTIFICATION(wui->work_unit_instance);
             
             //remove the oldest data
@@ -533,7 +533,7 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
     }
     
     //submit new instance of the requested control unit
-    boost::shared_ptr<AbstractControlUnit> instance(map_cu_alias_instancer[work_unit_type]->getInstance(work_unit_id, load_options, driver_params));
+    ChaosSharedPtr<AbstractControlUnit> instance(map_cu_alias_instancer[work_unit_type]->getInstance(work_unit_id, load_options, driver_params));
     CHECK_ASSERTION_THROW_AND_LOG(instance.get() != NULL, LCMERR_, -7, "Error creating work unit instance");
     
     //check if is a proxy control unit
@@ -555,16 +555,16 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
         CHECK_KEY_THROW_AND_LOG(message_data, UnitServerNodeDomainAndActionRPC::PARAM_CONTROL_UNIT_STARTUP_COMMAND, LCMERR_, -8, "The startup command key need to be a vector of CDataWrapper");
         
         //get the vector value
-        std::auto_ptr<CMultiTypeDataArrayWrapper> vector_values(message_data->getVectorValue(UnitServerNodeDomainAndActionRPC::PARAM_CONTROL_UNIT_STARTUP_COMMAND));
+        ChaosUniquePtr<CMultiTypeDataArrayWrapper> vector_values(message_data->getVectorValue(UnitServerNodeDomainAndActionRPC::PARAM_CONTROL_UNIT_STARTUP_COMMAND));
         for(int idx = 0;
             idx < vector_values->size();
             idx++) {
             //push command into the startup command vector of the control unit
-            instance->list_startup_command.push_back(boost::shared_ptr<chaos::common::data::CDataWrapper>(vector_values->getCDataWrapperElementAtIndex(idx)));
+            instance->list_startup_command.push_back(ChaosSharedPtr<chaos::common::data::CDataWrapper>(vector_values->getCDataWrapperElementAtIndex(idx)));
         }
     }
     
-    //submit contorl unit releaseing the unique_ptr
+    //submit contorl unit releaseing the ChaosUniquePtr
     submitControlUnit(instance);
     return NULL;
 }
@@ -586,11 +586,11 @@ CDataWrapper* ControlManager::unloadControlUnit(CDataWrapper *message_data, bool
        (map_cuid_registered_instance[work_unit_id]->work_unit_instance->getCUType().compare(NodeType::NODE_SUBTYPE_PROXY_CONTROL_UNIT) == 0)){
         load_handler(false,
                      map_cuid_registered_instance[work_unit_id]->work_unit_instance->getCUID(),
-                     boost::shared_ptr<ControlUnitApiInterface>());
+                     ChaosSharedPtr<ControlUnitApiInterface>());
     }
     
     //get the iterator for the work unit managment class
-    map<string, boost::shared_ptr<WorkUnitManagement> >::iterator iter = map_cuid_registered_instance.find(work_unit_id);
+    map<string, ChaosSharedPtr<WorkUnitManagement> >::iterator iter = map_cuid_registered_instance.find(work_unit_id);
     
     //migrate the workunit into the map for registering and unregistering instance
     map_cuid_reg_unreg_instance.insert(make_pair(work_unit_id, map_cuid_registered_instance[work_unit_id]));
@@ -610,7 +610,7 @@ CDataWrapper* ControlManager::unitServerStatus(CDataWrapper *message_data, bool 
     unit_server_status.addInt32Value(NodeDefinitionKey::NODE_TIMESTAMP,  (uint32_t) TimingUtil::getTimeStamp());
     LCMDBG_ << "[Action] Get Unit State";
     
-    map<string, boost::shared_ptr<WorkUnitManagement> >::iterator iter;
+    map<string, ChaosSharedPtr<WorkUnitManagement> >::iterator iter;
     for(iter = map_cuid_registered_instance.begin();iter!=map_cuid_registered_instance.end();iter++){
         chaos_data::CDataWrapper item;
         std::string cusm_state_key = iter->first+"_sm_state";

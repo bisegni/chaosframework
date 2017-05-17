@@ -93,11 +93,11 @@ typename chaos::cu::control_manager::handler::DatasetAttributeHandlerDescription
                 DEFINE_HANDLER_DESCRIPTION_FOR_TYPE(CharPtrDAHD, const char *);
                 
                 //!
-                typedef boost::shared_ptr<AbstractHandlerDescription> HandlerDescriptionPtr;
+                typedef ChaosSharedPtr<AbstractHandlerDescription> HandlerDescriptionPtr;
                 
                 //!
                 CHAOS_DEFINE_MAP_FOR_TYPE(std::string,
-                                          boost::shared_ptr<AbstractHandlerDescription>,
+                                          ChaosSharedPtr<AbstractHandlerDescription>,
                                           MapAttributeHandler);
                 CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string,
                                              HandlerAssociatedAttributeList);

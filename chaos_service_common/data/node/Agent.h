@@ -64,8 +64,8 @@ namespace chaos {
                     
                 }
                 
-                std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
-                    std::auto_ptr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> serialize() {
+                    ChaosUniquePtr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
                     data_serialized->addBoolValue("log_enable_state", dataWrapped().expiration_enabled);
                     data_serialized->addInt32Value("log_expiration", dataWrapped().log_expiration_in_seconds);
                     return data_serialized;
@@ -160,8 +160,8 @@ namespace chaos {
                     dataWrapped().log_at_laucnh = CDW_GET_BOOL_WITH_DEFAULT(serialized_data, AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_PAR_LOG_AT_LAUNCH, false);
                 }
                 
-                std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
-                    std::auto_ptr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> serialize() {
+                    ChaosUniquePtr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
                     data_serialized->addStringValue("association_uid", dataWrapped().association_unique_id);
                     data_serialized->addStringValue(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_PAR_NAME, dataWrapped().associated_node_uid);
                     data_serialized->addStringValue(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_CMD_LINE, dataWrapped().launch_cmd_line);
@@ -213,8 +213,8 @@ namespace chaos {
                     dataWrapped().check_ts = (uint64_t)CDW_GET_INT64_WITH_DEFAULT(serialized_data, "check_ts", 0);
                 }
                 
-                std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
-                    std::auto_ptr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> serialize() {
+                    ChaosUniquePtr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
                     data_serialized->addStringValue(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_PAR_NAME, dataWrapped().associated_node_uid);
                     data_serialized->addBoolValue("alive", dataWrapped().alive);
                     data_serialized->addInt64Value("check_ts", dataWrapped().check_ts);
@@ -268,14 +268,14 @@ namespace chaos {
                     associationList_sd_wrap.deserialize(serialized_data);
                 }
                 
-                std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
-                    std::auto_ptr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> serialize() {
+                    ChaosUniquePtr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
                     data_serialized->addInt64Value("seq", dataWrapped().instance_seq);
                     data_serialized->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, dataWrapped().instance_name);
                     data_serialized->addStringValue(AgentNodeDefinitionKey::WORKING_DIRECTORY, dataWrapped().working_directory);
                     VectorAgentAssociationSDWrapper associationList_sd_wrap(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(VectorAgentAssociation, dataWrapped().node_associated));
                     associationList_sd_wrap.serialization_key = AgentNodeDefinitionKey::NODE_ASSOCIATED;
-                    std::auto_ptr<chaos::common::data::CDataWrapper> ser_vec = associationList_sd_wrap.serialize();
+                    ChaosUniquePtr<chaos::common::data::CDataWrapper> ser_vec = associationList_sd_wrap.serialize();
                     data_serialized->appendAllElement(*ser_vec);
                     return data_serialized;
                 }
@@ -296,8 +296,8 @@ namespace chaos {
                     dataWrapped().entry_log_line = CDW_GET_SRT_WITH_DEFAULT(serialized_data, "log_entry", "");
                 }
                 
-                std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
-                    std::auto_ptr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> serialize() {
+                    ChaosUniquePtr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
                     data_serialized->addInt64Value("log_ts", dataWrapped().entry_ts);
                     data_serialized->addInt64Value("log_seq", dataWrapped().entry_seq);
                     data_serialized->addStringValue("log_entry", dataWrapped().entry_log_line);

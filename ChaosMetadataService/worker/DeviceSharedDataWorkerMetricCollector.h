@@ -34,11 +34,11 @@ namespace chaos{
             
             class DeviceSharedDataWorkerMetricCollector:
             public DeviceSharedDataWorker {
-                boost::shared_ptr<DeviceSharedDataWorkerMetric> data_worker_metric;
+                ChaosSharedPtr<DeviceSharedDataWorkerMetric> data_worker_metric;
             protected:
                 void executeJob(WorkerJobPtr job_info, void* cookie);
             public:
-                DeviceSharedDataWorkerMetricCollector(boost::shared_ptr<DeviceSharedDataWorkerMetric> _data_worker_metric);
+                DeviceSharedDataWorkerMetricCollector(ChaosSharedPtr<DeviceSharedDataWorkerMetric> _data_worker_metric);
                 ~DeviceSharedDataWorkerMetricCollector();
                 int submitJobInfo(WorkerJobPtr job_info);
                 

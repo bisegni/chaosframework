@@ -35,8 +35,8 @@ ApiProxyResult GetDomains::execute() {
     return callApi();
 }
 
-std::auto_ptr<GetDomainsHelper> GetDomains::getHelper(CDataWrapper *api_result) {
-    return std::auto_ptr<GetDomainsHelper>(new GetDomainsHelper(api_result));
+ChaosUniquePtr<GetDomainsHelper> GetDomains::getHelper(CDataWrapper *api_result) {
+    return ChaosUniquePtr<GetDomainsHelper>(new GetDomainsHelper(api_result));
 }
 
 
@@ -45,7 +45,7 @@ GetDomainsHelper::GetDomainsHelper(CDataWrapper *api_result) {
     //SnapshotInformationPtr
     if(!api_result || !api_result->hasKey("domain_list")) return;
     
-    std::auto_ptr<CMultiTypeDataArrayWrapper> domains_vec(api_result->getVectorValue("domain_list"));
+    ChaosUniquePtr<CMultiTypeDataArrayWrapper> domains_vec(api_result->getVectorValue("domain_list"));
     for(int idx = 0;
         idx < domains_vec->size();
         idx++) {

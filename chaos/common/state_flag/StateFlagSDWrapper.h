@@ -42,8 +42,8 @@ namespace chaos {
                 
             }
             
-            std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
-                std::auto_ptr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
+            ChaosUniquePtr<chaos::common::data::CDataWrapper> serialize() {
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
                 data_serialized->addInt32Value(chaos::NodeStateFlagDefinitionKey::NODE_SF_LEVEL_VALUE, static_cast<int32_t>(dataWrapped().value));
                 data_serialized->addStringValue(chaos::NodeStateFlagDefinitionKey::NODE_SF_LEVEL_TAG, dataWrapped().tag);
                 data_serialized->addStringValue(chaos::NodeStateFlagDefinitionKey::NODE_SF_LEVEL_DESCRIPTION, dataWrapped().description);
@@ -80,11 +80,11 @@ namespace chaos {
                 
                 if(serialized_data->hasKey(NodeStateFlagDefinitionKey::NODE_SF_LEVEL_SET) &&
                    serialized_data->isVectorValue(NodeStateFlagDefinitionKey::NODE_SF_LEVEL_SET)) {
-                    std::auto_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> state_level_vec(serialized_data->getVectorValue(NodeStateFlagDefinitionKey::NODE_SF_LEVEL_SET));
+                    ChaosUniquePtr<chaos::common::data::CMultiTypeDataArrayWrapper> state_level_vec(serialized_data->getVectorValue(NodeStateFlagDefinitionKey::NODE_SF_LEVEL_SET));
                     for(int idx = 0;
                         idx < state_level_vec->size();
                         idx++) {
-                        std::auto_ptr<chaos::common::data::CDataWrapper> state_level(state_level_vec->getCDataWrapperElementAtIndex(idx));
+                        ChaosUniquePtr<chaos::common::data::CDataWrapper> state_level(state_level_vec->getCDataWrapperElementAtIndex(idx));
                         slsdw.deserialize(state_level.get());
                         dataWrapped().addLevel(slsdw.dataWrapped());
                     }
@@ -92,8 +92,8 @@ namespace chaos {
                 
             }
             
-            std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
-                std::auto_ptr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
+            ChaosUniquePtr<chaos::common::data::CDataWrapper> serialize() {
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
                 data_serialized->addStringValue(NodeStateFlagDefinitionKey::NODE_SF_NAME, dataWrapped().flag_description.name);
                 data_serialized->addStringValue(NodeStateFlagDefinitionKey::NODE_SF_DESCRIPTION, dataWrapped().flag_description.description);
                 if(dataWrapped().set_levels.size()) {

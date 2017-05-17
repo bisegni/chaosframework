@@ -56,7 +56,7 @@ typedef chaos::common::utility::LockableObject<x>::LockableObjectWriteLock n ## 
                         lockable_obj_ref.getReadLock(rl);
                     }
                 };
-                typedef boost::shared_ptr<ReadLock> LockableObjectReadLock;
+                typedef ChaosSharedPtr<ReadLock> LockableObjectReadLock;
                 
                 //!writeable lock class
                 class WriteLock {
@@ -66,7 +66,7 @@ typedef chaos::common::utility::LockableObject<x>::LockableObjectWriteLock n ## 
                         lockable_obj_ref.getWriteLock(wl);
                     }
                 };
-                typedef boost::shared_ptr<WriteLock> LockableObjectWriteLock;
+                typedef ChaosSharedPtr<WriteLock> LockableObjectWriteLock;
                 
                 T container_object;
                 

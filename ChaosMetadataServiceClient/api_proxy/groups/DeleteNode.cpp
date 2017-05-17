@@ -35,7 +35,7 @@ API_PROXY_CD_DEFINITION(DeleteNode,
 ApiProxyResult DeleteNode::execute(const std::string& node_domain,
                                    const std::string& node_name,
                                    const std::string& node_parent_path) {
-    std::auto_ptr<CDataWrapper> pack(new CDataWrapper());
+    ChaosUniquePtr<CDataWrapper> pack(new CDataWrapper());
     pack->addStringValue("node_name", node_name);
     pack->addStringValue("node_domain", node_domain);
     pack->addStringValue("node_parent_path", node_parent_path);

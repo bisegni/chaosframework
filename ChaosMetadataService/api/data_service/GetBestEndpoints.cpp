@@ -45,8 +45,8 @@ chaos::common::data::CDataWrapper *GetBestEndpoints::execute(chaos::common::data
     
     int err = 0;
     int32_t numner_or_result = 3;
-    std::auto_ptr<CDataWrapper> result;
-    std::vector<boost::shared_ptr<CDataWrapper> > data_services;
+    ChaosUniquePtr<CDataWrapper> result;
+    std::vector<ChaosSharedPtr<CDataWrapper> > data_services;
     
     if(api_data && api_data->hasKey("count")) {
         numner_or_result = api_data->getInt32Value("count");
@@ -62,7 +62,7 @@ chaos::common::data::CDataWrapper *GetBestEndpoints::execute(chaos::common::data
     //constructs the result
     result.reset(new CDataWrapper());
     if(data_services.size()>0) {
-        BOOST_FOREACH(boost::shared_ptr<CDataWrapper> ds_element, data_services) {
+        BOOST_FOREACH(ChaosSharedPtr<CDataWrapper> ds_element, data_services) {
             if(ds_element->hasKey(chaos::NodeDefinitionKey::NODE_DIRECT_IO_ADDR) &&
                ds_element->hasKey(chaos::DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT)){
                 result->appendStringToArray(boost::str(boost::format("%1%|%2%")%

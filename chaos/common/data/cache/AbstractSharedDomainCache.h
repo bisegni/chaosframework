@@ -96,7 +96,7 @@ namespace chaos{
 					 \param domain the target that need to lock
 					 \param write_lock false for read and true for write lock
 					 */
-					virtual boost::shared_ptr<SharedCacheLockDomain> getLockOnDomain(SharedCacheDomain domain,
+					virtual ChaosSharedPtr<SharedCacheLockDomain> getLockOnDomain(SharedCacheDomain domain,
 																					 bool write_lock) = 0;
 				};
 				

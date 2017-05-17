@@ -109,7 +109,7 @@ int ProducerRegisterDatasetApi::execute(std::vector<std::string>& api_tokens,
 	for (Json::ValueConstIterator it = dataset_elements.begin();
 		 it != dataset_elements.end();
 		 ++it) {
-		boost::shared_ptr<CDataWrapper> element;
+		ChaosSharedPtr<CDataWrapper> element;
 		if((err = scanDatasetElement(*it, err_msg, element))) {
 			PRA_LERR << err_msg;
 			
@@ -144,7 +144,7 @@ int ProducerRegisterDatasetApi::execute(std::vector<std::string>& api_tokens,
 //scan a json elemenot of the dataset creating the respective CDataWrapper
 int ProducerRegisterDatasetApi::scanDatasetElement(const Json::Value& dataset_json_element,
 												   std::string& err_msg,
-												   boost::shared_ptr<chaos::common::data::CDataWrapper>& element) {
+												   ChaosSharedPtr<chaos::common::data::CDataWrapper>& element) {
 	element.reset(new CDataWrapper());
 	/*-the name of the attribute
 	 "ds_attr_name": string,

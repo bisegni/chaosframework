@@ -33,7 +33,7 @@ namespace chaos {
 	namespace metadata_service {
 		namespace api {
 			//!typedef for the group list
-            typedef boost::shared_ptr<AbstractApiGroup>          ApiGroupListElement;
+            typedef ChaosSharedPtr<AbstractApiGroup>          ApiGroupListElement;
 			typedef std::vector< ApiGroupListElement >           ApiGroupList;
 			typedef std::vector< ApiGroupListElement >::iterator ApiGroupListIterator;
 			
@@ -60,7 +60,7 @@ namespace chaos {
 					if(!instance) return;
 					subservices->network_broker_service->registerAction(instance);
 					//we have an instance so we can register that action
-					installed_api_group_list.push_back(boost::shared_ptr<AbstractApiGroup>(instance));
+					installed_api_group_list.push_back(ChaosSharedPtr<AbstractApiGroup>(instance));
 				}
 				
 				//! install a class as api group
@@ -68,14 +68,14 @@ namespace chaos {
 				void addApiAgroup() {
 					CHAOS_ASSERT(subservices)
 					//allcoate the instsancer for the AbstractApi depending by the template
-					std::auto_ptr<INSTANCER(T, AbstractApiGroup)> i(ALLOCATE_INSTANCER(T, AbstractApiGroup));
+					ChaosUniquePtr<INSTANCER(T, AbstractApiGroup)> i(ALLOCATE_INSTANCER(T, AbstractApiGroup));
 					
 					//get api instance
 					T *instance = (T*)i->getInstance();
 					if(instance) {
 						subservices->network_broker_service->registerAction(instance);
 						//we have an instance so we can register that action
-						installed_api_group_list.push_back(boost::shared_ptr<AbstractApiGroup>(instance));
+						installed_api_group_list.push_back(ChaosSharedPtr<AbstractApiGroup>(instance));
 					}
 				}
 				

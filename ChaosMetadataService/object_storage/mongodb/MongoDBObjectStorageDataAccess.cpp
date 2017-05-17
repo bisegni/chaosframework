@@ -42,7 +42,7 @@ using namespace chaos::service_common::persistence::mongodb;
 using namespace chaos::data_service::object_storage::mongodb;
 using namespace chaos::data_service::object_storage::abstraction;
 
-MongoDBObjectStorageDataAccess::MongoDBObjectStorageDataAccess(const boost::shared_ptr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
+MongoDBObjectStorageDataAccess::MongoDBObjectStorageDataAccess(const ChaosSharedPtr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
 MongoDBAccessor(_connection){}
 
 MongoDBObjectStorageDataAccess::~MongoDBObjectStorageDataAccess() {}

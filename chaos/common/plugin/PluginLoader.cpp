@@ -43,7 +43,7 @@ PluginLoader::~PluginLoader() {
 bool PluginLoader::checkPluginInstantiableForSubclass(const char * pluginName, const char * subclass) {
     if(!loaded()) return false;
     //check inspector if we can instanziate the plugin
-    UNIQUE_PTR<PluginInspector> inspector(getInspectorForName(pluginName));
+    ChaosUniquePtr<PluginInspector> inspector(getInspectorForName(pluginName));
 
     //check if the inspector was defined
     if(!inspector.get()) return false;

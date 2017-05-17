@@ -37,9 +37,9 @@ namespace chaos {
                     uint32_t retry_number;
                     
                     //array that contain all requests
-                    std::vector< boost::shared_ptr<RequestInfo> > requests;
+                    std::vector< ChaosSharedPtr<RequestInfo> > requests;
                     
-                    std::auto_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> cu_ids;
+                    ChaosUniquePtr<chaos::common::data::CMultiTypeDataArrayWrapper> cu_ids;
                 public:
                     RecoverError();
                     ~RecoverError();

@@ -293,7 +293,7 @@ void DataServiceEditor::fillDataServiceAssocaition(const QString& data_service,
     ui->pushButtonUpdateAssociationList->setEnabled(data_service.size()>0);
     if(!api_result.isNull() &&
             api_result->hasKey("node_search_result_page")) {
-        std::unique_ptr<CMultiTypeDataArrayWrapper> arr(api_result->getVectorValue("node_search_result_page"));
+        ChaosUniquePtr<CMultiTypeDataArrayWrapper> arr(api_result->getVectorValue("node_search_result_page"));
         for(int i = 0;
             i < arr->size();
             i++) {
@@ -323,7 +323,7 @@ void DataServiceEditor::fillTableDS(QSharedPointer<CDataWrapper> api_result) {
     table_model_ds->setRowCount(0);
     if(!api_result.isNull() &&
             api_result->hasKey("node_search_result_page")) {
-        std::unique_ptr<CMultiTypeDataArrayWrapper> arr(api_result->getVectorValue("node_search_result_page"));;
+        ChaosUniquePtr<CMultiTypeDataArrayWrapper> arr(api_result->getVectorValue("node_search_result_page"));;
         for(int i = 0;
             i < arr->size();
             i++) {

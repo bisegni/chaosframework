@@ -42,7 +42,7 @@ using namespace chaos::common::async_central;
 using namespace chaos::metadata_service::api;
 using namespace chaos::metadata_service::batch;
 using namespace chaos::service_common::persistence::data_access;
-using boost::shared_ptr;
+using ChaosSharedPtr;
 
 WaitSemaphore ChaosMetadataService::waitCloseSemaphore;
 

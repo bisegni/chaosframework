@@ -37,7 +37,7 @@ namespace chaos{
                     //! the range of index
                 typedef  uint16_t VariableIndexType;
 
-                CHAOS_DEFINE_VECTOR_FOR_TYPE(boost::shared_ptr<AttributeValue>, AttributeValueVector);
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(ChaosSharedPtr<AttributeValue>, AttributeValueVector);
                 
                     //! this class is a set of key with a ValueSetting class associated
                 /*!
@@ -55,7 +55,7 @@ namespace chaos{
                     //attribute vector
                     AttributeValueVector vector_attribute_value;
                 public:
-                    mutable boost::shared_ptr<boost::shared_mutex>	mutex;
+                    mutable ChaosSharedPtr<boost::shared_mutex>	mutex;
 
                     AttributeCache();
 
@@ -130,9 +130,9 @@ namespace chaos{
                 
                 class SharedCacheLockDomain {
                 protected:
-                    boost::shared_ptr<boost::shared_mutex>	mutex;
+                    ChaosSharedPtr<boost::shared_mutex>	mutex;
                 public:
-                    SharedCacheLockDomain(boost::shared_ptr<boost::shared_mutex>& _mutex);
+                    SharedCacheLockDomain(ChaosSharedPtr<boost::shared_mutex>& _mutex);
                     
                     virtual ~SharedCacheLockDomain();
                     
@@ -144,7 +144,7 @@ namespace chaos{
                 class WriteSharedCacheLockDomain : public SharedCacheLockDomain {
                     boost::unique_lock<boost::shared_mutex> w_lock;
                 public:
-                    WriteSharedCacheLockDomain(boost::shared_ptr<boost::shared_mutex>& _mutex, bool lock = false);
+                    WriteSharedCacheLockDomain(ChaosSharedPtr<boost::shared_mutex>& _mutex, bool lock = false);
                     
                     ~WriteSharedCacheLockDomain();
                     
@@ -156,7 +156,7 @@ namespace chaos{
                 class ReadSharedCacheLockDomain : public SharedCacheLockDomain {
                     boost::shared_lock<boost::shared_mutex> r_lock;
                 public:
-                    ReadSharedCacheLockDomain(boost::shared_ptr<boost::shared_mutex>& _mutex, bool lock = false);
+                    ReadSharedCacheLockDomain(ChaosSharedPtr<boost::shared_mutex>& _mutex, bool lock = false);
                     
                     ~ReadSharedCacheLockDomain();
                     

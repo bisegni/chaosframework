@@ -106,7 +106,7 @@ int main(int argc, const char * argv[]) {
         settings.use_cas = 0;
         settings.preallocation = 0;
         
-        unique_ptr<chaos::common::data::cache::DataCache> fc(new chaos::common::data::cache::DataCache());
+        ChaosUniquePtr<chaos::common::data::cache::DataCache> fc(new chaos::common::data::cache::DataCache());
         fc->init(&settings);
         fc->start();
         

@@ -59,10 +59,10 @@ namespace chaos {
                 class MongoDBAccessor {
                     friend class MongoDBPersistenceDriver;
                 protected:
-                    boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager> connection;
+                    ChaosSharedPtr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager> connection;
                     
                 public:
-                    MongoDBAccessor(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
+                    MongoDBAccessor(const ChaosSharedPtr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
                     virtual ~MongoDBAccessor();
                     
                     const std::string& getDatabaseName();

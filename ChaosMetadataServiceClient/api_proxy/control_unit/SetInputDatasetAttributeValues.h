@@ -41,9 +41,9 @@ namespace chaos {
                 
                 struct ControlUnitInputDatasetChangeSet {
                     std::string cu_uid;
-                    std::vector< boost::shared_ptr<InputDatasetAttributeChangeValue> > change_set;
+                    std::vector< ChaosSharedPtr<InputDatasetAttributeChangeValue> > change_set;
                     ControlUnitInputDatasetChangeSet(const std::string _cu_uid,
-                                                     const std::vector< boost::shared_ptr<InputDatasetAttributeChangeValue> >& _change_set);
+                                                     const std::vector< ChaosSharedPtr<InputDatasetAttributeChangeValue> >& _change_set);
                 };
                 
                 //! return the current control unit dataset
@@ -58,7 +58,7 @@ namespace chaos {
                     /*!
                      \param cu_unique_id control unit id for wich we need the dataset
                      */
-                    ApiProxyResult execute(const std::vector< boost::shared_ptr<ControlUnitInputDatasetChangeSet> >& change_set);
+                    ApiProxyResult execute(const std::vector< ChaosSharedPtr<ControlUnitInputDatasetChangeSet> >& change_set);
                 };
             }
         }

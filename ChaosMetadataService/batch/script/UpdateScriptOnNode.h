@@ -44,8 +44,8 @@ namespace chaos {
                     ChaosStringVector node_to_update_vec;
                     ChaosStringVectorIterator current_node_it;
                     
-                    std::auto_ptr<RequestInfo> request;
-                    std::auto_ptr<CDataWrapper> script_update_data_pack;
+                    ChaosUniquePtr<RequestInfo> request;
+                    ChaosUniquePtr<CDataWrapper> script_update_data_pack;
                 public:
                     UpdateScriptOnNode();
                     ~UpdateScriptOnNode();

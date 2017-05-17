@@ -27,9 +27,9 @@ using namespace chaos::common::message;
 
 //!private constructor
 MessageRequestFuture::MessageRequestFuture(chaos::common::utility::atomic_int_type _request_id,
-                                           boost::shared_future< boost::shared_ptr<chaos::common::data::CDataWrapper> > _future):
+                                           boost::shared_future< ChaosSharedPtr<chaos::common::data::CDataWrapper> > _message_future):
 request_id(_request_id),
-future(_future),
+message_future(_message_future),
 request_result(),
 error_code(0),
 error_message("no data"),
@@ -46,15 +46,15 @@ bool MessageRequestFuture::wait(int32_t timeout_in_milliseconds) {
         } else{
             //! whait for result
             if (timeout_in_milliseconds >= 0){
-                future.wait_for(boost::chrono::milliseconds(timeout_in_milliseconds));
+                message_future.wait_for(boost::chrono::milliseconds(timeout_in_milliseconds));
             }else{
-                future.wait();
+                message_future.wait();
             }
 
-            if (future.is_ready() &&
-                future.has_value()){
-                DEBUG_CODE(MRF_DBG << future.get()->getJSONString();)
-                MRF_PARSE_CDWPTR_RESULT(future.get())
+            if (message_future.is_ready() &&
+                message_future.has_value()){
+                DEBUG_CODE(MRF_DBG << message_future.get()->getJSONString();)
+                MRF_PARSE_CDWPTR_RESULT(message_future.get())
                 result = true;
             }
         }
