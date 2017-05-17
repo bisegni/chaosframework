@@ -71,7 +71,7 @@ void UpdateScriptOnNode::setHandler(CDataWrapper *data) {
     if(data->isStringValue(NodeDefinitionKey::NODE_UNIQUE_ID)) {
         node_to_update_vec.push_back(data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID));
     } else if(data->isVectorValue(NodeDefinitionKey::NODE_UNIQUE_ID)) {
-        std::auto_ptr<CMultiTypeDataArrayWrapper> arr(data->getVectorValue(NodeDefinitionKey::NODE_UNIQUE_ID));
+        ChaosUniquePtr<CMultiTypeDataArrayWrapper> arr(data->getVectorValue(NodeDefinitionKey::NODE_UNIQUE_ID));
         for(int idx = 0;
             idx < arr->size();
             idx++) {
@@ -101,7 +101,7 @@ void UpdateScriptOnNode::ccHandler() {
             } else {
                 bool alive = false;
                 CDataWrapper *tmp_ptr = NULL;
-                std::auto_ptr<CDataWrapper> node_desc;
+                ChaosUniquePtr<CDataWrapper> node_desc;
                 //fetch new node description
                 if((err = getDataAccess<mds_data_access::UnitServerDataAccess>()->getDescription(*current_node_it, &tmp_ptr)) ||
                    tmp_ptr == NULL) {

@@ -38,7 +38,7 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define ERR     DBG_LOG(MongoDBScriptDataAccess)
 #define DBG     ERR_LOG(MongoDBScriptDataAccess)
 
-MongoDBAgentDataAccess::MongoDBAgentDataAccess(const boost::shared_ptr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
+MongoDBAgentDataAccess::MongoDBAgentDataAccess(const ChaosSharedPtr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
 MongoDBAccessor(_connection),
 AgentDataAccess(),
 utility_data_access(NULL),
@@ -83,11 +83,11 @@ int MongoDBAgentDataAccess::insertUpdateAgentDescription(CDataWrapper& agent_des
         mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << agent_uid
                                     << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_AGENT);
         mongo::BSONArrayBuilder array_descirption_builder;
-        std::auto_ptr<CMultiTypeDataArrayWrapper> description_array(agent_description.getVectorValue(AgentNodeDefinitionKey::HOSTED_WORKER));
+        ChaosUniquePtr<CMultiTypeDataArrayWrapper> description_array(agent_description.getVectorValue(AgentNodeDefinitionKey::HOSTED_WORKER));
         for(int idx = 0;
             idx < description_array->size();
             idx++) {
-            std::auto_ptr<CDataWrapper> worker_desc(description_array->getCDataWrapperElementAtIndex(idx));
+            ChaosUniquePtr<CDataWrapper> worker_desc(description_array->getCDataWrapperElementAtIndex(idx));
             array_descirption_builder << mongo::BSONObj(worker_desc->getBSONRawData(size));
         }
         
@@ -139,7 +139,7 @@ int MongoDBAgentDataAccess::loadAgentDescription(const std::string& agent_uid,
             ERR << CHAOS_FORMAT("Error finding agent %1% with error %2%", %agent_uid%err);
         } else if(result.isEmpty() == false &&
                   result.hasField(AgentNodeDefinitionKey::NODE_ASSOCIATED)) {
-            std::auto_ptr<CDataWrapper> full_ser(new CDataWrapper(result.objdata()));
+            ChaosUniquePtr<CDataWrapper> full_ser(new CDataWrapper(result.objdata()));
             AgentInstanceSDWrapper agent_instance_sd_wrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(AgentInstance, agent_description));
             agent_instance_sd_wrapper.deserialize(full_ser.get());
         }
@@ -208,7 +208,7 @@ int MongoDBAgentDataAccess::saveNodeAssociationForAgent(const std::string& agent
         mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << agent_uid
                                     << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_AGENT);
         AgentAssociationSDWrapper assoc_wrap(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(AgentAssociation, node_association));
-        std::auto_ptr<CDataWrapper> assoc_ser = assoc_wrap.serialize();
+        ChaosUniquePtr<CDataWrapper> assoc_ser = assoc_wrap.serialize();
         mongo::BSONObj pull_update = BSON("$pull" << BSON(AgentNodeDefinitionKey::NODE_ASSOCIATED << BSON(NodeDefinitionKey::NODE_UNIQUE_ID << node_association.associated_node_uid)));
         mongo::BSONObj push_update = BSON("$push" << BSON(AgentNodeDefinitionKey::NODE_ASSOCIATED << mongo::BSONObj(assoc_ser->getBSONRawData(size))));
         
@@ -274,7 +274,7 @@ int MongoDBAgentDataAccess::loadNodeAssociationForAgent(const std::string& agent
                 if(associated_node_object.size()>0) {
                     mongo::BSONObj associate_node_configuration = associated_node_object[0].Obj();
                     //we have found description and need to return all field
-                    std::auto_ptr<CDataWrapper> associ_cfg_wrap(new CDataWrapper(associate_node_configuration.objdata()));
+                    ChaosUniquePtr<CDataWrapper> associ_cfg_wrap(new CDataWrapper(associate_node_configuration.objdata()));
                     AgentAssociationSDWrapper sd_wrap(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(AgentAssociation, node_association));
                     sd_wrap.deserialize(associ_cfg_wrap.get());
                 }
@@ -386,7 +386,7 @@ int MongoDBAgentDataAccess::getNodeListStatusForAgent(const std::string& agent_u
                     it++) {
                     mongo::BSONObj obj = it->Obj();
                     AgentAssociationStatusSDWrapper status_sd_wrapper;
-                    std::auto_ptr<CDataWrapper> status(new CDataWrapper(obj.objdata()));
+                    ChaosUniquePtr<CDataWrapper> status(new CDataWrapper(obj.objdata()));
                     status_sd_wrapper.deserialize(status.get());
                     if(obj.hasField("check_ts")){status_sd_wrapper().check_ts = obj.getField("check_ts").date().millis;}
                     node_status_vec.push_back(status_sd_wrapper());

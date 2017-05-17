@@ -67,7 +67,7 @@ deviceChannel(NULL) {
                                         __PRETTY_FUNCTION__);
      CDataWrapper *tmp_data_handler = NULL;
      if(!mdsChannel->getDataDriverBestConfiguration(&tmp_data_handler, millisecToWait)){
-            UNIQUE_PTR<CDataWrapper> best_available_da_ptr(tmp_data_handler);
+            ChaosUniquePtr<CDataWrapper> best_available_da_ptr(tmp_data_handler);
             ioLiveDataDriver->updateConfiguration(best_available_da_ptr.get());
      }
 
@@ -81,7 +81,7 @@ deviceChannel(NULL) {
     channel_keys[DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH]=(deviceChannel->getDeviceID() + DataPackPrefixID::HEALTH_DATASET_POSTFIX);
     //  current_dataset.push_back(d);
    for(int cnt=0;cnt<channel_keys.size();cnt++){
-	   boost::shared_ptr<chaos::common::data::CDataWrapper> ch;
+	   ChaosSharedPtr<chaos::common::data::CDataWrapper> ch;
    	   ch.reset(new chaos::common::data::CDataWrapper());
        current_dataset.push_back(ch);
    }
@@ -146,7 +146,7 @@ void CUController::updateChannel() throw(CException) {
     err = mdsChannel->getLastDatasetForDevice(deviceChannel->getDeviceID(), &tmp_data_handler, millisecToWait);
     if(err!=ErrorCode::EC_NO_ERROR || !tmp_data_handler) return;
     
-    UNIQUE_PTR<CDataWrapper> lastDeviceDefinition(tmp_data_handler);
+    ChaosUniquePtr<CDataWrapper> lastDeviceDefinition(tmp_data_handler);
     
     datasetDB.addAttributeToDataSetFromDataWrapper(*lastDeviceDefinition.get());
 }
@@ -615,7 +615,7 @@ void CUController::sendCustomMessage(const std::string& action,
 int CUController::checkRPCInformation(CDataWrapper **result_information,
                                       uint32_t timeout) {
     int err = -1;
-    std::auto_ptr<MessageRequestFuture> result = deviceChannel->checkRPCInformation();
+    ChaosUniquePtr<MessageRequestFuture> result = deviceChannel->checkRPCInformation();
     if(result.get() == NULL) return -1;
     if(result->wait(timeout)) {
         err = result->getError();
@@ -633,7 +633,7 @@ int CUController::echoTest(CDataWrapper * const echo_data,
                            CDataWrapper **echo_data_result,
                            uint32_t timeout) {
     int err = -1;
-    std::auto_ptr<MessageRequestFuture> result = deviceChannel->echoTest(echo_data);
+    ChaosUniquePtr<MessageRequestFuture> result = deviceChannel->echoTest(echo_data);
     if(result.get() == NULL) return err;
     if(result->wait(timeout)) {
         err = result->getError();
@@ -647,7 +647,7 @@ int CUController::echoTest(CDataWrapper * const echo_data,
 }
 
 //---------------------------------------------------------------------------------------------------
-std::auto_ptr<MessageRequestFuture> CUController::sendCustomRequestWithFuture(const std::string& action_name,
+ChaosUniquePtr<MessageRequestFuture> CUController::sendCustomRequestWithFuture(const std::string& action_name,
                                                                               common::data::CDataWrapper *request_date) {
     return deviceChannel->sendCustomRequestWithFuture(action_name,
                                                       request_date);
@@ -897,7 +897,7 @@ CDataWrapper * CUController::getLiveCDataWrapperPtr() {
 
 
 //---------------------------------------------------------------------------------------------------
-boost::shared_ptr<chaos::common::data::CDataWrapper> CUController::getCurrentDatasetForDomain(DatasetDomain domain) {
+ChaosSharedPtr<chaos::common::data::CDataWrapper> CUController::getCurrentDatasetForDomain(DatasetDomain domain) {
     boost::mutex::scoped_lock lock(trackMutext);
     if(domain<current_dataset.size()){
         return current_dataset[domain];
@@ -927,7 +927,7 @@ int   CUController::fetchCurrentDatatasetFromDomain(DatasetDomain domain,chaos::
 }
 
 //---------------------------------------------------------------------------------------------------
-boost::shared_ptr<chaos::common::data::CDataWrapper>  CUController::fetchCurrentDatatasetFromDomain(DatasetDomain domain) {
+ChaosSharedPtr<chaos::common::data::CDataWrapper>  CUController::fetchCurrentDatatasetFromDomain(DatasetDomain domain) {
     char *value = NULL;
     unsigned long value_len = 0;
     boost::mutex::scoped_lock lock(trackMutext);

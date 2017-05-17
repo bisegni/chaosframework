@@ -34,7 +34,7 @@ using namespace chaos::common::utility;
 using namespace chaos::service_common::persistence::mongodb;
 using namespace chaos::metadata_service::persistence::mongodb;
 
-MongoDBDataServiceDataAccess::MongoDBDataServiceDataAccess(const boost::shared_ptr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
+MongoDBDataServiceDataAccess::MongoDBDataServiceDataAccess(const ChaosSharedPtr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
 MongoDBAccessor(_connection),
 node_data_access(NULL){}
 
@@ -258,7 +258,7 @@ int MongoDBDataServiceDataAccess::removeNode(const std::string& ds_unique_id,
 
 //inherited method
 int MongoDBDataServiceDataAccess::searchAssociationForUID(const std::string& ds_unique_id,
-                                                          std::vector<boost::shared_ptr<CDataWrapper> >& node_associated) {
+                                                          std::vector<ChaosSharedPtr<CDataWrapper> >& node_associated) {
     CHAOS_ASSERT(node_data_access)
     int err = 0;
     std::vector<mongo::BSONElement> association;
@@ -298,7 +298,7 @@ int MongoDBDataServiceDataAccess::searchAssociationForUID(const std::string& ds_
                         MDBDSDA_ERR << "Error getting node description for associated cu:" << it->String() << " to the data service:" << ds_unique_id <<" with error:"<< err;
                         continue;
                     } else if(node_element_description) {
-                        node_associated.push_back(boost::shared_ptr<CDataWrapper>(node_element_description));
+                        node_associated.push_back(ChaosSharedPtr<CDataWrapper>(node_element_description));
                     }
                 }
             }
@@ -316,7 +316,7 @@ int MongoDBDataServiceDataAccess::searchAssociationForUID(const std::string& ds_
     return err;
 }
 
-int MongoDBDataServiceDataAccess::searchAllDataAccess(std::vector<boost::shared_ptr<common::data::CDataWrapper> >&  node_associated,
+int MongoDBDataServiceDataAccess::searchAllDataAccess(std::vector<ChaosSharedPtr<common::data::CDataWrapper> >&  node_associated,
                                                       uint32_t last_unique_id,
                                                       uint32_t page_length) {
     int err = 0;
@@ -357,14 +357,14 @@ int MongoDBDataServiceDataAccess::searchAllDataAccess(std::vector<boost::shared_
             for (SearchResultIterator it = paged_result.begin();
                  it != paged_result.end();
                  it++) {
-                node_associated.push_back(boost::shared_ptr<common::data::CDataWrapper>(new CDataWrapper(it->objdata())));
+                node_associated.push_back(ChaosSharedPtr<common::data::CDataWrapper>(new CDataWrapper(it->objdata())));
             }
         }
     }
     return err;
 }
 
-int MongoDBDataServiceDataAccess::getBestNDataService(std::vector<boost::shared_ptr<common::data::CDataWrapper> >&  best_available_data_service,
+int MongoDBDataServiceDataAccess::getBestNDataService(std::vector<ChaosSharedPtr<common::data::CDataWrapper> >&  best_available_data_service,
                                                       unsigned int number_of_result) {
     int err = 0;
     SearchResult            paged_result;
@@ -403,7 +403,7 @@ int MongoDBDataServiceDataAccess::getBestNDataService(std::vector<boost::shared_
                 it != end;
                 it++) {
                 //add element to result
-                best_available_data_service.push_back(boost::shared_ptr<common::data::CDataWrapper>(new CDataWrapper(it->objdata())));
+                best_available_data_service.push_back(ChaosSharedPtr<common::data::CDataWrapper>(new CDataWrapper(it->objdata())));
             }
            
         }
@@ -422,7 +422,7 @@ int MongoDBDataServiceDataAccess::getBestNDataService(std::vector<boost::shared_
 int MongoDBDataServiceDataAccess::getBestNDataService(std::vector<std::string >&  best_available_data_service,
                                                       unsigned int number_of_result) {
     int err = 0;
-    std::vector<boost::shared_ptr<common::data::CDataWrapper> > best_available_server;
+    std::vector<ChaosSharedPtr<common::data::CDataWrapper> > best_available_server;
     
     if((err = getBestNDataService(best_available_server,
                                   number_of_result))) {
@@ -430,7 +430,7 @@ int MongoDBDataServiceDataAccess::getBestNDataService(std::vector<std::string >&
     }
     
     //we can fill the vector with the endpoint
-    for(std::vector<boost::shared_ptr<common::data::CDataWrapper> >::iterator it = best_available_server.begin();
+    for(std::vector<ChaosSharedPtr<common::data::CDataWrapper> >::iterator it = best_available_server.begin();
         it != best_available_server.end();
         it++) {
         //add address
@@ -448,7 +448,7 @@ int MongoDBDataServiceDataAccess::getBestNDataService(std::vector<std::string >&
 int MongoDBDataServiceDataAccess::getBestNDataServiceEndpoint(std::vector<std::string>&  best_available_data_service_endpoint,
                                                               unsigned int number_of_result) {
     int err = 0;
-    std::vector<boost::shared_ptr<common::data::CDataWrapper> > best_available_server;
+    std::vector<ChaosSharedPtr<common::data::CDataWrapper> > best_available_server;
     
     if((err = getBestNDataService(best_available_server,
                                   number_of_result))) {
@@ -456,7 +456,7 @@ int MongoDBDataServiceDataAccess::getBestNDataServiceEndpoint(std::vector<std::s
     }
     
     //we can fill the vector with the endpoint
-    for(std::vector<boost::shared_ptr<common::data::CDataWrapper> >::iterator it = best_available_server.begin();
+    for(std::vector<ChaosSharedPtr<common::data::CDataWrapper> >::iterator it = best_available_server.begin();
         it != best_available_server.end();
         it++) {
         //add address

@@ -137,10 +137,10 @@ namespace chaos {
             public:
                 chaos::common::message::MDSMessageChannel   *mds_channel;
                     //! abstract contro unit isntalce
-                boost::shared_ptr<AbstractControlUnit>	work_unit_instance;
+                ChaosSharedPtr<AbstractControlUnit>	work_unit_instance;
                 
                     //! default constructor adn destructor
-                WorkUnitManagement(boost::shared_ptr<AbstractControlUnit>& _work_unit_instance);
+                WorkUnitManagement(ChaosSharedPtr<AbstractControlUnit>& _work_unit_instance);
                 ~WorkUnitManagement();
                 
                     //! return the state of the unit state machine

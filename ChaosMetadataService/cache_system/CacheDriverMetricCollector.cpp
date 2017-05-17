@@ -24,7 +24,7 @@
 using namespace chaos::data_service::cache_system;
 
 // static initialization
-boost::shared_ptr<CacheDriverSharedMetricIO> CacheDriverMetricCollector::shared_collector;
+ChaosSharedPtr<CacheDriverSharedMetricIO> CacheDriverMetricCollector::shared_collector;
 
 CacheDriverMetricCollector::CacheDriverMetricCollector(CacheDriver *_wrapped_cache_driver):
 CacheDriver(_wrapped_cache_driver->getName()),

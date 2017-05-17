@@ -41,12 +41,12 @@ namespace chaos {
         namespace data {
             namespace structured {
                 
-                typedef boost::shared_ptr<DatasetAttribute> DatasetAttributePtr;
+                typedef ChaosSharedPtr<DatasetAttribute> DatasetAttributePtr;
                 
                 //! define the contaner for the dataset within the boost multi index set
                 struct DatasetAttributeElement {
                     
-                    typedef boost::shared_ptr<DatasetAttributeElement> DatasetAttributeElementPtr;
+                    typedef ChaosSharedPtr<DatasetAttributeElement> DatasetAttributeElementPtr;
                     
                     //!keep track of ordering id
                     unsigned int seq_id;
@@ -156,11 +156,11 @@ namespace chaos {
                     if(serialized_data->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_LIST) &&
                        serialized_data->isVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_LIST)) {
                         DatasetAttributeSDWrapper attribute_wrapper;
-                        std::auto_ptr<CMultiTypeDataArrayWrapper> attr_vec(serialized_data->getVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_LIST));
+                        ChaosUniquePtr<CMultiTypeDataArrayWrapper> attr_vec(serialized_data->getVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_LIST));
                         for(int idx = 0;
                             idx < attr_vec->size();
                             idx++) {
-                            std::auto_ptr<CDataWrapper> attr_ser(attr_vec->getCDataWrapperElementAtIndex(idx));
+                            ChaosUniquePtr<CDataWrapper> attr_ser(attr_vec->getCDataWrapperElementAtIndex(idx));
                             attribute_wrapper.deserialize(attr_ser.get());
                             Subclass::dataWrapped().attribute_set.insert(DatasetAttributeElement::DatasetAttributeElementPtr(new DatasetAttributeElement((unsigned int)Subclass::dataWrapped().attribute_set.size(),
                                                                                                                                                          DatasetAttributePtr(new DatasetAttribute(attribute_wrapper())))));
@@ -168,8 +168,8 @@ namespace chaos {
                     }
                 }
                 
-                std::auto_ptr<CDataWrapper> serialize() {
-                    std::auto_ptr<CDataWrapper> result(new CDataWrapper());
+                ChaosUniquePtr<CDataWrapper> serialize() {
+                    ChaosUniquePtr<CDataWrapper> result(new CDataWrapper());
                     result->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_NAME, Subclass::dataWrapped().name);
                     
                     DatasetAttribute dataset_attribute_buf;

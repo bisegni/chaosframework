@@ -33,7 +33,7 @@ namespace chaos {
         namespace api_proxy {
             namespace service {
                 
-                typedef boost::shared_ptr<chaos::common::data::CDataWrapper> DatasetValueShrdPtr;
+                typedef ChaosSharedPtr<chaos::common::data::CDataWrapper> DatasetValueShrdPtr;
                 
                 CHAOS_DEFINE_VECTOR_FOR_TYPE(DatasetValueShrdPtr, VectorDatasetValue);
                 

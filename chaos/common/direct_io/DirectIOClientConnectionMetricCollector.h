@@ -38,14 +38,14 @@ namespace chaos {
             class DirectIOClientConnectionMetricCollector:
             public DirectIOClientConnection {
                 friend class DirectIOClient;
-                boost::shared_ptr<DirectIOClientConnectionSharedMetricIO> shared_collector;
+                ChaosSharedPtr<DirectIOClientConnectionSharedMetricIO> shared_collector;
                 DirectIOClientConnection *wrapped_connection;
             protected:
                 void fetchMetricForTimeDiff(uint64_t time_diff);
             public:
                 DirectIOClientConnectionMetricCollector(const std::string& _server_description,
                                                         uint16_t _endpoint,
-                                                        boost::shared_ptr<DirectIOClientConnectionSharedMetricIO> _shared_collector,
+                                                        ChaosSharedPtr<DirectIOClientConnectionSharedMetricIO> _shared_collector,
                                                         DirectIOClientConnection *_wrapped_connection);
                 
                 ~DirectIOClientConnectionMetricCollector();

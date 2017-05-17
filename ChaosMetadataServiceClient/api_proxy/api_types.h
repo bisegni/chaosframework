@@ -29,7 +29,7 @@ namespace chaos {
         namespace api_proxy {
             namespace node {
                 //create list types for cdatawrapper setter
-                CHAOS_DEFINE_VECTOR_FOR_TYPE(boost::shared_ptr<chaos::common::data::CDataWrapperKeyValueSetter>, ParameterSetterList)
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(ChaosSharedPtr<chaos::common::data::CDataWrapperKeyValueSetter>, ParameterSetterList)
                 /*!
                  wrap the command template information
                  */
@@ -52,7 +52,7 @@ namespace chaos {
                     uint32_t execution_channel;
                 };
 
-                CHAOS_DEFINE_VECTOR_FOR_TYPE(boost::shared_ptr<CommandTemplate>, TemplateList)
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(ChaosSharedPtr<CommandTemplate>, TemplateList)
                 
                 struct TemplateSubmission {
                     //! unique id of the node that need to receive the command
@@ -65,7 +65,7 @@ namespace chaos {
                     ParameterSetterList parametrized_attribute_value;
                 };
                 
-                CHAOS_DEFINE_VECTOR_FOR_TYPE(boost::shared_ptr<TemplateSubmission>, TemplateSubmissionList)
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(ChaosSharedPtr<TemplateSubmission>, TemplateSubmissionList)
                 
                 //define the list, iterator and cost iterator
                 CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string, CommandUIDList)
@@ -75,7 +75,7 @@ namespace chaos {
                     std::string           group_name;
                     ParameterSetterList   group_property_list;
                 };
-                CHAOS_DEFINE_VECTOR_FOR_TYPE(boost::shared_ptr<NodePropertyGroup>, NodePropertyGroupList)
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(ChaosSharedPtr<NodePropertyGroup>, NodePropertyGroupList)
             }
         }
     }

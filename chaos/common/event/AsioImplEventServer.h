@@ -91,7 +91,7 @@ namespace chaos {
             private:
                 boost::asio::io_service io_service;
                 boost::thread_group serviceThreads;
-                //vector< shared_ptr<boost::thread> > serviceThread;
+                //vector< ChaosSharedPtr<boost::thread> > serviceThread;
                 uint8_t threadNumber;
                 
             };

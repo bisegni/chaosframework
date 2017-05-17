@@ -77,40 +77,40 @@ bool ChaosTypedAttributeValueSetter::isValid() {
     return chaosAttributeMandatoryFlag()?!chaosAttributeValue().isNull():true;
 }
 
-boost::shared_ptr<CDataWrapperKeyValueSetter> ChaosTypedAttributeValueSetter::getCDataWrapperValueSetter(bool *ok) {
+ChaosSharedPtr<CDataWrapperKeyValueSetter> ChaosTypedAttributeValueSetter::getCDataWrapperValueSetter(bool *ok) {
     if(chaos_attribute_value_.isNull()) {
         if(ok) *ok = false;
-        return boost::shared_ptr<CDataWrapperKeyValueSetter>();
+        return ChaosSharedPtr<CDataWrapperKeyValueSetter>();
     }
 
     switch(chaosType()) {
     case chaos::DataType::TYPE_BOOLEAN:
         if(ok) *ok = true;
-        return boost::shared_ptr<CDataWrapperKeyValueSetter>(new CDataWrapperBoolKeyValueSetter(chaosAttributeName().toStdString(), chaos_attribute_value_.toBool()));
+        return ChaosSharedPtr<CDataWrapperKeyValueSetter>(new CDataWrapperBoolKeyValueSetter(chaosAttributeName().toStdString(), chaos_attribute_value_.toBool()));
         break;
     case chaos::DataType::TYPE_INT32:
-        return boost::shared_ptr<CDataWrapperKeyValueSetter>(new CDataWrapperInt32KeyValueSetter(chaosAttributeName().toStdString(), chaos_attribute_value_.toInt(ok)));
+        return ChaosSharedPtr<CDataWrapperKeyValueSetter>(new CDataWrapperInt32KeyValueSetter(chaosAttributeName().toStdString(), chaos_attribute_value_.toInt(ok)));
         break;
     case chaos::DataType::TYPE_INT64:
-        return boost::shared_ptr<CDataWrapperKeyValueSetter>(new CDataWrapperInt64KeyValueSetter(chaosAttributeName().toStdString(), chaos_attribute_value_.toLongLong(ok)));
+        return ChaosSharedPtr<CDataWrapperKeyValueSetter>(new CDataWrapperInt64KeyValueSetter(chaosAttributeName().toStdString(), chaos_attribute_value_.toLongLong(ok)));
         break;
     case chaos::DataType::TYPE_DOUBLE:
-        return boost::shared_ptr<CDataWrapperKeyValueSetter>(new CDataWrapperDoubleKeyValueSetter(chaosAttributeName().toStdString(), chaos_attribute_value_.toDouble(ok)));
+        return ChaosSharedPtr<CDataWrapperKeyValueSetter>(new CDataWrapperDoubleKeyValueSetter(chaosAttributeName().toStdString(), chaos_attribute_value_.toDouble(ok)));
         break;
         
     case chaos::DataType::TYPE_CLUSTER:{
     	  if(ok) *ok = true;
-    	        return boost::shared_ptr<CDataWrapperKeyValueSetter>(new CDataWrapperClusterKeyValueSetter(chaosAttributeName().toStdString(), chaos_attribute_value_.toString().toStdString()));
+    	        return ChaosSharedPtr<CDataWrapperKeyValueSetter>(new CDataWrapperClusterKeyValueSetter(chaosAttributeName().toStdString(), chaos_attribute_value_.toString().toStdString()));
     	        break;
      }
             
     case chaos::DataType::TYPE_STRING:
         if(ok) *ok = true;
-        return boost::shared_ptr<CDataWrapperKeyValueSetter>(new CDataWrapperStringKeyValueSetter(chaosAttributeName().toStdString(), chaos_attribute_value_.toString().toStdString()));
+        return ChaosSharedPtr<CDataWrapperKeyValueSetter>(new CDataWrapperStringKeyValueSetter(chaosAttributeName().toStdString(), chaos_attribute_value_.toString().toStdString()));
         break;
     default:
         if(ok) *ok = false;
-        return boost::shared_ptr<CDataWrapperKeyValueSetter> ();
+        return ChaosSharedPtr<CDataWrapperKeyValueSetter> ();
         break;
     }
 }

@@ -12,7 +12,7 @@ class SnapshotTableModel:
 public:
     SnapshotTableModel(QObject *parent = 0);
     ~SnapshotTableModel();
-    void updateSnapshotList(std::unique_ptr<chaos::metadata_service_client::api_proxy::service::GetAllSnapshotHelper> _snapshot_info_list);
+    void updateSnapshotList(ChaosUniquePtr<chaos::metadata_service_client::api_proxy::service::GetAllSnapshotHelper> _snapshot_info_list);
 protected:
     int getRowCount() const;
     int getColumnCount() const;
@@ -22,7 +22,7 @@ protected:
     QVariant getTextAlignForData(int row, int column) const;
     bool isCellSelectable(const QModelIndex &index) const;
 private:
-    std::unique_ptr<chaos::metadata_service_client::api_proxy::service::GetAllSnapshotHelper> snapshot_info_list;
+    ChaosUniquePtr<chaos::metadata_service_client::api_proxy::service::GetAllSnapshotHelper> snapshot_info_list;
 };
 
 #endif // SNAPSHOTTABLEMODEL_H

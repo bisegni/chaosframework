@@ -450,7 +450,7 @@ extern "C" {
 		DeviceController *dCtrl = getDeviceControllerFromID(dev_id);
 		if(dCtrl && command_alias) {
 			//changed to use the new api
-			std::auto_ptr<chaos::common::data::CDataWrapper> data_wrapper;
+			ChaosUniquePtr<chaos::common::data::CDataWrapper> data_wrapper;
 			
 			std::string cmd_alias_str = command_alias;
 			if(slow_command_data) {

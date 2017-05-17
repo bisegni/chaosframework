@@ -67,7 +67,7 @@ namespace  chaos {
             static const char * const StateVariableTypeAlarmCULabel = "cu_alarm";
             static const char * const StateVariableTypeAlarmDEVLabel   = "device_alarm";
             
-            CHAOS_DEFINE_VECTOR_FOR_TYPE(boost::shared_ptr<chaos::common::data::CDataWrapper>, ACUStartupCommandList);
+            CHAOS_DEFINE_VECTOR_FOR_TYPE(ChaosSharedPtr<chaos::common::data::CDataWrapper>, ACUStartupCommandList);
             
             CHAOS_DEFINE_MAP_FOR_TYPE(StateVariableType, chaos::common::alarm::AlarmCatalog, MapStateVariable);
             
@@ -88,7 +88,7 @@ namespace  chaos {
             
             typedef boost::function<bool(const bool, //true load/false unload
             const std::string&,//control unit id
-            const boost::shared_ptr<ControlUnitApiInterface>& )> ProxyLoadHandler;//event type
+            const ChaosSharedPtr<ControlUnitApiInterface>& )> ProxyLoadHandler;//event type
 
         }
     }

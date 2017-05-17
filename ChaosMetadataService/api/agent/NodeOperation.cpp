@@ -54,7 +54,7 @@ CDataWrapper *NodeOperation::execute(CDataWrapper *api_data, bool& detach_data) 
     GET_DATA_ACCESS(AgentDataAccess, a_da, -4);
     int err = 0;
     uint64_t cmd_id = 0;
-    std::auto_ptr<CDataWrapper> batch_data(new CDataWrapper());
+    ChaosUniquePtr<CDataWrapper> batch_data(new CDataWrapper());
     api_data->copyKeyTo(NodeDefinitionKey::NODE_UNIQUE_ID, *batch_data);
     api_data->copyKeyTo("node_operation", *batch_data);
     std::string agent_uid;

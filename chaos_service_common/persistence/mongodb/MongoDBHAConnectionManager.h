@@ -91,7 +91,7 @@ namespace chaos {
                     
                     inline bool canRetry();
                     
-                    inline std::auto_ptr<DriverScopedConnection> getConnection();
+                    inline ChaosUniquePtr<DriverScopedConnection> getConnection();
                     
                     inline bool isConnectionError(int error);
                     
@@ -171,7 +171,7 @@ namespace chaos {
                                     int v = -1,
                                     int ttl = 0 );
                     
-                    std::auto_ptr<mongo::DBClientCursor> query(const std::string &ns,
+                    ChaosUniquePtr<mongo::DBClientCursor> query(const std::string &ns,
                                                                mongo::Query query,
                                                                int nToReturn = 0,
                                                                int nToSkip = 0,

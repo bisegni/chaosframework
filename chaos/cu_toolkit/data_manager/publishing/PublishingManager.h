@@ -38,17 +38,17 @@ namespace chaos {
                 
                 //!structure used by publishable manager for the management of the target
                 struct PublishableTargetManagerElement {
-                    boost::shared_ptr<PublishTarget> target;
+                    ChaosSharedPtr<PublishTarget> target;
                     bool auto_remove;
                     
                     PublishableTargetManagerElement();
                     PublishableTargetManagerElement(const PublishableTargetManagerElement& src);
-                    PublishableTargetManagerElement(boost::shared_ptr<PublishTarget> _target,
+                    PublishableTargetManagerElement(ChaosSharedPtr<PublishTarget> _target,
                                                     bool _auto_remove);
                 };
                 
                 //!hash table that collect publishtarget shared pointer with theyr names
-                typedef boost::shared_ptr<PublishableTargetManagerElement>  PublishableTargetManagerElementShrdPtr;
+                typedef ChaosSharedPtr<PublishableTargetManagerElement>  PublishableTargetManagerElementShrdPtr;
                 CHAOS_DEFINE_MAP_FOR_TYPE(std::string, PublishableTargetManagerElementShrdPtr, PublishableElementNameMap);
                 
                 //! is the central class that collect all endpoint and manages they lifetime

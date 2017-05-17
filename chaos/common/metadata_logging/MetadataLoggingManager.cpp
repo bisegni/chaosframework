@@ -89,7 +89,7 @@ void MetadataLoggingManager::deinit() throw(chaos::CException) {
 
 void MetadataLoggingManager::registerChannel(const std::string& channel_alias,
                                              chaos::common::utility::ObjectInstancer<AbstractMetadataLogChannel> *instancer) {
-    map_instancer.insert(std::pair<std::string, boost::shared_ptr< chaos::common::utility::ObjectInstancer<AbstractMetadataLogChannel > > >(channel_alias, boost::shared_ptr< chaos::common::utility::ObjectInstancer<AbstractMetadataLogChannel > > (instancer)));
+    map_instancer.insert(std::pair<std::string, ChaosSharedPtr< chaos::common::utility::ObjectInstancer<AbstractMetadataLogChannel > > >(channel_alias, ChaosSharedPtr< chaos::common::utility::ObjectInstancer<AbstractMetadataLogChannel > > (instancer)));
 }
 
 AbstractMetadataLogChannel *MetadataLoggingManager::getChannel(const std::string channel_alias) {
@@ -149,7 +149,7 @@ int MetadataLoggingManager::sendLogEntry(chaos::common::data::CDataWrapper *log_
 
     int err = 0;
     //send message to mds and wait for ack
-    std::auto_ptr<MultiAddressMessageRequestFuture> log_future = message_channel->sendRequestWithFuture(MetadataServerLoggingDefinitionKeyRPC::ACTION_NODE_LOGGING_RPC_DOMAIN,
+    ChaosUniquePtr<MultiAddressMessageRequestFuture> log_future = message_channel->sendRequestWithFuture(MetadataServerLoggingDefinitionKeyRPC::ACTION_NODE_LOGGING_RPC_DOMAIN,
                                                                                                         MetadataServerLoggingDefinitionKeyRPC::ACTION_NODE_LOGGING_SUBMIT_ENTRY,
                                                                                                         log_entry,
                                                                                                         2000);

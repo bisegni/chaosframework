@@ -39,7 +39,7 @@ vector<AbstActionDescShrPtr>& DeclareAction::getActionDescriptors() {
  Return the description of all action into a CDataWrapper
  */
 void DeclareAction::getActionDescrionsInDataWrapper(chaos_data::CDataWrapper& actionsDescription, bool close) {
-    boost::shared_ptr<chaos_data::CDataWrapper> actionDescription;
+    ChaosSharedPtr<chaos_data::CDataWrapper> actionDescription;
     vector<AbstActionDescShrPtr>::iterator actionIter;
     
         //cycle all actions for construct the vector of param action
@@ -72,12 +72,12 @@ void DeclareAction::decodeAction(AbstActionDescShrPtr& actionDesc, chaos_data::C
     actionDescription.addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DESCRIPTION, actionDesc->getTypeValue(AbstractActionDescriptor::ActionDescription));
     
         //now i must describe the param for this action
-    vector< boost::shared_ptr<ActionParamDescription> >& paramDescriptionVector = actionDesc->getParamDescriptions();
+    vector< ChaosSharedPtr<ActionParamDescription> >& paramDescriptionVector = actionDesc->getParamDescriptions();
     
     if(paramDescriptionVector.size()){
             //there are some parameter for this action, need to be added to rapresentation
-        boost::shared_ptr<chaos_data::CDataWrapper> paramDescRepresentation(new chaos_data::CDataWrapper());
-        for (vector< boost::shared_ptr<ActionParamDescription> >::iterator paramIter = paramDescriptionVector.begin();
+        ChaosSharedPtr<chaos_data::CDataWrapper> paramDescRepresentation(new chaos_data::CDataWrapper());
+        for (vector< ChaosSharedPtr<ActionParamDescription> >::iterator paramIter = paramDescriptionVector.begin();
              paramIter !=paramDescriptionVector.end();
              paramIter++) {
             

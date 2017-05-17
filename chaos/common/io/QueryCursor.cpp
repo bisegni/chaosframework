@@ -56,7 +56,7 @@ void QueryCursor::ResultPage::reset(DirectIODeviceChannelOpcodeQueryDataCloudRes
     last_received_sequence = query_result->header.last_found_sequence;
     //scan all result
     char *current_data_prt = query_result->results;
-    boost::shared_ptr<CDataWrapper> last_record;
+    ChaosSharedPtr<CDataWrapper> last_record;
     decoded_page.clear();
     while(decoded_page.size() < new_query_result->header.numer_of_record_found){
         //!at this time cdata wrapper copy the data
@@ -78,7 +78,7 @@ const bool QueryCursor::ResultPage::hasNext() const {
     return current_fetched < decoded_page.size();
 }
 
-boost::shared_ptr<chaos::common::data::CDataWrapper> QueryCursor::ResultPage::next() throw (chaos::CException){
+ChaosSharedPtr<chaos::common::data::CDataWrapper> QueryCursor::ResultPage::next() throw (chaos::CException){
     if(hasNext() == false) {throw CException(-1, "Cursor endend", __PRETTY_FUNCTION__);}
     return decoded_page[current_fetched++];
 }
@@ -122,7 +122,7 @@ const bool QueryCursor::hasNext() {
     }
 }
 
-boost::shared_ptr<chaos::common::data::CDataWrapper>  QueryCursor::next() throw (chaos::CException) {
+ChaosSharedPtr<chaos::common::data::CDataWrapper>  QueryCursor::next() throw (chaos::CException) {
     return result_page.next();
 }
 

@@ -59,7 +59,7 @@ namespace chaos{
                 boost::atomic<int64_t> sequence_id;
                 
                 //restore poitn map
-                std::map<std::string, std::map<std::string, boost::shared_ptr<chaos_data::CDataWrapper> > > restore_point_map;
+                std::map<std::string, std::map<std::string, ChaosSharedPtr<chaos_data::CDataWrapper> > > restore_point_map;
                 
                 chaos_io::IODataDriver *io_data_driver;
                 
@@ -105,7 +105,7 @@ namespace chaos{
                 int clearRestorePoint(const std::string& restore_point_tag);
                 
                 //!return the dataset asccoaited to a domain in a determinated restore tag
-                boost::shared_ptr<chaos_data::CDataWrapper>  getDatasetFromRestorePoint(const std::string& restore_point_tag,
+                ChaosSharedPtr<chaos_data::CDataWrapper>  getDatasetFromRestorePoint(const std::string& restore_point_tag,
                                                                                         KeyDataStorageDomain domain);
                 
                 /*

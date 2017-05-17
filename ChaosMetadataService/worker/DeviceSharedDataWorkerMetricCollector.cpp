@@ -26,7 +26,7 @@
 
 using namespace chaos::data_service::worker;
 
-DeviceSharedDataWorkerMetricCollector::DeviceSharedDataWorkerMetricCollector(boost::shared_ptr<DeviceSharedDataWorkerMetric> _data_worker_metric):
+DeviceSharedDataWorkerMetricCollector::DeviceSharedDataWorkerMetricCollector(ChaosSharedPtr<DeviceSharedDataWorkerMetric> _data_worker_metric):
 DeviceSharedDataWorker(),
 data_worker_metric(_data_worker_metric){}
 

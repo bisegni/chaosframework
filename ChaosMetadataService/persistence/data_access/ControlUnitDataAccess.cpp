@@ -30,7 +30,7 @@ using namespace chaos::metadata_service::persistence::data_access;
 
 DEFINE_DA_NAME(ControlUnitDataAccess)
 
-CHAOS_DEFINE_VECTOR_FOR_TYPE(boost::shared_ptr<chaos::common::data::CDataWrapper>, CDSList)
+CHAOS_DEFINE_VECTOR_FOR_TYPE(ChaosSharedPtr<chaos::common::data::CDataWrapper>, CDSList)
 
 //! default constructor
 ControlUnitDataAccess::ControlUnitDataAccess(DataServiceDataAccess *_data_service_da):

@@ -37,8 +37,8 @@ ApiProxyResult GetAllSnapshot::execute(const std::string& query_filter) {
     return callApi(message);
 }
 
-std::auto_ptr<GetAllSnapshotHelper> GetAllSnapshot::getHelper(CDataWrapper *api_result) {
-    return std::auto_ptr<GetAllSnapshotHelper>(new GetAllSnapshotHelper(api_result));
+ChaosUniquePtr<GetAllSnapshotHelper> GetAllSnapshot::getHelper(CDataWrapper *api_result) {
+    return ChaosUniquePtr<GetAllSnapshotHelper>(new GetAllSnapshotHelper(api_result));
 }
 
 
@@ -47,11 +47,11 @@ GetAllSnapshotHelper::GetAllSnapshotHelper(CDataWrapper *api_result) {
     //SnapshotInformationPtr
     if(!api_result || !api_result->hasKey("snapshot_list_result")) return;
     
-    std::auto_ptr<CMultiTypeDataArrayWrapper> snapshot_desc_list(api_result->getVectorValue("snapshot_list_result"));
+    ChaosUniquePtr<CMultiTypeDataArrayWrapper> snapshot_desc_list(api_result->getVectorValue("snapshot_list_result"));
     for(int idx = 0;
         idx < snapshot_desc_list->size();
         idx++) {
-        std::auto_ptr<CDataWrapper> tmp_desc(snapshot_desc_list->getCDataWrapperElementAtIndex(idx));
+        ChaosUniquePtr<CDataWrapper> tmp_desc(snapshot_desc_list->getCDataWrapperElementAtIndex(idx));
         
         SnapshotInformationPtr snapshot_information(new SnapshotInformation());
         if(tmp_desc->hasKey("snap_name")) {

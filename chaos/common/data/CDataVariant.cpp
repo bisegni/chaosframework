@@ -41,8 +41,8 @@ bool bool_visitor::operator()(const int64_t i64v) const {return static_cast<bool
 bool bool_visitor::operator()(const uint64_t ui64v) const {return static_cast<bool>(ui64v);}
 bool bool_visitor::operator()(const double dv) const {return static_cast<bool>(dv);}
 bool bool_visitor::operator()(const std::string& str) const {SAFE_STREAM_CONV(bool, str, b); return b;}
-bool bool_visitor::operator()(const boost::shared_ptr<CDataBuffer>& buffer) const {return static_cast<int32_t>(buffer->getBufferSize());}
-bool bool_visitor::operator()(const boost::shared_ptr<CDataWrapper>& buffer) const {return buffer.get();}
+bool bool_visitor::operator()(const ChaosSharedPtr<CDataBuffer>& buffer) const {return static_cast<int32_t>(buffer->getBufferSize());}
+bool bool_visitor::operator()(const ChaosSharedPtr<CDataWrapper>& buffer) const {return buffer.get();}
 
 #pragma mark i32visitor
 int32_t int32_t_visitor::operator()(const bool bv) const {return static_cast<int32_t>(bv);}
@@ -52,8 +52,8 @@ int32_t int32_t_visitor::operator()(const int64_t i64v) const {return static_cas
 int32_t int32_t_visitor::operator()(const uint64_t ui64v) const {return static_cast<int32_t>(ui64v);}
 int32_t int32_t_visitor::operator()(const double dv) const {return static_cast<int32_t>(dv);}
 int32_t int32_t_visitor::operator()(const std::string& str) const {SAFE_STREAM_CONV(int32_t, str, i32); return i32;}
-int32_t int32_t_visitor::operator()(const boost::shared_ptr<CDataBuffer>& buffer) const {return static_cast<int32_t>(buffer->getBufferSize());}
-int32_t int32_t_visitor::operator()(const boost::shared_ptr<CDataWrapper>& buffer) const {return static_cast<int32_t>(buffer->getBSONRawSize());}
+int32_t int32_t_visitor::operator()(const ChaosSharedPtr<CDataBuffer>& buffer) const {return static_cast<int32_t>(buffer->getBufferSize());}
+int32_t int32_t_visitor::operator()(const ChaosSharedPtr<CDataWrapper>& buffer) const {return static_cast<int32_t>(buffer->getBSONRawSize());}
 
 #pragma mark ui32visitor
 uint32_t uint32_t_visitor::operator()(const bool bv) const {return static_cast<uint32_t>(bv);}
@@ -63,8 +63,8 @@ uint32_t uint32_t_visitor::operator()(const int64_t i64v) const {return static_c
 uint32_t uint32_t_visitor::operator()(const uint64_t ui64v) const {return static_cast<uint32_t>(ui64v);}
 uint32_t uint32_t_visitor::operator()(const double dv) const {return static_cast<uint32_t>(dv);}
 uint32_t uint32_t_visitor::operator()(const std::string& str) const {SAFE_STREAM_CONV(int32_t, str, i32); return static_cast<uint32_t>(i32);}
-uint32_t uint32_t_visitor::operator()(const boost::shared_ptr<CDataBuffer>& buffer) const {return buffer->getBufferSize();}
-uint32_t uint32_t_visitor::operator()(const boost::shared_ptr<CDataWrapper>& buffer) const {return static_cast<uint32_t>(buffer->getBSONRawSize());}
+uint32_t uint32_t_visitor::operator()(const ChaosSharedPtr<CDataBuffer>& buffer) const {return buffer->getBufferSize();}
+uint32_t uint32_t_visitor::operator()(const ChaosSharedPtr<CDataWrapper>& buffer) const {return static_cast<uint32_t>(buffer->getBSONRawSize());}
 
 #pragma mark i64visitor
 int64_t int64_t_visitor::operator()(const bool bv) const {return static_cast<int64_t>(bv);}
@@ -74,8 +74,8 @@ int64_t int64_t_visitor::operator()(const int64_t i64v) const {return i64v;}
 int64_t int64_t_visitor::operator()(const uint64_t ui64v) const {return static_cast<int64_t>(ui64v);}
 int64_t int64_t_visitor::operator()(const double dv) const {return static_cast<int64_t>(dv);}
 int64_t int64_t_visitor::operator()(const std::string& str) const {SAFE_STREAM_CONV(int64_t, str, i64); return i64;}
-int64_t int64_t_visitor::operator()(const boost::shared_ptr<CDataBuffer>& buffer) const {return static_cast<int64_t>(buffer->getBufferSize());}
-int64_t int64_t_visitor::operator()(const boost::shared_ptr<CDataWrapper>& buffer) const {return static_cast<int64_t>(buffer->getBSONRawSize());}
+int64_t int64_t_visitor::operator()(const ChaosSharedPtr<CDataBuffer>& buffer) const {return static_cast<int64_t>(buffer->getBufferSize());}
+int64_t int64_t_visitor::operator()(const ChaosSharedPtr<CDataWrapper>& buffer) const {return static_cast<int64_t>(buffer->getBSONRawSize());}
 
 #pragma mark ui64visitor
 uint64_t uint64_t_visitor::operator()(const bool bv) const {return static_cast<uint64_t>(bv);}
@@ -85,8 +85,8 @@ uint64_t uint64_t_visitor::operator()(const int64_t i64v) const {return static_c
 uint64_t uint64_t_visitor::operator()(const uint64_t ui64v) const {return ui64v;}
 uint64_t uint64_t_visitor::operator()(const double dv) const {return static_cast<uint64_t>(dv);}
 uint64_t uint64_t_visitor::operator()(const std::string& str) const {SAFE_STREAM_CONV(int64_t, str, i64); return static_cast<uint64_t>(i64);}
-uint64_t uint64_t_visitor::operator()(const boost::shared_ptr<CDataBuffer>& buffer) const {return (uint64_t)buffer->getBufferSize();}
-uint64_t uint64_t_visitor::operator()(const boost::shared_ptr<CDataWrapper>& buffer) const {return static_cast<uint64_t>(buffer->getBSONRawSize());}
+uint64_t uint64_t_visitor::operator()(const ChaosSharedPtr<CDataBuffer>& buffer) const {return (uint64_t)buffer->getBufferSize();}
+uint64_t uint64_t_visitor::operator()(const ChaosSharedPtr<CDataWrapper>& buffer) const {return static_cast<uint64_t>(buffer->getBSONRawSize());}
 
 
 #pragma mark doublevisitor
@@ -97,8 +97,8 @@ double double_visitor::operator()(const int64_t i64v) const {return static_cast<
 double double_visitor::operator()(const uint64_t ui64v) const {return static_cast<double>(ui64v);}
 double double_visitor::operator()(const double dv) const {return dv;}
 double double_visitor::operator()(const std::string& str) const {SAFE_STREAM_CONV(double, str, d); return d;}
-double double_visitor::operator()(const boost::shared_ptr<CDataBuffer>& buffer) const {return static_cast<double>(buffer->getBufferSize());}
-double double_visitor::operator()(const boost::shared_ptr<CDataWrapper>& buffer) const {return static_cast<double>(buffer->getBSONRawSize());}
+double double_visitor::operator()(const ChaosSharedPtr<CDataBuffer>& buffer) const {return static_cast<double>(buffer->getBufferSize());}
+double double_visitor::operator()(const ChaosSharedPtr<CDataWrapper>& buffer) const {return static_cast<double>(buffer->getBSONRawSize());}
 
 #pragma mark stringvisitor
 std::string string_visitor::operator()(const bool bv) const {SAFE_LEXICAL_WITH_DEFAULT(boost::lexical_cast<std::string>(bv), "false")}
@@ -108,31 +108,31 @@ std::string string_visitor::operator()(const int64_t i64v) const {SAFE_LEXICAL_W
 std::string string_visitor::operator()(const uint64_t ui64v) const {SAFE_LEXICAL_WITH_DEFAULT(boost::lexical_cast<std::string>(ui64v), "0")}
 std::string string_visitor::operator()(const double dv) const {SAFE_LEXICAL_WITH_DEFAULT(boost::lexical_cast<std::string>(dv), "0")}
 std::string string_visitor::operator()(const std::string& str) const {return str;}
-std::string string_visitor::operator()(const boost::shared_ptr<CDataBuffer>& buffer) const {return std::string(buffer->getBuffer(), buffer->getBufferSize());}
-std::string string_visitor::operator()(const boost::shared_ptr<CDataWrapper>& buffer) const {return buffer->getJSONString();}
+std::string string_visitor::operator()(const ChaosSharedPtr<CDataBuffer>& buffer) const {return std::string(buffer->getBuffer(), buffer->getBufferSize());}
+std::string string_visitor::operator()(const ChaosSharedPtr<CDataWrapper>& buffer) const {return buffer->getJSONString();}
 
 
 #pragma mark CDataBuffervisitor
-boost::shared_ptr<CDataBuffer> CDataBuffer_visitor::operator()(const bool bv) const {return boost::shared_ptr<CDataBuffer>(new CDataBuffer((const char*)&bv,sizeof(bool),true));}
-boost::shared_ptr<CDataBuffer> CDataBuffer_visitor::operator()(const int32_t i32v) const {return boost::shared_ptr<CDataBuffer>(new CDataBuffer((const char*)&i32v,sizeof(int32_t),true));}
-boost::shared_ptr<CDataBuffer> CDataBuffer_visitor::operator()(const uint32_t ui32v) const {return boost::shared_ptr<CDataBuffer>(new CDataBuffer((const char*)&ui32v,sizeof(uint32_t),true));}
-boost::shared_ptr<CDataBuffer> CDataBuffer_visitor::operator()(const int64_t i64v) const {return boost::shared_ptr<CDataBuffer>(new CDataBuffer((const char*)&i64v,sizeof(int64_t),true));}
-boost::shared_ptr<CDataBuffer> CDataBuffer_visitor::operator()(const uint64_t ui64v) const {return boost::shared_ptr<CDataBuffer>(new CDataBuffer((const char*)&ui64v,sizeof(uint64_t),true));}
-boost::shared_ptr<CDataBuffer> CDataBuffer_visitor::operator()(const double dv) const {return boost::shared_ptr<CDataBuffer>(new CDataBuffer((const char*)&dv,sizeof(double),true));}
-boost::shared_ptr<CDataBuffer> CDataBuffer_visitor::operator()(const std::string& str) const {return boost::shared_ptr<CDataBuffer>(new CDataBuffer(str.c_str(), (uint32_t)str.size(), true));}
-boost::shared_ptr<CDataBuffer> CDataBuffer_visitor::operator()(const boost::shared_ptr<CDataBuffer>& buffer) const {return buffer;}
-boost::shared_ptr<CDataBuffer> CDataBuffer_visitor::operator()(const boost::shared_ptr<CDataWrapper>& buffer) const {return boost::shared_ptr<CDataBuffer>(new CDataBuffer(buffer->getJSONString().c_str(), (uint32_t)buffer->getJSONString().size(), true));;}
+ChaosSharedPtr<CDataBuffer> CDataBuffer_visitor::operator()(const bool bv) const {return ChaosSharedPtr<CDataBuffer>(new CDataBuffer((const char*)&bv,sizeof(bool),true));}
+ChaosSharedPtr<CDataBuffer> CDataBuffer_visitor::operator()(const int32_t i32v) const {return ChaosSharedPtr<CDataBuffer>(new CDataBuffer((const char*)&i32v,sizeof(int32_t),true));}
+ChaosSharedPtr<CDataBuffer> CDataBuffer_visitor::operator()(const uint32_t ui32v) const {return ChaosSharedPtr<CDataBuffer>(new CDataBuffer((const char*)&ui32v,sizeof(uint32_t),true));}
+ChaosSharedPtr<CDataBuffer> CDataBuffer_visitor::operator()(const int64_t i64v) const {return ChaosSharedPtr<CDataBuffer>(new CDataBuffer((const char*)&i64v,sizeof(int64_t),true));}
+ChaosSharedPtr<CDataBuffer> CDataBuffer_visitor::operator()(const uint64_t ui64v) const {return ChaosSharedPtr<CDataBuffer>(new CDataBuffer((const char*)&ui64v,sizeof(uint64_t),true));}
+ChaosSharedPtr<CDataBuffer> CDataBuffer_visitor::operator()(const double dv) const {return ChaosSharedPtr<CDataBuffer>(new CDataBuffer((const char*)&dv,sizeof(double),true));}
+ChaosSharedPtr<CDataBuffer> CDataBuffer_visitor::operator()(const std::string& str) const {return ChaosSharedPtr<CDataBuffer>(new CDataBuffer(str.c_str(), (uint32_t)str.size(), true));}
+ChaosSharedPtr<CDataBuffer> CDataBuffer_visitor::operator()(const ChaosSharedPtr<CDataBuffer>& buffer) const {return buffer;}
+ChaosSharedPtr<CDataBuffer> CDataBuffer_visitor::operator()(const ChaosSharedPtr<CDataWrapper>& buffer) const {return ChaosSharedPtr<CDataBuffer>(new CDataBuffer(buffer->getJSONString().c_str(), (uint32_t)buffer->getJSONString().size(), true));;}
 
 #pragma mark CDataWrappervisitor
-boost::shared_ptr<CDataWrapper> CDataWrapper_visitor::operator()(const bool bv) const {throw CFatalException(-1,"invalid conversion to CDataWrapper from bool",__PRETTY_FUNCTION__);return boost::shared_ptr<CDataWrapper>(new CDataWrapper());}
-boost::shared_ptr<CDataWrapper> CDataWrapper_visitor::operator()(const int32_t i32v) const {throw CFatalException(-1,"invalid conversion to CDataWrapper from int32_t",__PRETTY_FUNCTION__);return boost::shared_ptr<CDataWrapper>(new CDataWrapper());}
-boost::shared_ptr<CDataWrapper> CDataWrapper_visitor::operator()(const uint32_t ui32v) const{throw CFatalException(-1,"invalid conversion to CDataWrapper from uint32_t",__PRETTY_FUNCTION__);return boost::shared_ptr<CDataWrapper>(new CDataWrapper());}
-boost::shared_ptr<CDataWrapper> CDataWrapper_visitor::operator()(const int64_t i64v) const{throw CFatalException(-1,"invalid conversion to CDataWrapper from int64_t",__PRETTY_FUNCTION__);return boost::shared_ptr<CDataWrapper>(new CDataWrapper());}
-boost::shared_ptr<CDataWrapper> CDataWrapper_visitor::operator()(const uint64_t ui64v) const {throw CFatalException(-1,"invalid conversion to CDataWrapper from uint64_t",__PRETTY_FUNCTION__);return boost::shared_ptr<CDataWrapper>(new CDataWrapper());}
-boost::shared_ptr<CDataWrapper> CDataWrapper_visitor::operator()(const double dv) const {throw CFatalException(-1,"invalid conversion to CDataWrapper from double",__PRETTY_FUNCTION__);return boost::shared_ptr<CDataWrapper>(new CDataWrapper());}
-boost::shared_ptr<CDataWrapper> CDataWrapper_visitor::operator()(const std::string& str) const {return boost::shared_ptr<CDataWrapper>(new CDataWrapper(str.c_str()));}
-boost::shared_ptr<CDataWrapper> CDataWrapper_visitor::operator()(const boost::shared_ptr<CDataBuffer>& buffer) const {return boost::shared_ptr<CDataWrapper>(new CDataWrapper(buffer->getBuffer()));}
-boost::shared_ptr<CDataWrapper> CDataWrapper_visitor::operator()(const boost::shared_ptr<CDataWrapper>& buffer) const {return boost::shared_ptr<CDataWrapper>(new CDataWrapper(buffer->getBSONData()->getBufferPtr()));}
+ChaosSharedPtr<CDataWrapper> CDataWrapper_visitor::operator()(const bool bv) const {throw CFatalException(-1,"invalid conversion to CDataWrapper from bool",__PRETTY_FUNCTION__);return ChaosSharedPtr<CDataWrapper>(new CDataWrapper());}
+ChaosSharedPtr<CDataWrapper> CDataWrapper_visitor::operator()(const int32_t i32v) const {throw CFatalException(-1,"invalid conversion to CDataWrapper from int32_t",__PRETTY_FUNCTION__);return ChaosSharedPtr<CDataWrapper>(new CDataWrapper());}
+ChaosSharedPtr<CDataWrapper> CDataWrapper_visitor::operator()(const uint32_t ui32v) const{throw CFatalException(-1,"invalid conversion to CDataWrapper from uint32_t",__PRETTY_FUNCTION__);return ChaosSharedPtr<CDataWrapper>(new CDataWrapper());}
+ChaosSharedPtr<CDataWrapper> CDataWrapper_visitor::operator()(const int64_t i64v) const{throw CFatalException(-1,"invalid conversion to CDataWrapper from int64_t",__PRETTY_FUNCTION__);return ChaosSharedPtr<CDataWrapper>(new CDataWrapper());}
+ChaosSharedPtr<CDataWrapper> CDataWrapper_visitor::operator()(const uint64_t ui64v) const {throw CFatalException(-1,"invalid conversion to CDataWrapper from uint64_t",__PRETTY_FUNCTION__);return ChaosSharedPtr<CDataWrapper>(new CDataWrapper());}
+ChaosSharedPtr<CDataWrapper> CDataWrapper_visitor::operator()(const double dv) const {throw CFatalException(-1,"invalid conversion to CDataWrapper from double",__PRETTY_FUNCTION__);return ChaosSharedPtr<CDataWrapper>(new CDataWrapper());}
+ChaosSharedPtr<CDataWrapper> CDataWrapper_visitor::operator()(const std::string& str) const {return ChaosSharedPtr<CDataWrapper>(new CDataWrapper(str.c_str()));}
+ChaosSharedPtr<CDataWrapper> CDataWrapper_visitor::operator()(const ChaosSharedPtr<CDataBuffer>& buffer) const {return ChaosSharedPtr<CDataWrapper>(new CDataWrapper(buffer->getBuffer()));}
+ChaosSharedPtr<CDataWrapper> CDataWrapper_visitor::operator()(const ChaosSharedPtr<CDataWrapper>& buffer) const {return ChaosSharedPtr<CDataWrapper>(new CDataWrapper(buffer->getBSONData()->getBufferPtr()));}
 
 
 #pragma mark CDatavariant implementation
@@ -182,11 +182,11 @@ CDataVariant::CDataVariant(const char * string_value):_internal_variant(std::str
 
 CDataVariant::CDataVariant(CDataBuffer *buffer_value):
 type(DataType::TYPE_BYTEARRAY),
-_internal_variant(boost::shared_ptr<CDataBuffer>(buffer_value)) { }
+_internal_variant(ChaosSharedPtr<CDataBuffer>(buffer_value)) { }
 
 CDataVariant::CDataVariant(CDataWrapper *buffer_value):
 type(DataType::TYPE_CLUSTER),
-_internal_variant(boost::shared_ptr<CDataWrapper>(buffer_value)) { }
+_internal_variant(ChaosSharedPtr<CDataWrapper>(buffer_value)) { }
 
 CDataVariant::CDataVariant(const CDataVariant& to_copy):
 type(to_copy.type),
@@ -218,7 +218,7 @@ type(_type){
             break;
         }
         case DataType::TYPE_CLUSTER:{
-          _internal_variant = boost::shared_ptr<CDataWrapper>(new CDataWrapper(static_cast<const char*>(_value_pointer)));
+          _internal_variant = ChaosSharedPtr<CDataWrapper>(new CDataWrapper(static_cast<const char*>(_value_pointer)));
         	break;
         }
         case DataType::TYPE_STRING:{
@@ -227,7 +227,7 @@ type(_type){
             break;
         }
         case DataType::TYPE_BYTEARRAY:{
-            _internal_variant = boost::shared_ptr<CDataBuffer>(new CDataBuffer(static_cast<const char*>(_value_pointer),
+            _internal_variant = ChaosSharedPtr<CDataBuffer>(new CDataBuffer(static_cast<const char*>(_value_pointer),
                                                                                _value_size,
                                                                                true));
             break;
@@ -315,11 +315,11 @@ CDataVariant::operator const CDataBuffer*() const {
     return asCDataBuffer();
 }
 
-boost::shared_ptr<CDataBuffer> CDataVariant::asCDataBufferShrdPtr() {
+ChaosSharedPtr<CDataBuffer> CDataVariant::asCDataBufferShrdPtr() {
     return boost::apply_visitor( CDataBuffer_visitor(), _internal_variant);
 }
 
-CDataVariant::operator boost::shared_ptr<CDataBuffer>() {
+CDataVariant::operator ChaosSharedPtr<CDataBuffer>() {
     return asCDataBufferShrdPtr();
 }
 
@@ -331,10 +331,10 @@ CDataVariant::operator const CDataWrapper * const() const {
     return asCDataWrapper();
 }
 
-boost::shared_ptr<CDataWrapper> CDataVariant::asCDataWrapperShrdPtr() {
+ChaosSharedPtr<CDataWrapper> CDataVariant::asCDataWrapperShrdPtr() {
     return boost::apply_visitor( CDataWrapper_visitor(), _internal_variant);
 }
 
-CDataVariant::operator boost::shared_ptr<CDataWrapper>() {
+CDataVariant::operator ChaosSharedPtr<CDataWrapper>() {
     return asCDataWrapperShrdPtr();
 }

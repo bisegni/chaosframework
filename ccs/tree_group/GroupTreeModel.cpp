@@ -105,7 +105,7 @@ void GroupTreeModel::asyncApiResult(const QString& tag,
                                     QSharedPointer<chaos::common::data::CDataWrapper> api_result) {
     if(tag.startsWith("domain>")) {
         QString domain = tag.split(">").back();
-        std::unique_ptr<groups::GetNodeChildsHelper> gnc_helper = groups::GetNodeChilds::getHelper(api_result.data());
+        ChaosUniquePtr<groups::GetNodeChildsHelper> gnc_helper = groups::GetNodeChilds::getHelper(api_result.data());
         beginResetModel();
         root_item->removeChild();
         for(groups::NodeChildListConstIterator it = gnc_helper->getNodeChildsList().begin();
@@ -137,7 +137,7 @@ void GroupTreeModel::asyncApiResult(const QString& tag,
         mutex_update_model.unlock();
 
         //get child list and call update param
-        std::unique_ptr<groups::GetNodeChildsHelper> gnc_helper = groups::GetNodeChilds::getHelper(api_result.data());
+        ChaosUniquePtr<groups::GetNodeChildsHelper> gnc_helper = groups::GetNodeChilds::getHelper(api_result.data());
         _updateNodeChildList(node_index_parent, gnc_helper->getNodeChildsList());
     } else if(tag.startsWith("_delete_node_")) {
         mutex_update_model.lock();

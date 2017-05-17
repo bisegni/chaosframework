@@ -69,7 +69,7 @@ namespace chaos {
                      */
                     ApiProxyResult execute(const std::vector<std::string>& source);
                     
-                    static std::auto_ptr<GetLogDomainForSourceUIDHelper> getHelper(chaos::common::data::CDataWrapper *api_result);
+                    static ChaosUniquePtr<GetLogDomainForSourceUIDHelper> getHelper(chaos::common::data::CDataWrapper *api_result);
                 };
                 
             }

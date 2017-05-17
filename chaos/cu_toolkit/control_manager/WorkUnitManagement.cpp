@@ -53,7 +53,7 @@ CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string, MessageKeyArray)
 /*---------------------------------------------------------------------------------
 
  ---------------------------------------------------------------------------------*/
-WorkUnitManagement::WorkUnitManagement(boost::shared_ptr<AbstractControlUnit>& _work_unit_instance):
+WorkUnitManagement::WorkUnitManagement(ChaosSharedPtr<AbstractControlUnit>& _work_unit_instance):
 mds_channel(NULL),
 work_unit_instance(_work_unit_instance),
 active(true),
@@ -215,7 +215,7 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
             for(chaos::cu::control_manager::ACUStartupCommandListIterator it = work_unit_instance->list_startup_command.begin();
                 it != work_unit_instance->list_startup_command.end();
                 it++) {
-                std::auto_ptr<CDataWrapper> rpc_message(new CDataWrapper);
+                ChaosUniquePtr<CDataWrapper> rpc_message(new CDataWrapper);
                 all_cmd_key.clear();
                 (*it)->getAllKey(all_cmd_key);
 
@@ -231,7 +231,7 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
                 rpc_message->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, work_unit_instance->getCUInstance());
 
                     //submit startup command
-                std::auto_ptr<CDataWrapper> submittion_result(NetworkBroker::getInstance()->submitInterProcessMessage(rpc_message.release()));
+                ChaosUniquePtr<CDataWrapper> submittion_result(NetworkBroker::getInstance()->submitInterProcessMessage(rpc_message.release()));
 
                 if(submittion_result->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE)) {
                         //error submitting startup command
@@ -333,7 +333,7 @@ bool WorkUnitManagement::smNeedToSchedule() {
 int WorkUnitManagement::sendConfPackToMDS(CDataWrapper& dataToSend) {
         // dataToSend can't be sent because it is porperty of the CU
         //so we need to copy it
-    std::auto_ptr<SerializationBuffer> serBuf(dataToSend.getBSONData());
+    ChaosUniquePtr<SerializationBuffer> serBuf(dataToSend.getBSONData());
     CDataWrapper mdsPack(serBuf->getBufferPtr());
         //add action for metadata server
         //add local ip and port

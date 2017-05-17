@@ -101,7 +101,7 @@ int ProducerInsertJsonApi::execute(std::vector<std::string>& api_tokens,
     }
     
     //we can proceed
-    UNIQUE_PTR<CDataWrapper> output_dataset(new CDataWrapper());
+    ChaosUniquePtr<CDataWrapper> output_dataset(new CDataWrapper());
     //	const std::string& producer_name = api_tokens[0];
     const std::string& producer_key = producer_name+"_o";
     

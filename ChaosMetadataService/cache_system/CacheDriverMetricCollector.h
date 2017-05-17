@@ -38,7 +38,7 @@ namespace chaos {
                 CacheDriver *wrapped_cache_driver;
                 
                 boost::mutex mutex_shared_collector;
-                static boost::shared_ptr<CacheDriverSharedMetricIO> shared_collector;
+                static ChaosSharedPtr<CacheDriverSharedMetricIO> shared_collector;
             public:
                 //!base constructo rwith the wrapped dariver
                 CacheDriverMetricCollector(CacheDriver *_wrapped_cache_driver);

@@ -80,13 +80,13 @@ CDataWrapper *GetSetFullUnitServer::execute(CDataWrapper *api_data,
         
         // look for UnitServer full description
         if(api_data->hasKey("us_desc")&& api_data->isCDataWrapperValue("us_desc")){
-            std::auto_ptr<CDataWrapper> udesc(api_data->getCSDataValue("us_desc"));
+            ChaosUniquePtr<CDataWrapper> udesc(api_data->getCSDataValue("us_desc"));
             if(udesc->hasKey("cu_desc")&& udesc->isVector("cu_desc")){
-                std::auto_ptr<CMultiTypeDataArrayWrapper> cu_l(udesc->getVectorValue("cu_desc"));
+                ChaosUniquePtr<CMultiTypeDataArrayWrapper> cu_l(udesc->getVectorValue("cu_desc"));
                 for(int cui=0;
                     (cu_l.get() !=NULL) &&
                     (cui<cu_l->size());cui++){
-                    std::auto_ptr<CDataWrapper> cuw(cu_l->getCDataWrapperElementAtIndex(cui));
+                    ChaosUniquePtr<CDataWrapper> cuw(cu_l->getCDataWrapperElementAtIndex(cui));
                     if(cuw->hasKey("cu_id") && cuw->hasKey("cu_type")){
                         std::string cu_id= cuw->getStringValue("cu_id");
                         std::string cu_type= cuw->getStringValue("cu_type");
@@ -115,7 +115,7 @@ CDataWrapper *GetSetFullUnitServer::execute(CDataWrapper *api_data,
         if(res->hasKey(NodeDefinitionKey::NODE_DESC)){
             tot_res.addStringValue(NodeDefinitionKey::NODE_DESC,res->getStringValue(NodeDefinitionKey::NODE_DESC));
         }
-        std::vector<boost::shared_ptr<CDataWrapper> > page_result;
+        std::vector<ChaosSharedPtr<CDataWrapper> > page_result;
         uint32_t last_sequence_id = 0;
         uint32_t page_length = 1000;
         std::vector<std::string> cu_type_filter;
@@ -135,7 +135,7 @@ CDataWrapper *GetSetFullUnitServer::execute(CDataWrapper *api_data,
                 CDataWrapper* res;
                 
                 
-                for (std::vector<boost::shared_ptr<CDataWrapper> >::iterator it = page_result.begin();
+                for (std::vector<ChaosSharedPtr<CDataWrapper> >::iterator it = page_result.begin();
                      it != page_result.end();
                      it++) {
                     if(it->get()->hasKey("ndk_uid")){

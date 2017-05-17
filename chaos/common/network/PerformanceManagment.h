@@ -66,7 +66,7 @@ namespace chaos {
 				
 				bool work_on_purge;
 				WaitSemaphore purge_wait_semaphore;
-				boost::shared_ptr<boost::thread> thread_purge;
+				ChaosSharedPtr<boost::thread> thread_purge;
 				
 				boost::shared_mutex	mutex_map_purgeable;
                 PMKeyObjectContainer map_sessions;

@@ -29,8 +29,8 @@ namespace chaos {
             namespace control_unit {
                 class GetCurrentDataset:
                 public AbstractApi {
-                    boost::shared_ptr<CDataWrapper> mergeDatasetAttributeWithSetup(boost::shared_ptr<CDataWrapper> element_in_dataset,
-                                                                                   boost::shared_ptr<CDataWrapper> element_in_setup);
+                    ChaosSharedPtr<CDataWrapper> mergeDatasetAttributeWithSetup(ChaosSharedPtr<CDataWrapper> element_in_dataset,
+                                                                                   ChaosSharedPtr<CDataWrapper> element_in_setup);
                 public:
                     GetCurrentDataset();
                     ~GetCurrentDataset();

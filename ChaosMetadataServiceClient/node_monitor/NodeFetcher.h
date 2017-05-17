@@ -39,7 +39,7 @@ namespace chaos {
             class NodeMonitor;
             
             //associate a type to a controlelr instance
-            CHAOS_DEFINE_MAP_FOR_TYPE(ControllerType, boost::shared_ptr<node_monitor::NodeController>, NodeTypeControllerMap)
+            CHAOS_DEFINE_MAP_FOR_TYPE(ControllerType, ChaosSharedPtr<node_monitor::NodeController>, NodeTypeControllerMap)
             
             class NodeFetcher:
             public chaos::metadata_service_client::monitor_system::QuantumSlotConsumer {
@@ -56,7 +56,7 @@ namespace chaos {
                 chaos::metadata_service_client::monitor_system::MonitorManager *monitor_manager;
                 
                 //---private method---
-                boost::shared_ptr<node_monitor::NodeController> getControllerForType(ControllerType type);
+                ChaosSharedPtr<node_monitor::NodeController> getControllerForType(ControllerType type);
                 
                 bool removeHandlerFromController(ControllerType type,
                                                  NodeMonitorHandler *handler);

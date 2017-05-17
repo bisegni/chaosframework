@@ -33,14 +33,14 @@ API_PROXY_CD_DEFINITION(GetNodeChilds,
  */
 ApiProxyResult GetNodeChilds::execute(const std::string& node_domain,
                                       const std::string& node_path) {
-    std::auto_ptr<CDataWrapper> pack(new CDataWrapper());
+    ChaosUniquePtr<CDataWrapper> pack(new CDataWrapper());
     if(node_path.size()){pack->addStringValue("node_path", node_path);}
     pack->addStringValue("group_domain", node_domain);
     return callApi(pack.release());
 }
 
-std::auto_ptr<GetNodeChildsHelper> GetNodeChilds::getHelper(CDataWrapper *api_result) {
-    return std::auto_ptr<GetNodeChildsHelper>(new GetNodeChildsHelper(api_result));
+ChaosUniquePtr<GetNodeChildsHelper> GetNodeChilds::getHelper(CDataWrapper *api_result) {
+    return ChaosUniquePtr<GetNodeChildsHelper>(new GetNodeChildsHelper(api_result));
 }
 
 
@@ -49,7 +49,7 @@ GetNodeChildsHelper::GetNodeChildsHelper(CDataWrapper *api_result) {
     //SnapshotInformationPtr
     if(!api_result || !api_result->hasKey("node_child_list")) return;
     
-    std::auto_ptr<CMultiTypeDataArrayWrapper> vec(api_result->getVectorValue("node_child_list"));
+    ChaosUniquePtr<CMultiTypeDataArrayWrapper> vec(api_result->getVectorValue("node_child_list"));
     for(int idx = 0;
         idx < vec->size();
         idx++) {

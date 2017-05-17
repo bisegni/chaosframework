@@ -165,9 +165,9 @@ bool AttributeValueSharedCache::hasAttribute(SharedCacheDomain domain,
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-boost::shared_ptr<SharedCacheLockDomain> AttributeValueSharedCache::getLockOnDomain(SharedCacheDomain domain,
+ChaosSharedPtr<SharedCacheLockDomain> AttributeValueSharedCache::getLockOnDomain(SharedCacheDomain domain,
                                                                                     bool write_lock) {
-    boost::shared_ptr<SharedCacheLockDomain> result;
+    ChaosSharedPtr<SharedCacheLockDomain> result;
     if(write_lock) {
         result.reset(new WriteSharedCacheLockDomain(getSharedDomain(domain).mutex));
     } else {

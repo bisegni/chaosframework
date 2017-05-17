@@ -84,7 +84,7 @@ CDataWrapper* NodeMessageChannel::sendRequest(const std::string& node_id,
 }
 
 //!send an rpc request to a remote node
-std::auto_ptr<MessageRequestFuture> NodeMessageChannel::sendRequestWithFuture(const std::string& node_id,
+ChaosUniquePtr<MessageRequestFuture> NodeMessageChannel::sendRequestWithFuture(const std::string& node_id,
                                                                               const std::string& action_name,
                                                                               CDataWrapper *request_pack) {
     return MessageChannel::sendRequestWithFuture(nodeAddress->ip_port,
@@ -94,13 +94,13 @@ std::auto_ptr<MessageRequestFuture> NodeMessageChannel::sendRequestWithFuture(co
 }
 
 //! Send a request for receive RPC information
-std::auto_ptr<MessageRequestFuture> NodeMessageChannel::checkRPCInformation(const std::string& node_id) {
+ChaosUniquePtr<MessageRequestFuture> NodeMessageChannel::checkRPCInformation(const std::string& node_id) {
     return MessageChannel::checkRPCInformation(nodeAddress->ip_port,
                                                node_id);
 }
 
 //! Send a request for an echo test
-std::auto_ptr<MessageRequestFuture> NodeMessageChannel::echoTest(chaos::common::data::CDataWrapper *echo_data) {
+ChaosUniquePtr<MessageRequestFuture> NodeMessageChannel::echoTest(chaos::common::data::CDataWrapper *echo_data) {
     return MessageChannel::echoTest(nodeAddress->ip_port,
                                     echo_data);
 }

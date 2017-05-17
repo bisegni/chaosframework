@@ -32,14 +32,16 @@
 #include <queue>
 #include <deque>
 #include <vector>
-#if __cplusplus >= 201103L
-#define SHARED_PTR std::shared_ptr
-#define UNIQUE_PTR std::unique_ptr
-#else
-#include <boost/interprocess/smart_ptr/unique_ptr.hpp>
-#define SHARED_PTR boost::shared_ptr
-#define UNIQUE_PTR boost::interprocess::unique_ptr
-#endif
+
+//#if __cplusplus >= 201103L
+//#define ChaosSharedPtr std::shared_ptr
+//#define ChaosUniquePtr std::unique_ptr
+//#else
+#include <boost/shared_ptr.hpp>
+#define ChaosSharedPtr boost::shared_ptr
+#define ChaosUniquePtr std::auto_ptr
+//#endif
+
 #define  CHAOS_DEFINE_SET_FOR_TYPE(t1, n)\
 typedef std::set< t1 >                   n;\
 typedef std::set< t1 >::iterator         n ## Iterator;\

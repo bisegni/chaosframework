@@ -101,8 +101,8 @@ namespace chaos {
                 
             public:
                 typedef AbstractConsumer<EventType, SubjectImpl > ConcreteConsumer;
-                typedef boost::shared_ptr< ConcreteConsumer > ConsumerShrdPtr;
-                typedef boost::shared_ptr< ConsumerInstancerDescription<EventType, SubjectImpl> > ConsumerInstancerShrdPtr;
+                typedef ChaosSharedPtr< ConcreteConsumer > ConsumerShrdPtr;
+                typedef ChaosSharedPtr< ConsumerInstancerDescription<EventType, SubjectImpl> > ConsumerInstancerShrdPtr;
                 
                 const std::string& getConsumerName() const {
                     return PropertyGroup::getGroupName();

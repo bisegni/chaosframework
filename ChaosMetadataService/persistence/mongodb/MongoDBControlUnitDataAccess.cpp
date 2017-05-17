@@ -38,7 +38,7 @@ using namespace chaos::common::utility;
 using namespace chaos::service_common::persistence::mongodb;
 using namespace chaos::metadata_service::persistence::mongodb;
 
-MongoDBControlUnitDataAccess::MongoDBControlUnitDataAccess(const boost::shared_ptr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection,
+MongoDBControlUnitDataAccess::MongoDBControlUnitDataAccess(const ChaosSharedPtr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection,
                                                            data_access::DataServiceDataAccess *_data_service_da):
 MongoDBAccessor(_connection),
 ControlUnitDataAccess(_data_service_da),
@@ -188,7 +188,7 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
         if(!dataset_description.hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION))return -2;
         if(!dataset_description.isCDataWrapperValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION))return -3;
         //checkout the dataset
-        UNIQUE_PTR<CDataWrapper> dataset(dataset_description.getCSDataValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
+        ChaosUniquePtr<CDataWrapper> dataset(dataset_description.getCSDataValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
         if(!dataset->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION))return -5;
         if(!dataset->isVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION))return -6;
         if(!dataset->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP))return -4;
@@ -202,7 +202,7 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
         
         
         
-        std::auto_ptr<CMultiTypeDataArrayWrapper> ds_vec(dataset->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
+        ChaosUniquePtr<CMultiTypeDataArrayWrapper> ds_vec(dataset->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
         if(!ds_vec.get()) return -7;
         //cicle all dataset attribute
         mongo::BSONArrayBuilder dataset_bson_array;
@@ -212,7 +212,7 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
             idx++) {
             mongo::BSONObjBuilder dataset_element_builder;
             
-            UNIQUE_PTR<CDataWrapper> dataset_element(ds_vec->getCDataWrapperElementAtIndex(idx));
+            ChaosUniquePtr<CDataWrapper> dataset_element(ds_vec->getCDataWrapperElementAtIndex(idx));
             if(dataset_element->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME) &&
                dataset_element->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION)&&
                dataset_element->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE)&&
@@ -238,7 +238,7 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
                         if(dataset_element->isVector(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE)) {
                             //we have multipler value for subtype
                             mongo::BSONArrayBuilder subtype_array_builder;
-                            std::auto_ptr<CMultiTypeDataArrayWrapper> sub_t_vec(dataset_element->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE));
+                            ChaosUniquePtr<CMultiTypeDataArrayWrapper> sub_t_vec(dataset_element->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE));
                             for(int idx = 0;
                                 idx < sub_t_vec->size();
                                 idx++) {
@@ -290,14 +290,14 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
         
         //check if we have bactch command in the dataset
         if(dataset_description.hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_COMMAND_DESCRIPTION)) {
-            std::auto_ptr<CMultiTypeDataArrayWrapper> bc_vec(dataset_description.getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_COMMAND_DESCRIPTION));
+            ChaosUniquePtr<CMultiTypeDataArrayWrapper> bc_vec(dataset_description.getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_COMMAND_DESCRIPTION));
             mongo::BSONArrayBuilder batch_command_bson_array;
             for(int idx = 0;
                 idx < bc_vec->size();
                 idx++) {
                 mongo::BSONObjBuilder batch_command_builder;
                 
-                UNIQUE_PTR<CDataWrapper> bc_element(bc_vec->getCDataWrapperElementAtIndex(idx));
+                ChaosUniquePtr<CDataWrapper> bc_element(bc_vec->getCDataWrapperElementAtIndex(idx));
                 MDB_COPY_STRING_CDWKEY_TO_BUILDER(batch_command_builder, bc_element, common::batch_command::BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID)
                 MDB_COPY_STRING_CDWKEY_TO_BUILDER(batch_command_builder, bc_element, common::batch_command::BatchCommandAndParameterDescriptionkey::BC_ALIAS)
                 MDB_COPY_STRING_CDWKEY_TO_BUILDER(batch_command_builder, bc_element, common::batch_command::BatchCommandAndParameterDescriptionkey::BC_DESCRIPTION)
@@ -305,12 +305,12 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
                 //check for parameter
                 if(bc_element->hasKey(common::batch_command::BatchCommandAndParameterDescriptionkey::BC_PARAMETERS)){
                     mongo::BSONArrayBuilder batch_command_parameter_bson_array;
-                    std::auto_ptr<CMultiTypeDataArrayWrapper> bc_param_vec(bc_element->getVectorValue(common::batch_command::BatchCommandAndParameterDescriptionkey::BC_PARAMETERS));
+                    ChaosUniquePtr<CMultiTypeDataArrayWrapper> bc_param_vec(bc_element->getVectorValue(common::batch_command::BatchCommandAndParameterDescriptionkey::BC_PARAMETERS));
                     for(int idx_param = 0;
                         idx_param < bc_param_vec->size();
                         idx_param++) {
                         mongo::BSONObjBuilder batch_command_parameter_builder;
-                        UNIQUE_PTR<CDataWrapper> bc_param_element(bc_param_vec->getCDataWrapperElementAtIndex(idx_param));
+                        ChaosUniquePtr<CDataWrapper> bc_param_element(bc_param_vec->getCDataWrapperElementAtIndex(idx_param));
                         MDB_COPY_STRING_CDWKEY_TO_BUILDER(batch_command_parameter_builder, bc_param_element, common::batch_command::BatchCommandAndParameterDescriptionkey::BC_PARAMETER_NAME)
                         MDB_COPY_STRING_CDWKEY_TO_BUILDER(batch_command_parameter_builder, bc_param_element, common::batch_command::BatchCommandAndParameterDescriptionkey::BC_PARAMETER_DESCRIPTION)
                         MDB_COPY_I32_CDWKEY_TO_BUILDER(batch_command_parameter_builder, bc_param_element, common::batch_command::BatchCommandAndParameterDescriptionkey::BC_PARAMETER_TYPE)
@@ -520,11 +520,11 @@ int MongoDBControlUnitDataAccess::setInstanceDescription(const std::string& cu_u
         if(instance_description.hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION)) {
             //get the contained control unit type
             mongo::BSONArrayBuilder bab;
-            UNIQUE_PTR<CMultiTypeDataArrayWrapper> drv_array(instance_description.getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION));
+            ChaosUniquePtr<CMultiTypeDataArrayWrapper> drv_array(instance_description.getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION));
             for(int idx = 0;
                 idx < drv_array->size();
                 idx++) {
-                UNIQUE_PTR<CDataWrapper> driver_desc(drv_array->getCDataWrapperElementAtIndex(idx));
+                ChaosUniquePtr<CDataWrapper> driver_desc(drv_array->getCDataWrapperElementAtIndex(idx));
                 if(driver_desc->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION_NAME) &&
                    driver_desc->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION_VERSION)&&
                    driver_desc->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION_INIT_PARAMETER)) {
@@ -545,11 +545,11 @@ int MongoDBControlUnitDataAccess::setInstanceDescription(const std::string& cu_u
         if(instance_description.hasKey("attribute_value_descriptions")) {
             //get the contained control unit type
             mongo::BSONArrayBuilder bab;
-            UNIQUE_PTR<CMultiTypeDataArrayWrapper> attr_array(instance_description.getVectorValue("attribute_value_descriptions"));
+            ChaosUniquePtr<CMultiTypeDataArrayWrapper> attr_array(instance_description.getVectorValue("attribute_value_descriptions"));
             for(int idx = 0;
                 idx < attr_array->size();
                 idx++) {
-                UNIQUE_PTR<CDataWrapper> attr_desc(attr_array->getCDataWrapperElementAtIndex(idx));
+                ChaosUniquePtr<CDataWrapper> attr_desc(attr_array->getCDataWrapperElementAtIndex(idx));
                 if(attr_desc->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME) &&
                    attr_desc->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE)) {
                     int size;
@@ -592,7 +592,7 @@ int MongoDBControlUnitDataAccess::setInstanceDescription(const std::string& cu_u
     return err;
 }
 
-int MongoDBControlUnitDataAccess::searchInstanceForUnitServer(std::vector<boost::shared_ptr<CDataWrapper> >& result_page,
+int MongoDBControlUnitDataAccess::searchInstanceForUnitServer(std::vector<ChaosSharedPtr<CDataWrapper> >& result_page,
                                                               const std::string& unit_server_uid,
                                                               std::vector<std::string> cu_type_filter,
                                                               uint32_t last_sequence_id,
@@ -641,7 +641,7 @@ int MongoDBControlUnitDataAccess::searchInstanceForUnitServer(std::vector<boost:
                 for (SearchResultIterator it = paged_result.begin();
                      it != paged_result.end();
                      it++) {
-                    boost::shared_ptr<CDataWrapper> result_intance(new CDataWrapper());
+                    ChaosSharedPtr<CDataWrapper> result_intance(new CDataWrapper());
                     result_intance->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, it->getStringField(NodeDefinitionKey::NODE_UNIQUE_ID));
                     if(it->hasField(NodeDefinitionKey::NODE_RPC_ADDR))result_intance->addStringValue(NodeDefinitionKey::NODE_RPC_ADDR, it->getStringField(NodeDefinitionKey::NODE_RPC_ADDR));
                     if(it->hasField(NodeDefinitionKey::NODE_RPC_DOMAIN))result_intance->addStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN, it->getStringField(NodeDefinitionKey::NODE_RPC_DOMAIN));
@@ -783,7 +783,7 @@ int MongoDBControlUnitDataAccess::deleteInstanceDescription(const std::string& u
 
 int MongoDBControlUnitDataAccess::getInstanceDatasetAttributeDescription(const std::string& control_unit_uid,
                                                                          const std::string& attribute_name,
-                                                                         boost::shared_ptr<chaos::common::data::CDataWrapper>& result) {
+                                                                         ChaosSharedPtr<chaos::common::data::CDataWrapper>& result) {
     int err = 0;
     mongo::BSONObj  result_bson;
     const std::string dotted_dataset_path =  boost::str(boost::format("%1%.%1%")%ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION);
@@ -829,7 +829,7 @@ int MongoDBControlUnitDataAccess::getInstanceDatasetAttributeDescription(const s
 
 int MongoDBControlUnitDataAccess::getInstanceDatasetAttributeConfiguration(const std::string& control_unit_uid,
                                                                            const std::string& attribute_name,
-                                                                           boost::shared_ptr<chaos::common::data::CDataWrapper>& result) {
+                                                                           ChaosSharedPtr<chaos::common::data::CDataWrapper>& result) {
     int err = 0;
     mongo::BSONObj  result_bson;
     try{
@@ -916,7 +916,7 @@ int MongoDBControlUnitDataAccess::getDataServiceAssociated(const std::string& cu
                 MDBCUDA_ERR << "Error fetching node description for data service:" << ds_unique_id;
             } else if(node_description!=NULL){
                 //we have object description
-                std::auto_ptr<CDataWrapper> node_ptr(node_description);
+                ChaosUniquePtr<CDataWrapper> node_ptr(node_description);
                 associated_ds.push_back(node_ptr->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID));
             } else {
                 MDBCUDA_ERR << "no node description found for data service:" << ds_unique_id;

@@ -39,7 +39,7 @@ namespace chaos {
         //!forward declaration
         class AbstractWorker;
         
-        typedef boost::shared_ptr<AbstractWorker> WorkerSharedPtr;
+        typedef ChaosSharedPtr<AbstractWorker> WorkerSharedPtr;
         CHAOS_DEFINE_MAP_FOR_TYPE(std::string, WorkerSharedPtr, MapWorker);
         
         typedef enum {
@@ -69,7 +69,7 @@ namespace chaos {
         protected:
             //!inherited by chaos::common::async_central::TimerHandler
             void timeout();
-            std::auto_ptr<chaos::common::data::CDataWrapper> getAgentRegistrationPack();
+            ChaosUniquePtr<chaos::common::data::CDataWrapper> getAgentRegistrationPack();
             
             /*!
              receive the ack package for agent registration on the MDS

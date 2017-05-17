@@ -45,7 +45,7 @@ namespace chaos {
                     
                     MongoDBNodeDataAccess *node_data_access;
                 protected:
-                    MongoDBControlUnitDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection,
+                    MongoDBControlUnitDataAccess(const ChaosSharedPtr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection,
                                                  data_access::DataServiceDataAccess *_data_service_da);
                     ~MongoDBControlUnitDataAccess();
                     
@@ -80,7 +80,7 @@ namespace chaos {
                     int setInstanceDescription(const std::string& cu_unique_id,
                                                chaos::common::data::CDataWrapper& instance_description);
                     
-                    int searchInstanceForUnitServer(std::vector<boost::shared_ptr<chaos::common::data::CDataWrapper> >& result_page,
+                    int searchInstanceForUnitServer(std::vector<ChaosSharedPtr<chaos::common::data::CDataWrapper> >& result_page,
                                                     const std::string& unit_server_uid,
                                                     std::vector<std::string> cu_type_filter,
                                                     uint32_t last_sequence_id,
@@ -99,11 +99,11 @@ namespace chaos {
                     
                     int getInstanceDatasetAttributeDescription(const std::string& control_unit_uid,
                                                                const std::string& attribute_name,
-                                                               boost::shared_ptr<chaos::common::data::CDataWrapper>& result);
+                                                               ChaosSharedPtr<chaos::common::data::CDataWrapper>& result);
                     
                     int getInstanceDatasetAttributeConfiguration(const std::string& control_unit_uid,
                                                                  const std::string& attribute_name,
-                                                                 boost::shared_ptr<chaos::common::data::CDataWrapper>& result);
+                                                                 ChaosSharedPtr<chaos::common::data::CDataWrapper>& result);
                     
                     int getDataServiceAssociated(const std::string& cu_uid,
                                                  std::vector<std::string>& associated_ds);

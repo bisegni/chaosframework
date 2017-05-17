@@ -36,7 +36,7 @@ namespace chaos {
                     uint32_t    work_concurency;
                 };
                 
-                typedef boost::shared_ptr<SnapshotInformation> SnapshotInformationPtr;
+                typedef ChaosSharedPtr<SnapshotInformation> SnapshotInformationPtr;
                 CHAOS_DEFINE_VECTOR_FOR_TYPE(SnapshotInformationPtr, SnapshotInfoList);
                 
                 class GetAllSnapshotHelper {
@@ -58,7 +58,7 @@ namespace chaos {
                     
                     ApiProxyResult execute(const std::string& query_filter = std::string());
                     
-                    static std::auto_ptr<GetAllSnapshotHelper> getHelper(chaos::common::data::CDataWrapper *api_result);
+                    static ChaosUniquePtr<GetAllSnapshotHelper> getHelper(chaos::common::data::CDataWrapper *api_result);
                 };
             }
         }

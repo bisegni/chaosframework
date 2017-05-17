@@ -78,7 +78,7 @@ namespace chaos {
                 
                 boost::asio::io_service io_service;
                 boost::thread_group	service_thread_group;
-                //vector< boost::shared_ptr<boost::thread> > serviceThread;
+                //vector< ChaosSharedPtr<boost::thread> > serviceThread;
             };
         }
     }

@@ -25,7 +25,7 @@ public:
     void updateData(const QSharedPointer<chaos::common::data::CDataWrapper>& _dataset);
     void updateInstanceDescription(const QSharedPointer<chaos::common::data::CDataWrapper>& _dataset_attribute_configuration);
     //! return all changed value and reset the tracking for new chagnes
-    void getAttributeChangeSet(std::vector<boost::shared_ptr<chaos::metadata_service_client::api_proxy::control_unit::ControlUnitInputDatasetChangeSet> > &value_set_array);
+    void getAttributeChangeSet(std::vector<ChaosSharedPtr<chaos::metadata_service_client::api_proxy::control_unit::ControlUnitInputDatasetChangeSet> > &value_set_array);
     void applyChangeSet(bool commit);
 protected:
     int getRowCount() const;

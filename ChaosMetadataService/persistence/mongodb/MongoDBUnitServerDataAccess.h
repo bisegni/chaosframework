@@ -46,7 +46,7 @@ namespace chaos {
 
                     MongoDBNodeDataAccess *node_data_access;
 				protected:
-                    MongoDBUnitServerDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
+                    MongoDBUnitServerDataAccess(const ChaosSharedPtr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
 					~MongoDBUnitServerDataAccess();
 				public:
                     //inherited method

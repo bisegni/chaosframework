@@ -191,7 +191,7 @@ void IODirectIODriver::storeHealthData(const std::string& key,
     boost::shared_lock<boost::shared_mutex>(mutext_feeder);
     IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
     
-    std::auto_ptr<chaos::common::data::SerializationBuffer> serialization(dataToStore.getBSONData());
+    ChaosUniquePtr<chaos::common::data::SerializationBuffer> serialization(dataToStore.getBSONData());
     
     if(next_client &&
        serialization.get()) {
@@ -307,7 +307,7 @@ chaos::common::data::CDataWrapper* IODirectIODriver::updateConfiguration(chaos::
     //checkif someone has passed us the device indetification
     if(newConfigration->hasKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST)){
         IODirectIODriver_LINFO_ << "Get the DataManager LiveData address value";
-        UNIQUE_PTR<chaos::common::data::CMultiTypeDataArrayWrapper> liveMemAddrConfig(newConfigration->getVectorValue(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST));
+        ChaosUniquePtr<chaos::common::data::CMultiTypeDataArrayWrapper> liveMemAddrConfig(newConfigration->getVectorValue(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST));
         size_t numerbOfserverAddressConfigured = liveMemAddrConfig->size();
         for ( int idx = 0; idx < numerbOfserverAddressConfigured; idx++ ){
             string serverDesc = liveMemAddrConfig->getStringElementAtIndex(idx);

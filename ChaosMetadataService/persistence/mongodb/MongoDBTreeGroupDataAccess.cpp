@@ -37,7 +37,7 @@ using namespace chaos::service_common;
 using namespace chaos::service_common::persistence::mongodb;
 using namespace chaos::metadata_service::persistence::mongodb;
 
-MongoDBTreeGroupDataAccess::MongoDBTreeGroupDataAccess(const boost::shared_ptr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
+MongoDBTreeGroupDataAccess::MongoDBTreeGroupDataAccess(const ChaosSharedPtr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
 MongoDBAccessor(_connection),
 TreeGroupDataAccess(){}
 
@@ -405,7 +405,7 @@ int MongoDBTreeGroupDataAccess::getNodeChildFromPath(const std::string& group_do
                                                      std::vector<std::string>& node_child) {
     int err = 0;
     bool presence = false;
-    std::auto_ptr<mongo::DBClientCursor> query_result;
+    ChaosUniquePtr<mongo::DBClientCursor> query_result;
     try {
         
         //get node and paretn path from full path description
@@ -447,7 +447,7 @@ int MongoDBTreeGroupDataAccess::getNodeChildFromPath(const std::string& group_do
 int MongoDBTreeGroupDataAccess::getNodeRootFromDomain(const std::string& group_domain,
                                                       std::vector<std::string>& node_child) {
     int err = 0;
-    std::auto_ptr<mongo::DBClientCursor> query_result;
+    ChaosUniquePtr<mongo::DBClientCursor> query_result;
     try {
         
         //create the bson element that identify the node
@@ -532,7 +532,7 @@ int MongoDBTreeGroupDataAccess::getChaosNodeFromGroupDomain(const std::string& g
     int err = 0;
     std::string node_name;
     std::string parent_path;
-    std::auto_ptr<mongo::DBClientCursor> query_result;
+    ChaosUniquePtr<mongo::DBClientCursor> query_result;
     try {
         
         //create the bson element that identify the node

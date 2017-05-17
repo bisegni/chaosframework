@@ -70,7 +70,7 @@ namespace chaos {
             };
             
             //! define the map for the metric
-            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, boost::shared_ptr<HealtMetric>, HealtNodeElementMap)
+            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ChaosSharedPtr<HealtMetric>, HealtNodeElementMap)
             
             struct NodeHealtSet {
                 //!notify when some metric has chagned
@@ -108,7 +108,7 @@ namespace chaos {
             };
             
             //! define map for node health information
-            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, boost::shared_ptr<NodeHealtSet>, HealtNodeMap)
+            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ChaosSharedPtr<NodeHealtSet>, HealtNodeMap)
             
             //! Is the root class for the healt managment system
             /*!
@@ -142,10 +142,10 @@ namespace chaos {
                 boost::mutex                                        mutex_publishing;
                 
                 //! drive rfor publishing the data
-                std::auto_ptr<chaos::common::io::IODataDriver>      io_data_driver;
+                ChaosUniquePtr<chaos::common::io::IODataDriver>      io_data_driver;
                 
                 //! private non locked push method for a healt set
-                inline void _publish(const boost::shared_ptr<NodeHealtSet>& heath_set,
+                inline void _publish(const ChaosSharedPtr<NodeHealtSet>& heath_set,
                                      uint64_t publish_ts);
                 
                 ProcInfo current_proc_info;

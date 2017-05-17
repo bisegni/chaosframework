@@ -7,8 +7,6 @@
 
 #include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
 
-#include <boost/shared_ptr.hpp>
-
 typedef chaos::DataType::DataType ChaosDataType;
 
 class ChaosLabel:

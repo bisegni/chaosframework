@@ -239,7 +239,7 @@ int EUSearch::runAlgoSearchSinceSeconds(const common::script::ScriptInParam& inp
     uint64_t processed_lement = 0;
     ChaosStringVector attribute_name;
     AbstractScriptVM *vm_ptr = getVM();
-    boost::shared_ptr<CDataWrapper> found_element;
+    ChaosSharedPtr<CDataWrapper> found_element;
     common::script::ScriptInParam algo_input_parameter;
     
     CHAOS_ASSERT(vm_ptr);

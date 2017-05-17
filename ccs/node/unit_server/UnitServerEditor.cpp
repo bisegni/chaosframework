@@ -217,7 +217,7 @@ void UnitServerEditor::onApiDone(const QString& tag,
         QStringList cy_type_list;
         if(api_result->hasKey(chaos::UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS)) {
             //get the vector of unit type
-            std::unique_ptr<CMultiTypeDataArrayWrapper> arr(api_result->getVectorValue(chaos::UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS));
+            ChaosUniquePtr<CMultiTypeDataArrayWrapper> arr(api_result->getVectorValue(chaos::UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS));
             for(int i = 0;
                 i < arr->size();
                 i++) {

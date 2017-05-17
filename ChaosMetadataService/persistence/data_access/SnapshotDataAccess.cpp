@@ -36,7 +36,7 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define SDA_DBG  DBG_LOG(SnapshotDataAccess)
 #define SDA_ERR  ERR_LOG(SnapshotDataAccess)
 
-CHAOS_DEFINE_VECTOR_FOR_TYPE(boost::shared_ptr<chaos::common::data::CDataWrapper>, CDSList)
+CHAOS_DEFINE_VECTOR_FOR_TYPE(ChaosSharedPtr<chaos::common::data::CDataWrapper>, CDSList)
 
 DEFINE_DA_NAME(SnapshotDataAccess)
 

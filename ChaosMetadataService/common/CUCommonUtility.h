@@ -31,7 +31,7 @@ namespace chaos {
             
             class CUCommonUtility {
             public:
-                static std::auto_ptr<chaos::common::data::CDataWrapper> prepareRequestPackForLoadControlUnit(const std::string& cu_uid,
+                static ChaosUniquePtr<chaos::common::data::CDataWrapper> prepareRequestPackForLoadControlUnit(const std::string& cu_uid,
                                                                                                              chaos::metadata_service::persistence::data_access::ControlUnitDataAccess *cu_da);
                 
                 static void prepareAutoInitAndStartInAutoLoadControlUnit(const std::string& cu_uid,
@@ -40,18 +40,18 @@ namespace chaos {
                                                                          chaos::metadata_service::persistence::data_access::DataServiceDataAccess *ds_da,
                                                                          chaos::common::data::CDataWrapper *auto_load_pack);
                 
-                static std::auto_ptr<chaos::common::data::CDataWrapper> initDataPack(const std::string& cu_uid,
+                static ChaosUniquePtr<chaos::common::data::CDataWrapper> initDataPack(const std::string& cu_uid,
                                                                                      chaos::metadata_service::persistence::data_access::NodeDataAccess *n_da,
                                                                                      chaos::metadata_service::persistence::data_access::ControlUnitDataAccess *cu_da,
                                                                                      chaos::metadata_service::persistence::data_access::DataServiceDataAccess *ds_da);
                 
-                static std::auto_ptr<chaos::common::data::CDataWrapper> startDataPack(const std::string& cu_uid);
+                static ChaosUniquePtr<chaos::common::data::CDataWrapper> startDataPack(const std::string& cu_uid);
                 
-                static std::auto_ptr<chaos::common::data::CDataWrapper> stopDataPack(const std::string& cu_uid);
+                static ChaosUniquePtr<chaos::common::data::CDataWrapper> stopDataPack(const std::string& cu_uid);
                 
-                static std::auto_ptr<chaos::common::data::CDataWrapper> deinitDataPack(const std::string& cu_uid);
+                static ChaosUniquePtr<chaos::common::data::CDataWrapper> deinitDataPack(const std::string& cu_uid);
                 
-                static std::auto_ptr<chaos::common::data::CDataWrapper> mergeDatasetAttributeWithSetup(chaos::common::data::CDataWrapper *element_in_dataset,
+                static ChaosUniquePtr<chaos::common::data::CDataWrapper> mergeDatasetAttributeWithSetup(chaos::common::data::CDataWrapper *element_in_dataset,
                                                                                                        chaos::common::data::CDataWrapper *element_in_setup);
             };
             

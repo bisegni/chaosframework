@@ -202,7 +202,8 @@ int DefaultPersistenceDriver::pushNewDataset(const std::string& producer_key,
 	//ad producer key
 	new_dataset->addStringValue(chaos::DataPackCommonKey::DPCK_DEVICE_ID, producer_key);
 	new_dataset->addInt32Value(chaos::DataPackCommonKey::DPCK_DATASET_TYPE, chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT);
-	UNIQUE_PTR<SerializationBuffer> serialization(new_dataset->getBSONData());
+	ChaosUniquePtr<SerializationBuffer> serialization(new_dataset->getBSONData());
+	
 	DirectIOChannelsInfo	*next_client = static_cast<DirectIOChannelsInfo*>(connection_feeder.getService());
 	serialization->disposeOnDelete = !next_client;
 	if(next_client) {

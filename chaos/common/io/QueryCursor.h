@@ -40,7 +40,7 @@ namespace chaos {
                 QueryPhaseEnded
             }QueryPhase;
             
-            CHAOS_DEFINE_VECTOR_FOR_TYPE(boost::shared_ptr<chaos::common::data::CDataWrapper>, ResultPageDecodedPacket);
+            CHAOS_DEFINE_VECTOR_FOR_TYPE(ChaosSharedPtr<chaos::common::data::CDataWrapper>, ResultPageDecodedPacket);
             
 #define DEFAULT_PAGE_LEN 100
             class QueryCursor {
@@ -50,7 +50,7 @@ namespace chaos {
                     unsigned int current_fetched;
                     ResultPageDecodedPacket decoded_page;
                     uint64_t last_received_sequence;
-                  //  std::auto_ptr<chaos::common::direct_io::channel::opcode_headers::DirectIODeviceChannelOpcodeQueryDataCloudResult>query_result;
+                  //  ChaosUniquePtr<chaos::common::direct_io::channel::opcode_headers::DirectIODeviceChannelOpcodeQueryDataCloudResult>query_result;
                     chaos::common::direct_io::channel::opcode_headers::DirectIODeviceChannelOpcodeQueryDataCloudResultPtr query_result;
                     ResultPage();
                     ~ResultPage();
@@ -58,7 +58,7 @@ namespace chaos {
                     
                     const bool hasNext() const;
                     
-                    boost::shared_ptr<chaos::common::data::CDataWrapper> next()  throw (chaos::CException);
+                    ChaosSharedPtr<chaos::common::data::CDataWrapper> next()  throw (chaos::CException);
                 };
                 
                 const std::string query_id;
@@ -87,7 +87,7 @@ namespace chaos {
                 
                 const bool hasNext();
                 const int32_t getError();
-                boost::shared_ptr<chaos::common::data::CDataWrapper> next() throw (CException);
+                ChaosSharedPtr<chaos::common::data::CDataWrapper> next() throw (CException);
                 
                 const uint32_t getPageLen() const;
                 

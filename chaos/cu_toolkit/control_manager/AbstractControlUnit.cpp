@@ -941,10 +941,10 @@ CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreP
     
     if(!key_data_storage.get()) throw MetadataLoggingCException(getCUID(), -2, "Key data storage driver not allocated", __PRETTY_FUNCTION__);
     
-    boost::shared_ptr<AttributeValueSharedCache> restore_cache(new AttributeValueSharedCache());
+    ChaosSharedPtr<AttributeValueSharedCache> restore_cache(new AttributeValueSharedCache());
     if(!restore_cache.get()) throw MetadataLoggingCException(getCUID(), -3, "failed to allocate restore cache", __PRETTY_FUNCTION__);
     
-    boost::shared_ptr<CDataWrapper> dataset_at_tag;
+    ChaosSharedPtr<CDataWrapper> dataset_at_tag;
     //get tag alias
     const std::string restore_snapshot_tag = restoreParam->getStringValue(NodeDomainAndActionRPC::ACTION_NODE_RESTORE_PARAM_TAG);
     
@@ -1419,7 +1419,7 @@ if(attributeInfo.maxRange.size() && v > attributeInfo.maxRange ) throw MetadataL
 
 CDataWrapper* AbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_attribute_values, bool& detachParam) throw (CException) {
     CHAOS_ASSERT(dataset_attribute_values)
-    boost::shared_ptr<SharedCacheLockDomain> w_lock = attribute_value_shared_cache->getLockOnDomain(DOMAIN_INPUT, true);
+    ChaosSharedPtr<SharedCacheLockDomain> w_lock = attribute_value_shared_cache->getLockOnDomain(DOMAIN_INPUT, true);
     w_lock->lock();
     
     RangeValueInfo attributeInfo;
@@ -1566,7 +1566,7 @@ DriverAccessor *AbstractControlUnit::getAccessoInstanceByIndex(int idx) {
 
 void AbstractControlUnit::pushOutputDataset(bool ts_already_set) {
     AttributeCache& output_attribute_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT);
-    boost::shared_ptr<SharedCacheLockDomain> r_lock = attribute_value_shared_cache->getLockOnDomain(DOMAIN_OUTPUT, false);
+    ChaosSharedPtr<SharedCacheLockDomain> r_lock = attribute_value_shared_cache->getLockOnDomain(DOMAIN_OUTPUT, false);
     r_lock->lock();
     
     //check if something as changed

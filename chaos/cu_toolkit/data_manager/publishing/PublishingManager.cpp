@@ -37,7 +37,7 @@ PublishableTargetManagerElement::PublishableTargetManagerElement(const Publishab
 target(src.target),
 auto_remove(src.auto_remove){}
 
-PublishableTargetManagerElement::PublishableTargetManagerElement(boost::shared_ptr<PublishTarget> _target,
+PublishableTargetManagerElement::PublishableTargetManagerElement(ChaosSharedPtr<PublishTarget> _target,
                                                                  bool _auto_remove):
 target(_target),
 auto_remove(_auto_remove){}
@@ -56,7 +56,7 @@ bool PublishingManager::addNewTarget(const std::string& target_name,
     //we can add the new target
     if(map_name_target().count(target_name) != 0) return false;
     
-    PublishableTargetManagerElementShrdPtr new_element(new PublishableTargetManagerElement( boost::shared_ptr<PublishTarget>(new PublishTarget(target_name)),
+    PublishableTargetManagerElementShrdPtr new_element(new PublishableTargetManagerElement( ChaosSharedPtr<PublishTarget>(new PublishTarget(target_name)),
                                                                                            auto_remove));
     map_name_target().insert(PublishableElementNameMapPair(target_name, new_element));
     

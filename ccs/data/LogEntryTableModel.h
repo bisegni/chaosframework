@@ -18,7 +18,7 @@ public:
     //!update log entries for node uid as emitter and log domain list to inclue
     void updateEntriesList(const QString& node_uid,
                             const chaos::metadata_service_client::api_proxy::logging::LogDomainList& domain_list);
-    boost::shared_ptr<chaos::metadata_service_client::api_proxy::logging::LogEntry> getLogEntryForRow(unsigned int row);
+    ChaosSharedPtr<chaos::metadata_service_client::api_proxy::logging::LogEntry> getLogEntryForRow(unsigned int row);
     virtual void clear();
     void setMaxResultItem(uint32_t _number_of_max_result);
 protected:
@@ -38,7 +38,7 @@ protected:
     uint32_t number_of_max_result;
     ApiSubmitter api_submitter;
     chaos::metadata_service_client::api_proxy::logging::LogDomainList domain_list;
-    std::unique_ptr<chaos::metadata_service_client::api_proxy::logging::GetLogForSourceUIDHelper> helper;
+    ChaosUniquePtr<chaos::metadata_service_client::api_proxy::logging::GetLogForSourceUIDHelper> helper;
 };
 
 #endif // LOGENTRYTABLEMODEL_H

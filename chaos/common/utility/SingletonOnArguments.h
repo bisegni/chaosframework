@@ -20,7 +20,7 @@ namespace chaos{
 			template <class T>
 			class SingletonOnArguments {
 				std::string init_params;
-				static std::map<std::string,boost::shared_ptr<T> > instances;
+				static std::map<std::string,ChaosSharedPtr<T> > instances;
 				static boost::mutex mutex;
 				
 			protected:
@@ -35,27 +35,27 @@ namespace chaos{
 				
 				void setParams(std::string p){init_params=p;}
 				
-				static boost::shared_ptr<T>& getInstance(std::string initParams){
+				static ChaosSharedPtr<T>& getInstance(std::string initParams){
 					boost::mutex::scoped_lock l(mutex);
 					
-					typename std::map<std::string, boost::shared_ptr<T> >::iterator i = instances.find(initParams);
+					typename std::map<std::string, ChaosSharedPtr<T> >::iterator i = instances.find(initParams);
 					if(i!=instances.end()){
 						return (i->second);
 					}
 					T* tmp = new T();
 					
-					boost::shared_ptr<T> ret = boost::shared_ptr<T>(tmp);
-					instances.insert(std::pair<std::string,boost::shared_ptr<T> >(initParams,ret));
+					ChaosSharedPtr<T> ret = ChaosSharedPtr<T>(tmp);
+					instances.insert(std::pair<std::string,ChaosSharedPtr<T> >(initParams,ret));
 					
 					dynamic_cast<SingletonOnArguments* >(tmp)->setParams(initParams);
 					
 					return instances[initParams];
 				}
 				
-				static void removeInstance( boost::shared_ptr<T>&t ){
+				static void removeInstance( ChaosSharedPtr<T>&t ){
 					boost::mutex::scoped_lock l(mutex);
 					
-					typename std::map<std::string, boost::shared_ptr<T> >::iterator i = instances.begin();
+					typename std::map<std::string, ChaosSharedPtr<T> >::iterator i = instances.begin();
 					while(i!=instances.end()){
 						if(i->second==t){
 							instances.erase(i);
@@ -71,7 +71,7 @@ namespace chaos{
 				}
 				
 			};
-			template <class T> std::map<std::string,boost::shared_ptr<T>  > SingletonOnArguments<T>::instances;
+			template <class T> std::map<std::string,ChaosSharedPtr<T>  > SingletonOnArguments<T>::instances;
 			template <class T> boost::mutex SingletonOnArguments<T>::mutex;
 		}
 	}

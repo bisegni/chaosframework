@@ -71,7 +71,7 @@ namespace chaos{
                               const chaos::common::state_flag::StateFlagServerity severity);
             };
             
-            typedef boost::shared_ptr<AlarmDescription> AlarmDescriptionShrdPtr;
+            typedef ChaosSharedPtr<AlarmDescription> AlarmDescriptionShrdPtr;
             
         }
     }

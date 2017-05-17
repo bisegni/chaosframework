@@ -48,7 +48,7 @@ namespace chaos {
 				typedef struct ConnectionMonitorInfo {
 					bool run;
 					std::string unique_identification;
-                    std::auto_ptr<boost::thread> monitor_thread;
+                    ChaosUniquePtr<boost::thread> monitor_thread;
 					void *monitor_socket;
 					std::string monitor_url;
 				} ConnectionMonitorInfo;

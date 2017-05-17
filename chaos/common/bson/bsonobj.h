@@ -104,7 +104,7 @@ namespace bson {
 
            OWNED CASE
            If the BSONObj owns the buffer, the buffer can be shared among several BSONObj's (by assignment).
-           In this case the buffer is basically implemented as a shared_ptr.
+           In this case the buffer is basically implemented as a ChaosSharedPtr.
            Since BSONObj's are typically immutable, this works well.
 
            UNOWNED CASE

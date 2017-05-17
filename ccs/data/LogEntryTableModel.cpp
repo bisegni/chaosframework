@@ -43,8 +43,8 @@ void LogEntryTableModel::clear() {
     endResetModel();
 }
 
-boost::shared_ptr<logging::LogEntry> LogEntryTableModel::getLogEntryForRow(unsigned int row) {
-    if(row >= helper->getLogEntryListSize()) return boost::shared_ptr<logging::LogEntry>();
+ChaosSharedPtr<logging::LogEntry> LogEntryTableModel::getLogEntryForRow(unsigned int row) {
+    if(row >= helper->getLogEntryListSize()) return ChaosSharedPtr<logging::LogEntry>();
     return helper->getLogEntryList()[row];
 }
 

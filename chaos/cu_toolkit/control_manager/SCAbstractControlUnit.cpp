@@ -100,14 +100,14 @@ void SCAbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configur
     //call superclass method
     AbstractControlUnit::_defineActionAndDataset(setup_configuration);
     
-    std::vector< boost::shared_ptr<BatchCommandDescription> > batch_command_description;
+    std::vector< ChaosSharedPtr<BatchCommandDescription> > batch_command_description;
     slow_command_executor->getCommandsDescriptions(batch_command_description);
     if(batch_command_description.size()){
         //fill setup with command descirption serialization
-        for(std::vector< boost::shared_ptr<BatchCommandDescription> > ::iterator it = batch_command_description.begin();
+        for(std::vector< ChaosSharedPtr<BatchCommandDescription> > ::iterator it = batch_command_description.begin();
             it != batch_command_description.end();
             it++) {
-            boost::shared_ptr<CDataWrapper> full_description((*it)->getFullDescription());
+            ChaosSharedPtr<CDataWrapper> full_description((*it)->getFullDescription());
             setup_configuration.appendCDataWrapperToArray(*full_description);
         }
         setup_configuration.finalizeArrayForKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_COMMAND_DESCRIPTION);
@@ -250,7 +250,7 @@ void SCAbstractControlUnit::submitBatchCommand(const std::string& batch_command_
                                          scheduler_step_delay);
 }
 
-std::auto_ptr<CommandState> SCAbstractControlUnit::getStateForCommandID(uint64_t command_id) {
+ChaosUniquePtr<CommandState> SCAbstractControlUnit::getStateForCommandID(uint64_t command_id) {
     return slow_command_executor->getStateForCommandID(command_id);
 }
 
@@ -259,7 +259,7 @@ std::auto_ptr<CommandState> SCAbstractControlUnit::getStateForCommandID(uint64_t
  */
 CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_attribute_values, bool& detachParam) throw (CException) {
     uint64_t command_id =0;
-    std::auto_ptr<CDataWrapper> result_for_command;
+    ChaosUniquePtr<CDataWrapper> result_for_command;
     
     //cal first the superclass method because the dataset_attribute_values is not detached
     CDataWrapper *result = AbstractControlUnit::setDatasetAttribute(dataset_attribute_values, detachParam);
@@ -292,7 +292,7 @@ CDataWrapper* SCAbstractControlUnit::updateConfiguration(CDataWrapper *update_pa
     if(update_pack==NULL)
         return NULL;
     CDataWrapper *result = AbstractControlUnit::updateConfiguration(update_pack, detach_param);
-    std::auto_ptr<CDataWrapper> cu_properties;
+    ChaosUniquePtr<CDataWrapper> cu_properties;
     CDataWrapper *cu_property_container = NULL;
     
     if(update_pack->hasKey(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)){
@@ -321,7 +321,7 @@ CDataWrapper* SCAbstractControlUnit::updateConfiguration(CDataWrapper *update_pa
     return result;
 }
 
-void SCAbstractControlUnit::installCommand(boost::shared_ptr<BatchCommandDescription> command_description,
+void SCAbstractControlUnit::installCommand(ChaosSharedPtr<BatchCommandDescription> command_description,
                                            bool is_default,
                                            bool sticky,
                                            unsigned int sandbox) {
@@ -334,7 +334,7 @@ void SCAbstractControlUnit::installCommand(boost::shared_ptr<BatchCommandDescrip
     }
 }
 bool SCAbstractControlUnit::waitOnCommandID(uint64_t& cmd_id) {
-    std::auto_ptr<CommandState> cmd_state;
+    ChaosUniquePtr<CommandState> cmd_state;
     do {
         cmd_state = getStateForCommandID(cmd_id);
         if (!cmd_state.get()) break;

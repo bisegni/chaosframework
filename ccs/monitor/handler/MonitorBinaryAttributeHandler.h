@@ -13,7 +13,7 @@ class MonitorBinaryAttributeHandler:
 protected:
     void consumeValue(const std::string& key,
                       const std::string& attribute,
-                      const boost::shared_ptr<chaos::common::data::SerializationBuffer>& value) {
+                      const ChaosSharedPtr<chaos::common::data::SerializationBuffer>& value) {
         //emit new value
         emit valueUpdated(QString::fromStdString(key),
                           QString::fromStdString(attribute),

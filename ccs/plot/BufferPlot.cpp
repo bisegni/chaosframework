@@ -34,7 +34,7 @@ AttributeScanner::~AttributeScanner() {
     }
 }
 
-void AttributeScanner::updateData(const boost::shared_ptr<chaos::common::data::CDataBuffer>& _buffer_to_plot) {
+void AttributeScanner::updateData(const ChaosSharedPtr<chaos::common::data::CDataBuffer>& _buffer_to_plot) {
     global_lock.lockForWrite();
     SingleTypeBinaryPlotAdapter<double>::setData(_buffer_to_plot);
     //iterate on buffer
@@ -156,7 +156,7 @@ bool BufferPlot::hasAttribute(const QString& node_uid,
 
 void BufferPlot::updateAttributeData(const QString& node_uid,
                                      const QString& attribute_name,
-                                     boost::shared_ptr<chaos::common::data::CDataBuffer>& _buffer_to_plot) {
+                                     ChaosSharedPtr<chaos::common::data::CDataBuffer>& _buffer_to_plot) {
     LockableAttributeMap::LockableObjectReadLock wl = map_attribute_scanners.getReadLockObject();
     AttributeMapKey key(node_uid,attribute_name);
     if(map_attribute_scanners().contains(key) == false) return;

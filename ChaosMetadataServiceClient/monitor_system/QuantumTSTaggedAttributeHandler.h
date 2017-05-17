@@ -125,7 +125,7 @@ x(const std::string& _attribute, const std::string& _ts_attribute, bool _event_o
                 virtual void consumeTSTaggedValue(const std::string& key,
                                                   const std::string& attribute,
                                                   uint64_t timestamp,
-                                                  const boost::shared_ptr<chaos::common::data::SerializationBuffer>& value) = 0;
+                                                  const ChaosSharedPtr<chaos::common::data::SerializationBuffer>& value) = 0;
             };
         }
     }

@@ -98,7 +98,7 @@ namespace chaos {
                  \param request_pack the request pack to forward to the action
                  \return the future of the request or null if no server has been found
                  */
-                std::auto_ptr<MessageRequestFuture> _sendRequestWithFuture(const std::string& action_domain,
+                ChaosUniquePtr<MessageRequestFuture> _sendRequestWithFuture(const std::string& action_domain,
                                                                            const std::string& action_name,
                                                                            chaos::common::data::CDataWrapper *request_pack,
                                                                            std::string& used_remote_address);
@@ -165,7 +165,7 @@ namespace chaos {
                  \param request_pack the request pack to forward to the action
                  \return the future of the request or null if no server has been found
                  */
-                std::auto_ptr<MultiAddressMessageRequestFuture> sendRequestWithFuture(const std::string& action_domain,
+                ChaosUniquePtr<MultiAddressMessageRequestFuture> sendRequestWithFuture(const std::string& action_domain,
                                                                                       const std::string& action_name,
                                                                                       chaos::common::data::CDataWrapper *request_pack,
                                                                                       int32_t request_timeout = 1000);

@@ -94,12 +94,12 @@ namespace chaos {
                    serialized_data->isVectorValue("property_g_plist")){
                     //we have properties
                     PropertyDescriptionSDWrapper property_wrapper;
-                    std::auto_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> prop_array(serialized_data->getVectorValue("property_g_plist"));
+                    ChaosUniquePtr<chaos::common::data::CMultiTypeDataArrayWrapper> prop_array(serialized_data->getVectorValue("property_g_plist"));
                     
                     for(unsigned int idx = 0;
                         idx < prop_array->size();
                         idx++) {
-                        std::auto_ptr<chaos::common::data::CDataWrapper> prop(prop_array->getCDataWrapperElementAtIndex(idx));
+                        ChaosUniquePtr<chaos::common::data::CDataWrapper> prop(prop_array->getCDataWrapperElementAtIndex(idx));
                         property_wrapper.deserialize(prop.get());
                         
                         //insert new porperty
@@ -110,8 +110,8 @@ namespace chaos {
                 }
             }
             
-            std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
-                std::auto_ptr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
+            ChaosUniquePtr<chaos::common::data::CDataWrapper> serialize() {
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
                 data_serialized->addStringValue("property_g_name", Subclass::dataWrapped().name);
                 if(Subclass::dataWrapped().map_properties.size()) {
                     

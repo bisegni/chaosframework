@@ -163,9 +163,9 @@ void ChaosStorageTypeWidget::on_pushButton_clicked(bool clicked) {
 void ChaosStorageTypeWidget::sendStorageType(chaos::DataServiceNodeDefinitionType::DSStorageType type,
                                              const QString& event_tag) {
     chaos::metadata_service_client::api_proxy::node::NodePropertyGroupList property_list;
-    boost::shared_ptr<chaos::common::data::CDataWrapperKeyValueSetter> storage_type(new chaos::common::data::CDataWrapperInt32KeyValueSetter(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_TYPE,
+    ChaosSharedPtr<chaos::common::data::CDataWrapperKeyValueSetter> storage_type(new chaos::common::data::CDataWrapperInt32KeyValueSetter(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_TYPE,
                                                                                                                                              type));
-    boost::shared_ptr<chaos::metadata_service_client::api_proxy::node::NodePropertyGroup> cu_property_group(new chaos::metadata_service_client::api_proxy::node::NodePropertyGroup());
+    ChaosSharedPtr<chaos::metadata_service_client::api_proxy::node::NodePropertyGroup> cu_property_group(new chaos::metadata_service_client::api_proxy::node::NodePropertyGroup());
     cu_property_group->group_name = "property_abstract_control_unit";
     cu_property_group->group_property_list.push_back(storage_type);
 

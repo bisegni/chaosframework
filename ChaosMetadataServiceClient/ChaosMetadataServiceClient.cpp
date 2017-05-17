@@ -46,7 +46,7 @@ using namespace chaos::metadata_service_client::event;
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::monitor_system;
 
-using boost::shared_ptr;
+using ChaosSharedPtr;
 
 #define CMSC_LAPP INFO_LOG(ChaosMetadataServiceClient)
 #define CMSC_LDBG DBG_LOG(ChaosMetadataServiceClient)
@@ -286,7 +286,7 @@ void ChaosMetadataServiceClient::reconfigureMonitor() throw(CException) {
     
     //get the endpoint array
     CMSC_LDBG<< "Scan the result for serverlist";
-    std::auto_ptr<CMultiTypeDataArrayWrapper> endpoint_array(available_enpoint_result->getResult()->getVectorValue(DS_DIRECT_IO_FULL_ADDRESS_LIST));
+    ChaosUniquePtr<CMultiTypeDataArrayWrapper> endpoint_array(available_enpoint_result->getResult()->getVectorValue(DS_DIRECT_IO_FULL_ADDRESS_LIST));
     CHAOS_LASSERT_EXCEPTION((endpoint_array->size()!=0),
                             CMSC_LERR,
                             -3,

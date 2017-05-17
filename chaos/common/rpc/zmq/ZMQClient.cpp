@@ -157,7 +157,7 @@ ZMQSocketPool::ResourceSlot *ZMQClient::getSocketForNFI(NetworkForwardInfo *nfi)
     if(it != map_socket.end()){
         return it->second->getNewResource();
     } else {
-        boost::shared_ptr< ZMQSocketPool > socket_pool(new ZMQSocketPool(nfi->destinationAddr, this));
+        ChaosSharedPtr< ZMQSocketPool > socket_pool(new ZMQSocketPool(nfi->destinationAddr, this));
         map_socket.insert(make_pair(nfi->destinationAddr, socket_pool));
         return socket_pool->getNewResource();
     }
@@ -253,7 +253,7 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
     ZMQSocketPool::ResourceSlot *socket_info = NULL;
     messageInfo->message->addBoolValue("syncrhonous_call", RpcClient::syncrhonous_call);
     
-    UNIQUE_PTR<chaos::common::data::SerializationBuffer> callSerialization(messageInfo->message->getBSONData());
+    ChaosUniquePtr<chaos::common::data::SerializationBuffer> callSerialization(messageInfo->message->getBSONData());
     try{
         socket_info = getSocketForNFI(messageInfo);
         if(socket_info == NULL){

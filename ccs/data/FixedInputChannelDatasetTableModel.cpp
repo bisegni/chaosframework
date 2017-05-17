@@ -80,20 +80,20 @@ void FixedInputChannelDatasetTableModel::updateInstanceDescription(const QShared
     }
 }
 
-void FixedInputChannelDatasetTableModel::getAttributeChangeSet(std::vector< boost::shared_ptr<ControlUnitInputDatasetChangeSet> >& value_set_array) {
+void FixedInputChannelDatasetTableModel::getAttributeChangeSet(std::vector< ChaosSharedPtr<ControlUnitInputDatasetChangeSet> >& value_set_array) {
     size_t index = attribute_value_changed.find_first();
 
-    std::vector< boost::shared_ptr<InputDatasetAttributeChangeValue> > change_set;
+    std::vector< ChaosSharedPtr<InputDatasetAttributeChangeValue> > change_set;
     while(index != boost::dynamic_bitset<>::npos) {
         QSharedPointer<CDataWrapper> element = vector_doe[index];
 
-        boost::shared_ptr<InputDatasetAttributeChangeValue> changes(new InputDatasetAttributeChangeValue(element->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME),
+        ChaosSharedPtr<InputDatasetAttributeChangeValue> changes(new InputDatasetAttributeChangeValue(element->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME),
                                                                                                          attribute_set_value[index]->current_value.toString().toStdString()));
         change_set.push_back(changes);
         index = attribute_value_changed.find_next(index);
     }
     //push this
-    value_set_array.push_back( boost::shared_ptr<ControlUnitInputDatasetChangeSet>(new ControlUnitInputDatasetChangeSet(node_uid.toStdString(), change_set)));
+    value_set_array.push_back( ChaosSharedPtr<ControlUnitInputDatasetChangeSet>(new ControlUnitInputDatasetChangeSet(node_uid.toStdString(), change_set)));
 }
 
 void FixedInputChannelDatasetTableModel::applyChangeSet(bool commit) {

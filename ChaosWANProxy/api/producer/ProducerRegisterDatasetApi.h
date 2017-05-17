@@ -36,7 +36,7 @@ namespace chaos {
 				public AbstractApi {
 					int scanDatasetElement(const Json::Value& dataset_json_element,
 										   std::string& err_msg,
-										   boost::shared_ptr<chaos::common::data::CDataWrapper>& element);
+										   ChaosSharedPtr<chaos::common::data::CDataWrapper>& element);
 				public:
 					//! default constructor
 					ProducerRegisterDatasetApi(persistence::AbstractPersistenceDriver *_persistence_driver);

@@ -40,7 +40,7 @@ namespace chaos {
                 protected service_common::persistence::mongodb::MongoDBAccessor {
                     friend class MongoDBPersistenceDriver;
                 protected:
-                    MongoDBSnapshotDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection,
+                    MongoDBSnapshotDataAccess(const ChaosSharedPtr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection,
                                               data_access::DataServiceDataAccess *_data_service_da);
                     ~MongoDBSnapshotDataAccess();
                 public:

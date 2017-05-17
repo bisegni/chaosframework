@@ -223,7 +223,7 @@ int64_t DirectIODeviceClientChannel::queryDataCloud(const std::string& key,
     data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodeQueryDataCloud);
     
     //get the buffer to send
-    UNIQUE_PTR<SerializationBuffer> buffer(query_description.getBSONData());
+    ChaosUniquePtr<SerializationBuffer> buffer(query_description.getBSONData());
     
     //the frre of memeory is managed in this class in async way
     buffer->disposeOnDelete = false;
@@ -276,7 +276,7 @@ int64_t DirectIODeviceClientChannel::deleteDataCloud(const std::string& key,
     data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodeDeleteDataCloud);
     
     //get the buffer to send
-    UNIQUE_PTR<SerializationBuffer> buffer(query_description.getBSONData());
+    ChaosUniquePtr<SerializationBuffer> buffer(query_description.getBSONData());
     
     //the frre of memeory is managed in this class in async way
     buffer->disposeOnDelete = false;

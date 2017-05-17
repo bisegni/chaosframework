@@ -41,24 +41,24 @@ namespace chaos{
         bool deinitialized;
         
 		chaos::common::thread::SharedMutex das_map_mutex;
-        map<string, boost::shared_ptr<DomainActionsScheduler> > das_map;
+        map<string, ChaosSharedPtr<DomainActionsScheduler> > das_map;
     
         /*!
          return the scheduler for domain and if no present create a new instance
          */
-        boost::shared_ptr<DomainActionsScheduler>& getSchedulerForDomainName(string&);
+        ChaosSharedPtr<DomainActionsScheduler>& getSchedulerForDomainName(string&);
         
         
         //! Domain name <-> Action name association map
         /*!Contains the association between the domain name and all action for this domain*/
-        map<string, boost::shared_ptr<DomainActions> >  action_domain_executor_map;
+        map<string, ChaosSharedPtr<DomainActions> >  action_domain_executor_map;
         
         //! Accessor to the object that manage the action for a domain
         /*!
          \return the instance of DomainActions pointer in relation to name
          but if the name is not present initialized it and add it to map
          */
-        boost::shared_ptr<DomainActions> getDomainActionsFromName(const string& domain_name);
+        ChaosSharedPtr<DomainActions> getDomainActionsFromName(const string& domain_name);
         
         //! Remove the infromation about a domain
         /*!

@@ -57,11 +57,11 @@ CDataWrapper *CommandTemplateSubmit::execute(CDataWrapper *api_data,
     CommandInstanceList command_instance_list;
     
     N_CTS_DBG << "validate all command instance";
-    std::auto_ptr<CMultiTypeDataArrayWrapper> submission_task_list(api_data->getVectorValue("submission_task"));
+    ChaosUniquePtr<CMultiTypeDataArrayWrapper> submission_task_list(api_data->getVectorValue("submission_task"));
     for(int idx =0;
         idx < submission_task_list->size();
         idx++) {
-        boost::shared_ptr<CDataWrapper>  submission_task(submission_task_list->getCDataWrapperElementAtIndex(idx));
+        ChaosSharedPtr<CDataWrapper>  submission_task(submission_task_list->getCDataWrapperElementAtIndex(idx));
         //!process the instance
         processSubmissionTask(n_da,
                               submission_task,
@@ -75,7 +75,7 @@ CDataWrapper *CommandTemplateSubmit::execute(CDataWrapper *api_data,
     for(CommandInstanceListIterator it = command_instance_list.begin();
         it != command_instance_list.end();
         it++) {
-        std::auto_ptr<CDataWrapper> instance_pack(new CDataWrapper());
+        ChaosUniquePtr<CDataWrapper> instance_pack(new CDataWrapper());
         N_CTS_INFO << "Send datapack "<< it->getJSONString();
         instance_pack->addCSDataValue("submission_task", *it);
         command_id = getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::node::SubmitBatchCommand),
@@ -85,7 +85,7 @@ CDataWrapper *CommandTemplateSubmit::execute(CDataWrapper *api_data,
 }
 
 void CommandTemplateSubmit::processSubmissionTask(NodeDataAccess *n_da,
-                                                  boost::shared_ptr<CDataWrapper> submission_task,
+                                                  ChaosSharedPtr<CDataWrapper> submission_task,
                                                   CommandInstanceList& command_instance_list) {
     CHECK_KEY_THROW_AND_LOG(submission_task.get(), NodeDefinitionKey::NODE_UNIQUE_ID, N_CTS_ERR, -1, "The node unique id is mandatory")
     CHECK_KEY_THROW_AND_LOG(submission_task.get(), "template_name", N_CTS_ERR, -2, "The name of tempalte is mandatory")
@@ -96,27 +96,27 @@ void CommandTemplateSubmit::processSubmissionTask(NodeDataAccess *n_da,
     const std::string command_unique_id = submission_task->getStringValue(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID);
     
     //fetch command
-    boost::shared_ptr<CDataWrapper> command_description = getCommandDescription(n_da,
+    ChaosSharedPtr<CDataWrapper> command_description = getCommandDescription(n_da,
                                                                                 command_unique_id);
     //fetch template
-    boost::shared_ptr<CDataWrapper> template_description = getCommandTemaplateDescription(n_da,
+    ChaosSharedPtr<CDataWrapper> template_description = getCommandTemaplateDescription(n_da,
                                                                                           template_name,
                                                                                           command_unique_id);
     
     //store command instance
-    std::auto_ptr<CDataWrapper> instance = CommandCommonUtility::createCommandInstanceByTemplateadnSubmissionDescription(node_uid,
+    ChaosUniquePtr<CDataWrapper> instance = CommandCommonUtility::createCommandInstanceByTemplateadnSubmissionDescription(node_uid,
                                                                                                                          submission_task.get(),
                                                                                                                          command_description.get(),
                                                                                                                          template_description.get());
     command_instance_list.push_back(instance.release());
 }
 
-boost::shared_ptr<CDataWrapper> CommandTemplateSubmit::getCommandDescription(NodeDataAccess *n_da,
+ChaosSharedPtr<CDataWrapper> CommandTemplateSubmit::getCommandDescription(NodeDataAccess *n_da,
                                                                              const std::string& command_unique_id) {
     int err = 0;
     bool presence = false;
     CDataWrapper *tmp_d_ptr = NULL;
-    boost::shared_ptr<CDataWrapper> result;
+    ChaosSharedPtr<CDataWrapper> result;
     
     //we need to load the command
     if((err = n_da->checkCommandPresence(command_unique_id,
@@ -135,13 +135,13 @@ boost::shared_ptr<CDataWrapper> CommandTemplateSubmit::getCommandDescription(Nod
     return result;
 }
 
-boost::shared_ptr<CDataWrapper> CommandTemplateSubmit::getCommandTemaplateDescription(NodeDataAccess *n_da,
+ChaosSharedPtr<CDataWrapper> CommandTemplateSubmit::getCommandTemaplateDescription(NodeDataAccess *n_da,
                                                                                       const std::string& template_name,
                                                                                       const std::string& command_unique_id) {
     int err = 0;
     bool presence = false;
     CDataWrapper *tmp_d_ptr = NULL;
-    boost::shared_ptr<CDataWrapper> result;
+    ChaosSharedPtr<CDataWrapper> result;
     
     //we need to load the template
     if((err = n_da->checkCommandTemplatePresence(template_name,

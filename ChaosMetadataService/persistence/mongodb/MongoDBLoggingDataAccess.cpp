@@ -48,7 +48,7 @@ using namespace chaos::service_common::persistence::mongodb;
 using namespace chaos::metadata_service::persistence::mongodb;
 using namespace chaos::metadata_service::persistence::data_access;
 
-MongoDBLoggingDataAccess::MongoDBLoggingDataAccess(const boost::shared_ptr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
+MongoDBLoggingDataAccess::MongoDBLoggingDataAccess(const ChaosSharedPtr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
 MongoDBAccessor(_connection),
 LoggingDataAccess(),
 utility_data_access(NULL){}
@@ -130,9 +130,9 @@ mongo::Query MongoDBLoggingDataAccess::getNextPagedQuery(uint64_t last_sequence,
 }
 
 
-boost::shared_ptr<LogEntry> MongoDBLoggingDataAccess::getEntryByBSON(const mongo::BSONObj& entry_bson) {
+ChaosSharedPtr<LogEntry> MongoDBLoggingDataAccess::getEntryByBSON(const mongo::BSONObj& entry_bson) {
     std::vector<mongo::BSONElement> all_element;
-    boost::shared_ptr<LogEntry> log_entry(new LogEntry());
+    ChaosSharedPtr<LogEntry> log_entry(new LogEntry());
     
     entry_bson.elems(all_element);
     for(std::vector<mongo::BSONElement>::iterator it_ele = all_element.begin();

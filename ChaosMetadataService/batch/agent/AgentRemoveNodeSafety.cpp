@@ -63,7 +63,7 @@ void AgentRemoveNodeSafety::setHandler(CDataWrapper *data) {
     std::string agent_host;
     agent_uid = data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
     if(data->isVectorValue(AgentNodeDefinitionKey::NODE_ASSOCIATED)) {
-        std::auto_ptr<CMultiTypeDataArrayWrapper> nodes_array(data->getVectorValue(AgentNodeDefinitionKey::NODE_ASSOCIATED));
+        ChaosUniquePtr<CMultiTypeDataArrayWrapper> nodes_array(data->getVectorValue(AgentNodeDefinitionKey::NODE_ASSOCIATED));
         for(int idx = 0; idx < nodes_array->size(); idx++) {
             associated_nodes.push_back(nodes_array->getStringElementAtIndex(idx));
         }
@@ -74,7 +74,7 @@ void AgentRemoveNodeSafety::setHandler(CDataWrapper *data) {
     }
     //! fetch the agent information
     CDataWrapper *tmp_ptr;
-    std::auto_ptr<CDataWrapper> agent_node_information;
+    ChaosUniquePtr<CDataWrapper> agent_node_information;
     if((err = getDataAccess<mds_data_access::NodeDataAccess>()->getNodeDescription(agent_uid, &tmp_ptr))) {
         LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error fetching node decription for %1%", %agent_uid))
     }

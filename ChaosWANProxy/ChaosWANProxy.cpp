@@ -38,7 +38,7 @@ using namespace chaos::common::healt_system;
 
 using namespace chaos::wan_proxy;
 using namespace chaos::wan_proxy::persistence;
-using boost::shared_ptr;
+using ChaosSharedPtr;
 
 WaitSemaphore chaos::wan_proxy::ChaosWANProxy::waitCloseSemaphore;
 

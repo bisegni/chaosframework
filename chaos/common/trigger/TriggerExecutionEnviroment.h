@@ -57,7 +57,7 @@ namespace chaos {
                     return environment_name;
                 }
                 
-                virtual std::auto_ptr<chaos::common::data::CDataWrapper> serialize() = 0;
+                virtual ChaosUniquePtr<chaos::common::data::CDataWrapper> serialize() = 0;
             };
             
             //!define th emap taht correlata
@@ -67,9 +67,9 @@ namespace chaos {
             public AbstractTriggerEnvironment {
             public:
                 //!comodity typedef
-                typedef boost::shared_ptr< SubjectBaseClass >                 SubjectInstanceShrdPtr;
-                typedef typename boost::shared_ptr< typename EventInstancerDescription<EventType, SubjectBaseClass>::ConcreteEvent >        EventInstanceShrdPtr;
-                typedef typename boost::shared_ptr< typename ConsumerInstancerDescription<EventType, SubjectBaseClass>::ConcreteConsumer >  ConsumerShrdPtr;
+                typedef ChaosSharedPtr< SubjectBaseClass >                 SubjectInstanceShrdPtr;
+                typedef typename ChaosSharedPtr< typename EventInstancerDescription<EventType, SubjectBaseClass>::ConcreteEvent >        EventInstanceShrdPtr;
+                typedef typename ChaosSharedPtr< typename ConsumerInstancerDescription<EventType, SubjectBaseClass>::ConcreteConsumer >  ConsumerShrdPtr;
                 
                 typedef typename ConsumerInstancerDescription<EventType, SubjectBaseClass>::ConsumerInstancerShrdPtr                ConsumerInstancerShrdPtr;
                 typedef typename EventInstancerDescription<EventType, SubjectBaseClass>::EventInstancerShrdPtr                      EventInstancerShrdPtr;
@@ -127,7 +127,7 @@ namespace chaos {
                     }
                 };
                 
-                typedef boost::shared_ptr< MappingEventConsumerOnSubject > MappingEventConsumerOnSubjectShrdPtr;
+                typedef ChaosSharedPtr< MappingEventConsumerOnSubject > MappingEventConsumerOnSubjectShrdPtr;
                 
                 //!multi index key extractor
                 struct AbstractEventMIExstractEventType {
@@ -333,8 +333,8 @@ namespace chaos {
                                      event_to_fire);
                 }
                 
-                std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
-                    std::auto_ptr<chaos::common::data::CDataWrapper> result(new chaos::common::data::CDataWrapper());
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> serialize() {
+                    ChaosUniquePtr<chaos::common::data::CDataWrapper> result(new chaos::common::data::CDataWrapper());
                     
                     common::property::PropertyGroup tmp_property_group;
                     common::property::PropertyGroupSDWrapper group_ref_wrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(common::property::PropertyGroup, tmp_property_group));

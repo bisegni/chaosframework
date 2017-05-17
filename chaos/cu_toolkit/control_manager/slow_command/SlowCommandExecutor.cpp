@@ -118,7 +118,7 @@ void SlowCommandExecutor::installCommand(const string& alias,
 }
 
 //! Install a command
-void SlowCommandExecutor::installCommand(boost::shared_ptr<BatchCommandDescription> command_description) {
+void SlowCommandExecutor::installCommand(ChaosSharedPtr<BatchCommandDescription> command_description) {
     //call superclss method
     BatchCommandExecutor::installCommand(command_description);
 }

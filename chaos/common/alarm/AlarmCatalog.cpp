@@ -40,7 +40,7 @@ AlarmCatalog::~AlarmCatalog() {}
 void AlarmCatalog::addAlarm(AlarmDescription *new_alarm) {
     CHAOS_ASSERT(new_alarm);
     StateFlag *state_flag_ptr = dynamic_cast<StateFlag*>(new_alarm);
-    StateFlagCatalog::addFlag(boost::shared_ptr<StateFlag>(state_flag_ptr));
+    StateFlagCatalog::addFlag(ChaosSharedPtr<StateFlag>(state_flag_ptr));
 }
 
 bool AlarmCatalog::addAlarmHandler(const std::string& alarm_name,
@@ -62,12 +62,12 @@ bool AlarmCatalog::removeAlarmHandler(const std::string& alarm_name,
 }
 
 AlarmDescription *AlarmCatalog::getAlarmByName(const std::string& alarm_name) {
-    boost::shared_ptr<StateFlag> alarm = StateFlagCatalog::getFlagByName(alarm_name);
+    ChaosSharedPtr<StateFlag> alarm = StateFlagCatalog::getFlagByName(alarm_name);
     return static_cast<AlarmDescription*>(alarm.get());
 }
 
 AlarmDescription *AlarmCatalog::getAlarmByOrderedID(const unsigned int alarm_ordered_id) {
-    boost::shared_ptr<StateFlag> alarm = StateFlagCatalog::getFlagByOrderedID(alarm_ordered_id);
+    ChaosSharedPtr<StateFlag> alarm = StateFlagCatalog::getFlagByOrderedID(alarm_ordered_id);
     return static_cast<AlarmDescription*>(alarm.get());
 }
 
@@ -75,15 +75,15 @@ void AlarmCatalog::setAllAlarmSeverity(int8_t new_severity) {
     StateFlagCatalog::setAllFlagState(new_severity);
 }
 
-std::auto_ptr<chaos::common::data::CDataBuffer> AlarmCatalog::getRawFlagsLevel() {
+ChaosUniquePtr<chaos::common::data::CDataBuffer> AlarmCatalog::getRawFlagsLevel() {
     return StateFlagCatalog::getRawFlagsLevel();
 }
 
-void AlarmCatalog::setApplyRawFlagsValue(std::auto_ptr<chaos::common::data::CDataBuffer>& raw_level) {
+void AlarmCatalog::setApplyRawFlagsValue(ChaosUniquePtr<chaos::common::data::CDataBuffer>& raw_level) {
     StateFlagCatalog::setApplyRawFlagsValue(raw_level);
 }
 
-std::auto_ptr<CDataWrapper> AlarmCatalog::serialize() {
+ChaosUniquePtr<CDataWrapper> AlarmCatalog::serialize() {
     StateFlagCatalogSDWrapper sd_wrap(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(StateFlagCatalog, *this));
     return sd_wrap.serialize();
 }

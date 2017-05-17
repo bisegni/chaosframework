@@ -44,7 +44,7 @@ chaos::common::data::CDataWrapper *GetSnapshotDatasetsForNode::execute(chaos::co
     CHECK_ASSERTION_THROW_AND_LOG(api_data->isStringValue("snapshot_name"), ERR, -5, "The snapshot name needs to be a string");
     int err = 0;
     VectorStrCDWShrdPtr saved_dataset;
-    std::auto_ptr<CDataWrapper> result(new CDataWrapper());
+    ChaosUniquePtr<CDataWrapper> result(new CDataWrapper());
     const std::string node_uid = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
     const std::string snapshot_name = api_data->getStringValue("snapshot_name");
     

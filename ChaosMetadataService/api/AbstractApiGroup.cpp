@@ -36,7 +36,7 @@ void AbstractApiGroup::init(void *init_data) throw (chaos::CException) {
     for(ApiListIterator it = api_instance.begin();
         it != api_instance.end();
         it++) {
-        boost::shared_ptr<AbstractApi> api = *it;
+        ChaosSharedPtr<AbstractApi> api = *it;
         
         //initilize api
         InizializableService::initImplementation(api.get(),

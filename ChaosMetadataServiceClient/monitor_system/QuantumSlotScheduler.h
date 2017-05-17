@@ -93,12 +93,12 @@ mutex_ ## queue_name.unlock();
             
             //! strucutre that contain the slot
             struct ScheduleSlot {
-                boost::shared_ptr<QuantumSlot> quantum_slot;
+                ChaosSharedPtr<QuantumSlot> quantum_slot;
                 //! indeitfy the current slot, when is 0 it will be executed
                 int current_quantum;
                 //! key composed by the key and the quantum 'key_quantum'
                 const std::string quantum_slot_key;
-                ScheduleSlot(boost::shared_ptr<QuantumSlot>& _quantum_slot):
+                ScheduleSlot(ChaosSharedPtr<QuantumSlot>& _quantum_slot):
                 quantum_slot(_quantum_slot),
                 current_quantum(_quantum_slot->getQuantumMultiplier()),
                 quantum_slot_key(CHAOS_QSS_COMPOSE_QUANTUM_SLOT_KEY(_quantum_slot->getKey(), current_quantum)){}
@@ -185,11 +185,11 @@ mutex_ ## queue_name.unlock();
                 
                 //!groups for thread that make the scanner
                 bool                                    work_on_scan;
-                boost::shared_ptr<boost::thread_group>  scanner_threads;
+                ChaosSharedPtr<boost::thread_group>  scanner_threads;
                 
                 //!groups for thread that fetch the value for a key
                 bool                                    work_on_fetch;
-                boost::shared_ptr<boost::thread_group>  fetcher_threads;
+                ChaosSharedPtr<boost::thread_group>  fetcher_threads;
                 
                 //! queue for all the active slot
                 LFQuantumSlotQueue                      queue_active_slot;
@@ -224,7 +224,7 @@ mutex_ ## queue_name.unlock();
                 void scanSlot();
                 
                 //! fetch the value for all the slot within the queue_active_slot queue
-                void fetchValue(boost::shared_ptr<chaos::common::io::IODataDriver> data_driver);
+                void fetchValue(ChaosSharedPtr<chaos::common::io::IODataDriver> data_driver);
                 
                 //! add a new thread to the fetcher job
                 void addNewfetcherThread();

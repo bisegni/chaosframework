@@ -73,7 +73,7 @@ void IDSTControlUnitBatchCommand::setHandler(CDataWrapper *data) {
     if((err = getDataAccess<mds_data_access::NodeDataAccess>()->getNodeDescription(cu_id, &tmp_ptr))) {
         LOG_AND_TROW(CU_IDST_BC_ERR, -1, "Control Unit information has not been found!")
     } else if(tmp_ptr != NULL) {
-        std::auto_ptr<CDataWrapper> auto_node_info(tmp_ptr);
+        ChaosUniquePtr<CDataWrapper> auto_node_info(tmp_ptr);
         if(auto_node_info->hasKey(NodeDefinitionKey::NODE_RPC_ADDR) &&
            auto_node_info->hasKey(NodeDefinitionKey::NODE_RPC_DOMAIN) ){
             request = createRequest(auto_node_info->getStringValue(NodeDefinitionKey::NODE_RPC_ADDR),

@@ -35,13 +35,13 @@ ApiProxyResult GetLogDomainForSourceUID::execute() {
 }
 
 ApiProxyResult GetLogDomainForSourceUID::execute(const std::string& source) {
-    std::auto_ptr<CDataWrapper> pack(new CDataWrapper());
+    ChaosUniquePtr<CDataWrapper> pack(new CDataWrapper());
     pack->addStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER, source);
     return callApi(pack.release());
 }
 
 ApiProxyResult GetLogDomainForSourceUID::execute(const std::vector<std::string>& source) {
-    std::auto_ptr<CDataWrapper> pack(new CDataWrapper());
+    ChaosUniquePtr<CDataWrapper> pack(new CDataWrapper());
     if(source.size()) {
         for(std::vector<std::string>::const_iterator it= source.begin();
             it!= source.end();
@@ -53,15 +53,15 @@ ApiProxyResult GetLogDomainForSourceUID::execute(const std::vector<std::string>&
     return callApi(pack.release());
 }
 
-std::auto_ptr<GetLogDomainForSourceUIDHelper> GetLogDomainForSourceUID::getHelper(CDataWrapper *api_result) {
-    return std::auto_ptr<GetLogDomainForSourceUIDHelper>(new GetLogDomainForSourceUIDHelper(api_result));
+ChaosUniquePtr<GetLogDomainForSourceUIDHelper> GetLogDomainForSourceUID::getHelper(CDataWrapper *api_result) {
+    return ChaosUniquePtr<GetLogDomainForSourceUIDHelper>(new GetLogDomainForSourceUIDHelper(api_result));
 }
 
 GetLogDomainForSourceUIDHelper::GetLogDomainForSourceUIDHelper(CDataWrapper *api_result) {
     //now we have the result
     if(!api_result || !api_result->hasKey("result_list")) return;
     
-    std::auto_ptr<CMultiTypeDataArrayWrapper> vec(api_result->getVectorValue("result_list"));
+    ChaosUniquePtr<CMultiTypeDataArrayWrapper> vec(api_result->getVectorValue("result_list"));
     for(int idx = 0;
         idx < vec->size();
         idx++) {

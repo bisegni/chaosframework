@@ -38,7 +38,7 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define ERR     DBG_LOG(MongoDBScriptDataAccess)
 #define DBG     ERR_LOG(MongoDBScriptDataAccess)
 
-MongoDBDeployDataAccess::MongoDBDeployDataAccess(const boost::shared_ptr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
+MongoDBDeployDataAccess::MongoDBDeployDataAccess(const ChaosSharedPtr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
 MongoDBAccessor(_connection),
 DeployDataAccess(),
 utility_data_access(NULL),

@@ -45,7 +45,7 @@ namespace chaos {
                         //define map of cursor and element
                         struct QueryInfo {
                             chaos::common::io::QueryCursor *cursor;
-                            boost::shared_ptr<chaos::common::data::CDataWrapper> current_extracted_element;
+                            ChaosSharedPtr<chaos::common::data::CDataWrapper> current_extracted_element;
                             QueryInfo();
                             QueryInfo(chaos::common::io::QueryCursor *_cursor);
                             QueryInfo(const QueryInfo& copy_src);

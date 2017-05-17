@@ -54,7 +54,7 @@ namespace chaos {
                                                               const std::string& search_string);
                     
                 protected:
-                    MongoDBAgentDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
+                    MongoDBAgentDataAccess(const ChaosSharedPtr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
                     ~MongoDBAgentDataAccess();
                 public:
                     //! inherited by data_access::AgentDataAccess

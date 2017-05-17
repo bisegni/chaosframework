@@ -72,17 +72,17 @@ namespace chaos {
                  all byte describe the current state of an alarm so the rtrsulting
                  memory as size = num of alarm * char)
                  */
-                std::auto_ptr<chaos::common::data::CDataBuffer> getRawFlagsLevel();
+                ChaosUniquePtr<chaos::common::data::CDataBuffer> getRawFlagsLevel();
                 
                 //!Set the raw alarm state of alarm current state
                 /*!
                  all byte describe the current state of an alarm so the rtrsulting
                  memory as size = num of alarm * char)
                  */
-                void setApplyRawFlagsValue(std::auto_ptr<chaos::common::data::CDataBuffer>& raw_level);
+                void setApplyRawFlagsValue(ChaosUniquePtr<chaos::common::data::CDataBuffer>& raw_level);
                 
                 //!return the serialization of description of alarm catalog
-                std::auto_ptr<chaos::common::data::CDataWrapper> serialize();
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> serialize();
                 
                 //!deserialize the description of a previously serialized catalog
                 void deserialize(chaos::common::data::CDataWrapper *serialized_data);

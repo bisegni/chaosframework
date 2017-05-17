@@ -8,8 +8,6 @@ QT       += core gui sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
-#CONFIG += c++11
-
 TARGET = ccs
 TEMPLATE = app
 RESOURCES = qdarkstyle/style.qrc \

@@ -103,7 +103,7 @@ void QuantumKeyAttributeBinaryHandler::_consumeValue(const std::string& key,
     int32_t buf_size = 0;
     consumeValue(key,
                  attribute,
-                 boost::shared_ptr<SerializationBuffer>(new SerializationBuffer(value->getBinaryValue(attribute, buf_size), buf_size)));
+                 ChaosSharedPtr<SerializationBuffer>(new SerializationBuffer(value->getBinaryValue(attribute, buf_size), buf_size)));
 }
 
 

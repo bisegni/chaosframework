@@ -41,7 +41,7 @@ namespace chaos {
 					REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(MongoDBPersistenceDriver)
 					
                     //!keep track of the allocated connection
-                    boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager> connection;
+                    ChaosSharedPtr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager> connection;
 
                     //! Construct the driver
 					MongoDBPersistenceDriver(const std::string& name);

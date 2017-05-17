@@ -142,7 +142,7 @@ new chaos::common::utility::TypedObjectInstancer<SlowCommandClass, chaos::cu::co
                     void installCommand(const std::string& alias,
 										chaos::common::utility::NestedObjectInstancer<SlowCommand, chaos_batch::BatchCommand> *instancer);
                     //! Install a command
-                    void installCommand(boost::shared_ptr<common::batch_command::BatchCommandDescription> command_description);
+                    void installCommand(ChaosSharedPtr<common::batch_command::BatchCommandDescription> command_description);
                 };
             }
         }

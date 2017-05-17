@@ -62,6 +62,8 @@ namespace chaos {
                 CMultiTypeDataArrayWrapper(vector< BSONElement > src);
                 
                 string getStringElementAtIndex(const int);
+                
+                
                 double getDoubleElementAtIndex(const int);
                 int32_t getInt32ElementAtIndex(const int);
                 int64_t getint64ElementAtIndex(const int);
@@ -118,7 +120,7 @@ namespace chaos {
                 CDataWrapper(const char* serializationBuffer);
                 ~CDataWrapper();
                 
-                static std::auto_ptr<CDataWrapper> instanceFromJson(const std::string& json_serialization);
+                static ChaosUniquePtr<CDataWrapper> instanceFromJson(const std::string& json_serialization);
                 
                 CDataWrapper *clone();
                 //add a csdata value
@@ -246,7 +248,7 @@ namespace chaos {
                 //return the binary data value
                 const char* getBinaryValue(const std::string&, int&);
                 
-                std::auto_ptr<CDataBuffer> getBinaryValueAsCDataBuffer(const std::string &key);
+                ChaosUniquePtr<CDataBuffer> getBinaryValueAsCDataBuffer(const std::string &key);
                 
                 //return the bson data
                 SerializationBuffer* getBSONData();
@@ -369,7 +371,7 @@ namespace chaos {
 #define CDW_GET_DOUBLE_WITH_DEFAULT(c, k, d) ((c)->hasKey(k)?(c)->getDoubleValue(k):d)
 #define CDW_GET_VALUE_WITH_DEFAULT(c, k, t, d) ((c)->hasKey(k)?(c)->t(k):d)
             
-            typedef boost::shared_ptr<chaos::common::data::CDataWrapper> CDWShrdPtr;
+            typedef ChaosSharedPtr<chaos::common::data::CDataWrapper> CDWShrdPtr;
             CHAOS_DEFINE_VECTOR_FOR_TYPE(CDWShrdPtr, VectorCDWShrdPtr);
             
             typedef std::pair<std::string, CDWShrdPtr> PairStrCDWShrdPtr;

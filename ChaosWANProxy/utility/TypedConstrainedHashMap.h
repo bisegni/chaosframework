@@ -42,7 +42,7 @@ namespace chaos {
 				//! add a class instance as api the name is got from the service name
 				template <typename A, typename P>
 				void addTypeWithParam(P param) {
-					std::auto_ptr<INSTANCER_P1(A, T, P)> i(ALLOCATE_INSTANCER_P1(A, T, P));
+					ChaosUniquePtr<INSTANCER_P1(A, T, P)> i(ALLOCATE_INSTANCER_P1(A, T, P));
 					T *instance = i->getInstance(param);
 					if(instance) {
 						chaos::common::utility::TemplatedKeyValueHashMap<T*>::addElement(instance->getName().c_str(),

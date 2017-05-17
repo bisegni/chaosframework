@@ -87,5 +87,5 @@ void QuantumTSTaggedBinaryAttributeHandler::_consumeValue(const std::string& key
     consumeTSTaggedValue(key,
                          attribute,
                          value->getUInt64Value(ts_attribute),
-                         boost::shared_ptr<SerializationBuffer>(new SerializationBuffer(value->getBinaryValue(attribute, buf_size), buf_size)));
+                         ChaosSharedPtr<SerializationBuffer>(new SerializationBuffer(value->getBinaryValue(attribute, buf_size), buf_size)));
 }

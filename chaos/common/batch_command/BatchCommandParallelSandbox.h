@@ -55,7 +55,7 @@ namespace chaos{
             };
             
             
-            typedef boost::shared_ptr<RunningCommandStat> RunningCommandStatShrdPtr;
+            typedef ChaosSharedPtr<RunningCommandStat> RunningCommandStatShrdPtr;
             
             CHAOS_DEFINE_LOCKABLE_OBJECT(std::queue< RunningCommandStatShrdPtr >, LockableSubmissionQueue);
             

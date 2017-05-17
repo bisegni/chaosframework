@@ -33,7 +33,7 @@ using namespace chaos::metadata_service::persistence::mongodb;
 #define MDBUSDA_DBG  DBG_LOG(MongoDBUnitServerDataAccess)
 #define MDBUSDA_ERR  ERR_LOG(MongoDBUnitServerDataAccess)
 
-MongoDBUnitServerDataAccess::MongoDBUnitServerDataAccess(const boost::shared_ptr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
+MongoDBUnitServerDataAccess::MongoDBUnitServerDataAccess(const ChaosSharedPtr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
 MongoDBAccessor(_connection),
 node_data_access(NULL){}
 
@@ -139,7 +139,7 @@ int MongoDBUnitServerDataAccess::updateUS(chaos::common::data::CDataWrapper& uni
 
         //get the contained control unit type
         mongo::BSONArrayBuilder bab;
-        UNIQUE_PTR<CMultiTypeDataArrayWrapper> cu_type_array(unit_server_description.getVectorValue(UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS));
+        ChaosUniquePtr<CMultiTypeDataArrayWrapper> cu_type_array(unit_server_description.getVectorValue(UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS));
         for(int idx = 0;
             idx < cu_type_array->size();
             idx++) {

@@ -236,7 +236,7 @@ int KeyDataStorage::loadRestorePoint(const std::string& restore_point_tag) {
     
     if(!restore_point_map.count(restore_point_tag)) {
         //allocate map for the restore tag
-        restore_point_map.insert(make_pair(restore_point_tag, std::map<std::string, boost::shared_ptr<chaos_data::CDataWrapper> >()));
+        restore_point_map.insert(make_pair(restore_point_tag, std::map<std::string, ChaosSharedPtr<chaos_data::CDataWrapper> >()));
     }
     
     if((err = io_data_driver->loadDatasetTypeFromSnapshotTag(restore_point_tag,
@@ -248,7 +248,7 @@ int KeyDataStorage::loadRestorePoint(const std::string& restore_point_tag) {
         return err;
     } else {
         if(dataset){
-            restore_point_map[restore_point_tag].insert(make_pair(output_key, boost::shared_ptr<chaos_data::CDataWrapper>(dataset)));
+            restore_point_map[restore_point_tag].insert(make_pair(output_key, ChaosSharedPtr<chaos_data::CDataWrapper>(dataset)));
             dataset = NULL;
         }
     }
@@ -262,7 +262,7 @@ int KeyDataStorage::loadRestorePoint(const std::string& restore_point_tag) {
         return err;
     } else {
         if(dataset){
-            restore_point_map[restore_point_tag].insert(make_pair(input_key, boost::shared_ptr<chaos_data::CDataWrapper>(dataset)));
+            restore_point_map[restore_point_tag].insert(make_pair(input_key, ChaosSharedPtr<chaos_data::CDataWrapper>(dataset)));
             dataset = NULL;
         }
     }
@@ -276,7 +276,7 @@ int KeyDataStorage::loadRestorePoint(const std::string& restore_point_tag) {
         return err;
     } else {
         if(dataset){
-            restore_point_map[restore_point_tag].insert(make_pair(custom_key, boost::shared_ptr<chaos_data::CDataWrapper>(dataset)));
+            restore_point_map[restore_point_tag].insert(make_pair(custom_key, ChaosSharedPtr<chaos_data::CDataWrapper>(dataset)));
             dataset = NULL;
         }
     }
@@ -290,7 +290,7 @@ int KeyDataStorage::loadRestorePoint(const std::string& restore_point_tag) {
         return err;
     } else {
         if(dataset){
-            restore_point_map[restore_point_tag].insert(make_pair(system_key, boost::shared_ptr<chaos_data::CDataWrapper>(dataset)));
+            restore_point_map[restore_point_tag].insert(make_pair(system_key, ChaosSharedPtr<chaos_data::CDataWrapper>(dataset)));
             dataset = NULL;
         }
     }
@@ -307,10 +307,10 @@ int KeyDataStorage::clearRestorePoint(const std::string& restore_point_tag) {
     
 }
 
-boost::shared_ptr<chaos_data::CDataWrapper> KeyDataStorage::getDatasetFromRestorePoint(const std::string& restore_point_tag,
+ChaosSharedPtr<chaos_data::CDataWrapper> KeyDataStorage::getDatasetFromRestorePoint(const std::string& restore_point_tag,
                                                                                        KeyDataStorageDomain domain) {
     if(!restore_point_map.count(restore_point_tag)) {
-        return boost::shared_ptr<chaos_data::CDataWrapper>();
+        return ChaosSharedPtr<chaos_data::CDataWrapper>();
     }
     
     switch(domain) {
@@ -332,7 +332,7 @@ boost::shared_ptr<chaos_data::CDataWrapper> KeyDataStorage::getDatasetFromRestor
 CDataWrapper* KeyDataStorage::updateConfiguration(CDataWrapper *newConfiguration) {
     //update the driver configration
     if(io_data_driver) io_data_driver->updateConfiguration(newConfiguration);
-    std::auto_ptr<CDataWrapper> cu_properties;
+    ChaosUniquePtr<CDataWrapper> cu_properties;
     CDataWrapper *cu_property_container = NULL;
     if(newConfiguration->hasKey("property_abstract_control_unit") &&
        newConfiguration->isCDataWrapperValue("property_abstract_control_unit")){

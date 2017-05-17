@@ -22,6 +22,7 @@
 #ifndef __CHAOSFramework__URLHAServiceFeeder_h
 #define __CHAOSFramework__URLHAServiceFeeder_h
 
+#include <chaos/common/chaos_types.h>
 #include <chaos/common/network/URLServiceFeeder.h>
 
 #include <queue>
@@ -71,7 +72,7 @@ namespace chaos {
                 URLHAServiceCheckerFeederHandler *service_checker_handler;
                 
                 boost::mutex mutex_queue;
-                std::queue< boost::shared_ptr<ServiceRetryInformation> > retry_queue;
+                std::queue< ChaosSharedPtr<ServiceRetryInformation> > retry_queue;
                 std::queue<uint32_t> respawned_queue;
             public:
                 URLHAServiceFeeder(std::string alias,

@@ -68,7 +68,7 @@ void AttributeCache::addAttribute(const string& name,
         default:
             break;
     }
-    boost::shared_ptr<AttributeValue> tmpSP(new AttributeValue(name, tmpIndex, size, type));
+    ChaosSharedPtr<AttributeValue> tmpSP(new AttributeValue(name, tmpIndex, size, type));
 
         //add the relative bit
     bitmapChangedAttribute.push_back(false);
@@ -203,7 +203,7 @@ void AttributeCache::exportToCDataWrapper(CDataWrapper& dest_dw) const {
 }
 
 #pragma mark SharedCacheLockDomain
-SharedCacheLockDomain::SharedCacheLockDomain(boost::shared_ptr<boost::shared_mutex>& _mutex):
+SharedCacheLockDomain::SharedCacheLockDomain(ChaosSharedPtr<boost::shared_mutex>& _mutex):
 mutex(_mutex){}
 
 SharedCacheLockDomain::~SharedCacheLockDomain(){}
@@ -211,7 +211,7 @@ SharedCacheLockDomain::~SharedCacheLockDomain(){}
 
 #pragma mark WriteSharedCacheLockDomain
 
-WriteSharedCacheLockDomain::WriteSharedCacheLockDomain(boost::shared_ptr<boost::shared_mutex>& _mutex,
+WriteSharedCacheLockDomain::WriteSharedCacheLockDomain(ChaosSharedPtr<boost::shared_mutex>& _mutex,
                                                        bool lock):
 SharedCacheLockDomain(_mutex),
 w_lock(*mutex.get(), boost::defer_lock){if(lock)w_lock.lock();}
@@ -227,7 +227,7 @@ void WriteSharedCacheLockDomain::unlock() {
 }
 
 
-ReadSharedCacheLockDomain::ReadSharedCacheLockDomain(boost::shared_ptr<boost::shared_mutex>& _mutex,
+ReadSharedCacheLockDomain::ReadSharedCacheLockDomain(ChaosSharedPtr<boost::shared_mutex>& _mutex,
                                                      bool lock):
 SharedCacheLockDomain(_mutex),
 r_lock(*mutex.get(), boost::defer_lock){if(lock)r_lock.lock();}

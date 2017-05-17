@@ -87,7 +87,7 @@ namespace chaos {
         boost::mutex mutex_execution_lock;
         
         //map for action
-        vector< boost::shared_ptr<ActionParamDescription> > paramDescriptionVec;
+        vector< ChaosSharedPtr<ActionParamDescription> > paramDescriptionVec;
         
         //only domain action can be set this value
         bool setEnabled(bool);
@@ -134,7 +134,7 @@ namespace chaos {
         /*!
          Return the array list of the param defined by this action
          */
-        vector< boost::shared_ptr<ActionParamDescription> >& getParamDescriptions();
+        vector< ChaosSharedPtr<ActionParamDescription> >& getParamDescriptions();
         
         /*!
          Add a new param
@@ -145,7 +145,7 @@ namespace chaos {
     };
     
     //define the ptr style defined
-    typedef boost::shared_ptr<AbstractActionDescriptor> AbstActionDescShrPtr;
+    typedef ChaosSharedPtr<AbstractActionDescriptor> AbstActionDescShrPtr;
     
 #pragma mark Template for Action Definition
     

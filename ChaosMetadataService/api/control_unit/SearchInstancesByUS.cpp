@@ -42,7 +42,7 @@ CDataWrapper *SearchInstancesByUS::execute(CDataWrapper *api_data,
     int err = 0;
     uint32_t last_sequence_id = 0;
     uint32_t page_length = 30;
-    std::vector<boost::shared_ptr<CDataWrapper> > page_result;
+    std::vector<ChaosSharedPtr<CDataWrapper> > page_result;
     std::vector<std::string> cu_type_filter;
 
     chaos::common::data::CDataWrapper *result = NULL;
@@ -59,7 +59,7 @@ CDataWrapper *SearchInstancesByUS::execute(CDataWrapper *api_data,
     }
 
     if(api_data->hasKey("control_unit_implementation")) {
-        std::auto_ptr<CMultiTypeDataArrayWrapper> cu_t_arr(api_data->getVectorValue("control_unit_implementation"));
+        ChaosUniquePtr<CMultiTypeDataArrayWrapper> cu_t_arr(api_data->getVectorValue("control_unit_implementation"));
         for(int idx = 0;
             idx < cu_t_arr->size();
             idx++) {
@@ -79,7 +79,7 @@ CDataWrapper *SearchInstancesByUS::execute(CDataWrapper *api_data,
         if(page_result.size() > 0) {
             //add found element to result
             result = new CDataWrapper();
-            for (std::vector<boost::shared_ptr<CDataWrapper> >::iterator it = page_result.begin();
+            for (std::vector<ChaosSharedPtr<CDataWrapper> >::iterator it = page_result.begin();
                  it != page_result.end();
                  it++) {
                 result->appendCDataWrapperToArray(*it->get());

@@ -41,15 +41,15 @@ namespace chaos {
             
             struct StateFlagElement {
                 
-                typedef boost::shared_ptr<StateFlagElement> StateFlagElementPtr;
+                typedef ChaosSharedPtr<StateFlagElement> StateFlagElementPtr;
                 
                 const unsigned int seq_id;
                 const std::string flag_name;
-                boost::shared_ptr<StateFlag> status_flag;
+                ChaosSharedPtr<StateFlag> status_flag;
                 
                 StateFlagElement(unsigned int _seq_id,
                                  std::string _flag_name,
-                                 boost::shared_ptr<StateFlag> _status_flag):
+                                 ChaosSharedPtr<StateFlag> _status_flag):
                 seq_id(_seq_id),
                 flag_name(_flag_name),
                 status_flag(_status_flag){}
@@ -121,7 +121,7 @@ namespace chaos {
             //!define the mat that will keep track of status field taht the current state repsect the severity for key
             CHAOS_DEFINE_MAP_FOR_TYPE(StateFlagServerity, boost::dynamic_bitset<uint8_t>, MapSeverityBitfield);
             //!define a vector for status flag
-            CHAOS_DEFINE_VECTOR_FOR_TYPE(boost::shared_ptr<StateFlag>, VectorStateFlag);
+            CHAOS_DEFINE_VECTOR_FOR_TYPE(ChaosSharedPtr<StateFlag>, VectorStateFlag);
             
             //!forward decalration
             class StateFlagCatalogSDWrapper;
@@ -130,7 +130,7 @@ namespace chaos {
             class StateFlagCatalog:
             public StateFlagListener {
                 friend class StateFlagCatalogSDWrapper;
-                boost::shared_ptr<StateFlag> empty_flag;
+                ChaosSharedPtr<StateFlag> empty_flag;
                 std::string catalog_name;
                 //define the catalog where is assigned an unique id to a flag
                 mutable chaos::common::utility::LockableObject<StateFlagElementContainer>  catalog_container;
@@ -149,7 +149,7 @@ namespace chaos {
                                       const std::string&        level_name,
                                       const StateFlagServerity  current_level_severity);
                 
-                void addMemberToSeverityMap(boost::shared_ptr<StateFlag> new_status_flag);
+                void addMemberToSeverityMap(ChaosSharedPtr<StateFlag> new_status_flag);
             public:
                 StateFlagCatalog();
                 StateFlagCatalog(const std::string& _catalog_name);
@@ -157,7 +157,7 @@ namespace chaos {
                 virtual ~StateFlagCatalog();
                 
                 //!add a new status flag
-                void addFlag(const boost::shared_ptr<StateFlag>& flag);
+                void addFlag(const ChaosSharedPtr<StateFlag>& flag);
                 
                 //! set state for flag usign his name
                 void setFlagState(const std::string& flag_name, int8_t new_state);
@@ -172,20 +172,20 @@ namespace chaos {
                 void appendCatalog(const StateFlagCatalog& src);
                 
                 //! return a status flag by name
-                boost::shared_ptr<StateFlag>& getFlagByName(const std::string& flag_name);
+                ChaosSharedPtr<StateFlag>& getFlagByName(const std::string& flag_name);
                 
                 //!return the flag using the ordered id
-                boost::shared_ptr<StateFlag>& getFlagByOrderedID(const unsigned int flag_ordered_id);
+                ChaosSharedPtr<StateFlag>& getFlagByOrderedID(const unsigned int flag_ordered_id);
                 
                 //!return all flag that are in a determinated severity
                 void getFlagsForSeverity(StateFlagServerity severity,
                                          VectorStateFlag& found_flag);
                 
                 //!get data buffer describing all flag with own level
-                std::auto_ptr<chaos::common::data::CDataBuffer> getRawFlagsLevel();
+                ChaosUniquePtr<chaos::common::data::CDataBuffer> getRawFlagsLevel();
                 
                 //!set the falg value base on array description
-                void setApplyRawFlagsValue(std::auto_ptr<chaos::common::data::CDataBuffer>& raw_level);
+                void setApplyRawFlagsValue(ChaosUniquePtr<chaos::common::data::CDataBuffer>& raw_level);
                 
                 //!return the number of status flag in the catalog
                 const size_t size() const;

@@ -126,7 +126,7 @@ namespace chaos {
                                         uint64_t scheduler_step_delay = 1000000)  throw (CException);
                 
                 //!return a command description for a determinate uid
-                std::auto_ptr<CommandState> getStateForCommandID(uint64_t command_id);
+                ChaosUniquePtr<CommandState> getStateForCommandID(uint64_t command_id);
 			public:
 				
 				/*! default constructor
@@ -158,7 +158,7 @@ namespace chaos {
 					slow_command_executor->installCommand(command_alias, SLOWCOMMAND_INSTANCER(T));
 				}
                 
-                void installCommand(boost::shared_ptr<BatchCommandDescription> command_description,
+                void installCommand(ChaosSharedPtr<BatchCommandDescription> command_description,
                                     bool is_default = false,
                                     bool sticky = true,
                                     unsigned int sandbox = 0);

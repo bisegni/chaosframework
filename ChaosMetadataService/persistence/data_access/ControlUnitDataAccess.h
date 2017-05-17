@@ -73,7 +73,7 @@ namespace chaos {
                     virtual int setInstanceDescription(const std::string& cu_unique_id,
                                                        chaos::common::data::CDataWrapper& instance_description) = 0;
                     
-                    virtual int searchInstanceForUnitServer(std::vector<boost::shared_ptr<common::data::CDataWrapper> >& result_page,
+                    virtual int searchInstanceForUnitServer(std::vector<ChaosSharedPtr<common::data::CDataWrapper> >& result_page,
                                                             const std::string& unit_server_uid,
                                                             std::vector<std::string> cu_type_filter,
                                                             uint32_t last_sequence_id,
@@ -91,11 +91,11 @@ namespace chaos {
                     
                     virtual int getInstanceDatasetAttributeDescription(const std::string& control_unit_uid,
                                                                        const std::string& attribute_name,
-                                                                       boost::shared_ptr<chaos::common::data::CDataWrapper>& result) = 0;
+                                                                       ChaosSharedPtr<chaos::common::data::CDataWrapper>& result) = 0;
                     
                     virtual int getInstanceDatasetAttributeConfiguration(const std::string& control_unit_uid,
                                                                          const std::string& attribute_name,
-                                                                         boost::shared_ptr<chaos::common::data::CDataWrapper>& result) = 0;
+                                                                         ChaosSharedPtr<chaos::common::data::CDataWrapper>& result) = 0;
                     
                     //! return the data service associater to control unit
                     virtual int getDataServiceAssociated(const std::string& cu_uid,

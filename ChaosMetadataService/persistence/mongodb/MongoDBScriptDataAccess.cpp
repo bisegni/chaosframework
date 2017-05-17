@@ -48,7 +48,7 @@ static const std::string    ESCAPE_REPLACE_STRING("\\\\&");
 static const boost::regex   ESCAPE_REPLACE_SEARCH_REGEXP("([\\^\\.\\$\\|\\(\\)\\[\\]\\*\\+\\?\\/\\\\])");
 static const boost::regex   REGEX_EXECUTION_POOL_VALIDATION("[A-Za-z0-9_]+:[A-Za-z0-9\\/_]+");
 
-MongoDBScriptDataAccess::MongoDBScriptDataAccess(const boost::shared_ptr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
+MongoDBScriptDataAccess::MongoDBScriptDataAccess(const ChaosSharedPtr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
 MongoDBAccessor(_connection),
 ScriptDataAccess(),
 utility_data_access(NULL){}
@@ -116,7 +116,7 @@ int MongoDBScriptDataAccess::updateScript(Script& script) {
         ScriptSDWrapper s_dw;
         s_dw.dataWrapped() = script;
         
-        std::auto_ptr<CDataWrapper> serialization = s_dw.serialize();
+        ChaosUniquePtr<CDataWrapper> serialization = s_dw.serialize();
         mongo::BSONObj u(serialization->getBSONRawData(size));
         DEBUG_CODE(SDA_DBG<<log_message("updateScriptContent",
                                         "update",

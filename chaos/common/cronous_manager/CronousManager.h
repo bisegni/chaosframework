@@ -35,13 +35,13 @@ namespace chaos {
         namespace cronous_manager {
             #define CHECK_TIME 10000
             //! define  avector for the running job
-            typedef boost::shared_ptr<boost::thread> ThreadJobShrdPtr;
+            typedef ChaosSharedPtr<boost::thread> ThreadJobShrdPtr;
             CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ThreadJobShrdPtr, MapJobThread);
             
             //!define vector for job instances
             
             //!defin eth eshared ptr for CronJob
-            typedef boost::shared_ptr<cronous_manager::CronJob> JobInstanceShrdPtr;
+            typedef ChaosSharedPtr<cronous_manager::CronJob> JobInstanceShrdPtr;
             CHAOS_DEFINE_MAP_FOR_TYPE(std::string, JobInstanceShrdPtr, MapJobInstance);
             
             //!Manager class for launch batch job a specific time intervall

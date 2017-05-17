@@ -59,7 +59,7 @@ namespace chaos {
                 
                 boost::mutex mutext_maps;
             
-                std::map<std::string, boost::shared_ptr< chaos::common::utility::ObjectInstancer<AbstractMetadataLogChannel> > > map_instancer;
+                std::map<std::string, ChaosSharedPtr< chaos::common::utility::ObjectInstancer<AbstractMetadataLogChannel> > > map_instancer;
                 
                 MetadataLoggingInstancesMap map_instance;
                 

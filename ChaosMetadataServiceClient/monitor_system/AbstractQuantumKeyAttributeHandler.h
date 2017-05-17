@@ -156,7 +156,7 @@ x::~x(){}
                 ~QuantumKeyAttributeBinaryHandler();
                 virtual void consumeValue(const std::string& key,
                                           const std::string& attribute,
-                                          const boost::shared_ptr<chaos::common::data::SerializationBuffer>& buffer) = 0;
+                                          const ChaosSharedPtr<chaos::common::data::SerializationBuffer>& buffer) = 0;
             };
         }
     }

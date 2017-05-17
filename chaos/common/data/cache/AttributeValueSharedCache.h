@@ -110,7 +110,7 @@ namespace chaos{
 					AttributeCache& getSharedDomain(SharedCacheDomain domain);
 					
 					//! return a class that implemnt the read o write lock on the specified domain
-					boost::shared_ptr<SharedCacheLockDomain> getLockOnDomain(SharedCacheDomain domain,
+					ChaosSharedPtr<SharedCacheLockDomain> getLockOnDomain(SharedCacheDomain domain,
 																			 bool write_lock);
 				};
 			}

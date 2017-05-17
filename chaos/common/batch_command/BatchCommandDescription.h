@@ -38,11 +38,11 @@ n::BatchCommandDescription ## c
 Get ## BatchCommandDescription ## c
 
 #define BATCH_COMMAND_DECLARE_DESCRIPTION(c)\
-boost::shared_ptr<chaos::common::batch_command::BatchCommandDescription> BATCH_COMMAND_FUNCTION_GET_DESCRIPTION(c)();
+ChaosSharedPtr<chaos::common::batch_command::BatchCommandDescription> BATCH_COMMAND_FUNCTION_GET_DESCRIPTION(c)();
 
 #define BATCH_COMMAND_OPEN_DESC(n, c, alias, d, uid)\
-boost::shared_ptr<chaos::common::batch_command::BatchCommandDescription> n GetBatchCommandDescription ## c (){\
-boost::shared_ptr<chaos::common::batch_command::BatchCommandDescription> result(new chaos::common::batch_command::BatchCommandDescription( alias, d, uid));
+ChaosSharedPtr<chaos::common::batch_command::BatchCommandDescription> n GetBatchCommandDescription ## c (){\
+ChaosSharedPtr<chaos::common::batch_command::BatchCommandDescription> result(new chaos::common::batch_command::BatchCommandDescription( alias, d, uid));
 
 #define BATCH_COMMAND_ADD_BOOL_PARAM(p, d, flag)\
 result->addParameter(p, d, chaos::DataType::TYPE_BOOLEAN, flag);
@@ -76,7 +76,7 @@ namespace chaos {
             class BatchCommandExecutor;
             class BatchCommand;
             
-            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, boost::shared_ptr<chaos::common::data::CDataWrapper>, BatchCommandMapParamter);
+            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ChaosSharedPtr<chaos::common::data::CDataWrapper>, BatchCommandMapParamter);
             CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string, BatchCommandParameterNameList);
             
             //! provide a set of method that permit to declare a batch command
@@ -130,11 +130,11 @@ namespace chaos {
                 bool getParameterDescription(const std::string& parameter_name,
                                              std::string& parameter_description);
                 
-                boost::shared_ptr<chaos::common::data::CDataWrapper>
+                ChaosSharedPtr<chaos::common::data::CDataWrapper>
                 getParameterDescription(const std::string& parameter_name);
                 
                 
-                boost::shared_ptr<chaos::common::data::CDataWrapper>
+                ChaosSharedPtr<chaos::common::data::CDataWrapper>
                 getFullDescription();
             };
             

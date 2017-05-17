@@ -61,7 +61,7 @@ void AsioImplEventServer::start() throw(CException) {
     
     for (int idx = 0; idx < threadNumber; idx++) {
             //create the handler
-        //shared_ptr<thread> thread(new boost::thread(bind(&asio::io_service::run, &io_service)));
+        //ChaosSharedPtr<thread> thread(new boost::thread(bind(&asio::io_service::run, &io_service)));
         serviceThreads.create_thread(bind(&asio::io_service::run, &io_service));
     }
 }

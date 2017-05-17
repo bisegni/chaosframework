@@ -72,7 +72,7 @@ namespace chaos {
                                            const uint64_t last_sequence_id,
                                            const uint32_t page_length = 30);
 
-                    static std::auto_ptr<GetLogForSourceUIDHelper> getHelper(chaos::common::data::CDataWrapper *api_result);
+                    static ChaosUniquePtr<GetLogForSourceUIDHelper> getHelper(chaos::common::data::CDataWrapper *api_result);
                 };
             }
         }

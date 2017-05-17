@@ -114,7 +114,7 @@ namespace chaos {
 			 of memory in the same container.
 			 */
 			class PointerBuffer {
-				boost::shared_ptr<char> ptr;
+				ChaosSharedPtr<char> ptr;
 				int32_t bufferDimension;
 				boost::mutex mux;
 			public:
@@ -151,15 +151,15 @@ namespace chaos {
 				 the pointer is a shared ptr, so it can be changed also if someone,
 				 is useing  memory allocated into this instance
 				 */
-				boost::shared_ptr<char> getPtr(int32_t& bufDim){
+				ChaosSharedPtr<char> getPtr(int32_t& bufDim){
 					bufDim = bufferDimension;
 					return ptr;
 				}
 				//! Return the typed ptr to the internal buffer
 				template<typename T>
-				boost::shared_ptr<T> const getTypedPtr(int32_t& bufDim){
+				ChaosSharedPtr<T> const getTypedPtr(int32_t& bufDim){
 					bufDim = bufferDimension/sizeof(T);
-					return boost::static_pointer_cast<T>(boost::shared_ptr<void>(ptr));
+					return boost::static_pointer_cast<T>(ChaosSharedPtr<void>(ptr));
 				}
 			};
 		}

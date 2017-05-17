@@ -80,7 +80,7 @@ namespace chaos {
                 boost::atomic_uint	channel_counter;
                 
                 boost::mutex mutex_map_shared_collectors;
-                std::map<SharedCollectorKey, boost::shared_ptr<DirectIOClientConnectionSharedMetricIO> > map_shared_collectors;
+                std::map<SharedCollectorKey, ChaosSharedPtr<DirectIOClientConnectionSharedMetricIO> > map_shared_collectors;
 			protected:
 				void forwardEventToClientConnection(DirectIOClientConnection *client, DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event_type);
                 

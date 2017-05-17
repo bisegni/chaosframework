@@ -54,7 +54,7 @@ namespace chaos {
                                                               const std::string& search_string);
                     
                 protected:
-                    MongoDBScriptDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
+                    MongoDBScriptDataAccess(const ChaosSharedPtr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
                     ~MongoDBScriptDataAccess();
                 public:
                     //! Inherited method

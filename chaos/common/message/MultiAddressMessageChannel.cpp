@@ -117,7 +117,7 @@ bool MultiAddressMessageChannel::serviceOnlineCheck(void *service_ptr) {
     bool result = false;
     int retry = 3;
     MMCFeederService *service = static_cast<MMCFeederService*>(service_ptr);
-    std::auto_ptr<MessageRequestFuture> request = MessageChannel::echoTest(service->ip_port,
+    ChaosUniquePtr<MessageRequestFuture> request = MessageChannel::echoTest(service->ip_port,
                                                                            NULL);
     while(--retry>0) {
         if(request->wait(500)) {
@@ -157,11 +157,11 @@ void MultiAddressMessageChannel::sendMessage(const std::string& action_domain,
 }
 
 //!send an rpc request to a remote node
-std::auto_ptr<MessageRequestFuture> MultiAddressMessageChannel::_sendRequestWithFuture(const std::string& action_domain,
+ChaosUniquePtr<MessageRequestFuture> MultiAddressMessageChannel::_sendRequestWithFuture(const std::string& action_domain,
                                                                                        const std::string& action_name,
                                                                                        CDataWrapper *request_pack,
                                                                                        std::string& used_remote_address) {
-    std::auto_ptr<MessageRequestFuture> result;
+    ChaosUniquePtr<MessageRequestFuture> result;
     MMCFeederService *service =  static_cast<MMCFeederService*>(service_feeder.getService());
     bool has_been_found_a_server = (service!=NULL);
     if(has_been_found_a_server) {
@@ -177,11 +177,11 @@ std::auto_ptr<MessageRequestFuture> MultiAddressMessageChannel::_sendRequestWith
 }
 
 //!send an rpc request to a remote node
-std::auto_ptr<MultiAddressMessageRequestFuture> MultiAddressMessageChannel::sendRequestWithFuture(const std::string& action_domain,
+ChaosUniquePtr<MultiAddressMessageRequestFuture> MultiAddressMessageChannel::sendRequestWithFuture(const std::string& action_domain,
                                                                                                   const std::string& action_name,
                                                                                                   CDataWrapper *request_pack,
                                                                                                   int32_t request_timeout) {
-    return std::auto_ptr<MultiAddressMessageRequestFuture>(new MultiAddressMessageRequestFuture(this,
+    return ChaosUniquePtr<MultiAddressMessageRequestFuture>(new MultiAddressMessageRequestFuture(this,
                                                                                                 action_domain,
                                                                                                 action_name,
                                                                                                 request_pack,

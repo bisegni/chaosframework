@@ -41,8 +41,8 @@ public:\
     t operator()(const uint64_t ui64v) const;\
     t operator()(double dv) const;\
     t operator()(const std::string& str) const;\
-    t operator()(const boost::shared_ptr<chaos::common::data::CDataBuffer>& buffer) const;\
-    t operator()(const boost::shared_ptr<chaos::common::data::CDataWrapper>& buffer) const;\
+    t operator()(const ChaosSharedPtr<chaos::common::data::CDataBuffer>& buffer) const;\
+    t operator()(const ChaosSharedPtr<chaos::common::data::CDataWrapper>& buffer) const;\
 };
 
 #define CHAOS_VARIANT_DEFINE_VISITOR_WITH_TYPE(t) CHAOS_VARIANT_DEFINE_VISITOR_WITH_NAME_TYPE(t,t)
@@ -57,8 +57,8 @@ namespace chaos {
             CHAOS_VARIANT_DEFINE_VISITOR_WITH_TYPE(uint64_t);
             CHAOS_VARIANT_DEFINE_VISITOR_WITH_TYPE(double);
             CHAOS_VARIANT_DEFINE_VISITOR_WITH_NAME_TYPE(string, std::string);
-            CHAOS_VARIANT_DEFINE_VISITOR_WITH_NAME_TYPE(CDataBuffer, boost::shared_ptr<chaos::common::data::CDataBuffer>);
-            CHAOS_VARIANT_DEFINE_VISITOR_WITH_NAME_TYPE(CDataWrapper, boost::shared_ptr<chaos::common::data::CDataWrapper>);
+            CHAOS_VARIANT_DEFINE_VISITOR_WITH_NAME_TYPE(CDataBuffer, ChaosSharedPtr<chaos::common::data::CDataBuffer>);
+            CHAOS_VARIANT_DEFINE_VISITOR_WITH_NAME_TYPE(CDataWrapper, ChaosSharedPtr<chaos::common::data::CDataWrapper>);
 
             
             /*!
@@ -73,8 +73,8 @@ namespace chaos {
                 double,
                 bool,
                 std::string,
-                boost::shared_ptr<chaos::common::data::CDataBuffer>,
-				boost::shared_ptr<chaos::common::data::CDataWrapper> > _internal_variant;
+                ChaosSharedPtr<chaos::common::data::CDataBuffer>,
+				ChaosSharedPtr<chaos::common::data::CDataWrapper> > _internal_variant;
             public:
                 explicit CDataVariant(DataType::DataType _type,
                                       const void *_value_pointer,
@@ -124,14 +124,14 @@ namespace chaos {
                 const chaos::common::data::CDataBuffer *const asCDataBuffer() const;
                 operator const chaos::common::data::CDataBuffer *() const;
                 
-                boost::shared_ptr<CDataBuffer> asCDataBufferShrdPtr();
-                operator boost::shared_ptr<CDataBuffer>();
+                ChaosSharedPtr<CDataBuffer> asCDataBufferShrdPtr();
+                operator ChaosSharedPtr<CDataBuffer>();
                 
                 const chaos::common::data::CDataWrapper *const asCDataWrapper() const;
                 operator const chaos::common::data::CDataWrapper *const() const;
                 
-                boost::shared_ptr<CDataWrapper> asCDataWrapperShrdPtr();
-                operator boost::shared_ptr<CDataWrapper>();
+                ChaosSharedPtr<CDataWrapper> asCDataWrapperShrdPtr();
+                operator ChaosSharedPtr<CDataWrapper>();
                 
             };
         }

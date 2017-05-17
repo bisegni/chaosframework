@@ -84,7 +84,7 @@ bool AttributeSharedCacheWrapper::setOutputAttributeNewSize(VariableIndexType at
                                         clear_mem);
 }
 
-boost::shared_ptr<SharedCacheLockDomain> AttributeSharedCacheWrapper::getLockOnOutputAttributeCache(bool write_lock) {
+ChaosSharedPtr<SharedCacheLockDomain> AttributeSharedCacheWrapper::getLockOnOutputAttributeCache(bool write_lock) {
 	CHAOS_ASSERT(attribute_value_shared_cache)
 	return attribute_value_shared_cache->getLockOnDomain(DOMAIN_OUTPUT, write_lock);
 }
@@ -147,10 +147,10 @@ void AttributeSharedCacheWrapper::setCustomDomainAsChanged() {
 
 }
 
-boost::shared_ptr<SharedCacheLockDomain> AttributeSharedCacheWrapper::getLockOnCustomAttributeCache(bool write_lock) {
+ChaosSharedPtr<SharedCacheLockDomain> AttributeSharedCacheWrapper::getLockOnCustomAttributeCache(bool write_lock) {
 	return 	attribute_value_shared_cache->getLockOnDomain(DOMAIN_CUSTOM, write_lock);
 }
 
-boost::shared_ptr<SharedCacheLockDomain> AttributeSharedCacheWrapper::getReadLockOnInputAttributeCache() {
+ChaosSharedPtr<SharedCacheLockDomain> AttributeSharedCacheWrapper::getReadLockOnInputAttributeCache() {
 	return 	attribute_value_shared_cache->getLockOnDomain(DOMAIN_INPUT, false);
 }

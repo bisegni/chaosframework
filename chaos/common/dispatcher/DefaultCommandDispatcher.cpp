@@ -60,7 +60,7 @@ void DefaultCommandDispatcher::deinit() throw(CException) {
     LDEF_CMD_DISPTC_APP_ << "Deinitilizing Default Command Dispatcher";
     //we need to stop all das
     chaos::common::thread::ReadLock r_lock(das_map_mutex);
-    map<string, boost::shared_ptr<DomainActionsScheduler> >::iterator dasIter = das_map.begin();
+    map<string, ChaosSharedPtr<DomainActionsScheduler> >::iterator dasIter = das_map.begin();
     for (; dasIter != das_map.end(); dasIter++) {
         LDEF_CMD_DISPTC_APP_ << "Deinitilizing action scheduler for domain:"<< (*dasIter).second->getManagedDomainName();
         //th einitialization is enclosed into try/catch because we need to
@@ -85,10 +85,10 @@ void DefaultCommandDispatcher::deinit() throw(CException) {
  return an isntance of DomainActions pointer in relation to name
  but if the name is not present initialized it and add it to map
  */
-boost::shared_ptr<DomainActions> DefaultCommandDispatcher::getDomainActionsFromName(const string& domain_name) {
+ChaosSharedPtr<DomainActions> DefaultCommandDispatcher::getDomainActionsFromName(const string& domain_name) {
     //check if is not preset, so we can allocate it
     if(!action_domain_executor_map.count(domain_name)){
-        boost::shared_ptr<DomainActions>  result(new DomainActions(domain_name));
+        ChaosSharedPtr<DomainActions>  result(new DomainActions(domain_name));
         if(result){;
             action_domain_executor_map.insert(make_pair(domain_name, result));
             DEBUG_CODE(LDEF_CMD_DISPTC_DBG_ << "Allocated new  DomainActions:" << domain_name;);
@@ -120,7 +120,7 @@ void DefaultCommandDispatcher::registerAction(DeclareAction *declareActionClass)
     vector<AbstActionDescShrPtr>::iterator actDescIter = declareActionClass->getActionDescriptors().begin();
     for (; actDescIter != declareActionClass->getActionDescriptors().end(); actDescIter++) {
         //get the domain executor for this action descriptor
-        boost::shared_ptr<DomainActions> domainExecutor = getDomainActionsFromName((*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain));
+        ChaosSharedPtr<DomainActions> domainExecutor = getDomainActionsFromName((*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain));
         
         //if the domain executor has been returned, add this action to it
         if(domainExecutor) {
@@ -136,7 +136,7 @@ void DefaultCommandDispatcher::registerAction(DeclareAction *declareActionClass)
         string domainName = (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain);
         
         if(!das_map.count(domainName)){
-            boost::shared_ptr<DomainActionsScheduler> das(new DomainActionsScheduler(getDomainActionsFromName(domainName)));
+            ChaosSharedPtr<DomainActionsScheduler> das(new DomainActionsScheduler(getDomainActionsFromName(domainName)));
             das->init(GlobalConfiguration::getInstance()->getConfiguration()->getUInt32Value(InitOption::OPT_RPC_DOMAIN_QUEUE_THREAD));
             DEBUG_CODE(LDEF_CMD_DISPTC_DBG_ << "Initialized actions scheduler for domain:" << domainName;)
             chaos::common::thread::UpgradeReadToWriteLock uw_lock(ur_lock);
@@ -164,7 +164,7 @@ void DefaultCommandDispatcher::deregisterAction(DeclareAction *declareActionClas
     vector<AbstActionDescShrPtr>::iterator actDescIter = declareActionClass->getActionDescriptors().begin();
     for (; actDescIter != declareActionClass->getActionDescriptors().end(); actDescIter++) {
         //get the domain executor for this action descriptor
-        boost::shared_ptr<DomainActions> domainExecutor = getDomainActionsFromName((*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain));
+        ChaosSharedPtr<DomainActions> domainExecutor = getDomainActionsFromName((*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain));
         
         //if the domain executor has been returned, add this action to it
         if(domainExecutor) {
@@ -190,7 +190,7 @@ void DefaultCommandDispatcher::deregisterAction(DeclareAction *declareActionClas
         //try to check if we need to remove the domain scheduler
         if(das_map.count(domain_name) &&
            !action_domain_executor_map.count(domain_name)) {
-            boost::shared_ptr<DomainActionsScheduler> domain_pointer = das_map[domain_name];
+            ChaosSharedPtr<DomainActionsScheduler> domain_pointer = das_map[domain_name];
             LDEF_CMD_DISPTC_DBG_ << "The domain scheduler no more needed for "<< domain_name << " so it it's going to be removed";
             das_map.erase(domain_name);
             try{
