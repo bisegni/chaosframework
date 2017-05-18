@@ -90,8 +90,8 @@ int ProducerRegisterJsonApi::execute(std::vector<std::string>& api_tokens,
 	CDataWrapper dataset_pack;
 	
 
-    int64_t ts = (boost::posix_time::microsec_clock::universal_time() - time_epoch).total_milliseconds();
-    dataset_pack.addInt64Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP,ts);
+   //int64_t ts = (boost::posix_time::microsec_clock::universal_time() - time_epoch).total_milliseconds();
+    dataset_pack.addInt64Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP,chaos::common::utility::TimingUtil::getTimeStamp());
 
   
     

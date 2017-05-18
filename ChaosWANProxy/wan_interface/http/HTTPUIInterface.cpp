@@ -487,7 +487,7 @@ int HTTPUIInterface::processRest(struct mg_connection *connection) {
 		std::string content_data(connection->content, connection->content_len);
         if(json_reader.parse(content_data, json_request)) {
             //print the received JSON document
-            DEBUG_CODE(HTTWAN_INTERFACE_DBG_ << "Received JSON pack:" <<json_writer.write(json_request);)
+           // DEBUG_CODE(HTTWAN_INTERFACE_DBG_ << "Received JSON pack:" <<json_writer.write(json_request);)
 
             //call the handler
             if((err = handler->handleCall(1,
@@ -510,7 +510,7 @@ int HTTPUIInterface::processRest(struct mg_connection *connection) {
             response.setCode(400);
             json_response["error"] = -1;
             json_response["error_message"].append("Error parsing the json post data");
-            DEBUG_CODE(HTTWAN_INTERFACE_ERR_ << "Error decoding the request:" << json_writer.write(json_response);)
+            DEBUG_CODE(HTTWAN_INTERFACE_ERR_ << "Error decoding the request:" << json_writer.write(json_response) <<" BODY:'"<<connection->content<<"'";)
         }
 
 
@@ -525,7 +525,7 @@ int HTTPUIInterface::processRest(struct mg_connection *connection) {
         if(!json) {
             json_response["error_message"].append("The content of the request need to be json");
         }
-        DEBUG_CODE(HTTWAN_INTERFACE_ERR_ << "Error decoding the request:" <<json_writer.write(json_response);)
+        DEBUG_CODE(HTTWAN_INTERFACE_ERR_ << "Error decoding the request:" <<json_writer.write(json_response) <<" BODY:'"<<connection->content<<"'" ;)
 	}
 
 	response << json_writer.write(json_response);

@@ -13,6 +13,7 @@
 #include <boost/utility.hpp>
 #include <boost/thread/mutex.hpp>
 #include <chaos/common/global.h>
+#include <chaos/common/chaos_types.h>
 #include <boost/shared_ptr.hpp>
 namespace chaos{
 	namespace common{

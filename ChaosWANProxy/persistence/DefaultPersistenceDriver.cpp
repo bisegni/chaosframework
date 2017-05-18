@@ -103,9 +103,9 @@ void DefaultPersistenceDriver::addServerList(const std::vector<std::string>& _cd
 	    CDataWrapper *tmp_data_handler = NULL;
 
 		 if(!mds_message_channel->getDataDriverBestConfiguration(&tmp_data_handler, 5000)){
-		           UNIQUE_PTR<CDataWrapper> best_available_da_ptr(tmp_data_handler);
+		           ChaosUniquePtr<CDataWrapper> best_available_da_ptr(tmp_data_handler);
 		           DPD_LDBG <<best_available_da_ptr->getJSONString();
-		           UNIQUE_PTR<chaos::common::data::CMultiTypeDataArrayWrapper> liveMemAddrConfig(best_available_da_ptr->getVectorValue(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST));
+		           ChaosUniquePtr<chaos::common::data::CMultiTypeDataArrayWrapper> liveMemAddrConfig(best_available_da_ptr->getVectorValue(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST));
 		           size_t numerbOfserverAddressConfigured = liveMemAddrConfig->size();
 		            for ( int idx = 0; idx < numerbOfserverAddressConfigured; idx++ ){
 		            	std::string serverDesc = liveMemAddrConfig->getStringElementAtIndex(idx);
@@ -201,9 +201,10 @@ int DefaultPersistenceDriver::pushNewDataset(const std::string& producer_key,
 	int err = 0;
 	//ad producer key
 	new_dataset->addStringValue(chaos::DataPackCommonKey::DPCK_DEVICE_ID, producer_key);
+
 	new_dataset->addInt32Value(chaos::DataPackCommonKey::DPCK_DATASET_TYPE, chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT);
 	ChaosUniquePtr<SerializationBuffer> serialization(new_dataset->getBSONData());
-	
+//	DPD_LDBG <<" PUSHING:"<<new_dataset->getJSONString();
 	DirectIOChannelsInfo	*next_client = static_cast<DirectIOChannelsInfo*>(connection_feeder.getService());
 	serialization->disposeOnDelete = !next_client;
 	if(next_client) {
@@ -211,7 +212,7 @@ int DefaultPersistenceDriver::pushNewDataset(const std::string& producer_key,
 		
 		//free the packet
 		serialization->disposeOnDelete = false;
-		if((err =(int)next_client->device_client_channel->storeAndCacheDataOutputChannel(producer_key,
+		if((err =(int)next_client->device_client_channel->storeAndCacheDataOutputChannel(producer_key+ chaos::DataPackPrefixID::OUTPUT_DATASET_POSTFIX,
 																						 (void*)serialization->getBufferPtr(),
 																						 (uint32_t)serialization->getBufferLen(),
                                                                                          (chaos::DataServiceNodeDefinitionType::DSStorageType)store_hint))) {

@@ -87,7 +87,7 @@ int ProducerInsertJsonApi::execute(std::vector<std::string>& api_tokens,
     if(dp_timestamp.isNull()) {
 
       
-      ts = (boost::posix_time::microsec_clock::universal_time() - time_epoch).total_milliseconds();
+      ts = chaos::common::utility::TimingUtil::getTimeStamp();
       
        
         err_msg = "The timestamp is mandatory";
@@ -103,15 +103,21 @@ int ProducerInsertJsonApi::execute(std::vector<std::string>& api_tokens,
     //we can proceed
     ChaosUniquePtr<CDataWrapper> output_dataset(new CDataWrapper());
     //	const std::string& producer_name = api_tokens[0];
-    const std::string& producer_key = producer_name+"_o";
     
     // add the node unique id
-    output_dataset->addStringValue(chaos::DataPackCommonKey::DPCK_DEVICE_ID, producer_name);
+	Json::StyledWriter				json_writer;
+	const char* jsonobj=json_writer.write(input_data).c_str();
+    //PID_LDBG << json_writer.write(input_data);
+    output_dataset->setSerializedJsonData(jsonobj	);
+
     // add timestamp of the datapack
     output_dataset->addInt64Value(chaos::DataPackCommonKey::DPCK_TIMESTAMP, ts);
     
     output_dataset->addInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID,pktid++ );
+
+
     //scan other memebrs to create the datapack
+#if 0
     Json::Value::Members members = input_data.getMemberNames();
     for(Json::Value::Members::iterator it = members.begin();
         it != members.end();
@@ -229,9 +235,9 @@ int ProducerInsertJsonApi::execute(std::vector<std::string>& api_tokens,
             
         }
     }
-    
+#endif
     //call persistence api for insert the data
-    if((err = persistence_driver->pushNewDataset(producer_key,
+    if((err = persistence_driver->pushNewDataset(producer_name ,
                                                  output_dataset.get(),
                                                  2))) {
         err_msg = "Error during push of the dataset";

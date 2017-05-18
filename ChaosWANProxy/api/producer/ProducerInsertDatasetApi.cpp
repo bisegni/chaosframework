@@ -100,8 +100,8 @@ int ProducerInsertDatasetApi::execute(std::vector<std::string>& api_tokens,
 	//	const std::string& producer_name = api_tokens[0];
     const std::string& producer_key = producer_name+"_o";
 
-        // add the node unique id
-    output_dataset->addStringValue(chaos::DataPackCommonKey::DPCK_DEVICE_ID, producer_name);
+
+
         // add timestamp of the datapack
     output_dataset->addInt64Value(chaos::DataPackCommonKey::DPCK_TIMESTAMP, (uint64_t)dp_timestamp.asUInt64());
 

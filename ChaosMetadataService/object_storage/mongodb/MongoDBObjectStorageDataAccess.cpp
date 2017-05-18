@@ -96,7 +96,9 @@ int MongoDBObjectStorageDataAccess::getObject(const std::string& key,
         } else if(result.isEmpty()) {
             DBG << "No data has been found";
         } else {
+
             object_ptr_ref.reset(new CDataWrapper(result.objdata()));
+     //       DBG<<"fromDB:"<<object_ptr_ref->getJSONString();
         }
     } catch (const mongo::DBException &e) {
         ERR << e.what();
@@ -211,7 +213,10 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string& key,
                     end = object_found.end();
                     it != end;
                     it++) {
-                    found_object_page.push_back(ObjectSharedPtr(new CDataWrapper(it->getObjectField(MONGODB_DAQ_DATA_FIELD).objdata())));
+                	CDataWrapper*new_obj=new CDataWrapper(it->getObjectField(MONGODB_DAQ_DATA_FIELD).objdata());
+                    found_object_page.push_back(ObjectSharedPtr(new_obj));
+     //               DBG<<"fromDB:"<<new_obj->getJSONString();
+
                 }
 #ifdef QUERY_WITH_SEQUENCE
                 last_sequence_found = object_found[object_found.size()-1].getFieldDotted(sequence_field).Long();
