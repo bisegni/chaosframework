@@ -45,7 +45,7 @@ namespace chaos {
             public chaos::common::async_central::TimerHandler,
             public chaos::common::utility::Singleton<TimingUtil> {
                 friend class chaos::common::utility::Singleton<TimingUtil>;
-                const double        calibration_offset_bound;
+                const uint32_t      calibration_offset_bound;
                 const bool          calibration_enable_status;
                 const std::string   remote_ntp_server;
                 static int64_t      timestamp_calibration_offset;
@@ -89,7 +89,8 @@ namespace chaos {
             protected:
                 TimingUtil();
                 void timeout();
-                uint64_t getNTPTS();
+                void getNTPTS(uint64_t& ntp_received_ts,
+                              uint64_t& ntp_reansmitted_ts);
             public:
                 
                 void enableTimestampCalibration();

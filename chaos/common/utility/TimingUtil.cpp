@@ -69,19 +69,34 @@ void TimingUtil::disableTimestampCalibration() {
 }
 
 void TimingUtil::timeout() {
-    uint64_t pre_ts = getTimeStamp();
-    uint64_t ntp_ts = getNTPTS();
-    //uint64_t post_ts = getTimeStamp();
-    int64_t diff = ntp_ts - pre_ts; //how much ntp time diff from us
-    if(std::llabs(diff) > calibration_offset_bound) {
-        timestamp_calibration_offset = diff;
-        TU_LAPP << CHAOS_FORMAT("Timestamp calibration has been applyed for %1% milliseconds with pre_ts:%2% ntpts:%3%",%diff%pre_ts%ntp_ts);
-    } else {
-        TU_LDBG << CHAOS_FORMAT("Timestamp calibration acquired data pre_ts:%1% ntpts:%2% diff:%3% ", %pre_ts%ntp_ts%diff);
+    uint64_t ntp_rx_ts = 0;
+    uint64_t ntp_tx_ts = 0;
+    try{
+        uint64_t pre_ts = getTimeStamp();
+        getNTPTS(ntp_rx_ts, ntp_tx_ts);
+        uint64_t post_ts = getTimeStamp();
+        //uint64_t post_ts = getTimeStamp();
+        int64_t diff_rx = ntp_rx_ts - pre_ts; //how much ntp time diff from us
+        int64_t diff_tx = ntp_tx_ts - post_ts;
+        int64_t offset = (int64_t)((double)(diff_rx + diff_tx) / 2.0);
+        double delay = (post_ts-pre_ts) - (ntp_tx_ts-ntp_rx_ts);
+        if(((int64_t)std::fabs(offset)) > calibration_offset_bound) {
+            timestamp_calibration_offset += (uint64_t)offset;
+            TU_LAPP << CHAOS_FORMAT("Timestamp calibration has been applyed for %1% milliseconds with pre_ts:%2% ntptx:%3%",%offset%pre_ts%ntp_tx_ts);
+        } else {
+            TU_LDBG << CHAOS_FORMAT("Timestamp calibration acquired data pre_ts:%1% ntptx:%2% diff:%3% ", %pre_ts%ntp_tx_ts%offset);
+        }
+    } catch(CException& ex) {
+        DECODE_CHAOS_EXCEPTION(ex);
     }
+    
 }
 
-uint64_t TimingUtil::getNTPTS() {
+#define COMPUTE_NTP_TS(s,f)\
+((((uint64_t)s - 2208988800ULL)  * 1000) + (uint64_t)(((double)f / 4294967296.0) * 1000))
+
+void TimingUtil::getNTPTS(uint64_t& ntp_received_ts,
+                          uint64_t& ntp_reansmitted_ts) {
     time_t result_time = 0;
     boost::array<char, 48> asio_buffer;
     ntp_packet *packet = reinterpret_cast<ntp_packet*>(asio_buffer.data());
@@ -109,18 +124,19 @@ uint64_t TimingUtil::getNTPTS() {
         size_t len = socket.receive_from(boost::asio::buffer(asio_buffer),
                                          sender_endpoint);
         if(len != sizeof(ntp_packet)) {throw chaos::CException(-1, "Error receiving data from ntp", __PRETTY_FUNCTION__);}
+        packet->rxTm_s = ntohl(packet->rxTm_s);
+        packet->rxTm_f = ntohl(packet->rxTm_f);
         packet->txTm_s = ntohl(packet->txTm_s);
         packet->txTm_f = ntohl(packet->txTm_f);
-        const uint64_t sec_part = ((uint64_t)packet->txTm_s - 2208988800ULL)  * 1000; //seconds since 1970
-        const double msec_part = ((double)packet->txTm_f / /*(double)std::numeric_limits<int32_t>::max()*/4294967296.0) * 1000;
+        //const uint64_t sec_part = ((uint64_t)packet->txTm_s - 2208988800ULL)  * 1000; //seconds since 1970
+        //const double msec_part = ((double)packet->txTm_f / /*(double)std::numeric_limits<int32_t>::max()*/4294967296.0) * 1000;
         //timeRecv = recvBuf[43] << 24 | recvBuf[42] << 16 | recvBuf[41] << 8 | recvBuf[40];
         //timeRecv = htonll((time_t)timeRecv);
-        result_time = sec_part + (uint64_t)msec_part;
+        ntp_received_ts = COMPUTE_NTP_TS(packet->rxTm_s, packet->rxTm_f);
+        ntp_reansmitted_ts = COMPUTE_NTP_TS(packet->txTm_s, packet->txTm_f);//(((uint64_t)packet->txTm_s - 2208988800ULL)  * 1000) + (uint64_t)(((double)packet->txTm_f / 4294967296.0) * 1000);
         
     } catch (std::exception& e){
         throw chaos::CException(-2, e.what(), __PRETTY_FUNCTION__);
         
     }
-    
-    return (uint64_t)result_time;
 }
