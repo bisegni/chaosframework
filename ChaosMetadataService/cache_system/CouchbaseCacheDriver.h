@@ -54,6 +54,42 @@ namespace chaos {
                 }
             };
 
+            CHAOS_DEFINE_VECTOR_FOR_TYPE(char, CouchBufferResult);
+            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, CouchBufferResult, MapKeyBuffer);
+            
+            typedef enum ResultType {
+                ResultTypeGet,
+                ResultTypeMultiGet,
+                ResultTypeStore
+            } ResultType;
+            
+            struct Result {
+                const ResultType     return_type;
+                lcb_error_t		last_err;
+                std::string		last_err_str;
+                
+                Result(ResultType _return_type);
+            };
+            
+            struct GetResult:
+            public Result {
+                CouchBufferResult result;
+                GetResult();
+            };
+            
+            struct MultiGetResult:
+            public Result {
+                MapKeyBuffer result;
+                MultiGetResult();
+            };
+            
+            struct StoreResult:
+            public Result {
+                StoreResult();
+            };
+            
+//#define COOKIY_TO_
+            
                 //! Abstraction of the chache driver
             /*!
              This class represent the abstraction of the
@@ -98,9 +134,18 @@ namespace chaos {
             public:
                 ~CouchbaseCacheDriver();
                 
-                int putData(void *element_key, uint8_t element_key_len, void *value, uint32_t value_len);
+                int putData(void *element_key,
+                            uint8_t element_key_len,
+                            void *value, uint32_t value_len);
                 
-                int getData(void *element_key, uint8_t element_key_len, void **value, uint32_t& value_len);
+                int getData(void *element_key,
+                            uint8_t element_key_len,
+                            void **value,
+                            uint32_t& value_len);
+                
+                int getData(ChaosStringSet keys,
+                            void **value,
+                            uint32_t& value_len);
                 
                 int addServer(std::string server_desc);
                 

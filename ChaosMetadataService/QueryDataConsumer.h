@@ -80,6 +80,12 @@ namespace chaos{
                                 opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult *result_header,
                                 void **result_value);
             
+            int consumeGetEvent(opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcode *header,
+                                ChaosStringSet keys,
+                                opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcodeResult *result_header,
+                                void **result_value,
+                                uint32_t& result_value_len);
+            
             int consumeDataCloudQuery(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloud *query_header,
                                       const std::string& search_key,
                                       uint64_t search_start_ts,

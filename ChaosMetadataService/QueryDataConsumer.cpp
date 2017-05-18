@@ -287,6 +287,14 @@ int QueryDataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *hea
     return err;
 }
 
+int QueryDataConsumer::consumeGetEvent(opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcode *header,
+                                       ChaosStringSet keys,
+                                       opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcodeResult *result_header,
+                                       void **result_value,
+                                       uint32_t& result_value_len) {
+    
+}
+
 int QueryDataConsumer::consumeDataCloudDelete(const std::string& search_key,
                                               uint64_t start_ts,
                                               uint64_t end_ts){
