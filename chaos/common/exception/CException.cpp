@@ -23,8 +23,8 @@
 using namespace chaos;
 
 CException::CException(int eCode,
-                       std::string eMessage,
-                       std::string eDomain) throw():
+                       const std::string& eMessage,
+                       const std::string& eDomain) throw():
 errorCode(eCode),
 errorMessage(eMessage),
 errorDomain(eDomain) {
@@ -57,14 +57,12 @@ void CException::composeMsg() {
     msg = ss.str();
 }
 
-const char* CFatalException::what() const throw() {
-	std::stringstream ret;
-//	std::string stack;
-	ret<<"FATAL:\""+msg<<"\"";
-/*	stack =boost::diagnostic_information(*this);
-	 if (stack.size() ) {
-	        ret <<" stack:"<< stack;
-	    }
-*/
-    return ret.str().c_str();
-}
+
+CFatalException::CFatalException(int eCode,
+                                 const std::string& eMessage,
+                                 const std::string& eDomain):
+CException(eCode,eMessage,eDomain) {
+    std::stringstream ret;
+    ret<<"FATAL:\""+msg<<"\"";
+    msg = ret.str();
+};

@@ -35,7 +35,7 @@ namespace chaos{
         //! string stream for compose the "what" message
     	 void composeMsg();
     protected:
-        std::string msg;
+        mutable std::string msg;
         
 
     public:
@@ -46,7 +46,7 @@ namespace chaos{
         //! identify the domain(ControlUnit, DataManager, ....)
         const std::string errorDomain;
         
-        CException(int eCode, std::string eMessage,  std::string eDomain) throw();
+        CException(int eCode, const std::string& eMessage,  const std::string& eDomain) throw();
         
         CException(const CException& _exception) throw();
         
@@ -57,8 +57,7 @@ namespace chaos{
 
     class CFatalException:public CException {
     	public:
-    	 CFatalException(int eCode, std::string eMessage,  std::string eDomain):CException(eCode,eMessage,eDomain) {};
-    	 virtual const char* what() const throw();
+    	 CFatalException(int eCode, const std::string& eMessage,  const std::string& eDomain);
     };
 }
 #endif

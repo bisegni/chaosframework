@@ -20,6 +20,7 @@
 
 #include <chaos/common/utility/InetUtility.h>
 #include <chaos/common/utility/endianess.h>
+#include <chaos/common/utility/DataBuffer.h>
 #include <chaos/common/direct_io/channel/DirectIODeviceClientChannel.h>
 #include <chaos/common/direct_io/DirectIOClient.h>
 #include <chaos/common/utility/UUIDUtil.h>
@@ -172,7 +173,7 @@ int64_t DirectIODeviceClientChannel::requestLastOutputData(const std::string& ke
         DIODCCLERR_ << "Error getting last value for key:" << key << " with error:" <<err;
         *result = NULL;
         if(answer){
-           free(answer);
+            free(answer);
         }
         return err;
     } else {
@@ -192,6 +193,66 @@ int64_t DirectIODeviceClientChannel::requestLastOutputData(const std::string& ke
     }
     if(answer) {
         if(answer->channel_header_data) free(answer->channel_header_data);
+        free(answer);
+    }
+    return err;
+}
+
+int64_t DirectIODeviceClientChannel::requestLastOutputData(const ChaosStringSet& keys,
+                                                           VectorCDWShrdPtr& result_vec) {
+    if(keys.size() == 0) return -1;
+    int64_t err = 0;
+    DataBuffer<> data_buffer;
+    DirectIODataPack *answer = NULL;
+    DirectIODataPack *data_pack = (DirectIODataPack*)calloc(sizeof(DirectIODataPack), 1);
+    //set opcode
+    data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodeMultiGetLastOutput);
+    
+    DirectIODeviceChannelHeaderMultiGetOpcode *mget_opcode_header  = (DirectIODeviceChannelHeaderMultiGetOpcode*)calloc(sizeof(DirectIODeviceChannelHeaderMultiGetOpcode), 1);
+    mget_opcode_header->field.number_of_key = TO_LITTEL_ENDNS_NUM(uint16_t, keys.size());
+    
+    for(ChaosStringSetConstIterator it = keys.begin(),
+        end = keys.end();
+        it != end;
+        it++) {
+        data_buffer.writeByte(it->c_str(), (int32_t)it->size());
+        data_buffer.writeByte('\0');
+    }
+    
+    //set header
+    uint32_t data_size = data_buffer.getSize();
+    void* data = data_buffer.release();
+    DIRECT_IO_SET_CHANNEL_HEADER(data_pack, mget_opcode_header, sizeof(DirectIODeviceChannelHeaderGetOpcode))
+    DIRECT_IO_SET_CHANNEL_DATA(data_pack, data, data_size);
+    //send data with synchronous answer flag
+    if((err = sendServiceData(data_pack, &answer))) {
+        //error getting last value
+        DIODCCLERR_ << "Error getting last value for multikey set with error:" << err;
+        if(answer){
+            free(answer);
+        }
+        return err;
+    } else {
+        //we got answer
+        if(answer) {
+            //get the header
+            opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcodeResult *result_header = static_cast<opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcodeResult*>(answer->channel_header_data);
+            result_header->number_of_result = FROM_LITTLE_ENDNS_NUM(uint32_t, result_header->number_of_result);
+            CHAOS_ASSERT(result_header->number_of_result > 0);
+            CHAOS_ASSERT(answer->channel_data);
+            
+            DataBuffer<> data_buffer(answer->channel_data, answer->header.channel_data_size);
+            answer->channel_data = NULL;
+            for(int idx = 0;
+                idx < result_header->number_of_result;
+                idx++) {
+                result_vec.push_back(CDWShrdPtr(data_buffer.readCDataWrapper().release()));
+            }
+        }
+    }
+    if(answer) {
+        if(answer->channel_header_data) free(answer->channel_header_data);
+        if(answer->channel_data) free(answer->channel_data);
         free(answer);
     }
     return err;
@@ -251,11 +312,11 @@ int64_t DirectIODeviceClientChannel::queryDataCloud(const std::string& key,
     }
     if(answer) {
         if(answer->channel_header_data) {
-        	free(answer->channel_header_data);
+            free(answer->channel_header_data);
         }
         free(answer);
     }
-
+    
     return err;
 }
 
@@ -287,7 +348,7 @@ int64_t DirectIODeviceClientChannel::deleteDataCloud(const std::string& key,
         //error getting last value
         DIODCCLERR_ << CHAOS_FORMAT("Error executing deelte operation for key %1%",%key);
     }
-
+    
     return err;
 }
 
@@ -300,6 +361,7 @@ void DirectIODeviceClientChannel::DirectIODeviceClientChannelDeallocator::freeSe
                 case opcode::DeviceChannelOpcodePutHeathData:
                 case opcode::DeviceChannelOpcodeGetLastOutput:
                 case opcode::DeviceChannelOpcodeQueryDataCloud:
+                case opcode::DeviceChannelOpcodeMultiGetLastOutput:
                     free(sent_data_ptr);
                     break;
                     //these two opcode are header allocated in the stack
@@ -317,6 +379,7 @@ void DirectIODeviceClientChannel::DirectIODeviceClientChannelDeallocator::freeSe
                 case opcode::DeviceChannelOpcodeGetLastOutput:
                 case opcode::DeviceChannelOpcodeQueryDataCloud:
                 case opcode::DeviceChannelOpcodeDeleteDataCloud:
+                case opcode::DeviceChannelOpcodeMultiGetLastOutput:
                     free(sent_data_ptr);
                     break;
             }

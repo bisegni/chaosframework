@@ -94,6 +94,25 @@ namespace chaos {
                                                     void **result_value)
                         {DELETE_HEADER_DATA(header, key_data) return -1;};
                         
+                        //! Receive the et of keys of the live data channel to read
+                        /*!
+                         Receive the keys set to fetch from the live cache and fill the synchronous_answer to return
+                         in synchronous way the result of the answre
+                         \param header header containing the information where send the answer
+                         \param key_data the data of the key
+                         \param key_len the size of the key data
+                         \param result_header
+                         \param result_value is the merory that contains the bson document answer for each key in sequence,
+                         \param result_value_size is the size of memory allocated into result_value pointer
+                         if a key is not found in live an empy bson document is add.
+                         */
+                        virtual int consumeGetEvent(opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcode *header,
+                                                    ChaosStringSet keys,
+                                                    opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcodeResult *result_header,
+                                                    void **result_value,
+                                                    uint32_t& result_value_len)
+                        {DELETE_HEADER(header) return -1;};
+                        
                         //! Execute a paged query into a time intervall
                         /*!
                          Execute a paged query in sinchronous way

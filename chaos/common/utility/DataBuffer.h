@@ -22,8 +22,11 @@
 #ifndef __CHAOSFramework_DB5BF462_F0F3_495E_9F27_17F8B476F473_ByteBuffer_h
 #define __CHAOSFramework_DB5BF462_F0F3_495E_9F27_17F8B476F473_ByteBuffer_h
 
-#include <stdint.h>
+#include <chaos/common/chaos_types.h>
+#include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/utility/ChaosAllocator.h>
+
+#include <stdint.h>
 
 namespace chaos {
     namespace common {
@@ -151,6 +154,22 @@ namespace chaos {
                     const char * str_start = ((const char *)ChaosBuffer<Allocator>::data) + cursor;
                     std::string result(str_start, str_len);
                     cursor += str_len;
+                    return result;
+                }
+                
+                std::string readStringUntilNull() {
+                    const char * str_start = ((const char *)ChaosBuffer<Allocator>::data) + cursor;
+                    const size_t end_string_location = std::strlen(str_start);
+                    if((cursor+end_string_location) >  ChaosBuffer<Allocator>::size) return std::string();
+                    std::string result(str_start, end_string_location);
+                    cursor += end_string_location;
+                    return result;
+                }
+                
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> readCDataWrapper() {
+                    const char * bson_start = ((const char *)ChaosBuffer<Allocator>::data) + cursor;
+                    ChaosUniquePtr<chaos::common::data::CDataWrapper> result(new chaos::common::data::CDataWrapper(bson_start));
+                    cursor += result->getBSONRawSize();
                     return result;
                 }
                 
