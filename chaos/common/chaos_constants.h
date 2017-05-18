@@ -108,6 +108,8 @@ namespace chaos {
         static const char * const   OPT_DATA_IO_IMPL					= "data-io-impl";
         //! Enable the calibration of the local timestsamp with a remote NTP server
         static const char * const   OPT_TIME_CALIBRATION                = "time-calibration";
+        //! Specify the bound of offset after wich the calibration work
+        static const char * const   OPT_TIME_CALIBRATION_OFFSET_BOUND   = "time-calibration-oofset-bound";
         //! Enable the calibration of the local timestsamp with a remote NTP server
         static const char * const   OPT_TIME_CALIBRATION_NTP_SERVER     = "time-calibration-ntp-server";
     }

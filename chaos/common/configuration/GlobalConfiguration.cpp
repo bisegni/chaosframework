@@ -85,6 +85,7 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException) {
         addOption(InitOption::OPT_PUBLISHING_IP, po::value< string >(), "Specify the ip address where to publish the framework rpc system");
         addOption(InitOption::OPT_PUBLISHING_INTERFACE, po::value< string >(), "Specify the interface where to publish the framework rpc system");
         addOption(InitOption::OPT_TIME_CALIBRATION, po::value< bool >()->zero_tokens(), "Enable the time calibration for chaos process");
+        addOption(InitOption::OPT_TIME_CALIBRATION_OFFSET_BOUND, po::value< unsigned int >()->default_value(500), "The number of millisecond of difference after wich the calibration will be activated");
         addOption(InitOption::OPT_TIME_CALIBRATION_NTP_SERVER, po::value< string >(), "Specify the NTP server used for time calibration");
     } catch (po::error &e) {
         throw CException(0, e.what(), "GlobalConfiguration::preParseStartupParameters");
@@ -351,6 +352,9 @@ void GlobalConfiguration::checkDefaultOption() throw (CException) {
     
     CHECK_AND_DEFINE_BOOL_ZERO_TOKEN_OPTION(enable_time_calibration, InitOption::OPT_TIME_CALIBRATION)
     configuration.addBoolValue(InitOption::OPT_TIME_CALIBRATION, enable_time_calibration);
+    
+    CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(unsigned int, offset_calibration_bound, InitOption::OPT_TIME_CALIBRATION_OFFSET_BOUND, 500)
+    configuration.addInt32Value(InitOption::OPT_TIME_CALIBRATION_OFFSET_BOUND, offset_calibration_bound);
     
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(std::string, time_calibration_ntp_server, InitOption::OPT_TIME_CALIBRATION_NTP_SERVER, "")
     configuration.addStringValue(InitOption::OPT_TIME_CALIBRATION_NTP_SERVER, time_calibration_ntp_server);

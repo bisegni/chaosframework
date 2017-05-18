@@ -38,7 +38,6 @@
 namespace chaos {
     namespace common {
         namespace utility {
-            
             /*
              Class for give some method util for timing purpose
              */
@@ -46,11 +45,39 @@ namespace chaos {
             public chaos::common::async_central::TimerHandler,
             public chaos::common::utility::Singleton<TimingUtil> {
                 friend class chaos::common::utility::Singleton<TimingUtil>;
-                
-                std::string remote_ntp_server;
-                static int64_t timestamp_calibration_offset;
+                const double        calibration_offset_bound;
+                const bool          calibration_enable_status;
+                const std::string   remote_ntp_server;
+                static int64_t      timestamp_calibration_offset;
                 static const char* formats[];
                 static const size_t formats_n;
+                
+                //NTP packet definition
+                typedef struct {
+                    unsigned li   : 2;       // Only two bits. Leap indicator.
+                    unsigned vn   : 3;       // Only three bits. Version number of the protocol.
+                    unsigned mode : 3;       // Only three bits. Mode. Client will pick mode 3 for client.
+                    
+                    uint8_t stratum;         // Eight bits. Stratum level of the local clock.
+                    uint8_t poll;            // Eight bits. Maximum interval between successive messages.
+                    uint8_t precision;       // Eight bits. Precision of the local clock.
+                    
+                    uint32_t rootDelay;      // 32 bits. Total round trip delay time.
+                    uint32_t rootDispersion; // 32 bits. Max error aloud from primary clock source.
+                    uint32_t refId;          // 32 bits. Reference clock identifier.
+                    
+                    uint32_t refTm_s;        // 32 bits. Reference time-stamp seconds.
+                    uint32_t refTm_f;        // 32 bits. Reference time-stamp fraction of a second.
+                    
+                    uint32_t origTm_s;       // 32 bits. Originate time-stamp seconds.
+                    uint32_t origTm_f;       // 32 bits. Originate time-stamp fraction of a second.
+                    
+                    uint32_t rxTm_s;         // 32 bits. Received time-stamp seconds.
+                    uint32_t rxTm_f;         // 32 bits. Received time-stamp fraction of a second.
+                    
+                    uint32_t txTm_s;         // 32 bits and the most important field the client cares about. Transmit time-stamp seconds.
+                    uint32_t txTm_f;         // 32 bits. Transmit time-stamp fraction of a second.
+                } ntp_packet;
                 
                 static inline boost::posix_time::time_duration getUTCOffset() {
                     using namespace boost::posix_time;
@@ -60,6 +87,7 @@ namespace chaos {
                     return now - utc_now;
                 }
             protected:
+                TimingUtil();
                 void timeout();
                 uint64_t getNTPTS();
             public:
