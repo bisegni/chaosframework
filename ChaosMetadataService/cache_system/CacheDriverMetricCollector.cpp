@@ -74,7 +74,18 @@ int CacheDriverMetricCollector::getData(void *element_key,
     }
     return err;
 }
-
+int CacheDriverMetricCollector::getData(ChaosStringSet keys,
+                                        void **value,
+                                        uint32_t& value_len) {
+    CHAOS_ASSERT(wrapped_cache_driver)
+    int err =  wrapped_cache_driver->getData(keys,
+                                             value,
+                                             value_len);
+    if(value_len) {
+        shared_collector->incrementGetBandWidth(value_len);
+    }
+    return err;
+}
 int CacheDriverMetricCollector::addServer(std::string server_desc) {
     CHAOS_ASSERT(wrapped_cache_driver)
     return wrapped_cache_driver->addServer(server_desc);

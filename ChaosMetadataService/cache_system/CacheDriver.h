@@ -26,6 +26,7 @@
 #include <stdint.h>
 #include <string>
 
+#include <chaos/common/chaos_types.h>
 #include <chaos/common/utility/NamedService.h>
 #include <chaos/common/utility/InizializableService.h>
 
@@ -59,6 +60,10 @@ namespace chaos {
 									uint8_t element_key_len,
 									void **value,
 									uint32_t& value_len) = 0;
+                
+                virtual int getData(ChaosStringSet keys,
+                                    void **value,
+                                    uint32_t& value_len) = 0;
 
                 virtual int addServer(std::string server_desc) = 0;
                 
