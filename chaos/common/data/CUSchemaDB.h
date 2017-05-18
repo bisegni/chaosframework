@@ -30,7 +30,6 @@
 
 #include <chaos/common/data/entity_db/EntityDB.h>
 #include <chaos/common/chaos_constants.h>
-#include <chaos/common/utility/TimingUtil.h>
 
 #define CUSCHEMA_DEFAULT_STRING_LENGHT 4096
 namespace chaos {
@@ -81,9 +80,6 @@ namespace chaos {
                 
                 //! Entity Database pointer
                 edb::EntityDB *entityDB;
-                
-                //! Timing utils
-                utility::TimingUtil timingUtils;
                 
                 //! Map that contains all device entity
                 EntityPtrMap deviceEntityMap;

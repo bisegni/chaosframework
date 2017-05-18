@@ -30,6 +30,7 @@
 #include <boost/format.hpp>
 
 #include <chaos/common/chaos_constants.h>
+#include <chaos/common/utility/TimingUtil.h>
 
 using namespace std;
 using namespace boost;
@@ -175,7 +176,7 @@ void CUSchemaDB::addDeviceId(const string& deviceID) {
     entity::Entity *dsEntity = entityDB->getNewEntityInstance(kiv);
     if(dsEntity) {
         deviceEntityMap.insert(make_pair(deviceID, dsEntity));
-        addUniqueAttributeProperty(dsEntity, mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP], (int64_t)timingUtils.getTimeStamp(), false);
+        addUniqueAttributeProperty(dsEntity, mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP], (int64_t)utility::TimingUtil::getTimeStamp(), false);
     }
 }
 
