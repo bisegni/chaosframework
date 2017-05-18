@@ -20,9 +20,11 @@
 
 #include <chaos/common/global.h>
 #include <chaos/common/utility/endianess.h>
+#include <chaos/common/utility/DataBuffer.h>
 #include <chaos/common/direct_io/channel/DirectIODeviceServerChannel.h>
 
-namespace chaos_data = chaos::common::data;
+using namespace chaos::common::data;
+using namespace chaos::common::utility;
 using namespace chaos::common::direct_io;
 using namespace chaos::common::direct_io::channel;
 using namespace chaos::common::direct_io::channel::opcode_headers;
@@ -100,7 +102,42 @@ int DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack,
             }
             break;
         }
-
+            
+        case opcode::DeviceChannelOpcodeMultiGetLastOutput: {
+            if(synchronous_answer == NULL) return -1000;
+            //allocate variable for result
+            uint32_t result_data_size = 0;
+            void *result_data = NULL;
+            ChaosStringSet keys;
+            opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcode *header = reinterpret_cast< opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcode* >(dataPack->channel_header_data);
+            opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcodeResult *result_header = (DirectIODeviceChannelHeaderMultiGetOpcodeResult*)calloc(sizeof(DirectIODeviceChannelHeaderMultiGetOpcodeResult), 1);
+            
+            //fetch the set of keys
+            DataBuffer<> data_buffer(dataPack->channel_data,
+                                     dataPack->header.channel_data_size);
+            dataPack->channel_data = NULL;
+            for(int idx = 0;
+                idx < header->field.number_of_key;
+                idx ++) {
+                keys.insert(data_buffer.readStringUntilNull());
+            }
+            err = handler->consumeGetEvent(header,
+                                           keys,
+                                           result_header,
+                                           &result_data,
+                                           result_data_size);
+            if(err == 0){
+                //set the result header and data
+                result_header->number_of_result = TO_LITTEL_ENDNS_NUM(uint32_t, result_header->number_of_result);
+                DIRECT_IO_SET_CHANNEL_HEADER(synchronous_answer, result_header, sizeof(DirectIODeviceChannelHeaderMultiGetOpcodeResult));
+                DIRECT_IO_SET_CHANNEL_DATA(synchronous_answer, result_data, result_data_size);
+            } else {
+                if(result_data) free(result_data);
+                if(result_header) free(result_header);
+            }
+            break;
+        }
+            
         case opcode::DeviceChannelOpcodeQueryDataCloud: {
             if(synchronous_answer == NULL) return -1000;
             opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudPtr header = reinterpret_cast< opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloud*>(dataPack->channel_header_data);

@@ -40,7 +40,7 @@ namespace chaos {
                     uint16_t endpoint;
                     uint64_t ip;
                     uint32_t hash;
-                }AnswerServerInfo;
+                } AnswerServerInfo;
                 
                 //! Class for the managment of pushing data for the device dataset
                 /*!
@@ -84,6 +84,10 @@ namespace chaos {
                     //! Send a request for the last output data
                     int64_t requestLastOutputData(const std::string& key,
                                                   void **result, uint32_t &size);
+                    
+                    //! Send a request for the last output data for a set of key
+                    int64_t requestLastOutputData(const ChaosStringSet& keys,
+                                                  chaos::common::data::VectorCDWShrdPtr& result_vec);
                     
                     //! Perform a temporal query on a key
                     /*!

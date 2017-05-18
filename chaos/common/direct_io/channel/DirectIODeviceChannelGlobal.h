@@ -28,7 +28,8 @@ namespace chaos {
                         DeviceChannelOpcodeGetLastOutput            = 2,	/**< request the last output dataset from live cache [synchronous]*/
                         DeviceChannelOpcodeQueryDataCloud			= 4,	/**< query the chaos data associated to a key [synchronous]*/
                         DeviceChannelOpcodeDeleteDataCloud			= 8,     /**< delete the data associated with a key [synchronous]*/
-                        DeviceChannelOpcodePutHeathData				= 16	/**< send the health dataset [synchronous]*/
+                        DeviceChannelOpcodePutHeathData				= 16,	/**< send the health dataset [synchronous]*/
+                        DeviceChannelOpcodeMultiGetLastOutput       = 32	/**< request the last output dataset from live cache for a set of key[synchronous]*/
                     } DeviceChannelOpcode;
                     
                     /*!
@@ -118,6 +119,18 @@ namespace chaos {
                     } DirectIODeviceChannelHeaderGetOpcode,
                     *DirectIODeviceChannelHeaderGetOpcodePtr;
                     
+                    //! Header for the DirectIODeviceChannelHeaderMultiGetOpcode opcode
+                    /*!
+                     this is the header for request the last output channel for more then one key
+                     */
+                    typedef	union DirectIODeviceChannelHeaderMultiGetOpcode {
+                        //raw data representation of the header
+                        char raw_data[2];
+                        struct header {
+                            uint16_t number_of_key;
+                        } field;
+                    } DirectIODeviceChannelHeaderMultiGetOpcode,
+                    *DirectIODeviceChannelHeaderMultiGetOpcodePtr;
                     
                     //! Header for DirectIODeviceChannelHeaderGetOpcode asynchronous result
                     /*!
@@ -128,6 +141,19 @@ namespace chaos {
                         uint32_t value_len;
                     } DirectIODeviceChannelHeaderGetOpcodeResult,
                     *DirectIODeviceChannelHeaderGetOpcodeResultPtr;
+                    
+                    //! Header for DirectIODeviceChannelHeaderMultiGetOpcode asynchronous result
+                    /*!
+                     the header contains the number for result that are found
+                     every result in encoded in a bson way sso every record as the lent at the start,
+                     if no data is found for a key an empty bson is returned. For each key a bson
+                     document is returned in the same order of key in the set
+                     */
+                    typedef struct DirectIODeviceChannelHeaderMultiGetOpcodeResult {
+                        //! The lenght of found data
+                        uint32_t number_of_result;
+                    } DirectIODeviceChannelHeaderMultiGetOpcodeResult,
+                    *DirectIODeviceChannelHeaderMultiGetOpcodeResultPtr;
                     
                     //#define QUERY_DATA_CLOUD_OPCODE_HEADER_LEN 4
                     //! Header for the DirectIODeviceChannelHeaderOpcodeQueryDataCloud opcode

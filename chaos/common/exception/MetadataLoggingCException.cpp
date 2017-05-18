@@ -25,7 +25,9 @@
 using namespace chaos::common::exception;
 using namespace chaos::common::metadata_logging;
 
-MetadataLoggingCException::MetadataLoggingCException(int eCode, const char * eMessage,  const char * eDomain)throw():
+MetadataLoggingCException::MetadataLoggingCException(int eCode,
+                                                     const char * eMessage,
+                                                     const char * eDomain)throw():
 CException(eCode, eMessage, eDomain) {}
 
 MetadataLoggingCException::MetadataLoggingCException(const std::string& log_source,
