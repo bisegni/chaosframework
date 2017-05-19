@@ -1,8 +1,3 @@
-cache:
-  key: "$CI_BUILD_REF_NAME"
-  paths:
-  - /builds/bisegni/chaosframework
-
 stages:
   - build
   - deploy
@@ -27,6 +22,10 @@ build_framework_x86_64:
     #- tar -zcf /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux_$TAR_NAME_POSTFIX.tgz /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux
     #- ls -la
     #- scp -v -i /builds/bisegni/chaosframework/deploy.key -o StrictHostKeyChecking=no /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux_$TAR_NAME_POSTFIX.tgz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/
+  cache:
+    key: "$CI_BUILD_REF_NAME"_development
+    paths:
+        - /builds/bisegni/chaosframework
   only:
     - development
     - master
@@ -45,6 +44,10 @@ build_framework_arm:
     #- tar -zcf /builds/bisegni/chaosframework/chaos-distrib-armhf_$TAR_NAME_POSTFIX.tgz /builds/bisegni/chaosframework/chaos-distrib-armhf
     #- ls -la
     #- scp -v -i /builds/bisegni/chaosframework/deploy.key -o StrictHostKeyChecking=no /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux_$TAR_NAME_POSTFIX.tgz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/
+  cache:
+    key: "$CI_BUILD_REF_NAME"_development
+    paths:
+        - /builds/bisegni/chaosframework
   only:
     - development
     - master
