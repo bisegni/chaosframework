@@ -216,7 +216,7 @@ namespace chaos{
                 handler::DatasetAttributeHandler dataset_attribute_manager;
                 
                 //! init configuration
-                ChaosUniquePtr<CDataWrapper> init_configuration;
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> init_configuration;
                 void _initDrivers() throw(CException);
                 void _initChecklist();
                 

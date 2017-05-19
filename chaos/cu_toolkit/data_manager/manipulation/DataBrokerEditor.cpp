@@ -86,10 +86,10 @@ ChaosUniquePtr<DatasetCacheWrapper> DataBrokerEditor::getDatasetCacheWrapperFor(
     return result;
 }
 
-ChaosUniquePtr<CDataWrapper> DataBrokerEditor::serialize() {
+ChaosUniquePtr<chaos::common::data::CDataWrapper> DataBrokerEditor::serialize() {
     LockableObjectReadLock_t wl;
     container_dataset.getReadLock(wl);
-    ChaosUniquePtr<CDataWrapper> result(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> result(new CDataWrapper());
     //scan all dataset and every serialization will be added to global CDataWrapper as array
     Dataset ds_buff;
     DatasetSDWrapper reference_ser_wrap(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(Dataset, ds_buff));
@@ -120,7 +120,7 @@ void DataBrokerEditor::deserialize(CDataWrapper& serialization) {
     for(int idx = 0;
         idx < ser_ds_vec->size();
         idx++) {
-        ChaosUniquePtr<CDataWrapper> ds_ser(ser_ds_vec->getCDataWrapperElementAtIndex(idx));
+        ChaosUniquePtr<chaos::common::data::CDataWrapper> ds_ser(ser_ds_vec->getCDataWrapperElementAtIndex(idx));
         ds_wrapper.deserialize(ds_ser.get());
         addNewDataset(ds_wrapper.dataWrapped());
     }

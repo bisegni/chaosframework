@@ -468,7 +468,7 @@ void HealtManager::publishNodeHealt(const std::string& node_uid) {
     if(map_node.count(node_uid) == 0) return;
     
     //allocate the datapack
-    ChaosUniquePtr<CDataWrapper> data_pack(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> data_pack(new CDataWrapper());
     
     // get metric ptr
     _publish(map_node[node_uid], TimingUtil::getTimeStamp());
@@ -498,7 +498,7 @@ void HealtManager::_publish(const ChaosSharedPtr<NodeHealtSet>& heath_set,
     updateProcInfo();
     
     //send datapack
-    ChaosUniquePtr<CDataWrapper> data_pack(prepareNodeDataPack(*heath_set,
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> data_pack(prepareNodeDataPack(*heath_set,
                                                               publish_ts));
     if(data_pack.get()) {
         //store data on cache

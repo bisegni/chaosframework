@@ -85,7 +85,7 @@ void RestoreSnapshotBatch::ccHandler() {
                 break;
             }
             
-            ChaosUniquePtr<CDataWrapper> node_description(tmp_ptr);
+            ChaosUniquePtr<chaos::common::data::CDataWrapper> node_description(tmp_ptr);
             
             if( !node_description->hasKey(NodeDefinitionKey::NODE_RPC_ADDR) ||
                !node_description->hasKey(NodeDefinitionKey::NODE_RPC_DOMAIN)) {

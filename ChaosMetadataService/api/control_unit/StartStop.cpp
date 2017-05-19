@@ -49,7 +49,7 @@ CDataWrapper *StartStop::execute(CDataWrapper *api_data,
     int err                     = 0;
     uint64_t command_id         = 0;
     CDataWrapper *tmp_ptr       = NULL;
-    ChaosUniquePtr<CDataWrapper> cu_base_description(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> cu_base_description(new CDataWrapper());
     
     const std::string cu_uid = api_data->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID);
     const bool start = api_data->getBoolValue("start");
@@ -62,7 +62,7 @@ CDataWrapper *StartStop::execute(CDataWrapper *api_data,
     } else if(tmp_ptr == NULL) {
         LOG_AND_TROW(CU_STASTO_ERR, err, boost::str(boost::format("No control unit node dafault description found for unique id:%1% ") % cu_uid));
     }
-    ChaosUniquePtr<CDataWrapper> cu_desk(tmp_ptr);
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> cu_desk(tmp_ptr);
     CHECK_KEY_THROW_AND_LOG(cu_desk.get(), NodeDefinitionKey::NODE_RPC_ADDR, CU_STASTO_ERR, -4, "No rpc addres in the control unit descirption")
     CHECK_KEY_THROW_AND_LOG(cu_desk.get(), NodeDefinitionKey::NODE_RPC_DOMAIN, CU_STASTO_ERR, -5, "No rpc domain in the control unit descirption")
     

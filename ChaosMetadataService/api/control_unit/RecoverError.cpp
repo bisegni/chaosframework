@@ -70,7 +70,7 @@ CDataWrapper *RecoverError::execute(CDataWrapper *api_data,
     }
     
     if(control_unit_to_recover.size()) {
-        ChaosUniquePtr<CDataWrapper> batch_data(new CDataWrapper());
+        ChaosUniquePtr<chaos::common::data::CDataWrapper> batch_data(new CDataWrapper());
         //we can launch the batch command to recover all control unit
         for(std::vector<std::string>::iterator it = control_unit_to_recover.begin();
             it != control_unit_to_recover.end();

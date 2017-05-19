@@ -29,8 +29,8 @@ namespace chaos {
             namespace control_unit {
                 class GetFullDescription:
                 public AbstractApi {
-                    ChaosSharedPtr<CDataWrapper> mergeDatasetAttributeWithSetup(ChaosSharedPtr<CDataWrapper> element_in_dataset,
-                                                                                   ChaosSharedPtr<CDataWrapper> element_in_setup);
+                    ChaosSharedPtr<chaos::common::data::CDataWrapper> mergeDatasetAttributeWithSetup(ChaosSharedPtr<chaos::common::data::CDataWrapper> element_in_dataset,
+                                                                                   ChaosSharedPtr<chaos::common::data::CDataWrapper> element_in_setup);
                 public:
                     GetFullDescription();
                     ~GetFullDescription();

@@ -34,7 +34,7 @@ API_PROXY_CD_DEFINITION(CommandTemplateSearch,
  
  */
 ApiProxyResult CommandTemplateSearch::execute(const CommandUIDList& uid_list) {
-    ChaosUniquePtr<CDataWrapper> message(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> message(new CDataWrapper());
     for(CommandUIDListConstIterator it = uid_list.begin();
         it != uid_list.end();
         it++) {

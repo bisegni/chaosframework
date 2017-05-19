@@ -34,16 +34,16 @@ API_PROXY_CD_DEFINITION(UpdateProperty,
  */
 ApiProxyResult UpdateProperty::execute(const std::string& node_unique_id,
                                        const NodePropertyGroupList& node_property_groups_list) {
-    ChaosUniquePtr<CDataWrapper> message(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> message(new CDataWrapper());
     //add node uid
     message->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_unique_id);
     
-    ChaosUniquePtr<CDataWrapper> update_property_pack(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> update_property_pack(new CDataWrapper());
     //scan all property group
     for(NodePropertyGroupListConstIterator it = node_property_groups_list.begin();
         it != node_property_groups_list.end();
         it++) {
-        ChaosUniquePtr<CDataWrapper> property_group(new CDataWrapper());
+        ChaosUniquePtr<chaos::common::data::CDataWrapper> property_group(new CDataWrapper());
         
         //scan all property
         for(ParameterSetterListIterator it_p = (*it)->group_property_list.begin();

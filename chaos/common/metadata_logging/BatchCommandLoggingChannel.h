@@ -44,7 +44,7 @@ METADATA_LOGGING_CHANNEL_INSTANCER(ErrorLoggingChannel)
                                     const std::string& log_subject,
                                     const uint64_t command_id,
                                     chaos::common::batch_command::BatchCommandEventType::BatchCommandEventType command_event,
-                                    CDataWrapper *message_data);
+                                    chaos::common::data::CDataWrapper *message_data);
                 
                 int logCommandRunningProperty(const std::string& log_emitter,
                                               const std::string& log_subject,

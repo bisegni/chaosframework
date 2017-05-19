@@ -37,7 +37,7 @@ chaos::common::data::CDataWrapper *GetAllSnapshot::execute(chaos::common::data::
 
     
     int err = 0;
-    ChaosUniquePtr<CDataWrapper> result(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> result(new CDataWrapper());
     SnapshotList snapshots;
 
     std::string snapshot_query_result;

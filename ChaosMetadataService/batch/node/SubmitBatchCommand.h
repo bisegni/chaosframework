@@ -35,7 +35,7 @@ namespace chaos {
                     DECLARE_MDS_COMMAND_ALIAS
                     //request for the command submission
                     ChaosUniquePtr<RequestInfo> request;
-                    ChaosUniquePtr<CDataWrapper> command_instance;
+                    ChaosUniquePtr<chaos::common::data::CDataWrapper> command_instance;
                 public:
                     SubmitBatchCommand();
                     ~SubmitBatchCommand();

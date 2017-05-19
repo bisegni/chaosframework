@@ -523,7 +523,7 @@ void CUSchemaDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& attributeDat
     string attributeDeviceID;
     string attributeName;
     string attributeDescription;
-    ChaosUniquePtr<CDataWrapper> elementDescription;
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> elementDescription;
     ChaosUniquePtr<CMultiTypeDataArrayWrapper> elementsDescriptions;
     //LDBG_<<"["<<__PRETTY_FUNCTION__<<"] Dataset:"<<attributeDataWrapper.getJSONString();
 
@@ -534,7 +534,7 @@ void CUSchemaDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& attributeDat
     
     if(attributeDataWrapper.hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION)){
         
-        ChaosUniquePtr<CDataWrapper> dataset_object(attributeDataWrapper.getCSDataValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
+        ChaosUniquePtr<chaos::common::data::CDataWrapper> dataset_object(attributeDataWrapper.getCSDataValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
         
         if(dataset_object->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION)) {
             
@@ -633,7 +633,7 @@ void CUSchemaDB::fillDataWrapperWithDataSetDescription(CDataWrapper& datasetDesc
             string deviceId = deviceEntityIter->first;
             entity::Entity *deviceEntity = deviceEntityIter->second;
             
-            ChaosUniquePtr<CDataWrapper> domainDatasetDescription(new CDataWrapper());
+            ChaosUniquePtr<chaos::common::data::CDataWrapper> domainDatasetDescription(new CDataWrapper());
             
             fillDataWrapperWithDataSetDescription(deviceEntity, *domainDatasetDescription.get());
             
@@ -697,7 +697,7 @@ void CUSchemaDB::fillDataWrapperWithDataSetDescription(entity::Entity *deviceEnt
         if(attrProperty.size() == 0) continue;
         
         //cicle all dataset element
-        ChaosUniquePtr<CDataWrapper> dataset_element(new CDataWrapper());
+        ChaosUniquePtr<chaos::common::data::CDataWrapper> dataset_element(new CDataWrapper());
         
         fillCDataWrapperDSAtribute(dataset_element.get(), deviceEntity, dstAttrEntity, attrProperty);
         

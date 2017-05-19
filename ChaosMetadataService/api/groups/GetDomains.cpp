@@ -51,7 +51,7 @@ chaos::common::data::CDataWrapper *GetDomains::execute(chaos::common::data::CDat
     }
     
     //compose output
-    ChaosUniquePtr<CDataWrapper> result(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> result(new CDataWrapper());
     if(domain_list.size()) {
         for(DomainListIterator it = domain_list.begin();
             it != domain_list.end();

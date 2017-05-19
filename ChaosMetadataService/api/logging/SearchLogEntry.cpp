@@ -82,7 +82,7 @@ chaos::common::data::CDataWrapper *SearchLogEntry::execute(CDataWrapper *api_dat
         LOG_AND_TROW(L_SLE_ERR, err, "Error searching for source");
     }
     if(entry_list.size()) {
-        ChaosUniquePtr<CDataWrapper> tmp_result(new CDataWrapper());
+        ChaosUniquePtr<chaos::common::data::CDataWrapper> tmp_result(new CDataWrapper());
         for(LogEntryListIterator it = entry_list.begin();
             it != entry_list.end();
             it++){

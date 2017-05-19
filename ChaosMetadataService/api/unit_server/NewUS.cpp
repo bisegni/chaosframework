@@ -52,7 +52,7 @@ void NewUS::performQuery(const std::string& new_us_uid,
     if(presence) {
         LOG_AND_TROW(US_NEW_ERR, -5, boost::str(boost::format("There is already another node with the same uid:%1%") % new_us_uid));
     }
-    ChaosUniquePtr<CDataWrapper> data_pack(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> data_pack(new CDataWrapper());
     data_pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, new_us_uid);
     data_pack->addStringValue(NodeDefinitionKey::NODE_TYPE, NodeType::NODE_TYPE_UNIT_SERVER);
     data_pack->addStringValue(NodeDefinitionKey::NODE_DESC, desc);

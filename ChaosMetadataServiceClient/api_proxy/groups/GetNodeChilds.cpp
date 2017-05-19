@@ -33,7 +33,7 @@ API_PROXY_CD_DEFINITION(GetNodeChilds,
  */
 ApiProxyResult GetNodeChilds::execute(const std::string& node_domain,
                                       const std::string& node_path) {
-    ChaosUniquePtr<CDataWrapper> pack(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> pack(new CDataWrapper());
     if(node_path.size()){pack->addStringValue("node_path", node_path);}
     pack->addStringValue("group_domain", node_domain);
     return callApi(pack.release());

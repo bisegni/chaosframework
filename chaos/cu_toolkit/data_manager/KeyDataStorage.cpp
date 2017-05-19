@@ -332,7 +332,7 @@ ChaosSharedPtr<chaos_data::CDataWrapper> KeyDataStorage::getDatasetFromRestorePo
 CDataWrapper* KeyDataStorage::updateConfiguration(CDataWrapper *newConfiguration) {
     //update the driver configration
     if(io_data_driver) io_data_driver->updateConfiguration(newConfiguration);
-    ChaosUniquePtr<CDataWrapper> cu_properties;
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> cu_properties;
     CDataWrapper *cu_property_container = NULL;
     if(newConfiguration->hasKey("property_abstract_control_unit") &&
        newConfiguration->isCDataWrapperValue("property_abstract_control_unit")){

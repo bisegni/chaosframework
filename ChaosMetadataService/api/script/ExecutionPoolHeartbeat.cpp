@@ -104,7 +104,7 @@ chaos::common::data::CDataWrapper *ExecutionPoolHeartbeat::execute(CDataWrapper 
         if(current_script_page.size() > 0) {
             
             //all is gone weel, we have script to load
-            ChaosUniquePtr<CDataWrapper> batch_data(new CDataWrapper());
+            ChaosUniquePtr<chaos::common::data::CDataWrapper> batch_data(new CDataWrapper());
             //copy to batch data unit server name and pool list
             batch_data->addStringValue(chaos::NodeDefinitionKey::NODE_PARENT, us_uid);
             api_data->copyKeyTo(ExecutionUnitNodeDefinitionKey::EXECUTION_POOL_LIST, *batch_data);

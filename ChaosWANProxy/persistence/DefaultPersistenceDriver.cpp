@@ -103,7 +103,7 @@ void DefaultPersistenceDriver::addServerList(const std::vector<std::string>& _cd
 	    CDataWrapper *tmp_data_handler = NULL;
 
 		 if(!mds_message_channel->getDataDriverBestConfiguration(&tmp_data_handler, 5000)){
-		           ChaosUniquePtr<CDataWrapper> best_available_da_ptr(tmp_data_handler);
+		           ChaosUniquePtr<chaos::common::data::CDataWrapper> best_available_da_ptr(tmp_data_handler);
 		           DPD_LDBG <<best_available_da_ptr->getJSONString();
 		           ChaosUniquePtr<chaos::common::data::CMultiTypeDataArrayWrapper> liveMemAddrConfig(best_available_da_ptr->getVectorValue(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST));
 		           size_t numerbOfserverAddressConfigured = liveMemAddrConfig->size();

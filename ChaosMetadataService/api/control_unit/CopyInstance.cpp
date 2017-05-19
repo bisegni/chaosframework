@@ -53,8 +53,8 @@ CDataWrapper *CopyInstance::execute(CDataWrapper *api_data,
     std::vector<std::string> keys;
     CDataWrapper *tmp_ptr = NULL;
     
-    ChaosUniquePtr<CDataWrapper> source_instance;
-    ChaosUniquePtr<CDataWrapper> destination_instance(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> source_instance;
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> destination_instance(new CDataWrapper());
     
     const std::string cu_src = api_data->getStringValue("ndk_uid_cu_src");
     const std::string us_src = api_data->getStringValue("ndk_uid_us_src");
@@ -117,7 +117,7 @@ CDataWrapper *CopyInstance::execute(CDataWrapper *api_data,
     }
     if (!presence) {
         //add new control unit node
-        ChaosUniquePtr<CDataWrapper> node_min_dec(new CDataWrapper());
+        ChaosUniquePtr<chaos::common::data::CDataWrapper> node_min_dec(new CDataWrapper());
         node_min_dec->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_dst);
         node_min_dec->addStringValue(NodeDefinitionKey::NODE_TYPE, NodeType::NODE_TYPE_CONTROL_UNIT);
         //need to be create a new empty node

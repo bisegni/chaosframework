@@ -215,7 +215,7 @@ void ControUnitInstanceEditor::fillUIFromInstanceInfo(QSharedPointer<chaos::comm
         for(int idx = 0;
             idx != arr_drv->size();
             idx++) {
-            ChaosUniquePtr<CDataWrapper> drv_desc(arr_drv->getCDataWrapperElementAtIndex(idx));
+            ChaosUniquePtr<chaos::common::data::CDataWrapper> drv_desc(arr_drv->getCDataWrapperElementAtIndex(idx));
 
             QStandardItem *item = NULL;
             QList<QStandardItem*> row_item;
@@ -238,7 +238,7 @@ void ControUnitInstanceEditor::fillUIFromInstanceInfo(QSharedPointer<chaos::comm
         for(int idx = 0;
             idx != arr_attr->size();
             idx++) {
-            ChaosUniquePtr<CDataWrapper> attr_desc(arr_attr->getCDataWrapperElementAtIndex(idx));
+            ChaosUniquePtr<chaos::common::data::CDataWrapper> attr_desc(arr_attr->getCDataWrapperElementAtIndex(idx));
 
             QStandardItem *item = NULL;
             QList<QStandardItem*> row_item;

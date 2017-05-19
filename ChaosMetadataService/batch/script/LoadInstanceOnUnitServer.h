@@ -50,7 +50,7 @@ namespace chaos {
                     
                     ChaosStringVector epool_list;
                     ChaosUniquePtr<RequestInfo> request;
-                    ChaosUniquePtr<CDataWrapper> load_datapack;
+                    ChaosUniquePtr<chaos::common::data::CDataWrapper> load_datapack;
                     
                     uint64_t                last_sequence_id;
                     SearchScriptPhase       search_script_phase;

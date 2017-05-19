@@ -76,7 +76,7 @@ namespace chaos {
             //!Dataset database
             chaos::common::data::DatasetDB datasetDB;
             //!point to the freashest live value for this device dataset
-            //ChaosUniquePtr<CDataWrapper> lastDeviceDefinition;
+            //ChaosUniquePtr<chaos::common::data::CDataWrapper> lastDeviceDefinition;
             
             //!point to the freashest live value for this device dataset
             std::vector< ChaosSharedPtr<chaos::common::data::CDataWrapper> >current_dataset;

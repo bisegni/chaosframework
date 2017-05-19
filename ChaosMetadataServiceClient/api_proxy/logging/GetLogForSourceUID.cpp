@@ -36,7 +36,7 @@ ApiProxyResult GetLogForSourceUID::execute(const std::string& source,
                                            const std::string& domain,
                                            const uint64_t last_sequence_id,
                                            const uint32_t page_length) {
-    ChaosUniquePtr<CDataWrapper> pack(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> pack(new CDataWrapper());
     pack->addStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER, source);
     if(last_sequence_id) {pack->addInt64Value("seq", last_sequence_id);}
     if(domain.size()) {pack->addStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN, domain);}
@@ -48,7 +48,7 @@ ApiProxyResult GetLogForSourceUID::execute(const std::string& source,
                                            const LogDomainList& domain_list,
                                            const uint64_t last_sequence_id,
                                            const uint32_t page_length) {
-    ChaosUniquePtr<CDataWrapper> pack(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> pack(new CDataWrapper());
     pack->addStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER, source);
     if(last_sequence_id ) {pack->addInt64Value("seq", last_sequence_id);}
     if(domain_list.size()) {
@@ -77,7 +77,7 @@ GetLogForSourceUIDHelper::GetLogForSourceUIDHelper(CDataWrapper *api_result) {
     for(int idx = 0;
         idx < vec->size();
         idx++) {
-        ChaosUniquePtr<CDataWrapper> entry_dw(vec->getCDataWrapperElementAtIndex(idx));
+        ChaosUniquePtr<chaos::common::data::CDataWrapper> entry_dw(vec->getCDataWrapperElementAtIndex(idx));
         
         ChaosSharedPtr<LogEntry> entry(new LogEntry());
         

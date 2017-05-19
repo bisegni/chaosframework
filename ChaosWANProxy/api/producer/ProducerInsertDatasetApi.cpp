@@ -96,7 +96,7 @@ int ProducerInsertDatasetApi::execute(std::vector<std::string>& api_tokens,
 	}
 
 	//we can proceed
-	ChaosUniquePtr<CDataWrapper> output_dataset(new CDataWrapper());
+	ChaosUniquePtr<chaos::common::data::CDataWrapper> output_dataset(new CDataWrapper());
 	//	const std::string& producer_name = api_tokens[0];
     const std::string& producer_key = producer_name+"_o";
 

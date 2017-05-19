@@ -49,7 +49,7 @@ void ManagedDirectIODataDriver::init(void *init_parameter) throw(CException) {
     data::CDataWrapper *conf = NULL;
     if((err = mds_channel->getDataDriverBestConfiguration(&conf)) || (conf == NULL)) {throw CException(-1, "Error fetching best endpoint from mds channel", __PRETTY_FUNCTION__);}
     
-    ChaosUniquePtr<CDataWrapper> auto_conf(conf);
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> auto_conf(conf);
     updateConfiguration(auto_conf.get());
 }
 

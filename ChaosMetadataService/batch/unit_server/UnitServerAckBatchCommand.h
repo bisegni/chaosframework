@@ -47,7 +47,7 @@ namespace chaos {
                     UnitServerAckPhase phase;
                     
                     ChaosUniquePtr<RequestInfo> request;
-                    ChaosUniquePtr<CDataWrapper> autoload_pack;
+                    ChaosUniquePtr<chaos::common::data::CDataWrapper> autoload_pack;
                     chaos::common::data::CDataWrapper *message_data;
                     
                     AutoloadCUList          list_autoload_cu;

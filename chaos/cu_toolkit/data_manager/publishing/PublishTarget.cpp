@@ -173,11 +173,11 @@ bool PublishTarget::publish(const PublishableElement& publishable_element) {
     return true;
 }
 
-ChaosUniquePtr<CDataWrapper> PublishTarget::getDataPack(const chaos::common::data::cache::AttributeCache &attribute_cache) {
+ChaosUniquePtr<chaos::common::data::CDataWrapper> PublishTarget::getDataPack(const chaos::common::data::cache::AttributeCache &attribute_cache) {
     //clock the cache
     ReadSharedCacheLockDomain read_lock_on_cache(attribute_cache.mutex);
     
-    ChaosUniquePtr<CDataWrapper> data_pack(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> data_pack(new CDataWrapper());
     
     //write timestamp
     attribute_cache.exportToCDataWrapper(*data_pack);

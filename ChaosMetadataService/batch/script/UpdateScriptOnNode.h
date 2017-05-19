@@ -45,7 +45,7 @@ namespace chaos {
                     ChaosStringVectorIterator current_node_it;
                     
                     ChaosUniquePtr<RequestInfo> request;
-                    ChaosUniquePtr<CDataWrapper> script_update_data_pack;
+                    ChaosUniquePtr<chaos::common::data::CDataWrapper> script_update_data_pack;
                 public:
                     UpdateScriptOnNode();
                     ~UpdateScriptOnNode();

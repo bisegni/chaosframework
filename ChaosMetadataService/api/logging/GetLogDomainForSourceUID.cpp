@@ -71,7 +71,7 @@ chaos::common::data::CDataWrapper *GetLogDomainForSourceUID::execute(CDataWrappe
         LOG_AND_TROW(L_GLTFS_ERR, err, "Error searching log types");
     }
     if(domain_list.size()) {
-        ChaosUniquePtr<CDataWrapper> tmp_result(new CDataWrapper());
+        ChaosUniquePtr<chaos::common::data::CDataWrapper> tmp_result(new CDataWrapper());
         for(LogDomainListIterator it = domain_list.begin();
             it != domain_list.end();
             it++){

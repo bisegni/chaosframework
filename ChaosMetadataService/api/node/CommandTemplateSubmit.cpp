@@ -75,7 +75,7 @@ CDataWrapper *CommandTemplateSubmit::execute(CDataWrapper *api_data,
     for(CommandInstanceListIterator it = command_instance_list.begin();
         it != command_instance_list.end();
         it++) {
-        ChaosUniquePtr<CDataWrapper> instance_pack(new CDataWrapper());
+        ChaosUniquePtr<chaos::common::data::CDataWrapper> instance_pack(new CDataWrapper());
         N_CTS_INFO << "Send datapack "<< it->getJSONString();
         instance_pack->addCSDataValue("submission_task", *it);
         command_id = getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::node::SubmitBatchCommand),
@@ -104,7 +104,7 @@ void CommandTemplateSubmit::processSubmissionTask(NodeDataAccess *n_da,
                                                                                           command_unique_id);
     
     //store command instance
-    ChaosUniquePtr<CDataWrapper> instance = CommandCommonUtility::createCommandInstanceByTemplateadnSubmissionDescription(node_uid,
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> instance = CommandCommonUtility::createCommandInstanceByTemplateadnSubmissionDescription(node_uid,
                                                                                                                          submission_task.get(),
                                                                                                                          command_description.get(),
                                                                                                                          template_description.get());

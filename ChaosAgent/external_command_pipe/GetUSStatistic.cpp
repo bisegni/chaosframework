@@ -49,7 +49,7 @@ int GetUSStatistic::execute(ChaosStringVector input_parameter) {
     }
     
     AgentInstanceSDWrapper agent_instance_sd_wrapper;
-    ChaosUniquePtr<CDataWrapper> api_data(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> api_data(new CDataWrapper());
     
     const std::string& agent_uid = ChaosAgent::getInstance()->settings.agent_uid;
     

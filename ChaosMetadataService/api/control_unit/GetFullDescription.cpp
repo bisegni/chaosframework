@@ -60,7 +60,7 @@ CDataWrapper *GetFullDescription::execute(CDataWrapper *api_data,
         if((err = cu_da->getFullDescription(cu_uid, &result))||(result==NULL)) {
                LOG_AND_TROW(CU_GCD_ERR, err, boost::str(boost::format("Error fetching the dataset for the node  unit uid:%1% with error %2%") % cu_uid % err));
         }
-        ChaosUniquePtr<CDataWrapper> dataset(result);
+        ChaosUniquePtr<chaos::common::data::CDataWrapper> dataset(result);
         return dataset.release();
 
      }
@@ -87,10 +87,10 @@ CDataWrapper *GetFullDescription::execute(CDataWrapper *api_data,
         LOG_AND_TROW(CU_GCD_ERR, -10001, boost::str(boost::format("Dataset not found for control unit '%1%'") % cu_uid));
     }
     //we have data set and now we need to update the input attribute
-    ChaosUniquePtr<CDataWrapper> dataset(result);
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> dataset(result);
 
-    ChaosUniquePtr<CDataWrapper> init_datapack(new CDataWrapper());
-    ChaosUniquePtr<CDataWrapper> init_dataset(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> init_datapack(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> init_dataset(new CDataWrapper());
     
     init_datapack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_uid);
     
@@ -153,7 +153,7 @@ CDataWrapper *GetFullDescription::execute(CDataWrapper *api_data,
             } else if(ds_description == NULL) {
                 CU_GCD_DBG << "No description foudn for data service:" << ds_unique_id;
             } else {
-                ChaosUniquePtr<CDataWrapper> ds_object(ds_description);
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> ds_object(ds_description);
                 if(ds_object->hasKey(NodeDefinitionKey::NODE_DIRECT_IO_ADDR) &&
                    ds_object->hasKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT)) {
                     //we can create the address

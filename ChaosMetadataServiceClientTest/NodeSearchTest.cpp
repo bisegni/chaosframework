@@ -68,7 +68,7 @@ void NodeSearchTest::testSearch(const std::string& search_string){
                             for (int idx = 0;
                                  idx < node_found_vec->size();
                                  idx++){
-                                ChaosUniquePtr<CDataWrapper> node_found(node_found_vec->getCDataWrapperElementAtIndex(idx));
+                                ChaosUniquePtr<chaos::common::data::CDataWrapper> node_found(node_found_vec->getCDataWrapperElementAtIndex(idx));
                                 
                                 //print the node uid
                                 std::cout << node_found->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID) << std::endl;

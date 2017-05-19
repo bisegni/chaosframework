@@ -33,7 +33,7 @@ API_PROXY_CD_DEFINITION(RecoverError,
  
  */
 ApiProxyResult RecoverError::execute(const std::vector<std::string>& cu_uids) {
-    ChaosUniquePtr<CDataWrapper> message(new chaos::common::data::CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> message(new chaos::common::data::CDataWrapper());
     
     //compose data pack
     for(std::vector<std::string>::const_iterator it = cu_uids.begin();

@@ -52,7 +52,7 @@ CDataWrapper *LoadUnloadControlUnit::execute(CDataWrapper *api_data,
     CDataWrapper *us_base_description = NULL;
     CDataWrapper *cu_base_descirption = NULL;
     CDataWrapper *cu_instance_description = NULL;
-    ChaosUniquePtr<CDataWrapper> load_unload_data_pack(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> load_unload_data_pack(new CDataWrapper());
     
     //get the parameter
     const std::string cu_uid = api_data->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID);
@@ -71,7 +71,7 @@ CDataWrapper *LoadUnloadControlUnit::execute(CDataWrapper *api_data,
     } else if(!cu_base_descirption) {
         LOG_AND_TROW(CU_LOUNLO_ERR, -5, boost::str(boost::format("No base infromation found for control unit:%1%") % cu_uid));
     } else {
-        ChaosUniquePtr<CDataWrapper> cu_inf(cu_base_descirption);
+        ChaosUniquePtr<chaos::common::data::CDataWrapper> cu_inf(cu_base_descirption);
         if(cu_inf->hasKey(chaos::NodeDefinitionKey::NODE_TYPE)) {
         std:string type = cu_inf->getStringValue(chaos::NodeDefinitionKey::NODE_TYPE);
             if(type.compare(chaos::NodeType::NODE_TYPE_CONTROL_UNIT) != 0) {
@@ -89,7 +89,7 @@ CDataWrapper *LoadUnloadControlUnit::execute(CDataWrapper *api_data,
             //we haven't found an instance for the node
             LOG_AND_TROW(CU_LOUNLO_ERR, -8, "The node doesn't has an instance configured");
         } else {
-            ChaosUniquePtr<CDataWrapper> cu_instance(cu_instance_description);
+            ChaosUniquePtr<chaos::common::data::CDataWrapper> cu_instance(cu_instance_description);
             
             if(!cu_instance->hasKey(chaos::NodeDefinitionKey::NODE_PARENT)) {
                 LOG_AND_TROW(CU_LOUNLO_ERR, -9, "Control unit instance laks of parent key(unit server)");
@@ -104,7 +104,7 @@ CDataWrapper *LoadUnloadControlUnit::execute(CDataWrapper *api_data,
                 LOG_AND_TROW(CU_LOUNLO_ERR, err, "Error fetching unit server information");
             }
             
-            ChaosUniquePtr<CDataWrapper> us_instance(us_base_description);
+            ChaosUniquePtr<chaos::common::data::CDataWrapper> us_instance(us_base_description);
             if(!us_instance->hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR)) {
                 LOG_AND_TROW(CU_LOUNLO_ERR, -11, "No rpc address for unit server found");
             }

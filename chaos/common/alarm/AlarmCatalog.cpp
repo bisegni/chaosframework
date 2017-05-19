@@ -83,7 +83,7 @@ void AlarmCatalog::setApplyRawFlagsValue(ChaosUniquePtr<chaos::common::data::CDa
     StateFlagCatalog::setApplyRawFlagsValue(raw_level);
 }
 
-ChaosUniquePtr<CDataWrapper> AlarmCatalog::serialize() {
+ChaosUniquePtr<chaos::common::data::CDataWrapper> AlarmCatalog::serialize() {
     StateFlagCatalogSDWrapper sd_wrap(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(StateFlagCatalog, *this));
     return sd_wrap.serialize();
 }

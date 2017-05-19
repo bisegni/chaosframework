@@ -43,7 +43,7 @@ chaos::common::data::CDataWrapper *GetSnapshotForNode::execute(chaos::common::da
     
     int err = 0;
     ChaosStringVector snapshot_for_node;
-    ChaosUniquePtr<CDataWrapper> result(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> result(new CDataWrapper());
     const std::string node_uid = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
     
     GET_DATA_ACCESS(SnapshotDataAccess, s_da, -4);

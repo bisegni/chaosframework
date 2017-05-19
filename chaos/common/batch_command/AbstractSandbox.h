@@ -72,10 +72,10 @@ n->fault_description.domain = d;
              into the sandbox
              */
             struct CommandInfoAndImplementation {
-                CDataWrapper *cmdInfo;
+                chaos::common::data::CDataWrapper *cmdInfo;
                 BatchCommand *cmdImpl;
                 
-                CommandInfoAndImplementation(CDataWrapper *_cmdInfo, BatchCommand *_cmdImpl);
+                CommandInfoAndImplementation(chaos::common::data::CDataWrapper *_cmdInfo, BatchCommand *_cmdImpl);
                 ~CommandInfoAndImplementation();
                 
                 void deleteInfo();

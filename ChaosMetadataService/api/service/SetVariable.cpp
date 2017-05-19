@@ -47,7 +47,7 @@ chaos::common::data::CDataWrapper *SetVariable::execute(chaos::common::data::CDa
     
     int err = 0;
     const std::string variable_name = api_data->getStringValue("variable_name");
-    ChaosUniquePtr<CDataWrapper> variable_value(api_data->getCSDataValue("variable_value"));
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> variable_value(api_data->getCSDataValue("variable_value"));
 
     
     if((err = u_da->setVariable(variable_name,

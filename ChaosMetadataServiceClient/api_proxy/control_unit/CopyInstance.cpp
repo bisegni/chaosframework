@@ -36,7 +36,7 @@ ApiProxyResult CopyInstance::execute(const std::string& cu_src,
                                      const std::string& us_src,
                                      const std::string& cu_dst,
                                      const std::string& us_dst) {
-    ChaosUniquePtr<CDataWrapper> message(new chaos::common::data::CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> message(new chaos::common::data::CDataWrapper());
 
     //compose data pack
     message->addStringValue("ndk_uid_cu_src", cu_src);

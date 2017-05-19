@@ -60,7 +60,7 @@ void RecoverError::setHandler(CDataWrapper *data) {
             if((err = getDataAccess<mds_data_access::NodeDataAccess>()->getNodeDescription(uid, &tmp_pointer))){
                 
             } else {
-                ChaosUniquePtr<CDataWrapper> cu_desc(tmp_pointer);
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> cu_desc(tmp_pointer);
                 //set the phase to send message
                 
                 requests.push_back(ChaosSharedPtr<RequestInfo>(createRequest(cu_desc->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR),

@@ -41,7 +41,7 @@ namespace chaos {
                     DECLARE_MDS_COMMAND_ALIAS
                     //request for the command submission
                     ChaosUniquePtr<RequestInfo> restore_request;
-                    ChaosUniquePtr<CDataWrapper> restore_message;
+                    ChaosUniquePtr<chaos::common::data::CDataWrapper> restore_message;
                     std::vector<std::string> list_node_in_snapshot;
                     
                     std::string snapshot_name;

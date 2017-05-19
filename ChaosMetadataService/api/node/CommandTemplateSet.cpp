@@ -58,7 +58,7 @@ CDataWrapper *CommandTemplateSet::execute(CDataWrapper *api_data,
         idx < tempalte_list->size();
         idx++) {
         
-        ChaosUniquePtr<CDataWrapper> template_element(tempalte_list->getCDataWrapperElementAtIndex(idx));
+        ChaosUniquePtr<chaos::common::data::CDataWrapper> template_element(tempalte_list->getCDataWrapperElementAtIndex(idx));
         
         if(!template_element->hasKey("template_name")||
            !template_element->hasKey(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID)) {

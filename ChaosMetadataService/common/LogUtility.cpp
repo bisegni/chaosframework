@@ -31,8 +31,8 @@ it++) {\
 o->m(it->first, it->second);\
 }
 
-ChaosUniquePtr<CDataWrapper> LogUtility::convertEntry(LogEntry& log_entry) {
-    ChaosUniquePtr<CDataWrapper> result(new CDataWrapper());
+ChaosUniquePtr<chaos::common::data::CDataWrapper> LogUtility::convertEntry(LogEntry& log_entry) {
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> result(new CDataWrapper());
     result->addInt64Value("seq", log_entry.sequence);
     result->addInt64Value(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_TIMESTAMP, log_entry.ts);
     result->addStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER, log_entry.source_identifier);

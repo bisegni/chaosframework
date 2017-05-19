@@ -64,7 +64,7 @@ void LoadInstanceOnUnitServer::setHandler(CDataWrapper *data) {
     }
     
     err = getDataAccess<mds_data_access::UnitServerDataAccess>()->getDescription(unit_server, &tmp_ptr);
-    ChaosUniquePtr<CDataWrapper> unit_server_description(tmp_ptr);
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> unit_server_description(tmp_ptr);
     if(err){
         LOG_AND_TROW(ERR, err, "Error fetching unit server description");
     }

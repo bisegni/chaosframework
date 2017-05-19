@@ -87,8 +87,8 @@ bsonBuilder(new BSONObjBuilder()){
 
 CDataWrapper::~CDataWrapper() {}
 
-ChaosUniquePtr<CDataWrapper> CDataWrapper::instanceFromJson(const std::string& json_serialization) {
-    ChaosUniquePtr<CDataWrapper> new_wrapper(new CDataWrapper());
+ChaosUniquePtr<chaos::common::data::CDataWrapper> CDataWrapper::instanceFromJson(const std::string& json_serialization) {
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> new_wrapper(new CDataWrapper());
     try{
         fromjson(json_serialization, new_wrapper->bsonBuilder.get());
     }catch(...){}

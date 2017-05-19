@@ -72,11 +72,11 @@ void SharedActionScheduler::synchronousCall(chaos_data::CDataWrapper *message,
                                             chaos_data::CDataWrapper *result) {
     MapDomainActionsLockedReadLock wr = map_domain_actions.getReadLockObject();
     bool message_has_been_detached = false;
-    ChaosUniquePtr<CDataWrapper>  action_message(message);
+    ChaosUniquePtr<chaos::common::data::CDataWrapper>  action_message(message);
     
     const std::string domain_name = message->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN);
     const std::string action_name = message->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME);
-    ChaosUniquePtr<CDataWrapper> message_data(message->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> message_data(message->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
     
     ChaosSharedPtr<DomainActions> domain_action = map_domain_actions()[domain_name];
     if(domain_action.get() == NULL ||
@@ -104,7 +104,7 @@ void SharedActionScheduler::synchronousCall(chaos_data::CDataWrapper *message,
     } else {
         //call and return
         try {
-            ChaosUniquePtr<CDataWrapper> action_result(action_desc_ptr->call(message_data.get(), message_has_been_detached));
+            ChaosUniquePtr<chaos::common::data::CDataWrapper> action_result(action_desc_ptr->call(message_data.get(), message_has_been_detached));
             if(action_result.get() &&
                action_message->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_DOMAIN) &&
                action_message->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_ACTION)) {
@@ -143,9 +143,9 @@ void SharedActionScheduler::processBufferElement(CDataWrapper *actionDescription
     //the domain is securely the same is is mandatory for submition so i need to get the name of the action
     CDataWrapper            *responsePack = NULL;
     CDataWrapper            *subCommand = NULL;
-    ChaosUniquePtr<CDataWrapper>  actionMessage;
-    ChaosUniquePtr<CDataWrapper>  remoteActionResult;
-    ChaosUniquePtr<CDataWrapper>  actionResult;
+    ChaosUniquePtr<chaos::common::data::CDataWrapper>  actionMessage;
+    ChaosUniquePtr<chaos::common::data::CDataWrapper>  remoteActionResult;
+    ChaosUniquePtr<chaos::common::data::CDataWrapper>  actionResult;
     //keep track for the retain of the message of the aciton description
     ElementManagingPolicy               action_elementPolicy = {false};
     bool    needAnswer = false;
@@ -221,7 +221,7 @@ void SharedActionScheduler::processBufferElement(CDataWrapper *actionDescription
             //check if we need to submit a sub command
             if( subCommand ) {
             	//ChaosUniquePtr can submit sub command
-                ChaosUniquePtr<CDataWrapper> dispatchSubCommandResult(dispatcher->dispatchCommand(subCommand));
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> dispatchSubCommandResult(dispatcher->dispatchCommand(subCommand));
             }
             
             if(needAnswer){

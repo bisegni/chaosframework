@@ -25,7 +25,7 @@ QVariant SearchNodeListModel::getRowData(int row) const {
     QString node_health_status("---");
     if(found_node->hasKey("health_stat") &&
             found_node->isCDataWrapperValue("health_stat")) {
-        ChaosUniquePtr<CDataWrapper> health_stat(found_node->getCSDataValue("health_stat"));
+        ChaosUniquePtr<chaos::common::data::CDataWrapper> health_stat(found_node->getCSDataValue("health_stat"));
         node_health_ts = QDateTime::fromMSecsSinceEpoch(health_stat->getUInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP), Qt::LocalTime).toString();
         node_health_status = QString::fromStdString(health_stat->getStringValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS));
     }

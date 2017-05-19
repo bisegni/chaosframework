@@ -165,7 +165,7 @@ int MongoDBNodeDataAccess::updateNode(chaos::common::data::CDataWrapper& node_de
                 idx++) {
                 mongo::BSONObjBuilder action_description;
                 mongo::BSONArrayBuilder param_descriptions;
-                ChaosUniquePtr<CDataWrapper> element(action_array->getCDataWrapperElementAtIndex(idx));
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> element(action_array->getCDataWrapperElementAtIndex(idx));
                 if(element->hasKey(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_NAME)) {
                     action_description << chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_NAME
                     << element->getStringValue(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_NAME);
@@ -181,7 +181,7 @@ int MongoDBNodeDataAccess::updateNode(chaos::common::data::CDataWrapper& node_de
                         idx < param_array->size();
                         idx++) {
                         mongo::BSONObjBuilder single_param_desc;
-                        ChaosUniquePtr<CDataWrapper> param(param_array->getCDataWrapperElementAtIndex(idx));
+                        ChaosUniquePtr<chaos::common::data::CDataWrapper> param(param_array->getCDataWrapperElementAtIndex(idx));
                         
                         if(param->hasKey(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PAR_NAME)) {
                             single_param_desc << chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PAR_NAME
@@ -637,7 +637,7 @@ int MongoDBNodeDataAccess::setCommandTemplate(chaos::common::data::CDataWrapper&
                                 BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID << command_unique_id);
         
         //create the update package (all key imnus the first two used before
-        ChaosUniquePtr<CDataWrapper> to_update(new CDataWrapper());
+        ChaosUniquePtr<chaos::common::data::CDataWrapper> to_update(new CDataWrapper());
         to_update->addStringValue("type", "template");
         std::vector<std::string> all_keys;
         command_template.getAllKey(all_keys);

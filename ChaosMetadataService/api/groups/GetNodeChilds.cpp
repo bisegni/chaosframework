@@ -63,7 +63,7 @@ chaos::common::data::CDataWrapper *GetNodeChilds::execute(chaos::common::data::C
         }
     }
     //compose output
-    ChaosUniquePtr<CDataWrapper> result(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> result(new CDataWrapper());
     if(node_list.size()) {
         for(NodeListIterator it = node_list.begin();
             it != node_list.end();

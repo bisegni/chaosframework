@@ -129,7 +129,7 @@ CDataWrapper* AgentRegister::registrationACK(CDataWrapper  *ack_pack,
                 //decode the agent descirption
                 if(ack_pack->hasKey("agent_description") &&
                    ack_pack->isCDataWrapperValue("agent_description")) {
-                    ChaosUniquePtr<CDataWrapper> aget_desc_ser(ack_pack->getCSDataValue("agent_description"));
+                    ChaosUniquePtr<chaos::common::data::CDataWrapper> aget_desc_ser(ack_pack->getCSDataValue("agent_description"));
                     agent_instance_sd_wrapper.deserialize(aget_desc_ser.get());
                 }
                 break;
@@ -144,8 +144,8 @@ CDataWrapper* AgentRegister::registrationACK(CDataWrapper  *ack_pack,
 }
 
 
-ChaosUniquePtr<CDataWrapper> AgentRegister::getAgentRegistrationPack() {
-    ChaosUniquePtr<CDataWrapper> result(new CDataWrapper());
+ChaosUniquePtr<chaos::common::data::CDataWrapper> AgentRegister::getAgentRegistrationPack() {
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> result(new CDataWrapper());
     if(result.get() == NULL) return result;
     result->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID,
                            ChaosAgent::getInstance()->settings.agent_uid);
@@ -163,7 +163,7 @@ ChaosUniquePtr<CDataWrapper> AgentRegister::getAgentRegistrationPack() {
     for(MapWorkerIterator iter = map_worker.begin();
         iter != map_worker.end();
         iter++) {
-        ChaosUniquePtr<CDataWrapper> worker_definition(new CDataWrapper());
+        ChaosUniquePtr<chaos::common::data::CDataWrapper> worker_definition(new CDataWrapper());
         CHAOS_ASSERT(worker_definition.get());
         //add worker name
         worker_definition->addStringValue(AgentNodeDefinitionKey::WORKER_NAME,
@@ -197,7 +197,7 @@ void AgentRegister::timeout() {
         case AgentRegisterStateRegistering: {
             //send the rigstration pack
             if(((reg_retry_counter++)%max_reg_retry_counter) == 0) {
-                ChaosUniquePtr<CDataWrapper> reg = getAgentRegistrationPack();
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> reg = getAgentRegistrationPack();
                 mds_message_channel->sendNodeRegistration(*reg);
                 HealtManager::getInstance()->addNewNode(agent_uid);
                 HealtManager::getInstance()->addNodeMetricValue(agent_uid,

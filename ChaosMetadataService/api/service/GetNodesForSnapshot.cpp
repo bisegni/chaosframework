@@ -44,7 +44,7 @@ chaos::common::data::CDataWrapper *GetNodesForSnapshot::execute(chaos::common::d
     
     int err = 0;
     NodeList node_in_snapshot;
-    ChaosUniquePtr<CDataWrapper> result(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> result(new CDataWrapper());
     const std::string snapshot_name = api_data->getStringValue("snapshot_name");
     
     GET_DATA_ACCESS(SnapshotDataAccess, s_da, -1);

@@ -72,7 +72,7 @@ chaos::common::data::CDataWrapper *SetSnapshotDatasetsForNode::execute(chaos::co
         for(int idx = 0;
             idx < dataset_vec_ptr->size();
             idx++) {
-            ChaosUniquePtr<CDataWrapper> dataset_info_ptr(dataset_vec_ptr->getCDataWrapperElementAtIndex(idx));
+            ChaosUniquePtr<chaos::common::data::CDataWrapper> dataset_info_ptr(dataset_vec_ptr->getCDataWrapperElementAtIndex(idx));
             
             if(dataset_info_ptr->hasKey("dataset_key") == false ||
                dataset_info_ptr->hasKey("dataset_value") == false) {
@@ -81,7 +81,7 @@ chaos::common::data::CDataWrapper *SetSnapshotDatasetsForNode::execute(chaos::co
             }
             
             const std::string dataset_key = dataset_info_ptr->getStringValue("dataset_key");
-            const ChaosUniquePtr<CDataWrapper> dataset_value(dataset_info_ptr->getCSDataValue("dataset_value"));
+            const ChaosUniquePtr<chaos::common::data::CDataWrapper> dataset_value(dataset_info_ptr->getCSDataValue("dataset_value"));
             
             //call api for set the value
 

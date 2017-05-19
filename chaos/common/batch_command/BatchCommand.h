@@ -26,16 +26,11 @@
 #include <string>
 #include <stdint.h>
 
-#include <boost/chrono.hpp>
-
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/data/cache/AttributeValueSharedCache.h>
 
 #include <chaos/common/batch_command/BatchCommandTypes.h>
 #include <chaos/common/batch_command/BatchCommandDescription.h>
-
-using namespace chaos::common::data;
-using namespace chaos::common::data::cache;
 
 namespace chaos{
     
@@ -134,7 +129,7 @@ namespace chaos{
                 FaultDescription fault_description;
                 
                 //! shared setting across all slow command
-                AbstractSharedDomainCache *sharedAttributeCachePtr;
+                chaos::common::data::cache::AbstractSharedDomainCache *sharedAttributeCachePtr;
                 
                 //! called befor the command start the execution
                 void commandPre();
@@ -151,7 +146,7 @@ namespace chaos{
                 virtual ~BatchCommand();
                 
                 virtual
-                AbstractSharedDomainCache * const getSharedCacheInterface();
+		  chaos::common::data::cache::AbstractSharedDomainCache * const getSharedCacheInterface();
                 
             public:
                 //! return the unique id for the command instance

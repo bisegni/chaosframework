@@ -40,7 +40,7 @@ namespace chaos {
                  */
                 class GetLogForSourceUID:
                 public AbstractApi {
-                    inline ChaosUniquePtr<CDataWrapper> converEntry(persistence::data_access::LogEntry& log_entry);
+                    inline ChaosUniquePtr<chaos::common::data::CDataWrapper> converEntry(persistence::data_access::LogEntry& log_entry);
                 public:
                     GetLogForSourceUID();
                     ~GetLogForSourceUID();

@@ -37,9 +37,9 @@ namespace chaos {
                 class CommandTemplateSubmit:
                 public AbstractApi {
                     
-                    ChaosSharedPtr<CDataWrapper> getCommandDescription(chaos::metadata_service::persistence::data_access::NodeDataAccess *n_da,
+                    ChaosSharedPtr<chaos::common::data::CDataWrapper> getCommandDescription(chaos::metadata_service::persistence::data_access::NodeDataAccess *n_da,
                                                                           const std::string& command_uid);
-                    ChaosSharedPtr<CDataWrapper> getCommandTemaplateDescription(chaos::metadata_service::persistence::data_access::NodeDataAccess *n_da,
+                    ChaosSharedPtr<chaos::common::data::CDataWrapper> getCommandTemaplateDescription(chaos::metadata_service::persistence::data_access::NodeDataAccess *n_da,
                                                                                    const std::string& template_name,
                                                                                    const std::string& command_uid);
                     

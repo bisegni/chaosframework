@@ -18,10 +18,11 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-
-#include <chaos/common/utility/TimingUtil.h>
-#include <chaos/common/async_central/AsyncCentralManager.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
+#include <chaos/common/async_central/AsyncCentralManager.h>
+#include <chaos/common/utility/TimingUtil.h>
+
+
 
 #include <boost/array.hpp>
 #include <boost/asio.hpp>

@@ -34,8 +34,8 @@ API_PROXY_CD_DEFINITION(SaveNodeAssociation,
 ApiProxyResult SaveNodeAssociation::execute(const std::string& agent_uid,
                                             AgentAssociation& node_association) {
     AgentAssociationSDWrapper assoc_sd_wrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(AgentAssociation, node_association));
-    ChaosUniquePtr<CDataWrapper> pack(new CDataWrapper());
-    ChaosUniquePtr<CDataWrapper> assoc_pack = assoc_sd_wrapper.serialize();
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> pack(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> assoc_pack = assoc_sd_wrapper.serialize();
     
     pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, agent_uid);
     pack->addCSDataValue(AgentNodeDefinitionKey::NODE_ASSOCIATED, *assoc_pack);
@@ -44,7 +44,7 @@ ApiProxyResult SaveNodeAssociation::execute(const std::string& agent_uid,
 
 ApiProxyResult SaveNodeAssociation::execute(const std::string& agent_uid,
 		chaos::common::data::CDataWrapper& node_association) {
-    ChaosUniquePtr<CDataWrapper> pack(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> pack(new CDataWrapper());
 
     pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, agent_uid);
     pack->addCSDataValue(AgentNodeDefinitionKey::NODE_ASSOCIATED, node_association);
@@ -53,10 +53,10 @@ ApiProxyResult SaveNodeAssociation::execute(const std::string& agent_uid,
 
 ApiProxyResult SaveNodeAssociation::execute(const std::string& agent_uid,
                                             VectorAgentAssociation& multiple_node_association) {
-    ChaosUniquePtr<CDataWrapper> pack(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> pack(new CDataWrapper());
     VectorAgentAssociationSDWrapper associationList_sd_wrap(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(VectorAgentAssociation, multiple_node_association));
     associationList_sd_wrap.serialization_key = AgentNodeDefinitionKey::NODE_ASSOCIATED;
-    ChaosUniquePtr<CDataWrapper> multiple_assoc_pack = associationList_sd_wrap.serialize();
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> multiple_assoc_pack = associationList_sd_wrap.serialize();
     pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, agent_uid);
     pack->appendAllElement(*multiple_assoc_pack);
     return callApi(pack.release());

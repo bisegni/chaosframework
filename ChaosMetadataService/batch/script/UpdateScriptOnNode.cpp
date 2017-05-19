@@ -101,7 +101,7 @@ void UpdateScriptOnNode::ccHandler() {
             } else {
                 bool alive = false;
                 CDataWrapper *tmp_ptr = NULL;
-                ChaosUniquePtr<CDataWrapper> node_desc;
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> node_desc;
                 //fetch new node description
                 if((err = getDataAccess<mds_data_access::UnitServerDataAccess>()->getDescription(*current_node_it, &tmp_ptr)) ||
                    tmp_ptr == NULL) {

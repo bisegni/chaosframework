@@ -164,7 +164,7 @@ void ZMQServer::executeOnThread(){
 
 void ZMQServer::worker() {
     ZMQS_LAPP << CHAOS_FORMAT("Entering worker for %1%", %bind_str.str());
-    ChaosUniquePtr<CDataWrapper> message_data;
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> message_data;
     //data pack pointer
     int err = 0;
     int	linger = 500;
@@ -218,7 +218,7 @@ void ZMQServer::worker() {
             } else {
                 if(zmq_msg_size(&request)>0) {
                     ZMQS_LDBG << "Message Received";
-                    ChaosUniquePtr<CDataWrapper> result_data_pack;
+                    ChaosUniquePtr<chaos::common::data::CDataWrapper> result_data_pack;
                     message_data.reset(new CDataWrapper((const char*)zmq_msg_data(&request)));
                     //dispatch the command
                     if(message_data->hasKey("syncrhonous_call") &&

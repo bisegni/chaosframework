@@ -121,7 +121,7 @@ CDataWrapper* SharedCommandDispatcher::executeCommandSync(CDataWrapper * message
             return result;
         }
         string action_name = message_data->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME);
-        ChaosUniquePtr<CDataWrapper>  action_message(message_data);
+        ChaosUniquePtr<chaos::common::data::CDataWrapper>  action_message(message_data);
         
         
         //RpcActionDefinitionKey::CS_CMDM_ACTION_NAME
@@ -139,7 +139,7 @@ CDataWrapper* SharedCommandDispatcher::executeCommandSync(CDataWrapper * message
         
         //submit the action(Thread Safe)
         AbstActionDescShrPtr action_desc_ptr = map_domain_actions()[action_domain]->getActionDescriptornFormActionName(action_name);
-        ChaosUniquePtr<CDataWrapper> message_data(action_message->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
+        ChaosUniquePtr<chaos::common::data::CDataWrapper> message_data(action_message->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
         
         //lock the action for write, so we can schedule it
         ActionReadLock read_lock_for_action_execution(action_desc_ptr->actionAccessMutext);
@@ -155,7 +155,7 @@ CDataWrapper* SharedCommandDispatcher::executeCommandSync(CDataWrapper * message
         } else {
             //call and return
             try {
-                ChaosUniquePtr<CDataWrapper> action_result(action_desc_ptr->call(message_data.get(), message_has_been_detached));
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> action_result(action_desc_ptr->call(message_data.get(), message_has_been_detached));
                 if(action_result.get() &&
                    action_message->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_DOMAIN) &&
                    action_message->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_ACTION)) {
@@ -192,9 +192,9 @@ void SharedCommandDispatcher::processBufferElement(chaos_data::CDataWrapper *act
     //the domain is securely the same is is mandatory for submition so i need to get the name of the action
     CDataWrapper            *responsePack = NULL;
     CDataWrapper            *subCommand = NULL;
-    ChaosUniquePtr<CDataWrapper>  actionMessage;
-    ChaosUniquePtr<CDataWrapper>  remoteActionResult;
-    ChaosUniquePtr<CDataWrapper>  actionResult;
+    ChaosUniquePtr<chaos::common::data::CDataWrapper>  actionMessage;
+    ChaosUniquePtr<chaos::common::data::CDataWrapper>  remoteActionResult;
+    ChaosUniquePtr<chaos::common::data::CDataWrapper>  actionResult;
     MapDomainActionsLockedReadLock wl = map_domain_actions.getReadLockObject();
     
     //keep track for the retain of the message of the aciton description
@@ -276,7 +276,7 @@ void SharedCommandDispatcher::processBufferElement(chaos_data::CDataWrapper *act
             //check if we need to submit a sub command
             if( subCommand ) {
                 //we can submit sub command
-                ChaosUniquePtr<CDataWrapper> dispatchSubCommandResult(dispatchCommand(subCommand));
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> dispatchSubCommandResult(dispatchCommand(subCommand));
             }
             
             if(needAnswer){

@@ -33,7 +33,7 @@ API_PROXY_CD_DEFINITION(Delete,
  
  */
 ApiProxyResult Delete::execute(const std::string& cu_uid) {
-    ChaosUniquePtr<CDataWrapper> message(new chaos::common::data::CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> message(new chaos::common::data::CDataWrapper());
     //compose data pack
     message->addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, cu_uid);
     //call api

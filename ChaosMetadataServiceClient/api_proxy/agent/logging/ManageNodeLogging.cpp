@@ -34,7 +34,7 @@ API_PROXY_CD_DEFINITION(ManageNodeLogging,
 
 ApiProxyResult ManageNodeLogging::execute(const std::string& node_uid,
                                           const NodeAssociationLoggingOperation logging_operation) {
-    ChaosUniquePtr<CDataWrapper> pack(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> pack(new CDataWrapper());
     pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_uid);
     pack->addInt32Value("NodeAssociationLoggingOperation", logging_operation);
     return callApi(pack.release());

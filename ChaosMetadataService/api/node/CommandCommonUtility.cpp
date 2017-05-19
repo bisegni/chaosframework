@@ -56,7 +56,7 @@ void CommandCommonUtility::validateCommandTemplateToDescription(CDataWrapper *co
             idx < parameter_list->size();
             idx++) {
             //scan the single parameter
-            ChaosUniquePtr<CDataWrapper> parameter_description(parameter_list->getCDataWrapperElementAtIndex(idx));
+            ChaosUniquePtr<chaos::common::data::CDataWrapper> parameter_description(parameter_list->getCDataWrapperElementAtIndex(idx));
             //check for mandatory field in command description
             CHECK_KEY_THROW_AND_LOG_FORMATTED(parameter_description,
                                               BatchCommandAndParameterDescriptionkey::BC_PARAMETER_NAME, N_CCU_ERR, -2,

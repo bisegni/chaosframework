@@ -160,7 +160,7 @@ namespace chaos {
                         for(int idx = 0;
                             idx < attr_vec->size();
                             idx++) {
-                            ChaosUniquePtr<CDataWrapper> attr_ser(attr_vec->getCDataWrapperElementAtIndex(idx));
+                            ChaosUniquePtr<chaos::common::data::CDataWrapper> attr_ser(attr_vec->getCDataWrapperElementAtIndex(idx));
                             attribute_wrapper.deserialize(attr_ser.get());
                             Subclass::dataWrapped().attribute_set.insert(DatasetAttributeElement::DatasetAttributeElementPtr(new DatasetAttributeElement((unsigned int)Subclass::dataWrapped().attribute_set.size(),
                                                                                                                                                          DatasetAttributePtr(new DatasetAttribute(attribute_wrapper())))));
@@ -168,8 +168,8 @@ namespace chaos {
                     }
                 }
                 
-                ChaosUniquePtr<CDataWrapper> serialize() {
-                    ChaosUniquePtr<CDataWrapper> result(new CDataWrapper());
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> serialize() {
+                    ChaosUniquePtr<chaos::common::data::CDataWrapper> result(new CDataWrapper());
                     result->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_NAME, Subclass::dataWrapped().name);
                     
                     DatasetAttribute dataset_attribute_buf;
