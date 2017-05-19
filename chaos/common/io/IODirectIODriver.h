@@ -50,8 +50,6 @@ namespace chaos_dio_channel = chaos::common::direct_io::channel;
 namespace chaos{
     namespace common {
         namespace io {
-            using namespace std;
-            using namespace boost;
             
             /*!
              Struct for initialization of the io driver

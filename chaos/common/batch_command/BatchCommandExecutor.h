@@ -134,7 +134,7 @@ namespace chaos {
                                                 uint32_t type_value_size);
                 
                 //! Global cache shared across the sandbox it can be alsog given
-                AttributeValueSharedCache  global_attribute_cache;
+                chaos::common::data::cache::AttributeValueSharedCache  global_attribute_cache;
                 
                 //! instanziate a command by CDataWrapper description
                 /*!
@@ -307,7 +307,7 @@ namespace chaos {
                 void getSandboxID(std::vector<std::string> & sandbox_id);
                 
                 //! return the shared, between commadn, attribute cache
-                AbstractSharedDomainCache *getAttributeSharedCache();
+                chaos::common::data::cache::AbstractSharedDomainCache *getAttributeSharedCache();
             };
         }
     }

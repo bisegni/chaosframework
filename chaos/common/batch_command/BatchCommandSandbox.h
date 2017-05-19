@@ -28,8 +28,6 @@ namespace chaos{
     namespace common {
         namespace batch_command {
 			
-			using namespace chaos::common::data;
-			using namespace chaos::common::data::cache;
             //forward declaration
             class BatchCommand;
             class BatchCommandExecutor;
@@ -107,7 +105,7 @@ namespace chaos{
                  of the input channel or shared variable setting,
                  used into the control algoritm.
                  */
-                AttributeValueSharedCache *shared_attribute_cache;
+                chaos::common::data::cache::AttributeValueSharedCache *shared_attribute_cache;
                 
                 //! contain the paused command
                 std::stack<PRIORITY_ELEMENT(CommandInfoAndImplementation)*> command_stack;
@@ -155,7 +153,7 @@ namespace chaos{
                 void checkNextCommand();
                 
                 //!Lfat the fault information with the command information into a unique CDataWrapper
-                inline ChaosUniquePtr<chaos::common::data::CDataWrapper> flatErrorInformationInCommandInfo(CDataWrapper *command_info,
+                inline ChaosUniquePtr<chaos::common::data::CDataWrapper> flatErrorInformationInCommandInfo(chaos::common::data::CDataWrapper *command_info,
                                                                                      FaultDescription& command_fault);
             protected:
                 
@@ -174,7 +172,7 @@ namespace chaos{
                 void deinit() throw(chaos::CException);
                 
                 //! enqueue a new command
-                bool enqueueCommand(CDataWrapper *command_to_info, BatchCommand *command_impl, uint32_t priority);
+                bool enqueueCommand(chaos::common::data::CDataWrapper *command_to_info, BatchCommand *command_impl, uint32_t priority);
                 
                 //! set the deafutl sticky command
                 /*!

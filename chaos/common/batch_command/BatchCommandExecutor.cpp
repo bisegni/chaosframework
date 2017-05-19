@@ -33,7 +33,7 @@ using namespace chaos::common::data;
 using namespace chaos::common::utility;
 using namespace chaos::common::async_central;
 using namespace chaos::common::batch_command;
-
+using namespace chaos::common::data::cache;
 #define PURGE_TS_DELAY	500
 
 #define LOG_HEAD_SBE "[BatchCommandExecutor-" << executorID << "] "
