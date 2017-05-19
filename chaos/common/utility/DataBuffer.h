@@ -162,7 +162,7 @@ namespace chaos {
                     const size_t end_string_location = std::strlen(str_start);
                     if((cursor+end_string_location) >  ChaosBuffer<Allocator>::size) return std::string();
                     std::string result(str_start, end_string_location);
-                    cursor += end_string_location;
+                    cursor += end_string_location+1;
                     return result;
                 }
                 
@@ -173,11 +173,18 @@ namespace chaos {
                     return result;
                 }
                 
+                ChaosSharedPtr<chaos::common::data::CDataWrapper> readCDataWrapperAsShrdPtr() {
+                    const char * bson_start = ((const char *)ChaosBuffer<Allocator>::data) + cursor;
+                    ChaosSharedPtr<chaos::common::data::CDataWrapper> result(new chaos::common::data::CDataWrapper(bson_start));
+                    cursor += result->getBSONRawSize();
+                    return result;
+                }
+
                 void setOffset(uint32_t offset) {
                     cursor = offset;
                 }
                 
-                uint32_t getSize() {
+                uint32_t getCursorLocation() {
                     return cursor;
                 }
             };

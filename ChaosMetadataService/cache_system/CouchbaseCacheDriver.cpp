@@ -67,25 +67,34 @@ void CouchbaseCacheDriver::getCallback(lcb_t instance,
                                        lcb_error_t error,
                                        const lcb_get_resp_t *resp) {
     const Result *result = reinterpret_cast<const Result*>(cookie);
-    if((result->err = error) != LCB_SUCCESS) {
-        result->err_str = lcb_strerror(instance, error);
-    }
+    
     switch(result->return_type) {
         case ResultTypeGet: {
             const GetResult * gr_ptr = dynamic_cast<const GetResult *>(result);
             CHAOS_ASSERT(gr_ptr);
-            gr_ptr->cached_data.assign(((char*)resp->v.v0.bytes),
-                                       ((char*)resp->v.v0.bytes)+resp->v.v0.nbytes);
+            if((result->err = error) != LCB_SUCCESS) {
+                result->err_str = lcb_strerror(instance, error);
+            }else {
+                gr_ptr->cached_data.assign(((char*)resp->v.v0.bytes),
+                                           ((char*)resp->v.v0.bytes)+resp->v.v0.nbytes);
+            }
             break;
         }
             
         case ResultTypeMultiGet: {
             const MultiGetResult * gr_ptr = dynamic_cast<const MultiGetResult *>(result);
             CHAOS_ASSERT(gr_ptr);
-            gr_ptr->multi_cached_data.insert(MultiCacheDataPair(std::string((char*)resp->v.v0.key,
-                                                                            resp->v.v0.nkey),
-                                                                CacheData(((char*)resp->v.v0.bytes),
-                                                                          ((char*)resp->v.v0.bytes)+resp->v.v0.nbytes)));
+            if((result->err = error) != LCB_SUCCESS) {
+                result->err_str = lcb_strerror(instance, error);
+                gr_ptr->multi_cached_data.insert(MultiCacheDataPair(std::string((char*)resp->v.v0.key,
+                                                                                resp->v.v0.nkey),
+                                                                    CacheData()));
+            }else {
+                gr_ptr->multi_cached_data.insert(MultiCacheDataPair(std::string((char*)resp->v.v0.key,
+                                                                                resp->v.v0.nkey),
+                                                                    CacheData(((char*)resp->v.v0.bytes),
+                                                                              ((char*)resp->v.v0.bytes)+resp->v.v0.nbytes)));
+            }
             break;
         }
             
@@ -207,11 +216,11 @@ int CouchbaseCacheDriver::getData(const std::string& key,
     return result_wrap.err;
 }
 
-int CouchbaseCacheDriver::getData(const ChaosStringSet& keys,
+int CouchbaseCacheDriver::getData(const ChaosStringVector& keys,
                                   MultiCacheData& multi_data) {
     //crate vrapper result
     MultiGetResult result_wrap(multi_data);
-    for(ChaosStringSetConstIterator it = keys.begin(),
+    for(ChaosStringVectorConstIterator it = keys.begin(),
         end = keys.end();
         it != end;
         it++) {

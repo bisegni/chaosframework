@@ -50,8 +50,8 @@ namespace chaos {
                 int getData(const std::string& key,
                             CacheData& data);
                 //!inherited method
-                int getData(const ChaosStringSet&   keys,
-                            MultiCacheData&         multi_data);
+                int getData(const ChaosStringVector&    keys,
+                            MultiCacheData&             multi_data);
                 //!inherited method
                 int addServer(std::string server_desc);
                 //!inherited method

@@ -29,7 +29,7 @@
 namespace chaos {
 	namespace common {
 		namespace utility {
-			class DataBuffer {
+			class UIDataBuffer {
 			public:
 				virtual int64_t getWriteBufferPosition() = 0;
 				
@@ -49,7 +49,7 @@ namespace chaos {
 			 position.
 			 */
 			template<typename T>
-			class SingleBufferCircularBuffer : public DataBuffer {
+			class SingleBufferCircularBuffer : public UIDataBuffer {
 				
 				//! the pointer to the memory for the buffer
 				int64_t currentPostion;

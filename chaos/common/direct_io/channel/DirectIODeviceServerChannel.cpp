@@ -108,7 +108,6 @@ int DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack,
             //allocate variable for result
             uint32_t result_data_size = 0;
             void *result_data = NULL;
-            ChaosStringSet keys;
             opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcode *header = reinterpret_cast< opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcode* >(dataPack->channel_header_data);
             opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcodeResult *result_header = (DirectIODeviceChannelHeaderMultiGetOpcodeResult*)calloc(sizeof(DirectIODeviceChannelHeaderMultiGetOpcodeResult), 1);
             
@@ -116,10 +115,12 @@ int DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack,
             DataBuffer<> data_buffer(dataPack->channel_data,
                                      dataPack->header.channel_data_size);
             dataPack->channel_data = NULL;
+            
+            ChaosStringVector keys;
             for(int idx = 0;
                 idx < header->field.number_of_key;
                 idx ++) {
-                keys.insert(data_buffer.readStringUntilNull());
+                keys.push_back(data_buffer.readStringUntilNull());
             }
             err = handler->consumeGetEvent(header,
                                            keys,

@@ -66,8 +66,8 @@ int CacheDriverMetricCollector::getData(const std::string& key,
     }
     return err;
 }
-int CacheDriverMetricCollector::getData(const ChaosStringSet&   keys,
-                                        MultiCacheData&         multi_data) {
+int CacheDriverMetricCollector::getData(const ChaosStringVector&    keys,
+                                        MultiCacheData&             multi_data) {
     CHAOS_ASSERT(wrapped_cache_driver)
     int err =  wrapped_cache_driver->getData(keys,
                                              multi_data);

@@ -71,7 +71,7 @@ namespace chaos{
                 chaos_dio_channel::DirectIOSystemAPIClientChannel	*system_client_channel;
             } IODirectIODriverClientChannels;
             
-
+            
             /*!
              */
             DECLARE_CLASS_FACTORY(IODirectIODriver, IODataDriver),
@@ -138,7 +138,8 @@ namespace chaos{
                 int removeData(const std::string& key,
                                uint64_t start_ts,
                                uint64_t end_ts) throw(CException);
-                
+                int retriveMultipleData(const ChaosStringVector& key,
+                                        chaos::common::data::VectorCDWShrdPtr& result)  throw(CException);
                 /*
                  * retriveRawData
                  */

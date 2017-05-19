@@ -117,7 +117,7 @@ namespace chaos {
                 int getData(const std::string& key,
                             CacheData& data);
                 
-                int getData(const ChaosStringSet& keys,
+                int getData(const ChaosStringVector& keys,
                             MultiCacheData& multi_data);
                 
                 int addServer(std::string server_desc);

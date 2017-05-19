@@ -29,6 +29,7 @@
 
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/utility/endianess.h>
+#include <chaos/common/utility/DataBuffer.h>
 #include <chaos/common/utility/InetUtility.h>
 
 #include <boost/thread.hpp>
@@ -269,16 +270,14 @@ int QueryDataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *hea
                                        opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult *result_header,
                                        void **result_value) {
     int err = 0;
-    CacheData cache_data;
     //debug check
     //protected access to cached driver
     CachePoolSlot *cache_slot = DriverPoolManager::getInstance()->getCacheDriverInstance();
     try{
+        CacheData cache_data;
         //get data
         err = cache_slot->resource_pooled->getData(std::string((const char*)channel_data,
                                                                channel_data_len),
-                                                   /*result_value,
-                                                    result_header->value_len*/
                                                    cache_data);
         if(cache_data.size()) {
             result_header->value_len = (uint32_t)cache_data.size();
@@ -294,11 +293,47 @@ int QueryDataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *hea
 }
 
 int QueryDataConsumer::consumeGetEvent(opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcode *header,
-                                       ChaosStringSet keys,
+                                       const ChaosStringVector& keys,
                                        opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcodeResult *result_header,
                                        void **result_value,
                                        uint32_t& result_value_len) {
-    
+    int err = 0;
+    //debug check
+    //protected access to cached driver
+    CachePoolSlot *cache_slot = DriverPoolManager::getInstance()->getCacheDriverInstance();
+    try{
+        //get data
+        DataBuffer<> data_buffer;
+        MultiCacheData multi_cached_data;
+        err = cache_slot->resource_pooled->getData(keys,
+                                                   multi_cached_data);
+        
+        for(ChaosStringVectorConstIterator it = keys.begin(),
+            end = keys.end();
+            it != end;
+            it++) {
+            const CacheData& cached_element = multi_cached_data[*it];
+            if(cached_element.size() == 0) {
+             //element has not been found so we need to create and empty cdata wrapper
+                CDataWrapper tmp;
+                int size = 0;
+                const char * d_ptr = tmp.getBSONRawData(size);
+                data_buffer.writeByte(d_ptr,
+                                      size);
+            } else {
+                data_buffer.writeByte(&cached_element[0],
+                                      (int32_t)cached_element.size());
+            }
+        }
+        
+        result_header->number_of_result = (uint32_t)multi_cached_data.size();
+        result_value_len = data_buffer.getCursorLocation();
+        *result_value = data_buffer.release();
+        
+    } catch(...) {}
+    DriverPoolManager::getInstance()->releaseCacheDriverInstance(cache_slot);
+    if(header) free(header);
+    return err;
 }
 
 int QueryDataConsumer::consumeDataCloudDelete(const std::string& search_key,

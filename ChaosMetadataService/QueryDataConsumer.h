@@ -81,7 +81,7 @@ namespace chaos{
                                 void **result_value);
             
             int consumeGetEvent(opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcode *header,
-                                ChaosStringSet keys,
+                                const ChaosStringVector& keys,
                                 opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcodeResult *result_header,
                                 void **result_value,
                                 uint32_t& result_value_len);
