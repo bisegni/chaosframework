@@ -20,9 +20,9 @@ build_framework_x86_64:
     - echo "Working directory:"$PWD
     - echo "Artifact name:"$TAR_NAME_POSTFIX
     - cmake -DCHAOS_ARCHITECTURE_TEST=ON .
-    - make  -j  $(nproc) ExperimentalStart
-    - make  -j  $(nproc) ExperimentalConfigure
-    - make  -j  $(nproc) ExperimentalBuild
+    - make  -j  $(nproc)
+    - make  -j  $(nproc)
+    - make  -j  $(nproc)
     - make install
     #- tar -zcf /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux_$TAR_NAME_POSTFIX.tgz /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux
     #- ls -la
