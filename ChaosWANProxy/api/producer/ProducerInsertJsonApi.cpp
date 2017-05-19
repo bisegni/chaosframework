@@ -53,12 +53,14 @@ int ProducerInsertJsonApi::execute(std::vector<std::string>& api_tokens,
                                    const Json::Value& input_data,
                                    std::map<std::string, std::string>& output_header,
                                    Json::Value& output_data) {
-    CHAOS_ASSERT(persistence_driver)
+    CHAOS_ASSERT(persistence_driver);
+
     int err = 0;
     std::string err_msg;
     std::string producer_name;
     int cnt;
     uint64_t ts;
+    try {
     if(api_tokens.size() == 0) {
         err_msg = "no producer name in the uri";
         PID_LERR << err_msg;
@@ -117,125 +119,6 @@ int ProducerInsertJsonApi::execute(std::vector<std::string>& api_tokens,
 
 
     //scan other memebrs to create the datapack
-#if 0
-    Json::Value::Members members = input_data.getMemberNames();
-    for(Json::Value::Members::iterator it = members.begin();
-        it != members.end();
-        it++) {
-        //get current value
-        const Json::Value& dataset_element = input_data[*it];
-        if(dataset_element.isArray()){
-	  int sub_type;
-            int type_size=4;
-            int size=dataset_element.size();
-            if(size>0){
-                
-                const Json::Value&value=dataset_element[0];
-                if(value.isObject()&&value.isMember("$numberLong")){
-		  type_size=sizeof(int64_t);
-		  sub_type = chaos::DataType::SUB_TYPE_INT64;
-
-		} else if(value.isBool()){
-                    //default is double
-		  
-                    type_size=sizeof(bool);
-                    sub_type = chaos::DataType::SUB_TYPE_BOOLEAN;
-                } else if(value.isInt()){
-                    type_size=sizeof(int32_t);
-                    sub_type = chaos::DataType::SUB_TYPE_INT32;
-                    
-                } else if(value.isInt64()){
-                    type_size=sizeof(int64_t);
-                    sub_type = chaos::DataType::SUB_TYPE_INT64;
-                } else if(value.isString()){
-                    type_size=1024;
-                    sub_type = chaos::DataType::SUB_TYPE_STRING;
-                    
-                }else {
-                    type_size=sizeof(double);
-                    sub_type = chaos::DataType::SUB_TYPE_DOUBLE;
-                }
-                char bytearray[type_size*size];
-                for(int cnt=0;cnt<size;cnt++){
-                    const Json::Value&value=dataset_element[cnt];
-                    switch(sub_type){
-                        case chaos::DataType::SUB_TYPE_DOUBLE:{
-                            double val=value.asDouble();
-                            output_dataset->appendDoubleToArray(val);
-                            double *ptr=(double*)bytearray;
-                            ptr[cnt]=val;
-                            break;
-                        }
-                        case chaos::DataType::SUB_TYPE_INT32:{
-                            int32_t val=value.asInt();
-                            int32_t *ptr=(int32_t *)bytearray;
-                            ptr[cnt]=val;
-                            break;
-                        }
-                        case chaos::DataType::SUB_TYPE_UNSIGNED:{
-                            uint32_t val=value.asUInt();
-                            uint32_t *ptr=(uint32_t *)bytearray;
-                            ptr[cnt]=val;
-                            break;
-                        }
-                        default:{
-                            int8_t val=value.asInt()&0xff;
-                            int8_t *ptr=(int8_t *)bytearray;
-                            ptr[cnt]=val;
-                            break;
-                        }
-                        case chaos::DataType::SUB_TYPE_INT16:{
-                            int16_t val=value.asInt()&0xffff;
-                            int16_t *ptr=(int16_t *)bytearray;
-                            ptr[cnt]=val;
-                            break;
-                        }
-
-                        case chaos::DataType::SUB_TYPE_INT64:{
-                            int64_t val=value.asInt64();
-                            int64_t *ptr=(int64_t *)bytearray;
-                            ptr[cnt]=val;
-                            break;
-                        }
-                        case chaos::DataType::SUB_TYPE_BOOLEAN:{
-                            bool val=value.asBool();
-                            bool *ptr=(bool *)bytearray;
-                            ptr[cnt]=val;
-                            break;
-                        }
-                        case chaos::DataType::SUB_TYPE_STRING:{
-                            std::string val=value.asString();
-                            strncpy(&bytearray[cnt],val.c_str(),1024);
-                            break;
-                        }
-                    }
-                    
-                }
-                //output_dataset->finalizeArrayForKey(it);
-                output_dataset->addBinaryValue(*it, bytearray, type_size*size);
-                
-            }
-        } else {
-	  if(dataset_element.isObject()&&dataset_element.isMember("$numberLong")){
-	    output_dataset->addInt64Value(*it, (int64_t)atoll(dataset_element["$numberLong"].asCString()));
-	  } else if(dataset_element.isDouble()){
-	    output_dataset->addDoubleValue(*it, dataset_element.asDouble());
-	  } else if(dataset_element.isBool()){
-                output_dataset->addBoolValue(*it, dataset_element.asBool());
-	  } else if(dataset_element.isInt64()){
-	    output_dataset->addInt64Value(*it, (int64_t)dataset_element.asInt64());
-	  } else if(dataset_element.isInt()){
-	    output_dataset->addInt32Value(*it, dataset_element.asInt());
-	  } else if(dataset_element.isString()){
-                output_dataset->addStringValue(*it, dataset_element.asString());
-            }else {
-                output_dataset->addDoubleValue(*it, dataset_element.asDouble());
-                
-            }
-            
-        }
-    }
-#endif
     //call persistence api for insert the data
     if((err = persistence_driver->pushNewDataset(producer_name ,
                                                  output_dataset.get(),
@@ -245,6 +128,14 @@ int ProducerInsertJsonApi::execute(std::vector<std::string>& api_tokens,
         PRODUCER_INSERT_ERR(output_data, err, err_msg);
         return err;
     }
+    } catch(std::exception e){
+    	PID_LERR << "Exception:"<<e.what();
+		err=-1;
+	} catch(...){
+		PID_LERR << "Exception during process";
+		err=-2;
+	}
     output_data["register_insert_err"] = 0;
+
     return err;
 }
