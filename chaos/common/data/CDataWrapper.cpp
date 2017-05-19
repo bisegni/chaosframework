@@ -360,6 +360,9 @@ uint32_t CDataWrapper::getValueSize(const std::string& key) {
         case BinData:
             ele.binData(bsize);
             return bsize;
+        case Array:{
+        	return bsonBuilder->asTempObj().getField(key).Array().size();
+        }
         case Object:{
         	   BSONObj subObject = bsonBuilder->asTempObj().getObjectField(key);
         	        	   //set the serialization data in resul datawrapper
