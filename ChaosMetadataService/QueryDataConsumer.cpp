@@ -36,6 +36,7 @@
 using namespace chaos::metadata_service;
 
 using namespace chaos::data_service;
+using namespace chaos::data_service::cache_system;
 using namespace chaos::data_service::object_storage::abstraction;
 
 using namespace chaos::metadata_service::persistence;
@@ -147,7 +148,6 @@ int QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *hea
     CHAOS_ASSERT(header)
     CHAOS_ASSERT(channel_data)
     int err = 0;
-    
     DataServiceNodeDefinitionType::DSStorageType storage_type = static_cast<DataServiceNodeDefinitionType::DSStorageType>(header->tag);
     //! if tag is == 1 the datapack is in liveonly
     bool send_to_storage_layer = (storage_type != DataServiceNodeDefinitionType::DSStorageTypeLive &&
@@ -155,12 +155,12 @@ int QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *hea
     switch(storage_type) {
         case DataServiceNodeDefinitionType::DSStorageTypeLiveHistory:
         case DataServiceNodeDefinitionType::DSStorageTypeLive:{
+            CacheData cache_data((char*)channel_data, ((char*)channel_data)+channel_data_len);
             //protected access to cached driver
             CachePoolSlot *cache_slot = DriverPoolManager::getInstance()->getCacheDriverInstance();
-            err = cache_slot->resource_pooled->putData(GET_PUT_OPCODE_KEY_PTR(header),
-                                                       header->key_len,
-                                                       channel_data,
-                                                       channel_data_len);
+            err = cache_slot->resource_pooled->putData(std::string((const char *)GET_PUT_OPCODE_KEY_PTR(header),
+                                                                   header->key_len),
+                                                       cache_data);
             DriverPoolManager::getInstance()->releaseCacheDriverInstance(cache_slot);
             break;
         }
@@ -269,18 +269,24 @@ int QueryDataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *hea
                                        opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult *result_header,
                                        void **result_value) {
     int err = 0;
+    CacheData cache_data;
     //debug check
     //protected access to cached driver
     CachePoolSlot *cache_slot = DriverPoolManager::getInstance()->getCacheDriverInstance();
     try{
         //get data
-        err = cache_slot->resource_pooled->getData(channel_data,
-                                                   channel_data_len,
-                                                   result_value,
-                                                   result_header->value_len);
-    } catch(...) {
-        
-    }
+        err = cache_slot->resource_pooled->getData(std::string((const char*)channel_data,
+                                                               channel_data_len),
+                                                   /*result_value,
+                                                    result_header->value_len*/
+                                                   cache_data);
+        if(cache_data.size()) {
+            result_header->value_len = (uint32_t)cache_data.size();
+            *result_value = malloc(result_header->value_len);
+            CHAOS_ASSERT(*result_value)
+            std::memcpy(*result_value, &cache_data[0], result_header->value_len);
+        }
+    } catch(...) {}
     DriverPoolManager::getInstance()->releaseCacheDriverInstance(cache_slot);
     if(channel_data) free(channel_data);
     if(header) free(header);
