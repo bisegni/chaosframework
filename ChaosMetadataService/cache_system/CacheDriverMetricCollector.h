@@ -44,19 +44,14 @@ namespace chaos {
                 CacheDriverMetricCollector(CacheDriver *_wrapped_cache_driver);
                 ~CacheDriverMetricCollector();
                 //!inherited method
-                int putData(void *element_key,
-                            uint8_t element_key_len,
-                            void *value,
-                            uint32_t value_len);
+                int putData(const std::string& key,
+                            const CacheData& data);
                 //!inherited method
-                int getData(void *element_key,
-                            uint8_t element_key_len,
-                            void **value,
-                            uint32_t& value_len);
+                int getData(const std::string& key,
+                            CacheData& data);
                 //!inherited method
-                int getData(ChaosStringSet keys,
-                            void **value,
-                            uint32_t& value_len);
+                int getData(const ChaosStringSet&   keys,
+                            MultiCacheData&         multi_data);
                 //!inherited method
                 int addServer(std::string server_desc);
                 //!inherited method

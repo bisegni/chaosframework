@@ -35,27 +35,6 @@
 namespace chaos {
     namespace data_service {
         namespace cache_system {
-
-
-            struct ResultValue {
-                void		*value;
-                uint32_t	value_len;
-                lcb_error_t err;
-                ResultValue():
-                value(NULL),
-                value_len(0){}
-                
-                void reset(bool purge) {
-                    if(value) {
-                        if(purge){ free(value);}
-                        value = NULL;
-                    }
-                    value_len = 0;
-                }
-            };
-
-            CHAOS_DEFINE_VECTOR_FOR_TYPE(char, CouchBufferResult);
-            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, CouchBufferResult, MapKeyBuffer);
             
             typedef enum ResultType {
                 ResultTypeGet,
@@ -65,22 +44,22 @@ namespace chaos {
             
             struct Result {
                 const ResultType     return_type;
-                lcb_error_t		last_err;
-                std::string		last_err_str;
-                
+                mutable lcb_error_t		err;
+                mutable std::string		err_str;
                 Result(ResultType _return_type);
+                virtual ~Result();
             };
             
             struct GetResult:
             public Result {
-                CouchBufferResult result;
-                GetResult();
+                CacheData& cached_data;
+                GetResult(CacheData& _cached_data);
             };
             
             struct MultiGetResult:
             public Result {
-                MapKeyBuffer result;
-                MultiGetResult();
+                MultiCacheData& multi_cached_data;
+                MultiGetResult(MultiCacheData& _multi_cached_data);
             };
             
             struct StoreResult:
@@ -88,9 +67,9 @@ namespace chaos {
                 StoreResult();
             };
             
-//#define COOKIY_TO_
+            //#define COOKIY_TO_
             
-                //! Abstraction of the chache driver
+            //! Abstraction of the chache driver
             /*!
              This class represent the abstraction of the
              work to do on cache. Cache system is to be intended as global
@@ -102,23 +81,21 @@ namespace chaos {
                 struct lcb_create_st	create_options;
                 lcb_error_t				last_err;
                 std::string				last_err_str;
-
+                
                 std::string				bucket_name;
                 std::string				bucket_user;
                 std::string				bucket_pwd;
-
+                
                 std::string all_server_str;
                 boost::shared_mutex	mutex_server;
                 std::vector<std::string> all_server_to_use;
                 typedef std::vector<std::string>::iterator ServerIterator;
-
-                ResultValue get_result;
-
+                
                 CouchbaseCacheDriver(std::string alias);
-
-
+                
+                
                 bool validateString(std::string& server_description);
-
+                
                 static void errorCallback(lcb_t instance,
                                           lcb_error_t err,
                                           const char *errinfo);
@@ -134,18 +111,14 @@ namespace chaos {
             public:
                 ~CouchbaseCacheDriver();
                 
-                int putData(void *element_key,
-                            uint8_t element_key_len,
-                            void *value, uint32_t value_len);
+                int putData(const std::string& key,
+                            const CacheData& data);
                 
-                int getData(void *element_key,
-                            uint8_t element_key_len,
-                            void **value,
-                            uint32_t& value_len);
+                int getData(const std::string& key,
+                            CacheData& data);
                 
-                int getData(ChaosStringSet keys,
-                            void **value,
-                            uint32_t& value_len);
+                int getData(const ChaosStringSet& keys,
+                            MultiCacheData& multi_data);
                 
                 int addServer(std::string server_desc);
                 
@@ -153,10 +126,10 @@ namespace chaos {
                 
                 int updateConfig();
                 
-                    //! init
+                //! init
                 void init(void *init_data) throw (chaos::CException);
                 
-                    //!deinit
+                //!deinit
                 void deinit() throw (chaos::CException);
             };
         }

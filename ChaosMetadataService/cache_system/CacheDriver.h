@@ -36,6 +36,10 @@ namespace chaos {
     namespace data_service {
         namespace cache_system {
             
+            CHAOS_DEFINE_VECTOR_FOR_TYPE(char, CacheData);
+            
+            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, CacheData, MultiCacheData);
+            
                 //! Abstraction of the chache driver
             /*!
              This class represent the abstraction of the 
@@ -51,19 +55,14 @@ namespace chaos {
             public:
 				virtual ~CacheDriver();
 				
-                virtual int putData(void *element_key,
-									uint8_t element_key_len,
-									void *value,
-									uint32_t value_len) = 0;
+                virtual int putData(const std::string& key,
+									const CacheData& data) = 0;
                 
-                virtual int getData(void *element_key,
-									uint8_t element_key_len,
-									void **value,
-									uint32_t& value_len) = 0;
+                virtual int getData(const std::string& key,
+									CacheData& data) = 0;
                 
-                virtual int getData(ChaosStringSet keys,
-                                    void **value,
-                                    uint32_t& value_len) = 0;
+                virtual int getData(const ChaosStringSet&   keys,
+                                    MultiCacheData&         multi_data) = 0;
 
                 virtual int addServer(std::string server_desc) = 0;
                 

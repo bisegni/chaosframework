@@ -45,44 +45,34 @@ CacheDriverMetricCollector::~CacheDriverMetricCollector() {
     delete wrapped_cache_driver;
 }
 
-int CacheDriverMetricCollector::putData(void *element_key,
-                                        uint8_t element_key_len,
-                                        void *value,
-                                        uint32_t value_len) {
+int CacheDriverMetricCollector::putData(const std::string& key,
+                                        const CacheData& data) {
     CHAOS_ASSERT(wrapped_cache_driver)
-    if(value_len) {
-        shared_collector->incrementSetBandWidth(value_len);
+    if(data.size()) {
+        shared_collector->incrementSetBandWidth((uint32_t)data.size());
     }
-    int err =  wrapped_cache_driver->putData(element_key,
-                                             element_key_len,
-                                             value,
-                                             value_len);
+    int err =  wrapped_cache_driver->putData(key,
+                                             data);
     return err;
 }
 
-int CacheDriverMetricCollector::getData(void *element_key,
-                                        uint8_t element_key_len,
-                                        void **value,
-                                        uint32_t& value_len) {
+int CacheDriverMetricCollector::getData(const std::string& key,
+                                        CacheData& data) {
     CHAOS_ASSERT(wrapped_cache_driver)
-    int err =  wrapped_cache_driver->getData(element_key,
-                                             element_key_len,
-                                             value,
-                                             value_len);
-    if(value_len) {
-        shared_collector->incrementGetBandWidth(value_len);
+    int err =  wrapped_cache_driver->getData(key,
+                                             data);
+    if(data.size()) {
+        shared_collector->incrementGetBandWidth((uint32_t)data.size());
     }
     return err;
 }
-int CacheDriverMetricCollector::getData(ChaosStringSet keys,
-                                        void **value,
-                                        uint32_t& value_len) {
+int CacheDriverMetricCollector::getData(const ChaosStringSet&   keys,
+                                        MultiCacheData&         multi_data) {
     CHAOS_ASSERT(wrapped_cache_driver)
     int err =  wrapped_cache_driver->getData(keys,
-                                             value,
-                                             value_len);
-    if(value_len) {
-        shared_collector->incrementGetBandWidth(value_len);
+                                             multi_data);
+    if(multi_data.size()) {
+        shared_collector->incrementGetBandWidth((uint32_t)multi_data.size());
     }
     return err;
 }

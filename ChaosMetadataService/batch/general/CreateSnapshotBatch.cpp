@@ -29,6 +29,7 @@ using namespace chaos::common::utility;
 using namespace chaos::common::network;
 
 using namespace chaos::metadata_service;
+using namespace chaos::data_service::cache_system;
 using namespace chaos::metadata_service::batch::general;
 
 #define G_RS_INFO INFO_LOG(CreateSnapshotBatch)
@@ -124,9 +125,6 @@ int CreateSnapshotBatch::storeDatasetTypeInSnapsnot(const std::string& job_work_
                                                     const std::string& unique_id,
                                                     const std::string& dataset_type) {
     int err = 0;
-    void *data = NULL;
-    uint32_t data_len = 0;
-    
     //identify the dataaset
     std::string dataset_to_fetch = unique_id + dataset_type;
     
@@ -134,25 +132,26 @@ int CreateSnapshotBatch::storeDatasetTypeInSnapsnot(const std::string& job_work_
     persistence::data_access::SnapshotDataAccess *s_da = getDataAccess<mds_data_access::SnapshotDataAccess>();
     data_service::CachePoolSlot *cache_slot = data_service::DriverPoolManager::getInstance()->getCacheDriverInstance();
     try{
+        CacheData stored_dataset;
         //get data
-        if((err = cache_slot->resource_pooled->getData((void*)dataset_to_fetch.c_str(), dataset_to_fetch.size(), &data, data_len))) {
+        if((err = cache_slot->resource_pooled->getData(std::string(dataset_to_fetch.c_str(),
+                                                                   dataset_to_fetch.size()),
+                                                       stored_dataset))) {
             G_RS_ERR << "Error retrieving live data for " << dataset_to_fetch << " with error: " << err;
-        } else if(data) {
+        } else if(stored_dataset.size()) {
             G_RS_DBG << "Store data on snapshot for " << dataset_to_fetch;
             if((err = s_da->snapshotAddElementToSnapshot(job_work_code,
                                                          snapshot_name,
                                                          unique_id,
                                                          dataset_to_fetch,
-                                                         data,
-                                                         data_len))) {
+                                                         &stored_dataset[0],
+                                                         (uint32_t)stored_dataset.size()))) {
                 G_RS_ERR<< "Error storign dataset type "<< dataset_type <<
                 " for " << unique_id <<
                 " in snapshot " << snapshot_name <<
                 " with error: " << err;
             }
-            
-            free(data);
-        }else {
+        } else {
             err = -1;
             G_RS_ERR<< "No data has been fetched for " << dataset_to_fetch;
         }

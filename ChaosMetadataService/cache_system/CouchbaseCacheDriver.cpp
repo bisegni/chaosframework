@@ -66,14 +66,31 @@ void CouchbaseCacheDriver::getCallback(lcb_t instance,
                                        const void *cookie,
                                        lcb_error_t error,
                                        const lcb_get_resp_t *resp) {
-    (void)instance;
-    if((((CouchbaseCacheDriver*)cookie)->get_result.err = error) == LCB_SUCCESS) {
-        ((CouchbaseCacheDriver*)cookie)->get_result.value_len = (uint32_t)resp->v.v0.nbytes;
-        ((CouchbaseCacheDriver*)cookie)->get_result.value = std::malloc(resp->v.v0.nbytes);
-        std::memcpy(((CouchbaseCacheDriver*)cookie)->get_result.value,
-                    resp->v.v0.bytes,
-                    resp->v.v0.nbytes);
-        
+    const Result *result = reinterpret_cast<const Result*>(cookie);
+    if((result->err = error) != LCB_SUCCESS) {
+        result->err_str = lcb_strerror(instance, error);
+    }
+    switch(result->return_type) {
+        case ResultTypeGet: {
+            const GetResult * gr_ptr = dynamic_cast<const GetResult *>(result);
+            CHAOS_ASSERT(gr_ptr);
+            gr_ptr->cached_data.assign(((char*)resp->v.v0.bytes),
+                                       ((char*)resp->v.v0.bytes)+resp->v.v0.nbytes);
+            break;
+        }
+            
+        case ResultTypeMultiGet: {
+            const MultiGetResult * gr_ptr = dynamic_cast<const MultiGetResult *>(result);
+            CHAOS_ASSERT(gr_ptr);
+            gr_ptr->multi_cached_data.insert(MultiCacheDataPair(std::string((char*)resp->v.v0.key,
+                                                                            resp->v.v0.nkey),
+                                                                CacheData(((char*)resp->v.v0.bytes),
+                                                                          ((char*)resp->v.v0.bytes)+resp->v.v0.nbytes)));
+            break;
+        }
+            
+        default:
+            break;
     }
 }
 
@@ -82,25 +99,27 @@ void CouchbaseCacheDriver::setCallback(lcb_t instance,
                                        lcb_storage_t operation,
                                        lcb_error_t error,
                                        const lcb_store_resp_t *resp) {
-    (void)instance;
-    if (error != LCB_SUCCESS) {
-        CCDLERR_ << lcb_strerror(instance, error);
+    const Result *result = reinterpret_cast<const Result*>(cookie);
+    if((result->err = error) != LCB_SUCCESS) {
+        result->err_str = lcb_strerror(instance, error);
+        CCDLERR_ << result->err_str;
     }
 }
 
 #pragma mark Results Defintion
 Result::Result(ResultType _return_type):
 return_type(_return_type),
-last_err(LCB_SUCCESS),
-last_err_str(){}
+err(LCB_SUCCESS),
+err_str(){}
+Result::~Result(){}
 
-GetResult::GetResult():
+GetResult::GetResult(CacheData& _cached_data):
 Result(ResultTypeGet),
-result(){}
+cached_data(_cached_data){}
 
-MultiGetResult::MultiGetResult():
+MultiGetResult::MultiGetResult(MultiCacheData& _multi_cached_data):
 Result(ResultTypeMultiGet),
-result(){}
+multi_cached_data(_multi_cached_data){}
 
 StoreResult::StoreResult():
 Result(ResultTypeStore){}
@@ -109,8 +128,7 @@ Result(ResultTypeStore){}
 CouchbaseCacheDriver::CouchbaseCacheDriver(std::string alias):
 CacheDriver(alias),
 instance(NULL),
-last_err(),
-get_result() {
+last_err() {
     lcb_uint32_t ver;
     const char *msg = lcb_get_version(&ver);
     CCDLAPP_ << "Couchbase sdk version: " << msg;
@@ -144,60 +162,70 @@ void CouchbaseCacheDriver::deinit() throw (chaos::CException) {
     CacheDriver::deinit();
 }
 
-int CouchbaseCacheDriver::putData(void *element_key,
-                                  uint8_t element_key_len,
-                                  void *value, uint32_t value_len) {
+int CouchbaseCacheDriver::putData(const std::string& key,
+                                  const CacheData& data) {
     CHAOS_ASSERT(getServiceState() == CUStateKey::INIT)
+    StoreResult result_wrap;
     lcb_error_t err = LCB_SUCCESS;
     lcb_store_cmd_t cmd;
     const lcb_store_cmd_t * const commands[] = { &cmd };
-    
     memset(&cmd, 0, sizeof(cmd));
-    cmd.v.v0.key = element_key;
-    cmd.v.v0.nkey = element_key_len;
-    cmd.v.v0.bytes = value;
-    cmd.v.v0.nbytes = value_len;
+    cmd.v.v0.key = key.c_str();
+    cmd.v.v0.nkey = key.size();
+    cmd.v.v0.bytes = &data[0];
+    cmd.v.v0.nbytes = data.size();
     cmd.v.v0.operation = LCB_SET;
-    if ((err = lcb_store(instance, this, 1, commands)) != LCB_SUCCESS) {
+    err = lcb_store(instance, &result_wrap, 1, commands);
+    err = lcb_wait(instance);
+    if (result_wrap.err != LCB_SUCCESS) {
         CCDLERR_<< "Fail to set value -> "<< lcb_errmap_default(instance, err) << " - " << lcb_strerror(instance, err);
     }
-    return err;
+    return result_wrap.err;
 }
 
-int CouchbaseCacheDriver::getData(void *element_key,
-                                  uint8_t element_key_len,
-                                  void **value,
-                                  uint32_t& value_len) {
+int CouchbaseCacheDriver::getData(const std::string& key,
+                                  CacheData& cached_data) {
     CHAOS_ASSERT(getServiceState() == CUStateKey::INIT)
-    CHAOS_ASSERT(value)
-    MapKeyBuffer map_results;
+    GetResult result_wrap(cached_data);
     lcb_error_t err = LCB_SUCCESS;
     lcb_get_cmd_t cmd;
     const lcb_get_cmd_t *commands[1];
-    
     commands[0] = &cmd;
     memset(&cmd, 0, sizeof(cmd));
-    cmd.v.v0.key = element_key;
-    cmd.v.v0.nkey = element_key_len;
-    err = lcb_get(instance, this, 1, commands);
-    if (err != LCB_SUCCESS &&
-        err != LCB_KEY_ENOENT) {
-        CCDLERR_<< "Fail to get value "<<std::string((char*)element_key, element_key_len) <<" for with err "<< err << "(" << lcb_errmap_default(instance, err) << ")";
+    cmd.v.v0.key = key.c_str();
+    cmd.v.v0.nkey = key.size();
+    err = lcb_get(instance, &result_wrap, 1, commands);
+    err = lcb_wait(instance);
+    if (result_wrap.err != LCB_SUCCESS &&
+        result_wrap.err != LCB_KEY_ENOENT) {
+        CCDLERR_<< "Fail to get value "<< key <<" for with err "<< result_wrap.err << "(" << result_wrap.err_str << ")";
     } else {
-        if(err == LCB_KEY_ENOENT) {
-            err = LCB_SUCCESS;
+        if(result_wrap.err == LCB_KEY_ENOENT) {
+            result_wrap.err = LCB_SUCCESS;
         }
-        *value = (void*)get_result.value;
-        value_len = get_result.value_len;
     }
-    get_result.reset(err != LCB_SUCCESS);
-    return err;
+    return result_wrap.err;
 }
 
-int CouchbaseCacheDriver::getData(ChaosStringSet keys,
-                                  void **value,
-                                  uint32_t& value_len) {
-    
+int CouchbaseCacheDriver::getData(const ChaosStringSet& keys,
+                                  MultiCacheData& multi_data) {
+    //crate vrapper result
+    MultiGetResult result_wrap(multi_data);
+    for(ChaosStringSetConstIterator it = keys.begin(),
+        end = keys.end();
+        it != end;
+        it++) {
+        
+        lcb_get_cmd_t cmd;
+        const lcb_get_cmd_t *commands[1];
+        commands[0] = &cmd;
+        memset(&cmd, 0, sizeof(cmd));
+        cmd.v.v0.key = it->c_str();
+        cmd.v.v0.nkey = it->size();
+        lcb_get(instance, &result_wrap, 1, commands);
+    }
+    lcb_wait(instance);
+    return 0;
 }
 
 bool CouchbaseCacheDriver::validateString(std::string& server_description) {
@@ -289,9 +317,7 @@ int CouchbaseCacheDriver::updateConfig() {
     
     lcb_set_cookie(instance, this);
     
-    lcb_behavior_set_syncmode(instance, LCB_SYNCHRONOUS);
-    
-    
+    //lcb_behavior_set_syncmode(instance, LCB_SYNCHRONOUS);
     
     /* initiate the connect sequence in libcouchbase */
     last_err = lcb_connect(instance);
