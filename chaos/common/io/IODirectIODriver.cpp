@@ -1,4 +1,4 @@
-git commit -a/*
+/*
  *	IODirectIODriver.cpp
  *	!CHAOS
  *	Created by Bisegni Claudio.
