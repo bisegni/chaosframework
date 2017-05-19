@@ -23,7 +23,7 @@ build_framework_x86_64:
     #- ls -la
     #- scp -v -i /builds/bisegni/chaosframework/deploy.key -o StrictHostKeyChecking=no /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux_$TAR_NAME_POSTFIX.tgz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/
   cache:
-    key: "$CI_BUILD_REF_NAME"_development
+    key: "$CI_BUILD_REF_NAME"_x86_64
     paths:
         - /builds/bisegni/chaosframework
   only:
@@ -45,7 +45,7 @@ build_framework_arm:
     #- ls -la
     #- scp -v -i /builds/bisegni/chaosframework/deploy.key -o StrictHostKeyChecking=no /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux_$TAR_NAME_POSTFIX.tgz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/
   cache:
-    key: "$CI_BUILD_REF_NAME"_development
+    key: "$CI_BUILD_REF_NAME"_arm
     paths:
         - /builds/bisegni/chaosframework
   only:
@@ -57,6 +57,10 @@ deploy_framework_x86_64:
     image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
     script:
       - echo "scp /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux_$TAR_NAME_POSTFIX.tgz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/"
+    cache:
+        key: "$CI_BUILD_REF_NAME"_x86_64
+        paths:
+            - /builds/bisegni/chaosframework
     only:
       - development
       - master
@@ -66,6 +70,10 @@ deploy_framework_arm:
     image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
     script:
       - echo "scp /builds/bisegni/chaosframework/chaos-distrib-armhf_$TAR_NAME_POSTFIX.tgz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/"
+    cache:
+        key: "$CI_BUILD_REF_NAME"_arm
+        paths:
+            - /builds/bisegni/chaosframework
     only:
       - development
       - master
