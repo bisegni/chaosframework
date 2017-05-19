@@ -57,7 +57,7 @@ namespace chaos {
                 //!time to waith for the answer to an request;
                 uint32_t millisecToWait;
                 
-                std::vector<std::string> channel_keys;
+                ChaosStringVector channel_keys;
                 
                 //!cached cu type
                 std::string cu_type;
@@ -393,6 +393,9 @@ namespace chaos {
                 
                 //!return the last fetched dataset for the domain
                 int getCurrentDatasetForDomain(DatasetDomain domain,chaos::common::data::CDataWrapper* ret);
+                
+                int fetchAllDataset();
+                
                 //! fetch from the chaso central cache the dataset associated to the domain
                 ChaosSharedPtr<chaos::common::data::CDataWrapper>  fetchCurrentDatatasetFromDomain(DatasetDomain domain);
                 
@@ -403,9 +406,9 @@ namespace chaos {
                  */
                 void fetchCurrentDeviceValue();
                 
-                common::utility::DataBuffer *getBufferForAttribute(string& attributeName);
-                common::utility::PointerBuffer *getPtrBufferForAttribute(string& attributeName);
-                common::utility::DataBuffer *getPtrBufferForTimestamp(const int initialDimension = 10);
+                chaos::common::utility::UIDataBuffer *getBufferForAttribute(string& attributeName);
+                chaos::common::utility::PointerBuffer *getPtrBufferForAttribute(string& attributeName);
+                chaos::common::utility::UIDataBuffer *getPtrBufferForTimestamp(const int initialDimension = 10);
                 
                 chaos::common::data::CDataWrapper *getCurrentData();
                 

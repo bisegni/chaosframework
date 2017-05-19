@@ -198,8 +198,8 @@ int64_t DirectIODeviceClientChannel::requestLastOutputData(const std::string& ke
     return err;
 }
 
-int64_t DirectIODeviceClientChannel::requestLastOutputData(const ChaosStringSet& keys,
-                                                           VectorCDWShrdPtr& result_vec) {
+int64_t DirectIODeviceClientChannel::requestLastOutputData(const ChaosStringVector& keys,
+                                                           VectorCDWShrdPtr& results) {
     if(keys.size() == 0) return -1;
     int64_t err = 0;
     DataBuffer<> data_buffer;
@@ -211,7 +211,7 @@ int64_t DirectIODeviceClientChannel::requestLastOutputData(const ChaosStringSet&
     DirectIODeviceChannelHeaderMultiGetOpcode *mget_opcode_header  = (DirectIODeviceChannelHeaderMultiGetOpcode*)calloc(sizeof(DirectIODeviceChannelHeaderMultiGetOpcode), 1);
     mget_opcode_header->field.number_of_key = TO_LITTEL_ENDNS_NUM(uint16_t, keys.size());
     
-    for(ChaosStringSetConstIterator it = keys.begin(),
+    for(ChaosStringVectorConstIterator it = keys.begin(),
         end = keys.end();
         it != end;
         it++) {
@@ -220,7 +220,7 @@ int64_t DirectIODeviceClientChannel::requestLastOutputData(const ChaosStringSet&
     }
     
     //set header
-    uint32_t data_size = data_buffer.getSize();
+    uint32_t data_size = data_buffer.getCursorLocation();
     void* data = data_buffer.release();
     DIRECT_IO_SET_CHANNEL_HEADER(data_pack, mget_opcode_header, sizeof(DirectIODeviceChannelHeaderGetOpcode))
     DIRECT_IO_SET_CHANNEL_DATA(data_pack, data, data_size);
@@ -246,7 +246,7 @@ int64_t DirectIODeviceClientChannel::requestLastOutputData(const ChaosStringSet&
             for(int idx = 0;
                 idx < result_header->number_of_result;
                 idx++) {
-                result_vec.push_back(CDWShrdPtr(data_buffer.readCDataWrapper().release()));
+                results.push_back(data_buffer.readCDataWrapperAsShrdPtr());
             }
         }
     }

@@ -191,12 +191,16 @@ int main(int argc, char *argv[]){
                 CDataWrapper *ds = NULL;
                 uint64_t start_ts = TimingUtil::getTimeStamp();
                 chaos::metadata_service_client::node_controller::CUController *cu_ctrl = NULL;
+                ChaosMetadataServiceClient::getInstance()->getNewCUController(device_id,&cu_ctrl);
+                if(cu_ctrl == NULL) {throw chaos::CException(-1, "Channel not found", __PRETTY_FUNCTION__);}
                 while(work){
-                    ChaosMetadataServiceClient::getInstance()->getNewCUController(device_id,&cu_ctrl);
-                    ds = cu_ctrl->fetchCurrentDatatasetFromDomain(chaos::cu::data_manager::KeyDataStorageDomainOutput).get();
-                    ChaosMetadataServiceClient::getInstance()->deleteCUController(cu_ctrl);
+                    cu_ctrl->fetchAllDataset();
+                    ds = cu_ctrl->getCurrentDatasetForDomain(chaos::cu::data_manager::KeyDataStorageDomainOutput).get();
+                    std::cout << ds->getJSONString();
+                    usleep(500000);
                     work = ((chaos::common::utility::TimingUtil::getTimeStamp()-start_ts) < (wait_seconds*1000));
                 }
+                ChaosMetadataServiceClient::getInstance()->deleteCUController(cu_ctrl);
             }
         }
         

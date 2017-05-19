@@ -165,7 +165,7 @@ int64_t DirectIOSystemAPIClientChannel::pushLogEntries(const std::string& node_n
     //set header
     DIRECT_IO_SET_CHANNEL_HEADER(data_pack, header, sizeof(DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader))
     //set as data
-    int32_t data_len = buffer.getSize();
+    int32_t data_len = buffer.getCursorLocation();
     DIRECT_IO_SET_CHANNEL_DATA(data_pack, buffer.release(), data_len);
     //send data with synchronous answer flag
     if((err = (int)sendPriorityData(data_pack))) {

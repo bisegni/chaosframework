@@ -35,8 +35,8 @@ namespace chaos_data = chaos::common::data;
 namespace chaos{
     namespace common {
         namespace io {
-
-
+            
+            
             /*!
              * History Output driver base abstract classe, that define two method to control
              * the initialization and history persistence of the data
@@ -111,6 +111,9 @@ namespace chaos{
                                               size_t* dataDim=NULL)  throw(CException) = 0;
                 
                 
+                virtual int retriveMultipleData(const ChaosStringVector& key,
+                                                chaos::common::data::VectorCDWShrdPtr& result)  throw(CException) = 0;
+                
                 //! restore from a tag a dataset associated to a key
                 /*!
                  try to load a dataset from snapshot identified by the tag
@@ -137,9 +140,9 @@ namespace chaos{
                 virtual void releaseQuery(QueryCursor *query) = 0;
             };
             
-        	typedef ChaosSharedPtr<chaos::common::io::IODataDriver> ioDataDriver_shr;
-
-
+            typedef ChaosSharedPtr<chaos::common::io::IODataDriver> ioDataDriver_shr;
+            
+            
         }
     }
 }

@@ -61,8 +61,8 @@ namespace chaos {
                 virtual int getData(const std::string& key,
 									CacheData& data) = 0;
                 
-                virtual int getData(const ChaosStringSet&   keys,
-                                    MultiCacheData&         multi_data) = 0;
+                virtual int getData(const ChaosStringVector&    keys,
+                                    MultiCacheData&             multi_data) = 0;
 
                 virtual int addServer(std::string server_desc) = 0;
                 

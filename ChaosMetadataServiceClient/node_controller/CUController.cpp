@@ -44,7 +44,7 @@ datasetDB(true),
 mdsChannel(NULL),
 deviceChannel(NULL) {
     millisecToWait = MSEC_WAIT_OPERATION;
-
+    
     ioLiveDataDriver=_ioLiveDataDriver;
     mdsChannel = NetworkBroker::getInstance()->getMetadataserverMessageChannel();
     if(!mdsChannel) throw CException(-1,
@@ -61,17 +61,17 @@ deviceChannel(NULL) {
     //add me as listener
     deviceChannel->addListener(this);
     //update live data driver
-
+    
     if(!ioLiveDataDriver.get()) throw CException(-3,
-                                        "Invalid data io driver found",
-                                        __PRETTY_FUNCTION__);
-     CDataWrapper *tmp_data_handler = NULL;
-     if(!mdsChannel->getDataDriverBestConfiguration(&tmp_data_handler, millisecToWait)){
-            ChaosUniquePtr<chaos::common::data::CDataWrapper> best_available_da_ptr(tmp_data_handler);
-            ioLiveDataDriver->updateConfiguration(best_available_da_ptr.get());
-     }
-
-    channel_keys.resize(16);
+                                                 "Invalid data io driver found",
+                                                 __PRETTY_FUNCTION__);
+    CDataWrapper *tmp_data_handler = NULL;
+    if(!mdsChannel->getDataDriverBestConfiguration(&tmp_data_handler, millisecToWait)){
+        ChaosUniquePtr<chaos::common::data::CDataWrapper> best_available_da_ptr(tmp_data_handler);
+        ioLiveDataDriver->updateConfiguration(best_available_da_ptr.get());
+    }
+    
+    channel_keys.resize(7);
     channel_keys[DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT]=(deviceChannel->getDeviceID() + DataPackPrefixID::OUTPUT_DATASET_POSTFIX);
     channel_keys[DataPackCommonKey::DPCK_DATASET_TYPE_INPUT]=(deviceChannel->getDeviceID() + DataPackPrefixID::INPUT_DATASET_POSTFIX);
     channel_keys[DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM]=(deviceChannel->getDeviceID() + DataPackPrefixID::CUSTOM_DATASET_POSTFIX);
@@ -80,19 +80,19 @@ deviceChannel(NULL) {
     channel_keys[DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM]=(deviceChannel->getDeviceID() + DataPackPrefixID::CU_ALARM_DATASET_POSTFIX);
     channel_keys[DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH]=(deviceChannel->getDeviceID() + DataPackPrefixID::HEALTH_DATASET_POSTFIX);
     //  current_dataset.push_back(d);
-   for(int cnt=0;cnt<channel_keys.size();cnt++){
-	   ChaosSharedPtr<chaos::common::data::CDataWrapper> ch;
-   	   ch.reset(new chaos::common::data::CDataWrapper());
-       current_dataset.push_back(ch);
-   }
-   updateChannel();
+    for(int cnt=0;cnt<channel_keys.size();cnt++){
+        ChaosSharedPtr<chaos::common::data::CDataWrapper> ch;
+        ch.reset(new chaos::common::data::CDataWrapper());
+        current_dataset.push_back(ch);
+    }
+    updateChannel();
 }
 
 //---------------------------------------------------------------------------------------------------
 CUController::~CUController() {
     LDBG_<<"["<<__PRETTY_FUNCTION__<<"] remove Device Controller:"<<deviceChannel->getDeviceID();
     stopTracking();
-
+    
     if(deviceChannel){
         deviceChannel->removeListener(this);
         NetworkBroker::getInstance()->disposeMessageChannel(deviceChannel);
@@ -136,13 +136,13 @@ void CUController::updateChannel() throw(CException) {
     int err = ErrorCode::EC_NO_ERROR;
     CDataWrapper *tmp_data_handler = NULL;
     CHAOS_ASSERT(deviceChannel)
-   /*
-    *  if(deviceChannel==NULL){
-        LDBG_<<"["<<__PRETTY_FUNCTION__<<"] Device Channel not still ready...";
-        return;
-
-    }
-    */
+    /*
+     *  if(deviceChannel==NULL){
+     LDBG_<<"["<<__PRETTY_FUNCTION__<<"] Device Channel not still ready...";
+     return;
+     
+     }
+     */
     err = mdsChannel->getLastDatasetForDevice(deviceChannel->getDeviceID(), &tmp_data_handler, millisecToWait);
     if(err!=ErrorCode::EC_NO_ERROR || !tmp_data_handler) return;
     
@@ -648,7 +648,7 @@ int CUController::echoTest(CDataWrapper * const echo_data,
 
 //---------------------------------------------------------------------------------------------------
 ChaosUniquePtr<MessageRequestFuture> CUController::sendCustomRequestWithFuture(const std::string& action_name,
-                                                                              common::data::CDataWrapper *request_date) {
+                                                                               common::data::CDataWrapper *request_date) {
     return deviceChannel->sendCustomRequestWithFuture(action_name,
                                                       request_date);
 }
@@ -731,7 +731,7 @@ void CUController::initializeAttributeIndexMap() {
         if(datasetDB.getAttributeRangeValueInfo(*iter, attributerangeInfo)!=0){
             LERR_<<"CANNOT RETRIVE attr range info of:"<<*iter;
         }
-   //     LDBG_<<"IN attr:"<<attributerangeInfo.name<<" type:"<<attributerangeInfo.valueType<<" bin type:"<<attributerangeInfo.binType;
+        //     LDBG_<<"IN attr:"<<attributerangeInfo.name<<" type:"<<attributerangeInfo.valueType<<" bin type:"<<attributerangeInfo.binType;
         attributeValueMap.insert(make_pair(*iter, attributerangeInfo));
         
     }
@@ -747,7 +747,7 @@ void CUController::initializeAttributeIndexMap() {
             LERR_<<"CANNOT RETRIVE attr range info of:"<<*iter;
             
         }
-    //    LDBG_<<"OUT attr:"<<attributerangeInfo.name<<" type:"<<attributerangeInfo.valueType<<" bin type:"<<attributerangeInfo.binType;
+        //    LDBG_<<"OUT attr:"<<attributerangeInfo.name<<" type:"<<attributerangeInfo.valueType<<" bin type:"<<attributerangeInfo.binType;
         attributeValueMap.insert(make_pair(*iter, attributerangeInfo));
         
     }
@@ -796,9 +796,9 @@ void CUController::allocateNewLiveBufferForAttributeAndType(string& attributeNam
 }
 
 //---------------------------------------------------------------------------------------------------
-DataBuffer *CUController::getBufferForAttribute(string& attributeName) {
+UIDataBuffer *CUController::getBufferForAttribute(string& attributeName) {
     boost::mutex::scoped_lock lock(trackMutext);
-    DataBuffer * result = NULL;
+    UIDataBuffer * result = NULL;
     //allocate attribute traccking
     
     if(attributeValueMap.count(attributeName) == 0  ) return result;
@@ -839,7 +839,7 @@ PointerBuffer *CUController::getPtrBufferForAttribute(string& attributeName) {
 }
 
 //---------------------------------------------------------------------------------------------------
-DataBuffer *CUController::getPtrBufferForTimestamp(const int initialDimension) {
+UIDataBuffer *CUController::getPtrBufferForTimestamp(const int initialDimension) {
     return int64AttributeLiveBuffer.count(DataPackCommonKey::DPCK_TIMESTAMP)>0? int64AttributeLiveBuffer[DataPackCommonKey::DPCK_TIMESTAMP]:NULL;
 }
 
@@ -905,42 +905,59 @@ ChaosSharedPtr<chaos::common::data::CDataWrapper> CUController::getCurrentDatase
     return current_dataset[0];
 }
 int CUController::getCurrentDatasetForDomain(DatasetDomain domain,chaos::common::data::CDataWrapper* ret){
-	boost::mutex::scoped_lock lock(trackMutext);
-	if(ret){
-		//ret->reset();
-		//ret->setSerializedData((const char*)current_dataset[domain]->getBSONData());
-		current_dataset[domain]->copyAllTo(*ret);
-	 return 0;
-	}
-	return -1;
-
+    boost::mutex::scoped_lock lock(trackMutext);
+    if(ret){
+        //ret->reset();
+        //ret->setSerializedData((const char*)current_dataset[domain]->getBSONData());
+        current_dataset[domain]->copyAllTo(*ret);
+        return 0;
+    }
+    return -1;
+    
 }
 int   CUController::fetchCurrentDatatasetFromDomain(DatasetDomain domain,chaos::common::data::CDataWrapper* ret){
-	 CUController::fetchCurrentDatatasetFromDomain(domain);
-	 boost::mutex::scoped_lock lock(trackMutext);
-	 if(ret){
-		// ret->reset();
-		 current_dataset[domain]->copyAllTo(*ret);
-		 return 0;
-	 }
-	 return 0;
+    CUController::fetchCurrentDatatasetFromDomain(domain);
+    boost::mutex::scoped_lock lock(trackMutext);
+    if(ret){
+        // ret->reset();
+        current_dataset[domain]->copyAllTo(*ret);
+        return 0;
+    }
+    return 0;
 }
+
+int CUController::fetchAllDataset() {
+    int err = 0;
+    CHAOS_ASSERT(ioLiveDataDriver.get());
+    boost::mutex::scoped_lock lock(trackMutext);
+    chaos::common::data::VectorCDWShrdPtr results;
+    if((err = ioLiveDataDriver->retriveMultipleData(channel_keys,
+                                                    results)) == 0) {
+        int counter = 0;
+        for(std::vector< ChaosSharedPtr<chaos::common::data::CDataWrapper> >::iterator it = current_dataset.begin(),
+            end = current_dataset.end();
+            it != end;
+            it++) {
+            (*it) = results[counter++];
+        }
+    }
+    return err;
+}
+
 
 //---------------------------------------------------------------------------------------------------
 ChaosSharedPtr<chaos::common::data::CDataWrapper>  CUController::fetchCurrentDatatasetFromDomain(DatasetDomain domain) {
-    char *value = NULL;
-    unsigned long value_len = 0;
     boost::mutex::scoped_lock lock(trackMutext);
-    if((ioLiveDataDriver.get())&&(domain<current_dataset.size())){
-        value = ioLiveDataDriver->retriveRawData(channel_keys[domain],(size_t*)&value_len);
-        if(value){
-            chaos::common::data::CDataWrapper *tmp = new CDataWrapper(value);
-            current_dataset[domain].reset(tmp);
-            free(value);
-            return current_dataset[domain];
-        }
+    chaos::common::data::VectorCDWShrdPtr results;
+    int value_len = 0;
+    char *value = ioLiveDataDriver->retriveRawData(channel_keys[domain],(size_t*)&value_len);
+    if(value){
+        chaos::common::data::CDataWrapper *tmp = new CDataWrapper(value);
+        current_dataset[domain].reset(tmp);
+        free(value);
+        return current_dataset[domain];
     }
-    return current_dataset[0];
+    return current_dataset[domain];
 }
 
 //---------------------------------------------------------------------------------------------------
@@ -1042,12 +1059,12 @@ void CUController::executeTimeIntervallQuery(DatasetDomain domain,
                                              uint64_t end_ts,
                                              QueryCursor **query_cursor,
                                              uint32_t page) {
-	if((domain>=0) && (domain<=DPCK_LAST_DATASET_INDEX)){
-		*query_cursor = ioLiveDataDriver->performQuery(channel_keys[domain],
-                                                   start_ts,
-                                                   end_ts,
-                                                   page);
-	}
+    if((domain>=0) && (domain<=DPCK_LAST_DATASET_INDEX)){
+        *query_cursor = ioLiveDataDriver->performQuery(channel_keys[domain],
+                                                       start_ts,
+                                                       end_ts,
+                                                       page);
+    }
 }
 
 //! release a query

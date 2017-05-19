@@ -24,11 +24,11 @@
 #include <stdint.h>
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/data/CDataWrapper.h>
+#include <chaos/common/utility/DataBuffer.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/direct_io/channel/DirectIODeviceChannelGlobal.h>
 #include <chaos/common/direct_io/channel/DirectIOVirtualClientChannel.h>
 
-namespace chaos_data = chaos::common::data;
 namespace chaos {
     namespace common {
         namespace direct_io {
@@ -41,6 +41,8 @@ namespace chaos {
                     uint64_t ip;
                     uint32_t hash;
                 } AnswerServerInfo;
+                
+                CHAOS_DEFINE_SET_FOR_TYPE(chaos::common::utility::DataBuffer<>, SetDataBuffer);
                 
                 //! Class for the managment of pushing data for the device dataset
                 /*!
@@ -86,8 +88,8 @@ namespace chaos {
                                                   void **result, uint32_t &size);
                     
                     //! Send a request for the last output data for a set of key
-                    int64_t requestLastOutputData(const ChaosStringSet& keys,
-                                                  chaos::common::data::VectorCDWShrdPtr& result_vec);
+                    int64_t requestLastOutputData(const ChaosStringVector& keys,
+                                                  chaos::common::data::VectorCDWShrdPtr& results);
                     
                     //! Perform a temporal query on a key
                     /*!

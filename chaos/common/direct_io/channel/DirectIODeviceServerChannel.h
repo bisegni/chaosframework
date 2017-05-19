@@ -107,7 +107,7 @@ namespace chaos {
                          if a key is not found in live an empy bson document is add.
                          */
                         virtual int consumeGetEvent(opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcode *header,
-                                                    ChaosStringSet keys,
+                                                    const ChaosStringVector& keys,
                                                     opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcodeResult *result_header,
                                                     void **result_value,
                                                     uint32_t& result_value_len)
