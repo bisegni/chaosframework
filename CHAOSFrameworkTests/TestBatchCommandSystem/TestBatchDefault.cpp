@@ -20,6 +20,7 @@
  */
 
 #include "TestBatchDefault.h"
+using namespace chaos::common::data;
 using namespace chaos::common::batch_command::test;
 TestBatchDefaultCommand::TestBatchDefaultCommand(){}
 
