@@ -167,17 +167,15 @@ void AbstractExecutionUnit::_defineActionAndDataset(chaos_data::CDataWrapper& se
     if(eu_description.size()){setup_configuration.addStringValue(ExecutionUnitNodeDefinitionKey::EXECUTION_UNIT_DESCRIPTION, eu_description);}
 }
 
-//! inherited method
 void AbstractExecutionUnit::unitInit() throw(CException) {
+    
     executeAlgorithmLaunch();
 }
 
-//! inherited method
 void AbstractExecutionUnit::unitStart() throw(CException) {
     executeAlgorithmStart();
 }
 
-//! inherited method
 void AbstractExecutionUnit::unitRun() throw(CException) {
     //get temp pointe to step timestamp
     uint64_t *step_ts = timestamp_acq_cached_value->getValuePtr<uint64_t>();
@@ -187,14 +185,26 @@ void AbstractExecutionUnit::unitRun() throw(CException) {
     last_execution_ts = *step_ts;
 }
 
-//! inherited method
 void AbstractExecutionUnit::unitStop() throw(CException) {
     executeAlgorithmStop();
 }
 
-//! inherited method
 void AbstractExecutionUnit::unitDeinit() throw(CException) {
     executeAlgorithmEnd();
+}
+
+int AbstractExecutionUnit::performLiveFetch(const chaos::cu::data_manager::KeyDataStorageDomain dataset_domain,
+                                            chaos::common::data::CDWShrdPtr& found_dataset) {
+    return key_data_storage->performLiveFetch(dataset_domain,
+                                              found_dataset);
+}
+
+int AbstractExecutionUnit::performLiveFetch(const ChaosStringVector& node_uid,
+                                            const chaos::cu::data_manager::KeyDataStorageDomain dataset_domain,
+                                            chaos::common::data::VectorCDWShrdPtr& found_dataset) {
+    return key_data_storage->performLiveFetch(node_uid,
+                                              dataset_domain,
+                                              found_dataset);
 }
 
 int AbstractExecutionUnit::performQuery(chaos::common::io::QueryCursor **cursor,

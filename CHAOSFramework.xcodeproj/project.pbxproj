@@ -514,7 +514,6 @@
 		327CFF091708C4EB0069497B /* FastHash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327CFF071708C4EA0069497B /* FastHash.cpp */; };
 		327CFF0A1708C4EB0069497B /* FastHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 327CFF081708C4EB0069497B /* FastHash.h */; };
 		327CFF121708D7760069497B /* CacheGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = 327CFF111708D7740069497B /* CacheGlobal.h */; };
-		327D7E0D1ED2E57A00A8AF1C /* EULiveManagment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327D7E0B1ED2E57A00A8AF1C /* EULiveManagment.cpp */; };
 		327D7E0E1ED2E57A00A8AF1C /* EULiveManagment.h in Headers */ = {isa = PBXBuildFile; fileRef = 327D7E0C1ED2E57A00A8AF1C /* EULiveManagment.h */; };
 		327F39A01AEA47980000C845 /* GetAssociationByDS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327F399E1AEA47980000C845 /* GetAssociationByDS.cpp */; };
 		327F39A71AEAA2290000C845 /* NewDS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327F39A51AEAA2290000C845 /* NewDS.cpp */; };
@@ -562,6 +561,7 @@
 		3289335A1D3549DE00FBA95B /* DeclareStateFlag.h in Headers */ = {isa = PBXBuildFile; fileRef = 328933581D3549DE00FBA95B /* DeclareStateFlag.h */; };
 		3289F9A5168508460080D93F /* SQLiteEntityDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3289F9A3168508460080D93F /* SQLiteEntityDB.cpp */; };
 		3289F9A6168508460080D93F /* SQLiteEntityDB.h in Headers */ = {isa = PBXBuildFile; fileRef = 3289F9A4168508460080D93F /* SQLiteEntityDB.h */; };
+		328C84741ED33C15008B5F7D /* EULiveManagment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327D7E0B1ED2E57A00A8AF1C /* EULiveManagment.cpp */; };
 		328C872C1ADEA45E0047C79B /* SearchInstancesByUS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328C872A1ADEA45E0047C79B /* SearchInstancesByUS.cpp */; };
 		328C872F1ADFC2D60047C79B /* GetInstance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328C872D1ADFC2D60047C79B /* GetInstance.cpp */; };
 		328C87321ADFDB9A0047C79B /* SearchInstancesByUS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328C87301ADFDB9A0047C79B /* SearchInstancesByUS.cpp */; };
@@ -6433,7 +6433,6 @@
 				32DF603F15E14F5A00312C94 /* InstrumentEventDescriptor.cpp in Sources */,
 				32067EA51CABEF0300DE568A /* CDataBuffer.cpp in Sources */,
 				32B73E9E18D9D80F00F0B187 /* PerformanceManagment.cpp in Sources */,
-				327D7E0D1ED2E57A00A8AF1C /* EULiveManagment.cpp in Sources */,
 				3214E7441DC10B9500A67414 /* MultiSeverityAlarm.cpp in Sources */,
 				3253F302189AEF8000959CA7 /* DirectIOVirtualServerChannel.cpp in Sources */,
 				32FC49B71E0ACB1B0087D82C /* BatchCommandParallelSandbox.cpp in Sources */,
@@ -6620,6 +6619,7 @@
 				3215860D178756B40090E7E6 /* AbstractDriverPlugin.cpp in Sources */,
 				324545011D4A676A0081F90B /* EventManager.cpp in Sources */,
 				32C4EF361D4F71370014F3D3 /* DatasetEvent.cpp in Sources */,
+				328C84741ED33C15008B5F7D /* EULiveManagment.cpp in Sources */,
 				326BB29F1E3753E200BFA602 /* ProxyControlUnit.cpp in Sources */,
 				3252A30F1C8ED2A800900FF2 /* AbstractAttributeHandler.cpp in Sources */,
 				326DB4C114B3A3E50018A8D0 /* ControlManager.cpp in Sources */,

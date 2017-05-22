@@ -180,14 +180,6 @@ void DataManager::pushDeviceDataByIdKey(const string& device_id, CDataWrapper* d
 }
 
 /*
- get last dataset for a specified key
- */
-chaos::common::utility::ArrayPointer<CDataWrapper> *DataManager::getLastCDataWrapperForDeviceIdKey(const string& device_id)  throw(CException) {
-        //use keydatastorage from map
-    return deviceIDKeyDataStorageMap[device_id]->getLastDataSet(data_manager::KeyDataStorageDomainOutput);
-}
-
-/*
  return a new instance of CDataWrapper filled with a mandatory data
  according to key
  */

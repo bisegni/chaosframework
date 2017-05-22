@@ -108,10 +108,6 @@ namespace chaos{
 				void pushDeviceDataByIdKey(const std::string &device_id, chaos_data::CDataWrapper*) throw(CException);
 				
 				/*
-				 Get the last CDataWrapper from the live data for the device id key
-				 */
-				common::utility::ArrayPointer<chaos_data::CDataWrapper> *getLastCDataWrapperForDeviceIdKey(const std::string &device_id)  throw(CException);
-				/*
 				 return a new instance of CDataWrapper filled with a mandatory data
 				 according to key
 				 */

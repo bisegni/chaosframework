@@ -247,15 +247,13 @@ void ScriptableExecutionUnit::unitDefineActionAndDataset() throw(CException) {
                         CHAOS_FORMAT("Error checking the presence of the function %1%", % SEU_INPUT_ATTRIBUTE_CHANGED));
     }
     alghorithm_handler_implemented[5] = exists;
-    
-    
     //    if(script_manager()->getVirtualMachine()->callProcedure(SEU_ALGORITHM_SETUP,
     //                                                          in_param)) {
     //        LOG_AND_TROW_FORMATTED(SEU_LERR, -6, "Error calling function %1% of the script(it maybe not implemented)", %SEU_ALGORITHM_SETUP);
     //    }
 }
 
-void ScriptableExecutionUnit::executeAlgorithmLaunch() throw(CException) {
+void ScriptableExecutionUnit::executeAlgorithmLaunch() throw(CException) {    
     if(!alghorithm_handler_implemented[0])
         return;
     LockableScriptManagerReadLock rl = script_manager.getReadLockObject();

@@ -32,7 +32,6 @@ using namespace chaos::cu::data_manager;
 #define KeyDataStorageLDBG	DBG_LOG(KeyDataStorage)
 #define KeyDataStorageLERR	ERR_LOG(KeyDataStorage)
 
-
 KeyDataStorage::KeyDataStorage(const std::string& _key,
                                chaos_io::IODataDriver *_io_data_driver):
 key(_key),
@@ -47,6 +46,7 @@ sequence_id(0 /*std::numeric_limits<int64_t>::min()*/){
     input_key	= _key + DataPackPrefixID::INPUT_DATASET_POSTFIX;
     system_key	= _key + DataPackPrefixID::SYSTEM_DATASET_POSTFIX;
     custom_key	= _key + DataPackPrefixID::CUSTOM_DATASET_POSTFIX;
+    health_key  = _key + DataPackPrefixID::HEALTH_DATASET_POSTFIX;
     cu_alarm_key	= _key + DataPackPrefixID::CU_ALARM_DATASET_POSTFIX;
     dev_alarm_key	= _key + DataPackPrefixID::DEV_ALARM_DATASET_POSTFIX;
 }
@@ -70,6 +70,63 @@ void KeyDataStorage::deinit() throw (chaos::CException) {
     if(io_data_driver) io_data_driver->deinit();
     restore_point_map.clear();
 }
+
+std::string KeyDataStorage::getDomainString(const KeyDataStorageDomain dataset_domain) {
+    switch(dataset_domain) {
+        case DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT:
+            return output_key;
+            break;
+        case DataPackCommonKey::DPCK_DATASET_TYPE_INPUT:
+            return input_key;
+            break;
+        case DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM:
+            return system_key;
+            break;
+        case DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM:
+            return custom_key;
+            break;
+        case DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM:
+            return cu_alarm_key;
+            break;
+        case DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM:
+            return dev_alarm_key;
+            break;
+        case DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH:
+            return health_key;
+            break;
+    }
+    return "";
+}
+
+
+std::string KeyDataStorage::getDomainString(const std::string& node_uid,
+                                            const KeyDataStorageDomain dataset_domain) {
+    switch(dataset_domain) {
+        case DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT:
+            return node_uid +  DataPackPrefixID::OUTPUT_DATASET_POSTFIX;
+            break;
+        case DataPackCommonKey::DPCK_DATASET_TYPE_INPUT:
+            return node_uid +  DataPackPrefixID::INPUT_DATASET_POSTFIX;
+            break;
+        case DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM:
+            return node_uid +  DataPackPrefixID::SYSTEM_DATASET_POSTFIX;
+            break;
+        case DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM:
+            return node_uid +  DataPackPrefixID::CUSTOM_DATASET_POSTFIX;
+            break;
+        case DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM:
+            return node_uid +  DataPackPrefixID::CU_ALARM_DATASET_POSTFIX;
+            break;
+        case DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM:
+            return node_uid +  DataPackPrefixID::DEV_ALARM_DATASET_POSTFIX;
+            break;
+        case DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH:
+            return node_uid +  DataPackPrefixID::HEALTH_DATASET_POSTFIX;
+            break;
+    }
+    return "";
+}
+
 /*
  Return a new instace for the CSDatawrapped filled
  with default madatory data
@@ -96,6 +153,9 @@ CDataWrapper* KeyDataStorage::getNewDataPackForDomain(const KeyDataStorageDomain
         case KeyDataStorageDomainDevAlarm:
             node_type = DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM;
             break;
+        case KeyDataStorageDomainHealth:
+            node_type = DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH;
+            break;
     }
     //add the unique key
     result->addStringValue(DataPackCommonKey::DPCK_DEVICE_ID, key);
@@ -106,35 +166,38 @@ CDataWrapper* KeyDataStorage::getNewDataPackForDomain(const KeyDataStorageDomain
 
 /*
  Retrive the data from Live Storage
- */
-ArrayPointer<CDataWrapper>* KeyDataStorage::getLastDataSet(KeyDataStorageDomain domain) {
-    //retrive data from cache for the key managed by
-    //this instance of keydatastorage
-    CHAOS_ASSERT(io_data_driver);
-    //lock for protect the access
-    boost::unique_lock<boost::mutex> l(mutex_push_data);
-    switch(domain) {
-        case KeyDataStorageDomainOutput:
-            return io_data_driver->retriveData(output_key);
-            break;
-        case KeyDataStorageDomainInput:
-            return io_data_driver->retriveData(input_key);
-            break;
-        case KeyDataStorageDomainSystem:
-            return io_data_driver->retriveData(system_key);
-            break;
-        case KeyDataStorageDomainCustom:
-            return io_data_driver->retriveData(custom_key);
-            break;
-        case KeyDataStorageDomainCUAlarm:
-            return io_data_driver->retriveData(cu_alarm_key);
-            break;
-        case KeyDataStorageDomainDevAlarm:
-            return io_data_driver->retriveData(dev_alarm_key);
-            break;
-    }
-    
-}
+ 
+ ArrayPointer<CDataWrapper>* KeyDataStorage::getLastDataSet(KeyDataStorageDomain domain) {
+ //retrive data from cache for the key managed by
+ //this instance of keydatastorage
+ CHAOS_ASSERT(io_data_driver);
+ //lock for protect the access
+ boost::unique_lock<boost::mutex> l(mutex_push_data);
+ switch(domain) {
+ case KeyDataStorageDomainOutput:
+ return io_data_driver->retriveData(output_key);
+ break;
+ case KeyDataStorageDomainInput:
+ return io_data_driver->retriveData(input_key);
+ break;
+ case KeyDataStorageDomainSystem:
+ return io_data_driver->retriveData(system_key);
+ break;
+ case KeyDataStorageDomainCustom:
+ return io_data_driver->retriveData(custom_key);
+ break;
+ case KeyDataStorageDomainCUAlarm:
+ return io_data_driver->retriveData(cu_alarm_key);
+ break;
+ case KeyDataStorageDomainDevAlarm:
+ return io_data_driver->retriveData(dev_alarm_key);
+ break;
+ case KeyDataStorageDomainHealth:
+ return io_data_driver->retriveData(health_key);
+ break;
+ }
+ return
+ } */
 
 void KeyDataStorage::pushDataWithControlOnHistoryTime(const std::string& key,
                                                       CDataWrapper *dataToStore,
@@ -308,7 +371,7 @@ int KeyDataStorage::clearRestorePoint(const std::string& restore_point_tag) {
 }
 
 ChaosSharedPtr<chaos_data::CDataWrapper> KeyDataStorage::getDatasetFromRestorePoint(const std::string& restore_point_tag,
-                                                                                       KeyDataStorageDomain domain) {
+                                                                                    KeyDataStorageDomain domain) {
     if(!restore_point_map.count(restore_point_tag)) {
         return ChaosSharedPtr<chaos_data::CDataWrapper>();
     }
@@ -322,7 +385,6 @@ ChaosSharedPtr<chaos_data::CDataWrapper> KeyDataStorage::getDatasetFromRestorePo
             return restore_point_map[restore_point_tag][custom_key];
         case KeyDataStorageDomainSystem:
             return restore_point_map[restore_point_tag][system_key];
-            
         default:
             CHAOS_ASSERT(false)
             break;
@@ -372,32 +434,38 @@ uint64_t KeyDataStorage::getStorageHistoryTime() {
     return storage_history_time;
 }
 
+int KeyDataStorage::performLiveFetch(const KeyDataStorageDomain dataset_domain,
+                                     chaos::common::data::CDWShrdPtr& found_dataset) {
+    int err = 0;
+    size_t size;
+    std::string node_dataset = getDomainString(dataset_domain);
+    char * raw_data = io_data_driver->retriveRawData(node_dataset, &size);
+    if(raw_data) {
+        found_dataset.reset(new CDataWrapper(raw_data));
+    }
+    free(raw_data);
+    return err;
+}
+
+int KeyDataStorage::performLiveFetch(const ChaosStringVector& node_uid,
+                                     const KeyDataStorageDomain dataset_domain,
+                                     chaos::common::data::VectorCDWShrdPtr& found_dataset) {
+    ChaosStringVector real_node_uid;
+    for(ChaosStringVectorConstIterator it = node_uid.begin(),
+        end = node_uid.end();
+        it != end;
+        it++) {
+        real_node_uid.push_back(getDomainString(*it, dataset_domain));
+    }
+    return io_data_driver->retriveMultipleData(real_node_uid,
+                                               found_dataset);
+}
+
 int KeyDataStorage::performSelfQuery(chaos::common::io::QueryCursor **cursor,
                                      KeyDataStorageDomain dataset_domain,
                                      const uint64_t start_ts,
                                      const uint64_t end_ts) {
-    std::string node_dataset;
-    switch(dataset_domain) {
-        case DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT:
-            node_dataset = output_key;
-            break;
-        case DataPackCommonKey::DPCK_DATASET_TYPE_INPUT:
-            node_dataset = input_key;
-            break;
-        case DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM:
-            node_dataset = system_key;
-            break;
-        case DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM:
-            node_dataset = custom_key;
-            break;
-        case DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM:
-            node_dataset = cu_alarm_key;
-            break;
-        case DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM:
-            node_dataset = dev_alarm_key;
-            break;
-    }
-    *cursor = io_data_driver->performQuery(node_dataset,
+    *cursor = io_data_driver->performQuery(getDomainString(dataset_domain),
                                            start_ts,
                                            end_ts);
     return ((*cursor == NULL)?-1:0);
@@ -408,28 +476,7 @@ int KeyDataStorage::performGeneralQuery(chaos::common::io::QueryCursor **cursor,
                                         KeyDataStorageDomain dataset_domain,
                                         const uint64_t start_ts,
                                         const uint64_t end_ts) {
-    std::string node_dataset;
-    switch(dataset_domain) {
-        case DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT:
-            node_dataset = node_id + DataPackPrefixID::OUTPUT_DATASET_POSTFIX;
-            break;
-        case DataPackCommonKey::DPCK_DATASET_TYPE_INPUT:
-            node_dataset = node_id + DataPackPrefixID::INPUT_DATASET_POSTFIX;
-            break;
-        case DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM:
-            node_dataset = node_id + DataPackPrefixID::SYSTEM_DATASET_POSTFIX;
-            break;
-        case DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM:
-            node_dataset = node_id + DataPackPrefixID::CUSTOM_DATASET_POSTFIX;
-            break;
-        case DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM:
-            node_dataset = node_id + DataPackPrefixID::CU_ALARM_DATASET_POSTFIX;
-            break;
-        case DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM:
-            node_dataset = node_id + DataPackPrefixID::DEV_ALARM_DATASET_POSTFIX;
-            break;
-    }
-    *cursor = io_data_driver->performQuery(node_dataset,
+    *cursor = io_data_driver->performQuery(getDomainString(dataset_domain),
                                            start_ts,
                                            end_ts);
     return ((*cursor == NULL)?-1:0);

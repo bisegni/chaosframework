@@ -38,7 +38,6 @@ namespace chaos{
             namespace script {
                 class EUScriptableWrapper;
             }
-            
             //!  Base class for execution unit !CHAOS node.
             /*!
              This is the abstraction of the execution unit. It permit to run algorithm that can
@@ -74,7 +73,6 @@ namespace chaos{
                 
                 //! inherited method
                 void unitDeinit() throw(CException);
-                
             protected:
                 //!redefine private for protection
                 AbstractSharedDomainCache* _getAttributeCache();
@@ -146,6 +144,16 @@ namespace chaos{
                 void setOutputAttributeValue(const std::string& attribute_name,
                                              const chaos::common::data::CDataVariant& attribute_value);
                 
+                //! perform live search for managed node uid
+                int performLiveFetch(const chaos::cu::data_manager::KeyDataStorageDomain dataset_domain,
+                                     chaos::common::data::CDWShrdPtr& found_dataset);
+                
+                //! perform live search for other node uid
+                int performLiveFetch(const ChaosStringVector& node_uid,
+                                     const chaos::cu::data_manager::KeyDataStorageDomain dataset_domain,
+                                     chaos::common::data::VectorCDWShrdPtr& found_dataset);
+                
+                
                 //! perform a new search
                 /*!
                  \param cursor is an handle to a QueryCursor structure, if all goes right a new pointer
@@ -164,6 +172,10 @@ namespace chaos{
                 
                 //! release a cursor
                 void releseQuery(chaos::common::io::QueryCursor *cursor);
+                
+                int performLiveFetch(const std::string& node_ui,
+                                     chaos::cu::data_manager::KeyDataStorageDomain domain,
+                                     chaos::common::data::CDataVariant& value);
                 
                 //!Event for notify that alghortim is going to be executed
                 virtual void executeAlgorithmLaunch() throw (CException) = 0;

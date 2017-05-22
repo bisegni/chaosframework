@@ -53,6 +53,7 @@ namespace chaos{
                 std::string input_key;
                 std::string system_key;
                 std::string custom_key;
+                std::string health_key;
                 std::string cu_alarm_key;
                 std::string dev_alarm_key;
                 //is the sequence if
@@ -77,6 +78,11 @@ namespace chaos{
                 void pushDataWithControlOnHistoryTime(const std::string& key,
                                                       chaos::common::data::CDataWrapper *dataToStore,
                                                       chaos::DataServiceNodeDefinitionType::DSStorageType storage_type);
+                
+                inline std::string getDomainString(const KeyDataStorageDomain dataset_domain);
+                
+                inline std::string getDomainString(const std::string& node_uid,
+                                                   const KeyDataStorageDomain dataset_domain);
             public:
                 KeyDataStorage(const std::string& _key,
                                chaos_io::IODataDriver *_io_data_driver);
@@ -93,7 +99,7 @@ namespace chaos{
                 /*
                  Retrive the data from Live Storage
                  */
-                chaos_utility::ArrayPointer<chaos_data::CDataWrapper>* getLastDataSet(KeyDataStorageDomain domain);
+                //chaos_utility::ArrayPointer<chaos_data::CDataWrapper>* getLastDataSet(KeyDataStorageDomain domain);
                 
                 //! push a dataset associated to a domain
                 void pushDataSet(KeyDataStorageDomain domain, chaos_data::CDataWrapper *dataset);
@@ -106,7 +112,7 @@ namespace chaos{
                 
                 //!return the dataset asccoaited to a domain in a determinated restore tag
                 ChaosSharedPtr<chaos_data::CDataWrapper>  getDatasetFromRestorePoint(const std::string& restore_point_tag,
-                                                                                        KeyDataStorageDomain domain);
+                                                                                     KeyDataStorageDomain domain);
                 
                 /*
                  Permit to be live configurable
@@ -121,6 +127,15 @@ namespace chaos{
                 
                 //! return how how many mseconds need to pass for the dataset is stored in history engine
                 uint64_t getStorageHistoryTime();
+                
+                //! perform live search for managed node uid
+                int performLiveFetch(const KeyDataStorageDomain dataset_domain,
+                                     chaos::common::data::CDWShrdPtr& found_dataset);
+                
+                //! perform live search for other node uid
+                int performLiveFetch(const ChaosStringVector& node_uid,
+                                     const KeyDataStorageDomain dataset_domain,
+                                     chaos::common::data::VectorCDWShrdPtr& found_dataset);
                 
                 int performSelfQuery(chaos::common::io::QueryCursor **cursor,
                                      KeyDataStorageDomain dataset_domain,

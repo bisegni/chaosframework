@@ -26,6 +26,7 @@
 
 #include <chaos/common/chaos_types.h>
 #include <chaos/common/utility/LockableObject.h>
+#include <chaos/common/network/NetworkBroker.h>
 
 #include <chaos/cu_toolkit/control_manager/script/api/api.h>
 #include <chaos/cu_toolkit/control_manager/AbstractExecutionUnit.h>
@@ -58,6 +59,7 @@ namespace chaos {
                 class ScriptableExecutionUnit:
                 public AbstractExecutionUnit {
                     friend class api::EUSearch;
+                    friend class api::EULiveManagment;
                     friend class api::EUDSValueManagement;
                     PUBLISHABLE_CONTROL_UNIT_INTERFACE(AbstractExecutionUnit)
                     
