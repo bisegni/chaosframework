@@ -30,7 +30,7 @@ DeclareAction::~DeclareAction() {
     actionDescriptionVector.clear();
 }
 
-vector<AbstActionDescShrPtr>& DeclareAction::getActionDescriptors() {
+std::vector<AbstActionDescShrPtr>& DeclareAction::getActionDescriptors() {
     return actionDescriptionVector;
 }
 
@@ -40,7 +40,7 @@ vector<AbstActionDescShrPtr>& DeclareAction::getActionDescriptors() {
  */
 void DeclareAction::getActionDescrionsInDataWrapper(chaos_data::CDataWrapper& actionsDescription, bool close) {
     ChaosSharedPtr<chaos_data::CDataWrapper> actionDescription;
-    vector<AbstActionDescShrPtr>::iterator actionIter;
+    std::vector<AbstActionDescShrPtr>::iterator actionIter;
     
         //cycle all actions for construct the vector of param action
     for (actionIter = actionDescriptionVector.begin(); 
@@ -72,12 +72,12 @@ void DeclareAction::decodeAction(AbstActionDescShrPtr& actionDesc, chaos_data::C
     actionDescription.addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DESCRIPTION, actionDesc->getTypeValue(AbstractActionDescriptor::ActionDescription));
     
         //now i must describe the param for this action
-    vector< ChaosSharedPtr<ActionParamDescription> >& paramDescriptionVector = actionDesc->getParamDescriptions();
+    std::vector< ChaosSharedPtr<ActionParamDescription> >& paramDescriptionVector = actionDesc->getParamDescriptions();
     
     if(paramDescriptionVector.size()){
             //there are some parameter for this action, need to be added to rapresentation
         ChaosSharedPtr<chaos_data::CDataWrapper> paramDescRepresentation(new chaos_data::CDataWrapper());
-        for (vector< ChaosSharedPtr<ActionParamDescription> >::iterator paramIter = paramDescriptionVector.begin();
+        for (std::vector< ChaosSharedPtr<ActionParamDescription> >::iterator paramIter = paramDescriptionVector.begin();
              paramIter !=paramDescriptionVector.end();
              paramIter++) {
             

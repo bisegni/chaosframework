@@ -34,11 +34,6 @@
 #include <boost/thread.hpp>
 
 namespace chaos {
-    using namespace std;
-    using namespace boost;
-    
-    namespace chaos_data = chaos::common::data;
-    
     typedef boost::shared_mutex ActionSharedLock;
     typedef boost::unique_lock< boost::shared_mutex >   ActionWriteLock;
     typedef boost::shared_lock< boost::shared_mutex >   ActionReadLock;
@@ -47,8 +42,8 @@ namespace chaos {
      struct for describe a param for an action
      */
     struct ActionParamDescription {
-        string paramName;
-        string paramDescription;
+        std::string paramName;
+        std::string paramDescription;
         DataType::DataType paramType;
         
         ActionParamDescription():
@@ -72,13 +67,13 @@ namespace chaos {
         
     protected:
         //domain for the action, the full name will be 'actionDomain::actioName
-        string actionDomain;
+        std::string actionDomain;
         
         //action key
-        string actionName;
+        std::string actionName;
         
         //action desription
-        string actionDescription;
+        std::string actionDescription;
         
         //!tag action as executables by more thread
         bool shared_execution;
@@ -87,7 +82,7 @@ namespace chaos {
         boost::mutex mutex_execution_lock;
         
         //map for action
-        vector< ChaosSharedPtr<ActionParamDescription> > paramDescriptionVec;
+        std::vector< ChaosSharedPtr<ActionParamDescription> > paramDescriptionVec;
         
         //only domain action can be set this value
         bool setEnabled(bool);
@@ -111,12 +106,13 @@ namespace chaos {
          \param detachParam the action can set this param to true, in this case the deallocation is demanded to the action
          \return the result of the action
          */
-        virtual chaos_data::CDataWrapper* call(chaos_data::CDataWrapper *actionParam, bool& detachParam)  throw (CException) = 0;
+        virtual chaos::common::data::CDataWrapper* call(chaos::common::data::CDataWrapper *actionParam, bool& detachParam)  throw (CException) = 0;
         
         /*!
          set the string value for the determinated type
          */
-        void setTypeValue(ActionStringType, const string &);
+        void setTypeValue(ActionStringType,
+                          const std::string &);
         
         bool isShared();
         bool isFired();
@@ -128,13 +124,13 @@ namespace chaos {
          get the string value for the determinated type, a reference
          has been return so keep in mind that string live within object life
          */
-        const string & getTypeValue(ActionStringType);
+        const std::string & getTypeValue(ActionStringType type);
         
 #pragma mark Param Method
         /*!
          Return the array list of the param defined by this action
          */
-        vector< ChaosSharedPtr<ActionParamDescription> >& getParamDescriptions();
+        std::vector< ChaosSharedPtr<ActionParamDescription> >& getParamDescriptions();
         
         /*!
          Add a new param
@@ -159,7 +155,7 @@ namespace chaos {
     class ActionDescriptor:
     public AbstractActionDescriptor {
     public:
-        typedef chaos_data::CDataWrapper* (T::*ActionPointerDef)(chaos_data::CDataWrapper*, bool&);
+        typedef chaos::common::data::CDataWrapper* (T::*ActionPointerDef)(chaos::common::data::CDataWrapper*, bool&);
         
         /*!
          construct the action class with objectClass pointer,object method pointer action domain name and action name
@@ -185,8 +181,8 @@ namespace chaos {
         /*!
          execute the action call
          */
-        chaos_data::CDataWrapper* call(chaos_data::CDataWrapper *actionParam,
-                                       bool& detachParam)  throw (CException) {
+        chaos::common::data::CDataWrapper* call(chaos::common::data::CDataWrapper *actionParam,
+                                                bool& detachParam)  throw (CException) {
             //call the action with param
             CHAOS_ASSERT(objectReference)
             boost::unique_lock<boost::mutex> wl(mutex_execution_lock, boost::defer_lock);

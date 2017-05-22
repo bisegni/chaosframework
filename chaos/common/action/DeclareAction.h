@@ -36,7 +36,7 @@ namespace chaos {
      action, need to subclass this
      */
     class DeclareAction {
-        vector<AbstActionDescShrPtr> actionDescriptionVector;
+        std::vector<AbstActionDescShrPtr> actionDescriptionVector;
             //!action
         /*!
          Encode action into his correspondend CDataWrapper
@@ -75,12 +75,12 @@ namespace chaos {
          return the array that contains all action descriptor for 
          the istance implementing this class
          */
-        vector<AbstActionDescShrPtr>& getActionDescriptors();
+        std::vector<AbstActionDescShrPtr>& getActionDescriptors();
         
         /*!
          Return the description of all action into a CDataWrapper
          */
-        void getActionDescrionsInDataWrapper(chaos_data::CDataWrapper&, bool close = true);
+        void getActionDescrionsInDataWrapper(chaos::common::data::CDataWrapper&, bool close = true);
     };
 }
 #endif

@@ -19,10 +19,8 @@
  */
 #include <chaos/common/action/ActionDescriptor.h>
 using namespace chaos;
-using namespace std;
 using namespace boost;
-
-
+using namespace std;
 
 AbstractActionDescriptor::AbstractActionDescriptor(bool shared_execution):
 fired(false),

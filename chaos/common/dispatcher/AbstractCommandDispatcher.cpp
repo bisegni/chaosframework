@@ -23,7 +23,9 @@
 
 using namespace chaos;
 using namespace chaos::common::data;
+
 using namespace boost;
+
 using namespace std;
 
 #define ACDLAPP_ LAPP_ << "[AbstractCommandDispatcher] - "
@@ -77,7 +79,7 @@ CDataWrapper *CheckDomainRpcAction::checkDomain(CDataWrapper *action_data, bool&
     return result.release();
 }
 
-AbstractCommandDispatcher::AbstractCommandDispatcher(string alias):
+AbstractCommandDispatcher::AbstractCommandDispatcher(const string& alias):
 NamedService(alias),
 check_domain_action(this),
 rpc_forwarder_ptr(NULL){
@@ -99,7 +101,7 @@ void AbstractCommandDispatcher::stop() throw(CException) {
 
 void AbstractCommandDispatcher::deinit()  throw(CException) {}
 
-bool AbstractCommandDispatcher::submitMessage(string& server_port,
+bool AbstractCommandDispatcher::submitMessage(const string& server_port,
                                               chaos::common::data::CDataWrapper* message,
                                               bool onThisThread)  throw(CException) {
     CHAOS_ASSERT(message && rpc_forwarder_ptr)

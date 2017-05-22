@@ -197,7 +197,7 @@ const std::string& AbstractControlUnit::getCUID() {
     return control_unit_id;
 }
 
-const string& AbstractControlUnit::getCUParam() {
+const std::string& AbstractControlUnit::getCUParam() {
     return control_unit_param;
 }
 
@@ -341,7 +341,7 @@ void AbstractControlUnit::_getDeclareActionInstance(std::vector<const chaos::Dec
 //----------------------------------------- checklist method ------------------------------------------------
 #pragma mark checklist method
 void AbstractControlUnit::doInitRpCheckList() throw(CException) {
-    std::vector<string> attribute_names;
+    std::vector<std::string> attribute_names;
     //rpc initialize service
     CHAOS_CHECK_LIST_START_SCAN_TO_DO(check_list_sub_service, "_init"){
         
@@ -1200,7 +1200,7 @@ void AbstractControlUnit::fillCachedValueVector(AttributeCache& attribute_cache,
 }
 
 void AbstractControlUnit::initAttributeOnSharedAttributeCache(SharedCacheDomain domain,
-                                                              std::vector<string>& attribute_names) {
+                                                              std::vector<std::string>& attribute_names) {
     //add input attribute to shared setting
     CHAOS_ASSERT(attribute_value_shared_cache)
     RangeValueInfo attributeInfo;

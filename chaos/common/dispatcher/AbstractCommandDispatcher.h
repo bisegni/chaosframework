@@ -37,11 +37,6 @@
 #include <chaos/common/utility/NamedService.h>
 #include <chaos/common/utility/StartableService.h>
 
-
-using namespace std;
-using namespace bson;
-using namespace boost;
-
 /*
  Base class for the command implementation
  */
@@ -101,11 +96,11 @@ namespace chaos{
         
     public:
         //! Constructor
-        AbstractCommandDispatcher(string alias);
+        AbstractCommandDispatcher(const std::string& alias);
         
         ~AbstractCommandDispatcher();
         
-        virtual void init(void*)  throw(CException);
+        virtual void init(void *init_data)  throw(CException);
         
         //-----------------------
         virtual void start() throw(CException);
@@ -134,7 +129,7 @@ namespace chaos{
          deallocation is managed by rpc client, otherwise("true" value) the caller need to delete the object it self
          \return boolean value to informa is the mesage has been submitted
          */
-        bool submitMessage(string& server_port,
+        bool submitMessage(const string& server_port,
                            chaos::common::data::CDataWrapper* message,
                            bool onThisThread = false) throw(CException);
         

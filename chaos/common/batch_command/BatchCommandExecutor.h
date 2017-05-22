@@ -63,7 +63,7 @@ namespace chaos {
             
             
             CHAOS_DEFINE_VECTOR_FOR_TYPE(ChaosSharedPtr<BatchCommandDescription>, BatchCommandDescriptionList);
-            CHAOS_DEFINE_MAP_FOR_TYPE(string,  ChaosSharedPtr<BatchCommandDescription>, MapCommandDescription);
+            CHAOS_DEFINE_MAP_FOR_TYPE(std::string,  ChaosSharedPtr<BatchCommandDescription>, MapCommandDescription);
             
             //! Slow command execution sand box
             /*!
@@ -224,7 +224,7 @@ namespace chaos {
                  \param alias is the name of the command to use as default (started at startup)
                  \param sandbox_instance is the 1-based index of the sandbox where install the command
                  */
-                void setDefaultCommand(const string& alias,
+                void setDefaultCommand(const std::string& alias,
                                        unsigned int sandbox_instance = COMMAND_BASE_SANDOXX_ID);
                 
                 /*!
@@ -248,7 +248,7 @@ namespace chaos {
                  \param alias the name associated to the command
                  \param instancer the instance of the instancer that will produce the "instance" of the command
                  */
-                void installCommand(const string& alias, chaos::common::utility::ObjectInstancer<BatchCommand> *instancer);
+                void installCommand(const std::string& alias, chaos::common::utility::ObjectInstancer<BatchCommand> *instancer);
                 
                 //! Install a command by his description
                 void installCommand(ChaosSharedPtr<BatchCommandDescription> command_description);

@@ -27,9 +27,6 @@
 #include <chaos/common/action/EventAction.h>
 #include <chaos/common/event/evt_desc/EventDescriptor.h>
 
-using namespace chaos::common::event;
-using namespace chaos::common::utility;
-
 namespace chaos {
     namespace common {
         namespace network {
@@ -58,15 +55,15 @@ namespace chaos {
         /*
             Perform the registration of an handler
          */
-        virtual void registerEventAction(EventAction *eventAction,
-										 EventType eventType,
+        virtual void registerEventAction(chaos::EventAction *eventAction,
+                                         chaos::common::event::EventType eventType,
 										 const char * const identificationString = NULL)  throw(CException) = 0;
         
             //! Event handler deregistration
         /*
             Perform the deregistration of an handler
          */
-        virtual void deregisterEventAction(EventAction *eventAction)  throw(CException) = 0;
+        virtual void deregisterEventAction(chaos::EventAction *eventAction)  throw(CException) = 0;
     };
     
 }

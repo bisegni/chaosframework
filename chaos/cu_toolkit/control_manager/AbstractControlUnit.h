@@ -77,11 +77,6 @@ const char * const  impl::PublishName = #impl;\
 public:\
 static const char * const PublishName;\
 private:\
-//class impl : public subclass
-
-using namespace chaos::common::data;
-using namespace chaos::common::data::cache;
-using namespace chaos::cu::driver_manager::driver;
 
 namespace chaos{
     namespace cu {
@@ -288,7 +283,7 @@ namespace chaos{
                 
                 //! initialize the dataset attributes (input and output)
                 void initAttributeOnSharedAttributeCache(SharedCacheDomain domain,
-                                                         std::vector<string>& attribute_names);
+                                                         std::vector<std::string>& attribute_names);
                 //! complete the output dataset cached with mandatory attribute
                 /*!
                  The mandatory attribute like timestamp and triggered id are added after the user defined output aattribute
@@ -618,13 +613,13 @@ namespace chaos{
                 virtual ~AbstractControlUnit();
                 
                 //! Return the control unit instance
-                const string& getCUInstance();
+                const std::string& getCUInstance();
                 
                 //! Return the control unit instance
-                const string& getCUID();
+                const std::string& getCUID();
                 
                 //! get control unit load parameter
-                const string& getCUParam();
+                const std::string& getCUParam();
                 
                 //!return true if the cu load paramete are in json format
                 const bool isCUParamInJson();
