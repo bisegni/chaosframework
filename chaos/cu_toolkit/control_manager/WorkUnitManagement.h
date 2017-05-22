@@ -131,7 +131,7 @@ namespace chaos {
                 bool    active;
                 int     publishing_counter_delay;
                 
-                int sendConfPackToMDS(CDataWrapper& dataToSend);
+                int sendConfPackToMDS(chaos::common::data::CDataWrapper& dataToSend);
                 int sendLoadCompletionToMDS(const std::string& control_unit_uid);
                 inline string getCurrentStateString();
             public:
@@ -165,7 +165,7 @@ namespace chaos {
                 void scheduleSM() throw (CException);
                 
                     //! manage the ack pack
-                bool manageACKPack(CDataWrapper& ack_pack);
+                bool manageACKPack(chaos::common::data::CDataWrapper& ack_pack);
                 
                 bool smNeedToSchedule();
                 

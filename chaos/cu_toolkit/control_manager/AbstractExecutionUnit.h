@@ -129,14 +129,14 @@ namespace chaos{
                 \ingroup Execution_Unit_User_Api
                 \ingroup Execution_Unit_Definition_Api
                  */
-                CDataVariant getOutputAttributeValue(const std::string& attribute_name);
+                chaos::common::data::CDataVariant getOutputAttributeValue(const std::string& attribute_name);
                 
                 //!Get the value from an input attribute
                 /*!
                  \ingroup Execution_Unit_User_Api
                  \ingroup Execution_Unit_Definition_Api
                  */
-                CDataVariant getInputAttributeValue(const std::string& attribute_name);
+                chaos::common::data::CDataVariant getInputAttributeValue(const std::string& attribute_name);
                 
                 //!Set the value from an output attribute
                 /*!
@@ -144,7 +144,7 @@ namespace chaos{
                  \ingroup Execution_Unit_Definition_Api
                  */
                 void setOutputAttributeValue(const std::string& attribute_name,
-                                             const CDataVariant& attribute_value);
+                                             const chaos::common::data::CDataVariant& attribute_value);
                 
                 //! perform a new search
                 /*!

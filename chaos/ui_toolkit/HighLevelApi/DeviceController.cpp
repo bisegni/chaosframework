@@ -782,9 +782,9 @@ void DeviceController::allocateNewLiveBufferForAttributeAndType(string& attribut
 }
 
 //---------------------------------------------------------------------------------------------------
-DataBuffer *DeviceController::getBufferForAttribute(string& attributeName) {
+UIDataBuffer *DeviceController::getBufferForAttribute(string& attributeName) {
     boost::mutex::scoped_lock lock(trackMutext);
-    DataBuffer * result = NULL;
+    UIDataBuffer * result = NULL;
     //allocate attribute traccking
     
     if(attributeValueMap.count(attributeName) == 0  ) return result;
@@ -825,7 +825,7 @@ PointerBuffer *DeviceController::getPtrBufferForAttribute(string& attributeName)
 }
 
 //---------------------------------------------------------------------------------------------------
-DataBuffer *DeviceController::getPtrBufferForTimestamp(const int initialDimension) {
+UIDataBuffer *DeviceController::getPtrBufferForTimestamp(const int initialDimension) {
     return int64AttributeLiveBuffer.count(DataPackCommonKey::DPCK_TIMESTAMP)>0? int64AttributeLiveBuffer[DataPackCommonKey::DPCK_TIMESTAMP]:NULL;
 }
 

@@ -26,6 +26,7 @@
 #include <chaos/common/utility/TimingUtil.h>
 
 using namespace chaos::common::io;
+using namespace chaos::common::data;
 using namespace chaos::common::script;
 using namespace chaos::common::utility;
 

@@ -82,8 +82,8 @@ namespace chaos {
                     /*!
                      defin ean rpc action that permit to update, at runtime, the soruce of the script
                      */
-                    CDataWrapper* updateScriptSource(CDataWrapper *data_pack,
-                                                     bool& detachParam) throw(CException);
+                    chaos::common::data::CDataWrapper* updateScriptSource(chaos::common::data::CDataWrapper *data_pack,
+                                                                          bool& detachParam) throw(CException);
                     
                 public:
                     /*! default constructor
@@ -144,7 +144,7 @@ namespace chaos {
                     void executeAlgorithmEnd() throw (CException);
                     
                     //! inherithed method
-                    void unitUndefineActionAndDataset() throw(CException);                    
+                    void unitUndefineActionAndDataset() throw(CException);
                     
                     //!called when changed on input attribute are detected
                     /*!

@@ -404,9 +404,9 @@ namespace chaos {
              */
             void fetchCurrentDeviceValue();
             
-            common::utility::DataBuffer *getBufferForAttribute(string& attributeName);
+            common::utility::UIDataBuffer *getBufferForAttribute(string& attributeName);
             common::utility::PointerBuffer *getPtrBufferForAttribute(string& attributeName);
-            common::utility::DataBuffer *getPtrBufferForTimestamp(const int initialDimension = 10);
+            common::utility::UIDataBuffer *getPtrBufferForTimestamp(const int initialDimension = 10);
             
             chaos::common::data::CDataWrapper *getCurrentData();
             

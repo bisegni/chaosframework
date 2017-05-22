@@ -22,6 +22,7 @@
 #include <chaos/cu_toolkit/control_manager/script/api/EUDSValueManagement.h>
 #include <chaos/cu_toolkit/control_manager/script/ScriptableExecutionUnit.h>
 
+using namespace chaos::common::data;
 using namespace chaos::common::script;
 using namespace chaos::cu::control_manager::script;
 using namespace chaos::cu::control_manager::script::api;
@@ -29,6 +30,11 @@ using namespace chaos::cu::control_manager::script::api;
 #define EUSW_LAPP    INFO_LOG_1_P(EUDSValueManagement, eu_instance->getCUID())
 #define EUSW_DBG     DBG_LOG_1_P(EUDSValueManagement, eu_instance->getCUID())
 #define EUSW_LERR    ERR_LOG_1_P(EUDSValueManagement, eu_instance->getCUID())
+
+#define EUSW_ADD_DATASET_ATTRIBUTE      "addDatasetAttribute"
+#define EUSW_GET_OUTPUT_ATTRIBUTE_VALUE "getOutputAttributeValue"
+#define EUSW_SET_OUTPUT_ATTRIBUTE_VALUE "setOutputAttributeValue"
+#define EUSW_GET_INPUT_ATTRIBUTE_VALUE  "getInputAttributeValue"
 
 EUDSValueManagement::EUDSValueManagement(ScriptableExecutionUnit *_eu_instance):
 TemplatedAbstractScriptableClass(this,

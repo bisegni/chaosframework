@@ -514,6 +514,8 @@
 		327CFF091708C4EB0069497B /* FastHash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327CFF071708C4EA0069497B /* FastHash.cpp */; };
 		327CFF0A1708C4EB0069497B /* FastHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 327CFF081708C4EB0069497B /* FastHash.h */; };
 		327CFF121708D7760069497B /* CacheGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = 327CFF111708D7740069497B /* CacheGlobal.h */; };
+		327D7E0D1ED2E57A00A8AF1C /* EULiveManagment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327D7E0B1ED2E57A00A8AF1C /* EULiveManagment.cpp */; };
+		327D7E0E1ED2E57A00A8AF1C /* EULiveManagment.h in Headers */ = {isa = PBXBuildFile; fileRef = 327D7E0C1ED2E57A00A8AF1C /* EULiveManagment.h */; };
 		327F39A01AEA47980000C845 /* GetAssociationByDS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327F399E1AEA47980000C845 /* GetAssociationByDS.cpp */; };
 		327F39A71AEAA2290000C845 /* NewDS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327F39A51AEAA2290000C845 /* NewDS.cpp */; };
 		327F39A81AEAA2290000C845 /* NewDS.h in Headers */ = {isa = PBXBuildFile; fileRef = 327F39A61AEAA2290000C845 /* NewDS.h */; };
@@ -1826,6 +1828,8 @@
 		327CFF071708C4EA0069497B /* FastHash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FastHash.cpp; sourceTree = "<group>"; };
 		327CFF081708C4EB0069497B /* FastHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastHash.h; sourceTree = "<group>"; };
 		327CFF111708D7740069497B /* CacheGlobal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheGlobal.h; sourceTree = "<group>"; };
+		327D7E0B1ED2E57A00A8AF1C /* EULiveManagment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EULiveManagment.cpp; sourceTree = "<group>"; };
+		327D7E0C1ED2E57A00A8AF1C /* EULiveManagment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EULiveManagment.h; sourceTree = "<group>"; };
 		327D83D91AF1185700AD7000 /* batch_impl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = batch_impl.h; sourceTree = "<group>"; };
 		327F399E1AEA47980000C845 /* GetAssociationByDS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetAssociationByDS.cpp; sourceTree = "<group>"; };
 		327F399F1AEA47980000C845 /* GetAssociationByDS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetAssociationByDS.h; sourceTree = "<group>"; };
@@ -3531,6 +3535,8 @@
 				32655ACC1E93FCF200829266 /* EUSearch.h */,
 				32655AC31E93C12D00829266 /* EUDSValueManagement.cpp */,
 				32655AC41E93C12E00829266 /* EUDSValueManagement.h */,
+				327D7E0B1ED2E57A00A8AF1C /* EULiveManagment.cpp */,
+				327D7E0C1ED2E57A00A8AF1C /* EULiveManagment.h */,
 			);
 			path = api;
 			sourceTree = "<group>";
@@ -5587,6 +5593,7 @@
 				325CA6BC15EE10B3007FCC12 /* EventAction.h in Headers */,
 				32BD631E1E1E4D7F006FE42C /* AbstractActionScheduler.h in Headers */,
 				3253E09515F27A180079B40E /* EventTypeScheduler.h in Headers */,
+				327D7E0E1ED2E57A00A8AF1C /* EULiveManagment.h in Headers */,
 				32FB201D1A3F11C400307A86 /* AttributeCache.h in Headers */,
 				3253F2FF189AEEFD00959CA7 /* DirectIOVirtualClientChannel.h in Headers */,
 				32A88BCB1CF8228A001DBAF5 /* lfunc.h in Headers */,
@@ -6426,6 +6433,7 @@
 				32DF603F15E14F5A00312C94 /* InstrumentEventDescriptor.cpp in Sources */,
 				32067EA51CABEF0300DE568A /* CDataBuffer.cpp in Sources */,
 				32B73E9E18D9D80F00F0B187 /* PerformanceManagment.cpp in Sources */,
+				327D7E0D1ED2E57A00A8AF1C /* EULiveManagment.cpp in Sources */,
 				3214E7441DC10B9500A67414 /* MultiSeverityAlarm.cpp in Sources */,
 				3253F302189AEF8000959CA7 /* DirectIOVirtualServerChannel.cpp in Sources */,
 				32FC49B71E0ACB1B0087D82C /* BatchCommandParallelSandbox.cpp in Sources */,

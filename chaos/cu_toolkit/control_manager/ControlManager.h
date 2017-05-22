@@ -212,33 +212,33 @@ namespace chaos {
                 /*!
 				 Action to poll status of a UnitServer and all CUs
 				 */
-				CDataWrapper* unitServerStatus(CDataWrapper *message_data, bool &detach) throw (CException);
+                chaos::common::data::CDataWrapper* unitServerStatus(chaos::common::data::CDataWrapper *message_data, bool &detach) throw (CException);
 				
 				/*!
 				 Action that show the unit server registration result(success or failure)
 				 */
-				CDataWrapper* unitServerRegistrationACK(CDataWrapper *message_data, bool &detach) throw (CException);
+				chaos::common::data::CDataWrapper* unitServerRegistrationACK(chaos::common::data::CDataWrapper *message_data, bool &detach) throw (CException);
 				
 				/*!
 				 Action that get the work unit registration(success or failure)
 				 */
-				CDataWrapper* workUnitRegistrationACK(CDataWrapper *message_data, bool &detach) throw (CException);
+				chaos::common::data::CDataWrapper* workUnitRegistrationACK(chaos::common::data::CDataWrapper *message_data, bool &detach) throw (CException);
 				
 				/*!
 				 Action for loading a control unit
 				 */
-				CDataWrapper* loadControlUnit(CDataWrapper *message_data, bool &detach) throw (CException);
+				chaos::common::data::CDataWrapper* loadControlUnit(chaos::common::data::CDataWrapper *message_data, bool &detach) throw (CException);
 				
 				/*!
 				 Action for the unloading of a control unit
 				 The unload operation, check that the target control unit is in deinit state
 				 */
-				CDataWrapper* unloadControlUnit(CDataWrapper *message_data, bool &detach) throw (CException);
+				chaos::common::data::CDataWrapper* unloadControlUnit(chaos::common::data::CDataWrapper *message_data, bool &detach) throw (CException);
 				
 				/*!
 				 Configure the sandbox and all subtree of the CU
 				 */
-				CDataWrapper* updateConfiguration(CDataWrapper  *message_data, bool& detach);
+				chaos::common::data::CDataWrapper* updateConfiguration(chaos::common::data::CDataWrapper  *message_data, bool& detach);
 				
                 /*
                  Submit a new Control unit instance

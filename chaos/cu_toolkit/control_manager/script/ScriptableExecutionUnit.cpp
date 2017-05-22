@@ -28,6 +28,7 @@
 
 #include <json/json.h>
 
+using namespace chaos::common::data;
 using namespace chaos::common::script;
 using namespace chaos::common::utility;
 using namespace chaos::common::exception;

@@ -37,6 +37,9 @@
 #include <chaos/common/async_central/AsyncCentralManager.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
 
+#include <boost/interprocess/sync/file_lock.hpp>
+#include <boost/interprocess/sync/scoped_lock.hpp>
+
 #ifdef __CHAOS_DEBUG_MEMORY__
 #include <unistd.h>
 #include <iostream>
@@ -48,6 +51,12 @@
 
     //! Default chaos namespace used to group all common api
 namespace chaos {
+    struct __file_remover__ {
+        const char*name;
+        __file_remover__(const char*_name):name(_name){}
+        ~__file_remover__(){std::remove(name);}
+    };
+    
 #ifdef __CHAOS_DEBUG_MEMORY__
     tracey::scope *scope_memory_track = NULL;
 #endif
@@ -170,6 +179,15 @@ namespace chaos {
             struct utsname u_name;
             if(initialized)
                  return;
+            
+            //lock file for permit to choose different tcp port for services
+            std::fstream domain_file_lock_stream("/tmp/chaos_init.lock",
+                                                 std::ios_base::out |
+                                                 std::ios_base::binary);    //check if we have got the lock
+            boost::interprocess::file_lock flock("/tmp/chaos_init.lock");
+            boost::interprocess::scoped_lock<boost::interprocess::file_lock> e_lock(flock);
+            __file_remover__ fr("/tmp/chaos_init.lock");
+            
             initialized=true;
             if (std::signal((int) SIGUSR1, start_acquiring_memory_allocation) == SIG_ERR){
                 std::cout << "start_acquiring_memory_allocation Signal handler registraiton error";
@@ -182,7 +200,7 @@ namespace chaos {
                     std::cout << "print_memory_leak_status Signal handler registraiton error";
                     exit(-1);
                 }
-
+                
                     //startup logger
                 chaos::common::log::LogManager::getInstance()->init();
 

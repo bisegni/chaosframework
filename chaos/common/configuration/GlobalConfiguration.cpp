@@ -26,9 +26,6 @@
 #include <boost/regex.hpp>
 #include <boost/algorithm/string.hpp>
 
-#include <boost/interprocess/sync/file_lock.hpp>
-#include <boost/interprocess/sync/scoped_lock.hpp>
-
 #include "GlobalConfiguration.h"
 
 using namespace chaos;
@@ -200,23 +197,7 @@ void GlobalConfiguration::parseParameter(const po::basic_parsed_options<char>& o
     //check the default option
     checkDefaultOption();
 }
-struct __file_remover__ {
-    const char*name;
-    __file_remover__(const char*_name):name(_name){}
-    ~__file_remover__(){std::remove(name);}
-};
 void GlobalConfiguration::checkDefaultOption() throw (CException) {
-    
-    //lock file for permit to choose different tcp port for services
-    std::fstream domain_file_lock_stream("/tmp/chaos_init.lock",
-                                         std::ios_base::out |
-                                         std::ios_base::binary);
-    
-    //check if we have got the lock
-    boost::interprocess::file_lock flock("/tmp/chaos_init.lock");
-    boost::interprocess::scoped_lock<boost::interprocess::file_lock> e_lock(flock);
-    __file_remover__ fr("/tmp/chaos_init.lock");
-    
     //now we can fill the gloabl configuration
     //start with getting log configuration
     CHECK_AND_DEFINE_BOOL_ZERO_TOKEN_OPTION(logOnConsole, InitOption::OPT_LOG_ON_CONSOLE)

@@ -104,7 +104,7 @@ namespace chaos {
 				/*!
 				 Event for update some CU configuration
 				 */
-				virtual chaos::common::data::CDataWrapper* updateConfiguration(CDataWrapper* update_pack, bool& detach_param) throw (CException);
+				virtual chaos::common::data::CDataWrapper* updateConfiguration(chaos::common::data::CDataWrapper* update_pack, bool& detach_param) throw (CException);
                 /*!
                  Thread method for the scheduler
                  */

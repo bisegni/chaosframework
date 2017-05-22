@@ -104,7 +104,7 @@ namespace chaos{
             public chaos::common::alarm::AlarmHandler,
             public chaos::cu::driver_manager::DriverErogatorInterface,
             public DeclareAction,
-            protected DatasetDB,
+            protected chaos::common::data::DatasetDB,
             protected chaos::common::async_central::TimerHandler,
             public common::utility::SWEService {
                 //friendly class declaration
@@ -124,8 +124,8 @@ namespace chaos{
 #endif
             public:
                 //! definition of the type for the driver list
-                typedef std::vector<DrvRequestInfo>				ControlUnitDriverList;
-                typedef std::vector<DrvRequestInfo>::iterator	ControlUnitDriverListIterator;
+                typedef std::vector<chaos::cu::driver_manager::driver::DrvRequestInfo>				ControlUnitDriverList;
+                typedef std::vector<chaos::cu::driver_manager::driver::DrvRequestInfo>::iterator	ControlUnitDriverListIterator;
                 
                 inline const char * const stateVariableEnumToName(chaos::cu::control_manager::StateVariableType type) {
                     switch(type) {
@@ -142,7 +142,7 @@ namespace chaos{
                     return -1;
                 }
                 
-                CDataWrapper *writeCatalogOnCDataWrapper(chaos::common::alarm::AlarmCatalog& catalog,
+                chaos::common::data::CDataWrapper *writeCatalogOnCDataWrapper(chaos::common::alarm::AlarmCatalog& catalog,
                                                          int32_t dataset_type);
             private:
                 //!load control key
@@ -186,7 +186,7 @@ namespace chaos{
                 ControlUnitDriverList control_unit_drivers;
                 
                 //! list of the accessor of the driver requested by the unit implementation
-                std::vector< DriverAccessor *> accessorInstances;
+                std::vector< chaos::cu::driver_manager::driver::DriverAccessor *> accessorInstances;
                 
                 //! attributed value shared cache
                 /*!
@@ -227,29 +227,29 @@ namespace chaos{
                 /*!
                  Initialize the Custom Contro Unit and return the configuration
                  */
-                virtual CDataWrapper* _init(CDataWrapper*, bool& detachParam) throw(CException);
+                virtual chaos::common::data::CDataWrapper* _init(chaos::common::data::CDataWrapper*, bool& detachParam) throw(CException);
                 
                 /*!
                  Deinit the Control Unit
                  */
-                virtual CDataWrapper* _deinit(CDataWrapper*, bool& detachParam) throw(CException);
+                virtual chaos::common::data::CDataWrapper* _deinit(chaos::common::data::CDataWrapper*, bool& detachParam) throw(CException);
                 
                 /*!
                  Starto the  Control Unit scheduling for device
                  */
-                virtual CDataWrapper* _start(CDataWrapper*, bool& detachParam) throw(CException);
+                virtual chaos::common::data::CDataWrapper* _start(chaos::common::data::CDataWrapper*, bool& detachParam) throw(CException);
                 
                 /*!
                  Stop the Custom Control Unit scheduling for device
                  */
-                virtual CDataWrapper* _stop(CDataWrapper*, bool& detachParam) throw(CException);
+                virtual chaos::common::data::CDataWrapper* _stop(chaos::common::data::CDataWrapper*, bool& detachParam) throw(CException);
                 
                 //!Recover from a recoverable error state
-                virtual CDataWrapper* _recover(CDataWrapper *deinitParam, bool& detachParam) throw(CException);
+                virtual chaos::common::data::CDataWrapper* _recover(chaos::common::data::CDataWrapper *deinitParam, bool& detachParam) throw(CException);
                 /*!
                  Restore the control unit to a precise tag
                  */
-                virtual CDataWrapper* _unitRestoreToSnapshot(CDataWrapper*, bool& detachParam) throw(CException);
+                virtual chaos::common::data::CDataWrapper* _unitRestoreToSnapshot(chaos::common::data::CDataWrapper*, bool& detachParam) throw(CException);
                 
                 /*!
                  Define the control unit DataSet and Action into
@@ -303,10 +303,10 @@ namespace chaos{
                 
                 //! filel the dataset packet for the cached attribute in the array
                 inline void fillCDatawrapperWithCachedValue(std::vector<AttributeValue*>& cached_attributes,
-                                                            CDataWrapper& dataset);
+                                                            chaos::common::data::CDataWrapper& dataset);
                 
                 void fillRestoreCacheWithDatasetFromTag(data_manager::KeyDataStorageDomain domain,
-                                                        CDataWrapper& dataset,
+                                                        chaos::common::data::CDataWrapper& dataset,
                                                         AbstractSharedDomainCache& restore_cache);
                 
                 //!logging api
@@ -337,7 +337,7 @@ namespace chaos{
                 /*!
                  This method configure the CDataWrapper whit all th einromation for describe the implemented device
                  */
-                virtual void _defineActionAndDataset(CDataWrapper& setup_configuration) throw(CException);
+                virtual void _defineActionAndDataset(chaos::common::data::CDataWrapper& setup_configuration) throw(CException);
                 
                 //! Get all managed declare action instance
                 /*!
@@ -351,21 +351,21 @@ namespace chaos{
                  This method is called when the input attribute of the dataset need to be valorized,
                  subclass need to perform all the appropiate action to set these attribute
                  */
-                CDataWrapper* _setDatasetAttribute(CDataWrapper*, bool&) throw (CException);
+                chaos::common::data::CDataWrapper* _setDatasetAttribute(chaos::common::data::CDataWrapper*, bool&) throw (CException);
                 
                 //! Return the state of the control unit
                 /*!
                  Return the current control unit state identifyed by ControlUnitState types
                  fitted into the CDatawrapper with the key CUStateKey::CONTROL_UNIT_STATE
                  */
-                CDataWrapper* _getState(CDataWrapper*, bool& detachParam) throw(CException);
+                chaos::common::data::CDataWrapper* _getState(chaos::common::data::CDataWrapper*, bool& detachParam) throw(CException);
                 
                 //! Return the information about the type of the current instace of control unit
                 /*!
                  Return unit fitted into cdata wrapper:
                  CU type: string type associated with the key @CUDefinitionKey::CS_CM_CU_TYPE
                  */
-                CDataWrapper* _getInfo(CDataWrapper*, bool& detachParam) throw(CException);
+                chaos::common::data::CDataWrapper* _getInfo(chaos::common::data::CDataWrapper*, bool& detachParam) throw(CException);
                 
                 //! update the timestamp attribute of the output datapack
                 void _updateAcquistionTimestamp(uint64_t alternative_ts = 0);
@@ -409,7 +409,7 @@ namespace chaos{
                  \param neededDriver need to be filled with the structure DrvRequestInfo filled with the information
                  about the needed driver [name, version and initialization param if preset statically]
                  */
-                virtual void unitDefineDriver(std::vector<DrvRequestInfo>& neededDriver);
+                virtual void unitDefineDriver(std::vector<chaos::cu::driver_manager::driver::DrvRequestInfo>& neededDriver);
                 
                 //! abstract method to permit to the control unit to define custom attribute
                 /*!
@@ -478,7 +478,7 @@ namespace chaos{
                  Receive the event for set the dataset input element, this virtual method
                  is empty because can be used by controlunit implementation
                  */
-                virtual CDataWrapper* setDatasetAttribute(CDataWrapper*, bool& detachParam) throw (CException);
+                virtual chaos::common::data::CDataWrapper* setDatasetAttribute(chaos::common::data::CDataWrapper*, bool& detachParam) throw (CException);
                 
                 // Infrastructure configuration update
                 /*!
@@ -486,7 +486,7 @@ namespace chaos{
                  checked to control waht is needed to update. Subclass that override this method need first inherited
                  the parent one and the check if the CDataWrapper contains something usefull for it.
                  */
-                virtual CDataWrapper* updateConfiguration(CDataWrapper*, bool&) throw (CException);
+                virtual chaos::common::data::CDataWrapper* updateConfiguration(chaos::common::data::CDataWrapper*, bool&) throw (CException);
                 
                 //! return the accessor by an index
                 /*

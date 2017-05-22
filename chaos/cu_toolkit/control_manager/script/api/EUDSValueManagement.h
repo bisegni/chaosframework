@@ -30,13 +30,7 @@ namespace chaos {
             namespace script {
                 //! forward declaration
                 class ScriptableExecutionUnit;
-                
                 namespace api {
-#define EUSW_ADD_DATASET_ATTRIBUTE      "addDatasetAttribute"
-#define EUSW_GET_OUTPUT_ATTRIBUTE_VALUE "getOutputAttributeValue"
-#define EUSW_SET_OUTPUT_ATTRIBUTE_VALUE "setOutputAttributeValue"
-#define EUSW_GET_INPUT_ATTRIBUTE_VALUE  "getInputAttributeValue"
-                    
                     //! class taht permit to interact with execution unit and chaos cript framework
                     class EUDSValueManagement:
                     public chaos::common::script::TemplatedAbstractScriptableClass<EUDSValueManagement> {

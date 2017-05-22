@@ -43,11 +43,11 @@
 
 
 namespace fs = boost::filesystem;
-namespace chaos_data = chaos::common::data;
 namespace chaos_async = chaos::common::async_central;
 namespace cu_driver_manager = chaos::cu::driver_manager;
 
 using namespace chaos;
+using namespace chaos::common::data;
 using namespace chaos::common::utility;
 using namespace chaos::common::healt_system;
 using namespace chaos::cu::command_manager;
