@@ -305,7 +305,7 @@ void QuantumSlotScheduler::fetchValue(ChaosSharedPtr<IODataDriver> data_driver) 
     while(work_on_fetch) {
         if(queue_active_slot.pop(cur_slot)) {
             //we have slot available
-            size_t          data_found_size;
+            size_t data_found_size;
             char * data_found = data_driver->retriveRawData(cur_slot->key, &data_found_size);
             
             //dispatch data

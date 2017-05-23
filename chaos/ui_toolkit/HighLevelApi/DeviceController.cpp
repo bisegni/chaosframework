@@ -894,8 +894,7 @@ CDataWrapper * DeviceController::getCurrentDatasetForDomain(DatasetDomain domain
 chaos::common::data::CDataWrapper *  DeviceController::fetchCurrentDatatasetFromDomain(DatasetDomain domain) {
     CHAOS_ASSERT(ioLiveDataDriver)
     char *value = NULL;
-    unsigned long value_len = 0;
-    
+    size_t value_len = 0;
     if(domain<current_dataset.size()){
         value = ioLiveDataDriver->retriveRawData(channel_keys[domain],(size_t*)&value_len);
         if(value){
