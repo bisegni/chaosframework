@@ -71,7 +71,7 @@ deviceChannel(NULL) {
         ioLiveDataDriver->updateConfiguration(best_available_da_ptr.get());
     }
     
-    channel_keys.resize(7);
+    channel_keys.resize(DPCK_LAST_DATASET_INDEX + 1);
     channel_keys[DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT]=(deviceChannel->getDeviceID() + DataPackPrefixID::OUTPUT_DATASET_POSTFIX);
     channel_keys[DataPackCommonKey::DPCK_DATASET_TYPE_INPUT]=(deviceChannel->getDeviceID() + DataPackPrefixID::INPUT_DATASET_POSTFIX);
     channel_keys[DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM]=(deviceChannel->getDeviceID() + DataPackPrefixID::CUSTOM_DATASET_POSTFIX);
@@ -948,8 +948,7 @@ int CUController::fetchAllDataset() {
 //---------------------------------------------------------------------------------------------------
 ChaosSharedPtr<chaos::common::data::CDataWrapper>  CUController::fetchCurrentDatatasetFromDomain(DatasetDomain domain) {
     boost::mutex::scoped_lock lock(trackMutext);
-    chaos::common::data::VectorCDWShrdPtr results;
-    int value_len = 0;
+    size_t value_len = 0;
     char *value = ioLiveDataDriver->retriveRawData(channel_keys[domain],(size_t*)&value_len);
     if(value){
         chaos::common::data::CDataWrapper *tmp = new CDataWrapper(value);
