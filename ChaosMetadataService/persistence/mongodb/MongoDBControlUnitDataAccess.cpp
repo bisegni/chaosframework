@@ -54,14 +54,14 @@ MongoDBControlUnitDataAccess::~MongoDBControlUnitDataAccess() {}
 //        const std::string key_processing_ageing = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_PROCESSING_AGEING);
 //        const std::string key_last_checing_time = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_AGEING_LAST_CHECK_DATA);
 //        const std::string key_last_performed_time = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_PERFORMED_AGEING);
-//        
+//
 //        mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << control_unit_id
 //                                    << MONGODB_COLLECTION_NODES_AGEING_INFO << BSON("$exists" << false ));
-//        
+//
 //        mongo::BSONObj update = BSON("$set" << BSON(key_last_checing_time << mongo::Date_t(current_ts) <<
 //                                                    key_last_performed_time << mongo::Date_t(current_ts) <<
 //                                                    key_processing_ageing << false));
-//        
+//
 //        /*BSON(key_last_checing_time << mongo::Date_t(current_ts) <<
 //         key_last_performed_time << mongo::Date_t(current_ts) <<
 //         key_processing_ageing << false);*/
@@ -108,7 +108,10 @@ int MongoDBControlUnitDataAccess::getControlUnitWithAutoFlag(const std::string& 
         query_builder << boost::str(boost::format("instance_description.%1%") % NodeDefinitionKey::NODE_PARENT) << unit_server_host;
         query_builder << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_CONTROL_UNIT;
         //exlude execution unit from autoload phase because hte ened to be loaded by execution pool
-        query_builder << NodeDefinitionKey::NODE_SUB_TYPE << BSON("$ne" << NodeType::NODE_SUBTYPE_SCRIPTABLE_EXECUTION_UNIT);
+        query_builder << "$or" << BSON_ARRAY(BSON(NodeDefinitionKey::NODE_SUB_TYPE << BSON("$ne" << NodeType::NODE_SUBTYPE_SCRIPTABLE_EXECUTION_UNIT)) <<
+                                             BSON_ARRAY("$and" << BSON_ARRAY(BSON(NodeDefinitionKey::NODE_SUB_TYPE <<  NodeType::NODE_SUBTYPE_SCRIPTABLE_EXECUTION_UNIT) <<
+                                                                             BSON(CHAOS_FORMAT("instance_description.%1%", %"script_bind_type") << service_common::data::script::ScriptBindTypeUnitServer))));
+        //query_builder << NodeDefinitionKey::NODE_SUB_TYPE << BSON("$ne" << NodeType::NODE_SUBTYPE_SCRIPTABLE_EXECUTION_UNIT);
         switch(auto_flag) {
             case AUTO_LOAD:
                 query_builder << "instance_description.auto_load" << true;
@@ -394,31 +397,31 @@ int MongoDBControlUnitDataAccess::checkDatasetPresence(const std::string& cu_uni
 
 int MongoDBControlUnitDataAccess::getFullDescription(const std::string& cu_unique_id,
                                                      chaos::common::data::CDataWrapper **dataset_description){
-	int err = 0;
-	mongo::BSONObj result;
-	try {
-		mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << cu_unique_id
-									<< NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_CONTROL_UNIT);
-
-		//remove the field of the document
-			   if((err = connection->findOne(result,
-											 MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
-											 query))) {
-				   MDBCUDA_ERR << "Error fetching dataset";
-			   } else if(result.isEmpty()) {
-				   MDBCUDA_ERR << "No element found";
-			   } else {
-				   //we have dataset so set it directly within the cdsta wrapper
-				   *dataset_description = new CDataWrapper(result.objdata());
-			   }
-		   } catch (const mongo::DBException &e) {
-			   MDBCUDA_ERR << e.what();
-			   err = -1;
-		   } catch (const CException &e) {
-			   MDBCUDA_ERR << e.what();
-			   err = e.errorCode;
-		   }
-	return err;
+    int err = 0;
+    mongo::BSONObj result;
+    try {
+        mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << cu_unique_id
+                                    << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_CONTROL_UNIT);
+        
+        //remove the field of the document
+        if((err = connection->findOne(result,
+                                      MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                      query))) {
+            MDBCUDA_ERR << "Error fetching dataset";
+        } else if(result.isEmpty()) {
+            MDBCUDA_ERR << "No element found";
+        } else {
+            //we have dataset so set it directly within the cdsta wrapper
+            *dataset_description = new CDataWrapper(result.objdata());
+        }
+    } catch (const mongo::DBException &e) {
+        MDBCUDA_ERR << e.what();
+        err = -1;
+    } catch (const CException &e) {
+        MDBCUDA_ERR << e.what();
+        err = e.errorCode;
+    }
+    return err;
 }
 int MongoDBControlUnitDataAccess::getDataset(const std::string& cu_unique_id,
                                              chaos::common::data::CDataWrapper **dataset_description) {
@@ -1063,9 +1066,9 @@ int MongoDBControlUnitDataAccess::eraseControlUnitDataBeforeTS(const std::string
                                 DataPackCommonKey::DPCK_TIMESTAMP << BSON( "$lte" << mongo::Date_t(unit_ts)));
         
         DEBUG_CODE(MDBCUDA_DBG<<log_message("eraseControlUnitDataBeforeTS",
-                                    "delete",
-                                    DATA_ACCESS_LOG_1_ENTRY("Query",
-                                                            q.jsonString()));)
+                                            "delete",
+                                            DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                    q.jsonString()));)
         //remove in unacknowledge way if something goes wrong successive query will delete it
         if((err = connection->remove(MONGO_DB_COLLECTION_NAME("daq"),
                                      q,

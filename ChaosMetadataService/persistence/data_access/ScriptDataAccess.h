@@ -32,6 +32,7 @@ namespace chaos {
     namespace metadata_service {
         namespace persistence {
             namespace data_access {
+                
                 //!data access for script management
                 class ScriptDataAccess:
                 public chaos::service_common::persistence::data_access::AbstractDataAccess {
@@ -75,6 +76,13 @@ namespace chaos {
                                                   const std::string& script_name,
                                                   const std::string& instance_name) = 0;
                     
+                    //!update the bind type of the script instance
+                    virtual int updateBindType(const uint64_t seq,
+                                               const std::string& script_name,
+                                               const std::string& instance_name,
+                                               const chaos::service_common::data::script::ScriptBindType bind_type,
+                                               const std::string& bind_parent = std::string()) = 0;
+                    
                     //! remove an instance to the script
                     virtual int removeScriptInstance(const uint64_t seq,
                                                      const std::string& script_name,
@@ -89,7 +97,7 @@ namespace chaos {
                      \param start_sequence_id is identified the sequence after wich we need to search
                      \param page_length is the maximum number of the element to return
                      */
-                    virtual int searchScriptInstance(std::vector<chaos::service_common::data::node::NodeInstance>& instance_list,
+                    virtual int searchScriptInstance(std::vector<chaos::service_common::data::script::ScriptInstance>& instance_list,
                                                      const std::string& script_name,
                                                      const std::string& search_string,
                                                      uint64_t start_sequence_id,

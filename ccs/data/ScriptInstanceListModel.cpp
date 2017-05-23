@@ -26,20 +26,21 @@ const ScriptBaseDescription& ScriptInstanceListModel::getScriptDescription() {
 }
 
 int ScriptInstanceListModel::getRowCount() const{
-    return ni_list_wrapper.dataWrapped().size();
+    return ni_list_wrapper.size();
 }
 
 QVariant ScriptInstanceListModel::getRowData(int row) const{
-    return QString::fromStdString(ni_list_wrapper.dataWrapped()[row].instance_name);
+    return QString::fromStdString(ni_list_wrapper[row].instance_name);
 }
 
 QVariant ScriptInstanceListModel::getUserData(int row) const{
-    return QVariant::fromValue<chaos::service_common::data::node::NodeInstance>(ni_list_wrapper.dataWrapped()[row]);
+    return QVariant::fromValue<chaos::service_common::data::node::NodeInstance>(ni_list_wrapper[row]);
 }
 
 void ScriptInstanceListModel::onApiDone(const QString& tag,
                                         QSharedPointer<CDataWrapper> api_result){
     beginResetModel();
-    ni_list_wrapper.deserialize(api_result.data());
+    SearchInstancesForScript::deserialize(*api_result,
+                                          ni_list_wrapper);
     endResetModel();
 }

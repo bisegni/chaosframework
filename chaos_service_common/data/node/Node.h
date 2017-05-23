@@ -28,6 +28,7 @@ namespace chaos {
     namespace service_common {
         namespace data {
             namespace node {
+                
                 //! base node instance description
                 struct NodeInstance {
                     uint64_t    instance_seq;

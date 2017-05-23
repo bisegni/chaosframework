@@ -27,8 +27,7 @@ private:
     //description of the script parent of the found instance
     chaos::service_common::data::script::ScriptBaseDescription script_description;
     //list of the current pag contained the found instances
-    chaos::common::data::structured::StdVectorSDWrapper<chaos::service_common::data::node::NodeInstance,
-    chaos::service_common::data::node::NodeInstanceSDWrapper> ni_list_wrapper;
+    std::vector<chaos::service_common::data::script::ScriptInstance> ni_list_wrapper;
 };
 
 #endif // SCRIPTINSTANCELISTMODEL_H

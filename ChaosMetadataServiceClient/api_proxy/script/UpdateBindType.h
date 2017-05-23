@@ -1,10 +1,10 @@
 /*
- *	SearchInstancesForScript.h
+ *	UpdateBindType.h
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
  *
- *    	Copyright 15/06/16 INFN, National Institute of Nuclear Physics
+ *    	Copyright 23/05/2017 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework_FDFC9046_54C9_4032_B775_70F29A8A8C1C_SearchInstancesForScript_h
-#define __CHAOSFramework_FDFC9046_54C9_4032_B775_70F29A8A8C1C_SearchInstancesForScript_h
+#ifndef __CHAOSFramework_E77F92DE_D8B6_4286_9ABF_850CFD93CDD2_UpdateBindType_h
+#define __CHAOSFramework_E77F92DE_D8B6_4286_9ABF_850CFD93CDD2_UpdateBindType_h
 
 #include <chaos_service_common/data/script/Script.h>
 #include <ChaosMetadataServiceClient/api_proxy/ApiProxy.h>
@@ -30,23 +30,19 @@ namespace chaos {
         namespace api_proxy {
             namespace script {
                 
-                class SearchInstancesForScript:
+                //update the node source code on a node tha tis na instance of the script
+                class UpdateBindType:
                 public chaos::metadata_service_client::api_proxy::ApiProxy {
-                    API_PROXY_CLASS(SearchInstancesForScript)
+                    API_PROXY_CLASS(UpdateBindType)
                 protected:
-                    API_PROXY_CD_DECLARATION(SearchInstancesForScript)
+                    API_PROXY_CD_DECLARATION(UpdateBindType)
                 public:
                     
                     /*!
-                     Search into the instances of a script
+                     Create or remove a script instance
                      */
-                    ApiProxyResult execute(const std::string& script_name,
-                                           const std::string& search_string,
-                                           const uint64_t last_sequence_id = 0,
-                                           const uint32_t page_lenght = 30);
-                    
-                    static void deserialize(chaos::common::data::CDataWrapper& serialization,
-                                            std::vector<chaos::service_common::data::script::ScriptInstance>& instances_found);
+                    ApiProxyResult execute(const chaos::service_common::data::script::ScriptBaseDescription& sbd,
+                                           chaos::service_common::data::script::ScriptInstance& scr_inst);
                 };
                 
             }
@@ -54,4 +50,4 @@ namespace chaos {
     }
 }
 
-#endif /* __CHAOSFramework_FDFC9046_54C9_4032_B775_70F29A8A8C1C_SearchInstancesForScript_h */
+#endif /* __CHAOSFramework_E77F92DE_D8B6_4286_9ABF_850CFD93CDD2_UpdateBindType_h */

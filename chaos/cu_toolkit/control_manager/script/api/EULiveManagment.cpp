@@ -81,7 +81,6 @@ int EULiveManagment::fetch(const ScriptInParam& input_parameter,
     } catch(...) {
         return -3;
     }
-    
     return err;
 }
 

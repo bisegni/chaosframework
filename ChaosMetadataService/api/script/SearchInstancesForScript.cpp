@@ -31,7 +31,7 @@ using namespace chaos::common::data;
 using namespace chaos::common::network;
 using namespace chaos::common::event::channel;
 using namespace chaos::common::data::structured;
-using namespace chaos::service_common::data::node;
+using namespace chaos::service_common::data::script;
 using namespace chaos::metadata_service::api::script;
 using namespace chaos::metadata_service::persistence::data_access;
 
@@ -61,7 +61,7 @@ chaos::common::data::CDataWrapper *SearchInstancesForScript::execute(CDataWrappe
 
     
     //create sd wrapper for a std vector list with node description
-    StdVectorSDWrapper<NodeInstance, NodeInstanceSDWrapper> ni_list_wrapper;
+    StdVectorSDWrapper<ScriptInstance, ScriptInstanceSDWrapper> ni_list_wrapper;
     
     if((err = s_da->searchScriptInstance(ni_list_wrapper.dataWrapped(),
                                          script_name,

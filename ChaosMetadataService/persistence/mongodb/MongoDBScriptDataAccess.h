@@ -75,12 +75,19 @@ namespace chaos {
                                           const std::string& instance_name);
                     
                     //! Inherited Method
+                    int updateBindType(const uint64_t seq,
+                                       const std::string& script_name,
+                                       const std::string& instance_name,
+                                       const chaos::service_common::data::script::ScriptBindType bind_type,
+                                       const std::string& bind_parent = std::string());
+                    
+                    //! Inherited Method
                     int removeScriptInstance(const uint64_t seq,
                                              const std::string& script_name,
                                              const std::string& instance_name);
                     
                     //! Inherited Method
-                    int searchScriptInstance(std::vector<chaos::service_common::data::node::NodeInstance>& instance_list,
+                    int searchScriptInstance(std::vector<chaos::service_common::data::script::ScriptInstance>& instance_list,
                                              const std::string& script_name,
                                              const std::string& search_string,
                                              uint64_t start_sequence_id,

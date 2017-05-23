@@ -23,6 +23,7 @@
 #include "SearchScript.h"
 #include "RemoveScript.h"
 #include "ScriptGroupApi.h"
+#include "UpdateBindType.h"
 #include "LoadFullScript.h"
 #include "UpdateScriptOnNode.h"
 #include "ManageScriptInstance.h"
@@ -39,6 +40,7 @@ AbstractApiGroup("script"){
     addApi<SaveScript>();
     addApi<SearchScript>();
     addApi<RemoveScript>();
+    addApi<UpdateBindType>();
     addApi<LoadFullScript>();
     addApi<UpdateScriptOnNode>();
     addApi<ManageScriptInstance>();

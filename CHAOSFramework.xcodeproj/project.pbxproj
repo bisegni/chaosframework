@@ -562,6 +562,9 @@
 		3289F9A5168508460080D93F /* SQLiteEntityDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3289F9A3168508460080D93F /* SQLiteEntityDB.cpp */; };
 		3289F9A6168508460080D93F /* SQLiteEntityDB.h in Headers */ = {isa = PBXBuildFile; fileRef = 3289F9A4168508460080D93F /* SQLiteEntityDB.h */; };
 		328C84741ED33C15008B5F7D /* EULiveManagment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327D7E0B1ED2E57A00A8AF1C /* EULiveManagment.cpp */; };
+		328C84771ED45FBE008B5F7D /* UpdateBindType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328C84751ED45FBE008B5F7D /* UpdateBindType.cpp */; };
+		328C847A1ED47148008B5F7D /* UpdateBindType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328C84781ED47148008B5F7D /* UpdateBindType.cpp */; };
+		328C847B1ED47148008B5F7D /* UpdateBindType.h in Headers */ = {isa = PBXBuildFile; fileRef = 328C84791ED47148008B5F7D /* UpdateBindType.h */; };
 		328C872C1ADEA45E0047C79B /* SearchInstancesByUS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328C872A1ADEA45E0047C79B /* SearchInstancesByUS.cpp */; };
 		328C872F1ADFC2D60047C79B /* GetInstance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328C872D1ADFC2D60047C79B /* GetInstance.cpp */; };
 		328C87321ADFDB9A0047C79B /* SearchInstancesByUS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328C87301ADFDB9A0047C79B /* SearchInstancesByUS.cpp */; };
@@ -1891,6 +1894,10 @@
 		3289335B1D3648F000FBA95B /* TemplatedDataSDWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemplatedDataSDWrapper.h; sourceTree = "<group>"; };
 		3289F9A3168508460080D93F /* SQLiteEntityDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLiteEntityDB.cpp; sourceTree = "<group>"; };
 		3289F9A4168508460080D93F /* SQLiteEntityDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLiteEntityDB.h; sourceTree = "<group>"; };
+		328C84751ED45FBE008B5F7D /* UpdateBindType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UpdateBindType.cpp; sourceTree = "<group>"; };
+		328C84761ED45FBE008B5F7D /* UpdateBindType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UpdateBindType.h; sourceTree = "<group>"; };
+		328C84781ED47148008B5F7D /* UpdateBindType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UpdateBindType.cpp; sourceTree = "<group>"; };
+		328C84791ED47148008B5F7D /* UpdateBindType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UpdateBindType.h; sourceTree = "<group>"; };
 		328C872A1ADEA45E0047C79B /* SearchInstancesByUS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SearchInstancesByUS.cpp; sourceTree = "<group>"; };
 		328C872B1ADEA45E0047C79B /* SearchInstancesByUS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchInstancesByUS.h; sourceTree = "<group>"; };
 		328C872D1ADFC2D60047C79B /* GetInstance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetInstance.cpp; sourceTree = "<group>"; };
@@ -2905,6 +2912,8 @@
 				32A1164F1D11A19200FF44ED /* ManageScriptInstance.h */,
 				32514EF31EA8DEAC001FF6B8 /* UpdateScriptOnNode.cpp */,
 				32514EF41EA8DEAC001FF6B8 /* UpdateScriptOnNode.h */,
+				328C84781ED47148008B5F7D /* UpdateBindType.cpp */,
+				328C84791ED47148008B5F7D /* UpdateBindType.h */,
 				3221D72E1CF5F292001BE971 /* script.h */,
 			);
 			path = script;
@@ -5167,6 +5176,8 @@
 				323201891D21591300701B03 /* ExecutionPoolHeartbeat.h */,
 				32514EED1EA8B81F001FF6B8 /* UpdateScriptOnNode.cpp */,
 				32514EEE1EA8B81F001FF6B8 /* UpdateScriptOnNode.h */,
+				328C84751ED45FBE008B5F7D /* UpdateBindType.cpp */,
+				328C84761ED45FBE008B5F7D /* UpdateBindType.h */,
 			);
 			path = script;
 			sourceTree = "<group>";
@@ -5853,6 +5864,7 @@
 				327F39B81AEAA2850000C845 /* DeleteDS.h in Headers */,
 				32D746051C7367A200F4D719 /* event.h in Headers */,
 				3221D7401CF5F348001BE971 /* data_service.h in Headers */,
+				328C847B1ED47148008B5F7D /* UpdateBindType.h in Headers */,
 				32401CBA1C183E2600E62866 /* GetNodesForSnapshot.h in Headers */,
 				3283B8901C7F31D20019255B /* SearchLogEntry.h in Headers */,
 				3252F35D1C298755004436A8 /* GetNodeChilds.h in Headers */,
@@ -6279,6 +6291,7 @@
 				32CAC9E41AE6991500DC6AAB /* LoadUnloadControlUnit.cpp in Sources */,
 				3211CCD61B0205C700F9B80E /* GetBestEndpoints.cpp in Sources */,
 				325963981D216BD800D94853 /* LoadInstanceOnUnitServer.cpp in Sources */,
+				328C84771ED45FBE008B5F7D /* UpdateBindType.cpp in Sources */,
 				32A51F6D1E71931C00209E92 /* GetProcessLogEntries.cpp in Sources */,
 				32A13EBF1C2019080010F3FC /* MongoDBTreeGroupDataAccess.cpp in Sources */,
 				320530DA1AE92D770064275B /* DataServiceDataAccess.cpp in Sources */,
@@ -6760,6 +6773,7 @@
 				32F7AB281C9991B000E18D3E /* ControlUnitController.cpp in Sources */,
 				3221D74F1CF606BC001BE971 /* SearchScript.cpp in Sources */,
 				3283B88E1C7F31D20019255B /* SearchLogEntry.cpp in Sources */,
+				328C847A1ED47148008B5F7D /* UpdateBindType.cpp in Sources */,
 				32990B281E521F5E00A4AF8F /* LoadAgentDescription.cpp in Sources */,
 				3239EF591C0F26D90052BE61 /* GetAllSnapshot.cpp in Sources */,
 				32D745F81C73388900F4D719 /* AlertEventHandler.cpp in Sources */,

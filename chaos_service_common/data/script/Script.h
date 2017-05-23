@@ -27,7 +27,7 @@
 
 #include <chaos/common/data/structured/DatasetAttribute.h>
 #include <chaos_service_common/data/dataset/AlgorithmVariable.h>
-
+#include <chaos_service_common/data/node/Node.h>
 namespace chaos {
     namespace service_common {
         namespace data {
@@ -276,6 +276,57 @@ namespace chaos {
                 CHAOS_DEFINE_TYPE_FOR_SD_LIST_WRAPPER(Script,
                                                       ScriptSDWrapper,
                                                       ScriptListWrapper);
+                
+                
+                typedef enum ScriptBindType {
+                    ScriptBindTypeDisable = 0,
+                    ScriptBindTypeAuto = 1,
+                    ScriptBindTypeUnitServer = 2
+                }ScriptBindType;
+                
+                //! The description of an instance of the script
+                struct ScriptInstance:
+                public node::NodeInstance {
+                    ScriptBindType  bind_type;
+                    std::string     bind_node;
+                    
+                    ScriptInstance():
+                    NodeInstance(),
+                    bind_type(ScriptBindTypeDisable),
+                    bind_node(){}
+                    
+                    ScriptInstance(const ScriptInstance& copy_src):
+                    NodeInstance(copy_src),
+                    bind_type(copy_src.bind_type),
+                    bind_node(copy_src.bind_node){}
+                    
+                    ScriptInstance& operator=(ScriptInstance const &rhs) {
+                        bind_type = rhs.bind_type;
+                        bind_node = rhs.bind_node;
+                        NodeInstance::operator=(rhs);
+                        return *this;
+                    };
+                };
+                
+                //sd wrapper for node instance class
+                CHAOS_OPEN_SDWRAPPER(ScriptInstance)
+                void deserialize(chaos::common::data::CDataWrapper *serialized_data) {
+                    if(serialized_data == NULL) return;
+                    node::NodeInstanceSDWrapper node_instance(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(node::NodeInstance, *((node::NodeInstance*)this)));
+                    node_instance.deserialize(serialized_data);
+                    dataWrapped().bind_type = static_cast<ScriptBindType>(CDW_GET_INT64_WITH_DEFAULT(serialized_data, "script_bind_type", ScriptBindTypeDisable));
+                    dataWrapped().bind_node = CDW_GET_SRT_WITH_DEFAULT(serialized_data, "script_bind_node", "");
+                }
+                
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> serialize() {
+                    node::NodeInstanceSDWrapper node_instance(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(node::NodeInstance, *((node::NodeInstance*)this)));
+                    ChaosUniquePtr<chaos::common::data::CDataWrapper> data_serialized = node_instance.serialize();
+                    
+                    data_serialized->addInt32Value("script_bind_type", static_cast<int32_t>(dataWrapped().bind_type));
+                    data_serialized->addStringValue("script_bind_node", dataWrapped().bind_node);
+                    return data_serialized;
+                }
+                CHAOS_CLOSE_SDWRAPPER()
             }
         }
     }
