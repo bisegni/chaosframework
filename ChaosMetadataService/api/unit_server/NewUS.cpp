@@ -46,7 +46,7 @@ void NewUS::performQuery(const std::string& new_us_uid,
     GET_DATA_ACCESS(UnitServerDataAccess, us_da, -3);
     
     if((err = us_da->checkPresence(new_us_uid, presence))) {
-        LOG_AND_TROW(US_NEW_ERR, -4, boost::str(boost::format("Error fetchi the presence for the uid:%1%") % new_us_uid));
+        LOG_AND_TROW(US_NEW_ERR, -4, boost::str(boost::format("Error fetching the presence for the uid:%1%") % new_us_uid));
     }
     
     if(presence) {
