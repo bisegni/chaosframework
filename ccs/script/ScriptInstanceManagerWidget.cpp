@@ -21,18 +21,18 @@ ScriptInstanceManagerWidget::ScriptInstanceManagerWidget(ScriptBaseDescription &
     instance_list_model(script_description),
     ui(new Ui::ScriptInstanceManagerWidget) {
     ui->setupUi(this);
-
-    ui->listView->setModel(&instance_list_model);
-
-    connect(ui->listView->selectionModel(),
+    QHeaderView *headerView = ui->tableViewInstance->horizontalHeader();
+    headerView->setSectionResizeMode(QHeaderView::Stretch);
+    ui->tableViewInstance->setModel(&instance_list_model);
+    connect(ui->tableViewInstance->selectionModel(),
             SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
             SLOT(selectionChanged(QItemSelection,QItemSelection)));
 
     QVector< QPair<QString, QVariant> > cm_vec;
     cm_vec.push_back(QPair<QString, QVariant>(CM_EDIT_INSTANCE, QVariant()));
     cm_vec.push_back(QPair<QString, QVariant>(CM_UPDATE_SOURCE, QVariant()));
-    ui->listView->setContextMenuPolicy(Qt::CustomContextMenu);
-    widget_utility.cmRegisterActions(ui->listView,
+    ui->tableViewInstance->setContextMenuPolicy(Qt::CustomContextMenu);
+    widget_utility.cmRegisterActions(ui->tableViewInstance,
                                      cm_vec);
 
     //start first search
@@ -75,18 +75,18 @@ void ScriptInstanceManagerWidget::selectionChanged(const QItemSelection& selecte
                                                    const QItemSelection& unselected) {
     bool selection = selected.indexes().size();
 
-    widget_utility.cmActionSetEnable(ui->listView,
+    widget_utility.cmActionSetEnable(ui->tableViewInstance,
                                       CM_EDIT_INSTANCE,
                                       selection);
-    widget_utility.cmActionSetEnable(ui->listView,
+    widget_utility.cmActionSetEnable(ui->tableViewInstance,
                                       CM_UPDATE_SOURCE,
                                       selection);
     ui->pushButtonremoveInstance->setEnabled(selection);
     if(selection) {
-        widget_utility.cmActionSetData(ui->listView,
+        widget_utility.cmActionSetData(ui->tableViewInstance,
                                        CM_EDIT_INSTANCE,
                                        QVariant::fromValue<QModelIndexList>(selected.indexes()));
-        widget_utility.cmActionSetData(ui->listView,
+        widget_utility.cmActionSetData(ui->tableViewInstance,
                                        CM_UPDATE_SOURCE,
                                        QVariant::fromValue<QModelIndexList>(selected.indexes()));
     }
@@ -115,7 +115,7 @@ void ScriptInstanceManagerWidget::on_pushButtonAddNew_clicked() {
 
 void ScriptInstanceManagerWidget::on_pushButtonremoveInstance_clicked() {
     ChaosStringVector str_list;
-    foreach (QModelIndex index, ui->listView->selectionModel()->selectedRows()) {
+    foreach (QModelIndex index, ui->tableViewInstance->selectionModel()->selectedRows()) {
         str_list.push_back(index.data().toString().toStdString());
     }
     api_submitter.submitApiResult("delete_instance",

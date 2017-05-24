@@ -1,19 +1,22 @@
 #ifndef SCRIPTINSTANCELISTMODEL_H
 #define SCRIPTINSTANCELISTMODEL_H
 
-#include "ChaosAbstractListModel.h"
+#include "ChaosAbstractTableModel.h"
 #include "../api_async_processor/ApiSubmitter.h"
 
 #include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
 
 class ScriptInstanceListModel :
-        public ChaosAbstractListModel,
+        public ChaosAbstractTableModel,
         protected ApiHandler {
     Q_OBJECT
 protected:
     int getRowCount() const;
-    QVariant getRowData(int row) const;
-    QVariant getUserData(int row) const;
+    int getColumnCount() const;
+    bool isCellSelectable(const QModelIndex &index) const;
+    QString getHeaderForColumn(int column) const;
+    QVariant getCellData(int row, int column) const;
+    QVariant getCellUserData(int row, int column) const;
     void onApiDone(const QString& tag,
                    QSharedPointer<chaos::common::data::CDataWrapper> api_result);
 public:
