@@ -42,7 +42,7 @@ AbstractApi("searchInstancesForScript"){
 SearchInstancesForScript::~SearchInstancesForScript() {
 }
 
-chaos::common::data::CDataWrapper *SearchInstancesForScript::execute(CDataWrapper *api_data, bool& detach_data) {
+CDataWrapper *SearchInstancesForScript::execute(CDataWrapper *api_data, bool& detach_data) {
     int err = 0;
     
     //check for mandatory attributes
@@ -70,6 +70,7 @@ chaos::common::data::CDataWrapper *SearchInstancesForScript::execute(CDataWrappe
                                          page_lenght))) {
         LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error searching instance for script %1%",%script_name));
     }
-
-    return ni_list_wrapper.serialize().release();
+    std::auto_ptr<CDataWrapper> result = ni_list_wrapper.serialize();
+    INFO << result->getJSONString();
+    return result.release();
 }

@@ -312,14 +312,14 @@ namespace chaos {
                 CHAOS_OPEN_SDWRAPPER(ScriptInstance)
                 void deserialize(chaos::common::data::CDataWrapper *serialized_data) {
                     if(serialized_data == NULL) return;
-                    node::NodeInstanceSDWrapper node_instance(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(node::NodeInstance, *((node::NodeInstance*)this)));
+                    node::NodeInstanceSDWrapper node_instance(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(node::NodeInstance, dataWrapped()));
                     node_instance.deserialize(serialized_data);
-                    dataWrapped().bind_type = static_cast<ScriptBindType>(CDW_GET_INT64_WITH_DEFAULT(serialized_data, "script_bind_type", ScriptBindTypeDisable));
+                    dataWrapped().bind_type = static_cast<ScriptBindType>(CDW_GET_INT32_WITH_DEFAULT(serialized_data, "script_bind_type", ScriptBindTypeDisable));
                     dataWrapped().bind_node = CDW_GET_SRT_WITH_DEFAULT(serialized_data, "script_bind_node", "");
                 }
                 
                 ChaosUniquePtr<chaos::common::data::CDataWrapper> serialize() {
-                    node::NodeInstanceSDWrapper node_instance(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(node::NodeInstance, *((node::NodeInstance*)this)));
+                    node::NodeInstanceSDWrapper node_instance(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(node::NodeInstance, dataWrapped()));
                     ChaosUniquePtr<chaos::common::data::CDataWrapper> data_serialized = node_instance.serialize();
                     
                     data_serialized->addInt32Value("script_bind_type", static_cast<int32_t>(dataWrapped().bind_type));
