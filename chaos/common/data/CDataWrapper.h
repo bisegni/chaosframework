@@ -74,7 +74,8 @@ namespace chaos {
                 bool isInt32ElementAtIndex(const int);
                 bool isInt64ElementAtIndex(const int);
                 bool isCDataWrapperElementAtIndex(const int);
-                
+                std::string getJSONString();
+
                 vector<BSONElement>::size_type size() const;
             };
             

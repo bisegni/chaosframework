@@ -686,7 +686,7 @@ dodouble:
             embeddedObject().toString(s, false, full, depth+1);
             break;
         case bson::Array:
-            embeddedObject().toString(s, true, full, depth+1);
+            embeddedObject().toString(s, false, full, depth+1);
             break;
         case Undefined:
             s << "undefined";
