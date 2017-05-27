@@ -95,6 +95,7 @@ void ChaosWANProxy::init(void *init_data)  throw(CException) {
 		
 		persistence_driver.reset(new DefaultPersistenceDriver(NetworkBroker::getInstance()), "DefaultPresistenceDriver");
 		persistence_driver.init(NULL, __PRETTY_FUNCTION__);
+		//setting.list_cds_server.push_back(getGlobalConfigurationInstance()->getMetadataServerAddress());
 		persistence_driver->addServerList(setting.list_cds_server);
 		
 		//Allcoate the handler

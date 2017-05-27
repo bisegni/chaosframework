@@ -99,22 +99,26 @@ void DefaultPersistenceDriver::clear() {
 void DefaultPersistenceDriver::addServerList(const std::vector<std::string>& _cds_address_list) {
 	//checkif someone has passed us the device indetification
 	DPD_LAPP << "Scan the direction address";
-	if(_cds_address_list.empty()){
+
 	    CDataWrapper *tmp_data_handler = NULL;
 
 		 if(!mds_message_channel->getDataDriverBestConfiguration(&tmp_data_handler, 5000)){
+			 if(tmp_data_handler!=NULL){
 		           ChaosUniquePtr<chaos::common::data::CDataWrapper> best_available_da_ptr(tmp_data_handler);
 		           DPD_LDBG <<best_available_da_ptr->getJSONString();
 		           ChaosUniquePtr<chaos::common::data::CMultiTypeDataArrayWrapper> liveMemAddrConfig(best_available_da_ptr->getVectorValue(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST));
-		           size_t numerbOfserverAddressConfigured = liveMemAddrConfig->size();
-		            for ( int idx = 0; idx < numerbOfserverAddressConfigured; idx++ ){
-		            	std::string serverDesc = liveMemAddrConfig->getStringElementAtIndex(idx);
-		            	connection_feeder.addURL(serverDesc);
-		            }
+		           if(liveMemAddrConfig.get()){
+					   size_t numerbOfserverAddressConfigured = liveMemAddrConfig->size();
+						for ( int idx = 0; idx < numerbOfserverAddressConfigured; idx++ ){
+							std::string serverDesc = liveMemAddrConfig->getStringElementAtIndex(idx);
+							connection_feeder.addURL(serverDesc);
+						}
+		           }
+			 }
 		 }
 		//mds_message_channel->ge
 	//	connection_feeder.addURL()
-	}
+
 	for (std::vector<std::string>::const_iterator it = _cds_address_list.begin();
 		 it != _cds_address_list.end();
 		 it++ ){
@@ -125,6 +129,7 @@ void DefaultPersistenceDriver::addServerList(const std::vector<std::string>& _cd
 		//add new url to connection feeder
 		connection_feeder.addURL(chaos::common::network::URL(*it));
 	}
+
 }
 
 /*---------------------------------------------------------------------------------

@@ -936,9 +936,12 @@ int CUController::fetchAllDataset() {
         int counter = 0;
         for(std::vector< ChaosSharedPtr<chaos::common::data::CDataWrapper> >::iterator it = current_dataset.begin(),
             end = current_dataset.end();
-            it != end;
+            (it != end) && (counter<results.size());
             it++) {
-            (*it) = results[counter++];
+
+        	(*it) = results[counter++];
+
+
         }
     }
     return err;
