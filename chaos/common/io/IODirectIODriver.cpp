@@ -204,7 +204,7 @@ int IODirectIODriver::retriveMultipleData(const ChaosStringVector& key,
                                           chaos::common::data::VectorCDWShrdPtr& result)  throw(CException) {
     boost::shared_lock<boost::shared_mutex>(mutext_feeder);
     IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
-    if(!next_client) return NULL;
+    if(!next_client) return -1;
 
     int err = (int)next_client->device_client_channel->requestLastOutputData(key,
                                                                              result);

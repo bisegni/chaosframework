@@ -273,6 +273,9 @@ int64_t ZMQDirectIOClientConnection::sendPriorityData(DirectIODataPack *data_pac
         if(err > 0 /*resource not available*/) {
             //remove socket in case of delay on the answer
             releaseSocketPair();
+            if(ensureSocket() == false) {
+                err = ErrorDirectIOCoce::EC_NO_SOCKET;
+            }
         }
     } else {
         err = ErrorDirectIOCoce::EC_NO_SOCKET;
@@ -306,6 +309,9 @@ int64_t ZMQDirectIOClientConnection::sendServiceData(DirectIODataPack *data_pack
         if(err > 0 /*resource not available*/) {
             //remove socket in case of delay on the answer
             releaseSocketPair();
+            if(ensureSocket() == false) {
+                err = ErrorDirectIOCoce::EC_NO_SOCKET;
+            }
         }
     } else {
         err = ErrorDirectIOCoce::EC_NO_SOCKET;
