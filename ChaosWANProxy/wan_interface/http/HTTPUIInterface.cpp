@@ -315,6 +315,11 @@ int HTTPUIInterface::process(struct mg_connection *connection) {
 	std::string cmd_schedule = request["sched"];
 	std::string cmd_prio = request["prio"];
 	std::string cmd_mode = request["mode"];
+	bool always_vector=true;
+	if(cmd.find("query")!=std::string::npos){
+			always_vector=false;
+
+	}
 	std::vector<std::string>dev_v;
 	boost::split(dev_v,dev_param,boost::is_any_of(","));
 	std::stringstream answer_multi;
@@ -331,8 +336,9 @@ int HTTPUIInterface::process(struct mg_connection *connection) {
 		response << ret;
 	} else {
 		response.setCode(200);
-
-		answer_multi<<"[";
+		if(dev_v.size()>1 || always_vector){
+			answer_multi<<"[";
+		}
 		for(std::vector<std::string>::iterator idevname=dev_v.begin();idevname!=dev_v.end();idevname++){
 			std::string ret;
 			boost::mutex::scoped_lock l(devio_mutex);
@@ -379,10 +385,16 @@ int HTTPUIInterface::process(struct mg_connection *connection) {
 
 			if(controller->get(cmd,(char*)parm.c_str(),0,atoi(cmd_prio.c_str()),atoi(cmd_schedule.c_str()),atoi(cmd_mode.c_str()),0,ret)!=::driver::misc::ChaosController::CHAOS_DEV_OK){
 			  HTTWAN_INTERFACE_ERR_<<LOG_CONNECTION<<"An error occurred during get of:\""<<*idevname<<"\"";
+				response.setCode(400);
+
 			}
 
 				if((idevname+1) == dev_v.end()){
-					answer_multi<<ret<<"]";
+					if(dev_v.size()>1 || always_vector){
+						answer_multi<<ret<<"]";
+					} else {
+						answer_multi<<ret;
+					}
 				}else {
 					answer_multi<<ret<<",";
 				}

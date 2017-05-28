@@ -1279,6 +1279,24 @@ namespace chaos {
                 return "unknown";
         }
     }
+    static inline unsigned int HumanTodatasetType(const std::string& domain) {
+    		if(domain == "output")
+    			return DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT;
+    		if(domain=="input")
+    			return DataPackCommonKey::DPCK_DATASET_TYPE_INPUT;
+    		if(domain=="custom")
+    			return DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM;
+    		if(domain=="system")
+    			return DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM;
+    		if(domain=="health")
+    			return DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH;
+    		if(domain=="device_alarms")
+    			return DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM;
+    		if(domain=="cu_alarms")
+    			return DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM;
+			return DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT;
+
+        }
     /** @defgroup DataPackKey Chaos Data Pack output attirbute
      This is the collection of the standard key that are contained into the output
      attribute data pack that describe a producer state

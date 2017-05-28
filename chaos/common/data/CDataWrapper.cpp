@@ -73,7 +73,21 @@ CDataWrapper* CMultiTypeDataArrayWrapper::getCDataWrapperElementAtIndex(const in
 vector<BSONElement>::size_type CMultiTypeDataArrayWrapper::size() const{
     return elementsArray.size();
 }
+std::string CMultiTypeDataArrayWrapper::getJSONString(){
+	std::stringstream ss;
+	ss<<"[";
+	for( vector< BSONElement >::iterator i =elementsArray.begin();i!= elementsArray.end();i++){
+		std::string var;
+		if(i+1 != elementsArray.end()){
 
+			ss<<i->toString(false,false)<<",";
+		} else {
+			ss<<i->toString(false,false);
+		}
+	}
+	ss<<"]";
+	return ss.str();
+}
 #pragma mark CDataWrapper
 CDataWrapper::CDataWrapper():
 bsonArrayBuilder(new BSONArrayBuilder()),
@@ -389,11 +403,13 @@ const char * CDataWrapper::getRawValuePtr(const std::string& key) {
             return ele.valuestrsafe();
         case BinData:
             return ele.binDataClean(bsize);
-        case Object:{
+        case Object:
+        case Array:{
         	   BSONObj subObject = bsonBuilder->asTempObj().getObjectField(key);
         	   //set the serialization data in resul datawrapper
         	   return subObject.objdata();
         }
+
         default:
 
             break;
@@ -547,6 +563,7 @@ CDataVariant CDataWrapper::getVariantValue(const std::string& key) {
         case CDataWrapperTypeBinary:
             return CDataVariant(getBinaryValueAsCDataBuffer(key).release());
             break;
+
         default:
             return CDataVariant();
             break;
