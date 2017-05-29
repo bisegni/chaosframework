@@ -2,6 +2,7 @@
 #include "ui_ScriptInstanceManagerWidget.h"
 #include "../node/control_unit/ControUnitInstanceEditor.h"
 #include "../GlobalServices.h"
+#include "../data/delegate/ComboBoxDelegate.h"
 
 #include <QString>
 #include <QInputDialog>
@@ -35,6 +36,12 @@ ScriptInstanceManagerWidget::ScriptInstanceManagerWidget(ScriptBaseDescription &
     widget_utility.cmRegisterActions(ui->tableViewInstance,
                                      cm_vec);
 
+    QStringList bind_type;
+    bind_type << tr(ScriptBindTypeUndefinedDescription) << tr(ScriptBindTypeDisableDescription) << tr(ScriptBindTypeAutoDescription) << tr(ScriptBindTypeUnitServerDescription);
+    ui->tableViewInstance->setItemDelegateForColumn(1, new ComboBoxDelegate(bind_type,
+                                                                            this));
+    ui->tableViewInstance->viewport()->setAcceptDrops(true);
+    ui->tableViewInstance->setDropIndicatorShown(true);
     //start first search
     on_pushButtonSearchInstances_clicked();
 }
@@ -76,11 +83,11 @@ void ScriptInstanceManagerWidget::selectionChanged(const QItemSelection& selecte
     bool selection = selected.indexes().size();
 
     widget_utility.cmActionSetEnable(ui->tableViewInstance,
-                                      CM_EDIT_INSTANCE,
-                                      selection);
+                                     CM_EDIT_INSTANCE,
+                                     selection);
     widget_utility.cmActionSetEnable(ui->tableViewInstance,
-                                      CM_UPDATE_SOURCE,
-                                      selection);
+                                     CM_UPDATE_SOURCE,
+                                     selection);
     ui->pushButtonremoveInstance->setEnabled(selection);
     if(selection) {
         widget_utility.cmActionSetData(ui->tableViewInstance,

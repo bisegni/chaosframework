@@ -279,10 +279,44 @@ namespace chaos {
                 
                 
                 typedef enum ScriptBindType {
-                    ScriptBindTypeDisable = 0,
-                    ScriptBindTypeAuto = 1,
-                    ScriptBindTypeUnitServer = 2
-                }ScriptBindType;
+                    ScriptBindTypeUndefined = 0,
+                    ScriptBindTypeDisable,
+                    ScriptBindTypeAuto,
+                    ScriptBindTypeUnitServer
+                } ScriptBindType;
+                
+                static const char * const ScriptBindTypeUndefinedDescription = "Bind Undefined";
+                static const char * const ScriptBindTypeDisableDescription = "Bind Disable";
+                static const char * const ScriptBindTypeAutoDescription = "Bind Automatic";
+                static const char * const ScriptBindTypeUnitServerDescription = "Bind to Unit Server";
+                
+                inline static ScriptBindType scriptBindTypeDecodeDescription(const std::string& description) {
+                    if(description.compare(ScriptBindTypeDisableDescription) == 0){
+                        return ScriptBindTypeDisable;
+                    } else if(description.compare(ScriptBindTypeAutoDescription) == 0){
+                        return ScriptBindTypeAuto;
+                    } else if(description.compare(ScriptBindTypeUnitServerDescription) == 0){
+                        return ScriptBindTypeUnitServer;
+                    } else if(description.compare(ScriptBindTypeUndefinedDescription) == 0){
+                        return ScriptBindTypeUndefined;
+                    }
+                    return ScriptBindTypeUndefined;
+                }
+                
+                inline static std::string scriptBindTypeDecodeCode(const ScriptBindType code) {
+                    switch(code) {
+                        case ScriptBindTypeDisable:
+                            return ScriptBindTypeDisableDescription;
+                        case ScriptBindTypeAuto:
+                            return ScriptBindTypeAutoDescription;
+                        case ScriptBindTypeUnitServer:
+                            return ScriptBindTypeUnitServerDescription;
+                        case ScriptBindTypeUndefined:
+                            return ScriptBindTypeUndefinedDescription;
+                        default:
+                            return ScriptBindTypeUndefinedDescription;
+                    }
+                }
                 
                 //! The description of an instance of the script
                 struct ScriptInstance:

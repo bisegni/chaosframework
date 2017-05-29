@@ -107,24 +107,25 @@ int MongoDBControlUnitDataAccess::getControlUnitWithAutoFlag(const std::string& 
         //filter on unit server
         query_builder << boost::str(boost::format("instance_description.%1%") % NodeDefinitionKey::NODE_PARENT) << unit_server_host;
         query_builder << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_CONTROL_UNIT;
-        //exlude execution unit from autoload phase because hte ened to be loaded by execution pool
-        query_builder << "$or" << BSON_ARRAY(BSON(NodeDefinitionKey::NODE_SUB_TYPE << BSON("$ne" << NodeType::NODE_SUBTYPE_SCRIPTABLE_EXECUTION_UNIT)) <<
-                                             BSON_ARRAY("$and" << BSON_ARRAY(BSON(NodeDefinitionKey::NODE_SUB_TYPE <<  NodeType::NODE_SUBTYPE_SCRIPTABLE_EXECUTION_UNIT) <<
-                                                                             BSON(CHAOS_FORMAT("instance_description.%1%", %"script_bind_type") << service_common::data::script::ScriptBindTypeUnitServer))));
-        //query_builder << NodeDefinitionKey::NODE_SUB_TYPE << BSON("$ne" << NodeType::NODE_SUBTYPE_SCRIPTABLE_EXECUTION_UNIT);
         switch(auto_flag) {
             case AUTO_LOAD:
                 query_builder << "instance_description.auto_load" << true;
                 break;
             case AUTO_INIT:
-                return 0;
+                query_builder << "instance_description.auto_init" << true;
                 break;
             case AUTO_START:
-                return 0;
+                query_builder << "instance_description.auto_start" << true;
                 break;
         }
         
         query_builder << "seq" << BSON("$gt"<<(long long)last_sequence_id);
+        //exlude execution unit from autoload phase because hte ened to be loaded by execution pool
+        query_builder << "$or" << BSON_ARRAY(BSON(NodeDefinitionKey::NODE_SUB_TYPE << BSON("$ne" << NodeType::NODE_SUBTYPE_SCRIPTABLE_EXECUTION_UNIT)) <<
+                                             BSON("$and" << BSON_ARRAY(BSON(NodeDefinitionKey::NODE_SUB_TYPE <<  NodeType::NODE_SUBTYPE_SCRIPTABLE_EXECUTION_UNIT) <<
+                                                                  BSON(CHAOS_FORMAT("instance_description.%1%", %"script_bind_type") << service_common::data::script::ScriptBindTypeUnitServer))));
+        //query_builder << NodeDefinitionKey::NODE_SUB_TYPE << BSON("$ne" << NodeType::NODE_SUBTYPE_SCRIPTABLE_EXECUTION_UNIT);
+        
         mongo::Query query = query_builder.obj();
         
         DEBUG_CODE(MDBCUDA_DBG<<log_message("checkDatasetPresence",

@@ -14,11 +14,26 @@ protected:
     int getRowCount() const;
     int getColumnCount() const;
     bool isCellSelectable(const QModelIndex &index) const;
+    bool isCellEditable(const QModelIndex &index) const;
     QString getHeaderForColumn(int column) const;
     QVariant getCellData(int row, int column) const;
     QVariant getCellUserData(int row, int column) const;
     void onApiDone(const QString& tag,
                    QSharedPointer<chaos::common::data::CDataWrapper> api_result);
+    bool setCellData(const QModelIndex &index, const QVariant &value);
+    bool dropMimeData(const QMimeData *data,
+                      Qt::DropAction action,
+                      int row,
+                      int column,
+                      const QModelIndex &parent);
+    bool canDropMimeData(const QMimeData *data,
+                         Qt::DropAction action,
+                         int row,
+                         int column,
+                         const QModelIndex &parent);
+    Qt::ItemFlags flags(const QModelIndex &index) const;
+    Qt::DropActions supportedDropActions() const;
+    QStringList mimeTypes() const;
 public:
     ScriptInstanceListModel(const chaos::service_common::data::script::ScriptBaseDescription& _script_description,
                             QObject *parent=0);
