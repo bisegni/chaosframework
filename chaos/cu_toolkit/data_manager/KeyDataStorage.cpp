@@ -476,7 +476,8 @@ int KeyDataStorage::performGeneralQuery(chaos::common::io::QueryCursor **cursor,
                                         KeyDataStorageDomain dataset_domain,
                                         const uint64_t start_ts,
                                         const uint64_t end_ts) {
-    *cursor = io_data_driver->performQuery(getDomainString(dataset_domain),
+    *cursor = io_data_driver->performQuery(getDomainString(node_id,
+                                                           dataset_domain),
                                            start_ts,
                                            end_ts);
     return ((*cursor == NULL)?-1:0);
