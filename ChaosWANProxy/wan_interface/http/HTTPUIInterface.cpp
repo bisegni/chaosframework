@@ -279,7 +279,7 @@ int HTTPUIInterface::process(struct mg_connection *connection) {
 	std::map<std::string, std::string> request;
 	//	const std::string api_uri = url.substr(strlen(API_PREFIX_V1)+1);
 	//const bool        json    = checkForContentType(connection,"application/json");
-
+try{
 	//remove the prefix and tokenize the url
 	if(method == "GET"){
 		if(connection->query_string== NULL){
@@ -403,7 +403,18 @@ int HTTPUIInterface::process(struct mg_connection *connection) {
 
 	}
 
+} catch(std::exception e){
+	  HTTWAN_INTERFACE_ERR_<<LOG_CONNECTION<<"An exception occurred:"<<e.what();
+	    response << "{}";
+	    response.setCode(400);
 
+
+} catch(...){
+	  HTTWAN_INTERFACE_ERR_<<LOG_CONNECTION<<"Uknown exception occurred:";
+	    response << "{}";
+	    response.setCode(400);
+
+}
 
 
 	flush_response(connection, &response);
@@ -455,11 +466,11 @@ int HTTPUIInterface::processRest(struct mg_connection *connection) {
 	const std::string url     = connection->uri;
 	const std::string api_uri = url.substr(strlen(API_PREFIX_V1)+1);
 	const bool        json    = checkForContentType(connection,
-                                                    "application/json");
+                                                   "application/json");
 
 	//remove the prefix and tokenize the url
 	std::vector<std::string> api_token_list;
-
+	try {
 	if(method == "GET"){
 		boost::algorithm::split(api_token_list,
 				connection->query_string,
@@ -499,7 +510,7 @@ int HTTPUIInterface::processRest(struct mg_connection *connection) {
 		std::string content_data(connection->content, connection->content_len);
         if(json_reader.parse(content_data, json_request)) {
             //print the received JSON document
-           // DEBUG_CODE(HTTWAN_INTERFACE_DBG_ << "Received JSON pack:" <<json_writer.write(json_request);)
+           DEBUG_CODE(HTTWAN_INTERFACE_DBG_ << "Received JSON pack:" <<json_writer.write(json_request);)
 
             //call the handler
             if((err = handler->handleCall(1,
@@ -538,6 +549,18 @@ int HTTPUIInterface::processRest(struct mg_connection *connection) {
             json_response["error_message"].append("The content of the request need to be json");
         }
         DEBUG_CODE(HTTWAN_INTERFACE_ERR_ << "Error decoding the request:" <<json_writer.write(json_response) <<" BODY:'"<<connection->content<<"'" ;)
+	}
+	} catch(std::exception e){
+		  HTTWAN_INTERFACE_ERR_<<LOG_CONNECTION<<"An exception occurred:"<<e.what();
+		    response << "{}";
+		    response.setCode(400);
+
+
+	} catch(...){
+		  HTTWAN_INTERFACE_ERR_<<LOG_CONNECTION<<"Uknown exception occurred:";
+		    response << "{}";
+		    response.setCode(400);
+
 	}
 
 	response << json_writer.write(json_response);

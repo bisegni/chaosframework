@@ -129,7 +129,7 @@ int ProducerInsertJsonApi::execute(std::vector<std::string>& api_tokens,
         return err;
     }
     } catch(std::exception e){
-    	PID_LERR << "Exception:"<<e.what();
+    	PID_LERR << "Exception:\""<<e.what()<<"\"";
 		err=-1;
 	} catch(...){
 		PID_LERR << "Exception during process";
