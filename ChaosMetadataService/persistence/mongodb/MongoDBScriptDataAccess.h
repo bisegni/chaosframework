@@ -75,11 +75,8 @@ namespace chaos {
                                           const std::string& instance_name);
                     
                     //! Inherited Method
-                    int updateBindType(const uint64_t seq,
-                                       const std::string& script_name,
-                                       const std::string& instance_name,
-                                       const chaos::service_common::data::script::ScriptBindType bind_type,
-                                       const std::string& bind_parent = std::string());
+                    int updateBindType(const chaos::service_common::data::script::ScriptBaseDescription& script_base_descrition,
+                                       const chaos::service_common::data::script::ScriptInstance& instance);
                     
                     //! Inherited Method
                     int removeScriptInstance(const uint64_t seq,

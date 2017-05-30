@@ -72,8 +72,9 @@ namespace chaos {
                 public chaos::common::data::TemplatedDataSDWrapper< std::vector<T> > {
                     W embedded_data_serializer;
                 public:
+                    typedef typename std::vector<T>::iterator iterator;
+                    typedef typename std::vector<T>::const_iterator const_iterator;
                     std::string serialization_key;
-                    
                     StdVectorSDWrapper(ChaosSharedPtr< DataWrapperReference< std::vector<T> > > _data =ChaosSharedPtr< DataWrapperReference< std::vector<T> > >(new DataWrapperCopy< std::vector<T> >())):
                     chaos::common::data::TemplatedDataSDWrapper< std::vector<T> >(_data),
                     serialization_key(){}

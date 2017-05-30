@@ -52,6 +52,8 @@ namespace chaos {
                     
                     AutoloadCUList          list_autoload_cu;
                     AutoloadCUListIterator  list_autoload_cu_current;
+                    
+                    int prepareInstance();
                 public:
                     UnitServerAckCommand();
                     ~UnitServerAckCommand();

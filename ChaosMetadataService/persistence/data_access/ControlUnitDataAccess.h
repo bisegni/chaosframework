@@ -25,6 +25,8 @@
 
 #include <chaos/common/data/CDataWrapper.h>
 
+#include <chaos_service_common/data/data.h>
+
 #include <boost/smart_ptr.hpp>
 
 namespace chaos {
@@ -96,6 +98,10 @@ namespace chaos {
                     virtual int getInstanceDatasetAttributeConfiguration(const std::string& control_unit_uid,
                                                                          const std::string& attribute_name,
                                                                          ChaosSharedPtr<chaos::common::data::CDataWrapper>& result) = 0;
+                    
+                    virtual int getScriptAssociatedToControlUnitInstance(const std::string& cu_instance,
+                                                                         bool& found,
+                                                                         chaos::service_common::data::script::ScriptBaseDescription& script_base_descrition) = 0;
                     
                     //! return the data service associater to control unit
                     virtual int getDataServiceAssociated(const std::string& cu_uid,

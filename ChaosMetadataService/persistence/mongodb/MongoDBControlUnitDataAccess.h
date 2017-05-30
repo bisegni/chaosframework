@@ -73,8 +73,8 @@ namespace chaos {
                                    chaos::common::data::CDataWrapper **dataset_description);
                     
                     int getFullDescription(const std::string& cu_unique_id,
-                                                      chaos::common::data::CDataWrapper **dataset_description);
-
+                                           chaos::common::data::CDataWrapper **dataset_description);
+                    
                     int setCommandDescription(chaos::common::data::CDataWrapper& command_description);
                     
                     int setInstanceDescription(const std::string& cu_unique_id,
@@ -104,6 +104,10 @@ namespace chaos {
                     int getInstanceDatasetAttributeConfiguration(const std::string& control_unit_uid,
                                                                  const std::string& attribute_name,
                                                                  ChaosSharedPtr<chaos::common::data::CDataWrapper>& result);
+                    
+                    int getScriptAssociatedToControlUnitInstance(const std::string& cu_instance,
+                                                                 bool& found,
+                                                                 chaos::service_common::data::script::ScriptBaseDescription& script_base_descrition);
                     
                     int getDataServiceAssociated(const std::string& cu_uid,
                                                  std::vector<std::string>& associated_ds);

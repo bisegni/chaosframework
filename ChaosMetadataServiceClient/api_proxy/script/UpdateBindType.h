@@ -37,12 +37,10 @@ namespace chaos {
                 protected:
                     API_PROXY_CD_DECLARATION(UpdateBindType)
                 public:
-                    
-                    /*!
-                     Create or remove a script instance
-                     */
                     ApiProxyResult execute(const chaos::service_common::data::script::ScriptBaseDescription& sbd,
                                            chaos::service_common::data::script::ScriptInstance& scr_inst);
+                    ApiProxyResult execute(const chaos::service_common::data::script::ScriptBaseDescription& sbd,
+                                           std::vector<chaos::service_common::data::script::ScriptInstance>& scr_inst_vec);
                 };
                 
             }

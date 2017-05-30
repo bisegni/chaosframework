@@ -77,11 +77,8 @@ namespace chaos {
                                                   const std::string& instance_name) = 0;
                     
                     //!update the bind type of the script instance
-                    virtual int updateBindType(const uint64_t seq,
-                                               const std::string& script_name,
-                                               const std::string& instance_name,
-                                               const chaos::service_common::data::script::ScriptBindType bind_type,
-                                               const std::string& bind_parent = std::string()) = 0;
+                    virtual int updateBindType(const chaos::service_common::data::script::ScriptBaseDescription& script_base_descrition,
+                                               const chaos::service_common::data::script::ScriptInstance& instance) = 0;
                     
                     //! remove an instance to the script
                     virtual int removeScriptInstance(const uint64_t seq,

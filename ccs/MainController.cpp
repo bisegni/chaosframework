@@ -69,6 +69,7 @@ void MainController::init(int argc, char **argv, QApplication& a) {
     qRegisterMetaType<ChaosSharedPtr<chaos::common::data::CDataWrapper> >("chaos::metadata_service_client::monitor_system::KeyValue");
     qRegisterMetaType<chaos::metadata_service_client::node_monitor::OnlineState>("chaos::metadata_service_client::node_monitor::OnlineState");
     qRegisterMetaType<chaos::service_common::data::node::NodeInstance>("chaos::service_common::data::node::NodeInstance");
+    qRegisterMetaType<chaos::service_common::data::script::ScriptInstance>("chaos::service_common::data::script::ScriptInstance");
     qRegisterMetaType<chaos::common::data::CDataVariant>("chaos::common::data::CDataVariant");
     qRegisterMetaType<QSharedPointer<TwoLineInformationItem> >("QSharedPointer<TwoLineInformationItem>");
 

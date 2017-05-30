@@ -114,6 +114,18 @@
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="pushButtonResetChange">
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Reset change</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>

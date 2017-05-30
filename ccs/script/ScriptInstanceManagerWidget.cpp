@@ -22,6 +22,16 @@ ScriptInstanceManagerWidget::ScriptInstanceManagerWidget(ScriptBaseDescription &
     instance_list_model(script_description),
     ui(new Ui::ScriptInstanceManagerWidget) {
     ui->setupUi(this);
+    ui->pushButtonApplyChange->setEnabled(false);
+    ui->pushButtonResetChange->setEnabled(false);
+
+    connect(&instance_list_model,
+            SIGNAL(bindTypeChanged(chaos::service_common::data::script::ScriptInstance&)),
+            SLOT(bindTypeChanged(chaos::service_common::data::script::ScriptInstance&)));
+    connect(&instance_list_model,
+            SIGNAL(commitDone(bool)),
+            SLOT(instanceCommitResult(bool)));
+
     QHeaderView *headerView = ui->tableViewInstance->horizontalHeader();
     headerView->setSectionResizeMode(QHeaderView::Stretch);
     ui->tableViewInstance->setModel(&instance_list_model);
@@ -99,6 +109,16 @@ void ScriptInstanceManagerWidget::selectionChanged(const QItemSelection& selecte
     }
 }
 
+void ScriptInstanceManagerWidget::bindTypeChanged(ScriptInstance& script_instance) {
+    ui->pushButtonApplyChange->setEnabled(true);
+    ui->pushButtonResetChange->setEnabled(true);
+}
+
+void ScriptInstanceManagerWidget::instanceCommitResult(bool achived) {
+    ui->pushButtonApplyChange->setEnabled(!achived);
+    ui->pushButtonResetChange->setEnabled(!achived);
+}
+
 void ScriptInstanceManagerWidget::on_pushButtonSearchInstances_clicked() {
     instance_list_model.updateInstanceListForSearchString(ui->lineEditSearchText->text());
 }
@@ -130,4 +150,12 @@ void ScriptInstanceManagerWidget::on_pushButtonremoveInstance_clicked() {
                                                                                    instance_list_model.getScriptDescription().name,
                                                                                    str_list,
                                                                                    false));
+}
+
+void ScriptInstanceManagerWidget::on_pushButtonResetChange_clicked() {
+    instance_list_model.rollbackChange();
+}
+
+void ScriptInstanceManagerWidget::on_pushButtonApplyChange_clicked() {
+    instance_list_model.commitChange();
 }

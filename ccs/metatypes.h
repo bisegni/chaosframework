@@ -34,5 +34,6 @@ Q_DECLARE_METATYPE(ChaosSharedPtr<chaos::CException>)
 Q_DECLARE_METATYPE(chaos::metadata_service_client::node_monitor::OnlineState)
 Q_DECLARE_METATYPE(chaos::service_common::data::node::NodeInstance)
 Q_DECLARE_METATYPE(chaos::common::data::CDataVariant)
+Q_DECLARE_METATYPE(chaos::service_common::data::script::ScriptInstance)
 
 #endif // METATYPES_H

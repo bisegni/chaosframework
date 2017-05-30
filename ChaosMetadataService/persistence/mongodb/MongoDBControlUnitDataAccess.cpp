@@ -35,6 +35,7 @@ using namespace chaos;
 using namespace chaos::common::data;
 
 using namespace chaos::common::utility;
+using namespace chaos::service_common::data::script;
 using namespace chaos::service_common::persistence::mongodb;
 using namespace chaos::metadata_service::persistence::mongodb;
 
@@ -120,10 +121,9 @@ int MongoDBControlUnitDataAccess::getControlUnitWithAutoFlag(const std::string& 
         }
         
         query_builder << "seq" << BSON("$gt"<<(long long)last_sequence_id);
-        //exlude execution unit from autoload phase because hte ened to be loaded by execution pool
         query_builder << "$or" << BSON_ARRAY(BSON(NodeDefinitionKey::NODE_SUB_TYPE << BSON("$ne" << NodeType::NODE_SUBTYPE_SCRIPTABLE_EXECUTION_UNIT)) <<
                                              BSON("$and" << BSON_ARRAY(BSON(NodeDefinitionKey::NODE_SUB_TYPE <<  NodeType::NODE_SUBTYPE_SCRIPTABLE_EXECUTION_UNIT) <<
-                                                                  BSON(CHAOS_FORMAT("instance_description.%1%", %"script_bind_type") << service_common::data::script::ScriptBindTypeUnitServer))));
+                                                                       BSON("script_bind_type" << service_common::data::script::ScriptBindTypeUnitServer))));
         //query_builder << NodeDefinitionKey::NODE_SUB_TYPE << BSON("$ne" << NodeType::NODE_SUBTYPE_SCRIPTABLE_EXECUTION_UNIT);
         
         mongo::Query query = query_builder.obj();
@@ -888,7 +888,57 @@ int MongoDBControlUnitDataAccess::getInstanceDatasetAttributeConfiguration(const
     return err;
 }
 
-//! return the data service associater to control unit
+int MongoDBControlUnitDataAccess::getScriptAssociatedToControlUnitInstance(const std::string& cu_instance,
+                                                                           bool& found,
+                                                                           ScriptBaseDescription& script_base_descrition) {
+    int err = 0;
+    found = false;
+    mongo::BSONObj  result_bson;
+    try{
+        mongo::BSONObj q = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << cu_instance <<
+                                NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_CONTROL_UNIT <<
+                                NodeDefinitionKey::NODE_SUB_TYPE << NodeType::NODE_SUBTYPE_SCRIPTABLE_EXECUTION_UNIT);
+        
+        mongo::BSONObj p = BSON(NodeDefinitionKey::NODE_GROUP_SET << 1 <<
+                                "script_seq" << 1);
+        DEBUG_CODE(MDBCUDA_DBG<<log_message("getScriptAssociatedToControlUnitInstance[script_info]",
+                                            "find",
+                                            DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                                    "projection",
+                                                                    q.toString(),
+                                                                    p.jsonString()));)
+        if((err = connection->findOne(result_bson,
+                                      MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                      q,
+                                      &p))) {
+            MDBCUDA_ERR << CHAOS_FORMAT("Error searching script information on instance %1%",%cu_instance);
+        } else if(result_bson.isEmpty() == false) {
+            mongo::BSONElement sname = result_bson.getField(NodeDefinitionKey::NODE_GROUP_SET);
+            mongo::BSONElement sseq = result_bson.getField("script_seq");
+            //getscript
+            q = BSON("script_name" << sname.String() <<
+                     "seq" << sseq.numberLong());
+            
+            if((err = connection->findOne(result_bson,
+                                          MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SCRIPT),
+                                          q))) {
+                MDBCUDA_ERR << CHAOS_FORMAT("Error loading script %1% information on instance %2%",%sname.String()%cu_instance);
+            } else if((found = (result_bson.isEmpty() == false))) {
+                ChaosUniquePtr<CDataWrapper> script_data(new CDataWrapper(result_bson.objdata()));
+                ScriptBaseDescriptionSDWrapper sdw(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(ScriptBaseDescription, script_base_descrition));
+                sdw.deserialize(script_data.get());
+            }
+        }
+    } catch (const mongo::DBException &e) {
+        MDBCUDA_ERR << e.what();
+        err = -1;
+    } catch (const CException &e) {
+        MDBCUDA_ERR << e.what();
+        err = e.errorCode;
+    }
+    return err;
+}
+
 int MongoDBControlUnitDataAccess::getDataServiceAssociated(const std::string& cu_uid,
                                                            std::vector<std::string>& associated_ds){
     CHAOS_ASSERT(node_data_access)

@@ -31,7 +31,8 @@ namespace chaos {
                 //! Update the script on a determinate node or series of node
                 class UpdateBindType:
                 public AbstractApi {
-                    
+                    int updateBindType(const chaos::service_common::data::script::ScriptBaseDescription& script_base_descrition,
+                                       const chaos::service_common::data::script::ScriptInstance& instance);
                 public:
                     UpdateBindType();
                     ~UpdateBindType();
