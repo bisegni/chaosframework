@@ -200,10 +200,10 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string& key,
                                     "findN",
                                     DATA_ACCESS_LOG_1_ENTRY("Query",
                                                             o.jsonString()));)
-        
+        mongo::BSONArrayBuilder bab;
         connection->findN(object_found,
                           MONGO_DB_COLLECTION_NAME(MONGODB_DAQ_COLL_NAME),
-                          q,
+                          q.readPref(mongo::ReadPreference_SecondaryPreferred, bab.arr()),
                           page_len);
         if(object_found.size() == 0) {
             DBG << "No data has been found";
