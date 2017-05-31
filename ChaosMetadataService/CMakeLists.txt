@@ -113,7 +113,8 @@ SET(cnd_src  ${cnd_src}	api/script/ScriptGroupApi.cpp
                         api/script/SearchInstancesForScript.cpp
                         api/script/ManageScriptInstance.cpp
                         api/script/ExecutionPoolHeartbeat.cpp
-                        api/script/UpdateScriptOnNode.cpp)
+                        api/script/UpdateScriptOnNode.cpp
+                        api/script/UpdateBindType.cpp)
 
 SET(cnd_src  ${cnd_src}	api/agent/AgentApiGroup.cpp
                         api/agent/LoadAgentDescription.cpp

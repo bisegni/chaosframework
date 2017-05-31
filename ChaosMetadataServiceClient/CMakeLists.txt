@@ -99,8 +99,7 @@ SET(mcl_src ${mcl_src}      api_proxy/unit_server/GetDescription.cpp
                             api_proxy/unit_server/DeleteUS.cpp
                             api_proxy/unit_server/LoadUnloadControlUnit.cpp
                             api_proxy/unit_server/ManageCUType.cpp
-                            api_proxy/unit_server/GetSetFullUnitServer.cpp
-                            )
+                            api_proxy/unit_server/GetSetFullUnitServer.cpp)
 
 SET(mcl_src ${mcl_src}      api_proxy/script/SaveScript.cpp
                             api_proxy/script/RemoveScript.cpp
@@ -108,7 +107,8 @@ SET(mcl_src ${mcl_src}      api_proxy/script/SaveScript.cpp
                             api_proxy/script/LoadFullScript.cpp
                             api_proxy/script/SearchInstancesForScript.cpp
                             api_proxy/script/ManageScriptInstance.cpp
-                            api_proxy/script/UpdateScriptOnNode.cpp)
+                            api_proxy/script/UpdateScriptOnNode.cpp
+                            api_proxy/script/UpdateBindType.cpp)
 
 SET(mcl_src ${mcl_src}      monitor_system/MonitorManager.cpp
                             monitor_system/QuantumSlot.cpp
