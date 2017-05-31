@@ -55,7 +55,7 @@ int ApiGroupVersionDomain::callGroupApi(std::vector<std::string>& api_tokens,
 		api_tokens.erase(api_tokens.begin());
 		
 		//forward call to the found group
-		api_group_selected->callApi(api_tokens,
+		err=api_group_selected->callApi(api_tokens,
 									input_data,
 									output_header,
 									output_data);
