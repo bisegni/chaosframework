@@ -34,22 +34,22 @@ using namespace chaos::cu::control_manager::script::api;
 #define EUSW_DBG     DBG_LOG_1_P(EULiveManagment, eu_instance->getCUID())
 #define EUSW_LERR    ERR_LOG_1_P(EULiveManagment, eu_instance->getCUID())
 
-#define EUSW_ADD_DATASET_ATTRIBUTE      "addDatasetAttribute"
-#define EUSW_GET_OUTPUT_ATTRIBUTE_VALUE "getOutputAttributeValue"
-#define EUSW_SET_OUTPUT_ATTRIBUTE_VALUE "setOutputAttributeValue"
-#define EUSW_GET_INPUT_ATTRIBUTE_VALUE  "getInputAttributeValue"
+#define EULM_FETCH          "fetch"
+#define EULM_GET_ATTR_VALUE "getValueForKey"
 
 EULiveManagment::EULiveManagment(ScriptableExecutionUnit *_eu_instance):
 TemplatedAbstractScriptableClass(this,
                                  "live"),
-eu_instance(_eu_instance){
+eu_instance(_eu_instance) {
+    addApi(EULM_FETCH, &EULiveManagment::fetch);
+    addApi(EULM_GET_ATTR_VALUE, &EULiveManagment::getValueForKey);
 }
 
 EULiveManagment::~EULiveManagment() {}
 
 int EULiveManagment::fetch(const ScriptInParam& input_parameter,
                            ScriptOutParam& output_parameter) {
-    if(input_parameter.size() >= 2) {
+    if(input_parameter.size() < 2) {
         return -1;
     }
     
@@ -86,7 +86,7 @@ int EULiveManagment::fetch(const ScriptInParam& input_parameter,
 
 int EULiveManagment::getValueForKey(const ScriptInParam& input_parameter,
                                     ScriptOutParam& output_parameter) {
-    if(input_parameter.size() == 3) {
+    if(input_parameter.size() != 3) {
         return -1;
     }
     const std::string node_uid = input_parameter[0];

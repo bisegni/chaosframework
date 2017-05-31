@@ -197,6 +197,7 @@ void ScriptableExecutionUnit::unitDefineActionAndDataset() throw(CException) {
     SEU_LAPP << "Register api";
     api_classes.push_back(ApiClassShrdPtr(new api::EUSearch(this)));
     api_classes.push_back(ApiClassShrdPtr(new api::EUDSValueManagement(this)));
+    api_classes.push_back(ApiClassShrdPtr(new api::EULiveManagment(this)));
     registerApi();
     
     //!load script within the virtual machine
