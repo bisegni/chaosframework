@@ -90,7 +90,7 @@ void ExecutionPoolManager::timeout() {
     //ad current unit server alias
     hb_message.addStringValue(chaos::NodeDefinitionKey::NODE_PARENT,
                               unit_server_alias);
-    if(eu_uid_list.size()) {
+    /*if(eu_uid_list.size()) {
         // make heart beat for the managed eu uid
         for(ChaosStringSetIterator it = eu_uid_list.begin(),
             end = eu_uid_list.end();
@@ -99,7 +99,7 @@ void ExecutionPoolManager::timeout() {
             hb_message.appendStringToArray(*it);
         }
         hb_message.finalizeArrayForKey(ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LIST);
-    }
+    }*/
     
     // check if we have enought resources for run script
     if(total_cpu_usage < cpu_cap_percentage &&

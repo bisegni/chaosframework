@@ -100,6 +100,17 @@ namespace chaos {
                                                      uint64_t start_sequence_id,
                                                      uint32_t page_length) = 0;
                     
+                    //!Return the full isntance description by instance unique identification
+                    /*!
+                     \param script_instance instance unique identifier
+                     \param found true if te instance has been found
+                     \param instance will be filled with the instance information
+                     */
+                    virtual int getScriptInstance(const std::string& script_instance,
+                                                  const uint64_t& seq,
+                                                  bool& found,
+                                                  chaos::service_common::data::script::ScriptInstance& instance) = 0;
+                    
                     //!Load a fulls cript information
                     /*!
                      \param script_base_description the base infromation to retrieve the script

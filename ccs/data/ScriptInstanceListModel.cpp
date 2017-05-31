@@ -54,7 +54,7 @@ const ScriptBaseDescription& ScriptInstanceListModel::getScriptDescription() {
 }
 
 void ScriptInstanceListModel::onApiDone(const QString& tag,
-                                        QSharedPointer<CDataWrapper> api_result){
+                                        QSharedPointer<CDataWrapper> api_result) {
     if(tag.compare("update_instances") == 0) {
         emit commitDone(true);
     } else {
@@ -69,6 +69,7 @@ void ScriptInstanceListModel::onApiDone(const QString& tag,
 }
 
 void ScriptInstanceListModel::onApiTimeout(const QString& tag) {
+    ApiHandler::onApiTimeout(tag);
     if(tag.compare("update_instances") == 0) {
         emit commitDone(false);
     }
@@ -76,6 +77,8 @@ void ScriptInstanceListModel::onApiTimeout(const QString& tag) {
 
 void ScriptInstanceListModel::onApiError(const QString& tag,
                                          QSharedPointer<chaos::CException> api_exception) {
+    ApiHandler::onApiError(tag,
+                           api_exception);
     if(tag.compare("update_instances") == 0) {
         emit commitDone(false);
     }

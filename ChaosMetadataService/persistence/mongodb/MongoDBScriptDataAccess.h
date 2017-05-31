@@ -89,6 +89,13 @@ namespace chaos {
                                              const std::string& search_string,
                                              uint64_t start_sequence_id,
                                              uint32_t page_length);
+                    
+                    // Inherited Method
+                    int getScriptInstance(const std::string& script_instance,
+                                          const uint64_t& seq,
+                                          bool& found,
+                                          chaos::service_common::data::script::ScriptInstance& instance);
+                    
                     //! Inherited Method
                     int loadScript(const uint64_t unique_id,
                                    const std::string& name,

@@ -64,7 +64,7 @@ chaos::common::data::CDataWrapper *ExecutionPoolHeartbeat::execute(CDataWrapper 
     
     GET_DATA_ACCESS(ScriptDataAccess, s_da, -3)
     
-    if(api_data->hasKey(ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LIST)) {
+    /*if(api_data->hasKey(ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LIST)) {
         CHAOS_LASSERT_EXCEPTION(api_data->isVectorValue(ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LIST), ERR, -4, "The running instance list key need to be a vector");
         
         ChaosUniquePtr<CMultiTypeDataArrayWrapper> array(api_data->getVectorValue(ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LIST));
@@ -80,7 +80,7 @@ chaos::common::data::CDataWrapper *ExecutionPoolHeartbeat::execute(CDataWrapper 
                                                        30000))){
             LOG_AND_TROW_FORMATTED(ERR, err, "Error during heartbeating peration for running script on unit server %1%", %us_uid);
         }
-    }
+    }*/
     
     if(api_data->hasKey(ExecutionUnitNodeDefinitionKey::EXECUTION_POOL_LIST)) {
         CHAOS_LASSERT_EXCEPTION(api_data->isVectorValue(ExecutionUnitNodeDefinitionKey::EXECUTION_POOL_LIST), ERR, -6, "The execution pool list key need to be a vector");

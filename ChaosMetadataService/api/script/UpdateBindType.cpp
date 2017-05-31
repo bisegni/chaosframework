@@ -48,6 +48,8 @@ UpdateBindType::~UpdateBindType() {}
 int UpdateBindType::updateBindType(const ScriptBaseDescription& script_base_descrition,
                                    const ScriptInstance& instance) {
     int err = 0;
+    bool found = false;
+    ScriptInstance original_instance;
     ChaosUniquePtr<CDataWrapper>  node_desc_ptr;
     
     GET_DATA_ACCESS(NodeDataAccess, n_da, -1);
@@ -55,7 +57,26 @@ int UpdateBindType::updateBindType(const ScriptBaseDescription& script_base_desc
     
     if(script_base_descrition.unique_id == 0 ||
        script_base_descrition.name.size() == 0) {
-        LOG_AND_TROW(ERR, -5, "Invalid script description");
+        LOG_AND_TROW(ERR, -1, "Invalid script description");
+    }
+    
+    if((err = s_da->getScriptInstance(instance.instance_name,
+                                      instance.instance_seq,
+                                      found,
+                                      original_instance))) {
+        LOG_AND_TROW(ERR, -2, CHAOS_FORMAT("Error retriving original instance for %1%[%2%]", %instance.instance_name%instance.instance_seq));
+    } else if(found){
+        // in case the change respect the same value we go away
+        if(original_instance.bind_type == instance.bind_type) {return 0;}
+        
+        bool alive = false;
+        //check if the node is alive, ini this case we can't change the bind type
+        if((err = n_da->isNodeAlive(instance.instance_name,
+                                    alive))) {
+            LOG_AND_TROW(ERR, -2, CHAOS_FORMAT("Error check the aliveness for instance for %1%[%2%]", %instance.instance_name%instance.instance_seq));
+        } else if(alive) {
+            LOG_AND_TROW(ERR, -2, CHAOS_FORMAT("he instance %1%[%2%] is alive and the bind type can be applyed", %instance.instance_name%instance.instance_seq));
+        }
     }
     if(instance.bind_type == ScriptBindTypeUnitServer) {
         CDataWrapper *node_description;
