@@ -31,7 +31,7 @@ namespace chaos {
     namespace common{
         namespace plugin {
             
-            //! Postifix of the allocator
+            //! Permit the discovere of the plugin information
             /*!
              Define the postifx of the allocator "c" function, exported by the ddl.
              */
@@ -47,30 +47,67 @@ namespace chaos {
 
             public:
                 
-                PluginInspector();
-                ~PluginInspector();
+                PluginInspector(){}
+                ~PluginInspector(){initAttributeForName.clear();}
                 
-                void setName(const char *_name);
+                void setName(const char *_name) {
+                    name = _name;
+                }
+
+                void setType(const char *_type) {
+                    type = _type;
+                }
                 
-                void setType(const char *_type);
+                void setVersion(const char *_version) {
+                    version = _version;
+                }
                 
-                void setVersion(const char *_version);
+                void setSubclass(const char *_subclass) {
+                    subclass = _subclass;
+                }
                 
-                void setSubclass(const char *_subclass);
+                const char * const getName() {
+                    return name.c_str();
+                }
                 
-                const char * const getName();
+                const char * const getType() {
+                    return type.c_str();
+                }
                 
-                const char * const getType();
+                const char * const getVersion() {
+                    return version.c_str();
+                }
                 
-                const char * const getVersion();
+                const char * const getSubclass() {
+                    return subclass.c_str();
+                }
                 
-                const char * const getSubclass();
+                void addInitAttributeForName(const char *name, const char * initAttribute) {
+                    initAttributeForName.insert(std::make_pair<std::string, std::string>(name, initAttribute));
+                }
                 
-                void addInitAttributeForName(const char *name, const char * initAttribute);
+                size_t getInputAttributeByNamesSize(const char *name) {
+                    return initAttributeForName.count(name);
+                }
                 
-                size_t getInputAttributeByNamesSize(const char *name);
-                
-                const char * const getInputAttributeForNameAndIndex(const char *name, size_t idx);
+                const char * const getInputAttributeForNameAndIndex(const char *name, size_t idx) {
+                    std::vector<std::string> initAttributes;
+                    //check if name exists
+                    if(!initAttributeForName.count(name)) return NULL;
+                    
+                    std::pair<std::multimap<std::string, std::string>::iterator, std::multimap<std::string, std::string>::iterator> attributesIterator;
+                    attributesIterator = initAttributeForName.equal_range(name);
+                    
+                    //copy all init attribute for name
+                    int _idx = 0;
+                    for (std::multimap<std::string, std::string>::iterator it2 = attributesIterator.first;
+                         it2 != attributesIterator.second;
+                         ++it2) {
+                        if(idx==_idx++) return it2->second.c_str();
+                    }
+                    return NULL;
+                }
+
             };
         }
     }

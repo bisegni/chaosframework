@@ -22,6 +22,7 @@
 #include "PluginLibrary.h"
 
 //define the general plugin
+#include <string>
 
 OPEN_PLUGIN_CLASS_DEFINITION(PluginAlias, 1.0, DRV, PluginLibrary)
 CLOSE_PLUGIN_CLASS_DEFINITION
@@ -32,10 +33,14 @@ REGISTER_CU_DRIVER_PLUGIN_CLASS_INIT_ATTRIBUTE(DriverAlias,http_address)
 REGISTER_CU_DRIVER_PLUGIN_CLASS_INIT_ATTRIBUTE(DriverAlias,http_port)
 CLOSE_CU_DRIVER_PLUGIN_CLASS_DEFINITION
 
+OPEN_EUAPI_LUGIN_CLASS_DEFINITION(EUPluginAlgotest, 1.0, EUTestApiPLugin)
+CLOSE_EUAPI_CLASS_DEFINITION
+
 //register the two plugin
 OPEN_REGISTER_PLUGIN
 REGISTER_PLUGIN(PluginAlias)
 REGISTER_PLUGIN(DriverAlias)
+REGISTER_PLUGIN(EUPluginAlgotest)
 CLOSE_REGISTER_PLUGIN
 
 PluginLibrary::PluginLibrary() {
@@ -51,4 +56,19 @@ void PluginLibrary::test(int num) {
 
 DEFAULT_CU_DRIVER_PLUGIN_CONSTRUCTOR(ControlUnitPluginLibrary) {
     std::cout << "Driver plugin created" << std::endl;
+}
+
+
+int EUTestApiPLugin::execute(const char *in_data,
+                             uint32_t in_data_size,
+                             char **out_data,
+                             uint32_t *out_data_size){
+    std::string in_str(in_data, in_data_size);
+    std::string ou_str = "[out]" + in_str;
+    std::cout << in_str << std::endl;
+    *out_data = (char*)malloc(ou_str.size());
+    std::strcpy(*out_data,
+                ou_str.c_str());
+    *out_data_size = ou_str.size();
+    return 0;
 }

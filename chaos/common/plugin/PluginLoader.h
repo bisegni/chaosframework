@@ -36,7 +36,7 @@ namespace chaos {
     namespace common{
         namespace plugin {
             
-
+            
             
 #define SYM_ALLOC_POSTFIX "_allocator"
             
@@ -48,9 +48,8 @@ namespace chaos {
             class PluginLoader {
                 //Allocator plugin exported function
                 boost::function<PluginDiscover*()> getDiscoverFunction;
-                
             protected:
-		boost::extensions::shared_library lib;
+                boost::extensions::shared_library lib;
                 
                 bool checkPluginInstantiableForSubclass(const char * pluginName, const char * subclass);
             public:

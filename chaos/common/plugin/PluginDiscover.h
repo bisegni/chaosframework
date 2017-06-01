@@ -36,19 +36,28 @@ namespace chaos {
 #define PLUGIN_DISCOVER_POSTFIX   "_discover"
             
             class PluginDiscover {
-                friend PluginDiscover* getInspector();
-                
+                friend chaos::common::plugin::PluginDiscover* getInspector();
                 std::vector<std::string> names;
 
             public:
-                PluginDiscover();
-                ~PluginDiscover();
+                PluginDiscover(){}
                 
-                void addName(const char *name);
+                ~PluginDiscover() {
+                    names.clear();
+                }
                 
-                size_t getNamesSize();
+                void addName(const char *name) {
+                    names.push_back(name);
+                }
                 
-                const char * const getNameForIndex(size_t idx);
+                size_t getNamesSize() {
+                    return names.size();
+                }
+                
+                const char * const getNameForIndex(size_t idx) {
+                    const std::string& result = names[idx];
+                    return result.c_str();
+                }
             };
         }
     }

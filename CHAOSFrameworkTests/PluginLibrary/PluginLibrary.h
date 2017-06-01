@@ -22,13 +22,17 @@
 #ifndef __CHAOSFrameworkTests_D30B815C_54CA_4E42_BE66_0720A6B92659_PluginLibrary_h
 #define __CHAOSFrameworkTests_D30B815C_54CA_4E42_BE66_0720A6B92659_PluginLibrary_h
 
+#define CHAOS_ENABLE_PLUGIN
+
 #include <chaos/common/plugin/PluginDefinition.h>
 
 #include <chaos/cu_toolkit/driver_manager/driver/AbstractDriverPlugin.h>
+#include <chaos/cu_toolkit/control_manager/script/api/plugin/EUAbstractApiPlugin.h>
 
 using namespace chaos::common::plugin;
 
-class PluginLibrary: public AbstractPlugin {
+class PluginLibrary:
+public AbstractPlugin {
 public:
     PluginLibrary();
     void test(int num);
@@ -53,5 +57,15 @@ public:
         return MsgManagmentResultType::MMR_EXECUTED;
     }
 };
+
+//test the eu api in plugin
+using namespace chaos::cu::control_manager::script::api::plugin;
+DECLARE_EUAPI_PLUGIN_SCLASS(EUTestApiPLugin) {
+    int execute(const char *in_data,
+                uint32_t in_data_size,
+                char **out_data,
+                uint32_t *out_data_size);
+};
+
 
 #endif /* __CHAOSFrameworkTests_D30B815C_54CA_4E42_BE66_0720A6B92659_PluginLibrary_h */

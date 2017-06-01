@@ -1313,8 +1313,9 @@
 				DYLIB_CURRENT_VERSION = 1;
 				EXECUTABLE_EXTENSION = chaos_extension;
 				EXECUTABLE_PREFIX = "";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				OTHER_LDFLAGS = (
-					"-lchaos_common",
+					$inherited,
 					"-lchaos_cutoolkit",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1331,8 +1332,9 @@
 				DYLIB_CURRENT_VERSION = 1;
 				EXECUTABLE_EXTENSION = chaos_extension;
 				EXECUTABLE_PREFIX = "";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				OTHER_LDFLAGS = (
-					"-lchaos_common",
+					$inherited,
 					"-lchaos_cutoolkit",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";

@@ -1,9 +1,10 @@
 /*
- *	AbstractPlugin.cpp
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ *	EUAbstractApiPlugin.cpp
  *
- *    	Copyright 2013 INFN, National Institute of Nuclear Physics
+ *	!CHAOS [CHAOSFramework]
+ *	Created by bisegni.
+ *
+ *    	Copyright 01/06/2017 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -18,19 +19,4 @@
  *    	limitations under the License.
  */
 
-
-#include <chaos/common/plugin/AbstractPlugin.h>
-
-using namespace chaos::common::plugin;
-
-const char * const AbstractPlugin::getName() {
-    return info.name.c_str();
-}
-
-const char * const AbstractPlugin::getVersion() {
-    return info.type.c_str();
-}
-
-const char * const AbstractPlugin::getType() {
-    return info.version.c_str();
-}
+#include "EUAbstractApiPlugin.h"

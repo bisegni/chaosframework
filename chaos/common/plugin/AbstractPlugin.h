@@ -27,11 +27,8 @@
 
 namespace chaos {
     namespace common {
-        
         //! Name space for grupping class for the plugin managment system of !CHAOS framework
         namespace plugin {
-            
-
             
             // forward declaration
             template <typename T>
@@ -60,14 +57,17 @@ namespace chaos {
                 PluginInfo info;
 
             public:
-                //! Return the name of the plugin
-                const char * const getName();
+                const char * const getName() {
+                    return info.name.c_str();
+                }
                 
-                //! Return the version of the plugin
-                const char * const getVersion();
+                const char * const getVersion() {
+                    return info.type.c_str();
+                }
                 
-                //! Return the type of the plugin
-                const char * const getType();
+                const char * const getType() {
+                    return info.version.c_str();
+                }
             };
             
             

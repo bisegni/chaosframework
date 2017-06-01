@@ -20,7 +20,6 @@
 
 #include <chaos/cu_toolkit/driver_manager/driver/DriverPluginLoader.h>
 
-
 using namespace std;
 using namespace boost::extensions;
 using namespace chaos::cu::driver_manager::driver;
