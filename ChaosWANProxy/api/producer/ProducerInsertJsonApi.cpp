@@ -83,25 +83,7 @@ int ProducerInsertJsonApi::execute(std::vector<std::string>& api_tokens,
     }
     
     
-    //we nned to remove the timestamp because is the only one that need to be int64
-    const Json::Value& dp_timestamp = const_cast<Json::Value&>(input_data).removeMember(chaos::DataPackCommonKey::DPCK_TIMESTAMP);
-    
-    if(dp_timestamp.isNull()) {
 
-      
-      ts = chaos::common::utility::TimingUtil::getTimeStamp();
-      
-       
-        err_msg = "The timestamp is mandatory";
-    } else if(!dp_timestamp.isInt64()) {
-        err_msg = "The timestamp needs to be an int64 number," + input_data[chaos::DataPackCommonKey::DPCK_TIMESTAMP].asString();
-        PID_LERR << err_msg;
-        PRODUCER_INSERT_ERR(output_data, -4, err_msg);
-        return err;
-    } else {
-        ts = dp_timestamp.asUInt64();
-    }
-    
     //we can proceed
     ChaosUniquePtr<chaos::common::data::CDataWrapper> output_dataset(new CDataWrapper());
     //	const std::string& producer_name = api_tokens[0];
@@ -109,14 +91,18 @@ int ProducerInsertJsonApi::execute(std::vector<std::string>& api_tokens,
     // add the node unique id
 	Json::StyledWriter				json_writer;
 	const char* jsonobj=json_writer.write(input_data).c_str();
-    //PID_LDBG << json_writer.write(input_data);
+//    PID_LDBG << json_writer.write(input_data);
     output_dataset->setSerializedJsonData(jsonobj	);
 
-    // add timestamp of the datapack
-    output_dataset->addInt64Value(chaos::DataPackCommonKey::DPCK_TIMESTAMP, ts);
-    
-    output_dataset->addInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID,pktid++ );
+    if(!input_data.isMember(chaos::DataPackCommonKey::DPCK_TIMESTAMP)){
+        ts = chaos::common::utility::TimingUtil::getTimeStamp();
 
+    // add timestamp of the datapack
+    	output_dataset->addInt64Value(chaos::DataPackCommonKey::DPCK_TIMESTAMP, ts);
+    }
+    if(!input_data.isMember(chaos::DataPackCommonKey::DPCK_SEQ_ID)){
+    	output_dataset->addInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID,pktid++ );
+    }
 
     //scan other memebrs to create the datapack
     //call persistence api for insert the data

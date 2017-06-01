@@ -471,8 +471,8 @@ int HTTPUIInterface::processRest(struct mg_connection *connection) {
 	const std::string method  = connection->request_method;
 	const std::string url     = connection->uri;
 	const std::string api_uri = url.substr(strlen(API_PREFIX_V1)+1);
-	const bool        json    = checkForContentType(connection,
-                                                   "application/json");
+	const bool        json    = true;/*checkForContentType(connection,
+                                                   "application/json");*/
 
 	//remove the prefix and tokenize the url
 	std::vector<std::string> api_token_list;
