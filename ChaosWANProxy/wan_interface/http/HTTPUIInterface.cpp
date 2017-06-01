@@ -307,6 +307,12 @@ try{
 		std::string content_data(decoded, connection->content_len);
 		HTTWAN_INTERFACE_DBG_<<LOG_CONNECTION<<"POST:"<<content_data;
 		request=mappify(content_data);
+	} else {
+		HTTWAN_INTERFACE_DBG_<<LOG_CONNECTION<<"UNSUPPORTED METHOD:"<<method<<" data:"<<connection->content;
+		response.setCode(400);
+					flush_response(connection, &response);
+					return 1;
+
 	}
 	std::string cmd, parm,dev_param;
 	dev_param = request["dev"];
