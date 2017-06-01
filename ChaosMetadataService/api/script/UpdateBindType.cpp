@@ -75,7 +75,7 @@ int UpdateBindType::updateBindType(const ScriptBaseDescription& script_base_desc
                                     alive))) {
             LOG_AND_TROW(ERR, -2, CHAOS_FORMAT("Error check the aliveness for instance for %1%[%2%]", %instance.instance_name%instance.instance_seq));
         } else if(alive) {
-            LOG_AND_TROW(ERR, -2, CHAOS_FORMAT("he instance %1%[%2%] is alive and the bind type can be applyed", %instance.instance_name%instance.instance_seq));
+            LOG_AND_TROW(ERR, -2, CHAOS_FORMAT("The instance %1%[%2%] is alive and the bind type can't be changed", %instance.instance_name%instance.instance_seq));
         }
     }
     if(instance.bind_type == ScriptBindTypeUnitServer) {

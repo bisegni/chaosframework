@@ -91,8 +91,8 @@ int ChaosLuaWrapperInterface::callApi(lua_State *ls) {
                                                  api_name,
                                                  in_param,
                                                  out_param))) {
-        LSVM_ERR << CHAOS_FORMAT("Error %1% calling %2%[%3%] with code %4%", %err%api_name%api_name%class_api_name);
-        luaL_argerror(ls, err, CHAOS_FORMAT("Error executing %1%[%2%]", %api_name%api_name).c_str());
+        LSVM_ERR << CHAOS_FORMAT("Error %1% calling %2%[%3%]", %err%api_name%class_api_name);
+        luaL_argerror(ls, err, CHAOS_FORMAT("Error executing %1%[%2%]", %api_name%class_api_name).c_str());
     } else {
         //we can send the return
         for(ScriptOutParamIterator it = out_param.begin(),

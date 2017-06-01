@@ -34,8 +34,9 @@ using namespace chaos::cu::control_manager::script::api;
 #define EUSW_DBG     DBG_LOG_1_P(EULiveManagment, eu_instance->getCUID())
 #define EUSW_LERR    ERR_LOG_1_P(EULiveManagment, eu_instance->getCUID())
 
-#define EULM_FETCH          "fetch"
-#define EULM_GET_ATTR_VALUE "getValueForKey"
+#define EULM_FETCH              "fetch"
+#define EULM_GET_ATTR_VALUE     "getValueForKey"
+#define EULM_CLEAR_LOCAL_CACHE  "clear"
 
 EULiveManagment::EULiveManagment(ScriptableExecutionUnit *_eu_instance):
 TemplatedAbstractScriptableClass(this,
@@ -43,6 +44,7 @@ TemplatedAbstractScriptableClass(this,
 eu_instance(_eu_instance) {
     addApi(EULM_FETCH, &EULiveManagment::fetch);
     addApi(EULM_GET_ATTR_VALUE, &EULiveManagment::getValueForKey);
+    addApi(EULM_CLEAR_LOCAL_CACHE, &EULiveManagment::clear);
 }
 
 EULiveManagment::~EULiveManagment() {}
@@ -67,7 +69,7 @@ int EULiveManagment::fetch(const ScriptInParam& input_parameter,
         
         if((err = eu_instance->performLiveFetch(node_uid_to_fetch,
                                                 domain_type,
-                                                found_dataset) == 0)) {
+                                                found_dataset)) == 0) {
             for(int elemend_index = 0;
                 elemend_index < found_dataset.size();
                 elemend_index++) {
@@ -79,7 +81,7 @@ int EULiveManagment::fetch(const ScriptInParam& input_parameter,
             
         }
     } catch(...) {
-        return -3;
+        return -2;
     }
     return err;
 }
@@ -89,8 +91,8 @@ int EULiveManagment::getValueForKey(const ScriptInParam& input_parameter,
     if(input_parameter.size() != 3) {
         return -1;
     }
-    const std::string node_uid = input_parameter[0];
-    const KeyDataStorageDomain domain = static_cast<KeyDataStorageDomain>(input_parameter[1].asInt32());
+    const KeyDataStorageDomain domain = static_cast<KeyDataStorageDomain>(input_parameter[0].asInt32());
+    const std::string node_uid = input_parameter[1];
     const std::string attribute_name = input_parameter[2];
     
     const NodeDomainPair map_key(node_uid,
@@ -106,5 +108,25 @@ int EULiveManagment::getValueForKey(const ScriptInParam& input_parameter,
     }
     
     output_parameter.push_back(it_ds->second->getVariantValue(attribute_name));
+    return 0;
+}
+
+int EULiveManagment::clear(const chaos::common::script::ScriptInParam& input_parameter,
+                           chaos::common::script::ScriptOutParam& output_parameter) {
+    if(input_parameter.size() < 2) {
+        return -1;
+    }
+    try {
+        const KeyDataStorageDomain domain_type = static_cast<KeyDataStorageDomain>(input_parameter[0].asInt32());
+        for(ScriptInParamConstIterator it =  (input_parameter.begin()+1),
+            end = input_parameter.end();
+            it != end;
+            it++) {
+            map_node_ds.erase(NodeDomainPair(*it,
+                                             domain_type));
+        }
+    } catch(...) {
+        return -2;
+    }
     return 0;
 }
