@@ -156,6 +156,8 @@
 		323BC2841EE0362500B4D602 /* EUAbstractApiPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 323BC2821EE0362500B4D602 /* EUAbstractApiPlugin.h */; };
 		323BC2871EE05A8B00B4D602 /* EUPluginLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323BC2851EE05A8B00B4D602 /* EUPluginLoader.cpp */; };
 		323BC2881EE05A8B00B4D602 /* EUPluginLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 323BC2861EE05A8B00B4D602 /* EUPluginLoader.h */; };
+		323BC28C1EE06E7500B4D602 /* plugin_constants.h in Headers */ = {isa = PBXBuildFile; fileRef = 323BC28A1EE06E7500B4D602 /* plugin_constants.h */; };
+		323BC2901EE0705500B4D602 /* plugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 323BC28E1EE0705500B4D602 /* plugin.h */; };
 		32401CB61C18330000E62866 /* GetNodesForSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32401CB41C18330000E62866 /* GetNodesForSnapshot.cpp */; };
 		32401CB91C183E2600E62866 /* GetNodesForSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32401CB71C183E2600E62866 /* GetNodesForSnapshot.cpp */; };
 		32401CBA1C183E2600E62866 /* GetNodesForSnapshot.h in Headers */ = {isa = PBXBuildFile; fileRef = 32401CB81C183E2600E62866 /* GetNodesForSnapshot.h */; };
@@ -1410,6 +1412,8 @@
 		323BC2821EE0362500B4D602 /* EUAbstractApiPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EUAbstractApiPlugin.h; sourceTree = "<group>"; };
 		323BC2851EE05A8B00B4D602 /* EUPluginLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EUPluginLoader.cpp; sourceTree = "<group>"; };
 		323BC2861EE05A8B00B4D602 /* EUPluginLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EUPluginLoader.h; sourceTree = "<group>"; };
+		323BC28A1EE06E7500B4D602 /* plugin_constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = plugin_constants.h; sourceTree = "<group>"; };
+		323BC28E1EE0705500B4D602 /* plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = plugin.h; sourceTree = "<group>"; };
 		32401CB41C18330000E62866 /* GetNodesForSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetNodesForSnapshot.cpp; sourceTree = "<group>"; };
 		32401CB51C18330000E62866 /* GetNodesForSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetNodesForSnapshot.h; sourceTree = "<group>"; };
 		32401CB71C183E2600E62866 /* GetNodesForSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetNodesForSnapshot.cpp; sourceTree = "<group>"; };
@@ -3165,6 +3169,8 @@
 				323BC2821EE0362500B4D602 /* EUAbstractApiPlugin.h */,
 				323BC2851EE05A8B00B4D602 /* EUPluginLoader.cpp */,
 				323BC2861EE05A8B00B4D602 /* EUPluginLoader.h */,
+				323BC28A1EE06E7500B4D602 /* plugin_constants.h */,
+				323BC28E1EE0705500B4D602 /* plugin.h */,
 			);
 			path = plugin;
 			sourceTree = "<group>";
@@ -5785,6 +5791,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				323BC2901EE0705500B4D602 /* plugin.h in Headers */,
 				32CFC5C61AF55FED00E2A0B6 /* IOCU.h in Headers */,
 				326DB4B914B3A3E50018A8D0 /* ChaosCUToolkit.h in Headers */,
 				326CD5AC1D66F975003AD071 /* PublishingManager.h in Headers */,
@@ -5828,6 +5835,7 @@
 				328CC9D71763CCC7000B30B6 /* AbstractDriver.h in Headers */,
 				32919A0C1764E68F00724874 /* DriverAccessor.h in Headers */,
 				322A3BCB1CEE1AA900FAD9DA /* ScriptableExecutionUnit.h in Headers */,
+				323BC28C1EE06E7500B4D602 /* plugin_constants.h in Headers */,
 				32C4EF3B1D4F71440014F3D3 /* DatasetConsumer.h in Headers */,
 				3214EF111D466F95004DB689 /* DataBroker.h in Headers */,
 				3291D5191D5DEE890077CBB3 /* PublishTarget.h in Headers */,

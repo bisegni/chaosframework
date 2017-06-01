@@ -1,10 +1,10 @@
 /*
- *	api.h
+ *	plugin.h
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
  *
- *    	Copyright 04/04/2017 INFN, National Institute of Nuclear Physics
+ *    	Copyright 01/06/2017 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -19,13 +19,12 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework_B2279B10_10C2_4207_92E0_420FD530F85A_api_h
-#define __CHAOSFramework_B2279B10_10C2_4207_92E0_420FD530F85A_api_h
+#ifndef __CHAOSFramework_C3D26FE7_C2B1_4F4D_A8E6_701A081F5D50_plugin_h
+#define __CHAOSFramework_C3D26FE7_C2B1_4F4D_A8E6_701A081F5D50_plugin_h
 
-#include <chaos/cu_toolkit/control_manager/script/api/EUSearch.h>
-#include <chaos/cu_toolkit/control_manager/script/api/EULiveManagment.h>
-#include <chaos/cu_toolkit/control_manager/script/api/EUDSValueManagement.h>
+#include <chaos/cu_toolkit/control_manager/script/api/plugin/plugin_constants.h>
 
-#include <chaos/cu_toolkit/control_manager/script/api/plugin/plugin.h>
+#include <chaos/cu_toolkit/control_manager/script/api/plugin/EUPluginLoader.h>
+#include <chaos/cu_toolkit/control_manager/script/api/plugin/EUAbstractApiPlugin.h>
 
-#endif /* __CHAOSFramework_B2279B10_10C2_4207_92E0_420FD530F85A_api_h */
+#endif /* __CHAOSFramework_C3D26FE7_C2B1_4F4D_A8E6_701A081F5D50_plugin_h */

@@ -20,6 +20,8 @@
 #include <chaos/cu_toolkit/ChaosCUToolkit.h>
 #include <chaos/cu_toolkit/data_manager/DataManager.h>
 #include <chaos/cu_toolkit/command_manager/CommandManager.h>
+#include <chaos/cu_toolkit/control_manager/script/api/api.h>
+
 
 #include <chaos/common/healt_system/HealtManager.h>
 #include <chaos/common/metadata_logging/MetadataLoggingManager.h>
@@ -154,7 +156,13 @@ ChaosCUToolkit::ChaosCUToolkit() {
                                                             CONTROL_MANAGER_EXECUTION_POOLS_CPU_CAP_DESC,
                                                             CONTROL_MANAGER_EXECUTION_POOLS_CPU_CAP_DEFAULT);
     
+    GlobalConfiguration::getInstance()->addOption< std::string >(EU_PLUGIN_DIRECTORY,
+                                                                 EU_PLUGIN_DIRECTORY_DESC,
+                                                                 EU_PLUGIN_DIRECTORY_DEFAULT);
     
+    GlobalConfiguration::getInstance()->addOption< bool >(EU_PLUGIN_ENABLE,
+                                                          EU_PLUGIN_ENABLE_DESC,
+                                                          EU_PLUGIN_ENABLE_DEFAULT);
 }
 
 ChaosCUToolkit::~ChaosCUToolkit() {
@@ -191,7 +199,7 @@ void ChaosCUToolkit::init(void *init_data)  throw(CException) {
         struct sigaction sigact;
         sigact.sa_sigaction = crit_err_hdlr;
         sigact.sa_flags = SA_RESTART | SA_SIGINFO;
-
+        
         if (sigaction(SIGSEGV, &sigact, (struct sigaction *)NULL) != 0) {
             LERR_ << "error setting signal handler for SIGSEGV";
         }
@@ -208,9 +216,9 @@ void ChaosCUToolkit::init(void *init_data)  throw(CException) {
             LERR_ << "SIGTERM Signal handler registration error";
         }
         
-//        if (signal((int) SIGSEGV, ChaosCUToolkit::signalHanlder) == SIG_ERR){
-//            LERR_ << "SIGSEGV Signal handler registration error";
-//        }
+        //        if (signal((int) SIGSEGV, ChaosCUToolkit::signalHanlder) == SIG_ERR){
+        //            LERR_ << "SIGSEGV Signal handler registration error";
+        //        }
         
         if (signal((int) SIGABRT, ChaosCUToolkit::signalHanlder) == SIG_ERR){
             LERR_ << "SIGABRT Signal handler registration error";
