@@ -83,6 +83,7 @@ bool AgentEditor::isClosing() {
 void AgentEditor::updateUI() {
     ui->labelWorkingDirectory->setText(QString::fromStdString(agent_insance.working_directory));
     ui->labelWorkingDirectory->setToolTip(QString::fromStdString(agent_insance.working_directory));
+    ui->labelRPCInfo->setText(QString("%1[%2]").arg(agent_insance.rpc_addr.c_str()).arg(agent_insance.hostname.c_str()));
 }
 
 void AgentEditor::on_pushButtonUpdateList_clicked() {

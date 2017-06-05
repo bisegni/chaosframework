@@ -260,8 +260,8 @@ namespace chaos {
                 CHAOS_OPEN_SDWRAPPER(AgentInstance)
                 void deserialize(chaos::common::data::CDataWrapper *serialized_data) {
                     if(serialized_data == NULL) return;
-                    dataWrapped().instance_seq = (uint64_t)CDW_GET_INT64_WITH_DEFAULT(serialized_data, "seq", 0);
-                    dataWrapped().instance_name = CDW_GET_SRT_WITH_DEFAULT(serialized_data, NodeDefinitionKey::NODE_UNIQUE_ID, "");
+                    node::NodeInstanceSDWrapper node_instance(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(node::NodeInstance, dataWrapped()));
+                    node_instance.deserialize(serialized_data);
                     dataWrapped().working_directory = CDW_GET_SRT_WITH_DEFAULT(serialized_data, AgentNodeDefinitionKey::WORKING_DIRECTORY, "");
                     VectorAgentAssociationSDWrapper associationList_sd_wrap(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(VectorAgentAssociation, dataWrapped().node_associated));
                     associationList_sd_wrap.serialization_key = AgentNodeDefinitionKey::NODE_ASSOCIATED;
@@ -269,9 +269,8 @@ namespace chaos {
                 }
                 
                 ChaosUniquePtr<chaos::common::data::CDataWrapper> serialize() {
-                    ChaosUniquePtr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
-                    data_serialized->addInt64Value("seq", dataWrapped().instance_seq);
-                    data_serialized->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, dataWrapped().instance_name);
+                    node::NodeInstanceSDWrapper node_instance(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(node::NodeInstance, dataWrapped()));
+                    ChaosUniquePtr<chaos::common::data::CDataWrapper> data_serialized = node_instance.serialize();
                     data_serialized->addStringValue(AgentNodeDefinitionKey::WORKING_DIRECTORY, dataWrapped().working_directory);
                     VectorAgentAssociationSDWrapper associationList_sd_wrap(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(VectorAgentAssociation, dataWrapped().node_associated));
                     associationList_sd_wrap.serialization_key = AgentNodeDefinitionKey::NODE_ASSOCIATED;
