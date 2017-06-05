@@ -701,7 +701,6 @@ void ControlManager::sendUnitServerRegistration() {
     //set server alias
     unit_server_registration_pack.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, unit_server_alias);
     unit_server_registration_pack.addStringValue(NodeDefinitionKey::NODE_TYPE, NodeType::NODE_TYPE_UNIT_SERVER);
-    
     if(unit_server_key.size()) {
         //the key need to be forwarded
         unit_server_registration_pack.addStringValue(NodeDefinitionKey::NODE_SECURITY_KEY, unit_server_key);

@@ -63,6 +63,7 @@ int MongoDBNodeDataAccess::getNodeDescription(const std::string& node_unique_id,
                                 chaos::NodeDefinitionKey::NODE_SUB_TYPE << 1 <<
                                 chaos::NodeDefinitionKey::NODE_RPC_ADDR << 1 <<
                                 chaos::NodeDefinitionKey::NODE_RPC_DOMAIN << 1 <<
+                                chaos::NodeDefinitionKey::NODE_HOST_NAME << 1 <<
                                 chaos::NodeDefinitionKey::NODE_DIRECT_IO_ADDR << 1 <<
                                 chaos::NodeDefinitionKey::NODE_TIMESTAMP << 1);
         
@@ -135,8 +136,6 @@ int MongoDBNodeDataAccess::updateNode(chaos::common::data::CDataWrapper& node_de
     mongo::BSONArrayBuilder bson_update_array;
     try {
         if(!node_description.hasKey(chaos::NodeDefinitionKey::NODE_UNIQUE_ID)) return -1;
-        //if(!node_description.hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR)) return -2;
-        //if(!node_description.hasKey(chaos::NodeDefinitionKey::NODE_TIMESTAMP)) return -4;
         
         //serach criteria
         bson_find << chaos::NodeDefinitionKey::NODE_UNIQUE_ID << node_description.getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID);
@@ -151,6 +150,9 @@ int MongoDBNodeDataAccess::updateNode(chaos::common::data::CDataWrapper& node_de
         }
         if(node_description.hasKey(chaos::NodeDefinitionKey::NODE_RPC_DOMAIN)) {
             updated_field << chaos::NodeDefinitionKey::NODE_RPC_DOMAIN << node_description.getStringValue(chaos::NodeDefinitionKey::NODE_RPC_DOMAIN);
+        }
+        if(node_description.hasKey(chaos::NodeDefinitionKey::NODE_HOST_NAME)) {
+            updated_field << chaos::NodeDefinitionKey::NODE_HOST_NAME << node_description.getStringValue(chaos::NodeDefinitionKey::NODE_HOST_NAME);
         }
         if(node_description.hasKey(chaos::NodeDefinitionKey::NODE_DIRECT_IO_ADDR)) {
             updated_field << chaos::NodeDefinitionKey::NODE_DIRECT_IO_ADDR << node_description.getStringValue(chaos::NodeDefinitionKey::NODE_DIRECT_IO_ADDR);

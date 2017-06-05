@@ -221,6 +221,9 @@ namespace chaos {
 
         //! brief node custom configuration parameters [CDataWrapper]
         static const char * const NODE_CUSTOM_PARAM       = "ndk_custom_param";
+        
+        //! brief node host name [string]
+        static const char * const NODE_HOST_NAME       = "ndk_host_name";
     }
     /** @} */ // end of NodeDefinitionKey
     

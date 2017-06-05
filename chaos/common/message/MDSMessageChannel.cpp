@@ -20,12 +20,13 @@
 
 #include <chaos/common/message/MDSMessageChannel.h>
 #include <chaos/common/network/NetworkBroker.h>
-
+#include <chaos/common/utility/InetUtility.h>
 #include <chaos/common/utility/TimingUtil.h>
 
 using namespace chaos::common::data;
 using namespace chaos::common::utility;
 using namespace chaos::common::message;
+
 #define MSG_INFO INFO_LOG(MDSMessageChannel)
 #define MSG_DBG DBG_LOG(MDSMessageChannel)
 #define MSG_ERR ERR_LOG(MDSMessageChannel)
@@ -114,7 +115,7 @@ int MDSMessageChannel::sendNodeRegistration(CDataWrapper& node_description,
     getRpcPublishedHostAndPort(currentBrokerIpPort);
     ChaosUniquePtr<chaos::common::data::CDataWrapper> data(new CDataWrapper(node_description.getBSONRawData(size_bson)));
     data->addStringValue(NodeDefinitionKey::NODE_RPC_ADDR, currentBrokerIpPort);
-    
+    data->addStringValue(NodeDefinitionKey::NODE_HOST_NAME, InetUtility::getHostname());
     //set our timestamp
     data->addInt64Value(chaos::NodeDefinitionKey::NODE_TIMESTAMP,
                         chaos::common::utility::TimingUtil::getTimeStamp());

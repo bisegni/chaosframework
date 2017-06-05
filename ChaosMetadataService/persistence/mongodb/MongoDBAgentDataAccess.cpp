@@ -65,7 +65,7 @@ int MongoDBAgentDataAccess::insertUpdateAgentDescription(CDataWrapper& agent_des
             ERR << CHAOS_FORMAT("Error checking agent %1% presence with error %2%" , %agent_uid%err);
             return err;
         }
-        
+
         if(presence == false) {
             //create new empty node
             CDataWrapper new_node;
@@ -78,6 +78,9 @@ int MongoDBAgentDataAccess::insertUpdateAgentDescription(CDataWrapper& agent_des
                 ERR << CHAOS_FORMAT("Error adding ageing structure to agent %1% with error %2%" , %agent_uid%err);
                 return err;
             }
+        } else if((err = node_data_access->updateNode(agent_description))) {
+                ERR << CHAOS_FORMAT("Error creating a new node structure for agent %1% with error %2%" , %agent_uid%err);
+                return err;
         }
         
         mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << agent_uid

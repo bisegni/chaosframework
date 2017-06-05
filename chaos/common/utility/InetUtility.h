@@ -31,6 +31,7 @@
 #include <netinet/in.h>
 #include <string.h>
 #include <arpa/inet.h>
+#include <stdlib.h>
 #include <chaos/common/global.h>
 
 #include <boost/regex.hpp>
@@ -200,6 +201,11 @@ namespace chaos {
                     }
                 }
                 
+                static std::string getHostname() {
+                    char hostname[1024];
+                    gethostname(hostname, 1024);
+                    return std::string(hostname, strlen(hostname));
+                }
 #define		STRIP_TO_UI64(x)  boost::asio::ip::address_v4::from_string(x)
 #define		UI64_TO_STRIP(i)  boost::asio::ip::address_v4(i).to_string()
             };

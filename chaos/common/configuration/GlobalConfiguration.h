@@ -276,10 +276,14 @@ x = hasOption(y);
          *Add the metadataserver address
          */
         void addLocalServerBasePort(int32_t localDefaultPort) throw (CException);
+        
+        //!return the hostname of the host that run chaos node
+        std::string getHostname();
+        
         /*
          return the address of metadataserver
          */
-        string getMetadataServerAddress();
+        std::string getMetadataServerAddress();
         
         /*
          return the address list of multiple configured metadataserver

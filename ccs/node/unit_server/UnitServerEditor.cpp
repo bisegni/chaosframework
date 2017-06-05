@@ -201,8 +201,14 @@ void UnitServerEditor::onApiDone(const QString& tag,
         ui->labelUnitServerUID->setText(node_unique_id);
         //address
         if(api_result->hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR)) {
+            QString addr_host;
+            if(api_result->hasKey(chaos::NodeDefinitionKey::NODE_HOST_NAME)) {
+                addr_host = QString("%1[%2]").arg(api_result->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR).c_str()).arg(api_result->getStringValue(chaos::NodeDefinitionKey::NODE_HOST_NAME).c_str());
+            } else {
+                addr_host = QString::fromStdString(api_result->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR));
+            }
             //we have address
-            ui->labelUinitServerAddress->setText(QString::fromStdString(api_result->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR)));
+            ui->labelUinitServerAddress->setText(addr_host);
         } else {
             ui->labelUinitServerAddress->setText(tr("No address"));
         }

@@ -354,7 +354,13 @@ void ControlUnitEditor::fillInfo(const QSharedPointer<chaos::common::data::CData
         }
     }
     if(node_info->hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR)) {
-        ui->labelRemoteAddress->setText(QString::fromStdString(node_info->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR)));
+        QString addr_host;
+        if(node_info->hasKey(chaos::NodeDefinitionKey::NODE_HOST_NAME)) {
+            addr_host = QString("%1[%2]").arg(node_info->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR).c_str()).arg(node_info->getStringValue(chaos::NodeDefinitionKey::NODE_HOST_NAME).c_str());
+        } else {
+            addr_host = QString::fromStdString(node_info->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR));
+        }
+        ui->labelRemoteAddress->setText(addr_host);
     } else {
         ui->labelRemoteAddress->setText(tr("---"));
     }

@@ -477,6 +477,10 @@ void GlobalConfiguration::addLocalServerBasePort(int32_t localDefaultPort) throw
     configuration.addInt32Value("base_port", localDefaultPort);
 }
 
+std::string GlobalConfiguration::getHostname() {
+    return InetUtility::getHostname();
+}
+
 /*
  return the address of metadataserver
  */
