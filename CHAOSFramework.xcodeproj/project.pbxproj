@@ -158,6 +158,8 @@
 		323BC2881EE05A8B00B4D602 /* EUPluginLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 323BC2861EE05A8B00B4D602 /* EUPluginLoader.h */; };
 		323BC28C1EE06E7500B4D602 /* plugin_constants.h in Headers */ = {isa = PBXBuildFile; fileRef = 323BC28A1EE06E7500B4D602 /* plugin_constants.h */; };
 		323BC2901EE0705500B4D602 /* plugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 323BC28E1EE0705500B4D602 /* plugin.h */; };
+		323BC2931EE5428000B4D602 /* EUPluginManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323BC2911EE5428000B4D602 /* EUPluginManager.cpp */; };
+		323BC2941EE5428000B4D602 /* EUPluginManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 323BC2921EE5428000B4D602 /* EUPluginManager.h */; };
 		32401CB61C18330000E62866 /* GetNodesForSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32401CB41C18330000E62866 /* GetNodesForSnapshot.cpp */; };
 		32401CB91C183E2600E62866 /* GetNodesForSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32401CB71C183E2600E62866 /* GetNodesForSnapshot.cpp */; };
 		32401CBA1C183E2600E62866 /* GetNodesForSnapshot.h in Headers */ = {isa = PBXBuildFile; fileRef = 32401CB81C183E2600E62866 /* GetNodesForSnapshot.h */; };
@@ -1414,6 +1416,8 @@
 		323BC2861EE05A8B00B4D602 /* EUPluginLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EUPluginLoader.h; sourceTree = "<group>"; };
 		323BC28A1EE06E7500B4D602 /* plugin_constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = plugin_constants.h; sourceTree = "<group>"; };
 		323BC28E1EE0705500B4D602 /* plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = plugin.h; sourceTree = "<group>"; };
+		323BC2911EE5428000B4D602 /* EUPluginManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EUPluginManager.cpp; sourceTree = "<group>"; };
+		323BC2921EE5428000B4D602 /* EUPluginManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EUPluginManager.h; sourceTree = "<group>"; };
 		32401CB41C18330000E62866 /* GetNodesForSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetNodesForSnapshot.cpp; sourceTree = "<group>"; };
 		32401CB51C18330000E62866 /* GetNodesForSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetNodesForSnapshot.h; sourceTree = "<group>"; };
 		32401CB71C183E2600E62866 /* GetNodesForSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetNodesForSnapshot.cpp; sourceTree = "<group>"; };
@@ -3169,6 +3173,8 @@
 				323BC2821EE0362500B4D602 /* EUAbstractApiPlugin.h */,
 				323BC2851EE05A8B00B4D602 /* EUPluginLoader.cpp */,
 				323BC2861EE05A8B00B4D602 /* EUPluginLoader.h */,
+				323BC2911EE5428000B4D602 /* EUPluginManager.cpp */,
+				323BC2921EE5428000B4D602 /* EUPluginManager.h */,
 				323BC28A1EE06E7500B4D602 /* plugin_constants.h */,
 				323BC28E1EE0705500B4D602 /* plugin.h */,
 			);
@@ -5834,6 +5840,7 @@
 				3214EF0B1D466CF6004DB689 /* DataBrokerManager.h in Headers */,
 				328CC9D71763CCC7000B30B6 /* AbstractDriver.h in Headers */,
 				32919A0C1764E68F00724874 /* DriverAccessor.h in Headers */,
+				323BC2941EE5428000B4D602 /* EUPluginManager.h in Headers */,
 				322A3BCB1CEE1AA900FAD9DA /* ScriptableExecutionUnit.h in Headers */,
 				323BC28C1EE06E7500B4D602 /* plugin_constants.h in Headers */,
 				32C4EF3B1D4F71440014F3D3 /* DatasetConsumer.h in Headers */,
@@ -6667,6 +6674,7 @@
 				3291D5181D5DEE890077CBB3 /* PublishTarget.cpp in Sources */,
 				32F2241B179AE3BC00853F62 /* RTAbstractControlUnit.cpp in Sources */,
 				32995C421BAC57A300F68148 /* SCWaitCommand.cpp in Sources */,
+				323BC2931EE5428000B4D602 /* EUPluginManager.cpp in Sources */,
 				32F2241F179AEED500853F62 /* SCAbstractControlUnit.cpp in Sources */,
 				32C4EF251D4BA7060014F3D3 /* DatasetEditor.cpp in Sources */,
 				32C4EF461D4F88ED0014F3D3 /* DatasetSubject.cpp in Sources */,

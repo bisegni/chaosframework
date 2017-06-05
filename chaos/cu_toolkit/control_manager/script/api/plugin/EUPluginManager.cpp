@@ -1,10 +1,10 @@
 /*
- *	plugin.h
+ *	PluginManager.cpp
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
  *
- *    	Copyright 01/06/2017 INFN, National Institute of Nuclear Physics
+ *    	Copyright 05/06/2017 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -19,13 +19,4 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework_C3D26FE7_C2B1_4F4D_A8E6_701A081F5D50_plugin_h
-#define __CHAOSFramework_C3D26FE7_C2B1_4F4D_A8E6_701A081F5D50_plugin_h
-
-#include <chaos/cu_toolkit/control_manager/script/api/plugin/plugin_constants.h>
-
-#include <chaos/cu_toolkit/control_manager/script/api/plugin/EUPluginLoader.h>
-#include <chaos/cu_toolkit/control_manager/script/api/plugin/EUAbstractApiPlugin.h>
-
 #include <chaos/cu_toolkit/control_manager/script/api/plugin/EUPluginManager.h>
-#endif /* __CHAOSFramework_C3D26FE7_C2B1_4F4D_A8E6_701A081F5D50_plugin_h */
