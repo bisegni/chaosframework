@@ -38,13 +38,15 @@ namespace chaos{
                             std::map<std::string, boost::function<EUAbstractApiPlugin*()> > driverAllocatorFunctions;
                         public:
                             //! default constructor
-                            EUPluginLoader(const char *pluginPath);
+                            EUPluginLoader(const std::string& plugin_path);
                             
                             //! default desctructor
                             ~EUPluginLoader();
                             
                             //! give infromation about the load operation of the dll
                             bool loaded();
+                            
+                            ChaosUniquePtr<common::plugin::PluginDiscover> getDiscover();
                             
                             //! Get the inspector for the name
                             ChaosUniquePtr<chaos::common::plugin::PluginInspector> getInspectorForName(const std::string& plugin_name);

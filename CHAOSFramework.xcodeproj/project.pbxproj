@@ -152,7 +152,6 @@
 		3239EF561C0F1E190052BE61 /* GetAllSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3239EF541C0F1E190052BE61 /* GetAllSnapshot.cpp */; };
 		3239EF591C0F26D90052BE61 /* GetAllSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3239EF571C0F26D90052BE61 /* GetAllSnapshot.cpp */; };
 		3239EF5A1C0F26D90052BE61 /* GetAllSnapshot.h in Headers */ = {isa = PBXBuildFile; fileRef = 3239EF581C0F26D90052BE61 /* GetAllSnapshot.h */; };
-		323BC2831EE0362500B4D602 /* EUAbstractApiPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323BC2811EE0362500B4D602 /* EUAbstractApiPlugin.cpp */; };
 		323BC2841EE0362500B4D602 /* EUAbstractApiPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 323BC2821EE0362500B4D602 /* EUAbstractApiPlugin.h */; };
 		323BC2871EE05A8B00B4D602 /* EUPluginLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323BC2851EE05A8B00B4D602 /* EUPluginLoader.cpp */; };
 		323BC2881EE05A8B00B4D602 /* EUPluginLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 323BC2861EE05A8B00B4D602 /* EUPluginLoader.h */; };
@@ -1410,7 +1409,6 @@
 		3239EF551C0F1E190052BE61 /* GetAllSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetAllSnapshot.h; sourceTree = "<group>"; };
 		3239EF571C0F26D90052BE61 /* GetAllSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetAllSnapshot.cpp; sourceTree = "<group>"; };
 		3239EF581C0F26D90052BE61 /* GetAllSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetAllSnapshot.h; sourceTree = "<group>"; };
-		323BC2811EE0362500B4D602 /* EUAbstractApiPlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EUAbstractApiPlugin.cpp; sourceTree = "<group>"; };
 		323BC2821EE0362500B4D602 /* EUAbstractApiPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EUAbstractApiPlugin.h; sourceTree = "<group>"; };
 		323BC2851EE05A8B00B4D602 /* EUPluginLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EUPluginLoader.cpp; sourceTree = "<group>"; };
 		323BC2861EE05A8B00B4D602 /* EUPluginLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EUPluginLoader.h; sourceTree = "<group>"; };
@@ -3169,7 +3167,6 @@
 		323BC2801EE035D000B4D602 /* plugin */ = {
 			isa = PBXGroup;
 			children = (
-				323BC2811EE0362500B4D602 /* EUAbstractApiPlugin.cpp */,
 				323BC2821EE0362500B4D602 /* EUAbstractApiPlugin.h */,
 				323BC2851EE05A8B00B4D602 /* EUPluginLoader.cpp */,
 				323BC2861EE05A8B00B4D602 /* EUPluginLoader.h */,
@@ -6644,7 +6641,6 @@
 				323BC2871EE05A8B00B4D602 /* EUPluginLoader.cpp in Sources */,
 				32A116AD1D181D2500FF44ED /* ExecutionPool.cpp in Sources */,
 				32C4EF421D4F7F9E0014F3D3 /* RegisterEnviroment.cpp in Sources */,
-				323BC2831EE0362500B4D602 /* EUAbstractApiPlugin.cpp in Sources */,
 				322A3BCA1CEE1AA900FAD9DA /* ScriptableExecutionUnit.cpp in Sources */,
 				32CFC5CC1AF5601300E2A0B6 /* BasicIODriverInterface.cpp in Sources */,
 				326DB4BF14B3A3E50018A8D0 /* AbstractControlUnit.cpp in Sources */,

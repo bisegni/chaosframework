@@ -28,8 +28,8 @@ using namespace chaos::common::plugin;
 using namespace chaos::cu::control_manager::script::api::plugin;
 
 //! default constructor
-EUPluginLoader::EUPluginLoader(const char *pluginPath):
-PluginLoader(pluginPath) {}
+EUPluginLoader::EUPluginLoader(const std::string& plugin_path):
+PluginLoader(plugin_path) {}
 
 //! default desctructor
 EUPluginLoader::~EUPluginLoader() {
@@ -41,9 +41,13 @@ bool EUPluginLoader::loaded() {
     return PluginLoader::loaded();
 }
 
+ChaosUniquePtr<PluginDiscover> EUPluginLoader::getDiscover() {
+    return ChaosUniquePtr<PluginDiscover>(PluginLoader::getDiscover());
+}
+
 //! Return the instance of the driver
-ChaosUniquePtr<chaos::common::plugin::PluginInspector> EUPluginLoader::getInspectorForName(const std::string& plugin_name) {
-    return ChaosUniquePtr<chaos::common::plugin::PluginInspector>(PluginLoader::getInspectorForName(plugin_name.c_str()));
+ChaosUniquePtr<PluginInspector> EUPluginLoader::getInspectorForName(const std::string& plugin_name) {
+    return ChaosUniquePtr<PluginInspector>(PluginLoader::getInspectorForName(plugin_name.c_str()));
 }
 
 //! Get the inspector for the name

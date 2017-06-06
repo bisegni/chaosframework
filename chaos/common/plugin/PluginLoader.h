@@ -51,9 +51,10 @@ namespace chaos {
             protected:
                 boost::extensions::shared_library lib;
                 
-                bool checkPluginInstantiableForSubclass(const char * pluginName, const char * subclass);
+                bool checkPluginInstantiableForSubclass(const std::string& pluginName,
+                                                        const std::string& subclass);
             public:
-                PluginLoader(const char *pluginPath);
+                PluginLoader(const std::string& plugin_path);
                 
                 ~PluginLoader();
                 
@@ -61,11 +62,9 @@ namespace chaos {
                 
                 PluginDiscover* getDiscover();
                 
-                PluginInspector* getInspectorForName(const char *pluginName);
+                PluginInspector* getInspectorForName(const std::string& pluginName);
                 
-                AbstractPlugin* newInstance(const char *pluginName);
-                
-                AbstractPlugin* newInstance(std::string pluginName);
+                AbstractPlugin* newInstance(const std::string& pluginName);
             };
             
         }

@@ -27,29 +27,29 @@ using namespace std;
 using namespace boost::extensions;
 using namespace chaos::common::plugin;
 
-PluginLoader::PluginLoader(const char *pluginPath):lib(pluginPath) {
-    if(pluginPath) {
-        //find library
-        if (lib.open()) {
-            // load the symbol for retrieve the plugin inspector
-            getDiscoverFunction = lib.get<PluginDiscover*>("getDiscover");
-        }
+PluginLoader::PluginLoader(const std::string& plugin_path):
+lib(plugin_path)  {
+    //find library
+    if (lib.open()) {
+        // load the symbol for retrieve the plugin inspector
+        getDiscoverFunction = lib.get<PluginDiscover*>("getDiscover");
     }
 }
 
 PluginLoader::~PluginLoader() {
 }
 
-bool PluginLoader::checkPluginInstantiableForSubclass(const char * pluginName, const char * subclass) {
+bool PluginLoader::checkPluginInstantiableForSubclass(const std::string& pluginName,
+                                                      const std::string& subclass) {
     if(!loaded()) return false;
     //check inspector if we can instanziate the plugin
     ChaosUniquePtr<PluginInspector> inspector(getInspectorForName(pluginName));
-
+    
     //check if the inspector was defined
     if(!inspector.get()) return false;
-
+    
     //check the plugin subclass
-    if(strcmp(inspector->getSubclass(), subclass) != 0) return false;
+    if(subclass.compare(inspector->getSubclass()) != 0) return false;
     
     return true;
 }
@@ -62,7 +62,7 @@ PluginDiscover* PluginLoader::getDiscover() {
     return getDiscoverFunction();
 }
 
-PluginInspector* PluginLoader::getInspectorForName(const char *pluginName) {
+PluginInspector* PluginLoader::getInspectorForName(const std::string& pluginName) {
     boost::function<PluginInspector*()> getInspectorFunction;
     string inspectorName = string(pluginName) + PLUGIN_INSPECTOR_POSTFIX;
     getInspectorFunction = lib.get<PluginInspector*>(inspectorName);
@@ -70,11 +70,7 @@ PluginInspector* PluginLoader::getInspectorForName(const char *pluginName) {
     return getInspectorFunction();
 }
 
-AbstractPlugin* PluginLoader::newInstance(std::string pluginName) {
-    return newInstance(pluginName.c_str());
-}
-
-AbstractPlugin* PluginLoader::newInstance(const char *pluginName) {
+AbstractPlugin* PluginLoader::newInstance(const std::string& pluginName) {
     
     //check if lib is loaded
     if(!loaded()) return NULL;
@@ -84,7 +80,7 @@ AbstractPlugin* PluginLoader::newInstance(const char *pluginName) {
     
     //we can instantiate the plugin
     string allocatorName = string(pluginName) + SYM_ALLOC_POSTFIX;
-        
+    
     //try to get function allocator
     boost::function<AbstractPlugin*()>  instancer = lib.get<AbstractPlugin*>(allocatorName);
     return instancer != NULL ? instancer():NULL;

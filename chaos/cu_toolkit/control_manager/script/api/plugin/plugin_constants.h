@@ -41,4 +41,4 @@ namespace chaos{
         }
     }
 }
-}#endif /* __CHAOSFramework__20927F5_831A_4A1F_ACB0_628709223BD9_plugin_constants_h */
+#endif /* __CHAOSFramework__20927F5_831A_4A1F_ACB0_628709223BD9_plugin_constants_h */
