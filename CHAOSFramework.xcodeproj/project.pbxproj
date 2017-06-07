@@ -157,8 +157,6 @@
 		323BC2881EE05A8B00B4D602 /* EUPluginLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 323BC2861EE05A8B00B4D602 /* EUPluginLoader.h */; };
 		323BC28C1EE06E7500B4D602 /* plugin_constants.h in Headers */ = {isa = PBXBuildFile; fileRef = 323BC28A1EE06E7500B4D602 /* plugin_constants.h */; };
 		323BC2901EE0705500B4D602 /* plugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 323BC28E1EE0705500B4D602 /* plugin.h */; };
-		323BC2931EE5428000B4D602 /* EUPluginManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323BC2911EE5428000B4D602 /* EUPluginManager.cpp */; };
-		323BC2941EE5428000B4D602 /* EUPluginManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 323BC2921EE5428000B4D602 /* EUPluginManager.h */; };
 		32401CB61C18330000E62866 /* GetNodesForSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32401CB41C18330000E62866 /* GetNodesForSnapshot.cpp */; };
 		32401CB91C183E2600E62866 /* GetNodesForSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32401CB71C183E2600E62866 /* GetNodesForSnapshot.cpp */; };
 		32401CBA1C183E2600E62866 /* GetNodesForSnapshot.h in Headers */ = {isa = PBXBuildFile; fileRef = 32401CB81C183E2600E62866 /* GetNodesForSnapshot.h */; };
@@ -1104,6 +1102,10 @@
 		32FC49B41E0AAFBE0087D82C /* AbstractSandbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FC49B21E0AAFBE0087D82C /* AbstractSandbox.h */; };
 		32FC49B71E0ACB1B0087D82C /* BatchCommandParallelSandbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FC49B51E0ACB1B0087D82C /* BatchCommandParallelSandbox.cpp */; };
 		32FC49B81E0ACB1B0087D82C /* BatchCommandParallelSandbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FC49B61E0ACB1B0087D82C /* BatchCommandParallelSandbox.h */; };
+		32FC56291EE7EC1C00C19841 /* PluginManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FC56271EE7EC1C00C19841 /* PluginManager.cpp */; };
+		32FC562A1EE7EC1C00C19841 /* PluginManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FC56281EE7EC1C00C19841 /* PluginManager.h */; };
+		32FC562D1EE8449A00C19841 /* EUPluginApiWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FC562B1EE8449A00C19841 /* EUPluginApiWrapper.cpp */; };
+		32FC562E1EE8449A00C19841 /* EUPluginApiWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FC562C1EE8449A00C19841 /* EUPluginApiWrapper.h */; };
 		32FC7EE51A70FDB70029C2A2 /* ApiManagment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FC7EE31A70FDB70029C2A2 /* ApiManagment.cpp */; };
 		32FF2A571E65782200117985 /* NodeOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A551E65782200117985 /* NodeOperation.cpp */; };
 		32FF2A581E65782200117985 /* NodeOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FF2A561E65782200117985 /* NodeOperation.h */; };
@@ -1414,8 +1416,6 @@
 		323BC2861EE05A8B00B4D602 /* EUPluginLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EUPluginLoader.h; sourceTree = "<group>"; };
 		323BC28A1EE06E7500B4D602 /* plugin_constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = plugin_constants.h; sourceTree = "<group>"; };
 		323BC28E1EE0705500B4D602 /* plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = plugin.h; sourceTree = "<group>"; };
-		323BC2911EE5428000B4D602 /* EUPluginManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EUPluginManager.cpp; sourceTree = "<group>"; };
-		323BC2921EE5428000B4D602 /* EUPluginManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EUPluginManager.h; sourceTree = "<group>"; };
 		32401CB41C18330000E62866 /* GetNodesForSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetNodesForSnapshot.cpp; sourceTree = "<group>"; };
 		32401CB51C18330000E62866 /* GetNodesForSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetNodesForSnapshot.h; sourceTree = "<group>"; };
 		32401CB71C183E2600E62866 /* GetNodesForSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetNodesForSnapshot.cpp; sourceTree = "<group>"; };
@@ -2594,6 +2594,10 @@
 		32FC49B21E0AAFBE0087D82C /* AbstractSandbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractSandbox.h; sourceTree = "<group>"; };
 		32FC49B51E0ACB1B0087D82C /* BatchCommandParallelSandbox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BatchCommandParallelSandbox.cpp; sourceTree = "<group>"; };
 		32FC49B61E0ACB1B0087D82C /* BatchCommandParallelSandbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BatchCommandParallelSandbox.h; sourceTree = "<group>"; };
+		32FC56271EE7EC1C00C19841 /* PluginManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginManager.cpp; sourceTree = "<group>"; };
+		32FC56281EE7EC1C00C19841 /* PluginManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginManager.h; sourceTree = "<group>"; };
+		32FC562B1EE8449A00C19841 /* EUPluginApiWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EUPluginApiWrapper.cpp; sourceTree = "<group>"; };
+		32FC562C1EE8449A00C19841 /* EUPluginApiWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EUPluginApiWrapper.h; sourceTree = "<group>"; };
 		32FC7EDF1A7008780029C2A2 /* mds_constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mds_constants.h; sourceTree = "<group>"; };
 		32FC7EE01A7008FA0029C2A2 /* mds_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mds_types.h; sourceTree = "<group>"; };
 		32FC7EE11A701BE40029C2A2 /* AbstractApi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AbstractApi.h; sourceTree = "<group>"; };
@@ -3170,8 +3174,8 @@
 				323BC2821EE0362500B4D602 /* EUAbstractApiPlugin.h */,
 				323BC2851EE05A8B00B4D602 /* EUPluginLoader.cpp */,
 				323BC2861EE05A8B00B4D602 /* EUPluginLoader.h */,
-				323BC2911EE5428000B4D602 /* EUPluginManager.cpp */,
-				323BC2921EE5428000B4D602 /* EUPluginManager.h */,
+				32FC562B1EE8449A00C19841 /* EUPluginApiWrapper.cpp */,
+				32FC562C1EE8449A00C19841 /* EUPluginApiWrapper.h */,
 				323BC28A1EE06E7500B4D602 /* plugin_constants.h */,
 				323BC28E1EE0705500B4D602 /* plugin.h */,
 			);
@@ -4302,6 +4306,8 @@
 				32875F96177634AF00E33D6F /* PluginInspector.h */,
 				328E36EA1786B89500C1564D /* PluginLoader.cpp */,
 				32875F9817763AE200E33D6F /* PluginLoader.h */,
+				32FC56271EE7EC1C00C19841 /* PluginManager.cpp */,
+				32FC56281EE7EC1C00C19841 /* PluginManager.h */,
 				328E36EC1786C00D00C1564D /* PluginDefinition.h */,
 			);
 			path = plugin;
@@ -5552,6 +5558,7 @@
 				32A5ED6014DBD68B001DC80E /* WaitSemaphore.h in Headers */,
 				3258AEEB1935C34000A66D44 /* URL.h in Headers */,
 				32C9CD3D1D51F7D30048DB4A /* PropertyDescription.h in Headers */,
+				32FC562A1EE7EC1C00C19841 /* PluginManager.h in Headers */,
 				32A88BEE1CF8228A001DBAF5 /* lualib.h in Headers */,
 				32BFF913176C862A00D27A04 /* StartableService.h in Headers */,
 				32B8C1A018292E51001CF714 /* DriverErogatorInterface.h in Headers */,
@@ -5794,6 +5801,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				32FC562E1EE8449A00C19841 /* EUPluginApiWrapper.h in Headers */,
 				323BC2901EE0705500B4D602 /* plugin.h in Headers */,
 				32CFC5C61AF55FED00E2A0B6 /* IOCU.h in Headers */,
 				326DB4B914B3A3E50018A8D0 /* ChaosCUToolkit.h in Headers */,
@@ -5837,7 +5845,6 @@
 				3214EF0B1D466CF6004DB689 /* DataBrokerManager.h in Headers */,
 				328CC9D71763CCC7000B30B6 /* AbstractDriver.h in Headers */,
 				32919A0C1764E68F00724874 /* DriverAccessor.h in Headers */,
-				323BC2941EE5428000B4D602 /* EUPluginManager.h in Headers */,
 				322A3BCB1CEE1AA900FAD9DA /* ScriptableExecutionUnit.h in Headers */,
 				323BC28C1EE06E7500B4D602 /* plugin_constants.h in Headers */,
 				32C4EF3B1D4F71440014F3D3 /* DatasetConsumer.h in Headers */,
@@ -6617,6 +6624,7 @@
 				32A8F7D1172BE3FD0090DB78 /* KeyGroupCache.cpp in Sources */,
 				32963A211AC08F7200FA72FA /* MultiAddressMessageChannel.cpp in Sources */,
 				324C768A1E01A5C500BA57E1 /* ProcStat.cpp in Sources */,
+				32FC56291EE7EC1C00C19841 /* PluginManager.cpp in Sources */,
 				32571D9C1C7C901A0001D884 /* BatchCommandLoggingChannel.cpp in Sources */,
 				324A4B0E191A3F6A00975394 /* error_codes.cpp in Sources */,
 				3298487D1736814700C158DF /* ChannelValueAccessor.cpp in Sources */,
@@ -6641,6 +6649,7 @@
 				323BC2871EE05A8B00B4D602 /* EUPluginLoader.cpp in Sources */,
 				32A116AD1D181D2500FF44ED /* ExecutionPool.cpp in Sources */,
 				32C4EF421D4F7F9E0014F3D3 /* RegisterEnviroment.cpp in Sources */,
+				32FC562D1EE8449A00C19841 /* EUPluginApiWrapper.cpp in Sources */,
 				322A3BCA1CEE1AA900FAD9DA /* ScriptableExecutionUnit.cpp in Sources */,
 				32CFC5CC1AF5601300E2A0B6 /* BasicIODriverInterface.cpp in Sources */,
 				326DB4BF14B3A3E50018A8D0 /* AbstractControlUnit.cpp in Sources */,
@@ -6670,7 +6679,6 @@
 				3291D5181D5DEE890077CBB3 /* PublishTarget.cpp in Sources */,
 				32F2241B179AE3BC00853F62 /* RTAbstractControlUnit.cpp in Sources */,
 				32995C421BAC57A300F68148 /* SCWaitCommand.cpp in Sources */,
-				323BC2931EE5428000B4D602 /* EUPluginManager.cpp in Sources */,
 				32F2241F179AEED500853F62 /* SCAbstractControlUnit.cpp in Sources */,
 				32C4EF251D4BA7060014F3D3 /* DatasetEditor.cpp in Sources */,
 				32C4EF461D4F88ED0014F3D3 /* DatasetSubject.cpp in Sources */,

@@ -10,7 +10,7 @@
 #include <chaos/cu_toolkit/driver_manager/driver/DriverPluginLoader.h>
 #include <chaos/cu_toolkit/control_manager/script/api/plugin/EUPluginLoader.h>
 #include <chaos/common/plugin/PluginLoader.h>
-
+#include <chaos/common/plugin/PluginManager.h>
 using namespace chaos::common::plugin;
 using namespace chaos::cu::driver_manager::driver;
 using namespace chaos::cu::control_manager::script::api::plugin;
@@ -81,30 +81,12 @@ int main(int argc, const char * argv[]) {
     std::cout << "----------------------------------End driver plugin test----------------------------------" << std::endl;
     std::cout << std::endl;
     std::cout << "----------------------------------Start driver plugin test----------------------------------" << std::endl;
-    EUPluginLoader euPluginLoader("PluginLibrary.chaos_extension");
-    if(driverLoader.loaded()) {
-        ChaosUniquePtr<PluginInspector> eu_plugin_inspector(euPluginLoader.getInspectorForName("EUPluginAlgotest"));
-        ChaosUniquePtr<EUAbstractApiPlugin> eu_plugin_instance(euPluginLoader.newPluginInstance("EUPluginAlgotest"));
-        if(eu_plugin_instance.get()) {
-            std::cout << eu_plugin_instance->getName() << "-" << eu_plugin_instance->getType() << "-" << eu_plugin_instance->getVersion() << std::endl;
-            std::string test_input("Eu script plugin input data");
-            char *out_data = NULL;
-            uint32_t out_size;
-            eu_plugin_instance->execute(test_input.c_str(),
-                                        (uint32_t)test_input.size(),
-                                        &out_data,
-                                        &out_size);
-            if(out_data) {
-                 std::cout << out_data << std::endl;
-            }
-            free(out_data);
-        } else {
-            std::cout << "DriverAlias not instantiated" << std::endl;
-        }
-    } else {
-        std::cerr << "Plugin not found" << std::endl;
-        return EXIT_FAILURE;
-    }
+    chaos::common::utility::InizializableService::initImplementation(chaos::common::async_central::AsyncCentralManager::getInstance(), NULL, "AsyncCentralManager", __PRETTY_FUNCTION__);
+    PluginManager pl_man("/Users/bisegni/source/chaos_development/chaosframework/chaos-distrib-x86_64-Darwin/bin");
+    pl_man.init(NULL);
+    sleep(10000000);
+    pl_man.deinit();
+    chaos::common::utility::InizializableService::deinitImplementation(chaos::common::async_central::AsyncCentralManager::getInstance(), "AsyncCentralManager", __PRETTY_FUNCTION__);
     std::cout << "----------------------------------End driver plugin test----------------------------------" << std::endl;
     
     return EXIT_SUCCESS;

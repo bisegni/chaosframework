@@ -20,16 +20,21 @@
  */
 
 #include <chaos/cu_toolkit/control_manager/script/ScriptableExecutionUnit.h>
+#include <chaos/cu_toolkit/control_manager/script/api/plugin/EUAbstractApiPlugin.h>
 
 #include <chaos/common/bson/util/base64.h>
 #include <chaos/common/exception/MetadataLoggingCException.h>
+#include <chaos/common/configuration/GlobalConfiguration.h>
 
 #include <chaos_service_common/data/data.h>
 
 #include <json/json.h>
 
 using namespace chaos::common::data;
+using namespace chaos::common::plugin;
+
 using namespace chaos::common::script;
+
 using namespace chaos::common::utility;
 using namespace chaos::common::exception;
 using namespace chaos::common::metadata_logging;
@@ -198,6 +203,21 @@ void ScriptableExecutionUnit::unitDefineActionAndDataset() throw(CException) {
     api_classes.push_back(ApiClassShrdPtr(new api::EUSearch(this)));
     api_classes.push_back(ApiClassShrdPtr(new api::EUDSValueManagement(this)));
     api_classes.push_back(ApiClassShrdPtr(new api::EULiveManagment(this)));
+    
+    if(GlobalConfiguration::getInstance()->getOption<bool>(InitOption::OPT_PLUGIN_ENABLE)) {
+        ChaosStringVector publish_api;
+        //add api form pugin
+        PluginManager::getInstance()->getRegisterdPluginForSubclass("chaos::cu::control_manager::script::api::plugin::EUAbstractApiPlugin", publish_api);
+        
+        for(ChaosStringVectorIterator it = publish_api.begin(),
+            end = publish_api.end();
+            it != end;
+            it++) {
+            ChaosUniquePtr<api::plugin::EUAbstractApiPlugin> api_instance = PluginManager::getInstance()->getPluginInstanceBySubclassAndName<api::plugin::EUAbstractApiPlugin>("chaos::cu::control_manager::script::api::plugin::EUAbstractApiPlugin",*it);
+            if(api_instance.get() == NULL) continue;
+            SEU_LAPP << CHAOS_FORMAT("Loading API '%1%' form plugin!", %api_instance->getApiName());
+        }
+    }
     registerApi();
     
     //!load script within the virtual machine
@@ -254,7 +274,7 @@ void ScriptableExecutionUnit::unitDefineActionAndDataset() throw(CException) {
     //    }
 }
 
-void ScriptableExecutionUnit::executeAlgorithmLaunch() throw(CException) {    
+void ScriptableExecutionUnit::executeAlgorithmLaunch() throw(CException) {
     if(!alghorithm_handler_implemented[0])
         return;
     LockableScriptManagerReadLock rl = script_manager.getReadLockObject();
@@ -401,4 +421,8 @@ CDataWrapper * ScriptableExecutionUnit::updateScriptSource(CDataWrapper *data_pa
     }
     SEU_LAPP << "Script source code update";
     return NULL;
+}
+
+void ScriptableExecutionUnit::pluginDirectoryHasBeenUpdated() {
+    
 }

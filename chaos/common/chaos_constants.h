@@ -112,6 +112,10 @@ namespace chaos {
         static const char * const   OPT_TIME_CALIBRATION_OFFSET_BOUND   = "time-calibration-oofset-bound";
         //! Enable the calibration of the local timestsamp with a remote NTP server
         static const char * const   OPT_TIME_CALIBRATION_NTP_SERVER     = "time-calibration-ntp-server";
+        //! Enable the usage of the plugin
+        static const char * const   OPT_PLUGIN_ENABLE                   = "plugin-enable";
+        //! Specify the directory were can be found the plugin
+        static const char * const   OPT_PLUGIN_DIRECTORY_PATH           = "plugin-directory-path";
     }
     /** @} */ // end of ParamOption
     

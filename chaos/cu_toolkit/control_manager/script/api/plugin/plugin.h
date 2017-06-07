@@ -25,7 +25,7 @@
 #include <chaos/cu_toolkit/control_manager/script/api/plugin/plugin_constants.h>
 
 #include <chaos/cu_toolkit/control_manager/script/api/plugin/EUPluginLoader.h>
+#include <chaos/cu_toolkit/control_manager/script/api/plugin/EUPluginApiWrapper.h>
 #include <chaos/cu_toolkit/control_manager/script/api/plugin/EUAbstractApiPlugin.h>
 
-#include <chaos/cu_toolkit/control_manager/script/api/plugin/EUPluginManager.h>
 #endif /* __CHAOSFramework_C3D26FE7_C2B1_4F4D_A8E6_701A081F5D50_plugin_h */

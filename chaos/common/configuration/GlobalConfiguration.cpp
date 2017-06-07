@@ -84,6 +84,9 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException) {
         addOption(InitOption::OPT_TIME_CALIBRATION, po::value< bool >()->zero_tokens(), "Enable the time calibration for chaos process");
         addOption(InitOption::OPT_TIME_CALIBRATION_OFFSET_BOUND, po::value< unsigned int >()->default_value(500), "The number of millisecond of difference after wich the calibration will be activated");
         addOption(InitOption::OPT_TIME_CALIBRATION_NTP_SERVER, po::value< string >(), "Specify the NTP server used for time calibration");
+        
+        addOption(InitOption::OPT_PLUGIN_ENABLE, po::value< bool >()->zero_tokens(), "Enable the use of the plugin");
+        addOption(InitOption::OPT_PLUGIN_DIRECTORY_PATH, po::value< std::string >()->default_value("plugin"), "Specify the directory where are stored the plugin");
     } catch (po::error &e) {
         throw CException(0, e.what(), "GlobalConfiguration::preParseStartupParameters");
     }

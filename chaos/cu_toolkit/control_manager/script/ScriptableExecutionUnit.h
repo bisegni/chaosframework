@@ -25,6 +25,7 @@
 #include <chaos/common/script/ScriptManager.h>
 
 #include <chaos/common/chaos_types.h>
+#include <chaos/common/plugin/PluginManager.h>
 #include <chaos/common/utility/LockableObject.h>
 #include <chaos/common/network/NetworkBroker.h>
 
@@ -57,7 +58,8 @@ namespace chaos {
                  }
                  */
                 class ScriptableExecutionUnit:
-                public AbstractExecutionUnit {
+                public AbstractExecutionUnit,
+                public chaos::common::plugin::AbstractPluginManagerListner {
                     friend class api::EUSearch;
                     friend class api::EULiveManagment;
                     friend class api::EUDSValueManagement;
@@ -87,6 +89,7 @@ namespace chaos {
                     chaos::common::data::CDataWrapper* updateScriptSource(chaos::common::data::CDataWrapper *data_pack,
                                                                           bool& detachParam) throw(CException);
                     
+                    void pluginDirectoryHasBeenUpdated();
                 public:
                     /*! default constructor
                      \param _execution_unit_param is a string that contains parameter to pass during the contorl unit creation

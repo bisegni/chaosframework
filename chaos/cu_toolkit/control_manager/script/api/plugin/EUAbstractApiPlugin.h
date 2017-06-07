@@ -46,6 +46,8 @@ namespace chaos{
                                                 uint32_t in_data_size,
                                                 char **out_data,
                                                 uint32_t *out_data_size) = 0;
+                            
+                            virtual const char *getApiName() = 0;
                         };
                         
 #define DECLARE_EUAPI_PLUGIN_SCLASS(CLASS_NAME)\

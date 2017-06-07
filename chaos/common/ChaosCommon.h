@@ -32,6 +32,7 @@
 #include <chaos/common/utility/Singleton.h>
 #include <chaos/common/utility/TimingUtil.h>
 #include <chaos/common/utility/InetUtility.h>
+#include <chaos/common/plugin/PluginManager.h>
 #include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/async_central/AsyncCentralManager.h>
@@ -241,12 +242,22 @@ namespace chaos {
                     //enable timestamp calibration
                     chaos::common::utility::TimingUtil::getInstance()->enableTimestampCalibration();
                 }
+                
+                if(GlobalConfiguration::getInstance()->hasOption(InitOption::OPT_PLUGIN_ENABLE)){
+                    //initialize the plugin manager
+                    chaos::common::utility::InizializableService::initImplementation(chaos::common::plugin::PluginManager::getInstance(), NULL, "PluginManager", __PRETTY_FUNCTION__);
+                }
+                
                 }
 
                 void deinit() throw (CException) {
                 	 if(deinitialized)
                 	            	return;
                 	 deinitialized=true;
+                    if(GlobalConfiguration::getInstance()->hasOption(InitOption::OPT_PLUGIN_ENABLE)){
+                        //initialize the plugin manager
+                        chaos::common::utility::InizializableService::deinitImplementation(chaos::common::plugin::PluginManager::getInstance(), "PluginManager", __PRETTY_FUNCTION__);
+                    }
                     if(GlobalConfiguration::getInstance()->hasOption(InitOption::OPT_TIME_CALIBRATION)) {
                         //enable timestamp calibration
                         chaos::common::utility::TimingUtil::getInstance()->disableTimestampCalibration();
