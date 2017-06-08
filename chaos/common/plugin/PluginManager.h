@@ -22,7 +22,6 @@
 #ifndef __CHAOSFramework_A6357109_5878_4143_9231_88AE4DD31250_PluginManager_h
 #define __CHAOSFramework_A6357109_5878_4143_9231_88AE4DD31250_PluginManager_h
 
-
 #include <chaos/common/chaos_types.h>
 #include <chaos/common/utility/Singleton.h>
 #include <chaos/common/plugin/PluginLoader.h>
@@ -30,24 +29,27 @@
 #include <chaos/common/async_central/async_central.h>
 #include <chaos/common/utility/InizializableService.h>
 #include <chaos/common/utility/AbstractListenerContainer.h>
+#include <chaos/common/utility/LockableObject.h>
 
 #include <boost/filesystem.hpp>
+#include <boost/multi_index/member.hpp>
+#include <boost/multi_index_container.hpp>
+#include <boost/multi_index/ordered_index.hpp>
+#include <boost/multi_index/hashed_index.hpp>
+#include <boost/multi_index/composite_key.hpp>
 
 namespace chaos{
     namespace common {
         namespace plugin {
             
-            typedef std::pair<std::string, std::string> ApiIdentifier;
-            
-            CHAOS_DEFINE_SET_FOR_TYPE(ApiIdentifier, SetApiName);
             CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ChaosStringSet, MapTypeApiName);
             //! plugin information
-            class LoadedPlugin {
+            class LoadedPluginLib {
             public:
                 const boost::filesystem::path plugin_file_path;
                 const uintmax_t       file_size;
                 const std::time_t     last_write_time;
-                LoadedPlugin(const boost::filesystem::path& _plugin_file_path);
+                LoadedPluginLib(const boost::filesystem::path& _plugin_file_path);
                 bool isLoaded();
                 const MapTypeApiName& getRegisteredPlugin();
                 bool hasPluginForClass(const std::string& plugin_class,
@@ -55,7 +57,7 @@ namespace chaos{
                 ChaosUniquePtr<chaos::common::plugin::PluginInspector> getInspectorForName(const std::string& api_name);
                 template<typename C>
                 ChaosUniquePtr<C> getInstance(const std::string& plugin_name) {
-                    return ChaosUniquePtr<C>(static_cast<C*>(loader->newInstance(plugin_name)));
+                    return loader->newInstance<C>(plugin_name);
                 }
             private:
                 ChaosSharedPtr<chaos::common::plugin::PluginLoader>  loader;
@@ -63,19 +65,24 @@ namespace chaos{
             };
             
             //! Comparator function
-            inline bool operator==(const LoadedPlugin& lhs,
-                                   const LoadedPlugin& rhs) {
+            inline bool operator==(const LoadedPluginLib& lhs,
+                                   const LoadedPluginLib& rhs) {
                 return lhs.file_size == rhs.file_size &&
                 lhs.last_write_time == rhs.last_write_time;
             }
             
             //! Comparator function
-            inline bool operator!=(const LoadedPlugin& lhs,
-                                   const LoadedPlugin& rhs) {
+            inline bool operator!=(const LoadedPluginLib& lhs,
+                                   const LoadedPluginLib& rhs) {
                 return !(lhs == rhs);
             }
             
-            CHAOS_DEFINE_MAP_FOR_TYPE(boost::filesystem::path, ChaosSharedPtr<LoadedPlugin>, MapPluginLoader);
+            typedef std::pair<std::string, std::string> PluginIdentifier;
+            CHAOS_DEFINE_MAP_FOR_TYPE(PluginIdentifier, boost::filesystem::path, MapPluginIdentifierPath);
+            CHAOS_DEFINE_LOCKABLE_OBJECT(MapPluginIdentifierPath, LockableMPIdPath);
+            
+            CHAOS_DEFINE_MAP_FOR_TYPE(boost::filesystem::path, ChaosSharedPtr<LoadedPluginLib>, MapPluginLoader);
+            CHAOS_DEFINE_LOCKABLE_OBJECT(MapPluginLoader, LockableMPLoader);
             
             //! Define base class for plugin manager listner
             class AbstractPluginManagerListner:
@@ -93,11 +100,13 @@ namespace chaos{
                 friend class chaos::common::utility::Singleton<PluginManager>;
                 const boost::filesystem::path plugin_directory;
                 ChaosSharedMutex map_mutex;
-                MapPluginLoader map_plugin_alias_loader;
+                
+                LockableMPIdPath map_pidentifier_path;
+                LockableMPLoader map_lib_path_loader;
                 PluginManager();
                 void timeout();
                 void ensurePluginDirectory();
-                bool registerApi(LoadedPlugin& plugin_info);
+                void updatePluginDatabase(LoadedPluginLib& loaded_lib);
                 void fireToListener(unsigned int fire_code,
                                     chaos::common::utility::AbstractListener *listener_to_fire);
             public:
@@ -105,22 +114,17 @@ namespace chaos{
                 ~PluginManager();
                 void init(void *init_data) throw(CException);
                 void deinit() throw(CException);
-                bool getRegisterdPluginForSubclass(const std::string& subclass,
+                bool getRegisterdPluginForSubclass(const std::string& plugin_subclass,
                                                    ChaosStringVector& registered_plugin);
                 template<typename C>
                 ChaosUniquePtr<C> getPluginInstanceBySubclassAndName(const std::string& plugin_class,
                                                                      const std::string& plugin_name) {
-                    ChaosReadLock rl(map_mutex);
-                    for(MapPluginLoaderIterator it = map_plugin_alias_loader.begin(),
-                        end = map_plugin_alias_loader.end();
-                        it != end;
-                        it++) {
-                        if(it->second->hasPluginForClass(plugin_class,
-                                                         plugin_name)){
-                            return it->second->getInstance<C>(plugin_name);
-                        }
-                    }
-                    return ChaosUniquePtr<C>();
+                    LockableMPIdPathReadLock rl_1 = map_pidentifier_path.getReadLockObject();
+                    LockableMPLoaderReadLock rl_2 = map_lib_path_loader.getReadLockObject();
+                    PluginIdentifier identifier_key(plugin_class, plugin_name);
+                    MapPluginIdentifierPathIterator path_it = map_pidentifier_path().find(identifier_key);
+                    if(path_it == map_pidentifier_path().end()) return ChaosUniquePtr<C>();
+                    return map_lib_path_loader()[path_it->second]->getInstance<C>(plugin_name);
                 }
             };
         }

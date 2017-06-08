@@ -47,7 +47,7 @@ namespace chaos {
                             ~EUPluginApiWrapper();
                         protected:
                             EUPluginApiWrapper(ScriptableExecutionUnit *_eu_instance,
-                                               ChaosUniquePtr<EUAbstractApiPlugin> _api_plugin);
+                                               ChaosUniquePtr<EUAbstractApiPlugin>& _api_plugin);
                             
                             int execPlugin(const chaos::common::script::ScriptInParam& input_parameter,
                                            chaos::common::script::ScriptOutParam& output_parameter);

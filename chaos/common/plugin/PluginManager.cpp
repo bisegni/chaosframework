@@ -34,44 +34,40 @@ namespace as = chaos::common::async_central;
 using namespace chaos::common::plugin;
 using namespace chaos::common::utility;
 
-#pragma mark LoadedPlugin
-LoadedPlugin::LoadedPlugin(const boost::filesystem::path& _plugin_file_path):
+#pragma mark LoadedPluginLib
+LoadedPluginLib::LoadedPluginLib(const boost::filesystem::path& _plugin_file_path):
 plugin_file_path(_plugin_file_path),
 loader(new PluginLoader(plugin_file_path.string())),
 file_size(bf::file_size(plugin_file_path)),
 last_write_time(bf::last_write_time(plugin_file_path)){
     if(loader->loaded()) {
         ChaosUniquePtr<PluginDiscover> discover(loader->getDiscover());
-        INFO << CHAOS_FORMAT("Register new plugin '%1%'", %plugin_file_path);
         for (int idx = 0; idx < discover->getNamesSize() ; idx++) {
             const std::string registered_name = discover->getNameForIndex(idx);
             ChaosUniquePtr<PluginInspector> discover(loader->getInspectorForName(registered_name));
-            
-            const std::string api_subclass = discover->getSubclass();
-            INFO << CHAOS_FORMAT("Register new api '%1%' of type '%2%'", %registered_name%api_subclass);
-            map_type_plugin[api_subclass].insert(registered_name);
+            map_type_plugin[discover->getSubclass()].insert(registered_name);
         }
     }
 }
 
-bool LoadedPlugin::isLoaded() {
+bool LoadedPluginLib::isLoaded() {
     return loader->loaded();
 }
 
-const MapTypeApiName& LoadedPlugin::getRegisteredPlugin() {
+const MapTypeApiName& LoadedPluginLib::getRegisteredPlugin() {
     return map_type_plugin;
 }
 
-ChaosUniquePtr<PluginInspector> LoadedPlugin::getInspectorForName(const std::string& api_name) {
+ChaosUniquePtr<PluginInspector> LoadedPluginLib::getInspectorForName(const std::string& api_name) {
     return ChaosUniquePtr<PluginInspector>();
 }
 
-bool LoadedPlugin::hasPluginForClass(const std::string& plugin_class,
+bool LoadedPluginLib::hasPluginForClass(const std::string& plugin_class,
                                  const std::string& plugin_name) {
     return (map_type_plugin[plugin_class].find(plugin_name) !=  map_type_plugin[plugin_class].end());
 }
 
-#pragma PLauingManager
+#pragma PluginManager
 PluginManager::PluginManager():
 plugin_directory(GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_PLUGIN_DIRECTORY_PATH)) {}
 
@@ -101,6 +97,28 @@ void PluginManager::fireToListener(unsigned int fire_code,
     if(l) l->pluginDirectoryHasBeenUpdated();
 }
 
+void PluginManager::updatePluginDatabase(LoadedPluginLib& loaded_lib) {
+    const MapTypeApiName& loaded_lib_content = loaded_lib.getRegisteredPlugin();
+    for(MapTypeApiNameConstIterator it = loaded_lib_content.begin(),
+        end = loaded_lib_content.end();
+        it != end;
+        it++) {
+        const std::string& type = it->first;
+        const ChaosStringSet& plugin_name_set = it->second;
+        for(ChaosStringSetConstIterator pname_it = plugin_name_set.begin(),
+            pname_end = plugin_name_set.end();
+            pname_it != pname_end;
+            pname_it++){
+            PluginIdentifier identifier_key(type, *pname_it);
+            //the if another plugin with the same name is already present
+            if(map_pidentifier_path().find(identifier_key) != map_pidentifier_path().end()) continue;
+            //add type/name pair to map and associate lib file path to it
+            INFO << CHAOS_FORMAT("Register plugin %1%[%2%] found in file %3%",%*pname_it%type%loaded_lib.plugin_file_path);
+            map_pidentifier_path().insert(MapPluginIdentifierPathPair(identifier_key, loaded_lib.plugin_file_path));
+        }
+    }
+}
+
 void PluginManager::timeout() {
     bs::error_code ec;
     bool changed = false;
@@ -116,19 +134,21 @@ void PluginManager::timeout() {
             const boost::filesystem::path extension = it->path().extension();
             if (bf::is_regular_file(plugin_path) &&
                 (extension == ".chaos_extension")) {
-                ChaosSharedPtr<LoadedPlugin> plugin_info(new LoadedPlugin(plugin_path));
-                if(plugin_info->isLoaded() == false) {
-                    ERR << CHAOS_FORMAT("Error loading plugin '%1%'", %plugin_info->plugin_file_path);
+                ChaosSharedPtr<LoadedPluginLib> loaded_lib(new LoadedPluginLib(plugin_path));
+                if(loaded_lib->isLoaded() == false) {
+                    ERR << CHAOS_FORMAT("Error loading plugin '%1%'", %loaded_lib->plugin_file_path);
                 } else {
-                    ChaosWriteLock wl(map_mutex);
-                    if((changed = (map_plugin_alias_loader.count(plugin_path) == 0))) {
-                        INFO << CHAOS_FORMAT("Add new plugin '%1%'", %plugin_info->plugin_file_path);
+                    LockableMPLoaderWriteLock rl = map_lib_path_loader.getWriteLockObject();
+                    if((changed = (map_lib_path_loader().count(plugin_path) == 0))) {
+                        INFO << CHAOS_FORMAT("Add new plugin '%1%'", %loaded_lib->plugin_file_path);
                         //add new plugin
-                        map_plugin_alias_loader.insert(MapPluginLoaderPair(plugin_path, plugin_info));
-                    } else if((changed = (*plugin_info != *map_plugin_alias_loader[plugin_path]))) {
-                        INFO << CHAOS_FORMAT("Replace plugin '%1%' with new version", %plugin_info->plugin_file_path);
+                        map_lib_path_loader().insert(MapPluginLoaderPair(plugin_path, loaded_lib));
+                        updatePluginDatabase(*loaded_lib);
+                    } else if((changed = (*loaded_lib != *map_lib_path_loader()[plugin_path]))) {
+                        INFO << CHAOS_FORMAT("Replace plugin '%1%' with new version", %loaded_lib->plugin_file_path);
                         //plugin has changed
-                        map_plugin_alias_loader[plugin_path] = plugin_info;
+                        map_lib_path_loader()[plugin_path] = loaded_lib;
+                        updatePluginDatabase(*loaded_lib);
                     }
                 }
             }
@@ -154,23 +174,18 @@ void PluginManager::ensurePluginDirectory() {
     }
 }
 
-bool PluginManager::getRegisterdPluginForSubclass(const std::string& subclass,
-                                                  ChaosStringVector& registered_api) {
-    ChaosReadLock rl(map_mutex);
-    for(MapPluginLoaderIterator it = map_plugin_alias_loader.begin(),
-        end = map_plugin_alias_loader.end();
+bool PluginManager::getRegisterdPluginForSubclass(const std::string& plugin_subclass,
+                                                  ChaosStringVector& registered_plugin) {
+    LockableMPIdPathReadLock rl_1 = map_pidentifier_path.getReadLockObject();
+    for(MapPluginIdentifierPathIterator it = map_pidentifier_path().begin(),
+        end = map_pidentifier_path().end();
         it != end;
         it++) {
-        const MapTypeApiName& type_plugin_name = it->second->getRegisteredPlugin();
-        MapTypeApiNameConstIterator found_type = type_plugin_name.find(subclass);
-        if(found_type != type_plugin_name.end()) return false;
-        //add all api contained in the plugin for the specified subclass
-        for(ChaosStringSetConstIterator api_it = found_type->second.begin(),
-            api_end = found_type->second.end();
-            api_it != api_end;
-            api_it++) {
-            registered_api.push_back(*api_it);
-        }
+        //it iterate on a pair and path
+        const std::string& type = it->first.first;
+        const std::string& plugin_name = it->first.second;
+        if(type.compare(plugin_subclass) != 0) continue;
+        registered_plugin.push_back(plugin_name);
     }
     return true;
 }

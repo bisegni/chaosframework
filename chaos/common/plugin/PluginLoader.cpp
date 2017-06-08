@@ -69,19 +69,3 @@ PluginInspector* PluginLoader::getInspectorForName(const std::string& pluginName
     if(getInspectorFunction == NULL) return NULL;
     return getInspectorFunction();
 }
-
-AbstractPlugin* PluginLoader::newInstance(const std::string& pluginName) {
-    
-    //check if lib is loaded
-    if(!loaded()) return NULL;
-    
-    //check if subclass is the rigrth one
-    if(!checkPluginInstantiableForSubclass(pluginName, "chaos::common::plugin::AbstractPlugin")) return NULL;
-    
-    //we can instantiate the plugin
-    string allocatorName = string(pluginName) + SYM_ALLOC_POSTFIX;
-    
-    //try to get function allocator
-    boost::function<AbstractPlugin*()>  instancer = lib.get<AbstractPlugin*>(allocatorName);
-    return instancer != NULL ? instancer():NULL;
-}

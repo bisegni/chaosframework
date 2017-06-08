@@ -21,6 +21,7 @@
 
 #include <chaos/cu_toolkit/control_manager/script/ScriptableExecutionUnit.h>
 #include <chaos/cu_toolkit/control_manager/script/api/plugin/EUAbstractApiPlugin.h>
+#include <chaos/cu_toolkit/control_manager/script/api/plugin/EUPluginApiWrapper.h>
 
 #include <chaos/common/bson/util/base64.h>
 #include <chaos/common/exception/MetadataLoggingCException.h>
@@ -39,6 +40,7 @@ using namespace chaos::common::utility;
 using namespace chaos::common::exception;
 using namespace chaos::common::metadata_logging;
 using namespace chaos::cu::control_manager::script;
+using namespace chaos::cu::control_manager::script::api::plugin;
 
 #define SEU_LAPP    INFO_LOG_1_P(ScriptableExecutionUnit, getDeviceID())
 #define SEU_DBG     DBG_LOG_1_P(ScriptableExecutionUnit, getDeviceID())
@@ -215,7 +217,8 @@ void ScriptableExecutionUnit::unitDefineActionAndDataset() throw(CException) {
             it++) {
             ChaosUniquePtr<api::plugin::EUAbstractApiPlugin> api_instance = PluginManager::getInstance()->getPluginInstanceBySubclassAndName<api::plugin::EUAbstractApiPlugin>("chaos::cu::control_manager::script::api::plugin::EUAbstractApiPlugin",*it);
             if(api_instance.get() == NULL) continue;
-            SEU_LAPP << CHAOS_FORMAT("Loading API '%1%' form plugin!", %api_instance->getApiName());
+            SEU_LAPP << CHAOS_FORMAT("Add API '%1%' form plugin!", %api_instance->getApiName());
+            api_classes.push_back(ApiClassShrdPtr(new EUPluginApiWrapper(this, api_instance)));
         }
     }
     registerApi();

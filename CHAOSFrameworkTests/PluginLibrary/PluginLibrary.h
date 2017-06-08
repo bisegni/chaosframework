@@ -65,6 +65,7 @@ DECLARE_EUAPI_PLUGIN_SCLASS(EUTestApiPLugin) {
                 uint32_t in_data_size,
                 char **out_data,
                 uint32_t *out_data_size);
+    const char *getApiName();
 };
 
 

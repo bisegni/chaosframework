@@ -80,7 +80,7 @@ void TimingUtil::timeout() {
         int64_t diff_rx = ntp_rx_ts - pre_ts; //how much ntp time diff from us
         int64_t diff_tx = ntp_tx_ts - post_ts;
         int64_t offset = (int64_t)((double)(diff_rx + diff_tx) / 2.0);
-        double delay = (post_ts-pre_ts) - (ntp_tx_ts-ntp_rx_ts);
+        //double delay = (post_ts-pre_ts) - (ntp_tx_ts-ntp_rx_ts);
         if(((int64_t)std::fabs(offset)) > calibration_offset_bound) {
             timestamp_calibration_offset += (uint64_t)offset;
             TU_LAPP << CHAOS_FORMAT("Timestamp calibration has been applyed for %1% milliseconds with pre_ts:%2% ntptx:%3%",%offset%pre_ts%ntp_tx_ts);
@@ -98,7 +98,7 @@ void TimingUtil::timeout() {
 
 void TimingUtil::getNTPTS(uint64_t& ntp_received_ts,
                           uint64_t& ntp_reansmitted_ts) {
-    time_t result_time = 0;
+    //time_t result_time = 0;
     boost::array<char, 48> asio_buffer;
     ntp_packet *packet = reinterpret_cast<ntp_packet*>(asio_buffer.data());
     //reset ntp packet

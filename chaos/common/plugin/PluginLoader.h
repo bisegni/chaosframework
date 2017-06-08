@@ -27,6 +27,7 @@
 #include <iostream>
 
 #include <boost/function.hpp>
+#include <chaos/common/chaos_types.h>
 #include <chaos/common/extension/shared_library.hpp>
 #include <chaos/common/plugin/PluginInspector.h>
 #include <chaos/common/plugin/PluginDiscover.h>
@@ -62,11 +63,22 @@ namespace chaos {
                 
                 PluginDiscover* getDiscover();
                 
-                PluginInspector* getInspectorForName(const std::string& pluginName);
+                PluginInspector* getInspectorForName(const std::string& plugin_name);
                 
-                AbstractPlugin* newInstance(const std::string& pluginName);
+                template<typename C>
+                ChaosUniquePtr<C> newInstance(const std::string& plugin_name) {
+                    
+                    //check if lib is loaded
+                    if(!loaded()) return ChaosUniquePtr<C>();
+                    
+                    //we can instantiate the plugin
+                    std::string allocator_name = plugin_name + SYM_ALLOC_POSTFIX;
+                    
+                    //try to get function allocator
+                    boost::function<C*()>  instancer = lib.get<C*>(allocator_name);
+                    return (instancer != NULL) ? ChaosUniquePtr<C>(instancer()):ChaosUniquePtr<C>();
+                }
             };
-            
         }
     }
 }

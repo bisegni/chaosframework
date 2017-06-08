@@ -72,3 +72,7 @@ int EUTestApiPLugin::execute(const char *in_data,
     *out_data_size = ou_str.size();
     return 0;
 }
+
+const char *EUTestApiPLugin::getApiName() {
+    return "plugin_test";
+}
