@@ -10,7 +10,7 @@
 #define STOP_NODE       "Stop Node"
 #define KILL_NODE       "Kill Node"
 #define RESTART_NODE    "Restart Node"
-#define START_NODE_LOG  "Star Node Logging"
+#define START_NODE_LOG  "Start Node Logging"
 #define STOP_NODE_LOG   "Stop Node Logging"
 #define EDIT_NODE       "Edit Node"
 
