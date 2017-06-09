@@ -51,7 +51,7 @@ static void my_free (void *data, void *hint) {
 ZMQClient::ZMQClient(const string& alias):
 RpcClient(alias),
 zmq_context(NULL),
-zmq_timeout(1000){}
+zmq_timeout(5000){}
 
 ZMQClient::~ZMQClient(){}
 
