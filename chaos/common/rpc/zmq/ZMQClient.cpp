@@ -183,7 +183,7 @@ void* ZMQClient::allocateResource(const std::string& pool_identification,
                                   uint32_t& alive_for_ms) {
     int err = 0;
     int linger = 0;
-    int water_mark = 1;
+    int water_mark = 2;
     
     //set the alive time to one minute
     alive_for_ms = ZMQ_SOCKET_LIFETIME_TIMEOUT;

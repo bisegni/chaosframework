@@ -195,7 +195,6 @@ void SharedCommandDispatcher::processBufferElement(chaos_data::CDataWrapper *act
     ChaosUniquePtr<chaos::common::data::CDataWrapper>  actionMessage;
     ChaosUniquePtr<chaos::common::data::CDataWrapper>  remoteActionResult;
     ChaosUniquePtr<chaos::common::data::CDataWrapper>  actionResult;
-    MapDomainActionsLockedReadLock wl = map_domain_actions.getReadLockObject();
     
     //keep track for the retain of the message of the aciton description
     ElementManagingPolicy               action_elementPolicy = {false};
