@@ -866,8 +866,6 @@
 		32B9F3F41AC3E74C00380FE9 /* AbstractPersistenceDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B9F3F11AC3E74C00380FE9 /* AbstractPersistenceDriver.cpp */; };
 		32B9F3F71AC4186300380FE9 /* NodeCreateUnitServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B9F3F51AC4186300380FE9 /* NodeCreateUnitServer.cpp */; };
 		32B9F3FA1AC4460A00380FE9 /* NodeGetDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B9F3F81AC4460A00380FE9 /* NodeGetDescription.cpp */; };
-		32BD63191E1E46F5006FE42C /* SharedActionScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32BD63171E1E46F5006FE42C /* SharedActionScheduler.cpp */; };
-		32BD631A1E1E46F5006FE42C /* SharedActionScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32BD63181E1E46F5006FE42C /* SharedActionScheduler.h */; };
 		32BD631D1E1E4D7F006FE42C /* AbstractActionScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32BD631B1E1E4D7F006FE42C /* AbstractActionScheduler.cpp */; };
 		32BD631E1E1E4D7F006FE42C /* AbstractActionScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32BD631C1E1E4D7F006FE42C /* AbstractActionScheduler.h */; };
 		32BE0ACC1E4B44B90007764C /* AgentApiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32BE0ACA1E4B44B90007764C /* AgentApiGroup.cpp */; };
@@ -2283,8 +2281,6 @@
 		32B9F3F61AC4186300380FE9 /* NodeCreateUnitServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeCreateUnitServer.h; sourceTree = "<group>"; };
 		32B9F3F81AC4460A00380FE9 /* NodeGetDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeGetDescription.cpp; sourceTree = "<group>"; };
 		32B9F3F91AC4460A00380FE9 /* NodeGetDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeGetDescription.h; sourceTree = "<group>"; };
-		32BD63171E1E46F5006FE42C /* SharedActionScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = SharedActionScheduler.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
-		32BD63181E1E46F5006FE42C /* SharedActionScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedActionScheduler.h; sourceTree = "<group>"; };
 		32BD631B1E1E4D7F006FE42C /* AbstractActionScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractActionScheduler.cpp; sourceTree = "<group>"; };
 		32BD631C1E1E4D7F006FE42C /* AbstractActionScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractActionScheduler.h; sourceTree = "<group>"; };
 		32BE0ACA1E4B44B90007764C /* AgentApiGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AgentApiGroup.cpp; sourceTree = "<group>"; };
@@ -3811,8 +3807,6 @@
 				326DB3F914B38BC00018A8D0 /* DefaultCommandDispatcher.h */,
 				326DB3FA14B38BC00018A8D0 /* DomainActionsScheduler.cpp */,
 				326DB3FB14B38BC00018A8D0 /* DomainActionsScheduler.h */,
-				32BD63171E1E46F5006FE42C /* SharedActionScheduler.cpp */,
-				32BD63181E1E46F5006FE42C /* SharedActionScheduler.h */,
 				32BD631B1E1E4D7F006FE42C /* AbstractActionScheduler.cpp */,
 				32BD631C1E1E4D7F006FE42C /* AbstractActionScheduler.h */,
 			);
@@ -5557,7 +5551,6 @@
 				32571DA11C7C91090001D884 /* batch_command.h in Headers */,
 				328FB18D15A9962300A1D8E7 /* RpcServerHandler.h in Headers */,
 				327967D615E029C70003C6DA /* AsioImplEventServer.h in Headers */,
-				32BD631A1E1E46F5006FE42C /* SharedActionScheduler.h in Headers */,
 				327967DA15E030C40003C6DA /* AsioEventHandler.h in Headers */,
 				3270E07E1C6DF19D00105726 /* metadata_logging.h in Headers */,
 				324A4B7A191A428500975394 /* checksum.h in Headers */,
@@ -6579,7 +6572,6 @@
 				32EBDEFE1B4E6FC700278C42 /* RpcClientMetricCollector.cpp in Sources */,
 				3219E69F18CC7AE600C2F795 /* DirectIOClientConnection.cpp in Sources */,
 				32279F8B16FA36B6009EC7B9 /* PublisherDataService.cpp in Sources */,
-				32BD63191E1E46F5006FE42C /* SharedActionScheduler.cpp in Sources */,
 				32BD631D1E1E4D7F006FE42C /* AbstractActionScheduler.cpp in Sources */,
 				32A88BD61CF8228A001DBAF5 /* loadlib.c in Sources */,
 				32CB736F16FE3432008575F0 /* ReaderDataService.cpp in Sources */,
