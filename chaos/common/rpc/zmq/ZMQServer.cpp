@@ -64,14 +64,14 @@ void ZMQServer::init(void *init_data) throw(CException) {
         thread_number = adapterConfiguration->getInt32Value(InitOption::OPT_RPC_SERVER_THREAD_NUMBER);
         
         ZMQS_LAPP << "port number:" << port_number;
-        ZMQS_LAPP << "thread number:" << thread_number;
+        ZMQS_LAPP << "worker thread number:" << thread_number;
         
         //create the zmq_context
         zmq_context = zmq_ctx_new();
         CHAOS_ASSERT(zmq_context)
         
         //et the thread number
-        zmq_ctx_set(zmq_context, ZMQ_IO_THREADS, thread_number);
+        zmq_ctx_set(zmq_context, ZMQ_IO_THREADS, 1);
         ZMQS_LAPP << "zmq_context initilized";
         
         
@@ -79,32 +79,20 @@ void ZMQServer::init(void *init_data) throw(CException) {
         bind_str << port_number;
         ZMQS_LAPP << "bind url: "<<bind_str.str();
         
-        ZMQS_LAPP << "Workers initialized";
+        //queue thread
+        ZMQS_LAPP << "Allocating thread for manage the Workers";
+        for (int idx = 0; idx<thread_number; idx++) {
+            thread_group.add_thread(new thread(boost::bind(&ZMQServer::worker, this)));
+        }
+        ZMQS_LAPP << "Worker threads initialized";
+        thread_group.add_thread(new thread(boost::bind(&ZMQServer::executeOnThread, this)));
+        ZMQS_LAPP << "Receiver thread initialized";
         ZMQS_LAPP << "initialized";
     } catch (std::exception& e) {
         throw CException(-2, e.what(), "ZMQServer::init");
     } catch (...) {
         throw CException(-3, "generic error", "ZMQServer::init");
     }
-    run_server = true;
-    //queue thread
-    ZMQS_LAPP << "Allocating thread for manage the request";
-    for (int idx = 0; idx<1; idx++) {
-        try{
-            thread_group.add_thread(new thread(boost::bind(&ZMQServer::worker, this)));
-        }catch(boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::lock_error> >& ex) {
-            ZMQS_LERR << ex.what();
-            throw CException(-1, std::string(ex.what()), std::string(__PRETTY_FUNCTION__));
-        }
-    }
-    
-    try{
-        thread_group.add_thread(new thread(boost::bind(&ZMQServer::executeOnThread, this)));
-    }catch(boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::lock_error> >& ex) {
-        ZMQS_LERR << ex.what();
-        throw CException(-1, std::string(ex.what()), std::string(__PRETTY_FUNCTION__));
-    }
-    ZMQS_LAPP << "Thread allocated";
 }
 
 //start the rpc adapter

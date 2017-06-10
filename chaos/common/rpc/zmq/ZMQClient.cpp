@@ -51,7 +51,7 @@ static void my_free (void *data, void *hint) {
 ZMQClient::ZMQClient(const string& alias):
 RpcClient(alias),
 zmq_context(NULL),
-zmq_timeout(5000){}
+zmq_timeout(10000){}
 
 ZMQClient::~ZMQClient(){}
 
@@ -183,7 +183,7 @@ void* ZMQClient::allocateResource(const std::string& pool_identification,
                                   uint32_t& alive_for_ms) {
     int err = 0;
     int linger = 0;
-    int water_mark = 2;
+    int water_mark = 1;
     
     //set the alive time to one minute
     alive_for_ms = ZMQ_SOCKET_LIFETIME_TIMEOUT;
