@@ -63,6 +63,10 @@ void ZMQServer::init(void *init_data) throw(CException) {
         
         thread_number = adapterConfiguration->getInt32Value(InitOption::OPT_RPC_SERVER_THREAD_NUMBER);
         
+        //bad patch OPT_RPC_DOMAIN_QUEUE_THREAD need to be removed
+        if(thread_number  < adapterConfiguration->getUInt32Value(InitOption::OPT_RPC_DOMAIN_QUEUE_THREAD)) {
+            thread_number = adapterConfiguration->getUInt32Value(InitOption::OPT_RPC_DOMAIN_QUEUE_THREAD);
+        }
         ZMQS_LAPP << "port number:" << port_number;
         ZMQS_LAPP << "worker thread number:" << thread_number;
         
@@ -73,7 +77,6 @@ void ZMQServer::init(void *init_data) throw(CException) {
         //et the thread number
         zmq_ctx_set(zmq_context, ZMQ_IO_THREADS, 1);
         ZMQS_LAPP << "zmq_context initilized";
-        
         
         bind_str << "tcp://*:";
         bind_str << port_number;

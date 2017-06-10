@@ -38,7 +38,7 @@ SharedCommandDispatcher::~SharedCommandDispatcher(){}
  */
 void SharedCommandDispatcher::init(void *initConfiguration) throw(CException) {
     AbstractCommandDispatcher::init(initConfiguration);
-    CObjectProcessingQueue<chaos_data::CDataWrapper>::init(GlobalConfiguration::getInstance()->getConfiguration()->getUInt32Value(InitOption::OPT_RPC_DOMAIN_QUEUE_THREAD));
+//    CObjectProcessingQueue<chaos_data::CDataWrapper>::init(GlobalConfiguration::getInstance()->getConfiguration()->getUInt32Value(InitOption::OPT_RPC_DOMAIN_QUEUE_THREAD));
 }
 
 
@@ -372,10 +372,12 @@ CDataWrapper *SharedCommandDispatcher::dispatchCommand(CDataWrapper *commandPack
         DEBUG_CODE(DBG_LOG(SharedCommandDispatcher)  << "Received the message content:-----------------------START\n"<<commandPack->getJSONString() << "\nReceived the message content:-------------------------END";)
         
         //submit the action(Thread Safe)
-        if(!(sent = CObjectProcessingQueue<chaos::common::data::CDataWrapper>::push(commandPack))) {
-            throw CException(ErrorRpcCoce::EC_RPC_NO_MORE_SPACE_ON_DOMAIN_QUEUE, "No more space in queue", __PRETTY_FUNCTION__);
+        ElementManagingPolicy policy;
+        processBufferElement(commandPack,
+                             policy);
+        if(policy.elementHasBeenDetached == false) {
+            delete(commandPack);
         }
-        
         //tag message has submitted
         resultPack->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, ErrorCode::EC_NO_ERROR);
     }catch(CException& ex){
