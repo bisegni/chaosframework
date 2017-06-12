@@ -69,16 +69,16 @@ int LogProcessEntriesTableModel::getRowCount() const {
 }
 
 int LogProcessEntriesTableModel::getColumnCount() const {
-    return 2;
+    return 1;
 }
 
 QString LogProcessEntriesTableModel::getHeaderForColumn(int column) const {
     QString result;
     switch (column) {
+//    case 0:
+//        result = tr("Timestamp");
+//        break;
     case 0:
-        result = tr("Timestamp");
-        break;
-    case 1:
         result = tr("Entry");
         break;
     default:
@@ -90,10 +90,10 @@ QString LogProcessEntriesTableModel::getHeaderForColumn(int column) const {
 QVariant LogProcessEntriesTableModel::getCellData(int row, int column) const {
     QString result;
     switch (column) {
+//    case 0:
+//        result = QDateTime::fromMSecsSinceEpoch(found_entires[row].entry_ts, Qt::LocalTime).toString("dd-MM-yy hh.mm.ss.zzz");
+//        break;
     case 0:
-        result = QDateTime::fromMSecsSinceEpoch(found_entires[row].entry_ts, Qt::LocalTime).toString("dd-MM-yy hh.mm.ss.zzz");
-        break;
-    case 1:
         result = QString::fromStdString(found_entires[row].entry_log_line);
         break;
     default:

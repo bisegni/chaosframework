@@ -71,10 +71,10 @@ QString LogEntryTableModel::getHeaderForColumn(int column) const {
             result = tr("Emitter");
             break;
         case 2:
-            result = tr("Domain");
+            result = tr("Subject");
             break;
         case 3:
-            result = tr("Subject");
+            result = tr("Domain");
             break;
         default:
             break;
@@ -85,10 +85,10 @@ QString LogEntryTableModel::getHeaderForColumn(int column) const {
             result = tr("Timestamp");
             break;
         case 1:
-            result = tr("Domain");
+            result = tr("Subject");
             break;
         case 2:
-            result = tr("Subject");
+            result = tr("Domain");
             break;
         default:
             break;
@@ -108,10 +108,10 @@ QVariant LogEntryTableModel::getCellData(int row, int column) const {
             result = QString::fromStdString(helper->getLogEntryList()[row]->source_identifier);
             break;
         case 2:
-            result = QString::fromStdString(helper->getLogEntryList()[row]->domain);
+            result = QString::fromStdString(helper->getLogEntryList()[row]->subject);
             break;
         case 3:
-            result = QString::fromStdString(helper->getLogEntryList()[row]->subject);
+            result = QString::fromStdString(helper->getLogEntryList()[row]->domain);
             break;
         default:
             break;
@@ -122,10 +122,10 @@ QVariant LogEntryTableModel::getCellData(int row, int column) const {
             result = TS_TO_STR(helper->getLogEntryList()[row]->ts);
             break;
         case 1:
-            result = QString::fromStdString(helper->getLogEntryList()[row]->domain);
+            result = QString::fromStdString(helper->getLogEntryList()[row]->subject);
             break;
         case 2:
-            result = QString::fromStdString(helper->getLogEntryList()[row]->subject);
+            result = QString::fromStdString(helper->getLogEntryList()[row]->domain);
             break;
         default:
             break;
@@ -135,40 +135,8 @@ QVariant LogEntryTableModel::getCellData(int row, int column) const {
 }
 
 QVariant LogEntryTableModel::getCellUserData(int row, int column) const {
-    QString result;
-    if(show_source_column) {
-        switch (column) {
-        case 0:
-            result = tr("Timestamp");
-            break;
-        case 1:
-            result = tr("Emitter");
-            break;
-        case 2:
-            result = tr("Domain");
-            break;
-        case 3:
-            result = tr("Subject");
-            break;
-        default:
-            break;
-        }
-    }else {
-        switch (column) {
-        case 0:
-            result = tr("Timestamp");
-            break;
-        case 1:
-            result = tr("Domain");
-            break;
-        case 2:
-            result = tr("Subject");
-            break;
-        default:
-            break;
-        }
-    }
-    return result;
+    return getCellData(row,
+                       column);
 }
 
 QVariant LogEntryTableModel::getTooltipTextForData(int row, int column) const {

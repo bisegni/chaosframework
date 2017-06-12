@@ -155,7 +155,8 @@ SOURCES += main.cpp\
     data/LogProcessEntriesTableModel.cpp \
     data/json/JsonTableModel.cpp \
     language_editor/JsonEditor.cpp \
-    node/agent/AgentSetting.cpp
+    node/agent/AgentSetting.cpp \
+    widget/CQTableView.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -295,7 +296,8 @@ HEADERS  += \
     data/LogProcessEntriesTableModel.h \
     data/json/JsonTableModel.h \
     language_editor/JsonEditor.h \
-    node/agent/AgentSetting.h
+    node/agent/AgentSetting.h \
+    widget/CQTableView.h
 
 FORMS    += \
     search/searchnoderesult.ui \

@@ -35,7 +35,11 @@ void CNodeLogWidget::initChaosContent() {
 
     //configure the entry table
     ui->tableViewLogEntries->setModel(&entry_table_model);
-    ui->tableViewLogEntries->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    //ui->tableViewLogEntries->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    //QHeaderView *headerView = ui->tableViewLogEntries->horizontalHeader();
+    //headerView->setSectionResizeMode(QHeaderView::Stretch);
+    ui->tableViewLogEntries->setColumnToContents(0, true);
+    ui->tableViewLogEntries->setColumnToContents(2, true);
     ui->tableViewLogEntries->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->tableViewLogEntries->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->tableViewLogEntries->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -45,7 +49,8 @@ void CNodeLogWidget::initChaosContent() {
 
     //set table view for log data
     ui->tableViewLogData->setModel(&data_table_model);
-    ui->tableViewLogData->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->tableViewLogData->setColumnToContents(0, true);
+    //ui->tableViewLogData->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tableViewLogData->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->tableViewLogData->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->tableViewLogData->setSelectionMode(QAbstractItemView::MultiSelection);
