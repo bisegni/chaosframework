@@ -102,8 +102,10 @@ bool MultiAddressMessageRequestFuture::wait() {
                     " message:"<<current_future->getErrorMessage() << " domain:" <<
                     current_future->getErrorDomain();
                     
-                    //switch to another server
-                    switchOnOtherServer();
+                    //set current server offline
+                    //switchOnOtherServer();
+                    parent_mn_message_channel->setURLAsOffline(last_used_address);
+                    working = false;
                 }
             }
         } else{
@@ -112,7 +114,9 @@ bool MultiAddressMessageRequestFuture::wait() {
                 continue;
             } else {
                 MAMRF_INFO << "We have retried " << retry_on_same_server << " times on "<<last_used_address;
-                switchOnOtherServer();
+                //switchOnOtherServer();
+                parent_mn_message_channel->setURLAsOffline(last_used_address);
+                working = false;
             }
         }
     }

@@ -137,7 +137,7 @@ void DefaultCommandDispatcher::registerAction(DeclareAction *declareActionClass)
         
         if(!das_map.count(domainName)){
             ChaosSharedPtr<DomainActionsScheduler> das(new DomainActionsScheduler(getDomainActionsFromName(domainName)));
-            das->init(GlobalConfiguration::getInstance()->getConfiguration()->getUInt32Value(InitOption::OPT_RPC_DOMAIN_QUEUE_THREAD));
+            das->init(1);
             DEBUG_CODE(LDEF_CMD_DISPTC_DBG_ << "Initialized actions scheduler for domain:" << domainName;)
             chaos::common::thread::UpgradeReadToWriteLock uw_lock(ur_lock);
             //add the domain scheduler to map

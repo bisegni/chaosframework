@@ -120,7 +120,7 @@ bool MultiAddressMessageChannel::serviceOnlineCheck(void *service_ptr) {
     ChaosUniquePtr<MessageRequestFuture> request = MessageChannel::echoTest(service->ip_port,
                                                                            NULL);
     while(--retry>0) {
-        if(request->wait(500)) {
+        if(request->wait(2000)) {
             retry = 0;
             result = (request->getError() == 0);
         }

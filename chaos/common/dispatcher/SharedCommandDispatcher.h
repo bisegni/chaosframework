@@ -43,8 +43,7 @@ namespace chaos{
      This class implemente the shared execution environment for pc action
      */
     DECLARE_CLASS_FACTORY(SharedCommandDispatcher,
-                          AbstractCommandDispatcher),
-    private CObjectProcessingQueue<chaos::common::data::CDataWrapper> {
+                          AbstractCommandDispatcher){
         MapDomainActionsLocked map_domain_actions;
     protected:
         void processBufferElement(chaos_data::CDataWrapper*,

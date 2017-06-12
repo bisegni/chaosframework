@@ -121,7 +121,6 @@ SET(common_lib_src ${common_lib_src}
         dispatcher/DefaultCommandDispatcher.cpp
         dispatcher/DomainActionsScheduler.cpp
         dispatcher/AbstractActionScheduler.cpp
-        dispatcher/SharedActionScheduler.cpp
         dispatcher/SharedCommandDispatcher.cpp)
 
 SET(common_lib_src ${common_lib_src}
