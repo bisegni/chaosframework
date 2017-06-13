@@ -39,7 +39,8 @@ namespace chaos {
 CHAOS_FORMAT("%1%_%2%.ini",%x.association_unique_id%ProcUtil::normalizeName(x.associated_node_uid))
             
 #define LOG_FILE_NAME(x)\
-CHAOS_FORMAT("%1%_%2%_%%Y-%%m-%%d_%%H-%%M-%%S.%%N.log",%x.association_unique_id%ProcUtil::normalizeName(x.associated_node_uid))
+		CHAOS_FORMAT("%1%_%2%.log",%x.association_unique_id%ProcUtil::normalizeName(x.associated_node_uid))
+//CHAOS_FORMAT("%1%_%2%_%%Y-%%m-%%d_%%H-%%M-%%S.%%N.log",%x.association_unique_id%ProcUtil::normalizeName(x.associated_node_uid))
             
 #define NPIPE_FILE_NAME(x)\
 CHAOS_FORMAT("%1%.pipe",%x.association_unique_id)
