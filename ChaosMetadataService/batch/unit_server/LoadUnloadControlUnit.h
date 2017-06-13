@@ -40,6 +40,7 @@ namespace chaos {
 
                     ChaosUniquePtr<RequestInfo> request;
                     ChaosUniquePtr<chaos::common::data::CDataWrapper> load_unload_pack;
+                    int prepareInstanceScriptForLoad(const std::string& instance_name);
                 public:
                     LoadUnloadControlUnit();
                     ~LoadUnloadControlUnit();

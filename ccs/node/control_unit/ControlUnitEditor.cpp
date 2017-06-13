@@ -293,11 +293,13 @@ QString ControlUnitEditor::getStatusString(int status) {
 void ControlUnitEditor::onApiDone(const QString& tag,
                                   QSharedPointer<CDataWrapper> api_result) {
     if(tag.compare(TAG_CU_INFO) == 0) {
+        if(api_result.isNull()) return;
         fillInfo(api_result);
     } else if(tag.compare(TAG_CU_DATASET) == 0) {
-        fillDataset(api_result);
         submitApiResult(QString(TAG_CU_INSTANCE),
                         GET_CHAOS_API_PTR(control_unit::GetInstance)->execute(control_unit_unique_id.toStdString()));
+        if(api_result.isNull()) return;
+        fillDataset(api_result);
     } else if(tag.compare(TAG_CU_INSTANCE) == 0) {
         if(api_result.isNull()) return;
         //enable the button for editing instance

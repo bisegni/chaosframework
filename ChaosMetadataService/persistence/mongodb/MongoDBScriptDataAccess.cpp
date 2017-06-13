@@ -219,7 +219,6 @@ int MongoDBScriptDataAccess::addScriptInstance(const uint64_t seq,
         }
         
         //we have the script now get the dataset and attach it to the instance
-        
     } catch (const mongo::DBException &e) {
         SDA_ERR << e.what();
         err = e.getCode();

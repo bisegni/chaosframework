@@ -78,7 +78,14 @@ MultiAddressMessageChannel::~MultiAddressMessageChannel() {
     service_feeder.clear();
 }
 
+void MultiAddressMessageChannel::init() throw(CException) {
+    MessageChannel::init();
+}
 
+void MultiAddressMessageChannel::deinit() throw(CException) {
+    AsyncCentralManager::getInstance()->removeTimer(this);
+    MessageChannel::deinit();
+}
 void MultiAddressMessageChannel::setURLAsOffline(const std::string& offline_url) {
     service_feeder.setURLAsOffline(offline_url);
     AsyncCentralManager::getInstance()->addTimer(this,
@@ -118,7 +125,7 @@ bool MultiAddressMessageChannel::serviceOnlineCheck(void *service_ptr) {
     int retry = 3;
     MMCFeederService *service = static_cast<MMCFeederService*>(service_ptr);
     ChaosUniquePtr<MessageRequestFuture> request = MessageChannel::echoTest(service->ip_port,
-                                                                           NULL);
+                                                                            NULL);
     while(--retry>0) {
         if(request->wait(2000)) {
             retry = 0;
@@ -158,9 +165,9 @@ void MultiAddressMessageChannel::sendMessage(const std::string& action_domain,
 
 //!send an rpc request to a remote node
 ChaosUniquePtr<MessageRequestFuture> MultiAddressMessageChannel::_sendRequestWithFuture(const std::string& action_domain,
-                                                                                       const std::string& action_name,
-                                                                                       CDataWrapper *request_pack,
-                                                                                       std::string& used_remote_address) {
+                                                                                        const std::string& action_name,
+                                                                                        CDataWrapper *request_pack,
+                                                                                        std::string& used_remote_address) {
     ChaosUniquePtr<MessageRequestFuture> result;
     MMCFeederService *service =  static_cast<MMCFeederService*>(service_feeder.getService());
     bool has_been_found_a_server = (service!=NULL);
@@ -178,13 +185,13 @@ ChaosUniquePtr<MessageRequestFuture> MultiAddressMessageChannel::_sendRequestWit
 
 //!send an rpc request to a remote node
 ChaosUniquePtr<MultiAddressMessageRequestFuture> MultiAddressMessageChannel::sendRequestWithFuture(const std::string& action_domain,
-                                                                                                  const std::string& action_name,
-                                                                                                  CDataWrapper *request_pack,
-                                                                                                  int32_t request_timeout) {
+                                                                                                   const std::string& action_name,
+                                                                                                   CDataWrapper *request_pack,
+                                                                                                   int32_t request_timeout) {
     return ChaosUniquePtr<MultiAddressMessageRequestFuture>(new MultiAddressMessageRequestFuture(this,
-                                                                                                action_domain,
-                                                                                                action_name,
-                                                                                                request_pack,
-                                                                                                request_timeout));
+                                                                                                 action_domain,
+                                                                                                 action_name,
+                                                                                                 request_pack,
+                                                                                                 request_timeout));
 }
 

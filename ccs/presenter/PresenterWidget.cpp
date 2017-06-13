@@ -172,7 +172,7 @@ void PresenterWidget::submitApiResult(const QString& api_tag,
                                       ApiProxyResult api_result) {
 
     api_submitter.submitApiResult(api_tag,
-                                  std::move(api_result));
+                                  api_result);
 }
 
 //-------slot for api-------
@@ -195,14 +195,17 @@ void PresenterWidget::onApiTimeout(const QString& tag) {
 
 
 void PresenterWidget::apiHasStarted(const QString& api_tag) {
-    if(submitted_api == 0) {
-        this->setCursor(Qt::WaitCursor);
-    }
+    //if(submitted_api == 0) {
+      //  this->setCursor(Qt::WaitCursor);
+   // }
     submitted_api++;
+    qDebug("Runned api:%d",submitted_api);
 }
 
 void PresenterWidget::apiHasEnded(const QString& api_tag) {
-     if((--submitted_api) == 0) {setCursor(Qt::ArrowCursor);}
+    --submitted_api;
+    qDebug("Still api running:%d", submitted_api);
+     //if((--submitted_api) == 0) {setCursor(Qt::ArrowCursor);}
 }
 
 void PresenterWidget::showInformation(const QString& title,

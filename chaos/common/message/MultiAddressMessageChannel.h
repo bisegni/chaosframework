@@ -136,6 +136,16 @@ namespace chaos {
                 bool serviceOnlineCheck(void *service_ptr);
                 void timeout();
                 void setURLAsOffline(const std::string& offline_url);
+                
+                /*!
+                 Initialization phase of the channel
+                 */
+                virtual void init() throw(CException);
+                
+                /*!
+                 Initialization phase of the channel
+                 */
+                virtual void deinit() throw(CException);
             public:
                 //! add a new node to the channel
                 void addNode(const chaos::common::network::CNetworkAddress& node_address);

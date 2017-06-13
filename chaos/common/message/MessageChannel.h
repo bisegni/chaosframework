@@ -86,15 +86,6 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
                     //! unique channel identifier
                 std::string channel_uuid;
                 PromisesHandlerSharedPtr safe_promises_handler_caller;
-                /*!
-                 Initialization phase of the channel
-                 */
-                virtual void init() throw(CException);
-                
-                /*!
-                 Initialization phase of the channel
-                 */
-                virtual void deinit() throw(CException);
                 
                 void _callHandler(const FuturePromiseData& response_data);
             protected:
@@ -129,6 +120,16 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
                  Repsonse data is received befor it is sent to the metadata server
                  */
                 virtual void requestPromisesHandler(const FuturePromiseData& response_data);
+                
+                /*!
+                 Initialization phase of the channel
+                 */
+                virtual void init() throw(CException);
+                
+                /*!
+                 Initialization phase of the channel
+                 */
+                virtual void deinit() throw(CException);
             public:
                 //! return last sendxxx error code
                 virtual int32_t getLastErrorCode();

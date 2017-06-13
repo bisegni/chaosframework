@@ -1,13 +1,7 @@
 #include "ApiAsyncProcessor.h"
 #include "ApiAsyncRunnable.h"
-ApiAsyncProcessor::ApiAsyncProcessor() :
-    QObject(NULL)
-{
-}
-
-ApiAsyncProcessor::~ApiAsyncProcessor()
-{
-}
+ApiAsyncProcessor::ApiAsyncProcessor():QObject(NULL){}
+ApiAsyncProcessor::~ApiAsyncProcessor() {}
 
 void ApiAsyncProcessor::submitApiResult(const QString& tag,
                                         chaos::metadata_service_client::api_proxy::ApiProxyResult async_result,
@@ -17,7 +11,7 @@ void ApiAsyncProcessor::submitApiResult(const QString& tag,
                                         const char* slot_timeout) {
     //create runnable
     ApiAsyncRunnable *aar = new ApiAsyncRunnable(tag,
-                                                 std::move(async_result));
+                                                 async_result);
 
     //! connect slot between target and runnable
     QObject::connect(aar, SIGNAL(asyncApiResult(QString, QSharedPointer<chaos::common::data::CDataWrapper>)),
