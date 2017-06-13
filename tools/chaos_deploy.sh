@@ -7,7 +7,7 @@ popd > /dev/null
 
 source $dir/common_util.sh
 TMPDIR="/tmp/$USER/chaos_deploy"
-dest_prefix=chaos-distrib
+
 DEPLOY_FILE=$TMPDIR/deployTargets
 
 
@@ -76,6 +76,14 @@ if [ -z "$restart" ];then
 fi
 
 source $conf
+if [ -z $DEPLOY_USER ];then
+    DEPLOY_USER="chaos"
+fi
+
+if [ -z $DEPLOY_PREFIX_DIR ];then
+    DEPLOY_PREFIX_DIR=/usr/local/chaos
+fi
+dest_prefix=$DEPLOY_PREFIX_DIR/chaos-distrib
 deployServer(){
     serv=$1
     if ! grep "$serv" $DEPLOY_FILE >& /dev/null;then
@@ -210,15 +218,21 @@ start_stop_service(){
     host=$1
     type=$2
     op=$3
-    
+
+    # if [[ "$host" =~ (.+)@(.+) ]];then
+    # 	user=${BASH_REMATCH[1]}
+    # 	host=${BASH_REMATCH[2]}
+    # fi
+
 ## new 
-	if ssh chaos@$host "sudo service chaos-$type $op" ;then
-	    ok_mesg "[$host] chaos-$type $op"
+    ll=`eval echo $START_STOP_CMD`
+	if eval ssh $DEPLOY_USER@$host $START_STOP_CMD ;then
+	    ok_mesg "[$host] $ll"
 	else
-	    nok_mesg "[$host] chaos-$type $op"
+	    nok_mesg "[$host] $ll"
 	fi  
 	if [ "$type" == "cu" ];then
-	    if ssh chaos@$host "killall -9 UnitServer"; then
+	    if ssh $DEPLOY_USER@$host "killall -9 UnitServer"; then
 		ok_mesg "[$host] killed UnitServer"
 	    else
 		nok_mesg "[$host] killed UnitServer"
@@ -307,13 +321,23 @@ info_mesg "generating tarball " "$name.tgz"
 TMP_DEPLOY=$TMPDIR/$name
 mkdir $TMP_DEPLOY
 mkdir $TMP_DEPLOY/log
-cp -r $CHAOS_PREFIX/lib $TMP_DEPLOY/
-cp -r $CHAOS_PREFIX/tools $TMP_DEPLOY/
-cp -r $CHAOS_PREFIX/etc $TMP_DEPLOY/
-rm $TMP_DEPLOY/etc/*.cfg
+if [ -z "$DEPLOY_DIR" ];then
+    DEPLOY_DIR="bin lib etc html tools"
+fi
+
+for i in $DEPLOY_DIR;do
+    info_mesg "including " "$i"
+    if [ "$i" != "bin" ];then
+	cp -r $CHAOS_PREFIX/$i $TMP_DEPLOY
+    fi
+done
+
+
+rm -f $TMP_DEPLOY/etc/*.cfg
 cp $cudir/*.cfg $TMP_DEPLOY/etc/
 cp -r $CHAOS_PREFIX/html $TMP_DEPLOY/
 cp -r $CHAOS_PREFIX/chaos_env.sh $TMP_DEPLOY/
+
 mkdir $TMP_DEPLOY/bin
 if [ -z "$DEPLOY_BINARIES" ];then
     DEPLOY_BINARIES="ChaosWANProxy:wan CUIserver:webui ChaosMetadataService:mds ChaosMetadataService:cds UnitServer:cu ChaosAgent:agent"
@@ -372,6 +396,7 @@ servers=`cat $DEPLOY_FILE`
 
 
 for host in `cat $DEPLOY_FILE`;do
+
     info_mesg "stopping all services on" " $host"
     start_stop_service $host "cu" stop >& /dev/null
     start_stop_service $host "agent" stop >& /dev/null
@@ -379,14 +404,17 @@ for host in `cat $DEPLOY_FILE`;do
     start_stop_service $host "cds" stop >& /dev/null
     start_stop_service $host "webui" stop >& /dev/null
     start_stop_service $host "wan" stop >& /dev/null
-    info_mesg "removing chaos-* " "$host"
-    if ssh chaos@$host "rm -rf chaos-*;echo \"$ver\" > README.install"; then
+
+
+    info_mesg "removing chaos-* " " $DEPLOY_USER@$host:$DEPLOY_PREFIX_DIR"
+
+    if ssh $DEPLOY_USER@$host "rm -rf $DEPLOY_PREFIX_DIR/chaos-*;echo \"$ver\" > README.install"; then
 	ok_mesg "removing chaos-* in $host"
     fi
     
 done  
 info_mesg "copy on the destination servers: " "$servers"
-if $dir/chaos_remote_copy.sh -u chaos -s $TMPDIR/$name.tgz $DEPLOY_FILE;then
+if $dir/chaos_remote_copy.sh -u $DEPLOY_USER -d $DEPLOY_PREFIX_DIR -s $TMPDIR/$name.tgz $DEPLOY_FILE;then
     ok_mesg "copy done"
 else
     nok_mesg "copy done"
@@ -399,9 +427,10 @@ md5=`md5sum $TMPDIR/$name.tgz | cut -d ' ' -f 1`
 extract(){
     host=$1
 
-    if ssh chaos@$host "test -f $name.tgz"; then
+    
+    if ssh $DEPLOY_USER@$host "test -f $DEPLOY_PREFIX_DIR/$name.tgz"; then
 	ver="installed "`date`" MD5:$md5"
-	if ssh chaos@$host "tar xfz $name.tgz;ln -sf $name $dest_prefix;echo \"$ver\" > README.install;rm $name.tgz"; then
+	if ssh $DEPLOY_USER@$host "cd $DEPLOY_PREFIX_DIR;tar xfz $name.tgz;ln -sf $name $dest_prefix;echo \"$ver\" > README.install;rm $name.tgz"; then
 	    ok_mesg "extracting $name in $host"
 	fi
     fi
@@ -425,13 +454,15 @@ deploy_install(){
 
 
     extract $host
-    if ssh chaos@$host "cd $dest_prefix;ln -sf \$PWD/tools/config/lnf/$cuconfig/$type.cfg etc/";then
+
+
+    if ssh $DEPLOY_USER@$host "cd $dest_prefix;ln -sf \$PWD/tools/config/lnf/$cuconfig/$type.cfg etc/";then
 	ok_mesg "$type configuration $dest_prefix/tools/config/lnf/$cuconfig/$type.cfg"
     else
 	nok_mesg "$type configuration $dest_prefix/tools/config/lnf/$cuconfig/$type.cfg"
     fi    
 
-    if ssh chaos@$host "cd $dest_prefix;ln -sf \$PWD/tools/config/lnf/$cuconfig/agent.cfg etc/";then
+    if ssh $DEPLOY_USER@$host "cd $dest_prefix;ln -sf \$PWD/tools/config/lnf/$cuconfig/agent.cfg etc/";then
 	ok_mesg "agent.cfg configuration $dest_prefix/tools/config/lnf/$cuconfig/agent.cfg"
     else
 	nok_mesg "agent configuration $dest_prefix/tools/config/lnf/$cuconfig/agent.cfg"
@@ -439,7 +470,7 @@ deploy_install(){
     
 
     if [ "$type" == "cu" ];then
-	if ssh chaos@$host "cd $dest_prefix/;ln -sf \$PWD/tools/config/lnf/$cuconfig/cu$subtype.sh bin/cu";then
+	if ssh $DEPLOY_USER@$host "cd $dest_prefix/;ln -sf \$PWD/tools/config/lnf/$cuconfig/cu$subtype.sh bin/cu";then
 	    ok_mesg "linking $dest_prefix/tools/config/lnf/$cuconfig/cu$subtchype.sh in $dest_prefix/bin/cu"
 	else
 	    nok_mesg "linking $dest_prefix/tools/config/lnf/$cuconfig/cu$subtype.sh in $dest_prefix/bin/cu"
