@@ -345,6 +345,7 @@ int MDSMessageChannel::getDataDriverBestConfiguration(CDataWrapper** deviceDefin
     if(future->wait()) {
         if((err = future->getError()) == ErrorCode::EC_NO_ERROR) {
             *deviceDefinition = future->detachResult();
+            CHAOS_ASSERT(*deviceDefinition);
         }
     } else {
         err = -1001;

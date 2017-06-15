@@ -83,6 +83,9 @@ fi
 if [ -z $DEPLOY_PREFIX_DIR ];then
     DEPLOY_PREFIX_DIR=/usr/local/chaos
 fi
+if [ -z $START_STOP_CMD ];then
+    START_STOP_CMD="sudo service chaos-\$type \$op"
+fi
 dest_prefix=$DEPLOY_PREFIX_DIR/chaos-distrib
 deployServer(){
     serv=$1
@@ -149,11 +152,11 @@ else
 	info_mesg "using configuration " "$cudir/webui.cfg"
     fi
 
-    pushd $CHAOS_PREFIX > /dev/null
-    cp -r $CHAOS_PREFIX/html $CHAOS_PREFIX/www-$webui
-    find $CHAOS_PREFIX/www-$webui -name "*" -exec  sed -i s/__template__webuiulr__/$webui/g \{\} >& /dev/null \; 
+#    pushd $CHAOS_PREFIX > /dev/null
+#    cp -r $CHAOS_PREFIX/html $CHAOS_PREFIX/www-$webui
+#    find $CHAOS_PREFIX/www-$webui -name "*" -exec  sed -i s/__template__webuiulr__/$webui/g \{\} >& /dev/null \; 
 
-    popd > /dev/null
+#    popd > /dev/null
     if [ $listupdate == "all" ] || [[ $listupdate =~ webui ]];then 
 	deployServer $WEBUI_SERVER
     fi
@@ -325,8 +328,10 @@ if [ -z "$DEPLOY_DIR" ];then
     DEPLOY_DIR="bin lib etc html tools"
 fi
 
+
 for i in $DEPLOY_DIR;do
     info_mesg "including " "$i"
+    
     if [ "$i" != "bin" ];then
 	cp -r $CHAOS_PREFIX/$i $TMP_DEPLOY
     fi
@@ -335,7 +340,7 @@ done
 
 rm -f $TMP_DEPLOY/etc/*.cfg
 cp $cudir/*.cfg $TMP_DEPLOY/etc/
-cp -r $CHAOS_PREFIX/html $TMP_DEPLOY/
+# cp -r $CHAOS_PREFIX/html $TMP_DEPLOY/
 cp -r $CHAOS_PREFIX/chaos_env.sh $TMP_DEPLOY/
 
 mkdir $TMP_DEPLOY/bin
@@ -358,7 +363,7 @@ for i in $DEPLOY_BINARIES;do
 
 
 done
-
+## find $TMP_DEPLOY -name ".git" -exec rm -rf \{\} \; >& /dev/null
 
 
 if tar -c -C $TMP_DEPLOY/.. $name | gzip -n > $TMPDIR/$name.tgz;then

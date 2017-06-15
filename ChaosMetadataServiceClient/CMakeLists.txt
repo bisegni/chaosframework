@@ -180,6 +180,9 @@ INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/monitor_sy
 FILE(GLOB files "monitor_system/handler/*.h")
 INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/monitor_system/handler)
 
+FILE(GLOB files "node_controller/*.h")
+INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/node_controller/)
+
 INSTALL(TARGETS chaos_metadata_service_client
 DESTINATION "lib"
 PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
