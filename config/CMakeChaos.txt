@@ -441,7 +441,9 @@ IF (NOT CACHE_DIR)
   option(CHAOS_DISABLE_EVENTFD "Disable EventFD" OFF)
   option(CHAOS_BUILD_CACHE "Keep third part sources" ON)
   option(CHAOS_BUILD_UNITSERVER "Automatically build an Unit Server that includes all CUs found in distribution" ON)
-  IF(CHAOS_ENABLE_C11)
+
+  IF(CHAOS_ENABLE_C11 AND NOT CHAOS_TARGET)
+
     set (CHAOS_CXX_FLAGS "${CHAOS_CXX_FLAGS} -std=c++11")
     ELSE()
     set (CHAOS_CXX_FLAGS "${CHAOS_CXX_FLAGS} -std=c++98")
