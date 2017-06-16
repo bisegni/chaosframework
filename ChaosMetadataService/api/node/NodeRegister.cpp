@@ -41,7 +41,8 @@ NodeRegister::~NodeRegister() {}
 CDataWrapper *NodeRegister::execute(CDataWrapper *api_data,
                                     bool& detach_data) throw (chaos::CException){
     CHECK_CDW_THROW_AND_LOG(api_data, USRA_ERR, -1, "No parameter found")
-    
+    int err = 0;
+    bool alive = false;
     CDataWrapper *result = NULL;
     if(!api_data->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID)) {
         throw CException(-1, "Node unique id not found", __PRETTY_FUNCTION__);
@@ -68,7 +69,6 @@ CDataWrapper *NodeRegister::execute(CDataWrapper *api_data,
     } else {
         throw CException(-3, "Type of node not managed for registration", __PRETTY_FUNCTION__);
     }
-    
     return result;
 }
 
@@ -112,15 +112,29 @@ CDataWrapper *NodeRegister::unitServerRegistration(CDataWrapper *api_data,
     
     int err = 0;
     uint64_t    command_id;
+    bool        alive = false;
     bool        is_present = false;
     uint64_t    nodes_seq = 0;
     //data is used to send answer so we tag it to get ownership
     detach_data = true;
     
     //fetch the unit server data access
-    GET_DATA_ACCESS(UnitServerDataAccess, us_da, -1)
-    GET_DATA_ACCESS(UtilityDataAccess, u_da, -2)
     
+    GET_DATA_ACCESS(NodeDataAccess, n_da, -1);
+    GET_DATA_ACCESS(UnitServerDataAccess, us_da, -2)
+    GET_DATA_ACCESS(UtilityDataAccess, u_da, -3)
+    const std::string node_uid = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
+    //check if node is already up and running
+    if((err = n_da->isNodeAlive(node_uid, alive))){
+        LOG_AND_TROW(USRA_ERR, -4, CHAOS_FORMAT("Error checking if node %1% was runnign", %node_uid));
+    } else if(alive) {
+        api_data->addInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT,
+                                ErrorCode::EC_MDS_NODE_REGISTRATION_FAILURE_INSTANCE_ALREADY_RUNNING);
+        getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::unit_server::UnitServerAckCommand),
+                                          api_data);
+        return NULL;
+    }
+    //we can porceed with uniserver registration
     const std::string unit_server_alias = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
     
     USRA_INFO << "Register unit server " << unit_server_alias;

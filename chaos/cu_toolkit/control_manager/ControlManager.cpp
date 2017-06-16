@@ -27,6 +27,7 @@
 #include <chaos/cu_toolkit/control_manager/ControlManager.h>
 #include <chaos/cu_toolkit/command_manager/CommandManager.h>
 #include <chaos/cu_toolkit/control_manager/script/ScriptableExecutionUnit.h>
+#include <chaos/cu_toolkit/ChaosCUToolkit.h>
 
 #include <boost/scoped_ptr.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -186,10 +187,7 @@ void ControlManager::start() throw(CException) {
     if(use_unit_server){
         //register unit server node
         HealtManager::getInstance()->addNewNode(unit_server_alias);
-        HealtManager::getInstance()->addNodeMetricValue(unit_server_alias,
-                                                        NodeHealtDefinitionKey::NODE_HEALT_STATUS,
-                                                        NodeHealtDefinitionValue::NODE_HEALT_STATUS_LOADING,
-                                                        true);
+        
         //add unit server registration managment timer
         if((err = chaos_async::AsyncCentralManager::getInstance()->addTimer(this, 0, GlobalConfiguration::getInstance()->getOption<uint64_t>(CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC)))){
             throw chaos::CException(-1, "Error registering the Control managet timer", __PRETTY_FUNCTION__);
@@ -729,6 +727,7 @@ CDataWrapper* ControlManager::unitServerRegistrationACK(CDataWrapper *message_da
     if(server_alias.compare(unit_server_alias) != 0) {
         throw CException(-2, "Server alias not found", __PRETTY_FUNCTION__);
     }
+
     if(message_data->hasKey(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT)) {
         //registration has been ended
         switch(message_data->getInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT)){
@@ -740,28 +739,30 @@ CDataWrapper* ControlManager::unitServerRegistrationACK(CDataWrapper *message_da
                     //update healt status
                     HealtManager::getInstance()->addNodeMetricValue(unit_server_alias,
                                                                     NodeHealtDefinitionKey::NODE_HEALT_STATUS,
-                                                                    NodeHealtDefinitionValue::NODE_HEALT_STATUS_LOAD);
+                                                                    NodeHealtDefinitionValue::NODE_HEALT_STATUS_LOAD,
+                                                                    true);
                     
                     //now we can start the execution pool manager becuase our unit server has ben successfully registered on the mds
                     if(use_execution_pools) {
                         exectuion_pool_manager.reset(new chaos::cu::control_manager::execution_pool::ExecutionPoolManager(), "ExecutionPoolManager");
                         exectuion_pool_manager.init(NULL, __PRETTY_FUNCTION__);
                     }
+                    //repeat fast as possible the timer
+                    chaos_async::AsyncCentralManager::getInstance()->removeTimer(this);
+                    chaos_async::AsyncCentralManager::getInstance()->addTimer(this, 0, GlobalConfiguration::getInstance()->getOption<uint64_t>(CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC));
                 } else {
                     LCMERR_ << "Registration ACK received,bad  SM state "<<(unit_server_sm.process_event(unit_server_state_machine::UnitServerEventType::UnitServerEventTypePublished()));
                     throw CException(ErrorCode::EC_MDS_NODE_BAD_SM_STATE, "Bad state of the sm for published event", __PRETTY_FUNCTION__);
                 }
                 break;
                 
-            case ErrorCode::EC_MDS_NODE_REGISTRATION_FAILURE_DUPLICATE_ALIAS:
-                LCMERR_ << "The " << unit_server_alias << " is already used";
+            case ErrorCode::EC_MDS_NODE_REGISTRATION_FAILURE_INSTANCE_ALREADY_RUNNING:
+                LCMERR_ << "The " << unit_server_alias << " is already used no we will QUIT";
                 //turn of unit server
                 if(unit_server_sm.process_event(unit_server_state_machine::UnitServerEventType::UnitServerEventTypeFailure()) == boost::msm::back::HANDLED_TRUE){
                     //we have problem
-                    //update healt status
-                    HealtManager::getInstance()->addNodeMetricValue(unit_server_alias,
-                                                                    NodeHealtDefinitionKey::NODE_HEALT_STATUS,
-                                                                    NodeHealtDefinitionValue::NODE_HEALT_STATUS_UNLOAD);
+                    //quit or retry
+                    ChaosCUToolkit::getInstance()->closeUIToolkit();
                 } else {
                     throw CException(ErrorCode::EC_MDS_NODE_BAD_SM_STATE, "Bad state of the sm for unpublishing event", __PRETTY_FUNCTION__);
                 }
@@ -773,20 +774,13 @@ CDataWrapper* ControlManager::unitServerRegistrationACK(CDataWrapper *message_da
                 LCMDBG_ << "Turning of unit server";
                 if(unit_server_sm.process_event(unit_server_state_machine::UnitServerEventType::UnitServerEventTypeFailure()) == boost::msm::back::HANDLED_TRUE) {
                     //we have problem
-                    HealtManager::getInstance()->addNodeMetricValue(unit_server_alias,
-                                                                    NodeHealtDefinitionKey::NODE_HEALT_STATUS,
-                                                                    NodeHealtDefinitionValue::NODE_HEALT_STATUS_UNLOAD);
+                    //quit or retry
+                    ChaosCUToolkit::getInstance()->closeUIToolkit();
                 } else {
                     throw CException(ErrorCode::EC_MDS_NODE_BAD_SM_STATE, "Bad state of the sm for unpublished event", __PRETTY_FUNCTION__);
                 }
                 break;
         }
-        //publish the healt result
-        HealtManager::getInstance()->publishNodeHealt(unit_server_alias);
-        
-        //repeat fast as possible the timer
-        chaos_async::AsyncCentralManager::getInstance()->removeTimer(this);
-        chaos_async::AsyncCentralManager::getInstance()->addTimer(this, 0, GlobalConfiguration::getInstance()->getOption<uint64_t>(CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC));
     } else {
         throw CException(-3, "No result received", __PRETTY_FUNCTION__);
     }

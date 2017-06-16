@@ -161,6 +161,10 @@ ChaosCUToolkit::~ChaosCUToolkit() {
     
 }
 
+void ChaosCUToolkit::closeUIToolkit() {
+    signalHanlder(SIGTERM);
+}
+
 //! C and C++ attribute parser
 /*!
  Specialized option for startup c and cpp program main options parameter

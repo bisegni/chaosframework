@@ -95,7 +95,7 @@ chaos::error::ChaosErrorCodeMapping::getInstance()->getErrorMessage(error_code)
             //!unit server registration has failed for invalid alias
             EC_MDS_NODE_REGISTRATION_FAILURE_INVALID_ALIAS,
             //!unit server registration for duplicated alias
-            EC_MDS_NODE_REGISTRATION_FAILURE_DUPLICATE_ALIAS,
+            EC_MDS_NODE_REGISTRATION_FAILURE_INSTANCE_ALREADY_RUNNING,
             //! node bad state machine state in response to mds ack event
             EC_MDS_NODE_BAD_SM_STATE,
             //!work unit is not self manageable and need to be loaded within an unit server

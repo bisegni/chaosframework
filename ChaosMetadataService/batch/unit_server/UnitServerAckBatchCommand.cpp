@@ -39,6 +39,7 @@ DEFINE_MDS_COMAMND_ALIAS(UnitServerAckCommand)
 UnitServerAckCommand::UnitServerAckCommand():
 MDSBatchCommand(),
 message_data(NULL),
+us_can_start(false),
 phase(USAP_ACK_US){
     list_autoload_cu_current = list_autoload_cu.end();
 }
@@ -51,7 +52,9 @@ void UnitServerAckCommand::setHandler(CDataWrapper *data) {
     
     //override default schedule time for this command
     //setFeatures(chaos::common::batch_command::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY, (uint64_t)1000);
-    
+    if(data->hasKey(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT)) {
+        us_can_start = data->getInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT) == ErrorCode::EC_MDS_NODE_REGISTRATION_OK;
+    }
     CHECK_CDW_THROW_AND_LOG(data, USAC_ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(data, chaos::NodeDefinitionKey::NODE_UNIQUE_ID, USAC_ERR, -2, "The unique id of unit server is mandatory")
     CHECK_KEY_THROW_AND_LOG(data, chaos::NodeDefinitionKey::NODE_RPC_ADDR, USAC_ERR, -3, "The rpc address of unit server is mandatory")
@@ -96,8 +99,12 @@ void UnitServerAckCommand::ccHandler() {
                     break;
                     
                 case MESSAGE_PHASE_COMPLETED:{
-                    //after terminate the control unit ack try to fetch cu autoload
-                    phase = USAP_CU_FECTH_NEXT;
+                    //after terminate the us ack try to fetch cu autoload
+                    if(us_can_start) {
+                        phase = USAP_CU_FECTH_NEXT;
+                    } else {
+                        BC_END_RUNNING_PROPERTY;
+                    }
                     break;
                 }
                     

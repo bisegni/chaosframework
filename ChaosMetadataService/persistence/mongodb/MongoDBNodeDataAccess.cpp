@@ -837,7 +837,8 @@ int MongoDBNodeDataAccess::isNodeAlive(const std::string& node_uid, bool& alive)
     try {
         mongo::BSONObj result;
         mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << node_uid <<
-                                    CHAOS_FORMAT("health_stat.%1%",%NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP) << BSON("$gte" << mongo::Date_t(TimingUtil::getTimeStamp()-(6*1000))));
+                                    CHAOS_FORMAT("health_stat.%1%",%NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP) <<
+                                    BSON("$gte" << mongo::Date_t(TimingUtil::getTimestampWithDelay((6*1000)))));
         
         DEBUG_CODE(MDBNDA_DBG<<log_message("isNodeAlive",
                                            "findOne",

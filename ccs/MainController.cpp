@@ -195,7 +195,7 @@ void MainController::initApplicationMenuBar() {
     menu->addAction("Snapshot manager", this, SLOT(actionSnaptshotManager()),QKeySequence(Qt::CTRL + Qt::Key_S));
     menu->addAction("Group manager", this, SLOT(actionTreeGroupManager()),QKeySequence(Qt::CTRL + Qt::Key_G));
     menu->addAction("Log Browser", this, SLOT(actionLogBrowser()),QKeySequence(Qt::CTRL + Qt::Key_L));
-    menu->addAction("Application Error Browser", this, SLOT(actionApplicationLogBrowser()),QKeySequence(Qt::CTRL + Qt::Key_A));
+    menu->addAction("Application Error Browser", this, SLOT(actionApplicationLogBrowser()),QKeySequence(Qt::CTRL + Qt::Key_E));
 
     //Data
     menu = main_menu_bar.addMenu("&Algorithm");

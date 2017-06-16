@@ -35,6 +35,9 @@
 
 namespace chaos{
     namespace cu {
+        namespace control_manager {
+            class ControlManager;
+        }
         /*! \page page_cut The Control Unit Toolkit
          *  \section page_cut_sec This toolkit represent the chaos driver for the real hardware to control
          *
@@ -46,7 +49,8 @@ namespace chaos{
          add Custom Control unit, and start all Contro Unit environment
          */
         class ChaosCUToolkit : public ChaosCommon<ChaosCUToolkit>, public ServerDelegator {
-	friend class common::utility::Singleton<ChaosCUToolkit>;
+            friend class common::utility::Singleton<ChaosCUToolkit>;
+            friend class chaos::cu::control_manager::ControlManager;
             //static boost::mutex monitor;
             //static boost::condition endWaithCondition;
             
@@ -55,7 +59,8 @@ namespace chaos{
             ChaosCUToolkit();
             ~ChaosCUToolkit();
             static void signalHanlder(int);
-            
+        protected:
+            void closeUIToolkit();
         public:
             typedef boost::mutex::scoped_lock lock;
             //! C and C++ attribute parser
@@ -72,12 +77,12 @@ namespace chaos{
             void start() throw(CException);
             void stop()throw(CException);
             void deinit()throw(CException);
-			
+            
             void setProxyCreationHandler(chaos::cu::control_manager::ProxyLoadHandler load_handler);
-			template<typename ControlUnitClass>
-			void registerControlUnit() {
-				control_manager::ControlManager::getInstance()->registerControlUnit<ControlUnitClass>();
-			}
+            template<typename ControlUnitClass>
+            void registerControlUnit() {
+                control_manager::ControlManager::getInstance()->registerControlUnit<ControlUnitClass>();
+            }
         };
     }
 }
