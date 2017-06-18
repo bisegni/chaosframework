@@ -182,6 +182,8 @@ INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/monitor_sy
 
 FILE(GLOB files "node_controller/*.h")
 INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/node_controller/)
+FILE(GLOB files "event/*.h")
+INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/event/)
 
 INSTALL(TARGETS chaos_metadata_service_client
 DESTINATION "lib"
