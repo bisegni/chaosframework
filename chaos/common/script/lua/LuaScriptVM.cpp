@@ -21,6 +21,10 @@
 
 #include <chaos/common/global.h>
 #include <chaos/common/script/lua/LuaScriptVM.h>
+//include lua modules
+#include <chaos/common/script/lua/lib/json.h>
+
+#include <string>
 
 using namespace chaos::common::data;
 using namespace chaos::common::script;
@@ -152,6 +156,20 @@ static int lua_print_wrap(lua_State* ls) {
     return 0;
 }
 
+static int lua_loader(lua_State* ls) {
+    int err = 0;
+    // get the module name
+    const std::string required_package = lua_tostring(ls, 1);
+    // find if you have such module loaded
+    if (required_package.compare("json") == 0) {
+        if((err = luaL_loadbuffer(ls, (const char *)json_lua, (size_t)json_lua_len, required_package.c_str()))) {
+            LSVM_ERR << lua_tostring(ls, -1);
+            lua_pop(ls, 1);
+        }
+    }
+    return 1;
+}
+
 static const struct luaL_Reg chaos_wrap [] = {
     {"_G", luaopen_base},
     {LUA_LOADLIBNAME, luaopen_package},
@@ -166,6 +184,7 @@ static const struct luaL_Reg chaos_wrap [] = {
 
 static const struct luaL_Reg chaos_custom [] = {
     {"print", lua_print_wrap},
+    //{"require", lua_require_wrap},
     {NULL, NULL} /* end of array */
 };
 
@@ -191,7 +210,11 @@ void LuaScriptVM::init(void *init_data) throw(chaos::CException) {
     lua_getglobal(ls, "_G");
     luaL_setfuncs(ls, chaos_custom, 0);
     lua_pop(ls, 1);
-
+    
+    //set custom loader
+    lua_register(ls, "chaos_module_loader", lua_loader);
+    luaL_dostring(ls, "table.insert(package.searchers, 2, chaos_module_loader) \n");
+    
     //register wrapper interface
     Luna<ChaosLuaWrapperInterface>::Register(ls);
     
@@ -202,6 +225,12 @@ void LuaScriptVM::deinit() throw(chaos::CException) {
         lua_close(ls);
         ls = NULL;
     }
+}
+
+void LuaScriptVM::loadExternalLuaLib(const std::string& lib_path) {
+    int err = 0;
+    //include json lua library
+    err = luaL_loadbuffer(ls, (const char *)json_lua, (size_t)json_lua_len, "json");
 }
 
 void LuaScriptVM::allocationOf(ChaosLuaWrapperInterface *newAllocatedClass) {
@@ -271,9 +300,9 @@ int LuaScriptVM::callFunction(const std::string& function_name,
     
     // do the call (2 arguments, 1 result)
     if ((last_error = lua_pcall(ls,
-                         (int)input_parameter.size(),
-                         0,
-                         1) != 0)) {
+                                (int)input_parameter.size(),
+                                0,
+                                1) != 0)) {
         LSVM_ERR << CHAOS_FORMAT("Error %1% calling script function %2%", %(last_error_message = lua_tostring(ls, -1))%function_name);
     } else {
         //result_element = lua_gettop(ls);
@@ -345,9 +374,9 @@ int LuaScriptVM::callProcedure(const std::string& function_name,
     
     // do the call (2 arguments, 1 result)
     if ((last_error = lua_pcall(ls,
-                         (int)input_parameter.size(),
-                         0,
-                         0) != 0)) {
+                                (int)input_parameter.size(),
+                                0,
+                                0) != 0)) {
         LSVM_ERR << CHAOS_FORMAT("Error %1% calling script function %2%", %(last_error_message = lua_tostring(ls, -1))%function_name);
     }
     return last_error;

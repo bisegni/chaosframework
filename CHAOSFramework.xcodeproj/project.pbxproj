@@ -1106,6 +1106,7 @@
 		32FC562A1EE7EC1C00C19841 /* PluginManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FC56281EE7EC1C00C19841 /* PluginManager.h */; };
 		32FC562D1EE8449A00C19841 /* EUPluginApiWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FC562B1EE8449A00C19841 /* EUPluginApiWrapper.cpp */; };
 		32FC562E1EE8449A00C19841 /* EUPluginApiWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FC562C1EE8449A00C19841 /* EUPluginApiWrapper.h */; };
+		32FC564D1EF7F07E00C19841 /* json.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FC564C1EF7F07E00C19841 /* json.h */; };
 		32FC7EE51A70FDB70029C2A2 /* ApiManagment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FC7EE31A70FDB70029C2A2 /* ApiManagment.cpp */; };
 		32FF2A571E65782200117985 /* NodeOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A551E65782200117985 /* NodeOperation.cpp */; };
 		32FF2A581E65782200117985 /* NodeOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FF2A561E65782200117985 /* NodeOperation.h */; };
@@ -2598,6 +2599,8 @@
 		32FC56281EE7EC1C00C19841 /* PluginManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginManager.h; sourceTree = "<group>"; };
 		32FC562B1EE8449A00C19841 /* EUPluginApiWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EUPluginApiWrapper.cpp; sourceTree = "<group>"; };
 		32FC562C1EE8449A00C19841 /* EUPluginApiWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EUPluginApiWrapper.h; sourceTree = "<group>"; };
+		32FC56471EF7DBA900C19841 /* json.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = json.lua; sourceTree = "<group>"; };
+		32FC564C1EF7F07E00C19841 /* json.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = json.h; sourceTree = "<group>"; };
 		32FC7EDF1A7008780029C2A2 /* mds_constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mds_constants.h; sourceTree = "<group>"; };
 		32FC7EE01A7008FA0029C2A2 /* mds_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mds_types.h; sourceTree = "<group>"; };
 		32FC7EE11A701BE40029C2A2 /* AbstractApi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AbstractApi.h; sourceTree = "<group>"; };
@@ -3445,6 +3448,7 @@
 		32612AB41CE2053D00F3B8F3 /* lua */ = {
 			isa = PBXGroup;
 			children = (
+				32FC56461EF7DB7900C19841 /* lib */,
 				32A88B7A1CF8226C001DBAF5 /* core */,
 				322A3BBE1CEE1A7F00FAD9DA /* LuaScriptVM.cpp */,
 				322A3BBF1CEE1A7F00FAD9DA /* LuaScriptVM.h */,
@@ -5371,6 +5375,15 @@
 			path = management;
 			sourceTree = "<group>";
 		};
+		32FC56461EF7DB7900C19841 /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				32FC564C1EF7F07E00C19841 /* json.h */,
+				32FC56471EF7DBA900C19841 /* json.lua */,
+			);
+			path = lib;
+			sourceTree = "<group>";
+		};
 		32FF2A6D1E6864E100117985 /* deploy */ = {
 			isa = PBXGroup;
 			children = (
@@ -5769,6 +5782,7 @@
 				32A88BEB1CF8228A001DBAF5 /* lua.hpp in Headers */,
 				329CFCF318CDEE2F002C37CF /* ObjectSlot.h in Headers */,
 				32279F8516F8DEAF009EC7B9 /* DataBroker.h in Headers */,
+				32FC564D1EF7F07E00C19841 /* json.h in Headers */,
 				32279F8C16FA36B6009EC7B9 /* PublisherDataService.h in Headers */,
 				324A4B7C191A428500975394 /* html.h in Headers */,
 				32A88BE81CF8228A001DBAF5 /* ltm.h in Headers */,

@@ -58,6 +58,7 @@ namespace chaos {
                 protected:
                     void init(void *init_data) throw(chaos::CException);
                     void deinit() throw(chaos::CException);
+                    void loadExternalLuaLib(const std::string& lib_path);
                     void allocationOf(ChaosLuaWrapperInterface *newAllocatedClass);
                     void deallocationOf(ChaosLuaWrapperInterface *deallocatedClass);
                 public:
