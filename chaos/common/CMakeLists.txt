@@ -222,7 +222,8 @@ SET(common_lib_src ${common_lib_src}
         batch_command/BatchCommandParallelSandbox.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        plugin/PluginLoader.cpp)
+  plugin/PluginLoader.cpp
+  plugin/PluginManager.cpp)
 
 SET(common_lib_src ${common_lib_src}
         property/PropertyCollector.cpp
