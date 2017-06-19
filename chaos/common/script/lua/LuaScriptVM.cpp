@@ -21,6 +21,7 @@
 
 #include <chaos/common/global.h>
 #include <chaos/common/script/lua/LuaScriptVM.h>
+#include <chaos/common/script/lua/LuaModuleManager.h>
 //include lua modules
 #include <chaos/common/script/lua/lib/json.h>
 
@@ -166,6 +167,13 @@ static int lua_loader(lua_State* ls) {
             LSVM_ERR << lua_tostring(ls, -1);
             lua_pop(ls, 1);
         }
+    } else if(LuaModuleManager::getInstance()->hasModule(required_package)) {
+        const std::string lua_module_path = LuaModuleManager::getInstance()->getModulePath(required_package);
+        LSVM_INFO << CHAOS_FORMAT("Loading module %1% from file %2%", %required_package%lua_module_path);
+        if((err = luaL_loadfile(ls, lua_module_path.c_str()))) {
+            LSVM_ERR << lua_tostring(ls, -1);
+            lua_pop(ls, 1);
+        }
     }
     return 1;
 }
@@ -190,9 +198,7 @@ static const struct luaL_Reg chaos_custom [] = {
 
 LuaScriptVM::LuaScriptVM(const std::string& name):
 AbstractScriptVM(name),
-ls(NULL){
-    
-}
+ls(NULL){}
 
 LuaScriptVM::~LuaScriptVM() {
     if(ls){lua_close(ls);}
@@ -225,12 +231,6 @@ void LuaScriptVM::deinit() throw(chaos::CException) {
         lua_close(ls);
         ls = NULL;
     }
-}
-
-void LuaScriptVM::loadExternalLuaLib(const std::string& lib_path) {
-    int err = 0;
-    //include json lua library
-    err = luaL_loadbuffer(ls, (const char *)json_lua, (size_t)json_lua_len, "json");
 }
 
 void LuaScriptVM::allocationOf(ChaosLuaWrapperInterface *newAllocatedClass) {

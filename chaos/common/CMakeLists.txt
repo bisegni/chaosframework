@@ -254,6 +254,7 @@ INCLUDE_DIRECTORIES(script/lua/core ./chaos/common ./chaos/common/metadata_loggi
 FILE(GLOB LuaCoreSource script/lua/core/*.c)
 SET(common_lib_src ${common_lib_src}
 	script/lua/LuaScriptVM.cpp
+    script/lua/LuaModuleManager.cpp
 	${LuaCoreSource})
 
 IF (NOT DEFINED BUILD_FORCE_STATIC)

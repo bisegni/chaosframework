@@ -244,6 +244,9 @@ namespace chaos {
                 }
                 
                 if(GlobalConfiguration::getInstance()->hasOption(InitOption::OPT_PLUGIN_ENABLE)){
+                    if(GlobalConfiguration::getInstance()->hasOption(InitOption::OPT_PLUGIN_DIRECTORY_PATH) == false) {
+                        throw chaos::CException(-1, "Plugin path need to be specified", __PRETTY_FUNCTION__);
+                    }
                     //initialize the plugin manager
                     chaos::common::utility::InizializableService::initImplementation(chaos::common::plugin::PluginManager::getInstance(), NULL, "PluginManager", __PRETTY_FUNCTION__);
                 }

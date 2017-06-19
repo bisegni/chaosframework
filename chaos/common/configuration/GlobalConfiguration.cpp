@@ -86,7 +86,7 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException) {
         addOption(InitOption::OPT_TIME_CALIBRATION_NTP_SERVER, po::value< string >(), "Specify the NTP server used for time calibration");
         
         addOption(InitOption::OPT_PLUGIN_ENABLE, po::value< bool >()->zero_tokens(), "Enable the use of the plugin");
-        addOption(InitOption::OPT_PLUGIN_DIRECTORY_PATH, po::value< std::string >()->default_value("plugin"), "Specify the directory where are stored the plugin");
+        addOption(InitOption::OPT_PLUGIN_DIRECTORY_PATH, po::value< std::string >(), "Specify the directory where are stored the plugin");
     } catch (po::error &e) {
         throw CException(0, e.what(), "GlobalConfiguration::preParseStartupParameters");
     }

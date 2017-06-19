@@ -22,11 +22,11 @@
 #ifndef __CHAOSFramework__LuaScriptVM_h
 #define __CHAOSFramework__LuaScriptVM_h
 
+#include <chaos/common/chaos_types.h>
 #include <chaos/common/script/lua/luna.h>
 #include <chaos/common/script/lua/core/lua.hpp>
 #include <chaos/common/script/AbstractScriptVM.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
-
 
 namespace chaos {
     namespace common {
@@ -46,19 +46,19 @@ namespace chaos {
                     static const char className[];
                     static const Luna<ChaosLuaWrapperInterface>::RegType Register[];
                 };
-                
+
                 //!define the chaos script lua implementation
                 DECLARE_CLASS_FACTORY(LuaScriptVM, AbstractScriptVM),
                 public LunaAllocationHandler<ChaosLuaWrapperInterface> {
                     REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(LuaScriptVM)
                     friend class Luna<ChaosLuaWrapperInterface>;
                     lua_State *ls;
+
                     LuaScriptVM(const std::string& alias);
                     ~LuaScriptVM();
                 protected:
                     void init(void *init_data) throw(chaos::CException);
                     void deinit() throw(chaos::CException);
-                    void loadExternalLuaLib(const std::string& lib_path);
                     void allocationOf(ChaosLuaWrapperInterface *newAllocatedClass);
                     void deallocationOf(ChaosLuaWrapperInterface *deallocatedClass);
                 public:
