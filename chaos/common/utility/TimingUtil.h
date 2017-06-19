@@ -188,6 +188,16 @@ namespace chaos {
                     }
                     return ts.total_milliseconds();
                 }
+                
+                //! return the timestam from now to dealy , in the past(false) or future(true)
+                static inline std::string toString(uint64_t since_epoc_ms,
+                                                   const std::string& format = std::string("%d-%m-%Y %H:%M:%S")) {
+                    boost::posix_time::time_facet * facet = new boost::posix_time::time_facet(format.c_str());
+                    std::ostringstream stream;
+                    stream.imbue(std::locale(stream.getloc(), facet));
+                    stream << boost::posix_time::ptime(EPOCH + boost::posix_time::milliseconds(since_epoc_ms));
+                    return stream.str();
+                }
             };
         }
     }

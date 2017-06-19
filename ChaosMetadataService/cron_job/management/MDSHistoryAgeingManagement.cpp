@@ -57,8 +57,6 @@ bool MDSHistoryAgeingManagement::execute(const common::cronous_manager::MapKeyVa
         log(CHAOS_FORMAT("Processing ageing for control unit %1%", %control_unit_found));
         if(aged) {
             log(CHAOS_FORMAT("Control unit %1% is gone out of ageing time[%2% seconds], we perform agein trigger", %control_unit_found%control_unit_ageing_time));
-            
-            
             const std::string output_key	= control_unit_found + DataPackPrefixID::OUTPUT_DATASET_POSTFIX;
             const std::string input_key     = control_unit_found + DataPackPrefixID::INPUT_DATASET_POSTFIX;
             const std::string system_key	= control_unit_found + DataPackPrefixID::SYSTEM_DATASET_POSTFIX;
@@ -87,6 +85,8 @@ bool MDSHistoryAgeingManagement::execute(const common::cronous_manager::MapKeyVa
                                                                                                            remove_until_ts))){
                 log(CHAOS_FORMAT("Error erasing logging for control unit %2% with error %3%", %alarm_key%control_unit_found%err));
             }
+        }else{
+            log(CHAOS_FORMAT("Control unit %1% not gone in ageing(%2% seconds) [last performing age %3% next is %4%]", %control_unit_found%control_unit_ageing_time%TimingUtil::toString(last_ageing_perform_time)%TimingUtil::toString(next_aged_time)));
         }
         getDataAccess<persistence::data_access::ControlUnitDataAccess>()->releaseControlUnitForAgeingManagement(control_unit_found, aged);
         
