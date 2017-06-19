@@ -37,7 +37,9 @@ SET(cu_lib_src ${cu_lib_src}
         control_manager/script/ScriptableExecutionUnit.cpp
         control_manager/script/api/EUDSValueManagement.cpp
         control_manager/script/api/EULiveManagment.cpp
-	control_manager/script/api/EUSearch.cpp)
+	control_manager/script/api/EUSearch.cpp
+	control_manager/script/ScriptableExecutionUnit.cpp
+	)
 	
 
 SET(cu_lib_src ${cu_lib_src}
