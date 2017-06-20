@@ -38,6 +38,8 @@ SET(cu_lib_src ${cu_lib_src}
         control_manager/script/api/EUDSValueManagement.cpp
         control_manager/script/api/EULiveManagment.cpp
 	control_manager/script/api/EUSearch.cpp
+	control_manager/script/api/plugin/EUPluginApiWrapper.cpp
+	control_manager/script/api/plugin/EUPluginLoader.cpp
 	control_manager/script/ScriptableExecutionUnit.cpp
 	)
 	
