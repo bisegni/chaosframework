@@ -15,7 +15,9 @@ build_framework_x86_64:
     - echo "Working directory:"$PWD
     - echo "Artifact name:"$TAR_NAME_POSTFIX
     - cmake -DCHAOS_ARCHITECTURE_TEST=ON .
-    - make  -j  4 install
+    - make clean
+    - make  -j 4
+    - make install
     #- tar -zcf /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux_$TAR_NAME_POSTFIX.tgz /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux
     #- ls -la
     #- scp -v -i /builds/bisegni/chaosframework/deploy.key -o StrictHostKeyChecking=no /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux_$TAR_NAME_POSTFIX.tgz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/
@@ -34,7 +36,9 @@ build_framework_arm:
     - echo "Working directory:"$PWD
     - echo "Artifact name:"$TAR_NAME_POSTFIX
     - cmake -DCHAOS_TARGET=armhf
-    - make  -j 4 install
+    - make clean
+    - make  -j 4
+    - make install
     #- tar -zcf /builds/bisegni/chaosframework/chaos-distrib-armhf_$TAR_NAME_POSTFIX.tgz /builds/bisegni/chaosframework/chaos-distrib-armhf
     #- ls -la
     #- scp -v -i /builds/bisegni/chaosframework/deploy.key -o StrictHostKeyChecking=no /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux_$TAR_NAME_POSTFIX.tgz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/
