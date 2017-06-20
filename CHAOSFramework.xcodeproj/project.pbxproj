@@ -1110,6 +1110,7 @@
 		32FC7EE51A70FDB70029C2A2 /* ApiManagment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FC7EE31A70FDB70029C2A2 /* ApiManagment.cpp */; };
 		32FCCA461EF8244F00CD47BB /* LuaModuleManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FCCA441EF8244F00CD47BB /* LuaModuleManager.cpp */; };
 		32FCCA471EF8244F00CD47BB /* LuaModuleManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FCCA451EF8244F00CD47BB /* LuaModuleManager.h */; };
+		32FCCA4A1EF942F900CD47BB /* base64.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FCCA491EF942F900CD47BB /* base64.h */; };
 		32FF2A571E65782200117985 /* NodeOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A551E65782200117985 /* NodeOperation.cpp */; };
 		32FF2A581E65782200117985 /* NodeOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FF2A561E65782200117985 /* NodeOperation.h */; };
 		32FF2A5B1E6579A400117985 /* NodeOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A591E6579A400117985 /* NodeOperation.cpp */; };
@@ -2612,6 +2613,8 @@
 		32FCB0691B00B4D0002894A2 /* monitor_system_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = monitor_system_types.h; sourceTree = "<group>"; };
 		32FCCA441EF8244F00CD47BB /* LuaModuleManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LuaModuleManager.cpp; sourceTree = "<group>"; };
 		32FCCA451EF8244F00CD47BB /* LuaModuleManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LuaModuleManager.h; sourceTree = "<group>"; };
+		32FCCA481EF942B000CD47BB /* base64.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = base64.lua; sourceTree = "<group>"; };
+		32FCCA491EF942F900CD47BB /* base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = base64.h; sourceTree = "<group>"; };
 		32FF2A551E65782200117985 /* NodeOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeOperation.cpp; sourceTree = "<group>"; };
 		32FF2A561E65782200117985 /* NodeOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeOperation.h; sourceTree = "<group>"; };
 		32FF2A591E6579A400117985 /* NodeOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeOperation.cpp; sourceTree = "<group>"; };
@@ -5384,6 +5387,8 @@
 		32FC56461EF7DB7900C19841 /* lib */ = {
 			isa = PBXGroup;
 			children = (
+				32FCCA491EF942F900CD47BB /* base64.h */,
+				32FCCA481EF942B000CD47BB /* base64.lua */,
 				32FC564C1EF7F07E00C19841 /* json.h */,
 				32FC56471EF7DBA900C19841 /* json.lua */,
 			);
@@ -5479,6 +5484,7 @@
 				32A968531D522FB800BD636C /* PropertyGroup.h in Headers */,
 				32A88BDD1CF8228A001DBAF5 /* lparser.h in Headers */,
 				32A88BE21CF8228A001DBAF5 /* lstring.h in Headers */,
+				32FCCA4A1EF942F900CD47BB /* base64.h in Headers */,
 				32460521179C55FC00B075DA /* sqlite3.h in Headers */,
 				32067EA21CABEE8800DE568A /* CDataVariant.h in Headers */,
 				32A88BF01CF8228A001DBAF5 /* lundump.h in Headers */,

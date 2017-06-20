@@ -115,6 +115,9 @@ x = hasOption(y);
         
         MapStrKeyStrValue map_kv_param_directio_clnt_impl;
         
+        //!map for key value used by script virtual machine
+        MapStrKeyStrValue map_kv_param_script_vm;
+        
         //fill the rpc
         void fillKVParameter(std::map<std::string, std::string>& kvmap,
                              const std::string& kv_string,
@@ -315,6 +318,9 @@ x = hasOption(y);
         
         //! return the directio client implementation key value map
         MapStrKeyStrValue& getDirectIOClientImplKVParam();
+        
+        //! return the script virtualmachine key value parameter
+        MapStrKeyStrValue& getScriptVMKVParam();
     };
 }
 #endif

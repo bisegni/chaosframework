@@ -24,6 +24,7 @@
 #include <chaos/common/script/lua/LuaModuleManager.h>
 //include lua modules
 #include <chaos/common/script/lua/lib/json.h>
+#include <chaos/common/script/lua/lib/base64.h>
 
 #include <string>
 
@@ -167,7 +168,12 @@ static int lua_loader(lua_State* ls) {
             LSVM_ERR << lua_tostring(ls, -1);
             lua_pop(ls, 1);
         }
-    } else if(LuaModuleManager::getInstance()->hasModule(required_package)) {
+    } else if (required_package.compare("base64") == 0) {
+        if((err = luaL_loadbuffer(ls, (const char *)base64_lua, (size_t)base64_lua_len, required_package.c_str()))) {
+            LSVM_ERR << lua_tostring(ls, -1);
+            lua_pop(ls, 1);
+        }
+    } else  if(LuaModuleManager::getInstance()->hasModule(required_package)) {
         const std::string lua_module_path = LuaModuleManager::getInstance()->getModulePath(required_package);
         LSVM_INFO << CHAOS_FORMAT("Loading module %1% from file %2%", %required_package%lua_module_path);
         if((err = luaL_loadfile(ls, lua_module_path.c_str()))) {

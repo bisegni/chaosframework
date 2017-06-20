@@ -87,6 +87,8 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException) {
         
         addOption(InitOption::OPT_PLUGIN_ENABLE, po::value< bool >()->zero_tokens(), "Enable the use of the plugin");
         addOption(InitOption::OPT_PLUGIN_DIRECTORY_PATH, po::value< std::string >(), "Specify the directory where are stored the plugin");
+        
+        addOption(InitOption::OPT_SCRIPT_VM_KV_PARAM, po::value< std::vector<std::string> >(),"Script virtual machine key value parameter [k=v]");
     } catch (po::error &e) {
         throw CException(0, e.what(), "GlobalConfiguration::preParseStartupParameters");
     }
@@ -334,14 +336,20 @@ void GlobalConfiguration::checkDefaultOption() throw (CException) {
     }
     finalizeMetadataServerAddress();
     
-    CHECK_AND_DEFINE_BOOL_ZERO_TOKEN_OPTION(enable_time_calibration, InitOption::OPT_TIME_CALIBRATION)
+    CHECK_AND_DEFINE_BOOL_ZERO_TOKEN_OPTION(enable_time_calibration, InitOption::OPT_TIME_CALIBRATION);
     configuration.addBoolValue(InitOption::OPT_TIME_CALIBRATION, enable_time_calibration);
     
-    CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(unsigned int, offset_calibration_bound, InitOption::OPT_TIME_CALIBRATION_OFFSET_BOUND, 500)
+    CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(unsigned int, offset_calibration_bound, InitOption::OPT_TIME_CALIBRATION_OFFSET_BOUND, 500);
     configuration.addInt32Value(InitOption::OPT_TIME_CALIBRATION_OFFSET_BOUND, offset_calibration_bound);
     
-    CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(std::string, time_calibration_ntp_server, InitOption::OPT_TIME_CALIBRATION_NTP_SERVER, "")
+    CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(std::string, time_calibration_ntp_server, InitOption::OPT_TIME_CALIBRATION_NTP_SERVER, "");
     configuration.addStringValue(InitOption::OPT_TIME_CALIBRATION_NTP_SERVER, time_calibration_ntp_server);
+    
+    CHECK_AND_DEFINE_OPTION(std::vector<std::string>, script_vm_kv_param, InitOption::OPT_SCRIPT_VM_KV_PARAM);
+    //fill the key value list
+    if(script_vm_kv_param.size()) {
+        fillKVParameter(map_kv_param_script_vm, script_vm_kv_param, "");
+    }
 }
 
 
@@ -543,4 +551,8 @@ MapStrKeyStrValue& GlobalConfiguration::getDirectIOServerImplKVParam() {
 
 MapStrKeyStrValue& GlobalConfiguration::getDirectIOClientImplKVParam() {
     return map_kv_param_directio_clnt_impl;
+}
+
+MapStrKeyStrValue& GlobalConfiguration::getScriptVMKVParam() {
+    return map_kv_param_script_vm;
 }

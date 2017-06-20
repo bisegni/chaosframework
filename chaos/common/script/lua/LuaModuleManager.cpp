@@ -28,29 +28,34 @@ using namespace chaos::common::script::lua;
 
 namespace bf = boost::filesystem;
 
-LuaModuleManager::LuaModuleManager():
-lua_module_path(GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_PLUGIN_DIRECTORY_PATH)) {
-    for (bf::directory_iterator it(lua_module_path),
-         end_it;
-         it != end_it;
-         ++it) {
-        const boost::filesystem::path plugin_path = it->path();
-        const boost::filesystem::path extension = it->path().extension();
-        if(extension.compare(".lua") != 0) continue;
-        
-        //we have a lua module to register
-        map_lua_module.insert(MapLuaModulePair(plugin_path.filename().string(), plugin_path));
+LuaModuleManager::LuaModuleManager() {
+    const MapStrKeyStrValue& script_vm_kvp = GlobalConfiguration::getInstance()->getScriptVMKVParam();
+    MapStrKeyStrValueConstIterator path_it = script_vm_kvp.find("lua-module-path");
+    if(path_it != script_vm_kvp.end()) {
+        //path to module path
+        const bf::path lua_module_path = path_it->second;
+        for (bf::directory_iterator it(lua_module_path),
+             end_it;
+             it != end_it;
+             ++it) {
+            const boost::filesystem::path plugin_path = it->path();
+            const boost::filesystem::path extension = it->path().extension();
+            if(extension.compare(".lua") != 0) continue;
+            
+            //we have a lua module to register
+            map_lua_module.insert(MapLuaModulePair(plugin_path.filename().string(), plugin_path));
+        }
     }
 }
 
 LuaModuleManager::~LuaModuleManager() {}
 
 bool LuaModuleManager::hasModule(const std::string& module_name) const {
-    return map_lua_module.find(module_name) != map_lua_module.end();
+    return map_lua_module.find(module_name+".lua") != map_lua_module.end();
 }
 
 std::string LuaModuleManager::getModulePath(const std::string& module_name) const {
-    MapLuaModuleConstIterator module_path = map_lua_module.find(module_name);
+    MapLuaModuleConstIterator module_path = map_lua_module.find(module_name+".lua");
     if(module_path == map_lua_module.end()) return "";
     return module_path->second.string();
 }

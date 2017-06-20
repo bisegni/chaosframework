@@ -116,6 +116,8 @@ namespace chaos {
         static const char * const   OPT_PLUGIN_ENABLE                   = "plugin-enable";
         //! Specify the directory were can be found the plugin
         static const char * const   OPT_PLUGIN_DIRECTORY_PATH           = "plugin-directory-path";
+        //!multiple key value parameter that are passed to script virtual machine
+        static const char * const   OPT_SCRIPT_VM_KV_PARAM              = "script-vm-kvp";
     }
     /** @} */ // end of ParamOption
     

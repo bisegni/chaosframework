@@ -37,8 +37,6 @@ namespace chaos {
                 class LuaModuleManager:
                 public chaos::common::utility::Singleton<LuaModuleManager> {
                     friend class chaos::common::utility::Singleton<LuaModuleManager>;
-                    //path to module path
-                    const std::string lua_module_path;
                     //!contiane module name and his path
                     MapLuaModule map_lua_module;
                     LuaModuleManager();
