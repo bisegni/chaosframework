@@ -22,7 +22,7 @@ build_framework_x86_64:
   cache:
     key: "$CI_BUILD_REF_NAME/x86_64"
     paths:
-        - /builds/bisegni/chaosframework
+        - /builds/bisegni/chaosframework/external-*
   only:
     - development
     - master
@@ -41,7 +41,7 @@ build_framework_arm:
   cache:
     key: "$CI_BUILD_REF_NAME/arm"
     paths:
-        - /builds/bisegni/chaosframework
+        - /builds/bisegni/chaosframework/external-*
   only:
     - development
     - master
