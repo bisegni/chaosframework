@@ -43,7 +43,7 @@ double CMultiTypeDataArrayWrapper::getDoubleElementAtIndex(const int pos) {
 int32_t CMultiTypeDataArrayWrapper::getInt32ElementAtIndex(const int pos) {
     return elementsArray[pos].Int();
 }
-int64_t CMultiTypeDataArrayWrapper::getint64ElementAtIndex(const int pos) {
+int64_t CMultiTypeDataArrayWrapper::getInt64ElementAtIndex(const int pos) {
     return elementsArray[pos].Long();
 }
 

@@ -66,7 +66,7 @@ namespace chaos {
                 
                 double getDoubleElementAtIndex(const int);
                 int32_t getInt32ElementAtIndex(const int);
-                int64_t getint64ElementAtIndex(const int);
+                int64_t getInt64ElementAtIndex(const int);
                 CDataWrapper* getCDataWrapperElementAtIndex(const int);
                 
                 bool isStringElementAtIndex(const int);
