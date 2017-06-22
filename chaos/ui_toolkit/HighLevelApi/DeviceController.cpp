@@ -717,7 +717,7 @@ void DeviceController::initializeAttributeIndexMap() {
         if(datasetDB.getAttributeRangeValueInfo(*iter, attributerangeInfo)!=0){
             LERR_<<"CANNOT RETRIVE attr range info of:"<<*iter;
         }
-        LDBG_<<"IN attr:"<<attributerangeInfo.name<<" type:"<<attributerangeInfo.valueType<<" bin type:"<<attributerangeInfo.binType;
+        LDBG_<<"IN attr:"<<attributerangeInfo.name<<" type:"<<attributerangeInfo.valueType;
         attributeValueMap.insert(make_pair(*iter, attributerangeInfo));
         
     }
@@ -733,7 +733,7 @@ void DeviceController::initializeAttributeIndexMap() {
             LERR_<<"CANNOT RETRIVE attr range info of:"<<*iter;
             
         }
-        LDBG_<<"OUT attr:"<<attributerangeInfo.name<<" type:"<<attributerangeInfo.valueType<<" bin type:"<<attributerangeInfo.binType;
+        LDBG_<<"OUT attr:"<<attributerangeInfo.name<<" type:"<<attributerangeInfo.valueType;
         attributeValueMap.insert(make_pair(*iter, attributerangeInfo));
         
     }

@@ -41,6 +41,8 @@ namespace chaos {
             typedef map<string, entity::Entity*> EntityPtrMap;
             typedef EntityPtrMap::iterator EntityPtrMapIterator;
             
+            CHAOS_DEFINE_VECTOR_FOR_TYPE(DataType::BinarySubtype, VectorBinSubtype);
+            
             //!Describe the range of the value for an attribute of the dataset
             /*!
              \ingroup Control_Unit_User_Api
@@ -59,7 +61,7 @@ namespace chaos {
                 //!Type of the value
                 DataType::DataType valueType;
                 //!Type of binary
-                DataType::BinarySubtype binType;
+                VectorBinSubtype binType;
                   //!cardinality 0 means auto.
                 uint32_t cardinality;
                 //! direction

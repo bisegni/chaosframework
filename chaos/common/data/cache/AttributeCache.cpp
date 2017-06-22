@@ -42,7 +42,8 @@ void AttributeCache::reset() {
 
 void AttributeCache::addAttribute(const string& name,
                                   uint32_t size,
-                                  chaos::DataType::DataType type) {
+                                  chaos::DataType::DataType type,
+                                  const std::vector<chaos::DataType::BinarySubtype>& sub_type) {
     if(mapAttributeNameIndex.count(name)) return;
 
     VariableIndexType tmpIndex;
@@ -68,7 +69,7 @@ void AttributeCache::addAttribute(const string& name,
         default:
             break;
     }
-    ChaosSharedPtr<AttributeValue> tmpSP(new AttributeValue(name, tmpIndex, size, type));
+    ChaosSharedPtr<AttributeValue> tmpSP(new AttributeValue(name, tmpIndex, size, type, sub_type));
 
         //add the relative bit
     bitmapChangedAttribute.push_back(false);

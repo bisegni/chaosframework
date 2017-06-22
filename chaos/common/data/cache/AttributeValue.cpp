@@ -39,13 +39,15 @@ using namespace chaos::common::data::cache;
 AttributeValue::AttributeValue(const std::string& _name,
                                uint32_t _index,
                                uint32_t _size,
-                               chaos::DataType::DataType _type):
+                               chaos::DataType::DataType _type,
+                               const std::vector<chaos::DataType::BinarySubtype>& _sub_type):
 value_buffer(NULL),
 size(_size),
 name(_name),
 index(_index),
 buf_size(0),
 type(_type),
+sub_type(_sub_type),
 sharedBitmapChangedAttribute(NULL){
     
     if(size) {
@@ -265,7 +267,15 @@ CDataWrapper *AttributeValue::getValueAsCDatawrapperPtr(bool from_json) {
 void AttributeValue::writeToCDataWrapper(CDataWrapper& data_wrapper) {
     switch(type) {
         case chaos::DataType::TYPE_BYTEARRAY:{
-            data_wrapper.addBinaryValue(name, (const char *)value_buffer, size);
+            switch(sub_type.size()) {
+                case 1:
+                    data_wrapper.addBinaryValue(name, sub_type[0], (const char *)value_buffer, size);
+                    break;
+                    
+                default:
+                    data_wrapper.addBinaryValue(name, (const char *)value_buffer, size);
+                    break;
+            }
             break;
         }
         case chaos::DataType::TYPE_CLUSTER:{
