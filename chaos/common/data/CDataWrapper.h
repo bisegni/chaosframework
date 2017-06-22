@@ -184,7 +184,7 @@ namespace chaos {
                 void addBoolValue(const std::string&, bool);
                 
                 //set a binary data value
-                void addBinaryValue(const std::string&, const char *, int);
+                void addBinaryValue(const std::string&, const char *buffer, int size, int subtype=BinDataGeneral);
                 template<typename T>
                 void addVectorValue(const std::string &key,T v[]){
                 	for(int cnt=0;cnt<sizeof(v)/sizeof(T);cnt++){
@@ -248,7 +248,9 @@ namespace chaos {
                 
                 //return the binary data value
                 const char* getBinaryValue(const std::string&, int&);
-                
+                // return binary type
+                int getBinaryType(const std::string&);
+
                 ChaosUniquePtr<CDataBuffer> getBinaryValueAsCDataBuffer(const std::string &key);
                 
                 //return the bson data
