@@ -910,6 +910,8 @@ void AbstractControlUnit::fillRestoreCacheWithDatasetFromTag(data_manager::KeyDa
             //get newly createdattribute from cache
             cached_attribute_value = restore_cache.getAttributeValue((SharedCacheDomain)domain,
                                                                      *it);
+            cached_attribute_value->sub_type.clear();
+            cached_attribute_value->sub_type.push_back(dataset.getBinarySubtype(*it));
             if(!cached_attribute_value) {
                 ACULERR_ << "Error retriving attribute value from cache for:" << *it;
                 continue;
@@ -1216,7 +1218,7 @@ void AbstractControlUnit::initAttributeOnSharedAttributeCache(SharedCacheDomain 
         DatasetDB::getAttributeRangeValueInfo(attribute_names[idx], attributeInfo);
         
         // add the attribute to the shared setting object
-        attribute_setting.addAttribute(attribute_names[idx], attributeInfo.maxSize, attributeInfo.valueType);
+        attribute_setting.addAttribute(attribute_names[idx], attributeInfo.maxSize, attributeInfo.valueType, attributeInfo.binType);
         
         if(!attributeInfo.defaultValue.size()) continue;
         
@@ -1622,7 +1624,11 @@ void AbstractControlUnit::pushOutputDataset(bool ts_already_set) {
                 output_attribute_dataset->addStringValue(value_set->name, value_set->getValuePtr<const char>());
                 break;
             case DataType::TYPE_BYTEARRAY:
-                output_attribute_dataset->addBinaryValue(value_set->name, value_set->getValuePtr<char>(), value_set->size);
+                if(value_set->sub_type.size() == 1) {
+                    output_attribute_dataset->addBinaryValue(value_set->name, value_set->sub_type[0],value_set->getValuePtr<char>(), value_set->size);
+                } else {
+                     output_attribute_dataset->addBinaryValue(value_set->name,value_set->getValuePtr<char>(), value_set->size);
+                }
                 break;
         }
     }
