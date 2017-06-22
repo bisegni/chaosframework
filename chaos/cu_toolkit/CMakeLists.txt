@@ -5,6 +5,12 @@ SET(cu_lib_src
         command_manager/CommandManager.cpp)
 
 SET(cu_lib_src ${cu_lib_src}
+        additional_lib/mongoose.c)
+
+SET(cu_lib_src ${cu_lib_src}
+        external_gateway/ExternalUnitGateway.cpp)
+
+SET(cu_lib_src ${cu_lib_src}
         driver_manager/DriverManager.cpp
         driver_manager/driver/AbstractDriver.cpp
         driver_manager/driver/DriverAccessor.cpp

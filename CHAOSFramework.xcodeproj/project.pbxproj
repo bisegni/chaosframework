@@ -1014,6 +1014,16 @@
 		32E6F43F1E48B4260068320E /* AgentDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E6F43D1E48B4260068320E /* AgentDataAccess.cpp */; };
 		32E6F4421E48B4B10068320E /* MongoDBAgentDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E6F4401E48B4B10068320E /* MongoDBAgentDataAccess.cpp */; };
 		32E6F4461E48D28F0068320E /* AgentAckCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E6F4441E48D28F0068320E /* AgentAckCommand.cpp */; };
+		32E782CE1EFC075D00AD59F7 /* ExternalUnitGateway.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E782CC1EFC075D00AD59F7 /* ExternalUnitGateway.cpp */; };
+		32E782CF1EFC075D00AD59F7 /* ExternalUnitGateway.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E782CD1EFC075D00AD59F7 /* ExternalUnitGateway.h */; };
+		32E782D81EFC095500AD59F7 /* mongoose.c in Sources */ = {isa = PBXBuildFile; fileRef = 32E782D61EFC095500AD59F7 /* mongoose.c */; };
+		32E782D91EFC095500AD59F7 /* mongoose.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E782D71EFC095500AD59F7 /* mongoose.h */; };
+		32E782DC1EFC0AC300AD59F7 /* ControlUnitBridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E782DA1EFC0AC300AD59F7 /* ControlUnitBridge.cpp */; };
+		32E782DD1EFC0AC300AD59F7 /* ControlUnitBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E782DB1EFC0AC300AD59F7 /* ControlUnitBridge.h */; };
+		32E782E01EFC0EEE00AD59F7 /* AbstractAdapter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E782DE1EFC0EEE00AD59F7 /* AbstractAdapter.cpp */; };
+		32E782E11EFC0EEE00AD59F7 /* AbstractAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E782DF1EFC0EEE00AD59F7 /* AbstractAdapter.h */; };
+		32E782E41EFC0F2800AD59F7 /* HTTPAdapter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E782E21EFC0F2800AD59F7 /* HTTPAdapter.cpp */; };
+		32E782E51EFC0F2800AD59F7 /* HTTPAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E782E31EFC0F2800AD59F7 /* HTTPAdapter.h */; };
 		32E86E431CD8A75F0038DE76 /* MessageRequestDomain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E86E411CD8A75F0038DE76 /* MessageRequestDomain.cpp */; };
 		32E86E441CD8A75F0038DE76 /* MessageRequestDomain.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E86E421CD8A75F0038DE76 /* MessageRequestDomain.h */; };
 		32E9A53E1A66A1B100545BB4 /* AbstractApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9A53C1A66A1B100545BB4 /* AbstractApi.cpp */; };
@@ -2487,6 +2497,16 @@
 		32E6F4441E48D28F0068320E /* AgentAckCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AgentAckCommand.cpp; sourceTree = "<group>"; };
 		32E6F4451E48D28F0068320E /* AgentAckCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AgentAckCommand.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		32E6F4481E48D3A30068320E /* agent_batch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = agent_batch.h; sourceTree = "<group>"; };
+		32E782CC1EFC075D00AD59F7 /* ExternalUnitGateway.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExternalUnitGateway.cpp; sourceTree = "<group>"; };
+		32E782CD1EFC075D00AD59F7 /* ExternalUnitGateway.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExternalUnitGateway.h; sourceTree = "<group>"; };
+		32E782D61EFC095500AD59F7 /* mongoose.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mongoose.c; sourceTree = "<group>"; };
+		32E782D71EFC095500AD59F7 /* mongoose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mongoose.h; sourceTree = "<group>"; };
+		32E782DA1EFC0AC300AD59F7 /* ControlUnitBridge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ControlUnitBridge.cpp; sourceTree = "<group>"; };
+		32E782DB1EFC0AC300AD59F7 /* ControlUnitBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ControlUnitBridge.h; sourceTree = "<group>"; };
+		32E782DE1EFC0EEE00AD59F7 /* AbstractAdapter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractAdapter.cpp; sourceTree = "<group>"; };
+		32E782DF1EFC0EEE00AD59F7 /* AbstractAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractAdapter.h; sourceTree = "<group>"; };
+		32E782E21EFC0F2800AD59F7 /* HTTPAdapter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPAdapter.cpp; sourceTree = "<group>"; };
+		32E782E31EFC0F2800AD59F7 /* HTTPAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPAdapter.h; sourceTree = "<group>"; };
 		32E86E411CD8A75F0038DE76 /* MessageRequestDomain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageRequestDomain.cpp; sourceTree = "<group>"; };
 		32E86E421CD8A75F0038DE76 /* MessageRequestDomain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageRequestDomain.h; sourceTree = "<group>"; };
 		32E977561A6E65B800D89C15 /* api_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = api_types.h; sourceTree = "<group>"; };
@@ -4017,6 +4037,8 @@
 				3294905B159AF4D700E86BD1 /* CMakeLists.txt */,
 				326DB49B14B3A3E50018A8D0 /* ChaosCUToolkit.cpp */,
 				326DB49C14B3A3E50018A8D0 /* ChaosCUToolkit.h */,
+				32E782D51EFC092100AD59F7 /* additional_lib */,
+				32E782CB1EFC070E00AD59F7 /* external_gateway */,
 				32954969176B90A800B5A064 /* driver_manager */,
 				326DB49D14B3A3E50018A8D0 /* command_manager */,
 				326DB4A414B3A3E50018A8D0 /* control_manager */,
@@ -5275,6 +5297,38 @@
 			path = script;
 			sourceTree = "<group>";
 		};
+		32E782CB1EFC070E00AD59F7 /* external_gateway */ = {
+			isa = PBXGroup;
+			children = (
+				32E782D01EFC081400AD59F7 /* http_adapter */,
+				32E782CC1EFC075D00AD59F7 /* ExternalUnitGateway.cpp */,
+				32E782CD1EFC075D00AD59F7 /* ExternalUnitGateway.h */,
+				32E782DA1EFC0AC300AD59F7 /* ControlUnitBridge.cpp */,
+				32E782DB1EFC0AC300AD59F7 /* ControlUnitBridge.h */,
+				32E782DE1EFC0EEE00AD59F7 /* AbstractAdapter.cpp */,
+				32E782DF1EFC0EEE00AD59F7 /* AbstractAdapter.h */,
+			);
+			path = external_gateway;
+			sourceTree = "<group>";
+		};
+		32E782D01EFC081400AD59F7 /* http_adapter */ = {
+			isa = PBXGroup;
+			children = (
+				32E782E21EFC0F2800AD59F7 /* HTTPAdapter.cpp */,
+				32E782E31EFC0F2800AD59F7 /* HTTPAdapter.h */,
+			);
+			path = http_adapter;
+			sourceTree = "<group>";
+		};
+		32E782D51EFC092100AD59F7 /* additional_lib */ = {
+			isa = PBXGroup;
+			children = (
+				32E782D61EFC095500AD59F7 /* mongoose.c */,
+				32E782D71EFC095500AD59F7 /* mongoose.h */,
+			);
+			path = additional_lib;
+			sourceTree = "<group>";
+		};
 		32E9A5411A66C41E00545BB4 /* utility */ = {
 			isa = PBXGroup;
 			children = (
@@ -5858,6 +5912,7 @@
 				3270D5E91CCFAC4F0072017B /* AbstractExecutionUnit.h in Headers */,
 				326933EE1D5089590033D9E9 /* trigger_system.h in Headers */,
 				32655ACE1E93FCF200829266 /* EUSearch.h in Headers */,
+				32E782E11EFC0EEE00AD59F7 /* AbstractAdapter.h in Headers */,
 				3252A3141C8ED6BD00900FF2 /* DatasetAttributeHandler.h in Headers */,
 				32655AC61E93C12E00829266 /* EUDSValueManagement.h in Headers */,
 				326DB4CC14B3A3E50018A8D0 /* KeyDataStorage.h in Headers */,
@@ -5874,14 +5929,18 @@
 				32919A0C1764E68F00724874 /* DriverAccessor.h in Headers */,
 				322A3BCB1CEE1AA900FAD9DA /* ScriptableExecutionUnit.h in Headers */,
 				323BC28C1EE06E7500B4D602 /* plugin_constants.h in Headers */,
+				32E782DD1EFC0AC300AD59F7 /* ControlUnitBridge.h in Headers */,
 				32C4EF3B1D4F71440014F3D3 /* DatasetConsumer.h in Headers */,
 				3214EF111D466F95004DB689 /* DataBroker.h in Headers */,
 				3291D5191D5DEE890077CBB3 /* PublishTarget.h in Headers */,
+				32E782E51EFC0F2800AD59F7 /* HTTPAdapter.h in Headers */,
 				32F2241C179AE3BC00853F62 /* RTAbstractControlUnit.h in Headers */,
 				32655ACA1E93C30800829266 /* api.h in Headers */,
 				32F22420179AEED500853F62 /* SCAbstractControlUnit.h in Headers */,
 				3250106019E2DB4A00809415 /* AttributeSharedCacheWrapper.h in Headers */,
+				32E782CF1EFC075D00AD59F7 /* ExternalUnitGateway.h in Headers */,
 				326933E61D5088BD0033D9E9 /* manipulation.h in Headers */,
+				32E782D91EFC095500AD59F7 /* mongoose.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6667,20 +6726,24 @@
 				326CD5AB1D66F975003AD071 /* PublishingManager.cpp in Sources */,
 				3287F7E617B2756C009DD6ED /* DriverManager.cpp in Sources */,
 				3214EF101D466F95004DB689 /* DataBroker.cpp in Sources */,
+				32E782DC1EFC0AC300AD59F7 /* ControlUnitBridge.cpp in Sources */,
 				325168CC1D47935D00E877DF /* DataBrokerEditor.cpp in Sources */,
 				3270D5E81CCFAC4F0072017B /* AbstractExecutionUnit.cpp in Sources */,
 				32655AC51E93C12E00829266 /* EUDSValueManagement.cpp in Sources */,
 				326DB4BA14B3A3E50018A8D0 /* CommandManager.cpp in Sources */,
+				32E782E01EFC0EEE00AD59F7 /* AbstractAdapter.cpp in Sources */,
 				32D4ACE71D66010100EF14E4 /* publishing_types.cpp in Sources */,
 				3214EF0A1D466CF6004DB689 /* DataBrokerManager.cpp in Sources */,
 				3265F332197E626900F22FBC /* WorkUnitManagement.cpp in Sources */,
 				323BC2871EE05A8B00B4D602 /* EUPluginLoader.cpp in Sources */,
 				32A116AD1D181D2500FF44ED /* ExecutionPool.cpp in Sources */,
+				32E782CE1EFC075D00AD59F7 /* ExternalUnitGateway.cpp in Sources */,
 				32C4EF421D4F7F9E0014F3D3 /* RegisterEnviroment.cpp in Sources */,
 				32FC562D1EE8449A00C19841 /* EUPluginApiWrapper.cpp in Sources */,
 				322A3BCA1CEE1AA900FAD9DA /* ScriptableExecutionUnit.cpp in Sources */,
 				32CFC5CC1AF5601300E2A0B6 /* BasicIODriverInterface.cpp in Sources */,
 				326DB4BF14B3A3E50018A8D0 /* AbstractControlUnit.cpp in Sources */,
+				32E782D81EFC095500AD59F7 /* mongoose.c in Sources */,
 				3215860D178756B40090E7E6 /* AbstractDriverPlugin.cpp in Sources */,
 				324545011D4A676A0081F90B /* EventManager.cpp in Sources */,
 				32C4EF361D4F71370014F3D3 /* DatasetEvent.cpp in Sources */,
@@ -6696,6 +6759,7 @@
 				32CFC5C51AF55FED00E2A0B6 /* IOCU.cpp in Sources */,
 				325F8B511763AF2300EFE616 /* SlowCommand.cpp in Sources */,
 				32655ACD1E93FCF200829266 /* EUSearch.cpp in Sources */,
+				32E782E41EFC0F2800AD59F7 /* HTTPAdapter.cpp in Sources */,
 				328CC9D61763CCC7000B30B6 /* AbstractDriver.cpp in Sources */,
 				32234D3F176E045100525E0C /* SlowCommandExecutor.cpp in Sources */,
 				3252A3181C8EE28E00900FF2 /* DatasetAttributeHandler.cpp in Sources */,
