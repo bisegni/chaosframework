@@ -67,8 +67,11 @@ namespace chaos{
                     uint32_t							buf_size;
                         //! is the datatype that represent the value
                     const chaos::DataType::DataType     type;
-
-                        //!main buffer
+                    
+                        //! subtype
+                    std::vector<chaos::DataType::BinarySubtype> sub_type;
+                    
+                    //!main buffer
                     void								*value_buffer;
                     CDataWrapper						cdvalue;
 
@@ -79,7 +82,8 @@ namespace chaos{
                     AttributeValue(const std::string& _name,
                                    uint32_t _index,
                                    uint32_t _size,
-                                   chaos::DataType::DataType type);
+                                   chaos::DataType::DataType type,
+                                   const std::vector<chaos::DataType::BinarySubtype>& _sub_type);
 
                         //!private destrucotr
                     ~AttributeValue();

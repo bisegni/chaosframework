@@ -21,6 +21,7 @@
 #define CDataWrapper_H
 
 #include <chaos/common/bson/bson.h>
+#include <chaos/common/chaos_constants.h>
 #include <chaos/common/chaos_types.h>
 #include <chaos/common/data/CDataBuffer.h>
 #include <json/json.h>
@@ -184,7 +185,11 @@ namespace chaos {
                 void addBoolValue(const std::string&, bool);
                 
                 //set a binary data value
-                void addBinaryValue(const std::string&, const char *, int);
+                void addBinaryValue(const std::string& key, const char *buff, int bufLen);
+                void addBinaryValue(const std::string& key,
+                                    chaos::DataType::BinarySubtype sub_type,
+                                    const char *buff,
+                                    int bufLen);
                 template<typename T>
                 void addVectorValue(const std::string &key,T v[]){
                 	for(int cnt=0;cnt<sizeof(v)/sizeof(T);cnt++){
@@ -248,6 +253,8 @@ namespace chaos {
                 
                 //return the binary data value
                 const char* getBinaryValue(const std::string&, int&);
+                
+                chaos::DataType::BinarySubtype getBinarySubtype(const std::string&);
                 
                 ChaosUniquePtr<CDataBuffer> getBinaryValueAsCDataBuffer(const std::string &key);
                 

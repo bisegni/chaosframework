@@ -63,7 +63,8 @@ namespace chaos{
 
                     void addAttribute(const std::string& name,
                                       uint32_t size,
-                                      chaos::DataType::DataType type);
+                                      chaos::DataType::DataType type,
+                                      const std::vector<chaos::DataType::BinarySubtype>& sub_type = std::vector<chaos::DataType::BinarySubtype>());
 
                     void setValueForAttribute(VariableIndexType n,
                                               const void * value,

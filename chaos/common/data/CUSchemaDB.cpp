@@ -51,7 +51,7 @@ void RangeValueInfo::reset() {
     valueType = (DataType::DataType)0;
     cardinality=0;
     dir=chaos::DataType::Undefined;
-    binType=chaos::DataType::SUB_TYPE_NONE;   
+    binType.clear();
 }
 
 CUSchemaDB::CUSchemaDB() {
@@ -239,11 +239,11 @@ void CUSchemaDB::addAttributeToDataSet(const std::string& node_uid,
             break;
         case DataType::TYPE_CLUSTER:
         case DataType::TYPE_STRING:
-        	if(maxDimension == 0){
-        		CUSCHEMALDBG<<"WARNING: not json/string max length given setting to:"<<CUSCHEMA_DEFAULT_STRING_LENGHT;
-        		maxDimension = CUSCHEMA_DEFAULT_STRING_LENGHT;
-        	}
-
+            if(maxDimension == 0){
+                CUSCHEMALDBG<<"WARNING: not json/string max length given setting to:"<<CUSCHEMA_DEFAULT_STRING_LENGHT;
+                maxDimension = CUSCHEMA_DEFAULT_STRING_LENGHT;
+            }
+            
             typeMaxDimension = maxDimension;
             break;
         case DataType::TYPE_BYTEARRAY:
@@ -309,7 +309,7 @@ void CUSchemaDB::addBinaryAttributeAsSubtypeToDataSet(const std::string& node_ui
         addUniqueAttributeProperty(element_dataset.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE], (int64_t)subtype);
         addUniqueAttributeProperty(element_dataset.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_CARDINALITY], (int64_t)cardinality);
         if(cardinality>0){addUniqueAttributeProperty(element_dataset.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_VALUE_MAX_SIZE], (int64_t)cardinality);}
-
+        
         device->isChild(*element_dataset.get(), isChild);
         if(!isChild) device->addChild(*element_dataset);
     }
@@ -526,7 +526,7 @@ void CUSchemaDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& attributeDat
     ChaosUniquePtr<chaos::common::data::CDataWrapper> elementDescription;
     ChaosUniquePtr<CMultiTypeDataArrayWrapper> elementsDescriptions;
     //LDBG_<<"["<<__PRETTY_FUNCTION__<<"] Dataset:"<<attributeDataWrapper.getJSONString();
-
+    
     if(!attributeDataWrapper.hasKey(NodeDefinitionKey::NODE_UNIQUE_ID)) return;
     attributeDeviceID = attributeDataWrapper.getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
     //get the entity for device
@@ -683,7 +683,7 @@ void CUSchemaDB::fillDataWrapperWithDataSetDescription(entity::Entity *deviceEnt
     
     //get dataset attribute for domain name
     
-
+    
     for (ptr_vector<entity::Entity>::iterator dstElmtIterator = device_dataset_attributes.begin();
          dstElmtIterator != device_dataset_attributes.end();
          dstElmtIterator++) {
@@ -905,7 +905,7 @@ int CUSchemaDB::getDeviceAttributeRangeValueInfo(const string& deviceID,
     keyToGot.push_back(keyIdAttrBinType);
     keyToGot.push_back(keyIdAttrCardinality);
     keyToGot.push_back(keyIdAttrDir);
-
+    
     (&attrEntityVec[0])->getPropertyByKeyID(keyToGot, attrPropertyVec);
     if(!attrPropertyVec.size()) return 1;
     rangeInfo.name=attributesName;
@@ -924,7 +924,28 @@ int CUSchemaDB::getDeviceAttributeRangeValueInfo(const string& deviceID,
         } else if(kivPtr->keyID == keyIdAttrType) {
             rangeInfo.valueType = (DataType::DataType)kivPtr->value.numValue;
         } else if(kivPtr->keyID == keyIdAttrBinType){
-            rangeInfo.binType = (DataType::BinarySubtype)kivPtr->value.numValue;
+            rangeInfo.binType.clear();
+            //rangeInfo.binType = (DataType::BinarySubtype)kivPtr->value.numValue;
+            //custom attribute
+            if(kivPtr->value.numValue == -1) {
+                //we have subtype collected in a separate entity so in this case the attribute value is an array
+                ChaosUniquePtr<entity::Entity> sub_tyhpe_entity(getBinarySubtypeEntity(deviceID, attributesName));
+                if(sub_tyhpe_entity.get()) {
+                    ptr_vector<edb::KeyIdAndValue> sub_types_list;
+                    //we need to get all rpoperty
+                    sub_tyhpe_entity->getAllProperty(sub_types_list);
+                    if(sub_types_list.size()) {
+                        for(ptr_vector<edb::KeyIdAndValue>::iterator it = sub_types_list.begin();
+                            it != sub_types_list.end();
+                            it++) {
+                            //no we need to add numerica value as 32 bit into the array for attribute subtype
+                            rangeInfo.binType.push_back(static_cast<DataType::BinarySubtype>(it->value.numValue));
+                        }
+                    }
+                }
+            } else {
+                rangeInfo.binType.push_back(static_cast<DataType::BinarySubtype>(kivPtr->value.numValue));
+            }
         } else if(kivPtr->keyID == keyIdAttrCardinality){
             rangeInfo.cardinality = (uint32_t)kivPtr->value.numValue;
         } else if(kivPtr->keyID == keyIdAttrDir){
@@ -944,8 +965,8 @@ int CUSchemaDB::getDeviceAttributeRangeValueInfo(const string& deviceID,
             
         }
     }
-
-
+    
+    
     return 0;
 }
 

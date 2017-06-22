@@ -278,8 +278,17 @@ bool  CDataWrapper::getBoolValue(const std::string& key) {
 }
 
 //set a binary data value
-void CDataWrapper::addBinaryValue(const std::string& key, const char *buff, int bufLen) {
+void CDataWrapper::addBinaryValue(const std::string& key,
+                                  const char *buff,
+                                  int bufLen) {
     bsonBuilder->appendBinData(key, bufLen, BinDataGeneral, buff);
+}
+
+void CDataWrapper::addBinaryValue(const std::string& key,
+                                  chaos::DataType::BinarySubtype sub_type,
+                                  const char *buff,
+                                  int bufLen) {
+    bsonBuilder->appendBinData(key, bufLen, static_cast<char>(sub_type+bdtCustom), buff);
 }
 
 void CDataWrapper::addVariantValue(const std::string& key,
@@ -318,6 +327,10 @@ void CDataWrapper::addVariantValue(const std::string& key,
 //return the binary data value
 const char* CDataWrapper::getBinaryValue(const std::string& key, int& bufLen)  {
     return bsonBuilder->asTempObj().getField(key).binData(bufLen);
+}
+
+chaos::DataType::BinarySubtype CDataWrapper::getBinarySubtype(const std::string& key) {
+    return static_cast<chaos::DataType::BinarySubtype>(bsonBuilder->asTempObj().getField(key).binDataType()-bdtCustom);
 }
 
 ChaosUniquePtr<CDataBuffer> CDataWrapper::getBinaryValueAsCDataBuffer(const std::string &key) {
