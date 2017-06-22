@@ -46,6 +46,15 @@
 
 CodeEditor::CodeEditor(QWidget *parent):
     QPlainTextEdit(parent) {
+    QFont font;
+    font.setFamily("Courier");
+    font.setStyleHint(QFont::Monospace);
+    font.setFixedPitch(true);
+    font.setPointSize(11);
+    setFont(font);
+    QFontMetrics metrics(font);
+    setTabStopWidth(4 * metrics.width(' '));
+
     lineNumberArea = new LineNumberArea(this);
 
     connect(this, SIGNAL(blockCountChanged(int)), this, SLOT(updateLineNumberAreaWidth(int)));

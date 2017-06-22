@@ -1228,20 +1228,23 @@ void AbstractControlUnit::initAttributeOnSharedAttributeCache(SharedCacheDomain 
                 case DataType::TYPE_BOOLEAN : {
                     bool val = boost::lexical_cast<bool>(attributeInfo.defaultValue);
                     attribute_setting.setValueForAttribute(idx, &val, sizeof(bool));
-                    break;}
+                    break;
+                }
                 case DataType::TYPE_DOUBLE : {
                     double val = boost::lexical_cast<double>(attributeInfo.defaultValue);
                     attribute_setting.setValueForAttribute(idx, &val, sizeof(double));
-                    break;}
+                    break;
+                }
                 case DataType::TYPE_INT32 : {
                     int32_t val = strtoul(attributeInfo.defaultValue.c_str(),0,0);//boost::lexical_cast<int32_t>(attributeInfo.defaultValue);
                     attribute_setting.setValueForAttribute(idx, &val, sizeof(int32_t));
-                    break;}
+                    break;
+                }
                 case DataType::TYPE_INT64 : {
                     int64_t val = strtoll(attributeInfo.defaultValue.c_str(),0,0);//boost::lexical_cast<int64_t>(attributeInfo.defaultValue);
                     attribute_setting.setValueForAttribute(idx, &val, sizeof(int64_t));
-                    break;}
-                    
+                    break;
+                }
                 case DataType::TYPE_CLUSTER:{
                     CDataWrapper tmp;
                     tmp.setSerializedJsonData(attributeInfo.defaultValue.c_str());
