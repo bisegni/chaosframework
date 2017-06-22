@@ -255,7 +255,6 @@ namespace chaos {
                 const char* getBinaryValue(const std::string&, int&);
                 
                 chaos::DataType::BinarySubtype getBinarySubtype(const std::string&);
-
                 ChaosUniquePtr<CDataBuffer> getBinaryValueAsCDataBuffer(const std::string &key);
                 
                 //return the bson data
