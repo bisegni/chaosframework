@@ -23,6 +23,7 @@
 #define __CHAOSFramework__D7B878E_3F06_4472_8769_442D263D93ED_ExternalUnitGateway_h
 
 #include <chaos/common/chaos_types.h>
+#include <chaos/common/utility/Singleton.h>
 #include <chaos/common/utility/InizializableService.h>
 #include <chaos/cu_toolkit/external_gateway/AbstractAdapter.h>
 
@@ -35,12 +36,14 @@ namespace chaos{
             
             //!External gateway root class
             class ExternalUnitGateway:
+            public chaos::common::utility::Singleton<ExternalUnitGateway>,
             public chaos::common::utility::InizializableService {
+                friend class chaos::common::utility::Singleton<ExternalUnitGateway>;
                 //!associate the protocol string to the adapter
                 MapAdapter map_protocol_adapter;
-            public:
                 ExternalUnitGateway();
                 ~ExternalUnitGateway();
+            public:
                 void init(void *init_data) throw (chaos::CException);
                 void deinit() throw (chaos::CException);
             };

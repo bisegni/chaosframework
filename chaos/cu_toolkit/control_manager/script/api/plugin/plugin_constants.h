@@ -35,6 +35,10 @@ namespace chaos{
 #define EU_PLUGIN_ENABLE                "eu-plugin-enable"
 #define EU_PLUGIN_ENABLE_DESC           "Enable the usage of plugin api for execution unit"
 #define EU_PLUGIN_ENABLE_DEFAULT        false
+                        
+#define UNIT_GATEWAY_ENABLE             "unit-gateway-enable"
+#define UNIT_GATEWAY_ENABLE_DESC        "Enable the management of external unit management"
+#define UNIT_GATEWAY_ENABLE_DEFAULT      false
                     }
                 }
             }

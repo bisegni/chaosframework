@@ -22,8 +22,12 @@
 #ifndef __CHAOSFramework__A9B46FE_F810_4509_990F_9F19087E9AE8_HTTPAdapter_h
 #define __CHAOSFramework__A9B46FE_F810_4509_990F_9F19087E9AE8_HTTPAdapter_h
 
+#include <chaos/common/chaos_types.h>
+#include <chaos/common/pqueue/CObjectProcessingQueue.h>
 #include <chaos/cu_toolkit/external_gateway/AbstractAdapter.h>
 #include <chaos/cu_toolkit/additional_lib/mongoose.h>
+
+#include <boost/thread.hpp>
 
 namespace chaos{
     namespace cu {
@@ -31,11 +35,30 @@ namespace chaos{
             
             namespace http_adapter {
                 
+                // This info is passed to the worker thread
+                struct WorkRequest {
+                    mg_connection *nc;
+                    http_message *message;
+                };
+                
                 //!External gateway root class
                 class HTTPAdapter:
+                protected CObjectProcessingQueue<WorkRequest>,
                 public AbstractAdapter {
-                    //struct mg_mgr mgr;
-                    //struct mg_connection *nc;
+                    bool run;
+                    
+                    sock_t sock[2];
+                    struct mg_serve_http_opts s_http_server_opts;
+                    
+                    ChaosUniquePtr<boost::thread> thread_poller;
+                    
+                    struct mg_mgr mgr;
+                    struct mg_connection *nc;
+                    
+                    void poller();
+                    static void eventHandler(struct mg_connection *nc, int ev, void *ev_data);
+                protected:
+                    void processBufferElement(WorkRequest *request, ElementManagingPolicy& policy) throw(CException);
                 public:
                     HTTPAdapter();
                     ~HTTPAdapter();

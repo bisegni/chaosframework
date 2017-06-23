@@ -2901,7 +2901,7 @@ struct {								\
 #endif
 
 #ifndef MG_ENABLE_MQTT
-#define MG_ENABLE_MQTT 1
+#define MG_ENABLE_MQTT 0
 #endif
 
 #ifndef MG_ENABLE_MQTT_BROKER
@@ -2932,7 +2932,7 @@ struct {								\
 #ifdef _WIN32
 #define MG_ENABLE_THREADS 1
 #else
-#define MG_ENABLE_THREADS 0
+#define MG_ENABLE_THREADS 1
 #endif
 #endif
 
