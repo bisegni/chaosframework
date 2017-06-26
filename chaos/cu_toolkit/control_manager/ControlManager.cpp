@@ -249,42 +249,34 @@ void ControlManager::deinit() throw(CException) {
             CommandManager::getInstance()->deregisterAction((chaos::DeclareAction *)cuDeclareActionsInstance[idx]);
         }
         
-        //load all device id for this cu
-        allCUDeviceIDToStop.push_back(cu->work_unit_instance->getDeviceID());
+        CDataWrapper fakeDWForDeinit;
+        fakeDWForDeinit.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu->work_unit_instance->getDeviceID());
+        try{
+            LCMAPP_  << "Stopping Control Unit: " << cu_identification_temp;
+            cu->work_unit_instance->_stop(&fakeDWForDeinit, detachFake);
+        }catch (CException& ex) {
+            if(ex.errorCode != 1){
+                //these exception need to be logged
+                DECODE_CHAOS_EXCEPTION(ex);
+            }
+        }
         
-        for (vector<string>::iterator iter =  allCUDeviceIDToStop.begin();
-             iter != allCUDeviceIDToStop.end();
-             iter++) {
-            
-            CDataWrapper fakeDWForDeinit;
-            fakeDWForDeinit.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, *iter);
-            try{
-                LCMAPP_  << "Stopping Control Unit: " << cu_identification_temp;
-                cu->work_unit_instance->_stop(&fakeDWForDeinit, detachFake);
-            }catch (CException& ex) {
-                if(ex.errorCode != 1){
-                    //these exception need to be logged
-                    DECODE_CHAOS_EXCEPTION(ex);
-                }
+        try{
+            LCMAPP_  << "Deiniting Control Unit: " << cu_identification_temp;
+            cu->work_unit_instance->_deinit(&fakeDWForDeinit, detachFake);
+        }catch (CException& ex) {
+            if(ex.errorCode != 1){
+                //these exception need to be logged
+                DECODE_CHAOS_EXCEPTION(ex);
             }
-            
-            try{
-                LCMAPP_  << "Deiniting Control Unit: " << cu_identification_temp;
-                cu->work_unit_instance->_deinit(&fakeDWForDeinit, detachFake);
-            }catch (CException& ex) {
-                if(ex.errorCode != 1){
-                    //these exception need to be logged
-                    DECODE_CHAOS_EXCEPTION(ex);
-                }
-            }
-            try{
-                LCMAPP_  << "Undefine Action And Dataset for  Control Unit: " << cu_identification_temp;
-                cu->work_unit_instance->_undefineActionAndDataset();
-            }  catch (CException& ex) {
-                if(ex.errorCode != 1){
-                    //these exception need to be logged
-                    DECODE_CHAOS_EXCEPTION(ex);
-                }
+        }
+        try{
+            LCMAPP_  << "Undefine Action And Dataset for  Control Unit: " << cu_identification_temp;
+            cu->work_unit_instance->_undefineActionAndDataset();
+        }  catch (CException& ex) {
+            if(ex.errorCode != 1){
+                //these exception need to be logged
+                DECODE_CHAOS_EXCEPTION(ex);
             }
         }
         cuDeclareActionsInstance.clear();
@@ -727,7 +719,7 @@ CDataWrapper* ControlManager::unitServerRegistrationACK(CDataWrapper *message_da
     if(server_alias.compare(unit_server_alias) != 0) {
         throw CException(-2, "Server alias not found", __PRETTY_FUNCTION__);
     }
-
+    
     if(message_data->hasKey(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT)) {
         //registration has been ended
         switch(message_data->getInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT)){

@@ -42,15 +42,19 @@ namespace chaos {
                             
                             //execution unit instances
                             ScriptableExecutionUnit *eu_instance;
-                            ChaosUniquePtr<plugin::EUAbstractApiPlugin> api_plugin;
+                            ChaosSharedPtr<plugin::EUAbstractApiPlugin> api_plugin;
                         public:
                             ~EUPluginApiWrapper();
                         protected:
                             EUPluginApiWrapper(ScriptableExecutionUnit *_eu_instance,
-                                               ChaosUniquePtr<EUAbstractApiPlugin>& _api_plugin);
+                                               ChaosSharedPtr<EUAbstractApiPlugin>& _api_plugin);
+                            
+                            int init(const char * init_data = NULL);
                             
                             int execPlugin(const chaos::common::script::ScriptInParam& input_parameter,
                                            chaos::common::script::ScriptOutParam& output_parameter);
+                            
+                            void deinit();
                         };
                     }
                 }

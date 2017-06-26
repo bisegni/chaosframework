@@ -76,7 +76,6 @@ namespace chaos {
                     
                     //!api vector
                     VectorApiClass api_classes;
-                    
                     std::bitset<6> alghorithm_handler_implemented;
                     
                     void registerApi();

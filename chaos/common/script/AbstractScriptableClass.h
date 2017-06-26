@@ -42,11 +42,12 @@ namespace chaos {
                 ScriptManager *script_manager_ptr;
                     //! is the name of the api class
                 const std::string api_class_name;
-
+                
                     //!entry point of the scirpting for call an exposed api
                 virtual int callApi(const std::string& api_name,
                                     const ScriptInParam& input_parameter,
                                     ScriptOutParam& output_parameter) = 0;
+
             protected:
                 //return the virtual machine to subclass
                 AbstractScriptVM *getVM();
@@ -54,6 +55,12 @@ namespace chaos {
             public:
                 AbstractScriptableClass(const std::string& _api_class_name);
                 virtual ~AbstractScriptableClass();
+                
+                //!provide an initlization for the api environment
+                virtual int init(const char * init_data = NULL){return 0;}
+                
+                //provide a way to deinitilize the evironneto initialized in the init call
+                virtual void deinit(){}
             };
 
                 //!defin e atype specific api with utility for add and remove it
