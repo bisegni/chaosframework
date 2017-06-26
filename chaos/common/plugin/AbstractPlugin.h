@@ -57,17 +57,15 @@ namespace chaos {
                 PluginInfo info;
 
             public:
-                const char * const getName() {
-                    return info.name.c_str();
-                }
+                virtual int init(const char * init_data = NULL) {return 0;}
                 
-                const char * const getVersion() {
-                    return info.type.c_str();
-                }
+                virtual void deinit() {}
                 
-                const char * const getType() {
-                    return info.version.c_str();
-                }
+                const char * const getName() {return info.name.c_str();}
+                
+                const char * const getVersion() {return info.type.c_str();}
+                
+                const char * const getType() {return info.version.c_str();}
             };
             
             

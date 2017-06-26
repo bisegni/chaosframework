@@ -34,7 +34,7 @@ using namespace chaos::cu::control_manager::script::api::plugin;
 #define EUSW_LERR    ERR_LOG_1_P(EUPluginApiWrapper, eu_instance->getCUID())
 
 EUPluginApiWrapper::EUPluginApiWrapper(ScriptableExecutionUnit *_eu_instance,
-                                       ChaosUniquePtr<EUAbstractApiPlugin>& _api_plugin):
+                                       ChaosSharedPtr<EUAbstractApiPlugin>& _api_plugin):
 TemplatedAbstractScriptableClass(this,
                                  _api_plugin->getApiName()),
 eu_instance(_eu_instance),
@@ -43,6 +43,10 @@ api_plugin(_api_plugin){
 }
 
 EUPluginApiWrapper::~EUPluginApiWrapper() {}
+
+int EUPluginApiWrapper::init(const char * init_data) {
+    return api_plugin->init(init_data);
+}
 
 int EUPluginApiWrapper::execPlugin(const ScriptInParam& input_parameter,
                            ScriptOutParam& output_parameter) {
@@ -67,4 +71,8 @@ int EUPluginApiWrapper::execPlugin(const ScriptInParam& input_parameter,
         return -2;
     }
     return err;
+}
+
+void EUPluginApiWrapper::deinit() {
+    api_plugin->deinit();
 }

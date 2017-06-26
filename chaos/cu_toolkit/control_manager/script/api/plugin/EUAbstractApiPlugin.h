@@ -34,6 +34,10 @@ namespace chaos{
                         class EUAbstractApiPlugin:
                         public chaos::common::plugin::AbstractPlugin {
                         public:
+                            
+                            //! start the initialization phase of the plugin
+                            int init(const char * init_data = NULL) = 0;
+                            
                             //!execute the api
                             /**
                              \param in_data json string null terminated
@@ -46,6 +50,9 @@ namespace chaos{
                                                 uint32_t in_data_size,
                                                 char **out_data,
                                                 uint32_t *out_data_size) = 0;
+                            
+                            //! start the deinit phase of the plugin
+                            void deinit() = 0;
                             
                             virtual const char *getApiName() = 0;
                         };

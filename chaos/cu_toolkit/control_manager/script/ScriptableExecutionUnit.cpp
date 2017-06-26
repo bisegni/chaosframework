@@ -96,22 +96,27 @@ ScriptableExecutionUnit::addAttributeToDataSet(const std::string &attribute_name
 
 void ScriptableExecutionUnit::registerApi() {
     CHAOS_ASSERT(script_manager().get());
-    
+    //register normal api
     for(VectorApiClassIterator it = api_classes.begin(),
         end = api_classes.end();
         it != end;
         it++) {
-        script_manager()->registerApiClass(*(*it));
+        if((*it)->init()) {
+            script_manager()->registerApiClass(*(*it));
+        } else {
+            SEU_LERR << "Error initilizing plugin api:" << "";
+        }
     }
 }
 
 void ScriptableExecutionUnit::unregisterApi() {
     CHAOS_ASSERT(script_manager().get());
-    
+    //deregister normal api
     for(VectorApiClassIterator it = api_classes.begin(),
         end = api_classes.end();
         it != end;
         it++) {
+        (*it)->deinit();
         script_manager()->deregisterApiClass(*(*it));
     }
 }
@@ -215,7 +220,7 @@ void ScriptableExecutionUnit::unitDefineActionAndDataset() throw(CException) {
             end = publish_api.end();
             it != end;
             it++) {
-            ChaosUniquePtr<api::plugin::EUAbstractApiPlugin> api_instance = PluginManager::getInstance()->getPluginInstanceBySubclassAndName<api::plugin::EUAbstractApiPlugin>("chaos::cu::control_manager::script::api::plugin::EUAbstractApiPlugin",*it);
+            ChaosSharedPtr<api::plugin::EUAbstractApiPlugin> api_instance(PluginManager::getInstance()->getPluginInstanceBySubclassAndName<api::plugin::EUAbstractApiPlugin>("chaos::cu::control_manager::script::api::plugin::EUAbstractApiPlugin",*it).release());
             if(api_instance.get() == NULL) continue;
             SEU_LAPP << CHAOS_FORMAT("Add API '%1%' form plugin!", %api_instance->getApiName());
             api_classes.push_back(ApiClassShrdPtr(new EUPluginApiWrapper(this, api_instance)));
