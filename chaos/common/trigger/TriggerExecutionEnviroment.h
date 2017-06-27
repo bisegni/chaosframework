@@ -172,7 +172,7 @@ namespace chaos {
                     if(it != type_subject_index.end()) {
                         return (*it)->consumer_instances;
                     } else {
-                        MappingEventConsumerOnSubjectShrdPtr mapping_instance(boost::make_shared<MappingEventConsumerOnSubject>(event_code,
+                        MappingEventConsumerOnSubjectShrdPtr mapping_instance(ChaosMakeSharedPtr<MappingEventConsumerOnSubject>(event_code,
                                                                                                                                 map_subject_instance[subject_uuid]));
                         type_subject_container.insert(mapping_instance);
                         return mapping_instance->consumer_instances;

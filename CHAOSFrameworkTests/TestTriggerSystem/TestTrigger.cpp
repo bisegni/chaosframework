@@ -75,8 +75,8 @@ bool TestTrigger::test(){
     SubjectTriggerEnviroment trigger_environment;
     
     //create the subjects
-    SubjectTriggerEnviroment::SubjectInstanceShrdPtr subject_one(boost::make_shared<Subject>(boost::make_shared<TriggeredData>(0)));
-    SubjectTriggerEnviroment::SubjectInstanceShrdPtr subject_two(boost::make_shared<Subject>(boost::make_shared<TriggeredData>(0)));
+    SubjectTriggerEnviroment::SubjectInstanceShrdPtr subject_one(ChaosMakeSharedPtr<Subject>(ChaosMakeSharedPtr<TriggeredData>(0)));
+    SubjectTriggerEnviroment::SubjectInstanceShrdPtr subject_two(ChaosMakeSharedPtr<Subject>(ChaosMakeSharedPtr<TriggeredData>(0)));
     
     trigger_environment.registerSubject(subject_one);
     trigger_environment.registerSubject(subject_two);
