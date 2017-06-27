@@ -46,7 +46,7 @@ namespace chaos {
             public:
                 bool remote_logging;
                 typedef ChaosSharedPtr<PipeReader>   PipeReaderPtr;
-                typedef boost::weak_ptr<PipeReader>     PipeReaderWeakPtr;
+                typedef ChaosWeakPtr<PipeReader>     PipeReaderWeakPtr;
                 void close();
                 static PipeReaderWeakPtr create(asio::io_service& io_service,
                                                 const std::string node_uid,

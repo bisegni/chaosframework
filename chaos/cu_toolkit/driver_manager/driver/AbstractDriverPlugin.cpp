@@ -29,9 +29,7 @@ AbstractDriverPlugin::AbstractDriverPlugin(AbstractDriver *_abstractDriver):abst
 }
 
 AbstractDriverPlugin::~AbstractDriverPlugin() {
-};
-
-//! Proxy for create a new accessor to the driver
+}
 
 DriverAccessor * const AbstractDriverPlugin::getNewAccessor() {
     DriverAccessor *newAccessor;

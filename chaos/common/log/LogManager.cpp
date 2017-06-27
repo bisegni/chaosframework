@@ -98,7 +98,7 @@ void LogManager::init() throw(CException) {
     uint32_t                    log_file_max_size_mb    =   GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_LOG_MAX_SIZE_MB)?GlobalConfiguration::getInstance()->getConfiguration()->getUInt32Value(InitOption::OPT_LOG_MAX_SIZE_MB):1;
     
     logging::add_common_attributes();
-    ChaosSharedPtr< logging::core > logger = boost::log::core::get();
+    boost::shared_ptr< logging::core > logger = boost::log::core::get();
     // Create a backend
 #if (BOOST_VERSION / 100000) >= 1 && ((BOOST_VERSION / 100) % 1000) >= 54
     logging::register_simple_formatter_factory< level::LogSeverityLevel, char  >("Severity");
@@ -136,14 +136,13 @@ void LogManager::init() throw(CException) {
     
     if(logOnSyslog) {
         // Creating a syslog sink.
-        ChaosSharedPtr< sinks::synchronous_sink< sinks::syslog_backend > > sink;
-        sink.reset(new sinks::synchronous_sink< sinks::syslog_backend >
-                   (
-                    //keywords::facility = sinks::syslog::user,
-                    keywords::use_impl = sinks::syslog::udp_socket_based,
-                    keywords::format = EXTENDEND_LOG_FORMAT
-                    )
-                   );
+        boost::shared_ptr< sinks::synchronous_sink< sinks::syslog_backend > > sink(new sinks::synchronous_sink< sinks::syslog_backend >
+                                                                                   (
+                                                                                    //keywords::facility = sinks::syslog::user,
+                                                                                    keywords::use_impl = sinks::syslog::udp_socket_based,
+                                                                                    keywords::format = EXTENDEND_LOG_FORMAT
+                                                                                    )
+                                                                                   );
         // Setting the remote address to sent syslog messages to.
         sink->locked_backend()->set_target_address(logSyslogSrv, logSyslogSrvPort);
         // Adding the sink to the core.b

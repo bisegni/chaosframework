@@ -27,11 +27,6 @@
 OPEN_PLUGIN_CLASS_DEFINITION(PluginAlias, 1.0, DRV, PluginLibrary)
 CLOSE_PLUGIN_CLASS_DEFINITION
 
-//define the cu driver plugin
-OPEN_CU_DRIVER_PLUGIN_CLASS_DEFINITION(DriverAlias, 1.0, ControlUnitPluginLibrary)
-REGISTER_CU_DRIVER_PLUGIN_CLASS_INIT_ATTRIBUTE(DriverAlias,http_address)
-REGISTER_CU_DRIVER_PLUGIN_CLASS_INIT_ATTRIBUTE(DriverAlias,http_port)
-CLOSE_CU_DRIVER_PLUGIN_CLASS_DEFINITION
 
 OPEN_EUAPI_LUGIN_CLASS_DEFINITION(EUPluginAlgotest, 1.0, EUTestApiPLugin)
 CLOSE_EUAPI_CLASS_DEFINITION
@@ -39,7 +34,6 @@ CLOSE_EUAPI_CLASS_DEFINITION
 //register the two plugin
 OPEN_REGISTER_PLUGIN
 REGISTER_PLUGIN(PluginAlias)
-REGISTER_PLUGIN(DriverAlias)
 REGISTER_PLUGIN(EUPluginAlgotest)
 CLOSE_REGISTER_PLUGIN
 
@@ -53,11 +47,9 @@ void PluginLibrary::test(int num) {
     }
 }
 
-
-DEFAULT_CU_DRIVER_PLUGIN_CONSTRUCTOR(ControlUnitPluginLibrary) {
-    std::cout << "Driver plugin created" << std::endl;
+int EUTestApiPLugin::init(const char * init_data) {
+    return 0;
 }
-
 
 int EUTestApiPLugin::execute(const char *in_data,
                              uint32_t in_data_size,
@@ -71,6 +63,10 @@ int EUTestApiPLugin::execute(const char *in_data,
                 ou_str.c_str());
     *out_data_size = ou_str.size();
     return 0;
+}
+
+void EUTestApiPLugin::deinit() {
+    
 }
 
 const char *EUTestApiPLugin::getApiName() {

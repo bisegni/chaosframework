@@ -87,9 +87,9 @@ command_state_queue_max_size(COMMAND_STATE_QUEUE_DEFAULT_SIZE) {
 void BatchCommandExecutor::addNewSandboxInstance() {
     ChaosSharedPtr<AbstractSandbox> tmp_ptr;
     if(serialized_sandbox == true) {
-        tmp_ptr = boost::make_shared<BatchCommandSandbox>();
+        tmp_ptr = ChaosMakeSharedPtr<BatchCommandSandbox>();
     } else {
-        tmp_ptr = boost::make_shared<BatchCommandParallelSandbox>();
+        tmp_ptr = ChaosMakeSharedPtr<BatchCommandParallelSandbox>();
     }
     tmp_ptr->event_handler = this;
     tmp_ptr->identification.append(executorID);

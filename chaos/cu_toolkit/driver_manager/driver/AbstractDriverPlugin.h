@@ -29,14 +29,12 @@ namespace chaos{
         namespace driver_manager {
             namespace driver {
                 
-                class AbstractDriverPlugin: public chaos::common::plugin::AbstractPlugin {
+                class AbstractDriverPlugin:
+                public chaos::common::plugin::AbstractPlugin {
                     AbstractDriver *abstractDriver;
                 public:
                     AbstractDriverPlugin(AbstractDriver *_abstractDriver);
                     virtual ~AbstractDriverPlugin();
-                    
-                    
-                    //! Proxy for create a new accessor to the driver
                     
                     DriverAccessor * const getNewAccessor();
                     

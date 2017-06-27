@@ -38,33 +38,16 @@ public:
     void test(int num);
 };
 
-using namespace chaos::cu::driver_manager::driver;
-DEFINE_CU_DRIVER_DEFINITION_PROTOTYPE(ControlUnitPluginLibrary)
-class ControlUnitPluginLibrary: ADD_CU_DRIVER_PLUGIN_SUPERCLASS {
-    
-public:
-    ControlUnitPluginLibrary();
-    void driverInit(const char *initParameter) throw(chaos::CException) {
-        
-    }
-    
-    void driverDeinit()  throw(chaos::CException) {
-        
-    }
-    
-    //! Execute a command
-    MsgManagmentResultType::MsgManagmentResult execOpcode(DrvMsgPtr cmd) {
-        return MsgManagmentResultType::MMR_EXECUTED;
-    }
-};
 
 //test the eu api in plugin
 using namespace chaos::cu::control_manager::script::api::plugin;
 DECLARE_EUAPI_PLUGIN_SCLASS(EUTestApiPLugin) {
+    int init(const char * init_data);
     int execute(const char *in_data,
                 uint32_t in_data_size,
                 char **out_data,
                 uint32_t *out_data_size);
+    void deinit();
     const char *getApiName();
 };
 

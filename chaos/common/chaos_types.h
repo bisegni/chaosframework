@@ -33,14 +33,20 @@
 #include <deque>
 #include <vector>
 
-//#if __cplusplus >= 201103L
-//#define ChaosSharedPtr std::shared_ptr
-//#define ChaosUniquePtr std::unique_ptr
-//#else
+#if __cplusplus >= 201103L
+#define ChaosSharedPtr std::shared_ptr
+#define ChaosMakeSharedPtr std::make_shared
+#define ChaosWeakPtr   std::weak_ptr 
+#define ChaosUniquePtr std::unique_ptr
+#pragma message "Use new memory management std::shared_ptr(ChaosSharedPtr) std::make_shared(ChaosMakeSharedPtr) std::weak_ptr(ChaosWeakPtr) std::unique_ptr(ChaosUniquePtr)"
+#else
 #include <boost/shared_ptr.hpp>
+#pragma message "Use c99 and boost for memory management boost::shared_ptr(ChaosSharedPtr) boost::make_shared(ChaosMakeSharedPtr) boost::weak_ptr(ChaosWeakPtr) std::auto_ptr(ChaosUniquePtr)"
 #define ChaosSharedPtr boost::shared_ptr
+#define ChaosMakeSharedPtr boost::make_shared
+#define ChaosWeakPtr boost::weak_ptr
 #define ChaosUniquePtr std::auto_ptr
-//#endif
+#endif
 
 #define  CHAOS_DEFINE_SET_FOR_TYPE(t1, n)\
 typedef std::set< t1 >                   n;\

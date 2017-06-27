@@ -55,7 +55,7 @@ namespace chaos {
             
             typedef chaos::common::utility::SafeAsyncCall<PromisesHandlerFunction> PromisesHandler;
             typedef ChaosSharedPtr< PromisesHandler > PromisesHandlerSharedPtr;
-            typedef boost::weak_ptr< PromisesHandler > PromisesHandlerWeakPtr;
+            typedef ChaosWeakPtr< PromisesHandler > PromisesHandlerWeakPtr;
             
             class ChaosMessagePromises:
             public boost::promise<FuturePromiseData> {
