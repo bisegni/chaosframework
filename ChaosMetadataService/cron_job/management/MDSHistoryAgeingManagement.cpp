@@ -62,7 +62,8 @@ bool MDSHistoryAgeingManagement::execute(const common::cronous_manager::MapKeyVa
             const std::string system_key	= control_unit_found + DataPackPrefixID::SYSTEM_DATASET_POSTFIX;
             const std::string custom_key	= control_unit_found + DataPackPrefixID::CUSTOM_DATASET_POSTFIX;
             const std::string health_key    = control_unit_found + NodeHealtDefinitionKey::HEALT_KEY_POSTFIX;
-            const std::string alarm_key    = control_unit_found + DataPackPrefixID::DEV_ALARM_DATASET_POSTFIX;
+            const std::string dev_alarm_key    = control_unit_found + DataPackPrefixID::DEV_ALARM_DATASET_POSTFIX;
+            const std::string cu_alarm_key    = control_unit_found + DataPackPrefixID::CU_ALARM_DATASET_POSTFIX;
             if((err = getDataAccess<persistence::data_access::ControlUnitDataAccess>()->eraseControlUnitDataBeforeTS(output_key,
                                                                                                                      remove_until_ts))){
                 log(CHAOS_FORMAT("Error erasing key %1% for control unit %2% with error %3%", %output_key%control_unit_found%err));
@@ -78,12 +79,15 @@ bool MDSHistoryAgeingManagement::execute(const common::cronous_manager::MapKeyVa
             } else if((err = getDataAccess<persistence::data_access::ControlUnitDataAccess>()->eraseControlUnitDataBeforeTS(health_key,
                                                                                                                             remove_until_ts))){
                 log(CHAOS_FORMAT("Error erasing key %1% for control unit %2% with error %3%", %health_key%control_unit_found%err));
-            } else if((err = getDataAccess<persistence::data_access::ControlUnitDataAccess>()->eraseControlUnitDataBeforeTS(alarm_key,
+            } else if((err = getDataAccess<persistence::data_access::ControlUnitDataAccess>()->eraseControlUnitDataBeforeTS(dev_alarm_key,
                                                                                                                             remove_until_ts))){
-                log(CHAOS_FORMAT("Error erasing key %1% for control unit %2% with error %3%", %alarm_key%control_unit_found%err));
+                log(CHAOS_FORMAT("Error erasing key %1% for control unit %2% with error %3%", %dev_alarm_key%control_unit_found%err));
+            } if((err = getDataAccess<persistence::data_access::ControlUnitDataAccess>()->eraseControlUnitDataBeforeTS(cu_alarm_key,
+                                                                                                                       remove_until_ts))){
+                log(CHAOS_FORMAT("Error erasing key %1% for control unit %2% with error %3%", %cu_alarm_key%control_unit_found%err));
             } else if((err = getDataAccess<persistence::data_access::LoggingDataAccess>()->eraseLogBeforTS(control_unit_found,
                                                                                                            remove_until_ts))){
-                log(CHAOS_FORMAT("Error erasing logging for control unit %2% with error %3%", %alarm_key%control_unit_found%err));
+                log(CHAOS_FORMAT("Error erasing logging for control unit %1% with error %2%", %control_unit_found%err));
             }
         }else{
             log(CHAOS_FORMAT("Control unit %1% not gone in ageing(%2% seconds) [last performing age %3% next is %4%]", %control_unit_found%control_unit_ageing_time%TimingUtil::toString(last_ageing_perform_time)%TimingUtil::toString(next_aged_time)));
