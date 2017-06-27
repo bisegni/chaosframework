@@ -13,7 +13,7 @@ build_framework_x86_64:
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
   script:
     - echo "Working directory:"$PWD
-    - echo "Artifact name:"$TAR_NAME_POSTFIX
+      #    - echo "Artifact name:"$TAR_NAME_POSTFIX
     - cmake -DCHAOS_ARCHITECTURE_TEST=ON .
     - make clean
     - make  -j 4
