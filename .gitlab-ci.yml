@@ -26,6 +26,7 @@ build_framework_x86_64:
     paths:
         - /builds/bisegni/chaosframework/config/CHACHE
         - /builds/bisegni/chaosframework/external-x86_64-Linux
+        - /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux
   only:
     - development
     - master
@@ -48,6 +49,7 @@ build_framework_arm:
     paths:
         - /builds/bisegni/chaosframework/config/CHACHE
         - /builds/bisegni/chaosframework/external-armhf
+        - /builds/bisegni/chaosframework/chaos-distrib-arm
   only:
     - development
     - master
@@ -56,11 +58,14 @@ deploy_framework_x86_64:
     stage: deploy
     image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
     script:
+      - ls -la /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux/bin
+      - ls -la /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux/lib
+      - ls -la /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux/include
       - echo "scp /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux_$TAR_NAME_POSTFIX.tgz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/"
     cache:
         key: "$CI_BUILD_REF_NAME/x86_64"
         paths:
-            - /builds/bisegni/chaosframework
+            - /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux
     only:
       - development
       - master
@@ -69,11 +74,14 @@ deploy_framework_arm:
     stage: deploy
     image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
     script:
+      - ls -la /builds/bisegni/chaosframework/chaos-distrib-armhf/bin
+      - ls -la /builds/bisegni/chaosframework/chaos-distrib-armhf/lib
+      - ls -la /builds/bisegni/chaosframework/chaos-distrib-armhf/include
       - echo "scp /builds/bisegni/chaosframework/chaos-distrib-armhf_$TAR_NAME_POSTFIX.tgz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/"
     cache:
         key: "$CI_BUILD_REF_NAME/arm"
         paths:
-            - /builds/bisegni/chaosframework
+            - /builds/bisegni/chaosframework/chaos-distrib-arm
     only:
       - development
       - master
