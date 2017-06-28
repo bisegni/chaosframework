@@ -25,6 +25,7 @@ build_framework_x86_64:
     key: "$CI_BUILD_REF_NAME/x86_64"
     paths:
         - /builds/bisegni/chaosframework/config/CHACHE
+        - /builds/bisegni/chaosframework/external-x86_64-Linux
   only:
     - development
     - master
@@ -46,6 +47,7 @@ build_framework_arm:
     key: "$CI_BUILD_REF_NAME/arm"
     paths:
         - /builds/bisegni/chaosframework/config/CHACHE
+        - /builds/bisegni/chaosframework/external-armhf
   only:
     - development
     - master
