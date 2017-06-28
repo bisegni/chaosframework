@@ -49,7 +49,7 @@ build_framework_arm:
     paths:
         - /builds/bisegni/chaosframework/config/CHACHE
         - /builds/bisegni/chaosframework/external-armhf
-        - /builds/bisegni/chaosframework/chaos-distrib-arm
+        - /builds/bisegni/chaosframework/chaos-distrib-armhf
   only:
     - development
     - master
@@ -81,7 +81,7 @@ deploy_framework_arm:
     cache:
         key: "$CI_BUILD_REF_NAME/arm"
         paths:
-            - /builds/bisegni/chaosframework/chaos-distrib-arm
+            - /builds/bisegni/chaosframework/chaos-distrib-armhf
     only:
       - development
       - master
