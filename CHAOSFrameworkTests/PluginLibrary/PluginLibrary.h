@@ -25,8 +25,6 @@
 #define CHAOS_ENABLE_PLUGIN
 
 #include <chaos/common/plugin/PluginDefinition.h>
-
-#include <chaos/cu_toolkit/driver_manager/driver/AbstractDriverPlugin.h>
 #include <chaos/cu_toolkit/control_manager/script/api/plugin/EUAbstractApiPlugin.h>
 
 using namespace chaos::common::plugin;
