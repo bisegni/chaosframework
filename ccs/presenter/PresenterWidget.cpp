@@ -172,7 +172,7 @@ void PresenterWidget::submitApiResult(const QString& api_tag,
                                       ApiProxyResult api_result) {
 
     api_submitter.submitApiResult(api_tag,
-                                  api_result);
+                                  std::move(api_result));
 }
 
 //-------slot for api-------

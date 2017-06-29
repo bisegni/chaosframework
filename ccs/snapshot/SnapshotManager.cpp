@@ -58,12 +58,12 @@ bool SnapshotManager::isClosing() {
 void SnapshotManager::onApiDone(const QString& tag,
                                 QSharedPointer<chaos::common::data::CDataWrapper> api_result) {
     if(tag.compare(TAG_SEARCH_SNAPSHOT) == 0) {
-        snapshot_table_model.updateSnapshotList(service::GetAllSnapshot::getHelper(api_result.data()));
+        snapshot_table_model.updateSnapshotList(std::move(service::GetAllSnapshot::getHelper(api_result.data())));
         node_in_snapshot_list_model.reset();
     } else if(tag.compare(TAG_DELETE_SNAPSHOT) == 0) {
         executeSearch();
     } else if(tag.compare(TAG_LOAD_NODE_IN_SNAPSHOT) == 0) {
-        node_in_snapshot_list_model.updateSnapshotList(service::GetNodesForSnapshot::getHelper(api_result.data()));
+        node_in_snapshot_list_model.updateSnapshotList(std::move(service::GetNodesForSnapshot::getHelper(api_result.data())));
     }
     PresenterWidget::onApiDone(tag, api_result);
 }

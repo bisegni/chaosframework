@@ -16,7 +16,7 @@ SnapshotTableModel::~SnapshotTableModel() {
 
 void SnapshotTableModel::updateSnapshotList(ChaosUniquePtr<chaos::metadata_service_client::api_proxy::service::GetAllSnapshotHelper> _snapshot_info_list) {
  beginResetModel();
- snapshot_info_list = _snapshot_info_list;
+ snapshot_info_list = std::move(_snapshot_info_list);
  endResetModel();
 }
 

@@ -11,7 +11,7 @@ void ApiAsyncProcessor::submitApiResult(const QString& tag,
                                         const char* slot_timeout) {
     //create runnable
     ApiAsyncRunnable *aar = new ApiAsyncRunnable(tag,
-                                                 async_result);
+                                                 std::move(async_result));
 
     //! connect slot between target and runnable
     QObject::connect(aar, SIGNAL(asyncApiResult(QString, QSharedPointer<chaos::common::data::CDataWrapper>)),
