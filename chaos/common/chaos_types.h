@@ -34,6 +34,7 @@
 #include <vector>
 
 #if __cplusplus >= 201103L
+
 #define ChaosSharedPtr std::shared_ptr
 #define ChaosMakeSharedPtr std::make_shared
 #define ChaosWeakPtr   std::weak_ptr 
