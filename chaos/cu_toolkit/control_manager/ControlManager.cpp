@@ -185,9 +185,6 @@ void ControlManager::start() throw(CException) {
     LCMAPP_  << "Start cu scan timer";
     int err = 0;
     if(use_unit_server){
-        //register unit server node
-        HealtManager::getInstance()->addNewNode(unit_server_alias);
-        
         //add unit server registration managment timer
         if((err = chaos_async::AsyncCentralManager::getInstance()->addTimer(this, 0, GlobalConfiguration::getInstance()->getOption<uint64_t>(CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC)))){
             throw chaos::CException(-1, "Error registering the Control managet timer", __PRETTY_FUNCTION__);
@@ -728,6 +725,8 @@ CDataWrapper* ControlManager::unitServerRegistrationACK(CDataWrapper *message_da
                 if(unit_server_sm.process_event(unit_server_state_machine::UnitServerEventType::UnitServerEventTypePublished()) == boost::msm::back::HANDLED_TRUE){
                     LCMAPP_ << "Registration is gone well";
                     //we are published and it is ok!
+                    //register unit server node
+                    HealtManager::getInstance()->addNewNode(unit_server_alias);
                     //update healt status
                     HealtManager::getInstance()->addNodeMetricValue(unit_server_alias,
                                                                     NodeHealtDefinitionKey::NODE_HEALT_STATUS,

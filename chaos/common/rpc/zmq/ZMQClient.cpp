@@ -103,9 +103,6 @@ void ZMQClient::stop() throw(CException) {
  */
 void ZMQClient::deinit() throw(CException) {
     ZMQC_LAPP << "deinitialization";
-    
-    boost::shared_lock<boost::shared_mutex> lock_socket_map(map_socket_mutex);
-    
     map_socket.clear();
     
     ZMQC_LAPP << "ObjectProcessingQueue<NetworkForwardInfo> stopping";
