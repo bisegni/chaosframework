@@ -288,7 +288,7 @@ void RTAbstractControlUnit::executeOnThread() {
         */
 
         //udpate output dataset timestamp tag
-        _updateAcquistionTimestamp((uint64_t)(start_execution/1000));
+        _updateAcquistionTimestamp((uint64_t)start_execution);
         try{
             //! exec the control unit step
             unitRun();

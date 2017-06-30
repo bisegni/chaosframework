@@ -55,9 +55,9 @@ int MongoDBSnapshotDataAccess::snapshotCreateNewWithName(const std::string& snap
     mongo::BSONObj          check_unique_q;
     mongo::BSONObj          check_result;
     //----- generate the random code ------ for this snapshot
-
-	working_job_unique_id="buttami";
-
+    
+    working_job_unique_id="buttami";
+    
     try{
         
         check_unique_q = BSON(MONGO_DB_FIELD_SNAPSHOT_NAME << snapshot_name);
@@ -300,10 +300,10 @@ int MongoDBSnapshotDataAccess::getNodeInSnapshot(const std::string& snapshot_nam
                                                                     prj.jsonString()));)
         
         ChaosUniquePtr<mongo::DBClientCursor> query_result = connection->query(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SNAPSHOT_DATA),
-                                                                              q,
-                                                                              0,
-                                                                              0,
-                                                                              &prj);
+                                                                               q,
+                                                                               0,
+                                                                               0,
+                                                                               &prj);
         while(query_result->more()) {
             mongo::BSONObj n = query_result->next();
             node_in_snapshot.push_back(n.getStringField("producer_id"));
@@ -338,10 +338,10 @@ int MongoDBSnapshotDataAccess::getSnapshotForNode(const std::string& node_unique
                                                                     prj.jsonString()));)
         
         ChaosUniquePtr<mongo::DBClientCursor> query_result = connection->query(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SNAPSHOT_DATA),
-                                                                              q,
-                                                                              0,
-                                                                              0,
-                                                                              &prj);
+                                                                               q,
+                                                                               0,
+                                                                               0,
+                                                                               &prj);
         while(query_result->more()) {
             mongo::BSONObj n = query_result->next();
             snapshot_for_node.push_back(n.getStringField("snap_name"));
@@ -416,10 +416,10 @@ int MongoDBSnapshotDataAccess::getAllSnapshot(SnapshotList& snapshot_desriptions
                                                                     prj.jsonString()));)
         
         ChaosUniquePtr<mongo::DBClientCursor> query_result = connection->query(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SNAPSHOT),
-                                                                              q,
-                                                                              0,
-                                                                              0,
-                                                                              &prj);
+                                                                               q,
+                                                                               0,
+                                                                               0,
+                                                                               &prj);
         if(query_result.get()) {
             while(query_result->more()) {
                 mongo::BSONObj n = query_result->next();
@@ -498,20 +498,20 @@ int MongoDBSnapshotDataAccess::setDatasetInSnapshotForNode(const std::string& wo
         mongo::BSONObj q_obj=q.obj();
         //u.appendElements(q_obj);
         mongo::BSONObj u = BSON("$set"<< BSON(dataset_key << mongo::BSONObj(dataset_value.getBSONRawData(size))));
-
+        
         DEBUG_CODE(MDBDSDA_DBG<<log_message("setDatasetInSnapshotForNode",
                                             "update",
                                             DATA_ACCESS_LOG_2_ENTRY("Query",
                                                                     "Update",
-																	q_obj.jsonString(),
-																	u.jsonString()));)
+                                                                    q_obj.jsonString(),
+                                                                    u.jsonString()));)
         
         if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SNAPSHOT_DATA),
-        		q_obj,
-				u,
+                                     q_obj,
+                                     u,
                                      true,
                                      false,
-                                     mongo::WriteConcern::acknowledged))) {
+                                     &mongo::WriteConcern::acknowledged))) {
             MDBDSDA_ERR << CHAOS_FORMAT("Error %1% updating dataset for node %2% in snapshot %3%", %err%node_unique_id%snapshot_name);
         }
         

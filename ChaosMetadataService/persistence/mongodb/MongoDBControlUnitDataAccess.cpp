@@ -341,8 +341,8 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
         mongo::BSONObj query = bson_find.obj();
         mongo::BSONObj update = BSON("$set" << BSON(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION << updated_field.obj()));
         
-        DEBUG_CODE(MDBCUDA_DBG<<log_message("getInstanceDescription",
-                                            "findOne",
+        DEBUG_CODE(MDBCUDA_DBG<<log_message("setDataset",
+                                            "update - dataset",
                                             DATA_ACCESS_LOG_2_ENTRY("Query",
                                                                     "Update",
                                                                     query.toString(),
@@ -351,6 +351,22 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
         if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                      query,
                                      update))) {
+            MDBCUDA_ERR << "Error updating unit server";
+        }
+        
+        //update run id
+        const std::string run_id_key = CHAOS_FORMAT("%1%.%2%", %ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION%ControlUnitNodeDefinitionKey::CONTROL_UNIT_RUN_ID);
+        mongo::BSONObj update_run_id = BSON("$inc" << BSON(run_id_key<<(int64_t)1));
+        DEBUG_CODE(MDBCUDA_DBG<<log_message("setDataset",
+                                            "update - run id",
+                                            DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                                    "Update",
+                                                                    query.toString(),
+                                                                    update_run_id.jsonString()));)
+        //set the instance parameter within the node representing the control unit
+        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                     query,
+                                     update_run_id))) {
             MDBCUDA_ERR << "Error updating unit server";
         }
     } catch (const mongo::DBException &e) {
@@ -1124,7 +1140,7 @@ int MongoDBControlUnitDataAccess::eraseControlUnitDataBeforeTS(const std::string
         if((err = connection->remove(MONGO_DB_COLLECTION_NAME("daq"),
                                      q,
                                      false,
-                                     mongo::WriteConcern::unacknowledged))){
+                                     &mongo::WriteConcern::unacknowledged))){
             MDBCUDA_ERR << CHAOS_FORMAT("Error erasing stored object data for key %1% up to %2%", %control_unit_id%unit_ts);
         }
     } catch (const mongo::DBException &e) {

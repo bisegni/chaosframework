@@ -748,7 +748,7 @@ CDataWrapper* ControlManager::unitServerRegistrationACK(CDataWrapper *message_da
                 break;
                 
             case ErrorCode::EC_MDS_NODE_REGISTRATION_FAILURE_INSTANCE_ALREADY_RUNNING:
-                LCMERR_ << "The " << unit_server_alias << " is already used no we will QUIT";
+                LCMERR_ << "Another " << unit_server_alias << " instance is alredy runnig";
                 //turn of unit server
                 if(unit_server_sm.process_event(unit_server_state_machine::UnitServerEventType::UnitServerEventTypeFailure()) == boost::msm::back::HANDLED_TRUE){
                     //we have problem

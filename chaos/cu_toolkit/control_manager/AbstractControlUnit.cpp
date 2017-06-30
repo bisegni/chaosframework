@@ -82,6 +82,7 @@ control_unit_instance(UUIDUtil::generateUUIDLite()),
 control_unit_type(_control_unit_type),
 control_unit_id(_control_unit_id),
 control_unit_param(_control_unit_param),
+run_id(0),
 standard_logging_channel(),
 alarm_logging_channel(),
 push_dataset_counter(0),
@@ -108,6 +109,7 @@ control_unit_instance(UUIDUtil::generateUUIDLite()),
 control_unit_type(_control_unit_type),
 control_unit_id(_control_unit_id),
 control_unit_param(_control_unit_param),
+run_id(0),
 standard_logging_channel(),
 alarm_logging_channel(),
 push_dataset_counter(0),
@@ -442,6 +444,7 @@ void AbstractControlUnit::doInitSMCheckList() throw(CException) {
             
             //cast to the CDatawrapper instance
             ACULAPP_ << "Initialize CU Database for device:" << DatasetDB::getDeviceID();
+            run_id = CDW_GET_INT64_WITH_DEFAULT(init_configuration, ControlUnitNodeDefinitionKey::CONTROL_UNIT_RUN_ID, 0);
             DatasetDB::addAttributeToDataSetFromDataWrapper(*init_configuration);
             break;
         }
@@ -1331,7 +1334,7 @@ CDataWrapper* AbstractControlUnit::_getInfo(CDataWrapper* getStatedParam,
 }
 
 void AbstractControlUnit::_updateAcquistionTimestamp(uint64_t alternative_ts) {
-    *timestamp_acq_cached_value->getValuePtr<uint64_t>() = (alternative_ts == 0?TimingUtil::getTimeStamp():alternative_ts);
+    *timestamp_acq_cached_value->getValuePtr<uint64_t>() = (alternative_ts == 0?TimingUtil::getTimeStampInMicroseconds():alternative_ts);
 }
 
 void AbstractControlUnit::_updateRunScheduleDelay(uint64_t new_scehdule_delay) {
@@ -1579,18 +1582,21 @@ void AbstractControlUnit::pushOutputDataset(bool ts_already_set) {
     
     CDataWrapper *output_attribute_dataset = key_data_storage->getNewDataPackForDomain(KeyDataStorageDomainOutput);
     if(!output_attribute_dataset) return;
-    
+    output_attribute_dataset->addInt64Value(ControlUnitDatapackCommonKey::RUN_ID, run_id);
     //write acq ts for second
     //add push timestamp
+    int64_t ts_us = 0;
     if(ts_already_set == false){
-        output_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, TimingUtil::getTimeStamp());
+        ts_us = TimingUtil::getTimeStampInMicroseconds();
     } else {
         AttributeValue *cached_value = attribute_value_shared_cache->getAttributeValue(DOMAIN_OUTPUT,
                                                                                        DataPackCommonKey::DPCK_TIMESTAMP);
-        if(cached_value) {
-            output_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, *cached_value->getValuePtr<uint64_t>());
-        }
+        CHAOS_ASSERT(cached_value);
+        ts_us =  *cached_value->getValuePtr<uint64_t>();
     }
+    output_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, ts_us/1000);
+    output_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP, ts_us);
+
     //add all other output channel
     for(int idx = 0;
         idx < ((int)cache_output_attribute_vector.size())-1; //the device id and timestamp in added out of this list
@@ -1650,14 +1656,13 @@ void AbstractControlUnit::pushInputDataset() {
     AttributeCache& input_attribute_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_INPUT);
     if(!input_attribute_cache.hasChanged()) return;
     //get the cdatawrapper for the pack
+    int64_t cur_us = TimingUtil::getTimeStampInMicroseconds();
     CDataWrapper *input_attribute_dataset = key_data_storage->getNewDataPackForDomain(KeyDataStorageDomainInput);
     if(input_attribute_dataset) {
+        input_attribute_dataset->addInt64Value(ControlUnitDatapackCommonKey::RUN_ID, run_id);
         //input dataset timestamp is added only when pushed on cache
-        input_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, TimingUtil::getTimeStamp());
-        
-        //add dataset type
-     //   input_attribute_dataset->addInt32Value(DataPackCommonKey::DPCK_DATASET_TYPE, DataPackCommonKey::DPCK_DATASET_TYPE_INPUT);
-        
+        input_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, cur_us/1000);
+        input_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP, cur_us);
         //fill the dataset
         fillCDatawrapperWithCachedValue(cache_input_attribute_vector, *input_attribute_dataset);
         
@@ -1672,10 +1677,13 @@ void AbstractControlUnit::pushCustomDataset() {
     AttributeCache& custom_attribute_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_CUSTOM);
     if(!custom_attribute_cache.hasChanged()) return;
     //get the cdatawrapper for the pack
+    int64_t cur_us = TimingUtil::getTimeStampInMicroseconds();
     CDataWrapper *custom_attribute_dataset = key_data_storage->getNewDataPackForDomain(KeyDataStorageDomainCustom);
     if(custom_attribute_dataset) {
-        //custom dataset timestamp is added only when pushed on cache
-        custom_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, TimingUtil::getTimeStamp());
+        custom_attribute_dataset->addInt64Value(ControlUnitDatapackCommonKey::RUN_ID, run_id);
+        //input dataset timestamp is added only when pushed on cache
+        custom_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, cur_us/1000);
+        custom_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP, cur_us);
         
         //add dataset type
     //    custom_attribute_dataset->addInt32Value(DataPackCommonKey::DPCK_DATASET_TYPE, DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM);
@@ -1692,11 +1700,13 @@ void AbstractControlUnit::pushSystemDataset() {
     AttributeCache& systemm_attribute_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM);
     if(!systemm_attribute_cache.hasChanged()) return;
     //get the cdatawrapper for the pack
+    int64_t cur_us = TimingUtil::getTimeStampInMicroseconds();
     CDataWrapper *system_attribute_dataset = key_data_storage->getNewDataPackForDomain(KeyDataStorageDomainSystem);
     if(system_attribute_dataset) {
-        //system dataset timestamp is added when pushed on cache laso if contain the hearbeat field
-        //! the dataaset can be pushed also in other moment
-        system_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, TimingUtil::getTimeStamp());
+        system_attribute_dataset->addInt64Value(ControlUnitDatapackCommonKey::RUN_ID, run_id);
+        //input dataset timestamp is added only when pushed on cache
+        system_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, cur_us/1000);
+        system_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP, cur_us);
         //add dataset type
      //   system_attribute_dataset->addInt32Value(DataPackCommonKey::DPCK_DATASET_TYPE, DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM);
         //fill the dataset
