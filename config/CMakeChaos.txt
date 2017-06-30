@@ -443,10 +443,9 @@ IF (NOT CACHE_DIR)
   option(CHAOS_BUILD_UNITSERVER "Automatically build an Unit Server that includes all CUs found in distribution" ON)
 
   IF(CHAOS_ENABLE_C11 AND NOT CHAOS_TARGET)
-
     set (CHAOS_CXX_FLAGS "${CHAOS_CXX_FLAGS} -std=c++11")
-    ELSE()
-    set (CHAOS_CXX_FLAGS "${CHAOS_CXX_FLAGS} -std=c++98")
+    ELSE()		 
+    set (CHAOS_CXX_FLAGS "${CHAOS_CXX_FLAGS} -std=c++98 -DFORCE_BOOST_SHPOINTER")
   ENDIF()
   IF( ( DEFINED ENV{CHAOS32}) OR CHAOS_FORCE_32 )
     MESG("Enabling 32 bit Compilation")
