@@ -34,11 +34,18 @@
 #include <vector>
 
 
-#if __cplusplus >= 201103L && ! defined FORCE_BOOST_SHPOINTER
+#if __cplusplus >= 201103L 
+#ifndef FORCE_BOOST_SHPOINTER
 #define ChaosSharedPtr std::shared_ptr
 #define ChaosMakeSharedPtr std::make_shared
 #define ChaosWeakPtr   std::weak_ptr 
+#else
+#define ChaosSharedPtr boost::shared_ptr
+#define ChaosMakeSharedPtr boost::make_shared
+#define ChaosWeakPtr boost::weak_ptr
+#endif
 #define ChaosUniquePtr std::unique_ptr
+
 //#pragma message "Use new memory management std::shared_ptr(ChaosSharedPtr) std::make_shared(ChaosMakeSharedPtr) std::weak_ptr(ChaosWeakPtr) std::unique_ptr(ChaosUniquePtr)"
 #else
 #include <boost/shared_ptr.hpp>
