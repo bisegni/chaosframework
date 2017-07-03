@@ -1143,7 +1143,7 @@ int MongoDBControlUnitDataAccess::getNextRunID(const std::string& control_unit_i
         //increment the run id
         mongo::BSONObj r;
         mongo::BSONObj q = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << control_unit_id);
-        mongo::BSONObj u = BSON("$inc" << BSON(run_id_key<<(int64_t)1));
+        mongo::BSONObj u = BSON("$inc" << BSON(run_id_key<<((long long))1));
         mongo::BSONObj sort;
         mongo::BSONObj projection = BSON(run_id_key<<1);
         //update run id

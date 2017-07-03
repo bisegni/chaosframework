@@ -202,7 +202,9 @@ namespace chaos{
                 AttributeSharedCacheWrapper *attribute_shared_cache_wrapper;
                 
                 //! fast access for acquisition timestamp
+                bool use_custom_high_resolution_timestamp;
                 AttributeValue *timestamp_acq_cached_value;
+                AttributeValue *timestamp_hw_acq_cached_value;
                 
                 //! fast access for thread scheduledaly cached value
                 AttributeValue *thread_schedule_daly_cached_value;
@@ -316,7 +318,6 @@ namespace chaos{
                 void metadataLogging(const std::string& subject,
                                      const chaos::common::metadata_logging::StandardLoggingChannel::LogLevel log_level,
                                      const std::string& message);
-            protected:
                 //  It's is the dynamically assigned instance of the CU. it will be used
                 // as domain for the rpc action.
                 string control_unit_instance;
@@ -371,7 +372,7 @@ namespace chaos{
                 chaos::common::data::CDataWrapper* _getInfo(chaos::common::data::CDataWrapper*, bool& detachParam) throw(CException);
                 
                 //! update the timestamp attribute of the output datapack
-                void _updateAcquistionTimestamp(uint64_t alternative_ts = 0);
+                void _updateAcquistionTimestamp(uint64_t alternative_ts);
                 
                 void _updateRunScheduleDelay(uint64_t new_scehdule_delay);
                 
@@ -399,6 +400,9 @@ namespace chaos{
                  */
                 virtual void _completeDatasetAttribute();
                 
+            protected:
+                void useCustomHigResolutionTimestamp(bool _use_custom_high_resolution_timestamp);
+                void setHigResolutionAcquistionTimestamp(uint64_t high_resolution_timestamp);
                 //! Abstract Method that need to be used by the sublcass to define the dataset
                 /*!
                  Subclass, in this method can call the api to create the dataset, after this method
@@ -638,7 +642,7 @@ namespace chaos{
                 const std::string& getCUType();
                 
                 //!push output dataset
-                virtual void pushOutputDataset(bool ts_already_set = false);
+                virtual void pushOutputDataset();
                 
                 //!push system dataset
                 virtual void pushInputDataset();

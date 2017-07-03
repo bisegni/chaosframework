@@ -89,7 +89,9 @@ push_dataset_counter(0),
 last_push_rate_grap_ts(0),
 attribute_value_shared_cache(),
 attribute_shared_cache_wrapper(),
+use_custom_high_resolution_timestamp(false),
 timestamp_acq_cached_value(),
+timestamp_hw_acq_cached_value(),
 thread_schedule_daly_cached_value(),
 key_data_storage() {
     //!try to decode parameter string has json document
@@ -116,7 +118,9 @@ push_dataset_counter(0),
 last_push_rate_grap_ts(0),
 attribute_value_shared_cache(),
 attribute_shared_cache_wrapper(),
+use_custom_high_resolution_timestamp(false),
 timestamp_acq_cached_value(),
+timestamp_hw_acq_cached_value(),
 thread_schedule_daly_cached_value(),
 key_data_storage() {
     //!try to decode parameter string has json document
@@ -1278,6 +1282,10 @@ void AbstractControlUnit::completeOutputAttribute() {
     //add timestamp
     domain_attribute_setting.addAttribute(DataPackCommonKey::DPCK_TIMESTAMP, sizeof(uint64_t), DataType::TYPE_INT64);
     timestamp_acq_cached_value = domain_attribute_setting.getValueSettingForIndex(domain_attribute_setting.getIndexForName(DataPackCommonKey::DPCK_TIMESTAMP));
+    
+    domain_attribute_setting.addAttribute(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP, sizeof(uint64_t), DataType::TYPE_INT64);
+    timestamp_hw_acq_cached_value = domain_attribute_setting.getValueSettingForIndex(domain_attribute_setting.getIndexForName(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP));
+    
 }
 
 void AbstractControlUnit::completeInputAttribute() {
@@ -1334,7 +1342,20 @@ CDataWrapper* AbstractControlUnit::_getInfo(CDataWrapper* getStatedParam,
 }
 
 void AbstractControlUnit::_updateAcquistionTimestamp(uint64_t alternative_ts) {
-    *timestamp_acq_cached_value->getValuePtr<uint64_t>() = (alternative_ts == 0?TimingUtil::getTimeStampInMicroseconds():alternative_ts);
+    *timestamp_acq_cached_value->getValuePtr<uint64_t>() = alternative_ts/1000;
+    if(!use_custom_high_resolution_timestamp){
+        *timestamp_hw_acq_cached_value->getValuePtr<uint64_t>() = alternative_ts;
+    }
+}
+
+void AbstractControlUnit::useCustomHigResolutionTimestamp(bool _use_custom_high_resolution_timestamp) {
+    use_custom_high_resolution_timestamp = _use_custom_high_resolution_timestamp;
+}
+
+void AbstractControlUnit::setHigResolutionAcquistionTimestamp(uint64_t high_resolution_timestamp) {
+    if(use_custom_high_resolution_timestamp){
+        *timestamp_hw_acq_cached_value->getValuePtr<uint64_t>() = high_resolution_timestamp;
+    }
 }
 
 void AbstractControlUnit::_updateRunScheduleDelay(uint64_t new_scehdule_delay) {
@@ -1572,7 +1593,7 @@ DriverAccessor *AbstractControlUnit::getAccessoInstanceByIndex(int idx) {
 }
 
 
-void AbstractControlUnit::pushOutputDataset(bool ts_already_set) {
+void AbstractControlUnit::pushOutputDataset() {
     AttributeCache& output_attribute_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT);
     ChaosSharedPtr<SharedCacheLockDomain> r_lock = attribute_value_shared_cache->getLockOnDomain(DOMAIN_OUTPUT, false);
     r_lock->lock();
@@ -1583,20 +1604,9 @@ void AbstractControlUnit::pushOutputDataset(bool ts_already_set) {
     CDataWrapper *output_attribute_dataset = key_data_storage->getNewDataPackForDomain(KeyDataStorageDomainOutput);
     if(!output_attribute_dataset) return;
     output_attribute_dataset->addInt64Value(ControlUnitDatapackCommonKey::RUN_ID, run_id);
-    //write acq ts for second
-    //add push timestamp
-    int64_t ts_us = 0;
-    if(ts_already_set == false){
-        ts_us = TimingUtil::getTimeStampInMicroseconds();
-    } else {
-        AttributeValue *cached_value = attribute_value_shared_cache->getAttributeValue(DOMAIN_OUTPUT,
-                                                                                       DataPackCommonKey::DPCK_TIMESTAMP);
-        CHAOS_ASSERT(cached_value);
-        ts_us =  *cached_value->getValuePtr<uint64_t>();
-    }
-    output_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, ts_us/1000);
-    output_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP, ts_us);
-
+    output_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, *timestamp_acq_cached_value->getValuePtr<uint64_t>());
+    output_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP, *timestamp_hw_acq_cached_value->getValuePtr<uint64_t>());
+    
     //add all other output channel
     for(int idx = 0;
         idx < ((int)cache_output_attribute_vector.size())-1; //the device id and timestamp in added out of this list
@@ -1636,7 +1646,7 @@ void AbstractControlUnit::pushOutputDataset(bool ts_already_set) {
                 if(value_set->sub_type.size() == 1) {
                     output_attribute_dataset->addBinaryValue(value_set->name, value_set->sub_type[0],value_set->getValuePtr<char>(), value_set->size);
                 } else {
-                     output_attribute_dataset->addBinaryValue(value_set->name,value_set->getValuePtr<char>(), value_set->size);
+                    output_attribute_dataset->addBinaryValue(value_set->name,value_set->getValuePtr<char>(), value_set->size);
                 }
                 break;
         }
@@ -1686,7 +1696,7 @@ void AbstractControlUnit::pushCustomDataset() {
         custom_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP, cur_us);
         
         //add dataset type
-    //    custom_attribute_dataset->addInt32Value(DataPackCommonKey::DPCK_DATASET_TYPE, DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM);
+        //    custom_attribute_dataset->addInt32Value(DataPackCommonKey::DPCK_DATASET_TYPE, DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM);
         
         //fill the dataset
         fillCDatawrapperWithCachedValue(cache_custom_attribute_vector, *custom_attribute_dataset);
@@ -1708,7 +1718,7 @@ void AbstractControlUnit::pushSystemDataset() {
         system_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, cur_us/1000);
         system_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP, cur_us);
         //add dataset type
-     //   system_attribute_dataset->addInt32Value(DataPackCommonKey::DPCK_DATASET_TYPE, DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM);
+        //   system_attribute_dataset->addInt32Value(DataPackCommonKey::DPCK_DATASET_TYPE, DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM);
         //fill the dataset
         fillCDatawrapperWithCachedValue(cache_system_attribute_vector, *system_attribute_dataset);
         
@@ -1728,7 +1738,7 @@ CDataWrapper *AbstractControlUnit::writeCatalogOnCDataWrapper(AlarmCatalog& cata
         //! the dataaset can be pushed also in other moment
         attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, TimingUtil::getTimeStamp());
         //add dataset type
-     //   attribute_dataset->addInt32Value(DataPackCommonKey::DPCK_DATASET_TYPE, dataset_type);
+        //   attribute_dataset->addInt32Value(DataPackCommonKey::DPCK_DATASET_TYPE, dataset_type);
         
         //scan all alarm ad create the datapack
         size_t alarm_size = catalog.size();

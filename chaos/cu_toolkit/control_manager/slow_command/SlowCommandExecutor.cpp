@@ -229,7 +229,7 @@ void SlowCommandExecutor::handleSandboxEvent(const std::string& sandbox_id,
         case BatchSandboxEventType::EVT_RUN_END: {
             //push output dataset specifingthat the ts has been already updated in casche directly
             control_unit_instance->pushInputDataset();
-            control_unit_instance->pushOutputDataset(true);
+            control_unit_instance->pushOutputDataset();
             break;
         }
             

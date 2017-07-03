@@ -304,7 +304,7 @@ void RTAbstractControlUnit::executeOnThread() {
         }
         
         // check if the output dataset need to be pushed
-        pushOutputDataset(true);
+        pushOutputDataset();
         //calculate the number of microsencods to wait
         //time_to_sleep = schedule_delay - (((next_predicted_run = TimingUtil::getTimeStampInMicroseconds()) - start_execution)+next_prediction_error);
 
