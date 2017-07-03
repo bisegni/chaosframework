@@ -23,6 +23,7 @@ build_framework_x86_64:
     #- scp -v -i /builds/bisegni/chaosframework/deploy.key -o StrictHostKeyChecking=no /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux_$TAR_NAME_POSTFIX.tgz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/
   cache:
     key: "$CI_BUILD_REF_NAME/x86_64"
+    untracked: true
     paths:
         - /builds/bisegni/chaosframework/config/CHACHE
         - /builds/bisegni/chaosframework/external-x86_64-Linux
@@ -46,6 +47,7 @@ build_framework_arm:
     #- scp -v -i /builds/bisegni/chaosframework/deploy.key -o StrictHostKeyChecking=no /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux_$TAR_NAME_POSTFIX.tgz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/
   cache:
     key: "$CI_BUILD_REF_NAME/arm"
+    untracked: true
     paths:
         - /builds/bisegni/chaosframework/config/CHACHE
         - /builds/bisegni/chaosframework/external-armhf
