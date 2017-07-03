@@ -32,6 +32,10 @@ void FixedOutputChannelDatasetTableModel::updateData(const QSharedPointer<chaos:
                                         QSharedPointer<AttributeInfo>(new AttributeInfo(real_row++,
                                                                                         4,
                                                                                         chaos::DataType::TYPE_INT64)));
+    map_doe_attribute_name_index.insert(chaos::DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP,
+                                        QSharedPointer<AttributeInfo>(new AttributeInfo(real_row++,
+                                                                                        4,
+                                                                                        chaos::DataType::TYPE_INT64)));
     map_doe_attribute_name_index.insert(chaos::ControlUnitDatapackCommonKey::RUN_ID,
                                         QSharedPointer<AttributeInfo>(new AttributeInfo(real_row++,
                                                                                         4,
@@ -39,7 +43,13 @@ void FixedOutputChannelDatasetTableModel::updateData(const QSharedPointer<chaos:
     QSharedPointer<CDataWrapper> element(new CDataWrapper());
     element->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME, chaos::DataPackCommonKey::DPCK_TIMESTAMP);
     element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE, chaos::DataType::TYPE_INT64);
-    element->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION, "Acquisition timestamp");
+    element->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION, "DAQ timestamp");
+    vector_doe.push_back(element);
+
+    element.reset(new CDataWrapper());
+    element->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME, chaos::DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP);
+    element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE, chaos::DataType::TYPE_INT64);
+    element->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION, "DAQ High resolution timestamp");
     vector_doe.push_back(element);
 
     element.reset(new CDataWrapper());
