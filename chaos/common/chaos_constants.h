@@ -701,7 +701,8 @@ namespace chaos {
     namespace ControlUnitNodeDefinitionKey {
         //! param to pass to the control unit during load operation[ string]
         static const char * const CONTROL_UNIT_LOAD_PARAM                           = "cudk_load_param";
-        
+        //! param to pass to the control unit during init operation[ int64]
+        static const char * const CONTROL_UNIT_RUN_ID                               = "cudk_run_id";
         //! Description for the control unit dirvers [vector[string, string, string]*]
         static const char * const CONTROL_UNIT_DRIVER_DESCRIPTION                   = "cudk_driver_description";
         
@@ -818,6 +819,17 @@ namespace chaos {
         //! represent the delay beetwen a subseguent cu start method call it is a property of a control unit
         static const char * const THREAD_SCHEDULE_DELAY                             = "cudk_thr_sch_delay";
     }
+    
+    /** @defgroup Contorl unit system key
+     *  This is the collection of the key representing the property that are exposed into system dataset
+     *  @{
+     */
+    //! Name space for grupping control unit system property
+    namespace ControlUnitDatapackCommonKey {
+        //!specify an initialization id for the node[int64]
+        static const char * const RUN_ID                          = "cudk_run_id";
+    }
+    
     /** @} */ // end of ControlUnitNodeDefinitionKey
     
     /** @defgroup CUType Control Unit Default Type
@@ -1201,10 +1213,12 @@ namespace chaos {
     namespace DataPackCommonKey {
         //!define the device unique key, this represent the primary key of the producer[string]
         static const char * const DPCK_DEVICE_ID                       = chaos::NodeDefinitionKey::NODE_UNIQUE_ID;
-        //!define the device data pack sequence id unique for device
+        //!define the device data pack sequence id unique for device, shared among all packet sent by the node[int64]
         static const char * const DPCK_SEQ_ID                          = "dpck_seq_id";
         //!this define the acquisition timestamp of the data represented by the dataset[uint64_t]
         static const char * const DPCK_TIMESTAMP                       = "dpck_ats";//chaos::NodeDefinitionKey::NODE_TIMESTAMP;
+        //!this define a custom counter often used for the hig resolution timestamp imformation
+        static const char * const DPCK_HIGH_RESOLUTION_TIMESTAMP       = "dpck_hr_ats";//chaos::NodeDefinitionKey::NODE_TIMESTAMP;
         //!define the type of the dataset uint32_t [output(0) - input(1) - custom(2) - system(3) - ....others int32_t]
         static const char * const DPCK_DATASET_TYPE                    = "dpck_ds_type";
         //! the constant that represent the output dataset type

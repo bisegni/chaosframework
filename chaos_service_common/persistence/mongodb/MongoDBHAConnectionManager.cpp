@@ -216,13 +216,13 @@ conn = getConnection();
 
 int MongoDBHAConnectionManager::insert(const std::string &ns,
                                        mongo::BSONObj obj,
-                                       const mongo::WriteConcern& wc,
+                                       const mongo::WriteConcern *wc,
                                        int flags) {
     int err = 0;
     GET_CONNECTION()
     try {
         
-        EXECUTE_MONGOAPI(conn->get()->insert(ns, obj, flags, &wc););
+        EXECUTE_MONGOAPI(conn->get()->insert(ns, obj, flags, wc););
     } catch (std::exception& ex) {
         MDBHAC_LERR_ << " -> " << ex.what();
         MONGO_DB_GET_ERROR(conn->get(), err);
@@ -310,16 +310,16 @@ int MongoDBHAConnectionManager::runCommand(mongo::BSONObj& result,
     return err;
 }
 
-int MongoDBHAConnectionManager::update( const std::string &ns,
+int MongoDBHAConnectionManager::update(const std::string &ns,
                                        mongo::Query query,
                                        mongo::BSONObj obj,
                                        bool upsert,
                                        bool multi,
-                                       const mongo::WriteConcern& wc) {
+                                       const mongo::WriteConcern *wc) {
     int err = 0;
     GET_CONNECTION()
     try {
-        EXECUTE_MONGOAPI(conn->get()->update(ns, query, obj, upsert, multi, &wc););
+        EXECUTE_MONGOAPI(conn->get()->update(ns, query, obj, upsert, multi, wc););
     } catch (std::exception& ex) {
         MDBHAC_LERR_ << " -> " << ex.what();
         MONGO_DB_GET_ERROR(conn->get(), err);
@@ -381,11 +381,11 @@ int MongoDBHAConnectionManager::findAndRemove(mongo::BSONObj& result,
 int MongoDBHAConnectionManager::remove( const std::string &ns ,
                                        mongo::Query q ,
                                        bool justOne,
-                                       const mongo::WriteConcern& wc) {
+                                       const mongo::WriteConcern *wc) {
     int err = 0;
     GET_CONNECTION()
     try {
-        EXECUTE_MONGOAPI(conn->get()->remove(ns, q, justOne, &wc);)
+        EXECUTE_MONGOAPI(conn->get()->remove(ns, q, justOne, wc);)
     } catch (std::exception& ex) {
         MDBHAC_LERR_ << " -> " << ex.what();
         MONGO_DB_GET_ERROR(conn->get(), err);

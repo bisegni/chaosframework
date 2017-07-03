@@ -124,6 +124,8 @@ namespace chaos {
                     
                     int eraseControlUnitDataBeforeTS(const std::string& control_unit_id,
                                                      uint64_t unit_ts);
+
+                    int getNextRunID(const std::string& control_unit_id, int64_t& run_id);
                 };
                 
                 

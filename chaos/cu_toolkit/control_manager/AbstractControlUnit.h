@@ -161,6 +161,9 @@ namespace chaos{
                 Json::Reader					json_reader;
                 Json::Value						json_parameter_document;
                 
+                //specify the counter updated by the mds on every initilization that will represent the run of work
+                int64_t run_id;
+                
                 //!logging channel
                 chaos::common::metadata_logging::StandardLoggingChannel *standard_logging_channel;
                 

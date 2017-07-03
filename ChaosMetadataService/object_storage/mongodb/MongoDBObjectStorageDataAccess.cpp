@@ -61,7 +61,7 @@ int MongoDBObjectStorageDataAccess::pushObject(const std::string& key,
                                 MONGODB_DAQ_DATA_FIELD << mongo::BSONObj(bson_raw_data));
         if((err = connection->insert(MONGO_DB_COLLECTION_NAME(MONGODB_DAQ_COLL_NAME),
                                      q,
-                                     mongo::WriteConcern::unacknowledged))){
+                                     &mongo::WriteConcern::unacknowledged))){
             ERR << "Error pushing object";
         }
     } catch (const mongo::DBException &e) {
@@ -139,7 +139,7 @@ int MongoDBObjectStorageDataAccess::deleteObject(const std::string& key,
         if((err = connection->remove(MONGO_DB_COLLECTION_NAME(MONGODB_DAQ_COLL_NAME),
                                      q,
                                      false,
-                                     mongo::WriteConcern::unacknowledged))){
+                                     &mongo::WriteConcern::unacknowledged))){
             ERR << CHAOS_FORMAT("Error erasing stored object data for key %1% from %2% to %3%", %key%start_timestamp%end_timestamp);
         }
     } catch (const mongo::DBException &e) {

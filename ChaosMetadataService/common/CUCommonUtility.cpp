@@ -116,6 +116,7 @@ ChaosUniquePtr<chaos::common::data::CDataWrapper> CUCommonUtility::initDataPack(
                                                           ControlUnitDataAccess *cu_da,
                                                           DataServiceDataAccess *ds_da) {
     int err = 0;
+    int64_t run_id = 0;
     CDataWrapper *result = NULL;
     ChaosUniquePtr<chaos::common::data::CDataWrapper> cu_base_description;
     ChaosUniquePtr<chaos::common::data::CDataWrapper> dataset_description;
@@ -150,6 +151,13 @@ ChaosUniquePtr<chaos::common::data::CDataWrapper> CUCommonUtility::initDataPack(
     //we have the configured instance
     ChaosUniquePtr<chaos::common::data::CDataWrapper> instance_description(result);
     result = NULL;
+    
+    //update run id
+    //update the cotnrol unit id
+    if((err = cu_da->getNextRunID(cu_uid,
+                                  run_id))) {
+        LOG_AND_TROW(CUCU_ERR, err, CHAOS_FORMAT("Error incrementig run id for control unit %1%", %cu_uid));
+    }
     
     //get the dataset of the control unit
     if((err = cu_da->getDataset(cu_uid,
@@ -286,6 +294,7 @@ ChaosUniquePtr<chaos::common::data::CDataWrapper> CUCommonUtility::initDataPack(
         instance_description->copyKeyTo(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME, *init_datapack);
     }
     
+    init_datapack->addInt64Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_RUN_ID, run_id);
     //set the action type
     init_datapack->addInt32Value("action", (int32_t)0);
     return init_datapack;
