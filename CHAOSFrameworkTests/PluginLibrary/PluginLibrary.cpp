@@ -22,7 +22,7 @@
 #include "PluginLibrary.h"
 
 //define the general plugin
-#include <string>
+#include <cstring>
 
 OPEN_PLUGIN_CLASS_DEFINITION(PluginAlias, 1.0, DRV, PluginLibrary)
 CLOSE_PLUGIN_CLASS_DEFINITION
@@ -66,7 +66,7 @@ int EUTestApiPLugin::execute(const char *in_data,
 }
 
 void EUTestApiPLugin::deinit() {
-    
+
 }
 
 const char *EUTestApiPLugin::getApiName() {

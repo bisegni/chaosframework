@@ -31,7 +31,7 @@ namespace chaos {
     namespace common{
         namespace script {
             class ScriptManager;
-            
+
                 //! define the abstraction of a scriptable class
             /*!
              Evrey sublcass of this one can expose method that can be callable form
@@ -42,7 +42,7 @@ namespace chaos {
                 ScriptManager *script_manager_ptr;
                     //! is the name of the api class
                 const std::string api_class_name;
-                
+
                     //!entry point of the scirpting for call an exposed api
                 virtual int callApi(const std::string& api_name,
                                     const ScriptInParam& input_parameter,
@@ -55,12 +55,14 @@ namespace chaos {
             public:
                 AbstractScriptableClass(const std::string& _api_class_name);
                 virtual ~AbstractScriptableClass();
-                
+
                 //!provide an initlization for the api environment
                 virtual int init(const char * init_data = NULL){return 0;}
-                
+
                 //provide a way to deinitilize the evironneto initialized in the init call
                 virtual void deinit(){}
+
+                const std::string& getClassName(){return api_class_name;}
             };
 
                 //!defin e atype specific api with utility for add and remove it
@@ -101,7 +103,7 @@ namespace chaos {
                                                  const std::string& api_class_name):
                 AbstractScriptableClass(api_class_name),
                 object_reference(_object_reference){                }
-                
+
                 ~TemplatedAbstractScriptableClass(){
                     //clear all map entries
                     map_api_ptr.clear();

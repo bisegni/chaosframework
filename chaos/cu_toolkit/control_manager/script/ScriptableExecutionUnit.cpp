@@ -97,14 +97,16 @@ ScriptableExecutionUnit::addAttributeToDataSet(const std::string &attribute_name
 void ScriptableExecutionUnit::registerApi() {
     CHAOS_ASSERT(script_manager().get());
     //register normal api
+    int err = 0;
     for(VectorApiClassIterator it = api_classes.begin(),
         end = api_classes.end();
         it != end;
         it++) {
-        if((*it)->init()) {
+          SEU_LAPP << "Inizializing api " << (*it)->getClassName();
+        if((err = (*it)->init()) == 0) {
             script_manager()->registerApiClass(*(*it));
         } else {
-            SEU_LERR << "Error initilizing plugin api:" << "";
+            SEU_LERR << CHAOS_FORMAT("Error %1% initilizing plugin api %2%", %err%(*it)->getClassName());
         }
     }
 }
@@ -128,27 +130,27 @@ throw MetadataLoggingCException(getDeviceID(), num, msg, __PRETTY_FUNCTION__);
 void ScriptableExecutionUnit::unitDefineActionAndDataset() throw(CException) {
     int err = 0;
     bool exists = false;
-    
+
     //define custom action
     addActionDescritionInstance<ScriptableExecutionUnit>(this,
                                                          &ScriptableExecutionUnit::updateScriptSource,
                                                          "updateScriptSource",
                                                          "Update the source of the script");
-    
+
     ChaosStringVector defined_input_attribute;
     //clear bitet for implemented lagorithm handler
     alghorithm_handler_implemented.reset();
-    
+
     //scan load parameter
     CHAOS_LASSERT_EXCEPTION((getCUParam().size() > 0),
                             SEU_LERR,
                             -1,
                             "NO JSON script information has been set at load time");
     CHAOS_LASSERT_EXCEPTION(isCUParamInJson(), SEU_LERR, -2, "Load parameter are not a json document");
-    
+
     //!get root json element
     const Json::Value &json_params = getCUParamJsonRootElement();
-    
+
     //scan json option
     if(json_params.isNull() == false) {
         const Json::Value
@@ -157,7 +159,7 @@ void ScriptableExecutionUnit::unitDefineActionAndDataset() throw(CException) {
         &_script_content = json_params[ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_CONTENT];
         const Json::Value
         &_script_b64_dataset = json_params[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION];
-        
+
         CHAOS_LASSERT_EXCEPTION(((_script_language.isNull() == false) && _script_content.isString()),
                                 SEU_LERR,
                                 -2,
@@ -167,13 +169,13 @@ void ScriptableExecutionUnit::unitDefineActionAndDataset() throw(CException) {
                                 SEU_LERR,
                                 -3,
                                 "The script content is not defined (or not a string) into load parameter");
-        
+
         //we nned to crasch in some situation
         script_language = _script_language.asString();
-        
+
         //we nned to crasch in some situation
         script_content = _script_content.asString();
-        
+
         //set the script dataset
         if(_script_b64_dataset.isNull() == false &&
            _script_b64_dataset.isString()) {
@@ -181,12 +183,12 @@ void ScriptableExecutionUnit::unitDefineActionAndDataset() throw(CException) {
             CDataWrapper script_dataset(decoded_bson_dataset.c_str());
             addAttributeToDataSetFromDataWrapper(script_dataset);
         }
-        
+
     }
     else {
         LOG_AND_TROW(SEU_LERR, -4, "Error decoding JSON load parameter");
     }
-    
+
     //get all input attribut to registr the handler for change event
     getDatasetAttributesName(DataType::Input,
                              defined_input_attribute);
@@ -198,7 +200,7 @@ void ScriptableExecutionUnit::unitDefineActionAndDataset() throw(CException) {
                                                                        &ScriptableExecutionUnit::updatedInputDataset,
                                                                        *it);
     }
-    
+
     //allocate script manager or language
     SEU_LAPP << CHAOS_FORMAT("Create script manager for '%1%' language!", %script_language);
     script_manager().reset(new ScriptManager(script_language));
@@ -210,12 +212,12 @@ void ScriptableExecutionUnit::unitDefineActionAndDataset() throw(CException) {
     api_classes.push_back(ApiClassShrdPtr(new api::EUSearch(this)));
     api_classes.push_back(ApiClassShrdPtr(new api::EUDSValueManagement(this)));
     api_classes.push_back(ApiClassShrdPtr(new api::EULiveManagment(this)));
-    
+
     if(GlobalConfiguration::getInstance()->getOption<bool>(InitOption::OPT_PLUGIN_ENABLE)) {
         ChaosStringVector publish_api;
         //add api form pugin
         PluginManager::getInstance()->getRegisterdPluginForSubclass("chaos::cu::control_manager::script::api::plugin::EUAbstractApiPlugin", publish_api);
-        
+
         for(ChaosStringVectorIterator it = publish_api.begin(),
             end = publish_api.end();
             it != end;
@@ -227,13 +229,13 @@ void ScriptableExecutionUnit::unitDefineActionAndDataset() throw(CException) {
         }
     }
     registerApi();
-    
+
     //!load script within the virtual machine
     SEU_LAPP << "Try to load the script";
     if(script_manager()->getVirtualMachine()->loadScript(script_content)) {
         LOG_AND_TROW_EX(SEU_LERR, -5, "Error loading script into virtual machine");
     }
-    
+
     //check for implemented handler
     if((err = script_manager()->getVirtualMachine()->functionExists(SEU_ALGORITHM_LAUNCH, exists))) {
         LOG_AND_TROW_EX(SEU_LERR,
@@ -241,35 +243,35 @@ void ScriptableExecutionUnit::unitDefineActionAndDataset() throw(CException) {
                         CHAOS_FORMAT("Error checking the presence of the function %1%", % SEU_ALGORITHM_LAUNCH));
     }
     alghorithm_handler_implemented[0] = exists;
-    
+
     if((err = script_manager()->getVirtualMachine()->functionExists(SEU_ALGORITHM_START, exists))) {
         LOG_AND_TROW_EX(SEU_LERR,
                         -4,
                         CHAOS_FORMAT("Error checking the presence of the function %1%", % SEU_ALGORITHM_START));
     }
     alghorithm_handler_implemented[1] = exists;
-    
+
     if((err = script_manager()->getVirtualMachine()->functionExists(SEU_ALGORITHM_STEP, exists))) {
         LOG_AND_TROW_EX(SEU_LERR,
                         -5,
                         CHAOS_FORMAT("Error checking the presence of the function %1%", % SEU_ALGORITHM_STEP));
     }
     alghorithm_handler_implemented[2] = exists;
-    
+
     if((err = script_manager()->getVirtualMachine()->functionExists(SEU_ALGORITHM_STOP, exists))) {
         LOG_AND_TROW_EX(SEU_LERR,
                         -6,
                         CHAOS_FORMAT("Error checking the presence of the function %1%", % SEU_ALGORITHM_STOP));
     }
     alghorithm_handler_implemented[3] = exists;
-    
+
     if((err = script_manager()->getVirtualMachine()->functionExists(SEU_ALGORITHM_END, exists))) {
         LOG_AND_TROW_EX(SEU_LERR,
                         -7,
                         CHAOS_FORMAT("Error checking the presence of the function %1%", % SEU_ALGORITHM_END));
     }
     alghorithm_handler_implemented[4] = exists;
-    
+
     if((err = script_manager()->getVirtualMachine()->functionExists(SEU_INPUT_ATTRIBUTE_CHANGED, exists))) {
         LOG_AND_TROW_EX(SEU_LERR,
                         -7,
@@ -314,7 +316,7 @@ void ScriptableExecutionUnit::executeAlgorithmStep(uint64_t step_delay_time) thr
     LockableScriptManagerReadLock rl = script_manager.getReadLockObject();
     ScriptInParam input_param;
     ScriptOutParam output_param;
-    
+
     //add step delay time
     input_param.push_back(CDataVariant((int64_t)step_delay_time));
     if(script_manager()->getVirtualMachine()->callProcedure(SEU_ALGORITHM_STEP,
@@ -354,7 +356,7 @@ void ScriptableExecutionUnit::executeAlgorithmEnd() throw(CException) {
 void ScriptableExecutionUnit::unitUndefineActionAndDataset() throw(CException) {
     SEU_LAPP << "Unregister api";
     unregisterApi();
-    
+
     if(script_manager().get() != NULL) {
         InizializableService::deinitImplementation(script_manager().get(),
                                                    "ScriptManager",
@@ -370,7 +372,7 @@ bool ScriptableExecutionUnit::updatedInputDataset(const std::string &attribute_n
     if(!alghorithm_handler_implemented[5])
         return false;
     LockableScriptManagerWriteLock rl = script_manager.getWriteLockObject();
-    
+
     bool managed = true;
     ScriptInParam input_param;
     input_param.push_back(CDataVariant(attribute_name));
@@ -390,7 +392,7 @@ CDataWrapper * ScriptableExecutionUnit::updateScriptSource(CDataWrapper *data_pa
     ScriptInParam input_param;
     chaos::service_common::data::script::ScriptSDWrapper sdw(data_pack);
     LockableScriptManagerWriteLock rl = script_manager.getWriteLockObject();
-    
+
     if(sdw().script_description.language.compare(script_language) != 0) {
         LOG_AND_TROW_EX(SEU_LERR,
                         -1,
@@ -401,7 +403,7 @@ CDataWrapper * ScriptableExecutionUnit::updateScriptSource(CDataWrapper *data_pa
     if(script_manager()->getVirtualMachine()->loadScript(script_content)) {
         LOG_AND_TROW_EX(SEU_LERR, -2, "Error loading script into virtual machine");
     }
-    
+
     //now we need to simulate the init and start operation
     switch(getServiceState()) {
         case CUStateKey::INIT:
@@ -432,5 +434,5 @@ CDataWrapper * ScriptableExecutionUnit::updateScriptSource(CDataWrapper *data_pa
 }
 
 void ScriptableExecutionUnit::pluginDirectoryHasBeenUpdated() {
-    
+
 }
