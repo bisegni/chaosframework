@@ -32,10 +32,20 @@ void FixedOutputChannelDatasetTableModel::updateData(const QSharedPointer<chaos:
                                         QSharedPointer<AttributeInfo>(new AttributeInfo(real_row++,
                                                                                         4,
                                                                                         chaos::DataType::TYPE_INT64)));
+    map_doe_attribute_name_index.insert(chaos::ControlUnitDatapackCommonKey::RUN_ID,
+                                        QSharedPointer<AttributeInfo>(new AttributeInfo(real_row++,
+                                                                                        4,
+                                                                                        chaos::DataType::TYPE_INT64)));
     QSharedPointer<CDataWrapper> element(new CDataWrapper());
     element->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME, chaos::DataPackCommonKey::DPCK_TIMESTAMP);
     element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE, chaos::DataType::TYPE_INT64);
     element->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION, "Acquisition timestamp");
+    vector_doe.push_back(element);
+
+    element.reset(new CDataWrapper());
+    element->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME, chaos::ControlUnitDatapackCommonKey::RUN_ID);
+    element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE, chaos::DataType::TYPE_INT64);
+    element->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION, "Run identification");
     vector_doe.push_back(element);
 
     //add other output channels
@@ -237,7 +247,7 @@ QVariant FixedOutputChannelDatasetTableModel::getTooltipTextForData(int row, int
         }
         break;
 
-   default:
+    default:
         result = getCellData(row, column);
         break;
     }

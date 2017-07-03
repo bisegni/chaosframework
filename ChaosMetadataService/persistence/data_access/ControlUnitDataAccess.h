@@ -133,6 +133,9 @@ namespace chaos {
                      */
                     virtual int eraseControlUnitDataBeforeTS(const std::string& control_unit_id,
                                                              uint64_t unit_ts) = 0;
+                    
+                    //! increment and return the control unit run id
+                    virtual int getNextRunID(const std::string& control_unit_id, int64_t& run_id) = 0;
                 };
                 
             }

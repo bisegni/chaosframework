@@ -337,10 +337,10 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
             updated_field.appendArray(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_COMMAND_DESCRIPTION,
                                       batch_command_bson_array.arr());
         }
-        
         mongo::BSONObj query = bson_find.obj();
         mongo::BSONObj update = BSON("$set" << BSON(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION << updated_field.obj()));
         
+        //update dateset
         DEBUG_CODE(MDBCUDA_DBG<<log_message("setDataset",
                                             "update - dataset",
                                             DATA_ACCESS_LOG_2_ENTRY("Query",
@@ -351,22 +351,6 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
         if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                      query,
                                      update))) {
-            MDBCUDA_ERR << "Error updating unit server";
-        }
-        
-        //update run id
-        const std::string run_id_key = CHAOS_FORMAT("%1%.%2%", %ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION%ControlUnitNodeDefinitionKey::CONTROL_UNIT_RUN_ID);
-        mongo::BSONObj update_run_id = BSON("$inc" << BSON(run_id_key<<(int64_t)1));
-        DEBUG_CODE(MDBCUDA_DBG<<log_message("setDataset",
-                                            "update - run id",
-                                            DATA_ACCESS_LOG_2_ENTRY("Query",
-                                                                    "Update",
-                                                                    query.toString(),
-                                                                    update_run_id.jsonString()));)
-        //set the instance parameter within the node representing the control unit
-        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
-                                     query,
-                                     update_run_id))) {
             MDBCUDA_ERR << "Error updating unit server";
         }
     } catch (const mongo::DBException &e) {
@@ -1142,6 +1126,48 @@ int MongoDBControlUnitDataAccess::eraseControlUnitDataBeforeTS(const std::string
                                      false,
                                      &mongo::WriteConcern::unacknowledged))){
             MDBCUDA_ERR << CHAOS_FORMAT("Error erasing stored object data for key %1% up to %2%", %control_unit_id%unit_ts);
+        }
+    } catch (const mongo::DBException &e) {
+        MDBCUDA_ERR << e.what();
+        err = e.getCode();
+    }
+    return err;
+}
+
+int MongoDBControlUnitDataAccess::getNextRunID(const std::string& control_unit_id,
+                                               int64_t& run_id) {
+    int err = 0;
+    try {
+        const std::string run_id_key = CHAOS_FORMAT("%1%.%2%", %"run_description"%ControlUnitNodeDefinitionKey::CONTROL_UNIT_RUN_ID);
+        
+        //increment the run id
+        mongo::BSONObj r;
+        mongo::BSONObj q = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << control_unit_id);
+        mongo::BSONObj u = BSON("$inc" << BSON(run_id_key<<(int64_t)1));
+        mongo::BSONObj sort;
+        mongo::BSONObj projection = BSON(run_id_key<<1);
+        //update run id
+        
+        DEBUG_CODE(MDBCUDA_DBG<<log_message("updateRunID",
+                                            "update",
+                                            DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                                    "Update",
+                                                                    q.toString(),
+                                                                    u.jsonString()));)
+        //set the instance parameter within the node representing the control unit
+        if((err = connection->findAndModify(r,
+                                            MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                            q,
+                                            u,
+                                            false,
+                                            true,
+                                            sort,
+                                            projection))) {
+            MDBCUDA_ERR << "Error updating run id for control unit " << control_unit_id;
+        } else if(r.isEmpty()) {
+            run_id = 0;
+        } else {
+            run_id = r.getFieldDotted(run_id_key).Long();
         }
     } catch (const mongo::DBException &e) {
         MDBCUDA_ERR << e.what();

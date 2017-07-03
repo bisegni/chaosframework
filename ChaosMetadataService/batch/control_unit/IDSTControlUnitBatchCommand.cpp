@@ -90,6 +90,7 @@ void IDSTControlUnitBatchCommand::setHandler(CDataWrapper *data) {
 
 // inherited method
 void IDSTControlUnitBatchCommand::acquireHandler() {
+    int err = 0;
     MDSBatchCommand::acquireHandler();
     switch(request->phase) {
         case MESSAGE_PHASE_UNSENT: {
