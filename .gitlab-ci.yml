@@ -25,7 +25,7 @@ build_framework_x86_64:
     key: "$CI_BUILD_REF_NAME/x86_64"
     untracked: true
     paths:
-        - /builds/bisegni/chaosframework/config/CHACHE
+        - /builds/bisegni/chaosframework/config/CACHE
         - /builds/bisegni/chaosframework/external-x86_64-Linux
         - /builds/bisegni/chaosframework/chaos-distrib-x86_64-Linux
   only:
@@ -49,7 +49,7 @@ build_framework_arm:
     key: "$CI_BUILD_REF_NAME/arm"
     untracked: true
     paths:
-        - /builds/bisegni/chaosframework/config/CHACHE
+        - /builds/bisegni/chaosframework/config/CACHE
         - /builds/bisegni/chaosframework/external-armhf
         - /builds/bisegni/chaosframework/chaos-distrib-armhf
   only:
