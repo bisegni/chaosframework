@@ -221,45 +221,19 @@ int QueryDataConsumer::consumeDataCloudQuery(DirectIODeviceChannelHeaderOpcodeQu
                                              const std::string& search_key,
                                              uint64_t search_start_ts,
                                              uint64_t search_end_ts,
-                                             uint64_t last_sequence_id,
-                                             DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult * result_header,
-                                             void **result_value) {
+                                             SearchSequence& last_element_found_seq,
+                                             QueryResultPage& page_element_found) {
     
     int err = 0;
     //execute the query
-    VectorObject reuslt_object_found;
     ObjectStorageDataAccess *obj_storage_da = object_storage_driver->getDataAccess<object_storage::abstraction::ObjectStorageDataAccess>();
     if((err = obj_storage_da->findObject(search_key,
                                          search_start_ts,
                                          search_end_ts,
                                          query_header->field.record_for_page,
-                                         reuslt_object_found,
-                                         (result_header->last_found_sequence = last_sequence_id)))) {
+                                         page_element_found,
+                                         last_element_found_seq))) {
         ERR << CHAOS_FORMAT("Error performing cloud query with code %1%", %err);
-    } else if(reuslt_object_found.size()){
-        //we successfully have perform query
-        result_header->result_data_size = 0;
-        result_header->numer_of_record_found = reuslt_object_found.size();
-        for(VectorObjectIterator it = reuslt_object_found.begin(),
-            end = reuslt_object_found.end();
-            it != end;
-            it++) {
-            //write result into mresults memory
-            int element_bson_size = 0;
-            const char * element_bson_mem = (*it)->getBSONRawData(element_bson_size);
-            
-            //enlarge buffer
-            *result_value = std::realloc(*result_value, (result_header->result_data_size + element_bson_size));
-            
-            //copy bson elelment in memory location
-            char *mem_start_copy = ((char*)*result_value)+result_header->result_data_size;
-            
-            //copy
-            std::memcpy(mem_start_copy, element_bson_mem, element_bson_size);
-            
-            //keep track of the full size of the result
-            result_header->result_data_size +=element_bson_size;
-        }
     }
     return err;
 }

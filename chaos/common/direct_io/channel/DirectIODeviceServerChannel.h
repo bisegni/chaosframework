@@ -20,7 +20,7 @@
 #ifndef __CHAOSFramework__DirectIODeviceServerChannel__
 #define __CHAOSFramework__DirectIODeviceServerChannel__
 
-
+#include <chaos/common/chaos_types.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/direct_io/channel/DirectIODeviceChannelGlobal.h>
@@ -32,7 +32,6 @@ namespace chaos {
     namespace common {
         namespace direct_io {
             namespace channel {
-                
                 //! Sercver channel for the managment of data request
                 /*!
                  This channel answer to the client api for data managment, push, get last data and various query
@@ -120,16 +119,15 @@ namespace chaos {
                          \param search_key the key that we need to query
                          \param search_start_ts the start of the time that delimit the lower time stamp of result
                          \param search_end_ts the end of the time stamp that delimit the upper time stamp of result
-                         \param start_ts_is_included true if the search_start_ts need to be considere included or not
+                         \param last_sequence_id is an in-out parameter, at in it specific the last found element, in output it need to be filled with the sequence information of the last item found
                          \param
                          */
                         virtual int consumeDataCloudQuery(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloud *query_header,
                                                           const std::string& search_key,
                                                           uint64_t search_start_ts,
                                                           uint64_t search_end_ts,
-                                                          uint64_t last_sequence_id,
-                                                          opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult * result_header,
-                                                          void **result_value)
+                                                          opcode_headers::SearchSequence& last_element_found_seq,
+                                                          opcode_headers::QueryResultPage& result_page)
                         {return -1;};
                         
                         //! Delete the data for a key delimited into a time intervall

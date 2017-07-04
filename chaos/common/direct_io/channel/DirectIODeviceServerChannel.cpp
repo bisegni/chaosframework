@@ -147,6 +147,7 @@ int DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack,
                 if (dataPack &&
                     dataPack->channel_data) {
                     void *result_data = NULL;
+                    QueryResultPage result_page;
                     chaos_data::CDataWrapper query((char *)dataPack->channel_data);
                     opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudResultPtr result_header = (DirectIODeviceChannelHeaderOpcodeQueryDataCloudResultPtr)calloc(sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult), 1);
                     
@@ -156,22 +157,49 @@ int DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack,
                     std::string key = CDW_GET_SRT_WITH_DEFAULT(&query, DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_KEY_STRING, "");
                     uint64_t start_ts = CDW_GET_VALUE_WITH_DEFAULT(&query, DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_STAR_TS_I64, getUInt64Value, 0);
                     uint64_t end_ts = CDW_GET_VALUE_WITH_DEFAULT(&query, DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_END_TS_I64, getUInt64Value, 0);
-                    uint64_t last_sequence_id = (uint64_t)CDW_GET_VALUE_WITH_DEFAULT(&query, DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_LAST_SEQUENCE_ID, getUInt64Value, std::numeric_limits<int64_t>::min());
+                    SearchSequence last_sequence_info{CDW_GET_VALUE_WITH_DEFAULT(&query, DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_LAST_RUN_ID, getUInt64Value, std::numeric_limits<int64_t>::min()),
+                                                      CDW_GET_VALUE_WITH_DEFAULT(&query, DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_LAST_DP_COUNTER, getUInt64Value, std::numeric_limits<int64_t>::min())};
                     //call server api if we have at least the key
                     if((key.compare("") != 0)) {err = handler->consumeDataCloudQuery(header,
                                                                                      key,
                                                                                      start_ts,
                                                                                      end_ts,
-                                                                                     last_sequence_id,
-                                                                                     result_header,
-                                                                                     &result_data);}
+                                                                                     last_sequence_info,//in-out
+                                                                                     result_page);}
                     if(err == 0){
+                        //manage emory for retur data
+                        if((result_header->numer_of_record_found = (uint32_t)result_page.size())){
+                            //we successfully have perform query
+                            result_header->result_data_size = 0;
+                            for(QueryResultPageIterator it = result_page.begin(),
+                                end = result_page.end();
+                                it != end;
+                                it++) {
+                                //write result into mresults memory
+                                int element_bson_size = 0;
+                                const char * element_bson_mem = (*it)->getBSONRawData(element_bson_size);
+                                
+                                //enlarge buffer
+                                result_data = std::realloc(result_data, (result_header->result_data_size + element_bson_size));
+                                
+                                //copy bson elelment in memory location
+                                char *mem_start_copy = ((char*)result_data)+result_header->result_data_size;
+                                
+                                //copy
+                                std::memcpy(mem_start_copy, element_bson_mem, element_bson_size);
+                                
+                                //keep track of the full size of the result
+                                result_header->result_data_size +=element_bson_size;
+                            }
+                        }
+                        
                         //set the result header and data
                         DIRECT_IO_SET_CHANNEL_HEADER(synchronous_answer, result_header, sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult));
                         DIRECT_IO_SET_CHANNEL_DATA(synchronous_answer, result_data, result_header->result_data_size);
                         result_header->result_data_size = TO_LITTEL_ENDNS_NUM(uint32_t, result_header->result_data_size);
                         result_header->numer_of_record_found = TO_LITTEL_ENDNS_NUM(uint32_t, result_header->numer_of_record_found);
-                        result_header->last_found_sequence = TO_LITTEL_ENDNS_NUM(uint64_t, result_header->last_found_sequence);
+                        result_header->last_found_sequence.run_id = TO_LITTEL_ENDNS_NUM(uint64_t, last_sequence_info.run_id);
+                        result_header->last_found_sequence.datapack_counter = TO_LITTEL_ENDNS_NUM(uint64_t, last_sequence_info.datapack_counter);
                     } else {
                         if(result_data) free(result_data);
                         if(result_header) free(result_header);

@@ -38,6 +38,8 @@ using namespace boost;
 using namespace chaos::common::data;
 using namespace chaos::common::utility;
 using namespace chaos::common::batch_command;
+using namespace chaos::common::direct_io::channel::opcode_headers;
+
 using namespace chaos::service_common::persistence::mongodb;
 using namespace chaos::data_service::object_storage::mongodb;
 using namespace chaos::data_service::object_storage::abstraction;
@@ -96,9 +98,9 @@ int MongoDBObjectStorageDataAccess::getObject(const std::string& key,
         } else if(result.isEmpty()) {
             DBG << "No data has been found";
         } else {
-
+            
             object_ptr_ref.reset(new CDataWrapper(result.objdata()));
-     //       DBG<<"fromDB:"<<object_ptr_ref->getJSONString();
+            //       DBG<<"fromDB:"<<object_ptr_ref->getJSONString();
         }
     } catch (const mongo::DBException &e) {
         ERR << e.what();
@@ -150,45 +152,35 @@ int MongoDBObjectStorageDataAccess::deleteObject(const std::string& key,
 }
 
 int MongoDBObjectStorageDataAccess::findObject(const std::string& key,
-                                                uint64_t timestamp_from,
-                                                uint64_t timestamp_to,
+                                               uint64_t timestamp_from,
+                                               uint64_t timestamp_to,
                                                const uint32_t page_len,
                                                object_storage::abstraction::VectorObject& found_object_page,
-                                               uint64_t& last_sequence_found) {
+                                               SearchSequence& last_record_found_seq) {
     int err = 0;
     std::vector<mongo::BSONObj> object_found;
     try {
         bool reverse_order = false;
-        const std::string sequence_field = CHAOS_FORMAT("%1%.%2%",%MONGODB_DAQ_DATA_FIELD%chaos::DataPackCommonKey::DPCK_SEQ_ID);
+        const std::string run_key = CHAOS_FORMAT("%1%.%2%",%MONGODB_DAQ_DATA_FIELD%chaos::ControlUnitDatapackCommonKey::RUN_ID);
+        const std::string counter_key = CHAOS_FORMAT("%1%.%2%",%MONGODB_DAQ_DATA_FIELD%chaos::DataPackCommonKey::DPCK_SEQ_ID);
         mongo::BSONObjBuilder time_query;
-            //we have the intervall
-            reverse_order = timestamp_from>timestamp_to;
-#ifndef QUERY_WITH_SEQUENCE
-            if(last_sequence_found>0){
-            	timestamp_from = last_sequence_found;
-            }
-#endif
+        //we have the intervall
+        reverse_order = timestamp_from>timestamp_to;
+        
+        if(reverse_order == false) {
+            time_query << "$gt" << mongo::Date_t(timestamp_from) <<
+            "$lte" << mongo::Date_t(timestamp_to);
+        } else {
+            time_query << "$lt" << mongo::Date_t(timestamp_from) <<
+            "$gte" << mongo::Date_t(timestamp_to);
+        }
+        
+        
 
-            if(reverse_order == false) {
-                time_query << "$gt" << mongo::Date_t(timestamp_from) <<
-                               "$lte" << mongo::Date_t(timestamp_to);
-            } else {
-                time_query << "$lt" << mongo::Date_t(timestamp_from) <<
-                              "$gte" << mongo::Date_t(timestamp_to);
-            }
-
-
-#ifdef QUERY_WITH_SEQUENCE
-
-
-        mongo::BSONObj o = BSON(chaos::DataPackCommonKey::DPCK_DEVICE_ID << key <<
-                                sequence_field << BSON("$gt" << (long long)last_sequence_found) <<
-                                chaos::DataPackCommonKey::DPCK_TIMESTAMP << time_query.obj());
-#else
-        mongo::BSONObj o = BSON(chaos::DataPackCommonKey::DPCK_DEVICE_ID << key <<
-                                   chaos::DataPackCommonKey::DPCK_TIMESTAMP << time_query.obj());
-#endif
-        mongo::Query q = o;
+        mongo::Query q = BSON(chaos::DataPackCommonKey::DPCK_DEVICE_ID << key <<
+                                chaos::DataPackCommonKey::DPCK_TIMESTAMP << time_query.obj() <<
+                                run_key << BSON("$gte" << (long long)last_record_found_seq.run_id) <<
+                                counter_key << BSON("$gte" << (long long)last_record_found_seq.datapack_counter));
         
         if(reverse_order) {
             q = q.sort(BSON(chaos::DataPackCommonKey::DPCK_TIMESTAMP<<-1));
@@ -199,7 +191,7 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string& key,
         DEBUG_CODE(DBG<<log_message("findObject",
                                     "findN",
                                     DATA_ACCESS_LOG_1_ENTRY("Query",
-                                                            o.jsonString()));)
+                                                            q.toString()));)
         mongo::BSONArrayBuilder bab;
         connection->findN(object_found,
                           MONGO_DB_COLLECTION_NAME(MONGODB_DAQ_COLL_NAME),
@@ -213,20 +205,15 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string& key,
                     end = object_found.end();
                     it != end;
                     it++) {
-                	CDataWrapper*new_obj=new CDataWrapper(it->getObjectField(MONGODB_DAQ_DATA_FIELD).objdata());
+                    CDataWrapper*new_obj=new CDataWrapper(it->getObjectField(MONGODB_DAQ_DATA_FIELD).objdata());
                     found_object_page.push_back(ObjectSharedPtr(new_obj));
-     //               DBG<<"fromDB:"<<new_obj->getJSONString();
-
+                    //               DBG<<"fromDB:"<<new_obj->getJSONString();
+                    
                 }
-#ifdef QUERY_WITH_SEQUENCE
-                last_sequence_found = object_found[object_found.size()-1].getFieldDotted(sequence_field).Long();
-                DEBUG_CODE(DBG<<CHAOS_FORMAT("Found %1% element last sequence read is %2%", %object_found.size()%(int64_t)last_sequence_found);)
-#else
-                const std::string sequence_time_field = CHAOS_FORMAT("%1%.%2%",%MONGODB_DAQ_DATA_FIELD%chaos::DataPackCommonKey::DPCK_TIMESTAMP );
 
-                last_sequence_found = object_found[object_found.size()-1].getFieldDotted(sequence_time_field).Long();
-                DEBUG_CODE(DBG<<CHAOS_FORMAT("Found %1% element last TIMED sequence read is %2%", %object_found.size()%(int64_t)last_sequence_found);)
-#endif
+                last_record_found_seq.run_id = object_found[object_found.size()-1].getFieldDotted(run_key).Long();
+                last_record_found_seq.datapack_counter = object_found[object_found.size()-1].getFieldDotted(counter_key).Long();
+                DEBUG_CODE(DBG<<CHAOS_FORMAT("Found %1% element last sequence read is [%2%-%3%]", %object_found.size()%(int64_t)last_record_found_seq.run_id%last_record_found_seq.datapack_counter);)
             }
         }
     } catch (const mongo::DBException &e) {

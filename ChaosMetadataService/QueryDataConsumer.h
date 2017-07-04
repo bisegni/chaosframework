@@ -90,9 +90,8 @@ namespace chaos{
                                       const std::string& search_key,
                                       uint64_t search_start_ts,
                                       uint64_t search_end_ts,
-                                      uint64_t last_sequence_id,
-                                      opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult * result_header,
-                                      void **result_value);
+                                      opcode_headers::SearchSequence& last_element_found_seq,
+                                      opcode_headers::QueryResultPage& page_element_found);
             
             int consumeDataCloudDelete(const std::string& search_key,
                                        uint64_t start_ts,

@@ -64,7 +64,7 @@ namespace chaos {
                                    uint64_t timestamp_to,
                                    const uint32_t page_len,
                                    object_storage::abstraction::VectorObject& found_object_page,
-                                   uint64_t& last_seq_found);
+                                   common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq);
                 };
             }
         }

@@ -38,7 +38,7 @@ namespace chaos {
                 QueryPhaseNotStarted,
                 QueryPhaseStarted,
                 QueryPhaseEnded
-            }QueryPhase;
+            } QueryPhase;
             
             CHAOS_DEFINE_VECTOR_FOR_TYPE(ChaosSharedPtr<chaos::common::data::CDataWrapper>, ResultPageDecodedPacket);
             
@@ -48,14 +48,11 @@ namespace chaos {
                 
                 struct ResultPage {
                     unsigned int current_fetched;
-                    ResultPageDecodedPacket decoded_page;
-                    uint64_t last_received_sequence;
-                  //  ChaosUniquePtr<chaos::common::direct_io::channel::opcode_headers::DirectIODeviceChannelOpcodeQueryDataCloudResult>query_result;
-                    chaos::common::direct_io::channel::opcode_headers::DirectIODeviceChannelOpcodeQueryDataCloudResultPtr query_result;
+                    direct_io::channel::opcode_headers::SearchSequence last_record_found_seq;
+                    direct_io::channel::opcode_headers::QueryResultPage found_element_page;
+
                     ResultPage();
                     ~ResultPage();
-                    void reset(chaos::common::direct_io::channel::opcode_headers::DirectIODeviceChannelOpcodeQueryDataCloudResultPtr new_query_result);
-                    
                     const bool hasNext() const;
                     
                     ChaosSharedPtr<chaos::common::data::CDataWrapper> next()  throw (chaos::CException);

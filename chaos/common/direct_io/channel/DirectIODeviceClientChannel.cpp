@@ -262,8 +262,8 @@ int64_t DirectIODeviceClientChannel::queryDataCloud(const std::string& key,
                                                     uint64_t start_ts,
                                                     uint64_t end_ts,
                                                     uint32_t page_dimension,
-                                                    uint64_t last_sequence_id,
-                                                    DirectIODeviceChannelOpcodeQueryDataCloudResultPtr *result_handler) {
+                                                    SearchSequence& last_sequence_id,
+                                                    QueryResultPage& found_element_page) {
     int64_t err = 0;
     DirectIODataPack *answer = NULL;
     CDataWrapper query_description;
@@ -276,7 +276,8 @@ int64_t DirectIODeviceClientChannel::queryDataCloud(const std::string& key,
     query_description.addStringValue(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_KEY_STRING, key);
     query_description.addInt64Value(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_STAR_TS_I64, (int64_t)start_ts);
     query_description.addInt64Value(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_END_TS_I64, (int64_t)end_ts);
-    query_description.addInt64Value(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_LAST_SEQUENCE_ID, last_sequence_id);
+    query_description.addInt64Value(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_LAST_RUN_ID, last_sequence_id.run_id);
+    query_description.addInt64Value(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_LAST_DP_COUNTER, last_sequence_id.datapack_counter);
     
     //copy the query id on header
     query_data_cloud_header->field.record_for_page = TO_LITTEL_ENDNS_NUM(uint32_t, page_dimension);
@@ -298,20 +299,25 @@ int64_t DirectIODeviceClientChannel::queryDataCloud(const std::string& key,
     } else {
         //we got answer
         if(answer) {
-            *result_handler = (DirectIODeviceChannelOpcodeQueryDataCloudResultPtr)calloc(sizeof(DirectIODeviceChannelOpcodeQueryDataCloudResult), 1);
             //get the header
-            (*result_handler)->header = *static_cast<opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult*>(answer->channel_header_data);
+            opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult *result_header = static_cast<opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult*>(answer->channel_header_data);
             
-            (*result_handler)->header.result_data_size = FROM_LITTLE_ENDNS_NUM(uint32_t, (*result_handler)->header.result_data_size);
-            (*result_handler)->header.numer_of_record_found = FROM_LITTLE_ENDNS_NUM(uint32_t, (*result_handler)->header.numer_of_record_found);
-            (*result_handler)->header.last_found_sequence = FROM_LITTLE_ENDNS_NUM(uint64_t, (*result_handler)->header.last_found_sequence);
-            if((*result_handler)->header.result_data_size > 0) {
-                (*result_handler)->results = (char*)answer->channel_data;
+            uint32_t result_data_size = FROM_LITTLE_ENDNS_NUM(uint32_t, result_header->result_data_size);
+            uint32_t numer_of_record_found = FROM_LITTLE_ENDNS_NUM(uint32_t, result_header->numer_of_record_found);
+            last_sequence_id.run_id = FROM_LITTLE_ENDNS_NUM(uint64_t, result_header->last_found_sequence.run_id);
+            last_sequence_id.datapack_counter = FROM_LITTLE_ENDNS_NUM(uint64_t, result_header->last_found_sequence.datapack_counter);
+            if(result_data_size > 0) {
+                //scan all result
+                char *current_data_prt = (char*)answer->channel_data;
+                while(found_element_page.size() < numer_of_record_found) {
+                    ChaosSharedPtr<CDataWrapper> last_record(new CDataWrapper(current_data_prt));
+                    //!at this time cdata wrapper copy the data
+                    found_element_page.push_back(last_record);
+                    //clear current record
+                    current_data_prt += last_record->getBSONRawSize();
+                }
             }
-        }
-    }
-    if(answer) {
-        if(answer->channel_header_data) {
+            free(answer->channel_data);
             free(answer->channel_header_data);
         }
         free(answer);

@@ -97,7 +97,8 @@ namespace chaos {
                      \param key to search
                      \param start_ts start of timestamp to search
                      \param end_ts end of the timestamp where limit the search
-                     \param query_id the newly associated query id is returned.
+                     \param last_sequence is an input-outpu field that permit to give sequence of the last found
+                            element and will be filled with last element's sequencefo the current found page
                      \param result_handler has the found element page
                      \return error
                      */
@@ -105,8 +106,8 @@ namespace chaos {
                                            uint64_t start_ts,
                                            uint64_t end_ts,
                                            uint32_t page_dimension,
-                                           uint64_t last_sequence_id,
-                                           opcode_headers::DirectIODeviceChannelOpcodeQueryDataCloudResultPtr *result_handler);
+                                           opcode_headers::SearchSequence& last_sequence,
+                                           opcode_headers::QueryResultPage& found_element_page);
                     
                     //! Perform a temporal data delete operation on a key
                     /*!

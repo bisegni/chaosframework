@@ -25,6 +25,7 @@
 #include <chaos/common/chaos_types.h>
 
 #include <chaos/common/data/CDataWrapper.h>
+#include <chaos/common/direct_io/channel/DirectIODeviceChannelGlobal.h>
 
 #include <chaos_service_common/persistence/data_access/AbstractDataAccess.h>
 
@@ -69,7 +70,7 @@ namespace chaos {
                                            const uint64_t timestamp_to,
                                            const uint32_t page_len,
                                            VectorObject& found_object_page,
-                                           uint64_t& last_seq_found) = 0;
+                                           common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq) = 0;
                 };
             }
         }

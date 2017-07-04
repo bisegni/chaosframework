@@ -11,7 +11,9 @@
 
 #include <string>
 #include <stdint.h>
-#include <arpa/inet.h>
+//#include <arpa/inet.h>
+#include <chaos/common/chaos_types.h>
+#include <chaos/common/data/CDataWrapper.h>
 
 namespace chaos {
     namespace common {
@@ -27,7 +29,7 @@ namespace chaos {
                         DeviceChannelOpcodePutOutput				= 1,	/**< send the output dataset [synchronous]*/
                         DeviceChannelOpcodeGetLastOutput            = 2,	/**< request the last output dataset from live cache [synchronous]*/
                         DeviceChannelOpcodeQueryDataCloud			= 4,	/**< query the chaos data associated to a key [synchronous]*/
-                        DeviceChannelOpcodeDeleteDataCloud			= 8,     /**< delete the data associated with a key [synchronous]*/
+                        DeviceChannelOpcodeDeleteDataCloud			= 8,    /**< delete the data associated with a key [synchronous]*/
                         DeviceChannelOpcodePutHeathData				= 16,	/**< send the health dataset [synchronous]*/
                         DeviceChannelOpcodeMultiGetLastOutput       = 32	/**< request the last output dataset from live cache for a set of key[synchronous]*/
                     } DeviceChannelOpcode;
@@ -64,8 +66,10 @@ namespace chaos {
                     static const char * const QUERY_PARAM_END_TS_I64                    = "qp_data_cloud_end_ts";
                     //!is the node unique id for wich we whant the results
                     static const char * const QUERY_PARAM_SEARCH_KEY_STRING             = "qp_data_cloud_key";
+                    //identify the last run id found
+                    static const char * const QUERY_PARAM_SEARCH_LAST_RUN_ID            = "qp_data_cloud_last_run_id";
                     //if true the data pack will be '>=' otherwhise '>' in timestamp respect to qp_data_cloud_start_ts key
-                    static const char * const QUERY_PARAM_SEARCH_LAST_SEQUENCE_ID		= "qp_data_cloud_last_sequence_id";
+                    static const char * const QUERY_PARAM_SEARCH_LAST_DP_COUNTER		= "qp_data_cloud_last_dp_counter";
                 }
                 
                 //! Name space for grupping the varius headers for every DeviceChannelOpcode
@@ -172,6 +176,15 @@ namespace chaos {
                     } DirectIODeviceChannelHeaderOpcodeQueryDataCloud,
                     *DirectIODeviceChannelHeaderOpcodeQueryDataCloudPtr;
                     
+                    //!page result
+                    CHAOS_DEFINE_VECTOR_FOR_TYPE(ChaosSharedPtr<chaos::common::data::CDataWrapper>, QueryResultPage);
+                    
+                    //structure for identificate the sequnce fo the found record
+                    typedef struct SearchSequence {
+                        uint64_t run_id;
+                        uint64_t datapack_counter;
+                    }SearchSequence;
+                    
                     //! Header for DirectIODeviceChannelHeaderGetOpcode asynchronous result
                     /*!
                      the found data is sent as data part of direct io protocol
@@ -182,7 +195,7 @@ namespace chaos {
                         //! The numer of element found
                         uint32_t numer_of_record_found;
                         //!last sequence found
-                        uint64_t last_found_sequence;
+                        SearchSequence last_found_sequence;
                     } DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult,
                     *DirectIODeviceChannelHeaderOpcodeQueryDataCloudResultPtr;
                     

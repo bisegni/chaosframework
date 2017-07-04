@@ -35,52 +35,21 @@ using namespace chaos::common::direct_io::channel::opcode_headers;
 
 #pragma mark QueryCursor
 QueryCursor::ResultPage::ResultPage():
-query_result(NULL),
-last_received_sequence(0),
-current_fetched(0){}
-
-QueryCursor::ResultPage::~ResultPage() {
-	 if(query_result){
-	    	free(query_result);
-	    }
+current_fetched(0){
+    std::memset(&last_record_found_seq, 0, sizeof(direct_io::channel::opcode_headers::SearchSequence));
 }
 
-void QueryCursor::ResultPage::reset(DirectIODeviceChannelOpcodeQueryDataCloudResultPtr new_query_result) {
-    current_fetched = 0;
-    decoded_page.clear();
-    //query_result.reset(new_query_result);
-    if(query_result){
-    	free(query_result);
-    }
-    query_result = new_query_result;
-    last_received_sequence = query_result->header.last_found_sequence;
-    //scan all result
-    char *current_data_prt = query_result->results;
-    ChaosSharedPtr<CDataWrapper> last_record;
-    decoded_page.clear();
-    while(decoded_page.size() < new_query_result->header.numer_of_record_found){
-        //!at this time cdata wrapper copy the data
-        last_record.reset(new CDataWrapper(current_data_prt));
-        decoded_page.push_back(last_record);
-        //clear current record
-        current_data_prt += last_record->getBSONRawSize();
-    }
-    if(query_result->results){
-    	free(query_result->results);
-    }
-    free(query_result);
-    query_result=NULL;
+QueryCursor::ResultPage::~ResultPage() {}
 
-    
-}
+
 
 const bool QueryCursor::ResultPage::hasNext() const {
-    return current_fetched < decoded_page.size();
+    return current_fetched < found_element_page.size();
 }
 
 ChaosSharedPtr<chaos::common::data::CDataWrapper> QueryCursor::ResultPage::next() throw (chaos::CException){
     if(hasNext() == false) {throw CException(-1, "Cursor endend", __PRETTY_FUNCTION__);}
-    return decoded_page[current_fetched++];
+    return found_element_page[current_fetched++];
 }
 
 #pragma mark QueryCursor
@@ -104,7 +73,7 @@ QueryCursor::~QueryCursor() {}
 const std::string& QueryCursor::queryID() const {
     return query_id;
 }
-const int32_t QueryCursor::getError(){return api_error;}
+const int32_t QueryCursor::getError(){return (int32_t)api_error;}
 const bool QueryCursor::hasNext() {
     switch(phase) {
         case QueryPhaseNotStarted:
@@ -128,20 +97,17 @@ ChaosSharedPtr<chaos::common::data::CDataWrapper>  QueryCursor::next() throw (ch
 
 #pragma mark private methods
 int64_t QueryCursor::fetchNewPage() {
-    bool from_included = false;
+    result_page.found_element_page.clear();
     IODirectIODriverClientChannels	*next_client = NULL;
-    chaos::common::direct_io::channel::opcode_headers::DirectIODeviceChannelOpcodeQueryDataCloudResultPtr query_result = NULL;
-    result_page.decoded_page.clear();
     if((next_client = static_cast<IODirectIODriverClientChannels*>(connection_feeder.getService())) == NULL) return -1;
     
     //fetch the new page
     switch(phase) {
         case QueryPhaseNotStarted:
             DBG << "Start Search";
-            result_page.last_received_sequence = 0;
+            std::memset(&result_page.last_record_found_seq, 0, sizeof(direct_io::channel::opcode_headers::SearchSequence));
             //change to the next phase
             phase = QueryPhaseStarted;
-            from_included = true;
             break;
         case QueryPhaseStarted:
             DBG << "Continue on next page";
@@ -151,28 +117,20 @@ int64_t QueryCursor::fetchNewPage() {
             ERR << "Cursor ended";
             return 0;
     }
-    query_result=NULL;
     if((api_error = next_client->device_client_channel->queryDataCloud(node_id,
                                                                        start_ts,
                                                                        end_ts,
                                                                        page_len,
-                                                                       result_page.last_received_sequence,
-                                                                       &query_result))) {
+                                                                       result_page.last_record_found_seq,
+                                                                       result_page.found_element_page))) {
         ERR << CHAOS_FORMAT("Error during fetching query page with code %1%", %api_error);
         phase = QueryPhaseEnded;
-        if(query_result){
-        	free(query_result);
-        	query_result=NULL;
-
-        }
         return api_error;
-    } else if(query_result) {
-        result_page.reset(query_result);
-        if(result_page.decoded_page.size()  < page_len) {
+    } else {
+        result_page.current_fetched = 0;
+        if(result_page.found_element_page.size() < page_len) {
             phase = QueryPhaseEnded;
         }
-    } else {
-        phase = QueryPhaseEnded;
     }
     return api_error;
 }
