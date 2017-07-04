@@ -871,7 +871,7 @@ int MongoDBNodeDataAccess::setTags(const std::string& node_uid, ChaosStringSet& 
         for(std::set<std::string>::const_iterator iterator = tags.begin() ; iterator != tags.end() ; iterator++) {
             bson_tag_list << *iterator;
         }
-        mongo::BSONObj update = BSON("$addToSet" << BSON("tags" << BSON("$each" << bson_tag_list.arr())));
+        mongo::BSONObj update = BSON("$addToSet" << BSON("instance_description.tags" << BSON("$each" << bson_tag_list.arr())));
 
         DEBUG_CODE(MDBNDA_DBG<<log_message("setTags",
                                            "update",
@@ -904,7 +904,7 @@ int MongoDBNodeDataAccess::dropTags(const std::string& node_uid, ChaosStringSet&
             for(std::set<std::string>::const_iterator iterator = tags.begin() ; iterator != tags.end() ; iterator++) {
                 bson_tag_list << *iterator;
             }
-            mongo::BSONObj update = BSON("$pull" << BSON("tags" << BSON("$in" << bson_tag_list.arr())));
+            mongo::BSONObj update = BSON("$pull" << BSON("instance_description.tags" << BSON("$in" << bson_tag_list.arr())));
 
             DEBUG_CODE(MDBNDA_DBG<<log_message("dropTags",
                                                "update",
@@ -931,7 +931,7 @@ int MongoDBNodeDataAccess::dropAllTags(const std::string& node_uid) {
 
     try {
         mongo::BSONObj query = BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID << node_uid);
-        mongo::BSONObj update = BSON("$set" << BSON("tags" << BSON("[]")));
+        mongo::BSONObj update = BSON("$set" << BSON("instance_description.tags" << BSON("[]")));
         mongo::BSONObj options = BSON("multi" << BSON("true"));
 
         DEBUG_CODE(MDBNDA_DBG<<log_message("dropAllTags",
@@ -959,7 +959,7 @@ int MongoDBNodeDataAccess::listTags(const std::string& node_uid, ChaosStringSet&
 
     try {
         mongo::BSONObj query = BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID << node_uid);
-        mongo::BSONObj projection = BSON("tags" << 1);
+        mongo::BSONObj projection = BSON("instance_description.tags" << 1);
 
         DEBUG_CODE(MDBNDA_DBG<<log_message("listTags",
                                            "findOne",
