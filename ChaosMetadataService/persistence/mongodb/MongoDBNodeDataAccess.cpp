@@ -106,15 +106,15 @@ int MongoDBNodeDataAccess::insertNewNode(CDataWrapper& node_description) {
                 node_description.addInt64Value("seq", sequence_id);
             }
         }
-        
+
         ChaosUniquePtr<SerializationBuffer> ser(node_description.getBSONData());
         mongo::BSONObj obj_to_insert(ser->getBufferPtr());
-        
+
         DEBUG_CODE(MDBNDA_DBG<<log_message("insertNewNode",
                                            "insert",
                                            DATA_ACCESS_LOG_1_ENTRY("Query",
                                                                    obj_to_insert));)
-        
+
         if((err = connection->insert(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                      obj_to_insert))) {
             MDBNDA_ERR << "Error creating new node";
@@ -859,6 +859,133 @@ int MongoDBNodeDataAccess::isNodeAlive(const std::string& node_uid, bool& alive)
     }
     return err;
 }
+
+int MongoDBNodeDataAccess::setTags(const std::string& node_uid, ChaosStringSet& tags) {
+    int err = 0;
+
+    try {
+        mongo::BSONObj query = BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID << node_uid);
+
+        mongo::BSONArrayBuilder bson_tag_list;
+        // constructing BSON array of tags
+        for(std::set<std::string>::const_iterator iterator = tags.begin() ; iterator != tags.end() ; iterator++) {
+            bson_tag_list << *iterator;
+        }
+        mongo::BSONObj update = BSON("$addToSet" << BSON("tags" << BSON("$each" << bson_tag_list.arr())));
+
+        DEBUG_CODE(MDBNDA_DBG<<log_message("setTags",
+                                           "update",
+                                           DATA_ACCESS_LOG_2_ENTRY("query",
+                                                                   "update",
+                                                                   query.jsonString(),
+                                                                   update.jsonString()));)
+
+        if(err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES), query, update)){
+            MDBNDA_ERR << CHAOS_FORMAT("Error updating associated tags for node %1%",%node_uid);
+        }
+
+    } catch (const mongo::DBException &e) {
+        MDBNDA_ERR << e.what();
+        err = e.getCode();
+    }
+
+    return err;
+}
+
+int MongoDBNodeDataAccess::dropTags(const std::string& node_uid, ChaosStringSet& tags) {
+
+        int err = 0;
+
+        try {
+            mongo::BSONObj query = BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID << node_uid);
+
+            mongo::BSONArrayBuilder bson_tag_list;
+            // constructing BSON array of tags
+            for(std::set<std::string>::const_iterator iterator = tags.begin() ; iterator != tags.end() ; iterator++) {
+                bson_tag_list << *iterator;
+            }
+            mongo::BSONObj update = BSON("$pull" << BSON("tags" << BSON("$in" << bson_tag_list.arr())));
+
+            DEBUG_CODE(MDBNDA_DBG<<log_message("dropTags",
+                                               "update",
+                                               DATA_ACCESS_LOG_2_ENTRY("query",
+                                                                       "update",
+                                                                       query.jsonString(),
+                                                                       update.jsonString()));)
+
+            if(err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES), query, update)){
+                MDBNDA_ERR << CHAOS_FORMAT("Error dropping associated tags for node %1%",%node_uid);
+            }
+
+        } catch (const mongo::DBException &e) {
+            MDBNDA_ERR << e.what();
+            err = e.getCode();
+        }
+
+        return err;
+}
+
+int MongoDBNodeDataAccess::dropAllTags(const std::string& node_uid) {
+
+    int err = 0;
+
+    try {
+        mongo::BSONObj query = BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID << node_uid);
+        mongo::BSONObj update = BSON("$set" << BSON("tags" << BSON("[]")));
+        mongo::BSONObj options = BSON("multi" << BSON("true"));
+
+        DEBUG_CODE(MDBNDA_DBG<<log_message("dropAllTags",
+                                           "update",
+                                           DATA_ACCESS_LOG_2_ENTRY("query",
+                                                                   "update",
+                                                                   query.jsonString(),
+                                                                   update.jsonString()));)
+
+        if(err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES), query, update, true, true)){
+            MDBNDA_ERR << CHAOS_FORMAT("Error dropping all associated tags for node %1%",%node_uid);
+        }
+
+    } catch (const mongo::DBException &e) {
+        MDBNDA_ERR << e.what();
+        err = e.getCode();
+    }
+
+    return err;
+}
+
+int MongoDBNodeDataAccess::listTags(const std::string& node_uid, ChaosStringSet& tags) {
+
+    int err = 0;
+
+    try {
+        mongo::BSONObj query = BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID << node_uid);
+        mongo::BSONObj projection = BSON("tags" << 1);
+
+        DEBUG_CODE(MDBNDA_DBG<<log_message("listTags",
+                                           "findOne",
+                                           DATA_ACCESS_LOG_2_ENTRY("query",
+                                                                   "projection",
+                                                                   query.jsonString(),
+                                                                   projection.jsonString()));)
+
+        mongo::BSONObj result;
+
+        if(err = connection->findOne(result, MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES), query, &projection)) {
+            MDBNDA_ERR << CHAOS_FORMAT("Error retrieving associated tags for node %1%",%node_uid);
+        } else if(result.isEmpty()) {
+            MDBNDA_ERR << CHAOS_FORMAT("No node found while searching for node uid %1%",%node_uid);
+        } else {
+
+        }
+
+    } catch (const mongo::DBException &e) {
+        MDBNDA_ERR << e.what();
+        err = e.getCode();
+    }
+
+    return err;
+}
+
 //int MongoDBNodeDataAccess::reserveNodeForAgeingManagement(uint64_t& last_sequence_id,
 //                                                          std::string& node_uid_reserved,
 //                                                          uint32_t& node_ageing_time,

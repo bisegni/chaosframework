@@ -115,8 +115,21 @@ namespace chaos {
 //                    
 //                    int releaseNodeForAgeingManagement(std::string& node_uid,
 //                                                       bool performed);
-                    
+
+                    //! inherited method
                     int isNodeAlive(const std::string& node_uid, bool& alive);
+
+                    //! inherited method
+                    int setTags(const std::string& node_uid, ChaosStringSet& tags);
+
+                    //! inherited method
+                    int dropTags(const std::string& node_uid, ChaosStringSet& tags);
+
+                    //! inherited method
+                    int dropAllTags(const std::string& node_uid);
+
+                    //! inherited method
+                    int listTags(const std::string& node_uid, ChaosStringSet& tags);
                 };
             }
         }
