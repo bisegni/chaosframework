@@ -931,8 +931,8 @@ int MongoDBNodeDataAccess::dropAllTags(const std::string& node_uid) {
 
     try {
         mongo::BSONObj query = BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID << node_uid);
-        mongo::BSONObj update = BSON("$set" << BSON("instance_description.tags" << BSON("[]")));
-        mongo::BSONObj options = BSON("multi" << BSON("true"));
+        mongo::BSONObj update = BSON("$set" << BSON("instance_description.tags" << BSON_ARRAY("")));
+        mongo::BSONObj options = BSON("multi" << true);
 
         DEBUG_CODE(MDBNDA_DBG<<log_message("dropAllTags",
                                            "update",
