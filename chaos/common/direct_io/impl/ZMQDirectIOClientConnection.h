@@ -65,11 +65,11 @@ namespace chaos {
                     void *zmq_context;
                     
                     boost::shared_mutex mutext_send_message;
-                    
+                    std::string priority_endpoint;
+                    std::string service_endpoint;
 					std::string priority_identity;
+                    std::string service_identity;
 					void *socket_priority;
-
-					std::string service_identity;
 					void *socket_service;
 
                     ConnectionMonitorInfo monitor_info;
@@ -102,7 +102,6 @@ namespace chaos {
                     
                     //! release an instantiated connection
                     int releaseSocketPair();
-                    
 				protected:
 					
                     void init(void *init_data) throw(chaos::CException);

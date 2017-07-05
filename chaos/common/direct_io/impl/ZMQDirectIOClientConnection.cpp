@@ -41,8 +41,7 @@ socket_service(NULL){
 ZMQDirectIOClientConnection::~ZMQDirectIOClientConnection() {}
 
 void ZMQDirectIOClientConnection::init(void *init_data) throw(chaos::CException) {
-    //int err = getNewSocketPair();
-    //if(err) throw CException(-1, "Error configuring socket", __PRETTY_FUNCTION__);
+    if(ensureSocket() == false) throw CException(-1, "Error configuring socket", __PRETTY_FUNCTION__);
 }
 
 void ZMQDirectIOClientConnection::deinit() throw(chaos::CException) {
@@ -56,33 +55,33 @@ int ZMQDirectIOClientConnection::readMonitorMesg(void *monitor,
                                                  int *value,
                                                  char *address,
                                                  int address_max_size) {
-        // First frame in message contains event number and value
-        zmq_msg_t msg;
-        zmq_msg_init (&msg);
-        if (zmq_msg_recv (&msg, monitor, 0) == -1)
-            return -1; // Interruped, presumably
-        assert (zmq_msg_more (&msg));
-        
+    // First frame in message contains event number and value
+    zmq_msg_t msg;
+    zmq_msg_init (&msg);
+    if (zmq_msg_recv (&msg, monitor, 0) == -1)
+        return -1; // Interruped, presumably
+    assert (zmq_msg_more (&msg));
+    
+    uint8_t *data = (uint8_t *) zmq_msg_data (&msg);
+    uint16_t event = *(uint16_t *) (data);
+    if (value)
+        *value = *(uint32_t *) (data + 2);
+    
+    // Second frame in message contains event address
+    zmq_msg_init (&msg);
+    if (zmq_msg_recv (&msg, monitor, 0) == -1)
+        return -1; // Interruped, presumably
+    assert (!zmq_msg_more (&msg));
+    
+    if (address) {
         uint8_t *data = (uint8_t *) zmq_msg_data (&msg);
-        uint16_t event = *(uint16_t *) (data);
-        if (value)
-            *value = *(uint32_t *) (data + 2);
-        
-        // Second frame in message contains event address
-        zmq_msg_init (&msg);
-        if (zmq_msg_recv (&msg, monitor, 0) == -1)
-            return -1; // Interruped, presumably
-        assert (!zmq_msg_more (&msg));
-        
-        if (address) {
-            uint8_t *data = (uint8_t *) zmq_msg_data (&msg);
-            size_t size = zmq_msg_size (&msg);
-            size_t size_to_use = (size>address_max_size?address_max_size:size);
-            memcpy (address, data, size_to_use);
-            address [size_to_use] = 0;
-        }
-        return event;
+        size_t size = zmq_msg_size (&msg);
+        size_t size_to_use = (size>address_max_size?address_max_size:size);
+        memcpy (address, data, size_to_use);
+        address [size_to_use] = 0;
     }
+    return event;
+}
 
 void ZMQDirectIOClientConnection::socketMonitor() {
     const int linger_period = 0;
@@ -144,8 +143,6 @@ int ZMQDirectIOClientConnection::getNewSocketPair() {
     std::string socket_id;
     std::string url;
     std::string error_str;
-    std::string priority_endpoint;
-    std::string service_endpoint;
     std::vector<std::string> resolved_ip;
     
     MapZMQConfiguration default_configuration;
@@ -256,32 +253,21 @@ int64_t ZMQDirectIOClientConnection::sendPriorityData(DirectIODataPack *data_pac
                                                       DirectIODeallocationHandler *data_deallocation_handler,
                                                       DirectIODataPack **synchronous_answer) {
     int64_t err = 0;
+    CHAOS_ASSERT(data_pack);
     boost::unique_lock<boost::shared_mutex> wl(mutext_send_message);
-    if(ensureSocket() == false) {
-        err = ErrorDirectIOCoce::EC_NO_SOCKET;
-        safeDeleteDataPack(data_pack,
-                           header_deallocation_handler,
-                           data_deallocation_handler);
-    } else if(socket_priority &&
-              data_pack){
-        err = writeToSocket(socket_priority,
-                            priority_identity,
-                            completeDataPack(data_pack),
-                            header_deallocation_handler,
-                            data_deallocation_handler,
-                            synchronous_answer);
-        if(err > 0 /*resource not available*/) {
-            //remove socket in case of delay on the answer
-            releaseSocketPair();
-            if(ensureSocket() == false) {
-                err = ErrorDirectIOCoce::EC_NO_SOCKET;
-            }
+    err = writeToSocket(socket_priority,
+                        priority_identity,
+                        completeDataPack(data_pack),
+                        header_deallocation_handler,
+                        data_deallocation_handler,
+                        synchronous_answer);
+    if(err > 0 /*resource not available*/) {
+        //remove socket in case of delay on the answer
+        //change id ofr socket
+        if((err = ZMQBaseClass::setAndReturnID(socket_priority,
+                                               priority_endpoint))) {
+            ERR << "Error configuring new id for socker :" << priority_endpoint;
         }
-    } else {
-        err = ErrorDirectIOCoce::EC_NO_SOCKET;
-        safeDeleteDataPack(data_pack,
-                           header_deallocation_handler,
-                           data_deallocation_handler);
     }
     return err;
 }
@@ -292,33 +278,22 @@ int64_t ZMQDirectIOClientConnection::sendServiceData(DirectIODataPack *data_pack
                                                      DirectIODeallocationHandler *data_deallocation_handler,
                                                      DirectIODataPack **synchronous_answer) {
     int64_t err = 0;
+    CHAOS_ASSERT(data_pack);
     boost::unique_lock<boost::shared_mutex> wl(mutext_send_message);
-    if(ensureSocket() == false) {
-        err = ErrorDirectIOCoce::EC_NO_SOCKET;
-        safeDeleteDataPack(data_pack,
-                           header_deallocation_handler,
-                           data_deallocation_handler);
-    } else if(socket_service &&
-              data_pack){
-        err = writeToSocket(socket_service,
-                            service_identity,
-                            completeDataPack(data_pack),
-                            header_deallocation_handler,
-                            data_deallocation_handler,
-                            synchronous_answer);
-        if(err > 0 /*resource not available*/) {
-            //remove socket in case of delay on the answer
-            releaseSocketPair();
-            if(ensureSocket() == false) {
-                err = ErrorDirectIOCoce::EC_NO_SOCKET;
-            }
+    err = writeToSocket(socket_service,
+                        service_identity,
+                        completeDataPack(data_pack),
+                        header_deallocation_handler,
+                        data_deallocation_handler,
+                        synchronous_answer);
+    if(err > 0 /*resource not available*/) {
+        //change id ofr socket
+        if((err = ZMQBaseClass::setAndReturnID(socket_service,
+                                               service_identity))) {
+            ERR << "Error configuring new id for socker :" << service_endpoint;
         }
-    } else {
-        err = ErrorDirectIOCoce::EC_NO_SOCKET;
-        safeDeleteDataPack(data_pack,
-                           header_deallocation_handler,
-                           data_deallocation_handler);
     }
+    
     return err;
 }
 
