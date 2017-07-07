@@ -64,8 +64,6 @@ uuid(UUIDUtil::generateUUIDLite()){
     std::memset(&init_parameter, 0, sizeof(IODirectIODriverInitParam));
     
     device_server_channel = NULL;
-    data_cache.data_ptr = NULL;
-    data_cache.data_len = 0;
 }
 
 IODirectIODriver::~IODirectIODriver() {
@@ -105,9 +103,10 @@ void IODirectIODriver::init(void *_init_parameter) throw(CException) {
 
 void IODirectIODriver::deinit() throw(CException) {
     IODirectIODriver_LINFO_ << "Remove active query";
-    //acquire write lock on map
+    //lock all  internal resource that can be effetted by
+    boost::shared_lock<boost::shared_mutex>(mutext_feeder);
     boost::unique_lock<boost::shared_mutex> wmap_loc(map_query_future_mutex);
-    
+
     //scan all remained query
     for(std::map<string, QueryCursor*>::iterator it = map_query_future.begin();
         it != map_query_future.end();
@@ -116,17 +115,14 @@ void IODirectIODriver::deinit() throw(CException) {
     }
     map_query_future.clear();
     
-    if(data_cache.data_ptr) {
-        IODirectIODriver_LINFO_ << "delete last data received";
-        free(data_cache.data_ptr);
-    }
-    
     //remove all url and service
     IODirectIODriver_LINFO_ << "Remove all urls";
     connectionFeeder.clear();
     
     //deinitialize server channel
     if(device_server_channel) {
+        //remove me as handler
+        device_server_channel->setHandler(NULL);
         init_parameter.endpoint_instance->releaseChannelInstance(device_server_channel);
     }
     
@@ -205,7 +201,7 @@ int IODirectIODriver::retriveMultipleData(const ChaosStringVector& key,
     boost::shared_lock<boost::shared_mutex>(mutext_feeder);
     IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
     if(!next_client) return -1;
-
+    
     int err = (int)next_client->device_client_channel->requestLastOutputData(key,
                                                                              result);
     if(err) {
@@ -267,6 +263,7 @@ int IODirectIODriver::loadDatasetTypeFromSnapshotTag(const std::string& restore_
 }
 
 void IODirectIODriver::addServerURL(const std::string& url) {
+    boost::unique_lock<boost::shared_mutex>(mutext_feeder);
     if(!common::direct_io::DirectIOClient::checkURL(url)) {
         IODirectIODriver_LERR_ << "Url " << url << " non well formed";
         return;
@@ -304,9 +301,14 @@ chaos::common::data::CDataWrapper* IODirectIODriver::updateConfiguration(chaos::
 void IODirectIODriver::disposeService(void *service_ptr) {
     if(!service_ptr) return;
     IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(service_ptr);
-    
+    //remove me as handler before delete all other this so anymore receive event
+    next_client->connection->setEventHandler(NULL);
     if(next_client->system_client_channel) next_client->connection->releaseChannelInstance(next_client->system_client_channel);
-    if(next_client->device_client_channel) next_client->connection->releaseChannelInstance(next_client->device_client_channel);
+
+    if(next_client->device_client_channel) {
+        next_client->connection->releaseChannelInstance(next_client->device_client_channel);
+    }
+
     init_parameter.client_instance->releaseConnection(next_client->connection);
     delete(next_client);
 }

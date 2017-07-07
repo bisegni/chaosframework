@@ -93,8 +93,6 @@ namespace chaos{
                 WaitSemaphore wait_get_answer;
                 boost::shared_mutex mutext_feeder;
                 
-                IODData data_cache;
-                
                 //query future management
                 boost::shared_mutex				map_query_future_mutex;
                 std::map<std::string, QueryCursor*>	map_query_future;
