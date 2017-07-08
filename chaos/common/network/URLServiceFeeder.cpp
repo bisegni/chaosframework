@@ -91,7 +91,6 @@ void URLServiceFeeder::removeFromOnlineQueue(uint32_t url_index) {
  */
 void URLServiceFeeder::clear(bool dispose_service) {
 	URLServiceFeeder_LAPP << "Remove all URL and service form multi-index";
-	set_urls_online.clear();
 	
 	for(int idx = 0; idx < (list_size/sizeof(URLServiceFeeder::URLService)); idx++) {
 		//allocate space for new url service
@@ -105,7 +104,7 @@ void URLServiceFeeder::clear(bool dispose_service) {
 		available_url.insert(idx);
 		offline_urls.erase(idx);
     }
-	
+    set_urls_online.clear();
 }
 
 void URLServiceFeeder::grow() {

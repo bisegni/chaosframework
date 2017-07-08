@@ -98,6 +98,7 @@ namespace chaos{
                 std::map<std::string, QueryCursor*>	map_query_future;
                 
                 std::string uuid;
+                bool shutting_down;
             protected:
                 chaos::common::network::URLServiceFeeder connectionFeeder;
                 void disposeService(void *service_ptr);
