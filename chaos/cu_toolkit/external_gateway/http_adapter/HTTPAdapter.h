@@ -64,6 +64,8 @@ namespace chaos{
                     ~HTTPAdapter();
                     void init(void *init_data) throw (chaos::CException);
                     void deinit() throw (chaos::CException);
+                    int registerEndpoint(const ExternalUnitEndpoint& endpoint);
+                    int deregisterEndpoint(const ExternalUnitEndpoint& endpoint);
                 };
             }
         }

@@ -32,7 +32,7 @@ using namespace chaos::common::utility;
 
 ExternalUnitGateway::ExternalUnitGateway() {
     //add adapters
-    map_protocol_adapter.insert(MapAdapterPair("http", ChaosSharedPtr<AbstractAdapter>(new http_adapter::HTTPAdapter())));
+    map_protocol_adapter().insert(MapAdapterPair("http", ChaosSharedPtr<AbstractAdapter>(new http_adapter::HTTPAdapter())));
 }
 
 ExternalUnitGateway::~ExternalUnitGateway() {
@@ -40,8 +40,8 @@ ExternalUnitGateway::~ExternalUnitGateway() {
 }
 
 void ExternalUnitGateway::init(void *init_data) throw (chaos::CException) {
-   for(MapAdapterIterator it = map_protocol_adapter.begin(),
-       end= map_protocol_adapter.end();
+   for(MapAdapterIterator it = map_protocol_adapter().begin(),
+       end= map_protocol_adapter().end();
        it != end;
        it++) {
        InizializableService::initImplementation(*it->second, NULL, it->first, __PRETTY_FUNCTION__);
@@ -49,10 +49,20 @@ void ExternalUnitGateway::init(void *init_data) throw (chaos::CException) {
 }
 
 void ExternalUnitGateway::deinit() throw (chaos::CException) {
-    for(MapAdapterIterator it = map_protocol_adapter.begin(),
-        end= map_protocol_adapter.end();
+    for(MapAdapterIterator it = map_protocol_adapter().begin(),
+        end= map_protocol_adapter().end();
         it != end;
         it++) {
         CHAOS_NOT_THROW(InizializableService::deinitImplementation(*it->second, it->first, __PRETTY_FUNCTION__););
     }
+}
+
+
+int ExternalUnitGateway::registerEndpoint(const ExternalUnitEndpoint& endpoint) {
+    if(getServiceState() != 1) return -1;
+    return 0;
+}
+
+int ExternalUnitGateway::deregisterEndpoint(const ExternalUnitEndpoint& endpoint) {
+    return 0;
 }

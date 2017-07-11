@@ -72,7 +72,7 @@ void HTTPAdapter::deinit() throw (chaos::CException) {
 void HTTPAdapter::poller() {
     INFO << "Entering thread poller";
     while (run) {
-        mg_mgr_poll(&mgr, 200);
+        mg_mgr_poll(&mgr, 10);
     }
     INFO << "Leaving thread poller";
 }
@@ -123,4 +123,12 @@ void HTTPAdapter::eventHandler(struct mg_connection *nc, int ev, void *ev_data) 
             //            }
             break;
     }
+}
+
+int HTTPAdapter::registerEndpoint(const ExternalUnitEndpoint& endpoint) {
+    
+}
+
+int HTTPAdapter::deregisterEndpoint(const ExternalUnitEndpoint& endpoint) {
+    
 }

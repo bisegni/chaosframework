@@ -24,9 +24,11 @@
 
 #include <chaos/common/chaos_types.h>
 #include <chaos/common/utility/Singleton.h>
+#include <chaos/common/utility/LockableObject.h>
 #include <chaos/common/utility/InizializableService.h>
-#include <chaos/cu_toolkit/external_gateway/AbstractAdapter.h>
 
+#include <chaos/cu_toolkit/external_gateway/AbstractAdapter.h>
+#include <chaos/cu_toolkit/external_gateway/ExternalUnitEndpoint.h>
 namespace chaos{
     namespace cu {
         namespace external_gateway {
@@ -34,18 +36,24 @@ namespace chaos{
             //! define adapter map
             CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ChaosSharedPtr<AbstractAdapter>, MapAdapter);
             
+            CHAOS_DEFINE_LOCKABLE_OBJECT(MapAdapter, LMapAdapter)
+            
+            
             //!External gateway root class
             class ExternalUnitGateway:
             public chaos::common::utility::Singleton<ExternalUnitGateway>,
             public chaos::common::utility::InizializableService {
                 friend class chaos::common::utility::Singleton<ExternalUnitGateway>;
                 //!associate the protocol string to the adapter
-                MapAdapter map_protocol_adapter;
+                LMapAdapter map_protocol_adapter;
                 ExternalUnitGateway();
                 ~ExternalUnitGateway();
             public:
                 void init(void *init_data) throw (chaos::CException);
                 void deinit() throw (chaos::CException);
+                
+                int registerEndpoint(const ExternalUnitEndpoint& endpoint);
+                int deregisterEndpoint(const ExternalUnitEndpoint& endpoint);
             };
         }
     }

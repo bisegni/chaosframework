@@ -754,6 +754,10 @@
 		32A88BF51CF8228A001DBAF5 /* lzio.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A88BB81CF8228A001DBAF5 /* lzio.h */; };
 		32A8F7D1172BE3FD0090DB78 /* KeyGroupCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A8F7CF172BE3FD0090DB78 /* KeyGroupCache.cpp */; };
 		32A8F7D2172BE3FD0090DB78 /* KeyGroupCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A8F7D0172BE3FD0090DB78 /* KeyGroupCache.h */; };
+		32A94A7C1F14CC830069DDA3 /* ExternalUnitConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A94A7A1F14CC830069DDA3 /* ExternalUnitConnection.cpp */; };
+		32A94A7D1F14CC830069DDA3 /* ExternalUnitConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A94A7B1F14CC830069DDA3 /* ExternalUnitConnection.h */; };
+		32A94A801F14CDBF0069DDA3 /* ExternalUnitEndpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A94A7E1F14CDBF0069DDA3 /* ExternalUnitEndpoint.cpp */; };
+		32A94A811F14CDBF0069DDA3 /* ExternalUnitEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A94A7F1F14CDBF0069DDA3 /* ExternalUnitEndpoint.h */; };
 		32A968521D522FB800BD636C /* PropertyGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A968501D522FB800BD636C /* PropertyGroup.cpp */; };
 		32A968531D522FB800BD636C /* PropertyGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A968511D522FB800BD636C /* PropertyGroup.h */; };
 		32AAD78814CD660B005A097C /* RpcClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 32AAD78714CD660B005A097C /* RpcClient.h */; };
@@ -2154,6 +2158,10 @@
 		32A88BB81CF8228A001DBAF5 /* lzio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lzio.h; sourceTree = "<group>"; };
 		32A8F7CF172BE3FD0090DB78 /* KeyGroupCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeyGroupCache.cpp; sourceTree = "<group>"; };
 		32A8F7D0172BE3FD0090DB78 /* KeyGroupCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyGroupCache.h; sourceTree = "<group>"; };
+		32A94A7A1F14CC830069DDA3 /* ExternalUnitConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExternalUnitConnection.cpp; sourceTree = "<group>"; };
+		32A94A7B1F14CC830069DDA3 /* ExternalUnitConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExternalUnitConnection.h; sourceTree = "<group>"; };
+		32A94A7E1F14CDBF0069DDA3 /* ExternalUnitEndpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExternalUnitEndpoint.cpp; sourceTree = "<group>"; };
+		32A94A7F1F14CDBF0069DDA3 /* ExternalUnitEndpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExternalUnitEndpoint.h; sourceTree = "<group>"; };
 		32A968501D522FB800BD636C /* PropertyGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PropertyGroup.cpp; sourceTree = "<group>"; };
 		32A968511D522FB800BD636C /* PropertyGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PropertyGroup.h; sourceTree = "<group>"; };
 		32AAD78714CD660B005A097C /* RpcClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcClient.h; sourceTree = "<group>"; };
@@ -5303,6 +5311,10 @@
 				32E782D01EFC081400AD59F7 /* http_adapter */,
 				32E782CC1EFC075D00AD59F7 /* ExternalUnitGateway.cpp */,
 				32E782CD1EFC075D00AD59F7 /* ExternalUnitGateway.h */,
+				32A94A7A1F14CC830069DDA3 /* ExternalUnitConnection.cpp */,
+				32A94A7B1F14CC830069DDA3 /* ExternalUnitConnection.h */,
+				32A94A7E1F14CDBF0069DDA3 /* ExternalUnitEndpoint.cpp */,
+				32A94A7F1F14CDBF0069DDA3 /* ExternalUnitEndpoint.h */,
 				32E782DA1EFC0AC300AD59F7 /* ControlUnitBridge.cpp */,
 				32E782DB1EFC0AC300AD59F7 /* ControlUnitBridge.h */,
 				32E782DE1EFC0EEE00AD59F7 /* AbstractAdapter.cpp */,
@@ -5885,6 +5897,7 @@
 				32FC562E1EE8449A00C19841 /* EUPluginApiWrapper.h in Headers */,
 				323BC2901EE0705500B4D602 /* plugin.h in Headers */,
 				32CFC5C61AF55FED00E2A0B6 /* IOCU.h in Headers */,
+				32A94A811F14CDBF0069DDA3 /* ExternalUnitEndpoint.h in Headers */,
 				326DB4B914B3A3E50018A8D0 /* ChaosCUToolkit.h in Headers */,
 				326CD5AC1D66F975003AD071 /* PublishingManager.h in Headers */,
 				32C4EF3F1D4F716A0014F3D3 /* dataset_event_types.h in Headers */,
@@ -5911,6 +5924,7 @@
 				326DB4CA14B3A3E50018A8D0 /* DataManagerException.h in Headers */,
 				3270D5E91CCFAC4F0072017B /* AbstractExecutionUnit.h in Headers */,
 				326933EE1D5089590033D9E9 /* trigger_system.h in Headers */,
+				32A94A7D1F14CC830069DDA3 /* ExternalUnitConnection.h in Headers */,
 				32655ACE1E93FCF200829266 /* EUSearch.h in Headers */,
 				32E782E11EFC0EEE00AD59F7 /* AbstractAdapter.h in Headers */,
 				3252A3141C8ED6BD00900FF2 /* DatasetAttributeHandler.h in Headers */,
@@ -6725,6 +6739,7 @@
 				326DB4B814B3A3E50018A8D0 /* ChaosCUToolkit.cpp in Sources */,
 				326CD5AB1D66F975003AD071 /* PublishingManager.cpp in Sources */,
 				3287F7E617B2756C009DD6ED /* DriverManager.cpp in Sources */,
+				32A94A801F14CDBF0069DDA3 /* ExternalUnitEndpoint.cpp in Sources */,
 				3214EF101D466F95004DB689 /* DataBroker.cpp in Sources */,
 				32E782DC1EFC0AC300AD59F7 /* ControlUnitBridge.cpp in Sources */,
 				325168CC1D47935D00E877DF /* DataBrokerEditor.cpp in Sources */,
@@ -6751,6 +6766,7 @@
 				326BB29F1E3753E200BFA602 /* ProxyControlUnit.cpp in Sources */,
 				3252A30F1C8ED2A800900FF2 /* AbstractAttributeHandler.cpp in Sources */,
 				326DB4C114B3A3E50018A8D0 /* ControlManager.cpp in Sources */,
+				32A94A7C1F14CC830069DDA3 /* ExternalUnitConnection.cpp in Sources */,
 				326DB4C814B3A3E50018A8D0 /* DataManager.cpp in Sources */,
 				325168CE1D479BAB00E877DF /* data_manager_types.cpp in Sources */,
 				3264138D1E3F658D0035E175 /* ControlUnitApiInterface.cpp in Sources */,

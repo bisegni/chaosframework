@@ -24,10 +24,11 @@
 
 #include <chaos/common/utility/InizializableService.h>
 
+#include <chaos/cu_toolkit/external_gateway/ExternalUnitEndpoint.h>
+
 namespace chaos{
     namespace cu {
         namespace external_gateway {
-            
             //!adapter interface
             class AbstractAdapter:
             public chaos::common::utility::InizializableService {
@@ -36,6 +37,8 @@ namespace chaos{
                 ~AbstractAdapter();
                 void init(void *init_data) throw (chaos::CException);
                 void deinit() throw (chaos::CException);
+                virtual int registerEndpoint(const ExternalUnitEndpoint& endpoint) = 0;
+                virtual int deregisterEndpoint(const ExternalUnitEndpoint& endpoint) = 0;
             };
         }
     }
