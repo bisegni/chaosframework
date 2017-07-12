@@ -29,6 +29,7 @@
 
 #include <chaos/cu_toolkit/external_gateway/AbstractAdapter.h>
 #include <chaos/cu_toolkit/external_gateway/ExternalUnitEndpoint.h>
+#include <chaos/cu_toolkit/external_gateway/ExternalEchoEndpoint.h>
 namespace chaos{
     namespace cu {
         namespace external_gateway {
@@ -44,6 +45,8 @@ namespace chaos{
             public chaos::common::utility::Singleton<ExternalUnitGateway>,
             public chaos::common::utility::InizializableService {
                 friend class chaos::common::utility::Singleton<ExternalUnitGateway>;
+                //!anc 'echo' endpoint for testing purphose
+                ExternalEchoEndpoint echo_endpoint;
                 //!associate the protocol string to the adapter
                 LMapAdapter map_protocol_adapter;
                 ExternalUnitGateway();
@@ -52,8 +55,8 @@ namespace chaos{
                 void init(void *init_data) throw (chaos::CException);
                 void deinit() throw (chaos::CException);
                 
-                int registerEndpoint(const ExternalUnitEndpoint& endpoint);
-                int deregisterEndpoint(const ExternalUnitEndpoint& endpoint);
+                int registerEndpoint(ExternalUnitEndpoint& endpoint);
+                int deregisterEndpoint(ExternalUnitEndpoint& endpoint);
             };
         }
     }

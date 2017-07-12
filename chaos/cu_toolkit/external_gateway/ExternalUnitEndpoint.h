@@ -23,6 +23,8 @@
 #define __CHAOSFramework__A6646B9_6E82_418D_B7A4_617A53271BEA_ExternalEndpoint_h
 
 #include <chaos/common/chaos_types.h>
+#include <chaos/common/utility/LockableObject.h>
+
 #include <chaos/cu_toolkit/external_gateway/ExternalUnitConnection.h>
 
 namespace chaos{
@@ -36,21 +38,39 @@ namespace chaos{
              ednpoint can be confiugre to permit one or multiple connection
              */
             class ExternalUnitEndpoint {
+                friend class ExternalUnitConnection;
+                //! define adapter map
+                CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ExternalUnitConnection*, MapConnection);
                 
+                CHAOS_DEFINE_LOCKABLE_OBJECT(MapConnection, LMapConnection);
+
                 //! end point identifier
                 const std::string endpoint_identifier;
+                
+                LMapConnection map_connection;
+                
+                //! send a message to a connection
+                int addConnection(ExternalUnitConnection& new_connection);
+                
+                //! send a message to a connection
+                int removeConnection(ExternalUnitConnection& removed_connection);
+                
             protected:
                 //!notify a new arrived connection
                 virtual void handleNewConnection(const std::string& connection_identifier) = 0;
+                
+                //! notify that a message has been received for a remote connection
+                virtual int handleReceivedeMessage(const std::string& connection_identifier, const std::string& message) = 0;
+                
                 //!notify that a connection has been closed
                 virtual void handleDisconnection(const std::string& connection_identifier) = 0;
+                
                 //! send a message to a connection
-                virtual int sendMessage(const std::string& connection_identifier, const std::string& message);
-                //! notify that a message has been received for a remote connection
-                virtual int handleRemoveMessage(const std::string& connection_identifier, const std::string& message);
+                int sendMessage(const std::string& connection_identifier, const std::string& message);
             public:
                 ExternalUnitEndpoint(const std::string& _endpoint_identifier);
                 virtual ~ExternalUnitEndpoint();
+                const std::string& getIdentifier();
             };
         }
     }

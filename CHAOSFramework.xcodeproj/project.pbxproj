@@ -758,6 +758,10 @@
 		32A94A7D1F14CC830069DDA3 /* ExternalUnitConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A94A7B1F14CC830069DDA3 /* ExternalUnitConnection.h */; };
 		32A94A801F14CDBF0069DDA3 /* ExternalUnitEndpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A94A7E1F14CDBF0069DDA3 /* ExternalUnitEndpoint.cpp */; };
 		32A94A811F14CDBF0069DDA3 /* ExternalUnitEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A94A7F1F14CDBF0069DDA3 /* ExternalUnitEndpoint.h */; };
+		32A94A841F16449E0069DDA3 /* HTTPExternalUnitConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A94A821F16449E0069DDA3 /* HTTPExternalUnitConnection.cpp */; };
+		32A94A851F16449E0069DDA3 /* HTTPExternalUnitConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A94A831F16449E0069DDA3 /* HTTPExternalUnitConnection.h */; };
+		32A94A881F1654040069DDA3 /* ExternalEchoEndpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A94A861F1654040069DDA3 /* ExternalEchoEndpoint.cpp */; };
+		32A94A891F1654040069DDA3 /* ExternalEchoEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A94A871F1654040069DDA3 /* ExternalEchoEndpoint.h */; };
 		32A968521D522FB800BD636C /* PropertyGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A968501D522FB800BD636C /* PropertyGroup.cpp */; };
 		32A968531D522FB800BD636C /* PropertyGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A968511D522FB800BD636C /* PropertyGroup.h */; };
 		32AAD78814CD660B005A097C /* RpcClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 32AAD78714CD660B005A097C /* RpcClient.h */; };
@@ -2162,6 +2166,10 @@
 		32A94A7B1F14CC830069DDA3 /* ExternalUnitConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExternalUnitConnection.h; sourceTree = "<group>"; };
 		32A94A7E1F14CDBF0069DDA3 /* ExternalUnitEndpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExternalUnitEndpoint.cpp; sourceTree = "<group>"; };
 		32A94A7F1F14CDBF0069DDA3 /* ExternalUnitEndpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExternalUnitEndpoint.h; sourceTree = "<group>"; };
+		32A94A821F16449E0069DDA3 /* HTTPExternalUnitConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPExternalUnitConnection.cpp; sourceTree = "<group>"; };
+		32A94A831F16449E0069DDA3 /* HTTPExternalUnitConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPExternalUnitConnection.h; sourceTree = "<group>"; };
+		32A94A861F1654040069DDA3 /* ExternalEchoEndpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExternalEchoEndpoint.cpp; sourceTree = "<group>"; };
+		32A94A871F1654040069DDA3 /* ExternalEchoEndpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExternalEchoEndpoint.h; sourceTree = "<group>"; };
 		32A968501D522FB800BD636C /* PropertyGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PropertyGroup.cpp; sourceTree = "<group>"; };
 		32A968511D522FB800BD636C /* PropertyGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PropertyGroup.h; sourceTree = "<group>"; };
 		32AAD78714CD660B005A097C /* RpcClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcClient.h; sourceTree = "<group>"; };
@@ -5311,14 +5319,16 @@
 				32E782D01EFC081400AD59F7 /* http_adapter */,
 				32E782CC1EFC075D00AD59F7 /* ExternalUnitGateway.cpp */,
 				32E782CD1EFC075D00AD59F7 /* ExternalUnitGateway.h */,
+				32E782DE1EFC0EEE00AD59F7 /* AbstractAdapter.cpp */,
+				32E782DF1EFC0EEE00AD59F7 /* AbstractAdapter.h */,
 				32A94A7A1F14CC830069DDA3 /* ExternalUnitConnection.cpp */,
 				32A94A7B1F14CC830069DDA3 /* ExternalUnitConnection.h */,
 				32A94A7E1F14CDBF0069DDA3 /* ExternalUnitEndpoint.cpp */,
 				32A94A7F1F14CDBF0069DDA3 /* ExternalUnitEndpoint.h */,
+				32A94A861F1654040069DDA3 /* ExternalEchoEndpoint.cpp */,
+				32A94A871F1654040069DDA3 /* ExternalEchoEndpoint.h */,
 				32E782DA1EFC0AC300AD59F7 /* ControlUnitBridge.cpp */,
 				32E782DB1EFC0AC300AD59F7 /* ControlUnitBridge.h */,
-				32E782DE1EFC0EEE00AD59F7 /* AbstractAdapter.cpp */,
-				32E782DF1EFC0EEE00AD59F7 /* AbstractAdapter.h */,
 			);
 			path = external_gateway;
 			sourceTree = "<group>";
@@ -5328,6 +5338,8 @@
 			children = (
 				32E782E21EFC0F2800AD59F7 /* HTTPAdapter.cpp */,
 				32E782E31EFC0F2800AD59F7 /* HTTPAdapter.h */,
+				32A94A821F16449E0069DDA3 /* HTTPExternalUnitConnection.cpp */,
+				32A94A831F16449E0069DDA3 /* HTTPExternalUnitConnection.h */,
 			);
 			path = http_adapter;
 			sourceTree = "<group>";
@@ -5909,6 +5921,7 @@
 				3252A3101C8ED2A800900FF2 /* AbstractAttributeHandler.h in Headers */,
 				326DB4BC14B3A3E50018A8D0 /* CommandManagerDefaultAdapters.h in Headers */,
 				32C4EF2A1D4BB0A60014F3D3 /* DatasetCacheWrapper.h in Headers */,
+				32A94A851F16449E0069DDA3 /* HTTPExternalUnitConnection.h in Headers */,
 				326933EA1D5089420033D9E9 /* publishing.h in Headers */,
 				3215861117875FDB0090E7E6 /* DriverPluginLoader.h in Headers */,
 				32C43BBB1D65FDE8007F5864 /* publishing_types.h in Headers */,
@@ -5936,6 +5949,7 @@
 				323BC2841EE0362500B4D602 /* EUAbstractApiPlugin.h in Headers */,
 				3287F7E717B27621009DD6ED /* DriverManager.h in Headers */,
 				323BC2881EE05A8B00B4D602 /* EUPluginLoader.h in Headers */,
+				32A94A891F1654040069DDA3 /* ExternalEchoEndpoint.h in Headers */,
 				325F8B521763AF2300EFE616 /* SlowCommand.h in Headers */,
 				32C4EF431D4F7F9E0014F3D3 /* RegisterEnviroment.h in Headers */,
 				3214EF0B1D466CF6004DB689 /* DataBrokerManager.h in Headers */,
@@ -6740,6 +6754,7 @@
 				326CD5AB1D66F975003AD071 /* PublishingManager.cpp in Sources */,
 				3287F7E617B2756C009DD6ED /* DriverManager.cpp in Sources */,
 				32A94A801F14CDBF0069DDA3 /* ExternalUnitEndpoint.cpp in Sources */,
+				32A94A881F1654040069DDA3 /* ExternalEchoEndpoint.cpp in Sources */,
 				3214EF101D466F95004DB689 /* DataBroker.cpp in Sources */,
 				32E782DC1EFC0AC300AD59F7 /* ControlUnitBridge.cpp in Sources */,
 				325168CC1D47935D00E877DF /* DataBrokerEditor.cpp in Sources */,
@@ -6786,6 +6801,7 @@
 				32C4EF291D4BB0A60014F3D3 /* DatasetCacheWrapper.cpp in Sources */,
 				3291D5181D5DEE890077CBB3 /* PublishTarget.cpp in Sources */,
 				32F2241B179AE3BC00853F62 /* RTAbstractControlUnit.cpp in Sources */,
+				32A94A841F16449E0069DDA3 /* HTTPExternalUnitConnection.cpp in Sources */,
 				32995C421BAC57A300F68148 /* SCWaitCommand.cpp in Sources */,
 				32F2241F179AEED500853F62 /* SCAbstractControlUnit.cpp in Sources */,
 				32C4EF251D4BA7060014F3D3 /* DatasetEditor.cpp in Sources */,

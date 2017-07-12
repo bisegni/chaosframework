@@ -19,7 +19,7 @@
  *    	limitations under the License.
  */
 
-#include "ExternalUnitEndpoint.h"
+#include <chaos/cu_toolkit/external_gateway/ExternalUnitEndpoint.h>
 
 using namespace chaos::cu::external_gateway;
 
@@ -34,10 +34,26 @@ ExternalUnitEndpoint::~ExternalUnitEndpoint() {
 
 int ExternalUnitEndpoint::sendMessage(const std::string& connection_identifier,
                         const std::string& message) {
+    LMapConnectionReadLock rl = map_connection.getReadLockObject();
+    if(map_connection().count(connection_identifier) == 0) return -1;
+    
+    return map_connection()[connection_identifier]->sendData(message);
+}
+
+const std::string& ExternalUnitEndpoint::getIdentifier() {
+    return endpoint_identifier;
+}
+
+int ExternalUnitEndpoint::addConnection(ExternalUnitConnection& new_connection) {
+    LMapConnectionWriteLock wl = map_connection.getWriteLockObject();
+    map_connection().insert(MapConnectionPair(new_connection.connection_identifier, &new_connection));
+    handleNewConnection(new_connection.connection_identifier);
     return 0;
 }
 
-int ExternalUnitEndpoint::handleRemoveMessage(const std::string& connection_identifier,
-                                const std::string& message) {
+int ExternalUnitEndpoint::removeConnection(ExternalUnitConnection& removed_connection) {
+    LMapConnectionWriteLock wl = map_connection.getWriteLockObject();
+    handleDisconnection(removed_connection.connection_identifier);
+    map_connection().erase(removed_connection.connection_identifier);
     return 0;
 }

@@ -19,15 +19,27 @@
  *    	limitations under the License.
  */
 
-#include "ExternalUnitConnection.h"
+#include <chaos/cu_toolkit/external_gateway/ExternalUnitConnection.h>
+#include <chaos/cu_toolkit/external_gateway/ExternalUnitEndpoint.h>
 
 #include <chaos/common/utility/UUIDUtil.h>
+#include <chaos/common/global.h>
 
 using namespace chaos::common::utility;
 
 using namespace chaos::cu::external_gateway;
 
-ExternalUnitConnection::ExternalUnitConnection():
-connection_identifier(UUIDUtil::generateUUIDLite()){}
+ExternalUnitConnection::ExternalUnitConnection(ExternalUnitEndpoint *_endpoint):
+connection_identifier(UUIDUtil::generateUUIDLite()),
+endpoint(_endpoint){
+    endpoint->addConnection(*this);
+}
 
-ExternalUnitConnection::~ExternalUnitConnection() {}
+ExternalUnitConnection::~ExternalUnitConnection() {
+    endpoint->removeConnection(*this);
+}
+
+int ExternalUnitConnection::sendDataToEndpoint(const std::string& data) {
+    CHAOS_ASSERT(endpoint);
+    return endpoint->handleReceivedeMessage(connection_identifier, data);
+}

@@ -40,15 +40,18 @@ ExternalUnitGateway::~ExternalUnitGateway() {
 }
 
 void ExternalUnitGateway::init(void *init_data) throw (chaos::CException) {
-   for(MapAdapterIterator it = map_protocol_adapter().begin(),
-       end= map_protocol_adapter().end();
-       it != end;
-       it++) {
-       InizializableService::initImplementation(*it->second, NULL, it->first, __PRETTY_FUNCTION__);
-   }
+    LMapAdapterWriteLock wl = map_protocol_adapter.getWriteLockObject();
+    for(MapAdapterIterator it = map_protocol_adapter().begin(),
+        end= map_protocol_adapter().end();
+        it != end;
+        it++) {
+        InizializableService::initImplementation(*it->second, NULL, it->first, __PRETTY_FUNCTION__);
+        it->second->registerEndpoint(echo_endpoint);
+    }
 }
 
 void ExternalUnitGateway::deinit() throw (chaos::CException) {
+    LMapAdapterWriteLock wl = map_protocol_adapter.getWriteLockObject();
     for(MapAdapterIterator it = map_protocol_adapter().begin(),
         end= map_protocol_adapter().end();
         it != end;
@@ -58,11 +61,29 @@ void ExternalUnitGateway::deinit() throw (chaos::CException) {
 }
 
 
-int ExternalUnitGateway::registerEndpoint(const ExternalUnitEndpoint& endpoint) {
+int ExternalUnitGateway::registerEndpoint(ExternalUnitEndpoint& endpoint) {
     if(getServiceState() != 1) return -1;
-    return 0;
+    LMapAdapterReadLock rl = map_protocol_adapter.getReadLockObject();
+    int err = 0;
+    for(MapAdapterIterator it = map_protocol_adapter().begin(),
+        end= map_protocol_adapter().end();
+        it != end &&
+        err == 0;
+        it++) {
+        err = it->second->registerEndpoint(endpoint);
+    }
+    return err;
 }
 
-int ExternalUnitGateway::deregisterEndpoint(const ExternalUnitEndpoint& endpoint) {
-    return 0;
+int ExternalUnitGateway::deregisterEndpoint(ExternalUnitEndpoint& endpoint) {
+    LMapAdapterReadLock rl = map_protocol_adapter.getReadLockObject();
+    int err = 0;
+    for(MapAdapterIterator it = map_protocol_adapter().begin(),
+        end= map_protocol_adapter().end();
+        it != end &&
+        err == 0;
+        it++) {
+        err = it->second->deregisterEndpoint(endpoint);
+    }
+    return err;
 }

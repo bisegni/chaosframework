@@ -29,16 +29,23 @@
 namespace chaos{
     namespace cu {
         namespace external_gateway {
+            
+            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ExternalUnitEndpoint*, MapEndpoint);
+            CHAOS_DEFINE_LOCKABLE_OBJECT(MapEndpoint, LMapEndpoint);
+            
             //!adapter interface
             class AbstractAdapter:
             public chaos::common::utility::InizializableService {
+            protected:
+                //!contains all association by endpoint url and class
+                LMapEndpoint    map_endpoint;
             public:
                 AbstractAdapter();
                 ~AbstractAdapter();
                 void init(void *init_data) throw (chaos::CException);
                 void deinit() throw (chaos::CException);
-                virtual int registerEndpoint(const ExternalUnitEndpoint& endpoint) = 0;
-                virtual int deregisterEndpoint(const ExternalUnitEndpoint& endpoint) = 0;
+                virtual int registerEndpoint(ExternalUnitEndpoint& endpoint) = 0;
+                virtual int deregisterEndpoint(ExternalUnitEndpoint& endpoint) = 0;
             };
         }
     }

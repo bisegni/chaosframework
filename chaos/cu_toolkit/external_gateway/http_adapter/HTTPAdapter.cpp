@@ -38,10 +38,6 @@ HTTPAdapter::~HTTPAdapter() {
 
 void HTTPAdapter::init(void *init_data) throw (chaos::CException) {
     run = true;
-    if (mg_socketpair(sock, SOCK_STREAM) == 0) {
-        perror("Opening socket pair");
-    }
-    
     mg_mgr_init(&mgr, NULL);
     
     nc = mg_bind(&mgr, "8080", HTTPAdapter::eventHandler);
@@ -64,15 +60,12 @@ void HTTPAdapter::deinit() throw (chaos::CException) {
     thread_poller->join();
     
     mg_mgr_free(&mgr);
-    
-    closesocket(sock[0]);
-    closesocket(sock[1]);
 }
 
 void HTTPAdapter::poller() {
     INFO << "Entering thread poller";
     while (run) {
-        mg_mgr_poll(&mgr, 10);
+        mg_mgr_poll(&mgr, 5);
     }
     INFO << "Leaving thread poller";
 }
@@ -99,36 +92,66 @@ void HTTPAdapter::eventHandler(struct mg_connection *nc, int ev, void *ev_data) 
             req->message = message;
             req->nc = nc;
             adapter->push(req);
-//            mg_printf(nc, "%s", "HTTP/1.1 200 OK\r\nTransfer-Encoding: chunked\r\n\r\n");
-//            mg_printf_http_chunk(nc, "{ \"result\": %d }", 25);
-//            mg_send_http_chunk(nc, "", 0);
+            //            mg_printf(nc, "%s", "HTTP/1.1 200 OK\r\nTransfer-Encoding: chunked\r\n\r\n");
+            //            mg_printf_http_chunk(nc, "{ \"result\": %d }", 25);
+            //            mg_send_http_chunk(nc, "", 0);
             break;
         }
             
-        case MG_EV_WEBSOCKET_HANDSHAKE_DONE: {
-            // broadcast(nc, mg_mk_str("++ joined"));
+        case MG_EV_WEBSOCKET_HANDSHAKE_REQUEST: {
+            char addr[32];
+            http_message *message = static_cast<http_message*>(ev_data);
+            const std::string uri(message->uri.p, message->uri.len);
+            mg_sock_addr_to_str(&nc->sa, addr, sizeof(addr),
+                                MG_SOCK_STRINGIFY_IP | MG_SOCK_STRINGIFY_PORT);
+            INFO << CHAOS_FORMAT("Received new connection for endoint %1% from %2%", %uri%addr);
+            LMapEndpointReadLock wl = adapter->map_endpoint.getReadLockObject();
+            if(adapter->map_endpoint().count(uri) == 0) {
+                ERR << CHAOS_FORMAT("No class registered to endpoint %1%", %uri);
+                mg_send_websocket_frame(nc, WEBSOCKET_OP_CLOSE, NULL, 0);
+                return;
+            }
+            
+            //we can create a new connection
+            
+            LMapConnectionWriteLock wconnl = adapter->map_connection.getWriteLockObject();
+            adapter->map_connection().insert(MapConnectionPair(reinterpret_cast<uintptr_t>(nc),
+                                                               ChaosSharedPtr<HTTPExternalUnitConnection>(new HTTPExternalUnitConnection(nc,
+                                                                                                                                         adapter->map_endpoint()[uri]))));
             break;
         }
+            
         case MG_EV_WEBSOCKET_FRAME: {
-            struct websocket_message *wm = (struct websocket_message *) ev_data;
-            //            struct mg_str d = {(char *) wm->data, wm->size};
-            //            broadcast(nc, d);
+            websocket_message *wm = (struct websocket_message *) ev_data;
+            INFO << std::string((const char*)wm->data, wm->size);
+            LMapConnectionReadLock wconnl = adapter->map_connection.getReadLockObject();
+            adapter->map_connection()[reinterpret_cast<uintptr_t>(nc)]->handleWSIncomingData(wm);
+            //mg_send_websocket_frame(c, WEBSOCKET_OP_TEXT, wm->data, wm->size);
             break;
         }
             
-        case MG_EV_CLOSE:
+        case MG_EV_CLOSE:{
+            LMapConnectionWriteLock wconnl = adapter->map_connection.getWriteLockObject();
+            adapter->map_connection().erase(reinterpret_cast<uintptr_t>(nc));
             /* Disconnect. Tell everybody. */
             //            if (nc->flags & MG_F_IS_WEBSOCKET) {
             //                broadcast(nc, mg_mk_str("-- left"));
             //            }
             break;
+        }
     }
 }
 
-int HTTPAdapter::registerEndpoint(const ExternalUnitEndpoint& endpoint) {
-    
+int HTTPAdapter::registerEndpoint(ExternalUnitEndpoint& endpoint) {
+    LMapEndpointWriteLock wl = map_endpoint.getWriteLockObject();
+    if(map_endpoint().count(endpoint.getIdentifier()) != 0) return 0;
+    map_endpoint().insert(MapEndpointPair(endpoint.getIdentifier(), &endpoint));
+    return 0;
 }
 
-int HTTPAdapter::deregisterEndpoint(const ExternalUnitEndpoint& endpoint) {
-    
+int HTTPAdapter::deregisterEndpoint(ExternalUnitEndpoint& endpoint) {
+    LMapEndpointWriteLock wl = map_endpoint.getWriteLockObject();
+    if(map_endpoint().count(endpoint.getIdentifier()) == 0) return 0;
+    map_endpoint().erase(endpoint.getIdentifier());
+    return 0;
 }

@@ -27,14 +27,24 @@
 namespace chaos {
     namespace cu {
         namespace external_gateway {
+            class AbstractAdapter;
+            class ExternalUnitEndpoint;
             
             //! Identify an external connection
             class ExternalUnitConnection {
+            protected:
+                //!endpoint that own the connection
+                ExternalUnitEndpoint *endpoint;
+            protected:
+                int sendDataToEndpoint(const std::string& data);
+            public:
                 //! end point identifier
                 const std::string connection_identifier;
-            public:
-                ExternalUnitConnection();
+                
+                ExternalUnitConnection(ExternalUnitEndpoint *_endpoint);
                 virtual ~ExternalUnitConnection();
+                
+                virtual int sendData(const std::string& data) = 0;
             };
         }
     }
