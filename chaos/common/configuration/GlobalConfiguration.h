@@ -122,10 +122,6 @@ x = hasOption(y);
         void fillKVParameter(std::map<std::string, std::string>& kvmap,
                              const std::string& kv_string,
                              const std::string& regex);
-        
-        void fillKVParameter(std::map<std::string, std::string>& kvmap,
-                             const std::vector<std::string>& kv_vector,
-                             const std::string& regex);
     public:
         void loadStartupParameter(int, char* argv[]) throw (CException);
         void loadStreamParameter(std::istream &config_file) throw (CException);
@@ -321,6 +317,10 @@ x = hasOption(y);
         
         //! return the script virtualmachine key value parameter
         MapStrKeyStrValue& getScriptVMKVParam();
+        
+        static void fillKVParameter(std::map<std::string, std::string>& kvmap,
+                                    const std::vector<std::string>& kv_vector,
+                                    const std::string& regex);
     };
 }
 #endif

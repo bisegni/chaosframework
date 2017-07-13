@@ -21,7 +21,7 @@
 #include <chaos/cu_toolkit/data_manager/DataManager.h>
 #include <chaos/cu_toolkit/command_manager/CommandManager.h>
 #include <chaos/cu_toolkit/control_manager/script/api/api.h>
-#include <chaos/cu_toolkit/external_gateway/ExternalUnitGateway.h>
+#include <chaos/cu_toolkit/external_gateway/external_gateway.h>
 
 #include <chaos/common/healt_system/HealtManager.h>
 #include <chaos/common/metadata_logging/MetadataLoggingManager.h>
@@ -167,6 +167,14 @@ ChaosCUToolkit::ChaosCUToolkit() {
     GlobalConfiguration::getInstance()->addOption< bool >(UNIT_GATEWAY_ENABLE,
                                                           UNIT_GATEWAY_ENABLE_DESC,
                                                           UNIT_GATEWAY_ENABLE_DEFAULT);
+    
+    GlobalConfiguration::getInstance()->addOption< unsigned int >(CU_EG_OPT_WORKER_THREAD_NUMBER,
+                                                                  CU_EG_OPT_WORKER_THREAD_NUMBER_DESC,
+                                                                  CU_EG_OPT_WORKER_THREAD_NUMBER_DEFAULT);
+    
+    GlobalConfiguration::getInstance()->addOption< std::vector<std::string> >(CU_EG_OPT_WORKER_KV_PARAM,
+                                                                              CU_EG_OPT_WORKER_KV_PARAM_DESC);
+    
 }
 
 ChaosCUToolkit::~ChaosCUToolkit() {

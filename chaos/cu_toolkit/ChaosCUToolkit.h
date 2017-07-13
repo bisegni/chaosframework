@@ -51,8 +51,6 @@ namespace chaos{
         class ChaosCUToolkit : public ChaosCommon<ChaosCUToolkit>, public ServerDelegator {
             friend class common::utility::Singleton<ChaosCUToolkit>;
             friend class chaos::cu::control_manager::ControlManager;
-            //static boost::mutex monitor;
-            //static boost::condition endWaithCondition;
             
             static WaitSemaphore waitCloseSemaphore;
             

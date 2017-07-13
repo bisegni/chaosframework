@@ -25,8 +25,9 @@
 #include <chaos/common/chaos_types.h>
 #include <chaos/common/utility/LockableObject.h>
 #include <chaos/common/pqueue/CObjectProcessingQueue.h>
-#include <chaos/cu_toolkit/external_gateway/AbstractAdapter.h>
+
 #include <chaos/cu_toolkit/additional_lib/mongoose.h>
+#include <chaos/cu_toolkit/external_gateway/AbstractAdapter.h>
 #include <chaos/cu_toolkit/external_gateway/http_adapter/http_adapter_types.h>
 #include <chaos/cu_toolkit/external_gateway/http_adapter/HTTPExternalUnitConnection.h>
 
@@ -45,6 +46,7 @@ namespace chaos{
                 protected CObjectProcessingQueue< WorkRequest >,
                 public AbstractAdapter {
                     bool run;
+                    HttpAdapterSetting setting;
                     
                     struct mg_serve_http_opts s_http_server_opts;
                     
@@ -57,7 +59,8 @@ namespace chaos{
                     LMapConnection  map_connection;
                     
                     void poller();
-                    static void eventHandler(struct mg_connection *nc, int ev, void *ev_data);
+                    static WorkRequestProtocols decodeProtocolType(http_message *http_message);
+                    static void eventHandler(mg_connection *nc, int ev, void *ev_data);
                 protected:
                     void processBufferElement(WorkRequest *request, ElementManagingPolicy& policy) throw(CException);
                 public:

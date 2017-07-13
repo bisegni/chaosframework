@@ -46,9 +46,5 @@ void ExternalEchoEndpoint::handleDisconnection(const std::string& connection_ide
 int ExternalEchoEndpoint::handleReceivedeMessage(const std::string& connection_identifier, const std::string& message) {
     INFO << CHAOS_FORMAT("Received connection from %1% with data '%2%'", %connection_identifier%message);
     sendMessage(connection_identifier, "[echo]"+message);
-    sleep(2);
-    sendMessage(connection_identifier, "[echo]--start frag--", EUCPhaseStartFragment);
-    sendMessage(connection_identifier, "[echo]--continue frag--", EUCPhaseContinueFragment);
-    sendMessage(connection_identifier, "[echo]--end frag--", EUCPhaseEndFragment);
     return 0;
 }

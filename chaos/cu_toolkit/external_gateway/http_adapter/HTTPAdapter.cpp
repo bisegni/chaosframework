@@ -20,13 +20,21 @@
  */
 
 #include <chaos/common/global.h>
+#include <chaos/common/configuration/GlobalConfiguration.h>
 #include <chaos/cu_toolkit/external_gateway/http_adapter/HTTPAdapter.h>
+#include <chaos/cu_toolkit/external_gateway/external_gateway_constants.h>
 
+#include <boost/lexical_cast.hpp>
+
+#include <string.h>
+
+using namespace chaos;
 using namespace chaos::cu::external_gateway::http_adapter;
 
 #define INFO    INFO_LOG(HTTPHelper)
 #define DBG     DBG_LOG(HTTPHelper)
 #define ERR     ERR_LOG(HTTPHelper)
+
 
 HTTPAdapter::HTTPAdapter():
 run(false),
@@ -37,10 +45,22 @@ HTTPAdapter::~HTTPAdapter() {
 }
 
 void HTTPAdapter::init(void *init_data) throw (chaos::CException) {
+    //scsan configuration
+    setting.thread_number = GlobalConfiguration::getInstance()->getOption<unsigned int>(CU_EG_OPT_WORKER_THREAD_NUMBER);
+    if(GlobalConfiguration::getInstance()->hasOption(CU_EG_OPT_WORKER_KV_PARAM)) {
+        std::map<string, string> http_param;
+        GlobalConfiguration::fillKVParameter(http_param,
+                                             GlobalConfiguration::getInstance()->getOption< std::vector<std::string> >(CU_EG_OPT_WORKER_KV_PARAM),
+                                             "");
+        //check publishing port paramter
+        if(http_param.count(CU_EG_HTTP_PUBLISHING_PORT)) {
+            setting.publishing_port = http_param[CU_EG_HTTP_PUBLISHING_PORT];
+        }
+    }
     run = true;
     mg_mgr_init(&mgr, NULL);
     
-    root_connection = mg_bind(&mgr, "8080", HTTPAdapter::eventHandler);
+    root_connection = mg_bind(&mgr, setting.publishing_port.c_str(), HTTPAdapter::eventHandler);
     if(root_connection == NULL) {CException(-1, "Error creating http connection", __PRETTY_FUNCTION__);}
     root_connection->user_data = this;
     
@@ -48,7 +68,7 @@ void HTTPAdapter::init(void *init_data) throw (chaos::CException) {
     s_http_server_opts.document_root = "";  // Serve current directory
     s_http_server_opts.enable_directory_listing = "no";
     //
-    CObjectProcessingQueue<WorkRequest>::init(2);
+    CObjectProcessingQueue<WorkRequest>::init(setting.thread_number);
     
     thread_poller.reset(new boost::thread(boost::bind(&HTTPAdapter::poller, this)));
 }
@@ -70,13 +90,26 @@ void HTTPAdapter::poller() {
     INFO << "Leaving thread poller";
 }
 
+WorkRequestProtocols HTTPAdapter::decodeProtocolType(http_message *http_message) {
+    CHAOS_ASSERT(http_message);
+    struct mg_str *value = mg_get_http_header(http_message, "cu-eg-protocol-type");
+    if(value == NULL) return WorkRequestProtocolsText;
+    const std::string type_str(value->p, value->len);
+    if(type_str.compare("json") == 0) {
+        return WorkRequestProtocolsJson;
+    } else {
+        return WorkRequestProtocolsText;
+    }
+    
+}
+
 void HTTPAdapter::processBufferElement(WorkRequest *request,
                                        ElementManagingPolicy& policy) throw(CException) {
-    switch(request->type) {
+    switch(request->r_type) {
         case WorkRequestTypeHttpRequest: {
             //http_message *message = static_cast<http_message*>(request->message);
             mg_printf(request->nc, "%s", "HTTP/1.1 200 OK\r\nTransfer-Encoding: chunked\r\n\r\n");
-            mg_printf_http_chunk(request->nc, "{ \"result\": %d }", 25);
+            mg_printf_http_chunk(request->nc, "!CHAOS Control External gateway not support htttp get or post");
             mg_send_http_chunk(request->nc, "", 0); /* Send empty chunk, the end of response */
             break;
         }
@@ -110,11 +143,13 @@ void HTTPAdapter::processBufferElement(WorkRequest *request,
             map_connection().erase(reinterpret_cast<uintptr_t>(request->nc));
             break;
         }
+            
+        default:{break;}
     }
     
 }
 
-void HTTPAdapter::eventHandler(struct mg_connection *nc, int ev, void *ev_data) {
+void HTTPAdapter::eventHandler(mg_connection *nc, int ev, void *ev_data) {
     (void) nc;
     (void) ev_data;
     HTTPAdapter *adapter = static_cast<HTTPAdapter*>(nc->user_data);
@@ -125,7 +160,8 @@ void HTTPAdapter::eventHandler(struct mg_connection *nc, int ev, void *ev_data) 
         case MG_EV_HTTP_REQUEST: {
             http_message *message = static_cast<http_message*>(ev_data);
             WorkRequest *req = new WorkRequest();
-            req->type = WorkRequestTypeHttpRequest;
+            req->r_type = WorkRequestTypeHttpRequest;
+            req->p_type = decodeProtocolType(message);
             req->nc = nc;
             req->uri.assign(message->uri.p, message->uri.len);
             req->buffer.assign(message->message.p, message->message.p+message->message.len);
@@ -135,7 +171,8 @@ void HTTPAdapter::eventHandler(struct mg_connection *nc, int ev, void *ev_data) 
         case MG_EV_WEBSOCKET_HANDSHAKE_REQUEST: {
             http_message *message = static_cast<http_message*>(ev_data);
             WorkRequest *req = new WorkRequest();
-            req->type = WorkRequestTypeWSHandshakeRequest;
+            req->r_type = WorkRequestTypeWSHandshakeRequest;
+            req->p_type = decodeProtocolType(message);
             req->nc = nc;
             req->uri.assign(message->uri.p, message->uri.len);
             req->buffer.assign(message->message.p, message->message.p+message->message.len);
@@ -145,7 +182,7 @@ void HTTPAdapter::eventHandler(struct mg_connection *nc, int ev, void *ev_data) 
         case MG_EV_WEBSOCKET_FRAME: {
             websocket_message *message = static_cast<websocket_message*>(ev_data);
             WorkRequest *req = new WorkRequest();
-            req->type = WorkRequestTypeWSFrame;
+            req->r_type = WorkRequestTypeWSFrame;
             req->buffer.assign(message->data, message->data+message->size);
             req->nc = nc;
             adapter->push(req);
@@ -153,7 +190,7 @@ void HTTPAdapter::eventHandler(struct mg_connection *nc, int ev, void *ev_data) 
         }
         case MG_EV_CLOSE:{
             WorkRequest *req = new WorkRequest();
-            req->type = WorkRequestTypeWSCloseEvent;
+            req->r_type = WorkRequestTypeWSCloseEvent;
             req->nc = nc;
             adapter->push(req);
             break;

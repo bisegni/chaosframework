@@ -29,7 +29,15 @@ namespace chaos{
     namespace cu {
         namespace external_gateway {
             namespace http_adapter {
+                
                 typedef enum {
+                    WorkRequestProtocolsUnspecified,
+                    WorkRequestProtocolsText,
+                    WorkRequestProtocolsJson
+                } WorkRequestProtocols;
+                
+                typedef enum {
+                    WorkRequestTypeUnspecified,
                     WorkRequestTypeHttpRequest,
                     WorkRequestTypeWSHandshakeRequest,
                     WorkRequestTypeWSFrame,
@@ -37,11 +45,27 @@ namespace chaos{
                 } WorkRequestType;
                 // This info is passed to the worker thread
                 struct WorkRequest {
-                    WorkRequestType type;
+                    WorkRequestType r_type;
+                    WorkRequestProtocols p_type;
                     mg_connection *nc;
                     std::string uri;
                     std::vector<char> buffer;
+                    
+                    WorkRequest():
+                    r_type(WorkRequestTypeUnspecified),
+                    p_type(WorkRequestProtocolsUnspecified),
+                    nc(NULL),
+                    uri(),
+                    buffer(){}
                 };
+                
+                
+                struct HttpAdapterSetting {
+                    uint32_t thread_number;
+                    std::string publishing_port;
+                };
+                
+#define CU_EG_HTTP_PUBLISHING_PORT "/cu/eg/http/publishing/port"
             }
         }
     }
