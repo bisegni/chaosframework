@@ -52,6 +52,7 @@
 		320E2FBF1D7EB9CB0077E8FE /* QueryCursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320E2FBD1D7EB9CB0077E8FE /* QueryCursor.cpp */; };
 		320E2FC01D7EB9CB0077E8FE /* QueryCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = 320E2FBE1D7EB9CB0077E8FE /* QueryCursor.h */; };
 		320E773E1A7FBD84001FB8BC /* UnitServerAckBatchCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320E773C1A7FBD84001FB8BC /* UnitServerAckBatchCommand.cpp */; };
+		320F732F1F178F6400C4806C /* http_adapter_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 320F732D1F178F6400C4806C /* http_adapter_types.h */; };
 		320FB0EC18A39E650014CDB3 /* DirectIO.h in Headers */ = {isa = PBXBuildFile; fileRef = 320FB0EB18A39E650014CDB3 /* DirectIO.h */; };
 		3210EE1E1AE7DE15006ADC0B /* RegistrationAckBatchCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3210EE1C1AE7DE15006ADC0B /* RegistrationAckBatchCommand.cpp */; };
 		3211CCD61B0205C700F9B80E /* GetBestEndpoints.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3211CCD41B0205C700F9B80E /* GetBestEndpoints.cpp */; };
@@ -1299,6 +1300,7 @@
 		320E773D1A7FBD84001FB8BC /* UnitServerAckBatchCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnitServerAckBatchCommand.h; sourceTree = "<group>"; };
 		320E773F1A7FC561001FB8BC /* unit_server_batch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = unit_server_batch.h; sourceTree = "<group>"; };
 		320E77401A7FD9A6001FB8BC /* mds_service_batch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mds_service_batch.h; sourceTree = "<group>"; };
+		320F732D1F178F6400C4806C /* http_adapter_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = http_adapter_types.h; sourceTree = "<group>"; };
 		320FB0EB18A39E650014CDB3 /* DirectIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIO.h; sourceTree = "<group>"; };
 		3210EE1C1AE7DE15006ADC0B /* RegistrationAckBatchCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegistrationAckBatchCommand.cpp; sourceTree = "<group>"; };
 		3210EE1D1AE7DE15006ADC0B /* RegistrationAckBatchCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegistrationAckBatchCommand.h; sourceTree = "<group>"; };
@@ -5340,6 +5342,7 @@
 				32E782E31EFC0F2800AD59F7 /* HTTPAdapter.h */,
 				32A94A821F16449E0069DDA3 /* HTTPExternalUnitConnection.cpp */,
 				32A94A831F16449E0069DDA3 /* HTTPExternalUnitConnection.h */,
+				320F732D1F178F6400C4806C /* http_adapter_types.h */,
 			);
 			path = http_adapter;
 			sourceTree = "<group>";
@@ -5968,6 +5971,7 @@
 				3250106019E2DB4A00809415 /* AttributeSharedCacheWrapper.h in Headers */,
 				32E782CF1EFC075D00AD59F7 /* ExternalUnitGateway.h in Headers */,
 				326933E61D5088BD0033D9E9 /* manipulation.h in Headers */,
+				320F732F1F178F6400C4806C /* http_adapter_types.h in Headers */,
 				32E782D91EFC095500AD59F7 /* mongoose.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

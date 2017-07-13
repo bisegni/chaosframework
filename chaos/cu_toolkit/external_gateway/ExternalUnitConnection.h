@@ -30,6 +30,14 @@ namespace chaos {
             class AbstractAdapter;
             class ExternalUnitEndpoint;
             
+            //!define the message opcode used to manage the fragmentation of the data
+            typedef enum {
+                EUCMessageOpcodeWhole,          //! send in one shot all message data
+                EUCPhaseStartFragment,          //!message is the beginning of the fragment
+                EUCPhaseContinueFragment,       //!message is the cntinuation of the fragment
+                EUCPhaseEndFragment             //!message is the end of the whole fragment
+            } EUCMessageOpcode;
+            
             //! Identify an external connection
             class ExternalUnitConnection {
             protected:
@@ -44,7 +52,9 @@ namespace chaos {
                 ExternalUnitConnection(ExternalUnitEndpoint *_endpoint);
                 virtual ~ExternalUnitConnection();
                 
-                virtual int sendData(const std::string& data) = 0;
+                //! send data over external protocol
+                virtual int sendData(const std::string& data,
+                                     const EUCMessageOpcode opcode = EUCMessageOpcodeWhole) = 0;
             };
         }
     }

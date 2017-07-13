@@ -33,11 +33,13 @@ ExternalUnitEndpoint::~ExternalUnitEndpoint() {
 }
 
 int ExternalUnitEndpoint::sendMessage(const std::string& connection_identifier,
-                        const std::string& message) {
+                                      const std::string& message,
+                                      const EUCMessageOpcode opcode) {
     LMapConnectionReadLock rl = map_connection.getReadLockObject();
     if(map_connection().count(connection_identifier) == 0) return -1;
-    
-    return map_connection()[connection_identifier]->sendData(message);
+    //send data to the coneection
+    return map_connection()[connection_identifier]->sendData(message,
+                                                             opcode);
 }
 
 const std::string& ExternalUnitEndpoint::getIdentifier() {

@@ -65,8 +65,10 @@ namespace chaos{
                 //!notify that a connection has been closed
                 virtual void handleDisconnection(const std::string& connection_identifier) = 0;
                 
-                //! send a message to a connection
-                int sendMessage(const std::string& connection_identifier, const std::string& message);
+                //! send a message throught a remote connection
+                int sendMessage(const std::string& connection_identifier,
+                                const std::string& message,
+                                const EUCMessageOpcode opcode = EUCMessageOpcodeWhole);
             public:
                 ExternalUnitEndpoint(const std::string& _endpoint_identifier);
                 virtual ~ExternalUnitEndpoint();

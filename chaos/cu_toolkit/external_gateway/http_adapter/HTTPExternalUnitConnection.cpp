@@ -29,13 +29,29 @@ ExternalUnitConnection(_endpoint),
 nc(_nc){}
 HTTPExternalUnitConnection::~HTTPExternalUnitConnection(){}
 
-int HTTPExternalUnitConnection::handleWSIncomingData(websocket_message *ws_message) {
-    
-    return sendDataToEndpoint(std::string((const char *)ws_message->data,
-                                          ws_message->size));
+int HTTPExternalUnitConnection::handleWSIncomingData(const ChaosUniquePtr<WorkRequest>& request) {
+    const std::string message(&request->buffer[0], request->buffer.size());
+    return sendDataToEndpoint(message);
 }
 
-int HTTPExternalUnitConnection::sendData(const std::string& data) {
-    mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT, data.c_str(), data.size());
+int HTTPExternalUnitConnection::sendData(const std::string& data,
+                                         const EUCMessageOpcode opcode) {
+    switch (opcode) {
+        case EUCMessageOpcodeWhole:
+            mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT, data.c_str(), data.size());
+            break;
+        case EUCPhaseStartFragment:
+            mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT|WEBSOCKET_DONT_FIN, data.c_str(), data.size());
+            break;
+            
+        case EUCPhaseContinueFragment:
+            mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT|WEBSOCKET_DONT_FIN, data.c_str(), data.size());
+            break;
+            
+        case EUCPhaseEndFragment:
+            mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT, data.c_str(), data.size());
+            break;
+    }
+    
     return 0;
 }

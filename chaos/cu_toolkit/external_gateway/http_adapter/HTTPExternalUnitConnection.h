@@ -23,6 +23,7 @@
 #define __CHAOSFramework_B4F38257_89FD_45DB_8E0C_2900506EFFAC_HTTPExternalConnection_h
 
 #include <chaos/cu_toolkit/external_gateway/ExternalUnitConnection.h>
+#include <chaos/cu_toolkit/external_gateway/http_adapter/http_adapter_types.h>
 #include <chaos/cu_toolkit/additional_lib/mongoose.h>
 
 namespace chaos{
@@ -37,9 +38,10 @@ namespace chaos{
                     //!associated websocket connection
                     mg_connection *nc = NULL;
                     //!manage all data received by the associated websocket
-                    int handleWSIncomingData(websocket_message *ws_message);
+                    int handleWSIncomingData(const ChaosUniquePtr<WorkRequest>& request);
                     
-                    int sendData(const std::string& data);
+                    int sendData(const std::string& data,
+                                 const EUCMessageOpcode opcode);
                 public:
                     HTTPExternalUnitConnection(mg_connection *_nc,
                                                ExternalUnitEndpoint *_endpoint);

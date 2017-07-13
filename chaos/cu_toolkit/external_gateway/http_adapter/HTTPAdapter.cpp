@@ -30,7 +30,7 @@ using namespace chaos::cu::external_gateway::http_adapter;
 
 HTTPAdapter::HTTPAdapter():
 run(false),
-nc(0){}
+root_connection(0){}
 
 HTTPAdapter::~HTTPAdapter() {
     
@@ -40,11 +40,11 @@ void HTTPAdapter::init(void *init_data) throw (chaos::CException) {
     run = true;
     mg_mgr_init(&mgr, NULL);
     
-    nc = mg_bind(&mgr, "8080", HTTPAdapter::eventHandler);
-    if(nc == NULL) {CException(-1, "Error creating http connection", __PRETTY_FUNCTION__);}
-    nc->user_data = this;
+    root_connection = mg_bind(&mgr, "8080", HTTPAdapter::eventHandler);
+    if(root_connection == NULL) {CException(-1, "Error creating http connection", __PRETTY_FUNCTION__);}
+    root_connection->user_data = this;
     
-    mg_set_protocol_http_websocket(nc);
+    mg_set_protocol_http_websocket(root_connection);
     s_http_server_opts.document_root = "";  // Serve current directory
     s_http_server_opts.enable_directory_listing = "no";
     //
@@ -65,16 +65,53 @@ void HTTPAdapter::deinit() throw (chaos::CException) {
 void HTTPAdapter::poller() {
     INFO << "Entering thread poller";
     while (run) {
-        mg_mgr_poll(&mgr, 5);
+        mg_mgr_poll(&mgr, 10);
     }
     INFO << "Leaving thread poller";
 }
 
 void HTTPAdapter::processBufferElement(WorkRequest *request,
                                        ElementManagingPolicy& policy) throw(CException) {
-    mg_printf(request->nc, "%s", "HTTP/1.1 200 OK\r\nTransfer-Encoding: chunked\r\n\r\n");
-    mg_printf_http_chunk(request->nc, "{ \"result\": %d }", 25);
-    mg_send_http_chunk(request->nc, "", 0); /* Send empty chunk, the end of response */
+    switch(request->type) {
+        case WorkRequestTypeHttpRequest: {
+            //http_message *message = static_cast<http_message*>(request->message);
+            mg_printf(request->nc, "%s", "HTTP/1.1 200 OK\r\nTransfer-Encoding: chunked\r\n\r\n");
+            mg_printf_http_chunk(request->nc, "{ \"result\": %d }", 25);
+            mg_send_http_chunk(request->nc, "", 0); /* Send empty chunk, the end of response */
+            break;
+        }
+        case WorkRequestTypeWSHandshakeRequest: {
+            char addr[32];
+            mg_sock_addr_to_str(&request->nc->sa, addr, sizeof(addr),
+                                MG_SOCK_STRINGIFY_IP | MG_SOCK_STRINGIFY_PORT);
+            INFO << CHAOS_FORMAT("Received new connection for endoint %1% from %2%", %request->uri%addr);
+            LMapEndpointReadLock wl = map_endpoint.getReadLockObject();
+            if(map_endpoint().count(request->uri) == 0) {
+                ERR << CHAOS_FORMAT("No class registered to endpoint %1%", %request->uri);
+                mg_send_websocket_frame(request->nc, WEBSOCKET_OP_CLOSE, NULL, 0);
+                return;
+            }
+            
+            //we can create a new connection
+            LMapConnectionWriteLock wconnl = map_connection.getWriteLockObject();
+            map_connection().insert(MapConnectionPair(reinterpret_cast<uintptr_t>(request->nc),
+                                                      ChaosSharedPtr<HTTPExternalUnitConnection>(new HTTPExternalUnitConnection(request->nc,
+                                                                                                                                map_endpoint()[request->uri]))));
+            break;
+        }
+        case WorkRequestTypeWSFrame: {
+            policy.elementHasBeenDetached = true;
+            LMapConnectionReadLock wconnl = map_connection.getReadLockObject();
+            map_connection()[reinterpret_cast<uintptr_t>(request->nc)]->handleWSIncomingData(ChaosUniquePtr<WorkRequest>(request));
+            break;
+        }
+        case WorkRequestTypeWSCloseEvent: {
+            LMapConnectionWriteLock wconnl = map_connection.getWriteLockObject();
+            map_connection().erase(reinterpret_cast<uintptr_t>(request->nc));
+            break;
+        }
+    }
+    
 }
 
 void HTTPAdapter::eventHandler(struct mg_connection *nc, int ev, void *ev_data) {
@@ -83,60 +120,42 @@ void HTTPAdapter::eventHandler(struct mg_connection *nc, int ev, void *ev_data) 
     HTTPAdapter *adapter = static_cast<HTTPAdapter*>(nc->user_data);
     switch (ev) {
         case MG_EV_ACCEPT:{
-            
             break;
         }
         case MG_EV_HTTP_REQUEST: {
             http_message *message = static_cast<http_message*>(ev_data);
             WorkRequest *req = new WorkRequest();
-            req->message = message;
+            req->type = WorkRequestTypeHttpRequest;
+            req->nc = nc;
+            req->uri.assign(message->uri.p, message->uri.len);
+            req->buffer.assign(message->message.p, message->message.p+message->message.len);
+            adapter->push(req);
+            break;
+        }
+        case MG_EV_WEBSOCKET_HANDSHAKE_REQUEST: {
+            http_message *message = static_cast<http_message*>(ev_data);
+            WorkRequest *req = new WorkRequest();
+            req->type = WorkRequestTypeWSHandshakeRequest;
+            req->nc = nc;
+            req->uri.assign(message->uri.p, message->uri.len);
+            req->buffer.assign(message->message.p, message->message.p+message->message.len);
+            adapter->push(req);
+            break;
+        }
+        case MG_EV_WEBSOCKET_FRAME: {
+            websocket_message *message = static_cast<websocket_message*>(ev_data);
+            WorkRequest *req = new WorkRequest();
+            req->type = WorkRequestTypeWSFrame;
+            req->buffer.assign(message->data, message->data+message->size);
             req->nc = nc;
             adapter->push(req);
-            //            mg_printf(nc, "%s", "HTTP/1.1 200 OK\r\nTransfer-Encoding: chunked\r\n\r\n");
-            //            mg_printf_http_chunk(nc, "{ \"result\": %d }", 25);
-            //            mg_send_http_chunk(nc, "", 0);
             break;
         }
-            
-        case MG_EV_WEBSOCKET_HANDSHAKE_REQUEST: {
-            char addr[32];
-            http_message *message = static_cast<http_message*>(ev_data);
-            const std::string uri(message->uri.p, message->uri.len);
-            mg_sock_addr_to_str(&nc->sa, addr, sizeof(addr),
-                                MG_SOCK_STRINGIFY_IP | MG_SOCK_STRINGIFY_PORT);
-            INFO << CHAOS_FORMAT("Received new connection for endoint %1% from %2%", %uri%addr);
-            LMapEndpointReadLock wl = adapter->map_endpoint.getReadLockObject();
-            if(adapter->map_endpoint().count(uri) == 0) {
-                ERR << CHAOS_FORMAT("No class registered to endpoint %1%", %uri);
-                mg_send_websocket_frame(nc, WEBSOCKET_OP_CLOSE, NULL, 0);
-                return;
-            }
-            
-            //we can create a new connection
-            
-            LMapConnectionWriteLock wconnl = adapter->map_connection.getWriteLockObject();
-            adapter->map_connection().insert(MapConnectionPair(reinterpret_cast<uintptr_t>(nc),
-                                                               ChaosSharedPtr<HTTPExternalUnitConnection>(new HTTPExternalUnitConnection(nc,
-                                                                                                                                         adapter->map_endpoint()[uri]))));
-            break;
-        }
-            
-        case MG_EV_WEBSOCKET_FRAME: {
-            websocket_message *wm = (struct websocket_message *) ev_data;
-            INFO << std::string((const char*)wm->data, wm->size);
-            LMapConnectionReadLock wconnl = adapter->map_connection.getReadLockObject();
-            adapter->map_connection()[reinterpret_cast<uintptr_t>(nc)]->handleWSIncomingData(wm);
-            //mg_send_websocket_frame(c, WEBSOCKET_OP_TEXT, wm->data, wm->size);
-            break;
-        }
-            
         case MG_EV_CLOSE:{
-            LMapConnectionWriteLock wconnl = adapter->map_connection.getWriteLockObject();
-            adapter->map_connection().erase(reinterpret_cast<uintptr_t>(nc));
-            /* Disconnect. Tell everybody. */
-            //            if (nc->flags & MG_F_IS_WEBSOCKET) {
-            //                broadcast(nc, mg_mk_str("-- left"));
-            //            }
+            WorkRequest *req = new WorkRequest();
+            req->type = WorkRequestTypeWSCloseEvent;
+            req->nc = nc;
+            adapter->push(req);
             break;
         }
     }

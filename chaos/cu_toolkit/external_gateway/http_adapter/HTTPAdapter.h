@@ -27,6 +27,7 @@
 #include <chaos/common/pqueue/CObjectProcessingQueue.h>
 #include <chaos/cu_toolkit/external_gateway/AbstractAdapter.h>
 #include <chaos/cu_toolkit/additional_lib/mongoose.h>
+#include <chaos/cu_toolkit/external_gateway/http_adapter/http_adapter_types.h>
 #include <chaos/cu_toolkit/external_gateway/http_adapter/HTTPExternalUnitConnection.h>
 
 #include <boost/thread.hpp>
@@ -34,21 +35,14 @@
 namespace chaos{
     namespace cu {
         namespace external_gateway {
-            
             namespace http_adapter {
-                
-                // This info is passed to the worker thread
-                struct WorkRequest {
-                    mg_connection *nc;
-                    http_message *message;
-                };
                 
                 CHAOS_DEFINE_MAP_FOR_TYPE(uintptr_t, ChaosSharedPtr<HTTPExternalUnitConnection>, MapConnection);
                 CHAOS_DEFINE_LOCKABLE_OBJECT(MapConnection, LMapConnection);
                 
                 //!External gateway root class
                 class HTTPAdapter:
-                protected CObjectProcessingQueue<WorkRequest>,
+                protected CObjectProcessingQueue< WorkRequest >,
                 public AbstractAdapter {
                     bool run;
                     
@@ -57,7 +51,7 @@ namespace chaos{
                     ChaosUniquePtr<boost::thread> thread_poller;
                     
                     struct mg_mgr mgr;
-                    struct mg_connection *nc;
+                    struct mg_connection *root_connection;
                     
                     //!contains all connection
                     LMapConnection  map_connection;
