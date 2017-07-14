@@ -455,28 +455,22 @@ test_services(){
 start_services(){
 
     if $tools/chaos_services.sh start mds; then
-	ok_mesg "chaos start MDS"
+	ok_mesg "chaos start MDS/CDS"
 
     else
-	nok_mesg "chaos start MDS"
+	nok_mesg "chaos start MDS/CDS"
 	return 1
     fi
 
-    if $tools/chaos_services.sh start cds; then
-	ok_mesg "chaos start CDS"
+
+    if $tools/chaos_services.sh start webui; then
+	ok_mesg "chaos start WEBUI"
 
     else
-	nok_mesg "chaos start CDS"
+	nok_mesg "chaos start WEBUI"
 	return 1
     fi
-
-    if $tools/chaos_services.sh start uis; then
-	ok_mesg "chaos start UIS"
-
-    else
-	nok_mesg "chaos start UIS"
-	return 1
-    fi
+    return 0
 }
 start_mds(){
     if $tools/chaos_services.sh start mds; then

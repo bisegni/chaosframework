@@ -211,8 +211,8 @@ int main (int argc, char* argv[] )
     bool reset_config=false;
 
   try {
-    ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_MDS_FILE, "MDS configuration file (initialize the MDS with the given json configuration [old style])",&conf_file);
-    ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_RESET_CONFIG, po::value<bool>(&reset_config)->default_value(false),"reset MDS configuration");
+    //ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption<std::string>(OPT_MDS_FILE, "MDS configuration file (initialize the MDS with the given json configuration [old style])",&conf_file);
+    //    ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_RESET_CONFIG, po::value<bool>(&reset_config)->default_value(false),"reset MDS configuration");
     ChaosMetadataServiceClient::getInstance()->init(argc, argv);
 
     chaos::common::data::CDataWrapper *conf=ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->getConfiguration();
@@ -231,6 +231,7 @@ int main (int argc, char* argv[] )
            std::cout<<"* resetting MDS configuration"<<std::endl;
               EXECUTE_CHAOS_API(api_proxy::service::ResetAll,3000);
     }
+
     if(!conf_file.empty()){
         std::cout<<"* Initializing mds:"<< mds<<" with:"<<conf_file<<endl;
         
@@ -249,6 +250,7 @@ int main (int argc, char* argv[] )
     std::cerr << e.errorCode << " - "<< e.errorDomain << " - " << e.errorMessage << std::endl;
     return -3;
   }
-
+  ChaosMetadataServiceClient::getInstance()->stop();
+  ChaosMetadataServiceClient::getInstance()->deinit();
   return 0;
 }
