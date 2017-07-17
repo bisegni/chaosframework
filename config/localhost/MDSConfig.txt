@@ -187,6 +187,70 @@
 	            }
 		    ]
 		},
+{
+		    "unit_server_alias": "TEST",
+		    "cu_id": "BTF/DIAG/DAQ/QDC/QDC965LO",
+		    "cu_type": "",
+		    "cu_param": "",
+		    "auto_load": false,
+		    "auto_start": false,
+		    "auto_init": false,
+		    "storage_type": 2,
+		    "storage_ageing": 3600,
+
+		    "DriverDescription": [
+
+		    ],
+		    "AttrDesc": []
+		},
+{
+		    "unit_server_alias": "TEST",
+		    "cu_id": "BTF/DIAG/DAQ/QDC/QDC965HI",
+		    "cu_type": "",
+		    "cu_param": "",
+		    "auto_load": false,
+		    "auto_start": false,
+		    "auto_init": false,
+		    "storage_type": 2,
+		    "storage_ageing": 3600,
+
+		    "DriverDescription": [
+
+		    ],
+		    "AttrDesc": []
+		},
+{
+		    "unit_server_alias": "TEST",
+		    "cu_id": "BTF/DIAG/DAQ/SCALER",
+		    "cu_type": "",
+		    "cu_param": "",
+		    "auto_load": false,
+		    "auto_start": false,
+		    "auto_init": false,
+		    "storage_type": 2,
+		    "storage_ageing": 3600,
+
+		    "DriverDescription": [
+
+		    ],
+		    "AttrDesc": []
+		},
+{
+		    "unit_server_alias": "TEST",
+		    "cu_id": "TEST/TEST_CU",
+		    "cu_type": "",
+		    "cu_param": "",
+		    "auto_load": false,
+		    "auto_start": false,
+		    "auto_init": false,
+		    "storage_type": 2,
+		    "storage_ageing": 3600,
+
+		    "DriverDescription": [
+
+		    ],
+		    "AttrDesc": []
+		},
 		{		
 		    "unit_server_alias": "TEST",
 		    "cu_id": "BTF/SCRAPER/SIMUL",
@@ -1831,25 +1895,7 @@
 			    "ds_default_value": "20"
 	            	}        
 		    ]
-},		{
-		    "unit_server_alias": "TEST",
-		    "cu_id": "BENCHMARK_UNIT_0/TEST_CU_0",
-		    "cu_type": "ChaosMESS",
-		    "cu_param": "",
-		    "auto_load": true,
-		    "auto_start": true,
-		    "auto_init": true,
-		    "storage_type": 2,
-		    "storage_ageing": 36000,
-		    "DriverDescription": [
-			{
-			    "DriverDescriptionName": "DummyDriver",
-			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": ""
-			}
-		    ],
-		    "AttrDesc": []
-		},
+},		
 		{
 		    "unit_server_alias": "TEST",
 		    "cu_id": "MEA/QUADRUPOLE/TEST001",
@@ -4859,6 +4905,30 @@
 		    "storage_type": 2,
 		    "storage_ageing": 36000,
 		    "DriverDescription": [],
+		    "AttrDesc": []
+		}
+	    ]
+	},{
+	    "unit_server_alias": "BENCHMARK_UNIT_0",
+	    "private_key": null,
+	    "public_key": null,
+	    "cu_desc": [{
+		    "unit_server_alias": "BENCHMARK_UNIT_0",
+		    "cu_id": "BENCHMARK_UNIT_0/TEST_CU_0",
+		    "cu_type": "ChaosMESS",
+		    "cu_param": "",
+		    "auto_load": true,
+		    "auto_start": true,
+		    "auto_init": true,
+		    "storage_type": 2,
+		    "storage_ageing": 36000,
+		    "DriverDescription": [
+			{
+			    "DriverDescriptionName": "DummyDriver",
+			    "DriverDescriptionVersion": "1.0.0",
+			    "DriverDescriptionInitParam": ""
+			}
+		    ],
 		    "AttrDesc": []
 		}
 	    ]
