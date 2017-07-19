@@ -56,6 +56,10 @@
 		320F73331F17A46400C4806C /* external_gateway_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 320F73311F17A46400C4806C /* external_gateway_types.h */; };
 		320F73371F17A5CB00C4806C /* external_gateway_constants.h in Headers */ = {isa = PBXBuildFile; fileRef = 320F73351F17A5CB00C4806C /* external_gateway_constants.h */; };
 		320F733B1F17A67800C4806C /* external_gateway.h in Headers */ = {isa = PBXBuildFile; fileRef = 320F73391F17A67800C4806C /* external_gateway.h */; };
+		320F733F1F1F4EC100C4806C /* AbstractExternalSerialization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320F733D1F1F4EC100C4806C /* AbstractExternalSerialization.cpp */; };
+		320F73401F1F4EC100C4806C /* AbstractExternalSerialization.h in Headers */ = {isa = PBXBuildFile; fileRef = 320F733E1F1F4EC100C4806C /* AbstractExternalSerialization.h */; };
+		320F73431F1F55E300C4806C /* ExternalBSONExtJsonSerialization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320F73411F1F55E300C4806C /* ExternalBSONExtJsonSerialization.cpp */; };
+		320F73441F1F55E300C4806C /* ExternalBSONExtJsonSerialization.h in Headers */ = {isa = PBXBuildFile; fileRef = 320F73421F1F55E300C4806C /* ExternalBSONExtJsonSerialization.h */; };
 		320FB0EC18A39E650014CDB3 /* DirectIO.h in Headers */ = {isa = PBXBuildFile; fileRef = 320FB0EB18A39E650014CDB3 /* DirectIO.h */; };
 		3210EE1E1AE7DE15006ADC0B /* RegistrationAckBatchCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3210EE1C1AE7DE15006ADC0B /* RegistrationAckBatchCommand.cpp */; };
 		3211CCD61B0205C700F9B80E /* GetBestEndpoints.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3211CCD41B0205C700F9B80E /* GetBestEndpoints.cpp */; };
@@ -1307,6 +1311,10 @@
 		320F73311F17A46400C4806C /* external_gateway_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = external_gateway_types.h; sourceTree = "<group>"; };
 		320F73351F17A5CB00C4806C /* external_gateway_constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = external_gateway_constants.h; sourceTree = "<group>"; };
 		320F73391F17A67800C4806C /* external_gateway.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = external_gateway.h; sourceTree = "<group>"; };
+		320F733D1F1F4EC100C4806C /* AbstractExternalSerialization.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractExternalSerialization.cpp; sourceTree = "<group>"; };
+		320F733E1F1F4EC100C4806C /* AbstractExternalSerialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractExternalSerialization.h; sourceTree = "<group>"; };
+		320F73411F1F55E300C4806C /* ExternalBSONExtJsonSerialization.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExternalBSONExtJsonSerialization.cpp; sourceTree = "<group>"; };
+		320F73421F1F55E300C4806C /* ExternalBSONExtJsonSerialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExternalBSONExtJsonSerialization.h; sourceTree = "<group>"; };
 		320FB0EB18A39E650014CDB3 /* DirectIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIO.h; sourceTree = "<group>"; };
 		3210EE1C1AE7DE15006ADC0B /* RegistrationAckBatchCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegistrationAckBatchCommand.cpp; sourceTree = "<group>"; };
 		3210EE1D1AE7DE15006ADC0B /* RegistrationAckBatchCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegistrationAckBatchCommand.h; sourceTree = "<group>"; };
@@ -2870,6 +2878,17 @@
 				320E773F1A7FC561001FB8BC /* unit_server_batch.h */,
 			);
 			path = unit_server;
+			sourceTree = "<group>";
+		};
+		320F733C1F1F4E8800C4806C /* serialization */ = {
+			isa = PBXGroup;
+			children = (
+				320F733D1F1F4EC100C4806C /* AbstractExternalSerialization.cpp */,
+				320F733E1F1F4EC100C4806C /* AbstractExternalSerialization.h */,
+				320F73411F1F55E300C4806C /* ExternalBSONExtJsonSerialization.cpp */,
+				320F73421F1F55E300C4806C /* ExternalBSONExtJsonSerialization.h */,
+			);
+			path = serialization;
 			sourceTree = "<group>";
 		};
 		3211FD061698666700424A3C /* caching */ = {
@@ -5324,6 +5343,7 @@
 		32E782CB1EFC070E00AD59F7 /* external_gateway */ = {
 			isa = PBXGroup;
 			children = (
+				320F733C1F1F4E8800C4806C /* serialization */,
 				32E782D01EFC081400AD59F7 /* http_adapter */,
 				32E782CC1EFC075D00AD59F7 /* ExternalUnitGateway.cpp */,
 				32E782CD1EFC075D00AD59F7 /* ExternalUnitGateway.h */,
@@ -5949,6 +5969,7 @@
 				326933E21D5088150033D9E9 /* data_manager.h in Headers */,
 				326DB4CA14B3A3E50018A8D0 /* DataManagerException.h in Headers */,
 				3270D5E91CCFAC4F0072017B /* AbstractExecutionUnit.h in Headers */,
+				320F73401F1F4EC100C4806C /* AbstractExternalSerialization.h in Headers */,
 				326933EE1D5089590033D9E9 /* trigger_system.h in Headers */,
 				320F73331F17A46400C4806C /* external_gateway_types.h in Headers */,
 				32A94A7D1F14CC830069DDA3 /* ExternalUnitConnection.h in Headers */,
@@ -5959,6 +5980,7 @@
 				326DB4CC14B3A3E50018A8D0 /* KeyDataStorage.h in Headers */,
 				3252A31C1C9021DE00900FF2 /* handler.h in Headers */,
 				326933F21D5089C20033D9E9 /* dataset_event.h in Headers */,
+				320F73441F1F55E300C4806C /* ExternalBSONExtJsonSerialization.h in Headers */,
 				32C4EF261D4BA7060014F3D3 /* DatasetEditor.h in Headers */,
 				323BC2841EE0362500B4D602 /* EUAbstractApiPlugin.h in Headers */,
 				3287F7E717B27621009DD6ED /* DriverManager.h in Headers */,
@@ -6771,6 +6793,7 @@
 				3287F7E617B2756C009DD6ED /* DriverManager.cpp in Sources */,
 				32A94A801F14CDBF0069DDA3 /* ExternalUnitEndpoint.cpp in Sources */,
 				32A94A881F1654040069DDA3 /* ExternalEchoEndpoint.cpp in Sources */,
+				320F73431F1F55E300C4806C /* ExternalBSONExtJsonSerialization.cpp in Sources */,
 				3214EF101D466F95004DB689 /* DataBroker.cpp in Sources */,
 				32E782DC1EFC0AC300AD59F7 /* ControlUnitBridge.cpp in Sources */,
 				325168CC1D47935D00E877DF /* DataBrokerEditor.cpp in Sources */,
@@ -6793,6 +6816,7 @@
 				3215860D178756B40090E7E6 /* AbstractDriverPlugin.cpp in Sources */,
 				324545011D4A676A0081F90B /* EventManager.cpp in Sources */,
 				32C4EF361D4F71370014F3D3 /* DatasetEvent.cpp in Sources */,
+				320F733F1F1F4EC100C4806C /* AbstractExternalSerialization.cpp in Sources */,
 				328C84741ED33C15008B5F7D /* EULiveManagment.cpp in Sources */,
 				326BB29F1E3753E200BFA602 /* ProxyControlUnit.cpp in Sources */,
 				3252A30F1C8ED2A800900FF2 /* AbstractAttributeHandler.cpp in Sources */,

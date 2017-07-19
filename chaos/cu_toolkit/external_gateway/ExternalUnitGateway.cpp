@@ -23,6 +23,8 @@
 #include <chaos/cu_toolkit/external_gateway/ExternalUnitGateway.h>
 #include <chaos/cu_toolkit/external_gateway/http_adapter/HTTPAdapter.h>
 
+#include <chaos/cu_toolkit/external_gateway/serialization/ExternalBSONExtJsonSerialization.h>
+
 using namespace chaos::cu::external_gateway;
 using namespace chaos::common::utility;
 
@@ -33,6 +35,9 @@ using namespace chaos::common::utility;
 ExternalUnitGateway::ExternalUnitGateway() {
     //add adapters
     map_protocol_adapter().insert(MapAdapterPair("http", ChaosSharedPtr<AbstractAdapter>(new http_adapter::HTTPAdapter())));
+    
+    //!add serializer
+    installSerializerInstancer<serialization::ExternalBSONExtJsonSerialization>();
 }
 
 ExternalUnitGateway::~ExternalUnitGateway() {
@@ -86,4 +91,11 @@ int ExternalUnitGateway::deregisterEndpoint(ExternalUnitEndpoint& endpoint) {
         err = it->second->deregisterEndpoint(endpoint);
     }
     return err;
+}
+
+ChaosUniquePtr<serialization::AbstractExternalSerialization> ExternalUnitGateway::getNewSerializationInstanceForType(const std::string& type) {
+    LMapSerializerReadLock rl = map_serializer.getReadLockObject();
+    MapSerializerIterator found_ser_it = map_serializer().find(type);
+    if(found_ser_it == map_serializer().end()) return ChaosUniquePtr<serialization::AbstractExternalSerialization>();
+    return ChaosUniquePtr<serialization::AbstractExternalSerialization>(found_ser_it->second->getInstance());
 }

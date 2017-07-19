@@ -268,7 +268,7 @@ namespace chaos {
                 SerializationBuffer* getJSONData();
                 
                 //return the json representation for this data wrapper
-                string getJSONString();
+                string getJSONString() const;
                 
                 //reinitialize the object with bson data
                 void setSerializedData(const char* bsonData);

@@ -489,7 +489,7 @@ SerializationBuffer* CDataWrapper::getJSONData() {
 }
 
 //return the json data
-string CDataWrapper::getJSONString() {
+string CDataWrapper::getJSONString() const {
     //finalize the bson object
     if( bsonBuilder->len()==0 ) return string("");
     

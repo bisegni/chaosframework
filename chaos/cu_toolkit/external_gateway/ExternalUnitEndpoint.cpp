@@ -33,12 +33,12 @@ ExternalUnitEndpoint::~ExternalUnitEndpoint() {
 }
 
 int ExternalUnitEndpoint::sendMessage(const std::string& connection_identifier,
-                                      const std::string& message,
+                                      ChaosUniquePtr<chaos::common::data::CDataWrapper> message,
                                       const EUCMessageOpcode opcode) {
     LMapConnectionReadLock rl = map_connection.getReadLockObject();
     if(map_connection().count(connection_identifier) == 0) return -1;
     //send data to the coneection
-    return map_connection()[connection_identifier]->sendData(message,
+    return map_connection()[connection_identifier]->sendData(ChaosMoveOperator(message),
                                                              opcode);
 }
 

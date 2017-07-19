@@ -45,6 +45,7 @@
 #define ChaosWeakPtr boost::weak_ptr
 #endif
 #define ChaosUniquePtr std::unique_ptr
+#define ChaosMoveOperator(x) std::move(x)
 
 //#pragma message "Use new memory management std::shared_ptr(ChaosSharedPtr) std::make_shared(ChaosMakeSharedPtr) std::weak_ptr(ChaosWeakPtr) std::unique_ptr(ChaosUniquePtr)"
 #else
@@ -54,6 +55,7 @@
 #define ChaosMakeSharedPtr boost::make_shared
 #define ChaosWeakPtr boost::weak_ptr
 #define ChaosUniquePtr std::auto_ptr
+#define ChaosMoveOperator(x) x
 #endif
 
 #define  CHAOS_DEFINE_SET_FOR_TYPE(t1, n)\

@@ -24,32 +24,32 @@
 using namespace chaos::cu::external_gateway::http_adapter;
 
 HTTPExternalUnitConnection::HTTPExternalUnitConnection(mg_connection *_nc,
-                                                       ExternalUnitEndpoint *_endpoint):
-ExternalUnitConnection(_endpoint),
+                                                       ExternalUnitEndpoint *_endpoint,
+                                                       ChaosUniquePtr<chaos::cu::external_gateway::serialization::AbstractExternalSerialization> _serializer_adaptor):
+ExternalUnitConnection(_endpoint, ChaosMoveOperator(_serializer_adaptor)),
 nc(_nc){}
 HTTPExternalUnitConnection::~HTTPExternalUnitConnection(){}
 
 int HTTPExternalUnitConnection::handleWSIncomingData(const ChaosUniquePtr<WorkRequest>& request) {
-    const std::string message(&request->buffer[0], request->buffer.size());
-    return sendDataToEndpoint(message);
+    return sendDataToEndpoint(ChaosMoveOperator(request->buffer));
 }
 
-int HTTPExternalUnitConnection::sendData(const std::string& data,
-                                         const EUCMessageOpcode opcode) {
+int HTTPExternalUnitConnection::sendDataToConnection(const ChaosUniquePtr<chaos::common::data::CDataBuffer> data,
+                                                     const EUCMessageOpcode opcode) {
     switch (opcode) {
         case EUCMessageOpcodeWhole:
-            mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT, data.c_str(), data.size());
+            mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT, data->getBuffer(), data->getBufferSize());
             break;
         case EUCPhaseStartFragment:
-            mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT|WEBSOCKET_DONT_FIN, data.c_str(), data.size());
+            mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT|WEBSOCKET_DONT_FIN, data->getBuffer(), data->getBufferSize());
             break;
             
         case EUCPhaseContinueFragment:
-            mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT|WEBSOCKET_DONT_FIN, data.c_str(), data.size());
+            mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT|WEBSOCKET_DONT_FIN, data->getBuffer(), data->getBufferSize());
             break;
             
         case EUCPhaseEndFragment:
-            mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT, data.c_str(), data.size());
+            mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT, data->getBuffer(), data->getBufferSize());
             break;
     }
     

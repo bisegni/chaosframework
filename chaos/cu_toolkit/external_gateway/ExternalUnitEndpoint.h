@@ -60,14 +60,15 @@ namespace chaos{
                 virtual void handleNewConnection(const std::string& connection_identifier) = 0;
                 
                 //! notify that a message has been received for a remote connection
-                virtual int handleReceivedeMessage(const std::string& connection_identifier, const std::string& message) = 0;
+                virtual int handleReceivedeMessage(const std::string& connection_identifier,
+                                                   ChaosUniquePtr<chaos::common::data::CDataWrapper> message) = 0;
                 
                 //!notify that a connection has been closed
                 virtual void handleDisconnection(const std::string& connection_identifier) = 0;
                 
                 //! send a message throught a remote connection
                 int sendMessage(const std::string& connection_identifier,
-                                const std::string& message,
+                                ChaosUniquePtr<chaos::common::data::CDataWrapper> message,
                                 const EUCMessageOpcode opcode = EUCMessageOpcodeWhole);
             public:
                 ExternalUnitEndpoint(const std::string& _endpoint_identifier);

@@ -40,11 +40,12 @@ namespace chaos{
                     //!manage all data received by the associated websocket
                     int handleWSIncomingData(const ChaosUniquePtr<WorkRequest>& request);
                     
-                    int sendData(const std::string& data,
-                                 const EUCMessageOpcode opcode);
+                    int sendDataToConnection(const ChaosUniquePtr<chaos::common::data::CDataBuffer> data,
+                                             const EUCMessageOpcode opcode);
                 public:
                     HTTPExternalUnitConnection(mg_connection *_nc,
-                                               ExternalUnitEndpoint *_endpoint);
+                                               ExternalUnitEndpoint *_endpoint,
+                                               ChaosUniquePtr<chaos::cu::external_gateway::serialization::AbstractExternalSerialization> _serializer_adaptor);
                     ~HTTPExternalUnitConnection();
                 };
             }

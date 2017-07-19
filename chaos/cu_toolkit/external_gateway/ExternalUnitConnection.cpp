@@ -29,9 +29,11 @@ using namespace chaos::common::utility;
 
 using namespace chaos::cu::external_gateway;
 
-ExternalUnitConnection::ExternalUnitConnection(ExternalUnitEndpoint *_endpoint):
+ExternalUnitConnection::ExternalUnitConnection(ExternalUnitEndpoint *_endpoint,
+                                               ChaosUniquePtr<chaos::cu::external_gateway::serialization::AbstractExternalSerialization> _serializer_adapter):
 connection_identifier(UUIDUtil::generateUUIDLite()),
-endpoint(_endpoint){
+endpoint(_endpoint),
+serializer_adapter(ChaosMoveOperator(_serializer_adapter)) {
     endpoint->addConnection(*this);
 }
 
@@ -39,7 +41,22 @@ ExternalUnitConnection::~ExternalUnitConnection() {
     endpoint->removeConnection(*this);
 }
 
-int ExternalUnitConnection::sendDataToEndpoint(const std::string& data) {
+int ExternalUnitConnection::sendDataToEndpoint(ChaosUniquePtr<chaos::common::data::CDataBuffer> reecived_data) {
     CHAOS_ASSERT(endpoint);
-    return endpoint->handleReceivedeMessage(connection_identifier, data);
+    CHAOS_ASSERT(serializer_adapter)
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> dmessage = serializer_adapter->deserialize(*reecived_data);
+    if(!dmessage) return -1;
+    return endpoint->handleReceivedeMessage(connection_identifier, ChaosMoveOperator(dmessage));
+}
+
+int ExternalUnitConnection::sendData(ChaosUniquePtr<chaos::common::data::CDataWrapper> data,
+                                     const EUCMessageOpcode opcode) {
+    CHAOS_ASSERT(data);
+    CHAOS_ASSERT(serializer_adapter)
+    return sendDataToConnection(serializer_adapter->serialize(*data), opcode);
+}
+
+const std::string& ExternalUnitConnection::getEndpointIdentifier() const {
+    CHAOS_ASSERT(endpoint);
+    return endpoint->getIdentifier();
 }

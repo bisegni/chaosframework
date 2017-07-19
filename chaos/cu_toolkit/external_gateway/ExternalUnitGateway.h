@@ -26,19 +26,30 @@
 #include <chaos/common/utility/Singleton.h>
 #include <chaos/common/utility/LockableObject.h>
 #include <chaos/common/utility/InizializableService.h>
+#include <chaos/common/utility/ObjectInstancer.h>
 
 #include <chaos/cu_toolkit/external_gateway/AbstractAdapter.h>
 #include <chaos/cu_toolkit/external_gateway/ExternalUnitEndpoint.h>
 #include <chaos/cu_toolkit/external_gateway/ExternalEchoEndpoint.h>
+#include <chaos/cu_toolkit/external_gateway/serialization/AbstractExternalSerialization.h>
+
+#include <algorithm>
+
 namespace chaos{
     namespace cu {
         namespace external_gateway {
             
             //! define adapter map
             CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ChaosSharedPtr<AbstractAdapter>, MapAdapter);
+            CHAOS_DEFINE_LOCKABLE_OBJECT(MapAdapter, LMapAdapter);
             
-            CHAOS_DEFINE_LOCKABLE_OBJECT(MapAdapter, LMapAdapter)
+            //!define serialization map
+            typedef ChaosSharedPtr< chaos::common::utility::ObjectInstancer<serialization::AbstractExternalSerialization> > ExtSerializerShrdPtr;
+            CHAOS_DEFINE_MAP_FOR_TYPE(std::string,  ExtSerializerShrdPtr, MapSerializer);
+            CHAOS_DEFINE_LOCKABLE_OBJECT(MapSerializer, LMapSerializer);
             
+#define CU_EG_SERIALIZER_INSTANCER(SerializerClass)\
+new chaos::common::utility::TypedObjectInstancer<SerializerClass, serialization::AbstractExternalSerialization>()
             
             //!External gateway root class
             class ExternalUnitGateway:
@@ -49,14 +60,28 @@ namespace chaos{
                 ExternalEchoEndpoint echo_endpoint;
                 //!associate the protocol string to the adapter
                 LMapAdapter map_protocol_adapter;
+                
+                LMapSerializer map_serializer;
+                
                 ExternalUnitGateway();
                 ~ExternalUnitGateway();
+                
             public:
                 void init(void *init_data) throw (chaos::CException);
                 void deinit() throw (chaos::CException);
                 
                 int registerEndpoint(ExternalUnitEndpoint& endpoint);
                 int deregisterEndpoint(ExternalUnitEndpoint& endpoint);
+                
+                ChaosUniquePtr<serialization::AbstractExternalSerialization> getNewSerializationInstanceForType(const std::string& type);
+                
+                template<typename T>
+                void installSerializerInstancer() {
+                    LMapSerializerWriteLock wl = map_serializer.getWriteLockObject();
+                    std::string lowering_type = T::ex_serialization_type;
+                    std::transform(lowering_type.begin(), lowering_type.end(), lowering_type.begin(), ::tolower);
+                    map_serializer().insert(MapSerializerPair(lowering_type, ExtSerializerShrdPtr(CU_EG_SERIALIZER_INSTANCER(T))));
+                }
             };
         }
     }

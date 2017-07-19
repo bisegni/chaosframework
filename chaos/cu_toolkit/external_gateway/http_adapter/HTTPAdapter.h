@@ -59,7 +59,7 @@ namespace chaos{
                     LMapConnection  map_connection;
                     
                     void poller();
-                    static WorkRequestProtocols decodeProtocolType(http_message *http_message);
+                    static const std::string getSerializationType(http_message *http_message);
                     static void eventHandler(mg_connection *nc, int ev, void *ev_data);
                 protected:
                     void processBufferElement(WorkRequest *request, ElementManagingPolicy& policy) throw(CException);

@@ -24,6 +24,8 @@
 
 #include <chaos/common/chaos_types.h>
 
+#include <chaos/cu_toolkit/external_gateway/serialization/AbstractExternalSerialization.h>
+
 namespace chaos {
     namespace cu {
         namespace external_gateway {
@@ -43,18 +45,26 @@ namespace chaos {
             protected:
                 //!endpoint that own the connection
                 ExternalUnitEndpoint *endpoint;
+                
+                //!,anage the absractio of serialization
+                ChaosUniquePtr<chaos::cu::external_gateway::serialization::AbstractExternalSerialization> serializer_adapter;
             protected:
-                int sendDataToEndpoint(const std::string& data);
+                int sendDataToEndpoint(ChaosUniquePtr<chaos::common::data::CDataBuffer> reecived_data);
+                virtual int sendDataToConnection(ChaosUniquePtr<chaos::common::data::CDataBuffer> data,
+                                                 const EUCMessageOpcode opcode = EUCMessageOpcodeWhole) = 0;
             public:
                 //! end point identifier
                 const std::string connection_identifier;
                 
-                ExternalUnitConnection(ExternalUnitEndpoint *_endpoint);
+                ExternalUnitConnection(ExternalUnitEndpoint *_endpoint,
+                                       ChaosUniquePtr<chaos::cu::external_gateway::serialization::AbstractExternalSerialization> _serializer_adapter);
                 virtual ~ExternalUnitConnection();
                 
                 //! send data over external protocol
-                virtual int sendData(const std::string& data,
-                                     const EUCMessageOpcode opcode = EUCMessageOpcodeWhole) = 0;
+                int sendData(ChaosUniquePtr<chaos::common::data::CDataWrapper> data,
+                             const EUCMessageOpcode opcode = EUCMessageOpcodeWhole);
+                
+                const std::string& getEndpointIdentifier() const;
             };
         }
     }

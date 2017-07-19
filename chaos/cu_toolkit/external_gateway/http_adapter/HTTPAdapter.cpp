@@ -21,12 +21,14 @@
 
 #include <chaos/common/global.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
+#include <chaos/cu_toolkit/external_gateway/ExternalUnitGateway.h>
 #include <chaos/cu_toolkit/external_gateway/http_adapter/HTTPAdapter.h>
 #include <chaos/cu_toolkit/external_gateway/external_gateway_constants.h>
 
 #include <boost/lexical_cast.hpp>
 
 #include <string.h>
+#include <algorithm>
 
 using namespace chaos;
 using namespace chaos::cu::external_gateway::http_adapter;
@@ -90,17 +92,17 @@ void HTTPAdapter::poller() {
     INFO << "Leaving thread poller";
 }
 
-WorkRequestProtocols HTTPAdapter::decodeProtocolType(http_message *http_message) {
+const std::string HTTPAdapter::getSerializationType(http_message *http_message) {
     CHAOS_ASSERT(http_message);
-    struct mg_str *value = mg_get_http_header(http_message, "cu-eg-protocol-type");
-    if(value == NULL) return WorkRequestProtocolsText;
-    const std::string type_str(value->p, value->len);
-    if(type_str.compare("json") == 0) {
-        return WorkRequestProtocolsJson;
-    } else {
-        return WorkRequestProtocolsText;
+    struct mg_str *value = mg_get_http_header(http_message, "Content-Type");
+    if(value == NULL) {
+        value = mg_get_http_header(http_message, "content-type");
+        if(value == NULL) return "";
     }
     
+    std::string ser_type(value->p, value->len);
+    std::transform(ser_type.begin(), ser_type.end(), ser_type.begin(), ::tolower);
+    return ser_type;
 }
 
 void HTTPAdapter::processBufferElement(WorkRequest *request,
@@ -125,17 +127,31 @@ void HTTPAdapter::processBufferElement(WorkRequest *request,
                 return;
             }
             
+            //get instance for serializer
+            ChaosUniquePtr<serialization::AbstractExternalSerialization> serializer = ExternalUnitGateway::getInstance()->getNewSerializationInstanceForType(request->s_type);
+            if(!serializer) {
+                //weh don't have found the sriealizer
+                const std::string error = CHAOS_FORMAT("Unable to find the serialization plugin for '%1%'", %request->s_type);
+                mg_send_websocket_frame(request->nc, WEBSOCKET_OP_TEXT, error.c_str(), error.size());
+                mg_send_websocket_frame(request->nc, WEBSOCKET_OP_CLOSE, NULL, 0);
+            }
             //we can create a new connection
             LMapConnectionWriteLock wconnl = map_connection.getWriteLockObject();
             map_connection().insert(MapConnectionPair(reinterpret_cast<uintptr_t>(request->nc),
                                                       ChaosSharedPtr<HTTPExternalUnitConnection>(new HTTPExternalUnitConnection(request->nc,
-                                                                                                                                map_endpoint()[request->uri]))));
+                                                                                                                                map_endpoint()[request->uri],
+                                                                                                                                ChaosMoveOperator(serializer)))));
             break;
         }
         case WorkRequestTypeWSFrame: {
+            int err = 0;
             policy.elementHasBeenDetached = true;
             LMapConnectionReadLock wconnl = map_connection.getReadLockObject();
-            map_connection()[reinterpret_cast<uintptr_t>(request->nc)]->handleWSIncomingData(ChaosUniquePtr<WorkRequest>(request));
+            if((err = map_connection()[reinterpret_cast<uintptr_t>(request->nc)]->handleWSIncomingData(ChaosUniquePtr<WorkRequest>(request)))){
+                //weh don't have found the sriealizer
+                const std::string error = CHAOS_FORMAT("{error:\"%1%\",message:\"%2%\"}", %err%map_connection()[reinterpret_cast<uintptr_t>(request->nc)]->getEndpointIdentifier());
+                mg_send_websocket_frame(request->nc, WEBSOCKET_OP_TEXT, error.c_str(), error.size());
+            }
             break;
         }
         case WorkRequestTypeWSCloseEvent: {
@@ -159,31 +175,31 @@ void HTTPAdapter::eventHandler(mg_connection *nc, int ev, void *ev_data) {
         }
         case MG_EV_HTTP_REQUEST: {
             http_message *message = static_cast<http_message*>(ev_data);
-            WorkRequest *req = new WorkRequest();
+            WorkRequest *req = new WorkRequest(message->message.p,
+                                               (uint32_t)message->message.len);
             req->r_type = WorkRequestTypeHttpRequest;
-            req->p_type = decodeProtocolType(message);
+            req->s_type = getSerializationType(message);
             req->nc = nc;
             req->uri.assign(message->uri.p, message->uri.len);
-            req->buffer.assign(message->message.p, message->message.p+message->message.len);
             adapter->push(req);
             break;
         }
         case MG_EV_WEBSOCKET_HANDSHAKE_REQUEST: {
             http_message *message = static_cast<http_message*>(ev_data);
-            WorkRequest *req = new WorkRequest();
+            WorkRequest *req = new WorkRequest(message->message.p,
+                                               (uint32_t)message->message.len);
             req->r_type = WorkRequestTypeWSHandshakeRequest;
-            req->p_type = decodeProtocolType(message);
+            req->s_type = getSerializationType(message);
             req->nc = nc;
             req->uri.assign(message->uri.p, message->uri.len);
-            req->buffer.assign(message->message.p, message->message.p+message->message.len);
             adapter->push(req);
             break;
         }
         case MG_EV_WEBSOCKET_FRAME: {
             websocket_message *message = static_cast<websocket_message*>(ev_data);
-            WorkRequest *req = new WorkRequest();
+            WorkRequest *req = new WorkRequest((const char *)message->data,
+                                               (uint32_t)message->size);
             req->r_type = WorkRequestTypeWSFrame;
-            req->buffer.assign(message->data, message->data+message->size);
             req->nc = nc;
             adapter->push(req);
             break;
