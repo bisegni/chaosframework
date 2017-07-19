@@ -23,14 +23,13 @@
 
 using namespace chaos::cu::external_gateway;
 
-ExternalUnitEndpoint::ExternalUnitEndpoint(const std::string& _endpoint_identifier):
-endpoint_identifier(_endpoint_identifier){
-    
-}
+ExternalUnitEndpoint::ExternalUnitEndpoint() {}
 
-ExternalUnitEndpoint::~ExternalUnitEndpoint() {
-    
-}
+ExternalUnitEndpoint::ExternalUnitEndpoint(const std::string& _endpoint_identifier):
+endpoint_identifier(_endpoint_identifier),
+number_of_connection_accepted(1){}
+
+ExternalUnitEndpoint::~ExternalUnitEndpoint() {}
 
 int ExternalUnitEndpoint::sendMessage(const std::string& connection_identifier,
                                       ChaosUniquePtr<chaos::common::data::CDataWrapper> message,
@@ -58,4 +57,9 @@ int ExternalUnitEndpoint::removeConnection(ExternalUnitConnection& removed_conne
     handleDisconnection(removed_connection.connection_identifier);
     map_connection().erase(removed_connection.connection_identifier);
     return 0;
+}
+
+const bool ExternalUnitEndpoint::canAcceptMoreConnection() {
+    LMapConnectionReadLock rl =  map_connection.getReadLockObject();
+    return number_of_connection_accepted < map_connection().size();
 }

@@ -279,6 +279,8 @@
 		3252A3141C8ED6BD00900FF2 /* DatasetAttributeHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 3252A3121C8ED6BD00900FF2 /* DatasetAttributeHandler.h */; };
 		3252A3181C8EE28E00900FF2 /* DatasetAttributeHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3252A3171C8EE28E00900FF2 /* DatasetAttributeHandler.cpp */; };
 		3252A31C1C9021DE00900FF2 /* handler.h in Headers */ = {isa = PBXBuildFile; fileRef = 3252A31A1C9021DE00900FF2 /* handler.h */; };
+		3252AEFA1F1F9EEF0065F137 /* CDataWrapperIODriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3252AEF81F1F9EEF0065F137 /* CDataWrapperIODriver.cpp */; };
+		3252AEFB1F1F9EEF0065F137 /* CDataWrapperIODriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 3252AEF91F1F9EEF0065F137 /* CDataWrapperIODriver.h */; };
 		3252F3541C29847E004436A8 /* GetDomains.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3252F3521C29847E004436A8 /* GetDomains.cpp */; };
 		3252F3581C298743004436A8 /* AddNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3252F3561C298743004436A8 /* AddNode.cpp */; };
 		3252F3591C298743004436A8 /* AddNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 3252F3571C298743004436A8 /* AddNode.h */; };
@@ -1575,6 +1577,8 @@
 		3252A3121C8ED6BD00900FF2 /* DatasetAttributeHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatasetAttributeHandler.h; sourceTree = "<group>"; };
 		3252A3171C8EE28E00900FF2 /* DatasetAttributeHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatasetAttributeHandler.cpp; sourceTree = "<group>"; };
 		3252A31A1C9021DE00900FF2 /* handler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = handler.h; sourceTree = "<group>"; };
+		3252AEF81F1F9EEF0065F137 /* CDataWrapperIODriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CDataWrapperIODriver.cpp; sourceTree = "<group>"; };
+		3252AEF91F1F9EEF0065F137 /* CDataWrapperIODriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDataWrapperIODriver.h; sourceTree = "<group>"; };
 		3252F3521C29847E004436A8 /* GetDomains.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetDomains.cpp; sourceTree = "<group>"; };
 		3252F3531C29847E004436A8 /* GetDomains.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetDomains.h; sourceTree = "<group>"; };
 		3252F3561C298743004436A8 /* AddNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = AddNode.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
@@ -4407,6 +4411,8 @@
 				3215860F17875FDB0090E7E6 /* DriverPluginLoader.h */,
 				3215860C178756B40090E7E6 /* AbstractDriverPlugin.cpp */,
 				3232F457177743DC003E1D4A /* AbstractDriverPlugin.h */,
+				3252AEF81F1F9EEF0065F137 /* CDataWrapperIODriver.cpp */,
+				3252AEF91F1F9EEF0065F137 /* CDataWrapperIODriver.h */,
 			);
 			path = driver;
 			sourceTree = "<group>";
@@ -5962,6 +5968,7 @@
 				326DB4C014B3A3E50018A8D0 /* AbstractControlUnit.h in Headers */,
 				326DB4C214B3A3E50018A8D0 /* ControlManager.h in Headers */,
 				3232F458177743DC003E1D4A /* AbstractDriverPlugin.h in Headers */,
+				3252AEFB1F1F9EEF0065F137 /* CDataWrapperIODriver.h in Headers */,
 				32C4EF471D4F88ED0014F3D3 /* DatasetSubject.h in Headers */,
 				326DB4C914B3A3E50018A8D0 /* DataManager.h in Headers */,
 				324545021D4A676A0081F90B /* EventManager.h in Headers */,
@@ -6824,6 +6831,7 @@
 				32A94A7C1F14CC830069DDA3 /* ExternalUnitConnection.cpp in Sources */,
 				326DB4C814B3A3E50018A8D0 /* DataManager.cpp in Sources */,
 				325168CE1D479BAB00E877DF /* data_manager_types.cpp in Sources */,
+				3252AEFA1F1F9EEF0065F137 /* CDataWrapperIODriver.cpp in Sources */,
 				3264138D1E3F658D0035E175 /* ControlUnitApiInterface.cpp in Sources */,
 				3215861017875FDB0090E7E6 /* DriverPluginLoader.cpp in Sources */,
 				326DB4CB14B3A3E50018A8D0 /* KeyDataStorage.cpp in Sources */,

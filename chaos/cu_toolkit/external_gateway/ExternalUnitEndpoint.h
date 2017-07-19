@@ -43,11 +43,10 @@ namespace chaos{
                 CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ExternalUnitConnection*, MapConnection);
                 
                 CHAOS_DEFINE_LOCKABLE_OBJECT(MapConnection, LMapConnection);
-
-                //! end point identifier
-                const std::string endpoint_identifier;
                 
                 LMapConnection map_connection;
+                
+                unsigned int number_of_connection_accepted;
                 
                 //! send a message to a connection
                 int addConnection(ExternalUnitConnection& new_connection);
@@ -56,6 +55,9 @@ namespace chaos{
                 int removeConnection(ExternalUnitConnection& removed_connection);
                 
             protected:
+                //! end point identifier
+                std::string endpoint_identifier;
+                
                 //!notify a new arrived connection
                 virtual void handleNewConnection(const std::string& connection_identifier) = 0;
                 
@@ -70,10 +72,14 @@ namespace chaos{
                 int sendMessage(const std::string& connection_identifier,
                                 ChaosUniquePtr<chaos::common::data::CDataWrapper> message,
                                 const EUCMessageOpcode opcode = EUCMessageOpcodeWhole);
+                
+                ExternalUnitEndpoint();
             public:
                 ExternalUnitEndpoint(const std::string& _endpoint_identifier);
                 virtual ~ExternalUnitEndpoint();
                 const std::string& getIdentifier();
+                
+                const bool canAcceptMoreConnection();
             };
         }
     }
