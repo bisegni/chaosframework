@@ -856,6 +856,7 @@ launch_us_cu(){
 	    else
 		var=$((`grep "successfully registered" $CHAOS_PREFIX/log/$USNAME-$FILE_NAME.log |wc -l`))
 		nok_mesg "$var CU registered in $t"
+		cat $CHAOS_PREFIX/log/$USNAME-$FILE_NAME.log
 		return 1
 	    fi
 	fi
