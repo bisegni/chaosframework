@@ -41,7 +41,7 @@ ExternalUnitConnection::~ExternalUnitConnection() {
     endpoint->removeConnection(*this);
 }
 
-int ExternalUnitConnection::sendDataToEndpoint(ChaosUniquePtr<chaos::common::data::CDataBuffer> reecived_data) {
+int ExternalUnitConnection::sendDataToEndpoint(chaos::common::data::CDBufferUniquePtr reecived_data) {
     CHAOS_ASSERT(endpoint);
     CHAOS_ASSERT(serializer_adapter)
     ChaosUniquePtr<chaos::common::data::CDataWrapper> dmessage = serializer_adapter->deserialize(*reecived_data);
@@ -49,7 +49,7 @@ int ExternalUnitConnection::sendDataToEndpoint(ChaosUniquePtr<chaos::common::dat
     return endpoint->handleReceivedeMessage(connection_identifier, ChaosMoveOperator(dmessage));
 }
 
-int ExternalUnitConnection::sendData(ChaosUniquePtr<chaos::common::data::CDataWrapper> data,
+int ExternalUnitConnection::sendData(chaos::common::data::CDWUniquePtr data,
                                      const EUCMessageOpcode opcode) {
     CHAOS_ASSERT(data);
     CHAOS_ASSERT(serializer_adapter)

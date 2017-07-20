@@ -40,7 +40,7 @@ namespace chaos{
                     //!manage all data received by the associated websocket
                     int handleWSIncomingData(const ChaosUniquePtr<WorkRequest>& request);
                     
-                    int sendDataToConnection(const ChaosUniquePtr<chaos::common::data::CDataBuffer> data,
+                    int sendDataToConnection(const chaos::common::data::CDBufferUniquePtr data,
                                              const EUCMessageOpcode opcode);
                 public:
                     HTTPExternalUnitConnection(mg_connection *_nc,

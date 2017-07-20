@@ -21,6 +21,7 @@
 
 #include <chaos/cu_toolkit/external_gateway/http_adapter/HTTPExternalUnitConnection.h>
 
+using namespace chaos::common::data;
 using namespace chaos::cu::external_gateway::http_adapter;
 
 HTTPExternalUnitConnection::HTTPExternalUnitConnection(mg_connection *_nc,
@@ -34,7 +35,7 @@ int HTTPExternalUnitConnection::handleWSIncomingData(const ChaosUniquePtr<WorkRe
     return sendDataToEndpoint(ChaosMoveOperator(request->buffer));
 }
 
-int HTTPExternalUnitConnection::sendDataToConnection(const ChaosUniquePtr<chaos::common::data::CDataBuffer> data,
+int HTTPExternalUnitConnection::sendDataToConnection(const chaos::common::data::CDBufferUniquePtr data,
                                                      const EUCMessageOpcode opcode) {
     switch (opcode) {
         case EUCMessageOpcodeWhole:

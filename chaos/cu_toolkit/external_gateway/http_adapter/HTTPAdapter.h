@@ -61,6 +61,15 @@ namespace chaos{
                     void poller();
                     static const std::string getSerializationType(http_message *http_message);
                     static void eventHandler(mg_connection *nc, int ev, void *ev_data);
+                    void  manageWSHandshake(WorkRequest& wr);
+                    void sendHTTPJSONError(mg_connection *nc,
+                                           int status_code,
+                                           const int error_code,
+                                           const std::string& error_message);
+                    void sendWSJSONError(mg_connection *nc,
+                                         const int error_code,
+                                         const std::string& error_message,
+                                         bool close_connection = false);
                 protected:
                     void processBufferElement(WorkRequest *request, ElementManagingPolicy& policy) throw(CException);
                 public:

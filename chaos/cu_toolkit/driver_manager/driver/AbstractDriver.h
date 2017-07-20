@@ -31,6 +31,7 @@
 
 #include <chaos/cu_toolkit/driver_manager/driver/DriverTypes.h>
 
+#include <json/json.h>
 
 namespace chaos_thread_ns = chaos::common::thread;
 
@@ -74,12 +75,19 @@ namespace chaos{
 					//! used by driver manager to identity the instance by the hashing
 					std::string identification_string;
 					
+                    //number of accesso that use this driver instance
                     boost::atomic_uint accessor_count;
                     
                     //! the list of all generated accessor
                     std::vector<DriverAccessor*> accessors;
                     
+                    //!accher list shared utex
                     boost::shared_mutex accesso_list_shr_mux;
+                    
+                    //!decode control unit paramete in json if conversion is applicable
+                    bool                            is_json_param;
+                    Json::Reader					json_reader;
+                    Json::Value						json_parameter_document;
                     
                     //! command queue used for receive DrvMsg pack
                     //boost::interprocess::message_queue *commandQueue;
@@ -88,7 +96,7 @@ namespace chaos{
 					
 					
                     // Initialize instance
-                    void init(void *initParamPtr) throw(chaos::CException);
+                    void init(void *init_param) throw(chaos::CException);
                     
                     // Deinit the implementation
                     void deinit() throw(chaos::CException);
@@ -111,6 +119,8 @@ namespace chaos{
 
 					virtual void driverInit(const char *initParameter) throw(chaos::CException) = 0;
 					virtual void driverDeinit()  throw(chaos::CException) = 0;
+                    const bool isDriverParamInJson() const;
+                    const Json::Value& getDriverParamJsonRootElement() const;
                 public:
 
                     

@@ -37,7 +37,7 @@ namespace chaos{
                 void handleDisconnection(const std::string& connection_identifier);
                 
                 int handleReceivedeMessage(const std::string& connection_identifier,
-                                           ChaosUniquePtr<chaos::common::data::CDataWrapper> message);
+                                           chaos::common::data::CDWUniquePtr message);
             public:
                 ExternalEchoEndpoint();
                 ~ExternalEchoEndpoint();

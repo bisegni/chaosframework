@@ -49,8 +49,8 @@ namespace chaos {
                 //!,anage the absractio of serialization
                 ChaosUniquePtr<chaos::cu::external_gateway::serialization::AbstractExternalSerialization> serializer_adapter;
             protected:
-                int sendDataToEndpoint(ChaosUniquePtr<chaos::common::data::CDataBuffer> reecived_data);
-                virtual int sendDataToConnection(ChaosUniquePtr<chaos::common::data::CDataBuffer> data,
+                int sendDataToEndpoint(chaos::common::data::CDBufferUniquePtr reecived_data);
+                virtual int sendDataToConnection(chaos::common::data::CDBufferUniquePtr data,
                                                  const EUCMessageOpcode opcode = EUCMessageOpcodeWhole) = 0;
             public:
                 //! end point identifier
@@ -61,7 +61,7 @@ namespace chaos {
                 virtual ~ExternalUnitConnection();
                 
                 //! send data over external protocol
-                int sendData(ChaosUniquePtr<chaos::common::data::CDataWrapper> data,
+                int sendData(chaos::common::data::CDWUniquePtr data,
                              const EUCMessageOpcode opcode = EUCMessageOpcodeWhole);
                 
                 const std::string& getEndpointIdentifier() const;

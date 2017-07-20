@@ -92,6 +92,24 @@ void HTTPAdapter::poller() {
     INFO << "Leaving thread poller";
 }
 
+void HTTPAdapter::sendHTTPJSONError(mg_connection *nc,
+                                    int status_code,
+                                    const int error_code,
+                                    const std::string& error_message) {
+    const std::string json_error = CHAOS_FORMAT("{error:%1%,message:\"%2%\"}", %error_code%error_message);
+    mg_send_head(nc, 400, 0, "Content-Type: application/json");
+    mg_printf(nc, "%s", json_error.c_str());
+}
+
+void HTTPAdapter::sendWSJSONError(mg_connection *nc,
+                                  const int error_code,
+                                  const std::string& error_message,
+                                  bool close_connection) {
+    const std::string json_error = CHAOS_FORMAT("{error:%1%,message:\"%2%\"}", %error_code%error_message);
+    mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT, json_error.c_str(), json_error.size());
+    if(close_connection){mg_send_websocket_frame(nc, WEBSOCKET_OP_CLOSE, NULL, 0);}
+}
+
 const std::string HTTPAdapter::getSerializationType(http_message *http_message) {
     CHAOS_ASSERT(http_message);
     struct mg_str *value = mg_get_http_header(http_message, "Content-Type");
@@ -105,53 +123,59 @@ const std::string HTTPAdapter::getSerializationType(http_message *http_message) 
     return ser_type;
 }
 
+void  HTTPAdapter::manageWSHandshake(WorkRequest& wr) {
+    char addr[32];
+    mg_sock_addr_to_str(&wr.nc->sa, addr, sizeof(addr),
+                        MG_SOCK_STRINGIFY_IP | MG_SOCK_STRINGIFY_PORT);
+    INFO << CHAOS_FORMAT("Received new connection for endoint %1% from %2%", %wr.uri%addr);
+    LMapEndpointReadLock wl = map_endpoint.getReadLockObject();
+    if(map_endpoint().count(wr.uri) == 0) {
+        sendWSJSONError(wr.nc,
+                        -1,
+                        CHAOS_FORMAT("No endpoint found for '%1%'", %wr.uri),
+                        true);
+        return;
+    }
+    
+    //check if endpoint can accept more connection
+    if(map_endpoint()[wr.uri]->canAcceptMoreConnection() == false) {
+        //write error for no more connection accepted by endpoint
+        sendWSJSONError(wr.nc,
+                        -2,
+                        CHAOS_FORMAT("No more connection accepted by endpoint '%1%'", %wr.uri),
+                        true);
+    } else {
+        //get instance for serializer
+        ChaosUniquePtr<serialization::AbstractExternalSerialization> serializer = ExternalUnitGateway::getInstance()->getNewSerializationInstanceForType(wr.s_type);
+        if(!serializer) {
+            //write error for no more connection accepted by endpoint
+            sendWSJSONError(wr.nc,
+                            -3,
+                            CHAOS_FORMAT("Unable to find the serialization plugin for '%1%'", %wr.s_type),
+                            true);
+        } else {
+            //we can create a new connection
+            LMapConnectionWriteLock wconnl = map_connection.getWriteLockObject();
+            map_connection().insert(MapConnectionPair(reinterpret_cast<uintptr_t>(wr.nc),
+                                                      ChaosSharedPtr<HTTPExternalUnitConnection>(new HTTPExternalUnitConnection(wr.nc,
+                                                                                                                                map_endpoint()[wr.uri],
+                                                                                                                                ChaosMoveOperator(serializer)))));
+        }
+    }
+}
+
 void HTTPAdapter::processBufferElement(WorkRequest *request,
                                        ElementManagingPolicy& policy) throw(CException) {
     switch(request->r_type) {
         case WorkRequestTypeHttpRequest: {
-            //http_message *message = static_cast<http_message*>(request->message);
+            //http_message *message = static_cast<http_message*>(wr.message);
             mg_printf(request->nc, "%s", "HTTP/1.1 200 OK\r\nTransfer-Encoding: chunked\r\n\r\n");
-            mg_printf_http_chunk(request->nc, "!CHAOS Control External gateway not support htttp get or post");
+            mg_printf_http_chunk(request->nc, "!CHAOS Control External gateway not support http get or post");
             mg_send_http_chunk(request->nc, "", 0); /* Send empty chunk, the end of response */
             break;
         }
         case WorkRequestTypeWSHandshakeRequest: {
-            char addr[32];
-            mg_sock_addr_to_str(&request->nc->sa, addr, sizeof(addr),
-                                MG_SOCK_STRINGIFY_IP | MG_SOCK_STRINGIFY_PORT);
-            INFO << CHAOS_FORMAT("Received new connection for endoint %1% from %2%", %request->uri%addr);
-            LMapEndpointReadLock wl = map_endpoint.getReadLockObject();
-            if(map_endpoint().count(request->uri) == 0) {
-                const std::string error = CHAOS_FORMAT("{error:-1,message:\"No endpoint found for %1%\"}", %request->uri);
-                ERR << error;
-                mg_send_websocket_frame(request->nc, WEBSOCKET_OP_TEXT, error.c_str(), error.size());
-                mg_send_websocket_frame(request->nc, WEBSOCKET_OP_CLOSE, NULL, 0);
-                return;
-            }
-            
-            //check if endpoint can accept more connection
-            if(map_endpoint()[request->uri]->canAcceptMoreConnection() == false) {
-                //write error for no more connection accepted by endpoint
-                const std::string error = CHAOS_FORMAT("{error:-2,message:\"No more connection accepted by endpoint '%1%'\"}", %request->uri);
-                ERR << error;
-                mg_send_websocket_frame(request->nc, WEBSOCKET_OP_TEXT, error.c_str(), error.size());
-                mg_send_websocket_frame(request->nc, WEBSOCKET_OP_CLOSE, NULL, 0);
-            } else {
-                //get instance for serializer
-                ChaosUniquePtr<serialization::AbstractExternalSerialization> serializer = ExternalUnitGateway::getInstance()->getNewSerializationInstanceForType(request->s_type);
-                if(!serializer) {
-                    //weh don't have found the sriealizer
-                    const std::string error = CHAOS_FORMAT("Unable to find the serialization plugin for '%1%'", %request->s_type);
-                    mg_send_websocket_frame(request->nc, WEBSOCKET_OP_TEXT, error.c_str(), error.size());
-                    mg_send_websocket_frame(request->nc, WEBSOCKET_OP_CLOSE, NULL, 0);
-                }
-                //we can create a new connection
-                LMapConnectionWriteLock wconnl = map_connection.getWriteLockObject();
-                map_connection().insert(MapConnectionPair(reinterpret_cast<uintptr_t>(request->nc),
-                                                          ChaosSharedPtr<HTTPExternalUnitConnection>(new HTTPExternalUnitConnection(request->nc,
-                                                                                                                                    map_endpoint()[request->uri],
-                                                                                                                                    ChaosMoveOperator(serializer)))));
-            }
+            manageWSHandshake(*request);
             break;
         }
         case WorkRequestTypeWSFrame: {

@@ -49,9 +49,12 @@ command_queue(new DriverQueueType()){}
 AbstractDriver::~AbstractDriver() {}
 
     // Initialize instance
-void AbstractDriver::init(void *initParamPtr) throw(chaos::CException) {
+void AbstractDriver::init(void *init_param) throw(chaos::CException) {
     driver_need_to_deinitialize = false;
-
+    
+    //!try to decode parameter string has json document
+    is_json_param = json_reader.parse(static_cast<const char *>(init_param), json_parameter_document);
+    
     ADLAPP_ << "Start in driver thread";
         //start interna thread for the waithing of the message
     thread_message_receiver.reset(new boost::thread(boost::bind(&AbstractDriver::scanForMessage, this)));
@@ -91,7 +94,7 @@ void AbstractDriver::init(void *initParamPtr) throw(chaos::CException) {
     std::memset(&init_msg, 0, sizeof(DrvMsg));
     init_msg.opcode = OpcodeType::OP_INIT_DRIVER;
     init_msg.id = 0;
-    init_msg.inputData = initParamPtr;
+    init_msg.inputData = init_param;
     init_msg.drvResponseMQ = &result_queue;
     command_queue->push(&init_msg);
     result_queue.wait_and_pop(id_to_read);
@@ -120,6 +123,14 @@ void AbstractDriver::deinit() throw(chaos::CException) {
 
 }
 
+const bool AbstractDriver::isDriverParamInJson() const {
+    return is_json_param;
+}
+
+const Json::Value& AbstractDriver::getDriverParamJsonRootElement() const {
+    return json_parameter_document;
+}
+
 /*------------------------------------------------------
 
  ------------------------------------------------------*/
@@ -130,11 +141,6 @@ bool AbstractDriver::getNewAccessor(DriverAccessor **newAccessor) {
     if (result) {
             //set the parent uuid
         result->driver_uuid = driver_uuid;
-            //share the input queue ptr
-        /* result->command_queue = new boost::interprocess::message_queue(boost::interprocess::open_only    // open or create
-         ,driverUUID.c_str());             // name queue  with casual UUID
-         */
-
         result->command_queue = command_queue.get();
         boost::unique_lock<boost::shared_mutex> lock(accesso_list_shr_mux);
         accessors.push_back(result);

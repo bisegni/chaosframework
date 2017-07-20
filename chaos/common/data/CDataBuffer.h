@@ -22,6 +22,8 @@
 #ifndef __CHAOSFramework__CDataBuffer_h
 #define __CHAOSFramework__CDataBuffer_h
 
+#include <chaos/common/chaos_types.h>
+
 #include <stdint.h>
 
 namespace chaos {
@@ -50,6 +52,8 @@ namespace chaos {
                                                            uint32_t _buffer_size);
             };
             
+            typedef ChaosUniquePtr<chaos::common::data::CDataBuffer> CDBufferUniquePtr;
+            typedef ChaosSharedPtr<chaos::common::data::CDataBuffer> CDBufferShrdPtr;
         }
     }
 }

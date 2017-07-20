@@ -34,28 +34,51 @@
 #include <vector>
 
 
-#if __cplusplus >= 201103L 
+#if __cplusplus >= 201103L
 #ifndef FORCE_BOOST_SHPOINTER
-#define ChaosSharedPtr std::shared_ptr
-#define ChaosMakeSharedPtr std::make_shared
-#define ChaosWeakPtr   std::weak_ptr 
+#define ChaosSharedPtr      std::shared_ptr
+#define ChaosMakeSharedPtr  std::make_shared
+#define ChaosWeakPtr        std::weak_ptr
+#include <atomic>
+template<typename T>
+using ChaosAtomic = std::atomic<T>;
+#include <future>
+template<typename T>
+using ChaosPromise = std::promise<T>;
+template<typename T>
+using ChaosFuture = std::future<T>;
 #else
 #define ChaosSharedPtr boost::shared_ptr
 #define ChaosMakeSharedPtr boost::make_shared
 #define ChaosWeakPtr boost::weak_ptr
+#include <boost/atomic>
+template<typename T>
+using ChaosAtomic = boost::atomic<T>;
+#include <boost/future.hpp>
+template<typename T>
+using ChaosPromise = boost::promise<T>;
+template<typename T>
+using ChaosFuture = boost::future<T>;
 #endif
 #define ChaosUniquePtr std::unique_ptr
 #define ChaosMoveOperator(x) std::move(x)
-
 //#pragma message "Use new memory management std::shared_ptr(ChaosSharedPtr) std::make_shared(ChaosMakeSharedPtr) std::weak_ptr(ChaosWeakPtr) std::unique_ptr(ChaosUniquePtr)"
 #else
 #include <boost/shared_ptr.hpp>
+#include <boost/atomic>
 //#pragma message "Use c99 and boost for memory management boost::shared_ptr(ChaosSharedPtr) boost::make_shared(ChaosMakeSharedPtr) boost::weak_ptr(ChaosWeakPtr) std::auto_ptr(ChaosUniquePtr)"
 #define ChaosSharedPtr boost::shared_ptr
 #define ChaosMakeSharedPtr boost::make_shared
 #define ChaosWeakPtr boost::weak_ptr
 #define ChaosUniquePtr std::auto_ptr
 #define ChaosMoveOperator(x) x
+template<typename T>
+using ChaosAtomic = boost::atomic<T>;
+#include <boost/future.hpp>
+template<typename T>
+using ChaosPromise = boost::promise<T>;
+template<typename T>
+using ChaosFuture = boost::future<T>;
 #endif
 
 #define  CHAOS_DEFINE_SET_FOR_TYPE(t1, n)\
@@ -120,7 +143,7 @@ CHAOS_DEFINE_SET_FOR_TYPE(std::string, ChaosStringSet)
 for(iter it = vec.begin();\
 it != vec.end();\
 it++) {\
-   to_execute \
+to_execute \
 }\
 
 typedef boost::shared_mutex                     ChaosSharedMutex;
@@ -128,11 +151,11 @@ typedef boost::shared_lock<boost::shared_mutex> ChaosReadLock;
 typedef boost::unique_lock<boost::shared_mutex> ChaosWriteLock;
 
 typedef struct {
-  float push_rate; // push rate
-  float sys_time; // time spent in system
-  float usr_time; // time spent in user
-  uint64_t upt_time; // uptime seconds
-  uint64_t metric_time; // timestamp of the metric
+    float push_rate; // push rate
+    float sys_time; // time spent in system
+    float usr_time; // time spent in user
+    uint64_t upt_time; // uptime seconds
+    uint64_t metric_time; // timestamp of the metric
 } cu_prof_t;
 
 #endif
