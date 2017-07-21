@@ -142,9 +142,9 @@ namespace chaos {
                 public:
                     //!define the type of the message that can be forw
                     typedef enum {
-                        MessageTypeDatasetRequest = 0,
-                        MessageTypeWrite,
-                        MessageTypeRead
+                        MessageTypeMetadataRequest = 0,
+                        MessageTypeVariableWrite,
+                        MessageTypeVariableRead
                     } MessageType;
                     
                     typedef enum {
@@ -164,7 +164,8 @@ namespace chaos {
                      Message is composed and sent to the remote driver. The answer is wait
                      for the maximum number of milliseconds the data receive returned
                      */
-                    int getDriverDataset(chaos::common::data::CDWUniquePtr& received_data);
+                    int getDriverDataset(chaos::common::data::CDWShrdPtr& received_ds,
+                                         uint32_t timeout = 5000);
                     
                     //!read a variable from the driver
                     /*!
@@ -174,7 +175,8 @@ namespace chaos {
                      \param value filled with the value read from the remote driver
                      */
                     int readVariable(const std::string& variable,
-                                     const chaos::common::data::CDataVariant& value);
+                                     const chaos::common::data::CDataVariant& value,
+                                     uint32_t timeout = 5000);
                     
                     //!write a variable from the driver
                     /*!
@@ -193,7 +195,8 @@ namespace chaos {
                      */
                     int sendRawRequest(MessageType message_type,
                                        chaos::common::data::CDWUniquePtr message_data,
-                                       AbstractRemoteIODriver::DriverResultFuture& request_future);
+                                       chaos::common::data::CDWShrdPtr& message_response,
+                                       uint32_t timeout = 5000);
                     
                     //!Send raw message to the remote driver
                     /*!

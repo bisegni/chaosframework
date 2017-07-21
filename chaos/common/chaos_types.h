@@ -47,6 +47,11 @@ template<typename T>
 using ChaosPromise = std::promise<T>;
 template<typename T>
 using ChaosFuture = std::future<T>;
+typedef std::future_status ChaosFutureStatus;
+#include <chrono>
+typedef std::chrono::seconds ChaosCronoSeconds;
+typedef std::chrono::milliseconds ChaosCronoMilliseconds;
+typedef std::chrono::microseconds ChaosCronoMicroseconds;
 #else
 #define ChaosSharedPtr boost::shared_ptr
 #define ChaosMakeSharedPtr boost::make_shared
@@ -59,6 +64,11 @@ template<typename T>
 using ChaosPromise = boost::promise<T>;
 template<typename T>
 using ChaosFuture = boost::future<T>;
+typedef boost::chrono::future_status ChaosFutureStatus;
+#include <boost/chrono.hpp>
+typedef boost::chrono::seconds ChaosCronoSeconds;
+typedef boost::chrono::milliseconds ChaosCronoMilliseconds;
+typedef boost::chrono::microseconds ChaosCronoMicroseconds;
 #endif
 #define ChaosUniquePtr std::unique_ptr
 #define ChaosMoveOperator(x) std::move(x)
@@ -79,6 +89,11 @@ template<typename T>
 using ChaosPromise = boost::promise<T>;
 template<typename T>
 using ChaosFuture = boost::future<T>;
+typedef boost::chrono::future_status ChaosFutureStatus;
+#include <boost/chrono.hpp>
+typedef boost::chrono::seconds ChaosCronoSeconds;
+typedef boost::chrono::milliseconds ChaosCronoMilliseconds;
+typedef boost::chrono::microseconds ChaosCronoMicroseconds;
 #endif
 
 #define  CHAOS_DEFINE_SET_FOR_TYPE(t1, n)\

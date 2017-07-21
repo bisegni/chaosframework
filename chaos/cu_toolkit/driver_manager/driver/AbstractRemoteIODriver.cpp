@@ -40,7 +40,7 @@ using namespace chaos::cu::driver_manager::driver;
 
 #pragma mark DriverResultInfo
 bool AbstractRemoteIODriver::DriverResultInfo::less::operator()(const DriverResultInfo::DriverResultInfoShrdPtr& h1,
-                                                              const DriverResultInfo::DriverResultInfoShrdPtr& h2) {
+                                                                const DriverResultInfo::DriverResultInfoShrdPtr& h2) {
     return h1->request_index < h2->request_index;
 }
 
@@ -171,19 +171,26 @@ void AbstractRemoteIODriver::timeout() {
         if(current_check_ts > (*it)->request_ts+TIMEOUT_PURGE_PROMISE) {
             DBG << CHAOS_FORMAT("Remove the pormises for request of index %1%", %(*it)->request_ts);
             set_p_req_ts_index.erase(it++);
-            //set_p().erase(it++);
         } else {
             ++it;
         }
     }
 }
+
 #pragma mark Public API
-int AbstractRemoteIODriver::getDriverDataset(CDWUniquePtr& received_data) {
-    return AR_ERROR_OK;
+int AbstractRemoteIODriver::getDriverDataset(CDWShrdPtr& received_ds,
+                                             uint32_t timeout) {
+    CDWUniquePtr ds_req_msg(new CDataWrapper());
+    ds_req_msg->addStringValue("mtype", "cat");
+    return sendRawRequest(MessageTypeMetadataRequest,
+                          ChaosMoveOperator(ds_req_msg),
+                          received_ds,
+                          timeout);
 }
 
 int AbstractRemoteIODriver::readVariable(const std::string& variable,
-                                         const CDataVariant& value) {
+                                         const CDataVariant& value,
+                                         uint32_t timeout) {
     return AR_ERROR_OK;
 }
 
@@ -194,7 +201,8 @@ int AbstractRemoteIODriver::writeVariable(const std::string& variable,
 
 int AbstractRemoteIODriver::sendRawRequest(MessageType message_type,
                                            CDWUniquePtr message_data,
-                                           AbstractRemoteIODriver::DriverResultFuture& request_future) {
+                                           CDWShrdPtr& message_response,
+                                           uint32_t timeout) {
     LStringWriteLock wl = current_connection_identifier.getWriteLockObject();
     switch(conn_phase) {
         case RDConnectionPhaseDisconnected:
@@ -208,7 +216,7 @@ int AbstractRemoteIODriver::sendRawRequest(MessageType message_type,
             //we can proceeed
             break;
     }
-    
+    AbstractRemoteIODriver::DriverResultFuture request_future;
     DriverResultInfo::DriverResultInfoShrdPtr promise_info(new DriverResultInfo());
     promise_info->request_ts = TimingUtil::getTimeStampInMicroseconds();
     promise_info->request_index = message_counter++;
@@ -227,7 +235,13 @@ int AbstractRemoteIODriver::sendRawRequest(MessageType message_type,
                                       ChaosMoveOperator(ext_message));
     //set the
     request_future = promise_info->promise.get_future();
-    return AR_ERROR_OK;
+    ChaosFutureStatus f_status = request_future.wait_for(ChaosCronoMilliseconds(timeout));
+    if(f_status == ChaosFutureStatus::ready) {
+        message_response = request_future.get();
+        return AR_ERROR_OK;
+    } else {
+        return AR_ERROR_TIMEOUT;
+    }
 }
 
 int AbstractRemoteIODriver::sendRawMessage(MessageType message_type,
