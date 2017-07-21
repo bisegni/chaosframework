@@ -72,7 +72,8 @@ namespace chaos{
                 int sendMessage(const std::string& connection_identifier,
                                 chaos::common::data::CDWUniquePtr message,
                                 const EUCMessageOpcode opcode = EUCMessageOpcodeWhole);
-                
+                //!close the connection
+                void closeConnection(const std::string& connection_identifier);
                 ExternalUnitEndpoint();
             public:
                 ExternalUnitEndpoint(const std::string& _endpoint_identifier);

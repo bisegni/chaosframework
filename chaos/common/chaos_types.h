@@ -86,6 +86,11 @@ typedef std::set< t1 >                   n;\
 typedef std::set< t1 >::iterator         n ## Iterator;\
 typedef std::set< t1 >::const_iterator   n ## ConstIterator;
 
+#define  CHAOS_DEFINE_SET_FOR_TYPE_COMP(t1, c, n)\
+typedef std::set< t1 , c>                   n;\
+typedef std::set< t1 , c>::iterator         n ## Iterator;\
+typedef std::set< t1 , c>::const_iterator   n ## ConstIterator;
+
 #define  CHAOS_DEFINE_VECTOR_FOR_TYPE(t, n)\
 typedef std::vector< t >                   n;\
 typedef std::vector< t >::iterator         n ## Iterator;\

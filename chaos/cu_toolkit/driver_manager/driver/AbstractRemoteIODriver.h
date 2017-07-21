@@ -28,6 +28,11 @@
 
 #include <chaos/common/async_central/async_central.h>
 
+#include <boost/multi_index/member.hpp>
+#include <boost/multi_index_container.hpp>
+#include <boost/multi_index/ordered_index.hpp>
+#include <boost/multi_index/hashed_index.hpp>
+
 namespace chaos {
     namespace cu {
         namespace driver_manager {
@@ -39,8 +44,26 @@ namespace chaos {
                  a control unit using an http protocols and work as a driver for that control unit
                  
                  the messages sent to the driver has the follow json scheme:
+                 autorization:
+                 {
+                 authorization_key:string vlaue
+                 .....
+                 }
+                 
                  request:
                  {
+                 request_index:int32
+                 .....
+                 }
+                 response:
+                 {
+                 request_index:int32 <--- the same of the answer
+                 .....
+                 }
+                 
+                 message: //not have the request field
+                 {
+                 .....
                  }
                  */
                 class AbstractRemoteIODriver:
@@ -51,24 +74,69 @@ namespace chaos {
                     typedef ChaosPromise< chaos::common::data::CDWShrdPtr > DriverResultPromise;
                     typedef ChaosFuture< chaos::common::data::CDWShrdPtr > DriverResultFuture;
                     
-                    struct DriverResultInfo {
-                        uint64_t request_ts;
-                        DriverResultPromise promise;
-                    };
-                    typedef ChaosSharedPtr< DriverResultInfo > DriverResultInfoShrdPtr;
                     
-                    CHAOS_DEFINE_MAP_FOR_TYPE(uint64_t,  DriverResultInfoShrdPtr, MapResult);
-                    CHAOS_DEFINE_LOCKABLE_OBJECT(MapResult, LMapResult);
+                    typedef enum {
+                        RDConnectionPhaseDisconnected,
+                        RDConnectionPhaseConnected,
+                        RDConnectionPhaseAutorized,
+                    } RDConnectionPhase;
+                    
+                    struct DriverResultInfo {
+                        uint32_t request_index;
+                        int64_t request_ts;
+                        DriverResultPromise promise;
+                        typedef ChaosSharedPtr< DriverResultInfo > DriverResultInfoShrdPtr;
+                        //!key accessors for multindix infrastructure
+                        struct less {
+                            bool operator()(const DriverResultInfoShrdPtr& h1, const DriverResultInfoShrdPtr& h2);
+                        };
+                        
+                        struct extract_index {
+                            typedef uint32_t result_type;
+                            // modify_key() requires return type to be non-const
+                            const result_type &operator()(const DriverResultInfoShrdPtr &p) const;
+                        };
+                        
+                        struct extract_req_ts {
+                            typedef int64_t result_type;
+                            // modify_key() requires return type to be non-const
+                            const result_type &operator()(const DriverResultInfoShrdPtr &p) const;
+                        };
+                    };
+                    
+                    //tag
+                    struct tag_req_id{};
+                    struct tag_req_ts{};
+                    
+                    //multi-index set
+                    typedef boost::multi_index_container<
+                    DriverResultInfo::DriverResultInfoShrdPtr,
+                    boost::multi_index::indexed_by<
+                    boost::multi_index::ordered_unique<boost::multi_index::tag<tag_req_id>,  DriverResultInfo::extract_index>,
+                    boost::multi_index::ordered_unique<boost::multi_index::tag<tag_req_ts>,  DriverResultInfo::extract_req_ts>
+                    >
+                    > SetPromise;
+                    
+                    typedef boost::multi_index::index<SetPromise, tag_req_id>::type               SetPromisesReqIdxIndex;
+                    typedef boost::multi_index::index<SetPromise, tag_req_id>::type::iterator     SetPromisesReqIdxIndexIter;
+                    typedef boost::multi_index::index<SetPromise, tag_req_ts>::type                   SetPromisesReqTSIndex;
+                    typedef boost::multi_index::index<SetPromise, tag_req_ts>::type::iterator         SetPromisesReqTSIndexIter;
+                    
+                    CHAOS_DEFINE_LOCKABLE_OBJECT(SetPromise, LSetPromise);
                     CHAOS_DEFINE_LOCKABLE_OBJECT(std::string, LString);
                     
-                    ChaosAtomic<uint64_t> message_counter;
-                    
                     //contains the autorization key that need to be passed by the remote driver
-                    std::string authorization_key;
+                    std::string         authorization_key;
+                    RDConnectionPhase   conn_phase;
                     
-                    LString     current_connection_identifier;
-                    LMapResult  map_of_promises;
+                    ChaosAtomic<uint32_t>   message_counter;
+                    LString                 current_connection_identifier;
+                    //set that contains all promise
+                    LSetPromise             set_p;
+                    SetPromisesReqIdxIndex& set_p_req_id_index;
+                    SetPromisesReqTSIndex&  set_p_req_ts_index;
                     
+                    //!initialization and deinitialization driver methods
                     void driverInit(const char *initParameter) throw (chaos::CException);
                     void driverDeinit() throw (chaos::CException);
                 public:
@@ -82,6 +150,7 @@ namespace chaos {
                     typedef enum {
                         AR_ERROR_OK = 0,
                         AR_ERROR_NO_CONNECTION,
+                        AR_ERROR_NOT_AUTORIZED,
                         AR_ERROR_TIMEOUT,
                         AR_ERROR_INVALID_MESSAGE_TYPE
                     } AR_ERROR;
@@ -143,7 +212,7 @@ namespace chaos {
                                                ChaosUniquePtr<chaos::common::data::CDataWrapper> message);
                     
                     void composeRequest(chaos::common::data::CDWUniquePtr& ext_msg,
-                                        uint64_t request_index,
+                                        uint32_t request_index,
                                         MessageType message_type,
                                         chaos::common::data::CDWUniquePtr& message_data);
                     void composeMessage(chaos::common::data::CDWUniquePtr& ext_msg,

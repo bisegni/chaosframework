@@ -49,6 +49,7 @@ const std::string& ExternalUnitEndpoint::getIdentifier() {
 int ExternalUnitEndpoint::addConnection(ExternalUnitConnection& new_connection) {
     LMapConnectionWriteLock wl = map_connection.getWriteLockObject();
     map_connection().insert(MapConnectionPair(new_connection.connection_identifier, &new_connection));
+    wl->unlock();
     handleNewConnection(new_connection.connection_identifier);
     return 0;
 }
@@ -63,4 +64,9 @@ int ExternalUnitEndpoint::removeConnection(ExternalUnitConnection& removed_conne
 const bool ExternalUnitEndpoint::canAcceptMoreConnection() {
     LMapConnectionReadLock rl =  map_connection.getReadLockObject();
     return number_of_connection_accepted > map_connection().size();
+}
+
+void ExternalUnitEndpoint::closeConnection(const std::string& connection_identifier) {
+    LMapConnectionReadLock rl =  map_connection.getReadLockObject();
+    map_connection()[connection_identifier]->closeConnection();
 }

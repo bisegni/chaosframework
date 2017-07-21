@@ -64,6 +64,8 @@ namespace chaos {
                 int sendData(chaos::common::data::CDWUniquePtr data,
                              const EUCMessageOpcode opcode = EUCMessageOpcodeWhole);
                 
+                virtual void closeConnection() = 0;
+                
                 const std::string& getEndpointIdentifier() const;
             };
         }

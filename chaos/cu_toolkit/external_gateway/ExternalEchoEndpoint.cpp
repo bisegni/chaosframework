@@ -29,11 +29,10 @@ using namespace chaos::cu::external_gateway;
 #define ERR     ERR_LOG(ExternalEchoEndpoint)
 
 ExternalEchoEndpoint::ExternalEchoEndpoint():
-ExternalUnitEndpoint("/echo"){}
+ExternalUnitEndpoint("/echo"),
+message_counter(1){}
 
-ExternalEchoEndpoint::~ExternalEchoEndpoint() {
-    
-}
+ExternalEchoEndpoint::~ExternalEchoEndpoint() {}
 
 void ExternalEchoEndpoint::handleNewConnection(const std::string& connection_identifier) {
     INFO << CHAOS_FORMAT("Received new connection %1%", %connection_identifier);
@@ -46,7 +45,11 @@ void ExternalEchoEndpoint::handleDisconnection(const std::string& connection_ide
 int ExternalEchoEndpoint::handleReceivedeMessage(const std::string& connection_identifier,
                                                  chaos::common::data::CDWUniquePtr message) {
     INFO << CHAOS_FORMAT("Received connection from %1% with data '%2%'", %connection_identifier%message->getJSONString());
-    message->addStringValue("ExternalEchoEndpoint", "echo answer");
-    sendMessage(connection_identifier, ChaosMoveOperator(message));
+    if(((message_counter++)%3) ==0) {
+        closeConnection(connection_identifier);
+    } else {
+        message->addStringValue("ExternalEchoEndpoint", "echo answer");
+        sendMessage(connection_identifier, ChaosMoveOperator(message));
+    }
     return 0;
 }

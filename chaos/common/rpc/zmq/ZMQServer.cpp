@@ -85,10 +85,10 @@ void ZMQServer::init(void *init_data) throw(CException) {
         //queue thread
         ZMQS_LAPP << "Allocating thread for manage the Workers";
         for (int idx = 0; idx<thread_number; idx++) {
-            thread_group.add_thread(new thread(boost::bind(&ZMQServer::worker, this)));
+            thread_group.add_thread(new boost::thread(boost::bind(&ZMQServer::worker, this)));
         }
         ZMQS_LAPP << "Worker threads initialized";
-        thread_group.add_thread(new thread(boost::bind(&ZMQServer::executeOnThread, this)));
+        thread_group.add_thread(new boost::thread(boost::bind(&ZMQServer::executeOnThread, this)));
         ZMQS_LAPP << "Receiver thread initialized";
         ZMQS_LAPP << "initialized";
     } catch (std::exception& e) {

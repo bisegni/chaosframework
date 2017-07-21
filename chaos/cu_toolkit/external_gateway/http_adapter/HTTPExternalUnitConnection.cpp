@@ -56,3 +56,7 @@ int HTTPExternalUnitConnection::sendDataToConnection(const chaos::common::data::
     
     return 0;
 }
+
+void HTTPExternalUnitConnection::closeConnection() {
+    mg_send_websocket_frame(nc, WEBSOCKET_OP_CLOSE, NULL, 0);
+}

@@ -30,6 +30,7 @@ namespace chaos{
             
             class ExternalEchoEndpoint:
             public ExternalUnitEndpoint {
+                unsigned int message_counter;
             protected:
                 //!inherited method by @ExternalUnitEndpoint
                 void handleNewConnection(const std::string& connection_identifier);

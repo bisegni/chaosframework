@@ -47,6 +47,8 @@ namespace chaos{
                                                ExternalUnitEndpoint *_endpoint,
                                                ChaosUniquePtr<chaos::cu::external_gateway::serialization::AbstractExternalSerialization> _serializer_adaptor);
                     ~HTTPExternalUnitConnection();
+                    
+                    void closeConnection();
                 };
             }
         }
