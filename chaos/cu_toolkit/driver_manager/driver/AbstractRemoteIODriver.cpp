@@ -121,10 +121,13 @@ int AbstractRemoteIODriver::handleReceivedeMessage(const std::string& connection
         }
     } else {
         if(!message->hasKey("request_index")) {
-            //spontaneus message from driver
-        } else if(!message->isInt32Value("request_index")) {
-            //send error because nto right type of req index
+            // spontaneus message from driver, that can forward error message
+            // or read answer for variable change
             
+        } else if(!message->isInt32Value("request_index")) {
+            //send error because not right type of req index
+            sendError(connection_identifier,
+                      -1, "request_index field need to be a int32 type", __PRETTY_FUNCTION__);
         } else {
             //good request index
             const int64_t req_index = message->getUInt32Value("request_index");
@@ -145,10 +148,10 @@ void AbstractRemoteIODriver::composeRequest(chaos::common::data::CDWUniquePtr& e
                                             MessageType message_type,
                                             chaos::common::data::CDWUniquePtr& message_data) {
     CHAOS_ASSERT(ext_msg)
-    ext_msg->addInt32Value("request_index", request_index);
     composeMessage(ext_msg,
                    message_type,
                    message_data);
+    ext_msg->addInt32Value("request_index", request_index);
 }
 
 void AbstractRemoteIODriver::composeMessage(chaos::common::data::CDWUniquePtr& ext_msg,
@@ -178,24 +181,69 @@ void AbstractRemoteIODriver::timeout() {
 }
 
 #pragma mark Public API
-int AbstractRemoteIODriver::getDriverDataset(CDWShrdPtr& received_ds,
-                                             uint32_t timeout) {
+int AbstractRemoteIODriver::getDeviceList(ChaosStringSet& hosted_device,
+                                          uint32_t timeout) {
+    int err = AR_ERROR_OK;
     CDWUniquePtr ds_req_msg(new CDataWrapper());
+    CDWShrdPtr answer;
     ds_req_msg->addStringValue("mtype", "cat");
-    return sendRawRequest(MessageTypeMetadataRequest,
-                          ChaosMoveOperator(ds_req_msg),
-                          received_ds,
-                          timeout);
+    if((err = sendRawRequest(MessageTypeMetadataGetDeviceList,
+                             ChaosMoveOperator(ds_req_msg),
+                             answer,
+                             timeout))) {
+        return err;
+    }
+    if(!answer) {
+        return  AR_ERROR_INVALID_MESSAGE_STRUCTURE;
+    }
+    //we have data
+    if(answer->hasKey("device_list") == false ||
+       answer->isVectorValue("device_list") == false) {
+        return AR_ERROR_INVALID_MESSAGE_STRUCTURE;
+    }
+    
+    //we can get the list
+    ChaosUniquePtr<CMultiTypeDataArrayWrapper> arr(answer->getVectorValue("device_list"));
+    for(int idx = 0;
+        idx < arr->size();
+        idx++) {
+        if(arr->isStringElementAtIndex(idx) == false) {
+            ERR <<"Device element in array is not a string";
+            hosted_device.clear();
+            return AR_ERROR_INVALID_MESSAGE_STRUCTURE;
+        }
+        hosted_device.insert(arr->getStringElementAtIndex(idx));
+    }
+    return err;
 }
 
-int AbstractRemoteIODriver::readVariable(const std::string& variable,
-                                         const CDataVariant& value,
+int AbstractRemoteIODriver::getDeviceDescription(const int32_t& device_index,
+                                                 AbstractRemoteIODriver::Device& device,
+                                                 uint32_t timeout) {
+    return AR_ERROR_OK;
+}
+
+int AbstractRemoteIODriver::readVariable(const uint32_t device_index,
+                                         VariableType var_type,
+                                         const uint32_t var_index,
+                                         const chaos::common::data::CDataVariant& value,
                                          uint32_t timeout) {
     return AR_ERROR_OK;
 }
 
-int AbstractRemoteIODriver::writeVariable(const std::string& variable,
-                                          const CDataVariant& value) {
+int AbstractRemoteIODriver::updateVariable(const uint32_t device_index,
+                                           VariableType var_type,
+                                           const uint32_t var_index,
+                                           const chaos::common::data::CDataVariant& value,
+                                           uint32_t timeout) {
+    return AR_ERROR_OK;
+}
+
+int AbstractRemoteIODriver::writeVariable(const uint32_t device_index,
+                                          VariableType var_type,
+                                          const uint32_t var_index,
+                                          const chaos::common::data::CDataVariant& value,
+                                          uint32_t timeout) {
     return AR_ERROR_OK;
 }
 

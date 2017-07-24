@@ -70,3 +70,25 @@ void ExternalUnitEndpoint::closeConnection(const std::string& connection_identif
     LMapConnectionReadLock rl =  map_connection.getReadLockObject();
     map_connection()[connection_identifier]->closeConnection();
 }
+
+int ExternalUnitEndpoint::sendError(const std::string& connection_identifier,
+                                    int code,
+                                    const std::string& message,
+                                    const std::string& domain) {
+    CDWUniquePtr error_pack(new CDataWrapper());
+    error_pack->addInt32Value("code", code);
+    error_pack->addStringValue("message", message);
+    error_pack->addStringValue("domain", domain);
+    return sendMessage(connection_identifier,
+                       ChaosMoveOperator(error_pack));
+}
+
+int ExternalUnitEndpoint::sendError(const std::string& connection_identifier,
+                                    const chaos::CException& ex) {
+    CDWUniquePtr error_pack(new CDataWrapper());
+    error_pack->addInt32Value("code", ex.errorCode);
+    error_pack->addStringValue("message", ex.errorMessage);
+    error_pack->addStringValue("domain", ex.errorDomain);
+    return sendMessage(connection_identifier,
+                       ChaosMoveOperator(error_pack));
+}

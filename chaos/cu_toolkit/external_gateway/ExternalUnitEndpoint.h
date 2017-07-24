@@ -23,6 +23,7 @@
 #define __CHAOSFramework__A6646B9_6E82_418D_B7A4_617A53271BEA_ExternalEndpoint_h
 
 #include <chaos/common/chaos_types.h>
+#include <chaos/common/exception/exception.h>
 #include <chaos/common/utility/LockableObject.h>
 
 #include <chaos/cu_toolkit/external_gateway/ExternalUnitConnection.h>
@@ -72,6 +73,15 @@ namespace chaos{
                 int sendMessage(const std::string& connection_identifier,
                                 chaos::common::data::CDWUniquePtr message,
                                 const EUCMessageOpcode opcode = EUCMessageOpcodeWhole);
+                //! send an error to remote driver
+                int sendError(const std::string& connection_identifier,
+                              int error_code,
+                              const std::string& error_message,
+                              const std::string& error_domain);
+                //! send an error to remote driver
+                int sendError(const std::string& connection_identifier,
+                              const chaos::CException& ex);
+                
                 //!close the connection
                 void closeConnection(const std::string& connection_identifier);
                 ExternalUnitEndpoint();

@@ -140,52 +140,145 @@ namespace chaos {
                     void driverInit(const char *initParameter) throw (chaos::CException);
                     void driverDeinit() throw (chaos::CException);
                 public:
-                    //!define the type of the message that can be forw
+                    //!define the type of the message that can be sent to remote driver
                     typedef enum {
-                        MessageTypeMetadataRequest = 0,
+                        MessageTypeMetadataGetDeviceList = 0,
+                        MessageTypeMetadataGetDeviceDataset,
+                        MessageTypeConfiguration,
                         MessageTypeVariableWrite,
-                        MessageTypeVariableRead
+                        MessageTypeVariableRead,
+                        MessageTypeError
                     } MessageType;
                     
+                    //!liste of error
                     typedef enum {
                         AR_ERROR_OK = 0,
                         AR_ERROR_NO_CONNECTION,
                         AR_ERROR_NOT_AUTORIZED,
                         AR_ERROR_TIMEOUT,
-                        AR_ERROR_INVALID_MESSAGE_TYPE
+                        AR_ERROR_INVALID_MESSAGE_TYPE,
+                        AR_ERROR_INVALID_MESSAGE_STRUCTURE
                     } AR_ERROR;
+                    
+                    //!define the type of the variable hosted by the driver for every managed device
+                    typedef enum {
+                        VariableOpRead      = 0,
+                        VariableOpWrite     = 1,
+                        VariableOpListen    = 2
+                    } VariableOperativity;
+                    
+                    //!define the types of a variabl eof a device
+                    typedef enum {
+                        //!variable that permit to configurate an aspect of he device
+                        VariableTypeConfiguration = 0,
+                        //! a type of variabl ethat permit to check a determinate aspect of a stete of the device
+                        VariableTypeStateCheck,
+                        //! a variable that permit to change an aspect of the device
+                        VariableTypeStateChange
+                    } VariableType;
+                    
+                    
+                    //! define the descirption of the variable of a device
+                    /*!
+                     the index to find the variable witin the driver is,
+                     device_index, var type, var_index.
+                     */
+                    typedef struct {
+                        //!the name of the variable
+                        const std::string name;
+                        //!the descirption of the variable
+                        const std::string description;
+                        //!specify the type of variable
+                        VariableType read_write_op;
+                        //!specify what operation can be requested for the specified variable
+                        //can be and concatenation fo the VariableOperativity values
+                        int32_t admit_operation;
+                        //!specify the type of the variable, how it can interact with asepct of the device
+                        VariableType type;
+                        //specify the location of the variable
+                        uint32_t index;
+                    } DeviceVariable;
+                    
+                    CHAOS_DEFINE_VECTOR_FOR_TYPE(DeviceVariable, VectorDeviceVariable);
+                    
+                    typedef struct {
+                        //!define the index of the device witin the internal driver catalog
+                        uint32_t index;
+                        //!define the name of the device
+                        std::string name;
+                        //!define the version of the firmware if available
+                        std::string firmware_v;
+                        //!is the list of exposed variable
+                        VectorDeviceVariable variables;
+                    } Device;
                     
                     AbstractRemoteIODriver();
                     
                     ~AbstractRemoteIODriver();
+                    
+                    //!Get the device list from remote driver
+                    /*!
+                     Get the list of managed device asking it to the driver
+                     \param hosted_device the list of device that are controlled by the remote driver
+                     \param timout time waited for the answere
+                     */
+                    int getDeviceList(ChaosStringSet& hosted_device,
+                                      uint32_t timeout = 5000);
                     
                     //!Request the dataset to the driver
                     /*!
                      Message is composed and sent to the remote driver. The answer is wait
                      for the maximum number of milliseconds the data receive returned
                      */
-                    int getDriverDataset(chaos::common::data::CDWShrdPtr& received_ds,
-                                         uint32_t timeout = 5000);
+                    int getDeviceDescription(const int32_t& device_index,
+                                             Device& device,
+                                             uint32_t timeout = 5000);
                     
                     //!read a variable from the driver
                     /*!
-                     Message is composed to the read operation and sent to the driver. The response is wait for the maximum
-                     number of milliseconds and returned (if one).
-                     \param variable name of variable
+                     read the value form the internal cache if neede an update is requested, and internal cache updated
+                     \param device_index is th eindex of the device that own the variable
+                     \param var_type is the type of the variable
+                     \param var_index is hte index of the variable
                      \param value filled with the value read from the remote driver
+                     \param timeout number of milliseconds and returned (if one).
                      */
-                    int readVariable(const std::string& variable,
+                    int readVariable(const uint32_t device_index,
+                                     VariableType var_type,
+                                     const uint32_t var_index,
                                      const chaos::common::data::CDataVariant& value,
                                      uint32_t timeout = 5000);
                     
-                    //!write a variable from the driver
+                    //!request an update of a variable
                     /*!
-                     Message is composed to the write operation and sent to the driver. No answer is wait
-                     \param variable name of variable
-                     \param value to send to the remote driver to be stored in variable
+                     Request an update for the variable value and internal cache is updated
+                     \param device_index is th eindex of the device that own the variable
+                     \param var_type is the type of the variable
+                     \param var_index is hte index of the variable
+                     \param value filled with the value read from the remote driver
+                     \param timeout number of milliseconds and returned (if one).
                      */
-                    int writeVariable(const std::string& variable,
-                                      const chaos::common::data::CDataVariant& value);
+                    int updateVariable(const uint32_t device_index,
+                                       VariableType var_type,
+                                       const uint32_t var_index,
+                                       const chaos::common::data::CDataVariant& value,
+                                       uint32_t timeout = 5000);
+                    
+                    //!update a device variable value into the driver
+                    /*!
+                     New value of the driver is forward to the driver, an answer is received to
+                     confirm the result of the oepration
+                     \param device_index is th eindex of the device that own the variable
+                     \param var_type is the type of the variable
+                     \param var_index is hte index of the variable
+                     \param value sent to the driver for update the variable
+                     \param timeout number of milliseconds and returned (if one).
+                     */
+                    int writeVariable(const uint32_t device_index,
+                                      VariableType var_type,
+                                      const uint32_t var_index,
+                                      const chaos::common::data::CDataVariant& value,
+                                      uint32_t timeout = 5000);
                     
                     //!Send raw request to the remote driver
                     /*!
@@ -223,6 +316,10 @@ namespace chaos {
                                         chaos::common::data::CDWUniquePtr& message_data);
                     //!inherited from chaos::common::async_central::TimerHandler
                     void timeout();
+                    
+                    virtual void receivedAsyncUpdate(const MessageType& message_type) = 0;
+                private:
+                    
                 };
                 
             }
