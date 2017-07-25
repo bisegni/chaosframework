@@ -515,6 +515,9 @@
 		32761A3C1B3157CA006C8719 /* GetCommandAndTemplateDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32761A3A1B3157CA006C8719 /* GetCommandAndTemplateDescription.cpp */; };
 		32761A401B37F202006C8719 /* SubmitBatchCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32761A3E1B37F202006C8719 /* SubmitBatchCommand.cpp */; };
 		327791E21B67728300FEDD52 /* ServiceApiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327791E01B67728300FEDD52 /* ServiceApiGroup.cpp */; };
+		32788D7F1F277207009BBB1E /* TemplatedRemoteIODriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 32788D7D1F277207009BBB1E /* TemplatedRemoteIODriver.h */; };
+		32788D821F27766A009BBB1E /* OpcodeExternalCommandMapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32788D801F27766A009BBB1E /* OpcodeExternalCommandMapper.cpp */; };
+		32788D831F27766A009BBB1E /* OpcodeExternalCommandMapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 32788D811F27766A009BBB1E /* OpcodeExternalCommandMapper.h */; };
 		327967B515DF99FB0003C6DA /* RpcClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327967B415DF99FB0003C6DA /* RpcClient.cpp */; };
 		327967B815DFAAF40003C6DA /* RpcServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327967B715DFAAF40003C6DA /* RpcServer.cpp */; };
 		327967D515E029C70003C6DA /* AsioImplEventServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327967D315E029C70003C6DA /* AsioImplEventServer.cpp */; };
@@ -1867,6 +1870,9 @@
 		32761A3F1B37F202006C8719 /* SubmitBatchCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubmitBatchCommand.h; sourceTree = "<group>"; };
 		327791E01B67728300FEDD52 /* ServiceApiGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceApiGroup.cpp; sourceTree = "<group>"; };
 		327791E11B67728300FEDD52 /* ServiceApiGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceApiGroup.h; sourceTree = "<group>"; };
+		32788D7D1F277207009BBB1E /* TemplatedRemoteIODriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemplatedRemoteIODriver.h; sourceTree = "<group>"; };
+		32788D801F27766A009BBB1E /* OpcodeExternalCommandMapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OpcodeExternalCommandMapper.cpp; sourceTree = "<group>"; };
+		32788D811F27766A009BBB1E /* OpcodeExternalCommandMapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpcodeExternalCommandMapper.h; sourceTree = "<group>"; };
 		327967B415DF99FB0003C6DA /* RpcClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = RpcClient.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		327967B715DFAAF40003C6DA /* RpcServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RpcServer.cpp; sourceTree = "<group>"; };
 		327967D315E029C70003C6DA /* AsioImplEventServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsioImplEventServer.cpp; sourceTree = "<group>"; };
@@ -4413,6 +4419,9 @@
 				3232F457177743DC003E1D4A /* AbstractDriverPlugin.h */,
 				3252AEF81F1F9EEF0065F137 /* AbstractRemoteIODriver.cpp */,
 				3252AEF91F1F9EEF0065F137 /* AbstractRemoteIODriver.h */,
+				32788D801F27766A009BBB1E /* OpcodeExternalCommandMapper.cpp */,
+				32788D811F27766A009BBB1E /* OpcodeExternalCommandMapper.h */,
+				32788D7D1F277207009BBB1E /* TemplatedRemoteIODriver.h */,
 			);
 			path = driver;
 			sourceTree = "<group>";
@@ -5979,6 +5988,7 @@
 				320F73401F1F4EC100C4806C /* AbstractExternalSerialization.h in Headers */,
 				326933EE1D5089590033D9E9 /* trigger_system.h in Headers */,
 				320F73331F17A46400C4806C /* external_gateway_types.h in Headers */,
+				32788D7F1F277207009BBB1E /* TemplatedRemoteIODriver.h in Headers */,
 				32A94A7D1F14CC830069DDA3 /* ExternalUnitConnection.h in Headers */,
 				32655ACE1E93FCF200829266 /* EUSearch.h in Headers */,
 				32E782E11EFC0EEE00AD59F7 /* AbstractAdapter.h in Headers */,
@@ -5987,6 +5997,7 @@
 				326DB4CC14B3A3E50018A8D0 /* KeyDataStorage.h in Headers */,
 				3252A31C1C9021DE00900FF2 /* handler.h in Headers */,
 				326933F21D5089C20033D9E9 /* dataset_event.h in Headers */,
+				32788D831F27766A009BBB1E /* OpcodeExternalCommandMapper.h in Headers */,
 				320F73441F1F55E300C4806C /* ExternalBSONExtJsonSerialization.h in Headers */,
 				32C4EF261D4BA7060014F3D3 /* DatasetEditor.h in Headers */,
 				323BC2841EE0362500B4D602 /* EUAbstractApiPlugin.h in Headers */,
@@ -6796,6 +6807,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				326DB4B814B3A3E50018A8D0 /* ChaosCUToolkit.cpp in Sources */,
+				32788D821F27766A009BBB1E /* OpcodeExternalCommandMapper.cpp in Sources */,
 				326CD5AB1D66F975003AD071 /* PublishingManager.cpp in Sources */,
 				3287F7E617B2756C009DD6ED /* DriverManager.cpp in Sources */,
 				32A94A801F14CDBF0069DDA3 /* ExternalUnitEndpoint.cpp in Sources */,
