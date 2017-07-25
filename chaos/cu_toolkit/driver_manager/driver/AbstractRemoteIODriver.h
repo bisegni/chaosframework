@@ -26,6 +26,9 @@
 
 #include <chaos/cu_toolkit/external_gateway/ExternalUnitEndpoint.h>
 
+#include <chaos/common/data/CDataVariant.h>
+#include <chaos/common/utility/LockableObject.h>
+
 #include <chaos/common/async_central/async_central.h>
 
 #include <boost/multi_index/member.hpp>
@@ -144,7 +147,6 @@ namespace chaos {
                     typedef enum {
                         MessageTypeMetadataGetDeviceList = 0,
                         MessageTypeMetadataGetDeviceDataset,
-                        MessageTypeConfiguration,
                         MessageTypeVariableWrite,
                         MessageTypeVariableRead,
                         MessageTypeError
@@ -157,7 +159,10 @@ namespace chaos {
                         AR_ERROR_NOT_AUTORIZED,
                         AR_ERROR_TIMEOUT,
                         AR_ERROR_INVALID_MESSAGE_TYPE,
-                        AR_ERROR_INVALID_MESSAGE_STRUCTURE
+                        AR_ERROR_INVALID_MESSAGE_STRUCTURE,
+                        AR_ERROR_NO_CACHED_DEVICE_AT_INDEX,
+                        AR_ERROR_NO_CACHED_VARIABLE_TYPE,
+                        AR_ERROR_NO_CACHED_VARIABLE_INDEX
                     } AR_ERROR;
                     
                     //!define the type of the variable hosted by the driver for every managed device
@@ -178,38 +183,47 @@ namespace chaos {
                     } VariableType;
                     
                     
-                    //! define the descirption of the variable of a device
+                    //! define the description of the variable of a device
                     /*!
                      the index to find the variable witin the driver is,
                      device_index, var type, var_index.
                      */
-                    typedef struct {
+                    typedef struct DeviceVariable {
                         //!the name of the variable
-                        const std::string name;
+                        std::string name;
                         //!the descirption of the variable
-                        const std::string description;
-                        //!specify the type of variable
-                        VariableType read_write_op;
+                        std::string description;
+                        //!specify the type of the variable, how it can interact with asepct of the device
+                        VariableType type;
                         //!specify what operation can be requested for the specified variable
                         //can be and concatenation fo the VariableOperativity values
                         int32_t admit_operation;
-                        //!specify the type of the variable, how it can interact with asepct of the device
-                        VariableType type;
-                        //specify the location of the variable
-                        uint32_t index;
+                        
+                        
+                        DeviceVariable(){}
+                        DeviceVariable(DeviceVariable& src):
+                        name(src.name),
+                        description(src.description),
+                        type(src.type),
+                        admit_operation(src.admit_operation){}
+                        
                     } DeviceVariable;
                     
                     CHAOS_DEFINE_VECTOR_FOR_TYPE(DeviceVariable, VectorDeviceVariable);
                     
                     typedef struct {
-                        //!define the index of the device witin the internal driver catalog
-                        uint32_t index;
                         //!define the name of the device
                         std::string name;
                         //!define the version of the firmware if available
                         std::string firmware_v;
                         //!is the list of exposed variable
                         VectorDeviceVariable variables;
+                        
+                        void clear() {
+                            name.clear();
+                            firmware_v.clear();
+                            variables.clear();
+                        }
                     } Device;
                     
                     AbstractRemoteIODriver();
@@ -229,9 +243,12 @@ namespace chaos {
                     /*!
                      Message is composed and sent to the remote driver. The answer is wait
                      for the maximum number of milliseconds the data receive returned
+                     \param force_update_cache, for the cache to be update with the remote driver contents fro the s
+                     needed device
                      */
                     int getDeviceDescription(const int32_t& device_index,
                                              Device& device,
+                                             bool force_update_cache = false,
                                              uint32_t timeout = 5000);
                     
                     //!read a variable from the driver
@@ -244,10 +261,9 @@ namespace chaos {
                      \param timeout number of milliseconds and returned (if one).
                      */
                     int readVariable(const uint32_t device_index,
-                                     VariableType var_type,
+                                     const VariableType var_type,
                                      const uint32_t var_index,
-                                     const chaos::common::data::CDataVariant& value,
-                                     uint32_t timeout = 5000);
+                                     chaos::common::data::CDataVariant& value);
                     
                     //!request an update of a variable
                     /*!
@@ -259,9 +275,8 @@ namespace chaos {
                      \param timeout number of milliseconds and returned (if one).
                      */
                     int updateVariable(const uint32_t device_index,
-                                       VariableType var_type,
+                                       const VariableType var_type,
                                        const uint32_t var_index,
-                                       const chaos::common::data::CDataVariant& value,
                                        uint32_t timeout = 5000);
                     
                     //!update a device variable value into the driver
@@ -278,6 +293,7 @@ namespace chaos {
                                       VariableType var_type,
                                       const uint32_t var_index,
                                       const chaos::common::data::CDataVariant& value,
+                                      bool wait_confirmation = false,
                                       uint32_t timeout = 5000);
                     
                     //!Send raw request to the remote driver
@@ -319,7 +335,36 @@ namespace chaos {
                     
                     virtual void receivedAsyncUpdate(const MessageType& message_type) = 0;
                 private:
+                    //!define the local cache of variable by his index
+                    CHAOS_DEFINE_MAP_FOR_TYPE(uint32_t, chaos::common::data::CDataVariant, MapVarCacheValues);
                     
+                    //!define tha cache fo the variable grouped by type
+                    CHAOS_DEFINE_MAP_FOR_TYPE(VariableType, MapVarCacheValues, MapVarTypeCache);
+                    
+                    //!internal structure for device cache
+                    typedef struct {
+                        Device device;
+                        //cache map that group variable for type
+                        MapVarTypeCache map_type_cache;
+                    } DeviceCache;
+                    
+                    //!map the index and the device info for cache purphose
+                    CHAOS_DEFINE_MAP_FOR_TYPE(uint32_t, ChaosSharedPtr<DeviceCache>, MapDeviceCache);
+                    CHAOS_DEFINE_LOCKABLE_OBJECT(MapDeviceCache, LMapDeviceCache);
+                    
+                    LMapDeviceCache map_device_cache;
+                    
+                    //!fill device info with remote driver content
+                    inline int buildDeviceInfo(chaos::common::data::CDataWrapper& received_data,
+                                               Device& device_info);
+                    //! update the variable in cache
+                    inline int updateVariableCachedValue(chaos::common::data::CDataWrapper& received_data);
+                    //! return the message type found within message
+                    inline int getMessageType(chaos::common::data::CDataWrapper& received_data,
+                                              MessageType& type);
+                    //!return the error
+                    inline int getErrorFromMessage(chaos::common::data::CDataWrapper& received_data,
+                                                   int& error_code);
                 };
                 
             }

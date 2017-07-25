@@ -55,7 +55,8 @@ typedef chaos::common::utility::LockableObject<x>::LockableObjectWriteLock n ## 
                     ReadLock(LockableObject<T>& lockable_obj_ref) {
                         lockable_obj_ref.getReadLock(rl);
                     }
-                    
+                public:
+                    void lock(){rl.lock();}
                     void unlock(){rl.unlock();}
                 };
                 typedef ChaosSharedPtr<ReadLock> LockableObjectReadLock;
@@ -68,6 +69,7 @@ typedef chaos::common::utility::LockableObject<x>::LockableObjectWriteLock n ## 
                         lockable_obj_ref.getWriteLock(wl);
                     }
                 public:
+                    void lock(){wl.lock();}
                     void unlock(){wl.unlock();}
                 };
                 typedef ChaosSharedPtr<WriteLock> LockableObjectWriteLock;
