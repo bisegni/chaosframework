@@ -345,11 +345,12 @@ int MDSMessageChannel::getDataDriverBestConfiguration(CDataWrapper** deviceDefin
     if(future->wait()) {
         if((err = future->getError()) == ErrorCode::EC_NO_ERROR) {
             *deviceDefinition = future->detachResult();
-	    //            CHAOS_ASSERT(*deviceDefinition);
-	    // TODO: handle in a better way
-	    return -1002;
+
+	    CHAOS_ASSERT(*deviceDefinition);
+
         }
     } else {
+
         err = -1001;
     }
     return err;

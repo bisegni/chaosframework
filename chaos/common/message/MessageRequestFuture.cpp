@@ -40,17 +40,20 @@ MessageRequestFuture::~MessageRequestFuture() {}
 
 bool MessageRequestFuture::wait(int32_t timeout_in_milliseconds) {
     bool result = false;
+    boost::future_status ret;
     try{
         if(request_result.get()) {
             result = true;
         } else{
             //! whait for result
             if (timeout_in_milliseconds >= 0){
-                message_future.wait_for(boost::chrono::milliseconds(timeout_in_milliseconds));
+                MRF_DBG<<" future wait"<<timeout_in_milliseconds;
+
+                ret=message_future.wait_for(boost::chrono::milliseconds(timeout_in_milliseconds));
+                MRF_DBG<<" future ret:"<<(int)ret;
             }else{
                 message_future.wait();
             }
-
             if (message_future.is_ready() &&
                 message_future.has_value()){
                 DEBUG_CODE(MRF_DBG << message_future.get()->getJSONString();)

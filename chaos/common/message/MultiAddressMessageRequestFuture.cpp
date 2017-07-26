@@ -89,9 +89,12 @@ bool MultiAddressMessageRequestFuture::wait() {
     //unitle we have valid future and don't have have answer
     while(current_future.get() &&
           working) {
-        MAMRF_DBG << "Waiting on server " << last_used_address;
+        MAMRF_DBG << "Waiting on server " << last_used_address<< " for "<<timeout_in_milliseconds<<" ms";
         //! waith for future
+
+
         if(current_future->wait(timeout_in_milliseconds)) {
+        	MAMRF_DBG << "Waiting on server " << last_used_address<< " for "<<timeout_in_milliseconds<<" ms";
             if(current_future->isRemoteMeaning()) {
                 //we have received from remote server somenthing
                 working = false;
@@ -110,7 +113,7 @@ bool MultiAddressMessageRequestFuture::wait() {
             }
         } else{
             if(retry_on_same_server++ < 3) {
-                MAMRF_INFO << "Retry to wait on same server";
+                MAMRF_INFO << "Retry to wait on same server for "<<timeout_in_milliseconds;
                 continue;
             } else {
                 MAMRF_INFO << "We have retried " << retry_on_same_server << " times on "<<last_used_address;
