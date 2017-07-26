@@ -47,10 +47,10 @@ bool MessageRequestFuture::wait(int32_t timeout_in_milliseconds) {
         } else{
             //! whait for result
             if (timeout_in_milliseconds >= 0){
-                MRF_DBG<<" future wait"<<timeout_in_milliseconds;
+	      MRF_DBG<<" future wait"<<timeout_in_milliseconds;
 
                 ret=message_future.wait_for(boost::chrono::milliseconds(timeout_in_milliseconds));
-                MRF_DBG<<" future ret:"<<(int)ret;
+		//                MRF_DBG<<" future ret:"<<(int)ret;
             }else{
                 message_future.wait();
             }
