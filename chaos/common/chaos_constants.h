@@ -25,6 +25,7 @@
 
 #include <string>
 #include <algorithm>
+#define MSEC_WAIT_OPERATION 5000
 
 namespace chaos {
     

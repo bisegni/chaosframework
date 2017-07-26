@@ -35,7 +35,6 @@ using namespace chaos::common::network;
 using namespace chaos::common::message;
 using namespace chaos::common::batch_command;
 using namespace chaos::cu::data_manager;
-#define MSEC_WAIT_OPERATION 1000
 
 
 //---------------------------------------------------------------------------------------------------
