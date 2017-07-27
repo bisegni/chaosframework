@@ -427,13 +427,13 @@ namespace chaos {
                 
                 //! Send a request for receive RPC information
                 int checkRPCInformation(chaos::common::data::CDataWrapper **result_information,
-                                        uint32_t timeout = MSEC_WAIT_OPERATION
+                                        uint32_t timeout = RpcConfigurationKey::GlobalRPCTimeoutinMSec
 );
                 
                 //! Send a request for an echo test
                 int echoTest(chaos::common::data::CDataWrapper * const echo_data,
                              chaos::common::data::CDataWrapper **echo_data_result,
-                             uint32_t timeout = MSEC_WAIT_OPERATION);
+                             uint32_t timeout = RpcConfigurationKey::GlobalRPCTimeoutinMSec);
                 
                 //! get datapack between time itervall
                 void executeTimeIntervallQuery(DatasetDomain domain,

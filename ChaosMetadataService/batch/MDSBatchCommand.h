@@ -114,8 +114,8 @@ namespace chaos{
                 
                 //! create a request to a remote rpc action
                 ChaosUniquePtr<RequestInfo> createRequest(const std::string& remote_address,
-                                                         const std::string& remote_domain,
-                                                         const std::string& remote_action) throw (chaos::CException);
+                                                          const std::string& remote_domain,
+                                                          const std::string& remote_action) throw (chaos::CException);
                 
                 //! send a request to a remote rpc action
                 /*!
@@ -127,6 +127,14 @@ namespace chaos{
                 //! send a message toa remote rpc action
                 void sendMessage(RequestInfo& request_info,
                                  chaos::common::data::CDataWrapper *message) throw (chaos::CException);
+                
+                ChaosUniquePtr<RequestInfo> sendRequest(const std::string& node_uid,
+                                                        const std::string& rpc_action,
+                                                        chaos::common::data::CDataWrapper *message) throw (chaos::CException);
+                
+                ChaosUniquePtr<RequestInfo> sendMessage(const std::string& node_uid,
+                                                        const std::string& rpc_action,
+                                                        chaos::common::data::CDataWrapper *message) throw (chaos::CException);
                 
                 void manageRequestPhase(RequestInfo& request_info) throw (chaos::CException);
                 

@@ -42,7 +42,7 @@ CUController::CUController(const std::string& _deviceID, chaos::common::io::ioDa
 datasetDB(true),
 mdsChannel(NULL),
 deviceChannel(NULL) {
-    millisecToWait = MSEC_WAIT_OPERATION;
+    millisecToWait = RpcConfigurationKey::GlobalRPCTimeoutinMSec;
     
     ioLiveDataDriver=_ioLiveDataDriver;
     mdsChannel = NetworkBroker::getInstance()->getMetadataserverMessageChannel();

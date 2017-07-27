@@ -116,7 +116,7 @@ namespace chaos {
                  all goes ok the status is put on Online.
                  \return true if something on address is changed
                  */
-                bool udpateNetworkAddress(int32_t millisec_to_wait = MSEC_WAIT_OPERATION);
+                bool udpateNetworkAddress(int32_t millisec_to_wait = RpcConfigurationKey::GlobalRPCTimeoutinMSec);
                 
                 //!Add new listener
                 void addListener(DeviceMessageChannelListener *new_listener);
@@ -154,7 +154,7 @@ namespace chaos {
                  \param initData the pointer to the data for device initialization. The memory is not deallocate after the send operation
                  \millisecToWait the number of millisecond for waith the answer
                  */
-                int initDevice(common::data::CDataWrapper *initData, int32_t millisec_to_wait = MSEC_WAIT_OPERATION);
+                int initDevice(common::data::CDataWrapper *initData, int32_t millisec_to_wait = RpcConfigurationKey::GlobalRPCTimeoutinMSec);
                 
                 //!Initialization of the device
                 /*!
@@ -162,32 +162,32 @@ namespace chaos {
                  setting from mds with internal channel
                  \millisecToWait the number of millisecond for waith the answer
                  */
-                int initDeviceToDefaultSetting(int32_t millisec_to_wait = MSEC_WAIT_OPERATION);
+                int initDeviceToDefaultSetting(int32_t millisec_to_wait = RpcConfigurationKey::GlobalRPCTimeoutinMSec);
                 
                 //!Device deinititalization
                 /*!
                  Perform the hardware deinitialization
                  \millisecToWait the number of millisecond for waith the answer
                  */
-                int deinitDevice(int32_t millisec_to_wait = MSEC_WAIT_OPERATION);
+                int deinitDevice(int32_t millisec_to_wait = RpcConfigurationKey::GlobalRPCTimeoutinMSec);
                 //!Start the device
                 /*!
                  Perform the hardware start of scheduling
                  \millisecToWait the number of millisecond for waith the answer
                  */
-                int startDevice(int32_t millisec_to_wait = MSEC_WAIT_OPERATION);
+                int startDevice(int32_t millisec_to_wait = RpcConfigurationKey::GlobalRPCTimeoutinMSec);
                 //! Stop the device
                 /*!
                  Perform the hardware stop of the scheduling
                  \millisecToWait the number of millisecond for waith the answer
                  */
-                int stopDevice(int32_t millisec_to_wait = MSEC_WAIT_OPERATION);
+                int stopDevice(int32_t millisec_to_wait = RpcConfigurationKey::GlobalRPCTimeoutinMSec);
                 
                 /*!
                  Recover from recoverable error
                  * \millisecToWait the number of millisecond for waith the answer
                  */
-                int recoverDeviceFromError(int32_t millisec_to_wait = MSEC_WAIT_OPERATION);
+                int recoverDeviceFromError(int32_t millisec_to_wait = RpcConfigurationKey::GlobalRPCTimeoutinMSec);
                 //! Restore the device to a tag
                 /*!
                  Perform the restore of the device state as was at tag
@@ -195,21 +195,21 @@ namespace chaos {
                  \millisecToWait the number of millisecond for waith the answer
                  */
                 int restoreDeviceToTag(const std::string& restore_tag,
-                                       int32_t millisec_to_wait = MSEC_WAIT_OPERATION);
+                                       int32_t millisec_to_wait = RpcConfigurationKey::GlobalRPCTimeoutinMSec);
                 //! get type fo the control unit
                 /*!
                  Perform request for get the information of the control unit
                  \millisecToWait the number of millisecond for waith the answer
                  */
                 int getType(std::string& control_unit_type,
-                            int32_t millisec_to_wait = MSEC_WAIT_OPERATION);
+                            int32_t millisec_to_wait = RpcConfigurationKey::GlobalRPCTimeoutinMSec);
                 //! Get device state
                 /*!
                  Get the current state of the hardware
                  \millisecToWait the number of millisecond for waith the answer
                  */
                 int getState(CUStateKey::ControlUnitState& deviceState,
-                             int32_t millisec_to_wait = MSEC_WAIT_OPERATION);
+                             int32_t millisec_to_wait = RpcConfigurationKey::GlobalRPCTimeoutinMSec);
                 
                 //! Send the CDatawrapper as adevice attribute values
                 /*!
@@ -218,13 +218,13 @@ namespace chaos {
                  */
                 int setAttributeValue(common::data::CDataWrapper& attributesValues,
                                       bool noWait,
-                                      int32_t millisec_to_wait = MSEC_WAIT_OPERATION);
+                                      int32_t millisec_to_wait = RpcConfigurationKey::GlobalRPCTimeoutinMSec);
                 
                 //!Set the device thread schedule delay
                 /*!
                  Set the delay between a schedule and the next
                  */
-                int setScheduleDelay(uint64_t scheduledDealy, int32_t millisec_to_wait = MSEC_WAIT_OPERATION);
+                int setScheduleDelay(uint64_t scheduledDealy, int32_t millisec_to_wait = RpcConfigurationKey::GlobalRPCTimeoutinMSec);
                 
                 /*!
                  \brief send a message to a custom action
@@ -238,7 +238,7 @@ namespace chaos {
                 int sendCustomRequest(const std::string& action_name,
                                       common::data::CDataWrapper* const,
                                       common::data::CDataWrapper** result_data,
-                                      uint32_t millisec_to_wait = MSEC_WAIT_OPERATION);
+                                      uint32_t millisec_to_wait = RpcConfigurationKey::GlobalRPCTimeoutinMSec);
                 
                 /*!
                  send a request to a custom action

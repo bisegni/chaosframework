@@ -44,7 +44,7 @@ datasetDB(true) {
     mdsChannel = NULL;
     deviceChannel = NULL;
     ioLiveDataDriver = NULL;
-    millisecToWait = MSEC_WAIT_OPERATION;
+    millisecToWait = RpcConfigurationKey::GlobalRPCTimeoutinMSec;
     channel_keys.push_back(device_id + DataPackPrefixID::OUTPUT_DATASET_POSTFIX);
     channel_keys.push_back(device_id + DataPackPrefixID::INPUT_DATASET_POSTFIX);
     channel_keys.push_back(device_id + DataPackPrefixID::CUSTOM_DATASET_POSTFIX);

@@ -160,7 +160,6 @@ void ZMQServer::worker() {
     int err = 0;
     int	linger = 500;
     int	water_mark = 10;
-    int	send_timeout = 5000;
     
     void *receiver = zmq_socket (zmq_context, ZMQ_REP);
     if(!receiver) return;
@@ -188,7 +187,7 @@ void ZMQServer::worker() {
         ZMQS_LERR << "Error setting ZMQ_SNDHWM value";
         return;
     }
-    err = zmq_setsockopt(receiver, ZMQ_SNDTIMEO, &send_timeout, sizeof(int));
+    err = zmq_setsockopt(receiver, ZMQ_SNDTIMEO, &RpcConfigurationKey::GlobalRPCTimeoutinMSec, sizeof(int));
     if(err) {
         ZMQS_LERR << "Error setting ZMQ_SNDHWM value";
         return;

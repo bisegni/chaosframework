@@ -20,9 +20,13 @@
 #include "MDSBatchCommand.h"
 #include "MDSBatchExecutor.h"
 
+using namespace chaos::common::data;
 using namespace chaos::common::network;
-using namespace chaos::metadata_service::batch;
 using namespace chaos::common::batch_command;
+
+using namespace chaos::metadata_service::batch;
+using namespace chaos::metadata_service::persistence::data_access;
+
 #define MDSBC_INFO INFO_LOG(MDSBatchCommand)
 #define MDSBC_DBG  DBG_LOG(MDSBatchCommand)
 #define MDSBC_ERR  ERR_LOG(MDSBatchCommand)
@@ -84,11 +88,11 @@ bool MDSBatchCommand::timeoutHandler() {
 
 //! create a request to a remote rpc action
 ChaosUniquePtr<RequestInfo> MDSBatchCommand::createRequest(const std::string& remote_address,
-                                                          const std::string& remote_domain,
-                                                          const std::string& remote_action) throw (chaos::CException) {
+                                                           const std::string& remote_domain,
+                                                           const std::string& remote_action) throw (chaos::CException) {
     return ChaosUniquePtr<RequestInfo> (new RequestInfo(remote_address,
-                                                       remote_domain,
-                                                       remote_action));
+                                                        remote_domain,
+                                                        remote_action));
 }
 
 void MDSBatchCommand::sendRequest(RequestInfo& request_info,
@@ -105,12 +109,79 @@ void MDSBatchCommand::sendRequest(RequestInfo& request_info,
 void MDSBatchCommand::sendMessage(RequestInfo& request_info,
                                   chaos::common::data::CDataWrapper *message) throw (chaos::CException) {
     CHAOS_ASSERT(message_channel)
-    
     message_channel->sendMessage(request_info.remote_address,
                                  request_info.remote_domain,
                                  request_info.remote_action,
                                  message);
     request_info.phase = MESSAGE_PHASE_COMPLETED;
+}
+
+ChaosUniquePtr<RequestInfo> MDSBatchCommand::sendRequest(const std::string& node_uid,
+                                                         const std::string& rpc_action,
+                                                         chaos::common::data::CDataWrapper *message) throw (chaos::CException) {
+    CDataWrapper *tmp_ptr = NULL;
+    int err = 0;
+    bool alive = false;
+    if((err = getDataAccess<NodeDataAccess>()->getNodeDescription(node_uid, &tmp_ptr))) {
+        LOG_AND_TROW_FORMATTED(MDSBC_ERR, err, "Error loading infomation for node '%1%'", %node_uid);
+    } else if(!tmp_ptr) {
+        LOG_AND_TROW_FORMATTED(MDSBC_ERR, -1, "No description found for node '%1%'", %node_uid);
+    }
+    
+    ChaosUniquePtr<CDataWrapper> node_description(tmp_ptr);
+    CHECK_ASSERTION_THROW_AND_LOG(node_description->hasKey(NodeDefinitionKey::NODE_RPC_ADDR), MDSBC_ERR, -2, CHAOS_FORMAT("%1% key has not been found on node description", %NodeDefinitionKey::NODE_RPC_ADDR));
+    CHECK_ASSERTION_THROW_AND_LOG(node_description->isStringValue(NodeDefinitionKey::NODE_RPC_ADDR), MDSBC_ERR, -2, CHAOS_FORMAT("%1% key need to be a string", %NodeDefinitionKey::NODE_RPC_ADDR));
+    CHECK_ASSERTION_THROW_AND_LOG(node_description->hasKey(NodeDefinitionKey::NODE_RPC_DOMAIN), MDSBC_ERR, -3, CHAOS_FORMAT("%1% key ha nots been found on node description", %NodeDefinitionKey::NODE_RPC_DOMAIN));
+    CHECK_ASSERTION_THROW_AND_LOG(node_description->isStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN), MDSBC_ERR, -4, CHAOS_FORMAT("%1% key need to be a string", %NodeDefinitionKey::NODE_RPC_DOMAIN));
+    const std::string node_rpc_address = node_description->getStringValue(NodeDefinitionKey::NODE_RPC_ADDR);
+    const std::string node_rpc_domain = node_description->getStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN);
+    
+    ChaosUniquePtr<RequestInfo> new_request = createRequest(node_rpc_address,
+                                                            node_rpc_domain,
+                                                            rpc_action);
+    if(getDataAccess<NodeDataAccess>()->isNodeAlive(node_uid,
+                                                    alive) ||
+       alive == false) {
+        new_request->phase = MESSAGE_PHASE_TIMEOUT;
+    } else {
+        sendRequest(*new_request,
+                    message);
+    }
+    return new_request;
+}
+
+ChaosUniquePtr<RequestInfo> MDSBatchCommand::sendMessage(const std::string& node_uid,
+                                                         const std::string& rpc_action,
+                                                         chaos::common::data::CDataWrapper *message) throw (chaos::CException) {
+    CDataWrapper *tmp_ptr = NULL;
+    int err = 0;
+    bool alive = false;
+    if((err = getDataAccess<NodeDataAccess>()->getNodeDescription(node_uid, &tmp_ptr))) {
+        LOG_AND_TROW_FORMATTED(MDSBC_ERR, err, "Error loading infomation for node '%1%'", %node_uid);
+    } else if(!tmp_ptr) {
+        LOG_AND_TROW_FORMATTED(MDSBC_ERR, -1, "No description found for node '%1%'", %node_uid);
+    }
+    
+    ChaosUniquePtr<CDataWrapper> node_description(tmp_ptr);
+    CHECK_ASSERTION_THROW_AND_LOG(node_description->hasKey(NodeDefinitionKey::NODE_RPC_ADDR), MDSBC_ERR, -2, CHAOS_FORMAT("%1% key has not been found on node description", %NodeDefinitionKey::NODE_RPC_ADDR));
+    CHECK_ASSERTION_THROW_AND_LOG(node_description->isStringValue(NodeDefinitionKey::NODE_RPC_ADDR), MDSBC_ERR, -2, CHAOS_FORMAT("%1% key need to be a string", %NodeDefinitionKey::NODE_RPC_ADDR));
+    CHECK_ASSERTION_THROW_AND_LOG(node_description->hasKey(NodeDefinitionKey::NODE_RPC_DOMAIN), MDSBC_ERR, -3, CHAOS_FORMAT("%1% key ha nots been found on node description", %NodeDefinitionKey::NODE_RPC_DOMAIN));
+    CHECK_ASSERTION_THROW_AND_LOG(node_description->isStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN), MDSBC_ERR, -4, CHAOS_FORMAT("%1% key need to be a string", %NodeDefinitionKey::NODE_RPC_DOMAIN));
+    const std::string node_rpc_address = node_description->getStringValue(NodeDefinitionKey::NODE_RPC_ADDR);
+    const std::string node_rpc_domain = node_description->getStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN);
+    
+    ChaosUniquePtr<RequestInfo> new_request = createRequest(node_rpc_address,
+                                                            node_rpc_domain,
+                                                            rpc_action);
+    if(getDataAccess<NodeDataAccess>()->isNodeAlive(node_uid,
+                                                    alive) ||
+       alive == false) {
+        new_request->phase = MESSAGE_PHASE_TIMEOUT;
+    } else {
+        sendMessage(*new_request,
+                    message);
+    }
+    return new_request;
 }
 
 void MDSBatchCommand::manageRequestPhase(RequestInfo& request_info) throw (chaos::CException) {
