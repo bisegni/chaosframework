@@ -917,8 +917,8 @@ void AbstractControlUnit::fillRestoreCacheWithDatasetFromTag(data_manager::KeyDa
             //get newly createdattribute from cache
             cached_attribute_value = restore_cache.getAttributeValue((SharedCacheDomain)domain,
                                                                      *it);
-            cached_attribute_value->sub_type.clear();
-            cached_attribute_value->sub_type.push_back(dataset.getBinarySubtype(*it));
+	    cached_attribute_value->sub_type.clear();
+	    //            cached_attribute_value->sub_type.push_back(dataset.getBinarySubtype(*it));
             if(!cached_attribute_value) {
                 ACULERR_ << "Error retriving attribute value from cache for:" << *it;
                 continue;
