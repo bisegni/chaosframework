@@ -257,6 +257,8 @@
 		324A4B9F191A569800975394 /* hex.h in Headers */ = {isa = PBXBuildFile; fileRef = 324A4B9D191A569800975394 /* hex.h */; };
 		324C768A1E01A5C500BA57E1 /* ProcStat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324C76881E01A5C500BA57E1 /* ProcStat.cpp */; };
 		324C768B1E01A5C500BA57E1 /* ProcStat.h in Headers */ = {isa = PBXBuildFile; fileRef = 324C76891E01A5C500BA57E1 /* ProcStat.h */; };
+		324D088D1F2F14C600836E29 /* ExternalIODriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324D088B1F2F14C600836E29 /* ExternalIODriver.cpp */; };
+		324D088E1F2F14C600836E29 /* ExternalIODriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 324D088C1F2F14C600836E29 /* ExternalIODriver.h */; };
 		324EF3E31AE923F9000837AF /* DataServiceApiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324EF3E11AE923F9000837AF /* DataServiceApiGroup.cpp */; };
 		324FD0811B00ACEF003800BA /* MonitorManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324FD07F1B00ACEF003800BA /* MonitorManager.cpp */; };
 		324FD0821B00ACEF003800BA /* MonitorManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 324FD0801B00ACEF003800BA /* MonitorManager.h */; };
@@ -1554,6 +1556,8 @@
 		324C76881E01A5C500BA57E1 /* ProcStat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcStat.cpp; sourceTree = "<group>"; };
 		324C76891E01A5C500BA57E1 /* ProcStat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcStat.h; sourceTree = "<group>"; };
 		324C768C1E01C75E00BA57E1 /* ConfigurationTemplate */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ConfigurationTemplate; sourceTree = "<group>"; };
+		324D088B1F2F14C600836E29 /* ExternalIODriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExternalIODriver.cpp; sourceTree = "<group>"; };
+		324D088C1F2F14C600836E29 /* ExternalIODriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExternalIODriver.h; sourceTree = "<group>"; };
 		324EF3E11AE923F9000837AF /* DataServiceApiGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataServiceApiGroup.cpp; sourceTree = "<group>"; };
 		324EF3E21AE923F9000837AF /* DataServiceApiGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataServiceApiGroup.h; sourceTree = "<group>"; };
 		324FD07F1B00ACEF003800BA /* MonitorManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MonitorManager.cpp; sourceTree = "<group>"; };
@@ -4419,6 +4423,8 @@
 				3232F457177743DC003E1D4A /* AbstractDriverPlugin.h */,
 				3252AEF81F1F9EEF0065F137 /* AbstractRemoteIODriver.cpp */,
 				3252AEF91F1F9EEF0065F137 /* AbstractRemoteIODriver.h */,
+				324D088B1F2F14C600836E29 /* ExternalIODriver.cpp */,
+				324D088C1F2F14C600836E29 /* ExternalIODriver.h */,
 				32788D801F27766A009BBB1E /* OpcodeExternalCommandMapper.cpp */,
 				32788D811F27766A009BBB1E /* OpcodeExternalCommandMapper.h */,
 				32788D7D1F277207009BBB1E /* TemplatedRemoteIODriver.h */,
@@ -6001,6 +6007,7 @@
 				320F73441F1F55E300C4806C /* ExternalBSONExtJsonSerialization.h in Headers */,
 				32C4EF261D4BA7060014F3D3 /* DatasetEditor.h in Headers */,
 				323BC2841EE0362500B4D602 /* EUAbstractApiPlugin.h in Headers */,
+				324D088E1F2F14C600836E29 /* ExternalIODriver.h in Headers */,
 				3287F7E717B27621009DD6ED /* DriverManager.h in Headers */,
 				323BC2881EE05A8B00B4D602 /* EUPluginLoader.h in Headers */,
 				32A94A891F1654040069DDA3 /* ExternalEchoEndpoint.h in Headers */,
@@ -6851,6 +6858,7 @@
 				325F8B511763AF2300EFE616 /* SlowCommand.cpp in Sources */,
 				32655ACD1E93FCF200829266 /* EUSearch.cpp in Sources */,
 				32E782E41EFC0F2800AD59F7 /* HTTPAdapter.cpp in Sources */,
+				324D088D1F2F14C600836E29 /* ExternalIODriver.cpp in Sources */,
 				328CC9D61763CCC7000B30B6 /* AbstractDriver.cpp in Sources */,
 				32234D3F176E045100525E0C /* SlowCommandExecutor.cpp in Sources */,
 				3252A3181C8EE28E00900FF2 /* DatasetAttributeHandler.cpp in Sources */,
