@@ -259,6 +259,8 @@
 		324C768B1E01A5C500BA57E1 /* ProcStat.h in Headers */ = {isa = PBXBuildFile; fileRef = 324C76891E01A5C500BA57E1 /* ProcStat.h */; };
 		324D088D1F2F14C600836E29 /* ExternalIODriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324D088B1F2F14C600836E29 /* ExternalIODriver.cpp */; };
 		324D088E1F2F14C600836E29 /* ExternalIODriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 324D088C1F2F14C600836E29 /* ExternalIODriver.h */; };
+		324D08A11F30CE2B00836E29 /* ChaosMicroUnitToolkit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324D089F1F30CE2B00836E29 /* ChaosMicroUnitToolkit.cpp */; };
+		324D08A21F30CE2B00836E29 /* ChaosMicroUnitToolkit.h in Headers */ = {isa = PBXBuildFile; fileRef = 324D08A01F30CE2B00836E29 /* ChaosMicroUnitToolkit.h */; };
 		324EF3E31AE923F9000837AF /* DataServiceApiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324EF3E11AE923F9000837AF /* DataServiceApiGroup.cpp */; };
 		324FD0811B00ACEF003800BA /* MonitorManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324FD07F1B00ACEF003800BA /* MonitorManager.cpp */; };
 		324FD0821B00ACEF003800BA /* MonitorManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 324FD0801B00ACEF003800BA /* MonitorManager.h */; };
@@ -1558,6 +1560,10 @@
 		324C768C1E01C75E00BA57E1 /* ConfigurationTemplate */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ConfigurationTemplate; sourceTree = "<group>"; };
 		324D088B1F2F14C600836E29 /* ExternalIODriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExternalIODriver.cpp; sourceTree = "<group>"; };
 		324D088C1F2F14C600836E29 /* ExternalIODriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExternalIODriver.h; sourceTree = "<group>"; };
+		324D08931F30CD7A00836E29 /* libchaos_micro_unit_toolkit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_micro_unit_toolkit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		324D089E1F30CE0200836E29 /* CMakeLists */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists; sourceTree = "<group>"; };
+		324D089F1F30CE2B00836E29 /* ChaosMicroUnitToolkit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChaosMicroUnitToolkit.cpp; sourceTree = "<group>"; };
+		324D08A01F30CE2B00836E29 /* ChaosMicroUnitToolkit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChaosMicroUnitToolkit.h; sourceTree = "<group>"; };
 		324EF3E11AE923F9000837AF /* DataServiceApiGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataServiceApiGroup.cpp; sourceTree = "<group>"; };
 		324EF3E21AE923F9000837AF /* DataServiceApiGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataServiceApiGroup.h; sourceTree = "<group>"; };
 		324FD07F1B00ACEF003800BA /* MonitorManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MonitorManager.cpp; sourceTree = "<group>"; };
@@ -2750,6 +2756,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		324D08901F30CD7A00836E29 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		326026E614B301F600C906CE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -3336,6 +3349,16 @@
 			path = concurrency;
 			sourceTree = "<group>";
 		};
+		324D08941F30CD7A00836E29 /* chaos_micro_unit_toolkit */ = {
+			isa = PBXGroup;
+			children = (
+				324D089E1F30CE0200836E29 /* CMakeLists */,
+				324D089F1F30CE2B00836E29 /* ChaosMicroUnitToolkit.cpp */,
+				324D08A01F30CE2B00836E29 /* ChaosMicroUnitToolkit.h */,
+			);
+			path = chaos_micro_unit_toolkit;
+			sourceTree = "<group>";
+		};
 		324EF3DA1AE922B1000837AF /* data_service */ = {
 			isa = PBXGroup;
 			children = (
@@ -3477,6 +3500,7 @@
 				32A40D421A9CD4A0000D9A35 /* chaos_service_common */,
 				32661C6A1AA73DA200F1A721 /* ChaosMetadataServiceClient */,
 				323236C9164573C60052CE06 /* ChaosMetadataService */,
+				324D08941F30CD7A00836E29 /* chaos_micro_unit_toolkit */,
 				3264139A1E44ACE60035E175 /* ChaosAgent */,
 				322085DB1AC5A0E200F1B71A /* ChaosMetadataServiceClientTest */,
 				32C7EAD51A5D9E450008DFE8 /* ChaosWANProxy */,
@@ -3490,6 +3514,7 @@
 				322085DA1AC5A0E100F1B71A /* ChaosMetadataServiceClientTest */,
 				326413991E44ACE60035E175 /* ChaosAgent */,
 				32F9C7991E81943F00D4B250 /* CouchTest */,
+				324D08931F30CD7A00836E29 /* libchaos_micro_unit_toolkit.dylib */,
 			);
 			sourceTree = "<group>";
 		};
@@ -5582,6 +5607,14 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		324D08911F30CD7A00836E29 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				324D08A21F30CE2B00836E29 /* ChaosMicroUnitToolkit.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		326026E714B301F600C906CE /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -6199,6 +6232,23 @@
 			productReference = 3230BEBE1817A9E100EA5793 /* ChaosMetadataService */;
 			productType = "com.apple.product-type.tool";
 		};
+		324D08921F30CD7A00836E29 /* chaos_micro_unit_toolkit */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 324D089B1F30CD7A00836E29 /* Build configuration list for PBXNativeTarget "chaos_micro_unit_toolkit" */;
+			buildPhases = (
+				324D088F1F30CD7A00836E29 /* Sources */,
+				324D08901F30CD7A00836E29 /* Frameworks */,
+				324D08911F30CD7A00836E29 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = chaos_micro_unit_toolkit;
+			productName = chaos_micro_unit_toolkit;
+			productReference = 324D08931F30CD7A00836E29 /* libchaos_micro_unit_toolkit.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		326026E814B301F600C906CE /* chaos_common */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 326026EB14B301F600C906CE /* Build configuration list for PBXNativeTarget "chaos_common" */;
@@ -6334,6 +6384,11 @@
 					322085D91AC5A0E100F1B71A = {
 						CreatedOnToolsVersion = 6.2;
 					};
+					324D08921F30CD7A00836E29 = {
+						CreatedOnToolsVersion = 8.3.3;
+						DevelopmentTeam = ZZ5BMKV37Y;
+						ProvisioningStyle = Automatic;
+					};
 					326413981E44ACE60035E175 = {
 						CreatedOnToolsVersion = 8.2.1;
 						DevelopmentTeam = ZZ5BMKV37Y;
@@ -6367,6 +6422,7 @@
 				3260276514B3068100C906CE /* chaos_cutoolkit */,
 				3260278614B307DA00C906CE /* chaos_uitoolkit */,
 				32661C651AA73D5B00F1A721 /* chaos_metadata_service_client */,
+				324D08921F30CD7A00836E29 /* chaos_micro_unit_toolkit */,
 				323236C6164573C60052CE06 /* ChaosMetadataService */,
 				326413981E44ACE60035E175 /* ChaosAgent */,
 				322085D91AC5A0E100F1B71A /* ChaosMetadataServiceClientTest */,
@@ -6577,6 +6633,14 @@
 				32AC6F021EB0918A00FCCD85 /* SetSnapshotDatasetsForNode.cpp in Sources */,
 				32655AD71E9CE0FA00829266 /* RemoveScript.cpp in Sources */,
 				32A51F781E7991C400209E92 /* GetSetFullUnitServer.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		324D088F1F30CD7A00836E29 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				324D08A11F30CE2B00836E29 /* ChaosMicroUnitToolkit.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7290,6 +7354,116 @@
 			};
 			name = Release;
 		};
+		324D089C1F30CD7A00836E29 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/lib";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = ZZ5BMKV37Y;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_PREFIX = lib;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					.,
+					usr/local/include,
+				);
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		324D089D1F30CD7A00836E29 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/lib";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = ZZ5BMKV37Y;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = lib;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					.,
+					usr/local/include,
+				);
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 		3260261214B300FE00C906CE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -7985,6 +8159,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		324D089B1F30CD7A00836E29 /* Build configuration list for PBXNativeTarget "chaos_micro_unit_toolkit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				324D089C1F30CD7A00836E29 /* Debug */,
+				324D089D1F30CD7A00836E29 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		3260261014B300FE00C906CE /* Build configuration list for PBXProject "CHAOSFramework" */ = {
 			isa = XCConfigurationList;
