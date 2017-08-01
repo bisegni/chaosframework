@@ -15,7 +15,9 @@ before_script:
   - chmod 600 /builds/bisegni/chaosframework/deploy.key
 
 build_framework_x86_64:
-  tag: docker shared
+  tags:
+    - docker
+    - shared
   stage: build
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
   script:
@@ -33,7 +35,9 @@ build_framework_x86_64:
     - master
 
 build_framework_arm:
-  tag: docker shared
+  tags:
+    - docker
+    - shared
   stage: build
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
   script:
