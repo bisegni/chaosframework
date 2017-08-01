@@ -47,7 +47,7 @@ namespace chaos{
                 
                 LMapConnection map_connection;
                 
-                unsigned int number_of_connection_accepted;
+                int number_of_connection_accepted;
                 
                 //! send a message to a connection
                 int addConnection(ExternalUnitConnection& new_connection);
@@ -84,6 +84,9 @@ namespace chaos{
                 
                 //!close the connection
                 void closeConnection(const std::string& connection_identifier);
+                
+                void setNumberOfAcceptedConnection(int _number_of_connection_accepted);
+                
                 ExternalUnitEndpoint();
             public:
                 ExternalUnitEndpoint(const std::string& _endpoint_identifier);
@@ -91,6 +94,8 @@ namespace chaos{
                 const std::string& getIdentifier();
                 
                 const bool canAcceptMoreConnection();
+                
+                const int getNumberOfAcceptedConnection() const;
             };
         }
     }

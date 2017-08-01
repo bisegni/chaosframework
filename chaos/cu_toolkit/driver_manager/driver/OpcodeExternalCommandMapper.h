@@ -36,10 +36,30 @@ namespace chaos {
                  */
                 class OpcodeExternalCommandMapper {
                     AbstractRemoteIODriver *remote_driver;
+                protected:
+                    //!Send raw request to the remote driver
+                    /*!
+                     \param message_data is the raw data to be transmitted to the remote driver
+                     \param received_data si the raw data received from the driver
+                     */
+                    int sendRawRequest(chaos::common::data::CDWUniquePtr message_data,
+                                       chaos::common::data::CDWShrdPtr& message_response,
+                                       uint32_t timeout = 5000);
+                    
+                    //!Send raw message to the remote driver
+                    /*!
+                     \param message_data is the raw data to be transmitted to the remote driver
+                     */
+                    int sendRawMessage(chaos::common::data::CDWUniquePtr message_data);
+                    
+                    const int getNumberOfMaxConnection() const;
+                    void setNumberOfMaxConnection(int max_conenction);
                 public:
                     OpcodeExternalCommandMapper(AbstractRemoteIODriver *_remote_driver);
                     virtual ~OpcodeExternalCommandMapper();
+                    
                     virtual MsgManagmentResultType::MsgManagmentResult execOpcode(DrvMsgPtr cmd) = 0;
+                    virtual int asyncMessageReceived(chaos::common::data::CDWUniquePtr message) = 0;
                 };
                 
             }

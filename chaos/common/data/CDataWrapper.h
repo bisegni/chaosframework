@@ -339,6 +339,8 @@ namespace chaos {
                 bool isJsonValue(const std::string& key);
                 
                 CDataWrapperType getValueType(const std::string& key);
+                
+                const bool isEmpty() const;
             };
             
             //! MutableCDataWrapper for field update

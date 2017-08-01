@@ -680,3 +680,7 @@ CDataWrapperType CDataWrapper::getValueType(const std::string& key) {
     }
     return result;
 }
+
+const bool CDataWrapper::isEmpty() const {
+    return bsonBuilder->asTempObj().isEmpty();
+}

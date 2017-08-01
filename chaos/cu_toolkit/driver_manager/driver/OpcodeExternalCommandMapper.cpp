@@ -27,3 +27,28 @@ OpcodeExternalCommandMapper::OpcodeExternalCommandMapper(AbstractRemoteIODriver 
 remote_driver(_remote_driver){CHAOS_ASSERT(remote_driver)}
 
 OpcodeExternalCommandMapper::~OpcodeExternalCommandMapper() {}
+
+
+int OpcodeExternalCommandMapper::sendRawRequest(chaos::common::data::CDWUniquePtr message_data,
+                                                chaos::common::data::CDWShrdPtr& message_response,
+                                                uint32_t timeout) {
+    CHAOS_ASSERT(remote_driver)
+    return remote_driver->sendRawRequest(ChaosMoveOperator(message_data),
+                                         message_response,
+                                         timeout);
+}
+
+
+int OpcodeExternalCommandMapper::sendRawMessage(chaos::common::data::CDWUniquePtr message_data) {
+    CHAOS_ASSERT(remote_driver)
+    return remote_driver->sendRawMessage(ChaosMoveOperator(message_data));
+}
+
+const int OpcodeExternalCommandMapper::getNumberOfMaxConnection() const {
+    CHAOS_ASSERT(remote_driver)
+    return remote_driver->getNumberOfAcceptedConnection();
+}
+void OpcodeExternalCommandMapper::setNumberOfMaxConnection(int max_conenction) {
+    CHAOS_ASSERT(remote_driver)
+    remote_driver->setNumberOfAcceptedConnection(max_conenction);
+}

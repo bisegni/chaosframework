@@ -115,15 +115,21 @@ int AbstractRemoteIODriver::handleReceivedeMessage(const std::string& connection
         //check if a message with autorization key will arive
         if(message->hasKey("authorization_key") &&
            message->isStringValue("authorization_key")) {
-            if(authorization_key.compare(message->getStringValue("authorization_key"))){
+            if(authorization_key.compare(message->getStringValue("authorization_key")) == 0){
                 conn_phase = RDConnectionPhaseAutorized;
+                sendAuthenticationACK();
+            } else {
+                //send error because not right type of req index
+                ExternalUnitEndpoint::sendError(connection_identifier,
+                                                -1, "Authentication failed", __PRETTY_FUNCTION__);
+                ExternalUnitEndpoint::closeConnection(connection_identifier);
             }
         }
     } else {
         if(!message->hasKey("message")){
             //send error because not right type of req index
             ExternalUnitEndpoint::sendError(connection_identifier,
-                                            -1, "message field is mandatory", __PRETTY_FUNCTION__);
+                                            -2, "message field is mandatory", __PRETTY_FUNCTION__);
         } else if(!message->isCDataWrapperValue("message")) {
             //send error because not right type of req index
             ExternalUnitEndpoint::sendError(connection_identifier,
@@ -133,7 +139,7 @@ int AbstractRemoteIODriver::handleReceivedeMessage(const std::string& connection
         } else if(!message->isInt32Value("request_index")) {
             //send error because not right type of req index
             ExternalUnitEndpoint::sendError(connection_identifier,
-                                            -2, "request_index field need to be a int32 type", __PRETTY_FUNCTION__);
+                                            -4, "request_index field need to be a int32 type", __PRETTY_FUNCTION__);
         }  else {
             //good request index
             const int64_t req_index = message->getUInt32Value("request_index");
@@ -166,6 +172,12 @@ void AbstractRemoteIODriver::timeout() {
             ++it;
         }
     }
+}
+
+void AbstractRemoteIODriver::sendAuthenticationACK() {
+    CDWUniquePtr auth_ack_data(new CDataWrapper());
+    auth_ack_data->addInt32Value("auth_state", 1);
+    sendRawMessage(ChaosMoveOperator(auth_ack_data));
 }
 
 int AbstractRemoteIODriver::sendRawRequest(CDWUniquePtr message_data,

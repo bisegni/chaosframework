@@ -28,7 +28,7 @@ ExternalUnitEndpoint::ExternalUnitEndpoint() {}
 
 ExternalUnitEndpoint::ExternalUnitEndpoint(const std::string& _endpoint_identifier):
 endpoint_identifier(_endpoint_identifier),
-number_of_connection_accepted(1){}
+number_of_connection_accepted(-1){}
 
 ExternalUnitEndpoint::~ExternalUnitEndpoint() {}
 
@@ -63,7 +63,8 @@ int ExternalUnitEndpoint::removeConnection(ExternalUnitConnection& removed_conne
 
 const bool ExternalUnitEndpoint::canAcceptMoreConnection() {
     LMapConnectionReadLock rl =  map_connection.getReadLockObject();
-    return number_of_connection_accepted > map_connection().size();
+    if(number_of_connection_accepted<0) return true;
+    else return number_of_connection_accepted > map_connection().size();
 }
 
 void ExternalUnitEndpoint::closeConnection(const std::string& connection_identifier) {
@@ -91,4 +92,12 @@ int ExternalUnitEndpoint::sendError(const std::string& connection_identifier,
     error_pack->addStringValue("domain", ex.errorDomain);
     return sendMessage(connection_identifier,
                        ChaosMoveOperator(error_pack));
+}
+
+const int ExternalUnitEndpoint::getNumberOfAcceptedConnection() const {
+    return number_of_connection_accepted;
+}
+
+void ExternalUnitEndpoint::setNumberOfAcceptedConnection(int _number_of_connection_accepted) {
+    number_of_connection_accepted = _number_of_connection_accepted;
 }

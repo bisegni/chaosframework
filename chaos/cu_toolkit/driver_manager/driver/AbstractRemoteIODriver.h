@@ -157,7 +157,6 @@ namespace chaos {
                     
                     ~AbstractRemoteIODriver();
                     
-                protected:
                     //!Send raw request to the remote driver
                     /*!
                      \param message_data is the raw data to be transmitted to the remote driver
@@ -173,6 +172,9 @@ namespace chaos {
                      */
                     int sendRawMessage(chaos::common::data::CDWUniquePtr message_data);
                     
+                    using ExternalUnitEndpoint::setNumberOfAcceptedConnection;
+                    using ExternalUnitEndpoint::getNumberOfAcceptedConnection;
+                protected:
                     //! handle called when a new message has been received
                     /*!
                      A new message has been received from the rmeote server in an asyc way. It
@@ -194,6 +196,9 @@ namespace chaos {
                                                ChaosUniquePtr<chaos::common::data::CDataWrapper> message);
                     //!inherited from chaos::common::async_central::TimerHandler
                     void timeout();
+                    
+                    //!
+                    void sendAuthenticationACK();
                 };
                 
             }

@@ -37,6 +37,9 @@ namespace chaos {
                         return opcode_ext_cmd_mapper->execOpcode(cmd);
                     }
                     
+                    int asyncMessageReceived(chaos::common::data::CDWUniquePtr message) {
+                        return opcode_ext_cmd_mapper->asyncMessageReceived(ChaosMoveOperator(message));
+                    }
                 public:
                     TemplatedRemoteIODriver():
                     opcode_ext_cmd_mapper(new OpExCMDAdaptor(this)){}
