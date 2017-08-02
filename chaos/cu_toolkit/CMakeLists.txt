@@ -8,7 +8,20 @@ SET(cu_lib_src ${cu_lib_src}
         additional_lib/mongoose.c)
 
 SET(cu_lib_src ${cu_lib_src}
-        external_gateway/ExternalUnitGateway.cpp)
+        external_gateway/ExternalUnitGateway.cpp
+        external_gateway/AbstractAdapter.cpp
+        external_gateway/ExternalUnitConnection.cpp
+        external_gateway/ExternalUnitEndpoint.cpp
+        external_gateway/ExternalEchoEndpoint.cpp
+        external_gateway/ControlUnitBridge.cpp)
+
+SET(cu_lib_src ${cu_lib_src}
+        external_gateway/serialization/AbstractExternalSerialization.cpp
+        external_gateway/serialization/ExternalBSONExtJsonSerialization.cpp)
+
+SET(cu_lib_src ${cu_lib_src}
+        external_gateway/http_adapter/HTTPAdapter.cpp
+        external_gateway/http_adapter/HTTPExternalUnitConnection.cpp)
 
 SET(cu_lib_src ${cu_lib_src}
         driver_manager/DriverManager.cpp

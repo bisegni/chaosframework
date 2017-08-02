@@ -70,6 +70,9 @@ ADD_SUBDIRECTORY(ChaosMetadataServiceClient)
 MESG("Configure Chaos Metadata Service Client Library Test Application")
 ADD_SUBDIRECTORY(ChaosMetadataServiceClientTest)
 
+MESG("Configure Chaos Micro Unit Toolkit")
+ADD_SUBDIRECTORY(chaos_micro_unit_toolkit)
+
 IF (CHAOS_WAN)
   MESG("Configure Chaos WAN Proxy")
   ADD_SUBDIRECTORY(ChaosWANProxy)

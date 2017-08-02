@@ -261,6 +261,8 @@
 		324D088E1F2F14C600836E29 /* ExternalIODriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 324D088C1F2F14C600836E29 /* ExternalIODriver.h */; };
 		324D08A11F30CE2B00836E29 /* ChaosMicroUnitToolkit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324D089F1F30CE2B00836E29 /* ChaosMicroUnitToolkit.cpp */; };
 		324D08A21F30CE2B00836E29 /* ChaosMicroUnitToolkit.h in Headers */ = {isa = PBXBuildFile; fileRef = 324D08A01F30CE2B00836E29 /* ChaosMicroUnitToolkit.h */; };
+		324D08A61F31CEC900836E29 /* mongoose.c in Sources */ = {isa = PBXBuildFile; fileRef = 324D08A41F31CEC900836E29 /* mongoose.c */; };
+		324D08A71F31CEC900836E29 /* mongoose.h in Headers */ = {isa = PBXBuildFile; fileRef = 324D08A51F31CEC900836E29 /* mongoose.h */; };
 		324EF3E31AE923F9000837AF /* DataServiceApiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324EF3E11AE923F9000837AF /* DataServiceApiGroup.cpp */; };
 		324FD0811B00ACEF003800BA /* MonitorManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324FD07F1B00ACEF003800BA /* MonitorManager.cpp */; };
 		324FD0821B00ACEF003800BA /* MonitorManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 324FD0801B00ACEF003800BA /* MonitorManager.h */; };
@@ -1561,9 +1563,11 @@
 		324D088B1F2F14C600836E29 /* ExternalIODriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExternalIODriver.cpp; sourceTree = "<group>"; };
 		324D088C1F2F14C600836E29 /* ExternalIODriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExternalIODriver.h; sourceTree = "<group>"; };
 		324D08931F30CD7A00836E29 /* libchaos_micro_unit_toolkit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_micro_unit_toolkit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		324D089E1F30CE0200836E29 /* CMakeLists */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists; sourceTree = "<group>"; };
+		324D089E1F30CE0200836E29 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		324D089F1F30CE2B00836E29 /* ChaosMicroUnitToolkit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChaosMicroUnitToolkit.cpp; sourceTree = "<group>"; };
 		324D08A01F30CE2B00836E29 /* ChaosMicroUnitToolkit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChaosMicroUnitToolkit.h; sourceTree = "<group>"; };
+		324D08A41F31CEC900836E29 /* mongoose.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mongoose.c; sourceTree = "<group>"; };
+		324D08A51F31CEC900836E29 /* mongoose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mongoose.h; sourceTree = "<group>"; };
 		324EF3E11AE923F9000837AF /* DataServiceApiGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataServiceApiGroup.cpp; sourceTree = "<group>"; };
 		324EF3E21AE923F9000837AF /* DataServiceApiGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataServiceApiGroup.h; sourceTree = "<group>"; };
 		324FD07F1B00ACEF003800BA /* MonitorManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MonitorManager.cpp; sourceTree = "<group>"; };
@@ -3352,11 +3356,21 @@
 		324D08941F30CD7A00836E29 /* chaos_micro_unit_toolkit */ = {
 			isa = PBXGroup;
 			children = (
-				324D089E1F30CE0200836E29 /* CMakeLists */,
+				324D089E1F30CE0200836E29 /* CMakeLists.txt */,
 				324D089F1F30CE2B00836E29 /* ChaosMicroUnitToolkit.cpp */,
 				324D08A01F30CE2B00836E29 /* ChaosMicroUnitToolkit.h */,
+				324D08A31F31CEB400836E29 /* external_lib */,
 			);
 			path = chaos_micro_unit_toolkit;
+			sourceTree = "<group>";
+		};
+		324D08A31F31CEB400836E29 /* external_lib */ = {
+			isa = PBXGroup;
+			children = (
+				324D08A41F31CEC900836E29 /* mongoose.c */,
+				324D08A51F31CEC900836E29 /* mongoose.h */,
+			);
+			name = external_lib;
 			sourceTree = "<group>";
 		};
 		324EF3DA1AE922B1000837AF /* data_service */ = {
@@ -5612,6 +5626,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				324D08A21F30CE2B00836E29 /* ChaosMicroUnitToolkit.h in Headers */,
+				324D08A71F31CEC900836E29 /* mongoose.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6640,6 +6655,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				324D08A61F31CEC900836E29 /* mongoose.c in Sources */,
 				324D08A11F30CE2B00836E29 /* ChaosMicroUnitToolkit.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -8167,6 +8183,7 @@
 				324D089D1F30CD7A00836E29 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		3260261014B300FE00C906CE /* Build configuration list for PBXProject "CHAOSFramework" */ = {
 			isa = XCConfigurationList;

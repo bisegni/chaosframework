@@ -3,7 +3,7 @@ project(chaos_micro_unit_toolkit)
 
 INCLUDE_DIRECTORIES(../)
 
-SET(source ChaosMetadataServiceClient.cpp)
+SET(source ChaosMicroUnitToolkit.cpp)
 
 IF (BUILD_FORCE_STATIC)
 ADD_LIBRARY(${PROJECT_NAME} STATIC ${source})
