@@ -1,10 +1,10 @@
 /*
- *	ChaosMicroUnitToolkit.cpp
+ *	AbstractUnitProxy.cpp
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
  *
- *    	Copyright 01/08/2017 INFN, National Institute of Nuclear Physics
+ *    	Copyright 02/08/2017 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -19,14 +19,5 @@
  *    	limitations under the License.
  */
 
-#include <chaos_micro_unit_toolkit/ChaosMicroUnitToolkit.h>
-
-using namespace chaos::micro_unit_toolkit;
-
-ChaosMicroUnitToolkit::ChaosMicroUnitToolkit() {
-    
-}
-
-ChaosMicroUnitToolkit::~ChaosMicroUnitToolkit() {
-    
-}
+#include <chaos_micro_unit_toolkit/connection/unit_proxy/AbstractUnitProxy.h>
+using namespace chaos::micro_unit_toolkit::connection::unit_proxy;

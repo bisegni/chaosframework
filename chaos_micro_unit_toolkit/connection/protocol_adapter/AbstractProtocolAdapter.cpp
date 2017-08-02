@@ -1,10 +1,10 @@
 /*
- *	ChaosMicroUnitToolkit.cpp
+ *	AbstractProtocolAdapter.cpp
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
  *
- *    	Copyright 01/08/2017 INFN, National Institute of Nuclear Physics
+ *    	Copyright 02/08/2017 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -19,14 +19,10 @@
  *    	limitations under the License.
  */
 
-#include <chaos_micro_unit_toolkit/ChaosMicroUnitToolkit.h>
+#include <chaos_micro_unit_toolkit/connection/protocol_adapter/AbstractProtocolAdapter.h>
+using namespace chaos::micro_unit_toolkit::connection::protocol_adapter;
 
-using namespace chaos::micro_unit_toolkit;
+AbstractProtocolAdapter::AbstractProtocolAdapter(ProtocolType _impl_type):
+protocol_type(_impl_type){}
 
-ChaosMicroUnitToolkit::ChaosMicroUnitToolkit() {
-    
-}
-
-ChaosMicroUnitToolkit::~ChaosMicroUnitToolkit() {
-    
-}
+AbstractProtocolAdapter::~AbstractProtocolAdapter() {}

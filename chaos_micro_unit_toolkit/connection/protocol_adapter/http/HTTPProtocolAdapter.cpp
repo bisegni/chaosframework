@@ -1,10 +1,10 @@
 /*
- *	ChaosMicroUnitToolkit.cpp
+ *	HTTPProtocolAdapter.cpp
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
  *
- *    	Copyright 01/08/2017 INFN, National Institute of Nuclear Physics
+ *    	Copyright 02/08/2017 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -19,14 +19,11 @@
  *    	limitations under the License.
  */
 
-#include <chaos_micro_unit_toolkit/ChaosMicroUnitToolkit.h>
+#include <chaos_micro_unit_toolkit/connection/protocol_adapter/http/HTTPProtocolAdapter.h>
 
-using namespace chaos::micro_unit_toolkit;
+using namespace chaos::micro_unit_toolkit::connection::protocol_adapter::http;
 
-ChaosMicroUnitToolkit::ChaosMicroUnitToolkit() {
-    
-}
+HTTPProtocolAdapter::HTTPProtocolAdapter():
+AbstractProtocolAdapter(ProtocolTypeHTTP){}
 
-ChaosMicroUnitToolkit::~ChaosMicroUnitToolkit() {
-    
-}
+HTTPProtocolAdapter::~HTTPProtocolAdapter() {}
