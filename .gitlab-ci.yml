@@ -55,6 +55,9 @@ build_framework_arm:
     - master
 
 deploy_framework_x86_64:
+    tags:
+      - docker
+      - shared
     stage: deploy
     image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
     script:
@@ -67,6 +70,9 @@ deploy_framework_x86_64:
       - master
 
 deploy_framework_arm:
+    tags:
+      - docker
+      - shared
     stage: deploy
     image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
     script:
