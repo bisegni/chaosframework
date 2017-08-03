@@ -161,7 +161,7 @@ void QuantumSlotScheduler::scanSlot() {
         //we need to slee for the quantum
         milliseconds_to_sleep = (MONITOR_QUANTUM_LENGTH - (current_processing_time = ((start_purge_time = TimingUtil::getTimeStamp()) - milliseconds_start)));
         
-        //----stat procesisng time---
+        //----stat processing time---
         iteration_processing_time += current_processing_time;
         
         if(((stat_counter++) % STAT_ITERATION) == 0) {

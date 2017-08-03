@@ -117,10 +117,12 @@ int main(int argc, char *argv[]){
                 ChaosMetadataServiceClient::getInstance()->enableMonitor();
                 std::cout << "Start node monitor library test" << std::endl;
                 {
-                    ChaosUniquePtr<NodeMonitorHandlerTest> nmt;
-                    
-                    //nmt[0].reset(new NodeMonitorHandlerTest(device_id, chaos::metadata_service_client::node_monitor::ControllerTypeNode));
-                    nmt.reset(new NodeMonitorHandlerTest(device_id, chaos::metadata_service_client::node_monitor::ControllerTypeNodeControlUnit));
+                    ChaosUniquePtr<NodeMonitorHandlerTest> nmt(new NodeMonitorHandlerTest(device_id, chaos::metadata_service_client::node_monitor::ControllerTypeNodeControlUnit));
+                    ChaosUniquePtr<NodeMonitorHandlerTest> nmt2(new NodeMonitorHandlerTest("rt_sin_a", chaos::metadata_service_client::node_monitor::ControllerTypeNodeControlUnit));
+                    ChaosUniquePtr<NodeMonitorHandlerTest> nmt3(new NodeMonitorHandlerTest("rt_sin_b", chaos::metadata_service_client::node_monitor::ControllerTypeNodeControlUnit));
+                    ChaosUniquePtr<NodeMonitorHandlerTest> nmt4(new NodeMonitorHandlerTest("rt_sin_c", chaos::metadata_service_client::node_monitor::ControllerTypeNodeControlUnit));
+                    ChaosUniquePtr<NodeMonitorHandlerTest> nmt5(new NodeMonitorHandlerTest("rt_sin_d", chaos::metadata_service_client::node_monitor::ControllerTypeNodeControlUnit));
+
                     sleep(wait_seconds);
                     //nmt[0].reset();
                     nmt.reset();

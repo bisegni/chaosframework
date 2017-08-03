@@ -150,7 +150,8 @@ namespace chaos {
                 static const char * const DIRECT_IO_PRIORITY_PORT					= "direct_io_priority_port";
                 //!  specify the port where the rpc must publish the his socket
                 static const char * const DIRECT_IO_SERVICE_PORT					= "direct_io_service_port";
-                
+                //! define the default time for directio operation
+                static const unsigned int GlobalDirectIOTimeoutinMSec               = 5000;
             }
             /** @} */ // end of DirectIOConfigurationKey
         }

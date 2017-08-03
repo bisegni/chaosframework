@@ -14,6 +14,7 @@
 class NodeMonitorHandlerTest:
 public chaos::metadata_service_client::node_monitor::ControlUnitMonitorHandler {
     const std::string node_uid;
+    int64_t last_ts;
     chaos::metadata_service_client::node_monitor::ControllerType controller_type;
 protected:
     //! called when an online state has changed
