@@ -24,10 +24,10 @@
 using namespace chaos::micro_unit_toolkit;
 using namespace chaos::micro_unit_toolkit::data;
 
-ChaosUniquePtr<DataPack> DataPack::newFromBuffer(const char *data,
-                                                 const size_t data_len,
-                                                 bool *parsed) {
-    ChaosUniquePtr<DataPack> new_dp(new DataPack());
+DataPackUniquePtr DataPack::newFromBuffer(const char *data,
+                                          const size_t data_len,
+                                          bool *parsed) {
+    DataPackUniquePtr new_dp(new DataPack());
     Json::Reader reader;
     bool parse_result = reader.parse(data,
                                      data+data_len,
@@ -56,12 +56,12 @@ void DataPack::addInt32Value(const std::string& key, int32_t value) {
 }
 
 const int32_t DataPack::getInt32Value(const std::string& key) const {
-     return root_json_object[key].asInt();
+    return root_json_object[key].asInt();
 }
 
 void DataPack::addInt64Value(const std::string& key,
                              int64_t value) {
-   root_json_object[key] = Json::Value(value);
+    root_json_object[key] = Json::Value(value);
 }
 
 const int64_t DataPack::getInt64Value(const std::string& key) const {
@@ -88,8 +88,8 @@ void DataPack::addDataPackValue(const std::string& key, DataPack& value) {
     root_json_object[key] = value.root_json_object;
 }
 
-const ChaosUniquePtr<DataPack> DataPack::getDataPackValue(const std::string& key) const {
-    return ChaosUniquePtr<DataPack>(new DataPack(root_json_object[key]));
+const DataPackUniquePtr DataPack::getDataPackValue(const std::string& key) const {
+    return DataPackUniquePtr(new DataPack(root_json_object[key]));
 }
 
 void DataPack::createArrayForKey(const std::string& key) {
@@ -124,13 +124,3 @@ std::string DataPack::toString() {
     Json::StyledWriter w;
     return w.write(root_json_object);
 }
-/*
- nullValue = 0, ///< 'null' value
- intValue,      ///< signed integer value
- uintValue,     ///< unsigned integer value
- realValue,     ///< double value
- stringValue,   ///< UTF-8 string value
- booleanValue,  ///< bool value
- arrayValue,    ///< array value (ordered list)
- objectValue    ///< object value (collection of name/value pairs).
-*/

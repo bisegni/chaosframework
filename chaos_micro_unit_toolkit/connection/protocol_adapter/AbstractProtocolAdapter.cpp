@@ -22,7 +22,15 @@
 #include <chaos_micro_unit_toolkit/connection/protocol_adapter/AbstractProtocolAdapter.h>
 using namespace chaos::micro_unit_toolkit::connection::protocol_adapter;
 
-AbstractProtocolAdapter::AbstractProtocolAdapter(ProtocolType _impl_type):
-protocol_type(_impl_type){}
+AbstractProtocolAdapter::AbstractProtocolAdapter(ProtocolType _impl_type,
+                                                 const std::string& _protocol_endpoint):
+protocol_type(_impl_type),
+protocol_endpoint(_protocol_endpoint),
+connection_status(ConnectionStateDisconnected){}
 
 AbstractProtocolAdapter::~AbstractProtocolAdapter() {}
+
+
+void AbstractProtocolAdapter::setHandler(ProtocolAdapterHandler *_handler) {
+    handler =_handler;
+}

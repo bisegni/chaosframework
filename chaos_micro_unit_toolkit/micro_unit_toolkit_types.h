@@ -15,14 +15,21 @@ namespace chaos {
     namespace micro_unit_toolkit {
 #if __cplusplus >= 201103L
         template<typename T>
+        using ChaosSharedPtr = std::shared_ptr<T>;
+        template<typename T>
         using ChaosUniquePtr = std::unique_ptr<T>;
 #define ChaosMoveOperator(x) std::move(x)
 #else
+#include <boost/shared_ptr.hpp>
+        template<typename T>
+        using ChaosSharedPtr = boost::shared_ptr<T>;
         template<typename T>
         using ChaosUniquePtr = std::auto_ptr<T>;
 #define ChaosMoveOperator(x) x
 
 #endif
+        
+        static unsigned int CommunicationTimeout = 5000;
     }
 }
 

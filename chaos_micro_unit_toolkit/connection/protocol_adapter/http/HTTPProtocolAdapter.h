@@ -24,6 +24,8 @@
 
 #include <chaos_micro_unit_toolkit/connection/protocol_adapter/AbstractProtocolAdapter.h>
 
+#include <chaos_micro_unit_toolkit/external_lib/mongoose.h>
+
 namespace chaos {
     namespace micro_unit_toolkit {
         namespace connection {
@@ -32,11 +34,25 @@ namespace chaos {
                     //! Abstract base class for all protocols adapter
                     class HTTPProtocolAdapter:
                     public AbstractProtocolAdapter {
-                        
+                        struct mg_mgr mgr;
+                        struct mg_connection *root_conn;
+                        static void ev_handler(struct mg_connection *conn,
+                                               int event,
+                                               void *event_data);
                     public:
-                        HTTPProtocolAdapter();
+                        HTTPProtocolAdapter(const std::string& endpoint);
+                        
                         ~HTTPProtocolAdapter();
                         
+                        int connect();
+                        
+                        int sendMessage(data::DataPackUniquePtr message);
+                        
+                        data::DataPackSharedPtr readMessage();
+                        
+                        bool hasMoreMessage();
+                        
+                        int close();
                     };
                 }
             }

@@ -21,9 +21,90 @@
 
 #include <chaos_micro_unit_toolkit/connection/protocol_adapter/http/HTTPProtocolAdapter.h>
 
+using namespace chaos::micro_unit_toolkit::data;
 using namespace chaos::micro_unit_toolkit::connection::protocol_adapter::http;
 
-HTTPProtocolAdapter::HTTPProtocolAdapter():
-AbstractProtocolAdapter(ProtocolTypeHTTP){}
+HTTPProtocolAdapter::HTTPProtocolAdapter(const std::string& endpoint):
+AbstractProtocolAdapter(ProtocolTypeHTTP,
+                        endpoint),
+root_conn(NULL){}
 
 HTTPProtocolAdapter::~HTTPProtocolAdapter() {}
+
+int HTTPProtocolAdapter::connect() {
+    int err = 0;
+    connection_status = ConnectionStateConnecting;
+    mg_mgr_init(&mgr, NULL);
+    root_conn = mg_connect_ws(&mgr,
+                              HTTPProtocolAdapter::ev_handler,
+                              AbstractProtocolAdapter::protocol_endpoint.c_str(),
+                              "ChaosExternalUnit", NULL);
+    if (root_conn != NULL) {
+        root_conn->user_data = this;
+    } else {
+        connection_status = ConnectionStateDisconnected;
+        err = -1;
+    }
+    return err;
+
+}
+
+int HTTPProtocolAdapter::sendMessage(data::DataPackUniquePtr message) {
+    int err = 0;
+    if(HTTPProtocolAdapter::connection_status != ConnectionStateConnected){
+        printf("No connection to '%s'", protocol_endpoint.c_str());
+        return -1;
+    }
+    return err;
+}
+
+DataPackSharedPtr HTTPProtocolAdapter::readMessage() {
+    if(queue_received_messages.size()) {
+        return DataPackSharedPtr();
+    } else {
+        DataPackSharedPtr result = queue_received_messages.front();
+        queue_received_messages.pop();
+        return result;
+    }
+}
+
+bool HTTPProtocolAdapter::hasMoreMessage() {
+    return queue_received_messages.size()>0;
+}
+
+int HTTPProtocolAdapter::close() {
+    return 0;
+}
+
+#pragma mark PrivateMethod
+void HTTPProtocolAdapter::ev_handler(struct mg_connection *conn,
+                                     int event,
+                                     void *event_data) {
+    HTTPProtocolAdapter *http_instance = static_cast<HTTPProtocolAdapter*>(conn->user_data);
+    
+    switch (event) {
+        case MG_EV_CONNECT: {
+            int status = *((int *) event_data);
+            if (status != 0) {
+                printf("Connection to '%s' failed with error: %d\n", http_instance->protocol_endpoint.c_str(), status);
+                http_instance->connection_status = ConnectionStateConnectionError;
+            }
+            break;
+        }
+        case MG_EV_WEBSOCKET_HANDSHAKE_DONE: {
+            http_instance->connection_status = ConnectionStateConnected;
+            break;
+        }
+
+        case MG_EV_WEBSOCKET_FRAME: {
+            struct websocket_message *wm = (struct websocket_message *) event_data;
+            data::DataPackSharedPtr rece_msg_shrd_ptr(DataPack::newFromBuffer((const char*)wm->data, wm->size).release());
+            http_instance->queue_received_messages.push(rece_msg_shrd_ptr);
+            break;
+        }
+        case MG_EV_CLOSE: {
+            http_instance->connection_status = ConnectionStateDisconnected;
+            break;
+        }
+    }
+}

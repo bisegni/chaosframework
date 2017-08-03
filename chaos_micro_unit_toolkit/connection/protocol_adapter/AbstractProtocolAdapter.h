@@ -22,20 +22,54 @@
 #ifndef __CHAOSFramework_CD2B55D0_1C87_4434_BADC_420C3CB85F42_AbstractProtocolAdapter_h
 #define __CHAOSFramework_CD2B55D0_1C87_4434_BADC_420C3CB85F42_AbstractProtocolAdapter_h
 
-#include <string>
+#include <chaos_micro_unit_toolkit/data/DataPack.h>
 #include <chaos_micro_unit_toolkit/connection/connection_type.h>
+
+#include <string>
+#include <queue>
+
 namespace chaos {
     namespace micro_unit_toolkit {
         namespace connection {
             namespace protocol_adapter {
                 
+                typedef enum {
+                    ConnectionStateDisconnected,
+                    ConnectionStateConnecting,
+                    ConnectionStateConnected,
+                    ConnectionStateConnectionError
+                } ConnectionState;
+                
+                class ProtocolAdapterHandler {
+                public:
+                    virtual int messageReceived(data::DataPackUniquePtr message);
+                };
+                
                 //! Abstract base class for all protocols adapter
                 class AbstractProtocolAdapter {
-                    const ProtocolType protocol_type;
+                    ProtocolAdapterHandler *handler;
                 public:
-                    AbstractProtocolAdapter(ProtocolType _impl_type);
+                    const ProtocolType  protocol_type;
+                    const std::string   protocol_endpoint;
+                    
+                    AbstractProtocolAdapter(ProtocolType _impl_type,
+                                            const std::string& connection_endpoint);
                     virtual ~AbstractProtocolAdapter();
                     
+                    virtual int connect() = 0;
+                    
+                    virtual int sendMessage(data::DataPackUniquePtr message) = 0;
+                    
+                    virtual data::DataPackSharedPtr readMessage() = 0;
+                    
+                    virtual bool hasMoreMessage() = 0;
+                    
+                    virtual int close() = 0;
+                    
+                    void setHandler(ProtocolAdapterHandler *handler);
+                protected:
+                    ConnectionState connection_status;
+                    std::queue<data::DataPackSharedPtr> queue_received_messages;
                 };
             }
         }

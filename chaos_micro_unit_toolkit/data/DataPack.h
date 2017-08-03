@@ -25,9 +25,14 @@
 #include <chaos_micro_unit_toolkit/micro_unit_toolkit_types.h>
 #include <chaos_micro_unit_toolkit/external_lib/json.h>
 
+#include <vector>
+
 namespace chaos {
     namespace micro_unit_toolkit {
         namespace data {
+            class DataPack;
+            typedef ChaosUniquePtr<DataPack> DataPackUniquePtr;
+            typedef ChaosSharedPtr<DataPack> DataPackSharedPtr;
             //! main singleton lab entrypoint
             class DataPack {
                 //data pointer is not owned by this object
@@ -36,9 +41,9 @@ namespace chaos {
             public:
                 DataPack();
                 virtual ~DataPack();
-                static ChaosUniquePtr<DataPack> newFromBuffer(const char *data,
-                                                              const size_t data_len,
-                                                              bool *parsed = NULL);
+                static DataPackUniquePtr newFromBuffer(const char *data,
+                                                       const size_t data_len,
+                                                       bool *parsed = NULL);
                 
                 void addBoolValue(const std::string& key, bool value);
                 const bool getBool(const std::string& key) const;
@@ -56,7 +61,7 @@ namespace chaos {
                 std::string getString(const std::string& key) const;
                 
                 void addDataPackValue(const std::string& key, DataPack& value);
-                const ChaosUniquePtr<DataPack> getDataPackValue(const std::string& key) const;
+                const DataPackUniquePtr getDataPackValue(const std::string& key) const;
                 
                 void createArrayForKey(const std::string& key);
                 void appendBoolValue(const std::string& arr_key, bool value);
@@ -65,6 +70,19 @@ namespace chaos {
                 void appendDoubleValue(const std::string& arr_key, double value);
                 void appendStringValue(const std::string& arr_key, const std::string& value);
                 void appendDataPackValue(const std::string& arr_key, DataPack& value);
+                
+                template<typename T>
+                void addArrayValue(const std::string& key, const std::vector<T> &value) {
+                    root_json_object[key] = Json::Value(Json::ValueType::arrayValue);
+                    Json::Value& array_value = root_json_object[key];
+                    for(typename std::vector<T>::const_iterator it = value.begin(),
+                        end = value.end();
+                        it != end;
+                        it++) {
+                        array_value.append(*it);
+                    }
+                    
+                }
                 
                 std::string toString();
             };
