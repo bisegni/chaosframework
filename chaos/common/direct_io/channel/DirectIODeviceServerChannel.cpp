@@ -55,7 +55,7 @@ int DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack,
     int err = -1;
     //set the clean handler
     *answer_data_deallocation_handler = *answer_header_deallocation_handler = &STATIC_DirectIODeviceServerChannelDeallocator;
-    
+
     // get the opcode
     opcode::DeviceChannelOpcode  channel_opcode = static_cast<opcode::DeviceChannelOpcode>(dataPack->header.dispatcher_header.fields.channel_opcode);
     switch (channel_opcode) {
@@ -68,7 +68,7 @@ int DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack,
                                            dataPack->header.channel_data_size);
             break;
         }
-            
+
         case opcode::DeviceChannelOpcodePutHeathData: {
             opcode_headers::DirectIODeviceChannelHeaderPutOpcode *header = reinterpret_cast< opcode_headers::DirectIODeviceChannelHeaderPutOpcode* >(dataPack->channel_header_data);
             //reallign the pointer to the start of the key
@@ -78,14 +78,14 @@ int DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack,
                                                   dataPack->header.channel_data_size);
             break;
         }
-            
+
         case opcode::DeviceChannelOpcodeGetLastOutput: {
             if(synchronous_answer == NULL) return -1000;
             //allocate variable for result
             void *result_data = NULL;
             opcode_headers::DirectIODeviceChannelHeaderGetOpcode *header = reinterpret_cast< opcode_headers::DirectIODeviceChannelHeaderGetOpcode* >(dataPack->channel_header_data);
             opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult *result_header = (DirectIODeviceChannelHeaderGetOpcodeResult*)calloc(sizeof(DirectIODeviceChannelHeaderGetOpcodeResult), 1);
-            
+
             err = handler->consumeGetEvent(header,
                                            dataPack->channel_data,
                                            dataPack->header.channel_data_size,
@@ -102,7 +102,7 @@ int DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack,
             }
             break;
         }
-            
+
         case opcode::DeviceChannelOpcodeMultiGetLastOutput: {
             if(synchronous_answer == NULL) return -1000;
             //allocate variable for result
@@ -110,12 +110,12 @@ int DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack,
             void *result_data = NULL;
             opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcode *header = reinterpret_cast< opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcode* >(dataPack->channel_header_data);
             opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcodeResult *result_header = (DirectIODeviceChannelHeaderMultiGetOpcodeResult*)calloc(sizeof(DirectIODeviceChannelHeaderMultiGetOpcodeResult), 1);
-            
+
             //fetch the set of keys
             DataBuffer<> data_buffer(dataPack->channel_data,
                                      dataPack->header.channel_data_size);
             dataPack->channel_data = NULL;
-            
+
             ChaosStringVector keys;
             for(int idx = 0;
                 idx < header->field.number_of_key;
@@ -138,11 +138,11 @@ int DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack,
             }
             break;
         }
-            
+
         case opcode::DeviceChannelOpcodeQueryDataCloud: {
             if(synchronous_answer == NULL) return -1000;
             opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudPtr header = reinterpret_cast< opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloud*>(dataPack->channel_header_data);
-            
+
             try {
                 if (dataPack &&
                     dataPack->channel_data) {
@@ -150,15 +150,15 @@ int DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack,
                     QueryResultPage result_page;
                     chaos_data::CDataWrapper query((char *)dataPack->channel_data);
                     opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudResultPtr result_header = (DirectIODeviceChannelHeaderOpcodeQueryDataCloudResultPtr)calloc(sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult), 1);
-                    
+
                     header->field.record_for_page = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.record_for_page);
-                    
+
                     //decode the endianes off the data
                     std::string key = CDW_GET_SRT_WITH_DEFAULT(&query, DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_KEY_STRING, "");
                     uint64_t start_ts = CDW_GET_VALUE_WITH_DEFAULT(&query, DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_STAR_TS_I64, getUInt64Value, 0);
                     uint64_t end_ts = CDW_GET_VALUE_WITH_DEFAULT(&query, DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_END_TS_I64, getUInt64Value, 0);
-                    SearchSequence last_sequence_info{CDW_GET_VALUE_WITH_DEFAULT(&query, DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_LAST_RUN_ID, getUInt64Value, std::numeric_limits<int64_t>::min()),
-                                                      CDW_GET_VALUE_WITH_DEFAULT(&query, DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_LAST_DP_COUNTER, getUInt64Value, std::numeric_limits<int64_t>::min())};
+                    SearchSequence last_sequence_info = {CDW_GET_VALUE_WITH_DEFAULT(&query, DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_LAST_RUN_ID, getUInt64Value, std::numeric_limits<int64_t>::min()),
+                                                        CDW_GET_VALUE_WITH_DEFAULT(&query, DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_LAST_DP_COUNTER, getUInt64Value, std::numeric_limits<int64_t>::min())};
                     //call server api if we have at least the key
                     if((key.compare("") != 0)) {err = handler->consumeDataCloudQuery(header,
                                                                                      key,
@@ -178,21 +178,21 @@ int DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack,
                                 //write result into mresults memory
                                 int element_bson_size = 0;
                                 const char * element_bson_mem = (*it)->getBSONRawData(element_bson_size);
-                                
+
                                 //enlarge buffer
                                 result_data = std::realloc(result_data, (result_header->result_data_size + element_bson_size));
-                                
+
                                 //copy bson elelment in memory location
                                 char *mem_start_copy = ((char*)result_data)+result_header->result_data_size;
-                                
+
                                 //copy
                                 std::memcpy(mem_start_copy, element_bson_mem, element_bson_size);
-                                
+
                                 //keep track of the full size of the result
                                 result_header->result_data_size +=element_bson_size;
                             }
                         }
-                        
+
                         //set the result header and data
                         DIRECT_IO_SET_CHANNEL_HEADER(synchronous_answer, result_header, sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult));
                         DIRECT_IO_SET_CHANNEL_DATA(synchronous_answer, result_data, result_header->result_data_size);
@@ -207,19 +207,19 @@ int DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack,
                 }
             } catch (...) {
                 // inca se of error header an cdatawrapper are cleaned here
-                
+
             }
             if(header) free(header);
             if(dataPack->channel_data) free(dataPack->channel_data);
             break;
         }
-            
+
         case opcode::DeviceChannelOpcodeDeleteDataCloud: {
             try {
                 if (dataPack &&
                     dataPack->channel_data) {
                     chaos_data::CDataWrapper query((char *)dataPack->channel_data);
-                    
+
                     //decode the endianes off the data
                     std::string key = CDW_GET_SRT_WITH_DEFAULT(&query, DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_KEY_STRING, "");
                     uint64_t start_ts = CDW_GET_VALUE_WITH_DEFAULT(&query, DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_STAR_TS_I64, getUInt64Value, 0);
@@ -238,10 +238,10 @@ int DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack,
         default:
             break;
     }
-    
+
     //only data pack is deleted, header and data of the channel are managed by handler
     free(dataPack);
-    
+
     //return no result
     return err;
 }
@@ -253,7 +253,7 @@ void DirectIODeviceServerChannel::DirectIODeviceServerChannelDeallocator::freeSe
             free(sent_data_ptr);
             break;
         }
-            
+
         case DisposeSentMemoryInfo::SentPartData: {
             free(sent_data_ptr);
             break;

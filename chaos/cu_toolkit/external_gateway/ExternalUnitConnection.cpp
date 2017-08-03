@@ -43,16 +43,16 @@ ExternalUnitConnection::~ExternalUnitConnection() {
 
 int ExternalUnitConnection::sendDataToEndpoint(chaos::common::data::CDBufferUniquePtr reecived_data) {
     CHAOS_ASSERT(endpoint);
-    CHAOS_ASSERT(serializer_adapter)
+    CHAOS_ASSERT(serializer_adapter.get());
     ChaosUniquePtr<chaos::common::data::CDataWrapper> dmessage = serializer_adapter->deserialize(*reecived_data);
-    if(!dmessage) return -1;
+    if(!dmessage.get()) return -1;
     return endpoint->handleReceivedeMessage(connection_identifier, ChaosMoveOperator(dmessage));
 }
 
 int ExternalUnitConnection::sendData(chaos::common::data::CDWUniquePtr data,
                                      const EUCMessageOpcode opcode) {
-    CHAOS_ASSERT(data);
-    CHAOS_ASSERT(serializer_adapter)
+    CHAOS_ASSERT(data.get());
+    CHAOS_ASSERT(serializer_adapter.get());
     return sendDataToConnection(serializer_adapter->serialize(*data), opcode);
 }
 

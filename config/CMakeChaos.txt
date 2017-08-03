@@ -420,7 +420,7 @@ IF (NOT CACHE_DIR)
 
   SET (CHAOS_FRAMEWORK ${CMAKE_CURRENT_LIST_DIR}/..)
   set (CHAOS_C_FLAGS "-Wno-deprecated -fPIC")
-  set (CHAOS_CXX_FLAGS "-Wno-deprecated -static-libstdc++ -fPIC")
+  set (CHAOS_CXX_FLAGS "-Wno-deprecated -fPIC")
   set (CHAOS_LINKER_FLAGS "")
 
   IF(NOT DEFINED PROCESSOR_COUNT)

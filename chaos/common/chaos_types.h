@@ -56,15 +56,15 @@ typedef std::chrono::microseconds ChaosCronoMicroseconds;
 #define ChaosSharedPtr boost::shared_ptr
 #define ChaosMakeSharedPtr boost::make_shared
 #define ChaosWeakPtr boost::weak_ptr
-#include <boost/atomic>
+#include <boost/atomic.hpp>
 template<typename T>
 using ChaosAtomic = boost::atomic<T>;
-#include <boost/future.hpp>
+#include <boost/thread/future.hpp>
 template<typename T>
 using ChaosPromise = boost::promise<T>;
 template<typename T>
-using ChaosFuture = boost::future<T>;
-typedef boost::chrono::future_status ChaosFutureStatus;
+using ChaosFuture = boost::shared_future<T>;
+typedef boost::future_status ChaosFutureStatus;
 #include <boost/chrono.hpp>
 typedef boost::chrono::seconds ChaosCronoSeconds;
 typedef boost::chrono::milliseconds ChaosCronoMilliseconds;
@@ -75,7 +75,7 @@ typedef boost::chrono::microseconds ChaosCronoMicroseconds;
 //#pragma message "Use new memory management std::shared_ptr(ChaosSharedPtr) std::make_shared(ChaosMakeSharedPtr) std::weak_ptr(ChaosWeakPtr) std::unique_ptr(ChaosUniquePtr)"
 #else
 #include <boost/shared_ptr.hpp>
-#include <boost/atomic>
+#include <boost/atomic.hpp>
 //#pragma message "Use c99 and boost for memory management boost::shared_ptr(ChaosSharedPtr) boost::make_shared(ChaosMakeSharedPtr) boost::weak_ptr(ChaosWeakPtr) std::auto_ptr(ChaosUniquePtr)"
 #define ChaosSharedPtr boost::shared_ptr
 #define ChaosMakeSharedPtr boost::make_shared
@@ -84,12 +84,12 @@ typedef boost::chrono::microseconds ChaosCronoMicroseconds;
 #define ChaosMoveOperator(x) x
 template<typename T>
 using ChaosAtomic = boost::atomic<T>;
-#include <boost/future.hpp>
+#include <boost/thread/future.hpp>
 template<typename T>
 using ChaosPromise = boost::promise<T>;
 template<typename T>
-using ChaosFuture = boost::future<T>;
-typedef boost::chrono::future_status ChaosFutureStatus;
+using ChaosFuture = boost::shared_future<T>;
+typedef boost::future_status ChaosFutureStatus;
 #include <boost/chrono.hpp>
 typedef boost::chrono::seconds ChaosCronoSeconds;
 typedef boost::chrono::milliseconds ChaosCronoMilliseconds;

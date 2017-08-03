@@ -43,7 +43,7 @@ run(false),
 root_connection(0){}
 
 HTTPAdapter::~HTTPAdapter() {
-    
+
 }
 
 void HTTPAdapter::init(void *init_data) throw (chaos::CException) {
@@ -61,17 +61,17 @@ void HTTPAdapter::init(void *init_data) throw (chaos::CException) {
     }
     run = true;
     mg_mgr_init(&mgr, NULL);
-    
+
     root_connection = mg_bind(&mgr, setting.publishing_port.c_str(), HTTPAdapter::eventHandler);
     if(root_connection == NULL) {CException(-1, "Error creating http connection", __PRETTY_FUNCTION__);}
     root_connection->user_data = this;
-    
+
     mg_set_protocol_http_websocket(root_connection);
     s_http_server_opts.document_root = "";  // Serve current directory
     s_http_server_opts.enable_directory_listing = "no";
     //
     CObjectProcessingQueue<WorkRequest>::init(setting.thread_number);
-    
+
     thread_poller.reset(new boost::thread(boost::bind(&HTTPAdapter::poller, this)));
 }
 
@@ -80,7 +80,7 @@ void HTTPAdapter::deinit() throw (chaos::CException) {
     CObjectProcessingQueue<WorkRequest>::deinit();
     CObjectProcessingQueue<WorkRequest>::clear();
     thread_poller->join();
-    
+
     mg_mgr_free(&mgr);
 }
 
@@ -117,7 +117,7 @@ const std::string HTTPAdapter::getSerializationType(http_message *http_message) 
         value = mg_get_http_header(http_message, "content-type");
         if(value == NULL) return "";
     }
-    
+
     std::string ser_type(value->p, value->len);
     std::transform(ser_type.begin(), ser_type.end(), ser_type.begin(), ::tolower);
     return ser_type;
@@ -136,7 +136,7 @@ void  HTTPAdapter::manageWSHandshake(WorkRequest& wr) {
                         true);
         return;
     }
-    
+
     //check if endpoint can accept more connection
     if(map_endpoint()[wr.uri]->canAcceptMoreConnection() == false) {
         //write error for no more connection accepted by endpoint
@@ -147,7 +147,7 @@ void  HTTPAdapter::manageWSHandshake(WorkRequest& wr) {
     } else {
         //get instance for serializer
         ChaosUniquePtr<serialization::AbstractExternalSerialization> serializer = ExternalUnitGateway::getInstance()->getNewSerializationInstanceForType(wr.s_type);
-        if(!serializer) {
+        if(!serializer.get()) {
             //write error for no more connection accepted by endpoint
             sendWSJSONError(wr.nc,
                             -3,
@@ -194,10 +194,10 @@ void HTTPAdapter::processBufferElement(WorkRequest *request,
             map_connection().erase(reinterpret_cast<uintptr_t>(request->nc));
             break;
         }
-            
+
         default:{break;}
     }
-    
+
 }
 
 void HTTPAdapter::eventHandler(mg_connection *nc, int ev, void *ev_data) {
