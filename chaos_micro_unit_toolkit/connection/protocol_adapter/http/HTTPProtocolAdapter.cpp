@@ -24,9 +24,12 @@
 using namespace chaos::micro_unit_toolkit::data;
 using namespace chaos::micro_unit_toolkit::connection::protocol_adapter::http;
 
-HTTPProtocolAdapter::HTTPProtocolAdapter(const std::string& endpoint):
-AbstractProtocolAdapter(ProtocolTypeHTTP,
-                        endpoint),
+const chaos::micro_unit_toolkit::connection::ProtocolType HTTPProtocolAdapter::protocol_type = ProtocolTypeHTTP;
+
+HTTPProtocolAdapter::HTTPProtocolAdapter(const std::string& endpoint,
+                                         const std::string& connection_header):
+AbstractProtocolAdapter(endpoint,
+                        connection_header),
 root_conn(NULL){}
 
 HTTPProtocolAdapter::~HTTPProtocolAdapter() {}

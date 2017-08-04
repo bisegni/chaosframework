@@ -20,9 +20,18 @@
  */
 
 #include <chaos_micro_unit_toolkit/connection/unit_proxy/RawDriverUnitProxy.h>
+
+using namespace chaos::micro_unit_toolkit::connection;
 using namespace chaos::micro_unit_toolkit::connection::unit_proxy;
+
+#define AUTHORIZATION_KEY        "authorization_key"
+#define AUTHORIZATION_STATE      "authorization_state"
+#define MESSAGE                 "message"
+#define REQUEST_IDENTIFICATION  "request_id"
+
+const ProxyType RawDriverUnitProxy::proxy_type = ProxyTypeRawDriver;
+
 RawDriverUnitProxy::RawDriverUnitProxy(protocol_adapter::AbstractProtocolAdapter& protocol_adapter):
-AbstractUnitProxy(ProxyTypeRawDriver,
-                  protocol_adapter){}
+AbstractUnitProxy(protocol_adapter){}
 
 RawDriverUnitProxy::~RawDriverUnitProxy() {}

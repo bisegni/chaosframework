@@ -14,16 +14,16 @@ using namespace chaos::micro_unit_toolkit::data;
 int main(int argc, const char * argv[]) {
     DataPack dp;
     DataPack dp_parent;
-    dp.addBoolValue("b", true);
-    dp.addInt32Value("ti32", 32);
-    dp.addInt64Value("ti64", 32);
-    dp.addDoubleValue("double", 90.5);
-    dp_parent.addStringValue("skey", "strings");
-    dp_parent.addDataPackValue("dpkey", dp);
+    dp.addBool("b", true);
+    dp.addInt32("ti32", 32);
+    dp.addInt64("ti64", 32);
+    dp.addDouble("double", 90.5);
+    dp_parent.addString("skey", "strings");
+    dp_parent.addDataPack("dpkey", dp);
     dp_parent.createArrayForKey("array");
-    dp_parent.appendDataPackValue("array", dp);
-    dp_parent.appendDataPackValue("array", dp);
-    dp_parent.appendDataPackValue("array", dp);
+    dp_parent.appendDataPack("array", dp);
+    dp_parent.appendDataPack("array", dp);
+    dp_parent.appendDataPack("array", dp);
     
     std::vector<int> arr;
     arr.push_back(1);
@@ -31,7 +31,7 @@ int main(int argc, const char * argv[]) {
     arr.push_back(3);
     arr.push_back(4);
     arr.push_back(5);
-    dp_parent.addArrayValue("iarr", arr);
-    std::cout << dp_parent.toString() << std::endl;
+    dp_parent.addArray("iarr", arr);
+    std::cout << dp_parent.toUnformattedString() << std::endl;
     return 0;
 }

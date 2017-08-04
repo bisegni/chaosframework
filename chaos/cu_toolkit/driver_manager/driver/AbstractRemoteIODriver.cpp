@@ -38,15 +38,20 @@ using namespace chaos::common::async_central;
 using namespace chaos::cu::external_gateway;
 using namespace chaos::cu::driver_manager::driver;
 
+#define AUTHORIZATION_KEY        "authorization_key"
+#define AUTHORIZATION_STATE      "authorization_state"
+#define MESSAGE                 "message"
+#define REQUEST_IDENTIFICATION  "request_id"
+
 #pragma mark DriverResultInfo
 bool AbstractRemoteIODriver::DriverResultInfo::less::operator()(const DriverResultInfo::DriverResultInfoShrdPtr& h1,
                                                                 const DriverResultInfo::DriverResultInfoShrdPtr& h2) {
-    return h1->request_index < h2->request_index;
+    return h1->request_id < h2->request_id;
 }
 
 const AbstractRemoteIODriver::DriverResultInfo::extract_index::result_type&
 AbstractRemoteIODriver::DriverResultInfo::extract_index::operator()(const DriverResultInfo::DriverResultInfoShrdPtr &p) const {
-    return p->request_index;
+    return p->request_id;
 }
 
 const AbstractRemoteIODriver::DriverResultInfo::extract_req_ts::result_type&
@@ -73,13 +78,13 @@ void AbstractRemoteIODriver::driverInit(const char *initParameter) throw(chaos::
     Json::Value root_param_document = getDriverParamJsonRootElement();
     
     Json::Value jv_endpoint_name = root_param_document["endpoint_name"];
-    Json::Value jv_autorization_key = root_param_document["authorization_key"];
+    Json::Value jv_authorization_key = root_param_document[AUTHORIZATION_KEY];
     CHECK_ASSERTION_THROW_AND_LOG((jv_endpoint_name.isNull() == false), ERR, -2, "The endpoint name is mandatory");
-    CHECK_ASSERTION_THROW_AND_LOG((jv_autorization_key.isNull() == false), ERR, -3, "The authorization key is mandatory");
+    CHECK_ASSERTION_THROW_AND_LOG((jv_authorization_key.isNull() == false), ERR, -3, "The authorization key is mandatory");
     
     //! end point identifier & authorization key
     ExternalUnitEndpoint::endpoint_identifier = jv_endpoint_name.asString();
-    authorization_key = jv_autorization_key.asString();
+    authorization_key = jv_authorization_key.asString();
     CHECK_ASSERTION_THROW_AND_LOG(authorization_key.size(), ERR, -4, "The authorization key cannot be zero lenght");
     
     AsyncCentralManager::getInstance()->addTimer(this,
@@ -113,9 +118,9 @@ int AbstractRemoteIODriver::handleReceivedeMessage(const std::string& connection
                                                    ChaosUniquePtr<CDataWrapper> message) {
     if(conn_phase != RDConnectionPhaseAutorized) {
         //check if a message with autorization key will arive
-        if(message->hasKey("authorization_key") &&
-           message->isStringValue("authorization_key")) {
-            if(authorization_key.compare(message->getStringValue("authorization_key")) == 0){
+        if(message->hasKey(AUTHORIZATION_KEY) &&
+           message->isStringValue(AUTHORIZATION_KEY)) {
+            if(authorization_key.compare(message->getStringValue(AUTHORIZATION_KEY)) == 0){
                 conn_phase = RDConnectionPhaseAutorized;
                 sendAuthenticationACK();
             } else {
@@ -126,24 +131,24 @@ int AbstractRemoteIODriver::handleReceivedeMessage(const std::string& connection
             }
         }
     } else {
-        if(!message->hasKey("message")){
+        if(!message->hasKey(MESSAGE)){
             //send error because not right type of req index
             ExternalUnitEndpoint::sendError(connection_identifier,
                                             -2, "message field is mandatory", __PRETTY_FUNCTION__);
-        } else if(!message->isCDataWrapperValue("message")) {
+        } else if(!message->isCDataWrapperValue(MESSAGE)) {
             //send error because not right type of req index
             ExternalUnitEndpoint::sendError(connection_identifier,
                                             -3, "message field need to be an object type", __PRETTY_FUNCTION__);
-        } else if(!message->hasKey("request_index")) {
+        } else if(!message->hasKey(REQUEST_IDENTIFICATION)) {
             asyncMessageReceived(ChaosMoveOperator(message));
-        } else if(!message->isInt32Value("request_index")) {
+        } else if(!message->isInt32Value(REQUEST_IDENTIFICATION)) {
             //send error because not right type of req index
             ExternalUnitEndpoint::sendError(connection_identifier,
-                                            -4, "request_index field need to be a int32 type", __PRETTY_FUNCTION__);
+                                            -4, "request_id field need to be a int32 type", __PRETTY_FUNCTION__);
         }  else {
             //good request index
-            const int64_t req_index = message->getUInt32Value("request_index");
-            ChaosUniquePtr<CDataWrapper> embedded_message(message->getCSDataValue("message"));
+            const int64_t req_index = message->getUInt32Value(REQUEST_IDENTIFICATION);
+            ChaosUniquePtr<CDataWrapper> embedded_message(message->getCSDataValue(MESSAGE));
             LSetPromiseWriteLock wl = set_p.getWriteLockObject();
             SetPromisesReqTSIndexIter it = set_p_req_ts_index.find(req_index);
             if(it != set_p_req_ts_index.end()) {
@@ -176,7 +181,7 @@ void AbstractRemoteIODriver::timeout() {
 
 void AbstractRemoteIODriver::sendAuthenticationACK() {
     CDWUniquePtr auth_ack_data(new CDataWrapper());
-    auth_ack_data->addInt32Value("auth_state", 1);
+    auth_ack_data->addInt32Value(AUTHORIZATION_STATE, 1);
     sendRawMessage(ChaosMoveOperator(auth_ack_data));
 }
 
@@ -200,10 +205,10 @@ int AbstractRemoteIODriver::sendRawRequest(CDWUniquePtr message_data,
     AbstractRemoteIODriver::DriverResultFuture request_future;
     DriverResultInfo::DriverResultInfoShrdPtr promise_info(new DriverResultInfo());
     promise_info->request_ts = TimingUtil::getTimeStampInMicroseconds();
-    promise_info->request_index = message_counter++;
+    promise_info->request_id = message_counter++;
     
-    ext_msg->addInt32Value("request_index", promise_info->request_index);
-    ext_msg->addCSDataValue("message", *message_data);
+    ext_msg->addInt32Value(REQUEST_IDENTIFICATION, promise_info->request_id);
+    ext_msg->addCSDataValue(MESSAGE, *message_data);
     //store promises in result map
     LSetPromiseWriteLock lmr_wl = set_p.getWriteLockObject();
     set_p().insert(promise_info);

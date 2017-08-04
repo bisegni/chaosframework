@@ -55,12 +55,12 @@ namespace chaos {
                  
                  request:
                  {
-                 request_index:int32
+                 request_id:int32
                  .....
                  }
                  response:
                  {
-                 request_index:int32 <--- the same of the answer
+                 request_id:int32 <--- the same of the answer
                  .....
                  }
                  
@@ -85,7 +85,7 @@ namespace chaos {
                     } RDConnectionPhase;
                     
                     struct DriverResultInfo {
-                        uint32_t request_index;
+                        uint32_t request_id;
                         int64_t request_ts;
                         DriverResultPromise promise;
                         typedef ChaosSharedPtr< DriverResultInfo > DriverResultInfoShrdPtr;

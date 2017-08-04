@@ -24,10 +24,10 @@
 using namespace chaos::micro_unit_toolkit::data;
 using namespace chaos::micro_unit_toolkit::connection::protocol_adapter;
 
-AbstractProtocolAdapter::AbstractProtocolAdapter(ProtocolType _impl_type,
-                                                 const std::string& _protocol_endpoint):
-protocol_type(_impl_type),
+AbstractProtocolAdapter::AbstractProtocolAdapter(const std::string& _protocol_endpoint,
+                                                 const std::string& _protocol_option):
 protocol_endpoint(_protocol_endpoint),
+protocol_option(_protocol_option),
 connection_status(ConnectionStateDisconnected),
 adapter_request_id(0){}
 

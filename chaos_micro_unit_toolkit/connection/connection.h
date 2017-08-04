@@ -26,5 +26,9 @@
 #include <chaos_micro_unit_toolkit/connection/ConnectionManager.h>
 
 #include <chaos_micro_unit_toolkit/connection/protocol_adapter/AbstractProtocolAdapter.h>
+#include <chaos_micro_unit_toolkit/connection/protocol_adapter/http/HTTPProtocolAdapter.h>
+
+#include <chaos_micro_unit_toolkit/connection/unit_proxy/AbstractUnitProxy.h>
+#include <chaos_micro_unit_toolkit/connection/unit_proxy/RawDriverUnitProxy.h>
 
 #endif /* __CHAOSFramework__45EFE2C_AE25_43D8_B40A_C3070A610391_connection_h */

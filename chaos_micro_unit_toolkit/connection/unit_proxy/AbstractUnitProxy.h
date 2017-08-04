@@ -29,7 +29,7 @@ namespace chaos {
     namespace micro_unit_toolkit {
         namespace connection {
             namespace unit_proxy {
-
+                
                 struct RemoteMessage {
                     data::DataPackSharedPtr message;
                     const bool is_request;
@@ -43,13 +43,7 @@ namespace chaos {
                 //! Abstract base class for all unit proxy
                 class AbstractUnitProxy {
                     protocol_adapter::AbstractProtocolAdapter& protocol_adapter;
-                public:
-                    const ProxyType type;
-                    AbstractUnitProxy(const ProxyType _type,
-                                      protocol_adapter::AbstractProtocolAdapter& _protocol_adapter);
-                    
-                    virtual ~AbstractUnitProxy();
-                    
+                protected:
                     int sendMessage(data::DataPackUniquePtr& message_data);
                     
                     int sendAnswer(RemoteMessageUniquePtr& message,
@@ -58,6 +52,9 @@ namespace chaos {
                     bool hasMoreMessage();
                     
                     RemoteMessageUniquePtr getNextMessage();
+                public:
+                    AbstractUnitProxy(protocol_adapter::AbstractProtocolAdapter& _protocol_adapter);
+                    virtual ~AbstractUnitProxy();
                 };
             }
         }

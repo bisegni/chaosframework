@@ -42,7 +42,9 @@ namespace chaos {
                         
                         int sendRawMessage(data::DataPackUniquePtr& message);
                     public:
-                        HTTPProtocolAdapter(const std::string& endpoint);
+                        static const ProtocolType protocol_type;
+                        HTTPProtocolAdapter(const std::string& endpoin,
+                                            const std::string& connection_header);
                         
                         ~HTTPProtocolAdapter();
                         

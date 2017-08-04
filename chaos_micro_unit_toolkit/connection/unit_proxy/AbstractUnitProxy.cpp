@@ -27,9 +27,7 @@ message(_message),
 is_request((message->hasKey("request_id") && message->isInt32("request_id"))),
 message_id(is_request?message->getInt32("request_id"):0){}
 
-AbstractUnitProxy::AbstractUnitProxy(const ProxyType _type,
-                                     protocol_adapter::AbstractProtocolAdapter& _protocol_adapter):
-type(_type),
+AbstractUnitProxy::AbstractUnitProxy(protocol_adapter::AbstractProtocolAdapter& _protocol_adapter):
 protocol_adapter(_protocol_adapter){}
 
 AbstractUnitProxy::~AbstractUnitProxy() {}

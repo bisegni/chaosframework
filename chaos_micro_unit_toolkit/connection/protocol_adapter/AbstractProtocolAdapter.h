@@ -49,11 +49,10 @@ namespace chaos {
                     
                     void handleReceivedMessage(chaos::micro_unit_toolkit::data::DataPackSharedPtr& received_message);
                 public:
-                    const ProtocolType  protocol_type;
                     const std::string   protocol_endpoint;
-                    
-                    AbstractProtocolAdapter(ProtocolType _impl_type,
-                                            const std::string& connection_endpoint);
+                    const std::string   protocol_option;
+                    AbstractProtocolAdapter(const std::string& _connection_endpoint,
+                                            const std::string& _protocol_option);
                     virtual ~AbstractProtocolAdapter();
                     
                     virtual int connect() = 0;
