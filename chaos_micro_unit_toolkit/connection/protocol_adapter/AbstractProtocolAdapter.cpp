@@ -85,3 +85,6 @@ DataPackSharedPtr AbstractProtocolAdapter::retrieveRequestResponse(uint32_t requ
     return DataPackSharedPtr();
 }
 
+ConnectionState AbstractProtocolAdapter::getConnectionState() const {
+    return connection_status;
+}

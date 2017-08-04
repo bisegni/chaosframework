@@ -41,7 +41,7 @@ int HTTPProtocolAdapter::connect() {
     root_conn = mg_connect_ws(&mgr,
                               HTTPProtocolAdapter::ev_handler,
                               AbstractProtocolAdapter::protocol_endpoint.c_str(),
-                              "ChaosExternalUnit", NULL);
+                              "ChaosExternalUnit", AbstractProtocolAdapter::protocol_option.c_str());
     if (root_conn != NULL) {
         root_conn->user_data = this;
     } else {

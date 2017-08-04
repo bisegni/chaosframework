@@ -23,6 +23,10 @@
 #define __CHAOSFramework__440E479_CAAE_4B1A_BC65_026184B47226_micro_unit_toolkit_h
 
 #include <chaos_micro_unit_toolkit/ChaosMicroUnitToolkit.h>
-#include <chaos_micro_unit_toolkit/micro_unit_toolkit_type.h>
+#include <chaos_micro_unit_toolkit/micro_unit_toolkit_types.h>
+
+#include <chaos_micro_unit_toolkit/data/DataPack.h>
+#include <chaos_micro_unit_toolkit/connection/connection.h>
+
 
 #endif /* __CHAOSFramework__440E479_CAAE_4B1A_BC65_026184B47226_micro_unit_toolkit_h */

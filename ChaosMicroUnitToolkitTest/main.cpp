@@ -7,9 +7,12 @@
 //
 
 #include <iostream>
-#include <chaos_micro_unit_toolkit/data/DataPack.h>
+#include <chaos_micro_unit_toolkit/micro_unit_toolkit.h>
 
+using namespace chaos::micro_unit_toolkit;
 using namespace chaos::micro_unit_toolkit::data;
+using namespace chaos::micro_unit_toolkit::connection;
+using namespace chaos::micro_unit_toolkit::connection::unit_proxy;
 
 int main(int argc, const char * argv[]) {
     DataPack dp;
@@ -33,5 +36,24 @@ int main(int argc, const char * argv[]) {
     arr.push_back(5);
     dp_parent.addArray("iarr", arr);
     std::cout << dp_parent.toUnformattedString() << std::endl;
+    
+    ChaosMicroUnitToolkit mut;
+    const char *option="Content-Type: application/bson-json\r\n";
+    ChaosUniquePtr< UnitConnection<RawDriverUnitProxy> > proxy = mut.createNewRawDriverUnit(ProtocolTypeHTTP,
+                                                                                            "ws://localhost:8080/io_driver",
+                                                                                            option);
+    
+    int err = proxy->protocol_adapter->connect();
+    proxy->protocol_adapter->poll(1000);
+    if(err) return err;
+
+    proxy->unit_proxy->authorization("work");
+    proxy->protocol_adapter->poll(2000);
+    if(proxy->unit_proxy->hasMoreMessage()) {
+        RemoteMessageUniquePtr m = proxy->unit_proxy->getNextMessage();
+        std::cout << m->message->toString() << std::endl;
+    }
+    proxy->protocol_adapter->close();
+    
     return 0;
 }

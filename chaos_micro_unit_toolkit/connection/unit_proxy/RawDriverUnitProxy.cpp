@@ -35,3 +35,9 @@ RawDriverUnitProxy::RawDriverUnitProxy(protocol_adapter::AbstractProtocolAdapter
 AbstractUnitProxy(protocol_adapter){}
 
 RawDriverUnitProxy::~RawDriverUnitProxy() {}
+
+void RawDriverUnitProxy::authorization(const std::string& authorization_key) {
+    data::DataPackUniquePtr message(new data::DataPack());
+    message->addString(AUTHORIZATION_KEY, authorization_key);
+    sendMessage(message);
+}

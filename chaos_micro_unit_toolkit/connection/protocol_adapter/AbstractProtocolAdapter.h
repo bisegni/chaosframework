@@ -69,6 +69,7 @@ namespace chaos {
                     
                     virtual int close() = 0;
 
+                    ConnectionState getConnectionState() const;
                 protected:
                     typedef std::map<uint32_t, data::DataPackSharedPtr> MapRequestIDResponse;
                     typedef std::pair<uint32_t, data::DataPackSharedPtr> MapRequestIDResponsePair;
