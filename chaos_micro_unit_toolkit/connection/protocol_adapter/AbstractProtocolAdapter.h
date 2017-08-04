@@ -27,6 +27,7 @@
 
 #include <string>
 #include <queue>
+#include <map>
 
 namespace chaos {
     namespace micro_unit_toolkit {
@@ -40,14 +41,13 @@ namespace chaos {
                     ConnectionStateConnectionError
                 } ConnectionState;
                 
-                class ProtocolAdapterHandler {
-                public:
-                    virtual int messageReceived(data::DataPackUniquePtr message);
-                };
                 
                 //! Abstract base class for all protocols adapter
                 class AbstractProtocolAdapter {
-                    ProtocolAdapterHandler *handler;
+                protected:
+                    virtual int sendRawMessage(chaos::micro_unit_toolkit::data::DataPackUniquePtr& message) = 0;
+                    
+                    void handleReceivedMessage(chaos::micro_unit_toolkit::data::DataPackSharedPtr& received_message);
                 public:
                     const ProtocolType  protocol_type;
                     const std::string   protocol_endpoint;
@@ -58,17 +58,30 @@ namespace chaos {
                     
                     virtual int connect() = 0;
                     
-                    virtual int sendMessage(data::DataPackUniquePtr message) = 0;
+                    int sendMessage(data::DataPackUniquePtr& message);
                     
-                    virtual data::DataPackSharedPtr readMessage() = 0;
+                    int sendRequest(data::DataPackUniquePtr& message,
+                                    uint32_t& request_id);
                     
-                    virtual bool hasMoreMessage() = 0;
+                    bool hasMoreMessage();
+                    
+                    data::DataPackSharedPtr getNextMessage();
+                    
+                    bool hasResponse();
+                    
+                    bool hasResponseAvailable(uint32_t request_id);
+                    
+                    data::DataPackSharedPtr retrieveRequestResponse(uint32_t request_id);
                     
                     virtual int close() = 0;
-                    
-                    void setHandler(ProtocolAdapterHandler *handler);
                 protected:
+                    typedef std::map<uint32_t, data::DataPackSharedPtr> MapRequestIDResponse;
+                    typedef std::pair<uint32_t, data::DataPackSharedPtr> MapRequestIDResponsePair;
+                    typedef MapRequestIDResponse::iterator MapRequestIDResponseIterator;
+
+                    uint32_t adapter_request_id;
                     ConnectionState connection_status;
+                    MapRequestIDResponse                map_req_id_response;
                     std::queue<data::DataPackSharedPtr> queue_received_messages;
                 };
             }

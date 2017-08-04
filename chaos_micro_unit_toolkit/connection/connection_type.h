@@ -15,17 +15,25 @@ namespace chaos {
             
             //! Proxy type definition
             typedef enum {
-                ProxyTypeRaw /*!< Specify a proxy that permit to sned and receive raw message from remote unit */
+                /*!Specify a proxy that permit to act ans a driver at low level, 
+                 no specified portocol is used messange and request need to be 
+                 managed by developer */
+                ProxyTypeRawDriver
             } ProxyType;
             
             //! Proxy type definition
             typedef enum {
-                SerializationTypeBSONJson /*!< Specify the extended json used for BSON serialization to use in comunication */
+                /*!Specify the extended json used 
+                 for BSON serialization to use in 
+                 comunication */
+                SerializationTypeBSONJson
             } SerializationType;
             
             //! Proxy type definition
             typedef enum {
-                ProtocolTypeHTTP /*!< Specify protocol used to connect to remote endpoint */
+                /*!Specify protocol used to 
+                 connect to remote endpoint */
+                ProtocolTypeHTTP
             } ProtocolType;
         }
     }

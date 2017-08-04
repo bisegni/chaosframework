@@ -20,17 +20,68 @@
  */
 
 #include <chaos_micro_unit_toolkit/connection/protocol_adapter/AbstractProtocolAdapter.h>
+
+using namespace chaos::micro_unit_toolkit::data;
 using namespace chaos::micro_unit_toolkit::connection::protocol_adapter;
 
 AbstractProtocolAdapter::AbstractProtocolAdapter(ProtocolType _impl_type,
                                                  const std::string& _protocol_endpoint):
 protocol_type(_impl_type),
 protocol_endpoint(_protocol_endpoint),
-connection_status(ConnectionStateDisconnected){}
+connection_status(ConnectionStateDisconnected),
+adapter_request_id(0){}
 
 AbstractProtocolAdapter::~AbstractProtocolAdapter() {}
 
-
-void AbstractProtocolAdapter::setHandler(ProtocolAdapterHandler *_handler) {
-    handler =_handler;
+void AbstractProtocolAdapter::handleReceivedMessage(data::DataPackSharedPtr& received_message) {
+    //checn whenever the message is a response or spontaneus message
+    if(received_message->hasKey("request_id") &&
+       received_message->isInt32("request_id")) {
+        map_req_id_response.insert(MapRequestIDResponsePair((uint32_t)received_message->getInt32("request_id"),
+                                                            received_message));
+    } else {
+        queue_received_messages.push(received_message);
+    }
 }
+
+int AbstractProtocolAdapter::sendMessage(data::DataPackUniquePtr& message) {
+    if(connection_status != ConnectionStateConnected){
+        printf("No connection to '%s'", protocol_endpoint.c_str());
+        return -1;
+    }
+    return sendRawMessage(message);
+}
+
+int AbstractProtocolAdapter::sendRequest(data::DataPackUniquePtr& message,
+                                         uint32_t& request_id) {
+    request_id = adapter_request_id++;
+    message->addInt32("request_id", request_id);
+    return sendMessage(message);
+}
+
+bool AbstractProtocolAdapter::hasMoreMessage() {
+    return queue_received_messages.size()>0;
+}
+
+DataPackSharedPtr AbstractProtocolAdapter::getNextMessage() {
+    if(queue_received_messages.size()) {
+        return DataPackSharedPtr();
+    } else {
+        DataPackSharedPtr result = queue_received_messages.front();
+        queue_received_messages.pop();
+        return result;
+    }
+}
+
+bool AbstractProtocolAdapter::hasResponse() {
+    return map_req_id_response.size()>0;
+}
+
+bool AbstractProtocolAdapter::hasResponseAvailable(uint32_t request_id) {
+    return map_req_id_response.find(request_id) != map_req_id_response.end();
+}
+
+DataPackSharedPtr AbstractProtocolAdapter::retrieveRequestResponse(uint32_t request_id) {
+    return DataPackSharedPtr();
+}
+

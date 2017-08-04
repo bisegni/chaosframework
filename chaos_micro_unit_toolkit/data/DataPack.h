@@ -45,34 +45,43 @@ namespace chaos {
                                                        const size_t data_len,
                                                        bool *parsed = NULL);
                 
-                void addBoolValue(const std::string& key, bool value);
+                bool hasKey(const std::string& key);
+                
+                void addBool(const std::string& key, bool value);
+                const bool isBool(const std::string& key) const;
                 const bool getBool(const std::string& key) const;
                 
-                void addInt32Value(const std::string& key, int32_t value);
-                const int32_t getInt32Value(const std::string& key) const;
+                void addInt32(const std::string& key, int32_t value);
+                const bool isInt32(const std::string& key) const;
+                const int32_t getInt32(const std::string& key) const;
                 
-                void addInt64Value(const std::string& key, int64_t value);
-                const int64_t getInt64Value(const std::string& key) const;
+                void addInt64(const std::string& key, int64_t value);
+                const bool isInt64(const std::string& key) const;
+                const int64_t getInt64(const std::string& key) const;
                 
-                void addDoubleValue(const std::string& key, double value);
+                void addDouble(const std::string& key, double value);
+                const bool isDouble(const std::string& key) const;
                 const double getDouble(const std::string& key) const;
                 
-                void addStringValue(const std::string& key, const std::string& value);
+                void addString(const std::string& key, const std::string& value);
+                const bool isString(const std::string& key) const;
                 std::string getString(const std::string& key) const;
                 
-                void addDataPackValue(const std::string& key, DataPack& value);
-                const DataPackUniquePtr getDataPackValue(const std::string& key) const;
+                void addDataPack(const std::string& key, DataPack& value);
+                const bool isDataPack(const std::string& key) const;
+                const DataPackUniquePtr getDataPack(const std::string& key) const;
                 
                 void createArrayForKey(const std::string& key);
-                void appendBoolValue(const std::string& arr_key, bool value);
-                void appendInt32Value(const std::string& arr_key, int32_t value);
-                void appendInt64Value(const std::string& arr_key, int64_t value);
-                void appendDoubleValue(const std::string& arr_key, double value);
-                void appendStringValue(const std::string& arr_key, const std::string& value);
-                void appendDataPackValue(const std::string& arr_key, DataPack& value);
+                const bool isArray(const std::string& key) const;
+                void appendBool(const std::string& arr_key, bool value);
+                void appendInt32(const std::string& arr_key, int32_t value);
+                void appendInt64(const std::string& arr_key, int64_t value);
+                void appendDouble(const std::string& arr_key, double value);
+                void appendString(const std::string& arr_key, const std::string& value);
+                void appendDataPack(const std::string& arr_key, DataPack& value);
                 
                 template<typename T>
-                void addArrayValue(const std::string& key, const std::vector<T> &value) {
+                void addArray(const std::string& key, const std::vector<T> &value) {
                     root_json_object[key] = Json::Value(Json::ValueType::arrayValue);
                     Json::Value& array_value = root_json_object[key];
                     for(typename std::vector<T>::const_iterator it = value.begin(),
@@ -85,6 +94,7 @@ namespace chaos {
                 }
                 
                 std::string toString();
+                std::string toUnformattedString();
             };
         }
     }

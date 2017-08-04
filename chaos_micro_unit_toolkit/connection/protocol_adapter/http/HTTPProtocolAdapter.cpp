@@ -49,30 +49,15 @@ int HTTPProtocolAdapter::connect() {
 
 }
 
-int HTTPProtocolAdapter::sendMessage(data::DataPackUniquePtr message) {
-    int err = 0;
-    if(HTTPProtocolAdapter::connection_status != ConnectionStateConnected){
-        printf("No connection to '%s'", protocol_endpoint.c_str());
-        return -1;
-    }
-    return err;
-}
-
-DataPackSharedPtr HTTPProtocolAdapter::readMessage() {
-    if(queue_received_messages.size()) {
-        return DataPackSharedPtr();
-    } else {
-        DataPackSharedPtr result = queue_received_messages.front();
-        queue_received_messages.pop();
-        return result;
-    }
-}
-
-bool HTTPProtocolAdapter::hasMoreMessage() {
-    return queue_received_messages.size()>0;
+int HTTPProtocolAdapter::sendRawMessage(DataPackUniquePtr& message) {
+    std::string to_send = message->toUnformattedString();
+    mg_send_websocket_frame(root_conn, WEBSOCKET_OP_TEXT, to_send.c_str(), to_send.size());
+    return 0;
 }
 
 int HTTPProtocolAdapter::close() {
+    mg_send_websocket_frame(root_conn, WEBSOCKET_OP_CLOSE, NULL, 0);
+    mg_mgr_free(&mgr);
     return 0;
 }
 
@@ -99,7 +84,7 @@ void HTTPProtocolAdapter::ev_handler(struct mg_connection *conn,
         case MG_EV_WEBSOCKET_FRAME: {
             struct websocket_message *wm = (struct websocket_message *) event_data;
             data::DataPackSharedPtr rece_msg_shrd_ptr(DataPack::newFromBuffer((const char*)wm->data, wm->size).release());
-            http_instance->queue_received_messages.push(rece_msg_shrd_ptr);
+            http_instance->handleReceivedMessage(rece_msg_shrd_ptr);
             break;
         }
         case MG_EV_CLOSE: {

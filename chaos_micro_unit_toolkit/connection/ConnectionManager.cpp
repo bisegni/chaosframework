@@ -1,5 +1,5 @@
 /*
- *	ConnectionManager.cpp
+ *	ConnectionManagerManager.cpp
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
@@ -19,14 +19,14 @@
  *    	limitations under the License.
  */
 
-#include <chaos_micro_unit_toolkit/connection/Connection.h>
+#include <chaos_micro_unit_toolkit/connection/ConnectionManager.h>
 using namespace chaos::micro_unit_toolkit::connection;
 
-Connection::Connection(const std::string& endpoint,
-                       const ProtocolType protocol_type) {
+ConnectionManager::ConnectionManager(const std::string& endpoint,
+                                     const ProtocolType protocol_type) {
     
 }
 
-Connection::~Connection() {
+ConnectionManager::~ConnectionManager() {
     
 }

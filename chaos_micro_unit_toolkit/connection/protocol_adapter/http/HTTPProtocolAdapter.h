@@ -39,18 +39,14 @@ namespace chaos {
                         static void ev_handler(struct mg_connection *conn,
                                                int event,
                                                void *event_data);
+                        
+                        int sendRawMessage(data::DataPackUniquePtr& message);
                     public:
                         HTTPProtocolAdapter(const std::string& endpoint);
                         
                         ~HTTPProtocolAdapter();
                         
                         int connect();
-                        
-                        int sendMessage(data::DataPackUniquePtr message);
-                        
-                        data::DataPackSharedPtr readMessage();
-                        
-                        bool hasMoreMessage();
                         
                         int close();
                     };

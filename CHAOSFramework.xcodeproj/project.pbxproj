@@ -114,6 +114,7 @@
 		32279F8B16FA36B6009EC7B9 /* PublisherDataService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32279F8916FA36B6009EC7B9 /* PublisherDataService.cpp */; };
 		32279F8C16FA36B6009EC7B9 /* PublisherDataService.h in Headers */ = {isa = PBXBuildFile; fileRef = 32279F8A16FA36B6009EC7B9 /* PublisherDataService.h */; };
 		322884451ADBBA1400CA1F4B /* PropertyCollector.h in Headers */ = {isa = PBXBuildFile; fileRef = 322884441ADBBA1400CA1F4B /* PropertyCollector.h */; };
+		3229005F1F3477D800717A38 /* micro_unit_toolkit.h in Headers */ = {isa = PBXBuildFile; fileRef = 3229005D1F3477D800717A38 /* micro_unit_toolkit.h */; };
 		3229700A18BCC6FE0004F70D /* DirectIOServerPublicInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3229700918BCC6FE0004F70D /* DirectIOServerPublicInterface.h */; };
 		322A3BC11CEE1A7F00FAD9DA /* LuaScriptVM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322A3BBE1CEE1A7F00FAD9DA /* LuaScriptVM.cpp */; };
 		322A3BC21CEE1A7F00FAD9DA /* LuaScriptVM.h in Headers */ = {isa = PBXBuildFile; fileRef = 322A3BBF1CEE1A7F00FAD9DA /* LuaScriptVM.h */; };
@@ -261,8 +262,8 @@
 		324D088E1F2F14C600836E29 /* ExternalIODriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 324D088C1F2F14C600836E29 /* ExternalIODriver.h */; };
 		324D08A11F30CE2B00836E29 /* ChaosMicroUnitToolkit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324D089F1F30CE2B00836E29 /* ChaosMicroUnitToolkit.cpp */; };
 		324D08A21F30CE2B00836E29 /* ChaosMicroUnitToolkit.h in Headers */ = {isa = PBXBuildFile; fileRef = 324D08A01F30CE2B00836E29 /* ChaosMicroUnitToolkit.h */; };
-		324D08AB1F31D5EA00836E29 /* Connection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324D08A91F31D5EA00836E29 /* Connection.cpp */; };
-		324D08AC1F31D5EA00836E29 /* Connection.h in Headers */ = {isa = PBXBuildFile; fileRef = 324D08AA1F31D5EA00836E29 /* Connection.h */; };
+		324D08AB1F31D5EA00836E29 /* ConnectionManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324D08A91F31D5EA00836E29 /* ConnectionManager.cpp */; };
+		324D08AC1F31D5EA00836E29 /* ConnectionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 324D08AA1F31D5EA00836E29 /* ConnectionManager.h */; };
 		324D08B01F31D70600836E29 /* AbstractProtocolAdapter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324D08AE1F31D70600836E29 /* AbstractProtocolAdapter.cpp */; };
 		324D08B11F31D70600836E29 /* AbstractProtocolAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 324D08AF1F31D70600836E29 /* AbstractProtocolAdapter.h */; };
 		324D08B51F31D7F300836E29 /* AbstractUnitProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324D08B31F31D7F300836E29 /* AbstractUnitProxy.cpp */; };
@@ -624,6 +625,9 @@
 		328E780C1A7AAB640008C070 /* MongoDBNodeDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328E780A1A7AAB640008C070 /* MongoDBNodeDataAccess.cpp */; };
 		328EFD611BA724A8009A832D /* NodeSearchTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328EFD5F1BA724A8009A832D /* NodeSearchTest.cpp */; };
 		328FB18D15A9962300A1D8E7 /* RpcServerHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 328FB18C15A9962300A1D8E7 /* RpcServerHandler.h */; };
+		329065DF1F346F2100356572 /* RawDriverUnitProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329065DD1F346F2100356572 /* RawDriverUnitProxy.cpp */; };
+		329065E01F346F2100356572 /* RawDriverUnitProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 329065DE1F346F2100356572 /* RawDriverUnitProxy.h */; };
+		329065E41F34763F00356572 /* connection.h in Headers */ = {isa = PBXBuildFile; fileRef = 329065E21F34763F00356572 /* connection.h */; };
 		32919A0B1764E68F00724874 /* DriverAccessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32919A091764E68F00724874 /* DriverAccessor.cpp */; };
 		32919A0C1764E68F00724874 /* DriverAccessor.h in Headers */ = {isa = PBXBuildFile; fileRef = 32919A0A1764E68F00724874 /* DriverAccessor.h */; };
 		3291D5181D5DEE890077CBB3 /* PublishTarget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3291D5161D5DEE890077CBB3 /* PublishTarget.cpp */; };
@@ -1419,6 +1423,7 @@
 		32279F8A16FA36B6009EC7B9 /* PublisherDataService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PublisherDataService.h; sourceTree = "<group>"; };
 		322884431ADBB55400CA1F4B /* Property.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Property.h; sourceTree = "<group>"; };
 		322884441ADBBA1400CA1F4B /* PropertyCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PropertyCollector.h; sourceTree = "<group>"; };
+		3229005D1F3477D800717A38 /* micro_unit_toolkit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = micro_unit_toolkit.h; sourceTree = "<group>"; };
 		3229700918BCC6FE0004F70D /* DirectIOServerPublicInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOServerPublicInterface.h; sourceTree = "<group>"; };
 		322A3BBE1CEE1A7F00FAD9DA /* LuaScriptVM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LuaScriptVM.cpp; sourceTree = "<group>"; };
 		322A3BBF1CEE1A7F00FAD9DA /* LuaScriptVM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LuaScriptVM.h; sourceTree = "<group>"; };
@@ -1588,8 +1593,8 @@
 		324D089E1F30CE0200836E29 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		324D089F1F30CE2B00836E29 /* ChaosMicroUnitToolkit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChaosMicroUnitToolkit.cpp; sourceTree = "<group>"; };
 		324D08A01F30CE2B00836E29 /* ChaosMicroUnitToolkit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChaosMicroUnitToolkit.h; sourceTree = "<group>"; };
-		324D08A91F31D5EA00836E29 /* Connection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Connection.cpp; sourceTree = "<group>"; };
-		324D08AA1F31D5EA00836E29 /* Connection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Connection.h; sourceTree = "<group>"; };
+		324D08A91F31D5EA00836E29 /* ConnectionManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConnectionManager.cpp; sourceTree = "<group>"; };
+		324D08AA1F31D5EA00836E29 /* ConnectionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConnectionManager.h; sourceTree = "<group>"; };
 		324D08AE1F31D70600836E29 /* AbstractProtocolAdapter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractProtocolAdapter.cpp; sourceTree = "<group>"; };
 		324D08AF1F31D70600836E29 /* AbstractProtocolAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractProtocolAdapter.h; sourceTree = "<group>"; };
 		324D08B31F31D7F300836E29 /* AbstractUnitProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractUnitProxy.cpp; sourceTree = "<group>"; };
@@ -2040,6 +2045,9 @@
 		328EFD5F1BA724A8009A832D /* NodeSearchTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeSearchTest.cpp; sourceTree = "<group>"; };
 		328EFD601BA724A8009A832D /* NodeSearchTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeSearchTest.h; sourceTree = "<group>"; };
 		328FB18C15A9962300A1D8E7 /* RpcServerHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcServerHandler.h; sourceTree = "<group>"; };
+		329065DD1F346F2100356572 /* RawDriverUnitProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RawDriverUnitProxy.cpp; sourceTree = "<group>"; };
+		329065DE1F346F2100356572 /* RawDriverUnitProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RawDriverUnitProxy.h; sourceTree = "<group>"; };
+		329065E21F34763F00356572 /* connection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = connection.h; sourceTree = "<group>"; };
 		32919A091764E68F00724874 /* DriverAccessor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = DriverAccessor.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		32919A0A1764E68F00724874 /* DriverAccessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = DriverAccessor.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		32919A0D17650F4500724874 /* DriverTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DriverTypes.h; sourceTree = "<group>"; };
@@ -3405,6 +3413,7 @@
 				324D089F1F30CE2B00836E29 /* ChaosMicroUnitToolkit.cpp */,
 				324D08A01F30CE2B00836E29 /* ChaosMicroUnitToolkit.h */,
 				324D08D61F31FFFE00836E29 /* micro_unit_toolkit_types.h */,
+				3229005D1F3477D800717A38 /* micro_unit_toolkit.h */,
 				324D08C71F31F25300836E29 /* data */,
 				324D08A81F31D4F300836E29 /* connection */,
 				324D08A31F31CEB400836E29 /* external_lib */,
@@ -3426,9 +3435,10 @@
 		324D08A81F31D4F300836E29 /* connection */ = {
 			isa = PBXGroup;
 			children = (
-				324D08A91F31D5EA00836E29 /* Connection.cpp */,
-				324D08AA1F31D5EA00836E29 /* Connection.h */,
+				324D08A91F31D5EA00836E29 /* ConnectionManager.cpp */,
+				324D08AA1F31D5EA00836E29 /* ConnectionManager.h */,
 				324D08B71F31DA5300836E29 /* connection_type.h */,
+				329065E21F34763F00356572 /* connection.h */,
 				324D08AD1F31D6BF00836E29 /* protocol_adapter */,
 				324D08B21F31D7AD00836E29 /* unit_proxy */,
 			);
@@ -3450,6 +3460,8 @@
 			children = (
 				324D08B31F31D7F300836E29 /* AbstractUnitProxy.cpp */,
 				324D08B41F31D7F300836E29 /* AbstractUnitProxy.h */,
+				329065DD1F346F2100356572 /* RawDriverUnitProxy.cpp */,
+				329065DE1F346F2100356572 /* RawDriverUnitProxy.h */,
 			);
 			path = unit_proxy;
 			sourceTree = "<group>";
@@ -3620,8 +3632,8 @@
 				326DB3B114B38BC00018A8D0 /* chaos */,
 				32A40D421A9CD4A0000D9A35 /* chaos_service_common */,
 				32661C6A1AA73DA200F1A721 /* ChaosMetadataServiceClient */,
-				323236C9164573C60052CE06 /* ChaosMetadataService */,
 				324D08941F30CD7A00836E29 /* chaos_micro_unit_toolkit */,
+				323236C9164573C60052CE06 /* ChaosMetadataService */,
 				3264139A1E44ACE60035E175 /* ChaosAgent */,
 				322085DB1AC5A0E200F1B71A /* ChaosMetadataServiceClientTest */,
 				324D08E01F321B4800836E29 /* ChaosMicroUnitToolkitTest */,
@@ -5734,12 +5746,15 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				324D08AC1F31D5EA00836E29 /* Connection.h in Headers */,
+				329065E41F34763F00356572 /* connection.h in Headers */,
+				324D08AC1F31D5EA00836E29 /* ConnectionManager.h in Headers */,
 				324D08B61F31D7F300836E29 /* AbstractUnitProxy.h in Headers */,
+				3229005F1F3477D800717A38 /* micro_unit_toolkit.h in Headers */,
 				324D08A21F30CE2B00836E29 /* ChaosMicroUnitToolkit.h in Headers */,
 				324D08B11F31D70600836E29 /* AbstractProtocolAdapter.h in Headers */,
 				324D08D51F31F5A000836E29 /* mongoose.h in Headers */,
 				324D08C61F31EC5000836E29 /* HTTPProtocolAdapter.h in Headers */,
+				329065E01F346F2100356572 /* RawDriverUnitProxy.h in Headers */,
 				324D08D21F31F5A000836E29 /* json.h in Headers */,
 				324D08CB1F31F26600836E29 /* DataPack.h in Headers */,
 			);
@@ -6794,12 +6809,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				324D08A11F30CE2B00836E29 /* ChaosMicroUnitToolkit.cpp in Sources */,
-				324D08AB1F31D5EA00836E29 /* Connection.cpp in Sources */,
+				324D08AB1F31D5EA00836E29 /* ConnectionManager.cpp in Sources */,
 				324D08D41F31F5A000836E29 /* mongoose.c in Sources */,
 				324D08B51F31D7F300836E29 /* AbstractUnitProxy.cpp in Sources */,
 				324D08C51F31EC5000836E29 /* HTTPProtocolAdapter.cpp in Sources */,
 				324D08CA1F31F26600836E29 /* DataPack.cpp in Sources */,
 				324D08B01F31D70600836E29 /* AbstractProtocolAdapter.cpp in Sources */,
+				329065DF1F346F2100356572 /* RawDriverUnitProxy.cpp in Sources */,
 				324D08D31F31F5A000836E29 /* jsoncpp.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -8432,6 +8448,7 @@
 				324D08E51F321B4800836E29 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		3260261014B300FE00C906CE /* Build configuration list for PBXProject "CHAOSFramework" */ = {
 			isa = XCConfigurationList;

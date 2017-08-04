@@ -33,6 +33,4 @@ namespace chaos {
     }
 }
 
-
-
 #endif /* micro_unit_toolkit_types_h */

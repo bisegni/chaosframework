@@ -22,18 +22,42 @@
 #ifndef __CHAOSFramework__9B333EE_BA6D_4EFC_8445_8AA63946A555_AbstractUnitProxy_h
 #define __CHAOSFramework__9B333EE_BA6D_4EFC_8445_8AA63946A555_AbstractUnitProxy_h
 
+#include <chaos_micro_unit_toolkit/data/DataPack.h>
+#include <chaos_micro_unit_toolkit/micro_unit_toolkit_types.h>
+#include <chaos_micro_unit_toolkit/connection/protocol_adapter/AbstractProtocolAdapter.h>
 namespace chaos {
     namespace micro_unit_toolkit {
         namespace connection {
             namespace unit_proxy {
+
+                struct RemoteMessage {
+                    data::DataPackSharedPtr message;
+                    const bool is_request;
+                    const uint32_t message_id;
+                    
+                    RemoteMessage(const data::DataPackSharedPtr& _message);
+                };
+                
+                typedef ChaosUniquePtr<RemoteMessage> RemoteMessageUniquePtr;
                 
                 //! Abstract base class for all unit proxy
-                class AbstractIUnitProxy {
-                    
+                class AbstractUnitProxy {
+                    protocol_adapter::AbstractProtocolAdapter& protocol_adapter;
                 public:
-                    AbstractIUnitProxy();
-                    virtual ~AbstractIUnitProxy();
+                    const ProxyType type;
+                    AbstractUnitProxy(const ProxyType _type,
+                                      protocol_adapter::AbstractProtocolAdapter& _protocol_adapter);
                     
+                    virtual ~AbstractUnitProxy();
+                    
+                    int sendMessage(data::DataPackUniquePtr& message_data);
+                    
+                    int sendAnswer(RemoteMessageUniquePtr& message,
+                                   data::DataPackUniquePtr& message_data);
+                    
+                    bool hasMoreMessage();
+                    
+                    RemoteMessageUniquePtr getNextMessage();
                 };
             }
         }

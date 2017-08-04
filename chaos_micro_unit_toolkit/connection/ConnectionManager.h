@@ -30,12 +30,12 @@ namespace chaos {
         namespace connection {
             
             //! Entry point for a connection to chaos external unit server
-            class Connection {
+            class ConnectionManager {
                 
             public:
-                Connection(const std::string& endpoint,
+                ConnectionManager(const std::string& endpoint,
                            const ProtocolType protocol_type);
-                ~Connection();
+                ~ConnectionManager();
                 
                 
             };

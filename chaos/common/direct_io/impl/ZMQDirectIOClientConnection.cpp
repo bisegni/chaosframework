@@ -155,6 +155,7 @@ int ZMQDirectIOClientConnection::getNewSocketPair() {
     default_configuration["ZMQ_RECONNECT_IVL_MAX"] = "10000";
     
     try {
+        
         DEBUG_CODE(DBG << "Allocating priority socket";)
         socket_priority = zmq_socket (zmq_context, ZMQ_DEALER);
         if(socket_priority == NULL) throw chaos::CException(1, "Error creating priority socket", __FUNCTION__);
