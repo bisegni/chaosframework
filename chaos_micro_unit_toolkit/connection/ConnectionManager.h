@@ -33,6 +33,8 @@
 
 namespace chaos {
     namespace micro_unit_toolkit {
+        //!forward decalration
+        class ChaosMicroUnitToolkit;
         namespace connection {
             
             /*!
@@ -123,15 +125,18 @@ namespace chaos {
             
             //! Entry point for a connection to chaos external unit server
             class ConnectionManager {
+                friend class chaos::micro_unit_toolkit::ChaosMicroUnitToolkit;
+                
                 typedef ObjectInstancerP1<unit_proxy::AbstractUnitProxy, protocol_adapter::AbstractProtocolAdapter> UnitProxyInstancer;
                 typedef std::map<ProxyType, ChaosSharedPtr< UnitProxyInstancer > > MapProxy;
                 
                 typedef ObjectInstancerP2<protocol_adapter::AbstractProtocolAdapter, std::string, std::string> ProtocolAdapterInstancer;
                 typedef std::map<ProtocolType, ChaosSharedPtr< ProtocolAdapterInstancer > > MapProtocol;
                 
-            public:
-                ConnectionManager(const std::string& endpoint,
-                                  const ProtocolType protocol_type);
+                MapProxy    map_proxy;
+                MapProtocol map_protocol;
+                
+                ConnectionManager();
                 ~ConnectionManager();
                 
                 template<typename T>
@@ -156,15 +161,13 @@ namespace chaos {
                     ChaosSharedPtr<protocol_adapter::AbstractProtocolAdapter> protocol_adater = getProtocolAdapter(protocol_type,
                                                                                                                    protocol_endpoint,
                                                                                                                    protocol_option);
-                    ChaosSharedPtr<UnitProxyClass> unit_proxy(static_cast<UnitProxyClass>(getUnitProxy(UnitProxyClass::proxy_type, *protocol_adater).release()));
+                    ChaosSharedPtr<UnitProxyClass> unit_proxy(static_cast<UnitProxyClass*>(getUnitProxy(UnitProxyClass::proxy_type, *protocol_adater).release()));
                     ChaosUniquePtr< UnitConnection<UnitProxyClass> > uc(new UnitConnection<UnitProxyClass>(protocol_adater,
                                                                                  unit_proxy));
                     return uc;
                 }
                 
-            private:
-                MapProxy    map_proxy;
-                MapProtocol map_protocol;
+
                 
                 ChaosSharedPtr<protocol_adapter::AbstractProtocolAdapter> getProtocolAdapter(ProtocolType type,
                                                                                              const std::string& endpoint,

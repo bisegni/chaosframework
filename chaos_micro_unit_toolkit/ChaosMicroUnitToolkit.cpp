@@ -22,6 +22,8 @@
 #include <chaos_micro_unit_toolkit/ChaosMicroUnitToolkit.h>
 
 using namespace chaos::micro_unit_toolkit;
+using namespace chaos::micro_unit_toolkit::connection;
+using namespace chaos::micro_unit_toolkit::connection::unit_proxy;
 
 ChaosMicroUnitToolkit::ChaosMicroUnitToolkit() {
     
@@ -29,4 +31,12 @@ ChaosMicroUnitToolkit::ChaosMicroUnitToolkit() {
 
 ChaosMicroUnitToolkit::~ChaosMicroUnitToolkit() {
     
+}
+
+ChaosUniquePtr< UnitConnection<RawDriverUnitProxy> > ChaosMicroUnitToolkit::createNewRawDriverUnit(connection::ProtocolType protocol_type,
+                                                                                                   const std::string& protocol_endpoint,
+                                                                                                   const std::string& protocol_option) {
+    return cman.getNewUnitConnection<RawDriverUnitProxy>(protocol_type,
+                                                         protocol_endpoint,
+                                                         protocol_option);
 }

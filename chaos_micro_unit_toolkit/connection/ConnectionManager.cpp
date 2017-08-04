@@ -32,15 +32,12 @@ using namespace chaos::micro_unit_toolkit::connection;
 using namespace chaos::micro_unit_toolkit::connection::unit_proxy;
 using namespace chaos::micro_unit_toolkit::connection::protocol_adapter;
 
-ConnectionManager::ConnectionManager(const std::string& endpoint,
-                                     const ProtocolType protocol_type) {
+ConnectionManager::ConnectionManager() {
     registerUnitProxy<RawDriverUnitProxy>();
     registerProtocolAdapter<http::HTTPProtocolAdapter>();
 }
 
-ConnectionManager::~ConnectionManager() {
-    
-}
+ConnectionManager::~ConnectionManager() {}
 
 ChaosSharedPtr<protocol_adapter::AbstractProtocolAdapter> ConnectionManager::getProtocolAdapter(ProtocolType type,
                                                                                                 const std::string& endpoint,

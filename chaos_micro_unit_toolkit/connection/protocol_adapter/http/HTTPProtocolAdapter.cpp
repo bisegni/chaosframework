@@ -52,10 +52,8 @@ int HTTPProtocolAdapter::connect() {
 
 }
 
-int HTTPProtocolAdapter::sendRawMessage(DataPackUniquePtr& message) {
-    std::string to_send = message->toUnformattedString();
-    mg_send_websocket_frame(root_conn, WEBSOCKET_OP_TEXT, to_send.c_str(), to_send.size());
-    return 0;
+void HTTPProtocolAdapter::poll(int32_t milliseconds_wait) {
+    mg_mgr_poll(&mgr, milliseconds_wait);
 }
 
 int HTTPProtocolAdapter::close() {
@@ -65,6 +63,13 @@ int HTTPProtocolAdapter::close() {
 }
 
 #pragma mark PrivateMethod
+
+int HTTPProtocolAdapter::sendRawMessage(DataPackUniquePtr& message) {
+    std::string to_send = message->toUnformattedString();
+    mg_send_websocket_frame(root_conn, WEBSOCKET_OP_TEXT, to_send.c_str(), to_send.size());
+    return 0;
+}
+
 void HTTPProtocolAdapter::ev_handler(struct mg_connection *conn,
                                      int event,
                                      void *event_data) {

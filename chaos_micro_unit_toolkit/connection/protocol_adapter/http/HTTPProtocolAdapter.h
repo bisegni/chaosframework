@@ -50,6 +50,8 @@ namespace chaos {
                         
                         int connect();
                         
+                        void poll(int32_t milliseconds_wait = 100);
+                        
                         int close();
                     };
                 }

@@ -22,16 +22,22 @@
 #ifndef __CHAOSFramework__B9F7036_64EE_43D8_B174_A3D8B7AA7D78_ChaosMicroUnitToolkit_h
 #define __CHAOSFramework__B9F7036_64EE_43D8_B174_A3D8B7AA7D78_ChaosMicroUnitToolkit_h
 
+#include <chaos_micro_unit_toolkit/micro_unit_toolkit_types.h>
+#include <chaos_micro_unit_toolkit/connection/connection.h>
+
 namespace chaos {
     namespace micro_unit_toolkit {
         
         //! main singleton lab entrypoint
         class ChaosMicroUnitToolkit {
-            
+            connection::ConnectionManager cman;
         public:
             ChaosMicroUnitToolkit();
             ~ChaosMicroUnitToolkit();
             
+            ChaosUniquePtr< connection::UnitConnection<connection::unit_proxy::RawDriverUnitProxy> > createNewRawDriverUnit(connection::ProtocolType protocol_type,
+                                                                                                                            const std::string& protocol_endpoint,
+                                                                                                                            const std::string& protocol_option);
         };
         
     }
