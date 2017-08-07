@@ -30,7 +30,7 @@
 #include <chaos/common/thread/TemplatedConcurrentQueue.h>
 
 #include <chaos/cu_toolkit/driver_manager/driver/DriverTypes.h>
-
+#include <chaos/common/data/CDataWrapper.h>
 #include <json/json.h>
 
 namespace chaos_thread_ns = chaos::common::thread;
@@ -94,7 +94,7 @@ namespace chaos{
                     ChaosUniquePtr<DriverQueueType> command_queue;
 					ChaosUniquePtr<boost::thread> thread_message_receiver;
 					
-					
+					bool is_bypass;
                     // Initialize instance
                     void init(void *init_param) throw(chaos::CException);
                     
@@ -118,8 +118,19 @@ namespace chaos{
                     virtual ~AbstractDriver();
 
 					virtual void driverInit(const char *initParameter) throw(chaos::CException) = 0;
+					/*
+					 * In case of json initialization driverInit with CDataWrapper is called
+					 * */
+					virtual void driverInit(const chaos::common::data::CDataWrapper&) throw(chaos::CException);
+
 					virtual void driverDeinit()  throw(chaos::CException) = 0;
                     const bool isDriverParamInJson() const;
+                    const bool isBypass()const;
+                    /*
+                     * called via rpc or via user to implement the bypass
+                     * */
+                    void setBypass(bool val);
+
                     const Json::Value& getDriverParamJsonRootElement() const;
                 public:
 

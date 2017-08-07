@@ -466,7 +466,8 @@ namespace chaos {
         
         //! perform an echo test. Return as is the input datapach as output
         static const char * const ACTION_CHECK_DOMAIN                               = "checkDomain";
-        
+        //! perform set/clear the node bypass function
+        static const char * const ACTION_NODE_BYPASS                                 = "bypassNodeUnit";
     }
     /** @} */ // end of NodeDomainAndActionRPC
     

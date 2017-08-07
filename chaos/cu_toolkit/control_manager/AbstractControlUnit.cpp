@@ -274,6 +274,11 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configurat
                                                                          "Perform the control unit initialization");
     
     actionDescription = addActionDescritionInstance<AbstractControlUnit>(this,
+                                                                             &AbstractControlUnit::_setBypass,
+                                                                             NodeDomainAndActionRPC::ACTION_NODE_BYPASS,
+                                                                             "Set/clear the bypass mode for drivers ");
+
+    actionDescription = addActionDescritionInstance<AbstractControlUnit>(this,
                                                                          &AbstractControlUnit::_deinit,
                                                                          NodeDomainAndActionRPC::ACTION_NODE_DEINIT
                                                                          ,
@@ -788,6 +793,11 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam,
     }
     
     return NULL;
+}
+
+CDataWrapper*  AbstractControlUnit::_setBypass(chaos::common::data::CDataWrapper*param, bool& detachParam) throw(CException){
+	// TODO: to be implemented
+	return NULL;
 }
 
 

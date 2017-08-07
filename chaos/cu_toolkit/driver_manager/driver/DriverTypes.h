@@ -54,6 +54,8 @@ namespace chaos{
 						OP_DEINIT_DRIVER,
 						OP_INIT,
 						OP_DEINIT,
+						OP_SET_BYPASS,
+						OP_CLEAR_BYPASS,
 						OP_UKNOWN= 0xDEADDEAD
 					} Opcode;
 				}

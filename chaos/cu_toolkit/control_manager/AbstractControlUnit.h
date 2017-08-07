@@ -399,7 +399,10 @@ namespace chaos{
                  stop the access to the user
                  */
                 virtual void _completeDatasetAttribute();
-                
+                /**
+                 * Set/clear the byapss mode
+                 * */
+                chaos::common::data::CDataWrapper* _setBypass(chaos::common::data::CDataWrapper*, bool& detachParam) throw(CException);;
             protected:
                 void useCustomHigResolutionTimestamp(bool _use_custom_high_resolution_timestamp);
                 void setHigResolutionAcquistionTimestamp(uint64_t high_resolution_timestamp);
