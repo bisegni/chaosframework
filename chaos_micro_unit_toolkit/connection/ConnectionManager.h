@@ -36,19 +36,6 @@ namespace chaos {
         //!forward decalration
         class ChaosMicroUnitToolkit;
         namespace connection {
-            
-            /*!
-             Templated interface that give rule for the the instantiation of a class.
-             */
-            template <typename R >
-            class ObjectInstancer {
-            public:
-                virtual ~ObjectInstancer(){};
-                virtual R* getInstance() {
-                    new R();
-                }
-            };
-            
             /*!
              Templated interface that give rule for the the instantiation of a class with one param constructor.
              */
@@ -56,9 +43,7 @@ namespace chaos {
             class ObjectInstancerP1 {
             public:
                 virtual ~ObjectInstancerP1(){};
-                virtual R* getInstance(p1 _p1) {
-                    return new R(_p1);
-                }
+                virtual R* getInstance(p1 _p1) = 0;
             };
             
             /*!
@@ -68,30 +53,10 @@ namespace chaos {
             class ObjectInstancerP2 {
             public:
                 virtual ~ObjectInstancerP2(){};
-                virtual R* getInstance(p1 _p1, p2 _p2) {
-                    return new R(_p1, _p2);
-                }
+                virtual R* getInstance(p1 _p1, p2 _p2) = 0;
             };
             
-            /*!
-             Templated interface that regolate the instantiation of a class.
-             */
-            template <typename S , typename B >
-            class NestedObjectInstancer:
-            public ObjectInstancer<B> {
-                ObjectInstancer<S> *instancer;
-            public:
-                NestedObjectInstancer(ObjectInstancer<S> *_instancer):instancer(_instancer){};
-                virtual ~NestedObjectInstancer(){
-                    if(instancer) {
-                        delete instancer;
-                    }
-                };
-                virtual B* getInstance() {
-                    return instancer->getInstance();
-                }
-            };
-            
+
             /*!
              Templated class that permit to instantiate the superclas of
              a base class. This class permit to check this rule at compiletime
