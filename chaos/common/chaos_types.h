@@ -74,7 +74,7 @@ typedef std::chrono::microseconds ChaosCronoMicroseconds;
 #include <boost/shared_ptr.hpp>
 #include <boost/atomic.hpp>
 #include <boost/thread/future.hpp>
-#include <boost/chrono.hpp>s
+#include <boost/chrono.hpp>
 #define ChaosSharedPtr boost::shared_ptr
 #define ChaosMakeSharedPtr boost::make_shared
 #define ChaosWeakPtr boost::weak_ptr
