@@ -10,6 +10,8 @@
 #define micro_unit_toolkit_types_h
 #if __cplusplus < 201103L || FORCE_BOOST_SHPOINTER
     #include <boost/shared_ptr.hpp>
+#else
+    #include <memory>
 #endif
 namespace chaos {
     namespace micro_unit_toolkit {
