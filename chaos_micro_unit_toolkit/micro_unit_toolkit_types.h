@@ -22,7 +22,7 @@ namespace chaos {
 #else
 #include <boost/shared_ptr.hpp>
 #define ChaosSharedPtr boost::shared_ptr
-#define ChaosUniquePtr std::auto_ptr;
+#define ChaosUniquePtr std::auto_ptr
 #define ChaosMoveOperator(x) x
 
 #endif
