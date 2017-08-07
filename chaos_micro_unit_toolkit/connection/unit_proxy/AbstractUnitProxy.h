@@ -29,31 +29,31 @@ namespace chaos {
     namespace micro_unit_toolkit {
         namespace connection {
             namespace unit_proxy {
-                
+
                 struct RemoteMessage {
                     data::DataPackSharedPtr message;
                     const bool is_request;
                     const uint32_t message_id;
-                    
+
                     RemoteMessage(const data::DataPackSharedPtr& _message);
                 };
-                
+
                 typedef ChaosUniquePtr<RemoteMessage> RemoteMessageUniquePtr;
-                
+
                 //! Abstract base class for all unit proxy
                 class AbstractUnitProxy {
-                    protocol_adapter::AbstractProtocolAdapter& protocol_adapter;
+                    protocol_adapter::AbstractProtocolAdapter *protocol_adapter;
                 protected:
                     int sendMessage(data::DataPackUniquePtr& message_data);
-                    
+
                     int sendAnswer(RemoteMessageUniquePtr& message,
                                    data::DataPackUniquePtr& message_data);
-                    
+
                     bool hasMoreMessage();
-                    
+
                     RemoteMessageUniquePtr getNextMessage();
                 public:
-                    AbstractUnitProxy(protocol_adapter::AbstractProtocolAdapter& _protocol_adapter);
+                    AbstractUnitProxy(protocol_adapter::AbstractProtocolAdapter *_protocol_adapter);
                     virtual ~AbstractUnitProxy();
                 };
             }

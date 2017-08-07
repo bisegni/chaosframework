@@ -27,28 +27,28 @@ message(_message),
 is_request((message->hasKey("request_id") && message->isInt32("request_id"))),
 message_id(is_request?message->getInt32("request_id"):0){}
 
-AbstractUnitProxy::AbstractUnitProxy(protocol_adapter::AbstractProtocolAdapter& _protocol_adapter):
+AbstractUnitProxy::AbstractUnitProxy(protocol_adapter::AbstractProtocolAdapter *_protocol_adapter):
 protocol_adapter(_protocol_adapter){}
 
 AbstractUnitProxy::~AbstractUnitProxy() {}
 
 int AbstractUnitProxy::sendMessage(data::DataPackUniquePtr& message_data) {
-    return protocol_adapter.sendMessage(message_data);
+    return protocol_adapter->sendMessage(message_data);
 }
 
 int AbstractUnitProxy::sendAnswer(RemoteMessageUniquePtr& message,
                                   data::DataPackUniquePtr& message_data) {
     if(message->is_request == false) return - 1;
     message_data->addInt32("request_id", message->is_request);
-    return protocol_adapter.sendMessage(message_data);
+    return protocol_adapter->sendMessage(message_data);
 }
 
 bool AbstractUnitProxy::hasMoreMessage() {
-    return protocol_adapter.hasMoreMessage();
+    return protocol_adapter->hasMoreMessage();
 }
 
 RemoteMessageUniquePtr AbstractUnitProxy::getNextMessage() {
-    if(protocol_adapter.hasMoreMessage() == false) return RemoteMessageUniquePtr();
-    RemoteMessageUniquePtr next_message(new RemoteMessage(protocol_adapter.getNextMessage()));
+    if(protocol_adapter->hasMoreMessage() == false) return RemoteMessageUniquePtr();
+    RemoteMessageUniquePtr next_message(new RemoteMessage(protocol_adapter->getNextMessage()));
     return next_message;
 }

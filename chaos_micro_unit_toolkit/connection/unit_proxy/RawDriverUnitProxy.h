@@ -26,18 +26,18 @@ namespace chaos {
     namespace micro_unit_toolkit {
         namespace connection {
             namespace unit_proxy {
-                
+
                 //! Abstract base class for all unit proxy
                 class RawDriverUnitProxy:
                 public AbstractUnitProxy {
-                    
+
                 public:
                     static const ProxyType proxy_type;
-                    RawDriverUnitProxy(protocol_adapter::AbstractProtocolAdapter& protocol_adapter);
+                    RawDriverUnitProxy(protocol_adapter::AbstractProtocolAdapter *protocol_adapter);
                     virtual ~RawDriverUnitProxy();
-                    
+
                     void authorization(const std::string& authorization_key);
-                    
+
                     using AbstractUnitProxy::sendMessage;
                     using AbstractUnitProxy::hasMoreMessage;
                     using AbstractUnitProxy::getNextMessage;

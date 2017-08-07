@@ -43,9 +43,9 @@ namespace chaos {
             class ObjectInstancerP1 {
             public:
                 virtual ~ObjectInstancerP1(){};
-                virtual R* getInstance(p1 _p1) = 0;
+                virtual R* getInstance(p1 *_p1) = 0;
             };
-            
+
             /*!
              Templated interface that give rule for the the instantiation of a class with two param constructor.
              */
@@ -55,7 +55,7 @@ namespace chaos {
                 virtual ~ObjectInstancerP2(){};
                 virtual R* getInstance(p1 _p1, p2 _p2) = 0;
             };
-            
+
 
             /*!
              Templated class that permit to instantiate the superclas of
@@ -65,11 +65,11 @@ namespace chaos {
             class TypedObjectInstancerP1:
             public ObjectInstancerP1<R, p1> {
             public:
-                R* getInstance(p1 _p1) {
+                R* getInstance(p1 *_p1) {
                     return new T(_p1);
                 }
             };
-            
+
             /*!
              Templated class that permit to instantiate the superclas of
              a base class. This class permit to check this rule at compiletime
@@ -82,49 +82,49 @@ namespace chaos {
                     return new T(_p1, _p2);
                 }
             };
-            
+
             template<typename T>
             struct UnitConnection {
                 const ChaosSharedPtr<protocol_adapter::AbstractProtocolAdapter> protocol_adapter;
                 const ChaosSharedPtr<T> unit_proxy;
-                
+
                 UnitConnection(const ChaosSharedPtr<protocol_adapter::AbstractProtocolAdapter>& _protocol_adapter,
                                const ChaosSharedPtr<T> _unit_proxy):
                 protocol_adapter(_protocol_adapter),
                 unit_proxy(_unit_proxy){}
             };
-            
+
             //! Entry point for a connection to chaos external unit server
             class ConnectionManager {
                 friend class chaos::micro_unit_toolkit::ChaosMicroUnitToolkit;
-                
-                typedef ObjectInstancerP1<unit_proxy::AbstractUnitProxy, protocol_adapter::AbstractProtocolAdapter> UnitProxyInstancer;
-                typedef std::map<ProxyType, ChaosSharedPtr< UnitProxyInstancer > > MapProxy;
-                
-                typedef ObjectInstancerP2<protocol_adapter::AbstractProtocolAdapter, std::string, std::string> ProtocolAdapterInstancer;
-                typedef std::map<ProtocolType, ChaosSharedPtr< ProtocolAdapterInstancer > > MapProtocol;
-                
+
+                typedef ChaosSharedPtr< ObjectInstancerP1<unit_proxy::AbstractUnitProxy, protocol_adapter::AbstractProtocolAdapter> > UnitProxyInstancer;
+                typedef std::map<ProxyType, UnitProxyInstancer > MapProxy;
+
+                typedef ChaosSharedPtr< ObjectInstancerP2<protocol_adapter::AbstractProtocolAdapter, std::string, std::string> > ProtocolAdapterInstancer;
+                typedef std::map<ProtocolType, ProtocolAdapterInstancer > MapProtocol;
+
                 MapProxy    map_proxy;
                 MapProtocol map_protocol;
-                
+
                 ConnectionManager();
                 ~ConnectionManager();
-                
+
                 template<typename T>
                 void registerProtocolAdapter() {
-                    map_protocol.insert(std::make_pair(T::protocol_type, ChaosSharedPtr<ProtocolAdapterInstancer>(new TypedObjectInstancerP2<T,
-                                                                                                                  protocol_adapter::AbstractProtocolAdapter,
-                                                                                                                  std::string,
-                                                                                                                  std::string>())));
+                    map_protocol.insert(std::make_pair(T::protocol_type, ProtocolAdapterInstancer(new TypedObjectInstancerP2<T,
+                                                                                                  protocol_adapter::AbstractProtocolAdapter,
+                                                                                                  std::string,
+                                                                                                  std::string>())));
                 }
-                
+
                 template<typename T>
                 void registerUnitProxy() {
-                    map_proxy.insert(std::make_pair(T::proxy_type, ChaosSharedPtr<UnitProxyInstancer>(new TypedObjectInstancerP1<T,
-                                                                                                      unit_proxy::AbstractUnitProxy,
-                                                                                                      protocol_adapter::AbstractProtocolAdapter>())));
+                    map_proxy.insert(std::make_pair(T::proxy_type, UnitProxyInstancer(new TypedObjectInstancerP1<T,
+                                                                                      unit_proxy::AbstractUnitProxy,
+                                                                                      protocol_adapter::AbstractProtocolAdapter>())));
                 }
-                
+
                 template<typename UnitProxyClass>
                 ChaosUniquePtr< UnitConnection<UnitProxyClass> > getNewUnitConnection(const ProtocolType protocol_type,
                                                                                       const std::string& protocol_endpoint,
@@ -132,20 +132,20 @@ namespace chaos {
                     ChaosSharedPtr<protocol_adapter::AbstractProtocolAdapter> protocol_adater = getProtocolAdapter(protocol_type,
                                                                                                                    protocol_endpoint,
                                                                                                                    protocol_option);
-                    ChaosSharedPtr<UnitProxyClass> unit_proxy(static_cast<UnitProxyClass*>(getUnitProxy(UnitProxyClass::proxy_type, *protocol_adater).release()));
+                    ChaosSharedPtr<UnitProxyClass> unit_proxy(static_cast<UnitProxyClass*>(getUnitProxy(UnitProxyClass::proxy_type, protocol_adater.get()).release()));
                     ChaosUniquePtr< UnitConnection<UnitProxyClass> > uc(new UnitConnection<UnitProxyClass>(protocol_adater,
-                                                                                 unit_proxy));
+                                                                                                           unit_proxy));
                     return uc;
                 }
-                
 
-                
+
+
                 ChaosSharedPtr<protocol_adapter::AbstractProtocolAdapter> getProtocolAdapter(ProtocolType type,
                                                                                              const std::string& endpoint,
                                                                                              const std::string& protocol_option);
-                
+
                 ChaosUniquePtr<unit_proxy::AbstractUnitProxy> getUnitProxy(ProxyType type,
-                                                                           protocol_adapter::AbstractProtocolAdapter& protocol_adapter);
+                                                                           protocol_adapter::AbstractProtocolAdapter *protocol_adapter);
             };
         }
     }

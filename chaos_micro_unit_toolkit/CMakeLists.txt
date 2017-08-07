@@ -21,7 +21,7 @@ ADD_LIBRARY(${PROJECT_NAME} SHARED ${source})
 set_target_properties(${PROJECT_NAME} PROPERTIES VERSION 1.0.0 SOVERSION 1)
 ENDIF ()
 
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${FrameworkLib})
+TARGET_LINK_LIBRARIES(${PROJECT_NAME})
 
 FILE(GLOB files "*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos_micro_unit_toolit)
