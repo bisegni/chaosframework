@@ -51,7 +51,7 @@ namespace chaos {
                 class AbstractProtocolAdapter {
                     friend class chaos::micro_unit_toolkit::connection::unit_proxy::AbstractUnitProxy;
                 protected:
-                    virtual int sendRawMessage(chaos::micro_unit_toolkit::data::DataPackUniquePtr& message) = 0;
+                    virtual int sendRawMessage(chaos::micro_unit_toolkit::data::DataPackUniquePtr& message);
                     
                     void handleReceivedMessage(chaos::micro_unit_toolkit::data::DataPackSharedPtr& received_message);
                 public:
@@ -65,7 +65,7 @@ namespace chaos {
                     
                     //!execute al llpending operation and waith a number milliseconds for incoming message
                     
-                    virtual void poll(int32_t milliseconds_wait = 100) = 0;
+                    virtual void poll(int32_t milliseconds_wait = 100);
                     
                     virtual int close() = 0;
 
