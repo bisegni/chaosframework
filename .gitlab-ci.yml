@@ -43,7 +43,7 @@ build_framework_x86_64_c98:
   script:
     - echo "Working directory:"$PWD
     - echo "Artifact name:"$TAR_NAME_POSTFIX
-    - cmake -DDCHAOS_ENABLE_C11=OFF .
+    - cmake -DCHAOS_ENABLE_C11=OFF .
     - make clean
     - make  -j 4
     - make install
