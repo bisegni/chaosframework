@@ -71,7 +71,7 @@ MESG("Configure Chaos Metadata Service Client Library Test Application")
 ADD_SUBDIRECTORY(ChaosMetadataServiceClientTest)
 
 MESG("Configure Chaos Micro Unit Toolkit")
-#ADD_SUBDIRECTORY(chaos_micro_unit_toolkit)
+ADD_SUBDIRECTORY(chaos_micro_unit_toolkit)
 
 MESG("Configure Chaos Micro Unit Toolkit Test")
 ADD_SUBDIRECTORY(ChaosMicroUnitToolkitTest)
