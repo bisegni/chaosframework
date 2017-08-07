@@ -274,10 +274,10 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configurat
                                                                          "Perform the control unit initialization");
     
     actionDescription = addActionDescritionInstance<AbstractControlUnit>(this,
-                                                                             &AbstractControlUnit::_setBypass,
-                                                                             NodeDomainAndActionRPC::ACTION_NODE_BYPASS,
-                                                                             "Set/clear the bypass mode for drivers ");
-
+                                                                         &AbstractControlUnit::_setBypass,
+                                                                         NodeDomainAndActionRPC::ACTION_NODE_BYPASS,
+                                                                         "Set/clear the bypass mode for drivers ");
+    
     actionDescription = addActionDescritionInstance<AbstractControlUnit>(this,
                                                                          &AbstractControlUnit::_deinit,
                                                                          NodeDomainAndActionRPC::ACTION_NODE_DEINIT
@@ -796,8 +796,8 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam,
 }
 
 CDataWrapper*  AbstractControlUnit::_setBypass(chaos::common::data::CDataWrapper*param, bool& detachParam) throw(CException){
-	// TODO: to be implemented
-	return NULL;
+    // TODO: to be implemented
+    return NULL;
 }
 
 
@@ -927,8 +927,8 @@ void AbstractControlUnit::fillRestoreCacheWithDatasetFromTag(data_manager::KeyDa
             //get newly createdattribute from cache
             cached_attribute_value = restore_cache.getAttributeValue((SharedCacheDomain)domain,
                                                                      *it);
-	    cached_attribute_value->sub_type.clear();
-	    //            cached_attribute_value->sub_type.push_back(dataset.getBinarySubtype(*it));
+            cached_attribute_value->sub_type.clear();
+            //            cached_attribute_value->sub_type.push_back(dataset.getBinarySubtype(*it));
             if(!cached_attribute_value) {
                 ACULERR_ << "Error retriving attribute value from cache for:" << *it;
                 continue;

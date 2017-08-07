@@ -53,22 +53,20 @@ typedef std::chrono::seconds ChaosCronoSeconds;
 typedef std::chrono::milliseconds ChaosCronoMilliseconds;
 typedef std::chrono::microseconds ChaosCronoMicroseconds;
 #else
+#include <boost/shared_ptr.hpp>
+#include <boost/atomic.hpp>
+#include <boost/thread/future.hpp>
+#include <boost/chrono.hpp>
 #define ChaosSharedPtr boost::shared_ptr
 #define ChaosMakeSharedPtr boost::make_shared
 #define ChaosWeakPtr boost::weak_ptr
-#include <boost/atomic.hpp>
-template<typename T>
-using ChaosAtomic = boost::atomic<T>;
-#include <boost/thread/future.hpp>
-template<typename T>
-using ChaosPromise = boost::promise<T>;
-template<typename T>
-using ChaosFuture = boost::shared_future<T>;
-typedef boost::future_status ChaosFutureStatus;
-#include <boost/chrono.hpp>
-typedef boost::chrono::seconds ChaosCronoSeconds;
-typedef boost::chrono::milliseconds ChaosCronoMilliseconds;
-typedef boost::chrono::microseconds ChaosCronoMicroseconds;
+#define ChaosAtomic boost::atomic;
+#define ChaosPromise boost::promise
+#define ChaosFuture boost::shared_future
+#define ChaosFutureStatus boost::future_status
+#define ChaosCronoSeconds boost::chrono::seconds
+#define ChaosCronoMilliseconds boost::chrono::milliseconds
+#define ChaosCronoMicroseconds boost::chrono::microseconds
 #endif
 #define ChaosUniquePtr std::unique_ptr
 #define ChaosMoveOperator(x) std::move(x)
@@ -76,24 +74,21 @@ typedef boost::chrono::microseconds ChaosCronoMicroseconds;
 #else
 #include <boost/shared_ptr.hpp>
 #include <boost/atomic.hpp>
+#include <boost/thread/future.hpp>
+#include <boost/chrono.hpp>
 //#pragma message "Use c99 and boost for memory management boost::shared_ptr(ChaosSharedPtr) boost::make_shared(ChaosMakeSharedPtr) boost::weak_ptr(ChaosWeakPtr) std::auto_ptr(ChaosUniquePtr)"
 #define ChaosSharedPtr boost::shared_ptr
 #define ChaosMakeSharedPtr boost::make_shared
 #define ChaosWeakPtr boost::weak_ptr
 #define ChaosUniquePtr std::auto_ptr
 #define ChaosMoveOperator(x) x
-template<typename T>
-using ChaosAtomic = boost::atomic<T>;
-#include <boost/thread/future.hpp>
-template<typename T>
-using ChaosPromise = boost::promise<T>;
-template<typename T>
-using ChaosFuture = boost::shared_future<T>;
-typedef boost::future_status ChaosFutureStatus;
-#include <boost/chrono.hpp>
-typedef boost::chrono::seconds ChaosCronoSeconds;
-typedef boost::chrono::milliseconds ChaosCronoMilliseconds;
-typedef boost::chrono::microseconds ChaosCronoMicroseconds;
+#define ChaosAtomic boost::atomic
+#define ChaosPromise boost::promise
+#define ChaosFuture  boost::shared_future
+#define ChaosFutureStatus boost::future_status
+#define ChaosCronoSeconds boost::chrono::seconds
+#define ChaosCronoMilliseconds boost::chrono::milliseconds
+#define ChaosCronoMicroseconds boost::chrono::microseconds
 #endif
 
 #define  CHAOS_DEFINE_SET_FOR_TYPE(t1, n)\

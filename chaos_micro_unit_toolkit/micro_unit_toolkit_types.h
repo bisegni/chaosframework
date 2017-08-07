@@ -21,14 +21,12 @@ namespace chaos {
 #define ChaosMoveOperator(x) std::move(x)
 #else
 #include <boost/shared_ptr.hpp>
-        template<typename T>
-        using ChaosSharedPtr = boost::shared_ptr<T>;
-        template<typename T>
-        using ChaosUniquePtr = std::auto_ptr<T>;
+#define ChaosSharedPtr boost::shared_ptr
+#define ChaosUniquePtr std::auto_ptr;
 #define ChaosMoveOperator(x) x
 
 #endif
-        
+
         static unsigned int CommunicationTimeout = 5000;
     }
 }
