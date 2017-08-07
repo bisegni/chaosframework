@@ -19,7 +19,7 @@ build_framework_x86_64:
     - docker
     - shared
   stage: build
-  image: baltig.infn.it:4567/chaos-lnf-control/chaos-docker-compilation:latest
+  image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
   script:
     - echo "Working directory:"$PWD
     - echo "Artifact name:"$TAR_NAME_POSTFIX
@@ -39,7 +39,7 @@ build_framework_x86_64_c98:
     - docker
     - shared
   stage: build
-  image: baltig.infn.it:4567/chaos-lnf-control/chaos-docker-compilation:latest
+  image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
   script:
     - echo "Working directory:"$PWD
     - echo "Artifact name:"$TAR_NAME_POSTFIX
@@ -59,7 +59,7 @@ build_framework_arm:
     - docker
     - shared
   stage: build
-  image: baltig.infn.it:4567/chaos-lnf-control/chaos-docker-compilation:latest
+  image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
   script:
     - echo "Working directory:"$PWD
     - echo "Artifact name:"$TAR_NAME_POSTFIX
