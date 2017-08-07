@@ -7,15 +7,15 @@ ENDIF()
 INCLUDE_DIRECTORIES(chaos/common ../)
 
 SET(cnd_src				main.cpp
-						ChaosMetadataService.cpp
-                        DriverPoolManager.cpp
-                        QueryDataConsumer.cpp)
+						      ChaosMetadataService.cpp
+                  DriverPoolManager.cpp
+                  QueryDataConsumer.cpp)
 
 SET(cnd_src  ${cnd_src} ../chaos_service_common/persistence/mongodb/MongoDBHAConnectionManager.cpp
                         ../chaos_service_common/persistence/mongodb/MongoDBAccessor.cpp)
 
 SET(cnd_src  ${cnd_src} ../chaos_service_common/persistence/data_access/AbstractDataAccess.cpp
-						../chaos_service_common/persistence/data_access/AbstractPersistenceDriver.cpp)
+						            ../chaos_service_common/persistence/data_access/AbstractPersistenceDriver.cpp)
 
 SET(cnd_src  ${cnd_src}	cron_job/MDSCronousManager.cpp
                         cron_job/MDSCronJob.cpp

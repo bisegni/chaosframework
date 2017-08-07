@@ -21,6 +21,7 @@
 
 #include <chaos_micro_unit_toolkit/data/DataPack.h>
 
+using namespace Json;
 using namespace chaos::micro_unit_toolkit;
 using namespace chaos::micro_unit_toolkit::data;
 
@@ -28,7 +29,7 @@ DataPackUniquePtr DataPack::newFromBuffer(const char *data,
                                           const size_t data_len,
                                           bool *parsed) {
     DataPackUniquePtr new_dp(new DataPack());
-    Json::Reader reader;
+    Reader reader;
     bool parse_result = reader.parse(data,
                                      data+data_len,
                                      new_dp->root_json_object);
@@ -38,7 +39,7 @@ DataPackUniquePtr DataPack::newFromBuffer(const char *data,
 
 DataPack::DataPack() {}
 
-DataPack::DataPack(const Json::Value& src_root_json_object):
+DataPack::DataPack(const Value& src_root_json_object):
 root_json_object(src_root_json_object){}
 
 DataPack::~DataPack() {}
@@ -48,7 +49,7 @@ bool DataPack::hasKey(const std::string& key) {
 }
 
 void DataPack::addBool(const std::string& key, bool value) {
-    root_json_object[key] = Json::Value(value);
+    root_json_object[key] = Value(value);
 }
 const bool DataPack::isBool(const std::string& key) const {
     return root_json_object[key].isBool();
@@ -59,7 +60,7 @@ const bool DataPack::getBool(const std::string& key) const {
 }
 void DataPack::addInt32(const std::string& key,
                         int32_t value) {
-    root_json_object[key] = Json::Value(value);
+    root_json_object[key] = Value(value);
 }
 const bool DataPack::isInt32(const std::string& key) const {
     return root_json_object[key].isInt();
@@ -69,7 +70,7 @@ const int32_t DataPack::getInt32(const std::string& key) const {
 }
 void DataPack::addInt64(const std::string& key,
                              int64_t value) {
-    root_json_object[key] = Json::Value(value);
+    root_json_object[key] = Value(value);
 }
 const bool DataPack::isInt64(const std::string& key) const {
     return root_json_object[key].isInt64();
@@ -79,7 +80,7 @@ const int64_t DataPack::getInt64(const std::string& key) const {
 }
 void DataPack::addDouble(const std::string& key,
                          double value) {
-    root_json_object[key] = Json::Value(value);
+    root_json_object[key] = Value(value);
 }
 const bool DataPack::isDouble(const std::string& key) const {
     return root_json_object[key].isDouble();
@@ -89,7 +90,7 @@ const double DataPack::getDouble(const std::string& key) const {
 }
 void DataPack::addString(const std::string& key,
                          const std::string& value) {
-    root_json_object[key] = Json::Value(value);
+    root_json_object[key] = Value(value);
 }
 const bool DataPack::isString(const std::string& key) const {
     return root_json_object[key].isString();
@@ -108,34 +109,34 @@ const DataPackUniquePtr DataPack::getDataPack(const std::string& key) const {
     return DataPackUniquePtr(new DataPack(root_json_object[key]));
 }
 void DataPack::createArrayForKey(const std::string& key) {
-    root_json_object[key] = Json::Value(Json::ValueType::arrayValue);
+    root_json_object[key] = Value(ValueType::arrayValue);
 }
 const bool DataPack::isArray(const std::string& key) const {
     return root_json_object[key].isArray();
 }
 void DataPack::appendBool(const std::string& arr_key,
                           bool value) {
-    root_json_object[arr_key].append(Json::Value(value));
+    root_json_object[arr_key].append(Value(value));
 }
 
 void DataPack::appendInt32(const std::string& arr_key,
                            int32_t value) {
-    root_json_object[arr_key].append(Json::Value(value));
+    root_json_object[arr_key].append(Value(value));
 }
 
 void DataPack::appendInt64(const std::string& arr_key,
                            int64_t value) {
-    root_json_object[arr_key].append(Json::Value(value));
+    root_json_object[arr_key].append(Value(value));
 }
 
 void DataPack::appendDouble(const std::string& arr_key,
                             double value) {
-    root_json_object[arr_key].append(Json::Value(value));
+    root_json_object[arr_key].append(Value(value));
 }
 
 void DataPack::appendString(const std::string& arr_key,
                             const std::string& value) {
-    root_json_object[arr_key].append(Json::Value(value));
+    root_json_object[arr_key].append(Value(value));
 }
 
 void DataPack::appendDataPack(const std::string& arr_key, DataPack& value) {
@@ -143,11 +144,11 @@ void DataPack::appendDataPack(const std::string& arr_key, DataPack& value) {
 }
 
 std::string DataPack::toString() {
-    Json::StyledWriter w;
+    StyledWriter w;
     return w.write(root_json_object);
 }
 
 std::string DataPack::toUnformattedString() {
-    Json::FastWriter w;
+    FastWriter w;
     return w.write(root_json_object);
 }

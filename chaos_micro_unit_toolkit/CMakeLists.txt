@@ -1,18 +1,18 @@
 cmake_minimum_required(VERSION 2.8)
+
 project(chaos_micro_unit_toolkit)
 
 INCLUDE_DIRECTORIES( ../)
-INCLUDE_DIRECTORIES( SYSTEM .)
 
 SET(source ChaosMicroUnitToolkit.cpp)
-SET(${source} data/DataPack.cpp)
-SET(${source} connection/ConnectionManager.cpp)
-SET(${source} connection/protocol_adapter/AbstractProtocolAdapter.cpp
+SET(source ${source} data/DataPack.cpp)
+SET(source ${source} connection/ConnectionManager.cpp)
+SET(source ${source} connection/protocol_adapter/AbstractProtocolAdapter.cpp
               connection/protocol_adapter/http/HTTPProtocolAdapter.cpp)
-SET(${source} connection/unit_proxy/AbstractUnitProxy.cpp
+SET(source ${source} connection/unit_proxy/AbstractUnitProxy.cpp
               connection/unit_proxy/RawDriverUnitProxy.cpp)
-SET(${source} external_lib/json.cpp
-              external_lib/mongoose.cpp)
+SET(source ${source} external_lib/jsoncpp.cpp
+              external_lib/mongoose.c)
 
 IF (BUILD_FORCE_STATIC)
 ADD_LIBRARY(${PROJECT_NAME} STATIC ${source})
@@ -21,7 +21,7 @@ ADD_LIBRARY(${PROJECT_NAME} SHARED ${source})
 set_target_properties(${PROJECT_NAME} PROPERTIES VERSION 1.0.0 SOVERSION 1)
 ENDIF ()
 
-TARGET_LINK_LIBRARIES(${PROJECT_NAME}  libc++)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${FrameworkLib})
 
 FILE(GLOB files "*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos_micro_unit_toolit)

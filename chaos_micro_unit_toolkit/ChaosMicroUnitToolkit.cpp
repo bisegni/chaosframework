@@ -18,7 +18,6 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-
 #include <chaos_micro_unit_toolkit/ChaosMicroUnitToolkit.h>
 
 using namespace chaos::micro_unit_toolkit;
@@ -26,11 +25,11 @@ using namespace chaos::micro_unit_toolkit::connection;
 using namespace chaos::micro_unit_toolkit::connection::unit_proxy;
 
 ChaosMicroUnitToolkit::ChaosMicroUnitToolkit() {
-    
+
 }
 
 ChaosMicroUnitToolkit::~ChaosMicroUnitToolkit() {
-    
+
 }
 
 ChaosUniquePtr< UnitConnection<RawDriverUnitProxy> > ChaosMicroUnitToolkit::createNewRawDriverUnit(connection::ProtocolType protocol_type,
