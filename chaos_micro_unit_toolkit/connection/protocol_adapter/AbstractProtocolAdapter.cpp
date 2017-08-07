@@ -89,10 +89,10 @@ ConnectionState AbstractProtocolAdapter::getConnectionState() const {
     return connection_status;
 }
 
-int AbstractProtocolAdapter::sendRawMessage(chaos::micro_unit_toolkit::data::DataPackUniquePtr& message) {
-    return 0;
-}
-
-void AbstractProtocolAdapter::poll(int32_t milliseconds_wait) {
-    
-}
+//int AbstractProtocolAdapter::sendRawMessage(chaos::micro_unit_toolkit::data::DataPackUniquePtr& message) {
+//    return 0;
+//}
+//
+//void AbstractProtocolAdapter::poll(int32_t milliseconds_wait) {
+//    
+//}

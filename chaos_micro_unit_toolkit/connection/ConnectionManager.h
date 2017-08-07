@@ -44,7 +44,9 @@ namespace chaos {
             class ObjectInstancer {
             public:
                 virtual ~ObjectInstancer(){};
-                virtual R* getInstance() = 0;
+                virtual R* getInstance() {
+                    new R();
+                }
             };
             
             /*!
@@ -54,7 +56,9 @@ namespace chaos {
             class ObjectInstancerP1 {
             public:
                 virtual ~ObjectInstancerP1(){};
-                virtual R* getInstance(p1 _p1) = 0;
+                virtual R* getInstance(p1 _p1) {
+                    return new R(_p1);
+                }
             };
             
             /*!
@@ -64,7 +68,9 @@ namespace chaos {
             class ObjectInstancerP2 {
             public:
                 virtual ~ObjectInstancerP2(){};
-                virtual R* getInstance(p1 _p1, p2 _p2) = 0;
+                virtual R* getInstance(p1 _p1, p2 _p2) {
+                    return new R(_p1, _p2);
+                }
             };
             
             /*!
