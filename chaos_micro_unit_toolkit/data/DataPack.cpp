@@ -109,7 +109,7 @@ const DataPackUniquePtr DataPack::getDataPack(const std::string& key) const {
     return DataPackUniquePtr(new DataPack(root_json_object[key]));
 }
 void DataPack::createArrayForKey(const std::string& key) {
-    root_json_object[key] = Value(ValueType::arrayValue);
+    root_json_object[key] = Value(arrayValue);
 }
 const bool DataPack::isArray(const std::string& key) const {
     return root_json_object[key].isArray();

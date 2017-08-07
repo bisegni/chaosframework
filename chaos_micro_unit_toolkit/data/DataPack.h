@@ -44,33 +44,33 @@ namespace chaos {
                 static DataPackUniquePtr newFromBuffer(const char *data,
                                                        const size_t data_len,
                                                        bool *parsed = NULL);
-                
+
                 bool hasKey(const std::string& key);
-                
+
                 void addBool(const std::string& key, bool value);
                 const bool isBool(const std::string& key) const;
                 const bool getBool(const std::string& key) const;
-                
+
                 void addInt32(const std::string& key, int32_t value);
                 const bool isInt32(const std::string& key) const;
                 const int32_t getInt32(const std::string& key) const;
-                
+
                 void addInt64(const std::string& key, int64_t value);
                 const bool isInt64(const std::string& key) const;
                 const int64_t getInt64(const std::string& key) const;
-                
+
                 void addDouble(const std::string& key, double value);
                 const bool isDouble(const std::string& key) const;
                 const double getDouble(const std::string& key) const;
-                
+
                 void addString(const std::string& key, const std::string& value);
                 const bool isString(const std::string& key) const;
                 std::string getString(const std::string& key) const;
-                
+
                 void addDataPack(const std::string& key, DataPack& value);
                 const bool isDataPack(const std::string& key) const;
                 const DataPackUniquePtr getDataPack(const std::string& key) const;
-                
+
                 void createArrayForKey(const std::string& key);
                 const bool isArray(const std::string& key) const;
                 void appendBool(const std::string& arr_key, bool value);
@@ -79,20 +79,21 @@ namespace chaos {
                 void appendDouble(const std::string& arr_key, double value);
                 void appendString(const std::string& arr_key, const std::string& value);
                 void appendDataPack(const std::string& arr_key, DataPack& value);
-                
+
                 template<typename T>
                 void addArray(const std::string& key, const std::vector<T> &value) {
-                    root_json_object[key] = Json::Value(Json::ValueType::arrayValue);
-                    Json::Value& array_value = root_json_object[key];
+                  using namespace Json;
+                    root_json_object[key] = Value(arrayValue);
+                    Value& array_value = root_json_object[key];
                     for(typename std::vector<T>::const_iterator it = value.begin(),
                         end = value.end();
                         it != end;
                         it++) {
                         array_value.append(*it);
                     }
-                    
+
                 }
-                
+
                 std::string toString();
                 std::string toUnformattedString();
             };
