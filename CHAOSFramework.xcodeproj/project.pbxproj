@@ -1304,6 +1304,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3200EF5F1F38ABD1002B5115 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		32033D5F1A64016A004F1B7D /* global_type.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = global_type.h; sourceTree = "<group>"; };
 		32033D601A6401B7004F1B7D /* global_constant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = global_constant.h; sourceTree = "<group>"; };
 		32033D611A6428E2004F1B7D /* wan_interface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = wan_interface.h; sourceTree = "<group>"; };
@@ -3487,6 +3488,7 @@
 		324D08E01F321B4800836E29 /* ChaosMicroUnitToolkitTest */ = {
 			isa = PBXGroup;
 			children = (
+				3200EF5F1F38ABD1002B5115 /* CMakeLists.txt */,
 				324D08E11F321B4800836E29 /* main.cpp */,
 			);
 			path = ChaosMicroUnitToolkitTest;

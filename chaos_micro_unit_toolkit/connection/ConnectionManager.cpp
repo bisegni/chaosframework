@@ -39,16 +39,16 @@ ConnectionManager::ConnectionManager() {
 
 ConnectionManager::~ConnectionManager() {}
 
-ChaosSharedPtr<protocol_adapter::AbstractProtocolAdapter> ConnectionManager::getProtocolAdapter(ProtocolType type,
-                                                                                                const std::string& endpoint,
-                                                                                                const std::string& protocol_option) {
-    if(map_protocol.count(type) == 0){ return ChaosSharedPtr<protocol_adapter::AbstractProtocolAdapter>();}
+ChaosSharedPtr<AbstractProtocolAdapter> ConnectionManager::getProtocolAdapter(ProtocolType type,
+                                                                              const std::string& endpoint,
+                                                                              const std::string& protocol_option) {
+    if(map_protocol.count(type) == 0){ return ChaosSharedPtr<AbstractProtocolAdapter>();}
     return ChaosSharedPtr<protocol_adapter::AbstractProtocolAdapter>(map_protocol[type]->getInstance(endpoint,
                                                                                                      protocol_option));
 }
 
-ChaosUniquePtr<unit_proxy::AbstractUnitProxy> ConnectionManager::getUnitProxy(ProxyType type,
-                                                                              protocol_adapter::AbstractProtocolAdapter& protocol_adapter){
+ChaosUniquePtr<AbstractUnitProxy> ConnectionManager::getUnitProxy(ProxyType type,
+                                                                  AbstractProtocolAdapter& protocol_adapter){
     if(map_proxy.count(type) == 0){ return ChaosUniquePtr<unit_proxy::AbstractUnitProxy>();}
     return ChaosUniquePtr<unit_proxy::AbstractUnitProxy>(map_proxy[type]->getInstance(protocol_adapter));
 }

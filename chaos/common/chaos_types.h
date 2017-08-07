@@ -40,15 +40,15 @@
 #define ChaosMakeSharedPtr  std::make_shared
 #define ChaosWeakPtr        std::weak_ptr
 #include <atomic>
+#include <future>
+#include <chrono>
 template<typename T>
 using ChaosAtomic = std::atomic<T>;
-#include <future>
 template<typename T>
 using ChaosPromise = std::promise<T>;
 template<typename T>
 using ChaosFuture = std::future<T>;
 typedef std::future_status ChaosFutureStatus;
-#include <chrono>
 typedef std::chrono::seconds ChaosCronoSeconds;
 typedef std::chrono::milliseconds ChaosCronoMilliseconds;
 typedef std::chrono::microseconds ChaosCronoMicroseconds;
@@ -70,13 +70,11 @@ typedef std::chrono::microseconds ChaosCronoMicroseconds;
 #endif
 #define ChaosUniquePtr std::unique_ptr
 #define ChaosMoveOperator(x) std::move(x)
-//#pragma message "Use new memory management std::shared_ptr(ChaosSharedPtr) std::make_shared(ChaosMakeSharedPtr) std::weak_ptr(ChaosWeakPtr) std::unique_ptr(ChaosUniquePtr)"
 #else
 #include <boost/shared_ptr.hpp>
 #include <boost/atomic.hpp>
 #include <boost/thread/future.hpp>
-#include <boost/chrono.hpp>
-//#pragma message "Use c99 and boost for memory management boost::shared_ptr(ChaosSharedPtr) boost::make_shared(ChaosMakeSharedPtr) boost::weak_ptr(ChaosWeakPtr) std::auto_ptr(ChaosUniquePtr)"
+#include <boost/chrono.hpp>s
 #define ChaosSharedPtr boost::shared_ptr
 #define ChaosMakeSharedPtr boost::make_shared
 #define ChaosWeakPtr boost::weak_ptr
