@@ -52,5 +52,5 @@ ChaosUniquePtr<AbstractUnitProxy> ConnectionManager::getUnitProxy(ProxyType type
                                                                   AbstractProtocolAdapter *protocol_adapter){
     if(map_proxy.count(type) == 0){ return ChaosUniquePtr<unit_proxy::AbstractUnitProxy>();}
     UnitProxyInstancer is = map_proxy[type];
-    return ChaosUniquePtr<unit_proxy::AbstractUnitProxy>(is->getInstance(protocol_adapter));
+    return ChaosUniquePtr<unit_proxy::AbstractUnitProxy>(is->getInstance(*protocol_adapter));
 }
