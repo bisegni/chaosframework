@@ -43,7 +43,7 @@ namespace chaos {
             class ObjectInstancerP1 {
             public:
                 virtual ~ObjectInstancerP1(){};
-                virtual R* getInstance(p1 *_p1) = 0;
+                virtual R* getInstance(p1& _p1) = 0;
             };
 
             /*!
@@ -65,7 +65,7 @@ namespace chaos {
             class TypedObjectInstancerP1:
             public ObjectInstancerP1<R, p1> {
             public:
-                R* getInstance(p1 *_p1) {
+                R* getInstance(p1& _p1) {
                     return new T(_p1);
                 }
             };

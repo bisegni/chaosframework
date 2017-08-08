@@ -42,7 +42,7 @@ namespace chaos {
 
                 //! Abstract base class for all unit proxy
                 class AbstractUnitProxy {
-                    protocol_adapter::AbstractProtocolAdapter *protocol_adapter;
+                    protocol_adapter::AbstractProtocolAdapter& protocol_adapter;
                 protected:
                     int sendMessage(data::DataPackUniquePtr& message_data);
 
@@ -53,7 +53,7 @@ namespace chaos {
 
                     RemoteMessageUniquePtr getNextMessage();
                 public:
-                    AbstractUnitProxy(protocol_adapter::AbstractProtocolAdapter *_protocol_adapter);
+                    AbstractUnitProxy(protocol_adapter::AbstractProtocolAdapter& _protocol_adapter);
                     virtual ~AbstractUnitProxy();
                 };
             }
