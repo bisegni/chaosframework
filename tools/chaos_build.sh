@@ -88,10 +88,15 @@ function printlog(){
 function initialize_bundle(){
     printlog "* initializing repo in "`pwd`
 
-    if ! repo init -u ssh://git@opensource-stash.infn.it:7999/chaos/chaos_repo_bundle.git -b development >> $log 2>&1;then
-	printlog "## repo initialization failed"
-	return 1
-    fi
+    # if ! repo init -u ssh://git@opensource-stash.infn.it:7999/chaos/chaos_repo_bundle.git -b development >> $log 2>&1;then
+    # 	printlog "## repo initialization failed"
+    # 	return 1
+    # fi
+     if ! repo init -u git@baltig.infn.it:chaos-lnf-control/chaos_repo_bundle.git -b development >> $log 2>&1;then
+     	printlog "## repo initialization failed"
+     	return 1
+     fi
+
     printlog "* synching repo"
     if ! repo sync >> $log 2>&1 ;then
 	printlog "## repo synchronization failed"

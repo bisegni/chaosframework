@@ -129,7 +129,8 @@ done
 shift $(( OPTIND - 1 ))
 
 if [ ${#on_dir[@]} -eq 0 ]; then
-    dirs=$(find . -name ".git" -exec grep -sl opensource \{\}/config \;)
+    dirs=$(find . -name ".git" -exec grep -sl git \{\}/config \;)
+#    dirs=$(find . -name ".git" )
     for d in $dirs;do
 	dir=$(dirname $d)
 	dir=$(dirname $dir)
