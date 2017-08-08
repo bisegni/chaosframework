@@ -79,7 +79,6 @@ exp_build_framework_x86_64:
     - make  -j 4
     - make install
   only:
-    - experimental
     - schedules
 
 exp_build_framework_x86_64_c98:
@@ -96,7 +95,6 @@ exp_build_framework_x86_64_c98:
     - make  -j 4
     - make install
   only:
-    - experimental
     - schedules
 
 exp_build_framework_arm:
@@ -113,7 +111,6 @@ exp_build_framework_arm:
     - make  -j 4
     - make install
   only:
-    - experimental
     - schedules
 #- tar -zcf /builds/chaos-lnf-control/chaosframework/chaos-distrib-armhf_$TAR_NAME_POSTFIX.tgz /builds/chaos-lnf-control/chaosframework/chaos-distrib-armhf
 #- ls -la
