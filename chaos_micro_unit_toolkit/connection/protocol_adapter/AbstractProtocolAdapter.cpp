@@ -46,7 +46,6 @@ void AbstractProtocolAdapter::handleReceivedMessage(data::DataPackSharedPtr& rec
 
 int AbstractProtocolAdapter::sendMessage(data::DataPackUniquePtr& message) {
     if(connection_status != ConnectionStateConnected){
-        printf("No connection to '%s'", protocol_endpoint.c_str());
         return -1;
     }
     return sendRawMessage(message);
@@ -88,11 +87,3 @@ DataPackSharedPtr AbstractProtocolAdapter::retrieveRequestResponse(uint32_t requ
 ConnectionState AbstractProtocolAdapter::getConnectionState() const {
     return connection_status;
 }
-
-//int AbstractProtocolAdapter::sendRawMessage(chaos::micro_unit_toolkit::data::DataPackUniquePtr& message) {
-//    return 0;
-//}
-//
-//void AbstractProtocolAdapter::poll(int32_t milliseconds_wait) {
-//    
-//}
