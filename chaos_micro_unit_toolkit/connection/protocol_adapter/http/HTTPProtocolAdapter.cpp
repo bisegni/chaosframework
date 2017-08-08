@@ -21,6 +21,8 @@
 
 #include <chaos_micro_unit_toolkit/connection/protocol_adapter/http/HTTPProtocolAdapter.h>
 
+#define ACCEPTED_CONNECTION_KEY "accepted_connection"
+
 using namespace chaos::micro_unit_toolkit::data;
 using namespace chaos::micro_unit_toolkit::connection::protocol_adapter::http;
 
@@ -49,7 +51,7 @@ int HTTPProtocolAdapter::connect() {
         err = -1;
     }
     return err;
-
+    
 }
 
 void HTTPProtocolAdapter::poll(int32_t milliseconds_wait) {
@@ -88,11 +90,31 @@ void HTTPProtocolAdapter::ev_handler(struct mg_connection *conn,
             http_instance->connection_status = ConnectionStateConnected;
             break;
         }
-
+            
         case MG_EV_WEBSOCKET_FRAME: {
             struct websocket_message *wm = (struct websocket_message *) event_data;
-            data::DataPackSharedPtr rece_msg_shrd_ptr(DataPack::newFromBuffer((const char*)wm->data, wm->size).release());
-            http_instance->handleReceivedMessage(rece_msg_shrd_ptr);
+            data::DataPackSharedPtr received_msg_shrd_ptr(DataPack::newFromBuffer((const char*)wm->data, wm->size).release());
+            if(http_instance->connection_status != ConnectionStateAccepted) {
+                //at this time we need to manage the receivedm of the data unitl we not received
+                //the dapack taht informa us for the connection accepted
+                if(received_msg_shrd_ptr->hasKey(ACCEPTED_CONNECTION_KEY) &&
+                   received_msg_shrd_ptr->isInt32(ACCEPTED_CONNECTION_KEY)) {
+                    int32_t accepted_value = received_msg_shrd_ptr->getInt32(ACCEPTED_CONNECTION_KEY);
+                    switch (accepted_value) {
+                        case 1:
+                            //ok
+                            http_instance->connection_status = ConnectionStateAccepted;
+                            break;
+                            
+                        default:
+                            http_instance->connection_status = ConnectionStateNotAccepted;
+                            break;
+                    }
+                    //this datapack must not be added to the user queue message because is a pack for sincronization
+                    break;
+                }
+            }
+            http_instance->handleReceivedMessage(received_msg_shrd_ptr);
             break;
         }
         case MG_EV_CLOSE: {

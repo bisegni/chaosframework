@@ -105,7 +105,7 @@ void DataPack::addDataPack(const std::string& key,
 const bool DataPack::isDataPack(const std::string& key) const {
     return root_json_object[key].isObject();
 }
-const DataPackUniquePtr DataPack::getDataPack(const std::string& key) const {
+DataPackUniquePtr DataPack::getDataPack(const std::string& key) const {
     return DataPackUniquePtr(new DataPack(root_json_object[key]));
 }
 void DataPack::createArrayForKey(const std::string& key) {

@@ -90,19 +90,13 @@ namespace chaos {
                         DriverResultPromise promise;
                         typedef ChaosSharedPtr< DriverResultInfo > DriverResultInfoShrdPtr;
                         //!key accessors for multindix infrastructure
-                        struct less {
-                            bool operator()(const DriverResultInfoShrdPtr& h1, const DriverResultInfoShrdPtr& h2);
-                        };
-                        
                         struct extract_index {
                             typedef uint32_t result_type;
-                            // modify_key() requires return type to be non-const
                             const result_type &operator()(const DriverResultInfoShrdPtr &p) const;
                         };
                         
                         struct extract_req_ts {
                             typedef int64_t result_type;
-                            // modify_key() requires return type to be non-const
                             const result_type &operator()(const DriverResultInfoShrdPtr &p) const;
                         };
                     };
@@ -141,6 +135,7 @@ namespace chaos {
                     
                     //!initialization and deinitialization driver methods
                     void driverInit(const char *initParameter) throw (chaos::CException);
+                    void driverInit(const chaos::common::data::CDataWrapper& init_parameter) throw(chaos::CException);
                     void driverDeinit() throw (chaos::CException);
                 public:
                     

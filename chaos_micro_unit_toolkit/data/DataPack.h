@@ -69,7 +69,7 @@ namespace chaos {
 
                 void addDataPack(const std::string& key, DataPack& value);
                 const bool isDataPack(const std::string& key) const;
-                const DataPackUniquePtr getDataPack(const std::string& key) const;
+                DataPackUniquePtr getDataPack(const std::string& key) const;
 
                 void createArrayForKey(const std::string& key);
                 const bool isArray(const std::string& key) const;

@@ -20,6 +20,7 @@
  */
 
 #include <chaos/common/global.h>
+#include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
 #include <chaos/cu_toolkit/external_gateway/ExternalUnitGateway.h>
 #include <chaos/cu_toolkit/external_gateway/http_adapter/HTTPAdapter.h>
@@ -31,6 +32,7 @@
 #include <algorithm>
 
 using namespace chaos;
+using namespace chaos::common::data;
 using namespace chaos::cu::external_gateway::http_adapter;
 
 #define INFO    INFO_LOG(HTTPHelper)
@@ -63,7 +65,7 @@ void HTTPAdapter::init(void *init_data) throw (chaos::CException) {
     mg_mgr_init(&mgr, NULL);
 
     root_connection = mg_bind(&mgr, setting.publishing_port.c_str(), HTTPAdapter::eventHandler);
-    if(root_connection == NULL) {CException(-1, "Error creating http connection", __PRETTY_FUNCTION__);}
+    if(root_connection == NULL) {throw CException(-1, "Error creating http connection", __PRETTY_FUNCTION__);}
     root_connection->user_data = this;
 
     mg_set_protocol_http_websocket(root_connection);
@@ -96,7 +98,10 @@ void HTTPAdapter::sendHTTPJSONError(mg_connection *nc,
                                     int status_code,
                                     const int error_code,
                                     const std::string& error_message) {
-    const std::string json_error = CHAOS_FORMAT("{error:%1%,message:\"%2%\"}", %error_code%error_message);
+    CDataWrapper err_data_pack;
+    err_data_pack.addInt32Value("error", error_code);
+    err_data_pack.addStringValue("error_message", error_message);
+    const std::string json_error = err_data_pack.getJSONString();
     mg_send_head(nc, 400, 0, "Content-Type: application/json");
     mg_printf(nc, "%s", json_error.c_str());
 }
@@ -105,8 +110,21 @@ void HTTPAdapter::sendWSJSONError(mg_connection *nc,
                                   const int error_code,
                                   const std::string& error_message,
                                   bool close_connection) {
-    const std::string json_error = CHAOS_FORMAT("{error:%1%,message:\"%2%\"}", %error_code%error_message);
+    CDataWrapper err_data_pack;
+    err_data_pack.addInt32Value("error", error_code);
+    err_data_pack.addStringValue("error_message", error_message);
+    const std::string json_error = err_data_pack.getJSONString();
     mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT, json_error.c_str(), json_error.size());
+    if(close_connection){mg_send_websocket_frame(nc, WEBSOCKET_OP_CLOSE, NULL, 0);}
+}
+
+void HTTPAdapter::sendWSJSONAcceptedConnection(mg_connection *nc,
+                                               bool accepted,
+                                               bool close_connection) {
+    CDataWrapper err_data_pack;
+    err_data_pack.addInt32Value("accepted_connection", accepted);
+    const std::string accepted_json = err_data_pack.getJSONString();
+    mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT, accepted_json.c_str(), accepted_json.size());
     if(close_connection){mg_send_websocket_frame(nc, WEBSOCKET_OP_CLOSE, NULL, 0);}
 }
 
@@ -133,7 +151,10 @@ void  HTTPAdapter::manageWSHandshake(WorkRequest& wr) {
         sendWSJSONError(wr.nc,
                         -1,
                         CHAOS_FORMAT("No endpoint found for '%1%'", %wr.uri),
-                        true);
+                        false);
+        sendWSJSONAcceptedConnection(wr.nc,
+                                     false,
+                                     true);
         return;
     }
 
@@ -143,7 +164,10 @@ void  HTTPAdapter::manageWSHandshake(WorkRequest& wr) {
         sendWSJSONError(wr.nc,
                         -2,
                         CHAOS_FORMAT("No more connection accepted by endpoint '%1%'", %wr.uri),
-                        true);
+                        false);
+        sendWSJSONAcceptedConnection(wr.nc,
+                                     false,
+                                     true);
     } else {
         //get instance for serializer
         ChaosUniquePtr<serialization::AbstractExternalSerialization> serializer = ExternalUnitGateway::getInstance()->getNewSerializationInstanceForType(wr.s_type);
@@ -152,7 +176,10 @@ void  HTTPAdapter::manageWSHandshake(WorkRequest& wr) {
             sendWSJSONError(wr.nc,
                             -3,
                             CHAOS_FORMAT("Unable to find the serialization plugin for '%1%'", %wr.s_type),
-                            true);
+                            false);
+            sendWSJSONAcceptedConnection(wr.nc,
+                                         false,
+                                         true);
         } else {
             //we can create a new connection
             LMapConnectionWriteLock wconnl = map_connection.getWriteLockObject();
@@ -160,6 +187,9 @@ void  HTTPAdapter::manageWSHandshake(WorkRequest& wr) {
                                                       ChaosSharedPtr<HTTPExternalUnitConnection>(new HTTPExternalUnitConnection(wr.nc,
                                                                                                                                 map_endpoint()[wr.uri],
                                                                                                                                 ChaosMoveOperator(serializer)))));
+            sendWSJSONAcceptedConnection(wr.nc,
+                                         true,
+                                         false);
         }
     }
 }

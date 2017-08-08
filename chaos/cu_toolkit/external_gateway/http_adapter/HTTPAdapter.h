@@ -70,6 +70,9 @@ namespace chaos{
                                          const int error_code,
                                          const std::string& error_message,
                                          bool close_connection = false);
+                    void sendWSJSONAcceptedConnection(mg_connection *nc,
+                                                      bool accepted,
+                                                      bool close_connection);
                 protected:
                     void processBufferElement(WorkRequest *request, ElementManagingPolicy& policy) throw(CException);
                 public:

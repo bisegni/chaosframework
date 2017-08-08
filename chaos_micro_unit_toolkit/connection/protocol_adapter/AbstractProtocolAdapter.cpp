@@ -35,8 +35,8 @@ AbstractProtocolAdapter::~AbstractProtocolAdapter() {}
 
 void AbstractProtocolAdapter::handleReceivedMessage(data::DataPackSharedPtr& received_message) {
     //checn whenever the message is a response or spontaneus message
-    if(received_message->hasKey("request_id") &&
-       received_message->isInt32("request_id")) {
+    if(received_message->hasKey("etx_request_id") &&
+       received_message->isInt32("etx_request_id")) {
         map_req_id_response.insert(MapRequestIDResponsePair((uint32_t)received_message->getInt32("request_id"),
                                                             received_message));
     } else {
@@ -45,7 +45,7 @@ void AbstractProtocolAdapter::handleReceivedMessage(data::DataPackSharedPtr& rec
 }
 
 int AbstractProtocolAdapter::sendMessage(data::DataPackUniquePtr& message) {
-    if(connection_status != ConnectionStateConnected){
+    if(connection_status != ConnectionStateAccepted){
         return -1;
     }
     return sendRawMessage(message);
@@ -54,16 +54,16 @@ int AbstractProtocolAdapter::sendMessage(data::DataPackUniquePtr& message) {
 int AbstractProtocolAdapter::sendRequest(data::DataPackUniquePtr& message,
                                          uint32_t& request_id) {
     request_id = adapter_request_id++;
-    message->addInt32("request_id", request_id);
+    message->addInt32("ext_request_id", request_id);
     return sendMessage(message);
 }
 
 bool AbstractProtocolAdapter::hasMoreMessage() {
-    return queue_received_messages.size()>0;
+    return queue_received_messages.size();
 }
 
 DataPackSharedPtr AbstractProtocolAdapter::getNextMessage() {
-    if(queue_received_messages.size()) {
+    if(queue_received_messages.size() == 0) {
         return DataPackSharedPtr();
     } else {
         DataPackSharedPtr result = queue_received_messages.front();

@@ -37,7 +37,21 @@ AbstractUnitProxy(protocol_adapter){}
 RawDriverUnitProxy::~RawDriverUnitProxy() {}
 
 void RawDriverUnitProxy::authorization(const std::string& authorization_key) {
+    authorization_state = AuthorizationStateRequested;
     data::DataPackUniquePtr message(new data::DataPack());
     message->addString(AUTHORIZATION_KEY, authorization_key);
     sendMessage(message);
+}
+
+bool RawDriverUnitProxy::manageAutorizationPhase() {
+    bool result = false;
+    if((result = hasMoreMessage())) {
+        //!check authentication state
+        RemoteMessageUniquePtr result = getNextMessage();
+        if(result->message->hasKey(AUTHORIZATION_STATE) ||
+           result->message->isBool(AUTHORIZATION_STATE)) {
+            authorization_state = (AuthorizationState)result->message->getBool(AUTHORIZATION_STATE);
+        }
+    }
+    return result;
 }

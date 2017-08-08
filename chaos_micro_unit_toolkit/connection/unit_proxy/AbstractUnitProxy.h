@@ -29,32 +29,58 @@ namespace chaos {
     namespace micro_unit_toolkit {
         namespace connection {
             namespace unit_proxy {
-
-                struct RemoteMessage {
+                
+                class RemoteMessage {
+                    bool is_error;
+                public:
                     data::DataPackSharedPtr message;
                     const bool is_request;
                     const uint32_t message_id;
-
+                    data::DataPackSharedPtr request_message;
                     RemoteMessage(const data::DataPackSharedPtr& _message);
+                    
+                    bool isError() const;
+                    int32_t getErrorCode() const;
+                    std::string getErrorMessage() const;
+                    std::string getErrorDomain() const;
                 };
-
+                
+                typedef enum {
+                    AuthorizationStateDenied,
+                    AuthorizationStateOk,
+                    AuthorizationStateRequested,
+                    AuthorizationStateUnknown
+                } AuthorizationState;
+                
                 typedef ChaosUniquePtr<RemoteMessage> RemoteMessageUniquePtr;
-
+                
                 //! Abstract base class for all unit proxy
                 class AbstractUnitProxy {
                     protocol_adapter::AbstractProtocolAdapter& protocol_adapter;
                 protected:
+                    AuthorizationState authorization_state;
                     int sendMessage(data::DataPackUniquePtr& message_data);
-
+                    
                     int sendAnswer(RemoteMessageUniquePtr& message,
                                    data::DataPackUniquePtr& message_data);
-
+                    
                     bool hasMoreMessage();
-
+                    
                     RemoteMessageUniquePtr getNextMessage();
                 public:
                     AbstractUnitProxy(protocol_adapter::AbstractProtocolAdapter& _protocol_adapter);
+                    
                     virtual ~AbstractUnitProxy();
+                    
+                    virtual void authorization(const std::string& authorization_key) = 0;
+                    
+                    //! need to be called once per connection pool for manage the autorization untile it return true
+                    /*!
+                     when this function is completed(return true) connection state need to be tested
+                     */
+                    virtual bool manageAutorizationPhase() = 0;
+                    
+                    const AuthorizationState& getAuthorizationState() const;
                 };
             }
         }

@@ -43,6 +43,8 @@ namespace chaos {
                     ConnectionStateDisconnected,
                     ConnectionStateConnecting,
                     ConnectionStateConnected,
+                    ConnectionStateAccepted,
+                    ConnectionStateNotAccepted,
                     ConnectionStateConnectionError
                 } ConnectionState;
                 

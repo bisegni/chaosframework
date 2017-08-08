@@ -37,7 +37,7 @@ namespace chaos {
                     virtual ~RawDriverUnitProxy();
 
                     void authorization(const std::string& authorization_key);
-
+                    bool manageAutorizationPhase();
                     using AbstractUnitProxy::sendMessage;
                     using AbstractUnitProxy::hasMoreMessage;
                     using AbstractUnitProxy::getNextMessage;

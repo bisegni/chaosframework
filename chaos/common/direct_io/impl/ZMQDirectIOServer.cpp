@@ -340,7 +340,7 @@ void ZMQDirectIOServer::worker(unsigned int w_type,
                                            answer_data_deallocation_handler))){
                         ZMQDIO_SRV_LAPP_ << "Error sending answer with code:" << err;
                     } else {
-                        //anser si sent well
+                        //anser is sent well
                     }
                 }
             }

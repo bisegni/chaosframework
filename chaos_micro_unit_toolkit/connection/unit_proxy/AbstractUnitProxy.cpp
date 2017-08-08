@@ -20,27 +20,53 @@
  */
 
 #include <chaos_micro_unit_toolkit/connection/unit_proxy/AbstractUnitProxy.h>
+using namespace chaos::micro_unit_toolkit::data;
 using namespace chaos::micro_unit_toolkit::connection::unit_proxy;
 
-RemoteMessage::RemoteMessage(const data::DataPackSharedPtr& _message):
+RemoteMessage::RemoteMessage(const DataPackSharedPtr& _message):
 message(_message),
 is_request((message->hasKey("request_id") && message->isInt32("request_id"))),
-message_id(is_request?message->getInt32("request_id"):0){}
+message_id(is_request?message->getInt32("request_id"):0){
+    if(is_request &&
+       message->hasKey("message") &&
+       message->isDataPack("message")) {
+        request_message.reset(message->getDataPack("message").release());
+    }
+}
+
+bool RemoteMessage::isError() const {
+    return message.get() && message->hasKey("error_code");
+}
+
+int32_t RemoteMessage::getErrorCode() const {
+    return message.get()?message->getInt32("error_code"):0;
+}
+
+std::string RemoteMessage::getErrorMessage() const {
+    return message.get()?message->getString("error_message"):"";
+}
+
+std::string RemoteMessage::getErrorDomain() const {
+    return message.get()?message->getString("error_domain"):"";
+}
 
 AbstractUnitProxy::AbstractUnitProxy(protocol_adapter::AbstractProtocolAdapter& _protocol_adapter):
-protocol_adapter(_protocol_adapter){}
+protocol_adapter(_protocol_adapter),
+authorization_state(AuthorizationStateUnknown){}
 
 AbstractUnitProxy::~AbstractUnitProxy() {}
 
-int AbstractUnitProxy::sendMessage(data::DataPackUniquePtr& message_data) {
+int AbstractUnitProxy::sendMessage(DataPackUniquePtr& message_data) {
     return protocol_adapter.sendMessage(message_data);
 }
 
 int AbstractUnitProxy::sendAnswer(RemoteMessageUniquePtr& message,
-                                  data::DataPackUniquePtr& message_data) {
+                                  DataPackUniquePtr& message_data) {
     if(message->is_request == false) return - 1;
-    message_data->addInt32("request_id", message->is_request);
-    return protocol_adapter.sendMessage(message_data);
+    DataPackUniquePtr answer(new DataPack());
+    answer->addInt32("request_id", message->message_id);
+    answer->addDataPack("message", *message_data);
+    return protocol_adapter.sendMessage(answer);
 }
 
 bool AbstractUnitProxy::hasMoreMessage() {
@@ -51,4 +77,8 @@ RemoteMessageUniquePtr AbstractUnitProxy::getNextMessage() {
     if(protocol_adapter.hasMoreMessage() == false) return RemoteMessageUniquePtr();
     RemoteMessageUniquePtr next_message(new RemoteMessage(protocol_adapter.getNextMessage()));
     return next_message;
+}
+
+const AuthorizationState& AbstractUnitProxy::getAuthorizationState() const {
+    return authorization_state;
 }
