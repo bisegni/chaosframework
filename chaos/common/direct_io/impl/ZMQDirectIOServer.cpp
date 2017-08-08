@@ -90,7 +90,7 @@ void ZMQDirectIOServer::start() throw(chaos::CException) {
     
     //get custm configuration for direct io server
     if(GlobalConfiguration::getInstance()->hasOption(InitOption::OPT_DIRECT_IO_SERVER_THREAD_NUMBER)) {
-        direct_io_thread_number = GlobalConfiguration::getInstance()->getOption<int>(InitOption::OPT_DIRECT_IO_SERVER_THREAD_NUMBER);
+        direct_io_thread_number = GlobalConfiguration::getInstance()->getOption<uint32_t>(InitOption::OPT_DIRECT_IO_SERVER_THREAD_NUMBER);
     }
     
     //create the ZMQContext
@@ -195,6 +195,7 @@ void ZMQDirectIOServer::poller(const std::string& public_url,
     ZMQDIO_SRV_LAPP_ << CHAOS_FORMAT("Enter pooler for %1%", %public_url);
     //start creating two socker for service and priority
     ZMQDIO_SRV_LAPP_ << "Allocating and binding priority socket to "<< priority_socket_bind_str;
+
     public_socket = zmq_socket (zmq_context, ZMQ_ROUTER);
     if(public_socket == NULL){
         return;
@@ -230,7 +231,7 @@ void ZMQDirectIOServer::poller(const std::string& public_url,
     }catch (std::exception &e) {}
     if(public_socket) {
         if((err = zmq_unbind(public_socket, public_url.c_str()))){
-            ZMQDIO_SRV_LERR_ << CHAOS_FORMAT("Error %1% unbindind socker for %2%", %err%public_url);
+            ZMQDIO_SRV_LERR_ << CHAOS_FORMAT("Error %1% unbindind socket for %2%", %err%public_url);
         }
         if((err = zmq_close(public_socket))){
             ZMQDIO_SRV_LERR_ << CHAOS_FORMAT("Error %1% closing socket for %2%", %err%public_url);

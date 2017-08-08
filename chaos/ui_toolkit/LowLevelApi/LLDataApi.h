@@ -34,7 +34,7 @@ namespace chaos {
         class LLDataApi:
 		public common::utility::Singleton<LLDataApi>  {
             friend class ChaosUIToolkit;
-
+            friend class Singleton<LLDataApi>;
             LLDataApi();
             ~LLDataApi();
 

@@ -154,7 +154,7 @@ namespace chaos {
                         } catch (CException& ex) {
                             DECODE_CHAOS_EXCEPTION(ex)
                         } catch (...) {
-                            COPPQUEUE_LAPP_ << "Unkown exception";
+                            COPPQUEUE_LAPP_ << "Unknown exception";
                         }
                         
                         //if weg got a listener notify it
@@ -224,7 +224,7 @@ namespace chaos {
                         liveThreadConditionLock.notify_all();
                         COPPQUEUE_LAPP_ << "join internal thread group";
                         t_group.join_all();
-                        COPPQUEUE_LAPP_ << "deinitlized";
+                        COPPQUEUE_LAPP_ << "deinitialized";
                     }
                     
                     bool push(T* elementToPush,

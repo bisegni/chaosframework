@@ -91,7 +91,7 @@ x = hasOption(y);
         //for contain program option value and other usefull think
         chaos_data::CDataWrapper configuration;
         friend class chaos::common::utility::Singleton<GlobalConfiguration>;
-        
+
         
         GlobalConfiguration():desc("!CHAOS Framework Allowed options"){};
         ~GlobalConfiguration(){};

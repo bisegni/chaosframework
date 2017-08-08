@@ -215,42 +215,46 @@ int main (int argc, char* argv[] )
 		ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_RESET_CONFIG, po::value<bool>(&reset_config)->default_value(false),"reset MDS configuration");
 		ChaosMetadataServiceClient::getInstance()->init(argc, argv);
 
+
+
 		chaos::common::data::CDataWrapper *conf=ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->getConfiguration();
-		std::cout<<conf->getJSONString()<<std::endl;
+	//	std::cout<<conf->getJSONString()<<std::endl;
 		if(conf->hasKey("metadata-server")){
 			mds  = conf->getVectorValue("metadata-server")->getStringElementAtIndex(0);
 		} else {
 			std::cerr<< "# you must define a valid MDS server 'metadata-server'"<<std::endl;
 			return -4;
 		}
+		ChaosMetadataServiceClient::getInstance()->start();
 
 		//! [UIToolkit Attribute Init]
 		std::cout <<"* MDS:"<<mds<<std::endl;
-		ChaosMetadataServiceClient::getInstance()->addServerAddress(mds);
+
+	//	ChaosMetadataServiceClient::getInstance()->addServerAddress(mds);
 		if(reset_config){
 			std::cout<<"* resetting MDS configuration"<<std::endl;
 			EXECUTE_CHAOS_API(api_proxy::service::ResetAll,3000);
 		}
-		if(operation_defined){
-					//       ChaosMetadataServiceClient::getInstance()->enableMonitor();
 
-					ChaosMetadataServiceClient::getInstance()->start();
-		}
 		if(!conf_file.empty()){
 			std::cout<<"* Initializing mds:"<< mds<<" with:"<<conf_file<<endl;
 
 			operation_defined=true;
 			initialize_from_old_mds(conf_file);
-			return 0;
+
 
 		}
+		ChaosMetadataServiceClient::getInstance()->stop();
+		ChaosMetadataServiceClient::getInstance()->deinit();
+		std::cout<<"* done"<<std::endl;
+
+		exit(0);
 
 
 	}catch (CException& e) {
 		std::cerr << e.errorCode << " - "<< e.errorDomain << " - " << e.errorMessage << std::endl;
 		return -3;
 	}
-	ChaosMetadataServiceClient::getInstance()->stop();
-	ChaosMetadataServiceClient::getInstance()->deinit();
 	return 0;
+
 }

@@ -23,6 +23,8 @@
 
 #include <boost/thread/once.hpp>
 #include <boost/noncopyable.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/make_shared.hpp>
 //#include <chaos/common/global.h>
 
 namespace chaos {
@@ -54,20 +56,26 @@ namespace chaos {
                 }
 
                 static void _singletonInit() {
-                    if(!t){
-                        t = new T();
-                    }
+                	if(t==0){
+                		t= new T();
+                	}
                 }
+
+                virtual ~Singleton(){if(t) delete t;t=0L;}
+
+            protected:
+                static T*  t;
 
             private:
 
-                static T                *t;
                 static boost::once_flag flag;
             };
 
-            template<class T> T *Singleton<T>::t = 0L;
+          template<class T> T* Singleton<T>::t=0L;
 
             template<class T> boost::once_flag Singleton<T>::flag = BOOST_ONCE_INIT;
+
+
         }
     }
 }

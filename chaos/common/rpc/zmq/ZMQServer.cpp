@@ -111,10 +111,12 @@ void ZMQServer::stop() throw(CException) {
 void ZMQServer::deinit() throw(CException) {
     run_server = false;
     ZMQS_LAPP << "Stopping thread";
-    zmq_ctx_shutdown(zmq_context);
-    zmq_ctx_destroy(zmq_context);
     //wiath all thread
+    zmq_ctx_shutdown(zmq_context);
+
     thread_group.join_all();
+    zmq_ctx_destroy(zmq_context);
+
     ZMQS_LAPP << "Thread stopped";
 }
 #define ZMQ_DO_AGAIN(x) do{x}while(err == EAGAIN);
@@ -201,6 +203,13 @@ void ZMQServer::worker() {
             
             ZMQS_LDBG << "Wait for message";
             err = zmq_recvmsg(receiver, &request, 0);
+            if(run_server==0){
+            	// no error should be issued on normal exit
+                ZMQS_LDBG << "exiting from worker..";
+
+            	continue;
+            }
+
             if(err == -1 ) {
                 int32_t sent_error = zmq_errno();
                 std::string error_message = zmq_strerror(sent_error);
