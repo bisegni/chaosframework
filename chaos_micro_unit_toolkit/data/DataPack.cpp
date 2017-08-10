@@ -20,6 +20,7 @@
  */
 
 #include <chaos_micro_unit_toolkit/data/DataPack.h>
+#include <chaos_micro_unit_toolkit/external_lib/base64.h>
 
 using namespace Json;
 using namespace chaos::micro_unit_toolkit;
@@ -69,7 +70,7 @@ const int32_t DataPack::getInt32(const std::string& key) const {
     return root_json_object[key].asInt();
 }
 void DataPack::addInt64(const std::string& key,
-                             int64_t value) {
+                        int64_t value) {
     root_json_object[key] = Value(value);
 }
 const bool DataPack::isInt64(const std::string& key) const {
@@ -108,6 +109,16 @@ const bool DataPack::isDataPack(const std::string& key) const {
 DataPackUniquePtr DataPack::getDataPack(const std::string& key) const {
     return DataPackUniquePtr(new DataPack(root_json_object[key]));
 }
+
+void DataPack::addBinary(const std::string& key,
+                         const char *s,
+                         const unsigned int len) {
+    root_json_object[key] = Value(base64_encode(reinterpret_cast<const unsigned char*>(s), len));
+}
+std::string DataPack::getBinary(const std::string& key) {
+    return base64_decode(root_json_object[key].asString());
+}
+
 void DataPack::createArrayForKey(const std::string& key) {
     root_json_object[key] = Value(arrayValue);
 }
