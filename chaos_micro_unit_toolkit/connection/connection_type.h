@@ -12,7 +12,9 @@
 namespace chaos {
     namespace micro_unit_toolkit {
         namespace connection {
-            
+            namespace protocol_adapter{
+                class AbstractProtocolAdapter;
+            }
             //! Proxy type definition
             typedef enum {
                 /*!Specify a proxy that permit to act ans a driver at low level, 
@@ -35,6 +37,64 @@ namespace chaos {
                  connect to remote endpoint */
                 ProtocolTypeHTTP
             } ProtocolType;
+            
+            /*!
+             Templated interface that give rule for the the instantiation of a class with one param constructor.
+             */
+            template <typename R, typename p1 >
+            class ObjectInstancerP1 {
+            public:
+                virtual ~ObjectInstancerP1(){};
+                virtual R* getInstance(p1& _p1) = 0;
+            };
+            
+            /*!
+             Templated interface that give rule for the the instantiation of a class with two param constructor.
+             */
+            template <typename R, typename p1, typename p2 >
+            class ObjectInstancerP2 {
+            public:
+                virtual ~ObjectInstancerP2(){};
+                virtual R* getInstance(p1 _p1, p2 _p2) = 0;
+            };
+            
+            
+            /*!
+             Templated class that permit to instantiate the superclas of
+             a base class. This class permit to check this rule at compiletime
+             */
+            template <typename T, typename R, typename p1>
+            class TypedObjectInstancerP1:
+            public ObjectInstancerP1<R, p1> {
+            public:
+                R* getInstance(p1& _p1) {
+                    return new T(_p1);
+                }
+            };
+            
+            /*!
+             Templated class that permit to instantiate the superclas of
+             a base class. This class permit to check this rule at compiletime
+             */
+            template <typename T, typename R, typename p1, typename p2 >
+            class TypedObjectInstancerP2:
+            public ObjectInstancerP2<R, p1, p2> {
+            public:
+                R* getInstance(p1 _p1, p2 _p2) {
+                    return new T(_p1, _p2);
+                }
+            };
+            
+            template<typename T>
+            struct UnitConnection {
+                const ChaosUniquePtr<protocol_adapter::AbstractProtocolAdapter> protocol_adapter;
+                const ChaosUniquePtr<T> unit_proxy;
+                
+                UnitConnection(ChaosUniquePtr<protocol_adapter::AbstractProtocolAdapter>& _protocol_adapter,
+                               ChaosUniquePtr<T> _unit_proxy):
+                protocol_adapter(ChaosMoveOperator(_protocol_adapter)),
+                unit_proxy(ChaosMoveOperator(_unit_proxy)){}
+            };
         }
     }
 }

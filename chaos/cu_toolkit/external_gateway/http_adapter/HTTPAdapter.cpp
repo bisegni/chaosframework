@@ -99,7 +99,7 @@ void HTTPAdapter::sendHTTPJSONError(mg_connection *nc,
                                     const int error_code,
                                     const std::string& error_message) {
     CDataWrapper err_data_pack;
-    err_data_pack.addInt32Value("error", error_code);
+    err_data_pack.addInt32Value("error_code", error_code);
     err_data_pack.addStringValue("error_message", error_message);
     const std::string json_error = err_data_pack.getJSONString();
     mg_send_head(nc, 400, 0, "Content-Type: application/json");
@@ -111,7 +111,7 @@ void HTTPAdapter::sendWSJSONError(mg_connection *nc,
                                   const std::string& error_message,
                                   bool close_connection) {
     CDataWrapper err_data_pack;
-    err_data_pack.addInt32Value("error", error_code);
+    err_data_pack.addInt32Value("error_code", error_code);
     err_data_pack.addStringValue("error_message", error_message);
     const std::string json_error = err_data_pack.getJSONString();
     mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT, json_error.c_str(), json_error.size());

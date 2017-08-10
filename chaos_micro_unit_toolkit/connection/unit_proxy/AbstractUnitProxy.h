@@ -29,6 +29,8 @@ namespace chaos {
     namespace micro_unit_toolkit {
         namespace connection {
             namespace unit_proxy {
+                //bforward decalration
+                class UnitProxyHandlerWrapper;
                 
                 class RemoteMessage {
                     bool is_error;
@@ -56,7 +58,8 @@ namespace chaos {
                 
                 //! Abstract base class for all unit proxy
                 class AbstractUnitProxy {
-                    protocol_adapter::AbstractProtocolAdapter& protocol_adapter;
+                    friend class chaos::micro_unit_toolkit::connection::unit_proxy::UnitProxyHandlerWrapper;
+                    ChaosUniquePtr<protocol_adapter::AbstractProtocolAdapter> protocol_adapter;
                 protected:
                     AuthorizationState authorization_state;
                     int sendMessage(data::DataPackUniquePtr& message_data);
@@ -67,8 +70,14 @@ namespace chaos {
                     bool hasMoreMessage();
                     
                     RemoteMessageUniquePtr getNextMessage();
+                    
+                    int connect();
+                    
+                    void poll(int32_t milliseconds_wait = 100);
+                    
+                    int close();
                 public:
-                    AbstractUnitProxy(protocol_adapter::AbstractProtocolAdapter& _protocol_adapter);
+                    AbstractUnitProxy(ChaosUniquePtr<protocol_adapter::AbstractProtocolAdapter>& _protocol_adapter);
                     
                     virtual ~AbstractUnitProxy();
                     
@@ -81,6 +90,10 @@ namespace chaos {
                     virtual bool manageAutorizationPhase() = 0;
                     
                     const AuthorizationState& getAuthorizationState() const;
+                    
+                    const protocol_adapter::ConnectionState& getConnectionState() const;
+                    
+                    void resetAuthorization();
                 };
             }
         }

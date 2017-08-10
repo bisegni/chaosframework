@@ -24,18 +24,32 @@ using namespace chaos::micro_unit_toolkit;
 using namespace chaos::micro_unit_toolkit::connection;
 using namespace chaos::micro_unit_toolkit::connection::unit_proxy;
 
-ChaosMicroUnitToolkit::ChaosMicroUnitToolkit() {
+ChaosMicroUnitToolkit::ChaosMicroUnitToolkit() {}
 
+ChaosMicroUnitToolkit::~ChaosMicroUnitToolkit() {}
+
+ChaosUniquePtr<connection::protocol_adapter::AbstractProtocolAdapter> ChaosMicroUnitToolkit::getConnectionAdapter(connection::ProtocolType protocol_type,
+                                                                                                                  const std::string& protocol_endpoint,
+                                                                                                                  const std::string& protocol_option) {
+    return cman.getProtocolAdapter(protocol_type,
+                                   protocol_endpoint,
+                                   protocol_option);
 }
 
-ChaosMicroUnitToolkit::~ChaosMicroUnitToolkit() {
-
-}
-
-ChaosUniquePtr< UnitConnection<RawDriverUnitProxy> > ChaosMicroUnitToolkit::createNewRawDriverUnit(connection::ProtocolType protocol_type,
-                                                                                                   const std::string& protocol_endpoint,
-                                                                                                   const std::string& protocol_option) {
-    return cman.getNewUnitConnection<RawDriverUnitProxy>(protocol_type,
-                                                         protocol_endpoint,
-                                                         protocol_option);
+ChaosUniquePtr<raw_driver::RawDriverHandlerWrapper> ChaosMicroUnitToolkit::createNewRawDriverHandlerWrapper(connection::ProtocolType protocol_type,
+                                                                                                            const std::string& protocol_endpoint,
+                                                                                                            const std::string& protocol_option,
+                                                                                                            connection::unit_proxy::UnitProxyHandler handler,
+                                                                                                            void *user_data,
+                                                                                                            const std::string& authorization_key) {
+    ChaosUniquePtr<protocol_adapter::AbstractProtocolAdapter> protocol_adater = cman.getProtocolAdapter(protocol_type,
+                                                                                                        protocol_endpoint,
+                                                                                                        protocol_option);
+    ChaosUniquePtr<raw_driver::RawDriverUnitProxy> unit_proxy = ChaosUniquePtr<raw_driver::RawDriverUnitProxy>(static_cast< raw_driver::RawDriverUnitProxy* >(cman.getUnitProxy(raw_driver::RawDriverUnitProxy::proxy_type,
+                                                                                                                                                                                protocol_adater).release()));
+    
+    return ChaosUniquePtr<raw_driver::RawDriverHandlerWrapper>(new raw_driver::RawDriverHandlerWrapper(handler,
+                                                                                                       user_data,
+                                                                                                       authorization_key,
+                                                                                                       unit_proxy));
 }

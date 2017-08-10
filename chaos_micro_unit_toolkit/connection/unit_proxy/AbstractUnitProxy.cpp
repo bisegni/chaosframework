@@ -20,8 +20,11 @@
  */
 
 #include <chaos_micro_unit_toolkit/connection/unit_proxy/AbstractUnitProxy.h>
+#include <cassert>
+#include <iostream>
 using namespace chaos::micro_unit_toolkit::data;
 using namespace chaos::micro_unit_toolkit::connection::unit_proxy;
+using namespace chaos::micro_unit_toolkit::connection::protocol_adapter;
 
 RemoteMessage::RemoteMessage(const DataPackSharedPtr& _message):
 message(_message),
@@ -50,14 +53,16 @@ std::string RemoteMessage::getErrorDomain() const {
     return message.get()?message->getString("error_domain"):"";
 }
 
-AbstractUnitProxy::AbstractUnitProxy(protocol_adapter::AbstractProtocolAdapter& _protocol_adapter):
-protocol_adapter(_protocol_adapter),
-authorization_state(AuthorizationStateUnknown){}
+AbstractUnitProxy::AbstractUnitProxy(ChaosUniquePtr<protocol_adapter::AbstractProtocolAdapter>& _protocol_adapter):
+protocol_adapter(ChaosMoveOperator(_protocol_adapter)),
+authorization_state(AuthorizationStateUnknown){assert(protocol_adapter.get());}
 
-AbstractUnitProxy::~AbstractUnitProxy() {}
+AbstractUnitProxy::~AbstractUnitProxy() {
+    std::cout <<"exit";
+}
 
 int AbstractUnitProxy::sendMessage(DataPackUniquePtr& message_data) {
-    return protocol_adapter.sendMessage(message_data);
+    return protocol_adapter->sendMessage(message_data);
 }
 
 int AbstractUnitProxy::sendAnswer(RemoteMessageUniquePtr& message,
@@ -66,19 +71,39 @@ int AbstractUnitProxy::sendAnswer(RemoteMessageUniquePtr& message,
     DataPackUniquePtr answer(new DataPack());
     answer->addInt32("request_id", message->message_id);
     answer->addDataPack("message", *message_data);
-    return protocol_adapter.sendMessage(answer);
+    return protocol_adapter->sendMessage(answer);
 }
 
 bool AbstractUnitProxy::hasMoreMessage() {
-    return protocol_adapter.hasMoreMessage();
+    return protocol_adapter->hasMoreMessage();
 }
 
 RemoteMessageUniquePtr AbstractUnitProxy::getNextMessage() {
-    if(protocol_adapter.hasMoreMessage() == false) return RemoteMessageUniquePtr();
-    RemoteMessageUniquePtr next_message(new RemoteMessage(protocol_adapter.getNextMessage()));
+    if(protocol_adapter->hasMoreMessage() == false) return RemoteMessageUniquePtr();
+    RemoteMessageUniquePtr next_message(new RemoteMessage(protocol_adapter->getNextMessage()));
     return next_message;
 }
 
 const AuthorizationState& AbstractUnitProxy::getAuthorizationState() const {
     return authorization_state;
+}
+
+int AbstractUnitProxy::connect() {
+    return protocol_adapter->connect();
+}
+
+void AbstractUnitProxy::poll(int32_t milliseconds_wait) {
+    protocol_adapter->poll(milliseconds_wait);
+}
+
+int AbstractUnitProxy::close() {
+    return protocol_adapter->close();
+}
+
+const ConnectionState& AbstractUnitProxy::getConnectionState() const {
+    return protocol_adapter->getConnectionState();
+}
+
+void AbstractUnitProxy::resetAuthorization() {
+    authorization_state = AuthorizationStateUnknown;
 }

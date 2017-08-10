@@ -25,7 +25,7 @@
 #include <chaos_micro_unit_toolkit/connection/protocol_adapter/http/HTTPProtocolAdapter.h>
 
 //unit
-#include <chaos_micro_unit_toolkit/connection/unit_proxy/RawDriverUnitProxy.h>
+#include <chaos_micro_unit_toolkit/connection/unit_proxy/raw_driver/RawDriverUnitProxy.h>
 
 using namespace chaos::micro_unit_toolkit;
 using namespace chaos::micro_unit_toolkit::connection;
@@ -33,24 +33,24 @@ using namespace chaos::micro_unit_toolkit::connection::unit_proxy;
 using namespace chaos::micro_unit_toolkit::connection::protocol_adapter;
 
 ConnectionManager::ConnectionManager() {
-    registerUnitProxy<RawDriverUnitProxy>();
+    registerUnitProxy<raw_driver::RawDriverUnitProxy::RawDriverUnitProxy>();
     registerProtocolAdapter<http::HTTPProtocolAdapter>();
 }
 
 ConnectionManager::~ConnectionManager() {}
 
-ChaosSharedPtr<AbstractProtocolAdapter> ConnectionManager::getProtocolAdapter(ProtocolType type,
+ChaosUniquePtr<AbstractProtocolAdapter> ConnectionManager::getProtocolAdapter(ProtocolType type,
                                                                               const std::string& endpoint,
                                                                               const std::string& protocol_option) {
-    if(map_protocol.count(type) == 0){ return ChaosSharedPtr<AbstractProtocolAdapter>();}
+    if(map_protocol.count(type) == 0){ return ChaosUniquePtr<AbstractProtocolAdapter>();}
     ProtocolAdapterInstancer is = map_protocol[type];
-    return ChaosSharedPtr<protocol_adapter::AbstractProtocolAdapter>(is->getInstance(endpoint,
+    return ChaosUniquePtr<protocol_adapter::AbstractProtocolAdapter>(is->getInstance(endpoint,
                                                                                      protocol_option));
 }
 
 ChaosUniquePtr<AbstractUnitProxy> ConnectionManager::getUnitProxy(ProxyType type,
-                                                                  AbstractProtocolAdapter *protocol_adapter){
+                                                                  ChaosUniquePtr<protocol_adapter::AbstractProtocolAdapter>& protocol_adapter){
     if(map_proxy.count(type) == 0){ return ChaosUniquePtr<unit_proxy::AbstractUnitProxy>();}
     UnitProxyInstancer is = map_proxy[type];
-    return ChaosUniquePtr<unit_proxy::AbstractUnitProxy>(is->getInstance(*protocol_adapter));
+    return ChaosUniquePtr<unit_proxy::AbstractUnitProxy>(is->getInstance(protocol_adapter));
 }

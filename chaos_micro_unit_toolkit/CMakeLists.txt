@@ -33,6 +33,8 @@ FILE(GLOB files "connection/protocol_adapter/http/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos_micro_unit_toolit/connection/protocol_adapter/http)
 FILE(GLOB files "connection/unit_proxy/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos_micro_unit_toolit/connection/unit_proxy)
+FILE(GLOB files "connection/unit_proxy/raw_driver/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos_micro_unit_toolit/connection/unit_proxy/raw_driver)
 FILE(GLOB files "external_lib/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos_micro_unit_toolit/external_lib)
 

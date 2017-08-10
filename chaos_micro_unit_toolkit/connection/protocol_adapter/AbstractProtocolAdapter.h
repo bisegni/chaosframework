@@ -32,11 +32,6 @@
 namespace chaos {
     namespace micro_unit_toolkit {
         namespace connection {
-            //!forward decalration
-            namespace unit_proxy {
-                class AbstractUnitProxy;
-            }
-            
             namespace protocol_adapter {
                 
                 typedef enum {
@@ -51,7 +46,6 @@ namespace chaos {
                 
                 //! Abstract base class for all protocols adapter
                 class AbstractProtocolAdapter {
-                    friend class chaos::micro_unit_toolkit::connection::unit_proxy::AbstractUnitProxy;
                 protected:
                     virtual int sendRawMessage(chaos::micro_unit_toolkit::data::DataPackUniquePtr& message) = 0;
                     
@@ -71,16 +65,8 @@ namespace chaos {
                     
                     virtual int close() = 0;
 
-                    ConnectionState getConnectionState() const;
-                protected:
-                    typedef std::map<uint32_t, data::DataPackSharedPtr> MapRequestIDResponse;
-                    typedef std::pair<uint32_t, data::DataPackSharedPtr> MapRequestIDResponsePair;
-                    typedef MapRequestIDResponse::iterator MapRequestIDResponseIterator;
-
-                    uint32_t adapter_request_id;
-                    ConnectionState connection_status;
-                    MapRequestIDResponse                map_req_id_response;
-                    std::queue<data::DataPackSharedPtr> queue_received_messages;
+                    const ConnectionState& getConnectionState() const;
+                    
                     
                     int sendMessage(data::DataPackUniquePtr& message);
                     
@@ -96,6 +82,16 @@ namespace chaos {
                     bool hasResponseAvailable(uint32_t request_id);
                     
                     data::DataPackSharedPtr retrieveRequestResponse(uint32_t request_id);
+                protected:
+                    typedef std::map<uint32_t, data::DataPackSharedPtr> MapRequestIDResponse;
+                    typedef std::pair<uint32_t, data::DataPackSharedPtr> MapRequestIDResponsePair;
+                    typedef MapRequestIDResponse::iterator MapRequestIDResponseIterator;
+
+                    uint32_t adapter_request_id;
+                    ConnectionState connection_status;
+                    MapRequestIDResponse                map_req_id_response;
+                    std::queue<data::DataPackSharedPtr> queue_received_messages;
+
                 };
             }
         }

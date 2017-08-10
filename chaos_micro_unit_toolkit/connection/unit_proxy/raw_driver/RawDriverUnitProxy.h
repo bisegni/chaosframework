@@ -26,23 +26,24 @@ namespace chaos {
     namespace micro_unit_toolkit {
         namespace connection {
             namespace unit_proxy {
-
-                //! Abstract base class for all unit proxy
-                class RawDriverUnitProxy:
-                public AbstractUnitProxy {
-
-                public:
-                    static const ProxyType proxy_type;
-                    RawDriverUnitProxy(protocol_adapter::AbstractProtocolAdapter& protocol_adapter);
-                    virtual ~RawDriverUnitProxy();
-
-                    void authorization(const std::string& authorization_key);
-                    bool manageAutorizationPhase();
-                    using AbstractUnitProxy::sendMessage;
-                    using AbstractUnitProxy::hasMoreMessage;
-                    using AbstractUnitProxy::getNextMessage;
-                    using AbstractUnitProxy::sendAnswer;
-                };
+                namespace raw_driver {
+                    //! Abstract base class for all unit proxy
+                    class RawDriverUnitProxy:
+                    public AbstractUnitProxy {
+                        
+                    public:
+                        static const ProxyType proxy_type;
+                        RawDriverUnitProxy(ChaosUniquePtr<protocol_adapter::AbstractProtocolAdapter>& protocol_adapter);
+                        virtual ~RawDriverUnitProxy();
+                        
+                        void authorization(const std::string& authorization_key);
+                        bool manageAutorizationPhase();
+                        using AbstractUnitProxy::sendMessage;
+                        using AbstractUnitProxy::hasMoreMessage;
+                        using AbstractUnitProxy::getNextMessage;
+                        using AbstractUnitProxy::sendAnswer;
+                    };
+                }
             }
         }
     }

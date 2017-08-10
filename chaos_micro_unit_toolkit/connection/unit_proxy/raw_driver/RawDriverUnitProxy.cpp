@@ -19,10 +19,11 @@
  *    	limitations under the License.
  */
 
-#include <chaos_micro_unit_toolkit/connection/unit_proxy/RawDriverUnitProxy.h>
+#include <chaos_micro_unit_toolkit/connection/unit_proxy/raw_driver/RawDriverUnitProxy.h>
 
 using namespace chaos::micro_unit_toolkit::connection;
 using namespace chaos::micro_unit_toolkit::connection::unit_proxy;
+using namespace chaos::micro_unit_toolkit::connection::unit_proxy::raw_driver;
 
 #define AUTHORIZATION_KEY        "authorization_key"
 #define AUTHORIZATION_STATE      "authorization_state"
@@ -31,7 +32,7 @@ using namespace chaos::micro_unit_toolkit::connection::unit_proxy;
 
 const ProxyType RawDriverUnitProxy::proxy_type = ProxyTypeRawDriver;
 
-RawDriverUnitProxy::RawDriverUnitProxy(protocol_adapter::AbstractProtocolAdapter& protocol_adapter):
+RawDriverUnitProxy::RawDriverUnitProxy(ChaosUniquePtr<protocol_adapter::AbstractProtocolAdapter>& protocol_adapter):
 AbstractUnitProxy(protocol_adapter){}
 
 RawDriverUnitProxy::~RawDriverUnitProxy() {}
