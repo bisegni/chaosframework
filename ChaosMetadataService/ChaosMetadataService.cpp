@@ -30,9 +30,6 @@
 
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 
-//! Regular expression for check server endpoint with the sintax hostname:[priority_port:service_port]
-static const boost::regex KVParamRegex("[a-zA-Z0-9/_-]+:[a-zA-Z0-9/_-]+");
-
 using namespace std;
 using namespace chaos;
 using namespace chaos::data_service;
@@ -283,7 +280,8 @@ void ChaosMetadataService::signalHanlder(int signalNumber) {
 
 void ChaosMetadataService::fillKVParameter(std::map<std::string, std::string>& kvmap,
                                            const std::vector<std::string>& multitoken_param) {
-    
+    //! Regular expression for check server endpoint with the sintax hostname:[priority_port:service_port]
+    boost::regex KVParamRegex("[a-zA-Z0-9/_-]+:[a-zA-Z0-9/_-]+");
     std::vector<std::string> kv_splitted;
     std::vector<std::string> kvtokens;
     for(std::vector<std::string>::const_iterator it = multitoken_param.begin();

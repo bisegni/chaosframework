@@ -29,15 +29,17 @@ using namespace chaos::common::direct_io;
 
 
 //! Regular expression for check server endpoint with the sintax hostname:[priority_port:service_port]
-static const boost::regex DirectIOHostIPAndEndpointRegExp("[a-zA-Z0-9]+(.[a-zA-Z0-9]+)+:[0-9]{4,5}:[0-9]{4,5}\\|[0-9]{1,3}");
+static const char * const DirectIOHostIPAndEndpoint = "[a-zA-Z0-9]+(.[a-zA-Z0-9]+)+:[0-9]{4,5}:[0-9]{4,5}\\|[0-9]{1,3}";
 //! Regular expression for check server endpoint with the sintax ip:[priority_port:service_port]
-static const boost::regex DirectIOServerDescriptionHostAndEndpointRegExp("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b:[0-9]{4,5}:[0-9]{4,5}\\|[0-9]{1,3}");
+static const char * const DirectIOServerDescriptionHostAndEndpoint = "\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b:[0-9]{4,5}:[0-9]{4,5}\\|[0-9]{1,3}";
 //! Regular expression for check server endpoint with the sintax hostname:[priority_port:service_port]
-static const boost::regex DirectIOHostNameRegExp("[a-zA-Z0-9]+(.[a-zA-Z0-9]+)+:[0-9]{4,5}:[0-9]{4,5}");
+static const char * const DirectIOHostName = "[a-zA-Z0-9]+(.[a-zA-Z0-9]+)+:[0-9]{4,5}:[0-9]{4,5}";
 //! Regular expression for check server endpoint with the sintax ip:[priority_port:service_port]
-static const boost::regex DirectIOIPAndPortRegExp("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b:[0-9]{4,5}:[0-9]{4,5}");
+static const char * const DirectIOIPAndPort = "\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b:[0-9]{4,5}:[0-9]{4,5}";
 
 bool DirectIOURLManagment::checkURL(const std::string& url) {
+    boost::regex DirectIOHostIPAndEndpointRegExp(DirectIOHostIPAndEndpoint);
+    boost::regex DirectIOServerDescriptionHostAndEndpointRegExp(DirectIOServerDescriptionHostAndEndpoint);
 	return	boost::regex_match(url, DirectIOHostIPAndEndpointRegExp) ||
 	boost::regex_match(url, DirectIOServerDescriptionHostAndEndpointRegExp);
 }
@@ -47,7 +49,8 @@ bool DirectIOURLManagment::decoupleServerDescription(const std::string& server_d
 													 std::string& priority_desc,
 													 std::string& service_desc) {
 	std::vector<std::string> server_desc_tokens;
-	
+    boost::regex DirectIOHostNameRegExp(DirectIOHostName);
+    boost::regex DirectIOIPAndPortRegExp(DirectIOIPAndPort);
 	if(!boost::regex_match(server_desc, DirectIOHostNameRegExp) &&
        !boost::regex_match(server_desc, DirectIOIPAndPortRegExp)) {
         return false;

@@ -40,11 +40,6 @@ std::string DirectIOClientConnection::my_str_ip;
 
 // current client ip in 64 bit form
 uint64_t DirectIOClientConnection::my_i64_ip = 0;
-//! Regular expression for check server endpoint with the sintax hostname:[priority_port:service_port]
-static const boost::regex DirectIOHostNameRegExp("[a-zA-Z0-9]+(.[a-zA-Z0-9]+)+:[0-9]{4,5}:[0-9]{4,5}");
-//! Regular expression for check server endpoint with the sintax ip:[priority_port:service_port]
-static const boost::regex DirectIOIPAndPortRegExp("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b:[0-9]{4,5}:[0-9]{4,5}");
-
 
 DirectIOClientConnection::DirectIOClientConnection(const std::string& _server_description,
 												   uint16_t _endpoint):

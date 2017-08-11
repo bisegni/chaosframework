@@ -31,9 +31,6 @@
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/io/IODirectIODriver.h>
 
-//! Regular expression for check server endpoint with the sintax hostname:[priority_port:service_port]
-static const boost::regex KVParamRegex("[a-zA-Z0-9/_-]+:[a-zA-Z0-9/_-]+");
-
 using namespace std;
 using namespace chaos;
 using namespace chaos::common::data;
