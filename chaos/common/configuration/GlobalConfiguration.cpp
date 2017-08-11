@@ -29,6 +29,7 @@
 #include "GlobalConfiguration.h"
 
 using namespace chaos;
+using namespace chaos::common::data;
 using namespace chaos::common::network;
 using namespace chaos::common::utility;
 
@@ -39,6 +40,10 @@ namespace po = boost::program_options;
 #define _SYNC_RPC_PORT				8080
 #define _DIRECT_IO_PRIORITY_PORT	1672
 #define _DIRECT_IO_SERVICE_PORT		30175
+
+GlobalConfiguration::GlobalConfiguration():
+desc("!CHAOS Framework Allowed options"){}
+GlobalConfiguration::~GlobalConfiguration(){}
 
 /*
  
@@ -203,71 +208,72 @@ void GlobalConfiguration::parseParameter(const po::basic_parsed_options<char>& o
     checkDefaultOption();
 }
 void GlobalConfiguration::checkDefaultOption() throw (CException) {
+    configuration.reset(new CDataWrapper());
     //now we can fill the gloabl configuration
     //start with getting log configuration
     CHECK_AND_DEFINE_BOOL_ZERO_TOKEN_OPTION(logOnConsole, InitOption::OPT_LOG_ON_CONSOLE);
-    configuration.addBoolValue(InitOption::OPT_LOG_ON_CONSOLE, logOnConsole);
+    configuration->addBoolValue(InitOption::OPT_LOG_ON_CONSOLE, logOnConsole);
     
     CHECK_AND_DEFINE_BOOL_ZERO_TOKEN_OPTION(logOnSyslog, InitOption::OPT_LOG_ON_SYSLOG);
-    configuration.addBoolValue(InitOption::OPT_LOG_ON_SYSLOG, logOnSyslog);
+    configuration->addBoolValue(InitOption::OPT_LOG_ON_SYSLOG, logOnSyslog);
     
     CHECK_AND_DEFINE_OPTION(string, logSyslogSrv, InitOption::OPT_LOG_SYSLOG_SERVER);
-    configuration.addStringValue(InitOption::OPT_LOG_SYSLOG_SERVER, logSyslogSrv);
+    configuration->addStringValue(InitOption::OPT_LOG_SYSLOG_SERVER, logSyslogSrv);
     
     CHECK_AND_DEFINE_OPTION(uint32_t, logSyslogSrvPort, InitOption::OPT_LOG_SYSLOG_SERVER_PORT);
-    configuration.addInt32Value(InitOption::OPT_LOG_SYSLOG_SERVER_PORT, logSyslogSrvPort);
+    configuration->addInt32Value(InitOption::OPT_LOG_SYSLOG_SERVER_PORT, logSyslogSrvPort);
     
     CHECK_AND_DEFINE_BOOL_ZERO_TOKEN_OPTION(logOnFile, InitOption::OPT_LOG_ON_FILE);
-    configuration.addBoolValue(InitOption::OPT_LOG_ON_FILE, logOnFile);
+    configuration->addBoolValue(InitOption::OPT_LOG_ON_FILE, logOnFile);
     
     CHECK_AND_DEFINE_OPTION(string, logFilePath, InitOption::OPT_LOG_FILE);
-    configuration.addStringValue(InitOption::OPT_LOG_FILE, logFilePath);
+    configuration->addStringValue(InitOption::OPT_LOG_FILE, logFilePath);
     
     CHECK_AND_DEFINE_OPTION(string, logLevel, InitOption::OPT_LOG_LEVEL)
-    configuration.addInt32Value(InitOption::OPT_LOG_LEVEL, filterLogLevel(logLevel));
+    configuration->addInt32Value(InitOption::OPT_LOG_LEVEL, filterLogLevel(logLevel));
     
     CHECK_AND_DEFINE_BOOL_ZERO_TOKEN_OPTION(log_metric_on_console, InitOption::OPT_LOG_METRIC_ON_CONSOLE);
-    configuration.addBoolValue(InitOption::OPT_LOG_METRIC_ON_CONSOLE, log_metric_on_console);
+    configuration->addBoolValue(InitOption::OPT_LOG_METRIC_ON_CONSOLE, log_metric_on_console);
     
     CHECK_AND_DEFINE_BOOL_ZERO_TOKEN_OPTION(log_metric_on_file, InitOption::OPT_LOG_METRIC_ON_FILE)
-    configuration.addBoolValue(InitOption::OPT_LOG_METRIC_ON_FILE, log_metric_on_file);
+    configuration->addBoolValue(InitOption::OPT_LOG_METRIC_ON_FILE, log_metric_on_file);
     
     CHECK_AND_DEFINE_OPTION(string, log_metric_file_path, InitOption::OPT_LOG_METRIC_ON_FILE_PATH);
-    configuration.addStringValue(InitOption::OPT_LOG_METRIC_ON_FILE_PATH, log_metric_file_path);
+    configuration->addStringValue(InitOption::OPT_LOG_METRIC_ON_FILE_PATH, log_metric_file_path);
     
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(uint32_t, log_max_size_mb, InitOption::OPT_LOG_MAX_SIZE_MB, 10);
-    configuration.addInt32Value(InitOption::OPT_LOG_MAX_SIZE_MB, log_max_size_mb);
+    configuration->addInt32Value(InitOption::OPT_LOG_MAX_SIZE_MB, log_max_size_mb);
     
     CHECK_AND_DEFINE_OPTION(string, publishingIp, InitOption::OPT_PUBLISHING_IP);
     bool isIp = regex_match(publishingIp, common::utility::ServerIPRegExp);
-    if(isIp) configuration.addStringValue(InitOption::OPT_PUBLISHING_IP, publishingIp);
+    if(isIp) configuration->addStringValue(InitOption::OPT_PUBLISHING_IP, publishingIp);
     
     CHECK_AND_DEFINE_OPTION(string, publishingInterface, InitOption::OPT_PUBLISHING_INTERFACE)
-    configuration.addStringValue(InitOption::OPT_PUBLISHING_INTERFACE, publishingInterface);
+    configuration->addStringValue(InitOption::OPT_PUBLISHING_INTERFACE, publishingInterface);
     
     //configure rpc
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(uint32_t, rpcServerPort, InitOption::OPT_RPC_SERVER_PORT, 8888);
     int32_t freeFoundPort = InetUtility::scanForLocalFreePort(rpcServerPort);
     addLocalServerBasePort(freeFoundPort);
-    configuration.addInt32Value(InitOption::OPT_RPC_SERVER_PORT, freeFoundPort);
+    configuration->addInt32Value(InitOption::OPT_RPC_SERVER_PORT, freeFoundPort);
     
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(uint32_t, rpcServerThreadNumber, InitOption::OPT_RPC_SERVER_THREAD_NUMBER, 1);
-    configuration.addInt32Value(InitOption::OPT_RPC_SERVER_THREAD_NUMBER, rpcServerThreadNumber);
+    configuration->addInt32Value(InitOption::OPT_RPC_SERVER_THREAD_NUMBER, rpcServerThreadNumber);
     
     CHECK_AND_DEFINE_OPTION(string, rpcImpl, InitOption::OPT_RPC_IMPLEMENTATION)
-    configuration.addStringValue(InitOption::OPT_RPC_IMPLEMENTATION, rpcImpl);
+    configuration->addStringValue(InitOption::OPT_RPC_IMPLEMENTATION, rpcImpl);
     
     CHECK_AND_DEFINE_OPTION(bool, OPT_RPC_SYNC_ENABLE, InitOption::OPT_RPC_SYNC_ENABLE)
     else{
         OPT_RPC_SYNC_ENABLE = false;
     }
-    configuration.addBoolValue(InitOption::OPT_RPC_SYNC_ENABLE, OPT_RPC_SYNC_ENABLE);
+    configuration->addBoolValue(InitOption::OPT_RPC_SYNC_ENABLE, OPT_RPC_SYNC_ENABLE);
     
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(bool, rpc_enable_log_metric, InitOption::OPT_RPC_LOG_METRIC, false);
-    configuration.addBoolValue(InitOption::OPT_RPC_LOG_METRIC, rpc_enable_log_metric);;
+    configuration->addBoolValue(InitOption::OPT_RPC_LOG_METRIC, rpc_enable_log_metric);;
     
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(uint64_t, rpc_enable_log_metric_update_sec, InitOption::OPT_RPC_LOG_METRIC_UPDATE_INTERVAL, 5);
-    configuration.addInt64Value(InitOption::OPT_RPC_LOG_METRIC_UPDATE_INTERVAL, rpc_enable_log_metric_update_sec);
+    configuration->addInt64Value(InitOption::OPT_RPC_LOG_METRIC_UPDATE_INTERVAL, rpc_enable_log_metric_update_sec);
     
     CHECK_AND_DEFINE_OPTION(string, rpc_impl_kv_param, InitOption::OPT_RPC_IMPL_KV_PARAM);
     
@@ -277,14 +283,14 @@ void GlobalConfiguration::checkDefaultOption() throw (CException) {
     }
     
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(uint32_t, rpc_domain_queue_thread_number, InitOption::OPT_RPC_DOMAIN_QUEUE_THREAD, 1);
-    configuration.addInt32Value(InitOption::OPT_RPC_DOMAIN_QUEUE_THREAD, rpc_domain_queue_thread_number);
+    configuration->addInt32Value(InitOption::OPT_RPC_DOMAIN_QUEUE_THREAD, rpc_domain_queue_thread_number);
     
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(uint32_t, rpc_domain_scheduler_type, InitOption::OPT_RPC_DOMAIN_SCHEDULER_TYPE, 0);
-    configuration.addInt32Value(InitOption::OPT_RPC_DOMAIN_SCHEDULER_TYPE, rpc_domain_scheduler_type);
+    configuration->addInt32Value(InitOption::OPT_RPC_DOMAIN_SCHEDULER_TYPE, rpc_domain_scheduler_type);
     
     //direct io
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(uint32_t, direct_io_server_thread_number, InitOption::OPT_DIRECT_IO_SERVER_THREAD_NUMBER, 2);
-    configuration.addInt32Value(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_SERVER_THREAD_NUMBER, direct_io_server_thread_number);
+    configuration->addInt32Value(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_SERVER_THREAD_NUMBER, direct_io_server_thread_number);
     
     CHECK_AND_DEFINE_OPTION(std::vector<std::string>, directio_srv_impl_kv_param, InitOption::OPT_DIRECT_IO_SERVER_IMPL_KV_PARAM);
     //fill the key value list
@@ -298,30 +304,30 @@ void GlobalConfiguration::checkDefaultOption() throw (CException) {
         fillKVParameter(map_kv_param_directio_clnt_impl, directio_clnt_impl_kv_param, "");
     }
     CHECK_AND_DEFINE_OPTION(string, direct_io_server_impl, InitOption::OPT_DIRECT_IO_IMPLEMENTATION)
-    configuration.addStringValue(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_IMPL_TYPE, direct_io_server_impl);
+    configuration->addStringValue(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_IMPL_TYPE, direct_io_server_impl);
     
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(uint32_t, direct_io_priority_port, InitOption::OPT_DIRECT_IO_PRIORITY_SERVER_PORT, _DIRECT_IO_PRIORITY_PORT);
     freeFoundPort = InetUtility::scanForLocalFreePort(direct_io_priority_port);
-    configuration.addInt32Value(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_PRIORITY_PORT, (uint32_t)freeFoundPort);
+    configuration->addInt32Value(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_PRIORITY_PORT, (uint32_t)freeFoundPort);
     
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(uint32_t, direct_io_service_port, InitOption::OPT_DIRECT_IO_SERVICE_SERVER_PORT, _DIRECT_IO_SERVICE_PORT);
     freeFoundPort = InetUtility::scanForLocalFreePort(direct_io_service_port);
-    configuration.addInt32Value(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_SERVICE_PORT, (uint32_t)freeFoundPort);
+    configuration->addInt32Value(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_SERVICE_PORT, (uint32_t)freeFoundPort);
     
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(bool, direct_io_enable_log_metric, InitOption::OPT_DIRECT_IO_LOG_METRIC, false);
-    configuration.addBoolValue(InitOption::OPT_DIRECT_IO_LOG_METRIC, direct_io_enable_log_metric);
+    configuration->addBoolValue(InitOption::OPT_DIRECT_IO_LOG_METRIC, direct_io_enable_log_metric);
     
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(uint64_t, direct_io_enable_log_metric_update_sec, InitOption::OPT_DIRECT_IO_LOG_METRIC_UPDATE_INTERVAL, 5);
-    configuration.addInt64Value(InitOption::OPT_DIRECT_IO_LOG_METRIC_UPDATE_INTERVAL, direct_io_enable_log_metric_update_sec);
+    configuration->addInt64Value(InitOption::OPT_DIRECT_IO_LOG_METRIC_UPDATE_INTERVAL, direct_io_enable_log_metric_update_sec);
     
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(bool, direct_io_enable_log_metric_merged_endpoint, InitOption::OPT_DIRECT_IO_CLIENT_LOG_METRIC_MERGED_ENDPOINT, true)
-    configuration.addBoolValue(InitOption::OPT_DIRECT_IO_CLIENT_LOG_METRIC_MERGED_ENDPOINT, direct_io_enable_log_metric_merged_endpoint);
+    configuration->addBoolValue(InitOption::OPT_DIRECT_IO_CLIENT_LOG_METRIC_MERGED_ENDPOINT, direct_io_enable_log_metric_merged_endpoint);
     
     //event
     CHECK_AND_DEFINE_BOOL_ZERO_TOKEN_OPTION(event_disable, InitOption::OPT_EVENT_DISABLE);
-    configuration.addBoolValue(InitOption::OPT_EVENT_DISABLE, event_disable);
+    configuration->addBoolValue(InitOption::OPT_EVENT_DISABLE, event_disable);
     
-    configuration.addStringValue(chaos::common::event::EventConfiguration::OPTION_KEY_EVENT_ADAPTER_IMPLEMENTATION, "AsioImpl");
+    configuration->addStringValue(chaos::common::event::EventConfiguration::OPTION_KEY_EVENT_ADAPTER_IMPLEMENTATION, "AsioImpl");
     
     //configure metadataserver as single or list
     CHECK_AND_DEFINE_OPTION(std::vector<std::string>, metadata_server_address_list, InitOption::OPT_METADATASERVER_ADDRESS);
@@ -337,13 +343,13 @@ void GlobalConfiguration::checkDefaultOption() throw (CException) {
     finalizeMetadataServerAddress();
     
     CHECK_AND_DEFINE_BOOL_ZERO_TOKEN_OPTION(enable_time_calibration, InitOption::OPT_TIME_CALIBRATION);
-    configuration.addBoolValue(InitOption::OPT_TIME_CALIBRATION, enable_time_calibration);
+    configuration->addBoolValue(InitOption::OPT_TIME_CALIBRATION, enable_time_calibration);
     
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(uint32_t, offset_calibration_bound, InitOption::OPT_TIME_CALIBRATION_OFFSET_BOUND, 500);
-    configuration.addInt32Value(InitOption::OPT_TIME_CALIBRATION_OFFSET_BOUND, offset_calibration_bound);
+    configuration->addInt32Value(InitOption::OPT_TIME_CALIBRATION_OFFSET_BOUND, offset_calibration_bound);
     
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(std::string, time_calibration_ntp_server, InitOption::OPT_TIME_CALIBRATION_NTP_SERVER, "");
-    configuration.addStringValue(InitOption::OPT_TIME_CALIBRATION_NTP_SERVER, time_calibration_ntp_server);
+    configuration->addStringValue(InitOption::OPT_TIME_CALIBRATION_NTP_SERVER, time_calibration_ntp_server);
     
     CHECK_AND_DEFINE_OPTION(std::vector<std::string>, script_vm_kv_param, InitOption::OPT_SCRIPT_VM_KV_PARAM);
     //fill the key value list
@@ -446,10 +452,10 @@ void GlobalConfiguration::fillKVParameter(std::map<std::string, std::string>& kv
  *return the cdatawrapper that contains the global configuraiton
  */
 chaos_data::CDataWrapper *GlobalConfiguration::getConfiguration(){
-    return &configuration;
+    return configuration.get();
 }
 void GlobalConfiguration::setConfiguration(chaos_data::CDataWrapper *conf){
-    configuration.copyAllTo(*conf);
+    configuration->copyAllTo(*conf);
 }
 
 /**
@@ -462,11 +468,11 @@ void GlobalConfiguration::addMetadataServerAddress(const string& mdsAddress) thr
         throw CException(1, "Bad server address", "GlobalConfiguration::addMetadataServerAddress");
     
     //address can be added
-    configuration.appendStringToArray(mdsAddress);
+    configuration->appendStringToArray(mdsAddress);
 }
 
 void GlobalConfiguration::finalizeMetadataServerAddress() {
-    configuration.finalizeArrayForKey(InitOption::OPT_METADATASERVER_ADDRESS);
+    configuration->finalizeArrayForKey(InitOption::OPT_METADATASERVER_ADDRESS);
 }
 
 /**
@@ -478,14 +484,14 @@ void GlobalConfiguration::addLocalServerAddress(const std::string& mdsAddress) t
         throw CException(1, "Bad server address", "GlobalConfiguration::addMetadataServerAddress");
     
     //address can be added
-    configuration.addStringValue("local_ip", mdsAddress);
+    configuration->addStringValue("local_ip", mdsAddress);
 }
 
 /**
  *Add the metadataserver address
  */
 void GlobalConfiguration::addLocalServerBasePort(int32_t localDefaultPort) throw (CException) {
-    configuration.addInt32Value("base_port", localDefaultPort);
+    configuration->addInt32Value("base_port", localDefaultPort);
 }
 
 std::string GlobalConfiguration::getHostname() {
@@ -496,14 +502,14 @@ std::string GlobalConfiguration::getHostname() {
  return the address of metadataserver
  */
 string GlobalConfiguration::getMetadataServerAddress() {
-    ChaosUniquePtr<chaos::common::data::CMultiTypeDataArrayWrapper> server_array(configuration.getVectorValue(InitOption::OPT_METADATASERVER_ADDRESS));
+    ChaosUniquePtr<chaos::common::data::CMultiTypeDataArrayWrapper> server_array(configuration->getVectorValue(InitOption::OPT_METADATASERVER_ADDRESS));
     CHAOS_ASSERT(server_array->size());
     return server_array->getStringElementAtIndex(0);
 }
 
 VectorMetadatserver GlobalConfiguration::getMetadataServerAddressList() {
     std::vector<CNetworkAddress> result;
-    ChaosUniquePtr<chaos::common::data::CMultiTypeDataArrayWrapper> server_array(configuration.getVectorValue(InitOption::OPT_METADATASERVER_ADDRESS));
+    ChaosUniquePtr<chaos::common::data::CMultiTypeDataArrayWrapper> server_array(configuration->getVectorValue(InitOption::OPT_METADATASERVER_ADDRESS));
     for(int idx = 0;
         idx < server_array->size();
         idx++) {
@@ -516,20 +522,20 @@ VectorMetadatserver GlobalConfiguration::getMetadataServerAddressList() {
  return the address of metadataserver
  */
 string GlobalConfiguration::getLocalServerAddress() {
-    return configuration.getStringValue("local_ip");
+    return configuration->getStringValue("local_ip");
 }
 
 /*
  return the address of metadataserver
  */
 int32_t GlobalConfiguration::getLocalServerBasePort() {
-    return configuration.getInt32Value("base_port");
+    return configuration->getInt32Value("base_port");
 }
 
 string GlobalConfiguration::getLocalServerAddressAnBasePort(){
     char buf[128];
-    string addr = configuration.getStringValue("local_ip");
-    sprintf ( buf, "%s:%d", addr.c_str(), (int)configuration.getInt32Value("base_port"));
+    string addr = configuration->getStringValue("local_ip");
+    sprintf ( buf, "%s:%d", addr.c_str(), (int)configuration->getInt32Value("base_port"));
     addr.assign(buf);
     return addr;
 }
@@ -538,7 +544,7 @@ string GlobalConfiguration::getLocalServerAddressAnBasePort(){
  return the address of metadataserver
  */
 bool GlobalConfiguration::isMEtadataServerConfigured() {
-    return configuration.hasKey(InitOption::OPT_METADATASERVER_ADDRESS);
+    return configuration->hasKey(InitOption::OPT_METADATASERVER_ADDRESS);
 }
 
 MapStrKeyStrValue& GlobalConfiguration::getRpcImplKVParam() {

@@ -81,7 +81,21 @@ int main(int argc, char *argv[]){
                                                                                                      10,
                                                                                                      & wait_seconds);
     try{
-        
+        for(int i = 0;
+            i<100;
+            i++) {
+            ChaosMetadataServiceClient::getInstance()->init(argc, argv);
+            
+            ChaosMetadataServiceClient::getInstance()->start();
+            
+            ChaosMetadataServiceClient::getInstance()->enableMonitor();
+            
+            ChaosMetadataServiceClient::getInstance()->disableMonitor();
+            
+            ChaosMetadataServiceClient::getInstance()->stop();
+            
+            ChaosMetadataServiceClient::getInstance()->deinit();
+        }
         ChaosMetadataServiceClient::getInstance()->init(argc, argv);
         
         ChaosMetadataServiceClient::getInstance()->start();
@@ -204,6 +218,9 @@ int main(int argc, char *argv[]){
                 }
                 ChaosMetadataServiceClient::getInstance()->deleteCUController(cu_ctrl);
             }
+                
+            default:
+                break;
         }
         
         //register log allert event

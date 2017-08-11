@@ -30,19 +30,19 @@
 namespace chaos {
     namespace common {
         namespace utility {
-
+            
 #define SUBCLASS_AS_SINGLETON(ClassName) \
-        public Singleton<ClassName>{\
-        friend class Singleton<ClassName>;
-
+public Singleton<ClassName>{\
+friend class Singleton<ClassName>;
+            
 #define DEFINE_CLASS_AS_SINGLETON(ClassName) \
-        class ClassName : public Singleton<ClassName>{\
-        friend class Singleton<ClassName>;
-
+class ClassName : public Singleton<ClassName>{\
+friend class Singleton<ClassName>;
+            
 #define DEFINE_CLASS_AS_SINGLETON_WITH_OTHER_SUBCLASS(ClassName, Subclass) \
-        class ClassName : public Subclass, public Singleton<ClassName>{\
-        friend class Singleton<ClassName>;
-
+class ClassName : public Subclass, public Singleton<ClassName>{\
+friend class Singleton<ClassName>;
+            
             /*
              * Utility class for singleton find here: http://www.boostcookbook.com/Recipe:/1235044
              */
@@ -54,28 +54,24 @@ namespace chaos {
                     call_once(_singletonInit, flag);
                     return t;
                 }
-
                 static void _singletonInit() {
-                	if(t==0){
-                		t= new T();
-                	}
+                    if(t==0){
+                        t= new T();
+                    }
                 }
-
                 virtual ~Singleton(){if(t) delete t;t=0L;}
-
             protected:
                 static T*  t;
-
+                Singleton(){}
             private:
-
                 static boost::once_flag flag;
+                // Stop the compiler generating methods of copy the object
+                Singleton(Singleton const& copy);            // Not Implemented
+                Singleton& operator=(Singleton const& copy); // Not Implemented
             };
-
-          template<class T> T* Singleton<T>::t=0L;
-
+            
+            template<class T> T* Singleton<T>::t=0L;
             template<class T> boost::once_flag Singleton<T>::flag = BOOST_ONCE_INIT;
-
-
         }
     }
 }

@@ -41,7 +41,7 @@ void NodeSearchTest::testSearch(const std::string& search_string){
     uint64_t last_sequence_id = 0;
     
     //get the api proxy
-    NodeSearch *node_search_api_proxy = ChaosMetadataServiceClient::getInstance()->getApiProxy<NodeSearch>(500);
+    ChaosUniquePtr<NodeSearch> node_search_api_proxy = ChaosMetadataServiceClient::getInstance()->getApiProxy<NodeSearch>(500);
     
     while (!end){
         

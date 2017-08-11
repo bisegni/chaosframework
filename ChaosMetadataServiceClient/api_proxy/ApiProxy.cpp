@@ -37,13 +37,8 @@ group_name(_group_name),
 api_name(_api_name),
 access_counter(0),
 timeout_in_milliseconds(_timeout_in_milliseconds),
-mn_message(_mn_message){
-    
-}
-//! default destructor
-ApiProxy::~ApiProxy() {
-    
-}
+mn_message(_mn_message){}
+ApiProxy::~ApiProxy() {}
 
 //! execute an api call
 

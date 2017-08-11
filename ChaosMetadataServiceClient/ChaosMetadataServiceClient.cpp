@@ -83,8 +83,7 @@ void ChaosMetadataServiceClient::init()  throw(CException) {
 
 	mds_client_initialized= true;
     //--------------api proxy------------------------
-      api_proxy_manager.reset(new ApiProxyManager(NetworkBroker::getInstance(),
-                                                  &setting),
+      api_proxy_manager.reset(new ApiProxyManager(),
                               "ApiProxyManager");
       api_proxy_manager.init(NULL, __PRETTY_FUNCTION__);
 
@@ -182,14 +181,12 @@ void ChaosMetadataServiceClient::deinit()   throw(CException) {
     
     CHAOS_NOT_THROW(api_proxy_manager.deinit(__PRETTY_FUNCTION__););
     
-    if(monitoringIsStarted()){CHAOS_NOT_THROW(monitor_manager.deinit(__PRETTY_FUNCTION__););}
-    
+    CHAOS_NOT_THROW(monitor_manager.deinit(__PRETTY_FUNCTION__););
     CHAOS_NOT_THROW(ChaosCommon<ChaosMetadataServiceClient>::deinit(););
     
     CMSC_LAPP << "-------------------------------------------------------------------------";
     CMSC_LAPP << "Metadata service client has been stopped";
     CMSC_LAPP << "-------------------------------------------------------------------------";
-
 }
 
 void ChaosMetadataServiceClient::clearServerList() {

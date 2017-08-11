@@ -36,15 +36,15 @@ namespace chaos {
 
 #define API_PROXY_CD_DECLARATION(x)\
 explicit x(chaos::common::message::MultiAddressMessageChannel *_mn_message, int32_t timeout_in_milliseconds);\
-~x();
+//~x();
 
 #define API_PROXY_CD_DEFINITION(x, group, name)\
 x::x(chaos::common::message::MultiAddressMessageChannel *_mn_message, int32_t timeout_in_milliseconds):ApiProxy(group, name, _mn_message, timeout_in_milliseconds){}\
-x::~x(){}
+//x::~x(){}
 
 #define API_PROXY_CD_DEFINITION_WITH_INIT(x, group, name, init)\
 x::x(chaos::common::message::MultiAddressMessageChannel *_mn_message, int32_t timeout_in_milliseconds):ApiProxy(group, name, _mn_message, timeout_in_milliseconds){init}\
-x::~x(){}
+//x::~x(){}
             //! define the result of an api like shared pointer of @chaos::common::message::MessageRequestFuture
             typedef ChaosUniquePtr<chaos::common::message::MultiAddressMessageRequestFuture> ApiProxyResult;
             
@@ -57,6 +57,7 @@ x::~x(){}
             };
             
             class ApiProxyManager;
+            
                 //! base class for all proxy api
             class ApiProxy {
                 friend class ApiProxyManager;
@@ -77,14 +78,15 @@ x::~x(){}
                                   const std::string& _api_name,
                                   chaos::common::message::MultiAddressMessageChannel *_mn_message,
                                   int32_t _timeout_in_milliseconds = 1000);
-                    //! default destructor
-                ~ApiProxy();
                     //! execute an api call
                 /*!
                  preform an call of an api and return the opportune future
                  that permit to inspect the result or error
                  */
                 ApiProxyResult callApi(chaos::common::data::CDataWrapper *api_message = NULL);
+            public:
+                //! default destructor
+                ~ApiProxy();
             };
         }
     }

@@ -90,7 +90,7 @@ namespace chaos {
             void deinit()throw(CException);
             
             template<typename D>
-            D* getApiProxy(int32_t timeout_in_milliseconds = 1000) {
+            ChaosUniquePtr<D> getApiProxy(int32_t timeout_in_milliseconds = RpcConfigurationKey::GlobalRPCTimeoutinMSec) {
                 return api_proxy_manager->getApiProxy<D>(timeout_in_milliseconds);
             }
             

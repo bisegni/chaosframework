@@ -24,26 +24,27 @@
 #include <ChaosMetadataServiceClient/api_proxy/ApiProxy.h>
 
 #include <chaos/common/network/NetworkBroker.h>
+#include <chaos/common/utility/LockableObject.h>
 #include <chaos/common/utility/InizializableService.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 
 #include <string>
 #include <vector>
-
+#include <iostream>
 #define GET_CHAOS_API_PTR(api_name)\
-    chaos::metadata_service_client::ChaosMetadataServiceClient::getInstance()->getApiProxy<api_name>()
+chaos::metadata_service_client::ChaosMetadataServiceClient::getInstance()->getApiProxy<api_name>()
 
 namespace chaos {
     namespace metadata_service_client {
-            //! forward declaration
+        //! forward declaration
         class ChaosMetadataServiceClient;
-
+        
         namespace api_proxy {
-                //type
+            //type
             typedef std::vector< ApiProxy* >           ApiProxyList;
             typedef std::vector< ApiProxy* >::iterator ApiProxyListIterator;
-
-                //! Manager for the creation of the appi proxy and thei managment
+            
+            //! Manager for the creation of the appi proxy and thei managment
             /*!
              For every MDS remote api there is a client proxy that hide the messaging
              complessity to the client
@@ -52,52 +53,30 @@ namespace chaos {
             public chaos::common::utility::InizializableService {
                 friend class chaos::common::utility::InizializableServiceContainer<ApiProxyManager>;
                 friend class chaos::metadata_service_client::ChaosMetadataServiceClient;
-
-                    //! Applciation settings
-                ClientSetting *setting;
-                    //! list of the api instance
-                ApiProxyList api_instance;
-
-                    //! network broker service
-                chaos::common::network::NetworkBroker *network_broker;
-
-                    //! referecne to the multinode message channel
+                
+                //! referecne to the multinode message channel
                 chaos::common::message::MultiAddressMessageChannel *mn_message_channel;
-
-
-                    //! default private constructor called only by ChaosMetadataServiceClient class
-                ApiProxyManager(chaos::common::network::NetworkBroker *_network_broker,
-                                ClientSetting *_setting);
-
-                    //! default destructor called only by ChaosMetadataServiceClient class
+                
+                
+                //! default private constructor called only by ChaosMetadataServiceClient class
+                ApiProxyManager();
+                
+                //! default destructor called only by ChaosMetadataServiceClient class
                 ~ApiProxyManager();
             public:
                 template<typename P>
-                P* getApiProxy(int32_t timeout_in_milliseconds = 1000) {
-                        //! there was a type for every template expantion
-                    static P* instance = NULL;
-                    if(instance == NULL) {
-                        //allcoate the instsancer for the AbstractApi depending by the template
-                        ChaosUniquePtr<INSTANCER_P2(P, ApiProxy, chaos::common::message::MultiAddressMessageChannel*, int32_t)> i(ALLOCATE_INSTANCER_P2(P, ApiProxy, chaos::common::message::MultiAddressMessageChannel*, int32_t));
-                        if(i.get() && mn_message_channel){
-                        //get api instance
-                        	instance = (P*)i->getInstance(mn_message_channel, timeout_in_milliseconds);
-
-                            //add new instance to the list of all instances
-                        	api_instance.push_back(instance);
-                        } else {
-                        	LERR_<<"CANNOT ALLOCATE API "<<__PRETTY_FUNCTION__;
-                        }
-                    }
-                    return instance;
+                ChaosUniquePtr<P> getApiProxy(int32_t timeout_in_milliseconds = RpcConfigurationKey::GlobalRPCTimeoutinMSec) {
+                    static ChaosUniquePtr<INSTANCER_P2(P, ApiProxy, chaos::common::message::MultiAddressMessageChannel*, int32_t)> i(ALLOCATE_INSTANCER_P2(P, ApiProxy, chaos::common::message::MultiAddressMessageChannel*, int32_t));
+                    //! there was a type for every template expantion
+                    return ChaosUniquePtr<P>((P*)i->getInstance(mn_message_channel, timeout_in_milliseconds));
                 };
-                    //!inherited by InizializableService
+                //!inherited by InizializableService
                 void init(void *init_data) throw (chaos::CException);
-                    //!inherited by InizializableService
+                //!inherited by InizializableService
                 void deinit() throw (chaos::CException);
-                    //! add a new api server endpoint
+                //! add a new api server endpoint
                 void addServerAddress(const std::string& server_address);
-                    //! remove all api endpoint server
+                //! remove all api endpoint server
                 void clearServer();
             };
         }

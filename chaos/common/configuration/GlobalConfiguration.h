@@ -84,17 +84,17 @@ x = hasOption(y);
      Central class for all CHOAS framework configuraitons
      */
     class GlobalConfiguration:
-    public chaos::common::utility::Singleton<GlobalConfiguration>{
+    public chaos::common::utility::Singleton<GlobalConfiguration> {
         //for program option
         po::variables_map vm;
         po::options_description desc;
         //for contain program option value and other usefull think
-        chaos_data::CDataWrapper configuration;
+        ChaosUniquePtr<chaos_data::CDataWrapper> configuration;
         friend class chaos::common::utility::Singleton<GlobalConfiguration>;
 
         
-        GlobalConfiguration():desc("!CHAOS Framework Allowed options"){};
-        ~GlobalConfiguration(){};
+        GlobalConfiguration();
+        ~GlobalConfiguration();
         //! Parse the options
         /*!
          Generalized parser option function
