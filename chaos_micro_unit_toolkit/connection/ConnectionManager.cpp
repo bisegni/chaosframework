@@ -33,7 +33,7 @@ using namespace chaos::micro_unit_toolkit::connection::unit_proxy;
 using namespace chaos::micro_unit_toolkit::connection::protocol_adapter;
 
 ConnectionManager::ConnectionManager() {
-    registerUnitProxy<raw_driver::RawDriverUnitProxy::RawDriverUnitProxy>();
+    registerUnitProxy<raw_driver::RawDriverUnitProxy>();
     registerProtocolAdapter<http::HTTPProtocolAdapter>();
 }
 

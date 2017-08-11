@@ -8,11 +8,14 @@ SET(source ChaosMicroUnitToolkit.cpp)
 SET(source ${source} data/DataPack.cpp)
 SET(source ${source} connection/ConnectionManager.cpp)
 SET(source ${source} connection/protocol_adapter/AbstractProtocolAdapter.cpp
-              connection/protocol_adapter/http/HTTPProtocolAdapter.cpp)
+                    connection/protocol_adapter/http/HTTPProtocolAdapter.cpp)
 SET(source ${source} connection/unit_proxy/AbstractUnitProxy.cpp
-              connection/unit_proxy/RawDriverUnitProxy.cpp)
-SET(source ${source} external_lib/jsoncpp.cpp
-              external_lib/mongoose.c)
+                      connection/unit_proxy/UnitProxyHandlerWrapper.cpp)
+SET(source ${source} connection/unit_proxy/raw_driver/RawDriverUnitProxy.cpp
+                      connection/unit_proxy/raw_driver/RawDriverHandlerWrapper.cpp)
+SET(source ${source}  external_lib/jsoncpp.cpp
+                      external_lib/mongoose.c
+                      external_lib/base64.cpp)
 
 IF (BUILD_FORCE_STATIC)
 ADD_LIBRARY(${PROJECT_NAME} STATIC ${source})
