@@ -8,11 +8,11 @@
 class StatusManager:
         public chaos::common::utility::Singleton<StatusManager> {
 public:
-
+    ~StatusManager();
 private:
     QStatusBar *app_status_bar;
     StatusManager();
-    ~StatusManager();
+
 };
 
 #endif // STATUSMANAGER_H
