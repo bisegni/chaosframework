@@ -79,6 +79,7 @@ void ChaosMetadataServiceClient::init()  throw(CException) {
 	CMSC_LDBG<<"Initializing";
 
 	mds_client_initialized= true;
+    mds_client_deinitialized = false;
     //--------------api proxy------------------------
       api_proxy_manager.reset(new ApiProxyManager(),
                               "ApiProxyManager");
@@ -177,8 +178,7 @@ void ChaosMetadataServiceClient::deinit()   throw(CException) {
     CHAOS_NOT_THROW(event_dispatch_manager.deinit(__PRETTY_FUNCTION__););
     
     CHAOS_NOT_THROW(api_proxy_manager.deinit(__PRETTY_FUNCTION__););
-    
-    CHAOS_NOT_THROW(monitor_manager.deinit(__PRETTY_FUNCTION__););
+
     CHAOS_NOT_THROW(ChaosCommon<ChaosMetadataServiceClient>::deinit(););
     
     CMSC_LAPP << "-------------------------------------------------------------------------";
