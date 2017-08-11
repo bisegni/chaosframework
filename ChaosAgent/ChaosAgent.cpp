@@ -27,7 +27,7 @@
 
 #define INFO    INFO_LOG(ChaosAgent)
 #define ERROR   ERR_LOG(ChaosAgent)
-#define DEBUG   DBG_LOG(ChaosAgent)
+#define DBG     DBG_LOG(ChaosAgent)
 
 using namespace chaos::agent;
 using namespace chaos::common::utility;
