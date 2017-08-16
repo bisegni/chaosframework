@@ -43,11 +43,11 @@ namespace chaos {
     namespace common {
         namespace utility {
             //! Regular expression for check server hostname and port
-            static const boost::regex ServerHostNameRegExp("[a-zA-Z0-9]+(.[a-zA-Z0-9]+)+:[0-9]{4,5}");
+            static const char * const ServerHostName = "[a-zA-Z0-9]+(.[a-zA-Z0-9]+)+:[0-9]{4,5}";
             //! Regular expression for check server ip and port
-            static const boost::regex ServerIPAndPortRegExp("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b:[0-9]{4,5}");
+            static const char * const ServerIPAndPort = "\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b:[0-9]{4,5}";
             //! Regular expression for check server ip
-            static const boost::regex ServerIPRegExp("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b");
+            static const char * const ServerIP = "\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b";
             
             
             class InetUtility {
@@ -93,7 +93,7 @@ namespace chaos {
                     struct ifaddrs * ifa=NULL;
                     std::string eth_interface_name;
                     std::vector<InterfaceInfo> interface_infos;
-
+                    
                     //chec if we have a prefered name to use
                     if(_eth_interface_name.size()) {
                         interface_infos.push_back(InterfaceInfo(_eth_interface_name, ""));
@@ -105,30 +105,30 @@ namespace chaos {
                     interface_infos.push_back(InterfaceInfo("eth",""));
                     interface_infos.push_back(InterfaceInfo("tun",""));
                     interface_infos.push_back(InterfaceInfo("utun",""));
-		    // loopback if no other found
-		    interface_infos.push_back(InterfaceInfo("lo",""));
+                    // loopback if no other found
+                    interface_infos.push_back(InterfaceInfo("lo",""));
                     
                     LAPP_ << "Scan for local network interface and ip";
                     getifaddrs(&if_addr_struct);
                     
                     for (ifa = if_addr_struct; ifa != NULL; ifa = ifa->ifa_next) {
                         if(ifa ->ifa_addr){
-							if (ifa ->ifa_addr->sa_family==AF_INET) { // check it is IP4
-								// is a valid IP4 Address
-								tmp_addr_ptr=&((struct sockaddr_in *)ifa->ifa_addr)->sin_addr;
-								char address_buffer[INET_ADDRSTRLEN];
-								inet_ntop(AF_INET, tmp_addr_ptr, address_buffer, INET_ADDRSTRLEN);
-								LAPP_ << "Interface " << ifa->ifa_name << " address " << address_buffer << "<- candidate to be chooses";
-								checkInterfaceName(interface_infos,
-												   ifa->ifa_name,
-												   address_buffer);
-							} else if (ifa->ifa_addr->sa_family==AF_INET6) { // check it is IP6
-								// is a valid IP6 Address
-								tmp_addr_ptr=&((struct sockaddr_in6 *)ifa->ifa_addr)->sin6_addr;
-								char address_buffer[INET6_ADDRSTRLEN];
-								inet_ntop(AF_INET6, tmp_addr_ptr, address_buffer, INET6_ADDRSTRLEN);
-								LAPP_ << "Interface " << ifa->ifa_name << " address " << address_buffer;
-							}
+                            if (ifa ->ifa_addr->sa_family==AF_INET) { // check it is IP4
+                                // is a valid IP4 Address
+                                tmp_addr_ptr=&((struct sockaddr_in *)ifa->ifa_addr)->sin_addr;
+                                char address_buffer[INET_ADDRSTRLEN];
+                                inet_ntop(AF_INET, tmp_addr_ptr, address_buffer, INET_ADDRSTRLEN);
+                                LAPP_ << "Interface " << ifa->ifa_name << " address " << address_buffer << "<- candidate to be chooses";
+                                checkInterfaceName(interface_infos,
+                                                   ifa->ifa_name,
+                                                   address_buffer);
+                            } else if (ifa->ifa_addr->sa_family==AF_INET6) { // check it is IP6
+                                // is a valid IP6 Address
+                                tmp_addr_ptr=&((struct sockaddr_in6 *)ifa->ifa_addr)->sin6_addr;
+                                char address_buffer[INET6_ADDRSTRLEN];
+                                inet_ntop(AF_INET6, tmp_addr_ptr, address_buffer, INET6_ADDRSTRLEN);
+                                LAPP_ << "Interface " << ifa->ifa_name << " address " << address_buffer;
+                            }
                         }
                     }
                     if (if_addr_struct!=NULL) freeifaddrs(if_addr_struct);
@@ -178,14 +178,17 @@ namespace chaos {
                 }
                 
                 static bool checkWellFormedHostPort(std::string host_port) {
+                    boost::regex ServerIPRegExp(ServerIP);
                     return regex_match(host_port, ServerIPRegExp);
                 }
                 
                 static bool checkWellFormedHostNamePort(std::string host_port) {
+                    boost::regex ServerHostNameRegExp(ServerHostName);
                     return regex_match(host_port, ServerHostNameRegExp);
                 }
                 
                 static bool checkWellFormedHostIpPort(std::string host_port) {
+                    boost::regex ServerIPAndPortRegExp(ServerIPAndPort);
                     return regex_match(host_port, ServerIPAndPortRegExp);
                 }
                 

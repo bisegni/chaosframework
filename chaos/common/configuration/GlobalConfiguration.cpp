@@ -246,8 +246,7 @@ void GlobalConfiguration::checkDefaultOption() throw (CException) {
     configuration->addInt32Value(InitOption::OPT_LOG_MAX_SIZE_MB, log_max_size_mb);
     
     CHECK_AND_DEFINE_OPTION(string, publishingIp, InitOption::OPT_PUBLISHING_IP);
-    bool isIp = regex_match(publishingIp, common::utility::ServerIPRegExp);
-    if(isIp) configuration->addStringValue(InitOption::OPT_PUBLISHING_IP, publishingIp);
+    if(InetUtility::checkWellFormedHostPort(publishingIp)){configuration->addStringValue(InitOption::OPT_PUBLISHING_IP, publishingIp);}
     
     CHECK_AND_DEFINE_OPTION(string, publishingInterface, InitOption::OPT_PUBLISHING_INTERFACE)
     configuration->addStringValue(InitOption::OPT_PUBLISHING_INTERFACE, publishingInterface);
@@ -463,8 +462,8 @@ void GlobalConfiguration::setConfiguration(chaos_data::CDataWrapper *conf){
  *Add the metadataserver address
  */
 void GlobalConfiguration::addMetadataServerAddress(const string& mdsAddress) throw (CException) {
-    bool isHostnameAndPort = regex_match(mdsAddress, ServerHostNameRegExp);
-    bool isIpAndPort  = regex_match(mdsAddress, ServerIPAndPortRegExp);
+    bool isHostnameAndPort = InetUtility::checkWellFormedHostNamePort(mdsAddress);
+    bool isIpAndPort  = InetUtility::checkWellFormedHostIpPort(mdsAddress);
     if(!isHostnameAndPort && !isIpAndPort)
         throw CException(1, "Bad server address", "GlobalConfiguration::addMetadataServerAddress");
     
@@ -480,7 +479,7 @@ void GlobalConfiguration::finalizeMetadataServerAddress() {
  *Add the metadataserver address
  */
 void GlobalConfiguration::addLocalServerAddress(const std::string& mdsAddress) throw (CException) {
-    bool isIp = regex_match(mdsAddress, ServerIPRegExp);
+    bool isIp = InetUtility::checkWellFormedHostPort(mdsAddress);
     if(!isIp)
         throw CException(1, "Bad server address", "GlobalConfiguration::addMetadataServerAddress");
     

@@ -231,19 +231,11 @@ void PublishTarget::handleEvent(chaos_direct_io::DirectIOClientConnection *clien
     boost::shared_lock<boost::shared_mutex>(mutext_feeder);
     uint32_t service_index = boost::lexical_cast<uint32_t>(client_connection->getCustomStringIdentification());
     switch (event) {
-        case chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventConnected:DEBUG_CODE(INFO <<
-                                                                                                                   CHAOS_FORMAT("Manage Connected event to service with index %1% and url %2%",
-                                                                                                                                % service_index
-                                                                                                                                % client_connection
-                                                                                                                                ->getURL());)
+        case chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventConnected:DEBUG_CODE(INFO <<CHAOS_FORMAT("Manage Connected event to service with index %1% and url %2%", % service_index% client_connection->getURL());)
             connection_feeder.setURLOnline(service_index);
             break;
             
-        case chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventDisconnected:DEBUG_CODE(INFO <<
-                                                                                                                      CHAOS_FORMAT("Manage Disconnected event to service with index %1% and url %2%",
-                                                                                                                                   % service_index
-                                                                                                                                   % client_connection
-                                                                                                                                   ->getURL());)
+        case chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventDisconnected:DEBUG_CODE(INFO <<CHAOS_FORMAT("Manage Disconnected event to service with index %1% and url %2%",% service_index% client_connection->getURL());)
             connection_feeder.setURLOffline(service_index);
             break;
     }
