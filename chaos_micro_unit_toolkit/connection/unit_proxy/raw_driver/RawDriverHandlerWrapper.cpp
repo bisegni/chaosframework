@@ -32,7 +32,12 @@ RawDriverHandlerWrapper::RawDriverHandlerWrapper(UnitProxyHandler handler,
                                                  ChaosUniquePtr<RawDriverUnitProxy>& _u_proxy):
 UnitProxyHandlerWrapper(handler,
                         user_data,
-                        ChaosMoveOperator(_u_proxy)),
+                        #if __cplusplus >= 201103L
+                        ChaosMoveOperator(_u_proxy)
+                        #else
+                        ChaosMoveOperator(ChaosUniquePtr<AbstractUnitProxy>(_u_proxy))
+                        #endif
+                      ),
 authorization_key(_authorization_key),
 auth_state(base_unit->getAuthorizationState()),
 authorized(false){}
@@ -41,7 +46,7 @@ RawDriverHandlerWrapper::~RawDriverHandlerWrapper(){}
 
 int RawDriverHandlerWrapper::unitEventLoop() {
     int err = 0;
-    
+
     switch (auth_state) {
         case AuthorizationStateUnknown:
             authorized = false;
