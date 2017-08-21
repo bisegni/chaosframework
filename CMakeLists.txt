@@ -65,7 +65,7 @@ IF (CHAOS_MDS)
 ENDIF()
 
 MESG("Configure Chaos Metadata Service Client Library")
-ADD_SUBDIRECTORY(ChaosMetadataServiceClient)
+ADD_SUBDIRECTORY(chaos_metadata_service_client)
 
 MESG("Configure Chaos Metadata Service Client Library Test Application")
 ADD_SUBDIRECTORY(ChaosMetadataServiceClientTest)

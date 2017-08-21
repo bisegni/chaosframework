@@ -22,7 +22,7 @@
 #ifndef __CHAOSFramework__HandlerMonitor_h
 #define __CHAOSFramework__HandlerMonitor_h
 
-#include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
+#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
 
 class HandlerMonitor:
 public chaos::metadata_service_client::monitor_system::QuantumKeyAttributeStringHandler {

@@ -6,7 +6,7 @@
 
 #include <QSharedPointer>
 #include <chaos/common/data/CDataWrapper.h>
-#include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
+#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
 class ApiAsyncRunnable :
         public QObject,
         public QRunnable {

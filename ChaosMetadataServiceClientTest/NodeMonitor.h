@@ -24,7 +24,7 @@
 #define CHAOS_NODEMONITOR_H
 
 #include <string>
-#include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
+#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
 
 class NodeMonitor :
 public chaos::metadata_service_client::monitor_system::QuantumSlotConsumer {

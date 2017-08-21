@@ -2,7 +2,7 @@
 #define CREATENEWSCRIPTDIALOG_H
 
 #include <QDialog>
-#include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
+#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
 
 namespace Ui {
 class CreateNewScriptDialog;

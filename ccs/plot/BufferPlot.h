@@ -5,7 +5,7 @@
 #include "AbstractBinaryPlotAdapter.h"
 
 #include <chaos/common/utility/LockableObject.h>
-#include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
+#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
 
 #include <QMap>
 #include <QWidget>

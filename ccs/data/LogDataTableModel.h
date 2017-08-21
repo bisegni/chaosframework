@@ -3,7 +3,7 @@
 
 #include "ChaosAbstractTableModel.h"
 
-#include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
+#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
 
 #include <QMap>
 #include <QPair>
