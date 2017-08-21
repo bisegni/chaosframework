@@ -22,15 +22,15 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
-#include <ChaosMetadataServiceClient/api_proxy/unit_server/NewUS.h>
-#include <ChaosMetadataServiceClient/api_proxy/unit_server/DeleteUS.h>
+#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
+#include <chaos_metadata_service_client/api_proxy/unit_server/NewUS.h>
+#include <chaos_metadata_service_client/api_proxy/unit_server/DeleteUS.h>
 
-#include <ChaosMetadataServiceClient/api_proxy/unit_server/ManageCUType.h>
+#include <chaos_metadata_service_client/api_proxy/unit_server/ManageCUType.h>
 
-#include <ChaosMetadataServiceClient/api_proxy/control_unit/SetInstanceDescription.h>
-#include <ChaosMetadataServiceClient/api_proxy/control_unit/Delete.h>
-#include <ChaosMetadataServiceClient/api_proxy/control_unit/DeleteInstance.h>
+#include <chaos_metadata_service_client/api_proxy/control_unit/SetInstanceDescription.h>
+#include <chaos_metadata_service_client/api_proxy/control_unit/Delete.h>
+#include <chaos_metadata_service_client/api_proxy/control_unit/DeleteInstance.h>
 
 #include <chaos/common/global.h>
 #include <chaos/common/utility/TimingUtil.h>
