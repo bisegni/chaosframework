@@ -125,12 +125,7 @@ exp_scan_coverity:
       - make clean
       - /tmp/coverity/bin/cov-build --dir /tmp/cov-int make  -j 4
       - tar czvf /tmp/chaos.tgz /tmp/cov-int
-      - curl --form token=i9B9MI9n53zWdx2iSS4Qvg \
-        --form email=bisegni@lnf.infn.it \
-        --form file=/tmp/chaos.tgz \
-        --form version="1.0.0" \
-        --form description="Beta" \
-        https://scan.coverity.com/builds?project=%21CHAOS+Control+System
+      - curl --form token=i9B9MI9n53zWdx2iSS4Qvg --form email=bisegni@lnf.infn.it --form file=/tmp/chaos.tgz --form version="1.0.0" --form description="Beta"  https://scan.coverity.com/builds?project=%21CHAOS+Control+System
     only:
       - web
 #- tar -zcf /builds/chaos-lnf-control/chaosframework/chaos-distrib-armhf_$TAR_NAME_POSTFIX.tgz /builds/chaos-lnf-control/chaosframework/chaos-distrib-armhf
