@@ -45,6 +45,9 @@ namespace chaos {
                                                 const std::string& _authorization_key,
                                                 ChaosUniquePtr<RawDriverUnitProxy>& _u_proxy);
                         ~RawDriverHandlerWrapper();
+                        
+                        //! send spontaneus message to the remote raw driver layer
+                        int sendMessage(data::DataPackUniquePtr& message_data);
                     };
                     
                 }

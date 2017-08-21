@@ -44,6 +44,11 @@ authorized(false){}
 
 RawDriverHandlerWrapper::~RawDriverHandlerWrapper(){}
 
+int RawDriverHandlerWrapper::sendMessage(data::DataPackUniquePtr& message_data) {
+    RawDriverUnitProxy * const rd = static_cast<RawDriverUnitProxy*>(base_unit.get());
+    return rd->sendMessage(message_data);
+}
+
 int RawDriverHandlerWrapper::unitEventLoop() {
     int err = 0;
 
@@ -66,8 +71,9 @@ int RawDriverHandlerWrapper::unitEventLoop() {
             //manage request by remote user
             err = manageRemoteMessage();
             //perform idle operation
-            if(!err){
-                err = callHandler(UP_EV_USR_ACTION, NULL);
+            if(!err) {
+                //call handler for user action passing the instace as public interface
+                err = callHandler(UP_EV_USR_ACTION, this);
             }
             break;
     }
@@ -90,7 +96,7 @@ int RawDriverHandlerWrapper::manageRemoteMessage() {
                     rd->sendAnswer(remote_message, req.response);
                 }
             } else {
-                //message lakc of opcode key or it is not int32
+                //message lack of opcode key or it is not int32
             }
         } else if(remote_message->isError() == false){
             UPMessage msg = {remote_message->request_message};
@@ -99,7 +105,7 @@ int RawDriverHandlerWrapper::manageRemoteMessage() {
             UPError err_msg = {remote_message->getErrorCode(),
                 remote_message->getErrorMessage(),
                 remote_message->getErrorDomain()};
-            err = callHandler(UP_EV_ERR_RECEIVED, &err);
+            err = callHandler(UP_EV_ERR_RECEIVED, &err_msg);
         }
     }
     return err;

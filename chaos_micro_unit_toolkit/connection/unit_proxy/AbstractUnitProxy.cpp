@@ -65,15 +65,6 @@ int AbstractUnitProxy::sendMessage(DataPackUniquePtr& message_data) {
     return protocol_adapter->sendMessage(message_data);
 }
 
-int AbstractUnitProxy::sendAnswer(RemoteMessageUniquePtr& message,
-                                  DataPackUniquePtr& message_data) {
-    if(message->is_request == false) return - 1;
-    DataPackUniquePtr answer(new DataPack());
-    answer->addInt32("request_id", message->message_id);
-    answer->addDataPack("message", *message_data);
-    return protocol_adapter->sendMessage(answer);
-}
-
 bool AbstractUnitProxy::hasMoreMessage() {
     return protocol_adapter->hasMoreMessage();
 }

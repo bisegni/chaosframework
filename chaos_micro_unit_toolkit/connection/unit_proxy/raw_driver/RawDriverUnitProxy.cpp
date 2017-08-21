@@ -21,6 +21,7 @@
 
 #include <chaos_micro_unit_toolkit/connection/unit_proxy/raw_driver/RawDriverUnitProxy.h>
 
+using namespace chaos::micro_unit_toolkit::data;
 using namespace chaos::micro_unit_toolkit::connection;
 using namespace chaos::micro_unit_toolkit::connection::unit_proxy;
 using namespace chaos::micro_unit_toolkit::connection::unit_proxy::raw_driver;
@@ -41,7 +42,7 @@ void RawDriverUnitProxy::authorization(const std::string& authorization_key) {
     authorization_state = AuthorizationStateRequested;
     data::DataPackUniquePtr message(new data::DataPack());
     message->addString(AUTHORIZATION_KEY, authorization_key);
-    sendMessage(message);
+    AbstractUnitProxy::sendMessage(message);
 }
 
 bool RawDriverUnitProxy::manageAutorizationPhase() {
@@ -55,4 +56,19 @@ bool RawDriverUnitProxy::manageAutorizationPhase() {
         }
     }
     return result;
+}
+
+int RawDriverUnitProxy::sendMessage(DataPackUniquePtr& message_data) {
+    DataPackUniquePtr message(new DataPack());
+    message->addDataPack("message", *message_data);
+    return AbstractUnitProxy::sendMessage(message);
+}
+
+int RawDriverUnitProxy::sendAnswer(RemoteMessageUniquePtr& message,
+                                  DataPackUniquePtr& message_data) {
+    if(message->is_request == false) return - 1;
+    DataPackUniquePtr answer(new DataPack());
+    answer->addInt32("request_id", message->message_id);
+    answer->addDataPack("message", *message_data);
+    return AbstractUnitProxy::sendMessage(answer);
 }

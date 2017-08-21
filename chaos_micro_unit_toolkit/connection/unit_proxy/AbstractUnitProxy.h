@@ -62,10 +62,7 @@ namespace chaos {
                     ChaosUniquePtr<protocol_adapter::AbstractProtocolAdapter> protocol_adapter;
                 protected:
                     AuthorizationState authorization_state;
-                    int sendMessage(data::DataPackUniquePtr& message_data);
-                    
-                    int sendAnswer(RemoteMessageUniquePtr& message,
-                                   data::DataPackUniquePtr& message_data);
+                    virtual int sendMessage(data::DataPackUniquePtr& message_data);
                     
                     bool hasMoreMessage();
                     

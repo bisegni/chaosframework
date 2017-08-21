@@ -55,7 +55,7 @@ namespace chaos {
                 
 #define RETRY_TIME              5
                 
-#define UP_EV_USR_ACTION        0   /* user can take here his action */
+#define UP_EV_USR_ACTION        0   /* user can take here his action event_data is the pointer to the handler warapepr instance that manage the handler function */
 #define UP_EV_CONN_CONNECTED    1   /* connection to remote host has been done */
 #define UP_EV_CONN_ERROR        3   /* there was and error on connection */
 #define UP_EV_CONN_DISCONNECTED 4   /* connection to remote host has been closed */
