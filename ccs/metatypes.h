@@ -4,7 +4,7 @@
 #include <string>
 #include <stdint.h>
 #include <QSharedPointer>
-#include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
+#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
 #include "data/ChaosByteArray.h"
 #include "data/CommandReader.h"
 #include "data/CommandParameterReader.h"

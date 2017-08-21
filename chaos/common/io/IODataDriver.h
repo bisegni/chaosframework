@@ -141,7 +141,7 @@ namespace chaos{
                 virtual void releaseQuery(QueryCursor *query) = 0;
             };
             
-            typedef ChaosSharedPtr<chaos::common::io::IODataDriver> ioDataDriver_shr;
+            typedef ChaosSharedPtr<chaos::common::io::IODataDriver> IODataDriverShrdPtr;
             
             
         }

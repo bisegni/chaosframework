@@ -1,7 +1,7 @@
 #ifndef APIHANDLER_H
 #define APIHANDLER_H
 
-#include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
+#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
 
 #include <QDebug>
 #include <QString>
