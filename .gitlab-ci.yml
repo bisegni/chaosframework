@@ -140,8 +140,7 @@ documentation_api:
       - apk update && apk add doxygen
       - doxygen Documentation/chaosdocs
       - mv Documentation/html Public/documentation/$CI_BUILD_REF_NAME
-    when:
-      - always
+    when: always
     only:
       - web
       - schedules
