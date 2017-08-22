@@ -111,19 +111,23 @@ void AbstractDriver::init(void *init_param) throw(chaos::CException) {
 void AbstractDriver::deinit() throw(chaos::CException) {
     ADLAPP_ << "Call custom driver deinitialization";
     // driverDeinit();
-    DrvMsg deinitMsg;
-    std::memset(&deinitMsg, 0, sizeof(DrvMsg));
-    deinitMsg.opcode = OpcodeType::OP_DEINIT_DRIVER;
+    DrvMsg deinit_msg;
+    ResponseMessageType id_to_read;
+    AccessorQueueType result_queue;
     
+    std::memset(&deinit_msg, 0, sizeof(DrvMsg));
+    deinit_msg.opcode = OpcodeType::OP_DEINIT_DRIVER;
+    deinit_msg.drvResponseMQ = &result_queue;
     //send opcode to driver implemetation
     driver_need_to_deinitialize = true;
-    command_queue->push(&deinitMsg);
-    
+    command_queue->push(&deinit_msg);
+    //wait for completition
+    result_queue.wait_and_pop(id_to_read);
+
     //now join to  the thread if joinable
     if (thread_message_receiver->joinable()) {
         thread_message_receiver->join();
     }
-    
 }
 
 const bool AbstractDriver::isDriverParamInJson() const {
@@ -224,7 +228,6 @@ void AbstractDriver::scanForMessage() {
                 case OpcodeType::OP_DEINIT_DRIVER:
                     driverDeinit();
                     opcode_submission_result = MsgManagmentResultType::MMR_EXECUTED;
-                    
                     break;
                     
                 default: {
