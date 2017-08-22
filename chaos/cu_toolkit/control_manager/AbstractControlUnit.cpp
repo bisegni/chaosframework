@@ -1450,7 +1450,7 @@ void AbstractControlUnit::unitInputAttributeChangedHandler() throw(CException) {
 #define CHECK_FOR_RANGE_VALUE(t, v, attr_name)\
 t max,min;\
 if(attributeInfo.maxRange.compare(0,2,"0x")==0){max = strtoll(attributeInfo.maxRange.c_str(),0,0);}else{max = attributeInfo.maxRange.size()?boost::lexical_cast<t>(attributeInfo.maxRange):std::numeric_limits<t>::max();}\
-if(attributeInfo.minRange.compare(0,2,"0x")==0){min = strtoll(attributeInfo.minRange.c_str(),0,0);}else{min = attributeInfo.maxRange.size()?boost::lexical_cast<t>(attributeInfo.minRange):std::numeric_limits<t>::min();}\
+if(attributeInfo.minRange.compare(0,2,"0x")==0){min = strtoll(attributeInfo.minRange.c_str(),0,0);}else{min = attributeInfo.minRange.size()?boost::lexical_cast<t>(attributeInfo.minRange):std::numeric_limits<t>::min();}\
 if(v < min || v > max) throw MetadataLoggingCException(getCUID(), -1,  boost::str(boost::format("Invalid value (%1%) [Min:%2% Max:%3%] for attribute %4%") % v % attributeInfo.minRange % attributeInfo.maxRange % attr_name ).c_str(), __PRETTY_FUNCTION__);\
 
 #define CHECK_FOR_STRING_RANGE_VALUE(v, attr_name)\

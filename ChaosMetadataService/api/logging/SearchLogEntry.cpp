@@ -52,7 +52,8 @@ chaos::common::data::CDataWrapper *SearchLogEntry::execute(CDataWrapper *api_dat
     uint64_t start_ts =  (api_data?((uint64_t)CDW_GET_INT64_WITH_DEFAULT(api_data, "start_ts", 0)):0);
     uint64_t end_ts = (api_data?((uint64_t)CDW_GET_INT64_WITH_DEFAULT(api_data, "end_ts", 0)):0);
     
-    if(api_data->hasKey(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN)) {
+    if(api_data&&
+       api_data->hasKey(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN)) {
         //we have domain
         if(api_data->isStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN)) {
             domain_to_include.push_back(api_data->getStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN));
@@ -66,7 +67,6 @@ chaos::common::data::CDataWrapper *SearchLogEntry::execute(CDataWrapper *api_dat
         } else {
             LOG_AND_TROW_FORMATTED(L_SLE_ERR, -5, "Domain key '%1% 'need to be string or array of string",%MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN);
         }
-        
     }
     
     uint32_t page_length =  (uint32_t)CDW_GET_INT32_WITH_DEFAULT(api_data, "page_length", 100);

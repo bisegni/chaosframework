@@ -160,7 +160,8 @@ void ScriptableExecutionUnit::unitDefineActionAndDataset() throw(CException) {
         const Json::Value
         &_script_b64_dataset = json_params[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION];
 
-        CHAOS_LASSERT_EXCEPTION(((_script_language.isNull() == false) && _script_content.isString()),
+        CHAOS_LASSERT_EXCEPTION(((_script_language.isNull() == false) &&
+                                 _script_language.isString()),
                                 SEU_LERR,
                                 -2,
                                 "The script language is not defined (or not a string) into load parameter");
