@@ -133,6 +133,27 @@ exp_scan_coverity:
         https://scan.coverity.com/builds?project=%21CHAOS+Control+System
     only:
       - web
+
+    exp_scan_coverity:
+        tags:
+          - docker
+          - shared
+        stage: deploy
+        image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/coverity:latest
+        script:
+          - mkdir -p /tmp/cov-int
+          - cmake .
+          - make clean
+          - /tmp/coverity/bin/cov-build --dir /tmp/cov-int make  -j 4
+          - tar czvf /tmp/chaos.tgz /tmp/cov-int
+          - curl --form token=i9B9MI9n53zWdx2iSS4Qvg \
+            --form email=bisegni@lnf.infn.it \
+            --form file=/tmp/chaos.tgz \
+            --form version="1.0.0" \
+            --form description="Beta" \
+            https://scan.coverity.com/builds?project=%21CHAOS+Control+System
+        only:
+          - web
 #- tar -zcf /builds/chaos-lnf-control/chaosframework/chaos-distrib-armhf_$TAR_NAME_POSTFIX.tgz /builds/chaos-lnf-control/chaosframework/chaos-distrib-armhf
 #- ls -la
 #- scp -v -i /builds/chaos-lnf-control/chaosframework/deploy.key -o StrictHostKeyChecking=no /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux_$TAR_NAME_POSTFIX.tgz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/
