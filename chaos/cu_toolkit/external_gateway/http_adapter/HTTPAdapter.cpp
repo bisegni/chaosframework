@@ -45,7 +45,7 @@ run(false),
 root_connection(0){}
 
 HTTPAdapter::~HTTPAdapter() {
-
+    
 }
 
 void HTTPAdapter::init(void *init_data) throw (chaos::CException) {
@@ -63,17 +63,17 @@ void HTTPAdapter::init(void *init_data) throw (chaos::CException) {
     }
     run = true;
     mg_mgr_init(&mgr, NULL);
-
+    
     root_connection = mg_bind(&mgr, setting.publishing_port.c_str(), HTTPAdapter::eventHandler);
     if(root_connection == NULL) {throw CException(-1, "Error creating http connection", __PRETTY_FUNCTION__);}
     root_connection->user_data = this;
-
+    
     mg_set_protocol_http_websocket(root_connection);
     s_http_server_opts.document_root = "";  // Serve current directory
     s_http_server_opts.enable_directory_listing = "no";
     //
     CObjectProcessingQueue<WorkRequest>::init(setting.thread_number);
-
+    
     thread_poller.reset(new boost::thread(boost::bind(&HTTPAdapter::poller, this)));
 }
 
@@ -82,7 +82,7 @@ void HTTPAdapter::deinit() throw (chaos::CException) {
     CObjectProcessingQueue<WorkRequest>::deinit();
     CObjectProcessingQueue<WorkRequest>::clear();
     thread_poller->join();
-
+    
     mg_mgr_free(&mgr);
 }
 
@@ -135,7 +135,7 @@ const std::string HTTPAdapter::getSerializationType(http_message *http_message) 
         value = mg_get_http_header(http_message, "content-type");
         if(value == NULL) return "";
     }
-
+    
     std::string ser_type(value->p, value->len);
     std::transform(ser_type.begin(), ser_type.end(), ser_type.begin(), ::tolower);
     return ser_type;
@@ -157,7 +157,7 @@ void  HTTPAdapter::manageWSHandshake(WorkRequest& wr) {
                                      true);
         return;
     }
-
+    
     //check if endpoint can accept more connection
     if(map_endpoint()[wr.uri]->canAcceptMoreConnection() == false) {
         //write error for no more connection accepted by endpoint
@@ -212,10 +212,12 @@ void HTTPAdapter::processBufferElement(WorkRequest *request,
             int err = 0;
             policy.elementHasBeenDetached = true;
             LMapConnectionReadLock wconnl = map_connection.getReadLockObject();
-            if((err = map_connection()[reinterpret_cast<uintptr_t>(request->nc)]->handleWSIncomingData(ChaosUniquePtr<WorkRequest>(request)))){
-                //weh don't have found the sriealizer
-                const std::string error = CHAOS_FORMAT("{error:%1%,message:\"%2%\"}", %err%map_connection()[reinterpret_cast<uintptr_t>(request->nc)]->getEndpointIdentifier());
-                mg_send_websocket_frame(request->nc, WEBSOCKET_OP_TEXT, error.c_str(), error.size());
+            if(map_connection().count(reinterpret_cast<uintptr_t>(request->nc))) {
+                if((err = map_connection()[reinterpret_cast<uintptr_t>(request->nc)]->handleWSIncomingData(ChaosUniquePtr<WorkRequest>(request)))){
+                    //weh don't have found the sriealizer
+                    const std::string error = CHAOS_FORMAT("{error:%1%,message:\"%2%\"}", %err%map_connection()[reinterpret_cast<uintptr_t>(request->nc)]->getEndpointIdentifier());
+                    mg_send_websocket_frame(request->nc, WEBSOCKET_OP_TEXT, error.c_str(), error.size());
+                }
             }
             break;
         }
@@ -224,10 +226,9 @@ void HTTPAdapter::processBufferElement(WorkRequest *request,
             map_connection().erase(reinterpret_cast<uintptr_t>(request->nc));
             break;
         }
-
+            
         default:{break;}
     }
-
 }
 
 void HTTPAdapter::eventHandler(mg_connection *nc, int ev, void *ev_data) {
@@ -260,7 +261,7 @@ void HTTPAdapter::eventHandler(mg_connection *nc, int ev, void *ev_data) {
             if(req->s_type.size() == 0) {
                 std::string error = "Serialization type not found";
                 mg_send_head(nc, 400, error.size(), "Content-Type: text/plain");
-                mg_printf(nc, "%.*s", error.size(),error.c_str());
+                mg_printf(nc, "%s", error.c_str());
             }else {
                 adapter->push(req);
             }
@@ -293,8 +294,24 @@ int HTTPAdapter::registerEndpoint(ExternalUnitEndpoint& endpoint) {
 }
 
 int HTTPAdapter::deregisterEndpoint(ExternalUnitEndpoint& endpoint) {
+    //lock for write conenction and endpoint
     LMapEndpointWriteLock wl = map_endpoint.getWriteLockObject();
+    
     if(map_endpoint().count(endpoint.getIdentifier()) == 0) return 0;
+    
+    LMapConnectionWriteLock wconnl = map_connection.getWriteLockObject();
+    for(MapConnectionIterator it = map_connection().begin(),
+        end = map_connection().end();
+        it != end;) {
+        if(it->second->getEndpointIdentifier().compare(endpoint.getIdentifier()) == 0) {
+            //iterator need to be removed so we force to close the connection
+            it->second->closeConnection();
+            //remove connection
+            map_connection().erase(it++);
+        } else {
+            ++it;
+        }
+    }
     map_endpoint().erase(endpoint.getIdentifier());
     return 0;
 }
