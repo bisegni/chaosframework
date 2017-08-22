@@ -130,19 +130,21 @@ exp_scan_coverity:
     only:
       - web
 
-exp_scan_coverity:
-      tags:
-        - docker
-        - shared
-      stage: deploy
-      image: alpine
-      script:
-        - apk update && apk add doxygen
-        - doxygen Documentation/chaosdocs
-        - mv Documentation/html Public/documentation/$CI_BUILD_REF_NAME
-      only:
-        - web
-        - schedules
+documentation_api:
+    tags:
+      - docker
+      - shared
+    stage: deploy
+    image: alpine
+    script:
+      - apk update && apk add doxygen
+      - doxygen Documentation/chaosdocs
+      - mv Documentation/html Public/documentation/$CI_BUILD_REF_NAME
+    when:
+      - always
+    only:
+      - web
+      - schedules
 
 
 #- tar -zcf /builds/chaos-lnf-control/chaosframework/chaos-distrib-armhf_$TAR_NAME_POSTFIX.tgz /builds/chaos-lnf-control/chaosframework/chaos-distrib-armhf
