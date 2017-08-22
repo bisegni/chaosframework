@@ -138,8 +138,9 @@ documentation_api:
     image: alpine
     script:
       - apk update && apk add doxygen
-      - doxygen Documentation/chaosdocs
-      - mv Documentation/html Public/documentation/$CI_BUILD_REF_NAME
+      - doxygen doc/chaosdocs
+      - rm -rf Public/*
+      - mv doc/html Public/doc/$CI_BUILD_REF_NAME/api/framework
     when: always
     only:
       - web
