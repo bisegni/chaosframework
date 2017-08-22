@@ -138,11 +138,13 @@ documentation_api:
     stage: deploy
     image: alpine
     script:
+      - rm -rf Public/*
       - apk update && apk add doxygen
       - doxygen doc/chaosdocs
-      - rm -rf Public/*
+      - mkdir -p Public/doc/$CI_BUILD_REF_NAME/api/framework
       - mv doc/html Public/doc/$CI_BUILD_REF_NAME/api/framework
     when: always
+    allow_failure: true
     only:
       - web
       - schedules
