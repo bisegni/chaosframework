@@ -78,11 +78,15 @@ git_arg=()
 git_cmd=""
 
 usage(){
-    echo -e "Usage is $0 [-s] [-t <tag name>][ -c <checkout branch> ] [ -p <branch name> ] [-d <directory0>] [-d <directory1>] \n-c <branch name>: check out a given branch name in all subdirs\n-p <branch>:commit and push modifications of a given branch\n-s:retrive the branch status\n-t <tag name>:make an annotated tag to all\n-d <directory>: apply just to the specified directory\n-m <src branch> <dst branch>: merge src into dst branch\n-y:answer yes"
+    echo -e "Usage is $0 [-s] [-t <tag name>][ -c <checkout branch> ] [ -p <branch name> ] [-d <directory0>] [-d <directory1>] \n-c <branch name>: check out a given branch name in all subdirs\n-p <branch>:commit and push modifications of a given branch\n-s:retrive the branch status\n-t <tag name>:make an annotated tag to all\n-d <directory>: apply just to the specified directory\n-m <src branch> <dst branch>: merge src into dst branch\n-y:answer yes\n-z <maxdepth>: search for git directory for a maximum depth [$maxdepth]"
 }
 yes=""
-while getopts t:c:p:hsd:mr:by opt; do
+maxdepth=3
+while getopts t:c:p:hsd:mr:byz: opt; do
     case $opt in
+	z)
+	    maxdepth=$OPTARG
+	    ;;
 	r)
 	    remote=1
 	    ;;
@@ -129,11 +133,11 @@ done
 shift $(( OPTIND - 1 ))
 
 if [ ${#on_dir[@]} -eq 0 ]; then
-    dirs=$(find . -name ".git" -exec grep -sl git \{\}/config \;)
-#    dirs=$(find . -name ".git" )
+#    dirs=$(find . -name ".git" -exec grep -sl infn \{\}/config \;)
+    dirs=$(find . -maxdepth $maxdepth -name ".git" -type d -not -path *.repo/* )
+
     for d in $dirs;do
 	dir=$(dirname $d)
-	dir=$(dirname $dir)
 	on_dir+=($dir)
 
     done
