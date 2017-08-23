@@ -279,9 +279,8 @@ void AbstractDriver::scanForMessage() {
 }
 
 void AbstractDriver::driverInit(const chaos::common::data::CDataWrapper& data) throw(chaos::CException){
-    std::stringstream ss;
-    ss<<"driver:"<<identification_string<<" must implement driverInit(const chaos::common::data::CDataWrapper& data) initialization";
-    throw chaos::CException(-1, ss.str(), __PRETTY_FUNCTION__);
+	ADLERR_<<"driver "<<identification_string<<" has json parameters you should implement driverInit(const chaos::common::data::CDataWrapper& data) initialization";
+	driverInit(data.getJSONString().c_str());
 }
 
 const bool AbstractDriver::isBypass()const {
