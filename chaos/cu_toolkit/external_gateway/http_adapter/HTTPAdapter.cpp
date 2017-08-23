@@ -89,7 +89,7 @@ void HTTPAdapter::deinit() throw (chaos::CException) {
 void HTTPAdapter::poller() {
     INFO << "Entering thread poller";
     while (run) {
-        mg_mgr_poll(&mgr, 10);
+        mg_mgr_poll(&mgr, 1);
     }
     INFO << "Leaving thread poller";
 }
