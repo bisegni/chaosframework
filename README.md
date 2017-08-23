@@ -1,5 +1,4 @@
-!CHAOS Framework
-=================================================
+# !CHAOS Framework
 
 The !CHAOS project is aiming at the development of a new concept of control system and data acquisition framework
 providing, with a high level of abstraction, all the services needed for controlling and managing a large scientific,
