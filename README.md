@@ -17,18 +17,17 @@ Key features and development strategies of !CHAOS are:
 - abstraction of services,  devices and data
 - easy and modular customization
 - extensive data caching for performance boost
-- use of high-performance internet sw technologies
+- use of high-performance internet software technologies
 
-!CHAOS use the standalone BSON C++ implementation, the source is exstracted from orginal mongodb opensource distribution found on http://www.mongodb.org/ (http://www.10gen.com/)
+!CHAOS use the standalone BSON C++ implementation, the source is pulled out from orginal mongodb opensource distribution found on http://www.mongodb.org/ (http://www.10gen.com/)
 "BSON" stands for "binary JSON" - a binary storage format that is JSON inspired.
 This distribution merely rips it out of the bson repository into its own.
 
 
 For further documentation please visit:
-http://chaos.infn.it                        - public information site
-https://opensource-confluence.infn.it       - public user and developer site
-https://github.com/bisegni/chaosframework   - public source code usefull to collaborate with us
+http://chaos.infn.it                                                - public information site
+https://chaos-lnf-control.baltig-pages.infn.it/chaosframework-doc   - public user and developer site
+https://chaos-lnf-control.baltig-pages.infn.it/chaosframework       - public source code usefull to collaborate with us
 
-docker container for build chaos: https://cloud.docker.com/_/repository/docker/bisegni/chaos/general
 
 release 1.0.0 (alpha 1 build 5)
