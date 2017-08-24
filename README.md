@@ -1,7 +1,8 @@
 # !CHAOS Framework
 
-[![build status](https://baltig.infn.it/chaos-lnf-control/chaosframework/badges/master/build.svg)](https://baltig.infn.it/chaos-lnf-control/chaosframework/commits/master)
-
+[![Master Build Status](https://baltig.infn.it/chaos-lnf-control/chaosframework/badges/master/build.svg)](https://baltig.infn.it/chaos-lnf-control/chaosframework/commits/master)
+[![Development Build Status](https://baltig.infn.it/chaos-lnf-control/chaosframework/badges/development/build.svg)](https://baltig.infn.it/chaos-lnf-control/chaosframework/commits/development)
+[![Experimental Build Status](https://baltig.infn.it/chaos-lnf-control/chaosframework/badges/experimental/build.svg)](https://baltig.infn.it/chaos-lnf-control/chaosframework/commits/experimental)
 The !CHAOS project is aiming at the development of a new concept of control system and data acquisition framework
 providing, with a high level of abstraction, all the services needed for controlling and managing a large scientific,
 or non-scientific, infrastructure.  
