@@ -132,7 +132,7 @@ exp_scan_coverity:
     only:
       - web
 
-documentation_api:
+pages:
     tags:
       - docker
       - shared
@@ -144,6 +144,9 @@ documentation_api:
       - mkdir -p public/doc/$CI_BUILD_REF_NAME/api/framework
       - mv doc/html public/doc/$CI_BUILD_REF_NAME/api/framework
     when: always
+    artifacts:
+    paths:
+      - public
     allow_failure: true
     only:
       - web
