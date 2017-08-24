@@ -4,7 +4,7 @@
 #include "ChaosAbstractTableModel.h"
 #include "../api_async_processor/ApiSubmitter.h"
 
-#include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
+#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
 
 #include <QSet>
 

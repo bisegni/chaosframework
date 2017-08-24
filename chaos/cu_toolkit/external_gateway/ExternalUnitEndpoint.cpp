@@ -1,22 +1,22 @@
 /*
- *	ExternalEndpoint.cpp
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFramework]
- *	Created by bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 11/07/2017 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include <chaos/cu_toolkit/external_gateway/ExternalUnitEndpoint.h>
@@ -77,9 +77,9 @@ int ExternalUnitEndpoint::sendError(const std::string& connection_identifier,
                                     const std::string& message,
                                     const std::string& domain) {
     CDWUniquePtr error_pack(new CDataWrapper());
-    error_pack->addInt32Value("code", code);
-    error_pack->addStringValue("message", message);
-    error_pack->addStringValue("domain", domain);
+    error_pack->addInt32Value("error_code", code);
+    error_pack->addStringValue("error_message", message);
+    error_pack->addStringValue("error_domain", domain);
     return sendMessage(connection_identifier,
                        ChaosMoveOperator(error_pack));
 }
@@ -87,9 +87,9 @@ int ExternalUnitEndpoint::sendError(const std::string& connection_identifier,
 int ExternalUnitEndpoint::sendError(const std::string& connection_identifier,
                                     const chaos::CException& ex) {
     CDWUniquePtr error_pack(new CDataWrapper());
-    error_pack->addInt32Value("code", ex.errorCode);
-    error_pack->addStringValue("message", ex.errorMessage);
-    error_pack->addStringValue("domain", ex.errorDomain);
+    error_pack->addInt32Value("error_code", ex.errorCode);
+    error_pack->addStringValue("error_message", ex.errorMessage);
+    error_pack->addStringValue("error_domain", ex.errorDomain);
     return sendMessage(connection_identifier,
                        ChaosMoveOperator(error_pack));
 }

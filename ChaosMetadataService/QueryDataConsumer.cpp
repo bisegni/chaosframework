@@ -1,21 +1,22 @@
 /*
- *	QueryDataConsumer.h
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2014 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 #include "ChaosMetadataService.h"
 #include "QueryDataConsumer.h"
@@ -159,10 +160,14 @@ int QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *hea
             CacheData cache_data((char*)channel_data, ((char*)channel_data)+channel_data_len);
             //protected access to cached driver
             CachePoolSlot *cache_slot = DriverPoolManager::getInstance()->getCacheDriverInstance();
-            err = cache_slot->resource_pooled->putData(std::string((const char *)GET_PUT_OPCODE_KEY_PTR(header),
-                                                                   header->key_len),
-                                                       cache_data);
-            DriverPoolManager::getInstance()->releaseCacheDriverInstance(cache_slot);
+            if(cache_slot) {
+                err = cache_slot->resource_pooled->putData(std::string((const char *)GET_PUT_OPCODE_KEY_PTR(header),
+                                                                       header->key_len),
+                                                           cache_data);
+                DriverPoolManager::getInstance()->releaseCacheDriverInstance(cache_slot);
+            } else {
+                ERR << "Error allocating cache slot";
+            }
             break;
         }
         case DataServiceNodeDefinitionType::DSStorageTypeHistory:
@@ -253,11 +258,15 @@ int QueryDataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *hea
         err = cache_slot->resource_pooled->getData(std::string((const char*)channel_data,
                                                                channel_data_len),
                                                    cache_data);
-        if(cache_data.size()) {
-            result_header->value_len = (uint32_t)cache_data.size();
-            *result_value = malloc(result_header->value_len);
-            CHAOS_ASSERT(*result_value)
-            std::memcpy(*result_value, &cache_data[0], result_header->value_len);
+        if(cache_slot) {
+            if(cache_data.size()) {
+                result_header->value_len = (uint32_t)cache_data.size();
+                *result_value = malloc(result_header->value_len);
+                CHAOS_ASSERT(*result_value)
+                std::memcpy(*result_value, &cache_data[0], result_header->value_len);
+            }
+        } else {
+            ERR << "Error allocating cache slot";
         }
     } catch(...) {}
     DriverPoolManager::getInstance()->releaseCacheDriverInstance(cache_slot);
@@ -281,29 +290,31 @@ int QueryDataConsumer::consumeGetEvent(opcode_headers::DirectIODeviceChannelHead
         MultiCacheData multi_cached_data;
         err = cache_slot->resource_pooled->getData(keys,
                                                    multi_cached_data);
-        
-        for(ChaosStringVectorConstIterator it = keys.begin(),
-            end = keys.end();
-            it != end;
-            it++) {
-            const CacheData& cached_element = multi_cached_data[*it];
-            if(cached_element.size() == 0) {
-             //element has not been found so we need to create and empty cdata wrapper
-                CDataWrapper tmp;
-                int size = 0;
-                const char * d_ptr = tmp.getBSONRawData(size);
-                data_buffer.writeByte(d_ptr,
-                                      size);
-            } else {
-                data_buffer.writeByte(&cached_element[0],
-                                      (int32_t)cached_element.size());
+        if(cache_slot) {
+            for(ChaosStringVectorConstIterator it = keys.begin(),
+                end = keys.end();
+                it != end;
+                it++) {
+                const CacheData& cached_element = multi_cached_data[*it];
+                if(cached_element.size() == 0) {
+                    //element has not been found so we need to create and empty cdata wrapper
+                    CDataWrapper tmp;
+                    int size = 0;
+                    const char * d_ptr = tmp.getBSONRawData(size);
+                    data_buffer.writeByte(d_ptr,
+                                          size);
+                } else {
+                    data_buffer.writeByte(&cached_element[0],
+                                          (int32_t)cached_element.size());
+                }
             }
+            
+            result_header->number_of_result = (uint32_t)multi_cached_data.size();
+            result_value_len = data_buffer.getCursorLocation();
+            *result_value = data_buffer.release();
+        } else {
+            ERR << "Error allocating cache slot";
         }
-        
-        result_header->number_of_result = (uint32_t)multi_cached_data.size();
-        result_value_len = data_buffer.getCursorLocation();
-        *result_value = data_buffer.release();
-        
     } catch(...) {}
     DriverPoolManager::getInstance()->releaseCacheDriverInstance(cache_slot);
     if(header) free(header);

@@ -1,22 +1,22 @@
 /*
- *	AbstractRemoteIODriver.cpp
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFramework]
- *	Created by bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 19/07/2017 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include <chaos/cu_toolkit/driver_manager/driver/AbstractRemoteIODriver.h>
@@ -28,7 +28,7 @@
 #define DBG		DBG_LOG(AbstractCDataWrapperIODriver)
 #define ERR		ERR_LOG(AbstractCDataWrapperIODriver)
 
-#define TIMEOUT_PURGE_PROMISE 60000
+#define TIMEOUT_PURGE_PROMISE 60000000
 #define PURGE_TIMER_REPEAT_DELAY 30000
 
 using namespace chaos::common::data;
@@ -44,11 +44,6 @@ using namespace chaos::cu::driver_manager::driver;
 #define REQUEST_IDENTIFICATION  "request_id"
 
 #pragma mark DriverResultInfo
-bool AbstractRemoteIODriver::DriverResultInfo::less::operator()(const DriverResultInfo::DriverResultInfoShrdPtr& h1,
-                                                                const DriverResultInfo::DriverResultInfoShrdPtr& h2) {
-    return h1->request_id < h2->request_id;
-}
-
 const AbstractRemoteIODriver::DriverResultInfo::extract_index::result_type&
 AbstractRemoteIODriver::DriverResultInfo::extract_index::operator()(const DriverResultInfo::DriverResultInfoShrdPtr &p) const {
     return p->request_id;
@@ -85,6 +80,25 @@ void AbstractRemoteIODriver::driverInit(const char *initParameter) throw(chaos::
     //! end point identifier & authorization key
     ExternalUnitEndpoint::endpoint_identifier = jv_endpoint_name.asString();
     authorization_key = jv_authorization_key.asString();
+    CHECK_ASSERTION_THROW_AND_LOG(authorization_key.size(), ERR, -4, "The authorization key cannot be zero lenght");
+    
+    AsyncCentralManager::getInstance()->addTimer(this,
+                                                 PURGE_TIMER_REPEAT_DELAY,
+                                                 PURGE_TIMER_REPEAT_DELAY);
+    
+    //register this driver as external endpoint
+    ExternalUnitGateway::getInstance()->registerEndpoint(*this);
+}
+
+void AbstractRemoteIODriver::driverInit(const chaos::common::data::CDataWrapper& init_parameter) throw(chaos::CException) {
+    CHECK_ASSERTION_THROW_AND_LOG((init_parameter.isEmpty() == false), ERR, -1, "Init parameter need to be formated in a json document");
+    
+    CHECK_ASSERTION_THROW_AND_LOG(init_parameter.hasKey("endpoint_name"), ERR, -2, "The endpoint name is mandatory");
+    CHECK_ASSERTION_THROW_AND_LOG(init_parameter.hasKey(AUTHORIZATION_KEY), ERR, -3, "The authorization key is mandatory");
+    
+    //! end point identifier & authorization key
+    ExternalUnitEndpoint::endpoint_identifier = init_parameter.getStringValue("endpoint_name");
+    authorization_key = init_parameter.getStringValue(AUTHORIZATION_KEY);
     CHECK_ASSERTION_THROW_AND_LOG(authorization_key.size(), ERR, -4, "The authorization key cannot be zero lenght");
     
     AsyncCentralManager::getInstance()->addTimer(this,
@@ -150,11 +164,11 @@ int AbstractRemoteIODriver::handleReceivedeMessage(const std::string& connection
             const int64_t req_index = message->getUInt32Value(REQUEST_IDENTIFICATION);
             ChaosUniquePtr<CDataWrapper> embedded_message(message->getCSDataValue(MESSAGE));
             LSetPromiseWriteLock wl = set_p.getWriteLockObject();
-            SetPromisesReqTSIndexIter it = set_p_req_ts_index.find(req_index);
-            if(it != set_p_req_ts_index.end()) {
+            SetPromisesReqIdxIndexIter it = set_p_req_id_index.find(req_index);
+            if(it != set_p_req_id_index.end()) {
                 //set promises and remove it
                 (*it)->promise.set_value(CDWShrdPtr(embedded_message.release()));
-                set_p_req_ts_index.erase(it);
+                set_p_req_id_index.erase(it);
             }
         }
     }
@@ -163,7 +177,7 @@ int AbstractRemoteIODriver::handleReceivedeMessage(const std::string& connection
 
 void AbstractRemoteIODriver::timeout() {
     LSetPromiseWriteLock wl = set_p.getWriteLockObject();
-    uint64_t current_check_ts = TimingUtil::getTimeStamp();
+    uint64_t current_check_ts = TimingUtil::getTimeStampInMicroseconds();
     unsigned int max_purge_check = 10;
     for(SetPromisesReqTSIndexIter it = set_p_req_ts_index.begin(),
         end = set_p_req_ts_index.end();
@@ -171,7 +185,7 @@ void AbstractRemoteIODriver::timeout() {
         max_purge_check--){
         //purge outdated promise
         if(current_check_ts > (*it)->request_ts+TIMEOUT_PURGE_PROMISE) {
-            DBG << CHAOS_FORMAT("Remove the pormises for request of index %1%", %(*it)->request_ts);
+            DBG << CHAOS_FORMAT("Remove the promise for request of index %1%", %(*it)->request_id);
             set_p_req_ts_index.erase(it++);
         } else {
             ++it;
@@ -212,7 +226,7 @@ int AbstractRemoteIODriver::sendRawRequest(CDWUniquePtr message_data,
     //store promises in result map
     LSetPromiseWriteLock lmr_wl = set_p.getWriteLockObject();
     set_p().insert(promise_info);
-    
+    lmr_wl->unlock();
     //send message to driver
     ExternalUnitEndpoint::sendMessage(current_connection_identifier(),
                                       ChaosMoveOperator(ext_msg));

@@ -1,22 +1,22 @@
 /*
- *	ConnectionManager.h
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFramework]
- *	Created by bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 02/08/2017 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #ifndef __CHAOSFramework__37CA350_9DAE_4B95_A1C3_B5FC41005DDE_ConnectionManager_h
@@ -36,69 +36,12 @@ namespace chaos {
         //!forward decalration
         class ChaosMicroUnitToolkit;
         namespace connection {
-            /*!
-             Templated interface that give rule for the the instantiation of a class with one param constructor.
-             */
-            template <typename R, typename p1 >
-            class ObjectInstancerP1 {
-            public:
-                virtual ~ObjectInstancerP1(){};
-                virtual R* getInstance(p1& _p1) = 0;
-            };
-
-            /*!
-             Templated interface that give rule for the the instantiation of a class with two param constructor.
-             */
-            template <typename R, typename p1, typename p2 >
-            class ObjectInstancerP2 {
-            public:
-                virtual ~ObjectInstancerP2(){};
-                virtual R* getInstance(p1 _p1, p2 _p2) = 0;
-            };
-
-
-            /*!
-             Templated class that permit to instantiate the superclas of
-             a base class. This class permit to check this rule at compiletime
-             */
-            template <typename T, typename R, typename p1>
-            class TypedObjectInstancerP1:
-            public ObjectInstancerP1<R, p1> {
-            public:
-                R* getInstance(p1& _p1) {
-                    return new T(_p1);
-                }
-            };
-
-            /*!
-             Templated class that permit to instantiate the superclas of
-             a base class. This class permit to check this rule at compiletime
-             */
-            template <typename T, typename R, typename p1, typename p2 >
-            class TypedObjectInstancerP2:
-            public ObjectInstancerP2<R, p1, p2> {
-            public:
-                R* getInstance(p1 _p1, p2 _p2) {
-                    return new T(_p1, _p2);
-                }
-            };
-
-            template<typename T>
-            struct UnitConnection {
-                const ChaosSharedPtr<protocol_adapter::AbstractProtocolAdapter> protocol_adapter;
-                const ChaosSharedPtr<T> unit_proxy;
-
-                UnitConnection(const ChaosSharedPtr<protocol_adapter::AbstractProtocolAdapter>& _protocol_adapter,
-                               const ChaosSharedPtr<T> _unit_proxy):
-                protocol_adapter(_protocol_adapter),
-                unit_proxy(_unit_proxy){}
-            };
 
             //! Entry point for a connection to chaos external unit server
             class ConnectionManager {
                 friend class chaos::micro_unit_toolkit::ChaosMicroUnitToolkit;
 
-                typedef ChaosSharedPtr< ObjectInstancerP1<unit_proxy::AbstractUnitProxy, protocol_adapter::AbstractProtocolAdapter> > UnitProxyInstancer;
+                typedef ChaosSharedPtr< ObjectInstancerP1<unit_proxy::AbstractUnitProxy, ChaosUniquePtr<protocol_adapter::AbstractProtocolAdapter>& > > UnitProxyInstancer;
                 typedef std::map<ProxyType, UnitProxyInstancer > MapProxy;
 
                 typedef ChaosSharedPtr< ObjectInstancerP2<protocol_adapter::AbstractProtocolAdapter, std::string, std::string> > ProtocolAdapterInstancer;
@@ -122,30 +65,16 @@ namespace chaos {
                 void registerUnitProxy() {
                     map_proxy.insert(std::make_pair(T::proxy_type, UnitProxyInstancer(new TypedObjectInstancerP1<T,
                                                                                       unit_proxy::AbstractUnitProxy,
-                                                                                      protocol_adapter::AbstractProtocolAdapter>())));
-                }
-
-                template<typename UnitProxyClass>
-                ChaosUniquePtr< UnitConnection<UnitProxyClass> > getNewUnitConnection(const ProtocolType protocol_type,
-                                                                                      const std::string& protocol_endpoint,
-                                                                                      const std::string& protocol_option) {
-                    ChaosSharedPtr<protocol_adapter::AbstractProtocolAdapter> protocol_adater = getProtocolAdapter(protocol_type,
-                                                                                                                   protocol_endpoint,
-                                                                                                                   protocol_option);
-                    ChaosSharedPtr<UnitProxyClass> unit_proxy(static_cast<UnitProxyClass*>(getUnitProxy(UnitProxyClass::proxy_type, protocol_adater.get()).release()));
-                    ChaosUniquePtr< UnitConnection<UnitProxyClass> > uc(new UnitConnection<UnitProxyClass>(protocol_adater,
-                                                                                                           unit_proxy));
-                    return uc;
+                                                                                      ChaosUniquePtr<protocol_adapter::AbstractProtocolAdapter>&>())));
                 }
 
 
-
-                ChaosSharedPtr<protocol_adapter::AbstractProtocolAdapter> getProtocolAdapter(ProtocolType type,
+                ChaosUniquePtr<protocol_adapter::AbstractProtocolAdapter> getProtocolAdapter(ProtocolType type,
                                                                                              const std::string& endpoint,
                                                                                              const std::string& protocol_option);
 
                 ChaosUniquePtr<unit_proxy::AbstractUnitProxy> getUnitProxy(ProxyType type,
-                                                                           protocol_adapter::AbstractProtocolAdapter *protocol_adapter);
+                                                                           ChaosUniquePtr<protocol_adapter::AbstractProtocolAdapter> &protocol_adapter);
             };
         }
     }

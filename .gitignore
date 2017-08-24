@@ -1,3 +1,6 @@
+doc/html
+doc/img
+doc/latex
 *.ui.autosave
 *.cbp
 build_*
@@ -62,7 +65,6 @@ ControlUnitTest/ChaosCUTest
 *mwb.bak
 example/UIToolkitTest/testui.app
 *application.log
-Documentation/uml/CHAOS.mdzip.bak
 external
 usr
 example/build-UIToolkitTest-Desktop-Debug/*

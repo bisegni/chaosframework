@@ -8,5 +8,5 @@ IF(BUILD_FORCE_STATIC)
 SET(CMAKE_EXE_LINKER_FLAGS "-static -Wl,--whole-archive -lchaos_common -Wl,--no-whole-archive")
 ENDIF()
 
-TARGET_LINK_LIBRARIES(ChaosMicroUnitToolkitTest chaos_micro_unit_toolkit)
+TARGET_LINK_LIBRARIES(ChaosMicroUnitToolkitTest chaos_micro_unit_toolkit chaos_common ${FrameworkLib})
 INSTALL_TARGETS(/bin ChaosMicroUnitToolkitTest)

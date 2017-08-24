@@ -1,22 +1,22 @@
 /*
- *	DataPack.h
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFramework]
- *	Created by bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 02/08/2017 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #ifndef __CHAOSFramework__FF18E47_E86B_4A8B_B5CA_7EA5C789F2FB_DataPack_h
@@ -44,33 +44,37 @@ namespace chaos {
                 static DataPackUniquePtr newFromBuffer(const char *data,
                                                        const size_t data_len,
                                                        bool *parsed = NULL);
-
+                
                 bool hasKey(const std::string& key);
-
+                
                 void addBool(const std::string& key, bool value);
                 const bool isBool(const std::string& key) const;
                 const bool getBool(const std::string& key) const;
-
+                
                 void addInt32(const std::string& key, int32_t value);
                 const bool isInt32(const std::string& key) const;
                 const int32_t getInt32(const std::string& key) const;
-
+                
                 void addInt64(const std::string& key, int64_t value);
                 const bool isInt64(const std::string& key) const;
                 const int64_t getInt64(const std::string& key) const;
-
+                
                 void addDouble(const std::string& key, double value);
                 const bool isDouble(const std::string& key) const;
                 const double getDouble(const std::string& key) const;
-
+                
                 void addString(const std::string& key, const std::string& value);
                 const bool isString(const std::string& key) const;
                 std::string getString(const std::string& key) const;
-
+                
                 void addDataPack(const std::string& key, DataPack& value);
                 const bool isDataPack(const std::string& key) const;
-                const DataPackUniquePtr getDataPack(const std::string& key) const;
-
+                DataPackUniquePtr getDataPack(const std::string& key) const;
+                
+                void addBinary(const std::string& key,
+                               const char *s,
+                               const unsigned int len);
+                std::string getBinary(const std::string& key);
                 void createArrayForKey(const std::string& key);
                 const bool isArray(const std::string& key) const;
                 void appendBool(const std::string& arr_key, bool value);
@@ -79,10 +83,10 @@ namespace chaos {
                 void appendDouble(const std::string& arr_key, double value);
                 void appendString(const std::string& arr_key, const std::string& value);
                 void appendDataPack(const std::string& arr_key, DataPack& value);
-
+                
                 template<typename T>
                 void addArray(const std::string& key, const std::vector<T> &value) {
-                  using namespace Json;
+                    using namespace Json;
                     root_json_object[key] = Value(arrayValue);
                     Value& array_value = root_json_object[key];
                     for(typename std::vector<T>::const_iterator it = value.begin(),
@@ -91,9 +95,9 @@ namespace chaos {
                         it++) {
                         array_value.append(*it);
                     }
-
+                    
                 }
-
+                
                 std::string toString();
                 std::string toUnformattedString();
             };

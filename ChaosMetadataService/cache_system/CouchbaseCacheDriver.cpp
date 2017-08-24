@@ -1,21 +1,22 @@
 /*
- *	CouchbaseChacheDriver.cpp
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2014 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include "CouchbaseCacheDriver.h"
@@ -35,14 +36,6 @@
 #define CCDLERR_ LERR_ << CouchbaseCacheDriver_LOG_HEAD
 
 using namespace chaos::common::utility;
-
-//! Regular expression for check server endpoint with the sintax hostname:[priority_port:service_port]
-static const boost::regex CouchbaseHostNameOnlyRegExp("[a-zA-Z0-9]+(.[a-zA-Z0-9]+)+");
-//! Regular expression for check server endpoint with the sintax hostname:[priority_port:service_port]
-static const boost::regex CouchbaseHostNameRegExp("[a-zA-Z0-9]+(.[a-zA-Z0-9]+)+:[0-9]{4,5}");
-//! Regular expression for check server endpoint with the sintax ip:[priority_port:service_port]
-static const boost::regex CouchbaseIPAndPortRegExp("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b:[0-9]{4,5}");
-
 
 using namespace chaos::data_service::cache_system;
 
@@ -240,7 +233,12 @@ int CouchbaseCacheDriver::getData(const ChaosStringVector& keys,
 bool CouchbaseCacheDriver::validateString(std::string& server_description) {
     boost::algorithm::trim(server_description);
     std::string normalized_server_desc = boost::algorithm::to_lower_copy(server_description);
-    
+    //! Regular expression for check server endpoint with the sintax hostname:[priority_port:service_port]
+    boost::regex CouchbaseHostNameOnlyRegExp("[a-zA-Z0-9]+(.[a-zA-Z0-9]+)+");
+    //! Regular expression for check server endpoint with the sintax hostname:[priority_port:service_port]
+    boost::regex CouchbaseHostNameRegExp("[a-zA-Z0-9]+(.[a-zA-Z0-9]+)+:[0-9]{4,5}");
+    //! Regular expression for check server endpoint with the sintax ip:[priority_port:service_port]
+    boost::regex CouchbaseIPAndPortRegExp("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b:[0-9]{4,5}");
     //check if the description is well formed
     if(!regex_match(normalized_server_desc, CouchbaseHostNameOnlyRegExp) &&
        !regex_match(normalized_server_desc, CouchbaseHostNameRegExp) &&

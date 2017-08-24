@@ -5,7 +5,7 @@
 #include <QLabel>
 #include <chaos/common/chaos_constants.h>
 
-#include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
+#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
 
 typedef chaos::DataType::DataType ChaosDataType;
 

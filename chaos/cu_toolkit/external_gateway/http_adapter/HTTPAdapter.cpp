@@ -1,25 +1,26 @@
 /*
- *	HTTPAdapter.cpp
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFramework]
- *	Created by bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 22/06/2017 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include <chaos/common/global.h>
+#include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
 #include <chaos/cu_toolkit/external_gateway/ExternalUnitGateway.h>
 #include <chaos/cu_toolkit/external_gateway/http_adapter/HTTPAdapter.h>
@@ -31,6 +32,7 @@
 #include <algorithm>
 
 using namespace chaos;
+using namespace chaos::common::data;
 using namespace chaos::cu::external_gateway::http_adapter;
 
 #define INFO    INFO_LOG(HTTPHelper)
@@ -43,7 +45,7 @@ run(false),
 root_connection(0){}
 
 HTTPAdapter::~HTTPAdapter() {
-
+    
 }
 
 void HTTPAdapter::init(void *init_data) throw (chaos::CException) {
@@ -61,17 +63,17 @@ void HTTPAdapter::init(void *init_data) throw (chaos::CException) {
     }
     run = true;
     mg_mgr_init(&mgr, NULL);
-
+    
     root_connection = mg_bind(&mgr, setting.publishing_port.c_str(), HTTPAdapter::eventHandler);
-    if(root_connection == NULL) {CException(-1, "Error creating http connection", __PRETTY_FUNCTION__);}
+    if(root_connection == NULL) {throw CException(-1, "Error creating http connection", __PRETTY_FUNCTION__);}
     root_connection->user_data = this;
-
+    
     mg_set_protocol_http_websocket(root_connection);
     s_http_server_opts.document_root = "";  // Serve current directory
     s_http_server_opts.enable_directory_listing = "no";
     //
     CObjectProcessingQueue<WorkRequest>::init(setting.thread_number);
-
+    
     thread_poller.reset(new boost::thread(boost::bind(&HTTPAdapter::poller, this)));
 }
 
@@ -80,14 +82,14 @@ void HTTPAdapter::deinit() throw (chaos::CException) {
     CObjectProcessingQueue<WorkRequest>::deinit();
     CObjectProcessingQueue<WorkRequest>::clear();
     thread_poller->join();
-
+    
     mg_mgr_free(&mgr);
 }
 
 void HTTPAdapter::poller() {
     INFO << "Entering thread poller";
     while (run) {
-        mg_mgr_poll(&mgr, 10);
+        mg_mgr_poll(&mgr, 1);
     }
     INFO << "Leaving thread poller";
 }
@@ -96,7 +98,10 @@ void HTTPAdapter::sendHTTPJSONError(mg_connection *nc,
                                     int status_code,
                                     const int error_code,
                                     const std::string& error_message) {
-    const std::string json_error = CHAOS_FORMAT("{error:%1%,message:\"%2%\"}", %error_code%error_message);
+    CDataWrapper err_data_pack;
+    err_data_pack.addInt32Value("error_code", error_code);
+    err_data_pack.addStringValue("error_message", error_message);
+    const std::string json_error = err_data_pack.getJSONString();
     mg_send_head(nc, 400, 0, "Content-Type: application/json");
     mg_printf(nc, "%s", json_error.c_str());
 }
@@ -105,8 +110,21 @@ void HTTPAdapter::sendWSJSONError(mg_connection *nc,
                                   const int error_code,
                                   const std::string& error_message,
                                   bool close_connection) {
-    const std::string json_error = CHAOS_FORMAT("{error:%1%,message:\"%2%\"}", %error_code%error_message);
+    CDataWrapper err_data_pack;
+    err_data_pack.addInt32Value("error_code", error_code);
+    err_data_pack.addStringValue("error_message", error_message);
+    const std::string json_error = err_data_pack.getJSONString();
     mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT, json_error.c_str(), json_error.size());
+    if(close_connection){mg_send_websocket_frame(nc, WEBSOCKET_OP_CLOSE, NULL, 0);}
+}
+
+void HTTPAdapter::sendWSJSONAcceptedConnection(mg_connection *nc,
+                                               bool accepted,
+                                               bool close_connection) {
+    CDataWrapper err_data_pack;
+    err_data_pack.addInt32Value("accepted_connection", accepted);
+    const std::string accepted_json = err_data_pack.getJSONString();
+    mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT, accepted_json.c_str(), accepted_json.size());
     if(close_connection){mg_send_websocket_frame(nc, WEBSOCKET_OP_CLOSE, NULL, 0);}
 }
 
@@ -117,7 +135,7 @@ const std::string HTTPAdapter::getSerializationType(http_message *http_message) 
         value = mg_get_http_header(http_message, "content-type");
         if(value == NULL) return "";
     }
-
+    
     std::string ser_type(value->p, value->len);
     std::transform(ser_type.begin(), ser_type.end(), ser_type.begin(), ::tolower);
     return ser_type;
@@ -133,17 +151,23 @@ void  HTTPAdapter::manageWSHandshake(WorkRequest& wr) {
         sendWSJSONError(wr.nc,
                         -1,
                         CHAOS_FORMAT("No endpoint found for '%1%'", %wr.uri),
-                        true);
+                        false);
+        sendWSJSONAcceptedConnection(wr.nc,
+                                     false,
+                                     true);
         return;
     }
-
+    
     //check if endpoint can accept more connection
     if(map_endpoint()[wr.uri]->canAcceptMoreConnection() == false) {
         //write error for no more connection accepted by endpoint
         sendWSJSONError(wr.nc,
                         -2,
                         CHAOS_FORMAT("No more connection accepted by endpoint '%1%'", %wr.uri),
-                        true);
+                        false);
+        sendWSJSONAcceptedConnection(wr.nc,
+                                     false,
+                                     true);
     } else {
         //get instance for serializer
         ChaosUniquePtr<serialization::AbstractExternalSerialization> serializer = ExternalUnitGateway::getInstance()->getNewSerializationInstanceForType(wr.s_type);
@@ -152,7 +176,10 @@ void  HTTPAdapter::manageWSHandshake(WorkRequest& wr) {
             sendWSJSONError(wr.nc,
                             -3,
                             CHAOS_FORMAT("Unable to find the serialization plugin for '%1%'", %wr.s_type),
-                            true);
+                            false);
+            sendWSJSONAcceptedConnection(wr.nc,
+                                         false,
+                                         true);
         } else {
             //we can create a new connection
             LMapConnectionWriteLock wconnl = map_connection.getWriteLockObject();
@@ -160,6 +187,9 @@ void  HTTPAdapter::manageWSHandshake(WorkRequest& wr) {
                                                       ChaosSharedPtr<HTTPExternalUnitConnection>(new HTTPExternalUnitConnection(wr.nc,
                                                                                                                                 map_endpoint()[wr.uri],
                                                                                                                                 ChaosMoveOperator(serializer)))));
+            sendWSJSONAcceptedConnection(wr.nc,
+                                         true,
+                                         false);
         }
     }
 }
@@ -182,10 +212,12 @@ void HTTPAdapter::processBufferElement(WorkRequest *request,
             int err = 0;
             policy.elementHasBeenDetached = true;
             LMapConnectionReadLock wconnl = map_connection.getReadLockObject();
-            if((err = map_connection()[reinterpret_cast<uintptr_t>(request->nc)]->handleWSIncomingData(ChaosUniquePtr<WorkRequest>(request)))){
-                //weh don't have found the sriealizer
-                const std::string error = CHAOS_FORMAT("{error:%1%,message:\"%2%\"}", %err%map_connection()[reinterpret_cast<uintptr_t>(request->nc)]->getEndpointIdentifier());
-                mg_send_websocket_frame(request->nc, WEBSOCKET_OP_TEXT, error.c_str(), error.size());
+            if(map_connection().count(reinterpret_cast<uintptr_t>(request->nc))) {
+                if((err = map_connection()[reinterpret_cast<uintptr_t>(request->nc)]->handleWSIncomingData(ChaosUniquePtr<WorkRequest>(request)))){
+                    //weh don't have found the sriealizer
+                    const std::string error = CHAOS_FORMAT("{error:%1%,message:\"%2%\"}", %err%map_connection()[reinterpret_cast<uintptr_t>(request->nc)]->getEndpointIdentifier());
+                    mg_send_websocket_frame(request->nc, WEBSOCKET_OP_TEXT, error.c_str(), error.size());
+                }
             }
             break;
         }
@@ -194,10 +226,9 @@ void HTTPAdapter::processBufferElement(WorkRequest *request,
             map_connection().erase(reinterpret_cast<uintptr_t>(request->nc));
             break;
         }
-
+            
         default:{break;}
     }
-
 }
 
 void HTTPAdapter::eventHandler(mg_connection *nc, int ev, void *ev_data) {
@@ -230,7 +261,7 @@ void HTTPAdapter::eventHandler(mg_connection *nc, int ev, void *ev_data) {
             if(req->s_type.size() == 0) {
                 std::string error = "Serialization type not found";
                 mg_send_head(nc, 400, error.size(), "Content-Type: text/plain");
-                mg_printf(nc, "%.*s", error.size(),error.c_str());
+                mg_printf(nc, "%s", error.c_str());
             }else {
                 adapter->push(req);
             }
@@ -263,8 +294,24 @@ int HTTPAdapter::registerEndpoint(ExternalUnitEndpoint& endpoint) {
 }
 
 int HTTPAdapter::deregisterEndpoint(ExternalUnitEndpoint& endpoint) {
+    //lock for write conenction and endpoint
     LMapEndpointWriteLock wl = map_endpoint.getWriteLockObject();
+    
     if(map_endpoint().count(endpoint.getIdentifier()) == 0) return 0;
+    
+    LMapConnectionWriteLock wconnl = map_connection.getWriteLockObject();
+    for(MapConnectionIterator it = map_connection().begin(),
+        end = map_connection().end();
+        it != end;) {
+        if(it->second->getEndpointIdentifier().compare(endpoint.getIdentifier()) == 0) {
+            //iterator need to be removed so we force to close the connection
+            it->second->closeConnection();
+            //remove connection
+            map_connection().erase(it++);
+        } else {
+            ++it;
+        }
+    }
     map_endpoint().erase(endpoint.getIdentifier());
     return 0;
 }

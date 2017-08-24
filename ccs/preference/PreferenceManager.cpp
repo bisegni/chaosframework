@@ -1,6 +1,6 @@
 #include "PreferenceManager.h"
 
-#include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
+#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
 
 #include <QSettings>
 

@@ -1,25 +1,26 @@
 /*
- *	DataPack.cpp
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFramework]
- *	Created by bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 02/08/2017 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include <chaos_micro_unit_toolkit/data/DataPack.h>
+#include <chaos_micro_unit_toolkit/external_lib/base64.h>
 
 using namespace Json;
 using namespace chaos::micro_unit_toolkit;
@@ -69,7 +70,7 @@ const int32_t DataPack::getInt32(const std::string& key) const {
     return root_json_object[key].asInt();
 }
 void DataPack::addInt64(const std::string& key,
-                             int64_t value) {
+                        int64_t value) {
     root_json_object[key] = Value(value);
 }
 const bool DataPack::isInt64(const std::string& key) const {
@@ -105,9 +106,19 @@ void DataPack::addDataPack(const std::string& key,
 const bool DataPack::isDataPack(const std::string& key) const {
     return root_json_object[key].isObject();
 }
-const DataPackUniquePtr DataPack::getDataPack(const std::string& key) const {
+DataPackUniquePtr DataPack::getDataPack(const std::string& key) const {
     return DataPackUniquePtr(new DataPack(root_json_object[key]));
 }
+
+void DataPack::addBinary(const std::string& key,
+                         const char *s,
+                         const unsigned int len) {
+    root_json_object[key] = Value(base64_encode(reinterpret_cast<const unsigned char*>(s), len));
+}
+std::string DataPack::getBinary(const std::string& key) {
+    return base64_decode(root_json_object[key].asString());
+}
+
 void DataPack::createArrayForKey(const std::string& key) {
     root_json_object[key] = Value(arrayValue);
 }

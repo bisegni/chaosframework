@@ -1,10 +1,23 @@
-//
-//  main.cpp
-//  ChaosMicroUnitToolkitTest
-//
-//  Created by bisegni on 02/08/2017.
-//  Copyright © 2017 INFN. All rights reserved.
-//
+/*
+ * Copyright 2012, 2017 INFN
+ *
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
+ *
+ * https://joinup.ec.europa.eu/software/page/eupl
+ *
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
+ */
 
 #include <iostream>
 #include <chaos_micro_unit_toolkit/micro_unit_toolkit.h>
@@ -27,7 +40,7 @@ int main(int argc, const char * argv[]) {
     dp_parent.appendDataPack("array", dp);
     dp_parent.appendDataPack("array", dp);
     dp_parent.appendDataPack("array", dp);
-    
+
     std::vector<int> arr;
     arr.push_back(1);
     arr.push_back(2);
@@ -36,24 +49,5 @@ int main(int argc, const char * argv[]) {
     arr.push_back(5);
     dp_parent.addArray("iarr", arr);
     std::cout << dp_parent.toUnformattedString() << std::endl;
-    
-    ChaosMicroUnitToolkit mut;
-    const char *option="Content-Type: application/bson-json\r\n";
-    ChaosUniquePtr< UnitConnection<RawDriverUnitProxy> > proxy = mut.createNewRawDriverUnit(ProtocolTypeHTTP,
-                                                                                            "ws://localhost:8080/io_driver",
-                                                                                            option);
-    
-    int err = proxy->protocol_adapter->connect();
-    proxy->protocol_adapter->poll(1000);
-    if(err) return err;
-
-    proxy->unit_proxy->authorization("work");
-    proxy->protocol_adapter->poll(2000);
-    if(proxy->unit_proxy->hasMoreMessage()) {
-        RemoteMessageUniquePtr m = proxy->unit_proxy->getNextMessage();
-        std::cout << m->message->toString() << std::endl;
-    }
-    proxy->protocol_adapter->close();
-    
     return 0;
 }

@@ -9,7 +9,7 @@
 #ifndef NodeMonitorHandlerTest_hpp
 #define NodeMonitorHandlerTest_hpp
 
-#include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
+#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
 
 class NodeMonitorHandlerTest:
 public chaos::metadata_service_client::node_monitor::ControlUnitMonitorHandler {

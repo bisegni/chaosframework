@@ -1,25 +1,27 @@
 /*
- *	HTTPProtocolAdapter.cpp
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFramework]
- *	Created by bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 02/08/2017 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include <chaos_micro_unit_toolkit/connection/protocol_adapter/http/HTTPProtocolAdapter.h>
+
+#define ACCEPTED_CONNECTION_KEY "accepted_connection"
 
 using namespace chaos::micro_unit_toolkit::data;
 using namespace chaos::micro_unit_toolkit::connection::protocol_adapter::http;
@@ -49,7 +51,7 @@ int HTTPProtocolAdapter::connect() {
         err = -1;
     }
     return err;
-
+    
 }
 
 void HTTPProtocolAdapter::poll(int32_t milliseconds_wait) {
@@ -88,11 +90,31 @@ void HTTPProtocolAdapter::ev_handler(struct mg_connection *conn,
             http_instance->connection_status = ConnectionStateConnected;
             break;
         }
-
+            
         case MG_EV_WEBSOCKET_FRAME: {
             struct websocket_message *wm = (struct websocket_message *) event_data;
-            data::DataPackSharedPtr rece_msg_shrd_ptr(DataPack::newFromBuffer((const char*)wm->data, wm->size).release());
-            http_instance->handleReceivedMessage(rece_msg_shrd_ptr);
+            data::DataPackSharedPtr received_msg_shrd_ptr(DataPack::newFromBuffer((const char*)wm->data, wm->size).release());
+            if(http_instance->connection_status != ConnectionStateAccepted) {
+                //at this time we need to manage the receivedm of the data unitl we not received
+                //the dapack taht informa us for the connection accepted
+                if(received_msg_shrd_ptr->hasKey(ACCEPTED_CONNECTION_KEY) &&
+                   received_msg_shrd_ptr->isInt32(ACCEPTED_CONNECTION_KEY)) {
+                    int32_t accepted_value = received_msg_shrd_ptr->getInt32(ACCEPTED_CONNECTION_KEY);
+                    switch (accepted_value) {
+                        case 1:
+                            //ok
+                            http_instance->connection_status = ConnectionStateAccepted;
+                            break;
+                            
+                        default:
+                            http_instance->connection_status = ConnectionStateNotAccepted;
+                            break;
+                    }
+                    //this datapack must not be added to the user queue message because is a pack for sincronization
+                    break;
+                }
+            }
+            http_instance->handleReceivedMessage(received_msg_shrd_ptr);
             break;
         }
         case MG_EV_CLOSE: {

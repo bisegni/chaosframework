@@ -1,22 +1,22 @@
 /*
- *	ChaosMicroUnitToolkit.h
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFramework]
- *	Created by bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 01/08/2017 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #ifndef __CHAOSFramework__B9F7036_64EE_43D8_B174_A3D8B7AA7D78_ChaosMicroUnitToolkit_h
@@ -35,9 +35,16 @@ namespace chaos {
             ChaosMicroUnitToolkit();
             ~ChaosMicroUnitToolkit();
             
-            ChaosUniquePtr< connection::UnitConnection<connection::unit_proxy::RawDriverUnitProxy> > createNewRawDriverUnit(connection::ProtocolType protocol_type,
-                                                                                                                            const std::string& protocol_endpoint,
-                                                                                                                            const std::string& protocol_option);
+            ChaosUniquePtr<connection::protocol_adapter::AbstractProtocolAdapter> getConnectionAdapter(connection::ProtocolType protocol_type,
+                                                                                                       const std::string& protocol_endpoint,
+                                                                                                       const std::string& protocol_option);
+            
+            ChaosUniquePtr<connection::unit_proxy::raw_driver::RawDriverHandlerWrapper> createNewRawDriverHandlerWrapper(connection::ProtocolType protocol_type,
+                                                                                                                         const std::string& protocol_endpoint,
+                                                                                                                         const std::string& protocol_option,
+                                                                                                                         connection::unit_proxy::UnitProxyHandler handler,
+                                                                                                                         void *user_data,
+                                                                                                                         const std::string& authorization_key);
         };
         
     }

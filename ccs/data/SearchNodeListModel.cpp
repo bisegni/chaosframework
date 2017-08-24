@@ -3,7 +3,7 @@
 #include "delegate/TwoLineInformationItem.h"
 
 #include <QDateTime>
-#include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
+#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
 #include <QMimeData>
 #include <QDataStream>
 using namespace chaos::common::data;

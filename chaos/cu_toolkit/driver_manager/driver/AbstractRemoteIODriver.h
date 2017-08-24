@@ -1,22 +1,22 @@
 /*
- *	AbstractRemoteIODriver.h
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFramework]
- *	Created by bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 19/07/2017 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #ifndef __CHAOSFramework__CE5788A_1D68_477E_BB9E_55BE8F7D3373_AbstractRemoteIODriver_h
@@ -90,19 +90,13 @@ namespace chaos {
                         DriverResultPromise promise;
                         typedef ChaosSharedPtr< DriverResultInfo > DriverResultInfoShrdPtr;
                         //!key accessors for multindix infrastructure
-                        struct less {
-                            bool operator()(const DriverResultInfoShrdPtr& h1, const DriverResultInfoShrdPtr& h2);
-                        };
-                        
                         struct extract_index {
                             typedef uint32_t result_type;
-                            // modify_key() requires return type to be non-const
                             const result_type &operator()(const DriverResultInfoShrdPtr &p) const;
                         };
                         
                         struct extract_req_ts {
                             typedef int64_t result_type;
-                            // modify_key() requires return type to be non-const
                             const result_type &operator()(const DriverResultInfoShrdPtr &p) const;
                         };
                     };
@@ -141,6 +135,7 @@ namespace chaos {
                     
                     //!initialization and deinitialization driver methods
                     void driverInit(const char *initParameter) throw (chaos::CException);
+                    void driverInit(const chaos::common::data::CDataWrapper& init_parameter) throw(chaos::CException);
                     void driverDeinit() throw (chaos::CException);
                 public:
                     

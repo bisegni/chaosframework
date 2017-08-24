@@ -1,22 +1,22 @@
 /*
- *	AbstractProtocolAdapter.h
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFramework]
- *	Created by bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 02/08/2017 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #ifndef __CHAOSFramework_CD2B55D0_1C87_4434_BADC_420C3CB85F42_AbstractProtocolAdapter_h
@@ -32,24 +32,20 @@
 namespace chaos {
     namespace micro_unit_toolkit {
         namespace connection {
-            //!forward decalration
-            namespace unit_proxy {
-                class AbstractUnitProxy;
-            }
-            
             namespace protocol_adapter {
                 
                 typedef enum {
                     ConnectionStateDisconnected,
                     ConnectionStateConnecting,
                     ConnectionStateConnected,
+                    ConnectionStateAccepted,
+                    ConnectionStateNotAccepted,
                     ConnectionStateConnectionError
                 } ConnectionState;
                 
                 
                 //! Abstract base class for all protocols adapter
                 class AbstractProtocolAdapter {
-                    friend class chaos::micro_unit_toolkit::connection::unit_proxy::AbstractUnitProxy;
                 protected:
                     virtual int sendRawMessage(chaos::micro_unit_toolkit::data::DataPackUniquePtr& message) = 0;
                     
@@ -69,16 +65,8 @@ namespace chaos {
                     
                     virtual int close() = 0;
 
-                    ConnectionState getConnectionState() const;
-                protected:
-                    typedef std::map<uint32_t, data::DataPackSharedPtr> MapRequestIDResponse;
-                    typedef std::pair<uint32_t, data::DataPackSharedPtr> MapRequestIDResponsePair;
-                    typedef MapRequestIDResponse::iterator MapRequestIDResponseIterator;
-
-                    uint32_t adapter_request_id;
-                    ConnectionState connection_status;
-                    MapRequestIDResponse                map_req_id_response;
-                    std::queue<data::DataPackSharedPtr> queue_received_messages;
+                    const ConnectionState& getConnectionState() const;
+                    
                     
                     int sendMessage(data::DataPackUniquePtr& message);
                     
@@ -94,6 +82,16 @@ namespace chaos {
                     bool hasResponseAvailable(uint32_t request_id);
                     
                     data::DataPackSharedPtr retrieveRequestResponse(uint32_t request_id);
+                protected:
+                    typedef std::map<uint32_t, data::DataPackSharedPtr> MapRequestIDResponse;
+                    typedef std::pair<uint32_t, data::DataPackSharedPtr> MapRequestIDResponsePair;
+                    typedef MapRequestIDResponse::iterator MapRequestIDResponseIterator;
+
+                    uint32_t adapter_request_id;
+                    ConnectionState connection_status;
+                    MapRequestIDResponse                map_req_id_response;
+                    std::queue<data::DataPackSharedPtr> queue_received_messages;
+
                 };
             }
         }

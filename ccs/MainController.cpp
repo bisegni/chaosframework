@@ -15,7 +15,7 @@
 #include <QFile>
 #include <QMenu>
 
-#include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
+#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
 #include "error/ErrorManager.h"
 #include "node/unit_server/UnitServerEditor.h"
 #include "node/data_service/DataServiceEditor.h"
