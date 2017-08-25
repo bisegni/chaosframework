@@ -38,6 +38,7 @@ HTTPProtocolAdapter::~HTTPProtocolAdapter() {}
 
 int HTTPProtocolAdapter::connect() {
     int err = 0;
+    if(connection_status != ConnectionStateDisconnected) return -1;
     connection_status = ConnectionStateConnecting;
     mg_mgr_init(&mgr, NULL);
     root_conn = mg_connect_ws(&mgr,
@@ -59,6 +60,7 @@ void HTTPProtocolAdapter::poll(int32_t milliseconds_wait) {
 }
 
 int HTTPProtocolAdapter::close() {
+    if(connection_status != ConnectionStateConnected) return -1;
     mg_send_websocket_frame(root_conn, WEBSOCKET_OP_CLOSE, NULL, 0);
     mg_mgr_free(&mgr);
     return 0;

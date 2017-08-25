@@ -37,7 +37,7 @@ void AbstractProtocolAdapter::handleReceivedMessage(data::DataPackSharedPtr& rec
     //checn whenever the message is a response or spontaneus message
     if(received_message->hasKey("etx_request_id") &&
        received_message->isInt32("etx_request_id")) {
-        map_req_id_response.insert(MapRequestIDResponsePair((uint32_t)received_message->getInt32("request_id"),
+        map_req_id_response.insert(MapRequestIDResponsePair((uint32_t)received_message->getInt32("etx_request_id"),
                                                             received_message));
     } else {
         queue_received_messages.push(received_message);

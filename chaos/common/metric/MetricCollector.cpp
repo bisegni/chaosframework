@@ -127,8 +127,8 @@ void MetricCollector::timeout() {
     //write metric to backend
     CHAOS_SCAN_VECTOR_ITERATOR(VectorMetricBackendIterator, vector_metric_backend, (*it)->prepare(now);)
     for(VectorMetricIterator it_metric = slot_to_persist->vector_attribute_value.begin();
-                            it_metric != slot_to_persist->vector_attribute_value.end();
-                            it_metric++) {
+        it_metric != slot_to_persist->vector_attribute_value.end();
+        it_metric++) {
         CHAOS_SCAN_VECTOR_ITERATOR(VectorMetricBackendIterator,
                                    vector_metric_backend,
                                    (*it)->preMetric();
@@ -144,8 +144,12 @@ void MetricCollector::setStatIntervalInSeconds(uint64_t stat_intervall_in_second
 }
 
 void MetricCollector::startLogging() {
-    last_stat_call = chaos::common::utility::TimingUtil::getTimeStamp();
-    AsyncCentralManager::getInstance()->addTimer(this, 1000, stat_intervall);
+    try{
+        last_stat_call = chaos::common::utility::TimingUtil::getTimeStamp();
+        AsyncCentralManager::getInstance()->addTimer(this, 1000, stat_intervall);
+    }catch(...) {
+        throw CException(-1, "Error adding timer", __PRETTY_FUNCTION__);
+    }
 }
 
 void MetricCollector::stopLogging() {

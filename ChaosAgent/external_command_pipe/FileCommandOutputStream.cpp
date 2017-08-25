@@ -44,17 +44,21 @@ void FileCommandOutputStream::deinit() throw (chaos::CException) {
 AbstractCommandOutputStream& FileCommandOutputStream::operator<<(const std::string& string) {
     ssize_t err  = 0;
     output_file = open(file_path.c_str(), O_RDWR|O_NONBLOCK);
-    err = write(output_file, string.c_str(), string.size());
-    err = fsync(output_file);
-    close(output_file);
+    if(output_file>0) {
+        err = write(output_file, string.c_str(), string.size());
+        err = fsync(output_file);
+        close(output_file);
+    }
     return *this;
 }
 
 AbstractCommandOutputStream& FileCommandOutputStream::operator<<(const char * string) {
     ssize_t err = 0;
     output_file = open(file_path.c_str(), O_RDWR|O_NONBLOCK);
-    err = write(output_file, string, strlen(string));
-    err = fsync(output_file);
-    close(output_file);
+    if(output_file>0) {
+        err = write(output_file, string, strlen(string));
+        err = fsync(output_file);
+        close(output_file);
+    }
     return *this;
 }
