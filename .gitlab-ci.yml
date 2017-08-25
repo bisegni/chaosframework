@@ -137,10 +137,10 @@ exp_scan_coverity:
       - docker
       - shared
     stage: build
-    image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/coverity:latest
+    image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/llvm_coverity_u1710
     script:
       - mkdir -p /tmp/cov-int
-      - cmake .
+      - cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ .
       - make clean
       - /tmp/coverity/bin/cov-build --dir /tmp/cov-int make -j 4
       - cd /tmp
