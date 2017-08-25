@@ -16,6 +16,21 @@ before_script:
   - echo $CHAOS_DEPLOY_PRIVATE_KEY >> /builds/chaos-lnf-control/chaosframework/deploy.key
   - chmod 600 /builds/chaos-lnf-control/chaosframework/deploy.key
 
+llvm_build_framework_x86_64:
+  tags:
+    - docker
+    - shared
+  stage: build
+  image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/llvm_coverity_u1710
+  script:
+    - cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ .
+    - make clean
+    - make  -j 4
+    - make install
+  only:
+    - development
+    - master
+
 build_framework_x86_64:
   tags:
     - docker
@@ -23,8 +38,6 @@ build_framework_x86_64:
   stage: build
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
   script:
-    - echo "Working directory:"$PWD
-    - echo "Artifact name:"$TAR_NAME_POSTFIX
     - cmake .
     - make clean
     - make  -j 4
@@ -40,8 +53,6 @@ build_framework_x86_64_c98:
   stage: build
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
   script:
-    - echo "Working directory:"$PWD
-    - echo "Artifact name:"$TAR_NAME_POSTFIX
     - cmake -DCHAOS_ENABLE_C11=OFF .
     - make clean
     - make  -j 4
@@ -57,8 +68,6 @@ build_framework_arm:
   stage: build
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
   script:
-    - echo "Working directory:"$PWD
-    - echo "Artifact name:"$TAR_NAME_POSTFIX
     - cmake -DCHAOS_TARGET=armhf
     - make clean
     - make  -j 4
@@ -74,8 +83,6 @@ exp_build_framework_x86_64:
   stage: build
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
   script:
-    - echo "Working directory:"$PWD
-    - echo "Artifact name:"$TAR_NAME_POSTFIX
     - cmake .
     - make clean
     - make  -j 4
@@ -90,8 +97,6 @@ exp_build_framework_x86_64_c98:
   stage: build
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
   script:
-    - echo "Working directory:"$PWD
-    - echo "Artifact name:"$TAR_NAME_POSTFIX
     - cmake -DCHAOS_ENABLE_C11=OFF .
     - make clean
     - make  -j 4
@@ -106,8 +111,6 @@ exp_build_framework_arm:
   stage: build
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
   script:
-    - echo "Working directory:"$PWD
-    - echo "Artifact name:"$TAR_NAME_POSTFIX
     - cmake -DCHAOS_TARGET=armhf
     - make clean
     - make  -j 4
