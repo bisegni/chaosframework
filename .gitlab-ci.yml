@@ -132,7 +132,7 @@ exp_build_framework_arm:
   only:
     - schedules
 
-exp_scan_coverity:
+exp_llvm_scan_coverity:
     tags:
       - docker
       - shared
