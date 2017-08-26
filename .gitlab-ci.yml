@@ -158,8 +158,7 @@ pages:
     script:
       - apk update && apk add doxygen
       - doxygen doc/doxygen.cfg
-      - mkdir -p public/doc/$CI_BUILD_REF_NAME/api/framework
-      - mv doc/html public/doc/$CI_BUILD_REF_NAME/api/framework
+      - mv doc/html/ public/
     when: always
     artifacts:
         paths:
