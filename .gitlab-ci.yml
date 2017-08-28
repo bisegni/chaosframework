@@ -76,6 +76,20 @@ build_framework_arm:
     - development
     - master
 
+exp_llvm_build_framework_x86_64:
+  tags:
+    - docker
+    - shared
+  stage: build
+  image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/llvm_coverity_u1710
+  script:
+    - cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ .
+    - make clean
+    - make  -j 4
+    - make install
+  only:
+    - schedules
+
 exp_build_framework_x86_64:
   tags:
     - docker
@@ -118,15 +132,15 @@ exp_build_framework_arm:
   only:
     - schedules
 
-exp_scan_coverity:
+exp_llvm_scan_coverity:
     tags:
       - docker
       - shared
     stage: build
-    image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/coverity:latest
+    image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/llvm_coverity_u1710
     script:
       - mkdir -p /tmp/cov-int
-      - cmake .
+      - cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ .
       - make clean
       - /tmp/coverity/bin/cov-build --dir /tmp/cov-int make -j 4
       - cd /tmp
@@ -144,8 +158,12 @@ pages:
     script:
       - apk update && apk add doxygen
       - doxygen doc/doxygen.cfg
+<<<<<<< HEAD
       - mkdir -p public/$CI_BUILD_REF_NAME/
       - mv doc/html/* public/$CI_BUILD_REF_NAME/
+=======
+      - mv doc/html/ public/
+>>>>>>> 64af47821a04d01b912ae6a0282319bb4873fae7
     when: always
     artifacts:
         paths:
