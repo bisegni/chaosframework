@@ -33,8 +33,8 @@ using namespace chaos::micro_unit_toolkit::connection::unit_proxy::raw_driver;
 
 const ProxyType RawDriverUnitProxy::proxy_type = ProxyTypeRawDriver;
 
-RawDriverUnitProxy::RawDriverUnitProxy(ChaosUniquePtr<protocol_adapter::AbstractProtocolAdapter>& protocol_adapter):
-AbstractUnitProxy(protocol_adapter){}
+RawDriverUnitProxy::RawDriverUnitProxy(ChaosUniquePtr<connection_adapter::AbstractConnectionAdapter>& connection_adapter):
+AbstractUnitProxy(connection_adapter){}
 
 RawDriverUnitProxy::~RawDriverUnitProxy() {}
 

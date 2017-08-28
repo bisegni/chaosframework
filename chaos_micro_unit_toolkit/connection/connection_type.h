@@ -12,8 +12,8 @@
 namespace chaos {
     namespace micro_unit_toolkit {
         namespace connection {
-            namespace protocol_adapter {
-                class AbstractProtocolAdapter;
+            namespace connection_adapter {
+                class AbstractConnectionAdapter;
             }
             //! Proxy type definition
             typedef enum {
@@ -35,8 +35,8 @@ namespace chaos {
             typedef enum {
                 /*!Specify protocol used to
                  connect to remote endpoint */
-                ProtocolTypeHTTP
-            } ProtocolType;
+                ConnectionTypeHTTP
+            } ConnectionType;
 
             /*!
              Templated interface that give rule for the the instantiation of a class with one param constructor.
@@ -87,12 +87,12 @@ namespace chaos {
 
             template<typename T>
             struct UnitConnection {
-                const ChaosUniquePtr<protocol_adapter::AbstractProtocolAdapter> protocol_adapter;
+                const ChaosUniquePtr<connection_adapter::AbstractConnectionAdapter> connection_adapter;
                 const ChaosUniquePtr<T> unit_proxy;
 
-                UnitConnection(ChaosUniquePtr<protocol_adapter::AbstractProtocolAdapter>& _protocol_adapter,
+                UnitConnection(ChaosUniquePtr<connection_adapter::AbstractConnectionAdapter>& _protocol_adapter,
                                ChaosUniquePtr<T> _unit_proxy):
-                protocol_adapter(ChaosMoveOperator(_protocol_adapter)),
+                connection_adapter(ChaosMoveOperator(_protocol_adapter)),
                 unit_proxy(ChaosMoveOperator(_unit_proxy)){}
             };
         }

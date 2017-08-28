@@ -19,32 +19,32 @@
  * permissions and limitations under the Licence.
  */
 
-#include <chaos_micro_unit_toolkit/connection/protocol_adapter/http/HTTPProtocolAdapter.h>
+#include <chaos_micro_unit_toolkit/connection/connection_adapter/http/HTTPConnectionAdapter.h>
 
 #define ACCEPTED_CONNECTION_KEY "accepted_connection"
 
 using namespace chaos::micro_unit_toolkit::data;
-using namespace chaos::micro_unit_toolkit::connection::protocol_adapter::http;
+using namespace chaos::micro_unit_toolkit::connection::connection_adapter::http;
 
-const chaos::micro_unit_toolkit::connection::ProtocolType HTTPProtocolAdapter::protocol_type = ProtocolTypeHTTP;
+const chaos::micro_unit_toolkit::connection::ConnectionType HTTPConnectionAdapter::connection_type = ConnectionTypeHTTP;
 
-HTTPProtocolAdapter::HTTPProtocolAdapter(const std::string& endpoint,
+HTTPConnectionAdapter::HTTPConnectionAdapter(const std::string& endpoint,
                                          const std::string& connection_header):
-AbstractProtocolAdapter(endpoint,
+AbstractConnectionAdapter(endpoint,
                         connection_header),
 root_conn(NULL){}
 
-HTTPProtocolAdapter::~HTTPProtocolAdapter() {}
+HTTPConnectionAdapter::~HTTPConnectionAdapter() {}
 
-int HTTPProtocolAdapter::connect() {
+int HTTPConnectionAdapter::connect() {
     int err = 0;
     if(connection_status != ConnectionStateDisconnected) return -1;
     connection_status = ConnectionStateConnecting;
     mg_mgr_init(&mgr, NULL);
     root_conn = mg_connect_ws(&mgr,
-                              HTTPProtocolAdapter::ev_handler,
-                              AbstractProtocolAdapter::protocol_endpoint.c_str(),
-                              "ChaosExternalUnit", AbstractProtocolAdapter::protocol_option.c_str());
+                              HTTPConnectionAdapter::ev_handler,
+                              AbstractConnectionAdapter::protocol_endpoint.c_str(),
+                              "ChaosExternalUnit", AbstractConnectionAdapter::protocol_option.c_str());
     if (root_conn != NULL) {
         root_conn->user_data = this;
     } else {
@@ -55,11 +55,11 @@ int HTTPProtocolAdapter::connect() {
     
 }
 
-void HTTPProtocolAdapter::poll(int32_t milliseconds_wait) {
+void HTTPConnectionAdapter::poll(int32_t milliseconds_wait) {
     mg_mgr_poll(&mgr, milliseconds_wait);
 }
 
-int HTTPProtocolAdapter::close() {
+int HTTPConnectionAdapter::close() {
     if(connection_status != ConnectionStateConnected) return -1;
     mg_send_websocket_frame(root_conn, WEBSOCKET_OP_CLOSE, NULL, 0);
     mg_mgr_free(&mgr);
@@ -68,16 +68,16 @@ int HTTPProtocolAdapter::close() {
 
 #pragma mark PrivateMethod
 
-int HTTPProtocolAdapter::sendRawMessage(DataPackUniquePtr& message) {
+int HTTPConnectionAdapter::sendRawMessage(DataPackUniquePtr& message) {
     std::string to_send = message->toUnformattedString();
     mg_send_websocket_frame(root_conn, WEBSOCKET_OP_TEXT, to_send.c_str(), to_send.size());
     return 0;
 }
 
-void HTTPProtocolAdapter::ev_handler(struct mg_connection *conn,
+void HTTPConnectionAdapter::ev_handler(struct mg_connection *conn,
                                      int event,
                                      void *event_data) {
-    HTTPProtocolAdapter *http_instance = static_cast<HTTPProtocolAdapter*>(conn->user_data);
+    HTTPConnectionAdapter *http_instance = static_cast<HTTPConnectionAdapter*>(conn->user_data);
     
     switch (event) {
         case MG_EV_CONNECT: {

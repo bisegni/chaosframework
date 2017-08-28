@@ -35,11 +35,11 @@ namespace chaos {
             ChaosMicroUnitToolkit();
             ~ChaosMicroUnitToolkit();
             
-            ChaosUniquePtr<connection::protocol_adapter::AbstractProtocolAdapter> getConnectionAdapter(connection::ProtocolType protocol_type,
+            ChaosUniquePtr<connection::connection_adapter::AbstractConnectionAdapter> getConnectionAdapter(connection::ConnectionType protocol_type,
                                                                                                        const std::string& protocol_endpoint,
                                                                                                        const std::string& protocol_option);
             
-            ChaosUniquePtr<connection::unit_proxy::raw_driver::RawDriverHandlerWrapper> createNewRawDriverHandlerWrapper(connection::ProtocolType protocol_type,
+            ChaosUniquePtr<connection::unit_proxy::raw_driver::RawDriverHandlerWrapper> createNewRawDriverHandlerWrapper(connection::ConnectionType protocol_type,
                                                                                                                          const std::string& protocol_endpoint,
                                                                                                                          const std::string& protocol_option,
                                                                                                                          connection::unit_proxy::UnitProxyHandler handler,

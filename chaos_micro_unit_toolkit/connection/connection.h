@@ -25,8 +25,8 @@
 #include <chaos_micro_unit_toolkit/connection/connection_type.h>
 #include <chaos_micro_unit_toolkit/connection/ConnectionManager.h>
 
-#include <chaos_micro_unit_toolkit/connection/protocol_adapter/AbstractProtocolAdapter.h>
-#include <chaos_micro_unit_toolkit/connection/protocol_adapter/http/HTTPProtocolAdapter.h>
+#include <chaos_micro_unit_toolkit/connection/connection_adapter/AbstractConnectionAdapter.h>
+#include <chaos_micro_unit_toolkit/connection/connection_adapter/http/HTTPConnectionAdapter.h>
 
 #include <chaos_micro_unit_toolkit/connection/unit_proxy/AbstractUnitProxy.h>
 #include <chaos_micro_unit_toolkit/connection/unit_proxy/raw_driver/RawDriverUnitProxy.h>

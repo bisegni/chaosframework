@@ -24,7 +24,7 @@
 #include <iostream>
 using namespace chaos::micro_unit_toolkit::data;
 using namespace chaos::micro_unit_toolkit::connection::unit_proxy;
-using namespace chaos::micro_unit_toolkit::connection::protocol_adapter;
+using namespace chaos::micro_unit_toolkit::connection::connection_adapter;
 
 RemoteMessage::RemoteMessage(const DataPackSharedPtr& _message):
 message(_message),
@@ -53,25 +53,25 @@ std::string RemoteMessage::getErrorDomain() const {
     return message.get()?message->getString("error_domain"):"";
 }
 
-AbstractUnitProxy::AbstractUnitProxy(ChaosUniquePtr<protocol_adapter::AbstractProtocolAdapter>& _protocol_adapter):
-protocol_adapter(ChaosMoveOperator(_protocol_adapter)),
-authorization_state(AuthorizationStateUnknown){assert(protocol_adapter.get());}
+AbstractUnitProxy::AbstractUnitProxy(ChaosUniquePtr<connection_adapter::AbstractConnectionAdapter>& _protocol_adapter):
+connection_adapter(ChaosMoveOperator(_protocol_adapter)),
+authorization_state(AuthorizationStateUnknown){assert(connection_adapter.get());}
 
 AbstractUnitProxy::~AbstractUnitProxy() {
     std::cout <<"exit";
 }
 
 int AbstractUnitProxy::sendMessage(DataPackUniquePtr& message_data) {
-    return protocol_adapter->sendMessage(message_data);
+    return connection_adapter->sendMessage(message_data);
 }
 
 bool AbstractUnitProxy::hasMoreMessage() {
-    return protocol_adapter->hasMoreMessage();
+    return connection_adapter->hasMoreMessage();
 }
 
 RemoteMessageUniquePtr AbstractUnitProxy::getNextMessage() {
-    if(protocol_adapter->hasMoreMessage() == false) return RemoteMessageUniquePtr();
-    RemoteMessageUniquePtr next_message(new RemoteMessage(protocol_adapter->getNextMessage()));
+    if(connection_adapter->hasMoreMessage() == false) return RemoteMessageUniquePtr();
+    RemoteMessageUniquePtr next_message(new RemoteMessage(connection_adapter->getNextMessage()));
     return next_message;
 }
 
@@ -80,19 +80,19 @@ const AuthorizationState& AbstractUnitProxy::getAuthorizationState() const {
 }
 
 int AbstractUnitProxy::connect() {
-    return protocol_adapter->connect();
+    return connection_adapter->connect();
 }
 
 void AbstractUnitProxy::poll(int32_t milliseconds_wait) {
-    protocol_adapter->poll(milliseconds_wait);
+    connection_adapter->poll(milliseconds_wait);
 }
 
 int AbstractUnitProxy::close() {
-    return protocol_adapter->close();
+    return connection_adapter->close();
 }
 
 const ConnectionState& AbstractUnitProxy::getConnectionState() const {
-    return protocol_adapter->getConnectionState();
+    return connection_adapter->getConnectionState();
 }
 
 void AbstractUnitProxy::resetAuthorization() {

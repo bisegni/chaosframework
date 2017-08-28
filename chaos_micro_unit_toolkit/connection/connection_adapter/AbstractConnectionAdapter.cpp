@@ -19,21 +19,21 @@
  * permissions and limitations under the Licence.
  */
 
-#include <chaos_micro_unit_toolkit/connection/protocol_adapter/AbstractProtocolAdapter.h>
+#include <chaos_micro_unit_toolkit/connection/connection_adapter/AbstractConnectionAdapter.h>
 
 using namespace chaos::micro_unit_toolkit::data;
-using namespace chaos::micro_unit_toolkit::connection::protocol_adapter;
+using namespace chaos::micro_unit_toolkit::connection::connection_adapter;
 
-AbstractProtocolAdapter::AbstractProtocolAdapter(const std::string& _protocol_endpoint,
+AbstractConnectionAdapter::AbstractConnectionAdapter(const std::string& _protocol_endpoint,
                                                  const std::string& _protocol_option):
 protocol_endpoint(_protocol_endpoint),
 protocol_option(_protocol_option),
 connection_status(ConnectionStateDisconnected),
 adapter_request_id(0){}
 
-AbstractProtocolAdapter::~AbstractProtocolAdapter() {}
+AbstractConnectionAdapter::~AbstractConnectionAdapter() {}
 
-void AbstractProtocolAdapter::handleReceivedMessage(data::DataPackSharedPtr& received_message) {
+void AbstractConnectionAdapter::handleReceivedMessage(data::DataPackSharedPtr& received_message) {
     //checn whenever the message is a response or spontaneus message
     if(received_message->hasKey("etx_request_id") &&
        received_message->isInt32("etx_request_id")) {
@@ -44,25 +44,25 @@ void AbstractProtocolAdapter::handleReceivedMessage(data::DataPackSharedPtr& rec
     }
 }
 
-int AbstractProtocolAdapter::sendMessage(data::DataPackUniquePtr& message) {
+int AbstractConnectionAdapter::sendMessage(data::DataPackUniquePtr& message) {
     if(connection_status != ConnectionStateAccepted){
         return -1;
     }
     return sendRawMessage(message);
 }
 
-int AbstractProtocolAdapter::sendRequest(data::DataPackUniquePtr& message,
+int AbstractConnectionAdapter::sendRequest(data::DataPackUniquePtr& message,
                                          uint32_t& request_id) {
     request_id = adapter_request_id++;
     message->addInt32("ext_request_id", request_id);
     return sendMessage(message);
 }
 
-bool AbstractProtocolAdapter::hasMoreMessage() {
+bool AbstractConnectionAdapter::hasMoreMessage() {
     return queue_received_messages.size();
 }
 
-DataPackSharedPtr AbstractProtocolAdapter::getNextMessage() {
+DataPackSharedPtr AbstractConnectionAdapter::getNextMessage() {
     if(queue_received_messages.size() == 0) {
         return DataPackSharedPtr();
     } else {
@@ -72,18 +72,18 @@ DataPackSharedPtr AbstractProtocolAdapter::getNextMessage() {
     }
 }
 
-bool AbstractProtocolAdapter::hasResponse() {
+bool AbstractConnectionAdapter::hasResponse() {
     return map_req_id_response.size()>0;
 }
 
-bool AbstractProtocolAdapter::hasResponseAvailable(uint32_t request_id) {
+bool AbstractConnectionAdapter::hasResponseAvailable(uint32_t request_id) {
     return map_req_id_response.find(request_id) != map_req_id_response.end();
 }
 
-DataPackSharedPtr AbstractProtocolAdapter::retrieveRequestResponse(uint32_t request_id) {
+DataPackSharedPtr AbstractConnectionAdapter::retrieveRequestResponse(uint32_t request_id) {
     return DataPackSharedPtr();
 }
 
-const ConnectionState& AbstractProtocolAdapter::getConnectionState() const {
+const ConnectionState& AbstractConnectionAdapter::getConnectionState() const {
     return connection_status;
 }

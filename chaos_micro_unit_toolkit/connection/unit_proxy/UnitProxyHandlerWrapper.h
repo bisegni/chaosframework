@@ -25,7 +25,7 @@
 #include <chaos_micro_unit_toolkit/micro_unit_toolkit_types.h>
 #include <chaos_micro_unit_toolkit/connection/connection_type.h>
 #include <chaos_micro_unit_toolkit/connection/unit_proxy/AbstractUnitProxy.h>
-#include <chaos_micro_unit_toolkit/connection/protocol_adapter/AbstractProtocolAdapter.h>
+#include <chaos_micro_unit_toolkit/connection/connection_adapter/AbstractConnectionAdapter.h>
 
 namespace chaos {
     namespace micro_unit_toolkit {

@@ -266,12 +266,12 @@
 		324D08A21F30CE2B00836E29 /* ChaosMicroUnitToolkit.h in Headers */ = {isa = PBXBuildFile; fileRef = 324D08A01F30CE2B00836E29 /* ChaosMicroUnitToolkit.h */; };
 		324D08AB1F31D5EA00836E29 /* ConnectionManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324D08A91F31D5EA00836E29 /* ConnectionManager.cpp */; };
 		324D08AC1F31D5EA00836E29 /* ConnectionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 324D08AA1F31D5EA00836E29 /* ConnectionManager.h */; };
-		324D08B01F31D70600836E29 /* AbstractProtocolAdapter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324D08AE1F31D70600836E29 /* AbstractProtocolAdapter.cpp */; };
-		324D08B11F31D70600836E29 /* AbstractProtocolAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 324D08AF1F31D70600836E29 /* AbstractProtocolAdapter.h */; };
+		324D08B01F31D70600836E29 /* AbstractConnectionAdapter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324D08AE1F31D70600836E29 /* AbstractConnectionAdapter.cpp */; };
+		324D08B11F31D70600836E29 /* AbstractConnectionAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 324D08AF1F31D70600836E29 /* AbstractConnectionAdapter.h */; };
 		324D08B51F31D7F300836E29 /* AbstractUnitProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324D08B31F31D7F300836E29 /* AbstractUnitProxy.cpp */; };
 		324D08B61F31D7F300836E29 /* AbstractUnitProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 324D08B41F31D7F300836E29 /* AbstractUnitProxy.h */; };
-		324D08C51F31EC5000836E29 /* HTTPProtocolAdapter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324D08C31F31EC5000836E29 /* HTTPProtocolAdapter.cpp */; };
-		324D08C61F31EC5000836E29 /* HTTPProtocolAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 324D08C41F31EC5000836E29 /* HTTPProtocolAdapter.h */; };
+		324D08C51F31EC5000836E29 /* HTTPConnectionAdapter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324D08C31F31EC5000836E29 /* HTTPConnectionAdapter.cpp */; };
+		324D08C61F31EC5000836E29 /* HTTPConnectionAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 324D08C41F31EC5000836E29 /* HTTPConnectionAdapter.h */; };
 		324D08CA1F31F26600836E29 /* DataPack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324D08C81F31F26600836E29 /* DataPack.cpp */; };
 		324D08CB1F31F26600836E29 /* DataPack.h in Headers */ = {isa = PBXBuildFile; fileRef = 324D08C91F31F26600836E29 /* DataPack.h */; };
 		324D08D21F31F5A000836E29 /* json.h in Headers */ = {isa = PBXBuildFile; fileRef = 324D08CD1F31F5A000836E29 /* json.h */; };
@@ -1594,13 +1594,13 @@
 		324D08A01F30CE2B00836E29 /* ChaosMicroUnitToolkit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChaosMicroUnitToolkit.h; sourceTree = "<group>"; };
 		324D08A91F31D5EA00836E29 /* ConnectionManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConnectionManager.cpp; sourceTree = "<group>"; };
 		324D08AA1F31D5EA00836E29 /* ConnectionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConnectionManager.h; sourceTree = "<group>"; };
-		324D08AE1F31D70600836E29 /* AbstractProtocolAdapter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractProtocolAdapter.cpp; sourceTree = "<group>"; };
-		324D08AF1F31D70600836E29 /* AbstractProtocolAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractProtocolAdapter.h; sourceTree = "<group>"; };
+		324D08AE1F31D70600836E29 /* AbstractConnectionAdapter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractConnectionAdapter.cpp; sourceTree = "<group>"; };
+		324D08AF1F31D70600836E29 /* AbstractConnectionAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractConnectionAdapter.h; sourceTree = "<group>"; };
 		324D08B31F31D7F300836E29 /* AbstractUnitProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractUnitProxy.cpp; sourceTree = "<group>"; };
 		324D08B41F31D7F300836E29 /* AbstractUnitProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractUnitProxy.h; sourceTree = "<group>"; };
 		324D08B71F31DA5300836E29 /* connection_type.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = connection_type.h; sourceTree = "<group>"; };
-		324D08C31F31EC5000836E29 /* HTTPProtocolAdapter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPProtocolAdapter.cpp; sourceTree = "<group>"; };
-		324D08C41F31EC5000836E29 /* HTTPProtocolAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPProtocolAdapter.h; sourceTree = "<group>"; };
+		324D08C31F31EC5000836E29 /* HTTPConnectionAdapter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPConnectionAdapter.cpp; sourceTree = "<group>"; };
+		324D08C41F31EC5000836E29 /* HTTPConnectionAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPConnectionAdapter.h; sourceTree = "<group>"; };
 		324D08C81F31F26600836E29 /* DataPack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataPack.cpp; sourceTree = "<group>"; };
 		324D08C91F31F26600836E29 /* DataPack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataPack.h; sourceTree = "<group>"; };
 		324D08CD1F31F5A000836E29 /* json.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = json.h; sourceTree = "<group>"; };
@@ -3445,11 +3445,12 @@
 		324D08AD1F31D6BF00836E29 /* protocol_adapter */ = {
 			isa = PBXGroup;
 			children = (
-				324D08AE1F31D70600836E29 /* AbstractProtocolAdapter.cpp */,
-				324D08AF1F31D70600836E29 /* AbstractProtocolAdapter.h */,
+				324D08AE1F31D70600836E29 /* AbstractConnectionAdapter.cpp */,
+				324D08AF1F31D70600836E29 /* AbstractConnectionAdapter.h */,
 				324D08C21F31EC2E00836E29 /* http */,
 			);
-			path = protocol_adapter;
+			name = protocol_adapter;
+			path = connection_adapter;
 			sourceTree = "<group>";
 		};
 		324D08B21F31D7AD00836E29 /* unit_proxy */ = {
@@ -3467,8 +3468,8 @@
 		324D08C21F31EC2E00836E29 /* http */ = {
 			isa = PBXGroup;
 			children = (
-				324D08C31F31EC5000836E29 /* HTTPProtocolAdapter.cpp */,
-				324D08C41F31EC5000836E29 /* HTTPProtocolAdapter.h */,
+				324D08C31F31EC5000836E29 /* HTTPConnectionAdapter.cpp */,
+				324D08C41F31EC5000836E29 /* HTTPConnectionAdapter.h */,
 			);
 			path = http;
 			sourceTree = "<group>";
@@ -5761,11 +5762,11 @@
 				324D08B61F31D7F300836E29 /* AbstractUnitProxy.h in Headers */,
 				3229005F1F3477D800717A38 /* micro_unit_toolkit.h in Headers */,
 				324D08A21F30CE2B00836E29 /* ChaosMicroUnitToolkit.h in Headers */,
-				324D08B11F31D70600836E29 /* AbstractProtocolAdapter.h in Headers */,
+				324D08B11F31D70600836E29 /* AbstractConnectionAdapter.h in Headers */,
 				324D08D51F31F5A000836E29 /* mongoose.h in Headers */,
 				325F517F1F3C3E11000B842F /* RawDriverHandlerWrapper.h in Headers */,
 				325F51831F3C3E4D000B842F /* UnitProxyHandlerWrapper.h in Headers */,
-				324D08C61F31EC5000836E29 /* HTTPProtocolAdapter.h in Headers */,
+				324D08C61F31EC5000836E29 /* HTTPConnectionAdapter.h in Headers */,
 				324D08D21F31F5A000836E29 /* json.h in Headers */,
 				324D08CB1F31F26600836E29 /* DataPack.h in Headers */,
 				324BE84C1F3CA31A00FFDA02 /* base64.h in Headers */,
@@ -6802,12 +6803,12 @@
 				324D08AB1F31D5EA00836E29 /* ConnectionManager.cpp in Sources */,
 				324D08D41F31F5A000836E29 /* mongoose.c in Sources */,
 				324D08B51F31D7F300836E29 /* AbstractUnitProxy.cpp in Sources */,
-				324D08C51F31EC5000836E29 /* HTTPProtocolAdapter.cpp in Sources */,
+				324D08C51F31EC5000836E29 /* HTTPConnectionAdapter.cpp in Sources */,
 				325F517E1F3C3E11000B842F /* RawDriverHandlerWrapper.cpp in Sources */,
 				324D08CA1F31F26600836E29 /* DataPack.cpp in Sources */,
 				325F51821F3C3E4D000B842F /* UnitProxyHandlerWrapper.cpp in Sources */,
 				324BE84B1F3CA31A00FFDA02 /* base64.cpp in Sources */,
-				324D08B01F31D70600836E29 /* AbstractProtocolAdapter.cpp in Sources */,
+				324D08B01F31D70600836E29 /* AbstractConnectionAdapter.cpp in Sources */,
 				325F517A1F3C3DD2000B842F /* RawDriverUnitProxy.cpp in Sources */,
 				324D08D31F31F5A000836E29 /* jsoncpp.cpp in Sources */,
 			);

@@ -32,7 +32,7 @@
 namespace chaos {
     namespace micro_unit_toolkit {
         namespace connection {
-            namespace protocol_adapter {
+            namespace connection_adapter {
                 
                 //!Conenction state
                 typedef enum {
@@ -52,7 +52,7 @@ namespace chaos {
                 
                 
                 //! Abstract base class for all protocols adapter
-                class AbstractProtocolAdapter {
+                class AbstractConnectionAdapter {
                 protected:
                     virtual int sendRawMessage(chaos::micro_unit_toolkit::data::DataPackUniquePtr& message) = 0;
                     
@@ -60,9 +60,9 @@ namespace chaos {
                 public:
                     const std::string   protocol_endpoint;
                     const std::string   protocol_option;
-                    AbstractProtocolAdapter(const std::string& _connection_endpoint,
+                    AbstractConnectionAdapter(const std::string& _connection_endpoint,
                                             const std::string& _protocol_option);
-                    virtual ~AbstractProtocolAdapter();
+                    virtual ~AbstractConnectionAdapter();
                     
                     //! start the connection
                     virtual int connect() = 0;
