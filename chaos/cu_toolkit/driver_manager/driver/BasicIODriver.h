@@ -21,9 +21,6 @@
 #ifndef __BASICIODRIVER_H__
 #define __BASICIODRIVER_H__
 #include <chaos/cu_toolkit/driver_manager/driver/AbstractDriverPlugin.h>
-
-namespace cu_driver=chaos::cu::driver_manager::driver;
-
 namespace chaos {
     namespace cu  {
         namespace driver_manager {
@@ -73,7 +70,7 @@ namespace chaos {
 
                     ~BasicIODriver();
                     //! Execute a command
-                    cu_driver::MsgManagmentResultType::MsgManagmentResult execOpcode(cu_driver::DrvMsgPtr cmd);
+                    chaos::cu::driver_manager::driver::MsgManagmentResultType::MsgManagmentResult execOpcode(chaos::cu::driver_manager::driver::DrvMsgPtr cmd);
                     /**
                      \brief Read  from the physical device
                      \param buffer[out] destination buffer

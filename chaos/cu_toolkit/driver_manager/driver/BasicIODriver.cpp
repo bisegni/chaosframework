@@ -63,8 +63,8 @@ void BasicIODriver::driverDeinit() throw(chaos::CException) {
 }
 
 //! Execute a command
-cu_driver::MsgManagmentResultType::MsgManagmentResult BasicIODriver::execOpcode(cu_driver::DrvMsgPtr cmd) {
-	cu_driver::MsgManagmentResultType::MsgManagmentResult result = cu_driver::MsgManagmentResultType::MMR_EXECUTED;
+MsgManagmentResultType::MsgManagmentResult BasicIODriver::execOpcode(DrvMsgPtr cmd) {
+	MsgManagmentResultType::MsgManagmentResult result = MsgManagmentResultType::MMR_EXECUTED;
 	switch(cmd->opcode) {
 		case BasicIODriverOpcode_READ:{
                     int ch=cmd->parm[0];

@@ -29,8 +29,8 @@
 
 #include <chaos/common/utility/InizializableService.h>
 #include <chaos/common/thread/TemplatedConcurrentQueue.h>
-
 #include <chaos/cu_toolkit/driver_manager/driver/DriverTypes.h>
+#include <chaos/cu_toolkit/driver_manager/driver/BaseBypassDriver.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <json/json.h>
 
@@ -63,6 +63,7 @@ namespace chaos{
                     a message queue is used for receive DrvMsg pack.
                  */
 				class AbstractDriver:
+                public OpcodeExecutor,
 				public chaos::common::utility::InizializableService {
                     template<typename T>
                     friend class DriverWrapperPlugin;
@@ -95,7 +96,17 @@ namespace chaos{
                     ChaosUniquePtr<DriverQueueType> command_queue;
 					ChaosUniquePtr<boost::thread> thread_message_receiver;
 					
-					bool is_bypass;
+                    //pointer to the bypassdirver to use
+                    ChaosUniquePtr<BaseBypassDriver> bypass_driver;
+                    
+                    //poit to current executor
+                    /*!
+                     in default point to the "this" pointer of 
+                     this class current instance in case of bypass activated
+                     point to the pointer of the bypass class
+                     */
+                    OpcodeExecutor *o_exe;
+                    
                     // Initialize instance
                     void init(void *init_param) throw(chaos::CException);
                     
@@ -113,7 +124,7 @@ namespace chaos{
 					
                 protected:
                     //!Private constructor
-                    AbstractDriver();
+                    AbstractDriver(ChaosUniquePtr<BaseBypassDriver> custom_bypass_driver = ChaosUniquePtr<BaseBypassDriver>(new BaseBypassDriver()));
                     
                     //!Private destructor
                     virtual ~AbstractDriver();

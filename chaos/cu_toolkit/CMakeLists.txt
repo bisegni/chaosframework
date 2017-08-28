@@ -26,6 +26,7 @@ SET(cu_lib_src ${cu_lib_src}
 SET(cu_lib_src ${cu_lib_src}
         driver_manager/DriverManager.cpp
         driver_manager/driver/AbstractDriver.cpp
+        driver_manager/driver/BaseBypassDriver.cpp
         driver_manager/driver/DriverAccessor.cpp
         driver_manager/driver/DriverPluginLoader.cpp
         driver_manager/driver/AbstractDriverPlugin.cpp)
