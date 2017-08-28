@@ -48,7 +48,7 @@ namespace chaos {
                     public:
                         //! point to the protocol constant type define in @chaos::micro_unit_toolkit::connection::ConnectionType
                         static const ConnectionType connection_type;
-                        
+
                         //!defautl contructor
                         /*!
                          \param endpoin has the form 'ws://hostname:port/uri/of/endpoint'
