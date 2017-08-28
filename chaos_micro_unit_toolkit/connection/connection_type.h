@@ -12,7 +12,7 @@
 namespace chaos {
     namespace micro_unit_toolkit {
         namespace connection {
-            namespace protocol_adapter{
+            namespace protocol_adapter {
                 class AbstractProtocolAdapter;
             }
             //! Proxy type definition

@@ -31,7 +31,11 @@ namespace chaos {
         namespace connection {
             namespace protocol_adapter {
                 namespace http {
-                    //! Abstract base class for all protocols adapter
+                    //! HTTP implementation of connection adapter
+                    /*!
+                     This adapter realize a standard http websocket connection with the remote endpoint. It
+                     uses mongoose library to perform all http operation.
+                     */
                     class HTTPProtocolAdapter:
                     public AbstractProtocolAdapter {
                         struct mg_mgr mgr;
@@ -39,19 +43,27 @@ namespace chaos {
                         static void ev_handler(struct mg_connection *conn,
                                                int event,
                                                void *event_data);
-                        
+                        //!inherited method
                         int sendRawMessage(data::DataPackUniquePtr& message);
                     public:
+                        //! point to the protocol constant type define in @chaos::micro_unit_toolkit::connection::ProtocolType
                         static const ProtocolType protocol_type;
+                        
+                        //!defautl contructor
+                        /*!
+                         \param endpoin has the form 'ws://hostname:port/uri/of/endpoint'
+                         \param connection_header continas all header that need to be attacched to websocket http
+                         initiation request
+                         */
                         HTTPProtocolAdapter(const std::string& endpoin,
                                             const std::string& connection_header);
-                        
+                        //!default destructor
                         ~HTTPProtocolAdapter();
-                        
+                        //!inherited method
                         int connect();
-                        
+                        //!inherited method
                         void poll(int32_t milliseconds_wait = 100);
-                        
+                        //!inherited method
                         int close();
                     };
                 }
