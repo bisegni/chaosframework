@@ -286,8 +286,12 @@ void AbstractDriver::driverInit(const chaos::common::data::CDataWrapper& data) t
 }
 
 const bool AbstractDriver::isBypass()const {
-    return is_bypass;
+    return o_exe != this;
 }
-void AbstractDriver::setBypass(bool v){
-    is_bypass=v;
+void AbstractDriver::setBypass(bool bypass){
+    if(bypass) {
+        o_exe = bypass_driver.get();
+    } else {
+        o_exe = this;
+    }
 }

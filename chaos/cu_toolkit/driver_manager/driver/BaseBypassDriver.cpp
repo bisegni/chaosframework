@@ -25,7 +25,7 @@ using namespace chaos::cu::driver_manager::driver;
 BaseBypassDriver::BaseBypassDriver(){}
 BaseBypassDriver::~BaseBypassDriver(){}
 
-MsgManagmentResultType::MsgManagmentResult execOpcode(DrvMsgPtr cmd) {
+MsgManagmentResultType::MsgManagmentResult BaseBypassDriver::execOpcode(DrvMsgPtr cmd) {
     //do nothig and return as executed
     return MsgManagmentResultType::MMR_EXECUTED;
 }
