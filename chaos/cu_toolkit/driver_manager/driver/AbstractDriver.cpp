@@ -183,7 +183,7 @@ bool AbstractDriver::releaseAccessor(DriverAccessor *accessor) {
  
  ------------------------------------------------------*/
 void AbstractDriver::scanForMessage() {
-    ADLAPP_ << "Scanner thread started for dirver["<<driver_uuid<<"]";
+    ADLAPP_ << "Scanner thread started for driver["<<driver_uuid<<"]";
     MsgManagmentResultType::MsgManagmentResult opcode_submission_result=MsgManagmentResultType::MMR_ERROR;
     
     DrvMsgPtr current_message_ptr;
@@ -213,11 +213,15 @@ void AbstractDriver::scanForMessage() {
                     break;
                 case OpcodeType::OP_INIT_DRIVER:
                     if(is_json_param){
-                        chaos::common::data::CDataWrapper p;
-                        p.setSerializedJsonData(static_cast<const char *>(current_message_ptr->inputData));
-                        ADLDBG_ << "JSON PARMS:"<<current_message_ptr->inputData;
+                    	try {
+                    		chaos::common::data::CDataWrapper p;
+                    		p.setSerializedJsonData(static_cast<const char *>(current_message_ptr->inputData));
+                    		ADLDBG_ << "JSON PARMS:"<<current_message_ptr->inputData;
+                    		driverInit(p);
+                    	} catch(...){
+                    		driverInit(static_cast<const char *>(current_message_ptr->inputData));
+                    	}
                         
-                        driverInit(p);
                         
                     } else {
                         driverInit(static_cast<const char *>(current_message_ptr->inputData));
@@ -249,20 +253,21 @@ void AbstractDriver::scanForMessage() {
             }
         } catch(CException& ex) {
             //chaos exception
-            ADLERR_ << "an error has been catched code: "<<ex.errorCode<<" msg:"<< ex.errorMessage.c_str()<<" dom:"<<ex.errorDomain.c_str();
+            ADLERR_ << "an error has been catched code: "<<ex.errorCode<<" msg:"<< ex.errorMessage.c_str()<<" dom:"<<ex.errorDomain.c_str()<< " executing opcode:"<<current_message_ptr->opcode;;
             current_message_ptr->ret = ex.errorCode;
             strncpy(current_message_ptr->err_msg, ex.errorMessage.c_str(), DRVMSG_ERR_MSG_SIZE);
             strncpy(current_message_ptr->err_dom, ex.errorDomain.c_str(), DRVMSG_ERR_DOM_SIZE);
         } catch(std::exception e){
-            ADLERR_ << "unexpected exception ";
+
             opcode_submission_result = MsgManagmentResultType::MMR_ERROR;
             std::stringstream ss;
-            ss<<"Unexpected exception:"<<e.what();
+            ss<<"Unexpected exception:"<<e.what() << " executing opcode:"<<current_message_ptr->opcode;
+            ADLERR_ << ss.str();
             strncpy(current_message_ptr->err_msg, ss.str().c_str(), DRVMSG_ERR_MSG_SIZE);
             strncpy(current_message_ptr->err_dom, __PRETTY_FUNCTION__, DRVMSG_ERR_DOM_SIZE);
         } catch(...) {
             //unkonwn exception
-            ADLERR_ << "an unknown exception ";
+            ADLERR_ << "an unknown exception executing opcode:"<<current_message_ptr->opcode;;
             opcode_submission_result = MsgManagmentResultType::MMR_ERROR;
             strncpy(current_message_ptr->err_msg, "Unexpected exception:", DRVMSG_ERR_MSG_SIZE);
             strncpy(current_message_ptr->err_dom, __PRETTY_FUNCTION__, DRVMSG_ERR_DOM_SIZE);
