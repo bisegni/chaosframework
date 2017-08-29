@@ -35,9 +35,6 @@ void CNodeLogWidget::initChaosContent() {
 
     //configure the entry table
     ui->tableViewLogEntries->setModel(&entry_table_model);
-    //ui->tableViewLogEntries->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    //QHeaderView *headerView = ui->tableViewLogEntries->horizontalHeader();
-    //headerView->setSectionResizeMode(QHeaderView::Stretch);
     ui->tableViewLogEntries->setColumnToContents(0, true);
     ui->tableViewLogEntries->setColumnToContents(2, true);
     ui->tableViewLogEntries->setEditTriggers(QAbstractItemView::NoEditTriggers);

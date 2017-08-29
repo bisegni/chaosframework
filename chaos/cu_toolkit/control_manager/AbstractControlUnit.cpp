@@ -1592,9 +1592,9 @@ CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* update_pac
     if(update_pack->hasKey("property_abstract_control_unit") &&
        update_pack->isCDataWrapperValue("property_abstract_control_unit")){
         p_abstract_cu.reset(update_pack->getCSDataValue("property_abstract_control_unit"));
-        if(p_abstract_cu->hasKey("bypass_state") &&
-           p_abstract_cu->isBoolValue("bypass_state")) {
-            setBypassState(p_abstract_cu->getBoolValue("bypass_state"));
+        if(p_abstract_cu->hasKey(ControlUnitDatapackSystemKey::BYPASS_STATE) &&
+           p_abstract_cu->isBoolValue(ControlUnitDatapackSystemKey::BYPASS_STATE)) {
+            setBypassState(p_abstract_cu->getBoolValue(ControlUnitDatapackSystemKey::BYPASS_STATE));
         }
     }
     //forward property change pack to the data driver

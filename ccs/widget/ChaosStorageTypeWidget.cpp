@@ -79,10 +79,10 @@ void ChaosStorageTypeWidget::updateChaosContent() {
 void ChaosStorageTypeWidget::nodeChangedOnlineState(const std::string& node_uid,
                                                     OnlineState old_status,
                                                     OnlineState new_status) {
+    online_status = new_status;
     QMetaObject::invokeMethod(this,
                               "updateUIStatus",
                               Qt::QueuedConnection);
-    online_status = new_status;
 }
 
 void ChaosStorageTypeWidget::updatedDS(const std::string& control_unit_uid,

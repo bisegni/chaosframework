@@ -204,11 +204,11 @@ void AbstractDriver::scanForMessage() {
             switch (current_message_ptr->opcode) {
                 case OpcodeType::OP_SET_BYPASS:
                     ADLDBG_ << "Switch to bypass driver";
-                    //executor =
+                    setBypass(true);
                     break;
                 case OpcodeType::OP_CLEAR_BYPASS:
                     ADLDBG_ << "Switch to normal driver";
-                    //is_bypass=false;
+                    setBypass(false);
                     break;
                 case OpcodeType::OP_INIT_DRIVER:
                     if(is_json_param){

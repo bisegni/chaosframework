@@ -60,9 +60,11 @@ void ControlUnitEditor::initUI() {
     ui->pushButtonEditInstance->setEnabled(false);
     //add model to table
     ui->tableViewOutputChannel->setModel(&dataset_output_table_model);
+    ui->tableViewOutputChannel->setColumnToContents(0, true);
     ui->tableViewOutputChannel->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
     ui->tableViewInputChannels->setModel(&dataset_input_table_model);
+    ui->tableViewInputChannels->setColumnToContents(0, true);
     ui->tableViewInputChannels->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
     //compose logic on switch
@@ -179,6 +181,11 @@ void ControlUnitEditor::initUI() {
     //storage type
     ui->widgetStorageType->setNodeUID(control_unit_unique_id);
 
+    //driver bypass
+    ui->pushButtonDriverBypass->setNodeUID(control_unit_unique_id);
+    ui->pushButtonDriverBypass->setPropertyGroupName("property_abstract_control_unit");
+    ui->pushButtonDriverBypass->setPropertyName(chaos::ControlUnitDatapackSystemKey::BYPASS_STATE);
+
     //start monitoring
     manageMonitoring(true);
 
@@ -236,6 +243,7 @@ void ControlUnitEditor::manageMonitoring(bool start) {
         ui->ledIndicatorHealtTSControlUnit->initChaosContent();
         ui->chaosLabelDSOutputPushRate->initChaosContent();
         ui->widgetStorageType->initChaosContent();
+        ui->pushButtonDriverBypass->initChaosContent();
     }else{
         if(unit_server_parent_unique_id.size()) {
             //remove old unit server for healt
@@ -246,6 +254,7 @@ void ControlUnitEditor::manageMonitoring(bool start) {
             ui->ledIndicatorHealtTSUnitServer->deinitChaosContent();
         }
         ui->widgetStorageType->deinitChaosContent();
+        ui->pushButtonDriverBypass->deinitChaosContent();
         ui->labelControlUnitState->deinitChaosContent();
         ChaosMetadataServiceClient::getInstance()->removeHandlerToNodeMonitor(control_unit_unique_id.toStdString(),
                                                                               node_monitor::ControllerTypeNode,
