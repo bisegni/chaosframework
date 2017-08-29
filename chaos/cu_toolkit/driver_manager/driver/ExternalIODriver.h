@@ -87,7 +87,7 @@ namespace chaos {
                         
                         
                         DeviceVariable(){}
-                        DeviceVariable(DeviceVariable& src):
+                        DeviceVariable(const DeviceVariable& src):
                         name(src.name),
                         description(src.description),
                         type(src.type),
