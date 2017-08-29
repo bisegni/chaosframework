@@ -30,7 +30,6 @@ llvm_build_framework_x86_64:
   only:
     - development
     - master
-  retry: 2
 
 build_framework_x86_64:
   tags:
@@ -46,7 +45,6 @@ build_framework_x86_64:
   only:
     - development
     - master
-  retry: 2
 
 build_framework_x86_64_c98:
   tags:
@@ -62,7 +60,6 @@ build_framework_x86_64_c98:
   only:
     - development
     - master
-  retry: 2
 
 build_framework_arm:
   tags:
@@ -78,8 +75,7 @@ build_framework_arm:
   only:
     - development
     - master
-  retry: 2
-  
+
 exp_llvm_build_framework_x86_64:
   tags:
     - docker
