@@ -29,7 +29,10 @@ SET(cu_lib_src ${cu_lib_src}
         driver_manager/driver/BaseBypassDriver.cpp
         driver_manager/driver/DriverAccessor.cpp
         driver_manager/driver/DriverPluginLoader.cpp
-        driver_manager/driver/AbstractDriverPlugin.cpp)
+        driver_manager/driver/AbstractDriverPlugin.cpp
+        driver_manager/driver/AbstractRemoteIODriver.cpp
+        driver_manager/driver/ExternalIODriver.cpp
+        driver_manager/driver/OpcodeExternalCommandMapper.cpp)
 
 SET(cu_lib_src ${cu_lib_src}
         driver_manager/driver/BasicIODriver.cpp
@@ -121,6 +124,7 @@ INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/control_manager/hand
 
 FILE(GLOB files "control_manager/slow_command/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/control_manager/slow_command)
+
 FILE(GLOB files "control_manager/execution_pool/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/control_manager/execution_pool)
 

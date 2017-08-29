@@ -38,7 +38,7 @@ using namespace chaos::cu::driver_manager::driver;
 /*------------------------------------------------------
 
  ------------------------------------------------------*/
-AbstractDriver::AbstractDriver(ChaosUniquePtr<BaseBypassDriver> custom_bypass_driver):
+AbstractDriver::AbstractDriver(BaseBypassShrdPtr custom_bypass_driver):
 accessor_count(0),
 bypass_driver(ChaosMoveOperator(custom_bypass_driver)),
 o_exe(this),
@@ -290,7 +290,8 @@ const bool AbstractDriver::isBypass()const {
 }
 void AbstractDriver::setBypass(bool bypass){
     if(bypass) {
-        o_exe = bypass_driver.get();
+        LBypassDriverUnqPtrReadLock rl = bypass_driver.getReadLockObject();
+        o_exe = bypass_driver().get();
     } else {
         o_exe = this;
     }

@@ -139,17 +139,17 @@ void AbstractControlUnit::_initDrivers() throw(CException) {
     ACULAPP_ << "Initializating Driver Accessors";
     //at this point and before the unit implementation init i need to get
     //the infromation about the needed drivers
-    std::vector<DrvRequestInfo> unitNeededDrivers;
+    std::vector<DrvRequestInfo> unit_needed_drivers;
     
     //got the needded driver definition
-    unitDefineDriver(unitNeededDrivers);
+    unitDefineDriver(unit_needed_drivers);
     
-    accessorInstances.clear();
+    accessor_instances.clear();
     for (int idx = 0;
-         idx != unitNeededDrivers.size();
+         idx != unit_needed_drivers.size();
          idx++) {
-        driver_manager::driver::DriverAccessor *accessorInstance = driver_manager::DriverManager::getInstance()->getNewAccessorForDriverInstance(unitNeededDrivers[idx]);
-        accessorInstances.push_back(accessorInstance);
+        driver_manager::driver::DriverAccessor *accessor_instance = driver_manager::DriverManager::getInstance()->getNewAccessorForDriverInstance(unit_needed_drivers[idx]);
+        accessor_instances.push_back(accessor_instance);
     }
 }
 
@@ -185,12 +185,12 @@ void AbstractControlUnit::_initChecklist() {
 AbstractControlUnit::~AbstractControlUnit() {
     //clear the accessor of the driver
     for (int idx = 0;
-         idx != accessorInstances.size();
+         idx != accessor_instances.size();
          idx++) {
-        driver_manager::DriverManager::getInstance()->releaseAccessor(accessorInstances[idx]);
+        driver_manager::DriverManager::getInstance()->releaseAccessor(accessor_instances[idx]);
     }
     //clear the vector
-    accessorInstances.clear();
+    accessor_instances.clear();
 }
 
 /*
@@ -267,17 +267,12 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configurat
     actionDescription = addActionDescritionInstance<AbstractControlUnit>(this,
                                                                          &AbstractControlUnit::updateConfiguration,
                                                                          NodeDomainAndActionRPC::ACTION_UPDATE_PROPERTY,
-                                                                         "Update control unit configuration");
+                                                                         "Update control unit property");
     
     actionDescription = addActionDescritionInstance<AbstractControlUnit>(this,
                                                                          &AbstractControlUnit::_init,
                                                                          NodeDomainAndActionRPC::ACTION_NODE_INIT,
                                                                          "Perform the control unit initialization");
-    
-    actionDescription = addActionDescritionInstance<AbstractControlUnit>(this,
-                                                                         &AbstractControlUnit::_setBypass,
-                                                                         NodeDomainAndActionRPC::ACTION_NODE_BYPASS,
-                                                                         "Set/clear the bypass mode for drivers ");
     
     actionDescription = addActionDescritionInstance<AbstractControlUnit>(this,
                                                                          &AbstractControlUnit::_deinit,
@@ -796,11 +791,6 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam,
     return NULL;
 }
 
-CDataWrapper*  AbstractControlUnit::_setBypass(chaos::common::data::CDataWrapper*param, bool& detachParam) throw(CException){
-    // TODO: to be implemented
-    return NULL;
-}
-
 
 /*go
  deinit all datastorage
@@ -1314,6 +1304,9 @@ void AbstractControlUnit::initSystemAttributeOnSharedAttributeCache() {
     domain_attribute_setting.addAttribute(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, 0, DataType::TYPE_INT64);
     thread_schedule_daly_cached_value = domain_attribute_setting.getValueSettingForIndex(domain_attribute_setting.getIndexForName(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY));
     
+    //add bypass state
+    domain_attribute_setting.addAttribute(ControlUnitDatapackSystemKey::BYPASS_STATE, 0, DataType::TYPE_BOOLEAN);
+    
     //add storage type
     domain_attribute_setting.addAttribute(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE, 0, DataType::TYPE_INT32);
     
@@ -1425,6 +1418,22 @@ void AbstractControlUnit::_completeDatasetAttribute() {
                                      "Activated when some alarm has been issued",
                                      DataType::TYPE_INT32,
                                      DataType::Output);
+}
+
+void AbstractControlUnit::setBypassState(bool bypass_stage,
+                                         bool high_priority) {
+    DrvMsg cmd;
+    memset(&cmd, 0, sizeof(DrvMsg));
+    cmd.opcode = bypass_stage?OpcodeType::OP_SET_BYPASS:OpcodeType::OP_CLEAR_BYPASS;
+    //broadcast bypass to all driver instances allocated by control unit
+    for(VInstantitedDriverIterator it = accessor_instances.begin(),
+        end = accessor_instances.end();
+        it != end;
+        it++) {
+        (*it)->send(&cmd, (high_priority?1000:0));
+    }
+    //update dateset
+    *attribute_value_shared_cache->getAttributeValue(DOMAIN_SYSTEM, ControlUnitDatapackSystemKey::BYPASS_STATE)->getValuePtr<bool>() = bypass_stage;
 }
 
 //!handler calledfor restor a control unit to a determinate point
@@ -1571,7 +1580,7 @@ CDataWrapper* AbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_att
 /*
  Update the configuration for all descendant tree in the Control Uniti class struccture
  */
-CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* updatePack, bool& detachParam) throw (CException) {
+CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* update_pack, bool& detachParam) throw (CException) {
     //check to see if the device can ben initialized
     if(SWEService::getServiceState() != chaos::CUStateKey::INIT &&
        SWEService::getServiceState() != chaos::CUStateKey::START) {
@@ -1579,9 +1588,17 @@ CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* updatePack
         throw MetadataLoggingCException(getCUID(), -3, "Device Not Initilized", __PRETTY_FUNCTION__);
     }
     
+    CDWUniquePtr p_abstract_cu;
+    if(update_pack->hasKey("property_abstract_control_unit") &&
+       update_pack->isCDataWrapperValue("property_abstract_control_unit")){
+        p_abstract_cu.reset(update_pack->getCSDataValue("property_abstract_control_unit"));
+        if(p_abstract_cu->hasKey("bypass_state") &&
+           p_abstract_cu->isBoolValue("bypass_state")) {
+            setBypassState(p_abstract_cu->getBoolValue("bypass_state"));
+        }
+    }
     //forward property change pack to the data driver
-    key_data_storage->updateConfiguration(updatePack);
-    
+    key_data_storage->updateConfiguration(update_pack);
     *attribute_value_shared_cache->getAttributeValue(DOMAIN_SYSTEM, DataServiceNodeDefinitionKey::DS_STORAGE_TYPE)->getValuePtr<int32_t>() = key_data_storage->getStorageType();
     *attribute_value_shared_cache->getAttributeValue(DOMAIN_SYSTEM, DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME)->getValuePtr<uint64_t>() = key_data_storage->getStorageLiveTime();
     *attribute_value_shared_cache->getAttributeValue(DOMAIN_SYSTEM, DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME)->getValuePtr<uint64_t>() = key_data_storage->getStorageHistoryTime();
@@ -1599,8 +1616,8 @@ CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* updatePack
  added by the unit implementation into the function AbstractControlUnit::unitDefineDriver.
  */
 DriverAccessor *AbstractControlUnit::getAccessoInstanceByIndex(int idx) {
-    if( idx >= accessorInstances.size() ) return NULL;
-    return accessorInstances[idx];
+    if( idx >= accessor_instances.size() ) return NULL;
+    return accessor_instances[idx];
 }
 
 
@@ -1659,6 +1676,8 @@ void AbstractControlUnit::pushOutputDataset() {
                 } else {
                     output_attribute_dataset->addBinaryValue(value_set->name,value_set->getValuePtr<char>(), value_set->size);
                 }
+                break;
+            default:
                 break;
         }
     }

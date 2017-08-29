@@ -26,6 +26,6 @@ BaseBypassDriver::BaseBypassDriver(){}
 BaseBypassDriver::~BaseBypassDriver(){}
 
 MsgManagmentResultType::MsgManagmentResult BaseBypassDriver::execOpcode(DrvMsgPtr cmd) {
-    //do nothig and return as executed
+    //do nothing and return as executed
     return MsgManagmentResultType::MMR_EXECUTED;
 }

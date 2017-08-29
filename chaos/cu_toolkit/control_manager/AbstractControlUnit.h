@@ -119,14 +119,75 @@ namespace chaos{
                 friend class RTAbstractControlUnit;
                 friend class slow_command::SlowCommand;
                 friend class slow_command::SlowCommandExecutor;
-                //enable trace for heap into control unit environment
-#ifdef __CHAOS_DEBUG_MEMORY_CU__
-                tracey::scope sc;
-#endif
             public:
-                //! definition of the type for the driver list
-                typedef std::vector<chaos::cu::driver_manager::driver::DrvRequestInfo>				ControlUnitDriverList;
-                typedef std::vector<chaos::cu::driver_manager::driver::DrvRequestInfo>::iterator	ControlUnitDriverListIterator;
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(chaos::cu::driver_manager::driver::DrvRequestInfo, ControlUnitDriverList);
+                //! Default Contructor
+                /*!
+                 \param _control_unit_type the superclass need to set the control unit type for his implementation
+                 \param _control_unit_id unique id for the control unit
+                 \param _control_unit_param is a string that contains parameter to pass during the contorl unit creation
+                 */
+                AbstractControlUnit(const std::string& _control_unit_type,
+                                    const std::string& _control_unit_id,
+                                    const std::string& _control_unit_param);
+                
+                //! Default Contructor
+                /*!
+                 \param _control_unit_type the superclass need to set the control unit type for his implementation
+                 \param _control_unit_id unique id for the control unit
+                 \param _control_unit_param is a string that contains parameter to pass during the contorl unit creation
+                 \param _control_unit_drivers driver information
+                 */
+                AbstractControlUnit(const std::string& _control_unit_type,
+                                    const std::string& _control_unit_id,
+                                    const std::string& _control_unit_param,
+                                    const ControlUnitDriverList& _control_unit_drivers);
+                
+                //! default destructor
+                virtual ~AbstractControlUnit();
+                
+                //! Return the control unit instance
+                const std::string& getCUInstance();
+                
+                //! Return the control unit instance
+                const std::string& getCUID();
+                
+                //! get control unit load parameter
+                const std::string& getCUParam();
+                
+                //!return true if the cu load paramete are in json format
+                const bool isCUParamInJson();
+                
+                //! return the root of the json document
+                /*!
+                 in case isCUParamInJson return false the root json document
+                 will contains NULL value.
+                 */
+                const Json::Value& getCUParamJsonRootElement();
+                
+                //! return the type of the control unit
+                const std::string& getCUType();
+                
+                //!push output dataset
+                virtual void pushOutputDataset();
+                
+                //!push system dataset
+                virtual void pushInputDataset();
+                
+                //!push system dataset
+                virtual void pushCustomDataset();
+                
+                //!push system dataset
+                virtual void pushSystemDataset();
+                
+                //!push alarm dataset
+                virtual void pushCUAlarmDataset();
+                
+                //!push alarm dataset
+                virtual void pushDevAlarmDataset();
+                
+                //!copy into a CDataWrapper last received initialization package
+                void copyInitConfiguraiton(chaos::common::data::CDataWrapper& copy);
                 
                 inline const char * const stateVariableEnumToName(chaos::cu::control_manager::StateVariableType type) {
                     switch(type) {
@@ -144,8 +205,12 @@ namespace chaos{
                 }
                 
                 chaos::common::data::CDataWrapper *writeCatalogOnCDataWrapper(chaos::common::alarm::AlarmCatalog& catalog,
-                                                         int32_t dataset_type);
+                                                                              int32_t dataset_type);
             private:
+                //enable trace for heap into control unit environment
+#ifdef __CHAOS_DEBUG_MEMORY_CU__
+                tracey::scope sc;
+#endif
                 //!load control key
                 std::string control_key;
                 
@@ -187,10 +252,12 @@ namespace chaos{
                 uint64_t    last_push_rate_grap_ts;
                 
                 //! control unit driver information list
+                //! definition of the type for the driver list
                 ControlUnitDriverList control_unit_drivers;
                 
                 //! list of the accessor of the driver requested by the unit implementation
-                std::vector< chaos::cu::driver_manager::driver::DriverAccessor *> accessorInstances;
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(chaos::cu::driver_manager::driver::DriverAccessor*, VInstantitedDriver);
+                VInstantitedDriver accessor_instances;
                 
                 //! attributed value shared cache
                 /*!
@@ -400,10 +467,9 @@ namespace chaos{
                  stop the access to the user
                  */
                 virtual void _completeDatasetAttribute();
-                /**
-                 * Set/clear the byapss mode
-                 * */
-                chaos::common::data::CDataWrapper* _setBypass(chaos::common::data::CDataWrapper*, bool& detachParam) throw(CException);;
+                
+                void setBypassState(bool bypass_stage,
+                                    bool high_priority = false);
             protected:
                 void useCustomHigResolutionTimestamp(bool _use_custom_high_resolution_timestamp);
                 void setHigResolutionAcquistionTimestamp(uint64_t high_resolution_timestamp);
@@ -596,75 +662,6 @@ namespace chaos{
                 bool removeHandlerOnAttributeName(const std::string& attribute_name) {
                     return dataset_attribute_manager.removeHandlerOnAttributeName(attribute_name);
                 }
-            public:
-                
-                //! Default Contructor
-                /*!
-                 \param _control_unit_type the superclass need to set the control unit type for his implementation
-                 \param _control_unit_id unique id for the control unit
-                 \param _control_unit_param is a string that contains parameter to pass during the contorl unit creation
-                 */
-                AbstractControlUnit(const std::string& _control_unit_type,
-                                    const std::string& _control_unit_id,
-                                    const std::string& _control_unit_param);
-                
-                //! Default Contructor
-                /*!
-                 \param _control_unit_type the superclass need to set the control unit type for his implementation
-                 \param _control_unit_id unique id for the control unit
-                 \param _control_unit_param is a string that contains parameter to pass during the contorl unit creation
-                 \param _control_unit_drivers driver information
-                 */
-                AbstractControlUnit(const std::string& _control_unit_type,
-                                    const std::string& _control_unit_id,
-                                    const std::string& _control_unit_param,
-                                    const ControlUnitDriverList& _control_unit_drivers);
-                
-                //! default destructor
-                virtual ~AbstractControlUnit();
-                
-                //! Return the control unit instance
-                const std::string& getCUInstance();
-                
-                //! Return the control unit instance
-                const std::string& getCUID();
-                
-                //! get control unit load parameter
-                const std::string& getCUParam();
-                
-                //!return true if the cu load paramete are in json format
-                const bool isCUParamInJson();
-                
-                //! return the root of the json document
-                /*!
-                 in case isCUParamInJson return false the root json document
-                 will contains NULL value.
-                 */
-                const Json::Value& getCUParamJsonRootElement();
-                
-                //! return the type of the control unit
-                const std::string& getCUType();
-                
-                //!push output dataset
-                virtual void pushOutputDataset();
-                
-                //!push system dataset
-                virtual void pushInputDataset();
-                
-                //!push system dataset
-                virtual void pushCustomDataset();
-                
-                //!push system dataset
-                virtual void pushSystemDataset();
-                
-                //!push alarm dataset
-                virtual void pushCUAlarmDataset();
-                
-                //!push alarm dataset
-                virtual void pushDevAlarmDataset();
-                
-                //!copy into a CDataWrapper last received initialization package
-                void copyInitConfiguraiton(chaos::common::data::CDataWrapper& copy);
             };
         }
     }

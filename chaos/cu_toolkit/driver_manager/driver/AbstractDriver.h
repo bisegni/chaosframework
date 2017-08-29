@@ -27,11 +27,13 @@
 
 #include <boost/thread.hpp>
 
+#include <chaos/common/data/CDataWrapper.h>
+#include <chaos/common/utility/LockableObject.h>
 #include <chaos/common/utility/InizializableService.h>
 #include <chaos/common/thread/TemplatedConcurrentQueue.h>
 #include <chaos/cu_toolkit/driver_manager/driver/DriverTypes.h>
 #include <chaos/cu_toolkit/driver_manager/driver/BaseBypassDriver.h>
-#include <chaos/common/data/CDataWrapper.h>
+
 #include <json/json.h>
 
 namespace chaos_thread_ns = chaos::common::thread;
@@ -57,6 +59,10 @@ namespace chaos{
 					std::string init_paramter_sintax;
 				} DriverDescirption;
 				
+                
+                typedef ChaosSharedPtr<BaseBypassDriver> BaseBypassShrdPtr;
+                CHAOS_DEFINE_LOCKABLE_OBJECT(BaseBypassShrdPtr, LBypassDriverUnqPtr);
+                
                     //! !CHAOS Device Driver abstract class
                 /*!
                     This represent the base class for all driver in !CHAOS. For standardize the comunicacetion 
@@ -97,7 +103,7 @@ namespace chaos{
 					ChaosUniquePtr<boost::thread> thread_message_receiver;
 					
                     //pointer to the bypassdirver to use
-                    ChaosUniquePtr<BaseBypassDriver> bypass_driver;
+                    LBypassDriverUnqPtr bypass_driver;
                     
                     //poit to current executor
                     /*!
@@ -124,7 +130,7 @@ namespace chaos{
 					
                 protected:
                     //!Private constructor
-                    AbstractDriver(ChaosUniquePtr<BaseBypassDriver> custom_bypass_driver = ChaosUniquePtr<BaseBypassDriver>(new BaseBypassDriver()));
+                    AbstractDriver(BaseBypassShrdPtr custom_bypass_driver = BaseBypassShrdPtr(new BaseBypassDriver()));
                     
                     //!Private destructor
                     virtual ~AbstractDriver();
