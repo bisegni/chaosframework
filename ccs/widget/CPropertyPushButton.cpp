@@ -85,8 +85,8 @@ void CPropertyPushButton::updateUIStatus() {
     setEnabled(online_status == OnlineStateON);
 
     if(last_error_code) {
-        setButtonState(2);
         updateStateDescription(2, last_error_message);
+        setButtonState(2);
     } else {
         setButtonState(last_got_value.asBool());
     }
@@ -108,4 +108,7 @@ void CPropertyPushButton::on_pushButton_clicked(bool clicked) {
     submitApiResult("update_property",
                     GET_CHAOS_API_PTR(chaos::metadata_service_client::api_proxy::node::UpdateProperty)->execute(nodeUID().toStdString(),
                                                                                                                 property_list));
+    QMetaObject::invokeMethod(this,
+                              "updateUIStatus",
+                              Qt::QueuedConnection);
 }

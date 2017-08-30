@@ -119,32 +119,32 @@ void ChaosStorageTypeWidget::updateUIStatus() {
 
     //take on off ccording to storage type
     if(IS_IN_ERROR(ui->pushButtonLive, last_pushbutton_in_error)) {
-        ui->pushButtonLive->setButtonState(2);
         ui->pushButtonLive->updateStateDescription(2, last_error_message);
+        ui->pushButtonLive->setButtonState(2);
     } else {
         ui->pushButtonLive->setButtonState(storage_type == DSStorageTypeLive);
     }
     ui->pushButtonLive->setChecked(storage_type == DSStorageTypeLive);
 
     if(IS_IN_ERROR(ui->pushButtonHistory, last_pushbutton_in_error)) {
-        ui->pushButtonHistory->setButtonState(2);
         ui->pushButtonHistory->updateStateDescription(2, last_error_message);
+        ui->pushButtonHistory->setButtonState(2);
     } else {
         ui->pushButtonHistory->setButtonState(storage_type == DSStorageTypeHistory);
     }
     ui->pushButtonHistory->setChecked(storage_type == DSStorageTypeHistory);
 
     if(IS_IN_ERROR(ui->pushButtonLiveAndHistory, last_pushbutton_in_error)) {
-        ui->pushButtonLiveAndHistory->setButtonState(2);
         ui->pushButtonLiveAndHistory->updateStateDescription(2, last_error_message);
+        ui->pushButtonLiveAndHistory->setButtonState(2);
     } else {
         ui->pushButtonLiveAndHistory->setButtonState(storage_type == DSStorageTypeLiveHistory);
     }
     ui->pushButtonLiveAndHistory->setChecked(storage_type == DSStorageTypeLiveHistory);
 
     if(IS_IN_ERROR(ui->pushButtonUndefined, last_pushbutton_in_error)) {
-        ui->pushButtonUndefined->setButtonState(2);
         ui->pushButtonUndefined->updateStateDescription(2, last_error_message);
+        ui->pushButtonUndefined->setButtonState(2);
     } else {
         ui->pushButtonUndefined->setButtonState(storage_type == DSStorageTypeUndefined);
     }
