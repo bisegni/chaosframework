@@ -113,7 +113,6 @@
 		32279F8516F8DEAF009EC7B9 /* DataBroker.h in Headers */ = {isa = PBXBuildFile; fileRef = 32279F8316F8DEAF009EC7B9 /* DataBroker.h */; };
 		32279F8B16FA36B6009EC7B9 /* PublisherDataService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32279F8916FA36B6009EC7B9 /* PublisherDataService.cpp */; };
 		32279F8C16FA36B6009EC7B9 /* PublisherDataService.h in Headers */ = {isa = PBXBuildFile; fileRef = 32279F8A16FA36B6009EC7B9 /* PublisherDataService.h */; };
-		322884451ADBBA1400CA1F4B /* PropertyCollector.h in Headers */ = {isa = PBXBuildFile; fileRef = 322884441ADBBA1400CA1F4B /* PropertyCollector.h */; };
 		3229005F1F3477D800717A38 /* micro_unit_toolkit.h in Headers */ = {isa = PBXBuildFile; fileRef = 3229005D1F3477D800717A38 /* micro_unit_toolkit.h */; };
 		3229700A18BCC6FE0004F70D /* DirectIOServerPublicInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3229700918BCC6FE0004F70D /* DirectIOServerPublicInterface.h */; };
 		322A3BC11CEE1A7F00FAD9DA /* LuaScriptVM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322A3BBE1CEE1A7F00FAD9DA /* LuaScriptVM.cpp */; };
@@ -320,7 +319,6 @@
 		3253F303189AEF8000959CA7 /* DirectIOVirtualServerChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3253F301189AEF8000959CA7 /* DirectIOVirtualServerChannel.h */; };
 		32543B1A1AFA6D28008D58EC /* HealtMetric.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32543B181AFA6D28008D58EC /* HealtMetric.cpp */; };
 		32543B1B1AFA6D28008D58EC /* HealtMetric.h in Headers */ = {isa = PBXBuildFile; fileRef = 32543B191AFA6D28008D58EC /* HealtMetric.h */; };
-		325568521AE3A98B00CFA7C9 /* PropertyCollector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325568511AE3A98B00CFA7C9 /* PropertyCollector.cpp */; };
 		3255E72415EA86F2005C96CA /* DefaultEventDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3255E72315EA86F1005C96CA /* DefaultEventDispatcher.cpp */; };
 		3255E72715EA87D2005C96CA /* AbstractEventDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3255E72515EA87D1005C96CA /* AbstractEventDispatcher.cpp */; };
 		3255E72815EA87D2005C96CA /* AbstractEventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 3255E72615EA87D1005C96CA /* AbstractEventDispatcher.h */; };
@@ -1420,8 +1418,7 @@
 		32279F8316F8DEAF009EC7B9 /* DataBroker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataBroker.h; sourceTree = "<group>"; };
 		32279F8916FA36B6009EC7B9 /* PublisherDataService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PublisherDataService.cpp; sourceTree = "<group>"; };
 		32279F8A16FA36B6009EC7B9 /* PublisherDataService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PublisherDataService.h; sourceTree = "<group>"; };
-		322884431ADBB55400CA1F4B /* Property.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Property.h; sourceTree = "<group>"; };
-		322884441ADBBA1400CA1F4B /* PropertyCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PropertyCollector.h; sourceTree = "<group>"; };
+		322884431ADBB55400CA1F4B /* property.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = property.h; sourceTree = "<group>"; };
 		3229005D1F3477D800717A38 /* micro_unit_toolkit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = micro_unit_toolkit.h; sourceTree = "<group>"; };
 		3229700918BCC6FE0004F70D /* DirectIOServerPublicInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOServerPublicInterface.h; sourceTree = "<group>"; };
 		322A3BBE1CEE1A7F00FAD9DA /* LuaScriptVM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LuaScriptVM.cpp; sourceTree = "<group>"; };
@@ -1659,7 +1656,6 @@
 		3253F304189AF0D500959CA7 /* DirectIODataPack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DirectIODataPack.h; sourceTree = "<group>"; };
 		32543B181AFA6D28008D58EC /* HealtMetric.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HealtMetric.cpp; sourceTree = "<group>"; };
 		32543B191AFA6D28008D58EC /* HealtMetric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HealtMetric.h; sourceTree = "<group>"; };
-		325568511AE3A98B00CFA7C9 /* PropertyCollector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PropertyCollector.cpp; sourceTree = "<group>"; };
 		3255E72315EA86F1005C96CA /* DefaultEventDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DefaultEventDispatcher.cpp; sourceTree = "<group>"; };
 		3255E72515EA87D1005C96CA /* AbstractEventDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractEventDispatcher.cpp; sourceTree = "<group>"; };
 		3255E72615EA87D1005C96CA /* AbstractEventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractEventDispatcher.h; sourceTree = "<group>"; };
@@ -3119,9 +3115,7 @@
 				32C9CD3B1D51F7D30048DB4A /* PropertyDescription.h */,
 				32A968501D522FB800BD636C /* PropertyGroup.cpp */,
 				32A968511D522FB800BD636C /* PropertyGroup.h */,
-				322884431ADBB55400CA1F4B /* Property.h */,
-				325568511AE3A98B00CFA7C9 /* PropertyCollector.cpp */,
-				322884441ADBBA1400CA1F4B /* PropertyCollector.h */,
+				322884431ADBB55400CA1F4B /* property.h */,
 			);
 			path = property;
 			sourceTree = "<group>";
@@ -5821,7 +5815,6 @@
 				32A88BD81CF8228A001DBAF5 /* lobject.h in Headers */,
 				32AB51CE1A1A69A300BB0BE3 /* DirectIOSystemAPIServerChannel.h in Headers */,
 				32A88BF51CF8228A001DBAF5 /* lzio.h in Headers */,
-				322884451ADBBA1400CA1F4B /* PropertyCollector.h in Headers */,
 				32F7FEAC18A5066600FC03AB /* FastDelegateBind.h in Headers */,
 				324A4B50191A41EF00975394 /* cstdint.h in Headers */,
 				324A4B4A191A41EF00975394 /* atomic_word.h in Headers */,
@@ -6992,7 +6985,6 @@
 				3214EF1F1D467FE1004DB689 /* Dataset.cpp in Sources */,
 				32AB51CD1A1A69A300BB0BE3 /* DirectIOSystemAPIServerChannel.cpp in Sources */,
 				32A88BF11CF8228A001DBAF5 /* lutf8lib.c in Sources */,
-				325568521AE3A98B00CFA7C9 /* PropertyCollector.cpp in Sources */,
 				322EC1B71D3406650012467C /* StateFlag.cpp in Sources */,
 				32EFCD6618BDE3A400B5EB77 /* IODirectIODriver.cpp in Sources */,
 				3220F98118A4DBEB00B0A1D4 /* DirectIOVirtualChannel.cpp in Sources */,

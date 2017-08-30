@@ -1,4 +1,4 @@
-/*
+     /*
  * Copyright 2012, 2017 INFN
  *
  * Licensed under the EUPL, Version 1.2 or – as soon they
@@ -307,7 +307,7 @@ int LuaScriptVM::callFunction(const std::string& function_name,
     // do the call (2 arguments, 1 result)
     if ((last_error = lua_pcall(ls,
                                 (int)input_parameter.size(),
-                                0,
+                                LUA_MULTRET,
                                 1) != 0)) {
         LSVM_ERR << CHAOS_FORMAT("Error %1% calling script function %2%", %(last_error_message = lua_tostring(ls, -1))%function_name);
     } else {
@@ -316,7 +316,8 @@ int LuaScriptVM::callFunction(const std::string& function_name,
         //        for(int idx = 0;
         //            idx < result_element;
         //            idx++) {
-        switch(lua_type(ls, -1)){
+        int type = 0;
+        switch((type = lua_type(ls, -1))){
             case LUA_TSTRING:
                 output_parameter.push_back(CDataVariant(lua_tostring(ls, -1)));
                 break;
