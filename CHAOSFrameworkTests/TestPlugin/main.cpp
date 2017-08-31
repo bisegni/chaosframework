@@ -24,11 +24,14 @@
 #include <chaos/cu_toolkit/control_manager/script/api/plugin/EUPluginLoader.h>
 #include <chaos/common/plugin/PluginLoader.h>
 #include <chaos/common/plugin/PluginManager.h>
+#include <chaos/common/configuration/GlobalConfiguration.h>
 using namespace chaos::common::plugin;
 using namespace chaos::cu::driver_manager::driver;
 using namespace chaos::cu::control_manager::script::api::plugin;
 
-int main(int argc, const char * argv[]) {
+int main(int argc, char ** argv) {
+    chaos::GlobalConfiguration::getInstance()->preParseStartupParameters();
+    chaos::GlobalConfiguration::getInstance()->parseStartupParameters(argc, argv);
     ChaosUniquePtr<AbstractPlugin> plugin;
     std::cout << "----------------------------------Start general plugin test----------------------------------" << std::endl;
     PluginLoader loader("PluginLibrary.chaos_extension");
