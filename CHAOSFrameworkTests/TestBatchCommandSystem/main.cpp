@@ -20,18 +20,14 @@ using namespace chaos::common::batch_command::test;
 new chaos::common::utility::TypedObjectInstancer<BatchCommandClass, TestBatchCommand>())
 
 void whaitOrAssertOnFault(TestCommandExecutor &executor, bool has_default) {
-    uint64_t last_running_element = 0;
+    BatchCommandStat s;
     do{
-        if(last_running_element == 0) {
-            last_running_element = executor.getRunningElement();
-        } else {
-            uint64_t cur_running_element = executor.getRunningElement();
-            //assert(last_running_element > cur_running_element);
-            last_running_element = cur_running_element;
-        }
-        std::cout << "Still runnign:" << last_running_element << std::endl;
+        s = executor.getStat();
+        std::cout << "In stack:" << s.stacked_commands << std::endl;
+        std::cout << "In queue:" << s.queued_commands << std::endl;
         sleep(1);
-    }while(last_running_element > (has_default?1:0));
+    }while(s.queued_commands == 0 &&
+           s.stacked_commands == 0);
 }
 
 void testInfrastructure() {
@@ -42,8 +38,8 @@ void testInfrastructure() {
     executor.installCommand("TestCommandSetOnly", BATCH_COMMAND_INSTANCER(TestCommandSetOnly));
     executor.installCommand("TestCommandComplete", BATCH_COMMAND_INSTANCER(TestCommandComplete));
     executor.installCommand("TestBatchDefaultCommand", BATCH_COMMAND_INSTANCER(TestBatchDefaultCommand));
-    executor.has_default = true;
-    executor.setDefaultCommand("TestBatchDefaultCommand");
+    //executor.has_default = true;
+    //executor.setDefaultCommand("TestBatchDefaultCommand");
     std::cout << "--------------Testing architecture--------------"<<std::endl;
     //test sequence normal
     uint64_t command_id;
@@ -65,7 +61,6 @@ void testInfrastructure() {
     for(int idx = 0;
         idx < 1000;
         idx++) {
-        
         executor.submitCommand("TestCommandComplete", NULL, command_id, 0, 100, static_cast<chaos::common::batch_command::SubmissionRuleType::SubmissionRule>(std::rand()%3));
     }
     

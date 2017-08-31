@@ -40,7 +40,7 @@ namespace chaos {
     namespace common {
         namespace trigger {
             
-            //! define a base event description that can trigger some executio
+            //! define a base event description that can trigger some execution
             /*!
              an event is defined by a name and a code and they are unique
              within the data broker instance

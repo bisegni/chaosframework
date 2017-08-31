@@ -48,13 +48,6 @@ BatchCommand *  TestCommandExecutor::instanceCommandInfo(const std::string& comm
                                                                                              submission_rule,
                                                                                              submission_retry_delay,
                                                                                              scheduler_step_delay);
-    
-    //customize the newly create batch command
-    if(result) {
-        LockableObjectWriteLock_t wr;
-        map_id_command.getWriteLock(wr);
-        map_id_command().insert(IDCommandMapPair(result->getUID(), TestElement(result)));
-    }
     return result;
 }
 
@@ -63,12 +56,6 @@ void TestCommandExecutor::handleCommandEvent(const std::string& command_alias,
                                              BatchCommandEventType::BatchCommandEventType type,
                                              chaos::common::data::CDataWrapper *command_info,
                                              const BatchCommandStat& commands_stats) {
-    LockableObjectWriteLock_t wl;
-    map_id_command.getWriteLock(wl);
-    local_stat = commands_stats;
-    if(map_id_command().count(command_seq) == 0) return;
-    TestElement& element = map_id_command()[command_seq];
-    element.last_event = type;
     switch(type){
         case common::batch_command::BatchCommandEventType::EVT_QUEUED:
             break;
@@ -80,32 +67,24 @@ void TestCommandExecutor::handleCommandEvent(const std::string& command_alias,
             paused_count++;
             break;
         case common::batch_command::BatchCommandEventType::EVT_COMPLETED: {
-            element.has_completed = true;
+            LBatchCommandStatWriteLock wl = local_stat.getWriteLockObject();
+            local_stat() = commands_stats;
             completed_count++;
-            uint64_t end_to_set_time = 0;
-            if(last_end_time){
-                end_to_set_time = element.command_instance->set_ts - last_end_time;
-            }
-            last_end_time = element.command_instance->end_ts;
-            uint64_t set_ts_total = element.command_instance->set_ts-element.command_instance->create_ts;
-            uint64_t end_ts_total = element.command_instance->end_ts-element.command_instance->set_ts;
-            //std::cout << CHAOS_FORMAT("[Completed]Command with id %1% completed with st:%2% ed:%3% count:%4% ETS:%5%",%command_seq
-            //                          %(set_ts_total)
-            //                          %(end_ts_total)
-            //                          %element.command_instance->cicle_count
-            //                          %end_to_set_time) << std::endl;
-            map_id_command().erase(command_seq);
             break;
         }
-        case common::batch_command::BatchCommandEventType::EVT_FAULT:{
-            map_id_command().erase(command_seq);
+        case common::batch_command::BatchCommandEventType::EVT_FAULT: {
             fault_count++;
+            LBatchCommandStatWriteLock wl = local_stat.getWriteLockObject();
+            local_stat() = commands_stats;
             break;
         }
-        case common::batch_command::BatchCommandEventType::EVT_KILLED:
-            map_id_command().erase(command_seq);
+            
+        case common::batch_command::BatchCommandEventType::EVT_KILLED: {
             killed_count++;
+            LBatchCommandStatWriteLock wl = local_stat.getWriteLockObject();
+            local_stat() = commands_stats;
             break;
+        }
     }
 }
 
@@ -115,17 +94,11 @@ void TestCommandExecutor::handleSandboxEvent(const std::string& sandbox_id,
                                              uint32_t type_value_size) {
 }
 
-uint64_t TestCommandExecutor::getRunningElement() {
-    LockableObjectWriteLock_t wr;
-    map_id_command.getWriteLock(wr);
-    return local_stat.queued_commands+local_stat.stacked_commands;
+BatchCommandStat TestCommandExecutor::getStat() {
+    LBatchCommandStatWriteLock wl = local_stat.getWriteLockObject();
+    return local_stat();
 }
 
-void TestCommandExecutor::resetMap() {
-    LockableObjectWriteLock_t wr;
-    map_id_command.getWriteLock(wr);
-    map_id_command().clear();
-}
 
 void TestCommandExecutor::printStatistic() {
     std::cout << CHAOS_FORMAT("Test terminated with\nTerminated:%1% Killed:%2% Faulted:%3% Number of Pause:%4% total:%5%", %completed_count%killed_count%fault_count%paused_count%(completed_count+killed_count+fault_count)) << std::endl;

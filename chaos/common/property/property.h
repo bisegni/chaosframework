@@ -21,7 +21,7 @@
 #ifndef CHAOSFramework_Property_h
 #define CHAOSFramework_Property_h
 
-#include <chaos/common/property/Property.h>
+#include <chaos/common/property/PropertyDescription.h>
 #include <chaos/common/property/PropertyGroup.h>
 
 #endif
