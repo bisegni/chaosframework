@@ -16,7 +16,7 @@ option(CHAOS_DATA_EXPORT "Chaos Data Export" ON)
 option(CHAOS_EXAMPLES "Chaos Examples" ON)
 option(CHAOS_CCS "Chaos CCS Compile needs qt5.6-static-x86_64 installed" OFF)
 set(QMAKE_PATH "Default QT QMAKE PATH" CACHE STRING "/usr/local/chaos/qt-56/bin")
-
+ADD_DEFINITIONS(-fvisibility=hidden)
 EXECUTE_PROCESS(
 COMMAND ./version.sh
 WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/chaos/common/
