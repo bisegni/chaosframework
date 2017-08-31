@@ -35,12 +35,28 @@ map_properties(src.map_properties){}
 
 bool PropertyGroup::addProperty(const std::string& property_name,
                                 const std::string& property_description,
-                                const DataType::DataType property_type) {
+                                const DataType::DataType property_type,
+                                const uint32_t flag,
+                                const CDataVariant& property_default_value) {
     //add property
     if(map_properties.count(property_name) != 0) return false;
     map_properties.insert(MapPropertiesPair(property_name, PropertyDescription(property_name,
                                                                                property_description,
-                                                                               property_type)));
+                                                                               property_type,
+                                                                               flag,
+                                                                               property_default_value)));
+    return true;
+}
+
+bool PropertyGroup::addProperty(const std::string& property_name,
+                                const CDataVariant& property_default_value) {
+    //add property
+    if(map_properties.count(property_name) != 0) return false;
+    map_properties.insert(MapPropertiesPair(property_name, PropertyDescription(property_name,
+                                                                               "",
+                                                                               DataType::TYPE_UNDEFINED,
+                                                                               0,
+                                                                               property_default_value)));
     return true;
 }
 

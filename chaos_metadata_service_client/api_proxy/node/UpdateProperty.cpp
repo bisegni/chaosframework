@@ -22,6 +22,7 @@
 #include <chaos_metadata_service_client/api_proxy/node/UpdateProperty.h>
 
 using namespace chaos::common::data;
+using namespace chaos::common::property;
 using namespace chaos::common::batch_command;
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::api_proxy::node;
@@ -56,6 +57,19 @@ ApiProxyResult UpdateProperty::execute(const std::string& node_unique_id,
         update_property_pack->addCSDataValue((*it)->group_name, *property_group);
     }
     message->addCSDataValue("update_property", *update_property_pack);
+    
+    //call api
+    return callApi(message.release());
+}
+
+ApiProxyResult UpdateProperty::execute(const std::string& node_unique_id,
+                                       chaos::common::property::PropertyGroup& node_property_groups_list) {
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> message(new CDataWrapper());
+    //add node uid
+    message->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_unique_id);
+    
+    PropertyGroupSDWrapper pg_sdw(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(PropertyGroup, node_property_groups_list));
+    message->addCSDataValue("update_property", *pg_sdw.serialize());
     
     //call api
     return callApi(message.release());

@@ -50,7 +50,8 @@ namespace chaos {
                 PropertyDescription(const std::string& _name,
                                     const std::string& _description,
                                     const DataType::DataType& _type = DataType::TYPE_UNDEFINED,
-                                    const uint32_t _flag = 0);
+                                    const uint32_t _flag = 0,
+                                    const chaos::common::data::CDataVariant& property_default_value = chaos::common::data::CDataVariant());
                 
                 
                 ~PropertyDescription();

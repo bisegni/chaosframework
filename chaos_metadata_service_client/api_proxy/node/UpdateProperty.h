@@ -23,6 +23,7 @@
 #define __CHAOSFramework__UpdateProperty__
 
 #include <chaos_metadata_service_client/api_proxy/ApiProxy.h>
+#include <chaos/common/property/property.h>
 
 namespace chaos {
     namespace metadata_service_client {
@@ -43,6 +44,13 @@ namespace chaos {
                      */
                     ApiProxyResult execute(const std::string& node_unique_id,
                                            const NodePropertyGroupList& node_property_groups_list);
+                    
+                    /*!
+                     \param node_unique_id the unique id of a command
+                     \param node_property_groups_list the property group wit property value
+                     */
+                    ApiProxyResult execute(const std::string& node_unique_id,
+                                           chaos::common::property::PropertyGroup& node_property_groups);
                 };
             }
         }

@@ -21,11 +21,9 @@
 
 #include "UpdateProperty.h"
 #include "../../batch/node/UpdatePropertyCommand.h"
-#include <chaos/common/property/property.h>
 
 using namespace chaos;
 using namespace chaos::common::data;
-using namespace chaos::common::property;
 using namespace chaos::common::batch_command;
 using namespace chaos::metadata_service::api::node;
 using namespace chaos::metadata_service::persistence::data_access;

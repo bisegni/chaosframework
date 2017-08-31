@@ -63,7 +63,12 @@ namespace chaos {
                 
                 bool addProperty(const std::string& property_name,
                                  const std::string& property_description,
-                                 const DataType::DataType property_type);
+                                 const DataType::DataType property_type,
+                                 const uint32_t flag = 0,
+                                 const chaos::common::data::CDataVariant& property_default_value = chaos::common::data::CDataVariant());
+                
+                bool addProperty(const std::string& property_name,
+                                 const chaos::common::data::CDataVariant& property_default_value = chaos::common::data::CDataVariant());
                 
                 void setPropertyValue(const std::string& property_name,
                                       const chaos::common::data::CDataVariant& new_value);

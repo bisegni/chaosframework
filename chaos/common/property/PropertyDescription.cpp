@@ -32,11 +32,13 @@ PropertyDescription::PropertyDescription(){}
 PropertyDescription::PropertyDescription(const std::string& _name,
                                          const std::string& _description,
                                          const DataType::DataType& _type,
-                                         const uint32_t _flag):
+                                         const uint32_t _flag,
+                                         const chaos::common::data::CDataVariant& property_default_value):
 name(_name),
 description(_description),
 type(_type),
-flag(_flag){}
+flag(_flag),
+property_value(property_default_value){}
 
 
 PropertyDescription::~PropertyDescription() {}

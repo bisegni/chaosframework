@@ -21,8 +21,10 @@
 
 #include <chaos/common/global.h>
 #include <chaos/common/utility/UUIDUtil.h>
+#include <chaos/common/property/property.h>
 #include <chaos/common/healt_system/HealtManager.h>
 #include <chaos/common/event/channel/InstrumentEventChannel.h>
+
 #include <chaos/cu_toolkit/data_manager/DataManager.h>
 #include <chaos/cu_toolkit/driver_manager/DriverManager.h>
 #include <chaos/cu_toolkit/command_manager/CommandManager.h>
@@ -38,6 +40,7 @@ using namespace boost::uuids;
 using namespace chaos::common::data;
 using namespace chaos::common::alarm;
 using namespace chaos::common::utility;
+using namespace chaos::common::property;
 using namespace chaos::common::exception;
 using namespace chaos::common::data::cache;
 using namespace chaos::common::healt_system;
@@ -1588,6 +1591,8 @@ CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* update_pac
         throw MetadataLoggingCException(getCUID(), -3, "Device Not Initilized", __PRETTY_FUNCTION__);
     }
     
+    PropertyGroupSDWrapper pg_sdw;
+    pg_sdw.deserialize(update_pack);
     CDWUniquePtr p_abstract_cu;
     if(update_pack->hasKey("property_abstract_control_unit") &&
        update_pack->isCDataWrapperValue("property_abstract_control_unit")){
