@@ -65,6 +65,7 @@ namespace chaos {
              * Chaos variant implementation that host all dataset CHAOS data type
              */
             class CDataVariant {
+                friend bool operator==(const CDataVariant& lhs, const CDataVariant& rhs);
                 DataType::DataType type;
                 boost::variant<int32_t,
                 uint32_t,
@@ -132,7 +133,6 @@ namespace chaos {
                 
                 ChaosSharedPtr<CDataWrapper> asCDataWrapperShrdPtr();
                 operator ChaosSharedPtr<CDataWrapper>();
-                
             };
         }
     }

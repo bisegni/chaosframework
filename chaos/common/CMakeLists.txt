@@ -226,7 +226,6 @@ SET(common_lib_src ${common_lib_src}
   plugin/PluginManager.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        property/PropertyCollector.cpp
         property/PropertyGroup.cpp
         property/PropertyDescription.cpp)
 

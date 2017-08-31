@@ -22,7 +22,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-#include <streambuf>
+#include <assert.h>
 
 
 #include <chaos/common/script/ScriptManager.h>
@@ -39,20 +39,22 @@ int main(int argc, const char * argv[]) {
                                              NULL,
                                              "ScriptManager",
                                              __PRETTY_FUNCTION__);
-    
-    
-    std::ifstream t("test.lua");
-    std::string script((std::istreambuf_iterator<char>(t)),
-                       std::istreambuf_iterator<char>());
+    std::string script("function testString(str_to_test) if(string.match(str_to_test, \"test_string\")) then print(\" String \"..str_to_test..\" has been matched\") return true else print(\" String\"..str_to_test..\" didn't match\") return false end end");
     script_manager->getVirtualMachine()->loadScript(script);
     
     ScriptInParam in_param;
+    ScriptInParam out_param;
     in_param.push_back(CDataVariant("test_string"));
-    script_manager->getVirtualMachine()->callProcedure("testString", in_param);
+    script_manager->getVirtualMachine()->callFunction("testString", in_param, out_param);
+    assert(out_param.size() == 1);
+    assert(out_param[0].asBool() == true);
     
     in_param.clear();
+    out_param.clear();
     in_param.push_back(CDataVariant("wrong_string"));
-    script_manager->getVirtualMachine()->callProcedure("testString", in_param);
+    script_manager->getVirtualMachine()->callFunction("testString", in_param, out_param);
+    assert(out_param.size() == 1);
+    assert(out_param[0].asBool() == false);
     
     InizializableService::deinitImplementation(script_manager.get(),
                                                "ScriptManager",

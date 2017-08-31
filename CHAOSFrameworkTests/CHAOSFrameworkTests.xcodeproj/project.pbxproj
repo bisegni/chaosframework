@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		321E59321D7457FF00365F57 /* TestBatchDefault.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 321E59301D7457FF00365F57 /* TestBatchDefault.cpp */; };
+		3249283F1F56CB8D00409E83 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3249283E1F56CB8D00409E83 /* main.cpp */; };
 		327A28651D71D6D100DFDD2C /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327A28641D71D6D100DFDD2C /* main.cpp */; };
 		327A286B1D71D72700DFDD2C /* TestCommandExecutor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327A28691D71D72700DFDD2C /* TestCommandExecutor.cpp */; };
 		327A286E1D71D73300DFDD2C /* TestBatchCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327A286C1D71D73300DFDD2C /* TestBatchCommand.cpp */; };
@@ -36,6 +37,15 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		3249283A1F56CB8D00409E83 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		327A28601D71D6D100DFDD2C /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -159,7 +169,11 @@
 		321E59301D7457FF00365F57 /* TestBatchDefault.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestBatchDefault.cpp; sourceTree = "<group>"; };
 		321E59311D7457FF00365F57 /* TestBatchDefault.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestBatchDefault.h; sourceTree = "<group>"; };
 		3235DB521D74A46B009D016E /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
-		32655AD41E9B746600829266 /* test.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test.lua; sourceTree = "<group>"; };
+		3249283C1F56CB8D00409E83 /* TestProperty */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestProperty; sourceTree = BUILT_PRODUCTS_DIR; };
+		3249283E1F56CB8D00409E83 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		324928461F58041200409E83 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		324928471F5804E400409E83 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		324928481F5804FF00409E83 /* TestProperty */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TestProperty; sourceTree = "<group>"; };
 		327A28621D71D6D100DFDD2C /* TestBatchCommandSystem */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestBatchCommandSystem; sourceTree = BUILT_PRODUCTS_DIR; };
 		327A28641D71D6D100DFDD2C /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		327A28691D71D72700DFDD2C /* TestCommandExecutor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestCommandExecutor.cpp; sourceTree = "<group>"; };
@@ -223,6 +237,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		324928391F56CB8D00409E83 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		327A285F1D71D6D100DFDD2C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -324,6 +345,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3249283D1F56CB8D00409E83 /* TestProperty */ = {
+			isa = PBXGroup;
+			children = (
+				324928481F5804FF00409E83 /* TestProperty */,
+				3249283E1F56CB8D00409E83 /* main.cpp */,
+			);
+			path = TestProperty;
+			sourceTree = "<group>";
+		};
 		327A28631D71D6D100DFDD2C /* TestBatchCommandSystem */ = {
 			isa = PBXGroup;
 			children = (
@@ -356,6 +386,7 @@
 				32EBC2191E92507B00785AAC /* TestTimer */,
 				32DF53571E97E191005E2304 /* TestLuaScript */,
 				32AC6F0C1EC0CD8D00FCCD85 /* TestVariant */,
+				3249283D1F56CB8D00409E83 /* TestProperty */,
 				3299433F1D6B38CC008DBAE9 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -377,6 +408,7 @@
 				32EBC2181E92507B00785AAC /* TestTimer */,
 				32DF53561E97E191005E2304 /* TestLuaScript */,
 				32AC6F0B1EC0CD8D00FCCD85 /* TestVariant */,
+				3249283C1F56CB8D00409E83 /* TestProperty */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -452,6 +484,7 @@
 		32AC6F0C1EC0CD8D00FCCD85 /* TestVariant */ = {
 			isa = PBXGroup;
 			children = (
+				324928471F5804E400409E83 /* CMakeLists.txt */,
 				32AC6F0D1EC0CD8D00FCCD85 /* main.cpp */,
 			);
 			path = TestVariant;
@@ -497,7 +530,7 @@
 		32DF53571E97E191005E2304 /* TestLuaScript */ = {
 			isa = PBXGroup;
 			children = (
-				32655AD41E9B746600829266 /* test.lua */,
+				324928461F58041200409E83 /* CMakeLists.txt */,
 				32DF53581E97E191005E2304 /* main.cpp */,
 			);
 			path = TestLuaScript;
@@ -528,6 +561,23 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		3249283B1F56CB8D00409E83 /* TestProperty */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 324928421F56CB8D00409E83 /* Build configuration list for PBXNativeTarget "TestProperty" */;
+			buildPhases = (
+				324928381F56CB8D00409E83 /* Sources */,
+				324928391F56CB8D00409E83 /* Frameworks */,
+				3249283A1F56CB8D00409E83 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TestProperty;
+			productName = TestProperty;
+			productReference = 3249283C1F56CB8D00409E83 /* TestProperty */;
+			productType = "com.apple.product-type.tool";
+		};
 		327A28611D71D6D100DFDD2C /* TestBatchCommandSystem */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 327A28681D71D6D100DFDD2C /* Build configuration list for PBXNativeTarget "TestBatchCommandSystem" */;
@@ -775,6 +825,11 @@
 				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = bisegni;
 				TargetAttributes = {
+					3249283B1F56CB8D00409E83 = {
+						CreatedOnToolsVersion = 8.3.3;
+						DevelopmentTeam = ZZ5BMKV37Y;
+						ProvisioningStyle = Automatic;
+					};
 					327A28611D71D6D100DFDD2C = {
 						CreatedOnToolsVersion = 8.0;
 						ProvisioningStyle = Automatic;
@@ -871,11 +926,20 @@
 				32EBC2171E92507B00785AAC /* TestTimer */,
 				32DF53551E97E191005E2304 /* TestLuaScript */,
 				32AC6F0A1EC0CD8D00FCCD85 /* TestVariant */,
+				3249283B1F56CB8D00409E83 /* TestProperty */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
+		324928381F56CB8D00409E83 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3249283F1F56CB8D00409E83 /* main.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		327A285E1D71D6D100DFDD2C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1002,6 +1066,30 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		324928401F56CB8D00409E83 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				DEVELOPMENT_TEAM = ZZ5BMKV37Y;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		324928411F56CB8D00409E83 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				DEVELOPMENT_TEAM = ZZ5BMKV37Y;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		327A28661D71D6D100DFDD2C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1384,6 +1472,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		324928421F56CB8D00409E83 /* Build configuration list for PBXNativeTarget "TestProperty" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				324928401F56CB8D00409E83 /* Debug */,
+				324928411F56CB8D00409E83 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		327A28681D71D6D100DFDD2C /* Build configuration list for PBXNativeTarget "TestBatchCommandSystem" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

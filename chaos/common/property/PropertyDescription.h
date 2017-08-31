@@ -23,19 +23,21 @@
 #define __CHAOSFramework_A779EE47_822D_461E_B702_849E049D5CD7_PropertyDescription_h
 
 #include <chaos/common/chaos_constants.h>
-#include <chaos/common/data/cache/AttributeValue.h>
+#include <chaos/common/data/CDataVariant.h>
 #include <chaos/common/data/TemplatedDataSDWrapper.h>
+
+#include <boost/function.hpp>
 
 namespace chaos {
     namespace common {
         namespace property {
-            
             class PropertyDescriptionSDWrapper;
             
             //!define a porperty taht is rapresentated by haos base value
             class PropertyDescription {
                 friend class PropertyDescriptionSDWrapper;
-                chaos::common::data::CDataVariant  property_values;
+                //!current property value
+                chaos::common::data::CDataVariant  property_value;
             public:
                 std::string name;
                 std::string description;
@@ -80,7 +82,7 @@ namespace chaos {
                 Subclass::dataWrapped().type = (DataType::DataType)CDW_GET_INT32_WITH_DEFAULT(serialized_data, "property_type", 0);
                 Subclass::dataWrapped().flag = (uint32_t)CDW_GET_INT32_WITH_DEFAULT(serialized_data, "property_flag", 0);
                 if(serialized_data->hasKey("property_value")){
-                    Subclass::dataWrapped().property_values = serialized_data->getVariantValue("property_value");
+                    Subclass::dataWrapped().property_value = serialized_data->getVariantValue("property_value");
                 }
             }
             
@@ -90,7 +92,7 @@ namespace chaos {
                 data_serialized->addStringValue("property_description", Subclass::dataWrapped().description);
                 data_serialized->addInt32Value("property_type", Subclass::dataWrapped().type);
                 data_serialized->addInt32Value("property_flag", Subclass::dataWrapped().flag);
-                data_serialized->addVariantValue("property_value", Subclass::dataWrapped().property_values);
+                data_serialized->addVariantValue("property_value", Subclass::dataWrapped().property_value);
                 return data_serialized;
             }
             CHAOS_CLOSE_SDWRAPPER()

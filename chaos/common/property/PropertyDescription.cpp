@@ -24,12 +24,9 @@
 using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::common::property;
-using namespace chaos::common::data::cache;
 
 //! default constructor
-PropertyDescription::PropertyDescription(){
-    
-}
+PropertyDescription::PropertyDescription(){}
 
 //! default constructor with the alias of the command
 PropertyDescription::PropertyDescription(const std::string& _name,
@@ -49,7 +46,7 @@ PropertyDescription& PropertyDescription::operator=(PropertyDescription const &r
     description=rhs.description;
     type=rhs.type;
     flag=rhs.flag;
-    property_values=rhs.property_values;
+    property_value=rhs.property_value;
     return *this;
 }
 
@@ -70,9 +67,9 @@ const uint32_t PropertyDescription::getFlags() const {
 }
 
 void PropertyDescription::updatePropertyValue(const CDataVariant& new_property_value) {
-    property_values = new_property_value;
+    property_value = new_property_value;
 }
 
 const chaos::common::data::CDataVariant& PropertyDescription::getPropertyValue() const {
-    return property_values;
+    return property_value;
 }
