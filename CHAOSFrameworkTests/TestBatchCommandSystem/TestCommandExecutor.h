@@ -39,7 +39,9 @@ namespace chaos{
                  */
                 class TestCommandExecutor:
                 public BatchCommandExecutor {
-                    LBatchCommandStat local_stat;
+                public:
+                    uint64_t queued;
+                    uint64_t stacked;
                     uint64_t last_end_time;
                     uint64_t completed_count;
                     uint64_t fault_count;
@@ -71,8 +73,9 @@ namespace chaos{
                     ~TestCommandExecutor();
                     
                     void printStatistic();
-                    
-                    BatchCommandStat getStat();
+                    void resetStat();
+                    uint64_t getQueued();
+                    uint64_t getStacked();
                 };
             }
         }
