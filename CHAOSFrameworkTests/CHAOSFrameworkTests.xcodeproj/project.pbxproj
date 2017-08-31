@@ -171,7 +171,9 @@
 		3235DB521D74A46B009D016E /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		3249283C1F56CB8D00409E83 /* TestProperty */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestProperty; sourceTree = BUILT_PRODUCTS_DIR; };
 		3249283E1F56CB8D00409E83 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		32655AD41E9B746600829266 /* test.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test.lua; sourceTree = "<group>"; };
+		324928461F58041200409E83 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		324928471F5804E400409E83 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		324928481F5804FF00409E83 /* TestProperty */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TestProperty; sourceTree = "<group>"; };
 		327A28621D71D6D100DFDD2C /* TestBatchCommandSystem */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestBatchCommandSystem; sourceTree = BUILT_PRODUCTS_DIR; };
 		327A28641D71D6D100DFDD2C /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		327A28691D71D72700DFDD2C /* TestCommandExecutor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestCommandExecutor.cpp; sourceTree = "<group>"; };
@@ -346,6 +348,7 @@
 		3249283D1F56CB8D00409E83 /* TestProperty */ = {
 			isa = PBXGroup;
 			children = (
+				324928481F5804FF00409E83 /* TestProperty */,
 				3249283E1F56CB8D00409E83 /* main.cpp */,
 			);
 			path = TestProperty;
@@ -481,6 +484,7 @@
 		32AC6F0C1EC0CD8D00FCCD85 /* TestVariant */ = {
 			isa = PBXGroup;
 			children = (
+				324928471F5804E400409E83 /* CMakeLists.txt */,
 				32AC6F0D1EC0CD8D00FCCD85 /* main.cpp */,
 			);
 			path = TestVariant;
@@ -526,7 +530,7 @@
 		32DF53571E97E191005E2304 /* TestLuaScript */ = {
 			isa = PBXGroup;
 			children = (
-				32655AD41E9B746600829266 /* test.lua */,
+				324928461F58041200409E83 /* CMakeLists.txt */,
 				32DF53581E97E191005E2304 /* main.cpp */,
 			);
 			path = TestLuaScript;
