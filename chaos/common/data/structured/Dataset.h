@@ -147,7 +147,6 @@ namespace chaos {
                 //! define serialization wrapper for dataset type
                 CHAOS_OPEN_SDWRAPPER(Dataset)
                 void deserialize(chaos::common::data::CDataWrapper *serialized_data) {
-                    
                     //remove all attribute
                     Subclass::dataWrapped().attribute_set.clear();
                     Subclass::dataWrapped().name = CDW_GET_SRT_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_NAME, "");
