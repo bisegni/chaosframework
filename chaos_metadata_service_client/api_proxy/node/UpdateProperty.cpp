@@ -63,12 +63,20 @@ ApiProxyResult UpdateProperty::execute(const std::string& node_unique_id,
 }
 
 ApiProxyResult UpdateProperty::execute(const std::string& node_unique_id,
-                                       chaos::common::property::PropertyGroup& node_property_groups_list) {
+                                       chaos::common::property::PropertyGroup& node_property_group) {
+    chaos::common::property::PropertyGroupVector group_vector;
+    group_vector.push_back(node_property_group);
+    return execute(node_unique_id,
+                   group_vector);
+}
+
+ApiProxyResult UpdateProperty::execute(const std::string& node_unique_id,
+                                       chaos::common::property::PropertyGroupVector& node_property_group_vector) {
     ChaosUniquePtr<chaos::common::data::CDataWrapper> message(new CDataWrapper());
     //add node uid
     message->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_unique_id);
     
-    PropertyGroupSDWrapper pg_sdw(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(PropertyGroup, node_property_groups_list));
+    PropertyGroupVectorSDWrapper pg_sdw(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(PropertyGroupVector, node_property_group_vector));
     message->addCSDataValue("update_property", *pg_sdw.serialize());
     
     //call api

@@ -184,6 +184,8 @@
 		32460521179C55FC00B075DA /* sqlite3.h in Headers */ = {isa = PBXBuildFile; fileRef = 3246051F179C55FC00B075DA /* sqlite3.h */; };
 		3249282D1F5465CA00409E83 /* BaseBypassDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 3249282B1F5465CA00409E83 /* BaseBypassDriver.h */; };
 		324928331F54696200409E83 /* BaseBypassDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3249282A1F5465CA00409E83 /* BaseBypassDriver.cpp */; };
+		324928531F597E4500409E83 /* PropertyCollector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324928511F597E4500409E83 /* PropertyCollector.cpp */; };
+		324928541F597E4500409E83 /* PropertyCollector.h in Headers */ = {isa = PBXBuildFile; fileRef = 324928521F597E4500409E83 /* PropertyCollector.h */; };
 		324A4B0D191A3F6A00975394 /* disallow_copying.h in Headers */ = {isa = PBXBuildFile; fileRef = 324A4B03191A3F6A00975394 /* disallow_copying.h */; };
 		324A4B0E191A3F6A00975394 /* error_codes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324A4B04191A3F6A00975394 /* error_codes.cpp */; };
 		324A4B0F191A3F6A00975394 /* error_codes.h in Headers */ = {isa = PBXBuildFile; fileRef = 324A4B05191A3F6A00975394 /* error_codes.h */; };
@@ -1509,6 +1511,8 @@
 		3246051F179C55FC00B075DA /* sqlite3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sqlite3.h; sourceTree = "<group>"; };
 		3249282A1F5465CA00409E83 /* BaseBypassDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BaseBypassDriver.cpp; sourceTree = "<group>"; };
 		3249282B1F5465CA00409E83 /* BaseBypassDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseBypassDriver.h; sourceTree = "<group>"; };
+		324928511F597E4500409E83 /* PropertyCollector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PropertyCollector.cpp; sourceTree = "<group>"; };
+		324928521F597E4500409E83 /* PropertyCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PropertyCollector.h; sourceTree = "<group>"; };
 		324A4B03191A3F6A00975394 /* disallow_copying.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = disallow_copying.h; sourceTree = "<group>"; };
 		324A4B04191A3F6A00975394 /* error_codes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = error_codes.cpp; sourceTree = "<group>"; };
 		324A4B05191A3F6A00975394 /* error_codes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = error_codes.h; sourceTree = "<group>"; };
@@ -3115,6 +3119,8 @@
 				32C9CD3B1D51F7D30048DB4A /* PropertyDescription.h */,
 				32A968501D522FB800BD636C /* PropertyGroup.cpp */,
 				32A968511D522FB800BD636C /* PropertyGroup.h */,
+				324928511F597E4500409E83 /* PropertyCollector.cpp */,
+				324928521F597E4500409E83 /* PropertyCollector.h */,
 				322884431ADBB55400CA1F4B /* property.h */,
 			);
 			path = property;
@@ -6018,6 +6024,7 @@
 				328E36ED1786C00D00C1564D /* PluginDefinition.h in Headers */,
 				32B571ED168E02C30002A198 /* bson_builder_base.h in Headers */,
 				32C25DF51DB90C3200A46C2B /* StandardLoggingChannel.h in Headers */,
+				324928541F597E4500409E83 /* PropertyCollector.h in Headers */,
 				324A4B28191A405700975394 /* algorithm.h in Headers */,
 				32B571EE168E02C30002A198 /* bson_db.h in Headers */,
 				32B571F0168E02C30002A198 /* bson_field.h in Headers */,
@@ -7002,6 +7009,7 @@
 				32FB20201A3F2E7300307A86 /* AbstractSharedDomainCache.cpp in Sources */,
 				3230BEC2181A6ADB00EA5793 /* DatasetDB.cpp in Sources */,
 				32AF7D4018DAEAF300537DE6 /* PerformanceNodeChannel.cpp in Sources */,
+				324928531F597E4500409E83 /* PropertyCollector.cpp in Sources */,
 				32EBDF061B4FCA6F00278C42 /* ConsoleMetricBackend.cpp in Sources */,
 				324A4B71191A428500975394 /* bson_extract.cpp in Sources */,
 				32067EA11CABEE8800DE568A /* CDataVariant.cpp in Sources */,

@@ -1581,7 +1581,7 @@ CDataWrapper* AbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_att
 }
 
 /*
- Update the configuration for all descendant tree in the Control Uniti class struccture
+ Update the configuration for all descendant tree in the Control Unit class struccture
  */
 CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* update_pack, bool& detachParam) throw (CException) {
     //check to see if the device can ben initialized
@@ -1591,7 +1591,7 @@ CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* update_pac
         throw MetadataLoggingCException(getCUID(), -3, "Device Not Initilized", __PRETTY_FUNCTION__);
     }
     
-    PropertyGroupSDWrapper pg_sdw;
+    PropertyGroupVectorSDWrapper pg_sdw;
     pg_sdw.deserialize(update_pack);
     CDWUniquePtr p_abstract_cu;
     if(update_pack->hasKey("property_abstract_control_unit") &&
