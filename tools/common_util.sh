@@ -12,6 +12,13 @@ CHAOS_OVERALL_OPT="--event-disable 1"
 if [ -n "$CHAOS_INTERFACE" ];then
     CHAOS_OVERALL_OPT="$CHAOS_OVERALL_OPT --publishing-interface $CHAOS_INTERFACE"
 fi
+if [ -n "$CHAOS_MDS" ];then
+    CHAOS_OVERALL_OPT="$CHAOS_OVERALL_OPT --metadata-server $CHAOS_MDS"
+fi
+
+if [ -n "$CHAOS_IP" ];then
+    CHAOS_OVERALL_OPT="$CHAOS_OVERALL_OPT --publishing-ip $CHAOS_IP"
+fi
 
 if [ -n "$CHAOS_TOOLS" ];then
     tools=$CHAOS_TOOLS
