@@ -60,7 +60,7 @@ bool PropertyGroup::addProperty(const std::string& property_name,
     return true;
 }
 
-const CDataVariant& PropertyGroup::getPropertyValue(const std::string& property_name) {
+const CDataVariant& PropertyGroup::getPropertyValue(const std::string& property_name) const {
     if(map_properties.count(property_name) == 0) return default_null_value;
     return map_properties[property_name].getPropertyValue();
 }
@@ -70,7 +70,7 @@ PropertyDescription& PropertyGroup::getProperty(const std::string& property_name
 }
 
 void PropertyGroup::setPropertyValue(const std::string& property_name,
-                                     const chaos::common::data::CDataVariant& new_value) {
+                                     const chaos::common::data::CDataVariant& new_value) const {
     if(map_properties.count(property_name) == 0) return;
     if(value_change_function) {
         //!check if the value is accepted
@@ -119,7 +119,7 @@ void PropertyGroup::copyPropertiesFromGroup(const PropertyGroup& src_group,
     }
 }
 
-void PropertyGroup::updatePropertiesValueFromSourceGroup(const PropertyGroup& src_group) {
+void PropertyGroup::updatePropertiesValueFromSourceGroup(const PropertyGroup& src_group) const {
     for (MapPropertiesConstIterator it = src_group.map_properties.begin(),
          end = src_group.map_properties.end();
          it != end;

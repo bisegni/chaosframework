@@ -118,7 +118,7 @@ namespace chaos{
                 /*
                  Permit to be live configurable
                  */
-                chaos_data::CDataWrapper* updateConfiguration(chaos_data::CDataWrapper *);
+                void updateConfiguration(const std::string& conf_name, const chaos::common::data::CDataVariant& conf_value);
                 
                 //!return the current storage type [live, history or both] setting
                 DataServiceNodeDefinitionType::DSStorageType getStorageType();

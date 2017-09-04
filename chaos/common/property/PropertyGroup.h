@@ -56,7 +56,7 @@ namespace chaos {
                 PropertyValueUpdatedFunction value_updated_function;
             public:
                 std::string name;
-                MapProperties map_properties;
+                mutable MapProperties map_properties;
                 PropertyGroup();
                 PropertyGroup(const std::string& _name);
                 PropertyGroup(const PropertyGroup& src);
@@ -71,7 +71,7 @@ namespace chaos {
                                  const chaos::common::data::CDataVariant& property_default_value = chaos::common::data::CDataVariant());
                 
                 void setPropertyValue(const std::string& property_name,
-                                      const chaos::common::data::CDataVariant& new_value);
+                                      const chaos::common::data::CDataVariant& new_value) const;
                 
                 void setPropertyValueChangeFunction(const PropertyValueChangeFunction& value_change_f);
                 
@@ -79,14 +79,14 @@ namespace chaos {
                 
                 PropertyDescription& getProperty(const std::string& property_name);
                 
-                const chaos::common::data::CDataVariant& getPropertyValue(const std::string& property_name);
+                const chaos::common::data::CDataVariant& getPropertyValue(const std::string& property_name) const;
                 
                 const std::string& getGroupName() const;
                 
                 void copyPropertiesFromGroup(const PropertyGroup& src_group,
                                              bool copy_value = false);
                 
-                void updatePropertiesValueFromSourceGroup(const PropertyGroup& src_group);
+                void updatePropertiesValueFromSourceGroup(const PropertyGroup& src_group) const;
                 
                 const MapProperties getAllProperties() const;
                 

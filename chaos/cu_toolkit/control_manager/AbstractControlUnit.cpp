@@ -98,6 +98,7 @@ timestamp_acq_cached_value(),
 timestamp_hw_acq_cached_value(),
 thread_schedule_daly_cached_value(),
 key_data_storage() {
+    _initPropertyGroup();
     //!try to decode parameter string has json document
     is_control_unit_json_param = json_reader.parse(control_unit_param, json_parameter_document);
     //initialize check list
@@ -127,6 +128,7 @@ timestamp_acq_cached_value(),
 timestamp_hw_acq_cached_value(),
 thread_schedule_daly_cached_value(),
 key_data_storage() {
+    _initPropertyGroup();
     //!try to decode parameter string has json document
     is_control_unit_json_param = json_reader.parse(control_unit_param, json_parameter_document);
     //copy array
@@ -182,6 +184,21 @@ void AbstractControlUnit::_initChecklist() {
     check_list_sub_service.addCheckList("start");
     check_list_sub_service.getSharedCheckList("start")->addElement(START_SM_PHASE_STAT_TIMER);
 }
+
+void AbstractControlUnit::_initPropertyGroup() {
+    PropertyGroup& pg_abstract_cu = addGroup("property_abstract_control_unit");
+    pg_abstract_cu.addProperty(ControlUnitDatapackSystemKey::BYPASS_STATE, "Put control unit in bypass state", DataType::TYPE_BOOLEAN);
+    pg_abstract_cu.addProperty(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE, "Set the control unit storage type", DataType::TYPE_INT32);
+    pg_abstract_cu.addProperty(DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME, "Set the control unit storage type", DataType::TYPE_INT64);
+    pg_abstract_cu.addProperty(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME, "Set the control unit storage type", DataType::TYPE_INT64);
+    pg_abstract_cu.addProperty(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, "Set the control unit step repeat time in microseconds", DataType::TYPE_INT64);
+    
+    PropertyCollector::setPropertyValueChangeFunction(ChaosBind(&AbstractControlUnit::propertyChangeHandler, this,
+                                                                ChaosBindPlaceholder(_1), ChaosBindPlaceholder(_2), ChaosBindPlaceholder(_3)));
+    PropertyCollector::setPropertyValueUpdatedFunction(ChaosBind(&AbstractControlUnit::propertyUpdatedHandler, this,
+                                                                 ChaosBindPlaceholder(_1), ChaosBindPlaceholder(_2), ChaosBindPlaceholder(_3), ChaosBindPlaceholder(_4)));
+}
+
 /*!
  Destructor a new CU with an identifier
  */
@@ -1591,28 +1608,44 @@ CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* update_pac
         throw MetadataLoggingCException(getCUID(), -3, "Device Not Initilized", __PRETTY_FUNCTION__);
     }
     
+
     PropertyGroupVectorSDWrapper pg_sdw;
     pg_sdw.deserialize(update_pack);
-    CDWUniquePtr p_abstract_cu;
-    if(update_pack->hasKey("property_abstract_control_unit") &&
-       update_pack->isCDataWrapperValue("property_abstract_control_unit")){
-        p_abstract_cu.reset(update_pack->getCSDataValue("property_abstract_control_unit"));
-        if(p_abstract_cu->hasKey(ControlUnitDatapackSystemKey::BYPASS_STATE) &&
-           p_abstract_cu->isBoolValue(ControlUnitDatapackSystemKey::BYPASS_STATE)) {
-            setBypassState(p_abstract_cu->getBoolValue(ControlUnitDatapackSystemKey::BYPASS_STATE));
-        }
-    }
-    //forward property change pack to the data driver
-    key_data_storage->updateConfiguration(update_pack);
-    *attribute_value_shared_cache->getAttributeValue(DOMAIN_SYSTEM, DataServiceNodeDefinitionKey::DS_STORAGE_TYPE)->getValuePtr<int32_t>() = key_data_storage->getStorageType();
-    *attribute_value_shared_cache->getAttributeValue(DOMAIN_SYSTEM, DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME)->getValuePtr<uint64_t>() = key_data_storage->getStorageLiveTime();
-    *attribute_value_shared_cache->getAttributeValue(DOMAIN_SYSTEM, DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME)->getValuePtr<uint64_t>() = key_data_storage->getStorageHistoryTime();
+    
+    //update the property
+    PropertyCollector::applyValue(pg_sdw());
     
     //mark all cache as changed
     attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM).markAllAsChanged();
     
     pushSystemDataset();
     return NULL;
+}
+
+bool AbstractControlUnit::propertyChangeHandler(const std::string& group_name,
+                                                const std::string& property_name,
+                                                const CDataVariant& property_value) {
+    ACULDBG_ << CHAOS_FORMAT("Update property request for %1%[%2%] with value %3%", %property_name%group_name%property_value.asString());
+    return true;
+}
+
+void AbstractControlUnit::propertyUpdatedHandler(const std::string& group_name,
+                                                 const std::string& property_name,
+                                                 const CDataVariant& old_value,
+                                                 const CDataVariant& new_value) {
+    if(group_name.compare("property_abstract_control_unit") == 0) {
+         key_data_storage->updateConfiguration(property_name, new_value);
+        //is my group
+        if(property_name.compare(ControlUnitDatapackSystemKey::BYPASS_STATE) == 0) {
+            setBypassState(new_value.asBool());
+        } else if(property_name.compare(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE) == 0) {
+            *attribute_value_shared_cache->getAttributeValue(DOMAIN_SYSTEM, DataServiceNodeDefinitionKey::DS_STORAGE_TYPE)->getValuePtr<int32_t>() = new_value.asInt32();
+        } else if(property_name.compare(DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME) == 0) {
+            *attribute_value_shared_cache->getAttributeValue(DOMAIN_SYSTEM, DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME)->getValuePtr<uint64_t>() = new_value.asUInt64();
+        } else if(property_name.compare(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME) == 0) {
+            *attribute_value_shared_cache->getAttributeValue(DOMAIN_SYSTEM, DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME)->getValuePtr<uint64_t>() = new_value.asUInt64();
+        }
+    }
 }
 
 //! return the accessor by an index

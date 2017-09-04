@@ -28,22 +28,31 @@
 namespace chaos {
     namespace common {
         namespace property {
-            
             class PropertyGroup;
-            
             //define a map of property group
             typedef ChaosSharedPtr<PropertyGroup> PropertyGroupShrdPtr;
             CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ChaosSharedPtr<PropertyGroup>, PropertyGroupMap);
             
             //!host one or more group of porperty
             class PropertyCollector {
-                PropertyGroupMap map_property;
+                mutable PropertyGroupMap map_property;
+                PropertyValueChangeFunction     value_change_f;
+                PropertyValueUpdatedFunction    value_updated_f;
+                
+                bool changeHandler(const std::string& group_name,
+                                   const std::string& property_name,
+                                   const chaos::common::data::CDataVariant& property_value);
+                
+                void updateHandler(const std::string& group_name,
+                                   const std::string& property_name,
+                                   const chaos::common::data::CDataVariant& old_value,
+                                   const chaos::common::data::CDataVariant& new_value);
             public:
                 PropertyCollector();
                 ~PropertyCollector();
                 
                 //add a new group
-                void addGroup(const std::string& group_name);
+                PropertyGroup& addGroup(const std::string& group_name);
                 
                 //add a new variable to a group
                 void addGroupProperty(const std::string& group_name,
@@ -52,13 +61,13 @@ namespace chaos {
                                       const chaos::DataType::DataType property_type,
                                       const uint32_t flag = 0);
                 
-                void setPropertyValueChangeFunction(const std::string& group_name,
-                                                    const PropertyValueChangeFunction& value_change_f);
+                void setPropertyValueChangeFunction(const PropertyValueChangeFunction& new_value_change_f);
                 
-                void setPropertyValueUpdatedFunction(const std::string& group_name,
-                                                     const PropertyValueUpdatedFunction& value_updated_f);
+                void setPropertyValueUpdatedFunction(const PropertyValueUpdatedFunction& new_value_updated_f);
                 
                 void getGroupNames(ChaosStringVector& names);
+                
+                void applyValue(const PropertyGroupVector& pg_vec) const;
             };
         }
     }

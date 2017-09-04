@@ -19,6 +19,7 @@
  * permissions and limitations under the Licence.
  */
 #include <chaos/common/property/PropertyCollector.h>
+#include <chaos/common/chaos_constants.h>
 
 using namespace chaos;
 using namespace chaos::common::property;
@@ -27,9 +28,13 @@ PropertyCollector::PropertyCollector() {}
 
 PropertyCollector::~PropertyCollector() {}
 
-void PropertyCollector::addGroup(const std::string& group_name) {
-    if(map_property.count(group_name)) return;
-    map_property.insert(PropertyGroupMapPair(group_name, PropertyGroupShrdPtr(new PropertyGroup(group_name))));
+PropertyGroup& PropertyCollector::addGroup(const std::string& group_name) {
+    if(map_property.count(group_name)) return *map_property[group_name];
+    PropertyGroupShrdPtr pg_shrd_ptr(new PropertyGroup(group_name));
+    pg_shrd_ptr->setPropertyValueChangeFunction(ChaosBind(&PropertyCollector::changeHandler, this, ChaosBindPlaceholder(_1), ChaosBindPlaceholder(_2), ChaosBindPlaceholder(_3)));
+    pg_shrd_ptr->setPropertyValueUpdatedFunction(ChaosBind(&PropertyCollector::updateHandler, this, ChaosBindPlaceholder(_1), ChaosBindPlaceholder(_2), ChaosBindPlaceholder(_3), ChaosBindPlaceholder(_4)));
+    map_property.insert(PropertyGroupMapPair(group_name, pg_shrd_ptr));
+    return *map_property[group_name];
 }
 
 void PropertyCollector::addGroupProperty(const std::string& group_name,
@@ -44,16 +49,12 @@ void PropertyCollector::addGroupProperty(const std::string& group_name,
                                           flag);
 }
 
-void PropertyCollector::setPropertyValueChangeFunction(const std::string& group_name,
-                                                       const PropertyValueChangeFunction& value_change_f) {
-    if(map_property.count(group_name)) return;
-    map_property[group_name]->setPropertyValueChangeFunction(value_change_f);
+void PropertyCollector::setPropertyValueChangeFunction(const PropertyValueChangeFunction& new_value_change_f) {
+    value_change_f = new_value_change_f;
 }
 
-void PropertyCollector::setPropertyValueUpdatedFunction(const std::string& group_name,
-                                                        const PropertyValueUpdatedFunction& value_updated_f) {
-    if(map_property.count(group_name)) return;
-    map_property[group_name]->setPropertyValueUpdatedFunction(value_updated_f);
+void PropertyCollector::setPropertyValueUpdatedFunction( const PropertyValueUpdatedFunction& new_value_updated_f) {
+    value_updated_f = new_value_updated_f;
 }
 
 void PropertyCollector::getGroupNames(ChaosStringVector& names) {
@@ -63,4 +64,34 @@ void PropertyCollector::getGroupNames(ChaosStringVector& names) {
         it++) {
         names.push_back(it->first);
     }
+}
+
+bool PropertyCollector::changeHandler(const std::string& group_name,
+                                      const std::string& property_name,
+                                      const chaos::common::data::CDataVariant& property_value) {
+    return value_change_f(group_name,
+                          property_name,
+                          property_value);
+}
+
+void PropertyCollector::updateHandler(const std::string& group_name,
+                                      const std::string& property_name,
+                                      const chaos::common::data::CDataVariant& old_value,
+                                      const chaos::common::data::CDataVariant& new_value) {
+    value_updated_f(group_name,
+                    property_name,
+                    old_value,
+                    new_value);
+}
+
+void PropertyCollector::applyValue(const PropertyGroupVector& pg_vec) const {
+    for(PropertyGroupVectorConstIterator it = pg_vec.begin(),
+        end = pg_vec.end();
+        it != end;
+        it++) {
+        const std::string& pg_name = it->getGroupName();
+        if(map_property.count(pg_name) == 0) continue;
+        it->updatePropertiesValueFromSourceGroup(*it);
+    }
+    
 }
