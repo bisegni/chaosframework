@@ -799,6 +799,10 @@ launch_us_cu(){
     if [ -n "$3" ];then
 	META="$3"
     fi
+    if [ -n $CHAOS_MDS ];then
+	META="";
+	## because on chaos overall
+    fi
     if [ -n "$4" ];then
 	USNAME="$4"
     fi
