@@ -115,9 +115,7 @@ namespace chaos{
                 ChaosSharedPtr<chaos_data::CDataWrapper>  getDatasetFromRestorePoint(const std::string& restore_point_tag,
                                                                                      KeyDataStorageDomain domain);
                 
-                /*
-                 Permit to be live configurable
-                 */
+                void updateConfiguration(chaos::common::data::CDataWrapper *configuration);
                 void updateConfiguration(const std::string& conf_name, const chaos::common::data::CDataVariant& conf_value);
                 
                 //!return the current storage type [live, history or both] setting

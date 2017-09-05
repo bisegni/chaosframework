@@ -286,40 +286,27 @@ CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_a
     return result;
 }
 
-/*
- Event for update some CU configuration
- */
-CDataWrapper* SCAbstractControlUnit::updateConfiguration(CDataWrapper *update_pack, bool& detach_param) throw (CException) {
-    if(update_pack==NULL)
-        return NULL;
-    CDataWrapper *result = AbstractControlUnit::updateConfiguration(update_pack, detach_param);
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> cu_properties;
-    CDataWrapper *cu_property_container = NULL;
-    
-    if(update_pack->hasKey(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)){
-        cu_property_container = update_pack;
-    } else  if(update_pack->hasKey("property_abstract_control_unit") &&
-               update_pack->isCDataWrapperValue("property_abstract_control_unit")){
-        cu_properties.reset(update_pack->getCSDataValue("property_abstract_control_unit"));
-        cu_property_container = cu_properties.get();
-    }
-    
-    if(cu_property_container) {
-        if(cu_properties.get() && cu_properties->hasKey(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)) {
-            //we need to configure the delay  from a run() call and the next
-            uint64_t new_schedule_daly = cu_property_container->getUInt64Value(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY);
+void SCAbstractControlUnit::propertyUpdatedHandler(const std::string& group_name,
+                                                   const std::string& property_name,
+                                                   const CDataVariant& old_value,
+                                                   const CDataVariant& new_value) {
+    if(group_name.compare("property_abstract_control_unit") == 0) {
+        key_data_storage->updateConfiguration(property_name, new_value);
+        //is my group
+        if(property_name.compare(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY) == 0) {
             chaos_batch::features::Features features;
             std::memset(&features, 0, sizeof(chaos_batch::features::Features));
-            //features.featuresFlag &= chaos_batch::features::FeaturesFlagTypes::FF_LOCK_USER_MOD;
-            features.featureSchedulerStepsDelay = new_schedule_daly;
+            features.featureSchedulerStepsDelay = new_value.asUInt64();
             slow_command_executor->setCommandFeatures(features);
-            //update cached value
-            _updateRunScheduleDelay(new_schedule_daly);
-            //push the dataset on data server
-            pushSystemDataset();
+            _updateRunScheduleDelay(new_value.asUInt64());
+            //pushSystemDataset();
         }
     }
-    return result;
+    //call superclass
+    AbstractControlUnit::propertyUpdatedHandler(group_name,
+                                                property_name,
+                                                old_value,
+                                                new_value);
 }
 
 void SCAbstractControlUnit::installCommand(ChaosSharedPtr<BatchCommandDescription> command_description,
@@ -339,7 +326,7 @@ bool SCAbstractControlUnit::waitOnCommandID(uint64_t& cmd_id) {
     do {
         cmd_state = getStateForCommandID(cmd_id);
         if (!cmd_state.get()) break;
-
+        
         switch (cmd_state->last_event) {
             case BatchCommandEventType::EVT_QUEUED:
                 SCACU_LDBG_ << cmd_id << " -> QUEUED";
@@ -366,8 +353,8 @@ bool SCAbstractControlUnit::waitOnCommandID(uint64_t& cmd_id) {
         //whait some times
         usleep(500000);
     } while (cmd_state->last_event != BatchCommandEventType::EVT_COMPLETED &&
-            cmd_state->last_event != BatchCommandEventType::EVT_FAULT &&
-            cmd_state->last_event != BatchCommandEventType::EVT_KILLED);
+             cmd_state->last_event != BatchCommandEventType::EVT_FAULT &&
+             cmd_state->last_event != BatchCommandEventType::EVT_KILLED);
     return (cmd_state.get() &&
             cmd_state->last_event == BatchCommandEventType::EVT_COMPLETED);
 }

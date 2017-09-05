@@ -22,10 +22,12 @@
 #include "CUCommonUtility.h"
 
 #include <chaos/common/global.h>
+#include <chaos/common/property/property.h>
 
 #include <boost/foreach.hpp>
 
 using namespace chaos::common::data;
+using namespace chaos::common::property;
 using namespace chaos::metadata_service::common;
 using namespace chaos::metadata_service::persistence::data_access;
 
@@ -119,6 +121,7 @@ ChaosUniquePtr<chaos::common::data::CDataWrapper> CUCommonUtility::initDataPack(
     int err = 0;
     int64_t run_id = 0;
     CDataWrapper *result = NULL;
+    PropertyGroupVectorSDWrapper property_group_vector_sdw;
     ChaosUniquePtr<chaos::common::data::CDataWrapper> cu_base_description;
     ChaosUniquePtr<chaos::common::data::CDataWrapper> dataset_description;
     ChaosUniquePtr<chaos::common::data::CDataWrapper> init_datapack(new CDataWrapper());
@@ -269,31 +272,31 @@ ChaosUniquePtr<chaos::common::data::CDataWrapper> CUCommonUtility::initDataPack(
         }
         init_datapack->finalizeArrayForKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST);
     }
-    //ad the default scheduler step delay
-    if(instance_description->hasKey(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY) &&
-       instance_description->isInt64Value(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)) {
-        instance_description->copyKeyTo(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, *init_datapack);
+    
+    //add al property for control unit
+    PropertyGroup control_unit_property_group("property_abstract_control_unit");
+    if(instance_description->hasKey(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)) {
+        control_unit_property_group.addProperty(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, instance_description->getVariantValue(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY));
+    }
+    if(instance_description->hasKey(chaos::ControlUnitDatapackSystemKey::BYPASS_STATE)) {
+        control_unit_property_group.addProperty(chaos::ControlUnitDatapackSystemKey::BYPASS_STATE, instance_description->getVariantValue(chaos::ControlUnitDatapackSystemKey::BYPASS_STATE));
+    }
+    if(instance_description->hasKey(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_TYPE) ) {
+        control_unit_property_group.addProperty(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_TYPE, instance_description->getVariantValue(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_TYPE));
+    }
+    if(instance_description->hasKey(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING)) {
+        control_unit_property_group.addProperty(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING, instance_description->getVariantValue(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING));
+    }
+    if(instance_description->hasKey(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME)) {
+        control_unit_property_group.addProperty(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME, instance_description->getVariantValue(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME));
+    }
+    if(instance_description->hasKey(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME)) {
+        control_unit_property_group.addProperty(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME, instance_description->getVariantValue(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME));
     }
     
-    if(instance_description->hasKey(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_TYPE) &&
-       instance_description->isInt32Value(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_TYPE)) {
-        instance_description->copyKeyTo(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_TYPE, *init_datapack);
-    }
-    
-    if(instance_description->hasKey(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING) &&
-       instance_description->isInt32Value(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING)) {
-        instance_description->copyKeyTo(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING, *init_datapack);
-    }
-    
-    if(instance_description->hasKey(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME) &&
-       instance_description->isInt64Value(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME)) {
-        instance_description->copyKeyTo(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME, *init_datapack);
-    }
-    
-    if(instance_description->hasKey(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME) &&
-       instance_description->isInt64Value(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME)) {
-        instance_description->copyKeyTo(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME, *init_datapack);
-    }
+    property_group_vector_sdw().push_back(control_unit_property_group);
+    property_group_vector_sdw.serialization_key="property";
+    property_group_vector_sdw.serialize()->copyAllTo(*init_datapack);
     
     init_datapack->addInt64Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_RUN_ID, run_id);
     //set the action type

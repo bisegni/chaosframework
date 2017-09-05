@@ -1608,13 +1608,14 @@ CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* update_pac
         throw MetadataLoggingCException(getCUID(), -3, "Device Not Initilized", __PRETTY_FUNCTION__);
     }
     
-
+    
     PropertyGroupVectorSDWrapper pg_sdw;
+    pg_sdw.serialization_key="property";
     pg_sdw.deserialize(update_pack);
     
     //update the property
     PropertyCollector::applyValue(pg_sdw());
-    
+    key_data_storage->updateConfiguration(update_pack);
     //mark all cache as changed
     attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM).markAllAsChanged();
     
@@ -1634,7 +1635,7 @@ void AbstractControlUnit::propertyUpdatedHandler(const std::string& group_name,
                                                  const CDataVariant& old_value,
                                                  const CDataVariant& new_value) {
     if(group_name.compare("property_abstract_control_unit") == 0) {
-         key_data_storage->updateConfiguration(property_name, new_value);
+        key_data_storage->updateConfiguration(property_name, new_value);
         //is my group
         if(property_name.compare(ControlUnitDatapackSystemKey::BYPASS_STATE) == 0) {
             setBypassState(new_value.asBool());

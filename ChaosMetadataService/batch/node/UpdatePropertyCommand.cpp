@@ -44,9 +44,9 @@ void UpdatePropertyCommand::setHandler(CDataWrapper *data) {
     
     CHECK_CDW_THROW_AND_LOG(data, CU_UP_ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(data, NodeDefinitionKey::NODE_UNIQUE_ID, CU_UP_ERR, -2, "The attribute node unique id is mandatory")
-    CHECK_KEY_THROW_AND_LOG(data, "update_property", CU_UP_ERR, -3, "The attribute node unique id is mandatory")
+    CHECK_KEY_THROW_AND_LOG(data, "property", CU_UP_ERR, -3, "The attribute node unique id is mandatory")
 
-    update_property_pack.reset(data->getCSDataValue("update_property"));
+    update_property_pack = data;
     
     const std::string node_uid = data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
     //fetch data for sending message to node id
@@ -76,7 +76,7 @@ void UpdatePropertyCommand::ccHandler() {
     switch(request->phase) {
         case MESSAGE_PHASE_UNSENT: {
             sendMessage(*request,
-                        update_property_pack.get());
+                        update_property_pack);
             BC_END_RUNNING_PROPERTY
         }
             

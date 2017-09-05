@@ -91,7 +91,7 @@ void PropertyCollector::applyValue(const PropertyGroupVector& pg_vec) const {
         it++) {
         const std::string& pg_name = it->getGroupName();
         if(map_property.count(pg_name) == 0) continue;
-        it->updatePropertiesValueFromSourceGroup(*it);
+        map_property[pg_name]->updatePropertiesValueFromSourceGroup(*it);
     }
     
 }

@@ -56,7 +56,7 @@ ApiProxyResult UpdateProperty::execute(const std::string& node_unique_id,
         }
         update_property_pack->addCSDataValue((*it)->group_name, *property_group);
     }
-    message->addCSDataValue("update_property", *update_property_pack);
+    message->addCSDataValue("property", *update_property_pack);
     
     //call api
     return callApi(message.release());
@@ -75,10 +75,9 @@ ApiProxyResult UpdateProperty::execute(const std::string& node_unique_id,
     ChaosUniquePtr<chaos::common::data::CDataWrapper> message(new CDataWrapper());
     //add node uid
     message->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_unique_id);
-    
     PropertyGroupVectorSDWrapper pg_sdw(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(PropertyGroupVector, node_property_group_vector));
-    message->addCSDataValue("update_property", *pg_sdw.serialize());
-    
+    pg_sdw.serialization_key = "property";
+    pg_sdw.serialize()->copyAllTo(*message);
     //call api
     return callApi(message.release());
 }

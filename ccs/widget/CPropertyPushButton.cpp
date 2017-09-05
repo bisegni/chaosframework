@@ -106,7 +106,7 @@ void CPropertyPushButton::on_pushButton_clicked(bool clicked) {
 //    property_list.push_back(cu_property_group);
 
     chaos::common::property::PropertyGroup pg(property_group_name.toStdString());
-    pg.addProperty(property_name.toStdString(), CDataVariant(last_got_value.asBool()));
+    pg.addProperty(property_name.toStdString(), CDataVariant(!last_got_value.asBool()));
 
     submitApiResult("update_property",
                     GET_CHAOS_API_PTR(chaos::metadata_service_client::api_proxy::node::UpdateProperty)->execute(nodeUID().toStdString(),

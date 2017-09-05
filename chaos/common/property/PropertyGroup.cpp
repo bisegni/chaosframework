@@ -31,7 +31,9 @@ name(_name){}
 
 PropertyGroup::PropertyGroup(const PropertyGroup& src):
 name(src.name),
-map_properties(src.map_properties){}
+map_properties(src.map_properties),
+value_change_function(src.value_change_function),
+value_updated_function(src.value_updated_function){}
 
 bool PropertyGroup::addProperty(const std::string& property_name,
                                 const std::string& property_description,
@@ -83,7 +85,7 @@ void PropertyGroup::setPropertyValue(const std::string& property_name,
     
     //inform the ganged function fo the changed
     if(value_updated_function){value_updated_function(name,
-                                                      name,
+                                                      property_name,
                                                       old,
                                                       map_properties[property_name].getPropertyValue());}
 }
