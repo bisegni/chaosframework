@@ -20,6 +20,41 @@ if [ -n "$CHAOS_IP" ];then
     CHAOS_OVERALL_OPT="$CHAOS_OVERALL_OPT --publishing-ip $CHAOS_IP"
 fi
 
+if [ -n "$CHAOS_LIVE_USER" ];then
+    CHAOS_MDS_OPT="$CHAOS_MDS_OPT --cache-driver-kvp user:$CHAOS_LIVE_USER"
+fi
+
+if [ -n "$CHAOS_LIVE_PASSWORD" ];then
+    CHAOS_MDS_OPT="$CHAOS_MDS_OPT --cache-driver-kvp pwd:$CHAOS_LIVE_PASSWORD"
+fi
+
+if [ -n "$CHAOS_LIVE_SERVERS" ];then
+    for i in $CHAOS_LIVE_SERVERS;do
+	CHAOS_MDS_OPT="$CHAOS_MDS_OPT --cache-servers $i"
+    done
+else
+    CHAOS_MDS_OPT="$CHAOS_MDS_OPT --cache-servers localhost"
+fi
+
+if [ -n "$CHAOS_DB_SERVERS" ];then
+    for i in $CHAOS_DB_SERVERS;do
+	CHAOS_MDS_OPT="$CHAOS_MDS_OPT --persistence-servers $i"
+	CHAOS_MDS_OPT="$CHAOS_MDS_OPT --obj-storage-driver-server_url $i"
+    done
+else
+    CHAOS_MDS_OPT="$CHAOS_MDS_OPT --persistence-servers localhost"
+    CHAOS_MDS_OPT="$CHAOS_MDS_OPT --obj-storage-driver-server_url localhost"
+
+fi
+
+if [ -n "$CHAOS_DB_USER" ];then
+    CHAOS_MDS_OPT="$CHAOS_MDS_OPT --persistence-kv-param user:$CHAOS_DB_USER"
+fi
+
+if [ -n "$CHAOS_DB_PASSWORD" ];then
+    CHAOS_MDS_OPT="$CHAOS_MDS_OPT --persistence-kv-param pwd:$CHAOS_DB_PASSWORD"
+fi
+
 if [ -n "$CHAOS_TOOLS" ];then
     tools=$CHAOS_TOOLS
 else
