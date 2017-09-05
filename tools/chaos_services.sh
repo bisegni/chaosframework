@@ -23,18 +23,21 @@ fi
 
 
 backend_checks(){
-
-    if ! ps -fe |grep [m]ongod >/dev/null ;then
-	error_mesg "mongod not running" ; exit 1
-    else
-	ok_mesg "mongod check"
-    fi
-    if ! ps -fe |grep [e]pmd >/dev/null ;then
-	if ! ps -fe |grep [m]emcached >/dev/null;then
-	    error_mesg "epmd (couchbase) nor memcached  running" ; exit 1
+    if [ -z "$CHAOS_DB_SERVERS" ];then
+	if ! ps -fe |grep [m]ongod >/dev/null ;then
+	    error_mesg "mongod not running" ; exit 1
+	else
+	    ok_mesg "mongod check"
 	fi
-    else
-	ok_mesg "couchbase check"
+    fi
+    if [ -z "$CHAOS_LIVE_SERVERS" ]; then
+	if ! ps -fe |grep [e]pmd >/dev/null ;then
+	    if ! ps -fe |grep [m]emcached >/dev/null;then
+		error_mesg "epmd (couchbase) nor memcached  running" ; exit 1
+	    fi
+	else
+	    ok_mesg "couchbase check"
+	fi
     fi
 
 }
