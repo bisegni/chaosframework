@@ -8,16 +8,20 @@ SCRIPTTESTABSPATH=`pwd -P`
 SCRIPTNAME=`basename $SCRIPTTESTABSPATH`
 popd > /dev/null
 export LC_ALL="en_US.UTF-8"
-CHAOS_OVERALL_OPT="--event-disable 1"
+export CHAOS_OVERALL_OPT="--event-disable 1"
+export CHAOS_MDS_OPT=""
 if [ -n "$CHAOS_INTERFACE" ];then
     CHAOS_OVERALL_OPT="$CHAOS_OVERALL_OPT --publishing-interface $CHAOS_INTERFACE"
 fi
-if [ -n "$CHAOS_MDS" ];then
-    CHAOS_OVERALL_OPT="$CHAOS_OVERALL_OPT --metadata-server $CHAOS_MDS"
+if [ -z "$CHAOS_MDS" ];then
+    export CHAOS_MDS=localhost:5000
 fi
-
+CHAOS_OVERALL_OPT="$CHAOS_OVERALL_OPT --metadata-server $CHAOS_MDS"
 if [ -n "$CHAOS_IP" ];then
     CHAOS_OVERALL_OPT="$CHAOS_OVERALL_OPT --publishing-ip $CHAOS_IP"
+fi
+if [ -z "$CHAOS_US_TEST" ];then
+    export CHAOS_US_TEST="TEST"
 fi
 
 if [ -n "$CHAOS_LIVE_USER" ];then
