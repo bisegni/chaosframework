@@ -109,7 +109,7 @@ start_us(){
 	exit 1
     fi
     
-    run_proc "$CHAOS_PREFIX/bin/$US_EXEC --conf-file $CHAOS_PREFIX/etc/cu.cfg $CHAOS_OVERALL_OPT --log-on-file --log-file $CHAOS_PREFIX/log/$US_EXEC.log > $CHAOS_PREFIX/log/$US_EXEC.std.out 2>&1 &" "$US_EXEC"
+    run_proc "$CHAOS_PREFIX/bin/$US_EXEC --conf-file $CHAOS_PREFIX/etc/cu.cfg $CHAOS_OVERALL_OPT --log-on-file 1 --log-file $CHAOS_PREFIX/log/$US_EXEC.log > $CHAOS_PREFIX/log/$US_EXEC.std.out 2>&1 &" "$US_EXEC"
 }
 
 ui_stop()
