@@ -127,11 +127,6 @@ void RTAbstractControlUnit::setDefaultScheduleDelay(uint64_t _schedule_delay) {
  */
 void RTAbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configuration)  throw(CException) {
     AbstractControlUnit::_defineActionAndDataset(setup_configuration);
-    //add the scekdule dalay for the sandbox
-    if(schedule_delay){
-        //in this case ovverride the config file
-        setup_configuration.addInt64Value(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY , schedule_delay);
-    }
 }
 
 AbstractSharedDomainCache *RTAbstractControlUnit::_getAttributeCache() {
@@ -238,7 +233,7 @@ void RTAbstractControlUnit::propertyUpdatedHandler(const std::string& group_name
                                                    const std::string& property_name,
                                                    const chaos::common::data::CDataVariant& old_value,
                                                    const chaos::common::data::CDataVariant& new_value) {
-    if(group_name.compare("property_abstract_control_unit") == 0) {
+    if(group_name.compare(chaos::ControlUnitPropertyKey::GROUP_NAME) == 0) {
         key_data_storage->updateConfiguration(property_name, new_value);
         //is my group
         if(property_name.compare(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY) == 0) {

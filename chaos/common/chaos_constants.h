@@ -824,6 +824,21 @@ namespace chaos {
     }
     /** @} */ // end of ExecutionUnitNodeDefinitionKey
     
+    /** @defgroup Contorl unit property key
+     *  This is the collection of the key representing the property that are exposed by control unit
+     *  @{
+     */
+    //! Name space for grupping control unit system property
+    namespace ControlUnitPropertyKey {
+        static const char * const GROUP_NAME                            = "property_abstract_control_unit";
+        //! represent the type of initialization restore
+        static const char * const INIT_RESTORE_OPTION                   = "cudk_init_restore_option";
+        static const unsigned int INIT_RESTORE_OPTION_TYPE_STATIC       = 0;
+        static const unsigned int INIT_RESTORE_OPTION_TYPE_LAST_VALIDE  = 1;
+        
+        static const char * const INIT_RESTORE_APPLY                    = "cudk_init_restore_apply";
+    }
+    
     /** @defgroup Contorl unit system key
      *  This is the collection of the key representing the property that are exposed into system dataset
      *  @{

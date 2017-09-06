@@ -470,8 +470,8 @@ namespace chaos{
                  */
                 virtual void _completeDatasetAttribute();
                 
-                void setBypassState(bool bypass_stage,
-                                    bool high_priority = false);
+                void _setBypassState(bool bypass_stage,
+                                     bool high_priority = false);
             protected:
                 void useCustomHigResolutionTimestamp(bool _use_custom_high_resolution_timestamp);
                 void setHigResolutionAcquistionTimestamp(uint64_t high_resolution_timestamp);

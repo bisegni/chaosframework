@@ -68,6 +68,9 @@ namespace chaos {
                 void getGroupNames(ChaosStringVector& names);
                 
                 void applyValue(const PropertyGroupVector& pg_vec) const;
+                
+                void fillDescription(const std::string& ser_key,
+                                     chaos::common::data::CDataWrapper& serialization_pack);
             };
         }
     }

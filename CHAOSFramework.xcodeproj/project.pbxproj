@@ -186,6 +186,12 @@
 		324928331F54696200409E83 /* BaseBypassDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3249282A1F5465CA00409E83 /* BaseBypassDriver.cpp */; };
 		324928531F597E4500409E83 /* PropertyCollector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324928511F597E4500409E83 /* PropertyCollector.cpp */; };
 		324928541F597E4500409E83 /* PropertyCollector.h in Headers */ = {isa = PBXBuildFile; fileRef = 324928521F597E4500409E83 /* PropertyCollector.h */; };
+		324928571F60381C00409E83 /* UpdatePropertyDefaultValues.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324928551F60381C00409E83 /* UpdatePropertyDefaultValues.cpp */; };
+		3249285A1F603C4E00409E83 /* UpdatePropertyDefaultValues.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324928581F603C4E00409E83 /* UpdatePropertyDefaultValues.cpp */; };
+		3249285B1F603C4E00409E83 /* UpdatePropertyDefaultValues.h in Headers */ = {isa = PBXBuildFile; fileRef = 324928591F603C4E00409E83 /* UpdatePropertyDefaultValues.h */; };
+		3249285E1F603E2A00409E83 /* GetPropertyDefaultValues.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3249285C1F603E2A00409E83 /* GetPropertyDefaultValues.cpp */; };
+		324928611F603EE300409E83 /* GetPropertyDefaultValues.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3249285F1F603EE300409E83 /* GetPropertyDefaultValues.cpp */; };
+		324928621F603EE300409E83 /* GetPropertyDefaultValues.h in Headers */ = {isa = PBXBuildFile; fileRef = 324928601F603EE300409E83 /* GetPropertyDefaultValues.h */; };
 		324A4B0D191A3F6A00975394 /* disallow_copying.h in Headers */ = {isa = PBXBuildFile; fileRef = 324A4B03191A3F6A00975394 /* disallow_copying.h */; };
 		324A4B0E191A3F6A00975394 /* error_codes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324A4B04191A3F6A00975394 /* error_codes.cpp */; };
 		324A4B0F191A3F6A00975394 /* error_codes.h in Headers */ = {isa = PBXBuildFile; fileRef = 324A4B05191A3F6A00975394 /* error_codes.h */; };
@@ -1513,6 +1519,14 @@
 		3249282B1F5465CA00409E83 /* BaseBypassDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseBypassDriver.h; sourceTree = "<group>"; };
 		324928511F597E4500409E83 /* PropertyCollector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PropertyCollector.cpp; sourceTree = "<group>"; };
 		324928521F597E4500409E83 /* PropertyCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PropertyCollector.h; sourceTree = "<group>"; };
+		324928551F60381C00409E83 /* UpdatePropertyDefaultValues.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UpdatePropertyDefaultValues.cpp; sourceTree = "<group>"; };
+		324928561F60381C00409E83 /* UpdatePropertyDefaultValues.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UpdatePropertyDefaultValues.h; sourceTree = "<group>"; };
+		324928581F603C4E00409E83 /* UpdatePropertyDefaultValues.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UpdatePropertyDefaultValues.cpp; sourceTree = "<group>"; };
+		324928591F603C4E00409E83 /* UpdatePropertyDefaultValues.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UpdatePropertyDefaultValues.h; sourceTree = "<group>"; };
+		3249285C1F603E2A00409E83 /* GetPropertyDefaultValues.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetPropertyDefaultValues.cpp; sourceTree = "<group>"; };
+		3249285D1F603E2A00409E83 /* GetPropertyDefaultValues.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetPropertyDefaultValues.h; sourceTree = "<group>"; };
+		3249285F1F603EE300409E83 /* GetPropertyDefaultValues.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetPropertyDefaultValues.cpp; sourceTree = "<group>"; };
+		324928601F603EE300409E83 /* GetPropertyDefaultValues.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetPropertyDefaultValues.h; sourceTree = "<group>"; };
 		324A4B03191A3F6A00975394 /* disallow_copying.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = disallow_copying.h; sourceTree = "<group>"; };
 		324A4B04191A3F6A00975394 /* error_codes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = error_codes.cpp; sourceTree = "<group>"; };
 		324A4B05191A3F6A00975394 /* error_codes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = error_codes.h; sourceTree = "<group>"; };
@@ -2907,6 +2921,10 @@
 				32B1E7FC1B2B06CD00221E49 /* CommandGet.h */,
 				32568C8C1B3D7FED0006988C /* UpdateProperty.cpp */,
 				32568C8D1B3D7FED0006988C /* UpdateProperty.h */,
+				324928581F603C4E00409E83 /* UpdatePropertyDefaultValues.cpp */,
+				324928591F603C4E00409E83 /* UpdatePropertyDefaultValues.h */,
+				3249285F1F603EE300409E83 /* GetPropertyDefaultValues.cpp */,
+				324928601F603EE300409E83 /* GetPropertyDefaultValues.h */,
 				32B1E7E61B297AB300221E49 /* CommandTemplateSet.cpp */,
 				32B1E7E71B297AB300221E49 /* CommandTemplateSet.h */,
 				32B1E7F41B2AD1CC00221E49 /* CommandTemplateGet.cpp */,
@@ -4633,6 +4651,10 @@
 				32B1E7F91B2B036C00221E49 /* CommandGet.h */,
 				32568C861B3D3B270006988C /* UpdateProperty.cpp */,
 				32568C871B3D3B270006988C /* UpdateProperty.h */,
+				324928551F60381C00409E83 /* UpdatePropertyDefaultValues.cpp */,
+				324928561F60381C00409E83 /* UpdatePropertyDefaultValues.h */,
+				3249285C1F603E2A00409E83 /* GetPropertyDefaultValues.cpp */,
+				3249285D1F603E2A00409E83 /* GetPropertyDefaultValues.h */,
 				32B1E7E31B297A6100221E49 /* CommandTemplateSet.cpp */,
 				32B1E7E41B297A6100221E49 /* CommandTemplateSet.h */,
 				32B1E7EA1B297CF800221E49 /* CommandTemplateSearch.cpp */,
@@ -6318,6 +6340,7 @@
 				32FF2ACA1E6F117A00117985 /* ManageNodeLogging.h in Headers */,
 				32B1E8071B2EA07200221E49 /* CommandTemplateDelete.h in Headers */,
 				328C87331ADFDB9A0047C79B /* SearchInstancesByUS.h in Headers */,
+				3249285B1F603C4E00409E83 /* UpdatePropertyDefaultValues.h in Headers */,
 				32A116561D128B9C00FF44ED /* Node.h in Headers */,
 				3208AABA1AC56A51000860D9 /* ApiProxy.h in Headers */,
 				32FF2A621E65CCEB00117985 /* AlertAgentCheckProcessHandler.h in Headers */,
@@ -6345,6 +6368,7 @@
 				32E2B1B51C32A60D00FCFB42 /* DeleteNode.h in Headers */,
 				3221D7341CF5F2BA001BE971 /* node.h in Headers */,
 				32F7AB151C9960A700E18D3E /* NodeMonitor.h in Headers */,
+				324928621F603EE300409E83 /* GetPropertyDefaultValues.h in Headers */,
 				32FF2A581E65782200117985 /* NodeOperation.h in Headers */,
 				32990B101E4C6F5000A4AF8F /* agent.h in Headers */,
 				32F7AB191C9964AE00E18D3E /* node_monitor.h in Headers */,
@@ -6669,6 +6693,7 @@
 				32FC49A41E0807F70087D82C /* GetVariable.cpp in Sources */,
 				3235FDCA1A6FF45600EC83A9 /* GetDescription.cpp in Sources */,
 				325FC8611AF7C8B200DB9D66 /* GetCurrentDataset.cpp in Sources */,
+				324928571F60381C00409E83 /* UpdatePropertyDefaultValues.cpp in Sources */,
 				326ACF851E01525D00AD011E /* MongoDBObjectStorageDataAccess.cpp in Sources */,
 				32B299A41BE25ABE000D3716 /* RecoverError.cpp in Sources */,
 				32936C641D9277DC00485F71 /* GetSnapshotForNode.cpp in Sources */,
@@ -6776,6 +6801,7 @@
 				328E780C1A7AAB640008C070 /* MongoDBNodeDataAccess.cpp in Sources */,
 				3221D7261CF5AEDE001BE971 /* MongoDBScriptDataAccess.cpp in Sources */,
 				32B4193B1B17715700C3CA7D /* ApplyChangeSet.cpp in Sources */,
+				3249285E1F603E2A00409E83 /* GetPropertyDefaultValues.cpp in Sources */,
 				3270E0731C6CBFDE00105726 /* LoggingDataAccess.cpp in Sources */,
 				326ACF811E01525D00AD011E /* CacheDriverSharedMetricIO.cpp in Sources */,
 				326ACFA91E0159C600AD011E /* DeviceSharedDataWorker.cpp in Sources */,
@@ -7178,6 +7204,7 @@
 				32D745EC1C723BDD00F4D719 /* GetLogForSourceUID.cpp in Sources */,
 				32761A321B30565A006C8719 /* CommandInstanceSubmit.cpp in Sources */,
 				3234BE7A1B034AFC00AE6B08 /* AbstractQuantumKeyAttributeHandler.cpp in Sources */,
+				3249285A1F603C4E00409E83 /* UpdatePropertyDefaultValues.cpp in Sources */,
 				32BE0AE11E4C69850007764C /* SaveNodeAssociation.cpp in Sources */,
 				327F39BE1AEAB6260000C845 /* GetAllDS.cpp in Sources */,
 				32761A311B305652006C8719 /* CommandTemplateSubmit.cpp in Sources */,
@@ -7254,6 +7281,7 @@
 				328C87361ADFDD410047C79B /* GetInstance.cpp in Sources */,
 				32A51F701E71968B00209E92 /* GetProcessLogEntries.cpp in Sources */,
 				32AC6F051EB0BF3F00FCCD85 /* SetSnapshotDatasetsForNode.cpp in Sources */,
+				324928611F603EE300409E83 /* GetPropertyDefaultValues.cpp in Sources */,
 				32D745FC1C7338D100F4D719 /* AlertLogEventHandler.cpp in Sources */,
 				327F39AB1AEAA2390000C845 /* UpdateDS.cpp in Sources */,
 				326150951CAAB3120003D0C2 /* NodeMonitorHandler.cpp in Sources */,

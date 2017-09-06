@@ -1,5 +1,5 @@
 /*
- * Copyright 2012, 2017 INFN
+ * Copyright 2012, 06/09/2017 INFN
  *
  * Licensed under the EUPL, Version 1.2 or – as soon they
  * will be approved by the European Commission - subsequent
@@ -19,8 +19,8 @@
  * permissions and limitations under the Licence.
  */
 
-#ifndef __CHAOSFramework__UpdateProperty__
-#define __CHAOSFramework__UpdateProperty__
+#ifndef __CHAOSFramework__2143649_21D1_406A_B407_97637805B4DE_GetPropertyDefaultValues_h
+#define __CHAOSFramework__2143649_21D1_406A_B407_97637805B4DE_GetPropertyDefaultValues_h
 
 #include "../AbstractApi.h"
 
@@ -29,11 +29,11 @@ namespace chaos {
         namespace api {
             namespace node {
                 //update property live on node
-                class UpdateProperty:
+                class GetPropertyDefaultValues:
                 public AbstractApi {
                 public:
-                    UpdateProperty();
-                    ~UpdateProperty();
+                    GetPropertyDefaultValues();
+                    ~GetPropertyDefaultValues();
                     chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
                                                                bool& detach_data) throw(chaos::CException);
                 };
@@ -42,4 +42,4 @@ namespace chaos {
     }
 }
 
-#endif /* defined(__CHAOSFramework__UpdateProperty__) */
+#endif /* __CHAOSFramework__2143649_21D1_406A_B407_97637805B4DE_GetPropertyDefaultValues_h */

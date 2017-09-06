@@ -22,6 +22,7 @@
 #include <chaos/common/chaos_constants.h>
 
 using namespace chaos;
+using namespace chaos::common::data;
 using namespace chaos::common::property;
 
 PropertyCollector::PropertyCollector() {}
@@ -93,5 +94,17 @@ void PropertyCollector::applyValue(const PropertyGroupVector& pg_vec) const {
         if(map_property.count(pg_name) == 0) continue;
         map_property[pg_name]->updatePropertiesValueFromSourceGroup(*it);
     }
-    
+}
+
+void PropertyCollector::fillDescription(const std::string& ser_key,
+                                        CDataWrapper& serialization_pack) {
+    PropertyGroupVectorSDWrapper pgv_sdw;
+    pgv_sdw.serialization_key = ser_key;
+    for(PropertyGroupMapIterator it = map_property.begin(),
+        end = map_property.end();
+        it != end;
+        it++) {
+        pgv_sdw().push_back(*it->second);
+    }
+    pgv_sdw.serialize()->copyAllTo(serialization_pack);
 }

@@ -20,6 +20,8 @@
  */
 #include "NodeRegister.h"
 
+#include <chaos/common/property/property.h>
+
 #include "../../batch/unit_server/UnitServerAckBatchCommand.h"
 #include "../../batch/control_unit/RegistrationAckBatchCommand.h"
 #include "../../batch/agent/AgentAckCommand.h"
@@ -31,6 +33,7 @@
 #define USRA_ERR  ERR_LOG(NodeRegister)
 
 using namespace chaos::common::data;
+using namespace chaos::common::property;
 using namespace chaos::metadata_service::api::node;
 using namespace chaos::metadata_service::persistence::data_access;
 
@@ -296,6 +299,14 @@ CDataWrapper *NodeRegister::controlUnitRegistration(CDataWrapper *api_data,
                 LOG_AND_TROW_FORMATTED(USRA_ERR, -9, "Error searchin unit server for control unit %1% with code %2%",%cu_uid%err);
             }
             
+        }
+        
+        //!save porperty
+        PropertyGroupVectorSDWrapper pgv_swd;
+        pgv_swd.serialization_key = "property";
+        pgv_swd.deserialize(api_data);
+        if((err = n_da->setProperty(cu_uid, pgv_swd()))) {
+            LOG_AND_TROW_FORMATTED(USRA_ERR, err, "Error on node porperty update for %1%",%cu_uid);
         }
         
         //set the code to inform cu that all is gone well

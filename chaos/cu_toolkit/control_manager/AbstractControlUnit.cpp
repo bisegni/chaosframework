@@ -186,7 +186,7 @@ void AbstractControlUnit::_initChecklist() {
 }
 
 void AbstractControlUnit::_initPropertyGroup() {
-    PropertyGroup& pg_abstract_cu = addGroup("property_abstract_control_unit");
+    PropertyGroup& pg_abstract_cu = addGroup(chaos::ControlUnitPropertyKey::GROUP_NAME);
     pg_abstract_cu.addProperty(ControlUnitDatapackSystemKey::BYPASS_STATE, "Put control unit in bypass state", DataType::TYPE_BOOLEAN);
     pg_abstract_cu.addProperty(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE, "Set the control unit storage type", DataType::TYPE_INT32);
     pg_abstract_cu.addProperty(DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME, "Set the control unit storage type", DataType::TYPE_INT64);
@@ -334,10 +334,12 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configurat
     
     //get action description
     getActionDescrionsInDataWrapper(setup_configuration);
+    
+    //add property description
+    PropertyCollector::fillDescription("property", setup_configuration);
 }
 
 void AbstractControlUnit::unitDefineDriver(std::vector<DrvRequestInfo>& neededDriver) {
-    
     for(ControlUnitDriverListIterator iter = control_unit_drivers.begin();
         iter != control_unit_drivers.end();
         iter++) {
@@ -1440,7 +1442,7 @@ void AbstractControlUnit::_completeDatasetAttribute() {
                                      DataType::Output);
 }
 
-void AbstractControlUnit::setBypassState(bool bypass_stage,
+void AbstractControlUnit::_setBypassState(bool bypass_stage,
                                          bool high_priority) {
     DrvMsg cmd;
     memset(&cmd, 0, sizeof(DrvMsg));
@@ -1598,7 +1600,7 @@ CDataWrapper* AbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_att
 }
 
 /*
- Update the configuration for all descendant tree in the Control Unit class struccture
+ Update the configuration for all descendant tree in the Control Unit class structure
  */
 CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* update_pack, bool& detachParam) throw (CException) {
     //check to see if the device can ben initialized
@@ -1638,7 +1640,7 @@ void AbstractControlUnit::propertyUpdatedHandler(const std::string& group_name,
         key_data_storage->updateConfiguration(property_name, new_value);
         //is my group
         if(property_name.compare(ControlUnitDatapackSystemKey::BYPASS_STATE) == 0) {
-            setBypassState(new_value.asBool());
+            _setBypassState(new_value.asBool());
         } else if(property_name.compare(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE) == 0) {
             *attribute_value_shared_cache->getAttributeValue(DOMAIN_SYSTEM, DataServiceNodeDefinitionKey::DS_STORAGE_TYPE)->getValuePtr<int32_t>() = new_value.asInt32();
         } else if(property_name.compare(DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME) == 0) {

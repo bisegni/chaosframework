@@ -24,6 +24,7 @@
 
 #include "../persistence.h"
 
+#include <chaos/common/property/property.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos_service_common/data/data.h>
 
@@ -136,6 +137,20 @@ namespace chaos {
                                            bool alive_only,
                                            uint32_t last_unique_id,
                                            uint32_t page_length = 100) = 0;
+                    
+                    //!set the wole node property list
+                    virtual int setProperty(const std::string& node_uid,
+                                            const chaos::common::property::PropertyGroupVector& property_group_vector) = 0;
+                    
+                    virtual int updatePropertyDefaultValue(const std::string& node_uid,
+                                                           const chaos::common::property::PropertyGroupVector& property_group_vector) = 0;
+                    
+                    //! return the whole node porperty list
+                    virtual int getProperty(const std::string& node_uid,
+                                            chaos::common::property::PropertyGroupVector& property_group_vector) = 0;
+                    
+                    virtual int getPropertyDefaultValue(const std::string& node_uid,
+                                                        chaos::common::property::PropertyGroupVector& property_group_vector) = 0;
                     
                     //! Check a command presence
                     /*!

@@ -22,7 +22,6 @@
 #include "CUCommonUtility.h"
 
 #include <chaos/common/global.h>
-#include <chaos/common/property/property.h>
 
 #include <boost/foreach.hpp>
 
@@ -88,9 +87,9 @@ void CUCommonUtility::prepareAutoInitAndStartInAutoLoadControlUnit(const std::st
         if(auto_init || auto_start) {
             if(auto_init){
                 ChaosUniquePtr<chaos::common::data::CDataWrapper> init_datapack = initDataPack(cu_uid,
-                                                                         n_da,
-                                                                         cu_da,
-                                                                         ds_da);
+                                                                                               n_da,
+                                                                                               cu_da,
+                                                                                               ds_da);
                 
                 ChaosUniquePtr<chaos::common::data::CDataWrapper> init_message_datapack(new CDataWrapper());
                 init_message_datapack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, NodeDomainAndActionRPC::ACTION_NODE_INIT);
@@ -115,13 +114,12 @@ void CUCommonUtility::prepareAutoInitAndStartInAutoLoadControlUnit(const std::st
 }
 
 ChaosUniquePtr<chaos::common::data::CDataWrapper> CUCommonUtility::initDataPack(const std::string& cu_uid,
-                                                          NodeDataAccess *n_da,
-                                                          ControlUnitDataAccess *cu_da,
-                                                          DataServiceDataAccess *ds_da) {
+                                                                                NodeDataAccess *n_da,
+                                                                                ControlUnitDataAccess *cu_da,
+                                                                                DataServiceDataAccess *ds_da) {
     int err = 0;
     int64_t run_id = 0;
     CDataWrapper *result = NULL;
-    PropertyGroupVectorSDWrapper property_group_vector_sdw;
     ChaosUniquePtr<chaos::common::data::CDataWrapper> cu_base_description;
     ChaosUniquePtr<chaos::common::data::CDataWrapper> dataset_description;
     ChaosUniquePtr<chaos::common::data::CDataWrapper> init_datapack(new CDataWrapper());
@@ -169,7 +167,7 @@ ChaosUniquePtr<chaos::common::data::CDataWrapper> CUCommonUtility::initDataPack(
         LOG_AND_TROW(CUCU_ERR, err, boost::str(boost::format("Error fetching dataset for control unit %1%") % cu_uid));
     } else if(result != NULL){
         //we have the published dataset
-        dataset_description.reset(result);    
+        dataset_description.reset(result);
         
         ChaosUniquePtr<CMultiTypeDataArrayWrapper> dataset_element_vec(dataset_description->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
         ChaosUniquePtr<chaos::common::data::CDataWrapper> init_dataset(new CDataWrapper());
@@ -192,7 +190,7 @@ ChaosUniquePtr<chaos::common::data::CDataWrapper> CUCommonUtility::initDataPack(
                       element_configuration.get() != NULL){
                 //we can retrive the configured attribute
                 ChaosUniquePtr<chaos::common::data::CDataWrapper> init_ds_attribute = mergeDatasetAttributeWithSetup(element.get(),
-                                                                                               element_configuration.get());
+                                                                                                                     element_configuration.get());
                 init_dataset->appendCDataWrapperToArray(*init_ds_attribute.get());
             } else {
                 init_dataset->appendCDataWrapperToArray(*element.get());
@@ -273,35 +271,35 @@ ChaosUniquePtr<chaos::common::data::CDataWrapper> CUCommonUtility::initDataPack(
         init_datapack->finalizeArrayForKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST);
     }
     
-    //add al property for control unit
-    PropertyGroup control_unit_property_group("property_abstract_control_unit");
-    if(instance_description->hasKey(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)) {
-        control_unit_property_group.addProperty(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, instance_description->getVariantValue(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY));
-    }
-    if(instance_description->hasKey(chaos::ControlUnitDatapackSystemKey::BYPASS_STATE)) {
-        control_unit_property_group.addProperty(chaos::ControlUnitDatapackSystemKey::BYPASS_STATE, instance_description->getVariantValue(chaos::ControlUnitDatapackSystemKey::BYPASS_STATE));
-    }
-    if(instance_description->hasKey(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_TYPE) ) {
-        control_unit_property_group.addProperty(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_TYPE, instance_description->getVariantValue(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_TYPE));
-    }
-    if(instance_description->hasKey(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING)) {
-        control_unit_property_group.addProperty(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING, instance_description->getVariantValue(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING));
-    }
-    if(instance_description->hasKey(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME)) {
-        control_unit_property_group.addProperty(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME, instance_description->getVariantValue(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME));
-    }
-    if(instance_description->hasKey(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME)) {
-        control_unit_property_group.addProperty(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME, instance_description->getVariantValue(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME));
+    PropertyGroupVectorSDWrapper pgu_default;
+    if((err = n_da->getPropertyDefaultValue(cu_uid, pgu_default()))){
+        LOG_AND_TROW(CUCU_ERR, err, CHAOS_FORMAT("Error fetching property defaults for node %1%", % cu_uid));
     }
     
-    property_group_vector_sdw().push_back(control_unit_property_group);
-    property_group_vector_sdw.serialization_key="property";
-    property_group_vector_sdw.serialize()->copyAllTo(*init_datapack);
+    pgu_default.serialization_key="property";
+    pgu_default.serialize()->copyAllTo(*init_datapack);
     
     init_datapack->addInt64Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_RUN_ID, run_id);
     //set the action type
     init_datapack->addInt32Value("action", (int32_t)0);
     return init_datapack;
+}
+
+void CUCommonUtility::mergeDefaultToProperty(PropertyGroupVector& src_group_vec,
+                                             PropertyGroupVector& dst_group_vec) {
+    for(PropertyGroupVectorIterator src_it = src_group_vec.begin(),
+        src_end = src_group_vec.end();
+        src_it != src_end;
+        src_it++) {
+        for(PropertyGroupVectorIterator dst_it = dst_group_vec.begin(),
+            dst_end = src_group_vec.end();
+            dst_it != dst_end;
+            dst_it++) {
+            if(src_it->getGroupName().compare(dst_it->getGroupName()) != 0) continue;
+            
+            dst_it->updatePropertiesValueFromSourceGroup(*src_it);
+        }
+    }
 }
 
 ChaosUniquePtr<chaos::common::data::CDataWrapper> CUCommonUtility::startDataPack(const std::string& cu_uid) {
@@ -340,7 +338,7 @@ dst->addInt32Value(k, src->getInt32Value(k));\
 }
 
 ChaosUniquePtr<chaos::common::data::CDataWrapper> CUCommonUtility::mergeDatasetAttributeWithSetup(CDataWrapper *element_in_dataset,
-                                                                            CDataWrapper *element_in_setup) {
+                                                                                                  CDataWrapper *element_in_setup) {
     ChaosUniquePtr<chaos::common::data::CDataWrapper> result(new CDataWrapper());
     //move
     MOVE_STRING_VALUE(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME, element_in_dataset, result)

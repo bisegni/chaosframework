@@ -183,7 +183,7 @@ void ControlUnitEditor::initUI() {
 
     //driver bypass
     ui->pushButtonDriverBypass->setNodeUID(control_unit_unique_id);
-    ui->pushButtonDriverBypass->setPropertyGroupName("property_abstract_control_unit");
+    ui->pushButtonDriverBypass->setPropertyGroupName(chaos::ControlUnitPropertyKey::GROUP_NAME);
     ui->pushButtonDriverBypass->setPropertyName(chaos::ControlUnitDatapackSystemKey::BYPASS_STATE);
 
     //start monitoring
@@ -534,7 +534,7 @@ void ControlUnitEditor::on_pushButtonCreateInstance_clicked() {
 }
 
 void ControlUnitEditor::on_pushButtonSetRunScheduleDelay_clicked() {
-    chaos::common::property::PropertyGroup pg("property_abstract_control_unit");
+    chaos::common::property::PropertyGroup pg(chaos::ControlUnitPropertyKey::GROUP_NAME);
     pg.addProperty(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, CDataVariant(ui->lineEditRunScheduleDelay->text().toLongLong()));
     submitApiResult(TAG_CU_SET_THREAD_SCHEDULE_DELAY,
                     GET_CHAOS_API_PTR(node::UpdateProperty)->execute(control_unit_unique_id.toStdString(),

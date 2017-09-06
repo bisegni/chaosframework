@@ -24,6 +24,7 @@
 
 #include "../persistence/persistence.h"
 
+#include <chaos/common/property/property.h>
 #include <chaos/common/data/CDataWrapper.h>
 
 namespace chaos {
@@ -31,6 +32,9 @@ namespace chaos {
         namespace common {
             
             class CUCommonUtility {
+                void mergeDefaultToProperty(chaos::common::property::PropertyGroupVector& src_group,
+                                            chaos::common::property::PropertyGroupVector& dst_group);
+                
             public:
                 static ChaosUniquePtr<chaos::common::data::CDataWrapper> prepareRequestPackForLoadControlUnit(const std::string& cu_uid,
                                                                                                              chaos::metadata_service::persistence::data_access::ControlUnitDataAccess *cu_da);
