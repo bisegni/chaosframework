@@ -193,7 +193,7 @@ void AbstractControlUnit::_initPropertyGroup() {
     pg_abstract_cu.addProperty(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME, "Set the control unit storage type", DataType::TYPE_INT64);
     pg_abstract_cu.addProperty(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, "Set the control unit step repeat time in microseconds", DataType::TYPE_INT64);
     pg_abstract_cu.addProperty(ControlUnitPropertyKey::INIT_RESTORE_OPTION, "Specify the restore type operatio to do durint initialization phase", DataType::TYPE_INT32);
-    pg_abstract_cu.addProperty(ControlUnitPropertyKey::INIT_RESTORE_APPLY, "Specify if the restore operation need to be done as real operation or not", DataType::TYPE_BOOL);
+    pg_abstract_cu.addProperty(ControlUnitPropertyKey::INIT_RESTORE_APPLY, "Specify if the restore operation need to be done as real operation or not", DataType::TYPE_BOOLEAN);
     
     PropertyCollector::setPropertyValueChangeFunction(ChaosBind(&AbstractControlUnit::propertyChangeHandler, this,
                                                                 ChaosBindPlaceholder(_1), ChaosBindPlaceholder(_2), ChaosBindPlaceholder(_3)));
