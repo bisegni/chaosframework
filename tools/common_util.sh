@@ -10,6 +10,10 @@ popd > /dev/null
 export LC_ALL="en_US.UTF-8"
 export CHAOS_OVERALL_OPT="--event-disable 1"
 export CHAOS_MDS_OPT=""
+export CHAOS_DEBUG_CMD=""
+if [ -n "$CHAOS_DEBUG_CMD_TOOL" ];then
+    CHAOS_DEBUG_CMD=$CHAOS_DEBUG_CMD_TOOL
+fi
 if [ -n "$CHAOS_INTERFACE" ];then
     CHAOS_OVERALL_OPT="$CHAOS_OVERALL_OPT --publishing-interface $CHAOS_INTERFACE"
 fi
@@ -448,19 +452,27 @@ run_proc(){
     if [ $? -eq 0 ] && [ -n "$oldpid" ]; then
 	oldpidl=($oldpid)
     fi
-
+    cmdline=""
+    if [ -n "$CHAOS_DEBUG_CMD" ];then
+	echo "run" > /tmp/gdbbatch
+	echo "info threads" >> /tmp/gdbbatch
+	echo "where" >> /tmp/gdbbatch
+	echo "quit" >> /tmp/gdbbatch
+	echo "y" >> /tmp/gdbbatch
+	CHAOS_DEBUG_CMD="$CHAOS_DEBUG_CMD -q -batch -x /tmp/gdbbatch --args"
+    fi
     if [ -z "$run_prefix" ];then
-	eval $command_line
+	cmdline="$CHAOS_DEBUG_CMD $command_line"
     else
 	if [ -n "$CHAOS_RUNOUTPREFIX" ];then
 
 	    run_prefix="$run_prefix $CHAOS_RUNOUTPREFIX$CHAOS_PREFIX/log/data_$process_name.log"
 	fi
-	eval "$run_prefix $command_line"
+	cmdline="$CHAOS_DEBUG_CMD $run_prefix $command_line"
 	
     fi
-   
-    if [ $? -eq 0 ]; then
+   eval $cmdline
+   if [ $? -eq 0 ]; then
 	pid=$!
 	sleep 1
 	local pidl=()
@@ -468,20 +480,22 @@ run_proc(){
 	if [ $? -eq 0 ] && [ -n "$pid" ]; then
 	    pidl=($pid)
 	fi
-
+	
 	if [ -n $pid ];then
 #	    local p=${pidl[$((${#pidl[@]} -1))]}
 	    p=$pid
 	    ok_mesg "process \x1B[32m\x1B[1m$process_name\x1B[21m\x1B[39m with pid \"$p\", started"
 	    proc_pid=$p
-
+	    echo "$cmdline" > $CHAOS_PREFIX/log/$process_name.cmdline.$pid.log
 	    return 0
 	else
+	    echo "$cmdline" > $CHAOS_PREFIX/log/$process_name.cmdline.nopid.log
 	    nok_mesg "process $process_name ($command_line) quitted unexpectly "
 	    exit 1
 	fi
 
-    else
+   else
+       echo "$cmdline" > $CHAOS_PREFIX/log/$process_name.cmdline.errlaunch.log
 	error_mesg "error lunching $process_name"
 	exit 1
     fi
