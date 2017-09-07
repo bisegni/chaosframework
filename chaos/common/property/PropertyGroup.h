@@ -90,6 +90,8 @@ namespace chaos {
                 
                 const MapProperties getAllProperties() const;
                 
+                const bool hasProperty(const std::string& property_name) const;
+                
                 void resetProperiesValues();
                 
                 PropertyGroup& operator()();

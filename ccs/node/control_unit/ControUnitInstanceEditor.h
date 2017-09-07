@@ -38,8 +38,6 @@ public:
     //read the ui and preapre the api proxy with the value
     chaos::metadata_service_client::api_proxy::control_unit::SetInstanceDescriptionHelper set_instance_api_hepler;
     chaos::metadata_service_client::api_proxy::control_unit::SetInstanceDescriptionHelper& prepareSetInstanceApi();
-
-    void fillUIFromInstanceInfo(QSharedPointer<chaos::common::data::CDataWrapper> api_result);
 protected:
     void initUI();
     bool isClosing();
@@ -48,6 +46,8 @@ protected:
     void contextualMenuActionTrigger(const QString& cm_title,
                                      const QVariant& cm_data);
 private slots:
+    void fillUIFromInstanceInfo(QSharedPointer<chaos::common::data::CDataWrapper> api_result);
+
     void on_pushButtonSaveInstance_clicked();
 
     void on_pushButtonAddDriverDescription_clicked();
@@ -91,8 +91,11 @@ private slots:
     void cancelScriptEditing();
     void scriptEditorClosed();
 
+    void on_pushButtonUpdateALL_clicked();
+
 private:
     Ui::ControUnitInstanceEditor *ui;
+    void updateALL();
 };
 
 #endif // CONTROUNITINSTANCEEDITOR_H

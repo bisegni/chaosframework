@@ -98,18 +98,6 @@ void ControUnitInstanceEditor::initUI() {
     connect(ui->tableViewDatasetAttributes->selectionModel(),
             SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
             SLOT(tableDriverDescriptionSelectionChanged(QItemSelection,QItemSelection)));
-
-    if(is_in_editing) {
-        //get information from server
-        submitApiResult(QString("get_instance"),
-                        GET_CHAOS_API_PTR(control_unit::GetInstance)->execute(ui->lineEditControlUnitUniqueID->text().toStdString()));
-    }
-
-    //get unit server informationi
-    if(ui->labelUnitServerUID->text().size() > 0) {
-        submitApiResult(QString("get_us_description"),
-                        GET_CHAOS_API_PTR(unit_server::GetDescription)->execute(ui->labelUnitServerUID->text().toStdString()));
-    }
     //set limit for ageing field
     ui->lineEditHistoryAgeing->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
     ui->lineEditHistoryTime->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
@@ -120,6 +108,8 @@ void ControUnitInstanceEditor::initUI() {
     registerWidgetForContextualMenu(ui->textEditLoadParameter,
                                     cm,
                                     false);
+
+    updateALL();
 }
 
 control_unit::SetInstanceDescriptionHelper& ControUnitInstanceEditor::prepareSetInstanceApi() {
@@ -181,6 +171,7 @@ control_unit::SetInstanceDescriptionHelper& ControUnitInstanceEditor::prepareSet
 #define CHECK_AND_SET_CHECK(x,v) if(api_result->hasKey(x)) { v->setChecked(api_result->getBoolValue(x)); } else {  v->setChecked(false);}
 
 void ControUnitInstanceEditor::fillUIFromInstanceInfo(QSharedPointer<chaos::common::data::CDataWrapper> api_result) {
+    qDebug() << api_result->getJSONString().c_str();
     table_model_driver_spec->setRowCount(0);
     table_model_dataset_attribute_setup->setRowCount(0);
     if(api_result->hasKey("control_unit_implementation") &&
@@ -194,7 +185,7 @@ void ControUnitInstanceEditor::fillUIFromInstanceInfo(QSharedPointer<chaos::comm
             CHECK_AND_SET_CHECK("auto_init", ui->checkBoxAutoInit)
             CHECK_AND_SET_CHECK("auto_start", ui->checkBoxAutoStart)
             CHECK_AND_SET_LABEL(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM, ui->textEditLoadParameter)
-            if(api_result->hasKey(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)){
+    if(api_result->hasKey(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)){
         ui->lineEditDefaultScheduleTime->setText(QString::number(api_result->getUInt64Value(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)));
     }
     if(api_result->hasKey(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_TYPE)){
@@ -292,7 +283,7 @@ void ControUnitInstanceEditor::onApiDone(const QString& tag,
         //closeTab();
     } else if(tag.compare("get_instance") == 0) {
         //fill gui with instance info
-        fillUIFromInstanceInfo(api_result);
+        QMetaObject::invokeMethod(this, "fillUIFromInstanceInfo", Qt::QueuedConnection, Q_ARG(QSharedPointer<CDataWrapper>, api_result));
     } else if(tag.compare("get_us_description") == 0) {
         //we have unit server description
         if(api_result->hasKey(chaos::UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS)) {
@@ -529,5 +520,23 @@ void ControUnitInstanceEditor::contextualMenuActionTrigger(const QString& cm_tit
     if(cm_title.compare(EDIT_JSON_DOCUMENT) == 0) {
         //launch json editor
         launchPresenterWidget(new JsonEditor());
+    }
+}
+
+void ControUnitInstanceEditor::on_pushButtonUpdateALL_clicked() {
+    updateALL();
+}
+
+void ControUnitInstanceEditor::updateALL() {
+    if(is_in_editing) {
+        //get information from server
+        submitApiResult(QString("get_instance"),
+                        GET_CHAOS_API_PTR(control_unit::GetInstance)->execute(ui->lineEditControlUnitUniqueID->text().toStdString()));
+    }
+
+    //get unit server informationi
+    if(ui->labelUnitServerUID->text().size() > 0) {
+        submitApiResult(QString("get_us_description"),
+                        GET_CHAOS_API_PTR(unit_server::GetDescription)->execute(ui->labelUnitServerUID->text().toStdString()));
     }
 }

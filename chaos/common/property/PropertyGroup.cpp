@@ -138,6 +138,10 @@ const MapProperties PropertyGroup::getAllProperties() const {
     return map_properties;
 }
 
+const bool PropertyGroup::hasProperty(const std::string& property_name) const {
+    return map_properties.find(property_name) != map_properties.end();
+}
+
 void PropertyGroup::resetProperiesValues() {
     for (MapPropertiesIterator it = map_properties.begin(),
          end = map_properties.end();

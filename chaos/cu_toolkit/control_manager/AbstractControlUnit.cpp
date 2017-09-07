@@ -444,6 +444,8 @@ void AbstractControlUnit::doInitRpCheckList() throw(CException) {
             
             //call update param function
             updateConfiguration(init_configuration.get(), detach_fake);
+            
+            //check for cold or hot init restore operation
             break;
         }
         CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_init", INIT_RPC_PHASE_PUSH_DATASET){

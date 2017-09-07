@@ -93,7 +93,7 @@ namespace chaos {
                 CDW_CHECK_AND_SET(Subclass::dataWrapped().description.size(), data_serialized, addStringValue, "property_description", Subclass::dataWrapped().description);
                 CDW_CHECK_AND_SET(Subclass::dataWrapped().type != DataType::TYPE_UNDEFINED, data_serialized, addInt32Value, "property_type", Subclass::dataWrapped().type);
                 CDW_CHECK_AND_SET(Subclass::dataWrapped().flag != 0, data_serialized, addInt32Value, "property_flag", Subclass::dataWrapped().type);
-                CDW_CHECK_AND_SET(Subclass::dataWrapped().property_value.isValid(), data_serialized, addStringValue, "property_value", Subclass::dataWrapped().property_value);
+                CDW_CHECK_AND_SET(Subclass::dataWrapped().property_value.isValid(), data_serialized, addVariantValue, "property_value", Subclass::dataWrapped().property_value);
                 return data_serialized;
             }
             CHAOS_CLOSE_SDWRAPPER()
