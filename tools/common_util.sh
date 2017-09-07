@@ -453,22 +453,23 @@ run_proc(){
 	oldpidl=($oldpid)
     fi
     cmdline=""
+    debug=""
     if [ -n "$CHAOS_DEBUG_CMD" ];then
 	echo "run" > /tmp/gdbbatch
 	echo "info threads" >> /tmp/gdbbatch
 	echo "where" >> /tmp/gdbbatch
 	echo "quit" >> /tmp/gdbbatch
 	echo "y" >> /tmp/gdbbatch
-	CHAOS_DEBUG_CMD="$CHAOS_DEBUG_CMD -q -batch -x /tmp/gdbbatch --args"
+	debug="$CHAOS_DEBUG_CMD -q -batch -x /tmp/gdbbatch --args"
     fi
     if [ -z "$run_prefix" ];then
-	cmdline="$CHAOS_DEBUG_CMD $command_line"
+	cmdline="$debug $command_line"
     else
 	if [ -n "$CHAOS_RUNOUTPREFIX" ];then
 
 	    run_prefix="$run_prefix $CHAOS_RUNOUTPREFIX$CHAOS_PREFIX/log/data_$process_name.log"
 	fi
-	cmdline="$CHAOS_DEBUG_CMD $run_prefix $command_line"
+	cmdline="$debug $run_prefix $command_line"
 	
     fi
    eval $cmdline
