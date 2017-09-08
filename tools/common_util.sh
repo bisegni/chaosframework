@@ -1,7 +1,7 @@
 
 OS=`uname -s`
 ARCH=`uname -m`
-
+MYPID=$!
 SCRIPTTESTPATH=$0
 pushd `dirname $0` > /dev/null
 SCRIPTTESTABSPATH=`pwd -P`
@@ -153,32 +153,32 @@ monitor_processes(){
 
 info_mesg(){
     if [ -z "$2" ]; then
-	echo -e "* \x1B[1m$1\x1B[22m"
+	echo -e "* [$MYPID] \x1B[1m$1\x1B[22m"
     else
-	echo -e "* \x1B[1m$1\x1B[32m$2\x1B[39m\x1B[22m"
+	echo -e "* [$MYPID] \x1B[1m$1\x1B[32m$2\x1B[39m\x1B[22m"
     fi
 }
 error_mesg(){
     if [ -z "$2" ]; then
-	echo -e "# \x1B[31m\x1B[1m$1\x1B[22m\x1B[39m"
+	echo -e "# [$MYPID] \x1B[31m\x1B[1m$1\x1B[22m\x1B[39m"
     else
-	echo -e "# \x1B[1m$1\x1B[31m$2\x1B[39m\x1B[22m"
+	echo -e "# [$MYPID] \x1B[1m$1\x1B[31m$2\x1B[39m\x1B[22m"
     fi
 }
 
 warn_mesg(){
     if [ -z "$2" ]; then
-	echo -e "% \x1B[33m\x1B[1m$1\x1B[22m\x1B[39m"
+	echo -e "% [$MYPID] \x1B[33m\x1B[1m$1\x1B[22m\x1B[39m"
     else
-	echo -e "% \x1B[1m$1\x1B[33m$2\x1B[39m\x1B[22m"
+	echo -e "% [$MYPID] \x1B[1m$1\x1B[33m$2\x1B[39m\x1B[22m"
     fi
 }
 
 ok_mesg(){
-    echo -e "* $1 \x1B[32m\x1B[1mOK\x1B[22m\x1B[39m"
+    echo -e "* [$MYPID] $1 \x1B[32m\x1B[1mOK\x1B[22m\x1B[39m"
 }
 nok_mesg(){
-    echo -e "* $1 \x1B[31m\x1B[1mNOK\x1B[22m\x1B[39m"
+    echo -e "* [$MYPID] $1 \x1B[31m\x1B[1mNOK\x1B[22m\x1B[39m"
 }
 
 function unSetEnv(){
@@ -890,7 +890,7 @@ launch_us_cu(){
 
 	FILE_NAME=`echo $REAL_ALIAS|$SED 's/\//_/g'`
 #	echo "$CHAOS_PREFIX/bin/$USNAME $CHAOS_OVERALL_OPT --log-on-file 1 $CHAOS_TEST_DEBUG --log-file $CHAOS_PREFIX/log/$USNAME-$FILE_NAME.log --unit-server-alias $REAL_ALIAS $META"  > $CHAOS_PREFIX/log/$USNAME-$FILE_NAME-$us.stdout
-	if run_proc "$CHAOS_PREFIX/bin/$USNAME --conf-file $CHAOS_PREFIX/etc/cu.cfg --log-on-file 1 $CHAOS_TEST_DEBUG $CHAOS_OVERALL_OPT --log-file $CHAOS_PREFIX/log/$USNAME-$FILE_NAME.log --unit-server-alias $REAL_ALIAS $META >> $CHAOS_PREFIX/log/$USNAME-$FILE_NAME-$us.stdout 2>&1 &" "$USNAME"; then
+	if run_proc "$CHAOS_PREFIX/bin/$USNAME --conf-file $CHAOS_PREFIX/etc/cu.cfg --log-on-file 1 $CHAOS_TEST_DEBUG $CHAOS_OVERALL_OPT --log-file $CHAOS_PREFIX/log/$USNAME-$FILE_NAME.$MYPID.log --unit-server-alias $REAL_ALIAS $META >> $CHAOS_PREFIX/log/$USNAME-$FILE_NAME-$us.$MYPID.stdout 2>&1 &" "$USNAME"; then
 	    ok_mesg "$USNAME \"$REAL_ALIAS\" ($proc_pid) started"
 	    us_proc+=($proc_pid)
 	else
@@ -917,11 +917,11 @@ launch_us_cu(){
 	if [ -n "$CHECK_REGISTRATION" ];then
 	    local old_reg=-1
 	    local curr_reg=0
-	    var1="((\`grep \"successfully registered\" $CHAOS_PREFIX/log/$USNAME-$FILE_NAME.log |wc -l\` >= $NCU))"
+	    var1="((\`grep \"successfully registered\" $CHAOS_PREFIX/log/$USNAME-$FILE_NAME.$MYPID.log |wc -l\` >= $NCU))"
 	    while [ $curr_reg -gt $old_reg ] && [ $curr_reg -lt $NCU ] ;do
 		execute_command_until_ok "$var1" 20
 		old_reg=$curr_reg
-		curr_reg=`grep "successfully registered" $CHAOS_PREFIX/log/$USNAME-$FILE_NAME.log |wc -l`
+		curr_reg=`grep "successfully registered" $CHAOS_PREFIX/log/$USNAME-$FILE_NAME.$MYPID.log |wc -l`
 		echo ""
 		if [ $curr_reg -lt $NCU ] ;then
 		    info_mesg "registered till now ..." "$curr_reg"
