@@ -919,7 +919,7 @@ launch_us_cu(){
 	    local curr_reg=0
 	    var1="((\`grep \"successfully registered\" $CHAOS_PREFIX/log/$USNAME-$FILE_NAME.log |wc -l\` >= $NCU))"
 	    while [ $curr_reg -gt $old_reg ] && [ $curr_reg -lt $NCU ] ;do
-		execute_command_until_ok "$var1" 10
+		execute_command_until_ok "$var1" 20
 		old_reg=$curr_reg
 		curr_reg=`grep "successfully registered" $CHAOS_PREFIX/log/$USNAME-$FILE_NAME.log |wc -l`
 		echo ""
