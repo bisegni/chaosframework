@@ -8,7 +8,7 @@ SCRIPTTESTABSPATH=`pwd -P`
 SCRIPTNAME=`basename $SCRIPTTESTABSPATH`
 popd > /dev/null
 export LC_ALL="en_US.UTF-8"
-export CHAOS_OVERALL_OPT="--event-disable 1"
+export CHAOS_OVERALL_OPT="--event-disable 1 --log-max-size 200"
 export CHAOS_MDS_OPT=""
 export CHAOS_DEBUG_CMD=""
 if [ -n "$CHAOS_DEBUG_CMD_TOOL" ];then
@@ -889,7 +889,7 @@ launch_us_cu(){
 	rm $CHAOS_PREFIX/log/$USNAME-$us.log >& /dev/null
 
 	FILE_NAME=`echo $REAL_ALIAS|$SED 's/\//_/g'`
-	echo "$CHAOS_PREFIX/bin/$USNAME $CHAOS_OVERALL_OPT --log-on-file 1 $CHAOS_TEST_DEBUG --log-file $CHAOS_PREFIX/log/$USNAME-$FILE_NAME.log --unit-server-alias $REAL_ALIAS $META"  > $CHAOS_PREFIX/log/$USNAME-$FILE_NAME-$us.stdout
+#	echo "$CHAOS_PREFIX/bin/$USNAME $CHAOS_OVERALL_OPT --log-on-file 1 $CHAOS_TEST_DEBUG --log-file $CHAOS_PREFIX/log/$USNAME-$FILE_NAME.log --unit-server-alias $REAL_ALIAS $META"  > $CHAOS_PREFIX/log/$USNAME-$FILE_NAME-$us.stdout
 	if run_proc "$CHAOS_PREFIX/bin/$USNAME --conf-file $CHAOS_PREFIX/etc/cu.cfg --log-on-file 1 $CHAOS_TEST_DEBUG $CHAOS_OVERALL_OPT --log-file $CHAOS_PREFIX/log/$USNAME-$FILE_NAME.log --unit-server-alias $REAL_ALIAS $META >> $CHAOS_PREFIX/log/$USNAME-$FILE_NAME-$us.stdout 2>&1 &" "$USNAME"; then
 	    ok_mesg "$USNAME \"$REAL_ALIAS\" ($proc_pid) started"
 	    us_proc+=($proc_pid)
@@ -919,11 +919,17 @@ launch_us_cu(){
 	    local curr_reg=0
 	    var1="((\`grep \"successfully registered\" $CHAOS_PREFIX/log/$USNAME-$FILE_NAME.log |wc -l\` >= $NCU))"
 	    while [ $curr_reg -gt $old_reg ] && [ $curr_reg -lt $NCU ] ;do
-		execute_command_until_ok "$var1" 180
+		execute_command_until_ok "$var1" 10
 		old_reg=$curr_reg
-		curr_reg=$((`grep "successfully registered" $CHAOS_PREFIX/log/$USNAME-$FILE_NAME.log |wc -l`))
+		curr_reg=`grep "successfully registered" $CHAOS_PREFIX/log/$USNAME-$FILE_NAME.log |wc -l`
+		echo ""
+		if [ $curr_reg -lt $NCU ] ;then
+		    info_mesg "registered till now ..." "$curr_reg"
+		fi
+
+
 	    done
-	    if [ $curr_reg -ge $NCU ];then
+	    if [ $curr_reg -gt 0 ];then
 		t=$(end_profile_time)
 		ok_mesg "$curr_reg  registered in $t"
 	    else
