@@ -446,6 +446,7 @@ void AbstractControlUnit::doInitRpCheckList() throw(CException) {
             updateConfiguration(init_configuration.get(), detach_fake);
             
             //check for cold or hot init restore operation
+            checkForRestoreOnInit();
             break;
         }
         CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_init", INIT_RPC_PHASE_PUSH_DATASET){
@@ -962,6 +963,44 @@ void AbstractControlUnit::fillRestoreCacheWithDatasetFromTag(data_manager::KeyDa
     }
 }
 
+void AbstractControlUnit::checkForRestoreOnInit()  throw(CException) {
+    PropertyGroupShrdPtr pg_shrd_ptr = PropertyCollector::getGroup(chaos::ControlUnitPropertyKey::GROUP_NAME);
+    if(!pg_shrd_ptr->hasProperty(chaos::ControlUnitPropertyKey::INIT_RESTORE_APPLY) ||
+       pg_shrd_ptr->getProperty(chaos::ControlUnitPropertyKey::INIT_RESTORE_APPLY).getPropertyValue().asBool() == false) return;
+    
+    //now we can launch the restore the current input attrite, remeber that
+    //input attribute are composed by mds so the type of restore data(static conf or live) is manage at mds leve
+    //control unit in case off pply true need only to launch the restore on current input dataset set.
+    try {
+        ChaosUniquePtr<AttributeValueSharedCache> restore_cache(new AttributeValueSharedCache());
+        if(!restore_cache.get()) throw MetadataLoggingCException(getCUID(), -3, "failed to allocate restore cache", __PRETTY_FUNCTION__);
+        
+        AttributeCache& ac_src = attribute_value_shared_cache->getSharedDomain(DOMAIN_INPUT);
+        AttributeCache& ac_dst = restore_cache->getSharedDomain(DOMAIN_INPUT);
+        ac_src.copyToAttributeCache(ac_dst);
+        
+        //unitRestoreToSnapshot
+        if(unitRestoreToSnapshot(restore_cache.get())){
+            metadataLogging(chaos::common::metadata_logging::StandardLoggingChannel::LogLevelInfo,
+                            "Restore to initilization value run successfully");
+        } else {
+            metadataLogging(chaos::common::metadata_logging::StandardLoggingChannel::LogLevelError,
+                            "Restore to initilization value has fault");
+            
+            //input attribute already already updated
+        }
+    } catch (MetadataLoggingCException& ex) {
+        throw ex;
+    }  catch (CException& ex) {
+        MetadataLoggingCException loggable_exception(getCUID(),
+                                                     ex.errorCode,
+                                                     ex.errorMessage,
+                                                     ex.errorDomain);
+        
+        DECODE_CHAOS_EXCEPTION(loggable_exception);
+    }
+}
+
 /*!
  Restore the control unit to a precise tag
  */
@@ -1016,6 +1055,12 @@ CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreP
             } else {
                 metadataLogging(chaos::common::metadata_logging::StandardLoggingChannel::LogLevelError,
                                 CHAOS_FORMAT("Restore for %1% has been faulted", %restore_snapshot_tag));
+                
+                //input dataset need to be update
+                AttributeCache& ac_src = restore_cache->getSharedDomain(DOMAIN_INPUT);
+                AttributeCache& ac_dst = attribute_value_shared_cache->getSharedDomain(DOMAIN_INPUT);
+                ac_src.copyToAttributeCache(ac_dst);
+
             }
         } catch (MetadataLoggingCException& ex) {
             throw ex;
@@ -1447,7 +1492,7 @@ void AbstractControlUnit::_completeDatasetAttribute() {
 }
 
 void AbstractControlUnit::_setBypassState(bool bypass_stage,
-                                         bool high_priority) {
+                                          bool high_priority) {
     DrvMsg cmd;
     memset(&cmd, 0, sizeof(DrvMsg));
     cmd.opcode = bypass_stage?OpcodeType::OP_SET_BYPASS:OpcodeType::OP_CLEAR_BYPASS;

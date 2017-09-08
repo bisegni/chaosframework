@@ -20,6 +20,7 @@
  */
 
 #include "CUCommonUtility.h"
+#include "../DriverPoolManager.h"
 
 #include <chaos/common/global.h>
 
@@ -113,6 +114,22 @@ void CUCommonUtility::prepareAutoInitAndStartInAutoLoadControlUnit(const std::st
     }
 }
 
+CDWShrdPtr CUCommonUtility::getConfigurationToUse(const std::string& cu_uid,
+                                                  const std::string& ds_attribute_name,
+                                                  chaos::metadata_service::persistence::data_access::NodeDataAccess *n_da,
+                                                  chaos::metadata_service::persistence::data_access::ControlUnitDataAccess *cu_da) {
+    int err = 0;
+    ChaosSharedPtr<CDataWrapper> element_configuration;
+    data_service::ObjectStoragePoolSlot *cache_slot = data_service::DriverPoolManager::getInstance()->getObjectStorageInstance();
+    if((err = cu_da->getInstanceDatasetAttributeConfiguration(cu_uid,
+                                                              ds_attribute_name,
+                                                              element_configuration))) {
+        LOG_AND_TROW(CUCU_ERR, err, boost::str(boost::format("Error loading the configuration for the the dataset's attribute: %1% for control unit: %2%") % ds_attribute_name % cu_uid));
+    }
+    data_service::DriverPoolManager::getInstance()->releaseObjectStorageInstance(cache_slot);
+    return element_configuration;
+}
+
 ChaosUniquePtr<chaos::common::data::CDataWrapper> CUCommonUtility::initDataPack(const std::string& cu_uid,
                                                                                 NodeDataAccess *n_da,
                                                                                 ControlUnitDataAccess *cu_da,
@@ -178,20 +195,21 @@ ChaosUniquePtr<chaos::common::data::CDataWrapper> CUCommonUtility::initDataPack(
             ChaosUniquePtr<chaos::common::data::CDataWrapper> element(dataset_element_vec->getCDataWrapperElementAtIndex(idx));
             const std::string  ds_attribute_name = element->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME);
             int32_t direction = element->getInt32Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION);
-            
-            ChaosSharedPtr<CDataWrapper> element_configuration;
             //get the dataset element setup
-            if((err = cu_da->getInstanceDatasetAttributeConfiguration(cu_uid,
-                                                                      ds_attribute_name,
-                                                                      element_configuration))) {
-                LOG_AND_TROW(CUCU_ERR, err, boost::str(boost::format("Error loading the configuration for the the dataset's attribute: %1% for control unit: %2%") % ds_attribute_name % cu_uid));
-            } else if((direction == chaos::DataType::Input ||
-                       direction == chaos::DataType::Bidirectional) &&
-                      element_configuration.get() != NULL){
-                //we can retrive the configured attribute
-                ChaosUniquePtr<chaos::common::data::CDataWrapper> init_ds_attribute = mergeDatasetAttributeWithSetup(element.get(),
-                                                                                                                     element_configuration.get());
-                init_dataset->appendCDataWrapperToArray(*init_ds_attribute.get());
+            if(direction == chaos::DataType::Input ||
+               direction == chaos::DataType::Bidirectional){
+                CDWShrdPtr element_configuration = getConfigurationToUse(cu_uid,
+                                                                         ds_attribute_name,
+                                                                         n_da,
+                                                                         cu_da);
+                if(element_configuration.get()) {
+                    //we can retrive the configured attribute
+                    ChaosUniquePtr<chaos::common::data::CDataWrapper> init_ds_attribute = mergeDatasetAttributeWithSetup(element.get(),
+                                                                                                                         element_configuration.get());
+                    init_dataset->appendCDataWrapperToArray(*init_ds_attribute.get());
+                } else {
+                    init_dataset->appendCDataWrapperToArray(*element.get());
+                }
             } else {
                 init_dataset->appendCDataWrapperToArray(*element.get());
             }

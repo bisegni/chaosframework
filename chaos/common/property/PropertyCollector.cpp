@@ -50,6 +50,15 @@ void PropertyCollector::addGroupProperty(const std::string& group_name,
                                           flag);
 }
 
+PropertyGroupShrdPtr PropertyCollector::getGroup(const std::string& group_name) const {
+    if(map_property.count(group_name)) return PropertyGroupShrdPtr();
+    return map_property[group_name];
+}
+
+const bool PropertyCollector::hasGroup(const std::string& group_name) const {
+    return map_property.count(group_name);
+}
+
 void PropertyCollector::setPropertyValueChangeFunction(const PropertyValueChangeFunction& new_value_change_f) {
     value_change_f = new_value_change_f;
 }

@@ -204,6 +204,30 @@ void AttributeCache::exportToCDataWrapper(CDataWrapper& dest_dw) const {
     }
 }
 
+void AttributeCache::copyToAttributeCache(AttributeCache& dest_attribute_cache) {
+    for(AttributeValueVectorConstIterator it = vector_attribute_value.begin(),
+        end = vector_attribute_value.end();
+        it != end;
+        it++) {
+        dest_attribute_cache.copyAttribute(*(*it));
+    }
+}
+
+void AttributeCache::copyAttribute(AttributeValue& av) {
+    if(hasAttribute(av.name)){
+        //update attribute
+        getValueSettingByName(av.name)->setValue(av.getAsVariant());
+    } else {
+        //add attribute
+        addAttribute(av.name,
+                     av.size,
+                     av.type,
+                     av.sub_type);
+        //udpate value
+        getValueSettingByName(av.name)->setValue(av.getAsVariant());
+    }
+}
+
 #pragma mark SharedCacheLockDomain
 SharedCacheLockDomain::SharedCacheLockDomain(ChaosSharedPtr<boost::shared_mutex>& _mutex):
 mutex(_mutex){}

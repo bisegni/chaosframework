@@ -208,6 +208,8 @@ namespace chaos{
                 
                 chaos::common::data::CDataWrapper *writeCatalogOnCDataWrapper(chaos::common::alarm::AlarmCatalog& catalog,
                                                                               int32_t dataset_type);
+                //check at initilization time ifr need to to a restore or only an apply
+                void checkForRestoreOnInit() throw(CException);
             private:
                 //enable trace for heap into control unit environment
 #ifdef __CHAOS_DEBUG_MEMORY_CU__
@@ -383,7 +385,6 @@ namespace chaos{
                 void fillRestoreCacheWithDatasetFromTag(data_manager::KeyDataStorageDomain domain,
                                                         chaos::common::data::CDataWrapper& dataset,
                                                         AbstractSharedDomainCache& restore_cache);
-                
                 //!logging api
                 void metadataLogging(const std::string& subject,
                                      const chaos::common::metadata_logging::StandardLoggingChannel::LogLevel log_level,

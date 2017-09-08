@@ -36,8 +36,9 @@ namespace chaos{
         namespace data {
 
             class CDataWrapper;
-
             namespace cache {
+                
+                class AttributeCache;
             	namespace spec {
             	 template<typename T>
             	       inline  T* getValuePtr(void* value_buffer,CDataWrapper *cd) {
@@ -56,7 +57,7 @@ namespace chaos{
                  A AttributeValue is a class that help to understand when a value is changed and updated
                  */
                 struct AttributeValue {
-                    friend class AttributeSetting;
+                    friend class AttributeCache;
                     const std::string					name;
                         //! the index of this value
                     const uint32_t                      index;

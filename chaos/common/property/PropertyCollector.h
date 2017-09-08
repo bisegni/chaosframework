@@ -54,6 +54,10 @@ namespace chaos {
                 //add a new group
                 PropertyGroup& addGroup(const std::string& group_name);
                 
+                PropertyGroupShrdPtr getGroup(const std::string& group_name) const;
+                
+                const bool hasGroup(const std::string& group_name) const;
+                
                 //add a new variable to a group
                 void addGroupProperty(const std::string& group_name,
                                       const std::string& property_name,

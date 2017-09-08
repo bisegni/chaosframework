@@ -24,6 +24,7 @@
 
 #include "cache_system/cache_system.h"
 #include "persistence/persistence.h"
+#include "object_storage/object_storage.h"
 
 #include <chaos/common/utility/Singleton.h>
 #include <chaos/common/utility/InizializableService.h>
@@ -36,6 +37,41 @@ namespace chaos{
         //!cache
         //! forward declaration
         class DriverPoolManager;
+        
+        
+        typedef chaos::common::pool::ResourcePool<chaos::service_common::persistence::data_access::AbstractPersistenceDriver> ObjectStoragePool;
+        typedef ObjectStoragePool::ResourcePoolHelper ObjectStoragePoolHelper;
+        typedef ObjectStoragePool::ResourceSlot ObjectStoragePoolSlot;
+        
+        //! cache driver pool implementation
+        class ObjectStorageDriverPool:
+        public ObjectStoragePoolHelper,
+        public chaos::common::utility::InizializableService {
+            friend class DriverPoolManager;
+            //!created instances
+            unsigned int instance_created;
+            
+            //!keep track of how many instance in pol need to be present at startup
+            unsigned int minimum_instance_in_pool;
+            
+            //complete implementation name of cache driver
+            std::string impl_name;
+            
+            //pool container
+            ObjectStoragePool pool;
+            
+            ObjectStorageDriverPool();
+            ~ObjectStorageDriverPool();
+        protected:
+            //resource pool handler
+            chaos::service_common::persistence::data_access::AbstractPersistenceDriver* allocateResource(const std::string& pool_identification,
+                                                                                                 uint32_t& alive_for_ms);
+            void deallocateResource(const std::string& pool_identification,
+                                    chaos::service_common::persistence::data_access::AbstractPersistenceDriver* pooled_driver);
+            
+            void init(void *init_data) throw (chaos::CException);
+            void deinit() throw (chaos::CException);
+        };
         
         typedef chaos::common::pool::ResourcePool<chaos::data_service::cache_system::CacheDriver> CachePool;
         typedef CachePool::ResourcePoolHelper CachePoolHelper;
@@ -66,7 +102,7 @@ namespace chaos{
                                                                              uint32_t& alive_for_ms);
             void deallocateResource(const std::string& pool_identification,
                                     chaos::data_service::cache_system::CacheDriver* pooled_driver);
-
+            
             void init(void *init_data) throw (chaos::CException);
             void deinit() throw (chaos::CException);
         };
@@ -80,8 +116,8 @@ namespace chaos{
             friend class chaos::common::utility::Singleton<DriverPoolManager>;
             
             //drivers pool;
-            CacheDriverPool cache_pool;
-            
+            CacheDriverPool         cache_pool;
+            ObjectStorageDriverPool obj_storage_pool;
             //private contructor and destructor
             DriverPoolManager();
             ~DriverPoolManager();
@@ -94,6 +130,9 @@ namespace chaos{
         public:
             CachePoolSlot *getCacheDriverInstance();
             void releaseCacheDriverInstance(CachePoolSlot *cache_driver_instance);
+            
+            ObjectStoragePoolSlot *getObjectStorageInstance();
+            void releaseObjectStorageInstance(ObjectStoragePoolSlot *obj_storage_driver_instance);
         };
     }
 }

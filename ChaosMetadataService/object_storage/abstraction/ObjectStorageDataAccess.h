@@ -34,10 +34,8 @@ namespace chaos {
         namespace object_storage {
             namespace abstraction {
                 
-                typedef ChaosSharedPtr<chaos::common::data::CDataWrapper> ObjectSharedPtr;
-                
                 //!Object vector
-                CHAOS_DEFINE_VECTOR_FOR_TYPE(ObjectSharedPtr, VectorObject);
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(chaos::common::data::CDWShrdPtr, VectorObject);
                 
                 //!CHaos abstraction for store time series data wintin a persistence sublayer
                 class ObjectStorageDataAccess:
@@ -57,7 +55,11 @@ namespace chaos {
                     //!Retrieve an object from the object persistence layer
                     virtual int getObject(const std::string& key,
                                           const uint64_t& timestamp,
-                                          ObjectSharedPtr& object_ptr_ref) = 0;
+                                          chaos::common::data::CDWShrdPtr& object_ptr_ref) = 0;
+                    
+                    //!Retrieve the last inserted object from the object persistence layer
+                    virtual int getLastObject(const std::string& key,
+                                              chaos::common::data::CDWShrdPtr& object_ptr_ref) = 0;
                     
                     //!delete objects that are contained between intervall (exstreme included)
                     virtual int deleteObject(const std::string& key,
