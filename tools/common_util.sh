@@ -455,7 +455,8 @@ run_proc(){
     cmdline=""
     debug=""
     if [ -n "$CHAOS_DEBUG_CMD" ];then
-	echo "run" > /tmp/gdbbatch
+	echo "set disable-randomization off" > /tmp/gdbbatch
+	echo "run" >> /tmp/gdbbatch
 	echo "info threads" >> /tmp/gdbbatch
 	echo "where" >> /tmp/gdbbatch
 	echo "quit" >> /tmp/gdbbatch
