@@ -69,7 +69,7 @@ void PerformanceManagment::start() throw(chaos::CException) {
 	PMLAPP_ << "Start the purger thread";
 	//work_on_purge = true;
 	//thread_purge.reset(new boost::thread(& PerformanceManagment::purge_worker, this));
-    AsyncCentralManager::getInstance()->addTimer(this, 0, 5000);
+    AsyncCentralManager::getInstance()->addTimer(this, 0, chaos::common::constants::PerformanceManagerTimersTimeoutinMSec);
 }
 
 //Stop the implementation

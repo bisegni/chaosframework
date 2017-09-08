@@ -159,7 +159,16 @@ namespace chaos {
             /** @} */ // end of DirectIOConfigurationKey
         }
     }
-    
+    namespace common {
+    	namespace constants {
+    		// hearth beat timers
+        	static const unsigned int HBTimersTimeoutinMSec               = 5000;
+        	static const unsigned int AgentTimersTimeoutinMSec            = 5000;
+        	static const unsigned int CUTimersTimeoutinMSec              = 5000;
+        	static const unsigned int PerformanceManagerTimersTimeoutinMSec  = 5000;
+    	}
+
+    };
     /** @defgroup NodeDefinitionKey !CHAOS node key description
      *  This is the collection of the key for the general node information
      *  @{

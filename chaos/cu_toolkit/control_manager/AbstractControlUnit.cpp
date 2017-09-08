@@ -488,7 +488,7 @@ void AbstractControlUnit::doStartSMCheckList() throw(CException) {
     CHAOS_CHECK_LIST_START_SCAN_TO_DO(check_list_sub_service, "start"){
         CHAOS_CHECK_LIST_DONE(check_list_sub_service, "start", START_SM_PHASE_STAT_TIMER){
             //register timer for push statistic
-            chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this, 5000, 5000);
+            chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this, 0, chaos::common::constants::CUTimersTimeoutinMSec);
             //get timestamp for first pushes metric acquisition
             last_push_rate_grap_ts = TimingUtil::getTimeStamp();
         }

@@ -101,7 +101,7 @@ ProcessWorker::~ProcessWorker() {
 
 
 void ProcessWorker::init(void *data) throw(chaos::CException) {
-    AsyncCentralManager::getInstance()->addTimer(this, 5000, 5000);
+    AsyncCentralManager::getInstance()->addTimer(this, 0, chaos::common::constants::AgentTimersTimeoutinMSec);
 }
 
 void ProcessWorker::deinit() throw(chaos::CException) {

@@ -190,8 +190,8 @@ void ChaosMetadataService::start()  throw(CException) {
         
         //at this point i must with for end signal
         chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this,
-                                                                                   5000,
-                                                                                   5000);
+                                                                                   0,
+                                                                                   chaos::common::constants::HBTimersTimeoutinMSec);
         waitCloseSemaphore.wait();
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
