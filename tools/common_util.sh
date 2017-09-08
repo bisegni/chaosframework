@@ -915,14 +915,19 @@ launch_us_cu(){
 	#     fi
 	# done
 	if [ -n "$CHECK_REGISTRATION" ];then
+	    local old_reg=-1
+	    local curr_reg=0
 	    var1="((\`grep \"successfully registered\" $CHAOS_PREFIX/log/$USNAME-$FILE_NAME.log |wc -l\` >= $NCU))"
-	    if execute_command_until_ok "$var1" 180; then
+	    while [ $curr_reg -gt $old_reg ] && [ $curr_reg -lt $NCU ] ;do
+		execute_command_until_ok "$var1" 180
+		old_reg=$curr_reg
+		curr_reg=$((`grep "successfully registered" $CHAOS_PREFIX/log/$USNAME-$FILE_NAME.log |wc -l`))
+	    done
+	    if [ $curr_reg -ge $NCU ];then
 		t=$(end_profile_time)
-		ok_mesg "$NCU  registered in $t"
+		ok_mesg "$curr_reg  registered in $t"
 	    else
-		var=$((`grep "successfully registered" $CHAOS_PREFIX/log/$USNAME-$FILE_NAME.log |wc -l`))
-		nok_mesg "$var CU registered in $t"
-#		cat $CHAOS_PREFIX/log/$USNAME-$FILE_NAME.log
+		nok_mesg "$curr_reg/$NCU  registered in $t"
 		return 1
 	    fi
 	fi
