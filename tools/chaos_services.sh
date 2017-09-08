@@ -3,7 +3,7 @@ cmd=$1
 pushd `dirname $0` > /dev/null
 scriptdir=`pwd -P`
 popd > /dev/null
-PID=$!
+
 if [ -z "$CHAOS_TOOLS" ];then
     export CHAOS_TOOLS=$scriptdir
 fi
@@ -64,11 +64,11 @@ start_mds(){
     info_mesg "starting MDS..." "($CHAOS_LIVE_SERVERS)($CHAOS_DB_SERVERS)"
     check_proc_then_kill "$CHAOS_PREFIX/bin/$MDS_EXEC"
 
-    run_proc "$CHAOS_PREFIX/bin/$MDS_EXEC --conf-file $CHAOS_PREFIX/etc/mds.cfg $CHAOS_OVERALL_OPT $CHAOS_MDS_OPT --log-file $CHAOS_PREFIX/log/$MDS_EXEC.$PID.log > $CHAOS_PREFIX/log/$MDS_EXEC.$PID.std.out 2>&1 &" "$MDS_EXEC"
+    run_proc "$CHAOS_PREFIX/bin/$MDS_EXEC --conf-file $CHAOS_PREFIX/etc/mds.cfg $CHAOS_OVERALL_OPT $CHAOS_MDS_OPT --log-file $CHAOS_PREFIX/log/$MDS_EXEC.$MYPID.log > $CHAOS_PREFIX/log/$MDS_EXEC.$MYPID.std.out 2>&1 &" "$MDS_EXEC"
     #    echo "$CHAOS_PREFIX/bin/$MDS_EXEC --conf-file $CHAOS_PREFIX/etc/mds.cfg $CHAOS_OVERALL_OPT $CHAOS_MDS_OPT --log-file $CHAOS_PREFIX/log/$MDS_EXEC.log" >> $CHAOS_PREFIX/log/$MDS_EXEC.std.out
 
-    if execute_command_until_ok "grep \"Data Service published\" $CHAOS_PREFIX/log/$MDS_EXEC.$PID.log" 120;then
-	info_mesg "MDS:" " `grep \"Data Service published\" $CHAOS_PREFIX/log/$MDS_EXEC.$PID.log`"
+    if execute_command_until_ok "grep \"Data Service published\" $CHAOS_PREFIX/log/$MDS_EXEC.$MYPID.log" 120;then
+	info_mesg "MDS:" " `grep \"Data Service published\" $CHAOS_PREFIX/log/$MDS_EXEC.$MYPID.log`"
 	sleep 1
 	ok_mesg "checking publishing"
 	
@@ -89,7 +89,7 @@ start_ui(){
     info_mesg "starting " "webui.."
     check_proc_then_kill "$CHAOS_PREFIX/bin/$UI_EXEC"
 
-    run_proc "$CHAOS_PREFIX/bin/$UI_EXEC --conf-file $CHAOS_PREFIX/etc/webui.cfg $port $CHAOS_OVERALL_OPT --log-file $CHAOS_PREFIX/log/webui.$PID.log > $CHAOS_PREFIX/log/$UI_EXEC.$PID.std.out 2>&1 &" "$UI_EXEC"
+    run_proc "$CHAOS_PREFIX/bin/$UI_EXEC --conf-file $CHAOS_PREFIX/etc/webui.cfg $port $CHAOS_OVERALL_OPT --log-file $CHAOS_PREFIX/log/webui.$MYPID.log > $CHAOS_PREFIX/log/$UI_EXEC.$MYPID.std.out 2>&1 &" "$UI_EXEC"
  #   echo "$CHAOS_PREFIX/bin/$UI_EXEC --conf-file $CHAOS_PREFIX/etc/webui.cfg $port $CHAOS_OVERALL_OPT --log-file $CHAOS_PREFIX/log/webui.log" >> $CHAOS_PREFIX/log/$UI_EXEC.std.out
 }
 
@@ -97,7 +97,7 @@ start_agent(){
 
     info_mesg "starting " "agent"
     check_proc_then_kill "$CHAOS_PREFIX/bin/$AGENT_EXEC"
-    run_proc "$CHAOS_PREFIX/bin/$AGENT_EXEC --conf-file  $CHAOS_PREFIX/etc/wan.cfg $CHAOS_OVERALL_OPT --log-on-file --log-file $CHAOS_PREFIX/log/agent.$PID.log > $CHAOS_PREFIX/log/$AGENT_EXEC.$PID.std.out 2>&1 &" "$AGENT_EXEC"
+    run_proc "$CHAOS_PREFIX/bin/$AGENT_EXEC --conf-file  $CHAOS_PREFIX/etc/wan.cfg $CHAOS_OVERALL_OPT --log-on-file --log-file $CHAOS_PREFIX/log/agent.$MYPID.log > $CHAOS_PREFIX/log/$AGENT_EXEC.$MYPID.std.out 2>&1 &" "$AGENT_EXEC"
 }
 
 
@@ -113,12 +113,12 @@ start_us(){
 	      return
     fi
     info_mesg "transferring configuration to MDS " "$CHAOS_PREFIX/etc/localhost/MDSConfig.cfg"
-    if ! run_proc "$CHAOS_PREFIX/bin/ChaosMDSCmd --mds-conf $CHAOS_PREFIX/etc/localhost/MDSConfig.txt $CHAOS_OVERALL_OPT -r 1 --log-on-file --log-file $CHAOS_PREFIX/log/ChaosMDSCmd.$PID.log > $CHAOS_PREFIX/log/ChaosMDSCmd.$PID.std.out 2>&1 " "ChaosMDSCmd";then
+    if ! run_proc "$CHAOS_PREFIX/bin/ChaosMDSCmd --mds-conf $CHAOS_PREFIX/etc/localhost/MDSConfig.txt $CHAOS_OVERALL_OPT -r 1 --log-on-file --log-file $CHAOS_PREFIX/log/ChaosMDSCmd.$MYPID.log > $CHAOS_PREFIX/log/ChaosMDSCmd.$MYPID.std.out 2>&1 " "ChaosMDSCmd";then
 	error_mesg "failed initialization of " "MDS"
 	exit 1
     fi
     
-    run_proc "$CHAOS_PREFIX/bin/$US_EXEC --conf-file $CHAOS_PREFIX/etc/cu.cfg $CHAOS_OVERALL_OPT --log-on-file 1 --log-file $CHAOS_PREFIX/log/$US_EXEC.$PID.log > $CHAOS_PREFIX/log/$US_EXEC.$PID.std.out 2>&1 &" "$US_EXEC"
+    run_proc "$CHAOS_PREFIX/bin/$US_EXEC --conf-file $CHAOS_PREFIX/etc/cu.cfg $CHAOS_OVERALL_OPT --log-on-file 1 --log-file $CHAOS_PREFIX/log/$US_EXEC.$MYPID.log > $CHAOS_PREFIX/log/$US_EXEC.$MYPID.std.out 2>&1 &" "$US_EXEC"
 }
 
 ui_stop()

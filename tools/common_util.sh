@@ -1,7 +1,8 @@
 
 OS=`uname -s`
 ARCH=`uname -m`
-MYPID=$!
+export MYPID=$$
+export MYNAME=`basename $0`
 SCRIPTTESTPATH=$0
 pushd `dirname $0` > /dev/null
 SCRIPTTESTABSPATH=`pwd -P`
@@ -153,32 +154,32 @@ monitor_processes(){
 
 info_mesg(){
     if [ -z "$2" ]; then
-	echo -e "* [$MYPID] \x1B[1m$1\x1B[22m"
+	echo -e "* [$MYNAME-$MYPID] \x1B[1m$1\x1B[22m"
     else
-	echo -e "* [$MYPID] \x1B[1m$1\x1B[32m$2\x1B[39m\x1B[22m"
+	echo -e "* [$MYNAME-$MYPID] \x1B[1m$1\x1B[32m$2\x1B[39m\x1B[22m"
     fi
 }
 error_mesg(){
     if [ -z "$2" ]; then
-	echo -e "# [$MYPID] \x1B[31m\x1B[1m$1\x1B[22m\x1B[39m"
+	echo -e "# [$MYNAME-$MYPID] \x1B[31m\x1B[1m$1\x1B[22m\x1B[39m"
     else
-	echo -e "# [$MYPID] \x1B[1m$1\x1B[31m$2\x1B[39m\x1B[22m"
+	echo -e "# [$MYNAME-$MYPID] \x1B[1m$1\x1B[31m$2\x1B[39m\x1B[22m"
     fi
 }
 
 warn_mesg(){
     if [ -z "$2" ]; then
-	echo -e "% [$MYPID] \x1B[33m\x1B[1m$1\x1B[22m\x1B[39m"
+	echo -e "% [$MYNAME-$MYPID] \x1B[33m\x1B[1m$1\x1B[22m\x1B[39m"
     else
-	echo -e "% [$MYPID] \x1B[1m$1\x1B[33m$2\x1B[39m\x1B[22m"
+	echo -e "% [$MYNAME-$MYPID] \x1B[1m$1\x1B[33m$2\x1B[39m\x1B[22m"
     fi
 }
 
 ok_mesg(){
-    echo -e "* [$MYPID] $1 \x1B[32m\x1B[1mOK\x1B[22m\x1B[39m"
+    echo -e "* [$MYNAME-$MYPID] $1 \x1B[32m\x1B[1mOK\x1B[22m\x1B[39m"
 }
 nok_mesg(){
-    echo -e "* [$MYPID] $1 \x1B[31m\x1B[1mNOK\x1B[22m\x1B[39m"
+    echo -e "* [$MYNAME-$MYPID] $1 \x1B[31m\x1B[1mNOK\x1B[22m\x1B[39m"
 }
 
 function unSetEnv(){
