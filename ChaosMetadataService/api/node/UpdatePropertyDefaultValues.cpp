@@ -51,6 +51,7 @@ CDataWrapper *UpdatePropertyDefaultValues::execute(CDataWrapper *api_data,
     //
     PropertyGroupVectorSDWrapper pgv_sdv;
     pgv_sdv.serialization_key = "property";
+    pgv_sdv.deserialize(api_data);
     if((err = n_da->updatePropertyDefaultValue(node_unique_id, pgv_sdv()))) {
         LOG_AND_TROW_FORMATTED(ERR, -4, "Error getting command for uid %1%", %node_unique_id);
     }

@@ -14,6 +14,7 @@
 #define EDIT_JSON_DOCUMENT "Edit Json Document"
 
 using namespace chaos::common::data;
+using namespace chaos::common::property;
 using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::api_proxy;
 
@@ -130,11 +131,6 @@ control_unit::SetInstanceDescriptionHelper& ControUnitInstanceEditor::prepareSet
     //schedule delay
     set_instance_api_hepler.default_schedule_delay = ui->lineEditDefaultScheduleTime->text().toULongLong();
 
-    //storage configuration
-    set_instance_api_hepler.storage_type = static_cast<chaos::DataServiceNodeDefinitionType::DSStorageType>(ui->comboBoxStorageType->currentIndex());
-    set_instance_api_hepler.history_ageing = ui->lineEditHistoryAgeing->text().toUInt();
-    set_instance_api_hepler.history_time = ui->lineEditHistoryTime->text().toULongLong();
-    set_instance_api_hepler.live_time = ui->lineEditLiveTime->text().toULongLong();
     //add all driver description
     set_instance_api_hepler.clearAllDriverDescriptions();
     for(int idx = 0;
@@ -179,27 +175,13 @@ void ControUnitInstanceEditor::fillUIFromInstanceInfo(QSharedPointer<chaos::comm
         ui->textEditLoadParameter->setEnabled(api_result->getStringValue("control_unit_implementation").compare("ScriptableExecutionUnit") != 0);
     }
     CHECK_AND_SET_LABEL(chaos::NodeDefinitionKey::NODE_PARENT, ui->labelUnitServerUID)
-            CHECK_AND_SET_LABEL(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, ui->lineEditControlUnitUniqueID)
-            CHECK_AND_SET_LABEL("control_unit_implementation", ui->labelControlUnitType)
-            CHECK_AND_SET_CHECK("auto_load", ui->checkBoxAutoLoad)
-            CHECK_AND_SET_CHECK("auto_init", ui->checkBoxAutoInit)
-            CHECK_AND_SET_CHECK("auto_start", ui->checkBoxAutoStart)
-            CHECK_AND_SET_LABEL(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM, ui->textEditLoadParameter)
-    if(api_result->hasKey(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)){
-        ui->lineEditDefaultScheduleTime->setText(QString::number(api_result->getUInt64Value(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)));
-    }
-    if(api_result->hasKey(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_TYPE)){
-        ui->comboBoxStorageType->setCurrentIndex(api_result->getUInt32Value(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_TYPE));
-    }
-    if(api_result->hasKey(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING)){
-        ui->lineEditHistoryAgeing->setText(QString::number(api_result->getUInt32Value(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING)));
-    }
-    if(api_result->hasKey(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME)){
-        ui->lineEditHistoryTime->setText(QString::number(api_result->getUInt64Value(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME)));
-    }
-    if(api_result->hasKey(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME)){
-        ui->lineEditLiveTime->setText(QString::number(api_result->getUInt64Value(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME)));
-    }
+    CHECK_AND_SET_LABEL(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, ui->lineEditControlUnitUniqueID)
+    CHECK_AND_SET_LABEL("control_unit_implementation", ui->labelControlUnitType)
+    CHECK_AND_SET_CHECK("auto_load", ui->checkBoxAutoLoad)
+    CHECK_AND_SET_CHECK("auto_init", ui->checkBoxAutoInit)
+    CHECK_AND_SET_CHECK("auto_start", ui->checkBoxAutoStart)
+    CHECK_AND_SET_LABEL(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM, ui->textEditLoadParameter)
+
     //add driverdesc
     if(api_result->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION)) {
         ChaosUniquePtr<CMultiTypeDataArrayWrapper> arr_drv(api_result->getVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION));
@@ -267,6 +249,47 @@ void ControUnitInstanceEditor::fillUIFromInstanceInfo(QSharedPointer<chaos::comm
     }
 }
 
+void ControUnitInstanceEditor::fillUIFromPropertyInfo(QSharedPointer<chaos::common::data::CDataWrapper> api_result) {
+    chaos::common::property::PropertyGroupVector property_vector;
+    node::GetPropertyDefaultValues::deserialize(*api_result.data(), property_vector);
+    if(property_vector.size() == 0 ||
+            property_vector.size() != 1) return;
+    chaos::common::property::PropertyGroup& pg = property_vector[0];
+    if(pg.hasProperty(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)){
+        ui->lineEditDefaultScheduleTime->setText(QString::number(pg.getProperty(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY).getPropertyValue().asUInt64()));
+    }
+    if(pg.hasProperty(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_TYPE)){
+        ui->comboBoxStorageType->setCurrentIndex(pg.getProperty(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_TYPE).getPropertyValue().asUInt32());
+    }
+    if(pg.hasProperty(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING)){
+        ui->lineEditHistoryAgeing->setText(QString::number(pg.getProperty(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING).getPropertyValue().asUInt32()));
+    }
+    if(pg.hasProperty(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME)){
+        ui->lineEditHistoryTime->setText(QString::number(pg.getProperty(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME).getPropertyValue().asUInt64()));
+    }
+    if(pg.hasProperty(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME)){
+        ui->lineEditLiveTime->setText(QString::number(pg.getProperty(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME).getPropertyValue().asUInt64()));
+    }
+    if(pg.hasProperty(chaos::ControlUnitPropertyKey::INIT_RESTORE_OPTION)){
+        ui->comboBoxStaticInitRestoreOption->setCurrentIndex(pg.getProperty(chaos::ControlUnitPropertyKey::INIT_RESTORE_OPTION).getPropertyValue().asUInt32());
+    }
+    if(pg.hasProperty(chaos::ControlUnitPropertyKey::INIT_RESTORE_APPLY)){
+        ui->checkBoxInitRestoreApply->setChecked(pg.getProperty(chaos::ControlUnitPropertyKey::INIT_RESTORE_APPLY).getPropertyValue().asBool());
+    }
+}
+
+QSharedPointer<PropertyGroup> ControUnitInstanceEditor::preparePropertyGroup() {
+    QSharedPointer<PropertyGroup> result(new PropertyGroup(chaos::ControlUnitPropertyKey::GROUP_NAME));
+    result->addProperty(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, CDataVariant(ui->lineEditDefaultScheduleTime->text().toULongLong()));
+    result->addProperty(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_TYPE, CDataVariant(ui->comboBoxStorageType->currentIndex()));
+    result->addProperty(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING, CDataVariant(ui->lineEditHistoryAgeing->text().toUInt()));
+    result->addProperty(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME, CDataVariant(ui->lineEditHistoryTime->text().toULongLong()));
+    result->addProperty(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME, CDataVariant(ui->lineEditLiveTime->text().toULongLong()));
+    result->addProperty(chaos::ControlUnitPropertyKey::INIT_RESTORE_OPTION, CDataVariant(ui->comboBoxStaticInitRestoreOption->currentIndex()));
+    result->addProperty(chaos::ControlUnitPropertyKey::INIT_RESTORE_APPLY, CDataVariant(ui->checkBoxInitRestoreApply->checkState()==Qt::Checked));
+    return result;
+}
+
 bool ControUnitInstanceEditor::isClosing() {
     //in case we have editor open we close it
     cancelScriptEditing();
@@ -276,14 +299,17 @@ bool ControUnitInstanceEditor::isClosing() {
 void ControUnitInstanceEditor::onApiDone(const QString& tag,
                                          QSharedPointer<CDataWrapper> api_result) {
     if(tag.compare("save_instance") == 0) {
-        QMessageBox::information(this,
-                                 tr("Instance Save"),
-                                 tr("Instance has been successfull saved"));
+//        QMessageBox::information(this,
+//                                 tr("Instance Save"),
+//                                 tr("Instance has been successfull saved"));
         //close editor
         //closeTab();
     } else if(tag.compare("get_instance") == 0) {
         //fill gui with instance info
         QMetaObject::invokeMethod(this, "fillUIFromInstanceInfo", Qt::QueuedConnection, Q_ARG(QSharedPointer<CDataWrapper>, api_result));
+    } else if(tag.compare("get_property_defaults") == 0) {
+        //fill gui with instance info
+        QMetaObject::invokeMethod(this, "fillUIFromPropertyInfo", Qt::QueuedConnection, Q_ARG(QSharedPointer<CDataWrapper>, api_result));
     } else if(tag.compare("get_us_description") == 0) {
         //we have unit server description
         if(api_result->hasKey(chaos::UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS)) {
@@ -303,6 +329,9 @@ void ControUnitInstanceEditor::onApiDone(const QString& tag,
 void ControUnitInstanceEditor::on_pushButtonSaveInstance_clicked() {
     submitApiResult(QString("save_instance"),
                     GET_CHAOS_API_PTR(control_unit::SetInstanceDescription)->execute(prepareSetInstanceApi()));
+
+    submitApiResult(QString("save_property_defaults"),
+                    GET_CHAOS_API_PTR(node::UpdatePropertyDefaultValues)->execute(ui->lineEditControlUnitUniqueID->text().toStdString(), *preparePropertyGroup().data()));
 }
 
 void ControUnitInstanceEditor::on_pushButtonAddDriverDescription_clicked()
@@ -528,15 +557,18 @@ void ControUnitInstanceEditor::on_pushButtonUpdateALL_clicked() {
 }
 
 void ControUnitInstanceEditor::updateALL() {
-    if(is_in_editing) {
-        //get information from server
-        submitApiResult(QString("get_instance"),
-                        GET_CHAOS_API_PTR(control_unit::GetInstance)->execute(ui->lineEditControlUnitUniqueID->text().toStdString()));
-    }
-
     //get unit server informationi
     if(ui->labelUnitServerUID->text().size() > 0) {
         submitApiResult(QString("get_us_description"),
                         GET_CHAOS_API_PTR(unit_server::GetDescription)->execute(ui->labelUnitServerUID->text().toStdString()));
+    }
+    if(is_in_editing) {
+        //get information from server
+        submitApiResult(QString("get_instance"),
+                        GET_CHAOS_API_PTR(control_unit::GetInstance)->execute(ui->lineEditControlUnitUniqueID->text().toStdString()));
+        //get information from server
+        submitApiResult(QString("get_property_defaults"),
+                        GET_CHAOS_API_PTR(node::GetPropertyDefaultValues)->execute(ui->lineEditControlUnitUniqueID->text().toStdString()));
+
     }
 }

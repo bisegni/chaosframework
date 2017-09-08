@@ -43,13 +43,13 @@ namespace chaos {
                      \param node_property_groups_list the property group wit property valu
                      */
                     ApiProxyResult execute(const std::string& node_unique_id,
-                                           chaos::common::property::PropertyGroup& node_property_group);
+                                           const chaos::common::property::PropertyGroup& node_property_group);
                     
                     /*!
                      \param node_unique_id the unique id of a command
                      */
                     ApiProxyResult execute(const std::string& node_unique_id,
-                                           chaos::common::property::PropertyGroupVector& node_property_group_vector);
+                                           const chaos::common::property::PropertyGroupVector& node_property_group_vector);
                 };
             }
         }

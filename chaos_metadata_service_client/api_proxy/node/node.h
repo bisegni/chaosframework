@@ -32,6 +32,8 @@
 #include <chaos_metadata_service_client/api_proxy/node/CommandTemplateDelete.h>
 #include <chaos_metadata_service_client/api_proxy/node/CommandTemplateSearch.h>
 #include <chaos_metadata_service_client/api_proxy/node/CommandTemplateSubmit.h>
+#include <chaos_metadata_service_client/api_proxy/node/GetPropertyDefaultValues.h>
+#include <chaos_metadata_service_client/api_proxy/node/UpdatePropertyDefaultValues.h>
 #include <chaos_metadata_service_client/api_proxy/node/GetCommandAndTemplateDescription.h>
 
 #endif /* __CHAOSFramework_B52252F5_64C5_47BD_9733_7D4DE2B260AF_node_h */

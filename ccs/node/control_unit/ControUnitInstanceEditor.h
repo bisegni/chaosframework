@@ -38,6 +38,7 @@ public:
     //read the ui and preapre the api proxy with the value
     chaos::metadata_service_client::api_proxy::control_unit::SetInstanceDescriptionHelper set_instance_api_hepler;
     chaos::metadata_service_client::api_proxy::control_unit::SetInstanceDescriptionHelper& prepareSetInstanceApi();
+    QSharedPointer<chaos::common::property::PropertyGroup> preparePropertyGroup();
 protected:
     void initUI();
     bool isClosing();
@@ -47,6 +48,8 @@ protected:
                                      const QVariant& cm_data);
 private slots:
     void fillUIFromInstanceInfo(QSharedPointer<chaos::common::data::CDataWrapper> api_result);
+
+    void fillUIFromPropertyInfo(QSharedPointer<chaos::common::data::CDataWrapper> api_result);
 
     void on_pushButtonSaveInstance_clicked();
 

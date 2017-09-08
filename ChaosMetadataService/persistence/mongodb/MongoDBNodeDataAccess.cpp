@@ -503,6 +503,7 @@ PropertyGroup *getPrgFromVec(const std::string& group_name,
         it++) {
         if(it->getGroupName().compare(group_name) != 0) continue;
         res_ptr = &(*it);
+        break;
     }
     return res_ptr;
 }

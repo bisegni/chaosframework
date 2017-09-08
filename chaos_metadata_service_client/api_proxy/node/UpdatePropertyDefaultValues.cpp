@@ -31,7 +31,7 @@ API_PROXY_CD_DEFINITION(UpdatePropertyDefaultValues,
                         "updatePropertyDefaultValues")
 
 ApiProxyResult UpdatePropertyDefaultValues::execute(const std::string& node_unique_id,
-                                       chaos::common::property::PropertyGroup& node_property_group) {
+                                                    const chaos::common::property::PropertyGroup& node_property_group) {
     chaos::common::property::PropertyGroupVector group_vector;
     group_vector.push_back(node_property_group);
     return execute(node_unique_id,
@@ -39,11 +39,11 @@ ApiProxyResult UpdatePropertyDefaultValues::execute(const std::string& node_uniq
 }
 
 ApiProxyResult UpdatePropertyDefaultValues::execute(const std::string& node_unique_id,
-                                       chaos::common::property::PropertyGroupVector& node_property_group_vector) {
+                                                    const chaos::common::property::PropertyGroupVector& node_property_group_vector) {
     ChaosUniquePtr<chaos::common::data::CDataWrapper> message(new CDataWrapper());
     //add node uid
     message->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_unique_id);
-    PropertyGroupVectorSDWrapper pg_sdw(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(PropertyGroupVector, node_property_group_vector));
+    PropertyGroupVectorSDWrapper pg_sdw(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(PropertyGroupVector, const_cast<chaos::common::property::PropertyGroupVector&>(node_property_group_vector)));
     pg_sdw.serialization_key = "property";
     pg_sdw.serialize()->copyAllTo(*message);
     //call api
