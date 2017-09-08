@@ -524,10 +524,10 @@ start_services(){
 	return 1
     fi
 
-
+    
     if $tools/chaos_services.sh start webui; then
-	ok_mesg "chaos start WEBUI"
-
+	ok_mesg "chaos start WEBUI, sleeping 10s"
+	sleep 10
     else
 	nok_mesg "chaos start WEBUI"
 	return 1

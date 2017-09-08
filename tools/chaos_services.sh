@@ -65,8 +65,17 @@ start_mds(){
     check_proc_then_kill "$CHAOS_PREFIX/bin/$MDS_EXEC"
 
     run_proc "$CHAOS_PREFIX/bin/$MDS_EXEC --conf-file $CHAOS_PREFIX/etc/mds.cfg $CHAOS_OVERALL_OPT $CHAOS_MDS_OPT --log-file $CHAOS_PREFIX/log/$MDS_EXEC.log > $CHAOS_PREFIX/log/$MDS_EXEC.std.out 2>&1 &" "$MDS_EXEC"
-    echo "$CHAOS_PREFIX/bin/$MDS_EXEC --conf-file $CHAOS_PREFIX/etc/mds.cfg $CHAOS_OVERALL_OPT $CHAOS_MDS_OPT --log-file $CHAOS_PREFIX/log/$MDS_EXEC.log" >> $CHAOS_PREFIX/log/$MDS_EXEC.std.out
+    #    echo "$CHAOS_PREFIX/bin/$MDS_EXEC --conf-file $CHAOS_PREFIX/etc/mds.cfg $CHAOS_OVERALL_OPT $CHAOS_MDS_OPT --log-file $CHAOS_PREFIX/log/$MDS_EXEC.log" >> $CHAOS_PREFIX/log/$MDS_EXEC.std.out
 
+    if execute_command_until_ok "grep \"Data Service published\" $CHAOS_PREFIX/log/$MDS_EXEC.log" 120;then
+	info_mesg "MDS:" " `grep \"Data Service published\" $CHAOS_PREFIX/log/$MDS_EXEC.log`"
+	sleep 1
+	ok_mesg "checking publishing"
+	
+    else
+	nok_mesg "checking publishing"
+	return 1
+    fi
 }
 
 # start_cds(){
@@ -81,7 +90,7 @@ start_ui(){
     check_proc_then_kill "$CHAOS_PREFIX/bin/$UI_EXEC"
 
     run_proc "$CHAOS_PREFIX/bin/$UI_EXEC --conf-file $CHAOS_PREFIX/etc/webui.cfg $port $CHAOS_OVERALL_OPT --log-file $CHAOS_PREFIX/log/webui.log > $CHAOS_PREFIX/log/$UI_EXEC.std.out 2>&1 &" "$UI_EXEC"
-    echo "$CHAOS_PREFIX/bin/$UI_EXEC --conf-file $CHAOS_PREFIX/etc/webui.cfg $port $CHAOS_OVERALL_OPT --log-file $CHAOS_PREFIX/log/webui.log" >> $CHAOS_PREFIX/log/$UI_EXEC.std.out
+ #   echo "$CHAOS_PREFIX/bin/$UI_EXEC --conf-file $CHAOS_PREFIX/etc/webui.cfg $port $CHAOS_OVERALL_OPT --log-file $CHAOS_PREFIX/log/webui.log" >> $CHAOS_PREFIX/log/$UI_EXEC.std.out
 }
 
 start_agent(){
