@@ -33,7 +33,7 @@ namespace chaos {
                         
                     public:
                         static const ProxyType proxy_type;
-                        RawDriverUnitProxy(ChaosUniquePtr<protocol_adapter::AbstractProtocolAdapter>& protocol_adapter);
+                        RawDriverUnitProxy(ChaosUniquePtr<connection_adapter::AbstractConnectionAdapter>& connection_adapter);
                         virtual ~RawDriverUnitProxy();
                         
                         void authorization(const std::string& authorization_key);

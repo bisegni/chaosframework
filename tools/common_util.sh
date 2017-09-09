@@ -1,16 +1,67 @@
 
 OS=`uname -s`
 ARCH=`uname -m`
-
+export MYPID=$$
+export MYNAME=`basename $0`
 SCRIPTTESTPATH=$0
 pushd `dirname $0` > /dev/null
 SCRIPTTESTABSPATH=`pwd -P`
 SCRIPTNAME=`basename $SCRIPTTESTABSPATH`
 popd > /dev/null
 export LC_ALL="en_US.UTF-8"
-CHAOS_OVERALL_OPT="--event-disable 1"
+export CHAOS_OVERALL_OPT="--event-disable 1 --log-max-size 200"
+export CHAOS_MDS_OPT=""
+export CHAOS_DEBUG_CMD=""
+if [ -n "$CHAOS_DEBUG_CMD_TOOL" ];then
+    CHAOS_DEBUG_CMD=$CHAOS_DEBUG_CMD_TOOL
+fi
 if [ -n "$CHAOS_INTERFACE" ];then
     CHAOS_OVERALL_OPT="$CHAOS_OVERALL_OPT --publishing-interface $CHAOS_INTERFACE"
+fi
+if [ -z "$CHAOS_MDS" ];then
+    export CHAOS_MDS=localhost:5000
+fi
+CHAOS_OVERALL_OPT="$CHAOS_OVERALL_OPT --metadata-server $CHAOS_MDS"
+if [ -n "$CHAOS_IP" ];then
+    CHAOS_OVERALL_OPT="$CHAOS_OVERALL_OPT --publishing-ip $CHAOS_IP"
+fi
+if [ -z "$CHAOS_US_TEST" ];then
+    export CHAOS_US_TEST="TEST"
+fi
+
+if [ -n "$CHAOS_LIVE_USER" ];then
+    CHAOS_MDS_OPT="$CHAOS_MDS_OPT --cache-driver-kvp user:$CHAOS_LIVE_USER"
+fi
+
+if [ -n "$CHAOS_LIVE_PASSWORD" ];then
+    CHAOS_MDS_OPT="$CHAOS_MDS_OPT --cache-driver-kvp pwd:$CHAOS_LIVE_PASSWORD"
+fi
+
+if [ -n "$CHAOS_LIVE_SERVERS" ];then
+    for i in $CHAOS_LIVE_SERVERS;do
+	CHAOS_MDS_OPT="$CHAOS_MDS_OPT --cache-servers $i"
+    done
+else
+    CHAOS_MDS_OPT="$CHAOS_MDS_OPT --cache-servers localhost"
+fi
+
+if [ -n "$CHAOS_DB_SERVERS" ];then
+    for i in $CHAOS_DB_SERVERS;do
+	CHAOS_MDS_OPT="$CHAOS_MDS_OPT --persistence-servers $i"
+	CHAOS_MDS_OPT="$CHAOS_MDS_OPT --obj-storage-driver-server_url $i"
+    done
+else
+    CHAOS_MDS_OPT="$CHAOS_MDS_OPT --persistence-servers localhost"
+    CHAOS_MDS_OPT="$CHAOS_MDS_OPT --obj-storage-driver-server_url localhost"
+
+fi
+
+if [ -n "$CHAOS_DB_USER" ];then
+    CHAOS_MDS_OPT="$CHAOS_MDS_OPT --persistence-kv-param user:$CHAOS_DB_USER"
+fi
+
+if [ -n "$CHAOS_DB_PASSWORD" ];then
+    CHAOS_MDS_OPT="$CHAOS_MDS_OPT --persistence-kv-param pwd:$CHAOS_DB_PASSWORD"
 fi
 
 if [ -n "$CHAOS_TOOLS" ];then
@@ -103,32 +154,32 @@ monitor_processes(){
 
 info_mesg(){
     if [ -z "$2" ]; then
-	echo -e "* \x1B[1m$1\x1B[22m"
+	echo -e "* [$MYNAME-$MYPID] \x1B[1m$1\x1B[22m"
     else
-	echo -e "* \x1B[1m$1\x1B[32m$2\x1B[39m\x1B[22m"
+	echo -e "* [$MYNAME-$MYPID] \x1B[1m$1\x1B[32m$2\x1B[39m\x1B[22m"
     fi
 }
 error_mesg(){
     if [ -z "$2" ]; then
-	echo -e "# \x1B[31m\x1B[1m$1\x1B[22m\x1B[39m"
+	echo -e "# [$MYNAME-$MYPID] \x1B[31m\x1B[1m$1\x1B[22m\x1B[39m"
     else
-	echo -e "# \x1B[1m$1\x1B[31m$2\x1B[39m\x1B[22m"
+	echo -e "# [$MYNAME-$MYPID] \x1B[1m$1\x1B[31m$2\x1B[39m\x1B[22m"
     fi
 }
 
 warn_mesg(){
     if [ -z "$2" ]; then
-	echo -e "% \x1B[33m\x1B[1m$1\x1B[22m\x1B[39m"
+	echo -e "% [$MYNAME-$MYPID] \x1B[33m\x1B[1m$1\x1B[22m\x1B[39m"
     else
-	echo -e "% \x1B[1m$1\x1B[33m$2\x1B[39m\x1B[22m"
+	echo -e "% [$MYNAME-$MYPID] \x1B[1m$1\x1B[33m$2\x1B[39m\x1B[22m"
     fi
 }
 
 ok_mesg(){
-    echo -e "* $1 \x1B[32m\x1B[1mOK\x1B[22m\x1B[39m"
+    echo -e "* [$MYNAME-$MYPID] $1 \x1B[32m\x1B[1mOK\x1B[22m\x1B[39m"
 }
 nok_mesg(){
-    echo -e "* $1 \x1B[31m\x1B[1mNOK\x1B[22m\x1B[39m"
+    echo -e "* [$MYNAME-$MYPID] $1 \x1B[31m\x1B[1mNOK\x1B[22m\x1B[39m"
 }
 
 function unSetEnv(){
@@ -402,19 +453,29 @@ run_proc(){
     if [ $? -eq 0 ] && [ -n "$oldpid" ]; then
 	oldpidl=($oldpid)
     fi
-
+    cmdline=""
+    debug=""
+    if [ -n "$CHAOS_DEBUG_CMD" ];then
+	echo "set disable-randomization off" > /tmp/gdbbatch
+	echo "run" >> /tmp/gdbbatch
+	echo "info threads" >> /tmp/gdbbatch
+	echo "where" >> /tmp/gdbbatch
+	echo "quit" >> /tmp/gdbbatch
+	echo "y" >> /tmp/gdbbatch
+	debug="$CHAOS_DEBUG_CMD -q -batch -x /tmp/gdbbatch --args"
+    fi
     if [ -z "$run_prefix" ];then
-	eval $command_line
+	cmdline="$debug $command_line"
     else
 	if [ -n "$CHAOS_RUNOUTPREFIX" ];then
 
 	    run_prefix="$run_prefix $CHAOS_RUNOUTPREFIX$CHAOS_PREFIX/log/data_$process_name.log"
 	fi
-	eval "$run_prefix $command_line"
+	cmdline="$debug $run_prefix $command_line"
 	
     fi
-   
-    if [ $? -eq 0 ]; then
+   eval $cmdline
+   if [ $? -eq 0 ]; then
 	pid=$!
 	sleep 1
 	local pidl=()
@@ -422,20 +483,22 @@ run_proc(){
 	if [ $? -eq 0 ] && [ -n "$pid" ]; then
 	    pidl=($pid)
 	fi
-
+	
 	if [ -n $pid ];then
 #	    local p=${pidl[$((${#pidl[@]} -1))]}
 	    p=$pid
 	    ok_mesg "process \x1B[32m\x1B[1m$process_name\x1B[21m\x1B[39m with pid \"$p\", started"
 	    proc_pid=$p
-
+	    echo "$cmdline" > $CHAOS_PREFIX/log/$process_name.cmdline.$pid.log
 	    return 0
 	else
+	    echo "$cmdline" > $CHAOS_PREFIX/log/$process_name.cmdline.nopid.log
 	    nok_mesg "process $process_name ($command_line) quitted unexpectly "
 	    exit 1
 	fi
 
-    else
+   else
+       echo "$cmdline" > $CHAOS_PREFIX/log/$process_name.cmdline.errlaunch.log
 	error_mesg "error lunching $process_name"
 	exit 1
     fi
@@ -462,10 +525,10 @@ start_services(){
 	return 1
     fi
 
-
+    
     if $tools/chaos_services.sh start webui; then
-	ok_mesg "chaos start WEBUI"
-
+	ok_mesg "chaos start WEBUI, sleeping 10s"
+	sleep 10
     else
 	nok_mesg "chaos start WEBUI"
 	return 1
@@ -619,7 +682,7 @@ chaos_cli_cmd(){
     if [ "$CHAOS_RUNTYPE" == "callgrind" ]; then
 	timeout=$((timeout * 10))
     fi
-    cli_cmd=`$CHAOS_PREFIX/bin/ChaosCLI --log-on-file $CHAOS_TEST_DEBUG --log-file $CHAOS_PREFIX/log/ChaosCLI.log --metadata-server $meta --device-id $cuname --timeout $timeout $param 2>&1`
+    cli_cmd=`$CHAOS_PREFIX/bin/ChaosCLI --log-on-file 1 $CHAOS_TEST_DEBUG --log-file $CHAOS_PREFIX/log/ChaosCLI.log --metadata-server $meta --device-id $cuname --timeout $timeout $param 2>&1`
 
     if [ $? -eq 0 ]; then
 	return 0
@@ -792,6 +855,10 @@ launch_us_cu(){
     if [ -n "$3" ];then
 	META="$3"
     fi
+    if [ -n $CHAOS_MDS ];then
+	META="";
+	## because on chaos overall
+    fi
     if [ -n "$4" ];then
 	USNAME="$4"
     fi
@@ -823,8 +890,8 @@ launch_us_cu(){
 	rm $CHAOS_PREFIX/log/$USNAME-$us.log >& /dev/null
 
 	FILE_NAME=`echo $REAL_ALIAS|$SED 's/\//_/g'`
-	echo "$CHAOS_PREFIX/bin/$USNAME $CHAOS_OVERALL_OPT --log-on-file $CHAOS_TEST_DEBUG --log-file $CHAOS_PREFIX/log/$USNAME-$FILE_NAME.log --unit-server-alias $REAL_ALIAS $META"  > $CHAOS_PREFIX/log/$USNAME-$FILE_NAME-$us.stdout
-	if run_proc "$CHAOS_PREFIX/bin/$USNAME --log-on-file $CHAOS_TEST_DEBUG $CHAOS_OVERALL_OPT --log-file $CHAOS_PREFIX/log/$USNAME-$FILE_NAME.log --unit-server-alias $REAL_ALIAS $META >> $CHAOS_PREFIX/log/$USNAME-$FILE_NAME-$us.stdout 2>&1 &" "$USNAME"; then
+#	echo "$CHAOS_PREFIX/bin/$USNAME $CHAOS_OVERALL_OPT --log-on-file 1 $CHAOS_TEST_DEBUG --log-file $CHAOS_PREFIX/log/$USNAME-$FILE_NAME.log --unit-server-alias $REAL_ALIAS $META"  > $CHAOS_PREFIX/log/$USNAME-$FILE_NAME-$us.stdout
+	if run_proc "$CHAOS_PREFIX/bin/$USNAME --conf-file $CHAOS_PREFIX/etc/cu.cfg --log-on-file 1 $CHAOS_TEST_DEBUG $CHAOS_OVERALL_OPT --log-file $CHAOS_PREFIX/log/$USNAME-$FILE_NAME.$MYPID.log --unit-server-alias $REAL_ALIAS $META >> $CHAOS_PREFIX/log/$USNAME-$FILE_NAME-$us.$MYPID.stdout 2>&1 &" "$USNAME"; then
 	    ok_mesg "$USNAME \"$REAL_ALIAS\" ($proc_pid) started"
 	    us_proc+=($proc_pid)
 	else
@@ -849,14 +916,25 @@ launch_us_cu(){
 	#     fi
 	# done
 	if [ -n "$CHECK_REGISTRATION" ];then
-	    var1="((\`grep \"successfully registered\" $CHAOS_PREFIX/log/$USNAME-$FILE_NAME.log |wc -l\` >= $NCU))"
-	    if execute_command_until_ok "$var1" 180; then
+	    local old_reg=-1
+	    local curr_reg=0
+	    var1="((\`grep \"successfully registered\" $CHAOS_PREFIX/log/$USNAME-$FILE_NAME.$MYPID.log |wc -l\` >= $NCU))"
+	    while [ $curr_reg -gt $old_reg ] && [ $curr_reg -lt $NCU ] ;do
+		execute_command_until_ok "$var1" 20
+		old_reg=$curr_reg
+		curr_reg=`grep "successfully registered" $CHAOS_PREFIX/log/$USNAME-$FILE_NAME.$MYPID.log |wc -l`
+		echo ""
+		if [ $curr_reg -lt $NCU ] ;then
+		    info_mesg "registered till now ..." "$curr_reg"
+		fi
+
+
+	    done
+	    if [ $curr_reg -gt 0 ];then
 		t=$(end_profile_time)
-		ok_mesg "$NCU  registered in $t"
+		ok_mesg "$curr_reg  registered in $t"
 	    else
-		var=$((`grep "successfully registered" $CHAOS_PREFIX/log/$USNAME-$FILE_NAME.log |wc -l`))
-		nok_mesg "$var CU registered in $t"
-		cat $CHAOS_PREFIX/log/$USNAME-$FILE_NAME.log
+		nok_mesg "$curr_reg/$NCU  registered in $t"
 		return 1
 	    fi
 	fi

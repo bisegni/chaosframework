@@ -33,13 +33,15 @@ PropertyGroup::PropertyGroup(const PropertyGroup& src):
 name(src.name),
 map_properties(src.map_properties){}
 
-void PropertyGroup::addProperty(const std::string& property_name,
+bool PropertyGroup::addProperty(const std::string& property_name,
                                 const std::string& property_description,
                                 const DataType::DataType property_type) {
     //add property
+    if(map_properties.count(property_name) != 0) return false;
     map_properties.insert(MapPropertiesPair(property_name, PropertyDescription(property_name,
                                                                                property_description,
                                                                                property_type)));
+    return true;
 }
 
 const CDataVariant& PropertyGroup::getPropertyValue(const std::string& property_name) {
@@ -54,7 +56,28 @@ PropertyDescription& PropertyGroup::getProperty(const std::string& property_name
 void PropertyGroup::setPropertyValue(const std::string& property_name,
                                      const chaos::common::data::CDataVariant& new_value) {
     if(map_properties.count(property_name) == 0) return;
+    if(value_change_function) {
+        //!check if the value is accepted
+        if(value_change_function(name,
+                                 property_name,
+                                 new_value) == false) return;
+    }
+    CDataVariant old = map_properties[property_name].getPropertyValue();
     map_properties[property_name].updatePropertyValue(new_value);
+    
+    //inform the ganged function fo the changed
+    if(value_updated_function){value_updated_function(name,
+                                                      name,
+                                                      old,
+                                                      map_properties[property_name].getPropertyValue());}
+}
+
+void PropertyGroup::setPropertyValueChangeFunction(const PropertyValueChangeFunction& value_change_f) {
+    value_change_function = value_change_f;
+}
+
+void PropertyGroup::setPropertyValueUpdatedFunction(const PropertyValueUpdatedFunction& value_updated_f) {
+    value_updated_function = value_updated_f;
 }
 
 const std::string& PropertyGroup::getGroupName() const {
@@ -80,6 +103,19 @@ void PropertyGroup::copyPropertiesFromGroup(const PropertyGroup& src_group,
     }
 }
 
+void PropertyGroup::updatePropertiesValueFromSourceGroup(const PropertyGroup& src_group) {
+    for (MapPropertiesConstIterator it = src_group.map_properties.begin(),
+         end = src_group.map_properties.end();
+         it != end;
+         it++) {
+        //!check if variable is present
+        if(map_properties.count(it->first)) {
+            //update values for current insert propety
+            setPropertyValue(it->first, it->second.getPropertyValue());
+        }
+    }
+}
+
 const MapProperties PropertyGroup::getAllProperties() const {
     return map_properties;
 }
@@ -99,43 +135,8 @@ PropertyGroup& PropertyGroup::operator()() {
 }
 
 PropertyGroup& PropertyGroup::operator()(const std::string& property_name,
-                                         const bool property_value) {
+                                         const CDataVariant& property_value) {
     setPropertyValue(property_name,
-                     CDataVariant(property_value));
-    return *this;
-}
-
-PropertyGroup& PropertyGroup::operator()(const std::string& property_name,
-                                         const int32_t property_value) {
-    setPropertyValue(property_name,
-                     CDataVariant(property_value));
-    return *this;
-}
-
-PropertyGroup& PropertyGroup::operator()(const std::string& property_name,
-                                         const int64_t property_value) {
-    setPropertyValue(property_name,
-                     CDataVariant(property_value));
-    return *this;
-}
-
-PropertyGroup& PropertyGroup::operator()(const std::string& property_name,
-                                         const double property_value) {
-    setPropertyValue(property_name,
-                     CDataVariant(property_value));
-    return *this;
-}
-
-PropertyGroup& PropertyGroup::operator()(const std::string& property_name,
-                                         const std::string& property_value) {
-    setPropertyValue(property_name,
-                     CDataVariant(property_value));
-    return *this;
-}
-
-PropertyGroup& PropertyGroup::operator()(const std::string& property_name,
-                                         chaos::common::data::CDataBuffer *property_value) {
-    setPropertyValue(property_name,
-                     CDataVariant(property_value));
+                     property_value);
     return *this;
 }

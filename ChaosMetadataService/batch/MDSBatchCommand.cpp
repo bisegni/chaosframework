@@ -123,30 +123,33 @@ ChaosUniquePtr<RequestInfo> MDSBatchCommand::sendRequest(const std::string& node
     CDataWrapper *tmp_ptr = NULL;
     int err = 0;
     bool alive = false;
+    ChaosUniquePtr<RequestInfo> new_request;
     if((err = getDataAccess<NodeDataAccess>()->getNodeDescription(node_uid, &tmp_ptr))) {
         LOG_AND_TROW_FORMATTED(MDSBC_ERR, err, "Error loading infomation for node '%1%'", %node_uid);
     } else if(!tmp_ptr) {
         LOG_AND_TROW_FORMATTED(MDSBC_ERR, -1, "No description found for node '%1%'", %node_uid);
     }
-    
-    ChaosUniquePtr<CDataWrapper> node_description(tmp_ptr);
-    CHECK_ASSERTION_THROW_AND_LOG(node_description->hasKey(NodeDefinitionKey::NODE_RPC_ADDR), MDSBC_ERR, -2, CHAOS_FORMAT("%1% key has not been found on node description", %NodeDefinitionKey::NODE_RPC_ADDR));
-    CHECK_ASSERTION_THROW_AND_LOG(node_description->isStringValue(NodeDefinitionKey::NODE_RPC_ADDR), MDSBC_ERR, -2, CHAOS_FORMAT("%1% key need to be a string", %NodeDefinitionKey::NODE_RPC_ADDR));
-    CHECK_ASSERTION_THROW_AND_LOG(node_description->hasKey(NodeDefinitionKey::NODE_RPC_DOMAIN), MDSBC_ERR, -3, CHAOS_FORMAT("%1% key ha nots been found on node description", %NodeDefinitionKey::NODE_RPC_DOMAIN));
-    CHECK_ASSERTION_THROW_AND_LOG(node_description->isStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN), MDSBC_ERR, -4, CHAOS_FORMAT("%1% key need to be a string", %NodeDefinitionKey::NODE_RPC_DOMAIN));
-    const std::string node_rpc_address = node_description->getStringValue(NodeDefinitionKey::NODE_RPC_ADDR);
-    const std::string node_rpc_domain = node_description->getStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN);
-    
-    ChaosUniquePtr<RequestInfo> new_request = createRequest(node_rpc_address,
-                                                            node_rpc_domain,
-                                                            rpc_action);
-    if(getDataAccess<NodeDataAccess>()->isNodeAlive(node_uid,
-                                                    alive) ||
-       alive == false) {
-        new_request->phase = MESSAGE_PHASE_TIMEOUT;
-    } else {
-        sendRequest(*new_request,
-                    message);
+    try{
+        ChaosUniquePtr<CDataWrapper> node_description(tmp_ptr);
+        CHECK_ASSERTION_THROW_AND_LOG(node_description->hasKey(NodeDefinitionKey::NODE_RPC_ADDR), MDSBC_ERR, -2, CHAOS_FORMAT("%1% key has not been found on node description", %NodeDefinitionKey::NODE_RPC_ADDR));
+        CHECK_ASSERTION_THROW_AND_LOG(node_description->isStringValue(NodeDefinitionKey::NODE_RPC_ADDR), MDSBC_ERR, -2, CHAOS_FORMAT("%1% key need to be a string", %NodeDefinitionKey::NODE_RPC_ADDR));
+        CHECK_ASSERTION_THROW_AND_LOG(node_description->hasKey(NodeDefinitionKey::NODE_RPC_DOMAIN), MDSBC_ERR, -3, CHAOS_FORMAT("%1% key ha nots been found on node description", %NodeDefinitionKey::NODE_RPC_DOMAIN));
+        CHECK_ASSERTION_THROW_AND_LOG(node_description->isStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN), MDSBC_ERR, -4, CHAOS_FORMAT("%1% key need to be a string", %NodeDefinitionKey::NODE_RPC_DOMAIN));
+        const std::string node_rpc_address = node_description->getStringValue(NodeDefinitionKey::NODE_RPC_ADDR);
+        const std::string node_rpc_domain = node_description->getStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN);
+        new_request = createRequest(node_rpc_address,
+                                    node_rpc_domain,
+                                    rpc_action);
+        if(getDataAccess<NodeDataAccess>()->isNodeAlive(node_uid,
+                                                        alive) ||
+           alive == false) {
+            new_request->phase = MESSAGE_PHASE_TIMEOUT;
+        } else {
+            sendRequest(*new_request,
+                        message);
+        }
+    }catch(...){
+        throw CException(-1, "erroro using bson", __PRETTY_FUNCTION__);
     }
     return new_request;
 }

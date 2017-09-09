@@ -34,7 +34,8 @@ namespace chaos {
                  this is the base class that permit to map the opcode sent by Controlunit
                  to the external driver command
                  */
-                class OpcodeExternalCommandMapper {
+                class OpcodeExternalCommandMapper:
+                public OpcodeExecutor {
                     AbstractRemoteIODriver *remote_driver;
                 protected:
                     //!Send raw request to the remote driver
@@ -56,9 +57,9 @@ namespace chaos {
                     void setNumberOfMaxConnection(int max_conenction);
                 public:
                     OpcodeExternalCommandMapper(AbstractRemoteIODriver *_remote_driver);
+                    
                     virtual ~OpcodeExternalCommandMapper();
                     
-                    virtual MsgManagmentResultType::MsgManagmentResult execOpcode(DrvMsgPtr cmd) = 0;
                     virtual int asyncMessageReceived(chaos::common::data::CDWUniquePtr message) = 0;
                 };
                 

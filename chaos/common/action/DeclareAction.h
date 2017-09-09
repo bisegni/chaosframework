@@ -27,10 +27,10 @@
 #include <chaos/common/data/CDataWrapper.h>
 
 namespace chaos {
-	
-	namespace chaos_data = chaos::common::data;
-	
-        //!Base class for all other that need to expose an action
+    
+    namespace chaos_data = chaos::common::data;
+    
+    //!Base class for all other that need to expose an action
     /*!
      This class must manage the action description allocation and disposal
      every class that need to be register into commandMnaager for expose
@@ -38,7 +38,7 @@ namespace chaos {
      */
     class DeclareAction {
         std::vector<AbstActionDescShrPtr> actionDescriptionVector;
-            //!action
+        //!action
         /*!
          Encode action into his correspondend CDataWrapper
          */
@@ -49,7 +49,7 @@ namespace chaos {
          */
         ~DeclareAction();
         
-            //!action definition helper
+        //!action definition helper
         /*!
          Create a new action description, returning it's shared pointer that can be used to configura the parametter
          */
@@ -60,20 +60,24 @@ namespace chaos {
                                                          const std::string& actionAliasName,
                                                          const std::string& actionDescription,
                                                          bool shared_execution = false) {
-            AbstActionDescShrPtr newActionDesc(new ActionDescriptor<T>(actonObjectPointer,
-                                                                       actionHandler,
-                                                                       actionDomainName,
-                                                                       actionAliasName,
-                                                                       shared_execution));
-            newActionDesc->setTypeValue(ActionDescriptor<T>::ActionDescription, actionDescription);
-            //add action description to vector
-            actionDescriptionVector.push_back(newActionDesc);
-            
-            return newActionDesc;
+            AbstActionDescShrPtr new_action;
+            try{
+                new_action.reset(new ActionDescriptor<T>(actonObjectPointer,
+                                                                           actionHandler,
+                                                                           actionDomainName,
+                                                                           actionAliasName,
+                                                                           shared_execution));
+                new_action->setTypeValue(ActionDescriptor<T>::ActionDescription, actionDescription);
+                //add action description to vector
+                actionDescriptionVector.push_back(new_action);
+            } catch (...) {
+                throw CException(-1, "Error adding new action", __PRETTY_FUNCTION__);
+            }
+            return new_action;
         }
-
+        
         /*!
-         return the array that contains all action descriptor for 
+         return the array that contains all action descriptor for
          the istance implementing this class
          */
         std::vector<AbstActionDescShrPtr>& getActionDescriptors();

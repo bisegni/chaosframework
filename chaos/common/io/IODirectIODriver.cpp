@@ -109,7 +109,7 @@ void IODirectIODriver::deinit() throw(CException) {
     IODirectIODriver_LINFO_ << "Remove active query";
     //lock all  internal resource that can be effetted by
     boost::unique_lock<boost::shared_mutex> wmap_loc(map_query_future_mutex);
-
+    
     //scan all remained query
     for(std::map<string, QueryCursor*>::iterator it = map_query_future.begin();
         it != map_query_future.end();
@@ -164,22 +164,27 @@ void IODirectIODriver::storeHealthData(const std::string& key,
                                        chaos_data::CDataWrapper& dataToStore,
                                        DataServiceNodeDefinitionType::DSStorageType storage_type) throw(CException) {
     int err = 0;
-    boost::shared_lock<boost::shared_mutex> rl(mutext_feeder);
-    IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
-    
-    ChaosUniquePtr<chaos::common::data::SerializationBuffer> serialization(dataToStore.getBSONData());
-    
-    if(next_client &&
-       serialization.get()) {
-        serialization->disposeOnDelete = false;
-        if((err = (int)next_client->device_client_channel->storeAndCacheHealthData(key,
-                                                                                   (void*)serialization->getBufferPtr(),
-                                                                                   (uint32_t)serialization->getBufferLen(),
-                                                                                   storage_type))) {
-            IODirectIODriver_LERR_ << "Error storing health data into data service "<<next_client->connection->getServerDescription()<<" with code:" << err;
+    try{
+        boost::shared_lock<boost::shared_mutex> rl(mutext_feeder);
+        IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
+        
+        ChaosUniquePtr<chaos::common::data::SerializationBuffer> serialization(dataToStore.getBSONData());
+        
+        if(next_client &&
+           serialization.get()) {
+            serialization->disposeOnDelete = false;
+            if((err = (int)next_client->device_client_channel->storeAndCacheHealthData(key,
+                                                                                       (void*)serialization->getBufferPtr(),
+                                                                                       (uint32_t)serialization->getBufferLen(),
+                                                                                       storage_type))) {
+                IODirectIODriver_LERR_ << "Error storing health data into data service "<<next_client->connection->getServerDescription()<<" with code:" << err;
+            }
+        } else {
+            DEBUG_CODE(IODirectIODriver_DLDBG_ << "No available socket->loose packet");
         }
-    } else {
-        DEBUG_CODE(IODirectIODriver_DLDBG_ << "No available socket->loose packet");
+    }catch(bson::AssertionException& bson_assert){
+        IODirectIODriver_LERR_ << CHAOS_FORMAT("bson assertion [%1%]", %
+                                               bson_assert.toString());
     }
 }
 
@@ -307,11 +312,11 @@ void IODirectIODriver::disposeService(void *service_ptr) {
     //remove me as handler before delete all other this so anymore receive event
     next_client->connection->setEventHandler(NULL);
     if(next_client->system_client_channel) next_client->connection->releaseChannelInstance(next_client->system_client_channel);
-
+    
     if(next_client->device_client_channel) {
         next_client->connection->releaseChannelInstance(next_client->device_client_channel);
     }
-
+    
     init_parameter.client_instance->releaseConnection(next_client->connection);
     delete(next_client);
 }

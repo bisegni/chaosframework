@@ -159,7 +159,16 @@ namespace chaos {
             /** @} */ // end of DirectIOConfigurationKey
         }
     }
-    
+    namespace common {
+    	namespace constants {
+    		// hearth beat timers
+        	static const unsigned int HBTimersTimeoutinMSec               = 5000;
+        	static const unsigned int AgentTimersTimeoutinMSec            = 5000;
+        	static const unsigned int CUTimersTimeoutinMSec              = 5000;
+        	static const unsigned int PerformanceManagerTimersTimeoutinMSec  = 5000;
+    	}
+
+    };
     /** @defgroup NodeDefinitionKey !CHAOS node key description
      *  This is the collection of the key for the general node information
      *  @{
@@ -469,10 +478,6 @@ namespace chaos {
         
         //! perform an echo test. Return as is the input datapach as output
         static const char * const ACTION_CHECK_DOMAIN                               = "checkDomain";
-        
-        //! perform an echo test. Return as is the input datapach as output
-        static const char * const ACTION_NODE_BYPASS                                = "setNodeBypass";
-        
     }
     /** @} */ // end of NodeDomainAndActionRPC
     
@@ -826,7 +831,13 @@ namespace chaos {
     //! Name space for grupping control unit system property
     namespace ControlUnitDatapackSystemKey {
         //! represent the delay beetwen a subseguent cu start method call it is a property of a control unit
-        static const char * const THREAD_SCHEDULE_DELAY                             = "cudk_thr_sch_delay";
+        static const char * const THREAD_SCHEDULE_DELAY                   = "cudk_thr_sch_delay";
+        //!represent the bypass state of the control unit
+        /*!
+         in this state all driver reject the command that are sent by control unit implementation
+         and no action are take on the hardware
+         */
+        static const char * const BYPASS_STATE                            = "cudk_bypass_state";
     }
     
     /** @defgroup Contorl unit system key

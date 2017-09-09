@@ -81,10 +81,7 @@ namespace chaos {
             delete(scope_memory_track);
             scope_memory_track = NULL;
         }
-        //std::string status = tracey::summary();
-        //std::cout << boost::str(boost::format("___________debug_memory_leak_status____________\n%1%\n___________debug_memory_leak_status____________")%status) << std::endl;
 #endif
-        //status.resize(0);
     }
     
     
@@ -97,8 +94,6 @@ namespace chaos {
     class ChaosCommon:
     public common::utility::Singleton<T>,
     public common::utility::StartableService {
-        
-        
     protected:
         bool initialized,deinitialized;
         
@@ -107,7 +102,9 @@ namespace chaos {
          Thi method call the \ref GlobalConfiguration::preParseStartupParameters method, starting the
          allocation of the startup framework parameter
          */
-        ChaosCommon(){
+        ChaosCommon():
+        initialized(false),
+        deinitialized(false){
             GlobalConfiguration::getInstance()->preParseStartupParameters();
             initialized=deinitialized=false;
         }
@@ -155,7 +152,6 @@ namespace chaos {
          Specialized option for startup c and cpp program main options parameter
          */
         void init(int argc, char* argv[]) throw (CException) {
-            
             preparseCommandOption(argc, argv);
             if(argv != NULL) {
                 GlobalConfiguration::getInstance()->parseStartupParameters(argc, argv);
@@ -181,29 +177,28 @@ namespace chaos {
             struct utsname u_name;
             if(initialized)
                 return;
-            
-            //lock file for permit to choose different tcp port for services
-            std::fstream domain_file_lock_stream("/tmp/chaos_init.lock",
-                                                 std::ios_base::out |
-                                                 std::ios_base::binary);    //check if we have got the lock
-            boost::interprocess::file_lock flock("/tmp/chaos_init.lock");
-            boost::interprocess::scoped_lock<boost::interprocess::file_lock> e_lock(flock);
-            __file_remover__ fr("/tmp/chaos_init.lock");
-            
-            initialized=true;
-            deinitialized = false;
-            if (std::signal((int) SIGUSR1, start_acquiring_memory_allocation) == SIG_ERR){
-                std::cout << "start_acquiring_memory_allocation Signal handler registraiton error";
-                exit(-1);
+            try {
+                //lock file for permit to choose different tcp port for services
+                std::fstream domain_file_lock_stream("/tmp/chaos_init.lock",
+                                                     std::ios_base::out |
+                                                     std::ios_base::binary);    //check if we have got the lock
+                boost::interprocess::file_lock flock("/tmp/chaos_init.lock");
+                boost::interprocess::scoped_lock<boost::interprocess::file_lock> e_lock(flock);
+                __file_remover__ fr("/tmp/chaos_init.lock");
+                
+                initialized=true;
+                deinitialized = false;
+                if (std::signal((int) SIGUSR1, start_acquiring_memory_allocation) == SIG_ERR){
+                    std::cout << "start_acquiring_memory_allocation Signal handler registraiton error";
+                    exit(-1);
                 }
-                
-                
+
                 // SIGINFO is not defined in ARM architectures
                 if (std::signal((int) SIGUSR2, print_memory_leak_status) == SIG_ERR){
                     std::cout << "print_memory_leak_status Signal handler registraiton error";
                     exit(-1);
                 }
-                
+                    
                 //startup logger
                 chaos::common::log::LogManager::getInstance()->init();
                 
@@ -252,42 +247,37 @@ namespace chaos {
                     //initialize the plugin manager
                     chaos::common::utility::InizializableService::initImplementation(chaos::common::plugin::PluginManager::getInstance(), NULL, "PluginManager", __PRETTY_FUNCTION__);
                 }
+            } catch(CException& ex) {
+                throw ex;
+            } catch(...) {
+                throw CException(-1, "NO chaos exception received", __PRETTY_FUNCTION__);
+            }
+        }
                 
-                }
+        void deinit() throw (CException) {
+            if(deinitialized) return;
+            deinitialized=true;
+            initialized = false;
+            if(GlobalConfiguration::getInstance()->hasOption(InitOption::OPT_PLUGIN_ENABLE)){
+                //initialize the plugin manager
+                chaos::common::utility::InizializableService::deinitImplementation(chaos::common::plugin::PluginManager::getInstance(), "PluginManager", __PRETTY_FUNCTION__);
+            }
+            if(GlobalConfiguration::getInstance()->hasOption(InitOption::OPT_TIME_CALIBRATION)) {
+                //enable timestamp calibration
+                chaos::common::utility::TimingUtil::getInstance()->disableTimestampCalibration();
+            }
+            //dellocate all
+            CHAOS_NOT_THROW(common::utility::StartableService::stopImplementation(chaos::common::network::NetworkBroker::getInstance(),  "NetworkBroker", __PRETTY_FUNCTION__););
+            CHAOS_NOT_THROW(common::utility::StartableService::deinitImplementation(chaos::common::network::NetworkBroker::getInstance(),  "AsyncCentralManager", __PRETTY_FUNCTION__););
+            CHAOS_NOT_THROW(common::utility::InizializableService::deinitImplementation(chaos::common::async_central::AsyncCentralManager::getInstance(),  "AsyncCentralManager", __PRETTY_FUNCTION__););
+        }
                 
-                void deinit() throw (CException) {
-                    if(deinitialized) return;
-                    deinitialized=true;
-                    initialized = false;
-                    if(GlobalConfiguration::getInstance()->hasOption(InitOption::OPT_PLUGIN_ENABLE)){
-                        //initialize the plugin manager
-                        chaos::common::utility::InizializableService::deinitImplementation(chaos::common::plugin::PluginManager::getInstance(), "PluginManager", __PRETTY_FUNCTION__);
-                    }
-                    if(GlobalConfiguration::getInstance()->hasOption(InitOption::OPT_TIME_CALIBRATION)) {
-                        //enable timestamp calibration
-                        chaos::common::utility::TimingUtil::getInstance()->disableTimestampCalibration();
-                    }
-                    //dellocate all
-                    CHAOS_NOT_THROW(common::utility::StartableService::stopImplementation(chaos::common::network::NetworkBroker::getInstance(),  "NetworkBroker", __PRETTY_FUNCTION__););
-                    CHAOS_NOT_THROW(common::utility::StartableService::deinitImplementation(chaos::common::network::NetworkBroker::getInstance(),  "AsyncCentralManager", __PRETTY_FUNCTION__););
-                    CHAOS_NOT_THROW(common::utility::InizializableService::deinitImplementation(chaos::common::async_central::AsyncCentralManager::getInstance(),  "AsyncCentralManager", __PRETTY_FUNCTION__););
-                }
+        void start() throw (CException) {}
+        void stop() throw (CException) {}
                 
-                void start() throw (CException) {
-                    
-                }
-                void stop() throw (CException) {
-                    
-                }
-                
-                GlobalConfiguration *getGlobalConfigurationInstance() {
-                    return GlobalConfiguration::getInstance();
-                }
-                };
-                
-                
-                }
-                
-                
-                
+        GlobalConfiguration *getGlobalConfigurationInstance() {
+            return GlobalConfiguration::getInstance();
+        }
+    };
+}
 #endif

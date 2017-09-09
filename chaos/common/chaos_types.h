@@ -43,6 +43,7 @@
 #include <atomic>
 #include <future>
 #include <chrono>
+#include <functional>
 template<typename T>
 using ChaosAtomic = std::atomic<T>;
 template<typename T>
@@ -53,11 +54,16 @@ typedef std::future_status ChaosFutureStatus;
 typedef std::chrono::seconds ChaosCronoSeconds;
 typedef std::chrono::milliseconds ChaosCronoMilliseconds;
 typedef std::chrono::microseconds ChaosCronoMicroseconds;
+
+template< class R >
+using ChaosFunction = std::function< R >;
+
 #else
 #include <boost/shared_ptr.hpp>
 #include <boost/atomic.hpp>
 #include <boost/thread/future.hpp>
 #include <boost/chrono.hpp>
+#include <boost/function.hpp>
 #define ChaosSharedPtr boost::shared_ptr
 #define ChaosMakeSharedPtr boost::make_shared
 #define ChaosWeakPtr boost::weak_ptr
@@ -68,6 +74,7 @@ typedef std::chrono::microseconds ChaosCronoMicroseconds;
 #define ChaosCronoSeconds boost::chrono::seconds
 #define ChaosCronoMilliseconds boost::chrono::milliseconds
 #define ChaosCronoMicroseconds boost::chrono::microseconds
+#define ChaosFunction boost::function
 #endif
 #define ChaosUniquePtr std::unique_ptr
 #define ChaosMoveOperator(x) std::move(x)
@@ -76,6 +83,7 @@ typedef std::chrono::microseconds ChaosCronoMicroseconds;
 #include <boost/atomic.hpp>
 #include <boost/thread/future.hpp>
 #include <boost/chrono.hpp>
+#include <boost/function.hpp>
 #define ChaosSharedPtr boost::shared_ptr
 #define ChaosMakeSharedPtr boost::make_shared
 #define ChaosWeakPtr boost::weak_ptr
@@ -88,6 +96,7 @@ typedef std::chrono::microseconds ChaosCronoMicroseconds;
 #define ChaosCronoSeconds boost::chrono::seconds
 #define ChaosCronoMilliseconds boost::chrono::milliseconds
 #define ChaosCronoMicroseconds boost::chrono::microseconds
+#define ChaosFunction boost::function
 #endif
 
 #define  CHAOS_DEFINE_SET_FOR_TYPE(t1, n)\

@@ -77,7 +77,7 @@ namespace chaos{
                      This queue is used by the accessor to check whenever
                      a command, identified by his id, has been processed.
                      */
-                    AccessorQueueType *accessor_async_mq;
+                    AccessorQueueType accessor_async_mq;
 
                     
                     //! Synchronous accessor queue
@@ -85,7 +85,7 @@ namespace chaos{
                      This queue is used by the accessor to Synchronous check whenever
                      a command, identified by his id, has been processed.
                      */
-                    AccessorQueueType *accessor_sync_mq;
+                    AccessorQueueType accessor_sync_mq;
                     
                     //! input driver shared queue
                     /*!

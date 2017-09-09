@@ -27,11 +27,13 @@
 
 #include <boost/thread.hpp>
 
+#include <chaos/common/data/CDataWrapper.h>
+#include <chaos/common/utility/LockableObject.h>
 #include <chaos/common/utility/InizializableService.h>
 #include <chaos/common/thread/TemplatedConcurrentQueue.h>
-
 #include <chaos/cu_toolkit/driver_manager/driver/DriverTypes.h>
-#include <chaos/common/data/CDataWrapper.h>
+#include <chaos/cu_toolkit/driver_manager/driver/BaseBypassDriver.h>
+
 #include <json/json.h>
 
 namespace chaos_thread_ns = chaos::common::thread;
@@ -57,12 +59,17 @@ namespace chaos{
 					std::string init_paramter_sintax;
 				} DriverDescirption;
 				
+                
+                typedef ChaosSharedPtr<BaseBypassDriver> BaseBypassShrdPtr;
+                CHAOS_DEFINE_LOCKABLE_OBJECT(BaseBypassShrdPtr, LBypassDriverUnqPtr);
+                
                     //! !CHAOS Device Driver abstract class
                 /*!
                     This represent the base class for all driver in !CHAOS. For standardize the comunicacetion 
                     a message queue is used for receive DrvMsg pack.
                  */
 				class AbstractDriver:
+                public OpcodeExecutor,
 				public chaos::common::utility::InizializableService {
                     template<typename T>
                     friend class DriverWrapperPlugin;
@@ -95,7 +102,17 @@ namespace chaos{
                     ChaosUniquePtr<DriverQueueType> command_queue;
 					ChaosUniquePtr<boost::thread> thread_message_receiver;
 					
-					bool is_bypass;
+                    //pointer to the bypassdirver to use
+                    LBypassDriverUnqPtr bypass_driver;
+                    
+                    //poit to current executor
+                    /*!
+                     in default point to the "this" pointer of 
+                     this class current instance in case of bypass activated
+                     point to the pointer of the bypass class
+                     */
+                    OpcodeExecutor *o_exe;
+                    
                     // Initialize instance
                     void init(void *init_param) throw(chaos::CException);
                     
@@ -113,7 +130,7 @@ namespace chaos{
 					
                 protected:
                     //!Private constructor
-                    AbstractDriver();
+                    AbstractDriver(BaseBypassShrdPtr custom_bypass_driver = BaseBypassShrdPtr(new BaseBypassDriver()));
                     
                     //!Private destructor
                     virtual ~AbstractDriver();

@@ -26,7 +26,7 @@
 
 using namespace chaos::micro_unit_toolkit::data;
 using namespace chaos::micro_unit_toolkit::connection::unit_proxy;
-using namespace chaos::micro_unit_toolkit::connection::protocol_adapter;
+using namespace chaos::micro_unit_toolkit::connection::connection_adapter;
 
 UnitProxyHandlerWrapper::UnitProxyHandlerWrapper(UnitProxyHandler _handler,
                                                  void *_user_data,
@@ -66,7 +66,7 @@ int UnitProxyHandlerWrapper::reconnection() {
 int UnitProxyHandlerWrapper::eventLoop(int32_t milliseconds_wait) {
     int err = 0;
     //reference to internal conenction state of adapter
-    const protocol_adapter::ConnectionState& connection_state = base_unit->getConnectionState();
+    const connection_adapter::ConnectionState& connection_state = base_unit->getConnectionState();
     
     //schedule work
     switch (connection_state) {

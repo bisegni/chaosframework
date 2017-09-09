@@ -102,6 +102,7 @@ void HTTPAdapter::sendHTTPJSONError(mg_connection *nc,
     err_data_pack.addInt32Value("error_code", error_code);
     err_data_pack.addStringValue("error_message", error_message);
     const std::string json_error = err_data_pack.getJSONString();
+    ERR << CHAOS_FORMAT("Error response:%1%", %json_error);
     mg_send_head(nc, 400, 0, "Content-Type: application/json");
     mg_printf(nc, "%s", json_error.c_str());
 }
@@ -114,6 +115,7 @@ void HTTPAdapter::sendWSJSONError(mg_connection *nc,
     err_data_pack.addInt32Value("error_code", error_code);
     err_data_pack.addStringValue("error_message", error_message);
     const std::string json_error = err_data_pack.getJSONString();
+    ERR << CHAOS_FORMAT("Error response:%1%", %json_error);
     mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT, json_error.c_str(), json_error.size());
     if(close_connection){mg_send_websocket_frame(nc, WEBSOCKET_OP_CLOSE, NULL, 0);}
 }

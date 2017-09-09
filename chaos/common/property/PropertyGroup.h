@@ -30,10 +30,30 @@ namespace chaos {
     namespace common {
         namespace property {
             
+            //!define the type of funciton called when property need to be updated
+            /*!
+             the prototype retun a boolan that need to be returned as false if the set of the
+             value has not been successfull.
+             */
+            typedef ChaosFunction<bool(const std::string&,//!group_name
+            const std::string&,//!property name
+            const chaos::common::data::CDataVariant&//!property value
+            )> PropertyValueChangeFunction;
+            
+            //!function called when new value has been acceppted
+            typedef ChaosFunction<void(const std::string&,//!group name
+            const std::string&,//!property name
+            const chaos::common::data::CDataVariant&, //!old value
+            const chaos::common::data::CDataVariant& //!new value
+            )> PropertyValueUpdatedFunction;
+            
             CHAOS_DEFINE_MAP_FOR_TYPE(std::string, PropertyDescription, MapProperties);
             
             class PropertyGroup {
                 chaos::common::data::CDataVariant default_null_value;
+                
+                PropertyValueChangeFunction value_change_function;
+                PropertyValueUpdatedFunction value_updated_function;
             public:
                 std::string name;
                 MapProperties map_properties;
@@ -41,12 +61,16 @@ namespace chaos {
                 PropertyGroup(const std::string& _name);
                 PropertyGroup(const PropertyGroup& src);
                 
-                void addProperty(const std::string& property_name,
+                bool addProperty(const std::string& property_name,
                                  const std::string& property_description,
                                  const DataType::DataType property_type);
                 
                 void setPropertyValue(const std::string& property_name,
                                       const chaos::common::data::CDataVariant& new_value);
+                
+                void setPropertyValueChangeFunction(const PropertyValueChangeFunction& value_change_f);
+                
+                void setPropertyValueUpdatedFunction(const PropertyValueUpdatedFunction& value_updated_f);
                 
                 PropertyDescription& getProperty(const std::string& property_name);
                 
@@ -57,6 +81,8 @@ namespace chaos {
                 void copyPropertiesFromGroup(const PropertyGroup& src_group,
                                              bool copy_value = false);
                 
+                void updatePropertiesValueFromSourceGroup(const PropertyGroup& src_group);
+                
                 const MapProperties getAllProperties() const;
                 
                 void resetProperiesValues();
@@ -64,22 +90,7 @@ namespace chaos {
                 PropertyGroup& operator()();
                 
                 PropertyGroup& operator()(const std::string& property_name,
-                                          const bool property_value);
-                
-                PropertyGroup& operator()(const std::string& property_name,
-                                          const int32_t property_value);
-                
-                PropertyGroup& operator()(const std::string& property_name,
-                                          const int64_t property_value);
-                
-                PropertyGroup& operator()(const std::string& property_name,
-                                          const double property_value);
-                
-                PropertyGroup& operator()(const std::string& property_name,
-                                          const std::string& property_value);
-                
-                PropertyGroup& operator()(const std::string& property_name,
-                                          chaos::common::data::CDataBuffer *property_value);
+                                          const chaos::common::data::CDataVariant& property_value);
             };
             
             CHAOS_OPEN_SDWRAPPER(PropertyGroup)
@@ -101,8 +112,6 @@ namespace chaos {
                         idx++) {
                         ChaosUniquePtr<chaos::common::data::CDataWrapper> prop(prop_array->getCDataWrapperElementAtIndex(idx));
                         property_wrapper.deserialize(prop.get());
-                        
-                        //insert new porperty
                         Subclass::dataWrapped().map_properties.insert(MapPropertiesPair(property_wrapper.dataWrapped().getName(),
                                                                                         property_wrapper.dataWrapped()));
                     }
@@ -114,15 +123,11 @@ namespace chaos {
                 ChaosUniquePtr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
                 data_serialized->addStringValue("property_g_name", Subclass::dataWrapped().name);
                 if(Subclass::dataWrapped().map_properties.size()) {
-                    
-                    PropertyDescription pd;
-                    PropertyDescriptionSDWrapper property_ref_wrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(PropertyDescription, pd));
-                    
                     for(MapPropertiesIterator it = Subclass::dataWrapped().map_properties.begin(),
                         end = Subclass::dataWrapped().map_properties.end();
                         it != end;
                         it++) {
-                        property_ref_wrapper.dataWrapped() = it->second;
+                        PropertyDescriptionSDWrapper property_ref_wrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(PropertyDescription, it->second));
                         data_serialized->appendCDataWrapperToArray(*property_ref_wrapper.serialize());
                     }
                     

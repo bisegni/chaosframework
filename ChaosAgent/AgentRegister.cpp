@@ -97,11 +97,15 @@ void AgentRegister::stop() throw (chaos::CException) {
     NetworkBroker::getInstance()->deregisterAction(this);
     
     registration_state() = AgentRegisterStateStartUnregistering;
+    try{
     AsyncCentralManager::getInstance()->addTimer(this,
                                                  SM_EXECTION_STEP_MS,
                                                  SM_EXECTION_STEP_MS);
     while(registration_state != AgentRegisterStateUnregistered &&
           registration_state != AgentRegisterStateFault) {usleep(500000);}
+    }catch(...) {
+        throw CException(-1, "Error creating timer", __PRETTY_FUNCTION__);
+    }
     
 }
 

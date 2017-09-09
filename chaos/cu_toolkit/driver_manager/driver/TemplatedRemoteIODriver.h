@@ -31,6 +31,7 @@ namespace chaos {
                 //!permit to specify the converter to adapt already created driver for be used as external
                 template<typename OpExCMDAdaptor>
                 class TemplatedRemoteIODriver:
+                public OpcodeExecutor,
                 public AbstractRemoteIODriver {
                     ChaosUniquePtr<OpcodeExternalCommandMapper> opcode_ext_cmd_mapper;
                     virtual MsgManagmentResultType::MsgManagmentResult execOpcode(DrvMsgPtr cmd) {

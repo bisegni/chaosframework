@@ -158,7 +158,8 @@ SOURCES += main.cpp\
     data/json/JsonTableModel.cpp \
     language_editor/JsonEditor.cpp \
     node/agent/AgentSetting.cpp \
-    widget/CQTableView.cpp
+    widget/CQTableView.cpp \
+    widget/CPropertyPushButton.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -299,7 +300,8 @@ HEADERS  += \
     data/json/JsonTableModel.h \
     language_editor/JsonEditor.h \
     node/agent/AgentSetting.h \
-    widget/CQTableView.h
+    widget/CQTableView.h \
+    widget/CPropertyPushButton.h
 
 FORMS    += \
     search/searchnoderesult.ui \

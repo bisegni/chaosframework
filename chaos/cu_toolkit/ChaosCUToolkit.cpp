@@ -212,7 +212,6 @@ void ChaosCUToolkit::init(void *init_data)  throw(CException) {
         struct sigaction sigact;
         sigact.sa_sigaction = crit_err_hdlr;
         sigact.sa_flags = SA_RESTART | SA_SIGINFO;
-        
         if (sigaction(SIGSEGV, &sigact, (struct sigaction *)NULL) != 0) {
             LERR_ << "error setting signal handler for SIGSEGV";
         }

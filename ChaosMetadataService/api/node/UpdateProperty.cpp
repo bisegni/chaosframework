@@ -43,7 +43,7 @@ CDataWrapper *UpdateProperty::execute(CDataWrapper *api_data,
     ChaosUniquePtr<chaos::common::data::CDataWrapper> node_description;
     CHECK_CDW_THROW_AND_LOG(api_data, N_UP_ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(api_data, NodeDefinitionKey::NODE_UNIQUE_ID, N_UP_ERR, -2, "The node unique id is mandatory")
-    CHECK_KEY_THROW_AND_LOG(api_data, "update_property", N_UP_ERR, -3, "Property update pack is mandatory is mandatory")
+    CHECK_KEY_THROW_AND_LOG(api_data, "update_property", N_UP_ERR, -3, "Property update pack is mandatory")
     
     //get the data access
     GET_DATA_ACCESS(NodeDataAccess, n_da, -4)

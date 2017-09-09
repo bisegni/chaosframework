@@ -119,6 +119,20 @@ namespace chaos{
                     char    err_msg[DRVMSG_ERR_MSG_SIZE];       /**< error message */
                     char    err_dom[DRVMSG_ERR_DOM_SIZE];       /**< error domain */
                 } *DrvMsgPtr;
+                
+                //!define a class that can execute driver opcode
+                class OpcodeExecutor {
+                public:
+                    //! Execute a command
+                    /*!
+                     The driver implementation must use the opcode to recognize the
+                     command to execute and then write it on th ememory allocate
+                     by the issuer of the command.
+                     \param cmd the message that needs to be executed by the driver implementation
+                     \return the managment state of the message
+                     */
+                    virtual MsgManagmentResultType::MsgManagmentResult execOpcode(DrvMsgPtr cmd) = 0;
+                };
             }
         }
     }

@@ -24,7 +24,7 @@
 
 #include <chaos_micro_unit_toolkit/data/DataPack.h>
 #include <chaos_micro_unit_toolkit/micro_unit_toolkit_types.h>
-#include <chaos_micro_unit_toolkit/connection/protocol_adapter/AbstractProtocolAdapter.h>
+#include <chaos_micro_unit_toolkit/connection/connection_adapter/AbstractConnectionAdapter.h>
 namespace chaos {
     namespace micro_unit_toolkit {
         namespace connection {
@@ -32,6 +32,7 @@ namespace chaos {
                 //bforward decalration
                 class UnitProxyHandlerWrapper;
                 
+                //!decode a message received from remote andpoint
                 class RemoteMessage {
                     bool is_error;
                 public:
@@ -59,7 +60,7 @@ namespace chaos {
                 //! Abstract base class for all unit proxy
                 class AbstractUnitProxy {
                     friend class chaos::micro_unit_toolkit::connection::unit_proxy::UnitProxyHandlerWrapper;
-                    ChaosUniquePtr<protocol_adapter::AbstractProtocolAdapter> protocol_adapter;
+                    ChaosUniquePtr<connection_adapter::AbstractConnectionAdapter> connection_adapter;
                 protected:
                     AuthorizationState authorization_state;
                     virtual int sendMessage(data::DataPackUniquePtr& message_data);
@@ -74,7 +75,7 @@ namespace chaos {
                     
                     int close();
                 public:
-                    AbstractUnitProxy(ChaosUniquePtr<protocol_adapter::AbstractProtocolAdapter>& _protocol_adapter);
+                    AbstractUnitProxy(ChaosUniquePtr<connection_adapter::AbstractConnectionAdapter>& _protocol_adapter);
                     
                     virtual ~AbstractUnitProxy();
                     
@@ -88,7 +89,7 @@ namespace chaos {
                     
                     const AuthorizationState& getAuthorizationState() const;
                     
-                    const protocol_adapter::ConnectionState& getConnectionState() const;
+                    const connection_adapter::ConnectionState& getConnectionState() const;
                     
                     void resetAuthorization();
                 };
