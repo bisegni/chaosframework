@@ -108,7 +108,7 @@ int MongoDBObjectStorageDataAccess::getObject(const std::string& key,
 }
 
 int MongoDBObjectStorageDataAccess::getLastObject(const std::string& key,
-                                                          CDWShrdPtr& object_ptr_ref) {
+                                                  CDWShrdPtr& object_ptr_ref) {
     int err = 0;
     mongo::BSONObj result;
     try {

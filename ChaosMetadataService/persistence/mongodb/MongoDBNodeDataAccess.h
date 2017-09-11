@@ -81,11 +81,14 @@ namespace chaos {
                     int updatePropertyDefaultValue(const std::string& node_uid,
                                                    const chaos::common::property::PropertyGroupVector& property_group_vector);
                     //! inherited method
-                    int getProperty(const std::string& node_uid,
+                    int getProperty(const data_access::PropertyType property_type,
+                                    const std::string& node_uid,
                                     chaos::common::property::PropertyGroupVector& property_group_vector);
                     //! inherited method
-                    int getPropertyDefaultValue(const std::string& node_uid,
-                                                chaos::common::property::PropertyGroupVector& property_group_vector);
+                    int getPropertyGroup(const data_access::PropertyType property_type,
+                                         const std::string& node_uid,
+                                         const std::string& property_group_name,
+                                         chaos::common::property::PropertyGroup& property_group);
                     //! inherited method
                     int getCommand(const std::string& command_unique_id,
                                    chaos::common::data::CDataWrapper **command);

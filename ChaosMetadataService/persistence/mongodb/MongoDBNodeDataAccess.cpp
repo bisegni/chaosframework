@@ -516,7 +516,8 @@ int MongoDBNodeDataAccess::updatePropertyDefaultValue(const std::string& node_ui
     
     //get store default and update or add new
     PropertyGroupVector property_stored;
-    if((err = getPropertyDefaultValue(node_uid, property_stored)) != 0) return err;
+    if((err = getProperty(data_access::PropertyTypeDefaultValues,
+                          node_uid, property_stored)) != 0) return err;
     
     for(PropertyGroupVectorConstIterator it = property_group_vector.begin(),
         end = property_group_vector.end();
@@ -556,14 +557,25 @@ int MongoDBNodeDataAccess::updatePropertyDefaultValue(const std::string& node_ui
     return err;
 }
 
-int MongoDBNodeDataAccess::getProperty(const std::string& node_uid,
+int MongoDBNodeDataAccess::getProperty(const data_access::PropertyType property_type,
+                                       const std::string& node_uid,
                                        chaos::common::property::PropertyGroupVector& property_group_vector) {
     int err = 0;
     try {
+        std::string property_key;
+        switch (property_type) {
+            case data_access::PropertyTypeDescription:
+                property_key = "property";
+                break;
+                
+            case data_access::PropertyTypeDefaultValues:
+                property_key = "property_defaults";
+                break;
+        }
         mongo::BSONObj found_property;
         mongo::BSONObj q = BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID << node_uid <<
-                                "property" << BSON("$exists" << true));
-        mongo::BSONObj p = BSON("property" << 1);
+                                property_key << BSON("$exists" << true));
+        mongo::BSONObj p = BSON(property_key << 1);
         DEBUG_CODE(MDBNDA_DBG<<log_message("getProperty",
                                            "findOne",
                                            DATA_ACCESS_LOG_1_ENTRY("Query",
@@ -588,15 +600,28 @@ int MongoDBNodeDataAccess::getProperty(const std::string& node_uid,
     return err;
 }
 
-int MongoDBNodeDataAccess::getPropertyDefaultValue(const std::string& node_uid,
-                                                   chaos::common::property::PropertyGroupVector& property_group_vector) {
+int MongoDBNodeDataAccess::getPropertyGroup(const data_access::PropertyType property_type,
+                                            const std::string& node_uid,
+                                            const std::string& property_group_name,
+                                            chaos::common::property::PropertyGroup& property_group) {
     int err = 0;
     try {
+        std::string property_key;
+        switch (property_type) {
+            case data_access::PropertyTypeDescription:
+                property_key = "property";
+                break;
+                
+            case data_access::PropertyTypeDefaultValues:
+                property_key = "property_defaults";
+                break;
+        }
         mongo::BSONObj found_property;
         mongo::BSONObj q = BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID << node_uid <<
-                                "property_defaults" << BSON("$exists" << true));
-        mongo::BSONObj p = BSON("property_defaults" << 1);
-        DEBUG_CODE(MDBNDA_DBG<<log_message("getPropertyDefaultValue",
+                                property_key << BSON("$exists" << true) <<
+                                CHAOS_FORMAT("%1%.property_g_name", %property_key) << property_group_name);
+        mongo::BSONObj p = BSON("_id" << 0 << CHAOS_FORMAT("%1%", %property_key) << 1);
+        DEBUG_CODE(MDBNDA_DBG<<log_message("getProperty",
                                            "findOne",
                                            DATA_ACCESS_LOG_1_ENTRY("Query",
                                                                    q.jsonString()));)
@@ -609,9 +634,12 @@ int MongoDBNodeDataAccess::getPropertyDefaultValue(const std::string& node_uid,
         }
         if(!found_property.isEmpty()) {
             CDWUniquePtr prop_ser(new CDataWrapper(found_property.objdata()));
-            chaos::common::property::PropertyGroupVectorSDWrapper pg_sdw(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(PropertyGroupVector, property_group_vector));
-            pg_sdw.serialization_key = "property_defaults";
+            chaos::common::property::PropertyGroupVectorSDWrapper pg_sdw;
+            pg_sdw.serialization_key = property_key;
             pg_sdw.deserialize(prop_ser.get());
+            if(pg_sdw().size()) {
+                property_group = pg_sdw()[0];
+            }
         }
     } catch (const mongo::DBException &e) {
         MDBNDA_ERR << e.what();

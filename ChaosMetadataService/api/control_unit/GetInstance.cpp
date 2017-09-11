@@ -62,8 +62,9 @@ CDataWrapper *GetInstance::execute(CDataWrapper *api_data,
     
     //for compativbility  update here the default porperty values
     PropertyGroupVector pgv;
-    if((err = n_da->getPropertyDefaultValue(cu_uid,
-                                            pgv))) {
+    if((err = n_da->getProperty(PropertyTypeDefaultValues,
+                                cu_uid,
+                                pgv))) {
         LOG_AND_TROW(CU_GI_ERR, err, CHAOS_FORMAT("Error reading property defaults for node:%1%",%cu_uid));
     }
     if(pgv.size()) {

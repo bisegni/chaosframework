@@ -36,9 +36,10 @@ namespace chaos {
                                             chaos::common::property::PropertyGroupVector& dst_group);
                 
                 static chaos::common::data::CDWShrdPtr getConfigurationToUse(const std::string& cu_uid,
-                                                 const std::string& ds_attribute_name,
-                                                 chaos::metadata_service::persistence::data_access::NodeDataAccess *n_da,
-                                                 chaos::metadata_service::persistence::data_access::ControlUnitDataAccess *cu_da);
+                                                                             const std::string& ds_attribute_name,
+                                                                             chaos::metadata_service::persistence::data_access::NodeDataAccess *n_da,
+                                                                             chaos::metadata_service::persistence::data_access::ControlUnitDataAccess *cu_da,
+                                                                             chaos::common::property::PropertyGroup& control_unit_property_group);
                 
             public:
                 static ChaosUniquePtr<chaos::common::data::CDataWrapper> prepareRequestPackForLoadControlUnit(const std::string& cu_uid,

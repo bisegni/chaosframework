@@ -29,6 +29,7 @@
 using namespace chaos::common::data;
 using namespace chaos::common::property;
 using namespace chaos::metadata_service::common;
+using namespace chaos::data_service::object_storage::abstraction;
 using namespace chaos::metadata_service::persistence::data_access;
 
 #define CUCU_INFO LOG_LOG(CUCommonUtility)
@@ -117,16 +118,56 @@ void CUCommonUtility::prepareAutoInitAndStartInAutoLoadControlUnit(const std::st
 CDWShrdPtr CUCommonUtility::getConfigurationToUse(const std::string& cu_uid,
                                                   const std::string& ds_attribute_name,
                                                   chaos::metadata_service::persistence::data_access::NodeDataAccess *n_da,
-                                                  chaos::metadata_service::persistence::data_access::ControlUnitDataAccess *cu_da) {
+                                                  chaos::metadata_service::persistence::data_access::ControlUnitDataAccess *cu_da,
+                                                  PropertyGroup& control_unit_property_group) {
     int err = 0;
     ChaosSharedPtr<CDataWrapper> element_configuration;
-    data_service::ObjectStoragePoolSlot *cache_slot = data_service::DriverPoolManager::getInstance()->getObjectStorageInstance();
-    if((err = cu_da->getInstanceDatasetAttributeConfiguration(cu_uid,
-                                                              ds_attribute_name,
-                                                              element_configuration))) {
-        LOG_AND_TROW(CUCU_ERR, err, boost::str(boost::format("Error loading the configuration for the the dataset's attribute: %1% for control unit: %2%") % ds_attribute_name % cu_uid));
+    
+    if(control_unit_property_group.getProperty(chaos::ControlUnitPropertyKey::INIT_RESTORE_OPTION).getPropertyValue().asInt32() == chaos::ControlUnitPropertyKey::INIT_RESTORE_OPTION_TYPE_STATIC) {
+        if((err = cu_da->getInstanceDatasetAttributeConfiguration(cu_uid,
+                                                                  ds_attribute_name,
+                                                                  element_configuration))) {
+            LOG_AND_TROW(CUCU_ERR, err, boost::str(boost::format("Error loading the configuration for the the dataset's attribute: %1% for control unit: %2%") % ds_attribute_name % cu_uid));
+        }
     }
-    data_service::DriverPoolManager::getInstance()->releaseObjectStorageInstance(cache_slot);
+    
+    if(control_unit_property_group.hasProperty(chaos::ControlUnitPropertyKey::INIT_RESTORE_OPTION)) {
+        if(control_unit_property_group.getProperty(chaos::ControlUnitPropertyKey::INIT_RESTORE_OPTION).getPropertyValue().asInt32() == chaos::ControlUnitPropertyKey::INIT_RESTORE_OPTION_TYPE_LAST_VALIDE) {
+            //in this case we need only the value, but if the attribute has been set in static configuration all othe property are preserved
+            //get last dataset
+            data_service::ObjectStoragePoolSlot *cache_slot = data_service::DriverPoolManager::getInstance()->getObjectStorageInstance();
+            if(cache_slot != NULL) {
+                CDWShrdPtr tmp_result;
+                if(cache_slot->resource_pooled->getDataAccess<ObjectStorageDataAccess>()->getLastObject(cu_uid+chaos::DataPackPrefixID::INPUT_DATASET_POSTFIX, tmp_result) == 0) {
+                    if(tmp_result.get() != NULL) {
+                        ChaosStringSet all_keys;
+                        if(element_configuration.get() != NULL){
+                            element_configuration.reset(new CDataWrapper());
+                        }
+                        //we have found last dataset
+                        ChaosSharedPtr<CDataWrapper> new_configuration(new CDataWrapper());
+                        element_configuration->getAllKey(all_keys);
+                        
+                        for(ChaosStringSetIterator it = all_keys.begin(),
+                            end = all_keys.end();
+                            it != end;
+                            it++) {
+                            if(it->compare(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE) == 0) {
+                                tmp_result->copyKeyToNewKey(ds_attribute_name, ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE, *new_configuration);
+                            } else {
+                                element_configuration->copyKeyTo(*it, *new_configuration);
+                            }
+                        }
+                        //set new confiuration as element default configuration
+                        element_configuration = new_configuration;
+                    }
+                }
+                data_service::DriverPoolManager::getInstance()->releaseObjectStorageInstance(cache_slot);
+            }
+        }
+        
+    }
+    
     return element_configuration;
 }
 
@@ -137,6 +178,7 @@ ChaosUniquePtr<chaos::common::data::CDataWrapper> CUCommonUtility::initDataPack(
     int err = 0;
     int64_t run_id = 0;
     CDataWrapper *result = NULL;
+    PropertyGroup control_unit_property_group;
     ChaosUniquePtr<chaos::common::data::CDataWrapper> cu_base_description;
     ChaosUniquePtr<chaos::common::data::CDataWrapper> dataset_description;
     ChaosUniquePtr<chaos::common::data::CDataWrapper> init_datapack(new CDataWrapper());
@@ -182,9 +224,17 @@ ChaosUniquePtr<chaos::common::data::CDataWrapper> CUCommonUtility::initDataPack(
     if((err = cu_da->getDataset(cu_uid,
                                 &result))) {
         LOG_AND_TROW(CUCU_ERR, err, boost::str(boost::format("Error fetching dataset for control unit %1%") % cu_uid));
-    } else if(result != NULL){
+    } else if(result != NULL) {
         //we have the published dataset
         dataset_description.reset(result);
+        
+        //check for restore option
+        if((err = n_da->getPropertyGroup(PropertyTypeDefaultValues,
+                                         cu_uid,
+                                         chaos::ControlUnitPropertyKey::GROUP_NAME,
+                                         control_unit_property_group))) {
+            LOG_AND_TROW(CUCU_ERR, err, CHAOS_FORMAT("Error fetching defaults value for properti group %1% for control unit %2%", %chaos::ControlUnitPropertyKey::GROUP_NAME%cu_uid));
+        }
         
         ChaosUniquePtr<CMultiTypeDataArrayWrapper> dataset_element_vec(dataset_description->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
         ChaosUniquePtr<chaos::common::data::CDataWrapper> init_dataset(new CDataWrapper());
@@ -201,7 +251,8 @@ ChaosUniquePtr<chaos::common::data::CDataWrapper> CUCommonUtility::initDataPack(
                 CDWShrdPtr element_configuration = getConfigurationToUse(cu_uid,
                                                                          ds_attribute_name,
                                                                          n_da,
-                                                                         cu_da);
+                                                                         cu_da,
+                                                                         control_unit_property_group);
                 if(element_configuration.get()) {
                     //we can retrive the configured attribute
                     ChaosUniquePtr<chaos::common::data::CDataWrapper> init_ds_attribute = mergeDatasetAttributeWithSetup(element.get(),
@@ -290,7 +341,7 @@ ChaosUniquePtr<chaos::common::data::CDataWrapper> CUCommonUtility::initDataPack(
     }
     
     PropertyGroupVectorSDWrapper pgu_default;
-    if((err = n_da->getPropertyDefaultValue(cu_uid, pgu_default()))){
+    if((err = n_da->getProperty(PropertyTypeDefaultValues, cu_uid, pgu_default()))){
         LOG_AND_TROW(CUCU_ERR, err, CHAOS_FORMAT("Error fetching property defaults for node %1%", % cu_uid));
     }
     

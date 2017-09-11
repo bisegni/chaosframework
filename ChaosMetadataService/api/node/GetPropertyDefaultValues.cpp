@@ -35,7 +35,7 @@ AbstractApi("getPropertyDefaultValues"){}
 GetPropertyDefaultValues::~GetPropertyDefaultValues(){}
 
 CDataWrapper *GetPropertyDefaultValues::execute(CDataWrapper *api_data,
-                                                   bool& detach_data) throw(chaos::CException) {
+                                                bool& detach_data) throw(chaos::CException) {
     int err = 0;
     ChaosUniquePtr<chaos::common::data::CDataWrapper> node_description;
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found")
@@ -50,7 +50,9 @@ CDataWrapper *GetPropertyDefaultValues::execute(CDataWrapper *api_data,
     //
     PropertyGroupVectorSDWrapper pgv_sdv;
     pgv_sdv.serialization_key = "property";
-    if((err = n_da->getPropertyDefaultValue(node_unique_id, pgv_sdv()))) {
+    if((err = n_da->getProperty(persistence::data_access::PropertyTypeDefaultValues,
+                                node_unique_id,
+                                pgv_sdv()))) {
         LOG_AND_TROW_FORMATTED(ERR, -4, "Error getting command for uid %1%", %node_unique_id);
     }
     return pgv_sdv.serialize().release();

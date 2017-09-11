@@ -33,6 +33,11 @@ namespace chaos {
         namespace persistence {
             namespace data_access {
                 
+                typedef enum PropertyType {
+                    PropertyTypeDescription,
+                    PropertyTypeDefaultValues
+                } PropertyType;
+                
                 /*!
                  Perform the basic operation on abstract node infomation
                  */
@@ -146,12 +151,14 @@ namespace chaos {
                                                            const chaos::common::property::PropertyGroupVector& property_group_vector) = 0;
                     
                     //! return the whole node porperty list
-                    virtual int getProperty(const std::string& node_uid,
+                    virtual int getProperty(const PropertyType property_type,
+                                            const std::string& node_uid,
                                             chaos::common::property::PropertyGroupVector& property_group_vector) = 0;
                     
-                    virtual int getPropertyDefaultValue(const std::string& node_uid,
-                                                        chaos::common::property::PropertyGroupVector& property_group_vector) = 0;
-                    
+                    virtual int getPropertyGroup(const PropertyType property_type,
+                                                 const std::string& node_uid,
+                                                 const std::string& property_group_name,
+                                                 chaos::common::property::PropertyGroup& property_group) = 0;
                     //! Check a command presence
                     /*!
                      \param command_unique_id is the unique identifir ther represent the command
