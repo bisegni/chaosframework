@@ -21,6 +21,7 @@
 
 #include <chaos/common/global.h>
 #include <chaos/common/data/CDataWrapper.h>
+#include <chaos/common/utility/InetUtility.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
 #include <chaos/cu_toolkit/external_gateway/ExternalUnitGateway.h>
 #include <chaos/cu_toolkit/external_gateway/http_adapter/HTTPAdapter.h>
@@ -33,6 +34,7 @@
 
 using namespace chaos;
 using namespace chaos::common::data;
+using namespace chaos::common::utility;
 using namespace chaos::cu::external_gateway::http_adapter;
 
 #define INFO    INFO_LOG(HTTPHelper)
@@ -44,9 +46,7 @@ HTTPAdapter::HTTPAdapter():
 run(false),
 root_connection(0){}
 
-HTTPAdapter::~HTTPAdapter() {
-    
-}
+HTTPAdapter::~HTTPAdapter() {}
 
 void HTTPAdapter::init(void *init_data) throw (chaos::CException) {
     //scsan configuration
@@ -64,7 +64,9 @@ void HTTPAdapter::init(void *init_data) throw (chaos::CException) {
     run = true;
     mg_mgr_init(&mgr, NULL);
     
-    root_connection = mg_bind(&mgr, setting.publishing_port.c_str(), HTTPAdapter::eventHandler);
+    int http_port = InetUtility::scanForLocalFreePort(boost::lexical_cast<int>(setting.publishing_port));
+    const std::string http_port_str = boost::lexical_cast<std::string>(http_port);
+    root_connection = mg_bind(&mgr, http_port_str.c_str(), HTTPAdapter::eventHandler);
     if(root_connection == NULL) {throw CException(-1, "Error creating http connection", __PRETTY_FUNCTION__);}
     root_connection->user_data = this;
     
