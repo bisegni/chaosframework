@@ -43,7 +43,7 @@ void PropertyCollector::addGroupProperty(const std::string& group_name,
                                          const std::string& property_description,
                                          const DataType::DataType property_type,
                                          const uint32_t flag) {
-    if(map_property.count(group_name)) return;
+    if(map_property.count(group_name) == 0) return;
     map_property[group_name]->addProperty(property_name,
                                           property_description,
                                           property_type,
@@ -51,7 +51,7 @@ void PropertyCollector::addGroupProperty(const std::string& group_name,
 }
 
 PropertyGroupShrdPtr PropertyCollector::getGroup(const std::string& group_name) const {
-    if(map_property.count(group_name)) return PropertyGroupShrdPtr();
+    if(map_property.count(group_name) == 0) return PropertyGroupShrdPtr();
     return map_property[group_name];
 }
 

@@ -590,7 +590,7 @@ int MongoDBNodeDataAccess::getProperty(const data_access::PropertyType property_
         if(!found_property.isEmpty()) {
             CDWUniquePtr prop_ser(new CDataWrapper(found_property.objdata()));
             chaos::common::property::PropertyGroupVectorSDWrapper pg_sdw(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(PropertyGroupVector, property_group_vector));
-            pg_sdw.serialization_key = "property";
+            pg_sdw.serialization_key = property_key;
             pg_sdw.deserialize(prop_ser.get());
         }
     } catch (const mongo::DBException &e) {

@@ -81,24 +81,24 @@ int MongoDBObjectStorageDataAccess::getObject(const std::string& key,
     try {
         mongo::BSONObj q = BSON(chaos::DataPackCommonKey::DPCK_DEVICE_ID << key <<
                                 chaos::DataPackCommonKey::DPCK_TIMESTAMP << mongo::Date_t(TimingUtil::getTimeStamp()));
-        
-        mongo::BSONObj p = BSON(CHAOS_FORMAT("%1%.$",%MONGODB_DAQ_DATA_FIELD) << 1);
         DEBUG_CODE(DBG<<log_message("getObject",
                                     "findOne",
-                                    DATA_ACCESS_LOG_2_ENTRY("Query",
-                                                            "Projection",
-                                                            q.jsonString(),
-                                                            p.jsonString()));)
+                                    DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                            q.jsonString()));)
         
         if((err = connection->findOne(result,
                                       MONGO_DB_COLLECTION_NAME(MONGODB_DAQ_COLL_NAME),
-                                      q,
-                                      &p))){
+                                      q))){
             ERR << "Error fetching stored object";
         } else if(result.isEmpty()) {
             DBG << "No data has been found";
         } else {
-            object_ptr_ref.reset(new CDataWrapper(result.objdata()));
+            if(result.hasField(MONGODB_DAQ_DATA_FIELD)) {
+                mongo::BSONElement e = result.getField(MONGODB_DAQ_DATA_FIELD);
+                if(e.isABSONObj()) {
+                    object_ptr_ref.reset(new CDataWrapper(e.Obj().objdata()));
+                }
+            }
         }
     } catch (const mongo::DBException &e) {
         ERR << e.what();
@@ -113,8 +113,6 @@ int MongoDBObjectStorageDataAccess::getLastObject(const std::string& key,
     mongo::BSONObj result;
     try {
         mongo::Query q = BSON(chaos::DataPackCommonKey::DPCK_DEVICE_ID << key);
-        mongo::BSONObj p = BSON(CHAOS_FORMAT("%1%.$",%MONGODB_DAQ_DATA_FIELD) << 1);
-        
         q = q.sort(BSON(chaos::DataPackCommonKey::DPCK_TIMESTAMP << -1));
         
         DEBUG_CODE(DBG<<log_message("getLastObject",
@@ -124,15 +122,17 @@ int MongoDBObjectStorageDataAccess::getLastObject(const std::string& key,
         
         if((err = connection->findOne(result,
                                       MONGO_DB_COLLECTION_NAME(MONGODB_DAQ_COLL_NAME),
-                                      q,
-                                      &p))){
+                                      q))){
             ERR << "Error fetching stored object";
         } else if(result.isEmpty()) {
             DBG << "No data has been found";
         } else {
-            
-            object_ptr_ref.reset(new CDataWrapper(result.objdata()));
-            //       DBG<<"fromDB:"<<object_ptr_ref->getJSONString();
+            if(result.hasField(MONGODB_DAQ_DATA_FIELD)) {
+                mongo::BSONElement e = result.getField(MONGODB_DAQ_DATA_FIELD);
+                if(e.isABSONObj()) {
+                    object_ptr_ref.reset(new CDataWrapper(e.Obj().objdata()));
+                }
+            }
         }
     } catch (const mongo::DBException &e) {
         ERR << e.what();

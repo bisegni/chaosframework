@@ -445,8 +445,16 @@ void AbstractControlUnit::doInitRpCheckList() throw(CException) {
             //call update param function
             updateConfiguration(init_configuration.get(), detach_fake);
             
-            //check for cold or hot init restore operation
-            checkForRestoreOnInit();
+            //chec if we need to do a restor on first start
+            PropertyGroupShrdPtr cug = PropertyCollector::getGroup(chaos::ControlUnitPropertyKey::GROUP_NAME);
+            if(cug.get()) {
+                if(cug->hasProperty(chaos::ControlUnitPropertyKey::INIT_RESTORE_APPLY) &&
+                   cug->getProperty(chaos::ControlUnitPropertyKey::INIT_RESTORE_APPLY).getPropertyValue().isValid() &&
+                   cug->getProperty(chaos::ControlUnitPropertyKey::INIT_RESTORE_APPLY).getPropertyValue().asBool()) {
+                    //we need to add to stsart phase the restore one
+                    check_list_sub_service.getSharedCheckList("_start")->addElement(START_RPC_PHASE_RESTORE_ON_FIRST_START);
+                }
+            }
             break;
         }
         CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_init", INIT_RPC_PHASE_PUSH_DATASET){
@@ -506,6 +514,17 @@ void AbstractControlUnit::doStartRpCheckList() throw(CException) {
         
         CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_start", START_RPC_PHASE_UNIT){
             unitStart();
+        }
+        
+        CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_start", START_RPC_PHASE_RESTORE_ON_FIRST_START) {
+            try{
+                checkForRestoreOnInit();
+                check_list_sub_service.getSharedCheckList("_start")->removeElement(START_RPC_PHASE_RESTORE_ON_FIRST_START);
+            } catch(CException& ex){
+                check_list_sub_service.getSharedCheckList("_start")->removeElement(START_RPC_PHASE_RESTORE_ON_FIRST_START);
+                throw ex;
+            }
+            break;
         }
     }
     CHAOS_CHECK_LIST_END_SCAN_TO_DO(check_list_sub_service, "_start")
@@ -964,10 +983,6 @@ void AbstractControlUnit::fillRestoreCacheWithDatasetFromTag(data_manager::KeyDa
 }
 
 void AbstractControlUnit::checkForRestoreOnInit()  throw(CException) {
-    PropertyGroupShrdPtr pg_shrd_ptr = PropertyCollector::getGroup(chaos::ControlUnitPropertyKey::GROUP_NAME);
-    if(!pg_shrd_ptr->hasProperty(chaos::ControlUnitPropertyKey::INIT_RESTORE_APPLY) ||
-       pg_shrd_ptr->getProperty(chaos::ControlUnitPropertyKey::INIT_RESTORE_APPLY).getPropertyValue().asBool() == false) return;
-    
     //now we can launch the restore the current input attrite, remeber that
     //input attribute are composed by mds so the type of restore data(static conf or live) is manage at mds leve
     //control unit in case off pply true need only to launch the restore on current input dataset set.
@@ -1060,7 +1075,7 @@ CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreP
                 AttributeCache& ac_src = restore_cache->getSharedDomain(DOMAIN_INPUT);
                 AttributeCache& ac_dst = attribute_value_shared_cache->getSharedDomain(DOMAIN_INPUT);
                 ac_src.copyToAttributeCache(ac_dst);
-
+                
             }
         } catch (MetadataLoggingCException& ex) {
             throw ex;
@@ -1658,7 +1673,6 @@ CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* update_pac
         ACULAPP_ << "device:" << DatasetDB::getDeviceID() << " not initialized";
         throw MetadataLoggingCException(getCUID(), -3, "Device Not Initilized", __PRETTY_FUNCTION__);
     }
-    
     
     PropertyGroupVectorSDWrapper pg_sdw;
     pg_sdw.serialization_key="property";

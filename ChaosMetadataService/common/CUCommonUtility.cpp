@@ -123,12 +123,11 @@ CDWShrdPtr CUCommonUtility::getConfigurationToUse(const std::string& cu_uid,
     int err = 0;
     ChaosSharedPtr<CDataWrapper> element_configuration;
     
-    if(control_unit_property_group.getProperty(chaos::ControlUnitPropertyKey::INIT_RESTORE_OPTION).getPropertyValue().asInt32() == chaos::ControlUnitPropertyKey::INIT_RESTORE_OPTION_TYPE_STATIC) {
-        if((err = cu_da->getInstanceDatasetAttributeConfiguration(cu_uid,
-                                                                  ds_attribute_name,
-                                                                  element_configuration))) {
-            LOG_AND_TROW(CUCU_ERR, err, boost::str(boost::format("Error loading the configuration for the the dataset's attribute: %1% for control unit: %2%") % ds_attribute_name % cu_uid));
-        }
+    //fetch static information
+    if((err = cu_da->getInstanceDatasetAttributeConfiguration(cu_uid,
+                                                              ds_attribute_name,
+                                                              element_configuration))) {
+        LOG_AND_TROW(CUCU_ERR, err, boost::str(boost::format("Error loading the configuration for the the dataset's attribute: %1% for control unit: %2%") % ds_attribute_name % cu_uid));
     }
     
     if(control_unit_property_group.hasProperty(chaos::ControlUnitPropertyKey::INIT_RESTORE_OPTION)) {
@@ -141,7 +140,7 @@ CDWShrdPtr CUCommonUtility::getConfigurationToUse(const std::string& cu_uid,
                 if(cache_slot->resource_pooled->getDataAccess<ObjectStorageDataAccess>()->getLastObject(cu_uid+chaos::DataPackPrefixID::INPUT_DATASET_POSTFIX, tmp_result) == 0) {
                     if(tmp_result.get() != NULL) {
                         ChaosStringSet all_keys;
-                        if(element_configuration.get() != NULL){
+                        if(element_configuration.get() == NULL){
                             element_configuration.reset(new CDataWrapper());
                         }
                         //we have found last dataset
@@ -165,9 +164,7 @@ CDWShrdPtr CUCommonUtility::getConfigurationToUse(const std::string& cu_uid,
                 data_service::DriverPoolManager::getInstance()->releaseObjectStorageInstance(cache_slot);
             }
         }
-        
     }
-    
     return element_configuration;
 }
 
@@ -391,19 +388,19 @@ ChaosUniquePtr<chaos::common::data::CDataWrapper> CUCommonUtility::deinitDataPac
 
 #define MOVE_STRING_VALUE(k, src, dst)\
 if(src->hasKey(k)) {\
-dst->addStringValue(k, src->getStringValue(k));\
+dst->addStringValue(k, src->getVariantValue(k).asString());\
 }
 
 #define MERGE_STRING_VALUE(k, src, src2, dst)\
 if(src2->hasKey(k)) {\
-dst->addStringValue(k, src2->getStringValue(k));\
+dst->addStringValue(k, src2->getVariantValue(k).asString());\
 } else {\
 MOVE_STRING_VALUE(k, src, dst)\
 }
 
 #define MOVE_INT32_VALUE(k, src, dst)\
 if(src->hasKey(k)) {\
-dst->addInt32Value(k, src->getInt32Value(k));\
+dst->addInt32Value(k, src->getVariantValue(k).asInt32());\
 }
 
 ChaosUniquePtr<chaos::common::data::CDataWrapper> CUCommonUtility::mergeDatasetAttributeWithSetup(CDataWrapper *element_in_dataset,
