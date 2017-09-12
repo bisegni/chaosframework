@@ -375,7 +375,6 @@ void AbstractControlUnit::doInitRpCheckList() throw(CException) {
     std::vector<std::string> attribute_names;
     //rpc initialize service
     CHAOS_CHECK_LIST_START_SCAN_TO_DO(check_list_sub_service, "_init"){
-        
         CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_init", INIT_RPC_PHASE_CALL_INIT_STATE){
             //call init sequence
             init(NULL);
@@ -488,7 +487,6 @@ void AbstractControlUnit::doInitSMCheckList() throw(CException) {
             DatasetDB::addAttributeToDataSetFromDataWrapper(*init_configuration);
             break;
         }
-        
         CHAOS_CHECK_LIST_DONE(check_list_sub_service, "init", INIT_SM_PHASE_CREATE_DATA_STORAGE) {
             //call init sequence
             //call update param function
@@ -506,16 +504,13 @@ void AbstractControlUnit::doInitSMCheckList() throw(CException) {
 
 void AbstractControlUnit::doStartRpCheckList() throw(CException) {
     CHAOS_CHECK_LIST_START_SCAN_TO_DO(check_list_sub_service, "_start"){
-        
         CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_start", START_RPC_PHASE_IMPLEMENTATION){
             start();
             break;
         }
-        
         CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_start", START_RPC_PHASE_UNIT){
             unitStart();
         }
-        
         CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_start", START_RPC_PHASE_RESTORE_ON_FIRST_START) {
             try{
                 checkForRestoreOnInit();
@@ -558,7 +553,6 @@ void AbstractControlUnit::redoInitRpCheckList(bool throw_exception) throw(CExcep
             }
             break;
         }
-        
         CHAOS_CHECK_LIST_REDO(check_list_sub_service, "_init", INIT_RPC_PHASE_COMPLETE_OUTPUT_ATTRIBUTE){
             break;
         }
@@ -602,7 +596,6 @@ void AbstractControlUnit::redoInitSMCheckList(bool throw_exception) throw(CExcep
         CHAOS_CHECK_LIST_REDO(check_list_sub_service, "init",  INIT_SM_PHASE_INIT_DB){
             break;
         }
-        
         CHAOS_CHECK_LIST_REDO(check_list_sub_service, "init", INIT_SM_PHASE_CREATE_DATA_STORAGE) {
             //remove key data storage
             CHEK_IF_NEED_TO_THROW(throw_exception,
@@ -624,7 +617,6 @@ void AbstractControlUnit::redoStartRpCheckList(bool throw_exception) throw(CExce
             CHEK_IF_NEED_TO_THROW(throw_exception, stop();)
             break;
         }
-        
         //unit sto need to go after the abstract cu has been stopped
         CHAOS_CHECK_LIST_REDO(check_list_sub_service, "_start", START_RPC_PHASE_UNIT){
             CHEK_IF_NEED_TO_THROW(throw_exception, unitStop();)
