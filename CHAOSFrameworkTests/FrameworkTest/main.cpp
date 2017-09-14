@@ -19,11 +19,14 @@
  * permissions and limitations under the Licence.
  */
 
-#include "TestTrigger.h"
+#include <gtest/gtest.h>
+#include <chaos/common/log/LogManager.h>
+#include <chaos/common/configuration/GlobalConfiguration.h>
 
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    chaos::test::trigger_system::TestTrigger test_trigger;
-    if(!test_trigger.test()) return 1;
-    return 0;
+int main(int argc,  char ** argv) {
+    chaos::GlobalConfiguration::getInstance()->preParseStartupParameters();
+    chaos::GlobalConfiguration::getInstance()->parseStartupParameters(argc, argv);
+    chaos::common::log::LogManager::getInstance()->init();
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }

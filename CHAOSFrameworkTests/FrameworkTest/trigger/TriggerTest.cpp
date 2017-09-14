@@ -19,9 +19,10 @@
  * permissions and limitations under the Licence.
  */
 
-#include "TestTrigger.h"
+#include "TriggerTest.h"
 
 #include <chaos/common/property/PropertyGroup.h>
+
 
 using namespace chaos::common::data;
 using namespace chaos::test::trigger_system;
@@ -62,66 +63,59 @@ ConsumerResult SubjectConsumerDecrement::consumeEvent(TriggerDataEventType event
 }
 
 //---------------------------------
-TestTrigger::TestTrigger(){
-    
-}
+TriggerTest::TriggerTest():
+subject_one(ChaosMakeSharedPtr<Subject>(ChaosMakeSharedPtr<TriggeredData>(0))),
+subject_two(ChaosMakeSharedPtr<Subject>(ChaosMakeSharedPtr<TriggeredData>(0))){}
 
-TestTrigger::~TestTrigger(){
-    
-}
-
-bool TestTrigger::test(){
-    //instantiate the trigger environment
-    SubjectTriggerEnviroment trigger_environment;
-    
-    //create the subjects
-    SubjectTriggerEnviroment::SubjectInstanceShrdPtr subject_one(ChaosMakeSharedPtr<Subject>(ChaosMakeSharedPtr<TriggeredData>(0)));
-    SubjectTriggerEnviroment::SubjectInstanceShrdPtr subject_two(ChaosMakeSharedPtr<Subject>(ChaosMakeSharedPtr<TriggeredData>(0)));
-    
+void TriggerTest::SetUp(){
     trigger_environment.registerSubject(subject_one);
     trigger_environment.registerSubject(subject_two);
+}
+
+//------------------
+TEST_F(TriggerTest, TriggerTestComplete){
     
     //attach conusmer to subject
-    assert(trigger_environment.addConsumerOnSubjectForEvent(kTriggerDataEventTypeOne,
-                                                            subject_one,
-                                                            "SubjectConsumerIncrement"));
+    ASSERT_TRUE(trigger_environment.addConsumerOnSubjectForEvent(kTriggerDataEventTypeOne,
+                                                                 subject_one,
+                                                                 "SubjectConsumerIncrement"));
     
-    assert(trigger_environment.addConsumerOnSubjectForEvent(kTriggerDataEventTypeTwo,
-                                                            subject_two,
-                                                            "SubjectConsumerDecrement"));
+    ASSERT_TRUE(trigger_environment.addConsumerOnSubjectForEvent(kTriggerDataEventTypeTwo,
+                                                                 subject_two,
+                                                                 "SubjectConsumerDecrement"));
     
     SubjectTriggerEnviroment::EventInstanceShrdPtr event_one = trigger_environment.getEventInstance(kTriggerDataEventTypeOne);
-    assert(event_one.get());
+    ASSERT_TRUE(event_one.get());
     SubjectTriggerEnviroment::EventInstanceShrdPtr event_two = trigger_environment.getEventInstance(kTriggerDataEventTypeTwo);
-    assert(event_two.get());
+    ASSERT_TRUE(event_two.get());
     
-    assert(subject_one->subject_data->data_value == 0);
-    assert(subject_two->subject_data->data_value == 0);
+    EXPECT_EQ(0, subject_one->subject_data->data_value);
+    EXPECT_EQ(0, subject_two->subject_data->data_value);
     
     trigger_environment.fireEventOnSubject(event_one, subject_one);
-    assert(subject_one->subject_data->data_value == 1);
-    assert(subject_two->subject_data->data_value == 0);
+    EXPECT_EQ(1, subject_one->subject_data->data_value);
+    EXPECT_EQ(0, subject_two->subject_data->data_value);
     
     event_one->getProperties()("offset", CDataVariant(10));
     trigger_environment.fireEventOnSubject(event_one, subject_one);
-    assert(subject_one->subject_data->data_value == 12);
-    assert(subject_two->subject_data->data_value == 0);
+    EXPECT_EQ(12, subject_one->subject_data->data_value);
+    EXPECT_EQ(0, subject_two->subject_data->data_value);
     
     trigger_environment.fireEventOnSubject(event_two, subject_two);
-    assert(subject_one->subject_data->data_value == 12);
-    assert(subject_two->subject_data->data_value == -1);
+    EXPECT_EQ(12, subject_one->subject_data->data_value);
+    EXPECT_EQ(-1, subject_two->subject_data->data_value);
     
     event_two->getProperties()("offset", CDataVariant(10));
     trigger_environment.fireEventOnSubject(event_two, subject_two);
-    assert(subject_one->subject_data->data_value == 12);
-    assert(subject_two->subject_data->data_value == -12);
+    EXPECT_EQ(12, subject_one->subject_data->data_value);
+    EXPECT_EQ(-12, subject_two->subject_data->data_value);
     
     //add xross consumer and fire event to reset the counter in the subject
-    assert(trigger_environment.addConsumerOnSubjectForEvent(kTriggerDataEventTypeTwo,
+    ASSERT_TRUE(trigger_environment.addConsumerOnSubjectForEvent(kTriggerDataEventTypeTwo,
                                                             subject_one,
                                                             "SubjectConsumerDecrement"));
     
-    assert(trigger_environment.addConsumerOnSubjectForEvent(kTriggerDataEventTypeOne,
+    ASSERT_TRUE(trigger_environment.addConsumerOnSubjectForEvent(kTriggerDataEventTypeOne,
                                                             subject_two,
                                                             "SubjectConsumerIncrement"));
     event_two->getProperties()();//reset the values;
@@ -134,20 +128,20 @@ bool TestTrigger::test(){
     trigger_environment.fireEventOnSubject(event_one, subject_two);
     event_one->getProperties()("offset", CDataVariant(10));
     trigger_environment.fireEventOnSubject(event_one, subject_two);
-    assert(subject_one->subject_data->data_value == 0);
-    assert(subject_two->subject_data->data_value == 0);
+    EXPECT_EQ(0, subject_one->subject_data->data_value);
+    EXPECT_EQ(0, subject_two->subject_data->data_value);
     
     //add consumer decrement to event one to subject one in this case counter need to remain to 0
-    assert(trigger_environment.addConsumerOnSubjectForEvent(kTriggerDataEventTypeOne,
+    ASSERT_TRUE(trigger_environment.addConsumerOnSubjectForEvent(kTriggerDataEventTypeOne,
                                                             subject_one,
                                                             "SubjectConsumerDecrement"));
     event_one->getProperties()();
     trigger_environment.fireEventOnSubject(event_one, subject_one);
-    assert(subject_one->subject_data->data_value == 0);
+    ASSERT_EQ(0, subject_one->subject_data->data_value);
     
     event_one->getProperties()("offset", CDataVariant(10));
     trigger_environment.fireEventOnSubject(event_one, subject_one);
-    assert(subject_one->subject_data->data_value == 0);
+    ASSERT_EQ(0, subject_one->subject_data->data_value);
     
     int idx = 0;
     SubjectTriggerEnviroment::VectorConsumerInstance consumer_list;
@@ -158,17 +152,12 @@ bool TestTrigger::test(){
         it++, idx++) {
         switch (idx) {
             case 0:
-                assert((*it)->getConsumerName().compare("SubjectConsumerIncrement") == 0);
+                ASSERT_EQ(0, (*it)->getConsumerName().compare("SubjectConsumerIncrement"));
                 break;
             case 1:
-                assert((*it)->getConsumerName().compare("SubjectConsumerDecrement") == 0);
+                ASSERT_EQ(0, (*it)->getConsumerName().compare("SubjectConsumerDecrement"));
                 break;
         }
         
     }
-    //test property group
-    //SubjectConsumerIncrementPropertyDescription cons_desc;
-    //common::property::PropertyGroupSDWrapper group_ref_wrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(common::property::PropertyGroup, cons_desc));
-    std::cout << trigger_environment.serialize()->getJSONString() << std::endl;
-    return true;
 }
