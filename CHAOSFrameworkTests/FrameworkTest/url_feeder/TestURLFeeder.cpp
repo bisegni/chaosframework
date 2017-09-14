@@ -52,7 +52,6 @@ void TestURLFeeder::SetUp() {
 }
 
 TEST_F(TestURLFeeder, TestURLFeederLogic) {
-    std::cout << "----------------logic feeder test-----------" << std::endl;
     feeder_engine.addURL(chaos::common::network::URL("http://test:9091"), 100);
     feeder_engine.addURL(chaos::common::network::URL("http://test:9092"), 50);
     feeder_engine.addURL(chaos::common::network::URL("http://test:9093"), 25);
