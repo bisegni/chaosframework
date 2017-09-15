@@ -43,7 +43,8 @@ CheckConfigureBuild(mongoclient mongo-cxx-driver:legacy-1.0.0-rc0 "--extralib=bo
 #########
 
 
-IF (CHAOS_ONLY_DEPENDECY OR CHAOS_ARCHITECTURE_TEST)
+IF (CHAOS_ONLY_DEPENDECY OR
+    CHAOS_ARCHITECTURE_TEST)
   #google test
   ExternalProject_Add(
      googletest
@@ -78,24 +79,26 @@ if(NOT CHAOS_ONLY_DEPENDECY)
   MESG("Configure UIToolkit Layer")
   ADD_SUBDIRECTORY(chaos/ui_toolkit)
 
-  IF (CHAOS_AGENT)
-  MESG("Configure Chaos Agent Service")
-  ADD_SUBDIRECTORY(ChaosAgent)
-  ENDIF()
-
-  IF (CHAOS_MDS)
-    MESG("Configure Chaos Metadata Service")
-    ADD_SUBDIRECTORY(ChaosMetadataService)
-  ENDIF()
-
   MESG("Configure Chaos Metadata Service Client Library")
   ADD_SUBDIRECTORY(chaos_metadata_service_client)
 
-  MESG("Configure Chaos Metadata Service Client Library Test Application")
-  ADD_SUBDIRECTORY(ChaosMetadataServiceClientTest)
-
   MESG("Configure Chaos Micro Unit Toolkit")
   ADD_SUBDIRECTORY(chaos_micro_unit_toolkit)
+endif()
+
+IF (CHAOS_AGENT AND NOT CHAOS_ONLY_DEPENDECY)
+MESG("Configure Chaos Agent Service")
+ADD_SUBDIRECTORY(ChaosAgent)
+ENDIF()
+
+IF (CHAOS_MDS AND NOT CHAOS_ONLY_DEPENDECY)
+  MESG("Configure Chaos Metadata Service")
+  ADD_SUBDIRECTORY(ChaosMetadataService)
+ENDIF()
+
+IF(NOT CHAOS_ONLY_DEPENDECY)
+  MESG("Configure Chaos Metadata Service Client Library Test Application")
+  ADD_SUBDIRECTORY(ChaosMetadataServiceClientTest)
 
   MESG("Configure Chaos Micro Unit Toolkit Test")
   ADD_SUBDIRECTORY(ChaosMicroUnitToolkitTest)
