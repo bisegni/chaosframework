@@ -17,11 +17,11 @@
 		327A28651D71D6D100DFDD2C /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327A28641D71D6D100DFDD2C /* main.cpp */; };
 		327A286B1D71D72700DFDD2C /* TestCommandExecutor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327A28691D71D72700DFDD2C /* TestCommandExecutor.cpp */; };
 		327A286E1D71D73300DFDD2C /* TestBatchCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327A286C1D71D73300DFDD2C /* TestBatchCommand.cpp */; };
-		3299437C1D6B5456008DBAE9 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3299437B1D6B5456008DBAE9 /* main.cpp */; };
 		3299438B1D6B58EE008DBAE9 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3299438A1D6B58EE008DBAE9 /* main.cpp */; };
 		329943911D6B5902008DBAE9 /* TestObjectProcessingPriorityQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3299438F1D6B5902008DBAE9 /* TestObjectProcessingPriorityQueue.cpp */; };
 		3299439A1D6B5C5F008DBAE9 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329943991D6B5C5F008DBAE9 /* main.cpp */; };
 		329943A01D6B5CC4008DBAE9 /* TestObjectProcessingQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3299439E1D6B5CC4008DBAE9 /* TestObjectProcessingQueue.cpp */; };
+		32A735331F6C399E00008145 /* PropertyTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A735311F6C399E00008145 /* PropertyTest.cpp */; };
 		32AC6F0E1EC0CD8D00FCCD85 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32AC6F0D1EC0CD8D00FCCD85 /* main.cpp */; };
 		32DAABA11D6B64DF00464F7A /* TestObjectProcessingPriorityQueueForPriority.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DAAB9F1D6B64DF00464F7A /* TestObjectProcessingPriorityQueueForPriority.cpp */; };
 		32DAABA91D6C739200464F7A /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DAABA81D6C739200464F7A /* main.cpp */; };
@@ -169,10 +169,8 @@
 		329943711D6B4911008DBAE9 /* TestStateFlagCatalog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestStateFlagCatalog.cpp; sourceTree = "<group>"; };
 		329943721D6B4911008DBAE9 /* TestStateFlagCatalog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestStateFlagCatalog.h; sourceTree = "<group>"; };
 		329943791D6B5456008DBAE9 /* TestURLFeeder */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestURLFeeder; sourceTree = BUILT_PRODUCTS_DIR; };
-		3299437B1D6B5456008DBAE9 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		329943801D6B5469008DBAE9 /* TestURLFeeder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestURLFeeder.cpp; sourceTree = "<group>"; };
 		329943811D6B5469008DBAE9 /* TestURLFeeder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestURLFeeder.h; sourceTree = "<group>"; };
-		329943831D6B585C008DBAE9 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		329943881D6B58EE008DBAE9 /* TestObjectProcessingPriorityQueue */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestObjectProcessingPriorityQueue; sourceTree = BUILT_PRODUCTS_DIR; };
 		3299438A1D6B58EE008DBAE9 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		3299438F1D6B5902008DBAE9 /* TestObjectProcessingPriorityQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestObjectProcessingPriorityQueue.cpp; sourceTree = "<group>"; };
@@ -183,6 +181,8 @@
 		3299439E1D6B5CC4008DBAE9 /* TestObjectProcessingQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestObjectProcessingQueue.cpp; sourceTree = "<group>"; };
 		3299439F1D6B5CC4008DBAE9 /* TestObjectProcessingQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestObjectProcessingQueue.h; sourceTree = "<group>"; };
 		329943A11D6B5D42008DBAE9 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		32A735311F6C399E00008145 /* PropertyTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PropertyTest.cpp; sourceTree = "<group>"; };
+		32A735321F6C399E00008145 /* PropertyTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PropertyTest.h; sourceTree = "<group>"; };
 		32AC6F0B1EC0CD8D00FCCD85 /* TestVariant */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestVariant; sourceTree = BUILT_PRODUCTS_DIR; };
 		32AC6F0D1EC0CD8D00FCCD85 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		32DAAB9F1D6B64DF00464F7A /* TestObjectProcessingPriorityQueueForPriority.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestObjectProcessingPriorityQueueForPriority.cpp; sourceTree = "<group>"; };
@@ -317,6 +317,7 @@
 			isa = PBXGroup;
 			children = (
 				32639FE81F6AAD990049089C /* main.cpp */,
+				32C4BA591F6C3287000F5C50 /* property */,
 				32639FF41F6ACAB60049089C /* url_feeder */,
 				32639FF21F6ABB840049089C /* state_flag_catalog */,
 				32639FEE1F6AAE730049089C /* templated_key_value_hash */,
@@ -379,7 +380,6 @@
 		329943351D6B38CC008DBAE9 = {
 			isa = PBXGroup;
 			children = (
-				3299437A1D6B5456008DBAE9 /* TestURLFeeder */,
 				329943891D6B58EE008DBAE9 /* TestObjectProcessingPriorityQueue */,
 				329943981D6B5C5F008DBAE9 /* TestObjectProcessingQueue */,
 				32DAABA71D6C739200464F7A /* TestMemcachedEmbedded */,
@@ -416,15 +416,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		3299437A1D6B5456008DBAE9 /* TestURLFeeder */ = {
-			isa = PBXGroup;
-			children = (
-				329943831D6B585C008DBAE9 /* CMakeLists.txt */,
-				3299437B1D6B5456008DBAE9 /* main.cpp */,
-			);
-			path = TestURLFeeder;
-			sourceTree = "<group>";
-		};
 		329943891D6B58EE008DBAE9 /* TestObjectProcessingPriorityQueue */ = {
 			isa = PBXGroup;
 			children = (
@@ -456,6 +447,15 @@
 				32AC6F0D1EC0CD8D00FCCD85 /* main.cpp */,
 			);
 			path = TestVariant;
+			sourceTree = "<group>";
+		};
+		32C4BA591F6C3287000F5C50 /* property */ = {
+			isa = PBXGroup;
+			children = (
+				32A735311F6C399E00008145 /* PropertyTest.cpp */,
+				32A735321F6C399E00008145 /* PropertyTest.h */,
+			);
+			path = property;
 			sourceTree = "<group>";
 		};
 		32DAABA71D6C739200464F7A /* TestMemcachedEmbedded */ = {
@@ -869,6 +869,7 @@
 				32639FE91F6AAD990049089C /* main.cpp in Sources */,
 				32639FF01F6AB2230049089C /* TriggerTest.cpp in Sources */,
 				32639FF51F6ACAC70049089C /* TestURLFeeder.cpp in Sources */,
+				32A735331F6C399E00008145 /* PropertyTest.cpp in Sources */,
 				32639FF31F6ABB980049089C /* TestStateFlagCatalog.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -888,7 +889,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3299437C1D6B5456008DBAE9 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
