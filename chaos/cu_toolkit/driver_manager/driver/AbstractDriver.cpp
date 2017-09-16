@@ -211,19 +211,25 @@ void AbstractDriver::scanForMessage() {
                     setBypass(false);
                     break;
                 case OpcodeType::OP_INIT_DRIVER:
-                    if(is_json_param){
+                    opcode_submission_result = MsgManagmentResultType::MMR_EXECUTED;
+                    {
+                    	chaos::common::data::CDataWrapper p;
+                    	int isjson=1;
                     	try {
-                    		chaos::common::data::CDataWrapper p;
+
                     		p.setSerializedJsonData(static_cast<const char *>(current_message_ptr->inputData));
-                    		ADLDBG_ << "JSON PARMS:"<<current_message_ptr->inputData;
-                    		driverInit(p);
                     	} catch(...){
+                    		isjson=0;
+                    	}
+                    	if(isjson){
+                    		ADLDBG_ << "JSON PARMS:"<<p.getJSONString();
+                    		driverInit(p);
+                    	} else {
+                    		ADLDBG_ << "STRING PARMS:"<<static_cast<const char *>(current_message_ptr->inputData);
                     		driverInit(static_cast<const char *>(current_message_ptr->inputData));
                     	}
-                    } else {
-                        driverInit(static_cast<const char *>(current_message_ptr->inputData));
                     }
-                    opcode_submission_result = MsgManagmentResultType::MMR_EXECUTED;
+
                     break;
 
                 case OpcodeType::OP_DEINIT_DRIVER:

@@ -373,7 +373,8 @@ namespace chaos {
                     *reinterpret_cast< double* >( (char*)element.value() ) = newvalue;
                 }
             };
-         
+            ostream& operator<<(ostream& os, const CDataWrapper& dt);
+
 #define CDW_GET_SRT_WITH_DEFAULT(c, k, d) ((c)->hasKey(k)?(c)->getStringValue(k):d)
 #define CDW_GET_BOOL_WITH_DEFAULT(c, k, d) ((c)->hasKey(k)?(c)->getBoolValue(k):d)
 #define CDW_GET_INT32_WITH_DEFAULT(c, k, d) ((c)->hasKey(k)?(c)->getInt32Value(k):d)

@@ -681,7 +681,9 @@ CDataWrapperType CDataWrapper::getValueType(const std::string& key) const {
     }
     return result;
 }
-
+ostream& operator<<(ostream& os, const CDataWrapper& dt){
+	return os<<dt.getJSONString();
+}
 const bool CDataWrapper::isEmpty() const {
     return bsonBuilder->asTempObj().isEmpty();
 }
