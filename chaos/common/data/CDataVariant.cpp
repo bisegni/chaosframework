@@ -218,7 +218,9 @@ type(_type){
             break;
         }
         case DataType::TYPE_CLUSTER:{
-          _internal_variant = ChaosSharedPtr<CDataWrapper>(new CDataWrapper(static_cast<const char*>(_value_pointer)));
+        	CDataWrapper*tmp=new CDataWrapper();
+        	tmp->setSerializedJsonData(static_cast<const char*>(_value_pointer));
+          _internal_variant = ChaosSharedPtr<CDataWrapper>(tmp);
         	break;
         }
         case DataType::TYPE_STRING:{
