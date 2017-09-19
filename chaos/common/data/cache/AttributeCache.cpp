@@ -221,15 +221,13 @@ void AttributeCache::copyAttribute(AttributeValue& av) {
 		//update attribute
 		getValueSettingByName(av.name)->setValue(av.getAsVariant());
 	} else {
-		{
-
-
+		DEBUG_CODE({
 			if(av.size && (av.type == 6) && av.value_buffer ){
 				LDBG_<<"adding attribute value '"<<av.name<<"' size:"<<av.size<<" type:"<<av.type<<" subtype:"<<((av.sub_type.size()>0)?av.sub_type[0]:-1)<<" stringa:"<<(const char*)av.value_buffer;
 			} else {
 				LDBG_<<"adding attribute value '"<<av.name<<"' size:"<<av.size<<" type:"<<av.type<<" subtype:"<<((av.sub_type.size()>0)?av.sub_type[0]:-1);
 			}
-		}
+        });
 		//add attribute
 		addAttribute(av.name,
 				av.size,
