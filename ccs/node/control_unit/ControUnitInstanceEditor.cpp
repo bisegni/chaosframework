@@ -280,11 +280,11 @@ void ControUnitInstanceEditor::fillUIFromPropertyInfo(QSharedPointer<chaos::comm
 
 QSharedPointer<PropertyGroup> ControUnitInstanceEditor::preparePropertyGroup() {
     QSharedPointer<PropertyGroup> result(new PropertyGroup(chaos::ControlUnitPropertyKey::GROUP_NAME));
-    result->addProperty(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, CDataVariant(ui->lineEditDefaultScheduleTime->text().toULongLong()));
+    result->addProperty(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, CDataVariant(static_cast<uint64_t>(ui->lineEditDefaultScheduleTime->text().toULongLong())));
     result->addProperty(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_TYPE, CDataVariant(ui->comboBoxStorageType->currentIndex()));
     result->addProperty(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING, CDataVariant(ui->lineEditHistoryAgeing->text().toUInt()));
-    result->addProperty(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME, CDataVariant(ui->lineEditHistoryTime->text().toULongLong()));
-    result->addProperty(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME, CDataVariant(ui->lineEditLiveTime->text().toULongLong()));
+    result->addProperty(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME, CDataVariant(static_cast<uint64_t>(ui->lineEditHistoryTime->text().toULongLong())));
+    result->addProperty(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME, CDataVariant(static_cast<uint64_t>(ui->lineEditLiveTime->text().toULongLong())));
     result->addProperty(chaos::ControlUnitPropertyKey::INIT_RESTORE_OPTION, CDataVariant(ui->comboBoxStaticInitRestoreOption->currentIndex()));
     result->addProperty(chaos::ControlUnitPropertyKey::INIT_RESTORE_APPLY, CDataVariant(ui->checkBoxInitRestoreApply->checkState()==Qt::Checked));
     return result;

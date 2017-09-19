@@ -535,7 +535,7 @@ void ControlUnitEditor::on_pushButtonCreateInstance_clicked() {
 
 void ControlUnitEditor::on_pushButtonSetRunScheduleDelay_clicked() {
     chaos::common::property::PropertyGroup pg(chaos::ControlUnitPropertyKey::GROUP_NAME);
-    pg.addProperty(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, CDataVariant(ui->lineEditRunScheduleDelay->text().toLongLong()));
+    pg.addProperty(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, CDataVariant(static_cast<uint64_t>(ui->lineEditRunScheduleDelay->text().toLongLong())));
     submitApiResult(TAG_CU_SET_THREAD_SCHEDULE_DELAY,
                     GET_CHAOS_API_PTR(node::UpdateProperty)->execute(control_unit_unique_id.toStdString(),
                                                                      pg));
