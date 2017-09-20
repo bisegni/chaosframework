@@ -26,11 +26,11 @@
 
 class TimerTask:
 public chaos::common::async_central::TimerHandler {
-    int counter;
+    int& counter;
 protected:
     void timeout();
 public:
-    TimerTask();
+    TimerTask(int& interal_counter);
 };
 
 #endif /* __CHAOSFrameworkTests_A04DD2A1_4803_4A5E_A2B8_FC0D1BCD92D1_TimerTask_h */

@@ -75,6 +75,21 @@ namespace chaos {
                                    uint32_t last_unique_id,
                                    uint32_t page_length);
                     //! inherited method
+                    int setProperty(const std::string& node_uid,
+                                    const chaos::common::property::PropertyGroupVector& property_group_vector);
+                    //! inherited method
+                    int updatePropertyDefaultValue(const std::string& node_uid,
+                                                   const chaos::common::property::PropertyGroupVector& property_group_vector);
+                    //! inherited method
+                    int getProperty(const data_access::PropertyType property_type,
+                                    const std::string& node_uid,
+                                    chaos::common::property::PropertyGroupVector& property_group_vector);
+                    //! inherited method
+                    int getPropertyGroup(const data_access::PropertyType property_type,
+                                         const std::string& node_uid,
+                                         const std::string& property_group_name,
+                                         chaos::common::property::PropertyGroup& property_group);
+                    //! inherited method
                     int getCommand(const std::string& command_unique_id,
                                    chaos::common::data::CDataWrapper **command);
                     //! inherited method
@@ -107,15 +122,15 @@ namespace chaos {
                     //! inherited method
                     int addAgeingManagementDataToNode(const std::string& control_unit_id);
                     
-//                    int reserveNodeForAgeingManagement(uint64_t& last_sequence_id,
-//                                                       std::string& node_uid_reserved,
-//                                                       uint32_t& node_ageing_time,
-//                                                       uint64_t& last_ageing_perform_time,
-//                                                       uint64_t timeout_for_checking,
-//                                                       uint64_t delay_next_check);
-//                    
-//                    int releaseNodeForAgeingManagement(std::string& node_uid,
-//                                                       bool performed);
+                    //                    int reserveNodeForAgeingManagement(uint64_t& last_sequence_id,
+                    //                                                       std::string& node_uid_reserved,
+                    //                                                       uint32_t& node_ageing_time,
+                    //                                                       uint64_t& last_ageing_perform_time,
+                    //                                                       uint64_t timeout_for_checking,
+                    //                                                       uint64_t delay_next_check);
+                    //
+                    //                    int releaseNodeForAgeingManagement(std::string& node_uid,
+                    //                                                       bool performed);
                     
                     int isNodeAlive(const std::string& node_uid, bool& alive);
                 };

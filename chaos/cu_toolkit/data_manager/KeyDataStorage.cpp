@@ -21,6 +21,7 @@
 
 #include <chaos/common/global.h>
 #include <chaos/common/chaos_constants.h>
+#include <chaos/common/data/CDataVariant.h>
 #include <chaos/common/utility/TimingUtil.h>
 #include <chaos/cu_toolkit/data_manager/KeyDataStorage.h>
 using namespace std;
@@ -164,41 +165,6 @@ CDataWrapper* KeyDataStorage::getNewDataPackForDomain(const KeyDataStorageDomain
     result->addInt64Value(DataPackCommonKey::DPCK_SEQ_ID, ++sequence_id);
     return result;
 }
-
-/*
- Retrive the data from Live Storage
- 
- ArrayPointer<CDataWrapper>* KeyDataStorage::getLastDataSet(KeyDataStorageDomain domain) {
- //retrive data from cache for the key managed by
- //this instance of keydatastorage
- CHAOS_ASSERT(io_data_driver);
- //lock for protect the access
- boost::unique_lock<boost::mutex> l(mutex_push_data);
- switch(domain) {
- case KeyDataStorageDomainOutput:
- return io_data_driver->retriveData(output_key);
- break;
- case KeyDataStorageDomainInput:
- return io_data_driver->retriveData(input_key);
- break;
- case KeyDataStorageDomainSystem:
- return io_data_driver->retriveData(system_key);
- break;
- case KeyDataStorageDomainCustom:
- return io_data_driver->retriveData(custom_key);
- break;
- case KeyDataStorageDomainCUAlarm:
- return io_data_driver->retriveData(cu_alarm_key);
- break;
- case KeyDataStorageDomainDevAlarm:
- return io_data_driver->retriveData(dev_alarm_key);
- break;
- case KeyDataStorageDomainHealth:
- return io_data_driver->retriveData(health_key);
- break;
- }
- return
- } */
 
 void KeyDataStorage::pushDataWithControlOnHistoryTime(const std::string& key,
                                                       CDataWrapper *dataToStore,
@@ -392,35 +358,28 @@ ChaosSharedPtr<chaos_data::CDataWrapper> KeyDataStorage::getDatasetFromRestorePo
     }
 }
 
-CDataWrapper* KeyDataStorage::updateConfiguration(CDataWrapper *newConfiguration) {
+void KeyDataStorage::updateConfiguration(CDataWrapper *configuration) {
     //update the driver configration
-    if(io_data_driver) io_data_driver->updateConfiguration(newConfiguration);
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> cu_properties;
-    CDataWrapper *cu_property_container = NULL;
-    if(newConfiguration->hasKey("property_abstract_control_unit") &&
-       newConfiguration->isCDataWrapperValue("property_abstract_control_unit")){
-        cu_properties.reset(newConfiguration->getCSDataValue("property_abstract_control_unit"));
-        cu_property_container = cu_properties.get();
-    } else {
-        cu_property_container = newConfiguration;
-    }
-    
-    if(cu_property_container->isInt64Value(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME)){
-        storage_history_time = cu_property_container->getUInt64Value(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME);
+    if(io_data_driver) io_data_driver->updateConfiguration(configuration);
+
+}
+
+void KeyDataStorage::updateConfiguration(const std::string& conf_name,
+                                         const chaos::common::data::CDataVariant& conf_value) {
+    if(conf_name.compare(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME) == 0){
+        storage_history_time = conf_value.asUInt64();
         KeyDataStorageLAPP << CHAOS_FORMAT("Set storage history time to %1%", %storage_history_time);
     }
     
-    if(cu_property_container->isInt64Value(DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME)){
-        storage_live_time = cu_property_container->getUInt64Value(DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME);
-        KeyDataStorageLAPP << CHAOS_FORMAT("Set storage live time to %1%", %storage_live_time);
+    if(conf_name.compare(DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME) == 0){
+        storage_live_time = conf_value.asUInt64();
     }
     
-    if(cu_property_container->hasKey(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE) &&
-       cu_property_container->isInt32Value(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE)){
-        storage_type = static_cast<DataServiceNodeDefinitionType::DSStorageType>(cu_property_container->getInt32Value(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE));
-        KeyDataStorageLAPP << CHAOS_FORMAT("Set storage type to %1%", %storage_type);
+    if(conf_name.compare(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE) == 0){
+        storage_type = static_cast<DataServiceNodeDefinitionType::DSStorageType>(conf_value.asInt32());
     }
-    return NULL;
+    
+    KeyDataStorageLAPP << CHAOS_FORMAT("Set %2% to %1%", %conf_name%storage_live_time);
 }
 
 DataServiceNodeDefinitionType::DSStorageType KeyDataStorage::getStorageType() {

@@ -34,89 +34,91 @@ namespace chaos{
     namespace common {
         namespace data {
             namespace cache {
-
-                    //! the range of index
+                
+                //! the range of index
                 typedef  uint16_t VariableIndexType;
-
+                
                 CHAOS_DEFINE_VECTOR_FOR_TYPE(ChaosSharedPtr<AttributeValue>, AttributeValueVector);
                 
-                    //! this class is a set of key with a ValueSetting class associated
+                //! this class is a set of key with a ValueSetting class associated
                 /*!
                  This class collect a set on key with the repsective ValueSetting creating a domain o
                  values.
                  */
                 class AttributeCache {
-                        //!global index for this set
+                    //!global index for this set
                     VariableIndexType index;
-
+                    
                     boost::dynamic_bitset<BitBlockDimension> bitmapChangedAttribute;
-
+                    
                     std::map<std::string, VariableIndexType> mapAttributeNameIndex;
                     
                     //attribute vector
                     AttributeValueVector vector_attribute_value;
+                    
+                    void copyAttribute(AttributeValue& av);
                 public:
                     mutable ChaosSharedPtr<boost::shared_mutex>	mutex;
-
+                    
                     AttributeCache();
-
+                    
                     ~AttributeCache();
-
+                    
                     void addAttribute(const std::string& name,
                                       uint32_t size,
                                       chaos::DataType::DataType type,
                                       const std::vector<chaos::DataType::BinarySubtype>& sub_type = std::vector<chaos::DataType::BinarySubtype>());
-
+                    
                     void setValueForAttribute(VariableIndexType n,
                                               const void * value,
                                               uint32_t size);
-
+                    
                     void setValueForAttribute(VariableIndexType n, CDataWrapper& value);
-
+                    
                     void setValueForAttribute(const std::string& name,
                                               const void * value,
                                               uint32_t size);
-
+                    
                     bool hasName(const std::string& name);
-
+                    
                     VariableIndexType getIndexForName(const std::string& name );
-
-                        //! get all attribute name in this set
+                    
+                    //! get all attribute name in this set
                     void getAttributeNames(std::vector<std::string>& names);
-
-                        //! Deinit the implementation
+                    
+                    //! Deinit the implementation
                     void reset();
-
-                        //! return the changed id into the vector
+                    
+                    //! return the changed id into the vector
                     void getChangedIndex(std::vector<VariableIndexType>& changed_index);
-
-                        //! get the ValueSetting for the index
+                    
+                    //! get the ValueSetting for the index
                     AttributeValue *getValueSettingForIndex(VariableIndexType index);
-
-                        //! get the ValueSetting for the index
+                    
+                    //! get the ValueSetting for the index
                     AttributeValue *getValueSettingByName(const std::string& name);
-
-                        //! return the number of the attribute into the domain
+                    
+                    //! return the number of the attribute into the domain
                     VariableIndexType getNumberOfAttributes();
                     
-                        //! reset the chagned index array
+                    //! reset the chagned index array
                     void resetChangedIndex();
                     
-                        //! mark all attribute as changed
+                    //! mark all attribute as changed
                     void markAllAsChanged();
                     
-                        //! return true if some attribute has change it's value
+                    //! return true if some attribute has change it's value
                     bool hasChanged() const;
                     
-                        //! set new size on attribute by index
+                    //! set new size on attribute by index
                     bool setNewSize(VariableIndexType attribute_index,
                                     uint32_t new_size,
                                     bool clear_mem = false);
-                        //! set new size on attribute by name
+                    //! set new size on attribute by name
                     bool setNewSize(const std::string& attribute_name,
                                     uint32_t new_size,
                                     bool clear_mem);
-                        //! check if an attribute is present
+                    //! check if an attribute is present
                     bool hasAttribute(const std::string& attribute_name);
                     
                     void writeAttributeToCDataWrapper(const std::string& attribute_name,
@@ -127,6 +129,8 @@ namespace chaos{
                      attribute
                      */
                     void exportToCDataWrapper(CDataWrapper& dest_dw) const;
+                    
+                    void copyToAttributeCache(AttributeCache& dest_attribute_cache);
                 };
                 
                 

@@ -28,6 +28,8 @@
 #include "ChangeNodeState.h"
 #include "CommandGet.h"
 #include "UpdateProperty.h"
+#include "UpdatePropertyDefaultValues.h"
+#include "GetPropertyDefaultValues.h"
 #include "CommandTemplateSet.h"
 #include "CommandTemplateGet.h"
 #include "CommandTemplateDelete.h"
@@ -57,6 +59,8 @@ AbstractApiGroup(NodeDomainAndActionRPC::RPC_DOMAIN){
     addApi<CommandTemplateSearch>();
     addApi<CommandTemplateSubmit>();
     addApi<CommandInstanceSubmit>();
+    addApi<GetPropertyDefaultValues>();
+    addApi<UpdatePropertyDefaultValues>();
     addApi<GetCommandAndTemplateDescription>();
 }
 

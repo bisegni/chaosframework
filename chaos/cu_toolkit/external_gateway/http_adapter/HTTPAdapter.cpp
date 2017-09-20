@@ -21,6 +21,7 @@
 
 #include <chaos/common/global.h>
 #include <chaos/common/data/CDataWrapper.h>
+#include <chaos/common/utility/InetUtility.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
 #include <chaos/cu_toolkit/external_gateway/ExternalUnitGateway.h>
 #include <chaos/cu_toolkit/external_gateway/http_adapter/HTTPAdapter.h>
@@ -33,6 +34,7 @@
 
 using namespace chaos;
 using namespace chaos::common::data;
+using namespace chaos::common::utility;
 using namespace chaos::cu::external_gateway::http_adapter;
 
 #define INFO    INFO_LOG(HTTPHelper)
@@ -44,9 +46,7 @@ HTTPAdapter::HTTPAdapter():
 run(false),
 root_connection(0){}
 
-HTTPAdapter::~HTTPAdapter() {
-    
-}
+HTTPAdapter::~HTTPAdapter() {}
 
 void HTTPAdapter::init(void *init_data) throw (chaos::CException) {
     //scsan configuration
@@ -64,7 +64,9 @@ void HTTPAdapter::init(void *init_data) throw (chaos::CException) {
     run = true;
     mg_mgr_init(&mgr, NULL);
     
-    root_connection = mg_bind(&mgr, setting.publishing_port.c_str(), HTTPAdapter::eventHandler);
+    int http_port = InetUtility::scanForLocalFreePort(boost::lexical_cast<int>(setting.publishing_port));
+    const std::string http_port_str = boost::lexical_cast<std::string>(http_port);
+    root_connection = mg_bind(&mgr, http_port_str.c_str(), HTTPAdapter::eventHandler);
     if(root_connection == NULL) {throw CException(-1, "Error creating http connection", __PRETTY_FUNCTION__);}
     root_connection->user_data = this;
     
@@ -149,7 +151,8 @@ void  HTTPAdapter::manageWSHandshake(WorkRequest& wr) {
                         MG_SOCK_STRINGIFY_IP | MG_SOCK_STRINGIFY_PORT);
     INFO << CHAOS_FORMAT("Received new connection for endoint %1% from %2%", %wr.uri%addr);
     LMapEndpointReadLock wl = map_endpoint.getReadLockObject();
-    if(map_endpoint().count(wr.uri) == 0) {
+    MapEndpointIterator endpoint_it = map_endpoint().find(wr.uri);
+    if(endpoint_it == map_endpoint().end()) {
         sendWSJSONError(wr.nc,
                         -1,
                         CHAOS_FORMAT("No endpoint found for '%1%'", %wr.uri),
@@ -161,7 +164,7 @@ void  HTTPAdapter::manageWSHandshake(WorkRequest& wr) {
     }
     
     //check if endpoint can accept more connection
-    if(map_endpoint()[wr.uri]->canAcceptMoreConnection() == false) {
+    if(endpoint_it->second->canAcceptMoreConnection() == false) {
         //write error for no more connection accepted by endpoint
         sendWSJSONError(wr.nc,
                         -2,
@@ -187,7 +190,7 @@ void  HTTPAdapter::manageWSHandshake(WorkRequest& wr) {
             LMapConnectionWriteLock wconnl = map_connection.getWriteLockObject();
             map_connection().insert(MapConnectionPair(reinterpret_cast<uintptr_t>(wr.nc),
                                                       ChaosSharedPtr<HTTPExternalUnitConnection>(new HTTPExternalUnitConnection(wr.nc,
-                                                                                                                                map_endpoint()[wr.uri],
+                                                                                                                                endpoint_it->second,
                                                                                                                                 ChaosMoveOperator(serializer)))));
             sendWSJSONAcceptedConnection(wr.nc,
                                          true,

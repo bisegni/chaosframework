@@ -102,10 +102,11 @@ namespace chaos {
 				 */
 				inline void threadStartStopManagment(bool startAction) throw(CException);
 				
-				/*!
-				 Event for update some CU configuration
-				 */
-				virtual chaos::common::data::CDataWrapper* updateConfiguration(chaos::common::data::CDataWrapper* update_pack, bool& detach_param) throw (CException);
+                //!inherited method by @AbstractControlUnit
+                void propertyUpdatedHandler(const std::string& group_name,
+                                            const std::string& property_name,
+                                            const chaos::common::data::CDataVariant& old_value,
+                                            const chaos::common::data::CDataVariant& new_value);
                 /*!
                  Thread method for the scheduler
                  */

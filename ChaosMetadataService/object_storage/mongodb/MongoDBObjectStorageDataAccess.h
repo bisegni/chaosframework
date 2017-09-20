@@ -53,11 +53,15 @@ namespace chaos {
                     //inhertied method
                     int getObject(const std::string& key,
                                   const uint64_t& timestamp,
-                                  object_storage::abstraction::ObjectSharedPtr& object_ptr_ref);
+                                  chaos::common::data::CDWShrdPtr& object_ptr_ref);
+                    
+                    //!inherited method
+                    int getLastObject(const std::string& key,
+                                      chaos::common::data::CDWShrdPtr& object_ptr_ref);
                     //inhertied method
                     int deleteObject(const std::string& key,
-                                             uint64_t start_timestamp,
-                                             uint64_t end_timestamp);
+                                     uint64_t start_timestamp,
+                                     uint64_t end_timestamp);
                     //inhertied method
                     int findObject(const std::string& key,
                                    uint64_t timestamp_from,

@@ -23,35 +23,25 @@
 #define __CHAOSFrameworkTests__01071BC_B99C_407B_B3F0_721B6EE771A4_TestURLFeeder_h
 
 #include <chaos/common/network/URLServiceFeeder.h>
+#include <gtest/gtest.h>
 
-namespace chaos {
-    namespace test {
-        namespace network {
-            
-            class ServiceForURL {
-            public:
-                std::string url;
-            };
-            
-            class TestURLFeeder : public common::network::URLServiceFeederHandler {
-                chaos::common::network::URLServiceFeeder feeder_engine;
-                uint32_t number_of_cycle;
-            protected:
-                
-                void disposeService(void *service_ptr);
-                void* serviceForURL(const common::network::URL& url,
-                                    uint32_t service_index);
-                
-                void test_feeder_logic();
-                void test_feeder_logic_equal_priority();
-                void test_feeder_preformance();
-            public:
-                void test(uint32_t _number_of_cycle = 0);
-                TestURLFeeder();
-            };
-            
-        }
-    }
-}
+class ServiceForURL {
+public:
+    std::string url;
+};
+
+class TestURLFeeder :
+public testing::Test,
+public chaos::common::network::URLServiceFeederHandler {
+protected:
+    uint32_t number_of_cycle;
+    chaos::common::network::URLServiceFeeder feeder_engine;
+    void disposeService(void *service_ptr);
+    void* serviceForURL(const chaos::common::network::URL& url,
+                        uint32_t service_index);
+    virtual void SetUp();
+public:
+    TestURLFeeder();
+};
 
 #endif /* __CHAOSFrameworkTests__01071BC_B99C_407B_B3F0_721B6EE771A4_TestURLFeeder_h */

@@ -31,20 +31,38 @@ name(_name){}
 
 PropertyGroup::PropertyGroup(const PropertyGroup& src):
 name(src.name),
-map_properties(src.map_properties){}
+map_properties(src.map_properties),
+value_change_function(src.value_change_function),
+value_updated_function(src.value_updated_function){}
 
 bool PropertyGroup::addProperty(const std::string& property_name,
                                 const std::string& property_description,
-                                const DataType::DataType property_type) {
+                                const DataType::DataType property_type,
+                                const uint32_t flag,
+                                const CDataVariant& property_default_value) {
     //add property
     if(map_properties.count(property_name) != 0) return false;
     map_properties.insert(MapPropertiesPair(property_name, PropertyDescription(property_name,
                                                                                property_description,
-                                                                               property_type)));
+                                                                               property_type,
+                                                                               flag,
+                                                                               property_default_value)));
     return true;
 }
 
-const CDataVariant& PropertyGroup::getPropertyValue(const std::string& property_name) {
+bool PropertyGroup::addProperty(const std::string& property_name,
+                                const CDataVariant& property_default_value) {
+    //add property
+    if(map_properties.count(property_name) != 0) return false;
+    map_properties.insert(MapPropertiesPair(property_name, PropertyDescription(property_name,
+                                                                               "",
+                                                                               DataType::TYPE_UNDEFINED,
+                                                                               0,
+                                                                               property_default_value)));
+    return true;
+}
+
+const CDataVariant& PropertyGroup::getPropertyValue(const std::string& property_name) const {
     if(map_properties.count(property_name) == 0) return default_null_value;
     return map_properties[property_name].getPropertyValue();
 }
@@ -54,7 +72,7 @@ PropertyDescription& PropertyGroup::getProperty(const std::string& property_name
 }
 
 void PropertyGroup::setPropertyValue(const std::string& property_name,
-                                     const chaos::common::data::CDataVariant& new_value) {
+                                     const chaos::common::data::CDataVariant& new_value) const {
     if(map_properties.count(property_name) == 0) return;
     if(value_change_function) {
         //!check if the value is accepted
@@ -67,7 +85,7 @@ void PropertyGroup::setPropertyValue(const std::string& property_name,
     
     //inform the ganged function fo the changed
     if(value_updated_function){value_updated_function(name,
-                                                      name,
+                                                      property_name,
                                                       old,
                                                       map_properties[property_name].getPropertyValue());}
 }
@@ -103,7 +121,7 @@ void PropertyGroup::copyPropertiesFromGroup(const PropertyGroup& src_group,
     }
 }
 
-void PropertyGroup::updatePropertiesValueFromSourceGroup(const PropertyGroup& src_group) {
+void PropertyGroup::updatePropertiesValueFromSourceGroup(const PropertyGroup& src_group) const {
     for (MapPropertiesConstIterator it = src_group.map_properties.begin(),
          end = src_group.map_properties.end();
          it != end;
@@ -118,6 +136,10 @@ void PropertyGroup::updatePropertiesValueFromSourceGroup(const PropertyGroup& sr
 
 const MapProperties PropertyGroup::getAllProperties() const {
     return map_properties;
+}
+
+const bool PropertyGroup::hasProperty(const std::string& property_name) const {
+    return map_properties.find(property_name) != map_properties.end();
 }
 
 void PropertyGroup::resetProperiesValues() {

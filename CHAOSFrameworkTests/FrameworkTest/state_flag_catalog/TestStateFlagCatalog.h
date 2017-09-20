@@ -24,23 +24,18 @@
 #include <chaos/common/alarm/AlarmCatalog.h>
 #include <chaos/common/state_flag/StateFlagCatalog.h>
 
-namespace chaos {
-    namespace common {
-        namespace utility {
-            namespace test {
-                
-                class TestStateFlagCatalog {
-                    chaos::common::alarm::AlarmCatalog alarm_catalog;
-                    chaos::common::state_flag::StateFlagCatalog catalog_a;
-                    chaos::common::state_flag::StateFlagCatalog catalog_b;
-                public:
-                    TestStateFlagCatalog();
-                    ~TestStateFlagCatalog();
-                    bool test();
-                };
-            }
-        }
-    }
-}
+#include <gtest/gtest.h>
+
+class TestStateFlagCatalog:
+public testing::Test{
+public:
+    TestStateFlagCatalog();
+protected:
+    chaos::common::alarm::AlarmCatalog alarm_catalog;
+    chaos::common::state_flag::StateFlagCatalog catalog_a;
+    chaos::common::state_flag::StateFlagCatalog catalog_b;
+    virtual void SetUp();
+};
+
 
 #endif /* __CHAOSFrameworkTests_D40485EA_AE3A_461F_818A_4272F4DC9097_TestStateFlagCatalog_h */

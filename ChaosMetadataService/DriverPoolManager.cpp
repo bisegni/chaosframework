@@ -34,6 +34,64 @@ using namespace chaos::metadata_service;
 using namespace chaos::common::utility;
 using namespace chaos::common::async_central;
 using namespace chaos::data_service::cache_system;
+using namespace chaos::service_common::persistence::data_access;
+using namespace chaos::data_service::object_storage::abstraction;
+//storage pool
+//-------------------------------------------cache pool---------------------------------------
+
+ObjectStorageDriverPool::ObjectStorageDriverPool():
+instance_created(0),
+minimum_instance_in_pool(3),
+impl_name(ChaosMetadataService::getInstance()->setting.object_storage_setting.driver_impl + "ObjectStorageDriver"),
+pool("object_storage_driver",
+     this,
+     minimum_instance_in_pool) {}
+
+ObjectStorageDriverPool::~ObjectStorageDriverPool() {}
+
+AbstractPersistenceDriver* ObjectStorageDriverPool::allocateResource(const std::string& pool_identification,
+                                                       uint32_t& alive_for_ms) {
+    AbstractPersistenceDriver *pooled_driver = NULL;
+    DEBUG_CODE(DP_LOG_INFO << "New pool request allocation for object storage driver:" << impl_name;)
+    //increment and check instance created
+    if(instance_created+1 > minimum_instance_in_pool) {
+        alive_for_ms = 1000*60*10; //one hour
+    } else {
+        //we want at least two active driver instance
+        alive_for_ms = std::numeric_limits<uint32_t>::max();
+    }
+    DEBUG_CODE(DP_LOG_INFO << "requested resource need to live for ms:" << alive_for_ms;)
+    
+    //pooled_driver
+    try{
+        pooled_driver = ObjectFactoryRegister<AbstractPersistenceDriver>::getInstance()->getNewInstanceByName(impl_name);
+        InizializableService::initImplementation(pooled_driver,
+                                                 NULL,
+                                                 pooled_driver->getName(),
+                                                 __PRETTY_FUNCTION__);
+        //increment create counter
+        instance_created++;
+
+        DEBUG_CODE(DP_LOG_INFO << "Allocation done for storage driver:" << impl_name << " total created:" << instance_created;)
+    } catch(chaos::CException& ex) {
+        DP_LOG_ERR << CHAOS_FORMAT("Erro allocation storage driver %1%", %impl_name);
+    }
+    return pooled_driver;
+}
+
+void ObjectStorageDriverPool::deallocateResource(const std::string& pool_identification,
+                                                 AbstractPersistenceDriver* pooled_driver) {
+    //decrement instance created
+    instance_created--;
+    InizializableService::deinitImplementation(pooled_driver,
+                                               pooled_driver->getName(),
+                                               __PRETTY_FUNCTION__);
+    delete(pooled_driver);
+}
+
+void ObjectStorageDriverPool::init(void *init_data) throw (chaos::CException) {}
+
+void ObjectStorageDriverPool::deinit() throw (chaos::CException) {}
 
 //-------------------------------------------cache pool---------------------------------------
 
@@ -59,7 +117,7 @@ CacheDriver* CacheDriverPool::allocateResource(const std::string& pool_identific
         alive_for_ms = std::numeric_limits<uint32_t>::max();
     }
     DEBUG_CODE(DP_LOG_INFO << "requested resource need to live for ms:" << alive_for_ms;)
-
+    
     //pooled_driver
     try{
         pooled_driver = ObjectFactoryRegister<cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name);
@@ -82,9 +140,9 @@ CacheDriver* CacheDriverPool::allocateResource(const std::string& pool_identific
         
         //fix the update on server
         if(pooled_driver->updateConfig()<0){
-        	DP_LOG_ERR<<" cannot complete initialization of cache driver:\""<<cache_impl_name<<"\" removing..";
-        	delete pooled_driver;
-        	return NULL;
+            DP_LOG_ERR<<" cannot complete initialization of cache driver:\""<<cache_impl_name<<"\" removing..";
+            delete pooled_driver;
+            return NULL;
         }
         
         //increment create counter
@@ -146,4 +204,12 @@ CachePoolSlot* DriverPoolManager::getCacheDriverInstance() {
 
 void DriverPoolManager::releaseCacheDriverInstance(CachePoolSlot *cache_driver_instance) {
     cache_pool.pool.releaseResource(cache_driver_instance);
+}
+
+ObjectStoragePoolSlot *DriverPoolManager::getObjectStorageInstance() {
+    return obj_storage_pool.pool.getNewResource();
+}
+
+void DriverPoolManager::releaseObjectStorageInstance(ObjectStoragePoolSlot *obj_storage_driver_instance) {
+    obj_storage_pool.pool.releaseResource(obj_storage_driver_instance);
 }

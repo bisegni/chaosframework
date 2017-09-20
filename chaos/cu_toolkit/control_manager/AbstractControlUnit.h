@@ -36,15 +36,16 @@
 
 #include <chaos/common/chaos_types.h>
 #include <chaos/common/data/DatasetDB.h>
+#include <chaos/common/property/property.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/utility/SWEService.h>
 #include <chaos/common/alarm/AlarmCatalog.h>
-#include <chaos/common/alarm/MultiSeverityAlarm.h>
 #include <chaos/common/exception/exception.h>
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/utility/ArrayPointer.h>
 #include <chaos/common/general/Configurable.h>
 #include <chaos/common/action/ActionDescriptor.h>
+#include <chaos/common/alarm/MultiSeverityAlarm.h>
 #include <chaos/common/utility/AggregatedCheckList.h>
 #include <chaos/common/async_central/async_central.h>
 #include <chaos/common/metadata_logging/metadata_logging.h>
@@ -102,12 +103,13 @@ namespace chaos{
              that needs to be used to create device and his dataset are contained into the DeviceSchemaDB class.
              */
             class AbstractControlUnit:
-            public chaos::common::alarm::AlarmHandler,
-            public chaos::cu::driver_manager::DriverErogatorInterface,
             public DeclareAction,
+            public common::utility::SWEService,
             protected chaos::common::data::DatasetDB,
+            public chaos::common::alarm::AlarmHandler,
+            public chaos::common::property::PropertyCollector,
             protected chaos::common::async_central::TimerHandler,
-            public common::utility::SWEService {
+            public chaos::cu::driver_manager::DriverErogatorInterface {
                 //friendly class declaration
                 friend class ControlManager;
                 friend class ProxyControlUnit;
@@ -206,6 +208,8 @@ namespace chaos{
                 
                 chaos::common::data::CDataWrapper *writeCatalogOnCDataWrapper(chaos::common::alarm::AlarmCatalog& catalog,
                                                                               int32_t dataset_type);
+                //check at initilization time ifr need to to a restore or only an apply
+                void checkForRestoreOnInit() throw(CException);
             private:
                 //enable trace for heap into control unit environment
 #ifdef __CHAOS_DEBUG_MEMORY_CU__
@@ -287,7 +291,7 @@ namespace chaos{
                 ChaosUniquePtr<chaos::common::data::CDataWrapper> init_configuration;
                 void _initDrivers() throw(CException);
                 void _initChecklist();
-                
+                void _initPropertyGroup();
                 void doInitRpCheckList() throw(CException);
                 void doInitSMCheckList() throw(CException);
                 void doStartRpCheckList() throw(CException);
@@ -381,7 +385,6 @@ namespace chaos{
                 void fillRestoreCacheWithDatasetFromTag(data_manager::KeyDataStorageDomain domain,
                                                         chaos::common::data::CDataWrapper& dataset,
                                                         AbstractSharedDomainCache& restore_cache);
-                
                 //!logging api
                 void metadataLogging(const std::string& subject,
                                      const chaos::common::metadata_logging::StandardLoggingChannel::LogLevel log_level,
@@ -468,8 +471,8 @@ namespace chaos{
                  */
                 virtual void _completeDatasetAttribute();
                 
-                void setBypassState(bool bypass_stage,
-                                    bool high_priority = false);
+                void _setBypassState(bool bypass_stage,
+                                     bool high_priority = false);
             protected:
                 void useCustomHigResolutionTimestamp(bool _use_custom_high_resolution_timestamp);
                 void setHigResolutionAcquistionTimestamp(uint64_t high_resolution_timestamp);
@@ -564,6 +567,17 @@ namespace chaos{
                  the parent one and the check if the CDataWrapper contains something usefull for it.
                  */
                 virtual chaos::common::data::CDataWrapper* updateConfiguration(chaos::common::data::CDataWrapper*, bool&) throw (CException);
+                
+                //!callback for put a veto on property value change request
+                virtual bool propertyChangeHandler(const std::string& group_name,
+                                                   const std::string& property_name,
+                                                   const chaos::common::data::CDataVariant& property_value);
+                
+                //!callback ofr updated property value
+                virtual void propertyUpdatedHandler(const std::string& group_name,
+                                                    const std::string& property_name,
+                                                    const chaos::common::data::CDataVariant& old_value,
+                                                    const chaos::common::data::CDataVariant& new_value);
                 
                 //! return the accessor by an index
                 /*

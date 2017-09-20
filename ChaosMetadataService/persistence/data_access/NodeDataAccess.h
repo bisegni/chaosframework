@@ -24,6 +24,7 @@
 
 #include "../persistence.h"
 
+#include <chaos/common/property/property.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos_service_common/data/data.h>
 
@@ -31,6 +32,11 @@ namespace chaos {
     namespace metadata_service {
         namespace persistence {
             namespace data_access {
+                
+                typedef enum PropertyType {
+                    PropertyTypeDescription,
+                    PropertyTypeDefaultValues
+                } PropertyType;
                 
                 /*!
                  Perform the basic operation on abstract node infomation
@@ -137,6 +143,22 @@ namespace chaos {
                                            uint32_t last_unique_id,
                                            uint32_t page_length = 100) = 0;
                     
+                    //!set the wole node property list
+                    virtual int setProperty(const std::string& node_uid,
+                                            const chaos::common::property::PropertyGroupVector& property_group_vector) = 0;
+                    
+                    virtual int updatePropertyDefaultValue(const std::string& node_uid,
+                                                           const chaos::common::property::PropertyGroupVector& property_group_vector) = 0;
+                    
+                    //! return the whole node porperty list
+                    virtual int getProperty(const PropertyType property_type,
+                                            const std::string& node_uid,
+                                            chaos::common::property::PropertyGroupVector& property_group_vector) = 0;
+                    
+                    virtual int getPropertyGroup(const PropertyType property_type,
+                                                 const std::string& node_uid,
+                                                 const std::string& property_group_name,
+                                                 chaos::common::property::PropertyGroup& property_group) = 0;
                     //! Check a command presence
                     /*!
                      \param command_unique_id is the unique identifir ther represent the command

@@ -96,18 +96,12 @@ void CPropertyPushButton::updateUIStatus() {
 void CPropertyPushButton::on_pushButton_clicked(bool clicked) {
     last_error_code = 0;
     last_error_message.clear();
-    ChaosSharedPtr<chaos::common::data::CDataWrapperKeyValueSetter> bool_value(new chaos::common::data::CDataWrapperBoolKeyValueSetter(property_name.toStdString(),
-                                                                                                                                             clicked));
-    ChaosSharedPtr<chaos::metadata_service_client::api_proxy::node::NodePropertyGroup> cu_property_group(new chaos::metadata_service_client::api_proxy::node::NodePropertyGroup());
-    cu_property_group->group_name = property_group_name.toStdString();
-    cu_property_group->group_property_list.push_back(bool_value);
-
-    chaos::metadata_service_client::api_proxy::node::NodePropertyGroupList property_list;
-    property_list.push_back(cu_property_group);
+    chaos::common::property::PropertyGroup pg(property_group_name.toStdString());
+    pg.addProperty(property_name.toStdString(), CDataVariant(!last_got_value.asBool()));
 
     submitApiResult("update_property",
                     GET_CHAOS_API_PTR(chaos::metadata_service_client::api_proxy::node::UpdateProperty)->execute(nodeUID().toStdString(),
-                                                                                                                property_list));
+                                                                                                                pg));
     QMetaObject::invokeMethod(this,
                               "updateUIStatus",
                               Qt::QueuedConnection);

@@ -84,7 +84,6 @@ static RunningVSSubmissioneResult running_vs_submition[4][3] = {
     {RSR_CURRENT_CMD_HAS_ENDED, RSR_CURRENT_CMD_HAS_ENDED, RSR_CURRENT_CMD_HAS_ENDED},
     /*fault running property*/
     {RSR_CURRENT_CMD_HAS_FAULTED, RSR_CURRENT_CMD_HAS_FAULTED, RSR_CURRENT_CMD_HAS_FAULTED}
-    
 };
 
 #define CHECK_RUNNING_VS_SUBMISSION(r,s) running_vs_submition[r][s]
@@ -107,10 +106,10 @@ BatchCommandSandbox::~BatchCommandSandbox() {}
 
 void BatchCommandSandbox::init(void *initData) throw (chaos::CException) {
     current_executing_command = NULL;
-    
+
     acquire_handler_functor.cmd_instance = NULL;
     acquire_handler_functor.sandbox_identifier = identification;
-    
+
     correlation_handler_functor.cmd_instance = NULL;
     correlation_handler_functor.sandbox_identifier = identification;
     end_handler_functor.cmd_instance = NULL;
@@ -120,19 +119,19 @@ void BatchCommandSandbox::init(void *initData) throw (chaos::CException) {
 }
 
 void BatchCommandSandbox::start() throw (chaos::CException) {
-    
+
     //se the flag to the end o the scheduler
     SCSLDBG_ << "Set scheduler work flag to true";
     schedule_work_flag = true;
-    
+
     //reset statistic
     std::memset(&stat, 0, sizeof (SandboxStat));
-    
+
     //allocate thread
     thread_scheduler.reset(new boost::thread(boost::bind(&BatchCommandSandbox::runCommand, this)));
     thread_next_command_checker.reset(new boost::thread(boost::bind(&BatchCommandSandbox::checkNextCommand, this)));
     DEBUG_CODE(SCSLDBG_ << "Allocated thread for the scheduler runCommand "<<std::hex<<thread_scheduler->native_handle()<<" and checker "<< thread_next_command_checker->native_handle()<<std::dec;);
-    
+
     //set the scheduler thread priority
 #if defined(__linux__) || defined(__APPLE__)
     int policy;
@@ -145,7 +144,7 @@ void BatchCommandSandbox::start() throw (chaos::CException) {
                                              (policy == SCHED_OTHER) ? "SCHED_OTHER" :
                                              "???");)
         DEBUG_CODE(SCSLDBG_ << "priority " << param.sched_priority;)
-        
+
         policy = SCHED_RR;
         param.sched_priority = sched_get_priority_max(SCHED_RR);
         if (!pthread_setschedparam(threadID, policy, &param)) {
@@ -156,7 +155,7 @@ void BatchCommandSandbox::start() throw (chaos::CException) {
                                                  (policy == SCHED_OTHER) ? "SCHED_OTHER" :
                                                  "???");)
             DEBUG_CODE(SCSLDBG_ << "priority " << param.sched_priority;)
-            
+
         }
     }
 #endif
@@ -164,18 +163,18 @@ void BatchCommandSandbox::start() throw (chaos::CException) {
 
 void BatchCommandSandbox::stop() throw (chaos::CException) {
     //we ned to get the lock on the scheduler
-    
+
     //se the flag to the end o fthe scheduler
     SCSLAPP_ << "Set scheduler work flag to false";
     schedule_work_flag = false;
-    
+
     SCSLAPP_ << "Notify pauseCondition variable";
     thread_scheduler_pause_condition.unlock();
     whait_for_next_check.unlock();
-    
+
     if (thread_scheduler->joinable()) {
         SCSLAPP_ << "Join on schedulerThread";
-        
+
         thread_scheduler->join();
     }
     if (thread_next_command_checker->joinable()) {
@@ -187,12 +186,12 @@ void BatchCommandSandbox::stop() throw (chaos::CException) {
 
 void BatchCommandSandbox::deinit() throw (chaos::CException) {
     PRIORITY_ELEMENT(CommandInfoAndImplementation) *nextAvailableCommand = NULL;
-    
+
     SCSLAPP_ << "Delete scheduler thread";
     thread_scheduler.reset();
     thread_next_command_checker.reset();
     SCSLAPP_ << "Scheduler thread deleted";
-    
+
     SCSLAPP_ << "clean all paused and waiting command";
     if (current_executing_command && (current_executing_command->element->cmdImpl->sticky == false) ) {
         SCSLAPP_ << "Clear the executing command :"<<current_executing_command->element->cmdImpl->command_alias;
@@ -226,7 +225,7 @@ void BatchCommandSandbox::deinit() throw (chaos::CException) {
         DELETE_OBJ_POINTER(nextAvailableCommand);
     }
     SCSLAPP_ << "Paused command into the stack removed";
-    
+
     SCSLAPP_ << "Remove waiting command into the queue - size:" << command_submitted_queue.size();
     while (!command_submitted_queue.empty()) {
         nextAvailableCommand = command_submitted_queue.top();
@@ -239,7 +238,7 @@ void BatchCommandSandbox::deinit() throw (chaos::CException) {
                                                                                      cmd_stat);
         DELETE_OBJ_POINTER(nextAvailableCommand)
     }
-    
+
     //reset all the handler
     acquire_handler_functor.cmd_instance = NULL;
     correlation_handler_functor.cmd_instance = NULL;
@@ -249,12 +248,12 @@ void BatchCommandSandbox::setDefaultStickyCommand(BatchCommand *command_impl) {
     if(command_impl != NULL) {
         //get the assigned id
         addCommandID(command_impl);
-        
+
         default_sticky_command.reset(new PriorityQueuedElement<CommandInfoAndImplementation>(new CommandInfoAndImplementation(NULL, command_impl),
                                                                                              command_impl->unique_id,
                                                                                              0,
                                                                                              true));
-        
+
         if(default_sticky_command.get()) {
             //set sticky feature //settable only by sandbox
             default_sticky_command->element->cmdImpl->sticky = true;
@@ -271,12 +270,12 @@ whait_for_next_check.wait(x);
 void BatchCommandSandbox::checkNextCommand() {
     bool queue_empty = false;
     RunningVSSubmissioneResult current_check_value;
-    
-    
+
+
     SCSLDBG_ << "[checkNextCommand] checkNextCommand started wait run scheduler notify";
     whait_for_next_check.wait();
-    
-    
+
+
     if (!schedule_work_flag) {
         SCSLDBG_ << "[checkNextCommand] we need to exit befor start the loop";
         //condition_waith_scheduler_end.notify_one();
@@ -284,7 +283,7 @@ void BatchCommandSandbox::checkNextCommand() {
     }
     //manage the lock on next command mutex
     boost::unique_lock<boost::mutex> lock_next_command_queue(mutex_next_command_queue, boost::defer_lock_t());
-    
+
     while (schedule_work_flag) {
         //lock the command queue access
         lock_next_command_queue.lock();
@@ -303,7 +302,7 @@ void BatchCommandSandbox::checkNextCommand() {
                 lock_next_command_queue.lock();
                 next_available_command = command_submitted_queue.top();
                 DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] check installation for new command with pointer =" << std::hex << next_available_command << " alias:\""<<next_available_command->element->cmdImpl->getAlias()<<"\""<<std::dec;)
-                
+
                 //check what we need to do according to runng and submission property
                 current_check_value = CHECK_RUNNING_VS_SUBMISSION(current_executing_command->element->cmdImpl->runningProperty,
                                                                   next_available_command->element->cmdImpl->submissionRule);
@@ -311,18 +310,18 @@ void BatchCommandSandbox::checkNextCommand() {
                     DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] RSR_NO_CHANGE but is default, so interrupt and execute new command";)
                     current_check_value=RSR_STACK_CURENT_COMMAND;
                 }
-                
+
                 //manage the situation
                 switch (current_check_value) {
                     case RSR_NO_CHANGE:
                         DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] RSR_NO_CHANGE";)
-                        
+
                         lockForCurrentCommandMutex.unlock();
                         lock_next_command_queue.unlock();
                         WAIT_ON_NEXT_CMD
                         continue; //we must recontorl the top element because it could be have changed
                         break;
-                        
+
                     case RSR_TIMED_RETRY:
                         DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] RSR_TIMED_RETRY";)
                         lockForCurrentCommandMutex.unlock();
@@ -330,17 +329,17 @@ void BatchCommandSandbox::checkNextCommand() {
                         TIMED_WAIT_ON_NEXT_CMD(next_available_command->element->cmdImpl->commandFeatures.featureSubmissionRetryDelay);
                         continue; //we must recontorl the top element because it could be have changed
                         break;
-                        
+
                     case RSR_STACK_CURENT_COMMAND:
                         //the stack feature need that the
                         DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] RSR_STACK_CURRENT_COMMAND";)
                         command_submitted_queue.pop();
                         cmd_stat.queued_commands = (uint32_t)command_submitted_queue.size();
-                        
+
                         lock_next_command_queue.unlock();
                         if(current_executing_command->element->cmdImpl->sticky != true) {
                            DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] stacking current command:\" " << current_executing_command->element->cmdImpl->getAlias());
-                           
+
                             command_stack.push(current_executing_command);
                         }
                         DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] element in command_stack " << command_stack.size();)
@@ -352,11 +351,11 @@ void BatchCommandSandbox::checkNextCommand() {
                                                                              cmd_stat);
                         //install next command
                         installHandler(next_available_command);
-                        
+
                         //unlock scheduler
                         thread_scheduler_pause_condition.unlock();
                         break;
-                        
+
                     case RSR_KILL_KURRENT_COMMAND:
 
                     case RSR_CURRENT_CMD_HAS_ENDED:
@@ -364,8 +363,6 @@ void BatchCommandSandbox::checkNextCommand() {
 
                         //execute the handler
                         command_to_delete = current_executing_command;
-
-#pragma GCC diagnostic ignored "-Wswitch"
                         switch (current_check_value) {
                             case RSR_KILL_KURRENT_COMMAND:{
                                 DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] KILL  command:\""<< current_executing_command->element->cmdImpl->getAlias()<<"\"" );
@@ -377,7 +374,7 @@ void BatchCommandSandbox::checkNextCommand() {
                                                                                                           cmd_stat);
                                 break;
                             }
-                                
+
                             case RSR_CURRENT_CMD_HAS_ENDED:{
                                 DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] ENDED  command:\""<< current_executing_command->element->cmdImpl->getAlias()<<"\"" );
 
@@ -388,7 +385,7 @@ void BatchCommandSandbox::checkNextCommand() {
                                                                                                           cmd_stat);
                                 break;
                             }
-                                
+
                             case RSR_CURRENT_CMD_HAS_FAULTED:{
                                 DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] FAULT  command:\""<< current_executing_command->element->cmdImpl->getAlias()<<"\"" );
 
@@ -402,13 +399,11 @@ void BatchCommandSandbox::checkNextCommand() {
                                 break;
                             }
                         }
-#pragma GCC diagnostic pop
-                        
                         command_submitted_queue.pop();
                         cmd_stat.queued_commands = (uint32_t)command_submitted_queue.size();
                         lock_next_command_queue.unlock();
                         DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] element in command_submitted_queue " << command_submitted_queue.size();)
-                        
+
                         removeHandler(command_to_delete);
 
                         if (installHandler(next_available_command)) {
@@ -418,7 +413,6 @@ void BatchCommandSandbox::checkNextCommand() {
                         break;
                     }
                 }
-                
                 lockForCurrentCommandMutex.unlock();
                 //delete
                 if (command_to_delete && !command_to_delete->element->cmdImpl->sticky) {
@@ -466,20 +460,20 @@ void BatchCommandSandbox::checkNextCommand() {
                                                                       command_and_fault.get(),
                                                                       cmd_stat);
                                 }
-                                
+
                                 break;
                             }
                         }
                         //manage paused command
                         PRIORITY_ELEMENT(CommandInfoAndImplementation) * nextAvailableCommand = command_stack.top();
-                        
+
                         removeHandler(command_to_delete);
                         installHandler(nextAvailableCommand);
                         command_stack.pop();
                         cmd_stat.stacked_commands = (uint32_t)command_stack.size();
                         thread_scheduler_pause_condition.unlock();
                         if(command_to_delete->element->cmdImpl->sticky == false){
-                            
+
                             DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] Delete command "<< command_to_delete->element->cmdInfo->getJSONData()<<" with pointer " << std::hex << command_to_delete << std::dec;)
                             DELETE_OBJ_POINTER(command_to_delete);
                         }
@@ -507,16 +501,16 @@ void BatchCommandSandbox::checkNextCommand() {
                                                                       command_and_fault.get(),
                                                                       cmd_stat);
                                 }
-                                
+
                                 break;
                             }
                         }
                         if(command_to_delete->element->cmdImpl->sticky==false){
-                            
+
                             removeHandler(command_to_delete);
-                            
+
                             installHandler(NULL);
-                            
+
                             DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] Delete command with pointer " << std::hex << command_to_delete << std::dec;)
                             DELETE_OBJ_POINTER(command_to_delete);
                         }
@@ -538,7 +532,6 @@ void BatchCommandSandbox::checkNextCommand() {
     }
     SCSLAPP_ << "[checkNextCommand] Check next command thread ended";
 }
-
 
 inline ChaosUniquePtr<chaos::common::data::CDataWrapper> BatchCommandSandbox::flatErrorInformationInCommandInfo(CDataWrapper *command_info,
                                                                                           FaultDescription& command_fault) {
@@ -563,10 +556,10 @@ void BatchCommandSandbox::runCommand() {
     do {
         if (current_executing_command) {
             curr_executing_impl = current_executing_command->element->cmdImpl;
-            
+
             // count the time we have started a run step
             curr_executing_impl->timing_stats.command_step_counter++;
-            
+
             stat.last_cmd_step_start_usec = TimingUtil::getTimeStampInMicroseconds();
             if(next_predicted_run) {
                 //are onthe second
@@ -574,8 +567,8 @@ void BatchCommandSandbox::runCommand() {
                     next_prediction_error = 0;
                 }
             }
-            
-            
+
+
             if (event_handler) {
                 //signal the step of the run
                 event_handler->handleSandboxEvent(identification,
@@ -584,24 +577,24 @@ void BatchCommandSandbox::runCommand() {
             }
             // call the acquire phase
             acquire_handler_functor();
-            
+
             //call the correlation and commit phase();
             correlation_handler_functor();
-            
+
             //compute step duration
             stat.last_cmd_step_duration_usec = TimingUtil::getTimeStampInMicroseconds() - stat.last_cmd_step_start_usec;
-            
+
             //fire post command step
             curr_executing_impl->commandPost();
-            
+
             lockForCurrentCommand.unlock();
-            
+
             if (event_handler) {
                 //signal the step of the run
                 event_handler->handleSandboxEvent(identification,
                                                   BatchSandboxEventType::EVT_RUN_END);
             }
-            
+
             //check runnin property
             if (!schedule_work_flag && curr_executing_impl->runningProperty) {
                 canWork = false;
@@ -621,7 +614,7 @@ void BatchCommandSandbox::runCommand() {
                         }
                         break;
                     }
-                        
+
                     case RunningPropertyType::RP_FAULT:
                     case RunningPropertyType::RP_FATAL_FAULT:
                     case RunningPropertyType::RP_END:
@@ -633,7 +626,7 @@ void BatchCommandSandbox::runCommand() {
                         thread_scheduler_pause_condition.wait();
                         break;
                 }
-                
+
             }
             lockForCurrentCommand.lock();
         } else {
@@ -642,7 +635,7 @@ void BatchCommandSandbox::runCommand() {
                 canWork = false;
             } else {
                 //no more command to scehdule
-                
+
                 //reset the statistic befor sleep
                 std::memset(&stat, 0, sizeof (SandboxStat));
                 lockForCurrentCommand.unlock();
@@ -655,8 +648,6 @@ void BatchCommandSandbox::runCommand() {
     SCSLDBG_ << "Scheduler thread has finished";
 }
 
-//!install the command
-
 bool BatchCommandSandbox::installHandler(PRIORITY_ELEMENT(CommandInfoAndImplementation) * cmd_to_install) {
     //set current command
     if (cmd_to_install && cmd_to_install->element->cmdImpl) {
@@ -667,10 +658,10 @@ bool BatchCommandSandbox::installHandler(PRIORITY_ELEMENT(CommandInfoAndImplemen
 
         uint8_t handlerMask = tmp_impl->implementedHandler();
         //install the pointer of th ecommand into the respective handler functor
-        
+
         //set the shared stat befor cal set handler
         tmp_impl->shared_stat = &stat;
-        
+
         //fire the running event
         if (event_handler) {
             event_handler->handleCommandEvent(tmp_impl->command_alias,
@@ -679,7 +670,7 @@ bool BatchCommandSandbox::installHandler(PRIORITY_ELEMENT(CommandInfoAndImplemen
                                               cmd_to_install->element->cmdInfo,
                                               cmd_stat);
         }
-        
+
         //check set handler
         if (!tmp_impl->already_setupped && (handlerMask & HandlerType::HT_Set)) {
             try {
@@ -696,16 +687,16 @@ bool BatchCommandSandbox::installHandler(PRIORITY_ELEMENT(CommandInfoAndImplemen
                 SET_NAMED_FAULT(SCSLERR_, tmp_impl, -2, "Unmanaged exception", "Acquisition Handler",RunningPropertyType::RP_FATAL_FAULT);
             }
         }
-        
+
         //acquire handler
         if (handlerMask & HandlerType::HT_Acquisition) {acquire_handler_functor.cmd_instance = tmp_impl;}
-        
+
         //correlation commit
         if (handlerMask & HandlerType::HT_Correlation) {correlation_handler_functor.cmd_instance = tmp_impl;}
-        
+
         end_handler_functor.cmd_instance = tmp_impl;
         current_executing_command = cmd_to_install;
-        
+
         //fire the running event
         if (event_handler) {
             //signal the step of the run
@@ -733,11 +724,11 @@ void BatchCommandSandbox::removeHandler(PRIORITY_ELEMENT(CommandInfoAndImplement
         //there is only the set handler so we finish here.
         return;
     }
-    
+
     //acquire handler
     if ((handlerMask & HandlerType::HT_Acquisition) &&
         acquire_handler_functor.cmd_instance == cmd_to_install->element->cmdImpl) acquire_handler_functor.cmd_instance = NULL;
-    
+
     //correlation commit
     if ((handlerMask & HandlerType::HT_Correlation) &&
         correlation_handler_functor.cmd_instance == cmd_to_install->element->cmdImpl) correlation_handler_functor.cmd_instance = NULL;
@@ -746,7 +737,7 @@ void BatchCommandSandbox::removeHandler(PRIORITY_ELEMENT(CommandInfoAndImplement
 void BatchCommandSandbox::killCurrentCommand() {
     //lock the scheduler
     boost::mutex::scoped_lock lockForCurrentCommand(mutext_access_current_command);
-    
+
     // terminate the current command
     current_executing_command->element->cmdImpl->setRunningProperty(RunningPropertyType::RP_END);
 }
@@ -755,24 +746,24 @@ bool BatchCommandSandbox::enqueueCommand(chaos_data::CDataWrapper *command_to_in
                                          BatchCommand *command_impl,
                                          uint32_t priority) {
     CHAOS_ASSERT(command_impl)
-    
+
     if (StartableService::serviceState == CUStateKey::DEINIT) return false;
-    
+
     //
     {
         DEBUG_CODE(SCSLDBG_ << "Try to lock for command enqueue for:\"" << command_impl->command_alias.c_str()) << "\"";
         boost::unique_lock<boost::mutex> lock_next_command_queue(mutex_next_command_queue);
-        
+
         //get the assigned id
         addCommandID(command_impl);
-        
+
         command_submitted_queue.push(new PriorityQueuedElement<CommandInfoAndImplementation>(new CommandInfoAndImplementation(command_to_info, command_impl),
                                                                                              command_impl->unique_id,
                                                                                              priority,
                                                                                              true));
         SCSLDBG_ << "New command enqueued:\"" << command_impl->command_alias.c_str() << "\" \"" << ((command_to_info) ? command_to_info->getJSONString() : "") << "\"";
         SCSLDBG_ << "Queue size:" << command_submitted_queue.size();
-        
+
     }
     //increment command stat
     cmd_stat.queued_commands = (uint32_t)command_submitted_queue.size();
@@ -792,15 +783,15 @@ void BatchCommandSandbox::setCurrentCommandFeatures(features::Features& features
     uint64_t thread_step_delay = 0;
     //lock the scheduler
     boost::mutex::scoped_lock lockForCurrentCommand(mutext_access_current_command);
-    
+
     //recheck current command
     if (!current_executing_command) return;
-    
+
     current_executing_command->element->cmdImpl->commandFeatures.featuresFlag |= features.featuresFlag;
     current_executing_command->element->cmdImpl->commandFeatures.featureSchedulerStepsDelay = (thread_step_delay = features.featureSchedulerStepsDelay);
-    
+
     thread_scheduler_pause_condition.unlock();
-    
+
     if (event_handler) {
         //signal the step of the run
         event_handler->handleSandboxEvent(identification,
@@ -812,9 +803,9 @@ void BatchCommandSandbox::setCurrentCommandFeatures(features::Features& features
 void BatchCommandSandbox::setCurrentCommandScheduerStepDelay(uint64_t scheduler_step_delay) {
     //lock the scheduler
     boost::mutex::scoped_lock lockForCurrentCommand(mutext_access_current_command);
-    
+
     if(!current_executing_command) return;
-    
+
     current_executing_command->element->cmdImpl->commandFeatures.featureSchedulerStepsDelay = scheduler_step_delay;
     if (event_handler) {
         //signal the step of the run
@@ -822,7 +813,7 @@ void BatchCommandSandbox::setCurrentCommandScheduerStepDelay(uint64_t scheduler_
                                           BatchSandboxEventType::EVT_UPDATE_RUN_DELAY,
                                           &scheduler_step_delay, sizeof (uint64_t));
     }
-    
+
     lockForCurrentCommand.unlock();
     thread_scheduler_pause_condition.unlock();
 }
@@ -830,11 +821,11 @@ void BatchCommandSandbox::setCurrentCommandScheduerStepDelay(uint64_t scheduler_
 void BatchCommandSandbox::lockCurrentCommandFeature(bool lock) {
     //lock the scheduler
     boost::mutex::scoped_lock lockForCurrentCommand(mutext_access_current_command);
-    
+
     if(!current_executing_command) return;
-    
+
     current_executing_command->element->cmdImpl->lockFeaturePropertyFlag[0] = lock;
-    
+
     lockForCurrentCommand.unlock();
     thread_scheduler_pause_condition.unlock();
 }

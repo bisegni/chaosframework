@@ -21,9 +21,12 @@
 
 #include "GetInstance.h"
 
+#include <chaos/common/property/property.h>
+
 #include <boost/format.hpp>
 
 using namespace chaos::common::data;
+using namespace chaos::common::property;
 using namespace chaos::metadata_service::api::control_unit;
 using namespace chaos::metadata_service::persistence::data_access;
 
@@ -33,28 +36,54 @@ using namespace chaos::metadata_service::persistence::data_access;
 
 GetInstance::GetInstance():
 AbstractApi("getInstance"){
-
+    
 }
 
 GetInstance::~GetInstance() {
-
+    
 }
 
 CDataWrapper *GetInstance::execute(CDataWrapper *api_data,
                                    bool& detach_data) throw(chaos::CException) {
-
+    
     if(!api_data) {LOG_AND_TROW(CU_GI_ERR, -1, "Search parameter are needed");}
     if(!api_data->hasKey(chaos::NodeDefinitionKey::NODE_UNIQUE_ID)) {LOG_AND_TROW(CU_GI_ERR, -2, "The ndk_unique_id key (representing the control unit uid) is mandatory");}
-    //if(!api_data->hasKey(chaos::NodeDefinitionKey::NODE_PARENT)) {LOG_AND_TROW(CU_GI_ERR, -3, "The ndk_parent key (representing the unit server uid) is mandatory");}
-
+    
     int err = 0;
     CDataWrapper *result = NULL;
     const std::string cu_uid = api_data->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID);
-
-    GET_DATA_ACCESS(ControlUnitDataAccess, cu_da, -3)
+    
+    GET_DATA_ACCESS(NodeDataAccess, n_da, -3)
+    GET_DATA_ACCESS(ControlUnitDataAccess, cu_da, -4)
     if((err = cu_da->getInstanceDescription(cu_uid,
                                             &result))){
         LOG_AND_TROW(CU_GI_ERR, err, boost::str(boost::format("Error fetching the control unit instance description for cuid:%1%") % cu_uid));
+    }
+    
+    //for compativbility  update here the default porperty values
+    PropertyGroupVector pgv;
+    if((err = n_da->getProperty(PropertyTypeDefaultValues,
+                                cu_uid,
+                                pgv))) {
+        LOG_AND_TROW(CU_GI_ERR, err, CHAOS_FORMAT("Error reading property defaults for node:%1%",%cu_uid));
+    }
+    if(pgv.size()) {
+        PropertyGroup& pg = pgv[0];
+        if(pg.hasProperty(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)) {
+            result->addVariantValue(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, pg.getProperty(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY).getPropertyValue());
+        }
+        if(pg.hasProperty(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE)) {
+            result->addVariantValue(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE, pg.getProperty(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE).getPropertyValue());
+        }
+        if(pg.hasProperty(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING)) {
+            result->addVariantValue(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING, pg.getProperty(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING).getPropertyValue());
+        }
+        if(pg.hasProperty(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME)) {
+            result->addVariantValue(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME, pg.getProperty(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME).getPropertyValue());
+        }
+        if(pg.hasProperty(DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME)) {
+            result->addVariantValue(DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME, pg.getProperty(DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME).getPropertyValue());
+        }
     }
     return result;
 }

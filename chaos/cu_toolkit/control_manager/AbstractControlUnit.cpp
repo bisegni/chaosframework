@@ -21,8 +21,10 @@
 
 #include <chaos/common/global.h>
 #include <chaos/common/utility/UUIDUtil.h>
+#include <chaos/common/property/property.h>
 #include <chaos/common/healt_system/HealtManager.h>
 #include <chaos/common/event/channel/InstrumentEventChannel.h>
+
 #include <chaos/cu_toolkit/data_manager/DataManager.h>
 #include <chaos/cu_toolkit/driver_manager/DriverManager.h>
 #include <chaos/cu_toolkit/command_manager/CommandManager.h>
@@ -38,6 +40,7 @@ using namespace boost::uuids;
 using namespace chaos::common::data;
 using namespace chaos::common::alarm;
 using namespace chaos::common::utility;
+using namespace chaos::common::property;
 using namespace chaos::common::exception;
 using namespace chaos::common::data::cache;
 using namespace chaos::common::healt_system;
@@ -95,6 +98,7 @@ timestamp_acq_cached_value(),
 timestamp_hw_acq_cached_value(),
 thread_schedule_daly_cached_value(),
 key_data_storage() {
+    _initPropertyGroup();
     //!try to decode parameter string has json document
     is_control_unit_json_param = json_reader.parse(control_unit_param, json_parameter_document);
     //initialize check list
@@ -124,6 +128,7 @@ timestamp_acq_cached_value(),
 timestamp_hw_acq_cached_value(),
 thread_schedule_daly_cached_value(),
 key_data_storage() {
+    _initPropertyGroup();
     //!try to decode parameter string has json document
     is_control_unit_json_param = json_reader.parse(control_unit_param, json_parameter_document);
     //copy array
@@ -179,6 +184,23 @@ void AbstractControlUnit::_initChecklist() {
     check_list_sub_service.addCheckList("start");
     check_list_sub_service.getSharedCheckList("start")->addElement(START_SM_PHASE_STAT_TIMER);
 }
+
+void AbstractControlUnit::_initPropertyGroup() {
+    PropertyGroup& pg_abstract_cu = addGroup(chaos::ControlUnitPropertyKey::GROUP_NAME);
+    pg_abstract_cu.addProperty(ControlUnitDatapackSystemKey::BYPASS_STATE, "Put control unit in bypass state", DataType::TYPE_BOOLEAN);
+    pg_abstract_cu.addProperty(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE, "Set the control unit storage type", DataType::TYPE_INT32);
+    pg_abstract_cu.addProperty(DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME, "Set the control unit storage type", DataType::TYPE_INT64);
+    pg_abstract_cu.addProperty(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME, "Set the control unit storage type", DataType::TYPE_INT64);
+    pg_abstract_cu.addProperty(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, "Set the control unit step repeat time in microseconds", DataType::TYPE_INT64);
+    pg_abstract_cu.addProperty(ControlUnitPropertyKey::INIT_RESTORE_OPTION, "Specify the restore type operatio to do durint initialization phase", DataType::TYPE_INT32);
+    pg_abstract_cu.addProperty(ControlUnitPropertyKey::INIT_RESTORE_APPLY, "Specify if the restore operation need to be done as real operation or not", DataType::TYPE_BOOLEAN);
+    
+    PropertyCollector::setPropertyValueChangeFunction(ChaosBind(&AbstractControlUnit::propertyChangeHandler, this,
+                                                                ChaosBindPlaceholder(_1), ChaosBindPlaceholder(_2), ChaosBindPlaceholder(_3)));
+    PropertyCollector::setPropertyValueUpdatedFunction(ChaosBind(&AbstractControlUnit::propertyUpdatedHandler, this,
+                                                                 ChaosBindPlaceholder(_1), ChaosBindPlaceholder(_2), ChaosBindPlaceholder(_3), ChaosBindPlaceholder(_4)));
+}
+
 /*!
  Destructor a new CU with an identifier
  */
@@ -314,10 +336,12 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configurat
     
     //get action description
     getActionDescrionsInDataWrapper(setup_configuration);
+    
+    //add property description
+    PropertyCollector::fillDescription("property", setup_configuration);
 }
 
 void AbstractControlUnit::unitDefineDriver(std::vector<DrvRequestInfo>& neededDriver) {
-    
     for(ControlUnitDriverListIterator iter = control_unit_drivers.begin();
         iter != control_unit_drivers.end();
         iter++) {
@@ -351,7 +375,6 @@ void AbstractControlUnit::doInitRpCheckList() throw(CException) {
     std::vector<std::string> attribute_names;
     //rpc initialize service
     CHAOS_CHECK_LIST_START_SCAN_TO_DO(check_list_sub_service, "_init"){
-        
         CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_init", INIT_RPC_PHASE_CALL_INIT_STATE){
             //call init sequence
             init(NULL);
@@ -420,6 +443,17 @@ void AbstractControlUnit::doInitRpCheckList() throw(CException) {
             
             //call update param function
             updateConfiguration(init_configuration.get(), detach_fake);
+            
+            //chec if we need to do a restor on first start
+            PropertyGroupShrdPtr cug = PropertyCollector::getGroup(chaos::ControlUnitPropertyKey::GROUP_NAME);
+            if(cug.get()) {
+                if(cug->hasProperty(chaos::ControlUnitPropertyKey::INIT_RESTORE_APPLY) &&
+                   cug->getProperty(chaos::ControlUnitPropertyKey::INIT_RESTORE_APPLY).getPropertyValue().isValid() &&
+                   cug->getProperty(chaos::ControlUnitPropertyKey::INIT_RESTORE_APPLY).getPropertyValue().asBool()) {
+                    //we need to add to stsart phase the restore one
+                    check_list_sub_service.getSharedCheckList("_start")->addElement(START_RPC_PHASE_RESTORE_ON_FIRST_START);
+                }
+            }
             break;
         }
         CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_init", INIT_RPC_PHASE_PUSH_DATASET){
@@ -453,7 +487,6 @@ void AbstractControlUnit::doInitSMCheckList() throw(CException) {
             DatasetDB::addAttributeToDataSetFromDataWrapper(*init_configuration);
             break;
         }
-        
         CHAOS_CHECK_LIST_DONE(check_list_sub_service, "init", INIT_SM_PHASE_CREATE_DATA_STORAGE) {
             //call init sequence
             //call update param function
@@ -471,14 +504,22 @@ void AbstractControlUnit::doInitSMCheckList() throw(CException) {
 
 void AbstractControlUnit::doStartRpCheckList() throw(CException) {
     CHAOS_CHECK_LIST_START_SCAN_TO_DO(check_list_sub_service, "_start"){
-        
         CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_start", START_RPC_PHASE_IMPLEMENTATION){
             start();
             break;
         }
-        
         CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_start", START_RPC_PHASE_UNIT){
             unitStart();
+        }
+        CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_start", START_RPC_PHASE_RESTORE_ON_FIRST_START) {
+            try{
+                checkForRestoreOnInit();
+                check_list_sub_service.getSharedCheckList("_start")->removeElement(START_RPC_PHASE_RESTORE_ON_FIRST_START);
+            } catch(CException& ex){
+                check_list_sub_service.getSharedCheckList("_start")->removeElement(START_RPC_PHASE_RESTORE_ON_FIRST_START);
+                throw ex;
+            }
+            break;
         }
     }
     CHAOS_CHECK_LIST_END_SCAN_TO_DO(check_list_sub_service, "_start")
@@ -512,7 +553,6 @@ void AbstractControlUnit::redoInitRpCheckList(bool throw_exception) throw(CExcep
             }
             break;
         }
-        
         CHAOS_CHECK_LIST_REDO(check_list_sub_service, "_init", INIT_RPC_PHASE_COMPLETE_OUTPUT_ATTRIBUTE){
             break;
         }
@@ -556,7 +596,6 @@ void AbstractControlUnit::redoInitSMCheckList(bool throw_exception) throw(CExcep
         CHAOS_CHECK_LIST_REDO(check_list_sub_service, "init",  INIT_SM_PHASE_INIT_DB){
             break;
         }
-        
         CHAOS_CHECK_LIST_REDO(check_list_sub_service, "init", INIT_SM_PHASE_CREATE_DATA_STORAGE) {
             //remove key data storage
             CHEK_IF_NEED_TO_THROW(throw_exception,
@@ -578,7 +617,6 @@ void AbstractControlUnit::redoStartRpCheckList(bool throw_exception) throw(CExce
             CHEK_IF_NEED_TO_THROW(throw_exception, stop();)
             break;
         }
-        
         //unit sto need to go after the abstract cu has been stopped
         CHAOS_CHECK_LIST_REDO(check_list_sub_service, "_start", START_RPC_PHASE_UNIT){
             CHEK_IF_NEED_TO_THROW(throw_exception, unitStop();)
@@ -936,6 +974,40 @@ void AbstractControlUnit::fillRestoreCacheWithDatasetFromTag(data_manager::KeyDa
     }
 }
 
+void AbstractControlUnit::checkForRestoreOnInit()  throw(CException) {
+    //now we can launch the restore the current input attrite, remeber that
+    //input attribute are composed by mds so the type of restore data(static conf or live) is manage at mds leve
+    //control unit in case off pply true need only to launch the restore on current input dataset set.
+    try {
+        ChaosUniquePtr<AttributeValueSharedCache> restore_cache(new AttributeValueSharedCache());
+        if(!restore_cache.get()) throw MetadataLoggingCException(getCUID(), -3, "failed to allocate restore cache", __PRETTY_FUNCTION__);
+        
+        AttributeCache& ac_src = attribute_value_shared_cache->getSharedDomain(DOMAIN_INPUT);
+        AttributeCache& ac_dst = restore_cache->getSharedDomain(DOMAIN_INPUT);
+        ac_src.copyToAttributeCache(ac_dst);
+        
+        //unitRestoreToSnapshot
+        if(unitRestoreToSnapshot(restore_cache.get())){
+            metadataLogging(chaos::common::metadata_logging::StandardLoggingChannel::LogLevelInfo,
+                            "Restore to initilization value run successfully");
+        } else {
+            metadataLogging(chaos::common::metadata_logging::StandardLoggingChannel::LogLevelError,
+                            "Restore to initilization value has fault");
+            
+            //input attribute already already updated
+        }
+    } catch (MetadataLoggingCException& ex) {
+        throw ex;
+    }  catch (CException& ex) {
+        MetadataLoggingCException loggable_exception(getCUID(),
+                                                     ex.errorCode,
+                                                     ex.errorMessage,
+                                                     ex.errorDomain);
+        
+        DECODE_CHAOS_EXCEPTION(loggable_exception);
+    }
+}
+
 /*!
  Restore the control unit to a precise tag
  */
@@ -990,6 +1062,12 @@ CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreP
             } else {
                 metadataLogging(chaos::common::metadata_logging::StandardLoggingChannel::LogLevelError,
                                 CHAOS_FORMAT("Restore for %1% has been faulted", %restore_snapshot_tag));
+                
+                //input dataset need to be update
+                AttributeCache& ac_src = restore_cache->getSharedDomain(DOMAIN_INPUT);
+                AttributeCache& ac_dst = attribute_value_shared_cache->getSharedDomain(DOMAIN_INPUT);
+                ac_src.copyToAttributeCache(ac_dst);
+                
             }
         } catch (MetadataLoggingCException& ex) {
             throw ex;
@@ -1373,7 +1451,7 @@ void AbstractControlUnit::_updateRunScheduleDelay(uint64_t new_scehdule_delay) {
 void AbstractControlUnit::_updatePushRateMetric() {
     uint64_t rate_acq_ts = TimingUtil::getTimeStamp();
     double time_offset = (double(rate_acq_ts - last_push_rate_grap_ts))/1000.0; //time in seconds
-    double output_ds_rate = push_dataset_counter/time_offset; //rate in seconds
+    double output_ds_rate = (time_offset>0)?push_dataset_counter/time_offset:0; //rate in seconds
     
     HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
                                                     ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_PUSH_RATE,
@@ -1420,8 +1498,8 @@ void AbstractControlUnit::_completeDatasetAttribute() {
                                      DataType::Output);
 }
 
-void AbstractControlUnit::setBypassState(bool bypass_stage,
-                                         bool high_priority) {
+void AbstractControlUnit::_setBypassState(bool bypass_stage,
+                                          bool high_priority) {
     DrvMsg cmd;
     memset(&cmd, 0, sizeof(DrvMsg));
     cmd.opcode = bypass_stage?OpcodeType::OP_SET_BYPASS:OpcodeType::OP_CLEAR_BYPASS;
@@ -1578,7 +1656,7 @@ CDataWrapper* AbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_att
 }
 
 /*
- Update the configuration for all descendant tree in the Control Uniti class struccture
+ Update the configuration for all descendant tree in the Control Unit class structure
  */
 CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* update_pack, bool& detachParam) throw (CException) {
     //check to see if the device can ben initialized
@@ -1588,26 +1666,44 @@ CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* update_pac
         throw MetadataLoggingCException(getCUID(), -3, "Device Not Initilized", __PRETTY_FUNCTION__);
     }
     
-    CDWUniquePtr p_abstract_cu;
-    if(update_pack->hasKey("property_abstract_control_unit") &&
-       update_pack->isCDataWrapperValue("property_abstract_control_unit")){
-        p_abstract_cu.reset(update_pack->getCSDataValue("property_abstract_control_unit"));
-        if(p_abstract_cu->hasKey(ControlUnitDatapackSystemKey::BYPASS_STATE) &&
-           p_abstract_cu->isBoolValue(ControlUnitDatapackSystemKey::BYPASS_STATE)) {
-            setBypassState(p_abstract_cu->getBoolValue(ControlUnitDatapackSystemKey::BYPASS_STATE));
-        }
-    }
-    //forward property change pack to the data driver
-    key_data_storage->updateConfiguration(update_pack);
-    *attribute_value_shared_cache->getAttributeValue(DOMAIN_SYSTEM, DataServiceNodeDefinitionKey::DS_STORAGE_TYPE)->getValuePtr<int32_t>() = key_data_storage->getStorageType();
-    *attribute_value_shared_cache->getAttributeValue(DOMAIN_SYSTEM, DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME)->getValuePtr<uint64_t>() = key_data_storage->getStorageLiveTime();
-    *attribute_value_shared_cache->getAttributeValue(DOMAIN_SYSTEM, DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME)->getValuePtr<uint64_t>() = key_data_storage->getStorageHistoryTime();
+    PropertyGroupVectorSDWrapper pg_sdw;
+    pg_sdw.serialization_key="property";
+    pg_sdw.deserialize(update_pack);
     
+    //update the property
+    PropertyCollector::applyValue(pg_sdw());
+    key_data_storage->updateConfiguration(update_pack);
     //mark all cache as changed
     attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM).markAllAsChanged();
     
     pushSystemDataset();
     return NULL;
+}
+
+bool AbstractControlUnit::propertyChangeHandler(const std::string& group_name,
+                                                const std::string& property_name,
+                                                const CDataVariant& property_value) {
+    ACULDBG_ << CHAOS_FORMAT("Update property request for %1%[%2%] with value %3%", %property_name%group_name%property_value.asString());
+    return true;
+}
+
+void AbstractControlUnit::propertyUpdatedHandler(const std::string& group_name,
+                                                 const std::string& property_name,
+                                                 const CDataVariant& old_value,
+                                                 const CDataVariant& new_value) {
+    if(group_name.compare("property_abstract_control_unit") == 0) {
+        key_data_storage->updateConfiguration(property_name, new_value);
+        //is my group
+        if(property_name.compare(ControlUnitDatapackSystemKey::BYPASS_STATE) == 0) {
+            _setBypassState(new_value.asBool());
+        } else if(property_name.compare(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE) == 0) {
+            *attribute_value_shared_cache->getAttributeValue(DOMAIN_SYSTEM, DataServiceNodeDefinitionKey::DS_STORAGE_TYPE)->getValuePtr<int32_t>() = new_value.asInt32();
+        } else if(property_name.compare(DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME) == 0) {
+            *attribute_value_shared_cache->getAttributeValue(DOMAIN_SYSTEM, DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME)->getValuePtr<uint64_t>() = new_value.asUInt64();
+        } else if(property_name.compare(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME) == 0) {
+            *attribute_value_shared_cache->getAttributeValue(DOMAIN_SYSTEM, DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME)->getValuePtr<uint64_t>() = new_value.asUInt64();
+        }
+    }
 }
 
 //! return the accessor by an index

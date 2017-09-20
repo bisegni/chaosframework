@@ -54,13 +54,14 @@ HealtPresenterWidget::HealtPresenterWidget(const QString &node_to_check,
     //force start refresh also if node is down
     changedOnlineStatus(node_uid,
                         chaos::metadata_service_client::node_monitor::OnlineStateON);
-    QMap<QString, QVariant> cm_map;
-    cm_map.insert("Load", QVariant());
-    cm_map.insert("Init", QVariant());
-    cm_map.insert("Start", QVariant());
-    cm_map.insert("Stop", QVariant());
-    cm_map.insert("Deinit", QVariant());
-    cm_map.insert("Plot", QVariant());
+    QVector< QPair<QString, QVariant> > cm_map;
+    cm_map.push_back(QPair<QString, QVariant>("Load", QVariant()));
+    cm_map.push_back(QPair<QString, QVariant>("Init", QVariant()));
+    cm_map.push_back(QPair<QString, QVariant>("Start", QVariant()));
+    cm_map.push_back(QPair<QString, QVariant>("Stop", QVariant()));
+    cm_map.push_back(QPair<QString, QVariant>("Deinit", QVariant()));
+    cm_map.push_back(QPair<QString, QVariant>("Unload", QVariant()));
+    cm_map.push_back(QPair<QString, QVariant>("Plot", QVariant()));
     wUtil.cmRegisterActions(this,
                             cm_map);
     node_action = wUtil.cmGetAction(this, "action");
@@ -145,27 +146,31 @@ void HealtPresenterWidget::cmActionTrigger(const QString& cm_title,
         api_submitter.submitApiResult(QString("cu_load"),
                                       GET_CHAOS_API_PTR(unit_server::LoadUnloadControlUnit)->execute(node_uid.toStdString(),
                                                                                                      true));
-    }else if(cm_title.compare("Unload") == 0) {
+    } else if(cm_title.compare("Unload") == 0) {
         api_submitter.submitApiResult(QString("cu_unload"),
                                       GET_CHAOS_API_PTR(unit_server::LoadUnloadControlUnit)->execute(node_uid.toStdString(),
                                                                                                      false));
-    }else if(cm_title.compare("Init") == 0) {
+    } else if(cm_title.compare("Unload") == 0) {
+        api_submitter.submitApiResult(QString("cu_unload"),
+                                      GET_CHAOS_API_PTR(unit_server::LoadUnloadControlUnit)->execute(node_uid.toStdString(),
+                                                                                                     false));
+    } else if(cm_title.compare("Init") == 0) {
         api_submitter.submitApiResult(QString("cu_init"),
                                       GET_CHAOS_API_PTR(control_unit::InitDeinit)->execute(node_uid.toStdString(),
                                                                                            true));
-    }else if(cm_title.compare("Deinit") == 0) {
+    } else if(cm_title.compare("Deinit") == 0) {
         api_submitter.submitApiResult(QString("cu_deinit"),
                                       GET_CHAOS_API_PTR(control_unit::InitDeinit)->execute(node_uid.toStdString(),
                                                                                            false));
-    }else if(cm_title.compare("Start") == 0) {
+    } else if(cm_title.compare("Start") == 0) {
         api_submitter.submitApiResult(QString("cu_start"),
                                       GET_CHAOS_API_PTR(control_unit::StartStop)->execute(node_uid.toStdString(),
                                                                                           true));
-    }else if(cm_title.compare("Stop") == 0) {
+    } else if(cm_title.compare("Stop") == 0) {
         api_submitter.submitApiResult(QString("cu_stop"),
                                       GET_CHAOS_API_PTR(control_unit::StartStop)->execute(node_uid.toStdString(),
                                                                                           false));
-    }else if(cm_title.compare("Plot") == 0) {
+    } else if(cm_title.compare("Plot") == 0) {
         NodeAttributePlotting *plot_viewer = new NodeAttributePlotting(node_uid, NULL);
         plot_viewer->show();
     }

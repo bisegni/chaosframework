@@ -32,34 +32,16 @@ namespace chaos{
     namespace common {
         namespace batch_command {
             namespace test {
-                
-                struct TestElement {
-                    TestBatchCommand *command_instance;
-                    common::batch_command::BatchCommandEventType::BatchCommandEventType last_event;
-                    bool has_completed;
-                    bool has_faulted;
-                    
-                    TestElement():
-                    command_instance(NULL),
-                    has_completed(false),
-                    has_faulted(0){}
-                    
-                    TestElement(TestBatchCommand *_command_instance):
-                    command_instance(_command_instance),
-                    has_completed(false),
-                    has_faulted(0){}
-                };
-                
-                CHAOS_DEFINE_MAP_FOR_TYPE(uint64_t, TestElement, IDCommandMap);
-                
+                CHAOS_DEFINE_LOCKABLE_OBJECT(BatchCommandStat, LBatchCommandStat);
                 /*!
                  this class sis the implementation of the batch executor for
                  the metadataserver batch job
                  */
                 class TestCommandExecutor:
                 public BatchCommandExecutor {
-                    chaos::common::utility::LockableObject<IDCommandMap> map_id_command;
-                    BatchCommandStat local_stat;
+                public:
+                    uint64_t queued;
+                    uint64_t stacked;
                     uint64_t last_end_time;
                     uint64_t completed_count;
                     uint64_t fault_count;
@@ -90,11 +72,10 @@ namespace chaos{
                     TestCommandExecutor();
                     ~TestCommandExecutor();
                     
-                    uint64_t getRunningElement();
-                    
-                    void resetMap();
-                    
                     void printStatistic();
+                    void resetStat();
+                    uint64_t getQueued();
+                    uint64_t getStacked();
                 };
             }
         }

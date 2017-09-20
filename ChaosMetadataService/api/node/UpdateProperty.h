@@ -28,6 +28,7 @@ namespace chaos {
     namespace metadata_service {
         namespace api {
             namespace node {
+                //update property live on node
                 class UpdateProperty:
                 public AbstractApi {
                 public:
@@ -40,6 +41,5 @@ namespace chaos {
         }
     }
 }
-
 
 #endif /* defined(__CHAOSFramework__UpdateProperty__) */

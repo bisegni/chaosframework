@@ -69,7 +69,7 @@ void IDSTControlUnitBatchCommand::setHandler(CDataWrapper *data) {
     
     //set cu id to the batch command datapack
     cu_id = data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
-    action = static_cast<IDSTAction>(data->getInt32Value("action"));//0-init,1-start,2-ztop,3-deinit
+    action = static_cast<IDSTAction>(data->getInt32Value("action"));//0-init,1-start,2-stop,3-deinit
     
     if((err = getDataAccess<mds_data_access::NodeDataAccess>()->getNodeDescription(cu_id, &tmp_ptr))) {
         LOG_AND_TROW(CU_IDST_BC_ERR, -1, "Control Unit information has not been found!")

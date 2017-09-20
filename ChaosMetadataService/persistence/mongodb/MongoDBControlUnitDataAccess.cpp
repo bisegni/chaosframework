@@ -22,6 +22,7 @@
 #include "MongoDBControlUnitDataAccess.h"
 
 #include <chaos/common/utility/TimingUtil.h>
+#include <chaos/common/property/property.h>
 
 #include <boost/format.hpp>
 #include <boost/foreach.hpp>
@@ -338,6 +339,7 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
             updated_field.appendArray(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_COMMAND_DESCRIPTION,
                                       batch_command_bson_array.arr());
         }
+
         mongo::BSONObj query = bson_find.obj();
         mongo::BSONObj update = BSON("$set" << BSON(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION << updated_field.obj()));
         
@@ -506,7 +508,7 @@ int MongoDBControlUnitDataAccess::setInstanceDescription(const std::string& cu_u
         if(instance_description.hasKey(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING)) {
             updated_field << DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING << instance_description.getInt32Value(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING);
             //insert the last check time to now
-            updated_field << MONGODB_COLLECTION_NODES_AGEING_LAST_CHECK_DATA << mongo::Date_t(common::utility::TimingUtil::getTimeStamp());
+            //updated_field << MONGODB_COLLECTION_NODES_AGEING_LAST_CHECK_DATA << mongo::Date_t(common::utility::TimingUtil::getTimeStamp());
         }
         
         if(instance_description.hasKey(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME)) {

@@ -32,6 +32,7 @@
 #define MDBNDA_ERR  ERR_LOG(MongoDBNodeDataAccess)
 
 using namespace boost;
+using namespace chaos::common::property;
 using namespace chaos::common::data;
 using namespace chaos::common::data::structured;
 using namespace chaos::common::utility;
@@ -461,6 +462,188 @@ int MongoDBNodeDataAccess::searchNode(chaos::common::data::CDataWrapper **result
             }
             (*result)->finalizeArrayForKey("node_search_result_page");
         }
+    }
+    return err;
+}
+
+int MongoDBNodeDataAccess::setProperty(const std::string& node_uid,
+                                       const PropertyGroupVector& property_group_vector) {
+    int err = 0;
+    int size = 0;
+    try {
+        chaos::common::property::PropertyGroupVectorSDWrapper pg_sdw(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(PropertyGroupVector, const_cast<PropertyGroupVector&>(property_group_vector)));
+        pg_sdw.serialization_key = "property";
+        mongo::BSONObj q = BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID << node_uid);
+        mongo::BSONObj u = BSON("$set" << mongo::BSONObj(pg_sdw.serialize()->getBSONRawData(size)));
+        DEBUG_CODE(MDBNDA_DBG<<log_message("setProperty",
+                                           "update",
+                                           DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                                   "Update",
+                                                                   q.jsonString(),
+                                                                   u.jsonString()));)
+        
+        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                     q,
+                                     u))){
+            MDBNDA_ERR << CHAOS_FORMAT("Error setting property for %1%",%node_uid);
+        }
+    } catch (const mongo::DBException &e) {
+        MDBNDA_ERR << e.what();
+        err = e.getCode();
+    }
+    return err;
+}
+
+PropertyGroup *getPrgFromVec(const std::string& group_name,
+                             chaos::common::property::PropertyGroupVector& property_group_vector) {
+    PropertyGroup *res_ptr = NULL;
+    for(PropertyGroupVectorIterator it = property_group_vector.begin(),
+        end = property_group_vector.end();
+        it != end;
+        it++) {
+        if(it->getGroupName().compare(group_name) != 0) continue;
+        res_ptr = &(*it);
+        break;
+    }
+    return res_ptr;
+}
+
+//update porperty without removing old, if old are present the value are pushed
+int MongoDBNodeDataAccess::updatePropertyDefaultValue(const std::string& node_uid,
+                                                      const chaos::common::property::PropertyGroupVector& property_group_vector) {
+    int err = 0;
+    int size = 0;
+    
+    //get store default and update or add new
+    PropertyGroupVector property_stored;
+    if((err = getProperty(data_access::PropertyTypeDefaultValues,
+                          node_uid, property_stored)) != 0) return err;
+    
+    for(PropertyGroupVectorConstIterator it = property_group_vector.begin(),
+        end = property_group_vector.end();
+        it != end;
+        it++) {
+        const std::string group_name = it->getGroupName();
+        
+        PropertyGroup *pg = getPrgFromVec(group_name, property_stored);
+        if(pg != NULL) {
+            pg->copyPropertiesFromGroup(*it, true);
+        } else {
+            property_stored.push_back(*it);
+        }
+    }
+    //no we can update all defaults
+    try {
+        chaos::common::property::PropertyGroupVectorSDWrapper pg_sdw(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(PropertyGroupVector, const_cast<PropertyGroupVector&>(property_stored)));
+        pg_sdw.serialization_key = "property_defaults";
+        mongo::BSONObj q = BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID << node_uid);
+        mongo::BSONObj u = BSON("$set" << mongo::BSONObj(pg_sdw.serialize()->getBSONRawData(size)));
+        DEBUG_CODE(MDBNDA_DBG<<log_message("updatePropertyDefaultValue",
+                                           "update",
+                                           DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                                   "Update",
+                                                                   q.jsonString(),
+                                                                   u.jsonString()));)
+        
+        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                     q,
+                                     u))){
+            MDBNDA_ERR << CHAOS_FORMAT("Error updating property default values for %1%",%node_uid);
+        }
+    } catch (const mongo::DBException &e) {
+        MDBNDA_ERR << e.what();
+        err = e.getCode();
+    }
+    return err;
+}
+
+int MongoDBNodeDataAccess::getProperty(const data_access::PropertyType property_type,
+                                       const std::string& node_uid,
+                                       chaos::common::property::PropertyGroupVector& property_group_vector) {
+    int err = 0;
+    try {
+        std::string property_key;
+        switch (property_type) {
+            case data_access::PropertyTypeDescription:
+                property_key = "property";
+                break;
+                
+            case data_access::PropertyTypeDefaultValues:
+                property_key = "property_defaults";
+                break;
+        }
+        mongo::BSONObj found_property;
+        mongo::BSONObj q = BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID << node_uid <<
+                                property_key << BSON("$exists" << true));
+        mongo::BSONObj p = BSON(property_key << 1);
+        DEBUG_CODE(MDBNDA_DBG<<log_message("getProperty",
+                                           "findOne",
+                                           DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                   q.jsonString()));)
+        
+        if((err = connection->findOne(found_property,
+                                      MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                      q,
+                                      &p))){
+            MDBNDA_ERR << CHAOS_FORMAT("Error retriving property for %1%",%node_uid);
+        }
+        if(!found_property.isEmpty()) {
+            CDWUniquePtr prop_ser(new CDataWrapper(found_property.objdata()));
+            chaos::common::property::PropertyGroupVectorSDWrapper pg_sdw(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(PropertyGroupVector, property_group_vector));
+            pg_sdw.serialization_key = property_key;
+            pg_sdw.deserialize(prop_ser.get());
+        }
+    } catch (const mongo::DBException &e) {
+        MDBNDA_ERR << e.what();
+        err = e.getCode();
+    }
+    return err;
+}
+
+int MongoDBNodeDataAccess::getPropertyGroup(const data_access::PropertyType property_type,
+                                            const std::string& node_uid,
+                                            const std::string& property_group_name,
+                                            chaos::common::property::PropertyGroup& property_group) {
+    int err = 0;
+    try {
+        std::string property_key;
+        switch (property_type) {
+            case data_access::PropertyTypeDescription:
+                property_key = "property";
+                break;
+                
+            case data_access::PropertyTypeDefaultValues:
+                property_key = "property_defaults";
+                break;
+        }
+        mongo::BSONObj found_property;
+        mongo::BSONObj q = BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID << node_uid <<
+                                property_key << BSON("$exists" << true) <<
+                                CHAOS_FORMAT("%1%.property_g_name", %property_key) << property_group_name);
+        mongo::BSONObj p = BSON("_id" << 0 << CHAOS_FORMAT("%1%", %property_key) << 1);
+        DEBUG_CODE(MDBNDA_DBG<<log_message("getProperty",
+                                           "findOne",
+                                           DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                   q.jsonString()));)
+        
+        if((err = connection->findOne(found_property,
+                                      MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                      q,
+                                      &p))){
+            MDBNDA_ERR << CHAOS_FORMAT("Error retriving property for %1%",%node_uid);
+        }
+        if(!found_property.isEmpty()) {
+            CDWUniquePtr prop_ser(new CDataWrapper(found_property.objdata()));
+            chaos::common::property::PropertyGroupVectorSDWrapper pg_sdw;
+            pg_sdw.serialization_key = property_key;
+            pg_sdw.deserialize(prop_ser.get());
+            if(pg_sdw().size()) {
+                property_group = pg_sdw()[0];
+            }
+        }
+    } catch (const mongo::DBException &e) {
+        MDBNDA_ERR << e.what();
+        err = e.getCode();
     }
     return err;
 }

@@ -57,7 +57,8 @@ typedef std::chrono::microseconds ChaosCronoMicroseconds;
 
 template< class R >
 using ChaosFunction = std::function< R >;
-
+#define ChaosBind std::bind
+#define ChaosBindPlaceholder(x) std::placeholders::x
 #else
 #include <boost/shared_ptr.hpp>
 #include <boost/atomic.hpp>
@@ -75,6 +76,8 @@ using ChaosFunction = std::function< R >;
 #define ChaosCronoMilliseconds boost::chrono::milliseconds
 #define ChaosCronoMicroseconds boost::chrono::microseconds
 #define ChaosFunction boost::function
+#define ChaosBind boost::bind
+#define ChaosBindPlaceholder(x) x
 #endif
 #define ChaosUniquePtr std::unique_ptr
 #define ChaosMoveOperator(x) std::move(x)
@@ -97,6 +100,8 @@ using ChaosFunction = std::function< R >;
 #define ChaosCronoMilliseconds boost::chrono::milliseconds
 #define ChaosCronoMicroseconds boost::chrono::microseconds
 #define ChaosFunction boost::function
+#define ChaosBind boost::bind
+#define ChaosBindPlaceholder(x) x
 #endif
 
 #define  CHAOS_DEFINE_SET_FOR_TYPE(t1, n)\

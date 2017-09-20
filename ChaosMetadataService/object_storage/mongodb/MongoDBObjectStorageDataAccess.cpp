@@ -75,32 +75,64 @@ int MongoDBObjectStorageDataAccess::pushObject(const std::string& key,
 
 int MongoDBObjectStorageDataAccess::getObject(const std::string& key,
                                               const uint64_t& timestamp,
-                                              ObjectSharedPtr& object_ptr_ref) {
+                                              CDWShrdPtr& object_ptr_ref) {
     int err = 0;
     mongo::BSONObj result;
     try {
         mongo::BSONObj q = BSON(chaos::DataPackCommonKey::DPCK_DEVICE_ID << key <<
                                 chaos::DataPackCommonKey::DPCK_TIMESTAMP << mongo::Date_t(TimingUtil::getTimeStamp()));
-        
-        mongo::BSONObj p = BSON(CHAOS_FORMAT("%1%.$",%MONGODB_DAQ_DATA_FIELD) << 1);
         DEBUG_CODE(DBG<<log_message("getObject",
                                     "findOne",
-                                    DATA_ACCESS_LOG_2_ENTRY("Query",
-                                                            "Projection",
-                                                            q.jsonString(),
-                                                            p.jsonString()));)
+                                    DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                            q.jsonString()));)
         
         if((err = connection->findOne(result,
                                       MONGO_DB_COLLECTION_NAME(MONGODB_DAQ_COLL_NAME),
-                                      q,
-                                      &p))){
+                                      q))){
             ERR << "Error fetching stored object";
         } else if(result.isEmpty()) {
             DBG << "No data has been found";
         } else {
-            
-            object_ptr_ref.reset(new CDataWrapper(result.objdata()));
-            //       DBG<<"fromDB:"<<object_ptr_ref->getJSONString();
+            if(result.hasField(MONGODB_DAQ_DATA_FIELD)) {
+                mongo::BSONElement e = result.getField(MONGODB_DAQ_DATA_FIELD);
+                if(e.isABSONObj()) {
+                    object_ptr_ref.reset(new CDataWrapper(e.Obj().objdata()));
+                }
+            }
+        }
+    } catch (const mongo::DBException &e) {
+        ERR << e.what();
+        err = e.getCode();
+    }
+    return err;
+}
+
+int MongoDBObjectStorageDataAccess::getLastObject(const std::string& key,
+                                                  CDWShrdPtr& object_ptr_ref) {
+    int err = 0;
+    mongo::BSONObj result;
+    try {
+        mongo::Query q = BSON(chaos::DataPackCommonKey::DPCK_DEVICE_ID << key);
+        q = q.sort(BSON(chaos::DataPackCommonKey::DPCK_TIMESTAMP << -1));
+        
+        DEBUG_CODE(DBG<<log_message("getLastObject",
+                                    "findOne",
+                                    DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                            q.toString()));)
+        
+        if((err = connection->findOne(result,
+                                      MONGO_DB_COLLECTION_NAME(MONGODB_DAQ_COLL_NAME),
+                                      q))){
+            ERR << "Error fetching stored object";
+        } else if(result.isEmpty()) {
+            DBG << "No data has been found";
+        } else {
+            if(result.hasField(MONGODB_DAQ_DATA_FIELD)) {
+                mongo::BSONElement e = result.getField(MONGODB_DAQ_DATA_FIELD);
+                if(e.isABSONObj()) {
+                    object_ptr_ref.reset(new CDataWrapper(e.Obj().objdata()));
+                }
+            }
         }
     } catch (const mongo::DBException &e) {
         ERR << e.what();
@@ -176,11 +208,11 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string& key,
         }
         
         
-
+        
         mongo::Query q = BSON(chaos::DataPackCommonKey::DPCK_DEVICE_ID << key <<
-                                chaos::DataPackCommonKey::DPCK_TIMESTAMP << time_query.obj() <<
-                                run_key << BSON("$gte" << (long long)last_record_found_seq.run_id) <<
-                                counter_key << BSON("$gte" << (long long)last_record_found_seq.datapack_counter));
+                              chaos::DataPackCommonKey::DPCK_TIMESTAMP << time_query.obj() <<
+                              run_key << BSON("$gte" << (long long)last_record_found_seq.run_id) <<
+                              counter_key << BSON("$gte" << (long long)last_record_found_seq.datapack_counter));
         
         if(reverse_order) {
             q = q.sort(BSON(chaos::DataPackCommonKey::DPCK_TIMESTAMP<<-1));
@@ -206,11 +238,9 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string& key,
                     it != end;
                     it++) {
                     CDataWrapper*new_obj=new CDataWrapper(it->getObjectField(MONGODB_DAQ_DATA_FIELD).objdata());
-                    found_object_page.push_back(ObjectSharedPtr(new_obj));
-                    //               DBG<<"fromDB:"<<new_obj->getJSONString();
-                    
+                    found_object_page.push_back(CDWShrdPtr(new_obj));
                 }
-
+                
                 last_record_found_seq.run_id = object_found[object_found.size()-1].getFieldDotted(run_key).Long();
                 last_record_found_seq.datapack_counter = object_found[object_found.size()-1].getFieldDotted(counter_key).Long();
                 DEBUG_CODE(DBG<<CHAOS_FORMAT("Found %1% element last sequence read is [%2%-%3%]", %object_found.size()%(int64_t)last_record_found_seq.run_id%last_record_found_seq.datapack_counter);)

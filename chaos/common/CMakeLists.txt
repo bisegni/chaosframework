@@ -227,6 +227,7 @@ SET(common_lib_src ${common_lib_src}
 
 SET(common_lib_src ${common_lib_src}
         property/PropertyGroup.cpp
+        property/PropertyCollector.cpp
         property/PropertyDescription.cpp)
 
 SET(common_lib_src ${common_lib_src}

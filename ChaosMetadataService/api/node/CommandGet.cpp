@@ -54,7 +54,7 @@ CDataWrapper *CommandGet::execute(CDataWrapper *api_data,
     
     //we need to add the sequence
     if((err = n_da->getCommand(command_unique_id, &result))) {
-        LOG_AND_TROW_FORMATTED(N_CG_ERR, -4, "Error getting command for uid %1%", %command_unique_id)
+        LOG_AND_TROW_FORMATTED(N_CG_ERR, -4, "Error getting command for uid %1%", %command_unique_id);
     }
     return result;
 }

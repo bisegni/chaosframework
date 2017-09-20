@@ -50,7 +50,8 @@ namespace chaos {
                 PropertyDescription(const std::string& _name,
                                     const std::string& _description,
                                     const DataType::DataType& _type = DataType::TYPE_UNDEFINED,
-                                    const uint32_t _flag = 0);
+                                    const uint32_t _flag = 0,
+                                    const chaos::common::data::CDataVariant& property_default_value = chaos::common::data::CDataVariant());
                 
                 
                 ~PropertyDescription();
@@ -88,11 +89,11 @@ namespace chaos {
             
             ChaosUniquePtr<chaos::common::data::CDataWrapper> serialize() {
                 ChaosUniquePtr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
-                data_serialized->addStringValue("property_name", Subclass::dataWrapped().name);
-                data_serialized->addStringValue("property_description", Subclass::dataWrapped().description);
-                data_serialized->addInt32Value("property_type", Subclass::dataWrapped().type);
-                data_serialized->addInt32Value("property_flag", Subclass::dataWrapped().flag);
-                data_serialized->addVariantValue("property_value", Subclass::dataWrapped().property_value);
+                CDW_CHECK_AND_SET(Subclass::dataWrapped().name.size(), data_serialized, addStringValue, "property_name", Subclass::dataWrapped().name);
+                CDW_CHECK_AND_SET(Subclass::dataWrapped().description.size(), data_serialized, addStringValue, "property_description", Subclass::dataWrapped().description);
+                CDW_CHECK_AND_SET(Subclass::dataWrapped().type != DataType::TYPE_UNDEFINED, data_serialized, addInt32Value, "property_type", Subclass::dataWrapped().type);
+                CDW_CHECK_AND_SET(Subclass::dataWrapped().flag != 0, data_serialized, addInt32Value, "property_flag", Subclass::dataWrapped().type);
+                CDW_CHECK_AND_SET(Subclass::dataWrapped().property_value.isValid(), data_serialized, addVariantValue, "property_value", Subclass::dataWrapped().property_value);
                 return data_serialized;
             }
             CHAOS_CLOSE_SDWRAPPER()

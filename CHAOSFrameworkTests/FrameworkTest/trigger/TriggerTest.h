@@ -24,6 +24,8 @@
 
 #include <chaos/common/trigger/trigger.h>
 
+#include <gtest/gtest.h>
+
 using namespace chaos::common::trigger;
 
 namespace chaos {
@@ -103,12 +105,16 @@ namespace chaos {
                 ~SubjectTriggerEnviroment(){}
             };
             
-            //---------------------------------
-            class TestTrigger {
+            class TriggerTest:
+            public testing::Test {
+            protected:
+                virtual void SetUp();
+                // virtual void TearDown() {}
+                SubjectTriggerEnviroment::SubjectInstanceShrdPtr subject_one;
+                SubjectTriggerEnviroment::SubjectInstanceShrdPtr subject_two;
+                SubjectTriggerEnviroment trigger_environment;
             public:
-                TestTrigger();
-                ~TestTrigger();
-                bool test();
+                TriggerTest();
             };
         }
     }

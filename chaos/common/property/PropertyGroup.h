@@ -56,17 +56,22 @@ namespace chaos {
                 PropertyValueUpdatedFunction value_updated_function;
             public:
                 std::string name;
-                MapProperties map_properties;
+                mutable MapProperties map_properties;
                 PropertyGroup();
                 PropertyGroup(const std::string& _name);
                 PropertyGroup(const PropertyGroup& src);
                 
                 bool addProperty(const std::string& property_name,
                                  const std::string& property_description,
-                                 const DataType::DataType property_type);
+                                 const DataType::DataType property_type,
+                                 const uint32_t flag = 0,
+                                 const chaos::common::data::CDataVariant& property_default_value = chaos::common::data::CDataVariant());
+                
+                bool addProperty(const std::string& property_name,
+                                 const chaos::common::data::CDataVariant& property_default_value = chaos::common::data::CDataVariant());
                 
                 void setPropertyValue(const std::string& property_name,
-                                      const chaos::common::data::CDataVariant& new_value);
+                                      const chaos::common::data::CDataVariant& new_value) const;
                 
                 void setPropertyValueChangeFunction(const PropertyValueChangeFunction& value_change_f);
                 
@@ -74,16 +79,18 @@ namespace chaos {
                 
                 PropertyDescription& getProperty(const std::string& property_name);
                 
-                const chaos::common::data::CDataVariant& getPropertyValue(const std::string& property_name);
+                const chaos::common::data::CDataVariant& getPropertyValue(const std::string& property_name) const;
                 
                 const std::string& getGroupName() const;
                 
                 void copyPropertiesFromGroup(const PropertyGroup& src_group,
                                              bool copy_value = false);
                 
-                void updatePropertiesValueFromSourceGroup(const PropertyGroup& src_group);
+                void updatePropertiesValueFromSourceGroup(const PropertyGroup& src_group) const;
                 
                 const MapProperties getAllProperties() const;
+                
+                const bool hasProperty(const std::string& property_name) const;
                 
                 void resetProperiesValues();
                 
@@ -137,6 +144,46 @@ namespace chaos {
                 return data_serialized;
             }
             CHAOS_CLOSE_SDWRAPPER()
+            
+            //!define a vector of property group
+            CHAOS_DEFINE_VECTOR_FOR_TYPE(PropertyGroup, PropertyGroupVector);
+            
+            //define the serialization of property vector
+            CHAOS_OPEN_SDWRAPPER(PropertyGroupVector)
+            std::string serialization_key;
+            void deserialize(chaos::common::data::CDataWrapper *serialized_data){
+                if(serialized_data == NULL) return;
+                Subclass::dataWrapped().clear();
+                PropertyGroupSDWrapper pg_sdw;
+                const std::string ser_key = (serialization_key.size()==0)?"std_vector_":serialization_key;
+                if(serialized_data->hasKey(ser_key) &&
+                   serialized_data->isVectorValue(ser_key)) {
+                    ChaosUniquePtr<chaos::common::data::CMultiTypeDataArrayWrapper> serialized_array(serialized_data->getVectorValue(ser_key));
+                    for(int idx = 0;
+                        idx < serialized_array->size();
+                        idx++) {
+                        if(serialized_array->isCDataWrapperElementAtIndex(idx) == false) continue;
+                        chaos::common::data::CDWUniquePtr ser_group(serialized_array->getCDataWrapperElementAtIndex(idx));
+                        pg_sdw.deserialize(ser_group.get());
+                        Subclass::dataWrapped().push_back(pg_sdw());
+                    }
+                }
+            }
+            
+            ChaosUniquePtr<chaos::common::data::CDataWrapper> serialize() {
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> result(new chaos::common::data::CDataWrapper());
+                const std::string ser_key = (serialization_key.size()==0)?"std_vector_":serialization_key;
+                for(PropertyGroupVectorIterator it = Subclass::dataWrapped().begin(),
+                    end = Subclass::dataWrapped().end();
+                    it != end;
+                    it++) {
+                    PropertyGroupSDWrapper pg_sdw(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(PropertyGroup, *it));
+                    result->appendCDataWrapperToArray(*pg_sdw.serialize());
+                }
+                result->finalizeArrayForKey(ser_key);
+                return result;
+            }
+            CHAOS_CLOSE_SDWRAPPER();
         }
     }
 }

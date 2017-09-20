@@ -183,7 +183,7 @@ void ControlUnitEditor::initUI() {
 
     //driver bypass
     ui->pushButtonDriverBypass->setNodeUID(control_unit_unique_id);
-    ui->pushButtonDriverBypass->setPropertyGroupName("property_abstract_control_unit");
+    ui->pushButtonDriverBypass->setPropertyGroupName(chaos::ControlUnitPropertyKey::GROUP_NAME);
     ui->pushButtonDriverBypass->setPropertyName(chaos::ControlUnitDatapackSystemKey::BYPASS_STATE);
 
     //start monitoring
@@ -534,18 +534,11 @@ void ControlUnitEditor::on_pushButtonCreateInstance_clicked() {
 }
 
 void ControlUnitEditor::on_pushButtonSetRunScheduleDelay_clicked() {
-    chaos::metadata_service_client::api_proxy::node::NodePropertyGroupList property_list;
-    ChaosSharedPtr<chaos::common::data::CDataWrapperKeyValueSetter> thread_run_schedule(new chaos::common::data::CDataWrapperInt64KeyValueSetter(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY,
-                                                                                                                                                    ui->lineEditRunScheduleDelay->text().toLongLong()));
-    ChaosSharedPtr<chaos::metadata_service_client::api_proxy::node::NodePropertyGroup> cu_property_group(new chaos::metadata_service_client::api_proxy::node::NodePropertyGroup());
-    cu_property_group->group_name = "property_abstract_control_unit";
-    cu_property_group->group_property_list.push_back(thread_run_schedule);
-
-    property_list.push_back(cu_property_group);
-
+    chaos::common::property::PropertyGroup pg(chaos::ControlUnitPropertyKey::GROUP_NAME);
+    pg.addProperty(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, CDataVariant(static_cast<uint64_t>(ui->lineEditRunScheduleDelay->text().toLongLong())));
     submitApiResult(TAG_CU_SET_THREAD_SCHEDULE_DELAY,
                     GET_CHAOS_API_PTR(node::UpdateProperty)->execute(control_unit_unique_id.toStdString(),
-                                                                     property_list));
+                                                                     pg));
 }
 
 void ControlUnitEditor::on_pushButtonRecoverError_clicked() {

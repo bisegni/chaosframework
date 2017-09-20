@@ -5,7 +5,7 @@
 	    "private_key": null,
 	    "public_key": null,
 	    "cu_desc": [
-		 {		
+		{		
 		    "unit_server_alias": "TEST",
 		    "cu_id": "BTF/SCRAPER/SLTB004R",
 		    "cu_type": "::driver::actuator::SCActuatorControlUnit",
@@ -24,171 +24,171 @@
 			}
 		    ],
 		    "AttrDesc": [
-{		    
+			{		    
 			    "ds_attr_name": "position",
 			    "ds_max_range": "100",
 			    "ds_min_range": "0",
 			    "ds_default_value": "0"
-		    },
-		    {		    
+			},
+			{		    
 			    "ds_attr_name": "bypass",
 			    "ds_max_range": "1",
 			    "ds_min_range": "0",
 			    "ds_default_value": "1"
-		    },
-		    {		    
+			},
+			{		    
 			    "ds_attr_name": "ConfigString",
 			    "ds_max_range": "",
 			    "ds_min_range": "",
 			    "ds_default_value": "31,/home/chaos/chaos-distrib/etc/common_actuators_technosoft/asse3.t.zip"
-		    },
-		    {
+			},
+			{
 			    "ds_attr_name": "axisID",
 			    "ds_max_range": "255",
 			    "ds_min_range": "0",
 			    "ds_default_value": "31"
-	            },
-	            {
+			},
+			{
 			    "ds_attr_name": "fileTable",
 			    "ds_max_range": "",
 			    "ds_min_range": "",
 			    "ds_default_value": "asse3.t.zip"
-	            },
-		    {
+			},
+			{
 			    "ds_attr_name": "fixednumberofrounds",
 			    "ds_max_range": "10000000",
 			    "ds_min_range": "0.000000001",
 			    "ds_default_value": "20"
-	            },
-		    {
+			},
+			{
 			    "ds_attr_name": "lineardisplacement[mm]",
 			    "ds_max_range": "10000000",
 			    "ds_min_range": "0.000000001",
 			    "ds_default_value": "1.5"
-	            },
-	            {
+			},
+			{
 			    "ds_attr_name": "numencoderlines",
 			    "ds_max_range": "10000000",
 			    "ds_min_range": "0.000000001",
 			    "ds_default_value": "800"
-	            },
-	 	    {
+			},
+	 		{
 			    "ds_attr_name": "range_slit[mm]",
 			    "ds_max_range": "10000000",
 			    "ds_min_range": "0.000000001",
 			    "ds_default_value": "28.5"
-	            },
-		    {
+			},
+			{
 			    "ds_attr_name": "speed",
 			    "ds_max_range": "600",
 			    "ds_min_range": "0.000000001",
 			    "ds_default_value": "200"
-	            },
-		    {
+			},
+			{
 			    "ds_attr_name": "maxspeed",
 			    "ds_max_range": "600",
 			    "ds_min_range": "0.000000001",
 			    "ds_default_value": "600"
-	            },
-		    {
+			},
+			{
 			    "ds_attr_name": "acceleration",
 			    "ds_max_range": "5",
 			    "ds_min_range": "0.000000001",
 			    "ds_default_value": "1"
-	            },
-		    {
+			},
+			{
 			    "ds_attr_name": "maxacceleration",
 			    "ds_max_range": "5",
 			    "ds_min_range": "0.000000001",
 			    "ds_default_value": "5"
-	            },
-		    {
+			},
+			{
 			    "ds_attr_name": "highspeedhoming",
 			    "ds_max_range": "25",
 			    "ds_min_range": "0.000000001",
 			    "ds_default_value": "10"
-	            },
-		    {
+			},
+			{
 			    "ds_attr_name": "maxhighspeedhoming",
 			    "ds_max_range": "25",
 			    "ds_min_range": "0.000000001",
 			    "ds_default_value": "25"
-	            },
-	            {
+			},
+			{
 			    "ds_attr_name": "lowspeedhoming",
 			    "ds_max_range": "7",
 			    "ds_min_range": "0.000000001",
 			    "ds_default_value": "3"
-	            },
-		    {
+			},
+			{
 			    "ds_attr_name": "maxlowspeedhoming",
 			    "ds_max_range": "7",
 			    "ds_min_range": "0.000000001",
 			    "ds_default_value": "7"
-	            },
-		    {
+			},
+			{
 			    "ds_attr_name": "accelerationhoming",
 			    "ds_max_range": "0.6",
 			    "ds_min_range": "0.000000001",
 			    "ds_default_value": "0.3"
-	            },
-		    {
+			},
+			{
 			    "ds_attr_name": "maxaccelerationhoming",
 			    "ds_max_range": "0.6",
 			    "ds_min_range": "0.000000001",
 			    "ds_default_value": "0.6"
-	            },
-		    {
+			},
+			{
 			    "ds_attr_name": "nummicrostepsperstep",
 			    "ds_max_range": "10000000",
 			    "ds_min_range": "0.000000001",
 			    "ds_default_value": "256"
-	            },
-		    {
+			},
+			{
 			    "ds_attr_name": "stepsperround",
 			    "ds_max_range": "10000000",
 			    "ds_min_range": "0.000000001",
 			    "ds_default_value": "200"
-	            },
-		    {
+			},
+			{
 			    "ds_attr_name": "isadditive",
 			    "ds_max_range": "1",
 			    "ds_min_range": "0",
 			    "ds_default_value": "0"
-	            },
-	            {
+			},
+			{
 			    "ds_attr_name": "movement",
 			    "ds_max_range": "1",
 			    "ds_min_range": "-1",
 			    "ds_default_value": "1"
-	            },
-		    {
+			},
+			{
 			    "ds_attr_name": "referenceBase",
 			    "ds_max_range": "1",
 			    "ds_min_range": "0",
 			    "ds_default_value": "1"
-	            },
-		    {
+			},
+			{
 			    "ds_attr_name": "voltage_LNS[V]",
 			    "ds_max_range": "1000000",
 			    "ds_min_range": "0.000000001",
 			    "ds_default_value": "30"
-	            },
-		    {
+			},
+			{
 			    "ds_attr_name": "voltage_LPS[V]",
 			    "ds_max_range": "1000000",
 			    "ds_min_range": "0.000000001",
 			    "ds_default_value": "10"
-	            },
-		    {
+			},
+			{
 			    "ds_attr_name": "fullscalePot",
 			    "ds_max_range": "2000000",
 			    "ds_min_range": "0.000000001",
 			    "ds_default_value": "20"
-	            }
+			}
 		    ]
 		},
-{
+		{
 		    "unit_server_alias": "TEST",
 		    "cu_id": "BTF/DIAG/DAQ/QDC/QDC965LO",
 		    "cu_type": "",
@@ -204,7 +204,7 @@
 		    ],
 		    "AttrDesc": []
 		},
-{
+		{
 		    "unit_server_alias": "TEST",
 		    "cu_id": "BTF/DIAG/DAQ/QDC/QDC965HI",
 		    "cu_type": "",
@@ -220,7 +220,7 @@
 		    ],
 		    "AttrDesc": []
 		},
-{
+		{
 		    "unit_server_alias": "TEST",
 		    "cu_id": "BTF/DIAG/DAQ/SCALER",
 		    "cu_type": "",
@@ -236,7 +236,7 @@
 		    ],
 		    "AttrDesc": []
 		},
-{
+		{
 		    "unit_server_alias": "TEST",
 		    "cu_id": "TEST/TEST_CU",
 		    "cu_type": "",
@@ -271,169 +271,169 @@
 			}
 		    ],
 		    "AttrDesc": [
-  {		    
+			{		    
 			    "ds_attr_name": "position",
 			    "ds_max_range": "100",
 			    "ds_min_range": "0",
 			    "ds_default_value": "0"
-		    },
-		  		  
-  {		    
+			},
+		  	
+			{		    
 			    "ds_attr_name": "bypass",
 			    "ds_max_range": "1",
 			    "ds_min_range": "0",
 			    "ds_default_value": "0"
-		    },
-		    {		    
+			},
+			{		    
 			    "ds_attr_name": "ConfigString",
 			    "ds_max_range": "",
 			    "ds_min_range": "",
 			    "ds_default_value": "13,asse3.t.zip"
-		    },
-		    {
+			},
+			{
 			    "ds_attr_name": "axisID",
 			    "ds_max_range": "255",
 			    "ds_min_range": "0",
 			    "ds_default_value": "13"
-	            },
-	            {
+			},
+			{
 			    "ds_attr_name": "fileTable",
 			    "ds_max_range": "",
 			    "ds_min_range": "",
 			    "ds_default_value": "asse3.t.zip"
-	            },
-		    {
+			},
+			{
 			    "ds_attr_name": "fixednumberofrounds",
 			    "ds_max_range": "10000000",
 			    "ds_min_range": "0.000000001",
 			    "ds_default_value": "20"
-	            },
-		    {
+			},
+			{
 			    "ds_attr_name": "lineardisplacement[mm]",
 			    "ds_max_range": "10000000",
 			    "ds_min_range": "0.000000001",
 			    "ds_default_value": "1.5"
-	            },
-	            {
+			},
+			{
 			    "ds_attr_name": "numencoderlines",
 			    "ds_max_range": "10000000",
 			    "ds_min_range": "0.000000001",
 			    "ds_default_value": "800"
-	            },
-	 	    {
+			},
+	 		{
 			    "ds_attr_name": "range_slit[mm]",
 			    "ds_max_range": "10000000",
 			    "ds_min_range": "0.000000001",
 			    "ds_default_value": "28.5"
-	            },
-		    {
+			},
+			{
 			    "ds_attr_name": "speed",
 			    "ds_max_range": "600",
 			    "ds_min_range": "0.000000001",
 			    "ds_default_value": "200"
-	            },
-		    {
+			},
+			{
 			    "ds_attr_name": "maxspeed",
 			    "ds_max_range": "600",
 			    "ds_min_range": "0.000000001",
 			    "ds_default_value": "600"
-	            },
-		    {
+			},
+			{
 			    "ds_attr_name": "acceleration",
 			    "ds_max_range": "5",
 			    "ds_min_range": "0.000000001",
 			    "ds_default_value": "1"
-	            },
-		    {
+			},
+			{
 			    "ds_attr_name": "maxacceleration",
 			    "ds_max_range": "5",
 			    "ds_min_range": "0.000000001",
 			    "ds_default_value": "5"
-	            },
-		    {
+			},
+			{
 			    "ds_attr_name": "highspeedhoming",
 			    "ds_max_range": "25",
 			    "ds_min_range": "0.000000001",
 			    "ds_default_value": "10"
-	            },
-		    {
+			},
+			{
 			    "ds_attr_name": "maxhighspeedhoming",
 			    "ds_max_range": "25",
 			    "ds_min_range": "0.000000001",
 			    "ds_default_value": "25"
-	            },
-	            {
+			},
+			{
 			    "ds_attr_name": "lowspeedhoming",
 			    "ds_max_range": "7",
 			    "ds_min_range": "0.000000001",
 			    "ds_default_value": "3"
-	            },
-		    {
+			},
+			{
 			    "ds_attr_name": "maxlowspeedhoming",
 			    "ds_max_range": "7",
 			    "ds_min_range": "0.000000001",
 			    "ds_default_value": "7"
-	            },
-		    {
+			},
+			{
 			    "ds_attr_name": "accelerationhoming",
 			    "ds_max_range": "0.6",
 			    "ds_min_range": "0.000000001",
 			    "ds_default_value": "0.3"
-	            },
-		    {
+			},
+			{
 			    "ds_attr_name": "maxaccelerationhoming",
 			    "ds_max_range": "0.6",
 			    "ds_min_range": "0.000000001",
 			    "ds_default_value": "0.6"
-	            },
-		    {
+			},
+			{
 			    "ds_attr_name": "nummicrostepsperstep",
 			    "ds_max_range": "10000000",
 			    "ds_min_range": "0.000000001",
 			    "ds_default_value": "256"
-	            },
-		    {
+			},
+			{
 			    "ds_attr_name": "stepsperround",
 			    "ds_max_range": "10000000",
 			    "ds_min_range": "0.000000001",
 			    "ds_default_value": "200"
-	            },
-		    {
+			},
+			{
 			    "ds_attr_name": "isadditive",
 			    "ds_max_range": "1",
 			    "ds_min_range": "0",
 			    "ds_default_value": "0"
-	            },
-	            {
+			},
+			{
 			    "ds_attr_name": "movement",
 			    "ds_max_range": "1",
 			    "ds_min_range": "-1",
 			    "ds_default_value": "1"
-	            },
-		    {
+			},
+			{
 			    "ds_attr_name": "referenceBase",
 			    "ds_max_range": "1",
 			    "ds_min_range": "0",
 			    "ds_default_value": "1"
-	            },
-		    {
+			},
+			{
 			    "ds_attr_name": "voltage_LNS[V]",
 			    "ds_max_range": "1000000",
 			    "ds_min_range": "0.000000001",
 			    "ds_default_value": "30"
-	            },
-		    {
+			},
+			{
 			    "ds_attr_name": "voltage_LPS[V]",
 			    "ds_max_range": "1000000",
 			    "ds_min_range": "0.000000001",
 			    "ds_default_value": "10"
-	            },
-		    {
+			},
+			{
 			    "ds_attr_name": "fullscalePot",
 			    "ds_max_range": "2000000",
 			    "ds_min_range": "0.000000001",
 			    "ds_default_value": "20"
-	            }
+			}
 		    ]
 		},
 		{		
@@ -446,7 +446,7 @@
 		    "auto_init":true,
 		    "storage_type": 2,
 		    "storage_ageing": 36000,
-		      		    "default_schedule_delay": 1000000,	
+		    "default_schedule_delay": 1000000,	
 		    "DriverDescription": [
 			{
 			    "DriverDescriptionName": "ActuatorSim",
@@ -455,21 +455,21 @@
 			}
 		    ],
 		    "AttrDesc": [
-{		    
+			{		    
 			    "ds_attr_name": "position",
 			    "ds_max_range": "100",
 			    "ds_min_range": "0",
 			    "ds_default_value": "0"
-		    },
+			},
 			{		    
 			    "ds_attr_name": "bypass",
 			    "ds_max_range": "1",
 			    "ds_min_range": "0",
 			    "ds_default_value": "1"
-		    },
+			},
 
 
-		    {		    
+			{		    
 			    "ds_attr_name": "ConfigString",
 			    "ds_max_range": "",
 			    "ds_min_range": "",
@@ -630,7 +630,7 @@
 		    "auto_init":true,
 		    "storage_type": 2,
 		    "storage_ageing": 36000,
-		      		    "default_schedule_delay": 1000000,	
+		    "default_schedule_delay": 1000000,	
 		    "DriverDescription": [
 		  	{
 			    "DriverDescriptionName": "ActuatorSim",
@@ -639,20 +639,20 @@
 			}
 		    ],
 		    "AttrDesc": [
-{		    
+			{		    
 			    "ds_attr_name": "position",
 			    "ds_max_range": "100",
 			    "ds_min_range": "0",
 			    "ds_default_value": "0"
-		    },
-			  		    {		    
+			},
+			{		    
 			    "ds_attr_name": "bypass",
 			    "ds_max_range": "1",
 			    "ds_min_range": "0",
 			    "ds_default_value": "0"
-		    },
+			},
 
-		    {		    
+			{		    
 			    "ds_attr_name": "ConfigString",
 			    "ds_max_range": "",
 			    "ds_min_range": "",
@@ -804,7 +804,7 @@
 	            	}
 		    ]
 		},
-{		
+		{		
 		    "unit_server_alias": "TEST",
 		    "cu_id": "BTF/SCRAPER/SLTB002L",
 		    "cu_type": "::driver::actuator::SCActuatorControlUnit",
@@ -814,7 +814,7 @@
 		    "auto_init":true,
 		    "storage_type": 2,
 		    "storage_ageing": 36000,
-		      		    "default_schedule_delay": 1000000,	
+		    "default_schedule_delay": 1000000,	
 		    "DriverDescription": [
 			{
 			    "DriverDescriptionName": "ActuatorSim",
@@ -824,20 +824,20 @@
 
 		    ],
 		    "AttrDesc": [
-{		    
+			{		    
 			    "ds_attr_name": "position",
 			    "ds_max_range": "100",
 			    "ds_min_range": "0",
 			    "ds_default_value": "0"
-		    },
-		    		    {		    
+			},
+		    	{		    
 			    "ds_attr_name": "bypass",
 			    "ds_max_range": "1",
 			    "ds_min_range": "0",
 			    "ds_default_value": "1"
-		    },
+			},
 
-		    {		    
+			{		    
 			    "ds_attr_name": "ConfigString",
 			    "ds_max_range": "",
 			    "ds_min_range": "",
@@ -989,7 +989,7 @@
 	            	}
 		    ]
 		},
-{		
+		{		
 		    "unit_server_alias": "TEST",
 		    "cu_id": "BTF/SCRAPER/SLTB003U",
 		    "cu_type": "::driver::actuator::SCActuatorControlUnit",
@@ -999,7 +999,7 @@
 		    "auto_init":true,
 		    "storage_type": 2,
 		    "storage_ageing": 36000,
-		      		    "default_schedule_delay": 1000000,	
+		    "default_schedule_delay": 1000000,	
 		    "DriverDescription": [
 			{
 			    "DriverDescriptionName": "ActuatorSim",
@@ -1009,19 +1009,19 @@
 
 		    ],
 		    "AttrDesc": [
-{		    
+			{		    
 			    "ds_attr_name": "position",
 			    "ds_max_range": "100",
 			    "ds_min_range": "0",
 			    "ds_default_value": "0"
-		    },
-		    		    {		    
+			},
+		    	{		    
 			    "ds_attr_name": "bypass",
 			    "ds_max_range": "1",
 			    "ds_min_range": "0",
 			    "ds_default_value": "1"
-		    },
-		    {		    
+			},
+			{		    
 			    "ds_attr_name": "ConfigString",
 			    "ds_max_range": "",
 			    "ds_min_range": "",
@@ -1173,7 +1173,7 @@
 	            	}     
 		    ]
 		},
-{		
+		{		
 		    "unit_server_alias": "TEST",
 		    "cu_id": "BTF/SCRAPER/SLTB003D",
 		    "cu_type": "::driver::actuator::SCActuatorControlUnit",
@@ -1183,7 +1183,7 @@
 		    "auto_init":true,
 		    "storage_type": 2,
 		    "storage_ageing": 36000,
-		      		    "default_schedule_delay": 1000000,	
+		    "default_schedule_delay": 1000000,	
 		    "DriverDescription": [
 			{
 			    "DriverDescriptionName": "ActuatorSim",
@@ -1192,19 +1192,19 @@
 			}
 		    ],
 		    "AttrDesc": [
-{		    
+			{		    
 			    "ds_attr_name": "position",
 			    "ds_max_range": "100",
 			    "ds_min_range": "0",
 			    "ds_default_value": "0"
-		    },
-		    		    {		    
+			},
+		    	{		    
 			    "ds_attr_name": "bypass",
 			    "ds_max_range": "1",
 			    "ds_min_range": "0",
 			    "ds_default_value": "1"
-		    },
-		    {		    
+			},
+			{		    
 			    "ds_attr_name": "ConfigString",
 			    "ds_max_range": "",
 			    "ds_min_range": "",
@@ -1356,7 +1356,7 @@
 	            	}    
           	    ]
 		},
-{		
+		{		
 		    "unit_server_alias": "TEST",
 		    "cu_id": "BTF/SCRAPER/SLTB001U",
 		    "cu_type": "::driver::actuator::SCActuatorControlUnit",
@@ -1366,7 +1366,7 @@
 		    "auto_init":true,
 		    "storage_type": 2,
 		    "storage_ageing": 36000,
-		      		    "default_schedule_delay": 1000000,	
+		    "default_schedule_delay": 1000000,	
 		    "DriverDescription": [
 			{
 			    "DriverDescriptionName": "ActuatorSim",
@@ -1375,18 +1375,18 @@
 			}
 		    ],
 		    "AttrDesc": [
-{		    
+			{		    
 			    "ds_attr_name": "position",
 			    "ds_max_range": "100",
 			    "ds_min_range": "0",
 			    "ds_default_value": "0"
-		    },
-		    		    {		    
+			},
+		    	{		    
 			    "ds_attr_name": "bypass",
 			    "ds_max_range": "1",
 			    "ds_min_range": "0",
 			    "ds_default_value": "1"
-		    },
+			},
 
 		    	{		    
 			    "ds_attr_name": "ConfigString",
@@ -1539,7 +1539,7 @@
 			    "ds_default_value": "20"
 	            	}          
 		    ]
-},{		
+		},{		
 		    "unit_server_alias": "TEST",
 		    "cu_id": "BTF/SCRAPER/SLTB001D",
 		    "cu_type": "::driver::actuator::SCActuatorControlUnit",
@@ -1549,7 +1549,7 @@
 		    "auto_init":true,
 		    "storage_type": 2,
 		    "storage_ageing": 36000,
-		      		    "default_schedule_delay": 1000000,	
+		    "default_schedule_delay": 1000000,	
 		    "DriverDescription": [
 			{
 			    "DriverDescriptionName": "ActuatorSim",
@@ -1558,18 +1558,18 @@
 			}
 		    ],
 		    "AttrDesc": [
-{		    
+			{		    
 			    "ds_attr_name": "position",
 			    "ds_max_range": "100",
 			    "ds_min_range": "0",
 			    "ds_default_value": "0"
-		    },
-		    		    {		    
+			},
+		    	{		    
 			    "ds_attr_name": "bypass",
 			    "ds_max_range": "1",
 			    "ds_min_range": "0",
 			    "ds_default_value": "1"
-		    },
+			},
 
 		    	{		    
 			    "ds_attr_name": "ConfigString",
@@ -1722,7 +1722,7 @@
 			    "ds_default_value": "20"
 	            	}   
 		    ]
-},{		
+		},{		
 		    "unit_server_alias": "TEST",
 		    "cu_id": "BTF/SCRAPER/TARGET",
 		    "cu_type": "::driver::actuator::SCActuatorControlUnit",
@@ -1732,7 +1732,7 @@
 		    "auto_init":true,
 		    "storage_type": 2,
 		    "storage_ageing": 36000,
-		      		    "default_schedule_delay": 1000000,	
+		    "default_schedule_delay": 1000000,	
 		    "DriverDescription": [
 			{
 			    "DriverDescriptionName": "ActuatorSim",
@@ -1741,18 +1741,18 @@
 			}
 		    ],
 		    "AttrDesc": [
-{		    
+			{		    
 			    "ds_attr_name": "position",
 			    "ds_max_range": "100",
 			    "ds_min_range": "0",
 			    "ds_default_value": "0"
-		    },
-		    		    {		    
+			},
+		    	{		    
 			    "ds_attr_name": "bypass",
 			    "ds_max_range": "1",
 			    "ds_min_range": "0",
 			    "ds_default_value": "1"
-		    },
+			},
 
 		    	{		    
 			    "ds_attr_name": "ConfigString",
@@ -1905,7 +1905,7 @@
 			    "ds_default_value": "20"
 	            	}        
 		    ]
-},		
+		},		
 		{
 		    "unit_server_alias": "TEST",
 		    "cu_id": "MEA/QUADRUPOLE/TEST001",
@@ -1916,16 +1916,16 @@
 		    "auto_init":true,
 		    "storage_type": 2,
 		    "storage_ageing": 0,
-		      		    "default_schedule_delay": 1000000,	
+		    "default_schedule_delay": 1000000,	
 		    "DriverDescription": [
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "SimPSupply:/dev/ttyr1d,10,1,0:280,0:10,100:200,200:300,0,5.0"
+			    "DriverDescriptionInitParam":"{\"driver\":{\"dev\":\"/dev/ttyrd02\",\"slaveid\":10,\"feature\":1,\"min_curr\":0.0,\"max_curr\":100.0,\"min_volt\":0.0,\"max_volt\":10.0,\"min_write_time_ms\":100,\"max_write_time_ms\":200,\"min_read_time_ms\":200,\"max_read_time_ms\":300,\"force_err_sec\":0,\"readout_err\":5.0,\"update_delay_us\":100000}}"
 			}
 		    ],
 		    "AttrDesc": [
-		    {
+			{
 			    "ds_attr_name": "polFromSet",
 			    "ds_max_range": "1",
 			    "ds_min_range": "0",
@@ -2058,18 +2058,19 @@
 		    "auto_init":true,
 		    "storage_type": 2,
 		    "storage_ageing": 0,
-		      		    "default_schedule_delay": 1000000,	
+		    "default_schedule_delay": 1000000,	
 		    "DriverDescription": [
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "SimPSupply:/dev/ttyr1d,11,1,0:280,0:10,100:200,200:300,0,5.0"
+			    "DriverDescriptionInitParam":"{\"driver\":{\"dev\":\"/dev/ttyrd02\",\"slaveid\":11,\"feature\":1,\"min_curr\":0.0,\"max_curr\":100.0,\"min_volt\":0.0,\"max_volt\":10.0,\"min_write_time_ms\":100,\"max_write_time_ms\":200,\"min_read_time_ms\":200,\"max_read_time_ms\":300,\"force_err_sec\":0,\"readout_err\":5.0,\"update_delay_us\":100000}}"
+
 			}
-		    
+			
 
 		    ],
 		    "AttrDesc": [
-		    {
+			{
 			    "ds_attr_name": "polFromSet",
 			    "ds_max_range": "1",
 			    "ds_min_range": "0",
@@ -2192,7 +2193,7 @@
 			}
 		    ]
 		},
-{
+		{
 		    "unit_server_alias": "TEST",
 		    "cu_id": "BTF/DIPOLE/DHSTB001",
 		    "cu_type": "::driver::powersupply::SCPowerSupplyControlUnit",
@@ -2202,16 +2203,16 @@
 		    "auto_init": true,
 		    "storage_type": 2,
 		    "storage_ageing": 3600,
-		      		    "default_schedule_delay": 1000000,	
+		    "default_schedule_delay": 1000000,	
 		    "DriverDescription": [
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "SimPSupply:/dev/ttyr08,4,1,0:700,0:10,100:200,200:300,0,5.0"
+  			    "DriverDescriptionInitParam":"{\"driver\":{\"dev\":\"/dev/ttyr08\",\"slaveid\":4,\"feature\":1,\"min_curr\":0.0,\"max_curr\":700.0,\"min_volt\":0.0,\"max_volt\":10.0,\"min_write_time_ms\":100,\"max_write_time_ms\":200,\"min_read_time_ms\":200,\"max_read_time_ms\":300,\"force_err_sec\":0,\"readout_err\":5.0,\"update_delay_us\":100000}}"
 			}
 		    ],
 		    "AttrDesc": [
-		    		    {
+		    	{
 			    "ds_attr_name": "polFromSet",
 			    "ds_max_range": "1",
 			    "ds_min_range": "0",
@@ -2344,16 +2345,16 @@
 		    "auto_init": true,
 		    "storage_type": 2,
 		    "storage_ageing": 3600,
-		      		    "default_schedule_delay": 1000000,	
+		    "default_schedule_delay": 1000000,	
 		    "DriverDescription": [
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "SimPSupply:/dev/ttyr05,6,1,0:700,0:10,100:200,200:300,0,1.0"
+			    "DriverDescriptionInitParam":"{\"driver\":{\"dev\":\"/dev/ttyr05\",\"slaveid\":6,\"feature\":1,\"min_curr\":0.0,\"max_curr\":100.0,\"min_volt\":0.0,\"max_volt\":10.0,\"min_write_time_ms\":100,\"max_write_time_ms\":200,\"min_read_time_ms\":200,\"max_read_time_ms\":300,\"force_err_sec\":0,\"readout_err\":5.0,\"update_delay_us\":100000}}"
 			}
 		    ],
 		    "AttrDesc": [
-		    		    {
+		    	{
 			    "ds_attr_name": "polFromSet",
 			    "ds_max_range": "1",
 			    "ds_min_range": "0",
@@ -2492,7 +2493,7 @@
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "SimPSupply:/dev/ttyr48,9,1,0:100,0:10,100:200,200:300,10,1.0"
+			    "DriverDescriptionInitParam":"{\"driver\":{\"dev\":\"/dev/ttyr1\",\"slaveid\":10,\"feature\":1,\"min_curr\":0.0,\"max_curr\":280.0,\"min_volt\":0.0,\"max_volt\":10.0,\"min_write_time_ms\":100,\"max_write_time_ms\":200,\"min_read_time_ms\":200,\"max_read_time_ms\":300,\"force_err_sec\":0,\"readout_err\":5.0,\"update_delay_us\":100000}}"
 			}
 		    ],
 		    "AttrDesc": [
@@ -2629,16 +2630,17 @@
 		    "auto_init": true,
 		    "storage_type": 2,
 		    "storage_ageing": 3600,
-		      		    "default_schedule_delay": 1000000,	
+		    "default_schedule_delay": 1000000,	
 		    "DriverDescription": [
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "SimPSupply:/dev/ttyr05,4,1,0:100,0:10,100:200,200:300,0,1.0"
+			    "DriverDescriptionInitParam":"{\"driver\":{\"dev\":\"/dev/ttyr05\",\"slaveid\":4,\"feature\":1,\"min_curr\":0.0,\"max_curr\":100.0,\"min_volt\":0.0,\"max_volt\":10.0,\"min_write_time_ms\":100,\"max_write_time_ms\":200,\"min_read_time_ms\":200,\"max_read_time_ms\":300,\"force_err_sec\":0,\"readout_err\":5.0,\"update_delay_us\":100000}}"
+			    
 			}
 		    ],
 		    "AttrDesc": [
-		    		    {
+		    	{
 			    "ds_attr_name": "polFromSet",
 			    "ds_max_range": "1",
 			    "ds_min_range": "0",
@@ -2771,17 +2773,18 @@
 		    "auto_init": true,
 		    "storage_type": 2,
 		    "storage_ageing": 3600,
-		      		    "default_schedule_delay": 1000000,	
+		    "default_schedule_delay": 1000000,	
 		    "DriverDescription": [
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
- 			    "DriverDescriptionInitParam": "SimPSupply:/dev/ttyr08,1,1,0:100,0:10,100000:1000000,200000:500000,0,1.0"
+			    "DriverDescriptionInitParam":"{\"driver\":{\"dev\":\"/dev/ttyr08\",\"slaveid\":1,\"feature\":1,\"min_curr\":0.0,\"max_curr\":100.0,\"min_volt\":0.0,\"max_volt\":10.0,\"min_write_time_ms\":100,\"max_write_time_ms\":200,\"min_read_time_ms\":200,\"max_read_time_ms\":300,\"force_err_sec\":0,\"readout_err\":5.0,\"update_delay_us\":100000}}"
+ 			    
 			    
 			}
 		    ],
 		    "AttrDesc": [
-		    		    {
+		    	{
 			    "ds_attr_name": "polFromSet",
 			    "ds_max_range": "1",
 			    "ds_min_range": "0",
@@ -2914,17 +2917,18 @@
 		    "auto_init": true,
 		    "storage_type": 2,
 		    "storage_ageing": 3600,
-		      		    "default_schedule_delay": 1000000,	
+		    "default_schedule_delay": 1000000,	
 		    "DriverDescription": [
 
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "SimPSupply:/dev/ttyr08,3,1,0:100,0:10,100:200,200:300,0,1.0"
+			    "DriverDescriptionInitParam":"{\"driver\":{\"dev\":\"/dev/ttyr08\",\"slaveid\":3,\"feature\":1,\"min_curr\":0.0,\"max_curr\":100.0,\"min_volt\":0.0,\"max_volt\":10.0,\"min_write_time_ms\":100,\"max_write_time_ms\":200,\"min_read_time_ms\":200,\"max_read_time_ms\":300,\"force_err_sec\":0,\"readout_err\":5.0,\"update_delay_us\":100000}}"
+
 			}
 		    ],
 		    "AttrDesc": [
-		    		    {
+		    	{
 			    "ds_attr_name": "polFromSet",
 			    "ds_max_range": "1",
 			    "ds_min_range": "0",
@@ -3057,16 +3061,17 @@
 		    "auto_init": true,
 		    "storage_type": 2,
 		    "storage_ageing": 3600,
-		      		    "default_schedule_delay": 1000000,	
+		    "default_schedule_delay": 1000000,	
 		    "DriverDescription": [
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "SimPSupply:/dev/ttyr08,14,1,0:100,0:10,100:200,200:300,0,1.0"
+			    "DriverDescriptionInitParam":"{\"driver\":{\"dev\":\"/dev/ttyr08\",\"slaveid\":14,\"feature\":1,\"min_curr\":0.0,\"max_curr\":100.0,\"min_volt\":0.0,\"max_volt\":10.0,\"min_write_time_ms\":100,\"max_write_time_ms\":200,\"min_read_time_ms\":200,\"max_read_time_ms\":300,\"force_err_sec\":0,\"readout_err\":5.0,\"update_delay_us\":100000}}"
+			    
 			}
 		    ],
 		    "AttrDesc": [
-		    		    {
+		    	{
 			    "ds_attr_name": "polFromSet",
 			    "ds_max_range": "1",
 			    "ds_min_range": "0",
@@ -3199,17 +3204,18 @@
 		    "auto_init": true,
 		    "storage_type": 2,
 		    "storage_ageing": 3600,
-		      		    "default_schedule_delay": 1000000,	
+		    "default_schedule_delay": 1000000,	
 		    "DriverDescription": [
 
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "SimPSupply:/dev/ttyr02,4,1,0:100,0:10,100:200,200:300,0,1.0"
+			    "DriverDescriptionInitParam":"{\"driver\":{\"dev\":\"/dev/ttyr02\",\"slaveid\":4,\"feature\":1,\"min_curr\":0.0,\"max_curr\":100.0,\"min_volt\":0.0,\"max_volt\":10.0,\"min_write_time_ms\":100,\"max_write_time_ms\":200,\"min_read_time_ms\":200,\"max_read_time_ms\":300,\"force_err_sec\":0,\"readout_err\":5.0,\"update_delay_us\":100000}}"
+			   
 			}
 		    ],
 		    "AttrDesc": [
-		    		    {
+		    	{
 			    "ds_attr_name": "polFromSet",
 			    "ds_max_range": "1",
 			    "ds_min_range": "0",
@@ -3342,12 +3348,12 @@
 		    "auto_init": true,
 		    "storage_type": 2,
 		    "storage_ageing": 3600,
-		      		    "default_schedule_delay": 1000000,	
+		    "default_schedule_delay": 1000000,	
 		    "DriverDescription": [
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "SimPSupply:/dev/ttyr08,13,2,-10:9.995,0:10,100:200,200:300,0,1.0"
+			    "DriverDescriptionInitParam":"{\"driver\":{\"dev\":\"/dev/ttyr08\",\"slaveid\":13,\"feature\":2,\"min_curr\":-10.0,\"max_curr\":9.95,\"min_volt\":0.0,\"max_volt\":10.0,\"min_write_time_ms\":100,\"max_write_time_ms\":200,\"min_read_time_ms\":200,\"max_read_time_ms\":300,\"force_err_sec\":0,\"readout_err\":5.0,\"update_delay_us\":100000}}"			    
 			}
 		    ],
 		    "AttrDesc": [
@@ -3385,7 +3391,7 @@
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "SimPSupply:/dev/ttyr78,5,2,-10:9.995,0:10,100:200,200:300,0,1.0"
+			    "DriverDescriptionInitParam":"{\"driver\":{\"dev\":\"/dev/ttyr78\",\"slaveid\":5,\"feature\":2,\"min_curr\":-10.0,\"max_curr\":9.95,\"min_volt\":0.0,\"max_volt\":10.0,\"min_write_time_ms\":100,\"max_write_time_ms\":200,\"min_read_time_ms\":200,\"max_read_time_ms\":300,\"force_err_sec\":0,\"readout_err\":5.0,\"update_delay_us\":100000}}"			    			    
 			}
 		    ],
 		    "AttrDesc": [
@@ -3423,7 +3429,7 @@
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "SimPSupply:/dev/ttyr98,6,2,-10:9.995,0:10,100:200,200:300,0,1.0"
+			    "DriverDescriptionInitParam":"{\"driver\":{\"dev\":\"/dev/ttyr98\",\"slaveid\":6,\"feature\":2,\"min_curr\":-10.0,\"max_curr\":9.95,\"min_volt\":0.0,\"max_volt\":10.0,\"min_write_time_ms\":100,\"max_write_time_ms\":200,\"min_read_time_ms\":200,\"max_read_time_ms\":300,\"force_err_sec\":0,\"readout_err\":5.0,\"update_delay_us\":100000}}"			    			    			    
 			}
 		    ],
 		    "AttrDesc": [
@@ -3461,7 +3467,8 @@
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "SimPSupply:/dev/ttyr28,13,2,-10:9.995,0:10,100:200,200:300,0,1.0"
+			    "DriverDescriptionInitParam":"{\"driver\":{\"dev\":\"/dev/ttyr28\",\"slaveid\":66,\"feature\":2,\"min_curr\":-10.0,\"max_curr\":9.95,\"min_volt\":0.0,\"max_volt\":10.0,\"min_write_time_ms\":100,\"max_write_time_ms\":200,\"min_read_time_ms\":200,\"max_read_time_ms\":300,\"force_err_sec\":0,\"readout_err\":5.0,\"update_delay_us\":100000}}"			    			    			    			    
+
 			}
 		    ],
 		    "AttrDesc": [
@@ -3499,7 +3506,7 @@
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "SimPSupply:/dev/ttyr38,13,2,-10:9.995,0:10,100:200,200:300,0,1.0"
+			    "DriverDescriptionInitParam":"{\"driver\":{\"dev\":\"/dev/ttyr38\",\"slaveid\":0,\"feature\":2,\"min_curr\":-10.0,\"max_curr\":9.95,\"min_volt\":0.0,\"max_volt\":10.0,\"min_write_time_ms\":100,\"max_write_time_ms\":200,\"min_read_time_ms\":200,\"max_read_time_ms\":300,\"force_err_sec\":0,\"readout_err\":5.0,\"update_delay_us\":100000}}"			    			    			    			    			    
 			}
 		    ],
 		    "AttrDesc": [
@@ -3679,19 +3686,19 @@
 			}
 		    ],
 		    "AttrDesc": [{
-			    "ds_attr_name": "config",
-			    "ds_max_range": "",
-			    "ds_min_range": "",
-			    "ds_default_value": "{\"coeff_u\":[9.8435 ,-0.022408,0.00014638 ,0.034859 ,-1.4584e-6  ,-9.9279e-6,-1.15991e-5,1.94837e-7],\"coeff_v\":[32.0137,0.0432143,0.000222447,-0.339764,-0.000318269,0.00167884]}"
+			"ds_attr_name": "config",
+			"ds_max_range": "",
+			"ds_min_range": "",
+			"ds_default_value": "{\"coeff_u\":[9.8435 ,-0.022408,0.00014638 ,0.034859 ,-1.4584e-6  ,-9.9279e-6,-1.15991e-5,1.94837e-7],\"coeff_v\":[32.0137,0.0432143,0.000222447,-0.339764,-0.000318269,0.00167884]}"
 
-		    	},
-			{
-			    "ds_attr_name": "POLYTYPE",
-			    "ds_max_range": "1",
-			    "ds_min_range": "0",
-			    "ds_default_value": "1"
+		    },
+				 {
+				     "ds_attr_name": "POLYTYPE",
+				     "ds_max_range": "1",
+				     "ds_min_range": "0",
+				     "ds_default_value": "1"
 
-		    	}]
+		    		 }]
 		},{
 		    "unit_server_alias": "TEST",
 		    "cu_id": "ACCUMULATOR/BPM/BPBA2001",
@@ -3711,7 +3718,7 @@
 			}
 		    ],
 		    "AttrDesc": [
-{
+			{
 			    "ds_attr_name": "config",
 			    "ds_max_range": "",
 			    "ds_min_range": "",
@@ -3745,7 +3752,7 @@
 			}
 		    ],
 		    "AttrDesc": [
-{
+			{
 			    "ds_attr_name": "config",
 			    "ds_max_range": "",
 			    "ds_min_range": "",
@@ -3780,20 +3787,20 @@
 			}
 		    ],
 		    "AttrDesc": [{
-			    "ds_attr_name": "config",
-			    "ds_max_range": "",
-			    "ds_min_range": "",
-			    "ds_default_value": "{\"coeff_u\":[9.8435 ,-0.022408,0.00014638 ,0.034859 ,-1.4584e-6  ,-9.9279e-6,-1.15991e-5,1.94837e-7],\"coeff_v\":[32.0137,0.0432143,0.000222447,-0.339764,-0.000318269,0.00167884]}"
+			"ds_attr_name": "config",
+			"ds_max_range": "",
+			"ds_min_range": "",
+			"ds_default_value": "{\"coeff_u\":[9.8435 ,-0.022408,0.00014638 ,0.034859 ,-1.4584e-6  ,-9.9279e-6,-1.15991e-5,1.94837e-7],\"coeff_v\":[32.0137,0.0432143,0.000222447,-0.339764,-0.000318269,0.00167884]}"
 
-		    	},
-			{
-			    "ds_attr_name": "POLYTYPE",
-			    "ds_max_range": "1",
-			    "ds_min_range": "0",
-			    "ds_default_value": "1"
+		    },
+				 {
+				     "ds_attr_name": "POLYTYPE",
+				     "ds_max_range": "1",
+				     "ds_min_range": "0",
+				     "ds_default_value": "1"
 
-		    	}
-		    ]
+		    		 }
+				]
 		},
 		{
 		    "unit_server_alias": "TEST",
@@ -3814,20 +3821,20 @@
 			}
 		    ],
 		    "AttrDesc": [{
-			    "ds_attr_name": "config",
-			    "ds_max_range": "",
-			    "ds_min_range": "",
-			    "ds_default_value": "{\"coeff_u\":[9.8435 ,-0.022408,0.00014638 ,0.034859 ,-1.4584e-6  ,-9.9279e-6,-1.15991e-5,1.94837e-7],\"coeff_v\":[32.0137,0.0432143,0.000222447,-0.339764,-0.000318269,0.00167884]}"
+			"ds_attr_name": "config",
+			"ds_max_range": "",
+			"ds_min_range": "",
+			"ds_default_value": "{\"coeff_u\":[9.8435 ,-0.022408,0.00014638 ,0.034859 ,-1.4584e-6  ,-9.9279e-6,-1.15991e-5,1.94837e-7],\"coeff_v\":[32.0137,0.0432143,0.000222447,-0.339764,-0.000318269,0.00167884]}"
 
-		    	},
-			{
-			    "ds_attr_name": "POLYTYPE",
-			    "ds_max_range": "1",
-			    "ds_min_range": "0",
-			    "ds_default_value": "1"
+		    },
+				 {
+				     "ds_attr_name": "POLYTYPE",
+				     "ds_max_range": "1",
+				     "ds_min_range": "0",
+				     "ds_default_value": "1"
 
-		    	}
-		    ]
+		    		 }
+				]
 		},
 		{
 		    "unit_server_alias": "TEST",
@@ -3848,7 +3855,7 @@
 			}
 		    ],
 		    "AttrDesc": [
-{
+			{
 			    "ds_attr_name": "config",
 			    "ds_max_range": "",
 			    "ds_min_range": "",
@@ -3883,7 +3890,7 @@
 			}
 		    ],
 		    "AttrDesc": [
-{
+			{
 			    "ds_attr_name": "config",
 			    "ds_max_range": "",
 			    "ds_min_range": "",
@@ -3917,21 +3924,21 @@
 			}
 		    ],
 		    "AttrDesc": [{
-			    "ds_attr_name": "config",
-			    "ds_max_range": "",
-			    "ds_min_range": "",
-			    "ds_default_value": "{\"coeff_u\":[28.5574,-0.046125,5.43125e-5,0.0172085,-1.15991e-5,1.94837e-7],\"coeff_v\":[28.5574,0.0172085,1.94837e-7,-0.046125,-1.15991e-5,5.43125e-5]}"
+			"ds_attr_name": "config",
+			"ds_max_range": "",
+			"ds_min_range": "",
+			"ds_default_value": "{\"coeff_u\":[28.5574,-0.046125,5.43125e-5,0.0172085,-1.15991e-5,1.94837e-7],\"coeff_v\":[28.5574,0.0172085,1.94837e-7,-0.046125,-1.15991e-5,5.43125e-5]}"
 
-		    	},
-		    	{
-			    "ds_attr_name": "POLYTYPE",
-			    "ds_max_range": "1",
-			    "ds_min_range": "0",
-			    "ds_default_value": "0"
+		    },
+		    		 {
+				     "ds_attr_name": "POLYTYPE",
+				     "ds_max_range": "1",
+				     "ds_min_range": "0",
+				     "ds_default_value": "0"
 
-		    	}
+		    		 }
 
-		    ]
+				]
 		},{
 		    "unit_server_alias": "TEST",
 		    "cu_id": "ACCUMULATOR/BPM/BPSA1001",
@@ -3951,21 +3958,21 @@
 			}
 		    ],
 		    "AttrDesc": [{
-			    "ds_attr_name": "config",
-			    "ds_max_range": "",
-			    "ds_min_range": "",
-			    "ds_default_value": "{\"coeff_u\":[28.5574,-0.046125,5.43125e-5,0.0172085,-1.15991e-5,1.94837e-7],\"coeff_v\":[28.5574,0.0172085,1.94837e-7,-0.046125,-1.15991e-5,5.43125e-5]}"
+			"ds_attr_name": "config",
+			"ds_max_range": "",
+			"ds_min_range": "",
+			"ds_default_value": "{\"coeff_u\":[28.5574,-0.046125,5.43125e-5,0.0172085,-1.15991e-5,1.94837e-7],\"coeff_v\":[28.5574,0.0172085,1.94837e-7,-0.046125,-1.15991e-5,5.43125e-5]}"
 
-		    	},
-		    	{
-			    "ds_attr_name": "POLYTYPE",
-			    "ds_max_range": "1",
-			    "ds_min_range": "0",
-			    "ds_default_value": "0"
+		    },
+		    		 {
+				     "ds_attr_name": "POLYTYPE",
+				     "ds_max_range": "1",
+				     "ds_min_range": "0",
+				     "ds_default_value": "0"
 
-		    	}
+		    		 }
 
-		    ]
+				]
 		},{
 		    "unit_server_alias": "TEST",
 		    "cu_id": "ACCUMULATOR/BPM/BPBA1001",
@@ -3985,7 +3992,7 @@
 			}
 		    ],
 		    "AttrDesc": [
-{
+			{
 			    "ds_attr_name": "config",
 			    "ds_max_range": "",
 			    "ds_min_range": "",
@@ -4019,7 +4026,7 @@
 			}
 		    ],
 		    "AttrDesc": [
-{
+			{
 			    "ds_attr_name": "config",
 			    "ds_max_range": "",
 			    "ds_min_range": "",
@@ -4046,7 +4053,7 @@
 		    "auto_init": true,
 		    "storage_type": 2,
 		    "storage_ageing": 36000000,
-		      		    "default_schedule_delay": 1000000,	
+		    "default_schedule_delay": 1000000,	
 		    "DriverDescription": [
 			{
 			    "DriverDescriptionName": "remoteGroupAccessDriver",
@@ -4414,7 +4421,7 @@
 		    "auto_init": true,
 		    "storage_type": 2,
 		    "storage_ageing": 3600,
-		      		    "default_schedule_delay": 2000000,	
+		    "default_schedule_delay": 2000000,	
 		    "DriverDescription": [
 			{
 			    "DriverDescriptionName": "VTemperatureDriver",
@@ -4594,7 +4601,7 @@
 		    "storage_type": 2,
 		    "storage_ageing": 3600,
 		    "auto_load": true,
-		      		    "default_schedule_delay": 2000000,	
+		    "default_schedule_delay": 2000000,	
 		    "DriverDescription": [
 			{
 			    "DriverDescriptionName": "VTemperatureDriver",
@@ -4864,55 +4871,55 @@
 		    ],
 		    "AttrDesc": []
 		},
-	   {		    "unit_server_alias": "TEST",
-		    "cu_id": "BTF/MOTOR",
-		    "cu_type": "::driver::actuator::SCActuatorControlUnit",
-		    "cu_param": "",
-		    "auto_load": true,
-		    "storage_type": 2,
-		    "storage_ageing": 36000,
+		{		    "unit_server_alias": "TEST",
+				    "cu_id": "BTF/MOTOR",
+				    "cu_type": "::driver::actuator::SCActuatorControlUnit",
+				    "cu_param": "",
+				    "auto_load": true,
+				    "storage_type": 2,
+				    "storage_ageing": 36000,
 		      		    "default_schedule_delay": 2000000,	
-		    "DriverDescription": [
-			{
-			    "DriverDescriptionName": "ActuatorSim",
-			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "14,0,115200,/dev/ttyr1c"
-			}
-		    ],
-		    "AttrDesc": [
-			{		    
-			    "ds_attr_name": "ConfigString",
-			    "ds_max_range": "",
-			    "ds_min_range": "",
-			    "ds_default_value": "14,/home/chaos/chaos-distrib/etc/common_actuators_technosoft/1setup001.t.zip"
-			},
-			{
-			    "ds_attr_name": "axisID",
-			    "ds_max_range": "255",
-			    "ds_min_range": "0",
-			    "ds_default_value": "14"
-			},
-                        {
-			    "ds_attr_name": "__positionWarningTHR",
-			    "ds_max_range": "10",
-			    "ds_min_range": "0",
-			    "ds_default_value": "0.01"
-			},
-                        {
-			    "ds_attr_name": "__positionWarningTHR_Timeout",
-			    "ds_max_range": "10000",
-			    "ds_min_range": "0",
-			    "ds_default_value": "1"
-			},
-                        {
-			    "ds_attr_name": "__mov_rel/offset_mm",
-			    "ds_max_range": "1000",
-			    "ds_min_range": "-1000",
-			    "ds_default_value": "0"
-			}
-		    ]
+				    "DriverDescription": [
+					{
+					    "DriverDescriptionName": "ActuatorSim",
+					    "DriverDescriptionVersion": "1.0.0",
+					    "DriverDescriptionInitParam": "14,0,115200,/dev/ttyr1c"
+					}
+				    ],
+				    "AttrDesc": [
+					{		    
+					    "ds_attr_name": "ConfigString",
+					    "ds_max_range": "",
+					    "ds_min_range": "",
+					    "ds_default_value": "14,/home/chaos/chaos-distrib/etc/common_actuators_technosoft/1setup001.t.zip"
+					},
+					{
+					    "ds_attr_name": "axisID",
+					    "ds_max_range": "255",
+					    "ds_min_range": "0",
+					    "ds_default_value": "14"
+					},
+					{
+					    "ds_attr_name": "__positionWarningTHR",
+					    "ds_max_range": "10",
+					    "ds_min_range": "0",
+					    "ds_default_value": "0.01"
+					},
+					{
+					    "ds_attr_name": "__positionWarningTHR_Timeout",
+					    "ds_max_range": "10000",
+					    "ds_min_range": "0",
+					    "ds_default_value": "1"
+					},
+					{
+					    "ds_attr_name": "__mov_rel/offset_mm",
+					    "ds_max_range": "1000",
+					    "ds_min_range": "-1000",
+					    "ds_default_value": "0"
+					}
+				    ]
 		}
-	 ]   
+	    ]   
 	},{
 	    "unit_server_alias": "IMA",
 	    "private_key": null,
@@ -4937,25 +4944,25 @@
 	    "private_key": null,
 	    "public_key": null,
 	    "cu_desc": [{
-		    "unit_server_alias": "BENCHMARK_UNIT_0",
-		    "cu_id": "BENCHMARK_UNIT_0/TEST_CU_0",
-		    "cu_type": "ChaosMESS",
-		    "cu_param": "",
-		    "auto_load": true,
-		    "auto_start": true,
-		    "auto_init": true,
-		    "storage_type": 2,
-		    "storage_ageing": 36000,
-		    "DriverDescription": [
-			{
-			    "DriverDescriptionName": "DummyDriver",
-			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": ""
-			}
-		    ],
-		    "AttrDesc": []
-		}
-	    ]
+		"unit_server_alias": "BENCHMARK_UNIT_0",
+		"cu_id": "BENCHMARK_UNIT_0/TEST_CU_0",
+		"cu_type": "ChaosMESS",
+		"cu_param": "",
+		"auto_load": true,
+		"auto_start": true,
+		"auto_init": true,
+		"storage_type": 2,
+		"storage_ageing": 36000,
+		"DriverDescription": [
+		    {
+			"DriverDescriptionName": "DummyDriver",
+			"DriverDescriptionVersion": "1.0.0",
+			"DriverDescriptionInitParam": ""
+		    }
+		],
+		"AttrDesc": []
+	    }
+		       ]
 	}
     ]
 }

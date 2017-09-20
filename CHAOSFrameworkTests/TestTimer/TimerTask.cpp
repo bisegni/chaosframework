@@ -21,8 +21,8 @@
 
 #include "TimerTask.h"
 
-TimerTask::TimerTask():
-counter(0){}
+TimerTask::TimerTask(int& interal_counter):
+counter(interal_counter){}
 
 void TimerTask::timeout() {
     counter++;

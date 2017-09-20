@@ -19,18 +19,30 @@
  * permissions and limitations under the Licence.
  */
 
-#include "TestTemplateKeyValueHashMap.h"
+#include "TemplateKeyValueHashMap.h"
 
 #include <cassert>
 #include <boost/lexical_cast.hpp>
 
-using namespace chaos::common::utility::test;
+
+
+
+TestTemplateKeyValueHashMap::TestTemplateKeyValueHashMap(){}
+
+void TestTemplateKeyValueHashMap::SetUp() {
+    error_count          = 0;
+    production_id        = 0;
+    product_id_sum       = 0;
+    number_of_producer   = 10;
+    number_of_production = 100;
+    number_of_consumer   = 10;
+}
 
 void TestTemplateKeyValueHashMap::producer() {
     for(int idx = 0;
         idx < number_of_production;
         idx++) {
-        TestTemplateKeyValueHashMapElement *element = (TestTemplateKeyValueHashMapElement *)malloc(sizeof(TestTemplateKeyValueHashMapElement));
+        TemplateKeyValueHashMapElement *element = (TemplateKeyValueHashMapElement *)malloc(sizeof(TemplateKeyValueHashMapElement));
         element->product_id = production_id++;
         
         std::string element_key = std::string("element_") + boost::lexical_cast<std::string>(element->product_id);
@@ -39,7 +51,7 @@ void TestTemplateKeyValueHashMap::producer() {
 }
 
 void TestTemplateKeyValueHashMap::consumer() {
-    TestTemplateKeyValueHashMapElement *element_found = NULL;
+    TemplateKeyValueHashMapElement *element_found = NULL;
     for(int            idx            = 0;
         idx < production_id;
         idx++) {
@@ -50,8 +62,8 @@ void TestTemplateKeyValueHashMap::consumer() {
                       (uint32_t)element_key.size(),
                       &element_found) == 0){
             //ok
-            assert(element_found);
-            assert(element_found->product_id == idx);
+            ASSERT_TRUE(element_found);
+            ASSERT_EQ(idx, element_found->product_id);
             
             //sum the product id
             product_id_sum += element_found->product_id;
@@ -63,32 +75,14 @@ void TestTemplateKeyValueHashMap::consumer() {
 }
 
 void TestTemplateKeyValueHashMap::clearHashTableElement(const void *key,
-                                                        uint32_t key_len,
-                                                        TestTemplateKeyValueHashMapElement *element) {
+                                                    uint32_t key_len,
+                                                    TemplateKeyValueHashMapElement *element) {
     assert(element);
     free(element);
 }
 
-int TestTemplateKeyValueHashMap::sumOfNumbersUptTo(int num) {
-    unsigned int result = 0;
-    
-    for(int idx = 0;
-        idx < num;
-        idx++) {
-        result += idx;
-    }
-    return result;
-}
-
-bool TestTemplateKeyValueHashMap::test(int _number_of_producer,
-                                       int _number_of_production,
-                                       int _number_of_consumer) {
-    number_of_producer   = _number_of_producer;
-    number_of_production = _number_of_production;
-    number_of_consumer   = _number_of_consumer;
-    production_id        = 0;
-    product_id_sum       = 0;
-    
+//------------------------
+TEST_F(TestTemplateKeyValueHashMap, TestTemplateKeyValueHashMap) {
     //init the producer
     for(int idx = 0;
         idx < number_of_producer;
@@ -98,7 +92,7 @@ bool TestTemplateKeyValueHashMap::test(int _number_of_producer,
     
     //waith that all insert has been done
     producer_thread_group.join_all();
-    assert(production_id == (_number_of_producer * _number_of_production));
+    ASSERT_EQ(production_id, (number_of_producer * number_of_production));
     
     //init the consumer
     for(int idx = 0;
@@ -109,10 +103,6 @@ bool TestTemplateKeyValueHashMap::test(int _number_of_producer,
     
     //waith that all insert has been done
     consumer_thread_group.join_all();
-    
-    assert((number_of_consumer * sumOfNumbersUptTo(_number_of_producer * _number_of_production)) == product_id_sum);
-    
+    ASSERT_EQ(0, error_count);
     clear();
-    
-    return true;
 }

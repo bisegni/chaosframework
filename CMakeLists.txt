@@ -2,10 +2,17 @@ cmake_minimum_required(VERSION 2.8)
 
 include(config/CMakeChaos.txt)
 project(chaosframework)
+include(ExternalProject)
+include(CTest)
+#find git
+find_package(Git REQUIRED)
+
+#clear var
 unset(CMAKE_CXX_COMPILER_WORKS CACHE)
 unset(CMAKE_CXX_COMPILER_WORKS)
-include(CTest)
 
+#specify option
+option(CHAOS_ONLY_DEPENDECY "Download all the dependency" OFF)
 option(CHAOS_MEMCACHE_TEST "Memcached test" OFF)
 option(CHAOS_ARCHITECTURE_TEST "Architecture tests" OFF)
 option(CHAOS_CDS "Chaos Data Service" ON)
@@ -33,8 +40,25 @@ ENDIF()
 CheckConfigureBuild(jsoncpp jsoncpp "-DJSONCPP_WITH_TESTS=OFF;-DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF" https://github.com/bisegni )
 
 CheckConfigureBuild(mongoclient mongo-cxx-driver:legacy-1.0.0-rc0 "--extralib=boost_system;--disable-warnings-as-errors;install-mongoclient" https://github.com/mongodb)
-
 #########
+
+
+IF (CHAOS_ONLY_DEPENDECY OR
+    CHAOS_ARCHITECTURE_TEST)
+  #google test
+  ExternalProject_Add(
+     googletest
+     GIT_REPOSITORY https://github.com/google/googletest.git
+     GIT_TAG master
+     PREFIX "${CMAKE_BINARY_DIR}/ext_dep/googletest-prefix"
+     SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/googletest-src"
+     BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/googletest-build"
+     CMAKE_ARGS
+      -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
+     LOG_DOWNLOAD ON
+     LOG_CONFIGURE ON
+     LOG_BUILD ON)
+ENDIF()
 
 SET( ${PROJECT_NAME}_MAJOR_VERSION 0 )
 SET( ${PROJECT_NAME}_MINOR_VERSION 1 )
@@ -45,71 +69,60 @@ LINK_DIRECTORIES(${CMAKE_INSTALL_PREFIX}/lib)
 
 SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
 
-MESG("Configure Common Layer")
-ADD_SUBDIRECTORY(chaos/common)
+if(NOT CHAOS_ONLY_DEPENDECY)
+  MESG("Configure Common Layer")
+  ADD_SUBDIRECTORY(chaos/common)
 
-MESG("Configure CUToolkit Layer")
-ADD_SUBDIRECTORY(chaos/cu_toolkit)
+  MESG("Configure CUToolkit Layer")
+  ADD_SUBDIRECTORY(chaos/cu_toolkit)
 
-MESG("Configure UIToolkit Layer")
-ADD_SUBDIRECTORY(chaos/ui_toolkit)
+  MESG("Configure UIToolkit Layer")
+  ADD_SUBDIRECTORY(chaos/ui_toolkit)
 
-IF (CHAOS_AGENT)
+  MESG("Configure Chaos Metadata Service Client Library")
+  ADD_SUBDIRECTORY(chaos_metadata_service_client)
+
+  MESG("Configure Chaos Micro Unit Toolkit")
+  ADD_SUBDIRECTORY(chaos_micro_unit_toolkit)
+endif()
+
+IF (CHAOS_AGENT AND NOT CHAOS_ONLY_DEPENDECY)
 MESG("Configure Chaos Agent Service")
 ADD_SUBDIRECTORY(ChaosAgent)
 ENDIF()
 
-IF (CHAOS_MDS)
+IF (CHAOS_MDS AND NOT CHAOS_ONLY_DEPENDECY)
   MESG("Configure Chaos Metadata Service")
   ADD_SUBDIRECTORY(ChaosMetadataService)
 ENDIF()
 
-MESG("Configure Chaos Metadata Service Client Library")
-ADD_SUBDIRECTORY(chaos_metadata_service_client)
+IF(NOT CHAOS_ONLY_DEPENDECY)
+  MESG("Configure Chaos Metadata Service Client Library Test Application")
+  ADD_SUBDIRECTORY(ChaosMetadataServiceClientTest)
 
-MESG("Configure Chaos Metadata Service Client Library Test Application")
-ADD_SUBDIRECTORY(ChaosMetadataServiceClientTest)
+  MESG("Configure Chaos Micro Unit Toolkit Test")
+  ADD_SUBDIRECTORY(ChaosMicroUnitToolkitTest)
 
-MESG("Configure Chaos Micro Unit Toolkit")
-ADD_SUBDIRECTORY(chaos_micro_unit_toolkit)
+  IF (CHAOS_WAN)
+    MESG("Configure Chaos WAN Proxy")
+    ADD_SUBDIRECTORY(ChaosWANProxy)
+  ENDIF()
 
-MESG("Configure Chaos Micro Unit Toolkit Test")
-ADD_SUBDIRECTORY(ChaosMicroUnitToolkitTest)
+  IF (CHAOS_DATA_EXPORT)
+    MESG("Configure Chaos Data Export ")
+    ADD_SUBDIRECTORY(ChaosDataExport)
+  ENDIF()
 
-IF (CHAOS_WAN)
-  MESG("Configure Chaos WAN Proxy")
-  ADD_SUBDIRECTORY(ChaosWANProxy)
-ENDIF()
+  IF(CHAOS_EXAMPLES)
+    MESG("Configure Chaos CLI")
+    ADD_SUBDIRECTORY(example/ChaosCLI)
 
-# IF (CHAOS_CDS)
-#   MESG("Configure Chaos Data Service")
-#   ADD_SUBDIRECTORY(ChaosDataService)
-# ENDIF()
+    MESG("Configure Chaos ChaosMDSCmd")
+    ADD_SUBDIRECTORY(example/ChaosMDSCmd)
 
-IF (CHAOS_DATA_EXPORT)
-  MESG("Configure Chaos Data Export ")
-  ADD_SUBDIRECTORY(ChaosDataExport)
-ENDIF()
-
-IF(CHAOS_EXAMPLES)
-  MESG("Configure Chaos CLI")
-  ADD_SUBDIRECTORY(example/ChaosCLI)
-
-  MESG("Configure Chaos ChaosMDSCmd")
-  ADD_SUBDIRECTORY(example/ChaosMDSCmd)
-
-  MESG("Configure Chaos Performance Tester")
-  ADD_SUBDIRECTORY(example/ChaosPerformanceTester)
-  #MESG("Configure Control Unit Test examples")
-  #ADD_SUBDIRECTORY(example/ControlUnitTest bin/bin_example_cutest)
-
-  #MESG("Configure BenchTest simulation excutable")
-  #ADD_SUBDIRECTORY(example/BenchTest bin/bench_test)
-ENDIF()
-
-IF (CHAOS_MEMCACHE_TEST)
-  MESG("Configure ChaosMemCacheTest test excutable")
-  ADD_SUBDIRECTORY(test/MemcachedEmbeddedTest)
+    MESG("Configure Chaos Performance Tester")
+    ADD_SUBDIRECTORY(example/ChaosPerformanceTester)
+  ENDIF()
 ENDIF()
 
 IF (CHAOS_ARCHITECTURE_TEST)
@@ -129,8 +142,6 @@ ENDIF()
 
 MESG("Done")
 
-#MESG("Configure Plugin Test")
-#ADD_SUBDIRECTORY(test/PluginTest bin/plugin_test)
 if( NOT ${CMAKE_INSTALL_PREFIX} MATCHES ${CMAKE_CURRENT_SOURCE_DIR}/usr/local)
   IF(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/usr/local" )
     FILE(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/usr)

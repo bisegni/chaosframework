@@ -159,6 +159,13 @@ info_mesg(){
 	echo -e "* [$MYNAME-$MYPID] \x1B[1m$1\x1B[32m$2\x1B[39m\x1B[22m"
     fi
 }
+info_mesg_n(){
+    if [ -z "$2" ]; then
+	echo -ne "* [$MYNAME-$MYPID] \x1B[1m$1\x1B[22m"
+    else
+	echo -ne "* [$MYNAME-$MYPID] \x1B[1m$1\x1B[32m$2\x1B[39m\x1B[22m"
+    fi
+}
 error_mesg(){
     if [ -z "$2" ]; then
 	echo -e "# [$MYNAME-$MYPID] \x1B[31m\x1B[1m$1\x1B[22m\x1B[39m"
