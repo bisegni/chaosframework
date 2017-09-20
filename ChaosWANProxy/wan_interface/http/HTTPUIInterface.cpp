@@ -39,6 +39,7 @@ using namespace chaos::common::data;
 using namespace chaos::common::utility;
 using namespace chaos::wan_proxy::wan_interface;
 using namespace chaos::wan_proxy::wan_interface::http;
+using namespace mongoose;
 #define API_PREFIX_V1 "/api/v1"
 #define API_PATH_REGEX_V1(p) API_PREFIX_V1 p
 

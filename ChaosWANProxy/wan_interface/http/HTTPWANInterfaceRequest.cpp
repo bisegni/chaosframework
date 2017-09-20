@@ -19,7 +19,7 @@
  * permissions and limitations under the Licence.
  */
 #include "HTTPWANInterfaceRequest.h"
-
+using namespace mongoose;
 using namespace chaos::wan_proxy::wan_interface::http;
 
 HTTPWANInterfaceRequest::HTTPWANInterfaceRequest(struct mg_connection *_connection):

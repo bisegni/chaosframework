@@ -158,7 +158,7 @@ typedef struct stat ns_stat_t;
 typedef void *SSL;
 typedef void *SSL_CTX;
 #endif
-namespace mongoose {
+
 union socket_address {
 	struct sockaddr sa;
 	struct sockaddr_in sin;
@@ -1328,7 +1328,7 @@ typedef pid_t process_id_t;
 #endif                  //////// End of platform-specific defines and includes
 
 #include "mongoose.h"
-
+namespace mongoose {
 #define MAX_REQUEST_SIZE 16384
 #define IOBUF_SIZE 8192
 #define MAX_PATH_SIZE 8192
