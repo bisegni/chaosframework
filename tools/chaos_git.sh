@@ -158,7 +158,7 @@ fi
 
 for dir in ${on_dir[@]}; do
     pushd $dir > /dev/null
-    REMOTE_LINE=`git remote get-url --push origin`
+    REMOTE_LINE=`git config --get remote.origin.url`
     if [[ "$REMOTE_LINE" == "ssh://git@"* ]]; then
 	if [[ "$REMOTE_LINE" =~ ssh:\/\/git@(.*)\/(.*)\/(.*)\.git ]];then
 
