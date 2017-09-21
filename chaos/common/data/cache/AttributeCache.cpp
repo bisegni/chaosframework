@@ -216,7 +216,7 @@ void AttributeCache::copyToAttributeCache(AttributeCache& dest_attribute_cache) 
 void AttributeCache::copyAttribute(AttributeValue& av) {
 	if(hasAttribute(av.name)){
 		AttributeValue*ptr=getValueSettingByName(av.name);
-		LDBG_<<"copy attribute value '"<<av.name<<"' size:"<<av.size<<" type:"<<av.type<<" subtype:"<<((av.sub_type.size()>0)?av.sub_type[0]:-1)<<" IN size:"<<ptr->size<<" type:"<<ptr->type<<" subtype:"<<(ptr->sub_type.size()>0)?ptr->sub_type[0]:-1;
+		LDBG_<<"copy attribute value '"<<av.name<<"' size:"<<av.size<<" type:"<<av.type<<" subtype:"<<((av.sub_type.size()>0)?av.sub_type[0]:-1)<<" IN size:"<<ptr->size<<" type:"<<ptr->type<<" subtype:"<<((ptr->sub_type.size()>0)?ptr->sub_type[0]:-1);
 
 		//update attribute
 		getValueSettingByName(av.name)->setValue(av.getAsVariant());

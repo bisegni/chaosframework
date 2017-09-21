@@ -958,7 +958,7 @@ void CUController::fetchCurrentDeviceValue() {
         if(!tmpPtr->hasKey(key)) continue;
         
         switch (attributeValueMap[*iter].valueType) {
-                
+                //TODO: other cases
             case DataType::TYPE_INT32:
                 int32AttributeLiveBuffer[*iter]->addValue(tmpPtr->getInt32Value(key));
                 break;
