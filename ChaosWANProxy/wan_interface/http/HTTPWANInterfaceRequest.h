@@ -32,9 +32,9 @@ namespace chaos{
 				class HTTPWANInterfaceRequest {
 					friend class HTTPWANInterface;;
 					
-					struct mg_connection *connection;
+					mongoose::mg_connection *connection;
 				protected:
-					HTTPWANInterfaceRequest(struct mg_connection *_connection);
+					HTTPWANInterfaceRequest(mongoose::mg_connection *_connection);
 					~HTTPWANInterfaceRequest();
 				public:
 					const char * getHeaderKeyValue(const char * header_key);

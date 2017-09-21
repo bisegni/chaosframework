@@ -23,11 +23,7 @@
 #include <stdio.h>      // required for FILE
 #include <stddef.h>     // required for size_t
 #include <sys/types.h>  // required for time_t
-
-#ifdef __cplusplus
-extern "C" {
-#endif // __cplusplus
-
+namespace mongoose {
 // This structure contains information about HTTP request.
 struct mg_connection {
   const char *request_method; // "GET", "POST", etc
@@ -145,8 +141,6 @@ struct mg_expansion {
 void mg_template(struct mg_connection *, const char *text,
                  struct mg_expansion *expansions);
 
-#ifdef __cplusplus
-}
-#endif // __cplusplus
+};
 
 #endif // MONGOOSE_HEADER_INCLUDED

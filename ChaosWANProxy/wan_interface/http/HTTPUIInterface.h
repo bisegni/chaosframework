@@ -43,8 +43,8 @@ namespace chaos {
     namespace wan_proxy {
         namespace wan_interface {
             namespace http {
-                typedef std::vector<struct mg_server *>				ServerList;
-                typedef std::vector<struct mg_server *>::iterator	ServerListIterator;
+                typedef std::vector<mongoose::mg_server *>				ServerList;
+                typedef std::vector<mongoose::mg_server *>::iterator	ServerListIterator;
                 
                 //!interface param key
                 static const char * const	OPT_HTTP_PORT			= "HTTP_wi_port";
@@ -72,7 +72,7 @@ namespace chaos {
                     boost::thread_group http_server_thread;
                     std::string basePath;
                     //!poll the http server in a thread
-                    void pollHttpServer(struct mg_server *http_server);
+                    void pollHttpServer(mongoose::mg_server *http_server);
                     static std::map<std::string,::driver::misc::ChaosController*> devs;
 
                      ::driver::misc::ChaosController* info;
@@ -81,14 +81,14 @@ namespace chaos {
 
                     static void addDevice(std::string,::driver::misc::ChaosController*);
                     static void removeDevice(std::string);
-                    bool checkForContentType(struct mg_connection *connection,
+                    bool checkForContentType(mongoose::mg_connection *connection,
                                                                const std::string& type);
                     boost::mutex devio_mutex;
                 public:
-                    bool handle(struct mg_connection *connection);
+                    bool handle(mongoose::mg_connection *connection);
 
-                    int process(struct mg_connection *connection);
-                    int processRest(struct mg_connection *connection);
+                    int process(mongoose::mg_connection *connection);
+                    int processRest(mongoose::mg_connection *connection);
 
                 protected:
                     

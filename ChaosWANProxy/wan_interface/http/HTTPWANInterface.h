@@ -43,8 +43,8 @@ namespace chaos {
     namespace wan_proxy {
         namespace wan_interface {
             namespace http {
-                typedef std::vector<struct mg_server *>				ServerList;
-                typedef std::vector<struct mg_server *>::iterator	ServerListIterator;
+                typedef std::vector<mongoose::mg_server *>				ServerList;
+                typedef std::vector<mongoose::mg_server *>::iterator	ServerListIterator;
                 
                 //!interface param key
                 static const char * const	OPT_HTTP_PORT			= "HTTP_wi_port";
@@ -70,12 +70,12 @@ namespace chaos {
                     boost::thread_group http_server_thread;
                     std::string basePath;
                     //!poll the http server in a thread
-                    void pollHttpServer(struct mg_server *http_server);
-                    bool checkForContentType(struct mg_connection *connection,
+                    void pollHttpServer(mongoose::mg_server *http_server);
+                    bool checkForContentType(mongoose::mg_connection *connection,
                                              const std::string& type);
                 public:
-                    int process(struct mg_connection *connection);
-                    bool handle(struct mg_connection *connection);
+                    int process(mongoose::mg_connection *connection);
+                    bool handle(mongoose::mg_connection *connection);
                 protected:
                     
                     //inherited method

@@ -2350,7 +2350,7 @@
 			{
 			    "DriverDescriptionName": "PowerSimDD",
 			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam":"{\"driver\":{\"dev\":\"/dev/ttyr05\",\"slaveid\":6,\"feature\":1,\"min_curr\":0.0,\"max_curr\":100.0,\"min_volt\":0.0,\"max_volt\":10.0,\"min_write_time_ms\":100,\"max_write_time_ms\":200,\"min_read_time_ms\":200,\"max_read_time_ms\":300,\"force_err_sec\":0,\"readout_err\":5.0,\"update_delay_us\":100000}}"
+			    "DriverDescriptionInitParam":"{\"driver\":{\"dev\":\"/dev/ttyr05\",\"slaveid\":6,\"feature\":1,\"min_curr\":0.0,\"max_curr\":700.0,\"min_volt\":0.0,\"max_volt\":10.0,\"min_write_time_ms\":100,\"max_write_time_ms\":200,\"min_read_time_ms\":200,\"max_read_time_ms\":300,\"force_err_sec\":0,\"readout_err\":5.0,\"update_delay_us\":100000}}"
 			}
 		    ],
 		    "AttrDesc": [

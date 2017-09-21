@@ -17,7 +17,7 @@ SET(wp_src ${wp_src}	# wan_interface/http/HTTPWANInterface.cpp
 						wan_interface/http/HTTPUIInterface.cpp
 						wan_interface/http/HTTPWANInterfaceRequest.cpp
 						wan_interface/http/HTTPWANInterfaceStringResponse.cpp
-						wan_interface/http/mongoose.c)
+						wan_interface/http/mongoose.cpp)
 
 
 SET(wp_src ${wp_src}	api/AbstractApi.cpp

@@ -32,6 +32,7 @@
 #include <json/json.h>
 
 using namespace chaos;
+using namespace mongoose;
 using namespace chaos::common::data;
 using namespace chaos::common::utility;
 using namespace chaos::wan_proxy::wan_interface;
