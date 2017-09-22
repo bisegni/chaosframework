@@ -1,21 +1,22 @@
 /*
- *	DriverManager.cpp
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2013 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include <chaos/common/global.h>
@@ -89,8 +90,8 @@ void DriverManager::deinit() throw(chaos::CException) {
 }
 
 // Register a new driver
-void DriverManager::registerDriver(boost::shared_ptr<ObjectInstancer<AbstractDriver> > instancer,
-                                   boost::shared_ptr<PluginInspector> description) throw(chaos::CException) {
+void DriverManager::registerDriver(ChaosSharedPtr<ObjectInstancer<AbstractDriver> > instancer,
+                                   ChaosSharedPtr<PluginInspector> description) throw(chaos::CException) {
   boost::unique_lock<boost::shared_mutex> lock(mutextMapAccess);
 
   if (!instancer) {
@@ -112,7 +113,7 @@ void DriverManager::registerDriver(boost::shared_ptr<ObjectInstancer<AbstractDri
     return;
   }
 
-  boost::shared_ptr<DriverPluginInfo> driver_plugin_info(new DriverPluginInfo());
+  ChaosSharedPtr<DriverPluginInfo> driver_plugin_info(new DriverPluginInfo());
   driver_plugin_info->sp_inspector = description;
   driver_plugin_info->sp_instancer = instancer;
   mapDriverAliasVersionInstancer.insert(make_pair(composedDriverName, driver_plugin_info));
@@ -158,7 +159,7 @@ DriverAccessor *DriverManager::getNewAccessorForDriverInstance(DrvRequestInfo &r
   //the instance of the driver need to be created
   if (mapDriverAliasVersionInstancer.count(composedDriverName) == 0) {
     std::map<std::string,
-             boost::shared_ptr<DriverPluginInfo> >::iterator i;
+             ChaosSharedPtr<DriverPluginInfo> >::iterator i;
     DMLDBG_ << boost::str(boost::format("Driver %1% not found, here a list of possible driver names and versions")%driverInfo);
     for (i = mapDriverAliasVersionInstancer.begin();
          i != mapDriverAliasVersionInstancer.end();

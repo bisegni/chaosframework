@@ -1,21 +1,22 @@
 /*
- *	chaos_types.h
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2013 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #ifndef CHAOSFramework_chaos_types_h
@@ -33,10 +34,85 @@
 #include <deque>
 #include <vector>
 
+
+#if __cplusplus >= 201103L
+#ifndef FORCE_BOOST_SHPOINTER
+#define ChaosSharedPtr      std::shared_ptr
+#define ChaosMakeSharedPtr  std::make_shared
+#define ChaosWeakPtr        std::weak_ptr
+#include <atomic>
+#include <future>
+#include <chrono>
+#include <functional>
+template<typename T>
+using ChaosAtomic = std::atomic<T>;
+template<typename T>
+using ChaosPromise = std::promise<T>;
+template<typename T>
+using ChaosFuture = std::future<T>;
+typedef std::future_status ChaosFutureStatus;
+typedef std::chrono::seconds ChaosCronoSeconds;
+typedef std::chrono::milliseconds ChaosCronoMilliseconds;
+typedef std::chrono::microseconds ChaosCronoMicroseconds;
+
+template< class R >
+using ChaosFunction = std::function< R >;
+#define ChaosBind std::bind
+#define ChaosBindPlaceholder(x) std::placeholders::x
+#else
+#include <boost/shared_ptr.hpp>
+#include <boost/atomic.hpp>
+#include <boost/thread/future.hpp>
+#include <boost/chrono.hpp>
+#include <boost/function.hpp>
+#define ChaosSharedPtr boost::shared_ptr
+#define ChaosMakeSharedPtr boost::make_shared
+#define ChaosWeakPtr boost::weak_ptr
+#define ChaosAtomic boost::atomic;
+#define ChaosPromise boost::promise
+#define ChaosFuture boost::shared_future
+#define ChaosFutureStatus boost::future_status
+#define ChaosCronoSeconds boost::chrono::seconds
+#define ChaosCronoMilliseconds boost::chrono::milliseconds
+#define ChaosCronoMicroseconds boost::chrono::microseconds
+#define ChaosFunction boost::function
+#define ChaosBind boost::bind
+#define ChaosBindPlaceholder(x) x
+#endif
+#define ChaosUniquePtr std::unique_ptr
+#define ChaosMoveOperator(x) std::move(x)
+#else
+#include <boost/shared_ptr.hpp>
+#include <boost/atomic.hpp>
+#include <boost/thread/future.hpp>
+#include <boost/chrono.hpp>
+#include <boost/function.hpp>
+#define ChaosSharedPtr boost::shared_ptr
+#define ChaosMakeSharedPtr boost::make_shared
+#define ChaosWeakPtr boost::weak_ptr
+#define ChaosUniquePtr std::auto_ptr
+#define ChaosMoveOperator(x) x
+#define ChaosAtomic boost::atomic
+#define ChaosPromise boost::promise
+#define ChaosFuture  boost::shared_future
+#define ChaosFutureStatus boost::future_status
+#define ChaosCronoSeconds boost::chrono::seconds
+#define ChaosCronoMilliseconds boost::chrono::milliseconds
+#define ChaosCronoMicroseconds boost::chrono::microseconds
+#define ChaosFunction boost::function
+#define ChaosBind boost::bind
+#define ChaosBindPlaceholder(x) x
+#endif
+
 #define  CHAOS_DEFINE_SET_FOR_TYPE(t1, n)\
 typedef std::set< t1 >                   n;\
 typedef std::set< t1 >::iterator         n ## Iterator;\
 typedef std::set< t1 >::const_iterator   n ## ConstIterator;
+
+#define  CHAOS_DEFINE_SET_FOR_TYPE_COMP(t1, c, n)\
+typedef std::set< t1 , c>                   n;\
+typedef std::set< t1 , c>::iterator         n ## Iterator;\
+typedef std::set< t1 , c>::const_iterator   n ## ConstIterator;
 
 #define  CHAOS_DEFINE_VECTOR_FOR_TYPE(t, n)\
 typedef std::vector< t >                   n;\
@@ -95,7 +171,7 @@ CHAOS_DEFINE_SET_FOR_TYPE(std::string, ChaosStringSet)
 for(iter it = vec.begin();\
 it != vec.end();\
 it++) {\
-   to_execute \
+to_execute \
 }\
 
 typedef boost::shared_mutex                     ChaosSharedMutex;
@@ -103,10 +179,11 @@ typedef boost::shared_lock<boost::shared_mutex> ChaosReadLock;
 typedef boost::unique_lock<boost::shared_mutex> ChaosWriteLock;
 
 typedef struct {
-  float push_rate; // push rate
-  float sys_time; // time spent in system
-  float usr_time; // time spent in user
-  uint64_t upt_time; // uptime seconds
-  uint64_t metric_time; // timestamp of the metric
+    float push_rate; // push rate
+    float sys_time; // time spent in system
+    float usr_time; // time spent in user
+    uint64_t upt_time; // uptime seconds
+    uint64_t metric_time; // timestamp of the metric
 } cu_prof_t;
+
 #endif

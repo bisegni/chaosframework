@@ -1,21 +1,22 @@
 /*
- *	IODirectIODriver.cpp
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include <boost/algorithm/string.hpp>
@@ -53,53 +54,38 @@ namespace chaos_dio_channel = chaos::common::direct_io::channel;
 DEFINE_CLASS_FACTORY(IODirectIODriver, IODataDriver);
 
 //using namespace memcache;
-
-/*---------------------------------------------------------------------------------
- 
- ---------------------------------------------------------------------------------*/
-IODirectIODriver::IODirectIODriver(std::string alias):
+IODirectIODriver::IODirectIODriver(const std::string& alias):
 NamedService(alias),
 current_endpoint_p_port(0),
 current_endpoint_s_port(0),
 current_endpoint_index(0),
 connectionFeeder(alias, this),
-uuid(UUIDUtil::generateUUIDLite()){
+uuid(UUIDUtil::generateUUIDLite()),
+shutting_down(false){
     //clear
     std::memset(&init_parameter, 0, sizeof(IODirectIODriverInitParam));
     
     device_server_channel = NULL;
-    data_cache.data_ptr = NULL;
-    data_cache.data_len = 0;
 }
 
-/*---------------------------------------------------------------------------------
- 
- ---------------------------------------------------------------------------------*/
 IODirectIODriver::~IODirectIODriver() {
 }
 
-/*---------------------------------------------------------------------------------
- 
- ---------------------------------------------------------------------------------*/
 void IODirectIODriver::setDirectIOParam(IODirectIODriverInitParam& _init_parameter) {
     //store the configuration
-    init_parameter = _init_parameter;
+    //init_parameter = _init_parameter;
 }
 
-/*---------------------------------------------------------------------------------
- 
- ---------------------------------------------------------------------------------*/
 void IODirectIODriver::init(void *_init_parameter) throw(CException) {
+    shutting_down = false;
     IODataDriver::init(_init_parameter);
     
     IODirectIODriver_LINFO_ << "Check init parameter";
     
-    if(!init_parameter.network_broker) throw CException(-1, "No network broker configured", __PRETTY_FUNCTION__);
-    
-    init_parameter.client_instance = init_parameter.network_broker->getSharedDirectIOClientInstance();
+    init_parameter.client_instance = NetworkBroker::getInstance()->getSharedDirectIOClientInstance();
     //if(!init_parameter.client_instance) throw CException(-1, "No client configured", __PRETTY_FUNCTION__);
     
-    init_parameter.endpoint_instance = init_parameter.network_broker->getDirectIOServerEndpoint();
+    init_parameter.endpoint_instance = NetworkBroker::getInstance()->getDirectIOServerEndpoint();
     if(!init_parameter.endpoint_instance) throw CException(-1, "No endpoint configured", __PRETTY_FUNCTION__);
     
     //initialize client
@@ -118,12 +104,10 @@ void IODirectIODriver::init(void *_init_parameter) throw(CException) {
     
 }
 
-/*---------------------------------------------------------------------------------
- 
- ---------------------------------------------------------------------------------*/
 void IODirectIODriver::deinit() throw(CException) {
+    shutting_down = true;
     IODirectIODriver_LINFO_ << "Remove active query";
-    //acquire write lock on map
+    //lock all  internal resource that can be effetted by
     boost::unique_lock<boost::shared_mutex> wmap_loc(map_query_future_mutex);
     
     //scan all remained query
@@ -134,39 +118,29 @@ void IODirectIODriver::deinit() throw(CException) {
     }
     map_query_future.clear();
     
-    if(data_cache.data_ptr) {
-        IODirectIODriver_LINFO_ << "delete last data received";
-        free(data_cache.data_ptr);
-    }
-    
     //remove all url and service
     IODirectIODriver_LINFO_ << "Remove all urls";
     connectionFeeder.clear();
     
-    //initialize client
-    //InizializableService::deinitImplementation(init_parameter.client_instance, init_parameter.client_instance->getName(), __PRETTY_FUNCTION__);
-    //delete(init_parameter.client_instance);
-    
     //deinitialize server channel
     if(device_server_channel) {
+        //remove me as handler
+        device_server_channel->setHandler(NULL);
         init_parameter.endpoint_instance->releaseChannelInstance(device_server_channel);
     }
     
     if(init_parameter.endpoint_instance) {
-        init_parameter.network_broker->releaseDirectIOServerEndpoint(init_parameter.endpoint_instance);
+        NetworkBroker::getInstance()->releaseDirectIOServerEndpoint(init_parameter.endpoint_instance);
     }
     IODataDriver::deinit();
 }
 
-/*---------------------------------------------------------------------------------
- 
- ---------------------------------------------------------------------------------*/
 void IODirectIODriver::storeRawData(const std::string& key,
                                     chaos::common::data::SerializationBuffer *serialization,
                                     DataServiceNodeDefinitionType::DSStorageType storage_type)  throw(CException) {
     CHAOS_ASSERT(serialization)
     int err = 0;
-    boost::shared_lock<boost::shared_mutex>(mutext_feeder);
+    boost::shared_lock<boost::shared_mutex> rl(mutext_feeder);
     //if(next_client->connection->getState() == chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventConnected)
     IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
     serialization->disposeOnDelete = !next_client;
@@ -185,12 +159,38 @@ void IODirectIODriver::storeRawData(const std::string& key,
     delete(serialization);
 }
 
-/*---------------------------------------------------------------------------------
- 
- ---------------------------------------------------------------------------------*/
+
+void IODirectIODriver::storeHealthData(const std::string& key,
+                                       chaos_data::CDataWrapper& dataToStore,
+                                       DataServiceNodeDefinitionType::DSStorageType storage_type) throw(CException) {
+    int err = 0;
+    try{
+        boost::shared_lock<boost::shared_mutex> rl(mutext_feeder);
+        IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
+        
+        ChaosUniquePtr<chaos::common::data::SerializationBuffer> serialization(dataToStore.getBSONData());
+        
+        if(next_client &&
+           serialization.get()) {
+            serialization->disposeOnDelete = false;
+            if((err = (int)next_client->device_client_channel->storeAndCacheHealthData(key,
+                                                                                       (void*)serialization->getBufferPtr(),
+                                                                                       (uint32_t)serialization->getBufferLen(),
+                                                                                       storage_type))) {
+                IODirectIODriver_LERR_ << "Error storing health data into data service "<<next_client->connection->getServerDescription()<<" with code:" << err;
+            }
+        } else {
+            DEBUG_CODE(IODirectIODriver_DLDBG_ << "No available socket->loose packet");
+        }
+    }catch(bson::AssertionException& bson_assert){
+        IODirectIODriver_LERR_ << CHAOS_FORMAT("bson assertion [%1%]", %
+                                               bson_assert.toString());
+    }
+}
+
 char* IODirectIODriver::retriveRawData(const std::string& key, size_t *dim)  throw(CException) {
     char* result = NULL;
-    boost::shared_lock<boost::shared_mutex>(mutext_feeder);
+    boost::shared_lock<boost::shared_mutex> rl(mutext_feeder);
     IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
     if(!next_client) return NULL;
     
@@ -204,16 +204,27 @@ char* IODirectIODriver::retriveRawData(const std::string& key, size_t *dim)  thr
     return result;
 }
 
-/*---------------------------------------------------------------------------------
- 
- ---------------------------------------------------------------------------------*/
-int IODirectIODriver::removeData(const std::string& key,
-                                  uint64_t start_ts,
-                                  uint64_t end_ts) throw(CException) {
-    boost::shared_lock<boost::shared_mutex>(mutext_feeder);
+int IODirectIODriver::retriveMultipleData(const ChaosStringVector& key,
+                                          chaos::common::data::VectorCDWShrdPtr& result)  throw(CException) {
+    boost::shared_lock<boost::shared_mutex> rl(mutext_feeder);
     IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
     if(!next_client) return -1;
+    
+    int err = (int)next_client->device_client_channel->requestLastOutputData(key,
+                                                                             result);
+    if(err) {
+        IODirectIODriver_LERR_ << "Error retriving data from data service "<<next_client->connection->getServerDescription()<< " with code:" << err;
+    }
+    return err;
+}
 
+int IODirectIODriver::removeData(const std::string& key,
+                                 uint64_t start_ts,
+                                 uint64_t end_ts) throw(CException) {
+    boost::shared_lock<boost::shared_mutex> rl(mutext_feeder);
+    IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
+    if(!next_client) return -1;
+    
     int err = (int)next_client->device_client_channel->deleteDataCloud(key,
                                                                        start_ts,
                                                                        end_ts);
@@ -223,16 +234,12 @@ int IODirectIODriver::removeData(const std::string& key,
     return err;
 }
 
-/*---------------------------------------------------------------------------------
- 
- ---------------------------------------------------------------------------------*/
-//! restore from a tag a dataset associated to a key
 int IODirectIODriver::loadDatasetTypeFromSnapshotTag(const std::string& restore_point_tag_name,
                                                      const std::string& key,
                                                      uint32_t dataset_type,
                                                      chaos_data::CDataWrapper **cdatawrapper_handler) {
     int err = 0;
-    boost::shared_lock<boost::shared_mutex>(mutext_feeder);
+    boost::shared_lock<boost::shared_mutex> rl(mutext_feeder);
     IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
     *cdatawrapper_handler=NULL;
     if(!next_client) return 0;
@@ -263,65 +270,8 @@ int IODirectIODriver::loadDatasetTypeFromSnapshotTag(const std::string& restore_
     return err;
 }
 
-/*---------------------------------------------------------------------------------
- 
- ---------------------------------------------------------------------------------*/
-//! restore from a tag a dataset associated to a key
-int IODirectIODriver::createNewSnapshot(const std::string& snapshot_tag,
-                                        const std::vector<std::string>& node_list) {
-    int err = 0;
-    boost::shared_lock<boost::shared_mutex>(mutext_feeder);
-    IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
-    if(!next_client) return 0;
-    chaos_dio_channel::DirectIOSystemAPIGetDatasetSnapshotResultPtr snapshot_result = NULL;
-    
-    if((err = (int)next_client->system_client_channel->makeNewDatasetSnapshot(snapshot_tag,
-                                                                              node_list,
-                                                                              &snapshot_result))) {
-        IODirectIODriver_LERR_ << "Error creating snapshot:"<<snapshot_tag << " with error:" <<err;
-    } else {
-        if(snapshot_result &&
-           snapshot_result->api_result.error) {
-            err = snapshot_result->api_result.error;
-            //we have the dataaset
-            IODirectIODriver_LERR_ << "Error creating snapshot:"<<snapshot_tag << " with error:" <<snapshot_result->api_result.error << " and message:" << snapshot_result->api_result.error_message;
-        }
-    }
-    //delete the received result if there was one
-    if(snapshot_result) free(snapshot_result);
-    return err;
-}
-
-/*---------------------------------------------------------------------------------
- 
- ---------------------------------------------------------------------------------*/
-int IODirectIODriver::deleteSnapshot(const std::string& snapshot_tag) {
-    int err = 0;
-    boost::shared_lock<boost::shared_mutex>(mutext_feeder);
-    IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
-    if(!next_client) return 0;
-    chaos_dio_channel::DirectIOSystemAPIGetDatasetSnapshotResultPtr snapshot_result = NULL;
-    
-    if((err = (int)next_client->system_client_channel->deleteDatasetSnapshot(snapshot_tag,
-                                                                             &snapshot_result))) {
-        IODirectIODriver_LERR_ << "Error erasing snapshot:"<<snapshot_tag << " with error:" <<err;
-    } else {
-        if(snapshot_result &&
-           snapshot_result->api_result.error) {
-            err = snapshot_result->api_result.error;
-            //we have the dataaset
-            IODirectIODriver_LERR_ << "Error erasing snapshot:"<<snapshot_tag << " with error:" <<snapshot_result->api_result.error << " and message:" << snapshot_result->api_result.error_message;
-        }
-    }
-    //delete the received result if there was one
-    if(snapshot_result) free(snapshot_result);
-    return err;
-}
-
-/*---------------------------------------------------------------------------------
- 
- ---------------------------------------------------------------------------------*/
 void IODirectIODriver::addServerURL(const std::string& url) {
+    boost::unique_lock<boost::shared_mutex>(mutext_feeder);
     if(!common::direct_io::DirectIOClient::checkURL(url)) {
         IODirectIODriver_LERR_ << "Url " << url << " non well formed";
         return;
@@ -331,21 +281,22 @@ void IODirectIODriver::addServerURL(const std::string& url) {
     connectionFeeder.addURL(chaos::common::network::URL(url));
 }
 
-/*---------------------------------------------------------------------------------
- 
- ---------------------------------------------------------------------------------*/
 chaos::common::data::CDataWrapper* IODirectIODriver::updateConfiguration(chaos::common::data::CDataWrapper* newConfigration) {
     //lock the feeder access
-    boost::unique_lock<boost::shared_mutex>(mutext_feeder);
+    boost::unique_lock<boost::shared_mutex> rl(mutext_feeder);
     //checkif someone has passed us the device indetification
     if(newConfigration->hasKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST)){
         IODirectIODriver_LINFO_ << "Get the DataManager LiveData address value";
-        auto_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> liveMemAddrConfig(newConfigration->getVectorValue(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST));
+        ChaosUniquePtr<chaos::common::data::CMultiTypeDataArrayWrapper> liveMemAddrConfig(newConfigration->getVectorValue(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST));
         size_t numerbOfserverAddressConfigured = liveMemAddrConfig->size();
         for ( int idx = 0; idx < numerbOfserverAddressConfigured; idx++ ){
             string serverDesc = liveMemAddrConfig->getStringElementAtIndex(idx);
             if(!common::direct_io::DirectIOClient::checkURL(serverDesc)) {
                 IODirectIODriver_DLDBG_ << "Data proxy server description " << serverDesc << " non well formed";
+                continue;
+            }
+            if(connectionFeeder.hasURL(serverDesc)) {
+                IODirectIODriver_LERR_ << "Data proxy server description " << serverDesc << " is laredy instaleld in driver";
                 continue;
             }
             //add new url to connection feeder
@@ -355,22 +306,21 @@ chaos::common::data::CDataWrapper* IODirectIODriver::updateConfiguration(chaos::
     return NULL;
 }
 
-/*---------------------------------------------------------------------------------
- 
- ---------------------------------------------------------------------------------*/
 void IODirectIODriver::disposeService(void *service_ptr) {
     if(!service_ptr) return;
     IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(service_ptr);
-    
+    //remove me as handler before delete all other this so anymore receive event
+    next_client->connection->setEventHandler(NULL);
     if(next_client->system_client_channel) next_client->connection->releaseChannelInstance(next_client->system_client_channel);
-    if(next_client->device_client_channel) next_client->connection->releaseChannelInstance(next_client->device_client_channel);
+    
+    if(next_client->device_client_channel) {
+        next_client->connection->releaseChannelInstance(next_client->device_client_channel);
+    }
+    
     init_parameter.client_instance->releaseConnection(next_client->connection);
     delete(next_client);
 }
 
-/*---------------------------------------------------------------------------------
- 
- ---------------------------------------------------------------------------------*/
 void* IODirectIODriver::serviceForURL(const common::network::URL& url, uint32_t service_index) {
     IODirectIODriver_LINFO_ << "try to add connection for " << url.getURL();
     IODirectIODriverClientChannels * clients_channel = NULL;
@@ -418,53 +368,49 @@ void* IODirectIODriver::serviceForURL(const common::network::URL& url, uint32_t 
     return clients_channel;
 }
 
-/*---------------------------------------------------------------------------------
- 
- ---------------------------------------------------------------------------------*/
 void IODirectIODriver::handleEvent(chaos_direct_io::DirectIOClientConnection *client_connection,
                                    chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event) {
-    //if the channel has bee disconnected turn the relative index offline, if onli reput it online
-    boost::unique_lock<boost::shared_mutex>(mutext_feeder);
-    uint32_t service_index = boost::lexical_cast<uint32_t>(client_connection->getCustomStringIdentification());
-    switch(event) {
-        case chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventConnected:
-            DEBUG_CODE(IODirectIODriver_LINFO_ << "Manage Connected event to service with index " << service_index << " and url" << client_connection->getURL();)
-            connectionFeeder.setURLOnline(service_index);
-            break;
-            
-        case chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventDisconnected:
-	  if(connectionFeeder.isOnline(service_index)){
-            DEBUG_CODE(IODirectIODriver_LINFO_ << "Manage Disconnected event for service with index " << service_index << " and url" << client_connection->getURL();)
-	      connectionFeeder.setURLOffline(service_index);
-	  }
-            break;
+    if(shutting_down) return;
+    try {
+        uint32_t service_index = boost::lexical_cast<uint32_t>(client_connection->getCustomStringIdentification());
+        switch(event) {
+            case chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventConnected:
+                DEBUG_CODE(IODirectIODriver_LINFO_ << "Manage Connected event to service with index " << service_index << " and url" << client_connection->getURL();)
+                connectionFeeder.setURLOnline(service_index);
+                break;
+                
+            case chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventDisconnected:
+                if(connectionFeeder.isOnline(service_index)){
+                    DEBUG_CODE(IODirectIODriver_LINFO_ << "Manage Disconnected event for service with index " << service_index << " and url" << client_connection->getURL();)
+                    connectionFeeder.setURLOffline(service_index);
+                }
+                break;
+        }
+    } catch(...){
+        IODirectIODriver_LERR_ << "exception handling event identification:" << client_connection->getCustomStringIdentification() << " and url:" << client_connection->getURL();
     }
 }
 
-/*---------------------------------------------------------------------------------
- 
- ---------------------------------------------------------------------------------*/
 QueryCursor *IODirectIODriver::performQuery(const std::string& key,
                                             uint64_t start_ts,
-                                            uint64_t end_ts,uint32_t page_len) {
+                                            uint64_t end_ts,
+                                            uint32_t page_len) {
     QueryCursor *q = new QueryCursor(UUIDUtil::generateUUID(),
                                      connectionFeeder,
                                      key,
                                      start_ts,
-                                     end_ts,page_len);
+                                     end_ts,
+                                     page_len);
     if(q) {
         //add query to map
         boost::unique_lock<boost::shared_mutex> wmap_loc(map_query_future_mutex);
-        map_query_future.insert(make_pair<string, QueryCursor*>(q->queryID(), q));
+        map_query_future.insert(make_pair(q->queryID(), q));
     } else {
         releaseQuery(q);
     }
     return q;
 }
 
-/*---------------------------------------------------------------------------------
- 
- ---------------------------------------------------------------------------------*/
 void IODirectIODriver::releaseQuery(QueryCursor *query_cursor) {
     //acquire write lock
     if(query_cursor == NULL) return;
@@ -472,4 +418,5 @@ void IODirectIODriver::releaseQuery(QueryCursor *query_cursor) {
     if(map_query_future.count(query_cursor->queryID())) {
         map_query_future.erase(query_cursor->queryID());
     }
+    delete query_cursor;
 }

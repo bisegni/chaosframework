@@ -1,21 +1,22 @@
 /*
- *	BatchCommandDescription.cpp
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include <chaos/common/batch_command/BatchCommandDescription.h>
@@ -48,7 +49,7 @@ void BatchCommandDescription::addParameter(const std::string& parameter_name,
                                            chaos::DataType::DataType type,
                                            int32_t flag) {
     //allocate paramter
-    boost::shared_ptr< CDataWrapper > attribute_description(new CDataWrapper());
+    ChaosSharedPtr< CDataWrapper > attribute_description(new CDataWrapper());
     
     attribute_description->addStringValue(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_NAME, parameter_name);
     attribute_description->addStringValue(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_DESCRIPTION, parameter_description);
@@ -58,9 +59,9 @@ void BatchCommandDescription::addParameter(const std::string& parameter_name,
     map_parameter.insert(make_pair(parameter_name, attribute_description));
 }
 
-boost::shared_ptr<CDataWrapper>
+ChaosSharedPtr<CDataWrapper>
 BatchCommandDescription::getFullDescription() {
-    boost::shared_ptr<CDataWrapper> description_obj(new CDataWrapper());
+    ChaosSharedPtr<CDataWrapper> description_obj(new CDataWrapper());
     description_obj->addStringValue(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID, unique_identifier);
     description_obj->addStringValue(BatchCommandAndParameterDescriptionkey::BC_ALIAS, alias);
     description_obj->addStringValue(BatchCommandAndParameterDescriptionkey::BC_DESCRIPTION, description);
@@ -85,7 +86,7 @@ void BatchCommandDescription::getParameters(std::vector<std::string>& parameter_
 
 bool BatchCommandDescription::getParameterType(const std::string& parameter_name,
                                                chaos::DataType::DataType& type) {
-    boost::shared_ptr<CDataWrapper> desc(getParameterDescription(parameter_name));
+    ChaosSharedPtr<CDataWrapper> desc(getParameterDescription(parameter_name));
     if(desc.get() == NULL) return false;
     type = (chaos::DataType::DataType)desc->getInt32Value(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_TYPE);
     return true;
@@ -94,7 +95,7 @@ bool BatchCommandDescription::getParameterType(const std::string& parameter_name
 
 bool BatchCommandDescription::getParameterFlag(const std::string& parameter_name,
                                                int32_t& flag) {
-    boost::shared_ptr<CDataWrapper> desc(getParameterDescription(parameter_name));
+    ChaosSharedPtr<CDataWrapper> desc(getParameterDescription(parameter_name));
     if(desc.get() == NULL) return false;
     flag = desc->getInt32Value(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_FLAG);
     return true;
@@ -103,15 +104,15 @@ bool BatchCommandDescription::getParameterFlag(const std::string& parameter_name
 
 bool BatchCommandDescription::getParameterDescription(const std::string& parameter_name,
                                                       std::string& parameter_description) {
-    boost::shared_ptr<CDataWrapper> desc(getParameterDescription(parameter_name));
+    ChaosSharedPtr<CDataWrapper> desc(getParameterDescription(parameter_name));
     if(desc.get() == NULL) return false;
     parameter_description = desc->getStringValue(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_DESCRIPTION);
     return true;
 }
 
-boost::shared_ptr<CDataWrapper>
+ChaosSharedPtr<CDataWrapper>
 BatchCommandDescription::getParameterDescription(const std::string& parameter_name) {
-    if(map_parameter.count(parameter_name)==0) return boost::shared_ptr<CDataWrapper>();
+    if(map_parameter.count(parameter_name)==0) return ChaosSharedPtr<CDataWrapper>();
     return map_parameter[parameter_name];
 }
 

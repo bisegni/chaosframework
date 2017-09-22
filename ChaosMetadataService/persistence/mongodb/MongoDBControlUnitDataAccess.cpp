@@ -1,26 +1,28 @@
 /*
- *	MongoDBControlUnitDataAccess.cpp
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2015 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 #include "mongo_db_constants.h"
 #include "MongoDBControlUnitDataAccess.h"
 
 #include <chaos/common/utility/TimingUtil.h>
+#include <chaos/common/property/property.h>
 
 #include <boost/format.hpp>
 #include <boost/foreach.hpp>
@@ -35,10 +37,11 @@ using namespace chaos;
 using namespace chaos::common::data;
 
 using namespace chaos::common::utility;
+using namespace chaos::service_common::data::script;
 using namespace chaos::service_common::persistence::mongodb;
 using namespace chaos::metadata_service::persistence::mongodb;
 
-MongoDBControlUnitDataAccess::MongoDBControlUnitDataAccess(const boost::shared_ptr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection,
+MongoDBControlUnitDataAccess::MongoDBControlUnitDataAccess(const ChaosSharedPtr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection,
                                                            data_access::DataServiceDataAccess *_data_service_da):
 MongoDBAccessor(_connection),
 ControlUnitDataAccess(_data_service_da),
@@ -47,45 +50,45 @@ node_data_access(NULL){}
 MongoDBControlUnitDataAccess::~MongoDBControlUnitDataAccess() {}
 
 
-int MongoDBControlUnitDataAccess::compeleteControlUnitForAgeingManagement(const std::string& control_unit_id) {
-    int err = 0;
-    try {
-        uint64_t current_ts = TimingUtil::getTimeStamp();
-        const std::string key_processing_ageing = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_PROCESSING_AGEING);
-        const std::string key_last_checing_time = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_AGEING_LAST_CHECK_DATA);
-        const std::string key_last_performed_time = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_PERFORMED_AGEING);
-        
-        mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << control_unit_id
-                                    << MONGODB_COLLECTION_NODES_AGEING_INFO << BSON("$exists" << false ));
-        
-        mongo::BSONObj update = BSON("$set" << BSON(key_last_checing_time << mongo::Date_t(current_ts) <<
-                                                    key_last_performed_time << mongo::Date_t(current_ts) <<
-                                                    key_processing_ageing << false));
-        
-        /*BSON(key_last_checing_time << mongo::Date_t(current_ts) <<
-         key_last_performed_time << mongo::Date_t(current_ts) <<
-         key_processing_ageing << false);*/
-        DEBUG_CODE(MDBCUDA_DBG<<log_message("compeleteControlUnitForAgeingManagement",
-                                            "update",
-                                            DATA_ACCESS_LOG_2_ENTRY("query",
-                                                                    "update",
-                                                                    query.jsonString(),
-                                                                    update.jsonString()));)
-        //remove the field of the document
-        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
-                                     query,
-                                     update))) {
-            MDBCUDA_ERR << CHAOS_FORMAT("Error %1% completing control unit %2% with ageing management information", %err%control_unit_id);
-        }
-    } catch (const mongo::DBException &e) {
-        MDBCUDA_ERR << e.what();
-        err = -1;
-    } catch (const CException &e) {
-        MDBCUDA_ERR << e.what();
-        err = e.errorCode;
-    }
-    return err;
-}
+//int MongoDBControlUnitDataAccess::compeleteControlUnitForAgeingManagement(const std::string& control_unit_id) {
+//    int err = 0;
+//    try {
+//        uint64_t current_ts = TimingUtil::getTimeStamp();
+//        const std::string key_processing_ageing = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_PROCESSING_AGEING);
+//        const std::string key_last_checing_time = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_AGEING_LAST_CHECK_DATA);
+//        const std::string key_last_performed_time = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_PERFORMED_AGEING);
+//
+//        mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << control_unit_id
+//                                    << MONGODB_COLLECTION_NODES_AGEING_INFO << BSON("$exists" << false ));
+//
+//        mongo::BSONObj update = BSON("$set" << BSON(key_last_checing_time << mongo::Date_t(current_ts) <<
+//                                                    key_last_performed_time << mongo::Date_t(current_ts) <<
+//                                                    key_processing_ageing << false));
+//
+//        /*BSON(key_last_checing_time << mongo::Date_t(current_ts) <<
+//         key_last_performed_time << mongo::Date_t(current_ts) <<
+//         key_processing_ageing << false);*/
+//        DEBUG_CODE(MDBCUDA_DBG<<log_message("compeleteControlUnitForAgeingManagement",
+//                                            "update",
+//                                            DATA_ACCESS_LOG_2_ENTRY("query",
+//                                                                    "update",
+//                                                                    query.jsonString(),
+//                                                                    update.jsonString()));)
+//        //remove the field of the document
+//        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+//                                     query,
+//                                     update))) {
+//            MDBCUDA_ERR << CHAOS_FORMAT("Error %1% completing control unit %2% with ageing management information", %err%control_unit_id);
+//        }
+//    } catch (const mongo::DBException &e) {
+//        MDBCUDA_ERR << e.what();
+//        err = -1;
+//    } catch (const CException &e) {
+//        MDBCUDA_ERR << e.what();
+//        err = e.errorCode;
+//    }
+//    return err;
+//}
 
 int MongoDBControlUnitDataAccess::checkPresence(const std::string& unit_server_unique_id,
                                                 bool& presence) {
@@ -107,21 +110,24 @@ int MongoDBControlUnitDataAccess::getControlUnitWithAutoFlag(const std::string& 
         //filter on unit server
         query_builder << boost::str(boost::format("instance_description.%1%") % NodeDefinitionKey::NODE_PARENT) << unit_server_host;
         query_builder << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_CONTROL_UNIT;
-        //exlude execution unit from autoload phase because hte ened to be loaded by execution pool
-        query_builder << NodeDefinitionKey::NODE_SUB_TYPE << BSON("$ne" << NodeType::NODE_SUBTYPE_SCRIPTABLE_EXECUTION_UNIT);
         switch(auto_flag) {
             case AUTO_LOAD:
                 query_builder << "instance_description.auto_load" << true;
                 break;
             case AUTO_INIT:
-                return 0;
+                query_builder << "instance_description.auto_init" << true;
                 break;
             case AUTO_START:
-                return 0;
+                query_builder << "instance_description.auto_start" << true;
                 break;
         }
         
         query_builder << "seq" << BSON("$gt"<<(long long)last_sequence_id);
+        query_builder << "$or" << BSON_ARRAY(BSON(NodeDefinitionKey::NODE_SUB_TYPE << BSON("$ne" << NodeType::NODE_SUBTYPE_SCRIPTABLE_EXECUTION_UNIT)) <<
+                                             BSON("$and" << BSON_ARRAY(BSON(NodeDefinitionKey::NODE_SUB_TYPE <<  NodeType::NODE_SUBTYPE_SCRIPTABLE_EXECUTION_UNIT) <<
+                                                                       BSON("script_bind_type" << service_common::data::script::ScriptBindTypeUnitServer))));
+        //query_builder << NodeDefinitionKey::NODE_SUB_TYPE << BSON("$ne" << NodeType::NODE_SUBTYPE_SCRIPTABLE_EXECUTION_UNIT);
+        
         mongo::Query query = query_builder.obj();
         
         DEBUG_CODE(MDBCUDA_DBG<<log_message("checkDatasetPresence",
@@ -165,7 +171,7 @@ int MongoDBControlUnitDataAccess::insertNewControlUnit(CDataWrapper& control_uni
         MDBCUDA_ERR << "Error:" << err << " adding new node for control unit";
     } else {
         //compelte control unit with ageing managment information
-        err = compeleteControlUnitForAgeingManagement(control_unit_description.getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID));
+        err = node_data_access->addAgeingManagementDataToNode(control_unit_description.getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID));
     }
     return err;
 }
@@ -188,7 +194,7 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
         if(!dataset_description.hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION))return -2;
         if(!dataset_description.isCDataWrapperValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION))return -3;
         //checkout the dataset
-        auto_ptr<CDataWrapper> dataset(dataset_description.getCSDataValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
+        ChaosUniquePtr<chaos::common::data::CDataWrapper> dataset(dataset_description.getCSDataValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
         if(!dataset->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION))return -5;
         if(!dataset->isVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION))return -6;
         if(!dataset->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP))return -4;
@@ -202,7 +208,7 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
         
         
         
-        std::auto_ptr<CMultiTypeDataArrayWrapper> ds_vec(dataset->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
+        ChaosUniquePtr<CMultiTypeDataArrayWrapper> ds_vec(dataset->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
         if(!ds_vec.get()) return -7;
         //cicle all dataset attribute
         mongo::BSONArrayBuilder dataset_bson_array;
@@ -212,7 +218,7 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
             idx++) {
             mongo::BSONObjBuilder dataset_element_builder;
             
-            auto_ptr<CDataWrapper> dataset_element(ds_vec->getCDataWrapperElementAtIndex(idx));
+            ChaosUniquePtr<chaos::common::data::CDataWrapper> dataset_element(ds_vec->getCDataWrapperElementAtIndex(idx));
             if(dataset_element->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME) &&
                dataset_element->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION)&&
                dataset_element->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE)&&
@@ -238,7 +244,7 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
                         if(dataset_element->isVector(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE)) {
                             //we have multipler value for subtype
                             mongo::BSONArrayBuilder subtype_array_builder;
-                            std::auto_ptr<CMultiTypeDataArrayWrapper> sub_t_vec(dataset_element->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE));
+                            ChaosUniquePtr<CMultiTypeDataArrayWrapper> sub_t_vec(dataset_element->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE));
                             for(int idx = 0;
                                 idx < sub_t_vec->size();
                                 idx++) {
@@ -290,14 +296,14 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
         
         //check if we have bactch command in the dataset
         if(dataset_description.hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_COMMAND_DESCRIPTION)) {
-            std::auto_ptr<CMultiTypeDataArrayWrapper> bc_vec(dataset_description.getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_COMMAND_DESCRIPTION));
+            ChaosUniquePtr<CMultiTypeDataArrayWrapper> bc_vec(dataset_description.getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_COMMAND_DESCRIPTION));
             mongo::BSONArrayBuilder batch_command_bson_array;
             for(int idx = 0;
                 idx < bc_vec->size();
                 idx++) {
                 mongo::BSONObjBuilder batch_command_builder;
                 
-                auto_ptr<CDataWrapper> bc_element(bc_vec->getCDataWrapperElementAtIndex(idx));
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> bc_element(bc_vec->getCDataWrapperElementAtIndex(idx));
                 MDB_COPY_STRING_CDWKEY_TO_BUILDER(batch_command_builder, bc_element, common::batch_command::BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID)
                 MDB_COPY_STRING_CDWKEY_TO_BUILDER(batch_command_builder, bc_element, common::batch_command::BatchCommandAndParameterDescriptionkey::BC_ALIAS)
                 MDB_COPY_STRING_CDWKEY_TO_BUILDER(batch_command_builder, bc_element, common::batch_command::BatchCommandAndParameterDescriptionkey::BC_DESCRIPTION)
@@ -305,12 +311,12 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
                 //check for parameter
                 if(bc_element->hasKey(common::batch_command::BatchCommandAndParameterDescriptionkey::BC_PARAMETERS)){
                     mongo::BSONArrayBuilder batch_command_parameter_bson_array;
-                    std::auto_ptr<CMultiTypeDataArrayWrapper> bc_param_vec(bc_element->getVectorValue(common::batch_command::BatchCommandAndParameterDescriptionkey::BC_PARAMETERS));
+                    ChaosUniquePtr<CMultiTypeDataArrayWrapper> bc_param_vec(bc_element->getVectorValue(common::batch_command::BatchCommandAndParameterDescriptionkey::BC_PARAMETERS));
                     for(int idx_param = 0;
                         idx_param < bc_param_vec->size();
                         idx_param++) {
                         mongo::BSONObjBuilder batch_command_parameter_builder;
-                        auto_ptr<CDataWrapper> bc_param_element(bc_param_vec->getCDataWrapperElementAtIndex(idx_param));
+                        ChaosUniquePtr<chaos::common::data::CDataWrapper> bc_param_element(bc_param_vec->getCDataWrapperElementAtIndex(idx_param));
                         MDB_COPY_STRING_CDWKEY_TO_BUILDER(batch_command_parameter_builder, bc_param_element, common::batch_command::BatchCommandAndParameterDescriptionkey::BC_PARAMETER_NAME)
                         MDB_COPY_STRING_CDWKEY_TO_BUILDER(batch_command_parameter_builder, bc_param_element, common::batch_command::BatchCommandAndParameterDescriptionkey::BC_PARAMETER_DESCRIPTION)
                         MDB_COPY_I32_CDWKEY_TO_BUILDER(batch_command_parameter_builder, bc_param_element, common::batch_command::BatchCommandAndParameterDescriptionkey::BC_PARAMETER_TYPE)
@@ -333,12 +339,13 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
             updated_field.appendArray(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_COMMAND_DESCRIPTION,
                                       batch_command_bson_array.arr());
         }
-        
+
         mongo::BSONObj query = bson_find.obj();
         mongo::BSONObj update = BSON("$set" << BSON(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION << updated_field.obj()));
         
-        DEBUG_CODE(MDBCUDA_DBG<<log_message("getInstanceDescription",
-                                            "findOne",
+        //update dateset
+        DEBUG_CODE(MDBCUDA_DBG<<log_message("setDataset",
+                                            "update - dataset",
                                             DATA_ACCESS_LOG_2_ENTRY("Query",
                                                                     "Update",
                                                                     query.toString(),
@@ -392,6 +399,34 @@ int MongoDBControlUnitDataAccess::checkDatasetPresence(const std::string& cu_uni
     return err;
 }
 
+int MongoDBControlUnitDataAccess::getFullDescription(const std::string& cu_unique_id,
+                                                     chaos::common::data::CDataWrapper **dataset_description){
+    int err = 0;
+    mongo::BSONObj result;
+    try {
+        mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << cu_unique_id
+                                    << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_CONTROL_UNIT);
+        
+        //remove the field of the document
+        if((err = connection->findOne(result,
+                                      MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                      query))) {
+            MDBCUDA_ERR << "Error fetching dataset";
+        } else if(result.isEmpty()) {
+            MDBCUDA_ERR << "No element found";
+        } else {
+            //we have dataset so set it directly within the cdsta wrapper
+            *dataset_description = new CDataWrapper(result.objdata());
+        }
+    } catch (const mongo::DBException &e) {
+        MDBCUDA_ERR << e.what();
+        err = -1;
+    } catch (const CException &e) {
+        MDBCUDA_ERR << e.what();
+        err = e.errorCode;
+    }
+    return err;
+}
 int MongoDBControlUnitDataAccess::getDataset(const std::string& cu_unique_id,
                                              chaos::common::data::CDataWrapper **dataset_description) {
     int err = 0;
@@ -473,7 +508,7 @@ int MongoDBControlUnitDataAccess::setInstanceDescription(const std::string& cu_u
         if(instance_description.hasKey(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING)) {
             updated_field << DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING << instance_description.getInt32Value(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING);
             //insert the last check time to now
-            updated_field << MONGODB_COLLECTION_NODES_AGEING_LAST_CHECK_DATA << mongo::Date_t(common::utility::TimingUtil::getTimeStamp());
+            //updated_field << MONGODB_COLLECTION_NODES_AGEING_LAST_CHECK_DATA << mongo::Date_t(common::utility::TimingUtil::getTimeStamp());
         }
         
         if(instance_description.hasKey(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME)) {
@@ -492,11 +527,11 @@ int MongoDBControlUnitDataAccess::setInstanceDescription(const std::string& cu_u
         if(instance_description.hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION)) {
             //get the contained control unit type
             mongo::BSONArrayBuilder bab;
-            auto_ptr<CMultiTypeDataArrayWrapper> drv_array(instance_description.getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION));
+            ChaosUniquePtr<CMultiTypeDataArrayWrapper> drv_array(instance_description.getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION));
             for(int idx = 0;
                 idx < drv_array->size();
                 idx++) {
-                auto_ptr<CDataWrapper> driver_desc(drv_array->getCDataWrapperElementAtIndex(idx));
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> driver_desc(drv_array->getCDataWrapperElementAtIndex(idx));
                 if(driver_desc->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION_NAME) &&
                    driver_desc->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION_VERSION)&&
                    driver_desc->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION_INIT_PARAMETER)) {
@@ -517,11 +552,11 @@ int MongoDBControlUnitDataAccess::setInstanceDescription(const std::string& cu_u
         if(instance_description.hasKey("attribute_value_descriptions")) {
             //get the contained control unit type
             mongo::BSONArrayBuilder bab;
-            auto_ptr<CMultiTypeDataArrayWrapper> attr_array(instance_description.getVectorValue("attribute_value_descriptions"));
+            ChaosUniquePtr<CMultiTypeDataArrayWrapper> attr_array(instance_description.getVectorValue("attribute_value_descriptions"));
             for(int idx = 0;
                 idx < attr_array->size();
                 idx++) {
-                auto_ptr<CDataWrapper> attr_desc(attr_array->getCDataWrapperElementAtIndex(idx));
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> attr_desc(attr_array->getCDataWrapperElementAtIndex(idx));
                 if(attr_desc->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME) &&
                    attr_desc->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE)) {
                     int size;
@@ -564,7 +599,7 @@ int MongoDBControlUnitDataAccess::setInstanceDescription(const std::string& cu_u
     return err;
 }
 
-int MongoDBControlUnitDataAccess::searchInstanceForUnitServer(std::vector<boost::shared_ptr<CDataWrapper> >& result_page,
+int MongoDBControlUnitDataAccess::searchInstanceForUnitServer(std::vector<ChaosSharedPtr<CDataWrapper> >& result_page,
                                                               const std::string& unit_server_uid,
                                                               std::vector<std::string> cu_type_filter,
                                                               uint32_t last_sequence_id,
@@ -613,7 +648,7 @@ int MongoDBControlUnitDataAccess::searchInstanceForUnitServer(std::vector<boost:
                 for (SearchResultIterator it = paged_result.begin();
                      it != paged_result.end();
                      it++) {
-                    boost::shared_ptr<CDataWrapper> result_intance(new CDataWrapper());
+                    ChaosSharedPtr<CDataWrapper> result_intance(new CDataWrapper());
                     result_intance->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, it->getStringField(NodeDefinitionKey::NODE_UNIQUE_ID));
                     if(it->hasField(NodeDefinitionKey::NODE_RPC_ADDR))result_intance->addStringValue(NodeDefinitionKey::NODE_RPC_ADDR, it->getStringField(NodeDefinitionKey::NODE_RPC_ADDR));
                     if(it->hasField(NodeDefinitionKey::NODE_RPC_DOMAIN))result_intance->addStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN, it->getStringField(NodeDefinitionKey::NODE_RPC_DOMAIN));
@@ -755,7 +790,7 @@ int MongoDBControlUnitDataAccess::deleteInstanceDescription(const std::string& u
 
 int MongoDBControlUnitDataAccess::getInstanceDatasetAttributeDescription(const std::string& control_unit_uid,
                                                                          const std::string& attribute_name,
-                                                                         boost::shared_ptr<chaos::common::data::CDataWrapper>& result) {
+                                                                         ChaosSharedPtr<chaos::common::data::CDataWrapper>& result) {
     int err = 0;
     mongo::BSONObj  result_bson;
     const std::string dotted_dataset_path =  boost::str(boost::format("%1%.%1%")%ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION);
@@ -801,7 +836,7 @@ int MongoDBControlUnitDataAccess::getInstanceDatasetAttributeDescription(const s
 
 int MongoDBControlUnitDataAccess::getInstanceDatasetAttributeConfiguration(const std::string& control_unit_uid,
                                                                            const std::string& attribute_name,
-                                                                           boost::shared_ptr<chaos::common::data::CDataWrapper>& result) {
+                                                                           ChaosSharedPtr<chaos::common::data::CDataWrapper>& result) {
     int err = 0;
     mongo::BSONObj  result_bson;
     try{
@@ -856,7 +891,57 @@ int MongoDBControlUnitDataAccess::getInstanceDatasetAttributeConfiguration(const
     return err;
 }
 
-//! return the data service associater to control unit
+int MongoDBControlUnitDataAccess::getScriptAssociatedToControlUnitInstance(const std::string& cu_instance,
+                                                                           bool& found,
+                                                                           ScriptBaseDescription& script_base_descrition) {
+    int err = 0;
+    found = false;
+    mongo::BSONObj  result_bson;
+    try{
+        mongo::BSONObj q = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << cu_instance <<
+                                NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_CONTROL_UNIT <<
+                                NodeDefinitionKey::NODE_SUB_TYPE << NodeType::NODE_SUBTYPE_SCRIPTABLE_EXECUTION_UNIT);
+        
+        mongo::BSONObj p = BSON(NodeDefinitionKey::NODE_GROUP_SET << 1 <<
+                                "script_seq" << 1);
+        DEBUG_CODE(MDBCUDA_DBG<<log_message("getScriptAssociatedToControlUnitInstance[script_info]",
+                                            "find",
+                                            DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                                    "projection",
+                                                                    q.toString(),
+                                                                    p.jsonString()));)
+        if((err = connection->findOne(result_bson,
+                                      MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                      q,
+                                      &p))) {
+            MDBCUDA_ERR << CHAOS_FORMAT("Error searching script information on instance %1%",%cu_instance);
+        } else if(result_bson.isEmpty() == false) {
+            mongo::BSONElement sname = result_bson.getField(NodeDefinitionKey::NODE_GROUP_SET);
+            mongo::BSONElement sseq = result_bson.getField("script_seq");
+            //getscript
+            q = BSON("script_name" << sname.String() <<
+                     "seq" << sseq.numberLong());
+            
+            if((err = connection->findOne(result_bson,
+                                          MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SCRIPT),
+                                          q))) {
+                MDBCUDA_ERR << CHAOS_FORMAT("Error loading script %1% information on instance %2%",%sname.String()%cu_instance);
+            } else if((found = (result_bson.isEmpty() == false))) {
+                ChaosUniquePtr<CDataWrapper> script_data(new CDataWrapper(result_bson.objdata()));
+                ScriptBaseDescriptionSDWrapper sdw(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(ScriptBaseDescription, script_base_descrition));
+                sdw.deserialize(script_data.get());
+            }
+        }
+    } catch (const mongo::DBException &e) {
+        MDBCUDA_ERR << e.what();
+        err = -1;
+    } catch (const CException &e) {
+        MDBCUDA_ERR << e.what();
+        err = e.errorCode;
+    }
+    return err;
+}
+
 int MongoDBControlUnitDataAccess::getDataServiceAssociated(const std::string& cu_uid,
                                                            std::vector<std::string>& associated_ds){
     CHAOS_ASSERT(node_data_access)
@@ -888,7 +973,7 @@ int MongoDBControlUnitDataAccess::getDataServiceAssociated(const std::string& cu
                 MDBCUDA_ERR << "Error fetching node description for data service:" << ds_unique_id;
             } else if(node_description!=NULL){
                 //we have object description
-                std::auto_ptr<CDataWrapper> node_ptr(node_description);
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> node_ptr(node_description);
                 associated_ds.push_back(node_ptr->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID));
             } else {
                 MDBCUDA_ERR << "no node description found for data service:" << ds_unique_id;
@@ -1035,15 +1120,57 @@ int MongoDBControlUnitDataAccess::eraseControlUnitDataBeforeTS(const std::string
                                 DataPackCommonKey::DPCK_TIMESTAMP << BSON( "$lte" << mongo::Date_t(unit_ts)));
         
         DEBUG_CODE(MDBCUDA_DBG<<log_message("eraseControlUnitDataBeforeTS",
-                                    "delete",
-                                    DATA_ACCESS_LOG_1_ENTRY("Query",
-                                                            q.jsonString()));)
+                                            "delete",
+                                            DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                    q.jsonString()));)
         //remove in unacknowledge way if something goes wrong successive query will delete it
         if((err = connection->remove(MONGO_DB_COLLECTION_NAME("daq"),
                                      q,
                                      false,
-                                     mongo::WriteConcern::unacknowledged))){
+                                     &mongo::WriteConcern::unacknowledged))){
             MDBCUDA_ERR << CHAOS_FORMAT("Error erasing stored object data for key %1% up to %2%", %control_unit_id%unit_ts);
+        }
+    } catch (const mongo::DBException &e) {
+        MDBCUDA_ERR << e.what();
+        err = e.getCode();
+    }
+    return err;
+}
+
+int MongoDBControlUnitDataAccess::getNextRunID(const std::string& control_unit_id,
+                                               int64_t& run_id) {
+    int err = 0;
+    try {
+        const std::string run_id_key = CHAOS_FORMAT("%1%.%2%", %"run_description"%ControlUnitNodeDefinitionKey::CONTROL_UNIT_RUN_ID);
+        
+        //increment the run id
+        mongo::BSONObj r;
+        mongo::BSONObj q = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << control_unit_id);
+        mongo::BSONObj u = BSON("$inc" << BSON(run_id_key<<(long long)1));
+        mongo::BSONObj sort;
+        mongo::BSONObj projection = BSON(run_id_key<<1);
+        //update run id
+        
+        DEBUG_CODE(MDBCUDA_DBG<<log_message("updateRunID",
+                                            "update",
+                                            DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                                    "Update",
+                                                                    q.toString(),
+                                                                    u.jsonString()));)
+        //set the instance parameter within the node representing the control unit
+        if((err = connection->findAndModify(r,
+                                            MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                            q,
+                                            u,
+                                            false,
+                                            true,
+                                            sort,
+                                            projection))) {
+            MDBCUDA_ERR << "Error updating run id for control unit " << control_unit_id;
+        } else if(r.isEmpty()) {
+            run_id = 0;
+        } else {
+            run_id = r.getFieldDotted(run_id_key).Long();
         }
     } catch (const mongo::DBException &e) {
         MDBCUDA_ERR << e.what();

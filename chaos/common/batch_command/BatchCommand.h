@@ -1,21 +1,22 @@
 /*
- *	BatchCommand.h
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #ifndef __CHAOSFramework__BatchCommand__
@@ -26,16 +27,11 @@
 #include <string>
 #include <stdint.h>
 
-#include <boost/chrono.hpp>
-
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/data/cache/AttributeValueSharedCache.h>
 
 #include <chaos/common/batch_command/BatchCommandTypes.h>
 #include <chaos/common/batch_command/BatchCommandDescription.h>
-
-using namespace chaos::common::data;
-using namespace chaos::common::data::cache;
 
 namespace chaos{
     
@@ -43,21 +39,24 @@ namespace chaos{
         
         //! The name space that group all foundamental class need by slow control !CHAOS implementation
         namespace batch_command {
-            
+            class AbstractSandbox;
             //forward declaration
             //class BatchCommandExecutor;
             
             //!help macro for set the sate
-#define BC_EXEC_RUNNING_PROPERTY    setRunningProperty(chaos::common::batch_command::RunningPropertyType::RP_Exsc);
-#define BC_NORMAL_RUNNING_PROPERTY  setRunningProperty(chaos::common::batch_command::RunningPropertyType::RP_Normal);
-#define BC_END_RUNNING_PROPERTY     setRunningProperty(chaos::common::batch_command::RunningPropertyType::RP_End);
-#define BC_FAULT_RUNNING_PROPERTY   setRunningProperty(chaos::common::batch_command::RunningPropertyType::RP_Fault);
-            
+#define BC_EXCLUSIVE_RUNNING_PROPERTY    setRunningProperty(chaos::common::batch_command::RunningPropertyType::RP_EXSC);
+#define BC_NORMAL_RUNNING_PROPERTY  setRunningProperty(chaos::common::batch_command::RunningPropertyType::RP_NORMAL);
+#define BC_END_RUNNING_PROPERTY     setRunningProperty(chaos::common::batch_command::RunningPropertyType::RP_END);
+#define BC_FAULT_RUNNING_PROPERTY   setRunningProperty(chaos::common::batch_command::RunningPropertyType::RP_FAULT);
+#define BC_FATAL_FAULT_RUNNING_PROPERTY   setRunningProperty(chaos::common::batch_command::RunningPropertyType::RP_FATAL_FAULT);
+
             //help madro to get the state
-#define BC_CHECK_EXEC_RUNNING_PROPERTY  (getRunningProperty() == chaos::common::batch_command::RunningPropertyType::RP_Exsc)
-#define BC_CHECK_NORMAL_RUNNING_PROPERTY (getRunningProperty() == chaos::common::batch_command::RunningPropertyType::RP_Normal)
-#define BC_CHECK_END_RUNNING_PROPERTY   (getRunningProperty() == chaos::common::batch_command::RunningPropertyType::RP_End)
-#define BC_CHECK_FAULT_RUNNING_PROPERTY (getRunningProperty() == chaos::common::batch_command::RunningPropertyType::RP_Fault)
+#define BC_CHECK_EXEC_RUNNING_PROPERTY  (getRunningProperty() == chaos::common::batch_command::RunningPropertyType::RP_EXSC)
+#define BC_CHECK_NORMAL_RUNNING_PROPERTY (getRunningProperty() == chaos::common::batch_command::RunningPropertyType::RP_NORMAL)
+#define BC_CHECK_END_RUNNING_PROPERTY   (getRunningProperty() == chaos::common::batch_command::RunningPropertyType::RP_END)
+#define BC_CHECK_FAULT_RUNNING_PROPERTY (getRunningProperty() == chaos::common::batch_command::RunningPropertyType::RP_FAULT)
+#define BC_CHECK_FATAL_FAULT_RUNNING_PROPERTY (getRunningProperty() == chaos::common::batch_command::RunningPropertyType::RP_FATAL_FAULT)
+
             
             //! Collect the command timing stats
             typedef struct CommandTimingStats {
@@ -77,9 +76,14 @@ namespace chaos{
              */
             class BatchCommand {
                 friend class BatchCommandSandbox;
+                friend class RunningCommandStat;
+                friend class BatchCommandParallelSandbox;
                 friend class BatchCommandExecutor;
+                friend class AbstractSandbox;
                 friend struct AcquireFunctor;
                 friend struct CorrelationFunctor;
+                friend struct EndFunctor;
+
                 friend struct CommandInfoAndImplementation;
                 bool sticky;
                 //!unique command id
@@ -126,7 +130,7 @@ namespace chaos{
                 FaultDescription fault_description;
                 
                 //! shared setting across all slow command
-                AbstractSharedDomainCache *sharedAttributeCachePtr;
+                chaos::common::data::cache::AbstractSharedDomainCache *sharedAttributeCachePtr;
                 
                 //! called befor the command start the execution
                 void commandPre();
@@ -143,7 +147,7 @@ namespace chaos{
                 virtual ~BatchCommand();
                 
                 virtual
-                AbstractSharedDomainCache * const getSharedCacheInterface();
+		  chaos::common::data::cache::AbstractSharedDomainCache * const getSharedCacheInterface();
                 
             public:
                 //! return the unique id for the command instance
@@ -236,7 +240,7 @@ namespace chaos{
                     //check if the features are locked for the user modifications
                     if(lockFeaturePropertyFlag.test(0) || lockFeaturePropertyFlag.test(2)) return;
                     
-                    commandFeatures.featuresFlag ^= features;
+                    commandFeatures.featuresFlag &= ~features;
                     switch (features) {
                         case features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY:
                             commandFeatures.featureSchedulerStepsDelay = 0;
@@ -276,6 +280,14 @@ namespace chaos{
                  */
                 virtual void setHandler(chaos::common::data::CDataWrapper *data);
                 
+
+                //! End the command execution
+                      /*!
+                         This handle is called in command termination has the main purpose to end the command. All the operation need to close the command.
+
+                    */
+               virtual void endHandler();
+
                 //! Aquire the necessary data for the command
                 /*!
                  The acquire handler has the purpose to get all necessary data need the by CC handler.

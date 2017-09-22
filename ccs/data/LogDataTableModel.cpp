@@ -13,7 +13,7 @@ LogDataTableModel::LogDataTableModel(QObject *parent):
     }\
 
 
-void LogDataTableModel::setLogEntry(boost::shared_ptr<LogEntry> _log_entry_ptr) {
+void LogDataTableModel::setLogEntry(ChaosSharedPtr<LogEntry> _log_entry_ptr) {
     beginResetModel();
     int counter = 0;
     log_data_map.clear();

@@ -1,21 +1,22 @@
 /*
- *	ZMQClient.cpp
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 #include <chaos/common/global.h>
 #include <chaos/common/rpc/zmq/ZMQClient.h>
@@ -51,7 +52,7 @@ static void my_free (void *data, void *hint) {
 ZMQClient::ZMQClient(const string& alias):
 RpcClient(alias),
 zmq_context(NULL),
-zmq_timeout(1000){}
+zmq_timeout(RpcConfigurationKey::GlobalRPCTimeoutinMSec){}
 
 ZMQClient::~ZMQClient(){}
 
@@ -103,9 +104,6 @@ void ZMQClient::stop() throw(CException) {
  */
 void ZMQClient::deinit() throw(CException) {
     ZMQC_LAPP << "deinitialization";
-    
-    boost::shared_lock<boost::shared_mutex> lock_socket_map(map_socket_mutex);
-    
     map_socket.clear();
     
     ZMQC_LAPP << "ObjectProcessingQueue<NetworkForwardInfo> stopping";
@@ -122,7 +120,8 @@ void ZMQClient::deinit() throw(CException) {
 /*
  
  */
-bool ZMQClient::submitMessage(NetworkForwardInfo *forwardInfo, bool onThisThread) throw(CException) {
+bool ZMQClient::submitMessage(NetworkForwardInfo *forwardInfo,
+                              bool onThisThread) throw(CException) {
     CHAOS_ASSERT(forwardInfo);
     ElementManagingPolicy ePolicy;
     try{
@@ -156,7 +155,7 @@ ZMQSocketPool::ResourceSlot *ZMQClient::getSocketForNFI(NetworkForwardInfo *nfi)
     if(it != map_socket.end()){
         return it->second->getNewResource();
     } else {
-        boost::shared_ptr< ZMQSocketPool > socket_pool(new ZMQSocketPool(nfi->destinationAddr, this));
+        ChaosSharedPtr< ZMQSocketPool > socket_pool(new ZMQSocketPool(nfi->destinationAddr, this));
         map_socket.insert(make_pair(nfi->destinationAddr, socket_pool));
         return socket_pool->getNewResource();
     }
@@ -167,14 +166,14 @@ ZMQSocketPool::ResourceSlot *ZMQClient::getSocketForNFI(NetworkForwardInfo *nfi)
 void ZMQClient::releaseSocket(ZMQSocketPool::ResourceSlot *socket_slot_to_release) {
     boost::unique_lock<boost::shared_mutex> lock_socket_map(map_socket_mutex);
     if(socket_slot_to_release && map_socket[socket_slot_to_release->pool_identification].get())
-      map_socket[socket_slot_to_release->pool_identification]->releaseResource(socket_slot_to_release);
+        map_socket[socket_slot_to_release->pool_identification]->releaseResource(socket_slot_to_release);
 }
 
 void ZMQClient::deleteSocket(ZMQSocketPool::ResourceSlot *socket_slot_to_release) {
     boost::unique_lock<boost::shared_mutex> lock_socket_map(map_socket_mutex);
-        if(socket_slot_to_release && map_socket[socket_slot_to_release->pool_identification].get())
-	  map_socket[socket_slot_to_release->pool_identification]->releaseResource(socket_slot_to_release,
-										   true);
+    if(socket_slot_to_release && map_socket[socket_slot_to_release->pool_identification].get())
+        map_socket[socket_slot_to_release->pool_identification]->releaseResource(socket_slot_to_release,
+                                                                                 true);
 }
 
 //----resource pool handler-----
@@ -250,7 +249,9 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
     //get remote ip
     //serialize the call packet
     ZMQSocketPool::ResourceSlot *socket_info = NULL;
-    auto_ptr<chaos::common::data::SerializationBuffer> callSerialization(messageInfo->message->getBSONData());
+    messageInfo->message->addBoolValue("syncrhonous_call", RpcClient::syncrhonous_call);
+    
+    ChaosUniquePtr<chaos::common::data::SerializationBuffer> callSerialization(messageInfo->message->getBSONData());
     try{
         socket_info = getSocketForNFI(messageInfo);
         if(socket_info == NULL){
@@ -298,6 +299,7 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
                                                 error_message,
                                                 __PRETTY_FUNCTION__);
                 }
+                
                 //delete socket
                 deleteSocket(socket_info);
                 socket_info = NULL;
@@ -322,11 +324,16 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
                     //decode result of the posting message operation
                     if(messageInfo->is_request) {
                         if(zmq_msg_size(&reply)>0){
-                            ZMQC_LDBG << "ACK Received for request";
-                            //there is a reply so we need to check if all ok or in case answer to request
-                            forwadSubmissionResultError(messageInfo->sender_node_id,
-                                                        messageInfo->sender_request_id,
-                                                        new CDataWrapper(static_cast<const char *>(zmq_msg_data(&reply))));
+                            if(RpcClient::syncrhonous_call) {
+                                forwadSubmissionResult(messageInfo,
+                                                       new CDataWrapper(static_cast<const char *>(zmq_msg_data(&reply))));
+                            } else {
+                                ZMQC_LDBG << "ACK Received for request";
+                                //there is a reply so we need to check if all ok or in case answer to request
+                                forwadSubmissionResultError(messageInfo->sender_node_id,
+                                                            messageInfo->sender_request_id,
+                                                            new CDataWrapper(static_cast<const char *>(zmq_msg_data(&reply))));
+                            }
                         } else {
                             ZMQC_LDBG << "Bad ACK received";
                             forwadSubmissionResultError(messageInfo,

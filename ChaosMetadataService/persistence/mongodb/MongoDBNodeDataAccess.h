@@ -1,21 +1,22 @@
 /*
- *	MongoDBNodeDataAccess.h
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyrigh 2015 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 #ifndef __CHAOSFramework__MongoDBNodeDataAccess__
 #define __CHAOSFramework__MongoDBNodeDataAccess__
@@ -37,13 +38,13 @@ namespace chaos {
                     friend class MongoDBPersistenceDriver;
                     
                     MongoDBUtilityDataAccess *utility_data_access;
-
+                    
                 protected:
-                    MongoDBNodeDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
+                    MongoDBNodeDataAccess(const ChaosSharedPtr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
                     ~MongoDBNodeDataAccess();
                     
                     mongo::BSONObj getAliveOption(unsigned int timeout_sec);
-               public:
+                public:
                     //inherited method
                     int getNodeDescription(const std::string& node_unique_id,
                                            chaos::common::data::CDataWrapper **node_description);
@@ -74,6 +75,21 @@ namespace chaos {
                                    uint32_t last_unique_id,
                                    uint32_t page_length);
                     //! inherited method
+                    int setProperty(const std::string& node_uid,
+                                    const chaos::common::property::PropertyGroupVector& property_group_vector);
+                    //! inherited method
+                    int updatePropertyDefaultValue(const std::string& node_uid,
+                                                   const chaos::common::property::PropertyGroupVector& property_group_vector);
+                    //! inherited method
+                    int getProperty(const data_access::PropertyType property_type,
+                                    const std::string& node_uid,
+                                    chaos::common::property::PropertyGroupVector& property_group_vector);
+                    //! inherited method
+                    int getPropertyGroup(const data_access::PropertyType property_type,
+                                         const std::string& node_uid,
+                                         const std::string& property_group_name,
+                                         chaos::common::property::PropertyGroup& property_group);
+                    //! inherited method
                     int getCommand(const std::string& command_unique_id,
                                    chaos::common::data::CDataWrapper **command);
                     //! inherited method
@@ -103,6 +119,20 @@ namespace chaos {
                                               const std::vector<std::string>& cmd_uid_to_filter,
                                               uint32_t last_unique_id,
                                               uint32_t page_length = 100);
+                    //! inherited method
+                    int addAgeingManagementDataToNode(const std::string& control_unit_id);
+                    
+                    //                    int reserveNodeForAgeingManagement(uint64_t& last_sequence_id,
+                    //                                                       std::string& node_uid_reserved,
+                    //                                                       uint32_t& node_ageing_time,
+                    //                                                       uint64_t& last_ageing_perform_time,
+                    //                                                       uint64_t timeout_for_checking,
+                    //                                                       uint64_t delay_next_check);
+                    //
+                    //                    int releaseNodeForAgeingManagement(std::string& node_uid,
+                    //                                                       bool performed);
+                    
+                    int isNodeAlive(const std::string& node_uid, bool& alive);
                 };
             }
         }

@@ -1,22 +1,22 @@
 /*
- *	BatchCommandLoggingChannel.cpp
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFramework]
- *	Created by Claudio Bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 23/02/16 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include <chaos/common/metadata_logging/BatchCommandLoggingChannel.h>
@@ -62,8 +62,11 @@ int BatchCommandLoggingChannel::logCommandState(const std::string& log_emitter,
             log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::CommandLogging::PARAM_NODE_LOGGING_LOG_COMMAND_STATE_DESCRIPTION, "Completed");
             break;
         case EVT_FAULT:
-            log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::CommandLogging::PARAM_NODE_LOGGING_LOG_COMMAND_STATE_DESCRIPTION, "Faulted");
+            log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::CommandLogging::PARAM_NODE_LOGGING_LOG_COMMAND_STATE_DESCRIPTION, "Fault");
             break;
+        case EVT_FATAL_FAULT:
+		   log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::CommandLogging::PARAM_NODE_LOGGING_LOG_COMMAND_STATE_DESCRIPTION, "Fatal Fault");
+		   break;
         case EVT_KILLED:
             log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::CommandLogging::PARAM_NODE_LOGGING_LOG_COMMAND_STATE_DESCRIPTION, "Killed");
             break;
@@ -85,17 +88,20 @@ int BatchCommandLoggingChannel::logCommandRunningProperty(const std::string& log
 
     switch(rprop) {
 
-        case chaos::common::batch_command::RunningPropertyType::RP_Exsc:
+        case chaos::common::batch_command::RunningPropertyType::RP_EXSC:
             log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::CommandLogging::PARAM_NODE_LOGGING_LOG_COMMAND_RUN_PROPERTY_DESCRIPTION, "Exclusive");
             break;
-        case chaos::common::batch_command::RunningPropertyType::RP_Normal:
+        case chaos::common::batch_command::RunningPropertyType::RP_NORMAL:
             log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::CommandLogging::PARAM_NODE_LOGGING_LOG_COMMAND_RUN_PROPERTY_DESCRIPTION, "Normal");
             break;
-        case chaos::common::batch_command::RunningPropertyType::RP_End:
+        case chaos::common::batch_command::RunningPropertyType::RP_END:
             log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::CommandLogging::PARAM_NODE_LOGGING_LOG_COMMAND_RUN_PROPERTY_DESCRIPTION, "End");
             break;
-        case chaos::common::batch_command::RunningPropertyType::RP_Fault:
+        case chaos::common::batch_command::RunningPropertyType::RP_FAULT:
             log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::CommandLogging::PARAM_NODE_LOGGING_LOG_COMMAND_RUN_PROPERTY_DESCRIPTION, "Fault");
+            break;
+        case chaos::common::batch_command::RunningPropertyType::RP_FATAL_FAULT:
+            log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::CommandLogging::PARAM_NODE_LOGGING_LOG_COMMAND_RUN_PROPERTY_DESCRIPTION, "Fatal");
             break;
     }
     return sendLog(log_entry,

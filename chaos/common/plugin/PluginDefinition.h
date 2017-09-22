@@ -1,27 +1,26 @@
 /*
- *	PluginDefinition.h
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2013 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #ifndef CHAOSFramework_PluginDefinition_h
 #define CHAOSFramework_PluginDefinition_h
-
-#include <chaos/common/extension/extension.hpp>
 
 #include <chaos/common/plugin/PluginDiscover.h>
 #include <chaos/common/plugin/PluginInspector.h>
@@ -40,10 +39,8 @@ namespace chaos {
              \param t the type of the plugin
              \param n the name of the class that implement the plugin
              */
-#define DEFINE_PLUGIN_ALLOCATOR(a,v,t,n,r) \
-extern "C" \
-r* BOOST_EXTENSION_EXPORT_DECL \
-a ## _allocator() {\
+#define DEFINE_PLUGIN_ALLOCATOR(a,v,t,n,r) extern "C" \
+r* a ## _allocator() {\
 return chaos::common::plugin::PluginInstancer<n>::getInstance(#a,#v,#t);\
 }
 
@@ -51,14 +48,13 @@ return chaos::common::plugin::PluginInstancer<n>::getInstance(#a,#v,#t);\
 #define GET_PLUGIN_CLASS_DEFINITION(a) a ## _inspector()
 	
 			
-#define DEFINE_PLUGIN_DEFINITION_PROTOTYPE(a,r) extern "C" chaos::common::plugin::PluginInspector* BOOST_EXTENSION_EXPORT_DECL a ## _inspector();
+#define DEFINE_PLUGIN_DEFINITION_PROTOTYPE(a,r) extern "C" chaos::common::plugin::PluginInspector* a ## _inspector();
 			
             //!
 #define OPEN_GENERAL_PLUGIN_CLASS_DEFINITION(a,v,t,n,r) \
 DEFINE_PLUGIN_ALLOCATOR(a,v,t,n, r) \
 extern "C" \
-chaos::common::plugin::PluginInspector* BOOST_EXTENSION_EXPORT_DECL \
-a ## _inspector() {\
+chaos::common::plugin::PluginInspector* a ## _inspector() {\
 chaos::common::plugin::PluginInspector *inspector = new chaos::common::plugin::PluginInspector();\
 inspector->setName(#a); \
 inspector->setType(#t); \
@@ -93,8 +89,7 @@ return inspector; \
 #ifdef CHAOS_ENABLE_PLUGIN
 #define OPEN_REGISTER_PLUGIN \
 extern "C" \
-chaos::common::plugin::PluginDiscover* BOOST_EXTENSION_EXPORT_DECL \
-getDiscover() {\
+chaos::common::plugin::PluginDiscover* getDiscover() {\
 chaos::common::plugin::PluginDiscover *discover = new chaos::common::plugin::PluginDiscover();
 
             //! Register a plugin

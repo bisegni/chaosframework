@@ -3,8 +3,9 @@
 #include "delegate/TwoLineInformationItem.h"
 
 #include <QDateTime>
-#include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
-
+#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
+#include <QMimeData>
+#include <QDataStream>
 using namespace chaos::common::data;
 using namespace chaos::metadata_service_client::api_proxy;
 
@@ -24,7 +25,7 @@ QVariant SearchNodeListModel::getRowData(int row) const {
     QString node_health_status("---");
     if(found_node->hasKey("health_stat") &&
             found_node->isCDataWrapperValue("health_stat")) {
-        std::auto_ptr<CDataWrapper> health_stat(found_node->getCSDataValue("health_stat"));
+        ChaosUniquePtr<chaos::common::data::CDataWrapper> health_stat(found_node->getCSDataValue("health_stat"));
         node_health_ts = QDateTime::fromMSecsSinceEpoch(health_stat->getUInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP), Qt::LocalTime).toString();
         node_health_status = QString::fromStdString(health_stat->getStringValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS));
     }
@@ -35,6 +36,56 @@ QVariant SearchNodeListModel::getRowData(int row) const {
                                                                                                                              node_health_status),
                                                                                QVariant::fromValue(found_node)));
     return QVariant::fromValue(cmd_desc);
+}
+
+Qt::ItemFlags SearchNodeListModel::flags(const QModelIndex &index) const {
+    Qt::ItemFlags defaultFlags = QAbstractListModel::flags(index);
+    if (index.isValid())
+        return Qt::ItemIsDragEnabled | defaultFlags;
+    else
+        return defaultFlags;
+}
+
+Qt::DropActions SearchNodeListModel::supportedDragActions() const {
+    return Qt::CopyAction;
+}
+
+QMimeData *SearchNodeListModel::mimeData(const QModelIndexList &indexes) const {
+    QMimeData *result = new QMimeData();
+    QModelIndexList::const_iterator iter = indexes.begin();
+    QModelIndexList::const_iterator iter_end = indexes.end();
+    QByteArray encoded_data;
+    QByteArray encoded_data_node_and_type;
+    QDataStream stream(&encoded_data, QIODevice::WriteOnly);
+    while(iter != iter_end){
+        if(iter->isValid() == false) continue;
+        QSharedPointer<TwoLineInformationItem> element = iter->data().value<QSharedPointer<TwoLineInformationItem> >();
+        stream << element->title;
+        iter++;
+    }
+    result->setData("application/chaos-node-uid-list", encoded_data);
+
+    iter = indexes.begin();
+    iter_end = indexes.end();
+    QDataStream stream_node_type(&encoded_data_node_and_type, QIODevice::WriteOnly);
+    while(iter != iter_end){
+        if(iter->isValid() == false) continue;
+        QSharedPointer<CDataWrapper> found_node = result_found[iter->row()];
+
+        QString node_uid = QString::fromStdString(found_node->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID));
+        QString node_type =  QString::fromStdString(found_node->getStringValue(chaos::NodeDefinitionKey::NODE_TYPE));
+        stream_node_type << node_uid;
+        stream_node_type << node_type;
+        iter++;
+    }
+    result->setData("application/chaos-node-uid-type-list", encoded_data_node_and_type);
+    return result;
+}
+
+QStringList SearchNodeListModel::mimeTypes() const {
+    QStringList types;
+    types << "application/chaos-node-uid-list";
+    return types;
 }
 
 QVariant SearchNodeListModel::getUserData(int row) const {
@@ -64,7 +115,7 @@ void SearchNodeListModel::onApiDone(const QString& tag,
             api_result->hasKey("node_search_result_page") &&
             api_result->isVectorValue("node_search_result_page")) {
         //we have result
-        std::auto_ptr<CMultiTypeDataArrayWrapper> arr(api_result->getVectorValue("node_search_result_page"));
+        ChaosUniquePtr<CMultiTypeDataArrayWrapper> arr(api_result->getVectorValue("node_search_result_page"));
 
         if(arr->size()) {
             //get first element seq

@@ -1,21 +1,22 @@
-/*	
- *	DataManager.cpp
- *	!CHAOS
- *	Created by Bisegni Claudio.
- *	
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+/*
+ * Copyright 2012, 2017 INFN
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include <iostream>
@@ -61,7 +62,7 @@ void DataManager::init(void *initParameter) throw(CException) {
  * Deinitzialize the datamanager
  */
 void DataManager::deinit() throw(CException) {
-    auto_ptr<KeyDataStorage> tmpKDS;
+    ChaosUniquePtr<KeyDataStorage> tmpKDS;
     map<string, KeyDataStorage*>::iterator iter = deviceIDKeyDataStorageMap.begin();
     
     for (  ; iter != deviceIDKeyDataStorageMap.end(); iter++ ) {
@@ -111,8 +112,7 @@ IODataDriver *DataManager::getDataLiveDriverNewInstance() throw(CException) {
 			//set the information
 			IODirectIODriverInitParam init_param;
 			std::memset(&init_param, 0, sizeof(IODirectIODriverInitParam));
-			//get client and endpoint
-			init_param.network_broker = command_manager::CommandManager::getInstance()->broker;
+			//get client and endpointb
 			init_param.client_instance = NULL;
 			init_param.endpoint_instance = NULL;
 			((IODirectIODriver*)result)->setDirectIOParam(init_param);
@@ -157,7 +157,7 @@ void DataManager::deinitDeviceIDKeyDataStorage(const string& device_id) throw(CE
     if(iter == deviceIDKeyDataStorageMap.end()) return;
         
             //get the pointer
-    auto_ptr<KeyDataStorage> tmpKDS((*iter).second);
+    ChaosUniquePtr<KeyDataStorage> tmpKDS((*iter).second);
     LAPP_ << "Remove in the manager the KeyDataStorage for device id key:" << device_id;
             //remove key from map
     deviceIDKeyDataStorageMap.erase(device_id);
@@ -181,17 +181,9 @@ void DataManager::pushDeviceDataByIdKey(const string& device_id, CDataWrapper* d
 }
 
 /*
- get last dataset for a specified key
- */
-chaos::common::utility::ArrayPointer<CDataWrapper> *DataManager::getLastCDataWrapperForDeviceIdKey(const string& device_id)  throw(CException) {
-        //use keydatastorage from map
-    return deviceIDKeyDataStorageMap[device_id]->getLastDataSet(data_manager::KeyDataStorageDomainOutput);
-}
-
-/*
  return a new instance of CDataWrapper filled with a mandatory data
  according to key
  */
 CDataWrapper *DataManager::getNewDataWrapperForDeviceIdKey(const string& device_id) {
-    return deviceIDKeyDataStorageMap[device_id]->getNewOutputAttributeDataWrapper();
+    return deviceIDKeyDataStorageMap[device_id]->getNewDataPackForDomain(KeyDataStorageDomainOutput);
 }

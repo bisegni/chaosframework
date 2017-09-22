@@ -1,21 +1,22 @@
 /*
- *	DirectIOPerformanceServerChannel.h
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #ifndef __CHAOSFramework__DirectIOSystemAPIServerChannel__
@@ -31,15 +32,15 @@
 namespace chaos_data = chaos::common::data;
 
 namespace chaos {
-	namespace common {
-		namespace direct_io {
-			class DirectIODispatcher;
-			namespace channel {
-				using namespace chaos::common::direct_io::channel::opcode_headers;
-				//! serve rimplementation for the System API direct io channel
-				DECLARE_CLASS_FACTORY(DirectIOSystemAPIServerChannel, DirectIOVirtualServerChannel),
-				public chaos::common::direct_io::DirectIOEndpointHandler {
-					REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(DirectIOSystemAPIServerChannel)
+    namespace common {
+        namespace direct_io {
+            class DirectIODispatcher;
+            namespace channel {
+                using namespace chaos::common::direct_io::channel::opcode_headers;
+                //! serve rimplementation for the System API direct io channel
+                DECLARE_CLASS_FACTORY(DirectIOSystemAPIServerChannel, DirectIOVirtualServerChannel),
+                public chaos::common::direct_io::DirectIOEndpointHandler {
+                    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(DirectIOSystemAPIServerChannel)
                     
                     class DirectIOSystemAPIServerChannelDeallocator:
                     public DirectIODeallocationHandler {
@@ -49,69 +50,51 @@ namespace chaos {
                     //static deallocator forthis channel
                     static DirectIOSystemAPIServerChannelDeallocator STATIC_DirectIOSystemAPIServerChannelDeallocator;
                     
-				public:
-					//! System API DirectIO server handler
-					typedef class DirectIOSystemAPIServerChannelHandler {
-					public:
-						//! Manage the creation of a snapshot
-						/*!
-						 The creation for a new snapshot has been requested, all information
-						 on the live cache will be stored into database layer creating a
-						 reference to this snapshot.
-						 \param header header of the new snapshot api
-						 \param snapped_producer_key the list of the producer, identfied the
-						 unique key, to include into the snaphsoot
-						 \param api_result the result of the api
-						 \return error on the forwading of the event
-						 */
-						virtual int consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,
-															void *concatenated_unique_id_memory,
-															uint32_t concatenated_unique_id_memory_size,
-															DirectIOSystemAPISnapshotResultHeader &result_header)
-						{DELETE_HEADER_DATA(header, concatenated_unique_id_memory) return 0;};
-						
-						//! Manage the delete operation on an existing snapshot
-						/*!
-						 Perform the delete operation on the snpashot and all dataset associated to it.
-						\param header of the snapshot to delete
-						\param api_result the result of the api
-						\return error on the forwading of the event
-						 */
-						virtual int consumeDeleteSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,
-															   DirectIOSystemAPISnapshotResultHeader &result_header)
-						{DELETE_HEADER(header) return 0;};
-						
-						//! Return the dataset for a producerkey ona specific snapshot
-						/*!
-						\param header of the snapshot where to fetch the dataasets
-						\param producer_id is the identification of the producre of the returning datasets
-						\return error on the forwading of the event
-						 */
-						virtual int consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,
-																   const std::string& producer_id,
-																   void **channel_found_data,
-																   uint32_t& channel_found_data_length,
-																   DirectIOSystemAPISnapshotResultHeader &result_header)
-						{DELETE_HEADER(header) return 0;};
-					} DirectIOSystemAPIServerChannelHandler;
-					
-					void setHandler(DirectIOSystemAPIServerChannelHandler *_handler);
-				protected:
-					//! Handler for the event
-					DirectIOSystemAPIServerChannelHandler *handler;
-					
-					//!default constructor
-					DirectIOSystemAPIServerChannel(std::string alias);
-					
-					//! endpoint entry method
-					int consumeDataPack(DirectIODataPack *dataPack,
-										DirectIODataPack *synchronous_answer,
+                public:
+                    //! System API DirectIO server handler
+                    typedef class DirectIOSystemAPIServerChannelHandler {
+                    public:
+                        //! Return the dataset for a producerkey ona specific snapshot
+                        /*!
+                         \param header of the snapshot where to fetch the dataasets
+                         \param producer_id is the identification of the producre of the returning datasets
+                         \return error on the forwading of the event
+                         */
+                        virtual int consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,
+                                                                   const std::string& producer_id,
+                                                                   void **channel_found_data,
+                                                                   uint32_t& channel_found_data_length,
+                                                                   DirectIOSystemAPISnapshotResultHeader &result_header)
+                        {DELETE_HEADER(header) return 0;};
+                        
+                        //! Persist log entries for emitted by a node
+                        /*!
+                         \param header of the snapshot where to fetch the dataasets
+                         \param producer_id is the identification of the producre of the returning datasets
+                         \return error on the forwading of the event
+                         */
+                        virtual int consumeLogEntries(const std::string& node_name,
+                                                      const ChaosStringVector& log_entries)
+                        {return 0;};
+                    } DirectIOSystemAPIServerChannelHandler;
+                    
+                    void setHandler(DirectIOSystemAPIServerChannelHandler *_handler);
+                protected:
+                    //! Handler for the event
+                    DirectIOSystemAPIServerChannelHandler *handler;
+                    
+                    //!default constructor
+                    DirectIOSystemAPIServerChannel(std::string alias);
+                    
+                    //! endpoint entry method
+                    int consumeDataPack(DirectIODataPack *dataPack,
+                                        DirectIODataPack *synchronous_answer,
                                         DirectIODeallocationHandler **answer_header_deallocation_handler,
                                         DirectIODeallocationHandler **answer_data_deallocation_handler);
-				};
-			}
-		}
-	}
+                };
+            }
+        }
+    }
 }
 
 #endif /* defined(__CHAOSFramework__DirectIOSystemAPIServerChannel__) */

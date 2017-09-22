@@ -1,21 +1,22 @@
 /*
- *	LoadUnloadControlUnit.cpp
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2015 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include "LoadUnloadControlUnit.h"
@@ -52,7 +53,7 @@ CDataWrapper *LoadUnloadControlUnit::execute(CDataWrapper *api_data,
     CDataWrapper *us_base_description = NULL;
     CDataWrapper *cu_base_descirption = NULL;
     CDataWrapper *cu_instance_description = NULL;
-    std::auto_ptr<CDataWrapper> load_unload_data_pack(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> load_unload_data_pack(new CDataWrapper());
     
     //get the parameter
     const std::string cu_uid = api_data->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID);
@@ -71,7 +72,7 @@ CDataWrapper *LoadUnloadControlUnit::execute(CDataWrapper *api_data,
     } else if(!cu_base_descirption) {
         LOG_AND_TROW(CU_LOUNLO_ERR, -5, boost::str(boost::format("No base infromation found for control unit:%1%") % cu_uid));
     } else {
-        std::auto_ptr<CDataWrapper> cu_inf(cu_base_descirption);
+        ChaosUniquePtr<chaos::common::data::CDataWrapper> cu_inf(cu_base_descirption);
         if(cu_inf->hasKey(chaos::NodeDefinitionKey::NODE_TYPE)) {
         std:string type = cu_inf->getStringValue(chaos::NodeDefinitionKey::NODE_TYPE);
             if(type.compare(chaos::NodeType::NODE_TYPE_CONTROL_UNIT) != 0) {
@@ -89,7 +90,7 @@ CDataWrapper *LoadUnloadControlUnit::execute(CDataWrapper *api_data,
             //we haven't found an instance for the node
             LOG_AND_TROW(CU_LOUNLO_ERR, -8, "The node doesn't has an instance configured");
         } else {
-            std::auto_ptr<CDataWrapper> cu_instance(cu_instance_description);
+            ChaosUniquePtr<chaos::common::data::CDataWrapper> cu_instance(cu_instance_description);
             
             if(!cu_instance->hasKey(chaos::NodeDefinitionKey::NODE_PARENT)) {
                 LOG_AND_TROW(CU_LOUNLO_ERR, -9, "Control unit instance laks of parent key(unit server)");
@@ -104,7 +105,7 @@ CDataWrapper *LoadUnloadControlUnit::execute(CDataWrapper *api_data,
                 LOG_AND_TROW(CU_LOUNLO_ERR, err, "Error fetching unit server information");
             }
             
-            std::auto_ptr<CDataWrapper> us_instance(us_base_description);
+            ChaosUniquePtr<chaos::common::data::CDataWrapper> us_instance(us_base_description);
             if(!us_instance->hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR)) {
                 LOG_AND_TROW(CU_LOUNLO_ERR, -11, "No rpc address for unit server found");
             }

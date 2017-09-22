@@ -1,23 +1,26 @@
 /*
- *	ChaosWANProxy.cpp
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 #include "ChaosWANProxy.h"
+#include <chaos/common/healt_system/HealtManager.h>
+
 #include "global_constant.h"
 #include "DefaultWANInterfaceHandler.h"
 #include "wan_interface/wan_interface.h"
@@ -32,10 +35,11 @@ using namespace std;
 using namespace chaos;
 using namespace chaos::common::network;
 using namespace chaos::common::utility;
+using namespace chaos::common::healt_system;
 
 using namespace chaos::wan_proxy;
 using namespace chaos::wan_proxy::persistence;
-using boost::shared_ptr;
+using ChaosSharedPtr;
 
 WaitSemaphore chaos::wan_proxy::ChaosWANProxy::waitCloseSemaphore;
 
@@ -65,6 +69,7 @@ void ChaosWANProxy::init(int argc, char* argv[]) throw (CException) {
  */
 void ChaosWANProxy::init(istringstream &initStringStream) throw (CException) {
 	ChaosCommon<ChaosWANProxy>::init(initStringStream);
+
 }
 
 /*
@@ -74,7 +79,8 @@ void ChaosWANProxy::init(void *init_data)  throw(CException) {
 	std::string tmp_interface_name;
 	try {
 		ChaosCommon<ChaosWANProxy>::init(init_data);
-		   
+       StartableService::initImplementation(HealtManager::getInstance(), NULL, "HealtManager", __PRETTY_FUNCTION__);
+
 		if(!getGlobalConfigurationInstance()->hasOption(setting_options::OPT_INTERFACE_TO_ACTIVATE)) {
 			throw CException(-1, "The interface protocol are mandatory", __PRETTY_FUNCTION__);
 		}
@@ -90,6 +96,7 @@ void ChaosWANProxy::init(void *init_data)  throw(CException) {
 		
 		persistence_driver.reset(new DefaultPersistenceDriver(NetworkBroker::getInstance()), "DefaultPresistenceDriver");
 		persistence_driver.init(NULL, __PRETTY_FUNCTION__);
+		//setting.list_cds_server.push_back(getGlobalConfigurationInstance()->getMetadataServerAddress());
 		persistence_driver->addServerList(setting.list_cds_server);
 		
 		//Allcoate the handler
@@ -103,7 +110,7 @@ void ChaosWANProxy::init(void *init_data)  throw(CException) {
 			it != setting.list_wan_interface_to_enable.end();
 			it++) {
 			tmp_interface_name.clear();
-			tmp_interface_name = *it + "WANInterface";
+			tmp_interface_name = *it;
 			wan_interface::AbstractWANInterface *tmp_interface_instance = ObjectFactoryRegister<wan_interface::AbstractWANInterface>::getInstance()->getNewInstanceByName(tmp_interface_name);
 			if(!tmp_interface_instance) {
 				LCND_LERR << "Error allocating " <<tmp_interface_name<< " wan interface";
@@ -123,6 +130,7 @@ void ChaosWANProxy::init(void *init_data)  throw(CException) {
 			wan_active_interfaces.push_back(tmp_interface_instance);
 			
 			LCND_LAPP << "Wan interface: " <<tmp_interface_instance->getName()<< " have been installed";
+
 		}
 		
 	} catch (CException& ex) {
@@ -138,6 +146,7 @@ void ChaosWANProxy::init(void *init_data)  throw(CException) {
 void ChaosWANProxy::start()  throw(CException) {
 	//lock o monitor for waith the end
 	try {
+	      StartableService::startImplementation(HealtManager::getInstance(), "HealtManager", __PRETTY_FUNCTION__);
 		//start all wan interface
 		for(WanInterfaceListIterator it = wan_active_interfaces.begin();
 			it != wan_active_interfaces.end();
@@ -150,6 +159,8 @@ void ChaosWANProxy::start()  throw(CException) {
 		
 		//at this point i must with for end signal
 		waitCloseSemaphore.wait();
+
+
 	} catch (CException& ex) {
 		DECODE_CHAOS_EXCEPTION(ex)
 	}
@@ -181,8 +192,11 @@ void ChaosWANProxy::stop()   throw(CException) {
 															 (*it)->getName(),
 															 __PRETTY_FUNCTION__);)
 	}
+	  CHAOS_NOT_THROW(StartableService::stopImplementation(HealtManager::getInstance(), "HealtManager", __PRETTY_FUNCTION__););
 	//endWaithCondition.notify_one();
 	waitCloseSemaphore.unlock();
+
+
 }
 
 /*
@@ -190,6 +204,8 @@ void ChaosWANProxy::stop()   throw(CException) {
  */
 void ChaosWANProxy::deinit()   throw(CException) {
 	//deinit all wan interface
+    CHAOS_NOT_THROW(StartableService::deinitImplementation(HealtManager::getInstance(), "HealtManager", __PRETTY_FUNCTION__););
+
 	for(WanInterfaceListIterator it = wan_active_interfaces.begin();
 		it != wan_active_interfaces.end();
 		it++) {

@@ -1,21 +1,22 @@
 /*
- *	SetInputDatasetAttributeValues.cpp
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2015 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include "SetInputDatasetAttributeValues.h"
@@ -48,7 +49,7 @@ CDataWrapper *SetInputDatasetAttributeValues::execute(CDataWrapper *api_data,
     int err = 0;
     uint64_t command_id = 0;
     //get values array
-    std::auto_ptr<CMultiTypeDataArrayWrapper> value_set_array(api_data->getVectorValue("attribute_set_values"));
+    ChaosUniquePtr<CMultiTypeDataArrayWrapper> value_set_array(api_data->getVectorValue("attribute_set_values"));
     
     //get the data access
     GET_DATA_ACCESS(NodeDataAccess, n_da, -3)
@@ -56,13 +57,13 @@ CDataWrapper *SetInputDatasetAttributeValues::execute(CDataWrapper *api_data,
     for(int idx = 0;
         idx < value_set_array->size();
         idx++){
-        std::auto_ptr<CDataWrapper> cu_changes_set(value_set_array->getCDataWrapperElementAtIndex(idx));
+        ChaosUniquePtr<chaos::common::data::CDataWrapper> cu_changes_set(value_set_array->getCDataWrapperElementAtIndex(idx));
         CHECK_KEY_THROW_AND_LOG(cu_changes_set.get(), NodeDefinitionKey::NODE_UNIQUE_ID, CU_SIDAV_ERR, -4, "The ndk_uid key is mandatory")
         CHECK_KEY_THROW_AND_LOG(cu_changes_set.get(), "change_set", CU_SIDAV_ERR, -5, "The change_set key is mandatory")
         //CHECK_KEY_THROW_AND_LOG(set_element.get(), "set_value", CU_SIDAV_ERR, -6, "The cudk_ds_attr_name key is mandatory")
         
         //compose the batch message per control unit
-        std::auto_ptr<CDataWrapper> batch_message_per_cu(new CDataWrapper);
+        ChaosUniquePtr<chaos::common::data::CDataWrapper> batch_message_per_cu(new CDataWrapper);
         
         //get cu uid
         const std::string cu_uid = cu_changes_set->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
@@ -79,7 +80,7 @@ CDataWrapper *SetInputDatasetAttributeValues::execute(CDataWrapper *api_data,
         }
         
         //we have a descirption for control unit so we need to get the rpc address and domain
-        auto_ptr<CDataWrapper> cu_node_description(cu_node_desc);
+        ChaosUniquePtr<chaos::common::data::CDataWrapper> cu_node_description(cu_node_desc);
         if(!cu_node_description->hasKey(NodeDefinitionKey::NODE_RPC_ADDR) ||
            !cu_node_description->hasKey(NodeDefinitionKey::NODE_RPC_DOMAIN)) {
             //we have no node scription for this control unit so we step forward
@@ -95,19 +96,19 @@ CDataWrapper *SetInputDatasetAttributeValues::execute(CDataWrapper *api_data,
                                              cu_node_description->getStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN));
         
         CU_SIDAV_DBG << "Fetch changes_set for control unit:" << cu_uid;
-        std::auto_ptr<CMultiTypeDataArrayWrapper> change_set(cu_changes_set->getVectorValue("change_set"));
+        ChaosUniquePtr<CMultiTypeDataArrayWrapper> change_set(cu_changes_set->getVectorValue("change_set"));
         
         for(int idx_change = 0;
             idx_change < change_set->size();
             idx_change++) {
-            std::auto_ptr<CDataWrapper> change(change_set->getCDataWrapperElementAtIndex(idx_change));
+            ChaosUniquePtr<chaos::common::data::CDataWrapper> change(change_set->getCDataWrapperElementAtIndex(idx_change));
             if(!change->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME)||
                !change->hasKey("change_value")) {
                 //we need to have either the values
                 continue;
             }
             //attribute description form the dataset
-            boost::shared_ptr<CDataWrapper> element_description;
+            ChaosSharedPtr<CDataWrapper> element_description;
             //get teh attribute name
             const std::string attribute_name = change->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME);
             //get the dataset element setup
@@ -141,6 +142,11 @@ CDataWrapper *SetInputDatasetAttributeValues::execute(CDataWrapper *api_data,
                     case chaos::DataType::TYPE_DOUBLE:
                         batch_message_per_cu->addDoubleValue(attribute_name,
                                                              boost::lexical_cast<double>(change->getStringValue("change_value")));
+                        break;
+                    case chaos::DataType::TYPE_CLUSTER:{
+                       
+                        batch_message_per_cu->addJsonValue(attribute_name,change->getStringValue("change_value"));
+                    }
                         break;
                     case chaos::DataType::TYPE_STRING:
                         batch_message_per_cu->addStringValue(attribute_name,

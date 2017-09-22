@@ -1,21 +1,22 @@
 /*
- *	MetricCollector.cpp
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2015 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include <chaos/common/metric/MetricCollector.h>
@@ -126,8 +127,8 @@ void MetricCollector::timeout() {
     //write metric to backend
     CHAOS_SCAN_VECTOR_ITERATOR(VectorMetricBackendIterator, vector_metric_backend, (*it)->prepare(now);)
     for(VectorMetricIterator it_metric = slot_to_persist->vector_attribute_value.begin();
-                            it_metric != slot_to_persist->vector_attribute_value.end();
-                            it_metric++) {
+        it_metric != slot_to_persist->vector_attribute_value.end();
+        it_metric++) {
         CHAOS_SCAN_VECTOR_ITERATOR(VectorMetricBackendIterator,
                                    vector_metric_backend,
                                    (*it)->preMetric();
@@ -143,8 +144,12 @@ void MetricCollector::setStatIntervalInSeconds(uint64_t stat_intervall_in_second
 }
 
 void MetricCollector::startLogging() {
-    last_stat_call = chaos::common::utility::TimingUtil::getTimeStamp();
-    AsyncCentralManager::getInstance()->addTimer(this, 1000, stat_intervall);
+    try{
+        last_stat_call = chaos::common::utility::TimingUtil::getTimeStamp();
+        AsyncCentralManager::getInstance()->addTimer(this, 1000, stat_intervall);
+    }catch(...) {
+        throw CException(-1, "Error adding timer", __PRETTY_FUNCTION__);
+    }
 }
 
 void MetricCollector::stopLogging() {

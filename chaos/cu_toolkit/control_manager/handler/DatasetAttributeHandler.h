@@ -1,22 +1,22 @@
 /*
- *	DatasetAttributeHandler.h
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFramework]
- *	Created by Claudio Bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 08/03/16 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #ifndef __CHAOSFramework__DatasetAttributeHandler_h
@@ -93,11 +93,11 @@ typename chaos::cu::control_manager::handler::DatasetAttributeHandlerDescription
                 DEFINE_HANDLER_DESCRIPTION_FOR_TYPE(CharPtrDAHD, const char *);
                 
                 //!
-                typedef boost::shared_ptr<AbstractHandlerDescription> HandlerDescriptionPtr;
+                typedef ChaosSharedPtr<AbstractHandlerDescription> HandlerDescriptionPtr;
                 
                 //!
                 CHAOS_DEFINE_MAP_FOR_TYPE(std::string,
-                                          boost::shared_ptr<AbstractHandlerDescription>,
+                                          ChaosSharedPtr<AbstractHandlerDescription>,
                                           MapAttributeHandler);
                 CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string,
                                              HandlerAssociatedAttributeList);
@@ -121,7 +121,8 @@ typename chaos::cu::control_manager::handler::DatasetAttributeHandlerDescription
                     
                     
                     bool executeHandler(chaos::common::data::CDataWrapper *attribute_changes_set) {
-                        if(attribute_changes_set == NULL) return false;
+                        if(attribute_changes_set == NULL ||
+                           attribute_changes_set->hasKey(attribute_name) == false) return false;
                         //broadcast the attribute value
                         return ((*object_reference).*handler_pointer)(attribute_name,
                                                                       attribute_changes_set->getVariantValue(attribute_name));

@@ -70,7 +70,7 @@ bool CommandTemplateInstanceEditor::eventFilter(QObject *object, QEvent *event) 
 }
 
 void CommandTemplateInstanceEditor::initUI() {
-    setTabTitle("Instance creation");
+    setTitle("Instance creation");
     ui->labelNodeUniqueID->setText(node_uid);
     ui->labelTemplateName->setText(template_name);
     //load template
@@ -107,10 +107,10 @@ void CommandTemplateInstanceEditor::onApiDone(const QString& tag,
                                api_result);
 }
 
-boost::shared_ptr<node::TemplateSubmission> CommandTemplateInstanceEditor::getTempalteSubmissionTask() {
+ChaosSharedPtr<node::TemplateSubmission> CommandTemplateInstanceEditor::getTempalteSubmissionTask() {
     bool ok = false;
 
-    boost::shared_ptr<node::TemplateSubmission> submission_info(new node::TemplateSubmission());
+    ChaosSharedPtr<node::TemplateSubmission> submission_info(new node::TemplateSubmission());
     submission_info->node_unique_id = node_uid.toStdString();
     submission_info->template_name = template_name.toStdString();
     submission_info->command_unique_id = command_uid.toStdString();
@@ -120,12 +120,12 @@ boost::shared_ptr<node::TemplateSubmission> CommandTemplateInstanceEditor::getTe
         iter.next();
         if(!iter.value()->chaosAttributeValueSetter()->isValid()) {
             showInformation(tr("Submission"), tr("validation"), QString("The attribute %1 is not valid").arg(iter.key()));
-            return boost::shared_ptr<node::TemplateSubmission>();
+            return ChaosSharedPtr<node::TemplateSubmission>();
         }
-        boost::shared_ptr<CDataWrapperKeyValueSetter> setter = iter.value()->chaosAttributeValueSetter()->getCDataWrapperValueSetter(&ok);
+        ChaosSharedPtr<CDataWrapperKeyValueSetter> setter = iter.value()->chaosAttributeValueSetter()->getCDataWrapperValueSetter(&ok);
         if(!ok) {
             showInformation(tr("Submission"), tr("validation"), QString("The attribute %1 has an invalid value").arg(iter.key()));
-            return boost::shared_ptr<node::TemplateSubmission>();
+            return ChaosSharedPtr<node::TemplateSubmission>();
         }
         submission_info->parametrized_attribute_value.push_back(setter);
     }
@@ -139,7 +139,7 @@ void CommandTemplateInstanceEditor::submitInstance() {
     unsigned int instance_number = (ui->lineEditNumberofInstances->text().size()==0)?1:ui->lineEditNumberofInstances->text().toUInt();
 
     for(unsigned int idx = 0; idx < instance_number; idx++) {
-        boost::shared_ptr<node::TemplateSubmission>  instance = getTempalteSubmissionTask();
+        ChaosSharedPtr<node::TemplateSubmission>  instance = getTempalteSubmissionTask();
         if(instance.get() == NULL) break;
         submission_list.push_back(instance);
     }
@@ -174,5 +174,5 @@ void CommandTemplateInstanceEditor::configureForTemplate(QSharedPointer<CDataWra
         }
     }
     setMinimumHeight(minimumHeight()+heigh_to_add);
-    parentWidget()->setGeometry(parentWidget()->geometry().adjusted(0,0,0,heigh_to_add));
+    setGeometry(geometry().adjusted(0,0,0,heigh_to_add));
 }

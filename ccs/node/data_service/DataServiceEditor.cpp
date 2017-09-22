@@ -132,7 +132,7 @@ void DataServiceEditor::on_pushButtonAssociateNewControlUnit_clicked() {
             SIGNAL(selectedNodes(QString, QVector<QPair<QString,QString> >)),
             SLOT(handleSelectedNodes(QString, QVector<QPair<QString,QString> >)));
     //show the search panel
-    addWidgetToPresenter(search_node);
+    launchPresenterWidget(search_node);
 }
 
 
@@ -293,7 +293,7 @@ void DataServiceEditor::fillDataServiceAssocaition(const QString& data_service,
     ui->pushButtonUpdateAssociationList->setEnabled(data_service.size()>0);
     if(!api_result.isNull() &&
             api_result->hasKey("node_search_result_page")) {
-        std::auto_ptr<CMultiTypeDataArrayWrapper> arr(api_result->getVectorValue("node_search_result_page"));
+        ChaosUniquePtr<CMultiTypeDataArrayWrapper> arr(api_result->getVectorValue("node_search_result_page"));
         for(int i = 0;
             i < arr->size();
             i++) {
@@ -323,7 +323,7 @@ void DataServiceEditor::fillTableDS(QSharedPointer<CDataWrapper> api_result) {
     table_model_ds->setRowCount(0);
     if(!api_result.isNull() &&
             api_result->hasKey("node_search_result_page")) {
-        std::auto_ptr<CMultiTypeDataArrayWrapper> arr(api_result->getVectorValue("node_search_result_page"));;
+        ChaosUniquePtr<CMultiTypeDataArrayWrapper> arr(api_result->getVectorValue("node_search_result_page"));;
         for(int i = 0;
             i < arr->size();
             i++) {

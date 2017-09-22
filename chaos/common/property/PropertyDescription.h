@@ -1,41 +1,43 @@
 /*
- *	PropertyDescription.h
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFramework]
- *	Created by bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 03/08/16 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #ifndef __CHAOSFramework_A779EE47_822D_461E_B702_849E049D5CD7_PropertyDescription_h
 #define __CHAOSFramework_A779EE47_822D_461E_B702_849E049D5CD7_PropertyDescription_h
 
 #include <chaos/common/chaos_constants.h>
-#include <chaos/common/data/cache/AttributeValue.h>
+#include <chaos/common/data/CDataVariant.h>
 #include <chaos/common/data/TemplatedDataSDWrapper.h>
+
+#include <boost/function.hpp>
 
 namespace chaos {
     namespace common {
         namespace property {
-            
             class PropertyDescriptionSDWrapper;
             
             //!define a porperty taht is rapresentated by haos base value
             class PropertyDescription {
                 friend class PropertyDescriptionSDWrapper;
-                chaos::common::data::CDataVariant  property_values;
+                //!current property value
+                chaos::common::data::CDataVariant  property_value;
             public:
                 std::string name;
                 std::string description;
@@ -48,7 +50,8 @@ namespace chaos {
                 PropertyDescription(const std::string& _name,
                                     const std::string& _description,
                                     const DataType::DataType& _type = DataType::TYPE_UNDEFINED,
-                                    const uint32_t _flag = 0);
+                                    const uint32_t _flag = 0,
+                                    const chaos::common::data::CDataVariant& property_default_value = chaos::common::data::CDataVariant());
                 
                 
                 ~PropertyDescription();
@@ -80,17 +83,17 @@ namespace chaos {
                 Subclass::dataWrapped().type = (DataType::DataType)CDW_GET_INT32_WITH_DEFAULT(serialized_data, "property_type", 0);
                 Subclass::dataWrapped().flag = (uint32_t)CDW_GET_INT32_WITH_DEFAULT(serialized_data, "property_flag", 0);
                 if(serialized_data->hasKey("property_value")){
-                    Subclass::dataWrapped().property_values = serialized_data->getVariantValue("property_value");
+                    Subclass::dataWrapped().property_value = serialized_data->getVariantValue("property_value");
                 }
             }
             
-            std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
-                std::auto_ptr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
-                data_serialized->addStringValue("property_name", Subclass::dataWrapped().name);
-                data_serialized->addStringValue("property_description", Subclass::dataWrapped().description);
-                data_serialized->addInt32Value("property_type", Subclass::dataWrapped().type);
-                data_serialized->addInt32Value("property_flag", Subclass::dataWrapped().flag);
-                data_serialized->addVariantValue("property_value", Subclass::dataWrapped().property_values);
+            ChaosUniquePtr<chaos::common::data::CDataWrapper> serialize() {
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
+                CDW_CHECK_AND_SET(Subclass::dataWrapped().name.size(), data_serialized, addStringValue, "property_name", Subclass::dataWrapped().name);
+                CDW_CHECK_AND_SET(Subclass::dataWrapped().description.size(), data_serialized, addStringValue, "property_description", Subclass::dataWrapped().description);
+                CDW_CHECK_AND_SET(Subclass::dataWrapped().type != DataType::TYPE_UNDEFINED, data_serialized, addInt32Value, "property_type", Subclass::dataWrapped().type);
+                CDW_CHECK_AND_SET(Subclass::dataWrapped().flag != 0, data_serialized, addInt32Value, "property_flag", Subclass::dataWrapped().type);
+                CDW_CHECK_AND_SET(Subclass::dataWrapped().property_value.isValid(), data_serialized, addVariantValue, "property_value", Subclass::dataWrapped().property_value);
                 return data_serialized;
             }
             CHAOS_CLOSE_SDWRAPPER()

@@ -25,7 +25,7 @@
 */
 
 #pragma once
-#include <chaos/common/global.h>
+//#include <chaos/common/global.h>
 #include <chaos/common/bson/optime.h>
 #include <chaos/common/bson/util/time_support.h>
 

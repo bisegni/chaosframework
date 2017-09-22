@@ -1,21 +1,22 @@
 /*
- *	NodeDataAccess.h
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyrigh 2015 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #ifndef __CHAOSFramework__NodeDataAccess__
@@ -23,6 +24,7 @@
 
 #include "../persistence.h"
 
+#include <chaos/common/property/property.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos_service_common/data/data.h>
 
@@ -30,7 +32,12 @@ namespace chaos {
     namespace metadata_service {
         namespace persistence {
             namespace data_access {
-
+                
+                typedef enum PropertyType {
+                    PropertyTypeDescription,
+                    PropertyTypeDefaultValues
+                } PropertyType;
+                
                 /*!
                  Perform the basic operation on abstract node infomation
                  */
@@ -38,13 +45,13 @@ namespace chaos {
                 public chaos::service_common::persistence::data_access::AbstractDataAccess {
                 public:
                     DECLARE_DA_NAME
-                        //! default constructor
+                    //! default constructor
                     NodeDataAccess();
-
-                        //! defautl destructor
+                    
+                    //! defautl destructor
                     ~NodeDataAccess();
-
-                        //! return the whole node description
+                    
+                    //! return the whole node description
                     /*!
                      return the whole node description as is on database
                      \param node_unique_id the unique id of the node
@@ -52,8 +59,8 @@ namespace chaos {
                      */
                     virtual int getNodeDescription(const std::string& node_unique_id,
                                                    chaos::common::data::CDataWrapper **node_description) = 0;
-
-                        //! insert a new node
+                    
+                    //! insert a new node
                     /*!
                      The API receive a data pack with one or more key listed in chaos::NodeDefinitionKey namespace,
                      the mandatory key are:
@@ -66,8 +73,8 @@ namespace chaos {
                      \return 0 for no error otherwhise a negative value
                      */
                     virtual int insertNewNode(chaos::common::data::CDataWrapper& node_description) = 0;
-
-                        //! update the node information
+                    
+                    //! update the node information
                     /*!
                      The API receive a data pack with one or more key listed in chaos::NodeDefinitionKey namespace.
                      The mandatory key are the NODE_UNIQUE_ID need to find the description and the only updateable key are:
@@ -79,9 +86,9 @@ namespace chaos {
                      \return 0 for no error otherwhise a negative value
                      */
                     virtual int updateNode(chaos::common::data::CDataWrapper& node_description) = 0;
-
-
-                        //! check if a unit server identified by unique id is preset
+                    
+                    
+                    //! check if a unit server identified by unique id is preset
                     /*!
                      The API check is the description of the node has been created. The variable represent the answer to the
                      request only if the result of the api is 0;
@@ -92,7 +99,7 @@ namespace chaos {
                     virtual int checkNodePresence(bool& presence,
                                                   const std::string& node_unique_id,
                                                   const std::string& node_unique_type = std::string()) = 0;
-
+                    
                     //! set node health information
                     /*!
                      Set and update the health information for a node.
@@ -113,14 +120,14 @@ namespace chaos {
                     virtual int getNodeHealthStatus(const std::string& node_unique_id,
                                                     common::data::structured::HealthStat& health_stat) = 0;
                     
-                        //! delete the node description
+                    //! delete the node description
                     /*
                      The API delete the node description.
                      */
                     virtual int deleteNode(const std::string& node_unique_id,
                                            const std::string& node_type = std::string()) = 0;
-
-                        //!Make simple paged query on node
+                    
+                    //!Make simple paged query on node
                     /*!
                      perform a simple search on node filtering on type
                      \param result the handle for the reuslt data (is allcoated only if the search has been done with success)
@@ -136,6 +143,22 @@ namespace chaos {
                                            uint32_t last_unique_id,
                                            uint32_t page_length = 100) = 0;
                     
+                    //!set the wole node property list
+                    virtual int setProperty(const std::string& node_uid,
+                                            const chaos::common::property::PropertyGroupVector& property_group_vector) = 0;
+                    
+                    virtual int updatePropertyDefaultValue(const std::string& node_uid,
+                                                           const chaos::common::property::PropertyGroupVector& property_group_vector) = 0;
+                    
+                    //! return the whole node porperty list
+                    virtual int getProperty(const PropertyType property_type,
+                                            const std::string& node_uid,
+                                            chaos::common::property::PropertyGroupVector& property_group_vector) = 0;
+                    
+                    virtual int getPropertyGroup(const PropertyType property_type,
+                                                 const std::string& node_uid,
+                                                 const std::string& property_group_name,
+                                                 chaos::common::property::PropertyGroup& property_group) = 0;
                     //! Check a command presence
                     /*!
                      \param command_unique_id is the unique identifir ther represent the command
@@ -196,8 +219,8 @@ namespace chaos {
                      \param command_unique_id is the unique identifir ther represent the command
                      */
                     virtual int getCommandTemplate(const std::string& template_name,
-                                                      const std::string& command_unique_id,
-                                                      chaos::common::data::CDataWrapper **command_template) = 0;
+                                                   const std::string& command_unique_id,
+                                                   chaos::common::data::CDataWrapper **command_template) = 0;
                     
                     //!Make simple command template query
                     /*!
@@ -210,8 +233,29 @@ namespace chaos {
                                                       const std::vector<std::string>& cmd_uid_to_filter,
                                                       uint32_t last_unique_id,
                                                       uint32_t page_length = 100) = 0;
+                    
+                    //!add data structure to node for permit ageing management
+                    virtual int addAgeingManagementDataToNode(const std::string& control_unit_id) = 0;
+                    
+                    //                    virtual int reserveNodeForAgeingManagement(uint64_t& last_sequence_id,
+                    //                                                               std::string& node_uid_reserved,
+                    //                                                               uint32_t& node_ageing_time,
+                    //                                                               uint64_t& last_ageing_perform_time,
+                    //                                                               uint64_t timeout_for_checking,
+                    //                                                               uint64_t delay_next_check) = 0;
+                    
+                    //                    virtual int releaseNodeForAgeingManagement(std::string& node_uid,
+                    //                                                                      bool performed) = 0;
+                    
+                    //!check if a node is alive
+                    /*!
+                     using helat data store on database check if the node i still alive
+                     \param node_uid is the node for wich we want to check the alive state
+                     \param alive contai the state of the node if function doesn't report error
+                     */
+                    virtual int isNodeAlive(const std::string& node_uid, bool& alive) = 0;
                 };
-
+                
             }
         }
     }

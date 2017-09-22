@@ -19,6 +19,7 @@
 #include <QDropEvent>
 #include <QMimeData>
 #include <QStringRef>
+#include <QIntValidator>
 
 using namespace chaos;
 using namespace chaos::common::data;
@@ -35,6 +36,7 @@ UnitServerEditor::UnitServerEditor(const QString &_node_unique_id) :
     PresenterWidget(NULL),
     node_unique_id(_node_unique_id),
     move_copy_search_instance(NULL),
+    us_log_entries_tab_model(node_unique_id),
     ui(new Ui::UnitServerEditor) {
     ui->setupUi(this);
     ui->splitterTypeInstances->setStretchFactor(0,0);
@@ -52,7 +54,7 @@ UnitServerEditor::~UnitServerEditor() {
 }
 
 void UnitServerEditor::initUI() {
-    setTabTitle(node_unique_id);
+    setTitle(node_unique_id);
     ui->labelUnitServerUID->setText(node_unique_id);
 
     //create cu type list model
@@ -102,6 +104,9 @@ void UnitServerEditor::initUI() {
     ui->chaosLabelHealthState->setHealthAttribute(CNodeHealthLabel::HealthOperationalState);
     ui->chaosLabelHealthState->initChaosContent();
     ui->chaosLedIndicatorHealt->initChaosContent();
+
+    ui->tableViewLogEntries->setModel(&us_log_entries_tab_model);
+    ui->lineEditLogEntriesNumber->setValidator(new QIntValidator(100,10000));
     //load info
     updateAll();
 }
@@ -196,8 +201,14 @@ void UnitServerEditor::onApiDone(const QString& tag,
         ui->labelUnitServerUID->setText(node_unique_id);
         //address
         if(api_result->hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR)) {
+            QString addr_host;
+            if(api_result->hasKey(chaos::NodeDefinitionKey::NODE_HOST_NAME)) {
+                addr_host = QString("%1[%2]").arg(api_result->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR).c_str()).arg(api_result->getStringValue(chaos::NodeDefinitionKey::NODE_HOST_NAME).c_str());
+            } else {
+                addr_host = QString::fromStdString(api_result->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR));
+            }
             //we have address
-            ui->labelUinitServerAddress->setText(QString::fromStdString(api_result->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR)));
+            ui->labelUinitServerAddress->setText(addr_host);
         } else {
             ui->labelUinitServerAddress->setText(tr("No address"));
         }
@@ -212,7 +223,7 @@ void UnitServerEditor::onApiDone(const QString& tag,
         QStringList cy_type_list;
         if(api_result->hasKey(chaos::UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS)) {
             //get the vector of unit type
-            std::auto_ptr<CMultiTypeDataArrayWrapper> arr(api_result->getVectorValue(chaos::UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS));
+            ChaosUniquePtr<CMultiTypeDataArrayWrapper> arr(api_result->getVectorValue(chaos::UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS));
             for(int i = 0;
                 i < arr->size();
                 i++) {
@@ -280,8 +291,8 @@ void UnitServerEditor::on_pushButtonCreateNewInstance_clicked()
         return;
     }
     //we can start instance editor
-    addWidgetToPresenter(new ControUnitInstanceEditor(node_unique_id,
-                                                      selected_index.first().data().toString()));
+    launchPresenterWidget(new ControUnitInstanceEditor(node_unique_id,
+                                                       selected_index.first().data().toString()));
 }
 
 void UnitServerEditor::on_pushButtonUpdateAllInfo_clicked() {
@@ -305,9 +316,9 @@ void UnitServerEditor::on_pushButtonEditInstance_clicked() {
     foreach (QModelIndex element, ui->tableView->selectionModel()->selectedRows()) {
         QString cu_inst_id = table_model->item(element.row(), 0)->text();
         qDebug() << "Edit " << cu_inst_id << " instance";
-        addWidgetToPresenter(new ControUnitInstanceEditor(node_unique_id,
-                                                          cu_inst_id,
-                                                          true));
+        launchPresenterWidget(new ControUnitInstanceEditor(node_unique_id,
+                                                           cu_inst_id,
+                                                           true));
     }
 }
 
@@ -425,7 +436,7 @@ void UnitServerEditor::moveToUnitServer() {
     tag.resize(tag.size()-1);
     move_copy_search_instance = new SearchNodeResult(true, tag);
     connect(move_copy_search_instance, SIGNAL(selectedNodes(QString,QVector<QPair<QString,QString> >)), SLOT(selectedUnitServer(QString,QVector<QPair<QString,QString> >)));
-    addWidgetToPresenter(move_copy_search_instance);
+    launchPresenterWidget(move_copy_search_instance);
 }
 
 void UnitServerEditor::copyToUnitServer() {
@@ -444,7 +455,7 @@ void UnitServerEditor::copyToUnitServer() {
     tag.resize(tag.size()-1);
     move_copy_search_instance = new SearchNodeResult(true, tag);
     connect(move_copy_search_instance, SIGNAL(selectedNodes(QString,QVector<QPair<QString,QString> >)), SLOT(selectedUnitServer(QString,QVector<QPair<QString,QString> >)));
-    addWidgetToPresenter(move_copy_search_instance);
+    launchPresenterWidget(move_copy_search_instance);
 }
 
 void UnitServerEditor::selectedUnitServer(const QString& tag, const QVector< QPair<QString,QString> >& selected_item) {
@@ -472,7 +483,7 @@ void UnitServerEditor::selectedUnitServer(const QString& tag, const QVector< QPa
                                                                   new_cu_uid,
                                                                   &ok);
                 if(ok && destination_cu_id.size()) {
-                   continue;
+                    continue;
                 }
             } else {
                 break;
@@ -537,5 +548,15 @@ void UnitServerEditor::changedNodeOnlineStatus(const QString& node_uid,
 void UnitServerEditor::on_tableView_doubleClicked(const QModelIndex &index) {
     QStandardItem *node_uid = table_model->item(index.row(), 0);
     qDebug() << "Open control unit editor for" << node_uid->text();
-    addWidgetToPresenter(new ControlUnitEditor(node_uid->text()));
+    launchPresenterWidget(new ControlUnitEditor(node_uid->text()));
+}
+
+void UnitServerEditor::on_pushButtonStartSearchEntry_clicked() {
+    us_log_entries_tab_model.setMaxResultItem(ui->lineEditLogEntriesNumber->text().toUInt());
+    us_log_entries_tab_model.startSearchEntry();
+}
+
+void UnitServerEditor::on_pushButtonLoadMoreEntries_clicked() {
+    us_log_entries_tab_model.setMaxResultItem(ui->lineEditLogEntriesNumber->text().toUInt());
+    us_log_entries_tab_model.next();
 }

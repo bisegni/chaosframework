@@ -1,22 +1,22 @@
-
 /*
- *	cde.cpp
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include <stdio.h>
@@ -52,7 +52,7 @@ using namespace boost;
 #define OPT_DST_TARGET      "dest-target"
 #define OPT_DST_FILE        "dest-file"
 #define OPT_DST_TYPE        "dest-type"
-
+#define OPT_PAGE_LENGHT     "page-lenght"
 #define OPT_START_TIME      "start-time"
 #define OPT_END_TIME		"end-time"
 
@@ -161,7 +161,8 @@ int main(int argc, char* argv[]) {
     uint32_t timeout;
     string device_id;
     string dst_file="export";
-    unsigned int dest_type;
+    uint32_t dest_type;
+    uint32_t page_len;
     string start_time;
     string end_time;
     std::string err_str;
@@ -186,10 +187,11 @@ int main(int argc, char* argv[]) {
         //! [UIToolkit Attribute Init]
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_CU_ID, "The identification string of the device", &device_id);
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>(OPT_TIMEOUT, "Timeout for wait the answer in milliseconds", 2000, &timeout);
-        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<unsigned int>(OPT_DST_TYPE, "Destination date type [binary(0), JSON(1), CSV(2)]", 0, &dest_type);
+        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>(OPT_DST_TYPE, "Destination date type [binary(0), JSON(1), CSV(2)]", 0, &dest_type);
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_DST_FILE, "Destination file for save found datapack", &dst_file);
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_START_TIME, "Time for first datapack to find [format from %Y-%m-%dT%H:%M:%S.%f to %Y]", &start_time);
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_END_TIME, "Time for last datapack to find [format from %Y-%m-%dT%H:%M:%S.%f to %Y]", &end_time);
+        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>(OPT_PAGE_LENGHT, "query page lenght", 1, &page_len);
         //! [UIToolkit Attribute Init]
         
         //! [UIToolkit Init]
@@ -227,18 +229,18 @@ int main(int argc, char* argv[]) {
             std::cout << "Set end data to:"<< end_time << std::endl;
         }
         
-	switch(dest_type) {
-	case 0:
-	  dst_file.append(".bin");
-	  break;
-	case 1:
-	  dst_file.append(".json");
-	  break;
-	case 2:
-	  dst_file.append(".cvs");
-	  break;
-	}
-
+        switch(dest_type) {
+            case 0:
+                dst_file.append(".bin");
+                break;
+            case 1:
+                dst_file.append(".json");
+                break;
+            case 2:
+                dst_file.append(".cvs");
+                break;
+        }
+        
         std::basic_ios<char>::openmode dst_file_mode = ios_base::out;
         if(dest_type) {
             dst_file_mode |= ios_base::binary;
@@ -255,77 +257,84 @@ int main(int argc, char* argv[]) {
         //we can allocate the channel
         std::cout << "Acquiring controller" << std::endl;
         DeviceController *controller = HLDataApi::getInstance()->getControllerForDeviceID(device_id, timeout);
-        if(!controller) throw CException(4, "Error allcoating decive controller", "device controller creation");
+        if(!controller) throw CException(4, "Error allocating decive controller", "device controller creation");
         
         
-        chaos::common::io::QueryCursor *query_cursor = NULL;
-        controller->executeTimeIntervallQuery(DatasetDomainOutput,
-                                              start_ts, end_ts, &query_cursor);
-        
-        std::vector<std::string> output_element_name;
-        //fetche the output element of the device
-        controller->getDeviceDatasetAttributesName(output_element_name,
-                                                   DataType::Output);
-        
-        //create header
-        if(dest_type == 2) {
+        for(int idx = 0;
+            idx < 1000;
+            idx++) {
+            chaos::common::io::QueryCursor *query_cursor = NULL;
+            controller->executeTimeIntervallQuery(DatasetDomainOutput,
+                                                  start_ts,
+                                                  end_ts,
+                                                  &query_cursor,
+                                                  page_len);
             
-            //write header
-            int idx = 0;
-            (*destination_stream) << chaos::DataPackCommonKey::DPCK_TIMESTAMP << ",";
-            for(std::vector<std::string>::const_iterator it = output_element_name.begin();
-                it < output_element_name.end();
-                it++){
-                (*destination_stream) << *it;
-                if(++idx < output_element_name.size()) {
-                    (*destination_stream) << ",";
-                }
-            }
-            (*destination_stream) << std::endl;
-        }
-        
-        if(query_cursor) {
-            uint32_t exported = 0;
-            std::cout << "Exported " << std::flush;
-            while(query_cursor->hasNext()) {
-                exported++;
-                boost::shared_ptr<CDataWrapper> q_result(query_cursor->next());
-                if(q_result.get()) {
-                    retry = 0;
-                    auto_ptr<chaos::common::data::SerializationBuffer> ser;
-                    //get serialization buffer by type
-                    switch (dest_type) {
-                            //BSON
-                        case 0:{
-                            ser.reset(q_result->getBSONData());
-                            break;
-                        }
-                            //JSON
-                        case 1:{
-                            ser.reset(q_result->getJSONData());
-                            break;
-                        }
-                            //CSV
-                        case 2:{
-                            ser.reset(getCSVDecoding(*controller, output_element_name, *q_result.get()));
-                            break;
-                        }
+            std::vector<std::string> output_element_name;
+            //fetche the output element of the device
+            controller->getDeviceDatasetAttributesName(output_element_name,
+                                                       DataType::Output);
+            
+            //create header
+            if(dest_type == 2) {
+                
+                //write header
+                int idx = 0;
+                (*destination_stream) << chaos::DataPackCommonKey::DPCK_TIMESTAMP << ",";
+                for(std::vector<std::string>::const_iterator it = output_element_name.begin();
+                    it < output_element_name.end();
+                    it++){
+                    (*destination_stream) << *it;
+                    if(++idx < output_element_name.size()) {
+                        (*destination_stream) << ",";
                     }
-                    //write the data
-                    if(ser.get())destination_stream->write(ser->getBufferPtr(), ser->getBufferLen());
-                    
-                } else {
-                    break;
+                }
+                (*destination_stream) << std::endl;
+            }
+            
+            if(query_cursor) {
+                uint32_t exported = 0;
+                std::cout << "Exported " << std::flush;
+                while(query_cursor->hasNext()) {
+                    exported++;
+                    ChaosSharedPtr<CDataWrapper> q_result(query_cursor->next());
+                    if(q_result.get()) {
+                        retry = 0;
+                        ChaosUniquePtr<chaos::common::data::SerializationBuffer> ser;
+                        //get serialization buffer by type
+                        switch (dest_type) {
+                                //BSON
+                            case 0:{
+                                ser.reset(q_result->getBSONData());
+                                break;
+                            }
+                                //JSON
+                            case 1:{
+                                ser.reset(q_result->getJSONData());
+                                break;
+                            }
+                                //CSV
+                            case 2:{
+                                ser.reset(getCSVDecoding(*controller, output_element_name, *q_result.get()));
+                                break;
+                            }
+                        }
+                        //write the data
+                        if(ser.get())destination_stream->write(ser->getBufferPtr(), ser->getBufferLen());
+                        
+                    } else {
+                        break;
+                    }
+                    printNumberOfExportedElement(exported);
                 }
                 printNumberOfExportedElement(exported);
+                std::cout << std::endl;
+                std::cout << "Releasing query" << std::endl;
+                controller->releaseQuery(query_cursor);
             }
-            printNumberOfExportedElement(exported);
-            std::cout << std::endl;
-            std::cout << "Releasing query" << std::endl;
-            controller->releaseQuery(query_cursor);
+            destination_stream->flush();
+            std::cout << "Releasing controller" << std::endl;
         }
-        destination_stream->flush();
-        std::cout << "Releasing controller" << std::endl;
         HLDataApi::getInstance()->disposeDeviceControllerPtr(controller);
     } catch (CException& e) {
         std::cout << "\x1B[?25h";

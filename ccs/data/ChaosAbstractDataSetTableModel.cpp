@@ -57,6 +57,7 @@ void ChaosAbstractDataSetTableModel::setAttributeMonitoring(bool enable) {
                 attribute_handler = QSharedPointer<AbstractAttributeHandler>(new MonitorDoubleAttributeHandler(it.key()));
                 break;
             }
+                case chaos::DataType::TYPE_CLUSTER:
             case chaos::DataType::TYPE_STRING:{
                 attribute_handler = QSharedPointer<AbstractAttributeHandler>(new MonitorStringAttributeHandler(it.key()));
                 break;
@@ -103,6 +104,7 @@ void ChaosAbstractDataSetTableModel::consumeValue(const QString& key,
     case chaos::DataType::TYPE_INT32:
     case chaos::DataType::TYPE_INT64:
     case chaos::DataType::TYPE_DOUBLE:
+        case chaos::DataType::TYPE_CLUSTER:
     case chaos::DataType::TYPE_STRING:{
         map_doe_current_values.insert(it.value()->row,
                                       value.toString());

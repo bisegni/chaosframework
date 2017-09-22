@@ -18,7 +18,8 @@ class SearchNodeResult;
 typedef enum SearchNodeType {
     SNT_ALL_TYPE,
     SNT_UNIT_SERVER,
-    SNT_CONTROL_UNIT
+    SNT_CONTROL_UNIT,
+    SNT_AGENT_UNIT
 } SearchNodeType;
 
 class SearchNodeResult :

@@ -1,21 +1,22 @@
-/*	
- *	DefaultCommandDispatcher.h
- *	!CHAOS
- *	Created by Bisegni Claudio.
- *	
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+/*
+ * Copyright 2012, 2017 INFN
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #ifndef DefaultCommandDispatcher_H
@@ -41,27 +42,44 @@ namespace chaos{
         bool deinitialized;
         
 		chaos::common::thread::SharedMutex das_map_mutex;
-        map<string, boost::shared_ptr<DomainActionsScheduler> > das_map;
+        map<string, ChaosSharedPtr<DomainActionsScheduler> > das_map;
     
         /*!
          return the scheduler for domain and if no present create a new instance
          */
-        boost::shared_ptr<DomainActionsScheduler>& getSchedulerForDomainName(string&);
+        ChaosSharedPtr<DomainActionsScheduler>& getSchedulerForDomainName(string&);
         
-    protected:
+        
+        //! Domain name <-> Action name association map
+        /*!Contains the association between the domain name and all action for this domain*/
+        map<string, ChaosSharedPtr<DomainActions> >  action_domain_executor_map;
+        
+        //! Accessor to the object that manage the action for a domain
+        /*!
+         \return the instance of DomainActions pointer in relation to name
+         but if the name is not present initialized it and add it to map
+         */
+        ChaosSharedPtr<DomainActions> getDomainActionsFromName(const string& domain_name);
+        
+        //! Remove the infromation about a domain
+        /*!
+         \return an isntance of DomainActions pointer and remove
+         it form the map
+         */
+        void  removeDomainActionsFromName(const string& domain_name);
+        
+    public:
+        DefaultCommandDispatcher(string alias);
+        virtual ~DefaultCommandDispatcher();
         /*!
          Initialization method for output buffer
          */
-        void init(chaos::common::data::CDataWrapper *initConfiguration) throw(CException);
+        void init(void *) throw(CException);
         
         /*!
          Deinitialization method for output buffer
          */
         void deinit() throw(CException);
-
-    public:
-        DefaultCommandDispatcher(string alias);
-        virtual ~DefaultCommandDispatcher();
         /*!
          Register actions defined by AbstractActionDescriptor instance contained in the array
          */
@@ -78,12 +96,10 @@ namespace chaos{
 		// inherited method
 		chaos::common::data::CDataWrapper* executeCommandSync(chaos::common::data::CDataWrapper * action_pack);
         
-        // inherited method
-        chaos::common::data::CDataWrapper* executeCommandSync(const std::string& domain,
-                                                              const std::string& action,
-                                                              chaos::common::data::CDataWrapper * message_data);
         //inherited method
         uint32_t domainRPCActionQueued(const std::string& domain_name);
+        
+        bool hasDomain(const std::string& domain_name);
     };
 }
 #endif

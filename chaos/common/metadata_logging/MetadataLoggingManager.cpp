@@ -1,22 +1,22 @@
 /*
- *	MetadataLoggingManager.cpp
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFramework]
- *	Created by Claudio Bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 02/02/16 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include <chaos/common/network/NetworkBroker.h>
@@ -89,7 +89,7 @@ void MetadataLoggingManager::deinit() throw(chaos::CException) {
 
 void MetadataLoggingManager::registerChannel(const std::string& channel_alias,
                                              chaos::common::utility::ObjectInstancer<AbstractMetadataLogChannel> *instancer) {
-    map_instancer.insert(make_pair(channel_alias, instancer));
+    map_instancer.insert(std::pair<std::string, ChaosSharedPtr< chaos::common::utility::ObjectInstancer<AbstractMetadataLogChannel > > >(channel_alias, ChaosSharedPtr< chaos::common::utility::ObjectInstancer<AbstractMetadataLogChannel > > (instancer)));
 }
 
 AbstractMetadataLogChannel *MetadataLoggingManager::getChannel(const std::string channel_alias) {
@@ -101,7 +101,7 @@ AbstractMetadataLogChannel *MetadataLoggingManager::getChannel(const std::string
     
     AbstractMetadataLogChannel *result = map_instancer[channel_alias]->getInstance();
     result->setLoggingManager(this);
-    map_instance.insert(make_pair(result->getInstanceUUID(), result));
+    map_instance.insert(std::pair<std::string, AbstractMetadataLogChannel*> (result->getInstanceUUID(), result));
     
     MLM_INFO << "Creted new channel instance " << result->getInstanceUUID() << " for " << channel_alias;
     return result;
@@ -149,18 +149,18 @@ int MetadataLoggingManager::sendLogEntry(chaos::common::data::CDataWrapper *log_
 
     int err = 0;
     //send message to mds and wait for ack
-    std::auto_ptr<MultiAddressMessageRequestFuture> log_future = message_channel->sendRequestWithFuture(MetadataServerLoggingDefinitionKeyRPC::ACTION_NODE_LOGGING_RPC_DOMAIN,
+    ChaosUniquePtr<MultiAddressMessageRequestFuture> log_future = message_channel->sendRequestWithFuture(MetadataServerLoggingDefinitionKeyRPC::ACTION_NODE_LOGGING_RPC_DOMAIN,
                                                                                                         MetadataServerLoggingDefinitionKeyRPC::ACTION_NODE_LOGGING_SUBMIT_ENTRY,
                                                                                                         log_entry,
                                                                                                         2000);
     //wait for ack
     if(log_future->wait()) {
         //we have got semthing
-        DEBUG_CODE(MLM_DBG << "Submition log entry has received ack with error\n " << log_future->getError() <<
+        /*DEBUG_CODE(MLM_DBG << "Submition log entry has received ack with error\n " << log_future->getError() <<
                    "\n" << log_future->getErrorMessage() << "\n" <<
-                   log_future->getErrorDomain(););
+                   log_future->getErrorDomain(););*/
         if((err = log_future->getError())) {
-            MLM_ERR << "Error forwarding log entry with code:" << err;
+            MLM_ERR << "Error forwarding log entry with code:" << err<<"Domain:"<<log_future->getErrorDomain()<<" msg:"<<log_future->getErrorMessage();
         } else {
             //log has been successfully forwarded
             DEBUG_CODE(MLM_DBG << "Log has been successfully forwarded");

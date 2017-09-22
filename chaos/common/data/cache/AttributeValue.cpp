@@ -1,21 +1,22 @@
 /*
- *	AttributesValue.cpp
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2013 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include <chaos/common/global.h>
@@ -39,13 +40,15 @@ using namespace chaos::common::data::cache;
 AttributeValue::AttributeValue(const std::string& _name,
                                uint32_t _index,
                                uint32_t _size,
-                               chaos::DataType::DataType _type):
+                               chaos::DataType::DataType _type,
+                               const std::vector<chaos::DataType::BinarySubtype>& _sub_type):
 value_buffer(NULL),
 size(_size),
 name(_name),
 index(_index),
 buf_size(0),
 type(_type),
+sub_type(_sub_type),
 sharedBitmapChangedAttribute(NULL){
     
     if(size) {
@@ -65,6 +68,7 @@ AttributeValue::~AttributeValue() {
         buf_size =0;
         size=0;
         free(value_buffer);
+        value_buffer=NULL;
     }
 }
 
@@ -120,7 +124,14 @@ bool AttributeValue::setStringValue(const std::string& value,
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
+bool AttributeValue::setValue(CDataWrapper& attribute_value,
+                              bool tag_has_changed) {
+	attribute_value.copyAllTo(cdvalue);
+	//set the relative field for set has changed
+	if(tag_has_changed) sharedBitmapChangedAttribute->set(index);
+	 return true;
 
+}
 bool AttributeValue::setValue(const CDataVariant& attribute_value,
                               bool tag_has_changed) {
     CHAOS_ASSERT(value_buffer)
@@ -151,13 +162,14 @@ bool AttributeValue::setValue(const CDataVariant& attribute_value,
             break;
         }
         case DataType::TYPE_DOUBLE: {
-            bool bv = attribute_value.asBool();
+            double dv = attribute_value.asDouble();
             //copy string to buffer
             std::memcpy(value_buffer,
-                        &bv,
-                        sizeof(bool));
+                        &dv,
+                        sizeof(double));
             break;
         }
+        case DataType::TYPE_CLUSTER:
         case DataType::TYPE_STRING: {
             const std::string value = attribute_value.asString();
             if(!grow((uint32_t)value.size())) return false;
@@ -256,13 +268,26 @@ CDataWrapper *AttributeValue::getValueAsCDatawrapperPtr(bool from_json) {
 void AttributeValue::writeToCDataWrapper(CDataWrapper& data_wrapper) {
     switch(type) {
         case chaos::DataType::TYPE_BYTEARRAY:{
-            data_wrapper.addBinaryValue(name, (const char *)value_buffer, size);
+            switch(sub_type.size()) {
+                case 1:
+                    data_wrapper.addBinaryValue(name, sub_type[0], (const char *)value_buffer, size);
+                    break;
+                    
+                default:
+                    data_wrapper.addBinaryValue(name, (const char *)value_buffer, size);
+                    break;
+            }
+            break;
+        }
+        case chaos::DataType::TYPE_CLUSTER:{
+
+            data_wrapper.addCSDataValue(name,cdvalue);
             break;
         }
         case chaos::DataType::TYPE_STRING:{
-            unsigned long str_len = std::strlen((const char *)value_buffer);
+            unsigned long str_len = value_buffer?std::strlen((const char *)value_buffer):0;
             str_len = (str_len>=size?size:str_len);
-            data_wrapper.addStringValue(name, std::string(static_cast<const char*>(value_buffer), str_len));
+            data_wrapper.addStringValue(name, (str_len?std::string(static_cast<const char*>(value_buffer), str_len):""));
             break;
         }
             
@@ -298,6 +323,7 @@ std::string AttributeValue::toString() {
         case chaos::DataType::TYPE_BYTEARRAY:{
             return "binary_data";
         }
+        case chaos::DataType::TYPE_CLUSTER:
         case chaos::DataType::TYPE_STRING:{
             return std::string((const char *)value_buffer, size);
         }
@@ -332,6 +358,8 @@ std::string AttributeValue::toString(int double_precision) {
         case chaos::DataType::TYPE_BYTEARRAY:{
             return "binary_data";
         }
+        
+        case chaos::DataType::TYPE_CLUSTER:
         case chaos::DataType::TYPE_STRING:{
             return std::string((const char *)value_buffer, size);
         }

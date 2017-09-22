@@ -67,7 +67,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QTableView" name="tableViewLogEntries">
+         <widget class="CQTableView" name="tableViewLogEntries">
           <property name="font">
            <font>
             <pointsize>11</pointsize>
@@ -209,7 +209,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QTableView" name="tableViewLogData">
+         <widget class="CQTableView" name="tableViewLogData">
           <property name="font">
            <font>
             <pointsize>11</pointsize>
@@ -301,6 +301,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CQTableView</class>
+   <extends>QTableView</extends>
+   <header>widget/CQTableView.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

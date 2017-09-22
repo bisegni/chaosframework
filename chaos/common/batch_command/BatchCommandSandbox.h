@@ -20,58 +20,19 @@
 #include <chaos/common/exception/exception.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/data/cache/AttributeValueSharedCache.h>
-#include <chaos/common/utility/StartableService.h>
 #include <chaos/common/thread/WaitSemaphore.h>
-#include <chaos/common/pqueue/CObjectProcessingPriorityQueue.h>
 
-#include <chaos/common/batch_command/BatchCommand.h>
-#include <chaos/common/batch_command/BatchCommandTypes.h>
-#include <chaos/common/batch_command/BatchCommandSandboxEventHandler.h>
+#include <chaos/common/batch_command/AbstractSandbox.h>
 
 namespace chaos{
     namespace common {
         namespace batch_command {
 			
-			using namespace chaos::common::data;
-			using namespace chaos::common::data::cache;
-			
             //forward declaration
             class BatchCommand;
             class BatchCommandExecutor;
             
-            //! Base functor for the command handler
-            struct BaseFunctor {
-                std::string sandbox_identifier;
-                BatchCommand *cmd_instance;
-            };
-            
-            //! Functor implementation
-            struct AcquireFunctor : public BaseFunctor {
-                void operator()();
-            };
-            
-            struct CorrelationFunctor : public BaseFunctor {
-                void operator()();
-            };
-            
-            
-            /*!
-             Type used for the next available command impl and description
-             into the sandbox
-             */
-            struct CommandInfoAndImplementation {
-                CDataWrapper *cmdInfo;
-                BatchCommand *cmdImpl;
-                
-                CommandInfoAndImplementation(CDataWrapper *_cmdInfo, BatchCommand *_cmdImpl);
-                ~CommandInfoAndImplementation();
-                
-                void deleteInfo();
-                void deleteImpl();
-                
-            };
-            
-            // pulic class used into the sandbox for use the priority set into the lement that are pointer and not rela reference
+            //! pulic class used into the sandbox for use the priority set into the lement that are pointer and not rela reference
             struct PriorityCommandCompare {
                 bool operator() (const PRIORITY_ELEMENT(CommandInfoAndImplementation)* lhs, const PRIORITY_ELEMENT(CommandInfoAndImplementation)* rhs) const {
                     if(lhs->priority < rhs->priority) {
@@ -84,7 +45,7 @@ namespace chaos{
                 }
             };
             
-            //! SAndbox fo the slow command execution
+            //! Sandbox fo the slow command execution
             /*!
              This is the sandbox where the command are executed. Here are checked the
              submission rule of the incoming command and the execution state of the current one.
@@ -92,24 +53,19 @@ namespace chaos{
              come in.
              */
             class BatchCommandSandbox:
-			public utility::StartableService {
+            public AbstractSandbox {
                 friend class BatchCommandExecutor;
                 friend struct AcquireFunctor;
                 friend struct CorrelationFunctor;
                 //stat for the single step of the command execution
                 SandboxStat stat;
                 BatchCommandStat cmd_stat;
-                //sandbox identification string
-                std::string identification;
-                
-                //handler for sandbox event
-                BatchCommandSandboxEventHandler *event_handler;
                 
                 //-------shared data beetwen scheduler and checker thread------
                 bool            schedule_work_flag;
                 
                 //! default sticky command
-                std::auto_ptr<PRIORITY_ELEMENT(CommandInfoAndImplementation)>   default_sticky_command;
+                ChaosUniquePtr<PRIORITY_ELEMENT(CommandInfoAndImplementation)>   default_sticky_command;
                 
                 //!point to the current executing command
                 PRIORITY_ELEMENT(CommandInfoAndImplementation)   *current_executing_command;
@@ -120,7 +76,7 @@ namespace chaos{
                 
                 //------------------scheduler---------------------
                 //internal ascheduling thread
-                std::auto_ptr<boost::thread> thread_scheduler;
+                ChaosUniquePtr<boost::thread> thread_scheduler;
                 //! delay for the next beat of scheduler
                 //uint64_t schedulerStepDelay;
                 //! Thread for whait until the queue is empty
@@ -138,7 +94,7 @@ namespace chaos{
                 boost::mutex          mutex_next_command_queue;
                 
                 //! instance to the checker thread
-                std::auto_ptr<boost::thread>    thread_next_command_checker;
+                ChaosUniquePtr<boost::thread>    thread_next_command_checker;
                 
                 //! Thread for whait until the queue is empty
                 boost::condition_variable_any  condition_waith_scheduler_end;
@@ -149,7 +105,7 @@ namespace chaos{
                  of the input channel or shared variable setting,
                  used into the control algoritm.
                  */
-                AttributeValueSharedCache *shared_attribute_cache;
+                chaos::common::data::cache::AttributeValueSharedCache *shared_attribute_cache;
                 
                 //! contain the paused command
                 std::stack<PRIORITY_ELEMENT(CommandInfoAndImplementation)*> command_stack;
@@ -160,6 +116,9 @@ namespace chaos{
                 
                 //! Pointer to the correlation and commit pahse handler's of the current command
                 CorrelationFunctor correlation_handler_functor;
+
+                EndFunctor end_handler_functor;
+
                 //-------------------- handler poiter --------------------
                 
                 //!install the handler of the command
@@ -174,9 +133,6 @@ namespace chaos{
 				
 				//kill the current running command without rule(like -9)
                 void killCurrentCommand();
-				
-				//default private constructor and destructor
-                BatchCommandSandbox();
                 
                 //! execute a complete step of the command (acquire -> correlation) and check if the new command can be installed
                 /*!
@@ -197,7 +153,7 @@ namespace chaos{
                 void checkNextCommand();
                 
                 //!Lfat the fault information with the command information into a unique CDataWrapper
-                inline std::auto_ptr<CDataWrapper> flatErrorInformationInCommandInfo(CDataWrapper *command_info,
+                inline ChaosUniquePtr<chaos::common::data::CDataWrapper> flatErrorInformationInCommandInfo(chaos::common::data::CDataWrapper *command_info,
                                                                                      FaultDescription& command_fault);
             protected:
                 
@@ -216,21 +172,26 @@ namespace chaos{
                 void deinit() throw(chaos::CException);
                 
                 //! enqueue a new command
-                bool enqueueCommand(CDataWrapper *command_to_info, BatchCommand *command_impl, uint32_t priority);
+                bool enqueueCommand(chaos::common::data::CDataWrapper *command_to_info, BatchCommand *command_impl, uint32_t priority);
                 
                 //! set the deafutl sticky command
                 /*!
                  this comamnd is the one that is run when no other command
                  are presente neither into commadn queue or command stack
                  */
-                void setDefaultStickyCommand(BatchCommand *instance);
+                void setDefaultStickyCommand(BatchCommand *command_impl);
             public:
+                BatchCommandSandbox();
                 ~BatchCommandSandbox();
                 //! Command features modification rpc action
                 /*!
                  Updat ethe modiable features of the running command
                  */
-                void setCommandFeatures(features::Features& features) throw (CException);
+                void setCurrentCommandFeatures(features::Features& features) throw (CException);
+                
+                void setCurrentCommandScheduerStepDelay(uint64_t scheduler_step_delay);
+                
+                void lockCurrentCommandFeature(bool lock);
             };
         }
     }

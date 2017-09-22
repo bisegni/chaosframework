@@ -1,38 +1,34 @@
 /*
- *	ActionDescriptor.cpp
- *	!CHAOS
- *	Created by Bisegni Claudio. 
- *	
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ * Copyright 2012, 2017 INFN
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 #include <chaos/common/action/ActionDescriptor.h>
 using namespace chaos;
-using namespace std;
 using namespace boost;
+using namespace std;
 
+AbstractActionDescriptor::AbstractActionDescriptor(bool shared_execution):
+fired(false),
+enabled(true),
+shared_execution(shared_execution){}
 
-
-AbstractActionDescriptor::AbstractActionDescriptor(){
-    fired=false;
-    enabled=true;
-}
-
-AbstractActionDescriptor::~AbstractActionDescriptor() {
-    fired=false;
-    enabled=false;
-}
+AbstractActionDescriptor::~AbstractActionDescriptor() {}
 
 /*
  set the string value for the determinated type
@@ -63,6 +59,10 @@ bool AbstractActionDescriptor::setFiredWriteLocked(bool _fired){
     return setFired(_fired);
 }
 
+bool AbstractActionDescriptor::isShared() {
+    return shared_execution;
+}
+
 bool AbstractActionDescriptor::setFired(bool _fired){
     fired =_fired && enabled;
     return fired;
@@ -84,7 +84,7 @@ bool AbstractActionDescriptor::setEnabled(bool _enabled){
 /*
  get the string value for the determinated type, a reference
  has been return so keep in mind that string live within object life
- */        
+ */
 const string & AbstractActionDescriptor::getTypeValue(ActionStringType sType)  {
     if (sType == ActionDomain) {
         return actionDomain;
@@ -97,7 +97,7 @@ const string & AbstractActionDescriptor::getTypeValue(ActionStringType sType)  {
 /*
  Return the array list of the param defined by this action
  */
-vector< boost::shared_ptr<ActionParamDescription> >& AbstractActionDescriptor::getParamDescriptions() {
+vector< ChaosSharedPtr<ActionParamDescription> >& AbstractActionDescriptor::getParamDescriptions() {
     return paramDescriptionVec;
 }
 
@@ -107,7 +107,7 @@ vector< boost::shared_ptr<ActionParamDescription> >& AbstractActionDescriptor::g
 void AbstractActionDescriptor::addParam(const std::string& param_name,
                                         DataType::DataType type,
                                         const std::string& description){
-    boost::shared_ptr<ActionParamDescription> desc (new ActionParamDescription(param_name));
+    ChaosSharedPtr<ActionParamDescription> desc (new ActionParamDescription(param_name));
     desc->paramType = type;
     desc->paramDescription = description;
     paramDescriptionVec.push_back(desc);

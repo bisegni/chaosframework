@@ -37,6 +37,13 @@ private slots:
 
     void selectionChanged(const QItemSelection& selected,
                           const QItemSelection& unselected);
+
+    void bindTypeChanged(chaos::service_common::data::script::ScriptInstance& script_instance);
+    void instanceCommitResult(bool achived);
+    void on_pushButtonResetChange_clicked();
+
+    void on_pushButtonApplyChange_clicked();
+
 private:
     ApiSubmitter api_submitter;
     WidgetUtility widget_utility;

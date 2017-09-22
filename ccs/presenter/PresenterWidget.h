@@ -4,7 +4,7 @@
 #include "../monitor/monitor.h"
 #include "../api_async_processor/ApiSubmitter.h"
 
-#include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
+#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
 
 #include <QMap>
 #include <QWidget>
@@ -27,9 +27,6 @@ class PresenterWidget:
         protected ApiHandler {
     Q_OBJECT
     friend class CommandPresenter;
-
-    QMdiSubWindow *editor_subwindow;
-    CommandPresenter *presenter_instance;
 
     unsigned int submitted_api;
     ApiSubmitter api_submitter;
@@ -56,8 +53,8 @@ public slots:
     void closeTab();
 
 private:
+    void showEvent( QShowEvent* event ) Q_DECL_OVERRIDE;
     void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;
-    void setSubWindow(QMdiSubWindow *_editor_subwindow);
     void addDefaultNodeAction(QWidget *contextual_menu_parent);
 private slots:
     void generalContextualMenuActionTrigger();
@@ -70,9 +67,9 @@ protected slots:
 protected:
     ApiAsyncProcessor api_processor;
 
-    void setTabTitle(const QString& title);
+    void setTitle(const QString& title);
 
-    void addWidgetToPresenter(PresenterWidget *p_w);
+    void launchPresenterWidget(PresenterWidget *p_w);
 
     void showInformation(const QString& title,
                          const QString& sub_title,
@@ -120,7 +117,9 @@ protected:
     void registerWidgetForContextualMenu(QWidget *contextual_menu_parent,
                                          QMap<QString, QVariant> *widget_contextual_menu_action,
                                          bool add_default_node_action);
-
+    void registerWidgetForContextualMenu(QWidget *contextual_menu_parent,
+                                         QVector< QPair<QString, QVariant> >& widget_contextual_menu_action,
+                                         bool add_default_node_action);
     virtual void contextualMenuActionTrigger(const QString& cm_title,
                                              const QVariant& cm_data);
 

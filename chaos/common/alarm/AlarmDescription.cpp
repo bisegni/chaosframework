@@ -1,22 +1,22 @@
 /*
- *	AlarmDescription.cpp
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFramework]
- *	Created by bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 26/10/2016 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include <chaos/common/alarm/AlarmDescription.h>
@@ -26,19 +26,20 @@ using namespace chaos::common::utility;
 using namespace chaos::common::state_flag;
 
 #pragma mark AlarmHandler
-void AlarmHandler::stateFlagUpdated(const std::string& flag_uuid,
-                                    const std::string& flag_name,
-                                    const std::string& level_name,
-                                    const StateFlagServerity current_level_severity) {
-    alarmChanged(flag_name,
+void AlarmHandler::stateFlagUpdated(const FlagDescription       flag_description,
+                                    const std::string&          level_name,
+                                    const StateFlagServerity    current_level_severity) {
+    alarmChanged(flag_description.tag,
+                 flag_description.name,
                  current_level_severity);
 }
 
 #pragma mark AlarmDescription
-AlarmDescription::AlarmDescription(const std::string alarm_name,
-                                   const std::string alarm_description):
+AlarmDescription::AlarmDescription(const std::string& alarm_tag,
+                                   const std::string& alarm_name,
+                                   const std::string& alarm_description):
 StateFlag(alarm_name,
-          alarm_description){}
+          alarm_description){setTag(alarm_tag);}
 
 AlarmDescription::~AlarmDescription() {}
 
@@ -75,4 +76,6 @@ const std::string& AlarmDescription::getCurrentSeverityDescription() const {
     return StateFlag::getCurrentStateLevel().getDescription();
 }
 
-
+const std::string& AlarmDescription::getAlarmTag() const {
+    return StateFlag::getTag();
+}

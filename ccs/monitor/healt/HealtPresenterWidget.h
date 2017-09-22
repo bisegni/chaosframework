@@ -1,8 +1,8 @@
 #ifndef HEALTPRESENTERWIDGET_H
 #define HEALTPRESENTERWIDGET_H
 #include "../handler/healt/healt.h"
-#include "../../presenter/CommandPresenter.h"
-#include "../../api_async_processor/ApiAsyncProcessor.h"
+#include "../../api_async_processor/ApiSubmitter.h"
+#include "utility/WidgetUtility.h"
 #include <QFrame>
 
 namespace Ui {
@@ -11,42 +11,50 @@ class HealtPresenterWidget;
 
 //! Widget that show the healt information about a node
 class HealtPresenterWidget :
-        public QFrame
-{
+        public QFrame,
+        protected WidgetUtilityhandler,
+        protected ApiHandler,
+        chaos::metadata_service_client::node_monitor::NodeMonitorHandler {
     Q_OBJECT
 
 protected:
-    //! called when there is a new value for the status
 
+    //!Api has ben called successfully
+    void onApiDone(const QString& tag,
+                   QSharedPointer<chaos::common::data::CDataWrapper> api_result);
 
-    //! called when there is a new value for the heartbeat
+    void nodeChangedOnlineState(const std::string& node_uid,
+                                chaos::metadata_service_client::node_monitor::OnlineState old_state,
+                                chaos::metadata_service_client::node_monitor::OnlineState new_state);
 
+    void nodeChangedInternalState(const std::string& node_uid,
+                                  const std::string& old_state,
+                                  const std::string& new_state);
+
+    void nodeHasBeenRestarted(const std::string& node_uid);
+
+    void cmActionTrigger(const QString& cm_title,
+                         const QVariant& cm_data);
 public:
-    explicit HealtPresenterWidget(CommandPresenter *_global_command_presenter,
-                                  const QString& node_to_check,
+    explicit HealtPresenterWidget(const QString& node_to_check,
                                   QWidget *parent = 0);
     ~HealtPresenterWidget();
 public slots:
-
-private slots:
-
-    //!Api has ben called successfully
-    void asyncApiResult(const QString& tag,
-                        QSharedPointer<chaos::common::data::CDataWrapper> api_result);
-
-    //!Api has been give an error
-    void asyncApiError(const QString& tag,
-                       QSharedPointer<chaos::CException> api_exception);
-    void asyncApiTimeout(const QString& tag);
     //!open node editor
     void on_pushButtonOpenNodeEditor_clicked();
-
-    void cuContextualmenuTrigger();
+private slots:
+    void changedOnlineStatus(const QString& node_uid,
+                             chaos::metadata_service_client::node_monitor::OnlineState online_state);
 private:
+    bool is_cu;
+    bool is_sc_cu;
+    bool is_ds;
+    QAction *node_action;
     QString type;
+    QString subtype;
+    WidgetUtility wUtil;
     const QString node_uid;
-    ApiAsyncProcessor api_processor;
-    CommandPresenter *global_command_presenter;
+    ApiSubmitter api_submitter;
     Ui::HealtPresenterWidget *ui;
 
     QString seconds_to_DHMS(uint64_t duration);

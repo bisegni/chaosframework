@@ -1,21 +1,22 @@
 /*
- *	IODirectIODriver.h
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #ifndef __CHAOSFramework__IODirectIODriver__
@@ -50,14 +51,11 @@ namespace chaos_dio_channel = chaos::common::direct_io::channel;
 namespace chaos{
     namespace common {
         namespace io {
-            using namespace std;
-            using namespace boost;
-
+            
             /*!
              Struct for initialization of the io driver
              */
             typedef struct IODirectIODriverInitParam {
-                chaos::common::network::NetworkBroker	*network_broker;
                 chaos_direct_io::DirectIOClient			*client_instance;
                 chaos_direct_io::DirectIOServerEndpoint *endpoint_instance;
             } IODirectIODriverInitParam, *IODirectIODriverInitParamPtr;
@@ -73,6 +71,7 @@ namespace chaos{
                 chaos_dio_channel::DirectIODeviceClientChannel		*device_client_channel;
                 chaos_dio_channel::DirectIOSystemAPIClientChannel	*system_client_channel;
             } IODirectIODriverClientChannels;
+            
             
             /*!
              */
@@ -95,22 +94,21 @@ namespace chaos{
                 WaitSemaphore wait_get_answer;
                 boost::shared_mutex mutext_feeder;
                 
-                IODData data_cache;
-                chaos::common::network::URLServiceFeeder connectionFeeder;
-                
                 //query future management
                 boost::shared_mutex				map_query_future_mutex;
                 std::map<std::string, QueryCursor*>	map_query_future;
                 
                 std::string uuid;
+                bool shutting_down;
             protected:
+                chaos::common::network::URLServiceFeeder connectionFeeder;
                 void disposeService(void *service_ptr);
                 void* serviceForURL(const common::network::URL& url, uint32_t service_index);
                 void handleEvent(chaos_direct_io::DirectIOClientConnection *client_connection,
                                  chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event);
             public:
                 
-                IODirectIODriver(std::string alias);
+                IODirectIODriver(const std::string& alias);
                 virtual ~IODirectIODriver();
                 
                 void setDirectIOParam(IODirectIODriverInitParam& _init_parameter);
@@ -126,6 +124,10 @@ namespace chaos{
                  */
                 void deinit() throw(CException);
                 
+                void storeHealthData(const std::string& key,
+                                     chaos_data::CDataWrapper & dataToStore,
+                                     DataServiceNodeDefinitionType::DSStorageType storage_type) throw(CException);
+                
                 /*
                  * storeRawData
                  */
@@ -136,7 +138,8 @@ namespace chaos{
                 int removeData(const std::string& key,
                                uint64_t start_ts,
                                uint64_t end_ts) throw(CException);
-                
+                int retriveMultipleData(const ChaosStringVector& key,
+                                        chaos::common::data::VectorCDWShrdPtr& result)  throw(CException);
                 /*
                  * retriveRawData
                  */
@@ -148,11 +151,6 @@ namespace chaos{
                                                    const std::string& key,
                                                    uint32_t dataset_type,
                                                    chaos_data::CDataWrapper **cdatawrapper_handler);
-                //! restore from a tag a dataset associated to a key
-                int createNewSnapshot(const std::string& snapshot_tag,
-                                      const std::vector<std::string>& node_list);
-                
-                int deleteSnapshot(const std::string& snapshot_tag);
                 
                 /*
                  * updateConfiguration

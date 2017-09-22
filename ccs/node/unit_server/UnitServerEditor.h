@@ -1,9 +1,10 @@
 #ifndef UNITSERVEREDITOR_H
 #define UNITSERVEREDITOR_H
 
+#include "../../search/SearchNodeResult.h"
 #include "../../presenter/PresenterWidget.h"
 #include "../../widget/CLedIndicatorHealt.h"
-#include "../../search/SearchNodeResult.h"
+#include "../../data/LogProcessEntriesTableModel.h"
 
 #include <QItemSelection>
 #include <QStringListModel>
@@ -72,6 +73,10 @@ private slots:
                                 chaos::metadata_service_client::node_monitor::OnlineState alive_state);
     void on_tableView_doubleClicked(const QModelIndex &index);
 
+    void on_pushButtonStartSearchEntry_clicked();
+
+    void on_pushButtonLoadMoreEntries_clicked();
+
 protected:
     void initUI();
     bool isClosing();
@@ -80,6 +85,7 @@ protected:
 protected slots:
         void selectedUnitServer(const QString& tag, const QVector<QPair<QString,QString> >& selected_item);
 private:
+    LogProcessEntriesTableModel us_log_entries_tab_model;
     SearchNodeResult    *move_copy_search_instance;
     QStandardItemModel *table_model;
     Ui::UnitServerEditor *ui;

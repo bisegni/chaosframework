@@ -1,22 +1,22 @@
 /*
- *	EventConsumerDatasetChange.h
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFramework]
- *	Created by bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 29/07/16 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #ifndef __CHAOSFramework__A5E9B423_6474_43C8_92B3_A4FCA8AC8C77_RegisterEventConsumerEnvironment_h
@@ -57,7 +57,7 @@ namespace chaos {
                     return environment_name;
                 }
                 
-                virtual std::auto_ptr<chaos::common::data::CDataWrapper> serialize() = 0;
+                virtual ChaosUniquePtr<chaos::common::data::CDataWrapper> serialize() = 0;
             };
             
             //!define th emap taht correlata
@@ -67,9 +67,9 @@ namespace chaos {
             public AbstractTriggerEnvironment {
             public:
                 //!comodity typedef
-                typedef boost::shared_ptr< SubjectBaseClass >                 SubjectInstanceShrdPtr;
-                typedef typename boost::shared_ptr< typename EventInstancerDescription<EventType, SubjectBaseClass>::ConcreteEvent >        EventInstanceShrdPtr;
-                typedef typename boost::shared_ptr< typename ConsumerInstancerDescription<EventType, SubjectBaseClass>::ConcreteConsumer >  ConsumerShrdPtr;
+                typedef ChaosSharedPtr< SubjectBaseClass >                 SubjectInstanceShrdPtr;
+                typedef typename ChaosSharedPtr< typename EventInstancerDescription<EventType, SubjectBaseClass>::ConcreteEvent >        EventInstanceShrdPtr;
+                typedef typename ChaosSharedPtr< typename ConsumerInstancerDescription<EventType, SubjectBaseClass>::ConcreteConsumer >  ConsumerShrdPtr;
                 
                 typedef typename ConsumerInstancerDescription<EventType, SubjectBaseClass>::ConsumerInstancerShrdPtr                ConsumerInstancerShrdPtr;
                 typedef typename EventInstancerDescription<EventType, SubjectBaseClass>::EventInstancerShrdPtr                      EventInstancerShrdPtr;
@@ -127,7 +127,7 @@ namespace chaos {
                     }
                 };
                 
-                typedef boost::shared_ptr< MappingEventConsumerOnSubject > MappingEventConsumerOnSubjectShrdPtr;
+                typedef ChaosSharedPtr< MappingEventConsumerOnSubject > MappingEventConsumerOnSubjectShrdPtr;
                 
                 //!multi index key extractor
                 struct AbstractEventMIExstractEventType {
@@ -172,7 +172,7 @@ namespace chaos {
                     if(it != type_subject_index.end()) {
                         return (*it)->consumer_instances;
                     } else {
-                        MappingEventConsumerOnSubjectShrdPtr mapping_instance(boost::make_shared<MappingEventConsumerOnSubject>(event_code,
+                        MappingEventConsumerOnSubjectShrdPtr mapping_instance(ChaosMakeSharedPtr<MappingEventConsumerOnSubject>(event_code,
                                                                                                                                 map_subject_instance[subject_uuid]));
                         type_subject_container.insert(mapping_instance);
                         return mapping_instance->consumer_instances;
@@ -333,8 +333,8 @@ namespace chaos {
                                      event_to_fire);
                 }
                 
-                std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
-                    std::auto_ptr<chaos::common::data::CDataWrapper> result(new chaos::common::data::CDataWrapper());
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> serialize() {
+                    ChaosUniquePtr<chaos::common::data::CDataWrapper> result(new chaos::common::data::CDataWrapper());
                     
                     common::property::PropertyGroup tmp_property_group;
                     common::property::PropertyGroupSDWrapper group_ref_wrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(common::property::PropertyGroup, tmp_property_group));

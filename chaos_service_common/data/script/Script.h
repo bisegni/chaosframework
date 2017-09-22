@@ -1,22 +1,22 @@
 /*
- *	Script.h
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFramework]
- *	Created by bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 24/05/16 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #ifndef __CHAOSFramework__B6FD4CC_B9C0_439B_9FD7_53540B34EC15_Script_h
@@ -27,7 +27,7 @@
 
 #include <chaos/common/data/structured/DatasetAttribute.h>
 #include <chaos_service_common/data/dataset/AlgorithmVariable.h>
-
+#include <chaos_service_common/data/node/Node.h>
 namespace chaos {
     namespace service_common {
         namespace data {
@@ -74,8 +74,8 @@ namespace chaos {
                     dataWrapped().language = CDW_GET_SRT_WITH_DEFAULT(serialized_data, chaos::ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LANGUAGE, "");
                 }
                 
-                std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
-                    std::auto_ptr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> serialize() {
+                    ChaosUniquePtr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
                     data_serialized->addInt64Value("seq", dataWrapped().unique_id);
                     data_serialized->addStringValue(CHAOS_SBD_NAME, dataWrapped().name);
                     data_serialized->addStringValue(CHAOS_SBD_DESCRIPTION, dataWrapped().description);
@@ -160,7 +160,7 @@ namespace chaos {
                         //deserialize classificaion list
                         if(serialized_data->hasKey("classification_list")) {
                             //encode classification list into array
-                            std::auto_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> serialized_array(serialized_data->getVectorValue("classification_list"));
+                            ChaosUniquePtr<chaos::common::data::CMultiTypeDataArrayWrapper> serialized_array(serialized_data->getVectorValue("classification_list"));
                             for(int idx = 0;
                                 idx < serialized_array->size();
                                 idx++) {
@@ -171,7 +171,7 @@ namespace chaos {
                         //deserialize pool list
                         if(serialized_data->hasKey("execution_pool_list")) {
                             //encode classification list into array
-                            std::auto_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> serialized_array(serialized_data->getVectorValue("execution_pool_list"));
+                            ChaosUniquePtr<chaos::common::data::CMultiTypeDataArrayWrapper> serialized_array(serialized_data->getVectorValue("execution_pool_list"));
                             for(int idx = 0;
                                 idx < serialized_array->size();
                                 idx++) {
@@ -182,11 +182,11 @@ namespace chaos {
                         //deserialize variable
                         if(serialized_data->hasKey(variable_ser_key) &&
                            serialized_data->isVectorValue(variable_ser_key)) {
-                            std::auto_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> serialized_array(serialized_data->getVectorValue(variable_ser_key));
+                            ChaosUniquePtr<chaos::common::data::CMultiTypeDataArrayWrapper> serialized_array(serialized_data->getVectorValue(variable_ser_key));
                             for(int idx = 0;
                                 idx < serialized_array->size();
                                 idx++) {
-                                std::auto_ptr<chaos::common::data::CDataWrapper> element(serialized_array->getCDataWrapperElementAtIndex(idx));
+                                ChaosUniquePtr<chaos::common::data::CDataWrapper> element(serialized_array->getCDataWrapperElementAtIndex(idx));
                                 algo_var_dw.deserialize(element.get());
                                 dataWrapped().variable_list.push_back(algo_var_dw.dataWrapped());
                             }
@@ -195,11 +195,11 @@ namespace chaos {
                         //deserialize dataset attribute
                         if(serialized_data->hasKey(ds_attr_ser_key) &&
                            serialized_data->isVectorValue(ds_attr_ser_key)) {
-                            std::auto_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> serialized_array(serialized_data->getVectorValue(ds_attr_ser_key));
+                            ChaosUniquePtr<chaos::common::data::CMultiTypeDataArrayWrapper> serialized_array(serialized_data->getVectorValue(ds_attr_ser_key));
                             for(int idx = 0;
                                 idx < serialized_array->size();
                                 idx++) {
-                                std::auto_ptr<chaos::common::data::CDataWrapper> element(serialized_array->getCDataWrapperElementAtIndex(idx));
+                                ChaosUniquePtr<chaos::common::data::CDataWrapper> element(serialized_array->getCDataWrapperElementAtIndex(idx));
                                 ds_attr_dw.deserialize(element.get());
                                 dataWrapped().dataset_attribute_list.push_back(ds_attr_dw.dataWrapped());
                             }
@@ -207,14 +207,14 @@ namespace chaos {
                     }
                     
                     //serialization
-                    std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
+                    ChaosUniquePtr<chaos::common::data::CDataWrapper> serialize() {
                         ScriptBaseDescriptionSDWrapper  sd_dw;
                         chaos::service_common::data::dataset::AlgorithmVariableSDWrapper algo_var_dw;
                         chaos::common::data::structured::DatasetAttributeSDWrapper ds_attr_dw;
                         
                         sd_dw() = dataWrapped().script_description;
                         
-                        std::auto_ptr<chaos::common::data::CDataWrapper> data_serialized = sd_dw.serialize();
+                        ChaosUniquePtr<chaos::common::data::CDataWrapper> data_serialized = sd_dw.serialize();
                         
                         //add script content
                         data_serialized->addStringValue(chaos::ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_CONTENT, dataWrapped().script_content);
@@ -244,7 +244,7 @@ namespace chaos {
                         //check for variable
                         if(dataWrapped().variable_list.size()) {
                             //we have some variable defined
-                            std::auto_ptr<chaos::common::data::CDataWrapper> variable_definition(new chaos::common::data::CDataWrapper());
+                            ChaosUniquePtr<chaos::common::data::CDataWrapper> variable_definition(new chaos::common::data::CDataWrapper());
                             for(chaos::service_common::data::dataset::AlgorithmVariableListIterator it = dataWrapped().variable_list.begin(),
                                 end = dataWrapped().variable_list.end();
                                 it != end;
@@ -258,7 +258,7 @@ namespace chaos {
                         //check for dataset attribute
                         if(dataWrapped().dataset_attribute_list.size()) {
                             //we have some attribute for dataset
-                            std::auto_ptr<chaos::common::data::CDataWrapper> variable_definition(new chaos::common::data::CDataWrapper());
+                            ChaosUniquePtr<chaos::common::data::CDataWrapper> variable_definition(new chaos::common::data::CDataWrapper());
                             for(chaos::common::data::structured::DatasetAttributeListIterator it = dataWrapped().dataset_attribute_list.begin(),
                                 end = dataWrapped().dataset_attribute_list.end();
                                 it != end;
@@ -276,6 +276,91 @@ namespace chaos {
                 CHAOS_DEFINE_TYPE_FOR_SD_LIST_WRAPPER(Script,
                                                       ScriptSDWrapper,
                                                       ScriptListWrapper);
+                
+                
+                typedef enum ScriptBindType {
+                    ScriptBindTypeUndefined = 0,
+                    ScriptBindTypeDisable,
+                    ScriptBindTypeAuto,
+                    ScriptBindTypeUnitServer
+                } ScriptBindType;
+                
+                static const char * const ScriptBindTypeUndefinedDescription = "Bind Undefined";
+                static const char * const ScriptBindTypeDisableDescription = "Bind Disable";
+                static const char * const ScriptBindTypeAutoDescription = "Bind Automatic";
+                static const char * const ScriptBindTypeUnitServerDescription = "Bind to Unit Server";
+                
+                inline static ScriptBindType scriptBindTypeDecodeDescription(const std::string& description) {
+                    if(description.compare(ScriptBindTypeDisableDescription) == 0){
+                        return ScriptBindTypeDisable;
+                    } else if(description.compare(ScriptBindTypeAutoDescription) == 0){
+                        return ScriptBindTypeAuto;
+                    } else if(description.compare(ScriptBindTypeUnitServerDescription) == 0){
+                        return ScriptBindTypeUnitServer;
+                    } else if(description.compare(ScriptBindTypeUndefinedDescription) == 0){
+                        return ScriptBindTypeUndefined;
+                    }
+                    return ScriptBindTypeUndefined;
+                }
+                
+                inline static std::string scriptBindTypeDecodeCode(const ScriptBindType code) {
+                    switch(code) {
+                        case ScriptBindTypeDisable:
+                            return ScriptBindTypeDisableDescription;
+                        case ScriptBindTypeAuto:
+                            return ScriptBindTypeAutoDescription;
+                        case ScriptBindTypeUnitServer:
+                            return ScriptBindTypeUnitServerDescription;
+                        case ScriptBindTypeUndefined:
+                            return ScriptBindTypeUndefinedDescription;
+                        default:
+                            return ScriptBindTypeUndefinedDescription;
+                    }
+                }
+                
+                //! The description of an instance of the script
+                struct ScriptInstance:
+                public node::NodeInstance {
+                    ScriptBindType  bind_type;
+                    std::string     bind_node;
+                    
+                    ScriptInstance():
+                    NodeInstance(),
+                    bind_type(ScriptBindTypeDisable),
+                    bind_node(){}
+                    
+                    ScriptInstance(const ScriptInstance& copy_src):
+                    NodeInstance(copy_src),
+                    bind_type(copy_src.bind_type),
+                    bind_node(copy_src.bind_node){}
+                    
+                    ScriptInstance& operator=(ScriptInstance const &rhs) {
+                        bind_type = rhs.bind_type;
+                        bind_node = rhs.bind_node;
+                        NodeInstance::operator=(rhs);
+                        return *this;
+                    };
+                };
+                
+                //sd wrapper for node instance class
+                CHAOS_OPEN_SDWRAPPER(ScriptInstance)
+                void deserialize(chaos::common::data::CDataWrapper *serialized_data) {
+                    if(serialized_data == NULL) return;
+                    node::NodeInstanceSDWrapper node_instance(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(node::NodeInstance, dataWrapped()));
+                    node_instance.deserialize(serialized_data);
+                    dataWrapped().bind_type = static_cast<ScriptBindType>(CDW_GET_INT32_WITH_DEFAULT(serialized_data, "script_bind_type", ScriptBindTypeDisable));
+                    dataWrapped().bind_node = CDW_GET_SRT_WITH_DEFAULT(serialized_data, "script_bind_node", "");
+                }
+                
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> serialize() {
+                    node::NodeInstanceSDWrapper node_instance(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(node::NodeInstance, dataWrapped()));
+                    ChaosUniquePtr<chaos::common::data::CDataWrapper> data_serialized = node_instance.serialize();
+                    
+                    data_serialized->addInt32Value("script_bind_type", static_cast<int32_t>(dataWrapped().bind_type));
+                    data_serialized->addStringValue("script_bind_node", dataWrapped().bind_node);
+                    return data_serialized;
+                }
+                CHAOS_CLOSE_SDWRAPPER()
             }
         }
     }

@@ -1,6 +1,6 @@
 #include "GroupTreeModel.h"
 
-#include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
+#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
 
 #include <QUuid>
 #include <QDebug>
@@ -40,7 +40,8 @@ Qt::ItemFlags GroupTreeModel::flags(const QModelIndex &index) const {
     return QAbstractItemModel::flags(index);
 }
 
-QVariant GroupTreeModel::headerData(int section, Qt::Orientation orientation,
+QVariant GroupTreeModel::headerData(int section,
+                                    Qt::Orientation orientation,
                                     int role) const {
     if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
         return root_item->data(section);
@@ -104,7 +105,7 @@ void GroupTreeModel::asyncApiResult(const QString& tag,
                                     QSharedPointer<chaos::common::data::CDataWrapper> api_result) {
     if(tag.startsWith("domain>")) {
         QString domain = tag.split(">").back();
-        std::auto_ptr<groups::GetNodeChildsHelper> gnc_helper = groups::GetNodeChilds::getHelper(api_result.data());
+        ChaosUniquePtr<groups::GetNodeChildsHelper> gnc_helper = groups::GetNodeChilds::getHelper(api_result.data());
         beginResetModel();
         root_item->removeChild();
         for(groups::NodeChildListConstIterator it = gnc_helper->getNodeChildsList().begin();
@@ -136,7 +137,7 @@ void GroupTreeModel::asyncApiResult(const QString& tag,
         mutex_update_model.unlock();
 
         //get child list and call update param
-        std::auto_ptr<groups::GetNodeChildsHelper> gnc_helper = groups::GetNodeChilds::getHelper(api_result.data());
+        ChaosUniquePtr<groups::GetNodeChildsHelper> gnc_helper = groups::GetNodeChilds::getHelper(api_result.data());
         _updateNodeChildList(node_index_parent, gnc_helper->getNodeChildsList());
     } else if(tag.startsWith("_delete_node_")) {
         mutex_update_model.lock();

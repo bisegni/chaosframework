@@ -1,22 +1,22 @@
 /*
- *	DataBrokerEditor.cpp
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFramework]
- *	Created by bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 25/07/16 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include <chaos/common/global.h>
@@ -59,11 +59,11 @@ int DataBrokerEditor::addNewDataset(const std::string& name,
     return 0;
 }
 
-std::auto_ptr<DatasetEditor> DataBrokerEditor::getDatasetEditorFor(const std::string& ds_name) {
+ChaosUniquePtr<DatasetEditor> DataBrokerEditor::getDatasetEditorFor(const std::string& ds_name) {
     LockableObjectReadLock_t wl;
     container_dataset.getReadLock(wl);
     
-    std::auto_ptr<DatasetEditor> result;
+    ChaosUniquePtr<DatasetEditor> result;
     DECNameIndexIterator nit = ds_index_name.find(ds_name);
     if(nit == ds_index_name.end()) {
         ERR << CHAOS_FORMAT("No dataset with name %1% found", %ds_name);
@@ -73,10 +73,10 @@ std::auto_ptr<DatasetEditor> DataBrokerEditor::getDatasetEditorFor(const std::st
     return result;
 }
 
-std::auto_ptr<DatasetCacheWrapper> DataBrokerEditor::getDatasetCacheWrapperFor(const std::string& ds_name) {
+ChaosUniquePtr<DatasetCacheWrapper> DataBrokerEditor::getDatasetCacheWrapperFor(const std::string& ds_name) {
     LockableObjectReadLock_t wl;
     container_dataset.getReadLock(wl);
-    std::auto_ptr<DatasetCacheWrapper> result;
+    ChaosUniquePtr<DatasetCacheWrapper> result;
     DECNameIndexIterator nit = ds_index_name.find(ds_name);
     if(nit == ds_index_name.end()) {
         ERR << CHAOS_FORMAT("No dataset with name %1% found", %ds_name);
@@ -86,10 +86,10 @@ std::auto_ptr<DatasetCacheWrapper> DataBrokerEditor::getDatasetCacheWrapperFor(c
     return result;
 }
 
-std::auto_ptr<CDataWrapper> DataBrokerEditor::serialize() {
+ChaosUniquePtr<chaos::common::data::CDataWrapper> DataBrokerEditor::serialize() {
     LockableObjectReadLock_t wl;
     container_dataset.getReadLock(wl);
-    std::auto_ptr<CDataWrapper> result(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> result(new CDataWrapper());
     //scan all dataset and every serialization will be added to global CDataWrapper as array
     Dataset ds_buff;
     DatasetSDWrapper reference_ser_wrap(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(Dataset, ds_buff));
@@ -113,14 +113,14 @@ void DataBrokerEditor::deserialize(CDataWrapper& serialization) {
        serialization.isVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION)) return;
     
     //get the datawrapper array
-    std::auto_ptr<CMultiTypeDataArrayWrapper> ser_ds_vec(serialization.getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION));
+    ChaosUniquePtr<CMultiTypeDataArrayWrapper> ser_ds_vec(serialization.getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION));
     if(ser_ds_vec->size() == 0) return;
     
     DatasetSDWrapper ds_wrapper;
     for(int idx = 0;
         idx < ser_ds_vec->size();
         idx++) {
-        std::auto_ptr<CDataWrapper> ds_ser(ser_ds_vec->getCDataWrapperElementAtIndex(idx));
+        ChaosUniquePtr<chaos::common::data::CDataWrapper> ds_ser(ser_ds_vec->getCDataWrapperElementAtIndex(idx));
         ds_wrapper.deserialize(ds_ser.get());
         addNewDataset(ds_wrapper.dataWrapped());
     }

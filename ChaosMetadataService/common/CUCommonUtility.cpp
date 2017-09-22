@@ -1,31 +1,35 @@
 /*
- *	CUCommonUtility.cpp
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2015 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include "CUCommonUtility.h"
+#include "../DriverPoolManager.h"
 
 #include <chaos/common/global.h>
 
 #include <boost/foreach.hpp>
 
 using namespace chaos::common::data;
+using namespace chaos::common::property;
 using namespace chaos::metadata_service::common;
+using namespace chaos::data_service::object_storage::abstraction;
 using namespace chaos::metadata_service::persistence::data_access;
 
 #define CUCU_INFO LOG_LOG(CUCommonUtility)
@@ -33,12 +37,12 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define CUCU_ERR  ERR_LOG(CUCommonUtility)
 
 
-std::auto_ptr<CDataWrapper> CUCommonUtility::prepareRequestPackForLoadControlUnit(const std::string& cu_uid, ControlUnitDataAccess *cu_da) {
+ChaosUniquePtr<chaos::common::data::CDataWrapper> CUCommonUtility::prepareRequestPackForLoadControlUnit(const std::string& cu_uid, ControlUnitDataAccess *cu_da) {
     CUCU_DBG << "Prepare autoload request for:" << cu_uid;
     int err = 0;
     CDataWrapper * tmp_ptr = NULL;
-    std::auto_ptr<CDataWrapper> instance_description;
-    std::auto_ptr<CDataWrapper> result_pack;
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> instance_description;
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> result_pack;
     if((err = cu_da->getInstanceDescription(cu_uid,
                                             &tmp_ptr))) {
         //we haven't found an instance for the node
@@ -78,28 +82,28 @@ void CUCommonUtility::prepareAutoInitAndStartInAutoLoadControlUnit(const std::st
     if((err = cu_da->getInstanceDescription(cu_uid, &tmp_ptr))) {
         LOG_AND_TROW_FORMATTED(CUCU_ERR, err, "Error %1% durring fetch of instance for unit server %2%", %err%cu_da)
     } else if(tmp_ptr) {
-        std::auto_ptr<CDataWrapper> auto_inst(tmp_ptr);
+        ChaosUniquePtr<chaos::common::data::CDataWrapper> auto_inst(tmp_ptr);
         bool auto_init = auto_inst->hasKey("auto_init")?auto_inst->getBoolValue("auto_init"):false;
         bool auto_start = auto_inst->hasKey("auto_start")?auto_inst->getBoolValue("auto_start"):false;
         
         if(auto_init || auto_start) {
             if(auto_init){
-                std::auto_ptr<CDataWrapper> init_datapack = initDataPack(cu_uid,
-                                                                         n_da,
-                                                                         cu_da,
-                                                                         ds_da);
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> init_datapack = initDataPack(cu_uid,
+                                                                                               n_da,
+                                                                                               cu_da,
+                                                                                               ds_da);
                 
-                std::auto_ptr<CDataWrapper> init_message_datapack(new CDataWrapper());
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> init_message_datapack(new CDataWrapper());
                 init_message_datapack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, NodeDomainAndActionRPC::ACTION_NODE_INIT);
                 init_message_datapack->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *init_datapack);
                 
                 auto_load_pack->appendCDataWrapperToArray(*init_message_datapack);
             }
             if(auto_start){
-                std::auto_ptr<CDataWrapper> start_datapack(new CDataWrapper());
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> start_datapack(new CDataWrapper());
                 start_datapack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_uid);
                 
-                std::auto_ptr<CDataWrapper> start_message_datapack(new CDataWrapper());
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> start_message_datapack(new CDataWrapper());
                 start_message_datapack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, NodeDomainAndActionRPC::ACTION_NODE_START);
                 start_message_datapack->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *start_datapack);
                 auto_load_pack->appendCDataWrapperToArray(*start_message_datapack);
@@ -111,15 +115,70 @@ void CUCommonUtility::prepareAutoInitAndStartInAutoLoadControlUnit(const std::st
     }
 }
 
-std::auto_ptr<CDataWrapper> CUCommonUtility::initDataPack(const std::string& cu_uid,
-                                                          NodeDataAccess *n_da,
-                                                          ControlUnitDataAccess *cu_da,
-                                                          DataServiceDataAccess *ds_da) {
+CDWShrdPtr CUCommonUtility::getConfigurationToUse(const std::string& cu_uid,
+                                                  const std::string& ds_attribute_name,
+                                                  chaos::metadata_service::persistence::data_access::NodeDataAccess *n_da,
+                                                  chaos::metadata_service::persistence::data_access::ControlUnitDataAccess *cu_da,
+                                                  PropertyGroup& control_unit_property_group) {
     int err = 0;
+    ChaosSharedPtr<CDataWrapper> element_configuration;
+    
+    //fetch static information
+    if((err = cu_da->getInstanceDatasetAttributeConfiguration(cu_uid,
+                                                              ds_attribute_name,
+                                                              element_configuration))) {
+        LOG_AND_TROW(CUCU_ERR, err, boost::str(boost::format("Error loading the configuration for the the dataset's attribute: %1% for control unit: %2%") % ds_attribute_name % cu_uid));
+    }
+    
+    if(control_unit_property_group.hasProperty(chaos::ControlUnitPropertyKey::INIT_RESTORE_OPTION)) {
+        if(control_unit_property_group.getProperty(chaos::ControlUnitPropertyKey::INIT_RESTORE_OPTION).getPropertyValue().asInt32() == chaos::ControlUnitPropertyKey::INIT_RESTORE_OPTION_TYPE_LAST_VALIDE) {
+            //in this case we need only the value, but if the attribute has been set in static configuration all othe property are preserved
+            //get last dataset
+            data_service::ObjectStoragePoolSlot *cache_slot = data_service::DriverPoolManager::getInstance()->getObjectStorageInstance();
+            if(cache_slot != NULL) {
+                CDWShrdPtr tmp_result;
+                if(cache_slot->resource_pooled->getDataAccess<ObjectStorageDataAccess>()->getLastObject(cu_uid+chaos::DataPackPrefixID::INPUT_DATASET_POSTFIX, tmp_result) == 0) {
+                    if(tmp_result.get() != NULL) {
+                        ChaosStringSet all_keys;
+                        if(element_configuration.get() == NULL){
+                            element_configuration.reset(new CDataWrapper());
+                        }
+                        //we have found last dataset
+                        ChaosSharedPtr<CDataWrapper> new_configuration(new CDataWrapper());
+                        element_configuration->getAllKey(all_keys);
+                        
+                        for(ChaosStringSetIterator it = all_keys.begin(),
+                            end = all_keys.end();
+                            it != end;
+                            it++) {
+                            if(it->compare(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE) == 0) {
+                                tmp_result->copyKeyToNewKey(ds_attribute_name, ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE, *new_configuration);
+                            } else {
+                                element_configuration->copyKeyTo(*it, *new_configuration);
+                            }
+                        }
+                        //set new confiuration as element default configuration
+                        element_configuration = new_configuration;
+                    }
+                }
+                data_service::DriverPoolManager::getInstance()->releaseObjectStorageInstance(cache_slot);
+            }
+        }
+    }
+    return element_configuration;
+}
+
+ChaosUniquePtr<chaos::common::data::CDataWrapper> CUCommonUtility::initDataPack(const std::string& cu_uid,
+                                                                                NodeDataAccess *n_da,
+                                                                                ControlUnitDataAccess *cu_da,
+                                                                                DataServiceDataAccess *ds_da) {
+    int err = 0;
+    int64_t run_id = 0;
     CDataWrapper *result = NULL;
-    std::auto_ptr<CDataWrapper> cu_base_description;
-    std::auto_ptr<CDataWrapper> dataset_description;
-    std::auto_ptr<CDataWrapper> init_datapack(new CDataWrapper());
+    PropertyGroup control_unit_property_group;
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> cu_base_description;
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> dataset_description;
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> init_datapack(new CDataWrapper());
     
     //set the control unique id in the init datapack
     init_datapack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_uid);
@@ -148,40 +207,57 @@ std::auto_ptr<CDataWrapper> CUCommonUtility::initDataPack(const std::string& cu_
         LOG_AND_TROW(CUCU_ERR, err, boost::str(boost::format("No instance found for control unit: %1%") % cu_uid));
     }
     //we have the configured instance
-    std::auto_ptr<CDataWrapper> instance_description(result);
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> instance_description(result);
     result = NULL;
+    
+    //update run id
+    //update the cotnrol unit id
+    if((err = cu_da->getNextRunID(cu_uid,
+                                  run_id))) {
+        LOG_AND_TROW(CUCU_ERR, err, CHAOS_FORMAT("Error incrementig run id for control unit %1%", %cu_uid));
+    }
     
     //get the dataset of the control unit
     if((err = cu_da->getDataset(cu_uid,
                                 &result))) {
         LOG_AND_TROW(CUCU_ERR, err, boost::str(boost::format("Error fetching dataset for control unit %1%") % cu_uid));
-    } else if(result != NULL){
+    } else if(result != NULL) {
         //we have the published dataset
-        dataset_description.reset(result);    
+        dataset_description.reset(result);
         
-        std:auto_ptr<CMultiTypeDataArrayWrapper> dataset_element_vec(dataset_description->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
-        std::auto_ptr<CDataWrapper> init_dataset(new CDataWrapper());
+        //check for restore option
+        if((err = n_da->getPropertyGroup(PropertyTypeDefaultValues,
+                                         cu_uid,
+                                         chaos::ControlUnitPropertyKey::GROUP_NAME,
+                                         control_unit_property_group))) {
+            LOG_AND_TROW(CUCU_ERR, err, CHAOS_FORMAT("Error fetching defaults value for properti group %1% for control unit %2%", %chaos::ControlUnitPropertyKey::GROUP_NAME%cu_uid));
+        }
+        
+        ChaosUniquePtr<CMultiTypeDataArrayWrapper> dataset_element_vec(dataset_description->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
+        ChaosUniquePtr<chaos::common::data::CDataWrapper> init_dataset(new CDataWrapper());
         for(int idx = 0; idx <
             dataset_element_vec->size();
             idx++) {
             //get the dataset element
-            std::auto_ptr<CDataWrapper> element(dataset_element_vec->getCDataWrapperElementAtIndex(idx));
+            ChaosUniquePtr<chaos::common::data::CDataWrapper> element(dataset_element_vec->getCDataWrapperElementAtIndex(idx));
             const std::string  ds_attribute_name = element->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME);
             int32_t direction = element->getInt32Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION);
-            
-            boost::shared_ptr<CDataWrapper> element_configuration;
             //get the dataset element setup
-            if((err = cu_da->getInstanceDatasetAttributeConfiguration(cu_uid,
-                                                                      ds_attribute_name,
-                                                                      element_configuration))) {
-                LOG_AND_TROW(CUCU_ERR, err, boost::str(boost::format("Error loading the configuration for the the dataset's attribute: %1% for control unit: %2%") % ds_attribute_name % cu_uid));
-            } else if((direction == chaos::DataType::Input ||
-                       direction == chaos::DataType::Bidirectional) &&
-                      element_configuration.get() != NULL){
-                //we can retrive the configured attribute
-                std::auto_ptr<CDataWrapper> init_ds_attribute = mergeDatasetAttributeWithSetup(element.get(),
-                                                                                               element_configuration.get());
-                init_dataset->appendCDataWrapperToArray(*init_ds_attribute.get());
+            if(direction == chaos::DataType::Input ||
+               direction == chaos::DataType::Bidirectional){
+                CDWShrdPtr element_configuration = getConfigurationToUse(cu_uid,
+                                                                         ds_attribute_name,
+                                                                         n_da,
+                                                                         cu_da,
+                                                                         control_unit_property_group);
+                if(element_configuration.get()) {
+                    //we can retrive the configured attribute
+                    ChaosUniquePtr<chaos::common::data::CDataWrapper> init_ds_attribute = mergeDatasetAttributeWithSetup(element.get(),
+                                                                                                                         element_configuration.get());
+                    init_dataset->appendCDataWrapperToArray(*init_ds_attribute.get());
+                } else {
+                    init_dataset->appendCDataWrapperToArray(*element.get());
+                }
             } else {
                 init_dataset->appendCDataWrapperToArray(*element.get());
             }
@@ -196,16 +272,16 @@ std::auto_ptr<CDataWrapper> CUCommonUtility::initDataPack(const std::string& cu_
             LOG_AND_TROW(CUCU_ERR, err, boost::str(boost::format("Error fetching the isntance for control unit %1%") % cu_uid));
         } else if(result != NULL) {
             instance_description.reset(result);
-            std::auto_ptr<CDataWrapper> init_dataset(new CDataWrapper());
+            ChaosUniquePtr<chaos::common::data::CDataWrapper> init_dataset(new CDataWrapper());
             if(instance_description->hasKey("attribute_value_descriptions") &&
                instance_description->isVectorValue("attribute_value_descriptions")) {
                 //we have a configuration so we try to send it as dataset
-                std::auto_ptr<CMultiTypeDataArrayWrapper> instance_description_array(result->getVectorValue("attribute_value_descriptions"));
+                ChaosUniquePtr<CMultiTypeDataArrayWrapper> instance_description_array(result->getVectorValue("attribute_value_descriptions"));
                 for(int aai = 0;
                     aai < instance_description_array->size();
                     aai++) {
                     
-                    std::auto_ptr<CDataWrapper> attribute(instance_description_array->getCDataWrapperElementAtIndex(aai));
+                    ChaosUniquePtr<chaos::common::data::CDataWrapper> attribute(instance_description_array->getCDataWrapperElementAtIndex(aai));
                     
                     init_dataset->appendCDataWrapperToArray(*attribute.get());
                 }
@@ -245,7 +321,7 @@ std::auto_ptr<CDataWrapper> CUCommonUtility::initDataPack(const std::string& cu_
             } else if(ds_description == NULL) {
                 CUCU_DBG << "No description foudn for data service:" << ds_unique_id;
             } else {
-                std::auto_ptr<CDataWrapper> ds_object(ds_description);
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> ds_object(ds_description);
                 if(ds_object->hasKey(NodeDefinitionKey::NODE_DIRECT_IO_ADDR) &&
                    ds_object->hasKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT)) {
                     //we can create the address
@@ -260,75 +336,76 @@ std::auto_ptr<CDataWrapper> CUCommonUtility::initDataPack(const std::string& cu_
         }
         init_datapack->finalizeArrayForKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST);
     }
-    //ad the default scheduler step delay
-    if(instance_description->hasKey(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY) &&
-       instance_description->isInt64Value(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)) {
-        instance_description->copyKeyTo(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, *init_datapack);
+    
+    PropertyGroupVectorSDWrapper pgu_default;
+    if((err = n_da->getProperty(PropertyTypeDefaultValues, cu_uid, pgu_default()))){
+        LOG_AND_TROW(CUCU_ERR, err, CHAOS_FORMAT("Error fetching property defaults for node %1%", % cu_uid));
     }
     
-    if(instance_description->hasKey(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_TYPE) &&
-       instance_description->isInt32Value(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_TYPE)) {
-        instance_description->copyKeyTo(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_TYPE, *init_datapack);
-    }
+    pgu_default.serialization_key="property";
+    pgu_default.serialize()->copyAllTo(*init_datapack);
     
-    if(instance_description->hasKey(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING) &&
-       instance_description->isInt32Value(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING)) {
-        instance_description->copyKeyTo(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING, *init_datapack);
-    }
-    
-    if(instance_description->hasKey(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME) &&
-       instance_description->isInt64Value(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME)) {
-        instance_description->copyKeyTo(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME, *init_datapack);
-    }
-    
-    if(instance_description->hasKey(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME) &&
-       instance_description->isInt64Value(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME)) {
-        instance_description->copyKeyTo(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME, *init_datapack);
-    }
-    
+    init_datapack->addInt64Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_RUN_ID, run_id);
     //set the action type
     init_datapack->addInt32Value("action", (int32_t)0);
     return init_datapack;
 }
 
-std::auto_ptr<CDataWrapper> CUCommonUtility::startDataPack(const std::string& cu_uid) {
-    std::auto_ptr<CDataWrapper> result(new CDataWrapper());
+void CUCommonUtility::mergeDefaultToProperty(PropertyGroupVector& src_group_vec,
+                                             PropertyGroupVector& dst_group_vec) {
+    for(PropertyGroupVectorIterator src_it = src_group_vec.begin(),
+        src_end = src_group_vec.end();
+        src_it != src_end;
+        src_it++) {
+        for(PropertyGroupVectorIterator dst_it = dst_group_vec.begin(),
+            dst_end = src_group_vec.end();
+            dst_it != dst_end;
+            dst_it++) {
+            if(src_it->getGroupName().compare(dst_it->getGroupName()) != 0) continue;
+            
+            dst_it->updatePropertiesValueFromSourceGroup(*src_it);
+        }
+    }
+}
+
+ChaosUniquePtr<chaos::common::data::CDataWrapper> CUCommonUtility::startDataPack(const std::string& cu_uid) {
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> result(new CDataWrapper());
     result->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_uid);
     return result;
 }
 
-std::auto_ptr<CDataWrapper> CUCommonUtility::stopDataPack(const std::string& cu_uid) {
-    std::auto_ptr<CDataWrapper> result(new CDataWrapper());
+ChaosUniquePtr<chaos::common::data::CDataWrapper> CUCommonUtility::stopDataPack(const std::string& cu_uid) {
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> result(new CDataWrapper());
     result->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_uid);
     return result;
 }
 
-std::auto_ptr<CDataWrapper> CUCommonUtility::deinitDataPack(const std::string& cu_uid) {
-    std::auto_ptr<CDataWrapper> result(new CDataWrapper());
+ChaosUniquePtr<chaos::common::data::CDataWrapper> CUCommonUtility::deinitDataPack(const std::string& cu_uid) {
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> result(new CDataWrapper());
     result->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_uid);
     return result;
 }
 
 #define MOVE_STRING_VALUE(k, src, dst)\
 if(src->hasKey(k)) {\
-dst->addStringValue(k, src->getStringValue(k));\
+dst->addStringValue(k, src->getVariantValue(k).asString());\
 }
 
 #define MERGE_STRING_VALUE(k, src, src2, dst)\
 if(src2->hasKey(k)) {\
-dst->addStringValue(k, src2->getStringValue(k));\
+dst->addStringValue(k, src2->getVariantValue(k).asString());\
 } else {\
 MOVE_STRING_VALUE(k, src, dst)\
 }
 
 #define MOVE_INT32_VALUE(k, src, dst)\
 if(src->hasKey(k)) {\
-dst->addInt32Value(k, src->getInt32Value(k));\
+dst->addInt32Value(k, src->getVariantValue(k).asInt32());\
 }
 
-std::auto_ptr<CDataWrapper> CUCommonUtility::mergeDatasetAttributeWithSetup(CDataWrapper *element_in_dataset,
-                                                                            CDataWrapper *element_in_setup) {
-    std::auto_ptr<CDataWrapper> result(new CDataWrapper());
+ChaosUniquePtr<chaos::common::data::CDataWrapper> CUCommonUtility::mergeDatasetAttributeWithSetup(CDataWrapper *element_in_dataset,
+                                                                                                  CDataWrapper *element_in_setup) {
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> result(new CDataWrapper());
     //move
     MOVE_STRING_VALUE(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME, element_in_dataset, result)
     MOVE_STRING_VALUE(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION, element_in_dataset, result)

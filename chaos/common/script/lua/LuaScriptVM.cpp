@@ -1,26 +1,32 @@
-/*
- *	LuaScriptVM.cpp
+     /*
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFramework]
- *	Created by Claudio Bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 10/05/16 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include <chaos/common/global.h>
 #include <chaos/common/script/lua/LuaScriptVM.h>
+#include <chaos/common/script/lua/LuaModuleManager.h>
+//include lua modules
+#include <chaos/common/script/lua/lib/json.h>
+#include <chaos/common/script/lua/lib/base64.h>
+
+#include <string>
 
 using namespace chaos::common::data;
 using namespace chaos::common::script;
@@ -73,7 +79,7 @@ int ChaosLuaWrapperInterface::callApi(lua_State *ls) {
                 if(lua_isinteger(ls, i)){
                     in_param.push_back(CDataVariant((int64_t)lua_tointeger(ls, i)));
                 } else if (lua_isnumber(ls, i)) {
-                    in_param.push_back(CDataVariant(lua_isnumber(ls, i)));
+                    in_param.push_back(CDataVariant(lua_tonumber(ls, i)));
                 }
                 break;
             case LUA_TBOOLEAN:
@@ -91,8 +97,8 @@ int ChaosLuaWrapperInterface::callApi(lua_State *ls) {
                                                  api_name,
                                                  in_param,
                                                  out_param))) {
-        LSVM_ERR << CHAOS_FORMAT("Error %1% calling %2%[%3%] with code %4%", %err%api_name%api_name%class_api_name);
-        luaL_argerror(ls, err, CHAOS_FORMAT("Error executing %1%[%2%]", %api_name%api_name).c_str());
+        LSVM_ERR << CHAOS_FORMAT("Error %1% calling %2%[%3%]", %err%api_name%class_api_name);
+        luaL_argerror(ls, err, CHAOS_FORMAT("Error executing %1%[%2%]", %api_name%class_api_name).c_str());
     } else {
         //we can send the return
         for(ScriptOutParamIterator it = out_param.begin(),
@@ -112,6 +118,7 @@ int ChaosLuaWrapperInterface::callApi(lua_State *ls) {
                 case DataType::TYPE_DOUBLE:
                     lua_pushnumber(ls, it->asDouble());
                     break;
+                case DataType::TYPE_CLUSTER:
                 case DataType::TYPE_STRING:
                     lua_pushstring(ls, it->asString().c_str());
                     break;
@@ -151,16 +158,53 @@ static int lua_print_wrap(lua_State* ls) {
     return 0;
 }
 
+static int lua_loader(lua_State* ls) {
+    int err = 0;
+    // get the module name
+    const std::string required_package = lua_tostring(ls, 1);
+    // find if you have such module loaded
+    if (required_package.compare("json") == 0) {
+        if((err = luaL_loadbuffer(ls, (const char *)json_lua, (size_t)json_lua_len, required_package.c_str()))) {
+            LSVM_ERR << lua_tostring(ls, -1);
+            lua_pop(ls, 1);
+        }
+    } else if (required_package.compare("base64") == 0) {
+        if((err = luaL_loadbuffer(ls, (const char *)base64_lua, (size_t)base64_lua_len, required_package.c_str()))) {
+            LSVM_ERR << lua_tostring(ls, -1);
+            lua_pop(ls, 1);
+        }
+    } else  if(LuaModuleManager::getInstance()->hasModule(required_package)) {
+        const std::string lua_module_path = LuaModuleManager::getInstance()->getModulePath(required_package);
+        LSVM_INFO << CHAOS_FORMAT("Loading module %1% from file %2%", %required_package%lua_module_path);
+        if((err = luaL_loadfile(ls, lua_module_path.c_str()))) {
+            LSVM_ERR << lua_tostring(ls, -1);
+            lua_pop(ls, 1);
+        }
+    }
+    return 1;
+}
+
 static const struct luaL_Reg chaos_wrap [] = {
+    {"_G", luaopen_base},
+    {LUA_LOADLIBNAME, luaopen_package},
+    {LUA_COLIBNAME, luaopen_coroutine},
+    {LUA_TABLIBNAME, luaopen_table},
+    {LUA_OSLIBNAME, luaopen_os},
+    {LUA_STRLIBNAME, luaopen_string},
+    {LUA_MATHLIBNAME, luaopen_math},
+    {LUA_UTF8LIBNAME, luaopen_utf8},
+    {NULL, NULL} /* end of array */
+};
+
+static const struct luaL_Reg chaos_custom [] = {
     {"print", lua_print_wrap},
+    //{"require", lua_require_wrap},
     {NULL, NULL} /* end of array */
 };
 
 LuaScriptVM::LuaScriptVM(const std::string& name):
 AbstractScriptVM(name),
-ls(NULL){
-    
-}
+ls(NULL){}
 
 LuaScriptVM::~LuaScriptVM() {
     if(ls){lua_close(ls);}
@@ -168,15 +212,20 @@ LuaScriptVM::~LuaScriptVM() {
 
 void LuaScriptVM::init(void *init_data) throw(chaos::CException) {
     ls = luaL_newstate();
-    luaopen_os(ls);
-    luaopen_base(ls);
-    luaopen_math(ls);
-    luaopen_table(ls);
-    luaopen_string(ls);
-    
+    const luaL_Reg *lib;
+    /* "require" functions from 'loadedlibs' and set results to global table */
+    for (lib = chaos_wrap; lib->func; lib++) {
+        luaL_requiref(ls, lib->name, lib->func, 1);
+        lua_pop(ls, 1);  /* remove lib */
+    }
+    //luaL_openlibs(ls);
     lua_getglobal(ls, "_G");
-    luaL_setfuncs(ls, chaos_wrap, 0);
+    luaL_setfuncs(ls, chaos_custom, 0);
     lua_pop(ls, 1);
+    
+    //set custom loader
+    lua_register(ls, "chaos_module_loader", lua_loader);
+    luaL_dostring(ls, "table.insert(package.searchers, 2, chaos_module_loader) \n");
     
     //register wrapper interface
     Luna<ChaosLuaWrapperInterface>::Register(ls);
@@ -217,7 +266,9 @@ int LuaScriptVM::loadScript(const std::string& loadable_script) {
 int LuaScriptVM::callFunction(const std::string& function_name,
                               const ScriptInParam& input_parameter,
                               ScriptOutParam& output_parameter) {
-    int err = 0;
+    last_error = 0;
+    last_error_message.clear();
+    
     // push functions and arguments
     lua_getglobal(ls, function_name.c_str());
     
@@ -238,6 +289,8 @@ int LuaScriptVM::callFunction(const std::string& function_name,
             case DataType::TYPE_DOUBLE:
                 lua_pushnumber(ls, it->asDouble());
                 break;
+                
+            case DataType::TYPE_CLUSTER:
             case DataType::TYPE_STRING:
                 lua_pushstring(ls, it->asString().c_str());
                 break;
@@ -252,18 +305,19 @@ int LuaScriptVM::callFunction(const std::string& function_name,
     }
     
     // do the call (2 arguments, 1 result)
-    if ((err = lua_pcall(ls,
-                         (int)input_parameter.size(),
-                         0,
-                         1) != 0)) {
-        LSVM_ERR << CHAOS_FORMAT("Error %1% calling script function %2%", %lua_tostring(ls, -1)%function_name);
+    if ((last_error = lua_pcall(ls,
+                                (int)input_parameter.size(),
+                                LUA_MULTRET,
+                                1) != 0)) {
+        LSVM_ERR << CHAOS_FORMAT("Error %1% calling script function %2%", %(last_error_message = lua_tostring(ls, -1))%function_name);
     } else {
         //result_element = lua_gettop(ls);
         //execution as gone well, we can get the expected result
         //        for(int idx = 0;
         //            idx < result_element;
         //            idx++) {
-        switch(lua_type(ls, -1)){
+        int type = 0;
+        switch((type = lua_type(ls, -1))){
             case LUA_TSTRING:
                 output_parameter.push_back(CDataVariant(lua_tostring(ls, -1)));
                 break;
@@ -283,12 +337,14 @@ int LuaScriptVM::callFunction(const std::string& function_name,
         lua_pop(ls, 1);
         //        }
     }
-    return err;
+    return last_error;
 }
 
 int LuaScriptVM::callProcedure(const std::string& function_name,
                                const ScriptInParam& input_parameter) {
-    int err = 0;
+    last_error = 0;
+    last_error_message.clear();
+    
     // push functions and arguments
     lua_getglobal(ls, function_name.c_str());
     
@@ -309,6 +365,7 @@ int LuaScriptVM::callProcedure(const std::string& function_name,
             case DataType::TYPE_DOUBLE:
                 lua_pushnumber(ls, it->asDouble());
                 break;
+            case DataType::TYPE_CLUSTER:
             case DataType::TYPE_STRING:
                 lua_pushstring(ls, it->asString().c_str());
                 break;
@@ -323,13 +380,13 @@ int LuaScriptVM::callProcedure(const std::string& function_name,
     }
     
     // do the call (2 arguments, 1 result)
-    if ((err = lua_pcall(ls,
-                         (int)input_parameter.size(),
-                         0,
-                         0) != 0)) {
-        LSVM_ERR << CHAOS_FORMAT("Error %1% calling script function %2%", %lua_tostring(ls, -1)%function_name);
+    if ((last_error = lua_pcall(ls,
+                                (int)input_parameter.size(),
+                                0,
+                                0) != 0)) {
+        LSVM_ERR << CHAOS_FORMAT("Error %1% calling script function %2%", %(last_error_message = lua_tostring(ls, -1))%function_name);
     }
-    return err;
+    return last_error;
 }
 
 int LuaScriptVM::functionExists(const std::string& name,

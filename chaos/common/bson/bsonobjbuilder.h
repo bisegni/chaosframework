@@ -498,6 +498,22 @@ namespace bson {
             return *this;
         }
 
+        /** Append a binary data element
+         @param fieldName name of the field
+         @param len length of the binary data in bytes
+         @param subtype subtype information for the data. @see enum BinDataType in bsontypes.h.
+         Use BinDataGeneral if you don't care about the type.
+         @param data the byte array
+         */
+        BSONObjBuilder& appendBinData( const StringData& fieldName, int len, char type, const void *data ) {
+            _b.appendNum( (char) BinData );
+            _b.appendStr( fieldName );
+            _b.appendNum( len );
+            _b.appendNum( (char) type );
+            _b.appendBuf( data, len );
+            return *this;
+        }
+        
         BSONObjBuilder& append(const StringData& fieldName, const BSONBinData& bd) {
             return appendBinData(fieldName, bd.length, bd.type, bd.data);
         }

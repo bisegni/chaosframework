@@ -1,22 +1,22 @@
 /*
- *	TestCommandExecutor.cpp
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFrameworkTests]
- *	Created by Claudio Bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 27/08/2016 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include "TestCommandExecutor.h"
@@ -33,6 +33,8 @@ completed_count(0),
 fault_count(0),
 killed_count(0),
 paused_count(0),
+queued(0),
+stacked(0),
 has_default(false){}
 
 TestCommandExecutor::~TestCommandExecutor() {
@@ -48,25 +50,16 @@ BatchCommand *  TestCommandExecutor::instanceCommandInfo(const std::string& comm
                                                                                              submission_rule,
                                                                                              submission_retry_delay,
                                                                                              scheduler_step_delay);
-    
-    //customize the newly create batch command
-    if(result) {
-        LockableObjectWriteLock_t wr;
-        map_id_command.getWriteLock(wr);
-        map_id_command().insert(IDCommandMapPair(result->getUID(), TestElement(result)));
-    }
     return result;
 }
 
 void TestCommandExecutor::handleCommandEvent(const std::string& command_alias,
                                              uint64_t command_seq,
-                                             common::batch_command::BatchCommandEventType::BatchCommandEventType type,
-                                             chaos::common::data::CDataWrapper *command_data) {
-    LockableObjectWriteLock_t wl;
-    map_id_command.getWriteLock(wl);
-    if(map_id_command().count(command_seq) == 0) return;
-    TestElement& element = map_id_command()[command_seq];
-    element.last_event = type;
+                                             BatchCommandEventType::BatchCommandEventType type,
+                                             chaos::common::data::CDataWrapper *command_info,
+                                             const BatchCommandStat& commands_stats) {
+    queued = commands_stats.queued_commands;
+    stacked = commands_stats.stacked_commands;
     switch(type){
         case common::batch_command::BatchCommandEventType::EVT_QUEUED:
             break;
@@ -78,32 +71,19 @@ void TestCommandExecutor::handleCommandEvent(const std::string& command_alias,
             paused_count++;
             break;
         case common::batch_command::BatchCommandEventType::EVT_COMPLETED: {
-            element.has_completed = true;
+
             completed_count++;
-            uint64_t end_to_set_time = 0;
-            if(last_end_time){
-                end_to_set_time = element.command_instance->set_ts - last_end_time;
-            }
-            last_end_time = element.command_instance->end_ts;
-            uint64_t set_ts_total = element.command_instance->set_ts-element.command_instance->create_ts;
-            uint64_t end_ts_total = element.command_instance->end_ts-element.command_instance->set_ts;
-            //std::cout << CHAOS_FORMAT("[Completed]Command with id %1% completed with st:%2% ed:%3% count:%4% ETS:%5%",%command_seq
-            //                          %(set_ts_total)
-            //                          %(end_ts_total)
-            //                          %element.command_instance->cicle_count
-            //                          %end_to_set_time) << std::endl;
-            map_id_command().erase(command_seq);
             break;
         }
-        case common::batch_command::BatchCommandEventType::EVT_FAULT:{
-            map_id_command().erase(command_seq);
+        case common::batch_command::BatchCommandEventType::EVT_FAULT: {
             fault_count++;
             break;
         }
-        case common::batch_command::BatchCommandEventType::EVT_KILLED:
-            map_id_command().erase(command_seq);
+            
+        case common::batch_command::BatchCommandEventType::EVT_KILLED: {
             killed_count++;
             break;
+        }
     }
 }
 
@@ -113,18 +93,24 @@ void TestCommandExecutor::handleSandboxEvent(const std::string& sandbox_id,
                                              uint32_t type_value_size) {
 }
 
-uint64_t TestCommandExecutor::getRunningElement() {
-    LockableObjectWriteLock_t wr;
-    map_id_command.getWriteLock(wr);
-    return map_id_command().size();
-}
-
-void TestCommandExecutor::resetMap() {
-    LockableObjectWriteLock_t wr;
-    map_id_command.getWriteLock(wr);
-    map_id_command().clear();
+void TestCommandExecutor::resetStat() {
+    last_end_time = 0;
+    completed_count = 0;
+    fault_count = 0;
+    killed_count = 0;
+    paused_count = 0;
+    queued = 0;
+    stacked = 0;
 }
 
 void TestCommandExecutor::printStatistic() {
     std::cout << CHAOS_FORMAT("Test terminated with\nTerminated:%1% Killed:%2% Faulted:%3% Number of Pause:%4% total:%5%", %completed_count%killed_count%fault_count%paused_count%(completed_count+killed_count+fault_count)) << std::endl;
+}
+
+uint64_t TestCommandExecutor::getQueued() {
+    return queued;
+}
+
+uint64_t TestCommandExecutor::getStacked() {
+    return stacked;
 }

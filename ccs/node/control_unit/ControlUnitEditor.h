@@ -2,7 +2,7 @@
 #define CONTROLUNITEDITOR_H
 #include "ControlUnitCommandTemplateEditor.h"
 
-#include "../../data/AlarmListModel.h"
+#include "../../data/ControlUnitStateVaribleListModel.h"
 #include "../../data/CommandListModel.h"
 #include "../../data/CommandTemplateListModel.h"
 #include "../../data/FixedInputChannelDatasetTableModel.h"
@@ -94,7 +94,9 @@ private slots:
 
     void on_pushButtonShowPlot_clicked();
 
-    void on_checkBoxShowAlarm_clicked();
+    void on_checkBoxShowAlarms_clicked();
+
+    void on_pushButtonUpdateControlUnitInfo_clicked();
 
 private:
     QString getStatusString(int status);
@@ -113,7 +115,8 @@ private:
     QString                 unit_server_parent_unique_id;
     SwitchAggregator        logic_switch_aggregator;
 
-    AlarmListModel                      alarm_list_model;
+    ControlUnitStateVaribleListModel    alarm_list_model;
+    ControlUnitStateVaribleListModel    warning_list_model;
     CommandListModel                    command_list_model;
     CommandTemplateListModel            command_template_list_model;
 

@@ -36,7 +36,7 @@ namespace chaos {
     typedef chaos::common::pool::ResourcePool<void> ZMQSocketPool;
     
     //define the pool my for every endpoint
-    CHAOS_DEFINE_MAP_FOR_TYPE(std::string, boost::shared_ptr< ZMQSocketPool >, SocketMap)
+    CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ChaosSharedPtr< ZMQSocketPool >, SocketMap)
     
     /*
      Class that implemnt !CHAOS RPC messaggin gusing ZMQ

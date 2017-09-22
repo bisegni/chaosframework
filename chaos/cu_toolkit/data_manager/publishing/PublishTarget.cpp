@@ -1,22 +1,22 @@
 /*
- *	PublishTarget.cpp
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFramework]
- *	Created by bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 12/08/16 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include <chaos/common/network/NetworkBroker.h>
@@ -152,7 +152,7 @@ bool PublishTarget::publish(const PublishableElement& publishable_element) {
     //lock feeder
     ChaosReadLock rl(mutext_feeder);
     
-    std::auto_ptr<SerializationBuffer> serialization(getDataPack(publishable_element.dataset_ptr->dataset_value_cache)->getBSONData());
+    ChaosUniquePtr<SerializationBuffer> serialization(getDataPack(publishable_element.dataset_ptr->dataset_value_cache)->getBSONData());
     
     //get next available client
     PublishTargetClientChannel *next_client = static_cast<PublishTargetClientChannel *>(connection_feeder.getService());
@@ -173,11 +173,11 @@ bool PublishTarget::publish(const PublishableElement& publishable_element) {
     return true;
 }
 
-std::auto_ptr<CDataWrapper> PublishTarget::getDataPack(const chaos::common::data::cache::AttributeCache &attribute_cache) {
+ChaosUniquePtr<chaos::common::data::CDataWrapper> PublishTarget::getDataPack(const chaos::common::data::cache::AttributeCache &attribute_cache) {
     //clock the cache
     ReadSharedCacheLockDomain read_lock_on_cache(attribute_cache.mutex);
     
-    std::auto_ptr<CDataWrapper> data_pack(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> data_pack(new CDataWrapper());
     
     //write timestamp
     attribute_cache.exportToCDataWrapper(*data_pack);
@@ -197,7 +197,7 @@ void PublishTarget::disposeService(void *service_ptr) {
 
 void *PublishTarget::serviceForURL(const URL &url, uint32_t service_index) {
     INFO << "try to add connection for " << url.getURL();
-    std::auto_ptr<PublishTargetClientChannel> endpoint_connection(new PublishTargetClientChannel());
+    ChaosUniquePtr<PublishTargetClientChannel> endpoint_connection(new PublishTargetClientChannel());
     endpoint_connection->connection =
     NetworkBroker::getInstance()->getSharedDirectIOClientInstance()->getNewConnection(url.getURL());
     if (endpoint_connection->connection) {
@@ -231,19 +231,11 @@ void PublishTarget::handleEvent(chaos_direct_io::DirectIOClientConnection *clien
     boost::shared_lock<boost::shared_mutex>(mutext_feeder);
     uint32_t service_index = boost::lexical_cast<uint32_t>(client_connection->getCustomStringIdentification());
     switch (event) {
-        case chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventConnected:DEBUG_CODE(INFO <<
-                                                                                                                   CHAOS_FORMAT("Manage Connected event to service with index %1% and url %2%",
-                                                                                                                                % service_index
-                                                                                                                                % client_connection
-                                                                                                                                ->getURL());)
+        case chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventConnected:DEBUG_CODE(INFO <<CHAOS_FORMAT("Manage Connected event to service with index %1% and url %2%", % service_index% client_connection->getURL());)
             connection_feeder.setURLOnline(service_index);
             break;
             
-        case chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventDisconnected:DEBUG_CODE(INFO <<
-                                                                                                                      CHAOS_FORMAT("Manage Disconnected event to service with index %1% and url %2%",
-                                                                                                                                   % service_index
-                                                                                                                                   % client_connection
-                                                                                                                                   ->getURL());)
+        case chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventDisconnected:DEBUG_CODE(INFO <<CHAOS_FORMAT("Manage Disconnected event to service with index %1% and url %2%",% service_index% client_connection->getURL());)
             connection_feeder.setURLOffline(service_index);
             break;
     }

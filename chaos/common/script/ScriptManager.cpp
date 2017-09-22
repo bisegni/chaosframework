@@ -1,22 +1,22 @@
 /*
- *	ScriptManager.cpp
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFramework]
- *	Created by Claudio Bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 10/05/16 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include <chaos/common/script/ScriptManager.h>
@@ -39,22 +39,26 @@ ScriptManager::~ScriptManager() {
     map_api_class.clear();
 }
 
-void ScriptManager::registerApiClass(AbstractScriptableClass *api_class) {
+void ScriptManager::registerApiClass(AbstractScriptableClass& api_class) {
         //write lock the map
     boost::unique_lock<boost::shared_mutex> rl(map_mutex);
-    if(map_api_class.count(api_class->api_class_name)) return;
+    if(map_api_class.count(api_class.api_class_name)) return;
         //add api class
-    SCRPTMAN_DBG << CHAOS_FORMAT("Register api class for %1% class", %api_class->api_class_name);
-    map_api_class.insert(make_pair(api_class->api_class_name, api_class));
+    SCRPTMAN_DBG << CHAOS_FORMAT("Register api class for %1% class", %api_class.api_class_name);
+    
+    api_class.script_manager_ptr = this;
+    map_api_class.insert(make_pair(api_class.api_class_name, &api_class));
 }
 
-void ScriptManager::deregisterApiClass(AbstractScriptableClass *api_class) {
+void ScriptManager::deregisterApiClass(AbstractScriptableClass& api_class) {
         //write lock on map
     boost::unique_lock<boost::shared_mutex> rl(map_mutex);
-    if(map_api_class.count(api_class->api_class_name) == 0) return;
+    if(map_api_class.count(api_class.api_class_name) == 0) return;
         //remove api class
-    SCRPTMAN_DBG << CHAOS_FORMAT("Deregister api class for %1% class", %api_class->api_class_name);
-    map_api_class.erase(api_class->api_class_name);
+    SCRPTMAN_DBG << CHAOS_FORMAT("Deregister api class for %1% class", %api_class.api_class_name);
+    
+    api_class.script_manager_ptr = NULL;
+    map_api_class.erase(api_class.api_class_name);
 }
 
     //!entry point of the scirpting for call an exposed api

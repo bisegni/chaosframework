@@ -32,10 +32,30 @@ void FixedOutputChannelDatasetTableModel::updateData(const QSharedPointer<chaos:
                                         QSharedPointer<AttributeInfo>(new AttributeInfo(real_row++,
                                                                                         4,
                                                                                         chaos::DataType::TYPE_INT64)));
+    map_doe_attribute_name_index.insert(chaos::DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP,
+                                        QSharedPointer<AttributeInfo>(new AttributeInfo(real_row++,
+                                                                                        4,
+                                                                                        chaos::DataType::TYPE_INT64)));
+    map_doe_attribute_name_index.insert(chaos::ControlUnitDatapackCommonKey::RUN_ID,
+                                        QSharedPointer<AttributeInfo>(new AttributeInfo(real_row++,
+                                                                                        4,
+                                                                                        chaos::DataType::TYPE_INT64)));
     QSharedPointer<CDataWrapper> element(new CDataWrapper());
     element->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME, chaos::DataPackCommonKey::DPCK_TIMESTAMP);
     element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE, chaos::DataType::TYPE_INT64);
-    element->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION, "Acquisition timestamp");
+    element->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION, "DAQ timestamp");
+    vector_doe.push_back(element);
+
+    element.reset(new CDataWrapper());
+    element->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME, chaos::DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP);
+    element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE, chaos::DataType::TYPE_INT64);
+    element->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION, "DAQ High resolution timestamp");
+    vector_doe.push_back(element);
+
+    element.reset(new CDataWrapper());
+    element->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME, chaos::ControlUnitDatapackCommonKey::RUN_ID);
+    element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE, chaos::DataType::TYPE_INT64);
+    element->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION, "Run identification");
     vector_doe.push_back(element);
 
     //add other output channels
@@ -112,6 +132,9 @@ QVariant FixedOutputChannelDatasetTableModel::getCellData(int row, int column) c
             case chaos::DataType::TYPE_INT64:
                 result = QString("Int64");
                 break;
+            case chaos::DataType::TYPE_CLUSTER:
+                result = QString("cluster");
+                break;
             case chaos::DataType::TYPE_STRING:
                 result = QString("String");
                 break;
@@ -121,9 +144,7 @@ QVariant FixedOutputChannelDatasetTableModel::getCellData(int row, int column) c
             case chaos::DataType::TYPE_BYTEARRAY:
                 result = QString("Binary");
                 break;
-            case chaos::DataType::TYPE_CLUSTER:
-                result = QString("Cluster");
-                break;
+
             default:
                 break;
             }
@@ -236,7 +257,7 @@ QVariant FixedOutputChannelDatasetTableModel::getTooltipTextForData(int row, int
         }
         break;
 
-   default:
+    default:
         result = getCellData(row, column);
         break;
     }

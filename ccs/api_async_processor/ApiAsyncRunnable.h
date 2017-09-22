@@ -6,17 +6,18 @@
 
 #include <QSharedPointer>
 #include <chaos/common/data/CDataWrapper.h>
-#include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
+#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
 class ApiAsyncRunnable :
         public QObject,
-        public QRunnable
-{
+        public QRunnable {
     Q_OBJECT
     const QString tag;
-    chaos::metadata_service_client::api_proxy::ApiProxyResult async_result;
+    typedef ChaosSharedPtr<chaos::common::message::MultiAddressMessageRequestFuture> ApiAsyncRunnableType;
+    ApiAsyncRunnableType async_result;
 public:
     explicit ApiAsyncRunnable(const QString& _tag,
                               chaos::metadata_service_client::api_proxy::ApiProxyResult _async_result);
+
     ~ApiAsyncRunnable();
     void run();
 signals:

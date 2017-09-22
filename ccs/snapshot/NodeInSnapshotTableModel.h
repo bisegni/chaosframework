@@ -2,7 +2,7 @@
 #define NODEINSNAPSHOTTABLEMODEL_H
 
 #include "../data/ChaosAbstractListModel.h"
-#include <ChaosMetadataServiceClient/api_proxy/api.h>
+#include <chaos_metadata_service_client/api_proxy/api.h>
 
 #include <QSharedPointer>
 
@@ -12,14 +12,14 @@ class NodeInSnapshotTableModel:
 public:
     NodeInSnapshotTableModel(QObject *parent = 0);
     ~NodeInSnapshotTableModel();
-    void updateSnapshotList(std::auto_ptr<chaos::metadata_service_client::api_proxy::service::GetNodesForSnapshotHelper> _node_in_snapshot_helper);
+    void updateSnapshotList(ChaosUniquePtr<chaos::metadata_service_client::api_proxy::service::GetNodesForSnapshotHelper> _node_in_snapshot_helper);
     void reset();
 protected:
     int getRowCount() const;
     QVariant getRowData(int row) const;
     QVariant getUserData(int row) const;
 private:
-    std::auto_ptr<chaos::metadata_service_client::api_proxy::service::GetNodesForSnapshotHelper> node_in_snapshot_helper;
+    ChaosUniquePtr<chaos::metadata_service_client::api_proxy::service::GetNodesForSnapshotHelper> node_in_snapshot_helper;
 };
 
 #endif // NODEINSNAPSHOTTABLEMODEL_H

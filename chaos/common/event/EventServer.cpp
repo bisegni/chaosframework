@@ -1,21 +1,22 @@
 /*
- *	EventServer.cpp
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 #include <chaos/common/global.h>
 #include <chaos/common/event/EventServer.h>
@@ -45,13 +46,13 @@ void EventServer::dispatchEventToHandler(const unsigned char * const serializedE
         if(*((uint16_t*)serializedEvent) != 0x4345) throw CException(2, "Bad event signature", "EventServer::dispatchEventToHandler");
         if(length > EVT_DATA_MAX_BYTE_LENGTH)  throw CException(1, "Event memory size exceed the max allowed", "EventServer::dispatchEventToHandler");
         
-            //check the type
-        auto_ptr<EventTypeAndPriority> eventTypeAndHeaderPtr(new EventTypeAndPriority());
+        //check the type
+        ChaosUniquePtr<EventTypeAndPriority> eventTypeAndHeaderPtr(new EventTypeAndPriority());
         
-            //get header swapped checking endian conversion
-        *((uint16_t*)eventTypeAndHeaderPtr.get()) = byte_swap<little_endian, host_endian, uint16_t>(*((uint16_t*)(serializedEvent+EVT_HEADER_BYTE_LENGTH)));
+        //get header swapped checking endian conversion
+        *((uint8_t*)eventTypeAndHeaderPtr.get()) = byte_swap<little_endian, host_endian, uint8_t>(*((uint8_t*)(serializedEvent+EVT_HEADER_BYTE_LENGTH)));
         
-            //dispatcher the event in the root handler on one of the fourth method
+        //dispatcher the event in the root handler on one of the fourth method
         switch (eventTypeAndHeaderPtr->type) {
             case EventTypeAlert:  {
                 alert::AlertEventDescriptor *result = new alert::AlertEventDescriptor();

@@ -1,22 +1,22 @@
 /*
- *	AbstractExecutionUnit.h
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFramework]
- *	Created by Claudio Bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 26/04/16 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #ifndef __CHAOSFramework__AbstractExecutionUnit_h
@@ -38,7 +38,6 @@ namespace chaos{
             namespace script {
                 class EUScriptableWrapper;
             }
-            
             //!  Base class for execution unit !CHAOS node.
             /*!
              This is the abstraction of the execution unit. It permit to run algorithm that can
@@ -74,11 +73,9 @@ namespace chaos{
                 
                 //! inherited method
                 void unitDeinit() throw(CException);
-                
+            protected:
                 //!redefine private for protection
                 AbstractSharedDomainCache* _getAttributeCache();
-                
-            protected:
                 
                 /*!
                  Describe the functionality of the execution unit
@@ -130,14 +127,14 @@ namespace chaos{
                 \ingroup Execution_Unit_User_Api
                 \ingroup Execution_Unit_Definition_Api
                  */
-                CDataVariant getOutputAttributeValue(const std::string& attribute_name);
+                chaos::common::data::CDataVariant getOutputAttributeValue(const std::string& attribute_name);
                 
                 //!Get the value from an input attribute
                 /*!
                  \ingroup Execution_Unit_User_Api
                  \ingroup Execution_Unit_Definition_Api
                  */
-                CDataVariant getInputAttributeValue(const std::string& attribute_name);
+                chaos::common::data::CDataVariant getInputAttributeValue(const std::string& attribute_name);
                 
                 //!Set the value from an output attribute
                 /*!
@@ -145,7 +142,40 @@ namespace chaos{
                  \ingroup Execution_Unit_Definition_Api
                  */
                 void setOutputAttributeValue(const std::string& attribute_name,
-                                             const CDataVariant& attribute_value);
+                                             const chaos::common::data::CDataVariant& attribute_value);
+                
+                //! perform live search for managed node uid
+                int performLiveFetch(const chaos::cu::data_manager::KeyDataStorageDomain dataset_domain,
+                                     chaos::common::data::CDWShrdPtr& found_dataset);
+                
+                //! perform live search for other node uid
+                int performLiveFetch(const ChaosStringVector& node_uid,
+                                     const chaos::cu::data_manager::KeyDataStorageDomain dataset_domain,
+                                     chaos::common::data::VectorCDWShrdPtr& found_dataset);
+                
+                
+                //! perform a new search
+                /*!
+                 \param cursor is an handle to a QueryCursor structure, if all goes right a new pointer
+                 to this structure is returned. It need to beused ot fetch the results
+                 \param key specify the target of the search operation
+                 \param start_ts is the initial time stamp for search time constraint
+                 \param end_ts is the last time stamp for search time constraint
+                 \param page_len is the total number of element that the page need to be contained
+                 */
+                int performQuery(chaos::common::io::QueryCursor **cursor,
+                                 const std::string& node_id,
+                                 chaos::cu::data_manager::KeyDataStorageDomain dataset_domain,
+                                 const uint64_t start_ts,
+                                 const uint64_t end_ts,
+                                 const uint32_t page_len);
+                
+                //! release a cursor
+                void releseQuery(chaos::common::io::QueryCursor *cursor);
+                
+                int performLiveFetch(const std::string& node_ui,
+                                     chaos::cu::data_manager::KeyDataStorageDomain domain,
+                                     chaos::common::data::CDataVariant& value);
                 
                 //!Event for notify that alghortim is going to be executed
                 virtual void executeAlgorithmLaunch() throw (CException) = 0;
@@ -173,7 +203,8 @@ namespace chaos{
                  \param _execution_unit_param is a string that contains parameter to pass during the contorl unit creation
                  \param _execution_unit_drivers driver information
                  */
-                AbstractExecutionUnit(const std::string& _execution_unit_id,
+                AbstractExecutionUnit(const std::string& _execution_unit_subtype,
+                                      const std::string& _execution_unit_id,
                                       const std::string& _execution_unit_param);
                 /*!
                  Parametrized constructor
@@ -181,7 +212,8 @@ namespace chaos{
                  \param _execution_unit_param is a string that contains parameter to pass during the contorl unit creation
                  \param _execution_unit_drivers driver information
                  */
-                AbstractExecutionUnit(const std::string& _execution_unit_id,
+                AbstractExecutionUnit(const std::string& _execution_unit_subtype,
+                                      const std::string& _execution_unit_id,
                                       const std::string& _execution_unit_param,
                                       const ControlUnitDriverList& _execution_unit_drivers);
                 

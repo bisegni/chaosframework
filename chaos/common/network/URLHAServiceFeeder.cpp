@@ -1,22 +1,22 @@
 /*
- *	URLHAServiceFeeder.cpp
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFramework]
- *	Created by Claudio Bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 08/02/16 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include <chaos/common/utility/TimingUtil.h>
@@ -82,7 +82,7 @@ void URLHAServiceFeeder::setURLAsOffline(const std::string& remote_address) {
     boost::unique_lock<boost::mutex> wr(mutex_queue);
     uint32_t url_index = getIndexFromURL(remote_address);
     URLServiceFeeder::setURLOffline(url_index);
-    boost::shared_ptr<ServiceRetryInformation> sri(new ServiceRetryInformation(url_index,
+    ChaosSharedPtr<ServiceRetryInformation> sri(new ServiceRetryInformation(url_index,
                                                                                remote_address));
     sri->retry_timeout = TimingUtil::getTimeStamp()+min_retry_time;
     
@@ -95,7 +95,7 @@ void URLHAServiceFeeder::setURLAsOffline(const std::string& remote_address) {
 void URLHAServiceFeeder::setIndexAsOffline(const uint32_t remote_index) {
     boost::unique_lock<boost::mutex> wr(mutex_queue);
     URLServiceFeeder::setURLOffline(remote_index);
-    boost::shared_ptr<ServiceRetryInformation> sri(new ServiceRetryInformation(remote_index,
+    ChaosSharedPtr<ServiceRetryInformation> sri(new ServiceRetryInformation(remote_index,
                                                                                getURLForIndex(remote_index)));
     sri->retry_timeout = TimingUtil::getTimeStamp()+min_retry_time;
     retry_queue.push(sri);
@@ -110,7 +110,7 @@ void URLHAServiceFeeder::checkForAliveService() {
     
     while (retry_queue.size() &&
            max_element-- > 0) {
-        boost::shared_ptr<ServiceRetryInformation> sri = retry_queue.front();retry_queue.pop();
+        ChaosSharedPtr<ServiceRetryInformation> sri = retry_queue.front();retry_queue.pop();
         wr.unlock();
         if(current_ts>= sri->retry_timeout) {
             sri->retry_times++;

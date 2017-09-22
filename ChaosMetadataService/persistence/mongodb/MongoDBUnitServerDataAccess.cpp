@@ -1,21 +1,22 @@
 /*
- *	MongoDBUnitServerDataAccess.cpp
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyrigh 2015 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 #include "MongoDBUnitServerDataAccess.h"
 #include <chaos/common/utility/TimingUtil.h>
@@ -33,7 +34,7 @@ using namespace chaos::metadata_service::persistence::mongodb;
 #define MDBUSDA_DBG  DBG_LOG(MongoDBUnitServerDataAccess)
 #define MDBUSDA_ERR  ERR_LOG(MongoDBUnitServerDataAccess)
 
-MongoDBUnitServerDataAccess::MongoDBUnitServerDataAccess(const boost::shared_ptr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
+MongoDBUnitServerDataAccess::MongoDBUnitServerDataAccess(const ChaosSharedPtr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
 MongoDBAccessor(_connection),
 node_data_access(NULL){}
 
@@ -139,7 +140,7 @@ int MongoDBUnitServerDataAccess::updateUS(chaos::common::data::CDataWrapper& uni
 
         //get the contained control unit type
         mongo::BSONArrayBuilder bab;
-        auto_ptr<CMultiTypeDataArrayWrapper> cu_type_array(unit_server_description.getVectorValue(UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS));
+        ChaosUniquePtr<CMultiTypeDataArrayWrapper> cu_type_array(unit_server_description.getVectorValue(UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS));
         for(int idx = 0;
             idx < cu_type_array->size();
             idx++) {
@@ -221,7 +222,7 @@ int MongoDBUnitServerDataAccess::getDescription(const std::string& unit_server_u
     int err = 0;
     if((err = node_data_access->getNodeDescription(unit_server_uid,
                                                    unit_server_description))) {
-        MDBUSDA_ERR << "Error fetching the base ndoe attribute with code:" << err;
+        MDBUSDA_ERR << "Error fetching the base node attribute with code:" << err;
     } else if(!*unit_server_description) {
         MDBUSDA_ERR << "No data basic node attribute found for unit server" << unit_server_uid;
         err = -1;

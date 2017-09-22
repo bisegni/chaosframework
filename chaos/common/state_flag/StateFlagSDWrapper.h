@@ -1,22 +1,22 @@
 /*
- *	StateFlagSDWrapper.h
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFramework]
- *	Created by bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 18/07/16 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #ifndef __CHAOSFramework_A4A802EC_5299_484B_AFF5_2FF3271807C2_StateFlagSDWrapper_h
@@ -42,8 +42,8 @@ namespace chaos {
                 
             }
             
-            std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
-                std::auto_ptr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
+            ChaosUniquePtr<chaos::common::data::CDataWrapper> serialize() {
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
                 data_serialized->addInt32Value(chaos::NodeStateFlagDefinitionKey::NODE_SF_LEVEL_VALUE, static_cast<int32_t>(dataWrapped().value));
                 data_serialized->addStringValue(chaos::NodeStateFlagDefinitionKey::NODE_SF_LEVEL_TAG, dataWrapped().tag);
                 data_serialized->addStringValue(chaos::NodeStateFlagDefinitionKey::NODE_SF_LEVEL_DESCRIPTION, dataWrapped().description);
@@ -62,17 +62,17 @@ namespace chaos {
             CHAOS_OPEN_SDWRAPPER(StateFlag)
             void deserialize(chaos::common::data::CDataWrapper *serialized_data) {
                 if(serialized_data == NULL) return;
-                dataWrapped().name = CDW_GET_SRT_WITH_DEFAULT(serialized_data, NodeStateFlagDefinitionKey::NODE_SF_NAME, "");
+                dataWrapped().flag_description.name = CDW_GET_SRT_WITH_DEFAULT(serialized_data, NodeStateFlagDefinitionKey::NODE_SF_NAME, "");
                 //check if we have a catalog name
                 ChaosStringVector splitted_name;
                 boost::split( splitted_name,
-                             dataWrapped().name ,
+                             dataWrapped().flag_description.name ,
                              boost::is_any_of("/"),
                              boost::token_compress_on);
                 if(splitted_name.size() > 1) {
-                    dataWrapped().name = splitted_name[splitted_name.size()-1];
+                    dataWrapped().flag_description.name = splitted_name[splitted_name.size()-1];
                 }
-                dataWrapped().description = CDW_GET_SRT_WITH_DEFAULT(serialized_data, NodeStateFlagDefinitionKey::NODE_SF_DESCRIPTION, "");
+                dataWrapped().flag_description.description = CDW_GET_SRT_WITH_DEFAULT(serialized_data, NodeStateFlagDefinitionKey::NODE_SF_DESCRIPTION, "");
                 
                 //decode the list fo state level
                 StateLevelSDWrapper slsdw;
@@ -80,11 +80,11 @@ namespace chaos {
                 
                 if(serialized_data->hasKey(NodeStateFlagDefinitionKey::NODE_SF_LEVEL_SET) &&
                    serialized_data->isVectorValue(NodeStateFlagDefinitionKey::NODE_SF_LEVEL_SET)) {
-                    std::auto_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> state_level_vec(serialized_data->getVectorValue(NodeStateFlagDefinitionKey::NODE_SF_LEVEL_SET));
+                    ChaosUniquePtr<chaos::common::data::CMultiTypeDataArrayWrapper> state_level_vec(serialized_data->getVectorValue(NodeStateFlagDefinitionKey::NODE_SF_LEVEL_SET));
                     for(int idx = 0;
                         idx < state_level_vec->size();
                         idx++) {
-                        std::auto_ptr<chaos::common::data::CDataWrapper> state_level(state_level_vec->getCDataWrapperElementAtIndex(idx));
+                        ChaosUniquePtr<chaos::common::data::CDataWrapper> state_level(state_level_vec->getCDataWrapperElementAtIndex(idx));
                         slsdw.deserialize(state_level.get());
                         dataWrapped().addLevel(slsdw.dataWrapped());
                     }
@@ -92,10 +92,10 @@ namespace chaos {
                 
             }
             
-            std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
-                std::auto_ptr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
-                data_serialized->addStringValue(NodeStateFlagDefinitionKey::NODE_SF_NAME, dataWrapped().name);
-                data_serialized->addStringValue(NodeStateFlagDefinitionKey::NODE_SF_DESCRIPTION, dataWrapped().description);
+            ChaosUniquePtr<chaos::common::data::CDataWrapper> serialize() {
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
+                data_serialized->addStringValue(NodeStateFlagDefinitionKey::NODE_SF_NAME, dataWrapped().flag_description.name);
+                data_serialized->addStringValue(NodeStateFlagDefinitionKey::NODE_SF_DESCRIPTION, dataWrapped().flag_description.description);
                 if(dataWrapped().set_levels.size()) {
                     StateLevelSDWrapper slsdw;
                     //we have state level to encode

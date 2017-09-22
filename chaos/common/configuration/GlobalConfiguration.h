@@ -1,21 +1,22 @@
 /*
- *	GlobalConfiguration.h
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 #ifndef ChaosFramework_GlobalConfiguration_h
 #define ChaosFramework_GlobalConfiguration_h
@@ -77,23 +78,24 @@ x = getOption<t>(y);\
 bool x;\
 x = hasOption(y);
     
+    CHAOS_DEFINE_VECTOR_FOR_TYPE(chaos::common::network::CNetworkAddress, VectorMetadatserver);
     CHAOS_DEFINE_MAP_FOR_TYPE(std::string, std::string, MapStrKeyStrValue);
     
     /*
      Central class for all CHOAS framework configuraitons
      */
     class GlobalConfiguration:
-    public chaos::common::utility::Singleton<GlobalConfiguration>{
+    public chaos::common::utility::Singleton<GlobalConfiguration> {
         //for program option
         po::variables_map vm;
         po::options_description desc;
         //for contain program option value and other usefull think
-        chaos_data::CDataWrapper configuration;
+        ChaosUniquePtr<chaos_data::CDataWrapper> configuration;
         friend class chaos::common::utility::Singleton<GlobalConfiguration>;
+
         
-        
-        GlobalConfiguration():desc("!CHAOS Framework Allowed options"){};
-        ~GlobalConfiguration(){};
+        GlobalConfiguration();
+        ~GlobalConfiguration();
         //! Parse the options
         /*!
          Generalized parser option function
@@ -114,13 +116,12 @@ x = hasOption(y);
         
         MapStrKeyStrValue map_kv_param_directio_clnt_impl;
         
+        //!map for key value used by script virtual machine
+        MapStrKeyStrValue map_kv_param_script_vm;
+        
         //fill the rpc
         void fillKVParameter(std::map<std::string, std::string>& kvmap,
                              const std::string& kv_string,
-                             const std::string& regex);
-        
-        void fillKVParameter(std::map<std::string, std::string>& kvmap,
-                             const std::vector<std::string>& kv_vector,
                              const std::string& regex);
     public:
         void loadStartupParameter(int, char* argv[]) throw (CException);
@@ -275,15 +276,19 @@ x = hasOption(y);
          *Add the metadataserver address
          */
         void addLocalServerBasePort(int32_t localDefaultPort) throw (CException);
+        
+        //!return the hostname of the host that run chaos node
+        std::string getHostname();
+        
         /*
          return the address of metadataserver
          */
-        string getMetadataServerAddress();
+        std::string getMetadataServerAddress();
         
         /*
          return the address list of multiple configured metadataserver
          */
-        std::vector<chaos::common::network::CNetworkAddress> getMetadataServerAddressList();
+        VectorMetadatserver getMetadataServerAddressList();
         
         /*
          return the address of metadataserver
@@ -310,6 +315,13 @@ x = hasOption(y);
         
         //! return the directio client implementation key value map
         MapStrKeyStrValue& getDirectIOClientImplKVParam();
+        
+        //! return the script virtualmachine key value parameter
+        MapStrKeyStrValue& getScriptVMKVParam();
+        
+        static void fillKVParameter(std::map<std::string, std::string>& kvmap,
+                                    const std::vector<std::string>& kv_vector,
+                                    const std::string& regex);
     };
 }
 #endif

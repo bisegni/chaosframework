@@ -1,22 +1,22 @@
 /*
- *	QueryCursor.h
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFramework]
- *	Created by bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 06/09/16 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #ifndef __CHAOSFramework__CE8768D_5BB0_4EF2_A186_7685A0C31B3F_QueryCursor_h
@@ -38,9 +38,9 @@ namespace chaos {
                 QueryPhaseNotStarted,
                 QueryPhaseStarted,
                 QueryPhaseEnded
-            }QueryPhase;
+            } QueryPhase;
             
-            CHAOS_DEFINE_VECTOR_FOR_TYPE(boost::shared_ptr<chaos::common::data::CDataWrapper>, ResultPageDecodedPacket);
+            CHAOS_DEFINE_VECTOR_FOR_TYPE(ChaosSharedPtr<chaos::common::data::CDataWrapper>, ResultPageDecodedPacket);
             
 #define DEFAULT_PAGE_LEN 100
             class QueryCursor {
@@ -48,17 +48,14 @@ namespace chaos {
                 
                 struct ResultPage {
                     unsigned int current_fetched;
-                    ResultPageDecodedPacket decoded_page;
-                    uint64_t last_received_sequence;
-                    chaos::common::direct_io::channel::opcode_headers::DirectIODeviceChannelOpcodeQueryDataCloudResultPtr query_result;
-                    
+                    direct_io::channel::opcode_headers::SearchSequence last_record_found_seq;
+                    direct_io::channel::opcode_headers::QueryResultPage found_element_page;
+
                     ResultPage();
-                    
-                    void reset(chaos::common::direct_io::channel::opcode_headers::DirectIODeviceChannelOpcodeQueryDataCloudResultPtr new_query_result);
-                    
+                    ~ResultPage();
                     const bool hasNext() const;
                     
-                    boost::shared_ptr<chaos::common::data::CDataWrapper> next()  throw (chaos::CException);
+                    ChaosSharedPtr<chaos::common::data::CDataWrapper> next()  throw (chaos::CException);
                 };
                 
                 const std::string query_id;
@@ -86,8 +83,8 @@ namespace chaos {
                 const std::string& queryID() const;
                 
                 const bool hasNext();
-                
-                boost::shared_ptr<chaos::common::data::CDataWrapper> next() throw (CException);
+                const int32_t getError();
+                ChaosSharedPtr<chaos::common::data::CDataWrapper> next() throw (CException);
                 
                 const uint32_t getPageLen() const;
                 

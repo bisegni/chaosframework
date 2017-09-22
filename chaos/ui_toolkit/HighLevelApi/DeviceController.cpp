@@ -1,21 +1,22 @@
 /*
- *	DeviceLiveDataFetcher.cpp
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include "DeviceController.h"
@@ -33,7 +34,6 @@ using namespace chaos::common::utility;
 using namespace chaos::common::message;
 using namespace chaos::common::batch_command;
 
-#define MSEC_WAIT_OPERATION 1000
 
 
 //---------------------------------------------------------------------------------------------------
@@ -41,21 +41,30 @@ DeviceController::DeviceController(string& _deviceID):
 device_id(_deviceID),
 datasetDB(true) {
     
-    const auto_ptr<chaos::common::data::CDataWrapper> d;
+    const ChaosUniquePtr<chaos::common::data::CDataWrapper> d;
     mdsChannel = NULL;
     deviceChannel = NULL;
     ioLiveDataDriver = NULL;
-    millisecToWait = MSEC_WAIT_OPERATION;
+    millisecToWait = RpcConfigurationKey::GlobalRPCTimeoutinMSec;
     channel_keys.push_back(device_id + DataPackPrefixID::OUTPUT_DATASET_POSTFIX);
     channel_keys.push_back(device_id + DataPackPrefixID::INPUT_DATASET_POSTFIX);
     channel_keys.push_back(device_id + DataPackPrefixID::CUSTOM_DATASET_POSTFIX);
     channel_keys.push_back(device_id + DataPackPrefixID::SYSTEM_DATASET_POSTFIX);
+    channel_keys.push_back(device_id + DataPackPrefixID::DEV_ALARM_DATASET_POSTFIX);
+    channel_keys.push_back(device_id + DataPackPrefixID::CU_ALARM_DATASET_POSTFIX);
     channel_keys.push_back(device_id + DataPackPrefixID::HEALTH_DATASET_POSTFIX);
-    channel_keys.push_back(device_id + DataPackPrefixID::ALARM_DATASET_POSTFIX);
+
     //  current_dataset.push_back(d);
     for(int cnt=0;cnt<channel_keys.size();cnt++)
-        current_dataset.push_back(boost::shared_ptr<chaos::common::data::CDataWrapper>());
+        current_dataset.push_back(ChaosSharedPtr<chaos::common::data::CDataWrapper>());
     
+    
+    //allocate device channel the memory of the CDeviceNetworkAddress * is managed by channel
+    CDeviceNetworkAddress *address = new CDeviceNetworkAddress(_deviceID);
+    //get a new message channel in a self manage way
+    deviceChannel = LLRpcApi::getInstance()->getNewDeviceMessageChannel(address,
+                                                                        true);
+    if(!deviceChannel) throw CException(-4, "Invalid device channel created", "DeviceController::init");
 }
 
 //---------------------------------------------------------------------------------------------------
@@ -108,7 +117,7 @@ void DeviceController::updateChannel() throw(CException) {
     err = mdsChannel->getLastDatasetForDevice(device_id, &tmp_data_handler, millisecToWait);
     if(err!=ErrorCode::EC_NO_ERROR || !tmp_data_handler) throw CException(-2, "No device dataset received", "DeviceController::updateChannel");
     
-    auto_ptr<CDataWrapper> lastDeviceDefinition(tmp_data_handler);
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> lastDeviceDefinition(tmp_data_handler);
     
     datasetDB.addAttributeToDataSetFromDataWrapper(*lastDeviceDefinition.get());
     
@@ -121,19 +130,10 @@ void DeviceController::updateChannel() throw(CException) {
         if(ioLiveDataDriver) {
             ioLiveDataDriver->init(NULL);
             if(!mdsChannel->getDataDriverBestConfiguration(&tmp_data_handler, millisecToWait)){
-                auto_ptr<CDataWrapper> best_available_da_ptr(tmp_data_handler);
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> best_available_da_ptr(tmp_data_handler);
                 ioLiveDataDriver->updateConfiguration(best_available_da_ptr.get());
             }
         }
-    }
-    
-    
-    //allocate device channel the memory of the CDeviceNetworkAddress * is managed by channel
-    if(!deviceChannel){
-        deviceChannel = LLRpcApi::getInstance()->getNewDeviceMessageChannel(devAddress);
-        if(!deviceChannel) throw CException(-4, "Invalid device channel created", "DeviceController::init");
-    }else{
-        deviceChannel->setNewAddress(devAddress);
     }
 }
 
@@ -188,6 +188,7 @@ int DeviceController::getAttributeStrValue(string attribute_name, string& attrib
                     attribute_value = boost::lexical_cast<string>(dataWrapper->getDoubleValue(attribute_name.c_str()));
                     break;
                     
+                case DataType::TYPE_CLUSTER:
                 case DataType::TYPE_STRING:
                     attribute_value = boost::lexical_cast<string>(dataWrapper->getStringValue(attribute_name.c_str()));
                     break;
@@ -353,6 +354,11 @@ int DeviceController::setAttributeToValue(const char *attributeName, const char 
             attributeValuePack.addBoolValue(attributeName, boolValuePtr);
             break;
         }
+        case DataType::TYPE_CLUSTER:
+            attributeValuePack.addJsonValue(attributeName, attributeValue);
+            break;
+            
+            
         case DataType::TYPE_STRING:{
             attributeValuePack.addStringValue(attributeName, attributeValue);
             break;
@@ -400,6 +406,11 @@ int DeviceController::setAttributeToValue(const char *attributeName, DataType::D
         case DataType::TYPE_BOOLEAN: {
             bool *boolValuePtr = static_cast<bool *>(attributeValue);
             attributeValuePack.addBoolValue(attributeName, *boolValuePtr);
+            break;
+        }
+        case DataType::TYPE_CLUSTER:{
+            
+            attributeValuePack.addJsonValue(attributeName,static_cast<const char *>(attributeValue));
             break;
         }
         case DataType::TYPE_STRING:{
@@ -573,20 +584,24 @@ int DeviceController::flushCommandStateHistory() {
 }
 
 //---------------------------------------------------------------------------------------------------
-int DeviceController::sendCustomRequest(const char * const action, common::data::CDataWrapper * const param, common::data::CDataWrapper**const result, bool async, bool queued) {
-    return deviceChannel->sendCustomRequest(action, param, result, millisecToWait, async, queued);
+int DeviceController::sendCustomRequest(const std::string& action,
+                                        common::data::CDataWrapper * const param,
+                                        common::data::CDataWrapper**const result) {
+    return deviceChannel->sendCustomRequest(action, param, result, millisecToWait);
 }
 
 //---------------------------------------------------------------------------------------------------
-void DeviceController::sendCustomMessage(const char * const action, common::data::CDataWrapper * const param, bool queued) {
-    deviceChannel->sendCustomMessage(action, param, !queued);
+void DeviceController::sendCustomMessage(const std::string& action,
+                                         common::data::CDataWrapper * const param) {
+    deviceChannel->sendCustomMessage(action,
+                                     param);
 }
 
 //---------------------------------------------------------------------------------------------------
 int DeviceController::checkRPCInformation(CDataWrapper **result_information,
                                           uint32_t timeout) {
     int err = -1;
-    std::auto_ptr<MessageRequestFuture> result = deviceChannel->checkRPCInformation();
+    ChaosUniquePtr<MessageRequestFuture> result = deviceChannel->checkRPCInformation();
     if(result.get() == NULL) return -1;
     if(result->wait(timeout)) {
         err = result->getError();
@@ -604,7 +619,7 @@ int DeviceController::echoTest(CDataWrapper * const echo_data,
                                CDataWrapper **echo_data_result,
                                uint32_t timeout) {
     int err = -1;
-    std::auto_ptr<MessageRequestFuture> result = deviceChannel->echoTest(echo_data);
+    ChaosUniquePtr<MessageRequestFuture> result = deviceChannel->echoTest(echo_data);
     if(result.get() == NULL) return err;
     if(result->wait(timeout)) {
         err = result->getError();
@@ -618,7 +633,7 @@ int DeviceController::echoTest(CDataWrapper * const echo_data,
 }
 
 //---------------------------------------------------------------------------------------------------
-std::auto_ptr<MessageRequestFuture> DeviceController::sendCustomRequestWithFuture(const std::string& action_name,
+ChaosUniquePtr<MessageRequestFuture> DeviceController::sendCustomRequestWithFuture(const std::string& action_name,
                                                                                   common::data::CDataWrapper *request_date) {
     return deviceChannel->sendCustomRequestWithFuture(action_name,
                                                       request_date);
@@ -669,7 +684,12 @@ int DeviceController::setAttributeValue(string& attributeName, const char* attri
         case DataType::TYPE_BYTEARRAY:
             attributeValuePack.addBinaryValue(attrname,attributeValue,size);
             return deviceChannel->setAttributeValue(attributeValuePack,millisecToWait);
+        case DataType::TYPE_CLUSTER:{
             
+            attributeValuePack.addJsonValue(attrname,attributeValue);
+            
+            return deviceChannel->setAttributeValue(attributeValuePack,millisecToWait);
+        }
         case DataType::TYPE_STRING:
             attributeValuePack.addStringValue(attrname,attributeValue);
             return deviceChannel->setAttributeValue(attributeValuePack,millisecToWait);
@@ -697,7 +717,7 @@ void DeviceController::initializeAttributeIndexMap() {
         if(datasetDB.getAttributeRangeValueInfo(*iter, attributerangeInfo)!=0){
             LERR_<<"CANNOT RETRIVE attr range info of:"<<*iter;
         }
-        LDBG_<<"IN attr:"<<attributerangeInfo.name<<" type:"<<attributerangeInfo.valueType<<" bin type:"<<attributerangeInfo.binType;
+        LDBG_<<"IN attr:"<<attributerangeInfo.name<<" type:"<<attributerangeInfo.valueType;
         attributeValueMap.insert(make_pair(*iter, attributerangeInfo));
         
     }
@@ -713,7 +733,7 @@ void DeviceController::initializeAttributeIndexMap() {
             LERR_<<"CANNOT RETRIVE attr range info of:"<<*iter;
             
         }
-        LDBG_<<"OUT attr:"<<attributerangeInfo.name<<" type:"<<attributerangeInfo.valueType<<" bin type:"<<attributerangeInfo.binType;
+        LDBG_<<"OUT attr:"<<attributerangeInfo.name<<" type:"<<attributerangeInfo.valueType;
         attributeValueMap.insert(make_pair(*iter, attributerangeInfo));
         
     }
@@ -762,9 +782,9 @@ void DeviceController::allocateNewLiveBufferForAttributeAndType(string& attribut
 }
 
 //---------------------------------------------------------------------------------------------------
-DataBuffer *DeviceController::getBufferForAttribute(string& attributeName) {
+UIDataBuffer *DeviceController::getBufferForAttribute(string& attributeName) {
     boost::mutex::scoped_lock lock(trackMutext);
-    DataBuffer * result = NULL;
+    UIDataBuffer * result = NULL;
     //allocate attribute traccking
     
     if(attributeValueMap.count(attributeName) == 0  ) return result;
@@ -805,7 +825,7 @@ PointerBuffer *DeviceController::getPtrBufferForAttribute(string& attributeName)
 }
 
 //---------------------------------------------------------------------------------------------------
-DataBuffer *DeviceController::getPtrBufferForTimestamp(const int initialDimension) {
+UIDataBuffer *DeviceController::getPtrBufferForTimestamp(const int initialDimension) {
     return int64AttributeLiveBuffer.count(DataPackCommonKey::DPCK_TIMESTAMP)>0? int64AttributeLiveBuffer[DataPackCommonKey::DPCK_TIMESTAMP]:NULL;
 }
 
@@ -874,8 +894,7 @@ CDataWrapper * DeviceController::getCurrentDatasetForDomain(DatasetDomain domain
 chaos::common::data::CDataWrapper *  DeviceController::fetchCurrentDatatasetFromDomain(DatasetDomain domain) {
     CHAOS_ASSERT(ioLiveDataDriver)
     char *value = NULL;
-    unsigned long value_len = 0;
-    
+    size_t value_len = 0;
     if(domain<current_dataset.size()){
         value = ioLiveDataDriver->retriveRawData(channel_keys[domain],(size_t*)&value_len);
         if(value){
@@ -1012,13 +1031,13 @@ int DeviceController::createNewSnapshot(const std::string& snapshot_tag,
     CHAOS_ASSERT(ioLiveDataDriver)
     std::vector<std::string> device_id_in_snap = other_snapped_device;
     device_id_in_snap.push_back(device_id);
-    return ioLiveDataDriver->createNewSnapshot(snapshot_tag,
-                                               device_id_in_snap);
+    return mdsChannel->createNewSnapshot(snapshot_tag,
+    		device_id_in_snap);
 }
 
 int DeviceController::deleteSnapshot(const std::string& snapshot_tag) {
     CHAOS_ASSERT(ioLiveDataDriver)
-    return ioLiveDataDriver->deleteSnapshot(snapshot_tag);
+    return mdsChannel->deleteSnapshot(snapshot_tag);
 }
 
 int DeviceController::getSnapshotList(ChaosStringVector& snapshot_list) {

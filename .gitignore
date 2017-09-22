@@ -1,3 +1,9 @@
+ext_dep/*
+doc/html
+doc/img
+doc/latex
+*.ui.autosave
+*.cbp
 build_*
 ccs/build_*
 DartConfiguration.tcl
@@ -60,7 +66,6 @@ ControlUnitTest/ChaosCUTest
 *mwb.bak
 example/UIToolkitTest/testui.app
 *application.log
-Documentation/uml/CHAOS.mdzip.bak
 external
 usr
 example/build-UIToolkitTest-Desktop-Debug/*

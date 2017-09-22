@@ -1,21 +1,22 @@
 /*
- *	AbstractCommandDispatcher.cpp
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include <chaos/common/global.h>
@@ -23,7 +24,9 @@
 
 using namespace chaos;
 using namespace chaos::common::data;
+
 using namespace boost;
+
 using namespace std;
 
 #define ACDLAPP_ LAPP_ << "[AbstractCommandDispatcher] - "
@@ -68,33 +71,25 @@ CDataWrapper *CheckDomainRpcAction::checkDomain(CDataWrapper *action_data, bool&
     
     const std::string domain_name = action_data->getStringValue("domain_name");
     
-    std::auto_ptr<CDataWrapper> result(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> result(new CDataWrapper());
     bool alive = dispatcher->hasDomain(domain_name);
-    uint32_t queued_action_in_domain = dispatcher->domainRPCActionQueued(domain_name);
+    uint32_t queued_action_in_domain = 0;
     //create the result data pack
     result->addBoolValue("alive", alive);
     result->addInt32Value("queued_actions", queued_action_in_domain);
     return result.release();
 }
-//-----------------------------------------------------------------
 
-AbstractCommandDispatcher::AbstractCommandDispatcher(string alias):
+AbstractCommandDispatcher::AbstractCommandDispatcher(const string& alias):
 NamedService(alias),
 check_domain_action(this),
 rpc_forwarder_ptr(NULL){
 }
 
-AbstractCommandDispatcher::~AbstractCommandDispatcher() {
-    
-}
+AbstractCommandDispatcher::~AbstractCommandDispatcher() {}
 
-/*
- init the rpc adapter
- */
-void AbstractCommandDispatcher::init(void *initConfiguration) throw(CException) {
-}
+void AbstractCommandDispatcher::init(void *init_data)  throw(CException) {}
 
-//-----------------------
 void AbstractCommandDispatcher::start() throw(CException) {
     registerAction(&echo_action_class);
     registerAction(&check_domain_action);
@@ -105,88 +100,9 @@ void AbstractCommandDispatcher::stop() throw(CException) {
     deregisterAction(&echo_action_class);
 }
 
-/*
- deinit the rpc adapter
- */
-void AbstractCommandDispatcher::deinit() throw(CException) {
-}
+void AbstractCommandDispatcher::deinit()  throw(CException) {}
 
-/*
- return an isntance of DomainActions pointer in relation to name
- but if the name is not present initialized it and add it to map
- */
-boost::shared_ptr<DomainActions> AbstractCommandDispatcher::getDomainActionsFromName(const string& domain_name) {
-    //check if is not preset, so we can allocate it
-    if(!action_domain_executor_map.count(domain_name)){
-        boost::shared_ptr<DomainActions>  result(new DomainActions(domain_name));
-        if(result){;
-            action_domain_executor_map.insert(make_pair(domain_name, result));
-            DEBUG_CODE(ACDLDBG_ << "Allocated new  DomainActions:" << domain_name;);
-        }
-    }
-    //return the domain executor for name
-    return action_domain_executor_map[domain_name];
-}
-
-/*
- return an isntance of DomainActions pointer and remove
- it form the map
- */
-void AbstractCommandDispatcher::removeDomainActionsFromName(string& domainName) {
-    if(!action_domain_executor_map.count(domainName)){
-        action_domain_executor_map.erase(domainName);
-    }
-}
-
-/*
- Register actions defined by AbstractActionDescriptor instance contained in the array
- */
-void AbstractCommandDispatcher::registerAction(DeclareAction* declareActionClass)  throw(CException) {
-    if(!declareActionClass) return;
-    
-    vector<AbstActionDescShrPtr>::iterator actDescIter = declareActionClass->getActionDescriptors().begin();
-    for (; actDescIter != declareActionClass->getActionDescriptors().end(); actDescIter++) {
-        //get the domain executor for this action descriptor
-        boost::shared_ptr<DomainActions> domainExecutor = getDomainActionsFromName((*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain));
-        
-        //if the domain executor has been returned, add this action to it
-        if(domainExecutor) {
-            domainExecutor->addActionDescriptor(*actDescIter);
-            DEBUG_CODE(ACDLDBG_	<< "Registered action [" << (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionName)
-                       << "] for domain [" << (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain) << "]";);
-        }
-    }
-}
-
-/*
- Deregister actions for a determianted domain
- */
-void AbstractCommandDispatcher::deregisterAction(DeclareAction* declareActionClass)  throw(CException) {
-    if(!declareActionClass) return;
-    vector<AbstActionDescShrPtr>::iterator actDescIter = declareActionClass->getActionDescriptors().begin();
-    for (; actDescIter != declareActionClass->getActionDescriptors().end(); actDescIter++) {
-        //get the domain executor for this action descriptor
-        boost::shared_ptr<DomainActions> domainExecutor = getDomainActionsFromName((*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain));
-        
-        //if the domain executor has been returned, add this action to it
-        if(domainExecutor) {
-            domainExecutor->removeActionDescriptor(*actDescIter);
-            DEBUG_CODE(ACDLDBG_	<< "Deregistered action [" << (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionName)
-                       << "] for domain [" << (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain) << "]";);
-            
-            if(!domainExecutor->registeredActions()) {
-                std::string domain_name = domainExecutor->getDomainName();
-                DEBUG_CODE(ACDLDBG_ << "No more action in domain " << domain_name << " so it will be destroyed";);
-                action_domain_executor_map.erase(domain_name);
-            }
-        }
-    }
-}
-
-/*
- Send a message
- */
-bool AbstractCommandDispatcher::submitMessage(string& server_port,
+bool AbstractCommandDispatcher::submitMessage(const string& server_port,
                                               chaos::common::data::CDataWrapper* message,
                                               bool onThisThread)  throw(CException) {
     CHAOS_ASSERT(message && rpc_forwarder_ptr)
@@ -197,24 +113,11 @@ bool AbstractCommandDispatcher::submitMessage(string& server_port,
     return rpc_forwarder_ptr->submitMessage(nfi, onThisThread);
 }
 
-/*
- Update the configuration for the dispatcher
- */
 chaos::common::data::CDataWrapper* AbstractCommandDispatcher::updateConfiguration(chaos::common::data::CDataWrapper*)  throw(CException) {
     return NULL;
 }
 
-/*
- 
- */
 void AbstractCommandDispatcher::setRpcForwarder(RpcMessageForwarder *newRpcForwarderPtr){
     rpc_forwarder_ptr = newRpcForwarderPtr;
 }
 
-bool AbstractCommandDispatcher::hasDomain(const std::string& domain_name) {
-    return action_domain_executor_map.count(domain_name);
-}
-
-uint32_t AbstractCommandDispatcher::domainRPCActionQueued(const std::string& domain_name) {
-    return 0;
-}

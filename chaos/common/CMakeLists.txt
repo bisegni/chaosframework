@@ -6,7 +6,7 @@ IF( NOT CHAOS_DISABLE_EVENTFD)
 ELSE()
   SET(ZMQ_FLAGS "")
 ENDIF()
-CheckConfigureBuild(zmq zeromq4-x "${ZMQ_FLAGS}" https://github.com/zeromq)
+CheckConfigureBuild(zmq zeromq4-1 "${ZMQ_FLAGS}" https://github.com/zeromq)
 
 ####
 
@@ -119,7 +119,9 @@ SET(common_lib_src ${common_lib_src}
         dispatcher/AbstractEventDispatcher.cpp
         dispatcher/AbstractCommandDispatcher.cpp
         dispatcher/DefaultCommandDispatcher.cpp
-        dispatcher/DomainActionsScheduler.cpp)
+        dispatcher/DomainActionsScheduler.cpp
+        dispatcher/AbstractActionScheduler.cpp
+        dispatcher/SharedCommandDispatcher.cpp)
 
 SET(common_lib_src ${common_lib_src}
         exception/CException.cpp
@@ -169,6 +171,7 @@ SET(common_lib_src ${common_lib_src}
 SET(common_lib_src ${common_lib_src}
         io/IODataDriver.cpp
         io/IODirectIODriver.cpp
+        io/ManagedDirectIODataDriver.cpp
         io/QueryCursor.cpp)
 
 SET(common_lib_src ${common_lib_src}
@@ -180,8 +183,7 @@ SET(common_lib_src ${common_lib_src}
         message/MultiAddressMessageChannel.cpp
         message/MultiAddressMessageRequestFuture.cpp
         message/PerformanceNodeChannel.cpp
-        message/MessageRequestDomain.cpp
-        message/MessageRequestDomain.h)
+        message/MessageRequestDomain.cpp)
 
 SET(common_lib_src ${common_lib_src}
         network/NetworkBroker.cpp
@@ -199,10 +201,6 @@ SET(common_lib_src ${common_lib_src}
         rpc/zmq/ZMQServer.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        sync_rpc/RpcSyncServer.cpp
-        sync_rpc/HTTPRpcSyncServer.cpp)
-
-SET(common_lib_src ${common_lib_src}
         utility/NamedService.cpp
         utility/StartableService.cpp
         utility/InizializableService.cpp
@@ -211,23 +209,25 @@ SET(common_lib_src ${common_lib_src}
         utility/AggregatedCheckList.cpp
         utility/TimingUtil.cpp
         utility/AbstractListener.cpp
-        utility/AbstractListenerContainer.cpp)
+        utility/AbstractListenerContainer.cpp
+        utility/ProcStat.cpp
+        utility/FSUtility.cpp)
 
 SET(common_lib_src ${common_lib_src}
         batch_command/BatchCommandExecutor.cpp
         batch_command/BatchCommandSandbox.cpp
         batch_command/BatchCommand.cpp
-        batch_command/BatchCommandDescription.cpp)
+        batch_command/BatchCommandDescription.cpp
+        batch_command/AbstractSandbox.cpp
+        batch_command/BatchCommandParallelSandbox.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        plugin/AbstractPlugin.cpp
-        plugin/PluginDiscover.cpp
-        plugin/PluginInspector.cpp
-        plugin/PluginLoader.cpp)
+  plugin/PluginLoader.cpp
+  plugin/PluginManager.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        property/PropertyCollector.cpp
         property/PropertyGroup.cpp
+        property/PropertyCollector.cpp
         property/PropertyDescription.cpp)
 
 SET(common_lib_src ${common_lib_src}
@@ -249,11 +249,13 @@ SET(common_lib_src ${common_lib_src}
         trigger/TriggerExecutionEnviroment.cpp
         trigger/trigger_types.cpp)
 
+
 #compile lua chaos vm and core files
 INCLUDE_DIRECTORIES(script/lua/core ./chaos/common ./chaos/common/metadata_logging ../../)
 FILE(GLOB LuaCoreSource script/lua/core/*.c)
 SET(common_lib_src ${common_lib_src}
 	script/lua/LuaScriptVM.cpp
+    script/lua/LuaModuleManager.cpp
 	${LuaCoreSource})
 
 IF (NOT DEFINED BUILD_FORCE_STATIC)
@@ -273,7 +275,7 @@ ENDIF ()
 #SET_TARGET_PROPERTIES(chaos_common_static PROPERTIES OUTPUT_NAME chaos_common)
 
 
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} mongoose ${FrameworkLib})
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${FrameworkLib})
 
 
 

@@ -1,14 +1,13 @@
 #ifndef PREFERENCEDIALOG_H
 #define PREFERENCEDIALOG_H
 
+#include "preference_types.h"
 #include "PreferenceMDSHostListModel.h"
 
 #include <QDialog>
 #include <QSettings>
 #include <QAbstractButton>
 
-
-#define PREFERENCE_NETWORK_GROUP_NAME "net:preference:1_0"
 
 namespace Ui {
 class PreferenceDialog;

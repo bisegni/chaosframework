@@ -6,7 +6,7 @@
 
 #include <QDialog>
 #include <QAbstractButton>
-#include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
+#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
 
 namespace Ui {
 class ControlUnitCommandTemplateEditor;
@@ -47,7 +47,7 @@ private slots:
 
 private:
     bool in_editing;
-    boost::shared_ptr<chaos::metadata_service_client::api_proxy::node::CommandTemplate> getTemplateDescription();
+    ChaosSharedPtr<chaos::metadata_service_client::api_proxy::node::CommandTemplate> getTemplateDescription();
     QSharedPointer<chaos::common::data::CDataWrapper> command_description;
     CommandParameterTableModel parameter_table_model;
     Ui::ControlUnitCommandTemplateEditor *ui;

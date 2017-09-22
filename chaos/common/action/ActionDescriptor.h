@@ -1,21 +1,22 @@
-/*	
- *	ActionDescriptor.h
- *	!CHAOS
- *	Created by Bisegni Claudio.
- *	
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+/*
+ * Copyright 2012, 2017 INFN
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 #ifndef ChaosFramework_ActionDescriptor_h
 #define ChaosFramework_ActionDescriptor_h
@@ -31,27 +32,24 @@
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/exception/exception.h>
 
+#include <boost/thread.hpp>
+
 namespace chaos {
-    using namespace std;
-    using namespace boost;
-    
-	namespace chaos_data = chaos::common::data;
-	
     typedef boost::shared_mutex ActionSharedLock;
     typedef boost::unique_lock< boost::shared_mutex >   ActionWriteLock;
     typedef boost::shared_lock< boost::shared_mutex >   ActionReadLock;
     
-        /*
-         struct for describe a param for an action
-         */
+    /*
+     struct for describe a param for an action
+     */
     struct ActionParamDescription {
-        string paramName;
-        string paramDescription;
+        std::string paramName;
+        std::string paramDescription;
         DataType::DataType paramType;
         
         ActionParamDescription():
         paramType(DataType::TYPE_UNDEFINED){}
-
+        
         ActionParamDescription(const std::string& _paramName):
         paramName(_paramName),
         paramType(DataType::TYPE_UNDEFINED){}
@@ -64,25 +62,32 @@ namespace chaos {
     class AbstractActionDescriptor {
         friend class DomainActions;
         //condition_variable disableConditionalVariable;
-       
+        
         bool fired;
         bool enabled;
+        
     protected:
         //domain for the action, the full name will be 'actionDomain::actioName
-        string actionDomain;
+        std::string actionDomain;
         
         //action key
-        string actionName;
+        std::string actionName;
         
         //action desription
-        string actionDescription;
+        std::string actionDescription;
         
-            //map for action
-        vector< boost::shared_ptr<ActionParamDescription> > paramDescriptionVec;
+        //!tag action as executables by more thread
+        bool shared_execution;
+        
+        //!whe action is not shared executable mutex need to lock all other thread
+        boost::mutex mutex_execution_lock;
+        
+        //map for action
+        std::vector< ChaosSharedPtr<ActionParamDescription> > paramDescriptionVec;
         
         //only domain action can be set this value
         bool setEnabled(bool);
-
+        
     public:
         ActionSharedLock actionAccessMutext;
         
@@ -92,8 +97,8 @@ namespace chaos {
             ActionDescription
         } ActionStringType;
         
-            //default constructor
-        AbstractActionDescriptor();
+        //default constructor
+        AbstractActionDescriptor(bool shared_execution);
         virtual ~AbstractActionDescriptor();
         
         /*!
@@ -102,29 +107,31 @@ namespace chaos {
          \param detachParam the action can set this param to true, in this case the deallocation is demanded to the action
          \return the result of the action
          */
-        virtual chaos_data::CDataWrapper* call(chaos_data::CDataWrapper *actionParam, bool& detachParam)  throw (CException) = 0;
+        virtual chaos::common::data::CDataWrapper* call(chaos::common::data::CDataWrapper *actionParam, bool& detachParam)  throw (CException) = 0;
         
         /*!
-            set the string value for the determinated type
+         set the string value for the determinated type
          */
-        void setTypeValue(ActionStringType, const string &);
+        void setTypeValue(ActionStringType,
+                          const std::string &);
         
+        bool isShared();
         bool isFired();
         bool setFiredWriteLocked(bool _fired);
         bool setFired(bool _fired);
         bool isEnabled();
-
+        
         /*!
-            get the string value for the determinated type, a reference
-            has been return so keep in mind that string live within object life
-         */        
-        const string & getTypeValue(ActionStringType);
+         get the string value for the determinated type, a reference
+         has been return so keep in mind that string live within object life
+         */
+        const std::string & getTypeValue(ActionStringType type);
         
 #pragma mark Param Method
         /*!
          Return the array list of the param defined by this action
          */
-        vector< boost::shared_ptr<ActionParamDescription> >& getParamDescriptions();
+        std::vector< ChaosSharedPtr<ActionParamDescription> >& getParamDescriptions();
         
         /*!
          Add a new param
@@ -135,21 +142,22 @@ namespace chaos {
     };
     
     //define the ptr style defined
-    typedef boost::shared_ptr<AbstractActionDescriptor> AbstActionDescShrPtr;
-
+    typedef ChaosSharedPtr<AbstractActionDescriptor> AbstActionDescShrPtr;
+    
 #pragma mark Template for Action Definition
     
 #define IN_ACTION_PARAM_CHECK(x, e, m) if(x) throw CException(e, m, __PRETTY_FUNCTION__);
-	
+    
     /*!
      Template class for register a class method as an action. The T*
      msut not be deleted from this class when it will be deallocate
      */
     template <typename T>
-    class ActionDescriptor : public AbstractActionDescriptor {
+    class ActionDescriptor:
+    public AbstractActionDescriptor {
     public:
-        typedef chaos_data::CDataWrapper* (T::*ActionPointerDef)(chaos_data::CDataWrapper*, bool&);
-
+        typedef chaos::common::data::CDataWrapper* (T::*ActionPointerDef)(chaos::common::data::CDataWrapper*, bool&);
+        
         /*!
          construct the action class with objectClass pointer,object method pointer action domain name and action name
          that implement the action. be aware that the object reference is never deallocated by
@@ -158,24 +166,28 @@ namespace chaos {
         ActionDescriptor(T* _objectReference,
                          ActionPointerDef _actionPointer,
                          const std::string& _domainName,
-                         const std::string& _actionName) {
-                //set the object reference
+                         const std::string& _actionName,
+                         bool shared_execution = false):
+        AbstractActionDescriptor(shared_execution){
+            //set the object reference
             objectReference = _objectReference;
-                //set the action offset 
+            //set the action offset
             actionPointer = _actionPointer;
-                //set the action domain name
+            //set the action domain name
             setTypeValue(ActionDomain, _domainName);
-                //set the action name
+            //set the action name
             setTypeValue(ActionName, _actionName);
         }
-
         
         /*!
-            execute the action call
+         execute the action call
          */
-        chaos_data::CDataWrapper* call(chaos_data::CDataWrapper *actionParam, bool& detachParam)  throw (CException) {
-                //call the action with param
+        chaos::common::data::CDataWrapper* call(chaos::common::data::CDataWrapper *actionParam,
+                                                bool& detachParam)  throw (CException) {
+            //call the action with param
             CHAOS_ASSERT(objectReference)
+            boost::unique_lock<boost::mutex> wl(mutex_execution_lock, boost::defer_lock);
+            if(isShared() == false){wl.lock();};
             return ((*objectReference).*actionPointer)(actionParam, detachParam);
         }
         

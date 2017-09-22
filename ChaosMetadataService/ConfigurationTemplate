@@ -1,0 +1,15 @@
+#default mds server port
+rpc-server-port=5000
+
+persistence-impl=<prefix name>
+persistence-servers=hostname
+persistence-kv-param=<key:value>
+
+cache-servers=hostname
+cache-driver=<driver prefix>
+cache-driver-kvp=<key:value>
+data-worker-thread=thread number for worker
+
+obj-storage-driver=<driver name>
+obj-storage-driver-server_url=<host>
+obj-storage-kvp=<key:value>

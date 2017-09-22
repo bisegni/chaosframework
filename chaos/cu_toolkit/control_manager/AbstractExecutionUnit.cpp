@@ -1,22 +1,22 @@
 /*
- *	AbstractExecutionUnit.cpp
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFramework]
- *	Created by Claudio Bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 26/04/16 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include <chaos/common/utility/endianess.h>
@@ -37,6 +37,7 @@ using namespace chaos::common::exception;
 using namespace chaos::common::data::cache;
 
 using namespace chaos::cu;
+using namespace chaos::cu::data_manager;
 using namespace chaos::cu::control_manager;
 
 using namespace boost;
@@ -46,9 +47,10 @@ using namespace boost::chrono;
 #define EULDBG_ DBG_LOG_1_P(AbstractExecutionUnit, getCUInstance())
 #define EULERR_ ERR_LOG_1_P(AbstractExecutionUnit, getCUInstance())
 
-AbstractExecutionUnit::AbstractExecutionUnit(const std::string& _execution_unit_id,
+AbstractExecutionUnit::AbstractExecutionUnit(const std::string& _execution_unit_subtype,
+                                             const std::string& _execution_unit_id,
                                              const std::string& _execution_unit_param):
-RTAbstractControlUnit(CUType::EXUT,
+RTAbstractControlUnit(_execution_unit_subtype,
                       _execution_unit_id,
                       _execution_unit_param),
 last_execution_ts(0){}
@@ -58,10 +60,11 @@ last_execution_ts(0){}
  \param _execution_unit_id unique id for the control unit
  \param _execution_unit_drivers driver information
  */
-AbstractExecutionUnit::AbstractExecutionUnit(const std::string& _execution_unit_id,
+AbstractExecutionUnit::AbstractExecutionUnit(const std::string& _execution_unit_subtype,
+                                             const std::string& _execution_unit_id,
                                              const std::string& _execution_unit_param,
                                              const ControlUnitDriverList& _execution_unit_drivers):
-RTAbstractControlUnit(CUType::EXUT,
+RTAbstractControlUnit(_execution_unit_subtype,
                       _execution_unit_id,
                       _execution_unit_param,
                       _execution_unit_drivers),
@@ -152,7 +155,7 @@ void AbstractExecutionUnit::setOutputAttributeValue(const std::string& attribute
     CHAOS_ASSERT(attribute_value_shared_cache)
     CDataVariant result;
     AttributeValue *cached_value = NULL;
-    cached_value = attribute_value_shared_cache->getAttributeValue(DOMAIN_INPUT,
+    cached_value = attribute_value_shared_cache->getAttributeValue(DOMAIN_OUTPUT,
                                                                    attribute_name);
     cached_value->setValue(attribute_value);
 }
@@ -164,17 +167,15 @@ void AbstractExecutionUnit::_defineActionAndDataset(chaos_data::CDataWrapper& se
     if(eu_description.size()){setup_configuration.addStringValue(ExecutionUnitNodeDefinitionKey::EXECUTION_UNIT_DESCRIPTION, eu_description);}
 }
 
-//! inherited method
 void AbstractExecutionUnit::unitInit() throw(CException) {
+    
     executeAlgorithmLaunch();
 }
 
-//! inherited method
 void AbstractExecutionUnit::unitStart() throw(CException) {
     executeAlgorithmStart();
 }
 
-//! inherited method
 void AbstractExecutionUnit::unitRun() throw(CException) {
     //get temp pointe to step timestamp
     uint64_t *step_ts = timestamp_acq_cached_value->getValuePtr<uint64_t>();
@@ -184,12 +185,46 @@ void AbstractExecutionUnit::unitRun() throw(CException) {
     last_execution_ts = *step_ts;
 }
 
-//! inherited method
 void AbstractExecutionUnit::unitStop() throw(CException) {
     executeAlgorithmStop();
 }
 
-//! inherited method
 void AbstractExecutionUnit::unitDeinit() throw(CException) {
     executeAlgorithmEnd();
+}
+
+int AbstractExecutionUnit::performLiveFetch(const chaos::cu::data_manager::KeyDataStorageDomain dataset_domain,
+                                            chaos::common::data::CDWShrdPtr& found_dataset) {
+    return key_data_storage->performLiveFetch(dataset_domain,
+                                              found_dataset);
+}
+
+int AbstractExecutionUnit::performLiveFetch(const ChaosStringVector& node_uid,
+                                            const chaos::cu::data_manager::KeyDataStorageDomain dataset_domain,
+                                            chaos::common::data::VectorCDWShrdPtr& found_dataset) {
+    return key_data_storage->performLiveFetch(node_uid,
+                                              dataset_domain,
+                                              found_dataset);
+}
+
+int AbstractExecutionUnit::performQuery(chaos::common::io::QueryCursor **cursor,
+                                        const std::string& node_id,
+                                        KeyDataStorageDomain dataset_domain,
+                                        const uint64_t start_ts,
+                                        const uint64_t end_ts,
+                                        const uint32_t page_len) {
+    CHAOS_ASSERT(key_data_storage.get());
+    int err = key_data_storage->performGeneralQuery(cursor,
+                                                    node_id,
+                                                    dataset_domain,
+                                                    start_ts,
+                                                    end_ts);
+    if(!err || *cursor) {
+        (*cursor)->setPageDimension(page_len);
+    }
+    return err;
+}
+
+void AbstractExecutionUnit::releseQuery(chaos::common::io::QueryCursor *cursor) {
+    key_data_storage->releseQuery(cursor);
 }

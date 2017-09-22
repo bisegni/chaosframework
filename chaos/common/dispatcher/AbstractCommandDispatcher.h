@@ -1,21 +1,22 @@
 /*
- *	AbstractCommandDispatcher.h
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #ifndef AbstractCommandDispatcher_H
@@ -36,11 +37,6 @@
 
 #include <chaos/common/utility/NamedService.h>
 #include <chaos/common/utility/StartableService.h>
-
-
-using namespace std;
-using namespace bson;
-using namespace boost;
 
 /*
  Base class for the command implementation
@@ -99,12 +95,13 @@ namespace chaos{
         //! check domain class
         CheckDomainRpcAction check_domain_action;
         
-        //! Domain name <-> Action name association map
-        /*!Contains the association between the domain name and all action for this domain*/
-        map<string, boost::shared_ptr<DomainActions> >  action_domain_executor_map;
+    public:
+        //! Constructor
+        AbstractCommandDispatcher(const std::string& alias);
         
-        //! Dispatch initialization with default value
-        virtual void init(void*) throw(CException);
+        ~AbstractCommandDispatcher();
+        
+        virtual void init(void *init_data)  throw(CException);
         
         //-----------------------
         virtual void start() throw(CException);
@@ -112,28 +109,7 @@ namespace chaos{
         //-----------------------
         virtual void stop() throw(CException);
         
-        //! Dispatch deinitialization with default value
-        virtual void deinit() throw(CException);
-        
-        //! Accessor to the object that manage the action for a domain
-        /*!
-         \return the instance of DomainActions pointer in relation to name
-         but if the name is not present initialized it and add it to map
-         */
-        boost::shared_ptr<DomainActions> getDomainActionsFromName(const string & domain_name);
-        
-        //! Remove the infromation about a domain
-        /*!
-         \return an isntance of DomainActions pointer and remove
-         it form the map
-         */
-        void  removeDomainActionsFromName(string&);
-        
-    public:
-        //! Constructor
-        AbstractCommandDispatcher(string alias);
-        
-        ~AbstractCommandDispatcher();
+        virtual void deinit()  throw(CException);
         
         /*
          update the dispatcher configuration
@@ -154,7 +130,7 @@ namespace chaos{
          deallocation is managed by rpc client, otherwise("true" value) the caller need to delete the object it self
          \return boolean value to informa is the mesage has been submitted
          */
-        bool submitMessage(string& server_port,
+        bool submitMessage(const string& server_port,
                            chaos::common::data::CDataWrapper* message,
                            bool onThisThread = false) throw(CException);
         
@@ -164,7 +140,7 @@ namespace chaos{
          overrided by subclass for make some thing befor or after the registration
          \param declareActionClass The object that expose the domain and action name
          */
-        virtual void registerAction(DeclareAction *declareActionClass)  throw(CException) ;
+        virtual void registerAction(DeclareAction *declareActionClass)  throw(CException) = 0;
         
         //! Action deregistration
         /*
@@ -172,11 +148,9 @@ namespace chaos{
          overrided by subclass for make some thing befor or after the registration
          \param declareActionClass The object that expose the domain and action name
          */
-        virtual void deregisterAction(DeclareAction *declareActionClass)  throw(CException) ;
+        virtual void deregisterAction(DeclareAction *declareActionClass)  throw(CException) = 0;
         
-        virtual bool hasDomain(const std::string& domain_name);
-        
-        virtual uint32_t domainRPCActionQueued(const std::string& domain_name);
+        virtual bool hasDomain(const std::string& domain_name) = 0;
         
         /*!
          Set the rpc forwarder implementation

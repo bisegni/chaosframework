@@ -4,9 +4,12 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
-
+QT += core gui sql
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
+
+#CONFIG += c++11
+QMAKE_CXXFLAGS += -std=c++11
+QMAKE_MAC_SDK = macosx10.12
 
 TARGET = ccs
 TEMPLATE = app
@@ -40,13 +43,11 @@ LIBS +=     -ljsoncpp\
             -lboost_chrono\
             -lboost_filesystem\
             -lboost_log\
-            -lboost_log_setup\
-            -lmongoose
+            -lboost_log_setup
 
 SOURCES += main.cpp\
     search/SearchNodeResult.cpp \
     presenter/PresenterWidget.cpp \
-    presenter/CommandPresenter.cpp \
     api_async_processor/ApiAsyncProcessor.cpp \
     api_async_processor/ApiAsyncRunnable.cpp \
     MainController.cpp \
@@ -57,7 +58,6 @@ SOURCES += main.cpp\
     node/data_service/DataServiceEditor.cpp \
     node/data_service/CreateEditDataService.cpp \
     preference/PreferenceDialog.cpp \
-    MainWindow.cpp \
     monitor/healt/HealtMonitorWidget.cpp \
     monitor/healt/HealtPresenterWidget.cpp \
     monitor/healt/HealtWidgetsListPresenteWidget.cpp \
@@ -106,7 +106,6 @@ SOURCES += main.cpp\
     api_async_processor/ApiSubmitter.cpp \
     widget/ChaosWidgetCompanion.cpp \
     data/LogDomainListModel.cpp \
-    data/LogEntryTableModel.cpp \
     api_async_processor/ApiHandler.cpp \
     data/LogDataTableModel.cpp \
     log_browser/LogBrowser.cpp \
@@ -138,18 +137,34 @@ SOURCES += main.cpp\
     widget/OnOffImageIndicator.cpp \
     widget/CStateVisiblePushButton.cpp \
     status_manager/StatusManager.cpp \
-    data/AlarmListModel.cpp \
     widget/CQListView.cpp \
     widget/CCommandStatisticWidget.cpp \
     plot/AbstractBinaryPlotAdapter.cpp \
     plot/BufferPlot.cpp \
     widget/WidgetDynamicList.cpp \
-    data/SearchNodeListModel.cpp
+    data/SearchNodeListModel.cpp \
+    data/LiveDatasetTableModel.cpp \
+    data/SnapshotDatasetNodeListModel.cpp \
+    preference/PreferenceManager.cpp \
+    data/ControlUnitStateVaribleListModel.cpp \
+    utility/MessageUtility.cpp \
+    error/ErrorManager.cpp \
+    log_browser/ApplicationErrorLogging.cpp \
+    data/ApplicationErrorLoggingTableModel.cpp \
+    node/agent/AgentEditor.cpp \
+    data/AgentNodeAssociatedListModel.cpp \
+    node/agent/AgentNodeAssociationEditor.cpp \
+    data/LogEntryTableModel.cpp \
+    data/LogProcessEntriesTableModel.cpp \
+    data/json/JsonTableModel.cpp \
+    language_editor/JsonEditor.cpp \
+    node/agent/AgentSetting.cpp \
+    widget/CQTableView.cpp \
+    widget/CPropertyPushButton.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
     presenter/PresenterWidget.h \
-    presenter/CommandPresenter.h \
     api_async_processor/ApiAsyncProcessor.h \
     api_async_processor/ApiAsyncRunnable.h \
     MainController.h \
@@ -160,7 +175,6 @@ HEADERS  += \
     node/data_service/DataServiceEditor.h \
     node/data_service/CreateEditDataService.h \
     preference/PreferenceDialog.h \
-    MainWindow.h \
     monitor/healt/HealtMonitorWidget.h \
     monitor/healt/HealtPresenterWidget.h \
     monitor/healt/HealtWidgetsListPresenteWidget.h \
@@ -232,7 +246,6 @@ HEADERS  += \
     api_async_processor/ApiHandler.h \
     widget/ChaosWidgetCompanion.h \
     data/LogDomainListModel.h \
-    data/LogEntryTableModel.h \
     data/LogDataTableModel.h \
     data/SearchPager.h\
     log_browser/LogBrowser.h \
@@ -264,14 +277,32 @@ HEADERS  += \
     widget/OnOffImageIndicator.h \
     widget/CStateVisiblePushButton.h \
     status_manager/StatusManager.h \
-    data/AlarmListModel.h \
     widget/CQListView.h \
     widget/CCommandStatisticWidget.h \
     plot/AbstractBinaryPlotAdapter.h \
     plot/BufferPlot.h \
     widget/WidgetDynamicList.h \
     metatypes.h \
-    data/SearchNodeListModel.h
+    data/SearchNodeListModel.h \
+    data/LiveDatasetTableModel.h \
+    data/SnapshotDatasetNodeListModel.h \
+    preference/PreferenceManager.h \
+    preference/preference_types.h \
+    data/ControlUnitStateVaribleListModel.h \
+    utility/MessageUtility.h \
+    error/ErrorManager.h \
+    log_browser/ApplicationErrorLogging.h \
+    data/ApplicationErrorLoggingTableModel.h \
+    node/agent/AgentEditor.h \
+    data/AgentNodeAssociatedListModel.h \
+    node/agent/AgentNodeAssociationEditor.h \
+    data/LogEntryTableModel.h \
+    data/LogProcessEntriesTableModel.h \
+    data/json/JsonTableModel.h \
+    language_editor/JsonEditor.h \
+    node/agent/AgentSetting.h \
+    widget/CQTableView.h \
+    widget/CPropertyPushButton.h
 
 FORMS    += \
     search/searchnoderesult.ui \
@@ -282,7 +313,6 @@ FORMS    += \
     node/data_service/DataServiceEditor.ui \
     node/data_service/CreateEditDataService.ui \
     preference/PreferenceDialog.ui \
-    MainWindow.ui \
     monitor/healt/HealtPresenterWidget.ui \
     monitor/healt/HealtWidgetsListPresenteWidget.ui \
     node/control_unit/ControlUnitEditor.ui \
@@ -306,7 +336,12 @@ FORMS    += \
     script/ScriptInstanceManagerWidget.ui \
     widget/ChaosStorageTypeWidget.ui \
     widget/CCommandStatisticWidget.ui \
-    plot/BufferPlot.ui
+    plot/BufferPlot.ui \
+    log_browser/ApplicationErrorLogging.ui \
+    node/agent/AgentEditor.ui \
+    node/agent/AgentNodeAssociationEditor.ui \
+    language_editor/JsonEditor.ui \
+    node/agent/AgentSetting.ui
 
 DISTFILES += \
     dark_orange.stylesheet \

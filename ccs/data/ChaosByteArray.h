@@ -3,20 +3,20 @@
 
 #include <QObject>
 #include <QByteArray>
-#include <ChaosMetadataServiceClient/monitor_system/monitor_system.h>
+#include <chaos_metadata_service_client/monitor_system/monitor_system.h>
 
 class ChaosByteArray:
         public QObject {
     Q_OBJECT
 public:
-    ChaosByteArray(boost::shared_ptr<chaos::common::data::SerializationBuffer> _source_byte_array,
+    ChaosByteArray(ChaosSharedPtr<chaos::common::data::SerializationBuffer> _source_byte_array,
                    QObject *p = 0);
 
     QByteArray getByteArray();
 
 
 private:
-    boost::shared_ptr<chaos::common::data::SerializationBuffer> source_byte_array;
+    ChaosSharedPtr<chaos::common::data::SerializationBuffer> source_byte_array;
 };
 #endif // CHAOSBYTEARRAY
 

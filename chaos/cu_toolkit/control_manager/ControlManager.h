@@ -1,21 +1,22 @@
 /*
- *	ControlManager.h
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 #ifndef ChaosFramework_ControlManager_h
 #define ChaosFramework_ControlManager_h
@@ -36,6 +37,7 @@
 #include <chaos/common/thread/WaitSemaphore.h>
 #include <chaos/common/async_central/async_central.h>
 
+#include <chaos/cu_toolkit/control_manager/ControlUnitApiInterface.h>
 #include <chaos/cu_toolkit/control_manager/WorkUnitManagement.h>
 #include <chaos/cu_toolkit/control_manager/AbstractControlUnit.h>
 #include <chaos/cu_toolkit/control_manager/control_manager_constants.h>
@@ -153,21 +155,24 @@ namespace chaos {
 				
 				//!queue for control unit waiting to be published
 				mutable boost::shared_mutex		mutex_queue_submitted_cu;
-				queue< AbstractControlUnit* >	queue_submitted_cu;
+				queue< ChaosSharedPtr<AbstractControlUnit> >	queue_submitted_cu;
 				
 				//! control unit instance mapped with their unique identifier
 				mutable boost::shared_mutex mutex_map_cuid_reg_unreg_instance;
-                map<string, boost::shared_ptr<WorkUnitManagement> > map_cuid_reg_unreg_instance;
+                map<string, ChaosSharedPtr<WorkUnitManagement> > map_cuid_reg_unreg_instance;
 				
 				//map
 				mutable boost::shared_mutex mutex_map_cuid_registered_instance;
-				map<string, boost::shared_ptr<WorkUnitManagement> > map_cuid_registered_instance;
+				map<string, ChaosSharedPtr<WorkUnitManagement> > map_cuid_registered_instance;
 				
 				//! association by alias and control unit instancer
-				typedef std::map<string, boost::shared_ptr<CUObjectInstancer> >::iterator MapCUAliasInstancerIterator;
+				typedef std::map<string, ChaosSharedPtr<CUObjectInstancer> >::iterator MapCUAliasInstancerIterator;
 				mutable boost::shared_mutex mutex_map_cu_instancer;
-				std::map<string, boost::shared_ptr<CUObjectInstancer> > map_cu_alias_instancer;
+				std::map<string, ChaosSharedPtr<CUObjectInstancer> > map_cu_alias_instancer;
 				
+                //!hnalder thre proxy creation
+                ProxyLoadHandler load_handler;
+                
 				/*
 				 Constructor
 				 */
@@ -208,34 +213,38 @@ namespace chaos {
                 /*!
 				 Action to poll status of a UnitServer and all CUs
 				 */
-				CDataWrapper* unitServerStatus(CDataWrapper *message_data, bool &detach) throw (CException);
+                chaos::common::data::CDataWrapper* unitServerStatus(chaos::common::data::CDataWrapper *message_data, bool &detach) throw (CException);
 				
 				/*!
 				 Action that show the unit server registration result(success or failure)
 				 */
-				CDataWrapper* unitServerRegistrationACK(CDataWrapper *message_data, bool &detach) throw (CException);
+				chaos::common::data::CDataWrapper* unitServerRegistrationACK(chaos::common::data::CDataWrapper *message_data, bool &detach) throw (CException);
 				
 				/*!
 				 Action that get the work unit registration(success or failure)
 				 */
-				CDataWrapper* workUnitRegistrationACK(CDataWrapper *message_data, bool &detach) throw (CException);
+				chaos::common::data::CDataWrapper* workUnitRegistrationACK(chaos::common::data::CDataWrapper *message_data, bool &detach) throw (CException);
 				
 				/*!
 				 Action for loading a control unit
 				 */
-				CDataWrapper* loadControlUnit(CDataWrapper *message_data, bool &detach) throw (CException);
+				chaos::common::data::CDataWrapper* loadControlUnit(chaos::common::data::CDataWrapper *message_data, bool &detach) throw (CException);
 				
 				/*!
 				 Action for the unloading of a control unit
 				 The unload operation, check that the target control unit is in deinit state
 				 */
-				CDataWrapper* unloadControlUnit(CDataWrapper *message_data, bool &detach) throw (CException);
+				chaos::common::data::CDataWrapper* unloadControlUnit(chaos::common::data::CDataWrapper *message_data, bool &detach) throw (CException);
 				
 				/*!
 				 Configure the sandbox and all subtree of the CU
 				 */
-				CDataWrapper* updateConfiguration(CDataWrapper  *message_data, bool& detach);
+				chaos::common::data::CDataWrapper* updateConfiguration(chaos::common::data::CDataWrapper  *message_data, bool& detach);
 				
+                /*
+                 Submit a new Control unit instance
+                 */
+                void submitControlUnit(ChaosSharedPtr<AbstractControlUnit> control_unit_instance) throw(CException);
 			public:
 				
 				/*
@@ -259,11 +268,9 @@ namespace chaos {
 				 */
 				void deinit() throw(CException);
 				
-				/*
-				 Submit a new Control unit instance
-				 */
-				void submitControlUnit(AbstractControlUnit *control_unit_instance) throw(CException);
-				
+                //! allota a new control unit proxy
+                void setProxyCreationHandler(ProxyLoadHandler load_handler);
+                
 				//! control unit registration
 				/*!
 				 Register a control unit instancer associating it to an alias
@@ -275,7 +282,7 @@ namespace chaos {
 					WriteLock write_instancer_lock(mutex_map_cu_instancer);
 					
 					map_cu_alias_instancer.insert(make_pair(CONTROL_UNIT_PUBLISH_NAME(ControlUnitClass),
-															boost::shared_ptr<CUObjectInstancer>(ALLOCATE_INSTANCER_P3(ControlUnitClass,										//Control unit implementation
+															ChaosSharedPtr<CUObjectInstancer>(ALLOCATE_INSTANCER_P3(ControlUnitClass,										//Control unit implementation
 																													   AbstractControlUnit,										//Control unit base class
 																													   const std::string&,										//Control Unit unique id param
 																													   const std::string&,										//control unit load param

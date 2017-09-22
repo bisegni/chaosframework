@@ -1,21 +1,22 @@
 /*
- *	SCAbstractControlUnit.cpp
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2013 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include <chaos/common/batch_command/BatchCommand.h>
@@ -100,14 +101,14 @@ void SCAbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configur
     //call superclass method
     AbstractControlUnit::_defineActionAndDataset(setup_configuration);
     
-    std::vector< boost::shared_ptr<BatchCommandDescription> > batch_command_description;
+    std::vector< ChaosSharedPtr<BatchCommandDescription> > batch_command_description;
     slow_command_executor->getCommandsDescriptions(batch_command_description);
     if(batch_command_description.size()){
         //fill setup with command descirption serialization
-        for(std::vector< boost::shared_ptr<BatchCommandDescription> > ::iterator it = batch_command_description.begin();
+        for(std::vector< ChaosSharedPtr<BatchCommandDescription> > ::iterator it = batch_command_description.begin();
             it != batch_command_description.end();
             it++) {
-            boost::shared_ptr<CDataWrapper> full_description((*it)->getFullDescription());
+            ChaosSharedPtr<CDataWrapper> full_description((*it)->getFullDescription());
             setup_configuration.appendCDataWrapperToArray(*full_description);
         }
         setup_configuration.finalizeArrayForKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_COMMAND_DESCRIPTION);
@@ -250,7 +251,7 @@ void SCAbstractControlUnit::submitBatchCommand(const std::string& batch_command_
                                          scheduler_step_delay);
 }
 
-std::auto_ptr<CommandState> SCAbstractControlUnit::getStateForCommandID(uint64_t command_id) {
+ChaosUniquePtr<CommandState> SCAbstractControlUnit::getStateForCommandID(uint64_t command_id) {
     return slow_command_executor->getStateForCommandID(command_id);
 }
 
@@ -259,7 +260,7 @@ std::auto_ptr<CommandState> SCAbstractControlUnit::getStateForCommandID(uint64_t
  */
 CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_attribute_values, bool& detachParam) throw (CException) {
     uint64_t command_id =0;
-    std::auto_ptr<CDataWrapper> result_for_command;
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> result_for_command;
     
     //cal first the superclass method because the dataset_attribute_values is not detached
     CDataWrapper *result = AbstractControlUnit::setDatasetAttribute(dataset_attribute_values, detachParam);
@@ -285,43 +286,30 @@ CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_a
     return result;
 }
 
-/*
- Event for update some CU configuration
- */
-CDataWrapper* SCAbstractControlUnit::updateConfiguration(CDataWrapper *update_pack, bool& detach_param) throw (CException) {
-    if(update_pack==NULL)
-        return NULL;
-    CDataWrapper *result = AbstractControlUnit::updateConfiguration(update_pack, detach_param);
-    std::auto_ptr<CDataWrapper> cu_properties;
-    CDataWrapper *cu_property_container = NULL;
-    
-    if(update_pack->hasKey(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)){
-        cu_property_container = update_pack;
-    } else  if(update_pack->hasKey("property_abstract_control_unit") &&
-               update_pack->isCDataWrapperValue("property_abstract_control_unit")){
-        cu_properties.reset(update_pack->getCSDataValue("property_abstract_control_unit"));
-        cu_property_container = cu_properties.get();
-    }
-    
-    if(cu_property_container) {
-        if(cu_properties.get() && cu_properties->hasKey(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)) {
-            //we need to configure the delay  from a run() call and the next
-            uint64_t new_schedule_daly = cu_property_container->getUInt64Value(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY);
+void SCAbstractControlUnit::propertyUpdatedHandler(const std::string& group_name,
+                                                   const std::string& property_name,
+                                                   const CDataVariant& old_value,
+                                                   const CDataVariant& new_value) {
+    if(group_name.compare(chaos::ControlUnitPropertyKey::GROUP_NAME) == 0) {
+        key_data_storage->updateConfiguration(property_name, new_value);
+        //is my group
+        if(property_name.compare(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY) == 0) {
             chaos_batch::features::Features features;
             std::memset(&features, 0, sizeof(chaos_batch::features::Features));
-            //features.featuresFlag &= chaos_batch::features::FeaturesFlagTypes::FF_LOCK_USER_MOD;
-            features.featureSchedulerStepsDelay = new_schedule_daly;
+            features.featureSchedulerStepsDelay = new_value.asUInt64();
             slow_command_executor->setCommandFeatures(features);
-            //update cached value
-            _updateRunScheduleDelay(new_schedule_daly);
-            //push the dataset on data server
-            pushSystemDataset();
+            _updateRunScheduleDelay(new_value.asUInt64());
+            //pushSystemDataset();
         }
     }
-    return result;
+    //call superclass
+    AbstractControlUnit::propertyUpdatedHandler(group_name,
+                                                property_name,
+                                                old_value,
+                                                new_value);
 }
 
-void SCAbstractControlUnit::installCommand(boost::shared_ptr<BatchCommandDescription> command_description,
+void SCAbstractControlUnit::installCommand(ChaosSharedPtr<BatchCommandDescription> command_description,
                                            bool is_default,
                                            bool sticky,
                                            unsigned int sandbox) {
@@ -332,4 +320,41 @@ void SCAbstractControlUnit::installCommand(boost::shared_ptr<BatchCommandDescrip
                           sticky,
                           sandbox);
     }
+}
+bool SCAbstractControlUnit::waitOnCommandID(uint64_t& cmd_id) {
+    ChaosUniquePtr<CommandState> cmd_state;
+    do {
+        cmd_state = getStateForCommandID(cmd_id);
+        if (!cmd_state.get()) break;
+        
+        switch (cmd_state->last_event) {
+            case BatchCommandEventType::EVT_QUEUED:
+                SCACU_LDBG_ << cmd_id << " -> QUEUED";
+                break;
+            case BatchCommandEventType::EVT_RUNNING:
+                SCACU_LDBG_ << cmd_id << " -> RUNNING";
+                break;
+            case BatchCommandEventType::EVT_WAITING:
+                SCACU_LDBG_ << cmd_id << " -> WAITING";
+                break;
+            case BatchCommandEventType::EVT_PAUSED:
+                SCACU_LDBG_ << cmd_id << " -> PAUSED";
+                break;
+            case BatchCommandEventType::EVT_KILLED:
+                SCACU_LDBG_ << cmd_id << " -> KILLED";
+                break;
+            case BatchCommandEventType::EVT_COMPLETED:
+                SCACU_LDBG_ << cmd_id << " -> COMPLETED";
+                break;
+            case BatchCommandEventType::EVT_FAULT:
+                SCACU_LDBG_ << cmd_id << " -> FAULT";
+                break;
+        }
+        //whait some times
+        usleep(500000);
+    } while (cmd_state->last_event != BatchCommandEventType::EVT_COMPLETED &&
+             cmd_state->last_event != BatchCommandEventType::EVT_FAULT &&
+             cmd_state->last_event != BatchCommandEventType::EVT_KILLED);
+    return (cmd_state.get() &&
+            cmd_state->last_event == BatchCommandEventType::EVT_COMPLETED);
 }

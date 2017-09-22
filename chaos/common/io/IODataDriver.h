@@ -1,25 +1,26 @@
 /*
- *	IODataDriver.h
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
-#ifndef IODataDriver_H
-#define IODataDriver_H
+#ifndef _IODataDriver_H
+#define _IODataDriver_H
 #include <map>
 #include <vector>
 #include <boost/shared_ptr.hpp>
@@ -27,6 +28,7 @@
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/general/Configurable.h>
 #include <chaos/common/utility/ArrayPointer.h>
+#include <chaos/common/utility/InizializableService.h>
 #include <chaos/common/io/QueryCursor.h>
 
 namespace chaos_data = chaos::common::data;
@@ -35,11 +37,14 @@ namespace chaos{
     namespace common {
         namespace io {
             
+            
             /*!
              * History Output driver base abstract classe, that define two method to control
              * the initialization and history persistence of the data
              */
-            class IODataDriver: public Configurable {
+            class IODataDriver:
+            public Configurable,
+            public chaos::common::utility::InizializableService {
             protected:
                 QueryCursor *_getNewQueryFutureForQueryID(const std::string& query_id,
                                                           const std::string& key,
@@ -47,17 +52,18 @@ namespace chaos{
                                                           uint64_t end_ts);
                 
                 void _releaseQueryFuture(QueryCursor *query_future_ptr);
+                //boost::mutex iomutex;
             public:
                 virtual ~IODataDriver(){};
                 /*!
                  * Init method, the has map has all received value for configuration
                  * every implemented driver need to get all needed configuration param
                  */
-                virtual void init(void *init_parameter) throw(CException);
+                void init(void *init_parameter) throw(CException);
                 /*!
                  * DeInit method
                  */
-                virtual void deinit() throw(CException);
+                void deinit() throw(CException);
                 
                 /*!
                  * This method cache all object passed to driver
@@ -67,6 +73,10 @@ namespace chaos{
                                chaos_data::CDataWrapper *dataToStore,
                                DataServiceNodeDefinitionType::DSStorageType storage_type,
                                bool delete_data_to_store = true) throw(CException);
+                
+                virtual void storeHealthData(const std::string& key,
+                                             chaos_data::CDataWrapper& dataToStore,
+                                             DataServiceNodeDefinitionType::DSStorageType storage_type) throw(CException) = 0;
                 
                 //!remove data between the time intervall (extreme included) operation is not undoable
                 virtual int removeData(const std::string& key,
@@ -102,6 +112,9 @@ namespace chaos{
                                               size_t* dataDim=NULL)  throw(CException) = 0;
                 
                 
+                virtual int retriveMultipleData(const ChaosStringVector& key,
+                                                chaos::common::data::VectorCDWShrdPtr& result)  throw(CException) = 0;
+                
                 //! restore from a tag a dataset associated to a key
                 /*!
                  try to load a dataset from snapshot identified by the tag
@@ -114,11 +127,6 @@ namespace chaos{
                                                            const std::string& key,
                                                            uint32_t dataset_type,
                                                            chaos_data::CDataWrapper **cdatawrapper_handler) = 0;
-                
-                virtual int createNewSnapshot(const std::string& snapshot_tag,
-                                              const std::vector<std::string>& node_list) = 0;
-                
-                virtual int deleteSnapshot(const std::string& snapshot_tag) = 0;
                 /*!
                  Update the driver configuration
                  */
@@ -132,6 +140,9 @@ namespace chaos{
                 
                 virtual void releaseQuery(QueryCursor *query) = 0;
             };
+            
+            typedef ChaosSharedPtr<chaos::common::io::IODataDriver> IODataDriverShrdPtr;
+            
             
         }
     }

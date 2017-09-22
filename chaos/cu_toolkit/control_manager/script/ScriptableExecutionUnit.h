@@ -1,22 +1,22 @@
 /*
- *	ScriptableExecutionUnit.h
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFramework]
- *	Created by Claudio Bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 13/05/16 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #ifndef __CHAOSFramework__ScriptableExecutionUnit_h
@@ -24,8 +24,15 @@
 
 #include <chaos/common/script/ScriptManager.h>
 
-#include <chaos/cu_toolkit/control_manager/script/EUScriptableWrapper.h>
+#include <chaos/common/chaos_types.h>
+#include <chaos/common/plugin/PluginManager.h>
+#include <chaos/common/utility/LockableObject.h>
+#include <chaos/common/network/NetworkBroker.h>
+
+#include <chaos/cu_toolkit/control_manager/script/api/api.h>
 #include <chaos/cu_toolkit/control_manager/AbstractExecutionUnit.h>
+
+#include <boost/shared_ptr.hpp>
 
 #include <bitset>
 
@@ -33,12 +40,14 @@ namespace chaos {
     namespace cu {
         namespace control_manager {
             namespace script {
+                namespace api {
+                    class EUDSValueManagement;
+                }
                 
-#define SEU_ALGORITHM_LAUNCH    "algorithmLaunch"
-#define SEU_ALGORITHM_START     "algorithmStart"
-#define SEU_ALGORITHM_STEP      "algorithmStep"
-#define SEU_ALGORITHM_STOP      "algorithmStop"
-#define SEU_ALGORITHM_END       "algorithmEnd"
+                typedef ChaosSharedPtr<chaos::common::script::AbstractScriptableClass> ApiClassShrdPtr;
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(ApiClassShrdPtr, VectorApiClass);
+                
+                CHAOS_DEFINE_LOCKABLE_OBJECT(ChaosUniquePtr<chaos::common::script::ScriptManager>, LockableScriptManager);
                 
                 //! this class implementa an execution unit defined by a script
                 /*!
@@ -49,8 +58,11 @@ namespace chaos {
                  }
                  */
                 class ScriptableExecutionUnit:
-                public AbstractExecutionUnit {
-                    friend class EUScriptableWrapper;
+                public AbstractExecutionUnit,
+                public chaos::common::plugin::AbstractPluginManagerListner {
+                    friend class api::EUSearch;
+                    friend class api::EULiveManagment;
+                    friend class api::EUDSValueManagement;
                     PUBLISHABLE_CONTROL_UNIT_INTERFACE(AbstractExecutionUnit)
                     
                     //! the language to be used for the script
@@ -60,12 +72,23 @@ namespace chaos {
                     std::string script_content;
                     
                     //!scrip manger instance initilizated at eu init time
-                    std::auto_ptr<common::script::ScriptManager> script_manager;
+                    LockableScriptManager script_manager;
                     
-                    //! class taht wrap the execution uni to script
-                    EUScriptableWrapper scriptable_wrapper;
+                    //!api vector
+                    VectorApiClass api_classes;
+                    std::bitset<6> alghorithm_handler_implemented;
                     
-                    std::bitset<5> alghorithm_handler_implemented;
+                    void registerApi();
+                    void unregisterApi();
+                protected:
+                    //! update runtime the script source code
+                    /*!
+                     defin ean rpc action that permit to update, at runtime, the soruce of the script
+                     */
+                    chaos::common::data::CDataWrapper* updateScriptSource(chaos::common::data::CDataWrapper *data_pack,
+                                                                          bool& detachParam) throw(CException);
+                    
+                    void pluginDirectoryHasBeenUpdated();
                 public:
                     /*! default constructor
                      \param _execution_unit_param is a string that contains parameter to pass during the contorl unit creation
@@ -86,7 +109,6 @@ namespace chaos {
                     //!default destructor
                     ~ScriptableExecutionUnit();
                     
-                protected:
                     //! add an attribute to the dataset fo the execution unit
                     void addAttributeToDataSet(const std::string& attribute_name,
                                                const std::string& attribute_description,
@@ -125,9 +147,16 @@ namespace chaos {
                     //! inherithed method
                     void executeAlgorithmEnd() throw (CException);
                     
-                    
                     //! inherithed method
                     void unitUndefineActionAndDataset() throw(CException);
+                    
+                    //!called when changed on input attribute are detected
+                    /*!
+                     the keys of the map are the attribute names and the valu are the CDataVariant
+                     hosting hte real attribute value
+                     */
+                    bool updatedInputDataset(const std::string& attribute_name,
+                                             const chaos::common::data::CDataVariant& value);
                 };
             }
         }

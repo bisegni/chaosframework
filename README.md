@@ -1,5 +1,9 @@
-!CHAOS Framework
-=================================================
+# !CHAOS Framework
+
+Master build status:[![Master Build Status](https://baltig.infn.it/chaos-lnf-control/chaosframework/badges/master/build.svg)](https://baltig.infn.it/chaos-lnf-control/chaosframework/commits/master)
+Development Build Status:[![Development Build Status](https://baltig.infn.it/chaos-lnf-control/chaosframework/badges/development/build.svg)](https://baltig.infn.it/chaos-lnf-control/chaosframework/commits/development)
+Experimental Build Status
+[![Experimental Build Status](https://baltig.infn.it/chaos-lnf-control/chaosframework/badges/experimental/build.svg)](https://baltig.infn.it/chaos-lnf-control/chaosframework/commits/experimental)
 
 The !CHAOS project is aiming at the development of a new concept of control system and data acquisition framework
 providing, with a high level of abstraction, all the services needed for controlling and managing a large scientific,
@@ -17,18 +21,18 @@ Key features and development strategies of !CHAOS are:
 - abstraction of services,  devices and data
 - easy and modular customization
 - extensive data caching for performance boost
-- use of high-performance internet sw technologies
+- use of high-performance internet software technologies
 
-!CHAOS use the standalone BSON C++ implementation, the source is exstracted from orginal mongodb opensource distribution found on http://www.mongodb.org/ (http://www.10gen.com/)
+!CHAOS use the standalone BSON C++ implementation, the source is pulled out from orginal mongodb opensource distribution found on http://www.mongodb.org/ (http://www.10gen.com/)
 "BSON" stands for "binary JSON" - a binary storage format that is JSON inspired.
 This distribution merely rips it out of the bson repository into its own.
 
 
 For further documentation please visit:
-http://chaos.infn.it                        - public information site
-https://opensource-confluence.infn.it       - public user and developer site
-https://github.com/bisegni/chaosframework   - public source code usefull to collaborate with us
 
-docker container for build chaos: https://cloud.docker.com/_/repository/docker/bisegni/chaos/general
+* http://chaos.infn.it                                                                                  - public information site
+* https://chaos-lnf-control.baltig-pages.infn.it/chaosframework-doc      - public user and developer site
+* https://chaos-lnf-control.baltig-pages.infn.it/chaosframework             - public source code usefull to collaborate with us
 
-release 1.0.0 (alpha 1 build 5)
+
+*release 1.0.0 (alpha 1 build 5)*

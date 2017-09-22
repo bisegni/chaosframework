@@ -5,7 +5,7 @@
 #include "../api_async_processor/ApiSubmitter.h"
 
 #include <QVector>
-#include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
+#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
 
 class DomainListModel :
         public ChaosAbstractListModel,
@@ -28,7 +28,7 @@ signals:
 
 private:
     ApiSubmitter api_submitter;
-    std::auto_ptr<chaos::metadata_service_client::api_proxy::groups::GetDomainsHelper> get_domains_helper;
+    ChaosUniquePtr<chaos::metadata_service_client::api_proxy::groups::GetDomainsHelper> get_domains_helper;
 };
 
 #endif // DOMAINLISTMODEL_H

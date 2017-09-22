@@ -168,7 +168,7 @@
       </layout>
      </item>
      <item row="2" column="2">
-      <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,0,0,0,0,0,0,0,1,0">
+      <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,0,0,0,0,0,0,0,0,0">
        <property name="leftMargin">
         <number>2</number>
        </property>
@@ -184,123 +184,34 @@
        <property name="spacing">
         <number>4</number>
        </property>
-       <item row="0" column="3">
-        <widget class="CNodeHealthLabel" name="labelControlUnitState">
+       <item row="0" column="8">
+        <spacer name="horizontalSpacer_6">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="0" column="6">
+        <widget class="QLabel" name="label_6">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>50</width>
-           <height>0</height>
-          </size>
          </property>
          <property name="font">
           <font>
            <pointsize>11</pointsize>
           </font>
          </property>
-         <property name="statusTip">
-          <string>The last internal state relevated of the control unit</string>
-         </property>
          <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QLabel" name="label_2">
-         <property name="font">
-          <font>
-           <pointsize>11</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>CU Status:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="7">
-        <widget class="CNodeHealthLabel" name="labelUnitServerState">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>50</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>11</pointsize>
-          </font>
-         </property>
-         <property name="statusTip">
-          <string>The last state relevated of the unit server</string>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="9">
-        <widget class="CNodeResourceWidget" name="widgetNodeResource" native="true">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>100</width>
-           <height>0</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="5">
-        <widget class="CLedIndicatorHealt" name="ledIndicatorHealtTSUnitServer" native="true">
-         <property name="minimumSize">
-          <size>
-           <width>16</width>
-           <height>16</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>16</width>
-           <height>16</height>
-          </size>
-         </property>
-         <property name="statusTip">
-          <string>The healt status of the unit server that host the control unit</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="CLedIndicatorHealt" name="ledIndicatorHealtTSControlUnit" native="true">
-         <property name="minimumSize">
-          <size>
-           <width>16</width>
-           <height>16</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>16</width>
-           <height>16</height>
-          </size>
-         </property>
-         <property name="statusTip">
-          <string>The alive status of the control unit</string>
+          <string>US Status:</string>
          </property>
         </widget>
        </item>
@@ -343,36 +254,125 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="6">
-        <widget class="QLabel" name="label_6">
+       <item row="0" column="0">
+        <widget class="CLedIndicatorHealt" name="ledIndicatorHealtTSControlUnit" native="true">
+         <property name="minimumSize">
+          <size>
+           <width>16</width>
+           <height>16</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16</width>
+           <height>16</height>
+          </size>
+         </property>
+         <property name="statusTip">
+          <string>The alive status of the control unit</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="5">
+        <widget class="CLedIndicatorHealt" name="ledIndicatorHealtTSUnitServer" native="true">
+         <property name="minimumSize">
+          <size>
+           <width>16</width>
+           <height>16</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16</width>
+           <height>16</height>
+          </size>
+         </property>
+         <property name="statusTip">
+          <string>The healt status of the unit server that host the control unit</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="9">
+        <widget class="CNodeResourceWidget" name="widgetNodeResource" native="true">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>100</width>
+           <height>0</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="7">
+        <widget class="CNodeHealthLabel" name="labelUnitServerState">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>50</width>
+           <height>0</height>
+          </size>
          </property>
          <property name="font">
           <font>
            <pointsize>11</pointsize>
           </font>
          </property>
+         <property name="statusTip">
+          <string>The last state relevated of the unit server</string>
+         </property>
          <property name="text">
-          <string>US Status:</string>
+          <string/>
          </property>
         </widget>
        </item>
-       <item row="0" column="8">
-        <spacer name="horizontalSpacer_6">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+       <item row="0" column="1">
+        <widget class="QLabel" name="label_2">
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
          </property>
-         <property name="sizeHint" stdset="0">
+         <property name="text">
+          <string>CU Status:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="CNodeHealthLabel" name="labelControlUnitState">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
           <size>
-           <width>40</width>
-           <height>20</height>
+           <width>50</width>
+           <height>0</height>
           </size>
          </property>
-        </spacer>
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="statusTip">
+          <string>The last internal state relevated of the control unit</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
@@ -457,7 +457,7 @@
       <attribute name="title">
        <string>Dataset</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
        <property name="spacing">
         <number>4</number>
        </property>
@@ -474,185 +474,148 @@
         <number>2</number>
        </property>
        <item>
-        <layout class="QVBoxLayout" name="verticalLayoutOutputDataset">
+        <layout class="QHBoxLayout" name="horizontalLayout_10">
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_10">
-           <item>
-            <widget class="QPushButton" name="pushButtonOpenInstanceEditor">
-             <property name="font">
-              <font>
-               <pointsize>11</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Open Instance Editor</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer_8">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="1,1,0,0,0">
-           <property name="spacing">
-            <number>4</number>
+          <widget class="QPushButton" name="pushButtonOpenInstanceEditor">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
            </property>
-           <item>
-            <widget class="QCheckBox" name="checkBoxMonitorOutputChannels">
-             <property name="font">
-              <font>
-               <pointsize>11</pointsize>
-              </font>
-             </property>
-             <property name="toolTip">
-              <string>Output Channels monitoring switch</string>
-             </property>
-             <property name="text">
-              <string>Show live data for output channels</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="checkBoxShowAlarm">
-             <property name="font">
-              <font>
-               <pointsize>11</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Show Alarms</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="label_12">
-             <property name="font">
-              <font>
-               <pointsize>11</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>push rate:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="CNodeHealthLabel" name="chaosLabelDSOutputPushRate">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>11</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>0</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="CCommandStatisticWidget" name="widgetCommandStatistic" native="true"/>
-           </item>
-          </layout>
+           <property name="text">
+            <string>Open Instance Editor</string>
+           </property>
+          </widget>
          </item>
          <item>
-          <widget class="QSplitter" name="splitterDOAlarm">
+          <widget class="QPushButton" name="pushButtonUpdateControlUnitInfo">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Update Info</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_8">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
-           <widget class="QTableView" name="tableViewOutputChannel">
-            <property name="font">
-             <font>
-              <pointsize>11</pointsize>
-             </font>
-            </property>
-            <property name="statusTip">
-             <string>The output dataset attribute information</string>
-            </property>
-            <property name="editTriggers">
-             <set>QAbstractItemView::NoEditTriggers</set>
-            </property>
-            <property name="selectionMode">
-             <enum>QAbstractItemView::MultiSelection</enum>
-            </property>
-            <property name="selectionBehavior">
-             <enum>QAbstractItemView::SelectRows</enum>
-            </property>
-            <attribute name="verticalHeaderDefaultSectionSize">
-             <number>18</number>
-            </attribute>
-            <attribute name="verticalHeaderMinimumSectionSize">
-             <number>18</number>
-            </attribute>
-           </widget>
-           <widget class="CQListView" name="listViewAlarm">
-            <property name="font">
-             <font>
-              <pointsize>11</pointsize>
-             </font>
-            </property>
-           </widget>
-          </widget>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
          </item>
         </layout>
        </item>
        <item>
-        <layout class="QVBoxLayout" name="verticalLayoutInputDataset">
+        <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="1,1,0,0,0">
          <property name="spacing">
           <number>4</number>
          </property>
          <item>
-          <widget class="QCheckBox" name="checkBoxMonitorInputChannels">
+          <widget class="QCheckBox" name="checkBoxMonitorOutputChannels">
            <property name="font">
             <font>
              <pointsize>11</pointsize>
             </font>
            </property>
            <property name="toolTip">
-            <string>Input Channels monitoring switch</string>
+            <string>Output Channels monitoring switch</string>
            </property>
            <property name="text">
-            <string>Show live data for input channels</string>
+            <string>Show live data for output channels</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QTableView" name="tableViewInputChannels">
+          <widget class="QCheckBox" name="checkBoxShowAlarms">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Show Alarms</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_12">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>push rate:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="CNodeHealthLabel" name="chaosLabelDSOutputPushRate">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>0</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="CCommandStatisticWidget" name="widgetCommandStatistic" native="true"/>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QSplitter" name="splitter_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <widget class="QSplitter" name="splitterOutputDatasets">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <widget class="CQTableView" name="tableViewOutputChannel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="font">
             <font>
              <pointsize>11</pointsize>
             </font>
            </property>
            <property name="statusTip">
-            <string>The input dataset attribute information</string>
+            <string>The output dataset attribute information</string>
            </property>
            <property name="editTriggers">
-            <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked</set>
+            <set>QAbstractItemView::NoEditTriggers</set>
            </property>
            <property name="selectionMode">
             <enum>QAbstractItemView::MultiSelection</enum>
@@ -661,61 +624,144 @@
             <enum>QAbstractItemView::SelectRows</enum>
            </property>
            <attribute name="verticalHeaderDefaultSectionSize">
-            <number>20</number>
+            <number>18</number>
+           </attribute>
+           <attribute name="verticalHeaderMinimumSectionSize">
+            <number>18</number>
            </attribute>
           </widget>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
-           <property name="spacing">
-            <number>4</number>
+          <widget class="QSplitter" name="splitterAlarms">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
            </property>
+           <widget class="QListView" name="listViewAlarm">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>11</pointsize>
+             </font>
+            </property>
+            <property name="selectionMode">
+             <enum>QAbstractItemView::NoSelection</enum>
+            </property>
+           </widget>
+           <widget class="QListView" name="listViewWarning">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>11</pointsize>
+             </font>
+            </property>
+            <property name="selectionMode">
+             <enum>QAbstractItemView::NoSelection</enum>
+            </property>
+           </widget>
+          </widget>
+         </widget>
+         <widget class="QWidget" name="layoutWidget">
+          <layout class="QVBoxLayout" name="verticalLayout">
            <item>
-            <spacer name="horizontalSpacer_2">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+            <widget class="QCheckBox" name="checkBoxMonitorInputChannels">
+             <property name="font">
+              <font>
+               <pointsize>11</pointsize>
+              </font>
              </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
+             <property name="toolTip">
+              <string>Input Channels monitoring switch</string>
              </property>
-            </spacer>
+             <property name="text">
+              <string>Show live data for input channels</string>
+             </property>
+            </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButtonResetChangeSet">
+            <widget class="CQTableView" name="tableViewInputChannels">
              <property name="font">
               <font>
                <pointsize>11</pointsize>
               </font>
              </property>
              <property name="statusTip">
-              <string>Reset the changes done on the input attribute value</string>
+              <string>The input dataset attribute information</string>
              </property>
-             <property name="text">
-              <string>Reset Change Set</string>
+             <property name="editTriggers">
+              <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked</set>
              </property>
+             <property name="selectionMode">
+              <enum>QAbstractItemView::MultiSelection</enum>
+             </property>
+             <property name="selectionBehavior">
+              <enum>QAbstractItemView::SelectRows</enum>
+             </property>
+             <attribute name="verticalHeaderDefaultSectionSize">
+              <number>20</number>
+             </attribute>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButtonCommitSet">
-             <property name="font">
-              <font>
-               <pointsize>11</pointsize>
-              </font>
+            <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <property name="spacing">
+              <number>4</number>
              </property>
-             <property name="statusTip">
-              <string>Apply the change made on input attribute value</string>
-             </property>
-             <property name="text">
-              <string>Commit Change Set</string>
-             </property>
-            </widget>
+             <item>
+              <spacer name="horizontalSpacer_2">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButtonResetChangeSet">
+               <property name="font">
+                <font>
+                 <pointsize>11</pointsize>
+                </font>
+               </property>
+               <property name="statusTip">
+                <string>Reset the changes done on the input attribute value</string>
+               </property>
+               <property name="text">
+                <string>Reset Change Set</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButtonCommitSet">
+               <property name="font">
+                <font>
+                 <pointsize>11</pointsize>
+                </font>
+               </property>
+               <property name="statusTip">
+                <string>Apply the change made on input attribute value</string>
+               </property>
+               <property name="text">
+                <string>Commit Change Set</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
           </layout>
-         </item>
-        </layout>
+         </widget>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -741,6 +787,12 @@
        </property>
        <item>
         <widget class="QSplitter" name="splitterCommandList">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -991,31 +1043,6 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="6">
-        <spacer name="horizontalSpacer_5">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_9">
-         <property name="font">
-          <font>
-           <pointsize>11</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>Run Schedule Delay:</string>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="3">
         <widget class="CControlUnitDatasetLabel" name="labelRunScheduleDelaySet">
          <property name="sizePolicy">
@@ -1070,6 +1097,31 @@
          </property>
         </widget>
        </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_9">
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Run Schedule Delay:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="6">
+        <spacer name="horizontalSpacer_5">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
        <item row="0" column="1">
         <widget class="QLineEdit" name="lineEditRunScheduleDelay">
          <property name="sizePolicy">
@@ -1107,6 +1159,33 @@
           </size>
          </property>
         </spacer>
+       </item>
+       <item row="0" column="9">
+        <widget class="CPropertyPushButton" name="pushButtonDriverBypass">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>30</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="toolTip">
+          <string>Set all driver in bypass mode</string>
+         </property>
+         <property name="whatsThis">
+          <string>Set all driver in bypass mode</string>
+         </property>
+         <property name="text">
+          <string>bp</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
@@ -1272,15 +1351,20 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>CQListView</class>
-   <extends>QListView</extends>
-   <header>widget/CQListView.h</header>
-  </customwidget>
-  <customwidget>
    <class>CCommandStatisticWidget</class>
    <extends>QWidget</extends>
    <header>widget/CCommandStatisticWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CQTableView</class>
+   <extends>QTableView</extends>
+   <header>widget/CQTableView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>CPropertyPushButton</class>
+   <extends>QPushButton</extends>
+   <header>widget/CPropertyPushButton.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

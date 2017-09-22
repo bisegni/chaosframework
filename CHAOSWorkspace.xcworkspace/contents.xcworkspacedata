@@ -5,16 +5,6 @@
       location = "group:README.md">
    </FileRef>
    <FileRef
-      location = "group:APACHE-2.0.txt">
-   </FileRef>
-   <Group
-      location = "container:"
-      name = "Documentation">
-      <FileRef
-         location = "group:Documentation/chaosdocs">
-      </FileRef>
-   </Group>
-   <FileRef
       location = "group:CHAOSFramework.xcodeproj">
    </FileRef>
    <FileRef
@@ -25,9 +15,6 @@
    </FileRef>
    <FileRef
       location = "group:ChaosDataExport/ChaosDataExport.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:ChaosSnapshotUtility/ChaosSnapshotUtility.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:example/ChaosPerformanceTester/ChaosPerformanceTester.xcodeproj">

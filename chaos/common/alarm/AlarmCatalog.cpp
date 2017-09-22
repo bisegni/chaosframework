@@ -1,22 +1,22 @@
 /*
- *	AlarmCatalog.cpp
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFramework]
- *	Created by Claudio Bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 27/10/2016 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include <chaos/common/global.h>
@@ -26,15 +26,21 @@ using namespace chaos::common::data;
 using namespace chaos::common::alarm;
 using namespace chaos::common::state_flag;
 
+AlarmCatalog::AlarmCatalog():
+StateFlagCatalog("AlarmCatalog"){}
+
 AlarmCatalog::AlarmCatalog(const std::string& catalog_name):
 StateFlagCatalog(catalog_name){}
+
+AlarmCatalog::AlarmCatalog(const AlarmCatalog& catalog):
+StateFlagCatalog(catalog) {}
 
 AlarmCatalog::~AlarmCatalog() {}
 
 void AlarmCatalog::addAlarm(AlarmDescription *new_alarm) {
     CHAOS_ASSERT(new_alarm);
     StateFlag *state_flag_ptr = dynamic_cast<StateFlag*>(new_alarm);
-    StateFlagCatalog::addFlag(boost::shared_ptr<StateFlag>(state_flag_ptr));
+    StateFlagCatalog::addFlag(ChaosSharedPtr<StateFlag>(state_flag_ptr));
 }
 
 bool AlarmCatalog::addAlarmHandler(const std::string& alarm_name,
@@ -56,12 +62,12 @@ bool AlarmCatalog::removeAlarmHandler(const std::string& alarm_name,
 }
 
 AlarmDescription *AlarmCatalog::getAlarmByName(const std::string& alarm_name) {
-    boost::shared_ptr<StateFlag> alarm = StateFlagCatalog::getFlagByName(alarm_name);
+    ChaosSharedPtr<StateFlag> alarm = StateFlagCatalog::getFlagByName(alarm_name);
     return static_cast<AlarmDescription*>(alarm.get());
 }
 
 AlarmDescription *AlarmCatalog::getAlarmByOrderedID(const unsigned int alarm_ordered_id) {
-    boost::shared_ptr<StateFlag> alarm = StateFlagCatalog::getFlagByOrderedID(alarm_ordered_id);
+    ChaosSharedPtr<StateFlag> alarm = StateFlagCatalog::getFlagByOrderedID(alarm_ordered_id);
     return static_cast<AlarmDescription*>(alarm.get());
 }
 
@@ -69,15 +75,15 @@ void AlarmCatalog::setAllAlarmSeverity(int8_t new_severity) {
     StateFlagCatalog::setAllFlagState(new_severity);
 }
 
-std::auto_ptr<chaos::common::data::CDataBuffer> AlarmCatalog::getRawFlagsLevel() {
+ChaosUniquePtr<chaos::common::data::CDataBuffer> AlarmCatalog::getRawFlagsLevel() {
     return StateFlagCatalog::getRawFlagsLevel();
 }
 
-void AlarmCatalog::setApplyRawFlagsValue(std::auto_ptr<chaos::common::data::CDataBuffer>& raw_level) {
+void AlarmCatalog::setApplyRawFlagsValue(ChaosUniquePtr<chaos::common::data::CDataBuffer>& raw_level) {
     StateFlagCatalog::setApplyRawFlagsValue(raw_level);
 }
 
-std::auto_ptr<CDataWrapper> AlarmCatalog::serialize() {
+ChaosUniquePtr<chaos::common::data::CDataWrapper> AlarmCatalog::serialize() {
     StateFlagCatalogSDWrapper sd_wrap(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(StateFlagCatalog, *this));
     return sd_wrap.serialize();
 }
@@ -97,4 +103,7 @@ const bool AlarmCatalog::isCatalogClear() {
 
 const size_t AlarmCatalog::size() {
     return StateFlagCatalog::size();
+}
+const uint8_t AlarmCatalog::max() {
+    return StateFlagCatalog::max();
 }

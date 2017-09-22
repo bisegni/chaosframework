@@ -1,21 +1,22 @@
 /*
- *	SlowCommand.h
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #ifndef __CHAOSFramework__SlowCommand__
@@ -121,20 +122,25 @@ new chaos::common::utility::TypedObjectInstancer<n c, chaos::cu::control_manager
                     
                     //---------------alarm api-------------
                     //!set the severity on all alarm
-                    void setAlarmSeverity(const common::alarm::MultiSeverityAlarmLevel alarm_severity);
+                    void setStateVariableSeverity(StateVariableType variable_type,
+                                                  const common::alarm::MultiSeverityAlarmLevel state_variable_severity);
                     
                     //!set the alarm state
-                    bool setAlarmSeverity(const std::string& alarm_name,
-                                          const chaos::common::alarm::MultiSeverityAlarmLevel state_code);
-                    //!set the alarm state
-                    bool setAlarmSeverity(const unsigned int alarm_ordered_id,
-                                          const chaos::common::alarm::MultiSeverityAlarmLevel state_code);
+                    bool setStateVariableSeverity(StateVariableType variable_type,
+                                                  const std::string& state_variable__name,
+                                                  const chaos::common::alarm::MultiSeverityAlarmLevel state_variable_severity);
+                    //!set the alarm state_variable
+                    bool setStateVariableSeverity(StateVariableType variable_type,
+                                                  const unsigned int state_variable__ordered_id,
+                                                  const chaos::common::alarm::MultiSeverityAlarmLevel state_variable_severity);
                     //!get the current alarm state
-                    bool getAlarmSeverity(const std::string& alarm_name,
-                                          chaos::common::alarm::MultiSeverityAlarmLevel& current_state);
+                    bool getStateVariableSeverity(StateVariableType variable_type,
+                                                  const std::string& state_variable__name,
+                                                  chaos::common::alarm::MultiSeverityAlarmLevel& state_variable_severity);
                     //!get the current alarm state
-                    bool getAlarmSeverity(const unsigned int alarm_ordered_id,
-                                          chaos::common::alarm::MultiSeverityAlarmLevel& current_state);
+                    bool getStateVariableSeverity(StateVariableType variable_type,
+                                                  const unsigned int state_variable_ordered_id,
+                                                  chaos::common::alarm::MultiSeverityAlarmLevel& state_variable_severity);
                     //!set the busy flag
                     void setBusyFlag(bool state);
                     

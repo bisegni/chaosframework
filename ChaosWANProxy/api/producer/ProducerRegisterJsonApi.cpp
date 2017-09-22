@@ -1,21 +1,22 @@
 /*
- *	ProducerRegisterAPI.h
- *	!CHAOS
- *	Created by Andrea Michelotti.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyrigh 2016 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 #include "ProducerRegisterJsonApi.h"
 
@@ -59,6 +60,7 @@ int ProducerRegisterJsonApi::execute(std::vector<std::string>& api_tokens,
 	std::string err_msg;
 	std::string producer_name;
 	int cnt;
+	try{
 	if(api_tokens.size() == 0) {
 		err_msg = "no producer name in the uri";
 		PRA_LERR << err_msg;
@@ -86,37 +88,73 @@ int ProducerRegisterJsonApi::execute(std::vector<std::string>& api_tokens,
 	//const std::string& producer_name = api_tokens[0];
 	PRA_LDBG << "Start producer json registration with id " << producer_name;
 	
-	CDataWrapper mds_registration_pack;
+	CDataWrapper cu_dataset,mds_registration_pack;
 	CDataWrapper dataset_pack;
-	
+	Json::StyledWriter				json_writer;
 
-    int64_t ts = (boost::posix_time::microsec_clock::universal_time() - time_epoch).total_milliseconds();
-    dataset_pack.addInt64Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP,ts);
+	const char* jsonobj=json_writer.write(input_data).c_str();
+	PRA_LDBG << "TO DECODE:"<<jsonobj;
+	dataset_pack.setSerializedJsonData(jsonobj	);
 
-  
-    
-		//we have a dataset, perhaps empty...
-    Json::Value::Members members=input_data.getMemberNames();
- for(Json::Value::Members::iterator i =members.begin();i!=members.end();i++){
+	PRA_LDBG << dataset_pack.getJSONString();
+   //int64_t ts = (boost::posix_time::microsec_clock::universal_time() - time_epoch).total_milliseconds();
+    ChaosStringVector all_template_key;
+    dataset_pack.getAllKey(all_template_key);
 
-		boost::shared_ptr<CDataWrapper> element;
-		if((err = scanDatasetElement(input_data[*i],*i, err_msg, element))) {
-			PRA_LERR << err_msg;
-			
-			PRODUCER_REGISTER_ERR(output_data, err, err_msg);
-			return err;
-		} else {
-			// add parametere representation object to main action representation
-			dataset_pack.appendCDataWrapperToArray(*element.get());
-		}
-	}
-	
+    for(ChaosStringVectorIterator it = all_template_key.begin();
+           it != all_template_key.end();
+           it++) {
+           if(dataset_pack.isNullValue(*it)) {
+        	   PRA_LERR << "Removed from template null value key:" << *it;
+               continue;
+           }
+           CDataWrapper ds;
+           int32_t dstype=0,subtype=0;
+           int32_t size=0;
+           ds.addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME,*it);
+           if(dataset_pack.isVector(*it)){
+        	   dstype = chaos::DataType::TYPE_ACCESS_ARRAY;
+           }
+           size =dataset_pack.getValueSize(*it);
+           if(dataset_pack.isDoubleValue(*it)){
+        	   dstype |= chaos::DataType::TYPE_DOUBLE;
+        	   subtype= chaos::DataType::SUB_TYPE_DOUBLE;
+           } else if(dataset_pack.isInt64Value(*it)){
+        	   dstype |=  chaos::DataType::TYPE_INT64;
+        	   subtype= chaos::DataType::SUB_TYPE_INT64;
+
+           } else if(dataset_pack.isInt32Value(*it)){
+        	   dstype |=  chaos::DataType::TYPE_INT32;
+        	   subtype= chaos::DataType::SUB_TYPE_INT32;
+
+           } else if(dataset_pack.isStringValue(*it)){
+        	   dstype |=  chaos::DataType::TYPE_STRING;
+        	   subtype= chaos::DataType::SUB_TYPE_STRING;
+
+           } else if(dataset_pack.isBinaryValue(*it)){
+        	   dstype |=  chaos::DataType::TYPE_BYTEARRAY;
+           } else {
+        	   dstype |= chaos::DataType::TYPE_DOUBLE;
+        	   subtype= chaos::DataType::SUB_TYPE_DOUBLE;
+
+           }
+           ds.addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE,subtype);
+           ds.addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE,dstype);
+           ds.addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION,chaos::DataType::Output);
+           ds.addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_VALUE_MAX_SIZE,size);
+
+           PRA_LDBG<<"- ATTRIBUTE \""<<*it<<"\" SIZE:"<<size<<" TYPE:"<<dstype<<" SUBTYPE:"<<subtype;
+		   cu_dataset.appendCDataWrapperToArray(ds);
+
+       }
+	cu_dataset.addInt64Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP,chaos::common::utility::TimingUtil::getTimeStamp());
+
 	//close array for all device description
-	dataset_pack.finalizeArrayForKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION);
-    
-    mds_registration_pack.addCSDataValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION, dataset_pack);
+	cu_dataset.finalizeArrayForKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION);
+	cu_dataset.addInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID,(int64_t)0);
+
+    mds_registration_pack.addCSDataValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION, cu_dataset);
     mds_registration_pack.addStringValue(NodeDefinitionKey::NODE_TYPE, NodeType::NODE_TYPE_CONTROL_UNIT);
-    dataset_pack.addInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID,(int64_t)0);
 	DEBUG_CODE(PRA_LDBG << mds_registration_pack.getJSONString());
 	
 	if((err = persistence_driver->registerDataset(producer_name,
@@ -129,122 +167,12 @@ int ProducerRegisterJsonApi::execute(std::vector<std::string>& api_tokens,
 		output_data["producer_register_err"] = 0;
 		output_data["producer_register_bson"] =  mds_registration_pack.getJSONString();
 	}
+	} catch(std::exception e){
+		PRA_LERR << "Exception:"<<e.what();
+		err=-1;
+	} catch(...){
+		PRA_LERR << "Exception during process";
+		err=-2;
+	}
 	return err;
 }
-
-//scan a json elemenot of the dataset creating the respective CDataWrapper
-int ProducerRegisterJsonApi::scanDatasetElement(const Json::Value& dataset_json_element,std::string &name,
-												   std::string& err_msg,
-												   boost::shared_ptr<chaos::common::data::CDataWrapper>& element) {
-	element.reset(new CDataWrapper());
-	/*-the name of the attribute
-	 "ds_attr_name": string,
-	 */
-    std::string attribute_name =name;
-	if(attribute_name.empty()) {
-		err_msg = "no attribute name found";
-		return -6;
-	}
-	
-	element->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME,
-							attribute_name);
-    PRA_LDBG<<"==== attribute "<<attribute_name;
-    
-   	element->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION,
-							attribute_name);
-    
-    if(dataset_json_element.isArray()){
-        element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE,
-                               chaos::DataType::TYPE_BYTEARRAY);
-        int32_t size=dataset_json_element.size();
-        if(size>0){
-            // we can find the type
-            
-            const Json::Value& value=dataset_json_element[0];
-            element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_CARDINALITY,
-                                    size);
-            if(value.isBool()){
-                //default is double
-                element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE,
-                                       chaos::DataType::SUB_TYPE_BOOLEAN);
-                PRA_LDBG<<"Boolean array ["<<size<<"]";
-            } else if(value.isInt()){
-                //default is double
-                element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE,
-                                       chaos::DataType::SUB_TYPE_INT32);
-                PRA_LDBG<<"Int32 array ["<<size<<"]";
-
-            } else if(value.isObject()&&value.isMember("$numberLong")){
-                //default is double
-                element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE,
-                                       chaos::DataType::SUB_TYPE_INT64);
-            } else if(value.isString()){
-                //default is double
-                element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE,
-                                       chaos::DataType::SUB_TYPE_STRING);
-                PRA_LDBG<<"String array ["<<size<<"]";
-
-            }else {
-                //default is double
-                element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE,
-                                       chaos::DataType::SUB_TYPE_DOUBLE);
-                PRA_LDBG<<"Double array ["<<size<<"]";
-
-            }
-        } else {
-            // uknown type
-            //default is double
-            element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE,
-                                   chaos::DataType::SUB_TYPE_DOUBLE);
-            PRA_LDBG<<"Uknown array, setting default type to double";
-
-        }
-        
-    } else {
-      
-      if(dataset_json_element.isObject()&&dataset_json_element.isMember("$numberLong")){
-            //default is int64
-            element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE,
-                                   chaos::DataType::TYPE_INT64);
-	    PRA_LDBG<<"Int64 Type";
-        } else if(dataset_json_element.isDouble()){ 
-            //default is double
-            element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE,
-                                   chaos::DataType::TYPE_DOUBLE);
-            PRA_LDBG<<"Double Type";
-
-        } else if(dataset_json_element.isBool()){
-            //default is double
-            element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE,
-                                   chaos::DataType::TYPE_BOOLEAN);
-            PRA_LDBG<<"Boolean Type";
-
-        } else if(dataset_json_element.isInt()){
-            //default is double
-            element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE,
-                                   chaos::DataType::TYPE_INT32);
-            PRA_LDBG<<"Int32 Type";
-
-        }  else if(dataset_json_element.isString()){
-            //default is double
-            element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE,
-                                   chaos::DataType::TYPE_STRING);
-            PRA_LDBG<<"String Type";
-
-        } else {
-            //default is double
-            element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE,
-                                   chaos::DataType::TYPE_DOUBLE);
-            PRA_LDBG<<"Double Type";
-
-        }
-
-    }
-	
-		
-    element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION,
-							   chaos::DataType::Output);
-	
-    return 0;
-}
- 

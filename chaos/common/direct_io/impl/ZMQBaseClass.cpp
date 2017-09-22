@@ -1,21 +1,22 @@
 /*
- *	ZMQBaseClass.h
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2015 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include <chaos/common/global.h>
@@ -186,6 +187,7 @@ int ZMQBaseClass::readMessage(void * socket,
         //we got an error
         err = zmq_errno();
         ZMQDIO_BASE_LERR_ << "Error receiving data from socket with code:" << PRINT_ZMQ_ERR(err);
+        message_size_read=0;
         return err;
     } else {
         //take the readed byte
@@ -590,7 +592,7 @@ int ZMQBaseClass::sendDatapack(void *socket,
     
     //clean header or data part in case of error
     if(data_pack->channel_header_data != NULL) {
-        ZMQDIO_BASE_LERR_ << "Free channel header memory";
+        ZMQDIO_BASE_LAPP_ << "Free channel header memory";
         SYNC_DELETE_HEADER_AND_DATA(data_pack->channel_header_data,
                                     header_deallocation_handler,
                                     DisposeSentMemoryInfo::SentPartHeader,
@@ -598,12 +600,42 @@ int ZMQBaseClass::sendDatapack(void *socket,
     }
     
     if(data_pack->channel_data != NULL) {
-        ZMQDIO_BASE_LERR_ << "Free the channel data memory";
+        ZMQDIO_BASE_LAPP_ << "Free the channel data memory";
+        SYNC_DELETE_HEADER_AND_DATA(data_pack->channel_data,
+                                    data_deallocation_handler,
+                                    DisposeSentMemoryInfo::SentPartData,
+                                    sending_opcode);
+    }
+    return err;
+}
+
+int ZMQBaseClass::safeDeleteDataPack(DirectIODataPack *data_pack,
+                                     DirectIODeallocationHandler *header_deallocation_handler,
+                                     DirectIODeallocationHandler *data_deallocation_handler) {
+    if(data_pack == NULL) return 0;
+    uint16_t sending_opcode = data_pack->header.dispatcher_header.fields.channel_opcode;
+    
+    //send global header
+    data_pack->header.dispatcher_header.raw_data = DIRECT_IO_SET_DISPATCHER_DATA(data_pack->header.dispatcher_header.raw_data);
+    data_pack->header.channel_header_size = DIRECT_IO_SET_CHANNEL_HEADER_SIZE(data_pack->header.channel_header_size);
+    data_pack->header.channel_data_size = DIRECT_IO_SET_CHANNEL_DATA_SIZE(data_pack->header.channel_data_size);
+    
+    if(data_pack->channel_header_data != NULL) {
+        ZMQDIO_BASE_LAPP_ << "Free channel header memory";
+        SYNC_DELETE_HEADER_AND_DATA(data_pack->channel_header_data,
+                                    header_deallocation_handler,
+                                    DisposeSentMemoryInfo::SentPartHeader,
+                                    sending_opcode);
+    }
+    
+    if(data_pack->channel_data != NULL) {
+        ZMQDIO_BASE_LAPP_ << "Free the channel data memory";
         SYNC_DELETE_HEADER_AND_DATA(data_pack->channel_data,
                                     data_deallocation_handler,
                                     DisposeSentMemoryInfo::SentPartData,
                                     sending_opcode);
     }
     
-    return err;
+    free(data_pack);
+    return 0;
 }

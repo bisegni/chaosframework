@@ -1,22 +1,22 @@
 /*
- *	TestCommandExecutor.h
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFrameworkTests]
- *	Created by Claudio Bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 27/08/2016 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #ifndef __CHAOSFrameworkTests__EFDDB0A_68A8_49F1_9F35_99A49A968421_TestCommandExecutor_h
@@ -32,34 +32,16 @@ namespace chaos{
     namespace common {
         namespace batch_command {
             namespace test {
-                
-                struct TestElement {
-                    TestBatchCommand *command_instance;
-                    common::batch_command::BatchCommandEventType::BatchCommandEventType last_event;
-                    bool has_completed;
-                    bool has_faulted;
-                    
-                    TestElement():
-                    command_instance(NULL),
-                    has_completed(false),
-                    has_faulted(0){}
-                    
-                    TestElement(TestBatchCommand *_command_instance):
-                    command_instance(_command_instance),
-                    has_completed(false),
-                    has_faulted(0){}
-                };
-                
-                CHAOS_DEFINE_MAP_FOR_TYPE(uint64_t, TestElement, IDCommandMap);
-                
+                CHAOS_DEFINE_LOCKABLE_OBJECT(BatchCommandStat, LBatchCommandStat);
                 /*!
                  this class sis the implementation of the batch executor for
                  the metadataserver batch job
                  */
                 class TestCommandExecutor:
                 public BatchCommandExecutor {
-                    chaos::common::utility::LockableObject<IDCommandMap> map_id_command;
-                    
+                public:
+                    uint64_t queued;
+                    uint64_t stacked;
                     uint64_t last_end_time;
                     uint64_t completed_count;
                     uint64_t fault_count;
@@ -76,7 +58,8 @@ namespace chaos{
                     void handleCommandEvent(const std::string& command_alias,
                                             uint64_t command_seq,
                                             BatchCommandEventType::BatchCommandEventType type,
-                                            chaos::common::data::CDataWrapper *command_data);
+                                            chaos::common::data::CDataWrapper *command_info,
+                                            const BatchCommandStat& commands_stats);
                     
                     //! general sandbox event handler
                     void handleSandboxEvent(const std::string& sandbox_id,
@@ -89,11 +72,10 @@ namespace chaos{
                     TestCommandExecutor();
                     ~TestCommandExecutor();
                     
-                    uint64_t getRunningElement();
-                    
-                    void resetMap();
-                    
                     void printStatistic();
+                    void resetStat();
+                    uint64_t getQueued();
+                    uint64_t getStacked();
                 };
             }
         }

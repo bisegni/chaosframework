@@ -1,25 +1,26 @@
 /*
- *	CUSchemaDB.cpp
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include <string>
-
+#include <chaos/common/chaos_types.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/global.h>
 #include <chaos/common/data/CUSchemaDB.h>
@@ -30,6 +31,7 @@
 #include <boost/format.hpp>
 
 #include <chaos/common/chaos_constants.h>
+#include <chaos/common/utility/TimingUtil.h>
 
 using namespace std;
 using namespace boost;
@@ -37,7 +39,10 @@ using namespace chaos;
 using namespace chaos::common::data;
 
 #define MAKE_KEY(key, tmp) entityDB->getIDForKey(key, tmp);\
-mapDatasetKeyForID.insert(make_pair<const char *, uint32_t>(key, tmp));
+mapDatasetKeyForID.insert(make_pair(key, tmp));
+
+#define CUSCHEMALDBG LDBG_ << "[CUSchemaDB] - "<<__PRETTY_FUNCTION__<<":"
+#define CUSCHEMALERR LERR_ << "[CUSchemaDB] - ## Error "<<__PRETTY_FUNCTION__<<":"
 
 void RangeValueInfo::reset() {
     defaultValue.clear();
@@ -47,7 +52,7 @@ void RangeValueInfo::reset() {
     valueType = (DataType::DataType)0;
     cardinality=0;
     dir=chaos::DataType::Undefined;
-    binType=chaos::DataType::SUB_TYPE_NONE;   
+    binType.clear();
 }
 
 CUSchemaDB::CUSchemaDB() {
@@ -171,8 +176,8 @@ void CUSchemaDB::addDeviceId(const string& deviceID) {
     //add the entity for device
     entity::Entity *dsEntity = entityDB->getNewEntityInstance(kiv);
     if(dsEntity) {
-        deviceEntityMap.insert(make_pair<string, entity::Entity*>(deviceID, dsEntity));
-        addUniqueAttributeProperty(dsEntity, mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP], (int64_t)timingUtils.getTimeStamp(), false);
+        deviceEntityMap.insert(make_pair(deviceID, dsEntity));
+        addUniqueAttributeProperty(dsEntity, mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP], (int64_t)utility::TimingUtil::getTimeStamp(), false);
     }
 }
 
@@ -210,6 +215,7 @@ entity::Entity *CUSchemaDB::getDatasetElement(entity::Entity *device, const char
 /*
  Add the new field to the dataset
  */
+
 void CUSchemaDB::addAttributeToDataSet(const std::string& node_uid,
                                        const std::string& attributeName,
                                        const std::string& attributeDescription,
@@ -232,14 +238,18 @@ void CUSchemaDB::addAttributeToDataSet(const std::string& node_uid,
         case DataType::TYPE_INT64:
             typeMaxDimension = sizeof(int64_t);
             break;
+        case DataType::TYPE_CLUSTER:
         case DataType::TYPE_STRING:
-            if(maxDimension == 0)
-                throw CException(1, "for string type need to be specified the max value", "CUSchemaDB::addAttributeToDataSet");
+            if(maxDimension == 0){
+                CUSCHEMALDBG<<"WARNING: not json/string max length given setting to:"<<CUSCHEMA_DEFAULT_STRING_LENGHT;
+                maxDimension = CUSCHEMA_DEFAULT_STRING_LENGHT;
+            }
+            
             typeMaxDimension = maxDimension;
             break;
         case DataType::TYPE_BYTEARRAY:
             if(maxDimension == 0)
-                throw CException(1, "for byte array type need to be specified the max value", "CUSchemaDB::addAttributeToDataSet");
+                throw CException(1, "for byte array type need to be specified the max  string lenght", "CUSchemaDB::addAttributeToDataSet");
             typeMaxDimension = maxDimension;
             break;
         default:
@@ -260,7 +270,7 @@ void CUSchemaDB::addAttributeToDataSet(const std::string& node_uid,
     
     strcpy(kiv.value.strValue, a_name.c_str());
     
-    auto_ptr<entity::Entity> elementDst(entityDB->getNewEntityInstance(kiv));
+    ChaosUniquePtr <entity::Entity> elementDst(entityDB->getNewEntityInstance(kiv));
     
     if(elementDst.get()) {
         addUniqueAttributeProperty(elementDst.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION], attributeDescription);
@@ -291,7 +301,7 @@ void CUSchemaDB::addBinaryAttributeAsSubtypeToDataSet(const std::string& node_ui
     
     strcpy(kiv.value.strValue, a_name.c_str());
     
-    auto_ptr<entity::Entity> element_dataset(entityDB->getNewEntityInstance(kiv));
+    ChaosUniquePtr<entity::Entity> element_dataset(entityDB->getNewEntityInstance(kiv));
     
     if(element_dataset.get()) {
         addUniqueAttributeProperty(element_dataset.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION], attribute_description);
@@ -300,7 +310,7 @@ void CUSchemaDB::addBinaryAttributeAsSubtypeToDataSet(const std::string& node_ui
         addUniqueAttributeProperty(element_dataset.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE], (int64_t)subtype);
         addUniqueAttributeProperty(element_dataset.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_CARDINALITY], (int64_t)cardinality);
         if(cardinality>0){addUniqueAttributeProperty(element_dataset.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_VALUE_MAX_SIZE], (int64_t)cardinality);}
-
+        
         device->isChild(*element_dataset.get(), isChild);
         if(!isChild) device->addChild(*element_dataset);
     }
@@ -325,7 +335,7 @@ void CUSchemaDB::addBinaryAttributeAsSubtypeToDataSet(const std::string& node_ui
     
     strcpy(kiv.value.strValue, a_name.c_str());
     
-    auto_ptr<entity::Entity> element_dataset(entityDB->getNewEntityInstance(kiv));
+    ChaosUniquePtr<entity::Entity> element_dataset(entityDB->getNewEntityInstance(kiv));
     
     if(element_dataset.get()) {
         addUniqueAttributeProperty(element_dataset.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION], attribute_description);
@@ -343,7 +353,7 @@ void CUSchemaDB::addBinaryAttributeAsSubtypeToDataSet(const std::string& node_ui
         a_name.clear();
         composeAttributeName(node_uid, boost::str(boost::format("%1%_%2%")%attribute_name%ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE), a_name);
         strcpy(sub_kiv.value.strValue, a_name.c_str());
-        auto_ptr<entity::Entity> binary_subtype(entityDB->getNewEntityInstance(sub_kiv));
+        ChaosUniquePtr<entity::Entity> binary_subtype(entityDB->getNewEntityInstance(sub_kiv));
         if(binary_subtype.get()) {
             //we can add the list of the attribute
             for(std::vector<int>::const_iterator it = subtype_list.begin();
@@ -378,7 +388,7 @@ void CUSchemaDB::addBinaryAttributeAsMIMETypeToDataSet(const std::string& node_u
     
     strcpy(kiv.value.strValue, a_name.c_str());
     
-    auto_ptr<entity::Entity> element_dataset(entityDB->getNewEntityInstance(kiv));
+    ChaosUniquePtr<entity::Entity> element_dataset(entityDB->getNewEntityInstance(kiv));
     
     if(element_dataset.get()) {
         addUniqueAttributeProperty(element_dataset.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION], attribute_description);
@@ -514,10 +524,10 @@ void CUSchemaDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& attributeDat
     string attributeDeviceID;
     string attributeName;
     string attributeDescription;
-    auto_ptr<CDataWrapper> elementDescription;
-    auto_ptr<CMultiTypeDataArrayWrapper> elementsDescriptions;
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> elementDescription;
+    ChaosUniquePtr<CMultiTypeDataArrayWrapper> elementsDescriptions;
     //LDBG_<<"["<<__PRETTY_FUNCTION__<<"] Dataset:"<<attributeDataWrapper.getJSONString();
-
+    
     if(!attributeDataWrapper.hasKey(NodeDefinitionKey::NODE_UNIQUE_ID)) return;
     attributeDeviceID = attributeDataWrapper.getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
     //get the entity for device
@@ -525,7 +535,7 @@ void CUSchemaDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& attributeDat
     
     if(attributeDataWrapper.hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION)){
         
-        std::auto_ptr<CDataWrapper> dataset_object(attributeDataWrapper.getCSDataValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
+        ChaosUniquePtr<chaos::common::data::CDataWrapper> dataset_object(attributeDataWrapper.getCSDataValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
         
         if(dataset_object->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION)) {
             
@@ -545,7 +555,7 @@ void CUSchemaDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& attributeDat
                 string attrName = elementDescription->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME);
                 
                 //get the attribute
-                auto_ptr<entity::Entity> attributeEntity(getDatasetElement(deviceEntity, attrName));
+                ChaosUniquePtr<entity::Entity> attributeEntity(getDatasetElement(deviceEntity, attrName));
                 
                 //attribute description
                 if(elementDescription->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION)){
@@ -598,7 +608,7 @@ void CUSchemaDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& attributeDat
         clearAllAttributeForProperty(deviceEntity, mapDatasetKeyForID[DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST]);
         
         //in the package has been sent the address where fir the data for this device
-        auto_ptr<CMultiTypeDataArrayWrapper> serverVec(attributeDataWrapper.getVectorValue(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST));
+        ChaosUniquePtr<CMultiTypeDataArrayWrapper> serverVec(attributeDataWrapper.getVectorValue(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST));
         for (int idx = 0; idx < serverVec->size(); idx++) {
             //add new server
             deviceEntity->addProperty(mapDatasetKeyForID[DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST],  serverVec->getStringElementAtIndex(idx).c_str());
@@ -613,8 +623,8 @@ void CUSchemaDB::fillDataWrapperWithDataSetDescription(CDataWrapper& datasetDesc
     //now i must describe the param for this action
     // map<string, entity::Entity*> deviceEntityMap
     if(deviceEntityMap.size()){
-        boost::shared_ptr<CDataWrapper> datasetElementCDW;
-        boost::shared_ptr<CDataWrapper> domainDatasetDescription;
+        ChaosSharedPtr<CDataWrapper> datasetElementCDW;
+        ChaosSharedPtr<CDataWrapper> domainDatasetDescription;
         
         //there are some parameter for this action, need to be added to rapresentation
         for (EntityPtrMapIterator deviceEntityIter = deviceEntityMap.begin();
@@ -624,7 +634,7 @@ void CUSchemaDB::fillDataWrapperWithDataSetDescription(CDataWrapper& datasetDesc
             string deviceId = deviceEntityIter->first;
             entity::Entity *deviceEntity = deviceEntityIter->second;
             
-            auto_ptr<CDataWrapper> domainDatasetDescription(new CDataWrapper());
+            ChaosUniquePtr<chaos::common::data::CDataWrapper> domainDatasetDescription(new CDataWrapper());
             
             fillDataWrapperWithDataSetDescription(deviceEntity, *domainDatasetDescription.get());
             
@@ -674,7 +684,7 @@ void CUSchemaDB::fillDataWrapperWithDataSetDescription(entity::Entity *deviceEnt
     
     //get dataset attribute for domain name
     
-
+    
     for (ptr_vector<entity::Entity>::iterator dstElmtIterator = device_dataset_attributes.begin();
          dstElmtIterator != device_dataset_attributes.end();
          dstElmtIterator++) {
@@ -688,7 +698,7 @@ void CUSchemaDB::fillDataWrapperWithDataSetDescription(entity::Entity *deviceEnt
         if(attrProperty.size() == 0) continue;
         
         //cicle all dataset element
-        auto_ptr<CDataWrapper> dataset_element(new CDataWrapper());
+        ChaosUniquePtr<chaos::common::data::CDataWrapper> dataset_element(new CDataWrapper());
         
         fillCDataWrapperDSAtribute(dataset_element.get(), deviceEntity, dstAttrEntity, attrProperty);
         
@@ -750,7 +760,7 @@ void CUSchemaDB::fillCDataWrapperDSAtribute(CDataWrapper *dsAttribute,
             //custom attribute
             if(curKIV->value.numValue == -1) {
                 //we have subtype collected in a separate entity so in this case the attribute value is an array
-                std::auto_ptr<entity::Entity> sub_tyhpe_entity(getBinarySubtypeEntity(dID, attrDecomposed));
+                ChaosUniquePtr<entity::Entity> sub_tyhpe_entity(getBinarySubtypeEntity(dID, attrDecomposed));
                 if(sub_tyhpe_entity.get()) {
                     ptr_vector<edb::KeyIdAndValue> sub_types_list;
                     //we need to get all rpoperty
@@ -843,7 +853,7 @@ void CUSchemaDB::getDeviceAttributeDescription(const string& deviceID,
     ptr_vector<edb::KeyIdAndValue> attrPropertyVec;
     entity::Entity *deviceEntity = getDeviceEntity(deviceID);
     
-    auto_ptr<entity::Entity> attributeDstEntity(getDatasetElement(deviceEntity, attributesName.c_str()));
+    ChaosUniquePtr<entity::Entity> attributeDstEntity(getDatasetElement(deviceEntity, attributesName.c_str()));
     if(!attributeDstEntity.get()) return;
     
     attributeDstEntity->getPropertyByKeyID(mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION], attrPropertyVec);
@@ -862,6 +872,7 @@ int CUSchemaDB::getDeviceAttributeRangeValueInfo(const string& deviceID,
     ptr_vector<entity::Entity> attrEntityVec;
     ptr_vector<edb::KeyIdAndValue> attrPropertyVec;
     rangeInfo.reset();
+    CUSCHEMALDBG<<" DEVICE:"<<deviceID<<" attr:"<<attributesName;
     //clear all information
     kiv.keyID = mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME];
     kiv.type = edb::KEY_STR_VALUE;
@@ -895,7 +906,7 @@ int CUSchemaDB::getDeviceAttributeRangeValueInfo(const string& deviceID,
     keyToGot.push_back(keyIdAttrBinType);
     keyToGot.push_back(keyIdAttrCardinality);
     keyToGot.push_back(keyIdAttrDir);
-
+    
     (&attrEntityVec[0])->getPropertyByKeyID(keyToGot, attrPropertyVec);
     if(!attrPropertyVec.size()) return 1;
     rangeInfo.name=attributesName;
@@ -914,7 +925,28 @@ int CUSchemaDB::getDeviceAttributeRangeValueInfo(const string& deviceID,
         } else if(kivPtr->keyID == keyIdAttrType) {
             rangeInfo.valueType = (DataType::DataType)kivPtr->value.numValue;
         } else if(kivPtr->keyID == keyIdAttrBinType){
-            rangeInfo.binType = (DataType::BinarySubtype)kivPtr->value.numValue;
+            rangeInfo.binType.clear();
+            //rangeInfo.binType = (DataType::BinarySubtype)kivPtr->value.numValue;
+            //custom attribute
+            if(kivPtr->value.numValue == -1) {
+                //we have subtype collected in a separate entity so in this case the attribute value is an array
+                ChaosUniquePtr<entity::Entity> sub_tyhpe_entity(getBinarySubtypeEntity(deviceID, attributesName));
+                if(sub_tyhpe_entity.get()) {
+                    ptr_vector<edb::KeyIdAndValue> sub_types_list;
+                    //we need to get all rpoperty
+                    sub_tyhpe_entity->getAllProperty(sub_types_list);
+                    if(sub_types_list.size()) {
+                        for(ptr_vector<edb::KeyIdAndValue>::iterator it = sub_types_list.begin();
+                            it != sub_types_list.end();
+                            it++) {
+                            //no we need to add numerica value as 32 bit into the array for attribute subtype
+                            rangeInfo.binType.push_back(static_cast<DataType::BinarySubtype>(it->value.numValue));
+                        }
+                    }
+                }
+            } else {
+                rangeInfo.binType.push_back(static_cast<DataType::BinarySubtype>(kivPtr->value.numValue));
+            }
         } else if(kivPtr->keyID == keyIdAttrCardinality){
             rangeInfo.cardinality = (uint32_t)kivPtr->value.numValue;
         } else if(kivPtr->keyID == keyIdAttrDir){
@@ -934,8 +966,8 @@ int CUSchemaDB::getDeviceAttributeRangeValueInfo(const string& deviceID,
             
         }
     }
-
-
+    
+    
     return 0;
 }
 
@@ -955,7 +987,7 @@ void CUSchemaDB::setDeviceAttributeRangeValueInfo(const string& deviceID,
     entity::Entity *deviceEntity = getDeviceEntity(deviceID);
     
     //get the attribute
-    auto_ptr<entity::Entity> attributeEntity(getDatasetElement(deviceEntity, attributesName.c_str()));
+    ChaosUniquePtr<entity::Entity> attributeEntity(getDatasetElement(deviceEntity, attributesName.c_str()));
     
     uint32_t keyIdAttrMaxRng = mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE];
     uint32_t keyIdAttrMinRng = mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE];
@@ -975,7 +1007,7 @@ int CUSchemaDB::getDeviceAttributeDirection(const string& deviceID,
     //check if we ha found the attribute
     if(!deviceEntity) return 1;
     
-    auto_ptr<entity::Entity> attributeDstEntity(getDatasetElement(deviceEntity, attributesName.c_str()));
+    ChaosUniquePtr<entity::Entity> attributeDstEntity(getDatasetElement(deviceEntity, attributesName.c_str()));
     
     attributeDstEntity->getPropertyByKeyID(mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION], attrPropertyVec);
     if(!attrPropertyVec.size()) return 1;

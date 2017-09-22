@@ -1,22 +1,22 @@
 /*
- *	MongoDBScriptDataAccess.h
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFramework]
- *	Created by bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 25/05/16 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #ifndef __CHAOSFramework_BC38331E_2F7E_4033_B2EA_C03D6D694CD7_MongoDBScriptDataAccess_h
@@ -54,7 +54,7 @@ namespace chaos {
                                                               const std::string& search_string);
                     
                 protected:
-                    MongoDBScriptDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
+                    MongoDBScriptDataAccess(const ChaosSharedPtr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
                     ~MongoDBScriptDataAccess();
                 public:
                     //! Inherited method
@@ -75,16 +75,27 @@ namespace chaos {
                                           const std::string& instance_name);
                     
                     //! Inherited Method
+                    int updateBindType(const chaos::service_common::data::script::ScriptBaseDescription& script_base_descrition,
+                                       const chaos::service_common::data::script::ScriptInstance& instance);
+                    
+                    //! Inherited Method
                     int removeScriptInstance(const uint64_t seq,
                                              const std::string& script_name,
                                              const std::string& instance_name);
                     
                     //! Inherited Method
-                    int searchScriptInstance(std::vector<chaos::service_common::data::node::NodeInstance>& instance_list,
+                    int searchScriptInstance(std::vector<chaos::service_common::data::script::ScriptInstance>& instance_list,
                                              const std::string& script_name,
                                              const std::string& search_string,
                                              uint64_t start_sequence_id,
                                              uint32_t page_length);
+                    
+                    // Inherited Method
+                    int getScriptInstance(const std::string& script_instance,
+                                          const uint64_t& seq,
+                                          bool& found,
+                                          chaos::service_common::data::script::ScriptInstance& instance);
+                    
                     //! Inherited Method
                     int loadScript(const uint64_t unique_id,
                                    const std::string& name,

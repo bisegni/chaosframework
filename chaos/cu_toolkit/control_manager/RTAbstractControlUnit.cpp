@@ -1,21 +1,22 @@
 /*
- *	RTAbstractControlUnit.cpp
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2013 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include <limits>
@@ -47,7 +48,7 @@ RTAbstractControlUnit::RTAbstractControlUnit(const std::string& _control_unit_id
 AbstractControlUnit(CUType::RTCU,
                     _control_unit_id,
                     _control_unit_param),
-schedule_dalay(1000000),
+schedule_delay(1000000),
 scheduler_run(false){
     //allocate the handler engine
     // attributeHandlerEngine = new DSAttributeHandlerExecutionEngine(this);
@@ -68,7 +69,7 @@ AbstractControlUnit(CUType::RTCU,
                     _control_unit_id,
                     _control_unit_param,
                     _control_unit_drivers),
-schedule_dalay(1000000),
+schedule_delay(1000000),
 scheduler_run(false) {
     //allocate the handler engine
     //attributeHandlerEngine = new DSAttributeHandlerExecutionEngine(this);
@@ -84,7 +85,7 @@ RTAbstractControlUnit::RTAbstractControlUnit(const std::string& _alternate_type,
 AbstractControlUnit(_alternate_type,
                     _control_unit_id,
                     _control_unit_param),
-schedule_dalay(1000000),
+schedule_delay(1000000),
 scheduler_run(false) {
     //associate the shared cache of the executor to the asbtract control unit one
     attribute_value_shared_cache = new AttributeValueSharedCache();
@@ -99,7 +100,7 @@ AbstractControlUnit(_alternate_type,
                     _control_unit_id,
                     _control_unit_param,
                     _control_unit_drivers),
-schedule_dalay(1000000),
+schedule_delay(1000000),
 scheduler_run(false) {
     //associate the shared cache of the executor to the asbtract control unit one
     attribute_value_shared_cache = new AttributeValueSharedCache();
@@ -111,15 +112,12 @@ RTAbstractControlUnit::~RTAbstractControlUnit() {
     if(attribute_value_shared_cache) {
         delete(attribute_value_shared_cache);
     }
-    
-    //release handler engine
-    //if(attributeHandlerEngine) {
-    //    delete attributeHandlerEngine;
-    //}
 }
 
-void RTAbstractControlUnit::setDefaultScheduleDelay(uint64_t _schedule_dalay) {
-    schedule_dalay = _schedule_dalay;
+void RTAbstractControlUnit::setDefaultScheduleDelay(uint64_t _schedule_delay) {
+    
+    RTCULDBG_<<"setting default schedule to:"<<_schedule_delay<<" us";
+    schedule_delay = _schedule_delay;
 }
 
 /*
@@ -129,11 +127,6 @@ void RTAbstractControlUnit::setDefaultScheduleDelay(uint64_t _schedule_dalay) {
  */
 void RTAbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configuration)  throw(CException) {
     AbstractControlUnit::_defineActionAndDataset(setup_configuration);
-    //add the scekdule dalay for the sandbox
-    if(schedule_dalay){
-        //in this case ovverride the config file
-        setup_configuration.addInt64Value(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY , schedule_dalay);
-    }
 }
 
 AbstractSharedDomainCache *RTAbstractControlUnit::_getAttributeCache() {
@@ -235,38 +228,28 @@ void RTAbstractControlUnit::threadStartStopManagment(bool startAction) throw(CEx
     }
 }
 
-/*!
- Event for update some CU configuration
- */
-CDataWrapper* RTAbstractControlUnit::updateConfiguration(CDataWrapper* update_pack, bool& detach_param) throw (CException) {
-    CDataWrapper *result = AbstractControlUnit::updateConfiguration(update_pack, detach_param);
-    std::auto_ptr<CDataWrapper> cu_properties;
-    CDataWrapper *cu_property_container = NULL;
-    if(update_pack->hasKey(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)){
-        cu_property_container = update_pack;
-    } else if(update_pack->hasKey("property_abstract_control_unit") &&
-              update_pack->isCDataWrapperValue("property_abstract_control_unit")){
-        cu_properties.reset(update_pack->getCSDataValue("property_abstract_control_unit"));
-        cu_property_container = cu_properties.get();
-    }
-    
-    if(cu_property_container) {
-        if(cu_property_container->hasKey(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)) {
-            //we need to configure the delay  from a run() call and the next
-            uint64_t uSecdelay = cu_property_container->getUInt64Value(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY);
-            //check if we need to update the scehdule time
-            if(uSecdelay != schedule_dalay){
-                RTCULAPP_ << "Update schedule delay in:" << uSecdelay << " microsecond";
-                schedule_dalay = uSecdelay;
-                _updateRunScheduleDelay(schedule_dalay);
-                pushSystemDataset();
+//!inherited method by @AbstractControlUnit
+void RTAbstractControlUnit::propertyUpdatedHandler(const std::string& group_name,
+                                                   const std::string& property_name,
+                                                   const chaos::common::data::CDataVariant& old_value,
+                                                   const chaos::common::data::CDataVariant& new_value) {
+    if(group_name.compare(chaos::ControlUnitPropertyKey::GROUP_NAME) == 0) {
+        key_data_storage->updateConfiguration(property_name, new_value);
+        //is my group
+        if(property_name.compare(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY) == 0) {
+            uint64_t u_secdelay = new_value.asUInt64();
+            if(u_secdelay != schedule_delay){
+                RTCULAPP_ << "Update schedule delay in:" << u_secdelay << " microsecond";
+                schedule_delay = u_secdelay;
+                _updateRunScheduleDelay(schedule_delay);
             }
         }
-    } else {
-        //if we have no entries for scheduler try to setup it with default value
-        _updateRunScheduleDelay(schedule_dalay);
     }
-    return result;
+    //call superclass
+    AbstractControlUnit::propertyUpdatedHandler(group_name,
+                                                property_name,
+                                                old_value,
+                                                new_value);
 }
 
 /*
@@ -277,18 +260,21 @@ void RTAbstractControlUnit::executeOnThread() {
     int64_t time_to_sleep = 0;
     uint64_t next_predicted_run = 0;
     int64_t next_prediction_error = 0;
+    uint64_t duration;
+    RTCULAPP_ << "Run Start, schedule delay:"<<schedule_delay<<" us";
     while(scheduler_run) {
-        start_execution = TimingUtil::getTimeStampInMicrosends();
-        
-        if(next_predicted_run) {
-            //are onthe second
-            if((next_prediction_error = start_execution - next_predicted_run) < 0){
-                next_prediction_error = 0;
-            }
-        }
+        start_execution = TimingUtil::getTimeStampInMicroseconds();
+        /*
+         if(next_predicted_run) {
+         //are onthe second
+         if((next_prediction_error = (start_execution - next_predicted_run)) < 0){
+         next_prediction_error = 0;
+         }
+         }
+         */
         
         //udpate output dataset timestamp tag
-        _updateAcquistionTimestamp((uint64_t)(start_execution/1000));
+        _updateAcquistionTimestamp((uint64_t)start_execution);
         try{
             //! exec the control unit step
             unitRun();
@@ -304,15 +290,20 @@ void RTAbstractControlUnit::executeOnThread() {
         }
         
         // check if the output dataset need to be pushed
-        pushOutputDataset(true);
+        pushOutputDataset();
         //calculate the number of microsencods to wait
-        time_to_sleep = schedule_dalay - (((next_predicted_run = TimingUtil::getTimeStampInMicrosends()) - start_execution)+next_prediction_error);
+        //time_to_sleep = schedule_delay - (((next_predicted_run = TimingUtil::getTimeStampInMicroseconds()) - start_execution)+next_prediction_error);
+        
+        duration = TimingUtil::getTimeStampInMicroseconds() - start_execution;
+        time_to_sleep = schedule_delay - duration;
         if(time_to_sleep>0){
-            next_predicted_run += time_to_sleep;
+            //next_predicted_run = time_to_sleep;
+            RTCULDBG_<<" schedule:"<<schedule_delay<<" us wait "<<time_to_sleep<<" us cycle duration:"<<duration<<" us";
             boost::this_thread::sleep_for(boost::chrono::microseconds(time_to_sleep));
         } else {
             next_predicted_run = 0;
             next_prediction_error = 0;
         }
     }
+    RTCULAPP_ << "Run Exit";
 }

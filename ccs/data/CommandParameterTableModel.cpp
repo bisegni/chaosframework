@@ -53,29 +53,31 @@ void CommandParameterTableModel::updateAttribute(const QSharedPointer<chaos::com
 
 void CommandParameterTableModel::fillTemplate(chaos::metadata_service_client::api_proxy::node::CommandTemplate &command_template) {
     foreach (QSharedPointer<AttributeValueChangeSet> attribute, attribute_changes) {
-        boost::shared_ptr<CDataWrapperKeyValueSetter> kv_setter;
+        ChaosSharedPtr<CDataWrapperKeyValueSetter> kv_setter;
         if(attribute->parametrize) {
-            kv_setter = boost::shared_ptr<CDataWrapperKeyValueSetter>(new CDataWrapperNullKeyValueSetter(attribute->attribute_name.toStdString()));
+            kv_setter = ChaosSharedPtr<CDataWrapperKeyValueSetter>(new CDataWrapperNullKeyValueSetter(attribute->attribute_name.toStdString()));
         } else if(!attribute->current_value.isNull()) {
             switch (attribute->type) {
             case chaos::DataType::TYPE_BOOLEAN:
-                kv_setter = boost::shared_ptr<CDataWrapperKeyValueSetter>(new CDataWrapperBoolKeyValueSetter(attribute->attribute_name.toStdString(),
+                kv_setter = ChaosSharedPtr<CDataWrapperKeyValueSetter>(new CDataWrapperBoolKeyValueSetter(attribute->attribute_name.toStdString(),
                                                                                                              attribute->current_value.toBool()));
                 break;
             case chaos::DataType::TYPE_INT32:
-                kv_setter = boost::shared_ptr<CDataWrapperKeyValueSetter>(new CDataWrapperInt32KeyValueSetter(attribute->attribute_name.toStdString(),
+                kv_setter = ChaosSharedPtr<CDataWrapperKeyValueSetter>(new CDataWrapperInt32KeyValueSetter(attribute->attribute_name.toStdString(),
                                                                                                               attribute->current_value.toInt()));
                 break;
             case chaos::DataType::TYPE_INT64:
-                kv_setter = boost::shared_ptr<CDataWrapperKeyValueSetter>(new CDataWrapperInt64KeyValueSetter(attribute->attribute_name.toStdString(),
+                kv_setter = ChaosSharedPtr<CDataWrapperKeyValueSetter>(new CDataWrapperInt64KeyValueSetter(attribute->attribute_name.toStdString(),
                                                                                                               attribute->current_value.toLongLong()));
                 break;
+                
+                case chaos::DataType::TYPE_CLUSTER:
             case chaos::DataType::TYPE_STRING:
-                kv_setter = boost::shared_ptr<CDataWrapperKeyValueSetter>(new CDataWrapperStringKeyValueSetter(attribute->attribute_name.toStdString(),
+                kv_setter = ChaosSharedPtr<CDataWrapperKeyValueSetter>(new CDataWrapperStringKeyValueSetter(attribute->attribute_name.toStdString(),
                                                                                                                attribute->current_value.toString().toStdString()));
                 break;
             case chaos::DataType::TYPE_DOUBLE:
-                kv_setter = boost::shared_ptr<CDataWrapperKeyValueSetter>(new CDataWrapperDoubleKeyValueSetter(attribute->attribute_name.toStdString(),
+                kv_setter = ChaosSharedPtr<CDataWrapperKeyValueSetter>(new CDataWrapperDoubleKeyValueSetter(attribute->attribute_name.toStdString(),
                                                                                                                attribute->current_value.toDouble()));
                 break;
             case chaos::DataType::TYPE_BYTEARRAY:
@@ -108,7 +110,9 @@ void CommandParameterTableModel::applyTemplate(const QSharedPointer<chaos::commo
                 case chaos::DataType::TYPE_INT64:
                     attribute->current_value = (qlonglong)command_template->getInt64Value(attribute_name);
                     break;
+                case chaos::DataType::TYPE_CLUSTER:
                 case chaos::DataType::TYPE_STRING:
+                 
                     attribute->current_value = QString::fromStdString(command_template->getStringValue(attribute_name));
                     break;
                 case chaos::DataType::TYPE_DOUBLE:
@@ -194,6 +198,9 @@ QVariant CommandParameterTableModel::getCellData(int row, int column) const {
             break;
         case chaos::DataType::TYPE_INT64:
             result = QString("Int64");
+            break;
+        case chaos::DataType::TYPE_CLUSTER:
+             result = QString("cluster");
             break;
         case chaos::DataType::TYPE_STRING:
             result = QString("String");
@@ -324,22 +331,37 @@ bool CommandParameterTableModel::setCellData(const QModelIndex& index, const QVa
                 CHECKTYPE(result, int32_t, value)
                         if(!result) {
                     error_message = tr("The value is not convertible to int32");
-                    break;
                 }
+                break;
+
             }
             case chaos::DataType::TYPE_INT64:{
                 CHECKTYPE(result, int64_t, value)
                         if(!result) {
                     error_message = tr("The value is not convertible to int64_t");
-                    break;
                 }
+                break;
+
             }
             case chaos::DataType::TYPE_DOUBLE:{
                 CHECKTYPE(result, double, value)
                         if(!result) {
                     error_message = tr("The value is not convertible to double");
-                    break;
                 }
+                break;
+
+            }
+            case chaos::DataType::TYPE_CLUSTER:{
+                CDataWrapper tmp;
+                try {
+                    tmp.setSerializedJsonData(value.toString().toStdString().c_str());
+                    result = true;
+                } catch(...){
+                    result = false;
+                     error_message = tr("The value is not convertible to a json string");
+
+                }
+                break;
             }
             case chaos::DataType::TYPE_STRING:{
                 CHECKTYPE(result, std::string, value)

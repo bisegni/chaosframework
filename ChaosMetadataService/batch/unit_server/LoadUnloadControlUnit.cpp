@@ -1,32 +1,34 @@
 /*
- *	LoadUnloadControlUnit.cpp
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2015 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include "LoadUnloadControlUnit.h"
 
 #include "../control_unit/IDSTControlUnitBatchCommand.h"
 #include "../../common/CUCommonUtility.h"
-
+#include <chaos_service_common/data/data.h>
 using namespace chaos::common::data;
 using namespace chaos::common::network;
 using namespace chaos::metadata_service::common;
 using namespace chaos::metadata_service::batch::unit_server;
+using namespace chaos::service_common::data::script;
 
 #define BATHC_CU_LUL_INFO INFO_LOG(LoadUnloadControlUnit)
 #define BATHC_CU_LUL_DBG  DBG_LOG(LoadUnloadControlUnit)
@@ -42,6 +44,27 @@ static const char * const LoadUnloadControlUnit_NO_LOAD_UNLOAD = "No load or unl
 LoadUnloadControlUnit::LoadUnloadControlUnit():
 MDSBatchCommand() {}
 LoadUnloadControlUnit::~LoadUnloadControlUnit() {}
+
+int LoadUnloadControlUnit::prepareInstanceScriptForLoad(const std::string& instance_name) {
+    int err = 0;
+    bool found = false;
+    ScriptBaseDescription sbd;
+    
+    //befor send if need to check if the current instsance is a script
+    BATHC_CU_LUL_INFO << CHAOS_FORMAT("Send load data to %1%", %instance_name);
+    if((err = getDataAccess<mds_data_access::ControlUnitDataAccess>()->getScriptAssociatedToControlUnitInstance(instance_name,
+                                                                                                                found,
+                                                                                                                sbd))){
+        BATHC_CU_LUL_ERR << CHAOS_FORMAT("Error fetching the script associated to the control unit instance %1% with error %2%", %instance_name%err);
+    } else if(found) {
+        //in this case we need to copy the script data to the control unit instances
+        if((err = getDataAccess<mds_data_access::ScriptDataAccess>()->copyScriptDatasetAndContentToInstance(sbd,
+                                                                                                            instance_name))){
+            BATHC_CU_LUL_ERR << CHAOS_FORMAT("Error copying the script data to the control unit instance %1% with error %2%", %instance_name%err);
+        }
+    }
+    return err;
+}
 
 // inherited method
 void LoadUnloadControlUnit::setHandler(CDataWrapper *data) {
@@ -85,6 +108,8 @@ void LoadUnloadControlUnit::setHandler(CDataWrapper *data) {
     }
     //prepare load data pack to sento to control unit
     if(load){
+        //in case ho script instance copy the script information
+        prepareInstanceScriptForLoad(cu_id);
         load_unload_pack = CUCommonUtility::prepareRequestPackForLoadControlUnit(cu_id,
                                                                                  getDataAccess<mds_data_access::ControlUnitDataAccess>());
     } else {

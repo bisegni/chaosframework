@@ -1,22 +1,22 @@
 /*
- *	AlarmCatalog.h
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFramework]
- *	Created by Claudio Bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 27/10/2016 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #ifndef __CHAOSFramework__0CB64FD_9567_4577_BF46_5C47DBEE7998_AlarmCatalog_h
@@ -34,7 +34,9 @@ namespace chaos {
             class AlarmCatalog:
             protected chaos::common::state_flag::StateFlagCatalog {
             public:
+                AlarmCatalog();
                 AlarmCatalog(const std::string& catalog_name);
+                AlarmCatalog(const AlarmCatalog& catalog);
                 ~AlarmCatalog();
                 
                 //! add a new alarm to catalog
@@ -70,17 +72,17 @@ namespace chaos {
                  all byte describe the current state of an alarm so the rtrsulting
                  memory as size = num of alarm * char)
                  */
-                std::auto_ptr<chaos::common::data::CDataBuffer> getRawFlagsLevel();
+                ChaosUniquePtr<chaos::common::data::CDataBuffer> getRawFlagsLevel();
                 
                 //!Set the raw alarm state of alarm current state
                 /*!
                  all byte describe the current state of an alarm so the rtrsulting
                  memory as size = num of alarm * char)
                  */
-                void setApplyRawFlagsValue(std::auto_ptr<chaos::common::data::CDataBuffer>& raw_level);
+                void setApplyRawFlagsValue(ChaosUniquePtr<chaos::common::data::CDataBuffer>& raw_level);
                 
                 //!return the serialization of description of alarm catalog
-                std::auto_ptr<chaos::common::data::CDataWrapper> serialize();
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> serialize();
                 
                 //!deserialize the description of a previously serialized catalog
                 void deserialize(chaos::common::data::CDataWrapper *serialized_data);
@@ -90,6 +92,9 @@ namespace chaos {
                 
                 //!return the catalog size
                 const size_t size();
+
+                //!return the catalog size
+                 const uint8_t max();
             };
         }
     }

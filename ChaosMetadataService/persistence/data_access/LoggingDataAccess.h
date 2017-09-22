@@ -1,22 +1,22 @@
 /*
- *	LoggingDataAccess.h
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFramework]
- *	Created by Claudio Bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 11/02/16 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #ifndef __CHAOSFramework__LoggingDataAccess_h
@@ -51,7 +51,7 @@ namespace chaos {
                     LoggingKeyValueBoolMap      map_bool_value;
                 };
                 
-                CHAOS_DEFINE_VECTOR_FOR_TYPE(boost::shared_ptr<LogEntry>, LogEntryList);
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(ChaosSharedPtr<LogEntry>, LogEntryList);
                 
                 CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string, LogDomainList);
                 
@@ -78,7 +78,7 @@ namespace chaos {
                     //!Perform a search on log entries
                     /*!
                      perform a simple search on node filtering on type
-                     \param entry_list tge list of the current page of the entries found
+                     \param entry_list the list of the current page of the entries found
                      \param source_uid is the source that has created the entries
                      \param start_sequence_id is identified the sequence after wich we need to search
                      \param page_length is the maximum number of the element to return
@@ -115,6 +115,10 @@ namespace chaos {
                      */
                     virtual int getLogDomainsForSource(LogDomainList& entry_list,
                                                        const LogSourceList& source_uids) = 0;
+                    
+                    //! remove all log for belog to the source id
+                    virtual int eraseLogBeforTS(const std::string& source_uid,
+                                                uint64_t unit_ts) = 0;
                 };
             }
         }

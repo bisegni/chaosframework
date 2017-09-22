@@ -1,21 +1,22 @@
 /*
- *	NetworkBroker.h
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 #ifndef ChaosFramework_MessageBroker_h
 #define ChaosFramework_MessageBroker_h
@@ -25,7 +26,6 @@
 #include <boost/thread/mutex.hpp>
 
 #include <chaos/common/rpc/ChaosRpc.h>
-#include <chaos/common/sync_rpc/ChaosSyncRpc.h>
 #include <chaos/common/direct_io/DirectIO.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/action/DeclareAction.h>
@@ -61,6 +61,7 @@ namespace chaos {
             class MultiAddressMessageChannel;
 			class MDSMessageChannel;
 			class DeviceMessageChannel;
+            class DeviceMessageChannelListener;
 			class PerformanceNodeChannel;
 		}
 
@@ -116,9 +117,6 @@ namespace chaos {
 				
 				//! Rpc server for message listening
                 chaos::RpcServer *rpc_server;
-
-                //! Rpc sync interface
-                chaos::common::sync_rpc::RpcSyncServer *sync_rpc_server;
                 
 				//rpc action dispatcher
 				AbstractCommandDispatcher *rpc_dispatcher;
@@ -196,12 +194,6 @@ namespace chaos {
 				 */
 				void getPublishedHostAndPort(string&);
 				
-				//!Return the sync rpc url
-				/*!
-				 return the rpc url
-				 */
-				std::string getSyncRPCUrl();
-				
 				//!Return the rpc url
 				/*!
 				 return the rpc url
@@ -278,8 +270,7 @@ namespace chaos {
 				 \param onThisThread if true the message is forwarded in the same thread of the caller
 				 */
 				bool submitMessage(const string& serverAndPort,
-								   chaos::common::data::CDataWrapper *message,
-								   bool onThisThread=false);
+								   chaos::common::data::CDataWrapper *message);
 				
 				//!message request
 				/*!
@@ -291,8 +282,7 @@ namespace chaos {
 				bool submiteRequest(const string& serverAndPort,
                                     chaos::common::data::CDataWrapper *request,
                                     std::string sender_node_id,
-                                    uint32_t sender_request_id,
-									bool onThisThread=false);
+                                    uint32_t sender_request_id);
 				
                 
                 //!send interparocess message

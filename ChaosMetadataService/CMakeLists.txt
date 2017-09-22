@@ -7,13 +7,15 @@ ENDIF()
 INCLUDE_DIRECTORIES(chaos/common ../)
 
 SET(cnd_src				main.cpp
-						ChaosMetadataService.cpp)
+						      ChaosMetadataService.cpp
+                  DriverPoolManager.cpp
+                  QueryDataConsumer.cpp)
 
 SET(cnd_src  ${cnd_src} ../chaos_service_common/persistence/mongodb/MongoDBHAConnectionManager.cpp
                         ../chaos_service_common/persistence/mongodb/MongoDBAccessor.cpp)
 
 SET(cnd_src  ${cnd_src} ../chaos_service_common/persistence/data_access/AbstractDataAccess.cpp
-						../chaos_service_common/persistence/data_access/AbstractPersistenceDriver.cpp)
+						            ../chaos_service_common/persistence/data_access/AbstractPersistenceDriver.cpp)
 
 SET(cnd_src  ${cnd_src}	cron_job/MDSCronousManager.cpp
                         cron_job/MDSCronJob.cpp
@@ -39,13 +41,18 @@ SET(cnd_src  ${cnd_src}	api/groups/GroupsApiGroup.cpp
                         api/groups/GetNodeChilds.cpp)
 
 SET(cnd_src  ${cnd_src}	api/service/ServiceApiGroup.cpp
-						api/service/ResetAll.cpp
+						            api/service/ResetAll.cpp
                         api/service/GetAllSnapshot.cpp
                         api/service/RestoreSnapshot.cpp
                         api/service/CreateNewSnapshot.cpp
                         api/service/DeleteSnapshot.cpp
                         api/service/GetNodesForSnapshot.cpp
-                        api/service/GetSnapshotForNode.cpp)
+                        api/service/GetSnapshotDatasetsForNode.cpp
+                        api/service/SetSnapshotDatasetsForNode.cpp
+                        api/service/GetSnapshotForNode.cpp
+                        api/service/SetVariable.cpp
+                        api/service/RemoveVariable.cpp
+                        api/service/GetVariable.cpp)
 
 SET(cnd_src  ${cnd_src}	api/healt/HealtApiGroup.cpp
                         api/healt/ProcessHello.cpp
@@ -56,12 +63,10 @@ SET(cnd_src  ${cnd_src}	api/unit_server/UnitServerApiGroup.cpp
                         api/unit_server/LoadUnloadControlUnit.cpp
                         api/unit_server/NewUS.cpp
                         api/unit_server/DeleteUS.cpp
-                        api/unit_server/ManageCUType.cpp)
+                        api/unit_server/ManageCUType.cpp
+                        api/unit_server/GetSetFullUnitServer.cpp)
 
 SET(cnd_src  ${cnd_src}	api/data_service/DataServiceApiGroup.cpp
-                        api/data_service/NewDS.cpp
-                        api/data_service/UpdateDS.cpp
-                        api/data_service/DeleteDS.cpp
                         api/data_service/AssociationControlUnit.cpp
                         api/data_service/GetAssociationByDS.cpp
                         api/data_service/GetAllDataService.cpp
@@ -89,6 +94,8 @@ SET(cnd_src  ${cnd_src}	api/node/NodeGroup.cpp
                         api/node/NodeLoadCompletion.cpp
                         api/node/NodeSearch.cpp
                         api/node/UpdateProperty.cpp
+                        api/node/UpdatePropertyDefaultValues.cpp
+                        api/node/GetPropertyDefaultValues.cpp
                         api/node/ChangeNodeState.cpp
                         api/node/CommandGet.cpp
                         api/node/CommandTemplateSet.cpp
@@ -98,17 +105,44 @@ SET(cnd_src  ${cnd_src}	api/node/NodeGroup.cpp
                         api/node/CommandTemplateSubmit.cpp
                         api/node/CommandInstanceSubmit.cpp
                         api/node/CommandCommonUtility.cpp
+			api/node/GetPropertyDefaultValues.cpp
                         api/node/GetCommandAndTemplateDescription.cpp)
 
 SET(cnd_src  ${cnd_src}	api/script/ScriptGroupApi.cpp
                         api/script/SearchScript.cpp
                         api/script/SaveScript.cpp
+                        api/script/RemoveScript.cpp
                         api/script/LoadFullScript.cpp
                         api/script/SearchInstancesForScript.cpp
                         api/script/ManageScriptInstance.cpp
-                        api/script/ExecutionPoolHeartbeat.cpp)
+                        api/script/ExecutionPoolHeartbeat.cpp
+                        api/script/UpdateScriptOnNode.cpp
+                        api/script/UpdateBindType.cpp)
 
-SET(cnd_src  ${cnd_src}	persistence/data_access/UnitServerDataAccess.cpp
+SET(cnd_src  ${cnd_src}	api/agent/AgentApiGroup.cpp
+                        api/agent/LoadAgentDescription.cpp
+                        api/agent/ListNodeForAgent.cpp
+                        api/agent/SaveNodeAssociation.cpp
+                        api/agent/LoadNodeAssociation.cpp
+                        api/agent/RemoveNodeAssociation.cpp
+                        api/agent/NodeOperation.cpp
+                        api/agent/CheckAgentHostedProcess.cpp
+                        api/agent/GetManagementConfiguration.cpp
+                        api/agent/SetManagementConfiguration.cpp)
+
+SET(cnd_src  ${cnd_src}	api/agent/logging/AgentLoggingApiGroup.cpp
+                        api/agent/logging/GetProcessLogEntries.cpp
+                        api/agent/logging/ManageNodeLogging.cpp)
+
+#Worker
+SET(cnd_src  ${cnd_src}	worker/DataWorker.cpp
+                        worker/DeviceSharedDataWorker.cpp
+                        worker/DeviceSharedDataWorkerMetric.cpp
+                        worker/DeviceSharedDataWorkerMetricCollector.cpp)
+
+#Persistence
+SET(cnd_src  ${cnd_src} persistence/PersistenceManager.cpp
+                        persistence/data_access/UnitServerDataAccess.cpp
                         persistence/data_access/NodeDataAccess.cpp
                         persistence/data_access/UtilityDataAccess.cpp
                         persistence/data_access/ControlUnitDataAccess.cpp
@@ -116,7 +150,8 @@ SET(cnd_src  ${cnd_src}	persistence/data_access/UnitServerDataAccess.cpp
                         persistence/data_access/SnapshotDataAccess.cpp
 						persistence/data_access/TreeGroupDataAccess.cpp
                         persistence/data_access/LoggingDataAccess.cpp
-						persistence/data_access/ScriptDataAccess.cpp)
+						persistence/data_access/ScriptDataAccess.cpp
+                        persistence/data_access/AgentDataAccess.cpp)
 
 SET(cnd_src  ${cnd_src}	persistence/mongodb/MongoDBPersistenceDriver.cpp
                         persistence/mongodb/MongoDBUnitServerDataAccess.cpp
@@ -127,10 +162,29 @@ SET(cnd_src  ${cnd_src}	persistence/mongodb/MongoDBPersistenceDriver.cpp
                         persistence/mongodb/MongoDBSnapshotDataAccess.cpp
                         persistence/mongodb/MongoDBTreeGroupDataAccess.cpp
                         persistence/mongodb/MongoDBLoggingDataAccess.cpp
-						persistence/mongodb/MongoDBScriptDataAccess.cpp)
+						persistence/mongodb/MongoDBScriptDataAccess.cpp
+                        persistence/mongodb/MongoDBAgentDataAccess.cpp)
+#Caching
+SET(cnd_src  ${cnd_src}	cache_system/CacheDriver.cpp
+                        cache_system/CacheDriverMetricCollector.cpp
+                        cache_system/CacheDriverSharedMetricIO.cpp
+                        cache_system/CouchbaseCacheDriver.cpp)
+
+
+#Object Storage
+SET(cnd_src  ${cnd_src}	object_storage/abstraction/ObjectStorageDataAccess.cpp)
+
+SET(cnd_src  ${cnd_src}	object_storage/mongodb/MongoDBObjectStorageDataAccess.cpp
+                        object_storage/mongodb/MongoDBObjectStorageDriver.cpp)
 
 SET(cnd_src  ${cnd_src}	batch/MDSBatchExecutor.cpp
                         batch/MDSBatchCommand.cpp)
+
+SET(cnd_src  ${cnd_src}	batch/agent/AgentAckCommand.cpp
+                        batch/agent/AgentProcessController.cpp
+                        batch/agent/AgentCheckAgentProcess.cpp
+                        batch/agent/AgentRemoveNodeSafety.cpp
+                        batch/agent/AgentLoggingNodeManagement.cpp)
 
 SET(cnd_src  ${cnd_src}	batch/node/UpdatePropertyCommand.cpp
                         batch/node/SubmitBatchCommand.cpp)
@@ -143,14 +197,19 @@ SET(cnd_src  ${cnd_src}	batch/control_unit/RegistrationAckBatchCommand.cpp
                         batch/control_unit/ApplyChangeSet.cpp
                         batch/control_unit/RecoverError.cpp)
 
-SET(cnd_src  ${cnd_src}	batch/script/LoadInstanceOnUnitServer.cpp)
+SET(cnd_src  ${cnd_src}	batch/script/LoadInstanceOnUnitServer.cpp
+                        batch/script/UpdateScriptOnNode.cpp)
 
-SET(cnd_src  ${cnd_src}	batch/general/RestoreSnapshotBatch.cpp)
+SET(cnd_src  ${cnd_src}	batch/general/RestoreSnapshotBatch.cpp
+                        batch/general/CreateSnapshotBatch.cpp)
 
 ADD_EXECUTABLE(${PROJECT_NAME} ${cnd_src})
+
+CheckConfigureBuild(couchbaseS libcouchbase:chaos-0.1 "-DLCB_NO_SSL=true;-DLCB_NO_TESTS=true;-DLCB_NO_TOOLS=true;-DLCB_NO_PLUGINS=true" https://github.com/amichelotti)
 
 IF(BUILD_FORCE_STATIC)
   SET(CMAKE_EXE_LINKER_FLAGS "-static -Wl,--whole-archive -lchaos_common -Wl,--no-whole-archive")
 ENDIF()
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} chaos_common mongoclient ${FrameworkLib})
+
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} chaos_common mongoclient couchbaseS ${FrameworkLib})
 INSTALL_TARGETS(/bin ${PROJECT_NAME})

@@ -1,21 +1,22 @@
 /*
- *	RestoreSnapshotBatch.cpp
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2015 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include "RestoreSnapshotBatch.h"
@@ -46,6 +47,9 @@ void RestoreSnapshotBatch::setHandler(CDataWrapper *data) {
     CHECK_KEY_THROW_AND_LOG(data, "snapshot_name", G_RS_ERR, -2, "The name of the snapshot is mandatory")
     
     snapshot_name = data->getStringValue("snapshot_name");
+    //set default scheduler delay 0,05 second
+    setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY, (uint64_t)50000);
+    clearFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT);
     
     if((err = getDataAccess<mds_data_access::SnapshotDataAccess>()->getNodeInSnapshot(snapshot_name,
                                                                                       list_node_in_snapshot))) {
@@ -82,7 +86,7 @@ void RestoreSnapshotBatch::ccHandler() {
                 break;
             }
             
-            std::auto_ptr<CDataWrapper> node_description(tmp_ptr);
+            ChaosUniquePtr<chaos::common::data::CDataWrapper> node_description(tmp_ptr);
             
             if( !node_description->hasKey(NodeDefinitionKey::NODE_RPC_ADDR) ||
                !node_description->hasKey(NodeDefinitionKey::NODE_RPC_DOMAIN)) {

@@ -1,21 +1,22 @@
 /*
- *	ZMQDirectIOServer.cpp
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include <chaos/common/configuration/GlobalConfiguration.h>
@@ -90,7 +91,7 @@ void ZMQDirectIOServer::start() throw(chaos::CException) {
     
     //get custm configuration for direct io server
     if(GlobalConfiguration::getInstance()->hasOption(InitOption::OPT_DIRECT_IO_SERVER_THREAD_NUMBER)) {
-        direct_io_thread_number = GlobalConfiguration::getInstance()->getOption<int>(InitOption::OPT_DIRECT_IO_SERVER_THREAD_NUMBER);
+        direct_io_thread_number = GlobalConfiguration::getInstance()->getOption<uint32_t>(InitOption::OPT_DIRECT_IO_SERVER_THREAD_NUMBER);
     }
     
     //create the ZMQContext
@@ -195,6 +196,7 @@ void ZMQDirectIOServer::poller(const std::string& public_url,
     ZMQDIO_SRV_LAPP_ << CHAOS_FORMAT("Enter pooler for %1%", %public_url);
     //start creating two socker for service and priority
     ZMQDIO_SRV_LAPP_ << "Allocating and binding priority socket to "<< priority_socket_bind_str;
+
     public_socket = zmq_socket (zmq_context, ZMQ_ROUTER);
     if(public_socket == NULL){
         return;
@@ -230,7 +232,7 @@ void ZMQDirectIOServer::poller(const std::string& public_url,
     }catch (std::exception &e) {}
     if(public_socket) {
         if((err = zmq_unbind(public_socket, public_url.c_str()))){
-            ZMQDIO_SRV_LERR_ << CHAOS_FORMAT("Error %1% unbindind socker for %2%", %err%public_url);
+            ZMQDIO_SRV_LERR_ << CHAOS_FORMAT("Error %1% unbindind socket for %2%", %err%public_url);
         }
         if((err = zmq_close(public_socket))){
             ZMQDIO_SRV_LERR_ << CHAOS_FORMAT("Error %1% closing socket for %2%", %err%public_url);
@@ -315,7 +317,7 @@ void ZMQDirectIOServer::worker(unsigned int w_type,
             if((err = reveiceDatapack(worker_socket,
                                       identity,
                                       &data_pack))) {
-                CHK_AND_DELETE_OBJ_POINTER(data_pack);
+                DELETE_OBJ_POINTER(data_pack);
                 continue;
             } else {
                 //check if we need to sen an answer
@@ -339,7 +341,7 @@ void ZMQDirectIOServer::worker(unsigned int w_type,
                                            answer_data_deallocation_handler))){
                         ZMQDIO_SRV_LAPP_ << "Error sending answer with code:" << err;
                     } else {
-                        //anser si sent well
+                        //anser is sent well
                     }
                 }
             }

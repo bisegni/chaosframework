@@ -1,22 +1,22 @@
 /*
- *	StateFlagCatalog.cpp
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFramework]
- *	Created by bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 12/07/16 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include <chaos/common/global.h>
@@ -50,6 +50,10 @@ catalog_name(_catalog_name){
     }
 }
 
+StateFlagCatalog::StateFlagCatalog(const StateFlagCatalog& _catalog) {
+    *this = _catalog;
+}
+
 StateFlagCatalog::~StateFlagCatalog(){
     //!remove listere to all flag
     StateFlagElementContainerOrderedIndex& ordered_index = boost::multi_index::get<mitag_ordered>(catalog_container());
@@ -62,12 +66,11 @@ StateFlagCatalog::~StateFlagCatalog(){
 }
 
 
-void StateFlagCatalog::stateFlagUpdated(const std::string& flag_uuid,
-                                        const std::string& flag_name,
-                                        const std::string& level_name,
-                                        const StateFlagServerity current_level_severity) {
+void StateFlagCatalog::stateFlagUpdated(const FlagDescription       flag_description,
+                                        const std::string&          level_name,
+                                        const StateFlagServerity    current_level_severity) {
     StateFlagElementContainerFlaUUIDIndex& uuid_index = catalog_container().get<mitag_flag_uuid>();
-    StateFlagElementContainerFlaUUIDIndexItarator src_flag_it = uuid_index.find(flag_uuid);
+    StateFlagElementContainerFlaUUIDIndexItarator src_flag_it = uuid_index.find(flag_description.uuid);
     if(src_flag_it == uuid_index.end()) return;
     SLC_DBG << "Signal from " << (*src_flag_it)->flag_name << "with severity" << current_level_severity;
     
@@ -87,7 +90,7 @@ void StateFlagCatalog::stateFlagUpdated(const std::string& flag_uuid,
     }
 }
 
-void StateFlagCatalog::addMemberToSeverityMap(boost::shared_ptr<StateFlag> new_status_flag) {
+void StateFlagCatalog::addMemberToSeverityMap(ChaosSharedPtr<StateFlag> new_status_flag) {
     DEBUG_CODE(SLC_DBG << "Add fag to severity bitfield map " << new_status_flag->getName(););
     //iitializethe severity map
     for(int s = StateFlagServerityRegular;
@@ -98,22 +101,19 @@ void StateFlagCatalog::addMemberToSeverityMap(boost::shared_ptr<StateFlag> new_s
         } else {
             map_severity_bf_flag[(StateFlagServerity)s].push_back(0);
         }
-        DEBUG_CODE(
-                   std::string buffer;
+        DEBUG_CODE(std::string buffer;
                    boost::to_string(map_severity_bf_flag[(StateFlagServerity)s], buffer);
-                   SLC_DBG << "Bitfiled for severity "<< (StateFlagServerity)s <<"representation:" << buffer;
-                   );
+                   SLC_DBG << "Bitfiled for severity "<< (StateFlagServerity)s <<"representation:" << buffer;);
     }
     
 }
 
-void StateFlagCatalog::addFlag(const boost::shared_ptr<StateFlag>& flag) {
+void StateFlagCatalog::addFlag(const ChaosSharedPtr<StateFlag>& flag) {
     //boost::unique_lock<boost::shared_mutex> wl(mutex_catalog);
     LockableObjectWriteLock_t wl;
     catalog_container.getWriteLock(wl);
     StateFlagElementContainerNameIndex& name_index = catalog_container().get<mitag_name>();
     if(name_index.find(flag->getName()) != name_index.end()) return;
-    
     //we can insert flag with unique name
     catalog_container().insert(StateFlagElement::StateFlagElementPtr(new StateFlagElement((unsigned int)catalog_container().size(), flag->getName(), flag)));
     
@@ -176,14 +176,14 @@ void StateFlagCatalog::appendCatalog(const StateFlagCatalog& src) {
     }
 }
 
-boost::shared_ptr<StateFlag>& StateFlagCatalog::getFlagByName(const std::string& flag_name) {
+ChaosSharedPtr<StateFlag>& StateFlagCatalog::getFlagByName(const std::string& flag_name) {
     StateFlagElementContainerNameIndex& name_index = catalog_container().get<mitag_name>();
     StateFlagElementContainerNameIterator nit = name_index.find(flag_name);
     if(nit == name_index.end()) return empty_flag;
     return (*nit)->status_flag;
 }
 
-boost::shared_ptr<StateFlag>& StateFlagCatalog::getFlagByOrderedID(const unsigned int flag_ordered_id) {
+ChaosSharedPtr<StateFlag>& StateFlagCatalog::getFlagByOrderedID(const unsigned int flag_ordered_id) {
     StateFlagElementContainerOrderedIndex& ordered_index = catalog_container().get<mitag_ordered>();
     StateFlagElementContainerOrderedIndexIterator nit = ordered_index.find(flag_ordered_id);
     if(nit == ordered_index.end()) return empty_flag;
@@ -203,11 +203,11 @@ void StateFlagCatalog::getFlagsForSeverity(StateFlagServerity severity,
 }
 
 #pragma mark Serialization Method
-std::auto_ptr<chaos::common::data::CDataBuffer> StateFlagCatalog::getRawFlagsLevel() {
+ChaosUniquePtr<chaos::common::data::CDataBuffer> StateFlagCatalog::getRawFlagsLevel() {
     //read lock on owned catalog
     LockableObjectReadLock_t rl;
     catalog_container.getReadLock(rl);
-    std::auto_ptr<CDataBuffer> result;
+    ChaosUniquePtr<CDataBuffer> result;
     char * raw_description = (char*)malloc(catalog_container().size());
     if(raw_description) {
         //retrieve the ordered index
@@ -224,7 +224,7 @@ std::auto_ptr<chaos::common::data::CDataBuffer> StateFlagCatalog::getRawFlagsLev
     return result;
 }
 
-void StateFlagCatalog::setApplyRawFlagsValue(std::auto_ptr<chaos::common::data::CDataBuffer>& raw_level) {
+void StateFlagCatalog::setApplyRawFlagsValue(ChaosUniquePtr<chaos::common::data::CDataBuffer>& raw_level) {
     if(raw_level.get() == NULL) return;
     const char * buffer = raw_level->getBuffer();
     uint32_t buffer_size = raw_level->getBufferSize();
@@ -254,6 +254,21 @@ const size_t StateFlagCatalog::size() const {
     return catalog_container().size();
 }
 
+const uint8_t StateFlagCatalog::max() const {
+	uint8_t maxv=0;
+    LockableObjectWriteLock_t wl;
+    catalog_container.getWriteLock(wl);
+    //boost::unique_lock<boost::shared_mutex> wl(mutex_catalog);
+    StateFlagElementContainerOrderedIndex& ordered_index = boost::multi_index::get<mitag_ordered>(catalog_container());
+        for(StateFlagElementContainerOrderedIndexIterator it = ordered_index.begin(),
+            end = ordered_index.end();
+            it != end;
+            it++){
+
+            maxv=(maxv<(*it)->status_flag->getCurrentLevel())?(*it)->status_flag->getCurrentLevel():maxv;
+        }
+    return maxv;
+}
 const std::string& StateFlagCatalog::getName() const {
     return catalog_name;
 }

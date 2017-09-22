@@ -1,21 +1,22 @@
 /*
- *	SlowCommandExecutor.h
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2013 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 
@@ -75,7 +76,8 @@ new chaos::common::utility::TypedObjectInstancer<SlowCommandClass, chaos::cu::co
                 /*!
                     This class is the environment where the exeecution of the slow command handlers take place.
                  */
-                class SlowCommandExecutor : private chaos_batch::BatchCommandExecutor {
+                class SlowCommandExecutor:
+                private chaos_batch::BatchCommandExecutor {
 
                     friend class chaos::cu::control_manager::SCAbstractControlUnit;
 
@@ -141,7 +143,7 @@ new chaos::common::utility::TypedObjectInstancer<SlowCommandClass, chaos::cu::co
                     void installCommand(const std::string& alias,
 										chaos::common::utility::NestedObjectInstancer<SlowCommand, chaos_batch::BatchCommand> *instancer);
                     //! Install a command
-                    void installCommand(boost::shared_ptr<common::batch_command::BatchCommandDescription> command_description);
+                    void installCommand(ChaosSharedPtr<common::batch_command::BatchCommandDescription> command_description);
                 };
             }
         }

@@ -1,21 +1,22 @@
 /*
- *	SlowCommandExecutor.cpp
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2013 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include <vector>
@@ -83,7 +84,7 @@ void SlowCommandExecutor::start() throw(chaos::CException) {
 
 // Start the implementation
 void SlowCommandExecutor::stop() throw(chaos::CException) {
-    LDBG_ << "No implementation on stop";
+	SCELDBG_ << "stopping";
     //initialize superclass
     BatchCommandExecutor::stop();
 }
@@ -102,7 +103,7 @@ void SlowCommandExecutor::deinit() throw(chaos::CException) {
         MetadataLoggingManager::getInstance()->releaseChannel(command_logging_channel);
         command_logging_channel = NULL;
     }
-    LDBG_ << "No implementation on deinit";
+    SCELDBG_ << "deinitialized";
     
     last_ru_id_cache = NULL;
     last_error_code = NULL;
@@ -118,7 +119,7 @@ void SlowCommandExecutor::installCommand(const string& alias,
 }
 
 //! Install a command
-void SlowCommandExecutor::installCommand(boost::shared_ptr<BatchCommandDescription> command_description) {
+void SlowCommandExecutor::installCommand(ChaosSharedPtr<BatchCommandDescription> command_description) {
     //call superclss method
     BatchCommandExecutor::installCommand(command_description);
 }
@@ -156,6 +157,7 @@ void SlowCommandExecutor::handleCommandEvent(const std::string& command_alias,
                                              command_data,
                                              commands_stats);
     switch(type) {
+    case BatchCommandEventType::EVT_FATAL_FAULT:
         case BatchCommandEventType::EVT_FAULT: {
             
             if(command_data &&
@@ -172,9 +174,11 @@ void SlowCommandExecutor::handleCommandEvent(const std::string& command_alias,
                                                 code,
                                                 message,
                                                 domain);
-                //CException ex(code, message, domain);
+                if(type==BatchCommandEventType::EVT_FATAL_FAULT){
+                	CFatalException ex(code, message, domain);
                 //async go into recoverable error
-                //boost::thread(boost::bind(&AbstractControlUnit::_goInRecoverableError, control_unit_instance, ex)).detach();
+                	boost::thread(boost::bind(&AbstractControlUnit::_goInRecoverableError, control_unit_instance, ex)).detach();
+                }
             }
             break;
         }
@@ -208,7 +212,7 @@ void SlowCommandExecutor::handleSandboxEvent(const std::string& sandbox_id,
         last_ru_id_cache = getAttributeSharedCache()->getAttributeValue(DOMAIN_SYSTEM,
                                                                         DataPackSystemKey::DP_SYS_RUN_UNIT_ID);
         if(!last_ru_id_cache) {
-            SCELERR_ << "Error getting cache slot for unit id";
+        	SCELERR_ << "Error getting cache slot for unit id";
             return;
         }
     }
@@ -219,14 +223,14 @@ void SlowCommandExecutor::handleSandboxEvent(const std::string& sandbox_id,
     switch(type) {
         case BatchSandboxEventType::EVT_RUN_START: {
             uint64_t *hb = static_cast<uint64_t*>(type_value_ptr);
-            control_unit_instance->_updateAcquistionTimestamp((uint64_t)(*hb/1000));
+            control_unit_instance->_updateAcquistionTimestamp((uint64_t)*hb);
             
         }
             
         case BatchSandboxEventType::EVT_RUN_END: {
             //push output dataset specifingthat the ts has been already updated in casche directly
             control_unit_instance->pushInputDataset();
-            control_unit_instance->pushOutputDataset(true);
+            control_unit_instance->pushOutputDataset();
             break;
         }
             

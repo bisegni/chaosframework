@@ -1,21 +1,22 @@
 /*
- *	DeviceLiveDataFetcher.h
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #ifndef CHAOSFramework_DeviceLiveDataFetcher_h
@@ -36,7 +37,7 @@
 #include <map>
 
 namespace chaos {
-    namespace ui{
+    namespace ui {
         
         //! identify the domain qhere fetch the data
         typedef enum DatasetDomain {
@@ -44,8 +45,9 @@ namespace chaos {
             DatasetDomainInput,
             DatasetDomainCustom,
             DatasetDomainSystem,
+			DatasetDomainDevAlarm,
+			DatasetDomainCUAlarm,
             DatasetDomainHealth,
-            DatasetDomainAlarm
         } DatasetDomain;
         
         //! Controller for a single device instance
@@ -75,10 +77,10 @@ namespace chaos {
             //!Dataset database
             chaos::common::data::DatasetDB datasetDB;
             //!point to the freashest live value for this device dataset
-            //auto_ptr<CDataWrapper> lastDeviceDefinition;
+            //ChaosUniquePtr<chaos::common::data::CDataWrapper> lastDeviceDefinition;
             
             //!point to the freashest live value for this device dataset
-            std::vector< boost::shared_ptr<chaos::common::data::CDataWrapper> >current_dataset;
+            std::vector< ChaosSharedPtr<chaos::common::data::CDataWrapper> >current_dataset;
             
             
             //mutext for multi threading track operation
@@ -182,23 +184,28 @@ namespace chaos {
             /*!
              Get description for attribute name
              */
-            void getAttributeDescription(const std::string& attributesName, std::string& attributeDescription);
+            void getAttributeDescription(const std::string& attributesName,
+                                         std::string& attributeDescription);
             /*!
              Get all attribute name
              */
-            void getDeviceDatasetAttributesName(std::vector<std::string>& attributesName, DataType::DataSetAttributeIOAttribute directionType);
+            void getDeviceDatasetAttributesName(std::vector<std::string>& attributesName,
+                                                DataType::DataSetAttributeIOAttribute directionType);
             /*!
              Get range valu einfo for attrbiute name
              */
-            void getDeviceAttributeRangeValueInfo(const std::string& attributesName, chaos::common::data::RangeValueInfo& rangeInfo);
+            void getDeviceAttributeRangeValueInfo(const std::string& attributesName,
+                                                  chaos::common::data::RangeValueInfo& rangeInfo);
             /*!
              Get the direction of the attribute
              */
-            int getDeviceAttributeDirection(const std::string& attributesName, DataType::DataSetAttributeIOAttribute& directionType);
+            int getDeviceAttributeDirection(const std::string& attributesName,
+                                            DataType::DataSetAttributeIOAttribute& directionType);
             /*!
              Get the direction of the attribute
              */
-            int getDeviceAttributeType(const std::string& attributesName, DataType::DataType& type);
+            int getDeviceAttributeType(const std::string& attributesName,
+                                       DataType::DataType& type);
             
             /**
              *
@@ -206,7 +213,8 @@ namespace chaos {
              */
             std::vector<chaos::common::data::RangeValueInfo> getDeviceValuesInfo();
             //!
-            int getAttributeStrValue(const std::string attributesName, std::string& attribute_value);
+            int getAttributeStrValue(const std::string attributesName,
+                                     std::string& attribute_value);
             
             //! Get the type of the control unit
             /*!
@@ -397,21 +405,24 @@ namespace chaos {
              */
             void fetchCurrentDeviceValue();
             
-            common::utility::DataBuffer *getBufferForAttribute(string& attributeName);
+            common::utility::UIDataBuffer *getBufferForAttribute(string& attributeName);
             common::utility::PointerBuffer *getPtrBufferForAttribute(string& attributeName);
-            common::utility::DataBuffer *getPtrBufferForTimestamp(const int initialDimension = 10);
+            common::utility::UIDataBuffer *getPtrBufferForTimestamp(const int initialDimension = 10);
             
             chaos::common::data::CDataWrapper *getCurrentData();
             
             //! send custom request to device
-            int sendCustomRequest(const char * const action, common::data::CDataWrapper * const param, common::data::CDataWrapper**const result, bool async = false,  bool queued = true);
+            int sendCustomRequest(const std::string& action,
+                                  common::data::CDataWrapper * const param,
+                                  common::data::CDataWrapper**const result);
             
             //! send custom request to device and return a future
-            std::auto_ptr<chaos::common::message::MessageRequestFuture>  sendCustomRequestWithFuture(const std::string& action_name,
+            ChaosUniquePtr<chaos::common::message::MessageRequestFuture>  sendCustomRequestWithFuture(const std::string& action_name,
                                                                                                      common::data::CDataWrapper *request_date);
             
             //! send custom message to device
-            void sendCustomMessage(const char * const action, common::data::CDataWrapper * const param, bool queued = true);
+            void sendCustomMessage(const std::string& action,
+                                   common::data::CDataWrapper * const param);
             
             //! Send a request for receive RPC information
             int checkRPCInformation(chaos::common::data::CDataWrapper **result_information,

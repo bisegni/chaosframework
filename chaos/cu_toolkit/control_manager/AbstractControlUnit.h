@@ -1,21 +1,22 @@
 /*
- *	ControlUnit.h
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #ifndef ControlUnit_H
@@ -27,30 +28,39 @@
 #include <string>
 #include <vector>
 
+#include <json/json.h>
+
 #include <boost/chrono.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 
 #include <chaos/common/chaos_types.h>
 #include <chaos/common/data/DatasetDB.h>
+#include <chaos/common/property/property.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/utility/SWEService.h>
 #include <chaos/common/alarm/AlarmCatalog.h>
-#include <chaos/common/alarm/MultiSeverityAlarm.h>
 #include <chaos/common/exception/exception.h>
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/utility/ArrayPointer.h>
 #include <chaos/common/general/Configurable.h>
 #include <chaos/common/action/ActionDescriptor.h>
+#include <chaos/common/alarm/MultiSeverityAlarm.h>
 #include <chaos/common/utility/AggregatedCheckList.h>
 #include <chaos/common/async_central/async_central.h>
 #include <chaos/common/metadata_logging/metadata_logging.h>
 #include <chaos/common/data/cache/AttributeValueSharedCache.h>
 
+#include <chaos/cu_toolkit/control_manager/ControlUnitTypes.h>
 #include <chaos/cu_toolkit/data_manager/KeyDataStorage.h>
 #include <chaos/cu_toolkit/control_manager/handler/handler.h>
 #include <chaos/cu_toolkit/driver_manager/DriverErogatorInterface.h>
 #include <chaos/cu_toolkit/control_manager/AttributeSharedCacheWrapper.h>
+
+#define CUINFO LAPP_ << "["<<__FUNCTION__<<" - "<< getDeviceID()<<"]"
+#define CUDBG LDBG_ << "[- "<<__FUNCTION__<<" - "<< getDeviceID()<<"]"
+#define CUERR LERR_ << "["<<__PRETTY_FUNCTION__<<" - "<< getDeviceID()<<"]"
+
 
 
 #ifdef __CHAOS_DEBUG_MEMORY_CU__
@@ -69,11 +79,6 @@ const char * const  impl::PublishName = #impl;\
 public:\
 static const char * const PublishName;\
 private:\
-//class impl : public subclass
-
-using namespace chaos::common::data;
-using namespace chaos::common::data::cache;
-using namespace chaos::cu::driver_manager::driver;
 
 namespace chaos{
     namespace cu {
@@ -81,6 +86,8 @@ namespace chaos{
             
             //forward declaration
             class ControlManager;
+            class ProxyControlUnit;
+            class ControlUnitApiInterface;
             class WorkUnitManagement;
             class AbstractExecutionUnit;
             
@@ -89,36 +96,6 @@ namespace chaos{
                 class SlowCommandExecutor;
             }
             
-            typedef enum {
-                INIT_RPC_PHASE_CALL_INIT_STATE = 0,
-                INIT_RPC_PHASE_INIT_SHARED_CACHE,
-                INIT_RPC_PHASE_COMPLETE_OUTPUT_ATTRIBUTE,
-                INIT_RPC_PHASE_COMPLETE_INPUT_ATTRIBUTE,
-                INIT_RPC_PHASE_INIT_SYSTEM_CACHE,
-                INIT_RPC_PHASE_CALL_UNIT_DEFINE_ATTRIBUTE,
-                INIT_RPC_PHASE_CREATE_FAST_ACCESS_CASCHE_VECTOR,
-                INIT_RPC_PHASE_CALL_UNIT_INIT,
-                INIT_RPC_PHASE_UPDATE_CONFIGURATION,
-                INIT_RPC_PHASE_PUSH_DATASET
-            } InitRPCPhase;
-            
-            typedef enum {
-                INIT_SM_PHASE_INIT_DB = 0,
-                INIT_SM_PHASE_CREATE_DATA_STORAGE,
-            } InitSMPhase;
-            
-            
-            typedef enum {
-                START_RPC_PHASE_UNIT = 0,
-                START_RPC_PHASE_IMPLEMENTATION
-            } StartRPCPhase;
-            
-            typedef enum {
-                START_SM_PHASE_STAT_TIMER = 0
-            } StartSMPhase;
-            
-            CHAOS_DEFINE_VECTOR_FOR_TYPE(boost::shared_ptr<chaos::common::data::CDataWrapper>, ACUStartupCommandList)
-            
             //!  Base class for control unit !CHAOS node
             /*!
              This is the abstraction of the contorl unit node of CHAOS. This class extends DeclareAction
@@ -126,14 +103,17 @@ namespace chaos{
              that needs to be used to create device and his dataset are contained into the DeviceSchemaDB class.
              */
             class AbstractControlUnit:
-            public chaos::common::alarm::AlarmHandler,
-            public chaos::cu::driver_manager::DriverErogatorInterface,
             public DeclareAction,
-            protected DatasetDB,
+            public common::utility::SWEService,
+            protected chaos::common::data::DatasetDB,
+            public chaos::common::alarm::AlarmHandler,
+            public chaos::common::property::PropertyCollector,
             protected chaos::common::async_central::TimerHandler,
-            public common::utility::SWEService {
+            public chaos::cu::driver_manager::DriverErogatorInterface {
                 //friendly class declaration
                 friend class ControlManager;
+                friend class ProxyControlUnit;
+                friend class ControlUnitApiInterface;
                 friend class WorkUnitManagement;
                 friend class DomainActionsScheduler;
                 friend class AbstractExecutionUnit;
@@ -141,16 +121,103 @@ namespace chaos{
                 friend class RTAbstractControlUnit;
                 friend class slow_command::SlowCommand;
                 friend class slow_command::SlowCommandExecutor;
+            public:
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(chaos::cu::driver_manager::driver::DrvRequestInfo, ControlUnitDriverList);
+                //! Default Contructor
+                /*!
+                 \param _control_unit_type the superclass need to set the control unit type for his implementation
+                 \param _control_unit_id unique id for the control unit
+                 \param _control_unit_param is a string that contains parameter to pass during the contorl unit creation
+                 */
+                AbstractControlUnit(const std::string& _control_unit_type,
+                                    const std::string& _control_unit_id,
+                                    const std::string& _control_unit_param);
+                
+                //! Default Contructor
+                /*!
+                 \param _control_unit_type the superclass need to set the control unit type for his implementation
+                 \param _control_unit_id unique id for the control unit
+                 \param _control_unit_param is a string that contains parameter to pass during the contorl unit creation
+                 \param _control_unit_drivers driver information
+                 */
+                AbstractControlUnit(const std::string& _control_unit_type,
+                                    const std::string& _control_unit_id,
+                                    const std::string& _control_unit_param,
+                                    const ControlUnitDriverList& _control_unit_drivers);
+                
+                //! default destructor
+                virtual ~AbstractControlUnit();
+                
+                //! Return the control unit instance
+                const std::string& getCUInstance();
+                
+                //! Return the control unit instance
+                const std::string& getCUID();
+                
+                //! get control unit load parameter
+                const std::string& getCUParam();
+                
+                //!return true if the cu load paramete are in json format
+                const bool isCUParamInJson();
+                
+                //! return the root of the json document
+                /*!
+                 in case isCUParamInJson return false the root json document
+                 will contains NULL value.
+                 */
+                const Json::Value& getCUParamJsonRootElement();
+                
+                //! return the type of the control unit
+                const std::string& getCUType();
+                
+                //!push output dataset
+                virtual void pushOutputDataset();
+                
+                //!push system dataset
+                virtual void pushInputDataset();
+                
+                //!push system dataset
+                virtual void pushCustomDataset();
+                
+                //!push system dataset
+                virtual void pushSystemDataset();
+                
+                //!push alarm dataset
+                virtual void pushCUAlarmDataset();
+                
+                //!push alarm dataset
+                virtual void pushDevAlarmDataset();
+                
+                //!copy into a CDataWrapper last received initialization package
+                void copyInitConfiguraiton(chaos::common::data::CDataWrapper& copy);
+                
+                inline const char * const stateVariableEnumToName(chaos::cu::control_manager::StateVariableType type) {
+                    switch(type) {
+                        case  chaos::cu::control_manager::StateVariableTypeAlarmCU:
+                            return chaos::cu::control_manager::StateVariableTypeAlarmCULabel;
+                        case   chaos::cu::control_manager::StateVariableTypeAlarmDEV:
+                            return chaos::cu::control_manager::StateVariableTypeAlarmDEVLabel;
+                    }
+                }
+                
+                inline int stateVariableNameToEnum(const std::string& name) {
+                    if(name.compare(chaos::cu::control_manager::StateVariableTypeAlarmCULabel) == 0) {return chaos::cu::control_manager::StateVariableTypeAlarmCU;}
+                    if(name.compare(chaos::cu::control_manager::StateVariableTypeAlarmDEVLabel) == 0) {return chaos::cu::control_manager::StateVariableTypeAlarmDEV;}
+                    return -1;
+                }
+                
+                chaos::common::data::CDataWrapper *writeCatalogOnCDataWrapper(chaos::common::alarm::AlarmCatalog& catalog,
+                                                                              int32_t dataset_type);
+                //check at initilization time ifr need to to a restore or only an apply
+                void checkForRestoreOnInit() throw(CException);
+            private:
                 //enable trace for heap into control unit environment
 #ifdef __CHAOS_DEBUG_MEMORY_CU__
                 tracey::scope sc;
 #endif
-            public:
-                //! definition of the type for the driver list
-                typedef std::vector<DrvRequestInfo>				ControlUnitDriverList;
-                typedef std::vector<DrvRequestInfo>::iterator	ControlUnitDriverListIterator;
-            private:
-                std::string  control_key;
+                //!load control key
+                std::string control_key;
+                
                 //! contains the description of the type of the control unit
                 std::string control_unit_type;
                 
@@ -159,20 +226,27 @@ namespace chaos{
                 
                 //! control unit load param
                 std::string control_unit_param;
+                //!decode control unit paramete in json if conversion is applicable
+                bool                            is_control_unit_json_param;
+                Json::Reader					json_reader;
+                Json::Value						json_parameter_document;
+                
+                //specify the counter updated by the mds on every initilization that will represent the run of work
+                int64_t run_id;
                 
                 //!logging channel
                 chaos::common::metadata_logging::StandardLoggingChannel *standard_logging_channel;
                 
                 //!control unit alarm group
                 chaos::common::metadata_logging::AlarmLoggingChannel    *alarm_logging_channel;
-                chaos::common::alarm::AlarmCatalog                      alarm_catalog;
+                chaos::cu::control_manager::MapStateVariable           map_variable_catalog;
                 
                 //!these are the startup command list
                 /*!
                  The startup command are a set of command that are sent within the load command and
                  are executed after the control unit is completely load. This are enterely managed by ControlManager.
                  */
-                ACUStartupCommandList list_startup_command;
+                chaos::cu::control_manager::ACUStartupCommandList list_startup_command;
                 
                 //! keep track of how many push has been done for every dataset
                 //! 0 - output, 1-input, 2-custom
@@ -182,10 +256,12 @@ namespace chaos{
                 uint64_t    last_push_rate_grap_ts;
                 
                 //! control unit driver information list
+                //! definition of the type for the driver list
                 ControlUnitDriverList control_unit_drivers;
                 
                 //! list of the accessor of the driver requested by the unit implementation
-                std::vector< DriverAccessor *> accessorInstances;
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(chaos::cu::driver_manager::driver::DriverAccessor*, VInstantitedDriver);
+                VInstantitedDriver accessor_instances;
                 
                 //! attributed value shared cache
                 /*!
@@ -198,7 +274,9 @@ namespace chaos{
                 AttributeSharedCacheWrapper *attribute_shared_cache_wrapper;
                 
                 //! fast access for acquisition timestamp
+                bool use_custom_high_resolution_timestamp;
                 AttributeValue *timestamp_acq_cached_value;
+                AttributeValue *timestamp_hw_acq_cached_value;
                 
                 //! fast access for thread scheduledaly cached value
                 AttributeValue *thread_schedule_daly_cached_value;
@@ -210,10 +288,10 @@ namespace chaos{
                 handler::DatasetAttributeHandler dataset_attribute_manager;
                 
                 //! init configuration
-                std::auto_ptr<CDataWrapper> init_configuration;
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> init_configuration;
                 void _initDrivers() throw(CException);
                 void _initChecklist();
-                
+                void _initPropertyGroup();
                 void doInitRpCheckList() throw(CException);
                 void doInitSMCheckList() throw(CException);
                 void doStartRpCheckList() throw(CException);
@@ -226,29 +304,29 @@ namespace chaos{
                 /*!
                  Initialize the Custom Contro Unit and return the configuration
                  */
-                virtual CDataWrapper* _init(CDataWrapper*, bool& detachParam) throw(CException);
+                virtual chaos::common::data::CDataWrapper* _init(chaos::common::data::CDataWrapper*, bool& detachParam) throw(CException);
                 
                 /*!
                  Deinit the Control Unit
                  */
-                virtual CDataWrapper* _deinit(CDataWrapper*, bool& detachParam) throw(CException);
+                virtual chaos::common::data::CDataWrapper* _deinit(chaos::common::data::CDataWrapper*, bool& detachParam) throw(CException);
                 
                 /*!
                  Starto the  Control Unit scheduling for device
                  */
-                virtual CDataWrapper* _start(CDataWrapper*, bool& detachParam) throw(CException);
+                virtual chaos::common::data::CDataWrapper* _start(chaos::common::data::CDataWrapper*, bool& detachParam) throw(CException);
                 
                 /*!
                  Stop the Custom Control Unit scheduling for device
                  */
-                virtual CDataWrapper* _stop(CDataWrapper*, bool& detachParam) throw(CException);
+                virtual chaos::common::data::CDataWrapper* _stop(chaos::common::data::CDataWrapper*, bool& detachParam) throw(CException);
                 
                 //!Recover from a recoverable error state
-                virtual CDataWrapper* _recover(CDataWrapper *deinitParam, bool& detachParam) throw(CException);
+                virtual chaos::common::data::CDataWrapper* _recover(chaos::common::data::CDataWrapper *deinitParam, bool& detachParam) throw(CException);
                 /*!
                  Restore the control unit to a precise tag
                  */
-                virtual CDataWrapper* _unitRestoreToSnapshot(CDataWrapper*, bool& detachParam) throw(CException);
+                virtual chaos::common::data::CDataWrapper* _unitRestoreToSnapshot(chaos::common::data::CDataWrapper*, bool& detachParam) throw(CException);
                 
                 /*!
                  Define the control unit DataSet and Action into
@@ -282,7 +360,7 @@ namespace chaos{
                 
                 //! initialize the dataset attributes (input and output)
                 void initAttributeOnSharedAttributeCache(SharedCacheDomain domain,
-                                                         std::vector<string>& attribute_names);
+                                                         std::vector<std::string>& attribute_names);
                 //! complete the output dataset cached with mandatory attribute
                 /*!
                  The mandatory attribute like timestamp and triggered id are added after the user defined output aattribute
@@ -302,23 +380,21 @@ namespace chaos{
                 
                 //! filel the dataset packet for the cached attribute in the array
                 inline void fillCDatawrapperWithCachedValue(std::vector<AttributeValue*>& cached_attributes,
-                                                            CDataWrapper& dataset);
+                                                            chaos::common::data::CDataWrapper& dataset);
                 
                 void fillRestoreCacheWithDatasetFromTag(data_manager::KeyDataStorageDomain domain,
-                                                        CDataWrapper& dataset,
+                                                        chaos::common::data::CDataWrapper& dataset,
                                                         AbstractSharedDomainCache& restore_cache);
-                
                 //!logging api
                 void metadataLogging(const std::string& subject,
                                      const chaos::common::metadata_logging::StandardLoggingChannel::LogLevel log_level,
                                      const std::string& message);
-            protected:
                 //  It's is the dynamically assigned instance of the CU. it will be used
                 // as domain for the rpc action.
                 string control_unit_instance;
                 
                 //! Momentary driver for push data into the central memory
-                std::auto_ptr<data_manager::KeyDataStorage>  key_data_storage;
+                ChaosUniquePtr<data_manager::KeyDataStorage>  key_data_storage;
                 
                 //! fast cached attribute vector accessor
                 std::vector<AttributeValue*> cache_output_attribute_vector;
@@ -336,7 +412,7 @@ namespace chaos{
                 /*!
                  This method configure the CDataWrapper whit all th einromation for describe the implemented device
                  */
-                virtual void _defineActionAndDataset(CDataWrapper& setup_configuration) throw(CException);
+                virtual void _defineActionAndDataset(chaos::common::data::CDataWrapper& setup_configuration) throw(CException);
                 
                 //! Get all managed declare action instance
                 /*!
@@ -350,24 +426,24 @@ namespace chaos{
                  This method is called when the input attribute of the dataset need to be valorized,
                  subclass need to perform all the appropiate action to set these attribute
                  */
-                CDataWrapper* _setDatasetAttribute(CDataWrapper*, bool&) throw (CException);
+                chaos::common::data::CDataWrapper* _setDatasetAttribute(chaos::common::data::CDataWrapper*, bool&) throw (CException);
                 
                 //! Return the state of the control unit
                 /*!
                  Return the current control unit state identifyed by ControlUnitState types
                  fitted into the CDatawrapper with the key CUStateKey::CONTROL_UNIT_STATE
                  */
-                CDataWrapper* _getState(CDataWrapper*, bool& detachParam) throw(CException);
+                chaos::common::data::CDataWrapper* _getState(chaos::common::data::CDataWrapper*, bool& detachParam) throw(CException);
                 
                 //! Return the information about the type of the current instace of control unit
                 /*!
                  Return unit fitted into cdata wrapper:
                  CU type: string type associated with the key @CUDefinitionKey::CS_CM_CU_TYPE
                  */
-                CDataWrapper* _getInfo(CDataWrapper*, bool& detachParam) throw(CException);
+                chaos::common::data::CDataWrapper* _getInfo(chaos::common::data::CDataWrapper*, bool& detachParam) throw(CException);
                 
                 //! update the timestamp attribute of the output datapack
-                void _updateAcquistionTimestamp(uint64_t alternative_ts = 0);
+                void _updateAcquistionTimestamp(uint64_t alternative_ts);
                 
                 void _updateRunScheduleDelay(uint64_t new_scehdule_delay);
                 
@@ -395,6 +471,11 @@ namespace chaos{
                  */
                 virtual void _completeDatasetAttribute();
                 
+                void _setBypassState(bool bypass_stage,
+                                     bool high_priority = false);
+            protected:
+                void useCustomHigResolutionTimestamp(bool _use_custom_high_resolution_timestamp);
+                void setHigResolutionAcquistionTimestamp(uint64_t high_resolution_timestamp);
                 //! Abstract Method that need to be used by the sublcass to define the dataset
                 /*!
                  Subclass, in this method can call the api to create the dataset, after this method
@@ -408,7 +489,7 @@ namespace chaos{
                  \param neededDriver need to be filled with the structure DrvRequestInfo filled with the information
                  about the needed driver [name, version and initialization param if preset statically]
                  */
-                virtual void unitDefineDriver(std::vector<DrvRequestInfo>& neededDriver);
+                virtual void unitDefineDriver(std::vector<chaos::cu::driver_manager::driver::DrvRequestInfo>& neededDriver);
                 
                 //! abstract method to permit to the control unit to define custom attribute
                 /*!
@@ -452,7 +533,7 @@ namespace chaos{
                  */
                 virtual void unitUndefineActionAndDataset() throw(CException);
                 
-                //!handler calledfor restor a control unit to a determinate point
+                //!handler called for restore a control unit to a determinate point
                 /*!
                  On the call of this handler the cache restore part is filled with the dataset
                  that at restore point was pushed by control unit.
@@ -477,7 +558,7 @@ namespace chaos{
                  Receive the event for set the dataset input element, this virtual method
                  is empty because can be used by controlunit implementation
                  */
-                virtual CDataWrapper* setDatasetAttribute(CDataWrapper*, bool& detachParam) throw (CException);
+                virtual chaos::common::data::CDataWrapper* setDatasetAttribute(chaos::common::data::CDataWrapper*, bool& detachParam) throw (CException);
                 
                 // Infrastructure configuration update
                 /*!
@@ -485,7 +566,18 @@ namespace chaos{
                  checked to control waht is needed to update. Subclass that override this method need first inherited
                  the parent one and the check if the CDataWrapper contains something usefull for it.
                  */
-                virtual CDataWrapper* updateConfiguration(CDataWrapper*, bool&) throw (CException);
+                virtual chaos::common::data::CDataWrapper* updateConfiguration(chaos::common::data::CDataWrapper*, bool&) throw (CException);
+                
+                //!callback for put a veto on property value change request
+                virtual bool propertyChangeHandler(const std::string& group_name,
+                                                   const std::string& property_name,
+                                                   const chaos::common::data::CDataVariant& property_value);
+                
+                //!callback ofr updated property value
+                virtual void propertyUpdatedHandler(const std::string& group_name,
+                                                    const std::string& property_name,
+                                                    const chaos::common::data::CDataVariant& old_value,
+                                                    const chaos::common::data::CDataVariant& new_value);
                 
                 //! return the accessor by an index
                 /*
@@ -508,24 +600,30 @@ namespace chaos{
                 
                 //---------------alarm api-------------
                 //!create a new alarm into the catalog
-                void addAlarm(const std::string& alarm_name,
-                              const std::string& alarm_description);
+                void addStateVariable(chaos::cu::control_manager::StateVariableType variable_type,
+                                      const std::string& state_variable_name,
+                                      const std::string& state_variable_description);
                 
-                //!set the severity on all alarm
-                void setAlarmSeverity(const common::alarm::MultiSeverityAlarmLevel alarm_severity);
+                //!set the severity on all state_variable
+                void setStateVariableSeverity(chaos::cu::control_manager::StateVariableType variable_type,
+                                              const common::alarm::MultiSeverityAlarmLevel state_variable_severity);
                 
-                //!set the alarm state
-                bool setAlarmSeverity(const std::string& alarm_name,
-                                      const common::alarm::MultiSeverityAlarmLevel alarm_severity);
-                //!set the alarm state
-                bool setAlarmSeverity(const unsigned int alarm_ordered_id,
-                                      const common::alarm::MultiSeverityAlarmLevel alarm_severity);
-                //!get the current alarm state
-                bool getAlarmSeverity(const std::string& alarm_name,
-                                      common::alarm::MultiSeverityAlarmLevel& alarm_severity);
-                //!get the current alarm state
-                bool getAlarmSeverity(const unsigned int alarm_ordered_id,
-                                      common::alarm::MultiSeverityAlarmLevel& alarm_severity);
+                //!set the state_variable state
+                bool setStateVariableSeverity(chaos::cu::control_manager::StateVariableType variable_type,
+                                              const std::string& state_variable_name,
+                                              const common::alarm::MultiSeverityAlarmLevel state_variable_severity);
+                //!set the StateVariable state
+                bool setStateVariableSeverity(chaos::cu::control_manager::StateVariableType variable_type,
+                                              const unsigned int state_variable_ordered_id,
+                                              const common::alarm::MultiSeverityAlarmLevel state_variable_severity);
+                //!get the current StateVariable state
+                bool getStateVariableSeverity(chaos::cu::control_manager::StateVariableType variable_type,
+                                              const std::string& state_variable_name,
+                                              common::alarm::MultiSeverityAlarmLevel& state_variable_severity);
+                //!get the current StateVariable state
+                bool getStateVariableSeverity(chaos::cu::control_manager::StateVariableType variable_type,
+                                              const unsigned int state_variable_ordered_id,
+                                              common::alarm::MultiSeverityAlarmLevel& state_variable_severity);
                 
                 //! set the value on the busy flag
                 void setBusyFlag(bool state);
@@ -534,8 +632,9 @@ namespace chaos{
                 const bool getBusyFlag() const;
                 
                 //!called when an alarm has been modified in his severity
-                void alarmChanged(const std::string& alarm_name,
-                                  const int8_t alarm_severity);
+                void alarmChanged(const std::string& state_variable_tag,
+                                  const std::string& state_variable_name,
+                                  const int8_t state_variable_severity);
                 
                 //!logging api
                 void metadataLogging(const chaos::common::metadata_logging::StandardLoggingChannel::LogLevel log_level,
@@ -577,62 +676,6 @@ namespace chaos{
                 bool removeHandlerOnAttributeName(const std::string& attribute_name) {
                     return dataset_attribute_manager.removeHandlerOnAttributeName(attribute_name);
                 }
-            public:
-                
-                //! Default Contructor
-                /*!
-                 \param _control_unit_type the superclass need to set the control unit type for his implementation
-                 \param _control_unit_id unique id for the control unit
-                 \param _control_unit_param is a string that contains parameter to pass during the contorl unit creation
-                 */
-                AbstractControlUnit(const std::string& _control_unit_type,
-                                    const std::string& _control_unit_id,
-                                    const std::string& _control_unit_param);
-                
-                //! Default Contructor
-                /*!
-                 \param _control_unit_type the superclass need to set the control unit type for his implementation
-                 \param _control_unit_id unique id for the control unit
-                 \param _control_unit_param is a string that contains parameter to pass during the contorl unit creation
-                 \param _control_unit_drivers driver information
-                 */
-                AbstractControlUnit(const std::string& _control_unit_type,
-                                    const std::string& _control_unit_id,
-                                    const std::string& _control_unit_param,
-                                    const ControlUnitDriverList& _control_unit_drivers);
-                
-                //! default destructor
-                virtual ~AbstractControlUnit();
-                
-                //! Return the control unit instance
-                const char * getCUInstance();
-                
-                //! Return the control unit instance
-                const char * getCUID();
-                
-                //! get control unit load parameter
-                const string& getCUParam();
-                
-                //! return the type of the control unit
-                const std::string& getCUType();
-                
-                //!push output dataset
-                virtual void pushOutputDataset(bool ts_already_set = false);
-                
-                //!push system dataset
-                virtual void pushInputDataset();
-                
-                //!push system dataset
-                virtual void pushCustomDataset();
-                
-                //!push system dataset
-                virtual void pushSystemDataset();
-                
-                //!push alarm dataset
-                virtual void pushAlarmDataset();
-                
-                //!copy into a CDataWrapper last received initialization package
-                void copyInitConfiguraiton(CDataWrapper& copy);
             };
         }
     }

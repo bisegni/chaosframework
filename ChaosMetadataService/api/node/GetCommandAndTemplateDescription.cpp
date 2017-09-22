@@ -1,21 +1,22 @@
 /*
- *	GetCommandAndTemplateDescription.cpp
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2015 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include "GetCommandAndTemplateDescription.h"
@@ -42,8 +43,8 @@ CDataWrapper *GetCommandAndTemplateDescription::execute(CDataWrapper *api_data,
                                                         bool& detach_data) throw(chaos::CException) {
     int err = 0;
     CDataWrapper *tmp_d_ptr = NULL;
-    std::auto_ptr<CDataWrapper> cmd_desc;
-    std::auto_ptr<CDataWrapper> tmplt_cmd_desc;
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> cmd_desc;
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> tmplt_cmd_desc;
     CHECK_CDW_THROW_AND_LOG(api_data, N_GCTD_ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(api_data, "template_name", N_GCTD_ERR, -2, "The name of the template is mandatory")
     CHECK_KEY_THROW_AND_LOG(api_data, BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID, N_GCTD_ERR, -3, "The unique id of the command is mandatory")
@@ -80,7 +81,7 @@ CDataWrapper *GetCommandAndTemplateDescription::execute(CDataWrapper *api_data,
     CommandCommonUtility::validateCommandTemplateToDescription(cmd_desc.get(), tmplt_cmd_desc.get(), NULL);
     
     //we have either
-    std::auto_ptr<CDataWrapper> result(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> result(new CDataWrapper());
     result->addCSDataValue("command_description", *cmd_desc);
     result->addCSDataValue("template_description", *tmplt_cmd_desc);
     return result.release();

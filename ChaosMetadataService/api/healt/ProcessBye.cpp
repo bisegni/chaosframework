@@ -16,7 +16,7 @@ using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::healt;
 using namespace chaos::metadata_service::persistence::data_access;
 
-typedef std::vector< boost::shared_ptr<CDataWrapper> > ResultVector;
+typedef std::vector< ChaosSharedPtr<CDataWrapper> > ResultVector;
 
 ProcessBye::ProcessBye():
 AbstractApi("processBye"){

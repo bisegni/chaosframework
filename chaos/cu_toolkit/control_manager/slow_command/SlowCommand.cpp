@@ -1,21 +1,22 @@
 /*
- *	SlowCommand.cpp
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 #include <string>
 #include <chaos/cu_toolkit/control_manager/slow_command/SlowCommand.h>
@@ -58,32 +59,42 @@ AttributeSharedCacheWrapper * const SlowCommand::getAttributeCache() {
 }
 
 #pragma mark Alarm API
-void SlowCommand::setAlarmSeverity(const common::alarm::MultiSeverityAlarmLevel alarm_severity) {
-    abstract_control_unit->setAlarmSeverity(alarm_severity);
+void SlowCommand::setStateVariableSeverity(StateVariableType variable_type,
+                                           const common::alarm::MultiSeverityAlarmLevel state_variable_severity) {
+    abstract_control_unit->setStateVariableSeverity(variable_type,
+                                                    state_variable_severity);
 }
 
-bool SlowCommand::setAlarmSeverity(const std::string& alarm_name,
-                                   const MultiSeverityAlarmLevel alarm_severity) {
-    return abstract_control_unit->setAlarmSeverity(alarm_name,
-                                                   alarm_severity);
+bool SlowCommand::setStateVariableSeverity(StateVariableType variable_type,
+                                           const std::string& state_variable_name,
+                                           const MultiSeverityAlarmLevel state_variable_severity) {
+    return abstract_control_unit->setStateVariableSeverity(variable_type,
+                                                           state_variable_name,
+                                                           state_variable_severity);
 }
 
-bool SlowCommand::setAlarmSeverity(const unsigned int alarm_ordered_id,
-                                   const chaos::common::alarm:: MultiSeverityAlarmLevel alarm_severity) {
-    return abstract_control_unit->setAlarmSeverity(alarm_ordered_id,
-                                                   alarm_severity);
+bool SlowCommand::setStateVariableSeverity(StateVariableType variable_type,
+                                           const unsigned int state_variable_ordered_id,
+                                           const chaos::common::alarm:: MultiSeverityAlarmLevel state_variable_severity) {
+    return abstract_control_unit->setStateVariableSeverity(variable_type,
+                                                           state_variable_ordered_id,
+                                                           state_variable_severity);
 }
 
-bool SlowCommand::getAlarmSeverity(const std::string& alarm_name,
-                                   MultiSeverityAlarmLevel& alarm_severity) {
-    return abstract_control_unit->getAlarmSeverity(alarm_name,
-                                                   alarm_severity);
+bool SlowCommand::getStateVariableSeverity(StateVariableType variable_type,
+                                           const std::string& state_variable_name,
+                                           MultiSeverityAlarmLevel& state_variable_severity) {
+    return abstract_control_unit->getStateVariableSeverity(variable_type,
+                                                           state_variable_name,
+                                                           state_variable_severity);
 }
 
-bool SlowCommand::getAlarmSeverity(const unsigned int alarm_ordered_id,
-                                   MultiSeverityAlarmLevel& alarm_severity) {
-    return abstract_control_unit->getAlarmSeverity(alarm_ordered_id,
-                                                   alarm_severity);
+bool SlowCommand::getStateVariableSeverity(StateVariableType variable_type,
+                                           const unsigned int state_variable_ordered_id,
+                                           MultiSeverityAlarmLevel& state_variable_severity) {
+    return abstract_control_unit->getStateVariableSeverity(variable_type,
+                                                           state_variable_ordered_id,
+                                                           state_variable_severity);
 }
 
 void SlowCommand::setBusyFlag(bool state) {
@@ -95,7 +106,7 @@ bool SlowCommand::getBusyFlag() {
 }
 
 void SlowCommand::metadataLogging(const StandardLoggingChannel::LogLevel log_level,
-                    const std::string& message) {
+                                  const std::string& message) {
     abstract_control_unit->metadataLogging(getAlias(),
                                            log_level,
                                            message);

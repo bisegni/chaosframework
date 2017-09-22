@@ -1,21 +1,22 @@
 /*
- *	ControlManager.cpp
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include <chaos/common/global.h>
@@ -23,9 +24,11 @@
 #include <chaos/common/healt_system/HealtManager.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
 
+#include <chaos/cu_toolkit/control_manager/ProxyControlUnit.h>
 #include <chaos/cu_toolkit/control_manager/ControlManager.h>
 #include <chaos/cu_toolkit/command_manager/CommandManager.h>
 #include <chaos/cu_toolkit/control_manager/script/ScriptableExecutionUnit.h>
+#include <chaos/cu_toolkit/ChaosCUToolkit.h>
 
 #include <boost/scoped_ptr.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -42,11 +45,11 @@
 
 
 namespace fs = boost::filesystem;
-namespace chaos_data = chaos::common::data;
 namespace chaos_async = chaos::common::async_central;
 namespace cu_driver_manager = chaos::cu::driver_manager;
 
 using namespace chaos;
+using namespace chaos::common::data;
 using namespace chaos::common::utility;
 using namespace chaos::common::healt_system;
 using namespace chaos::cu::command_manager;
@@ -58,7 +61,8 @@ using namespace std;
  */
 ControlManager::ControlManager():
 publishing_counter_delay(0){
-    //! register scriptable control unit
+    //! register default control unit
+    registerControlUnit<chaos::cu::control_manager::ProxyControlUnit>();
     registerControlUnit<chaos::cu::control_manager::script::ScriptableExecutionUnit>();
 }
 
@@ -182,12 +186,6 @@ void ControlManager::start() throw(CException) {
     LCMAPP_  << "Start cu scan timer";
     int err = 0;
     if(use_unit_server){
-        //register unit server node
-        HealtManager::getInstance()->addNewNode(unit_server_alias);
-        HealtManager::getInstance()->addNodeMetricValue(unit_server_alias,
-                                                        NodeHealtDefinitionKey::NODE_HEALT_STATUS,
-                                                        NodeHealtDefinitionValue::NODE_HEALT_STATUS_LOADING,
-                                                        true);
         //add unit server registration managment timer
         if((err = chaos_async::AsyncCentralManager::getInstance()->addTimer(this, 0, GlobalConfiguration::getInstance()->getOption<uint64_t>(CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC)))){
             throw chaos::CException(-1, "Error registering the Control managet timer", __PRETTY_FUNCTION__);
@@ -237,10 +235,10 @@ void ControlManager::deinit() throw(CException) {
     
     
     LCMAPP_  << "Deinit all the submitted Control Unit";
-    for (map<string, boost::shared_ptr<WorkUnitManagement> >::iterator cuIter = map_cuid_registered_instance.begin();
+    for (map<string, ChaosSharedPtr<WorkUnitManagement> >::iterator cuIter = map_cuid_registered_instance.begin();
          cuIter != map_cuid_registered_instance.end();
          cuIter++ ){
-        boost::shared_ptr<WorkUnitManagement> cu = (*cuIter).second;
+        ChaosSharedPtr<WorkUnitManagement> cu = (*cuIter).second;
         
         cu_identification_temp = WU_IDENTIFICATION(cu->work_unit_instance);
         LCMAPP_  << "Start deregistration for control unit " << cu_identification_temp;
@@ -249,42 +247,34 @@ void ControlManager::deinit() throw(CException) {
             CommandManager::getInstance()->deregisterAction((chaos::DeclareAction *)cuDeclareActionsInstance[idx]);
         }
         
-        //load all device id for this cu
-        allCUDeviceIDToStop.push_back(cu->work_unit_instance->getDeviceID());
+        CDataWrapper fakeDWForDeinit;
+        fakeDWForDeinit.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu->work_unit_instance->getDeviceID());
+        try{
+            LCMAPP_  << "Stopping Control Unit: " << cu_identification_temp;
+            cu->work_unit_instance->_stop(&fakeDWForDeinit, detachFake);
+        }catch (CException& ex) {
+            if(ex.errorCode != 1){
+                //these exception need to be logged
+                DECODE_CHAOS_EXCEPTION(ex);
+            }
+        }
         
-        for (vector<string>::iterator iter =  allCUDeviceIDToStop.begin();
-             iter != allCUDeviceIDToStop.end();
-             iter++) {
-            
-            CDataWrapper fakeDWForDeinit;
-            fakeDWForDeinit.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, *iter);
-            try{
-                LCMAPP_  << "Stopping Control Unit: " << cu_identification_temp;
-                cu->work_unit_instance->_stop(&fakeDWForDeinit, detachFake);
-            }catch (CException& ex) {
-                if(ex.errorCode != 1){
-                    //these exception need to be logged
-                    DECODE_CHAOS_EXCEPTION(ex);
-                }
+        try{
+            LCMAPP_  << "Deiniting Control Unit: " << cu_identification_temp;
+            cu->work_unit_instance->_deinit(&fakeDWForDeinit, detachFake);
+        }catch (CException& ex) {
+            if(ex.errorCode != 1){
+                //these exception need to be logged
+                DECODE_CHAOS_EXCEPTION(ex);
             }
-            
-            try{
-                LCMAPP_  << "Deiniting Control Unit: " << cu_identification_temp;
-                cu->work_unit_instance->_deinit(&fakeDWForDeinit, detachFake);
-            }catch (CException& ex) {
-                if(ex.errorCode != 1){
-                    //these exception need to be logged
-                    DECODE_CHAOS_EXCEPTION(ex);
-                }
-            }
-            try{
-                LCMAPP_  << "Undefine Action And Dataset for  Control Unit: " << cu_identification_temp;
-                cu->work_unit_instance->_undefineActionAndDataset();
-            }  catch (CException& ex) {
-                if(ex.errorCode != 1){
-                    //these exception need to be logged
-                    DECODE_CHAOS_EXCEPTION(ex);
-                }
+        }
+        try{
+            LCMAPP_  << "Undefine Action And Dataset for  Control Unit: " << cu_identification_temp;
+            cu->work_unit_instance->_undefineActionAndDataset();
+        }  catch (CException& ex) {
+            if(ex.errorCode != 1){
+                //these exception need to be logged
+                DECODE_CHAOS_EXCEPTION(ex);
             }
         }
         cuDeclareActionsInstance.clear();
@@ -307,7 +297,7 @@ void ControlManager::deinit() throw(CException) {
 /*
  Submit a new Control unit for operation
  */
-void ControlManager::submitControlUnit(AbstractControlUnit *control_unit_instance) throw(CException) {
+void ControlManager::submitControlUnit(ChaosSharedPtr<AbstractControlUnit> control_unit_instance) throw(CException) {
     CHAOS_ASSERT(control_unit_instance)
     //lock the hastable of cu instance and managmer
     boost::unique_lock<boost::shared_mutex> lock(mutex_queue_submitted_cu);
@@ -351,7 +341,7 @@ void ControlManager::migrateStableAndUnstableSMCUInstance() {
     
     //used the Mark Ransom Technique for avoid the temporary iterator
     //http://stackoverflow.com/questions/180516/how-to-filter-items-from-a-stdmap/180616#180616
-    for (map<string, boost::shared_ptr<WorkUnitManagement> >::iterator i = map_cuid_reg_unreg_instance.begin();
+    for (map<string, ChaosSharedPtr<WorkUnitManagement> >::iterator i = map_cuid_reg_unreg_instance.begin();
          i != map_cuid_reg_unreg_instance.end();) {
         
         if(!i->second->smNeedToSchedule()) {
@@ -404,7 +394,7 @@ void ControlManager::makeSMSteps() {
     //lock for read the registering map
     ReadLock read_registering_lock(mutex_map_cuid_reg_unreg_instance);
     
-    for (map<string, boost::shared_ptr<WorkUnitManagement> >::iterator i = map_cuid_reg_unreg_instance.begin();
+    for (map<string, ChaosSharedPtr<WorkUnitManagement> >::iterator i = map_cuid_reg_unreg_instance.begin();
          i != map_cuid_reg_unreg_instance.end();
          i++ ){
         //make step
@@ -429,7 +419,7 @@ void ControlManager::manageControlUnit() {
         //try to consume all the submitted control unit instance (after the lock no other thread can submit new on)
         while(!queue_submitted_cu.empty()) {
             //we have new instance to manage
-            boost::shared_ptr<WorkUnitManagement> wui(new WorkUnitManagement(queue_submitted_cu.front()));
+            ChaosSharedPtr<WorkUnitManagement> wui(new WorkUnitManagement(queue_submitted_cu.front()));
             LCMAPP_  << "We have a new control unit instance:" << WU_IDENTIFICATION(wui->work_unit_instance);
             
             //remove the oldest data
@@ -494,7 +484,7 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
     LCMAPP_ << "Get new request for instance the work unit with alias:" << work_unit_type;
     
     WriteLock write_instancer_lock(mutex_map_cu_instancer);
-    CHECK_ASSERTION_THROW_AND_LOG(map_cu_alias_instancer.count(work_unit_type), LCMERR_, -2, "No work unit instancer's found for the alias")
+    CHECK_ASSERTION_THROW_AND_LOG(map_cu_alias_instancer.count(work_unit_type), LCMERR_, -2, CHAOS_FORMAT("No work unit instancer's found for type %1%",%work_unit_type));
     
     std::string work_unit_id = message_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
     std::string load_options = CDW_STR_KEY(ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM);
@@ -531,25 +521,20 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
     }
     
     //submit new instance of the requested control unit
-    std::auto_ptr<AbstractControlUnit> instance(map_cu_alias_instancer[work_unit_type]->getInstance(work_unit_id, load_options, driver_params));
-    CHECK_ASSERTION_THROW_AND_LOG(instance.get(), LCMERR_, -7, "Error creating work unit instance");
+    ChaosSharedPtr<AbstractControlUnit> instance(map_cu_alias_instancer[work_unit_type]->getInstance(work_unit_id, load_options, driver_params));
+    CHECK_ASSERTION_THROW_AND_LOG(instance.get() != NULL, LCMERR_, -7, "Error creating work unit instance");
     
-    //    //add healt metric for newly create control unit instance
-    //    HealtManager::getInstance()->addNewNode(work_unit_id);
-    //    //! add error code metric for control unit
-    //    HealtManager::getInstance()->addNodeMetric(work_unit_id,
-    //                                               NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE,
-    //                                               chaos::DataType::TYPE_INT32);
-    //    HealtManager::getInstance()->addNodeMetric(work_unit_id,
-    //                                               NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_MESSAGE,
-    //                                               chaos::DataType::TYPE_STRING);
-    //    HealtManager::getInstance()->addNodeMetric(work_unit_id,
-    //                                               NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_DOMAIN,
-    //                                               chaos::DataType::TYPE_STRING);
-    //    //add push rate metric
-    //    HealtManager::getInstance()->addNodeMetric(work_unit_id,
-    //                                               ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_PUSH_RATE,
-    //                                               chaos::DataType::TYPE_DOUBLE);
+    //check if is a proxy control unit
+    if(instance->getCUType().compare(NodeType::NODE_SUBTYPE_PROXY_CONTROL_UNIT) == 0){
+        //chec if someoune has attach the handler
+        CHECK_ASSERTION_THROW_AND_LOG((load_handler != NULL), LCMERR_, -8, CHAOS_FORMAT("No handler has been set for manage the %1% [of type ProxyControlUnit]",%work_unit_id));
+        if(load_handler(true,
+                        instance->getCUID(),
+                        static_cast<ProxyControlUnit*>(instance.get())->getProxyApiInterface()) == false){
+            LOG_AND_TROW(LCMERR_, -9, CHAOS_FORMAT("Load for %1% control unit denied by load handler", %work_unit_id));
+        }
+    }
+    
     //tag control uinit for mds managed
     instance->control_key = "mds";
     
@@ -558,17 +543,17 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
         CHECK_KEY_THROW_AND_LOG(message_data, UnitServerNodeDomainAndActionRPC::PARAM_CONTROL_UNIT_STARTUP_COMMAND, LCMERR_, -8, "The startup command key need to be a vector of CDataWrapper");
         
         //get the vector value
-        std::auto_ptr<CMultiTypeDataArrayWrapper> vector_values(message_data->getVectorValue(UnitServerNodeDomainAndActionRPC::PARAM_CONTROL_UNIT_STARTUP_COMMAND));
+        ChaosUniquePtr<CMultiTypeDataArrayWrapper> vector_values(message_data->getVectorValue(UnitServerNodeDomainAndActionRPC::PARAM_CONTROL_UNIT_STARTUP_COMMAND));
         for(int idx = 0;
             idx < vector_values->size();
             idx++) {
             //push command into the startup command vector of the control unit
-            instance->list_startup_command.push_back(boost::shared_ptr<chaos::common::data::CDataWrapper>(vector_values->getCDataWrapperElementAtIndex(idx)));
+            instance->list_startup_command.push_back(ChaosSharedPtr<chaos::common::data::CDataWrapper>(vector_values->getCDataWrapperElementAtIndex(idx)));
         }
     }
     
-    //submit contorl unit releaseing the auto_ptr
-    submitControlUnit(instance.release());
+    //submit contorl unit releaseing the ChaosUniquePtr
+    submitControlUnit(instance);
     return NULL;
 }
 
@@ -585,8 +570,15 @@ CDataWrapper* ControlManager::unloadControlUnit(CDataWrapper *message_data, bool
     WriteLock write_instancer_lock(mutex_map_cuid_registered_instance);
     IN_ACTION_PARAM_CHECK(!map_cuid_registered_instance.count(work_unit_id), -3, "Work unit not found on registered's map")
     
+    if(load_handler != NULL &&
+       (map_cuid_registered_instance[work_unit_id]->work_unit_instance->getCUType().compare(NodeType::NODE_SUBTYPE_PROXY_CONTROL_UNIT) == 0)){
+        load_handler(false,
+                     map_cuid_registered_instance[work_unit_id]->work_unit_instance->getCUID(),
+                     ChaosSharedPtr<ControlUnitApiInterface>());
+    }
+    
     //get the iterator for the work unit managment class
-    map<string, boost::shared_ptr<WorkUnitManagement> >::iterator iter = map_cuid_registered_instance.find(work_unit_id);
+    map<string, ChaosSharedPtr<WorkUnitManagement> >::iterator iter = map_cuid_registered_instance.find(work_unit_id);
     
     //migrate the workunit into the map for registering and unregistering instance
     map_cuid_reg_unreg_instance.insert(make_pair(work_unit_id, map_cuid_registered_instance[work_unit_id]));
@@ -606,7 +598,7 @@ CDataWrapper* ControlManager::unitServerStatus(CDataWrapper *message_data, bool 
     unit_server_status.addInt32Value(NodeDefinitionKey::NODE_TIMESTAMP,  (uint32_t) TimingUtil::getTimeStamp());
     LCMDBG_ << "[Action] Get Unit State";
     
-    map<string, boost::shared_ptr<WorkUnitManagement> >::iterator iter;
+    map<string, ChaosSharedPtr<WorkUnitManagement> >::iterator iter;
     for(iter = map_cuid_registered_instance.begin();iter!=map_cuid_registered_instance.end();iter++){
         chaos_data::CDataWrapper item;
         std::string cusm_state_key = iter->first+"_sm_state";
@@ -697,7 +689,6 @@ void ControlManager::sendUnitServerRegistration() {
     //set server alias
     unit_server_registration_pack.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, unit_server_alias);
     unit_server_registration_pack.addStringValue(NodeDefinitionKey::NODE_TYPE, NodeType::NODE_TYPE_UNIT_SERVER);
-    
     if(unit_server_key.size()) {
         //the key need to be forwarded
         unit_server_registration_pack.addStringValue(NodeDefinitionKey::NODE_SECURITY_KEY, unit_server_key);
@@ -726,6 +717,7 @@ CDataWrapper* ControlManager::unitServerRegistrationACK(CDataWrapper *message_da
     if(server_alias.compare(unit_server_alias) != 0) {
         throw CException(-2, "Server alias not found", __PRETTY_FUNCTION__);
     }
+    
     if(message_data->hasKey(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT)) {
         //registration has been ended
         switch(message_data->getInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT)){
@@ -734,31 +726,35 @@ CDataWrapper* ControlManager::unitServerRegistrationACK(CDataWrapper *message_da
                 if(unit_server_sm.process_event(unit_server_state_machine::UnitServerEventType::UnitServerEventTypePublished()) == boost::msm::back::HANDLED_TRUE){
                     LCMAPP_ << "Registration is gone well";
                     //we are published and it is ok!
+                    //register unit server node
+                    HealtManager::getInstance()->addNewNode(unit_server_alias);
                     //update healt status
                     HealtManager::getInstance()->addNodeMetricValue(unit_server_alias,
                                                                     NodeHealtDefinitionKey::NODE_HEALT_STATUS,
-                                                                    NodeHealtDefinitionValue::NODE_HEALT_STATUS_LOAD);
+                                                                    NodeHealtDefinitionValue::NODE_HEALT_STATUS_LOAD,
+                                                                    true);
                     
                     //now we can start the execution pool manager becuase our unit server has ben successfully registered on the mds
                     if(use_execution_pools) {
                         exectuion_pool_manager.reset(new chaos::cu::control_manager::execution_pool::ExecutionPoolManager(), "ExecutionPoolManager");
                         exectuion_pool_manager.init(NULL, __PRETTY_FUNCTION__);
                     }
+                    //repeat fast as possible the timer
+                    chaos_async::AsyncCentralManager::getInstance()->removeTimer(this);
+                    chaos_async::AsyncCentralManager::getInstance()->addTimer(this, 0, GlobalConfiguration::getInstance()->getOption<uint64_t>(CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC));
                 } else {
                     LCMERR_ << "Registration ACK received,bad  SM state "<<(unit_server_sm.process_event(unit_server_state_machine::UnitServerEventType::UnitServerEventTypePublished()));
                     throw CException(ErrorCode::EC_MDS_NODE_BAD_SM_STATE, "Bad state of the sm for published event", __PRETTY_FUNCTION__);
                 }
                 break;
                 
-            case ErrorCode::EC_MDS_NODE_REGISTRATION_FAILURE_DUPLICATE_ALIAS:
-                LCMERR_ << "The " << unit_server_alias << " is already used";
+            case ErrorCode::EC_MDS_NODE_REGISTRATION_FAILURE_INSTANCE_ALREADY_RUNNING:
+                LCMERR_ << "Another " << unit_server_alias << " instance is alredy runnig";
                 //turn of unit server
                 if(unit_server_sm.process_event(unit_server_state_machine::UnitServerEventType::UnitServerEventTypeFailure()) == boost::msm::back::HANDLED_TRUE){
                     //we have problem
-                    //update healt status
-                    HealtManager::getInstance()->addNodeMetricValue(unit_server_alias,
-                                                                    NodeHealtDefinitionKey::NODE_HEALT_STATUS,
-                                                                    NodeHealtDefinitionValue::NODE_HEALT_STATUS_UNLOAD);
+                    //quit or retry
+                    ChaosCUToolkit::getInstance()->closeUIToolkit();
                 } else {
                     throw CException(ErrorCode::EC_MDS_NODE_BAD_SM_STATE, "Bad state of the sm for unpublishing event", __PRETTY_FUNCTION__);
                 }
@@ -768,25 +764,22 @@ CDataWrapper* ControlManager::unitServerRegistrationACK(CDataWrapper *message_da
                 LCMERR_ << "The " << unit_server_alias << " is invalid";
                 //turn of unit server
                 LCMDBG_ << "Turning of unit server";
-                if(unit_server_sm.process_event(unit_server_state_machine::UnitServerEventType::UnitServerEventTypeFailure()) == boost::msm::back::HANDLED_TRUE){
+                if(unit_server_sm.process_event(unit_server_state_machine::UnitServerEventType::UnitServerEventTypeFailure()) == boost::msm::back::HANDLED_TRUE) {
                     //we have problem
-                    HealtManager::getInstance()->addNodeMetricValue(unit_server_alias,
-                                                                    NodeHealtDefinitionKey::NODE_HEALT_STATUS,
-                                                                    NodeHealtDefinitionValue::NODE_HEALT_STATUS_UNLOAD);
+                    //quit or retry
+                    ChaosCUToolkit::getInstance()->closeUIToolkit();
                 } else {
                     throw CException(ErrorCode::EC_MDS_NODE_BAD_SM_STATE, "Bad state of the sm for unpublished event", __PRETTY_FUNCTION__);
                 }
                 break;
         }
-        
-        //publish the healt result
-        HealtManager::getInstance()->publishNodeHealt(unit_server_alias);
-        
-        //repeat fast as possible the timer
-        chaos_async::AsyncCentralManager::getInstance()->removeTimer(this);
-        chaos_async::AsyncCentralManager::getInstance()->addTimer(this, 0, GlobalConfiguration::getInstance()->getOption<uint64_t>(CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC));
     } else {
         throw CException(-3, "No result received", __PRETTY_FUNCTION__);
     }
     return NULL;
+}
+
+//! allota a new control unit proxy
+void ControlManager::setProxyCreationHandler(ProxyLoadHandler _load_handler) {
+    load_handler = _load_handler;
 }

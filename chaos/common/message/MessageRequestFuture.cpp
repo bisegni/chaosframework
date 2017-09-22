@@ -1,4 +1,4 @@
-/*
+ /*
  *	MessageRequestFuture.cpp
  *	!CHAOS
  *	Created by Bisegni Claudio.
@@ -27,37 +27,37 @@ using namespace chaos::common::message;
 
 //!private constructor
 MessageRequestFuture::MessageRequestFuture(chaos::common::utility::atomic_int_type _request_id,
-                                           boost::shared_future< boost::shared_ptr<chaos::common::data::CDataWrapper> > _future):
+                                           boost::shared_future< ChaosSharedPtr<chaos::common::data::CDataWrapper> > _message_future):
 request_id(_request_id),
-future(_future),
-request_result(NULL),
+message_future(_message_future),
+request_result(),
 error_code(0),
 error_message("no data"),
 error_domain("no domain"),
-local_result(false) {
-    
-}
-//!private destructor
-MessageRequestFuture::~MessageRequestFuture() {
-}
+local_result(false) {}
+
+MessageRequestFuture::~MessageRequestFuture() {}
 
 bool MessageRequestFuture::wait(int32_t timeout_in_milliseconds) {
     bool result = false;
+    boost::future_status ret;
     try{
         if(request_result.get()) {
             result = true;
         } else{
             //! whait for result
             if (timeout_in_milliseconds >= 0){
-                future.wait_for(boost::chrono::milliseconds(timeout_in_milliseconds));
-            }else{
-                future.wait();
-            }
+	      MRF_DBG<<" future wait"<<timeout_in_milliseconds;
 
-            if (future.is_ready() &&
-                future.has_value()){
-                DEBUG_CODE(MRF_DBG << future.get()->getJSONString();)
-                MRF_PARSE_CDWPTR_RESULT(future.get())
+                ret=message_future.wait_for(boost::chrono::milliseconds(timeout_in_milliseconds));
+		//                MRF_DBG<<" future ret:"<<(int)ret;
+            }else{
+                message_future.wait();
+            }
+            if (message_future.is_ready() &&
+                message_future.has_value()){
+                DEBUG_CODE(MRF_DBG << message_future.get()->getJSONString();)
+                MRF_PARSE_CDWPTR_RESULT(message_future.get())
                 result = true;
             }
         }

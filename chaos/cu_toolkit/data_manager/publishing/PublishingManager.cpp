@@ -1,22 +1,22 @@
 /*
- *	PublishingManager.cpp
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFramework]
- *	Created by Claudio Bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 19/08/16 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include <chaos/cu_toolkit/data_manager/publishing/PublishingManager.h>
@@ -37,7 +37,7 @@ PublishableTargetManagerElement::PublishableTargetManagerElement(const Publishab
 target(src.target),
 auto_remove(src.auto_remove){}
 
-PublishableTargetManagerElement::PublishableTargetManagerElement(boost::shared_ptr<PublishTarget> _target,
+PublishableTargetManagerElement::PublishableTargetManagerElement(ChaosSharedPtr<PublishTarget> _target,
                                                                  bool _auto_remove):
 target(_target),
 auto_remove(_auto_remove){}
@@ -56,7 +56,7 @@ bool PublishingManager::addNewTarget(const std::string& target_name,
     //we can add the new target
     if(map_name_target().count(target_name) != 0) return false;
     
-    PublishableTargetManagerElementShrdPtr new_element(new PublishableTargetManagerElement( boost::shared_ptr<PublishTarget>(new PublishTarget(target_name)),
+    PublishableTargetManagerElementShrdPtr new_element(new PublishableTargetManagerElement( ChaosSharedPtr<PublishTarget>(new PublishTarget(target_name)),
                                                                                            auto_remove));
     map_name_target().insert(PublishableElementNameMapPair(target_name, new_element));
     

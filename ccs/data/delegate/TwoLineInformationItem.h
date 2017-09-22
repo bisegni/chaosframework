@@ -20,5 +20,4 @@ public:
                                     QObject *parent = 0);
     explicit TwoLineInformationItem(QObject *parent = 0);
 };
-
 #endif // TwoLineInformationItem_H

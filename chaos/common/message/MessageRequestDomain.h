@@ -1,22 +1,22 @@
 /*
- *	node_monitor_types.h
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFramework]
- *	Created by Claudio Bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 16/03/16 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #ifndef CHAOS_MESSAGEREQUESTDOMAIN_H
@@ -26,11 +26,12 @@
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/utility/UUIDUtil.h>
 #include <chaos/common/utility/Atomic.h>
+#include <chaos/common/utility/SafeAsyncCall.h>
 
 #include <boost/atomic.hpp>
 #include <boost/function.hpp>
 #include <boost/thread.hpp>
-#define BOOST_THREAD_PROVIDES_FUTURE
+//#define BOOST_THREAD_PROVIDES_FUTURE
 #include <boost/thread/future.hpp>
 
 #include <map>
@@ -43,17 +44,32 @@ namespace chaos {
             class MessageRequestFuture;
             class MessageRequestDomain;
             
-            typedef boost::shared_ptr<chaos::common::message::MessageRequestDomain> MessageRequestDomainSHRDPtr;
+            typedef ChaosSharedPtr<chaos::common::message::MessageRequestDomain> MessageRequestDomainSHRDPtr;
             
-            typedef boost::shared_ptr<common::data::CDataWrapper> FuturePromiseData;
+            typedef ChaosSharedPtr<common::data::CDataWrapper> FuturePromiseData;
             
             typedef boost::promise<FuturePromiseData> MessageFuturePromise;
             
-            typedef map<chaos::common::utility::atomic_int_type,
-            boost::shared_ptr<MessageFuturePromise> > MapPromises;
+            typedef boost::function<void(const FuturePromiseData&)> PromisesHandlerFunction;
+            
+            
+            typedef chaos::common::utility::SafeAsyncCall<PromisesHandlerFunction> PromisesHandler;
+            typedef ChaosSharedPtr< PromisesHandler > PromisesHandlerSharedPtr;
+            typedef ChaosWeakPtr< PromisesHandler > PromisesHandlerWeakPtr;
+            
+            class ChaosMessagePromises:
+            public boost::promise<FuturePromiseData> {
+                PromisesHandlerWeakPtr promises_handler_weak;
+            public:
+                ChaosMessagePromises(PromisesHandlerWeakPtr _promises_handler_weak);
+                void set_value(const FuturePromiseData& received_data);
+            };
             
             typedef map<chaos::common::utility::atomic_int_type,
-            boost::shared_ptr<MessageFuturePromise> >::iterator MapPromisesIterator;
+            ChaosSharedPtr<ChaosMessagePromises> > MapPromises;
+            
+            typedef map<chaos::common::utility::atomic_int_type,
+            ChaosSharedPtr<ChaosMessagePromises> >::iterator MapPromisesIterator;
             
             typedef boost::unique_future< FuturePromiseData > MessageUniqueFuture;
             
@@ -86,8 +102,9 @@ namespace chaos {
                 
                 const std::string& getDomainID();
                 
-                std::auto_ptr<MessageRequestFuture> getNewRequestMessageFuture(chaos::common::data::CDataWrapper& new_request_datapack,
-                                                                               uint32_t& new_request_id);
+                ChaosUniquePtr<MessageRequestFuture> getNewRequestMessageFuture(chaos::common::data::CDataWrapper& new_request_datapack,
+                                                                               uint32_t& new_request_id,
+                                                                               PromisesHandlerWeakPtr promises_handler_weak);
             };
         }
     }

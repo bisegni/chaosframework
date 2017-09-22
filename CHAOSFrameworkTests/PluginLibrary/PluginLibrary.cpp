@@ -1,41 +1,40 @@
 /*
- *	PluginLibrary.cpp
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFrameworkTests]
- *	Created by bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 23/08/16 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include "PluginLibrary.h"
 
 //define the general plugin
+#include <cstring>
 
 OPEN_PLUGIN_CLASS_DEFINITION(PluginAlias, 1.0, DRV, PluginLibrary)
 CLOSE_PLUGIN_CLASS_DEFINITION
 
-//define the cu driver plugin
-OPEN_CU_DRIVER_PLUGIN_CLASS_DEFINITION(DriverAlias, 1.0, ControlUnitPluginLibrary)
-REGISTER_CU_DRIVER_PLUGIN_CLASS_INIT_ATTRIBUTE(DriverAlias,http_address)
-REGISTER_CU_DRIVER_PLUGIN_CLASS_INIT_ATTRIBUTE(DriverAlias,http_port)
-CLOSE_CU_DRIVER_PLUGIN_CLASS_DEFINITION
+
+OPEN_EUAPI_LUGIN_CLASS_DEFINITION(EUPluginAlgotest, 1.0, EUTestApiPLugin)
+CLOSE_EUAPI_CLASS_DEFINITION
 
 //register the two plugin
 OPEN_REGISTER_PLUGIN
 REGISTER_PLUGIN(PluginAlias)
-REGISTER_PLUGIN(DriverAlias)
+REGISTER_PLUGIN(EUPluginAlgotest)
 CLOSE_REGISTER_PLUGIN
 
 PluginLibrary::PluginLibrary() {
@@ -48,7 +47,28 @@ void PluginLibrary::test(int num) {
     }
 }
 
+int EUTestApiPLugin::init(const char * init_data) {
+    return 0;
+}
 
-DEFAULT_CU_DRIVER_PLUGIN_CONSTRUCTOR(ControlUnitPluginLibrary) {
-    std::cout << "Driver plugin created" << std::endl;
+int EUTestApiPLugin::execute(const char *in_data,
+                             uint32_t in_data_size,
+                             char **out_data,
+                             uint32_t *out_data_size){
+    std::string in_str(in_data, in_data_size);
+    std::string ou_str = "[out]" + in_str;
+    std::cout << in_str << std::endl;
+    *out_data = (char*)malloc(ou_str.size());
+    std::strcpy(*out_data,
+                ou_str.c_str());
+    *out_data_size = ou_str.size();
+    return 0;
+}
+
+void EUTestApiPLugin::deinit() {
+
+}
+
+const char *EUTestApiPLugin::getApiName() {
+    return "plugin_test";
 }

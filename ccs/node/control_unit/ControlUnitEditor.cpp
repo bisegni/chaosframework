@@ -31,11 +31,12 @@ using namespace chaos::metadata_service_client::node_monitor;
 
 ControlUnitEditor::ControlUnitEditor(const QString &_control_unit_unique_id) :
     PresenterWidget(NULL),
+    ui(new Ui::ControlUnitEditor),
     restarted(false),
     last_online_state(false),
     control_unit_unique_id(_control_unit_unique_id),
-    alarm_list_model(control_unit_unique_id),
-    ui(new Ui::ControlUnitEditor),
+    alarm_list_model(control_unit_unique_id, ControlUnitStateVaribleListModel::StateVariableTypeAlarmDEV),
+    warning_list_model(control_unit_unique_id, ControlUnitStateVaribleListModel::StateVariableTypeAlarmCU),
     dataset_output_table_model(control_unit_unique_id,
                                chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT),
     dataset_input_table_model(control_unit_unique_id,
@@ -44,7 +45,6 @@ ControlUnitEditor::ControlUnitEditor(const QString &_control_unit_unique_id) :
 }
 
 ControlUnitEditor::~ControlUnitEditor() {
-    //shutdown monitoring of channel
     delete ui;
 }
 
@@ -60,9 +60,11 @@ void ControlUnitEditor::initUI() {
     ui->pushButtonEditInstance->setEnabled(false);
     //add model to table
     ui->tableViewOutputChannel->setModel(&dataset_output_table_model);
+    ui->tableViewOutputChannel->setColumnToContents(0, true);
     ui->tableViewOutputChannel->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
     ui->tableViewInputChannels->setModel(&dataset_input_table_model);
+    ui->tableViewInputChannels->setColumnToContents(0, true);
     ui->tableViewInputChannels->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
     //compose logic on switch
@@ -179,11 +181,13 @@ void ControlUnitEditor::initUI() {
     //storage type
     ui->widgetStorageType->setNodeUID(control_unit_unique_id);
 
+    //driver bypass
+    ui->pushButtonDriverBypass->setNodeUID(control_unit_unique_id);
+    ui->pushButtonDriverBypass->setPropertyGroupName(chaos::ControlUnitPropertyKey::GROUP_NAME);
+    ui->pushButtonDriverBypass->setPropertyName(chaos::ControlUnitDatapackSystemKey::BYPASS_STATE);
+
     //start monitoring
     manageMonitoring(true);
-
-    //launch api for control unit information
-    //updateAllControlUnitInfomration();
 
     //enable log widget
     ui->widgetChaosNodeLog->setNodeUID(control_unit_unique_id);
@@ -193,10 +197,12 @@ void ControlUnitEditor::initUI() {
     ui->widgetNodeResource->setNodeUID(control_unit_unique_id);
     ui->widgetNodeResource->initChaosContent();
 
-    //manage  alarm list
-    ui->listViewAlarm->setVisible(false);
+    //manage  alarm and warning list
+    ui->splitterOutputDatasets->setStretchFactor(1,0);
+    //reset the splitter in mode to hide the lists
+    on_checkBoxShowAlarms_clicked();
     ui->listViewAlarm->setModel(&alarm_list_model);
-
+    ui->listViewWarning->setModel(&warning_list_model);
     //manage command stat
     ui->widgetCommandStatistic->setVisible(false);
 }
@@ -237,6 +243,7 @@ void ControlUnitEditor::manageMonitoring(bool start) {
         ui->ledIndicatorHealtTSControlUnit->initChaosContent();
         ui->chaosLabelDSOutputPushRate->initChaosContent();
         ui->widgetStorageType->initChaosContent();
+        ui->pushButtonDriverBypass->initChaosContent();
     }else{
         if(unit_server_parent_unique_id.size()) {
             //remove old unit server for healt
@@ -247,6 +254,7 @@ void ControlUnitEditor::manageMonitoring(bool start) {
             ui->ledIndicatorHealtTSUnitServer->deinitChaosContent();
         }
         ui->widgetStorageType->deinitChaosContent();
+        ui->pushButtonDriverBypass->deinitChaosContent();
         ui->labelControlUnitState->deinitChaosContent();
         ChaosMetadataServiceClient::getInstance()->removeHandlerToNodeMonitor(control_unit_unique_id.toStdString(),
                                                                               node_monitor::ControllerTypeNode,
@@ -269,6 +277,7 @@ bool ControlUnitEditor::isClosing() {
     //remove monitoring on cu and us
     manageMonitoring(false);
     alarm_list_model.untrack();
+    warning_list_model.untrack();
     if(control_unit_subtype.compare(chaos::NodeType::NODE_SUBTYPE_BATCH_CONTROL_UNIT) == 0){
         ui->widgetCommandStatistic->deinitChaosContent();
     }
@@ -293,11 +302,13 @@ QString ControlUnitEditor::getStatusString(int status) {
 void ControlUnitEditor::onApiDone(const QString& tag,
                                   QSharedPointer<CDataWrapper> api_result) {
     if(tag.compare(TAG_CU_INFO) == 0) {
+        if(api_result.isNull()) return;
         fillInfo(api_result);
     } else if(tag.compare(TAG_CU_DATASET) == 0) {
-        fillDataset(api_result);
         submitApiResult(QString(TAG_CU_INSTANCE),
                         GET_CHAOS_API_PTR(control_unit::GetInstance)->execute(control_unit_unique_id.toStdString()));
+        if(api_result.isNull()) return;
+        fillDataset(api_result);
     } else if(tag.compare(TAG_CU_INSTANCE) == 0) {
         if(api_result.isNull()) return;
         //enable the button for editing instance
@@ -354,7 +365,13 @@ void ControlUnitEditor::fillInfo(const QSharedPointer<chaos::common::data::CData
         }
     }
     if(node_info->hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR)) {
-        ui->labelRemoteAddress->setText(QString::fromStdString(node_info->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR)));
+        QString addr_host;
+        if(node_info->hasKey(chaos::NodeDefinitionKey::NODE_HOST_NAME)) {
+            addr_host = QString("%1[%2]").arg(node_info->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR).c_str()).arg(node_info->getStringValue(chaos::NodeDefinitionKey::NODE_HOST_NAME).c_str());
+        } else {
+            addr_host = QString::fromStdString(node_info->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR));
+        }
+        ui->labelRemoteAddress->setText(addr_host);
     } else {
         ui->labelRemoteAddress->setText(tr("---"));
     }
@@ -445,7 +462,7 @@ void ControlUnitEditor::on_checkBoxMonitorInputChannels_clicked() {
 }
 
 void ControlUnitEditor::on_pushButtonCommitSet_clicked() {
-    std::vector< boost::shared_ptr< control_unit::ControlUnitInputDatasetChangeSet > > value_set_array;
+    std::vector< ChaosSharedPtr< control_unit::ControlUnitInputDatasetChangeSet > > value_set_array;
     dataset_input_table_model.getAttributeChangeSet(value_set_array);
     if(value_set_array[0]->change_set.size()==0) {
         QMessageBox msgBox;
@@ -476,7 +493,7 @@ void ControlUnitEditor::on_pushButtonAddNewCommadInstance_clicked() {
                 SIGNAL(templateSaved(QString,QString)),
                 SLOT(templateSaved(QString,QString)));
 
-        addWidgetToPresenter(template_editor);
+        launchPresenterWidget(template_editor);
     }
 }
 
@@ -495,7 +512,7 @@ void ControlUnitEditor::on_pushButtonEditInstance_clicked() {
                 SIGNAL(templateSaved(QString,QString)),
                 SLOT(templateSaved(QString,QString)));
 
-        addWidgetToPresenter(template_editor);
+        launchPresenterWidget(template_editor);
     }
 }
 
@@ -510,25 +527,18 @@ void ControlUnitEditor::on_pushButtonRemoveInstance_clicked() {
 
 void ControlUnitEditor::on_pushButtonCreateInstance_clicked() {
     foreach(QModelIndex index,  ui->listViewCommandInstance->selectionModel()->selectedRows()) {
-        addWidgetToPresenter(new CommandTemplateInstanceEditor(control_unit_unique_id,
-                                                               index.data().toString(),
-                                                               index.data(Qt::UserRole).toString()));
+        launchPresenterWidget(new CommandTemplateInstanceEditor(control_unit_unique_id,
+                                                                index.data().toString(),
+                                                                index.data(Qt::UserRole).toString()));
     }
 }
 
 void ControlUnitEditor::on_pushButtonSetRunScheduleDelay_clicked() {
-    chaos::metadata_service_client::api_proxy::node::NodePropertyGroupList property_list;
-    boost::shared_ptr<chaos::common::data::CDataWrapperKeyValueSetter> thread_run_schedule(new chaos::common::data::CDataWrapperInt64KeyValueSetter(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY,
-                                                                                                                                                    ui->lineEditRunScheduleDelay->text().toLongLong()));
-    boost::shared_ptr<chaos::metadata_service_client::api_proxy::node::NodePropertyGroup> cu_property_group(new chaos::metadata_service_client::api_proxy::node::NodePropertyGroup());
-    cu_property_group->group_name = "property_abstract_control_unit";
-    cu_property_group->group_property_list.push_back(thread_run_schedule);
-
-    property_list.push_back(cu_property_group);
-
+    chaos::common::property::PropertyGroup pg(chaos::ControlUnitPropertyKey::GROUP_NAME);
+    pg.addProperty(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, CDataVariant(static_cast<uint64_t>(ui->lineEditRunScheduleDelay->text().toLongLong())));
     submitApiResult(TAG_CU_SET_THREAD_SCHEDULE_DELAY,
                     GET_CHAOS_API_PTR(node::UpdateProperty)->execute(control_unit_unique_id.toStdString(),
-                                                                     property_list));
+                                                                     pg));
 }
 
 void ControlUnitEditor::on_pushButtonRecoverError_clicked() {
@@ -540,9 +550,9 @@ void ControlUnitEditor::on_pushButtonRecoverError_clicked() {
 }
 
 void ControlUnitEditor::on_pushButtonOpenInstanceEditor_clicked() {
-    addWidgetToPresenter(new ControUnitInstanceEditor(unit_server_parent_unique_id,
-                                                      control_unit_unique_id,
-                                                      true));
+    launchPresenterWidget(new ControUnitInstanceEditor(unit_server_parent_unique_id,
+                                                       control_unit_unique_id,
+                                                       true));
 }
 
 void ControlUnitEditor::tabIndexChanged(int new_index) {
@@ -569,8 +579,6 @@ void ControlUnitEditor::nodeChangedOnlineState(const std::string& node_uid,
         //state changed for unit server
         logic_switch_aggregator.broadcastCurrentValueForKey("us_alive", getStatusString(new_state));
     }
-
-
 }
 
 void ControlUnitEditor::nodeChangedInternalState(const std::string& node_uid,
@@ -578,7 +586,7 @@ void ControlUnitEditor::nodeChangedInternalState(const std::string& node_uid,
                                                  const std::string& new_state) {
     if(node_uid.compare(control_unit_unique_id.toStdString()) == 0) {
         logic_switch_aggregator.broadcastCurrentValueForKey("cu_state",  QString::fromStdString(new_state));
-        if(restarted && (new_state.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_LOAD) == 0 ||
+        if(restarted && (/*new_state.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_LOAD) == 0 ||*/
                          new_state.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_INIT) == 0 ||
                          new_state.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_START) == 0 )) {
             qDebug() << "Load dataset for Node" << QString::fromStdString(node_uid) << " that has been restarted";
@@ -586,7 +594,6 @@ void ControlUnitEditor::nodeChangedInternalState(const std::string& node_uid,
             updateAllControlUnitInfomration();
             restarted = false;
         }
-
         //broadcast cu status to switch
     } else if(node_uid.compare(unit_server_parent_unique_id.toStdString()) == 0) {
         //state changed for unit server
@@ -607,7 +614,22 @@ void ControlUnitEditor::on_pushButtonShowPlot_clicked() {
     plot_viewer->show();
 }
 
-void ControlUnitEditor::on_checkBoxShowAlarm_clicked() {
-    ui->listViewAlarm->setVisible(ui->checkBoxShowAlarm->isChecked());
-    if(ui->checkBoxShowAlarm->isChecked()){alarm_list_model.track();}else{alarm_list_model.untrack();}
+void ControlUnitEditor::on_checkBoxShowAlarms_clicked() {
+    QList<int> splitter_size;
+    if(ui->checkBoxShowAlarms->isChecked()) {
+        alarm_list_model.track();
+        warning_list_model.track();
+        splitter_size.push_back(450);
+        splitter_size.push_back(150);
+    } else {
+        alarm_list_model.untrack();
+        warning_list_model.untrack();
+        splitter_size.push_back(600);
+        splitter_size.push_back(0);
+    }
+    ui->splitterOutputDatasets->setSizes(splitter_size);
+}
+
+void ControlUnitEditor::on_pushButtonUpdateControlUnitInfo_clicked() {
+    updateAllControlUnitInfomration();
 }

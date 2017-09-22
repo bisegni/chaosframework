@@ -5,7 +5,7 @@
 #include "../../data/ChaosByteArray.h"
 #include <QObject>
 #include <QSharedPointer>
-#include <ChaosMetadataServiceClient/monitor_system/monitor_system.h>
+#include <chaos_metadata_service_client/monitor_system/monitor_system.h>
 
 
 class MonitorTSTaggedBinaryAttributeHandler:
@@ -17,7 +17,7 @@ protected:
     void consumeTSTaggedValue(const std::string& key,
                               const std::string& attribute,
                               uint64_t timestamp,
-                              const boost::shared_ptr<chaos::common::data::SerializationBuffer>& value) {
+                              const ChaosSharedPtr<chaos::common::data::SerializationBuffer>& value) {
         //emit new value
         emit valueUpdated(QString::fromStdString(key),
                           QString::fromStdString(attribute),

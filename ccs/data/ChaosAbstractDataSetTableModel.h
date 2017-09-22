@@ -6,7 +6,7 @@
 
 #include <QMap>
 
-#include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
+#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
 
 struct AttributeInfo {
     int row;

@@ -1,21 +1,22 @@
 /*
- *	KeyDataStorage.h
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #ifndef KeyDataStorage_H
@@ -35,31 +36,34 @@ namespace chaos_io = chaos::common::io;
 namespace chaos_utility = chaos::common::utility;
 namespace chaos{
     namespace cu {
-		namespace data_manager {
-			
-			typedef enum KeyDataStorageDomain {
-				KeyDataStorageDomainOutput = 0,
-				KeyDataStorageDomainInput,
-				KeyDataStorageDomainCustom,
-				KeyDataStorageDomainSystem,
-                KeyDataStorageDomainAlarm
-			} KeyDataStorageDomain;
-			
-			class KeyDataStorage {
-				std::string key;
-				std::string output_key;
-				std::string input_key;
-				std::string system_key;
-				std::string custom_key;
-                std::string alarm_key;
-				
+        namespace data_manager {
+            
+            typedef enum KeyDataStorageDomain {
+                KeyDataStorageDomainOutput = DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT,
+                KeyDataStorageDomainInput = DataPackCommonKey::DPCK_DATASET_TYPE_INPUT,
+                KeyDataStorageDomainCustom = DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM,
+                KeyDataStorageDomainSystem =  DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM,
+                KeyDataStorageDomainHealth = DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH,
+                KeyDataStorageDomainDevAlarm =DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM,
+                KeyDataStorageDomainCUAlarm =DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM
+            } KeyDataStorageDomain;
+            
+            class KeyDataStorage {
+                std::string key;
+                std::string output_key;
+                std::string input_key;
+                std::string system_key;
+                std::string custom_key;
+                std::string health_key;
+                std::string cu_alarm_key;
+                std::string dev_alarm_key;
                 //is the sequence if
                 boost::atomic<int64_t> sequence_id;
                 
-				//restore poitn map
-				std::map<std::string, std::map<std::string, boost::shared_ptr<chaos_data::CDataWrapper> > > restore_point_map;
-
-				chaos_io::IODataDriver *io_data_driver;
+                //restore poitn map
+                std::map<std::string, std::map<std::string, ChaosSharedPtr<chaos_data::CDataWrapper> > > restore_point_map;
+                
+                chaos_io::IODataDriver *io_data_driver;
                 
                 //storage type
                 DataServiceNodeDefinitionType::DSStorageType storage_type;
@@ -69,53 +73,83 @@ namespace chaos{
                 uint64_t storage_history_time_last_push;
                 uint64_t storage_live_time;
                 uint64_t storage_live_time_last_push;
-				//mutex to protect access to data io driver
-				boost::mutex mutex_push_data;
+                //mutex to protect access to data io driver
+                boost::mutex mutex_push_data;
                 
                 void pushDataWithControlOnHistoryTime(const std::string& key,
                                                       chaos::common::data::CDataWrapper *dataToStore,
                                                       chaos::DataServiceNodeDefinitionType::DSStorageType storage_type);
-			public:
-				KeyDataStorage(const std::string& _key,
-							   chaos_io::IODataDriver *_io_data_driver);
-				virtual ~KeyDataStorage();
-				
-				void init(void *init_parameter) throw (chaos::CException);
-
-				void deinit() throw (chaos::CException);
-				/*
-				 Return a new instace for the CSDatawrapped
-				 */
-				chaos_data::CDataWrapper* getNewOutputAttributeDataWrapper();
-				
-				/*
-				 Retrive the data from Live Storage
-				 */
-				chaos_utility::ArrayPointer<chaos_data::CDataWrapper>* getLastDataSet(KeyDataStorageDomain domain);
-				
-				//! push a dataset associated to a domain
-				void pushDataSet(KeyDataStorageDomain domain, chaos_data::CDataWrapper *dataset);
-				
-				//! load all dataseet for a restore point
-				int loadRestorePoint(const std::string& restore_point_tag);
-
-				//! clear all loaded dataset for a restore point
-				int clearRestorePoint(const std::string& restore_point_tag);
-				
-				//!return the dataset asccoaited to a domain in a determinated restore tag
-				boost::shared_ptr<chaos_data::CDataWrapper>  getDatasetFromRestorePoint(const std::string& restore_point_tag,
-																						KeyDataStorageDomain domain);
-
-				/*
-				 Permit to be live configurable
-				 */
-				chaos_data::CDataWrapper* updateConfiguration(chaos_data::CDataWrapper *);
                 
+                inline std::string getDomainString(const KeyDataStorageDomain dataset_domain);
+                
+                inline std::string getDomainString(const std::string& node_uid,
+                                                   const KeyDataStorageDomain dataset_domain);
+            public:
+                KeyDataStorage(const std::string& _key,
+                               chaos_io::IODataDriver *_io_data_driver);
+                virtual ~KeyDataStorage();
+                
+                void init(void *init_parameter) throw (chaos::CException);
+                
+                void deinit() throw (chaos::CException);
+                /*
+                 Return a new instace for the CSDatawrapped
+                 */
+                chaos_data::CDataWrapper* getNewDataPackForDomain(const KeyDataStorageDomain domain);
+                
+                /*
+                 Retrive the data from Live Storage
+                 */
+                //chaos_utility::ArrayPointer<chaos_data::CDataWrapper>* getLastDataSet(KeyDataStorageDomain domain);
+                
+                //! push a dataset associated to a domain
+                void pushDataSet(KeyDataStorageDomain domain, chaos_data::CDataWrapper *dataset);
+                
+                //! load all dataseet for a restore point
+                int loadRestorePoint(const std::string& restore_point_tag);
+                
+                //! clear all loaded dataset for a restore point
+                int clearRestorePoint(const std::string& restore_point_tag);
+                
+                //!return the dataset asccoaited to a domain in a determinated restore tag
+                ChaosSharedPtr<chaos_data::CDataWrapper>  getDatasetFromRestorePoint(const std::string& restore_point_tag,
+                                                                                     KeyDataStorageDomain domain);
+                
+                void updateConfiguration(chaos::common::data::CDataWrapper *configuration);
+                void updateConfiguration(const std::string& conf_name, const chaos::common::data::CDataVariant& conf_value);
+                
+                //!return the current storage type [live, history or both] setting
                 DataServiceNodeDefinitionType::DSStorageType getStorageType();
+                
+                //! return how how many mseconds need to pass for the dataset is stored in live cache
                 uint64_t getStorageLiveTime();
+                
+                //! return how how many mseconds need to pass for the dataset is stored in history engine
                 uint64_t getStorageHistoryTime();
-			};
-		}
+                
+                //! perform live search for managed node uid
+                int performLiveFetch(const KeyDataStorageDomain dataset_domain,
+                                     chaos::common::data::CDWShrdPtr& found_dataset);
+                
+                //! perform live search for other node uid
+                int performLiveFetch(const ChaosStringVector& node_uid,
+                                     const KeyDataStorageDomain dataset_domain,
+                                     chaos::common::data::VectorCDWShrdPtr& found_dataset);
+                
+                int performSelfQuery(chaos::common::io::QueryCursor **cursor,
+                                     KeyDataStorageDomain dataset_domain,
+                                     const uint64_t start_ts,
+                                     const uint64_t end_ts);
+                
+                int performGeneralQuery(chaos::common::io::QueryCursor **cursor,
+                                        const std::string& node_id,
+                                        KeyDataStorageDomain dataset_domain,
+                                        const uint64_t start_ts,
+                                        const uint64_t end_ts);
+                
+                void releseQuery(chaos::common::io::QueryCursor *cursor);
+            };
+        }
     }
 }
 #endif

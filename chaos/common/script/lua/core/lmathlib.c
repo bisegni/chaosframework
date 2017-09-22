@@ -1,8 +1,23 @@
 /*
-** $Id: lmathlib.c,v 1.117 2015/10/02 15:39:23 roberto Exp $
-** Standard mathematical library
-** See Copyright Notice in lua.h
-*/
+ * Copyright 2012, 2017 INFN
+ *
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
+ *
+ * https://joinup.ec.europa.eu/software/page/eupl
+ *
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
+ */
 
 #define lmathlib_c
 #define LUA_LIB
@@ -298,8 +313,6 @@ static int math_type (lua_State *L) {
 ** Deprecated functions (for compatibility only)
 ** ===================================================================
 */
-#if defined(LUA_COMPAT_MATHLIB)
-
 static int math_cosh (lua_State *L) {
   lua_pushnumber(L, l_mathop(cosh)(luaL_checknumber(L, 1)));
   return 1;
@@ -340,8 +353,6 @@ static int math_log10 (lua_State *L) {
   lua_pushnumber(L, l_mathop(log10)(luaL_checknumber(L, 1)));
   return 1;
 }
-
-#endif
 /* }================================================================== */
 
 
@@ -370,7 +381,6 @@ static const luaL_Reg mathlib[] = {
   {"sqrt",  math_sqrt},
   {"tan",   math_tan},
   {"type", math_type},
-#if defined(LUA_COMPAT_MATHLIB)
   {"atan2", math_atan},
   {"cosh",   math_cosh},
   {"sinh",   math_sinh},
@@ -379,7 +389,6 @@ static const luaL_Reg mathlib[] = {
   {"frexp", math_frexp},
   {"ldexp", math_ldexp},
   {"log10", math_log10},
-#endif
   /* placeholders */
   {"pi", NULL},
   {"huge", NULL},

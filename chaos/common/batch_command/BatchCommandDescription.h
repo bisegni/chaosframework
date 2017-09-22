@@ -1,21 +1,22 @@
 /*
- *	BatchCommandDescription.h
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #ifndef __CHAOSFramework__BatchCommandDescription__
@@ -38,11 +39,11 @@ n::BatchCommandDescription ## c
 Get ## BatchCommandDescription ## c
 
 #define BATCH_COMMAND_DECLARE_DESCRIPTION(c)\
-boost::shared_ptr<chaos::common::batch_command::BatchCommandDescription> BATCH_COMMAND_FUNCTION_GET_DESCRIPTION(c)();
+ChaosSharedPtr<chaos::common::batch_command::BatchCommandDescription> BATCH_COMMAND_FUNCTION_GET_DESCRIPTION(c)();
 
 #define BATCH_COMMAND_OPEN_DESC(n, c, alias, d, uid)\
-boost::shared_ptr<chaos::common::batch_command::BatchCommandDescription> n GetBatchCommandDescription ## c (){\
-boost::shared_ptr<chaos::common::batch_command::BatchCommandDescription> result(new chaos::common::batch_command::BatchCommandDescription( alias, d, uid));
+ChaosSharedPtr<chaos::common::batch_command::BatchCommandDescription> n GetBatchCommandDescription ## c (){\
+ChaosSharedPtr<chaos::common::batch_command::BatchCommandDescription> result(new chaos::common::batch_command::BatchCommandDescription( alias, d, uid));
 
 #define BATCH_COMMAND_ADD_BOOL_PARAM(p, d, flag)\
 result->addParameter(p, d, chaos::DataType::TYPE_BOOLEAN, flag);
@@ -54,7 +55,8 @@ result->addParameter(p, d, chaos::DataType::TYPE_INT64, flag);
 result->addParameter(p, d, chaos::DataType::TYPE_DOUBLE, flag);
 #define BATCH_COMMAND_ADD_STRING_PARAM(p, d, flag)\
 result->addParameter(p, d, chaos::DataType::TYPE_STRING, flag);
-
+#define BATCH_COMMAND_ADD_JSON_PARAM(p, d, flag)\
+result->addParameter(p, d, chaos::DataType::TYPE_CLUSTER, flag);
 #define BATCH_COMMAND_CLOSE_DESCRIPTION()\
 return result;}
 
@@ -75,7 +77,7 @@ namespace chaos {
             class BatchCommandExecutor;
             class BatchCommand;
             
-            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, boost::shared_ptr<chaos::common::data::CDataWrapper>, BatchCommandMapParamter);
+            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ChaosSharedPtr<chaos::common::data::CDataWrapper>, BatchCommandMapParamter);
             CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string, BatchCommandParameterNameList);
             
             //! provide a set of method that permit to declare a batch command
@@ -129,11 +131,11 @@ namespace chaos {
                 bool getParameterDescription(const std::string& parameter_name,
                                              std::string& parameter_description);
                 
-                boost::shared_ptr<chaos::common::data::CDataWrapper>
+                ChaosSharedPtr<chaos::common::data::CDataWrapper>
                 getParameterDescription(const std::string& parameter_name);
                 
                 
-                boost::shared_ptr<chaos::common::data::CDataWrapper>
+                ChaosSharedPtr<chaos::common::data::CDataWrapper>
                 getFullDescription();
             };
             

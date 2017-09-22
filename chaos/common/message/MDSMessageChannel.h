@@ -1,21 +1,22 @@
 /*
- *	MDSMessageChannel.h
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #ifndef CHAOSFramework_MDSMessageChannel_h
@@ -137,7 +138,18 @@ namespace chaos {
                 int getLastDatasetForDevice(const std::string& identificationID,
                                             CDataWrapper** deviceDefinition,
                                             uint32_t millisec_to_wait=5000);
-                
+
+                //! Get full node description
+			   /*!
+				Return the full description of the node
+				\param identificationID id for wich we need to get the network address information
+				\param deviceDefinition this is the handle to the pointer representing the description
+				\param millisec_to_wait delay after wich the wait is interrupt
+				\return error code
+				*/
+			   int getFullNodeDescription(const std::string& identificationID,
+										   CDataWrapper** deviceDefinition,
+										   uint32_t millisec_to_wait=5000);
                 //! return the configuration for the data driver
                 /*!
                  Return the besta available data service at the monent within the configuraiton for data driver
@@ -197,7 +209,8 @@ namespace chaos {
                  \return error code
                  */
                 int searchSnapshot(const std::string& query_filter,
-                                   std::map<uint64_t,std::string>& snapshot_found,uint32_t millisec_to_wait=5000);
+                                   std::map<uint64_t,std::string>& snapshot_found,
+                                   uint32_t millisec_to_wait=5000);
                 
                 //! Search node for snapshot
                 /*!
@@ -210,6 +223,28 @@ namespace chaos {
                                           ChaosStringVector& node_found,
                                           uint32_t millisec_to_wait=5000);
                 
+                //! retrieve a dataset related to a snapshot name of a given cu
+                int loadSnapshotNodeDataset(const std::string& snapname,
+                						const std::string& cu_name,
+                                              chaos::common::data::CDataWrapper&data_set,
+                                              uint32_t millisec_to_wait=5000);
+                //! create or update a variable
+                int setVariable(const std::string& variable_name,
+                                chaos::common::data::CDataWrapper& variable_value,
+                                uint32_t millisec_to_wait=5000);
+                
+                //! retrieve a variable value
+                int getVariable(const std::string& variable_name,
+                                chaos::common::data::CDataWrapper **variable_value,
+                                uint32_t millisec_to_wait=5000);
+                
+                //!remove a variable
+                int removeVariable(const std::string& variable_name,
+                                   uint32_t millisec_to_wait=5000);
+                
+                //!remove a variable
+                int searchVariable(const std::string& variable_name,ChaosStringVector& variable_found,
+                                                   uint32_t millisec_to_wait=5000);
                 //! Search snapshot for node
                 /*!
                  \param node_uid tha unique id of the node
@@ -246,7 +281,7 @@ namespace chaos {
                 /*!
                  \param request_pack is the data to forward to the rpc request, memory is internally managed by roc subsystem
                  */
-                std::auto_ptr<MultiAddressMessageRequestFuture> sendRequestWithFuture(const std::string& action_domain,
+                ChaosUniquePtr<MultiAddressMessageRequestFuture> sendRequestWithFuture(const std::string& action_domain,
                                                                                       const std::string& action_name,
                                                                                       chaos::common::data::CDataWrapper *request_pack,
                                                                                       int32_t request_timeout = 1000);

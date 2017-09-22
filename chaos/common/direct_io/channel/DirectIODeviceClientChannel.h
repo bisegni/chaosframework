@@ -1,21 +1,22 @@
 /*
- *	DirectIODeviceClientChannel.h
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 #ifndef __CHAOSFramework__DirectIODeviceClientChannel__
 #define __CHAOSFramework__DirectIODeviceClientChannel__
@@ -24,11 +25,11 @@
 #include <stdint.h>
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/data/CDataWrapper.h>
+#include <chaos/common/utility/DataBuffer.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/direct_io/channel/DirectIODeviceChannelGlobal.h>
 #include <chaos/common/direct_io/channel/DirectIOVirtualClientChannel.h>
 
-namespace chaos_data = chaos::common::data;
 namespace chaos {
     namespace common {
         namespace direct_io {
@@ -40,7 +41,9 @@ namespace chaos {
                     uint16_t endpoint;
                     uint64_t ip;
                     uint32_t hash;
-                }AnswerServerInfo;
+                } AnswerServerInfo;
+                
+                CHAOS_DEFINE_SET_FOR_TYPE(chaos::common::utility::DataBuffer<>, SetDataBuffer);
                 
                 //! Class for the managment of pushing data for the device dataset
                 /*!
@@ -74,9 +77,20 @@ namespace chaos {
                                                            DataServiceNodeDefinitionType::DSStorageType _put_mode,
                                                            bool wait_result = true);
                     
+                    //! Send device serialization with priority
+                    int64_t storeAndCacheHealthData(const std::string& key,
+                                                    void *buffer,
+                                                    uint32_t buffer_len,
+                                                    DataServiceNodeDefinitionType::DSStorageType _put_mode,
+                                                    bool wait_result = true);
+                    
                     //! Send a request for the last output data
                     int64_t requestLastOutputData(const std::string& key,
                                                   void **result, uint32_t &size);
+                    
+                    //! Send a request for the last output data for a set of key
+                    int64_t requestLastOutputData(const ChaosStringVector& keys,
+                                                  chaos::common::data::VectorCDWShrdPtr& results);
                     
                     //! Perform a temporal query on a key
                     /*!
@@ -84,7 +98,8 @@ namespace chaos {
                      \param key to search
                      \param start_ts start of timestamp to search
                      \param end_ts end of the timestamp where limit the search
-                     \param query_id the newly associated query id is returned.
+                     \param last_sequence is an input-outpu field that permit to give sequence of the last found
+                            element and will be filled with last element's sequencefo the current found page
                      \param result_handler has the found element page
                      \return error
                      */
@@ -92,8 +107,8 @@ namespace chaos {
                                            uint64_t start_ts,
                                            uint64_t end_ts,
                                            uint32_t page_dimension,
-                                           uint64_t last_sequence_id,
-                                           opcode_headers::DirectIODeviceChannelOpcodeQueryDataCloudResultPtr *result_handler);
+                                           opcode_headers::SearchSequence& last_sequence,
+                                           opcode_headers::QueryResultPage& found_element_page);
                     
                     //! Perform a temporal data delete operation on a key
                     /*!

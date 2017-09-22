@@ -1,22 +1,22 @@
 /*
- *	MongoDBScriptDataAccess.cpp
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFramework]
- *	Created by bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 25/05/16 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include "MongoDBScriptDataAccess.h"
@@ -48,7 +48,7 @@ static const std::string    ESCAPE_REPLACE_STRING("\\\\&");
 static const boost::regex   ESCAPE_REPLACE_SEARCH_REGEXP("([\\^\\.\\$\\|\\(\\)\\[\\]\\*\\+\\?\\/\\\\])");
 static const boost::regex   REGEX_EXECUTION_POOL_VALIDATION("[A-Za-z0-9_]+:[A-Za-z0-9\\/_]+");
 
-MongoDBScriptDataAccess::MongoDBScriptDataAccess(const boost::shared_ptr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
+MongoDBScriptDataAccess::MongoDBScriptDataAccess(const ChaosSharedPtr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
 MongoDBAccessor(_connection),
 ScriptDataAccess(),
 utility_data_access(NULL){}
@@ -93,11 +93,8 @@ int MongoDBScriptDataAccess::insertNewScript(Script& script_entry) {
                                      i))) {
             SDA_ERR << "Error creating new script";
         } else {
-            //now all other part of the script are managed with update
-            if(script_entry.script_content.size()) {
-                //add sccript content
-                err = updateScript(script_entry);
-            }
+            //add sccript content
+            err = updateScript(script_entry);
         }
     } catch (const mongo::DBException &e) {
         SDA_ERR << e.what();
@@ -119,7 +116,7 @@ int MongoDBScriptDataAccess::updateScript(Script& script) {
         ScriptSDWrapper s_dw;
         s_dw.dataWrapped() = script;
         
-        std::auto_ptr<CDataWrapper> serialization = s_dw.serialize();
+        ChaosUniquePtr<chaos::common::data::CDataWrapper> serialization = s_dw.serialize();
         mongo::BSONObj u(serialization->getBSONRawData(size));
         DEBUG_CODE(SDA_DBG<<log_message("updateScriptContent",
                                         "update",
@@ -146,7 +143,7 @@ int MongoDBScriptDataAccess::searchScript(ScriptBaseDescriptionListWrapper& scri
                                           uint32_t page_length) {
     int err = 0;
     SearchResult paged_result;
-    mongo::BSONObj p = BSON(CHAOS_SBD_NAME<< 1<<CHAOS_SBD_DESCRIPTION<<1);
+    mongo::BSONObj p = BSON("seq"<<1<<CHAOS_SBD_NAME<< 1<<CHAOS_SBD_DESCRIPTION<<1);
     CHAOS_ASSERT(utility_data_access)
     try {
         mongo::Query q = getNextPagedQuery(last_sequence_id,
@@ -172,7 +169,6 @@ int MongoDBScriptDataAccess::searchScript(ScriptBaseDescriptionListWrapper& scri
                      it++) {
                     CDataWrapper element_found(it->objdata());
                     script_list.add(&element_found);
-                    
                 }
             }
         }
@@ -206,8 +202,9 @@ int MongoDBScriptDataAccess::addScriptInstance(const uint64_t seq,
         mongo::Query q = BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID<< instance_name<<
                               chaos::NodeDefinitionKey::NODE_GROUP_SET << script_name<<
                               "script_seq" << (long long)seq);
-        //add base instanceinformation control control unit implementation
-        mongo::BSONObj u = BSON("$set" << BSON("instance_description" << BSON("control_unit_implementation" << "ScriptableExecutionUnit")));
+        //add base instance information control control unit implementation
+        mongo::BSONObj u = BSON("$set" << BSON("script_bind_type" << ScriptBindTypeDisable <<
+                                               "instance_description" << BSON("control_unit_implementation" << "ScriptableExecutionUnit")));
         
         DEBUG_CODE(SDA_DBG<<log_message("addScriptInstance",
                                         "update",
@@ -222,7 +219,39 @@ int MongoDBScriptDataAccess::addScriptInstance(const uint64_t seq,
         }
         
         //we have the script now get the dataset and attach it to the instance
-        
+    } catch (const mongo::DBException &e) {
+        SDA_ERR << e.what();
+        err = e.getCode();
+    }
+    return err;
+}
+
+int MongoDBScriptDataAccess::updateBindType(const chaos::service_common::data::script::ScriptBaseDescription& script_base_descrition,
+                                            const chaos::service_common::data::script::ScriptInstance& instance) {
+    CHAOS_ASSERT(node_data_access)
+    int err = 0;
+    try {
+        mongo::Query q = BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID<< instance.instance_name<<
+                              chaos::NodeDefinitionKey::NODE_GROUP_SET << script_base_descrition.name<<
+                              "script_seq" << (long long)script_base_descrition.unique_id);
+        mongo::BSONObj u;
+        if(instance.bind_type == ScriptBindTypeUnitServer) {
+            if(instance.bind_node.size() == 0) {SDA_ERR << "Invalid bind node name";return -1;}
+            u = BSON("$set" << BSON("script_bind_type" << (int32_t)instance.bind_type <<
+                                    CHAOS_FORMAT("instance_description.%1%",%chaos::NodeDefinitionKey::NODE_PARENT) << instance.bind_node));
+        } else {
+            u = BSON("$set" << BSON("script_bind_type" << (int32_t)instance.bind_type));
+        }
+        DEBUG_CODE(SDA_DBG<<log_message("addScriptInstance",
+                                        "update",
+                                        DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                                "Update",
+                                                                q,
+                                                                u));)
+        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES), q, u))){
+            SDA_ERR << "Error updating script instance node with default instance data" << err;
+            return err;
+        }
     } catch (const mongo::DBException &e) {
         SDA_ERR << e.what();
         err = e.getCode();
@@ -252,7 +281,7 @@ int MongoDBScriptDataAccess::removeScriptInstance(const uint64_t seq,
     return err;
 }
 
-int MongoDBScriptDataAccess::searchScriptInstance(std::vector<NodeInstance>& instance_list,
+int MongoDBScriptDataAccess::searchScriptInstance(std::vector<ScriptInstance>& instance_list,
                                                   const std::string& script_name,
                                                   const std::string& search_string,
                                                   uint64_t start_sequence_id,
@@ -263,20 +292,15 @@ int MongoDBScriptDataAccess::searchScriptInstance(std::vector<NodeInstance>& ins
         mongo::Query q = getNextPagedQueryForInstance(start_sequence_id,
                                                       script_name,
                                                       search_string);
-        
-        mongo::BSONObj p = BSON("seq" << 1 <<
-                                chaos::NodeDefinitionKey::NODE_UNIQUE_ID << 1);
         DEBUG_CODE(SDA_DBG<<log_message("searchScriptInstance",
                                         "performPagedQuery",
-                                        DATA_ACCESS_LOG_2_ENTRY("Query",
-                                                                "Projection",
-                                                                q,
-                                                                p));)
+                                        DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                q));)
         //inset on database new script description
         if((err = performPagedQuery(paged_result,
                                     MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                     q,
-                                    &p,
+                                    NULL,
                                     NULL,
                                     page_length))) {
             SDA_ERR << "Error calling performPagedQuery with error" << err;
@@ -288,13 +312,62 @@ int MongoDBScriptDataAccess::searchScriptInstance(std::vector<NodeInstance>& ins
                      it++) {
                     if(it->hasField("seq") &&
                        it->hasField(chaos::NodeDefinitionKey::NODE_UNIQUE_ID)){
-                        instance_list.push_back(NodeInstance((uint64_t)it->getField("seq").Long(), it->getField(chaos::NodeDefinitionKey::NODE_UNIQUE_ID).String()));
+                        ScriptInstance instance;
+                        instance.instance_seq = (uint64_t)it->getField("seq").Long();
+                        instance.instance_name = it->getField(chaos::NodeDefinitionKey::NODE_UNIQUE_ID).String();
+                        mongo::BSONElement bte = it->getFieldDotted("script_bind_type");
+                        instance.bind_type = bte.ok()?static_cast<ScriptBindType>(bte.numberInt()):ScriptBindTypeDisable;
+                        mongo::BSONElement bne = it->getFieldDotted(CHAOS_FORMAT("instance_description.%1%",%NodeDefinitionKey::NODE_PARENT));
+                        instance.bind_node = bne.ok()?bne.String():"";
+                        instance_list.push_back(instance);
                     }
                 }
             }
         }
         
         //now all other part of the script are managed with update
+    } catch (const mongo::DBException &e) {
+        SDA_ERR << e.what();
+        err = e.getCode();
+    }
+    return err;
+}
+
+int MongoDBScriptDataAccess::getScriptInstance(const std::string& script_instance,
+                                               const uint64_t& seq,
+                                               bool& found,
+                                               ScriptInstance& instance) {
+    int err = 0;
+    mongo::BSONObj element_found;
+    CHAOS_ASSERT(utility_data_access)
+    try {
+        found = false;
+        mongo::BSONObj q = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << script_instance
+                                << "seq" << (long long)seq);
+        
+        DEBUG_CODE(SDA_DBG<<log_message("getScriptInstance",
+                                        "findOne",
+                                        DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                q));)
+        //inset on database new script description
+        if((err = connection->findOne(element_found,
+                                      MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                      q))) {
+            SDA_ERR << CHAOS_FORMAT("Error fetching instance %1%[%2%] with error [%3%]", %script_instance%seq%err);
+        } else {
+            if((found = !element_found.isEmpty())) {
+                instance.instance_name = script_instance;
+                instance.instance_seq = seq;
+                mongo::BSONElement bte = element_found.getFieldDotted("script_bind_type");
+                instance.bind_type = bte.ok()?static_cast<ScriptBindType>(bte.numberInt()):ScriptBindTypeDisable;
+                mongo::BSONElement bne = element_found.getFieldDotted(CHAOS_FORMAT("instance_description.%1%",%NodeDefinitionKey::NODE_PARENT));
+                instance.bind_node = bne.ok()?bne.String():"";
+            } else {
+                SDA_ERR << CHAOS_FORMAT("The instance %1%[%2%] is empty", %script_instance%seq);
+                
+            }
+        }
+        
     } catch (const mongo::DBException &e) {
         SDA_ERR << e.what();
         err = e.getCode();
@@ -356,7 +429,7 @@ int MongoDBScriptDataAccess::deleteScript(const uint64_t unique_id,
                                         DATA_ACCESS_LOG_1_ENTRY("Query",
                                                                 q_instance));)
         //inset on database new script description
-        if((err = connection->remove(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SCRIPT),
+        if((err = connection->remove(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                      q_instance))) {
             SDA_ERR << CHAOS_FORMAT("Error removing instance for script %1%[%2%] with error [%3%]", %unique_id%name%err);
         } else {
@@ -449,9 +522,9 @@ int MongoDBScriptDataAccess::getUnscheduledInstanceForJob(const chaos::service_c
         bson_find_and << BSON(chaos::NodeDefinitionKey::NODE_SUB_TYPE << chaos::NodeType::NODE_SUBTYPE_SCRIPTABLE_EXECUTION_UNIT);
         bson_find_and << BSON("script_seq" << (long long)script.unique_id);
         bson_find_and << BSON("instance_description.auto_load"  << true);
-        
-        bson_find_hb_or << BSON(chaos::NodeDefinitionKey::NODE_TIMESTAMP << BSON("$exists" << true << "$lt" << start_timeout_date));
-        bson_find_hb_or << BSON(chaos::NodeDefinitionKey::NODE_TIMESTAMP << BSON("$exists" << false));
+        bson_find_and << BSON("script_bind_type"  << ScriptBindTypeAuto);
+        bson_find_hb_or << BSON(CHAOS_FORMAT("health_stat.%1%",%chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP) << BSON("$exists" << true << "$lt" << start_timeout_date));
+        bson_find_hb_or << BSON(CHAOS_FORMAT("health_stat.%1%",%chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP) << BSON("$exists" << false));
         bson_find_and << BSON("$or" << bson_find_hb_or.arr());
         
         mongo::BSONObj q = BSON("$and" << bson_find_and.arr());
@@ -495,7 +568,7 @@ int MongoDBScriptDataAccess::reserveInstanceForScheduling(bool& reserverd,
         
         //unique id rule
         bson_find_and << BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID << instance_uid);
-        
+        bson_find_and << BSON("script_bind_type"  << ScriptBindTypeAuto);
         //timeout rule
         uint64_t now = TimingUtil::getTimeStamp();
         mongo::Date_t start_timeout_date(now + timeout); //date need to be in the future because we need to reserve it
@@ -506,7 +579,7 @@ int MongoDBScriptDataAccess::reserveInstanceForScheduling(bool& reserverd,
         mongo::BSONObj q = BSON("$and" << bson_find_and.arr());
         //the reservation is done using updateing the heartbeat and unit server alias
         mongo::BSONObj u = BSON("$set" << BSON(CHAOS_FORMAT("instance_description.%1%",%chaos::NodeDefinitionKey::NODE_PARENT) << unit_server_parent <<
-                                               chaos::NodeDefinitionKey::NODE_TIMESTAMP << mongo::Date_t(now)));
+                                               CHAOS_FORMAT("health_stat.%1%",%chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP) << mongo::Date_t(now)));
         
         DEBUG_CODE(SDA_DBG<<log_message("instanceHeartbeat",
                                         "update",

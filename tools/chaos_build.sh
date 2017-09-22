@@ -1,6 +1,6 @@
 #!/bin/bash -e
-arch="x86_64 i686 arm armhf"
-build="dynamic static"
+arch="arm i686 armhf x86_64"
+build="static dynamic"
 prefix="chaos_bundle"
 branch="development"
 buildtype=""
@@ -13,7 +13,7 @@ currdir=`pwd`
 installdir="$currdir/chaos-build"
 inputdir=""
 nproc="4"
-log="default"
+log="chaos_build.log"
 unset CHAOS_TARGET
 unset CHAOS_PREFIX
 host=`hostname`
@@ -24,7 +24,7 @@ host_date=`date`
 mail_obj="[CHAOS CHECK] ERROR on $host($host_arch) $host_date"
 target=""
 stage=""
-
+deploy_mode=0
 
 function send_error_mail(){
     to=$1
@@ -86,12 +86,17 @@ function printlog(){
     
 }
 function initialize_bundle(){
-    printlog "* initializing repo"
+    printlog "* initializing repo in "`pwd`
 
-    if ! repo init -u ssh://git@opensource-stash.infn.it:7999/chaos/chaos_repo_bundle.git -b development >> $log 2>&1;then
-	printlog "## repo initialization failed"
-	return 1
-    fi
+    # if ! repo init -u ssh://git@opensource-stash.infn.it:7999/chaos/chaos_repo_bundle.git -b development >> $log 2>&1;then
+    # 	printlog "## repo initialization failed"
+    # 	return 1
+    # fi
+     if ! repo init -u git@baltig.infn.it:chaos-lnf-control/chaos_repo_bundle.git -b development >> $log 2>&1;then
+     	printlog "## repo initialization failed"
+     	return 1
+     fi
+
     printlog "* synching repo"
     if ! repo sync >> $log 2>&1 ;then
 	printlog "## repo synchronization failed"
@@ -113,7 +118,7 @@ function compile_bundle(){
     printlog "==== BRANCH:$branch"
     printlog "=========================================="
 
-    printlog "* entering in $dir checking out \"$branch\""
+    printlog "* entering in '$dir' checking out \"$branch\""
     printlog "* log file \"$log\""
     stage="initilization $dir $arch $build $branch"
     target="DIR $dir, ARCH $arch, BUILD:$build, BRANCH:$branch"
@@ -133,7 +138,7 @@ function compile_bundle(){
 	fi
     fi
     stage="git access to \"$branch\""
-    if ! chaosframework/tools/chaos_git.sh -c $branch >> $log 2>&1 ;then
+    if ! $mydir/chaos_git.sh -y -c $branch >> $log 2>&1 ;then
 	printlog "## error cannot checkout \"$branch\""
 	popd > /dev/null
 	exit 1;
@@ -151,12 +156,12 @@ function compile_bundle(){
     fi
     case $arch in
 	i686)	    
-	    cmake_params="$cmake_params -DCHAOS_TARGET=i686-linux26"
+	    cmake_params="$cmake_params -DCHAOS_TARGET=i686-linux26 -DCHAOS_CDS=OFF -DCHAOS_MDS=OFF -DCHAOS_WAN=OFF -DCHAOS_EXAMPLES=OFF"
 	    export PATH=/usr/local/chaos/i686-nptl-linux-gnu/bin:$PATH
 	    ;;
 
 	armhf)
-	    cmake_params="$cmake_params -DCHAOS_TARGET=armhf"
+	    cmake_params="$cmake_params -DCHAOS_TARGET=armhf -DCHAOS_CDS=OFF -DCHAOS_MDS=OFF -DCHAOS_WAN=OFF -DCHAOS_EXAMPLES=OFF"
 	    ;;
 
 	arm)
@@ -168,7 +173,7 @@ function compile_bundle(){
 	    source /usr/local/chaos/oecore-x86-64/environment-setup-armv7-vfp-neon-nilrt-linux-gnueabi
 	    ;;
 	x86_64)
-	    cmake_params="$cmake_params -DCHAOS_CCS=ON -DQMAKE_PATH=/usr/local/chaos/qt-5.6/bin/"
+	    cmake_params="$cmake_params -DCHAOS_CCS=ON -DQMAKE_PATH=/usr/local/chaos/qt-5.6/bin/ -DCHAOS_WAN=ON"
 	    enable_ccs=true
 	    ;;
     esac
@@ -187,7 +192,7 @@ function compile_bundle(){
     if [ ! -f CMakeCache.txt ]|| [ -n "$force_reconf" ];then
 	printlog "* configuring $dir cmake \"$cmake_params\"...."
 	rm -rf $install_prefix
-	chaosframework/tools/chaos_clean.sh . >> $log 2>&1
+	$mydir/chaos_clean.sh . >> $log 2>&1
 	if ! cmake $cmake_params . >> $log 2>&1;then
 	    printlog "## error during cmake configuration \"$cmake_params\""
 	    popd >& /dev/null
@@ -242,16 +247,22 @@ function compile_bundle(){
 }
 
 if [ -n "$fromscratch" ];then
-    printlog "* from scratch"
-    if [ -z "$inputdir" ];then
-	inputdir=$currdir"/build_chaos_bundle"
-    fi
-    if [ -d "$inputdir" ];then
-	printlog "* removing $inputdir"
-	rm -rf $inputdir
+
+for a in $arch;do
+    for b in $build;do
+    printlog "* from scratch arch '$a' build '$b'"
+
+    dir=$currdir"/$prefix-$a-$b"
+
+    if [ -d "$dir" ];then
+	printlog "* removing $dir"
+	rm -rf $dir
     fi
 
-    mkdir -p $inputdir
+    mkdir -p $dir
+    printlog "* creating $dir"
+done
+done
     
 fi
 for a in $arch;do

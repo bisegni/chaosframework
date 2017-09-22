@@ -1,29 +1,31 @@
 /*
- *	DirectIOSystemAPIServerChannel.cpp
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include <chaos/common/global.h>
 #include <chaos/common/utility/endianess.h>
+#include <chaos/common/utility/DataBuffer.h>
 #include <chaos/common/direct_io/channel/DirectIOSystemAPIServerChannel.h>
 
-
-namespace chaos_data = chaos::common::data;
+using namespace chaos::common::data;
+using namespace chaos::common::utility;
 using namespace chaos::common::direct_io;
 using namespace chaos::common::direct_io::channel;
 using namespace chaos::common::direct_io::channel::opcode_headers;
@@ -59,46 +61,12 @@ int DirectIOSystemAPIServerChannel::consumeDataPack(DirectIODataPack *dataPack,
     
     switch (channel_opcode) {
         case opcode::SystemAPIChannelOpcodeNewSnapshotDataset: {
-            if(synchronous_answer == NULL) return -1000;
-            
-            //get the header
-            DirectIOSystemAPISnapshotResultHeader *result_header = (DirectIOSystemAPISnapshotResultHeader*)calloc(sizeof(DirectIOSystemAPISnapshotResultHeader), 1);
-            opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeaderPtr header = reinterpret_cast< opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeaderPtr >(dataPack->channel_header_data);
-            header->field.producer_key_set_len = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.producer_key_set_len);
-            
-            //call the handler
-            err = handler->consumeNewSnapshotEvent(header,
-                                                   dataPack->channel_data,
-                                                   dataPack->header.channel_data_size,
-                                                   *result_header);
-            
-            if(err == 0){
-                //set the result header
-                //fix endianes into api result
-                result_header->error = TO_LITTEL_ENDNS_NUM(int32_t, result_header->error);
-                DIRECT_IO_SET_CHANNEL_HEADER(synchronous_answer, result_header, sizeof(DirectIOSystemAPISnapshotResultHeader))
-            }
+            return -10000;
             break;
         }
             
         case opcode::SystemAPIChannelOpcodeDeleteSnapshotDataset: {
-            if(synchronous_answer == NULL) return -1000;
-            //set the answer pointer
-            DirectIOSystemAPISnapshotResultHeader *result_header = (DirectIOSystemAPISnapshotResultHeader*)calloc(sizeof(DirectIOSystemAPISnapshotResultHeader), 1);
-            
-            //get the header
-            opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeaderPtr header = reinterpret_cast< opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeaderPtr >(dataPack->channel_header_data);
-            header->field.producer_key_set_len = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.producer_key_set_len);
-            
-            //call the handler
-            err = handler->consumeDeleteSnapshotEvent(header,
-                                                      *result_header);
-            if(err == 0){
-                //set the result header
-                //fix endianes into api result
-                result_header->error = TO_LITTEL_ENDNS_NUM(int32_t, result_header->error);
-                DIRECT_IO_SET_CHANNEL_HEADER(synchronous_answer, result_header, sizeof(DirectIOSystemAPISnapshotResultHeader))
-            }
+            return -10000;
             break;
         }
             
@@ -141,6 +109,37 @@ int DirectIOSystemAPIServerChannel::consumeDataPack(DirectIODataPack *dataPack,
             }
             break;
         }
+            
+        case opcode::SystemAPIChannelOpcodePushLogEntryForANode: {
+            if(synchronous_answer != NULL) return -1000;
+            ChaosStringVector log_entry;
+            DataBuffer<> buffer(dataPack->channel_data,
+                                dataPack->header.channel_data_size);
+            //read the request header
+            opcode_headers::DirectIOSystemAPIChannelOpcodePushLogEntryForANodeHeaderPtr header = reinterpret_cast< opcode_headers::DirectIOSystemAPIChannelOpcodePushLogEntryForANodeHeaderPtr >(dataPack->channel_header_data);
+            header->field.data_entries_num = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.data_entries_num);
+            
+            //now we can read data
+            uint32_t node_name_size = (uint32_t)FROM_LITTLE_ENDNS_NUM(uint32_t, buffer.readInt32());
+            std::string node_name = buffer.readString(node_name_size);
+            
+            //read all entry
+            uint32_t entry_len = 0;
+            for(int idx = 0;
+                idx < header->field.data_entries_num;
+                idx++) {
+                entry_len = (uint32_t)FROM_LITTLE_ENDNS_NUM(uint32_t, buffer.readInt32());
+                log_entry.push_back(buffer.readString(entry_len));
+            }
+            
+            //call the handler
+            err = handler->consumeLogEntries(node_name,
+                                             log_entry);
+            buffer.release();
+            if(header) free(header);
+            if(dataPack->channel_data) free(dataPack->channel_data);
+            return err;
+        }
         default:
             break;
     }
@@ -160,6 +159,7 @@ void DirectIOSystemAPIServerChannel::DirectIOSystemAPIServerChannelDeallocator::
                 case opcode::SystemAPIChannelOpcodeNewSnapshotDataset:
                 case opcode::SystemAPIChannelOpcodeDeleteSnapshotDataset:
                 case opcode::SystemAPIChannelOpcodeGetSnapshotDatasetForAKey:
+                case opcode::SystemAPIChannelOpcodePushLogEntryForANode:
                     free(sent_data_ptr);
                     break;
                     
@@ -176,6 +176,7 @@ void DirectIOSystemAPIServerChannel::DirectIOSystemAPIServerChannelDeallocator::
                     break;
                     
                 case opcode::SystemAPIChannelOpcodeGetSnapshotDatasetForAKey:
+                case opcode::SystemAPIChannelOpcodePushLogEntryForANode:
                     if(sent_data_ptr) free(sent_data_ptr);
                     break;
                 default:

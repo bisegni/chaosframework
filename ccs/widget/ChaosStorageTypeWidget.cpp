@@ -2,6 +2,9 @@
 #include "ui_ChaosStorageTypeWidget.h"
 #include <QDebug>
 
+using namespace chaos::common::data;
+using namespace chaos::common::property;
+
 using namespace chaos::DataServiceNodeDefinitionType;
 using namespace chaos::metadata_service_client::node_monitor;
 
@@ -79,10 +82,10 @@ void ChaosStorageTypeWidget::updateChaosContent() {
 void ChaosStorageTypeWidget::nodeChangedOnlineState(const std::string& node_uid,
                                                     OnlineState old_status,
                                                     OnlineState new_status) {
+    online_status = new_status;
     QMetaObject::invokeMethod(this,
                               "updateUIStatus",
                               Qt::QueuedConnection);
-    online_status = new_status;
 }
 
 void ChaosStorageTypeWidget::updatedDS(const std::string& control_unit_uid,
@@ -119,32 +122,32 @@ void ChaosStorageTypeWidget::updateUIStatus() {
 
     //take on off ccording to storage type
     if(IS_IN_ERROR(ui->pushButtonLive, last_pushbutton_in_error)) {
-        ui->pushButtonLive->setButtonState(2);
         ui->pushButtonLive->updateStateDescription(2, last_error_message);
+        ui->pushButtonLive->setButtonState(2);
     } else {
         ui->pushButtonLive->setButtonState(storage_type == DSStorageTypeLive);
     }
     ui->pushButtonLive->setChecked(storage_type == DSStorageTypeLive);
 
     if(IS_IN_ERROR(ui->pushButtonHistory, last_pushbutton_in_error)) {
-        ui->pushButtonHistory->setButtonState(2);
         ui->pushButtonHistory->updateStateDescription(2, last_error_message);
+        ui->pushButtonHistory->setButtonState(2);
     } else {
         ui->pushButtonHistory->setButtonState(storage_type == DSStorageTypeHistory);
     }
     ui->pushButtonHistory->setChecked(storage_type == DSStorageTypeHistory);
 
     if(IS_IN_ERROR(ui->pushButtonLiveAndHistory, last_pushbutton_in_error)) {
-        ui->pushButtonLiveAndHistory->setButtonState(2);
         ui->pushButtonLiveAndHistory->updateStateDescription(2, last_error_message);
+        ui->pushButtonLiveAndHistory->setButtonState(2);
     } else {
         ui->pushButtonLiveAndHistory->setButtonState(storage_type == DSStorageTypeLiveHistory);
     }
     ui->pushButtonLiveAndHistory->setChecked(storage_type == DSStorageTypeLiveHistory);
 
     if(IS_IN_ERROR(ui->pushButtonUndefined, last_pushbutton_in_error)) {
-        ui->pushButtonUndefined->setButtonState(2);
         ui->pushButtonUndefined->updateStateDescription(2, last_error_message);
+        ui->pushButtonUndefined->setButtonState(2);
     } else {
         ui->pushButtonUndefined->setButtonState(storage_type == DSStorageTypeUndefined);
     }
@@ -162,27 +165,17 @@ void ChaosStorageTypeWidget::on_pushButton_clicked(bool clicked) {
 
 void ChaosStorageTypeWidget::sendStorageType(chaos::DataServiceNodeDefinitionType::DSStorageType type,
                                              const QString& event_tag) {
-    chaos::metadata_service_client::api_proxy::node::NodePropertyGroupList property_list;
-    boost::shared_ptr<chaos::common::data::CDataWrapperKeyValueSetter> storage_type(new chaos::common::data::CDataWrapperInt32KeyValueSetter(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_TYPE,
-                                                                                                                                             type));
-    boost::shared_ptr<chaos::metadata_service_client::api_proxy::node::NodePropertyGroup> cu_property_group(new chaos::metadata_service_client::api_proxy::node::NodePropertyGroup());
-    cu_property_group->group_name = "property_abstract_control_unit";
-    cu_property_group->group_property_list.push_back(storage_type);
-
-    property_list.push_back(cu_property_group);
+    PropertyGroup pg(chaos::ControlUnitPropertyKey::GROUP_NAME);
+    pg.addProperty(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_TYPE, CDataVariant(type));
 
     submitApiResult(event_tag,
                     GET_CHAOS_API_PTR(chaos::metadata_service_client::api_proxy::node::UpdateProperty)->execute(nodeUID().toStdString(),
-                                                                                                                property_list));
+                                                                                                                pg));
 }
 
-void ChaosStorageTypeWidget::apiHasStarted(const QString& api_tag) {
-    QObject *sender = findChild<QObject*>(api_tag);
-}
+void ChaosStorageTypeWidget::apiHasStarted(const QString& api_tag) {}
 
-void ChaosStorageTypeWidget::apiHasEnded(const QString& api_tag) {
-    QObject *sender = findChild<QObject*>(api_tag);
-}
+void ChaosStorageTypeWidget::apiHasEnded(const QString& api_tag) {}
 
 void ChaosStorageTypeWidget::apiHasEndedWithError(const QString& api_tag,
                                                   QSharedPointer<chaos::CException> api_exception) {

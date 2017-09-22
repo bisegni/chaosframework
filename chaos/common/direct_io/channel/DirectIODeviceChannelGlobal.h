@@ -11,7 +11,9 @@
 
 #include <string>
 #include <stdint.h>
-#include <arpa/inet.h>
+//#include <arpa/inet.h>
+#include <chaos/common/chaos_types.h>
+#include <chaos/common/data/CDataWrapper.h>
 
 namespace chaos {
     namespace common {
@@ -27,7 +29,9 @@ namespace chaos {
                         DeviceChannelOpcodePutOutput				= 1,	/**< send the output dataset [synchronous]*/
                         DeviceChannelOpcodeGetLastOutput            = 2,	/**< request the last output dataset from live cache [synchronous]*/
                         DeviceChannelOpcodeQueryDataCloud			= 4,	/**< query the chaos data associated to a key [synchronous]*/
-                        DeviceChannelOpcodeDeleteDataCloud			= 8     /**< delete the data associated with a key [synchronous]*/
+                        DeviceChannelOpcodeDeleteDataCloud			= 8,    /**< delete the data associated with a key [synchronous]*/
+                        DeviceChannelOpcodePutHeathData				= 16,	/**< send the health dataset [synchronous]*/
+                        DeviceChannelOpcodeMultiGetLastOutput       = 32	/**< request the last output dataset from live cache for a set of key[synchronous]*/
                     } DeviceChannelOpcode;
                     
                     /*!
@@ -47,7 +51,8 @@ namespace chaos {
                     typedef enum SystemAPIChannelOpcode {
                         SystemAPIChannelOpcodeNewSnapshotDataset		= 1,	/**< start new datasets snapshot creation process*/
                         SystemAPIChannelOpcodeDeleteSnapshotDataset		= 2,	/**< delete the snapshot associated to the input tag */
-                        SystemAPIChannelOpcodeGetSnapshotDatasetForAKey	= 3     /**< return the snapshoted datasets for a determinated producer key*/
+                        SystemAPIChannelOpcodeGetSnapshotDatasetForAKey	= 3,    /**< return the snapshoted datasets for a determinated producer key*/
+                        SystemAPIChannelOpcodePushLogEntryForANode      = 4     /**< persist log entry for a node within chaos backend*/
                     } SystemAPIChannelOpcode;
                 }
                 
@@ -61,8 +66,10 @@ namespace chaos {
                     static const char * const QUERY_PARAM_END_TS_I64                    = "qp_data_cloud_end_ts";
                     //!is the node unique id for wich we whant the results
                     static const char * const QUERY_PARAM_SEARCH_KEY_STRING             = "qp_data_cloud_key";
+                    //identify the last run id found
+                    static const char * const QUERY_PARAM_SEARCH_LAST_RUN_ID            = "qp_data_cloud_last_run_id";
                     //if true the data pack will be '>=' otherwhise '>' in timestamp respect to qp_data_cloud_start_ts key
-                    static const char * const QUERY_PARAM_SEARCH_LAST_SEQUENCE_ID		= "qp_data_cloud_last_sequence_id";
+                    static const char * const QUERY_PARAM_SEARCH_LAST_DP_COUNTER		= "qp_data_cloud_last_dp_counter";
                 }
                 
                 //! Name space for grupping the varius headers for every DeviceChannelOpcode
@@ -116,6 +123,18 @@ namespace chaos {
                     } DirectIODeviceChannelHeaderGetOpcode,
                     *DirectIODeviceChannelHeaderGetOpcodePtr;
                     
+                    //! Header for the DirectIODeviceChannelHeaderMultiGetOpcode opcode
+                    /*!
+                     this is the header for request the last output channel for more then one key
+                     */
+                    typedef	union DirectIODeviceChannelHeaderMultiGetOpcode {
+                        //raw data representation of the header
+                        char raw_data[2];
+                        struct header {
+                            uint16_t number_of_key;
+                        } field;
+                    } DirectIODeviceChannelHeaderMultiGetOpcode,
+                    *DirectIODeviceChannelHeaderMultiGetOpcodePtr;
                     
                     //! Header for DirectIODeviceChannelHeaderGetOpcode asynchronous result
                     /*!
@@ -126,6 +145,19 @@ namespace chaos {
                         uint32_t value_len;
                     } DirectIODeviceChannelHeaderGetOpcodeResult,
                     *DirectIODeviceChannelHeaderGetOpcodeResultPtr;
+                    
+                    //! Header for DirectIODeviceChannelHeaderMultiGetOpcode asynchronous result
+                    /*!
+                     the header contains the number for result that are found
+                     every result in encoded in a bson way sso every record as the lent at the start,
+                     if no data is found for a key an empty bson is returned. For each key a bson
+                     document is returned in the same order of key in the set
+                     */
+                    typedef struct DirectIODeviceChannelHeaderMultiGetOpcodeResult {
+                        //! The lenght of found data
+                        uint32_t number_of_result;
+                    } DirectIODeviceChannelHeaderMultiGetOpcodeResult,
+                    *DirectIODeviceChannelHeaderMultiGetOpcodeResultPtr;
                     
                     //#define QUERY_DATA_CLOUD_OPCODE_HEADER_LEN 4
                     //! Header for the DirectIODeviceChannelHeaderOpcodeQueryDataCloud opcode
@@ -144,6 +176,15 @@ namespace chaos {
                     } DirectIODeviceChannelHeaderOpcodeQueryDataCloud,
                     *DirectIODeviceChannelHeaderOpcodeQueryDataCloudPtr;
                     
+                    //!page result
+                    CHAOS_DEFINE_VECTOR_FOR_TYPE(ChaosSharedPtr<chaos::common::data::CDataWrapper>, QueryResultPage);
+                    
+                    //structure for identificate the sequnce fo the found record
+                    typedef struct SearchSequence {
+                        uint64_t run_id;
+                        uint64_t datapack_counter;
+                    }SearchSequence;
+                    
                     //! Header for DirectIODeviceChannelHeaderGetOpcode asynchronous result
                     /*!
                      the found data is sent as data part of direct io protocol
@@ -154,7 +195,7 @@ namespace chaos {
                         //! The numer of element found
                         uint32_t numer_of_record_found;
                         //!last sequence found
-                        uint64_t last_found_sequence;
+                        SearchSequence last_found_sequence;
                     } DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult,
                     *DirectIODeviceChannelHeaderOpcodeQueryDataCloudResultPtr;
                     
@@ -231,6 +272,33 @@ namespace chaos {
                         char		error_message[256];
                     }DirectIOSystemAPISnapshotResultHeader,
                     *DirectIOSystemAPISnapshotResultHeaderPtr;
+                    
+                    //!header user for push log entries for a node
+                    /*!
+                     
+                     data fragment:
+                        -name size
+                        -name
+                        for each entry:
+                            -entry size
+                            -entry
+                     
+                     the data field for this opcode contains the name and the log entries 
+                     concatenated together. The name is mandatory and it is delimited by
+                     null characted, the number of entries is managed by this header and
+                     starts after name null characted and each entry is terminated by null 
+                     characted
+                     the opcode associated to this header is:
+                     - SystemAPIChannelOpcodePushLogEntryForANode
+                     */
+                    typedef	union DirectIOSystemAPIChannelOpcodePushLogEntryForANodeHeader {
+                        char raw_data[sizeof(uint32_t)];
+                        struct header {
+                            //! the number of entries name+log
+                            uint32_t	data_entries_num;
+                        } field;
+                    } DirectIOSystemAPIChannelOpcodePushLogEntryForANodeHeader,
+                    *DirectIOSystemAPIChannelOpcodePushLogEntryForANodeHeaderPtr;
                     
 #define GET_SYSTEM_API_GET_SNAPSHOT_RESULT_BASE_PTR(h) ((char*)h+sizeof(chaos::common::direct_io::channel::opcode_headers::DirectIOSystemAPISnapshotResult)+4)
                     //!result of the new and delete api

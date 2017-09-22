@@ -1,21 +1,22 @@
 /*
- *	IDSTControlUnitBatchCommand.cpp
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2015 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include "IDSTControlUnitBatchCommand.h"
@@ -68,12 +69,12 @@ void IDSTControlUnitBatchCommand::setHandler(CDataWrapper *data) {
     
     //set cu id to the batch command datapack
     cu_id = data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
-    action = static_cast<IDSTAction>(data->getInt32Value("action"));//0-init,1-start,2-ztop,3-deinit
+    action = static_cast<IDSTAction>(data->getInt32Value("action"));//0-init,1-start,2-stop,3-deinit
     
     if((err = getDataAccess<mds_data_access::NodeDataAccess>()->getNodeDescription(cu_id, &tmp_ptr))) {
         LOG_AND_TROW(CU_IDST_BC_ERR, -1, "Control Unit information has not been found!")
     } else if(tmp_ptr != NULL) {
-        std::auto_ptr<CDataWrapper> auto_node_info(tmp_ptr);
+        ChaosUniquePtr<chaos::common::data::CDataWrapper> auto_node_info(tmp_ptr);
         if(auto_node_info->hasKey(NodeDefinitionKey::NODE_RPC_ADDR) &&
            auto_node_info->hasKey(NodeDefinitionKey::NODE_RPC_DOMAIN) ){
             request = createRequest(auto_node_info->getStringValue(NodeDefinitionKey::NODE_RPC_ADDR),
@@ -90,6 +91,7 @@ void IDSTControlUnitBatchCommand::setHandler(CDataWrapper *data) {
 
 // inherited method
 void IDSTControlUnitBatchCommand::acquireHandler() {
+    int err = 0;
     MDSBatchCommand::acquireHandler();
     switch(request->phase) {
         case MESSAGE_PHASE_UNSENT: {

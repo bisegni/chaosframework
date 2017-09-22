@@ -1,21 +1,22 @@
 /*
- *	HTTPWANInterface.cpp
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2014 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include "HTTPWANInterface.h"
@@ -31,6 +32,7 @@
 #include <json/json.h>
 
 using namespace chaos;
+using namespace mongoose;
 using namespace chaos::common::data;
 using namespace chaos::common::utility;
 using namespace chaos::wan_proxy::wan_interface;
@@ -133,8 +135,8 @@ void HTTPWANInterface::init(void *init_data) throw(CException) {
 		mg_set_option(http_server, "enable_directory_listing", "false");
 		HTTWAN_INTERFACE_APP_ << " Thread " << idx << " configured";
 		//configure handler
-		mg_add_uri_handler(http_server, "/api/", event_handler);
-		mg_server_do_i_handle(http_server, do_i_handle);
+	//	mg_add_uri_handler(http_server, "/api/", event_handler);
+	//	mg_server_do_i_handle(http_server, do_i_handle);
 		HTTWAN_INTERFACE_APP_ << " Thread " << idx << " attached to handler";
 		//add server to the list
 		http_server_list.push_back(http_server);
@@ -207,7 +209,7 @@ bool HTTPWANInterface::checkForContentType(struct mg_connection *connection,
 int HTTPWANInterface::process(struct mg_connection *connection) {
 	CHAOS_ASSERT(handler)
 	int								err = 0;
-    DEBUG_CODE(uint64_t                        execution_time_start = TimingUtil::getTimeStampInMicrosends();)
+    DEBUG_CODE(uint64_t                        execution_time_start = TimingUtil::getTimeStampInMicroseconds();)
     DEBUG_CODE(uint64_t                        execution_time_end = 0;)
 	Json::Value						json_request;
 	Json::Value						json_response;
@@ -224,10 +226,40 @@ int HTTPWANInterface::process(struct mg_connection *connection) {
 	
 	//remove the prefix and tokenize the url
 	std::vector<std::string> api_token_list;
+
+	if(method == "GET"){
+		boost::algorithm::split(api_token_list,
+				connection->query_string,
+							 boost::algorithm::is_any_of("&"),
+							 boost::algorithm::token_compress_on);
+
+		HTTWAN_INTERFACE_DBG_ <<"GET url:"<<url<<" api:"<<api_uri<<"content:"<<connection->content<<" query:"<<connection->query_string;
+
+		 if((err = handler->handleCall(1,api_token_list,json_request,
+		                                          response.getHeader(),
+		                                          json_response))) {
+		                HTTWAN_INTERFACE_ERR_ << "Error on api call :" << connection->uri;
+		                //return the error for the api call
+		                response.setCode(400);
+		                json_response["error"] = err;
+		                json_response["error_message"].append("Call Error");
+		            }else{
+		                //return the infromation of api call success
+		                response.setCode(200);
+		                json_response["error"] = 0;
+		            }
+		 response << json_writer.write(json_response);
+		 	flush_response(connection, &response);
+		     DEBUG_CODE(execution_time_end = TimingUtil::getTimeStampInMicroseconds();)
+		     DEBUG_CODE(uint64_t duration = execution_time_end - execution_time_start;)
+		     DEBUG_CODE(HTTWAN_INTERFACE_DBG_ << "Execution time is:" << duration << " microseconds";)
+		 	return 1;//
+	}
 	boost::algorithm::split(api_token_list,
-					 api_uri,
-					 boost::algorithm::is_any_of("/"),
-					 boost::algorithm::token_compress_on);
+						 api_uri,
+						 boost::algorithm::is_any_of("/"),
+						 boost::algorithm::token_compress_on);
+
 	//check if we havethe domain and api name in the uri and the content is json
 	if(api_token_list.size()>= 2 &&
 	   json) {
@@ -277,7 +309,7 @@ int HTTPWANInterface::process(struct mg_connection *connection) {
 	
 	response << json_writer.write(json_response);
 	flush_response(connection, &response);
-    DEBUG_CODE(execution_time_end = TimingUtil::getTimeStampInMicrosends();)
+    DEBUG_CODE(execution_time_end = TimingUtil::getTimeStampInMicroseconds();)
     DEBUG_CODE(uint64_t duration = execution_time_end - execution_time_start;)
     DEBUG_CODE(HTTWAN_INTERFACE_DBG_ << "Execution time is:" << duration << " microseconds";)
 	return 1;//

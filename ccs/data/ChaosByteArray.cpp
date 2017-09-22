@@ -1,7 +1,7 @@
 #include "ChaosByteArray.h"
 
 
-ChaosByteArray::ChaosByteArray(boost::shared_ptr<chaos::common::data::SerializationBuffer> _source_byte_array,
+ChaosByteArray::ChaosByteArray(ChaosSharedPtr<chaos::common::data::SerializationBuffer> _source_byte_array,
                                QObject *p):
     QObject(p),
     source_byte_array(_source_byte_array){

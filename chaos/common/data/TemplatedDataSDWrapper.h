@@ -1,27 +1,27 @@
 /*
- *	TempaltedDataHelper.h
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFramework]
- *	Created by bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 24/05/16 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #ifndef __CHAOSFramework_EB44C3EB_D602_48B6_A57E_FBF4555A4C6A_TempaltedDataHelper_h
 #define __CHAOSFramework_EB44C3EB_D602_48B6_A57E_FBF4555A4C6A_TempaltedDataHelper_h
-
+#include <chaos/common/chaos_types.h>
 #include <chaos/common/data/CDataWrapper.h>
 #if ! defined(BOOST_NO_TYPEID)
 #define GET_TYPE_NAME(T) typeid(T).name();
@@ -29,6 +29,13 @@
 #include <boost/type_index.hpp>
 #define GET_TYPE_NAME(T) boost::typeindex::type_id<T>().pretty_name();
 #endif
+
+
+#define CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(x, default_param)\
+ChaosSharedPtr< chaos::common::data::DataWrapperReference<x> >(new chaos::common::data::DataWrapperReference<x>(default_param))
+
+#define CHAOS_SD_WRAPPER_DEFAULT_PARAMETER(x)\
+ChaosSharedPtr< chaos::common::data::DataWrapperReference<x> > _data = ChaosSharedPtr< chaos::common::data::DataWrapperReference<x> >(new chaos::common::data::DataWrapperCopy<x>())
 
 #include <typeinfo>
 #include <vector>
@@ -99,14 +106,15 @@ namespace chaos {
             template<typename T>
             class TemplatedDataSDWrapper {
                 //pointer todata wrapper
-                std::auto_ptr< DataWrapperReference<T> > wrapper;
+
+            	ChaosSharedPtr < DataWrapperReference<T> > wrapper;
             public:
                 //!constructor with the default container
-                TemplatedDataSDWrapper(std::auto_ptr< DataWrapperReference<T> > _wrapper):
+                TemplatedDataSDWrapper(ChaosSharedPtr< DataWrapperReference<T> >& _wrapper):
                 wrapper(_wrapper){}
                 
                 TemplatedDataSDWrapper(const T& copy_src,
-                                       std::auto_ptr< DataWrapperReference<T> > _wrapper):
+                		ChaosSharedPtr< DataWrapperReference<T> >& _wrapper):
                 wrapper(_wrapper){
                     (*wrapper)() = copy_src;
                 }
@@ -118,7 +126,7 @@ namespace chaos {
                 virtual void deserialize(chaos::common::data::CDataWrapper *serialized_data) = 0;
                 
                 //!serialize the container
-                virtual std::auto_ptr<chaos::common::data::CDataWrapper> serialize() = 0;
+                virtual ChaosUniquePtr<chaos::common::data::CDataWrapper> serialize() = 0;
                 
                 //!return the container
                 T& dataWrapped(){
@@ -127,7 +135,7 @@ namespace chaos {
                 
                 //!assign operation overload with wrapper
                 T& operator()() {
-                    return (*wrapper)();;
+                    return (*wrapper)();
                 }
                 
                 const T& dataWrapped() const {
@@ -145,16 +153,11 @@ namespace chaos {
                 }
             };
             
-
-#define CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(x, default_param)\
-std::auto_ptr< chaos::common::data::DataWrapperReference<x> >(new chaos::common::data::DataWrapperReference<x>(default_param))
             
 #define CHAOS_SD_WRAPPER_NAME(x)  x ## SDWrapper
             
 #define CHAOS_SD_WRAPPER_NAME_VAR(x, v)  CHAOS_SD_WRAPPER_NAME(x) v
             
-#define CHAOS_SD_WRAPPER_DEFAULT_PARAMETER(x)\
-std::auto_ptr< chaos::common::data::DataWrapperReference<x> > _data = std::auto_ptr< chaos::common::data::DataWrapperReference<x> >(new chaos::common::data::DataWrapperCopy<x>())
             
 #define CHAOS_SD_WRAPPER_DEFAULT_CONSTRUCTOR(x)\
 CHAOS_SD_WRAPPER_NAME(x)(CHAOS_SD_WRAPPER_DEFAULT_PARAMETER(x))
@@ -259,20 +262,20 @@ Subclass(copy_source, _data){}
                     }
                     
                     //we can deserialize data
-                    std::auto_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> serialized_array(serialized_data->getVectorValue(instance_serialization_key));
+                    ChaosUniquePtr<chaos::common::data::CMultiTypeDataArrayWrapper> serialized_array(serialized_data->getVectorValue(instance_serialization_key));
                     for(int idx = 0;
                         idx < serialized_array->size();
                         idx++) {
-                        std::auto_ptr<chaos::common::data::CDataWrapper> element(serialized_array->getCDataWrapperElementAtIndex(idx));
+                        ChaosUniquePtr<chaos::common::data::CDataWrapper> element(serialized_array->getCDataWrapperElementAtIndex(idx));
                         serializer_wrap.deserialize(element.get());
                         add(serializer_wrap.dataWrapped());
                     }
                 }
                 
                 //!serialize the list
-                std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> serialize() {
                     DW serializer_wrap;
-                    std::auto_ptr<chaos::common::data::CDataWrapper> result(new chaos::common::data::CDataWrapper());
+                    ChaosUniquePtr<chaos::common::data::CDataWrapper> result(new chaos::common::data::CDataWrapper());
                     for(WrapListIterator it = TemplatedDataListWrapper<T,DW>::begin(),
                         end = TemplatedDataListWrapper<T,DW>::end();
                         it != end;

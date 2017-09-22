@@ -1,27 +1,28 @@
 /*
- *	NodeSearch
- *	!CHAOS
- *	Created by Claudio Bisegni on 14/09/15.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2015 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 
 #include "NodeSearchTest.h"
 
-#include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
+#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
 
 using namespace chaos::common::data;
 
@@ -41,7 +42,7 @@ void NodeSearchTest::testSearch(const std::string& search_string){
     uint64_t last_sequence_id = 0;
     
     //get the api proxy
-    NodeSearch *node_search_api_proxy = ChaosMetadataServiceClient::getInstance()->getApiProxy<NodeSearch>(500);
+    ChaosUniquePtr<NodeSearch> node_search_api_proxy = ChaosMetadataServiceClient::getInstance()->getApiProxy<NodeSearch>(500);
     
     while (!end){
         
@@ -61,14 +62,14 @@ void NodeSearchTest::testSearch(const std::string& search_string){
                     if(search_result->getResult()->hasKey("node_search_result_page")&&
                        search_result->getResult()->isVectorValue("node_search_result_page")){
                         //we have result
-                        std::auto_ptr<CMultiTypeDataArrayWrapper> node_found_vec(search_result->getResult()->getVectorValue("node_search_result_page"));
+                        ChaosUniquePtr<CMultiTypeDataArrayWrapper> node_found_vec(search_result->getResult()->getVectorValue("node_search_result_page"));
                         if(node_found_vec->size() == 0) {
                             end=true;
                         } else{
                             for (int idx = 0;
                                  idx < node_found_vec->size();
                                  idx++){
-                                std::auto_ptr<CDataWrapper> node_found(node_found_vec->getCDataWrapperElementAtIndex(idx));
+                                ChaosUniquePtr<chaos::common::data::CDataWrapper> node_found(node_found_vec->getCDataWrapperElementAtIndex(idx));
                                 
                                 //print the node uid
                                 std::cout << node_found->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID) << std::endl;

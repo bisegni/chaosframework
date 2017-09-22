@@ -1,21 +1,22 @@
 /*
- *	chaos_constants.h
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 #ifndef ChaosFramework_ConstrolSystemConstants_h
 #define ChaosFramework_ConstrolSystemConstants_h
@@ -44,6 +45,12 @@ namespace chaos {
         static const char * const   OPT_LOG_ON_FILE                     = "log-on-file";
         //! Specify when the file path of the log
         static const char * const   OPT_LOG_FILE                        = "log-file";
+        //! enable logging on syslog
+        static const char * const   OPT_LOG_ON_SYSLOG                   = "log-on-syslog";
+        //! enable logging on syslog
+        static const char * const   OPT_LOG_SYSLOG_SERVER               = "log-syslog-server";
+        //! specify the port of syslogerver
+        static const char * const   OPT_LOG_SYSLOG_SERVER_PORT          = "log-syslog-server-port";
         //! Specify the level of the log going
         static const char * const   OPT_LOG_LEVEL                       = "log-level";
         //! Specify the log max size
@@ -63,15 +70,15 @@ namespace chaos {
         //! Specify the implementation to use for rp messaging
         static const char * const   OPT_RPC_IMPLEMENTATION              = "rpc-server-impl";
         //! Specify the implementation to use for rp messaging
-        static const char * const   OPT_RPC_SYNC_ENABLE                 = "rpc-syncserver-enable";
-        //! Specify the implementation to use for rp messaging
-        static const char * const   OPT_RPC_SYNC_IMPLEMENTATION         = "rpc-syncserver-impl";
-        //! Specify the implementation to use for rp messaging
-        static const char * const   OPT_RPC_SYNC_PORT					= "rpc-syncserver-port";
+        static const char * const   OPT_RPC_SYNC_ENABLE                 = "rpc-synchronous-enable";
         //! Specify the network port where rpc system will publish al the service
         static const char * const   OPT_RPC_SERVER_PORT                 = "rpc-server-port";
         //! Specify the number of the thread that the rpc ssytem must use to process the request
         static const char * const   OPT_RPC_SERVER_THREAD_NUMBER        = "rpc-server-thread-number";
+        //! Specify the number of the thread that EVERY queue in EVERY action domain has for rpc action consume
+        static const char * const   OPT_RPC_DOMAIN_QUEUE_THREAD         = "rpc-domain-queue-thread-number";
+        //! specify the schduler type for the execution of the rcp action(0-default,1-shared)
+        static const char * const   OPT_RPC_DOMAIN_SCHEDULER_TYPE       = "rpc-domain-scheduler-type";
         //! Specify the implementation to use for the direct io subsystem
         static const char * const   OPT_DIRECT_IO_IMPLEMENTATION		= "direct-io-impl";
         //! Specify the network port where the direct io subsystem publish i's priority channel
@@ -100,6 +107,18 @@ namespace chaos {
         static const char * const   OPT_PUBLISHING_INTERFACE            = "publishing-interface";
         //! Specify the ip where publish the framework
         static const char * const   OPT_DATA_IO_IMPL					= "data-io-impl";
+        //! Enable the calibration of the local timestsamp with a remote NTP server
+        static const char * const   OPT_TIME_CALIBRATION                = "time-calibration";
+        //! Specify the bound of offset after wich the calibration work
+        static const char * const   OPT_TIME_CALIBRATION_OFFSET_BOUND   = "time-calibration-oofset-bound";
+        //! Enable the calibration of the local timestsamp with a remote NTP server
+        static const char * const   OPT_TIME_CALIBRATION_NTP_SERVER     = "time-calibration-ntp-server";
+        //! Enable the usage of the plugin
+        static const char * const   OPT_PLUGIN_ENABLE                   = "plugin-enable";
+        //! Specify the directory were can be found the plugin
+        static const char * const   OPT_PLUGIN_DIRECTORY_PATH           = "plugin-directory-path";
+        //!multiple key value parameter that are passed to script virtual machine
+        static const char * const   OPT_SCRIPT_VM_KV_PARAM              = "script-vm-kvp";
     }
     /** @} */ // end of ParamOption
     
@@ -111,6 +130,8 @@ namespace chaos {
     namespace RpcConfigurationKey {
         //! the regular expression for check the wel format key/valuparameter list for CS_CMDM_OPT_RPC_IMPL_KV_PARAM
         static const char * const OPT_RPC_IMPL_KV_PARAM_STRING_REGEX    = "([a-zA-Z0-9/_,.]+)=([a-zA-Z0-9/_,.]+)(\\|([a-zA-Z0-9/_,.]+)=([a-zA-Z0-9/_,.]+))*";
+        //! define the default time for rpc operation
+        static const unsigned int GlobalRPCTimeoutinMSec                = 5000;
     }
     /** @} */ // end of RpcConfigurationKey
     
@@ -130,12 +151,24 @@ namespace chaos {
                 static const char * const DIRECT_IO_PRIORITY_PORT					= "direct_io_priority_port";
                 //!  specify the port where the rpc must publish the his socket
                 static const char * const DIRECT_IO_SERVICE_PORT					= "direct_io_service_port";
+                //!  define the default time for directio operation
+                static const unsigned int GlobalDirectIOTimeoutinMSec               = 5000;
+                
                 
             }
             /** @} */ // end of DirectIOConfigurationKey
         }
     }
-    
+    namespace common {
+    	namespace constants {
+    		// hearth beat timers
+        	static const unsigned int HBTimersTimeoutinMSec               = 5000;
+        	static const unsigned int AgentTimersTimeoutinMSec            = 5000;
+        	static const unsigned int CUTimersTimeoutinMSec              = 5000;
+        	static const unsigned int PerformanceManagerTimersTimeoutinMSec  = 5000;
+    	}
+
+    };
     /** @defgroup NodeDefinitionKey !CHAOS node key description
      *  This is the collection of the key for the general node information
      *  @{
@@ -203,6 +236,15 @@ namespace chaos {
         
         //! is the hartbeat of the node for the current request[uint64]
         static const char * const NODE_TIMESTAMP        = "ndk_heartbeat";
+
+        //! brief node description  [string]
+        static const char * const NODE_DESC       = "ndk_desc";
+
+        //! brief node custom configuration parameters [CDataWrapper]
+        static const char * const NODE_CUSTOM_PARAM       = "ndk_custom_param";
+        
+        //! brief node host name [string]
+        static const char * const NODE_HOST_NAME       = "ndk_host_name";
     }
     /** @} */ // end of NodeDefinitionKey
     
@@ -251,6 +293,14 @@ namespace chaos {
          !CHAOS async one.
          */
         static const char * const NODE_TYPE_WAN_PROXY       = "nt_wan_proxy";
+        
+        //! identify a process agent
+        /*!
+         A process agent is a daemo that run on an host that permit to
+         manage chaos process whitin that host (start stop uni t server and perform deploy)
+         */
+        static const char * const NODE_TYPE_AGENT       = "nt_agent";
+        
         //! identify an execution unit of type script
         /*!
          A scriptable execution unit consinst of a framework implementaion of the an
@@ -259,6 +309,7 @@ namespace chaos {
         static const char * const NODE_SUBTYPE_SCRIPTABLE_EXECUTION_UNIT    = "nt_script_eu";
         static const char * const NODE_SUBTYPE_REALTIME_CONTROL_UNIT        = "nt_rt_cu";
         static const char * const NODE_SUBTYPE_BATCH_CONTROL_UNIT           = "nt_sc_cu";
+        static const char * const NODE_SUBTYPE_PROXY_CONTROL_UNIT           = "nt_proxy_cu";
     }
     /** @} */ // end of NodeType
     
@@ -427,7 +478,6 @@ namespace chaos {
         
         //! perform an echo test. Return as is the input datapach as output
         static const char * const ACTION_CHECK_DOMAIN                               = "checkDomain";
-        
     }
     /** @} */ // end of NodeDomainAndActionRPC
     
@@ -470,7 +520,6 @@ namespace chaos {
     }
     /** @} */ // end of UnitServerNodeDefinitionKey
     
-    
     /** @defgroup UnitServerNodeDomainAndActionRPC !CHAOS unit server rpc key description
      *  This is the collection of all key used only by unit server
      *  @{
@@ -508,6 +557,93 @@ namespace chaos {
     }
     /** @} */ // end of UnitServerNodeDomainAndActionRPC
     
+    
+    /** @defgroup AgentNodeDefinitionKey !CHAOS agent node key description
+     *  @{
+     */
+    //! Name space for grupping key for the agent node type
+    namespace AgentNodeDefinitionKey {
+        
+        //! key for the worker contained within the agent
+        /*!
+         very worke can process different work witni the agent
+         */
+        static const char * const HOSTED_WORKER       = "andk_hosted_worker";
+        
+        //!the name that identify the worker
+        static const char * const WORKER_NAME         = "andk_worker_name";
+        
+        //!the description of the worker
+        static const char * const WORKER_DESCRIPTION    = "andk_worker_description";
+        
+        //!the list of node associated with the agent
+        static const char * const NODE_ASSOCIATED       = "andk_node_associated";
+        
+        //!the working directory of the agent instance
+        static const char * const WORKING_DIRECTORY     = "andk_working_directory";
+    }
+    /** @} */ // end of AgentNodeDefinitionKey
+    
+    /** @defgroup AgentNodeDomainAndActionRPC !CHAOS agent rpc key description
+     *  This is the collection of all key used only by agent
+     *  @{
+     */
+    namespace AgentNodeDomainAndActionRPC {
+        //! The domain for agent rpc action
+        static const char * const RPC_DOMAIN_                                        = "agent";
+        //! action called for the ack of the agent from mds
+        static const char * const ACTION_AGENT_REGISTRATION_ACK                     = "agentRegistrationAck";
+        
+        //!identify the error code for the registration
+        static const char * const REGISTRATION_RESULT                               = "andk_rpc_registration_result";
+        
+        namespace ProcessWorker {
+            //! The domain for agent rpc action
+            static const char * const RPC_DOMAIN                            = "ProcessWorker";
+            static const char * const ACTION_LAUNCH_NODE                    = "startNode";
+            static const char * const ACTION_LAUNCH_NODE_PAR_NAME           = NodeDefinitionKey::NODE_UNIQUE_ID;
+            static const char * const ACTION_LAUNCH_NODE_CMD_LINE           = "node_launch_cmd_line";
+            static const char * const ACTION_LAUNCH_NODE_PAR_CFG            = "node_init_cfg";
+            static const char * const ACTION_LAUNCH_NODE_PAR_AUTO_START     = "node_auto_start";
+            static const char * const ACTION_LAUNCH_NODE_PAR_KEEP_ALIVE     = "node_keep_alive";
+            static const char * const ACTION_LAUNCH_NODE_PAR_LOG_AT_LAUNCH  = "node_log_at_launch";
+            
+            static const char * const ACTION_STOP_NODE                      = "stopNode";
+            static const char * const ACTION_STOP_NODE_PAR_NAME             = "node_name";
+            
+            static const char * const ACTION_RESTART_NODE                   = "restartNode";
+            static const char * const ACTION_RESTART_NODE_PAR_NAME          = NodeDefinitionKey::NODE_UNIQUE_ID;
+            static const char * const ACTION_RESTART_NODE_PAR_KILL          = "kill";
+            
+            static const char * const ACTION_LIST_NODE                      = "listNode";
+            static const char * const ACTION_LIST_NODE_PARM_NAME            = NodeDefinitionKey::NODE_UNIQUE_ID;
+            
+            static const char * const ACTION_CHECK_NODE                     = "checkNode";
+            static const char * const ACTION_CHECK_NODE_ASSOCIATED_NODES    = AgentNodeDefinitionKey::NODE_ASSOCIATED;
+            static const char * const ACTION_CHECK_NODE_RESULT_NODE_UID     = NodeDefinitionKey::NODE_UNIQUE_ID;
+            static const char * const ACTION_CHECK_NODE_RESULT_NODE_ALIVE   = "alive";
+        }
+        
+        namespace DeployWorker {
+            static const char * const RPC_DOMAIN                    = "DeployWorker";
+            static const char * const ACTION_INIT_DEPLOY_SESSION    = "initDeploySession";
+            static const char * const ACTION_UPLOAD_DEPLOY_CHUNK    = "uploadDeployChunk";
+            static const char * const ACTION_END_DEPLOY_SESSION     = "endDeploySession";
+            
+            static const char * const ACTION_PARAM_SESSION_ID       = "session_uid";
+            static const char * const ACTION_PARAM_CHUNK_NUMBER     = "chunk_number";
+            static const char * const ACTION_PARAM_CHUNK_OFFSET     = "chunk_offset";
+            static const char * const ACTION_PARAM_CHUNK_DATA       = "chunk_data";
+            static const char * const ACTION_PARAM_SESSION_HASH     = "session_hash";
+        }
+        
+        namespace LogWorker {
+            static const char * const RPC_DOMAIN                            = "LogWorker";
+            static const char * const ACTION_START_LOGGING_ASSOCIATION  = "startLoggingAssociation";
+            static const char * const ACTION_STOP_LOGGING_ASSOCIATION   = "stopLoggingAssociation";
+        }
+    }
+    /** @} */ // end of AgentNodeDomainAndActionRPC
     
     /** @defgroup DataServiceNodeDefinitionKey !CHAOS data service node key description
      *  This is the collection of the key used to configure the DataProxy server
@@ -579,7 +715,8 @@ namespace chaos {
     namespace ControlUnitNodeDefinitionKey {
         //! param to pass to the control unit during load operation[ string]
         static const char * const CONTROL_UNIT_LOAD_PARAM                           = "cudk_load_param";
-        
+        //! param to pass to the control unit during init operation[ int64]
+        static const char * const CONTROL_UNIT_RUN_ID                               = "cudk_run_id";
         //! Description for the control unit dirvers [vector[string, string, string]*]
         static const char * const CONTROL_UNIT_DRIVER_DESCRIPTION                   = "cudk_driver_description";
         
@@ -674,7 +811,7 @@ namespace chaos {
         static const char * const EXECUTION_UNIT_DESCRIPTION            = "eudk_description";
         //!the list of the pool managed by a unit server
         static const char * const EXECUTION_POOL_LIST                   = "eudk_pool_list";
-        //!the list of the pool managed by a unit server
+        //!the list of the instance (fisical node that identify the xecution unit based on script)
         static const char * const EXECUTION_SCRIPT_INSTANCE_LIST        = "eudk_script_instance_list";
         //!is the language that represent the script of the execution unit
         static const char * const EXECUTION_SCRIPT_INSTANCE_LANGUAGE    = "eudk_script_language";
@@ -687,6 +824,21 @@ namespace chaos {
     }
     /** @} */ // end of ExecutionUnitNodeDefinitionKey
     
+    /** @defgroup Contorl unit property key
+     *  This is the collection of the key representing the property that are exposed by control unit
+     *  @{
+     */
+    //! Name space for grupping control unit system property
+    namespace ControlUnitPropertyKey {
+        static const char * const GROUP_NAME                            = "property_abstract_control_unit";
+        //! represent the type of initialization restore
+        static const char * const INIT_RESTORE_OPTION                   = "cudk_init_restore_option";
+        static const unsigned int INIT_RESTORE_OPTION_TYPE_STATIC       = 0;
+        static const unsigned int INIT_RESTORE_OPTION_TYPE_LAST_VALIDE  = 1;
+        
+        static const char * const INIT_RESTORE_APPLY                    = "cudk_init_restore_apply";
+    }
+    
     /** @defgroup Contorl unit system key
      *  This is the collection of the key representing the property that are exposed into system dataset
      *  @{
@@ -694,8 +846,25 @@ namespace chaos {
     //! Name space for grupping control unit system property
     namespace ControlUnitDatapackSystemKey {
         //! represent the delay beetwen a subseguent cu start method call it is a property of a control unit
-        static const char * const THREAD_SCHEDULE_DELAY                             = "cudk_thr_sch_delay";
+        static const char * const THREAD_SCHEDULE_DELAY                   = "cudk_thr_sch_delay";
+        //!represent the bypass state of the control unit
+        /*!
+         in this state all driver reject the command that are sent by control unit implementation
+         and no action are take on the hardware
+         */
+        static const char * const BYPASS_STATE                            = "cudk_bypass_state";
     }
+    
+    /** @defgroup Contorl unit system key
+     *  This is the collection of the key representing the property that are exposed into system dataset
+     *  @{
+     */
+    //! Name space for grupping control unit system property
+    namespace ControlUnitDatapackCommonKey {
+        //!specify an initialization id for the node[int64]
+        static const char * const RUN_ID                          = "cudk_run_id";
+    }
+    
     /** @} */ // end of ControlUnitNodeDefinitionKey
     
     /** @defgroup CUType Control Unit Default Type
@@ -706,7 +875,8 @@ namespace chaos {
     namespace CUType {
         static const char * const RTCU	= NodeType::NODE_SUBTYPE_REALTIME_CONTROL_UNIT;
         static const char * const SCCU  = NodeType::NODE_SUBTYPE_BATCH_CONTROL_UNIT;
-        static const char * const EXUT  = NodeType::NODE_SUBTYPE_SCRIPTABLE_EXECUTION_UNIT;
+        static const char * const SEXUT = NodeType::NODE_SUBTYPE_SCRIPTABLE_EXECUTION_UNIT;
+        static const char * const PROXY_CU	= NodeType::NODE_SUBTYPE_PROXY_CONTROL_UNIT;
     }
     /** @} */ // end of CUType
     
@@ -757,6 +927,10 @@ namespace chaos {
                 case TYPE_STRING:
                     return "String";
                     //!byte array variable length
+                case TYPE_CLUSTER:
+                    return "cluster";
+                    //!byte array variable length
+                    
                 case TYPE_BYTEARRAY:
                     return "Binary";
                 default:
@@ -778,6 +952,8 @@ namespace chaos {
                 return TYPE_BOOLEAN;
             } else if(type_description.compare("string") == 0) {
                 return TYPE_STRING;
+            } else if(type_description.compare("cluster") == 0) {
+                return TYPE_CLUSTER;
             } else if(type_description.compare("binary") == 0) {
                 return TYPE_BYTEARRAY;
             } else {
@@ -1012,17 +1188,19 @@ namespace chaos {
         }
         
         namespace AlarmLogging {
-            //! the key represent the error code [int32_t]
+            //! the key represent the alarm level code(an alarm or warning can have more severity) [int32_t]
             static const char * const PARAM_NODE_LOGGING_ALARM_LEVEL_CODE               = "mdsndk_nl_a_lc";
-            //! the key represent the error code [string]
+            //! the key represent the alarm level description [string]
             static const char * const PARAM_NODE_LOGGING_ALARM_LEVEL_DESCRIPTION        = "mdsndk_nl_a_ld";
-            //! the key represent the error message [int32_t]
+            //! the key represent the alarm code [int32_t]
             static const char * const PARAM_NODE_LOGGING_ALARM_CODE                     = "mdsndk_nl_a_c";
-            //! the key represent the error message [string]
+            //! the key represent the specific tagging using by sublayer [string]
+            static const char * const PARAM_NODE_LOGGING_ALARM_TAG                      = "mdsndk_nl_a_t";
+            //! the key represent the the name of the alarm [string]
             static const char * const PARAM_NODE_LOGGING_ALARM_NAME                     = "mdsndk_nl_a_n";
-            //! the key represent the error message [string]
+            //! the key represent the the description of the alarm [string]
             static const char * const PARAM_NODE_LOGGING_ALARM_DESCRIPTION              = "mdsndk_nl_a_d";
-            //! the key represent the error message [uint32_t]
+            //! the key represent the alarms repetition witin samples [uint32_t]
             static const char * const PARAM_NODE_LOGGING_ALARM_REPETITION               = "mdsndk_nl_a_rep";
         }
         
@@ -1056,7 +1234,8 @@ namespace chaos {
         static const char * const INPUT_DATASET_POSTFIX     = "_i";
         static const char * const CUSTOM_DATASET_POSTFIX    = "_c";
         static const char * const SYSTEM_DATASET_POSTFIX    = "_s";
-        static const char * const ALARM_DATASET_POSTFIX     = "_a";
+        static const char * const DEV_ALARM_DATASET_POSTFIX = "_a";
+        static const char * const CU_ALARM_DATASET_POSTFIX  = "_w";
         static const char * const HEALTH_DATASET_POSTFIX    = NodeHealtDefinitionKey::HEALT_KEY_POSTFIX;
     }
     /** @} */ // end of DataPackPrefixID
@@ -1069,12 +1248,13 @@ namespace chaos {
     namespace DataPackCommonKey {
         //!define the device unique key, this represent the primary key of the producer[string]
         static const char * const DPCK_DEVICE_ID                       = chaos::NodeDefinitionKey::NODE_UNIQUE_ID;
-        //!define the device data pack sequence id unique for device
+        //!define the device data pack sequence id unique for device, shared among all packet sent by the node[int64]
         static const char * const DPCK_SEQ_ID                          = "dpck_seq_id";
         //!this define the acquisition timestamp of the data represented by the dataset[uint64_t]
         static const char * const DPCK_TIMESTAMP                       = "dpck_ats";//chaos::NodeDefinitionKey::NODE_TIMESTAMP;
-        
-        //!define the type of the dataset uint32_t [output(0) - input(1) - custom(2) - system(3) int32_t]
+        //!this define a custom counter often used for the hig resolution timestamp imformation
+        static const char * const DPCK_HIGH_RESOLUTION_TIMESTAMP       = "dpck_hr_ats";//chaos::NodeDefinitionKey::NODE_TIMESTAMP;
+        //!define the type of the dataset uint32_t [output(0) - input(1) - custom(2) - system(3) - ....others int32_t]
         static const char * const DPCK_DATASET_TYPE                    = "dpck_ds_type";
         //! the constant that represent the output dataset type
         static const unsigned int DPCK_DATASET_TYPE_OUTPUT             = 0;
@@ -1084,11 +1264,97 @@ namespace chaos {
         static const unsigned int DPCK_DATASET_TYPE_CUSTOM             = 2;
         //! the constant that represent the system dataset type
         static const unsigned int DPCK_DATASET_TYPE_SYSTEM             = 3;
+        //! the constant that represent the health dataset type
+        static const unsigned int DPCK_DATASET_TYPE_HEALTH             = 4;
         //! the constant that represent the alarm dataset type
-        static const unsigned int DPCK_DATASET_TYPE_ALARM              = 4;
+        static const unsigned int DPCK_DATASET_TYPE_DEV_ALARM          = 5;
+        //! the constant that represent the alarm dataset type
+        static const unsigned int DPCK_DATASET_TYPE_CU_ALARM           = 6;
+
+
     }
+
+	#define DPCK_LAST_DATASET_INDEX	 6
     /** @} */ // end of DataPackCommonKey
     
+    //! return the postfix of the dataset type
+    static inline const char * const datasetTypeToPostfix(unsigned int ds_type) {
+        switch(ds_type) {
+            case DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT:
+                return DataPackPrefixID::OUTPUT_DATASET_POSTFIX;
+                //!Integer char bit length
+            case DataPackCommonKey::DPCK_DATASET_TYPE_INPUT:
+                return DataPackPrefixID::INPUT_DATASET_POSTFIX;
+                //!Integer 8 bit length
+            case DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM:
+                return DataPackPrefixID::CUSTOM_DATASET_POSTFIX;
+                //!Integer 16 bit length
+            case DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM:
+                return DataPackPrefixID::SYSTEM_DATASET_POSTFIX;
+                
+            case DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH:
+                return DataPackPrefixID::HEALTH_DATASET_POSTFIX;
+                //!Integer 32 bit length
+            case DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM:
+                return DataPackPrefixID::DEV_ALARM_DATASET_POSTFIX;
+                //!Integer 64 bit length
+            case DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM:
+                return DataPackPrefixID::CU_ALARM_DATASET_POSTFIX;
+            default:
+                return "";
+        }
+    }
+    
+    //! return the type of the dataset postfix
+    static inline const int datasetTypeToPostfix(const std::string& ds_postfix) {
+        if(ds_postfix.compare(DataPackPrefixID::OUTPUT_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT;}
+        if(ds_postfix.compare(DataPackPrefixID::INPUT_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_INPUT;}
+        if(ds_postfix.compare(DataPackPrefixID::CUSTOM_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM;}
+        if(ds_postfix.compare(DataPackPrefixID::SYSTEM_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM;}
+        if(ds_postfix.compare(DataPackPrefixID::DEV_ALARM_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM;}
+        if(ds_postfix.compare(DataPackPrefixID::CU_ALARM_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM;}
+        if(ds_postfix.compare(DataPackPrefixID::HEALTH_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH;}
+        return -1;
+    }
+    
+    static inline const char* datasetTypeToHuman(unsigned int domain) {
+        switch (domain) {
+            case DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT:
+                return "output";
+            case DataPackCommonKey::DPCK_DATASET_TYPE_INPUT:
+                return "input";
+            case DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM:
+                return "custom";
+            case DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM:
+                return "system";
+            case DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH:
+                return "health";
+            case DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM:
+                return "device_alarms";
+            case DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM:
+                return "cu_alarms";
+            default:
+                return "unknown";
+        }
+    }
+    static inline unsigned int HumanTodatasetType(const std::string& domain) {
+    		if(domain == "output")
+    			return DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT;
+    		if(domain=="input")
+    			return DataPackCommonKey::DPCK_DATASET_TYPE_INPUT;
+    		if(domain=="custom")
+    			return DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM;
+    		if(domain=="system")
+    			return DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM;
+    		if(domain=="health")
+    			return DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH;
+    		if(domain=="device_alarms")
+    			return DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM;
+    		if(domain=="cu_alarms")
+    			return DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM;
+			return DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT;
+
+        }
     /** @defgroup DataPackKey Chaos Data Pack output attirbute
      This is the collection of the standard key that are contained into the output
      attribute data pack that describe a producer state

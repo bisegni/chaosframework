@@ -1,22 +1,22 @@
 /*
- *	LockableObject.h
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFramework]
- *	Created by Claudio Bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 19/08/16 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #ifndef __CHAOSFramework_D05B56D9_6CA0_4646_8710_8306D92E3818_LockableObject_h
@@ -41,6 +41,13 @@ typedef chaos::common::utility::LockableObject<x>::LockableObjectWriteLock n ## 
             class LockableObject  {
                 ChaosSharedMutex mutex_container_dataset;
             public:
+                
+                LockableObject(){}
+                
+                LockableObject(const T& src){
+                    container_object = src;
+                }
+                
                 //!readable lock class
                 class ReadLock {
                     friend class LockableObject<T>;
@@ -48,8 +55,11 @@ typedef chaos::common::utility::LockableObject<x>::LockableObjectWriteLock n ## 
                     ReadLock(LockableObject<T>& lockable_obj_ref) {
                         lockable_obj_ref.getReadLock(rl);
                     }
+                public:
+                    void lock(){rl.lock();}
+                    void unlock(){rl.unlock();}
                 };
-                typedef boost::shared_ptr<ReadLock> LockableObjectReadLock;
+                typedef ChaosSharedPtr<ReadLock> LockableObjectReadLock;
                 
                 //!writeable lock class
                 class WriteLock {
@@ -58,8 +68,11 @@ typedef chaos::common::utility::LockableObject<x>::LockableObjectWriteLock n ## 
                     WriteLock(LockableObject<T>& lockable_obj_ref) {
                         lockable_obj_ref.getWriteLock(wl);
                     }
+                public:
+                    void lock(){wl.lock();}
+                    void unlock(){wl.unlock();}
                 };
-                typedef boost::shared_ptr<WriteLock> LockableObjectWriteLock;
+                typedef ChaosSharedPtr<WriteLock> LockableObjectWriteLock;
                 
                 T container_object;
                 
@@ -80,6 +93,14 @@ typedef chaos::common::utility::LockableObject<x>::LockableObjectWriteLock n ## 
                 
                 T& operator()(){
                     return container_object;
+                }
+                
+                inline bool operator==(const T& lhs) {
+                    return container_object == lhs;
+                }
+                
+                inline bool operator!=(const T& lhs) {
+                    return container_object != lhs;
                 }
             };
         }

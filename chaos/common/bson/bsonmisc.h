@@ -20,6 +20,7 @@
 #define __BSONMISC_H__
 #include <memory>
 
+#include <chaos/common/chaos_types.h>
 #include <chaos/common/bson/bsonelement.h>
 
 namespace bson {
@@ -237,7 +238,7 @@ namespace bson {
 
         bool haveSubobj() const { return _subobj.get() != 0; }
         BSONObjBuilder *subobj();
-        std::auto_ptr< BSONObjBuilder > _subobj;
+        ChaosUniquePtr< BSONObjBuilder > _subobj;
     };
 
     /**

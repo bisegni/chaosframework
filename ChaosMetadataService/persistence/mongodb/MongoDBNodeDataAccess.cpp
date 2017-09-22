@@ -1,21 +1,22 @@
 /*
- *	MongoDBNodeDataAccess.cpp
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2015 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 #include <mongo/client/dbclient.h>
 #include "MongoDBNodeDataAccess.h"
@@ -31,6 +32,7 @@
 #define MDBNDA_ERR  ERR_LOG(MongoDBNodeDataAccess)
 
 using namespace boost;
+using namespace chaos::common::property;
 using namespace chaos::common::data;
 using namespace chaos::common::data::structured;
 using namespace chaos::common::utility;
@@ -38,7 +40,7 @@ using namespace chaos::common::batch_command;
 using namespace chaos::service_common::persistence::mongodb;
 using namespace chaos::metadata_service::persistence::mongodb;
 
-MongoDBNodeDataAccess::MongoDBNodeDataAccess(const boost::shared_ptr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
+MongoDBNodeDataAccess::MongoDBNodeDataAccess(const ChaosSharedPtr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
 MongoDBAccessor(_connection),
 utility_data_access(NULL){}
 
@@ -63,6 +65,7 @@ int MongoDBNodeDataAccess::getNodeDescription(const std::string& node_unique_id,
                                 chaos::NodeDefinitionKey::NODE_SUB_TYPE << 1 <<
                                 chaos::NodeDefinitionKey::NODE_RPC_ADDR << 1 <<
                                 chaos::NodeDefinitionKey::NODE_RPC_DOMAIN << 1 <<
+                                chaos::NodeDefinitionKey::NODE_HOST_NAME << 1 <<
                                 chaos::NodeDefinitionKey::NODE_DIRECT_IO_ADDR << 1 <<
                                 chaos::NodeDefinitionKey::NODE_TIMESTAMP << 1);
         
@@ -106,7 +109,7 @@ int MongoDBNodeDataAccess::insertNewNode(CDataWrapper& node_description) {
             }
         }
         
-        std::auto_ptr<SerializationBuffer> ser(node_description.getBSONData());
+        ChaosUniquePtr<SerializationBuffer> ser(node_description.getBSONData());
         mongo::BSONObj obj_to_insert(ser->getBufferPtr());
         
         DEBUG_CODE(MDBNDA_DBG<<log_message("insertNewNode",
@@ -135,8 +138,6 @@ int MongoDBNodeDataAccess::updateNode(chaos::common::data::CDataWrapper& node_de
     mongo::BSONArrayBuilder bson_update_array;
     try {
         if(!node_description.hasKey(chaos::NodeDefinitionKey::NODE_UNIQUE_ID)) return -1;
-        //if(!node_description.hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR)) return -2;
-        //if(!node_description.hasKey(chaos::NodeDefinitionKey::NODE_TIMESTAMP)) return -4;
         
         //serach criteria
         bson_find << chaos::NodeDefinitionKey::NODE_UNIQUE_ID << node_description.getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID);
@@ -152,6 +153,9 @@ int MongoDBNodeDataAccess::updateNode(chaos::common::data::CDataWrapper& node_de
         if(node_description.hasKey(chaos::NodeDefinitionKey::NODE_RPC_DOMAIN)) {
             updated_field << chaos::NodeDefinitionKey::NODE_RPC_DOMAIN << node_description.getStringValue(chaos::NodeDefinitionKey::NODE_RPC_DOMAIN);
         }
+        if(node_description.hasKey(chaos::NodeDefinitionKey::NODE_HOST_NAME)) {
+            updated_field << chaos::NodeDefinitionKey::NODE_HOST_NAME << node_description.getStringValue(chaos::NodeDefinitionKey::NODE_HOST_NAME);
+        }
         if(node_description.hasKey(chaos::NodeDefinitionKey::NODE_DIRECT_IO_ADDR)) {
             updated_field << chaos::NodeDefinitionKey::NODE_DIRECT_IO_ADDR << node_description.getStringValue(chaos::NodeDefinitionKey::NODE_DIRECT_IO_ADDR);
         }
@@ -159,13 +163,13 @@ int MongoDBNodeDataAccess::updateNode(chaos::common::data::CDataWrapper& node_de
             updated_field << chaos::NodeDefinitionKey::NODE_TIMESTAMP << mongo::Date_t(node_description.getUInt64Value(chaos::NodeDefinitionKey::NODE_TIMESTAMP));
         }
         if(node_description.hasKey(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC)) {
-            std::auto_ptr<CMultiTypeDataArrayWrapper> action_array(node_description.getVectorValue(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC));
+            ChaosUniquePtr<CMultiTypeDataArrayWrapper> action_array(node_description.getVectorValue(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC));
             for(int idx = 0;
                 idx < action_array->size();
                 idx++) {
                 mongo::BSONObjBuilder action_description;
                 mongo::BSONArrayBuilder param_descriptions;
-                std::auto_ptr<CDataWrapper> element(action_array->getCDataWrapperElementAtIndex(idx));
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> element(action_array->getCDataWrapperElementAtIndex(idx));
                 if(element->hasKey(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_NAME)) {
                     action_description << chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_NAME
                     << element->getStringValue(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_NAME);
@@ -176,12 +180,12 @@ int MongoDBNodeDataAccess::updateNode(chaos::common::data::CDataWrapper& node_de
                 }
                 //check if the action has parameter
                 if(element->hasKey(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PARAM)) {
-                    std::auto_ptr<CMultiTypeDataArrayWrapper> param_array(element->getVectorValue(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PARAM));
+                    ChaosUniquePtr<CMultiTypeDataArrayWrapper> param_array(element->getVectorValue(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PARAM));
                     for(int idx = 0;
                         idx < param_array->size();
                         idx++) {
                         mongo::BSONObjBuilder single_param_desc;
-                        std::auto_ptr<CDataWrapper> param(param_array->getCDataWrapperElementAtIndex(idx));
+                        ChaosUniquePtr<chaos::common::data::CDataWrapper> param(param_array->getCDataWrapperElementAtIndex(idx));
                         
                         if(param->hasKey(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PAR_NAME)) {
                             single_param_desc << chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PAR_NAME
@@ -385,6 +389,9 @@ int MongoDBNodeDataAccess::searchNode(chaos::common::data::CDataWrapper **result
             case 2:
                 type_of_node = chaos::NodeType::NODE_TYPE_CONTROL_UNIT;
                 break;
+            case 3:
+                type_of_node = chaos::NodeType::NODE_TYPE_AGENT;
+                break;
             default:
                 break;
         }
@@ -459,6 +466,188 @@ int MongoDBNodeDataAccess::searchNode(chaos::common::data::CDataWrapper **result
     return err;
 }
 
+int MongoDBNodeDataAccess::setProperty(const std::string& node_uid,
+                                       const PropertyGroupVector& property_group_vector) {
+    int err = 0;
+    int size = 0;
+    try {
+        chaos::common::property::PropertyGroupVectorSDWrapper pg_sdw(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(PropertyGroupVector, const_cast<PropertyGroupVector&>(property_group_vector)));
+        pg_sdw.serialization_key = "property";
+        mongo::BSONObj q = BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID << node_uid);
+        mongo::BSONObj u = BSON("$set" << mongo::BSONObj(pg_sdw.serialize()->getBSONRawData(size)));
+        DEBUG_CODE(MDBNDA_DBG<<log_message("setProperty",
+                                           "update",
+                                           DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                                   "Update",
+                                                                   q.jsonString(),
+                                                                   u.jsonString()));)
+        
+        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                     q,
+                                     u))){
+            MDBNDA_ERR << CHAOS_FORMAT("Error setting property for %1%",%node_uid);
+        }
+    } catch (const mongo::DBException &e) {
+        MDBNDA_ERR << e.what();
+        err = e.getCode();
+    }
+    return err;
+}
+
+PropertyGroup *getPrgFromVec(const std::string& group_name,
+                             chaos::common::property::PropertyGroupVector& property_group_vector) {
+    PropertyGroup *res_ptr = NULL;
+    for(PropertyGroupVectorIterator it = property_group_vector.begin(),
+        end = property_group_vector.end();
+        it != end;
+        it++) {
+        if(it->getGroupName().compare(group_name) != 0) continue;
+        res_ptr = &(*it);
+        break;
+    }
+    return res_ptr;
+}
+
+//update porperty without removing old, if old are present the value are pushed
+int MongoDBNodeDataAccess::updatePropertyDefaultValue(const std::string& node_uid,
+                                                      const chaos::common::property::PropertyGroupVector& property_group_vector) {
+    int err = 0;
+    int size = 0;
+    
+    //get store default and update or add new
+    PropertyGroupVector property_stored;
+    if((err = getProperty(data_access::PropertyTypeDefaultValues,
+                          node_uid, property_stored)) != 0) return err;
+    
+    for(PropertyGroupVectorConstIterator it = property_group_vector.begin(),
+        end = property_group_vector.end();
+        it != end;
+        it++) {
+        const std::string group_name = it->getGroupName();
+        
+        PropertyGroup *pg = getPrgFromVec(group_name, property_stored);
+        if(pg != NULL) {
+            pg->copyPropertiesFromGroup(*it, true);
+        } else {
+            property_stored.push_back(*it);
+        }
+    }
+    //no we can update all defaults
+    try {
+        chaos::common::property::PropertyGroupVectorSDWrapper pg_sdw(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(PropertyGroupVector, const_cast<PropertyGroupVector&>(property_stored)));
+        pg_sdw.serialization_key = "property_defaults";
+        mongo::BSONObj q = BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID << node_uid);
+        mongo::BSONObj u = BSON("$set" << mongo::BSONObj(pg_sdw.serialize()->getBSONRawData(size)));
+        DEBUG_CODE(MDBNDA_DBG<<log_message("updatePropertyDefaultValue",
+                                           "update",
+                                           DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                                   "Update",
+                                                                   q.jsonString(),
+                                                                   u.jsonString()));)
+        
+        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                     q,
+                                     u))){
+            MDBNDA_ERR << CHAOS_FORMAT("Error updating property default values for %1%",%node_uid);
+        }
+    } catch (const mongo::DBException &e) {
+        MDBNDA_ERR << e.what();
+        err = e.getCode();
+    }
+    return err;
+}
+
+int MongoDBNodeDataAccess::getProperty(const data_access::PropertyType property_type,
+                                       const std::string& node_uid,
+                                       chaos::common::property::PropertyGroupVector& property_group_vector) {
+    int err = 0;
+    try {
+        std::string property_key;
+        switch (property_type) {
+            case data_access::PropertyTypeDescription:
+                property_key = "property";
+                break;
+                
+            case data_access::PropertyTypeDefaultValues:
+                property_key = "property_defaults";
+                break;
+        }
+        mongo::BSONObj found_property;
+        mongo::BSONObj q = BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID << node_uid <<
+                                property_key << BSON("$exists" << true));
+        mongo::BSONObj p = BSON(property_key << 1);
+        DEBUG_CODE(MDBNDA_DBG<<log_message("getProperty",
+                                           "findOne",
+                                           DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                   q.jsonString()));)
+        
+        if((err = connection->findOne(found_property,
+                                      MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                      q,
+                                      &p))){
+            MDBNDA_ERR << CHAOS_FORMAT("Error retriving property for %1%",%node_uid);
+        }
+        if(!found_property.isEmpty()) {
+            CDWUniquePtr prop_ser(new CDataWrapper(found_property.objdata()));
+            chaos::common::property::PropertyGroupVectorSDWrapper pg_sdw(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(PropertyGroupVector, property_group_vector));
+            pg_sdw.serialization_key = property_key;
+            pg_sdw.deserialize(prop_ser.get());
+        }
+    } catch (const mongo::DBException &e) {
+        MDBNDA_ERR << e.what();
+        err = e.getCode();
+    }
+    return err;
+}
+
+int MongoDBNodeDataAccess::getPropertyGroup(const data_access::PropertyType property_type,
+                                            const std::string& node_uid,
+                                            const std::string& property_group_name,
+                                            chaos::common::property::PropertyGroup& property_group) {
+    int err = 0;
+    try {
+        std::string property_key;
+        switch (property_type) {
+            case data_access::PropertyTypeDescription:
+                property_key = "property";
+                break;
+                
+            case data_access::PropertyTypeDefaultValues:
+                property_key = "property_defaults";
+                break;
+        }
+        mongo::BSONObj found_property;
+        mongo::BSONObj q = BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID << node_uid <<
+                                property_key << BSON("$exists" << true) <<
+                                CHAOS_FORMAT("%1%.property_g_name", %property_key) << property_group_name);
+        mongo::BSONObj p = BSON("_id" << 0 << CHAOS_FORMAT("%1%", %property_key) << 1);
+        DEBUG_CODE(MDBNDA_DBG<<log_message("getProperty",
+                                           "findOne",
+                                           DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                   q.jsonString()));)
+        
+        if((err = connection->findOne(found_property,
+                                      MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                      q,
+                                      &p))){
+            MDBNDA_ERR << CHAOS_FORMAT("Error retriving property for %1%",%node_uid);
+        }
+        if(!found_property.isEmpty()) {
+            CDWUniquePtr prop_ser(new CDataWrapper(found_property.objdata()));
+            chaos::common::property::PropertyGroupVectorSDWrapper pg_sdw;
+            pg_sdw.serialization_key = property_key;
+            pg_sdw.deserialize(prop_ser.get());
+            if(pg_sdw().size()) {
+                property_group = pg_sdw()[0];
+            }
+        }
+    } catch (const mongo::DBException &e) {
+        MDBNDA_ERR << e.what();
+        err = e.getCode();
+    }
+    return err;
+}
+
 int MongoDBNodeDataAccess::checkCommandPresence(const std::string& command_unique_id,
                                                 bool& presence) {
     int err = 0;
@@ -502,7 +691,7 @@ int MongoDBNodeDataAccess::setCommand(chaos::common::data::CDataWrapper& command
             return -3;
             MDBNDA_ERR << "No command description found";
         }
-        std::auto_ptr<SerializationBuffer> ser(command.getBSONData());
+        ChaosUniquePtr<SerializationBuffer> ser(command.getBSONData());
         mongo::BSONObj i(ser->getBufferPtr());
         
         mongo::BSONObj query = BSON(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID << command.getStringValue(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID));
@@ -634,7 +823,7 @@ int MongoDBNodeDataAccess::setCommandTemplate(chaos::common::data::CDataWrapper&
                                 BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID << command_unique_id);
         
         //create the update package (all key imnus the first two used before
-        std::auto_ptr<CDataWrapper> to_update(new CDataWrapper());
+        ChaosUniquePtr<chaos::common::data::CDataWrapper> to_update(new CDataWrapper());
         to_update->addStringValue("type", "template");
         std::vector<std::string> all_keys;
         command_template.getAllKey(all_keys);
@@ -649,7 +838,7 @@ int MongoDBNodeDataAccess::setCommandTemplate(chaos::common::data::CDataWrapper&
             command_template.copyKeyTo(*it, *to_update);
         }
         
-        std::auto_ptr<SerializationBuffer> chaos_bson(to_update->getBSONData());
+        ChaosUniquePtr<SerializationBuffer> chaos_bson(to_update->getBSONData());
         mongo::BSONObj u = BSON("$set" << mongo::BSONObj(chaos_bson->getBufferPtr()));
         
         DEBUG_CODE(MDBNDA_DBG<<log_message("setCommandTemplate",
@@ -788,3 +977,191 @@ int MongoDBNodeDataAccess::searchCommandTemplate(chaos::common::data::CDataWrapp
     }
     return err;
 }
+
+int MongoDBNodeDataAccess::addAgeingManagementDataToNode(const std::string& control_unit_id) {
+    int err = 0;
+    try {
+        uint64_t current_ts = TimingUtil::getTimeStamp();
+        const std::string key_processing_ageing = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_PROCESSING_AGEING);
+        const std::string key_last_checing_time = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_AGEING_LAST_CHECK_DATA);
+        const std::string key_last_performed_time = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_PERFORMED_AGEING);
+        
+        mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << control_unit_id
+                                    << MONGODB_COLLECTION_NODES_AGEING_INFO << BSON("$exists" << false ));
+        
+        mongo::BSONObj update = BSON("$set" << BSON(key_last_checing_time << mongo::Date_t(current_ts) <<
+                                                    key_last_performed_time << mongo::Date_t(current_ts) <<
+                                                    key_processing_ageing << false));
+        
+        
+        DEBUG_CODE(MDBNDA_DBG<<log_message("completeNodeForAgeingManagement",
+                                           "update",
+                                           DATA_ACCESS_LOG_2_ENTRY("query",
+                                                                   "update",
+                                                                   query.jsonString(),
+                                                                   update.jsonString()));)
+        //remove the field of the document
+        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                     query,
+                                     update))) {
+            MDBNDA_DBG << CHAOS_FORMAT("Error %1% completing control unit %2% with ageing management information", %err%control_unit_id);
+        }
+    } catch (const mongo::DBException &e) {
+        MDBNDA_ERR << e.what();
+        err = -1;
+    } catch (const CException &e) {
+        MDBNDA_ERR << e.what();
+        err = e.errorCode;
+    }
+    return err;
+}
+
+int MongoDBNodeDataAccess::isNodeAlive(const std::string& node_uid, bool& alive) {
+    int err = 0;
+    try {
+        mongo::BSONObj result;
+        mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << node_uid <<
+                                    CHAOS_FORMAT("health_stat.%1%",%NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP) <<
+                                    BSON("$gte" << mongo::Date_t(TimingUtil::getTimestampWithDelay((6*1000)))));
+        
+        DEBUG_CODE(MDBNDA_DBG<<log_message("isNodeAlive",
+                                           "findOne",
+                                           DATA_ACCESS_LOG_1_ENTRY("query",
+                                                                   query.jsonString()));)
+        if((err = connection->findOne(result,
+                                      MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                      query))) {
+            MDBNDA_DBG << CHAOS_FORMAT("Error %1% determinating the alive state for node %2%", %err%node_uid);
+        }
+        alive = (result.isEmpty() == false);
+    } catch (const mongo::DBException &e) {
+        MDBNDA_ERR << e.what();
+        err = -1;
+    } catch (const CException &e) {
+        MDBNDA_ERR << e.what();
+        err = e.errorCode;
+    }
+    return err;
+}
+//int MongoDBNodeDataAccess::reserveNodeForAgeingManagement(uint64_t& last_sequence_id,
+//                                                          std::string& node_uid_reserved,
+//                                                          uint32_t& node_ageing_time,
+//                                                          uint64_t& last_ageing_perform_time,
+//                                                          uint64_t timeout_for_checking,
+//                                                          uint64_t delay_next_check) {
+//    int err = 0;
+//    SearchResult paged_result;
+//    try {
+//        mongo::BSONObj result_found;
+//        mongo::BSONObjBuilder query_builder;
+//        mongo::BSONArrayBuilder query_ageing_and;
+//        mongo::BSONArrayBuilder query_ageing_or;
+//
+//        const std::string key_processing_ageing = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_PROCESSING_AGEING);
+//        const std::string key_last_checking_time = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_AGEING_LAST_CHECK_DATA);
+//        const std::string key_last_performed_time = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_PERFORMED_AGEING);
+//        //get all node where ageing is > of 0
+//        query_builder << CHAOS_FORMAT("instance_description.%1%",%DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING) << BSON("$gt" << 0);
+//
+//        //get all control unit
+//        query_builder << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_CONTROL_UNIT;
+//
+//        //condition on sequence
+//        query_builder << "seq" << BSON("$gt" << (long long)last_sequence_id);
+//
+//        //select control unit also if it is in checking managemnt but data checking time is old than one minute(it is gone in timeout)
+//        query_ageing_or << BSON(key_processing_ageing << true << key_last_checking_time << BSON("$lte" << mongo::Date_t(TimingUtil::getTimeStamp()-timeout_for_checking)));
+//
+//        //or on previous condition and on checking management == false the last checking date need to be greater that noral chack timeout
+//        query_ageing_or << BSON(key_processing_ageing << false << key_last_checking_time << BSON("$lte" << mongo::Date_t(TimingUtil::getTimeStamp()-delay_next_check)));
+//
+//        query_builder << "$or" << query_ageing_or.arr();
+//
+//
+//        mongo::BSONObj  query = query_builder.obj();
+//        // set atomicalli processing ageing to true
+//        mongo::BSONObj  update =  BSON("$set" << BSON(key_processing_ageing << true <<
+//                                                      key_last_checking_time << mongo::Date_t(TimingUtil::getTimeStamp())));
+//        // order getting first cu being the last processed one
+//        mongo::BSONObj  order_by = BSON(key_last_checking_time << 1);
+//        DEBUG_CODE(MDBNDA_DBG<<log_message("reserveNodeForAgeingManagement",
+//                                           "findAndUpdate",
+//                                           DATA_ACCESS_LOG_3_ENTRY("query",
+//                                                                   "update",
+//                                                                   "order_by",
+//                                                                   query.jsonString(),
+//                                                                   update.jsonString(),
+//                                                                   order_by.jsonString()));)
+//        //find the control unit
+//        if((err = connection->findAndModify(result_found,
+//                                            MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+//                                            query,
+//                                            update,
+//                                            false,
+//                                            false,
+//                                            order_by))){
+//            MDBNDA_DBG << CHAOS_FORMAT("Error %1% fetching the next cheable control unit for ageing", %err);
+//        } else if(result_found.isEmpty() == false && (result_found.hasField(NodeDefinitionKey::NODE_UNIQUE_ID) &&
+//                                                      result_found.hasField(MONGODB_COLLECTION_NODES_AGEING_INFO))) {
+//            //we have control unit
+//            last_sequence_id = (uint64_t)result_found.getField("seq").Long();
+//            node_uid_reserved = result_found.getField(NodeDefinitionKey::NODE_UNIQUE_ID).String();
+//            node_ageing_time = (uint32_t)result_found.getFieldDotted(CHAOS_FORMAT("instance_description.%1%",%DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING)).numberInt();
+//            last_ageing_perform_time = (uint64_t)result_found.getFieldDotted(key_last_performed_time).Date().asInt64();
+//        } else {
+//            last_sequence_id = 0;
+//            node_uid_reserved.clear();
+//            last_ageing_perform_time = 0;
+//            node_ageing_time = 0;
+//        }
+//
+//    } catch (const mongo::DBException &e) {
+//        MDBNDA_ERR << e.what();
+//        err = -1;
+//    } catch (const CException &e) {
+//        MDBNDA_ERR << e.what();
+//        err = e.errorCode;
+//    }
+//    return err;
+//}
+//
+//int MongoDBNodeDataAccess::releaseNodeForAgeingManagement(std::string& node_uid,
+//                                                          bool performed) {
+//    int err = 0;
+//    SearchResult paged_result;
+//    try {
+//        mongo::BSONObj result_found;
+//        uint64_t current_ts = TimingUtil::getTimeStamp();
+//        const std::string key_processing_ageing = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_PROCESSING_AGEING);
+//        const std::string key_last_checking_time = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_AGEING_LAST_CHECK_DATA);
+//        const std::string key_last_performed_time = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_PERFORMED_AGEING);
+//
+//        mongo::BSONObj  query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << node_uid);
+//        // set atomicalli processing ageing to true
+//        mongo::BSONObj  update = BSON("$set" << (performed?BSON(key_processing_ageing << false <<
+//                                                                key_last_checking_time << mongo::Date_t(current_ts) <<
+//                                                                key_last_performed_time << mongo::Date_t(current_ts)):
+//                                                 BSON(key_processing_ageing << false <<
+//                                                      key_last_checking_time << mongo::Date_t(current_ts))));
+//
+//        DEBUG_CODE(MDBNDA_ERR<<log_message("releaseNodeForAgeingManagement",
+//                                           "update",
+//                                           DATA_ACCESS_LOG_2_ENTRY("query",
+//                                                                   "update",
+//                                                                   query.jsonString(),
+//                                                                   update.jsonString()));)
+//        //find the control unit
+//        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+//                                     query,
+//                                     update))) {
+//            MDBNDA_ERR << CHAOS_FORMAT("Error %1% fetching the next cheable control unit for ageing", %err);
+//        }
+//    } catch (const mongo::DBException &e) {
+//        MDBNDA_ERR << e.what();
+//        err = -1;
+//    } catch (const CException &e) {
+//        MDBNDA_ERR << e.what();
+//        err = e.errorCode;
+//    }
+//    return err;
+//}

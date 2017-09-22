@@ -38,7 +38,7 @@ ControlUnitCommandTemplateEditor::~ControlUnitCommandTemplateEditor() {
 }
 
 void ControlUnitCommandTemplateEditor::initUI() {
-    setTabTitle("Command Tempalte Editor");
+    setTitle("Command Tempalte Editor");
     ui->lineEditTemplateName->setValidator(new QRegExpValidator(QRegExp(tr("[a-zA-z0-9_]{8,255}"))));
     ui->lineEditSubmissionPriority->setValidator(new QIntValidator(0, 100, this));
     ui->lineEditSubmissionRunStepDelay->setValidator(new QIntValidator(0, 60000000, this));
@@ -132,8 +132,8 @@ void ControlUnitCommandTemplateEditor::setTemplateDescription(QSharedPointer<cha
     parameter_table_model.applyTemplate(_template_description);
 }
 
-boost::shared_ptr<node::CommandTemplate> ControlUnitCommandTemplateEditor::getTemplateDescription() {
-    boost::shared_ptr<node::CommandTemplate> result(new node::CommandTemplate());
+ChaosSharedPtr<node::CommandTemplate> ControlUnitCommandTemplateEditor::getTemplateDescription() {
+    ChaosSharedPtr<node::CommandTemplate> result(new node::CommandTemplate());
     //set base information
 
     result->template_name = ui->lineEditTemplateName->text().toStdString();
@@ -182,7 +182,7 @@ void ControlUnitCommandTemplateEditor::on_pushButtonSave_clicked() {
         return;
     }
 
-    std::vector< boost::shared_ptr<node::CommandTemplate> >template_list;
+    std::vector< ChaosSharedPtr<node::CommandTemplate> >template_list;
     template_list.push_back(getTemplateDescription());
     submitApiResult(TAG_CMD_TEMPLATE_SET,
                     GET_CHAOS_API_PTR(node::CommandTemplateSet)->execute(template_list));

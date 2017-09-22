@@ -1,21 +1,22 @@
 /*
- *	NetworkBroker.cpp
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 #include <chaos/common/global.h>
 #include <boost/lexical_cast.hpp>
@@ -56,7 +57,6 @@ event_server(NULL),
 event_dispatcher(NULL),
 rpc_server(NULL),
 rpc_client(NULL),
-sync_rpc_server(NULL),
 rpc_dispatcher(NULL),
 direct_io_dispatcher(NULL),
 direct_io_server(NULL),
@@ -157,7 +157,19 @@ void NetworkBroker::init(void *initData) throw(CException) {
     if(globalConfiguration->hasKey(InitOption::OPT_RPC_IMPLEMENTATION)){
         //get the dispatcher
         MB_LAPP  << "Setup RPC sublayer";
-        rpc_dispatcher = ObjectFactoryRegister<AbstractCommandDispatcher>::getInstance()->getNewInstanceByName("DefaultCommandDispatcher");
+        uint32_t dispatcher_type = globalConfiguration->getUInt32Value(InitOption::OPT_RPC_DOMAIN_SCHEDULER_TYPE);
+        switch(dispatcher_type) {
+            case 1:
+                MB_LAPP  << "Use SharedCommandDispatcher for RPC";
+                rpc_dispatcher = ObjectFactoryRegister<AbstractCommandDispatcher>::getInstance()->getNewInstanceByName("SharedCommandDispatcher");
+                break;
+                
+            default:
+                MB_LAPP  << "Use DefaultCommandDispatcher for RPC";
+                rpc_dispatcher = ObjectFactoryRegister<AbstractCommandDispatcher>::getInstance()->getNewInstanceByName("DefaultCommandDispatcher");
+                break;
+        }
+        
         if(!rpc_dispatcher)
             throw CException(-6, "Command dispatcher implementation not found", __PRETTY_FUNCTION__);
         
@@ -201,28 +213,6 @@ void NetworkBroker::init(void *initData) throw(CException) {
     } else {
         throw CException(-10, "No RPC Adapter type found in configuration", __PRETTY_FUNCTION__);
     }
-    //---------------------------- R P C ----------------------------
-    //---------------------------- R P C SYNC ----------------------------
-    if(globalConfiguration->hasKey(InitOption::OPT_RPC_SYNC_ENABLE) &&
-       globalConfiguration->getBoolValue(InitOption::OPT_RPC_SYNC_ENABLE)){
-        //get the dispatcher
-        MB_LAPP  << "Setup RPC Sync implementation";
-        
-        // get the rpc type to instantiate
-        string rpc_sync_impl = globalConfiguration->getStringValue(InitOption::OPT_RPC_SYNC_IMPLEMENTATION);
-        //construct the rpc server and client name
-        string rpc_sync_impl_name = rpc_sync_impl+"RpcSyncServer";
-        
-        MB_LAPP  << "Trying to initilize RPC Server: " << rpc_sync_impl_name;
-        sync_rpc_server = ObjectFactoryRegister<sync_rpc::RpcSyncServer>::getInstance()->getNewInstanceByName(rpc_sync_impl_name);
-        if(!sync_rpc_server) throw CException(-11, "Error allocating rpc sync server implementation", __PRETTY_FUNCTION__);
-        
-        if(StartableService::initImplementation(sync_rpc_server, static_cast<void*>(globalConfiguration), sync_rpc_server->getName(), __PRETTY_FUNCTION__)) {
-            //set the handler on the rpc server
-            sync_rpc_server->setCommandDispatcher(rpc_dispatcher);
-        }
-    }
-    //---------------------------- R P C SYNC ----------------------------
     MB_LAPP  << "Initialize performance session manager";
     StartableService::initImplementation(performance_session_managment, static_cast<void*>(globalConfiguration), "PerformanceManagment",  __PRETTY_FUNCTION__);
     
@@ -285,10 +275,6 @@ void NetworkBroker::deinit() throw(CException) {
     }
     //---------------------------- E V E N T ----------------------------
     
-    //---------------------------- R P C SYNC ----------------------------
-    if(sync_rpc_server) {CHAOS_NOT_THROW(StartableService::deinitImplementation(sync_rpc_server, sync_rpc_server->getName(), __PRETTY_FUNCTION__);)}
-    //---------------------------- R P C SYNC ----------------------------
-    
     //---------------------------- R P C ----------------------------
     MB_LAPP  << "Deallocate all rpc channel";
     for (map<string, MessageChannel*>::iterator it = active_rpc_channel.begin();
@@ -332,7 +318,6 @@ void NetworkBroker::start() throw(CException){
     StartableService::startImplementation(rpc_dispatcher, "DefaultCommandDispatcher", __PRETTY_FUNCTION__);
     StartableService::startImplementation(rpc_server, rpc_server->getName(), __PRETTY_FUNCTION__);
     StartableService::startImplementation(rpc_client, rpc_client->getName(), __PRETTY_FUNCTION__);
-    if(sync_rpc_server){StartableService::startImplementation(sync_rpc_server, sync_rpc_server->getName(), __PRETTY_FUNCTION__);}
     StartableService::startImplementation(performance_session_managment, "PerformanceManagment",  __PRETTY_FUNCTION__);
 }
 
@@ -341,7 +326,6 @@ void NetworkBroker::start() throw(CException){
  */
 void NetworkBroker::stop() throw(CException) {
     CHAOS_NOT_THROW(StartableService::stopImplementation(performance_session_managment, "PerformanceManagment",  __PRETTY_FUNCTION__);)
-    if(sync_rpc_server){CHAOS_NOT_THROW(StartableService::stopImplementation(sync_rpc_server, sync_rpc_server->getName(), __PRETTY_FUNCTION__);)}
     CHAOS_NOT_THROW(StartableService::stopImplementation(rpc_client, rpc_client->getName(), __PRETTY_FUNCTION__);)
     CHAOS_NOT_THROW(StartableService::stopImplementation(rpc_server, rpc_server->getName(), __PRETTY_FUNCTION__);)
     CHAOS_NOT_THROW(StartableService::stopImplementation(rpc_dispatcher, "DefaultCommandDispatcher", __PRETTY_FUNCTION__);)
@@ -381,15 +365,6 @@ std::string NetworkBroker::getRPCUrl() {
 std::string NetworkBroker::getDirectIOUrl() {
     CHAOS_ASSERT(rpc_server);
     return direct_io_server->getUrl();
-}
-
-//!Return the sync rpc url
-std::string NetworkBroker::getSyncRPCUrl() {
-    if(sync_rpc_server) {
-        return sync_rpc_server->getUrl();
-    } else {
-        return string("Sync rpc not started");
-    }
 }
 
 #pragma mark Event Registration and forwarding
@@ -530,14 +505,13 @@ void NetworkBroker::deregisterAction(DeclareAction* declare_action_class) {
  Submit a message specifing the destination
  */
 bool NetworkBroker::submitMessage(const string& host,
-                                  CDataWrapper *message,
-                                  bool on_this_thread) {
+                                  CDataWrapper *message) {
     CHAOS_ASSERT(message && rpc_client)
     NetworkForwardInfo *nfi = new NetworkForwardInfo(false);
     nfi->destinationAddr = host;
     nfi->setMessage(message);
     //add answer id to datawrapper
-    return rpc_client->submitMessage(nfi, on_this_thread);
+    return rpc_client->submitMessage(nfi, false);
 }
 
 //!send interparocess message
@@ -561,8 +535,7 @@ chaos::common::data::CDataWrapper *NetworkBroker::submitInterProcessMessage(chao
 bool NetworkBroker::submiteRequest(const string& host,
                                    CDataWrapper *request,
                                    std::string sender_node_id,
-                                   uint32_t sender_request_id,
-                                   bool on_this_thread) {
+                                   uint32_t sender_request_id) {
     CHAOS_ASSERT(request && rpc_client)
     request->addStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_HOST_IP, published_host_and_port);
     NetworkForwardInfo *nfi = new NetworkForwardInfo(true);
@@ -570,7 +543,7 @@ bool NetworkBroker::submiteRequest(const string& host,
     nfi->sender_node_id = sender_node_id;
     nfi->sender_request_id = sender_request_id;
     nfi->setMessage(request);
-    return rpc_client->submitMessage(nfi, on_this_thread);
+    return rpc_client->submitMessage(nfi, false);
 }
 
 /*
@@ -636,7 +609,7 @@ MessageChannel *NetworkBroker::getNewMessageChannelForRemoteHost(CNetworkAddress
  */
 MDSMessageChannel *NetworkBroker::getMetadataserverMessageChannel(MessageRequestDomainSHRDPtr shared_request_domain) {
     MDSMessageChannel *channel = (shared_request_domain.get() == NULL)?
-    (new MDSMessageChannel(this, GlobalConfiguration::getInstance()->getMetadataServerAddressList())):
+    (new MDSMessageChannel(this, GlobalConfiguration::getInstance()->getMetadataServerAddressList(), global_request_domain)):
     (new MDSMessageChannel(this, GlobalConfiguration::getInstance()->getMetadataServerAddressList(), shared_request_domain));
     if(channel){
         channel->init();

@@ -1,21 +1,22 @@
 /*
- *	SnapshotDataAccess.h
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2015 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #ifndef __CHAOSFramework__SnapshotDataAccess_h
@@ -32,9 +33,9 @@ namespace chaos {
                 
                 class DataServiceDataAccess;
                 
-                typedef boost::shared_ptr<common::data::CDataWrapper> SnapshotElementPtr;
-                CHAOS_DEFINE_VECTOR_FOR_TYPE(SnapshotElementPtr, SnapshotList)
-                
+                typedef common::data::CDWShrdPtr                SnapshotElementPtr;
+                typedef common::data::VectorCDWShrdPtr          SnapshotList;
+                typedef common::data::VectorCDWShrdPtrIterator  SnapshotListIterator;
                 class SnapshotDataAccess:
                 public chaos::service_common::persistence::data_access::AbstractDataAccess {
                 protected:
@@ -48,15 +49,35 @@ namespace chaos {
                     //!default destructor
                     ~SnapshotDataAccess();
                     
-                    //! Create a new snapshot for the node uid list
-                    /*!
-                     Perform in an asynchronous way a snapshot creation
-                     \param snapshot_name the name of the new snapshot
-                     \param node_uid_list the list of the node (identified by node unique id) to include into
-                     snapshot.
-                     */
-                    virtual int createNewSnapshot(const std::string& snapshot_name,
-                                                  const ChaosStringVector& node_uid_list);
+                    //! Create a new snapshot
+                    virtual int snapshotCreateNewWithName(const std::string& snapshot_name,
+                                                          std::string& working_job_unique_id) = 0;
+                    
+                    //! check if a snapshot anme is present in metadata
+                    virtual int isSnapshotPresent(const std::string& snapshot_name,
+                                                  bool& presence) = 0;
+                    
+                    //! Add an element to a named snapshot
+                    virtual int snapshotAddElementToSnapshot(const std::string& working_job_unique_id,
+                                                             const std::string& snapshot_name,
+                                                             const std::string& producer_unique_key,
+                                                             const std::string& dataset_type,
+                                                             void* data,
+                                                             uint32_t data_len) = 0;
+                    
+                    virtual int snapshotIncrementJobCounter(const std::string& working_job_unique_id,
+                                                            const std::string& snapshot_name,
+                                                            bool add) = 0;
+                    
+                    //! get the dataset from a snapshot
+                    virtual int snapshotGetDatasetForProducerKey(const std::string& snapshot_name,
+                                                                 const std::string& producer_unique_key,
+                                                                 const std::string& dataset_type,
+                                                                 void **channel_data,
+                                                                 uint32_t& channel_data_size) = 0;
+                    
+                    //! Delete a snapshot where no job is working
+                    virtual int snapshotDeleteWithName(const std::string& snapshot_name) = 0;
                     
                     //! get the node uid in a snapshot
                     /*!
@@ -64,18 +85,23 @@ namespace chaos {
                      \param node_in_snapshot is the list of the node present in the snapshot
                      */
                     virtual int getNodeInSnapshot(const std::string& snapshot_name,
-                                                  ChaosStringVector& node_in_snapshot);
+                                                  ChaosStringVector& node_in_snapshot) = 0;
                     
                     //!return all snapshot where node is present
                     virtual int getSnapshotForNode(const std::string& node_unique_id,
-                                                   ChaosStringVector& snapshot_for_node);
+                                                   ChaosStringVector& snapshot_for_node) = 0;
                     
-                    //! delete a snapshot
-                    /*!
-                     remove interelly the snapshot.
-                     \param snapshot_name the name of the new snapshot
-                     */
-                    virtual int deleteSnapshot(const std::string& snapshot_name);
+                    //!return all dataset in snapshot for a node
+                    virtual int getDatasetInSnapshotForNode(const std::string& node_unique_id,
+                                                            const std::string& snapshot_name,
+                                                            common::data::VectorStrCDWShrdPtr& snapshot_for_node) = 0;
+                    
+                    //!set or update data set in snapshot or node
+                    virtual int setDatasetInSnapshotForNode(const std::string& working_job_unique_id,
+                                                            const std::string& node_unique_id,
+                                                            const std::string& snapshot_name,
+                                                            const std::string& dataset_key,
+                                                            common::data::CDataWrapper& dataset_value) = 0;
                     
                     //! check the snapshot work sate
                     /*!

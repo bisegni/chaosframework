@@ -1,21 +1,22 @@
 /*
- *	BatchCommandTypes.h
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2013 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #ifndef CHAOSFramework_BatchCommandTypes_h
@@ -43,7 +44,8 @@ namespace chaos {
                     EVT_PAUSED=3,			/**< The command is paused */
                     EVT_COMPLETED=4,		/**< The command has completed is work successfully */
                     EVT_FAULT=5,			/**< The command has fault */
-                    EVT_KILLED=6			/**< The command has been killed */
+                    EVT_KILLED=6,			/**< The command has been killed */
+					EVT_FATAL_FAULT=7       /**< The command has a fatal fault */
                 } BatchCommandEventType;
             }
 
@@ -99,9 +101,9 @@ namespace chaos {
                  * \brief Describe the state in which the command can be found
                  */
                 typedef enum SubmissionRule {
-                    SUBMIT_AND_Stack    = 0,    /**< The new command wil stack the current executing command that consist in
+                    SUBMIT_AND_STACK    = 0,    /**< The new command wil stack the current executing command that consist in
                                                  install all implemented handler of the new one without touch the handler that are not implemented */
-                    SUBMIT_AND_Kill     = 1,    /**< The new command will kill the current command, all hadnler ol killed one are erased and substituted */
+                    SUBMIT_AND_KILL     = 1,    /**< The new command will kill the current command, all hadnler ol killed one are erased and substituted */
                     SUBMIT_NORMAL       = 2     /**< The new command will waith the end of the current executed command and if an handler is implemented it is installed*/
                 } SubmissionRule;
             }
@@ -184,10 +186,11 @@ namespace chaos {
                  * \brief Describe the state in which the command can be found
                  */
                 typedef enum RunningProperty {
-                    RP_Exsc     = 0,    /**< The command cannot be killed or removed, it need to run */
-                    RP_Normal   = 1,    /**< The command can be stacked (paused) or killed*/
-                    RP_End      = 2,    /**< The command has ended his work */
-                    RP_Fault    = 3    /**< The command has had a fault */
+                    RP_EXSC     = 0,    /**< The command cannot be killed or removed, it need to run */
+                    RP_NORMAL   = 1,    /**< The command can be stacked (paused) or killed*/
+                    RP_END      = 2,    /**< The command has ended his work */
+                    RP_FAULT    = 3,    /**< The command has had a fault */
+					RP_FATAL_FAULT    = 4    /**< The command has had a fatal fault */
                 } RunningProperty;
             }
             

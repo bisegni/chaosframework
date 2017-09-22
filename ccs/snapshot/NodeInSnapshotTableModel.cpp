@@ -15,9 +15,9 @@ NodeInSnapshotTableModel::~NodeInSnapshotTableModel() {
 
 }
 
-void NodeInSnapshotTableModel::updateSnapshotList(std::auto_ptr<chaos::metadata_service_client::api_proxy::service::GetNodesForSnapshotHelper> _node_in_snapshot_helper) {
+void NodeInSnapshotTableModel::updateSnapshotList(ChaosUniquePtr<chaos::metadata_service_client::api_proxy::service::GetNodesForSnapshotHelper> _node_in_snapshot_helper) {
  beginResetModel();
- node_in_snapshot_helper = _node_in_snapshot_helper;
+ node_in_snapshot_helper = std::move(_node_in_snapshot_helper);
  endResetModel();
 }
 

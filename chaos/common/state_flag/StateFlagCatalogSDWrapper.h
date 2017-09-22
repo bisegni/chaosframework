@@ -1,22 +1,22 @@
 /*
- *	StateFlagCatalogSDWrapper.h
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFramework]
- *	Created by bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 18/07/16 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #ifndef __CHAOSFramework_A6322B6B_D5B8_47E4_B17D_EED6342E1526_StateFlagCatalogSDWrapper_h
@@ -42,20 +42,20 @@ namespace chaos {
                    serialized_data->isVectorValue(NodeStateFlagDefinitionKey::NODE_SF_CATALOG_FLAG_SET) ) {
                     StateFlagSDWrapper sfsdw;
                     //we have element to deserialize
-                    std::auto_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> flags_vec(serialized_data->getVectorValue(NodeStateFlagDefinitionKey::NODE_SF_CATALOG_FLAG_SET));
+                    ChaosUniquePtr<chaos::common::data::CMultiTypeDataArrayWrapper> flags_vec(serialized_data->getVectorValue(NodeStateFlagDefinitionKey::NODE_SF_CATALOG_FLAG_SET));
                     if(flags_vec->size()){
                         for (int idx = 0;
                              idx < flags_vec->size();
                              idx++) {
-                            std::auto_ptr<chaos::common::data::CDataWrapper> status_flag_element_obj_ser(flags_vec->getCDataWrapperElementAtIndex(idx));
+                            ChaosUniquePtr<chaos::common::data::CDataWrapper> status_flag_element_obj_ser(flags_vec->getCDataWrapperElementAtIndex(idx));
                             if(!status_flag_element_obj_ser->hasKey(NodeStateFlagDefinitionKey::NODE_SF_COMPOSED_NAME) ||
                                !status_flag_element_obj_ser->hasKey(NodeStateFlagDefinitionKey::NODE_SF_CATALOG_FLAG)) continue;
                             
                             //deserialize the flag
                             const std::string cat_flag_name = CDW_GET_SRT_WITH_DEFAULT(status_flag_element_obj_ser, NodeStateFlagDefinitionKey::NODE_SF_COMPOSED_NAME, "");
-                            std::auto_ptr<chaos::common::data::CDataWrapper> status_flag_ser(status_flag_element_obj_ser->getCSDataValue(NodeStateFlagDefinitionKey::NODE_SF_CATALOG_FLAG));
+                            ChaosUniquePtr<chaos::common::data::CDataWrapper> status_flag_ser(status_flag_element_obj_ser->getCSDataValue(NodeStateFlagDefinitionKey::NODE_SF_CATALOG_FLAG));
                             sfsdw.deserialize(status_flag_ser.get());
-                            boost::shared_ptr<StateFlag> new_flag(new StateFlag(sfsdw.dataWrapped()));
+                            ChaosSharedPtr<StateFlag> new_flag(new StateFlag(sfsdw.dataWrapped()));
                             
                             //we can insert
                             dataWrapped().catalog_container().insert(StateFlagElement::StateFlagElementPtr(new StateFlagElement((unsigned int)dataWrapped().catalog_container().size(), cat_flag_name, new_flag)));
@@ -68,8 +68,8 @@ namespace chaos {
                 }
             }
             
-            std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
-                std::auto_ptr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
+            ChaosUniquePtr<chaos::common::data::CDataWrapper> serialize() {
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
                 data_serialized->addStringValue(NodeStateFlagDefinitionKey::NODE_SF_CATALOG_NAME, dataWrapped().catalog_name);
                 
                 if(dataWrapped().catalog_container().size()) {

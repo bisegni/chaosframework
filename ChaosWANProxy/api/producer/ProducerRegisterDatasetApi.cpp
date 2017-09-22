@@ -1,21 +1,22 @@
 /*
- *	ProducerRegisterAPI.h
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyrigh 2015 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 #include "ProducerRegisterDatasetApi.h"
 
@@ -109,7 +110,7 @@ int ProducerRegisterDatasetApi::execute(std::vector<std::string>& api_tokens,
 	for (Json::ValueConstIterator it = dataset_elements.begin();
 		 it != dataset_elements.end();
 		 ++it) {
-		boost::shared_ptr<CDataWrapper> element;
+		ChaosSharedPtr<CDataWrapper> element;
 		if((err = scanDatasetElement(*it, err_msg, element))) {
 			PRA_LERR << err_msg;
 			
@@ -144,7 +145,7 @@ int ProducerRegisterDatasetApi::execute(std::vector<std::string>& api_tokens,
 //scan a json elemenot of the dataset creating the respective CDataWrapper
 int ProducerRegisterDatasetApi::scanDatasetElement(const Json::Value& dataset_json_element,
 												   std::string& err_msg,
-												   boost::shared_ptr<chaos::common::data::CDataWrapper>& element) {
+												   ChaosSharedPtr<chaos::common::data::CDataWrapper>& element) {
 	element.reset(new CDataWrapper());
 	/*-the name of the attribute
 	 "ds_attr_name": string,
@@ -207,7 +208,10 @@ int ProducerRegisterDatasetApi::scanDatasetElement(const Json::Value& dataset_js
 	}else if(type.compare("string") == 0) {
 		element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE,
 							   chaos::DataType::TYPE_STRING);
-	}else if(type.compare("binary") == 0) {
+	}else if(type.compare("cluster") == 0) {
+		element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE,
+							   chaos::DataType::TYPE_CLUSTER);
+	} else if(type.compare("binary") == 0) {
 		element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE,
 							   chaos::DataType::TYPE_BYTEARRAY);
 	}else if(type.compare("boolean") == 0) {

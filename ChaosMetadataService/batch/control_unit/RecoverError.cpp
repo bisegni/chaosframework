@@ -1,21 +1,22 @@
 /*
- *	RecoverError.cpp
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2015 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include "RecoverError.h"
@@ -60,10 +61,10 @@ void RecoverError::setHandler(CDataWrapper *data) {
             if((err = getDataAccess<mds_data_access::NodeDataAccess>()->getNodeDescription(uid, &tmp_pointer))){
                 
             } else {
-                std::auto_ptr<CDataWrapper> cu_desc(tmp_pointer);
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> cu_desc(tmp_pointer);
                 //set the phase to send message
                 
-                requests.push_back(boost::shared_ptr<RequestInfo>(createRequest(cu_desc->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR),
+                requests.push_back(ChaosSharedPtr<RequestInfo>(createRequest(cu_desc->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR),
                                                                                 cu_desc->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_DOMAIN),
                                                                                 chaos::NodeDomainAndActionRPC::ACTION_NODE_RECOVER).release()));
   
@@ -81,7 +82,7 @@ void RecoverError::acquireHandler() {
 void RecoverError::ccHandler() {
     MDSBatchCommand::ccHandler();
     
-    for(std::vector< boost::shared_ptr<RequestInfo> >::iterator it = requests.begin();
+    for(std::vector< ChaosSharedPtr<RequestInfo> >::iterator it = requests.begin();
         it != requests.end();
         it++ ) {
         //send message without waiting for replay

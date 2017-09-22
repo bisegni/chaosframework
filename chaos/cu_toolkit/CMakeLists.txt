@@ -1,15 +1,38 @@
 project(chaos_cutoolkit)
-INCLUDE_DIRECTORIES(chaos/cu_toolkit ../../)
+INCLUDE_DIRECTORIES(chaos/cu ../../)
 SET(cu_lib_src
         ChaosCUToolkit.cpp
         command_manager/CommandManager.cpp)
 
 SET(cu_lib_src ${cu_lib_src}
+        additional_lib/mongoose.c)
+
+SET(cu_lib_src ${cu_lib_src}
+        external_gateway/ExternalUnitGateway.cpp
+        external_gateway/AbstractAdapter.cpp
+        external_gateway/ExternalUnitConnection.cpp
+        external_gateway/ExternalUnitEndpoint.cpp
+        external_gateway/ExternalEchoEndpoint.cpp
+        external_gateway/ControlUnitBridge.cpp)
+
+SET(cu_lib_src ${cu_lib_src}
+        external_gateway/serialization/AbstractExternalSerialization.cpp
+        external_gateway/serialization/ExternalBSONExtJsonSerialization.cpp)
+
+SET(cu_lib_src ${cu_lib_src}
+        external_gateway/http_adapter/HTTPAdapter.cpp
+        external_gateway/http_adapter/HTTPExternalUnitConnection.cpp)
+
+SET(cu_lib_src ${cu_lib_src}
         driver_manager/DriverManager.cpp
         driver_manager/driver/AbstractDriver.cpp
+        driver_manager/driver/BaseBypassDriver.cpp
         driver_manager/driver/DriverAccessor.cpp
         driver_manager/driver/DriverPluginLoader.cpp
-        driver_manager/driver/AbstractDriverPlugin.cpp)
+        driver_manager/driver/AbstractDriverPlugin.cpp
+        driver_manager/driver/AbstractRemoteIODriver.cpp
+        driver_manager/driver/ExternalIODriver.cpp
+        driver_manager/driver/OpcodeExternalCommandMapper.cpp)
 
 SET(cu_lib_src ${cu_lib_src}
         driver_manager/driver/BasicIODriver.cpp
@@ -33,13 +56,21 @@ SET(cu_lib_src ${cu_lib_src}
         data_manager/manipulation/DatasetCacheWrapper.cpp
         data_manager/manipulation/DatasetEditor.cpp)
 
+SET(cu_lib_src ${cu_lib_src}
+        control_manager/script/ScriptableExecutionUnit.cpp
+        control_manager/script/api/EUDSValueManagement.cpp
+        control_manager/script/api/EULiveManagment.cpp
+	control_manager/script/api/EUSearch.cpp
+	control_manager/script/api/plugin/EUPluginApiWrapper.cpp
+	control_manager/script/api/plugin/EUPluginLoader.cpp
+	control_manager/script/ScriptableExecutionUnit.cpp
+	)
+	
 
 SET(cu_lib_src ${cu_lib_src}
         control_manager/AbstractControlUnit.cpp
         control_manager/ControlManager.cpp
         control_manager/SCAbstractControlUnit.cpp
-        control_manager/script/ScriptableExecutionUnit.cpp
-        control_manager/script/EUScriptableWrapper.cpp
         control_manager/RTAbstractControlUnit.cpp
         control_manager/AbstractExecutionUnit.cpp
         control_manager/WorkUnitManagement.cpp
@@ -49,7 +80,9 @@ SET(cu_lib_src ${cu_lib_src}
         control_manager/slow_command/SlowCommandExecutor.cpp
         control_manager/slow_command/SlowCommand.cpp
         control_manager/slow_command/command/SCWaitCommand.cpp
-        control_manager/AttributeSharedCacheWrapper.cpp)
+        control_manager/AttributeSharedCacheWrapper.cpp
+        control_manager/ProxyControlUnit.cpp
+        control_manager/ControlUnitApiInterface.cpp)
 
 SET(cu_lib_src ${cu_lib_src}
         control_manager/execution_pool/ExecutionPool.cpp)
@@ -69,7 +102,7 @@ separate_arguments(chaos_cutoolkit_lib)
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} chaos_common ${chaos_cutoolkit_lib})
 
 FILE(GLOB files "*.h")
-INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit)
+INSTALL(FILES ${files} DESTINATION include/chaos/cu)
 
 FILE(GLOB files "driver_manager/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/driver_manager)
@@ -91,6 +124,7 @@ INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/control_manager/hand
 
 FILE(GLOB files "control_manager/slow_command/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/control_manager/slow_command)
+
 FILE(GLOB files "control_manager/execution_pool/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/control_manager/execution_pool)
 

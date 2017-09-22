@@ -1,21 +1,22 @@
 /*
- *	MultiAddressMessageRequestFuture.h
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2015 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 #ifndef __CHAOSFramework__MultiAddressMessageRequestFuture__
 #define __CHAOSFramework__MultiAddressMessageRequestFuture__
@@ -35,7 +36,7 @@ namespace chaos{
              NOTE: This class is no more valid after that the MultiAddressMessageChannel from which has been created. If used after parent deallcoation
              memory crash will occur.
              */
-            class MultiAddressMessageRequestFuture{
+            class MultiAddressMessageRequestFuture {
                 //friend class for private constructor
                 friend class chaos::common::message::MultiAddressMessageChannel;
                 
@@ -48,10 +49,10 @@ namespace chaos{
                 std::string last_used_address;
                 std::string action_domain;
                 std::string action_name;
-                auto_ptr<chaos::common::data::CDataWrapper> message_pack;
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> message_pack;
                 
                 //! point to the current future
-                auto_ptr<MessageRequestFuture> current_future;
+                ChaosUniquePtr<MessageRequestFuture> current_future;
                 
                 //!private constructor
                 /*!
@@ -62,7 +63,7 @@ namespace chaos{
                                                  const std::string &_action_domain,
                                                  const std::string &_action_name,
                                                  chaos::common::data::CDataWrapper *_message_pack,
-                                                 int32_t _timeout_in_milliseconds = 1000);
+                                                 int32_t _timeout_in_milliseconds = RpcConfigurationKey::GlobalRPCTimeoutinMSec);
                 inline void retryOfflineServer();
                 inline void switchOnOtherServer();
             public:

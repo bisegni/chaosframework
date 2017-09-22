@@ -1,21 +1,22 @@
 /*
- *	AttributesValue.h
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2013 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 
@@ -28,15 +29,26 @@
 
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/data/CDataVariant.h>
+#include <chaos/common/data/CDataWrapper.h>
 
 namespace chaos{
     namespace common {
         namespace data {
 
             class CDataWrapper;
-
             namespace cache {
-
+                
+                class AttributeCache;
+            	namespace spec {
+            	 template<typename T>
+            	       inline  T* getValuePtr(void* value_buffer,CDataWrapper *cd) {
+            	                   return reinterpret_cast<T*>(value_buffer);
+            	           }
+            	   template<>
+            	     inline  CDataWrapper* getValuePtr<CDataWrapper>(void* value_buffer,CDataWrapper *cd){
+            	                   return cd;
+            	               }
+            	}
                     //! the dimensio of the block for the boost::dynamic_bitset class
                 typedef  uint8_t BitBlockDimension;
 
@@ -45,7 +57,7 @@ namespace chaos{
                  A AttributeValue is a class that help to understand when a value is changed and updated
                  */
                 struct AttributeValue {
-                    friend class AttributeSetting;
+                    friend class AttributeCache;
                     const std::string					name;
                         //! the index of this value
                     const uint32_t                      index;
@@ -57,9 +69,13 @@ namespace chaos{
                     uint32_t							buf_size;
                         //! is the datatype that represent the value
                     const chaos::DataType::DataType     type;
-
-                        //!main buffer
+                    
+                        //! subtype
+                    std::vector<chaos::DataType::BinarySubtype> sub_type;
+                    
+                    //!main buffer
                     void								*value_buffer;
+                    CDataWrapper						cdvalue;
 
                         //global index bitmap for infom that this value(using index) has been changed
                     boost::dynamic_bitset<BitBlockDimension> * sharedBitmapChangedAttribute;
@@ -68,7 +84,8 @@ namespace chaos{
                     AttributeValue(const std::string& _name,
                                    uint32_t _index,
                                    uint32_t _size,
-                                   chaos::DataType::DataType type);
+                                   chaos::DataType::DataType type,
+                                   const std::vector<chaos::DataType::BinarySubtype>& _sub_type);
 
                         //!private destrucotr
                     ~AttributeValue();
@@ -87,9 +104,10 @@ namespace chaos{
                                   uint32_t value_size,
                                   bool tag_has_changed = true);
                     
-                    bool setValue(const CDataVariant& attribute_value,
+                    bool setValue(CDataWrapper& attribute_value,
                                   bool tag_has_changed = true);
-                    
+                    bool setValue(const CDataVariant& attribute_value,
+                                                      bool tag_has_changed = true);
                     bool setStringValue(const std::string& value,
                                         bool tag_has_changed = true,
                                         bool enlarge_memory = false);
@@ -103,10 +121,11 @@ namespace chaos{
                         //! the value is returned has handle because the pointer can change it size ans so
                         //! the pointer can be relocated
                     template<typename T>
-                    inline T* getValuePtr() {
-                        return reinterpret_cast<T*>(value_buffer);
+                     inline T* getValuePtr() {
+                        //return reinterpret_cast<T*>(value_buffer);
+                    	return spec::getValuePtr<T>(value_buffer,&cdvalue);
                     }
-                    
+
                         //! return the buffer as cdatawrapper
                     /*!
                      This will work only if the contained data is a cdata buffer serialization

@@ -1,21 +1,22 @@
 /*
- *	NodeMessageChannel.h
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 #ifndef CHAOSFramework_NodeMessageChannel_h
 #define CHAOSFramework_NodeMessageChannel_h
@@ -43,7 +44,7 @@ namespace chaos {
 
 			protected:
 				//! node address for metadata server
-				auto_ptr<chaos::common::network::CNodeNetworkAddress> nodeAddress;
+                ChaosUniquePtr<chaos::common::network::CNodeNetworkAddress> nodeAddress;
 				
 			public:
 				//!Base constructor
@@ -76,8 +77,7 @@ namespace chaos {
                  */
                 void sendMessage(const std::string& node_id,
                                  const std::string& action_name,
-                                 chaos::common::data::CDataWrapper * const message_pack,
-                                 bool on_this_thread = false);
+                                 chaos::common::data::CDataWrapper * const message_pack);
                 /*!
                  \brief send a syncronous request and can wait for a determinated number of milliseconds the answer. If it has not
                  been received the method return with a NULL pointer
@@ -91,12 +91,10 @@ namespace chaos {
                 common::data::CDataWrapper* sendRequest(const std::string& node_id,
                                                         const std::string& action_name,
                                                         chaos::common::data::CDataWrapper *request_pack,
-                                                        int32_t millisec_to_wait=-1,
-                                                        bool async = false,
-                                                        bool on_this_thread = false);
+                                                        int32_t millisec_to_wait=-1);
                 
                 //!send an rpc request to a remote node
-                std::auto_ptr<MessageRequestFuture> sendRequestWithFuture(const std::string& node_id,
+                ChaosUniquePtr<MessageRequestFuture> sendRequestWithFuture(const std::string& node_id,
                                                                           const std::string& action_name,
                                                                           chaos::common::data::CDataWrapper *request_pack);
                 
@@ -105,12 +103,10 @@ namespace chaos {
                  RPC information contains the alive state of the node within rpc dispacher on the backend size
                  and the size of the queued actions
                  */
-                std::auto_ptr<MessageRequestFuture> checkRPCInformation(const std::string& node_id,
-                                                                        bool on_this_thread = false);
+                ChaosUniquePtr<MessageRequestFuture> checkRPCInformation(const std::string& node_id);
                 
                 //!Send a request for an echo test
-                std::auto_ptr<MessageRequestFuture> echoTest(chaos::common::data::CDataWrapper *echo_data,
-                                                             bool on_this_thread = false);
+                ChaosUniquePtr<MessageRequestFuture> echoTest(chaos::common::data::CDataWrapper *echo_data);
                 
                 //! return last sendxxx error code
                 int32_t getLastErrorCode();

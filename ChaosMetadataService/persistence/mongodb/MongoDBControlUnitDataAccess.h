@@ -1,21 +1,22 @@
 /*
- *	MongoDBControlUnitDataAccess.h
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2015 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 #ifndef __CHAOSFramework__MongoDBControlUnitDataAccess__
 #define __CHAOSFramework__MongoDBControlUnitDataAccess__
@@ -45,7 +46,7 @@ namespace chaos {
                     
                     MongoDBNodeDataAccess *node_data_access;
                 protected:
-                    MongoDBControlUnitDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection,
+                    MongoDBControlUnitDataAccess(const ChaosSharedPtr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection,
                                                  data_access::DataServiceDataAccess *_data_service_da);
                     ~MongoDBControlUnitDataAccess();
                     
@@ -72,12 +73,15 @@ namespace chaos {
                     int getDataset(const std::string& cu_unique_id,
                                    chaos::common::data::CDataWrapper **dataset_description);
                     
+                    int getFullDescription(const std::string& cu_unique_id,
+                                           chaos::common::data::CDataWrapper **dataset_description);
+                    
                     int setCommandDescription(chaos::common::data::CDataWrapper& command_description);
                     
                     int setInstanceDescription(const std::string& cu_unique_id,
                                                chaos::common::data::CDataWrapper& instance_description);
                     
-                    int searchInstanceForUnitServer(std::vector<boost::shared_ptr<chaos::common::data::CDataWrapper> >& result_page,
+                    int searchInstanceForUnitServer(std::vector<ChaosSharedPtr<chaos::common::data::CDataWrapper> >& result_page,
                                                     const std::string& unit_server_uid,
                                                     std::vector<std::string> cu_type_filter,
                                                     uint32_t last_sequence_id,
@@ -96,11 +100,15 @@ namespace chaos {
                     
                     int getInstanceDatasetAttributeDescription(const std::string& control_unit_uid,
                                                                const std::string& attribute_name,
-                                                               boost::shared_ptr<chaos::common::data::CDataWrapper>& result);
+                                                               ChaosSharedPtr<chaos::common::data::CDataWrapper>& result);
                     
                     int getInstanceDatasetAttributeConfiguration(const std::string& control_unit_uid,
                                                                  const std::string& attribute_name,
-                                                                 boost::shared_ptr<chaos::common::data::CDataWrapper>& result);
+                                                                 ChaosSharedPtr<chaos::common::data::CDataWrapper>& result);
+                    
+                    int getScriptAssociatedToControlUnitInstance(const std::string& cu_instance,
+                                                                 bool& found,
+                                                                 chaos::service_common::data::script::ScriptBaseDescription& script_base_descrition);
                     
                     int getDataServiceAssociated(const std::string& cu_uid,
                                                  std::vector<std::string>& associated_ds);
@@ -117,6 +125,8 @@ namespace chaos {
                     
                     int eraseControlUnitDataBeforeTS(const std::string& control_unit_id,
                                                      uint64_t unit_ts);
+
+                    int getNextRunID(const std::string& control_unit_id, int64_t& run_id);
                 };
                 
                 

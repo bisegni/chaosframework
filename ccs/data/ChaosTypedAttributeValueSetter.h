@@ -53,7 +53,7 @@ public:
     void setChaosAttributeMandatoryFlag(bool chaos_attribute_mandatory);
 
     bool isValid();
-    boost::shared_ptr<chaos::common::data::CDataWrapperKeyValueSetter> getCDataWrapperValueSetter(bool *ok = NULL);
+    ChaosSharedPtr<chaos::common::data::CDataWrapperKeyValueSetter> getCDataWrapperValueSetter(bool *ok = NULL);
 
 signals:
     void valueTypeChange(int type);

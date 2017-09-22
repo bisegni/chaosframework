@@ -17,7 +17,7 @@ void AbstractBinaryPlotAdapter::setBinaryType(const std::vector<unsigned int>& _
     element_per_channel = (_bin_type.size()/channel_offset);
 }
 
-void AbstractBinaryPlotAdapter::setData(const boost::shared_ptr<chaos::common::data::CDataBuffer>& _buffer_to_plot) {
+void AbstractBinaryPlotAdapter::setData(const ChaosSharedPtr<chaos::common::data::CDataBuffer>& _buffer_to_plot) {
     buffer_to_plot = _buffer_to_plot;
 }
 

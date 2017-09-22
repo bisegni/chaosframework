@@ -1,21 +1,22 @@
 /*
- *	CommandTemplateSubmit.cpp
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ * Copyright 2012, 2017 INFN
  *
- *    	Copyright 2015 INFN, National Institute of Nuclear Physics
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include "CommandTemplateSubmit.h"
@@ -57,11 +58,11 @@ CDataWrapper *CommandTemplateSubmit::execute(CDataWrapper *api_data,
     CommandInstanceList command_instance_list;
     
     N_CTS_DBG << "validate all command instance";
-    std::auto_ptr<CMultiTypeDataArrayWrapper> submission_task_list(api_data->getVectorValue("submission_task"));
+    ChaosUniquePtr<CMultiTypeDataArrayWrapper> submission_task_list(api_data->getVectorValue("submission_task"));
     for(int idx =0;
         idx < submission_task_list->size();
         idx++) {
-        boost::shared_ptr<CDataWrapper>  submission_task(submission_task_list->getCDataWrapperElementAtIndex(idx));
+        ChaosSharedPtr<CDataWrapper>  submission_task(submission_task_list->getCDataWrapperElementAtIndex(idx));
         //!process the instance
         processSubmissionTask(n_da,
                               submission_task,
@@ -75,7 +76,7 @@ CDataWrapper *CommandTemplateSubmit::execute(CDataWrapper *api_data,
     for(CommandInstanceListIterator it = command_instance_list.begin();
         it != command_instance_list.end();
         it++) {
-        std::auto_ptr<CDataWrapper> instance_pack(new CDataWrapper());
+        ChaosUniquePtr<chaos::common::data::CDataWrapper> instance_pack(new CDataWrapper());
         N_CTS_INFO << "Send datapack "<< it->getJSONString();
         instance_pack->addCSDataValue("submission_task", *it);
         command_id = getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::node::SubmitBatchCommand),
@@ -85,7 +86,7 @@ CDataWrapper *CommandTemplateSubmit::execute(CDataWrapper *api_data,
 }
 
 void CommandTemplateSubmit::processSubmissionTask(NodeDataAccess *n_da,
-                                                  boost::shared_ptr<CDataWrapper> submission_task,
+                                                  ChaosSharedPtr<CDataWrapper> submission_task,
                                                   CommandInstanceList& command_instance_list) {
     CHECK_KEY_THROW_AND_LOG(submission_task.get(), NodeDefinitionKey::NODE_UNIQUE_ID, N_CTS_ERR, -1, "The node unique id is mandatory")
     CHECK_KEY_THROW_AND_LOG(submission_task.get(), "template_name", N_CTS_ERR, -2, "The name of tempalte is mandatory")
@@ -96,27 +97,27 @@ void CommandTemplateSubmit::processSubmissionTask(NodeDataAccess *n_da,
     const std::string command_unique_id = submission_task->getStringValue(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID);
     
     //fetch command
-    boost::shared_ptr<CDataWrapper> command_description = getCommandDescription(n_da,
+    ChaosSharedPtr<CDataWrapper> command_description = getCommandDescription(n_da,
                                                                                 command_unique_id);
     //fetch template
-    boost::shared_ptr<CDataWrapper> template_description = getCommandTemaplateDescription(n_da,
+    ChaosSharedPtr<CDataWrapper> template_description = getCommandTemaplateDescription(n_da,
                                                                                           template_name,
                                                                                           command_unique_id);
     
     //store command instance
-    std::auto_ptr<CDataWrapper> instance = CommandCommonUtility::createCommandInstanceByTemplateadnSubmissionDescription(node_uid,
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> instance = CommandCommonUtility::createCommandInstanceByTemplateadnSubmissionDescription(node_uid,
                                                                                                                          submission_task.get(),
                                                                                                                          command_description.get(),
                                                                                                                          template_description.get());
     command_instance_list.push_back(instance.release());
 }
 
-boost::shared_ptr<CDataWrapper> CommandTemplateSubmit::getCommandDescription(NodeDataAccess *n_da,
+ChaosSharedPtr<CDataWrapper> CommandTemplateSubmit::getCommandDescription(NodeDataAccess *n_da,
                                                                              const std::string& command_unique_id) {
     int err = 0;
     bool presence = false;
     CDataWrapper *tmp_d_ptr = NULL;
-    boost::shared_ptr<CDataWrapper> result;
+    ChaosSharedPtr<CDataWrapper> result;
     
     //we need to load the command
     if((err = n_da->checkCommandPresence(command_unique_id,
@@ -135,13 +136,13 @@ boost::shared_ptr<CDataWrapper> CommandTemplateSubmit::getCommandDescription(Nod
     return result;
 }
 
-boost::shared_ptr<CDataWrapper> CommandTemplateSubmit::getCommandTemaplateDescription(NodeDataAccess *n_da,
+ChaosSharedPtr<CDataWrapper> CommandTemplateSubmit::getCommandTemaplateDescription(NodeDataAccess *n_da,
                                                                                       const std::string& template_name,
                                                                                       const std::string& command_unique_id) {
     int err = 0;
     bool presence = false;
     CDataWrapper *tmp_d_ptr = NULL;
-    boost::shared_ptr<CDataWrapper> result;
+    ChaosSharedPtr<CDataWrapper> result;
     
     //we need to load the template
     if((err = n_da->checkCommandTemplatePresence(template_name,

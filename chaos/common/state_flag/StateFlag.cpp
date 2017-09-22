@@ -1,22 +1,22 @@
 /*
- *	state_flag_types.cpp
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFramework]
- *	Created by bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 11/07/16 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include <chaos/common/global.h>
@@ -29,6 +29,21 @@ using namespace chaos::common::state_flag;
 #define SL_LOG INFO_LOG(StateFlag)
 #define SL_DBG DBG_LOG(StateFlag)
 #define SL_ERR ERR_LOG(StateFlag)
+
+FlagDescription::FlagDescription(const std::string& _name,
+                                 const std::string& _description):
+tag(),
+uuid(UUIDUtil::generateUUIDLite()),
+name(_name),
+description(_description) {}
+
+FlagDescription::FlagDescription(const FlagDescription& _description):
+tag(_description.tag),
+uuid(_description.uuid),
+name(_description.name),
+description(_description.description){}
+
+FlagDescription::~FlagDescription() {}
 
 #pragma mark StateLevel
 StateLevel::StateLevel():
@@ -94,45 +109,39 @@ const std::string& StateFlagListener::getStateFlagListenerUUID(){
 
 #pragma mark StateFlag
 StateFlag::StateFlag():
-flag_uuid(UUIDUtil::generateUUIDLite()),
-name(),
-description(),
+flag_description("",""),
 current_level(0){}
 
 
 StateFlag::StateFlag(const std::string& _name,
                      const std::string& _description):
-flag_uuid(UUIDUtil::generateUUIDLite()),
-name(_name),
-description(_description),
+flag_description(_name,
+                 _description),
 current_level(0){}
 
 StateFlag::StateFlag(const StateFlag& src):
-flag_uuid(UUIDUtil::generateUUIDLite()),
-name(src.name),
-description(src.description),
+flag_description(src.flag_description),
 current_level(src.current_level){}
 
 StateFlag& StateFlag::operator=(StateFlag const &rhs) {
-    name = rhs.name;
-    description = rhs.description;
+    flag_description.name = rhs.flag_description.name;
+    flag_description.description = rhs.flag_description.description;
     current_level = rhs.current_level;
     set_levels = rhs.set_levels;
     return *this;
 };
 
 const std::string& StateFlag::getDescription() const{
-    return description;
+    return flag_description.description;
 }
 
 const std::string& StateFlag::getFlagUUID() const {
-    return flag_uuid;
+    return flag_description.uuid;
 }
 
 const std::string& StateFlag::getName() const {
-    return name;
+    return flag_description.name;
 }
-
 
 bool StateFlag::addLevel(const StateLevel& level_state) {
     StatusLevelContainerOrderedIndex& ordered_index = boost::multi_index::get<ordered_index_tag>(set_levels);
@@ -194,11 +203,18 @@ void StateFlag::fireToListener(unsigned int fire_code,
     StateFlagListener *state_flag_listener_instance = dynamic_cast<StateFlagListener*>(listener_to_fire);
     if(state_flag_listener_instance){
         const StateLevel& level = getCurrentStateLevel();
-        state_flag_listener_instance->stateFlagUpdated(flag_uuid,
-                                                       name,
+        state_flag_listener_instance->stateFlagUpdated(flag_description,
                                                        level.getTag(),
                                                        level.getSeverity());
     }
+}
+
+void StateFlag::setTag(const std::string& new_tag) {
+    flag_description.tag = new_tag;
+}
+
+const std::string& StateFlag::getTag() const {
+    return flag_description.tag;
 }
 
 #pragma mark StateFlagBoolState

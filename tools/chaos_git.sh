@@ -39,16 +39,19 @@ git_checkout(){
 	if git branch | grep "$2" ;then
 	    check_out_opt="$2"
 	else
+	    info_mesg "[$dir] checking out from remote \"origin/$2\" tracking into " "$2"
 	    check_out_opt="-t -b $2 origin/$2"
 	fi
     else
 	if git branch |grep "$2";then
 	    check_out_opt="$2"
 	else
-	    echo "branch $2 not found, do you want create?, empty skip:"
-	    read mesg
-	    if [ -z "$mesg" ];then
-		return 1
+	    if [ -z "$yes" ];then
+		info_mesg_n "branch $2 not found, do you want create?, empty skip:"
+		read mesg
+		if [ -z "$mesg" ];then
+		    return 1
+		fi
 	    fi
 	    check_out_opt="-t -b $2"
 
@@ -75,13 +78,30 @@ git_arg=()
 git_cmd=""
 
 usage(){
-    echo -e "Usage is $0 [-s] [-t <tag name>][ -c <checkout branch> ] [ -p <branch name> ] [-d <directory0>] [-d <directory1>] \n-c <branch name>: check out a given branch name in all subdirs\n-p <branch>:commit and push modifications of a given branch\n-s:retrive the branch status\n-t <tag name>:make an annotated tag to all\n-d <directory>: apply just to the specified directory\n-m <src branch> <dst branch>: merge src into dst branch\n"
+    echo -e "Usage is $0 [-s] [-t <tag name>][ -c <checkout branch> ] [ -p <branch name> ] [-d <directory0>] [-d <directory1>] \n-c <branch name>: check out a given branch name in all subdirs\n-p <branch>:commit and push modifications of a given branch\n-s:retrive the branch status\n-t <tag name>:make an annotated tag to all\n-d <directory>: apply just to the specified directory\n-m <src branch> <dst branch>: merge src into dst branch\n-y:answer yes\n-z <maxdepth>: search for git directory for a maximum depth [$maxdepth]\n-r <dst branch>: create a merge request for actual branch -> destination branch\n-o <message>:apply message to all\n"
 }
-while getopts t:c:p:hsd:mr:b opt; do
+yes=""
+maxdepth=3
+overall_mesg=""
+while getopts t:c:p:hsd:mr:byz:r:o: opt; do
     case $opt in
+	o)
+	    overall_mesg=$OPTARG
+	    ;;
+	r)
+	    git_cmd=r
+	    create_merge_request=$OPTARG
+	    ;;
+	z)
+	    maxdepth=$OPTARG
+	    ;;
 	r)
 	    remote=1
 	    ;;
+	y)
+	    yes="1"
+	    ;;
+
 	t)
 	    echo -n "provide a tag message:"
 	    read mesg
@@ -121,10 +141,11 @@ done
 shift $(( OPTIND - 1 ))
 
 if [ ${#on_dir[@]} -eq 0 ]; then
-    dirs=$(find . -name ".git" -exec grep -sl opensource \{\}/config \;)
+#    dirs=$(find . -name ".git" -exec grep -sl infn \{\}/config \;)
+    dirs=$(find . -maxdepth $maxdepth -name ".git" -type d -not -path *.repo/* )
+
     for d in $dirs;do
 	dir=$(dirname $d)
-	dir=$(dirname $dir)
 	on_dir+=($dir)
 
     done
@@ -137,7 +158,53 @@ fi
 
 for dir in ${on_dir[@]}; do
     pushd $dir > /dev/null
+    REMOTE_LINE=`git config --get remote.origin.url`
+    if [[ "$REMOTE_LINE" == "ssh://git@"* ]]; then
+	if [[ "$REMOTE_LINE" =~ ssh:\/\/git@(.*)\/(.*)\/(.*)\.git ]];then
+
+	    GITHOST=${BASH_REMATCH[1]}
+	    GROUP=${BASH_REMATCH[2]}
+	    PROJECT_NAME=${BASH_REMATCH[3]}
+	fi
+    elif [[ $REMOTE_LINE == "https://"* ]]; then
+	if [[ "$REMOTE_LINE" =~ https:\/\/(.*)\/(.*)\/(.*)\.git ]];then
+	    GITHOST=${BASH_REMATCH[1]}
+	    GROUP=${BASH_REMATCH[2]}
+	    PROJECT_NAME=${BASH_REMATCH[3]}
+	fi
+
+	# https: https://my.gitlab.host.com/my-group/project.git
+
+    else
+	echo Unknown protocol from $REMOTE_LINE
+	exit 1
+    fi
     case $git_cmd in
+	r)
+
+
+	    SOURCE_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+	    DESTINATION_BRANCH=$create_merge_request
+	    info_mesg "[$dir] creating merge request \"$SOURCE_BRANCH->$DESTINATION_BRANCH\" for PROJECT " "$GITHOST/$GROUP/$PROJECT_NAME"
+	    if [ -z $overall_mesg ];then
+		info_mesg_n "[$dir] empty comment to skip:"
+		read mesg
+	    else
+		mesg=$overall_mesg
+	    fi
+	    if [ -n "$mesg" ]; then
+		info_mesg "* sending merge request \"$mesg\" to gitlab host " "$GITHOST"
+		if curl -s --header "PRIVATE-TOKEN:L-qCxMRRVFsedntAJyRL" -X POST "https://$GITHOST/api/v4/projects/$GROUP%2F$PROJECT_NAME/merge_requests" --data "source_branch=$SOURCE_BRANCH" --data "target_branch=$DESTINATION_BRANCH" --data "title=$mesg"; then
+		    ok_mesg "request sucessfully submitted to $GITHOST"
+		else
+		    nok_mesg "request sucessfully submitted to $GITHOST"
+		fi
+	    else
+		echo "* skipped!"
+	    fi
+
+	    
+	    ;;
 	s)
 	    git fetch
 	    info_mesg "directory " "$dir"
@@ -154,8 +221,16 @@ for dir in ${on_dir[@]}; do
 		usage
 		exit 1
 	    fi
-	    echo -n "[$dir] merging branch:\"$1\" in branch:\"$2\", empty comment to skip:"
-	    read mesg
+	    info_mesg "[$dir] merging " "\"$1\"=>\"$2\""
+	    
+	    if [ -z $overall_mesg ];then
+		info_mesg_n "[$dir] empty comment to skip:"
+		read mesg
+	    else
+		mesg=$overall_mesg
+	    fi
+
+
 	    if [ -n "$mesg" ]; then
 		if git_checkout $dir $2; then
 		    if git merge -m "$mesg" --no-ff $1;then
@@ -173,8 +248,15 @@ for dir in ${on_dir[@]}; do
     		usage
     		exit 1
     	    fi
-    	    echo -n "[$dir] rebase branch:\"$1\" against:\"$2\", empty charracter to skip:"
-    	    read mesg
+	    info_mesg "[$dir] rebasing " "\"$2\"=>\"$1\""
+
+	    if [ -z $overall_mesg ];then
+		info_mesg_n "[$dir] empty comment to skip:"
+		read mesg
+	    else
+		mesg=$overall_mesg
+	    fi
+
     	    if [ -n "$mesg" ]; then
     		if git_checkout $dir $1; then
     		    if git rebase $2;then
@@ -195,8 +277,15 @@ for dir in ${on_dir[@]}; do
 	    ;;
 	p)
 	    if git status | grep modified > /dev/null; then
-		echo -n "[$dir] modification found on [branch:$git_arg], empty comment to skip:"
-		read mesg
+		
+		info_mesg "[$dir] modification found on " "[branch:$git_arg]"
+		if [ -z $overall_mesg ];then
+		    info_mesg_n "[$dir] empty comment to skip:"
+		    read mesg
+		else
+		    mesg=$overall_mesg
+		fi
+
 		if [ -n "$mesg" ]; then
 			if git commit -m "$mesg" .;then
 			    info_mesg "[$dir] commit " "done"

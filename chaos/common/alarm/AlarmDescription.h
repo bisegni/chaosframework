@@ -1,22 +1,22 @@
 /*
- *	AlarmDescription.h
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFramework]
- *	Created by bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 26/10/2016 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #ifndef __CHAOSFramework_C540A441_6F28_4F99_9489_7331538962BD_AlarmDescription_h
@@ -38,12 +38,12 @@ namespace chaos{
             class AlarmHandler:
             public chaos::common::state_flag::StateFlagListener {
                 friend class AlarmDescription;
-                void stateFlagUpdated(const std::string& flag_uuid,
-                                      const std::string& flag_name,
-                                      const std::string& level_name,
-                                      const chaos::common::state_flag::StateFlagServerity current_level_severity);
+                void stateFlagUpdated(const chaos::common::state_flag::FlagDescription     flag_description,
+                                      const std::string&                                    level_name,
+                                      const chaos::common::state_flag::StateFlagServerity   current_level_severity);
             protected:
-                virtual void alarmChanged(const std::string& alarm_name,
+                virtual void alarmChanged(const std::string& alarm_tag,
+                                          const std::string& alarm_name,
                                           const int8_t alarm_severity) = 0;
             };
             
@@ -52,10 +52,13 @@ namespace chaos{
             protected state_flag::StateFlag {
                 friend class AlarmCatalog;
             public:
-                AlarmDescription(const std::string alarm_name,
-                                 const std::string alarm_description);
+                AlarmDescription(const std::string& alarm_tag,
+                                 const std::string& alarm_name,
+                                 const std::string& alarm_description);
                 ~AlarmDescription();
+                
             public:
+                const std::string& getAlarmTag() const;
                 const std::string& getAlarmName() const;
                 const std::string& getAlarmDescription() const;
                 void setCurrentSeverity(const uint8_t);
@@ -68,7 +71,7 @@ namespace chaos{
                               const chaos::common::state_flag::StateFlagServerity severity);
             };
             
-            typedef boost::shared_ptr<AlarmDescription> AlarmDescriptionShrdPtr;
+            typedef ChaosSharedPtr<AlarmDescription> AlarmDescriptionShrdPtr;
             
         }
     }

@@ -1,5 +1,5 @@
 #include "PresenterWidget.h"
-#include "CommandPresenter.h"
+#include "../error/ErrorManager.h"
 
 #include <QMenu>
 #include <QDebug>
@@ -14,29 +14,25 @@ using namespace chaos::metadata_service_client::api_proxy;
 
 PresenterWidget::PresenterWidget(QWidget *parent) :
     QWidget(parent),
-    editor_subwindow(NULL),
     submitted_api(0),
     api_submitter(this){
     setAttribute(Qt::WA_DeleteOnClose);
 }
 
-PresenterWidget::~PresenterWidget() {
+PresenterWidget::~PresenterWidget() {}
 
+void PresenterWidget::showEvent( QShowEvent* event ) {
+    QWidget::showEvent( event );
+    //init ui of the widget
+    initUI();
 }
 
-void PresenterWidget::setSubWindow(QMdiSubWindow *_editor_subwindow) {
-    if(editor_subwindow) return;
-    editor_subwindow = _editor_subwindow;
-}
-
-void PresenterWidget::setTabTitle(const QString& title) {
-    if(!editor_subwindow) return;
-    editor_subwindow->setWindowTitle(title);
+void PresenterWidget::setTitle(const QString& title) {
+    setWindowTitle(title);
 }
 
 void PresenterWidget::closeTab() {
-    if(!editor_subwindow) return;
-    editor_subwindow->close();
+    close();
 }
 
 void PresenterWidget::closeEvent(QCloseEvent *event) {
@@ -46,19 +42,16 @@ void PresenterWidget::closeEvent(QCloseEvent *event) {
     }
 }
 
-void PresenterWidget::addWidgetToPresenter(PresenterWidget *p_w) {
-    assert(presenter_instance);
-    presenter_instance->showCommandPresenter(p_w);
+void PresenterWidget::launchPresenterWidget(PresenterWidget *p_w) {
+    p_w->show();
 }
 
 void PresenterWidget::addNodeToHealtMonitor(const QString& node) {
-    assert(presenter_instance);
-    presenter_instance->addMonitorHealtForNode(node);
+    //presenter_instance->addMonitorHealtForNode(node);
 }
 
 void PresenterWidget::removeNodeToHealtMonitor(const QString& node) {
-    assert(presenter_instance);
-    presenter_instance->removeMonitorHealtForNode(node);
+    //presenter_instance->removeMonitorHealtForNode(node);
 }
 
 void PresenterWidget::manageWidgetStateOnForValue(const QString& value) {
@@ -179,7 +172,7 @@ void PresenterWidget::submitApiResult(const QString& api_tag,
                                       ApiProxyResult api_result) {
 
     api_submitter.submitApiResult(api_tag,
-                                  api_result);
+                                  std::move(api_result));
 }
 
 //-------slot for api-------
@@ -189,27 +182,30 @@ void PresenterWidget::onApiDone(const QString& tag,
 
 void PresenterWidget::onApiError(const QString& tag,
                                  QSharedPointer<CException> api_exception) {
-    showInformation(tr("Api Error"),
-                    tag,
-                    api_exception->what());
+//    showInformation(tr("Api Error"),
+//                    tag,
+//                    api_exception->what());
+    ErrorManager::getInstance()->submiteError(api_exception);
 }
 
 void PresenterWidget::onApiTimeout(const QString& tag) {
-    showInformation(tr("Api Error"),
-                    tag,
-                    tr("Timeout reached (Possible no server available)!"));
+    QSharedPointer<CException> api_exception(new CException(-1, "Timeout reached (Possible no server available)!", "PresenterWidget::onApiTimeout"));
+    ErrorManager::getInstance()->submiteError(api_exception);
 }
 
 
 void PresenterWidget::apiHasStarted(const QString& api_tag) {
-    if(submitted_api == 0) {
-        this->setCursor(Qt::WaitCursor);
-    }
+    //if(submitted_api == 0) {
+      //  this->setCursor(Qt::WaitCursor);
+   // }
     submitted_api++;
+    qDebug("Runned api:%d",submitted_api);
 }
 
 void PresenterWidget::apiHasEnded(const QString& api_tag) {
-     if((--submitted_api) == 0) {setCursor(Qt::ArrowCursor);}
+    --submitted_api;
+    qDebug("Still api running:%d", submitted_api);
+     //if((--submitted_api) == 0) {setCursor(Qt::ArrowCursor);}
 }
 
 void PresenterWidget::showInformation(const QString& title,
@@ -244,6 +240,27 @@ void PresenterWidget::registerWidgetForContextualMenu(QWidget *contextual_menu_p
                     this,
                     SLOT(generalContextualMenuActionTrigger()));
         }
+    }
+    if(add_default_node_action)addDefaultNodeAction(contextual_menu_parent);
+}
+
+void PresenterWidget::registerWidgetForContextualMenu(QWidget *contextual_menu_parent,
+                                                      QVector< QPair<QString, QVariant> >& widget_contextual_menu_action,
+                                                      bool add_default_node_action) {
+    if(!contextual_menu_parent) return;
+    contextual_menu_parent->setContextMenuPolicy(Qt::ActionsContextMenu);
+    QVector< QPair<QString, QVariant> >::iterator it = widget_contextual_menu_action.begin();
+    QVector< QPair<QString, QVariant> >::iterator end = widget_contextual_menu_action.end();
+    while(it != end) {
+        const QString action_name = it->first;
+        QAction *action = new QAction(action_name, contextual_menu_parent);
+        action->setData(it->second);
+        contextual_menu_parent->addAction(action);
+        connect(action,
+                SIGNAL(triggered()),
+                this,
+                SLOT(generalContextualMenuActionTrigger()));
+        it++;
     }
     if(add_default_node_action)addDefaultNodeAction(contextual_menu_parent);
 }

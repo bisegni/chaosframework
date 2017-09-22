@@ -1,22 +1,22 @@
 /*
- *	SearchInstancesForScript.cpp
+ * Copyright 2012, 2017 INFN
  *
- *	!CHAOS [CHAOSFramework]
- *	Created by bisegni.
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
  *
- *    	Copyright 15/06/16 INFN, National Institute of Nuclear Physics
+ * https://joinup.ec.europa.eu/software/page/eupl
  *
- *    	Licensed under the Apache License, Version 2.0 (the "License");
- *    	you may not use this file except in compliance with the License.
- *    	You may obtain a copy of the License at
- *
- *    	http://www.apache.org/licenses/LICENSE-2.0
- *
- *    	Unless required by applicable law or agreed to in writing, software
- *    	distributed under the License is distributed on an "AS IS" BASIS,
- *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    	See the License for the specific language governing permissions and
- *    	limitations under the License.
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
 
 #include "SearchInstancesForScript.h"
@@ -31,7 +31,7 @@ using namespace chaos::common::data;
 using namespace chaos::common::network;
 using namespace chaos::common::event::channel;
 using namespace chaos::common::data::structured;
-using namespace chaos::service_common::data::node;
+using namespace chaos::service_common::data::script;
 using namespace chaos::metadata_service::api::script;
 using namespace chaos::metadata_service::persistence::data_access;
 
@@ -42,7 +42,7 @@ AbstractApi("searchInstancesForScript"){
 SearchInstancesForScript::~SearchInstancesForScript() {
 }
 
-chaos::common::data::CDataWrapper *SearchInstancesForScript::execute(CDataWrapper *api_data, bool& detach_data) {
+CDataWrapper *SearchInstancesForScript::execute(CDataWrapper *api_data, bool& detach_data) {
     int err = 0;
     
     //check for mandatory attributes
@@ -61,7 +61,7 @@ chaos::common::data::CDataWrapper *SearchInstancesForScript::execute(CDataWrappe
 
     
     //create sd wrapper for a std vector list with node description
-    StdVectorSDWrapper<NodeInstance, NodeInstanceSDWrapper> ni_list_wrapper;
+    StdVectorSDWrapper<ScriptInstance, ScriptInstanceSDWrapper> ni_list_wrapper;
     
     if((err = s_da->searchScriptInstance(ni_list_wrapper.dataWrapped(),
                                          script_name,
@@ -70,6 +70,5 @@ chaos::common::data::CDataWrapper *SearchInstancesForScript::execute(CDataWrappe
                                          page_lenght))) {
         LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error searching instance for script %1%",%script_name));
     }
-
     return ni_list_wrapper.serialize().release();
 }
