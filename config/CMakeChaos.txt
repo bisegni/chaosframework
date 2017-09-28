@@ -7,6 +7,14 @@ macro (MESG parm)
   MESSAGE(STATUS "[${WHERE}] ${parm}")
 endmacro()
 
+macro (ERROR parm)
+    # get_filename_component(WHERE ${CMAKE_CURRENT_LIST_DIR} DIRECTORY)
+    SET(WHERE ${CMAKE_CURRENT_LIST_DIR})
+
+    MESSAGE(FATAL_ERROR "[${WHERE}] ### ${parm}, /tmp/cmake.log for details")
+
+endmacro()
+
 MACRO (SUBDIRLIST result curdir)
   MESG("Find all subdirectory of ${curdir}")
   SET(_ALL_SUBDIR "")
@@ -43,15 +51,10 @@ IF (NOT CACHE_DIR)
 	set(ENV(CC) ${CMAKE_C_COMPILER})
       endif()
     else()
-      ERROR("no ${name} (${what} compiler) found in PATH")
-          endif()
+      ERROR("compiler ${name} (${what} compiler) not found in PATH")
+    endif()
   endmacro()
 
-  macro (ERROR parm)
-    # get_filename_component(WHERE ${CMAKE_CURRENT_LIST_DIR} DIRECTORY)
-    SET(WHERE ${CMAKE_CURRENT_LIST_DIR})
-    MESSAGE(FATAL "[${WHERE}] ### ${parm}")
-  endmacro()
 
   macro (GitCloneUrl arg arg1)
     MESG("Cloning ${arg} from ${arg1} into ${EXTERNAL_BUILD_DIR}")
@@ -67,9 +70,11 @@ IF (NOT CACHE_DIR)
 	  WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}
 	  RESULT_VARIABLE err
 	  OUTPUT_VARIABLE out
+	  OUTPUT_FILE /tmp/cmake.log
+	  ERROR_FILE /tmp/cmake.log
 	  )
 	if( err)
-	  ERROR("cloning  from ${arg1} error: ${out}")
+	  ERROR("cloning  from ${arg1} error ${out}")
 	ELSE()
 	  MESG("save in cache ${EXTERNAL_BUILD_DIR}/${arg}")
 	  FILE(COPY ${EXTERNAL_BUILD_DIR}/${arg} DESTINATION ${CACHE_DIR} )
@@ -81,9 +86,11 @@ IF (NOT CACHE_DIR)
 	WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}
 	RESULT_VARIABLE err
 	OUTPUT_VARIABLE out
+	OUTPUT_FILE /tmp/cmake.log
+	ERROR_FILE /tmp/cmake.log
 	)
       if( err)
-	ERROR("cloning  from ${arg1} error: ${out}")
+	ERROR("cloning  from ${arg1} error :${out}")
       ENDIF()
     ENDIF()
   endmacro()
@@ -109,9 +116,12 @@ IF (NOT CACHE_DIR)
 	COMMAND wget ${url}/${what} --no-check-certificate -O ${what}
 	WORKING_DIRECTORY  ${EXTERNAL_BUILD_DIR}
 	RESULT_VARIABLE err
-	OUTPUT_VARIABLE out)
+	OUTPUT_VARIABLE out
+	OUTPUT_FILE /tmp/cmake.log
+	ERROR_FILE /tmp/cmake.log
+	)
       if( err)
-	ERROR("wget failed  error: ${out}")
+	ERROR("wget failed  error ${out}")
       ELSE()
 	IF(CHAOS_BUILD_CACHE)
 	  MESG("copy to cache ${CACHE_DIR}/${what}")
@@ -129,9 +139,12 @@ IF (NOT CACHE_DIR)
       COMMAND tar ${opt} ${what}
       WORKING_DIRECTORY  ${EXTERNAL_BUILD_DIR}
       RESULT_VARIABLE err
-      OUTPUT_VARIABLE out)
+      OUTPUT_VARIABLE out
+      OUTPUT_FILE /tmp/cmake.log
+      ERROR_FILE /tmp/cmake.log
+      )
     if( err)
-      ERROR("tar ${opt} failed  error: ${out}")
+      ERROR("tar ${opt} failed  error ${out}")
     endif()
   endmacro()
 
@@ -240,9 +253,11 @@ IF (NOT CACHE_DIR)
 	    WORKING_DIRECTORY ${CHAOS_BUNDLE}
 	    RESULT_VARIABLE err
 	    OUTPUT_VARIABLE out
+	    OUTPUT_FILE /tmp/cmake.log
+	    ERROR_FILE /tmp/cmake.log
 	    )
 	   if( err)
-	     ERROR("generation  error: ${out}")
+	     ERROR("generation  error ${out}")
 	   endif()
 	 ENDIF()
 #	 install (CODE "add_subdirectory(${CMAKE_INSTALL_PREFIX}/UnitServer)")
@@ -262,9 +277,12 @@ IF (NOT CACHE_DIR)
       COMMAND git checkout ${arg1}
       WORKING_DIRECTORY  ${EXTERNAL_BUILD_DIR}/${arg}
       RESULT_VARIABLE err
-      OUTPUT_VARIABLE out)
+      OUTPUT_VARIABLE out
+      OUTPUT_FILE /tmp/cmake.log
+      ERROR_FILE /tmp/cmake.log
+      )
     if( err)
-      ERROR("checkout  error: ${out}")
+      ERROR("checkout  error ${out}")
     endif()
   endmacro()
 
@@ -277,10 +295,12 @@ IF (NOT CACHE_DIR)
 	WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}/${arg}
 	RESULT_VARIABLE err
 	OUTPUT_VARIABLE mod
+	OUTPUT_FILE /tmp/cmake.log
+	ERROR_FILE /tmp/cmake.log
 	)
 
       IF( err)
-	ERROR("[${arg}] performing generation of configuration: ${err}")
+	ERROR("[${arg}] performing generation of configuration ${mod}")
       ENDIF()
     ENDIF()
 
@@ -295,9 +315,11 @@ IF (NOT CACHE_DIR)
 	  WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}/${arg}
 	  RESULT_VARIABLE err
 	  OUTPUT_VARIABLE out
+	  OUTPUT_FILE /tmp/cmake.log
+	  ERROR_FILE /tmp/cmake.log
 	  )
 	IF (err)
-	  ERROR("[${arg}] cleaning b2: ${out}")
+	  ERROR("[${arg}] cleaning b2 ${out}")
 	ENDIF()
 
 	SET(CONFPARM "./b2;${arg1}")
@@ -330,11 +352,12 @@ IF (NOT CACHE_DIR)
       COMMAND ${CONFPARM}
       WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}/${arg}
       RESULT_VARIABLE err
-      OUTPUT_VARIABLE out
+      OUTPUT_FILE /tmp/cmake.log
+      ERROR_FILE /tmp/cmake.log
       )
 
     if( err)
-      ERROR("[${arg}] configuring ${arg} :${out}")
+      ERROR("Error configuring")
     endif()
 
     IF(NOT SKIPBUILD)
@@ -343,13 +366,13 @@ IF (NOT CACHE_DIR)
 	COMMAND make install -j ${PROCESSOR_COUNT}
 	WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}/${arg}
 	RESULT_VARIABLE err2
-	OUTPUT_VARIABLE out2
+	OUTPUT_FILE /tmp/cmake.log
+	ERROR_FILE /tmp/cmake.log
 	)
       if( err2)
-	ERROR("[${arg}] compiling ${out2}: ${err2}")
+	ERROR("[${arg}] compiling ")
       endif()
     ELSE()
-      message(STATUS "[${arg}] compilation skipped...")
       SET(SKIPBUILD OFF)
       unset(SKIPBUILD CACHE)
     ENDIF()
@@ -369,9 +392,11 @@ IF (NOT CACHE_DIR)
       WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}/boost_1_${ver}_0
       RESULT_VARIABLE err
       OUTPUT_VARIABLE out
+      OUTPUT_FILE /tmp/cmake.log
+      ERROR_FILE /tmp/cmake.log
       )
     if( err)
-      ERROR("[BOOST] bootstrapping boost  failed  error: ${out}")
+      ERROR("[BOOST] bootstrapping boost  failed  error ${out}")
     endif()
 
 
@@ -382,7 +407,7 @@ IF (NOT CACHE_DIR)
       OUTPUT_VARIABLE out
       )
     if( err)
-      ERROR("[BOOST] error patching boost project-config.jam error: ${out}")
+      ERROR("[BOOST] error patching boost project-config.jam error" "${out}")
     endif()
     ConfigureAndBuild(boost_1_${ver}_0 "${arg}")
   endmacro()
@@ -440,6 +465,8 @@ IF (NOT CACHE_DIR)
   option(CHAOS_ENABLE_C11 "Enable C11" ON)
   option(CHAOS_DISABLE_EVENTFD "Disable EventFD" OFF)
   option(CHAOS_BUILD_CACHE "Keep third part sources" ON)
+  option(CHAOS_BOOST_VERSION "Use a predefined boost version" 64)
+  option(CHAOS_BOOST_DYNAMIC "compile and use dynamic boost" OFF)
   option(CHAOS_BUILD_UNITSERVER "Automatically build an Unit Server that includes all CUs found in distribution" ON)
 
   if(CMAKE_BUILD_TYPE MATCHES PROFILE)
@@ -588,8 +615,19 @@ IF (NOT CACHE_DIR)
     IF(NOT CMAKE_CXX_COMPILER)
       project(config)
     ENDIF()
+    
+    if(CHAOS_BOOST_DYNAMIC)
+      SET(CHAOS_CXX_FLAGS "${CHAOS_CXX_FLAGS} -DBOOST_LOG_DYN_LINK") 
+      SET(CHAOS_BOOST_FLAGS ${CHAOS_BOOST_FLAGS} link=shared runtime-link=shared)
+    ELSE()
+      SET(CHAOS_BOOST_FLAGS ${CHAOS_BOOST_FLAGS} link=static runtime-link=static)
+    ENDIF()
+    IF(CHAOS_LINKER_FLAGS)
+      SET(CHAOS_BOOST_FLAGS ${CHAOS_BOOST_FLAGS} linkflags=\""${CHAOS_LINKER_FLAGS}"\")
+    ENDIF()
 
-  SET(CHAOS_BOOST_FLAGS ${CHAOS_BOOST_FLAGS} linkflags=\""${CHAOS_LINKER_FLAGS}"\" cxxflags=\""${CHAOS_CXX_FLAGS} ${BOOST_CXX_ADDITIONAL_FLAGS}"\" --prefix=${CMAKE_INSTALL_PREFIX} --with-program_options --with-exception --with-chrono --with-filesystem --with-log --with-regex --with-random --with-system --with-thread --with-atomic --with-timer link=static install "-j ${PROCESSOR_COUNT}" )
+    
+  SET(CHAOS_BOOST_FLAGS ${CHAOS_BOOST_FLAGS} cxxflags=\""${CHAOS_CXX_FLAGS} ${BOOST_CXX_ADDITIONAL_FLAGS}"\" --prefix=${CMAKE_INSTALL_PREFIX} --with-program_options --with-exception --with-chrono --with-filesystem --with-log --with-regex --with-random --with-system --with-thread --with-atomic --with-timer install "-j ${PROCESSOR_COUNT}" )
 
 
 
@@ -633,8 +671,8 @@ IF (NOT CACHE_DIR)
   ######
 
   #### TOOL VERSIONS
-  if( DEFINED ENV{CHAOS_BOOST_VERSION})
-    SET(BOOST_VERSION ENV{CHAOS_BOOST_VERSION})
+  if( CHAOS_BOOST_VERSION)
+    SET(BOOST_VERSION ${CHAOS_BOOST_VERSION})
   ELSE()
     SET(BOOST_VERSION 64)
   ENDIF()
