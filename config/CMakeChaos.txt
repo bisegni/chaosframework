@@ -373,7 +373,6 @@ IF (NOT CACHE_DIR)
 	ERROR("[${arg}] compiling ")
       endif()
     ELSE()
-      message(STATUS "[${arg}] compilation skipped...")
       SET(SKIPBUILD OFF)
       unset(SKIPBUILD CACHE)
     ENDIF()
@@ -618,12 +617,16 @@ IF (NOT CACHE_DIR)
     ENDIF()
     
     if(CHAOS_BOOST_DYNAMIC)
-      SET(BOOST_LINK_FLAGS runtime-link=shared link=shared)
+      SET(CHAOS_BOOST_FLAGS ${CHAOS_BOOST_FLAGS} link=shared)
     ELSE()
-      SET(BOOST_LINK_FLAGS runtime-link=static link=static)
+      SET(CHAOS_BOOST_FLAGS ${CHAOS_BOOST_FLAGS} link=static)
     ENDIF()
+    IF(CHAOS_LINKER_FLAGS)
+      SET(CHAOS_BOOST_FLAGS ${CHAOS_BOOST_FLAGS} linkflags=\""${CHAOS_LINKER_FLAGS}"\")
+    ENDIF()
+
     
-  SET(CHAOS_BOOST_FLAGS ${CHAOS_BOOST_FLAGS} linkflags=\""${CHAOS_LINKER_FLAGS}"\" cxxflags=\""${CHAOS_CXX_FLAGS} ${BOOST_CXX_ADDITIONAL_FLAGS}"\" --prefix=${CMAKE_INSTALL_PREFIX} --with-program_options --with-exception --with-chrono --with-filesystem --with-log --with-regex --with-random --with-system --with-thread --with-atomic --with-timer ${BOOST_LINK_FLAGS} install "-j ${PROCESSOR_COUNT}" )
+  SET(CHAOS_BOOST_FLAGS ${CHAOS_BOOST_FLAGS} cxxflags=\""${CHAOS_CXX_FLAGS} ${BOOST_CXX_ADDITIONAL_FLAGS}"\" --prefix=${CMAKE_INSTALL_PREFIX} --with-program_options --with-exception --with-chrono --with-filesystem --with-log --with-regex --with-random --with-system --with-thread --with-atomic --with-timer install "-j ${PROCESSOR_COUNT}" )
 
 
 
