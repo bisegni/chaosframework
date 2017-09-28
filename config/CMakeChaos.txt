@@ -51,7 +51,7 @@ IF (NOT CACHE_DIR)
 	set(ENV(CC) ${CMAKE_C_COMPILER})
       endif()
     else()
-      ERROR("checking compiler ${name} (${what} compiler) found in PATH")
+      ERROR("compiler ${name} (${what} compiler) not found in PATH")
     endif()
   endmacro()
 
@@ -400,15 +400,15 @@ IF (NOT CACHE_DIR)
     endif()
 
 
-    # execute_process(
-    #   COMMAND sed -i -e "s/using gcc/using gcc : arm : ${SEDARG}/" project-config.jam
-    #   WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}/boost_1_${ver}_0
-    #   RESULT_VARIABLE err
-    #   OUTPUT_VARIABLE out
-    #   )
-    # if( err)
-    #   ERROR("[BOOST] error patching boost project-config.jam error" "${out}")
-    # endif()
+    execute_process(
+      COMMAND sed -i -e "s/using gcc/using gcc : arm : ${SEDARG}/" project-config.jam
+      WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}/boost_1_${ver}_0
+      RESULT_VARIABLE err
+      OUTPUT_VARIABLE out
+      )
+    if( err)
+      ERROR("[BOOST] error patching boost project-config.jam error" "${out}")
+    endif()
     ConfigureAndBuild(boost_1_${ver}_0 "${arg}")
   endmacro()
 
@@ -617,9 +617,10 @@ IF (NOT CACHE_DIR)
     ENDIF()
     
     if(CHAOS_BOOST_DYNAMIC)
-      SET(CHAOS_BOOST_FLAGS ${CHAOS_BOOST_FLAGS} link=shared)
+      SET(CHAOS_CXX_FLAGS "${CHAOS_CXX_FLAGS} -DBOOST_LOG_DYN_LINK") 
+      SET(CHAOS_BOOST_FLAGS ${CHAOS_BOOST_FLAGS} link=shared runtime-link=shared)
     ELSE()
-      SET(CHAOS_BOOST_FLAGS ${CHAOS_BOOST_FLAGS} link=static)
+      SET(CHAOS_BOOST_FLAGS ${CHAOS_BOOST_FLAGS} link=static runtime-link=static)
     ENDIF()
     IF(CHAOS_LINKER_FLAGS)
       SET(CHAOS_BOOST_FLAGS ${CHAOS_BOOST_FLAGS} linkflags=\""${CHAOS_LINKER_FLAGS}"\")
