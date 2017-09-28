@@ -19,48 +19,39 @@
  * permissions and limitations under the Licence.
  */
 
-#include "TestObjectProcessingPriorityQueueForPriority.h"
+#include "QueuePriorityTest.h"
 
-using namespace chaos::common::pqueue::test;
+QueuePriorityTest::QueuePriorityTest(){}
+QueuePriorityTest::~QueuePriorityTest(){}
 
-TestObjectProcessingPriorityQueueForPriority::TestObjectProcessingPriorityQueueForPriority():
-last_sequence(0),
-last_priority(100),
-max_priority(0),
-number_of_production(0){}
-
-TestObjectProcessingPriorityQueueForPriority::~TestObjectProcessingPriorityQueueForPriority(){}
-
-void TestObjectProcessingPriorityQueueForPriority::processBufferElement(TestPriorityElement *element,
-                                                                        ElementManagingPolicy& p) throw(CException) {
+void QueuePriorityTest::processBufferElement(TestPriorityElement *element,
+                                             chaos::ElementManagingPolicy& p) throw(chaos::CException) {
     if(last_priority != element->priority) {
-        assert(last_priority>=element->priority);
+        ASSERT_EQ(last_priority>=element->priority, true);
         last_priority = element->priority;
         last_sequence = 0;
     }
     if(last_sequence != element->id) {
-        assert(last_sequence<element->id);
+        ASSERT_EQ(last_sequence<element->id, true);
         last_sequence = element->id;
     }
 }
 
-void TestObjectProcessingPriorityQueueForPriority::init(int threadNumber) throw(CException) {
-    
+void QueuePriorityTest::SetUp() {
+    last_sequence = 0;
+    last_priority = 100;
+    max_priority = 50;
+    number_of_production = 1000;
+}
+
+TEST_F(QueuePriorityTest, QueueTestPriority) {
     //fill queue initlize to test priority for all element
     int priority = 0;
     for(int idx = 0; idx < number_of_production; idx++) {
+        //generating random priority
         priority = std::rand()%max_priority+1;
         push(new TestPriorityElement(chaos::common::utility::UUIDUtil::generateUUID(), idx, priority), priority, true);
     }
-    
-    CObjectProcessingPriorityQueue<TestPriorityElement>::init(threadNumber);
-}
-
-bool TestObjectProcessingPriorityQueueForPriority::test(int _max_priority,
-                                                        int _number_of_production) {
-    max_priority = _max_priority;
-    number_of_production =_number_of_production;
     init(1);
     deinit(true);
-    return true;
 }
