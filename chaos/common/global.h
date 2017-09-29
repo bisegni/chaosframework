@@ -200,7 +200,7 @@ delete(x); x=NULL;
 #define PRINT_LIB_HEADER  \
 LAPP_ << "-----------------------------------------";\
 LAPP_ << CSLIB_VERSION_HEADER;\
-LAPP_ << CSLIB_VERSION_NUMBER;\
+LAPP_ << CSLIB_VERSION_MAJOR<<"."<<CSLIB_VERSION_MINOR<<CSLIB_VERSION_NUMBER;\
 LAPP_ << "Date:"<<__DATE__ <<" " <<__TIME__;\
 LAPP_ << "-----------------------------------------";
 
