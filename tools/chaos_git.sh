@@ -197,8 +197,9 @@ for dir in ${on_dir[@]}; do
 		exit 1
 	    fi
 	    curl -X POST -F token="35685971883361120ee0e2ebd4020b" -F ref=${src_pipeline} -F "variables[DEPLOY_DESTINATION]=$target_env"  https://baltig.infn.it/api/v4/projects/807/trigger/pipeline
+	    exit 0
 	    ;;
-	exit 0
+	
 	r)
 
 
