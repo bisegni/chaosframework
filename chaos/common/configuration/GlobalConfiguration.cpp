@@ -176,7 +176,7 @@ void GlobalConfiguration::scanOption()  throw (CException) {
             
         }
         if (hasOption(InitOption::OPT_VERSION)) {
-        	std::cout <<"Version:"<< CSLIB_VERSION_MAJOR<<"."<<CSLIB_VERSION_MINOR<<"."<<CSLIB_VERSION_NUMBER<< " Date:"<<__DATE__ <<" Time:" <<__TIME__<<"\n";
+	  std::cout <<"Version:"<< CSLIB_VERSION_MAJOR<<"."<<CSLIB_VERSION_MINOR<<"."<<CSLIB_VERSION_NUMBER<< " Build ID:"<<CSLIB_BUILD_ID<< "Build Date:"<<__DATE__ <<"-" <<__TIME__<<"\n";
              exit(0);
               return;
 
