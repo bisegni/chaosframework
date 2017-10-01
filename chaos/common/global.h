@@ -60,6 +60,16 @@ BOOST_LOG_INLINE_GLOBAL_LOGGER_DEFAULT(chaosLogger, boost::log::sources::severit
 BOOST_LOG_DECLARE_GLOBAL_LOGGER(chaosLogger, boost::log::sources::severity_logger_mt < chaos::common::log::level::LogSeverityLevel > )
 #endif
 
+#ifndef CSLIB_VERSION_MAJOR
+#define CSLIB_VERSION_MAJOR "1"
+#endif
+#ifndef CSLIB_VERSION_MINOR
+#define CSLIB_VERSION_MINOR "1"
+#endif
+
+#ifndef CSLIB_BUILD_ID
+#define CSLIB_BUILD_ID 1
+#endif
 #define CHAOS_BOOST_LOCK_EXCEPTION_CACTH(exception_name, exception_code)\
 catch(boost::exception_detail::error_info_injector<boost::io::too_many_args>& exception_name){\
 exception_code\
