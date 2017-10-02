@@ -21,13 +21,12 @@
 
 #include "TestBatchDefault.h"
 using namespace chaos::common::data;
-using namespace chaos::common::batch_command::test;
 TestBatchDefaultCommand::TestBatchDefaultCommand(){}
 
 TestBatchDefaultCommand::~TestBatchDefaultCommand() {}
 
 void TestBatchDefaultCommand::setHandler(CDataWrapper *data) {
-    setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY, (uint64_t)1000000);
+    setFeatures(chaos::common::batch_command::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY, (uint64_t)1000000);
 }
 void TestBatchDefaultCommand::acquireHandler() {
     std::cout << "Default acquire" << std::endl;
@@ -43,7 +42,7 @@ bool TestBatchDefaultCommand::timeoutHandler() {
 }
 
 uint8_t TestBatchDefaultCommand::implementedHandler() {
-    return HandlerType::HT_Set|
-    HandlerType::HT_Correlation|
-    HandlerType::HT_Acquisition;
+    return chaos::common::batch_command::HandlerType::HT_Set|
+    chaos::common::batch_command::HandlerType::HT_Correlation|
+    chaos::common::batch_command::HandlerType::HT_Acquisition;
 }
