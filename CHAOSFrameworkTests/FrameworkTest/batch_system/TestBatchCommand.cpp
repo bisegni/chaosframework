@@ -23,7 +23,6 @@
 using namespace chaos::common::data;
 using namespace chaos::common::utility;
 using namespace chaos::common::batch_command;
-using namespace chaos::common::batch_command::test;
 
 TestBatchCommand::TestBatchCommand():
 create_ts(TimingUtil::getTimeStampInMicroseconds()),
@@ -37,8 +36,8 @@ void TestBatchCommand::setHandler(CDataWrapper *data) {
     set_ts = TimingUtil::getTimeStampInMicroseconds();
     
     //se cicle to 10 usec
-    setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY, (uint64_t)10);
-    setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT, (uint64_t)10000000);
+    setFeatures(chaos::common::batch_command::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY, (uint64_t)10);
+    setFeatures(chaos::common::batch_command::features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT, (uint64_t)10000000);
 }
 void TestBatchCommand::acquireHandler() {
     

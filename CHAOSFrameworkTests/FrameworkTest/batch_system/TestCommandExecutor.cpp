@@ -24,7 +24,6 @@
 using namespace chaos::common::data;
 using namespace chaos::common::utility;
 using namespace chaos::common::batch_command;
-using namespace chaos::common::batch_command::test;
 
 TestCommandExecutor::TestCommandExecutor():
 BatchCommandExecutor("exec_id"),
@@ -61,34 +60,37 @@ void TestCommandExecutor::handleCommandEvent(const std::string& command_alias,
     queued = commands_stats.queued_commands;
     stacked = commands_stats.stacked_commands;
     switch(type){
-        case common::batch_command::BatchCommandEventType::EVT_QUEUED:
+        case BatchCommandEventType::EVT_QUEUED:
             break;
-        case common::batch_command::BatchCommandEventType::EVT_WAITING:
+        case BatchCommandEventType::EVT_WAITING:
             break;
-        case common::batch_command::BatchCommandEventType::EVT_RUNNING:
+        case BatchCommandEventType::EVT_RUNNING:
             break;
-        case common::batch_command::BatchCommandEventType::EVT_PAUSED:
+        case BatchCommandEventType::EVT_PAUSED:
             paused_count++;
             break;
-        case common::batch_command::BatchCommandEventType::EVT_COMPLETED: {
-
+        case BatchCommandEventType::EVT_COMPLETED: {
+            
             completed_count++;
             break;
         }
-        case common::batch_command::BatchCommandEventType::EVT_FAULT: {
+        case BatchCommandEventType::EVT_FAULT: {
             fault_count++;
             break;
         }
             
-        case common::batch_command::BatchCommandEventType::EVT_KILLED: {
+        case BatchCommandEventType::EVT_KILLED: {
             killed_count++;
             break;
         }
+        case BatchCommandEventType::EVT_FATAL_FAULT:
+            
+            break;
     }
 }
 
 void TestCommandExecutor::handleSandboxEvent(const std::string& sandbox_id,
-                                             common::batch_command::BatchSandboxEventType::BatchSandboxEventType type,
+                                             BatchSandboxEventType::BatchSandboxEventType type,
                                              void* type_value_ptr,
                                              uint32_t type_value_size) {
 }
