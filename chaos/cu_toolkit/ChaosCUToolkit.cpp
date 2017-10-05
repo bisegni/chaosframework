@@ -228,10 +228,6 @@ void ChaosCUToolkit::init(void *init_data)  throw(CException) {
             LERR_ << "SIGTERM Signal handler registration error";
         }
         
-        //        if (signal((int) SIGSEGV, ChaosCUToolkit::signalHanlder) == SIG_ERR){
-        //            LERR_ << "SIGSEGV Signal handler registration error";
-        //        }
-        
         if (signal((int) SIGABRT, ChaosCUToolkit::signalHanlder) == SIG_ERR){
             LERR_ << "SIGABRT Signal handler registration error";
         }
@@ -241,7 +237,6 @@ void ChaosCUToolkit::init(void *init_data)  throw(CException) {
             //we can initilize the logging manager
             InizializableService::initImplementation(chaos::common::metadata_logging::MetadataLoggingManager::getInstance(), NULL, "MetadataLoggingManager", __PRETTY_FUNCTION__);
         }
-        
         
         //init healt manager singleton
         StartableService::initImplementation(HealtManager::getInstance(), NULL, "HealtManager", __PRETTY_FUNCTION__);
