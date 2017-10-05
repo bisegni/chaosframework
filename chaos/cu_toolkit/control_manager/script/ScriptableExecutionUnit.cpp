@@ -215,6 +215,7 @@ void ScriptableExecutionUnit::unitDefineActionAndDataset() throw(CException) {
     api_classes.push_back(ApiClassShrdPtr(new api::EULiveManagment(this)));
 
     if(GlobalConfiguration::getInstance()->getOption<bool>(InitOption::OPT_PLUGIN_ENABLE)) {
+        SEU_LAPP << "Scan Api Plugin";
         ChaosStringVector publish_api;
         //add api form pugin
         PluginManager::getInstance()->getRegisterdPluginForSubclass("chaos::cu::control_manager::script::api::plugin::EUAbstractApiPlugin", publish_api);

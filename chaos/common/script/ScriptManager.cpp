@@ -69,8 +69,7 @@ int ScriptManager::callScriptApi(const std::string& api_class,
         //read lock the map
     boost::shared_lock<boost::shared_mutex> rl(map_mutex);
     if(map_api_class.count(api_class) == 0) {
-        SCRPTMAN_ERR << CHAOS_FORMAT("Api class %1% is not registered", %api_class);
-        return -1;
+        throw CException(-1, CHAOS_FORMAT("Api class %1% is not registered", %api_class), __PRETTY_FUNCTION__);
     };
         //call api class
     return map_api_class[api_class]->callApi(api_name,

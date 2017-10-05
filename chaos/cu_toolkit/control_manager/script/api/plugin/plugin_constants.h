@@ -27,15 +27,6 @@ namespace chaos{
             namespace script {
                 namespace api {
                     namespace plugin {
-                        
-#define EU_PLUGIN_DIRECTORY             "eu-plugin-directory"
-#define EU_PLUGIN_DIRECTORY_DESC        "Specify the directory where execution unit api plugin are ocated"
-#define EU_PLUGIN_DIRECTORY_DEFAULT     "plugin"
-
-#define EU_PLUGIN_ENABLE                "eu-plugin-enable"
-#define EU_PLUGIN_ENABLE_DESC           "Enable the usage of plugin api for execution unit"
-#define EU_PLUGIN_ENABLE_DEFAULT        false
-                        
 #define UNIT_GATEWAY_ENABLE             "unit-gateway-enable"
 #define UNIT_GATEWAY_ENABLE_DESC        "Enable the management of external unit management"
 #define UNIT_GATEWAY_ENABLE_DEFAULT      false

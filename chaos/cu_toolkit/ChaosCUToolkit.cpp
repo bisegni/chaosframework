@@ -157,14 +157,6 @@ ChaosCUToolkit::ChaosCUToolkit() {
                                                             CONTROL_MANAGER_EXECUTION_POOLS_CPU_CAP_DESC,
                                                             CONTROL_MANAGER_EXECUTION_POOLS_CPU_CAP_DEFAULT);
     
-    GlobalConfiguration::getInstance()->addOption< std::string >(EU_PLUGIN_DIRECTORY,
-                                                                 EU_PLUGIN_DIRECTORY_DESC,
-                                                                 EU_PLUGIN_DIRECTORY_DEFAULT);
-    
-    GlobalConfiguration::getInstance()->addOption< bool >(EU_PLUGIN_ENABLE,
-                                                          EU_PLUGIN_ENABLE_DESC,
-                                                          EU_PLUGIN_ENABLE_DEFAULT);
-    
     GlobalConfiguration::getInstance()->addOption< bool >(UNIT_GATEWAY_ENABLE,
                                                           UNIT_GATEWAY_ENABLE_DESC,
                                                           UNIT_GATEWAY_ENABLE_DEFAULT);
