@@ -22,12 +22,12 @@
 #ifndef __CHAOSFramework_B4F38257_89FD_45DB_8E0C_2900506EFFAC_HTTPExternalConnection_h
 #define __CHAOSFramework_B4F38257_89FD_45DB_8E0C_2900506EFFAC_HTTPExternalConnection_h
 
-#include <chaos/cu_toolkit/external_gateway/ExternalUnitConnection.h>
-#include <chaos/cu_toolkit/external_gateway/http_adapter/http_adapter_types.h>
-#include <chaos/cu_toolkit/additional_lib/mongoose.h>
+#include <chaos/common/external_gateway/ExternalUnitConnection.h>
+#include <chaos/common/external_gateway/http_adapter/http_adapter_types.h>
+#include <chaos/common/additional_lib/mongoose.h>
 
 namespace chaos{
-    namespace cu {
+    namespace common {
         namespace external_gateway {
             namespace http_adapter{
                 class HTTPAdapter;
@@ -45,7 +45,7 @@ namespace chaos{
                 public:
                     HTTPExternalUnitConnection(mg_connection *_nc,
                                                ExternalUnitEndpoint *_endpoint,
-                                               ChaosUniquePtr<chaos::cu::external_gateway::serialization::AbstractExternalSerialization> _serializer_adaptor);
+                                               ChaosUniquePtr<chaos::common::external_gateway::serialization::AbstractExternalSerialization> _serializer_adaptor);
                     ~HTTPExternalUnitConnection();
                     
                     void closeConnection();

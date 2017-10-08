@@ -20,12 +20,12 @@
  */
 
 #include <chaos/common/global.h>
-#include <chaos/cu_toolkit/external_gateway/ExternalUnitGateway.h>
-#include <chaos/cu_toolkit/external_gateway/http_adapter/HTTPAdapter.h>
+#include <chaos/common/external_gateway/ExternalUnitGateway.h>
+#include <chaos/common/external_gateway/http_adapter/HTTPAdapter.h>
 
-#include <chaos/cu_toolkit/external_gateway/serialization/ExternalBSONExtJsonSerialization.h>
+#include <chaos/common/external_gateway/serialization/ExternalBSONExtJsonSerialization.h>
 
-using namespace chaos::cu::external_gateway;
+using namespace chaos::common::external_gateway;
 using namespace chaos::common::utility;
 
 #define INFO    INFO_LOG(ExternalUnitGateway)

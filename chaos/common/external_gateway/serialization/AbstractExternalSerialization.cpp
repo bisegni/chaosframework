@@ -19,6 +19,9 @@
  * permissions and limitations under the Licence.
  */
 
-#include <chaos/cu_toolkit/external_gateway/ControlUnitBridge.h>
+#include <chaos/common/external_gateway/serialization/AbstractExternalSerialization.h>
 
-using namespace chaos::cu::external_gateway;
+using namespace chaos::common::external_gateway::serialization;
+
+AbstractExternalSerialization::AbstractExternalSerialization(){}
+AbstractExternalSerialization::~AbstractExternalSerialization() {}

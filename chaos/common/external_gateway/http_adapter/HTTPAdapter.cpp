@@ -23,9 +23,9 @@
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/utility/InetUtility.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
-#include <chaos/cu_toolkit/external_gateway/ExternalUnitGateway.h>
-#include <chaos/cu_toolkit/external_gateway/http_adapter/HTTPAdapter.h>
-#include <chaos/cu_toolkit/external_gateway/external_gateway_constants.h>
+#include <chaos/common/external_gateway/ExternalUnitGateway.h>
+#include <chaos/common/external_gateway/http_adapter/HTTPAdapter.h>
+#include <chaos/common/external_gateway/external_gateway_constants.h>
 
 #include <boost/lexical_cast.hpp>
 
@@ -35,7 +35,7 @@
 using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::common::utility;
-using namespace chaos::cu::external_gateway::http_adapter;
+using namespace chaos::common::external_gateway::http_adapter;
 
 #define INFO    INFO_LOG(HTTPHelper)
 #define DBG     DBG_LOG(HTTPHelper)

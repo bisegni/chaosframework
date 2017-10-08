@@ -28,15 +28,15 @@
 #include <chaos/common/utility/InizializableService.h>
 #include <chaos/common/utility/ObjectInstancer.h>
 
-#include <chaos/cu_toolkit/external_gateway/AbstractAdapter.h>
-#include <chaos/cu_toolkit/external_gateway/ExternalUnitEndpoint.h>
-#include <chaos/cu_toolkit/external_gateway/ExternalEchoEndpoint.h>
-#include <chaos/cu_toolkit/external_gateway/serialization/AbstractExternalSerialization.h>
+#include <chaos/common/external_gateway/AbstractAdapter.h>
+#include <chaos/common/external_gateway/ExternalUnitEndpoint.h>
+#include <chaos/common/external_gateway/ExternalEchoEndpoint.h>
+#include <chaos/common/external_gateway/serialization/AbstractExternalSerialization.h>
 
 #include <algorithm>
 
 namespace chaos{
-    namespace cu {
+    namespace common {
         namespace external_gateway {
             
             //! define adapter map

@@ -22,7 +22,7 @@
 #include <chaos/cu_toolkit/data_manager/DataManager.h>
 #include <chaos/cu_toolkit/command_manager/CommandManager.h>
 #include <chaos/cu_toolkit/control_manager/script/api/api.h>
-#include <chaos/cu_toolkit/external_gateway/external_gateway.h>
+#include <chaos/common/external_gateway/external_gateway.h>
 
 #include <chaos/common/healt_system/HealtManager.h>
 #include <chaos/common/metadata_logging/MetadataLoggingManager.h>
@@ -245,7 +245,7 @@ void ChaosCUToolkit::init(void *init_data)  throw(CException) {
         if(GlobalConfiguration::getInstance()->hasOption(UNIT_GATEWAY_ENABLE) &&
            GlobalConfiguration::getInstance()->getOption<bool>(UNIT_GATEWAY_ENABLE)) {
             //initilize unit gateway
-            InizializableService::initImplementation(external_gateway::ExternalUnitGateway::getInstance(), NULL, "ExternalUnitGateway", __PRETTY_FUNCTION__);
+            InizializableService::initImplementation(common::external_gateway::ExternalUnitGateway::getInstance(), NULL, "ExternalUnitGateway", __PRETTY_FUNCTION__);
         }
         
         LAPP_ << "Control Manager Initialized";
@@ -330,7 +330,7 @@ void ChaosCUToolkit::deinit() throw(CException) {
     if(GlobalConfiguration::getInstance()->hasOption(UNIT_GATEWAY_ENABLE) &&
        GlobalConfiguration::getInstance()->getOption<bool>(UNIT_GATEWAY_ENABLE)) {
         //initilize unit gateway
-        InizializableService::deinitImplementation(external_gateway::ExternalUnitGateway::getInstance(), "ExternalUnitGateway", __PRETTY_FUNCTION__);
+        InizializableService::deinitImplementation(common::external_gateway::ExternalUnitGateway::getInstance(), "ExternalUnitGateway", __PRETTY_FUNCTION__);
     }
     //deinit command manager, this manager must be the last to startup
     CHAOS_NOT_THROW(StartableService::deinitImplementation(CommandManager::getInstance(), "CommandManager", "ChaosCUToolkit::stop"););

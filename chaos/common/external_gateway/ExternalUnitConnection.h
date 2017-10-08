@@ -24,10 +24,10 @@
 
 #include <chaos/common/chaos_types.h>
 
-#include <chaos/cu_toolkit/external_gateway/serialization/AbstractExternalSerialization.h>
+#include <chaos/common/external_gateway/serialization/AbstractExternalSerialization.h>
 
 namespace chaos {
-    namespace cu {
+    namespace common {
         namespace external_gateway {
             class AbstractAdapter;
             class ExternalUnitEndpoint;
@@ -47,7 +47,7 @@ namespace chaos {
                 ExternalUnitEndpoint *endpoint;
                 
                 //!,anage the absractio of serialization
-                ChaosUniquePtr<chaos::cu::external_gateway::serialization::AbstractExternalSerialization> serializer_adapter;
+                ChaosUniquePtr<chaos::common::external_gateway::serialization::AbstractExternalSerialization> serializer_adapter;
             protected:
                 int sendDataToEndpoint(chaos::common::data::CDBufferUniquePtr reecived_data);
                 virtual int sendDataToConnection(chaos::common::data::CDBufferUniquePtr data,
@@ -57,7 +57,7 @@ namespace chaos {
                 const std::string connection_identifier;
                 
                 ExternalUnitConnection(ExternalUnitEndpoint *_endpoint,
-                                       ChaosUniquePtr<chaos::cu::external_gateway::serialization::AbstractExternalSerialization> _serializer_adapter);
+                                       ChaosUniquePtr<chaos::common::external_gateway::serialization::AbstractExternalSerialization> _serializer_adapter);
                 virtual ~ExternalUnitConnection();
                 
                 //! send data over external protocol

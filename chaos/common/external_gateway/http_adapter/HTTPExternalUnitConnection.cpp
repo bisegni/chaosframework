@@ -19,14 +19,14 @@
  * permissions and limitations under the Licence.
  */
 
-#include <chaos/cu_toolkit/external_gateway/http_adapter/HTTPExternalUnitConnection.h>
+#include <chaos/common/external_gateway/http_adapter/HTTPExternalUnitConnection.h>
 
 using namespace chaos::common::data;
-using namespace chaos::cu::external_gateway::http_adapter;
+using namespace chaos::common::external_gateway::http_adapter;
 
 HTTPExternalUnitConnection::HTTPExternalUnitConnection(mg_connection *_nc,
                                                        ExternalUnitEndpoint *_endpoint,
-                                                       ChaosUniquePtr<chaos::cu::external_gateway::serialization::AbstractExternalSerialization> _serializer_adaptor):
+                                                       ChaosUniquePtr<chaos::common::external_gateway::serialization::AbstractExternalSerialization> _serializer_adaptor):
 ExternalUnitConnection(_endpoint, ChaosMoveOperator(_serializer_adaptor)),
 nc(_nc){}
 HTTPExternalUnitConnection::~HTTPExternalUnitConnection(){}

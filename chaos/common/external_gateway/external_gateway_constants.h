@@ -23,7 +23,7 @@
 #define __CHAOSFramework_F67CDB4D_86BB_49E0_9859_CE6BDCC3C989_external_gateway_constants_h
 
 namespace chaos{
-    namespace cu {
+    namespace common {
         namespace external_gateway {
             
 #define CU_EG_OPT_WORKER_THREAD_NUMBER          "cu-eg-worker-thread-number"

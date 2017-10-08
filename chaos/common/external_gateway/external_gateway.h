@@ -22,8 +22,8 @@
 #ifndef __CHAOSFramework_D0A4DD97_FA40_4763_8F1A_ADC7FE235A06_external_gateway_h
 #define __CHAOSFramework_D0A4DD97_FA40_4763_8F1A_ADC7FE235A06_external_gateway_h
 
-#include <chaos/cu_toolkit/external_gateway/ExternalUnitGateway.h>
-#include <chaos/cu_toolkit/external_gateway/external_gateway_types.h>
-#include <chaos/cu_toolkit/external_gateway/external_gateway_constants.h>
+#include <chaos/common/external_gateway/ExternalUnitGateway.h>
+#include <chaos/common/external_gateway/external_gateway_types.h>
+#include <chaos/common/external_gateway/external_gateway_constants.h>
 
 #endif /* __CHAOSFramework_D0A4DD97_FA40_4763_8F1A_ADC7FE235A06_external_gateway_h */

@@ -19,10 +19,10 @@
  *    	limitations under the License.
  */
 
-#include <chaos/cu_toolkit/external_gateway/serialization/ExternalBSONExtJsonSerialization.h>
+#include <chaos/common/external_gateway/serialization/ExternalBSONExtJsonSerialization.h>
 
 using namespace chaos::common::data;
-using namespace chaos::cu::external_gateway::serialization;
+using namespace chaos::common::external_gateway::serialization;
 
 //serialization type
 const std::string ExternalBSONExtJsonSerialization::ex_serialization_type = "application/bson-json";

@@ -56,9 +56,7 @@
 		320F73331F17A46400C4806C /* external_gateway_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 320F73311F17A46400C4806C /* external_gateway_types.h */; };
 		320F73371F17A5CB00C4806C /* external_gateway_constants.h in Headers */ = {isa = PBXBuildFile; fileRef = 320F73351F17A5CB00C4806C /* external_gateway_constants.h */; };
 		320F733B1F17A67800C4806C /* external_gateway.h in Headers */ = {isa = PBXBuildFile; fileRef = 320F73391F17A67800C4806C /* external_gateway.h */; };
-		320F733F1F1F4EC100C4806C /* AbstractExternalSerialization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320F733D1F1F4EC100C4806C /* AbstractExternalSerialization.cpp */; };
 		320F73401F1F4EC100C4806C /* AbstractExternalSerialization.h in Headers */ = {isa = PBXBuildFile; fileRef = 320F733E1F1F4EC100C4806C /* AbstractExternalSerialization.h */; };
-		320F73431F1F55E300C4806C /* ExternalBSONExtJsonSerialization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320F73411F1F55E300C4806C /* ExternalBSONExtJsonSerialization.cpp */; };
 		320F73441F1F55E300C4806C /* ExternalBSONExtJsonSerialization.h in Headers */ = {isa = PBXBuildFile; fileRef = 320F73421F1F55E300C4806C /* ExternalBSONExtJsonSerialization.h */; };
 		320FB0EC18A39E650014CDB3 /* DirectIO.h in Headers */ = {isa = PBXBuildFile; fileRef = 320FB0EB18A39E650014CDB3 /* DirectIO.h */; };
 		3210EE1E1AE7DE15006ADC0B /* RegistrationAckBatchCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3210EE1C1AE7DE15006ADC0B /* RegistrationAckBatchCommand.cpp */; };
@@ -180,8 +178,6 @@
 		324544FD1D4A56170081F90B /* AbstractListenerContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 324544FB1D4A56170081F90B /* AbstractListenerContainer.h */; };
 		324545011D4A676A0081F90B /* EventManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324544FF1D4A676A0081F90B /* EventManager.cpp */; };
 		324545021D4A676A0081F90B /* EventManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 324545001D4A676A0081F90B /* EventManager.h */; };
-		32460520179C55FC00B075DA /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = 3246051E179C55FC00B075DA /* sqlite3.c */; };
-		32460521179C55FC00B075DA /* sqlite3.h in Headers */ = {isa = PBXBuildFile; fileRef = 3246051F179C55FC00B075DA /* sqlite3.h */; };
 		3249282D1F5465CA00409E83 /* BaseBypassDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 3249282B1F5465CA00409E83 /* BaseBypassDriver.h */; };
 		324928331F54696200409E83 /* BaseBypassDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3249282A1F5465CA00409E83 /* BaseBypassDriver.cpp */; };
 		324928531F597E4500409E83 /* PropertyCollector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324928511F597E4500409E83 /* PropertyCollector.cpp */; };
@@ -414,6 +410,17 @@
 		3264139C1E44ACE60035E175 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3264139B1E44ACE60035E175 /* main.cpp */; };
 		326413A21E44AD750035E175 /* ChaosAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326413A01E44AD750035E175 /* ChaosAgent.cpp */; };
 		326413AB1E44C7DD0035E175 /* AgentRegister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326413A91E44C7DD0035E175 /* AgentRegister.cpp */; };
+		326420611F8A1CD200B58E3E /* ExternalUnitGateway.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E782CC1EFC075D00AD59F7 /* ExternalUnitGateway.cpp */; };
+		326420621F8A1CD200B58E3E /* AbstractAdapter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E782DE1EFC0EEE00AD59F7 /* AbstractAdapter.cpp */; };
+		326420631F8A1CD200B58E3E /* ExternalUnitConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A94A7A1F14CC830069DDA3 /* ExternalUnitConnection.cpp */; };
+		326420641F8A1CD200B58E3E /* ExternalUnitEndpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A94A7E1F14CDBF0069DDA3 /* ExternalUnitEndpoint.cpp */; };
+		326420651F8A1CD200B58E3E /* ExternalEchoEndpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A94A861F1654040069DDA3 /* ExternalEchoEndpoint.cpp */; };
+		326420671F8A1CDB00B58E3E /* HTTPAdapter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E782E21EFC0F2800AD59F7 /* HTTPAdapter.cpp */; };
+		326420681F8A1CDB00B58E3E /* HTTPExternalUnitConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A94A821F16449E0069DDA3 /* HTTPExternalUnitConnection.cpp */; };
+		326420691F8A1CE000B58E3E /* AbstractExternalSerialization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320F733D1F1F4EC100C4806C /* AbstractExternalSerialization.cpp */; };
+		3264206A1F8A1CE000B58E3E /* ExternalBSONExtJsonSerialization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320F73411F1F55E300C4806C /* ExternalBSONExtJsonSerialization.cpp */; };
+		3264206B1F8A28C100B58E3E /* mongoose.c in Sources */ = {isa = PBXBuildFile; fileRef = 32E782D61EFC095500AD59F7 /* mongoose.c */; };
+		3264206E1F8A290A00B58E3E /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = 3264206D1F8A28D700B58E3E /* sqlite3.c */; };
 		32655AC51E93C12E00829266 /* EUDSValueManagement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32655AC31E93C12D00829266 /* EUDSValueManagement.cpp */; };
 		32655AC61E93C12E00829266 /* EUDSValueManagement.h in Headers */ = {isa = PBXBuildFile; fileRef = 32655AC41E93C12E00829266 /* EUDSValueManagement.h */; };
 		32655ACA1E93C30800829266 /* api.h in Headers */ = {isa = PBXBuildFile; fileRef = 32655AC81E93C30800829266 /* api.h */; };
@@ -804,13 +811,9 @@
 		32A88BF51CF8228A001DBAF5 /* lzio.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A88BB81CF8228A001DBAF5 /* lzio.h */; };
 		32A8F7D1172BE3FD0090DB78 /* KeyGroupCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A8F7CF172BE3FD0090DB78 /* KeyGroupCache.cpp */; };
 		32A8F7D2172BE3FD0090DB78 /* KeyGroupCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A8F7D0172BE3FD0090DB78 /* KeyGroupCache.h */; };
-		32A94A7C1F14CC830069DDA3 /* ExternalUnitConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A94A7A1F14CC830069DDA3 /* ExternalUnitConnection.cpp */; };
 		32A94A7D1F14CC830069DDA3 /* ExternalUnitConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A94A7B1F14CC830069DDA3 /* ExternalUnitConnection.h */; };
-		32A94A801F14CDBF0069DDA3 /* ExternalUnitEndpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A94A7E1F14CDBF0069DDA3 /* ExternalUnitEndpoint.cpp */; };
 		32A94A811F14CDBF0069DDA3 /* ExternalUnitEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A94A7F1F14CDBF0069DDA3 /* ExternalUnitEndpoint.h */; };
-		32A94A841F16449E0069DDA3 /* HTTPExternalUnitConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A94A821F16449E0069DDA3 /* HTTPExternalUnitConnection.cpp */; };
 		32A94A851F16449E0069DDA3 /* HTTPExternalUnitConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A94A831F16449E0069DDA3 /* HTTPExternalUnitConnection.h */; };
-		32A94A881F1654040069DDA3 /* ExternalEchoEndpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A94A861F1654040069DDA3 /* ExternalEchoEndpoint.cpp */; };
 		32A94A891F1654040069DDA3 /* ExternalEchoEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A94A871F1654040069DDA3 /* ExternalEchoEndpoint.h */; };
 		32A968521D522FB800BD636C /* PropertyGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A968501D522FB800BD636C /* PropertyGroup.cpp */; };
 		32A968531D522FB800BD636C /* PropertyGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A968511D522FB800BD636C /* PropertyGroup.h */; };
@@ -1072,15 +1075,9 @@
 		32E6F43F1E48B4260068320E /* AgentDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E6F43D1E48B4260068320E /* AgentDataAccess.cpp */; };
 		32E6F4421E48B4B10068320E /* MongoDBAgentDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E6F4401E48B4B10068320E /* MongoDBAgentDataAccess.cpp */; };
 		32E6F4461E48D28F0068320E /* AgentAckCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E6F4441E48D28F0068320E /* AgentAckCommand.cpp */; };
-		32E782CE1EFC075D00AD59F7 /* ExternalUnitGateway.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E782CC1EFC075D00AD59F7 /* ExternalUnitGateway.cpp */; };
 		32E782CF1EFC075D00AD59F7 /* ExternalUnitGateway.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E782CD1EFC075D00AD59F7 /* ExternalUnitGateway.h */; };
-		32E782D81EFC095500AD59F7 /* mongoose.c in Sources */ = {isa = PBXBuildFile; fileRef = 32E782D61EFC095500AD59F7 /* mongoose.c */; };
 		32E782D91EFC095500AD59F7 /* mongoose.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E782D71EFC095500AD59F7 /* mongoose.h */; };
-		32E782DC1EFC0AC300AD59F7 /* ControlUnitBridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E782DA1EFC0AC300AD59F7 /* ControlUnitBridge.cpp */; };
-		32E782DD1EFC0AC300AD59F7 /* ControlUnitBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E782DB1EFC0AC300AD59F7 /* ControlUnitBridge.h */; };
-		32E782E01EFC0EEE00AD59F7 /* AbstractAdapter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E782DE1EFC0EEE00AD59F7 /* AbstractAdapter.cpp */; };
 		32E782E11EFC0EEE00AD59F7 /* AbstractAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E782DF1EFC0EEE00AD59F7 /* AbstractAdapter.h */; };
-		32E782E41EFC0F2800AD59F7 /* HTTPAdapter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E782E21EFC0F2800AD59F7 /* HTTPAdapter.cpp */; };
 		32E782E51EFC0F2800AD59F7 /* HTTPAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E782E31EFC0F2800AD59F7 /* HTTPAdapter.h */; };
 		32E86E431CD8A75F0038DE76 /* MessageRequestDomain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E86E411CD8A75F0038DE76 /* MessageRequestDomain.cpp */; };
 		32E86E441CD8A75F0038DE76 /* MessageRequestDomain.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E86E421CD8A75F0038DE76 /* MessageRequestDomain.h */; };
@@ -1513,8 +1510,6 @@
 		324544FB1D4A56170081F90B /* AbstractListenerContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractListenerContainer.h; sourceTree = "<group>"; };
 		324544FF1D4A676A0081F90B /* EventManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventManager.cpp; sourceTree = "<group>"; };
 		324545001D4A676A0081F90B /* EventManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventManager.h; sourceTree = "<group>"; };
-		3246051E179C55FC00B075DA /* sqlite3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sqlite3.c; sourceTree = "<group>"; };
-		3246051F179C55FC00B075DA /* sqlite3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sqlite3.h; sourceTree = "<group>"; };
 		3249282A1F5465CA00409E83 /* BaseBypassDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BaseBypassDriver.cpp; sourceTree = "<group>"; };
 		3249282B1F5465CA00409E83 /* BaseBypassDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseBypassDriver.h; sourceTree = "<group>"; };
 		324928511F597E4500409E83 /* PropertyCollector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PropertyCollector.cpp; sourceTree = "<group>"; };
@@ -1779,6 +1774,8 @@
 		326413A71E44B3F20035E175 /* chaos_agent_constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chaos_agent_constants.h; sourceTree = "<group>"; };
 		326413A91E44C7DD0035E175 /* AgentRegister.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AgentRegister.cpp; sourceTree = "<group>"; };
 		326413AA1E44C7DD0035E175 /* AgentRegister.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AgentRegister.h; sourceTree = "<group>"; };
+		3264206C1F8A28D700B58E3E /* sqlite3.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = sqlite3.h; path = chaos/common/additional_lib/sqlite3.h; sourceTree = SOURCE_ROOT; };
+		3264206D1F8A28D700B58E3E /* sqlite3.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = sqlite3.c; path = chaos/common/additional_lib/sqlite3.c; sourceTree = SOURCE_ROOT; };
 		32655AC31E93C12D00829266 /* EUDSValueManagement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EUDSValueManagement.cpp; sourceTree = "<group>"; };
 		32655AC41E93C12E00829266 /* EUDSValueManagement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EUDSValueManagement.h; sourceTree = "<group>"; };
 		32655AC81E93C30800829266 /* api.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = api.h; sourceTree = "<group>"; };
@@ -2624,8 +2621,6 @@
 		32E782CD1EFC075D00AD59F7 /* ExternalUnitGateway.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExternalUnitGateway.h; sourceTree = "<group>"; };
 		32E782D61EFC095500AD59F7 /* mongoose.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mongoose.c; sourceTree = "<group>"; };
 		32E782D71EFC095500AD59F7 /* mongoose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mongoose.h; sourceTree = "<group>"; };
-		32E782DA1EFC0AC300AD59F7 /* ControlUnitBridge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ControlUnitBridge.cpp; sourceTree = "<group>"; };
-		32E782DB1EFC0AC300AD59F7 /* ControlUnitBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ControlUnitBridge.h; sourceTree = "<group>"; };
 		32E782DE1EFC0EEE00AD59F7 /* AbstractAdapter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractAdapter.cpp; sourceTree = "<group>"; };
 		32E782DF1EFC0EEE00AD59F7 /* AbstractAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractAdapter.h; sourceTree = "<group>"; };
 		32E782E21EFC0F2800AD59F7 /* HTTPAdapter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPAdapter.cpp; sourceTree = "<group>"; };
@@ -3980,6 +3975,7 @@
 				326DB42F14B38BC00018A8D0 /* version.sh */,
 				32C100F4191B6EE100478F40 /* async_central */,
 				326DB3B514B38BC00018A8D0 /* action */,
+				32E782D51EFC092100AD59F7 /* additional_lib */,
 				32C25E0F1DBFB8B300A46C2B /* alarm */,
 				3296030E1876B45000CDCADA /* batch_command */,
 				326DB3BD14B38BC00018A8D0 /* bson */,
@@ -3991,6 +3987,7 @@
 				32A273EB1BB5A93D00572083 /* debug */,
 				32C3543317885A36009ED581 /* extension */,
 				326DB3FC14B38BC00018A8D0 /* exception */,
+				32E782CB1EFC070E00AD59F7 /* external_gateway */,
 				320C2180151B2BF200BD0F41 /* event */,
 				326DB3FE14B38BC00018A8D0 /* general */,
 				325D2FCA1AFA19B600B2A706 /* healt_system */,
@@ -4286,8 +4283,6 @@
 				3294905B159AF4D700E86BD1 /* CMakeLists.txt */,
 				326DB49B14B3A3E50018A8D0 /* ChaosCUToolkit.cpp */,
 				326DB49C14B3A3E50018A8D0 /* ChaosCUToolkit.h */,
-				32E782D51EFC092100AD59F7 /* additional_lib */,
-				32E782CB1EFC070E00AD59F7 /* external_gateway */,
 				32954969176B90A800B5A064 /* driver_manager */,
 				326DB49D14B3A3E50018A8D0 /* command_manager */,
 				326DB4A414B3A3E50018A8D0 /* control_manager */,
@@ -5159,8 +5154,6 @@
 		32BF74AA167CEB29007F8A57 /* sqlite_impl */ = {
 			isa = PBXGroup;
 			children = (
-				3246051E179C55FC00B075DA /* sqlite3.c */,
-				3246051F179C55FC00B075DA /* sqlite3.h */,
 				3289F9A3168508460080D93F /* SQLiteEntityDB.cpp */,
 				3289F9A4168508460080D93F /* SQLiteEntityDB.h */,
 			);
@@ -5574,8 +5567,6 @@
 				32A94A7F1F14CDBF0069DDA3 /* ExternalUnitEndpoint.h */,
 				32A94A861F1654040069DDA3 /* ExternalEchoEndpoint.cpp */,
 				32A94A871F1654040069DDA3 /* ExternalEchoEndpoint.h */,
-				32E782DA1EFC0AC300AD59F7 /* ControlUnitBridge.cpp */,
-				32E782DB1EFC0AC300AD59F7 /* ControlUnitBridge.h */,
 				320F73311F17A46400C4806C /* external_gateway_types.h */,
 				320F73351F17A5CB00C4806C /* external_gateway_constants.h */,
 				320F73391F17A67800C4806C /* external_gateway.h */,
@@ -5598,6 +5589,8 @@
 		32E782D51EFC092100AD59F7 /* additional_lib */ = {
 			isa = PBXGroup;
 			children = (
+				3264206D1F8A28D700B58E3E /* sqlite3.c */,
+				3264206C1F8A28D700B58E3E /* sqlite3.h */,
 				32E782D61EFC095500AD59F7 /* mongoose.c */,
 				32E782D71EFC095500AD59F7 /* mongoose.h */,
 			);
@@ -5835,7 +5828,6 @@
 				32A88BDD1CF8228A001DBAF5 /* lparser.h in Headers */,
 				32A88BE21CF8228A001DBAF5 /* lstring.h in Headers */,
 				32FCCA4A1EF942F900CD47BB /* base64.h in Headers */,
-				32460521179C55FC00B075DA /* sqlite3.h in Headers */,
 				32067EA21CABEE8800DE568A /* CDataVariant.h in Headers */,
 				32A88BF01CF8228A001DBAF5 /* lundump.h in Headers */,
 				326DB46614B38BC00018A8D0 /* ChaosDispatcher.h in Headers */,
@@ -6239,7 +6231,6 @@
 				32919A0C1764E68F00724874 /* DriverAccessor.h in Headers */,
 				322A3BCB1CEE1AA900FAD9DA /* ScriptableExecutionUnit.h in Headers */,
 				323BC28C1EE06E7500B4D602 /* plugin_constants.h in Headers */,
-				32E782DD1EFC0AC300AD59F7 /* ControlUnitBridge.h in Headers */,
 				32C4EF3B1D4F71440014F3D3 /* DatasetConsumer.h in Headers */,
 				3214EF111D466F95004DB689 /* DataBroker.h in Headers */,
 				3291D5191D5DEE890077CBB3 /* PublishTarget.h in Headers */,
@@ -6883,6 +6874,7 @@
 				328933591D3549DE00FBA95B /* DeclareStateFlag.cpp in Sources */,
 				3296031E1876B45000CDCADA /* AttributeValueSharedCache.cpp in Sources */,
 				326DB46B14B38BC00018A8D0 /* DefaultCommandDispatcher.cpp in Sources */,
+				326420631F8A1CD200B58E3E /* ExternalUnitConnection.cpp in Sources */,
 				32A88BD01CF8228A001DBAF5 /* llex.c in Sources */,
 				32A8621A1D58C79900A7D707 /* AbstractSubject.cpp in Sources */,
 				326DB46D14B38BC00018A8D0 /* DomainActionsScheduler.cpp in Sources */,
@@ -6938,9 +6930,11 @@
 				32414FD71DC1EEAD00830422 /* AlarmCatalog.cpp in Sources */,
 				32A88BCF1CF8228A001DBAF5 /* liolib.c in Sources */,
 				32C25DF41DB90C3200A46C2B /* StandardLoggingChannel.cpp in Sources */,
+				326420681F8A1CDB00B58E3E /* HTTPExternalUnitConnection.cpp in Sources */,
 				324A4B1B191A402A00975394 /* MurmurHash3.cpp in Sources */,
 				32CFF95B15E4D950005D607E /* EventDescriptor.cpp in Sources */,
 				32EBDEFA1B4E58F300278C42 /* MetricCollector.cpp in Sources */,
+				326420651F8A1CD200B58E3E /* ExternalEchoEndpoint.cpp in Sources */,
 				329603281876B45000CDCADA /* BatchCommandSandbox.cpp in Sources */,
 				32CFF95F15E4DBD3005D607E /* EventFactory.cpp in Sources */,
 				32A51F691E704E8700209E92 /* ManagedDirectIODataDriver.cpp in Sources */,
@@ -6972,6 +6966,7 @@
 				32E0EF3718CDB37D00CD1808 /* ZMQDirectIOClientConnection.cpp in Sources */,
 				32A88BCE1CF8228A001DBAF5 /* linit.c in Sources */,
 				32A88BCC1CF8228A001DBAF5 /* lgc.c in Sources */,
+				326420691F8A1CE000B58E3E /* AbstractExternalSerialization.cpp in Sources */,
 				3255E72715EA87D2005C96CA /* AbstractEventDispatcher.cpp in Sources */,
 				32C9CD3C1D51F7D30048DB4A /* PropertyDescription.cpp in Sources */,
 				327F51DE1952E81D00BA3D01 /* DirectIOURLManagment.cpp in Sources */,
@@ -6980,6 +6975,7 @@
 				328556A417F2E36000A64ED2 /* DirectIOServer.cpp in Sources */,
 				32B159D118B38C980096B58B /* DirectIODeviceClientChannel.cpp in Sources */,
 				3271B8911D3CE0B30035290E /* StateFlagSDWrapper.cpp in Sources */,
+				326420621F8A1CD200B58E3E /* AbstractAdapter.cpp in Sources */,
 				32B5C9501C68E2420021159C /* URLHAServiceFeeder.cpp in Sources */,
 				32A88BD41CF8228A001DBAF5 /* lmem.c in Sources */,
 				325DE9F115EC031E00D6F34E /* EventChannel.cpp in Sources */,
@@ -7002,6 +6998,7 @@
 				320E2FBF1D7EB9CB0077E8FE /* QueryCursor.cpp in Sources */,
 				32661C711AA7606400F1A721 /* NodeMessageChannel.cpp in Sources */,
 				3268CE35161608D100FCDB10 /* ZMQClient.cpp in Sources */,
+				326420671F8A1CDB00B58E3E /* HTTPAdapter.cpp in Sources */,
 				3268CE37161608D100FCDB10 /* ZMQServer.cpp in Sources */,
 				325D2FCD1AFA19E500B2A706 /* HealtManager.cpp in Sources */,
 				324A4B90191A527D00975394 /* base64.cpp in Sources */,
@@ -7026,13 +7023,14 @@
 				32B57207168E02D10002A198 /* oid.cpp in Sources */,
 				329603261876B45000CDCADA /* BatchCommandExecutor.cpp in Sources */,
 				32B159CD18AE08720096B58B /* ZMQSocketFeeder.cpp in Sources */,
-				32460520179C55FC00B075DA /* sqlite3.c in Sources */,
 				32FBC78E1D7F2BEC001F9170 /* TimingUtil.cpp in Sources */,
 				32C4C2AD1C8D9A8600D74E0F /* CException.cpp in Sources */,
 				32A88BBB1CF8228A001DBAF5 /* lauxlib.c in Sources */,
 				324A4B54191A41EF00975394 /* random.cpp in Sources */,
+				3264206A1F8A1CE000B58E3E /* ExternalBSONExtJsonSerialization.cpp in Sources */,
 				32A88BB91CF8228A001DBAF5 /* lapi.c in Sources */,
 				32FB20201A3F2E7300307A86 /* AbstractSharedDomainCache.cpp in Sources */,
+				3264206B1F8A28C100B58E3E /* mongoose.c in Sources */,
 				3230BEC2181A6ADB00EA5793 /* DatasetDB.cpp in Sources */,
 				32AF7D4018DAEAF300537DE6 /* PerformanceNodeChannel.cpp in Sources */,
 				324928531F597E4500409E83 /* PropertyCollector.cpp in Sources */,
@@ -7052,6 +7050,7 @@
 				32E86E431CD8A75F0038DE76 /* MessageRequestDomain.cpp in Sources */,
 				32612AC51CE20E5000F3B8F3 /* AbstractScriptVM.cpp in Sources */,
 				32EBDEFE1B4E6FC700278C42 /* RpcClientMetricCollector.cpp in Sources */,
+				326420641F8A1CD200B58E3E /* ExternalUnitEndpoint.cpp in Sources */,
 				3219E69F18CC7AE600C2F795 /* DirectIOClientConnection.cpp in Sources */,
 				32279F8B16FA36B6009EC7B9 /* PublisherDataService.cpp in Sources */,
 				32BD631D1E1E4D7F006FE42C /* AbstractActionScheduler.cpp in Sources */,
@@ -7060,11 +7059,13 @@
 				32612ABD1CE209BB00F3B8F3 /* ScriptManager.cpp in Sources */,
 				32A88BC71CF8228A001DBAF5 /* ldo.c in Sources */,
 				329DEB731D2E457F0050E914 /* chaos_errors.cpp in Sources */,
+				326420611F8A1CD200B58E3E /* ExternalUnitGateway.cpp in Sources */,
 				32A8621C1D58C79900A7D707 /* TriggerExecutionEnviroment.cpp in Sources */,
 				32A88BE41CF8228A001DBAF5 /* ltable.c in Sources */,
 				329FFFD1170712CE00D69CDE /* ManagedMemory.cpp in Sources */,
 				327CFF091708C4EB0069497B /* FastHash.cpp in Sources */,
 				32CB7CE017099C8D00767FC1 /* DataCache.cpp in Sources */,
+				3264206E1F8A290A00B58E3E /* sqlite3.c in Sources */,
 				32612AB91CE2058100F3B8F3 /* AbstractScriptableClass.cpp in Sources */,
 				32D421B317271572008A326E /* BsonFragment.cpp in Sources */,
 				32A88BD31CF8228A001DBAF5 /* lmathlib.c in Sources */,
@@ -7093,37 +7094,28 @@
 				324928331F54696200409E83 /* BaseBypassDriver.cpp in Sources */,
 				326CD5AB1D66F975003AD071 /* PublishingManager.cpp in Sources */,
 				3287F7E617B2756C009DD6ED /* DriverManager.cpp in Sources */,
-				32A94A801F14CDBF0069DDA3 /* ExternalUnitEndpoint.cpp in Sources */,
-				32A94A881F1654040069DDA3 /* ExternalEchoEndpoint.cpp in Sources */,
-				320F73431F1F55E300C4806C /* ExternalBSONExtJsonSerialization.cpp in Sources */,
 				3214EF101D466F95004DB689 /* DataBroker.cpp in Sources */,
-				32E782DC1EFC0AC300AD59F7 /* ControlUnitBridge.cpp in Sources */,
 				325168CC1D47935D00E877DF /* DataBrokerEditor.cpp in Sources */,
 				3270D5E81CCFAC4F0072017B /* AbstractExecutionUnit.cpp in Sources */,
 				32655AC51E93C12E00829266 /* EUDSValueManagement.cpp in Sources */,
 				326DB4BA14B3A3E50018A8D0 /* CommandManager.cpp in Sources */,
-				32E782E01EFC0EEE00AD59F7 /* AbstractAdapter.cpp in Sources */,
 				32D4ACE71D66010100EF14E4 /* publishing_types.cpp in Sources */,
 				3214EF0A1D466CF6004DB689 /* DataBrokerManager.cpp in Sources */,
 				3265F332197E626900F22FBC /* WorkUnitManagement.cpp in Sources */,
 				323BC2871EE05A8B00B4D602 /* EUPluginLoader.cpp in Sources */,
 				32A116AD1D181D2500FF44ED /* ExecutionPool.cpp in Sources */,
-				32E782CE1EFC075D00AD59F7 /* ExternalUnitGateway.cpp in Sources */,
 				32C4EF421D4F7F9E0014F3D3 /* RegisterEnviroment.cpp in Sources */,
 				32FC562D1EE8449A00C19841 /* EUPluginApiWrapper.cpp in Sources */,
 				322A3BCA1CEE1AA900FAD9DA /* ScriptableExecutionUnit.cpp in Sources */,
 				32CFC5CC1AF5601300E2A0B6 /* BasicIODriverInterface.cpp in Sources */,
 				326DB4BF14B3A3E50018A8D0 /* AbstractControlUnit.cpp in Sources */,
-				32E782D81EFC095500AD59F7 /* mongoose.c in Sources */,
 				3215860D178756B40090E7E6 /* AbstractDriverPlugin.cpp in Sources */,
 				324545011D4A676A0081F90B /* EventManager.cpp in Sources */,
 				32C4EF361D4F71370014F3D3 /* DatasetEvent.cpp in Sources */,
-				320F733F1F1F4EC100C4806C /* AbstractExternalSerialization.cpp in Sources */,
 				328C84741ED33C15008B5F7D /* EULiveManagment.cpp in Sources */,
 				326BB29F1E3753E200BFA602 /* ProxyControlUnit.cpp in Sources */,
 				3252A30F1C8ED2A800900FF2 /* AbstractAttributeHandler.cpp in Sources */,
 				326DB4C114B3A3E50018A8D0 /* ControlManager.cpp in Sources */,
-				32A94A7C1F14CC830069DDA3 /* ExternalUnitConnection.cpp in Sources */,
 				326DB4C814B3A3E50018A8D0 /* DataManager.cpp in Sources */,
 				325168CE1D479BAB00E877DF /* data_manager_types.cpp in Sources */,
 				3252AEFA1F1F9EEF0065F137 /* AbstractRemoteIODriver.cpp in Sources */,
@@ -7133,7 +7125,6 @@
 				32CFC5C51AF55FED00E2A0B6 /* IOCU.cpp in Sources */,
 				325F8B511763AF2300EFE616 /* SlowCommand.cpp in Sources */,
 				32655ACD1E93FCF200829266 /* EUSearch.cpp in Sources */,
-				32E782E41EFC0F2800AD59F7 /* HTTPAdapter.cpp in Sources */,
 				324D088D1F2F14C600836E29 /* ExternalIODriver.cpp in Sources */,
 				328CC9D61763CCC7000B30B6 /* AbstractDriver.cpp in Sources */,
 				32234D3F176E045100525E0C /* SlowCommandExecutor.cpp in Sources */,
@@ -7145,7 +7136,6 @@
 				32C4EF291D4BB0A60014F3D3 /* DatasetCacheWrapper.cpp in Sources */,
 				3291D5181D5DEE890077CBB3 /* PublishTarget.cpp in Sources */,
 				32F2241B179AE3BC00853F62 /* RTAbstractControlUnit.cpp in Sources */,
-				32A94A841F16449E0069DDA3 /* HTTPExternalUnitConnection.cpp in Sources */,
 				32995C421BAC57A300F68148 /* SCWaitCommand.cpp in Sources */,
 				32F2241F179AEED500853F62 /* SCAbstractControlUnit.cpp in Sources */,
 				32C4EF251D4BA7060014F3D3 /* DatasetEditor.cpp in Sources */,

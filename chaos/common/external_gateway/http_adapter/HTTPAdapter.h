@@ -26,15 +26,15 @@
 #include <chaos/common/utility/LockableObject.h>
 #include <chaos/common/pqueue/CObjectProcessingQueue.h>
 
-#include <chaos/cu_toolkit/additional_lib/mongoose.h>
-#include <chaos/cu_toolkit/external_gateway/AbstractAdapter.h>
-#include <chaos/cu_toolkit/external_gateway/http_adapter/http_adapter_types.h>
-#include <chaos/cu_toolkit/external_gateway/http_adapter/HTTPExternalUnitConnection.h>
+#include <chaos/common/additional_lib/mongoose.h>
+#include <chaos/common/external_gateway/AbstractAdapter.h>
+#include <chaos/common/external_gateway/http_adapter/http_adapter_types.h>
+#include <chaos/common/external_gateway/http_adapter/HTTPExternalUnitConnection.h>
 
 #include <boost/thread.hpp>
 
 namespace chaos{
-    namespace cu {
+    namespace common {
         namespace external_gateway {
             namespace http_adapter {
                 

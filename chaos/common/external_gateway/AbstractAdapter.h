@@ -24,10 +24,10 @@
 
 #include <chaos/common/utility/InizializableService.h>
 
-#include <chaos/cu_toolkit/external_gateway/ExternalUnitEndpoint.h>
+#include <chaos/common/external_gateway/ExternalUnitEndpoint.h>
 
 namespace chaos{
-    namespace cu {
+    namespace common {
         namespace external_gateway {
             
             CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ExternalUnitEndpoint*, MapEndpoint);

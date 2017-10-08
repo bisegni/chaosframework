@@ -20,9 +20,9 @@
  */
 
 #include <chaos/common/global.h>
-#include <chaos/cu_toolkit/external_gateway/ExternalEchoEndpoint.h>
+#include <chaos/common/external_gateway/ExternalEchoEndpoint.h>
 
-using namespace chaos::cu::external_gateway;
+using namespace chaos::common::external_gateway;
 
 #define INFO    INFO_LOG(ExternalEchoEndpoint)
 #define DBG     DBG_LOG(ExternalEchoEndpoint)

@@ -24,11 +24,11 @@
 
 #include <string>
 #include <vector>
-#include <chaos/cu_toolkit/additional_lib/mongoose.h>
+#include <chaos/common/additional_lib/mongoose.h>
 #include <chaos/common/data/CDataBuffer.h>
 
 namespace chaos{
-    namespace cu {
+    namespace common {
         namespace external_gateway {
             namespace http_adapter {
                 typedef enum {

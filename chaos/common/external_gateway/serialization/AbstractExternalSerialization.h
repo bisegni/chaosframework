@@ -25,7 +25,7 @@
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/data/CDataBuffer.h>
 namespace chaos{
-    namespace cu {
+    namespace common {
         namespace external_gateway {
             namespace serialization {
             

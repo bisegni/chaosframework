@@ -25,7 +25,7 @@
 #include <string>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/data/entity_db/EntityDB.h>
-#include <chaos/common/data/entity_db/sqlite_impl/sqlite3.h>
+#include <chaos/common/additional_lib/sqlite3.h>
 #include <boost/thread.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 

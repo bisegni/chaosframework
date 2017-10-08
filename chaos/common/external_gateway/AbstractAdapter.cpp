@@ -19,19 +19,22 @@
  * permissions and limitations under the Licence.
  */
 
-#ifndef __CHAOSFramework__E06B557_2BBE_4BD4_9BB3_BF3DD695FAA1_ControlUnitBridge_h
-#define __CHAOSFramework__E06B557_2BBE_4BD4_9BB3_BF3DD695FAA1_ControlUnitBridge_h
+#include <chaos/common/external_gateway/AbstractAdapter.h>
 
-namespace chaos{
-    namespace cu {
-        namespace external_gateway {
-            
-            //!Control unit bridge
-            class ControlUnitBridge {
-                
-            };
-        }
-    }
+using namespace chaos::common::external_gateway;
+
+AbstractAdapter::AbstractAdapter() {
+    
 }
 
-#endif /* __CHAOSFramework__E06B557_2BBE_4BD4_9BB3_BF3DD695FAA1_ControlUnitBridge_h */
+AbstractAdapter::~AbstractAdapter() {
+    
+}
+
+void AbstractAdapter::init(void *init_data) throw (chaos::CException) {
+    
+}
+
+void AbstractAdapter::deinit() throw (chaos::CException) {
+    
+}

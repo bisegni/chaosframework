@@ -14,6 +14,10 @@ SET(common_lib_src chaos_errors.cpp
                    log/LogManager.cpp)
 
 SET(common_lib_src ${common_lib_src}
+                    additional_lib/mongoose.c
+                    additional_lib/sqlite3.c)
+
+SET(common_lib_src ${common_lib_src}
                     metadata_logging/ErrorLoggingChannel.cpp
                     metadata_logging/AlarmLoggingChannel.cpp
                     metadata_logging/StandardLoggingChannel.cpp
@@ -90,7 +94,6 @@ SET(common_lib_src ${common_lib_src}
         data/structured/Dataset.cpp
         data/structured/DatasetAttribute.cpp
         data/entity_db/EntityDB.cpp
-        data/entity_db/sqlite_impl/sqlite3.c
         data/entity_db/sqlite_impl/SQLiteEntityDB.cpp
         data/entity/Entity.cpp data/broker/DataBroker.cpp
         data/broker/publisher/PublisherDataService.cpp
@@ -126,6 +129,21 @@ SET(common_lib_src ${common_lib_src}
 SET(common_lib_src ${common_lib_src}
         exception/CException.cpp
         exception/MetadataLoggingCException.cpp)
+
+SET(common_lib_src ${common_lib_src}
+        external_gateway/ExternalUnitGateway.cpp
+        external_gateway/AbstractAdapter.cpp
+        external_gateway/ExternalUnitConnection.cpp
+        external_gateway/ExternalUnitEndpoint.cpp
+        external_gateway/ExternalEchoEndpoint.cpp)
+
+SET(common_lib_src ${common_lib_src}
+        external_gateway/serialization/AbstractExternalSerialization.cpp
+        external_gateway/serialization/ExternalBSONExtJsonSerialization.cpp)
+
+SET(common_lib_src ${common_lib_src}
+        external_gateway/http_adapter/HTTPAdapter.cpp
+        external_gateway/http_adapter/HTTPExternalUnitConnection.cpp)
 
 SET(common_lib_src ${common_lib_src}
         event/EventClient.cpp

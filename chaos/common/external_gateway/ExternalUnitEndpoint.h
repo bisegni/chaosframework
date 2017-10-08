@@ -26,10 +26,10 @@
 #include <chaos/common/exception/exception.h>
 #include <chaos/common/utility/LockableObject.h>
 
-#include <chaos/cu_toolkit/external_gateway/ExternalUnitConnection.h>
+#include <chaos/common/external_gateway/ExternalUnitConnection.h>
 
 namespace chaos{
-    namespace cu {
+    namespace common {
         namespace external_gateway {
             
             //! Identify and external endpoint

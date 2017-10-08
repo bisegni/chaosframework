@@ -19,10 +19,10 @@
  * permissions and limitations under the Licence.
  */
 
-#include <chaos/cu_toolkit/external_gateway/ExternalUnitEndpoint.h>
+#include <chaos/common/external_gateway/ExternalUnitEndpoint.h>
 
 using namespace chaos::common::data;
-using namespace chaos::cu::external_gateway;
+using namespace chaos::common::external_gateway;
 
 ExternalUnitEndpoint::ExternalUnitEndpoint() {}
 

@@ -22,9 +22,9 @@
 #ifndef __CHAOSFramework__5D1E9AF_B79A_4FD7_89CC_3CD7D8E7925B_ExternalBSONExtJsonSerialization_h
 #define __CHAOSFramework__5D1E9AF_B79A_4FD7_89CC_3CD7D8E7925B_ExternalBSONExtJsonSerialization_h
 
-#include <chaos/cu_toolkit/external_gateway/serialization/AbstractExternalSerialization.h>
+#include <chaos/common/external_gateway/serialization/AbstractExternalSerialization.h>
 namespace chaos{
-    namespace cu {
+    namespace common {
         namespace external_gateway {
             namespace serialization {
                 

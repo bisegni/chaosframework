@@ -20,7 +20,7 @@
  */
 
 #include <chaos/cu_toolkit/driver_manager/driver/AbstractRemoteIODriver.h>
-#include <chaos/cu_toolkit/external_gateway/external_gateway.h>
+#include <chaos/common/external_gateway/external_gateway.h>
 
 #include <chaos/common/utility/TimingUtil.h>
 
@@ -35,7 +35,7 @@ using namespace chaos::common::data;
 using namespace chaos::common::utility;
 using namespace chaos::common::async_central;
 
-using namespace chaos::cu::external_gateway;
+using namespace chaos::common::external_gateway;
 using namespace chaos::cu::driver_manager::driver;
 
 #define AUTHORIZATION_KEY        "authorization_key"
