@@ -36,7 +36,7 @@ void MDSHistoryAgeingManagement::start() {
     log("Start MDSHistoryAgeingManagement");
 }
 
-bool MDSHistoryAgeingManagement::execute(const common::cronous_manager::MapKeyVariant& job_parameter) {
+bool MDSHistoryAgeingManagement::execute(const common::cronus_manager::MapKeyVariant& job_parameter) {
     int err = 0;
     bool need_another_step = false;
     std::string control_unit_found = "";

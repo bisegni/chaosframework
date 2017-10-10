@@ -22,9 +22,9 @@
 #include <chaos/common/global.h>
 #include <chaos/common/utility/UUIDUtil.h>
 #include <chaos/common/utility/TimingUtil.h>
-#include <chaos/common/cronous_manager/CronJob.h>
+#include <chaos/common/cronus_manager/CronJob.h>
 
-using namespace chaos::common::cronous_manager;
+using namespace chaos::common::cronus_manager;
 
 #define ILOG INFO_LOG(CronJob);
 #define DBG  DBG_LOG(CronJob);

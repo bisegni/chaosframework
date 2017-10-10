@@ -150,8 +150,8 @@ void ChaosMetadataService::init(void *init_data)  throw(CException) {
         data_consumer.init(NULL, __PRETTY_FUNCTION__);
         
         //initialize cron manager
-        cron_job::MDSCronousManager::getInstance()->abstract_persistance_driver = api_subsystem_accessor.persistence_driver.get();
-        InizializableService::initImplementation(cron_job::MDSCronousManager::getInstance(),
+        cron_job::MDSCronusManager::getInstance()->abstract_persistance_driver = api_subsystem_accessor.persistence_driver.get();
+        InizializableService::initImplementation(cron_job::MDSCronusManager::getInstance(),
                                                  NULL,
                                                  "MDSConousManager",
                                                  __PRETTY_FUNCTION__);
@@ -241,7 +241,7 @@ void ChaosMetadataService::stop() throw(CException) {
  Deiniti all the manager
  */
 void ChaosMetadataService::deinit() throw(CException) {
-    InizializableService::deinitImplementation(cron_job::MDSCronousManager::getInstance(),
+    InizializableService::deinitImplementation(cron_job::MDSCronusManager::getInstance(),
                                                "MDSConousManager",
                                                __PRETTY_FUNCTION__);
     //deinit api system

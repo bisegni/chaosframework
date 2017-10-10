@@ -20,30 +20,30 @@
  */
 
 #include <chaos/common/utility/TimingUtil.h>
-#include <chaos/common/cronous_manager/CronousManager.h>
+#include <chaos/common/cronus_manager/CronusManager.h>
 
 using namespace chaos::common::utility;
 using namespace chaos::common::async_central;
-using namespace chaos::common::cronous_manager;
+using namespace chaos::common::cronus_manager;
 
 
 #define CHECK_THREAD_MAX_ELEMENT 5
 #define MAX_NUMBER_OF_CONCURRENT_EXECUTION 10
 
 #pragma mark Public Methods
-CronousManager::CronousManager(uint64_t _scheduler_repeat_time):
+CronusManager::CronusManager(uint64_t _scheduler_repeat_time):
 scheduler_repeat_time(_scheduler_repeat_time){}
 
-CronousManager::~CronousManager() {}
+CronusManager::~CronusManager() {}
 
-void CronousManager::init(void *init_data) throw (chaos::CException) {
+void CronusManager::init(void *init_data) throw (chaos::CException) {
     //register as timer
     AsyncCentralManager::getInstance()->addTimer(this,
                                                  scheduler_repeat_time,
                                                  scheduler_repeat_time);
 }
 
-void CronousManager::deinit() throw (chaos::CException) {
+void CronusManager::deinit() throw (chaos::CException) {
     //register as timer
     AsyncCentralManager::getInstance()->removeTimer(this);
     
@@ -51,7 +51,7 @@ void CronousManager::deinit() throw (chaos::CException) {
     clearCompletedJob(false);
 }
 
-bool CronousManager::addJob(CronJob *new_job,
+bool CronusManager::addJob(CronJob *new_job,
                             std::string& job_index,
                             uint64_t repeat_delay,
                             uint64_t offset) {
@@ -67,7 +67,7 @@ bool CronousManager::addJob(CronJob *new_job,
     return true;
 }
 
-bool CronousManager::removeJob(const std::string& job_index) {
+bool CronusManager::removeJob(const std::string& job_index) {
     LockableObjectWriteLock_t wl;
     map_job_in_execution.getWriteLock(wl);
     
@@ -84,7 +84,7 @@ bool CronousManager::removeJob(const std::string& job_index) {
 }
 
 #pragma mark Protected Methods
-void CronousManager::timeout() {
+void CronusManager::timeout() {
     //scan job to start
     uint64_t current_ts = TimingUtil::getTimeStamp();
     
@@ -123,7 +123,7 @@ void CronousManager::timeout() {
 
 #pragma mark Private Methods
 
-void CronousManager::clearCompletedJob(bool timed_wait,
+void CronusManager::clearCompletedJob(bool timed_wait,
                                        unsigned int max_element_to_scan) {
     //check started job to determinate which has finisched
     unsigned int element_count = 0;

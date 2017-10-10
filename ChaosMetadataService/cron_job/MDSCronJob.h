@@ -25,18 +25,18 @@
 #include "../persistence/persistence.h"
 
 #include <chaos/common/global.h>
-#include <chaos/common/cronous_manager/CronJob.h>
+#include <chaos/common/cronus_manager/CronJob.h>
 
 
 namespace chaos {
     namespace metadata_service {
         namespace cron_job {
             
-            class MDSCronousManager;
+            class MDSCronusManager;
             
             class MDSCronJob:
-            public chaos::common::cronous_manager::CronJob {
-                friend class MDSCronousManager;
+            public chaos::common::cronus_manager::CronJob {
+                friend class MDSCronusManager;
                 //dataaccess abstract driver
                 chaos::service_common::persistence::data_access::AbstractPersistenceDriver *abstract_persistance_driver;
             protected:

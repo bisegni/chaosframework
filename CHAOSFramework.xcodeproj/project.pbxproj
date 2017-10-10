@@ -1136,13 +1136,13 @@
 		32F7FEA118A4FD9B00FC03AB /* DirectIOEndpointHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F7FEA018A4FD9B00FC03AB /* DirectIOEndpointHandler.h */; };
 		32F7FEAB18A5066600FC03AB /* FastDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F7FEA218A5066600FC03AB /* FastDelegate.h */; };
 		32F7FEAC18A5066600FC03AB /* FastDelegateBind.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F7FEA318A5066600FC03AB /* FastDelegateBind.h */; };
-		32F9F8121D8FD45A0023948D /* CronousManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F9F8101D8FD45A0023948D /* CronousManager.cpp */; };
-		32F9F8131D8FD45A0023948D /* CronousManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F9F8111D8FD45A0023948D /* CronousManager.h */; };
+		32F9F8121D8FD45A0023948D /* CronusManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F9F8101D8FD45A0023948D /* CronusManager.cpp */; };
+		32F9F8131D8FD45A0023948D /* CronusManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F9F8111D8FD45A0023948D /* CronusManager.h */; };
 		32F9F8161D8FD7030023948D /* CronJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F9F8141D8FD7030023948D /* CronJob.cpp */; };
 		32F9F8171D8FD7030023948D /* CronJob.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F9F8151D8FD7030023948D /* CronJob.h */; };
 		32F9F81F1D8FD7780023948D /* cronous_manager.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F9F81D1D8FD7780023948D /* cronous_manager.h */; };
 		32F9F8231D9031E90023948D /* MDSCronJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F9F8211D9031E90023948D /* MDSCronJob.cpp */; };
-		32F9F8261D90330E0023948D /* MDSCronousManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F9F8241D90330E0023948D /* MDSCronousManager.cpp */; };
+		32F9F8261D90330E0023948D /* MDSCronusManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F9F8241D90330E0023948D /* MDSCronusManager.cpp */; };
 		32F9F82E1D903B1D0023948D /* MDSHistoryAgeingManagement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F9F82C1D903B1D0023948D /* MDSHistoryAgeingManagement.cpp */; };
 		32FA1EF31A7A462200A46800 /* MDSBatchCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FA1EF11A7A462200A46800 /* MDSBatchCommand.cpp */; };
 		32FB20181A3F0FAB00307A86 /* AttributeValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FB20161A3F0FAB00307A86 /* AttributeValue.cpp */; };
@@ -2698,15 +2698,15 @@
 		32F7FEA218A5066600FC03AB /* FastDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastDelegate.h; sourceTree = "<group>"; };
 		32F7FEA318A5066600FC03AB /* FastDelegateBind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastDelegateBind.h; sourceTree = "<group>"; };
 		32F9C79B1E81943F00D4B250 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		32F9F8101D8FD45A0023948D /* CronousManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CronousManager.cpp; sourceTree = "<group>"; };
-		32F9F8111D8FD45A0023948D /* CronousManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CronousManager.h; sourceTree = "<group>"; };
+		32F9F8101D8FD45A0023948D /* CronusManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CronusManager.cpp; sourceTree = "<group>"; };
+		32F9F8111D8FD45A0023948D /* CronusManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CronusManager.h; sourceTree = "<group>"; };
 		32F9F8141D8FD7030023948D /* CronJob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CronJob.cpp; sourceTree = "<group>"; };
 		32F9F8151D8FD7030023948D /* CronJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CronJob.h; sourceTree = "<group>"; };
 		32F9F81D1D8FD7780023948D /* cronous_manager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cronous_manager.h; sourceTree = "<group>"; };
 		32F9F8211D9031E90023948D /* MDSCronJob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MDSCronJob.cpp; sourceTree = "<group>"; };
 		32F9F8221D9031E90023948D /* MDSCronJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDSCronJob.h; sourceTree = "<group>"; };
-		32F9F8241D90330E0023948D /* MDSCronousManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MDSCronousManager.cpp; sourceTree = "<group>"; };
-		32F9F8251D90330E0023948D /* MDSCronousManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDSCronousManager.h; sourceTree = "<group>"; };
+		32F9F8241D90330E0023948D /* MDSCronusManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MDSCronusManager.cpp; sourceTree = "<group>"; };
+		32F9F8251D90330E0023948D /* MDSCronusManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDSCronusManager.h; sourceTree = "<group>"; };
 		32F9F82C1D903B1D0023948D /* MDSHistoryAgeingManagement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MDSHistoryAgeingManagement.cpp; sourceTree = "<group>"; };
 		32F9F82D1D903B1D0023948D /* MDSHistoryAgeingManagement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDSHistoryAgeingManagement.h; sourceTree = "<group>"; };
 		32FA1EF11A7A462200A46800 /* MDSBatchCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MDSBatchCommand.cpp; sourceTree = "<group>"; };
@@ -3981,7 +3981,7 @@
 				326DB3BD14B38BC00018A8D0 /* bson */,
 				32640A07169DCC1B00450962 /* caching_system */,
 				326DB3E314B38BC00018A8D0 /* configuration */,
-				32F9F80F1D8FD4190023948D /* cronous_manager */,
+				32F9F80F1D8FD4190023948D /* cronus_manager */,
 				326DB3E614B38BC00018A8D0 /* data */,
 				326DB3EF14B38BC00018A8D0 /* dispatcher */,
 				32A273EB1BB5A93D00572083 /* debug */,
@@ -5673,23 +5673,23 @@
 			path = CouchTest;
 			sourceTree = "<group>";
 		};
-		32F9F80F1D8FD4190023948D /* cronous_manager */ = {
+		32F9F80F1D8FD4190023948D /* cronus_manager */ = {
 			isa = PBXGroup;
 			children = (
-				32F9F8101D8FD45A0023948D /* CronousManager.cpp */,
-				32F9F8111D8FD45A0023948D /* CronousManager.h */,
+				32F9F8101D8FD45A0023948D /* CronusManager.cpp */,
+				32F9F8111D8FD45A0023948D /* CronusManager.h */,
 				32F9F8141D8FD7030023948D /* CronJob.cpp */,
 				32F9F8151D8FD7030023948D /* CronJob.h */,
 				32F9F81D1D8FD7780023948D /* cronous_manager.h */,
 			);
-			path = cronous_manager;
+			path = cronus_manager;
 			sourceTree = "<group>";
 		};
 		32F9F8201D9031BD0023948D /* cron_job */ = {
 			isa = PBXGroup;
 			children = (
-				32F9F8241D90330E0023948D /* MDSCronousManager.cpp */,
-				32F9F8251D90330E0023948D /* MDSCronousManager.h */,
+				32F9F8241D90330E0023948D /* MDSCronusManager.cpp */,
+				32F9F8251D90330E0023948D /* MDSCronusManager.h */,
 				32F9F8211D9031E90023948D /* MDSCronJob.cpp */,
 				32F9F8221D9031E90023948D /* MDSCronJob.h */,
 				32F9F82B1D903AE00023948D /* management */,
@@ -5952,7 +5952,7 @@
 				32DF603C15E14D5F00312C94 /* AlertEventDescriptor.h in Headers */,
 				32DF604015E14F5A00312C94 /* InstrumentEventDescriptor.h in Headers */,
 				32DF604415E1502700312C94 /* CommandEventDescriptor.h in Headers */,
-				32F9F8131D8FD45A0023948D /* CronousManager.h in Headers */,
+				32F9F8131D8FD45A0023948D /* CronusManager.h in Headers */,
 				324A4B2B191A405700975394 /* damage_vector.h in Headers */,
 				32B1378F189BEC4100B17CA4 /* ZMQDirectIOServer.h in Headers */,
 				32DF604815E1505F00312C94 /* CustomEventDescriptor.h in Headers */,
@@ -6796,7 +6796,7 @@
 				3270E0731C6CBFDE00105726 /* LoggingDataAccess.cpp in Sources */,
 				326ACF811E01525D00AD011E /* CacheDriverSharedMetricIO.cpp in Sources */,
 				326ACFA91E0159C600AD011E /* DeviceSharedDataWorker.cpp in Sources */,
-				32F9F8261D90330E0023948D /* MDSCronousManager.cpp in Sources */,
+				32F9F8261D90330E0023948D /* MDSCronusManager.cpp in Sources */,
 				32761A3C1B3157CA006C8719 /* GetCommandAndTemplateDescription.cpp in Sources */,
 				3283B8961C7F37550019255B /* LogUtility.cpp in Sources */,
 				32568C8B1B3D54650006988C /* UpdatePropertyCommand.cpp in Sources */,
@@ -6857,7 +6857,7 @@
 				326DB45A14B38BC00018A8D0 /* GlobalConfiguration.cpp in Sources */,
 				32A88BE11CF8228A001DBAF5 /* lstring.c in Sources */,
 				32995C4E1BB421D400F68148 /* AggregatedCheckList.cpp in Sources */,
-				32F9F8121D8FD45A0023948D /* CronousManager.cpp in Sources */,
+				32F9F8121D8FD45A0023948D /* CronusManager.cpp in Sources */,
 				32F5B00A1B5F998F00457A63 /* CSVFileMetricBackend.cpp in Sources */,
 				32FB20181A3F0FAB00307A86 /* AttributeValue.cpp in Sources */,
 				324A4B75191A428500975394 /* jsobj.cpp in Sources */,

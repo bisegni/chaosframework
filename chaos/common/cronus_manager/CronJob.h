@@ -28,10 +28,10 @@
 
 namespace chaos {
     namespace common {
-        namespace cronous_manager {
+        namespace cronus_manager {
             
             //!forward declaration
-            class CronousManager;
+            class CronusManager;
             
             typedef enum CronJobState {
                 CronJobStateWaiting,
@@ -44,7 +44,7 @@ namespace chaos {
             
             //! abstraction of a job that can be execution to a specifi intervall of time
             class CronJob {
-                friend class CronousManager;
+                friend class CronusManager;
                 //!keep track of cron job state
                 CronJobState run_state;
                 MapKeyVariant job_parameter;

@@ -19,10 +19,10 @@
  * permissions and limitations under the Licence.
  */
 
-#ifndef __CHAOSFramework__9C99B80_FDA6_4B63_AA62_F784EF4786E5_MDSCronousManager_h
-#define __CHAOSFramework__9C99B80_FDA6_4B63_AA62_F784EF4786E5_MDSCronousManager_h
+#ifndef __CHAOSFramework__9C99B80_FDA6_4B63_AA62_F784EF4786E5_MDSCronusManager_h
+#define __CHAOSFramework__9C99B80_FDA6_4B63_AA62_F784EF4786E5_MDSCronusManager_h
 
-#include <chaos/common/cronous_manager/CronousManager.h>
+#include <chaos/common/cronus_manager/CronusManager.h>
 
 #include <chaos/common/utility/Singleton.h>
 
@@ -34,14 +34,14 @@ namespace chaos {
         
         namespace cron_job {
             
-            class MDSCronousManager:
-            public chaos::common::cronous_manager::CronousManager,
-            public chaos::common::utility::Singleton<MDSCronousManager> {
-                friend class chaos::common::utility::Singleton<MDSCronousManager>;
+            class MDSCronusManager:
+            public chaos::common::cronus_manager::CronusManager,
+            public chaos::common::utility::Singleton<MDSCronusManager> {
+                friend class chaos::common::utility::Singleton<MDSCronusManager>;
                 friend class chaos::metadata_service::ChaosMetadataService;
             private:
-                MDSCronousManager();
-                ~MDSCronousManager();
+                MDSCronusManager();
+                ~MDSCronusManager();
                 chaos::service_common::persistence::data_access::AbstractPersistenceDriver *abstract_persistance_driver;
             public:
                 void init(void *init_data) throw(chaos::CException);
@@ -55,4 +55,4 @@ namespace chaos {
     }
 }
 
-#endif /* __CHAOSFramework__9C99B80_FDA6_4B63_AA62_F784EF4786E5_MDSCronousManager_h */
+#endif /* __CHAOSFramework__9C99B80_FDA6_4B63_AA62_F784EF4786E5_MDSCronusManager_h */

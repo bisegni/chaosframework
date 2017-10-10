@@ -19,12 +19,12 @@
  * permissions and limitations under the Licence.
  */
 
-#ifndef __CHAOSFramework__C047152_14CC_43E5_8093_CD4B770A75C4_cronous_manager_h
-#define __CHAOSFramework__C047152_14CC_43E5_8093_CD4B770A75C4_cronous_manager_h
+#ifndef __CHAOSFramework__C047152_14CC_43E5_8093_CD4B770A75C4_cronus_manager_h
+#define __CHAOSFramework__C047152_14CC_43E5_8093_CD4B770A75C4_cronus_manager_h
 
 #include <chaos/common/chaos_types.h>
 #include <chaos/common/utility/LockableObject.h>
-#include <chaos/common/cronous_manager/CronJob.h>
+#include <chaos/common/cronus_manager/CronJob.h>
 #include <chaos/common/async_central/async_central.h>
 #include <chaos/common/utility/InizializableService.h>
 
@@ -32,7 +32,7 @@
 
 namespace chaos {
     namespace common {
-        namespace cronous_manager {
+        namespace cronus_manager {
             #define CHECK_TIME 10000
             //! define  avector for the running job
             typedef ChaosSharedPtr<boost::thread> ThreadJobShrdPtr;
@@ -41,11 +41,11 @@ namespace chaos {
             //!define vector for job instances
             
             //!defin eth eshared ptr for CronJob
-            typedef ChaosSharedPtr<cronous_manager::CronJob> JobInstanceShrdPtr;
+            typedef ChaosSharedPtr<cronus_manager::CronJob> JobInstanceShrdPtr;
             CHAOS_DEFINE_MAP_FOR_TYPE(std::string, JobInstanceShrdPtr, MapJobInstance);
             
             //!Manager class for launch batch job a specific time intervall
-            class CronousManager:
+            class CronusManager:
             public chaos::common::async_central::TimerHandler,
             public chaos::common::utility::InizializableService {
                 uint64_t scheduler_repeat_time;
@@ -59,8 +59,8 @@ namespace chaos {
                 //!intherited by @chaos::common::async_central::TimerHandler
                 void timeout();
             public:
-                CronousManager(uint64_t _scheduler_repeat_time = CHECK_TIME);
-                ~CronousManager();
+                CronusManager(uint64_t _scheduler_repeat_time = CHECK_TIME);
+                ~CronusManager();
                 //!intherited by @chaos::common::utility::InizializableService
                 void init(void *init_data) throw (chaos::CException);
                 
@@ -83,4 +83,4 @@ namespace chaos {
     }
 }
 
-#endif /* __CHAOSFramework__C047152_14CC_43E5_8093_CD4B770A75C4_cronous_manager_h */
+#endif /* __CHAOSFramework__C047152_14CC_43E5_8093_CD4B770A75C4_cronus_manager_h */

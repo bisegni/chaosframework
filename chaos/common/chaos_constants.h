@@ -155,8 +155,6 @@ namespace chaos {
                 static const char * const DIRECT_IO_SERVICE_PORT					= "direct_io_service_port";
                 //!  define the default time for directio operation
                 static const unsigned int GlobalDirectIOTimeoutinMSec               = 5000;
-                
-                
             }
             /** @} */ // end of DirectIOConfigurationKey
         }
@@ -696,7 +694,6 @@ namespace chaos {
             //!no storage behaviour defined
             DSStorageTypeUndefined
         } DSStorageType;
-        
     }
     /** @} */ // end of DataServiceNodeDefinitionType
     
@@ -801,7 +798,6 @@ namespace chaos {
     namespace ControlUnitNodeDomainAndActionRPC {
         //!Alias associated to thefunction that apply the value changes set to the input dataset attribute
         static const char * const CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET  = "cunrpc_ida_cs";
-        
     }
     
     /** @defgroup ExecutionUnitNodeDefinitionKey List of execution unit node type attribute key
@@ -837,7 +833,6 @@ namespace chaos {
         static const char * const INIT_RESTORE_OPTION                   = "cudk_init_restore_option";
         static const unsigned int INIT_RESTORE_OPTION_TYPE_STATIC       = 0;
         static const unsigned int INIT_RESTORE_OPTION_TYPE_LAST_VALIDE  = 1;
-        
         static const char * const INIT_RESTORE_APPLY                    = "cudk_init_restore_apply";
     }
     
@@ -1075,7 +1070,6 @@ namespace chaos {
             Output=1,
             //!define an attribute with two directions
             Bidirectional=2,
-            
             Undefined
         } DataSetAttributeIOAttribute;
         
@@ -1272,8 +1266,6 @@ namespace chaos {
         static const unsigned int DPCK_DATASET_TYPE_DEV_ALARM          = 5;
         //! the constant that represent the alarm dataset type
         static const unsigned int DPCK_DATASET_TYPE_CU_ALARM           = 6;
-
-
     }
 
 	#define DPCK_LAST_DATASET_INDEX	 6
@@ -1393,8 +1385,6 @@ namespace chaos {
     }
     /** @} */ // end of DataPackSystemKey
     
-    
-    
     /** @defgroup DatasetDefinitionkey Dataset definition key
      *  This is the collection of the key for the device dataset
      *  @{
@@ -1468,7 +1458,6 @@ namespace chaos {
         //!key for action name definition
         static const char * const CS_CMDM_ACTION_DESCRIPTION                  = "act_desc";
         
-        
         //!key action submission result
         //static const char * const CS_CMDM_ACTION_SUBMISSION_RESULT            = "act_sub_result";
         
@@ -1528,7 +1517,6 @@ namespace chaos {
         //! that runt the active contorl units. All it will be gracefull shutten down
         //! before daemon exit
         static const char * const ACTION_SYSTEM_SHUTDOWN                        = "shutdownUnitServer";
-        
         
         //! key for the server alias used by the instance [string]
         static const char * const UNIT_SERVER_STATES_ANSWER                     = "unit_server_states";

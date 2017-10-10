@@ -19,10 +19,10 @@
  * permissions and limitations under the Licence.
  */
 
-#ifndef __CHAOSFramework_DC7885B6_A0C1_4F90_AAFD_D06435CF95CB_cronous_manager_types_h
-#define __CHAOSFramework_DC7885B6_A0C1_4F90_AAFD_D06435CF95CB_cronous_manager_types_h
+#ifndef __CHAOSFramework_DC7885B6_A0C1_4F90_AAFD_D06435CF95CB_cronus_manager_types_h
+#define __CHAOSFramework_DC7885B6_A0C1_4F90_AAFD_D06435CF95CB_cronus_manager_types_h
 
-#include <chaos/common/cronous_manager/CronJob.h.h>
-#include <chaos/common/cronous_manager/CronousManager.h>
+#include <chaos/common/cronus_manager/CronJob.h.h>
+#include <chaos/common/cronus_manager/CronusManager.h>
 
-#endif /* __CHAOSFramework_DC7885B6_A0C1_4F90_AAFD_D06435CF95CB_cronous_manager_types_h */
+#endif /* __CHAOSFramework_DC7885B6_A0C1_4F90_AAFD_D06435CF95CB_cronus_manager_types_h */

@@ -19,20 +19,20 @@
  * permissions and limitations under the Licence.
  */
 
-#include "MDSCronousManager.h"
+#include "MDSCronusManager.h"
 #include "../ChaosMetadataService.h"
 #include "management/MDSHistoryAgeingManagement.h"
 
 using namespace chaos::metadata_service::cron_job;
 
-MDSCronousManager::MDSCronousManager():
-CronousManager(ChaosMetadataService::getInstance()->setting.cron_job_scheduler_repeat_time*1000),
+MDSCronusManager::MDSCronusManager():
+CronusManager(ChaosMetadataService::getInstance()->setting.cron_job_scheduler_repeat_time*1000),
 abstract_persistance_driver(NULL){}
 
-MDSCronousManager::~MDSCronousManager() {}
+MDSCronusManager::~MDSCronusManager() {}
 
-void MDSCronousManager::init(void *init_data) throw(chaos::CException) {
-    CronousManager::init(init_data);
+void MDSCronusManager::init(void *init_data) throw(chaos::CException) {
+    CronusManager::init(init_data);
     std::string job_string;
     addJob(new MDSHistoryAgeingManagement(NULL),
            job_string,
@@ -40,11 +40,11 @@ void MDSCronousManager::init(void *init_data) throw(chaos::CException) {
            ChaosMetadataService::getInstance()->setting.cron_job_ageing_management_repeat_time*1000);
 }
 
-void MDSCronousManager::deinit() throw(chaos::CException) {
-    CronousManager::deinit();
+void MDSCronusManager::deinit() throw(chaos::CException) {
+    CronusManager::deinit();
 }
 
-bool MDSCronousManager::addJob(MDSCronJob *new_job,
+bool MDSCronusManager::addJob(MDSCronJob *new_job,
                                std::string& job_index,
                                uint64_t repeat_delay,
                                uint64_t offset) {
@@ -52,7 +52,7 @@ bool MDSCronousManager::addJob(MDSCronJob *new_job,
     
     new_job->abstract_persistance_driver = abstract_persistance_driver;
     
-    return CronousManager::addJob(new_job,
+    return CronusManager::addJob(new_job,
                                   job_index,
                                   repeat_delay,
                                   offset);
