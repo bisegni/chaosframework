@@ -23,9 +23,9 @@
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/utility/InetUtility.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
-#include <chaos/common/external_gateway/ExternalUnitGateway.h>
-#include <chaos/common/external_gateway/http_adapter/HTTPAdapter.h>
-#include <chaos/common/external_gateway/external_gateway_constants.h>
+#include <chaos/common/external_unit/ExternalUnitManager.h>
+#include <chaos/common/external_unit/http_adapter/HTTPServerAdapter.h>
+#include <chaos/common/external_unit/external_unit_constants.h>
 
 #include <boost/lexical_cast.hpp>
 
@@ -35,20 +35,20 @@
 using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::common::utility;
-using namespace chaos::common::external_gateway::http_adapter;
+using namespace chaos::common::external_unit::http_adapter;
 
 #define INFO    INFO_LOG(HTTPHelper)
 #define DBG     DBG_LOG(HTTPHelper)
 #define ERR     ERR_LOG(HTTPHelper)
 
 
-HTTPAdapter::HTTPAdapter():
+HTTPServerAdapter::HTTPServerAdapter():
 run(false),
 root_connection(0){}
 
-HTTPAdapter::~HTTPAdapter() {}
+HTTPServerAdapter::~HTTPServerAdapter() {}
 
-void HTTPAdapter::init(void *init_data) throw (chaos::CException) {
+void HTTPServerAdapter::init(void *init_data) throw (chaos::CException) {
     //scsan configuration
     setting.thread_number = GlobalConfiguration::getInstance()->getOption<unsigned int>(CU_EG_OPT_WORKER_THREAD_NUMBER);
     if(GlobalConfiguration::getInstance()->hasOption(CU_EG_OPT_WORKER_KV_PARAM)) {
@@ -66,7 +66,7 @@ void HTTPAdapter::init(void *init_data) throw (chaos::CException) {
     
     int http_port = InetUtility::scanForLocalFreePort(boost::lexical_cast<int>(setting.publishing_port));
     const std::string http_port_str = boost::lexical_cast<std::string>(http_port);
-    root_connection = mg_bind(&mgr, http_port_str.c_str(), HTTPAdapter::eventHandler);
+    root_connection = mg_bind(&mgr, http_port_str.c_str(), HTTPServerAdapter::eventHandler);
     if(root_connection == NULL) {throw CException(-1, "Error creating http connection", __PRETTY_FUNCTION__);}
     root_connection->user_data = this;
     
@@ -76,10 +76,10 @@ void HTTPAdapter::init(void *init_data) throw (chaos::CException) {
     //
     CObjectProcessingQueue<WorkRequest>::init(setting.thread_number);
     
-    thread_poller.reset(new boost::thread(boost::bind(&HTTPAdapter::poller, this)));
+    thread_poller.reset(new boost::thread(boost::bind(&HTTPServerAdapter::poller, this)));
 }
 
-void HTTPAdapter::deinit() throw (chaos::CException) {
+void HTTPServerAdapter::deinit() throw (chaos::CException) {
     run = false;
     CObjectProcessingQueue<WorkRequest>::deinit();
     CObjectProcessingQueue<WorkRequest>::clear();
@@ -88,7 +88,7 @@ void HTTPAdapter::deinit() throw (chaos::CException) {
     mg_mgr_free(&mgr);
 }
 
-void HTTPAdapter::poller() {
+void HTTPServerAdapter::poller() {
     INFO << "Entering thread poller";
     while (run) {
         mg_mgr_poll(&mgr, 1);
@@ -96,7 +96,7 @@ void HTTPAdapter::poller() {
     INFO << "Leaving thread poller";
 }
 
-void HTTPAdapter::sendHTTPJSONError(mg_connection *nc,
+void HTTPServerAdapter::sendHTTPJSONError(mg_connection *nc,
                                     int status_code,
                                     const int error_code,
                                     const std::string& error_message) {
@@ -109,7 +109,7 @@ void HTTPAdapter::sendHTTPJSONError(mg_connection *nc,
     mg_printf(nc, "%s", json_error.c_str());
 }
 
-void HTTPAdapter::sendWSJSONError(mg_connection *nc,
+void HTTPServerAdapter::sendWSJSONError(mg_connection *nc,
                                   const int error_code,
                                   const std::string& error_message,
                                   bool close_connection) {
@@ -122,7 +122,7 @@ void HTTPAdapter::sendWSJSONError(mg_connection *nc,
     if(close_connection){mg_send_websocket_frame(nc, WEBSOCKET_OP_CLOSE, NULL, 0);}
 }
 
-void HTTPAdapter::sendWSJSONAcceptedConnection(mg_connection *nc,
+void HTTPServerAdapter::sendWSJSONAcceptedConnection(mg_connection *nc,
                                                bool accepted,
                                                bool close_connection) {
     CDataWrapper err_data_pack;
@@ -132,7 +132,7 @@ void HTTPAdapter::sendWSJSONAcceptedConnection(mg_connection *nc,
     if(close_connection){mg_send_websocket_frame(nc, WEBSOCKET_OP_CLOSE, NULL, 0);}
 }
 
-const std::string HTTPAdapter::getSerializationType(http_message *http_message) {
+const std::string HTTPServerAdapter::getSerializationType(http_message *http_message) {
     CHAOS_ASSERT(http_message);
     struct mg_str *value = mg_get_http_header(http_message, "Content-Type");
     if(value == NULL) {
@@ -145,7 +145,7 @@ const std::string HTTPAdapter::getSerializationType(http_message *http_message) 
     return ser_type;
 }
 
-void  HTTPAdapter::manageWSHandshake(WorkRequest& wr) {
+void  HTTPServerAdapter::manageWSHandshake(WorkRequest& wr) {
     char addr[32];
     mg_sock_addr_to_str(&wr.nc->sa, addr, sizeof(addr),
                         MG_SOCK_STRINGIFY_IP | MG_SOCK_STRINGIFY_PORT);
@@ -175,7 +175,7 @@ void  HTTPAdapter::manageWSHandshake(WorkRequest& wr) {
                                      true);
     } else {
         //get instance for serializer
-        ChaosUniquePtr<serialization::AbstractExternalSerialization> serializer = ExternalUnitGateway::getInstance()->getNewSerializationInstanceForType(wr.s_type);
+        ChaosUniquePtr<serialization::AbstractExternalSerialization> serializer = ExternalUnitManager::getInstance()->getNewSerializationInstanceForType(wr.s_type);
         if(!serializer.get()) {
             //write error for no more connection accepted by endpoint
             sendWSJSONError(wr.nc,
@@ -199,7 +199,7 @@ void  HTTPAdapter::manageWSHandshake(WorkRequest& wr) {
     }
 }
 
-void HTTPAdapter::processBufferElement(WorkRequest *request,
+void HTTPServerAdapter::processBufferElement(WorkRequest *request,
                                        ElementManagingPolicy& policy) throw(CException) {
     switch(request->r_type) {
         case WorkRequestTypeHttpRequest: {
@@ -236,10 +236,10 @@ void HTTPAdapter::processBufferElement(WorkRequest *request,
     }
 }
 
-void HTTPAdapter::eventHandler(mg_connection *nc, int ev, void *ev_data) {
+void HTTPServerAdapter::eventHandler(mg_connection *nc, int ev, void *ev_data) {
     (void) nc;
     (void) ev_data;
-    HTTPAdapter *adapter = static_cast<HTTPAdapter*>(nc->user_data);
+    HTTPServerAdapter *adapter = static_cast<HTTPServerAdapter*>(nc->user_data);
     switch (ev) {
         case MG_EV_ACCEPT:{
             break;
@@ -291,14 +291,14 @@ void HTTPAdapter::eventHandler(mg_connection *nc, int ev, void *ev_data) {
     }
 }
 
-int HTTPAdapter::registerEndpoint(ExternalUnitEndpoint& endpoint) {
+int HTTPServerAdapter::registerEndpoint(ExternalUnitEndpoint& endpoint) {
     LMapEndpointWriteLock wl = map_endpoint.getWriteLockObject();
     if(map_endpoint().count(endpoint.getIdentifier()) != 0) return 0;
     map_endpoint().insert(MapEndpointPair(endpoint.getIdentifier(), &endpoint));
     return 0;
 }
 
-int HTTPAdapter::deregisterEndpoint(ExternalUnitEndpoint& endpoint) {
+int HTTPServerAdapter::deregisterEndpoint(ExternalUnitEndpoint& endpoint) {
     //lock for write conenction and endpoint
     LMapEndpointWriteLock wl = map_endpoint.getWriteLockObject();
     

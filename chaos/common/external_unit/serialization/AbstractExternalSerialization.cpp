@@ -19,9 +19,9 @@
  * permissions and limitations under the Licence.
  */
 
-#include <chaos/common/external_gateway/serialization/AbstractExternalSerialization.h>
+#include <chaos/common/external_unit/serialization/AbstractExternalSerialization.h>
 
-using namespace chaos::common::external_gateway::serialization;
+using namespace chaos::common::external_unit::serialization;
 
 AbstractExternalSerialization::AbstractExternalSerialization(){}
 AbstractExternalSerialization::~AbstractExternalSerialization() {}

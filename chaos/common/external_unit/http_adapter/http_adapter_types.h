@@ -29,7 +29,7 @@
 
 namespace chaos{
     namespace common {
-        namespace external_gateway {
+        namespace external_unit {
             namespace http_adapter {
                 typedef enum {
                     WorkRequestTypeUnspecified,
@@ -64,7 +64,7 @@ namespace chaos{
                 };
                 
                 
-                struct HttpAdapterSetting {
+                struct HTTPServerAdapterSetting {
                     uint32_t thread_number;
                     std::string publishing_port;
                 };

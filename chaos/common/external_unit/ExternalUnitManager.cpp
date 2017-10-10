@@ -20,31 +20,31 @@
  */
 
 #include <chaos/common/global.h>
-#include <chaos/common/external_gateway/ExternalUnitGateway.h>
-#include <chaos/common/external_gateway/http_adapter/HTTPAdapter.h>
+#include <chaos/common/external_unit/ExternalUnitManager.h>
+#include <chaos/common/external_unit/http_adapter/HTTPServerAdapter.h>
 
-#include <chaos/common/external_gateway/serialization/ExternalBSONExtJsonSerialization.h>
+#include <chaos/common/external_unit/serialization/ExternalBSONExtJsonSerialization.h>
 
-using namespace chaos::common::external_gateway;
+using namespace chaos::common::external_unit;
 using namespace chaos::common::utility;
 
-#define INFO    INFO_LOG(ExternalUnitGateway)
-#define DBG     DBG_LOG(ExternalUnitGateway)
-#define ERR     ERR_LOG(ExternalUnitGateway)
+#define INFO    INFO_LOG(ExternalUnitManager)
+#define DBG     DBG_LOG(ExternalUnitManager)
+#define ERR     ERR_LOG(ExternalUnitManager)
 
-ExternalUnitGateway::ExternalUnitGateway() {
+ExternalUnitManager::ExternalUnitManager() {
     //add adapters
-    map_protocol_adapter().insert(MapAdapterPair("http", ChaosSharedPtr<AbstractAdapter>(new http_adapter::HTTPAdapter())));
+    map_protocol_adapter().insert(MapAdapterPair("http", ChaosSharedPtr<AbstractServerAdapter>(new http_adapter::HTTPServerAdapter())));
     
     //!add serializer
     installSerializerInstancer<serialization::ExternalBSONExtJsonSerialization>();
 }
 
-ExternalUnitGateway::~ExternalUnitGateway() {
+ExternalUnitManager::~ExternalUnitManager() {
     
 }
 
-void ExternalUnitGateway::init(void *init_data) throw (chaos::CException) {
+void ExternalUnitManager::init(void *init_data) throw (chaos::CException) {
     LMapAdapterWriteLock wl = map_protocol_adapter.getWriteLockObject();
     for(MapAdapterIterator it = map_protocol_adapter().begin(),
         end= map_protocol_adapter().end();
@@ -55,7 +55,7 @@ void ExternalUnitGateway::init(void *init_data) throw (chaos::CException) {
     }
 }
 
-void ExternalUnitGateway::deinit() throw (chaos::CException) {
+void ExternalUnitManager::deinit() throw (chaos::CException) {
     LMapAdapterWriteLock wl = map_protocol_adapter.getWriteLockObject();
     for(MapAdapterIterator it = map_protocol_adapter().begin(),
         end= map_protocol_adapter().end();
@@ -66,7 +66,7 @@ void ExternalUnitGateway::deinit() throw (chaos::CException) {
 }
 
 
-int ExternalUnitGateway::registerEndpoint(ExternalUnitEndpoint& endpoint) {
+int ExternalUnitManager::registerEndpoint(ExternalUnitEndpoint& endpoint) {
     if(getServiceState() != 1) return -1;
     LMapAdapterReadLock rl = map_protocol_adapter.getReadLockObject();
     int err = 0;
@@ -80,7 +80,7 @@ int ExternalUnitGateway::registerEndpoint(ExternalUnitEndpoint& endpoint) {
     return err;
 }
 
-int ExternalUnitGateway::deregisterEndpoint(ExternalUnitEndpoint& endpoint) {
+int ExternalUnitManager::deregisterEndpoint(ExternalUnitEndpoint& endpoint) {
     LMapAdapterReadLock rl = map_protocol_adapter.getReadLockObject();
     int err = 0;
     for(MapAdapterIterator it = map_protocol_adapter().begin(),
@@ -93,7 +93,18 @@ int ExternalUnitGateway::deregisterEndpoint(ExternalUnitEndpoint& endpoint) {
     return err;
 }
 
-ChaosUniquePtr<serialization::AbstractExternalSerialization> ExternalUnitGateway::getNewSerializationInstanceForType(const std::string& type) {
+int ExternalUnitManager::initilizeConnection(ExternalUnitEndpoint& endpoint,
+                                             const std::string& protocol,
+                                             const std::string& serialization,
+                                             const std::string& destination) {
+    return 0;
+}
+
+int ExternalUnitManager::releaseConnection(ExternalUnitEndpoint& endpoint) {
+    return 0;
+}
+
+ChaosUniquePtr<serialization::AbstractExternalSerialization> ExternalUnitManager::getNewSerializationInstanceForType(const std::string& type) {
     LMapSerializerReadLock rl = map_serializer.getReadLockObject();
     MapSerializerIterator found_ser_it = map_serializer().find(type);
     if(found_ser_it == map_serializer().end()) return ChaosUniquePtr<serialization::AbstractExternalSerialization>();

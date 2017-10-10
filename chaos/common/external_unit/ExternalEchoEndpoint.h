@@ -22,11 +22,11 @@
 #ifndef __CHAOSFramework_E6EB27EC_C56A_4A03_BF1C_03373F140079_ExternalEchoEndpoint_h
 #define __CHAOSFramework_E6EB27EC_C56A_4A03_BF1C_03373F140079_ExternalEchoEndpoint_h
 
-#include <chaos/common/external_gateway/ExternalUnitEndpoint.h>
+#include <chaos/common/external_unit/ExternalUnitEndpoint.h>
 
 namespace chaos{
     namespace common {
-        namespace external_gateway {
+        namespace external_unit {
             
             class ExternalEchoEndpoint:
             public ExternalUnitEndpoint {

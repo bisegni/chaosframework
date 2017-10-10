@@ -20,7 +20,7 @@
  */
 
 #include <chaos/cu_toolkit/driver_manager/driver/AbstractRemoteIODriver.h>
-#include <chaos/common/external_gateway/external_gateway.h>
+#include <chaos/common/external_unit/external_unit.h>
 
 #include <chaos/common/utility/TimingUtil.h>
 
@@ -35,7 +35,7 @@ using namespace chaos::common::data;
 using namespace chaos::common::utility;
 using namespace chaos::common::async_central;
 
-using namespace chaos::common::external_gateway;
+using namespace chaos::common::external_unit;
 using namespace chaos::cu::driver_manager::driver;
 
 #define AUTHORIZATION_KEY        "authorization_key"
@@ -87,7 +87,7 @@ void AbstractRemoteIODriver::driverInit(const char *initParameter) throw(chaos::
                                                  PURGE_TIMER_REPEAT_DELAY);
     
     //register this driver as external endpoint
-    ExternalUnitGateway::getInstance()->registerEndpoint(*this);
+    ExternalUnitManager::getInstance()->registerEndpoint(*this);
 }
 
 void AbstractRemoteIODriver::driverInit(const chaos::common::data::CDataWrapper& init_parameter) throw(chaos::CException) {
@@ -106,13 +106,13 @@ void AbstractRemoteIODriver::driverInit(const chaos::common::data::CDataWrapper&
                                                  PURGE_TIMER_REPEAT_DELAY);
     
     //register this driver as external endpoint
-    ExternalUnitGateway::getInstance()->registerEndpoint(*this);
+    ExternalUnitManager::getInstance()->registerEndpoint(*this);
 }
 
 void AbstractRemoteIODriver::driverDeinit() throw(chaos::CException) {
     INFO << "Deinit driver";
     //registerthis driver as external endpoint
-    ExternalUnitGateway::getInstance()->deregisterEndpoint(*this);
+    ExternalUnitManager::getInstance()->deregisterEndpoint(*this);
     AsyncCentralManager::getInstance()->removeTimer(this);
 }
 

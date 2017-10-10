@@ -26,7 +26,7 @@
 #include <chaos/common/data/CDataBuffer.h>
 namespace chaos{
     namespace common {
-        namespace external_gateway {
+        namespace external_unit {
             namespace serialization {
             
                 class AbstractExternalSerialization {

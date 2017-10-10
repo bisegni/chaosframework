@@ -19,11 +19,11 @@
  * permissions and limitations under the Licence.
  */
 
-#ifndef __CHAOSFramework_D0A4DD97_FA40_4763_8F1A_ADC7FE235A06_external_gateway_h
-#define __CHAOSFramework_D0A4DD97_FA40_4763_8F1A_ADC7FE235A06_external_gateway_h
+#ifndef __CHAOSFramework_D0A4DD97_FA40_4763_8F1A_ADC7FE235A06_external_unit_h
+#define __CHAOSFramework_D0A4DD97_FA40_4763_8F1A_ADC7FE235A06_external_unit_h
 
-#include <chaos/common/external_gateway/ExternalUnitGateway.h>
-#include <chaos/common/external_gateway/external_gateway_types.h>
-#include <chaos/common/external_gateway/external_gateway_constants.h>
+#include <chaos/common/external_unit/ExternalUnitManager.h>
+#include <chaos/common/external_unit/external_unit_types.h>
+#include <chaos/common/external_unit/external_unit_constants.h>
 
-#endif /* __CHAOSFramework_D0A4DD97_FA40_4763_8F1A_ADC7FE235A06_external_gateway_h */
+#endif /* __CHAOSFramework_D0A4DD97_FA40_4763_8F1A_ADC7FE235A06_external_unit_h */

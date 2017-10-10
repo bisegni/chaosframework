@@ -19,12 +19,12 @@
  * permissions and limitations under the Licence.
  */
 
-#ifndef __CHAOSFramework_F67CDB4D_86BB_49E0_9859_CE6BDCC3C989_external_gateway_constants_h
-#define __CHAOSFramework_F67CDB4D_86BB_49E0_9859_CE6BDCC3C989_external_gateway_constants_h
+#ifndef __CHAOSFramework_F67CDB4D_86BB_49E0_9859_CE6BDCC3C989_external_unit_constants_h
+#define __CHAOSFramework_F67CDB4D_86BB_49E0_9859_CE6BDCC3C989_external_unit_constants_h
 
 namespace chaos{
     namespace common {
-        namespace external_gateway {
+        namespace external_unit {
             
 #define CU_EG_OPT_WORKER_THREAD_NUMBER          "cu-eg-worker-thread-number"
 #define CU_EG_OPT_WORKER_THREAD_NUMBER_DESC     "Specify the number ofr the thread that the external adapter work need to use"
@@ -37,4 +37,4 @@ namespace chaos{
     }
 }
 
-#endif /* __CHAOSFramework_F67CDB4D_86BB_49E0_9859_CE6BDCC3C989_external_gateway_constants_h */
+#endif /* __CHAOSFramework_F67CDB4D_86BB_49E0_9859_CE6BDCC3C989_external_unit_constants_h */

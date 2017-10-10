@@ -19,8 +19,8 @@
  * permissions and limitations under the Licence.
  */
 
-#ifndef __CHAOSFramework__D7B878E_3F06_4472_8769_442D263D93ED_ExternalUnitGateway_h
-#define __CHAOSFramework__D7B878E_3F06_4472_8769_442D263D93ED_ExternalUnitGateway_h
+#ifndef __CHAOSFramework__D7B878E_3F06_4472_8769_442D263D93ED_ExternalUnitManager_h
+#define __CHAOSFramework__D7B878E_3F06_4472_8769_442D263D93ED_ExternalUnitManager_h
 
 #include <chaos/common/chaos_types.h>
 #include <chaos/common/utility/Singleton.h>
@@ -28,19 +28,20 @@
 #include <chaos/common/utility/InizializableService.h>
 #include <chaos/common/utility/ObjectInstancer.h>
 
-#include <chaos/common/external_gateway/AbstractAdapter.h>
-#include <chaos/common/external_gateway/ExternalUnitEndpoint.h>
-#include <chaos/common/external_gateway/ExternalEchoEndpoint.h>
-#include <chaos/common/external_gateway/serialization/AbstractExternalSerialization.h>
+#include <chaos/common/external_unit/AbstractServerAdapter.h>
+#include <chaos/common/external_unit/ExternalUnitEndpoint.h>
+#include <chaos/common/external_unit/ExternalEchoEndpoint.h>
+#include <chaos/common/external_unit/serialization/AbstractExternalSerialization.h>
 
 #include <algorithm>
 
+
 namespace chaos{
     namespace common {
-        namespace external_gateway {
+        namespace external_unit {
             
             //! define adapter map
-            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ChaosSharedPtr<AbstractAdapter>, MapAdapter);
+            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ChaosSharedPtr<AbstractServerAdapter>, MapAdapter);
             CHAOS_DEFINE_LOCKABLE_OBJECT(MapAdapter, LMapAdapter);
             
             //!define serialization map
@@ -52,10 +53,10 @@ namespace chaos{
 new chaos::common::utility::TypedObjectInstancer<SerializerClass, serialization::AbstractExternalSerialization>()
             
             //!External gateway root class
-            class ExternalUnitGateway:
-            public chaos::common::utility::Singleton<ExternalUnitGateway>,
+            class ExternalUnitManager:
+            public chaos::common::utility::Singleton<ExternalUnitManager>,
             public chaos::common::utility::InizializableService {
-                friend class chaos::common::utility::Singleton<ExternalUnitGateway>;
+                friend class chaos::common::utility::Singleton<ExternalUnitManager>;
                 //!anc 'echo' endpoint for testing purphose
                 ExternalEchoEndpoint echo_endpoint;
                 //!associate the protocol string to the adapter
@@ -63,15 +64,26 @@ new chaos::common::utility::TypedObjectInstancer<SerializerClass, serialization:
                 
                 LMapSerializer map_serializer;
                 
-                ExternalUnitGateway();
-                ~ExternalUnitGateway();
+                ExternalUnitManager();
+                ~ExternalUnitManager();
                 
             public:
                 void init(void *init_data) throw (chaos::CException);
                 void deinit() throw (chaos::CException);
-                
+                //!endpoint management api
+                //! register an endpoint on all server adapter
                 int registerEndpoint(ExternalUnitEndpoint& endpoint);
+                //! deregister an endpoint on all server protocol adapter
                 int deregisterEndpoint(ExternalUnitEndpoint& endpoint);
+                
+                //! initiator management api
+                //! create a new connection for and endpoint
+                int initilizeConnection(ExternalUnitEndpoint& endpoint,
+                                        const std::string& protocol,
+                                        const std::string& serialization,
+                                        const std::string& destination);
+                //! dispose a conenction associated to an endpoint
+                int releaseConnection(ExternalUnitEndpoint& endpoint);
                 
                 ChaosUniquePtr<serialization::AbstractExternalSerialization> getNewSerializationInstanceForType(const std::string& type);
                 
@@ -87,4 +99,4 @@ new chaos::common::utility::TypedObjectInstancer<SerializerClass, serialization:
     }
 }
 
-#endif /* __CHAOSFramework__D7B878E_3F06_4472_8769_442D263D93ED_ExternalUnitGateway_h */
+#endif /* __CHAOSFramework__D7B878E_3F06_4472_8769_442D263D93ED_ExternalUnitManager_h */

@@ -19,22 +19,17 @@
  * permissions and limitations under the Licence.
  */
 
-#include <chaos/common/external_gateway/AbstractAdapter.h>
+#ifndef __CHAOSFramework__4D9D840_A775_4403_951A_2572E8F3AB65_external_unit_types_h
+#define __CHAOSFramework__4D9D840_A775_4403_951A_2572E8F3AB65_external_unit_types_h
 
-using namespace chaos::common::external_gateway;
+#include <chaos/common/external_unit/external_unit_types.h>
+#include <chaos/common/external_unit/http_adapter/http_adapter_types.h>
 
-AbstractAdapter::AbstractAdapter() {
-    
+namespace chaos{
+    namespace common {
+        namespace external_unit {
+        }
+    }
 }
 
-AbstractAdapter::~AbstractAdapter() {
-    
-}
-
-void AbstractAdapter::init(void *init_data) throw (chaos::CException) {
-    
-}
-
-void AbstractAdapter::deinit() throw (chaos::CException) {
-    
-}
+#endif /* __CHAOSFramework__4D9D840_A775_4403_951A_2572E8F3AB65_external_unit_types_h */

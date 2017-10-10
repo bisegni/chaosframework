@@ -19,18 +19,18 @@
  * permissions and limitations under the Licence.
  */
 
-#include <chaos/common/external_gateway/ExternalUnitConnection.h>
-#include <chaos/common/external_gateway/ExternalUnitEndpoint.h>
+#include <chaos/common/external_unit/ExternalUnitConnection.h>
+#include <chaos/common/external_unit/ExternalUnitEndpoint.h>
 
 #include <chaos/common/utility/UUIDUtil.h>
 #include <chaos/common/global.h>
 
 using namespace chaos::common::utility;
 
-using namespace chaos::common::external_gateway;
+using namespace chaos::common::external_unit;
 
 ExternalUnitConnection::ExternalUnitConnection(ExternalUnitEndpoint *_endpoint,
-                                               ChaosUniquePtr<chaos::common::external_gateway::serialization::AbstractExternalSerialization> _serializer_adapter):
+                                               ChaosUniquePtr<chaos::common::external_unit::serialization::AbstractExternalSerialization> _serializer_adapter):
 connection_identifier(UUIDUtil::generateUUIDLite()),
 endpoint(_endpoint),
 serializer_adapter(ChaosMoveOperator(_serializer_adapter)) {

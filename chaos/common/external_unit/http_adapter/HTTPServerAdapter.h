@@ -19,34 +19,34 @@
  * permissions and limitations under the Licence.
  */
 
-#ifndef __CHAOSFramework__A9B46FE_F810_4509_990F_9F19087E9AE8_HTTPAdapter_h
-#define __CHAOSFramework__A9B46FE_F810_4509_990F_9F19087E9AE8_HTTPAdapter_h
+#ifndef __CHAOSFramework__A9B46FE_F810_4509_990F_9F19087E9AE8_HTTPServerAdapter_h
+#define __CHAOSFramework__A9B46FE_F810_4509_990F_9F19087E9AE8_HTTPServerAdapter_h
 
 #include <chaos/common/chaos_types.h>
 #include <chaos/common/utility/LockableObject.h>
 #include <chaos/common/pqueue/CObjectProcessingQueue.h>
 
 #include <chaos/common/additional_lib/mongoose.h>
-#include <chaos/common/external_gateway/AbstractAdapter.h>
-#include <chaos/common/external_gateway/http_adapter/http_adapter_types.h>
-#include <chaos/common/external_gateway/http_adapter/HTTPExternalUnitConnection.h>
+#include <chaos/common/external_unit/AbstractServerAdapter.h>
+#include <chaos/common/external_unit/http_adapter/http_adapter_types.h>
+#include <chaos/common/external_unit/http_adapter/HTTPExternalUnitConnection.h>
 
 #include <boost/thread.hpp>
 
 namespace chaos{
     namespace common {
-        namespace external_gateway {
+        namespace external_unit {
             namespace http_adapter {
                 
                 CHAOS_DEFINE_MAP_FOR_TYPE(uintptr_t, ChaosSharedPtr<HTTPExternalUnitConnection>, MapConnection);
                 CHAOS_DEFINE_LOCKABLE_OBJECT(MapConnection, LMapConnection);
                 
                 //!External gateway root class
-                class HTTPAdapter:
+                class HTTPServerAdapter:
                 protected CObjectProcessingQueue< WorkRequest >,
-                public AbstractAdapter {
+                public AbstractServerAdapter {
                     bool run;
-                    HttpAdapterSetting setting;
+                    HTTPServerAdapterSetting setting;
                     
                     struct mg_serve_http_opts s_http_server_opts;
                     
@@ -76,8 +76,8 @@ namespace chaos{
                 protected:
                     void processBufferElement(WorkRequest *request, ElementManagingPolicy& policy) throw(CException);
                 public:
-                    HTTPAdapter();
-                    ~HTTPAdapter();
+                    HTTPServerAdapter();
+                    ~HTTPServerAdapter();
                     void init(void *init_data) throw (chaos::CException);
                     void deinit() throw (chaos::CException);
                     int registerEndpoint(ExternalUnitEndpoint& endpoint);
@@ -88,4 +88,4 @@ namespace chaos{
     }
 }
 
-#endif /* __CHAOSFramework__A9B46FE_F810_4509_990F_9F19087E9AE8_HTTPAdapter_h */
+#endif /* __CHAOSFramework__A9B46FE_F810_4509_990F_9F19087E9AE8_HTTPServerAdapter_h */

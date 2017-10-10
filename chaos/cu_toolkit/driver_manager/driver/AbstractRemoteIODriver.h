@@ -24,7 +24,7 @@
 
 #include <chaos/cu_toolkit/driver_manager/driver/AbstractDriverPlugin.h>
 
-#include <chaos/common/external_gateway/ExternalUnitEndpoint.h>
+#include <chaos/common/external_unit/ExternalUnitEndpoint.h>
 
 #include <chaos/common/data/CDataVariant.h>
 #include <chaos/common/utility/LockableObject.h>
@@ -71,7 +71,7 @@ namespace chaos {
                  */
                 class AbstractRemoteIODriver:
                 ADD_CU_DRIVER_PLUGIN_SUPERCLASS,
-                chaos::common::external_gateway::ExternalUnitEndpoint,
+                chaos::common::external_unit::ExternalUnitEndpoint,
                 chaos::common::async_central::TimerHandler {
                     
                     typedef ChaosPromise< chaos::common::data::CDWShrdPtr > DriverResultPromise;

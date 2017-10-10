@@ -131,19 +131,19 @@ SET(common_lib_src ${common_lib_src}
         exception/MetadataLoggingCException.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        external_gateway/ExternalUnitGateway.cpp
-        external_gateway/AbstractAdapter.cpp
-        external_gateway/ExternalUnitConnection.cpp
-        external_gateway/ExternalUnitEndpoint.cpp
-        external_gateway/ExternalEchoEndpoint.cpp)
+        external_unit/ExternalUnitManager.cpp
+        external_unit/AbstractAdapter.cpp
+        external_unit/ExternalUnitConnection.cpp
+        external_unit/ExternalUnitEndpoint.cpp
+        external_unit/ExternalEchoEndpoint.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        external_gateway/serialization/AbstractExternalSerialization.cpp
-        external_gateway/serialization/ExternalBSONExtJsonSerialization.cpp)
+        external_unit/serialization/AbstractExternalSerialization.cpp
+        external_unit/serialization/ExternalBSONExtJsonSerialization.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        external_gateway/http_adapter/HTTPAdapter.cpp
-        external_gateway/http_adapter/HTTPExternalUnitConnection.cpp)
+        external_unit/http_adapter/HTTPServerAdapter.cpp
+        external_unit/http_adapter/HTTPExternalUnitConnection.cpp)
 
 SET(common_lib_src ${common_lib_src}
         event/EventClient.cpp
