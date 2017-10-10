@@ -131,6 +131,10 @@
 		3230DA0D1652C44B00113C93 /* RpcMessageForwarder.h in Headers */ = {isa = PBXBuildFile; fileRef = 3230DA0C1652C44B00113C93 /* RpcMessageForwarder.h */; };
 		3232018A1D21591300701B03 /* ExecutionPoolHeartbeat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323201881D21591300701B03 /* ExecutionPoolHeartbeat.cpp */; };
 		323236CB164573C60052CE06 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323236CA164573C60052CE06 /* main.cpp */; };
+		3232E9C01F8D08E3001B1951 /* HTTPClientAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3232E9BE1F8D08E3001B1951 /* HTTPClientAdapter.h */; };
+		3232E9C11F8D08E3001B1951 /* HTTPClientAdapter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3232E9BF1F8D08E3001B1951 /* HTTPClientAdapter.cpp */; };
+		3232E9C41F8D0B3A001B1951 /* HTTPBaseAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3232E9C21F8D0B3A001B1951 /* HTTPBaseAdapter.h */; };
+		3232E9C51F8D0B3A001B1951 /* HTTPBaseAdapter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3232E9C31F8D0B3A001B1951 /* HTTPBaseAdapter.cpp */; };
 		3232F458177743DC003E1D4A /* AbstractDriverPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 3232F457177743DC003E1D4A /* AbstractDriverPlugin.h */; };
 		323386B11ACD731E008863DC /* NodeSearch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323386AF1ACD731E008863DC /* NodeSearch.cpp */; };
 		323386B21ACD731E008863DC /* NodeSearch.h in Headers */ = {isa = PBXBuildFile; fileRef = 323386B01ACD731E008863DC /* NodeSearch.h */; };
@@ -1449,6 +1453,10 @@
 		323201881D21591300701B03 /* ExecutionPoolHeartbeat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExecutionPoolHeartbeat.cpp; sourceTree = "<group>"; };
 		323201891D21591300701B03 /* ExecutionPoolHeartbeat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExecutionPoolHeartbeat.h; sourceTree = "<group>"; };
 		323236CA164573C60052CE06 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		3232E9BE1F8D08E3001B1951 /* HTTPClientAdapter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HTTPClientAdapter.h; sourceTree = "<group>"; };
+		3232E9BF1F8D08E3001B1951 /* HTTPClientAdapter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPClientAdapter.cpp; sourceTree = "<group>"; };
+		3232E9C21F8D0B3A001B1951 /* HTTPBaseAdapter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HTTPBaseAdapter.h; sourceTree = "<group>"; };
+		3232E9C31F8D0B3A001B1951 /* HTTPBaseAdapter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPBaseAdapter.cpp; sourceTree = "<group>"; };
 		3232F457177743DC003E1D4A /* AbstractDriverPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractDriverPlugin.h; sourceTree = "<group>"; };
 		323386AF1ACD731E008863DC /* NodeSearch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeSearch.cpp; sourceTree = "<group>"; };
 		323386B01ACD731E008863DC /* NodeSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeSearch.h; sourceTree = "<group>"; };
@@ -5575,6 +5583,10 @@
 			children = (
 				32E782E21EFC0F2800AD59F7 /* HTTPServerAdapter.cpp */,
 				32E782E31EFC0F2800AD59F7 /* HTTPServerAdapter.h */,
+				3232E9BF1F8D08E3001B1951 /* HTTPClientAdapter.cpp */,
+				3232E9BE1F8D08E3001B1951 /* HTTPClientAdapter.h */,
+				3232E9C31F8D0B3A001B1951 /* HTTPBaseAdapter.cpp */,
+				3232E9C21F8D0B3A001B1951 /* HTTPBaseAdapter.h */,
 				320F732D1F178F6400C4806C /* http_adapter_types.h */,
 			);
 			path = http_adapter;
@@ -6100,6 +6112,7 @@
 				32640A33169DCC5800450962 /* TransformTracker.h in Headers */,
 				324A4B4F191A41EF00975394 /* compiler.h in Headers */,
 				32640A34169DCC5800450962 /* CommonBuffer.h in Headers */,
+				3232E9C01F8D08E3001B1951 /* HTTPClientAdapter.h in Headers */,
 				32C5A42818D9959800C0435C /* DirectIOPerformanceSession.h in Headers */,
 				32640A35169DCC5800450962 /* AbstractDataElement.h in Headers */,
 				32640A36169DCC5800450962 /* DataElement.h in Headers */,
@@ -6114,6 +6127,7 @@
 				32F7FEA118A4FD9B00FC03AB /* DirectIOEndpointHandler.h in Headers */,
 				32A391C418FE923E001C5A73 /* TemplatedKeyValueHashMap.h in Headers */,
 				32640A3C169DCC5800450962 /* IteratorGarbage.h in Headers */,
+				3232E9C41F8D0B3A001B1951 /* HTTPBaseAdapter.h in Headers */,
 				32B1378B189BEC3300B17CA4 /* ZMQDirectIOClient.h in Headers */,
 				324A4B11191A3F6A00975394 /* parse_number.h in Headers */,
 				32640A3D169DCC5800450962 /* IteratorReader.h in Headers */,
@@ -7019,6 +7033,7 @@
 				32C4C2AD1C8D9A8600D74E0F /* CException.cpp in Sources */,
 				32A88BBB1CF8228A001DBAF5 /* lauxlib.c in Sources */,
 				324A4B54191A41EF00975394 /* random.cpp in Sources */,
+				3232E9C51F8D0B3A001B1951 /* HTTPBaseAdapter.cpp in Sources */,
 				3264206A1F8A1CE000B58E3E /* ExternalBSONExtJsonSerialization.cpp in Sources */,
 				32A88BB91CF8228A001DBAF5 /* lapi.c in Sources */,
 				32FB20201A3F2E7300307A86 /* AbstractSharedDomainCache.cpp in Sources */,
@@ -7065,6 +7080,7 @@
 				3214EF241D468209004DB689 /* Lists.cpp in Sources */,
 				32A88BD91CF8228A001DBAF5 /* lopcodes.c in Sources */,
 				32C25DE41DB771D200A46C2B /* AsyncPoolRunner.cpp in Sources */,
+				3232E9C11F8D08E3001B1951 /* HTTPClientAdapter.cpp in Sources */,
 				328E405D17287B82004E5938 /* LFDataCache.cpp in Sources */,
 				324A4B7F191A428500975394 /* safe_num.cpp in Sources */,
 				32A8F7D1172BE3FD0090DB78 /* KeyGroupCache.cpp in Sources */,

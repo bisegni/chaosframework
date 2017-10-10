@@ -1,5 +1,5 @@
 /*
- * Copyright 2012, 2017 INFN
+ * Copyright 2012, 10/10/2017 INFN
  *
  * Licensed under the EUPL, Version 1.2 or – as soon they
  * will be approved by the European Commission - subsequent
@@ -19,36 +19,18 @@
  * permissions and limitations under the Licence.
  */
 
-#ifndef __CHAOSFramework__A9B46FE_F810_4509_990F_9F19087E9AE8_HTTPServerAdapter_h
-#define __CHAOSFramework__A9B46FE_F810_4509_990F_9F19087E9AE8_HTTPServerAdapter_h
+#ifndef chaos_common_external_unit_http_adapter_HTTPClientAdapter_h
+#define chaos_common_external_unit_http_adapter_HTTPClientAdapter_h
 
 #include <chaos/common/external_unit/http_adapter/HTTPBaseAdapter.h>
 
-namespace chaos{
+namespace chaos {
     namespace common {
         namespace external_unit {
             namespace http_adapter {
-
-                //!External gateway root class
-                class HTTPServerAdapter:
+                
+                class HTTPClientAdapter:
                 public HTTPBaseAdapter {
-                    CHAOS_DEFINE_MAP_FOR_TYPE(uintptr_t, ChaosSharedPtr<ExternalUnitConnection>, MapConnection);
-                    CHAOS_DEFINE_LOCKABLE_OBJECT(MapConnection, LMapConnection);
-                    friend class ExternalUnitConnection;
-                    
-                    bool run;
-                    HTTPServerAdapterSetting setting;
-                    
-                    struct mg_mgr mgr;
-                    struct mg_connection *root_connection;
-                    struct mg_serve_http_opts s_http_server_opts;
-                    
-                    void poller();
-                    static const std::string getSerializationType(http_message *http_message);
-                    static void eventHandler(mg_connection *nc,
-                                             int ev,
-                                             void *ev_data);
-                    void  manageWSHandshake(WorkRequest& wr);
                 protected:
                     void processBufferElement(WorkRequest *request, ElementManagingPolicy& policy) throw(CException);
                     int sendDataToConnection(const std::string& connection_identifier,
@@ -56,16 +38,14 @@ namespace chaos{
                                              const EUCMessageOpcode opcode);
                     int closeConnection(const std::string& connection_identifier);
                 public:
-                    HTTPServerAdapter();
-                    ~HTTPServerAdapter();
+                    HTTPClientAdapter();
+                    ~HTTPClientAdapter();
                     void init(void *init_data) throw (chaos::CException);
                     void deinit() throw (chaos::CException);
-                    int registerEndpoint(ExternalUnitEndpoint& endpoint);
-                    int deregisterEndpoint(ExternalUnitEndpoint& endpoint);
                 };
             }
         }
     }
 }
 
-#endif /* __CHAOSFramework__A9B46FE_F810_4509_990F_9F19087E9AE8_HTTPServerAdapter_h */
+#endif /* chaos_common_external_unit_http_adapter_HTTPClientAdapter_h */
