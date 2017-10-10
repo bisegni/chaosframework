@@ -34,7 +34,7 @@ using namespace chaos::common::utility;
 
 ExternalUnitManager::ExternalUnitManager() {
     //add adapters
-    map_protocol_adapter().insert(MapAdapterPair("http", ChaosSharedPtr<AbstractServerAdapter>(new http_adapter::HTTPServerAdapter())));
+    map_protocol_adapter().insert(MapAdapterPair("http", ChaosSharedPtr<AbstractAdapter>(new http_adapter::HTTPServerAdapter())));
     
     //!add serializer
     installSerializerInstancer<serialization::ExternalBSONExtJsonSerialization>();

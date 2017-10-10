@@ -19,14 +19,19 @@
  * permissions and limitations under the Licence.
  */
 
-#include <chaos/common/external_unit/AbstractServerAdapter.h>
+#include <chaos/common/external_unit/AbstractAdapter.h>
 
 using namespace chaos::common::external_unit;
 
-AbstractServerAdapter::AbstractServerAdapter() {}
+AbstractAdapter::AbstractAdapter() {}
 
-AbstractServerAdapter::~AbstractServerAdapter() {}
+AbstractAdapter::~AbstractAdapter() {}
 
-void AbstractServerAdapter::init(void *init_data) throw (chaos::CException) {}
+void AbstractAdapter::init(void *init_data) throw (chaos::CException) {}
 
-void AbstractServerAdapter::deinit() throw (chaos::CException) {}
+void AbstractAdapter::deinit() throw (chaos::CException) {}
+
+int AbstractAdapter::sendDataToEndpoint(ExternalUnitConnection& connection,
+                                        chaos::common::data::CDBufferUniquePtr received_data) {
+    return connection.sendDataToEndpoint(ChaosMoveOperator(received_data));
+}

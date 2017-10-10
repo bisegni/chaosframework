@@ -19,36 +19,45 @@
  * permissions and limitations under the Licence.
  */
 
-#ifndef __CHAOSFramework__03715EB_48C9_4FC9_933D_9B908EC5B726_AbstractServerAdapter_h
-#define __CHAOSFramework__03715EB_48C9_4FC9_933D_9B908EC5B726_AbstractServerAdapter_h
+#ifndef __CHAOSFramework__03715EB_48C9_4FC9_933D_9B908EC5B726_AbstractAdapter_h
+#define __CHAOSFramework__03715EB_48C9_4FC9_933D_9B908EC5B726_AbstractAdapter_h
 
 #include <chaos/common/utility/InizializableService.h>
 
 #include <chaos/common/external_unit/ExternalUnitEndpoint.h>
+#include <chaos/common/external_unit/ExternalUnitConnection.h>
 
 namespace chaos{
     namespace common {
         namespace external_unit {
-            
             CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ExternalUnitEndpoint*, MapEndpoint);
             CHAOS_DEFINE_LOCKABLE_OBJECT(MapEndpoint, LMapEndpoint);
             
             //!adapter interface
-            class AbstractServerAdapter:
+            class AbstractAdapter:
             public chaos::common::utility::InizializableService {
             protected:
                 //!contains all association by endpoint url and class
                 LMapEndpoint    map_endpoint;
+            protected:
+                int sendDataToEndpoint(ExternalUnitConnection& connection, chaos::common::data::CDBufferUniquePtr received_data);
             public:
-                AbstractServerAdapter();
-                ~AbstractServerAdapter();
+                AbstractAdapter();
+                ~AbstractAdapter();
                 void init(void *init_data) throw (chaos::CException);
                 void deinit() throw (chaos::CException);
+                
                 virtual int registerEndpoint(ExternalUnitEndpoint& endpoint) = 0;
                 virtual int deregisterEndpoint(ExternalUnitEndpoint& endpoint) = 0;
+                
+                virtual int sendDataToConnection(const std::string& connection_identifier,
+                                                 const chaos::common::data::CDBufferUniquePtr data,
+                                                 const EUCMessageOpcode opcode) = 0;
+                
+                virtual int closeConnection(const std::string& connection_identifier) = 0;
             };
         }
     }
 }
 
-#endif /* __CHAOSFramework__03715EB_48C9_4FC9_933D_9B908EC5B726_AbstractServerAdapter_h */
+#endif /* __CHAOSFramework__03715EB_48C9_4FC9_933D_9B908EC5B726_AbstractAdapter_h */

@@ -29,8 +29,8 @@
 namespace chaos {
     namespace common {
         namespace external_unit {
-            class AbstractServerAdapter;
             class ExternalUnitEndpoint;
+            class AbstractAdapter;
             
             //!define the message opcode used to manage the fragmentation of the data
             typedef enum {
@@ -42,7 +42,9 @@ namespace chaos {
             
             //! Identify an external connection
             class ExternalUnitConnection {
+                friend class AbstractAdapter;
             protected:
+                AbstractAdapter *adapter;
                 //!endpoint that own the connection
                 ExternalUnitEndpoint *endpoint;
                 
@@ -50,13 +52,12 @@ namespace chaos {
                 ChaosUniquePtr<chaos::common::external_unit::serialization::AbstractExternalSerialization> serializer_adapter;
             protected:
                 int sendDataToEndpoint(chaos::common::data::CDBufferUniquePtr reecived_data);
-                virtual int sendDataToConnection(chaos::common::data::CDBufferUniquePtr data,
-                                                 const EUCMessageOpcode opcode = EUCMessageOpcodeWhole) = 0;
             public:
                 //! end point identifier
                 const std::string connection_identifier;
                 
-                ExternalUnitConnection(ExternalUnitEndpoint *_endpoint,
+                ExternalUnitConnection(AbstractAdapter *_adapter,
+                                       ExternalUnitEndpoint *_endpoint,
                                        ChaosUniquePtr<chaos::common::external_unit::serialization::AbstractExternalSerialization> _serializer_adapter);
                 virtual ~ExternalUnitConnection();
                 
@@ -64,7 +65,7 @@ namespace chaos {
                 int sendData(chaos::common::data::CDWUniquePtr data,
                              const EUCMessageOpcode opcode = EUCMessageOpcodeWhole);
                 
-                virtual void closeConnection() = 0;
+                virtual void closeConnection();
                 
                 const std::string& getEndpointIdentifier() const;
             };

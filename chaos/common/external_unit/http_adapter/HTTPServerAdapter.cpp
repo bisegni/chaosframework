@@ -97,9 +97,9 @@ void HTTPServerAdapter::poller() {
 }
 
 void HTTPServerAdapter::sendHTTPJSONError(mg_connection *nc,
-                                    int status_code,
-                                    const int error_code,
-                                    const std::string& error_message) {
+                                          int status_code,
+                                          const int error_code,
+                                          const std::string& error_message) {
     CDataWrapper err_data_pack;
     err_data_pack.addInt32Value("error_code", error_code);
     err_data_pack.addStringValue("error_message", error_message);
@@ -110,9 +110,9 @@ void HTTPServerAdapter::sendHTTPJSONError(mg_connection *nc,
 }
 
 void HTTPServerAdapter::sendWSJSONError(mg_connection *nc,
-                                  const int error_code,
-                                  const std::string& error_message,
-                                  bool close_connection) {
+                                        const int error_code,
+                                        const std::string& error_message,
+                                        bool close_connection) {
     CDataWrapper err_data_pack;
     err_data_pack.addInt32Value("error_code", error_code);
     err_data_pack.addStringValue("error_message", error_message);
@@ -123,8 +123,8 @@ void HTTPServerAdapter::sendWSJSONError(mg_connection *nc,
 }
 
 void HTTPServerAdapter::sendWSJSONAcceptedConnection(mg_connection *nc,
-                                               bool accepted,
-                                               bool close_connection) {
+                                                     bool accepted,
+                                                     bool close_connection) {
     CDataWrapper err_data_pack;
     err_data_pack.addInt32Value("accepted_connection", accepted);
     const std::string accepted_json = err_data_pack.getJSONString();
@@ -187,11 +187,15 @@ void  HTTPServerAdapter::manageWSHandshake(WorkRequest& wr) {
                                          true);
         } else {
             //we can create a new connection
+            ChaosSharedPtr<ExternalUnitConnection> conn_ptr(new ExternalUnitConnection(this,
+                                                                                       endpoint_it->second,
+                                                                                       ChaosMoveOperator(serializer)));
             LMapConnectionWriteLock wconnl = map_connection.getWriteLockObject();
             map_connection().insert(MapConnectionPair(reinterpret_cast<uintptr_t>(wr.nc),
-                                                      ChaosSharedPtr<HTTPExternalUnitConnection>(new HTTPExternalUnitConnection(wr.nc,
-                                                                                                                                endpoint_it->second,
-                                                                                                                                ChaosMoveOperator(serializer)))));
+                                                      conn_ptr));
+            //add the mapping from mongoose conenciton and ext unit one
+            map_m_conn_ext_conn.insert(reinterpret_cast<uintptr_t>(wr.nc),
+                                       conn_ptr->connection_identifier);
             sendWSJSONAcceptedConnection(wr.nc,
                                          true,
                                          false);
@@ -200,7 +204,7 @@ void  HTTPServerAdapter::manageWSHandshake(WorkRequest& wr) {
 }
 
 void HTTPServerAdapter::processBufferElement(WorkRequest *request,
-                                       ElementManagingPolicy& policy) throw(CException) {
+                                             ElementManagingPolicy& policy) throw(CException) {
     switch(request->r_type) {
         case WorkRequestTypeHttpRequest: {
             //http_message *message = static_cast<http_message*>(wr.message);
@@ -218,7 +222,8 @@ void HTTPServerAdapter::processBufferElement(WorkRequest *request,
             policy.elementHasBeenDetached = true;
             LMapConnectionReadLock wconnl = map_connection.getReadLockObject();
             if(map_connection().count(reinterpret_cast<uintptr_t>(request->nc))) {
-                if((err = map_connection()[reinterpret_cast<uintptr_t>(request->nc)]->handleWSIncomingData(ChaosUniquePtr<WorkRequest>(request)))){
+                if((err = sendDataToEndpoint(*map_connection()[reinterpret_cast<uintptr_t>(request->nc)],
+                                             ChaosMoveOperator(request->buffer)))) {
                     //weh don't have found the sriealizer
                     const std::string error = CHAOS_FORMAT("{error:%1%,message:\"%2%\"}", %err%map_connection()[reinterpret_cast<uintptr_t>(request->nc)]->getEndpointIdentifier());
                     mg_send_websocket_frame(request->nc, WEBSOCKET_OP_TEXT, error.c_str(), error.size());
@@ -229,6 +234,7 @@ void HTTPServerAdapter::processBufferElement(WorkRequest *request,
         case WorkRequestTypeWSCloseEvent: {
             LMapConnectionWriteLock wconnl = map_connection.getWriteLockObject();
             map_connection().erase(reinterpret_cast<uintptr_t>(request->nc));
+            map_m_conn_ext_conn.removebyLeftKey(reinterpret_cast<uintptr_t>(request->nc));
             break;
         }
             
@@ -318,5 +324,38 @@ int HTTPServerAdapter::deregisterEndpoint(ExternalUnitEndpoint& endpoint) {
         }
     }
     map_endpoint().erase(endpoint.getIdentifier());
+    return 0;
+}
+
+int HTTPServerAdapter::sendDataToConnection(const std::string& connection_identifier,
+                                            const chaos::common::data::CDBufferUniquePtr data,
+                                            const EUCMessageOpcode opcode) {
+    LMapConnectionReadLock wconnl = map_connection.getReadLockObject();
+    if(!map_m_conn_ext_conn.hasRightKey(static_cast<std::string>(connection_identifier))) return -1;
+    mg_connection *nc = reinterpret_cast<mg_connection*>(map_m_conn_ext_conn.findByRightKey(static_cast<std::string>(connection_identifier)));
+    switch (opcode) {
+        case EUCMessageOpcodeWhole:
+            mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT, data->getBuffer(), data->getBufferSize());
+            break;
+        case EUCPhaseStartFragment:
+            mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT|WEBSOCKET_DONT_FIN, data->getBuffer(), data->getBufferSize());
+            break;
+            
+        case EUCPhaseContinueFragment:
+            mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT|WEBSOCKET_DONT_FIN, data->getBuffer(), data->getBufferSize());
+            break;
+            
+        case EUCPhaseEndFragment:
+            mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT, data->getBuffer(), data->getBufferSize());
+            break;
+    }
+    return 0;
+}
+
+int HTTPServerAdapter::closeConnection(const std::string& connection_identifier) {
+    LMapConnectionReadLock wconnl = map_connection.getReadLockObject();
+    if(!map_m_conn_ext_conn.hasRightKey(static_cast<std::string>(connection_identifier))) return -1;
+    mg_connection *nc = reinterpret_cast<mg_connection*>(map_m_conn_ext_conn.findByRightKey(static_cast<std::string>(connection_identifier)));
+    mg_send_websocket_frame(nc, WEBSOCKET_OP_CLOSE, "", 0);
     return 0;
 }

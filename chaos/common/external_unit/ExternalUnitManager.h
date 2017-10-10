@@ -28,7 +28,7 @@
 #include <chaos/common/utility/InizializableService.h>
 #include <chaos/common/utility/ObjectInstancer.h>
 
-#include <chaos/common/external_unit/AbstractServerAdapter.h>
+#include <chaos/common/external_unit/AbstractAdapter.h>
 #include <chaos/common/external_unit/ExternalUnitEndpoint.h>
 #include <chaos/common/external_unit/ExternalEchoEndpoint.h>
 #include <chaos/common/external_unit/serialization/AbstractExternalSerialization.h>
@@ -41,7 +41,7 @@ namespace chaos{
         namespace external_unit {
             
             //! define adapter map
-            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ChaosSharedPtr<AbstractServerAdapter>, MapAdapter);
+            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ChaosSharedPtr<AbstractAdapter>, MapAdapter);
             CHAOS_DEFINE_LOCKABLE_OBJECT(MapAdapter, LMapAdapter);
             
             //!define serialization map

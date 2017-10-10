@@ -411,12 +411,11 @@
 		326413A21E44AD750035E175 /* ChaosAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326413A01E44AD750035E175 /* ChaosAgent.cpp */; };
 		326413AB1E44C7DD0035E175 /* AgentRegister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326413A91E44C7DD0035E175 /* AgentRegister.cpp */; };
 		326420611F8A1CD200B58E3E /* ExternalUnitManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E782CC1EFC075D00AD59F7 /* ExternalUnitManager.cpp */; };
-		326420621F8A1CD200B58E3E /* AbstractServerAdapter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E782DE1EFC0EEE00AD59F7 /* AbstractServerAdapter.cpp */; };
+		326420621F8A1CD200B58E3E /* AbstractAdapter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E782DE1EFC0EEE00AD59F7 /* AbstractAdapter.cpp */; };
 		326420631F8A1CD200B58E3E /* ExternalUnitConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A94A7A1F14CC830069DDA3 /* ExternalUnitConnection.cpp */; };
 		326420641F8A1CD200B58E3E /* ExternalUnitEndpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A94A7E1F14CDBF0069DDA3 /* ExternalUnitEndpoint.cpp */; };
 		326420651F8A1CD200B58E3E /* ExternalEchoEndpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A94A861F1654040069DDA3 /* ExternalEchoEndpoint.cpp */; };
 		326420671F8A1CDB00B58E3E /* HTTPServerAdapter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E782E21EFC0F2800AD59F7 /* HTTPServerAdapter.cpp */; };
-		326420681F8A1CDB00B58E3E /* HTTPExternalUnitConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A94A821F16449E0069DDA3 /* HTTPExternalUnitConnection.cpp */; };
 		326420691F8A1CE000B58E3E /* AbstractExternalSerialization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320F733D1F1F4EC100C4806C /* AbstractExternalSerialization.cpp */; };
 		3264206A1F8A1CE000B58E3E /* ExternalBSONExtJsonSerialization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320F73411F1F55E300C4806C /* ExternalBSONExtJsonSerialization.cpp */; };
 		3264206B1F8A28C100B58E3E /* mongoose.c in Sources */ = {isa = PBXBuildFile; fileRef = 32E782D61EFC095500AD59F7 /* mongoose.c */; };
@@ -813,7 +812,6 @@
 		32A8F7D2172BE3FD0090DB78 /* KeyGroupCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A8F7D0172BE3FD0090DB78 /* KeyGroupCache.h */; };
 		32A94A7D1F14CC830069DDA3 /* ExternalUnitConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A94A7B1F14CC830069DDA3 /* ExternalUnitConnection.h */; };
 		32A94A811F14CDBF0069DDA3 /* ExternalUnitEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A94A7F1F14CDBF0069DDA3 /* ExternalUnitEndpoint.h */; };
-		32A94A851F16449E0069DDA3 /* HTTPExternalUnitConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A94A831F16449E0069DDA3 /* HTTPExternalUnitConnection.h */; };
 		32A94A891F1654040069DDA3 /* ExternalEchoEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A94A871F1654040069DDA3 /* ExternalEchoEndpoint.h */; };
 		32A968521D522FB800BD636C /* PropertyGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A968501D522FB800BD636C /* PropertyGroup.cpp */; };
 		32A968531D522FB800BD636C /* PropertyGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A968511D522FB800BD636C /* PropertyGroup.h */; };
@@ -1077,7 +1075,7 @@
 		32E6F4461E48D28F0068320E /* AgentAckCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E6F4441E48D28F0068320E /* AgentAckCommand.cpp */; };
 		32E782CF1EFC075D00AD59F7 /* ExternalUnitManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E782CD1EFC075D00AD59F7 /* ExternalUnitManager.h */; };
 		32E782D91EFC095500AD59F7 /* mongoose.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E782D71EFC095500AD59F7 /* mongoose.h */; };
-		32E782E11EFC0EEE00AD59F7 /* AbstractServerAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E782DF1EFC0EEE00AD59F7 /* AbstractServerAdapter.h */; };
+		32E782E11EFC0EEE00AD59F7 /* AbstractAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E782DF1EFC0EEE00AD59F7 /* AbstractAdapter.h */; };
 		32E782E51EFC0F2800AD59F7 /* HTTPServerAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E782E31EFC0F2800AD59F7 /* HTTPServerAdapter.h */; };
 		32E86E431CD8A75F0038DE76 /* MessageRequestDomain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E86E411CD8A75F0038DE76 /* MessageRequestDomain.cpp */; };
 		32E86E441CD8A75F0038DE76 /* MessageRequestDomain.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E86E421CD8A75F0038DE76 /* MessageRequestDomain.h */; };
@@ -2270,8 +2268,6 @@
 		32A94A7B1F14CC830069DDA3 /* ExternalUnitConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExternalUnitConnection.h; sourceTree = "<group>"; };
 		32A94A7E1F14CDBF0069DDA3 /* ExternalUnitEndpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExternalUnitEndpoint.cpp; sourceTree = "<group>"; };
 		32A94A7F1F14CDBF0069DDA3 /* ExternalUnitEndpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExternalUnitEndpoint.h; sourceTree = "<group>"; };
-		32A94A821F16449E0069DDA3 /* HTTPExternalUnitConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPExternalUnitConnection.cpp; sourceTree = "<group>"; };
-		32A94A831F16449E0069DDA3 /* HTTPExternalUnitConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPExternalUnitConnection.h; sourceTree = "<group>"; };
 		32A94A861F1654040069DDA3 /* ExternalEchoEndpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExternalEchoEndpoint.cpp; sourceTree = "<group>"; };
 		32A94A871F1654040069DDA3 /* ExternalEchoEndpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExternalEchoEndpoint.h; sourceTree = "<group>"; };
 		32A968501D522FB800BD636C /* PropertyGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PropertyGroup.cpp; sourceTree = "<group>"; };
@@ -2621,8 +2617,8 @@
 		32E782CD1EFC075D00AD59F7 /* ExternalUnitManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExternalUnitManager.h; sourceTree = "<group>"; };
 		32E782D61EFC095500AD59F7 /* mongoose.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mongoose.c; sourceTree = "<group>"; };
 		32E782D71EFC095500AD59F7 /* mongoose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mongoose.h; sourceTree = "<group>"; };
-		32E782DE1EFC0EEE00AD59F7 /* AbstractServerAdapter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractServerAdapter.cpp; sourceTree = "<group>"; };
-		32E782DF1EFC0EEE00AD59F7 /* AbstractServerAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractServerAdapter.h; sourceTree = "<group>"; };
+		32E782DE1EFC0EEE00AD59F7 /* AbstractAdapter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractAdapter.cpp; sourceTree = "<group>"; };
+		32E782DF1EFC0EEE00AD59F7 /* AbstractAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractAdapter.h; sourceTree = "<group>"; };
 		32E782E21EFC0F2800AD59F7 /* HTTPServerAdapter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPServerAdapter.cpp; sourceTree = "<group>"; };
 		32E782E31EFC0F2800AD59F7 /* HTTPServerAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPServerAdapter.h; sourceTree = "<group>"; };
 		32E86E411CD8A75F0038DE76 /* MessageRequestDomain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageRequestDomain.cpp; sourceTree = "<group>"; };
@@ -5559,8 +5555,8 @@
 				32E782D01EFC081400AD59F7 /* http_adapter */,
 				32E782CC1EFC075D00AD59F7 /* ExternalUnitManager.cpp */,
 				32E782CD1EFC075D00AD59F7 /* ExternalUnitManager.h */,
-				32E782DE1EFC0EEE00AD59F7 /* AbstractServerAdapter.cpp */,
-				32E782DF1EFC0EEE00AD59F7 /* AbstractServerAdapter.h */,
+				32E782DE1EFC0EEE00AD59F7 /* AbstractAdapter.cpp */,
+				32E782DF1EFC0EEE00AD59F7 /* AbstractAdapter.h */,
 				32A94A7A1F14CC830069DDA3 /* ExternalUnitConnection.cpp */,
 				32A94A7B1F14CC830069DDA3 /* ExternalUnitConnection.h */,
 				32A94A7E1F14CDBF0069DDA3 /* ExternalUnitEndpoint.cpp */,
@@ -5579,8 +5575,6 @@
 			children = (
 				32E782E21EFC0F2800AD59F7 /* HTTPServerAdapter.cpp */,
 				32E782E31EFC0F2800AD59F7 /* HTTPServerAdapter.h */,
-				32A94A821F16449E0069DDA3 /* HTTPExternalUnitConnection.cpp */,
-				32A94A831F16449E0069DDA3 /* HTTPExternalUnitConnection.h */,
 				320F732D1F178F6400C4806C /* http_adapter_types.h */,
 			);
 			path = http_adapter;
@@ -6187,7 +6181,6 @@
 				3252A3101C8ED2A800900FF2 /* AbstractAttributeHandler.h in Headers */,
 				326DB4BC14B3A3E50018A8D0 /* CommandManagerDefaultAdapters.h in Headers */,
 				32C4EF2A1D4BB0A60014F3D3 /* DatasetCacheWrapper.h in Headers */,
-				32A94A851F16449E0069DDA3 /* HTTPExternalUnitConnection.h in Headers */,
 				326933EA1D5089420033D9E9 /* publishing.h in Headers */,
 				3215861117875FDB0090E7E6 /* DriverPluginLoader.h in Headers */,
 				32C43BBB1D65FDE8007F5864 /* publishing_types.h in Headers */,
@@ -6209,7 +6202,7 @@
 				32788D7F1F277207009BBB1E /* TemplatedRemoteIODriver.h in Headers */,
 				32A94A7D1F14CC830069DDA3 /* ExternalUnitConnection.h in Headers */,
 				32655ACE1E93FCF200829266 /* EUSearch.h in Headers */,
-				32E782E11EFC0EEE00AD59F7 /* AbstractServerAdapter.h in Headers */,
+				32E782E11EFC0EEE00AD59F7 /* AbstractAdapter.h in Headers */,
 				3252A3141C8ED6BD00900FF2 /* DatasetAttributeHandler.h in Headers */,
 				32655AC61E93C12E00829266 /* EUDSValueManagement.h in Headers */,
 				326DB4CC14B3A3E50018A8D0 /* KeyDataStorage.h in Headers */,
@@ -6930,7 +6923,6 @@
 				32414FD71DC1EEAD00830422 /* AlarmCatalog.cpp in Sources */,
 				32A88BCF1CF8228A001DBAF5 /* liolib.c in Sources */,
 				32C25DF41DB90C3200A46C2B /* StandardLoggingChannel.cpp in Sources */,
-				326420681F8A1CDB00B58E3E /* HTTPExternalUnitConnection.cpp in Sources */,
 				324A4B1B191A402A00975394 /* MurmurHash3.cpp in Sources */,
 				32CFF95B15E4D950005D607E /* EventDescriptor.cpp in Sources */,
 				32EBDEFA1B4E58F300278C42 /* MetricCollector.cpp in Sources */,
@@ -6975,7 +6967,7 @@
 				328556A417F2E36000A64ED2 /* DirectIOServer.cpp in Sources */,
 				32B159D118B38C980096B58B /* DirectIODeviceClientChannel.cpp in Sources */,
 				3271B8911D3CE0B30035290E /* StateFlagSDWrapper.cpp in Sources */,
-				326420621F8A1CD200B58E3E /* AbstractServerAdapter.cpp in Sources */,
+				326420621F8A1CD200B58E3E /* AbstractAdapter.cpp in Sources */,
 				32B5C9501C68E2420021159C /* URLHAServiceFeeder.cpp in Sources */,
 				32A88BD41CF8228A001DBAF5 /* lmem.c in Sources */,
 				325DE9F115EC031E00D6F34E /* EventChannel.cpp in Sources */,

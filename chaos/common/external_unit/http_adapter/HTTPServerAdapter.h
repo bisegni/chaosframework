@@ -23,13 +23,14 @@
 #define __CHAOSFramework__A9B46FE_F810_4509_990F_9F19087E9AE8_HTTPServerAdapter_h
 
 #include <chaos/common/chaos_types.h>
+#include <chaos/common/utility/Bimap.h>
 #include <chaos/common/utility/LockableObject.h>
 #include <chaos/common/pqueue/CObjectProcessingQueue.h>
 
 #include <chaos/common/additional_lib/mongoose.h>
-#include <chaos/common/external_unit/AbstractServerAdapter.h>
+#include <chaos/common/external_unit/AbstractAdapter.h>
 #include <chaos/common/external_unit/http_adapter/http_adapter_types.h>
-#include <chaos/common/external_unit/http_adapter/HTTPExternalUnitConnection.h>
+#include <chaos/common/external_unit/ExternalUnitConnection.h>
 
 #include <boost/thread.hpp>
 
@@ -38,13 +39,17 @@ namespace chaos{
         namespace external_unit {
             namespace http_adapter {
                 
-                CHAOS_DEFINE_MAP_FOR_TYPE(uintptr_t, ChaosSharedPtr<HTTPExternalUnitConnection>, MapConnection);
+                CHAOS_DEFINE_MAP_FOR_TYPE(uintptr_t, ChaosSharedPtr<ExternalUnitConnection>, MapConnection);
                 CHAOS_DEFINE_LOCKABLE_OBJECT(MapConnection, LMapConnection);
+
+                
                 
                 //!External gateway root class
                 class HTTPServerAdapter:
                 protected CObjectProcessingQueue< WorkRequest >,
-                public AbstractServerAdapter {
+                public AbstractAdapter {
+                    friend class ExternalUnitConnection;
+                    
                     bool run;
                     HTTPServerAdapterSetting setting;
                     
@@ -57,6 +62,7 @@ namespace chaos{
                     
                     //!contains all connection
                     LMapConnection  map_connection;
+                    chaos::common::utility::Bimap<uintptr_t, std::string> map_m_conn_ext_conn;
                     
                     void poller();
                     static const std::string getSerializationType(http_message *http_message);
@@ -75,6 +81,10 @@ namespace chaos{
                                                       bool close_connection);
                 protected:
                     void processBufferElement(WorkRequest *request, ElementManagingPolicy& policy) throw(CException);
+                    int sendDataToConnection(const std::string& connection_identifier,
+                                             const chaos::common::data::CDBufferUniquePtr data,
+                                             const EUCMessageOpcode opcode);
+                    int closeConnection(const std::string& connection_identifier);
                 public:
                     HTTPServerAdapter();
                     ~HTTPServerAdapter();
