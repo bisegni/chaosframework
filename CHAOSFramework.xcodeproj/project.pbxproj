@@ -2572,6 +2572,7 @@
 		32D90D581CF4A6DC00996F09 /* SearchScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchScript.h; sourceTree = "<group>"; };
 		32D90D5D1CF4AA8200996F09 /* Script.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Script.h; sourceTree = "<group>"; };
 		32DA666F1700DBB6004FC02B /* endian.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = endian.h; sourceTree = "<group>"; };
+		32DA77631F8E6D2800497349 /* FutureHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FutureHelper.h; sourceTree = "<group>"; };
 		32DBAFC91C9C1745003E2769 /* NodeMonitorHandlerTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeMonitorHandlerTest.cpp; sourceTree = "<group>"; };
 		32DBAFCA1C9C1745003E2769 /* NodeMonitorHandlerTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeMonitorHandlerTest.h; sourceTree = "<group>"; };
 		32DD7F6F1C60F97C003032DE /* MetadataLoggingManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MetadataLoggingManager.cpp; sourceTree = "<group>"; };
@@ -4234,6 +4235,7 @@
 				3235110817B3EAE500E39E14 /* TemplatedConcurrentQueue.h */,
 				326CDBB518D860430054EF19 /* SpinLock.h */,
 				320DEA6319CC77F200ED66AB /* ThreadSemaphore.h */,
+				32DA77631F8E6D2800497349 /* FutureHelper.h */,
 			);
 			path = thread;
 			sourceTree = "<group>";
