@@ -24,7 +24,7 @@
 
 #include <chaos/cu_toolkit/driver_manager/driver/AbstractDriverPlugin.h>
 
-#include <chaos/common/external_unit/ExternalUnitEndpoint.h>
+#include <chaos/common/external_unit/ExternalUnitServerEndpoint.h>
 
 #include <chaos/common/data/CDataVariant.h>
 #include <chaos/common/utility/LockableObject.h>
@@ -71,7 +71,7 @@ namespace chaos {
                  */
                 class AbstractRemoteIODriver:
                 ADD_CU_DRIVER_PLUGIN_SUPERCLASS,
-                chaos::common::external_unit::ExternalUnitEndpoint,
+                chaos::common::external_unit::ExternalUnitServerEndpoint,
                 chaos::common::async_central::TimerHandler {
                     
                     typedef ChaosPromise< chaos::common::data::CDWShrdPtr > DriverResultPromise;
@@ -167,8 +167,9 @@ namespace chaos {
                      */
                     int sendRawMessage(chaos::common::data::CDWUniquePtr message_data);
                     
-                    using ExternalUnitEndpoint::setNumberOfAcceptedConnection;
-                    using ExternalUnitEndpoint::getNumberOfAcceptedConnection;
+                    //!keep public these method
+                    using ExternalUnitServerEndpoint::setNumberOfAcceptedConnection;
+                    using ExternalUnitServerEndpoint::getNumberOfAcceptedConnection;
                 protected:
                     //! handle called when a new message has been received
                     /*!

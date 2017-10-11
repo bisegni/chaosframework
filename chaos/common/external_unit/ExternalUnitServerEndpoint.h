@@ -1,5 +1,5 @@
 /*
- * Copyright 2012, 2017 INFN
+ * Copyright 2012, 11/10/2017 INFN
  *
  * Licensed under the EUPL, Version 1.2 or – as soon they
  * will be approved by the European Commission - subsequent
@@ -19,13 +19,14 @@
  * permissions and limitations under the Licence.
  */
 
-#ifndef __CHAOSFramework__A6646B9_6E82_418D_B7A4_617A53271BEA_ExternalEndpoint_h
-#define __CHAOSFramework__A6646B9_6E82_418D_B7A4_617A53271BEA_ExternalEndpoint_h
+#ifndef chaos_common_external_unit_ExternalUnitServerEndpoint_h
+#define chaos_common_external_unit_ExternalUnitServerEndpoint_h
 
 #include <chaos/common/chaos_types.h>
 #include <chaos/common/exception/exception.h>
 #include <chaos/common/utility/LockableObject.h>
 
+#include <chaos/common/external_unit/UnitEndpoint.h>
 #include <chaos/common/external_unit/ExternalUnitConnection.h>
 
 namespace chaos{
@@ -38,7 +39,8 @@ namespace chaos{
              that need to implement a controlunit or a driver. Each
              ednpoint can be confiugre to permit one or multiple connection
              */
-            class ExternalUnitEndpoint {
+            class ExternalUnitServerEndpoint:
+            public UnitEndpoint {
                 friend class ExternalUnitConnection;
                 //! define adapter map
                 CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ExternalUnitConnection*, MapConnection);
@@ -62,10 +64,6 @@ namespace chaos{
                 //!notify a new arrived connection
                 virtual void handleNewConnection(const std::string& connection_identifier) = 0;
                 
-                //! notify that a message has been received for a remote connection
-                virtual int handleReceivedeMessage(const std::string& connection_identifier,
-                                                   chaos::common::data::CDWUniquePtr message) = 0;
-                
                 //!notify that a connection has been closed
                 virtual void handleDisconnection(const std::string& connection_identifier) = 0;
                 
@@ -87,11 +85,12 @@ namespace chaos{
                 
                 void setNumberOfAcceptedConnection(int _number_of_connection_accepted);
                 
-                ExternalUnitEndpoint();
+                ExternalUnitServerEndpoint();
             public:
-                ExternalUnitEndpoint(const std::string& _endpoint_identifier);
-                virtual ~ExternalUnitEndpoint();
-                const std::string& getIdentifier();
+                ExternalUnitServerEndpoint(const std::string& _endpoint_identifier);
+                virtual ~ExternalUnitServerEndpoint();
+                
+                std::string getIdentifier();
                 
                 const bool canAcceptMoreConnection();
                 
@@ -101,4 +100,4 @@ namespace chaos{
     }
 }
 
-#endif /* __CHAOSFramework__A6646B9_6E82_418D_B7A4_617A53271BEA_ExternalEndpoint_h */
+#endif /* chaos_common_external_unit_ExternalUnitServerEndpoint_h */

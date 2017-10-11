@@ -20,8 +20,9 @@
  */
 
 #include <chaos/common/external_unit/ExternalUnitConnection.h>
-#include <chaos/common/external_unit/ExternalUnitEndpoint.h>
+
 #include <chaos/common/external_unit/AbstractAdapter.h>
+#include <chaos/common/external_unit/UnitEndpoint.h>
 
 #include <chaos/common/utility/UUIDUtil.h>
 #include <chaos/common/global.h>
@@ -31,7 +32,7 @@ using namespace chaos::common::utility;
 using namespace chaos::common::external_unit;
 
 ExternalUnitConnection::ExternalUnitConnection(AbstractAdapter *_adapter,
-                                               ExternalUnitEndpoint *_endpoint,
+                                               UnitEndpoint *_endpoint,
                                                ChaosUniquePtr<chaos::common::external_unit::serialization::AbstractExternalSerialization> _serializer_adapter):
 connection_identifier(UUIDUtil::generateUUIDLite()),
 adapter(_adapter),

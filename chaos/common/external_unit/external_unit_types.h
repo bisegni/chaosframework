@@ -22,12 +22,18 @@
 #ifndef __CHAOSFramework__4D9D840_A775_4403_951A_2572E8F3AB65_external_unit_types_h
 #define __CHAOSFramework__4D9D840_A775_4403_951A_2572E8F3AB65_external_unit_types_h
 
-#include <chaos/common/external_unit/external_unit_types.h>
 #include <chaos/common/external_unit/http_adapter/http_adapter_types.h>
 
 namespace chaos{
     namespace common {
         namespace external_unit {
+            //!define the message opcode used to manage the fragmentation of the data
+            typedef enum {
+                EUCMessageOpcodeWhole,          //! send in one shot all message data
+                EUCPhaseStartFragment,          //!message is the beginning of the fragment
+                EUCPhaseContinueFragment,       //!message is the cntinuation of the fragment
+                EUCPhaseEndFragment             //!message is the end of the whole fragment
+            } EUCMessageOpcode;
         }
     }
 }

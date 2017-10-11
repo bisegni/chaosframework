@@ -74,15 +74,15 @@ void HTTPServerAdapter::init(void *init_data) throw (chaos::CException) {
     s_http_server_opts.document_root = "";  // Serve current directory
     s_http_server_opts.enable_directory_listing = "no";
     //
-    CObjectProcessingQueue<WorkRequest>::init(setting.thread_number);
+    CObjectProcessingQueue<ServerWorkRequest>::init(setting.thread_number);
     
     thread_poller.reset(new boost::thread(boost::bind(&HTTPServerAdapter::poller, this)));
 }
 
 void HTTPServerAdapter::deinit() throw (chaos::CException) {
     run = false;
-    CObjectProcessingQueue<WorkRequest>::deinit();
-    CObjectProcessingQueue<WorkRequest>::clear();
+    CObjectProcessingQueue<ServerWorkRequest>::deinit();
+    CObjectProcessingQueue<ServerWorkRequest>::clear();
     thread_poller->join();
     
     mg_mgr_free(&mgr);
@@ -109,7 +109,7 @@ const std::string HTTPServerAdapter::getSerializationType(http_message *http_mes
     return ser_type;
 }
 
-void  HTTPServerAdapter::manageWSHandshake(WorkRequest& wr) {
+void  HTTPServerAdapter::manageWSHandshake(ServerWorkRequest& wr) {
     char addr[32];
     mg_sock_addr_to_str(&wr.nc->sa, addr, sizeof(addr),
                         MG_SOCK_STRINGIFY_IP | MG_SOCK_STRINGIFY_PORT);
@@ -167,7 +167,7 @@ void  HTTPServerAdapter::manageWSHandshake(WorkRequest& wr) {
     }
 }
 
-void HTTPServerAdapter::processBufferElement(WorkRequest *request,
+void HTTPServerAdapter::processBufferElement(ServerWorkRequest *request,
                                              ElementManagingPolicy& policy) throw(CException) {
     switch(request->r_type) {
         case WorkRequestTypeHttpRequest: {
@@ -216,8 +216,8 @@ void HTTPServerAdapter::eventHandler(mg_connection *nc, int ev, void *ev_data) {
         }
         case MG_EV_HTTP_REQUEST: {
             http_message *message = static_cast<http_message*>(ev_data);
-            WorkRequest *req = new WorkRequest(message->message.p,
-                                               (uint32_t)message->message.len);
+            ServerWorkRequest *req = new ServerWorkRequest(message->message.p,
+                                                           (uint32_t)message->message.len);
             req->r_type = WorkRequestTypeHttpRequest;
             req->s_type = getSerializationType(message);
             req->nc = nc;
@@ -227,8 +227,8 @@ void HTTPServerAdapter::eventHandler(mg_connection *nc, int ev, void *ev_data) {
         }
         case MG_EV_WEBSOCKET_HANDSHAKE_REQUEST: {
             http_message *message = static_cast<http_message*>(ev_data);
-            WorkRequest *req = new WorkRequest(message->message.p,
-                                               (uint32_t)message->message.len);
+            ServerWorkRequest *req = new ServerWorkRequest(message->message.p,
+                                                           (uint32_t)message->message.len);
             req->r_type = WorkRequestTypeWSHandshakeRequest;
             req->s_type = getSerializationType(message);
             req->nc = nc;
@@ -244,15 +244,15 @@ void HTTPServerAdapter::eventHandler(mg_connection *nc, int ev, void *ev_data) {
         }
         case MG_EV_WEBSOCKET_FRAME: {
             websocket_message *message = static_cast<websocket_message*>(ev_data);
-            WorkRequest *req = new WorkRequest((const char *)message->data,
-                                               (uint32_t)message->size);
+            ServerWorkRequest *req = new ServerWorkRequest((const char *)message->data,
+                                                           (uint32_t)message->size);
             req->r_type = WorkRequestTypeWSFrame;
             req->nc = nc;
             adapter->push(req);
             break;
         }
         case MG_EV_CLOSE:{
-            WorkRequest *req = new WorkRequest();
+            ServerWorkRequest *req = new ServerWorkRequest();
             req->r_type = WorkRequestTypeWSCloseEvent;
             req->nc = nc;
             adapter->push(req);
@@ -261,14 +261,24 @@ void HTTPServerAdapter::eventHandler(mg_connection *nc, int ev, void *ev_data) {
     }
 }
 
-int HTTPServerAdapter::registerEndpoint(ExternalUnitEndpoint& endpoint) {
+void HTTPServerAdapter::sendWSJSONAcceptedConnection(mg_connection *nc,
+                                                     bool accepted,
+                                                     bool close_connection) {
+    chaos::common::data::CDataWrapper err_data_pack;
+    err_data_pack.addInt32Value("accepted_connection", accepted);
+    const std::string accepted_json = err_data_pack.getJSONString();
+    mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT, accepted_json.c_str(), accepted_json.size());
+    if(close_connection){mg_send_websocket_frame(nc, WEBSOCKET_OP_CLOSE, NULL, 0);}
+}
+
+int HTTPServerAdapter::registerEndpoint(ExternalUnitServerEndpoint& endpoint) {
     LMapEndpointWriteLock wl = map_endpoint.getWriteLockObject();
     if(map_endpoint().count(endpoint.getIdentifier()) != 0) return 0;
     map_endpoint().insert(MapEndpointPair(endpoint.getIdentifier(), &endpoint));
     return 0;
 }
 
-int HTTPServerAdapter::deregisterEndpoint(ExternalUnitEndpoint& endpoint) {
+int HTTPServerAdapter::deregisterEndpoint(ExternalUnitServerEndpoint& endpoint) {
     //lock for write conenction and endpoint
     LMapEndpointWriteLock wl = map_endpoint.getWriteLockObject();
     

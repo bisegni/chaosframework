@@ -22,7 +22,7 @@
 #include <chaos/common/global.h>
 #include <chaos/common/external_unit/ExternalUnitManager.h>
 #include <chaos/common/external_unit/http_adapter/HTTPServerAdapter.h>
-
+#include <chaos/common/external_unit/http_adapter/HTTPClientAdapter.h>
 #include <chaos/common/external_unit/serialization/ExternalBSONExtJsonSerialization.h>
 
 using namespace chaos::common::external_unit;
@@ -34,7 +34,8 @@ using namespace chaos::common::utility;
 
 ExternalUnitManager::ExternalUnitManager() {
     //add adapters
-    map_protocol_adapter().insert(MapAdapterPair("http", ChaosSharedPtr<AbstractAdapter>(new http_adapter::HTTPServerAdapter())));
+    map_protocol_adapter().insert(MapAdapterPair("http",PairAdapter(ChaosSharedPtr<AbstractServerAdapter>(new http_adapter::HTTPServerAdapter()),
+                                                                    ChaosSharedPtr<AbstractClientAdapter>(new http_adapter::HTTPClientAdapter()))));
     
     //!add serializer
     installSerializerInstancer<serialization::ExternalBSONExtJsonSerialization>();
@@ -50,8 +51,8 @@ void ExternalUnitManager::init(void *init_data) throw (chaos::CException) {
         end= map_protocol_adapter().end();
         it != end;
         it++) {
-        InizializableService::initImplementation(*it->second, NULL, it->first, __PRETTY_FUNCTION__);
-        it->second->registerEndpoint(echo_endpoint);
+        InizializableService::initImplementation(*it->second.first, NULL, it->first, __PRETTY_FUNCTION__);
+        it->second.first->registerEndpoint(echo_endpoint);
     }
 }
 
@@ -61,12 +62,12 @@ void ExternalUnitManager::deinit() throw (chaos::CException) {
         end= map_protocol_adapter().end();
         it != end;
         it++) {
-        CHAOS_NOT_THROW(InizializableService::deinitImplementation(*it->second, it->first, __PRETTY_FUNCTION__););
+        CHAOS_NOT_THROW(InizializableService::deinitImplementation(*it->second.first, it->first, __PRETTY_FUNCTION__););
     }
 }
 
 
-int ExternalUnitManager::registerEndpoint(ExternalUnitEndpoint& endpoint) {
+int ExternalUnitManager::registerEndpoint(ExternalUnitServerEndpoint& endpoint) {
     if(getServiceState() != 1) return -1;
     LMapAdapterReadLock rl = map_protocol_adapter.getReadLockObject();
     int err = 0;
@@ -75,12 +76,12 @@ int ExternalUnitManager::registerEndpoint(ExternalUnitEndpoint& endpoint) {
         it != end &&
         err == 0;
         it++) {
-        err = it->second->registerEndpoint(endpoint);
+        err = it->second.first->registerEndpoint(endpoint);
     }
     return err;
 }
 
-int ExternalUnitManager::deregisterEndpoint(ExternalUnitEndpoint& endpoint) {
+int ExternalUnitManager::deregisterEndpoint(ExternalUnitServerEndpoint& endpoint) {
     LMapAdapterReadLock rl = map_protocol_adapter.getReadLockObject();
     int err = 0;
     for(MapAdapterIterator it = map_protocol_adapter().begin(),
@@ -88,19 +89,19 @@ int ExternalUnitManager::deregisterEndpoint(ExternalUnitEndpoint& endpoint) {
         it != end &&
         err == 0;
         it++) {
-        err = it->second->deregisterEndpoint(endpoint);
+        err = it->second.first->deregisterEndpoint(endpoint);
     }
     return err;
 }
 
-int ExternalUnitManager::initilizeConnection(ExternalUnitEndpoint& endpoint,
+int ExternalUnitManager::initilizeConnection(ExternalUnitClientEndpoint& endpoint,
                                              const std::string& protocol,
                                              const std::string& serialization,
                                              const std::string& destination) {
     return 0;
 }
 
-int ExternalUnitManager::releaseConnection(ExternalUnitEndpoint& endpoint) {
+int ExternalUnitManager::releaseConnection(ExternalUnitClientEndpoint& endpoint) {
     return 0;
 }
 

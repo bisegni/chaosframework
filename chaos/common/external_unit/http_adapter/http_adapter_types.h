@@ -39,7 +39,7 @@ namespace chaos{
                     WorkRequestTypeWSCloseEvent
                 } WorkRequestType;
                 // This info is passed to the worker thread
-                struct WorkRequest {
+                struct ServerWorkRequest {
                     WorkRequestType r_type;
                     mg_connection *nc;
                     std::string uri;
@@ -47,15 +47,15 @@ namespace chaos{
                     std::string s_type;
                     ChaosUniquePtr<chaos::common::data::CDataBuffer> buffer;
                     
-                    WorkRequest():
+                    ServerWorkRequest():
                     r_type(WorkRequestTypeUnspecified),
                     nc(NULL),
                     uri(),
                     s_type(),
                     buffer(){}
                     
-                    WorkRequest(const char *ptr,
-                                uint32_t size):
+                    ServerWorkRequest(const char *ptr,
+                                      uint32_t size):
                     r_type(WorkRequestTypeUnspecified),
                     nc(NULL),
                     uri(),

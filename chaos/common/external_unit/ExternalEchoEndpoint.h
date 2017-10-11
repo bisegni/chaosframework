@@ -22,14 +22,14 @@
 #ifndef __CHAOSFramework_E6EB27EC_C56A_4A03_BF1C_03373F140079_ExternalEchoEndpoint_h
 #define __CHAOSFramework_E6EB27EC_C56A_4A03_BF1C_03373F140079_ExternalEchoEndpoint_h
 
-#include <chaos/common/external_unit/ExternalUnitEndpoint.h>
+#include <chaos/common/external_unit/ExternalUnitServerEndpoint.h>
 
 namespace chaos{
     namespace common {
         namespace external_unit {
             
             class ExternalEchoEndpoint:
-            public ExternalUnitEndpoint {
+            public ExternalUnitServerEndpoint {
                 unsigned int message_counter;
             protected:
                 //!inherited method by @ExternalUnitEndpoint

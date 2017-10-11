@@ -23,16 +23,63 @@
 #define chaos_common_external_unit_http_adapter_HTTPClientAdapter_h
 
 #include <chaos/common/external_unit/http_adapter/HTTPBaseAdapter.h>
+#include <chaos/common/external_unit/ExternalUnitClientEndpoint.h>
+#include <chaos/common/external_unit/AbstractClientAdapter.h>
+
+#include <chaos/common/chaos_types.h>
+#include <chaos/common/data/CDataBuffer.h>
+#include <chaos/common/utility/UUIDUtil.h>
+#include <chaos/common/utility/LockableObject.h>
+
+#include <queue>
 
 namespace chaos {
     namespace common {
         namespace external_unit {
             namespace http_adapter {
-                
                 class HTTPClientAdapter:
-                public HTTPBaseAdapter {
+                public HTTPBaseAdapter,
+                public AbstractClientAdapter {
+                    //!queueu for forward the messages
+                    typedef std::queue<chaos::common::data::CDBufferShrdPtr> MessageqQueue;
+                    
+                    struct ConnectionInfo {
+                        bool connected;
+                        std::string endpoint_url;
+                        uint64_t next_reconnection_retry_ts;
+                        const std::string connection_id;
+                        MessageqQueue messages_for_connection;
+                        ChaosSharedMutex smux;
+                        HTTPClientAdapter *class_instance;
+                        struct mg_connection *conn;
+                        ChaosSharedPtr<ExternalUnitConnection> ext_unit_conn;
+                        
+                        ConnectionInfo():
+                        connected(false),
+                        next_reconnection_retry_ts(0),
+                        connection_id(chaos::common::utility::UUIDUtil::generateUUIDLite()),
+                        class_instance(NULL),
+                        conn(NULL),
+                        ext_unit_conn(){}
+                    };
+                    
+                    typedef ChaosSharedPtr<ConnectionInfo> ConnectionInfoShrdPtr;
+                    
+                    CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ConnectionInfoShrdPtr, MapReconnectionInfo);
+                    CHAOS_DEFINE_LOCKABLE_OBJECT(MapReconnectionInfo, LMapReconnectionInfo);
+                    
+                    bool run;
+                    struct mg_mgr mgr;
+                    
+                    //!map that hold the connection to use
+                    LMapReconnectionInfo map_connection;
+                    
+                    void poller();
+                    static void ev_handler(struct mg_connection *conn,
+                                           int event,
+                                           void *event_data);
+                    
                 protected:
-                    void processBufferElement(WorkRequest *request, ElementManagingPolicy& policy) throw(CException);
                     int sendDataToConnection(const std::string& connection_identifier,
                                              const chaos::common::data::CDBufferUniquePtr data,
                                              const EUCMessageOpcode opcode);
@@ -42,6 +89,10 @@ namespace chaos {
                     ~HTTPClientAdapter();
                     void init(void *init_data) throw (chaos::CException);
                     void deinit() throw (chaos::CException);
+                    int addNewConnectionForEndpoint(ExternalUnitClientEndpoint *endpoint,
+                                                       const std::string& endpoint_url,
+                                                       const std::string& serialization);
+                    int removeConnectionsFromEndpoint(ExternalUnitClientEndpoint *target_endpoint);
                 };
             }
         }

@@ -23,18 +23,25 @@
 #define __CHAOSFramework__A9B46FE_F810_4509_990F_9F19087E9AE8_HTTPServerAdapter_h
 
 #include <chaos/common/external_unit/http_adapter/HTTPBaseAdapter.h>
-
+#include <chaos/common/external_unit/AbstractServerAdapter.h>
+#include <chaos/common/external_unit/ExternalUnitConnection.h>
 namespace chaos{
     namespace common {
         namespace external_unit {
             namespace http_adapter {
-
+                
                 //!External gateway root class
                 class HTTPServerAdapter:
+                public AbstractServerAdapter,
+                protected CObjectProcessingQueue< ServerWorkRequest >,
                 public HTTPBaseAdapter {
+                    friend class ExternalUnitConnection;
                     CHAOS_DEFINE_MAP_FOR_TYPE(uintptr_t, ChaosSharedPtr<ExternalUnitConnection>, MapConnection);
                     CHAOS_DEFINE_LOCKABLE_OBJECT(MapConnection, LMapConnection);
-                    friend class ExternalUnitConnection;
+                    
+                    //!contains all connection
+                    LMapConnection  map_connection;
+                    chaos::common::utility::Bimap<uintptr_t, std::string> map_m_conn_ext_conn;
                     
                     bool run;
                     HTTPServerAdapterSetting setting;
@@ -48,9 +55,12 @@ namespace chaos{
                     static void eventHandler(mg_connection *nc,
                                              int ev,
                                              void *ev_data);
-                    void  manageWSHandshake(WorkRequest& wr);
+                    void  manageWSHandshake(ServerWorkRequest& wr);
+                    void sendWSJSONAcceptedConnection(mg_connection *nc,
+                                                      bool accepted,
+                                                      bool close_connection);
                 protected:
-                    void processBufferElement(WorkRequest *request, ElementManagingPolicy& policy) throw(CException);
+                    void processBufferElement(ServerWorkRequest *request, ElementManagingPolicy& policy) throw(CException);
                     int sendDataToConnection(const std::string& connection_identifier,
                                              const chaos::common::data::CDBufferUniquePtr data,
                                              const EUCMessageOpcode opcode);
@@ -60,8 +70,8 @@ namespace chaos{
                     ~HTTPServerAdapter();
                     void init(void *init_data) throw (chaos::CException);
                     void deinit() throw (chaos::CException);
-                    int registerEndpoint(ExternalUnitEndpoint& endpoint);
-                    int deregisterEndpoint(ExternalUnitEndpoint& endpoint);
+                    int registerEndpoint(ExternalUnitServerEndpoint& endpoint);
+                    int deregisterEndpoint(ExternalUnitServerEndpoint& endpoint);
                 };
             }
         }

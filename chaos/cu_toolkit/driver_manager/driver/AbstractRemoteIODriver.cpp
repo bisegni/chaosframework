@@ -56,7 +56,7 @@ AbstractRemoteIODriver::DriverResultInfo::extract_req_ts::operator()(const Drive
 
 #pragma mark AbstractRemoteDriver
 DEFAULT_CU_DRIVER_PLUGIN_CONSTRUCTOR(AbstractRemoteIODriver),
-ExternalUnitEndpoint(),
+ExternalUnitServerEndpoint(),
 authorization_key(),
 conn_phase(RDConnectionPhaseDisconnected),
 message_counter(0),
@@ -78,7 +78,7 @@ void AbstractRemoteIODriver::driverInit(const char *initParameter) throw(chaos::
     CHECK_ASSERTION_THROW_AND_LOG((jv_authorization_key.isNull() == false), ERR, -3, "The authorization key is mandatory");
     
     //! end point identifier & authorization key
-    ExternalUnitEndpoint::endpoint_identifier = jv_endpoint_name.asString();
+    ExternalUnitServerEndpoint::endpoint_identifier = jv_endpoint_name.asString();
     authorization_key = jv_authorization_key.asString();
     CHECK_ASSERTION_THROW_AND_LOG(authorization_key.size(), ERR, -4, "The authorization key cannot be zero lenght");
     
@@ -97,7 +97,7 @@ void AbstractRemoteIODriver::driverInit(const chaos::common::data::CDataWrapper&
     CHECK_ASSERTION_THROW_AND_LOG(init_parameter.hasKey(AUTHORIZATION_KEY), ERR, -3, "The authorization key is mandatory");
     
     //! end point identifier & authorization key
-    ExternalUnitEndpoint::endpoint_identifier = init_parameter.getStringValue("endpoint_name");
+    ExternalUnitServerEndpoint::endpoint_identifier = init_parameter.getStringValue("endpoint_name");
     authorization_key = init_parameter.getStringValue(AUTHORIZATION_KEY);
     CHECK_ASSERTION_THROW_AND_LOG(authorization_key.size(), ERR, -4, "The authorization key cannot be zero lenght");
     
@@ -139,26 +139,26 @@ int AbstractRemoteIODriver::handleReceivedeMessage(const std::string& connection
                 sendAuthenticationACK();
             } else {
                 //send error because not right type of req index
-                ExternalUnitEndpoint::sendError(connection_identifier,
-                                                -1, "Authentication failed", __PRETTY_FUNCTION__);
-                ExternalUnitEndpoint::closeConnection(connection_identifier);
+                ExternalUnitServerEndpoint::sendError(connection_identifier,
+                                                      -1, "Authentication failed", __PRETTY_FUNCTION__);
+                ExternalUnitServerEndpoint::closeConnection(connection_identifier);
             }
         }
     } else {
         if(!message->hasKey(MESSAGE)){
             //send error because not right type of req index
-            ExternalUnitEndpoint::sendError(connection_identifier,
-                                            -2, "message field is mandatory", __PRETTY_FUNCTION__);
+            ExternalUnitServerEndpoint::sendError(connection_identifier,
+                                                  -2, "message field is mandatory", __PRETTY_FUNCTION__);
         } else if(!message->isCDataWrapperValue(MESSAGE)) {
             //send error because not right type of req index
-            ExternalUnitEndpoint::sendError(connection_identifier,
-                                            -3, "message field need to be an object type", __PRETTY_FUNCTION__);
+            ExternalUnitServerEndpoint::sendError(connection_identifier,
+                                                  -3, "message field need to be an object type", __PRETTY_FUNCTION__);
         } else if(!message->hasKey(REQUEST_IDENTIFICATION)) {
             asyncMessageReceived(ChaosMoveOperator(message));
         } else if(!message->isInt32Value(REQUEST_IDENTIFICATION)) {
             //send error because not right type of req index
-            ExternalUnitEndpoint::sendError(connection_identifier,
-                                            -4, "request_id field need to be a int32 type", __PRETTY_FUNCTION__);
+            ExternalUnitServerEndpoint::sendError(connection_identifier,
+                                                  -4, "request_id field need to be a int32 type", __PRETTY_FUNCTION__);
         }  else {
             //good request index
             const int64_t req_index = message->getUInt32Value(REQUEST_IDENTIFICATION);
@@ -228,8 +228,8 @@ int AbstractRemoteIODriver::sendRawRequest(CDWUniquePtr message_data,
     set_p().insert(promise_info);
     lmr_wl->unlock();
     //send message to driver
-    ExternalUnitEndpoint::sendMessage(current_connection_identifier(),
-                                      ChaosMoveOperator(ext_msg));
+    ExternalUnitServerEndpoint::sendMessage(current_connection_identifier(),
+                                            ChaosMoveOperator(ext_msg));
     //set the
     request_future = promise_info->promise.get_future();
     ChaosFutureStatus f_status = request_future.wait_for(ChaosCronoMilliseconds(timeout));
@@ -257,14 +257,14 @@ int AbstractRemoteIODriver::sendRawMessage(CDWUniquePtr message_data) {
     }
     
     //send message to driver
-    ExternalUnitEndpoint::sendMessage(current_connection_identifier(),
-                                      ChaosMoveOperator(message_data));
+    ExternalUnitServerEndpoint::sendMessage(current_connection_identifier(),
+                                            ChaosMoveOperator(message_data));
     //we have connection
     return AR_ERROR_OK;
 }
 int AbstractRemoteIODriver::sendError(int error_code,
-                                       std::string& error_message,
-                                       std::string& error_domain) {
+                                      std::string& error_message,
+                                      std::string& error_domain) {
     LStringWriteLock wl = current_connection_identifier.getWriteLockObject();
     switch(conn_phase) {
         case RDConnectionPhaseDisconnected:
@@ -278,7 +278,7 @@ int AbstractRemoteIODriver::sendError(int error_code,
             //we can proceeed
             break;
     }
-    ExternalUnitEndpoint::sendError(current_connection_identifier(),
-                                    error_code, error_message, error_domain);
+    ExternalUnitServerEndpoint::sendError(current_connection_identifier(),
+                                          error_code, error_message, error_domain);
     return AR_ERROR_OK;
 }

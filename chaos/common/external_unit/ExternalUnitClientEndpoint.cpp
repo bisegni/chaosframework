@@ -19,20 +19,20 @@
  * permissions and limitations under the Licence.
  */
 
-#include <chaos/common/external_unit/ExternalUnitEndpoint.h>
+#include <chaos/common/external_unit/ExternalUnitClientEndpoint.h>
 
 using namespace chaos::common::data;
 using namespace chaos::common::external_unit;
 
-ExternalUnitEndpoint::ExternalUnitEndpoint() {}
+ExternalUnitClientEndpoint::ExternalUnitClientEndpoint() {}
 
-ExternalUnitEndpoint::ExternalUnitEndpoint(const std::string& _endpoint_identifier):
+ExternalUnitClientEndpoint::ExternalUnitClientEndpoint(const std::string& _endpoint_identifier):
 endpoint_identifier(_endpoint_identifier),
 number_of_connection_accepted(-1){}
 
-ExternalUnitEndpoint::~ExternalUnitEndpoint() {}
+ExternalUnitClientEndpoint::~ExternalUnitClientEndpoint() {}
 
-int ExternalUnitEndpoint::sendMessage(const std::string& connection_identifier,
+int ExternalUnitClientEndpoint::sendMessage(const std::string& connection_identifier,
                                       CDWUniquePtr message,
                                       const EUCMessageOpcode opcode) {
     LMapConnectionReadLock rl = map_connection.getReadLockObject();
@@ -42,11 +42,11 @@ int ExternalUnitEndpoint::sendMessage(const std::string& connection_identifier,
                                                              opcode);
 }
 
-const std::string& ExternalUnitEndpoint::getIdentifier() {
+std::string ExternalUnitClientEndpoint::getIdentifier() {
     return endpoint_identifier;
 }
 
-int ExternalUnitEndpoint::addConnection(ExternalUnitConnection& new_connection) {
+int ExternalUnitClientEndpoint::addConnection(ExternalUnitConnection& new_connection) {
     LMapConnectionWriteLock wl = map_connection.getWriteLockObject();
     map_connection().insert(MapConnectionPair(new_connection.connection_identifier, &new_connection));
     wl->unlock();
@@ -54,25 +54,25 @@ int ExternalUnitEndpoint::addConnection(ExternalUnitConnection& new_connection) 
     return 0;
 }
 
-int ExternalUnitEndpoint::removeConnection(ExternalUnitConnection& removed_connection) {
+int ExternalUnitClientEndpoint::removeConnection(ExternalUnitConnection& removed_connection) {
     LMapConnectionWriteLock wl = map_connection.getWriteLockObject();
     handleDisconnection(removed_connection.connection_identifier);
     map_connection().erase(removed_connection.connection_identifier);
     return 0;
 }
 
-const bool ExternalUnitEndpoint::canAcceptMoreConnection() {
+const bool ExternalUnitClientEndpoint::canAcceptMoreConnection() {
     LMapConnectionReadLock rl =  map_connection.getReadLockObject();
     if(number_of_connection_accepted<0) return true;
     else return number_of_connection_accepted > map_connection().size();
 }
 
-void ExternalUnitEndpoint::closeConnection(const std::string& connection_identifier) {
+void ExternalUnitClientEndpoint::closeConnection(const std::string& connection_identifier) {
     LMapConnectionReadLock rl =  map_connection.getReadLockObject();
     map_connection()[connection_identifier]->closeConnection();
 }
 
-int ExternalUnitEndpoint::sendError(const std::string& connection_identifier,
+int ExternalUnitClientEndpoint::sendError(const std::string& connection_identifier,
                                     int code,
                                     const std::string& message,
                                     const std::string& domain) {
@@ -84,7 +84,7 @@ int ExternalUnitEndpoint::sendError(const std::string& connection_identifier,
                        ChaosMoveOperator(error_pack));
 }
 
-int ExternalUnitEndpoint::sendError(const std::string& connection_identifier,
+int ExternalUnitClientEndpoint::sendError(const std::string& connection_identifier,
                                     const chaos::CException& ex) {
     CDWUniquePtr error_pack(new CDataWrapper());
     error_pack->addInt32Value("error_code", ex.errorCode);
@@ -94,10 +94,10 @@ int ExternalUnitEndpoint::sendError(const std::string& connection_identifier,
                        ChaosMoveOperator(error_pack));
 }
 
-const int ExternalUnitEndpoint::getNumberOfAcceptedConnection() const {
+const int ExternalUnitClientEndpoint::getNumberOfAcceptedConnection() const {
     return number_of_connection_accepted;
 }
 
-void ExternalUnitEndpoint::setNumberOfAcceptedConnection(int _number_of_connection_accepted) {
+void ExternalUnitClientEndpoint::setNumberOfAcceptedConnection(int _number_of_connection_accepted) {
     number_of_connection_accepted = _number_of_connection_accepted;
 }

@@ -23,30 +23,23 @@
 #define __CHAOSFramework_A9E1864B_5C02_4ECA_8289_AFA41CE09C52_ExternalConnection_h
 
 #include <chaos/common/chaos_types.h>
+#include <chaos/common/external_unit/external_unit_types.h>
 
 #include <chaos/common/external_unit/serialization/AbstractExternalSerialization.h>
 
 namespace chaos {
     namespace common {
         namespace external_unit {
-            class ExternalUnitEndpoint;
             class AbstractAdapter;
-            
-            //!define the message opcode used to manage the fragmentation of the data
-            typedef enum {
-                EUCMessageOpcodeWhole,          //! send in one shot all message data
-                EUCPhaseStartFragment,          //!message is the beginning of the fragment
-                EUCPhaseContinueFragment,       //!message is the cntinuation of the fragment
-                EUCPhaseEndFragment             //!message is the end of the whole fragment
-            } EUCMessageOpcode;
-            
+            class UnitEndpoint;
             //! Identify an external connection
             class ExternalUnitConnection {
-                friend class AbstractAdapter;
+                friend class AbstractServerAdapter;
+                friend class AbstractClientAdapter;
             protected:
                 AbstractAdapter *adapter;
                 //!endpoint that own the connection
-                ExternalUnitEndpoint *endpoint;
+                UnitEndpoint *endpoint;
                 
                 //!,anage the absractio of serialization
                 ChaosUniquePtr<chaos::common::external_unit::serialization::AbstractExternalSerialization> serializer_adapter;
@@ -57,7 +50,7 @@ namespace chaos {
                 const std::string connection_identifier;
                 
                 ExternalUnitConnection(AbstractAdapter *_adapter,
-                                       ExternalUnitEndpoint *_endpoint,
+                                       UnitEndpoint *_endpoint,
                                        ChaosUniquePtr<chaos::common::external_unit::serialization::AbstractExternalSerialization> _serializer_adapter);
                 virtual ~ExternalUnitConnection();
                 

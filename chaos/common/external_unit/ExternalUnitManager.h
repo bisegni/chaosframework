@@ -28,21 +28,24 @@
 #include <chaos/common/utility/InizializableService.h>
 #include <chaos/common/utility/ObjectInstancer.h>
 
-#include <chaos/common/external_unit/AbstractAdapter.h>
-#include <chaos/common/external_unit/ExternalUnitEndpoint.h>
+#include <chaos/common/external_unit/AbstractServerAdapter.h>
+#include <chaos/common/external_unit/AbstractClientAdapter.h>
+#include <chaos/common/external_unit/ExternalUnitClientEndpoint.h>
+#include <chaos/common/external_unit/ExternalUnitServerEndpoint.h>
 #include <chaos/common/external_unit/ExternalEchoEndpoint.h>
 #include <chaos/common/external_unit/serialization/AbstractExternalSerialization.h>
 
 #include <algorithm>
-
 
 namespace chaos{
     namespace common {
         namespace external_unit {
             
             //! define adapter map
-            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ChaosSharedPtr<AbstractAdapter>, MapAdapter);
+            typedef std::pair< ChaosSharedPtr<AbstractServerAdapter> , ChaosSharedPtr<AbstractClientAdapter> > PairAdapter;
+            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, PairAdapter, MapAdapter);
             CHAOS_DEFINE_LOCKABLE_OBJECT(MapAdapter, LMapAdapter);
+
             
             //!define serialization map
             typedef ChaosSharedPtr< chaos::common::utility::ObjectInstancer<serialization::AbstractExternalSerialization> > ExtSerializerShrdPtr;
@@ -72,18 +75,18 @@ new chaos::common::utility::TypedObjectInstancer<SerializerClass, serialization:
                 void deinit() throw (chaos::CException);
                 //!endpoint management api
                 //! register an endpoint on all server adapter
-                int registerEndpoint(ExternalUnitEndpoint& endpoint);
+                int registerEndpoint(ExternalUnitServerEndpoint& endpoint);
                 //! deregister an endpoint on all server protocol adapter
-                int deregisterEndpoint(ExternalUnitEndpoint& endpoint);
+                int deregisterEndpoint(ExternalUnitServerEndpoint& endpoint);
                 
                 //! initiator management api
                 //! create a new connection for and endpoint
-                int initilizeConnection(ExternalUnitEndpoint& endpoint,
+                int initilizeConnection(ExternalUnitClientEndpoint& endpoint,
                                         const std::string& protocol,
                                         const std::string& serialization,
                                         const std::string& destination);
                 //! dispose a conenction associated to an endpoint
-                int releaseConnection(ExternalUnitEndpoint& endpoint);
+                int releaseConnection(ExternalUnitClientEndpoint& endpoint);
                 
                 ChaosUniquePtr<serialization::AbstractExternalSerialization> getNewSerializationInstanceForType(const std::string& type);
                 

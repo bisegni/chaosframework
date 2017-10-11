@@ -29,7 +29,7 @@ using namespace chaos::common::external_unit;
 #define ERR     ERR_LOG(ExternalEchoEndpoint)
 
 ExternalEchoEndpoint::ExternalEchoEndpoint():
-ExternalUnitEndpoint("/echo"),
+ExternalUnitServerEndpoint("/echo"),
 message_counter(1){}
 
 ExternalEchoEndpoint::~ExternalEchoEndpoint() {}

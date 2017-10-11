@@ -1,5 +1,5 @@
 /*
- * Copyright 2012, 10/10/2017 INFN
+ * Copyright 2012, 11/10/2017 INFN
  *
  * Licensed under the EUPL, Version 1.2 or – as soon they
  * will be approved by the European Commission - subsequent
@@ -19,28 +19,32 @@
  * permissions and limitations under the Licence.
  */
 
-#ifndef chaos_common_external_unit_AbstractAdapter_h
-#define chaos_common_external_unit_AbstractAdapter_h
-
-#include <chaos/common/data/CDataBuffer.h>
-
-#include <chaos/common/utility/InizializableService.h>
-
-#include <chaos/common/external_unit/external_unit_types.h>
+#ifndef chaos_common_external_unit_AbstractClientAdapter_h
+#define chaos_common_external_unit_AbstractClientAdapter_h
+#include <chaos/common/external_unit/ExternalUnitServerEndpoint.h>
+#include <chaos/common/external_unit/ExternalUnitConnection.h>
+#include <chaos/common/external_unit/AbstractAdapter.h>
 
 namespace chaos{
     namespace common {
         namespace external_unit {
-            class ExternalUnitConnection;
+            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ExternalUnitServerEndpoint*, MapEndpoint);
+            CHAOS_DEFINE_LOCKABLE_OBJECT(MapEndpoint, LMapEndpoint);
+            
             //!adapter interface
-            class AbstractAdapter:
-            public chaos::common::utility::InizializableService {
+            class AbstractClientAdapter:
+            public AbstractAdapter {
             protected:
-                virtual int sendDataToEndpoint(ExternalUnitConnection& connection, chaos::common::data::CDBufferUniquePtr received_data) = 0;
+                //!contains all association by endpoint url and class
+                LMapEndpoint    map_endpoint;
+            protected:
+                int sendDataToEndpoint(ExternalUnitConnection& connection, chaos::common::data::CDBufferUniquePtr received_data);
             public:
-                AbstractAdapter(){}
-                ~AbstractAdapter(){}
-
+                AbstractClientAdapter();
+                ~AbstractClientAdapter();
+                void init(void *init_data) throw (chaos::CException);
+                void deinit() throw (chaos::CException);
+                
                 virtual int sendDataToConnection(const std::string& connection_identifier,
                                                  const chaos::common::data::CDBufferUniquePtr data,
                                                  const EUCMessageOpcode opcode) = 0;
@@ -51,4 +55,4 @@ namespace chaos{
     }
 }
 
-#endif /* chaos_common_external_unit_AbstractAdapter_h */
+#endif /* chaos_common_external_unit_AbstractClientAdapter_h */

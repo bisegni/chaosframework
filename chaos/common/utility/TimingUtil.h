@@ -178,7 +178,7 @@ namespace chaos {
                     }
                 }
                 
-                //! return the timestam from now to dealy , in the past(false) or future(true)
+                //! return the timestam from now to delay(milliseconds , in the past(false) or future(true)
                 static inline uint64_t getTimestampWithDelay(uint64_t delay,
                                                              bool past_future = false) {
                     boost::posix_time::time_duration ts;
