@@ -52,7 +52,7 @@ int AbstractConnectionAdapter::sendMessage(data::DataPackUniquePtr& message) {
 }
 
 int AbstractConnectionAdapter::sendRequest(data::DataPackUniquePtr& message,
-                                         uint32_t& request_id) {
+                                           uint32_t& request_id) {
     request_id = adapter_request_id++;
     message->addInt32("ext_request_id", request_id);
     return sendMessage(message);

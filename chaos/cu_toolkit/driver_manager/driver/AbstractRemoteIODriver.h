@@ -27,8 +27,8 @@
 #include <chaos/common/external_unit/ExternalUnitServerEndpoint.h>
 
 #include <chaos/common/data/CDataVariant.h>
+#include <chaos/common/thread/FutureHelper.h>
 #include <chaos/common/utility/LockableObject.h>
-
 #include <chaos/common/async_central/async_central.h>
 
 #include <boost/multi_index/member.hpp>
@@ -69,70 +69,13 @@ namespace chaos {
                  .....
                  }
                  */
+                typedef chaos::common::thread::FutureHelper<chaos::common::data::CDWShrdPtr> CDWShrdPtrFutureHelper;
+
+                
                 class AbstractRemoteIODriver:
                 ADD_CU_DRIVER_PLUGIN_SUPERCLASS,
                 chaos::common::external_unit::ExternalUnitServerEndpoint,
-                chaos::common::async_central::TimerHandler {
-                    
-                    typedef ChaosPromise< chaos::common::data::CDWShrdPtr > DriverResultPromise;
-                    typedef ChaosFuture< chaos::common::data::CDWShrdPtr > DriverResultFuture;
-                    
-                    
-                    typedef enum {
-                        RDConnectionPhaseDisconnected,
-                        RDConnectionPhaseConnected,
-                        RDConnectionPhaseAutorized,
-                    } RDConnectionPhase;
-                    
-                    struct DriverResultInfo {
-                        uint32_t request_id;
-                        int64_t request_ts;
-                        DriverResultPromise promise;
-                        typedef ChaosSharedPtr< DriverResultInfo > DriverResultInfoShrdPtr;
-                        //!key accessors for multindix infrastructure
-                        struct extract_index {
-                            typedef uint32_t result_type;
-                            const result_type &operator()(const DriverResultInfoShrdPtr &p) const;
-                        };
-                        
-                        struct extract_req_ts {
-                            typedef int64_t result_type;
-                            const result_type &operator()(const DriverResultInfoShrdPtr &p) const;
-                        };
-                    };
-                    
-                    //tag
-                    struct tag_req_id{};
-                    struct tag_req_ts{};
-                    
-                    //multi-index set
-                    typedef boost::multi_index_container<
-                    DriverResultInfo::DriverResultInfoShrdPtr,
-                    boost::multi_index::indexed_by<
-                    boost::multi_index::ordered_unique<boost::multi_index::tag<tag_req_id>,  DriverResultInfo::extract_index>,
-                    boost::multi_index::ordered_unique<boost::multi_index::tag<tag_req_ts>,  DriverResultInfo::extract_req_ts>
-                    >
-                    > SetPromise;
-                    
-                    typedef boost::multi_index::index<SetPromise, tag_req_id>::type               SetPromisesReqIdxIndex;
-                    typedef boost::multi_index::index<SetPromise, tag_req_id>::type::iterator     SetPromisesReqIdxIndexIter;
-                    typedef boost::multi_index::index<SetPromise, tag_req_ts>::type                   SetPromisesReqTSIndex;
-                    typedef boost::multi_index::index<SetPromise, tag_req_ts>::type::iterator         SetPromisesReqTSIndexIter;
-                    
-                    CHAOS_DEFINE_LOCKABLE_OBJECT(SetPromise, LSetPromise);
-                    CHAOS_DEFINE_LOCKABLE_OBJECT(std::string, LString);
-                    
-                    //contains the autorization key that need to be passed by the remote driver
-                    std::string         authorization_key;
-                    RDConnectionPhase   conn_phase;
-                    
-                    ChaosAtomic<uint32_t>   message_counter;
-                    LString                 current_connection_identifier;
-                    //set that contains all promise
-                    LSetPromise             set_p;
-                    SetPromisesReqIdxIndex& set_p_req_id_index;
-                    SetPromisesReqTSIndex&  set_p_req_ts_index;
-                    
+                protected CDWShrdPtrFutureHelper {
                     //!initialization and deinitialization driver methods
                     void driverInit(const char *initParameter) throw (chaos::CException);
                     void driverInit(const chaos::common::data::CDataWrapper& init_parameter) throw(chaos::CException);
@@ -171,6 +114,11 @@ namespace chaos {
                     using ExternalUnitServerEndpoint::setNumberOfAcceptedConnection;
                     using ExternalUnitServerEndpoint::getNumberOfAcceptedConnection;
                 protected:
+                    typedef enum {
+                        RDConnectionPhaseDisconnected,
+                        RDConnectionPhaseConnected,
+                        RDConnectionPhaseAutorized,
+                    } RDConnectionPhase;
                     //! handle called when a new message has been received
                     /*!
                      A new message has been received from the rmeote server in an asyc way. It
@@ -183,6 +131,11 @@ namespace chaos {
                                    std::string& error_message,
                                    std::string& error_domain);
                 private:
+                    CHAOS_DEFINE_LOCKABLE_OBJECT(std::string, LString);
+                    LString             current_connection_identifier;
+                    std::string         authorization_key;
+                    RDConnectionPhase   conn_phase;
+                    
                     //!inherited method by @ExternalUnitEndpoint
                     void handleNewConnection(const std::string& connection_identifier);
                     //!inherited method by @ExternalUnitEndpoint
@@ -190,8 +143,6 @@ namespace chaos {
                     
                     int handleReceivedeMessage(const std::string& connection_identifier,
                                                ChaosUniquePtr<chaos::common::data::CDataWrapper> message);
-                    //!inherited from chaos::common::async_central::TimerHandler
-                    void timeout();
                     
                     //!
                     void sendAuthenticationACK();

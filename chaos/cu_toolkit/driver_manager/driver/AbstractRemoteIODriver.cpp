@@ -43,25 +43,11 @@ using namespace chaos::cu::driver_manager::driver;
 #define MESSAGE                 "message"
 #define REQUEST_IDENTIFICATION  "request_id"
 
-#pragma mark DriverResultInfo
-const AbstractRemoteIODriver::DriverResultInfo::extract_index::result_type&
-AbstractRemoteIODriver::DriverResultInfo::extract_index::operator()(const DriverResultInfo::DriverResultInfoShrdPtr &p) const {
-    return p->request_id;
-}
-
-const AbstractRemoteIODriver::DriverResultInfo::extract_req_ts::result_type&
-AbstractRemoteIODriver::DriverResultInfo::extract_req_ts::operator()(const DriverResultInfo::DriverResultInfoShrdPtr &p) const {
-    return p->request_ts;
-}
-
 #pragma mark AbstractRemoteDriver
 DEFAULT_CU_DRIVER_PLUGIN_CONSTRUCTOR(AbstractRemoteIODriver),
 ExternalUnitServerEndpoint(),
 authorization_key(),
-conn_phase(RDConnectionPhaseDisconnected),
-message_counter(0),
-set_p_req_id_index(boost::multi_index::get<tag_req_id>(set_p())),
-set_p_req_ts_index(boost::multi_index::get<tag_req_ts>(set_p())){}
+conn_phase(RDConnectionPhaseDisconnected){}
 
 AbstractRemoteIODriver::~AbstractRemoteIODriver() {}
 
@@ -82,9 +68,7 @@ void AbstractRemoteIODriver::driverInit(const char *initParameter) throw(chaos::
     authorization_key = jv_authorization_key.asString();
     CHECK_ASSERTION_THROW_AND_LOG(authorization_key.size(), ERR, -4, "The authorization key cannot be zero lenght");
     
-    AsyncCentralManager::getInstance()->addTimer(this,
-                                                 PURGE_TIMER_REPEAT_DELAY,
-                                                 PURGE_TIMER_REPEAT_DELAY);
+    CDWShrdPtrFutureHelper::init(NULL);
     
     //register this driver as external endpoint
     ExternalUnitManager::getInstance()->registerEndpoint(*this);
@@ -101,9 +85,7 @@ void AbstractRemoteIODriver::driverInit(const chaos::common::data::CDataWrapper&
     authorization_key = init_parameter.getStringValue(AUTHORIZATION_KEY);
     CHECK_ASSERTION_THROW_AND_LOG(authorization_key.size(), ERR, -4, "The authorization key cannot be zero lenght");
     
-    AsyncCentralManager::getInstance()->addTimer(this,
-                                                 PURGE_TIMER_REPEAT_DELAY,
-                                                 PURGE_TIMER_REPEAT_DELAY);
+    CDWShrdPtrFutureHelper::init(NULL);
     
     //register this driver as external endpoint
     ExternalUnitManager::getInstance()->registerEndpoint(*this);
@@ -114,6 +96,7 @@ void AbstractRemoteIODriver::driverDeinit() throw(chaos::CException) {
     //registerthis driver as external endpoint
     ExternalUnitManager::getInstance()->deregisterEndpoint(*this);
     AsyncCentralManager::getInstance()->removeTimer(this);
+    CHAOS_NOT_THROW(CDWShrdPtrFutureHelper::deinit();)
 }
 
 void AbstractRemoteIODriver::handleNewConnection(const std::string& connection_identifier) {
@@ -161,36 +144,13 @@ int AbstractRemoteIODriver::handleReceivedeMessage(const std::string& connection
                                                   -4, "request_id field need to be a int32 type", __PRETTY_FUNCTION__);
         }  else {
             //good request index
-            const int64_t req_index = message->getUInt32Value(REQUEST_IDENTIFICATION);
+            const uint32_t req_index = message->getUInt32Value(REQUEST_IDENTIFICATION);
             ChaosUniquePtr<CDataWrapper> embedded_message(message->getCSDataValue(MESSAGE));
-            LSetPromiseWriteLock wl = set_p.getWriteLockObject();
-            SetPromisesReqIdxIndexIter it = set_p_req_id_index.find(req_index);
-            if(it != set_p_req_id_index.end()) {
-                //set promises and remove it
-                (*it)->promise.set_value(CDWShrdPtr(embedded_message.release()));
-                set_p_req_id_index.erase(it);
-            }
+            CDWShrdPtr message_shrd_ptr(embedded_message.release());
+            CDWShrdPtrFutureHelper::setDataForPromiseID(req_index, message_shrd_ptr);
         }
     }
     return 0;
-}
-
-void AbstractRemoteIODriver::timeout() {
-    LSetPromiseWriteLock wl = set_p.getWriteLockObject();
-    uint64_t current_check_ts = TimingUtil::getTimeStampInMicroseconds();
-    unsigned int max_purge_check = 10;
-    for(SetPromisesReqTSIndexIter it = set_p_req_ts_index.begin(),
-        end = set_p_req_ts_index.end();
-        it != end && max_purge_check;
-        max_purge_check--){
-        //purge outdated promise
-        if(current_check_ts > (*it)->request_ts+TIMEOUT_PURGE_PROMISE) {
-            DBG << CHAOS_FORMAT("Remove the promise for request of index %1%", %(*it)->request_id);
-            set_p_req_ts_index.erase(it++);
-        } else {
-            ++it;
-        }
-    }
 }
 
 void AbstractRemoteIODriver::sendAuthenticationACK() {
@@ -215,23 +175,18 @@ int AbstractRemoteIODriver::sendRawRequest(CDWUniquePtr message_data,
             //we can proceeed
             break;
     }
+    CDWShrdPtrFutureHelper::CounterType new_promise_id;
+    CDWShrdPtrFutureHelper::Future request_future;
     CDWUniquePtr ext_msg(new CDataWrapper());
-    AbstractRemoteIODriver::DriverResultFuture request_future;
-    DriverResultInfo::DriverResultInfoShrdPtr promise_info(new DriverResultInfo());
-    promise_info->request_ts = TimingUtil::getTimeStampInMicroseconds();
-    promise_info->request_id = message_counter++;
+    CDWShrdPtrFutureHelper::addNewPromise(new_promise_id,
+                                          request_future);
     
-    ext_msg->addInt32Value(REQUEST_IDENTIFICATION, promise_info->request_id);
+    ext_msg->addInt32Value(REQUEST_IDENTIFICATION, new_promise_id);
     ext_msg->addCSDataValue(MESSAGE, *message_data);
-    //store promises in result map
-    LSetPromiseWriteLock lmr_wl = set_p.getWriteLockObject();
-    set_p().insert(promise_info);
-    lmr_wl->unlock();
+    
     //send message to driver
     ExternalUnitServerEndpoint::sendMessage(current_connection_identifier(),
                                             ChaosMoveOperator(ext_msg));
-    //set the
-    request_future = promise_info->promise.get_future();
     ChaosFutureStatus f_status = request_future.wait_for(ChaosCronoMilliseconds(timeout));
     if(f_status == ChaosFutureStatus::ready) {
         message_response = request_future.get();
