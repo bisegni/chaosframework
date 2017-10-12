@@ -52,9 +52,6 @@ namespace chaos {
                      \param message_data is the raw data to be transmitted to the remote driver
                      */
                     int sendRawMessage(chaos::common::data::CDWUniquePtr message_data);
-                    
-                    const int getNumberOfMaxConnection() const;
-                    void setNumberOfMaxConnection(int max_conenction);
                 public:
                     OpcodeExternalCommandMapper(AbstractRemoteIODriver *_remote_driver);
                     

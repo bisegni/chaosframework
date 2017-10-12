@@ -124,7 +124,28 @@ void HTTPClientAdapter::ev_handler(struct mg_connection *conn,
             break;
         }
         case MG_EV_WEBSOCKET_FRAME: {
+            int err = 0;
             struct websocket_message *wm = (struct websocket_message *) event_data;
+            LMapReconnectionInfoReadLock wlm = ci->class_instance->map_connection.getReadLockObject();
+            //chec in external unit virtual conenction is present
+            MapReconnectionInfoIterator conn_it =  ci->class_instance->map_connection().find(ci->connection_id);
+            if(conn_it == ci->class_instance->map_connection().end()) {
+                ci->class_instance->sendWSJSONError(conn, -1, "Connection doesn't have an associated external unit virtual connection!");
+                return;
+            }
+            if(ci->ext_unit_conn.get()) {
+                ci->class_instance->sendWSJSONError(conn, -2, "The associated external unit virtual connection is null!");
+                return;
+            }
+            
+            ChaosUniquePtr<CDataBuffer> buffer(new CDataBuffer((const char *)wm->data,
+                                                               (uint32_t)wm->size,
+                                                               true));
+            if((err = ci->class_instance->sendDataToEndpoint(*ci->ext_unit_conn,
+                                                             ChaosMoveOperator(buffer)))) {
+                //weh don't have found the sriealizer
+                ci->class_instance->sendWSJSONError(conn, err, "Error sending data to endpoint");
+            }
             break;
         }
         case MG_EV_CLOSE: {

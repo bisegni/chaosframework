@@ -61,12 +61,6 @@ namespace chaos{
                 //! end point identifier
                 std::string endpoint_identifier;
                 
-                //!notify a new arrived connection
-                virtual void handleNewConnection(const std::string& connection_identifier) = 0;
-                
-                //!notify that a connection has been closed
-                virtual void handleDisconnection(const std::string& connection_identifier) = 0;
-                
                 //! send a message throught a remote connection
                 int sendMessage(const std::string& connection_identifier,
                                 chaos::common::data::CDWUniquePtr message,

@@ -75,22 +75,18 @@ int ExternalUnitServerEndpoint::sendError(const std::string& connection_identifi
                                     int code,
                                     const std::string& message,
                                     const std::string& domain) {
-    CDWUniquePtr error_pack(new CDataWrapper());
-    error_pack->addInt32Value("error_code", code);
-    error_pack->addStringValue("error_message", message);
-    error_pack->addStringValue("error_domain", domain);
     return sendMessage(connection_identifier,
-                       ChaosMoveOperator(error_pack));
+                       ChaosMoveOperator(encodeError(code,
+                                                     message,
+                                                     domain)));
 }
 
 int ExternalUnitServerEndpoint::sendError(const std::string& connection_identifier,
                                     const chaos::CException& ex) {
-    CDWUniquePtr error_pack(new CDataWrapper());
-    error_pack->addInt32Value("error_code", ex.errorCode);
-    error_pack->addStringValue("error_message", ex.errorMessage);
-    error_pack->addStringValue("error_domain", ex.errorDomain);
     return sendMessage(connection_identifier,
-                       ChaosMoveOperator(error_pack));
+                       ChaosMoveOperator(encodeError(ex.errorCode,
+                                                     ex.errorMessage,
+                                                     ex.errorDomain)));
 }
 
 const int ExternalUnitServerEndpoint::getNumberOfAcceptedConnection() const {

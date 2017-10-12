@@ -41,34 +41,19 @@ namespace chaos{
             class ExternalUnitClientEndpoint:
             public UnitEndpoint {
                 friend class ExternalUnitConnection;
-                //! define adapter map
-                CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ExternalUnitConnection*, MapConnection);
-                
-                CHAOS_DEFINE_LOCKABLE_OBJECT(MapConnection, LMapConnection);
-                
-                LMapConnection map_connection;
-                
-                int number_of_connection_accepted;
+                CHAOS_DEFINE_LOCKABLE_OBJECT(ExternalUnitConnection*, LExternalUnitConnection);
+                LExternalUnitConnection current_connection;
                 
                 //! send a message to a connection
-                int addConnection(ExternalUnitConnection& new_connection);
+                int setConnection(ExternalUnitConnection& new_connection);
                 
                 //! send a message to a connection
                 int removeConnection(ExternalUnitConnection& removed_connection);
                 
             protected:
-                //! end point identifier
-                std::string endpoint_identifier;
-                
-                //!notify a new arrived connection
-                virtual void handleNewConnection(const std::string& connection_identifier) = 0;
-                
-                //!notify that a connection has been closed
-                virtual void handleDisconnection(const std::string& connection_identifier) = 0;
                 
                 //! send a message throught a remote connection
-                int sendMessage(const std::string& connection_identifier,
-                                chaos::common::data::CDWUniquePtr message,
+                int sendMessage(chaos::common::data::CDWUniquePtr message,
                                 const EUCMessageOpcode opcode = EUCMessageOpcodeWhole);
                 //! send an error to remote driver
                 int sendError(const std::string& connection_identifier,
@@ -82,17 +67,12 @@ namespace chaos{
                 //!close the connection
                 void closeConnection(const std::string& connection_identifier);
                 
-                void setNumberOfAcceptedConnection(int _number_of_connection_accepted);
-                
                 ExternalUnitClientEndpoint();
             public:
-                ExternalUnitClientEndpoint(const std::string& _endpoint_identifier);
+                const std::string client_identification;
+                ExternalUnitClientEndpoint(const std::string& _client_identification);
                 virtual ~ExternalUnitClientEndpoint();
                 std::string getIdentifier();
-                
-                const bool canAcceptMoreConnection();
-                
-                const int getNumberOfAcceptedConnection() const;
             };
         }
     }

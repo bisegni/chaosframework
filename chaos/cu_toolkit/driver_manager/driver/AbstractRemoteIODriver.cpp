@@ -47,7 +47,10 @@ using namespace chaos::cu::driver_manager::driver;
 DEFAULT_CU_DRIVER_PLUGIN_CONSTRUCTOR(AbstractRemoteIODriver),
 ExternalUnitServerEndpoint(),
 authorization_key(),
-conn_phase(RDConnectionPhaseDisconnected){}
+conn_phase(RDConnectionPhaseDisconnected){
+    //for driver we need to have only one connection
+    setNumberOfAcceptedConnection(1);
+}
 
 AbstractRemoteIODriver::~AbstractRemoteIODriver() {}
 

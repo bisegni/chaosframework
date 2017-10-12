@@ -33,6 +33,12 @@ namespace chaos{
             class UnitEndpoint {
                 friend class ExternalUnitConnection;
             protected:
+                //!notify a new arrived connection
+                virtual void handleNewConnection(const std::string& connection_identifier) = 0;
+                
+                //!notify that a connection has been closed
+                virtual void handleDisconnection(const std::string& connection_identifier) = 0;
+                
                 //! notify that a message has been received for a remote connection
                 virtual int handleReceivedeMessage(const std::string& connection_identifier,
                                                    chaos::common::data::CDWUniquePtr message) = 0;
@@ -43,6 +49,24 @@ namespace chaos{
                 virtual int removeConnection(ExternalUnitConnection& removed_connection) = 0;
             public:
                 virtual std::string getIdentifier() = 0;
+                
+                chaos::common::data::CDWUniquePtr encodeError(int code,
+                                         const std::string& message,
+                                         const std::string& domain) {
+                    chaos::common::data::CDWUniquePtr error_pack(new chaos::common::data::CDataWrapper());
+                    error_pack->addInt32Value("error_code", code);
+                    error_pack->addStringValue("error_message", message);
+                    error_pack->addStringValue("error_domain", domain);
+                    return error_pack;
+                }
+                
+                chaos::common::data::CDWUniquePtr encodeError(const chaos::CException& ex) {
+                    chaos::common::data::CDWUniquePtr error_pack(new chaos::common::data::CDataWrapper());
+                    error_pack->addInt32Value("error_code", ex.errorCode);
+                    error_pack->addStringValue("error_message", ex.errorMessage);
+                    error_pack->addStringValue("error_domain", ex.errorDomain);
+                    return error_pack;
+                }
             };
         }
     }

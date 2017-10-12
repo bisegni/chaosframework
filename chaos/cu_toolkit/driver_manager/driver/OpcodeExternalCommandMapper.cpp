@@ -43,12 +43,3 @@ int OpcodeExternalCommandMapper::sendRawMessage(chaos::common::data::CDWUniquePt
     CHAOS_ASSERT(remote_driver)
     return remote_driver->sendRawMessage(ChaosMoveOperator(message_data));
 }
-
-const int OpcodeExternalCommandMapper::getNumberOfMaxConnection() const {
-    CHAOS_ASSERT(remote_driver)
-    return remote_driver->getNumberOfAcceptedConnection();
-}
-void OpcodeExternalCommandMapper::setNumberOfMaxConnection(int max_conenction) {
-    CHAOS_ASSERT(remote_driver)
-    remote_driver->setNumberOfAcceptedConnection(max_conenction);
-}

@@ -40,15 +40,12 @@ namespace chaos {
                 class HTTPClientAdapter:
                 public HTTPBaseAdapter,
                 public AbstractClientAdapter {
-                    //!queueu for forward the messages
-                    typedef std::queue<chaos::common::data::CDBufferShrdPtr> MessageqQueue;
                     
                     struct ConnectionInfo {
                         bool connected;
                         std::string endpoint_url;
                         uint64_t next_reconnection_retry_ts;
                         const std::string connection_id;
-                        MessageqQueue messages_for_connection;
                         ChaosSharedMutex smux;
                         HTTPClientAdapter *class_instance;
                         struct mg_connection *conn;
