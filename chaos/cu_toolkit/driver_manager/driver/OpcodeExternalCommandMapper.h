@@ -22,13 +22,14 @@
 #ifndef __CHAOSFramework__B51A442_6610_45C9_9855_E6E15E2F3DA2_OpcodeExternalCommandMapper_h
 #define __CHAOSFramework__B51A442_6610_45C9_9855_E6E15E2F3DA2_OpcodeExternalCommandMapper_h
 
-#include <chaos/cu_toolkit/driver_manager/driver/AbstractRemoteIODriver.h>
+#include <chaos/common/data/CDataWrapper.h>
+#include <chaos/cu_toolkit/driver_manager/driver/DriverTypes.h>
+#include <chaos/cu_toolkit/driver_manager/driver/RemoteIODriverProtocol.h>
 
 namespace chaos {
     namespace cu {
         namespace driver_manager {
             namespace driver {
-                
                 //!Opcode Ext driver message mapper
                 /*!
                  this is the base class that permit to map the opcode sent by Controlunit
@@ -36,7 +37,7 @@ namespace chaos {
                  */
                 class OpcodeExternalCommandMapper:
                 public OpcodeExecutor {
-                    AbstractRemoteIODriver *remote_driver;
+                    RemoteIODriverProtocol *driver_protocol;
                 protected:
                     //!Send raw request to the remote driver
                     /*!
@@ -53,7 +54,7 @@ namespace chaos {
                      */
                     int sendRawMessage(chaos::common::data::CDWUniquePtr message_data);
                 public:
-                    OpcodeExternalCommandMapper(AbstractRemoteIODriver *_remote_driver);
+                    OpcodeExternalCommandMapper(RemoteIODriverProtocol *driver_protocol);
                     
                     virtual ~OpcodeExternalCommandMapper();
                     

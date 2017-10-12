@@ -39,21 +39,21 @@ namespace chaos{
              ednpoint can be confiugre to permit one or multiple connection
              */
             class ExternalUnitClientEndpoint:
-            public UnitEndpoint {
+            public ::chaos::common::external_unit::UnitEndpoint {
                 friend class ExternalUnitConnection;
-                CHAOS_DEFINE_LOCKABLE_OBJECT(ExternalUnitConnection*, LExternalUnitConnection);
+                CHAOS_DEFINE_LOCKABLE_OBJECT(::chaos::common::external_unit::ExternalUnitConnection*, LExternalUnitConnection);
                 LExternalUnitConnection current_connection;
                 
                 //! send a message to a connection
-                int setConnection(ExternalUnitConnection& new_connection);
+                int setConnection(::chaos::common::external_unit::ExternalUnitConnection& new_connection);
                 
                 //! send a message to a connection
-                int removeConnection(ExternalUnitConnection& removed_connection);
+                int removeConnection(::chaos::common::external_unit::ExternalUnitConnection& removed_connection);
                 
             protected:
                 
                 //! send a message throught a remote connection
-                int sendMessage(chaos::common::data::CDWUniquePtr message,
+                int sendMessage(::chaos::common::data::CDWUniquePtr message,
                                 const EUCMessageOpcode opcode = EUCMessageOpcodeWhole);
                 //! send an error to remote driver
                 int sendError(const std::string& connection_identifier,

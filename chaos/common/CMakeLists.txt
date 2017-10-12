@@ -132,9 +132,11 @@ SET(common_lib_src ${common_lib_src}
 
 SET(common_lib_src ${common_lib_src}
         external_unit/ExternalUnitManager.cpp
-        external_unit/AbstractAdapter.cpp
+        external_unit/AbstractServerAdapter.cpp
+        external_unit/AbstractClientAdapter.cpp
         external_unit/ExternalUnitConnection.cpp
-        external_unit/ExternalUnitEndpoint.cpp
+        external_unit/ExternalUnitClientEndpoint.cpp
+        external_unit/ExternalUnitServerEndpoint.cpp
         external_unit/ExternalEchoEndpoint.cpp)
 
 SET(common_lib_src ${common_lib_src}
@@ -143,7 +145,7 @@ SET(common_lib_src ${common_lib_src}
 
 SET(common_lib_src ${common_lib_src}
         external_unit/http_adapter/HTTPServerAdapter.cpp
-        external_unit/http_adapter/HTTPExternalUnitConnection.cpp)
+        external_unit/http_adapter/HTTPClientAdapter.cpp)
 
 SET(common_lib_src ${common_lib_src}
         event/EventClient.cpp

@@ -28,16 +28,19 @@ using namespace chaos::cu::driver_manager::driver;
 #define DBG		DBG_LOG(ExternalIODriver)
 #define ERR		ERR_LOG(ExternalIODriver)
 
-ExternalIODriver::ExternalIODriver() {
+template <typename ExtDriverImpl>
+ExternalIODriver<ExtDriverImpl>::ExternalIODriver() {
     
 }
 
-ExternalIODriver::~ExternalIODriver() {
+template <typename ExtDriverImpl>
+ExternalIODriver<ExtDriverImpl>::~ExternalIODriver() {
     
 }
 
 #pragma mark Public API
-int ExternalIODriver::getDeviceList(ChaosStringSet& hosted_device,
+template <typename ExtDriverImpl>
+int ExternalIODriver<ExtDriverImpl>::getDeviceList(ChaosStringSet& hosted_device,
                                     uint32_t timeout) {
     int err = AR_ERROR_OK;
     CDWShrdPtr answer;
@@ -72,9 +75,9 @@ int ExternalIODriver::getDeviceList(ChaosStringSet& hosted_device,
     }
     return err;
 }
-
-int ExternalIODriver::getDeviceDescription(const int32_t& device_index,
-                                           ExternalIODriver::Device& device,
+template <typename ExtDriverImpl>
+int ExternalIODriver<ExtDriverImpl>::getDeviceDescription(const int32_t& device_index,
+                                           Device& device,
                                            bool force_update_cache,
                                            uint32_t timeout) {
     int err = AR_ERROR_OK;
@@ -124,7 +127,8 @@ int ExternalIODriver::getDeviceDescription(const int32_t& device_index,
     return AR_ERROR_OK;
 }
 
-int ExternalIODriver::readVariable(const uint32_t device_index,
+template <typename ExtDriverImpl>
+int ExternalIODriver<ExtDriverImpl>::readVariable(const uint32_t device_index,
                                    const VariableType var_type,
                                    const uint32_t var_index,
                                    chaos::common::data::CDataVariant& value) {
@@ -141,8 +145,8 @@ int ExternalIODriver::readVariable(const uint32_t device_index,
     value = v_value_cache_iter->second;
     return AR_ERROR_OK;
 }
-
-int ExternalIODriver::updateVariable(const uint32_t device_index,
+template <typename ExtDriverImpl>
+int ExternalIODriver<ExtDriverImpl>::updateVariable(const uint32_t device_index,
                                      const VariableType var_type,
                                      const uint32_t var_index,
                                      uint32_t timeout) {
@@ -170,8 +174,8 @@ int ExternalIODriver::updateVariable(const uint32_t device_index,
     }
     return err;
 }
-
-int ExternalIODriver::writeVariable(const uint32_t device_index,
+template <typename ExtDriverImpl>
+int ExternalIODriver<ExtDriverImpl>::writeVariable(const uint32_t device_index,
                                     VariableType var_type,
                                     const uint32_t var_index,
                                     const chaos::common::data::CDataVariant& value,
@@ -214,8 +218,9 @@ int ExternalIODriver::writeVariable(const uint32_t device_index,
 }
 
 #pragma mark Private Method
-int ExternalIODriver::buildDeviceInfo(CDataWrapper& received_data,
-                                      ExternalIODriver::Device& device_info) {
+template <typename ExtDriverImpl>
+int ExternalIODriver<ExtDriverImpl>::buildDeviceInfo(CDataWrapper& received_data,
+                                      Device& device_info) {
     int err = AR_ERROR_OK;
     //we have data
     if(received_data.hasKey("device_desc") == false ||
@@ -266,8 +271,8 @@ int ExternalIODriver::buildDeviceInfo(CDataWrapper& received_data,
     
     return err;
 }
-
-int ExternalIODriver::updateVariableCachedValue(CDataWrapper& received_data) {
+template <typename ExtDriverImpl>
+int ExternalIODriver<ExtDriverImpl>::updateVariableCachedValue(CDataWrapper& received_data) {
     int err = AR_ERROR_OK;
     try {
         CHECK_KEY_THROW_AND_LOG((&received_data), "d_index", ERR, -1, "d_index is mandatory");
@@ -297,8 +302,8 @@ int ExternalIODriver::updateVariableCachedValue(CDataWrapper& received_data) {
     }
     return AR_ERROR_OK;
 }
-
-int ExternalIODriver::getMessageType(CDataWrapper& received_data,
+template <typename ExtDriverImpl>
+int ExternalIODriver<ExtDriverImpl>::getMessageType(CDataWrapper& received_data,
                                      MessageType& type) {
     int err = AR_ERROR_OK;
     try {
@@ -310,8 +315,8 @@ int ExternalIODriver::getMessageType(CDataWrapper& received_data,
     }
     return AR_ERROR_OK;
 }
-
-int ExternalIODriver::getErrorFromMessage(chaos::common::data::CDataWrapper& received_data,
+template <typename ExtDriverImpl>
+int ExternalIODriver<ExtDriverImpl>::getErrorFromMessage(chaos::common::data::CDataWrapper& received_data,
                                           int& error_code) {
     int err = AR_ERROR_OK;
     if(received_data.hasKey("error_code") == false) {return IO_ERROR_INVALID_MESSAGE_STRUCTURE;}
@@ -319,24 +324,24 @@ int ExternalIODriver::getErrorFromMessage(chaos::common::data::CDataWrapper& rec
     error_code = received_data.getInt32Value("error_code");
     return err;
 }
-
-int ExternalIODriver::sendRawRequest(MessageType message_type,
+template <typename ExtDriverImpl>
+int ExternalIODriver<ExtDriverImpl>::sendRawRequest(MessageType message_type,
                                      CDWUniquePtr message_data,
                                      CDWShrdPtr& message_response,
                                      uint32_t timeout) {
     message_data->addInt32Value("type", (int32_t)message_type);
-    return AbstractRemoteIODriver::sendRawRequest(ChaosMoveOperator(message_data),
+    return ExtDriverImpl::sendRawRequest(ChaosMoveOperator(message_data),
                                                   message_response,
                                                   timeout);
 }
-
-int ExternalIODriver::sendRawMessage(MessageType message_type,
+template <typename ExtDriverImpl>
+int ExternalIODriver<ExtDriverImpl>::sendRawMessage(MessageType message_type,
                                      CDWUniquePtr message_data) {
     message_data->addInt32Value("type", (int32_t)message_type);
-    return AbstractRemoteIODriver::sendRawMessage(ChaosMoveOperator(message_data));
+    return ExtDriverImpl::sendRawMessage(ChaosMoveOperator(message_data));
 }
-
-int ExternalIODriver::asyncMessageReceived(chaos::common::data::CDWUniquePtr message) {
+template <typename ExtDriverImpl>
+int ExternalIODriver<ExtDriverImpl>::asyncMessageReceived(chaos::common::data::CDWUniquePtr message) {
     int err = AR_ERROR_OK;
     MessageType received_message_type;
     // spontaneus message from driver, that can forward error message

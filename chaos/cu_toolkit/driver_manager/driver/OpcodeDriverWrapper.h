@@ -24,15 +24,16 @@
 
 #include <chaos/cu_toolkit/driver_manager/driver/AbstractRemoteIODriver.h>
 #include <chaos/cu_toolkit/driver_manager/driver/OpcodeExternalCommandMapper.h>
+#include <chaos/cu_toolkit/driver_manager/driver/RemoteIODriverProtocol.h>
 namespace chaos {
     namespace cu {
         namespace driver_manager {
             namespace driver {
                 //!permit to specify the converter to adapt already created driver for be used as external
-                template<typename OpExCMDAdaptor>
-                class TemplatedRemoteIODriver:
-                public OpcodeExecutor,
-                public AbstractRemoteIODriver {
+                template<typename OpExCMDAdaptor, typename ExtDriverImpl>
+                class OpcodeDriverWrapper:
+                public ExtDriverImpl,
+                public RemoteIODriverProtocol {
                     ChaosUniquePtr<OpcodeExternalCommandMapper> opcode_ext_cmd_mapper;
                     virtual MsgManagmentResultType::MsgManagmentResult execOpcode(DrvMsgPtr cmd) {
                         return opcode_ext_cmd_mapper->execOpcode(cmd);
@@ -41,10 +42,33 @@ namespace chaos {
                     int asyncMessageReceived(chaos::common::data::CDWUniquePtr message) {
                         return opcode_ext_cmd_mapper->asyncMessageReceived(ChaosMoveOperator(message));
                     }
+                    
+                    
                 public:
-                    TemplatedRemoteIODriver():
+                    OpcodeDriverWrapper():
                     opcode_ext_cmd_mapper(new OpExCMDAdaptor(this)){}
-                    ~TemplatedRemoteIODriver() {}
+                    ~OpcodeDriverWrapper() {}
+                    
+                    //!Send raw request to the remote driver
+                    /*!
+                     \param message_data is the raw data to be transmitted to the remote driver
+                     \param received_data si the raw data received from the driver
+                     */
+                    int sendRawRequest(chaos::common::data::CDWUniquePtr message_data,
+                                       chaos::common::data::CDWShrdPtr& message_response,
+                                       uint32_t timeout = 5000) {
+                        return ExtDriverImpl::sendRawRequest(ChaosMoveOperator(message_data),
+                                                           message_response,
+                                                           timeout);
+                    }
+                    
+                    //!Send raw message to the remote driver
+                    /*!
+                     \param message_data is the raw data to be transmitted to the remote driver
+                     */
+                    int sendRawMessage(chaos::common::data::CDWUniquePtr message_data) {
+                        return ExtDriverImpl::sendRawMessage(ChaosMoveOperator(message_data));
+                    }
                 };
             }
         }

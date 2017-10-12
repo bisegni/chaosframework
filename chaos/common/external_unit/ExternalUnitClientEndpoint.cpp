@@ -36,17 +36,17 @@ int ExternalUnitClientEndpoint::sendMessage(CDWUniquePtr message,
     LExternalUnitConnectionReadLock rl = current_connection.getReadLockObject();
     if(current_connection() == NULL) return -1;
     //send data to the coneection
-    return map_connection()[connection_identifier]->sendData(ChaosMoveOperator(message),
+    return current_connection()->sendData(ChaosMoveOperator(message),
                                                              opcode);
 }
 
 std::string ExternalUnitClientEndpoint::getIdentifier() {
-    return endpoint_identifier;
+    return client_identification;
 }
 
-int ExternalUnitClientEndpoint::addConnection(ExternalUnitConnection& new_connection) {
+int ExternalUnitClientEndpoint::setConnection(ExternalUnitConnection& new_connection) {
     LExternalUnitConnectionWriteLock rl = current_connection.getWriteLockObject();
-    current_connection = &new_connection;
+    current_connection() = &new_connection;
     handleNewConnection(new_connection.connection_identifier);
     return 0;
 }
@@ -54,13 +54,13 @@ int ExternalUnitClientEndpoint::addConnection(ExternalUnitConnection& new_connec
 int ExternalUnitClientEndpoint::removeConnection(ExternalUnitConnection& removed_connection) {
     LExternalUnitConnectionWriteLock rl = current_connection.getWriteLockObject();
     handleDisconnection(removed_connection.connection_identifier);
-    current_connection = NULL;
+    current_connection() = NULL;
     return 0;
 }
 
 void ExternalUnitClientEndpoint::closeConnection(const std::string& connection_identifier) {
-    LMapConnectionReadLock rl =  map_connection.getReadLockObject();
-    map_connection()[connection_identifier]->closeConnection();
+    LExternalUnitConnectionReadLock rl =  current_connection.getReadLockObject();
+    current_connection()->closeConnection();
 }
 
 int ExternalUnitClientEndpoint::sendError(const std::string& connection_identifier,

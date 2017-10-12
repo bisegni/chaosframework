@@ -20,11 +20,10 @@
  */
 
 #include <chaos/cu_toolkit/driver_manager/driver/OpcodeExternalCommandMapper.h>
-
 using namespace chaos::cu::driver_manager::driver;
 
-OpcodeExternalCommandMapper::OpcodeExternalCommandMapper(AbstractRemoteIODriver *_remote_driver):
-remote_driver(_remote_driver){CHAOS_ASSERT(remote_driver)}
+OpcodeExternalCommandMapper::OpcodeExternalCommandMapper(RemoteIODriverProtocol *_driver_protocol):
+driver_protocol(_driver_protocol){CHAOS_ASSERT(driver_protocol)}
 
 OpcodeExternalCommandMapper::~OpcodeExternalCommandMapper() {}
 
@@ -32,14 +31,14 @@ OpcodeExternalCommandMapper::~OpcodeExternalCommandMapper() {}
 int OpcodeExternalCommandMapper::sendRawRequest(chaos::common::data::CDWUniquePtr message_data,
                                                 chaos::common::data::CDWShrdPtr& message_response,
                                                 uint32_t timeout) {
-    CHAOS_ASSERT(remote_driver)
-    return remote_driver->sendRawRequest(ChaosMoveOperator(message_data),
+    CHAOS_ASSERT(driver_protocol)
+    return driver_protocol->sendRawRequest(ChaosMoveOperator(message_data),
                                          message_response,
                                          timeout);
 }
 
 
 int OpcodeExternalCommandMapper::sendRawMessage(chaos::common::data::CDWUniquePtr message_data) {
-    CHAOS_ASSERT(remote_driver)
-    return remote_driver->sendRawMessage(ChaosMoveOperator(message_data));
+    CHAOS_ASSERT(driver_protocol)
+    return driver_protocol->sendRawMessage(ChaosMoveOperator(message_data));
 }
