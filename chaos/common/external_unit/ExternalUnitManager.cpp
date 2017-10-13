@@ -52,6 +52,8 @@ void ExternalUnitManager::init(void *init_data) throw (chaos::CException) {
         it != end;
         it++) {
         InizializableService::initImplementation(*it->second.first, NULL, it->first, __PRETTY_FUNCTION__);
+        InizializableService::initImplementation(*it->second.second, NULL, it->first, __PRETTY_FUNCTION__);
+        
         it->second.first->registerEndpoint(echo_endpoint);
     }
 }
@@ -64,6 +66,7 @@ void ExternalUnitManager::deinit() throw (chaos::CException) {
         it++) {
         it->second.first->deregisterEndpoint(echo_endpoint);
         CHAOS_NOT_THROW(InizializableService::deinitImplementation(*it->second.first, it->first, __PRETTY_FUNCTION__););
+        CHAOS_NOT_THROW(InizializableService::deinitImplementation(*it->second.second, it->first, __PRETTY_FUNCTION__););
     }
 }
 
