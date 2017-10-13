@@ -156,18 +156,6 @@ ChaosCUToolkit::ChaosCUToolkit() {
     GlobalConfiguration::getInstance()->addOption< double >(CONTROL_MANAGER_EXECUTION_POOLS_CPU_CAP,
                                                             CONTROL_MANAGER_EXECUTION_POOLS_CPU_CAP_DESC,
                                                             CONTROL_MANAGER_EXECUTION_POOLS_CPU_CAP_DEFAULT);
-    
-    GlobalConfiguration::getInstance()->addOption< bool >(UNIT_GATEWAY_ENABLE,
-                                                          UNIT_GATEWAY_ENABLE_DESC,
-                                                          UNIT_GATEWAY_ENABLE_DEFAULT);
-    
-    GlobalConfiguration::getInstance()->addOption< unsigned int >(CU_EG_OPT_WORKER_THREAD_NUMBER,
-                                                                  CU_EG_OPT_WORKER_THREAD_NUMBER_DESC,
-                                                                  CU_EG_OPT_WORKER_THREAD_NUMBER_DEFAULT);
-    
-    GlobalConfiguration::getInstance()->addOption< std::vector<std::string> >(CU_EG_OPT_WORKER_KV_PARAM,
-                                                                              CU_EG_OPT_WORKER_KV_PARAM_DESC);
-    
 }
 
 ChaosCUToolkit::~ChaosCUToolkit() {

@@ -27,9 +27,6 @@ namespace chaos{
             namespace script {
                 namespace api {
                     namespace plugin {
-#define UNIT_GATEWAY_ENABLE             "unit-gateway-enable"
-#define UNIT_GATEWAY_ENABLE_DESC        "Enable the management of external unit management"
-#define UNIT_GATEWAY_ENABLE_DEFAULT      false
                     }
                 }
             }

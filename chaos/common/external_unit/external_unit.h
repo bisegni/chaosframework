@@ -23,6 +23,9 @@
 #define __CHAOSFramework_D0A4DD97_FA40_4763_8F1A_ADC7FE235A06_external_unit_h
 
 #include <chaos/common/external_unit/ExternalUnitManager.h>
+#include <chaos/common/external_unit/ExternalUnitConnection.h>
+#include <chaos/common/external_unit/ExternalUnitServerEndpoint.h>
+#include <chaos/common/external_unit/ExternalUnitClientEndpoint.h>
 #include <chaos/common/external_unit/external_unit_types.h>
 #include <chaos/common/external_unit/external_unit_constants.h>
 

@@ -14,6 +14,7 @@
 		32639FF01F6AB2230049089C /* TriggerTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329943531D6B3AB7008DBAE9 /* TriggerTest.cpp */; };
 		32639FF31F6ABB980049089C /* TestStateFlagCatalog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329943711D6B4911008DBAE9 /* TestStateFlagCatalog.cpp */; };
 		32639FF51F6ACAC70049089C /* TestURLFeeder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329943801D6B5469008DBAE9 /* TestURLFeeder.cpp */; };
+		327A4D241F90CB3200DA800C /* ExternalUnitTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327A4D231F90CB3200DA800C /* ExternalUnitTest.cpp */; };
 		32818B3E1F8265B3004A409E /* EmbeddedLFCacheTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32818B3D1F8265B3004A409E /* EmbeddedLFCacheTest.cpp */; };
 		32818B421F828FBE004A409E /* BatchComandTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32818B411F828FBE004A409E /* BatchComandTest.cpp */; };
 		32818B431F828FDB004A409E /* TestCommandExecutor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327A28691D71D72700DFDD2C /* TestCommandExecutor.cpp */; };
@@ -141,6 +142,8 @@
 		327A286A1D71D72700DFDD2C /* TestCommandExecutor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestCommandExecutor.h; sourceTree = "<group>"; };
 		327A286C1D71D73300DFDD2C /* TestBatchCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestBatchCommand.cpp; sourceTree = "<group>"; };
 		327A286D1D71D73300DFDD2C /* TestBatchCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestBatchCommand.h; sourceTree = "<group>"; };
+		327A4D221F90CB3200DA800C /* ExternalUnitTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExternalUnitTest.h; sourceTree = "<group>"; };
+		327A4D231F90CB3200DA800C /* ExternalUnitTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ExternalUnitTest.cpp; sourceTree = "<group>"; };
 		32818B3C1F8265B3004A409E /* EmbeddedLFCacheTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EmbeddedLFCacheTest.h; sourceTree = "<group>"; };
 		32818B3D1F8265B3004A409E /* EmbeddedLFCacheTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EmbeddedLFCacheTest.cpp; sourceTree = "<group>"; };
 		32818B401F828FBE004A409E /* BatchComandTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BatchComandTest.h; sourceTree = "<group>"; };
@@ -296,6 +299,7 @@
 			isa = PBXGroup;
 			children = (
 				32639FE81F6AAD990049089C /* main.cpp */,
+				327A4D211F90CB1300DA800C /* external_unit */,
 				32818B3F1F828FA4004A409E /* batch_system */,
 				322EE87E1F825D5E00D89824 /* cache */,
 				323657E51F7CEC150089C70E /* queue */,
@@ -342,6 +346,15 @@
 				329943811D6B5469008DBAE9 /* TestURLFeeder.h */,
 			);
 			path = url_feeder;
+			sourceTree = "<group>";
+		};
+		327A4D211F90CB1300DA800C /* external_unit */ = {
+			isa = PBXGroup;
+			children = (
+				327A4D231F90CB3200DA800C /* ExternalUnitTest.cpp */,
+				327A4D221F90CB3200DA800C /* ExternalUnitTest.h */,
+			);
+			path = external_unit;
 			sourceTree = "<group>";
 		};
 		32818B3F1F828FA4004A409E /* batch_system */ = {
@@ -759,6 +772,7 @@
 				32639FF01F6AB2230049089C /* TriggerTest.cpp in Sources */,
 				32639FF51F6ACAC70049089C /* TestURLFeeder.cpp in Sources */,
 				32818B451F828FDB004A409E /* TestBatchCommand.cpp in Sources */,
+				327A4D241F90CB3200DA800C /* ExternalUnitTest.cpp in Sources */,
 				32818B431F828FDB004A409E /* TestCommandExecutor.cpp in Sources */,
 				328CFCA41F7D4167002FEB25 /* QueuePriorityTest.cpp in Sources */,
 				322EE8811F825D8000D89824 /* MemcachedEmbedded.cpp in Sources */,

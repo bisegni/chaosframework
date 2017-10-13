@@ -25,14 +25,18 @@
 namespace chaos{
     namespace common {
         namespace external_unit {
-            
-#define CU_EG_OPT_WORKER_THREAD_NUMBER          "cu-eg-worker-thread-number"
-#define CU_EG_OPT_WORKER_THREAD_NUMBER_DESC     "Specify the number ofr the thread that the external adapter work need to use"
-#define CU_EG_OPT_WORKER_THREAD_NUMBER_DEFAULT  4
-
-#define CU_EG_OPT_WORKER_KV_PARAM               "cu-eg-adapter-kv-param"
-#define CU_EG_OPT_WORKER_KV_PARAM_DESC          "Abstraction key:value parameter used by external protocol adapter implementation"
-
+            namespace InitOption {
+                static const char * const   OPT_UNIT_GATEWAY_ENABLE                         = "unit-gateway-enable";
+                static const char * const   OPT_UNIT_GATEWAY_ENABLE_DESC                    = "Enable the management of external unit management";
+                static const bool           OPT_UNIT_GATEWAY_ENABLE_DEFAULT                 =  false;
+                
+                static const char * const   OPT_UNIT_GATEWAY_WORKER_THREAD_NUMBER           = "unit-gateway-adapter-thread-number";
+                static const char * const   OPT_UNIT_GATEWAY_WORKER_THREAD_NUMBER_DESC      = "Specify the number ofr the thread that the external adapter work need to use";
+                static const unsigned int   OPT_UNIT_GATEWAY_WORKER_THREAD_NUMBER_DEFAULT   = 4;
+                
+                static const char * const   OPT_UNIT_GATEWAY_ADAPTER_KV_PARAM               = "unit-gateway-adapter-kv-param";
+                static const char * const   OPT_UNIT_GATEWAY_ADAPTER_KV_PARAM_DESC          = "Abstraction key:value parameter used by external protocol adapter implementation";
+                }
         }
     }
 }
