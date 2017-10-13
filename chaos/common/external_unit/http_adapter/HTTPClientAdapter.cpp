@@ -83,6 +83,11 @@ int HTTPClientAdapter::addNewConnectionForEndpoint(ExternalUnitClientEndpoint *e
     ci->class_instance = this;
     ci->endpoint_url = endpoint_url;
     ci->ext_unit_conn = conn_ptr;
+    ci->conn =  mg_connect_ws(&mgr,
+                              HTTPClientAdapter::ev_handler,
+                              ci->endpoint_url.c_str(),
+                              "ChaosExternalUnit",
+                              web_socket_option);
     ci->conn->user_data = ci.get();
     return 0;
 }
