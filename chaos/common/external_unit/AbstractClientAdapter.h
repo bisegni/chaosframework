@@ -21,35 +21,34 @@
 
 #ifndef chaos_common_external_unit_AbstractClientAdapter_h
 #define chaos_common_external_unit_AbstractClientAdapter_h
-#include <chaos/common/external_unit/ExternalUnitServerEndpoint.h>
+#include <chaos/common/external_unit/ExternalUnitClientEndpoint.h>
 #include <chaos/common/external_unit/ExternalUnitConnection.h>
 #include <chaos/common/external_unit/AbstractAdapter.h>
 
 namespace chaos{
     namespace common {
         namespace external_unit {
-            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ExternalUnitServerEndpoint*, MapEndpoint);
-            CHAOS_DEFINE_LOCKABLE_OBJECT(MapEndpoint, LMapEndpoint);
             
             //!adapter interface
             class AbstractClientAdapter:
             public AbstractAdapter {
             protected:
-                //!contains all association by endpoint url and class
-                LMapEndpoint    map_endpoint;
-            protected:
                 int sendDataToEndpoint(ExternalUnitConnection& connection, chaos::common::data::CDBufferUniquePtr received_data);
-            public:
-                AbstractClientAdapter();
-                ~AbstractClientAdapter();
-                void init(void *init_data) throw (chaos::CException);
-                void deinit() throw (chaos::CException);
-                
                 virtual int sendDataToConnection(const std::string& connection_identifier,
                                                  const chaos::common::data::CDBufferUniquePtr data,
                                                  const EUCMessageOpcode opcode) = 0;
                 
                 virtual int closeConnection(const std::string& connection_identifier) = 0;
+            public:
+                AbstractClientAdapter();
+                ~AbstractClientAdapter();
+                void init(void *init_data) throw (chaos::CException);
+                void deinit() throw (chaos::CException);
+                virtual int addNewConnectionForEndpoint(ExternalUnitClientEndpoint *endpoint,
+                                                const std::string& endpoint_url,
+                                                const std::string& serialization) = 0;
+                virtual int removeConnectionsFromEndpoint(ExternalUnitClientEndpoint *target_endpoint) = 0;
+
             };
         }
     }

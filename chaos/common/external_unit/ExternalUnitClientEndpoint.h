@@ -45,7 +45,7 @@ namespace chaos{
                 LExternalUnitConnection current_connection;
                 
                 //! send a message to a connection
-                int setConnection(::chaos::common::external_unit::ExternalUnitConnection& new_connection);
+                int addConnection(::chaos::common::external_unit::ExternalUnitConnection& new_connection);
                 
                 //! send a message to a connection
                 int removeConnection(::chaos::common::external_unit::ExternalUnitConnection& removed_connection);

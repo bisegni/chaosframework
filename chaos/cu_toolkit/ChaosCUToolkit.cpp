@@ -316,8 +316,8 @@ void ChaosCUToolkit::stop() throw(CException) {
  */
 void ChaosCUToolkit::deinit() throw(CException) {
     LAPP_ << "Deinitilizzating !CHAOS Control Unit System";
-    if(GlobalConfiguration::getInstance()->hasOption(UNIT_GATEWAY_ENABLE) &&
-       GlobalConfiguration::getInstance()->getOption<bool>(UNIT_GATEWAY_ENABLE)) {
+    if(GlobalConfiguration::getInstance()->hasOption(chaos::common::external_unit::InitOption::OPT_UNIT_GATEWAY_ENABLE) &&
+       GlobalConfiguration::getInstance()->getOption<bool>(chaos::common::external_unit::InitOption::OPT_UNIT_GATEWAY_ENABLE)) {
         //initilize unit gateway
         InizializableService::deinitImplementation(common::external_unit::ExternalUnitManager::getInstance(), "ExternalUnitManager", __PRETTY_FUNCTION__);
     }

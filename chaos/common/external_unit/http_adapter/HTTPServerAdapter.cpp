@@ -50,6 +50,7 @@ HTTPServerAdapter::~HTTPServerAdapter() {}
 
 void HTTPServerAdapter::init(void *init_data) throw (chaos::CException) {
     //scsan configuration
+    setting.publishing_port = "8080";
     setting.thread_number = GlobalConfiguration::getInstance()->getOption<unsigned int>(InitOption::OPT_UNIT_GATEWAY_WORKER_THREAD_NUMBER);
     if(GlobalConfiguration::getInstance()->hasOption(InitOption::OPT_UNIT_GATEWAY_ADAPTER_KV_PARAM)) {
         std::map<string, string> http_param;
@@ -63,9 +64,7 @@ void HTTPServerAdapter::init(void *init_data) throw (chaos::CException) {
     }
     run = true;
     mg_mgr_init(&mgr, NULL);
-    
-    int http_port = InetUtility::scanForLocalFreePort(boost::lexical_cast<int>(setting.publishing_port));
-    const std::string http_port_str = boost::lexical_cast<std::string>(http_port);
+    const std::string http_port_str = boost::lexical_cast<std::string>(InetUtility::scanForLocalFreePort(boost::lexical_cast<int>(setting.publishing_port)));
     root_connection = mg_bind(&mgr, http_port_str.c_str(), HTTPServerAdapter::eventHandler);
     if(root_connection == NULL) {throw CException(-1, "Error creating http connection", __PRETTY_FUNCTION__);}
     root_connection->user_data = this;

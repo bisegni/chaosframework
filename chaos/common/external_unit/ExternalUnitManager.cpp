@@ -62,6 +62,7 @@ void ExternalUnitManager::deinit() throw (chaos::CException) {
         end= map_protocol_adapter().end();
         it != end;
         it++) {
+        it->second.first->deregisterEndpoint(echo_endpoint);
         CHAOS_NOT_THROW(InizializableService::deinitImplementation(*it->second.first, it->first, __PRETTY_FUNCTION__););
     }
 }
@@ -98,7 +99,13 @@ int ExternalUnitManager::initilizeConnection(ExternalUnitClientEndpoint& endpoin
                                              const std::string& protocol,
                                              const std::string& serialization,
                                              const std::string& destination) {
-    return 0;
+    if(getServiceState() != 1) return -1;
+    LMapAdapterReadLock rl = map_protocol_adapter.getReadLockObject();
+    MapAdapterIterator it = map_protocol_adapter().find(protocol);
+    if(it == map_protocol_adapter().end()) return -2;
+    return it->second.second->addNewConnectionForEndpoint(&endpoint,
+                                                          destination,
+                                                          serialization);
 }
 
 int ExternalUnitManager::releaseConnection(ExternalUnitClientEndpoint& endpoint) {

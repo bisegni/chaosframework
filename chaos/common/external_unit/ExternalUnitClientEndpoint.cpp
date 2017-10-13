@@ -44,7 +44,7 @@ std::string ExternalUnitClientEndpoint::getIdentifier() {
     return client_identification;
 }
 
-int ExternalUnitClientEndpoint::setConnection(ExternalUnitConnection& new_connection) {
+int ExternalUnitClientEndpoint::addConnection(ExternalUnitConnection& new_connection) {
     LExternalUnitConnectionWriteLock rl = current_connection.getWriteLockObject();
     current_connection() = &new_connection;
     handleNewConnection(new_connection.connection_identifier);
