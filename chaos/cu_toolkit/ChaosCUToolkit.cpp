@@ -23,6 +23,7 @@
 #include <chaos/cu_toolkit/command_manager/CommandManager.h>
 #include <chaos/cu_toolkit/control_manager/script/api/api.h>
 #include <chaos/common/external_unit/external_unit.h>
+#include <chaos/common/external_unit/external_unit_constants.h>
 
 #include <chaos/common/healt_system/HealtManager.h>
 #include <chaos/common/metadata_logging/MetadataLoggingManager.h>
@@ -230,8 +231,8 @@ void ChaosCUToolkit::init(void *init_data)  throw(CException) {
         
         StartableService::initImplementation(ControlManager::getInstance(), NULL, "ControlManager", "ChaosCUToolkit::init");
         
-        if(GlobalConfiguration::getInstance()->hasOption(UNIT_GATEWAY_ENABLE) &&
-           GlobalConfiguration::getInstance()->getOption<bool>(UNIT_GATEWAY_ENABLE)) {
+        if(GlobalConfiguration::getInstance()->hasOption(chaos::common::external_unit::InitOption::OPT_UNIT_GATEWAY_ENABLE) &&
+           GlobalConfiguration::getInstance()->getOption<bool>(chaos::common::external_unit::InitOption::OPT_UNIT_GATEWAY_ENABLE)) {
             //initilize unit gateway
             InizializableService::initImplementation(common::external_unit::ExternalUnitManager::getInstance(), NULL, "ExternalUnitManager", __PRETTY_FUNCTION__);
         }

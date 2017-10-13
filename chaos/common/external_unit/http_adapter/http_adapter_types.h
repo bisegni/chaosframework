@@ -69,7 +69,7 @@ namespace chaos{
                     std::string publishing_port;
                 };
                 
-#define CU_EG_HTTP_PUBLISHING_PORT "/cu/eg/http/publishing/port"
+#define OPT_HTTP_PUBLISHING_PORT "/chaos/common/external_unit/http/publishing/port"
             }
         }
     }

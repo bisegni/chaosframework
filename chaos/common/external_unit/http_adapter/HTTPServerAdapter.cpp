@@ -57,8 +57,8 @@ void HTTPServerAdapter::init(void *init_data) throw (chaos::CException) {
                                              GlobalConfiguration::getInstance()->getOption< std::vector<std::string> >(InitOption::OPT_UNIT_GATEWAY_ADAPTER_KV_PARAM),
                                              "");
         //check publishing port paramter
-        if(http_param.count(CU_EG_HTTP_PUBLISHING_PORT)) {
-            setting.publishing_port = http_param[CU_EG_HTTP_PUBLISHING_PORT];
+        if(http_param.count(OPT_HTTP_PUBLISHING_PORT)) {
+            setting.publishing_port = http_param[OPT_HTTP_PUBLISHING_PORT];
         }
     }
     run = true;
