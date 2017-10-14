@@ -26,6 +26,23 @@
 #include <chaos/common/chaos_types.h>
 #include <chaos/common/external_unit/external_unit.h>
 
+class ServerEndpoint:
+public chaos::common::external_unit::ExternalUnitClientEndpoint {
+protected:
+    void handleNewConnection(const std::string& connection_identifier);
+
+    void handleDisconnection(const std::string& connection_identifier);
+
+    int handleReceivedeMessage(const std::string& connection_identifier,
+                               chaos::common::data::CDWUniquePtr message);
+public:
+    unsigned int connection_event_counter;
+    unsigned int disconnection_event_counter;
+    unsigned int received_message_counter;
+    ServerEndpoint();
+    ~ServerEndpoint();
+};
+
 class ExternalUnitTest:
 public testing::Test,
 public chaos::common::external_unit::ExternalUnitClientEndpoint {

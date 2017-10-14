@@ -28,6 +28,28 @@ using namespace chaos::common::external_unit;
 #define ECHO_TEST_KEY       "message"
 #define ECHO_KEY_MESSAGE    "this is the message"
 
+ServerEndpoint::ServerEndpoint() {
+    connection_event_counter = 0;
+    disconnection_event_counter = 0;
+    received_message_counter = 0;
+}
+
+ServerEndpoint::~ServerEndpoint() {
+    
+}
+
+void ServerEndpoint::handleNewConnection(const std::string& connection_identifier) {connection_event_counter++;}
+
+void ServerEndpoint::handleDisconnection(const std::string& connection_identifier) {disconnection_event_counter++;}
+
+int ServerEndpoint::handleReceivedeMessage(const std::string& connection_identifier,
+                                           chaos::common::data::CDWUniquePtr message) {
+    received_message_counter++;
+    return 0;
+}
+
+
+
 ExternalUnitTest::ExternalUnitTest():
 ExternalUnitClientEndpoint("EchoTest"){}
 
@@ -77,7 +99,7 @@ TEST_F(ExternalUnitTest, Echo) {
                                                             "ws://localhost:8080/echo");
     while(ExternalUnitClientEndpoint::isOnline() == false ||
           ExternalUnitClientEndpoint::getAcceptedState() != 1) {
-        ASSERT_LE(retry++, 10);
+        ASSERT_LE(retry++, 3);
         usleep(1000000);
     }
     ASSERT_EQ(ExternalUnitClientEndpoint::isOnline(), true);
@@ -88,7 +110,7 @@ TEST_F(ExternalUnitTest, Echo) {
     //wait answer
     retry = 0;
     while(echo_received == false) {
-        ASSERT_LE(retry++, 10);
+        ASSERT_LE(retry++, 3);
         usleep(1000000);
     }
     ASSERT_TRUE(echo_received);
@@ -100,9 +122,7 @@ TEST_F(ExternalUnitTest, Echo) {
 }
 
 TEST_F(ExternalUnitTest, Reconnection) {
-    int retry = 0;
-    CDWUniquePtr message(new CDataWrapper());
-    message->addStringValue(ECHO_TEST_KEY, ECHO_KEY_MESSAGE);
+    unsigned int retry = 0;
     
     ExternalUnitManager::getInstance()->initilizeConnection(*this,
                                                             "http",
@@ -110,18 +130,16 @@ TEST_F(ExternalUnitTest, Reconnection) {
                                                             "ws://localhost:8080/echo");
     while(ExternalUnitClientEndpoint::isOnline() == false ||
           ExternalUnitClientEndpoint::getAcceptedState() != 1) {
-        ASSERT_LE(retry++, 10);
+        ASSERT_LE(retry++, 3);
         usleep(1000000);
     }
     ASSERT_EQ(ExternalUnitClientEndpoint::isOnline(), true);
     ASSERT_EQ(ExternalUnitClientEndpoint::getAcceptedState(), 1);
     
-    //send echo message
-    ASSERT_EQ(sendMessage(ChaosMoveOperator(message)),0);
     //wait answer
     retry = 0;
     while(echo_received == false) {
-        ASSERT_LE(retry++, 10);
+        ASSERT_LE(retry++, 3);
         usleep(1000000);
     }
     ASSERT_TRUE(echo_received);
