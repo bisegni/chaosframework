@@ -42,19 +42,15 @@ namespace chaos {
                 public AbstractClientAdapter {
                     
                     struct ConnectionInfo {
-                        bool connected;
                         std::string endpoint_url;
                         uint64_t next_reconnection_retry_ts;
-                        const std::string connection_id;
                         ChaosSharedMutex smux;
                         HTTPClientAdapter *class_instance;
                         struct mg_connection *conn;
                         ChaosSharedPtr<ExternalUnitConnection> ext_unit_conn;
                         
                         ConnectionInfo():
-                        connected(false),
                         next_reconnection_retry_ts(0),
-                        connection_id(chaos::common::utility::UUIDUtil::generateUUIDLite()),
                         class_instance(NULL),
                         conn(NULL),
                         ext_unit_conn(){}
@@ -75,7 +71,9 @@ namespace chaos {
                     static void ev_handler(struct mg_connection *conn,
                                            int event,
                                            void *event_data);
-                    
+                    static void checkAcceptResponse(struct websocket_message *wm,
+                                                    bool& is_accept_response,
+                                                    int& accept_result);
                 protected:
                     int sendDataToConnection(const std::string& connection_identifier,
                                              const chaos::common::data::CDBufferUniquePtr data,
@@ -87,8 +85,8 @@ namespace chaos {
                     void init(void *init_data) throw (chaos::CException);
                     void deinit() throw (chaos::CException);
                     int addNewConnectionForEndpoint(ExternalUnitClientEndpoint *endpoint,
-                                                       const std::string& endpoint_url,
-                                                       const std::string& serialization);
+                                                    const std::string& endpoint_url,
+                                                    const std::string& serialization);
                     int removeConnectionsFromEndpoint(ExternalUnitClientEndpoint *target_endpoint);
                 };
             }

@@ -25,28 +25,40 @@ using namespace chaos::common::data;
 using namespace chaos::common::utility;
 using namespace chaos::common::external_unit;
 
+#define ECHO_TEST_KEY       "message"
+#define ECHO_KEY_MESSAGE    "this is the message"
 
 ExternalUnitTest::ExternalUnitTest():
 ExternalUnitClientEndpoint("EchoTest"){}
 
 ExternalUnitTest::~ExternalUnitTest(){}
 
-void ExternalUnitTest::handleNewConnection(const std::string& connection_identifier) {
-    
-}
+void ExternalUnitTest::handleNewConnection(const std::string& connection_identifier) {connection_event_counter++;}
 
-void ExternalUnitTest::handleDisconnection(const std::string& connection_identifier) {
-    
-}
+void ExternalUnitTest::handleDisconnection(const std::string& connection_identifier) {disconnection_event_counter++;}
 
 int ExternalUnitTest::handleReceivedeMessage(const std::string& connection_identifier,
-                                               chaos::common::data::CDWUniquePtr message) {
+                                             chaos::common::data::CDWUniquePtr message) {
+    received_message_counter++;
+    echo_received = message->hasKey(ECHO_TEST_KEY) &&
+    message->isStringValue(ECHO_TEST_KEY) &&
+    (message->getStringValue(ECHO_TEST_KEY).compare(ECHO_KEY_MESSAGE) == 0);
     return 0;
 }
 
-void ExternalUnitTest::SetUp(){}
+void ExternalUnitTest::SetUp() {
+    echo_received = false;
+    connection_event_counter = 0;
+    received_message_counter = 0;
+    disconnection_event_counter = 0;
+    ASSERT_NO_THROW(InizializableService::initImplementation(ExternalUnitManager::getInstance(), NULL, "ExternalUnitManager", __PRETTY_FUNCTION__););
+}
 
-TEST_F(ExternalUnitTest, InitDeinitTest) {
+void ExternalUnitTest::TearDown() {
+    ASSERT_NO_THROW(InizializableService::deinitImplementation(ExternalUnitManager::getInstance(), "ExternalUnitManager", __PRETTY_FUNCTION__););
+}
+
+TEST(ExternalUnitTest, InitDeinitCicle) {
     for(int idx = 0; idx < 100; idx++) {
         ASSERT_NO_THROW(ExternalUnitManager::getInstance()->init(NULL));
         
@@ -54,15 +66,68 @@ TEST_F(ExternalUnitTest, InitDeinitTest) {
     }
 }
 
-TEST_F(ExternalUnitTest, EchoTest) {
+TEST_F(ExternalUnitTest, Echo) {
+    int retry = 0;
     CDWUniquePtr message(new CDataWrapper());
-    message->addStringValue("message", "this is the message");
-    ASSERT_NO_THROW(InizializableService::initImplementation(ExternalUnitManager::getInstance(), NULL, "ExternalUnitManager", __PRETTY_FUNCTION__););
+    message->addStringValue(ECHO_TEST_KEY, ECHO_KEY_MESSAGE);
+    
     ExternalUnitManager::getInstance()->initilizeConnection(*this,
                                                             "http",
                                                             "application/bson-json",
                                                             "ws://localhost:8080/echo");
+    while(ExternalUnitClientEndpoint::isOnline() == false ||
+          ExternalUnitClientEndpoint::getAcceptedState() != 1) {
+        ASSERT_LE(retry++, 10);
+        usleep(1000000);
+    }
+    ASSERT_EQ(ExternalUnitClientEndpoint::isOnline(), true);
+    ASSERT_EQ(ExternalUnitClientEndpoint::getAcceptedState(), 1);
+    
+    //send echo message
     ASSERT_EQ(sendMessage(ChaosMoveOperator(message)),0);
-    ExternalUnitManager::getInstance()->releaseConnection(*this);
-    ASSERT_NO_THROW(InizializableService::deinitImplementation(ExternalUnitManager::getInstance(), "ExternalUnitManager", __PRETTY_FUNCTION__););
+    //wait answer
+    retry = 0;
+    while(echo_received == false) {
+        ASSERT_LE(retry++, 10);
+        usleep(1000000);
+    }
+    ASSERT_TRUE(echo_received);
+    ExternalUnitManager::getInstance()->releaseConnection(*this,
+                                                          "http");
+    ASSERT_EQ(connection_event_counter, 1);
+    ASSERT_EQ(received_message_counter, 1);
+    ASSERT_EQ(disconnection_event_counter, 1);
+}
+
+TEST_F(ExternalUnitTest, Reconnection) {
+    int retry = 0;
+    CDWUniquePtr message(new CDataWrapper());
+    message->addStringValue(ECHO_TEST_KEY, ECHO_KEY_MESSAGE);
+    
+    ExternalUnitManager::getInstance()->initilizeConnection(*this,
+                                                            "http",
+                                                            "application/bson-json",
+                                                            "ws://localhost:8080/echo");
+    while(ExternalUnitClientEndpoint::isOnline() == false ||
+          ExternalUnitClientEndpoint::getAcceptedState() != 1) {
+        ASSERT_LE(retry++, 10);
+        usleep(1000000);
+    }
+    ASSERT_EQ(ExternalUnitClientEndpoint::isOnline(), true);
+    ASSERT_EQ(ExternalUnitClientEndpoint::getAcceptedState(), 1);
+    
+    //send echo message
+    ASSERT_EQ(sendMessage(ChaosMoveOperator(message)),0);
+    //wait answer
+    retry = 0;
+    while(echo_received == false) {
+        ASSERT_LE(retry++, 10);
+        usleep(1000000);
+    }
+    ASSERT_TRUE(echo_received);
+    ExternalUnitManager::getInstance()->releaseConnection(*this,
+                                                          "http");
+    ASSERT_EQ(connection_event_counter, 1);
+    ASSERT_EQ(received_message_counter, 1);
+    ASSERT_EQ(disconnection_event_counter, 1);
 }

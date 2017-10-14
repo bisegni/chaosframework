@@ -35,6 +35,8 @@ ExternalUnitConnection::ExternalUnitConnection(AbstractAdapter *_adapter,
                                                UnitEndpoint *_endpoint,
                                                ChaosUniquePtr<chaos::common::external_unit::serialization::AbstractExternalSerialization> _serializer_adapter):
 connection_identifier(UUIDUtil::generateUUIDLite()),
+online(false),
+accepted_state(-1),
 adapter(_adapter),
 endpoint(_endpoint),
 serializer_adapter(ChaosMoveOperator(_serializer_adapter)) {
@@ -64,6 +66,6 @@ void ExternalUnitConnection::closeConnection() {
     adapter->closeConnection(connection_identifier);
 }
 
-const std::string& ExternalUnitConnection::getEndpointIdentifier() const {
+const std::string ExternalUnitConnection::getEndpointIdentifier() const {
     return endpoint->getIdentifier();
 }

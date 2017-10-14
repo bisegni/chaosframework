@@ -32,16 +32,22 @@ client_identification(_client_identification){}
 ExternalUnitClientEndpoint::~ExternalUnitClientEndpoint() {}
 
 int ExternalUnitClientEndpoint::sendMessage(CDWUniquePtr message,
-                                      const EUCMessageOpcode opcode) {
+                                            const EUCMessageOpcode opcode) {
     LExternalUnitConnectionReadLock rl = current_connection.getReadLockObject();
     if(current_connection() == NULL) return -1;
     //send data to the coneection
     return current_connection()->sendData(ChaosMoveOperator(message),
-                                                             opcode);
+                                          opcode);
 }
 
 std::string ExternalUnitClientEndpoint::getIdentifier() {
     return client_identification;
+}
+
+std::string ExternalUnitClientEndpoint::getConnectionIdentifier() {
+    LExternalUnitConnectionReadLock rl =  current_connection.getReadLockObject();
+    if(current_connection()==NULL) return "";
+    return current_connection()->connection_identifier;
 }
 
 int ExternalUnitClientEndpoint::addConnection(ExternalUnitConnection& new_connection) {
@@ -58,24 +64,31 @@ int ExternalUnitClientEndpoint::removeConnection(ExternalUnitConnection& removed
     return 0;
 }
 
-void ExternalUnitClientEndpoint::closeConnection(const std::string& connection_identifier) {
+void ExternalUnitClientEndpoint::closeConnection() {
     LExternalUnitConnectionReadLock rl =  current_connection.getReadLockObject();
     current_connection()->closeConnection();
 }
 
-int ExternalUnitClientEndpoint::sendError(const std::string& connection_identifier,
-                                    int code,
-                                    const std::string& message,
-                                    const std::string& domain) {
+int ExternalUnitClientEndpoint::sendError(int code,
+                                          const std::string& message,
+                                          const std::string& domain) {
     return sendMessage(ChaosMoveOperator(encodeError(code,
                                                      message,
                                                      domain)));
 }
 
-int ExternalUnitClientEndpoint::sendError(const std::string& connection_identifier,
-                                    const chaos::CException& ex) {
+int ExternalUnitClientEndpoint::sendError(const chaos::CException& ex) {
     return sendMessage(ChaosMoveOperator(encodeError(ex.errorCode,
                                                      ex.errorMessage,
                                                      ex.errorDomain)));
 }
 
+const bool ExternalUnitClientEndpoint::isOnline() {
+    if(current_connection() == NULL) return -1;
+    return current_connection()->online;
+}
+
+const int ExternalUnitClientEndpoint::getAcceptedState() {
+    if(current_connection() == NULL) return -1;
+    return current_connection()->accepted_state;
+}

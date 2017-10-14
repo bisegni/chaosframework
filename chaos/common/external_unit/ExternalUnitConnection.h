@@ -30,17 +30,25 @@
 namespace chaos {
     namespace common {
         namespace external_unit {
-            class AbstractAdapter;
             class UnitEndpoint;
+            class AbstractAdapter;
+            class ExternalUnitClientEndpoint;
+            namespace http_adapter {
+                class HTTPClientAdapter;
+            }
             //! Identify an external connection
             class ExternalUnitConnection {
                 friend class AbstractServerAdapter;
                 friend class AbstractClientAdapter;
+                friend class ExternalUnitClientEndpoint;
+                friend class http_adapter::HTTPClientAdapter;
             protected:
+                //!online and accepted state usend onli for client endpoint
+                bool online;
+                int accepted_state;
                 AbstractAdapter *adapter;
                 //!endpoint that own the connection
                 UnitEndpoint *endpoint;
-                
                 //!,anage the absractio of serialization
                 ChaosUniquePtr<chaos::common::external_unit::serialization::AbstractExternalSerialization> serializer_adapter;
             protected:
@@ -60,7 +68,7 @@ namespace chaos {
                 
                 virtual void closeConnection();
                 
-                const std::string& getEndpointIdentifier() const;
+                const std::string getEndpointIdentifier() const;
             };
         }
     }

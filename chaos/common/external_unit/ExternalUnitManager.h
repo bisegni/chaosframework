@@ -86,7 +86,8 @@ new chaos::common::utility::TypedObjectInstancer<SerializerClass, serialization:
                                         const std::string& serialization,
                                         const std::string& destination);
                 //! dispose a conenction associated to an endpoint
-                int releaseConnection(ExternalUnitClientEndpoint& endpoint);
+                int releaseConnection(ExternalUnitClientEndpoint& endpoint,
+                                      const std::string& protocol);
                 
                 ChaosUniquePtr<serialization::AbstractExternalSerialization> getNewSerializationInstanceForType(const std::string& type);
                 

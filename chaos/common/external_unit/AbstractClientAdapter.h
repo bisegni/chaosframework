@@ -48,7 +48,6 @@ namespace chaos{
                                                 const std::string& endpoint_url,
                                                 const std::string& serialization) = 0;
                 virtual int removeConnectionsFromEndpoint(ExternalUnitClientEndpoint *target_endpoint) = 0;
-
             };
         }
     }

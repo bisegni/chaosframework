@@ -111,8 +111,13 @@ int ExternalUnitManager::initilizeConnection(ExternalUnitClientEndpoint& endpoin
                                                           serialization);
 }
 
-int ExternalUnitManager::releaseConnection(ExternalUnitClientEndpoint& endpoint) {
-    return 0;
+int ExternalUnitManager::releaseConnection(ExternalUnitClientEndpoint& endpoint,
+                                           const std::string& protocol) {
+    if(getServiceState() != 1) return -1;
+    LMapAdapterReadLock rl = map_protocol_adapter.getReadLockObject();
+    MapAdapterIterator it = map_protocol_adapter().find(protocol);
+    if(it == map_protocol_adapter().end()) return -2;
+    return it->second.second->removeConnectionsFromEndpoint(&endpoint);
 }
 
 ChaosUniquePtr<serialization::AbstractExternalSerialization> ExternalUnitManager::getNewSerializationInstanceForType(const std::string& type) {

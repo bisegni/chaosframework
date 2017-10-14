@@ -36,7 +36,7 @@ using namespace chaos::common::external_unit::http_adapter;
 static const char *web_socket_option="Content-Type: application/bson-json\r\n";
 
 HTTPClientAdapter::HTTPClientAdapter():
-run(NULL){}
+run(false){}
 
 HTTPClientAdapter::~HTTPClientAdapter() {
     
@@ -44,6 +44,7 @@ HTTPClientAdapter::~HTTPClientAdapter() {
 
 void HTTPClientAdapter::init(void *init_data) throw (chaos::CException) {
     mg_mgr_init(&mgr, NULL);
+    run = true;
     thread_poller.reset(new boost::thread(boost::bind(&HTTPClientAdapter::poller, this)));
 }
 
@@ -79,7 +80,7 @@ int HTTPClientAdapter::addNewConnectionForEndpoint(ExternalUnitClientEndpoint *e
     
     //!associate id to connection
     ConnectionInfoShrdPtr ci(new ConnectionInfo());
-    map_connection().insert(MapReconnectionInfoPair(ci->connection_id, ci));
+    map_connection().insert(MapReconnectionInfoPair(conn_ptr->connection_identifier, ci));
     ci->class_instance = this;
     ci->endpoint_url = endpoint_url;
     ci->ext_unit_conn = conn_ptr;
@@ -93,7 +94,31 @@ int HTTPClientAdapter::addNewConnectionForEndpoint(ExternalUnitClientEndpoint *e
 }
 
 int HTTPClientAdapter::removeConnectionsFromEndpoint(ExternalUnitClientEndpoint *target_endpoint) {
+    LMapReconnectionInfoWriteLock wlm = map_connection.getWriteLockObject();
+    
+    MapReconnectionInfoIterator conn_it =  map_connection().find(target_endpoint->getConnectionIdentifier());
+    if(conn_it == map_connection().end()) return 0;
+    //!remove from active connection map
+    map_connection().erase(conn_it);
+    //now real conenction is fre to go away
+    if(conn_it->second->conn) {
+        if(conn_it->second->ext_unit_conn->online == false) return -1;
+        mg_send_websocket_frame(conn_it->second->conn, WEBSOCKET_OP_CLOSE, "", 0);
+    }
+    else{return -2;}
+    
+    
     return 0;
+}
+
+void HTTPClientAdapter::checkAcceptResponse(struct websocket_message *wm,
+                                            bool& is_accept_response,
+                                            int& accept_result) {
+    std::string json_string((const char *)wm->data,
+                            wm->size);
+    ChaosUniquePtr<CDataWrapper> check_accepted_res = CDataWrapper::instanceFromJson(json_string);
+    is_accept_response = check_accepted_res->hasKey("accepted_connection");
+    accept_result = is_accept_response?check_accepted_res->getInt32Value("accepted_connection"):-1;
 }
 
 void HTTPClientAdapter::ev_handler(struct mg_connection *conn,
@@ -125,44 +150,46 @@ void HTTPClientAdapter::ev_handler(struct mg_connection *conn,
         case MG_EV_CONNECT: {
             ChaosWriteLock wl(ci->smux);
             int status = *((int *) event_data);
-            ci->connected = (status==0);
+            ci->ext_unit_conn->online = (status==0);
             break;
         }
         case MG_EV_WEBSOCKET_FRAME: {
+            CHAOS_ASSERT(ci->ext_unit_conn.get() != NULL);
             int err = 0;
             struct websocket_message *wm = (struct websocket_message *) event_data;
-            LMapReconnectionInfoReadLock wlm = ci->class_instance->map_connection.getReadLockObject();
-            //chec in external unit virtual conenction is present
-            MapReconnectionInfoIterator conn_it =  ci->class_instance->map_connection().find(ci->connection_id);
-            if(conn_it == ci->class_instance->map_connection().end()) {
-                ci->class_instance->sendWSJSONError(conn, -1, "Connection doesn't have an associated external unit virtual connection!");
-                return;
-            }
-            if(ci->ext_unit_conn.get()) {
-                ci->class_instance->sendWSJSONError(conn, -2, "The associated external unit virtual connection is null!");
-                return;
-            }
-            
-            ChaosUniquePtr<CDataBuffer> buffer(new CDataBuffer((const char *)wm->data,
-                                                               (uint32_t)wm->size,
-                                                               true));
-            if((err = ci->class_instance->sendDataToEndpoint(*ci->ext_unit_conn,
-                                                             ChaosMoveOperator(buffer)))) {
-                //weh don't have found the sriealizer
-                ci->class_instance->sendWSJSONError(conn, err, "Error sending data to endpoint");
+            if(ci->ext_unit_conn->accepted_state <= 0) {
+                bool is_accept_response = false;
+                int accept_result = -1;
+                //check accepted state
+                checkAcceptResponse(wm, is_accept_response, accept_result);
+                if(is_accept_response) {
+                    ci->ext_unit_conn->accepted_state = accept_result;
+                } else {
+                    ci->class_instance->sendWSJSONError(conn, -2, "Accept response is not well formed!");
+                }
+            } else {
+                //accepted connection ca received data
+                ChaosUniquePtr<CDataBuffer> buffer(new CDataBuffer((const char *)wm->data,
+                                                                   (uint32_t)wm->size,
+                                                                   true));
+                if((err = ci->class_instance->sendDataToEndpoint(*ci->ext_unit_conn,
+                                                                 ChaosMoveOperator(buffer)))) {
+                    //weh don't have found the sriealizer
+                    ci->class_instance->sendWSJSONError(conn, err, "Error sending data to endpoint");
+                }
             }
             break;
         }
         case MG_EV_CLOSE: {
             //manage the reconnection
             LMapReconnectionInfoReadLock wlm = ci->class_instance->map_connection.getReadLockObject();
-            if(ci->class_instance->map_connection().count(ci->connection_id) !=0) {
+            if(ci->class_instance->map_connection().count(ci->ext_unit_conn->connection_identifier) !=0) {
                 //in this case concnretion info need to be put into  reconnection_queue
                 //!beause conenciton need to be reopend
                 
                 //reset real connection
                 ci->conn = NULL;
-                ci->connected  = false;
+                ci->ext_unit_conn->online  = false;
                 //set retry timeout after five seconds
                 ci->next_reconnection_retry_ts = TimingUtil::getTimestampWithDelay(5000, true);
             }
@@ -180,7 +207,7 @@ int HTTPClientAdapter::sendDataToConnection(const std::string& connection_identi
     if(conn_it == map_connection().end()) return -1;
     
     if(conn_it->second->conn) {
-        if(conn_it->second->connected == false) return -3;
+        if(conn_it->second->ext_unit_conn->online == false) return -3;
         switch (opcode) {
             case EUCMessageOpcodeWhole:
                 mg_send_websocket_frame(conn_it->second->conn, WEBSOCKET_OP_TEXT, data->getBuffer(), data->getBufferSize());
@@ -208,7 +235,7 @@ int HTTPClientAdapter::closeConnection(const std::string& connection_identifier)
     if(conn_it == map_connection().end()) return 0;
     
     if(conn_it->second->conn) {
-        if(conn_it->second->connected == false) return -1;
+        if(conn_it->second->ext_unit_conn->online == false) return -1;
         mg_send_websocket_frame(conn_it->second->conn, WEBSOCKET_OP_CLOSE, "", 0);
     }
     else{return -2;}

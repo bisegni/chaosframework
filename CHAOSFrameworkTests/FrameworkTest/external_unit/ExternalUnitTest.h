@@ -40,10 +40,15 @@ protected:
     int handleReceivedeMessage(const std::string& connection_identifier,
                                chaos::common::data::CDWUniquePtr message);
 protected:
+    bool echo_received;
+    unsigned int connection_event_counter;
+    unsigned int disconnection_event_counter;
+    unsigned int received_message_counter;
 public:
     ExternalUnitTest();
     ~ExternalUnitTest();
     void SetUp();
+    void TearDown();
 };
 
 #endif /* ExternalUnitTest_h */
