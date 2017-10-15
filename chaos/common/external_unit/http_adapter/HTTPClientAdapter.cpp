@@ -56,8 +56,10 @@ void HTTPClientAdapter::deinit() throw (chaos::CException) {
 
 void HTTPClientAdapter::poller() {
     INFO << "Entering thread poller";
+    poll_counter = 0;
     while (run) {
         mg_mgr_poll(&mgr, 1);
+        if(poll_counter++ % 1000){performReconnection();}
     }
     INFO << "Leaving thread poller";
 }
@@ -105,10 +107,32 @@ int HTTPClientAdapter::removeConnectionsFromEndpoint(ExternalUnitClientEndpoint 
         if(conn_it->second->ext_unit_conn->online == false) return -1;
         mg_send_websocket_frame(conn_it->second->conn, WEBSOCKET_OP_CLOSE, "", 0);
     }
-    else{return -2;}
-    
-    
     return 0;
+}
+
+void HTTPClientAdapter::performReconnection() {
+    uint64_t cur_ts = TimingUtil::getTimeStamp();
+    //!reconnection
+    LMapReconnectionInfoReadLock wlm = map_connection.getReadLockObject();
+    for(MapReconnectionInfoIterator it = map_connection().begin(), end = map_connection().end();
+        it != end;
+        it++) {
+        if(it->second->conn == NULL &&
+           cur_ts >= it->second->next_reconnection_retry_ts) {
+            //try to reconnect
+            it->second->conn = mg_connect_ws(&mgr,
+                                             HTTPClientAdapter::ev_handler,
+                                             it->second->endpoint_url.c_str(),
+                                             "ChaosExternalUnit",
+                                             web_socket_option);
+            if(it->second->conn) {
+                it->second->conn->user_data = it->second.get();
+            } else {
+                //retry to reconnect
+                it->second->next_reconnection_retry_ts = TimingUtil::getTimestampWithDelay(5000, true);
+            }
+        }
+    }
 }
 
 void HTTPClientAdapter::checkAcceptResponse(struct websocket_message *wm,
@@ -125,28 +149,8 @@ void HTTPClientAdapter::ev_handler(struct mg_connection *conn,
                                    int event,
                                    void *event_data) {
     ConnectionInfo *ci = static_cast<ConnectionInfo*>(conn->user_data);
+    if(ci == NULL) return;
     switch (event) {
-        case MG_EV_POLL: {
-            uint64_t cur_ts = TimingUtil::getTimeStamp();
-            //!reconnection
-            LMapReconnectionInfoReadLock wlm = ci->class_instance->map_connection.getReadLockObject();
-            for(MapReconnectionInfoIterator it = ci->class_instance->map_connection().begin(), end = ci->class_instance->map_connection().end();
-                it != end;
-                it++) {
-                if(ci->conn == NULL &&
-                   cur_ts <= ci->next_reconnection_retry_ts) {
-                    //try to reconnect
-                    ci->conn = mg_connect_ws(&ci->class_instance->mgr,
-                                             HTTPClientAdapter::ev_handler,
-                                             ci->endpoint_url.c_str(),
-                                             "ChaosExternalUnit",
-                                             web_socket_option);
-                }
-            }
-            //!connection to close
-            //g_send_websocket_frame(nc, WEBSOCKET_OP_CLOSE, "", 0);
-            break;
-        }
         case MG_EV_CONNECT: {
             ChaosWriteLock wl(ci->smux);
             int status = *((int *) event_data);
@@ -186,10 +190,10 @@ void HTTPClientAdapter::ev_handler(struct mg_connection *conn,
             if(ci->class_instance->map_connection().count(ci->ext_unit_conn->connection_identifier) !=0) {
                 //in this case concnretion info need to be put into  reconnection_queue
                 //!beause conenciton need to be reopend
-                
                 //reset real connection
                 ci->conn = NULL;
                 ci->ext_unit_conn->online  = false;
+                ci->ext_unit_conn->accepted_state = -1;
                 //set retry timeout after five seconds
                 ci->next_reconnection_retry_ts = TimingUtil::getTimestampWithDelay(5000, true);
             }

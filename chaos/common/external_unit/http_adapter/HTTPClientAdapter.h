@@ -40,7 +40,6 @@ namespace chaos {
                 class HTTPClientAdapter:
                 public HTTPBaseAdapter,
                 public AbstractClientAdapter {
-                    
                     struct ConnectionInfo {
                         std::string endpoint_url;
                         uint64_t next_reconnection_retry_ts;
@@ -63,11 +62,13 @@ namespace chaos {
                     
                     bool run;
                     struct mg_mgr mgr;
+                    uint32_t poll_counter;
                     
                     //!map that hold the connection to use
                     LMapReconnectionInfo map_connection;
                     
                     void poller();
+                    void performReconnection();
                     static void ev_handler(struct mg_connection *conn,
                                            int event,
                                            void *event_data);

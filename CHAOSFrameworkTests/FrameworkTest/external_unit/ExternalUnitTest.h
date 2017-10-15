@@ -27,7 +27,7 @@
 #include <chaos/common/external_unit/external_unit.h>
 
 class ServerEndpoint:
-public chaos::common::external_unit::ExternalUnitClientEndpoint {
+public chaos::common::external_unit::ExternalUnitServerEndpoint {
 protected:
     void handleNewConnection(const std::string& connection_identifier);
 

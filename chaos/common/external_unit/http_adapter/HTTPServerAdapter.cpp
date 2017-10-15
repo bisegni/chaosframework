@@ -288,10 +288,12 @@ int HTTPServerAdapter::deregisterEndpoint(ExternalUnitServerEndpoint& endpoint) 
         end = map_connection().end();
         it != end;) {
         if(it->second->getEndpointIdentifier().compare(endpoint.getIdentifier()) == 0) {
-            //iterator need to be removed so we force to close the connection
-            it->second->closeConnection();
-            //remove connection
-            map_connection().erase(it++);
+            if(map_m_conn_ext_conn.hasRightKey(static_cast<std::string>(it->second->connection_identifier))) {
+                mg_connection *nc = reinterpret_cast<mg_connection*>(map_m_conn_ext_conn.findByRightKey(static_cast<std::string>(it->second->connection_identifier)));
+                mg_send_websocket_frame(nc, WEBSOCKET_OP_CLOSE, "", 0);
+                //remove connection
+                map_connection().erase(it++);
+            }
         } else {
             ++it;
         }
