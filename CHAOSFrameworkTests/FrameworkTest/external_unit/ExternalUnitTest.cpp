@@ -100,7 +100,7 @@ TEST_F(ExternalUnitTest, Echo) {
     ExternalUnitManager::getInstance()->initilizeConnection(*this,
                                                             "http",
                                                             "application/bson-json",
-                                                            "ws://localhost:8080/test");
+                                                            "ws://localhost:8080/echo");
     while(ExternalUnitClientEndpoint::isOnline() == false ||
           ExternalUnitClientEndpoint::getAcceptedState() != 1) {
         ASSERT_LE(retry++, 10);
