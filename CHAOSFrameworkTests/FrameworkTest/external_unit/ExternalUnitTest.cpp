@@ -103,7 +103,7 @@ TEST_F(ExternalUnitTest, Echo) {
                                                             "ws://localhost:8080/test");
     while(ExternalUnitClientEndpoint::isOnline() == false ||
           ExternalUnitClientEndpoint::getAcceptedState() != 1) {
-        ASSERT_LE(retry++, 3);
+        ASSERT_LE(retry++, 10);
         usleep(500000);
     }
     ASSERT_EQ(ExternalUnitClientEndpoint::isOnline(), true);
@@ -114,7 +114,7 @@ TEST_F(ExternalUnitTest, Echo) {
     //wait answer
     retry = 0;
     while(echo_received == false) {
-        ASSERT_LE(retry++, 3);
+        ASSERT_LE(retry++, 10);
         usleep(500000);
     }
     ASSERT_TRUE(echo_received);
@@ -137,7 +137,7 @@ TEST_F(ExternalUnitTest, Reconnection) {
     //wait connection
     while(ExternalUnitClientEndpoint::isOnline() == false ||
           ExternalUnitClientEndpoint::getAcceptedState() != 1) {
-        ASSERT_LE(retry++, 3);
+        ASSERT_LE(retry++, 10);
         usleep(500000);
     }
     ASSERT_EQ(ExternalUnitClientEndpoint::isOnline(), true);
@@ -147,7 +147,7 @@ TEST_F(ExternalUnitTest, Reconnection) {
     ASSERT_EQ(ExternalUnitManager::getInstance()->deregisterEndpoint(test_endpoint), 0);
     while(ExternalUnitClientEndpoint::isOnline() != false ||
           ExternalUnitClientEndpoint::getAcceptedState() != -1) {
-        ASSERT_LE(retry++, 3);
+        ASSERT_LE(retry++, 10);
         usleep(500000);
     }
     ASSERT_EQ(ExternalUnitClientEndpoint::isOnline(), false);
