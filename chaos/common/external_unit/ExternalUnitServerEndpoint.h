@@ -58,9 +58,7 @@ namespace chaos{
                 int removeConnection(ExternalUnitConnection& removed_connection);
                 
             protected:
-                //! end point identifier
                 std::string endpoint_identifier;
-                
                 //! send a message throught a remote connection
                 int sendMessage(const std::string& connection_identifier,
                                 chaos::common::data::CDWUniquePtr message,

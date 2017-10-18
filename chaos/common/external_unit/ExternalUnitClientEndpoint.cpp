@@ -31,7 +31,8 @@ client_identification(_client_identification){}
 
 ExternalUnitClientEndpoint::~ExternalUnitClientEndpoint() {}
 
-int ExternalUnitClientEndpoint::sendMessage(CDWUniquePtr message,
+int ExternalUnitClientEndpoint::sendMessage(const std::string& connection_identifier,
+                                            CDWUniquePtr message,
                                             const EUCMessageOpcode opcode) {
     LExternalUnitConnectionReadLock rl = current_connection.getReadLockObject();
     if(current_connection() == NULL) return -1;
@@ -41,7 +42,7 @@ int ExternalUnitClientEndpoint::sendMessage(CDWUniquePtr message,
 }
 
 std::string ExternalUnitClientEndpoint::getIdentifier() {
-    return client_identification;
+    return endpoint_identifier;
 }
 
 std::string ExternalUnitClientEndpoint::getConnectionIdentifier() {
@@ -64,21 +65,25 @@ int ExternalUnitClientEndpoint::removeConnection(ExternalUnitConnection& removed
     return 0;
 }
 
-void ExternalUnitClientEndpoint::closeConnection() {
+void ExternalUnitClientEndpoint::closeConnection(const std::string& connection_identifier) {
     LExternalUnitConnectionReadLock rl =  current_connection.getReadLockObject();
     current_connection()->closeConnection();
 }
 
-int ExternalUnitClientEndpoint::sendError(int code,
+int ExternalUnitClientEndpoint::sendError(const std::string& connection_identifier,
+                                          int code,
                                           const std::string& message,
                                           const std::string& domain) {
-    return sendMessage(ChaosMoveOperator(encodeError(code,
+    return sendMessage(current_connection()->connection_identifier,
+                       ChaosMoveOperator(encodeError(code,
                                                      message,
                                                      domain)));
 }
 
-int ExternalUnitClientEndpoint::sendError(const chaos::CException& ex) {
-    return sendMessage(ChaosMoveOperator(encodeError(ex.errorCode,
+int ExternalUnitClientEndpoint::sendError(const std::string& connection_identifier,
+                                          const chaos::CException& ex) {
+    return sendMessage(current_connection()->connection_identifier,
+                       ChaosMoveOperator(encodeError(ex.errorCode,
                                                      ex.errorMessage,
                                                      ex.errorDomain)));
 }

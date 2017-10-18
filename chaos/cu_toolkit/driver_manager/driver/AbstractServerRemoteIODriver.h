@@ -30,9 +30,14 @@ namespace chaos {
         namespace driver_manager {
             namespace driver {
                 
+                typedef AbstractRemoteIODriver<common::external_unit::ExternalUnitServerEndpoint> ServerARIODriver;
+                
                 class AbstractServerRemoteIODriver:
-                public AbstractRemoteIODriver<common::external_unit::ExternalUnitServerEndpoint> {
-                    
+                public ServerARIODriver {
+                protected:
+                    void driverInit(const char *initParameter) throw (chaos::CException);
+                    void driverInit(const chaos::common::data::CDataWrapper& init_parameter) throw(chaos::CException);
+                    void driverDeinit() throw (chaos::CException);
                 public:
                     AbstractServerRemoteIODriver():
                     AbstractRemoteIODriver<ExternalUnitServerEndpoint>() {

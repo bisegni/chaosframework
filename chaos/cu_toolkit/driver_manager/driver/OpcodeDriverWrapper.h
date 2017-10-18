@@ -23,6 +23,9 @@
 #define __CHAOSFramework__8328273_33D4_43F5_8FD4_B0B6493427DC_RemoteIODriver_h
 
 #include <chaos/cu_toolkit/driver_manager/driver/AbstractRemoteIODriver.h>
+#include <chaos/cu_toolkit/driver_manager/driver/AbstractServerRemoteIODriver.h>
+#include <chaos/cu_toolkit/driver_manager/driver/AbstractClientRemoteIODriver.h>
+#include <chaos/cu_toolkit/driver_manager/driver/AbstractRemoteIODriver.h>
 #include <chaos/cu_toolkit/driver_manager/driver/OpcodeExternalCommandMapper.h>
 #include <chaos/cu_toolkit/driver_manager/driver/RemoteIODriverProtocol.h>
 namespace chaos {
@@ -58,8 +61,8 @@ namespace chaos {
                                        chaos::common::data::CDWShrdPtr& message_response,
                                        uint32_t timeout = 5000) {
                         return ExtDriverImpl::sendRawRequest(ChaosMoveOperator(message_data),
-                                                           message_response,
-                                                           timeout);
+                                                             message_response,
+                                                             timeout);
                     }
                     
                     //!Send raw message to the remote driver
@@ -70,6 +73,16 @@ namespace chaos {
                         return ExtDriverImpl::sendRawMessage(ChaosMoveOperator(message_data));
                     }
                 };
+                
+                //marcro for helping in driver declaration
+#define EXTERNAL_CLIENT_SERVER_DRIVER_CLASS_DEFINITION(DriverNamePrefix, OpcodeLogicWrapper)\
+DEFINE_CU_DRIVER_DEFINITION_PROTOTYPE(DriverNamePrefix ## RemoteServerDriver)\
+class DriverNamePrefix ## RemoteServerDriver:\
+public chaos::cu::driver_manager::driver::OpcodeDriverWrapper<OpcodeLogicWrapper, chaos::cu::driver_manager::driver::AbstractServerRemoteIODriver> {};\
+DEFINE_CU_DRIVER_DEFINITION_PROTOTYPE(DriverNamePrefix ## RemoteClientDriver)\
+class DriverNamePrefix ## RemoteClientDriver:\
+public chaos::cu::driver_manager::driver::OpcodeDriverWrapper<OpcodeLogicWrapper, chaos::cu::driver_manager::driver::AbstractClientRemoteIODriver> {};
+                
             }
         }
     }

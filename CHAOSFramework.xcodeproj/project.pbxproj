@@ -175,6 +175,8 @@
 		3244C0C6168CB96B007C802C /* Record.h in Headers */ = {isa = PBXBuildFile; fileRef = 3244C0C5168CB96B007C802C /* Record.h */; };
 		3244D11D15ECC25800FE2F86 /* AlertEventChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3244D11B15ECC25800FE2F86 /* AlertEventChannel.cpp */; };
 		3244D11E15ECC25800FE2F86 /* AlertEventChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3244D11C15ECC25800FE2F86 /* AlertEventChannel.h */; };
+		324506E91F9792A400D69F9B /* AbstractServerRemoteIODriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324506E81F9792A400D69F9B /* AbstractServerRemoteIODriver.cpp */; };
+		324506ED1F97950700D69F9B /* AbstractClientRemoteIODriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324506EB1F97950700D69F9B /* AbstractClientRemoteIODriver.cpp */; };
 		324544F81D4A55ED0081F90B /* AbstractListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324544F61D4A55ED0081F90B /* AbstractListener.cpp */; };
 		324544F91D4A55ED0081F90B /* AbstractListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 324544F71D4A55ED0081F90B /* AbstractListener.h */; };
 		324544FC1D4A56170081F90B /* AbstractListenerContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324544FA1D4A56170081F90B /* AbstractListenerContainer.cpp */; };
@@ -1040,7 +1042,7 @@
 		32D90D591CF4A6DC00996F09 /* SearchScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D90D571CF4A6DC00996F09 /* SearchScript.cpp */; };
 		32D90D601CF4AA8200996F09 /* Script.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D90D5D1CF4AA8200996F09 /* Script.h */; };
 		32DA77661F8FA36F00497349 /* AbstractServerRemoteIODriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DA77641F8FA36F00497349 /* AbstractServerRemoteIODriver.h */; };
-		32DA776C1F8FBDC700497349 /* AbstractClientRemoteDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DA776A1F8FBDC700497349 /* AbstractClientRemoteDriver.h */; };
+		32DA776C1F8FBDC700497349 /* AbstractClientRemoteIODriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DA776A1F8FBDC700497349 /* AbstractClientRemoteIODriver.h */; };
 		32DA776E1F8FC40500497349 /* ExternalIODriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324D088B1F2F14C600836E29 /* ExternalIODriver.cpp */; };
 		32DA77701F8FC9A900497349 /* OpcodeExternalCommandMapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DA77681F8FBBCB00497349 /* OpcodeExternalCommandMapper.cpp */; };
 		32DBAFCB1C9C1745003E2769 /* NodeMonitorHandlerTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DBAFC91C9C1745003E2769 /* NodeMonitorHandlerTest.cpp */; };
@@ -1513,6 +1515,8 @@
 		3244C0C5168CB96B007C802C /* Record.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Record.h; sourceTree = "<group>"; };
 		3244D11B15ECC25800FE2F86 /* AlertEventChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlertEventChannel.cpp; sourceTree = "<group>"; };
 		3244D11C15ECC25800FE2F86 /* AlertEventChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlertEventChannel.h; sourceTree = "<group>"; };
+		324506E81F9792A400D69F9B /* AbstractServerRemoteIODriver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractServerRemoteIODriver.cpp; sourceTree = "<group>"; };
+		324506EB1F97950700D69F9B /* AbstractClientRemoteIODriver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractClientRemoteIODriver.cpp; sourceTree = "<group>"; };
 		324544F61D4A55ED0081F90B /* AbstractListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractListener.cpp; sourceTree = "<group>"; };
 		324544F71D4A55ED0081F90B /* AbstractListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractListener.h; sourceTree = "<group>"; };
 		324544FA1D4A56170081F90B /* AbstractListenerContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractListenerContainer.cpp; sourceTree = "<group>"; };
@@ -2573,7 +2577,7 @@
 		32DA77631F8E6D2800497349 /* FutureHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FutureHelper.h; sourceTree = "<group>"; };
 		32DA77641F8FA36F00497349 /* AbstractServerRemoteIODriver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AbstractServerRemoteIODriver.h; sourceTree = "<group>"; };
 		32DA77681F8FBBCB00497349 /* OpcodeExternalCommandMapper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OpcodeExternalCommandMapper.cpp; sourceTree = "<group>"; };
-		32DA776A1F8FBDC700497349 /* AbstractClientRemoteDriver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AbstractClientRemoteDriver.h; sourceTree = "<group>"; };
+		32DA776A1F8FBDC700497349 /* AbstractClientRemoteIODriver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AbstractClientRemoteIODriver.h; sourceTree = "<group>"; };
 		32DA776F1F8FC4BF00497349 /* RemoteIODriverProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteIODriverProtocol.h; sourceTree = "<group>"; };
 		32DBAFC91C9C1745003E2769 /* NodeMonitorHandlerTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeMonitorHandlerTest.cpp; sourceTree = "<group>"; };
 		32DBAFCA1C9C1745003E2769 /* NodeMonitorHandlerTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeMonitorHandlerTest.h; sourceTree = "<group>"; };
@@ -4628,8 +4632,10 @@
 				3215860C178756B40090E7E6 /* AbstractDriverPlugin.cpp */,
 				3232F457177743DC003E1D4A /* AbstractDriverPlugin.h */,
 				3252AEF91F1F9EEF0065F137 /* AbstractRemoteIODriver.h */,
+				324506E81F9792A400D69F9B /* AbstractServerRemoteIODriver.cpp */,
 				32DA77641F8FA36F00497349 /* AbstractServerRemoteIODriver.h */,
-				32DA776A1F8FBDC700497349 /* AbstractClientRemoteDriver.h */,
+				324506EB1F97950700D69F9B /* AbstractClientRemoteIODriver.cpp */,
+				32DA776A1F8FBDC700497349 /* AbstractClientRemoteIODriver.h */,
 				324D088B1F2F14C600836E29 /* ExternalIODriver.cpp */,
 				324D088C1F2F14C600836E29 /* ExternalIODriver.h */,
 				32DA77681F8FBBCB00497349 /* OpcodeExternalCommandMapper.cpp */,
@@ -6250,7 +6256,7 @@
 				323BC2841EE0362500B4D602 /* EUAbstractApiPlugin.h in Headers */,
 				324D088E1F2F14C600836E29 /* ExternalIODriver.h in Headers */,
 				3287F7E717B27621009DD6ED /* DriverManager.h in Headers */,
-				32DA776C1F8FBDC700497349 /* AbstractClientRemoteDriver.h in Headers */,
+				32DA776C1F8FBDC700497349 /* AbstractClientRemoteIODriver.h in Headers */,
 				323BC2881EE05A8B00B4D602 /* EUPluginLoader.h in Headers */,
 				32A94A891F1654040069DDA3 /* ExternalEchoEndpoint.h in Headers */,
 				325F8B521763AF2300EFE616 /* SlowCommand.h in Headers */,
@@ -7146,10 +7152,12 @@
 				3215860D178756B40090E7E6 /* AbstractDriverPlugin.cpp in Sources */,
 				324545011D4A676A0081F90B /* EventManager.cpp in Sources */,
 				32C4EF361D4F71370014F3D3 /* DatasetEvent.cpp in Sources */,
+				324506E91F9792A400D69F9B /* AbstractServerRemoteIODriver.cpp in Sources */,
 				328C84741ED33C15008B5F7D /* EULiveManagment.cpp in Sources */,
 				326BB29F1E3753E200BFA602 /* ProxyControlUnit.cpp in Sources */,
 				3252A30F1C8ED2A800900FF2 /* AbstractAttributeHandler.cpp in Sources */,
 				326DB4C114B3A3E50018A8D0 /* ControlManager.cpp in Sources */,
+				324506ED1F97950700D69F9B /* AbstractClientRemoteIODriver.cpp in Sources */,
 				326DB4C814B3A3E50018A8D0 /* DataManager.cpp in Sources */,
 				325168CE1D479BAB00E877DF /* data_manager_types.cpp in Sources */,
 				3264138D1E3F658D0035E175 /* ControlUnitApiInterface.cpp in Sources */,

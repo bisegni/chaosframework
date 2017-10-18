@@ -51,19 +51,22 @@ namespace chaos{
                 int removeConnection(::chaos::common::external_unit::ExternalUnitConnection& removed_connection);
                 
             protected:
-                
+                std::string endpoint_identifier;
                 //! send a message throught a remote connection
-                int sendMessage(::chaos::common::data::CDWUniquePtr message,
+                int sendMessage(const std::string& connection_identifier,
+                                ::chaos::common::data::CDWUniquePtr message,
                                 const EUCMessageOpcode opcode = EUCMessageOpcodeWhole);
                 //! send an error to remote driver
-                int sendError(int error_code,
+                int sendError(const std::string& connection_identifier,
+                              int error_code,
                               const std::string& error_message,
                               const std::string& error_domain);
                 //! send an error to remote driver
-                int sendError(const chaos::CException& ex);
+                int sendError(const std::string& connection_identifier,
+                              const chaos::CException& ex);
                 
                 //!close the connection
-                void closeConnection();
+                void closeConnection(const std::string& connection_identifier);
                 
                 ExternalUnitClientEndpoint();
             public:

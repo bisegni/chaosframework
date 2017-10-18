@@ -137,7 +137,9 @@ SET(common_lib_src ${common_lib_src}
         external_unit/ExternalUnitConnection.cpp
         external_unit/ExternalUnitClientEndpoint.cpp
         external_unit/ExternalUnitServerEndpoint.cpp
-        external_unit/ExternalEchoEndpoint.cpp)
+        external_unit/ExternalEchoEndpoint.cpp
+        external_unit/ExternalUnitClientEndpoint.cpp
+        external_unit/ExternalUnitServerEndpoint.cpp)
 
 SET(common_lib_src ${common_lib_src}
         external_unit/serialization/AbstractExternalSerialization.cpp
