@@ -22,6 +22,9 @@
 
 using namespace chaos::cu::driver_manager::driver;
 
+#define INFO    INFO_LOG(AbstractServerRemoteIODriver)
+#define DBG     DBG_LOG(AbstractServerRemoteIODriver)
+#define ERR     ERR_LOG(AbstractServerRemoteIODriver)
 
 void AbstractServerRemoteIODriver::driverInit(const char *initParameter) throw (chaos::CException) {
     INFO << "Init driver:"<<initParameter;

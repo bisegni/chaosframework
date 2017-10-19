@@ -41,9 +41,9 @@
 #define MESSAGE                 "message"
 #define REQUEST_IDENTIFICATION  "request_id"
 
-#define INFO    INFO_LOG(AbstractCDataWrapperIODriver)
-#define DBG        DBG_LOG(AbstractCDataWrapperIODriver)
-#define ERR        ERR_LOG(AbstractCDataWrapperIODriver)
+#define AbstractRemoteIODriver_INFO    INFO_LOG(AbstractCDataWrapperIODriver)
+#define AbstractRemoteIODriver_DBG        DBG_LOG(AbstractCDataWrapperIODriver)
+#define AbstractRemoteIODriver_ERR        ERR_LOG(AbstractCDataWrapperIODriver)
 
 namespace chaos {
     namespace cu {
@@ -67,34 +67,33 @@ namespace chaos {
                 public chaos::cu::driver_manager::driver::AbstractDriverPlugin,
                 public EndpointType,
                 protected CDWShrdPtrFutureHelper {
+                    typedef enum {
+                        RDConnectionPhaseDisconnected,
+                        RDConnectionPhaseConnected,
+                        RDConnectionPhaseAutorized,
+                    } RDConnectionPhase;
+                    
+                    CHAOS_DEFINE_LOCKABLE_OBJECT(std::string, LString);
+                    LString             current_connection_identifier;
+                    std::string         authorization_key;
+                    RDConnectionPhase   conn_phase;
                 protected:
                     //!initialization and deinitialization driver methods
                     void driverInit(const char *initParameter) throw (chaos::CException) {
-                        INFO << "Init driver:"<<initParameter;
-                        CHECK_ASSERTION_THROW_AND_LOG(isDriverParamInJson(), ERR, -1, "Init parameter need to be formated in a json document");
-                        Json::Value root_param_document = getDriverParamJsonRootElement();
-                        Json::Value jv_authorization_key = root_param_document[AUTHORIZATION_KEY];
-                        CHECK_ASSERTION_THROW_AND_LOG((jv_authorization_key.isNull() == false), ERR, -3, "The authorization key is mandatory");
-                        
-                        if(jv_authorization_key.isNull() == false) {
-                            authorization_key = jv_authorization_key.asString();
-                        }
-                        
-                        CHECK_ASSERTION_THROW_AND_LOG(authorization_key.size(), ERR, -4, "The authorization key cannot be zero lenght");
-                        
-                        CDWShrdPtrFutureHelper::init(NULL);
                         }
                         void driverInit(const chaos::common::data::CDataWrapper& init_parameter) throw(chaos::CException) {
-                            CHECK_ASSERTION_THROW_AND_LOG((init_parameter.isEmpty() == false), ERR, -1, "Init parameter need to be formated in a json document");
-                            CHECK_ASSERTION_THROW_AND_LOG(init_parameter.hasKey(AUTHORIZATION_KEY), ERR, -3, "The authorization key is mandatory")
+                            CHECK_ASSERTION_THROW_AND_LOG((init_parameter.isEmpty() == false), AbstractRemoteIODriver_ERR, -1, "Init parameter need to be formated in a json document");
+                            //CHECK_ASSERTION_THROW_AND_LOG(init_parameter.hasKey(AUTHORIZATION_KEY), AbstractRemoteIODriver_ERR, -3, "The authorization key is mandatory")
                             //get the authorization key
-                            authorization_key = init_parameter.getStringValue(AUTHORIZATION_KEY);
-                            CHECK_ASSERTION_THROW_AND_LOG(authorization_key.size(), ERR, -4, "The authorization key cannot be zero lenght");
-                            
+                            if(init_parameter.hasKey(AUTHORIZATION_KEY)) {
+                                authorization_key = init_parameter.getStringValue(AUTHORIZATION_KEY);
+                            } else {
+                                authorization_key = "";
+                            }
                             CDWShrdPtrFutureHelper::init(NULL);
                         }
                         void driverDeinit() throw (chaos::CException) {
-                            INFO << "Deinit driver";
+                            AbstractRemoteIODriver_INFO << "Deinit driver";
                             CHAOS_NOT_THROW(CDWShrdPtrFutureHelper::deinit();)
                         }
                     public:
@@ -120,10 +119,15 @@ namespace chaos {
                                 case RDConnectionPhaseDisconnected:
                                     return AR_ERROR_NO_CONNECTION;
                                     break;
-                                case RDConnectionPhaseConnected:
+                                case RDConnectionPhaseConnected: {
                                     CHAOS_ASSERT(current_connection_identifier().size());
-                                    return AR_ERROR_NOT_AUTORIZED;
-                                    break;
+                                    if(authorization_key.size() != 0) {
+                                        return AR_ERROR_NOT_AUTORIZED;
+                                        break;
+                                    } else {
+                                        conn_phase = RDConnectionPhaseAutorized;
+                                    }
+                                }
                                 case RDConnectionPhaseAutorized:
                                     //we can proceeed
                                     break;
@@ -159,10 +163,15 @@ namespace chaos {
                                 case RDConnectionPhaseDisconnected:
                                     return AR_ERROR_NO_CONNECTION;
                                     break;
-                                case RDConnectionPhaseConnected:
+                                case RDConnectionPhaseConnected: {
                                     CHAOS_ASSERT(current_connection_identifier().size());
-                                    return AR_ERROR_NOT_AUTORIZED;
-                                    break;
+                                    if(authorization_key.size() != 0) {
+                                        return AR_ERROR_NOT_AUTORIZED;
+                                        break;
+                                    } else {
+                                        conn_phase = RDConnectionPhaseAutorized;
+                                    }
+                                }
                                 case RDConnectionPhaseAutorized:
                                     //we can proceeed
                                     break;
@@ -175,11 +184,6 @@ namespace chaos {
                             return AR_ERROR_OK;
                         }
                     protected:
-                        typedef enum {
-                            RDConnectionPhaseDisconnected,
-                            RDConnectionPhaseConnected,
-                            RDConnectionPhaseAutorized,
-                        } RDConnectionPhase;
                         //! handle called when a new message has been received
                         /*!
                          A new message has been received from the rmeote server in an asyc way. It
@@ -209,11 +213,6 @@ namespace chaos {
                             return AR_ERROR_OK;
                         }
                     private:
-                        CHAOS_DEFINE_LOCKABLE_OBJECT(std::string, LString);
-                        LString             current_connection_identifier;
-                        std::string         authorization_key;
-                        RDConnectionPhase   conn_phase;
-                        
                         //!inherited method by @ExternalUnitEndpoint
                         void handleNewConnection(const std::string& connection_identifier){
                             LStringWriteLock wl = current_connection_identifier.getWriteLockObject();

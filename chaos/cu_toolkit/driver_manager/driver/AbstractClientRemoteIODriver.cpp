@@ -20,36 +20,39 @@
  */
 #include <chaos/cu_toolkit/driver_manager/driver/AbstractClientRemoteIODriver.h>
 
+#define INFO    INFO_LOG(AbstractClientRemoteIODriver)
+#define DBG     DBG_LOG(AbstractClientRemoteIODriver)
+#define ERR     ERR_LOG(AbstractClientRemoteIODriver)
+
 using namespace chaos::cu::driver_manager::driver;
 
 void AbstractClientRemoteIODriver::driverInit(const char *initParameter) throw (chaos::CException) {
-    INFO << "Init driver:"<<initParameter;
-    CHECK_ASSERTION_THROW_AND_LOG(isDriverParamInJson(), ERR, -1, "Init parameter need to be formated in a json document");
-    
-    Json::Value root_param_document = getDriverParamJsonRootElement();
-    
-    Json::Value jv_endpoint_name = root_param_document["endpoint_name"];
-    CHECK_ASSERTION_THROW_AND_LOG((jv_endpoint_name.isNull() == false), ERR, -2, "The endpoint name is mandatory");
-    
-    //! end point identifier & authorization key
-    ExternalUnitClientEndpoint::endpoint_identifier = jv_endpoint_name.asString();
-    CHECK_ASSERTION_THROW_AND_LOG((ExternalUnitClientEndpoint::endpoint_identifier.size() > 0), ERR, -4, "The endpoint name is empty");
-    
-    ClientARIODriver::driverInit(initParameter);
-    
+    LOG_AND_TROW(ERR, -1, "AbstractClientRemoteIODriver can be initilized only with json document");
 }
 void AbstractClientRemoteIODriver::driverInit(const chaos::common::data::CDataWrapper& init_parameter) throw(chaos::CException) {
-    
     CHECK_ASSERTION_THROW_AND_LOG((init_parameter.isEmpty() == false), ERR, -1, "Init parameter need to be formated in a json document");
-    CHECK_ASSERTION_THROW_AND_LOG(init_parameter.hasKey("endpoint_name"), ERR, -2, "The endpoint name is mandatory");
-    
+    CHECK_ASSERTION_THROW_AND_LOG(init_parameter.hasKey("uri"), ERR, -2, "The hostname name is mandatory");
+    const std::string uri = init_parameter.getStringValue("uri");
+    CHECK_ASSERTION_THROW_AND_LOG(uri.size() != 0, ERR, -3, "The uri parameter can't be empty string");
     //! end point identifier & authorization key
-    ExternalUnitClientEndpoint::endpoint_identifier = init_parameter.getStringValue("endpoint_name");
+    if(init_parameter.hasKey("endpoint_name")){
+        ExternalUnitClientEndpoint::endpoint_identifier = init_parameter.getStringValue("endpoint_name");
+    } else {
+        ExternalUnitClientEndpoint::endpoint_identifier = init_parameter.getStringValue("uri");
+    }
     CHECK_ASSERTION_THROW_AND_LOG((ExternalUnitClientEndpoint::endpoint_identifier.size() > 0), ERR, -4, "The endpoint name is empty");
+    //register this driver as external endpoint
+    chaos::common::external_unit::ExternalUnitManager::getInstance()->initilizeConnection(*this,
+                                                                                          "http",
+                                                                                          "application/bson-json",
+                                                                                          uri);
+    
     
     ClientARIODriver::driverInit(init_parameter);
 }
 void AbstractClientRemoteIODriver::driverDeinit() throw (chaos::CException) {
     INFO << "Deinit driver";
+    chaos::common::external_unit::ExternalUnitManager::getInstance()->releaseConnection(*this,
+                                                                                        "http");
     CHAOS_NOT_THROW(ClientARIODriver::driverDeinit();)
 }
