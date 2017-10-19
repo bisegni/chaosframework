@@ -6,8 +6,6 @@
 #include <QThreadPool>
 
 #include <chaos/common/data/CDataWrapper.h>
-#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
-
 
 class ApiAsyncProcessor:
         public QObject

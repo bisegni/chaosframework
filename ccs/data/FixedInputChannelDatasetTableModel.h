@@ -3,10 +3,6 @@
 
 #include "AttributeValueChangeSet.h"
 #include "ChaosAbstractDataSetTableModel.h"
-
-#include <chaos/common/chaos_constants.h>
-#include <chaos/common/data/CDataWrapper.h>
-
 #include <boost/dynamic_bitset.hpp>
 
 #include <QVector>

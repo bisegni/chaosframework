@@ -3,9 +3,6 @@
 
 #include "AttributeReader.h"
 
-#include <chaos/common/chaos_constants.h>
-#include <chaos/common/data/CDataWrapperKeyValueSetter.h>
-
 #include <QObject>
 #include <QVariant>
 #include <QSharedPointer>

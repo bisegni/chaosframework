@@ -6,9 +6,6 @@
 #include <QVector>
 #include <QSharedPointer>
 
-#include <chaos/common/data/CDataWrapper.h>
-#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
-
 class DatasetAttributeListModel:
         public ChaosAbstractListModel {
     Q_OBJECT

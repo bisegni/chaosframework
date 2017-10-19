@@ -3,8 +3,6 @@
 
 #include <QDialog>
 
-#include <chaos_service_common/data/dataset/AlgorithmVariable.h>
-
 namespace Ui {
 class EditableScriptVariableTableModelEditDialog;
 }

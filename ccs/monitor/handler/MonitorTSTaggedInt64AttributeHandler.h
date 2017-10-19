@@ -3,7 +3,6 @@
 #include <QObject>
 #include "AbstractTSTaggedAttributeHandler.h"
 
-#include <chaos_metadata_service_client/monitor_system/monitor_system.h>
 
 class MonitorTSTaggedInt64AttributeHandler:
         public AbstractTSTaggedAttributeHandler,

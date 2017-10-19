@@ -7,7 +7,9 @@
 QT += core gui sql
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
-#CONFIG += c++11
+PRECOMPILED_HEADER = precomp_header.h
+CONFIG += precompile_header
+
 QMAKE_CXXFLAGS += -std=c++11
 QMAKE_MAC_SDK = macosx10.12
 
@@ -302,7 +304,8 @@ HEADERS  += \
     language_editor/JsonEditor.h \
     node/agent/AgentSetting.h \
     widget/CQTableView.h \
-    widget/CPropertyPushButton.h
+    widget/CPropertyPushButton.h\
+    precomp_header.h
 
 FORMS    += \
     search/searchnoderesult.ui \

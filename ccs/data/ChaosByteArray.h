@@ -3,7 +3,6 @@
 
 #include <QObject>
 #include <QByteArray>
-#include <chaos_metadata_service_client/monitor_system/monitor_system.h>
 
 class ChaosByteArray:
         public QObject {

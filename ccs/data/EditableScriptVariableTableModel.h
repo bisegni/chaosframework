@@ -3,8 +3,6 @@
 
 #include "ChaosAbstractTableModel.h"
 
-#include <chaos_service_common/data/dataset/AlgorithmVariable.h>
-
 class EditableScriptVariableTableModel:
         public ChaosAbstractTableModel {
 public:

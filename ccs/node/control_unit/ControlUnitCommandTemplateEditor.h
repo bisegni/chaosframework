@@ -6,7 +6,6 @@
 
 #include <QDialog>
 #include <QAbstractButton>
-#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
 
 namespace Ui {
 class ControlUnitCommandTemplateEditor;
