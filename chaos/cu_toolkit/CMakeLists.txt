@@ -12,7 +12,9 @@ SET(cu_lib_src ${cu_lib_src}
         driver_manager/driver/DriverPluginLoader.cpp
         driver_manager/driver/AbstractDriverPlugin.cpp
         driver_manager/driver/ExternalIODriver.cpp
-        driver_manager/driver/OpcodeExternalCommandMapper.cpp)
+        driver_manager/driver/OpcodeExternalCommandMapper.cpp
+        driver_manager/driver/AbstractServerRemoteIODriver.cpp
+        driver_manager/driver/AbstractClientRemoteIODriver.cpp)
 
 SET(cu_lib_src ${cu_lib_src}
         driver_manager/driver/BasicIODriver.cpp
