@@ -166,14 +166,15 @@ pages:
     stage: documentation
     image: alpine
     script:
+      - rm -rf public/$CI_BUILD_REF_NAME
       - apk update && apk add doxygen
       - doxygen doc/doxygen.cfg
       - mkdir -p public/$CI_BUILD_REF_NAME/
       - mv doc/html/* public/$CI_BUILD_REF_NAME/
     when: always
-    artifacts:
-        paths:
-            - public
+#    artifacts:
+#        paths:
+#            - public
     allow_failure: true
     only:
       - web
