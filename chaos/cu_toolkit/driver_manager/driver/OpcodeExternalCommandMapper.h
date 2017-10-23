@@ -58,6 +58,10 @@ namespace chaos {
                     
                     virtual ~OpcodeExternalCommandMapper();
                     
+                    virtual void driverInit(const chaos::common::data::CDataWrapper& init_parameter) throw(chaos::CException);
+                    
+                    virtual void driverDeinit() throw(chaos::CException);
+                    
                     virtual int asyncMessageReceived(chaos::common::data::CDWUniquePtr message) = 0;
                 };
                 

@@ -52,6 +52,16 @@ namespace chaos {
                     opcode_ext_cmd_mapper(new OpExCMDAdaptor(this)){}
                     ~OpcodeDriverWrapper() {}
                     
+                    void driverInit(const chaos::common::data::CDataWrapper& init_parameter) throw(chaos::CException) {
+                        ExtDriverImpl::driverInit(init_parameter);
+                        opcode_ext_cmd_mapper->driverInit(init_parameter);
+                    }
+                    
+                    void driverDeinit() throw(chaos::CException) {
+                        opcode_ext_cmd_mapper->driverDeinit();
+                        ExtDriverImpl::driverDeinit();
+                    }
+                    
                     //!Send raw request to the remote driver
                     /*!
                      \param message_data is the raw data to be transmitted to the remote driver
