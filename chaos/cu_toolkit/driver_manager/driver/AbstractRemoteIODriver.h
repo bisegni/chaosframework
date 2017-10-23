@@ -38,8 +38,8 @@
 
 #define AUTHORIZATION_KEY        "authorization_key"
 #define AUTHORIZATION_STATE      "authorization_state"
-#define MESSAGE                 "message"
-#define REQUEST_IDENTIFICATION  "request_id"
+#define MESSAGE                  "msg"
+#define REQUEST_IDENTIFICATION   "req_id"
 
 #define AbstractRemoteIODriver_INFO    INFO_LOG(AbstractCDataWrapperIODriver)
 #define AbstractRemoteIODriver_DBG        DBG_LOG(AbstractCDataWrapperIODriver)

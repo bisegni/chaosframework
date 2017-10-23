@@ -28,12 +28,12 @@ using namespace chaos::micro_unit_toolkit::connection::connection_adapter;
 
 RemoteMessage::RemoteMessage(const DataPackSharedPtr& _message):
 message(_message),
-is_request((message->hasKey("request_id") && message->isInt32("request_id"))),
-message_id(is_request?message->getInt32("request_id"):0){
+is_request((message->hasKey("req_id") && message->isInt32("req_id"))),
+message_id(is_request?message->getInt32("req_id"):0){
     if(is_request &&
-       message->hasKey("message") &&
-       message->isDataPack("message")) {
-        request_message.reset(message->getDataPack("message").release());
+       message->hasKey("msg") &&
+       message->isDataPack("msg")) {
+        request_message.reset(message->getDataPack("msg").release());
     }
 }
 
