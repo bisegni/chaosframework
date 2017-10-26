@@ -300,9 +300,17 @@ ENDIF ()
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${FrameworkLib})
 
 
-
+FILE(GLOB files "external_unit/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/common/external_unit)
 FILE(GLOB files "*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common)
+
+FILE(GLOB files "alarm/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/common/alarm)
+
+FILE(GLOB files "state_flag/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/common/state_flag)
+
 FILE(GLOB files "metadata_logging/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/metadata_logging)
 FILE(GLOB files "async_central/*.h")
@@ -410,10 +418,10 @@ INSTALL(FILES ${files} DESTINATION include/chaos/common/script/lua)
 FILE(GLOB files "script/lua/core/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/script/lua/core)
 
+
 INSTALL(TARGETS ${PROJECT_NAME}
         DESTINATION "lib"
         PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
-
 # INSTALL(TARGETS chaos_common_static
 #         DESTINATION "lib"
 #         PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
