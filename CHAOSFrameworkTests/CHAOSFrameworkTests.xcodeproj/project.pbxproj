@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3206CE281FA1DA9B0059A4A4 /* TestCDataWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3206CE271FA1DA9B0059A4A4 /* TestCDataWrapper.cpp */; };
 		322EE8811F825D8000D89824 /* MemcachedEmbedded.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322EE8801F825D8000D89824 /* MemcachedEmbedded.cpp */; };
 		32639FE91F6AAD990049089C /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32639FE81F6AAD990049089C /* main.cpp */; };
 		32639FEF1F6AB21E0049089C /* TemplateKeyValueHashMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329943621D6B468E008DBAE9 /* TemplateKeyValueHashMap.cpp */; };
@@ -81,6 +82,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3206CE271FA1DA9B0059A4A4 /* TestCDataWrapper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestCDataWrapper.cpp; sourceTree = "<group>"; };
 		321E59301D7457FF00365F57 /* TestBatchDefault.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestBatchDefault.cpp; sourceTree = "<group>"; };
 		321E59311D7457FF00365F57 /* TestBatchDefault.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestBatchDefault.h; sourceTree = "<group>"; };
 		322EE87F1F825D8000D89824 /* MemcachedEmbedded.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MemcachedEmbedded.h; sourceTree = "<group>"; };
@@ -317,6 +319,7 @@
 			isa = PBXGroup;
 			children = (
 				32DA77731F94AD6D00497349 /* TestVariant.cpp */,
+				3206CE271FA1DA9B0059A4A4 /* TestCDataWrapper.cpp */,
 			);
 			path = data;
 			sourceTree = "<group>";
@@ -575,6 +578,7 @@
 				32A735331F6C399E00008145 /* PropertyTest.cpp in Sources */,
 				32818B421F828FBE004A409E /* BatchComandTest.cpp in Sources */,
 				32639FF31F6ABB980049089C /* TestStateFlagCatalog.cpp in Sources */,
+				3206CE281FA1DA9B0059A4A4 /* TestCDataWrapper.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -30,9 +30,9 @@ class ServerEndpoint:
 public chaos::common::external_unit::ExternalUnitServerEndpoint {
 protected:
     void handleNewConnection(const std::string& connection_identifier);
-
+    
     void handleDisconnection(const std::string& connection_identifier);
-
+    
     int handleReceivedeMessage(const std::string& connection_identifier,
                                chaos::common::data::CDWUniquePtr message);
 public:
@@ -58,6 +58,7 @@ protected:
                                chaos::common::data::CDWUniquePtr message);
 protected:
     bool echo_received;
+    std::string current_connection;
     unsigned int connection_event_counter;
     unsigned int disconnection_event_counter;
     unsigned int received_message_counter;

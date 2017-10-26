@@ -57,9 +57,9 @@ ExternalUnitClientEndpoint("EchoTest"){}
 
 ExternalUnitTest::~ExternalUnitTest(){}
 
-void ExternalUnitTest::handleNewConnection(const std::string& connection_identifier) {connection_event_counter++;}
+void ExternalUnitTest::handleNewConnection(const std::string& connection_identifier) {current_connection = connection_identifier;connection_event_counter++;}
 
-void ExternalUnitTest::handleDisconnection(const std::string& connection_identifier) {disconnection_event_counter++;}
+void ExternalUnitTest::handleDisconnection(const std::string& connection_identifier) {current_connection.clear();disconnection_event_counter++;}
 
 int ExternalUnitTest::handleReceivedeMessage(const std::string& connection_identifier,
                                              chaos::common::data::CDWUniquePtr message) {
@@ -110,7 +110,7 @@ TEST_F(ExternalUnitTest, Echo) {
     ASSERT_EQ(ExternalUnitClientEndpoint::getAcceptedState(), 1);
     
     //send echo message
-    ASSERT_EQ(sendMessage(ChaosMoveOperator(message)),0);
+    ASSERT_EQ(sendMessage(current_connection, ChaosMoveOperator(message)),0);
     //wait answer
     retry = 0;
     while(echo_received == false) {
