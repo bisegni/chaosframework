@@ -25,30 +25,32 @@
 using namespace chaos::common::data;
 
 TEST(VariantTest, Normal) {
-    CDataVariant str_v("35.5");
-    CDataVariant neg_str_v("-35.5");
-    CDataVariant double_v(35.5);
-    CDataVariant neg_double_v(-35.5);
-    
+    CDataVariant str_v("36.6");
+    CDataVariant neg_str_v("-36.6");
+    CDataVariant double_v(36.6);
+    CDataVariant neg_double_v(-36.6);
+
     //str variant
-    ASSERT_EQ(static_cast<double>(str_v), 35.5);
-    ASSERT_EQ(static_cast<int32_t>(str_v), 35);
+    ASSERT_EQ(static_cast<double>(str_v), 36.6);
+    ASSERT_EQ(static_cast<int32_t>(str_v), 36);
     ASSERT_TRUE(static_cast<bool>(str_v));
-    ASSERT_STREQ(static_cast< ChaosSharedPtr<CDataBuffer> >(str_v)->getBuffer(), "35.5");
+    ASSERT_STREQ(static_cast< ChaosSharedPtr<CDataBuffer> >(str_v)->getBuffer(), "36.6");
     
     //neg str variant
-    ASSERT_EQ(static_cast<double>(neg_str_v), -35.5);
-    ASSERT_EQ(static_cast<int32_t>(neg_str_v), -35);
+    ASSERT_EQ(static_cast<double>(neg_str_v), -36.6);
+    ASSERT_EQ(static_cast<int32_t>(neg_str_v), -36);
     ASSERT_TRUE(static_cast<bool>(neg_str_v));
-    ASSERT_STREQ(static_cast< ChaosSharedPtr<CDataBuffer> >(neg_str_v)->getBuffer(), "-35.5");
+    ASSERT_STREQ(static_cast< ChaosSharedPtr<CDataBuffer> >(neg_str_v)->getBuffer(), "-36.6");
     
     //double variant
-    ASSERT_EQ(static_cast<double>(double_v), 35.5);
-    ASSERT_EQ(static_cast<int32_t>(double_v), 35);
+    ASSERT_STREQ(double_v.asString(2).c_str(), "36.60");
+    ASSERT_STREQ(double_v.asString().c_str(), "36.6");
+    ASSERT_EQ(static_cast<int32_t>(double_v), 36);
     ASSERT_TRUE(static_cast<bool>(double_v));
     
     //double neg variant
-    ASSERT_EQ(static_cast<double>(neg_double_v), -35.5);
-    ASSERT_EQ(static_cast<int32_t>(neg_double_v), -35);
+    ASSERT_STREQ(neg_double_v.asString(2).c_str(), "-36.60");
+    ASSERT_STREQ(neg_double_v.asString().c_str(), "-36.6");
+    ASSERT_EQ(static_cast<int32_t>(neg_double_v), -36);
     ASSERT_TRUE(static_cast<bool>(neg_double_v));
 }

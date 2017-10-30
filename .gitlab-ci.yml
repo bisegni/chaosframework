@@ -158,25 +158,25 @@ exp_llvm_scan_coverity:
     only:
       - web
 
-pages:
-    tags:
-      - chaos
-      - docker
-      - linux
-    stage: documentation
-    image: alpine
-    script:
-      - rm -rf public/$CI_BUILD_REF_NAME
-      - apk update && apk add doxygen
-      - doxygen doc/doxygen.cfg
-      - mkdir -p public/$CI_BUILD_REF_NAME/
-      - mv doc/html/* public/$CI_BUILD_REF_NAME/
-    when: always
+# pages:
+#     tags:
+#       - chaos
+#       - docker
+#       - linux
+#     stage: documentation
+#     image: alpine
+#     script:
+#       - rm -rf public/$CI_BUILD_REF_NAME
+#       - apk update && apk add doxygen
+#       - doxygen doc/doxygen.cfg
+#       - mkdir -p public/$CI_BUILD_REF_NAME/
+#       - mv doc/html/* public/$CI_BUILD_REF_NAME/
+#     when: always
 #    artifacts:
 #        paths:
 #            - public
-    allow_failure: true
-    only:
-      - web
-      - schedules
-      - triggers
+    # allow_failure: true
+    # only:
+    #   - web
+    #   - schedules
+    #   - triggers

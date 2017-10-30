@@ -20,7 +20,7 @@
  */
 #include <chaos/common/data/CDataWrapper.h>
 #include <gtest/gtest.h>
-
+#include <boost/lexical_cast.hpp>
 using namespace chaos::common::data;
 
 TEST(CDataWrapperTest, Normal) {
@@ -28,8 +28,9 @@ TEST(CDataWrapperTest, Normal) {
     data_pack.addBoolValue("bv", (int32_t)0);
     data_pack.addInt32Value("i32v", (int32_t)0);
     data_pack.addInt64Value("i64v", (int64_t)0);
-    data_pack.addDoubleValue("dbv", (double)0);
-    
+    data_pack.addDoubleValue("dbv", (double)36.6);
+    double test_double_1 = boost::lexical_cast<double>("36.6");
+    double test_double_2 = 36.6;
     const std::string json_serialization = data_pack.getJSONString();
     CDWUniquePtr deserialized = CDataWrapper::instanceFromJson(json_serialization);
     ASSERT_TRUE(deserialized->isDoubleValue("dbv"));

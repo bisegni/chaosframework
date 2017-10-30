@@ -34,15 +34,32 @@
 class n ## _visitor:\
 public boost::static_visitor< t > {\
 public:\
-    t operator()(const bool bv) const;\
-    t operator()(const int32_t i32v) const;\
-    t operator()(const uint32_t ui32v) const;\
-    t operator()(const int64_t i64v) const;\
-    t operator()(const uint64_t ui64v) const;\
-    t operator()(double dv) const;\
-    t operator()(const std::string& str) const;\
-    t operator()(const ChaosSharedPtr<chaos::common::data::CDataBuffer>& buffer) const;\
-    t operator()(const ChaosSharedPtr<chaos::common::data::CDataWrapper>& buffer) const;\
+t operator()(const bool bv) const;\
+t operator()(const int32_t i32v) const;\
+t operator()(const uint32_t ui32v) const;\
+t operator()(const int64_t i64v) const;\
+t operator()(const uint64_t ui64v) const;\
+t operator()(double dv) const;\
+t operator()(const std::string& str) const;\
+t operator()(const ChaosSharedPtr<chaos::common::data::CDataBuffer>& buffer) const;\
+t operator()(const ChaosSharedPtr<chaos::common::data::CDataWrapper>& buffer) const;\
+};
+
+#define CHAOS_VARIANT_DEFINE_VISITOR_WITH_NAME_TYPE_PARAM(n,t,p)\
+class n ## _visitor:\
+public boost::static_visitor< t > {\
+p param;\
+public:\
+n ## _visitor(p _param):param(_param){};\
+t operator()(const bool bv) const;\
+t operator()(const int32_t i32v) const;\
+t operator()(const uint32_t ui32v) const;\
+t operator()(const int64_t i64v) const;\
+t operator()(const uint64_t ui64v) const;\
+t operator()(double dv) const;\
+t operator()(const std::string& str) const;\
+t operator()(const ChaosSharedPtr<chaos::common::data::CDataBuffer>& buffer) const;\
+t operator()(const ChaosSharedPtr<chaos::common::data::CDataWrapper>& buffer) const;\
 };
 
 #define CHAOS_VARIANT_DEFINE_VISITOR_WITH_TYPE(t) CHAOS_VARIANT_DEFINE_VISITOR_WITH_NAME_TYPE(t,t)
@@ -56,10 +73,10 @@ namespace chaos {
             CHAOS_VARIANT_DEFINE_VISITOR_WITH_TYPE(int64_t);
             CHAOS_VARIANT_DEFINE_VISITOR_WITH_TYPE(uint64_t);
             CHAOS_VARIANT_DEFINE_VISITOR_WITH_TYPE(double);
-            CHAOS_VARIANT_DEFINE_VISITOR_WITH_NAME_TYPE(string, std::string);
+            CHAOS_VARIANT_DEFINE_VISITOR_WITH_NAME_TYPE_PARAM(string, std::string, int);
             CHAOS_VARIANT_DEFINE_VISITOR_WITH_NAME_TYPE(CDataBuffer, ChaosSharedPtr<chaos::common::data::CDataBuffer>);
             CHAOS_VARIANT_DEFINE_VISITOR_WITH_NAME_TYPE(CDataWrapper, ChaosSharedPtr<chaos::common::data::CDataWrapper>);
-
+            
             
             /*!
              * Chaos variant implementation that host all dataset CHAOS data type
@@ -75,7 +92,11 @@ namespace chaos {
                 bool,
                 std::string,
                 ChaosSharedPtr<chaos::common::data::CDataBuffer>,
-				ChaosSharedPtr<chaos::common::data::CDataWrapper> > _internal_variant;
+                ChaosSharedPtr<chaos::common::data::CDataWrapper> > _internal_variant;
+                
+                inline static void dtoS(double source,
+                                        std::string& converted,
+                                        unsigned int precision);
             public:
                 explicit CDataVariant(DataType::DataType _type,
                                       const void *_value_pointer,
@@ -91,9 +112,9 @@ namespace chaos {
                 //! take the ownership of the object
                 explicit CDataVariant(CDataBuffer *buffer_value);
                 explicit CDataVariant(CDataWrapper *buffer_value);
-
+                
                 CDataVariant(const CDataVariant& to_copy);
-
+                
                 CDataVariant();
                 
                 CDataVariant& operator=(const CDataVariant& arg);
@@ -119,7 +140,7 @@ namespace chaos {
                 bool asBool() const;
                 operator bool() const;
                 
-                const std::string asString() const;
+                const std::string asString(int precision = -1) const;
                 operator std::string() const;
                 
                 const chaos::common::data::CDataBuffer *const asCDataBuffer() const;
