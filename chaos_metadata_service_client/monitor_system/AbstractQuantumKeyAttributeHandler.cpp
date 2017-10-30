@@ -101,7 +101,7 @@ void QuantumKeyAttributeCDataWrapperHandler::_consumeValue(const std::string& ke
 QuantumKeyAttributeHandlerIMPL_CONST_DIST(QuantumKeyAttributeBinaryHandler)
 void QuantumKeyAttributeBinaryHandler::_consumeValue(const std::string& key,
                                                      const KeyValue& value) {
-    int32_t buf_size = 0;
+    uint32_t buf_size = 0;
     consumeValue(key,
                  attribute,
                  ChaosSharedPtr<SerializationBuffer>(new SerializationBuffer(value->getBinaryValue(attribute, buf_size), buf_size)));
