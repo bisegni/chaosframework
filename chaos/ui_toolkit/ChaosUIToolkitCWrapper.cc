@@ -28,7 +28,7 @@
 #include <chaos/ui_toolkit/ChaosUIToolkitCWrapper.h>
 #include <chaos/ui_toolkit/HighLevelApi/HLDataApi.h>
 
-#include <chaos/common/bson/util/base64.h>
+#include <chaos/common/additional_lib/base64.h>
 #include <chaos/common/data/CDataWrapper.h>
 
 #include <boost/lexical_cast.hpp>
@@ -383,11 +383,11 @@ extern "C" {
 									break;
 									
 								case DataType::TYPE_BYTEARRAY:
-									int len;
-									std::stringstream binary_field;
+									uint32_t len;
+									std::string binary_field;
 									const char * base_addr = dataWrapper->getBinaryValue(dsAttrName, len);
-									bson::base64::encode( binary_field , base_addr , len );
-									*dsAttrValueHandle = convertStringToCharPtr(binary_field.str());
+									binary_field = base64_encode((unsigned char const*)base_addr , len );
+									*dsAttrValueHandle = convertStringToCharPtr(binary_field.c_str());
 									break;
 							}
 						} else {

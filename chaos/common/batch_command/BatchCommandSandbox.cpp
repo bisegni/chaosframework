@@ -474,7 +474,7 @@ void BatchCommandSandbox::checkNextCommand() {
                         thread_scheduler_pause_condition.unlock();
                         if(command_to_delete->element->cmdImpl->sticky == false){
 
-                            DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] Delete command "<< command_to_delete->element->cmdInfo->getJSONData()<<" with pointer " << std::hex << command_to_delete << std::dec;)
+                            DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] Delete command "<< command_to_delete->element->cmdInfo->getJSONString()<<" with pointer " << std::hex << command_to_delete << std::dec;)
                             DELETE_OBJ_POINTER(command_to_delete);
                         }
                     } else {

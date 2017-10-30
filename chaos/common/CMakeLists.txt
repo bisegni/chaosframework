@@ -15,7 +15,8 @@ SET(common_lib_src chaos_errors.cpp
 
 SET(common_lib_src ${common_lib_src}
                     additional_lib/mongoose.c
-                    additional_lib/sqlite3.c)
+                    additional_lib/sqlite3.c
+                    additional_lib/base64.cpp)
 
 SET(common_lib_src ${common_lib_src}
                     metadata_logging/ErrorLoggingChannel.cpp
