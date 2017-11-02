@@ -1,5 +1,5 @@
 /*
- * Copyright 2012, 16/10/2017 INFN
+ * Copyright 2012, 02/11/2017 INFN
  *
  * Licensed under the EUPL, Version 1.2 or – as soon they
  * will be approved by the European Commission - subsequent

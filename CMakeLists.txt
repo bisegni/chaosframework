@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 include(config/CMakeChaos.txt)
 project(chaosframework)
 include(ExternalProject)
-include(CTest)
+#include(CTest)
 #find git
 find_package(Git REQUIRED)
 
@@ -13,7 +13,6 @@ unset(CMAKE_CXX_COMPILER_WORKS)
 
 #specify option
 option(CHAOS_ONLY_DEPENDECY "Download all the dependency" OFF)
-option(CHAOS_MEMCACHE_TEST "Memcached test" OFF)
 option(CHAOS_ARCHITECTURE_TEST "Architecture tests" OFF)
 option(CHAOS_CDS "Chaos Data Service" ON)
 option(CHAOS_MDS "Chaos MetaData Service" ON)
@@ -42,6 +41,12 @@ CheckConfigureBuild(jsoncpp jsoncpp "-DJSONCPP_WITH_TESTS=OFF;-DJSONCPP_WITH_POS
 CheckConfigureBuild(mongoclient mongo-cxx-driver:legacy-1.0.0-rc0 "--extralib=boost_system;--disable-warnings-as-errors;install-mongoclient" https://github.com/mongodb)
 #########
 
+IF(CHAOS_ARCHITECTURE_TEST)
+    SET (CMAKE_BUILD_TYPE Debug)
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fprofile-arcs -ftest-coverage")
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -fprofile-arcs -ftest-coverage")
+    set (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
+ENDIF()
 
 IF (CHAOS_ONLY_DEPENDECY OR
     CHAOS_ARCHITECTURE_TEST)

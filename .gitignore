@@ -1,3 +1,4 @@
+*.gcov
 ext_dep/*
 doc/html
 doc/img
