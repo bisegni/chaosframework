@@ -1,7 +1,6 @@
 stages:
   - build
-  - deploy
-  - documentation
+  - test
 
 cache:
   key: $CI_JOB_NAME/$CI_BUILD_REF_NAME
@@ -9,12 +8,6 @@ cache:
       - /builds/chaos-lnf-control/chaosframework/config/CACHE
       - /builds/chaos-lnf-control/chaosframework/external-*
       - /builds/chaos-lnf-control/chaosframework/chaos-distrib-*
-
-before_script:
-  - export NOW=$(date +"%Y%m%d-%H%M%S")
-  - export TAR_NAME_POSTFIX=$NOW
-  - echo $CHAOS_DEPLOY_PRIVATE_KEY >> /builds/chaos-lnf-control/chaosframework/deploy.key
-  - chmod 600 /builds/chaos-lnf-control/chaosframework/deploy.key
 
 llvm_build_framework_x86_64:
   tags:
@@ -31,6 +24,7 @@ llvm_build_framework_x86_64:
   only:
     - development
     - master
+    - schedules
 
 build_framework_x86_64:
   tags:
@@ -47,6 +41,7 @@ build_framework_x86_64:
   only:
     - development
     - master
+    - schedules
 
 build_framework_x86_64_c98:
   tags:
@@ -63,6 +58,7 @@ build_framework_x86_64_c98:
   only:
     - development
     - master
+    - schedules
 
 build_framework_arm:
   tags:
@@ -79,104 +75,82 @@ build_framework_arm:
   only:
     - development
     - master
-
-exp_llvm_build_framework_x86_64:
-  tags:
-    - chaos
-    - docker
-    - linux
-  stage: build
-  image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/llvm_coverity_u1710
-  script:
-    - cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ .
-    - make clean
-    - make  -j 4
-    - make install
-  only:
     - schedules
 
-exp_build_framework_x86_64:
-  tags:
-    - chaos
-    - docker
-    - linux
-  stage: build
-  image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
-  script:
-    - cmake .
-    - make clean
-    - make  -j 4
-    - make install
-  only:
-    - schedules
-
-exp_build_framework_x86_64_c98:
-  tags:
-    - chaos
-    - docker
-    - linux
-  stage: build
-  image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
-  script:
-    - cmake -DCHAOS_ENABLE_C11=OFF .
-    - make clean
-    - make  -j 4
-    - make install
-  only:
-    - schedules
-
-exp_build_framework_arm:
-  tags:
-    - chaos
-    - docker
-    - linux
-  stage: build
-  image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
-  script:
-    - cmake -DCHAOS_TARGET=armhf
-    - make clean
-    - make  -j 4
-    - make install
-  only:
-    - schedules
-
-exp_llvm_scan_coverity:
-    tags:
-      - chaos
-      - docker
-      - linux
-    stage: build
-    image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/llvm_coverity_u1710
-    script:
-      - mkdir -p /tmp/cov-int
-      - cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ .
-      - make clean
-      - /tmp/coverity/bin/cov-build --dir /tmp/cov-int make -j 4
-      - cd /tmp
-      - tar czvf chaos.tgz cov-int
-      - curl --form token=i9B9MI9n53zWdx2iSS4Qvg --form email=bisegni@lnf.infn.it --form file=@/tmp/chaos.tgz --form version="1.0.0" --form description="Beta"  https://scan.coverity.com/builds?project=%21CHAOS+Control+System
-    only:
-      - web
-
-# pages:
-#     tags:
-#       - chaos
-#       - docker
-#       - linux
-#     stage: documentation
-#     image: alpine
-#     script:
-#       - rm -rf public/$CI_BUILD_REF_NAME
-#       - apk update && apk add doxygen
-#       - doxygen doc/doxygen.cfg
-#       - mkdir -p public/$CI_BUILD_REF_NAME/
-#       - mv doc/html/* public/$CI_BUILD_REF_NAME/
-#     when: always
-#    artifacts:
-#        paths:
-#            - public
-    # allow_failure: true
-    # only:
-    #   - web
-    #   - schedules
-    #   - triggers
+  exp_llvm_scan_coverity:
+      tags:
+        - chaos
+        - docker
+        - linux
+      stage: build
+      image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/llvm_coverity_u1710
+      script:
+        - mkdir -p /tmp/cov-int
+        - cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ .
+        - make clean
+        - /tmp/coverity/bin/cov-build --dir /tmp/cov-int make -j 4
+        - cd /tmp
+        - tar czvf chaos.tgz cov-int
+        - curl --form token=i9B9MI9n53zWdx2iSS4Qvg --form email=bisegni@lnf.infn.it --form file=@/tmp/chaos.tgz --form version="1.0.0" --form description="Beta"  https://scan.coverity.com/builds?project=%21CHAOS+Control+System
+      only:
+        - web
+#
+# exp_llvm_build_framework_x86_64:
+#   tags:
+#     - chaos
+#     - docker
+#     - linux
+#   stage: build
+#   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/llvm_coverity_u1710
+#   script:
+#     - cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ .
+#     - make clean
+#     - make  -j 4
+#     - make install
+#   only:
+#     - schedules
+#
+# exp_build_framework_x86_64:
+#   tags:
+#     - chaos
+#     - docker
+#     - linux
+#   stage: build
+#   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
+#   script:
+#     - cmake .
+#     - make clean
+#     - make  -j 4
+#     - make install
+#   only:
+#     - schedules
+#
+# exp_build_framework_x86_64_c98:
+#   tags:
+#     - chaos
+#     - docker
+#     - linux
+#   stage: build
+#   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
+#   script:
+#     - cmake -DCHAOS_ENABLE_C11=OFF .
+#     - make clean
+#     - make  -j 4
+#     - make install
+#   only:
+#     - schedules
+#
+# exp_build_framework_arm:
+#   tags:
+#     - chaos
+#     - docker
+#     - linux
+#   stage: build
+#   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
+#   script:
+#     - cmake -DCHAOS_TARGET=armhf
+#     - make clean
+#     - make  -j 4
+#     - make install
+#   only:
+#     - schedules
