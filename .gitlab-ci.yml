@@ -77,23 +77,23 @@ build_framework_arm:
     - master
     - schedules
 
-  exp_llvm_scan_coverity:
-      tags:
-        - chaos
-        - docker
-        - linux
-      stage: build
-      image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/llvm_coverity_u1710
-      script:
-        - mkdir -p /tmp/cov-int
-        - cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ .
-        - make clean
-        - /tmp/coverity/bin/cov-build --dir /tmp/cov-int make -j 4
-        - cd /tmp
-        - tar czvf chaos.tgz cov-int
-        - curl --form token=i9B9MI9n53zWdx2iSS4Qvg --form email=bisegni@lnf.infn.it --form file=@/tmp/chaos.tgz --form version="1.0.0" --form description="Beta"  https://scan.coverity.com/builds?project=%21CHAOS+Control+System
-      only:
-        - web
+exp_llvm_scan_coverity:
+    tags:
+      - chaos
+      - docker
+      - linux
+    stage: build
+    image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/llvm_coverity_u1710
+    script:
+      - mkdir -p /tmp/cov-int
+      - cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ .
+      - make clean
+      - /tmp/coverity/bin/cov-build --dir /tmp/cov-int make -j 4
+      - cd /tmp
+      - tar czvf chaos.tgz cov-int
+      - curl --form token=i9B9MI9n53zWdx2iSS4Qvg --form email=bisegni@lnf.infn.it --form file=@/tmp/chaos.tgz --form version="1.0.0" --form description="Beta"  https://scan.coverity.com/builds?project=%21CHAOS+Control+System
+    only:
+      - web
 #
 # exp_llvm_build_framework_x86_64:
 #   tags:
