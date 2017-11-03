@@ -2,13 +2,6 @@ stages:
   - build
   - test
 
-cache:
-  key: $CI_JOB_NAME/$CI_BUILD_REF_NAME
-  paths:
-      - /builds/chaos-lnf-control/chaosframework/config/CACHE
-      - /builds/chaos-lnf-control/chaosframework/external-*
-      - /builds/chaos-lnf-control/chaosframework/chaos-distrib-*
-
 llvm_build_framework_x86_64:
   tags:
     - chaos
@@ -21,6 +14,14 @@ llvm_build_framework_x86_64:
     - make clean
     - make  -j 4
     - make install
+  cache:
+    key: llvm_build_framework_x86_64/$CI_BUILD_REF_NAME
+    paths:
+        - /builds/chaos-lnf-control/chaosframework/
+  artifacts:
+    paths:
+        - 'chaos-distrib-x86_64-Linux'
+    expire_in: 4 hour
   only:
     - development
     - master
@@ -38,6 +39,13 @@ build_framework_x86_64:
     - make clean
     - make  -j 4
     - make install
+  cache:
+    key: build_framework_x86_64/$CI_BUILD_REF_NAME
+    paths:
+        - /builds/chaos-lnf-control/chaosframework/
+  artifacts:
+    paths:
+        - 'chaos-distrib-x86_64-Linux'
   only:
     - development
     - master
@@ -55,6 +63,13 @@ build_framework_x86_64_c98:
     - make clean
     - make  -j 4
     - make install
+  cache:
+    key: build_framework_x86_64_c98/$CI_BUILD_REF_NAME
+    paths:
+        - /builds/chaos-lnf-control/chaosframework/
+  artifacts:
+    paths:
+        - 'chaos-distrib-x86_64-Linux'
   only:
     - development
     - master
@@ -72,6 +87,13 @@ build_framework_arm:
     - make clean
     - make  -j 4
     - make install
+  cache:
+    key: build_framework_arm/$CI_BUILD_REF_NAME
+    paths:
+        - /builds/chaos-lnf-control/chaosframework/
+  artifacts:
+    paths:
+        - 'chaos-distrib-x86_64-Linux'
   only:
     - development
     - master
@@ -92,6 +114,13 @@ exp_llvm_scan_coverity:
       - cd /tmp
       - tar czvf chaos.tgz cov-int
       - curl --form token=i9B9MI9n53zWdx2iSS4Qvg --form email=bisegni@lnf.infn.it --form file=@/tmp/chaos.tgz --form version="1.0.0" --form description="Beta"  https://scan.coverity.com/builds?project=%21CHAOS+Control+System
+    cache:
+      key: build_framework_arm/$CI_BUILD_REF_NAME
+      paths:
+          - /builds/chaos-lnf-control/chaosframework/
+    artifacts:
+      paths:
+          - 'chaos-distrib-x86_64-Linux'
     only:
       - web
 #
