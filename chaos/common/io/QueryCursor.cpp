@@ -104,17 +104,20 @@ int64_t QueryCursor::fetchNewPage() {
     //fetch the new page
     switch(phase) {
         case QueryPhaseNotStarted:
-            DBG << "Start Search";
+            DBG << "["<<node_id<<"] start search "<<start_ts<<"-"<<end_ts<<" page_len:"<<page_len;
+
             std::memset(&result_page.last_record_found_seq, 0, sizeof(direct_io::channel::opcode_headers::SearchSequence));
             //change to the next phase
             phase = QueryPhaseStarted;
             break;
         case QueryPhaseStarted:
-            DBG << "Continue on next page";
+            DBG << "["<<node_id<<"] continue search  "<<start_ts<<"-"<<end_ts<<" page_len:"<<page_len;
             break;
             
         case QueryPhaseEnded:
-            ERR << "Cursor ended";
+
+            ERR << "["<<node_id<<"] end search "<<start_ts<<"-"<<end_ts<<" page_len:"<<page_len;
+
             return 0;
     }
     if((api_error = next_client->device_client_channel->queryDataCloud(node_id,
