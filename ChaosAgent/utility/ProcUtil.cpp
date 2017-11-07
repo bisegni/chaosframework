@@ -53,14 +53,14 @@ FILE * ProcUtil::popen2(const std::string& command,
                         const std::string& type,
                         int & pid) {
     pid_t child_pid;
-    int fd[2];
+    int fd[2] = {0,0};
     pipe(fd);
-    
+
     if((child_pid = fork()) == -1)     {
         perror("fork");
         exit(0);
     }
-    
+
     /* child process */
     if (child_pid == 0) {
         if (type == "r") {
@@ -80,7 +80,7 @@ FILE * ProcUtil::popen2(const std::string& command,
             close(fd[READ]); //Close the READ end of the pipe since parent's fd is write-only
         }
     }
-    
+
     pid = child_pid;
     if (type == "r") {
         return fdopen(fd[READ], "r");
@@ -93,7 +93,7 @@ bool ProcUtil::popen2NoPipe(const std::string& command,
     if((pid = fork()) == -1)     {
         return false;
     }
-    
+
     /* child process */
     if (pid == 0) {
         setpgid(0, 0); //Needed so negative PIDs can kill children of /bin/sh
@@ -109,7 +109,7 @@ bool ProcUtil::popen2ToNamedPipe(const std::string& command,
     if((pid = fork()) == -1)     {
         return false;
     }
-    
+
     if (pid == 0) {
         /* child process */
         if((pid = fork()) < 0){
@@ -119,10 +119,10 @@ bool ProcUtil::popen2ToNamedPipe(const std::string& command,
             //firs child exis because became parent
             exit(0);
         }
-        
+
         //second child launch the process
         int fd = 0;
-        
+
         /* Create a new SID for the child process */
         //        sid = setsid();
         //        if (sid < 0) {
@@ -134,11 +134,11 @@ bool ProcUtil::popen2ToNamedPipe(const std::string& command,
             perror("open");
             return 1;
         }
-        
+
         dup2(fd,STDOUT_FILENO); /*copy the file descriptor fd into standard output*/
         dup2(fd,STDERR_FILENO); /* same, for the standard error */
         close(fd); /* close the file descriptor as we don't need it more  */
-        
+
         execl("/bin/sh", "/bin/sh", "-c", command.c_str(), NULL);
     } else {
         int status;
@@ -188,38 +188,38 @@ void ProcUtil::launchProcess(const AgentAssociation& node_association_info) {
         exec_command = COMPOSE_NODE_LAUNCH_CMD_LINE(node_association_info);
         init_file = CHAOS_FORMAT("%1%/%2%", %INIT_FILE_PATH()%INIT_FILE_NAME(node_association_info));
         queue_file = CHAOS_FORMAT("%1%/%2%", %QUEUE_FILE_PATH()%NPIPE_FILE_NAME(node_association_info));
-        
+
         boost::filesystem::path init_file_parent_path = INIT_FILE_PATH();
         if (boost::filesystem::exists(init_file_parent_path) == false &&
             boost::filesystem::create_directory(init_file_parent_path) == false) {
             throw chaos::CException(-1, CHAOS_FORMAT("Parent path %1% can't be created",%init_file_parent_path), __PRETTY_FUNCTION__);
         }
-        
+
         boost::filesystem::path queue_file_parent_path = QUEUE_FILE_PATH();
         if (boost::filesystem::exists(queue_file_parent_path) == false &&
             boost::filesystem::create_directory(queue_file_parent_path) == false) {
             throw chaos::CException(-1, CHAOS_FORMAT("Queue path %1% can't be created",%queue_file_parent_path), __PRETTY_FUNCTION__);
         }
-        
+
         //write configuration file
         std::ofstream init_file_stream;
         init_file_stream.open(init_file.string().c_str(), std::ofstream::trunc | std::ofstream::out);
-        
+
         //enable log on console that will be redirected on named pipe
         init_file_stream << CHAOS_FORMAT("%1%=",%InitOption::OPT_LOG_ON_CONSOLE) << std::endl;
-        
+
         //check for syslog setting of the agent that will be reflect on managed us
         if(GlobalConfiguration::getInstance()->hasOption(InitOption::OPT_LOG_ON_SYSLOG)) {
             init_file_stream << CHAOS_FORMAT("%1%=",%InitOption::OPT_LOG_ON_SYSLOG) << std::endl;
         }
-        
+
         if(ChaosAgent::getInstance()->settings.enable_us_logging) {
             init_file_stream << CHAOS_FORMAT("%1%=",%InitOption::OPT_LOG_ON_FILE) << std::endl;
             init_file_stream << CHAOS_FORMAT("%1%=%2%/%3%",%InitOption::OPT_LOG_FILE%LOG_FILE_PATH()%LOG_FILE_NAME(node_association_info)) << std::endl;
         }
-        
+
         init_file_stream << CHAOS_FORMAT("unit-server-alias=%1%",%node_association_info.associated_node_uid) << std::endl;
-        
+
         //append metadata server from agent configuration
         VectorMetadatserver mds_vec = GlobalConfiguration::getInstance()->getMetadataServerAddressList();
         for(VectorMetadatserverIterator mds_it = mds_vec.begin(),
@@ -228,7 +228,7 @@ void ProcUtil::launchProcess(const AgentAssociation& node_association_info) {
             mds_it++) {
             init_file_stream << CHAOS_FORMAT("metadata-server=%1%",%mds_it->ip_port) << std::endl;
         }
-        
+
         //append user defined paramenter
         init_file_stream.write(node_association_info.configuration_file_content.c_str(), node_association_info.configuration_file_content.length());
         init_file_stream.close();
@@ -237,7 +237,7 @@ void ProcUtil::launchProcess(const AgentAssociation& node_association_info) {
         if (!ProcUtil::popen2ToNamedPipe(exec_command.c_str(), queue_file.string())) {throw chaos::CException(-2, "popen() failed!", __PRETTY_FUNCTION__);}
     } catch(std::exception& ex) {
         throw ex;
-    } 
+    }
 }
 
 bool ProcUtil::checkProcessAlive(const AgentAssociation& node_association_info) {
@@ -247,7 +247,7 @@ bool ProcUtil::checkProcessAlive(const AgentAssociation& node_association_info) 
     std::string ps_command = CHAOS_FORMAT("ps -ef | grep '%1%'", %INIT_FILE_NAME(node_association_info));
     FILE *in = ProcUtil::popen2(ps_command.c_str(), "r", pid);
     if (!in) {throw chaos::CException(-2, "popen() failed!", __PRETTY_FUNCTION__);}
-    
+
     while(fgets(buff, sizeof(buff), in)!=NULL){
         if(strstr(buff, "grep") == NULL) {
             found = strstr(buff, node_association_info.launch_cmd_line.c_str()) != NULL;
