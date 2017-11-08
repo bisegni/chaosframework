@@ -25,7 +25,7 @@
 #include <unistd.h>
 #include <sstream>
 
-#include <chaos/common/bson/util/base64.h>
+#include <chaos/common/additional_lib/base64.h>
 #include <chaos/common/utility/TimingUtil.h>
 #include <chaos/common/network/CNodeNetworkAddress.h>
 #include <chaos/ui_toolkit/ChaosUIToolkit.h>
@@ -44,7 +44,6 @@ using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::common::utility;
 using namespace chaos::ui;
-using namespace bson;
 using namespace boost;
 
 #define OPT_CU_ID           "device-id"
@@ -106,11 +105,11 @@ chaos::common::data::SerializationBuffer *getCSVDecoding( DeviceController& cont
             }
                 
             case DataType::TYPE_BYTEARRAY:{
-                int len;
-                std::stringstream binary_field;
+                uint32_t len;
+                std::string binary_field;
                 const char * base_addr = data_pack.getBinaryValue((*it).c_str(), len);
-                bson::base64::encode( binary_field , base_addr , len );
-                csv_lin << binary_field.str();
+                binary_field = base64_encode( (unsigned char const* ) base_addr , len );
+                csv_lin << binary_field;
                 break;
             }
                 
@@ -310,7 +309,7 @@ int main(int argc, char* argv[]) {
                             }
                                 //JSON
                             case 1:{
-                                ser.reset(q_result->getJSONData());
+                                //ser.reset(q_result->getJSONString());
                                 break;
                             }
                                 //CSV
