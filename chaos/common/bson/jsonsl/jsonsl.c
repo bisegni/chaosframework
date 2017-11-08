@@ -4,7 +4,7 @@
  */
 
 #include "jsonsl.h"
-#include "bson-memory.h"
+#include "../bson/bson-memory.h"
 
 #include <limits.h>
 #include <ctype.h>
@@ -104,7 +104,7 @@ jsonsl_t jsonsl_new(int nlevels)
 {
     unsigned int ii;
     struct jsonsl_st * jsn;
-    
+
     if (nlevels < 2) {
         return NULL;
     }
