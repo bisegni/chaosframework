@@ -51,6 +51,7 @@ ENDIF()
 IF (CHAOS_ONLY_DEPENDECY OR
     CHAOS_ARCHITECTURE_TEST)
   #google test
+  MESG("Add google Test as external project")
   ExternalProject_Add(
      googletest
      GIT_REPOSITORY https://github.com/google/googletest.git
@@ -63,7 +64,24 @@ IF (CHAOS_ONLY_DEPENDECY OR
      LOG_DOWNLOAD ON
      LOG_CONFIGURE ON
      LOG_BUILD ON)
+
+
+     # Specify include dir
+     ExternalProject_Get_Property(googletest source_dir)
+     set(GTEST_INCLUDE_DIR ${source_dir}/include)
+
+     # Library
+     ExternalProject_Get_Property(googletest binary_dir)
+     set(GTEST_LIBRARY_DIR ${binary_dir})
+     ExternalProject_Get_Property(googletest binary_dir)
+     set(GTEST_LIBRARY_PATH ${binary_dir}/${CMAKE_FIND_LIBRARY_PREFIXES}gtest.a)
+
+     MESG("${GTEST_INCLUDE_DIR}")
+     MESG("${GTEST_LIBRARY_DIR}")
+     MESG("${GTEST_LIBRARY_PATH}")
+     MESG("${GTEST_LIBRARY}")
 ENDIF()
+
 
 SET( ${PROJECT_NAME}_MAJOR_VERSION 0 )
 SET( ${PROJECT_NAME}_MINOR_VERSION 1 )
@@ -133,16 +151,20 @@ ENDIF()
 IF (CHAOS_ARCHITECTURE_TEST)
 #scan all subdirectory of test directory
     MESG("Configure infrastructure tests")
-    SET(CHAOS_TEST_DIRECTORY "CHAOSFrameworkTests")
-
-    SUBDIRLIST(TEST_SUBDIRS ${CHAOS_TEST_DIRECTORY})
-    FOREACH(_TEST_DIRECTORY ${TEST_SUBDIRS})
-        IF(EXISTS "${_TEST_DIRECTORY}/CMakeLists.txt")
-            get_filename_component(_TEST_DIR_NAME ${_TEST_DIRECTORY} NAME)
-            MESG("Configure ${_TEST_DIR_NAME} test")
-            ADD_SUBDIRECTORY(${_TEST_DIRECTORY})
-        ENDIF()
-    ENDFOREACH()
+    set_directory_properties(PROPERTIES GTEST_INCLUDE_DIR ${GTEST_INCLUDE_DIR}
+                                        GTEST_LIBRARY_DIR ${GTEST_LIBRARY_DIR}
+                                        GTEST_LIBRARY_PATH ${GTEST_LIBRARY_PATH})
+    ADD_SUBDIRECTORY(CHAOSFrameworkTests/FrameworkTest)
+#    SET(CHAOS_TEST_DIRECTORY "CHAOSFrameworkTests")
+#    SUBDIRLIST(TEST_SUBDIRS ${CHAOS_TEST_DIRECTORY})
+#    FOREACH(_TEST_DIRECTORY ${TEST_SUBDIRS})
+#        IF(EXISTS "${_TEST_DIRECTORY}/CMakeLists.txt")
+#            #set the external project variable in subdirectory
+#            get_filename_component(_TEST_DIR_NAME ${_TEST_DIRECTORY} NAME)
+#            MESG("Configure ${_TEST_DIR_NAME} test")
+#            ADD_SUBDIRECTORY(${_TEST_DIRECTORY})
+#        ENDIF()
+#    ENDFOREACH()
 ENDIF()
 
 MESG("Done")
