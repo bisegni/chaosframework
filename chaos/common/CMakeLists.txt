@@ -48,27 +48,27 @@ SET(common_lib_src ${common_lib_src}
         alarm/MultiSeverityAlarm.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        bson/oid.cpp
-        bson/bson_validate.cpp
-        bson/base/parse_number.cpp
-        bson/base/string_data.cpp
-        bson/base/stringutils.cpp
-        bson/base/status.cpp
-        bson/base/error_codes.cpp
-        bson/murmurhash3/MurmurHash3.cpp
-        bson/mutable/document.cpp
-        bson/mutable/element.cpp
-        bson/platform/process_id.cpp
-        bson/platform/random.cpp
-        bson/util/hex.cpp bson/util/base64.cpp
-        bson/util/time_support.cpp
-        bson/util/time_support.cpp
-        bson/util/assert_util.cpp
-        bson/util/bson_extract.cpp
-        bson/util/jsobj.cpp
-        bson/util/json.cpp
-        bson/util/md5.cpp
-        bson/util/safe_num.cpp)
+        bson/bson/bcon.c
+        bson/bson/bson-atomic.c
+        bson/bson/bson-clock.c
+        bson/bson/bson-context.c
+        bson/bson/bson-decimal128.c
+        bson/bson/bson-error.c
+        bson/bson/bson-iso8601.c
+        bson/bson/bson-iter.c
+        bson/bson/bson-json.c
+        bson/bson/bson-keys.c
+        bson/bson/bson-md5.c
+        bson/bson/bson-memory.c
+        bson/bson/bson-oid.c
+        bson/bson/bson-reader.c
+        bson/bson/bson-string.c
+        bson/bson/bson-timegm.c
+        bson/bson/bson-utf8.c
+        bson/bson/bson-value.c
+        bson/bson/bson-writer.c
+        bson/bson/bson.c
+        bson/jsonsl/jsonsl.c)
 
 SET(common_lib_src ${common_lib_src}
         configuration/GlobalConfiguration.cpp)
