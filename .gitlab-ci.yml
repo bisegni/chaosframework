@@ -40,14 +40,12 @@ build_framework_x86_64_test:
   stage: test
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
   script:
-    - ls -la chaos-distrib-x86_64-Linux/bin
     - apt-get update
     - apt-get -y install lcov
     - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/lib
     - chaos-distrib-x86_64-Linux/bin/TestFramework
     - lcov --capture --directory . --output-file coverage.info
     - genhtml coverage.info --output-directory coverage_html
-  allow_failure: true
   artifacts:
     paths:
         - 'coverage_html'
@@ -142,7 +140,7 @@ build_framework_x86_64_c98_test:
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
   script:
     - export LD_LIBRARY_PATH=$PWD/chaos-distrib-x86_64-Linux-c98
-    - chaos-distrib-x86_64-Linux-c98/bin/FrameworkTest
+    - chaos-distrib-x86_64-Linux-c98/bin/TestFramework
   only:
     - development
     - master
