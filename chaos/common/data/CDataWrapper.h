@@ -20,6 +20,8 @@
 #ifndef CDataWrapper_H
 #define CDataWrapper_H
 
+#pragma GCC diagnostic ignored "-Wignored-attributes"
+
 #include <chaos/common/bson/bson.h>
 #include <chaos/common/chaos_types.h>
 #include <chaos/common/chaos_constants.h>
