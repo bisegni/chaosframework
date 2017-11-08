@@ -92,7 +92,7 @@
 /*
  * Define to 1 if you have reallocf available on your platform.
  */
-#define BSON_HAVE_REALLOCF 1
+#define BSON_HAVE_REALLOCF 0
 #if BSON_HAVE_REALLOCF != 1
 # undef BSON_HAVE_REALLOCF
 #endif
