@@ -182,9 +182,8 @@ void IODirectIODriver::storeHealthData(const std::string& key,
         } else {
             DEBUG_CODE(IODirectIODriver_DLDBG_ << "No available socket->loose packet");
         }
-    }catch(bson::AssertionException& bson_assert){
-        IODirectIODriver_LERR_ << CHAOS_FORMAT("bson assertion [%1%]", %
-                                               bson_assert.toString());
+    }catch(...){
+        IODirectIODriver_LERR_ << "Generic exception error";
     }
 }
 

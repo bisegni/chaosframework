@@ -48,7 +48,7 @@ chaos::common::data::CDataWrapper *SearchLogEntry::execute(CDataWrapper *api_dat
     //entry list
     LogEntryList entry_list;
     std::vector<std::string> domain_to_include;
-    const std::string search_string = (api_data?api_data->getValueWithDefault<std::string>("search_string", ""):"");
+    const std::string search_string = CDW_GET_SRT_WITH_DEFAULT(api_data, "search_string", "");
     uint64_t start_ts =  (api_data?((uint64_t)CDW_GET_INT64_WITH_DEFAULT(api_data, "start_ts", 0)):0);
     uint64_t end_ts = (api_data?((uint64_t)CDW_GET_INT64_WITH_DEFAULT(api_data, "end_ts", 0)):0);
     

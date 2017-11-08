@@ -29,9 +29,45 @@ TEST(CDataWrapperTest, Normal) {
     data_pack.addInt32Value("i32v", (int32_t)0);
     data_pack.addInt64Value("i64v", (int64_t)0);
     data_pack.addDoubleValue("dbv", (double)36.6);
-    ASSERT_EQ(data_pack.getBoolValue("bv"), false);
-    ASSERT_EQ(data_pack.getInt32Value("i32v"), 0);
-    ASSERT_EQ(data_pack.getInt64Value("i64v"), 0);
-    ASSERT_EQ(data_pack.getDoubleValue("dbv"), 36.6);
+    const std::string json_serialization = data_pack.getJSONString();
+    CDWUniquePtr deserialized = CDataWrapper::instanceFromJson(json_serialization);
+    ASSERT_TRUE(deserialized->isDoubleValue("dbv"));
+    ASSERT_TRUE(deserialized->isInt64Value("i64v"));
+    ASSERT_TRUE(deserialized->isInt32Value("i32v"));
+    ASSERT_TRUE(deserialized->isBoolValue("bv"));
 }
 
+TEST(CDataWrapperTest, MemoryLeaks) {
+    int idx = 0;
+    CDataWrapper data_pack;
+    CDWUniquePtr deserialized;
+    data_pack.addBoolValue("bv", (int32_t)0);
+    data_pack.addInt32Value("i32v", (int32_t)0);
+    data_pack.addInt64Value("i64v", (int64_t)0);
+    data_pack.addDoubleValue("dbv", (double)36.6);
+    for (; idx < 1000000; idx++) {
+        const std::string json_serialization = data_pack.getJSONString();
+        deserialized = CDataWrapper::instanceFromJson(json_serialization);
+    }
+    ASSERT_TRUE(deserialized->isDoubleValue("dbv"));
+    ASSERT_TRUE(deserialized->isInt64Value("i64v"));
+    ASSERT_TRUE(deserialized->isInt32Value("i32v"));
+    ASSERT_TRUE(deserialized->isBoolValue("bv"));
+}
+
+TEST(CDataWrapperTest, Performance) {
+    int idx = 0;
+    CDataWrapper data_pack;
+    CDWUniquePtr cloned;
+    for (; idx < 1000000; idx++) {
+        data_pack.addBoolValue("bv", (int32_t)0);
+        data_pack.addInt32Value("i32v", (int32_t)0);
+        data_pack.addInt64Value("i64v", (int64_t)0);
+        data_pack.addDoubleValue("dbv", (double)36.6);
+        cloned.reset(data_pack.clone());
+        ASSERT_TRUE(cloned->isInt64Value("i64v"));
+        ASSERT_TRUE(cloned->isInt32Value("i32v"));
+        ASSERT_TRUE(cloned->isBoolValue("bv"));
+        data_pack.reset();
+    }
+}

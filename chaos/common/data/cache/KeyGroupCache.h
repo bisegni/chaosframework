@@ -26,7 +26,6 @@
 #include <string>
 
 #include <chaos/common/chaos_constants.h>
-#include <chaos/common/bson/util/builder.h>
 #include <chaos/common/memory/ManagedMemory.h>
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/data/cache/LFDataCache.h>
@@ -60,9 +59,6 @@ namespace chaos {
 					
                     //! the maximum size of the channel
 					uint32_t maximumChannelSize;
-					
-                    //! bson generator
-					bson::BufBuilder bsonBuilder;
 					
                     //!Channel cache Array
 					/*!

@@ -1629,7 +1629,7 @@ CDataWrapper* AbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_att
                             break;
                         }
                         case DataType::TYPE_BYTEARRAY: {
-                            int bin_size = 0;
+                            uint32_t bin_size = 0;
                             const char *binv = dataset_attribute_values->getBinaryValue(attr_name, bin_size);
                             attribute_cache_value->setValue(binv, bin_size);
                             break;
