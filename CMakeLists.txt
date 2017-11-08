@@ -137,14 +137,14 @@ IF(NOT CHAOS_ONLY_DEPENDECY)
   ENDIF()
 
   IF(CHAOS_EXAMPLES)
-    MESG("Configure Chaos CLI")
-    ADD_SUBDIRECTORY(example/ChaosCLI)
+    #MESG("Configure Chaos CLI")
+    #ADD_SUBDIRECTORY(example/ChaosCLI)
 
     MESG("Configure Chaos ChaosMDSCmd")
     ADD_SUBDIRECTORY(example/ChaosMDSCmd)
 
-    MESG("Configure Chaos Performance Tester")
-    ADD_SUBDIRECTORY(example/ChaosPerformanceTester)
+    #MESG("Configure Chaos Performance Tester")
+    #ADD_SUBDIRECTORY(example/ChaosPerformanceTester)
   ENDIF()
 ENDIF()
 
