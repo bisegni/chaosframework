@@ -309,7 +309,8 @@ int main(int argc, char* argv[]) {
                             }
                                 //JSON
                             case 1:{
-                                //ser.reset(q_result->getJSONString());
+                                std::string ser_str = q_result->getJSONString();
+                                ser.reset(new SerializationBuffer(ser_str.c_str(), ser_str.size()));
                                 break;
                             }
                                 //CSV

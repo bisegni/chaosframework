@@ -30,7 +30,6 @@ void AbstractClientRemoteIODriver::driverInit(const char *initParameter) throw (
     LOG_AND_TROW(ERR, -1, "AbstractClientRemoteIODriver can be initilized only with json document");
 }
 void AbstractClientRemoteIODriver::driverInit(const chaos::common::data::CDataWrapper& init_parameter) throw(chaos::CException) {
-    CHECK_ASSERTION_THROW_AND_LOG((init_parameter.isEmpty() == false), ERR, -1, "Init parameter need to be formated in a json document");
     CHECK_ASSERTION_THROW_AND_LOG(init_parameter.hasKey("uri"), ERR, -2, "The hostname name is mandatory");
     const std::string uri = init_parameter.getStringValue("uri");
     CHECK_ASSERTION_THROW_AND_LOG(uri.size() != 0, ERR, -3, "The uri parameter can't be empty string");
