@@ -564,15 +564,10 @@ void CDataWrapper::setSerializedData(const char* bson_data) {
 //reinitialize the object with bson data
 void CDataWrapper::setSerializedJsonData(const char* json_data) {
     bson_error_t err;
-    size_t len = (size_t)BSON_UINT32_FROM_LE(*reinterpret_cast<const uint32_t *>(json_data));
-    bson_json_reader_t *reader = bson_json_data_reader_new(true,
-                                                           len);
-    if(bson_json_reader_read(reader,
-                             ACCESS_BSON(bson),
-                             &err) == -1){
-        //error
-    }
-    bson_json_reader_destroy(reader);
+    size_t len = (size_t)strlen(json_data);
+    ALLOCATE_BSONT(bson_new_from_json((const uint8_t*)json_data,
+                                      len,
+                                      &err));
 }
 
 //append all elemento of an
