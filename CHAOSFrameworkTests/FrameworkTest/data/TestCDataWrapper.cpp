@@ -25,6 +25,7 @@ using namespace chaos::common::data;
 
 TEST(CDataWrapperTest, Normal) {
     CDataWrapper data_pack;
+    CDataWrapper target_cdw;
     data_pack.addBoolValue("bv", (int32_t)0);
     data_pack.addInt32Value("i32v", (int32_t)0);
     data_pack.addInt64Value("i64v", (int64_t)0);
@@ -35,6 +36,12 @@ TEST(CDataWrapperTest, Normal) {
     ASSERT_TRUE(deserialized->isInt64Value("i64v"));
     ASSERT_TRUE(deserialized->isInt32Value("i32v"));
     ASSERT_TRUE(deserialized->isBoolValue("bv"));
+    
+    target_cdw.setSerializedJsonData(json_serialization.c_str());
+    ASSERT_TRUE(target_cdw.isDoubleValue("dbv"));
+    ASSERT_TRUE(target_cdw.isInt64Value("i64v"));
+    ASSERT_TRUE(target_cdw.isInt32Value("i32v"));
+    ASSERT_TRUE(target_cdw.isBoolValue("bv"));
 }
 
 TEST(CDataWrapperTest, MemoryLeaks) {

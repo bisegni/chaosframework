@@ -78,6 +78,7 @@ array_index(0) {
     bson = ALLOCATE_BSONT(bson_new_from_json((const uint8_t*)json_document.c_str(),
                                              json_document.size(),
                                              &err));
+    CHAOS_ASSERT(bson);
 }
 
 CDataWrapper::~CDataWrapper(){}
@@ -565,9 +566,10 @@ void CDataWrapper::setSerializedData(const char* bson_data) {
 void CDataWrapper::setSerializedJsonData(const char* json_data) {
     bson_error_t err;
     size_t len = (size_t)strlen(json_data);
-    ALLOCATE_BSONT(bson_new_from_json((const uint8_t*)json_data,
+    bson =ALLOCATE_BSONT(bson_new_from_json((const uint8_t*)json_data,
                                       len,
                                       &err));
+    CHAOS_ASSERT(bson);
 }
 
 //append all elemento of an
