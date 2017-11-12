@@ -44,7 +44,7 @@ namespace chaos {
                                                int event,
                                                void *event_data);
                         //!inherited method
-                        int sendRawMessage(data::DataPackUniquePtr& message);
+                        int sendRawMessage(chaos::micro_unit_toolkit::data::CDWUniquePtr& message);
                     public:
                         //! point to the protocol constant type define in @chaos::micro_unit_toolkit::connection::ConnectionType
                         static const ConnectionType connection_type;

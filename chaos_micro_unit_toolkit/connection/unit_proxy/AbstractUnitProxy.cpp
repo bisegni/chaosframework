@@ -26,14 +26,14 @@ using namespace chaos::micro_unit_toolkit::data;
 using namespace chaos::micro_unit_toolkit::connection::unit_proxy;
 using namespace chaos::micro_unit_toolkit::connection::connection_adapter;
 
-RemoteMessage::RemoteMessage(const DataPackSharedPtr& _message):
+RemoteMessage::RemoteMessage(const CDWShrdPtr& _message):
 message(_message),
-is_request((message->hasKey("req_id") && message->isInt32("req_id"))),
-message_id(is_request?message->getInt32("req_id"):0){
+is_request((message->hasKey("req_id") && message->isInt32Value("req_id"))),
+message_id(is_request?message->getInt32Value("req_id"):0){
     if(is_request &&
        message->hasKey("msg") &&
-       message->isDataPack("msg")) {
-        request_message.reset(message->getDataPack("msg").release());
+       message->isCDWValue("msg")) {
+        request_message.reset(message->getCDWValue("msg").release());
     }
 }
 
@@ -42,15 +42,15 @@ bool RemoteMessage::isError() const {
 }
 
 int32_t RemoteMessage::getErrorCode() const {
-    return message.get()?message->getInt32("error_code"):0;
+    return message.get()?message->getInt32Value("error_code"):0;
 }
 
 std::string RemoteMessage::getErrorMessage() const {
-    return message.get()?message->getString("error_message"):"";
+    return message.get()?message->getStringValue("error_message"):"";
 }
 
 std::string RemoteMessage::getErrorDomain() const {
-    return message.get()?message->getString("error_domain"):"";
+    return message.get()?message->getStringValue("error_domain"):"";
 }
 
 AbstractUnitProxy::AbstractUnitProxy(ChaosUniquePtr<connection_adapter::AbstractConnectionAdapter>& _protocol_adapter):
@@ -61,7 +61,7 @@ AbstractUnitProxy::~AbstractUnitProxy() {
     std::cout <<"exit";
 }
 
-int AbstractUnitProxy::sendMessage(DataPackUniquePtr& message_data) {
+int AbstractUnitProxy::sendMessage(CDWUniquePtr& message_data) {
     return connection_adapter->sendMessage(message_data);
 }
 

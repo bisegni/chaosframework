@@ -265,10 +265,6 @@
 		324D08B61F31D7F300836E29 /* AbstractUnitProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 324D08B41F31D7F300836E29 /* AbstractUnitProxy.h */; };
 		324D08C51F31EC5000836E29 /* HTTPConnectionAdapter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324D08C31F31EC5000836E29 /* HTTPConnectionAdapter.cpp */; };
 		324D08C61F31EC5000836E29 /* HTTPConnectionAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 324D08C41F31EC5000836E29 /* HTTPConnectionAdapter.h */; };
-		324D08CA1F31F26600836E29 /* DataPack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324D08C81F31F26600836E29 /* DataPack.cpp */; };
-		324D08CB1F31F26600836E29 /* DataPack.h in Headers */ = {isa = PBXBuildFile; fileRef = 324D08C91F31F26600836E29 /* DataPack.h */; };
-		324D08D21F31F5A000836E29 /* json.h in Headers */ = {isa = PBXBuildFile; fileRef = 324D08CD1F31F5A000836E29 /* json.h */; };
-		324D08D31F31F5A000836E29 /* jsoncpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324D08CE1F31F5A000836E29 /* jsoncpp.cpp */; };
 		324D08D41F31F5A000836E29 /* mongoose.c in Sources */ = {isa = PBXBuildFile; fileRef = 324D08CF1F31F5A000836E29 /* mongoose.c */; };
 		324D08D51F31F5A000836E29 /* mongoose.h in Headers */ = {isa = PBXBuildFile; fileRef = 324D08D01F31F5A000836E29 /* mongoose.h */; };
 		324D08E21F321B4800836E29 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324D08E11F321B4800836E29 /* main.cpp */; };
@@ -422,6 +418,28 @@
 		3265BF4615D1A9CA00C3CAC6 /* ChaosUIToolkitCWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 3265BF4515D1A9CA00C3CAC6 /* ChaosUIToolkitCWrapper.h */; };
 		3265BF4915D1AA9F00C3CAC6 /* ChaosUIToolkitCWrapper.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3265BF4815D1AA9F00C3CAC6 /* ChaosUIToolkitCWrapper.cc */; };
 		3265F332197E626900F22FBC /* WorkUnitManagement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D72CA8197D196D00512B89 /* WorkUnitManagement.cpp */; };
+		3265F94B1FB899D400FEA246 /* DataPack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3265F9491FB899D300FEA246 /* DataPack.cpp */; };
+		3265F94C1FB89F6B00FEA246 /* bson-context.c in Sources */ = {isa = PBXBuildFile; fileRef = 3265F9111FB8997300FEA246 /* bson-context.c */; };
+		3265F94D1FB89F6B00FEA246 /* bson-oid.c in Sources */ = {isa = PBXBuildFile; fileRef = 3265F9121FB8997300FEA246 /* bson-oid.c */; };
+		3265F94E1FB89F6B00FEA246 /* bson-error.c in Sources */ = {isa = PBXBuildFile; fileRef = 3265F9141FB8997300FEA246 /* bson-error.c */; };
+		3265F94F1FB89F6B00FEA246 /* bson-atomic.c in Sources */ = {isa = PBXBuildFile; fileRef = 3265F9151FB8997300FEA246 /* bson-atomic.c */; };
+		3265F9501FB89F6B00FEA246 /* bson-string.c in Sources */ = {isa = PBXBuildFile; fileRef = 3265F9171FB8997300FEA246 /* bson-string.c */; };
+		3265F9511FB89F6B00FEA246 /* bson-keys.c in Sources */ = {isa = PBXBuildFile; fileRef = 3265F9181FB8997300FEA246 /* bson-keys.c */; };
+		3265F9521FB89F6B00FEA246 /* bson-iter.c in Sources */ = {isa = PBXBuildFile; fileRef = 3265F91A1FB8997300FEA246 /* bson-iter.c */; };
+		3265F9531FB89F6B00FEA246 /* bson-iso8601.c in Sources */ = {isa = PBXBuildFile; fileRef = 3265F91B1FB8997300FEA246 /* bson-iso8601.c */; };
+		3265F9541FB89F6B00FEA246 /* bson-md5.c in Sources */ = {isa = PBXBuildFile; fileRef = 3265F91F1FB8997300FEA246 /* bson-md5.c */; };
+		3265F9551FB89F6B00FEA246 /* bson-memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 3265F9211FB8997300FEA246 /* bson-memory.c */; };
+		3265F9561FB89F6B00FEA246 /* bson-writer.c in Sources */ = {isa = PBXBuildFile; fileRef = 3265F9221FB8997300FEA246 /* bson-writer.c */; };
+		3265F9571FB89F6B00FEA246 /* bson-value.c in Sources */ = {isa = PBXBuildFile; fileRef = 3265F9251FB8997300FEA246 /* bson-value.c */; };
+		3265F9581FB89F6B00FEA246 /* bson-json.c in Sources */ = {isa = PBXBuildFile; fileRef = 3265F9291FB8997300FEA246 /* bson-json.c */; };
+		3265F9591FB89F6B00FEA246 /* bson.c in Sources */ = {isa = PBXBuildFile; fileRef = 3265F92C1FB8997300FEA246 /* bson.c */; };
+		3265F95A1FB89F6B00FEA246 /* bcon.c in Sources */ = {isa = PBXBuildFile; fileRef = 3265F9331FB8997300FEA246 /* bcon.c */; };
+		3265F95B1FB89F6B00FEA246 /* bson-decimal128.c in Sources */ = {isa = PBXBuildFile; fileRef = 3265F93C1FB8997300FEA246 /* bson-decimal128.c */; };
+		3265F95C1FB89F6B00FEA246 /* bson-timegm.c in Sources */ = {isa = PBXBuildFile; fileRef = 3265F93F1FB8997300FEA246 /* bson-timegm.c */; };
+		3265F95D1FB89F6B00FEA246 /* bson-utf8.c in Sources */ = {isa = PBXBuildFile; fileRef = 3265F9401FB8997300FEA246 /* bson-utf8.c */; };
+		3265F95E1FB89F6B00FEA246 /* bson-reader.c in Sources */ = {isa = PBXBuildFile; fileRef = 3265F9411FB8997300FEA246 /* bson-reader.c */; };
+		3265F95F1FB89F6B00FEA246 /* bson-clock.c in Sources */ = {isa = PBXBuildFile; fileRef = 3265F9421FB8997300FEA246 /* bson-clock.c */; };
+		3265F9601FB8A12B00FEA246 /* jsonsl.c in Sources */ = {isa = PBXBuildFile; fileRef = 3265F9481FB8997300FEA246 /* jsonsl.c */; };
 		32661C6D1AA741D000F1A721 /* ChaosMetadataServiceClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32661C6B1AA741D000F1A721 /* ChaosMetadataServiceClient.cpp */; };
 		32661C6E1AA741D000F1A721 /* ChaosMetadataServiceClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 32661C6C1AA741D000F1A721 /* ChaosMetadataServiceClient.h */; };
 		32661C711AA7606400F1A721 /* NodeMessageChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32661C6F1AA74E4700F1A721 /* NodeMessageChannel.cpp */; };
@@ -1572,10 +1590,6 @@
 		324D08B71F31DA5300836E29 /* connection_type.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = connection_type.h; sourceTree = "<group>"; };
 		324D08C31F31EC5000836E29 /* HTTPConnectionAdapter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPConnectionAdapter.cpp; sourceTree = "<group>"; };
 		324D08C41F31EC5000836E29 /* HTTPConnectionAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPConnectionAdapter.h; sourceTree = "<group>"; };
-		324D08C81F31F26600836E29 /* DataPack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataPack.cpp; sourceTree = "<group>"; };
-		324D08C91F31F26600836E29 /* DataPack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataPack.h; sourceTree = "<group>"; };
-		324D08CD1F31F5A000836E29 /* json.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = json.h; sourceTree = "<group>"; };
-		324D08CE1F31F5A000836E29 /* jsoncpp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = jsoncpp.cpp; sourceTree = "<group>"; };
 		324D08CF1F31F5A000836E29 /* mongoose.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mongoose.c; sourceTree = "<group>"; };
 		324D08D01F31F5A000836E29 /* mongoose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mongoose.h; sourceTree = "<group>"; };
 		324D08D61F31FFFE00836E29 /* micro_unit_toolkit_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = micro_unit_toolkit_types.h; sourceTree = "<group>"; };
@@ -1750,6 +1764,63 @@
 		326573F218CCD365009E9B6B /* TemplatedKeyObjectContainer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TemplatedKeyObjectContainer.h; sourceTree = "<group>"; };
 		3265BF4515D1A9CA00C3CAC6 /* ChaosUIToolkitCWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChaosUIToolkitCWrapper.h; sourceTree = "<group>"; };
 		3265BF4815D1AA9F00C3CAC6 /* ChaosUIToolkitCWrapper.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChaosUIToolkitCWrapper.cc; sourceTree = "<group>"; };
+		3265F9101FB8997300FEA246 /* b64_ntop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = b64_ntop.h; sourceTree = "<group>"; };
+		3265F9111FB8997300FEA246 /* bson-context.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "bson-context.c"; sourceTree = "<group>"; };
+		3265F9121FB8997300FEA246 /* bson-oid.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "bson-oid.c"; sourceTree = "<group>"; };
+		3265F9131FB8997300FEA246 /* bson.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bson.h; sourceTree = "<group>"; };
+		3265F9141FB8997300FEA246 /* bson-error.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "bson-error.c"; sourceTree = "<group>"; };
+		3265F9151FB8997300FEA246 /* bson-atomic.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "bson-atomic.c"; sourceTree = "<group>"; };
+		3265F9161FB8997300FEA246 /* bson-json.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "bson-json.h"; sourceTree = "<group>"; };
+		3265F9171FB8997300FEA246 /* bson-string.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "bson-string.c"; sourceTree = "<group>"; };
+		3265F9181FB8997300FEA246 /* bson-keys.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "bson-keys.c"; sourceTree = "<group>"; };
+		3265F9191FB8997300FEA246 /* bson-timegm-private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "bson-timegm-private.h"; sourceTree = "<group>"; };
+		3265F91A1FB8997300FEA246 /* bson-iter.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "bson-iter.c"; sourceTree = "<group>"; };
+		3265F91B1FB8997300FEA246 /* bson-iso8601.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "bson-iso8601.c"; sourceTree = "<group>"; };
+		3265F91C1FB8997300FEA246 /* bcon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bcon.h; sourceTree = "<group>"; };
+		3265F91D1FB8997300FEA246 /* bson-endian.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "bson-endian.h"; sourceTree = "<group>"; };
+		3265F91E1FB8997300FEA246 /* bson-decimal128.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "bson-decimal128.h"; sourceTree = "<group>"; };
+		3265F91F1FB8997300FEA246 /* bson-md5.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "bson-md5.c"; sourceTree = "<group>"; };
+		3265F9201FB8997300FEA246 /* bson-config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "bson-config.h"; sourceTree = "<group>"; };
+		3265F9211FB8997300FEA246 /* bson-memory.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "bson-memory.c"; sourceTree = "<group>"; };
+		3265F9221FB8997300FEA246 /* bson-writer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "bson-writer.c"; sourceTree = "<group>"; };
+		3265F9231FB8997300FEA246 /* bson-iso8601-private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "bson-iso8601-private.h"; sourceTree = "<group>"; };
+		3265F9241FB8997300FEA246 /* bson-clock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "bson-clock.h"; sourceTree = "<group>"; };
+		3265F9251FB8997300FEA246 /* bson-value.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "bson-value.c"; sourceTree = "<group>"; };
+		3265F9261FB8997300FEA246 /* bson-reader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "bson-reader.h"; sourceTree = "<group>"; };
+		3265F9271FB8997300FEA246 /* bson-utf8.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "bson-utf8.h"; sourceTree = "<group>"; };
+		3265F9281FB8997300FEA246 /* bson-string.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "bson-string.h"; sourceTree = "<group>"; };
+		3265F9291FB8997300FEA246 /* bson-json.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "bson-json.c"; sourceTree = "<group>"; };
+		3265F92A1FB8997300FEA246 /* bson-atomic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "bson-atomic.h"; sourceTree = "<group>"; };
+		3265F92B1FB8997300FEA246 /* bson-keys.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "bson-keys.h"; sourceTree = "<group>"; };
+		3265F92C1FB8997300FEA246 /* bson.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = bson.c; sourceTree = "<group>"; };
+		3265F92D1FB8997300FEA246 /* bson-error.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "bson-error.h"; sourceTree = "<group>"; };
+		3265F92E1FB8997300FEA246 /* bson-oid.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "bson-oid.h"; sourceTree = "<group>"; };
+		3265F92F1FB8997300FEA246 /* bson-stdint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "bson-stdint.h"; sourceTree = "<group>"; };
+		3265F9301FB8997300FEA246 /* bson-context.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "bson-context.h"; sourceTree = "<group>"; };
+		3265F9311FB8997300FEA246 /* bson-private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "bson-private.h"; sourceTree = "<group>"; };
+		3265F9321FB8997300FEA246 /* bson-context-private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "bson-context-private.h"; sourceTree = "<group>"; };
+		3265F9331FB8997300FEA246 /* bcon.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = bcon.c; sourceTree = "<group>"; };
+		3265F9341FB8997300FEA246 /* bson-types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "bson-types.h"; sourceTree = "<group>"; };
+		3265F9351FB8997300FEA246 /* bson-stdint-win32.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "bson-stdint-win32.h"; sourceTree = "<group>"; };
+		3265F9361FB8997300FEA246 /* bson-iter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "bson-iter.h"; sourceTree = "<group>"; };
+		3265F9371FB8997300FEA246 /* bson-thread-private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "bson-thread-private.h"; sourceTree = "<group>"; };
+		3265F9381FB8997300FEA246 /* bson-writer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "bson-writer.h"; sourceTree = "<group>"; };
+		3265F9391FB8997300FEA246 /* bson-memory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "bson-memory.h"; sourceTree = "<group>"; };
+		3265F93A1FB8997300FEA246 /* b64_pton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = b64_pton.h; sourceTree = "<group>"; };
+		3265F93B1FB8997300FEA246 /* bson-compat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "bson-compat.h"; sourceTree = "<group>"; };
+		3265F93C1FB8997300FEA246 /* bson-decimal128.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "bson-decimal128.c"; sourceTree = "<group>"; };
+		3265F93D1FB8997300FEA246 /* bson-macros.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "bson-macros.h"; sourceTree = "<group>"; };
+		3265F93E1FB8997300FEA246 /* bson-md5.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "bson-md5.h"; sourceTree = "<group>"; };
+		3265F93F1FB8997300FEA246 /* bson-timegm.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "bson-timegm.c"; sourceTree = "<group>"; };
+		3265F9401FB8997300FEA246 /* bson-utf8.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "bson-utf8.c"; sourceTree = "<group>"; };
+		3265F9411FB8997300FEA246 /* bson-reader.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "bson-reader.c"; sourceTree = "<group>"; };
+		3265F9421FB8997300FEA246 /* bson-clock.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "bson-clock.c"; sourceTree = "<group>"; };
+		3265F9431FB8997300FEA246 /* bson-value.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "bson-value.h"; sourceTree = "<group>"; };
+		3265F9441FB8997300FEA246 /* bson.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bson.h; sourceTree = "<group>"; };
+		3265F9471FB8997300FEA246 /* jsonsl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = jsonsl.h; sourceTree = "<group>"; };
+		3265F9481FB8997300FEA246 /* jsonsl.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jsonsl.c; sourceTree = "<group>"; };
+		3265F9491FB899D300FEA246 /* DataPack.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DataPack.cpp; sourceTree = "<group>"; };
+		3265F94A1FB899D400FEA246 /* DataPack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataPack.h; sourceTree = "<group>"; };
 		32661C661AA73D5B00F1A721 /* libchaos_metadata_service_client.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_metadata_service_client.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		32661C6B1AA741D000F1A721 /* ChaosMetadataServiceClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChaosMetadataServiceClient.cpp; sourceTree = "<group>"; };
 		32661C6C1AA741D000F1A721 /* ChaosMetadataServiceClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChaosMetadataServiceClient.h; sourceTree = "<group>"; };
@@ -3398,8 +3469,7 @@
 		324D08A31F31CEB400836E29 /* external_lib */ = {
 			isa = PBXGroup;
 			children = (
-				324D08CD1F31F5A000836E29 /* json.h */,
-				324D08CE1F31F5A000836E29 /* jsoncpp.cpp */,
+				3265F90E1FB8997300FEA246 /* bson */,
 				324D08CF1F31F5A000836E29 /* mongoose.c */,
 				324D08D01F31F5A000836E29 /* mongoose.h */,
 				324BE8491F3CA31A00FFDA02 /* base64.cpp */,
@@ -3456,8 +3526,8 @@
 		324D08C71F31F25300836E29 /* data */ = {
 			isa = PBXGroup;
 			children = (
-				324D08C81F31F26600836E29 /* DataPack.cpp */,
-				324D08C91F31F26600836E29 /* DataPack.h */,
+				3265F9491FB899D300FEA246 /* DataPack.cpp */,
+				3265F94A1FB899D400FEA246 /* DataPack.h */,
 			);
 			path = data;
 			sourceTree = "<group>";
@@ -3810,6 +3880,92 @@
 				327D7E0C1ED2E57A00A8AF1C /* EULiveManagment.h */,
 			);
 			path = api;
+			sourceTree = "<group>";
+		};
+		3265F90E1FB8997300FEA246 /* bson */ = {
+			isa = PBXGroup;
+			children = (
+				3265F90F1FB8997300FEA246 /* bson */,
+				3265F9441FB8997300FEA246 /* bson.h */,
+				3265F9451FB8997300FEA246 /* util */,
+				3265F9461FB8997300FEA246 /* jsonsl */,
+			);
+			path = bson;
+			sourceTree = "<group>";
+		};
+		3265F90F1FB8997300FEA246 /* bson */ = {
+			isa = PBXGroup;
+			children = (
+				3265F9101FB8997300FEA246 /* b64_ntop.h */,
+				3265F9111FB8997300FEA246 /* bson-context.c */,
+				3265F9121FB8997300FEA246 /* bson-oid.c */,
+				3265F9131FB8997300FEA246 /* bson.h */,
+				3265F9141FB8997300FEA246 /* bson-error.c */,
+				3265F9151FB8997300FEA246 /* bson-atomic.c */,
+				3265F9161FB8997300FEA246 /* bson-json.h */,
+				3265F9171FB8997300FEA246 /* bson-string.c */,
+				3265F9181FB8997300FEA246 /* bson-keys.c */,
+				3265F9191FB8997300FEA246 /* bson-timegm-private.h */,
+				3265F91A1FB8997300FEA246 /* bson-iter.c */,
+				3265F91B1FB8997300FEA246 /* bson-iso8601.c */,
+				3265F91C1FB8997300FEA246 /* bcon.h */,
+				3265F91D1FB8997300FEA246 /* bson-endian.h */,
+				3265F91E1FB8997300FEA246 /* bson-decimal128.h */,
+				3265F91F1FB8997300FEA246 /* bson-md5.c */,
+				3265F9201FB8997300FEA246 /* bson-config.h */,
+				3265F9211FB8997300FEA246 /* bson-memory.c */,
+				3265F9221FB8997300FEA246 /* bson-writer.c */,
+				3265F9231FB8997300FEA246 /* bson-iso8601-private.h */,
+				3265F9241FB8997300FEA246 /* bson-clock.h */,
+				3265F9251FB8997300FEA246 /* bson-value.c */,
+				3265F9261FB8997300FEA246 /* bson-reader.h */,
+				3265F9271FB8997300FEA246 /* bson-utf8.h */,
+				3265F9281FB8997300FEA246 /* bson-string.h */,
+				3265F9291FB8997300FEA246 /* bson-json.c */,
+				3265F92A1FB8997300FEA246 /* bson-atomic.h */,
+				3265F92B1FB8997300FEA246 /* bson-keys.h */,
+				3265F92C1FB8997300FEA246 /* bson.c */,
+				3265F92D1FB8997300FEA246 /* bson-error.h */,
+				3265F92E1FB8997300FEA246 /* bson-oid.h */,
+				3265F92F1FB8997300FEA246 /* bson-stdint.h */,
+				3265F9301FB8997300FEA246 /* bson-context.h */,
+				3265F9311FB8997300FEA246 /* bson-private.h */,
+				3265F9321FB8997300FEA246 /* bson-context-private.h */,
+				3265F9331FB8997300FEA246 /* bcon.c */,
+				3265F9341FB8997300FEA246 /* bson-types.h */,
+				3265F9351FB8997300FEA246 /* bson-stdint-win32.h */,
+				3265F9361FB8997300FEA246 /* bson-iter.h */,
+				3265F9371FB8997300FEA246 /* bson-thread-private.h */,
+				3265F9381FB8997300FEA246 /* bson-writer.h */,
+				3265F9391FB8997300FEA246 /* bson-memory.h */,
+				3265F93A1FB8997300FEA246 /* b64_pton.h */,
+				3265F93B1FB8997300FEA246 /* bson-compat.h */,
+				3265F93C1FB8997300FEA246 /* bson-decimal128.c */,
+				3265F93D1FB8997300FEA246 /* bson-macros.h */,
+				3265F93E1FB8997300FEA246 /* bson-md5.h */,
+				3265F93F1FB8997300FEA246 /* bson-timegm.c */,
+				3265F9401FB8997300FEA246 /* bson-utf8.c */,
+				3265F9411FB8997300FEA246 /* bson-reader.c */,
+				3265F9421FB8997300FEA246 /* bson-clock.c */,
+				3265F9431FB8997300FEA246 /* bson-value.h */,
+			);
+			path = bson;
+			sourceTree = "<group>";
+		};
+		3265F9451FB8997300FEA246 /* util */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = util;
+			sourceTree = "<group>";
+		};
+		3265F9461FB8997300FEA246 /* jsonsl */ = {
+			isa = PBXGroup;
+			children = (
+				3265F9471FB8997300FEA246 /* jsonsl.h */,
+				3265F9481FB8997300FEA246 /* jsonsl.c */,
+			);
+			path = jsonsl;
 			sourceTree = "<group>";
 		};
 		32661C6A1AA73DA200F1A721 /* chaos_metadata_service_client */ = {
@@ -5660,8 +5816,6 @@
 				325F517F1F3C3E11000B842F /* RawDriverHandlerWrapper.h in Headers */,
 				325F51831F3C3E4D000B842F /* UnitProxyHandlerWrapper.h in Headers */,
 				324D08C61F31EC5000836E29 /* HTTPConnectionAdapter.h in Headers */,
-				324D08D21F31F5A000836E29 /* json.h in Headers */,
-				324D08CB1F31F26600836E29 /* DataPack.h in Headers */,
 				324BE84C1F3CA31A00FFDA02 /* base64.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6663,15 +6817,35 @@
 				324D08A11F30CE2B00836E29 /* ChaosMicroUnitToolkit.cpp in Sources */,
 				324D08AB1F31D5EA00836E29 /* ConnectionManager.cpp in Sources */,
 				324D08D41F31F5A000836E29 /* mongoose.c in Sources */,
+				3265F9591FB89F6B00FEA246 /* bson.c in Sources */,
+				3265F9521FB89F6B00FEA246 /* bson-iter.c in Sources */,
 				324D08B51F31D7F300836E29 /* AbstractUnitProxy.cpp in Sources */,
+				3265F9571FB89F6B00FEA246 /* bson-value.c in Sources */,
 				324D08C51F31EC5000836E29 /* HTTPConnectionAdapter.cpp in Sources */,
 				325F517E1F3C3E11000B842F /* RawDriverHandlerWrapper.cpp in Sources */,
-				324D08CA1F31F26600836E29 /* DataPack.cpp in Sources */,
+				3265F9531FB89F6B00FEA246 /* bson-iso8601.c in Sources */,
+				3265F95C1FB89F6B00FEA246 /* bson-timegm.c in Sources */,
+				3265F94E1FB89F6B00FEA246 /* bson-error.c in Sources */,
+				3265F95D1FB89F6B00FEA246 /* bson-utf8.c in Sources */,
+				3265F9501FB89F6B00FEA246 /* bson-string.c in Sources */,
+				3265F95F1FB89F6B00FEA246 /* bson-clock.c in Sources */,
+				3265F95A1FB89F6B00FEA246 /* bcon.c in Sources */,
+				3265F95E1FB89F6B00FEA246 /* bson-reader.c in Sources */,
+				3265F9511FB89F6B00FEA246 /* bson-keys.c in Sources */,
+				3265F94F1FB89F6B00FEA246 /* bson-atomic.c in Sources */,
 				325F51821F3C3E4D000B842F /* UnitProxyHandlerWrapper.cpp in Sources */,
 				324BE84B1F3CA31A00FFDA02 /* base64.cpp in Sources */,
+				3265F9601FB8A12B00FEA246 /* jsonsl.c in Sources */,
+				3265F94C1FB89F6B00FEA246 /* bson-context.c in Sources */,
+				3265F94B1FB899D400FEA246 /* DataPack.cpp in Sources */,
 				324D08B01F31D70600836E29 /* AbstractConnectionAdapter.cpp in Sources */,
+				3265F9561FB89F6B00FEA246 /* bson-writer.c in Sources */,
+				3265F9541FB89F6B00FEA246 /* bson-md5.c in Sources */,
 				325F517A1F3C3DD2000B842F /* RawDriverUnitProxy.cpp in Sources */,
-				324D08D31F31F5A000836E29 /* jsoncpp.cpp in Sources */,
+				3265F9551FB89F6B00FEA246 /* bson-memory.c in Sources */,
+				3265F94D1FB89F6B00FEA246 /* bson-oid.c in Sources */,
+				3265F9581FB89F6B00FEA246 /* bson-json.c in Sources */,
+				3265F95B1FB89F6B00FEA246 /* bson-decimal128.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7443,6 +7617,7 @@
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-lboost_system";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -7495,6 +7670,7 @@
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-lboost_system";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};

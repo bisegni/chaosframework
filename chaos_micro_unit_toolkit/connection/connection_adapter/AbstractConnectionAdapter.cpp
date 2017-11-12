@@ -33,28 +33,28 @@ adapter_request_id(0){}
 
 AbstractConnectionAdapter::~AbstractConnectionAdapter() {}
 
-void AbstractConnectionAdapter::handleReceivedMessage(data::DataPackSharedPtr& received_message) {
+void AbstractConnectionAdapter::handleReceivedMessage(data::CDWShrdPtr& received_message) {
     //checn whenever the message is a response or spontaneus message
     if(received_message->hasKey("etx_request_id") &&
-       received_message->isInt32("etx_request_id")) {
-        map_req_id_response.insert(MapRequestIDResponsePair((uint32_t)received_message->getInt32("etx_request_id"),
+       received_message->isInt32Value("etx_request_id")) {
+        map_req_id_response.insert(MapRequestIDResponsePair((uint32_t)received_message->getInt32Value("etx_request_id"),
                                                             received_message));
     } else {
         queue_received_messages.push(received_message);
     }
 }
 
-int AbstractConnectionAdapter::sendMessage(data::DataPackUniquePtr& message) {
+int AbstractConnectionAdapter::sendMessage(data::CDWUniquePtr& message) {
     if(connection_status != ConnectionStateAccepted){
         return -1;
     }
     return sendRawMessage(message);
 }
 
-int AbstractConnectionAdapter::sendRequest(data::DataPackUniquePtr& message,
+int AbstractConnectionAdapter::sendRequest(data::CDWUniquePtr& message,
                                            uint32_t& request_id) {
     request_id = adapter_request_id++;
-    message->addInt32("ext_request_id", request_id);
+    message->addInt32Value("ext_request_id", request_id);
     return sendMessage(message);
 }
 
@@ -62,11 +62,11 @@ bool AbstractConnectionAdapter::hasMoreMessage() {
     return queue_received_messages.size();
 }
 
-DataPackSharedPtr AbstractConnectionAdapter::getNextMessage() {
+CDWShrdPtr AbstractConnectionAdapter::getNextMessage() {
     if(queue_received_messages.size() == 0) {
-        return DataPackSharedPtr();
+        return CDWShrdPtr();
     } else {
-        DataPackSharedPtr result = queue_received_messages.front();
+        CDWShrdPtr result = queue_received_messages.front();
         queue_received_messages.pop();
         return result;
     }
@@ -80,8 +80,8 @@ bool AbstractConnectionAdapter::hasResponseAvailable(uint32_t request_id) {
     return map_req_id_response.find(request_id) != map_req_id_response.end();
 }
 
-DataPackSharedPtr AbstractConnectionAdapter::retrieveRequestResponse(uint32_t request_id) {
-    return DataPackSharedPtr();
+CDWShrdPtr AbstractConnectionAdapter::retrieveRequestResponse(uint32_t request_id) {
+    return CDWShrdPtr();
 }
 
 const ConnectionState& AbstractConnectionAdapter::getConnectionState() const {

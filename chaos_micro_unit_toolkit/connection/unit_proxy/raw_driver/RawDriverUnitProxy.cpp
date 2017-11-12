@@ -40,8 +40,8 @@ RawDriverUnitProxy::~RawDriverUnitProxy() {}
 
 void RawDriverUnitProxy::authorization(const std::string& authorization_key) {
     authorization_state = AuthorizationStateRequested;
-    data::DataPackUniquePtr message(new data::DataPack());
-    message->addString(AUTHORIZATION_KEY, authorization_key);
+    data::CDWUniquePtr message(new data::DataPack());
+    message->addStringValue(AUTHORIZATION_KEY, authorization_key);
     AbstractUnitProxy::sendMessage(message);
 }
 
@@ -51,8 +51,8 @@ bool RawDriverUnitProxy::manageAutorizationPhase() {
         //!check authentication state
         RemoteMessageUniquePtr result = getNextMessage();
         if(result->message->hasKey(AUTHORIZATION_STATE) ||
-           result->message->isBool(AUTHORIZATION_STATE)) {
-            authorization_state = (AuthorizationState)result->message->getBool(AUTHORIZATION_STATE);
+           result->message->isBoolValue(AUTHORIZATION_STATE)) {
+            authorization_state = (AuthorizationState)result->message->getBoolValue(AUTHORIZATION_STATE);
         }
     }
     return result;
@@ -65,7 +65,7 @@ int RawDriverUnitProxy::sendMessage(DataPackUniquePtr& message_data) {
 }
 
 int RawDriverUnitProxy::sendAnswer(RemoteMessageUniquePtr& message,
-                                  DataPackUniquePtr& message_data) {
+                                   CDWUniquePtr& message_data) {
     if(message->is_request == false) return - 1;
     DataPackUniquePtr answer(new DataPack());
     answer->addInt32(REQUEST_IDENTIFICATION, message->message_id);
