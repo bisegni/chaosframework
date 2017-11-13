@@ -243,7 +243,9 @@ namespace chaos {
                                     }
                                 }
                             } else {
-                                if(!message->hasKey(MESSAGE)){
+                                if(message->hasKey(AUTHORIZATION_KEY)) {
+                                    sendAuthenticationACK();
+                                } else if(!message->hasKey(MESSAGE)){
                                     //send error because not right type of req index
                                     EndpointType::sendError(connection_identifier,
                                                             -2, "message field is mandatory", __PRETTY_FUNCTION__);

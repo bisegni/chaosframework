@@ -51,24 +51,35 @@ bool RawDriverUnitProxy::manageAutorizationPhase() {
         //!check authentication state
         RemoteMessageUniquePtr result = getNextMessage();
         if(result->message->hasKey(AUTHORIZATION_STATE) ||
-           result->message->isBoolValue(AUTHORIZATION_STATE)) {
-            authorization_state = (AuthorizationState)result->message->getBoolValue(AUTHORIZATION_STATE);
+           result->message->isInt32Value(AUTHORIZATION_STATE)) {
+            switch (result->message->getInt32Value(AUTHORIZATION_STATE)) {
+                case 0:
+                    authorization_state = AuthorizationStateDenied;
+                    break;
+                case 1:
+                    authorization_state = AuthorizationStateOk;
+                    break;
+                default:
+                     authorization_state = AuthorizationStateDenied;
+                    break;
+            }
+            
         }
     }
     return result;
 }
 
-int RawDriverUnitProxy::sendMessage(DataPackUniquePtr& message_data) {
-    DataPackUniquePtr message(new DataPack());
-    message->addDataPack(MESSAGE, *message_data);
+int RawDriverUnitProxy::sendMessage(CDWUniquePtr& message_data) {
+    CDWUniquePtr message(new DataPack());
+    message->addCDWValue(MESSAGE, *message_data);
     return AbstractUnitProxy::sendMessage(message);
 }
 
 int RawDriverUnitProxy::sendAnswer(RemoteMessageUniquePtr& message,
                                    CDWUniquePtr& message_data) {
     if(message->is_request == false) return - 1;
-    DataPackUniquePtr answer(new DataPack());
-    answer->addInt32(REQUEST_IDENTIFICATION, message->message_id);
-    answer->addDataPack(MESSAGE, *message_data);
+    CDWUniquePtr answer(new DataPack());
+    answer->addInt32Value(REQUEST_IDENTIFICATION, message->message_id);
+    answer->addCDWValue(MESSAGE, *message_data);
     return AbstractUnitProxy::sendMessage(answer);
 }
