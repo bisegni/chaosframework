@@ -171,22 +171,20 @@ type(DataType::TYPE_BOOLEAN),
 _internal_variant(bool_value) { }
 
 CDataVariant::CDataVariant(const std::string& string_value):_internal_variant(string_value){
-    CDataWrapper tmp;
-    try{
-        tmp.setSerializedJsonData(string_value.c_str());
-        type=DataType::TYPE_CLUSTER;
-    } catch(...){
+    CDWUniquePtr tmp = CDataWrapper::instanceFromJson(string_value);
+    if(tmp->isEmpty()) {
         type=DataType::TYPE_STRING;
+    } else {
+        type=DataType::TYPE_CLUSTER;
     }
 }
 
 CDataVariant::CDataVariant(const char * string_value):_internal_variant(std::string(string_value)){
-    CDataWrapper tmp;
-    try{
-        tmp.setSerializedJsonData(string_value);
-        type=DataType::TYPE_CLUSTER;
-    } catch(...){
+    CDWUniquePtr tmp = CDataWrapper::instanceFromJson(string_value);
+    if(tmp->isEmpty()) {
         type=DataType::TYPE_STRING;
+    } else {
+        type=DataType::TYPE_CLUSTER;
     }
 }
 

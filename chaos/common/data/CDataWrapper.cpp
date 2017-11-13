@@ -78,7 +78,9 @@ array_index(0) {
     bson = ALLOCATE_BSONT(bson_new_from_json((const uint8_t*)json_document.c_str(),
                                              json_document.size(),
                                              &err));
-    CHAOS_ASSERT(bson);
+    if(!bson.get()) {
+        bson = ALLOCATE_BSONT(bson_new());
+    }
 }
 
 CDataWrapper::~CDataWrapper(){}
