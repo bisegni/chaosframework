@@ -456,7 +456,7 @@ uint32_t CDataWrapper::getValueSize(const std::string& key) const{
             return array_len;
         }
         case BSON_TYPE_DOCUMENT:{
-        	   return v->value.v_doc.data_len;
+            return v->value.v_doc.data_len;
         }
         default:
             return 0;
@@ -491,7 +491,7 @@ const char * CDataWrapper::getRawValuePtr(const std::string& key) const{
             return reinterpret_cast<const char*>(array);
         }
         case BSON_TYPE_DOCUMENT:{
-        	   return reinterpret_cast<const char*>(v->value.v_doc.data);
+            return reinterpret_cast<const char*>(v->value.v_doc.data);
         }
         default:
             return NULL;
@@ -548,6 +548,17 @@ string CDataWrapper::getJSONString()  const{
     bson_free(str_c);
     return result;
 }
+
+//return the json data
+string CDataWrapper::getCompliantJSONString()  const{
+    size_t str_size = 0;
+    char * str_c = bson_as_json(ACCESS_BSON(bson),
+                                &str_size);
+    std::string result(str_c);
+    bson_free(str_c);
+    return result;
+}
+
 //reinitialize the object with bson data
 void CDataWrapper::setSerializedData(const char* bson_data) {
     bson_iter_t it;
@@ -569,8 +580,8 @@ void CDataWrapper::setSerializedJsonData(const char* json_data) {
     bson_error_t err;
     size_t len = (size_t)strlen(json_data);
     bson =ALLOCATE_BSONT(bson_new_from_json((const uint8_t*)json_data,
-                                      len,
-                                      &err));
+                                            len,
+                                            &err));
     CHAOS_ASSERT(bson);
 }
 

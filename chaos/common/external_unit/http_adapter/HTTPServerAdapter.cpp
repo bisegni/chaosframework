@@ -265,7 +265,7 @@ void HTTPServerAdapter::sendWSJSONAcceptedConnection(mg_connection *nc,
                                                      bool close_connection) {
     chaos::common::data::CDataWrapper err_data_pack;
     err_data_pack.addInt32Value("accepted_connection", accepted);
-    const std::string accepted_json = err_data_pack.getJSONString();
+    const std::string accepted_json = err_data_pack.getCompliantJSONString();
     mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT, accepted_json.c_str(), accepted_json.size());
     if(close_connection){mg_send_websocket_frame(nc, WEBSOCKET_OP_CLOSE, NULL, 0);}
 }
