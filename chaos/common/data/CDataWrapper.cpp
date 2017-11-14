@@ -345,6 +345,26 @@ void CDataWrapper::addBinaryValue(const std::string& key,
                        (const uint8_t *)buff,
                        buf_len);
 }
+void CDataWrapper::addValue(const std::string& key,int32_t val){
+    addInt32Value(key, val);
+}
+void CDataWrapper::addValue(const std::string& key,int64_t val){
+    addInt64Value(key, val);
+
+}
+
+void CDataWrapper::addValue(const std::string& key,double val){
+    addDoubleValue(key, val);
+
+}
+void CDataWrapper::addValue(const std::string& key,bool val){
+    addBoolValue(key, val);
+
+}
+void CDataWrapper::addValue(const std::string& key,std::string& val){
+    addStringValue(key, val);
+
+}
 
 void CDataWrapper::addVariantValue(const std::string& key,
                                    const CDataVariant& variant_value) {

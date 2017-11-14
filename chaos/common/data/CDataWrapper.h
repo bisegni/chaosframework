@@ -149,11 +149,13 @@ namespace chaos {
                 //add a integer value
                 void addInt32Value(const std::string&, int32_t);
                 
-                //                template <typename T>
-                //                void addValue(const std::string& key,T val){
-                //                    bsonBuilder->append(key, static_cast<T>(val));
-                //
-                //                }
+
+                void addValue(const std::string& key,int32_t val);
+                void addValue(const std::string& key,int64_t val);
+                void addValue(const std::string& key,double val);
+                void addValue(const std::string& key,bool val);
+                void addValue(const std::string& key,std::string& val);
+
                 //add a integer value
                 void addInt32Value(const std::string&, uint32_t);
                 //add a integer value
