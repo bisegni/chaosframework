@@ -14,7 +14,11 @@ SET(source ${source} connection/unit_proxy/AbstractUnitProxy.cpp
 SET(source ${source} connection/unit_proxy/raw_driver/RawDriverUnitProxy.cpp
                      connection/unit_proxy/raw_driver/RawDriverHandlerWrapper.cpp)
 SET(source ${source}
+<<<<<<< HEAD
                     external_lib/bson/bson/bcon.c
+=======
+                    external_lib/bson/bson/bson.c
+>>>>>>> 9007a10879e065ac9d1ab4051aecece8c60afd8b
                     external_lib/bson/bson/bson-atomic.c
                     external_lib/bson/bson/bson-clock.c
                     external_lib/bson/bson/bson-context.c
@@ -34,7 +38,11 @@ SET(source ${source}
                     external_lib/bson/bson/bson-value.c
                     external_lib/bson/bson/bson-writer.c
                     external_lib/bson/bson/bson.c
+<<<<<<< HEAD
                     external_lib/bson/jsonsl/jsonsl.c)
+=======
+                    external_lib/jsonsl/jsonsl.c)
+>>>>>>> 9007a10879e065ac9d1ab4051aecece8c60afd8b
 SET(source ${source} external_lib/mongoose.c
                      external_lib/base64.cpp)
 
