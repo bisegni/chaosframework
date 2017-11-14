@@ -123,9 +123,6 @@ IF(NOT CHAOS_ONLY_DEPENDECY)
   MESG("Configure Chaos Metadata Service Client Library Test Application")
   ADD_SUBDIRECTORY(ChaosMetadataServiceClientTest)
 
-  MESG("Configure Chaos Micro Unit Toolkit Test")
-  ADD_SUBDIRECTORY(ChaosMicroUnitToolkitTest)
-
   IF (CHAOS_WAN)
     MESG("Configure Chaos WAN Proxy")
     ADD_SUBDIRECTORY(ChaosWANProxy)

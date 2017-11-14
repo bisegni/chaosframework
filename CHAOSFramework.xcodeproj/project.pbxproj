@@ -267,7 +267,6 @@
 		324D08C61F31EC5000836E29 /* HTTPConnectionAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 324D08C41F31EC5000836E29 /* HTTPConnectionAdapter.h */; };
 		324D08D41F31F5A000836E29 /* mongoose.c in Sources */ = {isa = PBXBuildFile; fileRef = 324D08CF1F31F5A000836E29 /* mongoose.c */; };
 		324D08D51F31F5A000836E29 /* mongoose.h in Headers */ = {isa = PBXBuildFile; fileRef = 324D08D01F31F5A000836E29 /* mongoose.h */; };
-		324D08E21F321B4800836E29 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324D08E11F321B4800836E29 /* main.cpp */; };
 		324EF3E31AE923F9000837AF /* DataServiceApiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324EF3E11AE923F9000837AF /* DataServiceApiGroup.cpp */; };
 		324FD0811B00ACEF003800BA /* MonitorManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324FD07F1B00ACEF003800BA /* MonitorManager.cpp */; };
 		324FD0821B00ACEF003800BA /* MonitorManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 324FD0801B00ACEF003800BA /* MonitorManager.h */; };
@@ -1261,15 +1260,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
-		324D08DD1F321B4800836E29 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-		};
 		326413971E44ACE60035E175 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1291,7 +1281,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		3200EF5F1F38ABD1002B5115 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		32033D5F1A64016A004F1B7D /* global_type.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = global_type.h; sourceTree = "<group>"; };
 		32033D601A6401B7004F1B7D /* global_constant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = global_constant.h; sourceTree = "<group>"; };
 		32033D611A6428E2004F1B7D /* wan_interface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = wan_interface.h; sourceTree = "<group>"; };
@@ -1593,8 +1582,6 @@
 		324D08CF1F31F5A000836E29 /* mongoose.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mongoose.c; sourceTree = "<group>"; };
 		324D08D01F31F5A000836E29 /* mongoose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mongoose.h; sourceTree = "<group>"; };
 		324D08D61F31FFFE00836E29 /* micro_unit_toolkit_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = micro_unit_toolkit_types.h; sourceTree = "<group>"; };
-		324D08DF1F321B4800836E29 /* ChaosMicroUnitToolkitTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ChaosMicroUnitToolkitTest; sourceTree = BUILT_PRODUCTS_DIR; };
-		324D08E11F321B4800836E29 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		324EF3E11AE923F9000837AF /* DataServiceApiGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataServiceApiGroup.cpp; sourceTree = "<group>"; };
 		324EF3E21AE923F9000837AF /* DataServiceApiGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataServiceApiGroup.h; sourceTree = "<group>"; };
 		324FD07F1B00ACEF003800BA /* MonitorManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MonitorManager.cpp; sourceTree = "<group>"; };
@@ -2839,13 +2826,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		324D08DC1F321B4800836E29 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		326026E614B301F600C906CE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -3532,15 +3512,6 @@
 			path = data;
 			sourceTree = "<group>";
 		};
-		324D08E01F321B4800836E29 /* ChaosMicroUnitToolkitTest */ = {
-			isa = PBXGroup;
-			children = (
-				3200EF5F1F38ABD1002B5115 /* CMakeLists.txt */,
-				324D08E11F321B4800836E29 /* main.cpp */,
-			);
-			path = ChaosMicroUnitToolkitTest;
-			sourceTree = "<group>";
-		};
 		324EF3DA1AE922B1000837AF /* data_service */ = {
 			isa = PBXGroup;
 			children = (
@@ -3696,7 +3667,6 @@
 				323236C9164573C60052CE06 /* ChaosMetadataService */,
 				3264139A1E44ACE60035E175 /* ChaosAgent */,
 				322085DB1AC5A0E200F1B71A /* ChaosMetadataServiceClientTest */,
-				324D08E01F321B4800836E29 /* ChaosMicroUnitToolkitTest */,
 				32C7EAD51A5D9E450008DFE8 /* ChaosWANProxy */,
 				32F9C79A1E81943F00D4B250 /* CouchTest */,
 				3230BEBB1817A9E100EA5793 /* libchaos_common.dylib */,
@@ -3708,7 +3678,6 @@
 				322085DA1AC5A0E100F1B71A /* ChaosMetadataServiceClientTest */,
 				326413991E44ACE60035E175 /* ChaosAgent */,
 				324D08931F30CD7A00836E29 /* libchaos_micro_unit_toolkit.dylib */,
-				324D08DF1F321B4800836E29 /* ChaosMicroUnitToolkitTest */,
 			);
 			sourceTree = "<group>";
 		};
@@ -3887,7 +3856,6 @@
 			children = (
 				3265F90F1FB8997300FEA246 /* bson */,
 				3265F9441FB8997300FEA246 /* bson.h */,
-				3265F9451FB8997300FEA246 /* util */,
 				3265F9461FB8997300FEA246 /* jsonsl */,
 			);
 			path = bson;
@@ -3950,13 +3918,6 @@
 				3265F9431FB8997300FEA246 /* bson-value.h */,
 			);
 			path = bson;
-			sourceTree = "<group>";
-		};
-		3265F9451FB8997300FEA246 /* util */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = util;
 			sourceTree = "<group>";
 		};
 		3265F9461FB8997300FEA246 /* jsonsl */ = {
@@ -6420,23 +6381,6 @@
 			productReference = 324D08931F30CD7A00836E29 /* libchaos_micro_unit_toolkit.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		324D08DE1F321B4800836E29 /* ChaosMicroUnitToolkitTest */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 324D08E31F321B4800836E29 /* Build configuration list for PBXNativeTarget "ChaosMicroUnitToolkitTest" */;
-			buildPhases = (
-				324D08DB1F321B4800836E29 /* Sources */,
-				324D08DC1F321B4800836E29 /* Frameworks */,
-				324D08DD1F321B4800836E29 /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = ChaosMicroUnitToolkitTest;
-			productName = ChaosMicroUnitToolkitTest;
-			productReference = 324D08DF1F321B4800836E29 /* ChaosMicroUnitToolkitTest */;
-			productType = "com.apple.product-type.tool";
-		};
 		326026E814B301F600C906CE /* chaos_common */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 326026EB14B301F600C906CE /* Build configuration list for PBXNativeTarget "chaos_common" */;
@@ -6560,11 +6504,6 @@
 						DevelopmentTeam = ZZ5BMKV37Y;
 						ProvisioningStyle = Automatic;
 					};
-					324D08DE1F321B4800836E29 = {
-						CreatedOnToolsVersion = 8.3.3;
-						DevelopmentTeam = ZZ5BMKV37Y;
-						ProvisioningStyle = Automatic;
-					};
 					326413981E44ACE60035E175 = {
 						CreatedOnToolsVersion = 8.2.1;
 						DevelopmentTeam = ZZ5BMKV37Y;
@@ -6598,7 +6537,6 @@
 				323236C6164573C60052CE06 /* ChaosMetadataService */,
 				326413981E44ACE60035E175 /* ChaosAgent */,
 				322085D91AC5A0E100F1B71A /* ChaosMetadataServiceClientTest */,
-				324D08DE1F321B4800836E29 /* ChaosMicroUnitToolkitTest */,
 				32C7EAD31A5D9E450008DFE8 /* ChaosWANProxy */,
 				3211C65B1C146200003B38BF /* Compile ALL */,
 			);
@@ -6846,14 +6784,6 @@
 				3265F94D1FB89F6B00FEA246 /* bson-oid.c in Sources */,
 				3265F9581FB89F6B00FEA246 /* bson-json.c in Sources */,
 				3265F95B1FB89F6B00FEA246 /* bson-decimal128.c in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		324D08DB1F321B4800836E29 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				324D08E21F321B4800836E29 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7676,94 +7606,6 @@
 			};
 			name = Release;
 		};
-		324D08E41F321B4800836E29 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = ZZ5BMKV37Y;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
-				MTL_ENABLE_DEBUG_INFO = YES;
-				OTHER_LDFLAGS = "-lchaos_micro_unit_toolkit";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-			};
-			name = Debug;
-		};
-		324D08E51F321B4800836E29 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = ZZ5BMKV37Y;
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_LDFLAGS = "-lchaos_micro_unit_toolkit";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-			};
-			name = Release;
-		};
 		3260261214B300FE00C906CE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -8369,15 +8211,6 @@
 			buildConfigurations = (
 				324D089C1F30CD7A00836E29 /* Debug */,
 				324D089D1F30CD7A00836E29 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		324D08E31F321B4800836E29 /* Build configuration list for PBXNativeTarget "ChaosMicroUnitToolkitTest" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				324D08E41F321B4800836E29 /* Debug */,
-				324D08E51F321B4800836E29 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
