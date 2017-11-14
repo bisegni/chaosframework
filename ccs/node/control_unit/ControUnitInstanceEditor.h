@@ -96,6 +96,8 @@ private slots:
 
     void on_pushButtonUpdateALL_clicked();
 
+    void on_pushButtonSaveApplyProperty_clicked();
+
 private:
     Ui::ControUnitInstanceEditor *ui;
     void updateALL();

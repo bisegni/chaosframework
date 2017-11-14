@@ -572,3 +572,10 @@ void ControUnitInstanceEditor::updateALL() {
 
     }
 }
+
+void ControUnitInstanceEditor::on_pushButtonSaveApplyProperty_clicked() {
+    submitApiResult(QString("save_property_defaults"),
+                    GET_CHAOS_API_PTR(node::UpdatePropertyDefaultValues)->execute(ui->lineEditControlUnitUniqueID->text().toStdString(), *preparePropertyGroup().data()));
+    submitApiResult(QString("apply_property_values"),
+                    GET_CHAOS_API_PTR(node::UpdateProperty)->execute(ui->lineEditControlUnitUniqueID->text().toStdString(), *preparePropertyGroup().data()));
+}

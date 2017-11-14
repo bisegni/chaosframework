@@ -51,9 +51,9 @@ namespace chaos {
              */
             class CMultiTypeDataArrayWrapper;
             
-            typedef micro_unit_toolkit::ChaosSharedPtr<bson_t> ChaosBsonShrdPtr;
-            typedef micro_unit_toolkit::ChaosUniquePtr<DataPack> CDWUniquePtr;
-            typedef micro_unit_toolkit::ChaosSharedPtr<DataPack> CDWShrdPtr;
+            typedef ChaosSharedPtr<bson_t> ChaosBsonShrdPtr;
+            typedef ChaosUniquePtr<DataPack> CDWUniquePtr;
+            typedef ChaosSharedPtr<DataPack> CDWShrdPtr;
             /*!
              Class that wrap the serializaiton system for data storage
              */

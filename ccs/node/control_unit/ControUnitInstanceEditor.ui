@@ -739,6 +739,41 @@
          </property>
         </spacer>
        </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <spacer name="horizontalSpacer_4">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButtonSaveApplyProperty">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="whatsThis">
+            <string>Save the defaults value and apply values directly on CU</string>
+           </property>
+           <property name="accessibleName">
+            <string>Save and Apply all the porperty </string>
+           </property>
+           <property name="text">
+            <string>Save And Apply Property</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
       </layout>
      </widget>
     </widget>
@@ -800,7 +835,7 @@
          </font>
         </property>
         <property name="text">
-         <string>save</string>
+         <string>Save All</string>
         </property>
         <property name="default">
          <bool>false</bool>
