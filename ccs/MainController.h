@@ -10,8 +10,8 @@
 #include "log_browser/ApplicationErrorLogging.h"
 
 class MainController:
-public QObject,
-public ApiHandler {
+        public QObject,
+        public ApiHandler {
     Q_OBJECT
 public:
     MainController();
@@ -33,13 +33,14 @@ private slots:
     void actionApplicationLogBrowser();
     void lastWindowClosed();
     void actionCloseWidget(QObject *widget);
+    bool reconfigure();
 private:
     ApplicationErrorLogging *application_error_widget;
     QMenuBar main_menu_bar;
     ApiSubmitter api_submitter;
     QSharedPointer<QSplashScreen> splash;
 
-    bool reconfigure();
+
     void openInWindow(QWidget *w);
     void initApplicationMenuBar();
     void initConfigurationsMenu(QMenu *menu_configurations);
