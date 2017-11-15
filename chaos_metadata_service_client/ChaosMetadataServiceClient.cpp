@@ -51,7 +51,7 @@ using ChaosSharedPtr;
 #define CMSC_LERR ERR_LOG(ChaosMetadataServiceClient)
 
 #define POOL_SIZE_OPTION "live-channel-pool-size"
-//!default constructor
+
 ChaosMetadataServiceClient::ChaosMetadataServiceClient(){
 	 mds_client_initialized=mds_client_deinitialized=false;
 	 io_pool_req=0;
@@ -60,13 +60,8 @@ ChaosMetadataServiceClient::ChaosMetadataServiceClient(){
 															 DPCK_LAST_DATASET_INDEX);
 }
 
-//! default destructor
 ChaosMetadataServiceClient::~ChaosMetadataServiceClient() {}
 
-//! C and C++ attribute parser
-/*!
- Specialized option for startup c and cpp program main options parameter
- */
 void ChaosMetadataServiceClient::init(int argc, char* argv[]) throw (CException) {
     ChaosCommon<ChaosMetadataServiceClient>::init(argc, argv);
 }
@@ -111,9 +106,7 @@ void ChaosMetadataServiceClient::init()  throw(CException) {
           addServerAddress(it->ip_port);
       }
 }
-/*
- *
- */
+
 void ChaosMetadataServiceClient::init(void *init_data)  throw(CException) {
 
     try {
@@ -126,9 +119,6 @@ void ChaosMetadataServiceClient::init(void *init_data)  throw(CException) {
     }
 }
 
-/*
- *
- */
 void ChaosMetadataServiceClient::start()  throw(CException) {
     try {
         ChaosCommon<ChaosMetadataServiceClient>::start();
@@ -144,9 +134,6 @@ void ChaosMetadataServiceClient::start()  throw(CException) {
     }
 }
 
-/*
- Stop the toolkit execution
- */
 void ChaosMetadataServiceClient::stop()   throw(CException) {
     try {
         //stop monitor manager
@@ -159,9 +146,6 @@ void ChaosMetadataServiceClient::stop()   throw(CException) {
     }
 }
 
-/*
- Deiniti all the manager
- */
 void ChaosMetadataServiceClient::deinit()   throw(CException) {
 
 	if(mds_client_deinitialized){
@@ -421,7 +405,6 @@ bool ChaosMetadataServiceClient::addKeyAttributeHandlerForDataset(const std::str
                                   consumer_priority);
 }
 
-//! remove a consumer by key and quantum
 bool ChaosMetadataServiceClient::removeKeyConsumer(const std::string& key_to_monitor,
                                                    int quantum_multiplier,
                                                    monitor_system::QuantumSlotConsumer *consumer,
@@ -433,7 +416,6 @@ bool ChaosMetadataServiceClient::removeKeyConsumer(const std::string& key_to_mon
                                               wait_completion);
 }
 
-//! remove a consumer for the healt data associated to a key
 bool ChaosMetadataServiceClient::removeKeyConsumerForHealt(const std::string& key_to_monitor,
                                                            int quantum_multiplier,
                                                            monitor_system::QuantumSlotConsumer *consumer,
@@ -448,7 +430,6 @@ bool ChaosMetadataServiceClient::removeKeyConsumerForHealt(const std::string& ke
                              wait_completion);
 }
 
-//! remove an handler associated to ans attirbute of a key
 bool ChaosMetadataServiceClient::removeKeyAttributeHandler(const std::string& key_to_monitor,
                                                            int quantum_multiplier,
                                                            AbstractQuantumKeyAttributeHandler *attribute_handler) {
@@ -459,7 +440,7 @@ bool ChaosMetadataServiceClient::removeKeyAttributeHandler(const std::string& ke
     return true;
 }
 
-//! remove an handler associated to ans attirbute of a key
+
 bool ChaosMetadataServiceClient::removeKeyAttributeHandlerForHealt(const std::string& key_to_monitor,
                                                                    int quantum_multiplier,
                                                                    monitor_system::AbstractQuantumKeyAttributeHandler *attribute_handler) {
@@ -528,13 +509,11 @@ std::string ChaosMetadataServiceClient::getHealtKeyFromGeneralKey(const std::str
                       NodeHealtDefinitionKey::HEALT_KEY_POSTFIX);
 }
 
-//!register an event handler
 void ChaosMetadataServiceClient::registerEventHandler(AbstractEventHandler *handler) {
     CHAOS_ASSERT(event_dispatch_manager.get());
     event_dispatch_manager->registerEventHandler(handler);
 }
 
-//!deregister an event handler
 void ChaosMetadataServiceClient::deregisterEventHandler(AbstractEventHandler *handler) {
     event_dispatch_manager->deregisterEventHandler(handler);
 }
