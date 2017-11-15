@@ -220,12 +220,12 @@ namespace chaos {
                 
                 
                 template<typename T>
-                T getValue(const std::string& key) const{
+                 T getValue(const std::string& key) const{
                     T v;
                     bson_iter_t element_found;
                     bson_iter_init(&element_found, bson.get());
                     if(bson_iter_find_case(&element_found, key.c_str())){
-                        v = static_cast<T>(element_found.raw);
+                        v = *reinterpret_cast<const T*>(element_found.raw);
                     }
                     return v;
                 }
