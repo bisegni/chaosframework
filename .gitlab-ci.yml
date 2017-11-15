@@ -9,7 +9,7 @@ build_framework_x86_64:
     - docker
     - linux
   stage: build
-  image: chaos-lnf-control/chaos-docker-compilation/ubuntu1404-llvm:latest
+  image: registry.gitlab.com/chaos-lnf-control/chaos-docker-compilation/ubuntu1404-llvm:latest
   script:
     - tools/chaos_clean.sh
     - cmake -DCHAOS_ARCHITECTURE_TEST=ON .
@@ -38,7 +38,7 @@ build_framework_x86_64_test:
     - docker
     - linux
   stage: test
-  image: chaos-lnf-control/chaos-docker-compilation/ubuntu1404-llvm:latest
+  image: registry.gitlab.com/chaos-lnf-control/chaos-docker-compilation/ubuntu1404-llvm:latest
   script:
     - apt-get update
     - apt-get -y install lcov
@@ -63,7 +63,7 @@ llvm_build_framework_x86_64:
     - docker
     - linux
   stage: build
-  image: chaos-lnf-control/chaos-docker-compilation/ubuntu1704-llvm:latest
+  image: registry.gitlab.com/chaos-lnf-control/chaos-docker-compilation/ubuntu1704-llvm:latest
   script:
     - tools/chaos_clean.sh
     - cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCHAOS_ARCHITECTURE_TEST=ON .
@@ -93,7 +93,7 @@ llvm_build_framework_x86_64_test:
     - docker
     - linux
   stage: test
-  image: chaos-lnf-control/chaos-docker-compilation/ubuntu1704-llvm:latest
+  image: registry.gitlab.com/chaos-lnf-control/chaos-docker-compilation/ubuntu1704-llvm:latest
   script:
     - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux-llvm/lib
     - chaos-distrib-x86_64-Linux-llvm/bin/TestFramework
@@ -109,7 +109,7 @@ build_framework_x86_64_c98:
     - docker
     - linux
   stage: build
-  image: chaos-lnf-control/chaos-docker-compilation/ubuntu1404-llvm:latest
+  image: registry.gitlab.com/chaos-lnf-control/chaos-docker-compilation/ubuntu1404-llvm:latest
   script:
     - tools/chaos_clean.sh
     - cmake -DCHAOS_ENABLE_C11=OFF -DCHAOS_ARCHITECTURE_TEST=ON .
@@ -137,7 +137,7 @@ build_framework_x86_64_c98_test:
     - docker
     - linux
   stage: test
-  image: chaos-lnf-control/chaos-docker-compilation/ubuntu1404-llvm:latest
+  image: registry.gitlab.com/chaos-lnf-control/chaos-docker-compilation/ubuntu1404-llvm:latest
   script:
     - export LD_LIBRARY_PATH=$PWD/chaos-distrib-x86_64-Linux-c98
     - chaos-distrib-x86_64-Linux-c98/bin/TestFramework
@@ -153,7 +153,7 @@ build_framework_arm:
     - docker
     - linux
   stage: build
-  image: chaos-lnf-control/chaos-docker-compilation/ubuntu1404-llvm:latest
+  image: registry.gitlab.com/chaos-lnf-control/chaos-docker-compilation/ubuntu1404-llvm:latest
   script:
     - tools/chaos_clean.sh
     - cmake -DCHAOS_TARGET=armhf .
