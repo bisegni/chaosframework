@@ -20,7 +20,7 @@
  */
 #include "AbstractApi.h"
 #include <boost/lexical_cast.hpp>
-#include <chaos/common/bson/util/base64.h>
+#include <chaos/common/additional_lib/base64.h>
 using namespace chaos::wan_proxy::api;
 
 AbstractApi::AbstractApi(const std::string& name,
@@ -48,7 +48,7 @@ int AbstractApi::setValueFromString(chaos::common::data::CDataWrapper& dataset,
 		dataset.addStringValue(attribute_name.c_str(),
 							   value);
 	}else if(type.compare("binary") == 0) {
-		std::string decoded_binary = bson::base64::decode(value);
+        std::string decoded_binary = base64_decode(value);
 		dataset.addBinaryValue(attribute_name.c_str(),
 							   decoded_binary.c_str(),
 							   (uint32_t)decoded_binary.size());

@@ -20,7 +20,7 @@
 #ifndef CDataWrapper_H
 #define CDataWrapper_H
 
-#pragma GCC diagnostic ignored "-Wignored-attributes"
+//#pragma GCC diagnostic ignored "-Wignored-attributes"
 
 #include <chaos/common/bson/bson.h>
 #include <chaos/common/chaos_types.h>
@@ -366,7 +366,8 @@ namespace chaos {
                 int32_t getInt32ElementAtIndex(const int) const;
                 int64_t getint64ElementAtIndex(const int) const;
                 CDataWrapper* getCDataWrapperElementAtIndex(const int) const;
-                
+                std::string getJSONString() ;
+
                 bool isStringElementAtIndex(const int) const;
                 bool isDoubleElementAtIndex(const int) const;
                 bool isInt32ElementAtIndex(const int) const;
