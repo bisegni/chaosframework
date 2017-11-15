@@ -15,9 +15,7 @@ QMAKE_MAC_SDK = macosx10.12
 
 TARGET = ccs
 TEMPLATE = app
-RESOURCES = qdarkstyle/style.qrc \
-    dark_orange/dark_orange_style.qrc \
-    image/image.qrc
+RESOURCES = theme/theme.qrc
 
 INCLUDEPATH += $$PWD/../
 INCLUDEPATH += $$PWD/../usr/local/include

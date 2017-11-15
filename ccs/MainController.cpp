@@ -14,8 +14,8 @@
 #include <QTextStream>
 #include <QFile>
 #include <QMenu>
+#include <QResource>
 
-#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
 #include "error/ErrorManager.h"
 #include "node/unit_server/UnitServerEditor.h"
 #include "node/data_service/DataServiceEditor.h"
@@ -73,31 +73,58 @@ void MainController::init(int argc, char **argv, QApplication& a) {
     qRegisterMetaType<chaos::common::data::CDataVariant>("chaos::common::data::CDataVariant");
     qRegisterMetaType<QSharedPointer<TwoLineInformationItem> >("QSharedPointer<TwoLineInformationItem>");
 
-    a.setStyle(QStyleFactory::create("Fusion"));
-    QColor dark_main(95,95,95);
-    QColor dark_main_desktop(43,43,43);
-    QColor default_text(220,220,220);
-    QColor disable_color(155,155,155);
+    qApp->setStyle(QStyleFactory::create("Fusion"));
+    if(true) {
+        // modify palette to dark
+        QPalette darkPalette;
+        darkPalette.setColor(QPalette::Window,QColor(53,53,53));
+        darkPalette.setColor(QPalette::WindowText,Qt::white);
+        darkPalette.setColor(QPalette::Disabled,QPalette::WindowText,QColor(127,127,127));
+        darkPalette.setColor(QPalette::Base,QColor(42,42,42));
+        darkPalette.setColor(QPalette::AlternateBase,QColor(66,66,66));
+        darkPalette.setColor(QPalette::ToolTipBase,Qt::white);
+        darkPalette.setColor(QPalette::ToolTipText,Qt::white);
+        darkPalette.setColor(QPalette::Text,Qt::white);
+        darkPalette.setColor(QPalette::Disabled,QPalette::Text,QColor(127,127,127));
+        darkPalette.setColor(QPalette::Dark,QColor(35,35,35));
+        darkPalette.setColor(QPalette::Shadow,QColor(20,20,20));
+        darkPalette.setColor(QPalette::Button,QColor(53,53,53));
+        darkPalette.setColor(QPalette::ButtonText,Qt::white);
+        darkPalette.setColor(QPalette::Disabled,QPalette::ButtonText,QColor(127,127,127));
+        darkPalette.setColor(QPalette::BrightText,Qt::red);
+        darkPalette.setColor(QPalette::Link,QColor(42,130,218));
+        darkPalette.setColor(QPalette::Highlight,QColor(42,130,218));
+        darkPalette.setColor(QPalette::Disabled,QPalette::Highlight,QColor(80,80,80));
+        darkPalette.setColor(QPalette::HighlightedText,Qt::white);
+        darkPalette.setColor(QPalette::Disabled,QPalette::HighlightedText,QColor(127,127,127));
 
-    QPalette darkPalette;
-    darkPalette.setColor(QPalette::Window, dark_main);
-    darkPalette.setColor(QPalette::WindowText, default_text);
-    darkPalette.setColor(QPalette::Base, QColor(25,25,25));
-    darkPalette.setColor(QPalette::AlternateBase, dark_main);
-    darkPalette.setColor(QPalette::ToolTipBase, Qt::white);
-    darkPalette.setColor(QPalette::ToolTipText, Qt::white);
-    darkPalette.setColor(QPalette::Text, default_text);
-    darkPalette.setColor(QPalette::Button, dark_main);
-    darkPalette.setColor(QPalette::ButtonText, Qt::white);
-    darkPalette.setColor(QPalette::BrightText, Qt::red);
-    darkPalette.setColor(QPalette::Link, QColor(42, 130, 218));
+        qApp->setPalette(darkPalette);
+    } else {
+        QColor dark_main(95,95,95);
+        QColor dark_main_desktop(43,43,43);
+        QColor default_text(220,220,220);
+        QColor disable_color(155,155,155);
 
-    darkPalette.setColor(QPalette::Highlight, QColor(42, 130, 218));
-    darkPalette.setColor(QPalette::HighlightedText, Qt::black);
-    darkPalette.setColor(QPalette::Disabled, QPalette::ButtonText, disable_color);
-    darkPalette.setColor(QPalette::Disabled, QPalette::Text, disable_color);
+        QPalette darkPalette;
+        darkPalette.setColor(QPalette::Window, dark_main);
+        darkPalette.setColor(QPalette::WindowText, default_text);
+        darkPalette.setColor(QPalette::Base, QColor(25,25,25));
+        darkPalette.setColor(QPalette::AlternateBase, dark_main);
+        darkPalette.setColor(QPalette::ToolTipBase, Qt::white);
+        darkPalette.setColor(QPalette::ToolTipText, Qt::white);
+        darkPalette.setColor(QPalette::Text, default_text);
+        darkPalette.setColor(QPalette::Button, dark_main);
+        darkPalette.setColor(QPalette::ButtonText, Qt::white);
+        darkPalette.setColor(QPalette::BrightText, Qt::red);
+        darkPalette.setColor(QPalette::Link, QColor(42, 130, 218));
 
-    a.setPalette(darkPalette);
+        darkPalette.setColor(QPalette::Highlight, QColor(42, 130, 218));
+        darkPalette.setColor(QPalette::HighlightedText, Qt::black);
+        darkPalette.setColor(QPalette::Disabled, QPalette::ButtonText, disable_color);
+        darkPalette.setColor(QPalette::Disabled, QPalette::Text, disable_color);
+
+        a.setPalette(darkPalette);
+    }
 
 #ifdef Q_OS_LINUX
     a.setStyleSheet("QWidget {font-family: Monospace; font-size: 9pt;}"
