@@ -592,17 +592,24 @@ void ControUnitInstanceEditor::on_pushButtonUpdateLiveTime_clicked() {
     pte->setPropertyName(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME);
     pte->initChaosContent();
 
-    CPopupWidgetContainer *wc = new CPopupWidgetContainer(pte, this);
+    CPopupWidgetContainer *wc = new CPopupWidgetContainer(this);
     QRect rect = QRect(0,0,width(),0);
+    wc->addWidget(pte);
     wc->setGeometry(rect);
+    wc->setWindowModality(Qt::WindowModal);
     wc->show();
 }
 
 void ControUnitInstanceEditor::on_pushButtonUpdateStorageTime_clicked() {
-    CPropertyTextEdit pte;
-    pte.setNodeUID(ui->lineEditControlUnitUniqueID->text());
-    pte.setPropertyGroup(chaos::ControlUnitPropertyKey::GROUP_NAME);
-    pte.setPropertyName(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME);
-    pte.initChaosContent();
-    pte.show();
+    CPropertyTextEdit *pte = new  CPropertyTextEdit(this);
+    pte->setNodeUID(ui->lineEditControlUnitUniqueID->text());
+    pte->setPropertyGroup(chaos::ControlUnitPropertyKey::GROUP_NAME);
+    pte->setPropertyName(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME);
+    pte->initChaosContent();
+    CPopupWidgetContainer *wc = new CPopupWidgetContainer(this);
+    QRect rect = QRect(0,0,width(),0);
+    wc->addWidget(pte);
+    wc->setGeometry(rect);
+    wc->setWindowModality(Qt::WindowModal);
+    wc->show();
 }

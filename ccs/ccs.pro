@@ -346,7 +346,8 @@ FORMS    += \
     node/agent/AgentSetting.ui \
     widget/CPropertyTextEdit.ui \
     widget/CPropertyTextEdit.ui \
-    widget/CPopupWidgetContainer.ui
+    widget/CPopupWidgetContainer.ui \
+    widget/ChaosStorageTypeWidget.ui
 
 DISTFILES += \
     dark_orange.stylesheet \

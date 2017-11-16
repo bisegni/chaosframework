@@ -229,18 +229,6 @@ namespace chaos {
                     }
                     return v;
                 }
-                //
-                //                template<typename T>
-                //                T getValueWithDefault(const std::string& key, T default_value) {
-                //                    T v;
-                //                    BSONObj o = bsonBuilder->asTempObj();
-                //                    if(o.hasElement(key)) {
-                //                        o.getField(key).Val(v);
-                //                    } else {
-                //                        v = default_value;
-                //                    }
-                //                    return v;
-                //                }
                 
                 //return the binary data value
                 const char* getBinaryValue(const std::string&, uint32_t&) const;
