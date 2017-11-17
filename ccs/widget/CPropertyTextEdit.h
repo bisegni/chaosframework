@@ -1,27 +1,30 @@
-#ifndef CHAOSSTORAGETYPEWIDGET_H
-#define CHAOSSTORAGETYPEWIDGET_H
+#ifndef CPROPERTYTEXTEDIT_H
+#define CPROPERTYTEXTEDIT_H
 
 #include <QWidget>
 #include "ChaosMonitorWidgetCompanion.h"
-#include "CStateVisiblePushButton.h"
-
 namespace Ui {
-class ChaosStorageTypeWidget;
+class CPropertyTextEdit;
 }
 
-class ChaosStorageTypeWidget :
+class CPropertyTextEdit :
         public QWidget,
         public ChaosMonitorWidgetCompanion,
         public chaos::metadata_service_client::node_monitor::ControlUnitMonitorHandler {
     Q_OBJECT
-public:
-    explicit ChaosStorageTypeWidget(QWidget *parent = 0);
-    ~ChaosStorageTypeWidget();
 
+public:
+    explicit CPropertyTextEdit(QWidget *parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
+
+    ~CPropertyTextEdit();
     void initChaosContent();
     void deinitChaosContent();
     void updateChaosContent();
+    void setPropertyGroup(const QString& new_property_group);
+    const QString& propertyGroup();
 
+    void setPropertyName(const QString& new_property_name);
+    const QString& propertyName();
 protected:
     void nodeChangedOnlineState(const std::string& node_uid,
                                 chaos::metadata_service_client::node_monitor::OnlineState old_status,
@@ -34,23 +37,19 @@ protected:
                        int dataset_type);
 private slots:
     void updateUIStatus();
-    void on_pushButton_clicked(bool clicked);
-
-    void on_pushButtonEdit_clicked();
+    void on_pushButtonSavePropertyValue_clicked();
 
 private:
-    bool data_found;
-    QString last_pushbutton_in_error;
-    QString last_error_message;
-    chaos::DataServiceNodeDefinitionType::DSStorageType storage_type;
-    chaos::metadata_service_client::node_monitor::OnlineState online_status;
-    Ui::ChaosStorageTypeWidget *ui;
-
-    void sendStorageType(chaos::DataServiceNodeDefinitionType::DSStorageType type, const QString &event_tag);
     void apiHasStarted(const QString& api_tag);
     void apiHasEnded(const QString& api_tag);
     void apiHasEndedWithError(const QString& api_tag,
                               QSharedPointer<chaos::CException> api_exception);
+    QString current_property_value;
+    QString last_error_message;
+    QString property_group;
+    QString property_name;
+    chaos::metadata_service_client::node_monitor::OnlineState online_status;
+    Ui::CPropertyTextEdit *ui;
 };
 
-#endif // CHAOSSTORAGETYPEWIDGET_H
+#endif // CPROPERTYTEXTEDIT_H

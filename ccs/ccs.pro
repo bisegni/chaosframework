@@ -159,7 +159,9 @@ SOURCES += main.cpp\
     language_editor/JsonEditor.cpp \
     node/agent/AgentSetting.cpp \
     widget/CQTableView.cpp \
-    widget/CPropertyPushButton.cpp
+    widget/CPropertyPushButton.cpp \
+    widget/CPropertyTextEdit.cpp \
+    widget/CPopupWidgetContainer.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -301,7 +303,9 @@ HEADERS  += \
     node/agent/AgentSetting.h \
     widget/CQTableView.h \
     widget/CPropertyPushButton.h\
-    precomp_header.h
+    precomp_header.h \
+    widget/CPropertyTextEdit.h \
+    widget/CPopupWidgetContainer.h
 
 FORMS    += \
     search/searchnoderesult.ui \
@@ -333,14 +337,17 @@ FORMS    += \
     data/editor/script/EditableScriptVariableTableModelEditDialog.ui \
     data/editor/common/EditableSubtypeListWidget.ui \
     script/ScriptInstanceManagerWidget.ui \
-    widget/ChaosStorageTypeWidget.ui \
     widget/CCommandStatisticWidget.ui \
     plot/BufferPlot.ui \
     log_browser/ApplicationErrorLogging.ui \
     node/agent/AgentEditor.ui \
     node/agent/AgentNodeAssociationEditor.ui \
     language_editor/JsonEditor.ui \
-    node/agent/AgentSetting.ui
+    node/agent/AgentSetting.ui \
+    widget/CPropertyTextEdit.ui \
+    widget/CPropertyTextEdit.ui \
+    widget/CPopupWidgetContainer.ui \
+    widget/ChaosStorageTypeWidget.ui
 
 DISTFILES += \
     dark_orange.stylesheet \
