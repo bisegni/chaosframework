@@ -352,7 +352,7 @@ namespace chaos {
                 
                 double getDoubleElementAtIndex(const int) const;
                 int32_t getInt32ElementAtIndex(const int) const;
-                int64_t getint64ElementAtIndex(const int) const;
+                int64_t getInt64ElementAtIndex(const int) const;
                 CDataWrapper* getCDataWrapperElementAtIndex(const int) const;
                 std::string getJSONString() ;
 

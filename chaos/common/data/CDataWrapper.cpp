@@ -883,7 +883,7 @@ double CMultiTypeDataArrayWrapper::getDoubleElementAtIndex(const int pos) const{
 int32_t CMultiTypeDataArrayWrapper::getInt32ElementAtIndex(const int pos) const{
     return values[pos].value.v_int32;
 }
-int64_t CMultiTypeDataArrayWrapper::getint64ElementAtIndex(const int pos) const{
+int64_t CMultiTypeDataArrayWrapper::getInt64ElementAtIndex(const int pos) const{
     CHAOS_ASSERT(values[pos].value_type == BSON_TYPE_INT64);
     return values[pos].value.v_int64;
 }
