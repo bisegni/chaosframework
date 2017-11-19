@@ -36,6 +36,7 @@
 #include <chaos/common/plugin/PluginManager.h>
 #include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/utility/StartableService.h>
+#include <chaos/common/additional_lib/backward.hpp>
 #include <chaos/common/async_central/AsyncCentralManager.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
 
@@ -84,6 +85,19 @@ namespace chaos {
 #endif
     }
     
+    static const int posix_signals_to_cacth[] = {
+        // Signals for which the default action is "Core".
+        SIGABRT,    // Abort signal from abort(3)
+        SIGBUS,     // Bus error (bad memory access)
+        SIGFPE,     // Floating point exception
+        SIGILL,     // Illegal Instruction
+        SIGIOT,     // IOT trap. A synonym for SIGABRT
+        SIGSEGV,    // Invalid memory reference
+        SIGSYS,     // Bad argument to routine (SVr4)
+        SIGTRAP,    // Trace/breakpoint trap
+        SIGXCPU,    // CPU time limit exceeded (4.2BSD)
+        SIGXFSZ    // File size limit exceeded (4.2BSD)
+    };
     
     //! Chaos common engine class
     /*!
@@ -94,6 +108,8 @@ namespace chaos {
     class ChaosCommon:
     public common::utility::Singleton<T>,
     public common::utility::StartableService {
+        std::vector<int> signals_vec;
+        backward::SignalHandling s_tracer;
     protected:
         bool initialized,deinitialized;
         
@@ -104,7 +120,10 @@ namespace chaos {
          */
         ChaosCommon():
         initialized(false),
-        deinitialized(false){
+        deinitialized(false),
+        signals_vec(posix_signals_to_cacth,
+                    posix_signals_to_cacth + sizeof(posix_signals_to_cacth) / sizeof(posix_signals_to_cacth[0])),
+        s_tracer(signals_vec){
             GlobalConfiguration::getInstance()->preParseStartupParameters();
             initialized=deinitialized=false;
         }
@@ -178,6 +197,7 @@ namespace chaos {
             if(initialized)
                 return;
             try {
+                
                 //lock file for permit to choose different tcp port for services
                 std::fstream domain_file_lock_stream("/tmp/chaos_init.lock",
                                                      std::ios_base::out |

@@ -2536,6 +2536,7 @@
 		32D20A261CFD972C00F9EDDB /* AlgorithmVariable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlgorithmVariable.h; sourceTree = "<group>"; };
 		32D24FAF1A7AAD15002D65CE /* DataAccess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataAccess.h; sourceTree = "<group>"; };
 		32D24FB31A7BBD59002D65CE /* mongo_db_constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mongo_db_constants.h; sourceTree = "<group>"; };
+		32D36AD31FC1EE5500B23546 /* backward.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = backward.hpp; sourceTree = "<group>"; };
 		32D4ACE61D66010100EF14E4 /* publishing_types.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = publishing_types.cpp; sourceTree = "<group>"; };
 		32D5CB31179D233E00A8427E /* chaos_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chaos_types.h; sourceTree = "<group>"; };
 		32D6C8971815293200E9689B /* DirectIOHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOHandler.h; sourceTree = "<group>"; };
@@ -5579,6 +5580,7 @@
 		32E782D51EFC092100AD59F7 /* additional_lib */ = {
 			isa = PBXGroup;
 			children = (
+				32D36AD31FC1EE5500B23546 /* backward.hpp */,
 				3206CE991FA772DF0059A4A4 /* base64.cpp */,
 				3206CE9A1FA772DF0059A4A4 /* base64.h */,
 				3264206D1F8A28D700B58E3E /* sqlite3.c */,
