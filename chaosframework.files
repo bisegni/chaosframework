@@ -1378,6 +1378,7 @@ chaos/common/state_flag/StateFlagCatalogSDWrapper.cpp
 chaos/common/state_flag/StateFlagCatalogSDWrapper.h
 chaos/common/state_flag/StateFlagSDWrapper.cpp
 chaos/common/state_flag/StateFlagSDWrapper.h
+chaos/common/test/test_cdatawrapper.cpp
 chaos/common/thread/ChaosThread.h
 chaos/common/thread/FutureHelper.h
 chaos/common/thread/MultiKeyObjectWaitSemaphore.h
