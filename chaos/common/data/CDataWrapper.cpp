@@ -877,7 +877,13 @@ string CMultiTypeDataArrayWrapper::getStringElementAtIndex(const int pos) const{
 }
 
 double CMultiTypeDataArrayWrapper::getDoubleElementAtIndex(const int pos) const{
-    CHAOS_ASSERT(values[pos].value_type == BSON_TYPE_DOUBLE);
+
+    if(values[pos].value_type != BSON_TYPE_DOUBLE){
+        std::stringstream ss;
+        ss<<"type at index ["<<pos<<"] is not double, typeid:"<<values[pos].value_type;
+        throw CException(1, ss.str(), __PRETTY_FUNCTION__);
+
+    }
     return values[pos].value.v_double;
 }
 int32_t CMultiTypeDataArrayWrapper::getInt32ElementAtIndex(const int pos) const{
