@@ -18,6 +18,7 @@
  * See the Licence for the specific language governing
  * permissions and limitations under the Licence.
  */
+#include <chaos/common/chaos_types.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <gtest/gtest.h>
 #include <boost/lexical_cast.hpp>
@@ -76,5 +77,19 @@ TEST(CDataWrapperTest, Performance) {
         ASSERT_TRUE(cloned->isInt32Value("i32v"));
         ASSERT_TRUE(cloned->isBoolValue("bv"));
         data_pack.reset();
+    }
+}
+TEST(CDataWrapperTest, TestJsonDouble) {
+    const char* test_json_translation="{\"double_key\":[1.0,2.1,-1.0,-0.9]}";
+    double test_var[]={1.0,2.1,-1.0,-0.9};
+    CDataWrapper data;
+    data.setSerializedJsonData(test_json_translation);
+    ASSERT_TRUE(data.hasKey("double_key"));
+    ASSERT_TRUE(data.isVectorValue("double_key"));
+    ChaosUniquePtr<CMultiTypeDataArrayWrapper> p(data.getVectorValue("double_key"));
+    ASSERT_TRUE(p.get());
+
+    for(int cnt=0;cnt<p->size();cnt++){
+        ASSERT_EQ( test_var[cnt], p->getDoubleElementAtIndex(cnt));
     }
 }

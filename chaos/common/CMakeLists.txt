@@ -300,9 +300,6 @@ ENDIF ()
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${FrameworkLib})
 
-ADD_EXECUTABLE(testCDataWrapper test/test_cdatawrapper.cpp)
-TARGET_LINK_LIBRARIES(testCDataWrapper ${PROJECT_NAME})
-
 FILE(GLOB files "external_unit/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/external_unit)
 FILE(GLOB files "*.h")
