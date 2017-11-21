@@ -559,6 +559,7 @@
 		3274A90D1AC2F214000C6A4D /* ApiProxyManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3274A90B1AC2F214000C6A4D /* ApiProxyManager.h */; };
 		3275B1721FC4316A00BB7C77 /* ExternalBSONJsonSerialization.h in Headers */ = {isa = PBXBuildFile; fileRef = 3275B1701FC4316A00BB7C77 /* ExternalBSONJsonSerialization.h */; };
 		3275B1731FC4316A00BB7C77 /* ExternalBSONJsonSerialization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3275B1711FC4316A00BB7C77 /* ExternalBSONJsonSerialization.cpp */; };
+		3275B1751FC48A0000BB7C77 /* backward.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 3275B1741FC489FF00BB7C77 /* backward.hpp */; };
 		32761A311B305652006C8719 /* CommandTemplateSubmit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B1E80B1B2EDAC100221E49 /* CommandTemplateSubmit.cpp */; };
 		32761A321B30565A006C8719 /* CommandInstanceSubmit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B1E80E1B2EDAE900221E49 /* CommandInstanceSubmit.cpp */; };
 		32761A381B314697006C8719 /* GetCommandAndTemplateDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32761A361B314697006C8719 /* GetCommandAndTemplateDescription.cpp */; };
@@ -1961,6 +1962,7 @@
 		3274A90B1AC2F214000C6A4D /* ApiProxyManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApiProxyManager.h; sourceTree = "<group>"; };
 		3275B1701FC4316A00BB7C77 /* ExternalBSONJsonSerialization.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExternalBSONJsonSerialization.h; sourceTree = "<group>"; };
 		3275B1711FC4316A00BB7C77 /* ExternalBSONJsonSerialization.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ExternalBSONJsonSerialization.cpp; sourceTree = "<group>"; };
+		3275B1741FC489FF00BB7C77 /* backward.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = backward.hpp; sourceTree = "<group>"; };
 		32761A361B314697006C8719 /* GetCommandAndTemplateDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetCommandAndTemplateDescription.cpp; sourceTree = "<group>"; };
 		32761A371B314697006C8719 /* GetCommandAndTemplateDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetCommandAndTemplateDescription.h; sourceTree = "<group>"; };
 		32761A3A1B3157CA006C8719 /* GetCommandAndTemplateDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetCommandAndTemplateDescription.cpp; sourceTree = "<group>"; };
@@ -2536,7 +2538,6 @@
 		32D20A261CFD972C00F9EDDB /* AlgorithmVariable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlgorithmVariable.h; sourceTree = "<group>"; };
 		32D24FAF1A7AAD15002D65CE /* DataAccess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataAccess.h; sourceTree = "<group>"; };
 		32D24FB31A7BBD59002D65CE /* mongo_db_constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mongo_db_constants.h; sourceTree = "<group>"; };
-		32D36AD31FC1EE5500B23546 /* backward.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = backward.hpp; sourceTree = "<group>"; };
 		32D4ACE61D66010100EF14E4 /* publishing_types.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = publishing_types.cpp; sourceTree = "<group>"; };
 		32D5CB31179D233E00A8427E /* chaos_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chaos_types.h; sourceTree = "<group>"; };
 		32D6C8971815293200E9689B /* DirectIOHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOHandler.h; sourceTree = "<group>"; };
@@ -5580,7 +5581,7 @@
 		32E782D51EFC092100AD59F7 /* additional_lib */ = {
 			isa = PBXGroup;
 			children = (
-				32D36AD31FC1EE5500B23546 /* backward.hpp */,
+				3275B1741FC489FF00BB7C77 /* backward.hpp */,
 				3206CE991FA772DF0059A4A4 /* base64.cpp */,
 				3206CE9A1FA772DF0059A4A4 /* base64.h */,
 				3264206D1F8A28D700B58E3E /* sqlite3.c */,
@@ -6091,6 +6092,7 @@
 				32640A3F169DCC5800450962 /* SmartPointer.h in Headers */,
 				32875F97177634AF00E33D6F /* PluginInspector.h in Headers */,
 				322A3BC21CEE1A7F00FAD9DA /* LuaScriptVM.h in Headers */,
+				3275B1751FC48A0000BB7C77 /* backward.hpp in Headers */,
 				320FB0EC18A39E650014CDB3 /* DirectIO.h in Headers */,
 				3206CE9C1FA772DF0059A4A4 /* base64.h in Headers */,
 				327F51DF1952E81D00BA3D01 /* DirectIOURLManagment.h in Headers */,

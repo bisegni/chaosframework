@@ -35,11 +35,12 @@
 #include <chaos/common/utility/InetUtility.h>
 #include <chaos/common/plugin/PluginManager.h>
 #include <chaos/common/network/NetworkBroker.h>
-#include <chaos/common/utility/StartableService.h>
 #include <chaos/common/additional_lib/backward.hpp>
+#include <chaos/common/utility/StartableService.h>
 #include <chaos/common/async_central/AsyncCentralManager.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
 
+#include <boost/version.hpp>
 #include <boost/interprocess/sync/file_lock.hpp>
 #include <boost/interprocess/sync/scoped_lock.hpp>
 
@@ -85,20 +86,113 @@ namespace chaos {
 #endif
     }
     
-    static const int posix_signals_to_cacth[] = {
-        // Signals for which the default action is "Core".
-        SIGABRT,    // Abort signal from abort(3)
-        SIGBUS,     // Bus error (bad memory access)
-        SIGFPE,     // Floating point exception
-        SIGILL,     // Illegal Instruction
-        SIGIOT,     // IOT trap. A synonym for SIGABRT
-        SIGSEGV,    // Invalid memory reference
-        SIGSYS,     // Bad argument to routine (SVr4)
-        SIGTRAP,    // Trace/breakpoint trap
-        SIGXCPU,    // CPU time limit exceeded (4.2BSD)
-        SIGXFSZ    // File size limit exceeded (4.2BSD)
+#include <csignal>
+    class SignalHandling {
+    public:
+        static std::vector<int> make_default_signals() {
+            const int posix_signals[] = {
+                SIGABRT,    // Abort signal from abort(3)
+                SIGBUS,     // Bus error (bad memory access)
+                SIGFPE,     // Floating point exception
+                SIGILL,     // Illegal Instruction
+                SIGIOT,     // IOT trap. A synonym for SIGABRT
+                SIGSEGV,    // Invalid memory reference
+                SIGSYS,     // Bad argument to routine (SVr4)
+                SIGTRAP,    // Trace/breakpoint trap
+                SIGXCPU,    // CPU time limit exceeded (4.2BSD)
+                SIGXFSZ    // File size limit exceeded (4.2BSD)
+            };
+            return std::vector<int>(posix_signals, posix_signals + sizeof posix_signals / sizeof posix_signals[0] );
+        }
+        
+        SignalHandling(const std::vector<int>& posix_signals = make_default_signals()):
+        _loaded(false) {
+            bool success = true;
+            
+            const size_t stack_size = 1024 * 1024 * 8;
+            _stack_content.reset((char*)malloc(stack_size));
+            if (_stack_content) {
+                stack_t ss;
+                ss.ss_sp = _stack_content.get();
+                ss.ss_size = stack_size;
+                ss.ss_flags = 0;
+                if (sigaltstack(&ss, 0) < 0) {
+                    success = false;
+                }
+            } else {
+                success = false;
+            }
+            
+            for (size_t i = 0; i < posix_signals.size(); ++i) {
+                struct sigaction action;
+                memset(&action, 0, sizeof action);
+                action.sa_flags = (SA_SIGINFO | SA_ONSTACK | SA_NODEFER |
+                                   SA_RESETHAND);
+                sigfillset(&action.sa_mask);
+                sigdelset(&action.sa_mask, posix_signals[i]);
+                action.sa_sigaction = &sig_handler;
+                
+                int r = sigaction(posix_signals[i], &action, 0);
+                if (r < 0) success = false;
+            }
+            
+            _loaded = success;
+        }
+        
+        bool loaded() const { return _loaded; }
+        
+        static void handleSignal(int, siginfo_t* info, void* _ctx) {
+            ucontext_t *uctx = (ucontext_t*) _ctx;
+            
+            backward::StackTrace st;
+            void* error_addr = 0;
+#ifdef REG_RIP // x86_64
+            error_addr = reinterpret_cast<void*>(uctx->uc_mcontext.gregs[REG_RIP]);
+#elif defined(REG_EIP) // x86_32
+            error_addr = reinterpret_cast<void*>(uctx->uc_mcontext.gregs[REG_EIP]);
+#elif defined(__arm__)
+            error_addr = reinterpret_cast<void*>(uctx->uc_mcontext.arm_pc);
+#elif defined(__aarch64__)
+            error_addr = reinterpret_cast<void*>(uctx->uc_mcontext.pc);
+#elif defined(__ppc__) || defined(__powerpc) || defined(__powerpc__) || defined(__POWERPC__)
+            error_addr = reinterpret_cast<void*>(uctx->uc_mcontext.regs->nip);
+#else
+#    warning ":/ sorry, ain't know no nothing none not of your architecture!"
+#endif
+            if (error_addr) {
+                st.load_from(error_addr, 32);
+            } else {
+                st.load_here(32);
+            }
+            
+            backward::Printer printer;
+            printer.address = true;
+            printer.print(st, stderr);
+            
+#if _XOPEN_SOURCE >= 700 || _POSIX_C_SOURCE >= 200809L
+            psiginfo(info, 0);
+#endif
+        }
+        
+    private:
+        backward::details::handle<char*> _stack_content;
+        bool                   _loaded;
+        
+#ifdef __GNUC__
+        __attribute__((noreturn))
+#endif
+        static void sig_handler(int signo, siginfo_t* info, void* _ctx) {
+            handleSignal(signo, info, _ctx);
+            
+            // try to forward the signal.
+            raise(info->si_signo);
+            
+            // terminate the process immediately.
+            puts("watf? exit");
+            _exit(EXIT_FAILURE);
+        }
     };
-    
+
     //! Chaos common engine class
     /*!
      This is the base class for the other toolkit, it thake care to initialize all common
@@ -108,8 +202,7 @@ namespace chaos {
     class ChaosCommon:
     public common::utility::Singleton<T>,
     public common::utility::StartableService {
-        std::vector<int> signals_vec;
-        backward::SignalHandling s_tracer;
+        SignalHandling sign_handling;
     protected:
         bool initialized,deinitialized;
         
@@ -120,10 +213,7 @@ namespace chaos {
          */
         ChaosCommon():
         initialized(false),
-        deinitialized(false),
-        signals_vec(posix_signals_to_cacth,
-                    posix_signals_to_cacth + sizeof(posix_signals_to_cacth) / sizeof(posix_signals_to_cacth[0])),
-        s_tracer(signals_vec){
+        deinitialized(false){
             GlobalConfiguration::getInstance()->preParseStartupParameters();
             initialized=deinitialized=false;
         }
@@ -236,6 +326,8 @@ namespace chaos {
                 LAPP_ << "Compiler Version: " << BOOST_COMPILER;
                 LAPP_ << "-----------------------------------------";
                 
+                CHAOS_ASSERT(sign_handling.loaded());
+                    
                 //find our ip
                 string local_ip;
                 if(GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_PUBLISHING_IP)){

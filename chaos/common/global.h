@@ -36,7 +36,6 @@
 #include <chaos/common/endian.h>
 #include <chaos/common/log/LogManager.h>
 
-#include <boost/version.hpp>
 #include <boost/format.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -53,12 +52,7 @@
 
 #include <stdlib.h>
 
-#if BOOST_VERSION > 105300
-    //allocate the logger
 BOOST_LOG_INLINE_GLOBAL_LOGGER_DEFAULT(chaosLogger, boost::log::sources::severity_logger_mt < chaos::common::log::level::LogSeverityLevel > )
-#else
-BOOST_LOG_DECLARE_GLOBAL_LOGGER(chaosLogger, boost::log::sources::severity_logger_mt < chaos::common::log::level::LogSeverityLevel > )
-#endif
 
 #ifndef CSLIB_VERSION_MAJOR
 #define CSLIB_VERSION_MAJOR "1"
