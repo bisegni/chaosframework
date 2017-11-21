@@ -18,6 +18,12 @@
 #ifndef BSON_ITER_H
 #define BSON_ITER_H
 
+
+//#if !defined(BSON_INSIDE) && !defined(BSON_COMPILATION)
+//#error "Only <bson.h> can be included directly."
+//#endif
+
+
 #include "bson.h"
 #include "bson-endian.h"
 #include "bson-macros.h"
@@ -122,7 +128,7 @@ bson_iter_array (const bson_iter_t *iter,
 
 BSON_EXPORT (void)
 bson_iter_binary (const bson_iter_t *iter,
-                  unsigned int *subtype,
+                  bson_subtype_t *subtype,
                   uint32_t *binary_len,
                   const uint8_t **binary);
 

@@ -18,6 +18,12 @@
 #ifndef BSON_MACROS_H
 #define BSON_MACROS_H
 
+
+//#if !defined(BSON_INSIDE) && !defined(BSON_COMPILATION)
+//#error "Only <bson.h> can be included directly."
+//#endif
+
+
 #include <stdio.h>
 
 #ifdef __cplusplus
@@ -45,14 +51,21 @@
 #endif
 
 
+#if defined (__GNUC__)
 #define BSON_GNUC_CHECK_VERSION(major, minor) \
-   (defined (__GNUC__) &&                     \
-    ((__GNUC__ > (major)) ||                  \
-     ((__GNUC__ == (major)) && (__GNUC_MINOR__ >= (minor)))))
+   ((__GNUC__ > (major)) ||                   \
+    ((__GNUC__ == (major)) && (__GNUC_MINOR__ >= (minor))))
+#else
+#define BSON_GNUC_CHECK_VERSION(major, minor) 0
+#endif
 
 
+#if defined (__GNUC__)
 #define BSON_GNUC_IS_VERSION(major, minor) \
-   (defined (__GNUC__) && (__GNUC__ == (major)) && (__GNUC_MINOR__ == (minor)))
+   ((__GNUC__ == (major)) && (__GNUC_MINOR__ == (minor)))
+#else
+#define BSON_GNUC_IS_VERSION(major, minor) 0
+#endif
 
 
 /* Decorate public functions:
@@ -188,12 +201,14 @@
    } while (0)
 
 
-#define BSON_STATIC_ASSERT(s) BSON_STATIC_ASSERT_ (s, __LINE__)
-#define BSON_STATIC_ASSERT_JOIN(a, b) BSON_STATIC_ASSERT_JOIN2 (a, b)
-#define BSON_STATIC_ASSERT_JOIN2(a, b) a##b
-#define BSON_STATIC_ASSERT_(s, l)                             \
-   typedef char BSON_STATIC_ASSERT_JOIN (static_assert_test_, \
-                                         __LINE__)[(s) ? 1 : -1]
+#define BSON_STATIC_ASSERT(s) BSON_STATIC_ASSERT_ (s, __LINE__, assert)
+#define BSON_STATIC_ASSERT2(_name, _s) BSON_STATIC_ASSERT_ (_s, __LINE__, _name)
+#define BSON_STATIC_ASSERT_JOIN(_a, _b, _name) \
+   BSON_STATIC_ASSERT_JOIN2 (_a, _b, _name)
+#define BSON_STATIC_ASSERT_JOIN2(_a, _b, _name) _a##_b##_name
+#define BSON_STATIC_ASSERT_(_s, _l, _name)   \
+   typedef char BSON_STATIC_ASSERT_JOIN ( \
+      static_assert_test_, __LINE__, _name)[(_s) ? 1 : -1]
 
 
 #if defined(__GNUC__)

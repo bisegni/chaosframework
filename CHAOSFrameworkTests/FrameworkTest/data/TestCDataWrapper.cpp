@@ -82,11 +82,12 @@ TEST(CDataWrapperTest, Performance) {
 TEST(CDataWrapperTest, TestJsonDouble) {
     const char* test_json_translation="{\"double_key\":[1.0,2.1,-1.0,-0.9]}";
     double test_var[]={1.0,2.1,-1.0,-0.9};
-    CDataWrapper data;
-    data.setSerializedJsonData(test_json_translation);
-    ASSERT_TRUE(data.hasKey("double_key"));
-    ASSERT_TRUE(data.isVectorValue("double_key"));
-    ChaosUniquePtr<CMultiTypeDataArrayWrapper> p(data.getVectorValue("double_key"));
+    CDWUniquePtr data = CDataWrapper::instanceFromJson(test_json_translation);
+   //data.setSerializedJsonData(test_json_translation);
+    std::cout << data->getJSONString() << std::endl;
+    ASSERT_TRUE(data->hasKey("double_key"));
+    ASSERT_TRUE(data->isVectorValue("double_key"));
+    ChaosUniquePtr<CMultiTypeDataArrayWrapper> p(data->getVectorValue("double_key"));
     ASSERT_TRUE(p.get());
 
     for(int cnt=0;cnt<p->size();cnt++){

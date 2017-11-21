@@ -113,7 +113,6 @@
 		329943811D6B5469008DBAE9 /* TestURLFeeder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestURLFeeder.h; sourceTree = "<group>"; };
 		32A735311F6C399E00008145 /* PropertyTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PropertyTest.cpp; sourceTree = "<group>"; };
 		32A735321F6C399E00008145 /* PropertyTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PropertyTest.h; sourceTree = "<group>"; };
-		32C180ED1FAB33CD00AFCC15 /* TestPlugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestPlugin.h; sourceTree = "<group>"; };
 		32C180EE1FAB33CD00AFCC15 /* TestPlugin.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestPlugin.cpp; sourceTree = "<group>"; };
 		32C180F01FAB439300AFCC15 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		32DA77731F94AD6D00497349 /* TestVariant.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestVariant.cpp; sourceTree = "<group>"; };
@@ -306,7 +305,6 @@
 			isa = PBXGroup;
 			children = (
 				32C180EE1FAB33CD00AFCC15 /* TestPlugin.cpp */,
-				32C180ED1FAB33CD00AFCC15 /* TestPlugin.h */,
 			);
 			path = plugin;
 			sourceTree = "<group>";

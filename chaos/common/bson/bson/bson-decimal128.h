@@ -18,6 +18,11 @@
 #ifndef BSON_DECIMAL128_H
 #define BSON_DECIMAL128_H
 
+
+//#if !defined(BSON_INSIDE) && !defined(BSON_COMPILATION)
+//#error "Only <bson.h> can be included directly."
+//#endif
+
 #include <string.h>
 
 #include "bson-macros.h"

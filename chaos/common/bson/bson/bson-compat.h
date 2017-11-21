@@ -19,6 +19,11 @@
 #define BSON_COMPAT_H
 
 
+//#if !defined(BSON_INSIDE) && !defined(BSON_COMPILATION)
+//#error "Only <bson.h> can be included directly."
+//#endif
+
+
 #if defined(__MINGW32__)
 #if defined(__USE_MINGW_ANSI_STDIO)
 #if __USE_MINGW_ANSI_STDIO < 1
@@ -81,6 +86,7 @@ BSON_BEGIN_DECLS
 
 
 #ifdef _MSC_VER
+#include <time.h>
 #include "bson-stdint-win32.h"
 #ifndef __cplusplus
 /* benign redefinition of type */
@@ -106,14 +112,25 @@ typedef SSIZE_T ssize_t;
 #endif
 #pragma warning(default : 4142)
 #endif
+#ifndef PRIi32
 #define PRIi32 "d"
+#endif
+#ifndef PRId32
 #define PRId32 "d"
+#endif
+#ifndef PRIu32
 #define PRIu32 "u"
+#endif
+#ifndef PRIi64
 #define PRIi64 "I64i"
+#endif
+#ifndef PRId64
 #define PRId64 "I64i"
+#endif
+#ifndef PRIu64
 #define PRIu64 "I64u"
+#endif
 #else
-#include "bson-stdint.h"
 #include <inttypes.h>
 #endif
 

@@ -68,7 +68,6 @@
 		3206CE7E1FA767AC0059A4A4 /* bson.c in Sources */ = {isa = PBXBuildFile; fileRef = 3206CE461FA767AB0059A4A4 /* bson.c */; };
 		3206CE7F1FA767AC0059A4A4 /* bson-error.h in Headers */ = {isa = PBXBuildFile; fileRef = 3206CE471FA767AB0059A4A4 /* bson-error.h */; };
 		3206CE801FA767AC0059A4A4 /* bson-oid.h in Headers */ = {isa = PBXBuildFile; fileRef = 3206CE481FA767AB0059A4A4 /* bson-oid.h */; };
-		3206CE811FA767AC0059A4A4 /* bson-stdint.h in Headers */ = {isa = PBXBuildFile; fileRef = 3206CE491FA767AB0059A4A4 /* bson-stdint.h */; };
 		3206CE821FA767AC0059A4A4 /* bson-context.h in Headers */ = {isa = PBXBuildFile; fileRef = 3206CE4A1FA767AB0059A4A4 /* bson-context.h */; };
 		3206CE831FA767AC0059A4A4 /* bson-private.h in Headers */ = {isa = PBXBuildFile; fileRef = 3206CE4B1FA767AB0059A4A4 /* bson-private.h */; };
 		3206CE841FA767AC0059A4A4 /* bson-context-private.h in Headers */ = {isa = PBXBuildFile; fileRef = 3206CE4C1FA767AB0059A4A4 /* bson-context-private.h */; };
@@ -1331,7 +1330,6 @@
 		3206CE461FA767AB0059A4A4 /* bson.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bson.c; sourceTree = "<group>"; };
 		3206CE471FA767AB0059A4A4 /* bson-error.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "bson-error.h"; sourceTree = "<group>"; };
 		3206CE481FA767AB0059A4A4 /* bson-oid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "bson-oid.h"; sourceTree = "<group>"; };
-		3206CE491FA767AB0059A4A4 /* bson-stdint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "bson-stdint.h"; sourceTree = "<group>"; };
 		3206CE4A1FA767AB0059A4A4 /* bson-context.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "bson-context.h"; sourceTree = "<group>"; };
 		3206CE4B1FA767AB0059A4A4 /* bson-private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "bson-private.h"; sourceTree = "<group>"; };
 		3206CE4C1FA767AB0059A4A4 /* bson-context-private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "bson-context-private.h"; sourceTree = "<group>"; };
@@ -2928,7 +2926,6 @@
 				3206CE461FA767AB0059A4A4 /* bson.c */,
 				3206CE471FA767AB0059A4A4 /* bson-error.h */,
 				3206CE481FA767AB0059A4A4 /* bson-oid.h */,
-				3206CE491FA767AB0059A4A4 /* bson-stdint.h */,
 				3206CE4A1FA767AB0059A4A4 /* bson-context.h */,
 				3206CE4B1FA767AB0059A4A4 /* bson-private.h */,
 				3206CE4C1FA767AB0059A4A4 /* bson-context-private.h */,
@@ -5962,7 +5959,6 @@
 				3206CE701FA767AC0059A4A4 /* bson-decimal128.h in Headers */,
 				32BD631E1E1E4D7F006FE42C /* AbstractActionScheduler.h in Headers */,
 				3253E09515F27A180079B40E /* EventTypeScheduler.h in Headers */,
-				3206CE811FA767AC0059A4A4 /* bson-stdint.h in Headers */,
 				327D7E0E1ED2E57A00A8AF1C /* EULiveManagment.h in Headers */,
 				3206CE761FA767AC0059A4A4 /* bson-clock.h in Headers */,
 				32FB201D1A3F11C400307A86 /* AttributeCache.h in Headers */,

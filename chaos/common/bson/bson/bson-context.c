@@ -327,7 +327,7 @@ _bson_context_init (bson_context_t *context,    /* IN */
    unsigned int real_seed;
    bson_oid_t oid;
 
-   context->flags = flags;
+   context->flags = (int) flags;
    context->oid_get_host = _bson_context_get_oid_host_cached;
    context->oid_get_pid = _bson_context_get_oid_pid_cached;
    context->oid_get_seq32 = _bson_context_get_oid_seq32;
@@ -351,6 +351,10 @@ _bson_context_init (bson_context_t *context,    /* IN */
    /* ms's runtime is multithreaded by default, so no rand_r */
    srand (real_seed);
    context->seq32 = rand () & 0x007FFFF0;
+#elif defined(__FreeBSD__) || defined(__NetBSD__) || defined(__DragonFly__) || \
+   defined(__OpenBSD__)
+   arc4random_buf (&context->seq32, sizeof (context->seq32));
+   context->seq32 &= 0x007FFFF0;
 #else
    context->seq32 = rand_r (&real_seed) & 0x007FFFF0;
 #endif
@@ -381,7 +385,9 @@ _bson_context_init (bson_context_t *context,    /* IN */
          pid = BSON_UINT16_TO_BE (tid);
       } else
 #endif
-      pid = BSON_UINT16_TO_BE (_bson_getpid ());
+      {
+         pid = BSON_UINT16_TO_BE (_bson_getpid ());
+      }
 
       memcpy (&context->pidbe[0], &pid, 2);
    }
