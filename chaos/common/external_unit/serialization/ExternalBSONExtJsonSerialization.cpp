@@ -32,7 +32,7 @@ ExternalBSONExtJsonSerialization::ExternalBSONExtJsonSerialization(){}
 ExternalBSONExtJsonSerialization::~ExternalBSONExtJsonSerialization(){}
 
 ChaosUniquePtr<CDataBuffer> ExternalBSONExtJsonSerialization::serialize(const CDataWrapper& cdw_in) {
-    const std::string json_result = cdw_in.getCompliantJSONString();
+    const std::string json_result = cdw_in.getJSONString();
     return ChaosUniquePtr<CDataBuffer>(new CDataBuffer(json_result.c_str(), (uint32_t)json_result.size(), true));
 }
 

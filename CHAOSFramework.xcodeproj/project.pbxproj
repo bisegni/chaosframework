@@ -557,6 +557,8 @@
 		3272FE1715E1053100B096FB /* EventForwarder.h in Headers */ = {isa = PBXBuildFile; fileRef = 3272FE1615E1053100B096FB /* EventForwarder.h */; };
 		3274A90C1AC2F214000C6A4D /* ApiProxyManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3274A90A1AC2F214000C6A4D /* ApiProxyManager.cpp */; };
 		3274A90D1AC2F214000C6A4D /* ApiProxyManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3274A90B1AC2F214000C6A4D /* ApiProxyManager.h */; };
+		3275B1721FC4316A00BB7C77 /* ExternalBSONJsonSerialization.h in Headers */ = {isa = PBXBuildFile; fileRef = 3275B1701FC4316A00BB7C77 /* ExternalBSONJsonSerialization.h */; };
+		3275B1731FC4316A00BB7C77 /* ExternalBSONJsonSerialization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3275B1711FC4316A00BB7C77 /* ExternalBSONJsonSerialization.cpp */; };
 		32761A311B305652006C8719 /* CommandTemplateSubmit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B1E80B1B2EDAC100221E49 /* CommandTemplateSubmit.cpp */; };
 		32761A321B30565A006C8719 /* CommandInstanceSubmit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B1E80E1B2EDAE900221E49 /* CommandInstanceSubmit.cpp */; };
 		32761A381B314697006C8719 /* GetCommandAndTemplateDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32761A361B314697006C8719 /* GetCommandAndTemplateDescription.cpp */; };
@@ -1957,6 +1959,8 @@
 		3274A9071AC2EF70000C6A4D /* metadata_service_client_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = metadata_service_client_types.h; sourceTree = "<group>"; };
 		3274A90A1AC2F214000C6A4D /* ApiProxyManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ApiProxyManager.cpp; sourceTree = "<group>"; };
 		3274A90B1AC2F214000C6A4D /* ApiProxyManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApiProxyManager.h; sourceTree = "<group>"; };
+		3275B1701FC4316A00BB7C77 /* ExternalBSONJsonSerialization.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExternalBSONJsonSerialization.h; sourceTree = "<group>"; };
+		3275B1711FC4316A00BB7C77 /* ExternalBSONJsonSerialization.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ExternalBSONJsonSerialization.cpp; sourceTree = "<group>"; };
 		32761A361B314697006C8719 /* GetCommandAndTemplateDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetCommandAndTemplateDescription.cpp; sourceTree = "<group>"; };
 		32761A371B314697006C8719 /* GetCommandAndTemplateDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetCommandAndTemplateDescription.h; sourceTree = "<group>"; };
 		32761A3A1B3157CA006C8719 /* GetCommandAndTemplateDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetCommandAndTemplateDescription.cpp; sourceTree = "<group>"; };
@@ -3039,6 +3043,8 @@
 				320F733E1F1F4EC100C4806C /* AbstractExternalSerialization.h */,
 				320F73411F1F55E300C4806C /* ExternalBSONExtJsonSerialization.cpp */,
 				320F73421F1F55E300C4806C /* ExternalBSONExtJsonSerialization.h */,
+				3275B1711FC4316A00BB7C77 /* ExternalBSONJsonSerialization.cpp */,
+				3275B1701FC4316A00BB7C77 /* ExternalBSONJsonSerialization.h */,
 			);
 			path = serialization;
 			sourceTree = "<group>";
@@ -5787,6 +5793,7 @@
 				326DB43414B38BC00018A8D0 /* DeclareAction.h in Headers */,
 				326DB43614B38BC00018A8D0 /* DomainActions.h in Headers */,
 				32AB51CA1A1A66A300BB0BE3 /* DirectIOSystemAPIClientChannel.h in Headers */,
+				3275B1721FC4316A00BB7C77 /* ExternalBSONJsonSerialization.h in Headers */,
 				32067EA61CABEF0300DE568A /* CDataBuffer.h in Headers */,
 				32A88BC61CF8228A001DBAF5 /* ldebug.h in Headers */,
 				32A88BBC1CF8228A001DBAF5 /* lauxlib.h in Headers */,
@@ -6797,6 +6804,7 @@
 				32F5B00A1B5F998F00457A63 /* CSVFileMetricBackend.cpp in Sources */,
 				32FB20181A3F0FAB00307A86 /* AttributeValue.cpp in Sources */,
 				32995C4A1BB2FF2600F68148 /* CheckList.cpp in Sources */,
+				3275B1731FC4316A00BB7C77 /* ExternalBSONJsonSerialization.cpp in Sources */,
 				329C1F011B5540F900A84D55 /* MetricCollectorIO.cpp in Sources */,
 				326DB45C14B38BC00018A8D0 /* CDataWrapper.cpp in Sources */,
 				32B5C9581C6B97590021159C /* ErrorLoggingChannel.cpp in Sources */,

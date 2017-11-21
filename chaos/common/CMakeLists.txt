@@ -144,6 +144,7 @@ SET(common_lib_src ${common_lib_src}
 
 SET(common_lib_src ${common_lib_src}
         external_unit/serialization/AbstractExternalSerialization.cpp
+        external_unit/serialization/ExternalBSONJsonSerialization.cpp
         external_unit/serialization/ExternalBSONExtJsonSerialization.cpp)
 
 SET(common_lib_src ${common_lib_src}

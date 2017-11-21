@@ -21,7 +21,6 @@
 
 #ifndef __CHAOSFramework__5D1E9AF_B79A_4FD7_89CC_3CD7D8E7925B_ExternalBSONExtJsonSerialization_h
 #define __CHAOSFramework__5D1E9AF_B79A_4FD7_89CC_3CD7D8E7925B_ExternalBSONExtJsonSerialization_h
-
 #include <chaos/common/external_unit/serialization/AbstractExternalSerialization.h>
 namespace chaos{
     namespace common {
