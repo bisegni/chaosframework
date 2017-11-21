@@ -118,7 +118,9 @@ bool MDSHistoryAgeingManagement::execute(const common::cronus_manager::MapKeyVar
         getDataAccess<persistence::data_access::ControlUnitDataAccess>()->releaseControlUnitForAgeingManagement(control_unit_found, aged);
         
         need_another_step = true;
-    } else {}
+    } else {
+       log("Control unit with empty string");
+    }
     return need_another_step;
 }
 
