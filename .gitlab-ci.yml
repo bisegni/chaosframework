@@ -57,35 +57,35 @@ build_framework_x86_64_test:
     - web
 
 
-llvm_build_framework_x86_64:
-  tags:
-    - chaos
-    - docker
-    - linux
-  stage: build
-  image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/llvm_coverity_u1710
-  script:
-    - tools/chaos_clean.sh
-    - cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCHAOS_ARCHITECTURE_TEST=ON .
-    - make clean
-    - make  -j 4
-    - make install
-    - mv /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux-llvm
-  cache:
-    key: llvm_x86_64/$CI_BUILD_REF_NAME
-    paths:
-        - /builds/chaos-lnf-control/chaosframework/config/CACHE/
-  artifacts:
-    paths:
-        - chaos
-        - CHAOSFrameworkTests
-        - 'chaos-distrib-x86_64-Linux-llvm'
-    expire_in: 4 hour
-  only:
-    - development
-    - master
-    - schedules
-    - web
+# llvm_build_framework_x86_64:
+#   tags:
+#     - chaos
+#     - docker
+#     - linux
+#   stage: build
+#   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/llvm_coverity_u1710
+#   script:
+#     - tools/chaos_clean.sh
+#     - cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCHAOS_ARCHITECTURE_TEST=ON .
+#     - make clean
+#     - make  -j 4
+#     - make install
+#     - mv /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux-llvm
+#   cache:
+#     key: llvm_x86_64/$CI_BUILD_REF_NAME
+#     paths:
+#         - /builds/chaos-lnf-control/chaosframework/config/CACHE/
+#   artifacts:
+#     paths:
+#         - chaos
+#         - CHAOSFrameworkTests
+#         - 'chaos-distrib-x86_64-Linux-llvm'
+#     expire_in: 4 hour
+#   only:
+#     - development
+#     - master
+#     - schedules
+#     - web
 
 # llvm_build_framework_x86_64_test:
 #   tags:
