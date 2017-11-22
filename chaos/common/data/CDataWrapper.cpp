@@ -574,6 +574,9 @@ string CDataWrapper::getCompliantJSONString()  const{
     size_t str_size = 0;
     char * str_c = bson_as_relaxed_extended_json(ACCESS_BSON(bson),
                                 &str_size);
+    if(str_c==NULL){
+        return std::string("{}");
+    }
     std::string result(str_c);
     bson_free(str_c);
     return result;
