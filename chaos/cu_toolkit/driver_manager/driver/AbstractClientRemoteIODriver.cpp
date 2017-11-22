@@ -30,6 +30,7 @@ void AbstractClientRemoteIODriver::driverInit(const char *initParameter) throw (
     LOG_AND_TROW(ERR, -1, "AbstractClientRemoteIODriver can be initilized only with json document");
 }
 void AbstractClientRemoteIODriver::driverInit(const chaos::common::data::CDataWrapper& init_parameter) throw(chaos::CException) {
+    std::string content_type = "application/json";
     CHECK_ASSERTION_THROW_AND_LOG(init_parameter.hasKey("uri"), ERR, -2, "The hostname name is mandatory");
     const std::string uri = init_parameter.getStringValue("uri");
     CHECK_ASSERTION_THROW_AND_LOG(uri.size() != 0, ERR, -3, "The uri parameter can't be empty string");
@@ -39,11 +40,17 @@ void AbstractClientRemoteIODriver::driverInit(const chaos::common::data::CDataWr
     } else {
         ExternalUnitClientEndpoint::endpoint_identifier = init_parameter.getStringValue("uri");
     }
+    
+    if(init_parameter.hasKey("content_type") &&
+       init_parameter.isStringValue("content_type")) {
+        content_type = init_parameter.getStringValue("content_type");
+    }
+    
     CHECK_ASSERTION_THROW_AND_LOG((ExternalUnitClientEndpoint::endpoint_identifier.size() > 0), ERR, -4, "The endpoint name is empty");
     //register this driver as external endpoint
     chaos::common::external_unit::ExternalUnitManager::getInstance()->initilizeConnection(*this,
                                                                                           "http",
-                                                                                          "application/bson-json",
+                                                                                          content_type,
                                                                                           uri);
     
     
