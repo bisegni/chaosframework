@@ -1,10 +1,5 @@
 # !CHAOS Framework
 
-Master build status:[![Master Build Status](https://baltig.infn.it/chaos-lnf-control/chaosframework/badges/master/build.svg)](https://baltig.infn.it/chaos-lnf-control/chaosframework/commits/master)
-Development Build Status:[![Development Build Status](https://baltig.infn.it/chaos-lnf-control/chaosframework/badges/development/build.svg)](https://baltig.infn.it/chaos-lnf-control/chaosframework/commits/development)
-Experimental Build Status
-[![Experimental Build Status](https://baltig.infn.it/chaos-lnf-control/chaosframework/badges/experimental/build.svg)](https://baltig.infn.it/chaos-lnf-control/chaosframework/commits/experimental)
-
 The !CHAOS project is aiming at the development of a new concept of control system and data acquisition framework
 providing, with a high level of abstraction, all the services needed for controlling and managing a large scientific,
 or non-scientific, infrastructure.  
@@ -34,5 +29,17 @@ For further documentation please visit:
 * https://chaos-lnf-control.baltig-pages.infn.it/chaosframework-doc      - public user and developer site
 * https://chaos-lnf-control.baltig-pages.infn.it/chaosframework             - public source code usefull to collaborate with us
 
+### Compilation report
+branch name   |  build status  
+--------------|----------------
+Master        |  [![Master Build Status](https://baltig.infn.it/chaos-lnf-control/chaosframework/badges/master/build.svg)](https://baltig.infn.it/chaos-lnf-control/chaosframework/commits/master)
+Development   |  [![Development Build Status](https://baltig.infn.it/chaos-lnf-control/chaosframework/badges/development/build.svg)](https://baltig.infn.it/chaos-lnf-control/chaosframework/commits/development)
+Experimental  | [![Experimental Build Status](https://baltig.infn.it/chaos-lnf-control/chaosframework/badges/experimental/build.svg)](https://baltig.infn.it/chaos-lnf-control/chaosframework/commits/experimental)
+
+### Code coverage
+[Experimental Branch Covereage Report][4416b59a]
+[![coverage report](https://baltig.infn.it/chaos-lnf-control/chaosframework/badges/experimental/coverage.svg)](https://baltig.infn.it/chaos-lnf-control/chaosframework/commits/experimental)
+
+[4416b59a]: https://chaos-lnf-control.baltig-pages.infn.it/chaosframework/ "Experimental Code Coverage"
 
 *release 1.0.0 (alpha 1 build 5)*

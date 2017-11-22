@@ -48,19 +48,36 @@ TEST(CDataWrapperTest, Normal) {
 TEST(CDataWrapperTest, MemoryLeaks) {
     int idx = 0;
     CDataWrapper data_pack;
-    CDWUniquePtr deserialized;
+    CDWUniquePtr json_deserialized;
+    CDWUniquePtr bson_deserialized;
     data_pack.addBoolValue("bv", (int32_t)0);
     data_pack.addInt32Value("i32v", (int32_t)0);
     data_pack.addInt64Value("i64v", (int64_t)0);
     data_pack.addDoubleValue("dbv", (double)36.6);
+    data_pack.appendInt32ToArray(1);
+    data_pack.appendInt64ToArray(2);
+    data_pack.appendDoubleToArray(3.0);
+    data_pack.appendStringToArray("array_lement");
+    data_pack.finalizeArrayForKey("array");
+    const std::string json_serialization = data_pack.getJSONString();
     for (; idx < 1000000; idx++) {
-        const std::string json_serialization = data_pack.getJSONString();
-        deserialized = CDataWrapper::instanceFromJson(json_serialization);
+        bson_deserialized = CDWUniquePtr(new CDataWrapper(data_pack.getBSONRawData(), data_pack.getBSONRawSize()));
+        ASSERT_TRUE(bson_deserialized.get());
+        json_deserialized = CDataWrapper::instanceFromJson(json_serialization);
+        ASSERT_TRUE(json_deserialized.get());
+        ASSERT_STREQ(json_deserialized->toHash().c_str(), bson_deserialized->toHash().c_str());
+        ASSERT_TRUE(json_deserialized->isDoubleValue("dbv"));
+        ASSERT_TRUE(json_deserialized->isInt64Value("i64v"));
+        ASSERT_TRUE(json_deserialized->isInt32Value("i32v"));
+        ASSERT_TRUE(json_deserialized->isBoolValue("bv"));
+        
+        ChaosUniquePtr<CMultiTypeDataArrayWrapper> array_ptr(json_deserialized->getVectorValue("array"));
+        ASSERT_EQ(array_ptr->size(), 4);
+        ASSERT_EQ(array_ptr->getInt32ElementAtIndex(0), 1);
+        ASSERT_EQ(array_ptr->getInt64ElementAtIndex(1), 2);
+        ASSERT_EQ(array_ptr->getDoubleElementAtIndex(2), 3.0);
+        ASSERT_STREQ(array_ptr->getStringElementAtIndex(3).c_str(), "array_lement");
     }
-    ASSERT_TRUE(deserialized->isDoubleValue("dbv"));
-    ASSERT_TRUE(deserialized->isInt64Value("i64v"));
-    ASSERT_TRUE(deserialized->isInt32Value("i32v"));
-    ASSERT_TRUE(deserialized->isBoolValue("bv"));
 }
 
 TEST(CDataWrapperTest, Performance) {
@@ -79,6 +96,7 @@ TEST(CDataWrapperTest, Performance) {
         data_pack.reset();
     }
 }
+
 TEST(CDataWrapperTest, TestJsonDouble) {
     const char* test_json_translation="{\"double_key\":[1.0,2.1,-1.0,-0.9]}";
     double test_var[]={1.0,2.1,-1.0,-0.9};
@@ -91,4 +109,28 @@ TEST(CDataWrapperTest, TestJsonDouble) {
     for(int cnt=0;cnt<p->size();cnt++){
         ASSERT_EQ( test_var[cnt], p->getDoubleElementAtIndex(cnt));
     }
+}
+TEST(CDataWrapperTest, TestEmptyBSONToJSON) {
+    CDataWrapper bson_a((const char*)NULL, 0);
+    CDataWrapper bson_b((const char*)NULL);
+    const std::string json_a = bson_a.getJSONString();
+    const std::string can_json_a = bson_a.getCompliantJSONString();
+    ASSERT_STREQ(json_a.c_str(), "{ }");
+    ASSERT_STREQ(can_json_a.c_str(), "{ }");
+    const std::string json_b = bson_b.getJSONString();
+    const std::string can_json_b = bson_b.getCompliantJSONString();
+    ASSERT_STREQ(json_b.c_str(), "{ }");
+    ASSERT_STREQ(can_json_b.c_str(), "{ }");
+}
+TEST(CDataWrapperTest, TestEmptyJSONToBSON) {
+    CDWUniquePtr bson_a = CDataWrapper::instanceFromJson("{}");
+    CDWUniquePtr bson_b = CDataWrapper::instanceFromJson(std::string());
+    const std::string json_a = bson_a->getJSONString();
+    const std::string can_json_a = bson_a->getCompliantJSONString();
+    ASSERT_STREQ(json_a.c_str(), "{ }");
+    ASSERT_STREQ(can_json_a.c_str(), "{ }");
+    const std::string json_b = bson_b->getJSONString();
+    const std::string can_json_b = bson_b->getCompliantJSONString();
+    ASSERT_STREQ(json_b.c_str(), "{ }");
+    ASSERT_STREQ(can_json_b.c_str(), "{ }");
 }
