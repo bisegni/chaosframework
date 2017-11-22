@@ -53,22 +53,36 @@ array_index(0){
 }
 
 CDataWrapper::CDataWrapper(const bson_t *copy_bson):
-bson(ALLOCATE_BSONT(bson_copy(copy_bson))),
-array_index(0){}
+array_index(0){
+    if(copy_bson != NULL) {
+        bson = ALLOCATE_BSONT(bson_copy(copy_bson));
+    } else {
+        bson = ALLOCATE_BSONT(bson_new());
+    }
+    CHAOS_ASSERT(bson);
+}
 
 CDataWrapper::CDataWrapper(const char* mem_ser,
                            uint32_t mem_size):
-bson(ALLOCATE_BSONT(bson_new_from_data((const uint8_t*)mem_ser,
-                                       mem_size))),
 array_index(0){
+    if(mem_ser != NULL || mem_size) {
+        bson = ALLOCATE_BSONT(bson_new_from_data((const uint8_t*)mem_ser,
+                                                 mem_size));
+    } else {
+        bson = ALLOCATE_BSONT(bson_new());
+    }
     CHAOS_ASSERT(bson);
 }
 
 CDataWrapper::CDataWrapper(const char* mem_ser):
 array_index(0) {
-    uint32_t size = BSON_UINT32_FROM_LE(*reinterpret_cast<const uint32_t *>(mem_ser));
-    bson = ALLOCATE_BSONT(bson_new_from_data((const uint8_t*)mem_ser,
-                                             size));
+    if(mem_ser) {
+        uint32_t size = BSON_UINT32_FROM_LE(*reinterpret_cast<const uint32_t *>(mem_ser));
+        bson = ALLOCATE_BSONT(bson_new_from_data((const uint8_t*)mem_ser,
+                                                 size));
+    } else {
+        bson = ALLOCATE_BSONT(bson_new());
+    }
     CHAOS_ASSERT(bson);
 }
 
@@ -573,7 +587,7 @@ string CDataWrapper::getJSONString()  const{
 string CDataWrapper::getCompliantJSONString()  const{
     size_t str_size = 0;
     char * str_c = bson_as_relaxed_extended_json(ACCESS_BSON(bson),
-                                &str_size);
+                                                 &str_size);
     std::string result(str_c);
     bson_free(str_c);
     return result;

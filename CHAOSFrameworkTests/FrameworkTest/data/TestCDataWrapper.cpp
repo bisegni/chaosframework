@@ -79,6 +79,7 @@ TEST(CDataWrapperTest, Performance) {
         data_pack.reset();
     }
 }
+
 TEST(CDataWrapperTest, TestJsonDouble) {
     const char* test_json_translation="{\"double_key\":[1.0,2.1,-1.0,-0.9]}";
     double test_var[]={1.0,2.1,-1.0,-0.9};
@@ -91,4 +92,28 @@ TEST(CDataWrapperTest, TestJsonDouble) {
     for(int cnt=0;cnt<p->size();cnt++){
         ASSERT_EQ( test_var[cnt], p->getDoubleElementAtIndex(cnt));
     }
+}
+TEST(CDataWrapperTest, TestEmptyBSONToJSON) {
+    CDataWrapper bson_a((const char*)NULL, 0);
+    CDataWrapper bson_b((const char*)NULL);
+    const std::string json_a = bson_a.getJSONString();
+    const std::string can_json_a = bson_a.getCompliantJSONString();
+    ASSERT_STREQ(json_a.c_str(), "{ }");
+    ASSERT_STREQ(can_json_a.c_str(), "{ }");
+    const std::string json_b = bson_b.getJSONString();
+    const std::string can_json_b = bson_b.getCompliantJSONString();
+    ASSERT_STREQ(json_b.c_str(), "{ }");
+    ASSERT_STREQ(can_json_b.c_str(), "{ }");
+}
+TEST(CDataWrapperTest, TestEmptyJSONToBSON) {
+    CDWUniquePtr bson_a = CDataWrapper::instanceFromJson("{}");
+    CDWUniquePtr bson_b = CDataWrapper::instanceFromJson(std::string());
+    const std::string json_a = bson_a->getJSONString();
+    const std::string can_json_a = bson_a->getCompliantJSONString();
+    ASSERT_STREQ(json_a.c_str(), "{ }");
+    ASSERT_STREQ(can_json_a.c_str(), "{ }");
+    const std::string json_b = bson_b->getJSONString();
+    const std::string can_json_b = bson_b->getCompliantJSONString();
+    ASSERT_STREQ(json_b.c_str(), "{ }");
+    ASSERT_STREQ(can_json_b.c_str(), "{ }");
 }
