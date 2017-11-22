@@ -50,6 +50,7 @@ build_framework_x86_64_test:
     paths:
         - 'coverage_html'
     expire_in: 1 hour
+  coverage: '/^TOTAL.*\s+(\d+\%)$/'
   only:
     - development
     - master
