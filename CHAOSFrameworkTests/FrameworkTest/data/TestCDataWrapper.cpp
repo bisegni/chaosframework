@@ -134,3 +134,22 @@ TEST(CDataWrapperTest, TestEmptyJSONToBSON) {
     ASSERT_STREQ(json_b.c_str(), "{ }");
     ASSERT_STREQ(can_json_b.c_str(), "{ }");
 }
+
+TEST(CDataWrapperTest, TestConcatenation) {
+    const char* test_json_translation="{\"double_key\":[1.0,2.1,-1.0,-0.9]}";
+    CDataWrapper dconcat,empty;
+    CDWUniquePtr data = CDataWrapper::instanceFromJson(test_json_translation);
+    dconcat.addCSDataValue("empty",&empty);
+    dconcat.addCSDataValue("notempty",data.get());
+    double test_var[]={1.0,2.1,-1.0,-0.9};
+    ASSERT_TRUE(dconcat.hasKey("empty"));
+    CDataWrapper *t=dconcat.getCSDataValue("notempty");
+    ASSERT_TRUE(t->isVectorValue("double_key"));
+
+    ChaosUniquePtr<CMultiTypeDataArrayWrapper> p(t->getVectorValue("double_key"));
+    ASSERT_TRUE(p.get());
+
+    for(int cnt=0;cnt<p->size();cnt++){
+        ASSERT_EQ( test_var[cnt], p->getDoubleElementAtIndex(cnt));
+    }
+}
