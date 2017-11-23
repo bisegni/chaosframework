@@ -149,7 +149,7 @@ TEST(CDataWrapperTest, TestConcatenation) {
     pieno.addInt64Value("ts6",(int64_t)6LL);
     pieno.addStringValue("string_empty","");
     pieno.addInt32Value("int_key",3);
-    pieno.addStringValue("string_key","me sa che non funge sta libreria");
+    pieno.addStringValue("string_key","this is a long text that try to do some space on bson");
     pieno.addBoolValue("bool_key",true);
     pieno.addBoolValue("bool_key1",false);
 
@@ -175,5 +175,5 @@ TEST(CDataWrapperTest, TestConcatenation) {
     for(int cnt=0;cnt<p->size();cnt++){
         ASSERT_EQ( test_var[cnt], p->getDoubleElementAtIndex(cnt));
     }
-    ASSERT_STREQ("{ \"empty\" : {  }, \"notempty\" : { \"double_key\" : [ 1.0, 2.1000000000000000888, -1.0, -0.9000000000000000222 ], \"string_vector\" : [ \"ciao\", \"come stai\" ] }, \"empty2\" : {  }, \"pieno\" : { \"ts1\" : 1, \"ts2\" : 2, \"ts3\" : 3, \"ts4\" : 4, \"double_key\" : -2.0, \"ts5\" : 5, \"ts6\" : 6, \"string_empty\" : \"\", \"int_key\" : 3, \"string_key\" : \"me sa che non funge sta libreria\", \"bool_key\" : true, \"bool_key1\" : false } }", dconcat.getCompliantJSONString().c_str());
+    ASSERT_STREQ("{ \"empty\" : {  }, \"notempty\" : { \"double_key\" : [ 1.0, 2.1000000000000000888, -1.0, -0.9000000000000000222 ], \"string_vector\" : [ \"ciao\", \"come stai\" ] }, \"empty2\" : {  }, \"pieno\" : { \"ts1\" : 1, \"ts2\" : 2, \"ts3\" : 3, \"ts4\" : 4, \"double_key\" : -2.0, \"ts5\" : 5, \"ts6\" : 6, \"string_empty\" : \"\", \"int_key\" : 3, \"string_key\" : \"this is a long text that try to do some space on bson\", \"bool_key\" : true, \"bool_key1\" : false } }", dconcat.getCompliantJSONString().c_str());
 }
