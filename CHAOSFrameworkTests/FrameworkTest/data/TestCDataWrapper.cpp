@@ -44,7 +44,6 @@ TEST(CDataWrapperTest, Normal) {
     ASSERT_TRUE(target_cdw.isInt32Value("i32v"));
     ASSERT_TRUE(target_cdw.isBoolValue("bv"));
 }
-
 TEST(CDataWrapperTest, MemoryLeaks) {
     int idx = 0;
     CDataWrapper data_pack;
@@ -79,7 +78,6 @@ TEST(CDataWrapperTest, MemoryLeaks) {
         ASSERT_STREQ(array_ptr->getStringElementAtIndex(3).c_str(), "array_lement");
     }
 }
-
 TEST(CDataWrapperTest, Performance) {
     int idx = 0;
     CDataWrapper data_pack;
@@ -96,7 +94,6 @@ TEST(CDataWrapperTest, Performance) {
         data_pack.reset();
     }
 }
-
 TEST(CDataWrapperTest, TestJsonDouble) {
     const char* test_json_translation="{\"double_key\":[1.0,2.1,-1.0,-0.9]}";
     double test_var[]={1.0,2.1,-1.0,-0.9};
@@ -139,11 +136,17 @@ TEST(CDataWrapperTest, TestConcatenation) {
     const char* test_json_translation="{\"double_key\":[1.0,2.1,-1.0,-0.9]}";
     CDataWrapper dconcat,empty;
     CDWUniquePtr data = CDataWrapper::instanceFromJson(test_json_translation);
-    dconcat.addCSDataValue("empty",&empty);
-    dconcat.addCSDataValue("notempty",data.get());
+    dconcat.addCSDataValue("empty",empty);
+    dconcat.addCSDataValue("notempty",*data.get());
+    dconcat.addCSDataValue("empty2",empty);
     double test_var[]={1.0,2.1,-1.0,-0.9};
     ASSERT_TRUE(dconcat.hasKey("empty"));
-    CDataWrapper *t=dconcat.getCSDataValue("notempty");
+    ASSERT_TRUE(dconcat.isCDataWrapperValue("empty2"));
+    ASSERT_TRUE(dconcat.hasKey("empty2"));
+    ASSERT_TRUE(dconcat.isCDataWrapperValue("empty"));
+    ASSERT_TRUE(dconcat.hasKey("notempty"));
+    ASSERT_TRUE(dconcat.isCDataWrapperValue("notempty"));
+    CDWUniquePtr t(dconcat.getCSDataValue("notempty"));
     ASSERT_TRUE(t->isVectorValue("double_key"));
 
     ChaosUniquePtr<CMultiTypeDataArrayWrapper> p(t->getVectorValue("double_key"));
@@ -152,4 +155,5 @@ TEST(CDataWrapperTest, TestConcatenation) {
     for(int cnt=0;cnt<p->size();cnt++){
         ASSERT_EQ( test_var[cnt], p->getDoubleElementAtIndex(cnt));
     }
+    ASSERT_STREQ("{ \"empty\" : {  }, \"notempty\" : { \"double_key\" : [ 1.0, 2.1000000000000000888, -1.0, -0.9000000000000000222 ] }, \"empty2\" : {  } }", dconcat.getCompliantJSONString().c_str());
 }
