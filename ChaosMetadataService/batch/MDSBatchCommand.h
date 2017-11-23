@@ -102,7 +102,7 @@ namespace chaos{
                 uint8_t implementedHandler();
                 
                 // inherited method
-                void setHandler(chaos_data::CDataWrapper *data);
+                void setHandler(chaos::common::data::CDataWrapper *data);
                 
                 // inherited method
                 void acquireHandler();
@@ -149,12 +149,12 @@ namespace chaos{
                 uint32_t getNextSandboxToUse();
                 
                 uint64_t submitCommand(const std::string& batch_command_alias,
-                                       chaos_data::CDataWrapper *command_data,
+                                       chaos::common::data::CDataWrapper *command_data,
                                        uint32_t sandbox_id,
                                        uint32_t priority = 50);
                 
                 uint64_t submitCommand(const std::string& batch_command_alias,
-                                       chaos_data::CDataWrapper *command_data);
+                                       chaos::common::data::CDataWrapper *command_data);
             };
             
         }

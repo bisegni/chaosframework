@@ -29,7 +29,11 @@
 /*
  * Define to 1 for POSIX-like systems, 2 for Windows.
  */
+#if defined (__unix__) || (defined (__APPLE__) && defined (__MACH__))
 #define BSON_OS 1
+#elif
+#define BSON_OS 0
+#endif
 
 
 /*

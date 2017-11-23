@@ -187,13 +187,13 @@ void AbstractControlUnit::_initChecklist() {
 
 void AbstractControlUnit::_initPropertyGroup() {
     PropertyGroup& pg_abstract_cu = addGroup(chaos::ControlUnitPropertyKey::GROUP_NAME);
-    pg_abstract_cu.addProperty(ControlUnitDatapackSystemKey::BYPASS_STATE, "Put control unit in bypass state", DataType::TYPE_BOOLEAN);
-    pg_abstract_cu.addProperty(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE, "Set the control unit storage type", DataType::TYPE_INT32);
-    pg_abstract_cu.addProperty(DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME, "Set the control unit storage type", DataType::TYPE_INT64);
-    pg_abstract_cu.addProperty(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME, "Set the control unit storage type", DataType::TYPE_INT64);
-    pg_abstract_cu.addProperty(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, "Set the control unit step repeat time in microseconds", DataType::TYPE_INT64);
-    pg_abstract_cu.addProperty(ControlUnitPropertyKey::INIT_RESTORE_OPTION, "Specify the restore type operatio to do durint initialization phase", DataType::TYPE_INT32);
-    pg_abstract_cu.addProperty(ControlUnitPropertyKey::INIT_RESTORE_APPLY, "Specify if the restore operation need to be done as real operation or not", DataType::TYPE_BOOLEAN);
+    pg_abstract_cu.addProperty(ControlUnitDatapackSystemKey::BYPASS_STATE, "Put control unit in bypass state", DataType::TYPE_BOOLEAN, 0, CDataVariant((bool)false));
+    pg_abstract_cu.addProperty(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE, "Set the control unit storage type", DataType::TYPE_INT32, 0, CDataVariant((int32_t)0));
+    pg_abstract_cu.addProperty(DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME, "Set the control unit storage type", DataType::TYPE_INT64, 0, CDataVariant((int64_t)0));
+    pg_abstract_cu.addProperty(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME, "Set the control unit storage type", DataType::TYPE_INT64, 0, CDataVariant((int64_t)0));
+    pg_abstract_cu.addProperty(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, "Set the control unit step repeat time in microseconds", DataType::TYPE_INT64, 0, CDataVariant((int64_t)1000000));//set to one seconds
+    pg_abstract_cu.addProperty(ControlUnitPropertyKey::INIT_RESTORE_OPTION, "Specify the restore type operatio to do durint initialization phase", DataType::TYPE_INT32, 0, CDataVariant((int32_t)0));
+    pg_abstract_cu.addProperty(ControlUnitPropertyKey::INIT_RESTORE_APPLY, "Specify if the restore operation need to be done as real operation or not", DataType::TYPE_BOOLEAN,0, CDataVariant((bool)false));
     
     PropertyCollector::setPropertyValueChangeFunction(ChaosBind(&AbstractControlUnit::propertyChangeHandler, this,
                                                                 ChaosBindPlaceholder(_1), ChaosBindPlaceholder(_2), ChaosBindPlaceholder(_3)));
@@ -444,7 +444,7 @@ void AbstractControlUnit::doInitRpCheckList() throw(CException) {
             //call update param function
             updateConfiguration(init_configuration.get(), detach_fake);
             
-            //chec if we need to do a restor on first start
+            //check if we need to do a restore on first start
             PropertyGroupShrdPtr cug = PropertyCollector::getGroup(chaos::ControlUnitPropertyKey::GROUP_NAME);
             if(cug.get()) {
                 if(cug->hasProperty(chaos::ControlUnitPropertyKey::INIT_RESTORE_APPLY) &&
