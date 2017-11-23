@@ -32,9 +32,9 @@ For further documentation please visit:
 ### Compilation report
 branch name   |  build status  
 --------------|----------------
-Master        |  [![Master Build Status](https://baltig.infn.it/chaos-lnf-control/chaosframework/badges/master/build.svg)](https://baltig.infn.it/chaos-lnf-control/chaosframework/commits/master)
-Development   |  [![Development Build Status](https://baltig.infn.it/chaos-lnf-control/chaosframework/badges/development/build.svg)](https://baltig.infn.it/chaos-lnf-control/chaosframework/commits/development)
-Experimental  | [![Experimental Build Status](https://baltig.infn.it/chaos-lnf-control/chaosframework/badges/experimental/build.svg)](https://baltig.infn.it/chaos-lnf-control/chaosframework/commits/experimental)
+Master        | [![pipeline status](https://baltig.infn.it/chaos-lnf-control/chaosframework/badges/master/pipeline.svg)](https://baltig.infn.it/chaos-lnf-control/chaosframework/commits/master)
+Development   | [![pipeline status](https://baltig.infn.it/chaos-lnf-control/chaosframework/badges/development/pipeline.svg)](https://baltig.infn.it/chaos-lnf-control/chaosframework/commits/development)
+Experimental  | [![pipeline status](https://baltig.infn.it/chaos-lnf-control/chaosframework/badges/experimental/pipeline.svg)](https://baltig.infn.it/chaos-lnf-control/chaosframework/commits/experimental)
 
 ### Code coverage
 [Experimental Branch Covereage Report][4416b59a]
