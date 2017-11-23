@@ -586,10 +586,13 @@ string CDataWrapper::getJSONString()  const{
 //return the json data
 string CDataWrapper::getCompliantJSONString()  const{
     size_t str_size = 0;
-    char * str_c = bson_as_relaxed_extended_json(ACCESS_BSON(bson),
-                                                 &str_size);
+    char * str_c = bson_as_relaxed_extended_json(ACCESS_BSON(bson),&str_size);
     if(str_c==NULL){
-        return std::string("{}");
+        str_c =bson_as_canonical_extended_json(ACCESS_BSON(bson), &str_size);
+        if(str_c==NULL){
+            return std::string("{}");
+         }
+        LERR_<<"## cannot convert to compliant JSON:'"<<str_c<<"'";
     }
     std::string result(str_c);
     bson_free(str_c);

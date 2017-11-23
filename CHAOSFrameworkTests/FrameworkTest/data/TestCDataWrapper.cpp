@@ -133,12 +133,30 @@ TEST(CDataWrapperTest, TestEmptyJSONToBSON) {
 }
 
 TEST(CDataWrapperTest, TestConcatenation) {
-    const char* test_json_translation="{\"double_key\":[1.0,2.1,-1.0,-0.9]}";
-    CDataWrapper dconcat,empty;
+    const char* test_json_translation="{\"double_key\":[1.0,2.1,-1.0,-0.9],\"string_vector\":[\"ciao\",\"come stai\"]}";
+    CDataWrapper dconcat,empty,pieno;
     CDWUniquePtr data = CDataWrapper::instanceFromJson(test_json_translation);
     dconcat.addCSDataValue("empty",empty);
     dconcat.addCSDataValue("notempty",*data.get());
+
     dconcat.addCSDataValue("empty2",empty);
+    pieno.addInt64Value("ts1",(int64_t)1LL);
+    pieno.addInt64Value("ts2",(int64_t)2LL);
+    pieno.addInt64Value("ts3",(int64_t)3LL);
+    pieno.addInt64Value("ts4",(int64_t)4LL);
+    pieno.addDoubleValue("double_key",-2);
+    pieno.addInt64Value("ts5",(int64_t)5LL);
+    pieno.addInt64Value("ts6",(int64_t)6LL);
+    pieno.addStringValue("string_empty","");
+    pieno.addInt32Value("int_key",3);
+    pieno.addStringValue("string_key","me sa che non funge sta libreria");
+    pieno.addBoolValue("bool_key",true);
+    pieno.addBoolValue("bool_key1",false);
+
+    ASSERT_TRUE(pieno.getCompliantJSONString().size());
+    dconcat.addCSDataValue("pieno",pieno);
+
+
     double test_var[]={1.0,2.1,-1.0,-0.9};
     ASSERT_TRUE(dconcat.hasKey("empty"));
     ASSERT_TRUE(dconcat.isCDataWrapperValue("empty2"));
@@ -146,6 +164,8 @@ TEST(CDataWrapperTest, TestConcatenation) {
     ASSERT_TRUE(dconcat.isCDataWrapperValue("empty"));
     ASSERT_TRUE(dconcat.hasKey("notempty"));
     ASSERT_TRUE(dconcat.isCDataWrapperValue("notempty"));
+    ASSERT_TRUE(dconcat.isCDataWrapperValue("pieno"));
+
     CDWUniquePtr t(dconcat.getCSDataValue("notempty"));
     ASSERT_TRUE(t->isVectorValue("double_key"));
 
@@ -155,5 +175,5 @@ TEST(CDataWrapperTest, TestConcatenation) {
     for(int cnt=0;cnt<p->size();cnt++){
         ASSERT_EQ( test_var[cnt], p->getDoubleElementAtIndex(cnt));
     }
-    ASSERT_STREQ("{ \"empty\" : {  }, \"notempty\" : { \"double_key\" : [ 1.0, 2.1000000000000000888, -1.0, -0.9000000000000000222 ] }, \"empty2\" : {  } }", dconcat.getCompliantJSONString().c_str());
+    ASSERT_STREQ("{ \"empty\" : {  }, \"notempty\" : { \"double_key\" : [ 1.0, 2.1000000000000000888, -1.0, -0.9000000000000000222 ], \"string_vector\" : [ \"ciao\", \"come stai\" ] }, \"empty2\" : {  }, \"pieno\" : { \"ts1\" : 1, \"ts2\" : 2, \"ts3\" : 3, \"ts4\" : 4, \"double_key\" : -2.0, \"ts5\" : 5, \"ts6\" : 6, \"string_empty\" : \"\", \"int_key\" : 3, \"string_key\" : \"me sa che non funge sta libreria\", \"bool_key\" : true, \"bool_key1\" : false } }", dconcat.getCompliantJSONString().c_str());
 }
