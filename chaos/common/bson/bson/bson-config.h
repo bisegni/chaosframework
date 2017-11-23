@@ -31,7 +31,7 @@
  */
 #if defined (__unix__) || (defined (__APPLE__) && defined (__MACH__))
 #define BSON_OS 1
-#elif
+#else
 #define BSON_OS 0
 #endif
 
