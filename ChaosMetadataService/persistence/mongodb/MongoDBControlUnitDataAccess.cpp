@@ -1068,10 +1068,10 @@ int MongoDBControlUnitDataAccess::reserveControlUnitForAgeingManagement(uint64_t
                         continue;
                     }
                     
-                    if(ele_obj.hasField("property_g_list") == false) {
+                    if(ele_obj.hasField("property_g_plist") == false) {
                         continue;
                     }
-                    mongo::BSONElement cu_prop_arr_ele = ele_obj.getField("property_g_list");
+                    mongo::BSONElement cu_prop_arr_ele = ele_obj.getField("property_g_plist");
                     std::vector<mongo::BSONElement> cu_prop_arr = cu_prop_arr_ele.Array();
                     for(std::vector<mongo::BSONElement>::iterator cu_p_it = cu_prop_arr.begin(),
                         cu_p_end = cu_prop_arr.end();
