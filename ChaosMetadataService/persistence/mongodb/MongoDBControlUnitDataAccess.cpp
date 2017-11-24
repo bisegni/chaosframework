@@ -339,7 +339,7 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
             updated_field.appendArray(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_COMMAND_DESCRIPTION,
                                       batch_command_bson_array.arr());
         }
-
+        
         mongo::BSONObj query = bson_find.obj();
         mongo::BSONObj update = BSON("$set" << BSON(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION << updated_field.obj()));
         
@@ -1006,7 +1006,7 @@ int MongoDBControlUnitDataAccess::reserveControlUnitForAgeingManagement(uint64_t
         const std::string key_processing_ageing = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_PROCESSING_AGEING);
         const std::string key_last_checking_time = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_AGEING_LAST_CHECK_DATA);
         const std::string key_last_performed_time = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_PERFORMED_AGEING);
-         query_builder << "property_defaults" << BSON("$elemMatch" << BSON("property_g_plist" << BSON("$elemMatch" << BSON("property_name" << DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING << "property_value" << BSON("$gt" << 0)))));
+        query_builder << "property_defaults" << BSON("$elemMatch" << BSON("property_g_plist" << BSON("$elemMatch" << BSON("property_name" << DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING << "property_value" << BSON("$gt" << 0)))));
         
         //get all control unit
         query_builder << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_CONTROL_UNIT;
@@ -1048,11 +1048,62 @@ int MongoDBControlUnitDataAccess::reserveControlUnitForAgeingManagement(uint64_t
             MDBCUDA_ERR << CHAOS_FORMAT("Error %1% fetching the next cheable control unit for ageing", %err);
         } else if(result_found.isEmpty() == false && (result_found.hasField(NodeDefinitionKey::NODE_UNIQUE_ID) &&
                                                       result_found.hasField(MONGODB_COLLECTION_NODES_AGEING_INFO))) {
-            //we have control unit
-            last_sequence_id = (uint64_t)result_found.getField("seq").Long();
-            control_unit_found = result_found.getField(NodeDefinitionKey::NODE_UNIQUE_ID).String();
-            control_unit_ageing_time = (uint32_t)result_found.getFieldDotted(CHAOS_FORMAT("instance_description.%1%",%DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING)).numberInt();
-            last_ageing_perform_time = (uint64_t)result_found.getFieldDotted(key_last_performed_time).Date().asInt64();
+            
+            //find property
+            if(result_found.hasElement("property_defaults")) {
+                control_unit_ageing_time = 0;
+                mongo::BSONElement ele_prop_def = result_found.getFieldDotted("property_defaults");
+                std::vector<mongo::BSONElement> prop_arr = ele_prop_def.Array();
+                for(std::vector<mongo::BSONElement>::iterator it = prop_arr.begin(),
+                    end = prop_arr.end();
+                    it != end &&
+                    !control_unit_ageing_time;
+                    it++) {
+                    //find
+                    mongo::BSONObj ele_obj = it->Obj();
+                    if(ele_obj.hasField("property_g_name") == false) {
+                        continue;
+                    }
+                    if(ele_obj.getField("property_g_name").String().compare(ControlUnitPropertyKey::GROUP_NAME) != 0){
+                        continue;
+                    }
+                    
+                    if(ele_obj.hasField("property_g_list") == false) {
+                        continue;
+                    }
+                    mongo::BSONElement cu_prop_arr_ele = ele_obj.getField("property_g_list");
+                    std::vector<mongo::BSONElement> cu_prop_arr = cu_prop_arr_ele.Array();
+                    for(std::vector<mongo::BSONElement>::iterator cu_p_it = cu_prop_arr.begin(),
+                        cu_p_end = cu_prop_arr.end();
+                        cu_p_it != cu_p_end;
+                        cu_p_it++) {
+                        mongo::BSONObj cu_prop_obj = cu_p_it->Obj();
+                        if(cu_prop_obj.hasField("property_name") == false ||
+                           cu_prop_obj.hasField("property_value") == false) {
+                            continue;
+                        }
+                        
+                        if(cu_prop_obj.getField("property_name").String().compare(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING) != 0) {
+                            continue;
+                        }
+                        
+                        //we have the rigth element
+                        control_unit_ageing_time = (uint32_t)cu_prop_obj.getField("property_value").numberInt();
+                        break;
+                    }
+                    
+                }
+                if(control_unit_ageing_time) {
+                    last_sequence_id = (uint64_t)result_found.getField("seq").Long();
+                    control_unit_found = result_found.getField(NodeDefinitionKey::NODE_UNIQUE_ID).String();
+                    last_ageing_perform_time = (uint64_t)result_found.getFieldDotted(key_last_performed_time).Date().asInt64();
+                }
+            } else {
+                last_sequence_id = 0;
+                control_unit_found.clear();
+                last_ageing_perform_time = 0;
+                control_unit_ageing_time = 0;
+            }
         } else {
             last_sequence_id = 0;
             control_unit_found.clear();
