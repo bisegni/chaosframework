@@ -38,7 +38,10 @@
  * dependent. For example, some PPC or ARM systems may not have it even
  * if it is a recent GCC version.
  */
+#ifndef DISABLE_COMPARE_AND_SWAP
 #define BSON_HAVE_ATOMIC_32_ADD_AND_FETCH 1
+#endif
+
 #if BSON_HAVE_ATOMIC_32_ADD_AND_FETCH != 1
 # undef BSON_HAVE_ATOMIC_32_ADD_AND_FETCH
 #endif
@@ -46,7 +49,10 @@
 /*
  * Similarly, define to 1 if we have access to GCC 64-bit atomic builtins.
  */
+#ifndef DISABLE_COMPARE_AND_SWAP
 #define BSON_HAVE_ATOMIC_64_ADD_AND_FETCH 1
+#endif
+
 #if BSON_HAVE_ATOMIC_64_ADD_AND_FETCH != 1
 # undef BSON_HAVE_ATOMIC_64_ADD_AND_FETCH
 #endif
