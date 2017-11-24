@@ -1048,69 +1048,36 @@ int MongoDBControlUnitDataAccess::reserveControlUnitForAgeingManagement(uint64_t
             MDBCUDA_ERR << CHAOS_FORMAT("Error %1% fetching the next cheable control unit for ageing", %err);
         } else if(result_found.isEmpty() == false && (result_found.hasField(NodeDefinitionKey::NODE_UNIQUE_ID) &&
                                                       result_found.hasField(MONGODB_COLLECTION_NODES_AGEING_INFO))) {
-            
-            //find property
-            if(result_found.hasElement("property_defaults")) {
-                control_unit_ageing_time = 0;
-                mongo::BSONElement ele_prop_def = result_found.getFieldDotted("property_defaults");
-                std::vector<mongo::BSONElement> prop_arr = ele_prop_def.Array();
-                for(std::vector<mongo::BSONElement>::iterator it = prop_arr.begin(),
-                    end = prop_arr.end();
-                    it != end &&
-                    !control_unit_ageing_time;
-                    it++) {
-                    //find
-                    mongo::BSONObj ele_obj = it->Obj();
-                    if(ele_obj.hasField("property_g_name") == false) {
-                        continue;
-                    }
-                    if(ele_obj.getField("property_g_name").String().compare(ControlUnitPropertyKey::GROUP_NAME) != 0){
-                        continue;
-                    }
-                    
-                    if(ele_obj.hasField("property_g_plist") == false) {
-                        continue;
-                    }
-                    mongo::BSONElement cu_prop_arr_ele = ele_obj.getField("property_g_plist");
-                    std::vector<mongo::BSONElement> cu_prop_arr = cu_prop_arr_ele.Array();
-                    for(std::vector<mongo::BSONElement>::iterator cu_p_it = cu_prop_arr.begin(),
-                        cu_p_end = cu_prop_arr.end();
-                        cu_p_it != cu_p_end;
-                        cu_p_it++) {
-                        mongo::BSONObj cu_prop_obj = cu_p_it->Obj();
-                        if(cu_prop_obj.hasField("property_name") == false ||
-                           cu_prop_obj.hasField("property_value") == false) {
-                            continue;
-                        }
-                        
-                        if(cu_prop_obj.getField("property_name").String().compare(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING) != 0) {
-                            continue;
-                        }
-                        
-                        //we have the rigth element
-                        control_unit_ageing_time = (uint32_t)cu_prop_obj.getField("property_value").numberInt();
-                        break;
-                    }
-                    
-                }
-                if(control_unit_ageing_time) {
-                    last_sequence_id = (uint64_t)result_found.getField("seq").Long();
-                    control_unit_found = result_found.getField(NodeDefinitionKey::NODE_UNIQUE_ID).String();
-                    last_ageing_perform_time = (uint64_t)result_found.getFieldDotted(key_last_performed_time).Date().asInt64();
-                }
-            } else {
-                last_sequence_id = 0;
-                control_unit_found.clear();
-                last_ageing_perform_time = 0;
-                control_unit_ageing_time = 0;
-            }
-        } else {
             last_sequence_id = 0;
             control_unit_found.clear();
             last_ageing_perform_time = 0;
             control_unit_ageing_time = 0;
+            //find property
+            if(result_found.hasElement("property_defaults")) {
+                CDWUniquePtr prop_ser(new CDataWrapper(result_found.objdata()));
+                chaos::common::property::PropertyGroupVectorSDWrapper pg_sdw;
+                pg_sdw.serialization_key = "property_defaults";
+                pg_sdw.deserialize(prop_ser.get());
+                for(common::property::PropertyGroupVectorConstIterator it = pg_sdw().begin(),
+                    end = pg_sdw().end();
+                    it != end;
+                    it++) {
+                    const std::string& pg_name = it->getGroupName();
+                    if(pg_name.compare(ControlUnitPropertyKey::GROUP_NAME) == 0) {
+                        if(it->hasProperty(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING)){
+                            //we have ageing data
+                            control_unit_ageing_time = (uint32_t)it->getPropertyValue(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING).asInt32();
+                            last_sequence_id = (uint64_t)result_found.getField("seq").Long();
+                            control_unit_found = result_found.getField(NodeDefinitionKey::NODE_UNIQUE_ID).String();
+                            last_ageing_perform_time = (uint64_t)result_found.getFieldDotted(key_last_performed_time).Date().asInt64();
+                        }
+                        break;
+                    }
+                    
+                }
+
+            }
         }
-        
     } catch (const mongo::DBException &e) {
         MDBCUDA_ERR << e.what();
         err = -1;
