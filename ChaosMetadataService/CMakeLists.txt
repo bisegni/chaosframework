@@ -17,7 +17,7 @@ SET(cnd_src  ${cnd_src} ../chaos_service_common/persistence/mongodb/MongoDBHACon
 SET(cnd_src  ${cnd_src} ../chaos_service_common/persistence/data_access/AbstractDataAccess.cpp
 						            ../chaos_service_common/persistence/data_access/AbstractPersistenceDriver.cpp)
 
-SET(cnd_src  ${cnd_src}	cron_job/MDSCronousManager.cpp
+SET(cnd_src  ${cnd_src}	cron_job/MDSCronusManager.cpp
                         cron_job/MDSCronJob.cpp
                         cron_job/management/MDSHistoryAgeingManagement.cpp)
 

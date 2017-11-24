@@ -22,7 +22,8 @@
 #include <chaos/cu_toolkit/data_manager/DataManager.h>
 #include <chaos/cu_toolkit/command_manager/CommandManager.h>
 #include <chaos/cu_toolkit/control_manager/script/api/api.h>
-#include <chaos/cu_toolkit/external_gateway/external_gateway.h>
+#include <chaos/common/external_unit/external_unit.h>
+#include <chaos/common/external_unit/external_unit_constants.h>
 
 #include <chaos/common/healt_system/HealtManager.h>
 #include <chaos/common/metadata_logging/MetadataLoggingManager.h>
@@ -156,26 +157,6 @@ ChaosCUToolkit::ChaosCUToolkit() {
     GlobalConfiguration::getInstance()->addOption< double >(CONTROL_MANAGER_EXECUTION_POOLS_CPU_CAP,
                                                             CONTROL_MANAGER_EXECUTION_POOLS_CPU_CAP_DESC,
                                                             CONTROL_MANAGER_EXECUTION_POOLS_CPU_CAP_DEFAULT);
-    
-    GlobalConfiguration::getInstance()->addOption< std::string >(EU_PLUGIN_DIRECTORY,
-                                                                 EU_PLUGIN_DIRECTORY_DESC,
-                                                                 EU_PLUGIN_DIRECTORY_DEFAULT);
-    
-    GlobalConfiguration::getInstance()->addOption< bool >(EU_PLUGIN_ENABLE,
-                                                          EU_PLUGIN_ENABLE_DESC,
-                                                          EU_PLUGIN_ENABLE_DEFAULT);
-    
-    GlobalConfiguration::getInstance()->addOption< bool >(UNIT_GATEWAY_ENABLE,
-                                                          UNIT_GATEWAY_ENABLE_DESC,
-                                                          UNIT_GATEWAY_ENABLE_DEFAULT);
-    
-    GlobalConfiguration::getInstance()->addOption< unsigned int >(CU_EG_OPT_WORKER_THREAD_NUMBER,
-                                                                  CU_EG_OPT_WORKER_THREAD_NUMBER_DESC,
-                                                                  CU_EG_OPT_WORKER_THREAD_NUMBER_DEFAULT);
-    
-    GlobalConfiguration::getInstance()->addOption< std::vector<std::string> >(CU_EG_OPT_WORKER_KV_PARAM,
-                                                                              CU_EG_OPT_WORKER_KV_PARAM_DESC);
-    
 }
 
 ChaosCUToolkit::~ChaosCUToolkit() {
@@ -228,10 +209,6 @@ void ChaosCUToolkit::init(void *init_data)  throw(CException) {
             LERR_ << "SIGTERM Signal handler registration error";
         }
         
-        //        if (signal((int) SIGSEGV, ChaosCUToolkit::signalHanlder) == SIG_ERR){
-        //            LERR_ << "SIGSEGV Signal handler registration error";
-        //        }
-        
         if (signal((int) SIGABRT, ChaosCUToolkit::signalHanlder) == SIG_ERR){
             LERR_ << "SIGABRT Signal handler registration error";
         }
@@ -241,7 +218,6 @@ void ChaosCUToolkit::init(void *init_data)  throw(CException) {
             //we can initilize the logging manager
             InizializableService::initImplementation(chaos::common::metadata_logging::MetadataLoggingManager::getInstance(), NULL, "MetadataLoggingManager", __PRETTY_FUNCTION__);
         }
-        
         
         //init healt manager singleton
         StartableService::initImplementation(HealtManager::getInstance(), NULL, "HealtManager", __PRETTY_FUNCTION__);
@@ -255,10 +231,10 @@ void ChaosCUToolkit::init(void *init_data)  throw(CException) {
         
         StartableService::initImplementation(ControlManager::getInstance(), NULL, "ControlManager", "ChaosCUToolkit::init");
         
-        if(GlobalConfiguration::getInstance()->hasOption(UNIT_GATEWAY_ENABLE) &&
-           GlobalConfiguration::getInstance()->getOption<bool>(UNIT_GATEWAY_ENABLE)) {
+        if(GlobalConfiguration::getInstance()->hasOption(chaos::common::external_unit::InitOption::OPT_UNIT_GATEWAY_ENABLE) &&
+           GlobalConfiguration::getInstance()->getOption<bool>(chaos::common::external_unit::InitOption::OPT_UNIT_GATEWAY_ENABLE)) {
             //initilize unit gateway
-            InizializableService::initImplementation(external_gateway::ExternalUnitGateway::getInstance(), NULL, "ExternalUnitGateway", __PRETTY_FUNCTION__);
+            InizializableService::initImplementation(common::external_unit::ExternalUnitManager::getInstance(), NULL, "ExternalUnitManager", __PRETTY_FUNCTION__);
         }
         
         LAPP_ << "Control Manager Initialized";
@@ -340,10 +316,10 @@ void ChaosCUToolkit::stop() throw(CException) {
  */
 void ChaosCUToolkit::deinit() throw(CException) {
     LAPP_ << "Deinitilizzating !CHAOS Control Unit System";
-    if(GlobalConfiguration::getInstance()->hasOption(UNIT_GATEWAY_ENABLE) &&
-       GlobalConfiguration::getInstance()->getOption<bool>(UNIT_GATEWAY_ENABLE)) {
+    if(GlobalConfiguration::getInstance()->hasOption(chaos::common::external_unit::InitOption::OPT_UNIT_GATEWAY_ENABLE) &&
+       GlobalConfiguration::getInstance()->getOption<bool>(chaos::common::external_unit::InitOption::OPT_UNIT_GATEWAY_ENABLE)) {
         //initilize unit gateway
-        InizializableService::deinitImplementation(external_gateway::ExternalUnitGateway::getInstance(), "ExternalUnitGateway", __PRETTY_FUNCTION__);
+        InizializableService::deinitImplementation(common::external_unit::ExternalUnitManager::getInstance(), "ExternalUnitManager", __PRETTY_FUNCTION__);
     }
     //deinit command manager, this manager must be the last to startup
     CHAOS_NOT_THROW(StartableService::deinitImplementation(CommandManager::getInstance(), "CommandManager", "ChaosCUToolkit::stop"););

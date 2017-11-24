@@ -7,9 +7,6 @@
 #include <QObject>
 #include <QSharedPointer>
 
-#include <chaos/common/chaos_constants.h>
-#include <chaos/common/data/CDataWrapper.h>
-
 class DatasetReader :
         public QObject {
     Q_OBJECT

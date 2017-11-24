@@ -76,7 +76,7 @@ chaos::common::data::CDataWrapper *GetLogForSourceUID::execute(CDataWrapper *api
         }
         
     }
-    const std::string source = api_data->getValueWithDefault<std::string>(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER, "");
+    const std::string source = CDW_GET_SRT_WITH_DEFAULT(api_data, MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER, "");
     
     if((err = l_da->searchEntryForSource(entry_list,
                                          source,

@@ -33,12 +33,12 @@ namespace chaos {
             namespace unit_proxy {
                 
                 struct UPMessage {
-                    data::DataPackSharedPtr message;
+                    data::CDWShrdPtr message;
                 };
                 
                 struct UPRequest {
-                    data::DataPackSharedPtr message;
-                    data::DataPackUniquePtr response;
+                    data::CDWShrdPtr message;
+                    data::CDWUniquePtr response;
                 };
                 
                 struct UPError {

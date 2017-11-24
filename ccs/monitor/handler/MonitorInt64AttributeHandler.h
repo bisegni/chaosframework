@@ -3,8 +3,6 @@
 
 #include "AbstractAttributeHandler.h"
 
-#include <chaos_metadata_service_client/monitor_system/monitor_system.h>
-
 class MonitorInt64AttributeHandler:
         public AbstractAttributeHandler,
         public chaos::metadata_service_client::monitor_system::QuantumKeyAttributeInt64Handler {

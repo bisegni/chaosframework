@@ -22,95 +22,113 @@
 #ifndef __CHAOSFramework__061D444_6ECF_448C_8D63_98139B76FA9D_ExternalIODriver_h
 #define __CHAOSFramework__061D444_6ECF_448C_8D63_98139B76FA9D_ExternalIODriver_h
 
+#include <chaos/common/chaos_types.h>
 #include <chaos/cu_toolkit/driver_manager/driver/AbstractRemoteIODriver.h>
-
 namespace chaos {
     namespace cu {
         namespace driver_manager {
             namespace driver {
                 
+                //!define the type of the message that can be sent to remote driver
+                typedef enum {
+                    MessageTypeMetadataGetDeviceList = 0,
+                    MessageTypeMetadataGetDeviceDataset,
+                    MessageTypeVariableWrite,
+                    MessageTypeVariableRead,
+                    MessageTypeError
+                } MessageType;
+                
+                //!liste of error
+                typedef enum {
+                    IO_ERROR_INVALID_MESSAGE_TYPE = AR_ERROR_LAST,
+                    IO_ERROR_INVALID_MESSAGE_STRUCTURE,
+                    IO_ERROR_NO_CACHED_DEVICE_AT_INDEX,
+                    IO_ERROR_NO_CACHED_VARIABLE_TYPE,
+                    IO_ERROR_NO_CACHED_VARIABLE_INDEX
+                } IO_ERROR;
+                
+                //!define the type of the variable hosted by the driver for every managed device
+                typedef enum {
+                    VariableOpRead      = 0,
+                    VariableOpWrite     = 1,
+                    VariableOpListen    = 2
+                } VariableOperativity;
+                //!define the types of a variabl eof a device
+                typedef enum {
+                    //!variable that permit to configurate an aspect of he device
+                    VariableTypeConfiguration = 0,
+                    //! a type of variabl ethat permit to check a determinate aspect of a stete of the device
+                    VariableTypeStateCheck,
+                    //! a variable that permit to change an aspect of the device
+                    VariableTypeStateChange
+                } VariableType;
+                
+                //! define the description of the variable of a device
+                /*!
+                 the index to find the variable witin the driver is,
+                 device_index, var type, var_index.
+                 */
+                typedef struct DeviceVariable {
+                    //!the name of the variable
+                    std::string name;
+                    //!the descirption of the variable
+                    std::string description;
+                    //!specify the type of the variable, how it can interact with asepct of the device
+                    VariableType type;
+                    //!specify what operation can be requested for the specified variable
+                    //can be and concatenation fo the VariableOperativity values
+                    int32_t admit_operation;
+                    
+                    
+                    DeviceVariable(){}
+                    DeviceVariable(const DeviceVariable& src):
+                    name(src.name),
+                    description(src.description),
+                    type(src.type),
+                    admit_operation(src.admit_operation){}
+                    
+                } DeviceVariable;
+                
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(DeviceVariable, VectorDeviceVariable);
+                
+                typedef struct {
+                    //!define the name of the device
+                    std::string name;
+                    //!define the version of the firmware if available
+                    std::string firmware_v;
+                    //!is the list of exposed variable
+                    VectorDeviceVariable variables;
+                    
+                    void clear() {
+                        name.clear();
+                        firmware_v.clear();
+                        variables.clear();
+                    }
+                } Device;
+                
+                //!define the local cache of variable by his index
+                CHAOS_DEFINE_MAP_FOR_TYPE(uint32_t, chaos::common::data::CDataVariant, MapVarCacheValues);
+                //!define tha cache fo the variable grouped by type
+                CHAOS_DEFINE_MAP_FOR_TYPE(VariableType, MapVarCacheValues, MapVarTypeCache);
+                
+                //!internal structure for device cache
+                typedef struct {
+                    Device device;
+                    //cache map that group variable for type
+                    MapVarTypeCache map_type_cache;
+                } DeviceCache;
+
+
+
+                //!map the index and the device info for cache purphose
+                CHAOS_DEFINE_MAP_FOR_TYPE(uint32_t, ChaosSharedPtr<DeviceCache>, MapDeviceCache);
+                
+                CHAOS_DEFINE_LOCKABLE_OBJECT(MapDeviceCache, LMapDeviceCache);
+                
+                template <typename ExtDriverImpl>
                 class ExternalIODriver:
-                public AbstractRemoteIODriver {
+                public ExtDriverImpl {
                 public:
-                    //!define the type of the message that can be sent to remote driver
-                    typedef enum {
-                        MessageTypeMetadataGetDeviceList = 0,
-                        MessageTypeMetadataGetDeviceDataset,
-                        MessageTypeVariableWrite,
-                        MessageTypeVariableRead,
-                        MessageTypeError
-                    } MessageType;
-                    
-                    
-                    //!liste of error
-                    typedef enum {
-                        IO_ERROR_INVALID_MESSAGE_TYPE = AR_ERROR_LAST,
-                        IO_ERROR_INVALID_MESSAGE_STRUCTURE,
-                        IO_ERROR_NO_CACHED_DEVICE_AT_INDEX,
-                        IO_ERROR_NO_CACHED_VARIABLE_TYPE,
-                        IO_ERROR_NO_CACHED_VARIABLE_INDEX
-                    } IO_ERROR;
-                    
-                    //!define the type of the variable hosted by the driver for every managed device
-                    typedef enum {
-                        VariableOpRead      = 0,
-                        VariableOpWrite     = 1,
-                        VariableOpListen    = 2
-                    } VariableOperativity;
-                    
-                    //!define the types of a variabl eof a device
-                    typedef enum {
-                        //!variable that permit to configurate an aspect of he device
-                        VariableTypeConfiguration = 0,
-                        //! a type of variabl ethat permit to check a determinate aspect of a stete of the device
-                        VariableTypeStateCheck,
-                        //! a variable that permit to change an aspect of the device
-                        VariableTypeStateChange
-                    } VariableType;
-                    
-                    
-                    //! define the description of the variable of a device
-                    /*!
-                     the index to find the variable witin the driver is,
-                     device_index, var type, var_index.
-                     */
-                    typedef struct DeviceVariable {
-                        //!the name of the variable
-                        std::string name;
-                        //!the descirption of the variable
-                        std::string description;
-                        //!specify the type of the variable, how it can interact with asepct of the device
-                        VariableType type;
-                        //!specify what operation can be requested for the specified variable
-                        //can be and concatenation fo the VariableOperativity values
-                        int32_t admit_operation;
-                        
-                        
-                        DeviceVariable(){}
-                        DeviceVariable(const DeviceVariable& src):
-                        name(src.name),
-                        description(src.description),
-                        type(src.type),
-                        admit_operation(src.admit_operation){}
-                        
-                    } DeviceVariable;
-                    
-                    CHAOS_DEFINE_VECTOR_FOR_TYPE(DeviceVariable, VectorDeviceVariable);
-                    
-                    typedef struct {
-                        //!define the name of the device
-                        std::string name;
-                        //!define the version of the firmware if available
-                        std::string firmware_v;
-                        //!is the list of exposed variable
-                        VectorDeviceVariable variables;
-                        
-                        void clear() {
-                            name.clear();
-                            firmware_v.clear();
-                            variables.clear();
-                        }
-                    } Device;
                     
                     ExternalIODriver();
                     
@@ -183,22 +201,6 @@ namespace chaos {
                                       uint32_t timeout = 5000);
 
                 private:
-                    //!define the local cache of variable by his index
-                    CHAOS_DEFINE_MAP_FOR_TYPE(uint32_t, chaos::common::data::CDataVariant, MapVarCacheValues);
-                    
-                    //!define tha cache fo the variable grouped by type
-                    CHAOS_DEFINE_MAP_FOR_TYPE(VariableType, MapVarCacheValues, MapVarTypeCache);
-                    
-                    //!internal structure for device cache
-                    typedef struct {
-                        Device device;
-                        //cache map that group variable for type
-                        MapVarTypeCache map_type_cache;
-                    } DeviceCache;
-                    
-                    //!map the index and the device info for cache purphose
-                    CHAOS_DEFINE_MAP_FOR_TYPE(uint32_t, ChaosSharedPtr<DeviceCache>, MapDeviceCache);
-                    CHAOS_DEFINE_LOCKABLE_OBJECT(MapDeviceCache, LMapDeviceCache);
                     
                     LMapDeviceCache map_device_cache;
                     
@@ -236,6 +238,11 @@ namespace chaos {
                     
                     int asyncMessageReceived(chaos::common::data::CDWUniquePtr message);
                 };
+                
+                //#include <chaos/common/external_unit/ExternalUnitServerEndpoint.h>
+                //typedef ExternalIODriver< AbstractRemoteIODriver<chaos::common::external_unit::ExternalUnitServerEndpoint> > ExternalServerIODriver;
+                //#include <chaos/common/external_unit/ExternalUnitClientEndpoint.h>
+                //typedef ExternalIODriver< AbstractRemoteIODriver<chaos::common::external_unit::ExternalUnitClientEndpoint> > ExternalClientIODriver;
             }
         }
     }

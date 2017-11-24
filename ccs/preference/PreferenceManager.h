@@ -4,7 +4,6 @@
 #include "preference_types.h"
 
 #include <QStringList>
-#include <chaos/common/utility/Singleton.h>
 
 #include <QString>
 

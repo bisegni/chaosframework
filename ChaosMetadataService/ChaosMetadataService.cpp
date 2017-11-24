@@ -150,18 +150,11 @@ void ChaosMetadataService::init(void *init_data)  throw(CException) {
         data_consumer.init(NULL, __PRETTY_FUNCTION__);
         
         //initialize cron manager
-        cron_job::MDSCronousManager::getInstance()->abstract_persistance_driver = api_subsystem_accessor.persistence_driver.get();
-        InizializableService::initImplementation(cron_job::MDSCronousManager::getInstance(),
+        cron_job::MDSCronusManager::getInstance()->abstract_persistance_driver = api_subsystem_accessor.persistence_driver.get();
+        InizializableService::initImplementation(cron_job::MDSCronusManager::getInstance(),
                                                  NULL,
                                                  "MDSConousManager",
                                                  __PRETTY_FUNCTION__);
-        
-        persistence::data_access::DataServiceDataAccess *ds_da = persistence::PersistenceManager::getInstance()->getDataAccess<persistence::data_access::DataServiceDataAccess>();
-        
-        //register this process on persistence database
-        ds_da->registerNode(api_subsystem_accessor.network_broker_service->getRPCUrl(),
-                            api_subsystem_accessor.network_broker_service->getDirectIOUrl(),
-                            0);
         
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
@@ -187,6 +180,12 @@ void ChaosMetadataService::start()  throw(CException) {
         "\nDirectIO Server address: " << api_subsystem_accessor.network_broker_service->getDirectIOUrl() <<
         CHAOS_FORMAT("\nData Service published with url: %1%|0", %NetworkBroker::getInstance()->getDirectIOUrl()) <<
         "\n----------------------------------------------------------------------";
+        
+        //register this process on persistence database
+        persistence::data_access::DataServiceDataAccess *ds_da = persistence::PersistenceManager::getInstance()->getDataAccess<persistence::data_access::DataServiceDataAccess>();
+        ds_da->registerNode(api_subsystem_accessor.network_broker_service->getRPCUrl(),
+                            api_subsystem_accessor.network_broker_service->getDirectIOUrl(),
+                            0);
         
         //at this point i must with for end signal
         chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this,
@@ -241,7 +240,7 @@ void ChaosMetadataService::stop() throw(CException) {
  Deiniti all the manager
  */
 void ChaosMetadataService::deinit() throw(CException) {
-    InizializableService::deinitImplementation(cron_job::MDSCronousManager::getInstance(),
+    InizializableService::deinitImplementation(cron_job::MDSCronusManager::getInstance(),
                                                "MDSConousManager",
                                                __PRETTY_FUNCTION__);
     //deinit api system

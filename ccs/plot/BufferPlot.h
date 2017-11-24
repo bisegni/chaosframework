@@ -4,9 +4,6 @@
 #include "../external_lib/qcustomplot.h"
 #include "AbstractBinaryPlotAdapter.h"
 
-#include <chaos/common/utility/LockableObject.h>
-#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
-
 #include <QMap>
 #include <QWidget>
 #include <QSharedPointer>

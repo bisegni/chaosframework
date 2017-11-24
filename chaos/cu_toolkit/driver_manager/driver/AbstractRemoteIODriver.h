@@ -23,12 +23,12 @@
 #define __CHAOSFramework__CE5788A_1D68_477E_BB9E_55BE8F7D3373_AbstractRemoteIODriver_h
 
 #include <chaos/cu_toolkit/driver_manager/driver/AbstractDriverPlugin.h>
-
-#include <chaos/cu_toolkit/external_gateway/ExternalUnitEndpoint.h>
+#include <chaos/common/external_unit/external_unit.h>
+#include <chaos/common/external_unit/ExternalUnitServerEndpoint.h>
 
 #include <chaos/common/data/CDataVariant.h>
+#include <chaos/common/thread/FutureHelper.h>
 #include <chaos/common/utility/LockableObject.h>
-
 #include <chaos/common/async_central/async_central.h>
 
 #include <boost/multi_index/member.hpp>
@@ -36,169 +36,250 @@
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/hashed_index.hpp>
 
+#define AUTHORIZATION_KEY        "authorization_key"
+#define AUTHORIZATION_STATE      "authorization_state"
+#define MESSAGE                  "msg"
+#define REQUEST_IDENTIFICATION   "req_id"
+
+#define AbstractRemoteIODriver_INFO    INFO_LOG(AbstractCDataWrapperIODriver)
+#define AbstractRemoteIODriver_DBG        DBG_LOG(AbstractCDataWrapperIODriver)
+#define AbstractRemoteIODriver_ERR        ERR_LOG(AbstractCDataWrapperIODriver)
+
 namespace chaos {
     namespace cu {
         namespace driver_manager {
             namespace driver {
                 
-                //! define the abstraction fo comunicate with a remote driver
-                /*!
-                 Remote driver is a !CHAOS feature taht permit to a remote process to connect interact with
-                 a control unit using an http protocols and work as a driver for that control unit
-                 
-                 the messages sent to the driver has the follow json scheme:
-                 autorization:
-                 {
-                 authorization_key:string vlaue
-                 .....
-                 }
-                 
-                 request:
-                 {
-                 request_id:int32
-                 .....
-                 }
-                 response:
-                 {
-                 request_id:int32 <--- the same of the answer
-                 .....
-                 }
-                 
-                 message: //not have the request field
-                 {
-                 .....
-                 }
-                 */
+                //!liste of error
+                typedef enum {
+                    AR_ERROR_OK = 0,
+                    AR_ERROR_NO_CONNECTION,
+                    AR_ERROR_NOT_AUTORIZED,
+                    AR_ERROR_TIMEOUT,
+                    AR_ERROR_LAST = 100
+                } AR_ERROR;
+                
+                typedef chaos::common::thread::FutureHelper<chaos::common::data::CDWShrdPtr> CDWShrdPtrFutureHelper;
+                
+                template<typename EndpointType>
                 class AbstractRemoteIODriver:
-                ADD_CU_DRIVER_PLUGIN_SUPERCLASS,
-                chaos::cu::external_gateway::ExternalUnitEndpoint,
-                chaos::common::async_central::TimerHandler {
-                    
-                    typedef ChaosPromise< chaos::common::data::CDWShrdPtr > DriverResultPromise;
-                    typedef ChaosFuture< chaos::common::data::CDWShrdPtr > DriverResultFuture;
-                    
-                    
+                public chaos::cu::driver_manager::driver::AbstractDriver,
+                public chaos::cu::driver_manager::driver::AbstractDriverPlugin,
+                public EndpointType,
+                protected CDWShrdPtrFutureHelper {
                     typedef enum {
                         RDConnectionPhaseDisconnected,
                         RDConnectionPhaseConnected,
                         RDConnectionPhaseAutorized,
                     } RDConnectionPhase;
                     
-                    struct DriverResultInfo {
-                        uint32_t request_id;
-                        int64_t request_ts;
-                        DriverResultPromise promise;
-                        typedef ChaosSharedPtr< DriverResultInfo > DriverResultInfoShrdPtr;
-                        //!key accessors for multindix infrastructure
-                        struct extract_index {
-                            typedef uint32_t result_type;
-                            const result_type &operator()(const DriverResultInfoShrdPtr &p) const;
-                        };
-                        
-                        struct extract_req_ts {
-                            typedef int64_t result_type;
-                            const result_type &operator()(const DriverResultInfoShrdPtr &p) const;
-                        };
-                    };
-                    
-                    //tag
-                    struct tag_req_id{};
-                    struct tag_req_ts{};
-                    
-                    //multi-index set
-                    typedef boost::multi_index_container<
-                    DriverResultInfo::DriverResultInfoShrdPtr,
-                    boost::multi_index::indexed_by<
-                    boost::multi_index::ordered_unique<boost::multi_index::tag<tag_req_id>,  DriverResultInfo::extract_index>,
-                    boost::multi_index::ordered_unique<boost::multi_index::tag<tag_req_ts>,  DriverResultInfo::extract_req_ts>
-                    >
-                    > SetPromise;
-                    
-                    typedef boost::multi_index::index<SetPromise, tag_req_id>::type               SetPromisesReqIdxIndex;
-                    typedef boost::multi_index::index<SetPromise, tag_req_id>::type::iterator     SetPromisesReqIdxIndexIter;
-                    typedef boost::multi_index::index<SetPromise, tag_req_ts>::type                   SetPromisesReqTSIndex;
-                    typedef boost::multi_index::index<SetPromise, tag_req_ts>::type::iterator         SetPromisesReqTSIndexIter;
-                    
-                    CHAOS_DEFINE_LOCKABLE_OBJECT(SetPromise, LSetPromise);
                     CHAOS_DEFINE_LOCKABLE_OBJECT(std::string, LString);
-                    
-                    //contains the autorization key that need to be passed by the remote driver
+                    LString             current_connection_identifier;
                     std::string         authorization_key;
                     RDConnectionPhase   conn_phase;
-                    
-                    ChaosAtomic<uint32_t>   message_counter;
-                    LString                 current_connection_identifier;
-                    //set that contains all promise
-                    LSetPromise             set_p;
-                    SetPromisesReqIdxIndex& set_p_req_id_index;
-                    SetPromisesReqTSIndex&  set_p_req_ts_index;
-                    
-                    //!initialization and deinitialization driver methods
-                    void driverInit(const char *initParameter) throw (chaos::CException);
-                    void driverInit(const chaos::common::data::CDataWrapper& init_parameter) throw(chaos::CException);
-                    void driverDeinit() throw (chaos::CException);
-                public:
-                    
-                    //!liste of error
-                    typedef enum {
-                        AR_ERROR_OK = 0,
-                        AR_ERROR_NO_CONNECTION,
-                        AR_ERROR_NOT_AUTORIZED,
-                        AR_ERROR_TIMEOUT,
-                        AR_ERROR_LAST = 100
-                    } AR_ERROR;
-                    
-                    AbstractRemoteIODriver();
-                    
-                    ~AbstractRemoteIODriver();
-                    
-                    //!Send raw request to the remote driver
-                    /*!
-                     \param message_data is the raw data to be transmitted to the remote driver
-                     \param received_data si the raw data received from the driver
-                     */
-                    int sendRawRequest(chaos::common::data::CDWUniquePtr message_data,
-                                       chaos::common::data::CDWShrdPtr& message_response,
-                                       uint32_t timeout = 5000);
-                    
-                    //!Send raw message to the remote driver
-                    /*!
-                     \param message_data is the raw data to be transmitted to the remote driver
-                     */
-                    int sendRawMessage(chaos::common::data::CDWUniquePtr message_data);
-                    
-                    using ExternalUnitEndpoint::setNumberOfAcceptedConnection;
-                    using ExternalUnitEndpoint::getNumberOfAcceptedConnection;
                 protected:
-                    //! handle called when a new message has been received
-                    /*!
-                     A new message has been received from the rmeote server in an asyc way. It
-                     will be forward to sublcass only if remote server has been successfully registered
-                     */
-                    virtual int asyncMessageReceived(chaos::common::data::CDWUniquePtr message) = 0;
-                    
-                    //!send an errore to remote driver
-                    int sendError(int error_code,
-                                   std::string& error_message,
-                                   std::string& error_domain);
-                private:
-                    //!inherited method by @ExternalUnitEndpoint
-                    void handleNewConnection(const std::string& connection_identifier);
-                    //!inherited method by @ExternalUnitEndpoint
-                    void handleDisconnection(const std::string& connection_identifier);
-                    
-                    int handleReceivedeMessage(const std::string& connection_identifier,
-                                               ChaosUniquePtr<chaos::common::data::CDataWrapper> message);
-                    //!inherited from chaos::common::async_central::TimerHandler
-                    void timeout();
-                    
-                    //!
-                    void sendAuthenticationACK();
-                };
-                
-            }
-        }
-    }
-}
-
+                    //!initialization and deinitialization driver methods
+                    void driverInit(const char *initParameter) throw (chaos::CException) {
+                        }
+                        void driverInit(const chaos::common::data::CDataWrapper& init_parameter) throw(chaos::CException) {
+                            CHECK_ASSERTION_THROW_AND_LOG((init_parameter.isEmpty() == false), AbstractRemoteIODriver_ERR, -1, "Init parameter need to be formated in a json document");
+                            //CHECK_ASSERTION_THROW_AND_LOG(init_parameter.hasKey(AUTHORIZATION_KEY), AbstractRemoteIODriver_ERR, -3, "The authorization key is mandatory")
+                            //get the authorization key
+                            if(init_parameter.hasKey(AUTHORIZATION_KEY)) {
+                                authorization_key = init_parameter.getStringValue(AUTHORIZATION_KEY);
+                            } else {
+                                authorization_key = "";
+                            }
+                            CDWShrdPtrFutureHelper::init(NULL);
+                        }
+                        void driverDeinit() throw (chaos::CException) {
+                            AbstractRemoteIODriver_INFO << "Deinit driver";
+                            CHAOS_NOT_THROW(CDWShrdPtrFutureHelper::deinit();)
+                        }
+                    public:
+                        
+                        AbstractRemoteIODriver():
+                        chaos::cu::driver_manager::driver::AbstractDriverPlugin(this),
+                        EndpointType(),
+                        authorization_key(),
+                        conn_phase(RDConnectionPhaseDisconnected){}
+                        
+                        ~AbstractRemoteIODriver(){}
+                        
+                        //!Send raw request to the remote driver
+                        /*!
+                         \param message_data is the raw data to be transmitted to the remote driver
+                         \param received_data si the raw data received from the driver
+                         */
+                        int sendRawRequest(chaos::common::data::CDWUniquePtr message_data,
+                                           chaos::common::data::CDWShrdPtr& message_response,
+                                           uint32_t timeout = 5000) {
+                            LStringWriteLock wl = current_connection_identifier.getWriteLockObject();
+                            switch(conn_phase) {
+                                case RDConnectionPhaseDisconnected:
+                                    return AR_ERROR_NO_CONNECTION;
+                                    break;
+                                case RDConnectionPhaseConnected: {
+                                    CHAOS_ASSERT(current_connection_identifier().size());
+                                    if(authorization_key.size() != 0) {
+                                        return AR_ERROR_NOT_AUTORIZED;
+                                        break;
+                                    } else {
+                                        conn_phase = RDConnectionPhaseAutorized;
+                                    }
+                                }
+                                case RDConnectionPhaseAutorized:
+                                    //we can proceeed
+                                    break;
+                            }
+                            CDWShrdPtrFutureHelper::CounterType new_promise_id;
+                            CDWShrdPtrFutureHelper::Future request_future;
+                            chaos::common::data::CDWUniquePtr ext_msg(new chaos::common::data::CDataWrapper());
+                            CDWShrdPtrFutureHelper::addNewPromise(new_promise_id,
+                                                                  request_future);
+                            
+                            ext_msg->addInt32Value(REQUEST_IDENTIFICATION, new_promise_id);
+                            ext_msg->addCSDataValue(MESSAGE, *message_data);
+                            
+                            //send message to driver
+                            EndpointType::sendMessage(current_connection_identifier(),
+                                                      ChaosMoveOperator(ext_msg));
+                            ChaosFutureStatus f_status = request_future.wait_for(ChaosCronoMilliseconds(timeout));
+                            if(f_status == ChaosFutureStatus::ready) {
+                                message_response = request_future.get();
+                                return AR_ERROR_OK;
+                            } else {
+                                return AR_ERROR_TIMEOUT;
+                            }
+                        }
+                        
+                        //!Send raw message to the remote driver
+                        /*!
+                         \param message_data is the raw data to be transmitted to the remote driver
+                         */
+                        int sendRawMessage(chaos::common::data::CDWUniquePtr message_data) {
+                            LStringWriteLock wl = current_connection_identifier.getWriteLockObject();
+                            switch(conn_phase) {
+                                case RDConnectionPhaseDisconnected:
+                                    return AR_ERROR_NO_CONNECTION;
+                                    break;
+                                case RDConnectionPhaseConnected: {
+                                    CHAOS_ASSERT(current_connection_identifier().size());
+                                    if(authorization_key.size() != 0) {
+                                        return AR_ERROR_NOT_AUTORIZED;
+                                        break;
+                                    } else {
+                                        conn_phase = RDConnectionPhaseAutorized;
+                                    }
+                                }
+                                case RDConnectionPhaseAutorized:
+                                    //we can proceeed
+                                    break;
+                            }
+                            
+                            //send message to driver
+                            EndpointType::sendMessage(current_connection_identifier(),
+                                                      ChaosMoveOperator(message_data));
+                            //we have connection
+                            return AR_ERROR_OK;
+                        }
+                    protected:
+                        //! handle called when a new message has been received
+                        /*!
+                         A new message has been received from the rmeote server in an asyc way. It
+                         will be forward to sublcass only if remote server has been successfully registered
+                         */
+                        virtual int asyncMessageReceived(chaos::common::data::CDWUniquePtr message) = 0;
+                        
+                        //!send an errore to remote driver
+                        int sendError(int error_code,
+                                      std::string& error_message,
+                                      std::string& error_domain) {
+                            LStringWriteLock wl = current_connection_identifier.getWriteLockObject();
+                            switch(conn_phase) {
+                                case RDConnectionPhaseDisconnected:
+                                    return AR_ERROR_NO_CONNECTION;
+                                    break;
+                                case RDConnectionPhaseConnected:
+                                    CHAOS_ASSERT(current_connection_identifier().size());
+                                    return AR_ERROR_NOT_AUTORIZED;
+                                    break;
+                                case RDConnectionPhaseAutorized:
+                                    //we can proceeed
+                                    break;
+                            }
+                            EndpointType::sendError(current_connection_identifier(),
+                                                    error_code, error_message, error_domain);
+                            return AR_ERROR_OK;
+                        }
+                    private:
+                        //!inherited method by @ExternalUnitEndpoint
+                        void handleNewConnection(const std::string& connection_identifier){
+                            LStringWriteLock wl = current_connection_identifier.getWriteLockObject();
+                            current_connection_identifier() = connection_identifier;
+                            conn_phase = RDConnectionPhaseConnected;
+                        }
+                        //!inherited method by @ExternalUnitEndpoint
+                        void handleDisconnection(const std::string& connection_identifier) {
+                            LStringWriteLock wl = current_connection_identifier.getWriteLockObject();
+                            current_connection_identifier().clear();
+                            conn_phase = RDConnectionPhaseDisconnected;
+                        }
+                        
+                        int handleReceivedeMessage(const std::string& connection_identifier,
+                                                   ChaosUniquePtr<chaos::common::data::CDataWrapper> message) {
+                            if(conn_phase != RDConnectionPhaseAutorized) {
+                                //check if a message with autorization key will arive
+                                if(message->hasKey(AUTHORIZATION_KEY) &&
+                                   message->isStringValue(AUTHORIZATION_KEY)) {
+                                    if(authorization_key.compare(message->getStringValue(AUTHORIZATION_KEY)) == 0){
+                                        conn_phase = RDConnectionPhaseAutorized;
+                                        sendAuthenticationACK();
+                                    } else {
+                                        //send error because not right type of req index
+                                        EndpointType::sendError(connection_identifier,
+                                                                -1, "Authentication failed", __PRETTY_FUNCTION__);
+                                        EndpointType::closeConnection(connection_identifier);
+                                    }
+                                }
+                            } else {
+                                if(message->hasKey(AUTHORIZATION_KEY)) {
+                                    sendAuthenticationACK();
+                                } else if(!message->hasKey(MESSAGE)){
+                                    //send error because not right type of req index
+                                    EndpointType::sendError(connection_identifier,
+                                                            -2, "message field is mandatory", __PRETTY_FUNCTION__);
+                                } else if(!message->isCDataWrapperValue(MESSAGE)) {
+                                    //send error because not right type of req index
+                                    EndpointType::sendError(connection_identifier,
+                                                            -3, "message field need to be an object type", __PRETTY_FUNCTION__);
+                                } else if(!message->hasKey(REQUEST_IDENTIFICATION)) {
+                                    asyncMessageReceived(ChaosMoveOperator(message));
+                                } else if(!message->isInt32Value(REQUEST_IDENTIFICATION)) {
+                                    //send error because not right type of req index
+                                    EndpointType::sendError(connection_identifier,
+                                                            -4, "request_id field need to be a int32 type", __PRETTY_FUNCTION__);
+                                }  else {
+                                    //good request index
+                                    const uint32_t req_index = message->getUInt32Value(REQUEST_IDENTIFICATION);
+                                    ChaosUniquePtr<chaos::common::data::CDataWrapper> embedded_message(message->getCSDataValue(MESSAGE));
+                                    chaos::common::data::CDWShrdPtr message_shrd_ptr(embedded_message.release());
+                                    CDWShrdPtrFutureHelper::setDataForPromiseID(req_index, message_shrd_ptr);
+                                }
+                            }
+                            return 0;
+                        }
+                        
+                        //!
+                        void sendAuthenticationACK() {
+                            chaos::common::data::CDWUniquePtr auth_ack_data(new chaos::common::data::CDataWrapper());
+                            auth_ack_data->addInt32Value(AUTHORIZATION_STATE, 1);
+                            sendRawMessage(ChaosMoveOperator(auth_ack_data));
+                        }
+                        };
+                        }
+                        }
+                        }
+                        }
+                        
 #endif /* __CHAOSFramework__CE5788A_1D68_477E_BB9E_55BE8F7D3373_AbstractRemoteIODriver_h */

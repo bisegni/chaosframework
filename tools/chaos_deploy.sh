@@ -18,7 +18,7 @@ rm -rf $TMPDIR
 mkdir -p $TMPDIR
 echo "" > $DEPLOY_FILE
 Usage(){
-	echo -e "$0 [-r <cu|mds|cds|web|all>] [-l <"cu,mds,cds,web,wan">] [-i <source dir>] [-u] -c <configuration>\n-r <cu|mds|cds|web|all>: restart\n-u: update MDS configuration\n-c <configuration>:configuration\n-i <source dir>: distribution dir\n-l:<command separated of servers type to update i.e \"cu,mds\" for cus and mds>"
+	echo -e "$0 [-r <cu|mds|web|all>] [-l <"cu,mds,web,wan">] [-i <source dir>] [-u] -c <configuration>\n-r <cu|mds|cds|web|all>: restart\n-u: update MDS configuration\n-c <configuration>:configuration\n-i <source dir>: distribution dir\n-l:<command separated of servers type to update i.e \"cu,mds\" for cus and mds>"
 }
 while getopts r:hc:i:ul: opt; do
  case $opt in
@@ -262,11 +262,11 @@ start_stop_service(){
 net_start_stop(){
     type=$1
     op=$2
-    if [ "$type" == "cu" ];then
+    if [ "$type" == "cu" ] || [ "$type" == "agent" ] ;then
 	for c in $CU_SERVERS;do
     		start_stop_service "$c" agent $op
 	done
-	fi
+    fi
 
 	
 	if [ "$type" == "webui" ];then
@@ -283,24 +283,23 @@ net_start_stop(){
 	done
     fi
 
-	if [ "$type" == "mds" ];then
+	if [ "$type" == "mds" ] || [ "$type" == "cds" ] ;then
 	for c in $MDS_SERVER;do
-    		start_stop_service "$c" $type $op
+    		start_stop_service "$c" mds $op
+	done
+	for c in $CDS_SERVERS;do
+    		start_stop_service "$c" cds $op
    
 	done
+
     fi
 
-	if [ "$type" == "cds" ];then
-	for c in $CDS_SERVER;do
-    		start_stop_service "$c" $type $op
-   
-	done
-    fi
+
 }
 
 if [ -n "$restart" ];then
 	if [ "$restart" == "all" ];then
-		restart="mds cds webui wan agent" 
+		restart="mds webui wan agent" 
 	fi
 	k=0
 	for i in $restart;do

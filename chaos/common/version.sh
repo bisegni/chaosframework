@@ -1,8 +1,7 @@
 #!/bin/sh
 
 BASEDIR=$(dirname $0)
-
-git log -n 1 --pretty="format:#define CSLIB_VERSION_HEADER \"!CHAOS Library Developed By Claudio Bisegni\"%n#define CSLIB_VERSION_NUMBER \"Version:%h\"%n" > $BASEDIR/curr_version.h
+git log -n 1 --pretty="format:#define CSLIB_VERSION_HEADER \"!CHAOS Library Developed By Claudio Bisegni\"%n#define CSLIB_VERSION_NUMBER \"%h\"%n" > $BASEDIR/curr_version.h
 
 if diff $BASEDIR/curr_version.h $BASEDIR/version.h> /dev/null 2>&1; then
     echo "* no version changes detected";
@@ -13,7 +12,7 @@ fi
 
 #check if we are using the script into xcode or no (in xcode the ssty give an error)
 if [ ! -n $XCODE_PRODUCT_BUILD_VERSION ]; then
-    git log -n 1 --pretty="format:#define CSLIB_VERSION_HEADER \"!CHAOS Library Developed By Claudio Bisegni\"%n#define CSLIB_VERSION_NUMBER \"Version:%h\"%n" > /tmp/version.h
+    git log -n 1 --pretty="format:#define CSLIB_VERSION_HEADER \"!CHAOS Library Developed By Claudio Bisegni\"%n#define CSLIB_VERSION_NUMBER \"%h\"%n" > /tmp/version.h
     stty -echo
 
     if ! diff /tmp/version.h $BASEDIR/version.h>/dev/null; then
@@ -24,5 +23,5 @@ if [ ! -n $XCODE_PRODUCT_BUILD_VERSION ]; then
     rm /tmp/version.h
     stty echo
 else
-    git log -n 1 --pretty="format:#define CSLIB_VERSION_HEADER \"!CHAOS Library Developed By Claudio Bisegni\"%n#define CSLIB_VERSION_NUMBER \"Version:%h\"%n" > $BASEDIR/version.h
+    git log -n 1 --pretty="format:#define CSLIB_VERSION_HEADER \"!CHAOS Library Developed By Claudio Bisegni\"%n#define CSLIB_VERSION_NUMBER \"%h\"%n" > $BASEDIR/version.h
 fi

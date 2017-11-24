@@ -26,6 +26,8 @@
 
 using namespace chaos;
 using namespace chaos::common::data;
+using namespace chaos::common::property;
+
 using namespace chaos::metadata_service::api::unit_server;
 using namespace chaos::metadata_service::persistence::data_access;
 
@@ -75,8 +77,19 @@ CDataWrapper *GetSetFullUnitServer::execute(CDataWrapper *api_data,
             }
         } else {
             // create the entry
-            NewUS creat;
-            creat.execute(api_data,detach_data);
+
+        	ChaosUniquePtr<chaos::common::data::CDataWrapper> data_pack(new CDataWrapper());
+        	data_pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, us_uid);
+        	data_pack->addStringValue(NodeDefinitionKey::NODE_TYPE, NodeType::NODE_TYPE_UNIT_SERVER);
+        	//data_pack->addStringValue(NodeDefinitionKey::NODE_DESC, desc);
+        	  /*  if(custom.get()){
+        	        data_pack->addCSDataValue(chaos::NodeDefinitionKey::NODE_CUSTOM_PARAM,*custom);
+        	    }
+        	    */
+        	    if((err = us_da->insertNewUS(*data_pack, false))) {
+        	        LOG_AND_TROW(US_ACT_ERR, -6, boost::str(boost::format("Error creating a new unit server of id:%1%") % us_uid));
+        	    }
+
         }
         
         // look for UnitServer full description
@@ -88,15 +101,46 @@ CDataWrapper *GetSetFullUnitServer::execute(CDataWrapper *api_data,
                     (cu_l.get() !=NULL) &&
                     (cui<cu_l->size());cui++){
                     ChaosUniquePtr<chaos::common::data::CDataWrapper> cuw(cu_l->getCDataWrapperElementAtIndex(cui));
-                    if(cuw->hasKey("cu_id") && cuw->hasKey("cu_type")){
-                        std::string cu_id= cuw->getStringValue("cu_id");
-                        std::string cu_type= cuw->getStringValue("cu_type");
+                    if(cuw->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID) && cuw->hasKey(UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS)){
+                        std::string cu_id= cuw->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
+                        std::string cu_type= cuw->getStringValue("control_unit_implementation");
                         US_ACT_DBG<< "adding cu :"<<cu_id<<"("<<cu_type<<") to "<<us_uid;
                         if((err = us_da->addCUType(us_uid, cu_type))) {
                             LOG_AND_TROW_FORMATTED(US_ACT_ERR, err, "Error adding cu '%1%' type: %2% to unit server: %3%", %cu_id%us_uid%cu_type);
                         }
-                        chaos::metadata_service::api::control_unit::SetInstanceDescription is;
-                        is.execute(cuw.get(),detach_data);
+                        GET_DATA_ACCESS(ControlUnitDataAccess, cu_da, -3);
+                        GET_DATA_ACCESS(NodeDataAccess, n_da, -4)
+
+                        if((err = cu_da->setInstanceDescription(cu_id, *cuw.get()))) {
+                               LOG_AND_TROW(US_ACT_ERR, err, boost::str(boost::format("Error creating control unit instance description for node:%1%") % cu_id));
+                        }
+
+                        //for compativbility  update here the default porperty values
+                           PropertyGroup pg(chaos::ControlUnitPropertyKey::GROUP_NAME);
+                           if(cuw->hasKey(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)) {
+                               pg.addProperty(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, cuw->getVariantValue(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY));
+                           }
+
+                           if(cuw->hasKey(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE)) {
+                               pg.addProperty(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE, cuw->getVariantValue(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE));
+                           }
+
+                           if(cuw->hasKey(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING)) {
+                               pg.addProperty(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING, cuw->getVariantValue(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING));
+                           }
+
+                           if(cuw->hasKey(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME)) {
+                               pg.addProperty(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME, cuw->getVariantValue(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME));
+                           }
+
+                           if(cuw->hasKey(DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME)) {
+                               pg.addProperty(DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME, cuw->getVariantValue(DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME));
+                           }
+                           PropertyGroupVectorSDWrapper pgv_sdw;
+                           pgv_sdw().push_back(pg);
+                           if((err = n_da->updatePropertyDefaultValue(cu_id, pgv_sdw()))){
+                               LOG_AND_TROW(US_ACT_ERR, err, CHAOS_FORMAT("Error updating property defaults for node:%1%",%cu_id));
+                           }
                         US_ACT_DBG<< "added "<<cuw->getJSONString();
                     }
                     

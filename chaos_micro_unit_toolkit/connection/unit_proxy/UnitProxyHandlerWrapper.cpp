@@ -111,6 +111,7 @@ int UnitProxyHandlerWrapper::eventLoop(int32_t milliseconds_wait) {
     
     while ( base_unit->hasMoreMessage()) {
         RemoteMessageUniquePtr msg =  base_unit->getNextMessage();
+        std::cout << msg->message->toString();
         if(msg->isError()) {
             UPError err_msg = {msg->getErrorCode(),
                 msg->getErrorMessage(),

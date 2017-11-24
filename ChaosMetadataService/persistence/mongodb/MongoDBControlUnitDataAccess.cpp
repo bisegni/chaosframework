@@ -1006,8 +1006,7 @@ int MongoDBControlUnitDataAccess::reserveControlUnitForAgeingManagement(uint64_t
         const std::string key_processing_ageing = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_PROCESSING_AGEING);
         const std::string key_last_checking_time = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_AGEING_LAST_CHECK_DATA);
         const std::string key_last_performed_time = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_PERFORMED_AGEING);
-        //get all node where ageing is > of 0
-        query_builder << CHAOS_FORMAT("instance_description.%1%",%DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING) << BSON("$gt" << 0);
+         query_builder << "property_defaults" << BSON("$elemMatch" << BSON("property_g_plist" << BSON("$elemMatch" << BSON("property_name" << DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING << "property_value" << BSON("$gt" << 0)))));
         
         //get all control unit
         query_builder << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_CONTROL_UNIT;

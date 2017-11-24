@@ -7,9 +7,6 @@
 #include <QObject>
 #include <QSharedPointer>
 
-#include <chaos/common/chaos_constants.h>
-#include <chaos/common/data/CDataWrapper.h>
-
 class CommandReader :
         public QObject {
     Q_OBJECT

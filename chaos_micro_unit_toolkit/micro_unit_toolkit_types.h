@@ -22,7 +22,6 @@ using ChaosUniquePtr = std::unique_ptr<T>;
     template<typename T>
     using ChaosSharedPtr = std::shared_ptr<T>;
   #else
-
     #define ChaosSharedPtr boost::shared_ptr
   #endif
 #define ChaosMoveOperator(x) std::move(x)

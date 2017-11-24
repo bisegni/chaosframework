@@ -68,7 +68,7 @@ using ChaosFunction = std::function< R >;
 #define ChaosSharedPtr boost::shared_ptr
 #define ChaosMakeSharedPtr boost::make_shared
 #define ChaosWeakPtr boost::weak_ptr
-#define ChaosAtomic boost::atomic;
+#define ChaosAtomic boost::atomic
 #define ChaosPromise boost::promise
 #define ChaosFuture boost::shared_future
 #define ChaosFutureStatus boost::future_status

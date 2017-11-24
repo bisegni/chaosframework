@@ -22,6 +22,9 @@
 #include <chaos/common/data/CDataVariant.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/exception/CException.h>
+
+#include <sstream>
+
 using namespace chaos;
 using namespace chaos::common::data;
 
@@ -106,7 +109,14 @@ std::string string_visitor::operator()(const int32_t i32v) const {SAFE_LEXICAL_W
 std::string string_visitor::operator()(const uint32_t ui32v) const {SAFE_LEXICAL_WITH_DEFAULT(boost::lexical_cast<std::string>(ui32v), "0")}
 std::string string_visitor::operator()(const int64_t i64v) const {SAFE_LEXICAL_WITH_DEFAULT(boost::lexical_cast<std::string>(i64v), "0")}
 std::string string_visitor::operator()(const uint64_t ui64v) const {SAFE_LEXICAL_WITH_DEFAULT(boost::lexical_cast<std::string>(ui64v), "0")}
-std::string string_visitor::operator()(const double dv) const {SAFE_LEXICAL_WITH_DEFAULT(boost::lexical_cast<std::string>(dv), "0")}
+std::string string_visitor::operator()(const double dv) const {
+    std::ostringstream oss;
+    if(param>=0) {
+        oss << std::fixed << std::setprecision(param);
+    }
+    oss << dv;
+    return oss.str();
+}
 std::string string_visitor::operator()(const std::string& str) const {return str;}
 std::string string_visitor::operator()(const ChaosSharedPtr<CDataBuffer>& buffer) const {return std::string(buffer->getBuffer(), buffer->getBufferSize());}
 std::string string_visitor::operator()(const ChaosSharedPtr<CDataWrapper>& buffer) const {return buffer->getJSONString();}
@@ -161,22 +171,20 @@ type(DataType::TYPE_BOOLEAN),
 _internal_variant(bool_value) { }
 
 CDataVariant::CDataVariant(const std::string& string_value):_internal_variant(string_value){
-    CDataWrapper tmp;
-    try{
-        tmp.setSerializedJsonData(string_value.c_str());
-        type=DataType::TYPE_CLUSTER;
-    } catch(...){
+    CDWUniquePtr tmp = CDataWrapper::instanceFromJson(string_value);
+    if(tmp->isEmpty()) {
         type=DataType::TYPE_STRING;
+    } else {
+        type=DataType::TYPE_CLUSTER;
     }
 }
 
 CDataVariant::CDataVariant(const char * string_value):_internal_variant(std::string(string_value)){
-    CDataWrapper tmp;
-    try{
-        tmp.setSerializedJsonData(string_value);
-        type=DataType::TYPE_CLUSTER;
-    } catch(...){
+    CDWUniquePtr tmp = CDataWrapper::instanceFromJson(string_value);
+    if(tmp->isEmpty()) {
         type=DataType::TYPE_STRING;
+    } else {
+        type=DataType::TYPE_CLUSTER;
     }
 }
 
@@ -218,10 +226,10 @@ type(_type){
             break;
         }
         case DataType::TYPE_CLUSTER:{
-        	CDataWrapper*tmp=new CDataWrapper();
-        	tmp->setSerializedJsonData(static_cast<const char*>(_value_pointer));
-          _internal_variant = ChaosSharedPtr<CDataWrapper>(tmp);
-        	break;
+            CDataWrapper*tmp=new CDataWrapper();
+            tmp->setSerializedJsonData(static_cast<const char*>(_value_pointer));
+            _internal_variant = ChaosSharedPtr<CDataWrapper>(tmp);
+            break;
         }
         case DataType::TYPE_STRING:{
             _internal_variant = std::string(static_cast<const char*>(_value_pointer),
@@ -230,8 +238,8 @@ type(_type){
         }
         case DataType::TYPE_BYTEARRAY:{
             _internal_variant = ChaosSharedPtr<CDataBuffer>(new CDataBuffer(static_cast<const char*>(_value_pointer),
-                                                                               _value_size,
-                                                                               true));
+                                                                            _value_size,
+                                                                            true));
             break;
         }
         default:
@@ -286,7 +294,7 @@ CDataVariant::operator uint64_t() const {
 }
 
 double CDataVariant::asDouble() const {
-    return  boost::apply_visitor( double_visitor(), _internal_variant );
+    return  boost::apply_visitor(double_visitor(), _internal_variant );
 }
 
 CDataVariant::operator double() const {
@@ -301,12 +309,12 @@ CDataVariant::operator bool() const {
     return asBool();
 }
 
-const std::string CDataVariant::asString() const {
-    return  boost::apply_visitor( string_visitor(), _internal_variant );
+const std::string CDataVariant::asString(int precision) const {
+    return  boost::apply_visitor( string_visitor(precision), _internal_variant );
 }
 
 CDataVariant::operator std::string() const {
-    return asString();
+    return asString(-1);
 }
 
 const CDataBuffer * const CDataVariant::asCDataBuffer() const {

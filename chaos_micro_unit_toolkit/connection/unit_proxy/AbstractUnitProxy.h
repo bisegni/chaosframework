@@ -36,11 +36,11 @@ namespace chaos {
                 class RemoteMessage {
                     bool is_error;
                 public:
-                    data::DataPackSharedPtr message;
+                    data::CDWShrdPtr message;
                     const bool is_request;
                     const uint32_t message_id;
-                    data::DataPackSharedPtr request_message;
-                    RemoteMessage(const data::DataPackSharedPtr& _message);
+                    data::CDWShrdPtr request_message;
+                    RemoteMessage(const data::CDWShrdPtr& _message);
                     
                     bool isError() const;
                     int32_t getErrorCode() const;
@@ -63,7 +63,7 @@ namespace chaos {
                     ChaosUniquePtr<connection_adapter::AbstractConnectionAdapter> connection_adapter;
                 protected:
                     AuthorizationState authorization_state;
-                    virtual int sendMessage(data::DataPackUniquePtr& message_data);
+                    virtual int sendMessage(data::CDWUniquePtr& message_data);
                     
                     bool hasMoreMessage();
                     

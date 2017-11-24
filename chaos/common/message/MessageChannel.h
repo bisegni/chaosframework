@@ -46,7 +46,7 @@ namespace chaos {
         namespace message {
             
             /*! \name Check Request Result Macro
-             These macros are used to check the result of a syncronous request operation.
+             These macros are used to check the result of a synCronus request operation.
              */
             /*! \{ */
             
@@ -154,7 +154,7 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
                  \param node_id id of the remote node within a network broker interface
                  \param action_name the name of the action to call
                  \param message_pack the data to send, the pointer is not deallocated and i scopied into the pack
-                 \param on_this_thread notify when the message need to be sent syncronously or in async  way
+                 \param on_this_thread notify when the message need to be sent synCronusly or in async  way
                  */
                 void sendMessage(const std::string &remote_host,
                                  const std::string &node_id,
@@ -164,14 +164,14 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
                 
                 //!send an rpc request to a remote node
                 /*!
-                 send a syncronous request and can wait for a determinated number of milliseconds the answer. If it has not
+                 send a synCronus request and can wait for a determinated number of milliseconds the answer. If it has not
                  been received the method return with a NULL pointer
                  \param remote_host is the host:port string that identify the remote server where send the rpc request
                  \param node_id id of the node into remote chaos rpc system
                  \param action_name name of the actio to call
                  \param request_pack the data to send, the pointer is not deallocated and i scopied into the pack
                  \param millisec_to_wait waith the response for onli these number of millisec then return
-                 \param on_this_thread notify when the message need to be sent syncronously or in async  way
+                 \param on_this_thread notify when the message need to be sent synCronusly or in async  way
                  \return the answer of the request, a null value mean that the wait time is expired
                  */
                 common::data::CDataWrapper *sendRequest(const std::string &remote_host,
@@ -182,7 +182,7 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
                 
                 //!send an rpc request to a remote node
                 /*!
-                 send a syncronous request and can wait for a determinated number of milliseconds the answer. If it has not
+                 send a synCronus request and can wait for a determinated number of milliseconds the answer. If it has not
                  been received the method return with a NULL pointer
                  \param remote_host is the host:port string that identify the remote server where send the rpc request
                  \param node_id id of the node into remote chaos rpc system

@@ -44,7 +44,7 @@ authorized(false){}
 
 RawDriverHandlerWrapper::~RawDriverHandlerWrapper(){}
 
-int RawDriverHandlerWrapper::sendMessage(data::DataPackUniquePtr& message_data) {
+int RawDriverHandlerWrapper::sendMessage(data::CDWUniquePtr& message_data) {
     RawDriverUnitProxy * const rd = static_cast<RawDriverUnitProxy*>(base_unit.get());
     return rd->sendMessage(message_data);
 }
@@ -89,7 +89,7 @@ int RawDriverHandlerWrapper::manageRemoteMessage() {
         if(remote_message->is_request &&
            remote_message->request_message.get()) {
             if(remote_message->request_message->hasKey("opcode") &&
-               remote_message->request_message->isInt32("opcode")){
+               remote_message->request_message->isInt32Value("opcode")){
                 UPRequest req = {remote_message->request_message, ChaosUniquePtr<DataPack>(new DataPack())};
                 if((err = callHandler(UP_EV_REQ_RECEIVED,
                                       &req)) == 0) {

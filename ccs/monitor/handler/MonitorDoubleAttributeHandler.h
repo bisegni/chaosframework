@@ -3,7 +3,6 @@
 
 #include "AbstractAttributeHandler.h"
 
-#include <chaos_metadata_service_client/monitor_system/monitor_system.h>
 
 class MonitorDoubleAttributeHandler:
         public AbstractAttributeHandler,

@@ -52,7 +52,7 @@ void NodeMessageChannel::getRpcPublishedHostAndPort(std::string& rpc_published_h
  \param node_id id of the remote node within a network broker interface
  \param action_name the name of the action to call
  \param message_pack the data to send, the pointer is not deallocated and i scopied into the pack
- \param on_this_thread notify when the message need to be sent syncronously or in async  way
+ \param on_this_thread notify when the message need to be sent synCronusly or in async  way
  */
 void NodeMessageChannel::sendMessage(const std::string& node_id,
                                      const std::string& action_name,
@@ -64,13 +64,13 @@ void NodeMessageChannel::sendMessage(const std::string& node_id,
 }
 
 /*!
- \brief send a syncronous request and can wait for a determinated number of milliseconds the answer. If it has not
+ \brief send a synCronus request and can wait for a determinated number of milliseconds the answer. If it has not
  been received the method return with a NULL pointer
  \param node_id id of the node into remote chaos rpc system
  \param action_name name of the actio to call
  \param request_pack the data to send, the pointer is not deallocated and i scopied into the pack
  \param millisec_to_wait waith the response for onli these number of millisec then return
- \param on_this_thread notify when the message need to be sent syncronously or in async  way
+ \param on_this_thread notify when the message need to be sent synCronusly or in async  way
  \return the answer of the request, a null value mean that the wait time is expired
  */
 CDataWrapper* NodeMessageChannel::sendRequest(const std::string& node_id,

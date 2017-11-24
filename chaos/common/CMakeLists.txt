@@ -14,6 +14,11 @@ SET(common_lib_src chaos_errors.cpp
                    log/LogManager.cpp)
 
 SET(common_lib_src ${common_lib_src}
+                    additional_lib/mongoose.c
+                    additional_lib/sqlite3.c
+                    additional_lib/base64.cpp)
+
+SET(common_lib_src ${common_lib_src}
                     metadata_logging/ErrorLoggingChannel.cpp
                     metadata_logging/AlarmLoggingChannel.cpp
                     metadata_logging/StandardLoggingChannel.cpp
@@ -43,34 +48,34 @@ SET(common_lib_src ${common_lib_src}
         alarm/MultiSeverityAlarm.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        bson/oid.cpp
-        bson/bson_validate.cpp
-        bson/base/parse_number.cpp
-        bson/base/string_data.cpp
-        bson/base/stringutils.cpp
-        bson/base/status.cpp
-        bson/base/error_codes.cpp
-        bson/murmurhash3/MurmurHash3.cpp
-        bson/mutable/document.cpp
-        bson/mutable/element.cpp
-        bson/platform/process_id.cpp
-        bson/platform/random.cpp
-        bson/util/hex.cpp bson/util/base64.cpp
-        bson/util/time_support.cpp
-        bson/util/time_support.cpp
-        bson/util/assert_util.cpp
-        bson/util/bson_extract.cpp
-        bson/util/jsobj.cpp
-        bson/util/json.cpp
-        bson/util/md5.cpp
-        bson/util/safe_num.cpp)
+        bson/bson/bcon.c
+        bson/bson/bson-atomic.c
+        bson/bson/bson-clock.c
+        bson/bson/bson-context.c
+        bson/bson/bson-decimal128.c
+        bson/bson/bson-error.c
+        bson/bson/bson-iso8601.c
+        bson/bson/bson-iter.c
+        bson/bson/bson-json.c
+        bson/bson/bson-keys.c
+        bson/bson/bson-md5.c
+        bson/bson/bson-memory.c
+        bson/bson/bson-oid.c
+        bson/bson/bson-reader.c
+        bson/bson/bson-string.c
+        bson/bson/bson-timegm.c
+        bson/bson/bson-utf8.c
+        bson/bson/bson-value.c
+        bson/bson/bson-writer.c
+        bson/bson/bson.c
+        bson/jsonsl/jsonsl.c)
 
 SET(common_lib_src ${common_lib_src}
         configuration/GlobalConfiguration.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        cronous_manager/CronousManager.cpp
-        cronous_manager/CronJob.cpp)
+        cronus_manager/CronusManager.cpp
+        cronus_manager/CronJob.cpp)
 
 SET(common_lib_src ${common_lib_src}
         metric/MetricCollector.cpp
@@ -90,7 +95,6 @@ SET(common_lib_src ${common_lib_src}
         data/structured/Dataset.cpp
         data/structured/DatasetAttribute.cpp
         data/entity_db/EntityDB.cpp
-        data/entity_db/sqlite_impl/sqlite3.c
         data/entity_db/sqlite_impl/SQLiteEntityDB.cpp
         data/entity/Entity.cpp data/broker/DataBroker.cpp
         data/broker/publisher/PublisherDataService.cpp
@@ -126,6 +130,26 @@ SET(common_lib_src ${common_lib_src}
 SET(common_lib_src ${common_lib_src}
         exception/CException.cpp
         exception/MetadataLoggingCException.cpp)
+
+SET(common_lib_src ${common_lib_src}
+        external_unit/ExternalUnitManager.cpp
+        external_unit/AbstractServerAdapter.cpp
+        external_unit/AbstractClientAdapter.cpp
+        external_unit/ExternalUnitConnection.cpp
+        external_unit/ExternalUnitClientEndpoint.cpp
+        external_unit/ExternalUnitServerEndpoint.cpp
+        external_unit/ExternalEchoEndpoint.cpp
+        external_unit/ExternalUnitClientEndpoint.cpp
+        external_unit/ExternalUnitServerEndpoint.cpp)
+
+SET(common_lib_src ${common_lib_src}
+        external_unit/serialization/AbstractExternalSerialization.cpp
+        external_unit/serialization/ExternalBSONJsonSerialization.cpp
+        external_unit/serialization/ExternalBSONExtJsonSerialization.cpp)
+
+SET(common_lib_src ${common_lib_src}
+        external_unit/http_adapter/HTTPServerAdapter.cpp
+        external_unit/http_adapter/HTTPClientAdapter.cpp)
 
 SET(common_lib_src ${common_lib_src}
         event/EventClient.cpp
@@ -277,10 +301,17 @@ ENDIF ()
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${FrameworkLib})
 
-
-
+FILE(GLOB files "external_unit/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/common/external_unit)
 FILE(GLOB files "*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common)
+
+FILE(GLOB files "alarm/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/common/alarm)
+
+FILE(GLOB files "state_flag/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/common/state_flag)
+
 FILE(GLOB files "metadata_logging/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/metadata_logging)
 FILE(GLOB files "async_central/*.h")
@@ -388,10 +419,10 @@ INSTALL(FILES ${files} DESTINATION include/chaos/common/script/lua)
 FILE(GLOB files "script/lua/core/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/script/lua/core)
 
+
 INSTALL(TARGETS ${PROJECT_NAME}
         DESTINATION "lib"
         PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
-
 # INSTALL(TARGETS chaos_common_static
 #         DESTINATION "lib"
 #         PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)

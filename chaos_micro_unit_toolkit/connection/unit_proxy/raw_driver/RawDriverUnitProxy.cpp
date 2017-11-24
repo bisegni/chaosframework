@@ -26,10 +26,10 @@ using namespace chaos::micro_unit_toolkit::connection;
 using namespace chaos::micro_unit_toolkit::connection::unit_proxy;
 using namespace chaos::micro_unit_toolkit::connection::unit_proxy::raw_driver;
 
-#define AUTHORIZATION_KEY        "authorization_key"
-#define AUTHORIZATION_STATE      "authorization_state"
-#define MESSAGE                 "message"
-#define REQUEST_IDENTIFICATION  "request_id"
+#define AUTHORIZATION_KEY           "authorization_key"
+#define AUTHORIZATION_STATE         "authorization_state"
+#define MESSAGE                     "msg"
+#define REQUEST_IDENTIFICATION      "req_id"
 
 const ProxyType RawDriverUnitProxy::proxy_type = ProxyTypeRawDriver;
 
@@ -40,8 +40,8 @@ RawDriverUnitProxy::~RawDriverUnitProxy() {}
 
 void RawDriverUnitProxy::authorization(const std::string& authorization_key) {
     authorization_state = AuthorizationStateRequested;
-    data::DataPackUniquePtr message(new data::DataPack());
-    message->addString(AUTHORIZATION_KEY, authorization_key);
+    data::CDWUniquePtr message(new data::DataPack());
+    message->addStringValue(AUTHORIZATION_KEY, authorization_key);
     AbstractUnitProxy::sendMessage(message);
 }
 
@@ -51,24 +51,35 @@ bool RawDriverUnitProxy::manageAutorizationPhase() {
         //!check authentication state
         RemoteMessageUniquePtr result = getNextMessage();
         if(result->message->hasKey(AUTHORIZATION_STATE) ||
-           result->message->isBool(AUTHORIZATION_STATE)) {
-            authorization_state = (AuthorizationState)result->message->getBool(AUTHORIZATION_STATE);
+           result->message->isInt32Value(AUTHORIZATION_STATE)) {
+            switch (result->message->getInt32Value(AUTHORIZATION_STATE)) {
+                case 0:
+                    authorization_state = AuthorizationStateDenied;
+                    break;
+                case 1:
+                    authorization_state = AuthorizationStateOk;
+                    break;
+                default:
+                     authorization_state = AuthorizationStateDenied;
+                    break;
+            }
+            
         }
     }
     return result;
 }
 
-int RawDriverUnitProxy::sendMessage(DataPackUniquePtr& message_data) {
-    DataPackUniquePtr message(new DataPack());
-    message->addDataPack("message", *message_data);
+int RawDriverUnitProxy::sendMessage(CDWUniquePtr& message_data) {
+    CDWUniquePtr message(new DataPack());
+    message->addCDWValue(MESSAGE, *message_data);
     return AbstractUnitProxy::sendMessage(message);
 }
 
 int RawDriverUnitProxy::sendAnswer(RemoteMessageUniquePtr& message,
-                                  DataPackUniquePtr& message_data) {
+                                   CDWUniquePtr& message_data) {
     if(message->is_request == false) return - 1;
-    DataPackUniquePtr answer(new DataPack());
-    answer->addInt32("request_id", message->message_id);
-    answer->addDataPack("message", *message_data);
+    CDWUniquePtr answer(new DataPack());
+    answer->addInt32Value(REQUEST_IDENTIFICATION, message->message_id);
+    answer->addCDWValue(MESSAGE, *message_data);
     return AbstractUnitProxy::sendMessage(answer);
 }

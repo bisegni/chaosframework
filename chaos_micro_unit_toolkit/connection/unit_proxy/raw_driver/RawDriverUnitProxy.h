@@ -39,8 +39,8 @@ namespace chaos {
                         void authorization(const std::string& authorization_key);
                         bool manageAutorizationPhase();
                         int sendAnswer(RemoteMessageUniquePtr& message,
-                                       data::DataPackUniquePtr& message_data);
-                        int sendMessage(data::DataPackUniquePtr& message_data);
+                                       data::CDWUniquePtr& message_data);
+                        int sendMessage(data::CDWUniquePtr& message_data);
                         using AbstractUnitProxy::sendMessage;
                         using AbstractUnitProxy::hasMoreMessage;
                         using AbstractUnitProxy::getNextMessage;

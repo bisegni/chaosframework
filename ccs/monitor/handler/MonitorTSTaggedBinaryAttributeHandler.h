@@ -5,7 +5,6 @@
 #include "../../data/ChaosByteArray.h"
 #include <QObject>
 #include <QSharedPointer>
-#include <chaos_metadata_service_client/monitor_system/monitor_system.h>
 
 
 class MonitorTSTaggedBinaryAttributeHandler:

@@ -1,295 +1,383 @@
 /*
- * Copyright 2012, 2017 INFN
+ *	CDataWrapper.cpp
+ *	!CHAOS
+ *	Created by Bisegni Claudio.
  *
- * Licensed under the EUPL, Version 1.2 or – as soon they
- * will be approved by the European Commission - subsequent
- * versions of the EUPL (the "Licence");
- * You may not use this work except in compliance with the
- * Licence.
- * You may obtain a copy of the Licence at:
+ *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
- * https://joinup.ec.europa.eu/software/page/eupl
+ *    	Licensed under the Apache License, Version 2.0 (the "License");
+ *    	you may not use this file except in compliance with the License.
+ *    	You may obtain a copy of the License at
  *
- * Unless required by applicable law or agreed to in
- * writing, software distributed under the Licence is
- * distributed on an "AS IS" basis,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied.
- * See the Licence for the specific language governing
- * permissions and limitations under the Licence.
+ *    	http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    	Unless required by applicable law or agreed to in writing, software
+ *    	distributed under the License is distributed on an "AS IS" BASIS,
+ *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    	See the License for the specific language governing permissions and
+ *    	limitations under the License.
  */
 #include <chaos/common/global.h>
-#include <chaos/common/bson/util/json.h>
-#include <chaos/common/bson/bsontypes.h>
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/data/CDataVariant.h>
 #include <chaos/common/data/CDataWrapper.h>
-using namespace bson;
+
+#include <boost/lexical_cast.hpp>
+
+#include <json/json.h>
 
 using namespace chaos;
 using namespace chaos::common::data;
 
-#pragma mark CMultiTypeDataArrayWrapper
-CMultiTypeDataArrayWrapper::CMultiTypeDataArrayWrapper(vector< BSONElement > src) {
-    elementsArray = src;
-}
+#pragma mark Utility
 
-string CMultiTypeDataArrayWrapper::getStringElementAtIndex(const int pos) const {
-    return elementsArray[pos].String();
-}
+#define ALLOCATE_BSONT(x) ChaosBsonShrdPtr(x, &bsonDeallocator)
 
-double CMultiTypeDataArrayWrapper::getDoubleElementAtIndex(const int pos) const {
-    return elementsArray[pos].Double();
-}
-int32_t CMultiTypeDataArrayWrapper::getInt32ElementAtIndex(const int pos) const {
-    return elementsArray[pos].Int();
-}
-int64_t CMultiTypeDataArrayWrapper::getInt64ElementAtIndex(const int pos) const {
-    return elementsArray[pos].Long();
-}
+#define ACCESS_BSON(x) static_cast<bson_t*>(x.get())
 
-bool CMultiTypeDataArrayWrapper::isStringElementAtIndex(const int pos) const {
-    return elementsArray[pos].type()==String;
-}
+#define ENSURE_ARRAY(x) \
+if(x.get() == NULL) {array_index = 0; x = ALLOCATE_BSONT(bson_new());}
 
-bool CMultiTypeDataArrayWrapper::isDoubleElementAtIndex(const int pos) const {
-    return elementsArray[pos].type()==NumberDouble;
-}
+#define FIND_AND_CHECK(k,c)\
+bson_iter_t element_found;\
+bson_iter_init(&element_found, ACCESS_BSON(bson));\
+if(bson_iter_find_case(&element_found, key.c_str()) && c(&element_found))
 
-bool CMultiTypeDataArrayWrapper::isInt32ElementAtIndex(const int pos) const {
-    return elementsArray[pos].type()==NumberInt;
-}
+static void bsonDeallocator(bson_t* bson) {if(bson){bson_destroy(bson);}}
 
-bool CMultiTypeDataArrayWrapper::isInt64ElementAtIndex(const int pos) const {
-    return elementsArray[pos].type()==NumberLong;
-}
-
-bool CMultiTypeDataArrayWrapper::isCDataWrapperElementAtIndex(const int pos) const {
-    return elementsArray[pos].type()==Object;
-}
-
-CDataWrapper* CMultiTypeDataArrayWrapper::getCDataWrapperElementAtIndex(const int pos) const {
-    return new CDataWrapper(elementsArray[pos].embeddedObject().objdata());
-}
-vector<BSONElement>::size_type CMultiTypeDataArrayWrapper::size() const{
-    return elementsArray.size();
-}
-std::string CMultiTypeDataArrayWrapper::getJSONString() {
-	std::stringstream ss;
-	ss<<"[";
-	for( vector< BSONElement >::iterator i =elementsArray.begin();i!= elementsArray.end();i++){
-		std::string var;
-		if(i+1 != elementsArray.end()){
-
-			ss<<i->toString(false,false)<<",";
-		} else {
-			ss<<i->toString(false,false);
-		}
-	}
-	ss<<"]";
-	return ss.str();
-}
 #pragma mark CDataWrapper
 CDataWrapper::CDataWrapper():
-bsonArrayBuilder(new BSONArrayBuilder()),
-bsonBuilder(new BSONObjBuilder()){}
-
-CDataWrapper::CDataWrapper(const char* serializationBuffer):
-bsonArrayBuilder(new BSONArrayBuilder()),
-bsonBuilder(new BSONObjBuilder()){
-    bsonBuilder->appendElements(BSONObj(serializationBuffer));
+bson(ALLOCATE_BSONT(bson_new())),
+array_index(0){
+    CHAOS_ASSERT(bson);
 }
 
-CDataWrapper::~CDataWrapper() {}
+CDataWrapper::CDataWrapper(const bson_t *copy_bson):
+array_index(0){
+    if(copy_bson != NULL) {
+        bson = ALLOCATE_BSONT(bson_copy(copy_bson));
+    } else {
+        bson = ALLOCATE_BSONT(bson_new());
+    }
+    CHAOS_ASSERT(bson);
+}
 
-ChaosUniquePtr<chaos::common::data::CDataWrapper> CDataWrapper::instanceFromJson(const std::string& json_serialization) {
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> new_wrapper(new CDataWrapper());
-    try{
-        fromjson(json_serialization, new_wrapper->bsonBuilder.get());
-    }catch(...){}
-    return new_wrapper;
+CDataWrapper::CDataWrapper(const char* mem_ser,
+                           uint32_t mem_size):
+array_index(0){
+    if(mem_ser != NULL || mem_size) {
+        bson = ALLOCATE_BSONT(bson_new_from_data((const uint8_t*)mem_ser,
+                                                 mem_size));
+    } else {
+        bson = ALLOCATE_BSONT(bson_new());
+    }
+    CHAOS_ASSERT(bson);
+}
+
+CDataWrapper::CDataWrapper(const char* mem_ser):
+array_index(0) {
+    if(mem_ser) {
+        uint32_t size = BSON_UINT32_FROM_LE(*reinterpret_cast<const uint32_t *>(mem_ser));
+        bson = ALLOCATE_BSONT(bson_new_from_data((const uint8_t*)mem_ser,
+                                                 size));
+    } else {
+        bson = ALLOCATE_BSONT(bson_new());
+    }
+    CHAOS_ASSERT(bson);
+}
+
+CDataWrapper::CDataWrapper(const std::string& json_document):
+array_index(0) {
+    bson_error_t err;
+    bson = ALLOCATE_BSONT(bson_new_from_json((const uint8_t*)json_document.c_str(),
+                                             json_document.size(),
+                                             &err));
+    if(!bson.get()) {
+        bson = ALLOCATE_BSONT(bson_new());
+    }
+}
+
+CDataWrapper::~CDataWrapper(){}
+
+ChaosUniquePtr<CDataWrapper> CDataWrapper::instanceFromJson(const std::string& json_serialization) {
+    return ChaosUniquePtr<CDataWrapper>(new CDataWrapper(json_serialization));
 }
 
 CDataWrapper *CDataWrapper::clone() {
-    CDataWrapper *result = new CDataWrapper(bsonBuilder->asTempObj().objdata());
-    return result;
+    return new CDataWrapper(bson.get());
 }
 
 
 //add a csdata value
-void CDataWrapper::addCSDataValue(const std::string& key, const CDataWrapper& csData) {
-    if(csData.bsonBuilder->len()==0) return;
-    bsonBuilder->append(key, csData.bsonBuilder->asTempObj());
+void CDataWrapper::addCSDataValue(const std::string& key,
+                                  const CDataWrapper& sub_object) {
+    bson_append_document(ACCESS_BSON(bson),
+                         key.c_str(),
+                         (int)key.size(),
+                         ACCESS_BSON(sub_object.bson));
 }
 
 //add a string value
-void CDataWrapper::addStringValue(const std::string& key, const string& strValue) {
-    try{
-        bsonBuilder->append(key, strValue);
-    }catch(bson::MsgAssertionException& ex) {
-        LERR_<< "[" <<__PRETTY_FUNCTION__<< "]" << ex.what();
-    }
+void CDataWrapper::addStringValue(const std::string& key, const string& value) {
+    bson_append_utf8(ACCESS_BSON(bson),
+                     key.c_str(),
+                     (int)key.size(),
+                     value.c_str(),
+                     (int)value.size());
 }
 
 //append a strin gto an open array
-void CDataWrapper::appendStringToArray(const char * stringArrayElement) {
-    bsonArrayBuilder->append(stringArrayElement);
+void CDataWrapper::appendStringToArray(const string& value) {
+    ENSURE_ARRAY(bson_tmp_array);
+    bson_append_utf8(ACCESS_BSON(bson_tmp_array),
+                     boost::lexical_cast<std::string>(array_index++).c_str(),
+                     -1,
+                     value.c_str(),
+                     (int)value.size());
 }
 
 //append a strin gto an open array
-void CDataWrapper::appendStringToArray(const string& stringArrayElement) {
-    bsonArrayBuilder->append(stringArrayElement);
+void CDataWrapper::appendInt32ToArray(int32_t value) {
+    ENSURE_ARRAY(bson_tmp_array);
+    bson_append_int32(ACCESS_BSON(bson_tmp_array),
+                      boost::lexical_cast<std::string>(array_index++).c_str(),
+                      -1,
+                      value);
 }
 
 //append a strin gto an open array
-void CDataWrapper::appendInt32ToArray(int32_t int32ArrayElement) {
-    bsonArrayBuilder->append(int32ArrayElement);
+void CDataWrapper::appendInt64ToArray(int64_t value) {
+    ENSURE_ARRAY(bson_tmp_array);
+    bson_append_int64(ACCESS_BSON(bson_tmp_array),
+                      boost::lexical_cast<std::string>(array_index++).c_str(),
+                      -1,
+                      value);
 }
 
 //append a strin gto an open array
-void CDataWrapper::appendInt64ToArray(int64_t int64ArrayElement) {
-    bsonArrayBuilder->append((long long)int64ArrayElement);
-}
-
-//append a strin gto an open array
-void CDataWrapper::appendDoubleToArray(double doubleArrayElement) {
-    // TODO: all std int or NOT
-    bsonArrayBuilder->append(doubleArrayElement);
+void CDataWrapper::appendDoubleToArray(double value) {
+    ENSURE_ARRAY(bson_tmp_array);
+    bson_append_double(ACCESS_BSON(bson_tmp_array),
+                       boost::lexical_cast<std::string>(array_index++).c_str(),
+                       -1,
+                       value);
 }
 
 //appen a CDataWrapper to an open array
-void CDataWrapper::appendCDataWrapperToArray(CDataWrapper& srcDataWrapper, bool finalize) {
-    bsonArrayBuilder->append(finalize?srcDataWrapper.bsonBuilder->done():srcDataWrapper.bsonBuilder->asTempObj());
+void CDataWrapper::appendCDataWrapperToArray(CDataWrapper& value) {
+    ENSURE_ARRAY(bson_tmp_array);
+    bson_append_document(ACCESS_BSON(bson_tmp_array),
+                         boost::lexical_cast<std::string>(array_index++).c_str(),
+                         -1,
+                         value.bson.get());
 }
 
 //finalize the array into a key for the current dataobject
 void CDataWrapper::finalizeArrayForKey(const std::string& key) {
-    try{
-        bsonBuilder->appendArray(key, bsonArrayBuilder->done());
-        bsonArrayBuilder.reset(new BSONArrayBuilder());
-    } catch(bson::MsgAssertionException& ass_except) {
-        throw CException(-1, ass_except.what(), __PRETTY_FUNCTION__);
-    }
+    ENSURE_ARRAY(bson_tmp_array);
+    bson_append_array(ACCESS_BSON(bson),
+                      key.c_str(),
+                      (int)key.size(),
+                      bson_tmp_array.get());
+    bson_tmp_array.reset();
 }
 
 //return a vectorvalue for a key
-CMultiTypeDataArrayWrapper* CDataWrapper::getVectorValue(const std::string& key) const{
-    try {
-        if(bsonBuilder->asTempObj().hasElement(key))
-            return new CMultiTypeDataArrayWrapper(bsonBuilder->asTempObj().getField(key).Array());
-        
-    } catch (...) {
-    }
-    return NULL;
+CMultiTypeDataArrayWrapper* CDataWrapper::getVectorValue(const std::string& key)  const{
+    return new CMultiTypeDataArrayWrapper(bson,
+                                          key);
 }
 
 void CDataWrapper::addNullValue(const std::string& key) {
-    bsonBuilder->appendNull(key);
+    bson_append_null(ACCESS_BSON(bson),
+                     key.c_str(),
+                     (int)key.size());
 }
 //add a long value
-void CDataWrapper::addInt32Value(const std::string& key, int32_t i32Value) {
-    bsonBuilder->append(key, i32Value);
+void CDataWrapper::addInt32Value(const std::string& key, int32_t value) {
+    bson_append_int32(ACCESS_BSON(bson),
+                      key.c_str(),
+                      (int)key.size(),
+                      value);
 }
 //add a long value
-void CDataWrapper::addInt32Value(const std::string& key, uint32_t ui32Value) {
-    bsonBuilder->append(key, static_cast<int32_t>(ui32Value));
+void CDataWrapper::addInt32Value(const std::string& key, uint32_t value) {
+    bson_append_int32(ACCESS_BSON(bson),
+                      key.c_str(),
+                      (int)key.size(),
+                      static_cast<int32_t>(value));
 }
 //add a double value
-void CDataWrapper::addDoubleValue(const std::string& key, double dValue) {
-    bsonBuilder->append(key, (double)dValue);
+void CDataWrapper::addDoubleValue(const std::string& key, double value) {
+    bson_append_double(ACCESS_BSON(bson),
+                       key.c_str(),
+                       (int)key.size(),
+                       value);
 }
 
 //add a integer value
-void CDataWrapper::addInt64Value(const std::string& key, int64_t i64Value) {
-    bsonBuilder->append(key, (long long)i64Value);
+void CDataWrapper::addInt64Value(const std::string& key, int64_t value) {
+    bson_append_int64(ACCESS_BSON(bson),
+                      key.c_str(),
+                      (int)key.size(),
+                      value);
 }
 
 //add a integer value
-void CDataWrapper::addInt64Value(const std::string& key, uint64_t i64Value) {
-    bsonBuilder->append(key, (long long)static_cast<int64_t>(i64Value));
+void CDataWrapper::addInt64Value(const std::string& key, uint64_t value) {
+    bson_append_int64(ACCESS_BSON(bson),
+                      key.c_str(),
+                      (int)key.size(),
+                      static_cast<int64_t>(value));
 }
 
 //get a csdata value
-CDataWrapper *CDataWrapper::getCSDataValue(const std::string& key) const {
-    //allocate the pointer for the result
-    CDataWrapper *result = new CDataWrapper();
-    if(result){
-        //get the subobject
-        BSONObj subObject = bsonBuilder->asTempObj().getObjectField(key);
-        //set the serialization data in resul datawrapper
-        result->setSerializedData(subObject.objdata());
+CDataWrapper *CDataWrapper::getCSDataValue(const std::string& key) const{
+    FIND_AND_CHECK(key, BSON_ITER_HOLDS_DOCUMENT){
+        uint32_t document_len = 0;
+        const uint8_t *document = NULL;
+        bson_iter_document(&element_found,
+                           &document_len,
+                           &document);
+        return new CDataWrapper((const char *)document,document_len);
+    } else {
+        return new CDataWrapper();
     }
-    return result;
 }
-std::string CDataWrapper::getJsonValue(const std::string& key) const {
-    CDataWrapper *tmp;
-    std::string ret;
-    tmp = getCSDataValue(key);
-    if(tmp){
-        ret=tmp->getJSONString();
-        delete tmp;
+std::string CDataWrapper::getJsonValue(const std::string& key) const{
+    ChaosUniquePtr<CDataWrapper> tmp;
+    tmp.reset(getCSDataValue(key));
+    if(tmp.get()){
+        return tmp->getJSONString();
     }
-    
-    return ret;
+    return std::string();
 }
 
 //get string value
-string  CDataWrapper::getStringValue(const std::string& key) const {
-    return bsonBuilder->asTempObj().getField(key).String();
+string  CDataWrapper::getStringValue(const std::string& key) const{
+    FIND_AND_CHECK(key, BSON_ITER_HOLDS_UTF8){
+        return std::string(bson_iter_utf8(&element_found, NULL));
+    }
+    return std::string();
 }
 
 //get string value
-const char *  CDataWrapper::getCStringValue(const std::string& key)const {
-    //return bsonBuilder->asTempObj().getField(key).String().c_str();
+const char *  CDataWrapper::getCStringValue(const std::string& key) const{
     return getRawValuePtr(key);
 }
 
 //add a integer value
-int32_t CDataWrapper::getInt32Value(const std::string& key) const{
-    return bsonBuilder->asTempObj().getField(key).numberInt();
-}
-//add a integer value
-uint32_t CDataWrapper::getUInt32Value(const std::string& key) const{
-    
-    return static_cast<uint32_t>(bsonBuilder->asTempObj().getField(key).numberInt());
-}
-//add a integer value
-int64_t CDataWrapper::getInt64Value(const std::string& key) const {
-    
-    return bsonBuilder->asTempObj().getField(key).numberLong();
-}
-//add a integer value
-uint64_t CDataWrapper::getUInt64Value(const std::string& key) const {
-    
-    return static_cast<uint64_t>(bsonBuilder->asTempObj().getField(key).numberLong());
-}
-//add a integer value
-double CDataWrapper::getDoubleValue(const std::string& key) const {
-    if(bsonBuilder->asTempObj().getField(key).type()==NumberInt){
-        return (double)bsonBuilder->asTempObj().getField(key).numberInt();
-        
+int32_t CDataWrapper::getInt32Value(const std::string& key,
+                                    int32_t default_value) const{
+    FIND_AND_CHECK(key, BSON_ITER_HOLDS_INT32){
+        return bson_iter_int32(&element_found);
+    } else {
+        return default_value;
     }
-    return bsonBuilder->asTempObj().getField(key).Double();
+}
+//add a integer value
+uint32_t CDataWrapper::getUInt32Value(const std::string& key,
+                                      uint32_t default_value) const{
+    FIND_AND_CHECK(key, BSON_ITER_HOLDS_INT32){
+        return static_cast<uint32_t>(bson_iter_int32(&element_found));
+    } else {
+        return default_value;
+    }
+}
+//add a integer value
+int64_t CDataWrapper::getInt64Value(const std::string& key,
+                                    int64_t default_value) const{
+    FIND_AND_CHECK(key, BSON_ITER_HOLDS_INT64){
+        return bson_iter_int64(&element_found);
+    } else {
+        return default_value;
+    }
+}
+//add a integer value
+uint64_t CDataWrapper::getUInt64Value(const std::string& key,
+                                      uint64_t default_value) const{
+    FIND_AND_CHECK(key, BSON_ITER_HOLDS_INT64){
+        return static_cast<uint64_t>(bson_iter_int64(&element_found));
+    } else {
+        return default_value;
+    }
+}
+//add a integer value
+double CDataWrapper::getDoubleValue(const std::string& key,
+                                    double default_value) const{
+    FIND_AND_CHECK(key, BSON_ITER_HOLDS_DOUBLE){
+        return bson_iter_double(&element_found);
+    } else {
+        return default_value;
+    }
 }
 
 //get a bool value
-bool  CDataWrapper::getBoolValue(const std::string& key) const {
-    
-    return bsonBuilder->asTempObj().getField(key).Bool();
+bool  CDataWrapper::getBoolValue(const std::string& key,
+                                 bool default_value) const{
+    FIND_AND_CHECK(key, BSON_ITER_HOLDS_BOOL){
+        return bson_iter_bool(&element_found);
+    } else {
+        return default_value;
+    }
 }
 
 //set a binary data value
 void CDataWrapper::addBinaryValue(const std::string& key,
                                   const char *buff,
                                   int bufLen) {
-    bsonBuilder->appendBinData(key, bufLen, BinDataGeneral, buff);
+    bson_append_binary(ACCESS_BSON(bson),
+                       key.c_str(),
+                       (int)key.size(),
+                       BSON_SUBTYPE_BINARY,
+                       (const uint8_t *)buff,
+                       bufLen);
+}
+
+chaos::DataType::BinarySubtype CDataWrapper::getBinarySubtype(const std::string& key) const{
+    bson_subtype_t subtype = BSON_SUBTYPE_USER;
+    
+    FIND_AND_CHECK(key, BSON_ITER_HOLDS_BINARY){
+        const uint8_t *buff = NULL;
+        uint32_t buf_len;
+        bson_iter_binary(&element_found,
+                         &subtype,
+                         &buf_len,
+                         &buff);
+    }
+    return (chaos::DataType::BinarySubtype)(subtype-BSON_SUBTYPE_USER);
 }
 
 void CDataWrapper::addBinaryValue(const std::string& key,
                                   chaos::DataType::BinarySubtype sub_type,
                                   const char *buff,
-                                  int bufLen) {
-    bsonBuilder->appendBinData(key, bufLen, static_cast<char>(sub_type+bdtCustom), buff);
+                                  int buf_len) {
+    bson_append_binary(ACCESS_BSON(bson),
+                       key.c_str(),
+                       (int)key.size(),
+                       (bson_subtype_t)(sub_type+BSON_SUBTYPE_USER),
+                       (const uint8_t *)buff,
+                       buf_len);
+}
+void CDataWrapper::addValue(const std::string& key,int32_t val){
+    addInt32Value(key, val);
+}
+void CDataWrapper::addValue(const std::string& key,int64_t val){
+    addInt64Value(key, val);
+    
+}
+
+void CDataWrapper::addValue(const std::string& key,double val){
+    addDoubleValue(key, val);
+    
+}
+void CDataWrapper::addValue(const std::string& key,bool val){
+    addBoolValue(key, val);
+    
+}
+void CDataWrapper::addValue(const std::string& key,std::string& val){
+    addStringValue(key, val);
+    
 }
 
 void CDataWrapper::addVariantValue(const std::string& key,
@@ -310,7 +398,6 @@ void CDataWrapper::addVariantValue(const std::string& key,
             break;
         case DataType::TYPE_CLUSTER:{
             addJsonValue(key,variant_value.asString());
-            
             break;
         }
         case DataType::TYPE_STRING:
@@ -326,78 +413,87 @@ void CDataWrapper::addVariantValue(const std::string& key,
 }
 
 //return the binary data value
-const char* CDataWrapper::getBinaryValue(const std::string& key, int& bufLen) const  {
-    return bsonBuilder->asTempObj().getField(key).binData(bufLen);
+const char* CDataWrapper::getBinaryValue(const std::string& key, uint32_t& bufLen) const{
+    const uint8_t* ret = NULL;
+    bson_subtype_t sub = BSON_SUBTYPE_USER;
+    FIND_AND_CHECK(key, BSON_ITER_HOLDS_BINARY){
+        bson_iter_binary(&element_found,
+                         &sub,
+                         &bufLen,
+                         &ret);
+    }
+    return (const char*)ret;
 }
 
-chaos::DataType::BinarySubtype CDataWrapper::getBinarySubtype(const std::string& key) const {
-    return static_cast<chaos::DataType::BinarySubtype>(bsonBuilder->asTempObj().getField(key).binDataType()-bdtCustom);
-}
-
-ChaosUniquePtr<CDataBuffer> CDataWrapper::getBinaryValueAsCDataBuffer(const std::string &key) const {
-    int bufLen = 0;
-    const char* buffer = bsonBuilder->asTempObj().getField(key).binData(bufLen);
-    return ChaosUniquePtr<CDataBuffer>(new CDataBuffer(buffer, bufLen, true));
+ChaosUniquePtr<CDataBuffer> CDataWrapper::getBinaryValueAsCDataBuffer(const std::string &key) const{
+    uint32_t buf_len = 0;
+    const char* buffer = getBinaryValue(key, buf_len);
+    return ChaosUniquePtr<CDataBuffer>(new CDataBuffer(buffer,
+                                                       buf_len,
+                                                       true));
 }
 
 //check if the key is present in data wrapper
-bool CDataWrapper::hasKey(const std::string& key) const {
-    return bsonBuilder->asTempObj().hasElement(key);
+bool CDataWrapper::hasKey(const std::string& key) const{
+    return bson_has_field(ACCESS_BSON(bson), key.c_str());
 }
 
-bool CDataWrapper::isVector(const std::string& key) const {
-    return bsonBuilder->asTempObj().getField(key).type() == bson::Array;
-}
-
-//return all key contained into the object
-void CDataWrapper::getAllKey(ChaosStringVector& contained_key) const {
-    BSONObjIterator obj_iterator(bsonBuilder->asTempObj());
-    while(obj_iterator.more()) {
-        //we have another key
-        BSONElement element = obj_iterator.next();
-        
-        //add key to vector
-        contained_key.push_back(element.fieldNameStringData().toString());
+bool CDataWrapper::isVector(const std::string& key) const{
+    FIND_AND_CHECK(key, BSON_ITER_HOLDS_ARRAY){
+        return true;
+    } else {
+        return false;
     }
 }
 
 //return all key contained into the object
-void CDataWrapper::getAllKey(ChaosStringSet& contained_key) const {
-    BSONObjIterator obj_iterator(bsonBuilder->asTempObj());
-    while(obj_iterator.more()) {
-        //we have another key
-        BSONElement element = obj_iterator.next();
-        
-        //add key to vector
-        contained_key.insert(element.fieldNameStringData().toString());
+void CDataWrapper::getAllKey(ChaosStringVector& contained_key) const{
+    bson_iter_t it;
+    bson_iter_init(&it, ACCESS_BSON(bson));
+    while(bson_iter_next(&it)) {
+        contained_key.push_back(bson_iter_key(&it));
     }
 }
 
 //return all key contained into the object
-uint32_t CDataWrapper::getValueSize(const std::string& key) const {
-    BSONElement ele  = bsonBuilder->asTempObj().getField(key);
-    int bsize = 0;
-    switch(ele.type()) {
-        case NumberLong:
-        case NumberInt:
-        case Bool:
-        case NumberDouble:
-            return ele.valuesize();
-        case String:
-            return ele.valuestrsize();
-        case BinData:
-            ele.binData(bsize);
-            return bsize;
-        case Array:{
-        	return bsonBuilder->asTempObj().getField(key).Array().size();
+void CDataWrapper::getAllKey(ChaosStringSet& contained_key) const{
+    bson_iter_t it;
+    bson_iter_init(&it, ACCESS_BSON(bson));
+    while(bson_iter_next(&it)) {
+        contained_key.insert(bson_iter_key(&it));
+    }
+}
+
+//return all key contained into the object
+uint32_t CDataWrapper::getValueSize(const std::string& key) const{
+    bson_iter_t it;
+    bson_iter_init(&it, ACCESS_BSON(bson));
+    if(bson_iter_find_case(&it, key.c_str()) == false) return 0;
+    const bson_value_t *v = bson_iter_value(&it);
+    switch(v->value_type) {
+        case BSON_TYPE_INT64:
+            return sizeof(int64_t);
+        case BSON_TYPE_INT32:
+            return sizeof(int32_t);
+        case BSON_TYPE_BOOL:
+            return sizeof(bool);
+        case BSON_TYPE_DOUBLE:
+            return sizeof(double);
+        case BSON_TYPE_UTF8:
+            return v->value.v_utf8.len;
+        case BSON_TYPE_BINARY:
+            return v->value.v_binary.data_len;
+        case BSON_TYPE_ARRAY:{
+            uint32_t array_len = 0;
+            const uint8_t *array = NULL;
+            bson_iter_array(&it, &array_len, &array);
+            return array_len;
         }
-        case Object:{
-        	   BSONObj subObject = bsonBuilder->asTempObj().getObjectField(key);
-        	        	   //set the serialization data in resul datawrapper
-        	   return subObject.objsize();
+        case BSON_TYPE_DOCUMENT:{
+            return v->value.v_doc.data_len;
         }
         default:
-
+            return 0;
             break;
     }
     return 0;
@@ -405,35 +501,45 @@ uint32_t CDataWrapper::getValueSize(const std::string& key) const {
 
 //! return the raw value ptr address
 const char * CDataWrapper::getRawValuePtr(const std::string& key) const{
-    BSONElement ele  = bsonBuilder->asTempObj().getField(key);
-    int bsize = 0;
-    switch(ele.type()) {
-        case NumberLong:
-        case NumberInt:
-        case Bool:
-        case NumberDouble:
-            return ele.value();
-        case String:
-            return ele.valuestrsafe();
-        case BinData:
-            return ele.binDataClean(bsize);
-        case Object:
-        case Array:{
-        	   BSONObj subObject = bsonBuilder->asTempObj().getObjectField(key);
-        	   //set the serialization data in resul datawrapper
-        	   return subObject.objdata();
+    bson_iter_t it;
+    bson_iter_init(&it, ACCESS_BSON(bson));
+    if(bson_iter_find_case(&it, key.c_str()) == false) return 0;
+    const bson_value_t *v = bson_iter_value(&it);
+    switch(v->value_type) {
+        case BSON_TYPE_INT64:
+            return reinterpret_cast<const char*>(&v->value.v_int64);
+        case BSON_TYPE_INT32:
+            return reinterpret_cast<const char*>(&v->value.v_int32);
+        case BSON_TYPE_BOOL:
+            return reinterpret_cast<const char*>(&v->value.v_bool);
+        case BSON_TYPE_DOUBLE:
+            return reinterpret_cast<const char*>(&v->value.v_double);
+        case BSON_TYPE_UTF8:
+            return static_cast<const char*>(v->value.v_utf8.str);
+        case BSON_TYPE_BINARY:
+            return reinterpret_cast<const char*>(v->value.v_binary.data);
+        case BSON_TYPE_ARRAY:{
+            uint32_t array_len = 0;
+            const uint8_t *array = NULL;
+            bson_iter_array(&it, &array_len, &array);
+            return reinterpret_cast<const char*>(array);
         }
-
+        case BSON_TYPE_DOCUMENT:{
+            return reinterpret_cast<const char*>(v->value.v_doc.data);
+        }
         default:
-
+            return NULL;
             break;
     }
-    return NULL;
+    
 }
 
 //add a bool value
-void CDataWrapper::addBoolValue(const std::string& key, bool boolValue) {
-    bsonBuilder->append(key, boolValue);
+void CDataWrapper::addBoolValue(const std::string& key, bool value) {
+    bson_append_bool(ACCESS_BSON(bson),
+                     key.c_str(),
+                     (int)key.size(),
+                     value);
 }
 
 /*
@@ -441,119 +547,152 @@ void CDataWrapper::addBoolValue(const std::string& key, bool boolValue) {
  the requester of this method shuld be deallocate the object
  */
 SerializationBuffer* CDataWrapper::getBSONData() const{
-    //finalize the bson object
-    if( bsonBuilder->len()==0 ) return NULL;
-    
-    //get the object
-    BSONObj bsonObject = bsonBuilder->asTempObj();
-    //we have some data
-    SerializationBuffer *result = new SerializationBuffer(bsonObject.objdata(), bsonObject.objsize());
-    //recreate bson builder for next fill
-    return result;
+    const char * buff = reinterpret_cast<const char*>(bson_get_data(ACCESS_BSON(bson)));
+    if(!buff) return NULL;
+    return new SerializationBuffer(buff, bson->len);
 }
 
 /*
  Return the pointer of the data and the size. th eownership of data remain
  of the CDataWrapper
  */
-const char* CDataWrapper::getBSONRawData(int& size) const {
-    //finalize the bson object
-    if( bsonBuilder->len()==0 ) return NULL;
-    
-    //get the object
-    BSONObj bsonObject = bsonBuilder->asTempObj();
-    //we have some data
-    size = bsonObject.objsize();
-    //recreate bson builder for next fill
-    return bsonObject.objdata();
+const char* CDataWrapper::getBSONRawData(int& size) const{
+    size = bson->len;
+    return reinterpret_cast<const char*>(bson_get_data(ACCESS_BSON(bson)));
 }
 
-const int CDataWrapper::getBSONRawSize() const {
-    //finalize the bson object
-    if( bsonBuilder->len()==0 ) return 0;
-    
-    return bsonBuilder->asTempObj().objsize();
+/*
+ Return the pointer of the data and the size. th eownership of data remain
+ of the CDataWrapper
+ */
+const char* CDataWrapper::getBSONRawData() const{
+    return reinterpret_cast<const char*>(bson_get_data(ACCESS_BSON(bson)));
+}
+
+const int CDataWrapper::getBSONRawSize() const{
+    return bson->len;
 }
 
 //return the json data
-SerializationBuffer* CDataWrapper::getJSONData() const {
-    //finalize the bson object
-    if( bsonBuilder->len()==0 ) return 0L;
-    
-    //get the object
-    BSONObj bsonObject = bsonBuilder->asTempObj();
-    //return bsonObject.toString();
-    string jsonString = bsonObject.jsonString();
-    //recreate bson builder for next fill
-    //bsonBuilder.reset(new BSONObjBuilder());
-    return new SerializationBuffer(jsonString.c_str(), jsonString.size());
+string CDataWrapper::getJSONString()  const{
+    size_t str_size = 0;
+    char * str_c = bson_as_canonical_extended_json(ACCESS_BSON(bson),
+                                                   &str_size);
+    std::string result(str_c);
+    bson_free(str_c);
+    return result;
 }
 
 //return the json data
-string CDataWrapper::getJSONString() const {
-    //finalize the bson object
-    if( bsonBuilder->len()==0 ) return string("");
-    
-    return bsonBuilder->asTempObj().jsonString();
-}
-//reinitialize the object with bson data
-void CDataWrapper::setSerializedData(const char* bsonData) {
-    //bsonBuilder->appendElements(bson?BSONObj(bsonData):fromjson(bsonData));
-    bsonBuilder->appendElements(BSONObj(bsonData));
+string CDataWrapper::getCompliantJSONString()  const{
+    size_t str_size = 0;
+    char * str_c = bson_as_relaxed_extended_json(ACCESS_BSON(bson),&str_size);
+    if(str_c==NULL){
+        str_c =bson_as_canonical_extended_json(ACCESS_BSON(bson), &str_size);
+        if(str_c==NULL){
+            return std::string("{}");
+         }
+        LERR_<<"## cannot convert to compliant JSON:'"<<str_c<<"'";
+    }
+    std::string result(str_c);
+    bson_free(str_c);
+    return result;
 }
 
 //reinitialize the object with bson data
-void CDataWrapper::setSerializedJsonData(const char* jsonData) {
-    bsonBuilder->appendElements(fromjson(jsonData));
+void CDataWrapper::setSerializedData(const char* bson_data) {
+    bson_iter_t it;
+    size_t len = (size_t)BSON_UINT32_FROM_LE(*reinterpret_cast<const uint32_t *>(bson_data));
+    if(!bson_iter_init_from_data(&it,
+                                 reinterpret_cast<const uint8_t *>(bson_data),
+                                 len)) return;
+    while(bson_iter_next(&it)){
+        bson_append_value(ACCESS_BSON(bson),
+                          bson_iter_key(&it),
+                          -1,
+                          bson_iter_value(&it));
+    }
+    
+}
+
+//reinitialize the object with bson data
+void CDataWrapper::setSerializedJsonData(const char* json_data) {
+    bson_error_t err;
+    size_t len = (size_t)strlen(json_data);
+    bson =ALLOCATE_BSONT(bson_new_from_json((const uint8_t*)json_data,
+                                            len,
+                                            &err));
+    CHAOS_ASSERT(bson);
 }
 
 //append all elemento of an
-void CDataWrapper::appendAllElement(CDataWrapper& srcDataWrapper) {
-    bsonBuilder->appendElements(srcDataWrapper.bsonBuilder->asTempObj());
+void CDataWrapper::appendAllElement(CDataWrapper& src_cdw) {
+    bson_iter_t it;
+    bson_iter_init(&it, ACCESS_BSON(src_cdw.bson));
+    while (bson_iter_next(&it)) {
+        bson_append_value(ACCESS_BSON(bson),
+                          bson_iter_key(&it),
+                          -1,
+                          bson_iter_value(&it));
+    }
 }
 
 bool CDataWrapper::copyKeyTo(const std::string& key_to_copy,
                              CDataWrapper& destination) {
-    bool result = false;
-    if((result = bsonBuilder->asTempObj().hasElement(key_to_copy))){
-        //we can copy
-        destination.bsonBuilder->append(bsonBuilder->asTempObj().getField(key_to_copy));
-    }
-    return result;
+    return copyKeyToNewKey(key_to_copy,
+                           key_to_copy,
+                           destination);
 }
 
 //!copy a key(with value) from this instance to another CDataWrapper witha new key
 bool CDataWrapper::copyKeyToNewKey(const std::string& key_to_copy,
                                    const std::string& new_key,
                                    CDataWrapper& destination) {
-    bool result = false;
-    if((result = bsonBuilder->asTempObj().hasElement(key_to_copy))){
-        //we can copy
-        destination.bsonBuilder->appendAs(bsonBuilder->asTempObj().getField(key_to_copy), new_key);
-    }
-    return result;
+    bson_iter_t it;
+    bson_iter_init(&it, ACCESS_BSON(bson));
+    if(bson_iter_find_case(&it, key_to_copy.c_str()) == false) return false;
+    bson_append_value(ACCESS_BSON(destination.bson),
+                      new_key.c_str(),
+                      (int)new_key.size(),
+                      bson_iter_value(&it));
+    return true;
 }
 
 void CDataWrapper::copyAllTo(CDataWrapper& destination) {
-    std::vector<BSONElement> all_element;
-    bsonBuilder->asTempObj().elems(all_element);
-    for(std::vector<BSONElement>::iterator it = all_element.begin();
-        it != all_element.end();
-        it++) {
-        destination.bsonBuilder->append(*it);
+    bson_iter_t it;
+    bson_iter_init(&it, ACCESS_BSON(bson));
+    while (bson_iter_next(&it)) {
+        bson_append_value(ACCESS_BSON(destination.bson),
+                          bson_iter_key(&it),
+                          -1,
+                          bson_iter_value(&it));
     }
 }
 
 //reset the datawrapper
 void CDataWrapper::reset() {
-    bsonBuilder.reset(new BSONObjBuilder());
+    bson_reinit(ACCESS_BSON(bson));
+    bson_tmp_array.reset();
 }
 
 string CDataWrapper::toHash() const{
-    return  bsonBuilder->asTempObj().md5();
+    char ret[33];
+    bson_md5_t m;
+    uint8_t digest[16];
+    bson_md5_init(&m);
+    bson_md5_append(&m,
+                    bson_get_data(ACCESS_BSON(bson)),
+                    bson->len);
+    bson_md5_finish(&m,
+                    digest);
+    memset(ret, 0, 33);
+    for(int i = 0; i < 16; ++i) {
+        sprintf(&ret[i*2], "%02x", (unsigned int)digest[i]);
+    }
+    return std::string(ret, 33);
 }
 
-CDataVariant CDataWrapper::getVariantValue(const std::string& key) const {
+CDataVariant CDataWrapper::getVariantValue(const std::string& key) const{
     //check if key is present
     if(!hasKey(key)) return CDataVariant();
     
@@ -577,7 +716,6 @@ CDataVariant CDataWrapper::getVariantValue(const std::string& key) const {
         case CDataWrapperTypeBinary:
             return CDataVariant(getBinaryValueAsCDataBuffer(key).release());
             break;
-
         default:
             return CDataVariant();
             break;
@@ -587,35 +725,45 @@ CDataVariant CDataWrapper::getVariantValue(const std::string& key) const {
 //------------------------checking utility
 
 bool CDataWrapper::isNullValue(const std::string& key) const{
-    return bsonBuilder->asTempObj().getField(key).isNull();
+    FIND_AND_CHECK(key, BSON_ITER_HOLDS_NULL){
+        return true;
+    }
+    return false;
 }
 
 bool CDataWrapper::isBoolValue(const std::string& key) const{
-    return bsonBuilder->asTempObj().getField(key).isBoolean();
+    FIND_AND_CHECK(key, BSON_ITER_HOLDS_BOOL){
+        return true;
+    }
+    return false;
 }
 
 bool CDataWrapper::isInt32Value(const std::string& key) const{
-    return bsonBuilder->asTempObj().getField(key).type()==NumberInt;
+    FIND_AND_CHECK(key, BSON_ITER_HOLDS_INT32){
+        return true;
+    }
+    return false;
 }
 
 bool CDataWrapper::isInt64Value(const std::string& key) const{
-    return bsonBuilder->asTempObj().getField(key).type()==NumberLong;
+    FIND_AND_CHECK(key, BSON_ITER_HOLDS_INT64){
+        return true;
+    }
+    return false;
 }
 
 bool CDataWrapper::isDoubleValue(const std::string& key) const{
-    return bsonBuilder->asTempObj().getField(key).type()==NumberDouble;
+    FIND_AND_CHECK(key, BSON_ITER_HOLDS_DOUBLE){
+        return true;
+    }
+    return false;
 }
 
-bool  CDataWrapper::isJsonValue(const std::string& key) const {
-    CDataWrapper tmp;
-    
-    try {
-        tmp.setSerializedJsonData(getRawValuePtr(key));
-        return true;
-    } catch(...){
-    }
-    
-    return false;
+bool  CDataWrapper::isJsonValue(const std::string& key) const{
+    Json::Reader jr;
+    Json::Value v;
+    const char *cptr = getRawValuePtr(key);
+    return jr.parse(cptr, cptr+getValueSize(key), v);
 }
 void CDataWrapper::addJsonValue(const std::string& key, const string& val){
     CDataWrapper tmp;
@@ -630,49 +778,64 @@ void CDataWrapper::addJsonValue(const std::string& key, Json::Value& val){
 }
 
 bool CDataWrapper::isStringValue(const std::string& key) const{
-    return bsonBuilder->asTempObj().getField(key).type()==String;
+    FIND_AND_CHECK(key, BSON_ITER_HOLDS_UTF8){
+        return true;
+    }
+    return false;
 }
 
-bool CDataWrapper::isBinaryValue(const std::string& key) const {
-    return bsonBuilder->asTempObj().getField(key).type()==BinData;
+bool CDataWrapper::isBinaryValue(const std::string& key) const{
+    FIND_AND_CHECK(key, BSON_ITER_HOLDS_BINARY){
+        return true;
+    }
+    return false;
 }
 
-bool CDataWrapper::isCDataWrapperValue(const std::string& key) const {
-    return bsonBuilder->asTempObj().getField(key).type()==Object;
+bool CDataWrapper::isCDataWrapperValue(const std::string& key) const{
+    FIND_AND_CHECK(key, BSON_ITER_HOLDS_DOCUMENT){
+        return true;
+    }
+    return false;
 }
 
-bool CDataWrapper::isVectorValue(const std::string& key) const {
-    return bsonBuilder->asTempObj().getField(key).type()==Array;
+bool CDataWrapper::isVectorValue(const std::string& key) const{
+    FIND_AND_CHECK(key, BSON_ITER_HOLDS_ARRAY){
+        return true;
+    }
+    return false;
 }
 
-CDataWrapperType CDataWrapper::getValueType(const std::string& key) const {
+CDataWrapperType CDataWrapper::getValueType(const std::string& key) const{
     CDataWrapperType result = CDataWrapperTypeNoType;
-    switch(bsonBuilder->asTempObj().getField(key).type()) {
-        case Array:
+    bson_iter_t it;
+    bson_iter_init(&it, ACCESS_BSON(bson));
+    if(bson_iter_find_case(&it, key.c_str()) == false) return result;
+    switch(bson_iter_type(&it)) {
+        case BSON_TYPE_ARRAY:
             result = CDataWrapperTypeVector;
             break;
-        case Object:
+        case BSON_TYPE_DOCUMENT:
             result = CDataWrapperTypeObject;
             break;
-        case BinData:
+        case BSON_TYPE_BINARY:
             result = CDataWrapperTypeBinary;
             break;
-        case String:
+        case BSON_TYPE_UTF8:
             result = CDataWrapperTypeString;
             break;
-        case NumberDouble:
+        case BSON_TYPE_DOUBLE:
             result = CDataWrapperTypeDouble;
             break;
-        case NumberInt:
+        case BSON_TYPE_INT32:
             result = CDataWrapperTypeInt32;
             break;
-        case NumberLong:
+        case BSON_TYPE_INT64:
             result = CDataWrapperTypeInt64;
             break;
-        case Bool:
+        case BSON_TYPE_BOOL:
             result = CDataWrapperTypeBool;
             break;
-        case jstNULL:
+        case BSON_TYPE_NULL:
             result = CDataWrapperTypeNULL;
             break;
         default:
@@ -681,9 +844,106 @@ CDataWrapperType CDataWrapper::getValueType(const std::string& key) const {
     }
     return result;
 }
-ostream& operator<<(ostream& os, const CDataWrapper& dt){
-	return os<<dt.getJSONString();
+
+bool CDataWrapper::isEmpty() const {
+    return (bson_count_keys(ACCESS_BSON(bson)) == 0);
 }
-const bool CDataWrapper::isEmpty() const {
-    return bsonBuilder->asTempObj().isEmpty();
+
+#pragma mark CMultiTypeDataArrayWrapper
+CMultiTypeDataArrayWrapper::CMultiTypeDataArrayWrapper(const ChaosBsonShrdPtr& _document_shrd_ptr,
+                                                       const std::string& key):
+document_shrd_ptr(_document_shrd_ptr) {
+    bson_iter_t element_found;
+    bson_iter_init(&element_found, ACCESS_BSON(_document_shrd_ptr));
+    if(bson_iter_find_case(&element_found, key.c_str())&&
+       BSON_ITER_HOLDS_ARRAY(&element_found)) {
+        uint32_t array_len;
+        const uint8_t *array;
+        bson_iter_array(&element_found,
+                        &array_len,
+                        &array);
+        
+        if (bson_init_static(&array_doc, array, array_len)) {
+            bson_iter_t iter;
+            if(bson_iter_init(&iter, &array_doc)) {
+                while(bson_iter_next(&iter)) {
+                    bson_value_t copy;
+                    bson_value_copy(bson_iter_value(&iter), &copy);
+                    values.push_back(copy);
+                }
+            }
+        }
+    }
+}
+
+CMultiTypeDataArrayWrapper::~CMultiTypeDataArrayWrapper() {
+    for(VectorBsonValuesIterator it = values.begin(),
+        end = values.end();
+        it != end;
+        it++) {
+        bson_value_destroy(&(*it));
+    }
+}
+
+std::string CMultiTypeDataArrayWrapper::getJSONString() {
+    size_t str_size;
+    char * str_c = bson_as_canonical_extended_json(static_cast<const bson_t*>(&array_doc),&str_size);
+    return std::string(str_c,str_size);
+}
+
+std::string CMultiTypeDataArrayWrapper::getCanonicalJSONString() {
+    size_t str_size;
+    char * str_c = bson_as_relaxed_extended_json(static_cast<const bson_t*>(&array_doc),&str_size);
+    return std::string(str_c,str_size);
+}
+
+string CMultiTypeDataArrayWrapper::getStringElementAtIndex(const int pos) const{
+    CHAOS_ASSERT(values[pos].value_type == BSON_TYPE_UTF8);
+    return std::string(values[pos].value.v_utf8.str, values[pos].value.v_utf8.len);
+}
+
+double CMultiTypeDataArrayWrapper::getDoubleElementAtIndex(const int pos) const{
+    
+    if(values[pos].value_type != BSON_TYPE_DOUBLE){
+        std::stringstream ss;
+        ss<<"type at index ["<<pos<<"] is not double, typeid:"<<values[pos].value_type;
+        throw CException(1, ss.str(), __PRETTY_FUNCTION__);
+        
+    }
+    return values[pos].value.v_double;
+}
+int32_t CMultiTypeDataArrayWrapper::getInt32ElementAtIndex(const int pos) const{
+    return values[pos].value.v_int32;
+}
+int64_t CMultiTypeDataArrayWrapper::getInt64ElementAtIndex(const int pos) const{
+    CHAOS_ASSERT(values[pos].value_type == BSON_TYPE_INT64);
+    return values[pos].value.v_int64;
+}
+
+bool CMultiTypeDataArrayWrapper::isStringElementAtIndex(const int pos) const{
+    return values[pos].value_type == BSON_TYPE_UTF8;
+}
+
+bool CMultiTypeDataArrayWrapper::isDoubleElementAtIndex(const int pos) const{
+    return values[pos].value_type == BSON_TYPE_DOUBLE;
+}
+
+bool CMultiTypeDataArrayWrapper::isInt32ElementAtIndex(const int pos) const{
+    return values[pos].value_type == BSON_TYPE_INT32;
+}
+
+bool CMultiTypeDataArrayWrapper::isInt64ElementAtIndex(const int pos) const{
+    return values[pos].value_type == BSON_TYPE_INT64;
+}
+
+bool CMultiTypeDataArrayWrapper::isCDataWrapperElementAtIndex(const int pos) const{
+    return values[pos].value_type == BSON_TYPE_DOCUMENT;
+}
+
+CDataWrapper* CMultiTypeDataArrayWrapper::getCDataWrapperElementAtIndex(const int pos) const{
+    CHAOS_ASSERT(values[pos].value_type == BSON_TYPE_DOCUMENT);
+    return new CDataWrapper((const char *)values[pos].value.v_doc.data, values[pos].value.v_doc.data_len);
+}
+size_t CMultiTypeDataArrayWrapper::size() const{
+    return values.size();
 }

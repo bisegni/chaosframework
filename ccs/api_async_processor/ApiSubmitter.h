@@ -6,8 +6,6 @@
 
 #include <QObject>
 
-#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
-
 class ApiSubmitter:
         public QObject {
     Q_OBJECT

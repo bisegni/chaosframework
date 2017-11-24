@@ -118,13 +118,13 @@ namespace chaos {
                                 const mongo::BSONObj *fields_to_return = 0,
                                 int queryOptions = 0);
                     
-                    void findN(std::vector<mongo::BSONObj>& out,
-                               const std::string& ns,
-                               mongo::Query query,
-                               int nToReturn,
-                               int nToSkip = 0,
-                               const mongo::BSONObj *fields_to_return = 0,
-                               int queryOptions = 0);
+                    int findN(std::vector<mongo::BSONObj>& out,
+                              const std::string& ns,
+                              mongo::Query query,
+                              int nToReturn,
+                              int nToSkip = 0,
+                              const mongo::BSONObj *fields_to_return = 0,
+                              int queryOptions = 0);
                     
                     int findAndModify(mongo::BSONObj& result,
                                       const std::string& ns,
@@ -173,12 +173,12 @@ namespace chaos {
                                     int ttl = 0 );
                     
                     ChaosUniquePtr<mongo::DBClientCursor> query(const std::string &ns,
-                                                               mongo::Query query,
-                                                               int nToReturn = 0,
-                                                               int nToSkip = 0,
-                                                               const mongo::BSONObj *fieldsToReturn = 0,
-                                                               int queryOptions = 0,
-                                                               int batchSize = 0 );
+                                                                mongo::Query query,
+                                                                int nToReturn = 0,
+                                                                int nToSkip = 0,
+                                                                const mongo::BSONObj *fieldsToReturn = 0,
+                                                                int queryOptions = 0,
+                                                                int batchSize = 0 );
                     
                     int count(unsigned long long & result,
                               const std::string &ns,

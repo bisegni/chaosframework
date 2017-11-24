@@ -84,7 +84,7 @@ void QuantumTSTaggedStringAttributeHandler::_consumeValue(const std::string& key
 AbstractQuantumTSTaggedAttributeHandlerIMPL_CONST_DIST(QuantumTSTaggedBinaryAttributeHandler)
 void QuantumTSTaggedBinaryAttributeHandler::_consumeValue(const std::string& key,
                                                           const KeyValue& value) {
-    int32_t buf_size = 0;
+    uint32_t buf_size = 0;
     consumeTSTaggedValue(key,
                          attribute,
                          value->getUInt64Value(ts_attribute),

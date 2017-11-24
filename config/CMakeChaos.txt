@@ -166,7 +166,8 @@ IF (NOT CACHE_DIR)
       FILE(MAKE_DIRECTORY ${CMAKE_INSTALL_PREFIX}/www/html)
     ENDIF()
     IF(EXISTS "${CHAOS_BUNDLE}/tools")
-      FILE(COPY ${CHAOS_BUNDLE}/tools DESTINATION ${CMAKE_INSTALL_PREFIX}/)
+       FILE(COPY ${CHAOS_BUNDLE}/tools DESTINATION ${CMAKE_INSTALL_PREFIX}/)
+       FILE(COPY ${CHAOS_BUNDLE}/tools/config/Findchaos.cmake DESTINATION ${CMAKE_INSTALL_PREFIX}/)
     ENDIF()
 
     FILE(WRITE ${CMAKE_INSTALL_PREFIX}/chaos_env.sh "if [ -z \"\$CHAOS_PREFIX\" ];then\n")
@@ -334,7 +335,7 @@ IF (NOT CACHE_DIR)
 	  IF(EXISTS "${EXTERNAL_BUILD_DIR}/${arg}/SConstruct")
 	    MESG("[${arg}] SCONS configuration tool")
 	      IF(${SYSTEM_NAME} MATCHES "Darwin")
-	      	    SET(CONFPARM scons CXXFLAGS=${CHAOS_CXX_FLAGS} CFLAGS=${CHAOS_C_FLAGS} --prefix=${CMAKE_INSTALL_PREFIX} --libpath=${CMAKE_INSTALL_PREFIX}/lib --cxx=${CHAOS_CXX_COMPILER_REL} --osx-version-min=10.7 --libc++=libc++ --c++11=off --cc=${CHAOS_C_COMPILER_REL} --cpppath=${CMAKE_INSTALL_PREFIX}/include --extrapath=${CMAKE_INSTALL_PREFIX} -j ${PROCESSOR_COUNT} ${arg1} )
+	      	    SET(CONFPARM scons CC=${CMAKE_C_COMPILER} CXX=${CMAKE_CXX_COMPILER} CXXFLAGS=${CHAOS_CXX_FLAGS} CFLAGS=${CHAOS_C_FLAGS} --prefix=${CMAKE_INSTALL_PREFIX} --libpath=${CMAKE_INSTALL_PREFIX}/lib --cxx=${CHAOS_CXX_COMPILER_REL} --osx-version-min=10.7 --libc++=libc++ --c++11=off --cc=${CHAOS_C_COMPILER_REL} --cpppath=${CMAKE_INSTALL_PREFIX}/include --extrapath=${CMAKE_INSTALL_PREFIX} -j ${PROCESSOR_COUNT} ${arg1} )
 	      ELSE()
 	    SET(CONFPARM scons CXXFLAGS=${CHAOS_CXX_FLAGS} CFLAGS=${CHAOS_C_FLAGS} --prefix=${CMAKE_INSTALL_PREFIX} --libpath=${CMAKE_INSTALL_PREFIX}/lib --cxx=${CMAKE_CXX_COMPILER} --cc=${CMAKE_C_COMPILER} --cpppath=${CMAKE_INSTALL_PREFIX}/include --extrapath=${CMAKE_INSTALL_PREFIX} -j ${PROCESSOR_COUNT} ${arg1} )
 	    ENDIF()
@@ -381,15 +382,15 @@ IF (NOT CACHE_DIR)
   endmacro()
 
 
-  macro (BoostInstall ver url arg)
-    wget(boost_1_${ver}_0.tar.gz  https://sourceforge.net/projects/boost/files/boost/1.${ver}.0)
+  macro (BoostInstall ver min_ver url arg)
+    wget(boost_1_${ver}_${min_ver}.tar.gz  https://sourceforge.net/projects/boost/files/boost/1.${ver}.${min_ver})
     STRING(REPLACE "/" "\\/" SEDARG ${CMAKE_CXX_COMPILER})
 
-    tar(xf boost_1_${ver}_0.tar.gz)
+    tar(xf boost_1_${ver}_${min_ver}.tar.gz)
 
     execute_process(
       COMMAND ./bootstrap.sh
-      WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}/boost_1_${ver}_0
+      WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}/boost_1_${ver}_${min_ver}
       RESULT_VARIABLE err
       OUTPUT_VARIABLE out
       OUTPUT_FILE /tmp/cmake.log
@@ -402,14 +403,14 @@ IF (NOT CACHE_DIR)
 
     execute_process(
       COMMAND sed -i -e "s/using gcc/using gcc : arm : ${SEDARG}/" project-config.jam
-      WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}/boost_1_${ver}_0
+      WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}/boost_1_${ver}_${min_ver}
       RESULT_VARIABLE err
       OUTPUT_VARIABLE out
       )
     if( err)
       ERROR("[BOOST] error patching boost project-config.jam error" "${out}")
     endif()
-    ConfigureAndBuild(boost_1_${ver}_0 "${arg}")
+    ConfigureAndBuild(boost_1_${ver}_${min_ver} "${arg}")
   endmacro()
 
   macro (CheckConfigureBuild libcheck lib conf url)
@@ -448,6 +449,15 @@ IF (NOT CACHE_DIR)
   set (CHAOS_CXX_FLAGS "-Wno-deprecated -fPIC")
   set (CHAOS_LINKER_FLAGS "")
 
+IF(CHAOS_CC_COMPILER)
+    MESG("Setting CC compiler ${CHAOS_CC_COMPILER}")
+    SET(CMAKE_CXX_COMPILER ${CHAOS_CC_COMPILER})
+    CheckCompiler("CXX" ${CHAOS_CC_COMPILER})
+    CheckCompiler("C" ${CHAOS_C_COMPILER})
+    SET(CHAOS_BOOST_FLAGS toolset=${CHAOS_C_COMPILER})
+  ENDIF()
+
+
   IF(NOT DEFINED PROCESSOR_COUNT)
     SET(PROCESSOR_COUNT 4)
 
@@ -466,8 +476,22 @@ IF (NOT CACHE_DIR)
   option(CHAOS_DISABLE_EVENTFD "Disable EventFD" OFF)
   option(CHAOS_BUILD_CACHE "Keep third part sources" ON)
   option(CHAOS_BOOST_VERSION "Use a predefined boost version" 64)
+  option(CHAOS_BOOST_MINOR_VERSION "Use a predefined boost minor version" 0)
   option(CHAOS_BOOST_DYNAMIC "compile and use dynamic boost" OFF)
   option(CHAOS_BUILD_UNITSERVER "Automatically build an Unit Server that includes all CUs found in distribution" ON)
+  IF(NOT CHAOS_VERSION_MAJOR)
+  	 SET(CHAOS_VERSION_MAJOR "1")
+  ENDIF()
+  IF(NOT CHAOS_VERSION_MINOR)
+  	 SET(CHAOS_VERSION_MINOR "1")
+  ENDIF()
+  IF(NOT CHAOS_BUILD_ID)
+  	 SET(CHAOS_BUILD_ID 666)
+  ENDIF()
+
+  ADD_DEFINITIONS(-DCSLIB_VERSION_MAJOR="${CHAOS_VERSION_MAJOR}")
+  ADD_DEFINITIONS(-DCSLIB_VERSION_MINOR="${CHAOS_VERSION_MINOR}")
+  ADD_DEFINITIONS(-DCSLIB_BUILD_ID=${CHAOS_BUILD_ID})
 
   if(CMAKE_BUILD_TYPE MATCHES PROFILE)
      MESG("ENABLING PROFILE")
@@ -525,7 +549,8 @@ IF (NOT CACHE_DIR)
     SET(CHAOS_BOOST_FLAGS toolset=clang)
     CheckCompiler("CXX" clang++)
     CheckCompiler("C" clang)
-    SET(CHAOS_CXX_FLAGS "${CHAOS_CXX_FLAGS} -stdlib=libc++")
+    SET(CHAOS_CXX_FLAGS "${CHAOS_CXX_FLAGS} -std=c++11 -stdlib=libc++")
+    SET(CHAOS_C_FLAGS "${CHAOS_C_FLAGS} -stdlib=libc++")
     set(CHAOS_LINKER_FLAGS "-stdlib=libc++")
 
   ELSE()
@@ -673,8 +698,10 @@ IF (NOT CACHE_DIR)
   #### TOOL VERSIONS
   if( CHAOS_BOOST_VERSION)
     SET(BOOST_VERSION ${CHAOS_BOOST_VERSION})
+    SET(BOOST_MINOR_VERSION ${CHAOS_BOOST_MINOR_VERSION})
   ELSE()
     SET(BOOST_VERSION 64)
+    SET(BOOST_MINOR_VERSION 0)
   ENDIF()
 
   #####
@@ -690,11 +717,6 @@ IF (NOT CACHE_DIR)
   #  MESG("Setting C compiler ${CHAOS_C_COMPILER}")
   #  SET(CMAKE_C_COMPILER ${CHAOS_C_COMPILER})
   #ENDIF()
-
-  IF(CHAOS_CC_COMPILER)
-    MESG("Setting CC compiler ${CHAOS_CC_COMPILER}")
-    SET(CMAKE_CXX_COMPILER ${CHAOS_CC_COMPILER})
-  ENDIF()
 
   SET( CMAKE_CHAOS  $ENV{CHAOS_CMAKE_FLAGS})
 
@@ -791,9 +813,9 @@ IF (NOT CACHE_DIR)
     #  include_directories(${Boost_INCLUDE_DIRS})
   else()
     MESG("boost not found in ${CMAKE_INSTALL_PREFIX}/lib downloading...")
-    boostInstall(${BOOST_VERSION} http://download.sourceforge.net/project/boost/boost/1.${BOOST_VERSION}.0 "${CHAOS_BOOST_FLAGS}")
+    boostInstall(${BOOST_VERSION} ${BOOST_MINOR_VERSION} http://download.sourceforge.net/project/boost/boost/1.${BOOST_VERSION}.${BOOST_MINOR_VERSION} "${CHAOS_BOOST_FLAGS}")
     # gitCloneUrl(boost https://github.com/boostorg)
-    # gitCheckOut(boost boost-1.${BOOST_VERSION}.0)
+    # gitCheckOut(boost boost-1.${BOOST_VERSION}.${BOOST_MINOR_VERSION})
     # execute_process(
     #   COMMAND ./bootstrap.sh
     #   WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}/boost

@@ -19,8 +19,10 @@
  * permissions and limitations under the Licence.
  */
 
-#include "MongoDBObjectStorageDataAccess.h"
+#include <chaos/common/global.h>
 
+#include "MongoDBObjectStorageDataAccess.h"
+#include "../../ChaosMetadataService.h"
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/utility/TimingUtil.h>
 
@@ -45,7 +47,27 @@ using namespace chaos::data_service::object_storage::mongodb;
 using namespace chaos::data_service::object_storage::abstraction;
 
 MongoDBObjectStorageDataAccess::MongoDBObjectStorageDataAccess(const ChaosSharedPtr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
-MongoDBAccessor(_connection){}
+MongoDBAccessor(_connection),
+storage_write_concern(&mongo::WriteConcern::unacknowledged){
+    obj_stoarge_kvp = metadata_service::ChaosMetadataService::getInstance()->setting.object_storage_setting.key_value_custom_param;
+    if(obj_stoarge_kvp.count("mongodb_oswc")) {
+        //set the custom write concern
+        INFO << CHAOS_FORMAT("Set MongoDB object storage write concern to %1%", %obj_stoarge_kvp["mongodb_oswc"]);
+        if(obj_stoarge_kvp["mongodb_oswc"].compare("unacknowledged") == 0) {
+            storage_write_concern = &mongo::WriteConcern::unacknowledged;
+        } else if(obj_stoarge_kvp["mongodb_oswc"].compare("acknowledged") == 0) {
+            storage_write_concern = &mongo::WriteConcern::acknowledged;
+        } else if(obj_stoarge_kvp["mongodb_oswc"].compare("journaled") == 0) {
+            storage_write_concern = &mongo::WriteConcern::journaled;
+        }  else if(obj_stoarge_kvp["mongodb_oswc"].compare("replicated") == 0) {
+            storage_write_concern = &mongo::WriteConcern::replicated;
+        }  else if(obj_stoarge_kvp["mongodb_oswc"].compare("majority") == 0) {
+            storage_write_concern = &mongo::WriteConcern::majority;
+        } else {
+            ERR << CHAOS_FORMAT("Unrecognized value for parameter mongodb_oswc[%1%]", %obj_stoarge_kvp["mongodb_oswc"]);
+        }
+    }
+}
 
 MongoDBObjectStorageDataAccess::~MongoDBObjectStorageDataAccess() {}
 
@@ -63,7 +85,7 @@ int MongoDBObjectStorageDataAccess::pushObject(const std::string& key,
                                 MONGODB_DAQ_DATA_FIELD << mongo::BSONObj(bson_raw_data));
         if((err = connection->insert(MONGO_DB_COLLECTION_NAME(MONGODB_DAQ_COLL_NAME),
                                      q,
-                                     &mongo::WriteConcern::unacknowledged))){
+                                     storage_write_concern))){
             ERR << "Error pushing object";
         }
     } catch (const mongo::DBException &e) {

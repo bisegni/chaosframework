@@ -7,15 +7,15 @@
 QT += core gui sql
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
-#CONFIG += c++11
+PRECOMPILED_HEADER = precomp_header.h
+CONFIG += precompile_header
+
 QMAKE_CXXFLAGS += -std=c++11
 QMAKE_MAC_SDK = macosx10.12
 
 TARGET = ccs
 TEMPLATE = app
-RESOURCES = qdarkstyle/style.qrc \
-    dark_orange/dark_orange_style.qrc \
-    image/image.qrc
+RESOURCES = theme/theme.qrc
 
 INCLUDEPATH += $$PWD/../
 INCLUDEPATH += $$PWD/../usr/local/include
@@ -72,7 +72,6 @@ SOURCES += main.cpp\
     data/ChaosTypedAttributeValueSetter.cpp \
     external_lib/qcustomplot.cpp \
     data/AttributeReader.cpp \
-    widget/ChaosLabel.cpp \
     data/ChaosByteArray.cpp \
     plot/NodeAttributePlotting.cpp \
     data/DatasetReader.cpp \
@@ -160,7 +159,9 @@ SOURCES += main.cpp\
     language_editor/JsonEditor.cpp \
     node/agent/AgentSetting.cpp \
     widget/CQTableView.cpp \
-    widget/CPropertyPushButton.cpp
+    widget/CPropertyPushButton.cpp \
+    widget/CPropertyTextEdit.cpp \
+    widget/CPopupWidgetContainer.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -202,7 +203,6 @@ HEADERS  += \
     monitor/handler/system/SystemControlUnitRunScheduleDelay.h \
     monitor/monitor.h \
     monitor/handler/system/system.h \
-    widget/ChaosLabel.h \
     monitor/handler/MonitorTSTaggetBoolAttributeHandler.h \
     monitor/handler/AbstractTSTaggedAttributeHandler.h \
     monitor/handler/MonitorTSTaggedInt32AttributeHandler.h \
@@ -302,7 +302,10 @@ HEADERS  += \
     language_editor/JsonEditor.h \
     node/agent/AgentSetting.h \
     widget/CQTableView.h \
-    widget/CPropertyPushButton.h
+    widget/CPropertyPushButton.h\
+    precomp_header.h \
+    widget/CPropertyTextEdit.h \
+    widget/CPopupWidgetContainer.h
 
 FORMS    += \
     search/searchnoderesult.ui \
@@ -334,14 +337,17 @@ FORMS    += \
     data/editor/script/EditableScriptVariableTableModelEditDialog.ui \
     data/editor/common/EditableSubtypeListWidget.ui \
     script/ScriptInstanceManagerWidget.ui \
-    widget/ChaosStorageTypeWidget.ui \
     widget/CCommandStatisticWidget.ui \
     plot/BufferPlot.ui \
     log_browser/ApplicationErrorLogging.ui \
     node/agent/AgentEditor.ui \
     node/agent/AgentNodeAssociationEditor.ui \
     language_editor/JsonEditor.ui \
-    node/agent/AgentSetting.ui
+    node/agent/AgentSetting.ui \
+    widget/CPropertyTextEdit.ui \
+    widget/CPropertyTextEdit.ui \
+    widget/CPopupWidgetContainer.ui \
+    widget/ChaosStorageTypeWidget.ui
 
 DISTFILES += \
     dark_orange.stylesheet \

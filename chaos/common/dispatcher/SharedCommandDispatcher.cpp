@@ -269,7 +269,7 @@ void SharedCommandDispatcher::processBufferElement(chaos_data::CDataWrapper *act
                 //we need a response, so allocate the memory for it
                 remoteActionResult.reset(new CDataWrapper());
             }
-            //syncronously call the action in the current thread
+            //synCronusly call the action in the current thread
             actionResult.reset(actionDescriptionPtr->call(actionMessage.get(), action_elementPolicy.elementHasBeenDetached));
             
             //check if we need to submit a sub command

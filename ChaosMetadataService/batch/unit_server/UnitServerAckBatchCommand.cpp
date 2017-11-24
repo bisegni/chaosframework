@@ -229,11 +229,26 @@ int UnitServerAckCommand::prepareInstance() {
                                 UnitServerNodeDomainAndActionRPC::RPC_DOMAIN,
                                 UnitServerNodeDomainAndActionRPC::ACTION_UNIT_SERVER_LOAD_CONTROL_UNIT);
         //prepare auto init and autostart message into autoload pack
-        CUCommonUtility::prepareAutoInitAndStartInAutoLoadControlUnit(last_worked_cu.node_uid,
-                                                                      getDataAccess<mds_data_access::NodeDataAccess>(),
-                                                                      getDataAccess<mds_data_access::ControlUnitDataAccess>(),
-                                                                      getDataAccess<mds_data_access::DataServiceDataAccess>(),
-                                                                      autoload_pack.get());
+        try{
+            CUCommonUtility::prepareAutoInitAndStartInAutoLoadControlUnit(last_worked_cu.node_uid,
+                                                                          getDataAccess<mds_data_access::NodeDataAccess>(),
+                                                                          getDataAccess<mds_data_access::ControlUnitDataAccess>(),
+                                                                          getDataAccess<mds_data_access::DataServiceDataAccess>(),
+                                                                          autoload_pack.get());
+        } catch(CException& ex) {
+            getDataAccess<persistence::data_access::LoggingDataAccess>()->logException(last_worked_cu.node_uid,
+                                                                                       "[MDS]UnitServerAckCommand",
+                                                                                       "error",
+                                                                                       ex);
+            err = -2;
+        } catch(...) {
+            getDataAccess<persistence::data_access::LoggingDataAccess>()->logError(last_worked_cu.node_uid,
+                                                                                   "[MDS]UnitServerAckCommand",
+                                                                                   "error",
+                                                                                   -3,
+                                                                                   "Undefined error",
+                                                                                   __PRETTY_FUNCTION__);
+        }
     }
     return err;
 }

@@ -5,7 +5,6 @@
 #include "../api_async_processor/ApiSubmitter.h"
 
 #include <QVector>
-#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
 
 class DomainListModel :
         public ChaosAbstractListModel,

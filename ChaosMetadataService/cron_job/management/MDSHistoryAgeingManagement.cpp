@@ -36,7 +36,7 @@ void MDSHistoryAgeingManagement::start() {
     log("Start MDSHistoryAgeingManagement");
 }
 
-bool MDSHistoryAgeingManagement::execute(const common::cronous_manager::MapKeyVariant& job_parameter) {
+bool MDSHistoryAgeingManagement::execute(const common::cronus_manager::MapKeyVariant& job_parameter) {
     int err = 0;
     bool need_another_step = false;
     std::string control_unit_found = "";
@@ -64,28 +64,51 @@ bool MDSHistoryAgeingManagement::execute(const common::cronous_manager::MapKeyVa
             const std::string health_key    = control_unit_found + NodeHealtDefinitionKey::HEALT_KEY_POSTFIX;
             const std::string dev_alarm_key    = control_unit_found + DataPackPrefixID::DEV_ALARM_DATASET_POSTFIX;
             const std::string cu_alarm_key    = control_unit_found + DataPackPrefixID::CU_ALARM_DATASET_POSTFIX;
+            
+            log(CHAOS_FORMAT("Remove data for key %1%", %output_key));
             if((err = getDataAccess<persistence::data_access::ControlUnitDataAccess>()->eraseControlUnitDataBeforeTS(output_key,
                                                                                                                      remove_until_ts))){
                 log(CHAOS_FORMAT("Error erasing key %1% for control unit %2% with error %3%", %output_key%control_unit_found%err));
-            } else if((err = getDataAccess<persistence::data_access::ControlUnitDataAccess>()->eraseControlUnitDataBeforeTS(input_key,
+            }
+            
+            log(CHAOS_FORMAT("Remove data for key %1%", %input_key));
+            if((err = getDataAccess<persistence::data_access::ControlUnitDataAccess>()->eraseControlUnitDataBeforeTS(input_key,
                                                                                                                             remove_until_ts))){
                 log(CHAOS_FORMAT("Error erasing key %1% for control unit %2% with error %3%", %input_key%control_unit_found%err));
-            } else if((err = getDataAccess<persistence::data_access::ControlUnitDataAccess>()->eraseControlUnitDataBeforeTS(system_key,
+            }
+            
+            log(CHAOS_FORMAT("Remove data for key %1%", %system_key));
+            if((err = getDataAccess<persistence::data_access::ControlUnitDataAccess>()->eraseControlUnitDataBeforeTS(system_key,
                                                                                                                             remove_until_ts))){
                 log(CHAOS_FORMAT("Error erasing key %1% for control unit %2% with error %3%", %system_key%control_unit_found%err));
-            } else if((err = getDataAccess<persistence::data_access::ControlUnitDataAccess>()->eraseControlUnitDataBeforeTS(custom_key,
+            }
+            
+            log(CHAOS_FORMAT("Remove data for key %1%", %custom_key));
+            if((err = getDataAccess<persistence::data_access::ControlUnitDataAccess>()->eraseControlUnitDataBeforeTS(custom_key,
                                                                                                                             remove_until_ts))){
                 log(CHAOS_FORMAT("Error erasing key %1% for control unit %2% with error %3%", %custom_key%control_unit_found%err));
-            } else if((err = getDataAccess<persistence::data_access::ControlUnitDataAccess>()->eraseControlUnitDataBeforeTS(health_key,
+            }
+            
+            log(CHAOS_FORMAT("Remove data for key %1%", %health_key));
+            if((err = getDataAccess<persistence::data_access::ControlUnitDataAccess>()->eraseControlUnitDataBeforeTS(health_key,
                                                                                                                             remove_until_ts))){
                 log(CHAOS_FORMAT("Error erasing key %1% for control unit %2% with error %3%", %health_key%control_unit_found%err));
-            } else if((err = getDataAccess<persistence::data_access::ControlUnitDataAccess>()->eraseControlUnitDataBeforeTS(dev_alarm_key,
+            }
+            
+            log(CHAOS_FORMAT("Remove data for key %1%", %dev_alarm_key));
+            if((err = getDataAccess<persistence::data_access::ControlUnitDataAccess>()->eraseControlUnitDataBeforeTS(dev_alarm_key,
                                                                                                                             remove_until_ts))){
                 log(CHAOS_FORMAT("Error erasing key %1% for control unit %2% with error %3%", %dev_alarm_key%control_unit_found%err));
-            } if((err = getDataAccess<persistence::data_access::ControlUnitDataAccess>()->eraseControlUnitDataBeforeTS(cu_alarm_key,
+            }
+            
+            log(CHAOS_FORMAT("Remove data for key %1%", %cu_alarm_key));
+            if((err = getDataAccess<persistence::data_access::ControlUnitDataAccess>()->eraseControlUnitDataBeforeTS(cu_alarm_key,
                                                                                                                        remove_until_ts))){
                 log(CHAOS_FORMAT("Error erasing key %1% for control unit %2% with error %3%", %cu_alarm_key%control_unit_found%err));
-            } else if((err = getDataAccess<persistence::data_access::LoggingDataAccess>()->eraseLogBeforTS(control_unit_found,
+            }
+            
+            log(CHAOS_FORMAT("Remove log for cu %1%", %control_unit_found));
+            if((err = getDataAccess<persistence::data_access::LoggingDataAccess>()->eraseLogBeforTS(control_unit_found,
                                                                                                            remove_until_ts))){
                 log(CHAOS_FORMAT("Error erasing logging for control unit %1% with error %2%", %control_unit_found%err));
             }
@@ -95,7 +118,9 @@ bool MDSHistoryAgeingManagement::execute(const common::cronous_manager::MapKeyVa
         getDataAccess<persistence::data_access::ControlUnitDataAccess>()->releaseControlUnitForAgeingManagement(control_unit_found, aged);
         
         need_another_step = true;
-    } else {}
+    } else {
+       log("Control unit with empty string");
+    }
     return need_another_step;
 }
 

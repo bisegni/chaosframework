@@ -3,8 +3,6 @@
 
 #include "ChaosAbstractTableModel.h"
 
-#include <chaos/common/data/CDataVariant.h>
-
 #include <QMap>
 
 class LiveDatasetTableModel:

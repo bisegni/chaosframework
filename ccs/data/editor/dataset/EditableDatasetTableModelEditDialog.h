@@ -3,8 +3,6 @@
 
 #include <QDialog>
 
-#include <chaos/common/data/structured/DatasetAttribute.h>
-
 namespace Ui {
 class EditableDatasetTableModelEditDialog;
 }

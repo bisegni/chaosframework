@@ -47,7 +47,7 @@ namespace chaos {
                         ~RawDriverHandlerWrapper();
                         
                         //! send spontaneus message to the remote raw driver layer
-                        int sendMessage(data::DataPackUniquePtr& message_data);
+                        int sendMessage(data::CDWUniquePtr& message_data);
                     };
                     
                 }

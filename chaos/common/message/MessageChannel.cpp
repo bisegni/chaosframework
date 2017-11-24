@@ -141,7 +141,7 @@ void MessageChannel::requestPromisesHandler(const FuturePromiseData& response_da
 
 //!send an rpc request to a remote node
 /*!
- send a syncronous request and can wait for a determinated number of milliseconds the answer. If it has not
+ send a synCronus request and can wait for a determinated number of milliseconds the answer. If it has not
  been received the method return with a NULL pointer
  \param remote_host is the host:port string that identify the remote server where send the rpc request
  \param node_id id of the node into remote chaos rpc system

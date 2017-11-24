@@ -4,7 +4,6 @@
 #include "AbstractAttributeHandler.h"
 #include <QDebug>
 
-#include <chaos_metadata_service_client/monitor_system/monitor_system.h>
 
 class MonitorInt32AttributeHandler:
         public AbstractAttributeHandler,

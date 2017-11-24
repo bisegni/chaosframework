@@ -3,8 +3,6 @@
 
 #include "../../ChaosAbstractTableModel.h"
 
-#include <chaos/common/data/structured/DatasetAttribute.h>
-
 class EditableSubtypeListTableModel:
 public ChaosAbstractTableModel {
 public:

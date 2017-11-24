@@ -115,7 +115,9 @@ int MongoDBDataServiceDataAccess::registerNode(const std::string& ds_unique_id,
         if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                      query,
                                      update,
-                                     true))){
+                                     true,
+                                     false,
+                                     &mongo::WriteConcern::journaled))){
             MDBDSDA_ERR << "Error updating proprietary field for data service:" << ds_unique_id << " with error:" << err;
         }
     } catch (const mongo::DBException &e) {

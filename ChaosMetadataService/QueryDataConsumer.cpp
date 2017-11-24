@@ -254,11 +254,11 @@ int QueryDataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *hea
     CachePoolSlot *cache_slot = DriverPoolManager::getInstance()->getCacheDriverInstance();
     try{
         CacheData cache_data;
-        //get data
-        err = cache_slot->resource_pooled->getData(std::string((const char*)channel_data,
-                                                               channel_data_len),
-                                                   cache_data);
         if(cache_slot) {
+            //get data
+            err = cache_slot->resource_pooled->getData(std::string((const char*)channel_data,
+                                                                   channel_data_len),
+                                                       cache_data);
             if(cache_data.size()) {
                 result_header->value_len = (uint32_t)cache_data.size();
                 *result_value = malloc(result_header->value_len);
@@ -266,6 +266,7 @@ int QueryDataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *hea
                 std::memcpy(*result_value, &cache_data[0], result_header->value_len);
             }
         } else {
+            err = -1;
             ERR << "Error allocating cache slot";
         }
     } catch(...) {}
@@ -288,9 +289,9 @@ int QueryDataConsumer::consumeGetEvent(opcode_headers::DirectIODeviceChannelHead
         //get data
         DataBuffer<> data_buffer;
         MultiCacheData multi_cached_data;
-        err = cache_slot->resource_pooled->getData(keys,
-                                                   multi_cached_data);
         if(cache_slot) {
+            err = cache_slot->resource_pooled->getData(keys,
+                                                       multi_cached_data);
             for(ChaosStringVectorConstIterator it = keys.begin(),
                 end = keys.end();
                 it != end;
@@ -313,6 +314,7 @@ int QueryDataConsumer::consumeGetEvent(opcode_headers::DirectIODeviceChannelHead
             result_value_len = data_buffer.getCursorLocation();
             *result_value = data_buffer.release();
         } else {
+            err = -1;
             ERR << "Error allocating cache slot";
         }
     } catch(...) {}

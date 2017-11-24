@@ -1,9 +1,6 @@
 #ifndef ERRORMANAGER_H
 #define ERRORMANAGER_H
 
-#include <chaos/common/utility/Singleton.h>
-#include <chaos/common/exception/CException.h>
-
 #include <QObject>
 #include <QMutex>
 #include <QVector>
