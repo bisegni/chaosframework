@@ -1073,9 +1073,7 @@ int MongoDBControlUnitDataAccess::reserveControlUnitForAgeingManagement(uint64_t
                         }
                         break;
                     }
-                    
                 }
-
             }
         }
     } catch (const mongo::DBException &e) {
