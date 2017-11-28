@@ -135,38 +135,28 @@ void InetUtility::checkInterfaceName(std::vector<InterfaceInfo>& interface_infos
 
 bool InetUtility::checkWellFormedHostPort(std::string host_port) {
    bool ret=false;
-    {
-        boost::smatch match;
-
-        boost::regex exp(SERVERIP);
-        ret= regex_search(host_port,exp);
-    }
-
-    return ret;
+   boost::system::error_code ec;
+   boost::asio::ip::address::from_string( host_port, ec );
+   if ( ec )
+     return false;
+   return true;
 
 }
 
 bool InetUtility::checkWellFormedHostNamePort(std::string host_port) {
     bool ret=false;
-    {
-         boost::regex exp(SERVERHOSTNAME);
-         boost::smatch match;
-         ret =regex_search(host_port,exp);
+    int pos=host_port.find(":");
+    if(pos == std::string::npos){
+      return false;
     }
+    std::string hname=host_port.substr(0,pos);
+    std::string port=host_port.substr(pos+1);
+    return (gethostbyname(hname.c_str())!=NULL)&&(atoi(port.c_str())>0);
 
-    return ret;
 }
 
 bool InetUtility::checkWellFormedHostIpPort(std::string host_port) {
-    bool ret=false;
-    {
-        boost::smatch match;
-
-        boost::regex exp(SERVERIPANDPORT);
-        ret=regex_search(host_port,exp);
-    }
-
-    return ret;
+  return InetUtility::checkWellFormedHostNamePort(host_port);
 }
 
 void InetUtility::queryDns(std::string hostname, std::vector<std::string>& resolved_endpoints) {

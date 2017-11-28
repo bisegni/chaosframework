@@ -259,7 +259,7 @@ void GlobalConfiguration::checkDefaultOption() throw (CException) {
     configuration->addInt32Value(InitOption::OPT_LOG_MAX_SIZE_MB, log_max_size_mb);
     
     CHECK_AND_DEFINE_OPTION(string, publishingIp, InitOption::OPT_PUBLISHING_IP);
-    if(InetUtility::checkWellFormedHostPort(publishingIp)){configuration->addStringValue(InitOption::OPT_PUBLISHING_IP, publishingIp);}
+    if(publishingIp.size()&&InetUtility::checkWellFormedHostPort(publishingIp)){configuration->addStringValue(InitOption::OPT_PUBLISHING_IP, publishingIp);}
     
     CHECK_AND_DEFINE_OPTION(string, publishingInterface, InitOption::OPT_PUBLISHING_INTERFACE)
     configuration->addStringValue(InitOption::OPT_PUBLISHING_INTERFACE, publishingInterface);
@@ -495,9 +495,11 @@ void GlobalConfiguration::finalizeMetadataServerAddress() {
  */
 void GlobalConfiguration::addLocalServerAddress(const std::string& mdsAddress) throw (CException) {
     bool isIp = InetUtility::checkWellFormedHostPort(mdsAddress);
-    if(!isIp)
-        throw CException(1, "Bad server address", "GlobalConfiguration::addMetadataServerAddress");
-    
+    if(!isIp){
+      std::stringstream ss;
+      ss<<"Bad server address:'"<<mdsAddress<<"'";
+      throw CException(1, ss.str(), "GlobalConfiguration::addMetadataServerAddress");
+    }
     //address can be added
     configuration->addStringValue("local_ip", mdsAddress);
 }
