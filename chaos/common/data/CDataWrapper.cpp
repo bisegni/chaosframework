@@ -622,7 +622,12 @@ void CDataWrapper::setSerializedJsonData(const char* json_data) {
     bson =ALLOCATE_BSONT(bson_new_from_json((const uint8_t*)json_data,
                                             len,
                                             &err));
-    CHAOS_ASSERT(bson);
+    if(bson==NULL){
+        std::stringstream ss;
+        ss<<"cannot serialize json:'"<<json_data<<"'";
+        throw CException(1, ss.str(), __PRETTY_FUNCTION__);
+    }
+   // CHAOS_ASSERT(bson);
 }
 
 //append all elemento of an
@@ -898,7 +903,13 @@ std::string CMultiTypeDataArrayWrapper::getCanonicalJSONString() {
 }
 
 string CMultiTypeDataArrayWrapper::getStringElementAtIndex(const int pos) const{
-    CHAOS_ASSERT(values[pos].value_type == BSON_TYPE_UTF8);
+ //   CHAOS_ASSERT(values[pos].value_type == BSON_TYPE_UTF8);
+    if(values[pos].value_type != BSON_TYPE_UTF8){
+        std::stringstream ss;
+        ss<<"type at index ["<<pos<<"] is not String, typeid:"<<values[pos].value_type;
+        throw CException(1, ss.str(), __PRETTY_FUNCTION__);
+
+    }
     return std::string(values[pos].value.v_utf8.str, values[pos].value.v_utf8.len);
 }
 
@@ -916,7 +927,13 @@ int32_t CMultiTypeDataArrayWrapper::getInt32ElementAtIndex(const int pos) const{
     return values[pos].value.v_int32;
 }
 int64_t CMultiTypeDataArrayWrapper::getInt64ElementAtIndex(const int pos) const{
-    CHAOS_ASSERT(values[pos].value_type == BSON_TYPE_INT64);
+    //CHAOS_ASSERT(values[pos].value_type == BSON_TYPE_INT64);
+    if(values[pos].value_type != BSON_TYPE_INT64){
+        std::stringstream ss;
+        ss<<"type at index ["<<pos<<"] is not int64, typeid:"<<values[pos].value_type;
+        throw CException(1, ss.str(), __PRETTY_FUNCTION__);
+
+    }
     return values[pos].value.v_int64;
 }
 
@@ -941,7 +958,13 @@ bool CMultiTypeDataArrayWrapper::isCDataWrapperElementAtIndex(const int pos) con
 }
 
 CDataWrapper* CMultiTypeDataArrayWrapper::getCDataWrapperElementAtIndex(const int pos) const{
-    CHAOS_ASSERT(values[pos].value_type == BSON_TYPE_DOCUMENT);
+   // CHAOS_ASSERT(values[pos].value_type == BSON_TYPE_DOCUMENT);
+    if(values[pos].value_type != BSON_TYPE_DOCUMENT){
+        std::stringstream ss;
+        ss<<"type at index ["<<pos<<"] is not CDataWrapper, typeid:"<<values[pos].value_type;
+        throw CException(1, ss.str(), __PRETTY_FUNCTION__);
+
+    }
     return new CDataWrapper((const char *)values[pos].value.v_doc.data, values[pos].value.v_doc.data_len);
 }
 size_t CMultiTypeDataArrayWrapper::size() const{

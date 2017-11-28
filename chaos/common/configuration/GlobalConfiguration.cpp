@@ -477,9 +477,11 @@ void GlobalConfiguration::setConfiguration(chaos_data::CDataWrapper *conf){
 void GlobalConfiguration::addMetadataServerAddress(const string& mdsAddress) throw (CException) {
     bool isHostnameAndPort = InetUtility::checkWellFormedHostNamePort(mdsAddress);
     bool isIpAndPort  = InetUtility::checkWellFormedHostIpPort(mdsAddress);
-    if(!isHostnameAndPort && !isIpAndPort)
-        throw CException(1, "Bad server address", "GlobalConfiguration::addMetadataServerAddress");
-    
+    if(!isHostnameAndPort && !isIpAndPort){
+        std::stringstream ss;
+        ss<< "Bad server address: '"<<mdsAddress<<"' expected ip:port or hostaddress:port";
+        throw CException(1, ss.str(), "GlobalConfiguration::addMetadataServerAddress");
+    }
     //address can be added
     configuration->appendStringToArray(mdsAddress);
 }

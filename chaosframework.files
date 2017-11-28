@@ -799,6 +799,7 @@ chaos/common/action/DomainActions.cpp
 chaos/common/action/DomainActions.h
 chaos/common/action/EventAction.cpp
 chaos/common/action/EventAction.h
+chaos/common/additional_lib/backward.hpp
 chaos/common/additional_lib/base64.h
 chaos/common/additional_lib/mongoose.c
 chaos/common/additional_lib/mongoose.h
@@ -1417,6 +1418,7 @@ chaos/common/utility/FSUtility.cpp
 chaos/common/utility/FSUtility.h
 chaos/common/utility/FastDelegate.h
 chaos/common/utility/FastDelegateBind.h
+chaos/common/utility/InetUtility.cpp
 chaos/common/utility/InetUtility.h
 chaos/common/utility/InizializableService.cpp
 chaos/common/utility/InizializableService.h

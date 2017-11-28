@@ -57,6 +57,11 @@
 # undef BSON_HAVE_ATOMIC_64_ADD_AND_FETCH
 #endif
 
+#ifdef DISABLE_COMPARE_AND_SWAP
+#undef BSON_HAVE_ATOMIC_32_ADD_AND_FETCH
+#undef BSON_HAVE_ATOMIC_64_ADD_AND_FETCH
+#define __BSON_NEED_BARRIER
+#endif
 
 /*
  * Define to 1 if your system requires {} around PTHREAD_ONCE_INIT.

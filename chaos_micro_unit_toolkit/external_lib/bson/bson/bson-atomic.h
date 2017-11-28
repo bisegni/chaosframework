@@ -74,7 +74,10 @@ BSON_EXPORT (int64_t)
 bson_atomic_int64_add (volatile int64_t *p, int64_t n);
 #endif
 
-
+#ifdef __BSON_NEED_BARRIER
+BSON_EXPORT (void)
+bson_memory_barrier (void);
+#else
 #if defined(_WIN32)
 #define bson_memory_barrier() MemoryBarrier ()
 #elif defined(__GNUC__)
@@ -95,7 +98,7 @@ bson_atomic_int64_add (volatile int64_t *p, int64_t n);
 BSON_EXPORT (void)
 bson_memory_barrier (void);
 #endif
-
+#endif
 
 BSON_END_DECLS
 

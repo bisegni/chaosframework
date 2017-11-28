@@ -235,6 +235,7 @@ SET(common_lib_src ${common_lib_src}
         utility/AbstractListener.cpp
         utility/AbstractListenerContainer.cpp
         utility/ProcStat.cpp
+	utility/InetUtility.cpp
         utility/FSUtility.cpp)
 
 SET(common_lib_src ${common_lib_src}
