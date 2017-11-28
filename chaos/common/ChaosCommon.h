@@ -35,7 +35,9 @@
 #include <chaos/common/utility/InetUtility.h>
 #include <chaos/common/plugin/PluginManager.h>
 #include <chaos/common/network/NetworkBroker.h>
+#ifndef CHAOS_NO_BACKTRACE
 #include <chaos/common/additional_lib/backward.hpp>
+#endif
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/async_central/AsyncCentralManager.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
@@ -87,6 +89,7 @@ namespace chaos {
     }
     
 #include <csignal>
+#ifndef CHAOS_NO_BACKTRACE
     class SignalHandling {
     public:
         static std::vector<int> make_default_signals() {
@@ -172,6 +175,7 @@ namespace chaos {
 #if _XOPEN_SOURCE >= 700 || _POSIX_C_SOURCE >= 200809L
             psiginfo(info, 0);
 #endif
+
         }
         
     private:
@@ -192,7 +196,7 @@ namespace chaos {
             _exit(EXIT_FAILURE);
         }
     };
-
+#endif
     //! Chaos common engine class
     /*!
      This is the base class for the other toolkit, it thake care to initialize all common
@@ -202,7 +206,9 @@ namespace chaos {
     class ChaosCommon:
     public common::utility::Singleton<T>,
     public common::utility::StartableService {
+#ifndef CHAOS_NO_BACKTRACE
         SignalHandling sign_handling;
+#endif
     protected:
         bool initialized,deinitialized;
         
@@ -325,9 +331,9 @@ namespace chaos {
                 LAPP_ << "Boost version: " << (BOOST_VERSION / 100000) << "."<< ((BOOST_VERSION / 100) % 1000)<< "."<< (BOOST_VERSION / 100000);
                 LAPP_ << "Compiler Version: " << BOOST_COMPILER;
                 LAPP_ << "-----------------------------------------";
-                
+#ifndef CHAOS_NO_BACKTRACE
                 CHAOS_ASSERT(sign_handling.loaded());
-                    
+#endif                    
                 //find our ip
                 string local_ip;
                 if(GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_PUBLISHING_IP)){
