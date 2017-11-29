@@ -48,12 +48,13 @@ bson_iter_init(&element_found, ACCESS_BSON(bson));\
 if(bson_iter_find_case(&element_found, key.c_str()) && c(&element_found))
 
 #define INIT_ITERATOR(key) \
+    bool keyfound;\
     bson_iter_t element_found;\
     bson_iter_init(&element_found, ACCESS_BSON(bson));\
-    bson_iter_find_case(&element_found, key.c_str());
+    keyfound=bson_iter_find_case(&element_found, key.c_str());
 
 #define GET_VALUE(t,c) \
-    if(c(&element_found)){return bson_iter_##t (&element_found);}
+    if(keyfound&& (c(&element_found))){return bson_iter_##t (&element_found);}
 
 static void bsonDeallocator(bson_t* bson) {if(bson){bson_destroy(bson);}}
 
@@ -349,7 +350,7 @@ void CDataWrapper::addBinaryValue(const std::string& key,
 
 chaos::DataType::BinarySubtype CDataWrapper::getBinarySubtype(const std::string& key) const{
     bson_subtype_t subtype = BSON_SUBTYPE_USER;
-    
+
     FIND_AND_CHECK(key, BSON_ITER_HOLDS_BINARY){
         const uint8_t *buff = NULL;
         uint32_t buf_len;
@@ -377,20 +378,20 @@ void CDataWrapper::addValue(const std::string& key,int32_t val){
 }
 void CDataWrapper::addValue(const std::string& key,int64_t val){
     addInt64Value(key, val);
-    
+
 }
 
 void CDataWrapper::addValue(const std::string& key,double val){
     addDoubleValue(key, val);
-    
+
 }
 void CDataWrapper::addValue(const std::string& key,bool val){
     addBoolValue(key, val);
-    
+
 }
 void CDataWrapper::addValue(const std::string& key,std::string& val){
     addStringValue(key, val);
-    
+
 }
 
 void CDataWrapper::addVariantValue(const std::string& key,
@@ -422,7 +423,7 @@ void CDataWrapper::addVariantValue(const std::string& key,
                            variant_value.asCDataBuffer()->getBufferSize());
             break;
     }
-    
+
 }
 
 //return the binary data value
@@ -544,7 +545,7 @@ const char * CDataWrapper::getRawValuePtr(const std::string& key) const{
             return NULL;
             break;
     }
-    
+
 }
 
 //add a bool value
@@ -625,7 +626,7 @@ void CDataWrapper::setSerializedData(const char* bson_data) {
                           -1,
                           bson_iter_value(&it));
     }
-    
+
 }
 
 //reinitialize the object with bson data
@@ -713,7 +714,7 @@ string CDataWrapper::toHash() const{
 CDataVariant CDataWrapper::getVariantValue(const std::string& key) const{
     //check if key is present
     if(!hasKey(key)) return CDataVariant();
-    
+
     //create variant using the typed data
     switch (getValueType(key)) {
         case CDataWrapperTypeBool:
@@ -858,7 +859,7 @@ CDataWrapperType CDataWrapper::getValueType(const std::string& key) const{
             break;
         default:
             break;
-            
+
     }
     return result;
 }
@@ -880,7 +881,7 @@ document_shrd_ptr(_document_shrd_ptr) {
         bson_iter_array(&element_found,
                         &array_len,
                         &array);
-        
+
         if (bson_init_static(&array_doc, array, array_len)) {
             bson_iter_t iter;
             if(bson_iter_init(&iter, &array_doc)) {
@@ -927,12 +928,12 @@ string CMultiTypeDataArrayWrapper::getStringElementAtIndex(const int pos) const{
 }
 
 double CMultiTypeDataArrayWrapper::getDoubleElementAtIndex(const int pos) const{
-    
+
     if(values[pos].value_type != BSON_TYPE_DOUBLE){
         std::stringstream ss;
         ss<<"type at index ["<<pos<<"] is not double, typeid:"<<values[pos].value_type;
         throw CException(1, ss.str(), __PRETTY_FUNCTION__);
-        
+
     }
     return values[pos].value.v_double;
 }
