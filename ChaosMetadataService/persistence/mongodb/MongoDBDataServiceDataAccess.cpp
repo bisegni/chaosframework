@@ -79,8 +79,8 @@ int MongoDBDataServiceDataAccess::getDescription(const std::string& ds_unique_id
             err = -3;
             MDBDSDA_ERR << "no specific data service attribute found for " << ds_unique_id << " with error:" << err;
         } else {
-            (*node_description)->addStringValue(DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT,
-                                                result.getStringField(DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT));
+            (*node_description)->addInt32Value(DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT,
+                                                result.getField(DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT).numberInt());
         }
     } catch (const mongo::DBException &e) {
         MDBDSDA_ERR << e.what();
