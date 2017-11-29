@@ -131,7 +131,6 @@ TEST(CDataWrapperTest, TestEmptyJSONToBSON) {
     ASSERT_STREQ(json_b.c_str(), "{ }");
     ASSERT_STREQ(can_json_b.c_str(), "{ }");
 }
-
 TEST(CDataWrapperTest, TestConcatenation) {
     const char* test_json_translation="{\"double_key\":[1.0,2.1,-1.0,-0.9],\"string_vector\":[\"ciao\",\"come stai\"]}";
     CDataWrapper dconcat,empty,pieno;
@@ -176,4 +175,9 @@ TEST(CDataWrapperTest, TestConcatenation) {
         ASSERT_EQ( test_var[cnt], p->getDoubleElementAtIndex(cnt));
     }
     ASSERT_STREQ("{ \"empty\" : {  }, \"notempty\" : { \"double_key\" : [ 1.0, 2.1000000000000000888, -1.0, -0.9000000000000000222 ], \"string_vector\" : [ \"ciao\", \"come stai\" ] }, \"empty2\" : {  }, \"pieno\" : { \"ts1\" : 1, \"ts2\" : 2, \"ts3\" : 3, \"ts4\" : 4, \"double_key\" : -2.0, \"ts5\" : 5, \"ts6\" : 6, \"string_empty\" : \"\", \"int_key\" : 3, \"string_key\" : \"this is a long text that try to do some space on bson\", \"bool_key\" : true, \"bool_key1\" : false } }", dconcat.getCompliantJSONString().c_str());
+}
+TEST(CDataWrapperTest, DateToLong) {
+    const char * json = "{  \"ndk_heartbeat\" : { \"$date\" : { \"$numberLong\" : \"1511968737899\" } } }";
+    CDWUniquePtr data = CDataWrapper::instanceFromJson(json);
+    ASSERT_EQ(data->getInt64Value("ndk_heartbeat"), 1511968737899);
 }
