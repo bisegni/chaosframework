@@ -36,7 +36,7 @@ using namespace chaos::common::data;
 #define ACCESS_BSON(x) static_cast<bson_t*>(x.get())
 #define CW_CAST_EXCEPTION(type){\
     std::stringstream ss;\
-    ss<<"cannot get or cast to '" #type  "'"<<key<<"'";\
+    ss<<"cannot get or cast to '" #type  "' "<<key<<"'";\
     throw CException(1, ss.str(), __PRETTY_FUNCTION__);}
 
 #define ENSURE_ARRAY(x) \
@@ -47,12 +47,13 @@ bson_iter_t element_found;\
 bson_iter_init(&element_found, ACCESS_BSON(bson));\
 if(bson_iter_find_case(&element_found, key.c_str()) && c(&element_found))
 
-#define INIT_ITERATOR \
+#define INIT_ITERATOR(key) \
     bson_iter_t element_found;\
-    bson_iter_init(&element_found, ACCESS_BSON(bson));
+    bson_iter_init(&element_found, ACCESS_BSON(bson));\
+    bson_iter_find_case(&element_found, key.c_str());
 
-#define GET_VALUE(t,k,c) \
-    if(bson_iter_find_case(&element_found, key.c_str()) && c(&element_found)){return bson_iter_##t (&element_found);}
+#define GET_VALUE(t,c) \
+    if(c(&element_found)){return bson_iter_##t (&element_found);}
 
 static void bsonDeallocator(bson_t* bson) {if(bson){bson_destroy(bson);}}
 
@@ -279,55 +280,55 @@ const char *  CDataWrapper::getCStringValue(const std::string& key) const{
 
 //add a integer value
 int32_t CDataWrapper::getInt32Value(const std::string& key) const{
-    INIT_ITERATOR;
-    GET_VALUE(int32,key,BSON_ITER_HOLDS_INT32);
-    GET_VALUE(bool,key,BSON_ITER_HOLDS_BOOL);
+    INIT_ITERATOR(key);
+    GET_VALUE(int32,BSON_ITER_HOLDS_INT32);
+    GET_VALUE(bool,BSON_ITER_HOLDS_BOOL);
     CW_CAST_EXCEPTION(int32);
 }
 //add a integer value
 uint32_t CDataWrapper::getUInt32Value(const std::string& key) const{
-    INIT_ITERATOR;
-    GET_VALUE(int32,key,BSON_ITER_HOLDS_INT32);
-    GET_VALUE(bool,key,BSON_ITER_HOLDS_BOOL);
+    INIT_ITERATOR(key);
+    GET_VALUE(int32,BSON_ITER_HOLDS_INT32);
+    GET_VALUE(bool,BSON_ITER_HOLDS_BOOL);
     CW_CAST_EXCEPTION(uint32);
 
 }
 //add a integer value
 int64_t CDataWrapper::getInt64Value(const std::string& key) const{
-    INIT_ITERATOR;
-    GET_VALUE(int64,key,BSON_ITER_HOLDS_INT64);
-    GET_VALUE(int32,key,BSON_ITER_HOLDS_INT32);
-    GET_VALUE(double,key,BSON_ITER_HOLDS_DOUBLE);
-    GET_VALUE(bool,key,BSON_ITER_HOLDS_BOOL);
+    INIT_ITERATOR(key);
+    GET_VALUE(int64,BSON_ITER_HOLDS_INT64);
+    GET_VALUE(int32,BSON_ITER_HOLDS_INT32);
+    GET_VALUE(double,BSON_ITER_HOLDS_DOUBLE);
+    GET_VALUE(bool,BSON_ITER_HOLDS_BOOL);
     CW_CAST_EXCEPTION(int64);
 
 }
 //add a integer value
 uint64_t CDataWrapper::getUInt64Value(const std::string& key) const{
-    INIT_ITERATOR;
-    GET_VALUE(int64,key,BSON_ITER_HOLDS_INT64);
-    GET_VALUE(int32,key,BSON_ITER_HOLDS_INT32);
-    GET_VALUE(double,key,BSON_ITER_HOLDS_DOUBLE);
-    GET_VALUE(bool,key,BSON_ITER_HOLDS_BOOL);
+    INIT_ITERATOR(key);
+    GET_VALUE(int64,BSON_ITER_HOLDS_INT64);
+    GET_VALUE(int32,BSON_ITER_HOLDS_INT32);
+    GET_VALUE(double,BSON_ITER_HOLDS_DOUBLE);
+    GET_VALUE(bool,BSON_ITER_HOLDS_BOOL);
     CW_CAST_EXCEPTION(uint64);
 
 }
 //add a integer value
 double CDataWrapper::getDoubleValue(const std::string& key) const{
-    INIT_ITERATOR;
-    GET_VALUE(double,key,BSON_ITER_HOLDS_DOUBLE);
-    GET_VALUE(int64,key,BSON_ITER_HOLDS_INT64);
-    GET_VALUE(int32,key,BSON_ITER_HOLDS_INT32);
-    GET_VALUE(bool,key,BSON_ITER_HOLDS_BOOL);
+    INIT_ITERATOR(key);
+    GET_VALUE(double,BSON_ITER_HOLDS_DOUBLE);
+    GET_VALUE(int64,BSON_ITER_HOLDS_INT64);
+    GET_VALUE(int32,BSON_ITER_HOLDS_INT32);
+    GET_VALUE(bool,BSON_ITER_HOLDS_BOOL);
     CW_CAST_EXCEPTION(double);
 
 }
 
 //get a bool value
 bool  CDataWrapper::getBoolValue(const std::string& key) const{
-    INIT_ITERATOR;
-    GET_VALUE(bool,key,BSON_ITER_HOLDS_BOOL);
-    GET_VALUE(int32,key,BSON_ITER_HOLDS_INT32);
+    INIT_ITERATOR(key);
+    GET_VALUE(bool,BSON_ITER_HOLDS_BOOL);
+    GET_VALUE(int32,BSON_ITER_HOLDS_INT32);
     CW_CAST_EXCEPTION(bool);
 
 }
