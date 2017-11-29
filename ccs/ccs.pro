@@ -20,7 +20,7 @@ RESOURCES = theme/theme.qrc
 INCLUDEPATH += $$PWD/../
 INCLUDEPATH += $$PWD/../usr/local/include
 
-LIBS += -L$$PWD/../usr/local/lib
+LIBS += -L$$PWD/../usr/local/lib -L"/usr/lib/x86_64-linux-gnu/mesa/"
 
 
 LIBS +=     -lchaos_metadata_service_client
