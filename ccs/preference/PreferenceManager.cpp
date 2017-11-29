@@ -6,36 +6,18 @@
 
 using namespace chaos::metadata_service_client;
 
-PreferenceManager::PreferenceManager() {
+PreferenceManager::PreferenceManager() {}
 
-}
+PreferenceManager::~PreferenceManager() {}
 
-PreferenceManager::~PreferenceManager() {
-
-}
-
-bool PreferenceManager::activerNetworkConfiguration(const QString& configuration_name) {
-    setDefaultNetworkConfiguration(configuration_name);
-    return activeDefaultNetworkConfiguration();
-}
-
-void PreferenceManager::setDefaultNetworkConfiguration(const QString& configuration_name) {
-    QSettings settings;
-    settings.beginGroup(PREFERENCE_NETWORK_GROUP_NAME);
-    settings.setValue("active_configuration", configuration_name);
-    settings.endGroup();
-    settings.sync();
-}
-
-bool PreferenceManager::activeDefaultNetworkConfiguration() {
+bool PreferenceManager::activeNetworkConfiguration(const QString &configuration_name) {
     QSettings settings;
     ChaosMetadataServiceClient::getInstance()->clearServerList();
-    const QString active_configuration = getActiveConfigurationName();
 
     settings.beginGroup(PREFERENCE_NETWORK_GROUP_NAME);
 
-    if(settings.childGroups().contains(active_configuration) == false) return false;
-    settings.beginGroup(active_configuration);
+    if(settings.childGroups().contains(configuration_name) == false) return false;
+    settings.beginGroup(configuration_name);
 
     int mds_address_size = settings.beginReadArray("mds_address");
     for (int i = 0; i < mds_address_size; ++i) {
@@ -51,11 +33,15 @@ bool PreferenceManager::activeDefaultNetworkConfiguration() {
         ChaosMetadataServiceClient::getInstance()->enableMonitor();
     }
     ChaosMetadataServiceClient::getInstance()->reconfigureMonitor();
+
+    //set new configuration as active
+    settings.setValue("active_configuration", configuration_name);
+
     settings.endGroup();
     return true;
 }
 
-QStringList PreferenceManager::getNetowrkConfigurationsNames() {
+QStringList PreferenceManager::getNetworkConfigurationNames() {
     QSettings settings;
     settings.beginGroup(PREFERENCE_NETWORK_GROUP_NAME);
     const QStringList result = settings.childGroups();
@@ -63,9 +49,8 @@ QStringList PreferenceManager::getNetowrkConfigurationsNames() {
     return result;
 }
 
-QString  PreferenceManager::getActiveConfigurationName() {
+QString  PreferenceManager::getActiveNetworkConfigurationName() {
     QSettings settings;
-    ChaosMetadataServiceClient::getInstance()->clearServerList();
     settings.beginGroup(PREFERENCE_NETWORK_GROUP_NAME);
     const QString current_setting = settings.value("active_configuration").toString();
     settings.endGroup();

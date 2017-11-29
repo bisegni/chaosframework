@@ -993,6 +993,7 @@
 		32CAC9E81AE69F4400DC6AAB /* LoadUnloadControlUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CAC9E51AE69F3D00DC6AAB /* LoadUnloadControlUnit.cpp */; };
 		32CB736F16FE3432008575F0 /* ReaderDataService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CB736D16FE3432008575F0 /* ReaderDataService.cpp */; };
 		32CB737016FE3432008575F0 /* ReaderDataService.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CB736E16FE3432008575F0 /* ReaderDataService.h */; };
+		32CB75081FCE9DE6006DF3D0 /* InetUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CB75071FCE9DE5006DF3D0 /* InetUtility.cpp */; };
 		32CB7CE017099C8D00767FC1 /* DataCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CB7CDE17099C8D00767FC1 /* DataCache.cpp */; };
 		32CB7CE117099C8D00767FC1 /* DataCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CB7CDF17099C8D00767FC1 /* DataCache.h */; };
 		32CE2DA81C328E99004AC2A3 /* DeleteNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CE2DA61C328E98004AC2A3 /* DeleteNode.cpp */; };
@@ -2518,6 +2519,7 @@
 		32CAC9E61AE69F3D00DC6AAB /* LoadUnloadControlUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadUnloadControlUnit.h; sourceTree = "<group>"; };
 		32CB736D16FE3432008575F0 /* ReaderDataService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReaderDataService.cpp; sourceTree = "<group>"; };
 		32CB736E16FE3432008575F0 /* ReaderDataService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReaderDataService.h; sourceTree = "<group>"; };
+		32CB75071FCE9DE5006DF3D0 /* InetUtility.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InetUtility.cpp; sourceTree = "<group>"; };
 		32CB7CDE17099C8D00767FC1 /* DataCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataCache.cpp; sourceTree = "<group>"; };
 		32CB7CDF17099C8D00767FC1 /* DataCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataCache.h; sourceTree = "<group>"; };
 		32CE2DA61C328E98004AC2A3 /* DeleteNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeleteNode.cpp; sourceTree = "<group>"; };
@@ -4312,6 +4314,7 @@
 				326DB42C14B38BC00018A8D0 /* TimingUtil.h */,
 				326DB42D14B38BC00018A8D0 /* UUIDUtil.h */,
 				32AAD78D14CD95FD005A097C /* Atomic.h */,
+				32CB75071FCE9DE5006DF3D0 /* InetUtility.cpp */,
 				325F86EB14D9E59D00CDF35F /* InetUtility.h */,
 				32ED648D14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h */,
 				32DF603515E14C7700312C94 /* NamedService.cpp */,
@@ -6922,6 +6925,7 @@
 				32C9CD3C1D51F7D30048DB4A /* PropertyDescription.cpp in Sources */,
 				327F51DE1952E81D00BA3D01 /* DirectIOURLManagment.cpp in Sources */,
 				32A862181D58C79900A7D707 /* AbstractEvent.cpp in Sources */,
+				32CB75081FCE9DE6006DF3D0 /* InetUtility.cpp in Sources */,
 				32A88BE61CF8228A001DBAF5 /* ltablib.c in Sources */,
 				328556A417F2E36000A64ED2 /* DirectIOServer.cpp in Sources */,
 				32B159D118B38C980096B58B /* DirectIODeviceClientChannel.cpp in Sources */,

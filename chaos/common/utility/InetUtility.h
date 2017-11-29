@@ -78,7 +78,7 @@ namespace chaos {
                 /*!
                  This methdo will take care for network address scan process
                  */
-                static std::string scanForLocalNetworkAddress(std::string _eth_interface_name = std::string());
+                static std::string scanForLocalNetworkAddress(const std::string& _eth_interface_name = std::string());
                 
                 //! Network port scan
                 /*!

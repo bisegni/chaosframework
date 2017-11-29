@@ -15,6 +15,7 @@
 #include <QFile>
 #include <QMenu>
 #include <QResource>
+#include <QWindow>
 
 #include "error/ErrorManager.h"
 #include "node/unit_server/UnitServerEditor.h"
@@ -22,6 +23,7 @@
 #include "search/SearchNodeResult.h"
 #include "preference/PreferenceDialog.h"
 #include "preference/PreferenceManager.h"
+#include "preference/SelectNetworkDomain.h"
 #include "snapshot/SnapshotManager.h"
 #include "tree_group/TreeGroupManager.h"
 #include "log_browser/LogBrowser.h"
@@ -36,8 +38,8 @@ using namespace chaos::metadata_service_client;
 
 //declare metatype used in chaos
 MainController::MainController():
-    api_submitter(this),
-    application_error_widget(NULL){
+    application_error_widget(NULL),
+    api_submitter(this) {
     connect(&ErrorManager::getInstance()->signal_proxy,
             SIGNAL(errorEntryUpdated()),
             SLOT(actionApplicationLogBrowser()));
@@ -45,7 +47,7 @@ MainController::MainController():
 
 MainController::~MainController() {}
 
-void MainController::init(int argc, char **argv, QApplication& a) {
+bool MainController::init(int argc, char **argv) {
     //register chaos metatype
     qRegisterMetaType<QSharedPointer<ChaosByteArray> >();
     qRegisterMetaType<QSharedPointer<CommandReader> >();
@@ -123,26 +125,26 @@ void MainController::init(int argc, char **argv, QApplication& a) {
         darkPalette.setColor(QPalette::Disabled, QPalette::ButtonText, disable_color);
         darkPalette.setColor(QPalette::Disabled, QPalette::Text, disable_color);
 
-        a.setPalette(darkPalette);
+        ((QApplication*)QApplication::instance())->setPalette(darkPalette);
     }
 
 #ifdef Q_OS_LINUX
-    a.setStyleSheet("QWidget {font-family: Monospace; font-size: 9pt;}"
-                    "QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }");
+    QApplication::instance()->setStyleSheet("QWidget {font-family: Monospace; font-size: 9pt;}"
+                                            "QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }");
 #elif defined(Q_OS_DARWIN)
     //    QFile style_files(":/dark_orange/style.qss");
     //    if (!style_files.open(QFile::ReadOnly | QFile::Text)) {
-    a.setStyleSheet("QWidget {font-size: 11pt;}"
-                    "QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }");
+    ((QApplication*)QApplication::instance())->setStyleSheet("QWidget {font-size: 11pt;}"
+                                                             "QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }");
     //    }else{
     //        QTextStream in(&style_files);
-    //        a.setStyleSheet(in.readAll());
+    //        QApplication::instance()->setStyleSheet(in.readAll());
     //    }
 #else
 
 #endif
     //set application information
-    a.setQuitOnLastWindowClosed(false);
+    ((QApplication*)QApplication::instance())->setQuitOnLastWindowClosed(false);
     QApplication::setApplicationName("chaos_control_studio");
     QApplication::setApplicationVersion("0.0.1-alpha");
     QApplication::setOrganizationName("INFN-LNF");
@@ -152,38 +154,13 @@ void MainController::init(int argc, char **argv, QApplication& a) {
     ChaosMetadataServiceClient::getInstance()->init(argc, argv);
     ChaosMetadataServiceClient::getInstance()->start();
 
-    //init menu bar
-    initApplicationMenuBar();
-
-    //configure monitor
-    bool configured = reconfigure();
-
-    //show splash screen
-    QPixmap pixmap(":splash/main_splash.png");
-    splash.reset(new QSplashScreen(pixmap));
-    splash->show();
-    splash->showMessage(QObject::tr("Starting !CHAOS layer..."),
-                        Qt::AlignLeft | Qt::AlignBottom, Qt::lightGray);
-    a.processEvents();
-    //keep segnal for last windows closed
-    connect(&a,
-            SIGNAL(lastWindowClosed()),
-            SLOT(lastWindowClosed()));
-
-    splash->showMessage(QObject::tr("!CHAOS Control Studio Initilized!"),
-                        Qt::AlignLeft | Qt::AlignBottom, Qt::lightGray);
-    a.processEvents();
-    //set thread pool thread size
-    qDebug() << "Thread pool of size:" << QThreadPool::globalInstance()->maxThreadCount();
-
-
-    if(configured == false) {
-        splash->finish(NULL);
-        actionPreferences();
-    }
-    QWidget *w = new SearchNodeResult();
-    w->show();
-    splash->finish(w);
+    //start selection of the network domain
+    SelectNetworkDomain network_dmoain_selector;
+    connect(&network_dmoain_selector,
+            SIGNAL(networkDomainSelected(QString)),
+            SLOT(selectedNetworkDomain(QString)));
+    bool result = (network_dmoain_selector.exec() == QDialog::Accepted);
+    return result;
 }
 
 void MainController::deinit() {
@@ -196,17 +173,6 @@ void MainController::deinit() {
     ChaosMetadataServiceClient::getInstance()->deinit();
 
     qDebug() << "!CHAOS Control Studio closed!";
-}
-
-
-bool MainController::reconfigure() {
-    bool configured = true;
-    try{
-        configured = PreferenceManager::getInstance()->activerNetworkConfiguration(PreferenceManager::getInstance()->getActiveConfigurationName());
-    }catch(...) {
-        configured = false;
-    }
-    return configured;
 }
 
 void MainController::initApplicationMenuBar() {
@@ -243,8 +209,8 @@ void MainController::initApplicationMenuBar() {
 void MainController::initConfigurationsMenu(QMenu *menu_configurations) {
     QAction *action_configuration = NULL;
     QActionGroup* group_configuration = new QActionGroup(this);
-    QStringList networ_configurations = PreferenceManager::getInstance()->getNetowrkConfigurationsNames();
-    const QString current_setting = PreferenceManager::getInstance()->getActiveConfigurationName();
+    QStringList networ_configurations = PreferenceManager::getInstance()->getNetworkConfigurationNames();
+    const QString current_setting = PreferenceManager::getInstance()->getActiveNetworkConfigurationName();
     foreach (QString configuration, networ_configurations) {
         action_configuration = menu_configurations->addAction(configuration, this, SLOT(actionSwitchNetworkConfiguration()));
         action_configuration->setCheckable(true);
@@ -260,6 +226,33 @@ void MainController::openInWindow(QWidget *w) {
 
 void MainController::lastWindowClosed() {
 
+}
+
+void MainController::selectedNetworkDomain(const QString& selected_domain_network) {
+    //init menu bar
+    initApplicationMenuBar();
+
+    //show splash screen
+    QPixmap pixmap(":splash/main_splash.png");
+    splash.reset(new QSplashScreen(pixmap));
+    splash->show();
+    splash->showMessage(QObject::tr("Starting !CHAOS layer..."),
+                        Qt::AlignLeft | Qt::AlignBottom, Qt::lightGray);
+    QApplication::instance()->processEvents();
+    //keep segnal for last windows closed
+    connect(QApplication::instance(),
+            SIGNAL(lastWindowClosed()),
+            SLOT(lastWindowClosed()));
+
+    splash->showMessage(QObject::tr("!CHAOS Control Studio Initilized!"),
+                        Qt::AlignLeft | Qt::AlignBottom, Qt::lightGray);
+    QApplication::instance()->processEvents();
+    //set thread pool thread size
+    qDebug() << "Thread pool of size:" << QThreadPool::globalInstance()->maxThreadCount();
+
+    QWidget *w = new SearchNodeResult();
+    w->show();
+    splash->finish(w);
 }
 
 void MainController::actionSearchNode() {
@@ -308,9 +301,13 @@ void MainController::actionCloseWidget(QObject *widget) {
 }
 
 void MainController::actionSwitchNetworkConfiguration() {
+    QWindowList opened_windows =  QGuiApplication::allWindows();
+    for (uint i = 0 ; i< opened_windows.size() ; i++)     {
+        opened_windows.at(i)->close();
+    }
     QAction* action_network_configuration = dynamic_cast<QAction*>(sender());
-    if(action_network_configuration == NULL) return;
-    PreferenceManager::getInstance()->activerNetworkConfiguration(action_network_configuration->text());
+    //    if(action_network_configuration == NULL) return;
+    //    PreferenceManager::getInstance()->activerNetworkConfiguration(action_network_configuration->text());
 }
 
 void MainController::actionNewUnitServer() {
