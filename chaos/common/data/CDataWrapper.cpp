@@ -296,6 +296,7 @@ uint32_t CDataWrapper::getUInt32Value(const std::string& key) const{
 //add a integer value
 int64_t CDataWrapper::getInt64Value(const std::string& key) const{
     INIT_ITERATOR(key);
+    GET_VALUE(date_time,BSON_ITER_HOLDS_DATE_TIME);
     GET_VALUE(int64,BSON_ITER_HOLDS_INT64);
     GET_VALUE(int32,BSON_ITER_HOLDS_INT32);
     GET_VALUE(double,BSON_ITER_HOLDS_DOUBLE);
@@ -306,6 +307,7 @@ int64_t CDataWrapper::getInt64Value(const std::string& key) const{
 //add a integer value
 uint64_t CDataWrapper::getUInt64Value(const std::string& key) const{
     INIT_ITERATOR(key);
+    GET_VALUE(date_time,BSON_ITER_HOLDS_DATE_TIME);
     GET_VALUE(int64,BSON_ITER_HOLDS_INT64);
     GET_VALUE(int32,BSON_ITER_HOLDS_INT32);
     GET_VALUE(double,BSON_ITER_HOLDS_DOUBLE);
