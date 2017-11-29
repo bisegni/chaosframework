@@ -34,6 +34,10 @@ using namespace chaos::common::data;
 #define ALLOCATE_BSONT(x) ChaosBsonShrdPtr(x, &bsonDeallocator)
 
 #define ACCESS_BSON(x) static_cast<bson_t*>(x.get())
+#define CW_CAST_EXCEPTION(type){\
+    std::stringstream ss;\
+    ss<<"cannot get or cast to '" #type  "'"<<key<<"'";\
+    throw CException(1, ss.str(), __PRETTY_FUNCTION__);}
 
 #define ENSURE_ARRAY(x) \
 if(x.get() == NULL) {array_index = 0; x = ALLOCATE_BSONT(bson_new());}
@@ -267,59 +271,81 @@ const char *  CDataWrapper::getCStringValue(const std::string& key) const{
 }
 
 //add a integer value
-int32_t CDataWrapper::getInt32Value(const std::string& key,
-                                    int32_t default_value) const{
+int32_t CDataWrapper::getInt32Value(const std::string& key) const{
     FIND_AND_CHECK(key, BSON_ITER_HOLDS_INT32){
         return bson_iter_int32(&element_found);
-    } else {
-        return default_value;
+    } else FIND_AND_CHECK(key, BSON_ITER_HOLDS_BOOL){
+        return bson_iter_bool(&element_found);
     }
+    CW_CAST_EXCEPTION(int32);
+
 }
 //add a integer value
-uint32_t CDataWrapper::getUInt32Value(const std::string& key,
-                                      uint32_t default_value) const{
+uint32_t CDataWrapper::getUInt32Value(const std::string& key) const{
     FIND_AND_CHECK(key, BSON_ITER_HOLDS_INT32){
         return static_cast<uint32_t>(bson_iter_int32(&element_found));
-    } else {
-        return default_value;
+    } else FIND_AND_CHECK(key, BSON_ITER_HOLDS_BOOL){
+        return bson_iter_bool(&element_found);
+    } else FIND_AND_CHECK(key, BSON_ITER_HOLDS_BOOL){
+        return bson_iter_bool(&element_found);
     }
+    CW_CAST_EXCEPTION(uint32);
+
 }
 //add a integer value
-int64_t CDataWrapper::getInt64Value(const std::string& key,
-                                    int64_t default_value) const{
+int64_t CDataWrapper::getInt64Value(const std::string& key) const{
     FIND_AND_CHECK(key, BSON_ITER_HOLDS_INT64){
         return bson_iter_int64(&element_found);
-    } else {
-        return default_value;
+    } else FIND_AND_CHECK(key, BSON_ITER_HOLDS_INT32){
+        return bson_iter_int32(&element_found);
+    } else FIND_AND_CHECK(key, BSON_ITER_HOLDS_BOOL){
+        return bson_iter_bool(&element_found);
+    } else FIND_AND_CHECK(key, BSON_ITER_HOLDS_DOUBLE){
+        return bson_iter_double(&element_found);
     }
+    CW_CAST_EXCEPTION(int64);
+
 }
 //add a integer value
-uint64_t CDataWrapper::getUInt64Value(const std::string& key,
-                                      uint64_t default_value) const{
+uint64_t CDataWrapper::getUInt64Value(const std::string& key) const{
     FIND_AND_CHECK(key, BSON_ITER_HOLDS_INT64){
         return static_cast<uint64_t>(bson_iter_int64(&element_found));
-    } else {
-        return default_value;
+    } else FIND_AND_CHECK(key, BSON_ITER_HOLDS_INT32){
+        return bson_iter_int32(&element_found);
+    } else FIND_AND_CHECK(key, BSON_ITER_HOLDS_BOOL){
+        return bson_iter_bool(&element_found);
+    } else FIND_AND_CHECK(key, BSON_ITER_HOLDS_DOUBLE){
+        return bson_iter_double(&element_found);
     }
+    CW_CAST_EXCEPTION(uint64);
+
 }
 //add a integer value
-double CDataWrapper::getDoubleValue(const std::string& key,
-                                    double default_value) const{
+double CDataWrapper::getDoubleValue(const std::string& key) const{
+    // convert all types that fits into a double
     FIND_AND_CHECK(key, BSON_ITER_HOLDS_DOUBLE){
         return bson_iter_double(&element_found);
-    } else {
-        return default_value;
+    } else FIND_AND_CHECK(key, BSON_ITER_HOLDS_INT64){
+        return bson_iter_int64(&element_found);
+    } else FIND_AND_CHECK(key, BSON_ITER_HOLDS_INT32){
+        return bson_iter_int32(&element_found);
+    }  else FIND_AND_CHECK(key, BSON_ITER_HOLDS_BOOL){
+        return bson_iter_bool(&element_found);
     }
+
+    CW_CAST_EXCEPTION(double);
+
 }
 
 //get a bool value
-bool  CDataWrapper::getBoolValue(const std::string& key,
-                                 bool default_value) const{
+bool  CDataWrapper::getBoolValue(const std::string& key) const{
     FIND_AND_CHECK(key, BSON_ITER_HOLDS_BOOL){
         return bson_iter_bool(&element_found);
-    } else {
-        return default_value;
+    } else FIND_AND_CHECK(key, BSON_ITER_HOLDS_INT32){
+        return bson_iter_int32(&element_found);
     }
+    CW_CAST_EXCEPTION(bool);
+
 }
 
 //set a binary data value

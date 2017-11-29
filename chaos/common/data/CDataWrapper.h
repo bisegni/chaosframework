@@ -20,8 +20,6 @@
 #ifndef CDataWrapper_H
 #define CDataWrapper_H
 
-//#pragma GCC diagnostic ignored "-Wignored-attributes"
-
 #include <chaos/common/bson/bson.h>
 #include <chaos/common/chaos_types.h>
 #include <chaos/common/chaos_constants.h>
@@ -87,7 +85,7 @@ namespace chaos {
             };
             
             
-            typedef ChaosSharedPtr<bson_t> ChaosBsonShrdPtr;
+            typedef ChaosSharedPtr<struct _bson_t> ChaosBsonShrdPtr;
             
             /*!
              Class that wrap the serializaiton system for data storage
@@ -191,28 +189,22 @@ namespace chaos {
                                      const CDataVariant& variant_value);
                 
                 //get a integer value
-                int32_t getInt32Value(const std::string& key,
-                                      int32_t default_value = 0) const;
+                int32_t getInt32Value(const std::string& key) const;
                 
                 //get a integer value
-                int64_t getInt64Value(const std::string& key,
-                                      int64_t default_value = 0) const;
+                int64_t getInt64Value(const std::string& key) const;
                 
                 //get a integer value
-                uint32_t getUInt32Value(const std::string& key,
-                                        uint32_t default_value = 0) const;
+                uint32_t getUInt32Value(const std::string& key) const;
                 
                 //get a integer value
-                uint64_t getUInt64Value(const std::string& key,
-                                        uint64_t default_value = 0) const;
+                uint64_t getUInt64Value(const std::string& key) const;
                 
                 //add a integer value
-                double getDoubleValue(const std::string& key,
-                                      double default_value = 0) const;
+                double getDoubleValue(const std::string& key) const;
                 
                 //get a bool value
-                bool getBoolValue(const std::string&,
-                                  bool default_value = 0) const;
+                bool getBoolValue(const std::string&) const;
                 
                 
                 //get a json value
