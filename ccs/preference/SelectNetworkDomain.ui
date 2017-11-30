@@ -89,6 +89,13 @@
       </spacer>
      </item>
      <item>
+      <widget class="QPushButton" name="pushButtonPreferenceDialog">
+       <property name="text">
+        <string>Preferences</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="pushButtonCancel">
        <property name="text">
         <string>Select</string>

@@ -198,7 +198,7 @@ void MainController::initApplicationMenuBar() {
     menu = main_menu_bar.addMenu("&Tools");
     menu->addAction("Node Monitor", this, SLOT(actionNewNodeMonitor()),QKeySequence(Qt::CTRL + Qt::Key_T));
     menu->addSeparator();
-    initConfigurationsMenu(menu->addMenu("Network Configurations"));
+    menu->addAction("Switch Network Domain...", this, SLOT(actionSwitchNetworkConfiguration()));
     menu->addSeparator();
     menu->addAction("Agent Setting...", this, SLOT(actionAgentSetting()));
     menu->addSeparator();
@@ -302,12 +302,11 @@ void MainController::actionCloseWidget(QObject *widget) {
 
 void MainController::actionSwitchNetworkConfiguration() {
     QWindowList opened_windows =  QGuiApplication::allWindows();
-    for (uint i = 0 ; i< opened_windows.size() ; i++)     {
+    for (uint i = 0 ; i< opened_windows.size() ; i++) {
+        qDebug() << QString("Close window -> %1").arg(opened_windows.at(i)->title());
         opened_windows.at(i)->close();
     }
-    QAction* action_network_configuration = dynamic_cast<QAction*>(sender());
-    //    if(action_network_configuration == NULL) return;
-    //    PreferenceManager::getInstance()->activerNetworkConfiguration(action_network_configuration->text());
+
 }
 
 void MainController::actionNewUnitServer() {
@@ -325,9 +324,6 @@ void MainController::actionNewUnitServer() {
 
 void MainController::actionPreferences() {
     PreferenceDialog pref_dialog(NULL);
-    connect(&pref_dialog,
-            SIGNAL(changedConfiguration()),
-            SLOT(reconfigure()));
     pref_dialog.exec();
 }
 

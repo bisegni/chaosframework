@@ -22,7 +22,7 @@
 #include "SelectNetworkDomain.h"
 #include "ui_SelectNetworkDomain.h"
 #include "PreferenceManager.h"
-
+#include "PreferenceDialog.h"
 #include <QMessageBox>
 
 SelectNetworkDomain::SelectNetworkDomain(QWidget *parent) :
@@ -67,4 +67,9 @@ void SelectNetworkDomain::on_pushButtonCancel_clicked() {
 void SelectNetworkDomain::on_pushButtonSelection_clicked() {
     emit selectionAborted();
     reject();
+}
+
+void SelectNetworkDomain::on_pushButtonPreferenceDialog_clicked() {
+    PreferenceDialog pref_dialog(NULL);
+    pref_dialog.exec();
 }
