@@ -19,6 +19,7 @@
  * permissions and limitations under the Licence.
  */
 #include <chaos/common/chaos_types.h>
+#include <chaos/common/exception/CException.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <gtest/gtest.h>
 #include <boost/lexical_cast.hpp>
@@ -189,12 +190,13 @@ TEST(CDataWrapperTest, SimpleStringNoException) {
 }
 
 TEST(CDataWrapperTest, SimpleStringException) {
-    const char * json = "{\"powerOn\":true\"}";
+    const char * json = "{\"powerOn\"::true\"}";
     CDataWrapper data;
     try{
-        data.setSerializedJsonData(json);
-    } catch (chaos::CException e) {
-        ASSERT_EQ(0, 0);
-    }
+      data.setSerializedJsonData(json);
       ASSERT_EQ(1, 0);
+    } catch (chaos::CException e) {
+      ASSERT_EQ(0, 0);
+    }
+
 }
