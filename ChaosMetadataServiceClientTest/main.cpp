@@ -103,6 +103,19 @@ int main(int argc, char *argv[]){
                 ns.testSearch(device_id.size()?device_id:"");
                 break;
             }
+            case 2:{
+                std::cout << "Start node monitor library test" << std::endl;
+                {
+                    ChaosUniquePtr<NodeMonitorHandlerTest> nmt;
+                    nmt.reset(new NodeMonitorHandlerTest(device_id, chaos::metadata_service_client::node_monitor::ControllerTypeNode));
+                    sleep(wait_seconds);
+                    //nmt[0].reset();
+                    nmt.reset();
+                    
+                }
+                std::cout << "End node monitor library test" << std::endl;
+                break;
+            }
         }
         
     }

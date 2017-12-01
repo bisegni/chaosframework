@@ -48,6 +48,25 @@ MainController::MainController():
 MainController::~MainController() {}
 
 bool MainController::init(int argc, char **argv) {
+    //set application information
+    ((QApplication*)QApplication::instance())->setQuitOnLastWindowClosed(false);
+    QApplication::setApplicationName("ChaosControlStudio");
+    QApplication::setApplicationVersion("1.0.0-alpha");
+    QApplication::setOrganizationName("INFN-LNF");
+    QApplication::setOrganizationDomain("chaos.infn.it");
+
+    //keep segnal for last windows closed
+    connect(QApplication::instance(),
+            SIGNAL(lastWindowClosed()),
+            SLOT(lastWindowClosed()));
+
+    //show splash screen
+    QPixmap pixmap(":splash/main_splash.png");
+    splash.reset(new QSplashScreen(pixmap));
+    splash->show();
+    splash->showMessage(QObject::tr("Starting !CHAOS layer..."),
+                        Qt::AlignLeft | Qt::AlignBottom, Qt::lightGray);
+
     //register chaos metatype
     qRegisterMetaType<QSharedPointer<ChaosByteArray> >();
     qRegisterMetaType<QSharedPointer<CommandReader> >();
@@ -75,6 +94,7 @@ bool MainController::init(int argc, char **argv) {
     qRegisterMetaType<chaos::common::data::CDataVariant>("chaos::common::data::CDataVariant");
     qRegisterMetaType<QSharedPointer<TwoLineInformationItem> >("QSharedPointer<TwoLineInformationItem>");
 
+    //settin application style
     qApp->setStyle(QStyleFactory::create("Fusion"));
     if(true) {
         // modify palette to dark
@@ -143,17 +163,18 @@ bool MainController::init(int argc, char **argv) {
 #else
 
 #endif
-    //set application information
-    ((QApplication*)QApplication::instance())->setQuitOnLastWindowClosed(false);
-    QApplication::setApplicationName("chaos_control_studio");
-    QApplication::setApplicationVersion("0.0.1-alpha");
-    QApplication::setOrganizationName("INFN-LNF");
-    QApplication::setOrganizationDomain("chaos.infn.it");
-
+    QApplication::instance()->processEvents();
     //initialize !CHAOS metadata service client
     ChaosMetadataServiceClient::getInstance()->init(argc, argv);
     ChaosMetadataServiceClient::getInstance()->start();
+    QApplication::instance()->processEvents();
 
+    splash->showMessage(QObject::tr("!CHAOS Control Studio Initilized!"),
+                        Qt::AlignLeft | Qt::AlignBottom, Qt::lightGray);
+    QApplication::instance()->processEvents();
+    //set thread pool thread size
+    qDebug() << "Thread pool of size:" << QThreadPool::globalInstance()->maxThreadCount();
+    splash->close();
     //start selection of the network domain
     SelectNetworkDomain network_dmoain_selector;
     connect(&network_dmoain_selector,
@@ -232,27 +253,7 @@ void MainController::selectedNetworkDomain(const QString& selected_domain_networ
     //init menu bar
     initApplicationMenuBar();
 
-    //show splash screen
-    QPixmap pixmap(":splash/main_splash.png");
-    splash.reset(new QSplashScreen(pixmap));
-    splash->show();
-    splash->showMessage(QObject::tr("Starting !CHAOS layer..."),
-                        Qt::AlignLeft | Qt::AlignBottom, Qt::lightGray);
-    QApplication::instance()->processEvents();
-    //keep segnal for last windows closed
-    connect(QApplication::instance(),
-            SIGNAL(lastWindowClosed()),
-            SLOT(lastWindowClosed()));
-
-    splash->showMessage(QObject::tr("!CHAOS Control Studio Initilized!"),
-                        Qt::AlignLeft | Qt::AlignBottom, Qt::lightGray);
-    QApplication::instance()->processEvents();
-    //set thread pool thread size
-    qDebug() << "Thread pool of size:" << QThreadPool::globalInstance()->maxThreadCount();
-
-    QWidget *w = new SearchNodeResult();
-    w->show();
-    splash->finish(w);
+    actionSearchNode();
 }
 
 void MainController::actionSearchNode() {

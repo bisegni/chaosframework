@@ -71,5 +71,10 @@ void SelectNetworkDomain::on_pushButtonSelection_clicked() {
 
 void SelectNetworkDomain::on_pushButtonPreferenceDialog_clicked() {
     PreferenceDialog pref_dialog(NULL);
+    connect( &pref_dialog, SIGNAL(destroyed(QObject*)), this, SLOT(preferenceClosed(QObject*)));
     pref_dialog.exec();
+}
+
+void SelectNetworkDomain::preferenceClosed(QObject *source) {
+    loadAllConfiguration();
 }

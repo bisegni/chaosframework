@@ -45,9 +45,8 @@ signals:
 private slots:
     void on_pushButtonCancel_clicked();
     void on_pushButtonSelection_clicked();
-
     void on_pushButtonPreferenceDialog_clicked();
-
+    void preferenceClosed(QObject *source);
 private:
     void loadAllConfiguration();
     QSettings settings;
