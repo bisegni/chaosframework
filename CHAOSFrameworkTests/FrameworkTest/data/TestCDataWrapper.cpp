@@ -181,3 +181,20 @@ TEST(CDataWrapperTest, DateToLong) {
     CDWUniquePtr data = CDataWrapper::instanceFromJson(json);
     ASSERT_EQ(data->getInt64Value("ndk_heartbeat"), 1511968737899);
 }
+TEST(CDataWrapperTest, SimpleStringNoException) {
+    const char * json = "{\"powerOn\":\"true\"}";
+    CDataWrapper data;
+    data.setSerializedJsonData(json);
+    ASSERT_EQ(0, 0);
+}
+
+TEST(CDataWrapperTest, SimpleStringException) {
+    const char * json = "{\"powerOn\":true\"}";
+    CDataWrapper data;
+    try{
+        data.setSerializedJsonData(json);
+    } catch (chaos::CException e) {
+        ASSERT_EQ(0, 0);
+    }
+      ASSERT_EQ(1, 0);
+}
