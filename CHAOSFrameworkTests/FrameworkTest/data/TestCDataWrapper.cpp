@@ -19,6 +19,7 @@
  * permissions and limitations under the Licence.
  */
 #include <chaos/common/chaos_types.h>
+#include <chaos/common/exception/CException.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <gtest/gtest.h>
 #include <boost/lexical_cast.hpp>
@@ -180,4 +181,22 @@ TEST(CDataWrapperTest, DateToLong) {
     const char * json = "{  \"ndk_heartbeat\" : { \"$date\" : { \"$numberLong\" : \"1511968737899\" } } }";
     CDWUniquePtr data = CDataWrapper::instanceFromJson(json);
     ASSERT_EQ(data->getInt64Value("ndk_heartbeat"), 1511968737899);
+}
+TEST(CDataWrapperTest, SimpleStringNoException) {
+    const char * json = "{\"powerOn\":\"true\"}";
+    CDataWrapper data;
+    data.setSerializedJsonData(json);
+    ASSERT_EQ(0, 0);
+}
+
+TEST(CDataWrapperTest, SimpleStringException) {
+    const char * json = "{\"powerOn\"::true\"}";
+    CDataWrapper data;
+    try{
+      data.setSerializedJsonData(json);
+      ASSERT_EQ(1, 0);
+    } catch (chaos::CException e) {
+      ASSERT_EQ(0, 0);
+    }
+
 }

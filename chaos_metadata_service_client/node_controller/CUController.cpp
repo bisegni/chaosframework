@@ -374,6 +374,8 @@ int CUController::setAttributeToValue(const char *attributeName, const char *att
             break;
         }
     }
+    LDBG_<<"["<<__PRETTY_FUNCTION__<<"] Sending attribute '"<<attributeName<<"'='"<<attributeValuePack.getJSONString()<<"'";
+
     return deviceChannel->setAttributeValue(attributeValuePack, noWait, millisecToWait);
 }
 
