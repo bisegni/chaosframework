@@ -21,6 +21,7 @@
 #define CDataWrapper_H
 
 #include <chaos/common/bson/bson.h>
+#include <chaos/common/exception/CException.h>
 #include <chaos/common/chaos_types.h>
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/data/CDataBuffer.h>
@@ -147,13 +148,13 @@ namespace chaos {
                 //add a integer value
                 void addInt32Value(const std::string&, int32_t);
                 
-
+                
                 void addValue(const std::string& key,int32_t val);
                 void addValue(const std::string& key,int64_t val);
                 void addValue(const std::string& key,double val);
                 void addValue(const std::string& key,bool val);
                 void addValue(const std::string& key,std::string& val);
-
+                
                 //add a integer value
                 void addInt32Value(const std::string&, uint32_t);
                 //add a integer value
@@ -169,21 +170,7 @@ namespace chaos {
                 
                 //set a binary data value
                 void addBinaryValue(const std::string&, const char *, int);
-                //                template<typename T>
-                //                void addVectorValue(const std::string &key,T v[]){
-                //                	for(int cnt=0;cnt<sizeof(v)/sizeof(T);cnt++){
-                //                		bsonArrayBuilder->append(v[cnt]);
-                //                	}
-                //                	finalizeArrayForKey(key);
-                //                }
                 
-                //                template<typename T>
-                //                void addVectorValue(const std::string &key,std::vector<T> v){
-                //                                	for(typename std::vector<T>::iterator cnt=v.begin();cnt!=v.end();cnt++){
-                //                                		bsonArrayBuilder->append(*cnt);
-                //                                	}
-                //                                	finalizeArrayForKey(key);
-                //                                }
                 //!add a value from variant
                 void addVariantValue(const std::string& key,
                                      const CDataVariant& variant_value);
@@ -210,14 +197,52 @@ namespace chaos {
                 //get a json value
                 std::string getJsonValue(const std::string&) const;
                 
+#define THROW_TYPE_EXC(type)\
+std::stringstream ss;\
+ss<<"cannot get or cast to '" << #type;\
+throw chaos::CException(-2, ss.str(), __PRETTY_FUNCTION__);\
                 
                 template<typename T>
-                 T getValue(const std::string& key) const{
+                T getValue(const std::string& key) const{
                     T v;
-                    bson_iter_t element_found;
-                    bson_iter_init(&element_found, bson.get());
-                    if(bson_iter_find_case(&element_found, key.c_str())){
-                        v = *reinterpret_cast<const T*>(element_found.raw);
+                    if(hasKey(key) == false) {throw chaos::CException(-1, "Key not present", __PRETTY_FUNCTION__);}
+                    switch(getValueType(key)){
+                        case CDataWrapperTypeNoType:{
+                            THROW_TYPE_EXC(CDataWrapperTypeNoType);
+                        }
+                        case CDataWrapperTypeNULL:{
+                             THROW_TYPE_EXC(CDataWrapperTypeNULL);
+                        }
+                        case CDataWrapperTypeBool:{
+                            v = getBoolValue(key);
+                            break;
+                        }
+                        case CDataWrapperTypeInt32:{
+                            v = getInt32Value(key);
+                            break;
+                        }
+                        case CDataWrapperTypeInt64:{
+                            v = getInt64Value(key);
+                            break;
+                        }
+                        case CDataWrapperTypeDouble:{
+                            v = getDoubleValue(key);
+                            break;
+                        }
+                        case CDataWrapperTypeString:{
+                            THROW_TYPE_EXC(CDataWrapperTypeString);
+                            break;
+                        }
+                        case CDataWrapperTypeBinary:{
+                            THROW_TYPE_EXC(CDataWrapperTypeBinary);
+                            break;
+                        }
+                        case CDataWrapperTypeObject:{
+                             THROW_TYPE_EXC(CDataWrapperTypeObject);
+                        }
+                        case CDataWrapperTypeVector:{
+                             THROW_TYPE_EXC(CDataWrapperTypeVector);
+                        }
                     }
                     return v;
                 }
