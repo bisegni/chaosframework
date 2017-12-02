@@ -308,6 +308,12 @@ void MainController::actionSwitchNetworkConfiguration() {
         opened_windows.at(i)->close();
     }
 
+    //start network domain selector
+    SelectNetworkDomain network_dmoain_selector;
+    connect(&network_dmoain_selector,
+            SIGNAL(networkDomainSelected(QString)),
+            SLOT(selectedNetworkDomain(QString)));
+    network_dmoain_selector.exec();
 }
 
 void MainController::actionNewUnitServer() {
