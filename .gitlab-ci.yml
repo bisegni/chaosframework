@@ -8,6 +8,7 @@ build_framework_x86_64:
     - chaos
     - docker
     - linux
+    - fast
   stage: build
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
   script:
@@ -37,6 +38,7 @@ build_framework_x86_64_test:
     - chaos
     - docker
     - linux
+    - fast
   stage: test
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
   script:
@@ -109,6 +111,7 @@ build_framework_x86_64_c98:
     - chaos
     - docker
     - linux
+    - fast
   stage: build
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
   script:
@@ -153,6 +156,7 @@ build_framework_arm:
     - chaos
     - docker
     - linux
+    - fast
   stage: build
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
   script:
