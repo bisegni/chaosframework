@@ -16,9 +16,10 @@ class MainController:
 public:
     MainController();
     ~MainController();
-    void init(int argc, char **argv, QApplication &a);
+    bool init(int argc, char **argv);
     void deinit();
 private slots:
+    void selectedNetworkDomain(const QString& selected_domain_network);
     void actionSearchNode();
     void actionPreferences();
     void actionAgentSetting();
@@ -33,7 +34,6 @@ private slots:
     void actionApplicationLogBrowser();
     void lastWindowClosed();
     void actionCloseWidget(QObject *widget);
-    bool reconfigure();
 private:
     ApplicationErrorLogging *application_error_widget;
     QMenuBar main_menu_bar;

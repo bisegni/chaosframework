@@ -23,11 +23,9 @@
 
 #include "InetUtility.h"
 
-namespace chaos {
-namespace common {
-namespace utility {
+using namespace chaos::common::utility;
 
-std::string InetUtility::scanForLocalNetworkAddress(std::string _eth_interface_name ){
+std::string InetUtility::scanForLocalNetworkAddress(const std::string& _eth_interface_name){
     std::string ip_port;
     void * tmp_addr_ptr=NULL;
     struct ifaddrs * if_addr_struct=NULL;
@@ -40,7 +38,7 @@ std::string InetUtility::scanForLocalNetworkAddress(std::string _eth_interface_n
         interface_infos.push_back(InterfaceInfo(_eth_interface_name, ""));
     }
 
-    //default names are ppend to the end of the set
+    //default names append to the end of the set
     interface_infos.push_back(InterfaceInfo("en",""));
     interface_infos.push_back(InterfaceInfo("em",""));
     interface_infos.push_back(InterfaceInfo("eth",""));
@@ -89,7 +87,6 @@ std::string InetUtility::scanForLocalNetworkAddress(std::string _eth_interface_n
         // no ip was found go to localhost
         ip_port.assign("127.0.0.1");
     }
-
     return ip_port;
 }
 
@@ -109,11 +106,8 @@ int InetUtility::scanForLocalFreePort(int basePort) {
         close(sockfd);
         if(err>=0)portno++;
     }
-
     return portno;
 }
-
-
 
 void InetUtility::checkInterfaceName(std::vector<InterfaceInfo>& interface_infos,
                                      const std::string& interface_found,
@@ -129,10 +123,6 @@ void InetUtility::checkInterfaceName(std::vector<InterfaceInfo>& interface_infos
     }
 }
 
-
-
-
-
 bool InetUtility::checkWellFormedHostPort(std::string host_port) {
    bool ret=false;
    boost::system::error_code ec;
@@ -140,7 +130,6 @@ bool InetUtility::checkWellFormedHostPort(std::string host_port) {
    if ( ec )
      return false;
    return true;
-
 }
 
 bool InetUtility::checkWellFormedHostNamePort(std::string host_port) {
@@ -152,7 +141,6 @@ bool InetUtility::checkWellFormedHostNamePort(std::string host_port) {
     std::string hname=host_port.substr(0,pos);
     std::string port=host_port.substr(pos+1);
     return (gethostbyname(hname.c_str())!=NULL)&&(atoi(port.c_str())>0);
-
 }
 
 bool InetUtility::checkWellFormedHostIpPort(std::string host_port) {
@@ -161,9 +149,9 @@ bool InetUtility::checkWellFormedHostIpPort(std::string host_port) {
 
 void InetUtility::queryDns(std::string hostname, std::vector<std::string>& resolved_endpoints) {
     boost::asio::io_service io;
+    boost::system::error_code error;
     boost::asio::ip::tcp::resolver resolver(io);
     boost::asio::ip::tcp::resolver::query q(hostname.c_str(), "");
-    boost::system::error_code error;
     boost::asio::ip::tcp::resolver::iterator iter = resolver.resolve(q, error);
     boost::asio::ip::tcp::resolver::iterator end;
     while (iter != end) {
@@ -177,4 +165,3 @@ std::string InetUtility::getHostname() {
     gethostname(hostname, 1024);
     return std::string(hostname, strlen(hostname));
 }
-}}}

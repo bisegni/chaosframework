@@ -197,6 +197,7 @@ void UnitServerEditor::tableSelectionChanged(const QItemSelection& selected,
 void UnitServerEditor::onApiDone(const QString& tag,
                                  QSharedPointer<chaos::common::data::CDataWrapper> api_result) {
     if(tag.compare(TAG_GET_DESCRIPTION) == 0) {
+        qDebug() << QString::fromStdString(api_result->getJSONString());
         //uid
         ui->labelUnitServerUID->setText(node_unique_id);
         //address

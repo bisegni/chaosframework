@@ -49,28 +49,20 @@ void PreferenceDialog::updatePreverence() {
 void PreferenceDialog::loadAllPreference() {
     QStringList cy_type_list;
     settings.beginGroup(PREFERENCE_NETWORK_GROUP_NAME);
-    QString current_configuration;
     QStringList configurations = settings.childGroups();
     //write current configurations
     ui->comboBoxConfigurations->clear();
     ui->comboBoxConfigurations->addItems(configurations);
-    current_configuration = settings.value("active_configuration").toString();
-    ui->comboBoxConfigurations->setCurrentText(current_configuration);
     settings.endGroup();
 
-    loadMDSConfiguration(current_configuration);
+    loadMDSConfiguration(ui->comboBoxConfigurations->currentText());
 }
 
 void PreferenceDialog::saveAllPreference() {
-    settings.beginGroup(PREFERENCE_NETWORK_GROUP_NAME);
-    if(ui->comboBoxConfigurations->currentIndex()>= 0) {
-        settings.setValue("active_configuration", ui->comboBoxConfigurations->currentText());
-    } else {
-        settings.setValue("active_configuration", QVariant());
-    }
-    settings.sync();
-    //emit signal for changed preference
-    emit changedConfiguration();
+//    settings.beginGroup(PREFERENCE_NETWORK_GROUP_NAME);
+//    settings.sync();
+//    //emit signal for changed preference
+//    emit changedConfiguration();
 }
 
 void PreferenceDialog::loadMDSConfiguration(const QString& configuration_name) {

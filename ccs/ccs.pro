@@ -161,7 +161,8 @@ SOURCES += main.cpp\
     widget/CQTableView.cpp \
     widget/CPropertyPushButton.cpp \
     widget/CPropertyTextEdit.cpp \
-    widget/CPopupWidgetContainer.cpp
+    widget/CPopupWidgetContainer.cpp \
+    preference/SelectNetworkDomain.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -305,7 +306,8 @@ HEADERS  += \
     widget/CPropertyPushButton.h\
     precomp_header.h \
     widget/CPropertyTextEdit.h \
-    widget/CPopupWidgetContainer.h
+    widget/CPopupWidgetContainer.h \
+    preference/SelectNetworkDomain.h
 
 FORMS    += \
     search/searchnoderesult.ui \
@@ -345,9 +347,9 @@ FORMS    += \
     language_editor/JsonEditor.ui \
     node/agent/AgentSetting.ui \
     widget/CPropertyTextEdit.ui \
-    widget/CPropertyTextEdit.ui \
     widget/CPopupWidgetContainer.ui \
-    widget/ChaosStorageTypeWidget.ui
+    widget/ChaosStorageTypeWidget.ui \
+    preference/SelectNetworkDomain.ui
 
 DISTFILES += \
     dark_orange.stylesheet \
