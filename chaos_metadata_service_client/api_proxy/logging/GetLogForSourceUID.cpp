@@ -88,7 +88,7 @@ GetLogForSourceUIDHelper::GetLogForSourceUIDHelper(CDataWrapper *api_result) {
             it != contained_key.end();
             it++) {
             if(it->compare("seq") == 0) {
-                entry->sequence = entry_dw->getInt32Value("seq");
+                entry->sequence = entry_dw->getInt64Value("seq");
             }else if(it->compare(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER) == 0) {
                 entry->source_identifier = entry_dw->getStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER);
             } else if(it->compare(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_TIMESTAMP) == 0){
