@@ -103,7 +103,7 @@ TEST(CDataWrapperTest, TestJsonDouble) {
     ASSERT_TRUE(data->isVectorValue("double_key"));
     ChaosUniquePtr<CMultiTypeDataArrayWrapper> p(data->getVectorValue("double_key"));
     ASSERT_TRUE(p.get());
-
+    
     for(int cnt=0;cnt<p->size();cnt++){
         ASSERT_EQ( test_var[cnt], p->getDoubleElementAtIndex(cnt));
     }
@@ -138,7 +138,7 @@ TEST(CDataWrapperTest, TestConcatenation) {
     CDWUniquePtr data = CDataWrapper::instanceFromJson(test_json_translation);
     dconcat.addCSDataValue("empty",empty);
     dconcat.addCSDataValue("notempty",*data.get());
-
+    
     dconcat.addCSDataValue("empty2",empty);
     pieno.addInt64Value("ts1",(int64_t)1LL);
     pieno.addInt64Value("ts2",(int64_t)2LL);
@@ -152,11 +152,11 @@ TEST(CDataWrapperTest, TestConcatenation) {
     pieno.addStringValue("string_key","this is a long text that try to do some space on bson");
     pieno.addBoolValue("bool_key",true);
     pieno.addBoolValue("bool_key1",false);
-
+    
     ASSERT_TRUE(pieno.getCompliantJSONString().size());
     dconcat.addCSDataValue("pieno",pieno);
-
-
+    
+    
     double test_var[]={1.0,2.1,-1.0,-0.9};
     ASSERT_TRUE(dconcat.hasKey("empty"));
     ASSERT_TRUE(dconcat.isCDataWrapperValue("empty2"));
@@ -165,13 +165,13 @@ TEST(CDataWrapperTest, TestConcatenation) {
     ASSERT_TRUE(dconcat.hasKey("notempty"));
     ASSERT_TRUE(dconcat.isCDataWrapperValue("notempty"));
     ASSERT_TRUE(dconcat.isCDataWrapperValue("pieno"));
-
+    
     CDWUniquePtr t(dconcat.getCSDataValue("notempty"));
     ASSERT_TRUE(t->isVectorValue("double_key"));
-
+    
     ChaosUniquePtr<CMultiTypeDataArrayWrapper> p(t->getVectorValue("double_key"));
     ASSERT_TRUE(p.get());
-
+    
     for(int cnt=0;cnt<p->size();cnt++){
         ASSERT_EQ( test_var[cnt], p->getDoubleElementAtIndex(cnt));
     }
@@ -185,18 +185,11 @@ TEST(CDataWrapperTest, DateToLong) {
 TEST(CDataWrapperTest, SimpleStringNoException) {
     const char * json = "{\"powerOn\":\"true\"}";
     CDataWrapper data;
-    data.setSerializedJsonData(json);
-    ASSERT_EQ(0, 0);
+    ASSERT_NO_THROW(data.setSerializedJsonData(json));
 }
 
 TEST(CDataWrapperTest, SimpleStringException) {
     const char * json = "{\"powerOn\"::true\"}";
     CDataWrapper data;
-    try{
-      data.setSerializedJsonData(json);
-      ASSERT_EQ(1, 0);
-    } catch (chaos::CException e) {
-      ASSERT_EQ(0, 0);
-    }
-
+    ASSERT_THROW(data.setSerializedJsonData(json), chaos::CException);
 }

@@ -86,8 +86,8 @@
 		321E59311D7457FF00365F57 /* TestBatchDefault.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestBatchDefault.h; sourceTree = "<group>"; };
 		322EE87F1F825D8000D89824 /* MemcachedEmbedded.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MemcachedEmbedded.h; sourceTree = "<group>"; };
 		322EE8801F825D8000D89824 /* MemcachedEmbedded.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MemcachedEmbedded.cpp; sourceTree = "<group>"; };
-		3249283C1F56CB8D00409E83 /* TestProperty */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestProperty; sourceTree = BUILT_PRODUCTS_DIR; };
-		32639FE61F6AAD990049089C /* FrameworkTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = FrameworkTest; sourceTree = BUILT_PRODUCTS_DIR; };
+		3249283C1F56CB8D00409E83 /* TestProperty */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = TestProperty; path = /Users/bisegni/sources/chaos/chaos_development/chaosframework/CHAOSFrameworkTests/../usr/local/bin/TestProperty; sourceTree = "<absolute>"; };
+		32639FE61F6AAD990049089C /* FrameworkTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = FrameworkTest; path = /Users/bisegni/sources/chaos/chaos_development/chaosframework/CHAOSFrameworkTests/../usr/local/bin/FrameworkTest; sourceTree = "<absolute>"; };
 		32639FE81F6AAD990049089C /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		327A28691D71D72700DFDD2C /* TestCommandExecutor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestCommandExecutor.cpp; sourceTree = "<group>"; };
 		327A286A1D71D72700DFDD2C /* TestCommandExecutor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestCommandExecutor.h; sourceTree = "<group>"; };
@@ -117,13 +117,13 @@
 		32C180F01FAB439300AFCC15 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		32DA77731F94AD6D00497349 /* TestVariant.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestVariant.cpp; sourceTree = "<group>"; };
 		32DA77771F94B0D300497349 /* ScriptTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptTest.cpp; sourceTree = "<group>"; };
-		32DAABBE1D6C79D700464F7A /* TestPlugin */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestPlugin; sourceTree = BUILT_PRODUCTS_DIR; };
-		32DAABC91D6C7A1F00464F7A /* PluginLibrary.chaos_extension */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = PluginLibrary.chaos_extension; sourceTree = BUILT_PRODUCTS_DIR; };
+		32DAABBE1D6C79D700464F7A /* TestPlugin */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = TestPlugin; path = /Users/bisegni/sources/chaos/chaos_development/chaosframework/CHAOSFrameworkTests/../usr/local/bin/TestPlugin; sourceTree = "<absolute>"; };
+		32DAABC91D6C7A1F00464F7A /* PluginLibrary.chaos_extension */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; name = PluginLibrary.chaos_extension; path = /Users/bisegni/sources/chaos/chaos_development/chaosframework/CHAOSFrameworkTests/../usr/local/bin/PluginLibrary.chaos_extension; sourceTree = "<absolute>"; };
 		32DAABD21D6C7A5000464F7A /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		32DAABD31D6C7B2500464F7A /* PluginLibrary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginLibrary.cpp; sourceTree = "<group>"; };
 		32DAABD41D6C7B2500464F7A /* PluginLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginLibrary.h; sourceTree = "<group>"; };
-		32DF53561E97E191005E2304 /* TestLuaScript */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestLuaScript; sourceTree = BUILT_PRODUCTS_DIR; };
-		32EBC2181E92507B00785AAC /* TestTimer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestTimer; sourceTree = BUILT_PRODUCTS_DIR; };
+		32DF53561E97E191005E2304 /* TestLuaScript */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = TestLuaScript; path = /Users/bisegni/sources/chaos/chaos_development/chaosframework/CHAOSFrameworkTests/../usr/local/bin/TestLuaScript; sourceTree = "<absolute>"; };
+		32EBC2181E92507B00785AAC /* TestTimer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = TestTimer; path = /Users/bisegni/sources/chaos/chaos_development/chaosframework/CHAOSFrameworkTests/../usr/local/bin/TestTimer; sourceTree = "<absolute>"; };
 		32EBC21A1E92507B00785AAC /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		32EBC2201E9250F900785AAC /* TimerTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TimerTask.cpp; sourceTree = "<group>"; };
 		32EBC2211E9250F900785AAC /* TimerTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimerTask.h; sourceTree = "<group>"; };
@@ -284,21 +284,7 @@
 				32DAABCA1D6C7A1F00464F7A /* PluginLibrary */,
 				32EBC2191E92507B00785AAC /* TestTimer */,
 				32639FE71F6AAD990049089C /* FrameworkTest */,
-				3299433F1D6B38CC008DBAE9 /* Products */,
 			);
-			sourceTree = "<group>";
-		};
-		3299433F1D6B38CC008DBAE9 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				32DAABBE1D6C79D700464F7A /* TestPlugin */,
-				32DAABC91D6C7A1F00464F7A /* PluginLibrary.chaos_extension */,
-				32EBC2181E92507B00785AAC /* TestTimer */,
-				32DF53561E97E191005E2304 /* TestLuaScript */,
-				3249283C1F56CB8D00409E83 /* TestProperty */,
-				32639FE61F6AAD990049089C /* FrameworkTest */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		32C180EC1FAB33A800AFCC15 /* plugin */ = {
@@ -518,7 +504,7 @@
 				en,
 			);
 			mainGroup = 329943351D6B38CC008DBAE9;
-			productRefGroup = 3299433F1D6B38CC008DBAE9 /* Products */;
+			productRefGroup = 329943351D6B38CC008DBAE9;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
