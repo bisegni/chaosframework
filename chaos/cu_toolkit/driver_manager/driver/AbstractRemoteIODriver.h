@@ -69,19 +69,21 @@ namespace chaos {
                 public EndpointType {
 //                    friend class AbstractServerRemoteIODriver;
 //                    friend class AbstractClientRemoteIODriver;
-                    
+                protected:
                     typedef enum {
                         RDConnectionPhaseDisconnected,
                         RDConnectionPhaseConnected,
                         RDConnectionPhaseAutorized,
                         RDConnectionPhaseConfigured,
                     } RDConnectionPhase;
-                    
+                private:
                     CHAOS_DEFINE_LOCKABLE_OBJECT(std::string, LString);
                     LString                             current_connection_identifier;
                     std::string                         authorization_key;
                     RDConnectionPhase                   conn_phase;
                 protected:
+
+                    
                     CDWShrdPtrFutureHelper future_hepler;
                     //message sent to remote endpoint when new connection has been received
                     chaos::common::data::CDWUniquePtr   driver_init_pack;
@@ -224,7 +226,7 @@ namespace chaos {
                             return err;
                         }
                         
-                        const RDConnectionPhase getCOnnectionPhase() const {
+                        const RDConnectionPhase getConnectionPhase() const {
                             return conn_phase;
                         }
                         //! handle called when a new message has been received

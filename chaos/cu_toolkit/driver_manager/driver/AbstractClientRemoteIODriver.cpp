@@ -77,7 +77,7 @@ void AbstractClientRemoteIODriver::handleNewConnection(const std::string& connec
 void AbstractClientRemoteIODriver::timeout() {
     int err = 0;
     //client layer need to send authentication and configuration pack
-    switch(getCOnnectionPhase()) {
+    switch(getConnectionPhase()) {
         case RDConnectionPhaseConnected:
              err = manageAuthenticationPhase();
             break;
