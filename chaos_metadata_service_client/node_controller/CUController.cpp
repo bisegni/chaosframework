@@ -18,13 +18,28 @@
  * See the Licence for the specific language governing
  * permissions and limitations under the Licence.
  */
+#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
 
 #include <chaos_metadata_service_client/node_controller/CUController.h>
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/data/CDataWrapper.h>
+#include <chaos/common/data/CDataVariant.h>
+
 #include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/io/IODirectIODriver.h>
 #include <boost/lexical_cast.hpp>
+#include <chaos_metadata_service_client/api_proxy/unit_server/NewUS.h>
+#include <chaos_metadata_service_client/api_proxy/unit_server/DeleteUS.h>
+#include <chaos_metadata_service_client/api_proxy/unit_server/GetSetFullUnitServer.h>
+
+#include <chaos_metadata_service_client/api_proxy/unit_server/ManageCUType.h>
+#include <chaos_metadata_service_client/api_proxy/service/SetSnapshotDatasetsForNode.h>
+
+#include <chaos_metadata_service_client/api_proxy/control_unit/SetInstanceDescription.h>
+#include <chaos_metadata_service_client/api_proxy/control_unit/Delete.h>
+#include <chaos_metadata_service_client/api_proxy/control_unit/DeleteInstance.h>
+#include <chaos_metadata_service_client/api_proxy/agent/agent.h>
+#include <chaos_metadata_service_client/api_proxy/logging/logging.h>
 
 using namespace std;
 using namespace chaos;
@@ -36,7 +51,18 @@ using namespace chaos::common::network;
 using namespace chaos::common::message;
 using namespace chaos::common::batch_command;
 using namespace chaos::cu::data_manager;
-
+using namespace chaos::metadata_service_client;
+#define MDS_TIMEOUT 5000
+#define DBGET LDBG_<<"["<<__PRETTY_FUNCTION__<<"]"
+#define EXECUTE_CHAOS_API(api_name,time_out,...) \
+        DBGET<<" " <<" Executing Api:\""<< # api_name<<"\"" ;\
+        chaos::metadata_service_client::api_proxy::ApiProxyResult apires=  GET_CHAOS_API_PTR(api_name)->execute( __VA_ARGS__ );\
+        apires->setTimeout(time_out);\
+        apires->wait();\
+        if(apires->getError()){\
+            std::stringstream ss;\
+            ss<<" error in :"<<__FUNCTION__<<"|"<<__LINE__<<"|"<< # api_name <<" " <<apires->getErrorMessage();\
+            throw CException(-2,ss.str(),__PRETTY_FUNCTION__);}
 
 CUController::CUController(const std::string& _deviceID,
                            chaos::common::io::IODataDriverShrdPtr _ioLiveDataDriver):
@@ -147,8 +173,19 @@ void CUController::updateChannel() throw(CException) {
 }
 
 int CUController::setScheduleDelay(uint64_t microseconds) {
-    CHAOS_ASSERT(deviceChannel)
-    return deviceChannel->setScheduleDelay(microseconds, millisecToWait);
+
+    chaos::common::property::PropertyGroup pg(chaos::ControlUnitPropertyKey::GROUP_NAME);
+    pg.addProperty(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, CDataVariant(static_cast<uint64_t>(microseconds)));
+    DBGET<<chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY<<":"<<microseconds;
+    EXECUTE_CHAOS_API(chaos::metadata_service_client::api_proxy::node::UpdateProperty,millisecToWait,deviceChannel->getDeviceID(),pg);
+
+}
+
+int CUController::setBypass(bool onoff){
+    chaos::common::property::PropertyGroup pg(chaos::ControlUnitPropertyKey::GROUP_NAME);
+    pg.addProperty(chaos::ControlUnitDatapackSystemKey::BYPASS_STATE, CDataVariant(static_cast<bool>(onoff)));
+
+    EXECUTE_CHAOS_API(chaos::metadata_service_client::api_proxy::node::UpdateProperty,millisecToWait,deviceChannel->getDeviceID(),pg);
 }
 
 void CUController::getDeviceDatasetAttributesName(vector<string>& attributesName) {

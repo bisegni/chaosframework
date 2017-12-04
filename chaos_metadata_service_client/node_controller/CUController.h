@@ -168,6 +168,12 @@ namespace chaos {
                  Set the control unit run method scheduling delay
                  */
                 int setScheduleDelay(uint64_t microsecondsDelay);
+
+                //! update the scudiling of device run method
+                /*!
+                 Set the control unit bypass
+                 */
+                int setBypass(bool onoff);
                 /*!
                  Get attribute name filtered by direction type
                  */
@@ -245,6 +251,7 @@ namespace chaos {
                  */
                 int deinitDevice();
                 
+
                 /**
                  * recover the device from an error (recoverable)
                  * @return 0 on success
