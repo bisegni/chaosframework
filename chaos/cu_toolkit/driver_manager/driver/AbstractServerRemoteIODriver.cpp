@@ -74,7 +74,7 @@ void AbstractServerRemoteIODriver::handleNewConnection(const std::string& connec
 
 void AbstractServerRemoteIODriver::timeout() {
     //server driver need to send only configuration pack
-    CDWShrdPtr config_message_response;
-    sendConfigurationRequest(config_message_response);
-    AsyncCentralManager::getInstance()->removeTimer(this);
+//    CDWShrdPtr config_message_response;
+//    sendConfigurationRequest(config_message_response);
+//    AsyncCentralManager::getInstance()->removeTimer(this);
 }
