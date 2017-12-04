@@ -17,6 +17,9 @@ build_framework_x86_64:
     - make clean
     - make  -j 4
     - make install
+    - cd ccs
+    - Qt/5.9.3/gcc_64/bin/qmake
+    - make -j 4
   cache:
     key: x86_64/$CI_BUILD_REF_NAME
     paths:
