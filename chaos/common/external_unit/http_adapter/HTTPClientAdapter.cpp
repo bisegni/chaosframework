@@ -19,6 +19,7 @@
  * permissions and limitations under the Licence.
  */
 
+#include <chaos/common/exception/CException.h>
 #include <chaos/common/external_unit/ExternalUnitManager.h>
 #include <chaos/common/external_unit/http_adapter/HTTPClientAdapter.h>
 
@@ -73,25 +74,28 @@ int HTTPClientAdapter::addNewConnectionForEndpoint(ExternalUnitClientEndpoint *e
     if(!serializer.get()) {
         return -1;
     }
-    
-    ChaosSharedPtr<ExternalUnitConnection> conn_ptr(new ExternalUnitConnection(this,
-                                                                               endpoint,
-                                                                               ChaosMoveOperator(serializer)));
-    
-    
-    
-    //!associate id to connection
-    ConnectionInfoShrdPtr ci(new ConnectionInfo());
-    map_connection().insert(MapReconnectionInfoPair(conn_ptr->connection_identifier, ci));
-    ci->class_instance = this;
-    ci->endpoint_url = endpoint_url;
-    ci->ext_unit_conn = conn_ptr;
-    ci->conn =  mg_connect_ws(&mgr,
-                              HTTPClientAdapter::ev_handler,
-                              ci->endpoint_url.c_str(),
-                              "ChaosExternalUnit",
-                              web_socket_option);
-    ci->conn->user_data = ci.get();
+    try{
+        ChaosSharedPtr<ExternalUnitConnection> conn_ptr(new ExternalUnitConnection(this,
+                                                                                   endpoint,
+                                                                                   ChaosMoveOperator(serializer)));
+        
+        
+        
+        //!associate id to connection
+        ConnectionInfoShrdPtr ci(new ConnectionInfo());
+        map_connection().insert(MapReconnectionInfoPair(conn_ptr->connection_identifier, ci));
+        ci->class_instance = this;
+        ci->endpoint_url = endpoint_url;
+        ci->ext_unit_conn = conn_ptr;
+        ci->conn =  mg_connect_ws(&mgr,
+                                  HTTPClientAdapter::ev_handler,
+                                  ci->endpoint_url.c_str(),
+                                  "ChaosExternalUnit",
+                                  web_socket_option);
+        ci->conn->user_data = ci.get();
+    } catch(chaos::CException& ex) {
+        return -2;
+    }
     return 0;
 }
 
@@ -154,7 +158,7 @@ void HTTPClientAdapter::ev_handler(struct mg_connection *conn,
         case MG_EV_CONNECT: {
             ChaosWriteLock wl(ci->smux);
             int status = *((int *) event_data);
-            ci->ext_unit_conn->online = (status==0);
+            ci->ext_unit_conn->setOnline((status==0));
             break;
         }
         case MG_EV_WEBSOCKET_FRAME: {
@@ -192,7 +196,7 @@ void HTTPClientAdapter::ev_handler(struct mg_connection *conn,
                 //!beause conenciton need to be reopend
                 //reset real connection
                 ci->conn = NULL;
-                ci->ext_unit_conn->online  = false;
+                ci->ext_unit_conn->setOnline(false);
                 ci->ext_unit_conn->accepted_state = -1;
                 //set retry timeout after five seconds
                 ci->next_reconnection_retry_ts = TimingUtil::getTimestampWithDelay(5000, true);

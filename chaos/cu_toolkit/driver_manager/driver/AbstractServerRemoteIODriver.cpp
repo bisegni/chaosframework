@@ -20,6 +20,8 @@
  */
 #include <chaos/cu_toolkit/driver_manager/driver/AbstractServerRemoteIODriver.h>
 
+using namespace chaos::common::data;
+using namespace chaos::common::async_central;
 using namespace chaos::cu::driver_manager::driver;
 
 #define INFO    INFO_LOG(AbstractServerRemoteIODriver)
@@ -57,9 +59,22 @@ void AbstractServerRemoteIODriver::driverInit(const chaos::common::data::CDataWr
     //register this driver as external endpoint
     chaos::common::external_unit::ExternalUnitManager::getInstance()->registerEndpoint(*this);
 }
+
 void AbstractServerRemoteIODriver::driverDeinit() throw (chaos::CException) {
     INFO << "Deinit driver";
     //registerthis driver as external endpoint
     chaos::common::external_unit::ExternalUnitManager::getInstance()->deregisterEndpoint(*this);
     CHAOS_NOT_THROW(ServerARIODriver::driverDeinit();)
+}
+
+void AbstractServerRemoteIODriver::handleNewConnection(const std::string& connection_identifier) {
+    ServerARIODriver::handleNewConnection(connection_identifier);
+    AsyncCentralManager::getInstance()->addTimer(this, 0, 30000);
+}
+
+void AbstractServerRemoteIODriver::timeout() {
+    //server driver need to send only configuration pack
+    CDWShrdPtr config_message_response;
+    sendConfigurationRequest(config_message_response);
+    AsyncCentralManager::getInstance()->removeTimer(this);
 }

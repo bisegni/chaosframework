@@ -22,13 +22,14 @@
 #ifndef __CHAOSFramework__CE5788A_1D68_477E_BB9E_55BE8F7D3373_AbstractRemoteIODriver_h
 #define __CHAOSFramework__CE5788A_1D68_477E_BB9E_55BE8F7D3373_AbstractRemoteIODriver_h
 
-#include <chaos/cu_toolkit/driver_manager/driver/AbstractDriverPlugin.h>
 #include <chaos/common/external_unit/external_unit.h>
 #include <chaos/common/external_unit/ExternalUnitServerEndpoint.h>
 
 #include <chaos/common/data/CDataVariant.h>
 #include <chaos/common/thread/FutureHelper.h>
 #include <chaos/common/utility/LockableObject.h>
+
+#include <chaos/cu_toolkit/driver_manager/driver/AbstractDriverPlugin.h>
 
 #include <boost/multi_index/member.hpp>
 #include <boost/multi_index_container.hpp>
@@ -65,8 +66,7 @@ namespace chaos {
                 class AbstractRemoteIODriver:
                 public chaos::cu::driver_manager::driver::AbstractDriver,
                 public chaos::cu::driver_manager::driver::AbstractDriverPlugin,
-                public EndpointType,
-                protected CDWShrdPtrFutureHelper {
+                public EndpointType {
                     typedef enum {
                         RDConnectionPhaseDisconnected,
                         RDConnectionPhaseConnected,
@@ -78,6 +78,7 @@ namespace chaos {
                     std::string                         authorization_key;
                     RDConnectionPhase                   conn_phase;
                 protected:
+                    CDWShrdPtrFutureHelper future_hepler;
                     //message sent to remote endpoint when new connection has been received
                     chaos::common::data::CDWUniquePtr   driver_init_pack;
                     //!initialization and deinitialization driver methods
@@ -96,19 +97,21 @@ namespace chaos {
                            init_parameter.isCDataWrapperValue(INIT_HARDWARE_PARAM)) {
                             driver_init_pack.reset(init_parameter.getCSDataValue(INIT_HARDWARE_PARAM));
                         }
-                        CDWShrdPtrFutureHelper::init(NULL);
+                        future_hepler.init(NULL);
                     }
                     void driverDeinit() throw (chaos::CException) {
                         AbstractRemoteIODriver_INFO << "Deinit driver";
-                        CHAOS_NOT_THROW(CDWShrdPtrFutureHelper::deinit();)
-                    }
+                        CHAOS_NOT_THROW(future_hepler.deinit();)
+                        }
                     public:
-                        
                         AbstractRemoteIODriver():
                         chaos::cu::driver_manager::driver::AbstractDriverPlugin(this),
                         EndpointType(),
                         authorization_key(),
-                        conn_phase(RDConnectionPhaseDisconnected){}
+                        conn_phase(RDConnectionPhaseDisconnected),
+                        driver_init_pack(new chaos::common::data::CDataWrapper()){
+                            
+                        }
                         
                         ~AbstractRemoteIODriver(){}
                         
@@ -141,8 +144,8 @@ namespace chaos {
                             CDWShrdPtrFutureHelper::CounterType new_promise_id;
                             CDWShrdPtrFutureHelper::Future request_future;
                             chaos::common::data::CDWUniquePtr ext_msg(new chaos::common::data::CDataWrapper());
-                            CDWShrdPtrFutureHelper::addNewPromise(new_promise_id,
-                                                                  request_future);
+                            future_hepler.addNewPromise(new_promise_id,
+                                                        request_future);
                             
                             ext_msg->addInt32Value(REQUEST_IDENTIFICATION, new_promise_id);
                             ext_msg->addCSDataValue(MESSAGE, *message_data);
@@ -192,6 +195,33 @@ namespace chaos {
                             return AR_ERROR_OK;
                         }
                     protected:
+                        //!inherited method by @ExternalUnitEndpoint
+                        void handleNewConnection(const std::string& connection_identifier){
+                            LStringWriteLock wl = current_connection_identifier.getWriteLockObject();
+                            current_connection_identifier() = connection_identifier;
+                            conn_phase = RDConnectionPhaseConnected;
+                        }
+                        //!inherited method by @ExternalUnitEndpoint
+                        void handleDisconnection(const std::string& connection_identifier) {
+                            LStringWriteLock wl = current_connection_identifier.getWriteLockObject();
+                            current_connection_identifier().clear();
+                            conn_phase = RDConnectionPhaseDisconnected;
+                        }
+                        
+                        void sendAuthenticationRequest(chaos::common::data::CDWShrdPtr& message_response) {
+                            chaos::common::data::CDWUniquePtr auth_ack_data(new chaos::common::data::CDataWrapper());
+                            auth_ack_data->addStringValue(AUTHORIZATION_KEY, authorization_key);
+                            sendRawRequest(ChaosMoveOperator(auth_ack_data),
+                                           message_response);
+                        }
+                        
+                        void sendConfigurationRequest(chaos::common::data::CDWShrdPtr& message_response) {
+                            chaos::common::data::CDWUniquePtr auth_ack_data(new chaos::common::data::CDataWrapper());
+                            auth_ack_data->addCSDataValue(INIT_HARDWARE_PARAM, *driver_init_pack);
+                            sendRawRequest(ChaosMoveOperator(auth_ack_data),
+                                           message_response);
+                        }
+                        
                         //! handle called when a new message has been received
                         /*!
                          A new message has been received from the rmeote server in an asyc way. It
@@ -210,8 +240,12 @@ namespace chaos {
                                     break;
                                 case RDConnectionPhaseConnected:
                                     CHAOS_ASSERT(current_connection_identifier().size());
-                                    return AR_ERROR_NOT_AUTORIZED;
-                                    break;
+                                    if(authorization_key.size() != 0) {
+                                        return AR_ERROR_NOT_AUTORIZED;
+                                        break;
+                                    } else {
+                                        conn_phase = RDConnectionPhaseAutorized;
+                                    }
                                 case RDConnectionPhaseAutorized:
                                     //we can proceeed
                                     break;
@@ -221,26 +255,6 @@ namespace chaos {
                             return AR_ERROR_OK;
                         }
                     private:
-                        //!inherited method by @ExternalUnitEndpoint
-                        void handleNewConnection(const std::string& connection_identifier){
-                            LStringWriteLock wl = current_connection_identifier.getWriteLockObject();
-                            current_connection_identifier() = connection_identifier;
-                            conn_phase = RDConnectionPhaseConnected;
-                        }
-                        //!inherited method by @ExternalUnitEndpoint
-                        void handleDisconnection(const std::string& connection_identifier) {
-                            LStringWriteLock wl = current_connection_identifier.getWriteLockObject();
-                            current_connection_identifier().clear();
-                            conn_phase = RDConnectionPhaseDisconnected;
-                        }
-                        
-                        void timeout() {
-                            //send ih_param to remote hardware
-                            if(driver_init_pack.get() != NULL) {
-                                chaos::common::data::CDWUniquePtr ih_pack(driver_init_pack->clone());
-                                sendRawRequest(ChaosMoveOperator(ih_pack));
-                            }
-                        }
                         
                         int handleReceivedeMessage(const std::string& connection_identifier,
                                                    ChaosUniquePtr<chaos::common::data::CDataWrapper> message) {
@@ -256,6 +270,15 @@ namespace chaos {
                                         EndpointType::sendError(connection_identifier,
                                                                 -1, "Authentication failed", __PRETTY_FUNCTION__);
                                         EndpointType::closeConnection(connection_identifier);
+                                    }
+                                } else if(message->hasKey(AUTHORIZATION_STATE)){
+                                    switch(message->getVariantValue(AUTHORIZATION_STATE).asInt32()) {
+                                        case 1:
+                                            conn_phase = RDConnectionPhaseAutorized;
+                                            break;
+                                            
+                                        default:
+                                            break;
                                     }
                                 }
                             } else {
@@ -280,13 +303,12 @@ namespace chaos {
                                     const uint32_t req_index = message->getUInt32Value(REQUEST_IDENTIFICATION);
                                     ChaosUniquePtr<chaos::common::data::CDataWrapper> embedded_message(message->getCSDataValue(MESSAGE));
                                     chaos::common::data::CDWShrdPtr message_shrd_ptr(embedded_message.release());
-                                    CDWShrdPtrFutureHelper::setDataForPromiseID(req_index, message_shrd_ptr);
+                                    future_hepler.setDataForPromiseID(req_index, message_shrd_ptr);
                                 }
                             }
                             return 0;
                         }
                         
-                        //!
                         void sendAuthenticationACK() {
                             chaos::common::data::CDWUniquePtr auth_ack_data(new chaos::common::data::CDataWrapper());
                             auth_ack_data->addInt32Value(AUTHORIZATION_STATE, 1);

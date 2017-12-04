@@ -24,11 +24,14 @@
 #define DBG     DBG_LOG(AbstractClientRemoteIODriver)
 #define ERR     ERR_LOG(AbstractClientRemoteIODriver)
 
+using namespace chaos::common::data;
+using namespace chaos::common::async_central;
 using namespace chaos::cu::driver_manager::driver;
 
 void AbstractClientRemoteIODriver::driverInit(const char *initParameter) throw (chaos::CException) {
     LOG_AND_TROW(ERR, -1, "AbstractClientRemoteIODriver can be initilized only with json document");
 }
+
 void AbstractClientRemoteIODriver::driverInit(const chaos::common::data::CDataWrapper& init_parameter) throw(chaos::CException) {
     std::string content_type = "application/json";
     CHECK_ASSERTION_THROW_AND_LOG(init_parameter.hasKey("uri"), ERR, -2, "The hostname name is mandatory");
@@ -47,18 +50,34 @@ void AbstractClientRemoteIODriver::driverInit(const chaos::common::data::CDataWr
     }
     
     CHECK_ASSERTION_THROW_AND_LOG((ExternalUnitClientEndpoint::endpoint_identifier.size() > 0), ERR, -4, "The endpoint name is empty");
+    
+    ClientARIODriver::driverInit(init_parameter);
+    
     //register this driver as external endpoint
     chaos::common::external_unit::ExternalUnitManager::getInstance()->initilizeConnection(*this,
                                                                                           "http",
                                                                                           content_type,
                                                                                           uri);
-    
-    
-    ClientARIODriver::driverInit(init_parameter);
+
 }
+
 void AbstractClientRemoteIODriver::driverDeinit() throw (chaos::CException) {
     INFO << "Deinit driver";
     chaos::common::external_unit::ExternalUnitManager::getInstance()->releaseConnection(*this,
                                                                                         "http");
     CHAOS_NOT_THROW(ClientARIODriver::driverDeinit();)
+}
+
+void AbstractClientRemoteIODriver::handleNewConnection(const std::string& connection_identifier) {
+    ClientARIODriver::handleNewConnection(connection_identifier);
+    AsyncCentralManager::getInstance()->addTimer(this, 0, 30000);
+}
+
+void AbstractClientRemoteIODriver::timeout() {
+    //client layer need to send authentication and configuration pack
+    CDWShrdPtr auth_message_response;
+    CDWShrdPtr config_message_response;
+    sendAuthenticationRequest(auth_message_response);
+    sendConfigurationRequest(config_message_response);
+    AsyncCentralManager::getInstance()->removeTimer(this);
 }

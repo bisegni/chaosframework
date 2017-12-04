@@ -24,6 +24,7 @@
 #include <chaos/common/external_unit/http_adapter/HTTPServerAdapter.h>
 #include <chaos/common/external_unit/http_adapter/HTTPClientAdapter.h>
 #include <chaos/common/external_unit/serialization/ExternalBSONExtJsonSerialization.h>
+#include <chaos/common/external_unit/serialization/ExternalBSONJsonSerialization.h>
 
 using namespace chaos::common::external_unit;
 using namespace chaos::common::utility;
@@ -38,6 +39,7 @@ ExternalUnitManager::ExternalUnitManager() {
                                                                     ChaosSharedPtr<AbstractClientAdapter>(new http_adapter::HTTPClientAdapter()))));
     
     //!add serializer
+    installSerializerInstancer<serialization::ExternalBSONJsonSerialization>();
     installSerializerInstancer<serialization::ExternalBSONExtJsonSerialization>();
 }
 

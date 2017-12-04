@@ -41,7 +41,6 @@ adapter(_adapter),
 endpoint(_endpoint),
 serializer_adapter(ChaosMoveOperator(_serializer_adapter)) {
     CHAOS_ASSERT(adapter && endpoint && serializer_adapter.get());
-    endpoint->addConnection(*this);
 }
 
 ExternalUnitConnection::~ExternalUnitConnection() {
@@ -68,4 +67,13 @@ void ExternalUnitConnection::closeConnection() {
 
 const std::string ExternalUnitConnection::getEndpointIdentifier() const {
     return endpoint->getIdentifier();
+}
+
+void ExternalUnitConnection::setOnline(bool _online) {
+    if(online != _online) {
+        online = _online;
+        if(online) {
+            endpoint->addConnection(*this);
+        }
+    }
 }
