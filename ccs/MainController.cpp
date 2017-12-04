@@ -149,8 +149,8 @@ bool MainController::init(int argc, char **argv) {
     }
 
 #ifdef Q_OS_LINUX
-    QApplication::instance()->setStyleSheet("QWidget {font-family: Monospace; font-size: 9pt;}"
-                                            "QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }");
+    ((QApplication*)QApplication::instance())->setStyleSheet("QWidget {font-family: Monospace; font-size: 9pt;}"
+                                                             "QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }");
 #elif defined(Q_OS_DARWIN)
     //    QFile style_files(":/dark_orange/style.qss");
     //    if (!style_files.open(QFile::ReadOnly | QFile::Text)) {
