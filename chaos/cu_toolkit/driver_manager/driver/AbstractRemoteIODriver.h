@@ -29,7 +29,6 @@
 #include <chaos/common/data/CDataVariant.h>
 #include <chaos/common/thread/FutureHelper.h>
 #include <chaos/common/utility/LockableObject.h>
-#include <chaos/common/async_central/async_central.h>
 
 #include <boost/multi_index/member.hpp>
 #include <boost/multi_index_container.hpp>
@@ -37,6 +36,7 @@
 #include <boost/multi_index/hashed_index.hpp>
 
 #define AUTHORIZATION_KEY        "authorization_key"
+#define INIT_HARDWARE_PARAM      "ih_par"
 #define AUTHORIZATION_STATE      "authorization_state"
 #define MESSAGE                  "msg"
 #define REQUEST_IDENTIFICATION   "req_id"
@@ -74,28 +74,34 @@ namespace chaos {
                     } RDConnectionPhase;
                     
                     CHAOS_DEFINE_LOCKABLE_OBJECT(std::string, LString);
-                    LString             current_connection_identifier;
-                    std::string         authorization_key;
-                    RDConnectionPhase   conn_phase;
+                    LString                             current_connection_identifier;
+                    std::string                         authorization_key;
+                    RDConnectionPhase                   conn_phase;
                 protected:
+                    //message sent to remote endpoint when new connection has been received
+                    chaos::common::data::CDWUniquePtr   driver_init_pack;
                     //!initialization and deinitialization driver methods
-                    void driverInit(const char *initParameter) throw (chaos::CException) {
+                    void driverInit(const char *initParameter) throw (chaos::CException) {}
+                    void driverInit(const chaos::common::data::CDataWrapper& init_parameter) throw(chaos::CException) {
+                        CHECK_ASSERTION_THROW_AND_LOG((init_parameter.isEmpty() == false), AbstractRemoteIODriver_ERR, -1, "Init parameter need to be formated in a json document");
+                        //CHECK_ASSERTION_THROW_AND_LOG(init_parameter.hasKey(AUTHORIZATION_KEY), AbstractRemoteIODriver_ERR, -3, "The authorization key is mandatory")
+                        //get the authorization key
+                        if(init_parameter.hasKey(AUTHORIZATION_KEY)) {
+                            authorization_key = init_parameter.getStringValue(AUTHORIZATION_KEY);
+                        } else {
+                            authorization_key = "";
                         }
-                        void driverInit(const chaos::common::data::CDataWrapper& init_parameter) throw(chaos::CException) {
-                            CHECK_ASSERTION_THROW_AND_LOG((init_parameter.isEmpty() == false), AbstractRemoteIODriver_ERR, -1, "Init parameter need to be formated in a json document");
-                            //CHECK_ASSERTION_THROW_AND_LOG(init_parameter.hasKey(AUTHORIZATION_KEY), AbstractRemoteIODriver_ERR, -3, "The authorization key is mandatory")
-                            //get the authorization key
-                            if(init_parameter.hasKey(AUTHORIZATION_KEY)) {
-                                authorization_key = init_parameter.getStringValue(AUTHORIZATION_KEY);
-                            } else {
-                                authorization_key = "";
-                            }
-                            CDWShrdPtrFutureHelper::init(NULL);
+                        
+                        if(init_parameter.hasKey(INIT_HARDWARE_PARAM) &&
+                           init_parameter.isCDataWrapperValue(INIT_HARDWARE_PARAM)) {
+                            driver_init_pack.reset(init_parameter.getCSDataValue(INIT_HARDWARE_PARAM));
                         }
-                        void driverDeinit() throw (chaos::CException) {
-                            AbstractRemoteIODriver_INFO << "Deinit driver";
-                            CHAOS_NOT_THROW(CDWShrdPtrFutureHelper::deinit();)
-                        }
+                        CDWShrdPtrFutureHelper::init(NULL);
+                    }
+                    void driverDeinit() throw (chaos::CException) {
+                        AbstractRemoteIODriver_INFO << "Deinit driver";
+                        CHAOS_NOT_THROW(CDWShrdPtrFutureHelper::deinit();)
+                    }
                     public:
                         
                         AbstractRemoteIODriver():
@@ -178,8 +184,10 @@ namespace chaos {
                             }
                             
                             //send message to driver
+                            chaos::common::data::CDWUniquePtr ext_msg(new chaos::common::data::CDataWrapper());
+                            ext_msg->addCSDataValue(MESSAGE, *message_data);
                             EndpointType::sendMessage(current_connection_identifier(),
-                                                      ChaosMoveOperator(message_data));
+                                                      ChaosMoveOperator(ext_msg));
                             //we have connection
                             return AR_ERROR_OK;
                         }
@@ -224,6 +232,14 @@ namespace chaos {
                             LStringWriteLock wl = current_connection_identifier.getWriteLockObject();
                             current_connection_identifier().clear();
                             conn_phase = RDConnectionPhaseDisconnected;
+                        }
+                        
+                        void timeout() {
+                            //send ih_param to remote hardware
+                            if(driver_init_pack.get() != NULL) {
+                                chaos::common::data::CDWUniquePtr ih_pack(driver_init_pack->clone());
+                                sendRawRequest(ChaosMoveOperator(ih_pack));
+                            }
                         }
                         
                         int handleReceivedeMessage(const std::string& connection_identifier,
