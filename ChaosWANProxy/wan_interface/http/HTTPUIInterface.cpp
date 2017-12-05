@@ -52,8 +52,8 @@ using namespace mongoose;
 static const boost::regex REG_API_URL_FORMAT(API_PATH_REGEX_V1("((/[a-zA-Z0-9_]+))*")); //"/api/v1((/[a-zA-Z0-9_]+))*"
 
 std::map<std::string, ::driver::misc::ChaosController*> HTTPUIInterface::devs;
-
-
+boost::mutex HTTPUIInterface::devio_mutex;
+uint64_t HTTPUIInterface::last_check_activity=0;
 
 /**
  * The handlers below are written in C to do the binding of the C mongoose with
@@ -173,6 +173,7 @@ void HTTPUIInterface::init(void *init_data) throw(CException) {
 		sched_cu_v[cnt]=new ::common::misc::scheduler::Scheduler();
 	}
 	sched_alloc=0;
+    last_check_activity =TimingUtil::getTimeStampInMicroseconds() ;
 
 }
 
@@ -262,7 +263,22 @@ static std::map<std::string, std::string> mappify(std::string const& s)
 
 	return m;
 }
-
+int HTTPUIInterface::removeDevice(std::string devname){
+   boost::mutex::scoped_lock l(devio_mutex);
+   for(int cnt=0;cnt<chaos_thread_number;cnt++){
+       if(sched_cu_v[cnt]->remove(devname)){
+           HTTWAN_INTERFACE_DBG_<<"* removing \""<<devname<<"\" from scheduler "<<cnt;
+       }
+   }
+   std::map<std::string,::driver::misc::ChaosController*>::iterator i=devs.find(devname);
+   if(i!=devs.end()){
+       HTTWAN_INTERFACE_DBG_<<"* removing \""<<devname<<"\" from known devices";
+       delete i->second;
+       devs.erase(i);
+       return 1;
+   }
+   return 0;
+}
 int HTTPUIInterface::process(struct mg_connection *connection) {
 	CHAOS_ASSERT(handler)
 					int								err = 0;
@@ -408,6 +424,7 @@ try{
 			}
 		}
 		response<<answer_multi.str();
+    /***** CHECK FOR DEVICES NOT ACCESSED IN xx MIN**/
 
 	}
 
@@ -429,10 +446,29 @@ try{
 	DEBUG_CODE(execution_time_end = TimingUtil::getTimeStampInMicroseconds();)
 	DEBUG_CODE(uint64_t duration = execution_time_end - execution_time_start;)
 	DEBUG_CODE(HTTWAN_INTERFACE_DBG_<<LOG_CONNECTION << "Execution time is:" << duration*1.0/1000.0 << " ms";)
-
+    HTTPUIInterface::checkActivity();
 	return 1;//
 
 }
+void HTTPUIInterface::checkActivity(){
+    uint64_t now=TimingUtil::getTimeStampInMicroseconds();
+    if((now-last_check_activity)<CHECK_ACTIVITY_CU){
+        return;
+    }
+    HTTWAN_INTERFACE_DBG_<<" checking activity after:"<<(1.0*(now-last_check_activity)/1000000.0)<<" s";
+    last_check_activity = now;
+
+    for(std::map<std::string,::driver::misc::ChaosController*>::iterator i=devs.begin();i!=devs.end();i++){
+        if((i->second->lastAccess() >0)){
+        uint64_t elapsed=(now - i->second->lastAccess());
+        if( ( elapsed >PRUNE_NOT_ACCESSED_CU)){
+            HTTWAN_INTERFACE_DBG_<<"* pruning \""<<i->first<<"\" because elapsed "<<((1.0*elapsed)/1000000.0)<<" s";
+            removeDevice(i->first);
+        }
+    }
+    }
+}
+
 bool HTTPUIInterface::handle(struct mg_connection *connection) {
     bool accepted = false;
     if(!(accepted = regex_match(connection->uri, REG_API_URL_FORMAT))) {

@@ -39,7 +39,10 @@ namespace chaos {
             class CDataWrapper;
         }
     }
-    
+
+#define CHECK_ACTIVITY_CU 2*60*1000*1000
+#define PRUNE_NOT_ACCESSED_CU 6*60*1000*1000
+
     namespace wan_proxy {
         namespace wan_interface {
             namespace http {
@@ -80,10 +83,13 @@ namespace chaos {
                      int sched_alloc;
 
                     static void addDevice(std::string,::driver::misc::ChaosController*);
-                    static void removeDevice(std::string);
+                    int removeDevice(std::string);
                     bool checkForContentType(mongoose::mg_connection *connection,
                                                                const std::string& type);
-                    boost::mutex devio_mutex;
+                    static boost::mutex devio_mutex;
+                    static uint64_t last_check_activity;
+
+                    void checkActivity();
                 public:
                     bool handle(mongoose::mg_connection *connection);
 
