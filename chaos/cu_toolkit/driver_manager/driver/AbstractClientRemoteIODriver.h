@@ -24,7 +24,6 @@
 
 
 //as client we need to send authentication message
-#include <chaos/common/async_central/async_central.h>
 #include <chaos/cu_toolkit/driver_manager/driver/AbstractRemoteIODriver.h>
 
 #include <chaos/common/external_unit/ExternalUnitClientEndpoint.h>
@@ -35,14 +34,12 @@ namespace chaos {
                 typedef AbstractRemoteIODriver<common::external_unit::ExternalUnitClientEndpoint> ClientARIODriver;
                 
                 class AbstractClientRemoteIODriver:
-                public chaos::common::async_central::TimerHandler,
                 public ClientARIODriver {
                 protected:
                     void driverInit(const char *initParameter) throw (chaos::CException);
                     void driverInit(const chaos::common::data::CDataWrapper& init_parameter) throw(chaos::CException);
                     void driverDeinit() throw (chaos::CException);
                     void handleNewConnection(const std::string& connection_identifier);
-                    void timeout();
                 public:
                     AbstractClientRemoteIODriver():
                     ClientARIODriver() {}

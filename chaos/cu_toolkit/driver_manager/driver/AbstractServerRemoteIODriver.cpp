@@ -66,15 +66,3 @@ void AbstractServerRemoteIODriver::driverDeinit() throw (chaos::CException) {
     chaos::common::external_unit::ExternalUnitManager::getInstance()->deregisterEndpoint(*this);
     CHAOS_NOT_THROW(ServerARIODriver::driverDeinit();)
 }
-
-void AbstractServerRemoteIODriver::handleNewConnection(const std::string& connection_identifier) {
-    ServerARIODriver::handleNewConnection(connection_identifier);
-    AsyncCentralManager::getInstance()->addTimer(this, 0, 30000);
-}
-
-void AbstractServerRemoteIODriver::timeout() {
-    //server driver need to send only configuration pack
-//    CDWShrdPtr config_message_response;
-//    sendConfigurationRequest(config_message_response);
-//    AsyncCentralManager::getInstance()->removeTimer(this);
-}

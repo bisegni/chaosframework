@@ -21,7 +21,6 @@
 
 #ifndef chaos_cu_toolkit_driver_manager_driver_AbstractServerRemoteIODriver_h
 #define chaos_cu_toolkit_driver_manager_driver_AbstractServerRemoteIODriver_h
-#include <chaos/common/async_central/async_central.h>
 #include <chaos/cu_toolkit/driver_manager/driver/AbstractRemoteIODriver.h>
 
 #include <chaos/common/external_unit/ExternalUnitServerEndpoint.h>
@@ -33,14 +32,11 @@ namespace chaos {
                 typedef AbstractRemoteIODriver<common::external_unit::ExternalUnitServerEndpoint> ServerARIODriver;
                 
                 class AbstractServerRemoteIODriver:
-                public chaos::common::async_central::TimerHandler,
                 public ServerARIODriver {
                 protected:
                     void driverInit(const char *initParameter) throw (chaos::CException);
                     void driverInit(const chaos::common::data::CDataWrapper& init_parameter) throw(chaos::CException);
                     void driverDeinit() throw (chaos::CException);
-                    void handleNewConnection(const std::string& connection_identifier);
-                    void timeout();
                 public:
                     AbstractServerRemoteIODriver():
                     AbstractRemoteIODriver<ExternalUnitServerEndpoint>() {

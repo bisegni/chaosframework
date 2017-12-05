@@ -71,20 +71,5 @@ void AbstractClientRemoteIODriver::driverDeinit() throw (chaos::CException) {
 
 void AbstractClientRemoteIODriver::handleNewConnection(const std::string& connection_identifier) {
     ClientARIODriver::handleNewConnection(connection_identifier);
-    AsyncCentralManager::getInstance()->addTimer(this, 0, 30000);
-}
-
-void AbstractClientRemoteIODriver::timeout() {
-    int err = 0;
-    //client layer need to send authentication and configuration pack
-    switch(getConnectionPhase()) {
-        case RDConnectionPhaseConnected:
-             err = manageAuthenticationPhase();
-            break;
-        case RDConnectionPhaseAutorized:
-            err = manageConfigurationRequest();
-            break;
-    }
-   
-    AsyncCentralManager::getInstance()->removeTimer(this);
+    conn_phase = RDConnectionPhaseManageAutorization;
 }

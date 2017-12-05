@@ -39,6 +39,7 @@
 #define AUTHORIZATION_KEY        "authorization_key"
 #define INIT_HARDWARE_PARAM      "ih_par"
 #define AUTHORIZATION_STATE      "authorization_state"
+#define CONFIGURATION_STATE      "configuration_state"
 #define MESSAGE                  "msg"
 #define REQUEST_IDENTIFICATION   "req_id"
 
@@ -68,11 +69,12 @@ namespace chaos {
                 public chaos::cu::driver_manager::driver::AbstractDriverPlugin,
                 public EndpointType {
 //                    friend class AbstractServerRemoteIODriver;
-//                    friend class AbstractClientRemoteIODriver;
+                    friend class AbstractClientRemoteIODriver;
                 protected:
                     typedef enum {
                         RDConnectionPhaseDisconnected,
                         RDConnectionPhaseConnected,
+                        RDConnectionPhaseManageAutorization,//this fase is only osed by client implementation of driver
                         RDConnectionPhaseAutorized,
                         RDConnectionPhaseConfigured,
                     } RDConnectionPhase;
@@ -82,8 +84,6 @@ namespace chaos {
                     std::string                         authorization_key;
                     RDConnectionPhase                   conn_phase;
                 protected:
-
-                    
                     CDWShrdPtrFutureHelper future_hepler;
                     //message sent to remote endpoint when new connection has been received
                     chaos::common::data::CDWUniquePtr   driver_init_pack;
@@ -129,23 +129,10 @@ namespace chaos {
                         int sendRawRequest(chaos::common::data::CDWUniquePtr message_data,
                                            chaos::common::data::CDWShrdPtr& message_response,
                                            uint32_t timeout = 5000) {
+                            int err = 0;
                             LStringWriteLock wl = current_connection_identifier.getWriteLockObject();
-                            switch(conn_phase) {
-                                case RDConnectionPhaseDisconnected:
-                                    return AR_ERROR_NO_CONNECTION;
-                                    break;
-                                case RDConnectionPhaseConnected: {
-                                    CHAOS_ASSERT(current_connection_identifier().size());
-                                    if(authorization_key.size() != 0) {
-                                        return AR_ERROR_NOT_AUTORIZED;
-                                        break;
-                                    } else {
-                                        conn_phase = RDConnectionPhaseAutorized;
-                                    }
-                                }
-                                case RDConnectionPhaseAutorized:
-                                    //we can proceeed
-                                    break;
+                            if((err = _managePhases())) {
+                                return err;
                             }
                             return _sendRawRequest(ChaosMoveOperator(message_data),
                                                    message_response);
@@ -156,32 +143,12 @@ namespace chaos {
                          \param message_data is the raw data to be transmitted to the remote driver
                          */
                         int sendRawMessage(chaos::common::data::CDWUniquePtr message_data) {
+                            int err = 0;
                             LStringWriteLock wl = current_connection_identifier.getWriteLockObject();
-                            switch(conn_phase) {
-                                case RDConnectionPhaseDisconnected:
-                                    return AR_ERROR_NO_CONNECTION;
-                                    break;
-                                case RDConnectionPhaseConnected: {
-                                    CHAOS_ASSERT(current_connection_identifier().size());
-                                    if(authorization_key.size() != 0) {
-                                        return AR_ERROR_NOT_AUTORIZED;
-                                        break;
-                                    } else {
-                                        conn_phase = RDConnectionPhaseAutorized;
-                                    }
-                                }
-                                case RDConnectionPhaseAutorized:
-                                    //we can proceeed
-                                    break;
+                            if((err = _managePhases())) {
+                                return err;
                             }
-                            
-                            //send message to driver
-                            chaos::common::data::CDWUniquePtr ext_msg(new chaos::common::data::CDataWrapper());
-                            ext_msg->addCSDataValue(MESSAGE, *message_data);
-                            EndpointType::sendMessage(current_connection_identifier(),
-                                                      ChaosMoveOperator(ext_msg));
-                            //we have connection
-                            return AR_ERROR_OK;
+                            return _sendRawMessage(ChaosMoveOperator(message_data));
                         }
                     protected:
                         //!inherited method by @ExternalUnitEndpoint
@@ -195,35 +162,6 @@ namespace chaos {
                             LStringWriteLock wl = current_connection_identifier.getWriteLockObject();
                             current_connection_identifier().clear();
                             conn_phase = RDConnectionPhaseDisconnected;
-                        }
-                        int manageAuthenticationPhase() {
-                            int err = 0;
-                            chaos::common::data::CDWShrdPtr message_response;
-                            chaos::common::data::CDWUniquePtr auth_ack_data(new chaos::common::data::CDataWrapper());
-                            auth_ack_data->addStringValue(AUTHORIZATION_KEY, authorization_key);
-                            if((err = _sendRawRequest(ChaosMoveOperator(auth_ack_data),
-                                                      message_response)) ==0 ){
-                                if(message_response->hasKey(AUTHORIZATION_STATE)) {
-                                    if(message_response->getVariantValue(AUTHORIZATION_STATE).asInt32() == 0){
-                                        conn_phase = RDConnectionPhaseAutorized;
-                                    } else {
-                                        err = AR_ERROR_NOT_AUTORIZED;
-                                    }
-                                }
-                            }
-                            return err;
-                        }
-                        
-                        int manageConfigurationRequest() {
-                            int err = 0;
-                            chaos::common::data::CDWShrdPtr message_response;
-                            chaos::common::data::CDWUniquePtr conf_ack_data(new chaos::common::data::CDataWrapper());
-                            conf_ack_data->addCSDataValue(INIT_HARDWARE_PARAM, *driver_init_pack);
-                            if((err = _sendRawRequest(ChaosMoveOperator(conf_ack_data),
-                                                      message_response)) ==0 ){
-                                
-                            }
-                            return err;
                         }
                         
                         const RDConnectionPhase getConnectionPhase() const {
@@ -240,24 +178,10 @@ namespace chaos {
                         int sendError(int error_code,
                                       std::string& error_message,
                                       std::string& error_domain) {
+                            int err = 0;
                             LStringWriteLock wl = current_connection_identifier.getWriteLockObject();
-                            switch(conn_phase) {
-                                case RDConnectionPhaseDisconnected:
-                                    return AR_ERROR_NO_CONNECTION;
-                                    break;
-                                case RDConnectionPhaseConnected:
-                                    CHAOS_ASSERT(current_connection_identifier().size());
-                                    if(authorization_key.size() != 0) {
-                                        return AR_ERROR_NOT_AUTORIZED;
-                                        break;
-                                    } else {
-                                        conn_phase = RDConnectionPhaseAutorized;
-                                    }
-                                case RDConnectionPhaseAutorized:
-                                    //we can proceeed
-                                    break;
-                                case RDConnectionPhaseConfigured:
-                                    break;
+                            if((err = _managePhases())) {
+                                return err;
                             }
                             EndpointType::sendError(current_connection_identifier(),
                                                     error_code, error_message, error_domain);
@@ -325,6 +249,64 @@ namespace chaos {
                             sendRawMessage(ChaosMoveOperator(auth_ack_data));
                         }
                         
+                        //! manage the connection phases when a message or request need to be sent
+                        int _managePhases() {
+                            switch(conn_phase) {
+                                case RDConnectionPhaseDisconnected:
+                                    return AR_ERROR_NO_CONNECTION;
+                                    break;
+                                case RDConnectionPhaseConnected: {
+                                    CHAOS_ASSERT(current_connection_identifier().size());
+                                    if(authorization_key.size() != 0) {
+                                        return AR_ERROR_NOT_AUTORIZED;
+                                        break;
+                                    } else {
+                                        conn_phase = RDConnectionPhaseAutorized;
+                                    }
+                                }
+                                    
+                                case RDConnectionPhaseManageAutorization: {
+                                    int err = 0;
+                                    chaos::common::data::CDWShrdPtr message_response;
+                                    chaos::common::data::CDWUniquePtr auth_ack_data(new chaos::common::data::CDataWrapper());
+                                    auth_ack_data->addStringValue(AUTHORIZATION_KEY, authorization_key);
+                                    if((err = _sendRawRequest(ChaosMoveOperator(auth_ack_data),
+                                                              message_response)) ==0 ){
+                                        if(message_response->hasKey(AUTHORIZATION_STATE)) {
+                                            if(message_response->getVariantValue(AUTHORIZATION_STATE).asInt32() == 0){
+                                                conn_phase = RDConnectionPhaseAutorized;
+                                            } else {
+                                                return AR_ERROR_NOT_AUTORIZED;
+                                            }
+                                        }
+                                    }
+                                    break;
+                                }
+                                    
+                                case RDConnectionPhaseAutorized: {
+                                    int err = 0;
+                                    chaos::common::data::CDWShrdPtr message_response;
+                                    chaos::common::data::CDWUniquePtr conf_ack_data(new chaos::common::data::CDataWrapper());
+                                    conf_ack_data->addCSDataValue(INIT_HARDWARE_PARAM, *driver_init_pack);
+                                    if((err = _sendRawRequest(ChaosMoveOperator(conf_ack_data),
+                                                              message_response)) ==0 ){
+                                        if(message_response->hasKey(CONFIGURATION_STATE)) {
+                                            if(message_response->getVariantValue(CONFIGURATION_STATE).asInt32() == 0){
+                                                conn_phase = RDConnectionPhaseAutorized;
+                                            } else {
+                                                return AR_ERROR_NOT_AUTORIZED;
+                                            }
+                                        }
+                                    }
+                                    break;
+                                }
+                                case RDConnectionPhaseConfigured:
+                                    //we can proceeed
+                                    break;
+                            }
+                            return 0;
+                        }
+                        
                         int _sendRawRequest(chaos::common::data::CDWUniquePtr message_data,
                                             chaos::common::data::CDWShrdPtr& message_response,
                                             uint32_t timeout = 5000){
@@ -348,7 +330,15 @@ namespace chaos {
                                 return AR_ERROR_TIMEOUT;
                             }
                         }
-                        
+                        int _sendRawMessage(chaos::common::data::CDWUniquePtr message_data){
+                            //send message to driver
+                            chaos::common::data::CDWUniquePtr ext_msg(new chaos::common::data::CDataWrapper());
+                            ext_msg->addCSDataValue(MESSAGE, *message_data);
+                            EndpointType::sendMessage(current_connection_identifier(),
+                                                      ChaosMoveOperator(ext_msg));
+                            //we have connection
+                            return AR_ERROR_OK;
+                        }
                         };
                         }
                         }
