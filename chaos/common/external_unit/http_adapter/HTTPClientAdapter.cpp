@@ -158,7 +158,7 @@ void HTTPClientAdapter::ev_handler(struct mg_connection *conn,
         case MG_EV_CONNECT: {
             ChaosWriteLock wl(ci->smux);
             int status = *((int *) event_data);
-            ci->ext_unit_conn->setOnline((status==0));
+            ci->ext_unit_conn->online = (status==0);
             break;
         }
         case MG_EV_WEBSOCKET_FRAME: {
@@ -196,7 +196,7 @@ void HTTPClientAdapter::ev_handler(struct mg_connection *conn,
                 //!beause conenciton need to be reopend
                 //reset real connection
                 ci->conn = NULL;
-                ci->ext_unit_conn->setOnline(false);
+                ci->ext_unit_conn->online = false;
                 ci->ext_unit_conn->accepted_state = -1;
                 //set retry timeout after five seconds
                 ci->next_reconnection_retry_ts = TimingUtil::getTimestampWithDelay(5000, true);

@@ -69,8 +69,6 @@ namespace chaos {
                 virtual void closeConnection();
                 
                 const std::string getEndpointIdentifier() const;
-                
-                void setOnline(bool _online);
             };
         }
     }
