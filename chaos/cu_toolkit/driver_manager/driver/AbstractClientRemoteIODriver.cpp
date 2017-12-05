@@ -59,7 +59,7 @@ void AbstractClientRemoteIODriver::driverInit(const chaos::common::data::CDataWr
                                                                                                 "http",
                                                                                                 content_type,
                                                                                                 uri);
-    CHECK_ASSERTION_THROW_AND_LOG(err != 0, ERR, -4, "Error creating connection");
+    CHECK_ASSERTION_THROW_AND_LOG(err == 0, ERR, -4, "Error creating connection");
 }
 
 void AbstractClientRemoteIODriver::driverDeinit() throw (chaos::CException) {

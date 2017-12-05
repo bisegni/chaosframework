@@ -23,29 +23,27 @@ QVariant SearchNodeListModel::getRowData(int row) const {
     QString node_type =  QString::fromStdString(found_node->getStringValue(chaos::NodeDefinitionKey::NODE_TYPE));
     QString node_health_ts("---");
     QString node_health_status("---");
-    if(found_node->hasKey("health_stat") &&
+    qDebug() << found_node->getJSONString().c_str();
+    bool has_stat = found_node->hasKey("health_stat");
+    if(has_stat &&
             found_node->isCDataWrapperValue("health_stat")) {
         ChaosUniquePtr<chaos::common::data::CDataWrapper> health_stat(found_node->getCSDataValue("health_stat"));
         if(health_stat->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP) &&
                 health_stat->isInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP)) {
             node_health_ts = QDateTime::fromMSecsSinceEpoch(health_stat->getUInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP), Qt::LocalTime).toString();
-        } else {
-            node_health_ts = "---";
         }
         if(health_stat->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS) &&
                 health_stat->isStringValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS)) {
             node_health_status = QString::fromStdString(health_stat->getStringValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS));
-        } else {
-            node_health_status = "---";
         }
-
-        QSharedPointer<TwoLineInformationItem> cmd_desc(new TwoLineInformationItem(node_uid,
-                                                                                   QString("Type:%1 Heartbeat:%2 status:%3").arg(node_type,
-                                                                                                                                 node_health_ts,
-                                                                                                                                 node_health_status),
-                                                                                   QVariant::fromValue(found_node)));
-        return QVariant::fromValue(cmd_desc);
     }
+
+    QSharedPointer<TwoLineInformationItem> cmd_desc(new TwoLineInformationItem(node_uid,
+                                                                               QString("Type:%1 Heartbeat:%2 status:%3").arg(node_type,
+                                                                                                                             node_health_ts,
+                                                                                                                             node_health_status),
+                                                                               QVariant::fromValue(found_node)));
+    return QVariant::fromValue(cmd_desc);
 }
 
 Qt::ItemFlags SearchNodeListModel::flags(const QModelIndex &index) const {
