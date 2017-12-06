@@ -106,8 +106,10 @@ HTTPUIInterface::~HTTPUIInterface() {}
 
 //inherited method
 void HTTPUIInterface::init(void *init_data) throw(CException) {
-	//! forward message to superclass
-	AbstractWANInterface::init(init_data);
+    signal(SIGPIPE, SIG_IGN);
+    //! forward message to superclass
+
+    AbstractWANInterface::init(init_data);
 
 	//clear in case last deinit fails
 	http_server_list.clear();
@@ -264,7 +266,6 @@ static std::map<std::string, std::string> mappify(std::string const& s)
 	return m;
 }
 int HTTPUIInterface::removeDevice(std::string devname){
-   boost::mutex::scoped_lock l(devio_mutex);
    for(int cnt=0;cnt<chaos_thread_number;cnt++){
        if(sched_cu_v[cnt]->remove(devname)){
            HTTWAN_INTERFACE_DBG_<<"* removing \""<<devname<<"\" from scheduler "<<cnt;
@@ -457,6 +458,7 @@ void HTTPUIInterface::checkActivity(){
     }
     HTTWAN_INTERFACE_DBG_<<" checking activity after:"<<(1.0*(now-last_check_activity)/1000000.0)<<" s";
     last_check_activity = now;
+    boost::mutex::scoped_lock l(devio_mutex);
 
     for(std::map<std::string,::driver::misc::ChaosController*>::iterator i=devs.begin();i!=devs.end();i++){
         if((i->second->lastAccess() >0)){
