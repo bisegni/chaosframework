@@ -29,7 +29,11 @@
 /*
  * Define to 1 for POSIX-like systems, 2 for Windows.
  */
+#if defined (__unix__) || (defined (__APPLE__) && defined (__MACH__))
 #define BSON_OS 1
+#else
+#define BSON_OS 0
+#endif
 
 
 /*
@@ -38,8 +42,10 @@
  * dependent. For example, some PPC or ARM systems may not have it even
  * if it is a recent GCC version.
  */
-#ifndef DISABLE_COMPARE_AND_SWAP
+#if !defined DISABLE_COMPARE_AND_SWAP
 #define BSON_HAVE_ATOMIC_32_ADD_AND_FETCH 1
+#else
+#define BSON_HAVE_ATOMIC_32_ADD_AND_FETCH 0
 #endif
 
 #if BSON_HAVE_ATOMIC_32_ADD_AND_FETCH != 1
@@ -49,19 +55,16 @@
 /*
  * Similarly, define to 1 if we have access to GCC 64-bit atomic builtins.
  */
-#ifndef DISABLE_COMPARE_AND_SWAP
+#if !defined DISABLE_COMPARE_AND_SWAP
 #define BSON_HAVE_ATOMIC_64_ADD_AND_FETCH 1
+#else
+#define BSON_HAVE_ATOMIC_64_ADD_AND_FETCH 0
 #endif
 
 #if BSON_HAVE_ATOMIC_64_ADD_AND_FETCH != 1
 # undef BSON_HAVE_ATOMIC_64_ADD_AND_FETCH
 #endif
 
-#ifdef DISABLE_COMPARE_AND_SWAP
-#undef BSON_HAVE_ATOMIC_32_ADD_AND_FETCH
-#undef BSON_HAVE_ATOMIC_64_ADD_AND_FETCH
-#define __BSON_NEED_BARRIER
-#endif
 
 /*
  * Define to 1 if your system requires {} around PTHREAD_ONCE_INIT.
@@ -137,3 +140,4 @@
 
 
 #endif /* BSON_CONFIG_H */
+
