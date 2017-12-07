@@ -127,6 +127,21 @@ namespace chaos {
                         }
                         return result;
                     }
+                    
+                    bool checkConfigurationState(chaos::common::data::CDWShrdPtr& message_response) {
+                        bool result = false;
+                        if(message_response->hasKey("err") &&
+                           message_response->isInt32Value("err")) {
+                            if(message_response->getInt32Value("err") != 0) {
+                                return false;
+                            }
+                        }
+                        if(message_response->hasKey(CONFIGURATION_STATE) &&
+                           message_response->isInt32Value(CONFIGURATION_STATE)) {
+                            result = (message_response->getInt32Value(CONFIGURATION_STATE) == 1);
+                        }
+                        return result;
+                    }
                 public:
                     AbstractRemoteIODriver():
                     chaos::cu::driver_manager::driver::AbstractDriverPlugin(this),
@@ -287,18 +302,16 @@ namespace chaos {
                             }
                                 
                             case RDConnectionPhaseAutorized: {
+                                chaos::common::data::CDWUniquePtr conf_msg(driver_init_pack->clone());
                                 chaos::common::data::CDWShrdPtr message_response;
-                                chaos::common::data::CDWUniquePtr conf_ack_data(new chaos::common::data::CDataWrapper());
-                                conf_ack_data->addCSDataValue(INIT_HARDWARE_PARAM, *driver_init_pack);
-                                if((err = _sendRawRequest(ChaosMoveOperator(conf_ack_data),
-                                                          message_response)) ==0 ) {
-                                    if(message_response->hasKey(CONFIGURATION_STATE)) {
-                                        if(message_response->getVariantValue(CONFIGURATION_STATE).asInt32() == 0){
-                                            conn_phase = RDConnectionPhaseAutorized;
-                                        } else {
-                                            err = AR_ERROR_NOT_CONFIGURED;
-                                            break;
-                                        }
+                                if((err = _sendRawOpcodeRequest("conf",
+                                                                ChaosMoveOperator(conf_msg),
+                                                                message_response)) ==0 ){
+                                    if(checkConfigurationState(message_response)) {
+                                        conn_phase = RDConnectionPhaseConfigured;
+                                    } else {
+                                        err = AR_ERROR_NOT_CONFIGURED;
+                                        break;
                                     }
                                 }
                             }

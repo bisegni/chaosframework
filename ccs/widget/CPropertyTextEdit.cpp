@@ -81,7 +81,8 @@ void CPropertyTextEdit::noDSDataFound(const std::string& control_unit_uid,
 }
 
 void CPropertyTextEdit::updateUIStatus() {
-    setEnabled(online_status == OnlineStateON);
+    ui->lineEditPropertyValue->setEnabled(online_status == OnlineStateON);
+    ui->pushButtonSavePropertyValue->setEnabled(online_status == OnlineStateON);
     if(online_status == OnlineStateON) {
         if(last_error_message.size()) {
             ui->pushButtonSavePropertyValue->updateStateDescription(2, last_error_message);
