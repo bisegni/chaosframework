@@ -159,6 +159,26 @@ namespace chaos {
                      \param message_data is the raw data to be transmitted to the remote driver
                      \param received_data si the raw data received from the driver
                      */
+                    int sendOpcodeRequest(const std::string opcode,
+                                          chaos::common::data::CDWUniquePtr message_data,
+                                          chaos::common::data::CDWShrdPtr& message_response,
+                                          uint32_t timeout = 5000) {
+                        int err = 0;
+                        LStringWriteLock wl = current_connection_identifier.getWriteLockObject();
+                        if((err = _managePhases())) {
+                            return err;
+                        }
+                        return _sendRawOpcodeRequest(opcode,
+                                                     ChaosMoveOperator(message_data),
+                                                     message_response,
+                                                     timeout);
+                    }
+                    
+                    //!Send raw request to the remote driver
+                    /*!
+                     \param message_data is the raw data to be transmitted to the remote driver
+                     \param received_data si the raw data received from the driver
+                     */
                     int sendRawRequest(chaos::common::data::CDWUniquePtr message_data,
                                        chaos::common::data::CDWShrdPtr& message_response,
                                        uint32_t timeout = 5000) {
@@ -168,7 +188,8 @@ namespace chaos {
                             return err;
                         }
                         return _sendRawRequest(ChaosMoveOperator(message_data),
-                                               message_response);
+                                               message_response,
+                                               timeout);
                     }
                     
                     //!Send raw message to the remote driver
@@ -326,12 +347,14 @@ namespace chaos {
                     //send datapack as opcode format
                     int _sendRawOpcodeRequest(const std::string opcode,
                                               chaos::common::data::CDWUniquePtr message_data,
-                                              chaos::common::data::CDWShrdPtr& message_response) {
+                                              chaos::common::data::CDWShrdPtr& message_response,
+                                              uint32_t timeout = 5000) {
                         chaos::common::data::CDWUniquePtr opcpde_msg(new chaos::common::data::CDataWrapper());
                         opcpde_msg->addStringValue(MESSAGE_OPCODE, opcode);
                         opcpde_msg->addCSDataValue(MESSAGE_OPCODE_PARAMETER, *message_data);
                         return _sendRawRequest(ChaosMoveOperator(opcpde_msg),
-                                               message_response);
+                                               message_response,
+                                               timeout);
                     }
                     
                     int _sendRawRequest(chaos::common::data::CDWUniquePtr message_data,

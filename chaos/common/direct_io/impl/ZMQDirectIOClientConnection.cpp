@@ -41,7 +41,8 @@ socket_service(NULL){
 ZMQDirectIOClientConnection::~ZMQDirectIOClientConnection() {}
 
 void ZMQDirectIOClientConnection::init(void *init_data) throw(chaos::CException) {
-    if(ensureSocket() == false) throw CException(-1, "Error configuring socket", __PRETTY_FUNCTION__);
+    int err = 0;
+    if((err = ensureSocket())) throw CException(err, "Error configuring socket", __PRETTY_FUNCTION__);
 }
 
 void ZMQDirectIOClientConnection::deinit() throw(chaos::CException) {
@@ -217,6 +218,8 @@ int ZMQDirectIOClientConnection::getNewSocketPair() {
         }
     } catch(chaos::CException& ex) {
         releaseSocketPair();
+        err = ex.errorCode;
+        DECODE_CHAOS_EXCEPTION(ex);
     }
     return err;
 }
