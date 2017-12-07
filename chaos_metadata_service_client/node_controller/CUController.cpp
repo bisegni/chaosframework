@@ -178,7 +178,7 @@ int CUController::setScheduleDelay(uint64_t microseconds) {
     pg.addProperty(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, CDataVariant(static_cast<uint64_t>(microseconds)));
     DBGET<<chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY<<":"<<microseconds;
     EXECUTE_CHAOS_API(chaos::metadata_service_client::api_proxy::node::UpdateProperty,millisecToWait,deviceChannel->getDeviceID(),pg);
-
+    return 0;
 }
 
 int CUController::setBypass(bool onoff){
@@ -186,6 +186,7 @@ int CUController::setBypass(bool onoff){
     pg.addProperty(chaos::ControlUnitDatapackSystemKey::BYPASS_STATE, CDataVariant(static_cast<bool>(onoff)));
 
     EXECUTE_CHAOS_API(chaos::metadata_service_client::api_proxy::node::UpdateProperty,millisecToWait,deviceChannel->getDeviceID(),pg);
+    return 0;
 }
 
 void CUController::getDeviceDatasetAttributesName(vector<string>& attributesName) {
