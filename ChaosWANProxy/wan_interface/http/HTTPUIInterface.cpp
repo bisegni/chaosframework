@@ -452,7 +452,7 @@ try{
 
 }
 void HTTPUIInterface::checkActivity(){
-    uint64_t now=TimingUtil::getTimeStampInMicroseconds();
+    int64_t now=TimingUtil::getTimeStampInMicroseconds();
     if((now-last_check_activity)<CHECK_ACTIVITY_CU){
         return;
     }
@@ -462,9 +462,9 @@ void HTTPUIInterface::checkActivity(){
 
     for(std::map<std::string,::driver::misc::ChaosController*>::iterator i=devs.begin();i!=devs.end();i++){
         if((i->second->lastAccess() >0)){
-        uint64_t elapsed=(now - i->second->lastAccess());
+        int64_t elapsed=(now - (i->second)->lastAccess());
         if( ( elapsed >PRUNE_NOT_ACCESSED_CU)){
-            HTTWAN_INTERFACE_DBG_<<"* pruning \""<<i->first<<"\" because elapsed "<<((1.0*elapsed)/1000000.0)<<" s";
+            HTTWAN_INTERFACE_DBG_<<"* pruning \""<<i->first<<"\" because elapsed "<<((1.0*elapsed)/1000000.0)<<" s last time access:"<<((i->second)->lastAccess()/1000000.0)<<" s ago";
             removeDevice(i->first);
         }
     }
