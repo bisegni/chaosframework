@@ -214,32 +214,31 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string& key,
     int err = 0;
     std::vector<mongo::BSONObj> object_found;
     try {
+        mongo::Query q;
         bool reverse_order = false;
         const std::string run_key = CHAOS_FORMAT("%1%.%2%",%MONGODB_DAQ_DATA_FIELD%chaos::ControlUnitDatapackCommonKey::RUN_ID);
         const std::string counter_key = CHAOS_FORMAT("%1%.%2%",%MONGODB_DAQ_DATA_FIELD%chaos::DataPackCommonKey::DPCK_SEQ_ID);
-        mongo::BSONObjBuilder time_query;
         //we have the intervall
         reverse_order = timestamp_from>timestamp_to;
         
         if(reverse_order == false) {
-            time_query << "$gt" << mongo::Date_t(timestamp_from) <<
-            "$lte" << mongo::Date_t(timestamp_to);
+            q = BSON(chaos::DataPackCommonKey::DPCK_DEVICE_ID << key <<
+                     chaos::DataPackCommonKey::DPCK_TIMESTAMP << BSON("$gte" << mongo::Date_t(timestamp_from) <<
+                                                                      "$lt" << mongo::Date_t(timestamp_to)) <<
+                     run_key << BSON("$gte" << (long long)last_record_found_seq.run_id) <<
+                     counter_key << BSON("$gt" << (long long)last_record_found_seq.datapack_counter));
         } else {
-            time_query << "$lt" << mongo::Date_t(timestamp_from) <<
-            "$gte" << mongo::Date_t(timestamp_to);
+            BSON(chaos::DataPackCommonKey::DPCK_DEVICE_ID << key <<
+                 chaos::DataPackCommonKey::DPCK_TIMESTAMP << BSON("$lte" << mongo::Date_t(timestamp_from) <<
+                                                                  "$gt" << mongo::Date_t(timestamp_to)) <<
+                 run_key << BSON("$lte" << (long long)last_record_found_seq.run_id) <<
+                 counter_key << BSON("$lt" << (long long)last_record_found_seq.datapack_counter));
         }
         
-        
-        
-        mongo::Query q = BSON(chaos::DataPackCommonKey::DPCK_DEVICE_ID << key <<
-                              chaos::DataPackCommonKey::DPCK_TIMESTAMP << time_query.obj() <<
-                              run_key << BSON("$gte" << (long long)last_record_found_seq.run_id) <<
-                              counter_key << BSON("$gte" << (long long)last_record_found_seq.datapack_counter));
-        
         if(reverse_order) {
-            q = q.sort(BSON(chaos::DataPackCommonKey::DPCK_TIMESTAMP<<-1));
+            q = q.sort(BSON(run_key<<-1<<counter_key<<-1));
         } else {
-            q = q.sort(BSON(chaos::DataPackCommonKey::DPCK_TIMESTAMP<<1));
+            q = q.sort(BSON(run_key<<1<<counter_key<<1));
         }
         
         DEBUG_CODE(DBG<<log_message("findObject",
