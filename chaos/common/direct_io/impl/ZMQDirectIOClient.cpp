@@ -112,7 +112,12 @@ DirectIOClientConnection *ZMQDirectIOClient::_getNewConnectionImpl(std::string s
         //register client with the hash of the xzmq decoded endpoint address (tcp://ip:port)
         DEBUG_CODE(ZMQDIOLDBG_ << "Register client for " << server_description << " with zmq decoded hash " << connection->getUniqueUUID();)
         map_connections.registerElement(connection->getUniqueUUID(), connection);
-    } catch (...) {}
+    } catch (...) {
+        ZMQDIOLERR_ << CHAOS_FORMAT("We got error initilizing connection to %1%:%2% so we goning to deinitilize it an return NULL channel", %server_description%endpoint);
+        //in case of error
+        CHAOS_NOT_THROW(InizializableService::deinitImplementation(connection, "ZMQDirectIOClientConnection", __PRETTY_FUNCTION__););
+        connection = NULL;
+    }
     return connection;
 }
 

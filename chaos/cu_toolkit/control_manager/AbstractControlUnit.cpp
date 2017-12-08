@@ -1692,8 +1692,15 @@ void AbstractControlUnit::propertyUpdatedHandler(const std::string& group_name,
                                                  const CDataVariant& old_value,
                                                  const CDataVariant& new_value) {
     if(group_name.compare("property_abstract_control_unit") == 0) {
+        //update property on driver
         key_data_storage->updateConfiguration(property_name, new_value);
-        //is my group
+        
+//TODO
+//        if(attribute_value_shared_cache->hasAttribute(DOMAIN_SYSTEM, property_name)){
+//            attribute_value_shared_cache->getAttributeValue(DOMAIN_SYSTEM, property_name)->setValue(new_value);
+//        }
+        
+        //reflect modification on dataset
         if(property_name.compare(ControlUnitDatapackSystemKey::BYPASS_STATE) == 0) {
             _setBypassState(new_value.asBool());
         } else if(property_name.compare(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE) == 0) {

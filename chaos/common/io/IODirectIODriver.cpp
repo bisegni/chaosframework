@@ -285,7 +285,6 @@ chaos::common::data::CDataWrapper* IODirectIODriver::updateConfiguration(chaos::
     boost::unique_lock<boost::shared_mutex> rl(mutext_feeder);
     //checkif someone has passed us the device indetification
     if(newConfigration->hasKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST)){
-        IODirectIODriver_LINFO_ << "Get the DataManager LiveData address value";
         ChaosUniquePtr<chaos::common::data::CMultiTypeDataArrayWrapper> liveMemAddrConfig(newConfigration->getVectorValue(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST));
         size_t numerbOfserverAddressConfigured = liveMemAddrConfig->size();
         for ( int idx = 0; idx < numerbOfserverAddressConfigured; idx++ ){
@@ -298,7 +297,9 @@ chaos::common::data::CDataWrapper* IODirectIODriver::updateConfiguration(chaos::
                 IODirectIODriver_LERR_ << "Data proxy server description " << serverDesc << " is laredy instaleld in driver";
                 continue;
             }
-            //add new url to connection feeder
+            IODirectIODriver_LINFO_ << CHAOS_FORMAT("Add server %1% to IODirectIODriver", %serverDesc);
+            
+            //add new url to connection feeder, thi method in case of failure to allocate service will throw an eception
             connectionFeeder.addURL(chaos::common::network::URL(serverDesc));
         }
     }
@@ -321,7 +322,7 @@ void IODirectIODriver::disposeService(void *service_ptr) {
 }
 
 void* IODirectIODriver::serviceForURL(const common::network::URL& url, uint32_t service_index) {
-    IODirectIODriver_LINFO_ << "try to add connection for " << url.getURL();
+    IODirectIODriver_LINFO_ << "Try to create service for " << url.getURL();
     IODirectIODriverClientChannels * clients_channel = NULL;
     chaos_direct_io::DirectIOClientConnection *tmp_connection = init_parameter.client_instance->getNewConnection(url.getURL());
     if(tmp_connection) {
@@ -335,7 +336,7 @@ void* IODirectIODriver::serviceForURL(const common::network::URL& url, uint32_t 
             
             //release conenction
             init_parameter.client_instance->releaseConnection(tmp_connection);
-            
+            tmp_connection = NULL;
             //relase struct
             delete(clients_channel);
             return NULL;
@@ -350,8 +351,10 @@ void* IODirectIODriver::serviceForURL(const common::network::URL& url, uint32_t 
             
             //release connection
             init_parameter.client_instance->releaseConnection(tmp_connection);
+            tmp_connection = NULL;
             //relase struct
             delete(clients_channel);
+            clients_channel = NULL;
             return NULL;
         }
         //set the answer information
@@ -360,11 +363,12 @@ void* IODirectIODriver::serviceForURL(const common::network::URL& url, uint32_t 
         //set this driver instance as event handler for connection
         clients_channel->connection->setEventHandler(this);
         clients_channel->connection->setCustomStringIdentification(boost::lexical_cast<std::string>(service_index));
+        IODirectIODriver_LINFO_ << "Connection for " << url.getURL() << " added succesfully";
+        return clients_channel;
     } else {
         IODirectIODriver_LERR_ << "Error creating client connection for " << url.getURL();
+        return NULL;
     }
-    IODirectIODriver_LINFO_ << "connection for " << url.getURL() << " added succesfully";
-    return clients_channel;
 }
 
 void IODirectIODriver::handleEvent(chaos_direct_io::DirectIOClientConnection *client_connection,

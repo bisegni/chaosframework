@@ -19,6 +19,8 @@
  * permissions and limitations under the Licence.
  */
 
+#include <chaos/common/exception/CException.h>
+
 #include "TestURLFeeder.h"
 
 #define NUMBER_OF_CYCLE 1000000
@@ -38,6 +40,7 @@ number_of_cycle(0){}
 
 void* TestURLFeeder::serviceForURL(const URL& url,
                                    uint32_t service_index) {
+    if(url.getURL().compare("") == 0) return NULL;
     ServiceForURL *result = new ServiceForURL();
     result->url = url.getURL();
     return (void*)result;
@@ -53,6 +56,7 @@ void TestURLFeeder::SetUp() {
 
 TEST_F(TestURLFeeder, TestURLFeederLogic) {
     feeder_engine.addURL(chaos::common::network::URL("http://test:9091"), 100);
+    ASSERT_THROW(feeder_engine.addURL(chaos::common::network::URL(""), 50), chaos::CException);
     feeder_engine.addURL(chaos::common::network::URL("http://test:9092"), 50);
     feeder_engine.addURL(chaos::common::network::URL("http://test:9093"), 25);
     ServiceForURL *service = NULL;
