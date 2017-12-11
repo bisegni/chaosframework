@@ -41,12 +41,14 @@ number_of_cycle(0){}
 void* TestURLFeeder::serviceForURL(const URL& url,
                                    uint32_t service_index) {
     if(url.getURL().compare("") == 0) return NULL;
+    if(url.getURL().compare("exception") == 0) {throw chaos::CException(-1, "simulated exception", __PRETTY_FUNCTION__);}
     ServiceForURL *result = new ServiceForURL();
     result->url = url.getURL();
     return (void*)result;
 }
 
 void TestURLFeeder::disposeService(void *service_ptr) {
+    ASSERT_TRUE(service_ptr);
     delete ((ServiceForURL*)service_ptr);
 }
 
@@ -55,10 +57,11 @@ void TestURLFeeder::SetUp() {
 }
 
 TEST_F(TestURLFeeder, TestURLFeederLogic) {
-    feeder_engine.addURL(chaos::common::network::URL("http://test:9091"), 100);
-    ASSERT_THROW(feeder_engine.addURL(chaos::common::network::URL(""), 50), chaos::CException);
-    feeder_engine.addURL(chaos::common::network::URL("http://test:9092"), 50);
-    feeder_engine.addURL(chaos::common::network::URL("http://test:9093"), 25);
+    ASSERT_NO_THROW(feeder_engine.addURL(chaos::common::network::URL("http://test:9091"), 100));
+    EXPECT_THROW(feeder_engine.addURL(chaos::common::network::URL(""), 50), chaos::CException);
+    ASSERT_NO_THROW(feeder_engine.addURL(chaos::common::network::URL("http://test:9092"), 50));
+    EXPECT_THROW(feeder_engine.addURL(chaos::common::network::URL("exception"), 50), chaos::CException);
+    ASSERT_NO_THROW(feeder_engine.addURL(chaos::common::network::URL("http://test:9093"), 25));
     ServiceForURL *service = NULL;
     feeder_engine.setFeedMode(chaos::common::network::URLServiceFeeder::URLServiceFeedModeFailOver);
     CHECK_SERVICE("http://test:9091");
@@ -102,12 +105,12 @@ TEST_F(TestURLFeeder, TestURLFeederLogic) {
 }
 
 TEST_F(TestURLFeeder, TestURLFeederEqualPriority) {
-    feeder_engine.addURL(chaos::common::network::URL("http://test:9091"), 100);
-    feeder_engine.addURL(chaos::common::network::URL("http://test:9092"), 50);
-    feeder_engine.addURL(chaos::common::network::URL("http://test:9093"), 25);
-    feeder_engine.addURL(chaos::common::network::URL("http://test:8000"), 50);
-    feeder_engine.addURL(chaos::common::network::URL("http://test:8001"), 50);
-    feeder_engine.addURL(chaos::common::network::URL("http://test:8002"), 50);
+    ASSERT_NO_THROW(feeder_engine.addURL(chaos::common::network::URL("http://test:9091"), 100));
+    ASSERT_NO_THROW(feeder_engine.addURL(chaos::common::network::URL("http://test:9092"), 50));
+    ASSERT_NO_THROW(feeder_engine.addURL(chaos::common::network::URL("http://test:9093"), 25));
+    ASSERT_NO_THROW(feeder_engine.addURL(chaos::common::network::URL("http://test:8000"), 50));
+    ASSERT_NO_THROW(feeder_engine.addURL(chaos::common::network::URL("http://test:8001"), 50));
+    ASSERT_NO_THROW(feeder_engine.addURL(chaos::common::network::URL("http://test:8002"), 50));
     
     feeder_engine.setURLOffline(0);
     feeder_engine.setURLOffline(1);
@@ -154,7 +157,19 @@ TEST_F(TestURLFeeder, TestURLFeederEqualPriority) {
 }
 
 TEST_F(TestURLFeeder, TestURLFeederPerformance) {
+    ASSERT_NO_THROW(feeder_engine.addURL(chaos::common::network::URL("http://test:9091"), 100));
+    ASSERT_NO_THROW(feeder_engine.addURL(chaos::common::network::URL("http://test:9092"), 50));
+    ASSERT_NO_THROW(feeder_engine.addURL(chaos::common::network::URL("http://test:9093"), 25));
+    ASSERT_NO_THROW(feeder_engine.addURL(chaos::common::network::URL("http://test:8000"), 50));
+    ASSERT_NO_THROW(feeder_engine.addURL(chaos::common::network::URL("http://test:8001"), 50));
+    ASSERT_NO_THROW(feeder_engine.addURL(chaos::common::network::URL("http://test:8002"), 50));
     for (int idx = 0; idx < number_of_cycle; idx++) {
         feeder_engine.getService();
     }
+    ASSERT_NO_THROW(feeder_engine.removeURL(0));
+    ASSERT_NO_THROW(feeder_engine.removeURL(1));
+    ASSERT_NO_THROW(feeder_engine.removeURL(2));
+    ASSERT_NO_THROW(feeder_engine.removeURL(3));
+    ASSERT_NO_THROW(feeder_engine.removeURL(4));
+    ASSERT_NO_THROW(feeder_engine.removeURL(5));
 }
