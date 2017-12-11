@@ -42,7 +42,7 @@ ZMQDirectIOClientConnection::~ZMQDirectIOClientConnection() {}
 
 void ZMQDirectIOClientConnection::init(void *init_data) throw(chaos::CException) {
     int err = 0;
-    if((err = ensureSocket())) throw CException(err, "Error configuring socket", __PRETTY_FUNCTION__);
+    if((err = ensureSocket()) != 0) throw CException(err, "Error configuring socket", __PRETTY_FUNCTION__);
 }
 
 void ZMQDirectIOClientConnection::deinit() throw(chaos::CException) {
@@ -302,12 +302,12 @@ int64_t ZMQDirectIOClientConnection::sendServiceData(DirectIODataPack *data_pack
 }
 
 bool ZMQDirectIOClientConnection::ensureSocket() {
+    int err = 0;
     if(socket_service == NULL ||
        socket_priority == NULL) {
-        getNewSocketPair();
+        err = getNewSocketPair();
     }
-    return (socket_service &&
-            socket_priority);
+    return err;
 }
 
 //send data with zmq tech
