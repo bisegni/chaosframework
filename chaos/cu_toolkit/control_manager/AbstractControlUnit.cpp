@@ -510,6 +510,7 @@ void AbstractControlUnit::doStartRpCheckList() throw(CException) {
         }
         CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_start", START_RPC_PHASE_UNIT){
             unitStart();
+            break;
         }
         CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_start", START_RPC_PHASE_RESTORE_ON_FIRST_START) {
             try{
@@ -559,7 +560,6 @@ void AbstractControlUnit::redoInitRpCheckList(bool throw_exception) throw(CExcep
         CHAOS_CHECK_LIST_REDO(check_list_sub_service, "_init", INIT_RPC_PHASE_COMPLETE_INPUT_ATTRIBUTE){
             break;
         }
-        
         CHAOS_CHECK_LIST_REDO(check_list_sub_service, "_init", INIT_RPC_PHASE_INIT_SYSTEM_CACHE){
             break;
         }
@@ -1516,22 +1516,18 @@ void AbstractControlUnit::_setBypassState(bool bypass_stage,
 
 //!handler calledfor restor a control unit to a determinate point
 bool AbstractControlUnit::unitRestoreToSnapshot(AbstractSharedDomainCache * const snapshot_cache) throw(CException) {
-    return false;
+    return true;
 }
 
 //! this andler is called befor the input attribute will be updated
-void AbstractControlUnit::unitInputAttributePreChangeHandler() throw(CException) {
-    
-}
+void AbstractControlUnit::unitInputAttributePreChangeHandler() throw(CException) {}
 
 //! attribute change handler
 /*!
  the handle is fired after the input attribute cache as been update triggere
  by the rpc request for attribute change.
  */
-void AbstractControlUnit::unitInputAttributeChangedHandler() throw(CException) {
-    
-}
+void AbstractControlUnit::unitInputAttributeChangedHandler() throw(CException) {}
 
 
 #define CHECK_FOR_RANGE_VALUE(t, v, attr_name)\
