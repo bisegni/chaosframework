@@ -105,9 +105,7 @@ void PreferenceDialog::on_pushButtonAddNewMDSRpcEndpoint_clicked() {
                                                           tr("127.0.0.1:5000"),
                                                         &ok);
     if (ok && !new_mds_address.isEmpty()) {
-        list_model_mds_address.insertRow(list_model_mds_address.rowCount());
-        QModelIndex index = list_model_mds_address.index(list_model_mds_address.rowCount()-1);
-        list_model_mds_address.setData(index, new_mds_address);
+        list_model_mds_address.addMDSServer(new_mds_address);
         updateMDSConfiguration();
     }
 

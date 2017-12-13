@@ -29,6 +29,7 @@ SelectNetworkDomain::SelectNetworkDomain(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::SelectNetworkDomain) {
     ui->setupUi(this);
+    setWindowTitle("Network Domain Selection");
     loadAllConfiguration();
 }
 
