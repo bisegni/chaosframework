@@ -950,11 +950,24 @@ ChaosSharedPtr<chaos::common::data::CDataWrapper>  CUController::fetchCurrentDat
     return current_dataset[domain];
 }
 
-int CUController::getTimeStamp(uint64_t& live){
+int CUController::getPackSeq(uint64_t& seq){
+  CDataWrapper * d = current_dataset[KeyDataStorageDomainOutput].get();
+  if(d){
+    seq =d->getInt64Value(DataPackCommonKey::DPCK_SEQ_ID);
+    return 0;
+  }
+  seq=-1;
+  return -1;
+}
+int CUController::getTimeStamp(uint64_t& live,bool hr){
     CDataWrapper * d = current_dataset[KeyDataStorageDomainOutput].get();
     live =0;
     if(d){
+      if(hr){
+	live = d->getInt64Value(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP);
+      } else {
         live = d->getInt64Value(DataPackCommonKey::DPCK_TIMESTAMP);
+      }
         return 0;
     }
     return -1;

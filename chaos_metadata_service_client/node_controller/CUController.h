@@ -181,10 +181,18 @@ namespace chaos {
                 
                 /*!
                  Get time stamp of last packet
+                 * @param [in] hr high resolution (microseconds)
                  * @param [out] live output timestamp, set 0 on error
                  * @return 0 on success, negative otherwise
                  */
-                int getTimeStamp(uint64_t& live);
+                int getTimeStamp(uint64_t& live,bool hr=false);
+                /*!
+                 Get packet seq id 
+                 * @param [out] packet seq id, set 0 on error
+                 * @return 0 on success, negative otherwise
+                 */
+                int getPackSeq(uint64_t& seq);
+
                 /*!
                  Get description for attribute name
                  */
