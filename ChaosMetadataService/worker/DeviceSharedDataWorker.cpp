@@ -50,9 +50,9 @@ void DeviceSharedDataWorker::init(void *init_data) throw (chaos::CException) {
     DataWorker::init(init_data);
     
     const std::string object_impl_name = ChaosMetadataService::getInstance()->setting.object_storage_setting.driver_impl;
-    INFO << "allocating cache driver for every thread";
+    INFO << CHAOS_FORMAT("Allocating object storage driver '%1%' for every worker thread", %object_impl_name);
     
-    for(int idx = 0; idx < settings.job_thread_number; idx++) {
+    for(int idx = 0; idx < ChaosMetadataService::getInstance()->setting.worker_setting.thread_number; idx++) {
         ThreadCookie *_tc_ptr = new ThreadCookie();
         _tc_ptr->object_storage_driver.reset(ObjectFactoryRegister<AbstractPersistenceDriver>::getInstance()->getNewInstanceByName(object_impl_name+"ObjectStorageDriver"));
         
@@ -69,12 +69,12 @@ void DeviceSharedDataWorker::init(void *init_data) throw (chaos::CException) {
 
 void DeviceSharedDataWorker::deinit() throw (chaos::CException) {
     
-    for(int idx = 0; idx < settings.job_thread_number; idx++) {
+    for(int idx = 0; idx < ChaosMetadataService::getInstance()->setting.worker_setting.thread_number; idx++) {
         ThreadCookie *tmp_cookie = reinterpret_cast<ThreadCookie *>(thread_cookie[idx]);
         delete(tmp_cookie);
     }
     
-    std::memset(thread_cookie, 0, sizeof(void*)*settings.job_thread_number);
+    std::memset(thread_cookie, 0, sizeof(void*)*ChaosMetadataService::getInstance()->setting.worker_setting.thread_number);
     DataWorker::deinit();
 }
 
@@ -112,19 +112,5 @@ void DeviceSharedDataWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
         case DataServiceNodeDefinitionType::DSStorageTypeUndefined:{// live only
             break;
         }
-    }
-}
-
-//!
-void DeviceSharedDataWorker::mantain() throw (chaos::CException) {
-    // lock for mantains
-    for(int idx = 0; idx < settings.job_thread_number; idx++) {
-        //ThreadCookie *current_tread_cookie = reinterpret_cast<ThreadCookie *>(thread_cookie[idx]);
-        // CHAOS_ASSERT(current_tread_cookie)
-        //write lock on mantainance mutex
-        //boost::unique_lock<boost::shared_mutex> rl(current_tread_cookie->mantainance_mutex);
-        
-        //mantainance on virtual file
-        //current_tread_cookie->vfs_stage_file->mantain();
     }
 }
