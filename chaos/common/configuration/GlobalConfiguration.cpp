@@ -25,6 +25,7 @@
 #include <chaos/common/log/LogManager.h>
 
 #include <boost/regex.hpp>
+#include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 
 #include "GlobalConfiguration.h"
@@ -56,7 +57,7 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException) {
         addOption(InitOption::OPT_HELP, "Produce help message");
         addOption<std::string>(InitOption::OPT_CONF_FILE,"File configuration path");
         addOption(InitOption::OPT_VERSION, "Printout version");
-
+        
         addOption(InitOption::OPT_LOG_ON_CONSOLE, po::value< bool >()->zero_tokens(), "Specify when the log must be forwarded on console");
         addOption(InitOption::OPT_LOG_ON_SYSLOG, po::value< bool >()->zero_tokens(), "Specify when the log must be forwarded on syslog server");
         addOption(InitOption::OPT_LOG_SYSLOG_SERVER, po::value< string >()->default_value("localhost"), "Specify the logsrv hostname");
@@ -67,7 +68,7 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException) {
         addOption(InitOption::OPT_LOG_MAX_SIZE_MB, po::value< uint32_t >()->default_value(10), "Specify the max size in megabytes fo the file log");
         addOption(InitOption::OPT_LOG_METRIC_ON_CONSOLE, po::value< bool >()->zero_tokens(), "Enable the logging metric on console");
         addOption(InitOption::OPT_LOG_METRIC_ON_FILE, po::value< bool >()->zero_tokens(), "Enable the logging metric on file");
-        addOption(InitOption::OPT_LOG_METRIC_ON_FILE_PATH, po::value< string >()->default_value("./"), "Specify the path of metric logs");
+        addOption(InitOption::OPT_LOG_METRIC_ON_FILE_PATH, po::value< string >()->default_value(boost::filesystem::current_path().string()), "Specify the path of metric logs");
         addOption(InitOption::OPT_METADATASERVER_ADDRESS, po::value< std::vector< std::string > >(), "Metadataserver server:port address");
         addOption(InitOption::OPT_DATA_IO_IMPL, po::value< string >()->default_value("IODirect"), "Specify the data io implementation");
         addOption(InitOption::OPT_DIRECT_IO_IMPLEMENTATION, po::value< string >()->default_value("ZMQ"), "Specify the direct io implementation");
@@ -181,11 +182,11 @@ void GlobalConfiguration::scanOption()  throw (CException) {
             
         }
         if (hasOption(InitOption::OPT_VERSION)) {
-	  std::cout <<"Version:"<< CSLIB_VERSION_MAJOR<<"."<<CSLIB_VERSION_MINOR<<"."<<CSLIB_VERSION_NUMBER<< " BuildID:"<<CSLIB_BUILD_ID<< " BuildDate:"<<__DATE__ <<" " <<__TIME__<<"\n";
-             exit(0);
-              return;
-
-         }
+            std::cout <<"Version:"<< CSLIB_VERSION_MAJOR<<"."<<CSLIB_VERSION_MINOR<<"."<<CSLIB_VERSION_NUMBER<< " BuildID:"<<CSLIB_BUILD_ID<< " BuildDate:"<<__DATE__ <<" " <<__TIME__<<"\n";
+            exit(0);
+            return;
+            
+        }
     }catch (po::error &e) {
         //write error also on cerr
         std::cerr << e.what();
@@ -397,6 +398,20 @@ void GlobalConfiguration::addOption(const char* name,
     }
 }
 
+/*
+ Add a custom option
+ */
+void GlobalConfiguration::addOptionZeroTokens(const char* name,
+                                              const char* description,
+                                              bool *default_variable)  throw (CException) {
+    try{
+        addOption(name, po::value< bool >(default_variable)->zero_tokens(), description);
+    }catch (po::error &e) {
+        throw CException(0, e.what(), "GlobalConfiguration::addOptionZeroTokens");
+    }
+}
+
+
 void GlobalConfiguration::fillKVParameter(std::map<std::string, std::string>& kvmap,
                                           const std::string& kv_string,
                                           const std::string& regex) {
@@ -496,9 +511,9 @@ void GlobalConfiguration::finalizeMetadataServerAddress() {
 void GlobalConfiguration::addLocalServerAddress(const std::string& mdsAddress) throw (CException) {
     bool isIp = InetUtility::checkWellFormedHostPort(mdsAddress);
     if(!isIp){
-      std::stringstream ss;
-      ss<<"Bad server address:'"<<mdsAddress<<"'";
-      throw CException(1, ss.str(), "GlobalConfiguration::addMetadataServerAddress");
+        std::stringstream ss;
+        ss<<"Bad server address:'"<<mdsAddress<<"'";
+        throw CException(1, ss.str(), "GlobalConfiguration::addMetadataServerAddress");
     }
     //address can be added
     configuration->addStringValue("local_ip", mdsAddress);

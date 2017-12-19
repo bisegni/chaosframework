@@ -200,6 +200,14 @@ x = hasOption(y);
                 throw CException(0, e.what(), "GlobalConfiguration::addOption");
             }
         }
+        
+        /*
+         Add a custom option
+         */
+        void addOptionZeroTokens(const char* name,
+                                 const char* description,
+                                 bool *default_variable) throw (CException);
+        
         /*
          Add a custom option
          */

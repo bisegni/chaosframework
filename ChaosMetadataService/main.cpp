@@ -30,9 +30,8 @@ using namespace chaos::metadata_service;
 int main(int argc, char * argv[]) {
     try {
         //archiver
-        ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->addOption< bool >(OPT_ARCHIVER_LOG_METRIC,
+        ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->addOptionZeroTokens(OPT_ARCHIVER_LOG_METRIC,
                                                                                                  "Enable log metric for archiver",
-                                                                                                 false,
                                                                                                  &ChaosMetadataService::getInstance()->setting.worker_setting.log_metric);
         
         ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->addOption< uint32_t >(OPT_ARCHIVER_LOG_METRIC_UPDATE_INTERVAL,
