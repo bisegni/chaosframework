@@ -49,7 +49,7 @@ build_framework_x86_64_test:
     - apt-get -y install lcov
     - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/lib
     - chaos-distrib-x86_64-Linux/bin/TestFramework
-    - lcov --capture --directory . --output-file coverage.info
+    - lcov -r '*external-x86_64-Linux*' '*boost*' --capture --directory . --output-file coverage.info
     - genhtml coverage.info --output-directory coverage_html
   artifacts:
     paths:
