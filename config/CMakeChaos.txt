@@ -421,7 +421,13 @@ IF (NOT CACHE_DIR)
     wget(boost_1_${ver}_0.tar.gz  https://sourceforge.net/projects/boost/files/boost/1.${ver}.0)
     STRING(REPLACE "/" "\\/" SEDARG ${CMAKE_CXX_COMPILER})
 	
-    #tar(xf boost_1_${ver}_0.tar.gz)
+	IF ( EXISTS "${EXTERNAL_BUILD_DIR}/boost_1_${ver}_0")
+	MESG("TAR already executed")
+	ELSE()
+	MESG("not found  ${EXTERNAL_BUILD_DIR}/boost_1_${ver}_0")
+	tar(xf boost_1_${ver}_0.tar.gz)
+	ENDIF()
+    
 	MESG("tar ok")
 
     execute_process(

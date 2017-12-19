@@ -30,9 +30,9 @@ RESULT_VARIABLE err
     OUTPUT_VARIABLE out
 )
 if(err)
-	ERROR("CANNOT generate ${CMAKE_CURRENT_LIST_DIR}/chaos/common/version.h: ${out}")
+	#	ERROR("CANNOT generate ${CMAKE_CURRENT_LIST_DIR}/chaos/common/version.h: ${out}")
 	ELSE()
-	MESG("created version.h")
+		#MESG("created version.h")
 ENDIF()
 
 ###### Required Libraries
