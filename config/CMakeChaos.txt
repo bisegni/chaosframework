@@ -11,7 +11,7 @@ macro (ERROR parm)
     # get_filename_component(WHERE ${CMAKE_CURRENT_LIST_DIR} DIRECTORY)
     SET(WHERE ${CMAKE_CURRENT_LIST_DIR})
 
-    MESSAGE(FATAL_ERROR "[${WHERE}] ### ${parm}, /tmp/cmake.log for details")
+    MESSAGE(FATAL_ERROR "[${WHERE}] ### ${parm}, d:/cmake.log for details")
 
 endmacro()
 
@@ -70,8 +70,8 @@ IF (NOT CACHE_DIR)
 	  WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}
 	  RESULT_VARIABLE err
 	  OUTPUT_VARIABLE out
-	  OUTPUT_FILE /tmp/cmake.log
-	  ERROR_FILE /tmp/cmake.log
+	  OUTPUT_FILE d:/cmake.log
+	  ERROR_FILE d:/cmake.log
 	  )
 	if( err)
 	  ERROR("cloning  from ${arg1} error ${out}")
@@ -86,8 +86,8 @@ IF (NOT CACHE_DIR)
 	WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}
 	RESULT_VARIABLE err
 	OUTPUT_VARIABLE out
-	OUTPUT_FILE /tmp/cmake.log
-	ERROR_FILE /tmp/cmake.log
+	OUTPUT_FILE d:/cmake.log
+	ERROR_FILE d:/cmake.log
 	)
       if( err)
 	ERROR("cloning  from ${arg1} error :${out}")
@@ -117,8 +117,8 @@ IF (NOT CACHE_DIR)
 	WORKING_DIRECTORY  ${EXTERNAL_BUILD_DIR}
 	RESULT_VARIABLE err
 	OUTPUT_VARIABLE out
-	OUTPUT_FILE /tmp/cmake.log
-	ERROR_FILE /tmp/cmake.log
+	OUTPUT_FILE d:/cmake.log
+	ERROR_FILE d:/cmake.log
 	)
       if( err)
 	ERROR("wget failed  error ${out}")
@@ -135,13 +135,15 @@ IF (NOT CACHE_DIR)
 
   macro (tar opt what)
     MESG("tar ${opt} ${what}")
+	
     execute_process(
       COMMAND tar ${opt} ${what}
       WORKING_DIRECTORY  ${EXTERNAL_BUILD_DIR}
+	  
       RESULT_VARIABLE err
       OUTPUT_VARIABLE out
-      OUTPUT_FILE /tmp/cmake.log
-      ERROR_FILE /tmp/cmake.log
+      OUTPUT_FILE d:/cmake.log
+      ERROR_FILE d:/cmake.log
       )
     if( err)
       ERROR("tar ${opt} failed  error ${out}")
@@ -166,8 +168,7 @@ IF (NOT CACHE_DIR)
       FILE(MAKE_DIRECTORY ${CMAKE_INSTALL_PREFIX}/www/html)
     ENDIF()
     IF(EXISTS "${CHAOS_BUNDLE}/tools")
-       FILE(COPY ${CHAOS_BUNDLE}/tools DESTINATION ${CMAKE_INSTALL_PREFIX}/)
-       FILE(COPY ${CHAOS_BUNDLE}/tools/config/Findchaos.cmake DESTINATION ${CMAKE_INSTALL_PREFIX}/)
+      FILE(COPY ${CHAOS_BUNDLE}/tools DESTINATION ${CMAKE_INSTALL_PREFIX}/)
     ENDIF()
 
     FILE(WRITE ${CMAKE_INSTALL_PREFIX}/chaos_env.sh "if [ -z \"\$CHAOS_PREFIX\" ];then\n")
@@ -254,8 +255,8 @@ IF (NOT CACHE_DIR)
 	    WORKING_DIRECTORY ${CHAOS_BUNDLE}
 	    RESULT_VARIABLE err
 	    OUTPUT_VARIABLE out
-	    OUTPUT_FILE /tmp/cmake.log
-	    ERROR_FILE /tmp/cmake.log
+	    OUTPUT_FILE d:/cmake.log
+	    ERROR_FILE d:/cmake.log
 	    )
 	   if( err)
 	     ERROR("generation  error ${out}")
@@ -279,8 +280,8 @@ IF (NOT CACHE_DIR)
       WORKING_DIRECTORY  ${EXTERNAL_BUILD_DIR}/${arg}
       RESULT_VARIABLE err
       OUTPUT_VARIABLE out
-      OUTPUT_FILE /tmp/cmake.log
-      ERROR_FILE /tmp/cmake.log
+      OUTPUT_FILE d:/cmake.log
+      ERROR_FILE d:/cmake.log
       )
     if( err)
       ERROR("checkout  error ${out}")
@@ -296,8 +297,8 @@ IF (NOT CACHE_DIR)
 	WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}/${arg}
 	RESULT_VARIABLE err
 	OUTPUT_VARIABLE mod
-	OUTPUT_FILE /tmp/cmake.log
-	ERROR_FILE /tmp/cmake.log
+	OUTPUT_FILE d:/cmake.log
+	ERROR_FILE d:/cmake.log
 	)
 
       IF( err)
@@ -309,22 +310,27 @@ IF (NOT CACHE_DIR)
       MESG("[${arg}] CONFIGURE tool")
       SET(CONFPARM ./configure CXXFLAGS=${CHAOS_CXX_FLAGS} CFLAGS=${CHAOS_C_FLAGS} CC=${CMAKE_C_COMPILER} CXX=${CMAKE_CXX_COMPILER} LDFLAGS=${CHAOS_LINKER_FLAGS} --prefix=${CMAKE_INSTALL_PREFIX} ${arg1} ${CROSS_HOST})
     ELSE()
-      IF (EXISTS "${EXTERNAL_BUILD_DIR}/${arg}/b2")
+      IF (EXISTS "${EXTERNAL_BUILD_DIR}/${arg}/b2.exe")
 	MESG("[${arg}] B2 configuration/build tool")
 	execute_process(
 	  COMMAND ./b2 --clean
 	  WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}/${arg}
 	  RESULT_VARIABLE err
 	  OUTPUT_VARIABLE out
-	  OUTPUT_FILE /tmp/cmake.log
-	  ERROR_FILE /tmp/cmake.log
+	  OUTPUT_FILE d:/cmake.log
+	  ERROR_FILE d:/cmake.log
 	  )
 	IF (err)
 	  ERROR("[${arg}] cleaning b2 ${out}")
 	ENDIF()
 
-	SET(CONFPARM "./b2;${arg1}")
-
+	
+	
+	#IF(${SYSTEM_NAME} MATCHES "MINGW64_NT-10.0")
+	#	SET(CONFPARM "./b2")
+	#ELSE()
+		SET(CONFPARM "./b2;${arg1}")
+	#ENDIF()
 	SET(SKIPBUILD ON)
       ELSE()
 	IF (EXISTS "${EXTERNAL_BUILD_DIR}/${arg}/CMakeLists.txt")
@@ -337,7 +343,8 @@ IF (NOT CACHE_DIR)
 	      IF(${SYSTEM_NAME} MATCHES "Darwin")
 	      	    SET(CONFPARM scons CC=${CMAKE_C_COMPILER} CXX=${CMAKE_CXX_COMPILER} CXXFLAGS=${CHAOS_CXX_FLAGS} CFLAGS=${CHAOS_C_FLAGS} --prefix=${CMAKE_INSTALL_PREFIX} --libpath=${CMAKE_INSTALL_PREFIX}/lib --cxx=${CHAOS_CXX_COMPILER_REL} --osx-version-min=10.7 --libc++=libc++ --c++11=off --cc=${CHAOS_C_COMPILER_REL} --cpppath=${CMAKE_INSTALL_PREFIX}/include --extrapath=${CMAKE_INSTALL_PREFIX} -j ${PROCESSOR_COUNT} ${arg1} )
 	      ELSE()
-	    SET(CONFPARM scons CXXFLAGS=${CHAOS_CXX_FLAGS} CFLAGS=${CHAOS_C_FLAGS} --prefix=${CMAKE_INSTALL_PREFIX} --libpath=${CMAKE_INSTALL_PREFIX}/lib --cxx=${CMAKE_CXX_COMPILER} --cc=${CMAKE_C_COMPILER} --cpppath=${CMAKE_INSTALL_PREFIX}/include --extrapath=${CMAKE_INSTALL_PREFIX} -j ${PROCESSOR_COUNT} ${arg1} )
+		  
+	     SET(CONFPARM scons CXXFLAGS=${CHAOS_CXX_FLAGS} CFLAGS=${CHAOS_C_FLAGS} --prefix=${CMAKE_INSTALL_PREFIX} --libpath=${CMAKE_INSTALL_PREFIX}/lib --cxx=${CMAKE_CXX_COMPILER} --cc=${CMAKE_C_COMPILER} --cpppath=${CMAKE_INSTALL_PREFIX}/include --extrapath=${CMAKE_INSTALL_PREFIX} -j ${PROCESSOR_COUNT} ${arg1} )
 	    ENDIF()
 	    SET(SKIPBUILD ON)
 	  ENDIF()
@@ -348,28 +355,56 @@ IF (NOT CACHE_DIR)
     MESG("[${arg}] configuring with \"${CONFPARM}\"")
     #  separate_arguments(CONFPARM)
     #  MESG("configuring separated with \"${CONFPARM}\"")
-
-    execute_process(
-      COMMAND ${CONFPARM}
-      WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}/${arg}
+    
+	IF(${SYSTEM_NAME} MATCHES "MINGW64_NT-10.0")
+	  IF ( ${arg} MATCHES "mongo-cxx-driver")
+	    SET (WINPITHON "D:/Programmi/Python27/python.exe" )
+		SET(WINSCONS "c:/Users/Alex/Downloads/scons-3.0.1/build/scripts/scons" )
+		#SET(CONFPARM CXXFLAGS=${CHAOS_CXX_FLAGS} CFLAGS=${CHAOS_C_FLAGS} --prefix=${CMAKE_INSTALL_PREFIX} --libpath=${CMAKE_INSTALL_PREFIX}/lib --cxx=${CMAKE_CXX_COMPILER} --cc=${CMAKE_C_COMPILER} --cpppath=${CMAKE_INSTALL_PREFIX}/include --extrapath=${CMAKE_INSTALL_PREFIX} -j ${PROCESSOR_COUNT} ${arg1} )
+		SET (CONFPARM CXXFLAGS=${CHAOS_CXX_FLAGS} CFLAGS=${CHAOS_C_FLAGS} --prefix=${CMAKE_INSTALL_PREFIX} --libpath=${CMAKE_INSTALL_PREFIX}/lib --cpppath=${CMAKE_INSTALL_PREFIX}/include --extrapath=${CMAKE_INSTALL_PREFIX} --cpppath=${CMAKE_INSTALL_PREFIX}/include/boost-1_64 -j ${PROCESSOR_COUNT} ${arg1})
+		
+	  ENDIF()
+	ENDIF()
+	MESG ("ALEDEBUG ${CONFPARM}")
+	execute_process(
+      COMMAND  ${WINPITHON} ${WINSCONS} ${CONFPARM}
+	  WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}/${arg}
       RESULT_VARIABLE err
-      OUTPUT_FILE /tmp/cmake.log
-      ERROR_FILE /tmp/cmake.log
+      OUTPUT_FILE d:/cmake.log
+      ERROR_FILE d:/cmake.log
       )
 
     if( err)
+		
+	   MESG("error code is: ${err}")
       ERROR("Error configuring")
     endif()
-
+	
+	
+	
+	
+	
     IF(NOT SKIPBUILD)
       message(STATUS "[${arg}] compiling (${PROCESSOR_COUNT})")
+	  
+	  IF (EXISTS "${EXTERNAL_BUILD_DIR}/${arg}/makefiles/msvc2010/${arg}.sln")
+		MESG("Compiling for Windows with MSBuild")
+		execute_process(
+		COMMAND "C:/Windows/Microsoft.Net/Framework/v4.0.30319/MSBuild.exe" ${arg}.sln
+		WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}/${arg}/makefiles/msvc2010
+		RESULT_VARIABLE err2
+		OUTPUT_FILE d:/cmake.log
+		ERROR_FILE d:/cmake.log
+		)
+	  ELSE()
       execute_process(
 	COMMAND make install -j ${PROCESSOR_COUNT}
 	WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}/${arg}
 	RESULT_VARIABLE err2
-	OUTPUT_FILE /tmp/cmake.log
-	ERROR_FILE /tmp/cmake.log
+	OUTPUT_FILE d:/cmake.log
+	ERROR_FILE d:/cmake.log
 	)
+	ENDIF()
       if( err2)
 	ERROR("[${arg}] compiling ")
       endif()
@@ -382,19 +417,20 @@ IF (NOT CACHE_DIR)
   endmacro()
 
 
-  macro (BoostInstall ver min_ver url arg)
-    wget(boost_1_${ver}_${min_ver}.tar.gz  https://sourceforge.net/projects/boost/files/boost/1.${ver}.${min_ver})
+  macro (BoostInstall ver url arg)
+    wget(boost_1_${ver}_0.tar.gz  https://sourceforge.net/projects/boost/files/boost/1.${ver}.0)
     STRING(REPLACE "/" "\\/" SEDARG ${CMAKE_CXX_COMPILER})
-
-    tar(xf boost_1_${ver}_${min_ver}.tar.gz)
+	
+    #tar(xf boost_1_${ver}_0.tar.gz)
+	MESG("tar ok")
 
     execute_process(
-      COMMAND ./bootstrap.sh
-      WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}/boost_1_${ver}_${min_ver}
+      COMMAND bootstrap.bat
+      WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}/boost_1_${ver}_0
       RESULT_VARIABLE err
       OUTPUT_VARIABLE out
-      OUTPUT_FILE /tmp/cmake.log
-      ERROR_FILE /tmp/cmake.log
+      OUTPUT_FILE d:/cmake.log
+      ERROR_FILE d:/cmake.log
       )
     if( err)
       ERROR("[BOOST] bootstrapping boost  failed  error ${out}")
@@ -403,14 +439,14 @@ IF (NOT CACHE_DIR)
 
     execute_process(
       COMMAND sed -i -e "s/using gcc/using gcc : arm : ${SEDARG}/" project-config.jam
-      WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}/boost_1_${ver}_${min_ver}
+      WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}/boost_1_${ver}_0
       RESULT_VARIABLE err
       OUTPUT_VARIABLE out
       )
     if( err)
       ERROR("[BOOST] error patching boost project-config.jam error" "${out}")
     endif()
-    ConfigureAndBuild(boost_1_${ver}_${min_ver} "${arg}")
+    ConfigureAndBuild(boost_1_${ver}_0 "${arg}")
   endmacro()
 
   macro (CheckConfigureBuild libcheck lib conf url)
@@ -449,6 +485,8 @@ IF (NOT CACHE_DIR)
   set (CHAOS_CXX_FLAGS "-Wno-deprecated -fPIC")
   set (CHAOS_LINKER_FLAGS "")
 
+  
+  
 IF(CHAOS_CC_COMPILER)
     MESG("Setting CC compiler ${CHAOS_CC_COMPILER}")
     SET(CMAKE_CXX_COMPILER ${CHAOS_CC_COMPILER})
@@ -476,7 +514,6 @@ IF(CHAOS_CC_COMPILER)
   option(CHAOS_DISABLE_EVENTFD "Disable EventFD" OFF)
   option(CHAOS_BUILD_CACHE "Keep third part sources" ON)
   option(CHAOS_BOOST_VERSION "Use a predefined boost version" 64)
-  option(CHAOS_BOOST_MINOR_VERSION "Use a predefined boost minor version" 0)
   option(CHAOS_BOOST_DYNAMIC "compile and use dynamic boost" OFF)
   option(CHAOS_BUILD_UNITSERVER "Automatically build an Unit Server that includes all CUs found in distribution" ON)
   IF(NOT CHAOS_VERSION_MAJOR)
@@ -495,9 +532,8 @@ IF(CHAOS_CC_COMPILER)
 
   if(CMAKE_BUILD_TYPE MATCHES PROFILE)
      MESG("ENABLING PROFILE")
-     set (CHAOS_CXX_FLAGS "${CHAOS_CXX_FLAGS} -g -fprofile-arcs -ftest-coverage")
-     set (CHAOS_C_FLAGS "${CHAOS_C_FLAGS} -g -fprofile-arcs -ftest-coverage")
-     set (CHAOS_LINKER_FLAGS "${CHAOS_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
+     SET(CHAOS_CXX_FLAGS "${CHAOS_CXX_FLAGS} -pg")
+     SET (CHAOS_C_FLAGS "${CHAOS_C_FLAGS} -pg")
   ELSE()
      MESG("BUILD TYPE:${CMAKE_BUILD_TYPE}")
   ENDIF()
@@ -532,6 +568,12 @@ IF(CHAOS_CC_COMPILER)
 
   SET(SYSTEM_NAME ${CHAOS_SYSTEM_NAME})
   SET(CMAKE_SYSTEM_NAME ${CHAOS_SYSTEM_NAME})
+   
+	IF(${SYSTEM_NAME} MATCHES "MINGW64_NT-10.0")
+	
+	set (CHAOS_C_FLAGS "")
+	set (CHAOS_CXX_FLAGS "")
+	endif()
 
   IF (DEFINED ENV{CHAOS_TARGET} AND NOT CHAOS_TARGET)
     SET(CHAOS_TARGET $ENV{CHAOS_TARGET})
@@ -604,10 +646,7 @@ IF(CHAOS_CC_COMPILER)
 	SET(CMAKE_C_COMPILER arm-infn-linux-gnueabi-gcc)
 	SET(CHAOS_CROSS_HOST arm-infn-linux-gnueabi)
 	SET(CHAOS_ENABLE_C11 "Enable C11" OFF)
-	SET(CHAOS_BOOST_VERSION 56)
-        SET(CHAOS_BOOST_MINOR_VERSION 0)
-        SET (CHAOS_C_FLAGS "${CHAOS_C_FLAGS} -fno-builtin -DCHAOS_NO_BACKTRACE -DBOOST_ASIO_DISABLE_EVENTFD -D__BSON_USEMEMCPY__ -mcpu=xscale -D__BSON_USEMEMCPY__ -DBOOST_ASIO_DISABLE_EVENTFD -mno-unaligned-access -DDISABLE_COMPARE_AND_SWAP -mfloat-abi=soft")
-	SET(CHAOS_CXX_FLAGS "${CHAOS_CXX_FLAGS} ${CHAOS_C_FLAGS}")
+	SET(CHAOS_CXX_FLAGS "${CHAOS_CXX_FLAGS} -DBOOST_ASIO_DISABLE_EVENTFD -D__BSON_USEMEMCPY__ -mcpu=xscale -D__BSON_USEMEMCPY__ -DBOOST_ASIO_DISABLE_EVENTFD -mno-unaligned-access -DDISABLE_COMPARE_AND_SWAP -mfloat-abi=soft")
 	SET(CHAOS_BOOST_FLAGS toolset=gcc-arm target-os=linux)
 	SET(CHAOS_DISABLE_EVENTFD ON)
       ELSE()
@@ -616,7 +655,7 @@ IF(CHAOS_CC_COMPILER)
 	  CheckCompiler("CXX" i686-nptl-linux-gnu-g++)
 	  CheckCompiler("C" i686-nptl-linux-gnu-gcc)
 	  SET(CHAOS_CROSS_HOST i686-nptl-linux-gnu)
-	  SET(CHAOS_CXX_FLAGS "${CHAOS_CXX_FLAGS} -DCHAOS_NO_BACKTRACE -DBOOST_ASIO_DISABLE_EVENTFD")
+	  SET(CHAOS_CXX_FLAGS "${CHAOS_CXX_FLAGS} -DBOOST_ASIO_DISABLE_EVENTFD")
 	  SET(CHAOS_BOOST_FLAGS target-os=linux)
 	  SET(CHAOS_DISABLE_EVENTFD ON)
 	ELSE()
@@ -702,10 +741,8 @@ IF(CHAOS_CC_COMPILER)
   #### TOOL VERSIONS
   if( CHAOS_BOOST_VERSION)
     SET(BOOST_VERSION ${CHAOS_BOOST_VERSION})
-    SET(BOOST_MINOR_VERSION ${CHAOS_BOOST_MINOR_VERSION})
   ELSE()
     SET(BOOST_VERSION 64)
-    SET(BOOST_MINOR_VERSION 0)
   ENDIF()
 
   #####
@@ -817,9 +854,9 @@ IF(CHAOS_CC_COMPILER)
     #  include_directories(${Boost_INCLUDE_DIRS})
   else()
     MESG("boost not found in ${CMAKE_INSTALL_PREFIX}/lib downloading...")
-    boostInstall(${BOOST_VERSION} ${BOOST_MINOR_VERSION} http://download.sourceforge.net/project/boost/boost/1.${BOOST_VERSION}.${BOOST_MINOR_VERSION} "${CHAOS_BOOST_FLAGS}")
+    boostInstall(${BOOST_VERSION} http://download.sourceforge.net/project/boost/boost/1.${BOOST_VERSION}.0 "${CHAOS_BOOST_FLAGS}")
     # gitCloneUrl(boost https://github.com/boostorg)
-    # gitCheckOut(boost boost-1.${BOOST_VERSION}.${BOOST_MINOR_VERSION})
+    # gitCheckOut(boost boost-1.${BOOST_VERSION}.0)
     # execute_process(
     #   COMMAND ./bootstrap.sh
     #   WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}/boost
