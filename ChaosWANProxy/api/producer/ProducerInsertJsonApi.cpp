@@ -91,9 +91,10 @@ int ProducerInsertJsonApi::execute(std::vector<std::string>& api_tokens,
     
     // add the node unique id
 	Json::StyledWriter				json_writer;
-	const char* jsonobj=json_writer.write(input_data).c_str();
-//    PID_LDBG << json_writer.write(input_data);
-    output_dataset->setSerializedJsonData(jsonobj	);
+    std::string json_str=json_writer.write(input_data);
+
+ //   PID_LDBG << "PROCESSING:"<<json_str.c_str();//json_writer.write(input_data).c_str();
+    output_dataset->setSerializedJsonData(json_str.c_str()	);
 
     if(!input_data.isMember(chaos::DataPackCommonKey::DPCK_TIMESTAMP)){
         ts = chaos::common::utility::TimingUtil::getTimeStamp();
