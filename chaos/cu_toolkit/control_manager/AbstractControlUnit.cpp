@@ -940,37 +940,9 @@ void AbstractControlUnit::fillRestoreCacheWithDatasetFromTag(data_manager::KeyDa
     for(std::vector<std::string>::iterator it = dataset_key.begin();
         it != dataset_key.end();
         it++) {
-        //! fetch value size
-        value_size = dataset.getValueSize(*it);
-        
-        //! fetch raw data ptr address
-        raw_value_ptr = dataset.getRawValuePtr(*it);
-        if(value_size &&
-           raw_value_ptr) {
-            //add attribute for found key and value
-            restore_cache.addAttribute((SharedCacheDomain)domain,
-                                       *it,
-                                       value_size,
-                                       chaos::DataType::TYPE_BYTEARRAY);
-            
-            //get newly createdattribute from cache
-            cached_attribute_value = restore_cache.getAttributeValue((SharedCacheDomain)domain,
-                                                                     *it);
-            cached_attribute_value->sub_type.clear();
-            //            cached_attribute_value->sub_type.push_back(dataset.getBinarySubtype(*it));
-            if(!cached_attribute_value) {
-                ACULERR_ << "Error retriving attribute value from cache for:" << *it;
-                continue;
-            }
-            
-            //copy the found valu ein the cache
-            std::memcpy(cached_attribute_value->value_buffer,
-                        (const void *)raw_value_ptr,
-                        value_size);
-        }
-        
-        value_size = 0;
-        raw_value_ptr = NULL;
+        restore_cache.addAttribute((SharedCacheDomain)domain,
+                                   *it,
+                                   dataset.getVariantValue(*it));
     }
 }
 

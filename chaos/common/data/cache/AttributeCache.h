@@ -69,6 +69,10 @@ namespace chaos{
                                       chaos::DataType::DataType type,
                                       const std::vector<chaos::DataType::BinarySubtype>& sub_type = std::vector<chaos::DataType::BinarySubtype>());
                     
+                    //!add a new attribute and fill it with the value of the variant
+                    void addAttribute(const std::string& name,
+                                      const chaos::common::data::CDataVariant& value);
+                    
                     void setValueForAttribute(VariableIndexType n,
                                               const void * value,
                                               uint32_t size);

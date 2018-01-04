@@ -81,7 +81,9 @@ namespace chaos{
 											 const std::string&  name,
 											 uint32_t max_size,
 											 chaos::DataType::DataType type) = 0;
-					
+                    virtual void addAttribute(SharedCacheDomain domain,
+                                              const std::string&  name,
+                                              chaos::common::data::CDataVariant value) = 0;
                     virtual bool hasAttribute(SharedCacheDomain domain,
                                               const std::string&  name) = 0;
                     

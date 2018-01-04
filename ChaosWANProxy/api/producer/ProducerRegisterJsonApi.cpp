@@ -92,9 +92,10 @@ int ProducerRegisterJsonApi::execute(std::vector<std::string>& api_tokens,
 	CDataWrapper dataset_pack;
 	Json::StyledWriter				json_writer;
 
-	const char* jsonobj=json_writer.write(input_data).c_str();
-	PRA_LDBG << "TO DECODE:"<<jsonobj;
-	dataset_pack.setSerializedJsonData(jsonobj	);
+    std::string json_string=json_writer.write(input_data);
+    const char* json_string_p=json_string.c_str();
+    PRA_LDBG << "TO DECODE:"<<json_string_p<<" string size:"<<json_string.size();
+    dataset_pack.setSerializedJsonData(json_string_p);
 
 	PRA_LDBG << dataset_pack.getJSONString();
    //int64_t ts = (boost::posix_time::microsec_clock::universal_time() - time_epoch).total_milliseconds();
@@ -112,9 +113,7 @@ int ProducerRegisterJsonApi::execute(std::vector<std::string>& api_tokens,
            int32_t dstype=0,subtype=0;
            int32_t size=0;
            ds.addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME,*it);
-           if(dataset_pack.isVector(*it)){
-        	   dstype = chaos::DataType::TYPE_ACCESS_ARRAY;
-           }
+
            size =dataset_pack.getValueSize(*it);
            if(dataset_pack.isDoubleValue(*it)){
         	   dstype |= chaos::DataType::TYPE_DOUBLE;
@@ -138,6 +137,10 @@ int ProducerRegisterJsonApi::execute(std::vector<std::string>& api_tokens,
         	   subtype= chaos::DataType::SUB_TYPE_DOUBLE;
 
            }
+           if(dataset_pack.isVector(*it)){
+               //dstype = chaos::DataType::TYPE_ACCESS_ARRAY;
+               dstype = chaos::DataType::TYPE_BYTEARRAY;
+           }
            ds.addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE,subtype);
            ds.addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE,dstype);
            ds.addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION,chaos::DataType::Output);
@@ -160,7 +163,7 @@ int ProducerRegisterJsonApi::execute(std::vector<std::string>& api_tokens,
 	if((err = persistence_driver->registerDataset(producer_name,
 												  mds_registration_pack))) {
 		err_msg = "Error in the dataset registration";
-		PRA_LERR << err_msg;
+        PRA_LERR << err_msg<<" ret:"<<err;
 		PRODUCER_REGISTER_ERR(output_data, -19, err_msg);
 		return err;
 	}else {
