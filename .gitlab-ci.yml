@@ -177,10 +177,6 @@ build_framework_x86_64_c98:
     - make clean
     - make  -j 4
     - make install
-    - cd ccs
-    - /Qt/5.9.3/gcc_64/bin/qmake
-    - make -j 4
-    - mv /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux-c98
   cache:
     key: x86_64_c98/$CI_BUILD_REF_NAME
     paths:
