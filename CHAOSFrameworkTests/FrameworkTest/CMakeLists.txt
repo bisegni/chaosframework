@@ -22,6 +22,7 @@ SET(TestFrameworkSource main.cpp
 INCLUDE_DIRECTORIES(. ../../usr/local/include)
 LINK_DIRECTORIES( ${LINK_DIRECTORIES} ${PROJECT_SOURCE_DIR}/../../usr/local/lib )
 if(UNIX AND NOT APPLE)
+      LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/../../usr/local/lib64)
       LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/../../usr/local/lib/x86_64-linux-gnu)
 endif()
 MESG("Link directory ${PROJECT_SOURCE_DIR}/../../usr/local/lib")
