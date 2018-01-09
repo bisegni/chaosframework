@@ -1,8 +1,14 @@
 stages:
   - build
   - test
+  - deploy
   - publish
 
+before_script:
+  - export NOW=$(date +"%Y%m%d-%H%M%S")
+  - export TAR_NAME_POSTFIX=$NOW
+  - export SYS=`uname -s`
+  - export CHAOS_LIB_HASH=`git log -n 1 --pretty="%h"`
 build_framework_x86_64:
   tags:
     - chaos
@@ -111,6 +117,23 @@ execute_framework_centos7_test:
     paths:
         - 'chaos-distrib-x86_64-centos7'
     expire_in: 4 hour
+  only:
+    - development
+    - master
+    - schedules
+    - web
+
+execute_framework_centos7_deploy:
+  tags:
+    - lnf
+  stage: deploy
+  image: baltig.infn.it:4567/chaos-lnf-control/chaos_bundle_compilation:lite
+  dependencies:
+    - execute_framework_centos7_test
+  script:
+    - tar cfz chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz chaos-distrib-x86_64-centos7
+    - ls -la
+    - scp chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/$CI_COMMIT_REF_NAME/x86_64/centos/7/chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz
   only:
     - development
     - master
