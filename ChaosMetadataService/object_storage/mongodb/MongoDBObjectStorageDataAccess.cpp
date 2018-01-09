@@ -261,9 +261,20 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string& key,
                     CDataWrapper*new_obj=new CDataWrapper(it->getObjectField(MONGODB_DAQ_DATA_FIELD).objdata());
                     found_object_page.push_back(CDWShrdPtr(new_obj));
                 }
-                
-                last_record_found_seq.run_id = object_found[object_found.size()-1].getFieldDotted(run_key).Long();
-                last_record_found_seq.datapack_counter = object_found[object_found.size()-1].getFieldDotted(counter_key).Long();
+                if( object_found[object_found.size()-1].getFieldDotted(run_key).type()==mongo::NumberInt){
+                    last_record_found_seq.run_id = object_found[object_found.size()-1].getFieldDotted(run_key).Number();
+
+                } else {
+                    last_record_found_seq.run_id = object_found[object_found.size()-1].getFieldDotted(run_key).Long();
+                }
+
+
+                if( object_found[object_found.size()-1].getFieldDotted(counter_key).type()==mongo::NumberInt){
+                    last_record_found_seq.datapack_counter = object_found[object_found.size()-1].getFieldDotted(counter_key).Number();
+
+                } else {
+                    last_record_found_seq.datapack_counter = object_found[object_found.size()-1].getFieldDotted(counter_key).Long();
+                }
                 DEBUG_CODE(DBG<<CHAOS_FORMAT("Found %1% element last sequence read is [%2%-%3%]", %object_found.size()%(int64_t)last_record_found_seq.run_id%last_record_found_seq.datapack_counter);)
             }
         }

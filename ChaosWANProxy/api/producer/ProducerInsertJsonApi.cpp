@@ -105,7 +105,9 @@ int ProducerInsertJsonApi::execute(std::vector<std::string>& api_tokens,
     if(!input_data.isMember(chaos::DataPackCommonKey::DPCK_SEQ_ID)){
     	output_dataset->addInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID,pktid++ );
     }
-
+    if(!input_data.isMember(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_RUN_ID)){
+        output_dataset->addInt64Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_RUN_ID,(int64_t)0 );
+    }
     //scan other memebrs to create the datapack
     //call persistence api for insert the data
     if((err = persistence_driver->pushNewDataset(producer_name ,
