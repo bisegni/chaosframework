@@ -2,7 +2,7 @@
 #include "ui_DriverDescriptionInputDialog.h"
 
 DriverDescriptionInputDialog::DriverDescriptionInputDialog(QWidget *_parent) :
-    QDialog(_parent),
+    QDialog(_parent, Qt::Popup),
     current_row(-1),
     driver_name(QString("")),
     driver_version(QString("")),

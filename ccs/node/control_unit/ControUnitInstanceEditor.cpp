@@ -339,10 +339,10 @@ void ControUnitInstanceEditor::on_pushButtonSaveInstance_clicked() {
                     GET_CHAOS_API_PTR(node::UpdatePropertyDefaultValues)->execute(ui->lineEditControlUnitUniqueID->text().toStdString(), *preparePropertyGroup().data()));
 }
 
-void ControUnitInstanceEditor::on_pushButtonAddDriverDescription_clicked()
-{
+void ControUnitInstanceEditor::on_pushButtonAddDriverDescription_clicked() {
     //add new driver description
     DriverDescriptionInputDialog new_driver_dialog(this);
+    new_driver_dialog.setWindowModality(Qt::WindowModal);
     connect(&new_driver_dialog,
             SIGNAL(newDriverDescription(QString,QString,QString)),
             SLOT(addNewDriverDescription(QString,QString,QString)));
@@ -358,6 +358,7 @@ void ControUnitInstanceEditor::on_pushButtonEditDriverDescription_clicked()
                                                     table_model_driver_spec->item(current_index.row(), 1)->text(),
                                                     table_model_driver_spec->item(current_index.row(), 2)->text(),
                                                     this);
+    edit_driver_dialog.setWindowModality(Qt::WindowModal);
     connect(&edit_driver_dialog,
             SIGNAL(updateDriverDescription(int,QString,QString,QString)),
             SLOT(updateDriverDescription(int,QString,QString,QString)));

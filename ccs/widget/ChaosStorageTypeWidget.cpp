@@ -189,19 +189,20 @@ void ChaosStorageTypeWidget::apiHasEndedWithError(const QString& api_tag,
 }
 
 void ChaosStorageTypeWidget::on_pushButtonEdit_clicked() {
-    CPropertyTextEdit *pte_live_time = new  CPropertyTextEdit(NULL);
+    CPopupWidgetContainer *wc = new CPopupWidgetContainer(this);
+
+    CPropertyTextEdit *pte_live_time = new  CPropertyTextEdit(wc);
     pte_live_time->setNodeUID(nodeUID());
     pte_live_time->setPropertyGroup(chaos::ControlUnitPropertyKey::GROUP_NAME);
     pte_live_time->setPropertyName(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME);
     pte_live_time->initChaosContent();
 
-    CPropertyTextEdit *pte_history_time = new  CPropertyTextEdit(NULL);
+    CPropertyTextEdit *pte_history_time = new  CPropertyTextEdit(wc);
     pte_history_time->setNodeUID(nodeUID());
     pte_history_time->setPropertyGroup(chaos::ControlUnitPropertyKey::GROUP_NAME);
     pte_history_time->setPropertyName(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME);
     pte_history_time->initChaosContent();
 
-    CPopupWidgetContainer *wc = new CPopupWidgetContainer(this);
     wc->addWidget(pte_live_time);
     wc->addWidget(pte_history_time);
     QRect rect = QRect(0,0,parentWidget()->width(),0);
