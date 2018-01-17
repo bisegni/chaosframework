@@ -35,15 +35,31 @@ namespace chaos {
                 class AgentRemoveNodeSafety:
                 public metadata_service::batch::MDSBatchCommand {
                     DECLARE_MDS_COMMAND_ALIAS
+                    typedef enum ScanPhase {
+                        ScanPhaseNext,
+                        ScanPhaseProcess,
+                        ScanPhaseEnd
+                    } ScanPhase_t;
+                    
                     std::string agent_uid;
+                    ScanPhase_t scan_phase;
                     ChaosStringVector associated_nodes;
                     ChaosUniquePtr<RequestInfo> request;
-                    ChaosUniquePtr<chaos::common::data::CDataWrapper> message_data;
+                    ChaosUniquePtr<chaos::common::data::CDataWrapper>           message_data;
+                    service_common::data::agent::VectorAgentAssociationIterator current_association_it;
                     
-                    chaos::common::event::channel::AlertEventChannel *alert_event_channel;
+                    ChaosUniquePtr<chaos::common::data::CDataWrapper>       agent_node_information;
+                    service_common::data::agent::VectorAgentAssociation     association_list;
+                    chaos::common::event::channel::AlertEventChannel        *alert_event_channel;
+                    
+                    chaos::common::data::CDWUniquePtr composeStopMessage(service_common::data::agent::AgentAssociation& agent_association,
+                                                                         bool kill = true);
+                    
+                    bool processStopOperationPhases();
                 public:
                     AgentRemoveNodeSafety();
                     ~AgentRemoveNodeSafety();
+                    
                 protected:
                     // inherited method
                     void setHandler(chaos_data::CDataWrapper *data);

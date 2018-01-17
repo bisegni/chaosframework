@@ -67,7 +67,7 @@ void MDSBatchCommand::setHandler(CDataWrapper *data) {
     //set default scheduler delay 0,5 second
     setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY, (uint64_t)50000);
     //set the timeout to 10 seconds
-    setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT, (uint64_t)10000000);
+    setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT, (uint64_t)20000000);
     //set in exclusive running property
     BC_EXCLUSIVE_RUNNING_PROPERTY;
 }
