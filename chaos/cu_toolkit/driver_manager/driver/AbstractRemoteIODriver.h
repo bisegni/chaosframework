@@ -47,8 +47,8 @@
 #define REMOTE_LAYER_MESSAGE_TYPE   "msg_type"
 
 #define AbstractRemoteIODriver_INFO    INFO_LOG(AbstractCDataWrapperIODriver)
-#define AbstractRemoteIODriver_DBG        DBG_LOG(AbstractCDataWrapperIODriver)
-#define AbstractRemoteIODriver_ERR        ERR_LOG(AbstractCDataWrapperIODriver)
+#define AbstractRemoteIODriver_DBG     DBG_LOG(AbstractCDataWrapperIODriver)
+#define AbstractRemoteIODriver_ERR     ERR_LOG(AbstractCDataWrapperIODriver)
 
 namespace chaos {
     namespace cu {
@@ -110,7 +110,18 @@ namespace chaos {
                         future_hepler.init(NULL);
                     }
                     void driverDeinit() throw (chaos::CException) {
+                        int err = 0;
                         CHAOS_NOT_THROW(future_hepler.deinit();)
+                        if(conn_phase == RDConnectionPhaseAutorized ||
+                           conn_phase == RDConnectionPhaseConfigured) {
+                                chaos::common::data::CDWUniquePtr deinit_msg(new chaos::common::data::CDataWrapper());
+                                chaos::common::data::CDWShrdPtr message_response;
+                                if((err = _sendRawOpcodeRequest("deinit",
+                                                                ChaosMoveOperator(deinit_msg),
+                                                                message_response)) == 0){
+                                    AbstractRemoteIODriver_ERR<< CHAOS_FORMAT("[%1%]Error deinitilizing remote driver on connection", %current_connection_identifier());
+                                }
+                            }
                     }
                     
                     bool checkAuthenticationState(chaos::common::data::CDWShrdPtr& message_response) {
@@ -332,7 +343,7 @@ namespace chaos {
                             case RDConnectionPhaseAutorized: {
                                 chaos::common::data::CDWUniquePtr conf_msg(driver_init_pack->clone());
                                 chaos::common::data::CDWShrdPtr message_response;
-                                if((err = _sendRawOpcodeRequest("conf",
+                                if((err = _sendRawOpcodeRequest("init",
                                                                 ChaosMoveOperator(conf_msg),
                                                                 message_response)) ==0 ){
                                     if(checkConfigurationState(message_response)) {
