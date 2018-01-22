@@ -1,7 +1,42 @@
 cmake_minimum_required(VERSION 2.8)
 project(ChaosMetadataService)
+option(COMPILE_HAZELCAST_LIVE_DRIVER "Compile hazelcast live data driver" OFF)
+
 IF (DEFINED ENV{CHAOS_BUNDLE} )
   include($ENV{CHAOS_BUNDLE}/tools/project_template/CMakeChaos.txt)
+ENDIF()
+
+
+IF (COMPILE_HAZELCAST_LIVE_DRIVER)
+  MESG("Download hazelcast c++ client")
+  ExternalProject_Add(
+     hazelcast
+     GIT_REPOSITORY https://github.com/hazelcast/hazelcast-cpp-client.git
+     GIT_TAG v3.9.1
+     PREFIX "${CMAKE_BINARY_DIR}/ext_dep/hazelcast-prefix"
+     SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/hazelcast-src"
+     BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/hazelcast-build"
+     CMAKE_ARGS
+      -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
+      -DHZ_LIB_TYPE=STATIC 
+      -DHZ_BIT=64 
+      -DCMAKE_BUILD_TYPE=Release
+     LOG_DOWNLOAD ON
+     LOG_CONFIGURE ON
+     LOG_BUILD ON)
+
+
+     # Specify include dir
+     ExternalProject_Get_Property(hazelcast source_dir)
+     set(HAZELCAST_INCLUDE_DIR ${source_dir}/include)
+
+     # Library
+     ExternalProject_Get_Property(hazelcast binary_dir)
+     set(HAZELCAST_LIBRARY_DIR ${binary_dir})
+
+     MESG("${HAZELCAST_INCLUDE_DIR}")
+     MESG("${HAZELCAST_LIBRARY_DIR}")
+     MESG("${HAZELCAST_LIBRARY}")
 ENDIF()
 
 INCLUDE_DIRECTORIES(chaos/common ../)

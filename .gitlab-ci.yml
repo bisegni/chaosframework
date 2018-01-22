@@ -27,7 +27,7 @@ build_framework_x86_64:
     - /Qt/5.9.3/gcc_64/bin/qmake
     - make -j 4
   cache:
-    key: x86_64/$CI_BUILD_REF_NAME
+    key: x86_64_$CI_BUILD_REF_NAME
     paths:
         - /builds/chaos-lnf-control/chaosframework/config/CACHE/
   artifacts:
@@ -87,7 +87,7 @@ build_framework_centos7:
     - make -j 4
     - mv /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-centos7
   cache:
-    key: x86_64_centos7/$CI_BUILD_REF_NAME
+    key: x86_64_centos7_$CI_BUILD_REF_NAME
     paths:
         - /builds/chaos-lnf-control/chaosframework/config/CACHE/
   artifacts:
@@ -155,7 +155,7 @@ execute_framework_centos7_deploy:
 #     - make install
 #     - mv /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux-llvm
 #   cache:
-#     key: llvm_x86_64/$CI_BUILD_REF_NAME
+#     key: llvm_x86_64_$CI_BUILD_REF_NAME
 #     paths:
 #         - /builds/chaos-lnf-control/chaosframework/config/CACHE/
 #   artifacts:
@@ -202,7 +202,7 @@ build_framework_x86_64_c98:
     - make install
     - mv /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux-c98
   cache:
-    key: x86_64_c98/$CI_BUILD_REF_NAME
+    key: x86_64_c98_$CI_BUILD_REF_NAME
     paths:
         - /builds/chaos-lnf-control/chaosframework/config/CACHE/
   artifacts:
@@ -246,7 +246,7 @@ build_framework_arm:
     - make  -j 4
     - make install
   cache:
-    key: arm-compilation/$CI_BUILD_REF_NAME
+    key: arm-compilation_$CI_BUILD_REF_NAME
     paths:
         - /builds/chaos-lnf-control/chaosframework/config/CACHE/
   artifacts:
@@ -291,7 +291,7 @@ build_framework_arm:
 #       - tar czvf chaos.tgz cov-int
 #       - curl --form token=i9B9MI9n53zWdx2iSS4Qvg --form email=bisegni@lnf.infn.it --form file=@/tmp/chaos.tgz --form version="1.0.0" --form description="Beta"  https://scan.coverity.com/builds?project=%21CHAOS+Control+System
 #     cache:
-#       key: scan_coverity/$CI_BUILD_REF_NAME
+#       key: scan_coverity_$CI_BUILD_REF_NAME
 #       paths:
 #           - /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/
 #           - /builds/chaos-lnf-control/chaosframework/config/CACHE/
