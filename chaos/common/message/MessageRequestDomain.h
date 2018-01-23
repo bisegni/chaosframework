@@ -22,11 +22,14 @@
 #ifndef CHAOS_MESSAGEREQUESTDOMAIN_H
 #define CHAOS_MESSAGEREQUESTDOMAIN_H
 
+#include <chaos/common/chaos_types.h>
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/utility/UUIDUtil.h>
 #include <chaos/common/utility/Atomic.h>
 #include <chaos/common/utility/SafeAsyncCall.h>
+
+#include <chaos/common/message/MessageRequestFuture.h>
 
 #include <boost/atomic.hpp>
 #include <boost/function.hpp>
@@ -47,45 +50,28 @@ namespace chaos {
             typedef ChaosSharedPtr<chaos::common::message::MessageRequestDomain> MessageRequestDomainSHRDPtr;
             
             typedef ChaosSharedPtr<common::data::CDataWrapper> FuturePromiseData;
-            
-            typedef boost::promise<FuturePromiseData> MessageFuturePromise;
-            
-            typedef boost::function<void(const FuturePromiseData&)> PromisesHandlerFunction;
+            typedef ChaosPromise<FuturePromiseData> MessageFuturePromise;
+            typedef ChaosFunction<void(const FuturePromiseData&)> PromisesHandlerFunction;
             
             
             typedef chaos::common::utility::SafeAsyncCall<PromisesHandlerFunction> PromisesHandler;
             typedef ChaosSharedPtr< PromisesHandler > PromisesHandlerSharedPtr;
             typedef ChaosWeakPtr< PromisesHandler > PromisesHandlerWeakPtr;
             
+            //!promise subclass for manage the promise handler
             class ChaosMessagePromises:
-            public boost::promise<FuturePromiseData> {
+            public MessageFuturePromise {
                 PromisesHandlerWeakPtr promises_handler_weak;
             public:
                 ChaosMessagePromises(PromisesHandlerWeakPtr _promises_handler_weak);
                 void set_value(const FuturePromiseData& received_data);
             };
             
-            typedef map<chaos::common::utility::atomic_int_type,
-            ChaosSharedPtr<ChaosMessagePromises> > MapPromises;
-            
-            typedef map<chaos::common::utility::atomic_int_type,
-            ChaosSharedPtr<ChaosMessagePromises> >::iterator MapPromisesIterator;
-            
-            typedef boost::unique_future< FuturePromiseData > MessageUniqueFuture;
-            
             //! manage the RC domain for the request of a message channel
             class MessageRequestDomain:
             public DeclareAction {
                 std::string domain_id;
-                
-                //! atomic int for request id
-                boost::atomic<uint32_t> request_id_counter;
-                
-                //! Mutex for managing the maps manipulation
-                boost::mutex mutext_answer_managment;
-                
-                MapPromises map_request_id_promises;
-                
+                MessageRequestDomainFutureHelper future_helper;
             protected:
                 /*!
                  Called when a response to a request is received, it will manage the search of
@@ -96,9 +82,6 @@ namespace chaos {
             public:
                 MessageRequestDomain();
                 ~MessageRequestDomain();
-                
-                uint32_t getNextRequestID();
-                uint32_t getCurrentRequestID();
                 
                 const std::string& getDomainID();
                 

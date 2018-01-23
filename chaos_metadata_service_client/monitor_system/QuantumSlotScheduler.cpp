@@ -315,7 +315,7 @@ void QuantumSlotScheduler::fetchValue(ChaosSharedPtr<IODataDriver> data_driver) 
                                     data_found);
         } else {
             //we need to sleep untile someone wakeup us
-            QSS_DBG << "No more data slot to fetch so i'm going to sleep";
+            //QSS_DBG << "No more data slot to fetch so i'm going to sleep";
             condition_fetch.wait(lock_on_condition);
         }
     }

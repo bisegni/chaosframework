@@ -50,6 +50,8 @@ template<typename T>
 using ChaosPromise = std::promise<T>;
 template<typename T>
 using ChaosFuture = std::future<T>;
+template<typename T>
+using ChaosSharedFuture = std::shared_future<T>;
 typedef std::future_status ChaosFutureStatus;
 typedef std::chrono::seconds ChaosCronoSeconds;
 typedef std::chrono::milliseconds ChaosCronoMilliseconds;
@@ -70,7 +72,8 @@ using ChaosFunction = std::function< R >;
 #define ChaosWeakPtr boost::weak_ptr
 #define ChaosAtomic boost::atomic
 #define ChaosPromise boost::promise
-#define ChaosFuture boost::shared_future
+#define ChaosFuture boost::future
+#define ChaosSharedFuture boost::shared_future
 #define ChaosFutureStatus boost::future_status
 #define ChaosCronoSeconds boost::chrono::seconds
 #define ChaosCronoMilliseconds boost::chrono::milliseconds
@@ -94,7 +97,8 @@ using ChaosFunction = std::function< R >;
 #define ChaosMoveOperator(x) x
 #define ChaosAtomic boost::atomic
 #define ChaosPromise boost::promise
-#define ChaosFuture  boost::shared_future
+#define ChaosFuture  boost::future
+#define ChaosSharedFuture  boost::shared_future
 #define ChaosFutureStatus boost::future_status
 #define ChaosCronoSeconds boost::chrono::seconds
 #define ChaosCronoMilliseconds boost::chrono::milliseconds

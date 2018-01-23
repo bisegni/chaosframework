@@ -23,7 +23,6 @@ QVariant SearchNodeListModel::getRowData(int row) const {
     QString node_type =  QString::fromStdString(found_node->getStringValue(chaos::NodeDefinitionKey::NODE_TYPE));
     QString node_health_ts("---");
     QString node_health_status("---");
-    qDebug() << found_node->getJSONString().c_str();
     bool has_stat = found_node->hasKey("health_stat");
     if(has_stat &&
             found_node->isCDataWrapperValue("health_stat")) {
@@ -124,7 +123,6 @@ void SearchNodeListModel::onApiDone(const QString& tag,
             api_result->isVectorValue("node_search_result_page")) {
         //we have result
         ChaosUniquePtr<CMultiTypeDataArrayWrapper> arr(api_result->getVectorValue("node_search_result_page"));
-
         if(arr->size()) {
             //get first element seq
             for(int i = 0;
