@@ -52,6 +52,8 @@ CDataWrapper *GetSetFullUnitServer::execute(CDataWrapper *api_data,
     
     int err = 0;
     bool presence = false;
+    GET_DATA_ACCESS(ControlUnitDataAccess, cu_da, -3);
+    GET_DATA_ACCESS(NodeDataAccess, n_da, -4)
     GET_DATA_ACCESS(UnitServerDataAccess, us_da, -5)
     //get the parameter
     const std::string us_uid = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
@@ -104,12 +106,25 @@ CDataWrapper *GetSetFullUnitServer::execute(CDataWrapper *api_data,
                     if(cuw->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID) && cuw->hasKey("control_unit_implementation")){
                         std::string cu_id= cuw->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
                         std::string cu_type= cuw->getStringValue("control_unit_implementation");
+                        cuw->addStringValue(chaos::NodeDefinitionKey::NODE_TYPE, chaos::NodeType::NODE_TYPE_CONTROL_UNIT);
+
                         US_ACT_DBG<< "adding cu :"<<cu_id<<"("<<cu_type<<") to "<<us_uid;
                         if((err = us_da->addCUType(us_uid, cu_type))) {
                             LOG_AND_TROW_FORMATTED(US_ACT_ERR, err, "Error adding cu '%1%' type: %2% to unit server: %3%", %cu_id%us_uid%cu_type);
                         }
-                        GET_DATA_ACCESS(ControlUnitDataAccess, cu_da, -3);
-                        GET_DATA_ACCESS(NodeDataAccess, n_da, -4)
+                        if((err = n_da->checkNodePresence(presence,
+                                                          cu_id))){
+                            LOG_AND_TROW(US_ACT_ERR, err, "Error checking node presence")
+                        }
+                        if (!presence) {
+                            ChaosUniquePtr<chaos::common::data::CDataWrapper> node_min_dec(new CDataWrapper());
+                            node_min_dec->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_id);
+                            node_min_dec->addStringValue(NodeDefinitionKey::NODE_TYPE, chaos::NodeType::NODE_TYPE_CONTROL_UNIT);
+                                //need to be create a new empty node
+                            if((err = cu_da->insertNewControlUnit(*node_min_dec.get()))) {
+                                LOG_AND_TROW(US_ACT_ERR, err, "Error during new node creation")
+                            }
+                        }
 
                         if((err = cu_da->setInstanceDescription(cu_id, *cuw.get()))) {
                                LOG_AND_TROW(US_ACT_ERR, err, boost::str(boost::format("Error creating control unit instance description for node:%1%") % cu_id));
