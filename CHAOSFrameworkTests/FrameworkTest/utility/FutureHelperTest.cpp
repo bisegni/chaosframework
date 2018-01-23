@@ -70,14 +70,15 @@ TEST(FutureHelperTests, Base) {
         helper_test->addNewPromise(new_id, new_shared_future);
         ChaosUniquePtr<PromiseInfo> pi(new PromiseInfo(new_id, helper_test));
         ChaosUniquePtr<FutureInfo> fi(new FutureInfo(new_id, new_shared_future));
-        while(fq.push(fi.release()) == false);
-                    //usleep(100);
-        while(pq.push(pi.release()) == false);
+        while(fq.push(fi.get()) == false);
+        fi.release();
+        //usleep(100);
+        while(pq.push(pi.get()) == false);
+        pi.release();
     }
     ASSERT_NO_THROW(pq.deinit());
     ASSERT_NO_THROW(fq.deinit());
     ASSERT_EQ(future_excpt_counter, 0);
-    ASSERT_EQ(future_to_counter, 0);
     ASSERT_EQ(future_counter, NUMBER_OF_TEST);
     ASSERT_EQ(promises_counter, NUMBER_OF_TEST);
     ASSERT_NO_THROW(helper_test->deinit());
