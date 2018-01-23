@@ -101,7 +101,7 @@ CDataWrapper *GetSetFullUnitServer::execute(CDataWrapper *api_data,
                     (cu_l.get() !=NULL) &&
                     (cui<cu_l->size());cui++){
                     ChaosUniquePtr<chaos::common::data::CDataWrapper> cuw(cu_l->getCDataWrapperElementAtIndex(cui));
-                    if(cuw->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID) && cuw->hasKey(UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS)){
+                    if(cuw->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID) && cuw->hasKey("control_unit_implementation")){
                         std::string cu_id= cuw->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
                         std::string cu_type= cuw->getStringValue("control_unit_implementation");
                         US_ACT_DBG<< "adding cu :"<<cu_id<<"("<<cu_type<<") to "<<us_uid;
@@ -113,6 +113,9 @@ CDataWrapper *GetSetFullUnitServer::execute(CDataWrapper *api_data,
 
                         if((err = cu_da->setInstanceDescription(cu_id, *cuw.get()))) {
                                LOG_AND_TROW(US_ACT_ERR, err, boost::str(boost::format("Error creating control unit instance description for node:%1%") % cu_id));
+                        } else {
+                            US_ACT_DBG<< "setting instance cu :"<<cu_id<<"("<<cu_type<<") to:"<<cuw->getCompliantJSONString();
+
                         }
 
                         //for compativbility  update here the default porperty values
