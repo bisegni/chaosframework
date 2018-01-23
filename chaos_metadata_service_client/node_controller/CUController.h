@@ -32,6 +32,7 @@
 #include <chaos/common/utility/SingleBufferCircularBuffer.h>
 #include <chaos/cu_toolkit/data_manager/KeyDataStorage.h>
 #include <chaos/common/io/IODirectIODriver.h>
+#include <chaos/common/chaos_constants.h>
 
 //#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
 
@@ -409,7 +410,7 @@ namespace chaos {
                 
                 //!return the last fetched dataset for the domain
                 ChaosSharedPtr<chaos::common::data::CDataWrapper> getCurrentDatasetForDomain(DatasetDomain domain);
-                
+
                 //!return the last fetched dataset for the domain
                 int getCurrentDatasetForDomain(DatasetDomain domain,chaos::common::data::CDataWrapper* ret);
                 

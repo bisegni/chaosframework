@@ -21,7 +21,6 @@
 #include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
 
 #include <chaos_metadata_service_client/node_controller/CUController.h>
-#include <chaos/common/chaos_constants.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/data/CDataVariant.h>
 
