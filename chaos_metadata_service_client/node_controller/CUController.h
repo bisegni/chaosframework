@@ -81,7 +81,7 @@ namespace chaos {
                 //!point to the freashest live value for this device dataset
                 std::vector< ChaosSharedPtr<chaos::common::data::CDataWrapper> >current_dataset;
                 
-                
+                std::string devId;
                 //mutext for multi threading track operation
                 boost::mutex trackMutext;
                 
