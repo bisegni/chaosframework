@@ -20,13 +20,18 @@
  */
 #include "FutureHelperTest.h"
 #include <boost/atomic.hpp>
+#include <chaos/common/async_central/async_central.h>
+
 uint32_t future_counter = 0;
 uint32_t future_excpt_counter = 0;
 uint32_t future_to_counter = 0;
 uint32_t promises_counter = 0;
 using namespace chaos::common::data;
 
-#define NUMBER_OF_TEST 5000
+#define NUMBER_OF_TEST 1000000
+
+using namespace chaos::common::utility;
+using namespace chaos::common::async_central;
 
 void CDWComsumerPromise::processBufferElement(PromiseInfo_t *pi, chaos::ElementManagingPolicy& policy) throw(chaos::CException) {
     promises_counter++;
@@ -42,7 +47,7 @@ void CDWComsumerFuture::processBufferElement(FutureInfo_t *fi, chaos::ElementMan
         ASSERT_NO_THROW(fret = fi->future.wait_for(ChaosCronoMilliseconds(1000)));
         if(fret == ChaosFutureStatus::ready) {
             try{
-                result = fi->future.get();
+                ASSERT_NO_THROW(result = fi->future.get());
                 ASSERT_TRUE(result.get());
                 ASSERT_TRUE(result->hasKey("pid"));
                 ASSERT_TRUE(result->getInt32Value("pid") == fi->promise_id);
@@ -58,7 +63,8 @@ TEST(FutureHelperTests, Base) {
     //boost::thread_group threads;
     CDWComsumerPromise pq;
     CDWComsumerFuture fq;
-    MessageRequestDomainFutureHelperShrdPtr helper_test(new MessageRequestDomainFutureHelper());
+    ASSERT_NO_THROW(InizializableService::initImplementation(AsyncCentralManager::getInstance(), NULL, "AsyncCentralManager", __PRETTY_FUNCTION__));
+    MessageRequestDomainFutureHelperShrdPtr helper_test(new MessageRequestDomainFutureHelper(100,100));
     MessageRequestDomainFutureHelper::Future        new_shared_future;
     MessageRequestDomainFutureHelper::CounterType   new_id;
     ASSERT_NO_THROW(pq.init(1));
@@ -79,7 +85,9 @@ TEST(FutureHelperTests, Base) {
     ASSERT_NO_THROW(pq.deinit());
     ASSERT_NO_THROW(fq.deinit());
     ASSERT_EQ(future_excpt_counter, 0);
-    ASSERT_EQ(future_counter, NUMBER_OF_TEST);
+    ASSERT_EQ(future_to_counter, (promises_counter - future_counter));
+    ASSERT_EQ(future_counter, (promises_counter - future_to_counter));
     ASSERT_EQ(promises_counter, NUMBER_OF_TEST);
     ASSERT_NO_THROW(helper_test->deinit());
+    ASSERT_NO_THROW(InizializableService::deinitImplementation(AsyncCentralManager::getInstance(), "AsyncCentralManager", __PRETTY_FUNCTION__));
 }

@@ -34,7 +34,7 @@
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/hashed_index.hpp>
 
-#define TIMEOUT_PURGE_PROMISE 60000
+#define TIMEOUT_PURGE_PROMISE 30000
 #define PURGE_TIMER_REPEAT_DELAY 30000
 
 namespace chaos{
@@ -67,13 +67,13 @@ namespace chaos{
                     timeout_ts(src.timeout_ts),
                     promise_id(src.promise_id),
                     promise(src.promise){
-                        DEBUG_CODE(LDBG_ << DEFINE_LOG_HEADER(FutureHelper) << __FUNCTION__ << CHAOS_FORMAT("Copy PromisesInfo for id %1%", %promise_id););
+                        LDBG_ << DEFINE_LOG_HEADER(FutureHelper) << __FUNCTION__ << CHAOS_FORMAT("Copy PromisesInfo for id %1%", %promise_id);
                     }
                     
                     ~PromisesInfo() {
-                            DEBUG_CODE(LDBG_ << DEFINE_LOG_HEADER(FutureHelper) << __FUNCTION__ << CHAOS_FORMAT("Delete PromisesInfo for id %1%", %promise_id););
+                        LDBG_ << DEFINE_LOG_HEADER(FutureHelper) << __FUNCTION__ << CHAOS_FORMAT("Delete PromisesInfo for id %1%", %promise_id);
                     }
-
+                    
                     bool operator<(const PromisesInfo& p)const{
                         DBG_LOG(PromisesInfo::operator) << p.promise_id;
                         return promise_id<p.promise_id;
@@ -96,6 +96,20 @@ namespace chaos{
                     };
                 };
                 
+                struct PromisesInfoPromiseIdComparator {
+                    bool operator()(const CounterType& lhs, const CounterType& rhs) const {
+                        if(lhs == rhs ) return false;
+                        return lhs < rhs;
+                    }
+                };
+                
+                struct PromisesInfoPromiseTSComparator {
+                    bool operator()(const int64_t& lhs, const int64_t& rhs) const {
+                        if(lhs == rhs ) return false;
+                        return lhs < rhs;
+                    }
+                };
+                
                 //tag
                 struct tag_req_id{};
                 struct tag_req_ts{};
@@ -106,8 +120,8 @@ namespace chaos{
                 boost::multi_index::indexed_by<
                 //boost::multi_index::ordered_unique<boost::multi_index::tag<tag_req_id>,  typename PromisesInfo::extract_index>,
                 //boost::multi_index::ordered_unique<boost::multi_index::tag<tag_req_ts>,  typename PromisesInfo::extract_req_ts>
-                boost::multi_index::ordered_non_unique<boost::multi_index::tag<tag_req_id>, BOOST_MULTI_INDEX_MEMBER(PromisesInfo, CounterType, promise_id) >,
-                boost::multi_index::ordered_non_unique<boost::multi_index::tag<tag_req_ts>, BOOST_MULTI_INDEX_MEMBER(PromisesInfo, int64_t, timeout_ts) >
+                boost::multi_index::ordered_non_unique<boost::multi_index::tag<tag_req_id>, BOOST_MULTI_INDEX_MEMBER(PromisesInfo, CounterType, promise_id), PromisesInfoPromiseIdComparator >,
+                boost::multi_index::ordered_non_unique<boost::multi_index::tag<tag_req_ts>, BOOST_MULTI_INDEX_MEMBER(PromisesInfo, int64_t, timeout_ts), PromisesInfoPromiseTSComparator >
                 >
                 > SetPromise;
                 
@@ -120,7 +134,8 @@ namespace chaos{
                 typedef typename chaos::common::utility::LockableObject<SetPromise>::LockableObjectReadLock LSetPromiseReadLock;
                 typedef typename chaos::common::utility::LockableObject<SetPromise>::LockableObjectWriteLock LSetPromiseWriteLock;
                 
-                
+                const uint32_t promise_timeout;
+                const uint32_t purge_delay;
                 //!promises counter
                 ChaosAtomic<CounterType>   promises_counter;
                 //set that contains all promise
@@ -140,7 +155,7 @@ namespace chaos{
                         max_purge_check--){
                         //purge outdated promise
                         if(current_check_ts >= (*it).timeout_ts) {
-                            DEBUG_CODE(LDBG_ << DEFINE_LOG_HEADER(FutureHelper) << __FUNCTION__ << CHAOS_FORMAT(" - Remove the promise for request of index %1%", %(*it).promise_id););
+                            LDBG_ << DEFINE_LOG_HEADER(FutureHelper) << __FUNCTION__ << CHAOS_FORMAT(" - Remove the promise for request of index %1%", %(*it).promise_id);
                             set_p_req_ts_index.erase(it++);
                         } else {
                             ++it;
@@ -148,7 +163,10 @@ namespace chaos{
                     }
                 }
             public:
-                FutureHelper():
+                FutureHelper(const uint32_t& _purge_delay = PURGE_TIMER_REPEAT_DELAY,
+                             const uint32_t& _promise_timeout = TIMEOUT_PURGE_PROMISE):
+                promise_timeout(_promise_timeout),
+                purge_delay(_purge_delay),
                 promises_counter(0),
                 set_p_req_id_index(boost::multi_index::get<tag_req_id>(set_p())),
                 set_p_req_ts_index(boost::multi_index::get<tag_req_ts>(set_p())){}
@@ -157,31 +175,33 @@ namespace chaos{
                 
                 void init(void *init_data) throw(chaos::CException) {
                     chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this,
-                                                                                               PURGE_TIMER_REPEAT_DELAY,
-                                                                                               PURGE_TIMER_REPEAT_DELAY);
+                                                                                               purge_delay,
+                                                                                               purge_delay);
                 }
                 
                 void deinit() throw(chaos::CException) {
                     chaos::common::async_central::AsyncCentralManager::getInstance()->removeTimer(this);
+                    LSetPromiseWriteLock lmr_wl = set_p.getWriteLockObject();
+                    set_p().clear();
                 }
                 
                 void setDataForPromiseID(const CounterType promise_id, T promise_data) {
-                    DEBUG_CODE(LDBG_ << DEFINE_LOG_HEADER(FutureHelper) << __FUNCTION__ << CHAOS_FORMAT("Start with id %1%", %promise_id););
-                    LSetPromiseWriteLock wl = set_p.getWriteLockObject();
+                    LDBG_ << DEFINE_LOG_HEADER(FutureHelper) << __FUNCTION__ << CHAOS_FORMAT("Start with id %1%", %promise_id);
+                    LSetPromiseReadLock wl = set_p.getReadLockObject();
                     SetPromisesReqIdxIndexIter it = set_p_req_id_index.find(promise_id);
                     if(it != set_p_req_id_index.end()) {
                         //set promises and remove it
                         (*it).promise->set_value(promise_data);
                         //set_p_req_id_index.erase(it);
                     }
-                    DEBUG_CODE(LDBG_ << DEFINE_LOG_HEADER(FutureHelper) << __FUNCTION__ << CHAOS_FORMAT("End with id %1%", %promise_id););
+                    LDBG_ << DEFINE_LOG_HEADER(FutureHelper) << __FUNCTION__ << CHAOS_FORMAT("End with id %1%", %promise_id);
                 }
                 
                 void addNewPromise(CounterType& new_promise_id, Future& new_future) {
                     //store promises in result map
                     LSetPromiseWriteLock lmr_wl = set_p.getWriteLockObject();
                     PromisesInfo promise_info;
-                    promise_info.timeout_ts = chaos::common::utility::TimingUtil::getTimestampWithDelay(TIMEOUT_PURGE_PROMISE, true);
+                    promise_info.timeout_ts = chaos::common::utility::TimingUtil::getTimestampWithDelay(promise_timeout, true);
                     promise_info.promise_id = new_promise_id = promises_counter++;
                     new_future = promise_info.promise->get_future();
                     DEBUG_CODE(LDBG_ << DEFINE_LOG_HEADER(FutureHelper) << __FUNCTION__ << CHAOS_FORMAT(" -Add promises with index %1%", %new_promise_id););
@@ -190,7 +210,7 @@ namespace chaos{
                     SetPromisesReqIdxIndex& id_idx = boost::multi_index::get<tag_req_id>(set_p());
                     SetPromisesReqIdxIndexIter it = id_idx.find(new_promise_id);
                     if(it == id_idx.end()) {
-                         LDBG_ << DEFINE_LOG_HEADER(FutureHelper) << __FUNCTION__ << CHAOS_FORMAT("Promises with index %1% has not be added colliding with %2%", %new_promise_id%(*ires.first).promise_id);
+                        LDBG_ << DEFINE_LOG_HEADER(FutureHelper) << __FUNCTION__ << CHAOS_FORMAT("Promises with index %1% has not be added colliding with %2%", %new_promise_id%(*ires.first).promise_id);
                     }
                 }
             };
