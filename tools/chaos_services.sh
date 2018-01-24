@@ -97,7 +97,7 @@ start_agent(){
 
     info_mesg "starting " "agent"
     check_proc_then_kill "$CHAOS_PREFIX/bin/$AGENT_EXEC"
-    run_proc "$CHAOS_PREFIX/bin/$AGENT_EXEC --conf-file  $CHAOS_PREFIX/etc/wan.cfg $CHAOS_OVERALL_OPT --log-on-file --log-file $CHAOS_PREFIX/log/agent.$MYPID.log > $CHAOS_PREFIX/log/$AGENT_EXEC.$MYPID.std.out 2>&1 &" "$AGENT_EXEC"
+    run_proc "$CHAOS_PREFIX/bin/$AGENT_EXEC --conf-file  $CHAOS_PREFIX/etc/agent.cfg $CHAOS_OVERALL_OPT --log-on-file --log-file $CHAOS_PREFIX/log/agent.$MYPID.log > $CHAOS_PREFIX/log/$AGENT_EXEC.$MYPID.std.out 2>&1 &" "$AGENT_EXEC"
 }
 
 

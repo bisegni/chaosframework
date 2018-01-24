@@ -67,7 +67,7 @@ CUController::CUController(const std::string& _deviceID,
                            chaos::common::io::IODataDriverShrdPtr _ioLiveDataDriver):
 datasetDB(true),
 mdsChannel(NULL),
-deviceChannel(NULL) {
+deviceChannel(NULL),devId(_deviceID) {
     millisecToWait = RpcConfigurationKey::GlobalRPCTimeoutinMSec;
     
     ioLiveDataDriver=_ioLiveDataDriver;
@@ -97,13 +97,13 @@ deviceChannel(NULL) {
     }
     
     channel_keys.resize(DPCK_LAST_DATASET_INDEX + 1);
-    channel_keys[DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT]=(deviceChannel->getDeviceID() + DataPackPrefixID::OUTPUT_DATASET_POSTFIX);
-    channel_keys[DataPackCommonKey::DPCK_DATASET_TYPE_INPUT]=(deviceChannel->getDeviceID() + DataPackPrefixID::INPUT_DATASET_POSTFIX);
-    channel_keys[DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM]=(deviceChannel->getDeviceID() + DataPackPrefixID::CUSTOM_DATASET_POSTFIX);
-    channel_keys[DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM]=(deviceChannel->getDeviceID() + DataPackPrefixID::SYSTEM_DATASET_POSTFIX);
-    channel_keys[DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM]=(deviceChannel->getDeviceID() + DataPackPrefixID::DEV_ALARM_DATASET_POSTFIX);
-    channel_keys[DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM]=(deviceChannel->getDeviceID() + DataPackPrefixID::CU_ALARM_DATASET_POSTFIX);
-    channel_keys[DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH]=(deviceChannel->getDeviceID() + DataPackPrefixID::HEALTH_DATASET_POSTFIX);
+    channel_keys[DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT]=(_deviceID + DataPackPrefixID::OUTPUT_DATASET_POSTFIX);
+    channel_keys[DataPackCommonKey::DPCK_DATASET_TYPE_INPUT]=(_deviceID + DataPackPrefixID::INPUT_DATASET_POSTFIX);
+    channel_keys[DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM]=(_deviceID + DataPackPrefixID::CUSTOM_DATASET_POSTFIX);
+    channel_keys[DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM]=(_deviceID + DataPackPrefixID::SYSTEM_DATASET_POSTFIX);
+    channel_keys[DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM]=(_deviceID + DataPackPrefixID::DEV_ALARM_DATASET_POSTFIX);
+    channel_keys[DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM]=(_deviceID + DataPackPrefixID::CU_ALARM_DATASET_POSTFIX);
+    channel_keys[DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH]=(_deviceID + DataPackPrefixID::HEALTH_DATASET_POSTFIX);
     //  current_dataset.push_back(d);
     for(int cnt=0;cnt<channel_keys.size();cnt++){
         ChaosSharedPtr<chaos::common::data::CDataWrapper> ch;
@@ -114,7 +114,7 @@ deviceChannel(NULL) {
 }
 
 CUController::~CUController() {
-    LDBG_<<"["<<__PRETTY_FUNCTION__<<"] remove Device Controller:"<<deviceChannel->getDeviceID();
+    LDBG_<<"["<<__PRETTY_FUNCTION__<<"] remove Device Controller:"<<devId;
     stopTracking();
     
     if(deviceChannel){
@@ -141,7 +141,7 @@ uint32_t CUController::getRequestTimeWaith(){
 }
 
 void CUController::getDeviceId(string& dId) {
-    dId = deviceChannel->getDeviceID();
+    dId = devId;
 }
 
 void CUController::deviceAvailabilityChanged(const std::string& device_id,
@@ -152,23 +152,24 @@ void CUController::deviceAvailabilityChanged(const std::string& device_id,
 }
 
 void CUController::updateChannel() throw(CException) {
-    CHAOS_ASSERT(deviceChannel);
     int err = ErrorCode::EC_NO_ERROR;
     CDataWrapper *tmp_data_handler = NULL;
     CHAOS_ASSERT(deviceChannel)
-    /*
+    LDBG_<<"UPDATING \""<<devId<<"\"";
+            /*
      *  if(deviceChannel==NULL){
      LDBG_<<"["<<__PRETTY_FUNCTION__<<"] Device Channel not still ready...";
      return;
      
      }
      */
-    err = mdsChannel->getLastDatasetForDevice(deviceChannel->getDeviceID(), &tmp_data_handler, millisecToWait);
+    err = mdsChannel->getLastDatasetForDevice(devId, &tmp_data_handler, millisecToWait);
     if(err!=ErrorCode::EC_NO_ERROR || !tmp_data_handler) return;
     
     ChaosUniquePtr<chaos::common::data::CDataWrapper> lastDeviceDefinition(tmp_data_handler);
     
     datasetDB.addAttributeToDataSetFromDataWrapper(*lastDeviceDefinition.get());
+
 }
 
 int CUController::setScheduleDelay(uint64_t microseconds) {
@@ -176,7 +177,7 @@ int CUController::setScheduleDelay(uint64_t microseconds) {
     chaos::common::property::PropertyGroup pg(chaos::ControlUnitPropertyKey::GROUP_NAME);
     pg.addProperty(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, CDataVariant(static_cast<uint64_t>(microseconds)));
     DBGET<<chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY<<":"<<microseconds;
-    EXECUTE_CHAOS_API(chaos::metadata_service_client::api_proxy::node::UpdateProperty,millisecToWait,deviceChannel->getDeviceID(),pg);
+    EXECUTE_CHAOS_API(chaos::metadata_service_client::api_proxy::node::UpdateProperty,millisecToWait,devId,pg);
     return 0;
 }
 
@@ -184,7 +185,7 @@ int CUController::setBypass(bool onoff){
     chaos::common::property::PropertyGroup pg(chaos::ControlUnitPropertyKey::GROUP_NAME);
     pg.addProperty(chaos::ControlUnitDatapackSystemKey::BYPASS_STATE, CDataVariant(static_cast<bool>(onoff)));
 
-    EXECUTE_CHAOS_API(chaos::metadata_service_client::api_proxy::node::UpdateProperty,millisecToWait,deviceChannel->getDeviceID(),pg);
+    EXECUTE_CHAOS_API(chaos::metadata_service_client::api_proxy::node::UpdateProperty,millisecToWait,devId,pg);
     return 0;
 }
 
@@ -494,7 +495,7 @@ int CUController::submitSlowControlCommand(string commandAlias,
     if(submission_checker_steps_delay) local_command_pack.addInt32Value(BatchCommandSubmissionKey::SUBMISSION_RETRY_DELAY_UI32, submission_checker_steps_delay);
     
     //err = deviceChannel->setAttributeValue(local_command_pack, false, millisecToWait);
-    local_command_pack.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, deviceChannel->getDeviceID());
+    local_command_pack.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, devId);
     err = deviceChannel->sendCustomRequest(ControlUnitNodeDomainAndActionRPC::CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET, &local_command_pack, &result_data, millisecToWait);
     if(err == ErrorCode::EC_NO_ERROR &&
        result_data &&
@@ -533,7 +534,7 @@ int CUController::submitSlowControlCommand(string commandAlias,
     if(submission_checker_steps_delay) local_command_pack.addInt32Value(BatchCommandSubmissionKey::SUBMISSION_RETRY_DELAY_UI32, (uint32_t) submission_checker_steps_delay);
     
     //forward the request
-    local_command_pack.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, deviceChannel->getDeviceID());
+    local_command_pack.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, devId);
     err = deviceChannel->sendCustomRequest(ControlUnitNodeDomainAndActionRPC::CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET,
                                            &local_command_pack,
                                            &result_data,
@@ -1074,7 +1075,7 @@ int CUController::loadDatasetTypeFromSnapshotTag(const std::string& snapshot_tag
                                                  DatasetDomain dataset_type,
                                                  chaos_data::CDataWrapper **cdatawrapper_handler) {
     return ioLiveDataDriver->loadDatasetTypeFromSnapshotTag(snapshot_tag,
-                                                            deviceChannel->getDeviceID(),
+                                                            devId,
                                                             dataset_type,
                                                             cdatawrapper_handler);
 }
@@ -1083,7 +1084,7 @@ int CUController::createNewSnapshot(const std::string& snapshot_tag,
                                     const std::vector<std::string>& other_snapped_device) {
     CHAOS_ASSERT(ioLiveDataDriver.get())
     std::vector<std::string> device_id_in_snap = other_snapped_device;
-    device_id_in_snap.push_back(deviceChannel->getDeviceID());
+    device_id_in_snap.push_back(devId);
     return mdsChannel->createNewSnapshot(snapshot_tag,
                                          device_id_in_snap);
 }
@@ -1095,7 +1096,7 @@ int CUController::deleteSnapshot(const std::string& snapshot_tag) {
 
 int CUController::getSnapshotList(ChaosStringVector& snapshot_list) {
     CHAOS_ASSERT(mdsChannel)
-    return mdsChannel->searchSnapshotForNode(deviceChannel->getDeviceID(),
+    return mdsChannel->searchSnapshotForNode(devId,
                                              snapshot_list,
                                              millisecToWait);
 }
