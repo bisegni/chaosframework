@@ -76,7 +76,7 @@ SET(cnd_src  ${cnd_src}	api/groups/GroupsApiGroup.cpp
                         api/groups/GetNodeChilds.cpp)
 
 SET(cnd_src  ${cnd_src}	api/service/ServiceApiGroup.cpp
-						            api/service/ResetAll.cpp
+                        api/service/ResetAll.cpp
                         api/service/GetAllSnapshot.cpp
                         api/service/RestoreSnapshot.cpp
                         api/service/CreateNewSnapshot.cpp
@@ -140,7 +140,7 @@ SET(cnd_src  ${cnd_src}	api/node/NodeGroup.cpp
                         api/node/CommandTemplateSubmit.cpp
                         api/node/CommandInstanceSubmit.cpp
                         api/node/CommandCommonUtility.cpp
-			api/node/GetPropertyDefaultValues.cpp
+			            api/node/GetPropertyDefaultValues.cpp
                         api/node/GetCommandAndTemplateDescription.cpp)
 
 SET(cnd_src  ${cnd_src}	api/script/ScriptGroupApi.cpp
@@ -157,6 +157,7 @@ SET(cnd_src  ${cnd_src}	api/script/ScriptGroupApi.cpp
 SET(cnd_src  ${cnd_src}	api/agent/AgentApiGroup.cpp
                         api/agent/LoadAgentDescription.cpp
                         api/agent/ListNodeForAgent.cpp
+                        api/agent/GetAgentForNode.cpp
                         api/agent/SaveNodeAssociation.cpp
                         api/agent/LoadNodeAssociation.cpp
                         api/agent/RemoveNodeAssociation.cpp

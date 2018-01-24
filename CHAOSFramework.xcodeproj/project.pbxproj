@@ -1074,6 +1074,9 @@
 		32E782E51EFC0F2800AD59F7 /* HTTPServerAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E782E31EFC0F2800AD59F7 /* HTTPServerAdapter.h */; };
 		32E86E431CD8A75F0038DE76 /* MessageRequestDomain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E86E411CD8A75F0038DE76 /* MessageRequestDomain.cpp */; };
 		32E86E441CD8A75F0038DE76 /* MessageRequestDomain.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E86E421CD8A75F0038DE76 /* MessageRequestDomain.h */; };
+		32E9781A2018E41000882958 /* GetAgentForNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E978192018E41000882958 /* GetAgentForNode.cpp */; };
+		32E9781D2018E6DF00882958 /* GetAgentForNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E9781B2018E6DF00882958 /* GetAgentForNode.h */; };
+		32E9781E2018E6DF00882958 /* GetAgentForNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9781C2018E6DF00882958 /* GetAgentForNode.cpp */; };
 		32E9A53E1A66A1B100545BB4 /* AbstractApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9A53C1A66A1B100545BB4 /* AbstractApi.cpp */; };
 		32E9A5461A67D02900545BB4 /* ProducerGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9A5441A67D02900545BB4 /* ProducerGroup.cpp */; };
 		32E9A5491A67D6D600545BB4 /* ProducerRegisterDatasetApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9A5471A67D6D600545BB4 /* ProducerRegisterDatasetApi.cpp */; };
@@ -2637,6 +2640,10 @@
 		32E86E411CD8A75F0038DE76 /* MessageRequestDomain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageRequestDomain.cpp; sourceTree = "<group>"; };
 		32E86E421CD8A75F0038DE76 /* MessageRequestDomain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageRequestDomain.h; sourceTree = "<group>"; };
 		32E977561A6E65B800D89C15 /* api_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = api_types.h; sourceTree = "<group>"; };
+		32E978182018E41000882958 /* GetAgentForNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GetAgentForNode.h; sourceTree = "<group>"; };
+		32E978192018E41000882958 /* GetAgentForNode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GetAgentForNode.cpp; sourceTree = "<group>"; };
+		32E9781B2018E6DF00882958 /* GetAgentForNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GetAgentForNode.h; sourceTree = "<group>"; };
+		32E9781C2018E6DF00882958 /* GetAgentForNode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GetAgentForNode.cpp; sourceTree = "<group>"; };
 		32E9A53C1A66A1B100545BB4 /* AbstractApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractApi.cpp; sourceTree = "<group>"; };
 		32E9A53D1A66A1B100545BB4 /* AbstractApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractApi.h; sourceTree = "<group>"; };
 		32E9A53F1A66A1C300545BB4 /* api.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = api.h; sourceTree = "<group>"; };
@@ -5083,6 +5090,8 @@
 				32BE0ACB1E4B44B90007764C /* AgentApiGroup.h */,
 				32FF2A591E6579A400117985 /* NodeOperation.cpp */,
 				32FF2A5A1E6579A400117985 /* NodeOperation.h */,
+				32E978192018E41000882958 /* GetAgentForNode.cpp */,
+				32E978182018E41000882958 /* GetAgentForNode.h */,
 				32990B231E521C8400A4AF8F /* LoadAgentDescription.cpp */,
 				32990B241E521C8400A4AF8F /* LoadAgentDescription.h */,
 				32BE0ACE1E4B45DB0007764C /* ListNodeForAgent.cpp */,
@@ -5125,6 +5134,8 @@
 				32AC6F191EC4AC1F00FCCD85 /* SetManagementConfiguration.h */,
 				32AC6F1C1EC4AC2B00FCCD85 /* GetManagementConfiguration.cpp */,
 				32AC6F1D1EC4AC2B00FCCD85 /* GetManagementConfiguration.h */,
+				32E9781C2018E6DF00882958 /* GetAgentForNode.cpp */,
+				32E9781B2018E6DF00882958 /* GetAgentForNode.h */,
 				32990B0E1E4C6F5000A4AF8F /* agent.h */,
 			);
 			path = agent;
@@ -6242,6 +6253,7 @@
 				328C847B1ED47148008B5F7D /* UpdateBindType.h in Headers */,
 				32401CBA1C183E2600E62866 /* GetNodesForSnapshot.h in Headers */,
 				3283B8901C7F31D20019255B /* SearchLogEntry.h in Headers */,
+				32E9781D2018E6DF00882958 /* GetAgentForNode.h in Headers */,
 				3252F35D1C298755004436A8 /* GetNodeChilds.h in Headers */,
 				327C6A291C74E255002DA5A6 /* GetLogDomainForSourceUID.h in Headers */,
 				3239EF531C0EFEB20052BE61 /* DeleteSnapshot.h in Headers */,
@@ -6712,6 +6724,7 @@
 				32E09CFE1C0E05E60069752F /* DeleteSnapshot.cpp in Sources */,
 				32AC6F141EC4A53400FCCD85 /* GetManagementConfiguration.cpp in Sources */,
 				3270E06D1C6CBB7200105726 /* LoggingApiGroup.cpp in Sources */,
+				32E9781A2018E41000882958 /* GetAgentForNode.cpp in Sources */,
 				32362C1A1ADC0FD2000CA079 /* SetInstanceDescription.cpp in Sources */,
 				32B9F3F71AC4186300380FE9 /* NodeCreateUnitServer.cpp in Sources */,
 				32514EF21EA8BA13001FF6B8 /* UpdateScriptOnNode.cpp in Sources */,
@@ -7208,6 +7221,7 @@
 				3211CCDD1B03402800F9B80E /* QuantumKeyConsumer.cpp in Sources */,
 				32CAC9E81AE69F4400DC6AAB /* LoadUnloadControlUnit.cpp in Sources */,
 				32FC49A71E080F900087D82C /* SetVariable.cpp in Sources */,
+				32E9781E2018E6DF00882958 /* GetAgentForNode.cpp in Sources */,
 				32D746001C73399900F4D719 /* AbstractEventHandler.cpp in Sources */,
 				32F7AB281C9991B000E18D3E /* ControlUnitController.cpp in Sources */,
 				3221D74F1CF606BC001BE971 /* SearchScript.cpp in Sources */,

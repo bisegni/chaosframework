@@ -34,7 +34,8 @@ SET(mcl_src ${mcl_src}	    api_proxy/groups/AddNode.cpp
                             api_proxy/groups/GetDomains.cpp
                             api_proxy/groups/GetNodeChilds.cpp)
 
-SET(mcl_src ${mcl_src}	    api_proxy/agent/ListNodeForAgent.cpp
+SET(mcl_src ${mcl_src}	    api_proxy/agent/GetAgentForNode.cpp
+                            api_proxy/agent/ListNodeForAgent.cpp
                             api_proxy/agent/SaveNodeAssociation.cpp
                             api_proxy/agent/LoadNodeAssociation.cpp
                             api_proxy/agent/RemoveNodeAssociation.cpp

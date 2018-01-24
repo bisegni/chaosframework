@@ -1,5 +1,5 @@
 /*
- * Copyright 2012, 2017 INFN
+ * Copyright 2012, 24/01/2018 INFN
  *
  * Licensed under the EUPL, Version 1.2 or – as soon they
  * will be approved by the European Commission - subsequent
@@ -19,8 +19,8 @@
  * permissions and limitations under the Licence.
  */
 
-#ifndef __CHAOSFramework_EFEDD110_E100_4081_8C2E_8D22E3C5C5E8_NodeOperation_h
-#define __CHAOSFramework_EFEDD110_E100_4081_8C2E_8D22E3C5C5E8_NodeOperation_h
+#ifndef __CHAOSFramework_EFEASD10_E100_4081_8C2E_8DASR3C5C5E8_NodeOperation_h
+#define __CHAOSFramework_EFEASD10_E100_4081_8C2E_8DASR3C5C5E8_NodeOperation_h
 
 #include "../AbstractApi.h"
 
@@ -31,16 +31,15 @@ namespace chaos {
         namespace api {
             namespace agent {
                 
-                //! remove an association from an angen and a node
+                //! Return an agent associated to node
                 /*!
-                 
                  */
-                class NodeOperation:
+                class GetAgentForNode:
                 public AbstractApi {
                     
                 public:
-                    NodeOperation();
-                    ~NodeOperation();
+                    GetAgentForNode();
+                    ~GetAgentForNode();
                     chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
                                                                bool& detach_data);
                 };
@@ -48,4 +47,5 @@ namespace chaos {
         }
     }
 }
-#endif /* __CHAOSFramework_EFEDD110_E100_4081_8C2E_8D22E3C5C5E8_NodeOperation_h */
+#endif /* __CHAOSFramework_EFEASD10_E100_4081_8C2E_8DASR3C5C5E8_NodeOperation_h s*/
+
