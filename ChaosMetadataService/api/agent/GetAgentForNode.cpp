@@ -54,8 +54,12 @@ CDataWrapper *GetAgentForNode::execute(CDataWrapper *api_data, bool& detach_data
     const std::string node_uid = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
     if((err = a_da->getAgentForNode(node_uid, agent_uid))) {
         LOG_AND_TROW(ERR, -4, CHAOS_FORMAT("Error finding the agent for the node %1% with error %2%", %node_uid%err));
-    } else if(agent_uid.size() == 0) {
+    } /*else if(agent_uid.size() == 0) {
         LOG_AND_TROW(ERR, -5, CHAOS_FORMAT("The node %1% is not associated to any agent", %node_uid));
-    }
-    return NULL;
+    }*/
+    CDataWrapper* res=new CDataWrapper();
+
+    res->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID,agent_uid);
+
+    return res;
 }
