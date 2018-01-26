@@ -154,8 +154,6 @@ start_all(){
     status=$((status + $?))
     start_ui
     status=$((status + $?))
-    start_agent
-    status=$((status + $?))
 
     
 }
@@ -211,6 +209,9 @@ case "$cmd" in
     start)
 	if [ -z "$2" ]; then
 	    start_all
+	    start_agent
+
+
 	else
 	    case "$2" in
 		mds)
@@ -229,6 +230,7 @@ case "$cmd" in
 	       devel)
 		   start_all
 		   start_us
+		   start_agent
 		    exit 0
 		    ;;
 		*)
