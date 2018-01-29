@@ -11,7 +11,8 @@ CheckConfigureBuild(zmq zeromq4-1 "${ZMQ_FLAGS}" https://github.com/zeromq)
 ####
 
 SET(common_lib_src chaos_errors.cpp
-                   log/LogManager.cpp)
+                   log/LogManager.cpp
+                   log/ChaosLoggingManager.cpp)
 
 SET(common_lib_src ${common_lib_src}
                     additional_lib/mongoose.c

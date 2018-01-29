@@ -228,6 +228,8 @@
 		32401CBD1C1AD7AA00E62866 /* TreeGroupDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32401CBB1C1AD7AA00E62866 /* TreeGroupDataAccess.cpp */; };
 		32414FD71DC1EEAD00830422 /* AlarmCatalog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32414FD51DC1EEAD00830422 /* AlarmCatalog.cpp */; };
 		32414FD81DC1EEAD00830422 /* AlarmCatalog.h in Headers */ = {isa = PBXBuildFile; fileRef = 32414FD61DC1EEAD00830422 /* AlarmCatalog.h */; };
+		3243606C201F5A9800B03037 /* ChaosLoggingBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3243606A201F5A9700B03037 /* ChaosLoggingBackend.cpp */; };
+		3243606D201F5A9800B03037 /* ChaosLoggingBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 3243606B201F5A9700B03037 /* ChaosLoggingBackend.h */; };
 		3244C0C6168CB96B007C802C /* Record.h in Headers */ = {isa = PBXBuildFile; fileRef = 3244C0C5168CB96B007C802C /* Record.h */; };
 		3244D11D15ECC25800FE2F86 /* AlertEventChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3244D11B15ECC25800FE2F86 /* AlertEventChannel.cpp */; };
 		3244D11E15ECC25800FE2F86 /* AlertEventChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3244D11C15ECC25800FE2F86 /* AlertEventChannel.h */; };
@@ -1541,6 +1543,8 @@
 		32401CBC1C1AD7AA00E62866 /* TreeGroupDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeGroupDataAccess.h; sourceTree = "<group>"; };
 		32414FD51DC1EEAD00830422 /* AlarmCatalog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlarmCatalog.cpp; sourceTree = "<group>"; };
 		32414FD61DC1EEAD00830422 /* AlarmCatalog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlarmCatalog.h; sourceTree = "<group>"; };
+		3243606A201F5A9700B03037 /* ChaosLoggingBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChaosLoggingBackend.cpp; sourceTree = "<group>"; };
+		3243606B201F5A9700B03037 /* ChaosLoggingBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChaosLoggingBackend.h; sourceTree = "<group>"; };
 		3244C0C5168CB96B007C802C /* Record.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Record.h; sourceTree = "<group>"; };
 		3244D11B15ECC25800FE2F86 /* AlertEventChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlertEventChannel.cpp; sourceTree = "<group>"; };
 		3244D11C15ECC25800FE2F86 /* AlertEventChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlertEventChannel.h; sourceTree = "<group>"; };
@@ -5146,6 +5150,8 @@
 			children = (
 				32BE864515A0CEAF00818C39 /* LogManager.cpp */,
 				32BE864615A0CEAF00818C39 /* LogManager.h */,
+				3243606A201F5A9700B03037 /* ChaosLoggingBackend.cpp */,
+				3243606B201F5A9700B03037 /* ChaosLoggingBackend.h */,
 			);
 			path = log;
 			sourceTree = "<group>";
@@ -5865,6 +5871,7 @@
 				3214E7451DC10B9500A67414 /* MultiSeverityAlarm.h in Headers */,
 				32C3546A178860EB009ED581 /* decl.hpp in Headers */,
 				32612ACA1CE210BC00F3B8F3 /* script_types.h in Headers */,
+				3243606D201F5A9800B03037 /* ChaosLoggingBackend.h in Headers */,
 				32A88BDE1CF8228A001DBAF5 /* lprefix.h in Headers */,
 				326DB47E14B38BC00018A8D0 /* CObjectProcessingQueueListener.h in Headers */,
 				326DB47F14B38BC00018A8D0 /* ChaosRpc.h in Headers */,
@@ -6814,6 +6821,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3243606C201F5A9800B03037 /* ChaosLoggingBackend.cpp in Sources */,
 				326DB43014B38BC00018A8D0 /* ActionDescriptor.cpp in Sources */,
 				326DB43314B38BC00018A8D0 /* DeclareAction.cpp in Sources */,
 				326DB43514B38BC00018A8D0 /* DomainActions.cpp in Sources */,

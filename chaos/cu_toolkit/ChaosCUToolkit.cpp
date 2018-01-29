@@ -25,6 +25,7 @@
 #include <chaos/common/external_unit/external_unit.h>
 #include <chaos/common/external_unit/external_unit_constants.h>
 
+#include <chaos/common/log/LogManager.h>
 #include <chaos/common/healt_system/HealtManager.h>
 #include <chaos/common/metadata_logging/MetadataLoggingManager.h>
 
@@ -134,7 +135,8 @@ ChaosCUToolkit::ChaosCUToolkit() {
                                                         "Specify when to use in memory or on disc contorl unit internal database",
                                                         true);
     //
-    
+    GlobalConfiguration::getInstance()->addOptionZeroToken<bool>(CU_OPT_LOG_ON_MDS,
+                                                                 "Specify when log need to be redirect to metadata server");
     
     GlobalConfiguration::getInstance()->addOption<bool>(CONTROL_MANAGER_UNIT_SERVER_ENABLE,
                                                         CONTROL_MANAGER_UNIT_SERVER_ENABLE_desc,
@@ -189,7 +191,6 @@ void ChaosCUToolkit::init(void *init_data)  throw(CException) {
     try {
         ChaosCommon<ChaosCUToolkit>::init(init_data);
         LAPP_ << "Initializing !CHAOS Control Unit System";
-        
         struct sigaction sigact;
         sigact.sa_sigaction = crit_err_hdlr;
         sigact.sa_flags = SA_RESTART | SA_SIGINFO;
@@ -211,6 +212,11 @@ void ChaosCUToolkit::init(void *init_data)  throw(CException) {
         
         if (signal((int) SIGABRT, ChaosCUToolkit::signalHanlder) == SIG_ERR){
             LERR_ << "SIGABRT Signal handler registration error";
+        }
+        
+        if(GlobalConfiguration::getInstance()->hasOption(CU_OPT_LOG_ON_MDS) &&
+           GlobalConfiguration::getInstance()->hasOption(CONTROL_MANAGER_UNIT_SERVER_ALIAS)) {
+            chaos::common::log::LogManager::getInstance()->addMDSLoggingBackend(GlobalConfiguration::getInstance()->getOption<std::string>(CONTROL_MANAGER_UNIT_SERVER_ALIAS));
         }
         
         //force first allocation of metadata logging

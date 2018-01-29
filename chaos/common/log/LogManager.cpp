@@ -19,41 +19,15 @@
  * permissions and limitations under the Licence.
  */
 
-
 #include <chaos/common/global.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
-
-#include <boost/log/core.hpp>
-#include <boost/log/trivial.hpp>
-#include <boost/log/sources/severity_logger.hpp>
-
-#if BOOST_VERSION > 105300
-//allocate the logger
-#include <boost/log/sources/severity_logger.hpp>
-#include <boost/log/utility/setup/common_attributes.hpp>
-#include <boost/log/utility/setup/console.hpp>
-#include <boost/log/utility/setup/file.hpp>
-#include <boost/log/sources/severity_logger.hpp>
-#include <boost/log/attributes/attribute_name.hpp>
-#include <boost/log/sinks/sync_frontend.hpp>
-#include <boost/log/sinks/syslog_backend.hpp>
-#include <boost/log/attributes.hpp>
-#include <boost/log/expressions.hpp>
-#include <boost/log/utility/setup/formatter_parser.hpp>
+#include <chaos/common/log/ChaosLoggingBackend.h>
 namespace logging = boost::log;
 namespace keywords = boost::log::keywords;
 namespace attrs = boost::log::attributes;
 namespace sinks = boost::log::sinks;
 namespace expr = boost::log::expressions;
-#else
-#include <boost/log/filters.hpp>
-#include <boost/log/utility/init/to_file.hpp>
-#include <boost/log/utility/init/to_console.hpp>
-#include <boost/log/utility/init/common_attributes.hpp>
-#include <boost/log/formatters.hpp>
-namespace logging = boost::BOOST_LOG_NAMESPACE;
-namespace fmt = boost::log::formatters;
-#endif
+
 
 
 #include "LogManager.h"
@@ -113,7 +87,7 @@ void LogManager::init() throw(CException) {
                               keywords::time_based_rotation = logging::sinks::file::rotation_at_time_point(0, 0, 0),                // ...or at midnight
                               keywords::format = EXTENDEND_LOG_FORMAT,
                               keywords::auto_flush=true);
-
+        
         
     }
     
@@ -134,4 +108,11 @@ void LogManager::init() throw(CException) {
     
     //enable the log in case of needs
     logger->set_logging_enabled(logOnConsole || logOnFile || logOnSyslog);
+}
+
+void LogManager::addMDSLoggingBackend(const std::string& source) {
+    typedef sinks::synchronous_sink< ChaosLoggingBackend > sink_t;
+    boost::shared_ptr< sink_t > sink(new sink_t());
+    sink->locked_backend()->setSource(source);
+    boost::log::core::get()->add_sink(sink);
 }

@@ -68,6 +68,7 @@
 #endif
 
 #define CU_OPT_IN_MEMORY_DATABASE "cu-db-in-memory"
+#define CU_OPT_LOG_ON_MDS "log-on-mds"
 
 #define CONTROL_UNIT_PUBLISH_NAME(impl)\
 impl::PublishName
