@@ -275,7 +275,7 @@ CDataWrapper *DefaultCommandDispatcher::dispatchCommand(CDataWrapper *commandPac
         //RpcActionDefinitionKey::CS_CMDM_ACTION_NAME
         if(das_map.count(actionDomain) == 0) throw CException(ErrorRpcCoce::EC_RPC_NO_DOMAIN_REGISTERED_ON_SERVER, "Action Domain \""+actionDomain+"\" not registered (cmd pack \""+commandPack->getJSONString()+"\")", __PRETTY_FUNCTION__);
         
-        DEBUG_CODE(LDEF_CMD_DISPTC_DBG_ << "Received the message content:-----------------------START\n"<<commandPack->getJSONString() << "\nReceived the message content:-------------------------END";)
+        //DEBUG_CODE(LDEF_CMD_DISPTC_DBG_ << "Received the message content:-----------------------START\n"<<commandPack->getJSONString() << "\nReceived the message content:-------------------------END";)
         
         //submit the action(Thread Safe)
         if(!(sent = das_map[actionDomain]->push(commandPack))) {
@@ -294,9 +294,9 @@ CDataWrapper *DefaultCommandDispatcher::dispatchCommand(CDataWrapper *commandPac
         //set error to general exception error
         resultPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE, "Unmanaged error");
     }
-    DEBUG_CODE(LDEF_CMD_DISPTC_DBG_ << "Send the message ack:-----------------------START";)
-    DEBUG_CODE(LDEF_CMD_DISPTC_DBG_ << resultPack->getJSONString();)
-    DEBUG_CODE(LDEF_CMD_DISPTC_DBG_ << "Send the message ack:-------------------------END";)
+    //DEBUG_CODE(LDEF_CMD_DISPTC_DBG_ << "Send the message ack:-----------------------START";)
+    //DEBUG_CODE(LDEF_CMD_DISPTC_DBG_ << resultPack->getJSONString();)
+    //DEBUG_CODE(LDEF_CMD_DISPTC_DBG_ << "Send the message ack:-------------------------END";)
     return resultPack;
 }
 

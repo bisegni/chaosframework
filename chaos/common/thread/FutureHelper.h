@@ -66,13 +66,8 @@ namespace chaos{
                     PromisesInfo(const PromisesInfo& src):
                     timeout_ts(src.timeout_ts),
                     promise_id(src.promise_id),
-                    promise(src.promise){
-                        LDBG_ << DEFINE_LOG_HEADER(FutureHelper) << __FUNCTION__ << CHAOS_FORMAT("Copy PromisesInfo for id %1%", %promise_id);
-                    }
-                    
-                    ~PromisesInfo() {
-                        LDBG_ << DEFINE_LOG_HEADER(FutureHelper) << __FUNCTION__ << CHAOS_FORMAT("Delete PromisesInfo for id %1%", %promise_id);
-                    }
+                    promise(src.promise){}
+                    ~PromisesInfo() {}
                     
                     bool operator<(const PromisesInfo& p)const{
                         DBG_LOG(PromisesInfo::operator) << p.promise_id;
@@ -186,15 +181,13 @@ namespace chaos{
                 }
                 
                 void setDataForPromiseID(const CounterType promise_id, T promise_data) {
-                    LDBG_ << DEFINE_LOG_HEADER(FutureHelper) << __FUNCTION__ << CHAOS_FORMAT("Start with id %1%", %promise_id);
                     LSetPromiseReadLock wl = set_p.getReadLockObject();
                     SetPromisesReqIdxIndexIter it = set_p_req_id_index.find(promise_id);
                     if(it != set_p_req_id_index.end()) {
                         //set promises and remove it
                         (*it).promise->set_value(promise_data);
-                        //set_p_req_id_index.erase(it);
+                        set_p_req_id_index.erase(it);
                     }
-                    LDBG_ << DEFINE_LOG_HEADER(FutureHelper) << __FUNCTION__ << CHAOS_FORMAT("End with id %1%", %promise_id);
                 }
                 
                 void addNewPromise(CounterType& new_promise_id, Future& new_future) {
@@ -204,7 +197,6 @@ namespace chaos{
                     promise_info.timeout_ts = chaos::common::utility::TimingUtil::getTimestampWithDelay(promise_timeout, true);
                     promise_info.promise_id = new_promise_id = promises_counter++;
                     new_future = promise_info.promise->get_future();
-                    DEBUG_CODE(LDBG_ << DEFINE_LOG_HEADER(FutureHelper) << __FUNCTION__ << CHAOS_FORMAT(" -Add promises with index %1%", %new_promise_id););
                     std::pair<SetPromisesReqIdxIndexIter,bool> ires = set_p().insert(promise_info);
                     //for debug print al the element
                     SetPromisesReqIdxIndex& id_idx = boost::multi_index::get<tag_req_id>(set_p());

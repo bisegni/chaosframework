@@ -55,7 +55,6 @@ bool MessageRequestFuture::wait(int32_t timeout_in_milliseconds) {
             }
             if (fret == ChaosFutureStatus::ready){
                 CDWShrdPtr message_data = message_future.get();
-                DEBUG_CODE(MRF_DBG << message_data->getJSONString();)
                 MRF_PARSE_CDWPTR_RESULT(message_data.get())
                 result = true;
             }
