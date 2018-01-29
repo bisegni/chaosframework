@@ -64,7 +64,7 @@ TEST(FutureHelperTests, Base) {
     CDWComsumerPromise pq;
     CDWComsumerFuture fq;
     ASSERT_NO_THROW(InizializableService::initImplementation(AsyncCentralManager::getInstance(), NULL, "AsyncCentralManager", __PRETTY_FUNCTION__));
-    MessageRequestDomainFutureHelperShrdPtr helper_test(new MessageRequestDomainFutureHelper(100,100));
+    MessageRequestDomainFutureHelperShrdPtr helper_test(new MessageRequestDomainFutureHelper(5000,30000));
     MessageRequestDomainFutureHelper::Future        new_shared_future;
     MessageRequestDomainFutureHelper::CounterType   new_id;
     ASSERT_NO_THROW(pq.init(1));
