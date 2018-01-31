@@ -218,7 +218,7 @@ void ProcUtil::launchProcess(const AgentAssociation& node_association_info) {
         }
         
         if(node_association_info.log_on_mds){
-            init_file_stream << CHAOS_FORMAT("%1%",%InitOption::OPT_LOG_ON_MDS) << std::endl;
+            init_file_stream << CHAOS_FORMAT("%1%=",%InitOption::OPT_LOG_ON_MDS) << std::endl;
         }
         
         init_file_stream << CHAOS_FORMAT("unit-server-alias=%1%",%node_association_info.associated_node_uid) << std::endl;
