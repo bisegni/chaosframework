@@ -230,6 +230,8 @@
 		32414FD81DC1EEAD00830422 /* AlarmCatalog.h in Headers */ = {isa = PBXBuildFile; fileRef = 32414FD61DC1EEAD00830422 /* AlarmCatalog.h */; };
 		3243606C201F5A9800B03037 /* ChaosLoggingBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3243606A201F5A9700B03037 /* ChaosLoggingBackend.cpp */; };
 		3243606D201F5A9800B03037 /* ChaosLoggingBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 3243606B201F5A9700B03037 /* ChaosLoggingBackend.h */; };
+		324360702021C21200B03037 /* SharedManagedDirecIoDataDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 3243606E2021C21200B03037 /* SharedManagedDirecIoDataDriver.h */; };
+		324360712021C21200B03037 /* SharedManagedDirecIoDataDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3243606F2021C21200B03037 /* SharedManagedDirecIoDataDriver.cpp */; };
 		3244C0C6168CB96B007C802C /* Record.h in Headers */ = {isa = PBXBuildFile; fileRef = 3244C0C5168CB96B007C802C /* Record.h */; };
 		3244D11D15ECC25800FE2F86 /* AlertEventChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3244D11B15ECC25800FE2F86 /* AlertEventChannel.cpp */; };
 		3244D11E15ECC25800FE2F86 /* AlertEventChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3244D11C15ECC25800FE2F86 /* AlertEventChannel.h */; };
@@ -1192,7 +1194,6 @@
 		32FF2A931E6874FF00117985 /* MongoDBDeployDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A911E6874FF00117985 /* MongoDBDeployDataAccess.cpp */; };
 		32FF2AAA1E6D79EC00117985 /* DataBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FF2AA81E6D79EC00117985 /* DataBuffer.h */; };
 		32FF2AAE1E6D8B6400117985 /* ChaosAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FF2AAC1E6D8B6400117985 /* ChaosAllocator.h */; };
-		32FF2AB11E6DAC7F00117985 /* LogWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2AAF1E6DAC7F00117985 /* LogWorker.cpp */; };
 		32FF2ABA1E6EE70300117985 /* AgentLoggingNodeManagement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2AB81E6EE70300117985 /* AgentLoggingNodeManagement.cpp */; };
 		32FF2AC21E6F10A300117985 /* AgentLoggingApiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2AC01E6F10A300117985 /* AgentLoggingApiGroup.cpp */; };
 		32FF2AC51E6F10F400117985 /* ManageNodeLogging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2AC31E6F10F400117985 /* ManageNodeLogging.cpp */; };
@@ -1545,6 +1546,8 @@
 		32414FD61DC1EEAD00830422 /* AlarmCatalog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlarmCatalog.h; sourceTree = "<group>"; };
 		3243606A201F5A9700B03037 /* ChaosLoggingBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChaosLoggingBackend.cpp; sourceTree = "<group>"; };
 		3243606B201F5A9700B03037 /* ChaosLoggingBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChaosLoggingBackend.h; sourceTree = "<group>"; };
+		3243606E2021C21200B03037 /* SharedManagedDirecIoDataDriver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SharedManagedDirecIoDataDriver.h; sourceTree = "<group>"; };
+		3243606F2021C21200B03037 /* SharedManagedDirecIoDataDriver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SharedManagedDirecIoDataDriver.cpp; sourceTree = "<group>"; };
 		3244C0C5168CB96B007C802C /* Record.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Record.h; sourceTree = "<group>"; };
 		3244D11B15ECC25800FE2F86 /* AlertEventChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlertEventChannel.cpp; sourceTree = "<group>"; };
 		3244D11C15ECC25800FE2F86 /* AlertEventChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlertEventChannel.h; sourceTree = "<group>"; };
@@ -2800,8 +2803,6 @@
 		32FF2A921E6874FF00117985 /* MongoDBDeployDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MongoDBDeployDataAccess.h; sourceTree = "<group>"; };
 		32FF2AA81E6D79EC00117985 /* DataBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataBuffer.h; sourceTree = "<group>"; };
 		32FF2AAC1E6D8B6400117985 /* ChaosAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChaosAllocator.h; sourceTree = "<group>"; };
-		32FF2AAF1E6DAC7F00117985 /* LogWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LogWorker.cpp; sourceTree = "<group>"; };
-		32FF2AB01E6DAC7F00117985 /* LogWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogWorker.h; sourceTree = "<group>"; };
 		32FF2AB81E6EE70300117985 /* AgentLoggingNodeManagement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = AgentLoggingNodeManagement.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		32FF2AB91E6EE70300117985 /* AgentLoggingNodeManagement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AgentLoggingNodeManagement.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		32FF2AC01E6F10A300117985 /* AgentLoggingApiGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AgentLoggingApiGroup.cpp; sourceTree = "<group>"; };
@@ -4226,6 +4227,8 @@
 				32EFCD6518BDE3A400B5EB77 /* IODirectIODriver.h */,
 				320E2FBD1D7EB9CB0077E8FE /* QueryCursor.cpp */,
 				320E2FBE1D7EB9CB0077E8FE /* QueryCursor.h */,
+				3243606F2021C21200B03037 /* SharedManagedDirecIoDataDriver.cpp */,
+				3243606E2021C21200B03037 /* SharedManagedDirecIoDataDriver.h */,
 			);
 			path = io;
 			sourceTree = "<group>";
@@ -5517,8 +5520,6 @@
 				32E6F4381E48689E0068320E /* ProcessWorker.h */,
 				32FF2A671E672CAA00117985 /* DeployWorker.cpp */,
 				32FF2A681E672CAA00117985 /* DeployWorker.h */,
-				32FF2AAF1E6DAC7F00117985 /* LogWorker.cpp */,
-				32FF2AB01E6DAC7F00117985 /* LogWorker.h */,
 			);
 			path = worker;
 			sourceTree = "<group>";
@@ -6061,6 +6062,7 @@
 				32FF2AAE1E6D8B6400117985 /* ChaosAllocator.h in Headers */,
 				32640A27169DCC5800450962 /* BufferTracker.h in Headers */,
 				329603241876B45000CDCADA /* BatchCommandConstants.h in Headers */,
+				324360702021C21200B03037 /* SharedManagedDirecIoDataDriver.h in Headers */,
 				3249282D1F5465CA00409E83 /* BaseBypassDriver.h in Headers */,
 				32640A28169DCC5800450962 /* GarbageThread.h in Headers */,
 				32A88BD51CF8228A001DBAF5 /* lmem.h in Headers */,
@@ -6835,6 +6837,7 @@
 				3275B1731FC4316A00BB7C77 /* ExternalBSONJsonSerialization.cpp in Sources */,
 				329C1F011B5540F900A84D55 /* MetricCollectorIO.cpp in Sources */,
 				326DB45C14B38BC00018A8D0 /* CDataWrapper.cpp in Sources */,
+				324360712021C21200B03037 /* SharedManagedDirecIoDataDriver.cpp in Sources */,
 				32B5C9581C6B97590021159C /* ErrorLoggingChannel.cpp in Sources */,
 				3206CE851FA767AC0059A4A4 /* bcon.c in Sources */,
 				326DB45E14B38BC00018A8D0 /* CUSchemaDB.cpp in Sources */,
@@ -7152,7 +7155,6 @@
 				32DF7EFC1E7AF6B800B7FCDD /* PipeLineReader.cpp in Sources */,
 				329614A51E8527D900FE33B7 /* FileCommandOutputStream.cpp in Sources */,
 				329614991E851FCB00FE33B7 /* ProcUtil.cpp in Sources */,
-				32FF2AB11E6DAC7F00117985 /* LogWorker.cpp in Sources */,
 				32E6F43C1E4869120068320E /* AbstractWorker.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

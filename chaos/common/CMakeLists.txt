@@ -197,7 +197,8 @@ SET(common_lib_src ${common_lib_src}
         io/IODataDriver.cpp
         io/IODirectIODriver.cpp
         io/ManagedDirectIODataDriver.cpp
-        io/QueryCursor.cpp)
+        io/QueryCursor.cpp
+        io/SharedManagedDirecIoDataDriver.cpp)
 
 SET(common_lib_src ${common_lib_src}
         message/DeviceMessageChannel.cpp
@@ -236,7 +237,7 @@ SET(common_lib_src ${common_lib_src}
         utility/AbstractListener.cpp
         utility/AbstractListenerContainer.cpp
         utility/ProcStat.cpp
-	utility/InetUtility.cpp
+	    utility/InetUtility.cpp
         utility/FSUtility.cpp)
 
 SET(common_lib_src ${common_lib_src}
@@ -248,8 +249,8 @@ SET(common_lib_src ${common_lib_src}
         batch_command/BatchCommandParallelSandbox.cpp)
 
 SET(common_lib_src ${common_lib_src}
-  plugin/PluginLoader.cpp
-  plugin/PluginManager.cpp)
+        plugin/PluginLoader.cpp
+        plugin/PluginManager.cpp)
 
 SET(common_lib_src ${common_lib_src}
         property/PropertyGroup.cpp

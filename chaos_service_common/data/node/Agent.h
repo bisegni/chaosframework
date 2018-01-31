@@ -102,14 +102,14 @@ namespace chaos {
                     //!qgent automatically respawn process it it will be killed
                     bool  keep_alive;
                     //!qgent automatically route log to mds for launched process
-                    bool  log_at_laucnh;
+                    bool  log_on_mds;
                     
                     AgentAssociation():
                     associated_node_uid(),
                     configuration_file_content(),
                     auto_start(false),
                     keep_alive(false),
-                    log_at_laucnh(false){}
+                    log_on_mds(false){}
                     
                     AgentAssociation(const std::string& _associated_node_uid,
                                      const std::string& _launch_cmd_line,
@@ -123,7 +123,7 @@ namespace chaos {
                     configuration_file_content(_configuration_file_content),
                     auto_start(_auto_start),
                     keep_alive(_keep_alive),
-                    log_at_laucnh(_log_at_launch){}
+                    log_on_mds(_log_at_launch){}
                     
                     AgentAssociation(const AgentAssociation& copy_src):
                     association_unique_id(copy_src.association_unique_id),
@@ -132,7 +132,7 @@ namespace chaos {
                     configuration_file_content(copy_src.configuration_file_content),
                     auto_start(copy_src.auto_start),
                     keep_alive(copy_src.keep_alive),
-                    log_at_laucnh(copy_src.log_at_laucnh){}
+                    log_on_mds(copy_src.log_on_mds){}
                     
                     AgentAssociation& operator=(AgentAssociation const &rhs) {
                         if(this == &rhs) return *this;
@@ -142,7 +142,7 @@ namespace chaos {
                         configuration_file_content = rhs.configuration_file_content;
                         auto_start = rhs.auto_start;
                         keep_alive = rhs.keep_alive;
-                        log_at_laucnh = rhs.log_at_laucnh;
+                        log_on_mds = rhs.log_on_mds;
                         return *this;
                     }
                 };
@@ -157,7 +157,7 @@ namespace chaos {
                     dataWrapped().configuration_file_content = CDW_GET_SRT_WITH_DEFAULT(serialized_data, AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_PAR_CFG, "");
                     dataWrapped().auto_start = CDW_GET_BOOL_WITH_DEFAULT(serialized_data, AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_PAR_AUTO_START, false);
                     dataWrapped().keep_alive = CDW_GET_BOOL_WITH_DEFAULT(serialized_data, AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_PAR_KEEP_ALIVE, false);
-                    dataWrapped().log_at_laucnh = CDW_GET_BOOL_WITH_DEFAULT(serialized_data, AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_PAR_LOG_AT_LAUNCH, false);
+                    dataWrapped().log_on_mds = CDW_GET_BOOL_WITH_DEFAULT(serialized_data, AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_PAR_LOG_ON_MDS, false);
                 }
                 
                 ChaosUniquePtr<chaos::common::data::CDataWrapper> serialize() {
@@ -168,7 +168,7 @@ namespace chaos {
                     data_serialized->addStringValue(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_PAR_CFG, dataWrapped().configuration_file_content);
                     data_serialized->addBoolValue(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_PAR_AUTO_START, dataWrapped().auto_start);
                     data_serialized->addBoolValue(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_PAR_KEEP_ALIVE, dataWrapped().keep_alive);
-                    data_serialized->addBoolValue(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_PAR_LOG_AT_LAUNCH, dataWrapped().log_at_laucnh);
+                    data_serialized->addBoolValue(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_PAR_LOG_ON_MDS, dataWrapped().log_on_mds);
                     return data_serialized;
                 }
                 CHAOS_CLOSE_SDWRAPPER()

@@ -21,8 +21,7 @@ SET(agent_src   main.cpp
 	      
 SET(agent_src  ${agent_src} utility/PipeLineReader.cpp utility/ProcUtil.cpp)
 SET(agent_src  ${agent_src}	worker/ProcessWorker.cpp
-                            worker/DeployWorker.cpp
-                            worker/LogWorker.cpp)
+                            worker/DeployWorker.cpp)
 
 ADD_EXECUTABLE(${PROJECT_NAME} ${agent_src})
 

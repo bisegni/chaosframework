@@ -23,6 +23,7 @@
 #include <chaos/cu_toolkit/control_manager/script/api/plugin/EUAbstractApiPlugin.h>
 #include <chaos/cu_toolkit/control_manager/script/api/plugin/EUPluginApiWrapper.h>
 
+#include <chaos/common/chaos_constants.h>
 #include <chaos/common/additional_lib/base64.h>
 #include <chaos/common/exception/MetadataLoggingCException.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
@@ -31,6 +32,7 @@
 
 #include <json/json.h>
 
+using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::common::plugin;
 

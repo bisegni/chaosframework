@@ -18,8 +18,10 @@
  * See the Licence for the specific language governing
  * permissions and limitations under the Licence.
  */
-#include <chaos/common/log/ChaosLoggingBackend.h>
+
 #include <boost/log/expressions.hpp>
+#include <chaos/common/log/ChaosLoggingBackend.h>
+#include <chaos/common/io/SharedManagedDirecIoDataDriver.h>
 
 using namespace boost::log;
 using namespace chaos::common::io;
@@ -43,8 +45,8 @@ void ChaosLoggingBackend::setSource(const std::string& _log_source) {
 
 void ChaosLoggingBackend::consume(record_view const& rec) {
     log_entries.push_back(*rec[expressions::smessage]);
-    data_driver->storeLogEntries(log_source,
-                                 log_entries);
+    SharedManagedDirecIoDataDriver::getInstance()->getSharedDriver()->storeLogEntries(log_source,
+                                                                                      log_entries);
     log_entries.clear();
 }
 

@@ -48,6 +48,8 @@ namespace chaos {
         static const char * const   OPT_LOG_ON_FILE                     = "log-on-file";
         //! Specify when the file path of the log
         static const char * const   OPT_LOG_FILE                        = "log-file";
+        //! Specify when the log need to be forwarded on mds
+        static const char * const   OPT_LOG_ON_MDS                      = "log-on-mds";
         //! enable logging on syslog
         static const char * const   OPT_LOG_ON_SYSLOG                   = "log-on-syslog";
         //! enable logging on syslog
@@ -543,7 +545,7 @@ namespace chaos {
             static const char * const ACTION_LAUNCH_NODE_PAR_CFG            = "node_init_cfg";
             static const char * const ACTION_LAUNCH_NODE_PAR_AUTO_START     = "node_auto_start";
             static const char * const ACTION_LAUNCH_NODE_PAR_KEEP_ALIVE     = "node_keep_alive";
-            static const char * const ACTION_LAUNCH_NODE_PAR_LOG_AT_LAUNCH  = "node_log_at_launch";
+            static const char * const ACTION_LAUNCH_NODE_PAR_LOG_ON_MDS     = "node_log_on_mds";
             
             static const char * const ACTION_STOP_NODE                      = "stopNode";
             static const char * const ACTION_STOP_NODE_PAR_NAME             = "node_name";

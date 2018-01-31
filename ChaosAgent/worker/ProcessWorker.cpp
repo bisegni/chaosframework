@@ -47,7 +47,6 @@ using namespace chaos::common::utility;
 using namespace chaos::common::async_central;
 
 ProcessWorker::ProcessWorker():
-log_worker_ptr(NULL),
 AbstractWorker(AgentNodeDomainAndActionRPC::ProcessWorker::RPC_DOMAIN) {
     //register rpc action
     AbstActionDescShrPtr action_parameter_interface = DeclareAction::addActionDescritionInstance<ProcessWorker>(this,
@@ -110,7 +109,6 @@ void ProcessWorker::deinit() throw(chaos::CException) {
 
 
 void ProcessWorker::timeout() {
-    CHAOS_ASSERT(log_worker_ptr)
     LockableMapRespawnableNodeReadLock rl = map_respawnable_node.getReadLockObject();
     for(MapRespawnableNodeIterator it = map_respawnable_node().begin(),
         end = map_respawnable_node().end();
@@ -119,8 +117,6 @@ void ProcessWorker::timeout() {
         if(ProcUtil::checkProcessAlive(it->second) == false) {
             INFO << CHAOS_FORMAT("Respawn process for node %1%", %it->first);
             ProcUtil::launchProcess(it->second);
-            log_worker_ptr->startLogFetcher(it->second,
-                                            false);
         }
     }
 }
@@ -156,8 +152,6 @@ chaos::common::data::CDataWrapper *ProcessWorker::launchNode(chaos::common::data
     assoc_sd_wrapper.deserialize(data);
     if(ProcUtil::checkProcessAlive(assoc_sd_wrapper()) == false) {
         ProcUtil::launchProcess(assoc_sd_wrapper());
-        log_worker_ptr->startLogFetcher(assoc_sd_wrapper(),
-                                        false);
     }
     if(assoc_sd_wrapper().keep_alive) {
        addToRespawn(assoc_sd_wrapper());
