@@ -254,7 +254,6 @@ void DirectIODeviceServerChannel::DirectIODeviceServerChannelDeallocator::freeSe
             free(sent_data_ptr);
             break;
         }
-
         case DisposeSentMemoryInfo::SentPartData: {
             free(sent_data_ptr);
             break;

@@ -64,7 +64,6 @@ int DirectIOPerformanceServerChannel::consumeDataPack(DirectIODataPack *dataPack
             err = 0;
             break;
         }
-			
 		case opcode::PerformanceChannelOpcodeRespRoundTrip:
 			opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTripPtr header = reinterpret_cast< opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTripPtr >(dataPack->channel_header_data);
 			//reallign the pointer to the start of the key

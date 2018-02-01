@@ -168,7 +168,6 @@ void DirectIOSystemAPIServerChannel::DirectIOSystemAPIServerChannelDeallocator::
             }
             break;
         }
-            
         case DisposeSentMemoryInfo::SentPartData: {
             switch (free_info_ptr->sent_opcode) {
                 case opcode::SystemAPIChannelOpcodeNewSnapshotDataset:
