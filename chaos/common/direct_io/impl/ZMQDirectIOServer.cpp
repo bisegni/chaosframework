@@ -105,8 +105,7 @@ void ZMQDirectIOServer::start() throw(chaos::CException) {
     }
     
     //queue thread
-    ZMQDIO_SRV_LAPP_ << "Allocating and binding priority socket to "<< priority_socket_bind_str;
-    ZMQDIO_SRV_LAPP_ << "Allocating threads for manage the requests";
+    ZMQDIO_SRV_LAPP_ << CHAOS_FORMAT("Allocating and binding socket to %1%/%2%",%priority_socket_bind_str%service_socket_bind_str);
     try{
         //start the treads for the proxies
         server_threads_group.add_thread(new boost::thread(boost::bind(&ZMQDirectIOServer::poller,
@@ -126,7 +125,7 @@ void ZMQDirectIOServer::start() throw(chaos::CException) {
         server_threads_group.add_thread(new boost::thread(boost::bind(&ZMQDirectIOServer::worker,
                                                                       this,
                                                                       WorkerTypeService,
-                                                                      &DirectIOHandler::priorityDataReceived)));
+                                                                      &DirectIOHandler::serviceDataReceived)));
         //threads for priority worker
         for(int idx_thrd = 0;
             idx_thrd < direct_io_thread_number;
@@ -138,7 +137,7 @@ void ZMQDirectIOServer::start() throw(chaos::CException) {
             server_threads_group.add_thread(new boost::thread(boost::bind(&ZMQDirectIOServer::worker,
                                                                           this,
                                                                           WorkerTypeService,
-                                                                          &DirectIOHandler::priorityDataReceived)));
+                                                                          &DirectIOHandler::serviceDataReceived)));
         }
         ZMQDIO_SRV_LAPP_ << CHAOS_FORMAT("ZMQ high priority socket managed by %1% threads", %direct_io_thread_number);
     } catch(boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::lock_error> >& lock_error_exception) {
@@ -288,16 +287,14 @@ void ZMQDirectIOServer::worker(unsigned int w_type,
         return;
     }
     
-    if((w_type & WorkerTypePriority) == 1) {
+    if(w_type == WorkerTypePriority) {
         if((err = ZMQBaseClass::connectSocket(worker_socket,
                                               INPROC_PRIORITY,
                                               "ZMQ Server Worker"))) {
             ZMQDIO_SRV_LAPP_ << CHAOS_FORMAT("Error connecting worker socket with error %1%",%err);
             return;
         }
-    }
-    
-    if((w_type & WorkerTypeService) == 1) {
+    } else if(w_type == WorkerTypeService) {
         if((err = ZMQBaseClass::connectSocket(worker_socket,
                                               INPROC_SERVICE,
                                               "ZMQ Server Worker"))) {
