@@ -37,10 +37,7 @@ build_framework_x86_64:
         - 'chaos-distrib-x86_64-Linux'
     expire_in: 4 hour
   only:
-    - development
-    - master
-    - schedules
-    - web
+    - experimental
 
 build_framework_x86_64_test:
   tags:
@@ -63,10 +60,7 @@ build_framework_x86_64_test:
     expire_in: 1 hour
   coverage: '/^TOTAL.*\s+(\d+\%)$/'
   only:
-    - development
-    - master
-    - schedules
-    - web
+    - experimental
 
 build_framework_centos7:
   tags:
@@ -97,10 +91,7 @@ build_framework_centos7:
         - 'chaos-distrib-x86_64-centos7'
     expire_in: 4 hour
   only:
-    - development
-    - master
-    - schedules
-    - web
+    - experimental
 
 execute_framework_centos7_test:
   tags:
@@ -118,10 +109,7 @@ execute_framework_centos7_test:
         - 'chaos-distrib-x86_64-centos7'
     expire_in: 4 hour
   only:
-    - development
-    - master
-    - schedules
-    - web
+    - experimental
 
 execute_framework_centos7_deploy:
   tags:
@@ -136,8 +124,6 @@ execute_framework_centos7_deploy:
     - scp chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/$CI_COMMIT_REF_NAME/x86_64/centos/7/chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz
   only:
     - experimental
-    - development
-    - master
 
 # llvm_build_framework_x86_64:
 #   tags:
@@ -209,10 +195,7 @@ build_framework_x86_64_c98:
         - 'chaos-distrib-x86_64-Linux-c98'
     expire_in: 4 hour
   only:
-    - development
-    - master
-    - schedules
-    - web
+    - experimental
 
 build_framework_x86_64_c98_test:
   tags:
@@ -225,10 +208,7 @@ build_framework_x86_64_c98_test:
     - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux-c98/lib
     - chaos-distrib-x86_64-Linux-c98/bin/TestFramework
   only:
-    - development
-    - master
-    - schedules
-    - web
+    - experimental
 
 build_framework_arm:
   tags:
@@ -253,10 +233,7 @@ build_framework_arm:
         - 'chaos-distrib-armhf'
     expire_in: 4 hour
   only:
-    - development
-    - master
-    - schedules
-    - web
+    - experimental
 
 # build_framework_arm_test:
 #   tags:
@@ -309,7 +286,4 @@ pages:
       - public
     expire_in: 7 days
   only:
-    - development
-    - master
-    - schedules
-    - web
+    - experimental
