@@ -51,6 +51,9 @@ namespace chaos {
                     //! defautl destructor
                     ~NodeDataAccess();
                     
+                    virtual int getNodeDescription(const std::string& node_unique_id,
+                                                   chaos::common::data::CDWUniquePtr &node_description) = 0;
+                    
                     //! return the whole node description
                     /*!
                      return the whole node description as is on database

@@ -36,6 +36,7 @@
 #include "CommandTemplateSearch.h"
 #include "CommandTemplateSubmit.h"
 #include "CommandInstanceSubmit.h"
+#include "KillCurrentCommand.h"
 #include "GetCommandAndTemplateDescription.h"
 
 using namespace chaos::metadata_service::api::node;
@@ -54,6 +55,7 @@ AbstractApiGroup(NodeDomainAndActionRPC::RPC_DOMAIN){
     addApi<CommandTemplateGet>();
     addApi<NodeLoadCompletion>();
     addApi<NodeGetDescription>();
+    addApi<KillCurrentCommand>();
     addApi<NodeCreateUnitServer>();
     addApi<CommandTemplateDelete>();
     addApi<CommandTemplateSearch>();

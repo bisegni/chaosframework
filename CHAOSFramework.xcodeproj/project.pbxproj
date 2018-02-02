@@ -232,6 +232,7 @@
 		3243606D201F5A9800B03037 /* ChaosLoggingBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 3243606B201F5A9700B03037 /* ChaosLoggingBackend.h */; };
 		324360702021C21200B03037 /* SharedManagedDirecIoDataDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 3243606E2021C21200B03037 /* SharedManagedDirecIoDataDriver.h */; };
 		324360712021C21200B03037 /* SharedManagedDirecIoDataDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3243606F2021C21200B03037 /* SharedManagedDirecIoDataDriver.cpp */; };
+		324360802024A29800B03037 /* KillCurrentCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3243607F2024A29800B03037 /* KillCurrentCommand.cpp */; };
 		3244C0C6168CB96B007C802C /* Record.h in Headers */ = {isa = PBXBuildFile; fileRef = 3244C0C5168CB96B007C802C /* Record.h */; };
 		3244D11D15ECC25800FE2F86 /* AlertEventChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3244D11B15ECC25800FE2F86 /* AlertEventChannel.cpp */; };
 		3244D11E15ECC25800FE2F86 /* AlertEventChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3244D11C15ECC25800FE2F86 /* AlertEventChannel.h */; };
@@ -1548,6 +1549,8 @@
 		3243606B201F5A9700B03037 /* ChaosLoggingBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChaosLoggingBackend.h; sourceTree = "<group>"; };
 		3243606E2021C21200B03037 /* SharedManagedDirecIoDataDriver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SharedManagedDirecIoDataDriver.h; sourceTree = "<group>"; };
 		3243606F2021C21200B03037 /* SharedManagedDirecIoDataDriver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SharedManagedDirecIoDataDriver.cpp; sourceTree = "<group>"; };
+		3243607E2024A29800B03037 /* KillCurrentCommand.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KillCurrentCommand.h; sourceTree = "<group>"; };
+		3243607F2024A29800B03037 /* KillCurrentCommand.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = KillCurrentCommand.cpp; sourceTree = "<group>"; };
 		3244C0C5168CB96B007C802C /* Record.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Record.h; sourceTree = "<group>"; };
 		3244D11B15ECC25800FE2F86 /* AlertEventChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlertEventChannel.cpp; sourceTree = "<group>"; };
 		3244D11C15ECC25800FE2F86 /* AlertEventChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlertEventChannel.h; sourceTree = "<group>"; };
@@ -4751,6 +4754,8 @@
 				32761A3B1B3157CA006C8719 /* GetCommandAndTemplateDescription.h */,
 				32B1E8171B2FFCE500221E49 /* CommandCommonUtility.cpp */,
 				32B1E8181B2FFCE500221E49 /* CommandCommonUtility.h */,
+				3243607F2024A29800B03037 /* KillCurrentCommand.cpp */,
+				3243607E2024A29800B03037 /* KillCurrentCommand.h */,
 			);
 			path = node;
 			sourceTree = "<group>";
@@ -6658,6 +6663,7 @@
 				326ACF9B1E01594C00AD011E /* DriverPoolManager.cpp in Sources */,
 				32610F961AE671AF00779B84 /* StartStop.cpp in Sources */,
 				32B9F3F41AC3E74C00380FE9 /* AbstractPersistenceDriver.cpp in Sources */,
+				324360802024A29800B03037 /* KillCurrentCommand.cpp in Sources */,
 				32E09CF71C0DED340069752F /* RestoreSnapshot.cpp in Sources */,
 				32B299991BD900F1000D3716 /* CopyInstance.cpp in Sources */,
 				326ACF841E01525D00AD011E /* ObjectStorageDataAccess.cpp in Sources */,

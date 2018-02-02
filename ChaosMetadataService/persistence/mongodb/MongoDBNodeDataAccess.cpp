@@ -51,6 +51,19 @@ mongo::BSONObj MongoDBNodeDataAccess::getAliveOption(unsigned int timeout_sec) {
 }
 
 int MongoDBNodeDataAccess::getNodeDescription(const std::string& node_unique_id,
+                                              chaos::common::data::CDWUniquePtr &node_description) {
+    int err = 0;
+    chaos::common::data::CDataWrapper *node_description_tmp = NULL;
+    if(err = getNodeDescription(node_unique_id,
+                                &node_description_tmp)) {
+        MDBNDA_ERR << "Error fetching node description";
+    } else {
+        node_description.reset(node_description_tmp);
+    }
+    return err;
+}
+
+int MongoDBNodeDataAccess::getNodeDescription(const std::string& node_unique_id,
                                               chaos::common::data::CDataWrapper **node_description) {
     int err = 0;
     mongo::BSONObj result;
