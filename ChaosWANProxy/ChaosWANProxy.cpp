@@ -30,12 +30,14 @@
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
+#include <chaos/common/io/SharedManagedDirecIoDataDriver.h>
 
 using namespace std;
 using namespace chaos;
 using namespace chaos::common::network;
 using namespace chaos::common::utility;
 using namespace chaos::common::healt_system;
+using namespace chaos::common::io;
 
 using namespace chaos::wan_proxy;
 using namespace chaos::wan_proxy::persistence;
@@ -117,6 +119,7 @@ void ChaosWANProxy::init(void *init_data)  throw(CException) {
 				continue;
 			}
 			
+            InizializableService::initImplementation(SharedManagedDirecIoDataDriver::getInstance(), NULL, "SharedManagedDirecIoDataDriver", __PRETTY_FUNCTION__);
 
 			// try to initialize the implementation
 			StartableService::initImplementation(tmp_interface_instance,
@@ -132,9 +135,7 @@ void ChaosWANProxy::init(void *init_data)  throw(CException) {
 			LCND_LAPP << "Wan interface: " <<tmp_interface_instance->getName()<< " have been installed";
 
 		}
-        external_cmd_executor.reset(new external_command_pipe::ExternaCommandExecutor(), "ExternaCommandExecutor");
-        CHECK_ASSERTION_THROW_AND_LOG((external_cmd_executor.get() != NULL), ERROR, -2, "ExternaCommandExecutor instantiation failed");
-        external_cmd_executor.init(NULL, __PRETTY_FUNCTION__);
+
 	} catch (CException& ex) {
 		DECODE_CHAOS_EXCEPTION(ex)
 		exit(1);
