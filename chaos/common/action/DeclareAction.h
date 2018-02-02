@@ -37,12 +37,12 @@ namespace chaos {
      action, need to subclass this
      */
     class DeclareAction {
-        std::vector<AbstActionDescShrPtr> actionDescriptionVector;
+        mutable std::vector<AbstActionDescShrPtr> actionDescriptionVector;
         //!action
         /*!
          Encode action into his correspondend CDataWrapper
          */
-        void decodeAction(AbstActionDescShrPtr&, chaos_data::CDataWrapper&);
+        void decodeAction(AbstActionDescShrPtr&, chaos_data::CDataWrapper&) const;
     public:
         /*!
          Default destructor
@@ -85,7 +85,7 @@ namespace chaos {
         /*!
          Return the description of all action into a CDataWrapper
          */
-        void getActionDescrionsInDataWrapper(chaos::common::data::CDataWrapper&, bool close = true);
+        void getActionDescrionsInDataWrapper(chaos::common::data::CDataWrapper&, bool close = true) const;
     };
 }
 #endif

@@ -163,52 +163,63 @@ int MongoDBNodeDataAccess::updateNode(chaos::common::data::CDataWrapper& node_de
             updated_field << chaos::NodeDefinitionKey::NODE_TIMESTAMP << mongo::Date_t(node_description.getUInt64Value(chaos::NodeDefinitionKey::NODE_TIMESTAMP));
         }
         if(node_description.hasKey(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC)) {
-            ChaosUniquePtr<CMultiTypeDataArrayWrapper> action_array(node_description.getVectorValue(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC));
-            for(int idx = 0;
-                idx < action_array->size();
-                idx++) {
-                mongo::BSONObjBuilder action_description;
-                mongo::BSONArrayBuilder param_descriptions;
-                ChaosUniquePtr<chaos::common::data::CDataWrapper> element(action_array->getCDataWrapperElementAtIndex(idx));
-                if(element->hasKey(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_NAME)) {
-                    action_description << chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_NAME
-                    << element->getStringValue(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_NAME);
-                }
-                if(element->hasKey(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESCRIPTION)) {
-                    action_description << chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESCRIPTION
-                    << element->getStringValue(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESCRIPTION);
-                }
-                //check if the action has parameter
-                if(element->hasKey(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PARAM)) {
-                    ChaosUniquePtr<CMultiTypeDataArrayWrapper> param_array(element->getVectorValue(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PARAM));
+            ChaosUniquePtr<CMultiTypeDataArrayWrapper> description_array(node_description.getVectorValue(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC));
+            for(int desc_idx = 0;
+                desc_idx < description_array->size();
+                desc_idx++) {
+                ChaosUniquePtr<CDataWrapper> desc_obj(description_array->getCDataWrapperElementAtIndex(desc_idx));
+                if(desc_obj->hasKey(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC)) {
+                    ChaosUniquePtr<CMultiTypeDataArrayWrapper> action_array(desc_obj->getVectorValue(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC));
                     for(int idx = 0;
-                        idx < param_array->size();
+                        idx < action_array->size();
                         idx++) {
-                        mongo::BSONObjBuilder single_param_desc;
-                        ChaosUniquePtr<chaos::common::data::CDataWrapper> param(param_array->getCDataWrapperElementAtIndex(idx));
-                        
-                        if(param->hasKey(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PAR_NAME)) {
-                            single_param_desc << chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PAR_NAME
-                            << param->getStringValue( chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PAR_NAME);
+                        mongo::BSONObjBuilder action_description;
+                        mongo::BSONArrayBuilder param_descriptions;
+                        ChaosUniquePtr<chaos::common::data::CDataWrapper> element(action_array->getCDataWrapperElementAtIndex(idx));
+                        if(element->hasKey(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN)) {
+                            action_description << chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN
+                            << element->getStringValue(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN);
                         }
-                        if(param->hasKey(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PAR_INFO)) {
-                            single_param_desc << chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PAR_INFO
-                            << param->getStringValue( chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PAR_INFO);
+                        if(element->hasKey(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_NAME)) {
+                            action_description << chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_NAME
+                            << element->getStringValue(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_NAME);
                         }
-                        if(param->hasKey(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PAR_TYPE)) {
-                            single_param_desc << chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PAR_TYPE
-                            << param->getInt32Value(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PAR_TYPE);
+                        if(element->hasKey(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESCRIPTION)) {
+                            action_description << chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESCRIPTION
+                            << element->getStringValue(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESCRIPTION);
                         }
-                        //add element to array
-                        param_descriptions << single_param_desc.obj();
+                        //check if the action has parameter
+                        if(element->hasKey(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PARAM)) {
+                            ChaosUniquePtr<CMultiTypeDataArrayWrapper> param_array(element->getVectorValue(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PARAM));
+                            for(int idx = 0;
+                                idx < param_array->size();
+                                idx++) {
+                                mongo::BSONObjBuilder single_param_desc;
+                                ChaosUniquePtr<chaos::common::data::CDataWrapper> param(param_array->getCDataWrapperElementAtIndex(idx));
+                                
+                                if(param->hasKey(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PAR_NAME)) {
+                                    single_param_desc << chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PAR_NAME
+                                    << param->getStringValue( chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PAR_NAME);
+                                }
+                                if(param->hasKey(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PAR_INFO)) {
+                                    single_param_desc << chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PAR_INFO
+                                    << param->getStringValue( chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PAR_INFO);
+                                }
+                                if(param->hasKey(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PAR_TYPE)) {
+                                    single_param_desc << chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PAR_TYPE
+                                    << param->getInt32Value(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PAR_TYPE);
+                                }
+                                //add element to array
+                                param_descriptions << single_param_desc.obj();
+                            }
+                            //add all param description
+                            action_description.appendArray(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PARAM, param_descriptions.arr());
+                        }
+                        //appen action description to array
+                        bson_update_array << action_description.obj();
                     }
-                    //add all param description
-                    action_description.appendArray(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PARAM, param_descriptions.arr());
                 }
-                //appen action description to array
-                bson_update_array << action_description.obj();
             }
-            
             //add all action to the bson update object
             updated_field.appendArray(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC, bson_update_array.arr());
         }
