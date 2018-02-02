@@ -1154,6 +1154,8 @@ chaos/common/io/ManagedDirectIODataDriver.cpp
 chaos/common/io/ManagedDirectIODataDriver.h
 chaos/common/io/QueryCursor.cpp
 chaos/common/io/QueryCursor.h
+chaos/common/log/ChaosLoggingBackend.cpp
+chaos/common/log/ChaosLoggingBackend.h
 chaos/common/log/LogManager.cpp
 chaos/common/log/LogManager.h
 chaos/common/memory/ManagedMemory.cpp

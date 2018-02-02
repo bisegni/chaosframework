@@ -101,6 +101,7 @@ namespace chaos{
                 std::string uuid;
                 bool shutting_down;
             protected:
+                ChaosSharedMutex push_mutex;
                 chaos::common::network::URLServiceFeeder connectionFeeder;
                 void disposeService(void *service_ptr);
                 void* serviceForURL(const common::network::URL& url, uint32_t service_index);

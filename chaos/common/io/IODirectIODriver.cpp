@@ -189,6 +189,7 @@ void IODirectIODriver::storeHealthData(const std::string& key,
 
 char* IODirectIODriver::retriveRawData(const std::string& key, size_t *dim)  throw(CException) {
     char* result = NULL;
+
     boost::shared_lock<boost::shared_mutex> rl(mutext_feeder);
     IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
     if(!next_client) return NULL;

@@ -65,6 +65,7 @@ namespace chaos {
 			
 			//!base handler pinter
 			wan_interface::BaseWANInterfacelHandler *wan_interface_handler;
+            common::utility::InizializableServiceContainer<external_command_pipe::ExternaCommandExecutor> external_cmd_executor;
 
 		public:
 			//gloabl applicaiton settin

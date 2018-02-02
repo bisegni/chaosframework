@@ -76,6 +76,8 @@ start_mds(){
 	nok_mesg "checking publishing"
 	return 1
     fi
+    info_mesg "waiting " " 5 seconds"
+    sleep 5
 }
 
 # start_cds(){
@@ -102,7 +104,7 @@ start_agent(){
 
 
 start_us(){
-    info_mesg "starting " "$US_EXEC"
+
     check_proc_then_kill "$CHAOS_PREFIX/bin/$US_EXEC"
     if [ ! -e "$CHAOS_PREFIX/etc/cu.cfg" ]; then
 	     warn_mesg "UnitServer configuration file not found in \"$CHAOS_PREFIX/etc/cu.cfg\" " "start skipped"
@@ -117,7 +119,9 @@ start_us(){
 	error_mesg "failed initialization of " "MDS"
 	exit 1
     fi
-    
+    info_mesg "wait 5s ..."
+    sleep 5
+    info_mesg "starting " "$US_EXEC"
     run_proc "$CHAOS_PREFIX/bin/$US_EXEC --conf-file $CHAOS_PREFIX/etc/cu.cfg $CHAOS_OVERALL_OPT --log-on-file 1 --log-file $CHAOS_PREFIX/log/$US_EXEC.$MYPID.log > $CHAOS_PREFIX/log/$US_EXEC.$MYPID.std.out 2>&1 &" "$US_EXEC"
 }
 
@@ -152,6 +156,7 @@ start_all(){
 #    status=$((status + $?))
     start_mds
     status=$((status + $?))
+    
     start_ui
     status=$((status + $?))
 
