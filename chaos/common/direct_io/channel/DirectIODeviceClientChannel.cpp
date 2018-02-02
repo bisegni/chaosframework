@@ -69,7 +69,7 @@ void DirectIODeviceClientChannel::setAnswerServerInfo(uint16_t p_server_port, ui
     answer_server_info.s_server_port = s_server_port;
     answer_server_info.endpoint = answer_endpoint;
     //setEndpoint(endpoint);
-    answer_server_info.ip = ((DirectIOClientConnection*)client_instance)->getI64Ip();
+    answer_server_info.ip = ((DirectIOClientConnection*)client_instance())->getI64Ip();
 }
 
 int64_t DirectIODeviceClientChannel::storeAndCacheDataOutputChannel(const std::string& key,

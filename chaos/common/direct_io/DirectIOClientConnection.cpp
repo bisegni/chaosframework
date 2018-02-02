@@ -110,7 +110,7 @@ channel::DirectIOVirtualClientChannel *DirectIOClientConnection::getNewChannelIn
 	channel::DirectIOVirtualClientChannel *channel = ObjectFactoryRegister<channel::DirectIOVirtualClientChannel>::getInstance()->getNewInstanceByName(channel_name);
     //sub class method for register the instance
     if(channel) {
-		channel->client_instance = this;
+		channel->client_instance() = this;
 		map_client_channels.registerElement(channel->channel_route_index, channel);
     }
 	return channel;
@@ -120,7 +120,7 @@ channel::DirectIOVirtualClientChannel *DirectIOClientConnection::getNewChannelIn
 void DirectIOClientConnection::releaseChannelInstance(channel::DirectIOVirtualClientChannel *channel_instance) {
 	if(channel_instance) {
         map_client_channels.deregisterElementKey(channel_instance->channel_route_index);
-		channel_instance->client_instance = NULL;
+		channel_instance->client_instance() = NULL;
         delete(channel_instance);
     }
 }
