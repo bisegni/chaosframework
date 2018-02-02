@@ -334,8 +334,8 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configurat
     //grab dataset description
     DatasetDB::fillDataWrapperWithDataSetDescription(setup_configuration);
     
-    //get action description
-    getActionDescrionsInDataWrapper(setup_configuration);
+//    //get action description
+//    getActionDescrionsInDataWrapper(setup_configuration);
     
     //add property description
     PropertyCollector::fillDescription("property", setup_configuration);

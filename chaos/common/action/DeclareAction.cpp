@@ -39,7 +39,7 @@ std::vector<AbstActionDescShrPtr>& DeclareAction::getActionDescriptors() {
 /*
  Return the description of all action into a CDataWrapper
  */
-void DeclareAction::getActionDescrionsInDataWrapper(chaos_data::CDataWrapper& actionsDescription, bool close) {
+void DeclareAction::getActionDescrionsInDataWrapper(chaos_data::CDataWrapper& actionsDescription, bool close) const {
     ChaosSharedPtr<chaos_data::CDataWrapper> actionDescription;
     std::vector<AbstActionDescShrPtr>::iterator actionIter;
     
@@ -62,7 +62,7 @@ void DeclareAction::getActionDescrionsInDataWrapper(chaos_data::CDataWrapper& ac
 /*
  Return the description of all action into a CDataWrapper
  */
-void DeclareAction::decodeAction(AbstActionDescShrPtr& actionDesc, chaos_data::CDataWrapper& actionDescription) {
+void DeclareAction::decodeAction(AbstActionDescShrPtr& actionDesc, chaos_data::CDataWrapper& actionDescription) const {
         //add domain for the action 
     actionDescription.addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, actionDesc->getTypeValue(AbstractActionDescriptor::ActionDomain));
     
