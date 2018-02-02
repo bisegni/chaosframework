@@ -108,7 +108,7 @@ void IODirectIODriver::deinit() throw(CException) {
     shutting_down = true;
     IODirectIODriver_LINFO_ << "Remove active query";
     //lock all  internal resource that can be effetted by
-    boost::unique_lock<boost::shared_mutex> wmap_loc(map_query_future_mutex);
+    ChaosWriteLock wmap_loc(map_query_future_mutex);
     
     //scan all remained query
     for(std::map<string, QueryCursor*>::iterator it = map_query_future.begin();
@@ -140,7 +140,7 @@ void IODirectIODriver::storeRawData(const std::string& key,
                                     DataServiceNodeDefinitionType::DSStorageType storage_type)  throw(CException) {
     CHAOS_ASSERT(serialization)
     int err = 0;
-    boost::shared_lock<boost::shared_mutex> rl(mutext_feeder);
+    ChaosReadLock rl(mutext_feeder);
     //if(next_client->connection->getState() == chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventConnected)
     IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
     serialization->disposeOnDelete = !next_client;
@@ -165,7 +165,7 @@ void IODirectIODriver::storeHealthData(const std::string& key,
                                        DataServiceNodeDefinitionType::DSStorageType storage_type) throw(CException) {
     int err = 0;
     try{
-        boost::shared_lock<boost::shared_mutex> rl(mutext_feeder);
+        ChaosReadLock rl(mutext_feeder);
         IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
         
         ChaosUniquePtr<chaos::common::data::SerializationBuffer> serialization(dataToStore.getBSONData());
@@ -191,6 +191,7 @@ char* IODirectIODriver::retriveRawData(const std::string& key, size_t *dim)  thr
     char* result = NULL;
 
     boost::shared_lock<boost::shared_mutex> rl(mutext_feeder);
+
     IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
     if(!next_client) return NULL;
     
@@ -206,7 +207,7 @@ char* IODirectIODriver::retriveRawData(const std::string& key, size_t *dim)  thr
 
 int IODirectIODriver::retriveMultipleData(const ChaosStringVector& key,
                                           chaos::common::data::VectorCDWShrdPtr& result)  throw(CException) {
-    boost::shared_lock<boost::shared_mutex> rl(mutext_feeder);
+    ChaosReadLock rl(mutext_feeder);
     IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
     if(!next_client) return -1;
     
@@ -221,7 +222,7 @@ int IODirectIODriver::retriveMultipleData(const ChaosStringVector& key,
 int IODirectIODriver::removeData(const std::string& key,
                                  uint64_t start_ts,
                                  uint64_t end_ts) throw(CException) {
-    boost::shared_lock<boost::shared_mutex> rl(mutext_feeder);
+    ChaosReadLock rl(mutext_feeder);
     IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
     if(!next_client) return -1;
     
@@ -239,7 +240,7 @@ int IODirectIODriver::loadDatasetTypeFromSnapshotTag(const std::string& restore_
                                                      uint32_t dataset_type,
                                                      chaos_data::CDataWrapper **cdatawrapper_handler) {
     int err = 0;
-    boost::shared_lock<boost::shared_mutex> rl(mutext_feeder);
+    ChaosReadLock rl(mutext_feeder);
     IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
     *cdatawrapper_handler=NULL;
     if(!next_client) return 0;
@@ -271,7 +272,7 @@ int IODirectIODriver::loadDatasetTypeFromSnapshotTag(const std::string& restore_
 }
 
 void IODirectIODriver::addServerURL(const std::string& url) {
-    boost::unique_lock<boost::shared_mutex>(mutext_feeder);
+    ChaosWriteLock wl(mutext_feeder);
     if(!common::direct_io::DirectIOClient::checkURL(url)) {
         IODirectIODriver_LERR_ << "Url " << url << " non well formed";
         return;
@@ -283,7 +284,7 @@ void IODirectIODriver::addServerURL(const std::string& url) {
 
 chaos::common::data::CDataWrapper* IODirectIODriver::updateConfiguration(chaos::common::data::CDataWrapper* newConfigration) {
     //lock the feeder access
-    boost::unique_lock<boost::shared_mutex> rl(mutext_feeder);
+    ChaosWriteLock rl(mutext_feeder);
     //checkif someone has passed us the device indetification
     if(newConfigration->hasKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST)){
         ChaosUniquePtr<chaos::common::data::CMultiTypeDataArrayWrapper> liveMemAddrConfig(newConfigration->getVectorValue(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST));
@@ -407,7 +408,7 @@ QueryCursor *IODirectIODriver::performQuery(const std::string& key,
                                      page_len);
     if(q) {
         //add query to map
-        boost::unique_lock<boost::shared_mutex> wmap_loc(map_query_future_mutex);
+        ChaosWriteLock wmap_loc(map_query_future_mutex);
         map_query_future.insert(make_pair(q->queryID(), q));
     } else {
         releaseQuery(q);
@@ -418,7 +419,7 @@ QueryCursor *IODirectIODriver::performQuery(const std::string& key,
 void IODirectIODriver::releaseQuery(QueryCursor *query_cursor) {
     //acquire write lock
     if(query_cursor == NULL) return;
-    boost::unique_lock<boost::shared_mutex> wmap_loc(map_query_future_mutex);
+    ChaosWriteLock wmap_loc(map_query_future_mutex);
     if(map_query_future.count(query_cursor->queryID())) {
         map_query_future.erase(query_cursor->queryID());
     }

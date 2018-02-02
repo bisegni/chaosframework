@@ -92,10 +92,10 @@ namespace chaos{
                 chaos_utility::ObjectSlot<IODirectIODriverClientChannels*>	channels_slot;
                 
                 WaitSemaphore wait_get_answer;
-                boost::shared_mutex mutext_feeder;
+                ChaosSharedMutex mutext_feeder;
                 
                 //query future management
-                boost::shared_mutex				map_query_future_mutex;
+                ChaosSharedMutex                    map_query_future_mutex;
                 std::map<std::string, QueryCursor*>	map_query_future;
                 
                 std::string uuid;

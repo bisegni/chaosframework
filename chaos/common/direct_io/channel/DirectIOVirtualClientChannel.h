@@ -22,6 +22,7 @@
 #define __CHAOSFramework__DirectIOVirtualClientChannel__
 
 #include <stdint.h>
+#include <chaos/common/utility/LockableObject.h>
 #include <chaos/common/direct_io/DirectIOForwarder.h>
 #include <chaos/common/direct_io/channel/DirectIOVirtualChannel.h>
 
@@ -39,13 +40,13 @@ namespace chaos {
 			
             namespace channel {
 				
+                CHAOS_DEFINE_LOCKABLE_OBJECT(DirectIOForwarder*, DirectIOForwarderPtrLO);
+                
 				class DirectIOVirtualClientChannel :
 				protected DirectIOVirtualChannel,
 				protected DirectIODeallocationHandler {
 					friend class chaos::common::direct_io::DirectIOClientConnection;
-                    
 					DirectIOForwarderHandler  forward_handler;
-
 				protected:
 					
 					//! subclass can override this with custom persisint() after channel allocation) implementation
@@ -53,7 +54,7 @@ namespace chaos {
 					
 					//!only virtual channel class can access this class to permit
 					//! the regulatio of the call
-					DirectIOForwarder *client_instance;
+                    DirectIOForwarderPtrLO client_instance;
 					
 					//priority socket
 					int64_t sendPriorityData(chaos::common::direct_io::DirectIODataPack *data_pack,
