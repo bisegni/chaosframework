@@ -1,5 +1,5 @@
 /*
- * Copyright 2012, 02/02/2018 INFN
+ * Copyright 2012, 05/02/2018 INFN
  *
  * Licensed under the EUPL, Version 1.2 or – as soon they
  * will be approved by the European Commission - subsequent
@@ -22,20 +22,26 @@
 #ifndef __CHAOSFramework__KillCurrentCommand__
 #define __CHAOSFramework__KillCurrentCommand__
 
-#include "ForwardNodeRpcMessage.h"
+#include <chaos_metadata_service_client/api_proxy/ApiProxy.h>
+
 namespace chaos {
-    namespace metadata_service {
-        namespace api {
+    namespace metadata_service_client {
+        namespace api_proxy {
             namespace node {
                 
-                //! Call feature api for the sandbox
+                //! Return the complete description fo the tempalte and relative command
                 class KillCurrentCommand:
-                public ForwardNodeRpcMessage  {
+                public chaos::metadata_service_client::api_proxy::ApiProxy {
+                    API_PROXY_CLASS(KillCurrentCommand)
+                protected:
+                    //! default constructor
+                    API_PROXY_CD_DECLARATION(KillCurrentCommand)
                 public:
-                    KillCurrentCommand();
-                    ~KillCurrentCommand();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
-                                                               bool& detach_data) throw(chaos::CException);
+                    /*!
+                     \param template_name the name of template
+                     \param command_uid the command unique id
+                     */
+                    ApiProxyResult execute(const std::string& node_uid);
                 };
             }
         }

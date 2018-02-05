@@ -230,25 +230,12 @@ bool BatchCommandParallelSandbox::processCommand(bool set_handler_call,
     return result;
 }
 
-void BatchCommandParallelSandbox::killCurrentCommand() {
-    
-}
-
-void BatchCommandParallelSandbox::setCurrentCommandScheduerStepDelay(uint64_t scheduler_step_delay) {
-    
-}
-
-void BatchCommandParallelSandbox::lockCurrentCommandFeature(bool lock) {
-    
-}
-
-void BatchCommandParallelSandbox::setCurrentCommandFeatures(features::Features& features) throw (CException) {
-    
-}
-
-void BatchCommandParallelSandbox::setDefaultStickyCommand(BatchCommand *sticky_command) {
-    
-}
+void BatchCommandParallelSandbox::killCurrentCommand() {}
+void BatchCommandParallelSandbox::clearCommandQueue() {}
+void BatchCommandParallelSandbox::setCurrentCommandScheduerStepDelay(uint64_t scheduler_step_delay) {}
+void BatchCommandParallelSandbox::lockCurrentCommandFeature(bool lock) {}
+void BatchCommandParallelSandbox::setCurrentCommandFeatures(features::Features& features) throw (CException) {}
+void BatchCommandParallelSandbox::setDefaultStickyCommand(BatchCommand *sticky_command) {}
 
 bool BatchCommandParallelSandbox::enqueueCommand(CDataWrapper *command_data,
                                                  BatchCommand *command_impl,

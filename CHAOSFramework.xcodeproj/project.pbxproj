@@ -233,6 +233,15 @@
 		324360702021C21200B03037 /* SharedManagedDirecIoDataDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 3243606E2021C21200B03037 /* SharedManagedDirecIoDataDriver.h */; };
 		324360712021C21200B03037 /* SharedManagedDirecIoDataDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3243606F2021C21200B03037 /* SharedManagedDirecIoDataDriver.cpp */; };
 		324360802024A29800B03037 /* KillCurrentCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3243607F2024A29800B03037 /* KillCurrentCommand.cpp */; };
+		3243608320285AB000B03037 /* ForwardNodeRpcMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3243608220285AB000B03037 /* ForwardNodeRpcMessage.cpp */; };
+		3243608620285BCD00B03037 /* SendRpcCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3243608520285BCD00B03037 /* SendRpcCommand.cpp */; };
+		324360892028828A00B03037 /* ClearCommandQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324360882028828A00B03037 /* ClearCommandQueue.cpp */; };
+		3243608C20288BB500B03037 /* ForwardNodeRpcMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 3243608A20288BB500B03037 /* ForwardNodeRpcMessage.h */; };
+		3243608D20288BB500B03037 /* ForwardNodeRpcMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3243608B20288BB500B03037 /* ForwardNodeRpcMessage.cpp */; };
+		3243609020288BE900B03037 /* KillCurrentCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 3243608E20288BE900B03037 /* KillCurrentCommand.h */; };
+		3243609120288BE900B03037 /* KillCurrentCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3243608F20288BE900B03037 /* KillCurrentCommand.cpp */; };
+		3243609420288C0700B03037 /* ClearCommandQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 3243609220288C0700B03037 /* ClearCommandQueue.h */; };
+		3243609520288C0700B03037 /* ClearCommandQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3243609320288C0700B03037 /* ClearCommandQueue.cpp */; };
 		3244C0C6168CB96B007C802C /* Record.h in Headers */ = {isa = PBXBuildFile; fileRef = 3244C0C5168CB96B007C802C /* Record.h */; };
 		3244D11D15ECC25800FE2F86 /* AlertEventChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3244D11B15ECC25800FE2F86 /* AlertEventChannel.cpp */; };
 		3244D11E15ECC25800FE2F86 /* AlertEventChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3244D11C15ECC25800FE2F86 /* AlertEventChannel.h */; };
@@ -1551,6 +1560,18 @@
 		3243606F2021C21200B03037 /* SharedManagedDirecIoDataDriver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SharedManagedDirecIoDataDriver.cpp; sourceTree = "<group>"; };
 		3243607E2024A29800B03037 /* KillCurrentCommand.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KillCurrentCommand.h; sourceTree = "<group>"; };
 		3243607F2024A29800B03037 /* KillCurrentCommand.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = KillCurrentCommand.cpp; sourceTree = "<group>"; };
+		3243608120285AB000B03037 /* ForwardNodeRpcMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ForwardNodeRpcMessage.h; sourceTree = "<group>"; };
+		3243608220285AB000B03037 /* ForwardNodeRpcMessage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ForwardNodeRpcMessage.cpp; sourceTree = "<group>"; };
+		3243608420285BCD00B03037 /* SendRpcCommand.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SendRpcCommand.h; sourceTree = "<group>"; };
+		3243608520285BCD00B03037 /* SendRpcCommand.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SendRpcCommand.cpp; sourceTree = "<group>"; };
+		324360872028828A00B03037 /* ClearCommandQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ClearCommandQueue.h; sourceTree = "<group>"; };
+		324360882028828A00B03037 /* ClearCommandQueue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ClearCommandQueue.cpp; sourceTree = "<group>"; };
+		3243608A20288BB500B03037 /* ForwardNodeRpcMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ForwardNodeRpcMessage.h; sourceTree = "<group>"; };
+		3243608B20288BB500B03037 /* ForwardNodeRpcMessage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ForwardNodeRpcMessage.cpp; sourceTree = "<group>"; };
+		3243608E20288BE900B03037 /* KillCurrentCommand.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KillCurrentCommand.h; sourceTree = "<group>"; };
+		3243608F20288BE900B03037 /* KillCurrentCommand.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = KillCurrentCommand.cpp; sourceTree = "<group>"; };
+		3243609220288C0700B03037 /* ClearCommandQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ClearCommandQueue.h; sourceTree = "<group>"; };
+		3243609320288C0700B03037 /* ClearCommandQueue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ClearCommandQueue.cpp; sourceTree = "<group>"; };
 		3244C0C5168CB96B007C802C /* Record.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Record.h; sourceTree = "<group>"; };
 		3244D11B15ECC25800FE2F86 /* AlertEventChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlertEventChannel.cpp; sourceTree = "<group>"; };
 		3244D11C15ECC25800FE2F86 /* AlertEventChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlertEventChannel.h; sourceTree = "<group>"; };
@@ -3013,6 +3034,12 @@
 				32B1E80F1B2EDAE900221E49 /* CommandInstanceSubmit.h */,
 				32761A361B314697006C8719 /* GetCommandAndTemplateDescription.cpp */,
 				32761A371B314697006C8719 /* GetCommandAndTemplateDescription.h */,
+				3243608B20288BB500B03037 /* ForwardNodeRpcMessage.cpp */,
+				3243608A20288BB500B03037 /* ForwardNodeRpcMessage.h */,
+				3243608F20288BE900B03037 /* KillCurrentCommand.cpp */,
+				3243608E20288BE900B03037 /* KillCurrentCommand.h */,
+				3243609320288C0700B03037 /* ClearCommandQueue.cpp */,
+				3243609220288C0700B03037 /* ClearCommandQueue.h */,
 				3221D7321CF5F2BA001BE971 /* node.h */,
 			);
 			path = node;
@@ -4548,6 +4575,8 @@
 				32568C8A1B3D54650006988C /* UpdatePropertyCommand.h */,
 				32761A3E1B37F202006C8719 /* SubmitBatchCommand.cpp */,
 				32761A3F1B37F202006C8719 /* SubmitBatchCommand.h */,
+				3243608520285BCD00B03037 /* SendRpcCommand.cpp */,
+				3243608420285BCD00B03037 /* SendRpcCommand.h */,
 				32568C851B39A5180006988C /* node_batch.h */,
 			);
 			path = node;
@@ -4754,8 +4783,12 @@
 				32761A3B1B3157CA006C8719 /* GetCommandAndTemplateDescription.h */,
 				32B1E8171B2FFCE500221E49 /* CommandCommonUtility.cpp */,
 				32B1E8181B2FFCE500221E49 /* CommandCommonUtility.h */,
+				3243608220285AB000B03037 /* ForwardNodeRpcMessage.cpp */,
+				3243608120285AB000B03037 /* ForwardNodeRpcMessage.h */,
 				3243607F2024A29800B03037 /* KillCurrentCommand.cpp */,
 				3243607E2024A29800B03037 /* KillCurrentCommand.h */,
+				324360882028828A00B03037 /* ClearCommandQueue.cpp */,
+				324360872028828A00B03037 /* ClearCommandQueue.h */,
 			);
 			path = node;
 			sourceTree = "<group>";
@@ -6336,6 +6369,7 @@
 				32362C221ADD0C45000CA079 /* SetInstanceDescription.h in Headers */,
 				323386B21ACD731E008863DC /* NodeSearch.h in Headers */,
 				3221D72B1CF5EB22001BE971 /* SaveScript.h in Headers */,
+				3243609420288C0700B03037 /* ClearCommandQueue.h in Headers */,
 				32FF2A8D1E68726300117985 /* deploy.h in Headers */,
 				32D746011C73399900F4D719 /* AbstractEventHandler.h in Headers */,
 				325FC85E1AF7910300DB9D66 /* NewUS.h in Headers */,
@@ -6353,11 +6387,13 @@
 				32F7AB191C9964AE00E18D3E /* node_monitor.h in Headers */,
 				32990B171E4CBAA800A4AF8F /* RemoveNodeAssociation.h in Headers */,
 				32F7AB1D1C998E2500E18D3E /* node_monitor_types.h in Headers */,
+				3243609020288BE900B03037 /* KillCurrentCommand.h in Headers */,
 				3221D7301CF5F292001BE971 /* script.h in Headers */,
 				3211CCDA1B021B8D00F9B80E /* GetBestEndpoints.h in Headers */,
 				32661C6E1AA741D000F1A721 /* ChaosMetadataServiceClient.h in Headers */,
 				32B299AB1BE27945000D3716 /* RecoverError.h in Headers */,
 				326413941E40C72C0035E175 /* CUController.h in Headers */,
+				3243608C20288BB500B03037 /* ForwardNodeRpcMessage.h in Headers */,
 				32FC49B01E080FB80087D82C /* GetVariable.h in Headers */,
 				32A13EB91C2014170010F3FC /* Delete.h in Headers */,
 				32FC49A81E080F900087D82C /* SetVariable.h in Headers */,
@@ -6645,6 +6681,7 @@
 				3258D4811DF0332300D9C8D0 /* GetSnapshotDatasetsForNode.cpp in Sources */,
 				32FF2A761E68655A00117985 /* DeployApiGroup.cpp in Sources */,
 				32B1E8191B2FFCE500221E49 /* CommandCommonUtility.cpp in Sources */,
+				3243608320285AB000B03037 /* ForwardNodeRpcMessage.cpp in Sources */,
 				3270E0761C6CC05100105726 /* MongoDBLoggingDataAccess.cpp in Sources */,
 				32FC49A41E0807F70087D82C /* GetVariable.cpp in Sources */,
 				3235FDCA1A6FF45600EC83A9 /* GetDescription.cpp in Sources */,
@@ -6693,8 +6730,10 @@
 				32B1E80A1B2EA77200221E49 /* GetNodeNetworkAddress.cpp in Sources */,
 				32FA1EF31A7A462200A46800 /* MDSBatchCommand.cpp in Sources */,
 				32809C7C1A9C7DDD00C02C12 /* MongoDBUtilityDataAccess.cpp in Sources */,
+				3243608620285BCD00B03037 /* SendRpcCommand.cpp in Sources */,
 				323386B71AD3C4C6008863DC /* MongoDBAccessor.cpp in Sources */,
 				32CAC9E41AE6991500DC6AAB /* LoadUnloadControlUnit.cpp in Sources */,
+				324360892028828A00B03037 /* ClearCommandQueue.cpp in Sources */,
 				3211CCD61B0205C700F9B80E /* GetBestEndpoints.cpp in Sources */,
 				325963981D216BD800D94853 /* LoadInstanceOnUnitServer.cpp in Sources */,
 				328C84771ED45FBE008B5F7D /* UpdateBindType.cpp in Sources */,
@@ -7206,6 +7245,7 @@
 				326413931E40C7280035E175 /* CUController.cpp in Sources */,
 				3239EF521C0EFEB20052BE61 /* DeleteSnapshot.cpp in Sources */,
 				32FC49AB1E080FA80087D82C /* RemoveVariable.cpp in Sources */,
+				3243608D20288BB500B03037 /* ForwardNodeRpcMessage.cpp in Sources */,
 				327C6A281C74E255002DA5A6 /* GetLogDomainForSourceUID.cpp in Sources */,
 				32BE0AE51E4C69910007764C /* LoadNodeAssociation.cpp in Sources */,
 				32EBDF0E1B53A32600278C42 /* ManageCUType.cpp in Sources */,
@@ -7230,6 +7270,7 @@
 				327F39A71AEAA2290000C845 /* NewDS.cpp in Sources */,
 				3239EF4E1C0EFEA60052BE61 /* CreateNewSnapshot.cpp in Sources */,
 				324FD0811B00ACEF003800BA /* MonitorManager.cpp in Sources */,
+				3243609120288BE900B03037 /* KillCurrentCommand.cpp in Sources */,
 				320CA9541C29D71A00894AAA /* DeleteUS.cpp in Sources */,
 				32B299AA1BE27945000D3716 /* RecoverError.cpp in Sources */,
 				32990B2D1E547D7000A4AF8F /* CheckAgentHostedProcess.cpp in Sources */,
@@ -7256,6 +7297,7 @@
 				32AC6F1A1EC4AC1F00FCCD85 /* SetManagementConfiguration.cpp in Sources */,
 				328C87361ADFDD410047C79B /* GetInstance.cpp in Sources */,
 				32A51F701E71968B00209E92 /* GetProcessLogEntries.cpp in Sources */,
+				3243609520288C0700B03037 /* ClearCommandQueue.cpp in Sources */,
 				32AC6F051EB0BF3F00FCCD85 /* SetSnapshotDatasetsForNode.cpp in Sources */,
 				324928611F603EE300409E83 /* GetPropertyDefaultValues.cpp in Sources */,
 				32D745FC1C7338D100F4D719 /* AlertLogEventHandler.cpp in Sources */,

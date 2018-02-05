@@ -1,5 +1,5 @@
 /*
- * Copyright 2012, 2017 INFN
+ * Copyright 2012, 05/02/2018 INFN
  *
  * Licensed under the EUPL, Version 1.2 or – as soon they
  * will be approved by the European Commission - subsequent
@@ -19,25 +19,23 @@
  * permissions and limitations under the Licence.
  */
 
-#include <chaos_metadata_service_client/api_proxy/node/GetCommandAndTemplateDescription.h>
+#include <chaos_metadata_service_client/api_proxy/node/ClearCommandQueue.h>
+
 using namespace chaos::common::data;
 using namespace chaos::common::batch_command;
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::api_proxy::node;
 
 
-API_PROXY_CD_DEFINITION(GetCommandAndTemplateDescription,
+API_PROXY_CD_DEFINITION(ClearCommandQueue,
                         "system",
-                        "getCommandAndTemplateDescription")
+                        "clearCommandQueue")
 
 /*!
  
  */
-ApiProxyResult GetCommandAndTemplateDescription::execute(const std::string& template_name,
-                                           const std::string& command_uid) {
+ApiProxyResult ClearCommandQueue::execute(const std::string& node_uid) {
     ChaosUniquePtr<chaos::common::data::CDataWrapper> message(new CDataWrapper());
-    message->addStringValue("template_name", template_name);
-    message->addStringValue(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID, command_uid);
-    //call api
+    message->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_uid);
     return callApi(message.release());
 }

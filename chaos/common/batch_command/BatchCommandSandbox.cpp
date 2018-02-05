@@ -745,6 +745,12 @@ void BatchCommandSandbox::killCurrentCommand() {
     }
 }
 
+void BatchCommandSandbox::clearCommandQueue() {
+    SCSLDBG_ << "Wait lock for command enqueue for clearCommandQueue action";
+    boost::unique_lock<boost::mutex> lock_next_command_queue(mutex_next_command_queue);
+    command_submitted_queue = CommandPriorityQueue();
+}
+
 bool BatchCommandSandbox::enqueueCommand(chaos_data::CDataWrapper *command_to_info,
                                          BatchCommand *command_impl,
                                          uint32_t priority) {

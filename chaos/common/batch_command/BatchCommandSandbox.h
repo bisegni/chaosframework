@@ -45,6 +45,10 @@ namespace chaos{
                 }
             };
             
+            typedef std::priority_queue<PRIORITY_ELEMENT(CommandInfoAndImplementation)*,
+            std::vector<PRIORITY_ELEMENT(CommandInfoAndImplementation)*>,
+            PriorityCommandCompare > CommandPriorityQueue;
+            
             //! Sandbox fo the slow command execution
             /*!
              This is the sandbox where the command are executed. Here are checked the
@@ -86,9 +90,7 @@ namespace chaos{
                 
                 //------------------next command checker---------------------
                 //testing the inclusion of the command queue directly in the sandbox
-                std::priority_queue<PRIORITY_ELEMENT(CommandInfoAndImplementation)*,
-                std::vector<PRIORITY_ELEMENT(CommandInfoAndImplementation)*>,
-                PriorityCommandCompare > command_submitted_queue;
+                CommandPriorityQueue command_submitted_queue;
                 
                 //!Mutex used for sincronize the introspection of the current command
                 boost::mutex          mutex_next_command_queue;
@@ -133,6 +135,9 @@ namespace chaos{
 				
 				//kill the current running command without rule(like -9)
                 void killCurrentCommand();
+                
+                //!remove all pendign comands from queue
+                void clearCommandQueue();
                 
                 //! execute a complete step of the command (acquire -> correlation) and check if the new command can be installed
                 /*!

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012, 02/02/2018 INFN
+ * Copyright 2012, 05/02/2018 INFN
  *
  * Licensed under the EUPL, Version 1.2 or – as soon they
  * will be approved by the European Commission - subsequent
@@ -19,8 +19,8 @@
  * permissions and limitations under the Licence.
  */
 
-#ifndef __CHAOSFramework__KillCurrentCommand__
-#define __CHAOSFramework__KillCurrentCommand__
+#ifndef __CHAOSFramework__ClearCommandQueue__
+#define __CHAOSFramework__ClearCommandQueue__
 
 #include "ForwardNodeRpcMessage.h"
 namespace chaos {
@@ -29,11 +29,11 @@ namespace chaos {
             namespace node {
                 
                 //! Call feature api for the sandbox
-                class KillCurrentCommand:
+                class ClearCommandQueue:
                 public ForwardNodeRpcMessage  {
                 public:
-                    KillCurrentCommand();
-                    ~KillCurrentCommand();
+                    ClearCommandQueue();
+                    ~ClearCommandQueue();
                     chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
                                                                bool& detach_data) throw(chaos::CException);
                 };
@@ -42,4 +42,4 @@ namespace chaos {
     }
 }
 
-#endif /* defined(__CHAOSFramework__KillCurrentCommand__) */
+#endif /* defined(__CHAOSFramework__ClearCommandQueue__) */

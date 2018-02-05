@@ -600,7 +600,7 @@ int CUController::killCurrentCommand() {
 }
 
 int CUController::flushCommandStateHistory() {
-    return deviceChannel->sendCustomRequest(BatchCommandExecutorRpcActionKey::RPC_FLUSH_COMMAND_HISTORY, NULL, NULL, millisecToWait);
+    return 0;/*deviceChannel->sendCustomRequest(BatchCommandExecutorRpcActionKey::RPC_FLUSH_COMMAND_HISTORY, NULL, NULL, millisecToWait);*/
 }
 
 int CUController::sendCustomRequest(const std::string& action,

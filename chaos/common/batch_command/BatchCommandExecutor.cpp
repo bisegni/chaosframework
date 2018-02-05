@@ -54,32 +54,26 @@ command_state_queue_max_size(COMMAND_STATE_QUEUE_DEFAULT_SIZE) {
     // register the public rpc api
     std::string rpcActionDomain = executorID; //+ BatchCommandExecutorRpcActionKey::COMMAND_EXECUTOR_POSTFIX_DOMAIN;
     // add executor has event handler
-    
-    
-    BCELAPP_ << "Register getCommandSandboxStatistics action";
     DeclareAction::addActionDescritionInstance<BatchCommandExecutor>(this,
                                                                      &BatchCommandExecutor::getCommandState,
                                                                      rpcActionDomain.c_str(),
                                                                      BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE,
                                                                      "Return the state of the specified command");
-    BCELAPP_ << "Register setCommandFeatures action";
     DeclareAction::addActionDescritionInstance<BatchCommandExecutor>(this,
                                                                      &BatchCommandExecutor::setCommandFeatures,
                                                                      rpcActionDomain.c_str(),
                                                                      BatchCommandExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES,
                                                                      "Set the features of the running command");
-    BCELAPP_ << "Register killCurrentCommand action";
     DeclareAction::addActionDescritionInstance<BatchCommandExecutor>(this,
                                                                      &BatchCommandExecutor::killCurrentCommand,
                                                                      rpcActionDomain.c_str(),
                                                                      BatchCommandExecutorRpcActionKey::RPC_KILL_CURRENT_COMMAND,
                                                                      "Kill the running command");
-    BCELAPP_ << "Register flushCommandStates action";
     DeclareAction::addActionDescritionInstance<BatchCommandExecutor>(this,
-                                                                     &BatchCommandExecutor::flushCommandStates,
+                                                                     &BatchCommandExecutor::clearCommandQueue,
                                                                      rpcActionDomain.c_str(),
-                                                                     BatchCommandExecutorRpcActionKey::RPC_FLUSH_COMMAND_HISTORY,
-                                                                     "Flush the non active command history state");
+                                                                     BatchCommandExecutorRpcActionKey::RPC_CLEAR_COMMAND_QUEUE,
+                                                                     "Clear the command queue removing all pending command");
     
     //if not sandbox has been added force to create one
     addNewSandboxInstance();
@@ -688,11 +682,16 @@ void BatchCommandExecutor::setCommandFeatures(features::Features& features) thro
 //! Kill current command rpc action
 CDataWrapper* BatchCommandExecutor::killCurrentCommand(CDataWrapper *params, bool& detachParam) throw (CException) {
     ReadLock       lock(sandbox_map_mutex);
-    
     ChaosSharedPtr<AbstractSandbox> tmp_ptr = sandbox_map[0];
-    
-    BCELAPP_ << "Kill current command into the executor id: " << executorID;
     tmp_ptr->killCurrentCommand();
+    return NULL;
+}
+
+//! Kill current command rpc action
+CDataWrapper* BatchCommandExecutor::clearCommandQueue(CDataWrapper *params, bool& detachParam) throw (CException) {
+    ReadLock       lock(sandbox_map_mutex);
+    ChaosSharedPtr<AbstractSandbox> tmp_ptr = sandbox_map[0];
+    tmp_ptr->clearCommandQueue();
     return NULL;
 }
 

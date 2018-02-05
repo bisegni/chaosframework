@@ -1,5 +1,5 @@
 /*
- * Copyright 2012, 2017 INFN
+ * Copyright 2012, 05/02/2018 INFN
  *
  * Licensed under the EUPL, Version 1.2 or – as soon they
  * will be approved by the European Commission - subsequent
@@ -18,26 +18,29 @@
  * See the Licence for the specific language governing
  * permissions and limitations under the Licence.
  */
+#include <chaos_metadata_service_client/api_proxy/node/ForwardNodeRpcMessage.h>
 
-#include <chaos_metadata_service_client/api_proxy/node/GetCommandAndTemplateDescription.h>
 using namespace chaos::common::data;
 using namespace chaos::common::batch_command;
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::api_proxy::node;
 
 
-API_PROXY_CD_DEFINITION(GetCommandAndTemplateDescription,
+API_PROXY_CD_DEFINITION(ForwardNodeRpcMessage,
                         "system",
-                        "getCommandAndTemplateDescription")
+                        "forwardNodeRpcMessage")
 
 /*!
  
  */
-ApiProxyResult GetCommandAndTemplateDescription::execute(const std::string& template_name,
-                                           const std::string& command_uid) {
+ApiProxyResult ForwardNodeRpcMessage::execute(const std::string& node_uid,
+                                              const std::string& action_name,
+                                              const CDWUniquePtr& message_data) {
     ChaosUniquePtr<chaos::common::data::CDataWrapper> message(new CDataWrapper());
-    message->addStringValue("template_name", template_name);
-    message->addStringValue(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID, command_uid);
-    //call api
+    message->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_uid);
+    message->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, action_name);
+    if(message_data.get()) {
+        message->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *message_data);
+    }
     return callApi(message.release());
 }
