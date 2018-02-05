@@ -36,6 +36,11 @@ protected:
                        int dataset_type);
 private slots:
     void updateUIState();
+
+    void on_pushButtonClearPendigCommandQueue_clicked();
+
+    void on_pushButtonKillRunningCommand_clicked();
+
 private:
     Ui::CCommandStatisticWidget *ui;
     bool data_found;
