@@ -580,7 +580,7 @@ int DeviceController::killCurrentCommand() {
 
 //---------------------------------------------------------------------------------------------------
 int DeviceController::flushCommandStateHistory() {
-    return deviceChannel->sendCustomRequest(BatchCommandExecutorRpcActionKey::RPC_FLUSH_COMMAND_HISTORY, NULL, NULL, millisecToWait);
+    return 0;//deviceChannel->sendCustomRequest(BatchCommandExecutorRpcActionKey::RPC_FLUSH_COMMAND_HISTORY, NULL, NULL, millisecToWait);
 }
 
 //---------------------------------------------------------------------------------------------------

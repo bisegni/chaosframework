@@ -36,7 +36,6 @@ namespace chaos {
                     DECLARE_MDS_COMMAND_ALIAS
                     //request for the command submission
                     ChaosUniquePtr<RequestInfo> request;
-                    ChaosUniquePtr<chaos::common::data::CDataWrapper> command_instance;
                 public:
                     SendRpcCommand();
                     ~SendRpcCommand();

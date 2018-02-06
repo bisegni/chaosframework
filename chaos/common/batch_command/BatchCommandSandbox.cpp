@@ -267,6 +267,31 @@ whait_for_next_check.wait();
 #define TIMED_WAIT_ON_NEXT_CMD(x) \
 whait_for_next_check.wait(x);
 
+void BatchCommandSandbox::consumeWaitCmdOps() {
+    StackFunctionWaitingCommandLOReadLock rl = stack_wait_cmd_op.getReadLockObject(ChaosLockTypeTry);
+    if(rl->owns_lock() == false) return;
+    
+    while(!stack_wait_cmd_op().empty()) {
+        switch(stack_wait_cmd_op().top()) {
+            case WCFOClearQueue: {
+                while(!command_submitted_queue.empty()) {
+                    PRIORITY_ELEMENT(CommandInfoAndImplementation) *command_to_delete = command_submitted_queue.top();
+                    command_submitted_queue.pop();
+                    cmd_stat.queued_commands = (uint32_t)command_submitted_queue.size();
+                    if (event_handler) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
+                                                                         command_to_delete->element->cmdImpl->unique_id,
+                                                                         BatchCommandEventType::EVT_DEQUEUE,
+                                                                         command_to_delete->element->cmdInfo,
+                                                                         cmd_stat);
+                    DELETE_OBJ_POINTER(command_to_delete);
+                }
+                break;
+            }
+        }
+        stack_wait_cmd_op().pop();
+    }
+}
+
 void BatchCommandSandbox::checkNextCommand() {
     bool queue_empty = false;
     RunningVSSubmissioneResult current_check_value;
@@ -287,8 +312,13 @@ void BatchCommandSandbox::checkNextCommand() {
     while (schedule_work_flag) {
         //lock the command queue access
         lock_next_command_queue.lock();
+        
+        //consume opcod eon waiting command
+        consumeWaitCmdOps();
+        
         queue_empty = command_submitted_queue.empty();
         lock_next_command_queue.unlock();
+        
         //check for emptiness
         if (!queue_empty) {
             SCSLDBG_ << "[checkNextCommand] checkNextCommand can work, queue size:"<<command_submitted_queue.size();
@@ -546,6 +576,25 @@ inline ChaosUniquePtr<chaos::common::data::CDataWrapper> BatchCommandSandbox::fl
     return command_and_fault;
 }
 
+void BatchCommandSandbox::consumeRunCmdOps() {
+    StackFunctionRunningCommandLOReadLock rl = stack_run_cmd_op.getReadLockObject(ChaosLockTypeTry);
+    if(rl->owns_lock() == false ||
+       current_executing_command->element->cmdImpl == NULL) return;
+    
+    while(!stack_run_cmd_op().empty()) {
+        switch(stack_run_cmd_op().top()) {
+            case RCFOTerminate: {
+                if(!current_executing_command->element->cmdImpl->sticky) {
+                    // terminate the current command
+                    current_executing_command->element->cmdImpl->setRunningProperty(RunningPropertyType::RP_END);
+                }
+                break;
+            }
+        }
+        stack_run_cmd_op().pop();
+    }
+}
+
 void BatchCommandSandbox::runCommand() {
     bool canWork = schedule_work_flag;
     uint64_t next_predicted_run = 0;
@@ -555,6 +604,10 @@ void BatchCommandSandbox::runCommand() {
     boost::mutex::scoped_lock lockForCurrentCommand(mutext_access_current_command);
     do {
         if (current_executing_command) {
+            //consume oepration on current command
+            consumeRunCmdOps();
+            
+            //run command
             curr_executing_impl = current_executing_command->element->cmdImpl;
             
             // count the time we have started a run step
@@ -736,19 +789,15 @@ void BatchCommandSandbox::removeHandler(PRIORITY_ELEMENT(CommandInfoAndImplement
 
 void BatchCommandSandbox::killCurrentCommand() {
     //lock the scheduler
-    boost::mutex::scoped_lock lockForCurrentCommand(mutext_access_current_command);
-    
-    // terminate the current command
-    if(current_executing_command &&
-       current_executing_command->element->cmdImpl) {
-        current_executing_command->element->cmdImpl->setRunningProperty(RunningPropertyType::RP_END);
-    }
+    StackFunctionRunningCommandLOWriteLock rl = stack_run_cmd_op.getWriteLockObject();
+    stack_run_cmd_op().push(RCFOTerminate);
 }
 
 void BatchCommandSandbox::clearCommandQueue() {
-    SCSLDBG_ << "Wait lock for command enqueue for clearCommandQueue action";
-    boost::unique_lock<boost::mutex> lock_next_command_queue(mutex_next_command_queue);
-    command_submitted_queue = CommandPriorityQueue();
+    //lock the scheduler
+    StackFunctionWaitingCommandLOWriteLock rl = stack_wait_cmd_op.getWriteLockObject();
+    stack_wait_cmd_op().push(WCFOClearQueue);
+    whait_for_next_check.unlock();
 }
 
 bool BatchCommandSandbox::enqueueCommand(chaos_data::CDataWrapper *command_to_info,

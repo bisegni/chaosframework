@@ -33,13 +33,13 @@
     <widget class="QPushButton" name="pushButtonKillRunningCommand">
      <property name="maximumSize">
       <size>
-       <width>20</width>
-       <height>16777215</height>
+       <width>16</width>
+       <height>16</height>
       </size>
      </property>
      <property name="font">
       <font>
-       <pointsize>11</pointsize>
+       <pointsize>9</pointsize>
       </font>
      </property>
      <property name="toolTip">
@@ -54,13 +54,13 @@
     <widget class="QPushButton" name="pushButtonClearPendigCommandQueue">
      <property name="maximumSize">
       <size>
-       <width>20</width>
-       <height>16777215</height>
+       <width>16</width>
+       <height>16</height>
       </size>
      </property>
      <property name="font">
       <font>
-       <pointsize>11</pointsize>
+       <pointsize>9</pointsize>
       </font>
      </property>
      <property name="toolTip">

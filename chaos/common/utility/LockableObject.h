@@ -36,6 +36,11 @@ typedef chaos::common::utility::LockableObject<x> n;\
 typedef chaos::common::utility::LockableObject<x>::LockableObjectReadLock n ## ReadLock;\
 typedef chaos::common::utility::LockableObject<x>::LockableObjectWriteLock n ## WriteLock;\
 
+            typedef enum ChaosLockType {
+                ChaosLockTypeNormal,
+                ChaosLockTypeTry,
+                ChaosLockTypeDefer
+            } ChaosLockType;
             
             template<typename T>
             class LockableObject  {
@@ -52,12 +57,13 @@ typedef chaos::common::utility::LockableObject<x>::LockableObjectWriteLock n ## 
                 class ReadLock {
                     friend class LockableObject<T>;
                     LockableObjectReadLock_t rl;
-                    ReadLock(LockableObject<T>& lockable_obj_ref) {
-                        lockable_obj_ref.getReadLock(rl);
+                    ReadLock(LockableObject<T>& lockable_obj_ref, ChaosLockType ltype) {
+                        lockable_obj_ref.getReadLock(rl, ltype);
                     }
                 public:
                     void lock(){rl.lock();}
                     void unlock(){rl.unlock();}
+                    bool owns_lock() const {return rl.owns_lock();}
                 };
                 typedef ChaosSharedPtr<ReadLock> LockableObjectReadLock;
                 
@@ -65,30 +71,39 @@ typedef chaos::common::utility::LockableObject<x>::LockableObjectWriteLock n ## 
                 class WriteLock {
                     friend class LockableObject<T>;
                     LockableObjectWriteLock_t wl;
-                    WriteLock(LockableObject<T>& lockable_obj_ref) {
-                        lockable_obj_ref.getWriteLock(wl);
+                    WriteLock(LockableObject<T>& lockable_obj_ref, ChaosLockType ltype) {
+                        lockable_obj_ref.getWriteLock(wl, ltype);
                     }
                 public:
                     void lock(){wl.lock();}
                     void unlock(){wl.unlock();}
+                    bool owns_lock() const {return wl.owns_lock();}
                 };
                 typedef ChaosSharedPtr<WriteLock> LockableObjectWriteLock;
                 
                 T container_object;
                 
-                void getReadLock(LockableObjectReadLock_t& read_lock) {
-                    read_lock = LockableObjectReadLock_t(mutex_container_dataset);
+                void getReadLock(LockableObjectReadLock_t& read_lock, ChaosLockType ltype = ChaosLockTypeNormal) {
+                    switch(ltype) {
+                        case ChaosLockTypeNormal: read_lock = LockableObjectReadLock_t(mutex_container_dataset); break;
+                        case ChaosLockTypeTry: read_lock = LockableObjectReadLock_t(mutex_container_dataset, ChaosTryToLock_t()); break;
+                        case ChaosLockTypeDefer: read_lock = LockableObjectReadLock_t(mutex_container_dataset, ChaosDeferLock_t()); break;
+                    }
                 }
-                LockableObjectReadLock getReadLockObject() {
-                    return LockableObjectReadLock(new ReadLock(*this));
+                LockableObjectReadLock getReadLockObject(ChaosLockType ltype = ChaosLockTypeNormal) {
+                    return LockableObjectReadLock(new ReadLock(*this, ltype));
                 }
                 
-                void getWriteLock(LockableObjectWriteLock_t& write_lock) {
-                    write_lock = LockableObjectWriteLock_t(mutex_container_dataset);
+                void getWriteLock(LockableObjectWriteLock_t& write_lock, ChaosLockType ltype = ChaosLockTypeNormal) {
+                    switch(ltype) {
+                    case ChaosLockTypeNormal: write_lock = LockableObjectWriteLock_t(mutex_container_dataset); break;
+                    case ChaosLockTypeTry: write_lock = LockableObjectWriteLock_t(mutex_container_dataset, ChaosTryToLock_t()); break;
+                    case ChaosLockTypeDefer: write_lock = LockableObjectWriteLock_t(mutex_container_dataset, ChaosDeferLock_t()); break;
+                    }
                 }
                 
-                LockableObjectWriteLock getWriteLockObject() {
-                    return LockableObjectWriteLock(new WriteLock(*this));
+                LockableObjectWriteLock getWriteLockObject(ChaosLockType ltype = ChaosLockTypeNormal) {
+                    return LockableObjectWriteLock(new WriteLock(*this, ltype));
                 }
                 
                 T& operator()(){

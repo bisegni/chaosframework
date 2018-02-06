@@ -30,6 +30,7 @@
 
 #include <set>
 #include <map>
+#include <stack>
 #include <queue>
 #include <deque>
 #include <vector>
@@ -108,6 +109,9 @@ using ChaosFunction = std::function< R >;
 #define ChaosBindPlaceholder(x) x
 #endif
 
+#define  CHAOS_DEFINE_STACK_FOR_TYPE(t1, n)\
+typedef std::stack< t1 >                   n;
+
 #define  CHAOS_DEFINE_SET_FOR_TYPE(t1, n)\
 typedef std::set< t1 >                   n;\
 typedef std::set< t1 >::iterator         n ## Iterator;\
@@ -181,6 +185,10 @@ to_execute \
 typedef boost::shared_mutex                     ChaosSharedMutex;
 typedef boost::shared_lock<boost::shared_mutex> ChaosReadLock;
 typedef boost::unique_lock<boost::shared_mutex> ChaosWriteLock;
+
+typedef struct boost::defer_lock_t     ChaosDeferLock_t;
+typedef struct boost::try_to_lock_t    ChaosTryToLock_t;
+typedef struct boost::adopt_lock_t     ChaosAdoptLock_t;
 
 typedef struct {
     float push_rate; // push rate

@@ -45,7 +45,8 @@ namespace chaos {
                     EVT_COMPLETED=4,		/**< The command has completed is work successfully */
                     EVT_FAULT=5,			/**< The command has fault */
                     EVT_KILLED=6,			/**< The command has been killed */
-					EVT_FATAL_FAULT=7       /**< The command has a fatal fault */
+					EVT_FATAL_FAULT=7,      /**< The command has a fatal fault */
+                    EVT_DEQUEUE = 8         /**< The command is queued */
                 } BatchCommandEventType;
             }
 

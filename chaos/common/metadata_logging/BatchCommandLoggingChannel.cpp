@@ -70,6 +70,9 @@ int BatchCommandLoggingChannel::logCommandState(const std::string& log_emitter,
         case EVT_KILLED:
             log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::CommandLogging::PARAM_NODE_LOGGING_LOG_COMMAND_STATE_DESCRIPTION, "Killed");
             break;
+        case EVT_DEQUEUE:
+            log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::CommandLogging::PARAM_NODE_LOGGING_LOG_COMMAND_STATE_DESCRIPTION, "Dequeued");
+            break;
     }
     if(message_data){log_entry->appendAllElement(*message_data);}
     return sendLog(log_entry,

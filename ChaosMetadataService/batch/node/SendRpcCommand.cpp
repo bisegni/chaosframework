@@ -50,8 +50,8 @@ void SendRpcCommand::setHandler(CDataWrapper *data) {
     
     bool node_alive;
     CDWUniquePtr rpc_message;
-    const std::string node_uid = command_instance->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
-    const std::string rpc_action = command_instance->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
+    const std::string node_uid = data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
+    const std::string rpc_action = data->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME);
     
     if(data->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE) &&
        data->isCDataWrapperValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) {
