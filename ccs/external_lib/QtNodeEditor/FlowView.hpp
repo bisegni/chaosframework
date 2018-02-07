@@ -11,8 +11,8 @@ class FlowView
   : public QGraphicsView
 {
 public:
-
-  FlowView(FlowScene *scene);
+    FlowView(QWidget *parent = Q_NULLPTR);
+    FlowView(FlowScene *scene);
 
 public slots:
 
@@ -40,6 +40,6 @@ protected:
 
 private:
 
-  FlowScene* _scene;
+  //FlowScene* _scene;
 };
 }

@@ -186,7 +186,9 @@ SOURCES += main.cpp\
     external_lib/QtNodeEditor/NodeState.cpp \
     external_lib/QtNodeEditor/NodeStyle.cpp \
     external_lib/QtNodeEditor/Properties.cpp \
-    external_lib/QtNodeEditor/StyleCollection.cpp
+    external_lib/QtNodeEditor/StyleCollection.cpp \
+    node/connection_manager/ConnectionEditor.cpp \
+    node/connection_manager/model/DataModel.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -360,7 +362,9 @@ HEADERS  += \
     external_lib/QtNodeEditor/QStringStdHash.hpp \
     external_lib/QtNodeEditor/Serializable.hpp \
     external_lib/QtNodeEditor/Style.hpp \
-    external_lib/QtNodeEditor/StyleCollection.hpp
+    external_lib/QtNodeEditor/StyleCollection.hpp \
+    node/connection_manager/ConnectionEditor.h \
+    node/connection_manager/model/DataModel.h
 
 FORMS    += \
     search/searchnoderesult.ui \
@@ -402,7 +406,8 @@ FORMS    += \
     widget/CPropertyTextEdit.ui \
     widget/CPopupWidgetContainer.ui \
     widget/ChaosStorageTypeWidget.ui \
-    preference/SelectNetworkDomain.ui
+    preference/SelectNetworkDomain.ui \
+    node/connection_manager/ConnectionEditor.ui
 
 DISTFILES += \
     dark_orange.stylesheet \

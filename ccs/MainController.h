@@ -33,6 +33,7 @@ private slots:
     void actionSwitchNetworkConfiguration();
     void actionApplicationLogBrowser();
     void lastWindowClosed();
+    void actionConnectionManager();
     void actionCloseWidget(QObject *widget);
 private:
     ApplicationErrorLogging *application_error_widget;

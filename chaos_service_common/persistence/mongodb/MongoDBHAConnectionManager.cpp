@@ -80,7 +80,7 @@ void MongoAuthHook::onHandedOut( mongo::DBClientBase * conn ) {
 }
 
 void MongoAuthHook::onDestroy( mongo::DBClientBase * conn ) {
-    MDBHAC_LAPP_ << "MongoDBHAConnectionManager::onDestroy - " << conn->getServerAddress();
+    MDBHAC_LDBG_ << "MongoDBHAConnectionManager::onDestroy - " << conn->getServerAddress();
 }
 
 const std::string& MongoAuthHook::getDatabaseName() {

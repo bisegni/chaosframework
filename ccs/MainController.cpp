@@ -30,6 +30,7 @@
 #include "script/ScriptManager.h"
 #include "monitor/healt/HealtMonitorWidget.h"
 #include "node/agent/AgentSetting.h"
+#include "node/connection_manager/ConnectionEditor.h"
 #include "GlobalServices.h"
 
 #include "metatypes.h"
@@ -198,6 +199,7 @@ void MainController::deinit() {
 
 void MainController::initApplicationMenuBar() {
     main_menu_bar.setNativeMenuBar(true);
+    main_menu_bar.clear();
     //node menu
     QMenu *menu = main_menu_bar.addMenu("&Node");
     menu->addAction("New Unit Server", this, SLOT(actionNewUnitServer()));
@@ -206,6 +208,7 @@ void MainController::initApplicationMenuBar() {
 
     //Data
     menu = main_menu_bar.addMenu("&Data");
+    menu->addAction("Connection Editor", this, SLOT(actionConnectionManager()),QKeySequence(Qt::CTRL + Qt::Key_M));
     menu->addAction("Snapshot manager", this, SLOT(actionSnaptshotManager()),QKeySequence(Qt::CTRL + Qt::Key_S));
     menu->addAction("Group manager", this, SLOT(actionTreeGroupManager()),QKeySequence(Qt::CTRL + Qt::Key_G));
     menu->addAction("Log Browser", this, SLOT(actionLogBrowser()),QKeySequence(Qt::CTRL + Qt::Key_L));
@@ -282,6 +285,10 @@ void MainController::actionDataService() {
 
 void MainController::actionNewNodeMonitor() {
     openInWindow(new HealtMonitorWidget());
+}
+
+void MainController::actionConnectionManager() {
+    openInWindow(new ConnectionEditor());
 }
 
 void MainController::actionApplicationLogBrowser() {

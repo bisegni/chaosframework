@@ -25,9 +25,31 @@ using QtNodes::FlowView;
 using QtNodes::FlowScene;
 
 FlowView::
+FlowView(QWidget *parent):
+    QGraphicsView(parent)
+{
+    setDragMode(QGraphicsView::ScrollHandDrag);
+    setRenderHint(QPainter::Antialiasing);
+
+    auto const &flowViewStyle = StyleCollection::flowViewStyle();
+
+    setBackgroundBrush(flowViewStyle.BackgroundColor);
+
+    //setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+    //setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+
+    setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+
+    setCacheMode(QGraphicsView::CacheBackground);
+
+    //setViewport(new QGLWidget(QGLFormat(QGL::SampleBuffers)));
+}
+
+FlowView::
 FlowView(FlowScene *scene)
   : QGraphicsView(scene)
-  , _scene(scene)
 {
   setDragMode(QGraphicsView::ScrollHandDrag);
   setRenderHint(QPainter::Antialiasing);
@@ -83,7 +105,7 @@ contextMenuEvent(QContextMenuEvent *event)
     }
   });
 
-  for (auto const &modelRegistry : _scene->registry().registeredModels())
+  for (auto const &modelRegistry : static_cast<FlowScene*>(scene())->registry().registeredModels())
   {
     QString const &modelName = modelRegistry.first;
     modelMenu.addAction(modelName);
@@ -96,11 +118,11 @@ contextMenuEvent(QContextMenuEvent *event)
   {
     QString modelName = action->text();
 
-    auto type = _scene->registry().create(modelName);
+    auto type = static_cast<FlowScene*>(scene())->registry().create(modelName);
 
     if (type)
     {
-      auto& node = _scene->createNode(std::move(type));
+      auto& node = static_cast<FlowScene*>(scene())->createNode(std::move(type));
 
       QPoint pos = event->pos();
 
@@ -171,14 +193,14 @@ keyPressEvent(QKeyEvent *event)
   switch (event->key())
   {
     case Qt::Key_Escape:
-      _scene->clearSelection();
+      scene()->clearSelection();
       break;
 
     case Qt::Key_Delete:
     {
       std::vector<Node*> nodesToDelete;
       std::vector<Connection*> connectionsToDelete;
-      for (QGraphicsItem * item : _scene->selectedItems())
+      for (QGraphicsItem * item : scene()->selectedItems())
       {
         if (auto n = dynamic_cast<NodeGraphicsObject*>(item))
           nodesToDelete.push_back(&n->node());
@@ -188,10 +210,10 @@ keyPressEvent(QKeyEvent *event)
       }
 
       for( auto & n : nodesToDelete )
-        _scene->removeNode(*n);
+        static_cast<FlowScene*>(scene())->removeNode(*n);
 
       for( auto & c : connectionsToDelete )
-        _scene->deleteConnection(*c);
+        static_cast<FlowScene*>(scene())->deleteConnection(*c);
 
     }
 
@@ -282,7 +304,7 @@ void
 FlowView::
 showEvent(QShowEvent *event)
 {
-  _scene->setSceneRect(this->rect());
+  scene()->setSceneRect(this->rect());
   QGraphicsView::showEvent(event);
 }
 
