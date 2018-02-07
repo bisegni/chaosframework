@@ -141,6 +141,8 @@ SET(cnd_src  ${cnd_src}	api/node/NodeGroup.cpp
                         api/node/CommandInstanceSubmit.cpp
                         api/node/CommandCommonUtility.cpp
                         api/node/KillCurrentCommand.cpp
+                        api/node/ClearCommandQueue.cpp
+                        api/node/ForwardNodeRpcMessage.cpp
 			            api/node/GetPropertyDefaultValues.cpp
                         api/node/GetCommandAndTemplateDescription.cpp)
 
@@ -224,7 +226,8 @@ SET(cnd_src  ${cnd_src}	batch/agent/AgentAckCommand.cpp
                         batch/agent/AgentLoggingNodeManagement.cpp)
 
 SET(cnd_src  ${cnd_src}	batch/node/UpdatePropertyCommand.cpp
-                        batch/node/SubmitBatchCommand.cpp)
+                        batch/node/SubmitBatchCommand.cpp
+                        batch/node/SendRpcCommand.cpp)
 
 SET(cnd_src  ${cnd_src}	batch/unit_server/UnitServerAckBatchCommand.cpp
                         batch/unit_server/LoadUnloadControlUnit.cpp)
