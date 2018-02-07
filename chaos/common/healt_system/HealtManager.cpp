@@ -413,12 +413,20 @@ void HealtManager::addNodeMetricValue(const std::string& node_uid,
 CDataWrapper*  HealtManager::prepareNodeDataPack(NodeHealtSet& node_health_set,
                                                  uint64_t push_timestamp) {
     CDataWrapper *node_data_pack = new CDataWrapper();
-    
+    int64_t cur_ts_usec = TimingUtil::getTimeStampInMicroseconds();
     if(node_data_pack) {
         //add device unique id
         node_data_pack->addStringValue(DataPackCommonKey::DPCK_DEVICE_ID, node_health_set.node_uid);
         //add dataset type
         node_data_pack->addInt32Value(DataPackCommonKey::DPCK_DATASET_TYPE, DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH);
+        
+        node_data_pack->addInt64Value(DataPackCommonKey::DPCK_SEQ_ID, cur_ts_usec);
+        
+        node_data_pack->addInt64Value(ControlUnitDatapackCommonKey::RUN_ID, (int64_t)0);
+        
+        //set sequence id to the timestamp microseconds
+        node_data_pack->addInt64Value(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP, cur_ts_usec);
+        
         //set the push timestamp
         static_cast<Int64HealtMetric*>(node_health_set.map_metric[NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP].get())->value = push_timestamp;
         

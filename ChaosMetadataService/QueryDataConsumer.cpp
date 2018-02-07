@@ -194,7 +194,7 @@ int QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *hea
         job->data_pack = channel_data;
         job->data_pack_len = channel_data_len;
         if((err = device_data_worker[index_to_use]->submitJobInfo(job))) {
-            DEBUG_CODE(DBG << "error pushing data into worker queue");
+            DEBUG_CODE(DBG << "Error pushing data into worker queue");
             delete job;
             free(header);
             free(channel_data);
