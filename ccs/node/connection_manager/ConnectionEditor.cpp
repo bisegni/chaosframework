@@ -1,6 +1,6 @@
 #include "ConnectionEditor.h"
 #include "ui_ConnectionEditor.h"
-#include "model/DataModel.h"
+#include "model/ControlUnitNodeDataModel.h"
 using namespace QtNodes;
 
 ConnectionEditor::ConnectionEditor(QWidget *parent) :
@@ -19,7 +19,7 @@ ConnectionEditor::~ConnectionEditor() {
 std::shared_ptr<DataModelRegistry> ConnectionEditor::registerDataModels() {
     auto ret = std::make_shared<DataModelRegistry>();
 
-    ret->registerModel<DataModel>();
+    ret->registerModel<ControlUnitNodeDataModel>();
 
     /*
          We could have more models registered.
@@ -32,4 +32,9 @@ std::shared_ptr<DataModelRegistry> ConnectionEditor::registerDataModels() {
 
     return ret;
 
+}
+
+void ConnectionEditor::on_actionControl_Unit_triggered() {
+    std::unique_ptr<ControlUnitNodeDataModel> new_node_mode(new ControlUnitNodeDataModel());
+    scene.createNode(std::move(new_node_mode));
 }

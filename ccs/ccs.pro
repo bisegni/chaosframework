@@ -172,7 +172,6 @@ SOURCES += main.cpp\
     external_lib/QtNodeEditor/ConnectionState.cpp \
     external_lib/QtNodeEditor/ConnectionStyle.cpp \
     external_lib/QtNodeEditor/DataModelRegistry.cpp \
-    external_lib/QtNodeEditor/example_models.cpp \
     external_lib/QtNodeEditor/FlowItemInterface.cpp \
     external_lib/QtNodeEditor/FlowScene.cpp \
     external_lib/QtNodeEditor/FlowView.cpp \
@@ -188,7 +187,7 @@ SOURCES += main.cpp\
     external_lib/QtNodeEditor/Properties.cpp \
     external_lib/QtNodeEditor/StyleCollection.cpp \
     node/connection_manager/ConnectionEditor.cpp \
-    node/connection_manager/model/DataModel.cpp
+    node/connection_manager/model/ControlUnitNodeDataModel.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -342,7 +341,6 @@ HEADERS  += \
     external_lib/QtNodeEditor/ConnectionState.hpp \
     external_lib/QtNodeEditor/ConnectionStyle.hpp \
     external_lib/QtNodeEditor/DataModelRegistry.hpp \
-    external_lib/QtNodeEditor/example_models.hpp \
     external_lib/QtNodeEditor/FlowItemInterface.hpp \
     external_lib/QtNodeEditor/FlowScene.hpp \
     external_lib/QtNodeEditor/FlowView.hpp \
@@ -364,7 +362,7 @@ HEADERS  += \
     external_lib/QtNodeEditor/Style.hpp \
     external_lib/QtNodeEditor/StyleCollection.hpp \
     node/connection_manager/ConnectionEditor.h \
-    node/connection_manager/model/DataModel.h
+    node/connection_manager/model/ControlUnitNodeDataModel.h
 
 FORMS    += \
     search/searchnoderesult.ui \

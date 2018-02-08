@@ -144,8 +144,6 @@ void* MongoDBHAConnectionManager::serviceForURL(const URL& url,
                                                 uint32_t service_index) {
     std::string msg;
     ConnectionInfo *conn = new ConnectionInfo();
-    //conn->connect(mongo::HostAndPort(url.getURL()), msg);
-    //conn->auth(hook->db, hook->user, hook->pwd, msg);
     conn->conn_str = mongo::ConnectionString(mongo::HostAndPort(url.getURL()));
     conn->service_index = service_index;
     return (void*)conn;

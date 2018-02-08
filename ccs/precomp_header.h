@@ -4,6 +4,7 @@
 
 #if defined __cplusplus
 // Add C++ includes here
+#include <chaos/common/chaos_types.h>
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/utility/Singleton.h>

@@ -17,6 +17,9 @@ public:
     explicit ConnectionEditor(QWidget *parent = 0);
     ~ConnectionEditor();
 
+private slots:
+    void on_actionControl_Unit_triggered();
+
 private:
     QtNodes::FlowScene scene;
     Ui::ConnectionEditor *ui;

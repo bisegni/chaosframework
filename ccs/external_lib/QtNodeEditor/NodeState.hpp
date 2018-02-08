@@ -89,7 +89,6 @@ private:
   ReactToConnectionState _reaction;
   PortType     _reactingPortType;
   NodePortType _reactingDataType;
-
   bool _resizing;
 };
 }
