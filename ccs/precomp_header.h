@@ -6,6 +6,7 @@
 // Add C++ includes here
 #include <chaos/common/chaos_types.h>
 #include <chaos/common/chaos_constants.h>
+#include <chaos/common/data/structured/DatasetAttribute.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/utility/Singleton.h>
 #include <chaos/common/exception/CException.h>

@@ -31,7 +31,7 @@ ConnectionEditor::~ConnectionEditor() {
 std::shared_ptr<DataModelRegistry> ConnectionEditor::registerDataModels() {
     auto ret = std::make_shared<DataModelRegistry>();
 
-    ret->registerModel<ControlUnitNodeDataModel>();
+    //ret->registerModel<ControlUnitNodeDataModel>();
 
     /*
          We could have more models registered.
@@ -54,12 +54,12 @@ void ConnectionEditor::onApiDone(const QString& tag,
                                  QSharedPointer<chaos::common::data::CDataWrapper> api_result) {
     qDebug() << "Add control unit " << tag;
     if(api_result.isNull()) return;
-    qDebug() << QString::fromStdString(api_result->getJSONString());
-    DatasetAttributeList dataset_attribute_list;
+
+    std::unique_ptr<DatasetAttributeList> dataset_attribute_list(new DatasetAttributeList());
     GetCurrentDataset::deserialize(*api_result,
-                                   dataset_attribute_list);
-    //    std::unique_ptr<ControlUnitNodeDataModel> new_node_mode(new ControlUnitNodeDataModel());
-    //    scene.createNode(std::move(new_node_mode));
+                                   *dataset_attribute_list);
+    std::unique_ptr<ControlUnitNodeDataModel> new_node_mode(new ControlUnitNodeDataModel(dataset_attribute_list));
+    scene.createNode(std::move(new_node_mode));
 }
 
 void ConnectionEditor::dragEnterEvent(QDragEnterEvent *e) {

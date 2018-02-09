@@ -48,6 +48,7 @@ class ControlUnitNodeDataModel:
     Q_OBJECT
 public:
     ControlUnitNodeDataModel();
+    ControlUnitNodeDataModel(std::unique_ptr<chaos::common::data::structured::DatasetAttributeList>& _attr_lis);
     virtual ~ControlUnitNodeDataModel();
 
 public:
@@ -70,10 +71,9 @@ public:
 
     QWidget * embeddedWidget() override;
 private slots:
-    void lineEditEditingFinished();
+
 private:
-    unsigned int port_number;
-     QLineEdit * line_edit;
+     std::unique_ptr<chaos::common::data::structured::DatasetAttributeList> attr_list;
 };
 
 #endif // CONTROLUNITNODEDATAMODEL_H

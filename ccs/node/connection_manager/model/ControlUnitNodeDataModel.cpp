@@ -13,13 +13,12 @@ ch_name(_name){}
 NodePortType ControlUnitChannelData::type() const {
     return NodePortType {QString::number(ch_type), ch_name};
 }
-
 ControlUnitNodeDataModel::ControlUnitNodeDataModel():
-    port_number(0),
-    line_edit(new  QLineEdit()){
-    line_edit->setGeometry(0,0,40,40);
-    connect(line_edit, SIGNAL(editingFinished()), SLOT(lineEditEditingFinished()));
-}
+    attr_list(){}
+
+ControlUnitNodeDataModel::ControlUnitNodeDataModel(std::unique_ptr<chaos::common::data::structured::DatasetAttributeList>& _attr_list):
+    attr_list(std::move(_attr_list)){}
+
 ControlUnitNodeDataModel::~ControlUnitNodeDataModel(){}
 
 QString ControlUnitNodeDataModel::caption() const {
@@ -96,13 +95,5 @@ std::shared_ptr<NodeData> ControlUnitNodeDataModel::outData(PortIndex port) {
 void  ControlUnitNodeDataModel::setInData(std::shared_ptr<NodeData>, int) {}
 
 QWidget * ControlUnitNodeDataModel::embeddedWidget() {
-    return line_edit;
-}
-
-void ControlUnitNodeDataModel::lineEditEditingFinished() {
-    bool ok = false;
-    int num = line_edit->text().toInt(&ok);
-    if(ok) {
-        port_number = qAbs(num);
-    }
+    return nullptr;
 }
