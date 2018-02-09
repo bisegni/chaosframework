@@ -140,10 +140,7 @@ namespace chaos {
                 }
                 
                 static inline std::locale getLocale(int i){
-                    boost::posix_time::time_input_facet* tf=new boost::posix_time::time_input_facet();
-                    tf->format(formats[i]);
-                    std::locale loc(std::locale::classic(),tf);
-                    return loc;
+                    return std::locale(std::locale::classic(), new boost::posix_time::time_input_facet(formats[i]));
                 }
                 //!chack if a string is well format for date representation
                 static bool dateWellFormat(const std::string& timestamp) {

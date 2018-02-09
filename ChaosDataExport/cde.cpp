@@ -191,7 +191,7 @@ int main(int argc, char* argv[]) {
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_DST_FILE, "Destination file for save found datapack", &dst_file);
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_START_TIME, "Time for first datapack to find [format from %Y-%m-%dT%H:%M:%S.%f to %Y]", &start_time);
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_END_TIME, "Time for last datapack to find [format from %Y-%m-%dT%H:%M:%S.%f to %Y]", &end_time);
-        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>(OPT_PAGE_LENGHT, "query page lenght", 1, &page_len);
+        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>(OPT_PAGE_LENGHT, "query page lenght", 30, &page_len);
         //! [UIToolkit Attribute Init]
         
         //! [UIToolkit Init]
@@ -260,7 +260,6 @@ int main(int argc, char* argv[]) {
         if(!controller) throw CException(4, "Error allocating decive controller", "device controller creation");
         
         
-        
         chaos::common::io::QueryCursor *query_cursor = NULL;
         controller->executeTimeIntervallQuery(DatasetDomainOutput,
                                               start_ts,
@@ -321,6 +320,7 @@ int main(int argc, char* argv[]) {
                     }
                     //write the data
                     if(ser.get())destination_stream->write(ser->getBufferPtr(), ser->getBufferLen());
+                    
                 } else {
                     break;
                 }
@@ -330,10 +330,9 @@ int main(int argc, char* argv[]) {
             std::cout << std::endl;
             std::cout << "Releasing query" << std::endl;
             controller->releaseQuery(query_cursor);
-            
-            destination_stream->flush();
-            std::cout << "Releasing controller" << std::endl;
         }
+        destination_stream->flush();
+        std::cout << "Releasing controller" << std::endl;
         HLDataApi::getInstance()->disposeDeviceControllerPtr(controller);
     } catch (CException& e) {
         std::cout << "\x1B[?25h";
