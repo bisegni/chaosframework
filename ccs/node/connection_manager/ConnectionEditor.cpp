@@ -5,6 +5,7 @@ using namespace QtNodes;
 
 ConnectionEditor::ConnectionEditor(QWidget *parent) :
     QMainWindow(parent),
+    api_submitter(this),
     scene(registerDataModels()),
     ui(new Ui::ConnectionEditor){
     setWindowTitle("Connection Editor");
@@ -14,6 +15,11 @@ ConnectionEditor::ConnectionEditor(QWidget *parent) :
 
 ConnectionEditor::~ConnectionEditor() {
     delete ui;
+}
+
+void ConnectionEditor::onApiDone(const QString& tag,
+                                 QSharedPointer<chaos::common::data::CDataWrapper> api_result) {
+
 }
 
 std::shared_ptr<DataModelRegistry> ConnectionEditor::registerDataModels() {
@@ -31,7 +37,6 @@ std::shared_ptr<DataModelRegistry> ConnectionEditor::registerDataModels() {
        */
 
     return ret;
-
 }
 
 void ConnectionEditor::on_actionControl_Unit_triggered() {
