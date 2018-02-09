@@ -73,6 +73,9 @@ namespace chaos {
                     int getDataset(const std::string& cu_unique_id,
                                    chaos::common::data::CDataWrapper **dataset_description);
                     
+                    int getDataset(const std::string& cu_unique_id,
+                                   chaos::common::data::structured::Dataset& dataset);
+                    
                     int getFullDescription(const std::string& cu_unique_id,
                                            chaos::common::data::CDataWrapper **dataset_description);
                     
@@ -125,7 +128,7 @@ namespace chaos {
                     
                     int eraseControlUnitDataBeforeTS(const std::string& control_unit_id,
                                                      uint64_t unit_ts);
-
+                    
                     int getNextRunID(const std::string& control_unit_id, int64_t& run_id);
                 };
                 

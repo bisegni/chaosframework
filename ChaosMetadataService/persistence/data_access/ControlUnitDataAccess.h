@@ -25,6 +25,7 @@
 #include "../persistence_types.h"
 
 #include <chaos/common/data/CDataWrapper.h>
+#include <chaos/common/data/structured/Dataset.h>
 
 #include <chaos_service_common/data/data.h>
 
@@ -70,6 +71,9 @@ namespace chaos {
                     
                     virtual int getDataset(const std::string& cu_unique_id,
                                            chaos::common::data::CDataWrapper **dataset_description) = 0;
+                    
+                    virtual int getDataset(const std::string& cu_unique_id,
+                                           chaos::common::data::structured::Dataset& dataset) = 0;
                     
                     virtual int setCommandDescription(chaos::common::data::CDataWrapper& command_description) = 0;
                     

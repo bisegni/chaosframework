@@ -21,6 +21,11 @@ protected:
     //!Api has ben called successfully
     void onApiDone(const QString& tag,
                    QSharedPointer<chaos::common::data::CDataWrapper> api_result);
+
+    void dragEnterEvent(QDragEnterEvent *e);
+    void dropEvent(QDropEvent *e);
+    void dragMoveEvent(QDragMoveEvent* e);
+    void dragLeaveEvent(QDragLeaveEvent* e);
 private slots:
     void on_actionControl_Unit_triggered();
 

@@ -35,7 +35,7 @@
 
 using namespace chaos;
 using namespace chaos::common::data;
-
+using namespace chaos::common::data::structured;
 using namespace chaos::common::utility;
 using namespace chaos::service_common::data::script;
 using namespace chaos::service_common::persistence::mongodb;
@@ -456,6 +456,49 @@ int MongoDBControlUnitDataAccess::getDataset(const std::string& cu_unique_id,
         } else {
             //we have dataset so set it directly within the cdsta wrapper
             *dataset_description = new CDataWrapper(result.getObjectField(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION).objdata());
+        }
+    } catch (const mongo::DBException &e) {
+        MDBCUDA_ERR << e.what();
+        err = -1;
+    } catch (const CException &e) {
+        MDBCUDA_ERR << e.what();
+        err = e.errorCode;
+    }
+    return err;
+}
+
+
+int MongoDBControlUnitDataAccess::getDataset(const std::string& cu_unique_id,
+                                             Dataset& dataset) {
+    int err = 0;
+    mongo::BSONObj result;
+    try {
+        mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << cu_unique_id
+                                    << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_CONTROL_UNIT
+                                    << ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION  << BSON("$exists" << true ));
+        mongo::BSONObj prj = BSON(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION  << 1 <<
+                                  ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_COMMAND_DESCRIPTION << 1);
+        
+        
+        DEBUG_CODE(MDBCUDA_DBG<<log_message("getDataset",
+                                            "findOne",
+                                            DATA_ACCESS_LOG_2_ENTRY("query",
+                                                                    "prj",
+                                                                    query.toString(),
+                                                                    prj.toString()));)
+        //remove the field of the document
+        if((err = connection->findOne(result,
+                                      MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                      query,
+                                      &prj))) {
+            MDBCUDA_ERR << "Error fetching dataset";
+        } else if(result.isEmpty()) {
+            MDBCUDA_ERR << "No element found";
+        } else {
+            //we have dataset so set it directly within the cdsta wrapper
+            CDWUniquePtr ds_in_cdw(new CDataWrapper(result.getObjectField(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION).objdata()));
+            DatasetSDWrapper reference_ser_wrap(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(Dataset, dataset));
+            reference_ser_wrap.deserialize(ds_in_cdw.get());
         }
     } catch (const mongo::DBException &e) {
         MDBCUDA_ERR << e.what();
