@@ -83,7 +83,7 @@ chaos::common::data::SerializationBuffer *getCSVDecoding( DeviceController& cont
     chaos::common::data::SerializationBuffer *result = NULL;
     std::stringstream csv_lin;
     chaos::common::data::RangeValueInfo attribute_info;
-    
+
     //write timetamp before all field
     csv_lin << data_pack.getInt64Value(chaos::DataPackCommonKey::DPCK_TIMESTAMP) << ",";
     csv_lin << data_pack.getInt64Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_RUN_ID) << ",";
@@ -94,7 +94,7 @@ chaos::common::data::SerializationBuffer *getCSVDecoding( DeviceController& cont
         it++){
         //fetch the type
         controller.getDeviceAttributeRangeValueInfo(*it, attribute_info);
-        
+
         //write the data in csv way
         switch(attribute_info.valueType){
             case DataType::TYPE_BOOLEAN:{
@@ -103,7 +103,7 @@ chaos::common::data::SerializationBuffer *getCSVDecoding( DeviceController& cont
                 }
                 break;
             }
-                
+
             case DataType::TYPE_BYTEARRAY:{
                 uint32_t len;
                 std::string binary_field;
@@ -114,7 +114,7 @@ chaos::common::data::SerializationBuffer *getCSVDecoding( DeviceController& cont
                 }
                 break;
             }
-                
+
             case DataType::TYPE_DOUBLE:
                 if(data_pack.hasKey((*it).c_str())){
                     csv_lin << data_pack.getDoubleValue((*it).c_str());
@@ -126,21 +126,21 @@ chaos::common::data::SerializationBuffer *getCSVDecoding( DeviceController& cont
                 }
                 break;
             }
-                
+
             case DataType::TYPE_INT64:{
                 if(data_pack.hasKey((*it).c_str())){
                     csv_lin << data_pack.getInt64Value((*it).c_str());
                 }
                 break;
             }
-                
+
             case DataType::TYPE_STRING:{
                 if(data_pack.hasKey((*it).c_str())){
                     csv_lin << data_pack.getStringValue((*it).c_str());
                 }
                 break;
             }
-                
+
             default:
                 break;
         }
@@ -169,19 +169,19 @@ int main(int argc, const char* argv[]) {
     std::string err_str;
     std::ostream	*destination_stream = NULL;
     std::ofstream	destination_file;
-    
+
     uint64_t start_ts = 0;
     uint64_t end_ts = 0;
-    
+
     int rett=0;
     int retry = 0;
     uint32_t cicle_number = 0;
     //clear buffer
     memset(buf, 0, 255);
-    
+
     //disable buffer
     std::setvbuf(stdout, NULL, _IONBF, 0);
-    
+
     CDeviceNetworkAddress deviceNetworkAddress;
     try{
         //std::cout << "\x1B[?25l";
@@ -194,14 +194,14 @@ int main(int argc, const char* argv[]) {
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_END_TIME, "Time for last datapack to find [format from %Y-%m-%dT%H:%M:%S.%f to %Y]", &end_time);
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>(OPT_PAGE_LENGHT, "query page lenght", 30, &page_len);
         //! [UIToolkit Attribute Init]
-        
+
         //! [UIToolkit Init]
         ChaosUIToolkit::getInstance()->init(argc, argv);
         //! [UIToolkit Init]
         if(!ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_CU_ID)){
             throw CException(-1, "invalid device identification string", "check param");
         }
-        
+
         //get the timestamp for query boundary
         if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_START_TIME)){
             //try to check if the string is a number
@@ -215,7 +215,7 @@ int main(int argc, const char* argv[]) {
             }
             std::cout << "Set start data to:"<< start_time << std::endl;
         }
-        
+
         if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_END_TIME)){
             //try to check if the string is a number
             try {
@@ -228,7 +228,7 @@ int main(int argc, const char* argv[]) {
             }
             std::cout << "Set end data to:"<< end_time << std::endl;
         }
-        
+
         switch(dest_type) {
             case 0:
                 dst_file.append(".bin");
@@ -240,7 +240,7 @@ int main(int argc, const char* argv[]) {
                 dst_file.append(".cvs");
                 break;
         }
-        
+
         std::basic_ios<char>::openmode dst_file_mode = ios_base::out;
         if(dest_type) {
             dst_file_mode |= ios_base::binary;
@@ -253,25 +253,24 @@ int main(int argc, const char* argv[]) {
         }
         std::cout << "Destination file -> " << dst_file << std::endl;
         destination_stream = &destination_file;
-        
+
         //we can allocate the channel
         std::cout << "Acquiring controller" << std::endl;
         DeviceController *controller = HLDataApi::getInstance()->getControllerForDeviceID(device_id, timeout);
         if(!controller) throw CException(4, "Error allocating decive controller", "device controller creation");
-        
-        
+
         chaos::common::io::QueryCursor *query_cursor = NULL;
         controller->executeTimeIntervallQuery(DatasetDomainOutput,
                                               start_ts,
                                               end_ts,
                                               &query_cursor,
                                               page_len);
-        
+
         std::vector<std::string> output_element_name;
         //fetche the output element of the device
         controller->getDeviceDatasetAttributesName(output_element_name,
                                                    DataType::Output);
-        
+
         //create header
         if(dest_type == 2) {
             //write header
@@ -289,7 +288,7 @@ int main(int argc, const char* argv[]) {
             }
             (*destination_stream) << std::endl;
         }
-        
+
         if(query_cursor) {
             uint32_t exported = 0;
             std::cout << "Exported " << std::flush;
@@ -320,7 +319,7 @@ int main(int argc, const char* argv[]) {
                     }
                     //write the data
                     if(ser.get())destination_stream->write(ser->getBufferPtr(), ser->getBufferLen());
-                    
+
                 } else {
                     break;
                 }
@@ -343,7 +342,7 @@ int main(int argc, const char* argv[]) {
         std::cerr << "General error " << std::endl;
         return -2;
     }
-    
+
     try {
         //! [UIToolkit Deinit]
         ChaosUIToolkit::getInstance()->deinit();
@@ -357,4 +356,3 @@ int main(int argc, const char* argv[]) {
     std::cout << std::endl << "Export done"<< std::endl;
     return rett;
 }
-
