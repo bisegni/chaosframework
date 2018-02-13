@@ -75,7 +75,10 @@ SET(mcl_src ${mcl_src}      api_proxy/node/GetNodeDescription.cpp
                             api_proxy/node/UpdateProperty.cpp
 			    api_proxy/node/GetPropertyDefaultValues.cpp
 			    api_proxy/node/UpdatePropertyDefaultValues.cpp
-                            api_proxy/node/GetCommandAndTemplateDescription.cpp)
+                            api_proxy/node/GetCommandAndTemplateDescription.cpp
+			    api_proxy/node/KillCurrentCommand.cpp
+
+			    )
 
 SET(mcl_src ${mcl_src}      api_proxy/data_service/NewDS.cpp
                             api_proxy/data_service/UpdateDS.cpp
