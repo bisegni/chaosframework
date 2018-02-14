@@ -18,11 +18,11 @@
  * See the Licence for the specific language governing
  * permissions and limitations under the Licence.
  */
+#include <chaos/common/exception/CException.h>
 #include <chaos/common/global.h>
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/dispatcher/DefaultCommandDispatcher.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
-
 using namespace chaos;
 using namespace chaos::common::data;
 //namespace chaos_data = chaos::common::data;
@@ -246,6 +246,7 @@ CDataWrapper* DefaultCommandDispatcher::executeCommandSync(CDataWrapper * messag
         //tag message has submitted
         result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 0);
     }catch(CException& ex){
+        LDEF_CMD_DISPTC_ERR_<<ex;
         DECODE_CHAOS_EXCEPTION_IN_CDATAWRAPPERPTR(result, ex)
     } catch(...){
         MANAGE_ERROR_IN_CDATAWRAPPERPTR(result, -5, "General exception received", __PRETTY_FUNCTION__)
@@ -286,6 +287,7 @@ CDataWrapper *DefaultCommandDispatcher::dispatchCommand(CDataWrapper *commandPac
         resultPack->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, ErrorCode::EC_NO_ERROR);
     }catch(CException& ex){
         if(!sent && commandPack) delete(commandPack);
+        LDEF_CMD_DISPTC_ERR_<<ex;
         DECODE_CHAOS_EXCEPTION_IN_CDATAWRAPPERPTR(resultPack, ex)
     } catch(...){
         if(!sent && commandPack) delete(commandPack);
