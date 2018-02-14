@@ -35,14 +35,22 @@ void AbstractClientRemoteIODriver::driverInit(const char *initParameter) throw (
 void AbstractClientRemoteIODriver::driverInit(const chaos::common::data::CDataWrapper& init_parameter) throw(chaos::CException) {
     int err = 0;
     std::string content_type = "application/json";
-    CHECK_ASSERTION_THROW_AND_LOG(init_parameter.hasKey("uri"), ERR, -2, "The hostname name is mandatory");
-    const std::string uri = init_parameter.getStringValue("uri");
-    CHECK_ASSERTION_THROW_AND_LOG(uri.size() != 0, ERR, -3, "The uri parameter can't be empty string");
+    CHECK_MANDATORY_KEY(const_cast<const CDataWrapper *>(&init_parameter) , "url", ERR, -2);
+    CHECK_TYPE_OF_KEY(const_cast<const CDataWrapper *>(&init_parameter), "url", String, ERR, -3);
+
+    const std::string url = init_parameter.getStringValue("url");
+    CHECK_ASSERTION_THROW_AND_LOG(url.size() != 0, ERR, -3, "The uri parameter can't be empty string");
     //! end point identifier & authorization key
     if(init_parameter.hasKey("endpoint_name")){
         ExternalUnitClientEndpoint::endpoint_identifier = init_parameter.getStringValue("endpoint_name");
     } else {
         ExternalUnitClientEndpoint::endpoint_identifier = init_parameter.getStringValue("uri");
+    }
+    
+    //check if a driver uri has been set
+    if(init_parameter.hasKey("uri") &&
+       init_parameter.isStringValue("uri")) {
+        setDriverUri(init_parameter.getStringValue("uri"));
     }
     
     if(init_parameter.hasKey("content_type") &&
@@ -58,7 +66,7 @@ void AbstractClientRemoteIODriver::driverInit(const chaos::common::data::CDataWr
     err = chaos::common::external_unit::ExternalUnitManager::getInstance()->initilizeConnection(*this,
                                                                                                 "http",
                                                                                                 content_type,
-                                                                                                uri);
+                                                                                                url);
     CHECK_ASSERTION_THROW_AND_LOG(err == 0, ERR, -4, "Error creating connection");
 }
 

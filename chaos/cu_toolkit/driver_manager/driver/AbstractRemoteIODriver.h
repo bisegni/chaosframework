@@ -41,6 +41,7 @@
 #define AUTHORIZATION_STATE         "authorization_state"
 #define CONFIGURATION_STATE         "configuration_state"
 #define MESSAGE                     "msg"
+#define MESSAGE_URI                 "uri"
 #define MESSAGE_OPCODE              "opc"
 #define MESSAGE_OPCODE_PARAMETER    "par"
 #define REQUEST_IDENTIFICATION      "req_id"
@@ -72,7 +73,7 @@ namespace chaos {
                 public chaos::cu::driver_manager::driver::AbstractDriver,
                 public chaos::cu::driver_manager::driver::AbstractDriverPlugin,
                 public EndpointType {
-                    //                    friend class AbstractServerRemoteIODriver;
+                    // friend class AbstractServerRemoteIODriver;
                     friend class AbstractClientRemoteIODriver;
                 protected:
                     typedef enum {
@@ -84,9 +85,16 @@ namespace chaos {
                     } RDConnectionPhase;
                 private:
                     CHAOS_DEFINE_LOCKABLE_OBJECT(std::string, LString);
-                    LString                             current_connection_identifier;
-                    std::string                         authorization_key;
-                    RDConnectionPhase                   conn_phase;
+                    //!keep track of the current driver connection state
+                    RDConnectionPhase   conn_phase;
+                    //!the uri of the driver
+                    std::string         remote_uri;
+                    //!the uri instance to be used for api call subseguent the initialization phase
+                    std::string         remote_uri_instance;
+                    //!is the aturization key used to authenticate the remote parte
+                    std::string         authorization_key;
+                    //!is the indetifier of the remote conenction used by the sublayer
+                    LString             current_connection_identifier;
                 protected:
                     CDWShrdPtrFutureHelper future_hepler;
                     //message sent to remote endpoint when new connection has been received
@@ -114,16 +122,16 @@ namespace chaos {
                         CHAOS_NOT_THROW(future_hepler.deinit();)
                         if(conn_phase == RDConnectionPhaseAutorized ||
                            conn_phase == RDConnectionPhaseConfigured) {
-                                chaos::common::data::CDWUniquePtr deinit_msg(new chaos::common::data::CDataWrapper());
-                                chaos::common::data::CDWShrdPtr message_response;
-                                if((err = _sendRawOpcodeRequest("deinit",
-                                                                ChaosMoveOperator(deinit_msg),
-                                                                message_response)) == 0){
-                                    AbstractRemoteIODriver_ERR<< CHAOS_FORMAT("[%1%]Error deinitilizing remote driver on connection", %current_connection_identifier());
-                                }
+                            chaos::common::data::CDWUniquePtr deinit_msg(new chaos::common::data::CDataWrapper());
+                            chaos::common::data::CDWShrdPtr message_response;
+                            if((err = _sendRawOpcodeRequest(remote_uri_instance,
+                                                            "deinit",
+                                                            ChaosMoveOperator(deinit_msg),
+                                                            message_response)) == 0){
+                                //AbstractRemoteIODriver_INFO << CHAOS_FORMAT("[%1%]Error deinitilizing remote driver on connection", %current_connection_identifie());
                             }
+                        }
                     }
-                    
                     bool checkAuthenticationState(chaos::common::data::CDWShrdPtr& message_response) {
                         bool result = false;
                         if(message_response->hasKey("err") &&
@@ -138,7 +146,6 @@ namespace chaos {
                         }
                         return result;
                     }
-                    
                     bool checkConfigurationState(chaos::common::data::CDWShrdPtr& message_response) {
                         bool result = false;
                         if(message_response->hasKey("err") &&
@@ -151,21 +158,31 @@ namespace chaos {
                            message_response->isInt32Value(CONFIGURATION_STATE)) {
                             result = (message_response->getInt32Value(CONFIGURATION_STATE) == 1);
                         }
+                        
+                        if(message_response->hasKey(MESSAGE_URI) &&
+                           message_response->isStringValue(MESSAGE_URI)) {
+                            remote_uri_instance = message_response->getStringValue(MESSAGE_URI);
+                        }
                         return result;
                     }
                 public:
                     AbstractRemoteIODriver():
                     chaos::cu::driver_manager::driver::AbstractDriverPlugin(this),
                     EndpointType(),
+                    remote_uri(),
+                    remote_uri_instance(),
                     authorization_key(),
                     conn_phase(RDConnectionPhaseDisconnected),
-                    driver_init_pack(new chaos::common::data::CDataWrapper()){
-                        
-                    }
+                    driver_init_pack(new chaos::common::data::CDataWrapper()){}
                     
                     ~AbstractRemoteIODriver(){}
                     
-                    //!Send raw request to the remote driver
+                    //!set a new uri for driver
+                    void setDriverUri(std::string _new_remote_uri) {
+                         remote_uri = _new_remote_uri;
+                    }
+                    
+                    //!Send opcode request to the remote driver
                     /*!
                      \param message_data is the raw data to be transmitted to the remote driver
                      \param received_data si the raw data received from the driver
@@ -179,10 +196,28 @@ namespace chaos {
                         if((err = _managePhases())) {
                             return err;
                         }
-                        return _sendRawOpcodeRequest(opcode,
+                        return _sendRawOpcodeRequest(remote_uri_instance,
+                                                     opcode,
                                                      ChaosMoveOperator(message_data),
                                                      message_response,
                                                      timeout);
+                    }
+                    
+                    //!Send opcode message to the remote driver
+                    /*!
+                     \param message_data is the raw data to be transmitted to the remote driver
+                     \param received_data si the raw data received from the driver
+                     */
+                    int sendOpcodeMessage(const std::string opcode,
+                                          chaos::common::data::CDWUniquePtr message_data) {
+                        int err = 0;
+                        LStringWriteLock wl = current_connection_identifier.getWriteLockObject();
+                        if((err = _managePhases())) {
+                            return err;
+                        }
+                        return _sendRawOpcodeMessage(remote_uri_instance,
+                                                     opcode,
+                                                     ChaosMoveOperator(message_data));
                     }
                     
                     //!Send raw request to the remote driver
@@ -327,7 +362,8 @@ namespace chaos {
                                 chaos::common::data::CDWShrdPtr message_response;
                                 chaos::common::data::CDWUniquePtr auth_ack_data(new chaos::common::data::CDataWrapper());
                                 auth_ack_data->addStringValue(AUTHORIZATION_KEY, authorization_key);
-                                if((err = _sendRawOpcodeRequest("auth",
+                                if((err = _sendRawOpcodeRequest(remote_uri,
+                                                                "auth",
                                                                 ChaosMoveOperator(auth_ack_data),
                                                                 message_response)) ==0 ){
                                     if(checkAuthenticationState(message_response)) {
@@ -343,7 +379,8 @@ namespace chaos {
                             case RDConnectionPhaseAutorized: {
                                 chaos::common::data::CDWUniquePtr conf_msg(driver_init_pack->clone());
                                 chaos::common::data::CDWShrdPtr message_response;
-                                if((err = _sendRawOpcodeRequest("init",
+                                if((err = _sendRawOpcodeRequest((remote_uri_instance.size()?remote_uri_instance:remote_uri),
+                                                                "init",
                                                                 ChaosMoveOperator(conf_msg),
                                                                 message_response)) ==0 ){
                                     if(checkConfigurationState(message_response)) {
@@ -363,18 +400,28 @@ namespace chaos {
                     }
                     
                     //send datapack as opcode format
-                    int _sendRawOpcodeRequest(const std::string opcode,
+                    int _sendRawOpcodeRequest(const std::string uri,
+                                              const std::string opcode,
                                               chaos::common::data::CDWUniquePtr message_data,
                                               chaos::common::data::CDWShrdPtr& message_response,
                                               uint32_t timeout = 5000) {
                         chaos::common::data::CDWUniquePtr opcpde_msg(new chaos::common::data::CDataWrapper());
+                        opcpde_msg->addStringValue(MESSAGE_URI, uri);
                         opcpde_msg->addStringValue(MESSAGE_OPCODE, opcode);
                         opcpde_msg->addCSDataValue(MESSAGE_OPCODE_PARAMETER, *message_data);
                         return _sendRawRequest(ChaosMoveOperator(opcpde_msg),
                                                message_response,
                                                timeout);
                     }
-                    
+                    int _sendRawOpcodeMessage(const std::string uri,
+                                              const std::string opcode,
+                                              chaos::common::data::CDWUniquePtr message_data) {
+                        chaos::common::data::CDWUniquePtr opcpde_msg(new chaos::common::data::CDataWrapper());
+                        opcpde_msg->addStringValue(MESSAGE_URI, uri);
+                        opcpde_msg->addStringValue(MESSAGE_OPCODE, opcode);
+                        opcpde_msg->addCSDataValue(MESSAGE_OPCODE_PARAMETER, *message_data);
+                        return _sendRawMessage(ChaosMoveOperator(opcpde_msg));
+                    }
                     int _sendRawRequest(chaos::common::data::CDWUniquePtr message_data,
                                         chaos::common::data::CDWShrdPtr& message_response,
                                         uint32_t timeout = 5000){
@@ -414,3 +461,5 @@ namespace chaos {
 }
 
 #endif /* __CHAOSFramework__CE5788A_1D68_477E_BB9E_55BE8F7D3373_AbstractRemoteIODriver_h */
+
+
