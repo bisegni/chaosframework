@@ -66,7 +66,7 @@ void SendRpcCommand::setHandler(CDataWrapper *data) {
         //node is olnie so we cann proceed
         if((err = getDataAccess<mds_data_access::NodeDataAccess>()->getNodeDescription(node_uid, node_description))) {
             LOG_AND_TROW_FORMATTED(ERR, err, "Error loading infomation for node '%1%'", %node_uid)
-        } else if(node_description.get() == nullptr) {
+        } else if(node_description.get() == NULL) {
             LOG_AND_TROW_FORMATTED(ERR, -1, "No description found for node '%1%'", %node_uid)
         }
         
