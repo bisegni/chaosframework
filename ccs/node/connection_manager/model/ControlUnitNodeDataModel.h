@@ -48,7 +48,8 @@ class ControlUnitNodeDataModel:
     Q_OBJECT
 public:
     ControlUnitNodeDataModel();
-    ControlUnitNodeDataModel(std::unique_ptr<chaos::common::data::structured::DatasetAttributeList>& _attr_lis);
+    ControlUnitNodeDataModel(const QString& _cu_name,
+                             std::unique_ptr<chaos::common::data::structured::DatasetAttributeList>& _attr_lis);
     virtual ~ControlUnitNodeDataModel();
 
 public:
@@ -73,7 +74,10 @@ public:
 private slots:
 
 private:
-     std::unique_ptr<chaos::common::data::structured::DatasetAttributeList> attr_list;
+    const QString cu_name;
+    std::unique_ptr<chaos::common::data::structured::DatasetAttributeList> attr_list;
+    chaos::common::data::structured::DatasetAttributeList  in_attr_list;
+    chaos::common::data::structured::DatasetAttributeList  out_attr_list;
 };
 
 #endif // CONTROLUNITNODEDATAMODEL_H

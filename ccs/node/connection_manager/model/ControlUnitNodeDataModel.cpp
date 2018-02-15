@@ -1,6 +1,9 @@
 #include "ControlUnitNodeDataModel.h"
 #include <QtMath>
 #include <QDebug>
+
+using namespace chaos::common::data::structured;
+
 ControlUnitChannelData::ControlUnitChannelData():
     ch_type(chaos::DataType::TYPE_UNDEFINED),
     ch_name("empty"){}
@@ -16,17 +19,34 @@ NodePortType ControlUnitChannelData::type() const {
 ControlUnitNodeDataModel::ControlUnitNodeDataModel():
     attr_list(){}
 
-ControlUnitNodeDataModel::ControlUnitNodeDataModel(std::unique_ptr<chaos::common::data::structured::DatasetAttributeList>& _attr_list):
-    attr_list(std::move(_attr_list)){}
+ControlUnitNodeDataModel::ControlUnitNodeDataModel(const QString& _cu_name,
+                                                   std::unique_ptr<DatasetAttributeList>& _attr_list):
+    cu_name(_cu_name),
+    attr_list(std::move(_attr_list)){
+
+    for(DatasetAttributeListIterator it = attr_list->begin(),
+        end = attr_list->end();
+        it != end;
+        it++){
+        if(it->direction == chaos::DataType::Input ||
+                it->direction ==  chaos::DataType::Bidirectional) {
+            in_attr_list.push_back(*it);
+        }
+        if(it->direction == chaos::DataType::Output ||
+                it->direction ==  chaos::DataType::Bidirectional) {
+            out_attr_list.push_back(*it);
+        }
+    }
+}
 
 ControlUnitNodeDataModel::~ControlUnitNodeDataModel(){}
 
 QString ControlUnitNodeDataModel::caption() const {
-    return QString("quatb");
+    return cu_name;
 }
 
 QString ControlUnitNodeDataModel::name() const {
-    return QString("Control Unit Node");
+    return cu_name;
 }
 
 std::unique_ptr<NodeModel> ControlUnitNodeDataModel::clone() const {
@@ -37,11 +57,11 @@ unsigned int ControlUnitNodeDataModel::nPorts(PortType portType) const {
     unsigned int result = 0;
     switch (portType) {
     case PortType::In:
-        result = 2;
+        result = in_attr_list.size();
         break;
 
     case PortType::Out:
-        result = 2;
+        result = out_attr_list.size();
 
     default:
         break;
@@ -53,27 +73,11 @@ NodePortType ControlUnitNodeDataModel::dataType(PortType portType,
                                                 PortIndex portIndex) const {
     switch (portType) {
     case PortType::In:
-        switch (portIndex) {
-        case 0:
-            return ControlUnitChannelData(chaos::DataType::TYPE_BOOLEAN, "InCh1").type();
-            break;
-
-        case 1:
-            return ControlUnitChannelData(chaos::DataType::TYPE_INT32, "InCh2").type();
-            break;
-        }
+        return ControlUnitChannelData(in_attr_list[portIndex].type, QString::fromStdString(in_attr_list[portIndex].name)).type();
         break;
 
     case PortType::Out:
-        switch (portIndex) {
-        case 0:
-            return ControlUnitChannelData(chaos::DataType::TYPE_INT32, "OutCh1").type();
-            break;
-
-        case 1:
-            return ControlUnitChannelData(chaos::DataType::TYPE_BOOLEAN, "OutCh2").type();
-            break;
-        }
+        return ControlUnitChannelData(out_attr_list[portIndex].type, QString::fromStdString(out_attr_list[portIndex].name)).type();
         break;
 
     default:

@@ -58,7 +58,8 @@ void ConnectionEditor::onApiDone(const QString& tag,
     std::unique_ptr<DatasetAttributeList> dataset_attribute_list(new DatasetAttributeList());
     GetCurrentDataset::deserialize(*api_result,
                                    *dataset_attribute_list);
-    std::unique_ptr<ControlUnitNodeDataModel> new_node_mode(new ControlUnitNodeDataModel(dataset_attribute_list));
+    std::unique_ptr<ControlUnitNodeDataModel> new_node_mode(new ControlUnitNodeDataModel(tag,
+                                                                                         dataset_attribute_list));
     scene.createNode(std::move(new_node_mode));
 }
 
