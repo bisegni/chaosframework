@@ -50,6 +50,10 @@ void ConnectionEditor::on_actionControl_Unit_triggered() {
     //                                  GET_CHAOS_API_PTR(chaos::metadata_service_client::api_proxy::control_unit::GetCurrentDataset)->execute("control_unit_unique_id.toStdString()"));
 }
 
+void ConnectionEditor::on_actionSave_triggered() {
+    scene.save();
+}
+
 void ConnectionEditor::onApiDone(const QString& tag,
                                  QSharedPointer<chaos::common::data::CDataWrapper> api_result) {
     qDebug() << "Add control unit " << tag;
@@ -100,3 +104,4 @@ void ConnectionEditor::dropEvent(QDropEvent *e) {
         }
     }
 }
+

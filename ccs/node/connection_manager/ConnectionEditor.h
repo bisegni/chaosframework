@@ -28,6 +28,7 @@ protected:
     void dragLeaveEvent(QDragLeaveEvent* e);
 private slots:
     void on_actionControl_Unit_triggered();
+    void on_actionSave_triggered();
 
 private:
     ApiSubmitter api_submitter;

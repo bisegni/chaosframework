@@ -80,11 +80,11 @@ public:
 
 public:
 
-  void
+  std::unique_ptr<QJsonObject>
   save() const;
 
   void
-  load();
+  load(std::unique_ptr<QJsonObject> jsonDocument);
 
 signals:
 

@@ -38,17 +38,17 @@ using QtNodes::PortIndex;
 
 FlowScene::
 FlowScene(std::shared_ptr<DataModelRegistry> registry)
-  : _registry(registry)
+    : _registry(registry)
 {
-  setItemIndexMethod(QGraphicsScene::NoIndex);
+    setItemIndexMethod(QGraphicsScene::NoIndex);
 }
 
 
 FlowScene::
 ~FlowScene()
 {
-  _connections.clear();
-  _nodes.clear();
+    _connections.clear();
+    _nodes.clear();
 }
 
 
@@ -60,17 +60,17 @@ createConnection(PortType connectedPort,
                  Node& node,
                  PortIndex portIndex)
 {
-  auto connection = std::make_shared<Connection>(connectedPort, node, portIndex);
+    auto connection = std::make_shared<Connection>(connectedPort, node, portIndex);
 
-  auto cgo = cpp11::make_unique<ConnectionGraphicsObject>(*this, *connection);
+    auto cgo = cpp11::make_unique<ConnectionGraphicsObject>(*this, *connection);
 
-  // after this function connection points are set to node port
-  connection->setGraphicsObject(std::move(cgo));
+    // after this function connection points are set to node port
+    connection->setGraphicsObject(std::move(cgo));
 
-  _connections[connection->id()] = connection;
+    _connections[connection->id()] = connection;
 
-  connectionCreated(*connection);
-  return connection;
+    connectionCreated(*connection);
+    return connection;
 }
 
 
@@ -82,25 +82,25 @@ createConnection(Node& nodeIn,
                  PortIndex portIndexOut)
 {
 
-  auto connection =
-    std::make_shared<Connection>(nodeIn,
-                                 portIndexIn,
-                                 nodeOut,
-                                 portIndexOut);
+    auto connection =
+            std::make_shared<Connection>(nodeIn,
+                                         portIndexIn,
+                                         nodeOut,
+                                         portIndexOut);
 
-  auto cgo = cpp11::make_unique<ConnectionGraphicsObject>(*this, *connection);
+    auto cgo = cpp11::make_unique<ConnectionGraphicsObject>(*this, *connection);
 
-  nodeIn.nodeState().setConnection(PortType::In, portIndexIn, *connection);
-  nodeOut.nodeState().setConnection(PortType::Out, portIndexOut, *connection);
+    nodeIn.nodeState().setConnection(PortType::In, portIndexIn, *connection);
+    nodeOut.nodeState().setConnection(PortType::Out, portIndexOut, *connection);
 
-  // after this function connection points are set to node port
-  connection->setGraphicsObject(std::move(cgo));
+    // after this function connection points are set to node port
+    connection->setGraphicsObject(std::move(cgo));
 
-  _connections[connection->id()] = connection;
+    _connections[connection->id()] = connection;
 
-  connectionCreated(*connection);
+    connectionCreated(*connection);
 
-  return connection;
+    return connection;
 }
 
 
@@ -108,16 +108,16 @@ std::shared_ptr<Connection>
 FlowScene::
 restoreConnection(QJsonObject const &connectionJson)
 {
-  QUuid nodeInId  = QUuid(connectionJson["in_id"].toString());
-  QUuid nodeOutId = QUuid(connectionJson["out_id"].toString());
+    QUuid nodeInId  = QUuid(connectionJson["in_id"].toString());
+    QUuid nodeOutId = QUuid(connectionJson["out_id"].toString());
 
-  PortIndex portIndexIn  = connectionJson["in_index"].toInt();
-  PortIndex portIndexOut = connectionJson["out_index"].toInt();
+    PortIndex portIndexIn  = connectionJson["in_index"].toInt();
+    PortIndex portIndexOut = connectionJson["out_index"].toInt();
 
-  auto nodeIn  = _nodes[nodeInId].get();
-  auto nodeOut = _nodes[nodeOutId].get();
+    auto nodeIn  = _nodes[nodeInId].get();
+    auto nodeOut = _nodes[nodeOutId].get();
 
-  return createConnection(*nodeIn, portIndexIn, *nodeOut, portIndexOut);
+    return createConnection(*nodeIn, portIndexIn, *nodeOut, portIndexOut);
 }
 
 
@@ -125,9 +125,9 @@ void
 FlowScene::
 deleteConnection(Connection& connection)
 {
-  connectionDeleted(connection);
-  connection.removeFromNodes();
-  _connections.erase(connection.id());
+    connectionDeleted(connection);
+    connection.removeFromNodes();
+    _connections.erase(connection.id());
 }
 
 
@@ -135,16 +135,16 @@ Node&
 FlowScene::
 createNode(std::unique_ptr<NodeModel> && dataModel)
 {
-  auto node = cpp11::make_unique<Node>(std::move(dataModel));
-  auto ngo  = cpp11::make_unique<NodeGraphicsObject>(*this, *node);
+    auto node = cpp11::make_unique<Node>(std::move(dataModel));
+    auto ngo  = cpp11::make_unique<NodeGraphicsObject>(*this, *node);
 
-  node->setGraphicsObject(std::move(ngo));
+    node->setGraphicsObject(std::move(ngo));
 
-  auto nodePtr = node.get();
-  _nodes[node->id()] = std::move(node);
+    auto nodePtr = node.get();
+    _nodes[node->id()] = std::move(node);
 
-  nodeCreated(*nodePtr);
-  return *nodePtr;
+    nodeCreated(*nodePtr);
+    return *nodePtr;
 }
 
 
@@ -152,25 +152,25 @@ Node&
 FlowScene::
 restoreNode(QJsonObject const& nodeJson)
 {
-  QString modelName = nodeJson["model"].toObject()["name"].toString();
+    QString modelName = nodeJson["model"].toObject()["name"].toString();
 
-  auto dataModel = registry().create(modelName);
+    auto dataModel = registry().create(modelName);
 
-  if (!dataModel)
-    throw std::logic_error(std::string("No registered model with name ") +
-                           modelName.toLocal8Bit().data());
+    if (!dataModel)
+        throw std::logic_error(std::string("No registered model with name ") +
+                               modelName.toLocal8Bit().data());
 
-  auto node = cpp11::make_unique<Node>(std::move(dataModel));
-  auto ngo  = cpp11::make_unique<NodeGraphicsObject>(*this, *node);
-  node->setGraphicsObject(std::move(ngo));
+    auto node = cpp11::make_unique<Node>(std::move(dataModel));
+    auto ngo  = cpp11::make_unique<NodeGraphicsObject>(*this, *node);
+    node->setGraphicsObject(std::move(ngo));
 
-  node->restore(nodeJson);
+    node->restore(nodeJson);
 
-  auto nodePtr = node.get();
-  _nodes[node->id()] = std::move(node);
+    auto nodePtr = node.get();
+    _nodes[node->id()] = std::move(node);
 
-  nodeCreated(*nodePtr);
-  return *nodePtr;
+    nodeCreated(*nodePtr);
+    return *nodePtr;
 }
 
 
@@ -178,25 +178,25 @@ void
 FlowScene::
 removeNode(Node& node)
 {
-  // call signal
-  nodeDeleted(node);
+    // call signal
+    nodeDeleted(node);
 
-  auto deleteConnections = [&node, this] (PortType portType)
-  {
-    auto nodeState = node.nodeState();
-    auto const & nodeEntries = nodeState.getEntries(portType);
-
-    for (auto &connections : nodeEntries)
+    auto deleteConnections = [&node, this] (PortType portType)
     {
-      for (auto const &pair : connections)
-        deleteConnection(*pair.second);
-    }
-  };
+        auto nodeState = node.nodeState();
+        auto const & nodeEntries = nodeState.getEntries(portType);
 
-  deleteConnections(PortType::In);
-  deleteConnections(PortType::Out);
+        for (auto &connections : nodeEntries)
+        {
+            for (auto const &pair : connections)
+                deleteConnection(*pair.second);
+        }
+    };
 
-  _nodes.erase(node.id());
+    deleteConnections(PortType::In);
+    deleteConnections(PortType::Out);
+
+    _nodes.erase(node.id());
 }
 
 
@@ -204,7 +204,7 @@ DataModelRegistry&
 FlowScene::
 registry() const
 {
-  return *_registry;
+    return *_registry;
 }
 
 
@@ -212,7 +212,7 @@ void
 FlowScene::
 setRegistry(std::shared_ptr<DataModelRegistry> registry)
 {
-  _registry = registry;
+    _registry = registry;
 }
 
 
@@ -220,10 +220,10 @@ void
 FlowScene::
 iterateOverNodes(std::function<void(Node*)> visitor)
 {
-  for (const auto& _node : _nodes)
-  {
-    visitor(_node.second.get());
-  }
+    for (const auto& _node : _nodes)
+    {
+        visitor(_node.second.get());
+    }
 }
 
 
@@ -231,7 +231,7 @@ std::unordered_map<QUuid, std::unique_ptr<Node> > const &
 FlowScene::
 nodes() const
 {
-  return _nodes;
+    return _nodes;
 }
 
 
@@ -239,114 +239,75 @@ std::unordered_map<QUuid, std::shared_ptr<Connection> > const &
 FlowScene::
 connections() const
 {
-  return _connections;
+    return _connections;
 }
 
 
 //------------------------------------------------------------------------------
 
-void
+std::unique_ptr<QJsonObject>
 FlowScene::
 save() const
 {
-  QJsonObject sceneJson;
+    std::unique_ptr<QJsonObject> sceneJson(new QJsonObject());
 
-  QJsonArray nodesJsonArray;
+    QJsonArray nodesJsonArray;
 
-  for (auto const & pair : _nodes)
-  {
-    auto const &node = pair.second;
-
-    nodesJsonArray.append(node->save());
-  }
-
-  sceneJson["nodes"] = nodesJsonArray;
-
-  QJsonArray connectionJsonArray;
-  for (auto const & pair : _connections)
-  {
-    auto const &connection = pair.second;
-
-    QJsonObject connectionJson = connection->save();
-
-    if (!connectionJson.isEmpty())
-      connectionJsonArray.append(connectionJson);
-  }
-
-  sceneJson["connections"] = connectionJsonArray;
-
-  QString fileName =
-    QFileDialog::getSaveFileName(nullptr,
-                                 tr("Open Flow Scene"),
-                                 QDir::homePath(),
-                                 tr("Flow Scene Files (*.flow)"));
-
-  if (!fileName.isEmpty())
-  {
-    if (!fileName.endsWith("flow", Qt::CaseInsensitive))
-      fileName += ".flow";
-
-    QFile file(fileName);
-    if (file.open(QIODevice::WriteOnly))
+    for (auto const & pair : _nodes)
     {
-      QJsonDocument document(sceneJson);
-      file.write(document.toJson());
+        auto const &node = pair.second;
+
+        nodesJsonArray.append(node->save());
     }
-  }
+
+    (*sceneJson)["nodes"] = nodesJsonArray;
+
+    QJsonArray connectionJsonArray;
+    for (auto const & pair : _connections)
+    {
+        auto const &connection = pair.second;
+
+        QJsonObject connectionJson = connection->save();
+
+        if (!connectionJson.isEmpty())
+            connectionJsonArray.append(connectionJson);
+    }
+
+    (*sceneJson)["connections"] = connectionJsonArray;
+    return sceneJson;
 }
 
 
 void
 FlowScene::
-load()
-{
-  _connections.clear();
-  _nodes.clear();
+load(std::unique_ptr<QJsonObject> jsonDocument) {
+    _connections.clear();
+    _nodes.clear();
 
-  //-------------
+    QJsonArray nodesJsonArray = (*jsonDocument)["nodes"].toArray();
 
-  QString fileName =
-    QFileDialog::getOpenFileName(nullptr,
-                                 tr("Open Flow Scene"),
-                                 QDir::homePath(),
-                                 tr("Flow Scene Files (*.flow)"));
+    for (int i = 0; i < nodesJsonArray.size(); ++i)
+    {
+        restoreNode(nodesJsonArray[i].toObject());
+    }
 
-  if (!QFileInfo::exists(fileName))
-    return;
+    QJsonArray connectionJsonArray = (*jsonDocument)["connections"].toArray();
 
-  QFile file(fileName);
+    for (int i = 0; i < connectionJsonArray.size(); ++i)
+    {
+        restoreConnection(connectionJsonArray[i].toObject());
+    }
 
-  if (!file.open(QIODevice::ReadOnly))
-    return;
+    //QRectF  r = itemsBoundingRect();
+    ////QPointF c = r.center();
 
-  QByteArray wholeFile = file.readAll();
+    //for (auto &view : views())
+    //{
+    //qDebug() << "center";
 
-  QJsonObject const jsonDocument = QJsonDocument::fromJson(wholeFile).object();
-
-  QJsonArray nodesJsonArray = jsonDocument["nodes"].toArray();
-
-  for (int i = 0; i < nodesJsonArray.size(); ++i)
-  {
-    restoreNode(nodesJsonArray[i].toObject());
-  }
-
-  QJsonArray connectionJsonArray = jsonDocument["connections"].toArray();
-
-  for (int i = 0; i < connectionJsonArray.size(); ++i)
-  {
-    restoreConnection(connectionJsonArray[i].toObject());
-  }
-
-  //QRectF  r = itemsBoundingRect();
-  ////QPointF c = r.center();
-
-  //for (auto &view : views())
-  //{
-  //qDebug() << "center";
-
-  //view->setSceneRect(r);
-  //view->ensureVisible(r);
-  //}
+    //view->setSceneRect(r);
+    //view->ensureVisible(r);
+    //}
 }
 
 
@@ -359,34 +320,34 @@ Node*
 locateNodeAt(QPointF scenePoint, FlowScene &scene,
              QTransform viewTransform)
 {
-  // items under cursor
-  QList<QGraphicsItem*> items =
-    scene.items(scenePoint,
-                Qt::IntersectsItemShape,
-                Qt::DescendingOrder,
-                viewTransform);
+    // items under cursor
+    QList<QGraphicsItem*> items =
+            scene.items(scenePoint,
+                        Qt::IntersectsItemShape,
+                        Qt::DescendingOrder,
+                        viewTransform);
 
-  //// items convertable to NodeGraphicsObject
-  std::vector<QGraphicsItem*> filteredItems;
+    //// items convertable to NodeGraphicsObject
+    std::vector<QGraphicsItem*> filteredItems;
 
-  std::copy_if(items.begin(),
-               items.end(),
-               std::back_inserter(filteredItems),
-               [] (QGraphicsItem * item)
-               {
-                 return (dynamic_cast<NodeGraphicsObject*>(item) != nullptr);
-               });
+    std::copy_if(items.begin(),
+                 items.end(),
+                 std::back_inserter(filteredItems),
+                 [] (QGraphicsItem * item)
+    {
+        return (dynamic_cast<NodeGraphicsObject*>(item) != nullptr);
+    });
 
-  Node* resultNode = nullptr;
+    Node* resultNode = nullptr;
 
-  if (!filteredItems.empty())
-  {
-    QGraphicsItem* graphicsItem = filteredItems.front();
-    auto ngo = dynamic_cast<NodeGraphicsObject*>(graphicsItem);
+    if (!filteredItems.empty())
+    {
+        QGraphicsItem* graphicsItem = filteredItems.front();
+        auto ngo = dynamic_cast<NodeGraphicsObject*>(graphicsItem);
 
-    resultNode = &ngo->node();
-  }
+        resultNode = &ngo->node();
+    }
 
-  return resultNode;
+    return resultNode;
 }
 }
