@@ -78,7 +78,7 @@ deviceChannel(NULL),devId(_deviceID) {
     
     //get a new message channel in a self manage way
     deviceChannel = NetworkBroker::getInstance()->getDeviceMessageChannelFromAddress(new CDeviceNetworkAddress(_deviceID),
-                                                                                     true,
+                                                                                     false,
                                                                                      true);
     if(!deviceChannel) throw CException(-2,
                                         "Invalid device channel created",
