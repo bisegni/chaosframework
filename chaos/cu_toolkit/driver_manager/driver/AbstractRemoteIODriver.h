@@ -50,7 +50,7 @@
 #define AbstractRemoteIODriver_INFO    INFO_LOG(AbstractCDataWrapperIODriver)
 #define AbstractRemoteIODriver_DBG     DBG_LOG(AbstractCDataWrapperIODriver)
 #define AbstractRemoteIODriver_ERR     ERR_LOG(AbstractCDataWrapperIODriver)
-
+#define REMOTE_DEFAULT_TIMEOUT 50000
 namespace chaos {
     namespace cu {
         namespace driver_manager {
@@ -190,7 +190,7 @@ namespace chaos {
                     int sendOpcodeRequest(const std::string opcode,
                                           chaos::common::data::CDWUniquePtr message_data,
                                           chaos::common::data::CDWShrdPtr& message_response,
-                                          uint32_t timeout = 5000) {
+                                          uint32_t timeout = REMOTE_DEFAULT_TIMEOUT) {
                         int err = 0;
                         LStringWriteLock wl = current_connection_identifier.getWriteLockObject();
                         if((err = _managePhases())) {
@@ -227,7 +227,7 @@ namespace chaos {
                      */
                     int sendRawRequest(chaos::common::data::CDWUniquePtr message_data,
                                        chaos::common::data::CDWShrdPtr& message_response,
-                                       uint32_t timeout = 5000) {
+                                       uint32_t timeout = REMOTE_DEFAULT_TIMEOUT) {
                         int err = 0;
                         LStringWriteLock wl = current_connection_identifier.getWriteLockObject();
                         if((err = _managePhases())) {
@@ -349,6 +349,8 @@ namespace chaos {
                                 return AR_ERROR_NO_CONNECTION;
                                 break;
                             case RDConnectionPhaseConnected: {
+                            AbstractRemoteIODriver_DBG<<" Connected...";
+
                                 CHAOS_ASSERT(current_connection_identifier().size());
                                 if(authorization_key.size() != 0) {
                                     err = AR_ERROR_NOT_AUTORIZED;
@@ -361,6 +363,8 @@ namespace chaos {
                             case RDConnectionPhaseManageAutorization: {
                                 chaos::common::data::CDWShrdPtr message_response;
                                 chaos::common::data::CDWUniquePtr auth_ack_data(new chaos::common::data::CDataWrapper());
+                                AbstractRemoteIODriver_DBG<<" Connection OK, authorizing...";
+
                                 auth_ack_data->addStringValue(AUTHORIZATION_KEY, authorization_key);
                                 if((err = _sendRawOpcodeRequest(remote_uri,
                                                                 "auth",
@@ -369,6 +373,8 @@ namespace chaos {
                                     if(checkAuthenticationState(message_response)) {
                                         conn_phase = RDConnectionPhaseAutorized;
                                     } else {
+                                        AbstractRemoteIODriver_ERR<<" Authorization Fails, cannot configure";
+
                                         err = AR_ERROR_NOT_AUTORIZED;
                                         break;
                                     }
@@ -379,6 +385,8 @@ namespace chaos {
                             case RDConnectionPhaseAutorized: {
                                 chaos::common::data::CDWUniquePtr conf_msg(driver_init_pack->clone());
                                 chaos::common::data::CDWShrdPtr message_response;
+                                AbstractRemoteIODriver_DBG<<" Authorization OK, configuring...";
+
                                 if((err = _sendRawOpcodeRequest((remote_uri_instance.size()?remote_uri_instance:remote_uri),
                                                                 "init",
                                                                 ChaosMoveOperator(conf_msg),
@@ -386,6 +394,8 @@ namespace chaos {
                                     if(checkConfigurationState(message_response)) {
                                         conn_phase = RDConnectionPhaseConfigured;
                                     } else {
+                                        AbstractRemoteIODriver_ERR<<" Init Fails, Not Configured";
+
                                         err = AR_ERROR_NOT_CONFIGURED;
                                         break;
                                     }
@@ -394,6 +404,8 @@ namespace chaos {
                                 
                             case RDConnectionPhaseConfigured:
                                 //we can proceeed
+                            AbstractRemoteIODriver_DBG<<" Configuration OK!, start working";
+
                                 break;
                         }
                         return err;
@@ -404,7 +416,7 @@ namespace chaos {
                                               const std::string opcode,
                                               chaos::common::data::CDWUniquePtr message_data,
                                               chaos::common::data::CDWShrdPtr& message_response,
-                                              uint32_t timeout = 5000) {
+                                              uint32_t timeout = REMOTE_DEFAULT_TIMEOUT) {
                         chaos::common::data::CDWUniquePtr opcpde_msg(new chaos::common::data::CDataWrapper());
                         opcpde_msg->addStringValue(MESSAGE_URI, uri);
                         opcpde_msg->addStringValue(MESSAGE_OPCODE, opcode);
@@ -424,7 +436,7 @@ namespace chaos {
                     }
                     int _sendRawRequest(chaos::common::data::CDWUniquePtr message_data,
                                         chaos::common::data::CDWShrdPtr& message_response,
-                                        uint32_t timeout = 5000){
+                                        uint32_t timeout = REMOTE_DEFAULT_TIMEOUT){
                         CDWShrdPtrFutureHelper::CounterType new_promise_id;
                         CDWShrdPtrFutureHelper::Future request_future;
                         chaos::common::data::CDWUniquePtr ext_msg(new chaos::common::data::CDataWrapper());
@@ -442,6 +454,7 @@ namespace chaos {
                             message_response = request_future.get();
                             return AR_ERROR_OK;
                         } else {
+                            AbstractRemoteIODriver_ERR<<" Timeout Arised!";
                             return AR_ERROR_TIMEOUT;
                         }
                     }
