@@ -1,7 +1,7 @@
 #include "CommandListModel.h"
 #include "../data/delegate/TwoLineInformationItem.h"
 #include "../metatypes.h"
-#include <chaos/common/chaos_constants.h>
+
 using namespace chaos::common::data;
 using namespace chaos::metadata_service_client::api_proxy::node;
 

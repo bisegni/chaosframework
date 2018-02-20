@@ -5,7 +5,6 @@
 #include <QRunnable>
 
 #include <QSharedPointer>
-#include <chaos/common/data/CDataWrapper.h>
 
 class ApiAsyncRunnable :
         public QObject,

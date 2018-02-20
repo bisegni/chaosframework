@@ -3,8 +3,6 @@
 #include "../control_unit/ControUnitInstanceEditor.h"
 #include "../control_unit/ControlUnitEditor.h"
 
-#include <chaos/common/data/CDataWrapper.h>
-
 #include <QDebug>
 #include <QPointer>
 #include <QDateTime>

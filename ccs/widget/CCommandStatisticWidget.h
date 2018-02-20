@@ -3,8 +3,6 @@
 
 #include <QWidget>
 
-#include <chaos/common/batch_command/BatchCommandSandboxEventHandler.h>
-
 #include "ChaosMonitorWidgetCompanion.h"
 
 namespace Ui {
