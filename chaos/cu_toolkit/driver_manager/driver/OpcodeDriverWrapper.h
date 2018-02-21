@@ -54,6 +54,7 @@ namespace chaos {
                     
                     void driverInit(const chaos::common::data::CDataWrapper& init_parameter) throw(chaos::CException) {
                         ExtDriverImpl::driverInit(init_parameter);
+                        /* cannot be called before the instance is created*/
                         opcode_ext_cmd_mapper->driverInit(init_parameter);
                     }
                     

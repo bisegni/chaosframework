@@ -100,11 +100,17 @@ namespace chaos {
                     //message sent to remote endpoint when new connection has been received
                     chaos::common::data::CDWUniquePtr   driver_init_pack;
                     //!initialization and deinitialization driver methods
-                    void driverInit(const char *initParameter) throw (chaos::CException) {}
+                    void driverInit(const char *initParameter) throw (chaos::CException) {
+                      AbstractRemoteIODriver_DBG <<" Initialization from string..."<<initParameter;
+
+
+                    }
                     void driverInit(const chaos::common::data::CDataWrapper& init_parameter) throw(chaos::CException) {
                         CHECK_ASSERTION_THROW_AND_LOG((init_parameter.isEmpty() == false), AbstractRemoteIODriver_ERR, -1, "Init parameter need to be formated in a json document");
                         //CHECK_ASSERTION_THROW_AND_LOG(init_parameter.hasKey(AUTHORIZATION_KEY), AbstractRemoteIODriver_ERR, -3, "The authorization key is mandatory")
                         //get the authorization key
+                        AbstractRemoteIODriver_DBG <<" Initialization params:"<<init_parameter.getCompliantJSONString();
+
                         if(init_parameter.hasKey(AUTHORIZATION_KEY)) {
                             authorization_key = init_parameter.getStringValue(AUTHORIZATION_KEY);
                         } else {
@@ -147,10 +153,12 @@ namespace chaos {
                         return result;
                     }
                     bool checkConfigurationState(chaos::common::data::CDWShrdPtr& message_response) {
-                        bool result = false;
+                        bool result = true;
                         if(message_response->hasKey("err") &&
                            message_response->isInt32Value("err")) {
-                            if(message_response->getInt32Value("err") != 0) {
+                            int err;
+                            if((err=message_response->getInt32Value("err")) != 0) {
+                                AbstractRemoteIODriver_ERR <<" Returned not zero err="<<err;
                                 return false;
                             }
                         }
@@ -421,6 +429,7 @@ namespace chaos {
                         opcpde_msg->addStringValue(MESSAGE_URI, uri);
                         opcpde_msg->addStringValue(MESSAGE_OPCODE, opcode);
                         opcpde_msg->addCSDataValue(MESSAGE_OPCODE_PARAMETER, *message_data);
+                        AbstractRemoteIODriver_DBG<<"sending "+uri+" opcode:"<<opcode<<" msg:"<<message_data->getCompliantJSONString();
                         return _sendRawRequest(ChaosMoveOperator(opcpde_msg),
                                                message_response,
                                                timeout);

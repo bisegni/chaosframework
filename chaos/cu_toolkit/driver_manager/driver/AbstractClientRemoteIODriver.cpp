@@ -61,12 +61,13 @@ void AbstractClientRemoteIODriver::driverInit(const chaos::common::data::CDataWr
     CHECK_ASSERTION_THROW_AND_LOG((ExternalUnitClientEndpoint::endpoint_identifier.size() > 0), ERR, -4, "The endpoint name is empty");
     
     ClientARIODriver::driverInit(init_parameter);
-    
+    DBG <<"Initialize connection...";
     //register this driver as external endpoint
     err = chaos::common::external_unit::ExternalUnitManager::getInstance()->initilizeConnection(*this,
                                                                                                 "http",
                                                                                                 content_type,
                                                                                                 url);
+    DBG <<"Connection initialized with error:"<<err;
     CHECK_ASSERTION_THROW_AND_LOG(err == 0, ERR, -4, "Error creating connection");
 }
 
