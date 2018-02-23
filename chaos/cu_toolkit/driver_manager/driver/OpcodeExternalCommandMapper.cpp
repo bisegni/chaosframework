@@ -40,13 +40,14 @@ int OpcodeExternalCommandMapper::sendRawRequest(chaos::common::data::CDWUniquePt
                                            timeout);
 }
 
-int  OpcodeExternalCommandMapper::sendOpcodeRequest(const std::string opcode,
+int  OpcodeExternalCommandMapper::sendOpcodeRequest(const std::string& opcode,
                                                     chaos::common::data::CDWUniquePtr opcode_parameter,
-                                                    chaos::common::data::CDWShrdPtr& message_response) {
+                                                    chaos::common::data::CDWShrdPtr& message_response,
+                                                    uint32_t timeout ) {
     CHAOS_ASSERT(driver_protocol)
     return driver_protocol->sendOpcodeRequest(opcode,
                                               ChaosMoveOperator(opcode_parameter),
-                                              message_response);
+                                              message_response,timeout);
 }
 
 int OpcodeExternalCommandMapper::sendRawMessage(chaos::common::data::CDWUniquePtr message_data) {
