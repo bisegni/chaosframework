@@ -66,16 +66,16 @@ namespace chaos {
                     //!Inherited by RemoteIODriverProtocol::sendRawRequest
                     int sendRawRequest(chaos::common::data::CDWUniquePtr message_data,
                                        chaos::common::data::CDWShrdPtr& message_response,
-                                       uint32_t timeout = 5000) {
+                                       uint32_t timeout = REMOTE_DRIVER_DEFAULT_TIMEOUT) {
                         return ExtDriverImpl::sendRawRequest(ChaosMoveOperator(message_data),
                                                              message_response,
                                                              timeout);
                     }
                     
                     //!Inherited by RemoteIODriverProtocol::sendOpcodeRequest
-                    int sendOpcodeRequest(const std::string opcode,
+                    int sendOpcodeRequest(const std::string& opcode,
                                           chaos::common::data::CDWUniquePtr opcode_parameter,
-                                          chaos::common::data::CDWShrdPtr& message_response) {
+                                          chaos::common::data::CDWShrdPtr& message_response,uint32_t timeout=REMOTE_DRIVER_DEFAULT_TIMEOUT) {
                         return ExtDriverImpl::sendOpcodeRequest(opcode,
                                                                 ChaosMoveOperator(opcode_parameter),
                                                                 message_response,

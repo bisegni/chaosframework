@@ -8,6 +8,7 @@
 
 #ifndef RemoteIODriverProtocol_h
 #define RemoteIODriverProtocol_h
+#define REMOTE_DRIVER_DEFAULT_TIMEOUT 50000
 namespace chaos {
     namespace cu {
         namespace driver_manager {
@@ -22,7 +23,7 @@ namespace chaos {
                      */
                     virtual int sendRawRequest(chaos::common::data::CDWUniquePtr message_data,
                                                chaos::common::data::CDWShrdPtr& message_response,
-                                               uint32_t timeout = 5000) = 0;
+                                               uint32_t timeout = REMOTE_DRIVER_DEFAULT_TIMEOUT) = 0;
                     
                     //!Send an opcode standard request to remote layer
                     /*!
@@ -30,9 +31,9 @@ namespace chaos {
                      \param opcode_data is the parameter associated to the opcode
                      \param received_data si the raw data received from the driver
                      */
-                    virtual int sendOpcodeRequest(const std::string opcode,
+                    virtual int sendOpcodeRequest(const std::string& opcode,
                                                   chaos::common::data::CDWUniquePtr opcode_parameter,
-                                                  chaos::common::data::CDWShrdPtr& message_response) = 0;
+                                                  chaos::common::data::CDWShrdPtr& message_response,uint32_t timeout=REMOTE_DRIVER_DEFAULT_TIMEOUT) = 0;
                     
                     //!Send raw message to the remote driver
                     /*!

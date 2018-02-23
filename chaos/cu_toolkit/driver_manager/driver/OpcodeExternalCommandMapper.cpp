@@ -54,7 +54,7 @@ int OpcodeExternalCommandMapper::sendRawMessage(chaos::common::data::CDWUniquePt
     return driver_protocol->sendRawMessage(ChaosMoveOperator(message_data));
 }
 
-int  OpcodeExternalCommandMapper::sendOpcodeMessage(const std::string opcode,
+int  OpcodeExternalCommandMapper::sendOpcodeMessage(const std::string& opcode,
                                                     chaos::common::data::CDWUniquePtr opcode_message) {
     CHAOS_ASSERT(driver_protocol)
     return driver_protocol->sendOpcodeMessage(opcode,
