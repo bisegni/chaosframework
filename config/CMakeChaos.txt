@@ -383,7 +383,8 @@ IF (NOT CACHE_DIR)
 
 
   macro (BoostInstall ver min_ver url arg)
-    wget(boost_1_${ver}_${min_ver}.tar.gz  https://sourceforge.net/projects/boost/files/boost/1.${ver}.${min_ver})
+#    wget(boost_1_${ver}_${min_ver}.tar.gz  https://sourceforge.net/projects/boost/files/boost/1.${ver}.${min_ver})
+    wget(boost_1_${ver}_${min_ver}.tar.gz   https://dl.bintray.com/boostorg/release/1.${ver}.${min_ver}/source)
     STRING(REPLACE "/" "\\/" SEDARG ${CMAKE_CXX_COMPILER})
 
     tar(xf boost_1_${ver}_${min_ver}.tar.gz)
