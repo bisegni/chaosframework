@@ -134,19 +134,19 @@ IF (NOT CACHE_DIR)
   endmacro()
 
   macro (tar opt what)
-    MESG("tar ${opt} ${what}")
-	
+    
+		
+	MESG("tar ${opt} ${what}")
     execute_process(
       COMMAND tar ${opt} ${what}
       WORKING_DIRECTORY  ${EXTERNAL_BUILD_DIR}
-	  
       RESULT_VARIABLE err
       OUTPUT_VARIABLE out
       OUTPUT_FILE c:/cmake.log
       ERROR_FILE c:/cmake.log
       )
     if( err)
-      ERROR("tar ${opt} failed  error ${out}")
+      ERROR("tar ${opt} failed  error ${out}  ${EXTERNAL_BUILD_DIR}")
     endif()
   endmacro()
 
@@ -289,7 +289,13 @@ IF (NOT CACHE_DIR)
   endmacro()
 
   macro (ConfigureAndBuild arg arg1)
+   
     unset(SKIPBUILD CACHE)
+	IF(${SYSTEM_NAME} MATCHES "MINGW64_NT-10.0")
+	  IF ( ${arg} MATCHES "libevent")
+	 
+	  ENDIF()
+	ELSE()
     IF (EXISTS "${EXTERNAL_BUILD_DIR}/${arg}/autogen.sh")
       MESG("[${arg}] generation of configuration")
       execute_process(
@@ -300,7 +306,7 @@ IF (NOT CACHE_DIR)
 	OUTPUT_FILE c:/cmake.log
 	ERROR_FILE c:/cmake.log
 	)
-
+	ENDIF()
       IF( err)
 	ERROR("[${arg}] performing generation of configuration ${mod}")
       ENDIF()
@@ -335,8 +341,11 @@ IF (NOT CACHE_DIR)
       ELSE()
 	IF (EXISTS "${EXTERNAL_BUILD_DIR}/${arg}/CMakeLists.txt")
 	  MESG("[${arg}] CMAKE configuration tool")
+	  IF(${SYSTEM_NAME} MATCHES "MINGW64_NT-10.0" AND  ${arg} MATCHES "libevent")
+	  SET(CONFPARM cmake  ${CMAKE_CHAOS} -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} -DCMAKE_CXX_FLAGS=${CHAOS_CXX_FLAGS} -DCMAKE_C_FLAGS=${CHAOS_C_FLAGS} -DCMAKE_SYSTEM_NAME=${CMAKE_SYSTEM_NAME} -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY=${CMAKE_ARCHIVE_OUTPUT_DIRECTORY} -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=${CMAKE_LIBRARY_OUTPUT_DIRECTORY} -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=${CMAKE_RUNTIME_OUTPUT_DIRECTORY} -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER} -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER} -DCMAKE_EXE_LINKER_FLAGS=${CHAOS_LINKER_FLAGS} .) 
+	  else()
 	  SET(CONFPARM cmake ${arg1} ${CMAKE_CHAOS} -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} -DCMAKE_CXX_FLAGS=${CHAOS_CXX_FLAGS} -DCMAKE_C_FLAGS=${CHAOS_C_FLAGS} -DCMAKE_SYSTEM_NAME=${CMAKE_SYSTEM_NAME} -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY=${CMAKE_ARCHIVE_OUTPUT_DIRECTORY} -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=${CMAKE_LIBRARY_OUTPUT_DIRECTORY} -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=${CMAKE_RUNTIME_OUTPUT_DIRECTORY} -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER} -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER} -DCMAKE_EXE_LINKER_FLAGS=${CHAOS_LINKER_FLAGS} .)
-
+		endif()
 	ELSE()
 	  IF(EXISTS "${EXTERNAL_BUILD_DIR}/${arg}/SConstruct")
 	    MESG("[${arg}] SCONS configuration tool")
@@ -358,14 +367,30 @@ IF (NOT CACHE_DIR)
     
 	IF(${SYSTEM_NAME} MATCHES "MINGW64_NT-10.0")
 	  IF ( ${arg} MATCHES "mongo-cxx-driver")
-	    SET (WINPITHON "D:/Programmi/Python27/python.exe" )
-		SET(WINSCONS "c:/Users/Alex/Downloads/scons-3.0.1/build/scripts/scons" )
+	    SET (WINPITHON "C:/Python27/python.exe" )
+		SET(WINSCONS "c:/Python27/Scripts/scons.py" )
 		#SET(CONFPARM CXXFLAGS=${CHAOS_CXX_FLAGS} CFLAGS=${CHAOS_C_FLAGS} --prefix=${CMAKE_INSTALL_PREFIX} --libpath=${CMAKE_INSTALL_PREFIX}/lib --cxx=${CMAKE_CXX_COMPILER} --cc=${CMAKE_C_COMPILER} --cpppath=${CMAKE_INSTALL_PREFIX}/include --extrapath=${CMAKE_INSTALL_PREFIX} -j ${PROCESSOR_COUNT} ${arg1} )
 		SET (CONFPARM CXXFLAGS=${CHAOS_CXX_FLAGS} CFLAGS=${CHAOS_C_FLAGS} --prefix=${CMAKE_INSTALL_PREFIX} --libpath=${CMAKE_INSTALL_PREFIX}/lib --cpppath=${CMAKE_INSTALL_PREFIX}/include --extrapath=${CMAKE_INSTALL_PREFIX} --cpppath=${CMAKE_INSTALL_PREFIX}/include/boost-1_64 -j ${PROCESSOR_COUNT} ${arg1})
+		ELSE()
 		
 	  ENDIF()
 	ENDIF()
 	MESG ("ALEDEBUG ${CONFPARM}")
+	IF ( ${arg} MATCHES "libevent")
+		 MESG("ALEDEBUG Launching over libevent")
+	   execute_process(
+						COMMAND cmake -G "Visual Studio 10" .
+						WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}/${arg}
+						RESULT_VARIABLE err
+						OUTPUT_VARIABLE mod
+						OUTPUT_FILE c:/cmake.log
+						ERROR_FILE c:/cmake.log
+						)
+	else()
+	
+	
+	
+	
 	execute_process(
       COMMAND  ${WINPITHON} ${WINSCONS} ${CONFPARM}
 	  WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}/${arg}
@@ -373,7 +398,7 @@ IF (NOT CACHE_DIR)
       OUTPUT_FILE c:/cmake.log
       ERROR_FILE c:/cmake.log
       )
-
+	endif()
     if( err)
 		
 	   MESG("error code is: ${err}")
@@ -386,9 +411,16 @@ IF (NOT CACHE_DIR)
 	
     IF(NOT SKIPBUILD)
       message(STATUS "[${arg}] compiling (${PROCESSOR_COUNT})")
+	#  IF( EXISTS "${EXTERNAL_BUILD_DIR}/${arg}/makefiles/msvc2010/${arg}.sln")
+	#	SET (WINSOLUTION "${EXTERNAL_BUILD_DIR}/${arg}/makefiles/msvc2010/${arg}.sln" )
+	#  ELSE()
+	#   IF( EXISTS "${EXTERNAL_BUILD_DIR}/${arg}/${arg}.sln")
+		#SET (WINSOLUTION "${EXTERNAL_BUILD_DIR}/${arg}/${arg}.sln" )
+	#	ENDIF()
+	#  ENDIF()
 	  
-	  IF (EXISTS "${EXTERNAL_BUILD_DIR}/${arg}/makefiles/msvc2010/${arg}.sln")
-		MESG("Compiling for Windows with MSBuild")
+	  IF (EXISTS "${EXTERNAL_BUILD_DIR}/${arg}/makefiles/msvc2010/${arg}.sln" )
+		MESG("Compiling ${arg} for Windows with MSBuild")
 		execute_process(
 		COMMAND "C:/Windows/Microsoft.Net/Framework/v4.0.30319/MSBuild.exe" ${arg}.sln
 		WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}/${arg}/makefiles/msvc2010
