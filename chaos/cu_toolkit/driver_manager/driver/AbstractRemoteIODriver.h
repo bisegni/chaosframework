@@ -354,6 +354,8 @@ namespace chaos {
                         int err = 0;
                         switch(conn_phase) {
                             case RDConnectionPhaseDisconnected:
+                            AbstractRemoteIODriver_DBG<<" RDConnectionPhaseDisconnected";
+
                                 return AR_ERROR_NO_CONNECTION;
                                 break;
                             case RDConnectionPhaseConnected: {

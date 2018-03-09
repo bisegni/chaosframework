@@ -32,3 +32,8 @@ ApiProxyResult RemoveScript::execute(ScriptBaseDescription& description) {
     ScriptBaseDescriptionSDWrapper sdwrap(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(ScriptBaseDescription, description));
     return callApi(sdwrap.serialize().release());
 }
+ApiProxyResult  RemoveScript::execute( chaos::common::data::CDataWrapper* data_pack
+                                                               ){
+    return callApi(data_pack);
+
+}

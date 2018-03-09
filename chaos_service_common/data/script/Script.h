@@ -35,7 +35,7 @@ namespace chaos {
                 
 #define CHAOS_SBD_NAME          "script_name"
 #define CHAOS_SBD_DESCRIPTION   "script_description"
-                
+
                 //! The description of a script
                 struct ScriptBaseDescription {
                     uint64_t unique_id;

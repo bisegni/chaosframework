@@ -378,7 +378,8 @@ throw chaos::CException(-2, ss.str(), __PRETTY_FUNCTION__);\
                 bool isInt32ElementAtIndex(const int) const;
                 bool isInt64ElementAtIndex(const int) const;
                 bool isCDataWrapperElementAtIndex(const int) const;
-                
+                const char * getRawValueAtIndex(const int key,uint32_t& size) const;
+
                 size_t size() const;
             };
             

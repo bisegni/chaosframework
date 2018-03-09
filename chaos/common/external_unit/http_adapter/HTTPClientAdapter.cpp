@@ -156,12 +156,14 @@ void HTTPClientAdapter::ev_handler(struct mg_connection *conn,
     if(ci == NULL) return;
     switch (event) {
         case MG_EV_CONNECT: {
+        DBG<<" HTTP Client Connection event";
             ChaosWriteLock wl(ci->smux);
             int status = *((int *) event_data);
             ci->ext_unit_conn->online = (status==0);
             break;
         }
         case MG_EV_WEBSOCKET_FRAME: {
+
             CHAOS_ASSERT(ci->ext_unit_conn.get() != NULL);
             int err = 0;
             struct websocket_message *wm = (struct websocket_message *) event_data;
@@ -190,6 +192,8 @@ void HTTPClientAdapter::ev_handler(struct mg_connection *conn,
         }
         case MG_EV_CLOSE: {
             //manage the reconnection
+        DBG<<" HTTP Client CLOSE event";
+
             LMapReconnectionInfoReadLock wlm = ci->class_instance->map_connection.getReadLockObject();
             if(ci->class_instance->map_connection().count(ci->ext_unit_conn->connection_identifier) !=0) {
                 //in this case concnretion info need to be put into  reconnection_queue
