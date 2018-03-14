@@ -73,8 +73,10 @@ void AbstractClientRemoteIODriver::driverInit(const chaos::common::data::CDataWr
 
 void AbstractClientRemoteIODriver::driverDeinit() throw (chaos::CException) {
     //deinit driver  will send the deinitlization message to remote layer
+    DBG<<"deinitializing  remote driver";
+
     CHAOS_NOT_THROW(ClientARIODriver::driverDeinit();)
-    
+    DBG<<"deinitializing protocol";
     chaos::common::external_unit::ExternalUnitManager::getInstance()->releaseConnection(*this,
                                                                                         "http");
 }

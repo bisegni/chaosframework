@@ -22,7 +22,7 @@
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/external_unit/ExternalUnitManager.h>
 #include <chaos/common/external_unit/http_adapter/HTTPClientAdapter.h>
-
+#include <chaos/common/ChaosCommon.h>
 #include <chaos/common/utility/TimingUtil.h>
 
 #define INFO    INFO_LOG(HTTPClientAdapter)
@@ -37,7 +37,14 @@ using namespace chaos::common::external_unit::http_adapter;
 static const char *web_socket_option="Content-Type: application/bson-json\r\n";
 
 HTTPClientAdapter::HTTPClientAdapter():
-run(false){}
+run(false){
+    if(GlobalConfiguration::getInstance()->hasOption(chaos::InitOption::OPT_REST_POLL_TIME_US)){
+        rest_poll_time=GlobalConfiguration::getInstance()->getOption<uint32_t>(chaos::InitOption::OPT_REST_POLL_TIME_US);
+    } else {
+        rest_poll_time=10;
+    }
+
+}
 
 HTTPClientAdapter::~HTTPClientAdapter() {
     
@@ -51,7 +58,10 @@ void HTTPClientAdapter::init(void *init_data) throw (chaos::CException) {
 
 void HTTPClientAdapter::deinit() throw (chaos::CException) {
     run = false;
+    DBG<<" HTTPClientAdapter DEINIT";
+
     thread_poller->join();
+
     mg_mgr_free(&mgr);
 }
 
@@ -59,9 +69,15 @@ void HTTPClientAdapter::poller() {
     INFO << "Entering thread poller";
     poll_counter = 0;
     while (run) {
-        mg_mgr_poll(&mgr, 1);
-        if(poll_counter++ % 1000){performReconnection();}
+        mg_mgr_poll(&mgr, 0);
+        if(rest_poll_time>0){
+            usleep(rest_poll_time);
+            if(poll_counter++ % (rest_poll_time)*10000000){performReconnection();}
+
+        }
     }
+    DBG<<" HTTPClientAdapter POLL EXIT";
+
     INFO << "Leaving thread poller";
 }
 
@@ -242,15 +258,18 @@ int HTTPClientAdapter::sendDataToConnection(const std::string& connection_identi
 
 int HTTPClientAdapter::closeConnection(const std::string& connection_identifier) {
     LMapReconnectionInfoWriteLock wlm = map_connection.getWriteLockObject();
-    
+
     MapReconnectionInfoIterator conn_it =  map_connection().find(connection_identifier);
     if(conn_it == map_connection().end()) return 0;
     
     if(conn_it->second->conn) {
         if(conn_it->second->ext_unit_conn->online == false) return -1;
+        DBG<<" HTTPClientAdapter Close Connection";
+
         mg_send_websocket_frame(conn_it->second->conn, WEBSOCKET_OP_CLOSE, "", 0);
     }
-    else{return -2;}
+    else{
+        return -2;}
     
     //!remove from active connection map
     map_connection().erase(conn_it);

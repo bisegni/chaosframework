@@ -124,6 +124,9 @@ namespace chaos {
         static const char * const   OPT_PLUGIN_DIRECTORY_PATH           = "plugin-directory-path";
         //!multiple key value parameter that are passed to script virtual machine
         static const char * const   OPT_SCRIPT_VM_KV_PARAM              = "script-vm-kvp";
+        //!rest poll time us
+        static const char * const   OPT_REST_POLL_TIME_US              = "rest-poll-us";
+
     }
     /** @} */ // end of ParamOption
     

@@ -63,7 +63,7 @@ namespace chaos {
                     bool run;
                     struct mg_mgr mgr;
                     uint32_t poll_counter;
-                    
+                    uint32_t rest_poll_time;
                     //!map that hold the connection to use
                     LMapReconnectionInfo map_connection;
                     
