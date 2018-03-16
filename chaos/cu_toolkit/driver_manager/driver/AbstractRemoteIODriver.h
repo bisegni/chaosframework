@@ -448,6 +448,8 @@ namespace chaos {
                     int _sendRawRequest(chaos::common::data::CDWUniquePtr message_data,
                                         chaos::common::data::CDWShrdPtr& message_response,
                                         uint32_t timeout = REMOTE_DEFAULT_TIMEOUT){
+                        LStringWriteLock wl = current_connection_identifier.getWriteLockObject();
+
                         CDWShrdPtrFutureHelper::CounterType new_promise_id;
                         CDWShrdPtrFutureHelper::Future request_future;
                         chaos::common::data::CDWUniquePtr ext_msg(new chaos::common::data::CDataWrapper());

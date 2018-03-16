@@ -230,7 +230,6 @@ int HTTPClientAdapter::sendDataToConnection(const std::string& connection_identi
                                             const chaos::common::data::CDBufferUniquePtr data,
                                             const EUCMessageOpcode opcode) {
     LMapReconnectionInfoWriteLock wlm = map_connection.getWriteLockObject();
-    
     MapReconnectionInfoIterator conn_it =  map_connection().find(connection_identifier);
     if(conn_it == map_connection().end()) return -1;
     
