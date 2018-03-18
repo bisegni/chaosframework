@@ -41,12 +41,13 @@ namespace chaos{
                     
                     typedef enum {
                         OutOpInfoTypeSend,
-                        OutOpInfoTypeClose
+                        OutOpInfoTypeCloseConnection,
+                        OutOpInfoTypeCloseConnectionForEndpoint
                     } OutOpInfoType;
                     
                     typedef struct OutOp {
-                        //! conenction that is tharget of operation
-                        std::string connection_identifier;
+                        //! context sensitive identifier associated to the operation
+                        std::string identifier;
                         //! operation type
                         OutOpInfoType op_type;
                         //!data to sent

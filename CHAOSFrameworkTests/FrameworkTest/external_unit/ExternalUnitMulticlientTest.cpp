@@ -28,7 +28,7 @@ using namespace chaos::common::utility;
 using namespace chaos::common::external_unit;
 
 #define ECHO_TEST_KEY           "message"
-#define NUMBER_OF_CLIENT        1
+#define NUMBER_OF_CLIENT        10
 #define RUN_NUMBER_OF_SEND_DATA 10
 
 #pragma mark ExternalUnitMulticlientTestDeclare
