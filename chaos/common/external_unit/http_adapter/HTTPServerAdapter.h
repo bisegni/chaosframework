@@ -39,6 +39,28 @@ namespace chaos{
                     CHAOS_DEFINE_MAP_FOR_TYPE(uintptr_t, ChaosSharedPtr<ExternalUnitConnection>, MapConnection);
                     CHAOS_DEFINE_LOCKABLE_OBJECT(MapConnection, LMapConnection);
                     
+                    typedef enum {
+                        OutOpInfoTypeSend,
+                        OutOpInfoTypeClose
+                    } OutOpInfoType;
+                    
+                    typedef struct OutOp {
+                        //! conenction that is tharget of operation
+                        std::string connection_identifier;
+                        //! operation type
+                        OutOpInfoType op_type;
+                        //!data to sent
+                        chaos::common::data::CDBufferUniquePtr data;
+                        //! send data opcode
+                        EUCMessageOpcode data_opcode;
+                    } OutOp;
+                    
+                    typedef ChaosSharedPtr<OutOp> OutOpShrdPtr;
+                    typedef std::queue<OutOpShrdPtr> OutOpShrdPtrQueue;
+                    CHAOS_DEFINE_LOCKABLE_OBJECT(OutOpShrdPtrQueue, LOutOpShrdPtrQueue);
+                    //!operation posted during poll execution to send with the nex one
+                    LOutOpShrdPtrQueue post_evt_op_queue;
+                    
                     //!contains all connection
                     LMapConnection  map_connection;
                     chaos::common::utility::Bimap<uintptr_t, std::string> map_m_conn_ext_conn;
@@ -62,7 +84,7 @@ namespace chaos{
                 protected:
                     void processBufferElement(ServerWorkRequest *request, ElementManagingPolicy& policy) throw(CException);
                     int sendDataToConnection(const std::string& connection_identifier,
-                                             const chaos::common::data::CDBufferUniquePtr data,
+                                             chaos::common::data::CDBufferUniquePtr data,
                                              const EUCMessageOpcode opcode);
                     int closeConnection(const std::string& connection_identifier);
                 public:
