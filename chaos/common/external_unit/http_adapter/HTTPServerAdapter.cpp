@@ -91,6 +91,45 @@ void HTTPServerAdapter::poller() {
     INFO << "Entering thread poller";
     while (run) {
         mg_mgr_poll(&mgr, 1);
+        
+        //consume opcode queue
+        {
+            LOutOpShrdPtrQueueReadLock wconnl = post_evt_op_queue.getReadLockObject();
+            while(post_evt_op_queue().empty() == false) {
+                OutOpShrdPtr op = post_evt_op_queue().front();
+                post_evt_op_queue().pop();
+                switch(op->op_type) {
+                    case OutOpInfoTypeSend:{
+                        LMapConnectionReadLock wconnl = map_connection.getReadLockObject();
+                        if(!map_m_conn_ext_conn.hasRightKey(static_cast<std::string>(op->connection_identifier))) break;
+                        mg_connection *nc = reinterpret_cast<mg_connection*>(map_m_conn_ext_conn.findByRightKey(static_cast<std::string>(op->connection_identifier)));
+                        switch (op->data_opcode) {
+                            case EUCMessageOpcodeWhole:
+                                mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT, op->data->getBuffer(), op->data->getBufferSize());
+                                break;
+                            case EUCPhaseStartFragment:
+                                mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT|WEBSOCKET_DONT_FIN, op->data->getBuffer(), op->data->getBufferSize());
+                                break;
+                    
+                            case EUCPhaseContinueFragment:
+                                mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT|WEBSOCKET_DONT_FIN, op->data->getBuffer(), op->data->getBufferSize());
+                                break;
+                    
+                            case EUCPhaseEndFragment:
+                                mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT, op->data->getBuffer(), op->data->getBufferSize());
+                                break;
+                        }
+                        break;
+                    }
+                    case OutOpInfoTypeClose:{
+                        if(!map_m_conn_ext_conn.hasRightKey(static_cast<std::string>(op->connection_identifier))) break;
+                        mg_connection *nc = reinterpret_cast<mg_connection*>(map_m_conn_ext_conn.findByRightKey(static_cast<std::string>(op->connection_identifier)));
+                        mg_send_websocket_frame(nc, WEBSOCKET_OP_CLOSE, "", 0);
+                        break;
+                    }
+                }
+            }
+        }
     }
     INFO << "Leaving thread poller";
 }
@@ -289,8 +328,7 @@ int HTTPServerAdapter::deregisterEndpoint(ExternalUnitServerEndpoint& endpoint) 
         it != end;) {
         if(it->second->getEndpointIdentifier().compare(endpoint.getIdentifier()) == 0) {
             if(map_m_conn_ext_conn.hasRightKey(static_cast<std::string>(it->second->connection_identifier))) {
-                mg_connection *nc = reinterpret_cast<mg_connection*>(map_m_conn_ext_conn.findByRightKey(static_cast<std::string>(it->second->connection_identifier)));
-                mg_send_websocket_frame(nc, WEBSOCKET_OP_CLOSE, "", 0);
+                closeConnection(it->second->connection_identifier);
                 //remove connection
                 map_connection().erase(it++);
             }
@@ -303,34 +341,45 @@ int HTTPServerAdapter::deregisterEndpoint(ExternalUnitServerEndpoint& endpoint) 
 }
 
 int HTTPServerAdapter::sendDataToConnection(const std::string& connection_identifier,
-                                            const chaos::common::data::CDBufferUniquePtr data,
+                                            chaos::common::data::CDBufferUniquePtr data,
                                             const EUCMessageOpcode opcode) {
-    LMapConnectionReadLock wconnl = map_connection.getReadLockObject();
-    if(!map_m_conn_ext_conn.hasRightKey(static_cast<std::string>(connection_identifier))) return -1;
-    mg_connection *nc = reinterpret_cast<mg_connection*>(map_m_conn_ext_conn.findByRightKey(static_cast<std::string>(connection_identifier)));
-    switch (opcode) {
-        case EUCMessageOpcodeWhole:
-            mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT, data->getBuffer(), data->getBufferSize());
-            break;
-        case EUCPhaseStartFragment:
-            mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT|WEBSOCKET_DONT_FIN, data->getBuffer(), data->getBufferSize());
-            break;
-
-        case EUCPhaseContinueFragment:
-            mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT|WEBSOCKET_DONT_FIN, data->getBuffer(), data->getBufferSize());
-            break;
-
-        case EUCPhaseEndFragment:
-            mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT, data->getBuffer(), data->getBufferSize());
-            break;
-    }
+    LOutOpShrdPtrQueueWriteLock wconnl = post_evt_op_queue.getWriteLockObject();
+    OutOpShrdPtr op(new OutOp());
+    op->connection_identifier = connection_identifier;
+    op->op_type = OutOpInfoTypeSend;
+    op->data = ChaosMoveOperator(data);
+    op->data_opcode = opcode;
+    post_evt_op_queue().push(op);
+//    LMapConnectionReadLock wconnl = map_connection.getReadLockObject();
+//    if(!map_m_conn_ext_conn.hasRightKey(static_cast<std::string>(connection_identifier))) return -1;
+//    mg_connection *nc = reinterpret_cast<mg_connection*>(map_m_conn_ext_conn.findByRightKey(static_cast<std::string>(connection_identifier)));
+//    switch (opcode) {
+//        case EUCMessageOpcodeWhole:
+//            mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT, data->getBuffer(), data->getBufferSize());
+//            break;
+//        case EUCPhaseStartFragment:
+//            mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT|WEBSOCKET_DONT_FIN, data->getBuffer(), data->getBufferSize());
+//            break;
+//
+//        case EUCPhaseContinueFragment:
+//            mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT|WEBSOCKET_DONT_FIN, data->getBuffer(), data->getBufferSize());
+//            break;
+//
+//        case EUCPhaseEndFragment:
+//            mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT, data->getBuffer(), data->getBufferSize());
+//            break;
+//    }
     return 0;
 }
 
 int HTTPServerAdapter::closeConnection(const std::string& connection_identifier) {
-    LMapConnectionReadLock wconnl = map_connection.getReadLockObject();
-    if(!map_m_conn_ext_conn.hasRightKey(static_cast<std::string>(connection_identifier))) return -1;
-    mg_connection *nc = reinterpret_cast<mg_connection*>(map_m_conn_ext_conn.findByRightKey(static_cast<std::string>(connection_identifier)));
-    mg_send_websocket_frame(nc, WEBSOCKET_OP_CLOSE, "", 0);
+    LOutOpShrdPtrQueueWriteLock wconnl = post_evt_op_queue.getWriteLockObject();
+    OutOpShrdPtr op(new OutOp());
+    op->connection_identifier = connection_identifier;
+    op->op_type = OutOpInfoTypeClose;
+    post_evt_op_queue().push(op);
+//    if(!map_m_conn_ext_conn.hasRightKey(static_cast<std::string>(connection_identifier))) return -1;
+//    mg_connection *nc = reinterpret_cast<mg_connection*>(map_m_conn_ext_conn.findByRightKey(static_cast<std::string>(connection_identifier)));
+//    mg_send_websocket_frame(nc, WEBSOCKET_OP_CLOSE, "", 0);
     return 0;
 }
