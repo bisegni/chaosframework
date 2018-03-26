@@ -40,6 +40,32 @@ namespace chaos {
                 class HTTPBaseAdapter {
                     friend class ExternalUnitConnection;
                 protected:
+                    //structure for manage command executed in other thread
+                    
+                    //!opcode list
+                    typedef enum {
+                        OpcodeInfoTypeSend,
+                        OpcodeInfoTypeCloseConnection,
+                        OpcodeInfoTypeCloseConnectionForEndpoint
+                    } OpcodeInfoType;
+                    
+                    typedef struct Opcode {
+                        //! context sensitive identifier associated to the operation
+                        std::string identifier;
+                        //! operation type
+                        OpcodeInfoType op_type;
+                        //!data to sent
+                        chaos::common::data::CDBufferUniquePtr data;
+                        //! send data opcode
+                        EUCMessageOpcode data_opcode;
+                    } Opcode;
+                    
+                    typedef ChaosSharedPtr<Opcode> OpcodeShrdPtr;
+                    typedef std::queue<OpcodeShrdPtr> OpcodeShrdPtrQueue;
+                    CHAOS_DEFINE_LOCKABLE_OBJECT(OpcodeShrdPtrQueue, LOpcodeShrdPtrQueue);
+                    //!operation posted during poll execution to send with the nex one
+                    LOpcodeShrdPtrQueue post_evt_op_queue;
+                    
                     ChaosUniquePtr<boost::thread> thread_poller;
                     
                     virtual int sendDataToConnection(const std::string& connection_identifier,

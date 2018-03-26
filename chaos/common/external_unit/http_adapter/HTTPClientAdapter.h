@@ -77,7 +77,7 @@ namespace chaos {
                                                     int& accept_result);
                 protected:
                     int sendDataToConnection(const std::string& connection_identifier,
-                                             const chaos::common::data::CDBufferUniquePtr data,
+                                             chaos::common::data::CDBufferUniquePtr data,
                                              const EUCMessageOpcode opcode);
                     int closeConnection(const std::string& connection_identifier);
                 public:
