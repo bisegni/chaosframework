@@ -51,7 +51,7 @@ int ServerEndpoint::handleReceivedeMessage(const std::string& connection_identif
     return 0;
 }
 
-#pragma mark ServerEndpoint
+#pragma mark ExternalUnitTest
 ExternalUnitTest::ExternalUnitTest():
 ExternalUnitClientEndpoint("EchoTest"){}
 

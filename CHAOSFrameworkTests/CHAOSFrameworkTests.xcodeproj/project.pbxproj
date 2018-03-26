@@ -24,6 +24,7 @@
 		328CFCA41F7D4167002FEB25 /* QueuePriorityTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328CFCA21F7D4167002FEB25 /* QueuePriorityTest.cpp */; };
 		32A735331F6C399E00008145 /* PropertyTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A735311F6C399E00008145 /* PropertyTest.cpp */; };
 		32C180EF1FAB33CD00AFCC15 /* TestPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C180EE1FAB33CD00AFCC15 /* TestPlugin.cpp */; };
+		32CBCB29205ECF11002FB95F /* ExternalUnitMulticlientTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CBCB28205ECF11002FB95F /* ExternalUnitMulticlientTest.cpp */; };
 		32DA77741F94AD6D00497349 /* TestVariant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DA77731F94AD6D00497349 /* TestVariant.cpp */; };
 		32DA77781F94B0D300497349 /* ScriptTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DA77771F94B0D300497349 /* ScriptTest.cpp */; };
 		32DAABD51D6C7B2500464F7A /* PluginLibrary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DAABD31D6C7B2500464F7A /* PluginLibrary.cpp */; };
@@ -114,6 +115,7 @@
 		32A735321F6C399E00008145 /* PropertyTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PropertyTest.h; sourceTree = "<group>"; };
 		32C180EE1FAB33CD00AFCC15 /* TestPlugin.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestPlugin.cpp; sourceTree = "<group>"; };
 		32C180F01FAB439300AFCC15 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		32CBCB28205ECF11002FB95F /* ExternalUnitMulticlientTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ExternalUnitMulticlientTest.cpp; sourceTree = "<group>"; };
 		32DA77731F94AD6D00497349 /* TestVariant.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestVariant.cpp; sourceTree = "<group>"; };
 		32DA77771F94B0D300497349 /* ScriptTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptTest.cpp; sourceTree = "<group>"; };
 		32DAABD21D6C7A5000464F7A /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
@@ -263,6 +265,7 @@
 			children = (
 				327A4D231F90CB3200DA800C /* ExternalUnitTest.cpp */,
 				327A4D221F90CB3200DA800C /* ExternalUnitTest.h */,
+				32CBCB28205ECF11002FB95F /* ExternalUnitMulticlientTest.cpp */,
 			);
 			path = external_unit;
 			sourceTree = "<group>";
@@ -562,6 +565,7 @@
 				32818B431F828FDB004A409E /* TestCommandExecutor.cpp in Sources */,
 				32DA77781F94B0D300497349 /* ScriptTest.cpp in Sources */,
 				328CFCA41F7D4167002FEB25 /* QueuePriorityTest.cpp in Sources */,
+				32CBCB29205ECF11002FB95F /* ExternalUnitMulticlientTest.cpp in Sources */,
 				322EE8811F825D8000D89824 /* MemcachedEmbedded.cpp in Sources */,
 				32818B441F828FDB004A409E /* TestBatchDefault.cpp in Sources */,
 				32A735331F6C399E00008145 /* PropertyTest.cpp in Sources */,

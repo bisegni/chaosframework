@@ -34,7 +34,11 @@ ExternalUnitServerEndpoint::~ExternalUnitServerEndpoint() {}
 int ExternalUnitServerEndpoint::sendMessage(const std::string& connection_identifier,
                                       CDWUniquePtr message,
                                       const EUCMessageOpcode opcode) {
-    LMapConnectionReadLock rl = map_connection.getReadLockObject();
+    LMapConnectionReadLock rl;
+    do {
+        rl = map_connection.getReadLockObject(utility::ChaosLockTypeTry);
+        usleep(10000);
+    }while(rl->owns_lock() == false);
     if(map_connection().count(connection_identifier) == 0) return -1;
     //send data to the coneection
     return map_connection()[connection_identifier]->sendData(ChaosMoveOperator(message),
@@ -46,7 +50,11 @@ std::string ExternalUnitServerEndpoint::getIdentifier() {
 }
 
 int ExternalUnitServerEndpoint::addConnection(ExternalUnitConnection& new_connection) {
-    LMapConnectionWriteLock wl = map_connection.getWriteLockObject();
+    LMapConnectionWriteLock wl;
+    do {
+        wl = map_connection.getWriteLockObject(utility::ChaosLockTypeTry);
+        usleep(10000);
+    }while(wl->owns_lock() == false);
     map_connection().insert(MapConnectionPair(new_connection.connection_identifier, &new_connection));
     wl->unlock();
     handleNewConnection(new_connection.connection_identifier);

@@ -7,6 +7,7 @@ SET(TestFrameworkSource main.cpp
                         data/TestVariant.cpp
                         data/TestCDataWrapper.cpp
                         external_unit/ExternalUnitTest.cpp
+                        external_unit/ExternalUnitMulticlientTest.cpp
                         batch_system/TestCommandExecutor.cpp
                         batch_system/TestBatchCommand.cpp
                         batch_system/TestBatchDefault.cpp

@@ -134,8 +134,8 @@ typedef typename std::vector< t >::const_iterator   n ## ConstIterator;
 
 #define  CHAOS_DEFINE_QUEUE_FOR_TYPE(t, n)\
 typedef std::queue< t >                   n;\
-typedef std::queue< t >::iterator         n ## Iterator;\
-typedef std::queue< t >::const_iterator   n ## ConstIterator;
+typedef std::queue< t >::iterator         n ## Iterator;
+//typedef std::queue< t >::const_iterator   n ## ConstIterator;
 
 #define  CHAOS_DEFINE_DEQUE_FOR_TYPE(t, n)\
 typedef std::deque< t >                   n;\

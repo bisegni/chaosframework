@@ -43,7 +43,7 @@ run(false){
     } else {
         rest_poll_time=10;
     }
-
+    
 }
 
 HTTPClientAdapter::~HTTPClientAdapter() {
@@ -59,9 +59,9 @@ void HTTPClientAdapter::init(void *init_data) throw (chaos::CException) {
 void HTTPClientAdapter::deinit() throw (chaos::CException) {
     run = false;
     DBG<<" HTTPClientAdapter DEINIT";
-
+    
     thread_poller->join();
-
+    
     mg_mgr_free(&mgr);
 }
 
@@ -73,11 +73,59 @@ void HTTPClientAdapter::poller() {
         if(rest_poll_time>0){
             usleep(rest_poll_time);
             if(poll_counter++ % (rest_poll_time)*10000000){performReconnection();}
-
+        }
+        //consume opcode queue
+        {
+            LOpcodeShrdPtrQueueReadLock wconnl = post_evt_op_queue.getReadLockObject();
+            while(post_evt_op_queue().empty() == false) {
+                OpcodeShrdPtr op = post_evt_op_queue().front();
+                post_evt_op_queue().pop();
+                wconnl->unlock();
+                switch(op->op_type) {
+                    case OpcodeInfoTypeSend:{
+                        LMapReconnectionInfoWriteLock wlm = map_connection.getWriteLockObject();
+                        MapReconnectionInfoIterator conn_it =  map_connection().find(op->identifier);
+                        if(conn_it == map_connection().end()) {break;}
+                        if(conn_it->second->conn) {
+                            if(conn_it->second->ext_unit_conn->online == false) {break;};
+                            switch (op->data_opcode) {
+                                case EUCMessageOpcodeWhole:
+                                    mg_send_websocket_frame(conn_it->second->conn, WEBSOCKET_OP_TEXT, op->data->getBuffer(), op->data->getBufferSize());
+                                    break;
+                                case EUCPhaseStartFragment:
+                                    mg_send_websocket_frame(conn_it->second->conn, WEBSOCKET_OP_TEXT|WEBSOCKET_DONT_FIN, op->data->getBuffer(), op->data->getBufferSize());
+                                    break;
+                                case EUCPhaseContinueFragment:
+                                    mg_send_websocket_frame(conn_it->second->conn, WEBSOCKET_OP_TEXT|WEBSOCKET_DONT_FIN, op->data->getBuffer(), op->data->getBufferSize());
+                                    break;
+                                case EUCPhaseEndFragment:
+                                    mg_send_websocket_frame(conn_it->second->conn, WEBSOCKET_OP_TEXT, op->data->getBuffer(), op->data->getBufferSize());
+                                    break;
+                            }
+                        }
+                        break;
+                    }
+                    case OpcodeInfoTypeCloseConnection:{
+                        LMapReconnectionInfoWriteLock wlm = map_connection.getWriteLockObject();
+                        MapReconnectionInfoIterator conn_it =  map_connection().find(op->identifier);
+                        if(conn_it == map_connection().end()) {break;};
+                        if(conn_it->second->conn) {
+                            if(conn_it->second->ext_unit_conn->online == false){break;};
+                            DBG<<" HTTPClientAdapter Close Connection";
+                            mg_send_websocket_frame(conn_it->second->conn, WEBSOCKET_OP_CLOSE, "", 0);
+                        }
+                        //!remove from active connection map
+                        map_connection().erase(conn_it);
+                        break;
+                    }
+                    default:{break;}
+                }
+                wconnl->lock();
+            }
         }
     }
     DBG<<" HTTPClientAdapter POLL EXIT";
-
+    
     INFO << "Leaving thread poller";
 }
 
@@ -116,17 +164,18 @@ int HTTPClientAdapter::addNewConnectionForEndpoint(ExternalUnitClientEndpoint *e
 }
 
 int HTTPClientAdapter::removeConnectionsFromEndpoint(ExternalUnitClientEndpoint *target_endpoint) {
+    //remove endpoint from coon abstraction
     LMapReconnectionInfoWriteLock wlm = map_connection.getWriteLockObject();
+    MapReconnectionInfoIterator it = map_connection().find(target_endpoint->getConnectionIdentifier());
+    if(it == map_connection().end()) {return 0;}
+    //detach external unit cnnection abstraction
+    it->second->ext_unit_conn.reset();
     
-    MapReconnectionInfoIterator conn_it =  map_connection().find(target_endpoint->getConnectionIdentifier());
-    if(conn_it == map_connection().end()) return 0;
-    //!remove from active connection map
-    map_connection().erase(conn_it);
-    //now real conenction is fre to go away
-    if(conn_it->second->conn) {
-        if(conn_it->second->ext_unit_conn->online == false) return -1;
-        mg_send_websocket_frame(conn_it->second->conn, WEBSOCKET_OP_CLOSE, "", 0);
-    }
+    LOpcodeShrdPtrQueueWriteLock wconnl = post_evt_op_queue.getWriteLockObject();
+    OpcodeShrdPtr op(new Opcode());
+    op->identifier = target_endpoint->getConnectionIdentifier();
+    op->op_type = OpcodeInfoTypeCloseConnection;
+    post_evt_op_queue().push(op);
     return 0;
 }
 
@@ -172,14 +221,14 @@ void HTTPClientAdapter::ev_handler(struct mg_connection *conn,
     if(ci == NULL) return;
     switch (event) {
         case MG_EV_CONNECT: {
-        DBG<<" HTTP Client Connection event";
+            DBG<<" HTTP Client Connection event";
             ChaosWriteLock wl(ci->smux);
             int status = *((int *) event_data);
             ci->ext_unit_conn->online = (status==0);
             break;
         }
         case MG_EV_WEBSOCKET_FRAME: {
-
+            
             CHAOS_ASSERT(ci->ext_unit_conn.get() != NULL);
             int err = 0;
             struct websocket_message *wm = (struct websocket_message *) event_data;
@@ -208,9 +257,9 @@ void HTTPClientAdapter::ev_handler(struct mg_connection *conn,
         }
         case MG_EV_CLOSE: {
             //manage the reconnection
-        DBG<<" HTTP Client CLOSE event";
-
+            DBG<<" HTTP Client CLOSE event";
             LMapReconnectionInfoReadLock wlm = ci->class_instance->map_connection.getReadLockObject();
+            if(ci->ext_unit_conn.get() == NULL) {break;}
             if(ci->class_instance->map_connection().count(ci->ext_unit_conn->connection_identifier) !=0) {
                 //in this case concnretion info need to be put into  reconnection_queue
                 //!beause conenciton need to be reopend
@@ -227,50 +276,23 @@ void HTTPClientAdapter::ev_handler(struct mg_connection *conn,
 }
 
 int HTTPClientAdapter::sendDataToConnection(const std::string& connection_identifier,
-                                            const chaos::common::data::CDBufferUniquePtr data,
+                                            chaos::common::data::CDBufferUniquePtr data,
                                             const EUCMessageOpcode opcode) {
-    LMapReconnectionInfoWriteLock wlm = map_connection.getWriteLockObject();
-    MapReconnectionInfoIterator conn_it =  map_connection().find(connection_identifier);
-    if(conn_it == map_connection().end()) return -1;
-    
-    if(conn_it->second->conn) {
-        if(conn_it->second->ext_unit_conn->online == false) return -3;
-        switch (opcode) {
-            case EUCMessageOpcodeWhole:
-                mg_send_websocket_frame(conn_it->second->conn, WEBSOCKET_OP_TEXT, data->getBuffer(), data->getBufferSize());
-                break;
-            case EUCPhaseStartFragment:
-                mg_send_websocket_frame(conn_it->second->conn, WEBSOCKET_OP_TEXT|WEBSOCKET_DONT_FIN, data->getBuffer(), data->getBufferSize());
-                break;
-            case EUCPhaseContinueFragment:
-                mg_send_websocket_frame(conn_it->second->conn, WEBSOCKET_OP_TEXT|WEBSOCKET_DONT_FIN, data->getBuffer(), data->getBufferSize());
-                break;
-            case EUCPhaseEndFragment:
-                mg_send_websocket_frame(conn_it->second->conn, WEBSOCKET_OP_TEXT, data->getBuffer(), data->getBufferSize());
-                break;
-        }
-    } else {
-        return -2;
-    }
+    LOpcodeShrdPtrQueueWriteLock wconnl = post_evt_op_queue.getWriteLockObject();
+    OpcodeShrdPtr op(new Opcode());
+    op->identifier = connection_identifier;
+    op->op_type = OpcodeInfoTypeSend;
+    op->data = ChaosMoveOperator(data);
+    op->data_opcode = opcode;
+    post_evt_op_queue().push(op);
     return 0;
 }
 
 int HTTPClientAdapter::closeConnection(const std::string& connection_identifier) {
-    LMapReconnectionInfoWriteLock wlm = map_connection.getWriteLockObject();
-
-    MapReconnectionInfoIterator conn_it =  map_connection().find(connection_identifier);
-    if(conn_it == map_connection().end()) return 0;
-    
-    if(conn_it->second->conn) {
-        if(conn_it->second->ext_unit_conn->online == false) return -1;
-        DBG<<" HTTPClientAdapter Close Connection";
-
-        mg_send_websocket_frame(conn_it->second->conn, WEBSOCKET_OP_CLOSE, "", 0);
-    }
-    else{
-        return -2;}
-    
-    //!remove from active connection map
-    map_connection().erase(conn_it);
+    LOpcodeShrdPtrQueueWriteLock wconnl = post_evt_op_queue.getWriteLockObject();
+    OpcodeShrdPtr op(new Opcode());
+    op->identifier = connection_identifier;
+    op->op_type = OpcodeInfoTypeCloseConnection;
+    post_evt_op_queue().push(op);
     return 0;
 }
