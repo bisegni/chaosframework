@@ -104,19 +104,21 @@ int64_t QueryCursor::fetchNewPage() {
     //fetch the new page
     switch(phase) {
         case QueryPhaseNotStarted:
-            DBG << "["<<node_id<<"] start search "<<start_ts<<"-"<<end_ts<<" page_len:"<<page_len;
+            DBG << "["<<node_id<<"] start search "<<start_ts<<"-"<<end_ts<<" page_len:"<<page_len<<" data pack counter:"<< result_page.last_record_found_seq.datapack_counter<<"run id:"<< result_page.last_record_found_seq.run_id ;
 
             std::memset(&result_page.last_record_found_seq, 0, sizeof(direct_io::channel::opcode_headers::SearchSequence));
             //change to the next phase
             phase = QueryPhaseStarted;
             break;
         case QueryPhaseStarted:
-            DBG << "["<<node_id<<"] continue search  "<<start_ts<<"-"<<end_ts<<" page_len:"<<page_len;
+            DBG << "["<<node_id<<"] continue search  "<<start_ts<<"-"<<end_ts<<" page_len:"<<page_len<<" data pack counter:"<< result_page.last_record_found_seq.datapack_counter<<"run id:"<< result_page.last_record_found_seq.run_id ;
+
             break;
             
         case QueryPhaseEnded:
 
-            ERR << "["<<node_id<<"] end search "<<start_ts<<"-"<<end_ts<<" page_len:"<<page_len;
+            ERR << "["<<node_id<<"] end search "<<start_ts<<"-"<<end_ts<<" page_len:"<<page_len<<" data pack counter:"<< result_page.last_record_found_seq.datapack_counter<<"run id:"<< result_page.last_record_found_seq.run_id ;
+
 
             return 0;
     }
