@@ -1,0 +1,167 @@
+/*
+ * Copyright 2012, 2017 INFN
+ *
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
+ *
+ * https://joinup.ec.europa.eu/software/page/eupl
+ *
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
+ */
+
+#include <chaos_micro_unit_toolkit/connection/unit_proxy/raw_driver/ExternalDriverHandlerWrapper.h>
+#include <iostream>
+#include <cassert>
+using namespace chaos::micro_unit_toolkit::data;
+using namespace chaos::micro_unit_toolkit::connection;
+using namespace chaos::micro_unit_toolkit::connection::unit_proxy::raw_driver;
+
+
+#define MSG_KEY                 "msg"
+#define OPCODE_KEY              "opc"
+#define OPCODE_PARAMETER_KEY    "par"
+#define INITIALIZATION_URI      "uri"
+#define INIT_OPCODE             "init"
+#define DEINIT_OPCODE           "deinit"
+
+ExternalDriverHandlerWrapper::ExternalDriverHandlerWrapper(UnitProxyHandler handler,
+                                                           void *user_data,
+                                                           ChaosUniquePtr<ExternalDriverUnitProxy>& _u_proxy):
+UnitProxyHandlerWrapper(handler,
+                        user_data,
+#if __cplusplus >= 201103L
+                        ChaosMoveOperator(_u_proxy)
+#else
+                        ChaosMoveOperator(ChaosUniquePtr<AbstractUnitProxy>(_u_proxy))
+#endif
+                        ),
+unit_state(base_unit->getUnitState()),
+authorized(false){}
+
+ExternalDriverHandlerWrapper::~ExternalDriverHandlerWrapper(){}
+
+int ExternalDriverHandlerWrapper::sendMessage(data::CDWUniquePtr& message_data) {
+    ExternalDriverUnitProxy * const rd = static_cast<ExternalDriverUnitProxy*>(base_unit.get());
+    return rd->sendMessage(message_data);
+}
+
+int ExternalDriverHandlerWrapper::unitEventLoop() {
+    int err = 0;
+    switch (unit_state) {
+        case UnitStateUnknown:
+            authorized = false;
+            static_cast<ExternalDriverUnitProxy*>(base_unit.get())->manageAuthenticationRequest();
+            break;
+        case UnitStateNotAuthenticated:
+            err = callHandler(UP_EV_AUTH_REJECTED, NULL);
+            break;
+        case UnitStateAuthenticated:
+            if(authorized == false){
+                err = callHandler(UP_EV_AUTH_ACCEPTED, NULL);
+                authorized = true;
+            }
+            //manage request by remote user
+            err = manageRemoteMessage();
+            //perform idle operation
+            if(!err) {
+                //call handler for user action passing the instace as public interface
+                err = callHandler(UP_EV_USR_ACTION, this);
+            }
+            break;
+    }
+    return err;
+}
+
+int ExternalDriverHandlerWrapper::manageRemoteMessage() {
+    int err = 0;
+    bool init_opcode = false;
+    bool deinit_opcode = false;
+    ExternalDriverUnitProxy * const rd = static_cast<ExternalDriverUnitProxy*>(base_unit.get());
+    RemoteMessageUniquePtr remote_message;
+    while(rd->hasMoreMessage()) {
+        remote_message = rd->getNextMessage();
+        if(remote_message->message.get() == NULL) return -1;
+        
+        std::string uri;
+        std::string opcode;
+        data::CDWShrdPtr r_msg;
+        if(remote_message->message->hasKey(OPCODE_KEY) &&
+           remote_message->message->isStringValue(OPCODE_KEY)){
+            opcode = remote_message->message->getStringValue(OPCODE_KEY);
+        } else {
+            return -2;
+        }
+        
+        if(remote_message->message->hasKey(INITIALIZATION_URI) &&
+           remote_message->message->isStringValue(INITIALIZATION_URI)){
+            uri = remote_message->message->getStringValue(INITIALIZATION_URI);
+        } else {
+            return -3;
+        }
+        
+        if(remote_message->message->hasKey(OPCODE_PARAMETER_KEY) &&
+           remote_message->message->isCDWValue(OPCODE_PARAMETER_KEY)){
+            r_msg = remote_message->message->getCDWValue(OPCODE_PARAMETER_KEY);
+        }
+        //compose message and requests
+        EDMessage req_message = {uri, opcode, r_msg};
+        //check if we have and init msg
+        if((init_opcode = opcode.compare(INIT_OPCODE) == 0)) {
+            EDInitRequest init_request = {req_message,{}};
+            if((err = callHandler(UP_EV_INIT_RECEIVED,
+                                  &init_request)) == 0) {
+                CDWUniquePtr response_msg(new DataPack());
+                //                response_msg->addInt32Value(ERR_CODE, req.response.error_code);
+                //                if(req.response.error_message.size()) {
+                //                    response_msg->addStringValue(ERR_MSG, req.response.error_message);
+                //                }
+                //                if(req.response.error_domain.size()) {
+                //                    response_msg->addStringValue(ERR_MSG, req.response.error_message);
+                //                }
+                rd->sendAnswer(remote_message, response_msg);
+            }
+        } else if((deinit_opcode = opcode.compare(DEINIT_OPCODE) == 0)) {
+            EDDeinitRequest deinit_request = {req_message,{}};
+            if((err = callHandler(UP_EV_DEINIT_RECEIVED,
+                                  &deinit_request)) == 0) {
+                CDWUniquePtr response_msg(new DataPack());
+                //                response_msg->addInt32Value(ERR_CODE, req.response.error_code);
+                //                if(req.response.error_message.size()) {
+                //                    response_msg->addStringValue(ERR_MSG, req.response.error_message);
+                //                }
+                //                if(req.response.error_domain.size()) {
+                //                    response_msg->addStringValue(ERR_MSG, req.response.error_message);
+                //                }
+                rd->sendAnswer(remote_message, response_msg);
+            }
+        } else if(remote_message->is_request) {
+            EDNormalRequest normal_request = {req_message,{}};
+            if((err = callHandler(UP_EV_REQ_RECEIVED,
+                                  &normal_request)) == 0) {
+                CDWUniquePtr response_msg(new DataPack());
+                //                response_msg->addInt32Value(ERR_CODE, req.response.error_code);
+                //                if(req.response.error_message.size()) {
+                //                    response_msg->addStringValue(ERR_MSG, req.response.error_message);
+                //                }
+                //                if(req.response.error_domain.size()) {
+                //                    response_msg->addStringValue(ERR_MSG, req.response.error_message);
+                //                }
+                rd->sendAnswer(remote_message, response_msg);
+            }
+        } else {
+            err = callHandler(UP_EV_MSG_RECEIVED, &req_message);
+        }
+        
+    }
+    return err;
+}

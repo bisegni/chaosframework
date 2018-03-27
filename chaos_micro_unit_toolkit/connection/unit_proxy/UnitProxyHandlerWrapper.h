@@ -27,19 +27,25 @@
 #include <chaos_micro_unit_toolkit/connection/unit_proxy/AbstractUnitProxy.h>
 #include <chaos_micro_unit_toolkit/connection/connection_adapter/AbstractConnectionAdapter.h>
 
+#define RETRY_TIME              5
+
+#define UP_EV_USR_ACTION        0   /* user can take here his action event_data is the pointer to the handler warapepr instance that manage the handler function */
+#define UP_EV_CONN_CONNECTED    1   /* connection to remote host has been done */
+#define UP_EV_CONN_ERROR        3   /* there was and error on connection */
+#define UP_EV_CONN_DISCONNECTED 4   /* connection to remote host has been closed */
+#define UP_EV_CONN_ACCEPTED     5   /* connection has been accepted */
+#define UP_EV_CONN_REJECTED     6   /* connection has been rejexted */
+#define UP_EV_CONN_RETRY        7   /* retry to reconnect event_data point to and unsigned integer that is the current waiting time for retry */
+#define UP_EV_AUTH_ACCEPTED     8   /* unit has been accepted autorization key*/
+#define UP_EV_AUTH_REJECTED     9   /* unit has rejected the autorization key */
+#define UP_EV_MSG_RECEIVED      10  /* new message has been received, event_data point to UPMessage*, memory is valido only during call*/
+#define UP_EV_REQ_RECEIVED      11  /* new request has been received, event_data point to UPRequest*, memory is valido only during call*/
+#define UP_EV_ERR_RECEIVED      12  /* error message has been received, event_data point to UPError*, memory is valido only during call*/
+
 namespace chaos {
     namespace micro_unit_toolkit {
         namespace connection {
             namespace unit_proxy {
-                
-                struct UPMessage {
-                    data::CDWShrdPtr message;
-                };
-                
-                struct UPRequest {
-                    data::CDWShrdPtr message;
-                    data::CDWUniquePtr response;
-                };
                 
                 struct UPError {
                     const int error;
@@ -53,20 +59,6 @@ namespace chaos {
                  */
                 typedef int (*UnitProxyHandler)(void *usr_data, unsigned int event, void *event_data);
                 
-#define RETRY_TIME              5
-                
-#define UP_EV_USR_ACTION        0   /* user can take here his action event_data is the pointer to the handler warapepr instance that manage the handler function */
-#define UP_EV_CONN_CONNECTED    1   /* connection to remote host has been done */
-#define UP_EV_CONN_ERROR        3   /* there was and error on connection */
-#define UP_EV_CONN_DISCONNECTED 4   /* connection to remote host has been closed */
-#define UP_EV_CONN_ACCEPTED     5   /* connection has been accepted */
-#define UP_EV_CONN_REJECTED     6   /* connection has been rejexted */
-#define UP_EV_CONN_RETRY        7   /* retry to reconnect event_data point to and unsigned integer that is the current waiting time for retry */
-#define UP_EV_AUTH_ACCEPTED     8   /* unit has been accepted autorization key*/
-#define UP_EV_AUTH_REJECTED     9   /* unit has rejected the autorization key */
-#define UP_EV_MSG_RECEIVED      10  /* new message has been received, event_data point to UPMessage*, memory is valido only during call*/
-#define UP_EV_REQ_RECEIVED      11  /* new request has been received, event_data point to UPRequest*, memory is valido only during call*/
-#define UP_EV_ERR_RECEIVED      12  /* error message has been received, event_data point to UPError*, memory is valido only during call*/
                 //Base class use a function as handler for all event
                 /*!
                  this is a base class that handle all necessary operation to keep connection and guide user
@@ -87,8 +79,8 @@ namespace chaos {
                     virtual int unitEventLoop() = 0;
                 public:
                     UnitProxyHandlerWrapper(UnitProxyHandler _handler,
-                                           void *_user_data,
-                                           ChaosUniquePtr<AbstractUnitProxy> _base_unit);
+                                            void *_user_data,
+                                            ChaosUniquePtr<AbstractUnitProxy> _base_unit);
                     
                     virtual ~UnitProxyHandlerWrapper();
                     
