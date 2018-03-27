@@ -33,6 +33,7 @@ using namespace chaos::micro_unit_toolkit::connection::unit_proxy::raw_driver;
 #define INITIALIZATION_URI      "uri"
 #define INIT_OPCODE             "init"
 #define DEINIT_OPCODE           "deinit"
+#define CONFIGURATION_STATE     "configuration_state"
 
 ExternalDriverHandlerWrapper::ExternalDriverHandlerWrapper(UnitProxyHandler handler,
                                                            void *user_data,
@@ -120,43 +121,22 @@ int ExternalDriverHandlerWrapper::manageRemoteMessage() {
             EDInitRequest init_request = {req_message,{}};
             if((err = callHandler(UP_EV_INIT_RECEIVED,
                                   &init_request)) == 0) {
-                CDWUniquePtr response_msg(new DataPack());
-                //                response_msg->addInt32Value(ERR_CODE, req.response.error_code);
-                //                if(req.response.error_message.size()) {
-                //                    response_msg->addStringValue(ERR_MSG, req.response.error_message);
-                //                }
-                //                if(req.response.error_domain.size()) {
-                //                    response_msg->addStringValue(ERR_MSG, req.response.error_message);
-                //                }
+                CDWUniquePtr response_msg = composeResponseMessage(init_request.response);
+                response_msg->addInt32Value(CONFIGURATION_STATE, init_request.response.configuration_state);
+                response_msg->addStringValue(INITIALIZATION_URI, init_request.response.new_uri_id);
                 rd->sendAnswer(remote_message, response_msg);
             }
         } else if((deinit_opcode = opcode.compare(DEINIT_OPCODE) == 0)) {
             EDDeinitRequest deinit_request = {req_message,{}};
             if((err = callHandler(UP_EV_DEINIT_RECEIVED,
                                   &deinit_request)) == 0) {
-                CDWUniquePtr response_msg(new DataPack());
-                //                response_msg->addInt32Value(ERR_CODE, req.response.error_code);
-                //                if(req.response.error_message.size()) {
-                //                    response_msg->addStringValue(ERR_MSG, req.response.error_message);
-                //                }
-                //                if(req.response.error_domain.size()) {
-                //                    response_msg->addStringValue(ERR_MSG, req.response.error_message);
-                //                }
-                rd->sendAnswer(remote_message, response_msg);
+                rd->sendAnswer(remote_message, composeResponseMessage(deinit_request.response));
             }
         } else if(remote_message->is_request) {
             EDNormalRequest normal_request = {req_message,{}};
             if((err = callHandler(UP_EV_REQ_RECEIVED,
                                   &normal_request)) == 0) {
-                CDWUniquePtr response_msg(new DataPack());
-                //                response_msg->addInt32Value(ERR_CODE, req.response.error_code);
-                //                if(req.response.error_message.size()) {
-                //                    response_msg->addStringValue(ERR_MSG, req.response.error_message);
-                //                }
-                //                if(req.response.error_domain.size()) {
-                //                    response_msg->addStringValue(ERR_MSG, req.response.error_message);
-                //                }
-                rd->sendAnswer(remote_message, response_msg);
+                rd->sendAnswer(remote_message, composeResponseMessage(normal_request.response));
             }
         } else {
             err = callHandler(UP_EV_MSG_RECEIVED, &req_message);
@@ -164,4 +144,16 @@ int ExternalDriverHandlerWrapper::manageRemoteMessage() {
         
     }
     return err;
+}
+
+CDWUniquePtr ExternalDriverHandlerWrapper::composeResponseMessage(EDResponse& base_resposne) {
+    CDWUniquePtr response_msg(new DataPack());
+    response_msg->addInt32Value(ERR_CODE, base_resposne.error_code);
+    if(base_resposne.error_message.size()) {
+        response_msg->addStringValue(ERR_MSG, base_resposne.error_message);
+    }
+    if(base_resposne.error_domain.size()) {
+        response_msg->addStringValue(ERR_MSG, base_resposne.error_message);
+    }
+    return response_msg;
 }

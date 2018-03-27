@@ -42,7 +42,7 @@ namespace chaos {
                         virtual ~ExternalDriverUnitProxy();
                         
                         int sendAnswer(RemoteMessageUniquePtr& message,
-                                       data::CDWUniquePtr& message_data);
+                                       const data::CDWUniquePtr& message_data);
                         int sendMessage(data::CDWUniquePtr& message_data);
                         using AbstractUnitProxy::sendMessage;
                         using AbstractUnitProxy::hasMoreMessage;

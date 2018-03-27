@@ -25,8 +25,11 @@
 #include <chaos_micro_unit_toolkit/connection/unit_proxy/UnitProxyHandlerWrapper.h>
 #include <chaos_micro_unit_toolkit/connection/unit_proxy/raw_driver/ExternalDriverUnitProxy.h>
 
-#define UP_EV_INIT_RECEIVED     13  /* */
-#define UP_EV_DEINIT_RECEIVED   14  /* */
+#define UP_EV_MSG_RECEIVED      10  /* new message has been received, event_data point to UPMessage*, memory is valido only during call*/
+#define UP_EV_REQ_RECEIVED      11  /* new request has been received, event_data point to EDNormalRequest*, memory is valido only during call*/
+#define UP_EV_ERR_RECEIVED      12  /* error message has been received, event_data point to UPError*, memory is valid only during call*/
+#define UP_EV_INIT_RECEIVED     13  /* has been request a new driver initialization, the event_data point to EDInitResponse*, memory is valid only during call*/
+#define UP_EV_DEINIT_RECEIVED   14  /* has been request a new driver deinitilization, the event_data point to EDInitRequest*, memory is valid only during call*/
 
 namespace chaos {
     namespace micro_unit_toolkit {
@@ -102,6 +105,7 @@ namespace chaos {
                     public UnitProxyHandlerWrapper {
                         const UnitState& unit_state;
                         bool authorized = false;
+                        data::CDWUniquePtr composeResponseMessage(EDResponse& base_resposne);
                     protected:
                         int unitEventLoop();
                         int manageRemoteMessage();

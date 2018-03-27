@@ -38,9 +38,6 @@
 #define UP_EV_CONN_RETRY        7   /* retry to reconnect event_data point to and unsigned integer that is the current waiting time for retry */
 #define UP_EV_AUTH_ACCEPTED     8   /* unit has been accepted autorization key*/
 #define UP_EV_AUTH_REJECTED     9   /* unit has rejected the autorization key */
-#define UP_EV_MSG_RECEIVED      10  /* new message has been received, event_data point to UPMessage*, memory is valido only during call*/
-#define UP_EV_REQ_RECEIVED      11  /* new request has been received, event_data point to UPRequest*, memory is valido only during call*/
-#define UP_EV_ERR_RECEIVED      12  /* error message has been received, event_data point to UPError*, memory is valido only during call*/
 
 namespace chaos {
     namespace micro_unit_toolkit {

@@ -45,7 +45,7 @@ int ExternalDriverUnitProxy::sendMessage(CDWUniquePtr& message_data) {
 }
 
 int ExternalDriverUnitProxy::sendAnswer(RemoteMessageUniquePtr& message,
-                                        CDWUniquePtr& message_data) {
+                                        const CDWUniquePtr& message_data) {
     
     if(message->is_request == false) return - 1;
     CDWUniquePtr answer(new DataPack());
