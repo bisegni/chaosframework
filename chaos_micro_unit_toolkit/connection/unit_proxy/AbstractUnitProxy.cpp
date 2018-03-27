@@ -96,5 +96,5 @@ const ConnectionState& AbstractUnitProxy::getConnectionState() const {
 }
 
 void AbstractUnitProxy::resetAuthorization() {
-    authorization_state = AuthorizationStateUnknown;
+    unit_state = UnitStateUnknown;
 }

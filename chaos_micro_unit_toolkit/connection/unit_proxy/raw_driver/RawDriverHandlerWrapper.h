@@ -35,6 +35,7 @@ namespace chaos {
                     public UnitProxyHandlerWrapper {
                         std::string authorization_key;
                         const UnitState& unit_state;
+                        bool authorized = false;
                     protected:
                         int unitEventLoop();
                         int manageRemoteMessage();

@@ -83,7 +83,7 @@ namespace chaos {
                     /*!
                      when this function is completed(return true) connection state need to be tested
                      */
-                    virtual bool manageAutorizationPhase() = 0;
+                    virtual void manageAuthenticationRequest() = 0;
                     
                     const UnitState& getUnitState() const;
                     

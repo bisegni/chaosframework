@@ -39,7 +39,8 @@ UnitProxyHandlerWrapper(handler,
                         #endif
                       ),
 authorization_key(_authorization_key),
-unit_state(base_unit->getUnitState(){}
+unit_state(base_unit->getUnitState()),
+authorized(false){}
 
 RawDriverHandlerWrapper::~RawDriverHandlerWrapper(){}
 
@@ -51,23 +52,21 @@ int RawDriverHandlerWrapper::sendMessage(data::CDWUniquePtr& message_data) {
 int RawDriverHandlerWrapper::unitEventLoop() {
     int err = 0;
     switch (unit_state) {
-        case UnitStateAuthenticationUnknown:
-            if(authorization_key.size() == 0) {
-                unit_state = 
-            }
-    
-            break;
-        case UnitStateNotAuthenticated:
+        case UnitStateUnknown:
+            authorized = false;
             base_unit->manageAuthenticationRequest();
             break;
-        case UnitState:
+        case UnitStateNotAuthenticated:
             err = callHandler(UP_EV_AUTH_REJECTED, NULL);
-            return -1;
-        case AuthorizationStateOk:
+            break;
+        case UnitStateAuthenticated:
             if(authorized == false){
                 err = callHandler(UP_EV_AUTH_ACCEPTED, NULL);
                 authorized = true;
             }
+            //manage configuration
+            break;
+        case UnitStateConfigured:
             //manage request by remote user
             err = manageRemoteMessage();
             //perform idle operation
