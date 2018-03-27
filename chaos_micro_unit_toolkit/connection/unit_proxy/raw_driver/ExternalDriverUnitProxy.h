@@ -19,25 +19,30 @@
  * permissions and limitations under the Licence.
  */
 
-#ifndef __CHAOSFramework__E639CBF_4E39_4FA4_B612_E6ED8C8410DE_RawDriverUnitProxy_h
-#define __CHAOSFramework__E639CBF_4E39_4FA4_B612_E6ED8C8410DE_RawDriverUnitProxy_h
+#ifndef __CHAOSFramework__E639CBF_4E39_4FA4_B612_E6ED8C8410DE_ExternalDriverUnitProxy_h
+#define __CHAOSFramework__E639CBF_4E39_4FA4_B612_E6ED8C8410DE_ExternalDriverUnitProxy_h
 #include <chaos_micro_unit_toolkit/connection/unit_proxy/AbstractUnitProxy.h>
 namespace chaos {
     namespace micro_unit_toolkit {
         namespace connection {
             namespace unit_proxy {
                 namespace raw_driver {
+                    
+                    class ExternalDriverHandlerWrapper;
                     //! Abstract base class for all unit proxy
-                    class RawDriverUnitProxy:
+                    class ExternalDriverUnitProxy:
                     public AbstractUnitProxy {
+                        friend class ExternalDriverHandlerWrapper;
+                    protected:
+                        using AbstractUnitProxy::manageAuthenticationRequest;
                     public:
                         static const ProxyType proxy_type;
-                        RawDriverUnitProxy(ChaosUniquePtr<connection_adapter::AbstractConnectionAdapter>& connection_adapter);
-                        virtual ~RawDriverUnitProxy();
+                        ExternalDriverUnitProxy(const std::string& _authorization_key,
+                                           ChaosUniquePtr<connection_adapter::AbstractConnectionAdapter>& connection_adapter);
+                        virtual ~ExternalDriverUnitProxy();
                         
-                        void manageAuthenticationRequest();
                         int sendAnswer(RemoteMessageUniquePtr& message,
-                                       data::CDWUniquePtr& message_data);
+                                       const data::CDWUniquePtr& message_data);
                         int sendMessage(data::CDWUniquePtr& message_data);
                         using AbstractUnitProxy::sendMessage;
                         using AbstractUnitProxy::hasMoreMessage;
@@ -49,4 +54,4 @@ namespace chaos {
     }
 }
 
-#endif /* __CHAOSFramework__E639CBF_4E39_4FA4_B612_E6ED8C8410DE_RawDriverUnitProxy_h */
+#endif /* __CHAOSFramework__E639CBF_4E39_4FA4_B612_E6ED8C8410DE_ExternalDriverUnitProxy_h */

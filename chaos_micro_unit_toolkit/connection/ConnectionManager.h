@@ -40,7 +40,7 @@ namespace chaos {
             class ConnectionManager {
                 friend class chaos::micro_unit_toolkit::ChaosMicroUnitToolkit;
                 
-                typedef ChaosSharedPtr< ObjectInstancerP1<unit_proxy::AbstractUnitProxy, ChaosUniquePtr<connection_adapter::AbstractConnectionAdapter>& > > UnitProxyInstancer;
+                typedef ChaosSharedPtr< ObjectInstancerP2<unit_proxy::AbstractUnitProxy, const std::string&, ChaosUniquePtr<connection_adapter::AbstractConnectionAdapter>& > > UnitProxyInstancer;
                 typedef std::map<ProxyType, UnitProxyInstancer > MapProxy;
                 
                 typedef ChaosSharedPtr< ObjectInstancerP2<connection_adapter::AbstractConnectionAdapter, std::string, std::string> > ProtocolAdapterInstancer;
@@ -62,8 +62,9 @@ namespace chaos {
                 
                 template<typename T>
                 void registerUnitProxy() {
-                    map_proxy.insert(std::make_pair(T::proxy_type, UnitProxyInstancer(new TypedObjectInstancerP1<T,
+                    map_proxy.insert(std::make_pair(T::proxy_type, UnitProxyInstancer(new TypedObjectInstancerP2<T,
                                                                                       unit_proxy::AbstractUnitProxy,
+                                                                                      const std::string&,
                                                                                       ChaosUniquePtr<connection_adapter::AbstractConnectionAdapter>&>())));
                 }
                 
@@ -73,6 +74,7 @@ namespace chaos {
                                                                                                  const std::string& protocol_option);
                 
                 ChaosUniquePtr<unit_proxy::AbstractUnitProxy> getUnitProxy(ProxyType type,
+                                                                           const std::string& authorization_key,
                                                                            ChaosUniquePtr<connection_adapter::AbstractConnectionAdapter> &connection_adapter);
             };
         }

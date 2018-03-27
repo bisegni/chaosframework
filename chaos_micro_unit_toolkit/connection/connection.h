@@ -29,6 +29,6 @@
 #include <chaos_micro_unit_toolkit/connection/connection_adapter/http/HTTPConnectionAdapter.h>
 
 #include <chaos_micro_unit_toolkit/connection/unit_proxy/AbstractUnitProxy.h>
-#include <chaos_micro_unit_toolkit/connection/unit_proxy/raw_driver/RawDriverUnitProxy.h>
-#include <chaos_micro_unit_toolkit/connection/unit_proxy/raw_driver/RawDriverHandlerWrapper.h>
+#include <chaos_micro_unit_toolkit/connection/unit_proxy/raw_driver/ExternalDriverUnitProxy.h>
+#include <chaos_micro_unit_toolkit/connection/unit_proxy/raw_driver/ExternalDriverHandlerWrapper.h>
 #endif /* __CHAOSFramework__45EFE2C_AE25_43D8_B40A_C3070A610391_connection_h */

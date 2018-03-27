@@ -11,8 +11,8 @@ SET(source ${source} connection/connection_adapter/AbstractConnectionAdapter.cpp
                      connection/connection_adapter/http/HTTPConnectionAdapter.cpp)
 SET(source ${source} connection/unit_proxy/AbstractUnitProxy.cpp
                      connection/unit_proxy/UnitProxyHandlerWrapper.cpp)
-SET(source ${source} connection/unit_proxy/raw_driver/RawDriverUnitProxy.cpp
-                     connection/unit_proxy/raw_driver/RawDriverHandlerWrapper.cpp)
+SET(source ${source} connection/unit_proxy/raw_driver/ExternalDriverUnitProxy.cpp
+                     connection/unit_proxy/raw_driver/ExternalDriverHandlerWrapper.cpp)
 SET(source ${source}
                     external_lib/bson/bson/bson.c
                     external_lib/bson/bson/bson-atomic.c

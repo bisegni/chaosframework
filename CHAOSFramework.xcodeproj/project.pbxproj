@@ -350,10 +350,10 @@
 		325D2FE21AFB9C2100B2A706 /* ProcessBye.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325D2FE01AFB9C2100B2A706 /* ProcessBye.cpp */; };
 		325DE9F115EC031E00D6F34E /* EventChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325DE9EF15EC031E00D6F34E /* EventChannel.cpp */; };
 		325DE9F215EC031E00D6F34E /* EventChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 325DE9F015EC031E00D6F34E /* EventChannel.h */; };
-		325F517A1F3C3DD2000B842F /* RawDriverUnitProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F51781F3C3DD2000B842F /* RawDriverUnitProxy.cpp */; };
-		325F517B1F3C3DD2000B842F /* RawDriverUnitProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 325F51791F3C3DD2000B842F /* RawDriverUnitProxy.h */; };
-		325F517E1F3C3E11000B842F /* RawDriverHandlerWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F517C1F3C3E11000B842F /* RawDriverHandlerWrapper.cpp */; };
-		325F517F1F3C3E11000B842F /* RawDriverHandlerWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 325F517D1F3C3E11000B842F /* RawDriverHandlerWrapper.h */; };
+		325F517A1F3C3DD2000B842F /* ExternalDriverUnitProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F51781F3C3DD2000B842F /* ExternalDriverUnitProxy.cpp */; };
+		325F517B1F3C3DD2000B842F /* ExternalDriverUnitProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 325F51791F3C3DD2000B842F /* ExternalDriverUnitProxy.h */; };
+		325F517E1F3C3E11000B842F /* ExternalDriverHandlerWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F517C1F3C3E11000B842F /* ExternalDriverHandlerWrapper.cpp */; };
+		325F517F1F3C3E11000B842F /* ExternalDriverHandlerWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 325F517D1F3C3E11000B842F /* ExternalDriverHandlerWrapper.h */; };
 		325F51821F3C3E4D000B842F /* UnitProxyHandlerWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F51801F3C3E4D000B842F /* UnitProxyHandlerWrapper.cpp */; };
 		325F51831F3C3E4D000B842F /* UnitProxyHandlerWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 325F51811F3C3E4D000B842F /* UnitProxyHandlerWrapper.h */; };
 		325F86EC14D9E59D00CDF35F /* InetUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = 325F86EB14D9E59D00CDF35F /* InetUtility.h */; };
@@ -1705,10 +1705,10 @@
 		325D2FE11AFB9C2100B2A706 /* ProcessBye.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessBye.h; sourceTree = "<group>"; };
 		325DE9EF15EC031E00D6F34E /* EventChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventChannel.cpp; sourceTree = "<group>"; };
 		325DE9F015EC031E00D6F34E /* EventChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventChannel.h; sourceTree = "<group>"; };
-		325F51781F3C3DD2000B842F /* RawDriverUnitProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RawDriverUnitProxy.cpp; sourceTree = "<group>"; };
-		325F51791F3C3DD2000B842F /* RawDriverUnitProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RawDriverUnitProxy.h; sourceTree = "<group>"; };
-		325F517C1F3C3E11000B842F /* RawDriverHandlerWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RawDriverHandlerWrapper.cpp; sourceTree = "<group>"; };
-		325F517D1F3C3E11000B842F /* RawDriverHandlerWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RawDriverHandlerWrapper.h; sourceTree = "<group>"; };
+		325F51781F3C3DD2000B842F /* ExternalDriverUnitProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExternalDriverUnitProxy.cpp; sourceTree = "<group>"; };
+		325F51791F3C3DD2000B842F /* ExternalDriverUnitProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExternalDriverUnitProxy.h; sourceTree = "<group>"; };
+		325F517C1F3C3E11000B842F /* ExternalDriverHandlerWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExternalDriverHandlerWrapper.cpp; sourceTree = "<group>"; };
+		325F517D1F3C3E11000B842F /* ExternalDriverHandlerWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExternalDriverHandlerWrapper.h; sourceTree = "<group>"; };
 		325F51801F3C3E4D000B842F /* UnitProxyHandlerWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnitProxyHandlerWrapper.cpp; sourceTree = "<group>"; };
 		325F51811F3C3E4D000B842F /* UnitProxyHandlerWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnitProxyHandlerWrapper.h; sourceTree = "<group>"; };
 		325F86EB14D9E59D00CDF35F /* InetUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InetUtility.h; sourceTree = "<group>"; };
@@ -3685,10 +3685,10 @@
 		325F51771F3C3D89000B842F /* raw_driver */ = {
 			isa = PBXGroup;
 			children = (
-				325F51781F3C3DD2000B842F /* RawDriverUnitProxy.cpp */,
-				325F51791F3C3DD2000B842F /* RawDriverUnitProxy.h */,
-				325F517C1F3C3E11000B842F /* RawDriverHandlerWrapper.cpp */,
-				325F517D1F3C3E11000B842F /* RawDriverHandlerWrapper.h */,
+				325F51781F3C3DD2000B842F /* ExternalDriverUnitProxy.cpp */,
+				325F51791F3C3DD2000B842F /* ExternalDriverUnitProxy.h */,
+				325F517C1F3C3E11000B842F /* ExternalDriverHandlerWrapper.cpp */,
+				325F517D1F3C3E11000B842F /* ExternalDriverHandlerWrapper.h */,
 			);
 			path = raw_driver;
 			sourceTree = "<group>";
@@ -5833,13 +5833,13 @@
 			files = (
 				329065E41F34763F00356572 /* connection.h in Headers */,
 				324D08AC1F31D5EA00836E29 /* ConnectionManager.h in Headers */,
-				325F517B1F3C3DD2000B842F /* RawDriverUnitProxy.h in Headers */,
+				325F517B1F3C3DD2000B842F /* ExternalDriverUnitProxy.h in Headers */,
 				324D08B61F31D7F300836E29 /* AbstractUnitProxy.h in Headers */,
 				3229005F1F3477D800717A38 /* micro_unit_toolkit.h in Headers */,
 				324D08A21F30CE2B00836E29 /* ChaosMicroUnitToolkit.h in Headers */,
 				324D08B11F31D70600836E29 /* AbstractConnectionAdapter.h in Headers */,
 				324D08D51F31F5A000836E29 /* mongoose.h in Headers */,
-				325F517F1F3C3E11000B842F /* RawDriverHandlerWrapper.h in Headers */,
+				325F517F1F3C3E11000B842F /* ExternalDriverHandlerWrapper.h in Headers */,
 				325F51831F3C3E4D000B842F /* UnitProxyHandlerWrapper.h in Headers */,
 				324D08C61F31EC5000836E29 /* HTTPConnectionAdapter.h in Headers */,
 				324BE84C1F3CA31A00FFDA02 /* base64.h in Headers */,
@@ -6837,7 +6837,7 @@
 				324D08B51F31D7F300836E29 /* AbstractUnitProxy.cpp in Sources */,
 				3265F9571FB89F6B00FEA246 /* bson-value.c in Sources */,
 				324D08C51F31EC5000836E29 /* HTTPConnectionAdapter.cpp in Sources */,
-				325F517E1F3C3E11000B842F /* RawDriverHandlerWrapper.cpp in Sources */,
+				325F517E1F3C3E11000B842F /* ExternalDriverHandlerWrapper.cpp in Sources */,
 				3265F9531FB89F6B00FEA246 /* bson-iso8601.c in Sources */,
 				3265F95C1FB89F6B00FEA246 /* bson-timegm.c in Sources */,
 				3265F94E1FB89F6B00FEA246 /* bson-error.c in Sources */,
@@ -6856,7 +6856,7 @@
 				324D08B01F31D70600836E29 /* AbstractConnectionAdapter.cpp in Sources */,
 				3265F9561FB89F6B00FEA246 /* bson-writer.c in Sources */,
 				3265F9541FB89F6B00FEA246 /* bson-md5.c in Sources */,
-				325F517A1F3C3DD2000B842F /* RawDriverUnitProxy.cpp in Sources */,
+				325F517A1F3C3DD2000B842F /* ExternalDriverUnitProxy.cpp in Sources */,
 				3265F9551FB89F6B00FEA246 /* bson-memory.c in Sources */,
 				3265F94D1FB89F6B00FEA246 /* bson-oid.c in Sources */,
 				3265F9581FB89F6B00FEA246 /* bson-json.c in Sources */,

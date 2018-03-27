@@ -101,16 +101,14 @@ namespace chaos {
                     chaos::common::data::CDWUniquePtr   driver_init_pack;
                     //!initialization and deinitialization driver methods
                     void driverInit(const char *initParameter) throw (chaos::CException) {
-                      AbstractRemoteIODriver_DBG <<" Initialization from string..."<<initParameter;
-
-
+                        //AbstractRemoteIODriver_DBG <<" Initialization from string..."<<initParameter;
                     }
                     void driverInit(const chaos::common::data::CDataWrapper& init_parameter) throw(chaos::CException) {
                         CHECK_ASSERTION_THROW_AND_LOG((init_parameter.isEmpty() == false), AbstractRemoteIODriver_ERR, -1, "Init parameter need to be formated in a json document");
                         //CHECK_ASSERTION_THROW_AND_LOG(init_parameter.hasKey(AUTHORIZATION_KEY), AbstractRemoteIODriver_ERR, -3, "The authorization key is mandatory")
                         //get the authorization key
-                        AbstractRemoteIODriver_DBG <<" Initialization params:"<<init_parameter.getCompliantJSONString();
-
+                        //AbstractRemoteIODriver_DBG <<" Initialization params:"<<init_parameter.getCompliantJSONString();
+                        
                         if(init_parameter.hasKey(AUTHORIZATION_KEY)) {
                             authorization_key = init_parameter.getStringValue(AUTHORIZATION_KEY);
                         } else {
@@ -158,7 +156,7 @@ namespace chaos {
                            message_response->isInt32Value("err")) {
                             int err;
                             if((err=message_response->getInt32Value("err")) != 0) {
-                                AbstractRemoteIODriver_ERR <<" Returned not zero err="<<err;
+                                //AbstractRemoteIODriver_ERR <<" Returned not zero err="<<err;
                                 return false;
                             }
                         }
@@ -187,7 +185,7 @@ namespace chaos {
                     
                     //!set a new uri for driver
                     void setDriverUri(std::string _new_remote_uri) {
-                         remote_uri = _new_remote_uri;
+                        remote_uri = _new_remote_uri;
                     }
                     
                     //!Send opcode request to the remote driver
@@ -300,24 +298,24 @@ namespace chaos {
                     int handleReceivedeMessage(const std::string& connection_identifier,
                                                ChaosUniquePtr<chaos::common::data::CDataWrapper> message) {
                         if(message.get() == NULL) return 0;
-                        AbstractRemoteIODriver_DBG << CHAOS_FORMAT("Received message: %1%", %message->getCompliantJSONString());
+                        //AbstractRemoteIODriver_DBG << CHAOS_FORMAT("Received message: %1%", %message->getCompliantJSONString());
                         if(message->hasKey(MESSAGE) == false) {
                             //error msg key is mandatory
                             //EndpointType::sendError(connection_identifier,
                             //                        -1, "message field is mandatory", __PRETTY_FUNCTION__);
-                            AbstractRemoteIODriver_ERR<< CHAOS_FORMAT("[%1%]Message field is mandatory on connection", %connection_identifier);
+                            //AbstractRemoteIODriver_ERR<< CHAOS_FORMAT("[%1%]Message field is mandatory on connection", %connection_identifier);
                         } else if(message->isCDataWrapperValue(MESSAGE) == false) {
                             //error message need to be an object
                             //EndpointType::sendError(connection_identifier,
                             //                        -2, "message field need to be an object type", __PRETTY_FUNCTION__);
-                            AbstractRemoteIODriver_ERR<< CHAOS_FORMAT("[%1%]Message field need to be an object type", %connection_identifier);
+                            //AbstractRemoteIODriver_ERR<< CHAOS_FORMAT("[%1%]Message field need to be an object type", %connection_identifier);
                         } else if(message->hasKey(REQUEST_IDENTIFICATION)) {
                             //we have a request
                             if(message->isInt32Value(REQUEST_IDENTIFICATION) == false) {
                                 //error request id need to be a int32 value
                                 //EndpointType::sendError(connection_identifier,
                                 //                        -3, "request_id field need to be a int32 type", __PRETTY_FUNCTION__);
-                                AbstractRemoteIODriver_ERR<< CHAOS_FORMAT("[%1%]request_id field need to be a int32 type", %connection_identifier);
+                                //AbstractRemoteIODriver_ERR<< CHAOS_FORMAT("[%1%]request_id field need to be a int32 type", %connection_identifier);
                             }  else {
                                 //we can forward
                                 const uint32_t req_index = message->getUInt32Value(REQUEST_IDENTIFICATION);
@@ -330,7 +328,7 @@ namespace chaos {
                                 //error request id need to be a int32 value
                                 //EndpointType::sendError(connection_identifier,
                                 //                        -4, "msg_type field need to be a int32 type", __PRETTY_FUNCTION__);
-                                AbstractRemoteIODriver_ERR<< CHAOS_FORMAT("[%1%]msg_type field need to be a int32 type", %connection_identifier);
+                                //AbstractRemoteIODriver_ERR<< CHAOS_FORMAT("[%1%]msg_type field need to be a int32 type", %connection_identifier);
                             }
                             asyncMessageReceived(ChaosMoveOperator(message));
                         } else {
@@ -338,7 +336,7 @@ namespace chaos {
                             //error request id need to be a int32 value
                             //EndpointType::sendError(connection_identifier,
                             //                        -5, "remote layer side message lack of msg_type key", __PRETTY_FUNCTION__);
-                            AbstractRemoteIODriver_ERR<< CHAOS_FORMAT("[%1%]remote layer side message lack of msg_type key", %connection_identifier);
+                            //AbstractRemoteIODriver_ERR<< CHAOS_FORMAT("[%1%]remote layer side message lack of msg_type key", %connection_identifier);
                         }
                         return 0;
                     }
@@ -354,13 +352,11 @@ namespace chaos {
                         int err = 0;
                         switch(conn_phase) {
                             case RDConnectionPhaseDisconnected:
-                            AbstractRemoteIODriver_DBG<<" RDConnectionPhaseDisconnected";
-
+                                //AbstractRemoteIODriver_DBG<<" RDConnectionPhaseDisconnected";
                                 return AR_ERROR_NO_CONNECTION;
                                 break;
                             case RDConnectionPhaseConnected: {
-                            AbstractRemoteIODriver_DBG<<" Connected...";
-
+                                //AbstractRemoteIODriver_DBG<<" Connected...";
                                 CHAOS_ASSERT(current_connection_identifier().size());
                                 if(authorization_key.size() != 0) {
                                     err = AR_ERROR_NOT_AUTORIZED;
@@ -371,32 +367,33 @@ namespace chaos {
                             }
                                 
                             case RDConnectionPhaseManageAutorization: {
-                                chaos::common::data::CDWShrdPtr message_response;
-                                chaos::common::data::CDWUniquePtr auth_ack_data(new chaos::common::data::CDataWrapper());
-                                AbstractRemoteIODriver_DBG<<" Connection OK, authorizing...";
-
-                                auth_ack_data->addStringValue(AUTHORIZATION_KEY, authorization_key);
-                                if((err = _sendRawOpcodeRequest(remote_uri,
-                                                                "auth",
-                                                                ChaosMoveOperator(auth_ack_data),
-                                                                message_response)) ==0 ){
-                                    if(checkAuthenticationState(message_response)) {
-                                        conn_phase = RDConnectionPhaseAutorized;
-                                    } else {
-                                        AbstractRemoteIODriver_ERR<<" Authorization Fails, cannot configure";
-
-                                        err = AR_ERROR_NOT_AUTORIZED;
-                                        break;
+                                if(authorization_key.size() != 0) {
+                                    chaos::common::data::CDWShrdPtr message_response;
+                                    chaos::common::data::CDWUniquePtr auth_ack_data(new chaos::common::data::CDataWrapper());
+                                    //AbstractRemoteIODriver_DBG<<" Connection OK, authorizing...";
+                                    
+                                    auth_ack_data->addStringValue(AUTHORIZATION_KEY, authorization_key);
+                                    if((err = _sendRawOpcodeRequest(remote_uri,
+                                                                    "auth",
+                                                                    ChaosMoveOperator(auth_ack_data),
+                                                                    message_response)) ==0 ){
+                                        if(checkAuthenticationState(message_response)) {
+                                            conn_phase = RDConnectionPhaseAutorized;
+                                        } else {
+                                            //AbstractRemoteIODriver_ERR<<" Authorization Fails, cannot configure";
+                                            err = AR_ERROR_NOT_AUTORIZED;
+                                            break;
+                                        }
                                     }
+                                } else {
+                                    conn_phase = RDConnectionPhaseAutorized;
                                 }
-                                
                             }
                                 
                             case RDConnectionPhaseAutorized: {
                                 chaos::common::data::CDWUniquePtr conf_msg(driver_init_pack->clone());
                                 chaos::common::data::CDWShrdPtr message_response;
-                                AbstractRemoteIODriver_DBG<<" Authorization OK, configuring...";
-
+                                //AbstractRemoteIODriver_DBG<<" Authorization OK, configuring...";
                                 if((err = _sendRawOpcodeRequest((remote_uri_instance.size()?remote_uri_instance:remote_uri),
                                                                 "init",
                                                                 ChaosMoveOperator(conf_msg),
@@ -404,8 +401,7 @@ namespace chaos {
                                     if(checkConfigurationState(message_response)) {
                                         conn_phase = RDConnectionPhaseConfigured;
                                     } else {
-                                        AbstractRemoteIODriver_ERR<<" Init Fails, Not Configured";
-
+                                        //AbstractRemoteIODriver_ERR<<" Init Fails, Not Configured";
                                         err = AR_ERROR_NOT_CONFIGURED;
                                         break;
                                     }
@@ -414,8 +410,7 @@ namespace chaos {
                                 
                             case RDConnectionPhaseConfigured:
                                 //we can proceeed
-                            AbstractRemoteIODriver_DBG<<" Configuration OK!, start working";
-
+                                //AbstractRemoteIODriver_DBG<<" Configuration OK!, start working";
                                 break;
                         }
                         return err;
@@ -431,7 +426,7 @@ namespace chaos {
                         opcpde_msg->addStringValue(MESSAGE_URI, uri);
                         opcpde_msg->addStringValue(MESSAGE_OPCODE, opcode);
                         opcpde_msg->addCSDataValue(MESSAGE_OPCODE_PARAMETER, *message_data);
-                        AbstractRemoteIODriver_DBG<<"sending "+uri+" opcode:"<<opcode<<" msg:"<<message_data->getCompliantJSONString();
+                        //AbstractRemoteIODriver_DBG<<"sending "+uri+" opcode:"<<opcode<<" msg:"<<message_data->getCompliantJSONString();
                         return _sendRawRequest(ChaosMoveOperator(opcpde_msg),
                                                message_response,
                                                timeout);
@@ -465,7 +460,7 @@ namespace chaos {
                             message_response = request_future.get();
                             return AR_ERROR_OK;
                         } else {
-                            AbstractRemoteIODriver_ERR<<" Timeout Arised!";
+                            //AbstractRemoteIODriver_ERR<<" Timeout Arised!";
                             return AR_ERROR_TIMEOUT;
                         }
                     }

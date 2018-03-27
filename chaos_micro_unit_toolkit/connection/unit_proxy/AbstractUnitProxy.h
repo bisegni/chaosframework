@@ -25,6 +25,15 @@
 #include <chaos_micro_unit_toolkit/data/DataPack.h>
 #include <chaos_micro_unit_toolkit/micro_unit_toolkit_types.h>
 #include <chaos_micro_unit_toolkit/connection/connection_adapter/AbstractConnectionAdapter.h>
+
+#define AUTHORIZATION_KEY       "authorization_key"
+#define AUTHORIZATION_STATE     "authorization_state"
+#define REQUEST_KEY             "req_id"
+#define MSG_KEY                 "msg"
+#define ERR_CODE                "err"
+#define ERR_MSG                 "err_msg"
+#define ERR_DOM                 "err_dmn"
+
 namespace chaos {
     namespace micro_unit_toolkit {
         namespace connection {
@@ -36,11 +45,11 @@ namespace chaos {
                 class RemoteMessage {
                     bool is_error;
                 public:
-                    data::CDWShrdPtr message;
+                    data::CDWShrdPtr remote_message;
                     const bool is_request;
                     const uint32_t message_id;
-                    data::CDWShrdPtr request_message;
-                    RemoteMessage(const data::CDWShrdPtr& _message);
+                    data::CDWShrdPtr message;
+                    RemoteMessage(const data::CDWShrdPtr& _remote_message);
                     
                     bool isError() const;
                     int32_t getErrorCode() const;
@@ -51,8 +60,7 @@ namespace chaos {
                 typedef enum {
                     UnitStateUnknown,
                     UnitStateNotAuthenticated,
-                    UnitStateAuthenticated,
-                    UnitStateConfigured
+                    UnitStateAuthenticated
                 } UnitState;
                 
                 typedef ChaosUniquePtr<RemoteMessage> RemoteMessageUniquePtr;
@@ -63,6 +71,7 @@ namespace chaos {
                     ChaosUniquePtr<connection_adapter::AbstractConnectionAdapter> connection_adapter;
                 protected:
                     UnitState unit_state;
+                    const std::string authorization_key;
                     virtual int sendMessage(data::CDWUniquePtr& message_data);
                     
                     bool hasMoreMessage();
@@ -74,16 +83,13 @@ namespace chaos {
                     void poll(int32_t milliseconds_wait = 100);
                     
                     int close();
+
+                    void manageAuthenticationRequest();
                 public:
-                    AbstractUnitProxy(ChaosUniquePtr<connection_adapter::AbstractConnectionAdapter>& _protocol_adapter);
+                    AbstractUnitProxy(const std::string& _authorization_key,
+                                      ChaosUniquePtr<connection_adapter::AbstractConnectionAdapter>& _protocol_adapter);
                     
                     virtual ~AbstractUnitProxy();
-                    
-                    //! need to be called once per connection pool for manage the autorization untile it return true
-                    /*!
-                     when this function is completed(return true) connection state need to be tested
-                     */
-                    virtual void manageAuthenticationRequest() = 0;
                     
                     const UnitState& getUnitState() const;
                     
