@@ -34,8 +34,7 @@ namespace chaos {
                     class RawDriverHandlerWrapper:
                     public UnitProxyHandlerWrapper {
                         std::string authorization_key;
-                        const AuthorizationState& auth_state;
-                        bool authorized;
+                        const UnitState& unit_state;
                     protected:
                         int unitEventLoop();
                         int manageRemoteMessage();

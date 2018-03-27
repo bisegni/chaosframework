@@ -49,11 +49,11 @@ namespace chaos {
                 };
                 
                 typedef enum {
-                    AuthorizationStateDenied,
-                    AuthorizationStateOk,
-                    AuthorizationStateRequested,
-                    AuthorizationStateUnknown
-                } AuthorizationState;
+                    UnitStateUnknown,
+                    UnitStateNotAuthenticated,
+                    UnitStateAuthenticated,
+                    UnitStateConfigured
+                } UnitState;
                 
                 typedef ChaosUniquePtr<RemoteMessage> RemoteMessageUniquePtr;
                 
@@ -62,7 +62,7 @@ namespace chaos {
                     friend class chaos::micro_unit_toolkit::connection::unit_proxy::UnitProxyHandlerWrapper;
                     ChaosUniquePtr<connection_adapter::AbstractConnectionAdapter> connection_adapter;
                 protected:
-                    AuthorizationState authorization_state;
+                    UnitState unit_state;
                     virtual int sendMessage(data::CDWUniquePtr& message_data);
                     
                     bool hasMoreMessage();
@@ -79,15 +79,13 @@ namespace chaos {
                     
                     virtual ~AbstractUnitProxy();
                     
-                    virtual void authorization(const std::string& authorization_key) = 0;
-                    
                     //! need to be called once per connection pool for manage the autorization untile it return true
                     /*!
                      when this function is completed(return true) connection state need to be tested
                      */
                     virtual bool manageAutorizationPhase() = 0;
                     
-                    const AuthorizationState& getAuthorizationState() const;
+                    const UnitState& getUnitState() const;
                     
                     const connection_adapter::ConnectionState& getConnectionState() const;
                     

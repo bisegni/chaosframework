@@ -30,14 +30,12 @@ namespace chaos {
                     //! Abstract base class for all unit proxy
                     class RawDriverUnitProxy:
                     public AbstractUnitProxy {
-                        
                     public:
                         static const ProxyType proxy_type;
                         RawDriverUnitProxy(ChaosUniquePtr<connection_adapter::AbstractConnectionAdapter>& connection_adapter);
                         virtual ~RawDriverUnitProxy();
                         
-                        void authorization(const std::string& authorization_key);
-                        bool manageAutorizationPhase();
+                        void manageAuthenticationRequest();
                         int sendAnswer(RemoteMessageUniquePtr& message,
                                        data::CDWUniquePtr& message_data);
                         int sendMessage(data::CDWUniquePtr& message_data);

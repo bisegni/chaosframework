@@ -38,14 +38,7 @@ AbstractUnitProxy(connection_adapter){}
 
 RawDriverUnitProxy::~RawDriverUnitProxy() {}
 
-void RawDriverUnitProxy::authorization(const std::string& authorization_key) {
-    authorization_state = AuthorizationStateRequested;
-    data::CDWUniquePtr message(new data::DataPack());
-    message->addStringValue(AUTHORIZATION_KEY, authorization_key);
-    AbstractUnitProxy::sendMessage(message);
-}
-
-bool RawDriverUnitProxy::manageAutorizationPhase() {
+void RawDriverUnitProxy::manageAuthenticationRequest() {
     bool result = false;
     if((result = hasMoreMessage())) {
         //!check authentication state
@@ -54,19 +47,18 @@ bool RawDriverUnitProxy::manageAutorizationPhase() {
            result->message->isInt32Value(AUTHORIZATION_STATE)) {
             switch (result->message->getInt32Value(AUTHORIZATION_STATE)) {
                 case 0:
-                    authorization_state = AuthorizationStateDenied;
+                    unit_state = UnitStateNotAuthenticated;
                     break;
                 case 1:
-                    authorization_state = AuthorizationStateOk;
+                    unit_state = UnitStateAuthenticated;
                     break;
                 default:
-                     authorization_state = AuthorizationStateDenied;
+                     unit_state = UnitStateNotAuthenticated;
                     break;
             }
             
         }
     }
-    return result;
 }
 
 int RawDriverUnitProxy::sendMessage(CDWUniquePtr& message_data) {

@@ -3,7 +3,6 @@
 
 #include <QObject>
 #include <QRunnable>
-
 #include <QSharedPointer>
 
 class ApiAsyncRunnable :

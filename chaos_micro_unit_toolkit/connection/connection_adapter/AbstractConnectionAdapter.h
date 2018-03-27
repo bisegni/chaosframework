@@ -46,6 +46,8 @@ namespace chaos {
                     ConnectionStateAccepted,
                     //!connection has not been accepted by remote endpoint
                     ConnectionStateNotAccepted,
+                    //!the remote endpoint has been autorized
+                    ConnectionStateAuthorized,
                     //!the is an error on connection
                     ConnectionStateConnectionError
                 } ConnectionState;

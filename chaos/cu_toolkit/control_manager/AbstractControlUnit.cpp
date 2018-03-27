@@ -334,8 +334,8 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configurat
     //grab dataset description
     DatasetDB::fillDataWrapperWithDataSetDescription(setup_configuration);
     
-//    //get action description
-//    getActionDescrionsInDataWrapper(setup_configuration);
+    //    //get action description
+    //    getActionDescrionsInDataWrapper(setup_configuration);
     
     //add property description
     PropertyCollector::fillDescription("property", setup_configuration);
@@ -1663,10 +1663,10 @@ void AbstractControlUnit::propertyUpdatedHandler(const std::string& group_name,
         //update property on driver
         key_data_storage->updateConfiguration(property_name, new_value);
         
-//TODO
-//        if(attribute_value_shared_cache->hasAttribute(DOMAIN_SYSTEM, property_name)){
-//            attribute_value_shared_cache->getAttributeValue(DOMAIN_SYSTEM, property_name)->setValue(new_value);
-//        }
+        //TODO
+        //        if(attribute_value_shared_cache->hasAttribute(DOMAIN_SYSTEM, property_name)){
+        //            attribute_value_shared_cache->getAttributeValue(DOMAIN_SYSTEM, property_name)->setValue(new_value);
+        //        }
         
         //reflect modification on dataset
         if(property_name.compare(ControlUnitDatapackSystemKey::BYPASS_STATE) == 0) {
@@ -1742,10 +1742,12 @@ void AbstractControlUnit::pushOutputDataset() {
                 output_attribute_dataset->addStringValue(value_set->name, value_set->getValuePtr<const char>());
                 break;
             case DataType::TYPE_BYTEARRAY:
-                if(value_set->sub_type.size() == 1) {
-                    output_attribute_dataset->addBinaryValue(value_set->name, value_set->sub_type[0],value_set->getValuePtr<char>(), value_set->size);
-                } else {
-                    output_attribute_dataset->addBinaryValue(value_set->name,value_set->getValuePtr<char>(), value_set->size);
+                if(value_set->size) {
+                    if(value_set->sub_type.size() == 1) {
+                        output_attribute_dataset->addBinaryValue(value_set->name, value_set->sub_type[0],value_set->getValuePtr<char>(), value_set->size);
+                    } else {
+                        output_attribute_dataset->addBinaryValue(value_set->name,value_set->getValuePtr<char>(), value_set->size);
+                    }
                 }
                 break;
             default:
