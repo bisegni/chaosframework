@@ -18,7 +18,7 @@
  * See the Licence for the specific language governing
  * permissions and limitations under the Licence.
  */
-#include "raw_driver/ExternalDriverHandlerWrapper.h"
+
 #include <chaos_micro_unit_toolkit/connection/unit_proxy/UnitProxyHandlerWrapper.h>
 #include <iostream>
 #include <unistd.h>
