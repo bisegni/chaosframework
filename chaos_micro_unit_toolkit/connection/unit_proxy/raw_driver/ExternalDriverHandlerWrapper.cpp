@@ -92,7 +92,7 @@ int ExternalDriverHandlerWrapper::manageRemoteMessage() {
     while(rd->hasMoreMessage()) {
         remote_message = rd->getNextMessage();
         if(remote_message->message.get() == NULL) return -1;
-        
+        std::cout << remote_message->message->toString();
         std::string uri;
         std::string opcode;
         data::CDWShrdPtr r_msg;
@@ -100,14 +100,14 @@ int ExternalDriverHandlerWrapper::manageRemoteMessage() {
            remote_message->message->isStringValue(OPCODE_KEY)){
             opcode = remote_message->message->getStringValue(OPCODE_KEY);
         } else {
-            return -2;
+            return 0;
         }
         
         if(remote_message->message->hasKey(INITIALIZATION_URI) &&
            remote_message->message->isStringValue(INITIALIZATION_URI)){
             uri = remote_message->message->getStringValue(INITIALIZATION_URI);
         } else {
-            return -3;
+            return 0;
         }
         
         if(remote_message->message->hasKey(OPCODE_PARAMETER_KEY) &&
@@ -136,7 +136,10 @@ int ExternalDriverHandlerWrapper::manageRemoteMessage() {
             EDNormalRequest normal_request = {req_message,{}};
             if((err = callHandler(UP_EV_REQ_RECEIVED,
                                   &normal_request)) == 0) {
-                rd->sendAnswer(remote_message, composeResponseMessage(normal_request.response));
+                CDWUniquePtr response_msg = composeResponseMessage(normal_request.response);
+                normal_request.response.message->copyAllTo(*response_msg);
+                rd->sendAnswer(remote_message, response_msg);
+                
             }
         } else {
             err = callHandler(UP_EV_MSG_RECEIVED, &req_message);
