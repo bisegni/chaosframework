@@ -98,51 +98,12 @@ class CDataWrapper {
     ChaosBsonShrdPtr bson_tmp_array;
     CDataWrapper(const bson_t *copy_bson);
     explicit CDataWrapper(const std::string& json_document);
-    int setBson(const bson_value_t *v ,const int64_t& val){
-        if(v->value_type==BSON_TYPE_INT64){
-            memcpy((void*)&v->value.v_int64, (void*)&val,sizeof(int64_t));
-            return sizeof(int64_t);
-        }
-        return -1;
-    }
-    int setBson(const bson_value_t *v ,const int32_t& val){
-        if(v->value_type==BSON_TYPE_INT32){
-            memcpy((void*)&v->value.v_int32, (void*)&val,sizeof(int32_t));
-            return sizeof(int32_t);
-        }
-        return -1;
-    }
-    int setBson(const bson_value_t *v ,const double& val){
-        if(v->value_type==BSON_TYPE_DOUBLE){
-            memcpy((void*)&v->value.v_double, (void*)&val,sizeof(double));
-            return sizeof(double);
-        }
-        return -1;
-    }
-    int setBson(const bson_value_t *v ,const bool& val){
-        if(v->value_type==BSON_TYPE_BOOL){
-            memcpy((void*)&v->value.v_bool, (void*)&val,sizeof(bool));
-            return sizeof(bool);
-        }
-        return -1;
-    }
-
-
-    int setBson(const bson_value_t *v ,const std::string& val){
-        if(v->value_type == BSON_TYPE_UTF8){
-            memcpy((void*)v->value.v_utf8.str, (void*)val.c_str(),v->value.v_utf8.len);
-            return v->value.v_utf8.len;
-        }
-        return -1;
-    }
-
-    int setBson(const bson_value_t *v ,const void* val){
-        if(v->value_type == BSON_TYPE_BINARY){
-            memcpy((void*)v->value.v_binary.data, (void*)val,v->value.v_binary.data_len);
-            return v->value.v_binary.data_len;
-        }
-        return -1;
-    }
+    int setBson(const bson_iter_t * ,const int64_t& val);
+    int setBson(const bson_iter_t *v ,const int32_t& val);
+    int setBson(const bson_iter_t * ,const double& val);
+    int setBson(const bson_iter_t *,const bool& val);
+    int setBson(const bson_iter_t * ,const std::string& val);
+    int setBson(const bson_iter_t * ,const void* val);
 
 public:
 
@@ -255,8 +216,8 @@ public:
         bson_iter_init(&it, static_cast<bson_t*>(bson.get()));
         if(bson_iter_find_case(&it, key.c_str()) == false)
             return -1;
-        const bson_value_t *v = bson_iter_value(&it);
-        return setBson(v,val);
+        //const bson_value_t *v = bson_iter_value(&it);
+        return setBson(&it,val);
 
     }
     template<typename T>
@@ -281,8 +242,8 @@ public:
                 if(bson_iter_init(&iter, &array_doc)) {
                     while(bson_iter_next(&iter)&& (cnt<size)) {
                         int s;
-                        const bson_value_t *v = bson_iter_value(&it);
-                        if((s=setBson(v,val[cnt]))>0){
+                        //const bson_value_t *v = bson_iter_value(&it);
+                        if((s=setBson(&it,val[cnt]))>0){
                             ret+=s;
                         } else {
                             return -1;

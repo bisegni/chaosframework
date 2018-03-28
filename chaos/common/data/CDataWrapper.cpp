@@ -30,6 +30,7 @@ using namespace chaos;
 using namespace chaos::common::data;
 
 #pragma mark Utility
+#define ITER_TYPE(i) ((bson_type_t) * ((i)->raw + (i)->type))
 
 #define ALLOCATE_BSONT(x) ChaosBsonShrdPtr(x, &bsonDeallocator)
 
@@ -864,6 +865,56 @@ CDataWrapperType CDataWrapper::getValueType(const std::string& key) const{
 
 bool CDataWrapper::isEmpty() const {
     return (bson_count_keys(ACCESS_BSON(bson)) == 0);
+}
+
+
+
+int CDataWrapper::setBson( const bson_iter_t *v ,const int64_t& val){
+    if(ITER_TYPE(v)==BSON_TYPE_INT64){
+        memcpy((void*)(v->raw + v->d1), (void*)&val,sizeof(int64_t));
+        return sizeof(int64_t);
+    }
+    return -1;
+}
+int CDataWrapper::setBson(const bson_iter_t *v ,const int32_t& val){
+    if(ITER_TYPE(v)==BSON_TYPE_INT32){
+        memcpy((void*)(v->raw + v->d1),(void*)&val ,sizeof(int32_t));
+        return sizeof(int32_t);
+    }
+    return -1;
+}
+int CDataWrapper::setBson(const bson_iter_t *v ,const double& val){
+    if(ITER_TYPE(v)==BSON_TYPE_DOUBLE){
+        memcpy((void*)(v->raw + v->d1), (void*)&val,sizeof(double));
+        return sizeof(double);
+    }
+    return -1;
+}
+int CDataWrapper::setBson(const bson_iter_t *v ,const bool& val){
+    if(ITER_TYPE(v)==BSON_TYPE_BOOL){
+        memcpy((void*)(v->raw + v->d1), (void*)&val,sizeof(bool));
+        return sizeof(bool);
+    }
+    return -1;
+}
+
+
+int CDataWrapper::setBson(const bson_iter_t *v ,const std::string& val){
+    if(ITER_TYPE(v)== BSON_TYPE_UTF8){
+        const bson_value_t *vv = bson_iter_value((bson_iter_t *)v);
+        memcpy((void*)(v->raw + v->d1), (void*)val.c_str(),vv->value.v_utf8.len);
+        return vv->value.v_utf8.len;
+    }
+    return -1;
+}
+
+int CDataWrapper::setBson(const bson_iter_t *v ,const void* val){
+    if(ITER_TYPE(v)== BSON_TYPE_BINARY){
+        const bson_value_t *vv = bson_iter_value((bson_iter_t *)v);
+        memcpy((void*)(v->raw + v->d1), (void*)val,vv->value.v_binary.data_len);
+        return vv->value.v_binary.data_len;
+    }
+    return -1;
 }
 
 #pragma mark CMultiTypeDataArrayWrapper
