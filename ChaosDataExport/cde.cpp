@@ -24,7 +24,6 @@
 #include <fstream>
 #include <unistd.h>
 #include <sstream>
-#include "ChaosDatasetIO.h"
 #include <chaos/common/additional_lib/base64.h>
 #include <chaos/common/utility/TimingUtil.h>
 #include <chaos/common/network/CNodeNetworkAddress.h>

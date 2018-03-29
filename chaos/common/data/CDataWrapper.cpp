@@ -741,7 +741,6 @@ CDataVariant CDataWrapper::getVariantValue(const std::string& key) const{
 }
 
 //------------------------checking utility
-
 bool CDataWrapper::isNullValue(const std::string& key) const{
     FIND_AND_CHECK(key, BSON_ITER_HOLDS_NULL){
         return true;
@@ -867,8 +866,6 @@ bool CDataWrapper::isEmpty() const {
     return (bson_count_keys(ACCESS_BSON(bson)) == 0);
 }
 
-
-
 int CDataWrapper::setBson( const bson_iter_t *v ,const int64_t& val){
     if(ITER_TYPE(v)==BSON_TYPE_INT64){
         memcpy((void*)(v->raw + v->d1), (void*)&val,sizeof(int64_t));
@@ -876,6 +873,7 @@ int CDataWrapper::setBson( const bson_iter_t *v ,const int64_t& val){
     }
     return -1;
 }
+
 int CDataWrapper::setBson(const bson_iter_t *v ,const int32_t& val){
     if(ITER_TYPE(v)==BSON_TYPE_INT32){
         memcpy((void*)(v->raw + v->d1),(void*)&val ,sizeof(int32_t));
@@ -883,6 +881,7 @@ int CDataWrapper::setBson(const bson_iter_t *v ,const int32_t& val){
     }
     return -1;
 }
+
 int CDataWrapper::setBson(const bson_iter_t *v ,const double& val){
     if(ITER_TYPE(v)==BSON_TYPE_DOUBLE){
         memcpy((void*)(v->raw + v->d1), (void*)&val,sizeof(double));
@@ -890,6 +889,7 @@ int CDataWrapper::setBson(const bson_iter_t *v ,const double& val){
     }
     return -1;
 }
+
 int CDataWrapper::setBson(const bson_iter_t *v ,const bool& val){
     if(ITER_TYPE(v)==BSON_TYPE_BOOL){
         memcpy((void*)(v->raw + v->d1), (void*)&val,sizeof(bool));
@@ -897,7 +897,6 @@ int CDataWrapper::setBson(const bson_iter_t *v ,const bool& val){
     }
     return -1;
 }
-
 
 int CDataWrapper::setBson(const bson_iter_t *v ,const std::string& val){
     if(ITER_TYPE(v)== BSON_TYPE_UTF8){
