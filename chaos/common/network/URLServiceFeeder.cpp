@@ -48,12 +48,18 @@ set_urls_rb_pos_index(boost::multi_index::get<rb_pos_index>(set_urls_online)){
 
 URLServiceFeeder::~URLServiceFeeder() {
 	clear();
+    if(service_list==NULL)
+        return;
     for(int idx = 0; idx < (list_size/sizeof(URLServiceFeeder::URLService)); idx++) {
 		//element with the list ar object and are allocated with with new
-        delete (service_list[idx]);
+            delete (service_list[idx]);
+
     }
     //all list was allocated with malloc
+    if(service_list){
 	free(service_list);
+        service_list=NULL;
+    }
 }
 
 URLServiceFeeder::URLService *URLServiceFeeder::getNextFromSetByRoundRobin() {
