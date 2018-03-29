@@ -155,6 +155,7 @@ void HTTPServerAdapter::poller() {
                         break;
                     }
                 }
+                op->wait_termination_semaphore.unlock();
                 wconnl->lock();
             }
         }
@@ -347,14 +348,20 @@ int HTTPServerAdapter::registerEndpoint(ExternalUnitServerEndpoint& endpoint) {
 int HTTPServerAdapter::deregisterEndpoint(ExternalUnitServerEndpoint& endpoint) {
     //lock for write conenction and endpoint
     LMapEndpointWriteLock wl = map_endpoint.getWriteLockObject();
-    if(map_endpoint().count(endpoint.getIdentifier()) == 0) return 0;
-    map_endpoint().erase(endpoint.getIdentifier());
-    //at this point no new conneciton can be associated to the endpoint
-    LOpcodeShrdPtrQueueWriteLock wconnl = post_evt_op_queue.getWriteLockObject();
+    MapEndpointIterator me_it = map_endpoint().find(endpoint.getIdentifier());
+    if(me_it == map_endpoint().end()) return 0;
+    me_it->second = NULL;
     OpcodeShrdPtr op(new Opcode());
-    op->identifier = endpoint.getIdentifier();
-    op->op_type = OpcodeInfoTypeCloseConnectionForEndpoint;
-    post_evt_op_queue().push(op);
+    //    map_endpoint().erase(endpoint.getIdentifier());
+    //at this point no new conneciton can be associated to the endpoint
+    {
+        LOpcodeShrdPtrQueueWriteLock wconnl = post_evt_op_queue.getWriteLockObject();
+        op->identifier = endpoint.getIdentifier();
+        op->op_type = OpcodeInfoTypeCloseConnectionForEndpoint;
+        post_evt_op_queue().push(op);
+    }
+    //we need to wait that opcode has terminated
+    op->wait_termination_semaphore.wait();
     return 0;
 }
 

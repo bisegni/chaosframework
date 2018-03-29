@@ -110,7 +110,11 @@ void HTTPClientAdapter::poller() {
                         MapReconnectionInfoIterator conn_it =  map_connection().find(op->identifier);
                         if(conn_it == map_connection().end()) {break;};
                         if(conn_it->second->conn) {
-                            if(conn_it->second->ext_unit_conn->online == false){break;};
+//                            if(conn_it->second->ext_unit_conn.get() &&
+//                               conn_it->second->ext_unit_conn->online == false){
+//                                DBG<<" HTTPClientAdapter Close Connection";
+//                                break;
+//                            };
                             DBG<<" HTTPClientAdapter Close Connection";
                             mg_send_websocket_frame(conn_it->second->conn, WEBSOCKET_OP_CLOSE, "", 0);
                         }
@@ -168,14 +172,15 @@ int HTTPClientAdapter::removeConnectionsFromEndpoint(ExternalUnitClientEndpoint 
     LMapReconnectionInfoWriteLock wlm = map_connection.getWriteLockObject();
     MapReconnectionInfoIterator it = map_connection().find(target_endpoint->getConnectionIdentifier());
     if(it == map_connection().end()) {return 0;}
+    {
+        LOpcodeShrdPtrQueueWriteLock wconnl = post_evt_op_queue.getWriteLockObject();
+        OpcodeShrdPtr op(new Opcode());
+        op->identifier = target_endpoint->getConnectionIdentifier();
+        op->op_type = OpcodeInfoTypeCloseConnection;
+        post_evt_op_queue().push(op);
+    }
     //detach external unit cnnection abstraction
     it->second->ext_unit_conn.reset();
-    
-    LOpcodeShrdPtrQueueWriteLock wconnl = post_evt_op_queue.getWriteLockObject();
-    OpcodeShrdPtr op(new Opcode());
-    op->identifier = target_endpoint->getConnectionIdentifier();
-    op->op_type = OpcodeInfoTypeCloseConnection;
-    post_evt_op_queue().push(op);
     return 0;
 }
 

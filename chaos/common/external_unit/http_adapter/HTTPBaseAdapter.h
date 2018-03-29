@@ -25,6 +25,7 @@
 #include <chaos/common/chaos_types.h>
 #include <chaos/common/utility/Bimap.h>
 #include <chaos/common/utility/LockableObject.h>
+#include <chaos/common/thread/WaitSemaphore.h>
 #include <chaos/common/pqueue/CObjectProcessingQueue.h>
 
 #include <chaos/common/additional_lib/mongoose.h>
@@ -58,6 +59,8 @@ namespace chaos {
                         chaos::common::data::CDBufferUniquePtr data;
                         //! send data opcode
                         EUCMessageOpcode data_opcode;
+                        //some opcode need to notify the termination
+                        chaos::WaitSemaphore wait_termination_semaphore;
                     } Opcode;
                     
                     typedef ChaosSharedPtr<Opcode> OpcodeShrdPtr;

@@ -24,7 +24,7 @@
 #include <fstream>
 #include <unistd.h>
 #include <sstream>
-
+#include "ChaosDatasetIO.h"
 #include <chaos/common/additional_lib/base64.h>
 #include <chaos/common/utility/TimingUtil.h>
 #include <chaos/common/network/CNodeNetworkAddress.h>
@@ -197,7 +197,6 @@ int main(int argc, char* argv[]) {
         //! [UIToolkit Init]
         ChaosUIToolkit::getInstance()->init(argc, argv);
         //! [UIToolkit Init]
-        
         if(!ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_CU_ID)){
             throw CException(-1, "invalid device identification string", "check param");
         }
