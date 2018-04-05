@@ -58,7 +58,7 @@ bool MDSHistoryAgeingManagement::execute(const common::cronus_manager::MapKeyVar
         const std::string dev_alarm_key    = control_unit_found + DataPackPrefixID::DEV_ALARM_DATASET_POSTFIX;
         const std::string cu_alarm_key    = control_unit_found + DataPackPrefixID::CU_ALARM_DATASET_POSTFIX;
         uint64_t remove_until_ts = now - (control_unit_ageing_time*1000);
-        log(CHAOS_FORMAT("Processing ageing for control unit %1% removing all data before %2%", %control_unit_found%TimingUtil::toString(remove_until_ts)));
+        log(CHAOS_FORMAT("Processing ageing for control unit %1% removing all data before %2% [now:(ms)%3%-(ms ageing time)%4%]", %control_unit_found%TimingUtil::toString(remove_until_ts)%now%(control_unit_ageing_time*1000)));
         try {
             log(CHAOS_FORMAT("Remove data for key %1%", %output_key));
             if((err = getDataAccess<persistence::data_access::ControlUnitDataAccess>()->eraseControlUnitDataBeforeTS(output_key,
