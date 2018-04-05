@@ -126,8 +126,11 @@ void HTTPServerAdapter::poller() {
                         LMapConnectionWriteLock wconnl = map_connection.getWriteLockObject();
                         if(!map_m_conn_ext_conn.hasRightKey(static_cast<std::string>(op->identifier))) break;
                         mg_connection *nc = reinterpret_cast<mg_connection*>(map_m_conn_ext_conn.findByRightKey(static_cast<std::string>(op->identifier)));
-                        if(nc->flags & MG_F_LISTENING) {
-                            mg_send_websocket_frame(nc, WEBSOCKET_OP_CLOSE, "", 0);
+//                        if((nc->flags & MG_F_LISTENING) && (nc->sock != INVALID_SOCKET)) {
+//                            mg_send_websocket_frame(nc, WEBSOCKET_OP_CLOSE, "", 0);
+//                        }
+                        if(nc) {
+                            nc->flags |= MG_F_CLOSE_IMMEDIATELY;
                         }
                         map_connection().erase(reinterpret_cast<uintptr_t>(nc));
                         map_m_conn_ext_conn.removebyLeftKey(reinterpret_cast<uintptr_t>(nc));
@@ -142,9 +145,12 @@ void HTTPServerAdapter::poller() {
                             if(it->second->getEndpointIdentifier().compare(op->identifier) == 0) {
                                 if(map_m_conn_ext_conn.hasRightKey(static_cast<std::string>(it->second->connection_identifier))) {
                                     mg_connection *nc = reinterpret_cast<mg_connection*>(map_m_conn_ext_conn.findByRightKey(static_cast<std::string>(it->second->connection_identifier)));
-                                    if(nc->flags & MG_F_LISTENING) {
-                                        mg_send_websocket_frame(nc, WEBSOCKET_OP_CLOSE, "", 0);
+                                    if(nc) {
+                                        nc->flags |= MG_F_CLOSE_IMMEDIATELY;
                                     }
+//                                    if((nc->flags & MG_F_LISTENING) && (nc->sock != INVALID_SOCKET)) {
+//                                        mg_send_websocket_frame(nc, WEBSOCKET_OP_CLOSE, "", 0);
+//                                    }
                                     //remove connection
                                     map_connection().erase(it++);
                                 }
@@ -351,6 +357,7 @@ int HTTPServerAdapter::deregisterEndpoint(ExternalUnitServerEndpoint& endpoint) 
     MapEndpointIterator me_it = map_endpoint().find(endpoint.getIdentifier());
     if(me_it == map_endpoint().end()) return 0;
     me_it->second = NULL;
+    map_endpoint().erase(me_it);
     OpcodeShrdPtr op(new Opcode());
     //    map_endpoint().erase(endpoint.getIdentifier());
     //at this point no new conneciton can be associated to the endpoint
@@ -362,6 +369,7 @@ int HTTPServerAdapter::deregisterEndpoint(ExternalUnitServerEndpoint& endpoint) 
     }
     //we need to wait that opcode has terminated
     op->wait_termination_semaphore.wait();
+    
     return 0;
 }
 
