@@ -111,7 +111,7 @@ void TestClient::run() {
                                                             "ws://localhost:8080/echo");
     while(ExternalUnitClientEndpoint::isOnline() == false ||
           ExternalUnitClientEndpoint::getAcceptedState() != 1) {
-        //ASSERT_LE(retry++, 10);
+        ASSERT_LE(retry++, 240);
         usleep(500000);
     }
     ASSERT_EQ(ExternalUnitClientEndpoint::isOnline(), true);
@@ -127,11 +127,11 @@ void TestClient::run() {
     //wait answer
     retry = 0;
     while(echo_received == false) {
-        ASSERT_LE(retry++, 10);
+        ASSERT_LE(retry++, 240);
         usleep(500000);
     }
     while(received_message_counter != RUN_NUMBER_OF_SEND_DATA) {
-        ASSERT_LE(retry++, 10);
+        ASSERT_LE(retry++, 240);
         usleep(500000);
     }
     ExternalUnitManager::getInstance()->releaseConnection(*this,
