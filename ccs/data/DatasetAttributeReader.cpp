@@ -36,11 +36,11 @@ std::vector<unsigned int> DatasetAttributeReader::getSubtype() {
 
     if(!attribute_description->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE)) return sub_type;
 
-    CDataWrapperType type = attribute_description->getValueType(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE);
-    if(type != CDataWrapperTypeInt32 &&
-            type != CDataWrapperTypeVector ) return sub_type;
+    chaos::DataType::DataType type = attribute_description->getValueType(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE);
+    if(type != chaos::DataType::TYPE_INT32 &&
+            type != chaos::DataType::TYPE_ACCESS_ARRAY ) return sub_type;
     //we have subtype
-    if(type == CDataWrapperTypeInt32) {
+    if(type == chaos::DataType::TYPE_INT32 ) {
         //one subtype
         sub_type.push_back(attribute_description->getInt32Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE));
     } else {

@@ -839,7 +839,7 @@ namespace chaos {
             TYPE_STRING,
             //!byte array variable length
             TYPE_BYTEARRAY,
-            
+
             TYPE_CLUSTER,
             //!modifier to be ored to normal data types
             TYPE_ACCESS_ARRAY=0x100,

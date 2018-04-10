@@ -99,31 +99,25 @@ GetLogForSourceUIDHelper::GetLogForSourceUIDHelper(CDataWrapper *api_result) {
                 entry->subject = entry_dw->getStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SUBJECT);
             } else {
                 switch(entry_dw->getValueType(*it)) {
-                    case CDataWrapperTypeNoType:
-                        break;
-                    case CDataWrapperTypeNULL:
-                        break;
-                    case CDataWrapperTypeBool:
+
+                    case chaos::DataType::TYPE_BOOLEAN:
                         entry->map_bool_value.insert(make_pair(*it, entry_dw->getInt32Value(*it)));
                         break;
-                    case CDataWrapperTypeInt32:
+                    case chaos::DataType::TYPE_INT32:
                         entry->map_int32_value.insert(make_pair(*it, entry_dw->getInt32Value(*it)));
                         break;
-                    case CDataWrapperTypeInt64:
+                    case chaos::DataType::TYPE_INT64:
                         entry->map_int64_value.insert(make_pair(*it, entry_dw->getInt64Value(*it)));
                         break;
-                    case CDataWrapperTypeDouble:
+                    case chaos::DataType::TYPE_DOUBLE:
                         entry->map_double_value.insert(make_pair(*it, entry_dw->getDoubleValue(*it)));
                         break;
-                    case CDataWrapperTypeString:
+                    case chaos::DataType::TYPE_STRING:
                         entry->map_string_value.insert(make_pair(*it, entry_dw->getStringValue(*it)));
                         break;
-                    case CDataWrapperTypeBinary:
-                        break;
-                    case CDataWrapperTypeObject:
-                        break;
-                    case CDataWrapperTypeVector:
-                        break;
+                default:
+                    break;
+
                 }
             }
         }

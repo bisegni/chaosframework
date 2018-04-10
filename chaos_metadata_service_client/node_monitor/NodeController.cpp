@@ -82,22 +82,22 @@ void NodeController::updateData() {
         it != end;
         it++) {
         switch((value_type = last_ds_healt->getValueType(*it))) {
-            case CDataWrapperTypeBool:
+            case chaos::DataType::TYPE_BOOLEAN:
                 map_ds_health[*it] = CDataVariant(last_ds_healt->getBoolValue(*it));
                 break;
-            case CDataWrapperTypeInt32:
+            case  chaos::DataType::TYPE_INT32:
                 map_ds_health[*it] = CDataVariant(last_ds_healt->getInt32Value(*it));
                 break;
-            case CDataWrapperTypeInt64:
+            case  chaos::DataType::TYPE_INT64:
                 map_ds_health[*it] = CDataVariant(last_ds_healt->getInt64Value(*it));
                 break;
-            case CDataWrapperTypeDouble:
+            case  chaos::DataType::TYPE_DOUBLE:
                 map_ds_health[*it] = CDataVariant(last_ds_healt->getDoubleValue(*it));
                 break;
-            case CDataWrapperTypeString:
+            case  chaos::DataType::TYPE_STRING:
                 map_ds_health[*it] = CDataVariant(last_ds_healt->getStringValue(*it));
                 break;
-            case CDataWrapperTypeBinary:
+            case  chaos::DataType::TYPE_BYTEARRAY:
                 map_ds_health[*it] = CDataVariant(last_ds_healt->getBinaryValueAsCDataBuffer(*it).release());
                 break;
                 

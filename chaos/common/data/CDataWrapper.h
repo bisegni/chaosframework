@@ -37,7 +37,7 @@ namespace chaos {
 namespace common {
 namespace data {
 using namespace std;
-
+/*
 typedef enum CDataWrapperType {
     CDataWrapperTypeNoType,
     CDataWrapperTypeNULL,
@@ -50,7 +50,7 @@ typedef enum CDataWrapperType {
     CDataWrapperTypeObject,
     CDataWrapperTypeVector
 } CDataWrapperType;
-
+*/
 class CDataWrapper;
 class CDataVariant;
 /*!
@@ -263,42 +263,30 @@ public:
         T v;
         if(hasKey(key) == false) {throw chaos::CException(-1, "Key not present", __PRETTY_FUNCTION__);}
         switch(getValueType(key)){
-        case CDataWrapperTypeNoType:{
-            THROW_TYPE_EXC(CDataWrapperTypeNoType);
-        }
-        case CDataWrapperTypeNULL:{
-            THROW_TYPE_EXC(CDataWrapperTypeNULL);
-        }
-        case CDataWrapperTypeBool:{
+
+        case chaos::DataType::TYPE_BOOLEAN:{
             v = getBoolValue(key);
             break;
         }
-        case CDataWrapperTypeInt32:{
+        case chaos::DataType::TYPE_INT32:{
             v = getInt32Value(key);
             break;
         }
-        case CDataWrapperTypeInt64:{
+        case chaos::DataType::TYPE_INT64:{
             v = getInt64Value(key);
             break;
         }
-        case CDataWrapperTypeDouble:{
+        case chaos::DataType::TYPE_DOUBLE:{
             v = getDoubleValue(key);
             break;
         }
-        case CDataWrapperTypeString:{
-            THROW_TYPE_EXC(CDataWrapperTypeString);
-            break;
+
+        default:{
+            std::stringstream ss;
+            ss<<"cannot get key\""<<key<<"\" to type:"<<getValueType(key);
+            throw chaos::CException(-2,ss.str(),__PRETTY_FUNCTION__);
         }
-        case CDataWrapperTypeBinary:{
-            THROW_TYPE_EXC(CDataWrapperTypeBinary);
-            break;
-        }
-        case CDataWrapperTypeObject:{
-            THROW_TYPE_EXC(CDataWrapperTypeObject);
-        }
-        case CDataWrapperTypeVector:{
-            THROW_TYPE_EXC(CDataWrapperTypeVector);
-        }
+
         }
         return v;
     }
@@ -401,7 +389,7 @@ public:
 
     bool isJsonValue(const std::string& key) const;
 
-    CDataWrapperType getValueType(const std::string& key) const;
+    chaos::DataType::DataType getValueType(const std::string& key) const;
 
     bool isEmpty() const;
 };

@@ -716,22 +716,22 @@ CDataVariant CDataWrapper::getVariantValue(const std::string& key) const{
     
     //create variant using the typed data
     switch (getValueType(key)) {
-    case CDataWrapperTypeBool:
+    case chaos::DataType::TYPE_BOOLEAN:
         return CDataVariant(getBoolValue(key));
         break;
-    case CDataWrapperTypeInt32:
+    case  chaos::DataType::TYPE_INT32:
         return CDataVariant(getInt32Value(key));
         break;
-    case CDataWrapperTypeInt64:
+    case  chaos::DataType::TYPE_INT64:
         return CDataVariant(getInt64Value(key));
         break;
-    case CDataWrapperTypeDouble:
+    case  chaos::DataType::TYPE_DOUBLE:
         return CDataVariant(getDoubleValue(key));
         break;
-    case CDataWrapperTypeString:
+    case  chaos::DataType::TYPE_STRING:
         return CDataVariant(getStringValue(key));
         break;
-    case CDataWrapperTypeBinary:
+    case  chaos::DataType::TYPE_BYTEARRAY:
         return CDataVariant(getBinaryValueAsCDataBuffer(key).release());
         break;
     default:
@@ -822,38 +822,38 @@ bool CDataWrapper::isVectorValue(const std::string& key) const{
     return false;
 }
 
-CDataWrapperType CDataWrapper::getValueType(const std::string& key) const{
-    CDataWrapperType result = CDataWrapperTypeNoType;
+ chaos::DataType::DataType CDataWrapper::getValueType(const std::string& key) const{
+    chaos::DataType::DataType  result =  chaos::DataType::TYPE_UNDEFINED;
     bson_iter_t it;
     bson_iter_init(&it, ACCESS_BSON(bson));
     if(bson_iter_find_case(&it, key.c_str()) == false) return result;
     switch(bson_iter_type(&it)) {
     case BSON_TYPE_ARRAY:
-        result = CDataWrapperTypeVector;
+        result = chaos::DataType::TYPE_ACCESS_ARRAY;
         break;
     case BSON_TYPE_DOCUMENT:
-        result = CDataWrapperTypeObject;
+        result = chaos::DataType::TYPE_CLUSTER;
         break;
     case BSON_TYPE_BINARY:
-        result = CDataWrapperTypeBinary;
+        result = chaos::DataType::TYPE_BYTEARRAY;
         break;
     case BSON_TYPE_UTF8:
-        result = CDataWrapperTypeString;
+        result = chaos::DataType::TYPE_STRING;
         break;
     case BSON_TYPE_DOUBLE:
-        result = CDataWrapperTypeDouble;
+        result = chaos::DataType::TYPE_DOUBLE;
         break;
     case BSON_TYPE_INT32:
-        result = CDataWrapperTypeInt32;
+        result = chaos::DataType::TYPE_INT32;
         break;
     case BSON_TYPE_INT64:
-        result = CDataWrapperTypeInt64;
+        result = chaos::DataType::TYPE_INT64;
         break;
     case BSON_TYPE_BOOL:
-        result = CDataWrapperTypeBool;
+        result = chaos::DataType::TYPE_BOOLEAN;
         break;
     case BSON_TYPE_NULL:
-        result = CDataWrapperTypeNULL;
+        result = chaos::DataType::TYPE_UNDEFINED;
         break;
     default:
         break;

@@ -125,22 +125,22 @@ void ControlUnitController::_updateDatsetKeyMapValue(chaos::metadata_service_cli
          it != end;
          it++) {
         switch ((value_type = dataset->getValueType(*it))) {
-            case CDataWrapperTypeBool:
+            case chaos::DataType::TYPE_BOOLEAN:
                 map[*it] = CDataVariant(dataset->getBoolValue(*it));
                 break;
-            case CDataWrapperTypeInt32:
+            case chaos::DataType::TYPE_INT32:
                 map[*it] = CDataVariant(dataset->getInt32Value(*it));
                 break;
-            case CDataWrapperTypeInt64:
+            case chaos::DataType::TYPE_INT64:
                 map[*it] = CDataVariant(dataset->getInt64Value(*it));
                 break;
-            case CDataWrapperTypeDouble:
+            case chaos::DataType::TYPE_DOUBLE:
                 map[*it] = CDataVariant(dataset->getDoubleValue(*it));
                 break;
-            case CDataWrapperTypeString:
+            case chaos::DataType::TYPE_STRING:
                 map[*it] = CDataVariant(dataset->getStringValue(*it));
                 break;
-            case CDataWrapperTypeBinary:
+            case chaos::DataType::TYPE_BYTEARRAY:
                 map[*it] = CDataVariant(dataset->getBinaryValueAsCDataBuffer(*it).release());
                 break;
                 
