@@ -41,9 +41,9 @@ using namespace chaos::common::direct_io;
     endpoint_slot_array[i]->enable = false;
 
 
-DirectIODispatcher::DirectIODispatcher():available_endpoint_slot(MAX_ENDPOINT_NUMBER),endpoint_slot_array(NULL) {
-
-}
+DirectIODispatcher::DirectIODispatcher():
+available_endpoint_slot(MAX_ENDPOINT_NUMBER),
+endpoint_slot_array(NULL) {}
 
 DirectIODispatcher::~DirectIODispatcher(){
     CHAOS_NOT_THROW(stop();)

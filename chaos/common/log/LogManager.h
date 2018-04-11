@@ -70,10 +70,13 @@ namespace chaos {
                 friend class Singleton<LogManager>;
                 template<class T>
                 friend class chaos::ChaosCommon;
-                
+                boost::shared_ptr< boost::log::sinks::synchronous_sink< boost::log::sinks::text_ostream_backend > >  console_sink;
+                boost::shared_ptr< boost::log::sinks::synchronous_sink< boost::log::sinks::text_file_backend > >  file_sink;
+                boost::shared_ptr< boost::log::sinks::synchronous_sink< boost::log::sinks::syslog_backend > > syslog_sink;
                 LogManager(){}
             public:
                 void init() throw(CException);
+                void deinit() throw(CException);
                 void addMDSLoggingBackend(const std::string& source);
             };
             

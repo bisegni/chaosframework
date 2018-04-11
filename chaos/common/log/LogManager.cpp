@@ -78,36 +78,45 @@ void LogManager::init() throw(CException) {
     logging::register_simple_formatter_factory< level::LogSeverityLevel, char  >("Severity");
     logger->set_filter(expr::attr< level::LogSeverityLevel >("Severity") >= logLevel);
     if(logOnConsole){
-        logging::add_console_log(std::clog, logging::keywords::format = EXTENDEND_LOG_FORMAT);
+        console_sink = logging::add_console_log(std::clog, logging::keywords::format = EXTENDEND_LOG_FORMAT);
     }
     
     if(logOnFile){
-        logging::add_file_log(keywords::file_name = logFileName,                                                                    // file name pattern
+        file_sink = logging::add_file_log(keywords::file_name = logFileName,                                                                    // file name pattern
                               keywords::rotation_size = log_file_max_size_mb * 1024 * 1024,                                         // rotate files every 10 MiB...
                               keywords::time_based_rotation = logging::sinks::file::rotation_at_time_point(0, 0, 0),                // ...or at midnight
                               keywords::format = EXTENDEND_LOG_FORMAT,
                               keywords::auto_flush=true);
-        
-        
     }
     
     if(logOnSyslog) {
         // Creating a syslog sink.
-        boost::shared_ptr< sinks::synchronous_sink< sinks::syslog_backend > > sink(new sinks::synchronous_sink< sinks::syslog_backend >
-                                                                                   (
-                                                                                    //keywords::facility = sinks::syslog::user,
-                                                                                    keywords::use_impl = sinks::syslog::udp_socket_based,
-                                                                                    keywords::format = EXTENDEND_LOG_FORMAT
-                                                                                    )
-                                                                                   );
+        syslog_sink.reset(new sinks::synchronous_sink< sinks::syslog_backend >(keywords::use_impl = sinks::syslog::udp_socket_based,
+                                                                               keywords::format = EXTENDEND_LOG_FORMAT));
         // Setting the remote address to sent syslog messages to.
-        sink->locked_backend()->set_target_address(logSyslogSrv, logSyslogSrvPort);
+        syslog_sink->locked_backend()->set_target_address(logSyslogSrv, logSyslogSrvPort);
         // Adding the sink to the core.b
-        logger->add_sink(sink);
+        logger->add_sink(syslog_sink);
     }
     
     //enable the log in case of needs
     logger->set_logging_enabled(logOnConsole || logOnFile || logOnSyslog);
+}
+
+void LogManager::deinit() throw(CException) {
+    boost::shared_ptr< logging::core > logger = boost::log::core::get();
+    if(console_sink.get()) {
+        logger->remove_sink(console_sink);
+        console_sink.reset();
+    }
+    if(file_sink.get()){
+        logger->remove_sink(file_sink);
+        file_sink.reset();
+    }
+    if(syslog_sink.get()){
+        logger->remove_sink(syslog_sink);
+        syslog_sink.reset();
+    }
 }
 
 void LogManager::addMDSLoggingBackend(const std::string& source) {
