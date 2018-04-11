@@ -62,7 +62,7 @@ void ZMQDirectIOServer::init(void *init_data) throw(chaos::CException) {
     
     chaos_data::CDataWrapper *init_cw = static_cast<chaos_data::CDataWrapper*>(init_data);
     if(!init_cw) throw chaos::CException(0, "No configration has been provided", __PRETTY_FUNCTION__);
-    
+    LDBG_<<"configuration:"<<init_cw->getCompliantJSONString();
     //get the port from configuration
     priority_port = init_cw->getInt32Value(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_PRIORITY_PORT);
     if(priority_port <= 0) throw chaos::CException(0, "Bad priority port configured", __PRETTY_FUNCTION__);

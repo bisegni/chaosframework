@@ -170,7 +170,7 @@ namespace chaos {
                 }
 				COPQUEUE_LDBG_ << "join internal thread group";
 				t_group.join_all();
-				COPQUEUE_LDBG_ << "deinitlized";
+                COPQUEUE_LDBG_ << "deinitialized";
 			}
 			
 			/*

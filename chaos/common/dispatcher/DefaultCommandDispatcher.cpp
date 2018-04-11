@@ -58,12 +58,12 @@ void DefaultCommandDispatcher::init(void *initConfiguration) throw(CException) {
  Deinitialization method for output buffer
  */
 void DefaultCommandDispatcher::deinit() throw(CException) {
-    LDEF_CMD_DISPTC_APP_ << "Deinitilizing Default Command Dispatcher";
+    LDEF_CMD_DISPTC_APP_ << "Deinitializing Default Command Dispatcher";
     //we need to stop all das
     chaos::common::thread::ReadLock r_lock(das_map_mutex);
     map<string, ChaosSharedPtr<DomainActionsScheduler> >::iterator dasIter = das_map.begin();
     for (; dasIter != das_map.end(); dasIter++) {
-        LDEF_CMD_DISPTC_APP_ << "Deinitilizing action scheduler for domain:"<< (*dasIter).second->getManagedDomainName();
+        LDEF_CMD_DISPTC_APP_ << "Deinitializing action scheduler for domain:"<< (*dasIter).second->getManagedDomainName();
         //th einitialization is enclosed into try/catch because we need to
         //all well cleaned
         try{
@@ -80,7 +80,7 @@ void DefaultCommandDispatcher::deinit() throw(CException) {
     das_map.clear();
     deinitialized = false;
     AbstractCommandDispatcher::deinit();
-    LDEF_CMD_DISPTC_APP_ << "Deinitilized Default Command Dispatcher";
+    LDEF_CMD_DISPTC_APP_ << "Deinitialized Default Command Dispatcher";
 }
 /*
  return an isntance of DomainActions pointer in relation to name
