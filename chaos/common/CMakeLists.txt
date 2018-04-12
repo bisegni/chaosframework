@@ -301,8 +301,12 @@ ENDIF ()
 #ADD_LIBRARY(${PROJECT_NAME} ${common_lib_src})
 #SET_TARGET_PROPERTIES(chaos_common_static PROPERTIES OUTPUT_NAME chaos_common)
 
-
+IF(CERN_ROOT)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${FrameworkLib} Tree Core)
+ELSE()
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${FrameworkLib})
+ENDIF()
+
 
 FILE(GLOB files "external_unit/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/external_unit)

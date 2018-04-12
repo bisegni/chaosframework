@@ -36,6 +36,7 @@ CHAOSFrameworkTests/PluginLibrary/PluginLibrary.h
 CHAOSFrameworkTests/TestTimer/TimerTask.cpp
 CHAOSFrameworkTests/TestTimer/TimerTask.h
 CHAOSFrameworkTests/TestTimer/main.cpp
+CMakeLists.txt
 ChaosAgent/AbstractWorker.cpp
 ChaosAgent/AbstractWorker.h
 ChaosAgent/AgentRegister.cpp
@@ -790,6 +791,7 @@ ccs/widget/StateImageIndicatorWidget.cpp
 ccs/widget/StateImageIndicatorWidget.h
 ccs/widget/WidgetDynamicList.cpp
 ccs/widget/WidgetDynamicList.h
+chaos/common/CMakeLists.txt
 chaos/common/ChaosCommon.h
 chaos/common/action/ActionDescriptor.cpp
 chaos/common/action/ActionDescriptor.h
@@ -1873,6 +1875,7 @@ chaos_service_common/persistence/mongodb/MongoDBHAConnectionManager.cpp
 chaos_service_common/persistence/mongodb/MongoDBHAConnectionManager.h
 chaos_service_common/service_error.cpp
 chaos_service_common/service_error.h
+config/CMakeChaos.txt
 example/ChaosCLI/main.cpp
 example/ChaosMDSCmd/main.cpp
 example/ChaosPerformanceTester/main.cpp

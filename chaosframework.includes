@@ -2,3 +2,5 @@
 /usr/local/chaos/chaos-distrib/include
 
 
+config
+chaos/common

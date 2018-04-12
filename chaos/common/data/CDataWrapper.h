@@ -30,7 +30,9 @@
 #include <boost/scoped_ptr.hpp>
 
 #include <boost/shared_ptr.hpp>
-
+#ifdef CERN_ROOT
+class TTree;
+#endif
 #include <utility>
 
 namespace chaos {
@@ -140,7 +142,9 @@ public:
     void appendInt32ToArray(int32_t value);
     void appendInt64ToArray(int64_t value);
     void appendDoubleToArray(double value);
-    void appendCDataWrapperToArray(CDataWrapper& value);
+    void appendBooleanToArray(bool value);
+
+    void appendCDataWrapperToArray(const CDataWrapper& value);
     //finalize the array into a key for the current dataobject
     void finalizeArrayForKey(const std::string&);
 
@@ -156,11 +160,30 @@ public:
     void addInt32Value(const std::string&, int32_t);
 
 
-    void addValue(const std::string& key,int32_t val);
-    void addValue(const std::string& key,int64_t val);
-    void addValue(const std::string& key,double val);
-    void addValue(const std::string& key,bool val);
-    void addValue(const std::string& key,std::string& val);
+    void append(const std::string& key,int32_t val);
+    void append(const std::string& key,int64_t val);
+    void append(const std::string& key,double val);
+    void append(const std::string& key,bool val);
+    void append(const std::string& key,const std::string& val);
+    void append(const std::string& key,const CDataWrapper& val);
+
+    void append(const std::string& key,const std::vector<int32_t>& val);
+    void append(const std::string& key,const std::vector<int64_t>& val);
+    void append(const std::string& key,const std::vector<double>& val);
+    void append(const std::string& key,const std::vector<bool>& val);
+    void append(const std::string& key,const std::vector<std::string>& val);
+    void append(const std::string& key,const std::vector<CDataWrapper>& val);
+#ifdef CERN_ROOT
+    void append(const std::string& key,const TTree* val);
+    /**
+      export current CDataWrapper to Tree with the given name
+      \param name name of the tree
+      \param branch_name branch name
+      \param multiple creates a branch for each key, otherwise creates just on branch with all keys
+      \return NULL if error, an allocated and initialized Tree otherwise
+    */
+    TTree*getTree(const std::string& name,const std::string& branch_name,bool multiple=true);
+#endif
 
     //add a integer value
     void addInt32Value(const std::string&, uint32_t);

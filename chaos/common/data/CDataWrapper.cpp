@@ -29,7 +29,14 @@
 using namespace chaos;
 using namespace chaos::common::data;
 
+
 #pragma mark Utility
+#define ADD_VECTOR(v,ctype,bsontype){\
+    for( std::vector<ctype>::const_iterator i=v.begin();i!=v.end();i++){\
+        append ##bsontype ##ToArray(*i);}}
+
+
+
 #define ITER_TYPE(i) ((bson_type_t) * ((i)->raw + (i)->type))
 
 #define ALLOCATE_BSONT(x) ChaosBsonShrdPtr(x, &bsonDeallocator)
@@ -149,6 +156,13 @@ void CDataWrapper::appendStringToArray(const string& value) {
                      value.c_str(),
                      (int)value.size());
 }
+void CDataWrapper::appendBooleanToArray(bool value){
+    ENSURE_ARRAY(bson_tmp_array);
+    bson_append_bool(ACCESS_BSON(bson_tmp_array),
+                      boost::lexical_cast<std::string>(array_index++).c_str(),
+                      -1,
+                      value);
+}
 
 //append a strin gto an open array
 void CDataWrapper::appendInt32ToArray(int32_t value) {
@@ -178,7 +192,7 @@ void CDataWrapper::appendDoubleToArray(double value) {
 }
 
 //appen a CDataWrapper to an open array
-void CDataWrapper::appendCDataWrapperToArray(CDataWrapper& value) {
+void CDataWrapper::appendCDataWrapperToArray(const CDataWrapper& value) {
     ENSURE_ARRAY(bson_tmp_array);
     bson_append_document(ACCESS_BSON(bson_tmp_array),
                          boost::lexical_cast<std::string>(array_index++).c_str(),
@@ -374,27 +388,285 @@ void CDataWrapper::addBinaryValue(const std::string& key,
                        (const uint8_t *)buff,
                        buf_len);
 }
-void CDataWrapper::addValue(const std::string& key,int32_t val){
+void CDataWrapper::append(const std::string& key,int32_t val){
     addInt32Value(key, val);
 }
-void CDataWrapper::addValue(const std::string& key,int64_t val){
+void CDataWrapper::append(const std::string& key,int64_t val){
     addInt64Value(key, val);
     
 }
 
-void CDataWrapper::addValue(const std::string& key,double val){
+void CDataWrapper::append(const std::string& key,double val){
     addDoubleValue(key, val);
     
 }
-void CDataWrapper::addValue(const std::string& key,bool val){
+void CDataWrapper::append(const std::string& key,bool val){
     addBoolValue(key, val);
     
 }
-void CDataWrapper::addValue(const std::string& key,std::string& val){
+
+
+void CDataWrapper::append(const std::string& key,const std::string& val){
     addStringValue(key, val);
     
 }
+void CDataWrapper::append(const std::string& key,const CDataWrapper& val){
+    addCSDataValue(key,val);
+}
 
+void CDataWrapper::append(const std::string& key,const std::vector<int32_t>& val){
+    ADD_VECTOR(val,int32_t,Int32);
+    finalizeArrayForKey(key);
+}
+void CDataWrapper::append(const std::string& key,const std::vector<int64_t>& val){
+    ADD_VECTOR(val,int64_t,Int64);
+    finalizeArrayForKey(key);
+}
+void CDataWrapper::append(const std::string& key,const std::vector<double>& val){
+    ADD_VECTOR(val,double,Double);
+    finalizeArrayForKey(key);
+}
+void CDataWrapper::append(const std::string& key,const std::vector<bool>& val){
+    ADD_VECTOR(val,bool,Boolean);
+    finalizeArrayForKey(key);
+}
+void CDataWrapper::append(const std::string& key,const std::vector<std::string>& val){
+    ADD_VECTOR(val,std::string,String);
+    finalizeArrayForKey(key);
+
+}
+void CDataWrapper::append(const std::string& key,const std::vector<CDataWrapper>& val){
+    ADD_VECTOR(val,CDataWrapper,CDataWrapper);
+    finalizeArrayForKey(key);
+}
+#ifdef CERN_ROOT
+#warning "enabling CERN ROOT support"
+#include "TTree.h"
+#include "TBufferJSON.h"
+void CDataWrapper::append(const std::string& key,const TTree* val){
+    TString json=TBufferJSON::ConvertToJSON(val);
+    this->setSerializedJsonData(json.Data());
+}
+TTree*CDataWrapper::getTree(const std::string& name,const std::string& brname,bool multiple){
+    TTree* tr = new TTree();
+    typedef struct branchAlloc{
+        char* branchBuffer;
+        int32_t size;
+        std::string branchContent;
+        std::string brname;
+        branchAlloc(){size=0;branchBuffer=NULL;}
+        ~branchAlloc(){if((size>0)&&(branchBuffer)) {free(branchBuffer);size=0;}}
+    } branchAlloc_t;
+    int nbranch;
+
+    std::stringstream varname;
+    std::vector<std::string> contained_key;
+    int disable_dump=0;
+    branchAlloc_t*query=NULL;
+
+    CDataWrapper*cd=this;
+    cd->getAllKey(contained_key);
+    int branch_counter=0;
+    if(contained_key.size()==0){
+        return NULL;
+    }
+    if(multiple){
+        query = new branchAlloc_t[contained_key.size()];
+        nbranch=contained_key.size();
+
+    } else {
+        query = new branchAlloc_t[1];
+        nbranch=1;
+    //    branch_prefix="";//brname+std::string("__");
+    }
+
+
+    /**
+      create branch and space
+      */
+    for (std::vector<std::string>::iterator it = contained_key.begin();
+         it != contained_key.end(); it++,branch_counter++) {
+        disable_dump=0;
+        int found=0;
+        if(multiple==false){
+            branch_counter=0;
+        } else {
+            varname.str("");
+            if(query[branch_counter].size>0){
+                free(query[branch_counter].branchBuffer);
+                query[branch_counter].branchBuffer=0;
+            }
+            query[branch_counter].size=0;
+        }
+
+
+        chaos::DataType::DataType type_size = chaos::DataType::TYPE_DOUBLE;
+        if (cd->isVector(*it)) {
+            int size = 0;
+            CMultiTypeDataArrayWrapper* da = cd->getVectorValue(*it);
+            //if(!multiple)
+                varname <<*it;
+
+            varname << "[" << da->size() << "]";
+            found++;
+            if (da->size()) {
+                if (da->isDoubleElementAtIndex(0)) {
+                    type_size = chaos::DataType::TYPE_DOUBLE;
+                    query[branch_counter].size+=da->size()*sizeof(double);
+
+                } else if (da->isInt32ElementAtIndex(0)) {
+                    type_size = chaos::DataType::TYPE_INT32;
+                    query[branch_counter].size+=da->size()*sizeof(int32_t);
+
+                } else if (da->isInt64ElementAtIndex(0)) {
+                    type_size = chaos::DataType::TYPE_INT64;
+                    query[branch_counter].size+=da->size()*sizeof(int64_t);
+
+                } else if (da->isStringElementAtIndex(0)) {
+                    type_size = chaos::DataType::TYPE_STRING;
+                    query[branch_counter].size+=da->size()*(da->getStringElementAtIndex(0).size());
+
+                }
+            }
+            //	ROOTDBG<<" BELE "<<varname<<" tot size:"<<query[branch_counter].size;
+
+        } else {
+            if((type_size==chaos::DataType::TYPE_DOUBLE )||(type_size==chaos::DataType::TYPE_INT32)||(type_size==chaos::DataType::TYPE_INT64)||(type_size==chaos::DataType::TYPE_BOOLEAN)){
+
+                type_size = cd->getValueType(*it);
+                query[branch_counter].size+=cd->getValueSize(*it);
+
+              //  ROOTDBG<<" BELE "<<*it<< " ele size:"<<cd->getValueSize(*it)<<" tot size:"<<query[branch_counter].size;
+            }
+        }
+        switch (type_size) {
+
+        case chaos::DataType::TYPE_BOOLEAN:
+            found++;
+         //   if(!multiple)
+                varname <<*it;
+            varname << "/O";
+
+            break;
+        case chaos::DataType::TYPE_INT32:
+            found++;
+       //     if(!multiple)
+                varname <<*it;
+            varname << "/I";
+
+            break;
+        case chaos::DataType::TYPE_INT64:
+            found++;
+           // if(!multiple)
+                varname <<*it;
+            varname << "/L";
+
+            break;
+        case chaos::DataType::TYPE_DOUBLE:
+            found++;
+            //if(!multiple)
+                varname <<*it;
+            varname << "/D";
+
+            break;
+        case chaos::DataType::TYPE_STRING:
+            disable_dump=1;
+     //               found++;
+     //               varname << *it;
+     //           varname << "/C";
+
+            break;
+
+        default:
+            break;
+        }
+
+        if((multiple==false) && (found &&( (it+1)!= contained_key.end()))){
+            varname<<":";
+        }
+        if(multiple && (disable_dump == 0)){
+            std::stringstream ss;
+            ss<<brname<<"."<<(*it);
+            query[branch_counter].branchContent=varname.str();
+            query[branch_counter].branchBuffer=(char*)malloc(query[branch_counter].size);
+            query[branch_counter].brname=ss.str();
+            tr->Branch(query[branch_counter].brname.c_str(), (void*)query[branch_counter].branchBuffer,varname.str().c_str());
+          //  ROOTDBG<<"create ROOT BRANCH \""<<query[branch_counter].brname<<"\""<< " content:\""<<varname.str()<<"\" size:"<<query[branch_counter].size<<" address 0x"<<std::hex<<(uint64_t)query[branch_counter].branchBuffer<<std::dec;
+        }
+    }
+    if(multiple==false){
+        query[0].brname=brname;
+        query[0].branchContent=varname.str();
+        query[0].branchBuffer=(char*)malloc(query[0].size);
+        tr->Branch(brname.c_str(), (void*)query[0].branchBuffer,varname.str().c_str());
+       // ROOTDBG<<"create ROOT BRANCH \""<<query[0].brname<<"\""<< "content:\""<<varname.str()<<"\" size:"<<query[0].size<<" address 0x"<<std::hex<<(uint64_t)query[0].branchBuffer<<std::dec;
+
+    }
+
+
+    /**
+      FILL
+*/
+    branch_counter=0;
+
+
+    int ptr=0;
+    for (std::vector<std::string>::iterator it = contained_key.begin();
+         it != contained_key.end(); it++) {
+        if (cd->isVector(*it)) {
+            int size = 0;
+            CMultiTypeDataArrayWrapper* da = cd->getVectorValue(*it);
+
+            for(int cnt=0;cnt<da->size();cnt++){
+                if (da->isDoubleElementAtIndex(cnt)) {
+                    double tmp=da->getDoubleElementAtIndex(cnt);
+                    memcpy(query[branch_counter].branchBuffer+ptr,static_cast<void*>(&tmp),sizeof(tmp));
+                    ptr+=sizeof(tmp);
+                } else if (da->isInt32ElementAtIndex(cnt)) {
+                    int32_t tmp=da->getInt32ElementAtIndex(cnt);
+                    memcpy(query[branch_counter].branchBuffer+ptr,static_cast<void*>(&tmp),sizeof(tmp));
+                    ptr+=sizeof(tmp);
+                } else if (da->isInt64ElementAtIndex(cnt)) {
+                    int64_t tmp=da->getInt64ElementAtIndex(cnt);
+                    memcpy(query[branch_counter].branchBuffer+ptr,static_cast<void*>(&tmp),sizeof(tmp));
+                    ptr+=sizeof(tmp);
+
+                } else if (da->isStringElementAtIndex(cnt)) {
+                    std::string tmp=da->getStringElementAtIndex(cnt);
+                    memcpy(query[branch_counter].branchBuffer+ptr,(void*)(tmp.c_str()),tmp.size());
+                    ptr+=tmp.size();
+
+                }
+            }
+        } else {
+            //ROOTDBG<<"ELE "<<*it<<" size:"<<cd->getValueSize(*it);
+            switch(cd->getValueType(*it)){
+            case chaos::DataType::TYPE_DOUBLE:
+            case chaos::DataType::TYPE_INT64:
+            case chaos::DataType::TYPE_BOOLEAN:
+            case chaos::DataType::TYPE_INT32:{
+                memcpy(query[branch_counter].branchBuffer+ptr,cd->getRawValuePtr(*it),cd->getValueSize(*it));
+                ptr+=cd->getValueSize(*it);
+                break;
+            }
+            }
+
+        }
+        if((branch_counter+1)<nbranch){
+            // if multiple branch buffer is different, offset to zero
+            ptr=0;
+            branch_counter++;
+        }
+    }
+    tr->Fill();
+    for(branch_counter=0;branch_counter<nbranch;branch_counter++){
+        free(query[branch_counter].branchBuffer);
+
+    }
+    return tr;
+
+}
+#endif
 void CDataWrapper::addVariantValue(const std::string& key,
                                    const CDataVariant& variant_value) {
     //create variant using the typed data
