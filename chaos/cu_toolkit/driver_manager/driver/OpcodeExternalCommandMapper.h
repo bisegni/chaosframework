@@ -53,6 +53,10 @@ namespace chaos {
                     //!Wrap to @RemoteIODriverProtocol::sendOpcodeMessage method
                     int sendOpcodeMessage(const std::string& opcode,
                                           chaos::common::data::CDWUniquePtr opcode_message);
+                    //!Wrap to @RemoteIODriverProtocol::sendInitRequest method
+                    int sendInitRequest();
+                    //!Wrap to @RemoteIODriverProtocol::sendDeinitRequest method
+                    int sendDeinitRequest();
                 public:
                     OpcodeExternalCommandMapper(RemoteIODriverProtocol *driver_protocol);
                     
