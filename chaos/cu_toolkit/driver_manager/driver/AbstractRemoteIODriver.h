@@ -135,6 +135,7 @@ namespace chaos {
                                // AbstractRemoteIODriver_ERR << CHAOS_FORMAT("[%1%]Error deinitilizing remote driver on connection", %current_connection_identifie());
                             }
                         }
+                        remote_uri_instance.clear();
                     }
                     bool checkAuthenticationState(chaos::common::data::CDWShrdPtr& message_response) {
                         bool result = false;

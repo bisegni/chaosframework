@@ -1137,7 +1137,13 @@ bool CDataWrapper::isVectorValue(const std::string& key) const{
 bool CDataWrapper::isEmpty() const {
     return (bson_count_keys(ACCESS_BSON(bson)) == 0);
 }
-
+int CDataWrapper::setBson( const bson_iter_t *v ,const uint64_t& val){
+    if(ITER_TYPE(v)==BSON_TYPE_INT64){
+        memcpy((void*)(v->raw + v->d1), (void*)&val,sizeof(uint64_t));
+        return sizeof(uint64_t);
+    }
+    return -1;
+}
 int CDataWrapper::setBson( const bson_iter_t *v ,const int64_t& val){
     if(ITER_TYPE(v)==BSON_TYPE_INT64){
         memcpy((void*)(v->raw + v->d1), (void*)&val,sizeof(int64_t));
