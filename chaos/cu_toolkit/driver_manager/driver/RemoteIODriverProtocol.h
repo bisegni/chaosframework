@@ -48,6 +48,12 @@ namespace chaos {
                      */
                     virtual int sendOpcodeMessage(const std::string opcode,
                                                   chaos::common::data::CDWUniquePtr opcode_message) = 0;
+                    
+                    //!!Send an opcode for device initialization
+                    virtual int sendInitRequest() = 0;
+                    
+                    //!!Send an opcode for device deinitialization
+                    virtual int sendDeinitRequest() = 0;
                 };
             }
         }

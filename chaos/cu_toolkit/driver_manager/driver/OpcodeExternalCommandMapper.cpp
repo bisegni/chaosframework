@@ -61,3 +61,13 @@ int  OpcodeExternalCommandMapper::sendOpcodeMessage(const std::string& opcode,
     return driver_protocol->sendOpcodeMessage(opcode,
                                               ChaosMoveOperator(opcode_message));
 }
+
+int OpcodeExternalCommandMapper::sendInitRequest() {
+    CHAOS_ASSERT(driver_protocol)
+    return driver_protocol->sendInitRequest();
+}
+
+int OpcodeExternalCommandMapper::sendDeinitRequest() {
+    CHAOS_ASSERT(driver_protocol)
+    return driver_protocol->sendDeinitRequest();
+}
