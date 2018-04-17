@@ -93,6 +93,15 @@ namespace chaos {
                         return ExtDriverImpl::sendOpcodeMessage(opcode,
                                                                 ChaosMoveOperator(opcode_message));
                     }
+                    //!Inherited by RemoteIODriverProtocol::sendInitRequest
+                    int sendInitRequest() {
+                        return ExtDriverImpl::sendInitRequest();
+                    }
+                    
+                   //!Inherited by RemoteIODriverProtocol::sendDeinitRequest
+                    int sendDeinitRequest() {
+                        return ExtDriverImpl::sendDeinitRequest();
+                    }
                 };
                 
                 //marcro for helping in driver declaration
