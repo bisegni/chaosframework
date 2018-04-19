@@ -224,15 +224,15 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string& key,
         if(reverse_order == false) {
             q = BSON(chaos::DataPackCommonKey::DPCK_DEVICE_ID << key <<
                      chaos::DataPackCommonKey::DPCK_TIMESTAMP << BSON("$gte" << mongo::Date_t(timestamp_from) <<
-                                                                      "$lt" << mongo::Date_t(timestamp_to)) <<
+                                                                      "$lte" << mongo::Date_t(timestamp_to)) <<
                      run_key << BSON("$gte" << (long long)last_record_found_seq.run_id) <<
-                     counter_key << BSON("$gt" << (long long)last_record_found_seq.datapack_counter));
+                     counter_key << BSON("$gte" << (long long)last_record_found_seq.datapack_counter));
         } else {
             BSON(chaos::DataPackCommonKey::DPCK_DEVICE_ID << key <<
                  chaos::DataPackCommonKey::DPCK_TIMESTAMP << BSON("$lte" << mongo::Date_t(timestamp_from) <<
-                                                                  "$gt" << mongo::Date_t(timestamp_to)) <<
+                                                                  "$gte" << mongo::Date_t(timestamp_to)) <<
                  run_key << BSON("$lte" << (long long)last_record_found_seq.run_id) <<
-                 counter_key << BSON("$lt" << (long long)last_record_found_seq.datapack_counter));
+                 counter_key << BSON("$lte" << (long long)last_record_found_seq.datapack_counter));
         }
         
         if(reverse_order) {
@@ -258,20 +258,20 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string& key,
                     end = object_found.end();
                     it != end;
                     it++) {
-                    CDataWrapper*new_obj=new CDataWrapper(it->getObjectField(MONGODB_DAQ_DATA_FIELD).objdata());
-                    found_object_page.push_back(CDWShrdPtr(new_obj));
+                    CDWShrdPtr new_obj(new CDataWrapper(it->getObjectField(MONGODB_DAQ_DATA_FIELD).objdata()));
+                    found_object_page.push_back(new_obj);
                 }
                 if( object_found[object_found.size()-1].getFieldDotted(run_key).type()==mongo::NumberInt){
                     last_record_found_seq.run_id = object_found[object_found.size()-1].getFieldDotted(run_key).Number();
-
+                    
                 } else {
                     last_record_found_seq.run_id = object_found[object_found.size()-1].getFieldDotted(run_key).Long();
                 }
-
-
+                
+                
                 if( object_found[object_found.size()-1].getFieldDotted(counter_key).type()==mongo::NumberInt){
                     last_record_found_seq.datapack_counter = object_found[object_found.size()-1].getFieldDotted(counter_key).Number();
-
+                    
                 } else {
                     last_record_found_seq.datapack_counter = object_found[object_found.size()-1].getFieldDotted(counter_key).Long();
                 }
@@ -282,5 +282,14 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string& key,
         ERR << e.what();
         err = e.getCode();
     }
+    return err;
+}
+
+int MongoDBObjectStorageDataAccess::countObject(const std::string& key,
+                                                const uint64_t timestamp_from,
+                                                const uint64_t timestamp_to,
+                                                const uint64_t& object_count) {
+    int err = 0;
+    
     return err;
 }

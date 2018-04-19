@@ -7,10 +7,21 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		32462F192088866D003DB2F8 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32462F182088866D003DB2F8 /* main.cpp */; };
+		32462F1F208886A6003DB2F8 /* ChaosDatasetIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32462F1D208886A6003DB2F8 /* ChaosDatasetIO.cpp */; };
 		328B4E8E19C9AEF9008D1331 /* cde.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328B4E8D19C9AEF9008D1331 /* cde.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		32462F142088866D003DB2F8 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		328B4E7D19C9AE35008D1331 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -23,12 +34,23 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		32462F162088866D003DB2F8 /* TestDatasetIO */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestDatasetIO; sourceTree = BUILT_PRODUCTS_DIR; };
+		32462F182088866D003DB2F8 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		32462F1D208886A6003DB2F8 /* ChaosDatasetIO.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ChaosDatasetIO.cpp; sourceTree = "<group>"; };
+		32462F1E208886A6003DB2F8 /* ChaosDatasetIO.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChaosDatasetIO.h; sourceTree = "<group>"; };
 		328B4E7F19C9AE35008D1331 /* ChaosDataExport */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ChaosDataExport; sourceTree = BUILT_PRODUCTS_DIR; };
 		328B4E8C19C9AEF9008D1331 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
 		328B4E8D19C9AEF9008D1331 /* cde.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = cde.cpp; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		32462F132088866D003DB2F8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		328B4E7C19C9AE35008D1331 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -39,10 +61,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		32462F172088866D003DB2F8 /* TestDatasetIO */ = {
+			isa = PBXGroup;
+			children = (
+				32462F182088866D003DB2F8 /* main.cpp */,
+				32462F1D208886A6003DB2F8 /* ChaosDatasetIO.cpp */,
+				32462F1E208886A6003DB2F8 /* ChaosDatasetIO.h */,
+			);
+			path = TestDatasetIO;
+			sourceTree = "<group>";
+		};
 		328B4E7619C9AE35008D1331 = {
 			isa = PBXGroup;
 			children = (
 				328B4E8119C9AE35008D1331 /* ChaosDataExport */,
+				32462F172088866D003DB2F8 /* TestDatasetIO */,
 				328B4E8019C9AE35008D1331 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -51,6 +84,7 @@
 			isa = PBXGroup;
 			children = (
 				328B4E7F19C9AE35008D1331 /* ChaosDataExport */,
+				32462F162088866D003DB2F8 /* TestDatasetIO */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -67,6 +101,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		32462F152088866D003DB2F8 /* TestDatasetIO */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 32462F1C2088866D003DB2F8 /* Build configuration list for PBXNativeTarget "TestDatasetIO" */;
+			buildPhases = (
+				32462F122088866D003DB2F8 /* Sources */,
+				32462F132088866D003DB2F8 /* Frameworks */,
+				32462F142088866D003DB2F8 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TestDatasetIO;
+			productName = TestDatasetIO;
+			productReference = 32462F162088866D003DB2F8 /* TestDatasetIO */;
+			productType = "com.apple.product-type.tool";
+		};
 		328B4E7E19C9AE35008D1331 /* ChaosDataExport */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 328B4E8819C9AE35008D1331 /* Build configuration list for PBXNativeTarget "ChaosDataExport" */;
@@ -92,6 +143,12 @@
 			attributes = {
 				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = infn;
+				TargetAttributes = {
+					32462F152088866D003DB2F8 = {
+						CreatedOnToolsVersion = 9.3;
+						ProvisioningStyle = Automatic;
+					};
+				};
 			};
 			buildConfigurationList = 328B4E7A19C9AE35008D1331 /* Build configuration list for PBXProject "ChaosDataExport" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -106,11 +163,21 @@
 			projectRoot = "";
 			targets = (
 				328B4E7E19C9AE35008D1331 /* ChaosDataExport */,
+				32462F152088866D003DB2F8 /* TestDatasetIO */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
+		32462F122088866D003DB2F8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				32462F192088866D003DB2F8 /* main.cpp in Sources */,
+				32462F1F208886A6003DB2F8 /* ChaosDatasetIO.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		328B4E7B19C9AE35008D1331 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -122,6 +189,93 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		32462F1A2088866D003DB2F8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../usr/local/bin";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				HEADER_SEARCH_PATHS = ../../usr/local/include;
+				LIBRARY_SEARCH_PATHS = (
+					/usr/local/lib,
+					"$(SRCROOT)/../../usr/local/lib",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = (
+					"-lchaos_common",
+					"-lchaos_metadata_service_client",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		32462F1B2088866D003DB2F8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../usr/local/bin";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				HEADER_SEARCH_PATHS = ../../usr/local/include;
+				LIBRARY_SEARCH_PATHS = (
+					/usr/local/lib,
+					"$(SRCROOT)/../../usr/local/lib",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = (
+					"-lchaos_common",
+					"-lchaos_metadata_service_client",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		328B4E8619C9AE35008D1331 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -233,6 +387,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		32462F1C2088866D003DB2F8 /* Build configuration list for PBXNativeTarget "TestDatasetIO" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				32462F1A2088866D003DB2F8 /* Debug */,
+				32462F1B2088866D003DB2F8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		328B4E7A19C9AE35008D1331 /* Build configuration list for PBXProject "ChaosDataExport" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

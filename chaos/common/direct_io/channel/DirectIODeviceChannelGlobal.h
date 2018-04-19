@@ -181,8 +181,8 @@ namespace chaos {
                     
                     //structure for identificate the sequnce fo the found record
                     typedef struct SearchSequence {
-                        uint64_t run_id;
-                        uint64_t datapack_counter;
+                        int64_t run_id;
+                        int64_t datapack_counter;
                     }SearchSequence;
                     
                     //! Header for DirectIODeviceChannelHeaderGetOpcode asynchronous result

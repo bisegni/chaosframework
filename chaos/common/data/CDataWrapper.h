@@ -241,8 +241,8 @@ public:
             return -1;
         //const bson_value_t *v = bson_iter_value(&it);
         return setBson(&it,val);
-
     }
+    
     template<typename T>
     int setValue(const std::string& key,std::vector<T>& val){
         bson_iter_t it;

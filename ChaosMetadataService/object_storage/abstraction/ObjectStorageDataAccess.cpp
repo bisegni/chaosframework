@@ -26,10 +26,6 @@ using namespace chaos::data_service::object_storage::abstraction;
 DEFINE_DA_NAME(ObjectStorageDataAccess)
 
 ObjectStorageDataAccess::ObjectStorageDataAccess():
-AbstractDataAccess("ObjectStorageDataAccess") {
-    
-}
+AbstractDataAccess("ObjectStorageDataAccess") {}
 
-ObjectStorageDataAccess::~ObjectStorageDataAccess() {
-    
-}
+ObjectStorageDataAccess::~ObjectStorageDataAccess() {}

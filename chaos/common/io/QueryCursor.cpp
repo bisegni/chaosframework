@@ -36,6 +36,7 @@ using namespace chaos::common::direct_io::channel::opcode_headers;
 #pragma mark QueryCursor
 QueryCursor::ResultPage::ResultPage():
 current_fetched(0){
+    //initlize last sequence number
     std::memset(&last_record_found_seq, 0, sizeof(direct_io::channel::opcode_headers::SearchSequence));
 }
 
@@ -104,15 +105,17 @@ int64_t QueryCursor::fetchNewPage() {
     //fetch the new page
     switch(phase) {
         case QueryPhaseNotStarted:
+//            std::memset(&result_page.last_record_found_seq, 0, sizeof(direct_io::channel::opcode_headers::SearchSequence));
+//            result_page.last_record_found_seq.datapack_counter = -1;
             DBG << "["<<node_id<<"] start search "<<start_ts<<"-"<<end_ts<<" page_len:"<<page_len<<" data pack counter:"<< result_page.last_record_found_seq.datapack_counter<<"run id:"<< result_page.last_record_found_seq.run_id ;
 
-            std::memset(&result_page.last_record_found_seq, 0, sizeof(direct_io::channel::opcode_headers::SearchSequence));
             //change to the next phase
             phase = QueryPhaseStarted;
             break;
         case QueryPhaseStarted:
+            //increase data pack count of last recod found that will be used has next counter id to fetch
+            result_page.last_record_found_seq.datapack_counter++;
             DBG << "["<<node_id<<"] continue search  "<<start_ts<<"-"<<end_ts<<" page_len:"<<page_len<<" data pack counter:"<< result_page.last_record_found_seq.datapack_counter<<"run id:"<< result_page.last_record_found_seq.run_id ;
-
             break;
             
         case QueryPhaseEnded:

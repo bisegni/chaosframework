@@ -168,10 +168,10 @@ namespace chaos {
     namespace common {
     	namespace constants {
     		// hearth beat timers
-        	static const unsigned int HBTimersTimeoutinMSec               = 5000;
-        	static const unsigned int AgentTimersTimeoutinMSec            = 5000;
-        	static const unsigned int CUTimersTimeoutinMSec              = 5000;
-        	static const unsigned int PerformanceManagerTimersTimeoutinMSec  = 5000;
+        	static const unsigned int HBTimersTimeoutinMSec                     = 5000;
+        	static const unsigned int AgentTimersTimeoutinMSec                  = 5000;
+        	static const unsigned int CUTimersTimeoutinMSec                     = 5000;
+        	static const unsigned int PerformanceManagerTimersTimeoutinMSec     = 5000;
     	}
 
     };
