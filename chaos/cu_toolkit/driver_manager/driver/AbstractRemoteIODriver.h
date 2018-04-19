@@ -126,6 +126,7 @@ namespace chaos {
                         _sendDeinitRequest();
                         //close future helper
                         CHAOS_NOT_THROW(future_hepler.deinit();)
+
                     }
                     bool checkAuthenticationState(chaos::common::data::CDWShrdPtr& message_response) {
                         bool result = false;

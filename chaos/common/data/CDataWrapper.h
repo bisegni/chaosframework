@@ -100,6 +100,7 @@ class CDataWrapper {
     ChaosBsonShrdPtr bson_tmp_array;
     CDataWrapper(const bson_t *copy_bson);
     explicit CDataWrapper(const std::string& json_document);
+    int setBson(const bson_iter_t * ,const uint64_t& val);
     int setBson(const bson_iter_t * ,const int64_t& val);
     int setBson(const bson_iter_t *v ,const int32_t& val);
     int setBson(const bson_iter_t * ,const double& val);
