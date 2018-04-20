@@ -9,6 +9,7 @@
 #include <chaos_service_common/persistence/mongodb/MongoDBHAConnectionManager.h>
 
 #include <chaos/common/utility/TimingUtil.h>
+#include <chaos/common/chaos_constants.h>
 
 #include <boost/format.hpp>
 
@@ -175,7 +176,7 @@ ChaosUniquePtr<DriverScopedConnection> MongoDBHAConnectionManager::getConnection
     ConnectionInfo *conn = static_cast<ConnectionInfo*>(service_feeder.getService());
     if(conn) {
         try{
-            result.reset(new DriverScopedConnection(conn->conn_str, 1000));
+            result.reset(new DriverScopedConnection(conn->conn_str, common::constants::ObjectStorageTimeoutinMSec));
         } catch(mongo::UserException &ex) {
             MDBHAC_LERR_ << ex.what();
             result.reset(NULL);

@@ -172,6 +172,7 @@ namespace chaos {
         	static const unsigned int AgentTimersTimeoutinMSec                  = 5000;
         	static const unsigned int CUTimersTimeoutinMSec                     = 5000;
         	static const unsigned int PerformanceManagerTimersTimeoutinMSec     = 5000;
+            static const unsigned int ObjectStorageTimeoutinMSec                = 5000;
     	}
 
     };
