@@ -23,7 +23,8 @@
 #include <chaos/cu_toolkit/control_manager/script/api/plugin/EUAbstractApiPlugin.h>
 #include <chaos/cu_toolkit/control_manager/script/api/plugin/EUPluginApiWrapper.h>
 
-#include <chaos/common/bson/util/base64.h>
+#include <chaos/common/chaos_constants.h>
+#include <chaos/common/additional_lib/base64.h>
 #include <chaos/common/exception/MetadataLoggingCException.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
 
@@ -31,6 +32,7 @@
 
 #include <json/json.h>
 
+using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::common::plugin;
 
@@ -180,7 +182,7 @@ void ScriptableExecutionUnit::unitDefineActionAndDataset() throw(CException) {
         //set the script dataset
         if(_script_b64_dataset.isNull() == false &&
            _script_b64_dataset.isString()) {
-            const std::string decoded_bson_dataset = bson::base64::decode(_script_b64_dataset.asString());
+            const std::string decoded_bson_dataset = base64_decode(_script_b64_dataset.asString()); // bson::base64::decode();
             CDataWrapper script_dataset(decoded_bson_dataset.c_str());
             addAttributeToDataSetFromDataWrapper(script_dataset);
         }
@@ -215,6 +217,7 @@ void ScriptableExecutionUnit::unitDefineActionAndDataset() throw(CException) {
     api_classes.push_back(ApiClassShrdPtr(new api::EULiveManagment(this)));
 
     if(GlobalConfiguration::getInstance()->getOption<bool>(InitOption::OPT_PLUGIN_ENABLE)) {
+        SEU_LAPP << "Scan Api Plugin";
         ChaosStringVector publish_api;
         //add api form pugin
         PluginManager::getInstance()->getRegisterdPluginForSubclass("chaos::cu::control_manager::script::api::plugin::EUAbstractApiPlugin", publish_api);

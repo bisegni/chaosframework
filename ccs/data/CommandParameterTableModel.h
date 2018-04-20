@@ -3,7 +3,6 @@
 
 #include "ChaosAbstractTableModel.h"
 #include "AttributeValueChangeSet.h"
-#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
 
 #include <QVector>
 

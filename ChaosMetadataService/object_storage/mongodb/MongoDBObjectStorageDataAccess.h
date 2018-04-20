@@ -23,6 +23,7 @@
 #define __CHAOSFramework__B2D2009_02A2_468B_9C5C_1D184ECB470F_MongoDBObjectStorageDataAccess_h
 
 #include "../abstraction/ObjectStorageDataAccess.h"
+#include "../object_storage_types.h"
 #include <chaos/common/utility/ObjectInstancer.h>
 #include <chaos_service_common/persistence/mongodb/MongoDBAccessor.h>
 
@@ -37,6 +38,11 @@ namespace chaos {
                 public data_service::object_storage::abstraction::ObjectStorageDataAccess,
                 protected service_common::persistence::mongodb::MongoDBAccessor {
                     friend class MongoDBObjectStorageDriver;
+                   
+                    //object storage custom parameter
+                    MapKVP obj_stoarge_kvp;
+                    
+                    const mongo::WriteConcern *storage_write_concern;
                     
                     inline void addTimeRange(mongo::BSONObjBuilder& builder,
                                              const std::string& time_operator,
@@ -69,6 +75,11 @@ namespace chaos {
                                    const uint32_t page_len,
                                    object_storage::abstraction::VectorObject& found_object_page,
                                    common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq);
+                    //inhertied method
+                    int countObject(const std::string& key,
+                                    const uint64_t timestamp_from,
+                                    const uint64_t timestamp_to,
+                                    const uint64_t& object_count);
                 };
             }
         }

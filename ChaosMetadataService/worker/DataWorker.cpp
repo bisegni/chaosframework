@@ -1,35 +1,48 @@
-//
-//  DataWorker.cpp
-//  CHAOSFramework
-//
-//  Created by Claudio Bisegni on 19/02/14.
-//  Copyright (c) 2014 INFN. All rights reserved.
-//
+/*
+ * Copyright 2012, 2017 INFN
+ *
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
+ *
+ * https://joinup.ec.europa.eu/software/page/eupl
+ *
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
+ */
 
-#include <cstring>
 #include "DataWorker.h"
+#include "../ChaosMetadataService.h"
+
 #include <boost/thread/lock_options.hpp>
 #include <chaos/common/global.h>
 
+#include <cstring>
+
 using namespace chaos::common::utility;
+using namespace chaos::metadata_service;
 using namespace chaos::data_service::worker;
 
 #define DataWorker_LOG_HEAD "[DataWorker] - "
 
-#define DCLAPP_ LAPP_ << DataWorker_LOG_HEAD
-#define DCLDBG_ LDBG_ << DataWorker_LOG_HEAD << __FUNCTION__
-#define DCLERR_ LERR_ << DataWorker_LOG_HEAD << __FUNCTION__ << " - " << __LINE__ << "-"
+#define DCLAPP_ INFO_LOG(DataWorker)
+#define DCLDBG_ DBG_LOG(DataWorker)
+#define DCLERR_ ERR_LOG(DataWorker)
 
 DataWorker::DataWorker():
 work(false),
 job_queue(1000),
-max_element(1000){
-    std::memset(&settings, 0, sizeof(DataWorkerSetting));
-}
+max_element(1000){}
 
-DataWorker::~DataWorker() {
-    
-}
+DataWorker::~DataWorker() {}
 
 WorkerJobPtr DataWorker::getNextOrWait(boost::unique_lock<boost::mutex>& lock) {
     WorkerJobPtr new_job = NULL;
@@ -51,19 +64,13 @@ void DataWorker::consumeJob(void *cookie) {
 
 void DataWorker::init(void *init_data) throw (chaos::CException) {
     job_in_queue() = 0;
-    if(init_data) {
-        std::memcpy(&settings, init_data, sizeof(DataWorkerSetting));
-    } else {
-        settings.job_thread_number = DEFAULT_JOB_THREAD;
-    }
-    
-    thread_cookie = (void**)calloc(1, sizeof(void*)*settings.job_thread_number);
-    DCLAPP_ << " Using " << settings.job_thread_number << " thread for consuming job";
+    thread_cookie = (void**)calloc(1, sizeof(void*)*ChaosMetadataService::getInstance()->setting.worker_setting.thread_number);
+    DCLAPP_ << " Using " << ChaosMetadataService::getInstance()->setting.worker_setting.thread_number << " thread for consuming job";
 }
 
 void DataWorker::start() throw (chaos::CException) {
     work = true;
-    for(int idx = 0; idx <settings.job_thread_number; idx++) {
+    for(int idx = 0; idx < ChaosMetadataService::getInstance()->setting.worker_setting.thread_number; idx++) {
         job_thread_group.create_thread(boost::bind(&DataWorker::consumeJob, this, thread_cookie[idx]));
     }
 }
@@ -104,8 +111,4 @@ int DataWorker::submitJobInfo(WorkerJobPtr job_info) {
         return 0;
     }
     return -2;
-}
-
-void DataWorker::mantain() throw (chaos::CException) {
-    
 }

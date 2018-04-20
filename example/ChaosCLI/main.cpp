@@ -29,7 +29,6 @@
 #include <chaos/ui_toolkit/LowLevelApi/LLRpcApi.h>
 #include <chaos/ui_toolkit/HighLevelApi/HLDataApi.h>
 #include <stdio.h>
-#include <chaos/common/bson/bson.h>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/c_local_time_adjustor.hpp>
 #include <boost/random/random_device.hpp>
@@ -39,7 +38,6 @@ using namespace std;
 using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::ui;
-using namespace bson;
 using namespace boost;
 using namespace boost::posix_time;
 using namespace boost::date_time;
@@ -108,7 +106,7 @@ void print_state(CUStateKey::ControlUnitState state) {
         case CUStateKey::DEINIT:
             std::cout << "Deinitilized:"<<state;
             break;
-            
+
         case CUStateKey::RECOVERABLE_ERROR:
             std::cout << "Recovable Error:"<<state;
             break;
@@ -117,7 +115,7 @@ void print_state(CUStateKey::ControlUnitState state) {
             break;
         default:
             std::cout << "Uknown:"<<state;
-            
+
     }
     std::cout<<std::endl;
 }
@@ -142,7 +140,7 @@ int main (int argc, char* argv[] )
         int32_t print_domain_current_value = -1;
         long scheduleTime;
         uint32_t timeout;
-        
+
         string deviceID;
         string scAlias;
         string scSubmissionRule;
@@ -154,14 +152,14 @@ int main (int argc, char* argv[] )
         uint32_t scExecutionChannel;
         string rtAttributeValue;
         vector<string> key_to_show;
-        
-        
+
+
         bool scFeaturesLock;
         uint32_t scFeaturesSchedWait;
         std::string control_unit_type;
         CDeviceNetworkAddress deviceNetworkAddress;
         CUStateKey::ControlUnitState deviceState;
-        
+
         //! [UIToolkit Attribute Init]
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_CU_ID, "The identification string of the device");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>(OPT_TIMEOUT, "Timeout rpc in milliseconds", 2000, &timeout);
@@ -171,7 +169,7 @@ int main (int argc, char* argv[] )
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<bool>(OPT_PRINT_TYPE, "Print the type of the control unit of the device", false, &printType);
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<int32_t>(OPT_PRINT_DATASET, "print the dataset for the domain -1=no-print, 0=output, 1=input, 2=custom, 3=system 4=health 5=alarm", -1, &print_domain_current_value);
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption< vector<string> >(OPT_GET_DS_VALUE, "Print last value of the dataset keys[to use with opcode 11]", &key_to_show, true);
-        
+
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_SL_ALIAS, "The alias associted to the command for the slow control cu", "", &scAlias);
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>(OPT_SL_EXEC_CHANNEL, "TThe alias used to execute the command [it's 1 based, 0 let choice the channel to the engine]", 0, &scExecutionChannel);
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_SL_SUBMISSION_RULE, "The rule used for submit the command for the slow control cu [normal, stack, kill]","stack", &scSubmissionRule);
@@ -183,24 +181,24 @@ int main (int argc, char* argv[] )
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<bool>(OPT_SL_COMMAND_SET_FEATURES_LOCK, "if true will lock the feature to the command modification", &scFeaturesLock);
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>(OPT_SL_COMMAND_SET_FEATURES_SCHEDULER_WAIT, "The millisecond beetwen two step of the scheduler", &scFeaturesSchedWait);
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_RT_ATTRIBUTE_VALUE, "The attribute and value for the input attribute in rt control unit [attribute:value]", &rtAttributeValue);
-        
+
         //! [UIToolkit Attribute Init]
-        
+
         //! [UIToolkit Init]
         ChaosUIToolkit::getInstance()->init(argc, argv);
         //! [UIToolkit Init]
-        
+
         if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_STATE)){
             op = ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->getOption<int>(OPT_STATE);
         }
-        
+
         if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_CU_ID)){
             deviceID = ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->getOption<string>(OPT_CU_ID);
         }
-        
+
         if(deviceID.size()==0) throw CException(1, "invalid device identification string", "check param");
-        
-        
+
+
         if(op == 5 && !ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_SCHEDULE_TIME))
             throw CException(3, "The set schedule time code need the param \"stime\"", "device controller creation");
         else{
@@ -208,21 +206,21 @@ int main (int argc, char* argv[] )
                 scheduleTime = ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->getOption<long>(OPT_SCHEDULE_TIME);
             }
         }
-        
+
         DeviceController *controller = HLDataApi::getInstance()->getControllerForDeviceID(deviceID, timeout);
         if(!controller) throw CException(4, "Error allcoating decive controller", "device controller creation");
-        
+
         for(int idx = 0; idx < 8000000; idx++) {
             CDataWrapper message_echo;
             message_echo.addStringValue("echo_message", CHAOS_FORMAT("echo_test_message %1%/n%2%",%idx%rand_chars));
-            
+
             CDataWrapper *result = NULL;
             try{
                 if(controller->echoTest(&message_echo, &result) == 0) {
-                    
+
                 }
             }catch(...) {
-                
+
             }
             if(result) {
                 std::cout << idx << " - " <<result->getJSONString() << std::endl;
@@ -230,9 +228,9 @@ int main (int argc, char* argv[] )
             }
             usleep(100);
         }
-        
+
         controller->fetchCurrentDeviceValue();
-        
+
         // use the RPC version for the moment
         err = controller->getType(control_unit_type);
         if(err == ErrorCode::EC_TIMEOUT) {
@@ -248,56 +246,56 @@ int main (int argc, char* argv[] )
             std::cout << "State-less device, type:"<<control_unit_type<<std::endl;
             // deviceState = CUStateKey::START;
         }
-        
+
         if(printState) {
             uint64_t err;
             //err = controller->getState(deviceState);
             err = controller->getState(deviceState);
-            
+
             if(err == 0) throw CException(5, "Error retrving the state", "Get state for device");
             std::cout << "Current state ["<<err<<"]:";
             print_state(deviceState);
             std::cout << std::endl;
         }
-        
+
         if(printType) {
             std::string control_unit_type;
             err = controller->getState(deviceState);
             if(err == ErrorCode::EC_TIMEOUT && op!=11) throw CException(5, "Time out on connection", "Get state for device");
             std::cout << "Control unit type:";
-            
+
             std::cout << control_unit_type << std::endl;
         }
-        
+
         if(print_domain_current_value >= 0) {
             controller->fetchCurrentDatatasetFromDomain((DatasetDomain)print_domain_current_value);
             if(controller->getCurrentDatasetForDomain((DatasetDomain)print_domain_current_value) != NULL) {
                 std::cout << controller->getCurrentDatasetForDomain((DatasetDomain)print_domain_current_value)->getJSONString() <<std::endl;
             }
-            
+
         }
-        
+
         switch (op) {
             case 1:
                 /*
                  Init the control unit
                  */
-                
+
                 err = controller->initDevice();
                 if(err == ErrorCode::EC_TIMEOUT) throw CException(6, "Time out on connection", "Set device to init state");
-                
-                
+
+
                 /*  if((deviceState == CUStateKey::START)||(deviceState == CUStateKey::STOP)) {
                  print_state(deviceState);
                  throw CException(deviceState, "%% The device is in start or stop state.", "Setting device to init state");
-                 
+
                  }*/
                 break;
             case 2:
                 /*
                  Start the control unit
                  */
-                
+
                 err = controller->startDevice();
                 if(err == ErrorCode::EC_TIMEOUT) throw CException(2, "Time out on connection", "Set device to start state");
                 /*if(deviceState == CUStateKey::DEINIT ) {
@@ -309,8 +307,8 @@ int main (int argc, char* argv[] )
                 /*
                  Stop the control unit
                  */
-                
-                
+
+
                 err = controller->stopDevice();
                 if(err == ErrorCode::EC_TIMEOUT) throw CException(2, "Time out on connection", "Set device to stop state");
                 /* if((deviceState == CUStateKey::INIT)||(deviceState == CUStateKey::DEINIT)) {
@@ -322,7 +320,7 @@ int main (int argc, char* argv[] )
                 /*
                  deinit the control unit
                  */
-                
+
                 err = controller->deinitDevice();
                 if(err == ErrorCode::EC_TIMEOUT){
                     throw CException(2, "Time out on connection", "Set device to deinit state");
@@ -331,13 +329,13 @@ int main (int argc, char* argv[] )
                  print_state(deviceState);
                  throw CException(deviceState, "%% Device is in start cannot change state", "Set device to deinit");
                  }*/
-                
+
                 break;
             case 5:
                 /*
                  change schedule
                  */
-                
+
                 err = controller->setScheduleDelay(scheduleTime);
                 if(err == ErrorCode::EC_TIMEOUT) throw CException(2, "Time out on connection", "Set device to deinit state");
                 /* if(deviceState == CUStateKey::DEINIT) {
@@ -355,7 +353,7 @@ int main (int argc, char* argv[] )
                     if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_SL_COMMAND_SUBMISSION_RETRY_DELAY)) {
                         std::cout << "Custom checker delay submitted -> " << scSubmissionSubmissionRetryDelay << std::endl;
                     }
-                    
+
                     if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_SL_COMMAND_DATA)) {
                         userData.reset(new CDataWrapper());
                         if(userData.get())userData->setSerializedJsonData(scUserData.c_str());
@@ -429,7 +427,7 @@ int main (int argc, char* argv[] )
                 }
                 if(rtAttributeValue.find(":")== string::npos) {
                     throw CException(2, "Attribute param not well formet, lak of ':' character (param_name:param_value)", "OPCODE 9");
-                    
+
                 }
                 std::string param_name = rtAttributeValue.substr(0, rtAttributeValue.find(":"));
                 std::string param_value = rtAttributeValue.substr(rtAttributeValue.find(":")+1);
@@ -439,16 +437,16 @@ int main (int argc, char* argv[] )
                     throw CException(3, "Time out on connection", "OPCODE 9");
                 else if(err != ErrorCode::EC_NO_ERROR)
                     throw CException(3, "Time out on connection", "OPCODE 9");
-                
+
                 break;
             }
-                
+
             case 10:{
                 err = controller->flushCommandStateHistory();
                 if(err == ErrorCode::EC_TIMEOUT) throw CException(3, "Time out on connection", "OPCODE 10");
                 break;
             }
-                
+
             case 11:{
                 controller->fetchCurrentDeviceValue();
                 CDataWrapper * dataWrapper = controller->getLiveCDataWrapperPtr();
@@ -461,17 +459,17 @@ int main (int argc, char* argv[] )
                         std::cout << key_to_show[idx] << " = " << str_value << std::endl;
                     }
                 }
-                
+
                 break;
             }
-                
+
         }
-        
+
         if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_SL_COMMAND_SET_FEATURES_LOCK) ||
            ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_SL_COMMAND_SET_FEATURES_SCHEDULER_WAIT)){
-            
+
             chaos_batch::features::Features features;
-            
+
             //we can set the features
             if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_SL_COMMAND_SET_FEATURES_LOCK)) {
                 features.featuresFlag |= chaos_batch::features::FeaturesFlagTypes::FF_LOCK_USER_MOD;
@@ -480,7 +478,7 @@ int main (int argc, char* argv[] )
                 err = controller->setSlowCommandLockOnFeatures(scFeaturesLock);
                 if(err == ErrorCode::EC_TIMEOUT) throw CException(5, "Time out on connection", "setSlowCommandLockOnFeatures");
             }
-            
+
             if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_SL_COMMAND_SET_FEATURES_SCHEDULER_WAIT)) {
                 features.featuresFlag |= chaos_batch::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY;
                 features.featureSchedulerStepsDelay = scFeaturesSchedWait;
@@ -489,9 +487,9 @@ int main (int argc, char* argv[] )
                 err = controller->setSlowCommandFeatures(features, scFeaturesLock, scExecutionChannel);
                 if(err == ErrorCode::EC_TIMEOUT) throw CException(5, "Time out on connection", "setSlowCommandFeatures");
             }
-            
+
         }
-        
+
         if( printState && (op>=1 && op<=4)){
             //get the actual state of device
             err = controller->getState(deviceState);
@@ -500,10 +498,10 @@ int main (int argc, char* argv[] )
             print_state(deviceState);
             std::cout << std::endl;
         }
-        
+
         if(controller)
             HLDataApi::getInstance()->disposeDeviceControllerPtr(controller);
-        
+
     } catch (CException& e) {
         std::cerr << e.errorCode << " - "<< e.errorDomain << " - " << e.errorMessage << std::endl;
         return -4;

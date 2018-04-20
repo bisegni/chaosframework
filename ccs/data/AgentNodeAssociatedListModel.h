@@ -3,7 +3,6 @@
 
 #include "ChaosAbstractListModel.h"
 #include "../api_async_processor/ApiSubmitter.h"
-#include <chaos_service_common/data/node/Agent.h>
 
 class AgentNodeAssociatedListModel:
         public ChaosAbstractListModel,

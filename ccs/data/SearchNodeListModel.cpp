@@ -3,7 +3,6 @@
 #include "delegate/TwoLineInformationItem.h"
 
 #include <QDateTime>
-#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
 #include <QMimeData>
 #include <QDataStream>
 using namespace chaos::common::data;
@@ -23,11 +22,18 @@ QVariant SearchNodeListModel::getRowData(int row) const {
     QString node_type =  QString::fromStdString(found_node->getStringValue(chaos::NodeDefinitionKey::NODE_TYPE));
     QString node_health_ts("---");
     QString node_health_status("---");
-    if(found_node->hasKey("health_stat") &&
+    bool has_stat = found_node->hasKey("health_stat");
+    if(has_stat &&
             found_node->isCDataWrapperValue("health_stat")) {
         ChaosUniquePtr<chaos::common::data::CDataWrapper> health_stat(found_node->getCSDataValue("health_stat"));
-        node_health_ts = QDateTime::fromMSecsSinceEpoch(health_stat->getUInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP), Qt::LocalTime).toString();
-        node_health_status = QString::fromStdString(health_stat->getStringValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS));
+        if(health_stat->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP) &&
+                health_stat->isInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP)) {
+            node_health_ts = QDateTime::fromMSecsSinceEpoch(health_stat->getUInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP), Qt::LocalTime).toString();
+        }
+        if(health_stat->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS) &&
+                health_stat->isStringValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS)) {
+            node_health_status = QString::fromStdString(health_stat->getStringValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS));
+        }
     }
 
     QSharedPointer<TwoLineInformationItem> cmd_desc(new TwoLineInformationItem(node_uid,
@@ -116,7 +122,6 @@ void SearchNodeListModel::onApiDone(const QString& tag,
             api_result->isVectorValue("node_search_result_page")) {
         //we have result
         ChaosUniquePtr<CMultiTypeDataArrayWrapper> arr(api_result->getVectorValue("node_search_result_page"));
-
         if(arr->size()) {
             //get first element seq
             for(int i = 0;

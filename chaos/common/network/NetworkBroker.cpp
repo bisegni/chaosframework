@@ -83,7 +83,8 @@ void NetworkBroker::init(void *initData) throw(CException) {
     if(!globalConfiguration) {
         throw CException(-1, "No global configuraiton found", __PRETTY_FUNCTION__);
     }
-    
+    MB_LAPP << "Configuration:"<<globalConfiguration->getCompliantJSONString();
+
     //---------------------------- D I R E C T I/O ----------------------------
     if(globalConfiguration->hasKey(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_IMPL_TYPE)) {
         MB_LAPP  << "Setup DirectIO sublayer";

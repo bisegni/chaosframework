@@ -38,6 +38,7 @@ namespace chaos {
 #define CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC			"unit-server-retry-ms"
 #define CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC_desc	"Delay in milliseconds for the registration retry"
 #define CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC_DEFAULT	2000
+
         }
     }
 }

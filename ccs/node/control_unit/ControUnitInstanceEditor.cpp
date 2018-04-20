@@ -3,7 +3,8 @@
 #include "DriverDescriptionInputDialog.h"
 #include "AttributeValueRangeDialog.h"
 #include "../../language_editor/JsonEditor.h"
-
+#include "../../widget/CPropertyTextEdit.h"
+#include "../../widget/CPopupWidgetContainer.h"
 #include <QDebug>
 #include <QStandardItem>
 #include <QMessageBox>
@@ -27,6 +28,8 @@ ControUnitInstanceEditor::ControUnitInstanceEditor(const QString& unit_server_ui
     ui->setupUi(this);
     ui->labelUnitServerUID->setText(unit_server_uid);
     ui->labelControlUnitType->setText(control_unit_type);
+    ui->pushButtonUpdateLiveTime->setEnabled(false);
+    ui->pushButtonUpdateStorageTime->setEnabled(false);
 }
 
 ControUnitInstanceEditor::ControUnitInstanceEditor(const QString& unit_server_uid,
@@ -40,6 +43,8 @@ ControUnitInstanceEditor::ControUnitInstanceEditor(const QString& unit_server_ui
     ui->labelUnitServerUID->setText(unit_server_uid);
     ui->lineEditControlUnitUniqueID->setText(control_unit_uid);
     ui->lineEditControlUnitUniqueID->setEnabled(false);
+    ui->pushButtonUpdateLiveTime->setEnabled(true);
+    ui->pushButtonUpdateStorageTime->setEnabled(true);
 }
 
 ControUnitInstanceEditor::~ControUnitInstanceEditor() {
@@ -175,15 +180,15 @@ void ControUnitInstanceEditor::fillUIFromInstanceInfo(QSharedPointer<chaos::comm
         ui->textEditLoadParameter->setEnabled(api_result->getStringValue("control_unit_implementation").compare("ScriptableExecutionUnit") != 0);
     }
     CHECK_AND_SET_LABEL(chaos::NodeDefinitionKey::NODE_PARENT, ui->labelUnitServerUID)
-    CHECK_AND_SET_LABEL(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, ui->lineEditControlUnitUniqueID)
-    CHECK_AND_SET_LABEL("control_unit_implementation", ui->labelControlUnitType)
-    CHECK_AND_SET_CHECK("auto_load", ui->checkBoxAutoLoad)
-    CHECK_AND_SET_CHECK("auto_init", ui->checkBoxAutoInit)
-    CHECK_AND_SET_CHECK("auto_start", ui->checkBoxAutoStart)
-    CHECK_AND_SET_LABEL(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM, ui->textEditLoadParameter)
+            CHECK_AND_SET_LABEL(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, ui->lineEditControlUnitUniqueID)
+            CHECK_AND_SET_LABEL("control_unit_implementation", ui->labelControlUnitType)
+            CHECK_AND_SET_CHECK("auto_load", ui->checkBoxAutoLoad)
+            CHECK_AND_SET_CHECK("auto_init", ui->checkBoxAutoInit)
+            CHECK_AND_SET_CHECK("auto_start", ui->checkBoxAutoStart)
+            CHECK_AND_SET_LABEL(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM, ui->textEditLoadParameter)
 
-    //add driverdesc
-    if(api_result->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION)) {
+            //add driverdesc
+            if(api_result->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION)) {
         ChaosUniquePtr<CMultiTypeDataArrayWrapper> arr_drv(api_result->getVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION));
         for(int idx = 0;
             idx != arr_drv->size();
@@ -299,9 +304,9 @@ bool ControUnitInstanceEditor::isClosing() {
 void ControUnitInstanceEditor::onApiDone(const QString& tag,
                                          QSharedPointer<CDataWrapper> api_result) {
     if(tag.compare("save_instance") == 0) {
-//        QMessageBox::information(this,
-//                                 tr("Instance Save"),
-//                                 tr("Instance has been successfull saved"));
+        //        QMessageBox::information(this,
+        //                                 tr("Instance Save"),
+        //                                 tr("Instance has been successfull saved"));
         //close editor
         //closeTab();
     } else if(tag.compare("get_instance") == 0) {
@@ -334,10 +339,10 @@ void ControUnitInstanceEditor::on_pushButtonSaveInstance_clicked() {
                     GET_CHAOS_API_PTR(node::UpdatePropertyDefaultValues)->execute(ui->lineEditControlUnitUniqueID->text().toStdString(), *preparePropertyGroup().data()));
 }
 
-void ControUnitInstanceEditor::on_pushButtonAddDriverDescription_clicked()
-{
+void ControUnitInstanceEditor::on_pushButtonAddDriverDescription_clicked() {
     //add new driver description
     DriverDescriptionInputDialog new_driver_dialog(this);
+    new_driver_dialog.setWindowModality(Qt::WindowModal);
     connect(&new_driver_dialog,
             SIGNAL(newDriverDescription(QString,QString,QString)),
             SLOT(addNewDriverDescription(QString,QString,QString)));
@@ -353,6 +358,7 @@ void ControUnitInstanceEditor::on_pushButtonEditDriverDescription_clicked()
                                                     table_model_driver_spec->item(current_index.row(), 1)->text(),
                                                     table_model_driver_spec->item(current_index.row(), 2)->text(),
                                                     this);
+    edit_driver_dialog.setWindowModality(Qt::WindowModal);
     connect(&edit_driver_dialog,
             SIGNAL(updateDriverDescription(int,QString,QString,QString)),
             SLOT(updateDriverDescription(int,QString,QString,QString)));
@@ -571,4 +577,40 @@ void ControUnitInstanceEditor::updateALL() {
                         GET_CHAOS_API_PTR(node::GetPropertyDefaultValues)->execute(ui->lineEditControlUnitUniqueID->text().toStdString()));
 
     }
+}
+
+void ControUnitInstanceEditor::on_pushButtonSaveApplyProperty_clicked() {
+    submitApiResult(QString("save_property_defaults"),
+                    GET_CHAOS_API_PTR(node::UpdatePropertyDefaultValues)->execute(ui->lineEditControlUnitUniqueID->text().toStdString(), *preparePropertyGroup().data()));
+    submitApiResult(QString("apply_property_values"),
+                    GET_CHAOS_API_PTR(node::UpdateProperty)->execute(ui->lineEditControlUnitUniqueID->text().toStdString(), *preparePropertyGroup().data()));
+}
+
+void ControUnitInstanceEditor::on_pushButtonUpdateLiveTime_clicked() {
+    CPropertyTextEdit *pte = new  CPropertyTextEdit(this);
+    pte->setNodeUID(ui->lineEditControlUnitUniqueID->text());
+    pte->setPropertyGroup(chaos::ControlUnitPropertyKey::GROUP_NAME);
+    pte->setPropertyName(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME);
+    pte->initChaosContent();
+
+    CPopupWidgetContainer *wc = new CPopupWidgetContainer(this);
+    QRect rect = QRect(0,0,width(),0);
+    wc->addWidget(pte);
+    wc->setGeometry(rect);
+    wc->setWindowModality(Qt::WindowModal);
+    wc->show();
+}
+
+void ControUnitInstanceEditor::on_pushButtonUpdateStorageTime_clicked() {
+    CPropertyTextEdit *pte = new  CPropertyTextEdit(this);
+    pte->setNodeUID(ui->lineEditControlUnitUniqueID->text());
+    pte->setPropertyGroup(chaos::ControlUnitPropertyKey::GROUP_NAME);
+    pte->setPropertyName(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME);
+    pte->initChaosContent();
+    CPopupWidgetContainer *wc = new CPopupWidgetContainer(this);
+    QRect rect = QRect(0,0,width(),0);
+    wc->addWidget(pte);
+    wc->setGeometry(rect);
+    wc->setWindowModality(Qt::WindowModal);
+    wc->show();
 }

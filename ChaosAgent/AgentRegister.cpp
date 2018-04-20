@@ -23,7 +23,6 @@
 #include "AbstractWorker.h"
 #include "ChaosAgent.h"
 #include "worker/ProcessWorker.h"
-#include "worker/LogWorker.h"
 #include "utility/ProcUtil.h"
 
 #include <chaos/common/global.h>
@@ -74,8 +73,6 @@ void AgentRegister::addWorker(WorkerSharedPtr new_worker) {
 void AgentRegister::init(void *init_data) throw (chaos::CException) {
     //add all agent
     addWorker(WorkerSharedPtr(new worker::ProcessWorker()));
-    addWorker(WorkerSharedPtr(new worker::LogWorker()));
-    ((worker::ProcessWorker*)map_worker["ProcessWorker"].get())->log_worker_ptr = (worker::LogWorker*)map_worker["LogWorker"].get();
     
     //!get metadata message channel
     mds_message_channel = NetworkBroker::getInstance()->getMetadataserverMessageChannel();
@@ -239,7 +236,6 @@ void AgentRegister::timeout() {
                     if(it->auto_start) {
                         INFO << CHAOS_FORMAT("Autostart node %1%", %it->associated_node_uid);
                         ProcUtil::launchProcess(*it);
-                        ((worker::LogWorker*)lw_ptr.get())->startLogFetcher(*it, it->log_at_laucnh);
                         if(it->keep_alive) {
                              ((worker::ProcessWorker*)pw_ptr.get())->addToRespawn(*it);
                         }

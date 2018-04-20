@@ -161,7 +161,7 @@ namespace chaos {
                  \param node_id id of the remote node within a network broker interface
                  \param action_name the name of the action to call
                  \param message_pack the data to send, the pointer is not deallocated and is copied into the pack
-                 \param on_this_thread notify when the message need to be sent syncronously or in async  way
+                 \param on_this_thread notify when the message need to be sent synCronusly or in async  way
                  */
                 void sendMessage(const std::string& action_domain,
                                  const std::string& action_name,

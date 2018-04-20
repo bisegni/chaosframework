@@ -20,35 +20,54 @@
  */
 
 #include <chaos/cu_toolkit/driver_manager/driver/OpcodeExternalCommandMapper.h>
-
 using namespace chaos::cu::driver_manager::driver;
 
-OpcodeExternalCommandMapper::OpcodeExternalCommandMapper(AbstractRemoteIODriver *_remote_driver):
-remote_driver(_remote_driver){CHAOS_ASSERT(remote_driver)}
+OpcodeExternalCommandMapper::OpcodeExternalCommandMapper(RemoteIODriverProtocol *_driver_protocol):
+driver_protocol(_driver_protocol){CHAOS_ASSERT(driver_protocol)}
 
 OpcodeExternalCommandMapper::~OpcodeExternalCommandMapper() {}
 
+void OpcodeExternalCommandMapper::driverInit(const chaos::common::data::CDataWrapper& init_parameter) throw(chaos::CException) {}
+
+void OpcodeExternalCommandMapper::driverDeinit() throw(chaos::CException) {}
 
 int OpcodeExternalCommandMapper::sendRawRequest(chaos::common::data::CDWUniquePtr message_data,
                                                 chaos::common::data::CDWShrdPtr& message_response,
                                                 uint32_t timeout) {
-    CHAOS_ASSERT(remote_driver)
-    return remote_driver->sendRawRequest(ChaosMoveOperator(message_data),
-                                         message_response,
-                                         timeout);
+    CHAOS_ASSERT(driver_protocol)
+    return driver_protocol->sendRawRequest(ChaosMoveOperator(message_data),
+                                           message_response,
+                                           timeout);
 }
 
+int  OpcodeExternalCommandMapper::sendOpcodeRequest(const std::string& opcode,
+                                                    chaos::common::data::CDWUniquePtr opcode_parameter,
+                                                    chaos::common::data::CDWShrdPtr& message_response,
+                                                    uint32_t timeout ) {
+    CHAOS_ASSERT(driver_protocol)
+    return driver_protocol->sendOpcodeRequest(opcode,
+                                              ChaosMoveOperator(opcode_parameter),
+                                              message_response,timeout);
+}
 
 int OpcodeExternalCommandMapper::sendRawMessage(chaos::common::data::CDWUniquePtr message_data) {
-    CHAOS_ASSERT(remote_driver)
-    return remote_driver->sendRawMessage(ChaosMoveOperator(message_data));
+    CHAOS_ASSERT(driver_protocol)
+    return driver_protocol->sendRawMessage(ChaosMoveOperator(message_data));
 }
 
-const int OpcodeExternalCommandMapper::getNumberOfMaxConnection() const {
-    CHAOS_ASSERT(remote_driver)
-    return remote_driver->getNumberOfAcceptedConnection();
+int  OpcodeExternalCommandMapper::sendOpcodeMessage(const std::string& opcode,
+                                                    chaos::common::data::CDWUniquePtr opcode_message) {
+    CHAOS_ASSERT(driver_protocol)
+    return driver_protocol->sendOpcodeMessage(opcode,
+                                              ChaosMoveOperator(opcode_message));
 }
-void OpcodeExternalCommandMapper::setNumberOfMaxConnection(int max_conenction) {
-    CHAOS_ASSERT(remote_driver)
-    remote_driver->setNumberOfAcceptedConnection(max_conenction);
+
+int OpcodeExternalCommandMapper::sendInitRequest() {
+    CHAOS_ASSERT(driver_protocol)
+    return driver_protocol->sendInitRequest();
+}
+
+int OpcodeExternalCommandMapper::sendDeinitRequest() {
+    CHAOS_ASSERT(driver_protocol)
+    return driver_protocol->sendDeinitRequest();
 }

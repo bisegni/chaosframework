@@ -63,11 +63,11 @@ uint8_t MDSBatchCommand::implementedHandler() {
 }
 
 // inherited method
-void MDSBatchCommand::setHandler(chaos_data::CDataWrapper *data) {
+void MDSBatchCommand::setHandler(CDataWrapper *data) {
     //set default scheduler delay 0,5 second
     setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY, (uint64_t)50000);
     //set the timeout to 10 seconds
-    setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT, (uint64_t)10000000);
+    setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT, (uint64_t)20000000);
     //set in exclusive running property
     BC_EXCLUSIVE_RUNNING_PROPERTY;
 }
@@ -230,7 +230,7 @@ uint32_t MDSBatchCommand::getNextSandboxToUse() {
 }
 
 uint64_t MDSBatchCommand::submitCommand(const std::string& batch_command_alias,
-                                        chaos_data::CDataWrapper *command_data,
+                                        CDataWrapper *command_data,
                                         uint32_t sandbox_id,
                                         uint32_t priority) {
     CHAOS_ASSERT(executor_instance)
@@ -241,7 +241,7 @@ uint64_t MDSBatchCommand::submitCommand(const std::string& batch_command_alias,
 }
 
 uint64_t MDSBatchCommand::submitCommand(const std::string& batch_command_alias,
-                                        chaos_data::CDataWrapper *command_data) {
+                                        CDataWrapper *command_data) {
     CHAOS_ASSERT(executor_instance)
     return executor_instance->submitCommand(batch_command_alias,
                                             command_data);

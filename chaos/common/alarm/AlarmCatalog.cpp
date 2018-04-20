@@ -39,8 +39,8 @@ AlarmCatalog::~AlarmCatalog() {}
 
 void AlarmCatalog::addAlarm(AlarmDescription *new_alarm) {
     CHAOS_ASSERT(new_alarm);
-    StateFlag *state_flag_ptr = dynamic_cast<StateFlag*>(new_alarm);
-    StateFlagCatalog::addFlag(ChaosSharedPtr<StateFlag>(state_flag_ptr));
+    //StateFlag *state_flag_ptr = dynamic_cast<StateFlag*>(new_alarm);
+    StateFlagCatalog::addFlag(ChaosSharedPtr<StateFlag>(dynamic_cast<StateFlag*>(new_alarm)));
 }
 
 bool AlarmCatalog::addAlarmHandler(const std::string& alarm_name,

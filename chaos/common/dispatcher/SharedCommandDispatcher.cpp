@@ -269,7 +269,7 @@ void SharedCommandDispatcher::processBufferElement(chaos_data::CDataWrapper *act
                 //we need a response, so allocate the memory for it
                 remoteActionResult.reset(new CDataWrapper());
             }
-            //syncronously call the action in the current thread
+            //synCronusly call the action in the current thread
             actionResult.reset(actionDescriptionPtr->call(actionMessage.get(), action_elementPolicy.elementHasBeenDetached));
             
             //check if we need to submit a sub command
@@ -368,7 +368,7 @@ CDataWrapper *SharedCommandDispatcher::dispatchCommand(CDataWrapper *commandPack
         
         if(map_domain_actions()[actionDomain]->hasActionName(actionName) == false) throw CException(ErrorRpcCoce::EC_RPC_NO_ACTION_FOUND_IN_MESSAGE, "Action \""+actionName+"\" not found (cmd pack \""+commandPack->getJSONString()+"\")", __PRETTY_FUNCTION__);
 
-        DEBUG_CODE(DBG_LOG(SharedCommandDispatcher)  << "Received the message content:-----------------------START\n"<<commandPack->getJSONString() << "\nReceived the message content:-------------------------END";)
+        //DEBUG_CODE(DBG_LOG(SharedCommandDispatcher)  << "Received the message content:-----------------------START\n"<<commandPack->getJSONString() << "\nReceived the message content:-------------------------END";)
         
         //submit the action(Thread Safe)
         ElementManagingPolicy policy;

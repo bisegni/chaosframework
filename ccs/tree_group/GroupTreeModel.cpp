@@ -1,7 +1,5 @@
 #include "GroupTreeModel.h"
 
-#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
-
 #include <QUuid>
 #include <QDebug>
 #include <QMessageBox>

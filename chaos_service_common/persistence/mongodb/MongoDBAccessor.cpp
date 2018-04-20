@@ -93,7 +93,7 @@ int MongoDBAccessor::performPagedQuery(SearchResult& paged_result,
     int err = 0;
     try {
         //set the update
-        connection->findN(paged_result, db_collection, q, limit, 0, prj);
+       err = connection->findN(paged_result, db_collection, q, limit, 0, prj);
     } catch (const mongo::DBException &e) {
         MDBACC_ERR << e.what();
         err = e.getCode();

@@ -23,6 +23,7 @@
 
 #include <chaos/common/chaos_errors.h>
 #include <chaos/common/batch_command/BatchCommandConstants.h>
+#include <chaos/common/external_unit/external_unit_constants.h>
 
 #include <string>
 #include <algorithm>
@@ -37,6 +38,8 @@ namespace chaos {
     namespace InitOption{
         //! for print the help
         static const char * const	OPT_HELP                            = "help";
+        static const char * const	OPT_VERSION                         = "version";
+
         //! config file parameter
         static const char * const   OPT_CONF_FILE						= "conf-file";
         //! Specify when the log must be forwarded on console
@@ -45,6 +48,8 @@ namespace chaos {
         static const char * const   OPT_LOG_ON_FILE                     = "log-on-file";
         //! Specify when the file path of the log
         static const char * const   OPT_LOG_FILE                        = "log-file";
+        //! Specify when the log need to be forwarded on mds
+        static const char * const   OPT_LOG_ON_MDS                      = "log-on-mds";
         //! enable logging on syslog
         static const char * const   OPT_LOG_ON_SYSLOG                   = "log-on-syslog";
         //! enable logging on syslog
@@ -119,6 +124,9 @@ namespace chaos {
         static const char * const   OPT_PLUGIN_DIRECTORY_PATH           = "plugin-directory-path";
         //!multiple key value parameter that are passed to script virtual machine
         static const char * const   OPT_SCRIPT_VM_KV_PARAM              = "script-vm-kvp";
+        //!rest poll time us
+        static const char * const   OPT_REST_POLL_TIME_US              = "rest-poll-us";
+
     }
     /** @} */ // end of ParamOption
     
@@ -153,8 +161,6 @@ namespace chaos {
                 static const char * const DIRECT_IO_SERVICE_PORT					= "direct_io_service_port";
                 //!  define the default time for directio operation
                 static const unsigned int GlobalDirectIOTimeoutinMSec               = 5000;
-                
-                
             }
             /** @} */ // end of DirectIOConfigurationKey
         }
@@ -162,10 +168,11 @@ namespace chaos {
     namespace common {
     	namespace constants {
     		// hearth beat timers
-        	static const unsigned int HBTimersTimeoutinMSec               = 5000;
-        	static const unsigned int AgentTimersTimeoutinMSec            = 5000;
-        	static const unsigned int CUTimersTimeoutinMSec              = 5000;
-        	static const unsigned int PerformanceManagerTimersTimeoutinMSec  = 5000;
+        	static const unsigned int HBTimersTimeoutinMSec                     = 5000;
+        	static const unsigned int AgentTimersTimeoutinMSec                  = 5000;
+        	static const unsigned int CUTimersTimeoutinMSec                     = 5000;
+        	static const unsigned int PerformanceManagerTimersTimeoutinMSec     = 5000;
+            static const unsigned int ObjectStorageTimeoutinMSec                = 5000;
     	}
 
     };
@@ -313,71 +320,7 @@ namespace chaos {
     }
     /** @} */ // end of NodeType
     
-    /** @defgroup NodeHealtDefinitionKey !CHAOS node healt key description
-     *  @{
-     */
-    //! This namespace enclose all the key for inspetting a node healt
-    //! every different node need to expose default key and custom
-    namespace NodeHealtDefinitionKey {
-        static const char * const HEALT_KEY_POSTFIX                     = "_healt";
-        //! define time stamp of the push (usefull for heart beating) [uint64_t]
-        static const char * const NODE_HEALT_TIMESTAMP                  = "nh_ts";
-        //! identify the time spent as user by the process and all his thread[double]
-        static const char * const NODE_HEALT_USER_TIME                  = "nh_ut";
-        //! identify the time spent for system call by the process and all his thread[double]
-        static const char * const NODE_HEALT_SYSTEM_TIME                = "nh_st";
-        //! identify the swap memory used by process[int64_t]
-        static const char * const NODE_HEALT_PROCESS_SWAP               = "nh_sw";
-        //! identify the uptime of the node[uint64_t]
-        static const char * const NODE_HEALT_PROCESS_UPTIME             = "nh_upt";
-        //! define time stamp of the collection of the last insert metric
-        static const char * const NODE_HEALT_TIMESTAMP_LAST_METRIC      = "nh_ts_lst_metric";
-        //! define the status of a node (loaded, initilized, deinitialized, started, stopped, unloaded)
-        static const char * const NODE_HEALT_STATUS                     = "nh_status";
-        //!last node error code [int32]
-        static const char * const NODE_HEALT_LAST_ERROR_CODE            = "nh_lec";
-        //!last node error message [string]
-        static const char * const NODE_HEALT_LAST_ERROR_MESSAGE         = "nh_lem";
-        //!last node error domain [string]
-        static const char * const NODE_HEALT_LAST_ERROR_DOMAIN          = "nh_led";
-    }
-    /** @} */ // end of NodeHealtDefinitionKey
-    
-    /** @defgroup NodeHealtDefinitionValue !CHAOS node healt standard value
-     *  @{
-     */
-    //! This namespace enclose all the value for the healt key
-    namespace NodeHealtDefinitionValue {
-        //! unloaded status
-        static const char * const NODE_HEALT_STATUS_UNLOAD      = "Unload";
-        //! unloaded status
-        static const char * const NODE_HEALT_STATUS_UNLOADING   = "Unloading";
-        //! load status
-        static const char * const NODE_HEALT_STATUS_LOAD        = "Load";
-        //! load status
-        static const char * const NODE_HEALT_STATUS_LOADING     = "Loading";
-        //! initilizeed status
-        static const char * const NODE_HEALT_STATUS_INIT        = "Init";
-        //! initilizeed status
-        static const char * const NODE_HEALT_STATUS_INITING     = "Initializing";
-        //! deinitialized status
-        static const char * const NODE_HEALT_STATUS_DEINIT      = "Deinit";
-        //! deinitialized status
-        static const char * const NODE_HEALT_STATUS_DEINITING   = "Deinitializing";
-        //! started status
-        static const char * const NODE_HEALT_STATUS_START       = "Start";
-        //! started status
-        static const char * const NODE_HEALT_STATUS_STARTING    = "Starting";
-        //! stopped status
-        static const char * const NODE_HEALT_STATUS_STOP        = "Stop";
-        //! stopped status
-        static const char * const NODE_HEALT_STATUS_STOPING     = "Stoping";
-        //! recoverable error status
-        static const char * const NODE_HEALT_STATUS_RERROR      = "Recoverable Error";
-        //! fatal error status
-        static const char * const NODE_HEALT_STATUS_FERROR      = "Fatal Error";
-    }
-    /** @} */ // end of NodeHealtDefinitionValue
+
     
     /** @defgroup NodeStateFlagDefinitionKey constant for serialization of the status flag
      *  @{
@@ -606,7 +549,7 @@ namespace chaos {
             static const char * const ACTION_LAUNCH_NODE_PAR_CFG            = "node_init_cfg";
             static const char * const ACTION_LAUNCH_NODE_PAR_AUTO_START     = "node_auto_start";
             static const char * const ACTION_LAUNCH_NODE_PAR_KEEP_ALIVE     = "node_keep_alive";
-            static const char * const ACTION_LAUNCH_NODE_PAR_LOG_AT_LAUNCH  = "node_log_at_launch";
+            static const char * const ACTION_LAUNCH_NODE_PAR_LOG_ON_MDS     = "node_log_on_mds";
             
             static const char * const ACTION_STOP_NODE                      = "stopNode";
             static const char * const ACTION_STOP_NODE_PAR_NAME             = "node_name";
@@ -694,7 +637,6 @@ namespace chaos {
             //!no storage behaviour defined
             DSStorageTypeUndefined
         } DSStorageType;
-        
     }
     /** @} */ // end of DataServiceNodeDefinitionType
     
@@ -799,7 +741,6 @@ namespace chaos {
     namespace ControlUnitNodeDomainAndActionRPC {
         //!Alias associated to thefunction that apply the value changes set to the input dataset attribute
         static const char * const CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET  = "cunrpc_ida_cs";
-        
     }
     
     /** @defgroup ExecutionUnitNodeDefinitionKey List of execution unit node type attribute key
@@ -835,7 +776,6 @@ namespace chaos {
         static const char * const INIT_RESTORE_OPTION                   = "cudk_init_restore_option";
         static const unsigned int INIT_RESTORE_OPTION_TYPE_STATIC       = 0;
         static const unsigned int INIT_RESTORE_OPTION_TYPE_LAST_VALIDE  = 1;
-        
         static const char * const INIT_RESTORE_APPLY                    = "cudk_init_restore_apply";
     }
     
@@ -900,7 +840,7 @@ namespace chaos {
             TYPE_STRING,
             //!byte array variable length
             TYPE_BYTEARRAY,
-            
+
             TYPE_CLUSTER,
             //!modifier to be ored to normal data types
             TYPE_ACCESS_ARRAY=0x100,
@@ -1073,7 +1013,6 @@ namespace chaos {
             Output=1,
             //!define an attribute with two directions
             Bidirectional=2,
-            
             Undefined
         } DataSetAttributeIOAttribute;
         
@@ -1223,23 +1162,6 @@ namespace chaos {
     }
     /** @} */ // end of MetadataServerLoggingDefinitionKeyRPC
     
-    /** @defgroup DataPackPrefixID Chaos Data Prefix
-     This collection is a set for the prefix used for identify the domain
-     for the unique id key in chaos data cloud
-     @{
-     */
-    //! Namespace for the domain for the unique identification key
-    namespace DataPackPrefixID {
-        static const char * const OUTPUT_DATASET_POSTFIX    = "_o";
-        static const char * const INPUT_DATASET_POSTFIX     = "_i";
-        static const char * const CUSTOM_DATASET_POSTFIX    = "_c";
-        static const char * const SYSTEM_DATASET_POSTFIX    = "_s";
-        static const char * const DEV_ALARM_DATASET_POSTFIX = "_a";
-        static const char * const CU_ALARM_DATASET_POSTFIX  = "_w";
-        static const char * const HEALTH_DATASET_POSTFIX    = NodeHealtDefinitionKey::HEALT_KEY_POSTFIX;
-    }
-    /** @} */ // end of DataPackPrefixID
-    
     /** @defgroup DataPackCommonKey Chaos Data Pack common key
      This is the collection of the common key that are contained into the
      all the dataset of a data producer
@@ -1270,91 +1192,76 @@ namespace chaos {
         static const unsigned int DPCK_DATASET_TYPE_DEV_ALARM          = 5;
         //! the constant that represent the alarm dataset type
         static const unsigned int DPCK_DATASET_TYPE_CU_ALARM           = 6;
-
-
     }
 
-	#define DPCK_LAST_DATASET_INDEX	 6
-    /** @} */ // end of DataPackCommonKey
-    
-    //! return the postfix of the dataset type
-    static inline const char * const datasetTypeToPostfix(unsigned int ds_type) {
-        switch(ds_type) {
-            case DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT:
-                return DataPackPrefixID::OUTPUT_DATASET_POSTFIX;
-                //!Integer char bit length
-            case DataPackCommonKey::DPCK_DATASET_TYPE_INPUT:
-                return DataPackPrefixID::INPUT_DATASET_POSTFIX;
-                //!Integer 8 bit length
-            case DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM:
-                return DataPackPrefixID::CUSTOM_DATASET_POSTFIX;
-                //!Integer 16 bit length
-            case DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM:
-                return DataPackPrefixID::SYSTEM_DATASET_POSTFIX;
-                
-            case DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH:
-                return DataPackPrefixID::HEALTH_DATASET_POSTFIX;
-                //!Integer 32 bit length
-            case DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM:
-                return DataPackPrefixID::DEV_ALARM_DATASET_POSTFIX;
-                //!Integer 64 bit length
-            case DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM:
-                return DataPackPrefixID::CU_ALARM_DATASET_POSTFIX;
-            default:
-                return "";
-        }
-    }
-    
-    //! return the type of the dataset postfix
-    static inline const int datasetTypeToPostfix(const std::string& ds_postfix) {
-        if(ds_postfix.compare(DataPackPrefixID::OUTPUT_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT;}
-        if(ds_postfix.compare(DataPackPrefixID::INPUT_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_INPUT;}
-        if(ds_postfix.compare(DataPackPrefixID::CUSTOM_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM;}
-        if(ds_postfix.compare(DataPackPrefixID::SYSTEM_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM;}
-        if(ds_postfix.compare(DataPackPrefixID::DEV_ALARM_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM;}
-        if(ds_postfix.compare(DataPackPrefixID::CU_ALARM_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM;}
-        if(ds_postfix.compare(DataPackPrefixID::HEALTH_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH;}
-        return -1;
-    }
-    
-    static inline const char* datasetTypeToHuman(unsigned int domain) {
-        switch (domain) {
-            case DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT:
-                return "output";
-            case DataPackCommonKey::DPCK_DATASET_TYPE_INPUT:
-                return "input";
-            case DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM:
-                return "custom";
-            case DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM:
-                return "system";
-            case DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH:
-                return "health";
-            case DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM:
-                return "device_alarms";
-            case DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM:
-                return "cu_alarms";
-            default:
-                return "unknown";
-        }
-    }
-    static inline unsigned int HumanTodatasetType(const std::string& domain) {
-    		if(domain == "output")
-    			return DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT;
-    		if(domain=="input")
-    			return DataPackCommonKey::DPCK_DATASET_TYPE_INPUT;
-    		if(domain=="custom")
-    			return DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM;
-    		if(domain=="system")
-    			return DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM;
-    		if(domain=="health")
-    			return DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH;
-    		if(domain=="device_alarms")
-    			return DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM;
-    		if(domain=="cu_alarms")
-    			return DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM;
-			return DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT;
 
-        }
+
+    /** @defgroup NodeHealtDefinitionKey !CHAOS node healt key description
+     *  @{
+     */
+    //! This namespace enclose all the key for inspetting a node healt
+    //! every different node need to expose default key and custom
+    namespace NodeHealtDefinitionKey {
+        static const char * const HEALT_KEY_POSTFIX                     = "_healt";
+        //! define time stamp of the push (usefull for heart beating) [uint64_t]
+        static const char * const NODE_HEALT_TIMESTAMP                  = DataPackCommonKey::DPCK_TIMESTAMP;
+        //! identify the time spent as user by the process and all his thread[double]
+        static const char * const NODE_HEALT_USER_TIME                  = "nh_ut";
+        //! identify the time spent for system call by the process and all his thread[double]
+        static const char * const NODE_HEALT_SYSTEM_TIME                = "nh_st";
+        //! identify the swap memory used by process[int64_t]
+        static const char * const NODE_HEALT_PROCESS_SWAP               = "nh_sw";
+        //! identify the uptime of the node[uint64_t]
+        static const char * const NODE_HEALT_PROCESS_UPTIME             = "nh_upt";
+        //! define time stamp of the collection of the last insert metric
+        static const char * const NODE_HEALT_TIMESTAMP_LAST_METRIC      = "nh_ts_lst_metric";
+        //! define the status of a node (loaded, initilized, deinitialized, started, stopped, unloaded)
+        static const char * const NODE_HEALT_STATUS                     = "nh_status";
+        //!last node error code [int32]
+        static const char * const NODE_HEALT_LAST_ERROR_CODE            = "nh_lec";
+        //!last node error message [string]
+        static const char * const NODE_HEALT_LAST_ERROR_MESSAGE         = "nh_lem";
+        //!last node error domain [string]
+        static const char * const NODE_HEALT_LAST_ERROR_DOMAIN          = "nh_led";
+    }
+    /** @} */ // end of NodeHealtDefinitionKey
+
+    /** @defgroup NodeHealtDefinitionValue !CHAOS node healt standard value
+     *  @{
+     */
+    //! This namespace enclose all the value for the healt key
+    namespace NodeHealtDefinitionValue {
+        //! unloaded status
+        static const char * const NODE_HEALT_STATUS_UNLOAD      = "Unload";
+        //! unloaded status
+        static const char * const NODE_HEALT_STATUS_UNLOADING   = "Unloading";
+        //! load status
+        static const char * const NODE_HEALT_STATUS_LOAD        = "Load";
+        //! load status
+        static const char * const NODE_HEALT_STATUS_LOADING     = "Loading";
+        //! initilizeed status
+        static const char * const NODE_HEALT_STATUS_INIT        = "Init";
+        //! initilizeed status
+        static const char * const NODE_HEALT_STATUS_INITING     = "Initializing";
+        //! deinitialized status
+        static const char * const NODE_HEALT_STATUS_DEINIT      = "Deinit";
+        //! deinitialized status
+        static const char * const NODE_HEALT_STATUS_DEINITING   = "Deinitializing";
+        //! started status
+        static const char * const NODE_HEALT_STATUS_START       = "Start";
+        //! started status
+        static const char * const NODE_HEALT_STATUS_STARTING    = "Starting";
+        //! stopped status
+        static const char * const NODE_HEALT_STATUS_STOP        = "Stop";
+        //! stopped status
+        static const char * const NODE_HEALT_STATUS_STOPING     = "Stoping";
+        //! recoverable error status
+        static const char * const NODE_HEALT_STATUS_RERROR      = "Recoverable Error";
+        //! fatal error status
+        static const char * const NODE_HEALT_STATUS_FERROR      = "Fatal Error";
+    }
+    /** @} */ // end of NodeHealtDefinitionValue
+
     /** @defgroup DataPackKey Chaos Data Pack output attirbute
      This is the collection of the standard key that are contained into the output
      attribute data pack that describe a producer state
@@ -1391,8 +1298,6 @@ namespace chaos {
     }
     /** @} */ // end of DataPackSystemKey
     
-    
-    
     /** @defgroup DatasetDefinitionkey Dataset definition key
      *  This is the collection of the key for the device dataset
      *  @{
@@ -1426,6 +1331,104 @@ namespace chaos {
     }
     /** @} */ // end of DatasetDefinitionkey
     
+    /** @defgroup DataPackPrefixID Chaos Data Prefix
+     This collection is a set for the prefix used for identify the domain
+     for the unique id key in chaos data cloud
+     @{
+     */
+    //! Namespace for the domain for the unique identification key
+    namespace DataPackPrefixID {
+        static const char * const OUTPUT_DATASET_POSTFIX    = "_o";
+        static const char * const INPUT_DATASET_POSTFIX     = "_i";
+        static const char * const CUSTOM_DATASET_POSTFIX    = "_c";
+        static const char * const SYSTEM_DATASET_POSTFIX    = "_s";
+        static const char * const DEV_ALARM_DATASET_POSTFIX = "_a";
+        static const char * const CU_ALARM_DATASET_POSTFIX  = "_w";
+        static const char * const HEALTH_DATASET_POSTFIX    = NodeHealtDefinitionKey::HEALT_KEY_POSTFIX;
+    }
+    /** @} */ // end of DataPackPrefixID
+    #define DPCK_LAST_DATASET_INDEX	 6
+    /** @} */ // end of DataPackCommonKey
+
+    //! return the postfix of the dataset type
+    static inline const char * const datasetTypeToPostfix(unsigned int ds_type) {
+        switch(ds_type) {
+            case DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT:
+                return DataPackPrefixID::OUTPUT_DATASET_POSTFIX;
+                //!Integer char bit length
+            case DataPackCommonKey::DPCK_DATASET_TYPE_INPUT:
+                return DataPackPrefixID::INPUT_DATASET_POSTFIX;
+                //!Integer 8 bit length
+            case DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM:
+                return DataPackPrefixID::CUSTOM_DATASET_POSTFIX;
+                //!Integer 16 bit length
+            case DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM:
+                return DataPackPrefixID::SYSTEM_DATASET_POSTFIX;
+
+            case DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH:
+                return DataPackPrefixID::HEALTH_DATASET_POSTFIX;
+                //!Integer 32 bit length
+            case DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM:
+                return DataPackPrefixID::DEV_ALARM_DATASET_POSTFIX;
+                //!Integer 64 bit length
+            case DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM:
+                return DataPackPrefixID::CU_ALARM_DATASET_POSTFIX;
+            default:
+                return "";
+        }
+    }
+
+    //! return the type of the dataset postfix
+    static inline const int datasetTypeToPostfix(const std::string& ds_postfix) {
+        if(ds_postfix.compare(DataPackPrefixID::OUTPUT_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT;}
+        if(ds_postfix.compare(DataPackPrefixID::INPUT_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_INPUT;}
+        if(ds_postfix.compare(DataPackPrefixID::CUSTOM_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM;}
+        if(ds_postfix.compare(DataPackPrefixID::SYSTEM_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM;}
+        if(ds_postfix.compare(DataPackPrefixID::DEV_ALARM_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM;}
+        if(ds_postfix.compare(DataPackPrefixID::CU_ALARM_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM;}
+        if(ds_postfix.compare(DataPackPrefixID::HEALTH_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH;}
+        return -1;
+    }
+
+    static inline const char* datasetTypeToHuman(unsigned int domain) {
+        switch (domain) {
+            case DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT:
+                return "output";
+            case DataPackCommonKey::DPCK_DATASET_TYPE_INPUT:
+                return "input";
+            case DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM:
+                return "custom";
+            case DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM:
+                return "system";
+            case DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH:
+                return "health";
+            case DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM:
+                return "device_alarms";
+            case DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM:
+                return "cu_alarms";
+            default:
+                return "unknown";
+        }
+    }
+    static inline unsigned int HumanTodatasetType(const std::string& domain) {
+            if(domain == "output")
+                return DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT;
+            if(domain=="input")
+                return DataPackCommonKey::DPCK_DATASET_TYPE_INPUT;
+            if(domain=="custom")
+                return DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM;
+            if(domain=="system")
+                return DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM;
+            if(domain=="health")
+                return DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH;
+            if(domain=="device_alarms")
+                return DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM;
+            if(domain=="cu_alarms")
+                return DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM;
+            return DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT;
+
+        }
+
     /** @defgroup RpcActionDefinitionKey Action Rpc Protocol key
      *  This is the collection of the key used for the intere rpc protocol
      *  @{
@@ -1465,7 +1468,6 @@ namespace chaos {
         
         //!key for action name definition
         static const char * const CS_CMDM_ACTION_DESCRIPTION                  = "act_desc";
-        
         
         //!key action submission result
         //static const char * const CS_CMDM_ACTION_SUBMISSION_RESULT            = "act_sub_result";
@@ -1526,7 +1528,6 @@ namespace chaos {
         //! that runt the active contorl units. All it will be gracefull shutten down
         //! before daemon exit
         static const char * const ACTION_SYSTEM_SHUTDOWN                        = "shutdownUnitServer";
-        
         
         //! key for the server alias used by the instance [string]
         static const char * const UNIT_SERVER_STATES_ANSWER                     = "unit_server_states";

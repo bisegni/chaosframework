@@ -148,7 +148,6 @@ void SCAbstractControlUnit::init(void *initData) throw(CException) {
  */
 void SCAbstractControlUnit::deinit() throw(CException) {
     //call parent impl
-    AbstractControlUnit::deinit();
     
     if(slow_command_executor) {
         SCACU_LAPP_ << "Deinitialize the command executor for " << DatasetDB::getDeviceID();
@@ -158,6 +157,8 @@ void SCAbstractControlUnit::deinit() throw(CException) {
     } else {
         SCACU_LAPP_ << "No command executor allocated for " << DatasetDB::getDeviceID();
     }
+    AbstractControlUnit::deinit();
+
 }
 
 /*

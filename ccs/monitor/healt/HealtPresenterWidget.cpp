@@ -9,8 +9,6 @@
 #include <QDebug>
 #include <QDateTime>
 
-#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
-
 using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::api_proxy;
 static const QString TAG_NODE_INFO = "tag_node_info";

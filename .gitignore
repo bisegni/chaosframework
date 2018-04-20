@@ -1,3 +1,6 @@
+cov_html
+coverage.info
+*.gcov
 ext_dep/*
 doc/html
 doc/img

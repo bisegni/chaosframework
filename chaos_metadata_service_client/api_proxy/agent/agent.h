@@ -23,6 +23,7 @@
 #define __CHAOSFramework__57311D4_B841_4942_AEA8_FD8FDA8D6594_agent_h
 
 #include <chaos_metadata_service_client/api_proxy/agent/NodeOperation.h>
+#include <chaos_metadata_service_client/api_proxy/agent/GetAgentForNode.h>
 #include <chaos_metadata_service_client/api_proxy/agent/ListNodeForAgent.h>
 #include <chaos_metadata_service_client/api_proxy/agent/SaveNodeAssociation.h>
 #include <chaos_metadata_service_client/api_proxy/agent/LoadNodeAssociation.h>

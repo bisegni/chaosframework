@@ -368,18 +368,12 @@ void KeyDataStorage::updateConfiguration(const std::string& conf_name,
                                          const chaos::common::data::CDataVariant& conf_value) {
     if(conf_name.compare(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME) == 0){
         storage_history_time = conf_value.asUInt64();
-        KeyDataStorageLAPP << CHAOS_FORMAT("Set storage history time to %1%", %storage_history_time);
-    }
-    
-    if(conf_name.compare(DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME) == 0){
+    } else if(conf_name.compare(DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME) == 0){
         storage_live_time = conf_value.asUInt64();
-    }
-    
-    if(conf_name.compare(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE) == 0){
+    } else if(conf_name.compare(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE) == 0){
         storage_type = static_cast<DataServiceNodeDefinitionType::DSStorageType>(conf_value.asInt32());
     }
-    
-    KeyDataStorageLAPP << CHAOS_FORMAT("Set %2% to %1%", %conf_name%storage_live_time);
+    KeyDataStorageLAPP << CHAOS_FORMAT("Set value %1% to property %2%", %conf_value.asString()%conf_name);
 }
 
 DataServiceNodeDefinitionType::DSStorageType KeyDataStorage::getStorageType() {

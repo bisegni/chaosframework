@@ -25,6 +25,7 @@
 #include "../persistence_types.h"
 
 #include <chaos/common/data/CDataWrapper.h>
+#include <chaos/common/data/structured/Dataset.h>
 
 #include <chaos_service_common/data/data.h>
 
@@ -71,6 +72,9 @@ namespace chaos {
                     virtual int getDataset(const std::string& cu_unique_id,
                                            chaos::common::data::CDataWrapper **dataset_description) = 0;
                     
+                    virtual int getDataset(const std::string& cu_unique_id,
+                                           chaos::common::data::structured::Dataset& dataset) = 0;
+                    
                     virtual int setCommandDescription(chaos::common::data::CDataWrapper& command_description) = 0;
                     
                     virtual int setInstanceDescription(const std::string& cu_unique_id,
@@ -114,8 +118,8 @@ namespace chaos {
                             to 0 if no control uni thas been found
                      \param control_unit_found uinique id of found control unit, if empty control uni thas not been found
                      \param last_ageing_check_time is the found control unit last time that ageing has been checked
-                     \param timeout_for_checking time that need to pass for considering in serach the element that are already reserverd
-                     \param delay_next_check time after we can include into the reservation check an element that are free to be considered
+                     \param timeout_for_checking time that need to pass for onsider the element that are already reserverd available for be reserver
+                     \param delay_next_check time after which we can include an element that is free to be consider into the reservation query
                      */
                     virtual int reserveControlUnitForAgeingManagement(uint64_t& last_sequence_id,
                                                                       std::string& control_unit_found,

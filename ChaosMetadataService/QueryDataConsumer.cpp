@@ -88,28 +88,32 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
     InizializableService::initImplementation(object_storage_driver, NULL, object_storage_driver->getName(), __PRETTY_FUNCTION__);
     
     //Shared data worker
-    if(ChaosMetadataService::getInstance()->setting.cache_driver_setting.caching_worker_log_metric) {
+    if(ChaosMetadataService::getInstance()->setting.worker_setting.log_metric) {
         INFO << "Init Device shared data worker metric";
         dsdwm_metric.reset(new worker::DeviceSharedDataWorkerMetric("DeviceSharedDataWorkerMetric",
-                                                                    ChaosMetadataService::getInstance()->setting.cache_driver_setting.caching_worker_log_metric_update_interval));
+                                                                    ChaosMetadataService::getInstance()->setting.worker_setting.log_metric_update_interval));
     }
     //device data worker instances
     chaos::data_service::worker::DeviceSharedDataWorker *tmp = NULL;
-    device_data_worker = (chaos::data_service::worker::DataWorker**) malloc(sizeof(chaos::data_service::worker::DataWorker**) * ChaosMetadataService::getInstance()->setting.cache_driver_setting.caching_worker_num);
+    device_data_worker = (chaos::data_service::worker::DataWorker**) malloc(sizeof(chaos::data_service::worker::DataWorker**) * ChaosMetadataService::getInstance()->setting.worker_setting.instances);
     if(!device_data_worker) throw chaos::CException(-5, "Error allocating device workers", __FUNCTION__);
     for(int idx = 0;
-        idx < ChaosMetadataService::getInstance()->setting.cache_driver_setting.caching_worker_num;
+        idx < ChaosMetadataService::getInstance()->setting.worker_setting.instances;
         idx++) {
         
-        if(ChaosMetadataService::getInstance()->setting.cache_driver_setting.caching_worker_log_metric) {
+        if(ChaosMetadataService::getInstance()->setting.worker_setting.log_metric) {
             INFO << "Enable caching worker log metric";
             //install the data worker taht grab the metric
             device_data_worker[idx] = tmp = new worker::DeviceSharedDataWorkerMetricCollector(dsdwm_metric);
+            StartableService::initImplementation(tmp, NULL, "DeviceSharedDataWorkerMetricCollector", __PRETTY_FUNCTION__);
+            StartableService::startImplementation(tmp, "DeviceSharedDataWorkerMetricCollector", __PRETTY_FUNCTION__);
         } else {
             device_data_worker[idx] = tmp = new chaos::data_service::worker::DeviceSharedDataWorker();
+            StartableService::initImplementation(tmp, NULL, "DeviceSharedDataWorker", __PRETTY_FUNCTION__);
+            StartableService::startImplementation(tmp, "DeviceSharedDataWorker", __PRETTY_FUNCTION__);
         }
-        tmp->init(NULL);
-        tmp->start();
+        
+
     }
 }
 
@@ -126,14 +130,14 @@ void QueryDataConsumer::deinit() throw (chaos::CException) {
     }
     
     INFO << "Deallocating device push data worker list";
-    for(int idx = 0; idx < ChaosMetadataService::getInstance()->setting.cache_driver_setting.caching_worker_num; idx++) {
+    for(int idx = 0; idx < ChaosMetadataService::getInstance()->setting.worker_setting.instances; idx++) {
         INFO << "Release device worker "<< idx;
         device_data_worker[idx]->stop();
         device_data_worker[idx]->deinit();
         DELETE_OBJ_POINTER(device_data_worker[idx])
     }
     free(device_data_worker);
-    if(ChaosMetadataService::getInstance()->setting.cache_driver_setting.caching_worker_log_metric) {
+    if(ChaosMetadataService::getInstance()->setting.worker_setting.log_metric) {
         dsdwm_metric.reset();
     }
     
@@ -182,7 +186,7 @@ int QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *hea
     
     if(send_to_storage_layer) {
         //compute the index to use for the data worker
-        uint32_t index_to_use = device_data_worker_index++ % ChaosMetadataService::getInstance()->setting.cache_driver_setting.caching_worker_num;
+        uint32_t index_to_use = device_data_worker_index++ % ChaosMetadataService::getInstance()->setting.worker_setting.instances;
         CHAOS_ASSERT(device_data_worker[index_to_use])
         //create storage job information
         chaos::data_service::worker::DeviceSharedWorkerJob *job = new chaos::data_service::worker::DeviceSharedWorkerJob();
@@ -190,7 +194,7 @@ int QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *hea
         job->data_pack = channel_data;
         job->data_pack_len = channel_data_len;
         if((err = device_data_worker[index_to_use]->submitJobInfo(job))) {
-            DEBUG_CODE(DBG << "error pushing data into worker queue");
+            DEBUG_CODE(DBG << "Error pushing data into worker queue");
             delete job;
             free(header);
             free(channel_data);
@@ -254,11 +258,11 @@ int QueryDataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *hea
     CachePoolSlot *cache_slot = DriverPoolManager::getInstance()->getCacheDriverInstance();
     try{
         CacheData cache_data;
-        //get data
-        err = cache_slot->resource_pooled->getData(std::string((const char*)channel_data,
-                                                               channel_data_len),
-                                                   cache_data);
         if(cache_slot) {
+            //get data
+            err = cache_slot->resource_pooled->getData(std::string((const char*)channel_data,
+                                                                   channel_data_len),
+                                                       cache_data);
             if(cache_data.size()) {
                 result_header->value_len = (uint32_t)cache_data.size();
                 *result_value = malloc(result_header->value_len);
@@ -266,6 +270,7 @@ int QueryDataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *hea
                 std::memcpy(*result_value, &cache_data[0], result_header->value_len);
             }
         } else {
+            err = -1;
             ERR << "Error allocating cache slot";
         }
     } catch(...) {}
@@ -288,9 +293,9 @@ int QueryDataConsumer::consumeGetEvent(opcode_headers::DirectIODeviceChannelHead
         //get data
         DataBuffer<> data_buffer;
         MultiCacheData multi_cached_data;
-        err = cache_slot->resource_pooled->getData(keys,
-                                                   multi_cached_data);
         if(cache_slot) {
+            err = cache_slot->resource_pooled->getData(keys,
+                                                       multi_cached_data);
             for(ChaosStringVectorConstIterator it = keys.begin(),
                 end = keys.end();
                 it != end;
@@ -313,6 +318,7 @@ int QueryDataConsumer::consumeGetEvent(opcode_headers::DirectIODeviceChannelHead
             result_value_len = data_buffer.getCursorLocation();
             *result_value = data_buffer.release();
         } else {
+            err = -1;
             ERR << "Error allocating cache slot";
         }
     } catch(...) {}

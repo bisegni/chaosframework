@@ -3,8 +3,6 @@
 
 #include "ChaosAbstractListModel.h"
 
-#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
-
 #include <QVector>
 
 class ControlUnitStateVaribleListModel:

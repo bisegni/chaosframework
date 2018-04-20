@@ -22,7 +22,7 @@
 #include "MongoDBScriptDataAccess.h"
 #include "mongo_db_constants.h"
 
-#include <chaos/common/bson/util/base64.h>
+#include <chaos/common/additional_lib/base64.h>
 #include <chaos/common/utility/TimingUtil.h>
 
 #include <boost/regex.hpp>
@@ -143,7 +143,7 @@ int MongoDBScriptDataAccess::searchScript(ScriptBaseDescriptionListWrapper& scri
                                           uint32_t page_length) {
     int err = 0;
     SearchResult paged_result;
-    mongo::BSONObj p = BSON("seq"<<1<<CHAOS_SBD_NAME<< 1<<CHAOS_SBD_DESCRIPTION<<1);
+    mongo::BSONObj p = BSON("seq"<<1<<CHAOS_SBD_NAME<< 1<<CHAOS_SBD_DESCRIPTION<<1 <<chaos::ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LANGUAGE<<1);
     CHAOS_ASSERT(utility_data_access)
     try {
         mongo::Query q = getNextPagedQuery(last_sequence_id,
@@ -169,6 +169,7 @@ int MongoDBScriptDataAccess::searchScript(ScriptBaseDescriptionListWrapper& scri
                      it++) {
                     CDataWrapper element_found(it->objdata());
                     script_list.add(&element_found);
+
                 }
             }
         }
@@ -687,7 +688,7 @@ int MongoDBScriptDataAccess::copyScriptDatasetAndContentToInstance(const chaos::
                             
                             int bin_len;
                             const char * bin_data = dataset_description.getBSONRawData(bin_len);
-                            const std::string encoded_binary_ds = bson::base64::encode(bin_data, bin_len);
+                            const std::string encoded_binary_ds = base64_encode((unsigned char const *)bin_data, bin_len);
                             
                             script_load_parameter[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION] = encoded_binary_ds;
                             ub.append(CHAOS_FORMAT("instance_description.%1%",%ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM), fast_writer.write(script_load_parameter));

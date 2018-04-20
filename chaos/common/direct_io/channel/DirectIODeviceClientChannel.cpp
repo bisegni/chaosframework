@@ -62,16 +62,14 @@ answer_server_info(){
     header_deallocator = &STATIC_DirectIODeviceClientChannelDeallocator;
 }
 
-DirectIODeviceClientChannel::~DirectIODeviceClientChannel() {
-    
-}
+DirectIODeviceClientChannel::~DirectIODeviceClientChannel() {}
 
 void DirectIODeviceClientChannel::setAnswerServerInfo(uint16_t p_server_port, uint16_t s_server_port, uint16_t answer_endpoint) {
     answer_server_info.p_server_port = p_server_port;
     answer_server_info.s_server_port = s_server_port;
     answer_server_info.endpoint = answer_endpoint;
     //setEndpoint(endpoint);
-    answer_server_info.ip = ((DirectIOClientConnection*)client_instance)->getI64Ip();
+    answer_server_info.ip = ((DirectIOClientConnection*)client_instance())->getI64Ip();
 }
 
 int64_t DirectIODeviceClientChannel::storeAndCacheDataOutputChannel(const std::string& key,
@@ -169,7 +167,7 @@ int64_t DirectIODeviceClientChannel::requestLastOutputData(const std::string& ke
     DIRECT_IO_SET_CHANNEL_HEADER(data_pack, get_opcode_header, sizeof(DirectIODeviceChannelHeaderGetOpcode))
     DIRECT_IO_SET_CHANNEL_DATA(data_pack, data, (uint32_t)key.size())
     //send data with synchronous answer flag
-    if((err = sendServiceData(data_pack, &answer))) {
+    if((err = sendPriorityData(data_pack, &answer))) {
         //error getting last value
         DIODCCLERR_ << "Error getting last value for key:" << key << " with error:" <<err;
         *result = NULL;
@@ -226,7 +224,7 @@ int64_t DirectIODeviceClientChannel::requestLastOutputData(const ChaosStringVect
     DIRECT_IO_SET_CHANNEL_HEADER(data_pack, mget_opcode_header, sizeof(DirectIODeviceChannelHeaderGetOpcode))
     DIRECT_IO_SET_CHANNEL_DATA(data_pack, data, data_size);
     //send data with synchronous answer flag
-    if((err = sendServiceData(data_pack, &answer))) {
+    if((err = sendPriorityData(data_pack, &answer))) {
         //error getting last value
         DIODCCLERR_ << "Error getting last value for multikey set with error:" << err;
         if(answer){
@@ -302,7 +300,6 @@ int64_t DirectIODeviceClientChannel::queryDataCloud(const std::string& key,
         if(answer) {
             //get the header
             opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult *result_header = static_cast<opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult*>(answer->channel_header_data);
-            
             uint32_t result_data_size = FROM_LITTLE_ENDNS_NUM(uint32_t, result_header->result_data_size);
             uint32_t numer_of_record_found = FROM_LITTLE_ENDNS_NUM(uint32_t, result_header->numer_of_record_found);
             last_sequence_id.run_id = FROM_LITTLE_ENDNS_NUM(uint64_t, result_header->last_found_sequence.run_id);
@@ -323,7 +320,6 @@ int64_t DirectIODeviceClientChannel::queryDataCloud(const std::string& key,
         }
         free(answer);
     }
-    
     return err;
 }
 
@@ -377,7 +373,6 @@ void DirectIODeviceClientChannel::DirectIODeviceClientChannelDeallocator::freeSe
             }
             break;
         }
-            
         case DisposeSentMemoryInfo::SentPartData: {
             switch(static_cast<opcode::DeviceChannelOpcode>(free_info_ptr->sent_opcode)) {
                     //opcode with data

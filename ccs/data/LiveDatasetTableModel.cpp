@@ -1,8 +1,6 @@
 #include "LiveDatasetTableModel.h"
 #include "../metatypes.h"
 
-#include <chaos/common/chaos_constants.h>
-
 using namespace chaos::common::data;
 
 LiveDatasetTableModel::LiveDatasetTableModel(QObject *parent):

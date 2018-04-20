@@ -36,7 +36,6 @@
 #include <chaos/common/endian.h>
 #include <chaos/common/log/LogManager.h>
 
-#include <boost/version.hpp>
 #include <boost/format.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -53,13 +52,18 @@
 
 #include <stdlib.h>
 
-#if BOOST_VERSION > 105300
-    //allocate the logger
 BOOST_LOG_INLINE_GLOBAL_LOGGER_DEFAULT(chaosLogger, boost::log::sources::severity_logger_mt < chaos::common::log::level::LogSeverityLevel > )
-#else
-BOOST_LOG_DECLARE_GLOBAL_LOGGER(chaosLogger, boost::log::sources::severity_logger_mt < chaos::common::log::level::LogSeverityLevel > )
+
+#ifndef CSLIB_VERSION_MAJOR
+#define CSLIB_VERSION_MAJOR "1"
+#endif
+#ifndef CSLIB_VERSION_MINOR
+#define CSLIB_VERSION_MINOR "1"
 #endif
 
+#ifndef CSLIB_BUILD_ID
+#define CSLIB_BUILD_ID 1
+#endif
 #define CHAOS_BOOST_LOCK_EXCEPTION_CACTH(exception_name, exception_code)\
 catch(boost::exception_detail::error_info_injector<boost::io::too_many_args>& exception_name){\
 exception_code\
@@ -200,8 +204,9 @@ delete(x); x=NULL;
 #define PRINT_LIB_HEADER  \
 LAPP_ << "-----------------------------------------";\
 LAPP_ << CSLIB_VERSION_HEADER;\
-LAPP_ << CSLIB_VERSION_NUMBER;\
-LAPP_ << "Date:"<<__DATE__ <<" " <<__TIME__;\
+LAPP_ << CSLIB_VERSION_MAJOR<<"."<<CSLIB_VERSION_MINOR<<CSLIB_VERSION_NUMBER;\
+ LAPP_ << "Build ID:"<<CSLIB_BUILD_ID;\
+LAPP_ << "Build Date:"<<__DATE__ <<" " <<__TIME__;	\
 LAPP_ << "-----------------------------------------";
 
 #define CHAOS_NOT_THROW(x)\

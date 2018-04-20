@@ -66,7 +66,6 @@ namespace chaos{
                 ~DeviceSharedDataWorker();
                 void init(void *init_data) throw (chaos::CException);
                 void deinit() throw (chaos::CException);
-                void mantain() throw (chaos::CException);
             };
         }
     }

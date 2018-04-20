@@ -1,7 +1,5 @@
 #include "ControlUnitStateVaribleListModel.h"
 
-#include <chaos/common/alarm/alarm.h>
-
 #include <QBrush>
 
 using namespace chaos::metadata_service_client;

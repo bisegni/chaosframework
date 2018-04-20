@@ -34,7 +34,8 @@ SET(mcl_src ${mcl_src}	    api_proxy/groups/AddNode.cpp
                             api_proxy/groups/GetDomains.cpp
                             api_proxy/groups/GetNodeChilds.cpp)
 
-SET(mcl_src ${mcl_src}	    api_proxy/agent/ListNodeForAgent.cpp
+SET(mcl_src ${mcl_src}	    api_proxy/agent/GetAgentForNode.cpp
+                            api_proxy/agent/ListNodeForAgent.cpp
                             api_proxy/agent/SaveNodeAssociation.cpp
                             api_proxy/agent/LoadNodeAssociation.cpp
                             api_proxy/agent/RemoveNodeAssociation.cpp
@@ -74,7 +75,11 @@ SET(mcl_src ${mcl_src}      api_proxy/node/GetNodeDescription.cpp
                             api_proxy/node/UpdateProperty.cpp
 			    api_proxy/node/GetPropertyDefaultValues.cpp
 			    api_proxy/node/UpdatePropertyDefaultValues.cpp
-                            api_proxy/node/GetCommandAndTemplateDescription.cpp)
+                            api_proxy/node/GetCommandAndTemplateDescription.cpp
+			    api_proxy/node/KillCurrentCommand.cpp
+			    api_proxy/node/ClearCommandQueue.cpp
+
+			    )
 
 SET(mcl_src ${mcl_src}      api_proxy/data_service/NewDS.cpp
                             api_proxy/data_service/UpdateDS.cpp

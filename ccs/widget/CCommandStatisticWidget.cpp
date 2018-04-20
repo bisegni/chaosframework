@@ -28,9 +28,7 @@ void CCommandStatisticWidget::deinitChaosContent() {
     untrackNode();
 }
 
-void CCommandStatisticWidget::updateChaosContent() {
-
-}
+void CCommandStatisticWidget::updateChaosContent() {}
 
 void CCommandStatisticWidget::nodeChangedOnlineState(const std::string& node_uid,
                                                      OnlineState old_status,
@@ -75,4 +73,16 @@ void CCommandStatisticWidget::updateUIState() {
     ui->labelStackedCommandCurrentValue->setText(QString::number(cmd_stat.stacked_commands));
     setStyleSheetColorForOnlineState(online_status,
                                      ui->labelStackedCommandCurrentValue);
+}
+
+void CCommandStatisticWidget::on_pushButtonClearPendigCommandQueue_clicked() {
+    submitApiResult("clear_pending_command",
+                    GET_CHAOS_API_PTR(chaos::metadata_service_client::api_proxy::node::ClearCommandQueue)->execute(nodeUID().toStdString()));
+}
+
+void CCommandStatisticWidget::on_pushButtonKillRunningCommand_clicked() {
+    submitApiResult("kill_running_command",
+                    GET_CHAOS_API_PTR(chaos::metadata_service_client::api_proxy::node::KillCurrentCommand)->execute(nodeUID().toStdString()));
+
+
 }

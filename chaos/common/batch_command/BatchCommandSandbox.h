@@ -16,13 +16,15 @@
 
 #include <boost/thread.hpp>
 #include <boost/chrono.hpp>
-//#include <boost/heap/priority_queue.hpp>
+
 #include <chaos/common/exception/exception.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/data/cache/AttributeValueSharedCache.h>
 #include <chaos/common/thread/WaitSemaphore.h>
 
 #include <chaos/common/batch_command/AbstractSandbox.h>
+
+#include <chaos/common/utility/LockableObject.h>
 
 namespace chaos{
     namespace common {
@@ -31,6 +33,15 @@ namespace chaos{
             //forward declaration
             class BatchCommand;
             class BatchCommandExecutor;
+            
+            //tag for operation on command achieved b ysandbox
+            typedef enum {
+                WCFOClearQueue = 1
+            } WaitingCommandFunctionOpcode;
+            
+            typedef enum {
+                RCFOTerminate = 1
+            } RunningCommandFunctionOpcode;
             
             //! pulic class used into the sandbox for use the priority set into the lement that are pointer and not rela reference
             struct PriorityCommandCompare {
@@ -44,6 +55,17 @@ namespace chaos{
                     }
                 }
             };
+            
+            typedef std::priority_queue<PRIORITY_ELEMENT(CommandInfoAndImplementation)*,
+            std::vector<PRIORITY_ELEMENT(CommandInfoAndImplementation)*>,
+            PriorityCommandCompare > CommandPriorityQueue;
+            
+            //stack that contains operation to do on wiating or running command by the sandox
+            CHAOS_DEFINE_STACK_FOR_TYPE(RunningCommandFunctionOpcode, StackFunctionRunningCommand);
+            CHAOS_DEFINE_STACK_FOR_TYPE(WaitingCommandFunctionOpcode, StackFunctionWaitingCommand);
+            
+            CHAOS_DEFINE_LOCKABLE_OBJECT(StackFunctionRunningCommand, StackFunctionRunningCommandLO);
+            CHAOS_DEFINE_LOCKABLE_OBJECT(StackFunctionWaitingCommand, StackFunctionWaitingCommandLO);
             
             //! Sandbox fo the slow command execution
             /*!
@@ -75,20 +97,21 @@ namespace chaos{
                 WaitSemaphore					whait_for_next_check;
                 
                 //------------------scheduler---------------------
-                //internal ascheduling thread
+                //! contains the operation that runCommand() method need to do
+                //! to the current running command
+                StackFunctionRunningCommandLO stack_run_cmd_op;
+                //! internal ascheduling thread
                 ChaosUniquePtr<boost::thread> thread_scheduler;
                 //! delay for the next beat of scheduler
-                //uint64_t schedulerStepDelay;
                 //! Thread for whait until the queue is empty
                 WaitSemaphore  thread_scheduler_pause_condition;
-                //bool   threadSchedulerPauseConditionFlag;
-                //boost::condition_variable   threadSchedulerPauseCondition;
                 
                 //------------------next command checker---------------------
-                //testing the inclusion of the command queue directly in the sandbox
-                std::priority_queue<PRIORITY_ELEMENT(CommandInfoAndImplementation)*,
-                std::vector<PRIORITY_ELEMENT(CommandInfoAndImplementation)*>,
-                PriorityCommandCompare > command_submitted_queue;
+                //! contains the operation that checkNextCommand() method need to do
+                //! to the current running command
+                StackFunctionWaitingCommandLO stack_wait_cmd_op;
+                //! testing the inclusion of the command queue directly in the sandbox
+                CommandPriorityQueue command_submitted_queue;
                 
                 //!Mutex used for sincronize the introspection of the current command
                 boost::mutex          mutex_next_command_queue;
@@ -134,6 +157,15 @@ namespace chaos{
 				//kill the current running command without rule(like -9)
                 void killCurrentCommand();
                 
+                //!remove all pendign comands from queue
+                void clearCommandQueue();
+                
+                //!consume opcode from stack_run_cmd_op
+                /*!
+                 this method is called only from runCommand and it is safe only from this method
+                 */
+                void consumeRunCmdOps();
+                
                 //! execute a complete step of the command (acquire -> correlation) and check if the new command can be installed
                 /*!
                  Perform all check using the submission rule of the new command according
@@ -144,6 +176,12 @@ namespace chaos{
                  \return true if the command is successfull installed, false otherwise
                  */
                 void runCommand();
+                
+                //!consume opcode from stack_wait_cmd_op
+                /*!
+                 this method is called only from checkNextCommand and it is safe only from this method
+                 */
+                void consumeWaitCmdOps();
                 
                 //! check if there are command waiting to be submitted
                 /*!

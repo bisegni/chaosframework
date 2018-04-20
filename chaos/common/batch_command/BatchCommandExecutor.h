@@ -188,6 +188,14 @@ namespace chaos {
                  */
                 chaos_data::CDataWrapper* killCurrentCommand(chaos_data::CDataWrapper *params, bool& detachParam) throw (CException);
                 
+                //! remove all pendig command form queue
+                /*!
+                 \ingroup API_Slow_Control
+                 This METHOD perform the clean operation of the queue al the pending command will be deleted and not
+                 will be executed.
+                 */
+                chaos_data::CDataWrapper* clearCommandQueue(chaos_data::CDataWrapper *params, bool& detachParam) throw (CException);
+                
                 //! Flush the command state history
                 /*!
                  \ingroup API_Slow_Control

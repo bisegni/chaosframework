@@ -3,8 +3,6 @@
 
 #include "monitor/healt/HealtMonitorWidget.h"
 
-#include <chaos/common/utility/Singleton.h>
-
 class GlobalServices:
         public chaos::common::utility::Singleton<GlobalServices> {
     friend class Singleton<GlobalServices>;

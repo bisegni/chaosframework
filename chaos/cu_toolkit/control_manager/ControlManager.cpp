@@ -81,9 +81,7 @@ void ControlManager::init(void *initParameter) throw(CException) {
     AbstActionDescShrPtr actionDescription;
     
     //check if we need to start the unit server
-    use_unit_server =	GlobalConfiguration::getInstance()->hasOption(CONTROL_MANAGER_UNIT_SERVER_ENABLE) &&
-    GlobalConfiguration::getInstance()->getOption<bool>(CONTROL_MANAGER_UNIT_SERVER_ENABLE) &&
-    GlobalConfiguration::getInstance()->hasOption(CONTROL_MANAGER_UNIT_SERVER_ALIAS);
+    use_unit_server = GlobalConfiguration::getInstance()->hasOption(CONTROL_MANAGER_UNIT_SERVER_ALIAS);
     
     //check for execution pools
     use_execution_pools = GlobalConfiguration::getInstance()->hasOption(CONTROL_MANAGER_EXECUTION_POOLS);

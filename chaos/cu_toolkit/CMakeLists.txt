@@ -5,34 +5,16 @@ SET(cu_lib_src
         command_manager/CommandManager.cpp)
 
 SET(cu_lib_src ${cu_lib_src}
-        additional_lib/mongoose.c)
-
-SET(cu_lib_src ${cu_lib_src}
-        external_gateway/ExternalUnitGateway.cpp
-        external_gateway/AbstractAdapter.cpp
-        external_gateway/ExternalUnitConnection.cpp
-        external_gateway/ExternalUnitEndpoint.cpp
-        external_gateway/ExternalEchoEndpoint.cpp
-        external_gateway/ControlUnitBridge.cpp)
-
-SET(cu_lib_src ${cu_lib_src}
-        external_gateway/serialization/AbstractExternalSerialization.cpp
-        external_gateway/serialization/ExternalBSONExtJsonSerialization.cpp)
-
-SET(cu_lib_src ${cu_lib_src}
-        external_gateway/http_adapter/HTTPAdapter.cpp
-        external_gateway/http_adapter/HTTPExternalUnitConnection.cpp)
-
-SET(cu_lib_src ${cu_lib_src}
         driver_manager/DriverManager.cpp
         driver_manager/driver/AbstractDriver.cpp
         driver_manager/driver/BaseBypassDriver.cpp
         driver_manager/driver/DriverAccessor.cpp
         driver_manager/driver/DriverPluginLoader.cpp
         driver_manager/driver/AbstractDriverPlugin.cpp
-        driver_manager/driver/AbstractRemoteIODriver.cpp
         driver_manager/driver/ExternalIODriver.cpp
-        driver_manager/driver/OpcodeExternalCommandMapper.cpp)
+        driver_manager/driver/OpcodeExternalCommandMapper.cpp
+        driver_manager/driver/AbstractServerRemoteIODriver.cpp
+        driver_manager/driver/AbstractClientRemoteIODriver.cpp)
 
 SET(cu_lib_src ${cu_lib_src}
         driver_manager/driver/BasicIODriver.cpp
@@ -60,11 +42,10 @@ SET(cu_lib_src ${cu_lib_src}
         control_manager/script/ScriptableExecutionUnit.cpp
         control_manager/script/api/EUDSValueManagement.cpp
         control_manager/script/api/EULiveManagment.cpp
-	control_manager/script/api/EUSearch.cpp
-	control_manager/script/api/plugin/EUPluginApiWrapper.cpp
-	control_manager/script/api/plugin/EUPluginLoader.cpp
-	control_manager/script/ScriptableExecutionUnit.cpp
-	)
+        control_manager/script/api/EUSearch.cpp
+        control_manager/script/api/plugin/EUPluginApiWrapper.cpp
+        control_manager/script/api/plugin/EUPluginLoader.cpp
+        control_manager/script/ScriptableExecutionUnit.cpp)
 	
 
 SET(cu_lib_src ${cu_lib_src}
@@ -102,7 +83,7 @@ separate_arguments(chaos_cutoolkit_lib)
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} chaos_common ${chaos_cutoolkit_lib})
 
 FILE(GLOB files "*.h")
-INSTALL(FILES ${files} DESTINATION include/chaos/cu)
+INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit)
 
 FILE(GLOB files "driver_manager/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/driver_manager)

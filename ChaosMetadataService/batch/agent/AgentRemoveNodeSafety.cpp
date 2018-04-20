@@ -66,34 +66,22 @@ void AgentRemoveNodeSafety::setHandler(CDataWrapper *data) {
         ChaosUniquePtr<CMultiTypeDataArrayWrapper> nodes_array(data->getVectorValue(AgentNodeDefinitionKey::NODE_ASSOCIATED));
         for(int idx = 0; idx < nodes_array->size(); idx++) {
             associated_nodes.push_back(nodes_array->getStringElementAtIndex(idx));
+            association_list.push_back(AgentAssociation(nodes_array->getStringElementAtIndex(idx), "", ""));
         }
     } else if(data->isStringValue(AgentNodeDefinitionKey::NODE_ASSOCIATED)) {
-        associated_nodes.push_back(data->getStringValue(AgentNodeDefinitionKey::NODE_ASSOCIATED));
+        association_list.push_back(AgentAssociation(data->getStringValue(AgentNodeDefinitionKey::NODE_ASSOCIATED), "", ""));
     } else {
         LOG_AND_TROW(ERR, err, CHAOS_FORMAT("The key %1% need to be vector of string or string", %AgentNodeDefinitionKey::NODE_ASSOCIATED));
     }
     //! fetch the agent information
     CDataWrapper *tmp_ptr;
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> agent_node_information;
     if((err = getDataAccess<mds_data_access::NodeDataAccess>()->getNodeDescription(agent_uid, &tmp_ptr))) {
         LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error fetching node decription for %1%", %agent_uid))
     }
     agent_node_information.reset(tmp_ptr);
     
-    
-    AgentInstanceSDWrapper agent_description_sdw;
-    if((err = getDataAccess<mds_data_access::AgentDataAccess>()->loadAgentDescription(agent_uid,
-                                                                                      true,
-                                                                                      agent_description_sdw()))) {
-        LOG_AND_TROW(ERR, -3, CHAOS_FORMAT("Error loading the description for agent %1% with error %2%", %agent_uid%err));
-    }
-    VectorAgentAssociationSDWrapper node_ass_sd_wrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(VectorAgentAssociation, agent_description_sdw().node_associated));
-    node_ass_sd_wrapper.serialization_key = AgentNodeDefinitionKey::NODE_ASSOCIATED;
-    message_data = node_ass_sd_wrapper.serialize();
-    
-    request = createRequest(agent_node_information->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR),
-                            AgentNodeDomainAndActionRPC::ProcessWorker::RPC_DOMAIN,
-                            AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_CHECK_NODE);
+    scan_phase = ScanPhaseNext;
+    current_association_it = association_list.begin();
 }
 
 // inherited method
@@ -103,7 +91,64 @@ void AgentRemoveNodeSafety::acquireHandler() {
 
 // inherited method
 void AgentRemoveNodeSafety::ccHandler() {
+    switch(scan_phase) {
+        case ScanPhaseNext:{
+            if(current_association_it == association_list.end()) {
+                //we have terminated the work
+                INFO << CHAOS_FORMAT("All associated node to remove for agent %1% has ben processed", %agent_uid);
+                scan_phase = ScanPhaseEnd;
+                break;
+            }
+            DBG << CHAOS_FORMAT("Process remove operation for node %1% associated to the agent %2%", %current_association_it->associated_node_uid%agent_uid);
+            //compose the stop message with kill feature(we must force)
+            message_data = composeStopMessage(*current_association_it);
+            //create the request
+            request = createRequest(agent_node_information->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR),
+                                    AgentNodeDomainAndActionRPC::ProcessWorker::RPC_DOMAIN,
+                                    AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_STOP_NODE);
+            //at this point folow directly to the next case
+            scan_phase = ScanPhaseProcess;
+        }
+        case ScanPhaseProcess:{
+            if(processStopOperationPhases()) {
+                //we need to process the next association
+                current_association_it++;
+                scan_phase = ScanPhaseNext;
+            }
+            break;
+        }
+        case ScanPhaseEnd: {
+            //send an alerto to inform all listener that hase benn done a cross check
+            //we can send the event
+            if(alert_event_channel){
+                //send broadcast event
+                alert_event_channel->sendAgentProcessCheckAlert(agent_uid, 1);
+            }
+            BC_END_RUNNING_PROPERTY;
+            break;
+        }
+    }
+}
+
+// inherited method
+bool AgentRemoveNodeSafety::timeoutHandler() {
+    bool result = MDSBatchCommand::timeoutHandler();
+    return result;
+}
+
+CDWUniquePtr AgentRemoveNodeSafety::composeStopMessage(AgentAssociation& agent_association,
+                                                                      bool kill) {
+    CDWUniquePtr result(new CDataWrapper());
+    AgentAssociationSDWrapper assoc_sd_wrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(AgentAssociation, agent_association));
+    result = assoc_sd_wrapper.serialize();
+    result->addBoolValue(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_RESTART_NODE_PAR_KILL,
+                         kill);
+    return result;
+}
+
+bool AgentRemoveNodeSafety::processStopOperationPhases() {
     int err = 0;
+    bool got_to_next_scan_phase = 0;
     switch(request->phase) {
         case MESSAGE_PHASE_UNSENT: {
             sendRequest(*request,
@@ -113,57 +158,14 @@ void AgentRemoveNodeSafety::ccHandler() {
             manageRequestPhase(*request);
             break;
         }
-        case MESSAGE_PHASE_COMPLETED: {
-            if(request->request_future->wait(1000000) &&
-               request->request_future->getResult() != NULL) {
-                //we have answer from agent so we can update check information
-                VectorAgentAssociationStatusSDWrapper status_vec_sd_wrapper;
-                status_vec_sd_wrapper.serialization_key = AgentNodeDefinitionKey::NODE_ASSOCIATED;
-                status_vec_sd_wrapper.deserialize(request->request_future->getResult());
-                for(VectorAgentAssociationStatusIterator it = status_vec_sd_wrapper().begin(),
-                    end = status_vec_sd_wrapper().end();
-                    it != end;
-                    it++) {
-                    if((err = getDataAccess<mds_data_access::AgentDataAccess>()->setNodeAssociationStatus(agent_uid, *it))) {
-                        LOG_AND_TROW(ERR, -3, CHAOS_FORMAT("Error setting the association statusfor the node %1% association for agent %2% with error %3%",%it->associated_node_uid%agent_uid%err));
-                    }
-                    for(ChaosStringVectorIterator it_remove_node = associated_nodes.begin(),
-                        end_remove_node = associated_nodes.end();
-                        it_remove_node != end_remove_node;
-                        it_remove_node++){
-                        if(it->associated_node_uid.compare(*it_remove_node) == 0) {
-                            if(it->alive == false) {
-                                INFO << CHAOS_FORMAT("Associated node %1% for agent %2% it is shout down and ca be removed", %*it_remove_node%agent_uid);
-                                if((err = getDataAccess<mds_data_access::AgentDataAccess>()->removeNodeAssociationForAgent(agent_uid, *it_remove_node))) {
-                                    LOG_AND_TROW(ERR, -3, CHAOS_FORMAT("Error setting the association statusfor the node %1% association for agent %2% with error %3%",%*it_remove_node%agent_uid%err));
-                                }
-                            } else {
-                                ERR << CHAOS_FORMAT("Associated node %1% for agent %2% is alive and can't be removed", %*it_remove_node%agent_uid);
-                            }
-                            //remove the node from vector of nodes to remove
-                            associated_nodes.erase(it_remove_node);
-                            break;
-                        }
-                    }
-                }
-                
-            }
-            //send an alerto to inform all listener that hase benn done a cross check
-            //we can send the event
-            if(alert_event_channel){
-                //send broadcast event
-                alert_event_channel->sendAgentProcessCheckAlert(agent_uid, 1);
-            }
-        }
+        case MESSAGE_PHASE_COMPLETED:
         case MESSAGE_PHASE_TIMEOUT:
-        default:
-            BC_END_RUNNING_PROPERTY;
+            INFO << CHAOS_FORMAT("Associated node %1% for agent %2% will be stopped and removed", %current_association_it->associated_node_uid%agent_uid);
+            if((err = getDataAccess<mds_data_access::AgentDataAccess>()->removeNodeAssociationForAgent(agent_uid, current_association_it->associated_node_uid))) {
+                LOG_AND_TROW(ERR, -3, CHAOS_FORMAT("Error removing the node %1% association for agent %2% with error %3%",%current_association_it->associated_node_uid%agent_uid%err));
+            }
+            got_to_next_scan_phase = true;
             break;
     }
-}
-
-// inherited method
-bool AgentRemoveNodeSafety::timeoutHandler() {
-    bool result = MDSBatchCommand::timeoutHandler();
-    return result;
+    return got_to_next_scan_phase;
 }

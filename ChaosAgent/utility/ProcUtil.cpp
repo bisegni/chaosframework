@@ -53,7 +53,7 @@ FILE * ProcUtil::popen2(const std::string& command,
                         const std::string& type,
                         int & pid) {
     pid_t child_pid;
-    int fd[2];
+    int fd[2] = {0,0};
     pipe(fd);
     
     if((child_pid = fork()) == -1)     {
@@ -215,7 +215,10 @@ void ProcUtil::launchProcess(const AgentAssociation& node_association_info) {
         
         if(ChaosAgent::getInstance()->settings.enable_us_logging) {
             init_file_stream << CHAOS_FORMAT("%1%=",%InitOption::OPT_LOG_ON_FILE) << std::endl;
-            init_file_stream << CHAOS_FORMAT("%1%=%2%/%3%",%InitOption::OPT_LOG_FILE%LOG_FILE_PATH()%LOG_FILE_NAME(node_association_info)) << std::endl;
+        }
+        
+        if(node_association_info.log_on_mds){
+            init_file_stream << CHAOS_FORMAT("%1%=",%InitOption::OPT_LOG_ON_MDS) << std::endl;
         }
         
         init_file_stream << CHAOS_FORMAT("unit-server-alias=%1%",%node_association_info.associated_node_uid) << std::endl;
@@ -233,11 +236,11 @@ void ProcUtil::launchProcess(const AgentAssociation& node_association_info) {
         init_file_stream.write(node_association_info.configuration_file_content.c_str(), node_association_info.configuration_file_content.length());
         init_file_stream.close();
         //create the named pipe
-        ProcUtil::createNamedPipe(queue_file.string());
-        if (!ProcUtil::popen2ToNamedPipe(exec_command.c_str(), queue_file.string())) {throw chaos::CException(-2, "popen() failed!", __PRETTY_FUNCTION__);}
+        //ProcUtil::createNamedPipe(queue_file.string());
+        if (!ProcUtil::popen2NoPipe(exec_command.c_str(), pid)) {throw chaos::CException(-2, "popen() failed!", __PRETTY_FUNCTION__);}
     } catch(std::exception& ex) {
         throw ex;
-    } 
+    }
 }
 
 bool ProcUtil::checkProcessAlive(const AgentAssociation& node_association_info) {

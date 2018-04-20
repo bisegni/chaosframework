@@ -11,10 +11,32 @@ SET(source ${source} connection/connection_adapter/AbstractConnectionAdapter.cpp
                      connection/connection_adapter/http/HTTPConnectionAdapter.cpp)
 SET(source ${source} connection/unit_proxy/AbstractUnitProxy.cpp
                      connection/unit_proxy/UnitProxyHandlerWrapper.cpp)
-SET(source ${source} connection/unit_proxy/raw_driver/RawDriverUnitProxy.cpp
-                     connection/unit_proxy/raw_driver/RawDriverHandlerWrapper.cpp)
-SET(source ${source} external_lib/jsoncpp.cpp
-                     external_lib/mongoose.c
+SET(source ${source} connection/unit_proxy/raw_driver/ExternalDriverUnitProxy.cpp
+                     connection/unit_proxy/raw_driver/ExternalDriverHandlerWrapper.cpp)
+SET(source ${source}
+                    external_lib/bson/bson/bson.c
+                    external_lib/bson/bson/bson-atomic.c
+                    external_lib/bson/bson/bson-clock.c
+                    external_lib/bson/bson/bson-context.c
+                    external_lib/bson/bson/bson-decimal128.c
+                    external_lib/bson/bson/bson-error.c
+                    external_lib/bson/bson/bson-iso8601.c
+                    external_lib/bson/bson/bson-iter.c
+                    external_lib/bson/bson/bson-json.c
+                    external_lib/bson/bson/bson-keys.c
+                    external_lib/bson/bson/bson-md5.c
+                    external_lib/bson/bson/bson-memory.c
+                    external_lib/bson/bson/bson-oid.c
+                    external_lib/bson/bson/bson-reader.c
+                    external_lib/bson/bson/bson-string.c
+                    external_lib/bson/bson/bson-timegm.c
+                    external_lib/bson/bson/bson-utf8.c
+                    external_lib/bson/bson/bson-value.c
+                    external_lib/bson/bson/bson-writer.c
+                    external_lib/bson/bson/bson.c
+                    external_lib/bson/jsonsl/jsonsl.c)
+
+SET(source ${source} external_lib/mongoose.c
                      external_lib/base64.cpp)
 
 IF (BUILD_FORCE_STATIC)

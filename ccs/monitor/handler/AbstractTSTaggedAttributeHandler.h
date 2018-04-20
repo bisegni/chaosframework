@@ -4,7 +4,6 @@
 #include <QVariant>
 #include <QDebug>
 #include <QString>
-#include <chaos_metadata_service_client/monitor_system/monitor_system.h>
 
 class AbstractTSTaggedAttributeHandler:
         public QObject {

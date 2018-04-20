@@ -10,15 +10,16 @@
 #include "log_browser/ApplicationErrorLogging.h"
 
 class MainController:
-public QObject,
-public ApiHandler {
+        public QObject,
+        public ApiHandler {
     Q_OBJECT
 public:
     MainController();
     ~MainController();
-    void init(int argc, char **argv, QApplication &a);
+    bool init(int argc, char **argv);
     void deinit();
 private slots:
+    void selectedNetworkDomain(const QString& selected_domain_network);
     void actionSearchNode();
     void actionPreferences();
     void actionAgentSetting();
@@ -32,6 +33,7 @@ private slots:
     void actionSwitchNetworkConfiguration();
     void actionApplicationLogBrowser();
     void lastWindowClosed();
+    void actionConnectionManager();
     void actionCloseWidget(QObject *widget);
 private:
     ApplicationErrorLogging *application_error_widget;
@@ -39,7 +41,7 @@ private:
     ApiSubmitter api_submitter;
     QSharedPointer<QSplashScreen> splash;
 
-    bool reconfigure();
+
     void openInWindow(QWidget *w);
     void initApplicationMenuBar();
     void initConfigurationsMenu(QMenu *menu_configurations);

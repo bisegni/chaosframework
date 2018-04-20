@@ -19,8 +19,10 @@
  * permissions and limitations under the Licence.
  */
 
-#include "MongoDBObjectStorageDataAccess.h"
+#include <chaos/common/global.h>
 
+#include "MongoDBObjectStorageDataAccess.h"
+#include "../../ChaosMetadataService.h"
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/utility/TimingUtil.h>
 
@@ -45,7 +47,27 @@ using namespace chaos::data_service::object_storage::mongodb;
 using namespace chaos::data_service::object_storage::abstraction;
 
 MongoDBObjectStorageDataAccess::MongoDBObjectStorageDataAccess(const ChaosSharedPtr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
-MongoDBAccessor(_connection){}
+MongoDBAccessor(_connection),
+storage_write_concern(&mongo::WriteConcern::unacknowledged){
+    obj_stoarge_kvp = metadata_service::ChaosMetadataService::getInstance()->setting.object_storage_setting.key_value_custom_param;
+    if(obj_stoarge_kvp.count("mongodb_oswc")) {
+        //set the custom write concern
+        INFO << CHAOS_FORMAT("Set MongoDB object storage write concern to %1%", %obj_stoarge_kvp["mongodb_oswc"]);
+        if(obj_stoarge_kvp["mongodb_oswc"].compare("unacknowledged") == 0) {
+            storage_write_concern = &mongo::WriteConcern::unacknowledged;
+        } else if(obj_stoarge_kvp["mongodb_oswc"].compare("acknowledged") == 0) {
+            storage_write_concern = &mongo::WriteConcern::acknowledged;
+        } else if(obj_stoarge_kvp["mongodb_oswc"].compare("journaled") == 0) {
+            storage_write_concern = &mongo::WriteConcern::journaled;
+        }  else if(obj_stoarge_kvp["mongodb_oswc"].compare("replicated") == 0) {
+            storage_write_concern = &mongo::WriteConcern::replicated;
+        }  else if(obj_stoarge_kvp["mongodb_oswc"].compare("majority") == 0) {
+            storage_write_concern = &mongo::WriteConcern::majority;
+        } else {
+            ERR << CHAOS_FORMAT("Unrecognized value for parameter mongodb_oswc[%1%]", %obj_stoarge_kvp["mongodb_oswc"]);
+        }
+    }
+}
 
 MongoDBObjectStorageDataAccess::~MongoDBObjectStorageDataAccess() {}
 
@@ -63,7 +85,7 @@ int MongoDBObjectStorageDataAccess::pushObject(const std::string& key,
                                 MONGODB_DAQ_DATA_FIELD << mongo::BSONObj(bson_raw_data));
         if((err = connection->insert(MONGO_DB_COLLECTION_NAME(MONGODB_DAQ_COLL_NAME),
                                      q,
-                                     &mongo::WriteConcern::unacknowledged))){
+                                     storage_write_concern))){
             ERR << "Error pushing object";
         }
     } catch (const mongo::DBException &e) {
@@ -192,32 +214,31 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string& key,
     int err = 0;
     std::vector<mongo::BSONObj> object_found;
     try {
+        mongo::Query q;
         bool reverse_order = false;
         const std::string run_key = CHAOS_FORMAT("%1%.%2%",%MONGODB_DAQ_DATA_FIELD%chaos::ControlUnitDatapackCommonKey::RUN_ID);
         const std::string counter_key = CHAOS_FORMAT("%1%.%2%",%MONGODB_DAQ_DATA_FIELD%chaos::DataPackCommonKey::DPCK_SEQ_ID);
-        mongo::BSONObjBuilder time_query;
         //we have the intervall
         reverse_order = timestamp_from>timestamp_to;
         
         if(reverse_order == false) {
-            time_query << "$gt" << mongo::Date_t(timestamp_from) <<
-            "$lte" << mongo::Date_t(timestamp_to);
+            q = BSON(chaos::DataPackCommonKey::DPCK_DEVICE_ID << key <<
+                     chaos::DataPackCommonKey::DPCK_TIMESTAMP << BSON("$gte" << mongo::Date_t(timestamp_from) <<
+                                                                      "$lte" << mongo::Date_t(timestamp_to)) <<
+                     run_key << BSON("$gte" << (long long)last_record_found_seq.run_id) <<
+                     counter_key << BSON("$gte" << (long long)last_record_found_seq.datapack_counter));
         } else {
-            time_query << "$lt" << mongo::Date_t(timestamp_from) <<
-            "$gte" << mongo::Date_t(timestamp_to);
+            BSON(chaos::DataPackCommonKey::DPCK_DEVICE_ID << key <<
+                 chaos::DataPackCommonKey::DPCK_TIMESTAMP << BSON("$lte" << mongo::Date_t(timestamp_from) <<
+                                                                  "$gte" << mongo::Date_t(timestamp_to)) <<
+                 run_key << BSON("$lte" << (long long)last_record_found_seq.run_id) <<
+                 counter_key << BSON("$lte" << (long long)last_record_found_seq.datapack_counter));
         }
         
-        
-        
-        mongo::Query q = BSON(chaos::DataPackCommonKey::DPCK_DEVICE_ID << key <<
-                              chaos::DataPackCommonKey::DPCK_TIMESTAMP << time_query.obj() <<
-                              run_key << BSON("$gte" << (long long)last_record_found_seq.run_id) <<
-                              counter_key << BSON("$gte" << (long long)last_record_found_seq.datapack_counter));
-        
         if(reverse_order) {
-            q = q.sort(BSON(chaos::DataPackCommonKey::DPCK_TIMESTAMP<<-1));
+            q = q.sort(BSON(chaos::DataPackCommonKey::DPCK_TIMESTAMP<<-1<<run_key<<-1<<counter_key<<-1));
         } else {
-            q = q.sort(BSON(chaos::DataPackCommonKey::DPCK_TIMESTAMP<<1));
+            q = q.sort(BSON(chaos::DataPackCommonKey::DPCK_TIMESTAMP<<1<<run_key<<1<<counter_key<<1));
         }
         
         DEBUG_CODE(DBG<<log_message("findObject",
@@ -237,12 +258,23 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string& key,
                     end = object_found.end();
                     it != end;
                     it++) {
-                    CDataWrapper*new_obj=new CDataWrapper(it->getObjectField(MONGODB_DAQ_DATA_FIELD).objdata());
-                    found_object_page.push_back(CDWShrdPtr(new_obj));
+                    CDWShrdPtr new_obj(new CDataWrapper(it->getObjectField(MONGODB_DAQ_DATA_FIELD).objdata()));
+                    found_object_page.push_back(new_obj);
+                }
+                if( object_found[object_found.size()-1].getFieldDotted(run_key).type()==mongo::NumberInt){
+                    last_record_found_seq.run_id = object_found[object_found.size()-1].getFieldDotted(run_key).Number();
+                    
+                } else {
+                    last_record_found_seq.run_id = object_found[object_found.size()-1].getFieldDotted(run_key).Long();
                 }
                 
-                last_record_found_seq.run_id = object_found[object_found.size()-1].getFieldDotted(run_key).Long();
-                last_record_found_seq.datapack_counter = object_found[object_found.size()-1].getFieldDotted(counter_key).Long();
+                
+                if( object_found[object_found.size()-1].getFieldDotted(counter_key).type()==mongo::NumberInt){
+                    last_record_found_seq.datapack_counter = object_found[object_found.size()-1].getFieldDotted(counter_key).Number();
+                    
+                } else {
+                    last_record_found_seq.datapack_counter = object_found[object_found.size()-1].getFieldDotted(counter_key).Long();
+                }
                 DEBUG_CODE(DBG<<CHAOS_FORMAT("Found %1% element last sequence read is [%2%-%3%]", %object_found.size()%(int64_t)last_record_found_seq.run_id%last_record_found_seq.datapack_counter);)
             }
         }
@@ -250,5 +282,14 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string& key,
         ERR << e.what();
         err = e.getCode();
     }
+    return err;
+}
+
+int MongoDBObjectStorageDataAccess::countObject(const std::string& key,
+                                                const uint64_t timestamp_from,
+                                                const uint64_t timestamp_to,
+                                                const uint64_t& object_count) {
+    int err = 0;
+    
     return err;
 }

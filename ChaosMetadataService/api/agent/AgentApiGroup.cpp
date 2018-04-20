@@ -20,6 +20,7 @@
  */
 
 #include "AgentApiGroup.h"
+#include "GetAgentForNode.h"
 #include "ListNodeForAgent.h"
 #include "LoadNodeAssociation.h"
 #include "SaveNodeAssociation.h"
@@ -37,6 +38,7 @@ DEFINE_CLASS_FACTORY_NO_ALIAS(AgentApiGroup,
 
 AgentApiGroup::AgentApiGroup():
 AbstractApiGroup(AgentNodeDomainAndActionRPC::ProcessWorker::RPC_DOMAIN){
+    addApi<GetAgentForNode>();
     addApi<ListNodeForAgent>();
     addApi<LoadNodeAssociation>();
     addApi<SaveNodeAssociation>();
@@ -47,5 +49,4 @@ AbstractApiGroup(AgentNodeDomainAndActionRPC::ProcessWorker::RPC_DOMAIN){
     addApi<GetManagementConfiguration>();
     addApi<SetManagementConfiguration>();
 }
-
 AgentApiGroup::~AgentApiGroup() {}

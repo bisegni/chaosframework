@@ -23,6 +23,8 @@
 #include <chaos/common/healt_system/HealtManager.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
 
+#include <chaos/common/io/SharedManagedDirecIoDataDriver.h>
+
 #include <boost/format.hpp>
 #include <boost/foreach.hpp>
 
@@ -116,103 +118,81 @@ void HealtManager::updateProcInfo() {
 
 
 void HealtManager::init(void *init_data) throw (chaos::CException) {
-    
-    std::string impl_name = boost::str(boost::format("%1%IODriver") %
-                                       GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_DATA_IO_IMPL));
-    HM_INFO << "Allocating data driver " << impl_name;
-    
-    mds_message_channel = NetworkBroker::getInstance()->getMultiMetadataServiceRawMessageChannel();
-    if(mds_message_channel == NULL) throw CException(-2, "Unalbe to get metadata server channel", __PRETTY_FUNCTION__);
-    
-    io_data_driver.reset(common::utility::ObjectFactoryRegister<IODataDriver>::getInstance()->getNewInstanceByName(impl_name));
-    if(io_data_driver.get()) {
-        if(impl_name.compare("IODirectIODriver") == 0) {
-            //set the information
-            IODirectIODriverInitParam init_param;
-            std::memset(&init_param, 0, sizeof(IODirectIODriverInitParam));
-            init_param.client_instance = NULL;
-            init_param.endpoint_instance = NULL;
-            ((IODirectIODriver*)io_data_driver.get())->setDirectIOParam(init_param);
-        }
-    } else {
-        throw CException(-2, "No IO data driver has been found", __PRETTY_FUNCTION__);
-    }
-    
-    io_data_driver->init(NULL);
 }
 
 int HealtManager::sayHello() throw (chaos::CException) {
-    int retry = 0;
-    bool saying_hello = true;
-    HM_INFO << "Start hello, searching metadata services";
-    CDataWrapper *hello_pack = new CDataWrapper();
-    //add node id
-    hello_pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID,
-                               GlobalConfiguration::getInstance()->getLocalServerAddressAnBasePort());
-    hello_pack->addStringValue(NodeDefinitionKey::NODE_TYPE,
-                               NodeType::NODE_TYPE_HEALT_PROCESS);
-    hello_pack->addInt64Value(NodeDefinitionKey::NODE_TIMESTAMP,
-                              TimingUtil::getTimeStamp());
-    ChaosUniquePtr<MultiAddressMessageRequestFuture> future = mds_message_channel->sendRequestWithFuture(HealtProcessDomainAndActionRPC::RPC_DOMAIN,
-                                                                                                        HealtProcessDomainAndActionRPC::ACTION_PROCESS_WELCOME,
-                                                                                                        hello_pack,
-                                                                                                        1000);
-    do{
-        if(future->wait()) {
-            saying_hello = false;
-            if(future->getError()) {
-                throw CException(future->getError(),
-                                 future->getErrorMessage(),
-                                 future->getErrorDomain());
-            } else if(!future->getResult()) {
-                //we have received no result or no server list
-                throw CException(-1,
-                                 "Empty answer from hello message",
-                                 __PRETTY_FUNCTION__);
-            } else {
-                if(!future->getResult()->hasKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST)) {
-                    //we have received no result or no server list
-                    throw CException(-2,
-                                     "No server list on hello answer",
-                                     __PRETTY_FUNCTION__);
-                } else {
-                    //we have result and need to update the driver
-                    io_data_driver->updateConfiguration(future->getResult());
-                    return 0;
-                }
-            }
-        } else {
-            if(retry++ >= 10) {
-                throw CException(-3,
-                                 "Exceed the maximum number of retry  to wait the answer",
-                                 __PRETTY_FUNCTION__);
-            } else {
-                HM_INFO << "Retry waiting answer ("<<retry<<")";
-                
-            }
-        }
-        sleep(1);
-    }while(saying_hello);
+    //    int retry = 0;
+    //    bool saying_hello = true;
+    //    HM_INFO << "Start hello, searching metadata services";
+    //    CDataWrapper *hello_pack = new CDataWrapper();
+    //    //add node id
+    //    hello_pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID,
+    //                               GlobalConfiguration::getInstance()->getLocalServerAddressAnBasePort());
+    //    hello_pack->addStringValue(NodeDefinitionKey::NODE_TYPE,
+    //                               NodeType::NODE_TYPE_HEALT_PROCESS);
+    //    hello_pack->addInt64Value(NodeDefinitionKey::NODE_TIMESTAMP,
+    //                              TimingUtil::getTimeStamp());
+    //    ChaosUniquePtr<MultiAddressMessageRequestFuture> future = mds_message_channel->sendRequestWithFuture(HealtProcessDomainAndActionRPC::RPC_DOMAIN,
+    //                                                                                                        HealtProcessDomainAndActionRPC::ACTION_PROCESS_WELCOME,
+    //                                                                                                        hello_pack,
+    //                                                                                                        1000);
+    //    do{
+    //        if(future->wait()) {
+    //            saying_hello = false;
+    //            if(future->getError()) {
+    //                throw CException(future->getError(),
+    //                                 future->getErrorMessage(),
+    //                                 future->getErrorDomain());
+    //            } else if(!future->getResult()) {
+    //                //we have received no result or no server list
+    //                throw CException(-1,
+    //                                 "Empty answer from hello message",
+    //                                 __PRETTY_FUNCTION__);
+    //            } else {
+    //                if(!future->getResult()->hasKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST)) {
+    //                    //we have received no result or no server list
+    //                    throw CException(-2,
+    //                                     "No server list on hello answer",
+    //                                     __PRETTY_FUNCTION__);
+    //                } else {
+    //                    //we have result and need to update the driver
+    //                    io_data_driver->updateConfiguration(future->getResult());
+    //                    return 0;
+    //                }
+    //            }
+    //        } else {
+    //            if(retry++ >= 10) {
+    //                throw CException(-3,
+    //                                 "Exceed the maximum number of retry  to wait the answer",
+    //                                 __PRETTY_FUNCTION__);
+    //            } else {
+    //                HM_INFO << "Retry waiting answer ("<<retry<<")";
+    //
+    //            }
+    //        }
+    //        sleep(1);
+    //    }while(saying_hello);
     return -1;
 }
 
 void HealtManager::start() throw (chaos::CException) {
+    AsyncCentralManager::getInstance()->addTimer(this, 0, (HEALT_FIRE_TIMEOUT / HEALT_FIRE_SLOTS)*1000);
     //say hello to mds
-    int32_t retry =HELLO_PHASE_RETRY;
-    while(retry--){
-        try{
-            if(sayHello()==0){
-                HM_INFO << "Found ("<<retry<<")";
-                //add timer to publish all node healt very 5 second
-                AsyncCentralManager::getInstance()->addTimer(this, 0, (HEALT_FIRE_TIMEOUT / HEALT_FIRE_SLOTS)*1000);
-                return;
-            }
-        } catch(chaos::CException& ex) {
-            DECODE_CHAOS_EXCEPTION(ex);
-        }
-        HM_INFO << "Retry hello again ("<<retry<<")";
-    }
-    throw CException(-4, "Cannot find a valid MDS node" , __PRETTY_FUNCTION__);
+//    int32_t retry =HELLO_PHASE_RETRY;
+//    while(retry--){
+//        try{
+//            if(sayHello()==0){
+//                HM_INFO << "Found ("<<retry<<")";
+//                //add timer to publish all node healt very 5 second
+//
+//                return;
+//            }
+//        } catch(chaos::CException& ex) {
+//            DECODE_CHAOS_EXCEPTION(ex);
+//        }
+//        HM_INFO << "Retry hello again ("<<retry<<")";
+//    }
+//    throw CException(-4, "Cannot find a valid MDS node" , __PRETTY_FUNCTION__);
 }
 
 void HealtManager::stop() throw (chaos::CException) {
@@ -221,15 +201,10 @@ void HealtManager::stop() throw (chaos::CException) {
 }
 
 void HealtManager::deinit() throw (chaos::CException) {
-    if(io_data_driver.get()) {
-        io_data_driver->deinit();
-        io_data_driver.reset();
-    }
-    
-    if(mds_message_channel) {
-        NetworkBroker::getInstance()->disposeMessageChannel(mds_message_channel);
-        mds_message_channel = NULL;
-    }
+//    if(mds_message_channel) {
+//        NetworkBroker::getInstance()->disposeMessageChannel(mds_message_channel);
+//        mds_message_channel = NULL;
+//    }
 }
 
 const ProcInfo& HealtManager::getLastProcInfo() {
@@ -438,12 +413,20 @@ void HealtManager::addNodeMetricValue(const std::string& node_uid,
 CDataWrapper*  HealtManager::prepareNodeDataPack(NodeHealtSet& node_health_set,
                                                  uint64_t push_timestamp) {
     CDataWrapper *node_data_pack = new CDataWrapper();
-    
+    int64_t cur_ts_usec = TimingUtil::getTimeStampInMicroseconds();
     if(node_data_pack) {
         //add device unique id
         node_data_pack->addStringValue(DataPackCommonKey::DPCK_DEVICE_ID, node_health_set.node_uid);
         //add dataset type
         node_data_pack->addInt32Value(DataPackCommonKey::DPCK_DATASET_TYPE, DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH);
+        
+        node_data_pack->addInt64Value(DataPackCommonKey::DPCK_SEQ_ID, cur_ts_usec);
+        
+        node_data_pack->addInt64Value(ControlUnitDatapackCommonKey::RUN_ID, (int64_t)0);
+        
+        //set sequence id to the timestamp microseconds
+        node_data_pack->addInt64Value(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP, cur_ts_usec);
+        
         //set the push timestamp
         static_cast<Int64HealtMetric*>(node_health_set.map_metric[NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP].get())->value = push_timestamp;
         
@@ -497,15 +480,15 @@ void HealtManager::_publish(const ChaosSharedPtr<NodeHealtSet>& heath_set,
     boost::unique_lock<boost::mutex> wl_io(mutex_publishing);
     //update infromation abour process
     updateProcInfo();
-    
+
     //send datapack
     ChaosUniquePtr<chaos::common::data::CDataWrapper> data_pack(prepareNodeDataPack(*heath_set,
-                                                              publish_ts));
+                                                                                    publish_ts));
     if(data_pack.get()) {
         //store data on cache
-        io_data_driver->storeHealthData(heath_set->node_publish_key,
+        SharedManagedDirecIoDataDriver::getInstance()->getSharedDriver()->storeHealthData(heath_set->node_publish_key,
                                         *data_pack,
-                                        DataServiceNodeDefinitionType::DSStorageTypeLive);
+                                        DataServiceNodeDefinitionType::DSStorageTypeLiveHistory);
     } else {
         HM_ERR << "Error allocating health datapack for node:" << heath_set->node_uid;
     }

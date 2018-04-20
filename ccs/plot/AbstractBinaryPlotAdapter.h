@@ -1,8 +1,6 @@
 #ifndef ABSTRACTBINARYPLOTADAPTER_H
 #define ABSTRACTBINARYPLOTADAPTER_H
 
-#include <chaos/common/chaos_constants.h>
-#include <chaos/common/data/CDataBuffer.h>
 
 class AbstractBinaryPlotAdapter {
 public:

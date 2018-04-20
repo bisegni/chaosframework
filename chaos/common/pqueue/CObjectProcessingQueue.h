@@ -153,7 +153,7 @@ namespace chaos {
 				
 				if(waithForEmptyQueue){
 					COPQUEUE_LDBG_ << " wait until queue is empty";
-					while( !bufferQueue.empty()){
+					while(!bufferQueue.empty()){
 						emptyQueueConditionLock.timed_wait(lock,
 														   boost::posix_time::milliseconds(500));
 						
@@ -170,7 +170,7 @@ namespace chaos {
                 }
 				COPQUEUE_LDBG_ << "join internal thread group";
 				t_group.join_all();
-				COPQUEUE_LDBG_ << "deinitlized";
+                COPQUEUE_LDBG_ << "deinitialized";
 			}
 			
 			/*

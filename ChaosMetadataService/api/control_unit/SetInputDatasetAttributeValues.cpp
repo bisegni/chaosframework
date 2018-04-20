@@ -153,7 +153,7 @@ CDataWrapper *SetInputDatasetAttributeValues::execute(CDataWrapper *api_data,
                                                              change->getStringValue("change_value"));
                         break;
                     case chaos::DataType::TYPE_BYTEARRAY: {
-                        int size = 0;
+                        uint32_t size = 0;
                         batch_message_per_cu->addBinaryValue(attribute_name,
                                                              change->getBinaryValue("change_value", size),
                                                              size);

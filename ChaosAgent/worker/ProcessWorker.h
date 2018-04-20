@@ -23,7 +23,6 @@
 #define __CHAOSFramework_BED84E1E_63AB_431A_9CDD_DC38C4187D19_ProcessWorker_h
 
 #include "../AbstractWorker.h"
-#include "LogWorker.h"
 #include <chaos/common/chaos_types.h>
 #include <chaos/common/utility/LockableObject.h>
 #include <chaos/common/async_central/async_central.h>
@@ -44,8 +43,6 @@ namespace chaos {
             public AbstractWorker,
             public chaos::common::async_central::TimerHandler {
                 friend class chaos::agent::AgentRegister;
-                
-                LogWorker *log_worker_ptr;
                 LockableMapRespawnableNode map_respawnable_node;
             protected:
                 //! launch an data service

@@ -134,10 +134,10 @@ bool AttributeValue::setValue(CDataWrapper& attribute_value,
 }
 bool AttributeValue::setValue(const CDataVariant& attribute_value,
                               bool tag_has_changed) {
-    CHAOS_ASSERT(value_buffer)
     //if(type != attribute_value.getType()) return false;
     switch (attribute_value.getType()) {
         case DataType::TYPE_BOOLEAN: {
+             if(!grow(sizeof(bool))) return false;
             bool bv = attribute_value.asBool();
             //copy string to buffer
             std::memcpy(value_buffer,
@@ -146,6 +146,7 @@ bool AttributeValue::setValue(const CDataVariant& attribute_value,
             break;
         }
         case DataType::TYPE_INT32: {
+            if(!grow(sizeof(int32_t))) return false;
             int32_t i32v = attribute_value.asInt32();
             //copy string to buffer
             std::memcpy(value_buffer,
@@ -154,6 +155,7 @@ bool AttributeValue::setValue(const CDataVariant& attribute_value,
             break;
         }
         case DataType::TYPE_INT64: {
+            if(!grow(sizeof(int64_t))) return false;
             int64_t i64v = attribute_value.asInt64();
             //copy string to buffer
             std::memcpy(value_buffer,
@@ -162,6 +164,7 @@ bool AttributeValue::setValue(const CDataVariant& attribute_value,
             break;
         }
         case DataType::TYPE_DOUBLE: {
+            if(!grow(sizeof(double))) return false;
             double dv = attribute_value.asDouble();
             //copy string to buffer
             std::memcpy(value_buffer,

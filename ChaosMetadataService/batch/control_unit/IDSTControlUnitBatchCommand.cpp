@@ -91,47 +91,60 @@ void IDSTControlUnitBatchCommand::setHandler(CDataWrapper *data) {
 
 // inherited method
 void IDSTControlUnitBatchCommand::acquireHandler() {
-    int err = 0;
     MDSBatchCommand::acquireHandler();
-    switch(request->phase) {
-        case MESSAGE_PHASE_UNSENT: {
-            switch(action) {
-                case ACTION_INIT:
-                    CU_IDST_BC_INFO << "Send init command to " << cu_id;
-                    request->remote_action = NodeDomainAndActionRPC::ACTION_NODE_INIT;
-                    message = common::CUCommonUtility::initDataPack(cu_id,
-                                                                    getDataAccess<mds_data_access::NodeDataAccess>(),
-                                                                    getDataAccess<mds_data_access::ControlUnitDataAccess>(),
-                                                                    getDataAccess<mds_data_access::DataServiceDataAccess>());
-                    break;
-                case ACTION_START:
-                    CU_IDST_BC_INFO << "Send start command to " << cu_id;
-                    request->remote_action = NodeDomainAndActionRPC::ACTION_NODE_START;
-                    message = common::CUCommonUtility::startDataPack(cu_id);
-                    break;
-                case ACTION_STOP:
-                    CU_IDST_BC_INFO << "Send stop command to " << cu_id;
-                    request->remote_action = NodeDomainAndActionRPC::ACTION_NODE_STOP;
-                    message = common::CUCommonUtility::stopDataPack(cu_id);
-                    break;
-                case ACTION_DEINIT:
-                    CU_IDST_BC_INFO << "Send deinit command to " << cu_id;
-                    request->remote_action = NodeDomainAndActionRPC::ACTION_NODE_DEINIT;
-                    message = common::CUCommonUtility::deinitDataPack(cu_id);
-                    break;
+    try{
+        switch(request->phase) {
+            case MESSAGE_PHASE_UNSENT: {
+                switch(action) {
+                    case ACTION_INIT:
+                        CU_IDST_BC_INFO << "Send init command to " << cu_id;
+                        request->remote_action = NodeDomainAndActionRPC::ACTION_NODE_INIT;
+                        message = common::CUCommonUtility::initDataPack(cu_id,
+                                                                        getDataAccess<mds_data_access::NodeDataAccess>(),
+                                                                        getDataAccess<mds_data_access::ControlUnitDataAccess>(),
+                                                                        getDataAccess<mds_data_access::DataServiceDataAccess>());
+                        
+                        break;
+                    case ACTION_START:
+                        CU_IDST_BC_INFO << "Send start command to " << cu_id;
+                        request->remote_action = NodeDomainAndActionRPC::ACTION_NODE_START;
+                        message = common::CUCommonUtility::startDataPack(cu_id);
+                        break;
+                    case ACTION_STOP:
+                        CU_IDST_BC_INFO << "Send stop command to " << cu_id;
+                        request->remote_action = NodeDomainAndActionRPC::ACTION_NODE_STOP;
+                        message = common::CUCommonUtility::stopDataPack(cu_id);
+                        break;
+                    case ACTION_DEINIT:
+                        CU_IDST_BC_INFO << "Send deinit command to " << cu_id;
+                        request->remote_action = NodeDomainAndActionRPC::ACTION_NODE_DEINIT;
+                        message = common::CUCommonUtility::deinitDataPack(cu_id);
+                        break;
+                }
+                
+                //send message for action
+                sendMessage(*request,
+                            message.get());
+                BC_END_RUNNING_PROPERTY
+                break;
             }
-            
-            //send message for action
-            sendMessage(*request,
-                        message.get());
-            BC_END_RUNNING_PROPERTY
-            break;
+            case MESSAGE_PHASE_SENT:
+            case MESSAGE_PHASE_COMPLETED:
+            case MESSAGE_PHASE_TIMEOUT: {
+                break;
+            }
         }
-        case MESSAGE_PHASE_SENT:
-        case MESSAGE_PHASE_COMPLETED:
-        case MESSAGE_PHASE_TIMEOUT: {
-            break;
-        }
+    } catch(CException& ex) {
+        getDataAccess<persistence::data_access::LoggingDataAccess>()->logException(cu_id, "[MDS]IDSTControlUnitBatchCommand", "error", ex);
+         BC_END_RUNNING_PROPERTY
+    } catch(...) {
+        getDataAccess<persistence::data_access::LoggingDataAccess>()->logError(cu_id,
+                                                                               "[MDS]IDSTControlUnitBatchCommand",
+                                                                               "error",
+                                                                               -3,
+                                                                               "Undefined error",
+                                                                               __PRETTY_FUNCTION__);
+         BC_END_RUNNING_PROPERTY
     }
 }
 

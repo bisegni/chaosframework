@@ -152,19 +152,19 @@ ChaosSharedPtr<LogEntry> MongoDBLoggingDataAccess::getEntryByBSON(const mongo::B
         } else {
             //custom log key
             switch(it_ele->type()) {
-                case NumberInt:
+                case mongo::NumberInt:
                     log_entry->map_int64_value.insert(make_pair(field_name, it_ele->numberInt()));
                     break;
-                case NumberLong:
+                case mongo::NumberLong:
                     log_entry->map_int64_value.insert(make_pair(field_name, it_ele->numberLong()));
                     break;
-                case NumberDouble:
+                case mongo::NumberDouble:
                     log_entry->map_double_value.insert(make_pair(field_name, it_ele->numberDouble()));
                     break;
-                case String:
+                case mongo::String:
                     log_entry->map_string_value.insert(make_pair(field_name, it_ele->String()));
                     break;
-                case Bool:
+                case mongo::Bool:
                     log_entry->map_bool_value.insert(make_pair(field_name, it_ele->boolean()));
                     break;
                     

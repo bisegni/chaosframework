@@ -3,7 +3,6 @@
 
 #include <QAbstractTableModel>
 #include <QSharedPointer>
-#include <chaos/common/data/CDataWrapper.h>
 
 class ChaosAbstractTableModel :
         public QAbstractTableModel {

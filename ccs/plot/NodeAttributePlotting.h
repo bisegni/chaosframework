@@ -11,7 +11,6 @@
 #include <QSharedPointer>
 #include <QReadWriteLock>
 
-#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
 
 #include <boost/random.hpp>
 

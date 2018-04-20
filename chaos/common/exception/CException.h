@@ -25,7 +25,6 @@
 #include <cstring>
 #include <exception>
 #include <sstream>
-
 #define MSG_ERROR_BUF 255
 
 namespace chaos{
@@ -46,7 +45,7 @@ namespace chaos{
         const std::string errorMessage;
         //! identify the domain(ControlUnit, DataManager, ....)
         const std::string errorDomain;
-        
+
         CException(int eCode, const std::string& eMessage,  const std::string& eDomain) throw();
         
         CException(const CException& _exception) throw();
@@ -60,5 +59,7 @@ namespace chaos{
     	public:
     	 CFatalException(int eCode, const std::string& eMessage,  const std::string& eDomain);
     };
+    std::ostream& operator<<(std::ostream &os,const chaos::CException& ex);
 }
+
 #endif

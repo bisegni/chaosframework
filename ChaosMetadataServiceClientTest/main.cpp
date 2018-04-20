@@ -63,36 +63,61 @@ int main(int argc, char *argv[]){
     ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>("op",
                                                                                                      "Specify the operation to do[0-monitor a device id, 1-search node id]",
                                                                                                      &operation);
-
+    
     ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption<std::string>("device-id",
                                                                                                         "Specify the device",
                                                                                                         &device_id);
-
+    
     ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>("qm",
                                                                                                      "Specify the quantum multiplier to use",
                                                                                                      1,
                                                                                                      &quantum_multiplier);
-
+    
     ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>("monitor-timeout",
                                                                                                      "Specify the time that we need to monitor the device in seconds",
                                                                                                      10,
                                                                                                      & wait_seconds);
+    //register log allert event
+    ChaosMetadataServiceClient::getInstance()->init(argc, argv);
+    ChaosMetadataServiceClient::getInstance()->start();
+    ChaosMetadataServiceClient::getInstance()->enableMonitor();
     try{
-
-        ChaosMetadataServiceClient::getInstance()->init(argc, argv);
-        //ChaosMetadataServiceClient::getInstance()->start();
-
-
-        //register log allert event
-      //  ChaosMetadataServiceClient::getInstance()->registerEventHandler(&alert_log_handler);
-
-
-        //register log allert event
-        //ChaosMetadataServiceClient::getInstance()->deregisterEventHandler(&alert_log_handler);
-
-        //ChaosMetadataServiceClient::getInstance()->disableMonitor();
-        //ChaosMetadataServiceClient::getInstance()->stop();
-        ChaosMetadataServiceClient::getInstance()->deinit();
+        switch (operation){
+            case 0:{
+                
+                if (device_id.size() == 0) {LOG_AND_TROW(MSCT_ERR, -1, "Invalid device id")}
+                if (quantum_multiplier == 0) {LOG_AND_TROW(MSCT_ERR, -2, "Quantum multiplier can't be 0")}
+                //create monitor class
+                NodeMonitor nm(device_id,
+                               wait_seconds,
+                               quantum_multiplier);
+                
+                nm.monitor_node();
+                //nm.waitForPurge();
+                break;
+            }
+            case 1:{
+                //create search node utility class
+                NodeSearchTest ns(5);
+                //try search and waith the termination
+                ns.testSearch(device_id.size()?device_id:"");
+                break;
+            }
+            case 2:{
+                std::cout << "Start node monitor library test" << std::endl;
+                {
+                    ChaosUniquePtr<NodeMonitorHandlerTest> nmt;
+                    nmt.reset(new NodeMonitorHandlerTest(device_id, chaos::metadata_service_client::node_monitor::ControllerTypeNode));
+                    sleep(wait_seconds);
+                    //nmt[0].reset();
+                    nmt.reset();
+                    
+                }
+                std::cout << "End node monitor library test" << std::endl;
+                break;
+            }
+        }
+        
     }
     catch (chaos::CException &ex){
         DECODE_CHAOS_EXCEPTION(ex)
@@ -100,5 +125,8 @@ int main(int argc, char *argv[]){
     catch (...){
         std::cerr << "Unrecognized error";
     }
+    ChaosMetadataServiceClient::getInstance()->disableMonitor();
+    ChaosMetadataServiceClient::getInstance()->stop();
+    ChaosMetadataServiceClient::getInstance()->deinit();
     return 0;
 }

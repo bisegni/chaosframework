@@ -581,7 +581,7 @@
           <item row="4" column="0" alignment="Qt::AlignRight">
            <widget class="QLabel" name="label_6">
             <property name="toolTip">
-             <string>Is the time in milliseconds betwheen a storicized packet and the next storicized one. Considered only if storage type is &quot;History&quot; or &quot;Live And History&quot; selected</string>
+             <string>Is the time in microseconds betwheen a storicized packet and the next storicized one. Considered only if storage type is &quot;History&quot; or &quot;Live And History&quot; selected</string>
             </property>
             <property name="statusTip">
              <string>Is the time in milliseconds betwheen a storicized packet  and next</string>
@@ -591,42 +591,17 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="2">
-           <widget class="QLineEdit" name="lineEditHistoryTime">
-            <property name="text">
-             <string>0</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0" alignment="Qt::AlignRight">
-           <widget class="QLabel" name="label_2">
+          <item row="3" column="0" alignment="Qt::AlignRight">
+           <widget class="QLabel" name="label_8">
             <property name="toolTip">
-             <string>In microseconds</string>
+             <string>Is the time in microseconds betwheen a live packet and the next live one. Considered only if storage type is &quot;Live&quot; or &quot;Live And History&quot; selected</string>
+            </property>
+            <property name="statusTip">
+             <string>Is the time in milliseconds betwheen a live packet and the next live one</string>
             </property>
             <property name="text">
-             <string>Step Schedule Time</string>
+             <string>Live time:</string>
             </property>
-           </widget>
-          </item>
-          <item row="1" column="0" alignment="Qt::AlignRight">
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>Storage Type:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="2">
-           <widget class="QComboBox" name="comboBoxStaticInitRestoreOption">
-            <item>
-             <property name="text">
-              <string>Static Configuration</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Last valid</string>
-             </property>
-            </item>
            </widget>
           </item>
           <item row="1" column="2">
@@ -662,38 +637,39 @@
             </item>
            </widget>
           </item>
-          <item row="3" column="2">
-           <widget class="QLineEdit" name="lineEditLiveTime">
+          <item row="4" column="2">
+           <widget class="QLineEdit" name="lineEditHistoryTime">
             <property name="text">
              <string>0</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="2">
-           <widget class="QLineEdit" name="lineEditDefaultScheduleTime">
-            <property name="text">
-             <string>1000000</string>
-            </property>
-            <property name="placeholderText">
-             <string>1000000</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0" alignment="Qt::AlignRight">
-           <widget class="QLabel" name="label_8">
+          <item row="0" column="0" alignment="Qt::AlignRight">
+           <widget class="QLabel" name="label_2">
             <property name="toolTip">
-             <string>Is the time in milliseconds betwheen a live packet and the next live one. Considered only if storage type is &quot;Live&quot; or &quot;Live And History&quot; selected</string>
-            </property>
-            <property name="statusTip">
-             <string>Is the time in milliseconds betwheen a live packet and the next live one</string>
+             <string>In microseconds</string>
             </property>
             <property name="text">
-             <string>Live time:</string>
+             <string>Step Schedule Time</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="2">
-           <widget class="QLineEdit" name="lineEditHistoryAgeing">
+          <item row="5" column="2">
+           <widget class="QComboBox" name="comboBoxStaticInitRestoreOption">
+            <item>
+             <property name="text">
+              <string>Static Configuration</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Last valid</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="3" column="2">
+           <widget class="QLineEdit" name="lineEditLiveTime">
             <property name="text">
              <string>0</string>
             </property>
@@ -709,6 +685,30 @@
             </property>
            </widget>
           </item>
+          <item row="1" column="0" alignment="Qt::AlignRight">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Storage Type:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLineEdit" name="lineEditDefaultScheduleTime">
+            <property name="text">
+             <string>1000000</string>
+            </property>
+            <property name="placeholderText">
+             <string>1000000</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2">
+           <widget class="QLineEdit" name="lineEditHistoryAgeing">
+            <property name="text">
+             <string>0</string>
+            </property>
+           </widget>
+          </item>
           <item row="5" column="0" alignment="Qt::AlignRight">
            <widget class="QLabel" name="label_9">
             <property name="text">
@@ -720,6 +720,42 @@
            <widget class="QCheckBox" name="checkBoxInitRestoreApply">
             <property name="text">
              <string>Apply init restore</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="3">
+           <widget class="QPushButton" name="pushButtonUpdateLiveTime">
+            <property name="maximumSize">
+             <size>
+              <width>20</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>11</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>...</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="3">
+           <widget class="QPushButton" name="pushButtonUpdateStorageTime">
+            <property name="maximumSize">
+             <size>
+              <width>20</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>11</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>...</string>
             </property>
            </widget>
           </item>
@@ -738,6 +774,41 @@
           </size>
          </property>
         </spacer>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <spacer name="horizontalSpacer_4">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButtonSaveApplyProperty">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="whatsThis">
+            <string>Save the defaults value and apply values directly on CU</string>
+           </property>
+           <property name="accessibleName">
+            <string>Save and Apply all the porperty </string>
+           </property>
+           <property name="text">
+            <string>Save And Apply Property</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
@@ -800,7 +871,7 @@
          </font>
         </property>
         <property name="text">
-         <string>save</string>
+         <string>Save All</string>
         </property>
         <property name="default">
          <bool>false</bool>

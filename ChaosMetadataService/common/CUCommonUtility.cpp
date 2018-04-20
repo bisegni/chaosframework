@@ -130,38 +130,52 @@ CDWShrdPtr CUCommonUtility::getConfigurationToUse(const std::string& cu_uid,
         LOG_AND_TROW(CUCU_ERR, err, boost::str(boost::format("Error loading the configuration for the the dataset's attribute: %1% for control unit: %2%") % ds_attribute_name % cu_uid));
     }
     
-    if(control_unit_property_group.hasProperty(chaos::ControlUnitPropertyKey::INIT_RESTORE_OPTION)) {
-        if(control_unit_property_group.getProperty(chaos::ControlUnitPropertyKey::INIT_RESTORE_OPTION).getPropertyValue().asInt32() == chaos::ControlUnitPropertyKey::INIT_RESTORE_OPTION_TYPE_LAST_VALIDE) {
-            //in this case we need only the value, but if the attribute has been set in static configuration all othe property are preserved
-            //get last dataset
-            data_service::ObjectStoragePoolSlot *cache_slot = data_service::DriverPoolManager::getInstance()->getObjectStorageInstance();
-            if(cache_slot != NULL) {
-                CDWShrdPtr tmp_result;
-                if(cache_slot->resource_pooled->getDataAccess<ObjectStorageDataAccess>()->getLastObject(cu_uid+chaos::DataPackPrefixID::INPUT_DATASET_POSTFIX, tmp_result) == 0) {
-                    if(tmp_result.get() != NULL) {
-                        ChaosStringSet all_keys;
-                        if(element_configuration.get() == NULL){
-                            element_configuration.reset(new CDataWrapper());
-                        }
-                        //we have found last dataset
-                        ChaosSharedPtr<CDataWrapper> new_configuration(new CDataWrapper());
-                        element_configuration->getAllKey(all_keys);
-                        
-                        for(ChaosStringSetIterator it = all_keys.begin(),
-                            end = all_keys.end();
-                            it != end;
-                            it++) {
-                            if(it->compare(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE) == 0) {
-                                tmp_result->copyKeyToNewKey(ds_attribute_name, ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE, *new_configuration);
-                            } else {
-                                element_configuration->copyKeyTo(*it, *new_configuration);
+    //check if we need to do a restor at initialization time
+    if(control_unit_property_group.hasProperty(chaos::ControlUnitPropertyKey::INIT_RESTORE_APPLY)&
+       control_unit_property_group.getProperty(chaos::ControlUnitPropertyKey::INIT_RESTORE_APPLY).getPropertyValue().isValid() &&
+       control_unit_property_group.getProperty(chaos::ControlUnitPropertyKey::INIT_RESTORE_APPLY).getPropertyValue().asBool()) {
+        
+        //in case of restore at init if we need to to a restor to a last valid dataset wi try to fetch it from database
+        if(control_unit_property_group.hasProperty(chaos::ControlUnitPropertyKey::INIT_RESTORE_OPTION) &&
+           control_unit_property_group.getProperty(chaos::ControlUnitPropertyKey::INIT_RESTORE_OPTION).getPropertyValue().isValid()) {
+            if(control_unit_property_group.getProperty(chaos::ControlUnitPropertyKey::INIT_RESTORE_OPTION).getPropertyValue().asInt32() == chaos::ControlUnitPropertyKey::INIT_RESTORE_OPTION_TYPE_LAST_VALIDE) {
+                //in this case we need only the value, but if the attribute has been set in static configuration all othe property are preserved
+                //get last dataset
+                data_service::ObjectStoragePoolSlot *cache_slot = data_service::DriverPoolManager::getInstance()->getObjectStorageInstance();
+                if(cache_slot != NULL) {
+                    CDWShrdPtr tmp_result;
+                    if(cache_slot->resource_pooled->getDataAccess<ObjectStorageDataAccess>()->getLastObject(cu_uid+chaos::DataPackPrefixID::INPUT_DATASET_POSTFIX, tmp_result) == 0) {
+                        if(tmp_result.get() != NULL) {
+                            ChaosStringSet all_keys;
+                            if(element_configuration.get() == NULL){
+                                element_configuration.reset(new CDataWrapper());
                             }
+                            //we have found last dataset
+                            ChaosSharedPtr<CDataWrapper> new_configuration(new CDataWrapper());
+                            element_configuration->getAllKey(all_keys);
+                            
+                            for(ChaosStringSetIterator it = all_keys.begin(),
+                                end = all_keys.end();
+                                it != end;
+                                it++) {
+                                if(it->compare(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE) == 0) {
+                                    tmp_result->copyKeyToNewKey(ds_attribute_name, ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE, *new_configuration);
+                                } else {
+                                    element_configuration->copyKeyTo(*it, *new_configuration);
+                                }
+                            }
+                            //set new confiuration as element default configuration
+                            element_configuration = new_configuration;
+                        } else {
+                            //we have got problem to fetch last dataset so we trow exception
+                            throw CException(-1, "No dataset found on object storage", __PRETTY_FUNCTION__);
                         }
-                        //set new confiuration as element default configuration
-                        element_configuration = new_configuration;
                     }
+                    data_service::DriverPoolManager::getInstance()->releaseObjectStorageInstance(cache_slot);
+                } else {
+                    //we have got problem to fetch last dataset so we trow exception
+                    throw CException(-1, "Object storage driver not found", __PRETTY_FUNCTION__);
                 }
-                data_service::DriverPoolManager::getInstance()->releaseObjectStorageInstance(cache_slot);
             }
         }
     }

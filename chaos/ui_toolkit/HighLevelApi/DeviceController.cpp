@@ -199,7 +199,7 @@ int DeviceController::getAttributeStrValue(string attribute_name, string& attrib
                     
                 case DataType::TYPE_BYTEARRAY: {
                     const char *buffer = NULL;
-                    int size;
+                    uint32_t size;
                     buffer = dataWrapper->getBinaryValue(attribute_name.c_str(), size);
                     if(buffer) attribute_value.assign(buffer, size);
                     break;
@@ -580,7 +580,7 @@ int DeviceController::killCurrentCommand() {
 
 //---------------------------------------------------------------------------------------------------
 int DeviceController::flushCommandStateHistory() {
-    return deviceChannel->sendCustomRequest(BatchCommandExecutorRpcActionKey::RPC_FLUSH_COMMAND_HISTORY, NULL, NULL, millisecToWait);
+    return 0;//deviceChannel->sendCustomRequest(BatchCommandExecutorRpcActionKey::RPC_FLUSH_COMMAND_HISTORY, NULL, NULL, millisecToWait);
 }
 
 //---------------------------------------------------------------------------------------------------
@@ -973,7 +973,7 @@ void DeviceController::fetchCurrentDeviceValue() {
                 break;
                 
             case DataType::TYPE_BYTEARRAY:
-                int32_t ptrLen = 0;
+                uint32_t ptrLen = 0;
                 const char * tmpPtrAttribute = tmpPtr->getBinaryValue(key, ptrLen);
                 pointerAttributeLiveBuffer[*iter]->updateData(tmpPtrAttribute, ptrLen);
                 break;

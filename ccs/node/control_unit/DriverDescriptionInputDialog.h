@@ -7,8 +7,8 @@ namespace Ui {
 class DriverDescriptionInputDialog;
 }
 
-class DriverDescriptionInputDialog : public QDialog
-{
+class DriverDescriptionInputDialog :
+        public QDialog {
     Q_OBJECT
     int current_row;
     const QString& driver_name;

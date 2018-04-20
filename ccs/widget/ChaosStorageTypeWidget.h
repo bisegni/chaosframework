@@ -36,6 +36,8 @@ private slots:
     void updateUIStatus();
     void on_pushButton_clicked(bool clicked);
 
+    void on_pushButtonEdit_clicked();
+
 private:
     bool data_found;
     QString last_pushbutton_in_error;

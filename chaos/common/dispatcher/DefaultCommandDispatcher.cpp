@@ -18,11 +18,11 @@
  * See the Licence for the specific language governing
  * permissions and limitations under the Licence.
  */
+#include <chaos/common/exception/CException.h>
 #include <chaos/common/global.h>
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/dispatcher/DefaultCommandDispatcher.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
-
 using namespace chaos;
 using namespace chaos::common::data;
 //namespace chaos_data = chaos::common::data;
@@ -58,12 +58,12 @@ void DefaultCommandDispatcher::init(void *initConfiguration) throw(CException) {
  Deinitialization method for output buffer
  */
 void DefaultCommandDispatcher::deinit() throw(CException) {
-    LDEF_CMD_DISPTC_APP_ << "Deinitilizing Default Command Dispatcher";
+    LDEF_CMD_DISPTC_APP_ << "Deinitializing Default Command Dispatcher";
     //we need to stop all das
     chaos::common::thread::ReadLock r_lock(das_map_mutex);
     map<string, ChaosSharedPtr<DomainActionsScheduler> >::iterator dasIter = das_map.begin();
     for (; dasIter != das_map.end(); dasIter++) {
-        LDEF_CMD_DISPTC_APP_ << "Deinitilizing action scheduler for domain:"<< (*dasIter).second->getManagedDomainName();
+        LDEF_CMD_DISPTC_APP_ << "Deinitializing action scheduler for domain:"<< (*dasIter).second->getManagedDomainName();
         //th einitialization is enclosed into try/catch because we need to
         //all well cleaned
         try{
@@ -80,7 +80,7 @@ void DefaultCommandDispatcher::deinit() throw(CException) {
     das_map.clear();
     deinitialized = false;
     AbstractCommandDispatcher::deinit();
-    LDEF_CMD_DISPTC_APP_ << "Deinitilized Default Command Dispatcher";
+    LDEF_CMD_DISPTC_APP_ << "Deinitialized Default Command Dispatcher";
 }
 /*
  return an isntance of DomainActions pointer in relation to name
@@ -246,6 +246,7 @@ CDataWrapper* DefaultCommandDispatcher::executeCommandSync(CDataWrapper * messag
         //tag message has submitted
         result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 0);
     }catch(CException& ex){
+        LDEF_CMD_DISPTC_ERR_<<ex;
         DECODE_CHAOS_EXCEPTION_IN_CDATAWRAPPERPTR(result, ex)
     } catch(...){
         MANAGE_ERROR_IN_CDATAWRAPPERPTR(result, -5, "General exception received", __PRETTY_FUNCTION__)
@@ -275,7 +276,7 @@ CDataWrapper *DefaultCommandDispatcher::dispatchCommand(CDataWrapper *commandPac
         //RpcActionDefinitionKey::CS_CMDM_ACTION_NAME
         if(das_map.count(actionDomain) == 0) throw CException(ErrorRpcCoce::EC_RPC_NO_DOMAIN_REGISTERED_ON_SERVER, "Action Domain \""+actionDomain+"\" not registered (cmd pack \""+commandPack->getJSONString()+"\")", __PRETTY_FUNCTION__);
         
-        DEBUG_CODE(LDEF_CMD_DISPTC_DBG_ << "Received the message content:-----------------------START\n"<<commandPack->getJSONString() << "\nReceived the message content:-------------------------END";)
+        //DEBUG_CODE(LDEF_CMD_DISPTC_DBG_ << "Received the message content:-----------------------START\n"<<commandPack->getJSONString() << "\nReceived the message content:-------------------------END";)
         
         //submit the action(Thread Safe)
         if(!(sent = das_map[actionDomain]->push(commandPack))) {
@@ -286,6 +287,7 @@ CDataWrapper *DefaultCommandDispatcher::dispatchCommand(CDataWrapper *commandPac
         resultPack->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, ErrorCode::EC_NO_ERROR);
     }catch(CException& ex){
         if(!sent && commandPack) delete(commandPack);
+        LDEF_CMD_DISPTC_ERR_<<ex;
         DECODE_CHAOS_EXCEPTION_IN_CDATAWRAPPERPTR(resultPack, ex)
     } catch(...){
         if(!sent && commandPack) delete(commandPack);
@@ -294,9 +296,9 @@ CDataWrapper *DefaultCommandDispatcher::dispatchCommand(CDataWrapper *commandPac
         //set error to general exception error
         resultPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE, "Unmanaged error");
     }
-    DEBUG_CODE(LDEF_CMD_DISPTC_DBG_ << "Send the message ack:-----------------------START";)
-    DEBUG_CODE(LDEF_CMD_DISPTC_DBG_ << resultPack->getJSONString();)
-    DEBUG_CODE(LDEF_CMD_DISPTC_DBG_ << "Send the message ack:-------------------------END";)
+    //DEBUG_CODE(LDEF_CMD_DISPTC_DBG_ << "Send the message ack:-----------------------START";)
+    //DEBUG_CODE(LDEF_CMD_DISPTC_DBG_ << resultPack->getJSONString();)
+    //DEBUG_CODE(LDEF_CMD_DISPTC_DBG_ << "Send the message ack:-------------------------END";)
     return resultPack;
 }
 

@@ -24,8 +24,9 @@
 #include <chaos/common/configuration/GlobalConfiguration.h>
 
 int main(int argc,  char ** argv) {
+     char * dummy_option[0];
     chaos::GlobalConfiguration::getInstance()->preParseStartupParameters();
-    chaos::GlobalConfiguration::getInstance()->parseStartupParameters(argc, argv);
+    chaos::GlobalConfiguration::getInstance()->parseStartupParameters(0, dummy_option);
     chaos::common::log::LogManager::getInstance()->init();
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

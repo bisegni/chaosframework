@@ -68,8 +68,8 @@ int HTTPConnectionAdapter::close() {
 
 #pragma mark PrivateMethod
 
-int HTTPConnectionAdapter::sendRawMessage(DataPackUniquePtr& message) {
-    std::string to_send = message->toUnformattedString();
+int HTTPConnectionAdapter::sendRawMessage(CDWUniquePtr& message) {
+    std::string to_send = message->toString();
     mg_send_websocket_frame(root_conn, WEBSOCKET_OP_TEXT, to_send.c_str(), to_send.size());
     return 0;
 }
@@ -95,13 +95,14 @@ void HTTPConnectionAdapter::ev_handler(struct mg_connection *conn,
             
         case MG_EV_WEBSOCKET_FRAME: {
             struct websocket_message *wm = (struct websocket_message *) event_data;
-            data::DataPackSharedPtr received_msg_shrd_ptr(DataPack::newFromBuffer((const char*)wm->data, wm->size).release());
+            std::string got_json((const char*)wm->data, wm->size);
+            data::CDWShrdPtr received_msg_shrd_ptr(DataPack::instanceFromJson(got_json).release());
             if(http_instance->connection_status != ConnectionStateAccepted) {
                 //at this time we need to manage the receivedm of the data unitl we not received
                 //the dapack taht informa us for the connection accepted
                 if(received_msg_shrd_ptr->hasKey(ACCEPTED_CONNECTION_KEY) &&
-                   received_msg_shrd_ptr->isInt32(ACCEPTED_CONNECTION_KEY)) {
-                    int32_t accepted_value = received_msg_shrd_ptr->getInt32(ACCEPTED_CONNECTION_KEY);
+                   received_msg_shrd_ptr->isInt32Value(ACCEPTED_CONNECTION_KEY)) {
+                    int32_t accepted_value = received_msg_shrd_ptr->getInt32Value(ACCEPTED_CONNECTION_KEY);
                     switch (accepted_value) {
                         case 1:
                             //ok

@@ -51,6 +51,8 @@ namespace chaos {
                     LoggingKeyValueBoolMap      map_bool_value;
                 };
                 
+                typedef  ChaosUniquePtr<LogEntry> LogEntryUniuePtr;
+                
                 CHAOS_DEFINE_VECTOR_FOR_TYPE(ChaosSharedPtr<LogEntry>, LogEntryList);
                 
                 CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string, LogDomainList);
@@ -68,6 +70,22 @@ namespace chaos {
                     
                     //!default destructor
                     ~LoggingDataAccess();
+                    
+                    LogEntryUniuePtr getNewLogEntry(const std::string& log_emitter,
+                                                    const std::string& log_subject,
+                                                    const std::string& log_domain);
+                    
+                    int logException(const std::string& log_emitter,
+                                     const std::string& log_subject,
+                                     const std::string& log_domain,
+                                     const chaos::CException& ex);
+                    
+                    int logError(const std::string& log_emitter,
+                                 const std::string& log_subject,
+                                 const std::string& log_domain,
+                                 const int32_t& error_code,
+                                 const std::string& error_message,
+                                 const std::string& error_domain);
                     
                     //! Insert a new entry in the log
                     /*!

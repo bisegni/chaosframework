@@ -22,6 +22,8 @@
 #ifndef __CHAOSFramework__GetCurrentDataset__
 #define __CHAOSFramework__GetCurrentDataset__
 
+#include <chaos/common/data/structured/Dataset.h>
+
 #include <chaos_metadata_service_client/api_proxy/ApiProxy.h>
 
 namespace chaos {
@@ -42,6 +44,9 @@ namespace chaos {
                      \param cu_unique_id control unit id for wich we need the dataset
                      */
                     ApiProxyResult execute(const std::string& cu_unique_id);
+                    
+                    static void deserialize(chaos::common::data::CDataWrapper& cdw,
+                                            chaos::common::data::structured::DatasetAttributeList& dataset_attribute_list);
                 };
             }
         }

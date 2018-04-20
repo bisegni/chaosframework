@@ -34,3 +34,10 @@ ApiProxyResult SaveScript::execute(const Script& script_to_insert,
     if(import){data_pack->addBoolValue("import", import);}
     return callApi(data_pack.release());
 }
+
+ApiProxyResult  SaveScript::execute( chaos::common::data::CDataWrapper* data_pack,
+                                                              const bool& import  ){
+	 if(import){data_pack->addBoolValue("import", import);}
+	 return callApi(data_pack);
+
+}

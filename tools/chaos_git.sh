@@ -78,12 +78,12 @@ git_arg=()
 git_cmd=""
 
 usage(){
-    echo -e "Usage is $0 [-s] [-t <tag name>][ -c <checkout branch> ] [ -p <branch name> ] [-d <directory0>] [-d <directory1>] \n-c <branch name>: check out a given branch name in all subdirs\n-p <branch>:commit and push modifications of a given branch\n-s:retrive the branch status\n-t <tag name>:make an annotated tag to all\n-d <directory>: apply just to the specified directory\n-m <src branch> <dst branch>: merge src into dst branch\n-y:answer yes\n-z <maxdepth>: search for git directory for a maximum depth [$maxdepth]\n-r <dst branch>: create a merge request for actual branch -> destination branch\n-o <message>:apply message to all\n"
+    echo -e "Usage is $0 [-s] [-t <tag name>][ -c <checkout branch> ] [ -p <branch name> ] [-d <directory0>] [-d <directory1>] \n-c <branch name>: check out a given branch name in all subdirs\n-p <branch>:commit and push modifications of a given branch\n-s:retrive the branch status\n-t <tag name>:make an annotated tag to all\n-d <directory>: apply just to the specified directory\n-m <src branch> <dst branch>: merge src into dst branch\n-y:answer yes\n-z <maxdepth>: search for git directory for a maximum depth [$maxdepth]\n-r <dst branch>: create a merge request for actual branch -> destination branch\n-o <message>:apply message to all\n-x <experimental|development|master>:perform the given pipeline and deploy on a target environment"
 }
 yes=""
 maxdepth=3
 overall_mesg=""
-while getopts t:c:p:hsd:mr:byz:r:o: opt; do
+while getopts t:c:p:hsd:mr:byz:r:o:x: opt; do
     case $opt in
 	o)
 	    overall_mesg=$OPTARG
@@ -95,8 +95,9 @@ while getopts t:c:p:hsd:mr:byz:r:o: opt; do
 	z)
 	    maxdepth=$OPTARG
 	    ;;
-	r)
-	    remote=1
+	x)
+	    git_cmd=x
+	    src_pipeline=$OPTARG
 	    ;;
 	y)
 	    yes="1"
@@ -180,6 +181,25 @@ for dir in ${on_dir[@]}; do
 	exit 1
     fi
     case $git_cmd in
+	x)
+	    target_env=$src_pipeline
+	    info_mesg_n "[$dir] deploy in [$src_pipeline]:"
+	    read mesg
+	    if [ -n $mesg ];then
+		target_env=$mesg
+	
+	    fi
+	    if [ $target_env == "master" ];then
+		    target_env="production"
+	    fi
+	    if [ $target_env != "production" ] && [ $target_env != "development" ];then
+		error_mesg "invalid deploy environment '$target_env', valid deploy environments are: " "'production' or 'development'"
+		exit 1
+	    fi
+	    curl -X POST -F token="35685971883361120ee0e2ebd4020b" -F ref=${src_pipeline} -F "variables[DEPLOY_DESTINATION]=$target_env"  https://baltig.infn.it/api/v4/projects/807/trigger/pipeline
+	    exit 0
+	    ;;
+	
 	r)
 
 
@@ -289,7 +309,7 @@ for dir in ${on_dir[@]}; do
 		if [ -n "$mesg" ]; then
 			if git commit -m "$mesg" .;then
 			    info_mesg "[$dir] commit " "done"
-			    if git push origin $git_arg > /dev/null; then
+			    if git remote|xargs -L1 -I R git push R $git_arg > /dev/null; then
 				info_mesg "[$dir] push " "done"
 			    else
 				error_mesg "[$dir] cannot push"

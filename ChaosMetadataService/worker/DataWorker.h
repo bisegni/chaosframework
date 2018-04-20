@@ -43,7 +43,10 @@ namespace chaos {
 			} WorkerJob, *WorkerJobPtr;
 			
 			typedef struct DataWorkerSetting {
-				unsigned int job_thread_number;
+                unsigned int        instances;
+				unsigned int        thread_number;
+                bool                log_metric;
+                uint32_t            log_metric_update_interval;
 			} DataWorkerSetting;
 			
 			class DataWorker:
@@ -67,9 +70,6 @@ namespace chaos {
                 unsigned int max_element;
 			protected:
 				void * * thread_cookie;
-				
-				DataWorkerSetting settings;
-				
 				void consumeJob(void *cookie);
 				WorkerJobPtr getNextOrWait(boost::unique_lock<boost::mutex>& lock);
 				
@@ -81,7 +81,6 @@ namespace chaos {
 				void start() throw (chaos::CException);
 				void stop() throw (chaos::CException);
 				void deinit() throw (chaos::CException);
-				virtual void mantain() throw (chaos::CException);
 				virtual int submitJobInfo(WorkerJobPtr job_info);
 			};
 			

@@ -424,7 +424,8 @@ int MongoDBAgentDataAccess::pushLogEntry(const std::string& node_uid,
                                                             query.toString()));)
         
         if((err = connection->insert(MONGO_DB_COLLECTION_NAME(MONGO_DB_COLLECTION_AGENT_PROCESS_LOG),
-                                     query))){
+                                     query,
+                                     &mongo::WriteConcern::unacknowledged))){
             ERR << CHAOS_FORMAT("Error creating new elog entry for node %1% with error %2%", %node_uid%err);
         }
     } catch (const mongo::DBException &e) {

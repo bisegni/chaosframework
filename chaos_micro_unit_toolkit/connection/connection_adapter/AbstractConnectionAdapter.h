@@ -54,9 +54,9 @@ namespace chaos {
                 //! Abstract base class for all protocols adapter
                 class AbstractConnectionAdapter {
                 protected:
-                    virtual int sendRawMessage(chaos::micro_unit_toolkit::data::DataPackUniquePtr& message) = 0;
+                    virtual int sendRawMessage(chaos::micro_unit_toolkit::data::CDWUniquePtr& message) = 0;
                     
-                    void handleReceivedMessage(chaos::micro_unit_toolkit::data::DataPackSharedPtr& received_message);
+                    void handleReceivedMessage(chaos::micro_unit_toolkit::data::CDWShrdPtr& received_message);
                 public:
                     const std::string   protocol_endpoint;
                     const std::string   protocol_option;
@@ -88,14 +88,14 @@ namespace chaos {
                     /*!
                      \param message that will be sent to the remote endpoint
                      */
-                    int sendMessage(data::DataPackUniquePtr& message);
+                    int sendMessage(data::CDWUniquePtr& message);
                     
                     //!send a request to the remote endpoint
                     /*!
                      \param message that will be sent to the remote endpoint
                      \param request_id the id associated to the new request
                      */
-                    int sendRequest(data::DataPackUniquePtr& message,
+                    int sendRequest(data::CDWUniquePtr& message,
                                     uint32_t& request_id);
                     
                     //!check if there are message from remote endpoint
@@ -107,7 +107,7 @@ namespace chaos {
                     bool hasMoreMessage();
                     
                     //!return the message of top of the queue
-                    data::DataPackSharedPtr getNextMessage();
+                    data::CDWShrdPtr getNextMessage();
                     
                     //! Chekc if there are answer by remote endpoint
                     /*!
@@ -126,11 +126,11 @@ namespace chaos {
                     /*!
                      \param request_id the id associated to a request
                      */
-                    data::DataPackSharedPtr retrieveRequestResponse(uint32_t request_id);
+                    data::CDWShrdPtr retrieveRequestResponse(uint32_t request_id);
                 protected:
                     //!define the maps for the request response
-                    typedef std::map<uint32_t, data::DataPackSharedPtr> MapRequestIDResponse;
-                    typedef std::pair<uint32_t, data::DataPackSharedPtr> MapRequestIDResponsePair;
+                    typedef std::map<uint32_t, data::CDWShrdPtr> MapRequestIDResponse;
+                    typedef std::pair<uint32_t, data::CDWShrdPtr> MapRequestIDResponsePair;
                     typedef MapRequestIDResponse::iterator MapRequestIDResponseIterator;
 
                     //!the counter of the request id
@@ -140,7 +140,7 @@ namespace chaos {
                     //!define the map that asscoiate the request id to the reponse
                     MapRequestIDResponse                map_req_id_response;
                     //!contains the received message in the order as the have been received
-                    std::queue<data::DataPackSharedPtr> queue_received_messages;
+                    std::queue<data::CDWShrdPtr> queue_received_messages;
                 };
             }
         }

@@ -96,6 +96,12 @@ private slots:
 
     void on_pushButtonUpdateALL_clicked();
 
+    void on_pushButtonSaveApplyProperty_clicked();
+
+    void on_pushButtonUpdateLiveTime_clicked();
+
+    void on_pushButtonUpdateStorageTime_clicked();
+
 private:
     Ui::ControUnitInstanceEditor *ui;
     void updateALL();

@@ -49,6 +49,7 @@ namespace chaos{
             //----------object storage configuration----------------
             chaos::data_service::object_storage::ObjStorageSetting  object_storage_setting;
             
+            chaos::data_service::worker::DataWorkerSetting          worker_setting;
         };
         
         struct ApiSubserviceAccessor {

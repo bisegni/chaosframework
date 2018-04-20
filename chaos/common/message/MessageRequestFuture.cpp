@@ -23,13 +23,14 @@
 #define MRF_DBG DBG_LOG(MessageRequestFuture)
 #define MRF_ERR ERR_LOG(MessageRequestFuture)
 
+using namespace chaos::common::data;
 using namespace chaos::common::message;
 
 //!private constructor
 MessageRequestFuture::MessageRequestFuture(chaos::common::utility::atomic_int_type _request_id,
-                                           boost::shared_future< ChaosSharedPtr<chaos::common::data::CDataWrapper> > _message_future):
+                                           MessageRequestDomainFutureHelper::Future& _message_future):
 request_id(_request_id),
-message_future(_message_future),
+message_future(ChaosMoveOperator(_message_future)),
 request_result(),
 error_code(0),
 error_message("no data"),
@@ -40,29 +41,28 @@ MessageRequestFuture::~MessageRequestFuture() {}
 
 bool MessageRequestFuture::wait(int32_t timeout_in_milliseconds) {
     bool result = false;
-    boost::future_status ret;
+    ChaosFutureStatus fret = ChaosFutureStatus::deferred;
     try{
         if(request_result.get()) {
             result = true;
         } else{
             //! whait for result
             if (timeout_in_milliseconds >= 0){
-	      MRF_DBG<<" future wait"<<timeout_in_milliseconds;
-
-                ret=message_future.wait_for(boost::chrono::milliseconds(timeout_in_milliseconds));
-		//                MRF_DBG<<" future ret:"<<(int)ret;
-            }else{
+                MRF_DBG<<CHAOS_FORMAT("Future wait for %1% milliseconds",%timeout_in_milliseconds);
+                fret=message_future.wait_for(ChaosCronoMilliseconds(timeout_in_milliseconds));
+            } else {
                 message_future.wait();
             }
-            if (message_future.is_ready() &&
-                message_future.has_value()){
-                DEBUG_CODE(MRF_DBG << message_future.get()->getJSONString();)
-                MRF_PARSE_CDWPTR_RESULT(message_future.get())
+            if (fret == ChaosFutureStatus::ready){
+                CDWShrdPtr message_data = message_future.get();
+                MRF_PARSE_CDWPTR_RESULT(message_data.get())
                 result = true;
             }
         }
     } catch (boost::broken_promise &e) {
-        MRF_ERR << "Broken pormisess error:" << e.what();
+        MRF_ERR << CHAOS_FORMAT("Broken promises error:%1%",%e.what());
+    } catch (...) {
+        MRF_ERR << "Broken promises unrecognied error";
     }
     return result;
 }
@@ -71,7 +71,6 @@ bool MessageRequestFuture::wait(int32_t timeout_in_milliseconds) {
 chaos::common::data::CDataWrapper *MessageRequestFuture::getResult() {
     //! wait for result
     return request_result.get();
-    
 }
 
 chaos::common::data::CDataWrapper *MessageRequestFuture::detachResult() {

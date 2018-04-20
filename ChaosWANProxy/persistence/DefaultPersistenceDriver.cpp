@@ -258,11 +258,11 @@ int DefaultPersistenceDriver::registerDataset(const std::string& producer_key,
 	last_dataset.addStringValue(chaos::NodeDefinitionKey::NODE_RPC_DOMAIN, chaos::common::utility::UUIDUtil::generateUUIDLite());
     last_dataset.addStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR, network_broker->getRPCUrl());
 	last_dataset.addStringValue("mds_control_key","none");
-	if((ret=mds_message_channel->sendNodeRegistration(last_dataset, true, 3000)) ==0){
+    if((ret=mds_message_channel->sendNodeRegistration(last_dataset, true, 10000)) ==0){
 		CDataWrapper mdsPack;
 		mdsPack.addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, producer_key);
 		mdsPack.addStringValue(chaos::NodeDefinitionKey::NODE_TYPE, chaos::NodeType::NODE_TYPE_CONTROL_UNIT);
-		ret = mds_message_channel->sendNodeLoadCompletion(mdsPack, true, 3000);
+        ret = mds_message_channel->sendNodeLoadCompletion(mdsPack, true, 10000);
         HealtManager::getInstance()->addNewNode(producer_key);
 
 		HealtManager::getInstance()->addNodeMetricValue(producer_key,

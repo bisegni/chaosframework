@@ -89,21 +89,26 @@ chaos::common::data::CDataWrapper *SetInstanceDescription::execute(chaos::common
     if(instance_desc->hasKey(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)) {
         pg.addProperty(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, instance_desc->getVariantValue(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY));
     }
-    
     if(instance_desc->hasKey(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE)) {
         pg.addProperty(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE, instance_desc->getVariantValue(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE));
     }
-    
     if(instance_desc->hasKey(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING)) {
         pg.addProperty(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING, instance_desc->getVariantValue(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING));
     }
-    
     if(instance_desc->hasKey(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME)) {
         pg.addProperty(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME, instance_desc->getVariantValue(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME));
     }
-    
     if(instance_desc->hasKey(DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME)) {
         pg.addProperty(DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME, instance_desc->getVariantValue(DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME));
+    }
+    if(instance_desc->hasKey(chaos::ControlUnitPropertyKey::INIT_RESTORE_OPTION)) {
+        pg.addProperty(chaos::ControlUnitPropertyKey::INIT_RESTORE_OPTION, instance_desc->getVariantValue(chaos::ControlUnitPropertyKey::INIT_RESTORE_OPTION));
+    }
+    if(instance_desc->hasKey(chaos::ControlUnitPropertyKey::INIT_RESTORE_APPLY)) {
+        pg.addProperty(chaos::ControlUnitPropertyKey::INIT_RESTORE_APPLY, instance_desc->getVariantValue(chaos::ControlUnitPropertyKey::INIT_RESTORE_APPLY));
+    }
+    if(instance_desc->hasKey(ControlUnitDatapackSystemKey::BYPASS_STATE)) {
+        pg.addProperty(ControlUnitDatapackSystemKey::BYPASS_STATE, instance_desc->getVariantValue(ControlUnitDatapackSystemKey::BYPASS_STATE));
     }
     PropertyGroupVectorSDWrapper pgv_sdw;
     pgv_sdw().push_back(pg);

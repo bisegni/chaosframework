@@ -2,7 +2,6 @@
 
 #include <QVector>
 #include <QSharedPointer>
-#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
 
 using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::api_proxy;

@@ -140,10 +140,7 @@ namespace chaos {
                 }
                 
                 static inline std::locale getLocale(int i){
-                    boost::posix_time::time_input_facet* tf=new boost::posix_time::time_input_facet();
-                    tf->format(formats[i]);
-                    std::locale loc(std::locale::classic(),tf);
-                    return loc;
+                    return std::locale(std::locale::classic(), new boost::posix_time::time_input_facet(formats[i]));
                 }
                 //!chack if a string is well format for date representation
                 static bool dateWellFormat(const std::string& timestamp) {
@@ -178,7 +175,7 @@ namespace chaos {
                     }
                 }
                 
-                //! return the timestam from now to dealy , in the past(false) or future(true)
+                //! return the timestam from now to delay(milliseconds , in the past(false) or future(true)
                 static inline uint64_t getTimestampWithDelay(uint64_t delay,
                                                              bool past_future = false) {
                     boost::posix_time::time_duration ts;

@@ -22,8 +22,10 @@
 #include <chaos/cu_toolkit/data_manager/DataManager.h>
 #include <chaos/cu_toolkit/command_manager/CommandManager.h>
 #include <chaos/cu_toolkit/control_manager/script/api/api.h>
-#include <chaos/cu_toolkit/external_gateway/external_gateway.h>
-
+#include <chaos/common/external_unit/external_unit.h>
+#include <chaos/common/external_unit/external_unit_constants.h>
+#include <chaos/common/io/SharedManagedDirecIoDataDriver.h>
+#include <chaos/common/log/LogManager.h>
 #include <chaos/common/healt_system/HealtManager.h>
 #include <chaos/common/metadata_logging/MetadataLoggingManager.h>
 
@@ -35,6 +37,7 @@ using namespace chaos::common::utility;
 
 using namespace chaos::cu;
 using namespace chaos::common::healt_system;
+using namespace chaos::common::io;
 using namespace chaos::cu::data_manager;
 using namespace chaos::cu::command_manager;
 using namespace chaos::cu::control_manager;
@@ -133,7 +136,8 @@ ChaosCUToolkit::ChaosCUToolkit() {
                                                         "Specify when to use in memory or on disc contorl unit internal database",
                                                         true);
     //
-    
+    GlobalConfiguration::getInstance()->addOptionZeroToken<bool>(InitOption::OPT_LOG_ON_MDS,
+                                                                 "Specify when log need to be redirect to metadata server");
     
     GlobalConfiguration::getInstance()->addOption<bool>(CONTROL_MANAGER_UNIT_SERVER_ENABLE,
                                                         CONTROL_MANAGER_UNIT_SERVER_ENABLE_desc,
@@ -156,26 +160,6 @@ ChaosCUToolkit::ChaosCUToolkit() {
     GlobalConfiguration::getInstance()->addOption< double >(CONTROL_MANAGER_EXECUTION_POOLS_CPU_CAP,
                                                             CONTROL_MANAGER_EXECUTION_POOLS_CPU_CAP_DESC,
                                                             CONTROL_MANAGER_EXECUTION_POOLS_CPU_CAP_DEFAULT);
-    
-    GlobalConfiguration::getInstance()->addOption< std::string >(EU_PLUGIN_DIRECTORY,
-                                                                 EU_PLUGIN_DIRECTORY_DESC,
-                                                                 EU_PLUGIN_DIRECTORY_DEFAULT);
-    
-    GlobalConfiguration::getInstance()->addOption< bool >(EU_PLUGIN_ENABLE,
-                                                          EU_PLUGIN_ENABLE_DESC,
-                                                          EU_PLUGIN_ENABLE_DEFAULT);
-    
-    GlobalConfiguration::getInstance()->addOption< bool >(UNIT_GATEWAY_ENABLE,
-                                                          UNIT_GATEWAY_ENABLE_DESC,
-                                                          UNIT_GATEWAY_ENABLE_DEFAULT);
-    
-    GlobalConfiguration::getInstance()->addOption< unsigned int >(CU_EG_OPT_WORKER_THREAD_NUMBER,
-                                                                  CU_EG_OPT_WORKER_THREAD_NUMBER_DESC,
-                                                                  CU_EG_OPT_WORKER_THREAD_NUMBER_DEFAULT);
-    
-    GlobalConfiguration::getInstance()->addOption< std::vector<std::string> >(CU_EG_OPT_WORKER_KV_PARAM,
-                                                                              CU_EG_OPT_WORKER_KV_PARAM_DESC);
-    
 }
 
 ChaosCUToolkit::~ChaosCUToolkit() {
@@ -208,7 +192,6 @@ void ChaosCUToolkit::init(void *init_data)  throw(CException) {
     try {
         ChaosCommon<ChaosCUToolkit>::init(init_data);
         LAPP_ << "Initializing !CHAOS Control Unit System";
-        
         struct sigaction sigact;
         sigact.sa_sigaction = crit_err_hdlr;
         sigact.sa_flags = SA_RESTART | SA_SIGINFO;
@@ -228,12 +211,15 @@ void ChaosCUToolkit::init(void *init_data)  throw(CException) {
             LERR_ << "SIGTERM Signal handler registration error";
         }
         
-        //        if (signal((int) SIGSEGV, ChaosCUToolkit::signalHanlder) == SIG_ERR){
-        //            LERR_ << "SIGSEGV Signal handler registration error";
-        //        }
-        
         if (signal((int) SIGABRT, ChaosCUToolkit::signalHanlder) == SIG_ERR){
             LERR_ << "SIGABRT Signal handler registration error";
+        }
+        
+        InizializableService::initImplementation(SharedManagedDirecIoDataDriver::getInstance(), NULL, "SharedManagedDirecIoDataDriver", __PRETTY_FUNCTION__);
+        
+        if(GlobalConfiguration::getInstance()->hasOption(InitOption::OPT_LOG_ON_MDS) &&
+           GlobalConfiguration::getInstance()->hasOption(CONTROL_MANAGER_UNIT_SERVER_ALIAS)) {
+            chaos::common::log::LogManager::getInstance()->addMDSLoggingBackend(GlobalConfiguration::getInstance()->getOption<std::string>(CONTROL_MANAGER_UNIT_SERVER_ALIAS));
         }
         
         //force first allocation of metadata logging
@@ -241,24 +227,17 @@ void ChaosCUToolkit::init(void *init_data)  throw(CException) {
             //we can initilize the logging manager
             InizializableService::initImplementation(chaos::common::metadata_logging::MetadataLoggingManager::getInstance(), NULL, "MetadataLoggingManager", __PRETTY_FUNCTION__);
         }
-        
-        
-        //init healt manager singleton
         StartableService::initImplementation(HealtManager::getInstance(), NULL, "HealtManager", __PRETTY_FUNCTION__);
-        
         StartableService::initImplementation(CommandManager::getInstance(), NULL, "CommandManager", "ChaosCUToolkit::init");
         CommandManager::getInstance()->server_handler=this;
-        
         StartableService::initImplementation(DriverManager::getInstance(), NULL, "DriverManager", "ChaosCUToolkit::init");
-        
         StartableService::initImplementation(DataManager::getInstance(), NULL, "DataManager", "ChaosCUToolkit::init");
-        
         StartableService::initImplementation(ControlManager::getInstance(), NULL, "ControlManager", "ChaosCUToolkit::init");
         
-        if(GlobalConfiguration::getInstance()->hasOption(UNIT_GATEWAY_ENABLE) &&
-           GlobalConfiguration::getInstance()->getOption<bool>(UNIT_GATEWAY_ENABLE)) {
+        if(GlobalConfiguration::getInstance()->hasOption(chaos::common::external_unit::InitOption::OPT_UNIT_GATEWAY_ENABLE) &&
+           GlobalConfiguration::getInstance()->getOption<bool>(chaos::common::external_unit::InitOption::OPT_UNIT_GATEWAY_ENABLE)) {
             //initilize unit gateway
-            InizializableService::initImplementation(external_gateway::ExternalUnitGateway::getInstance(), NULL, "ExternalUnitGateway", __PRETTY_FUNCTION__);
+            InizializableService::initImplementation(common::external_unit::ExternalUnitManager::getInstance(), NULL, "ExternalUnitManager", __PRETTY_FUNCTION__);
         }
         
         LAPP_ << "Control Manager Initialized";
@@ -278,24 +257,12 @@ void ChaosCUToolkit::init(void *init_data)  throw(CException) {
 void ChaosCUToolkit::start() throw(CException){
     try {
         ChaosCommon<ChaosCUToolkit>::start();
-        
         LAPP_ << "Starting !CHAOS Control Unit System";
-        
-        //init healt manager singleton
         StartableService::startImplementation(HealtManager::getInstance(), "HealtManager", __PRETTY_FUNCTION__);
-        
-        //start command manager, this manager must be the last to startup
         StartableService::startImplementation(CommandManager::getInstance(), "CommandManager", "ChaosCUToolkit::start");
-        
-        //start driver manager
         StartableService::startImplementation(DriverManager::getInstance(), "DriverManager", "ChaosCUToolkit::start");
-        
-        //start command manager, this manager must be the last to startup
         StartableService::startImplementation(DataManager::getInstance(), "DataManager", "ChaosCUToolkit::start");
-        
-        //start Control Manager
         StartableService::startImplementation(ControlManager::getInstance(), "ControlManager", "ChaosCUToolkit::start");
-        
         LAPP_ << "-----------------------------------------";
         LAPP_ << "!CHAOS Control Unit System Started";
         LAPP_ << "RPC Server address: " << CommandManager::getInstance()->broker->getRPCUrl();
@@ -317,21 +284,11 @@ void ChaosCUToolkit::start() throw(CException){
  */
 void ChaosCUToolkit::stop() throw(CException) {
     LAPP_ << "Stopping !CHAOS Control Unit System";
-    //stop command manager, this manager must be the last to startup
     CHAOS_NOT_THROW(StartableService::stopImplementation(CommandManager::getInstance(), "CommandManager", "ChaosCUToolkit::stop"););
-    
-    //stop control manager
     CHAOS_NOT_THROW(StartableService::stopImplementation(ControlManager::getInstance(), "ControlManager", "ChaosCUToolkit::stop"););
-    
-    //stop command manager, this manager must be the last to startup
     CHAOS_NOT_THROW(StartableService::stopImplementation(DataManager::getInstance(), "DataManager", "ChaosCUToolkit::stop"););
-    
-    //stop driver manager
     CHAOS_NOT_THROW(StartableService::stopImplementation(DriverManager::getInstance(), "DriverManager", "ChaosCUToolkit::stop"););
-    
-    //init healt manager singleton
     CHAOS_NOT_THROW(StartableService::stopImplementation(HealtManager::getInstance(), "HealtManager", __PRETTY_FUNCTION__););
-    
     ChaosCommon<ChaosCUToolkit>::stop();
 }
 
@@ -340,33 +297,19 @@ void ChaosCUToolkit::stop() throw(CException) {
  */
 void ChaosCUToolkit::deinit() throw(CException) {
     LAPP_ << "Deinitilizzating !CHAOS Control Unit System";
-    if(GlobalConfiguration::getInstance()->hasOption(UNIT_GATEWAY_ENABLE) &&
-       GlobalConfiguration::getInstance()->getOption<bool>(UNIT_GATEWAY_ENABLE)) {
+    if(GlobalConfiguration::getInstance()->hasOption(chaos::common::external_unit::InitOption::OPT_UNIT_GATEWAY_ENABLE) &&
+       GlobalConfiguration::getInstance()->getOption<bool>(chaos::common::external_unit::InitOption::OPT_UNIT_GATEWAY_ENABLE)) {
         //initilize unit gateway
-        InizializableService::deinitImplementation(external_gateway::ExternalUnitGateway::getInstance(), "ExternalUnitGateway", __PRETTY_FUNCTION__);
+        InizializableService::deinitImplementation(common::external_unit::ExternalUnitManager::getInstance(), "ExternalUnitManager", __PRETTY_FUNCTION__);
     }
-    //deinit command manager, this manager must be the last to startup
     CHAOS_NOT_THROW(StartableService::deinitImplementation(CommandManager::getInstance(), "CommandManager", "ChaosCUToolkit::stop"););
-    
-    //deinit control manager
     CHAOS_NOT_THROW(StartableService::deinitImplementation(ControlManager::getInstance(), "ControlManager", "ChaosCUToolkit::stop"););
-    
-    //deinit data manager
     CHAOS_NOT_THROW(StartableService::deinitImplementation(DataManager::getInstance(), "DataManager", "ChaosCUToolkit::deinit"););
-    
-    //deinit metadata logging manager
     CHAOS_NOT_THROW(StartableService::deinitImplementation(DriverManager::getInstance(), "DriverManager", "ChaosCUToolkit::deinit"););
-    
     CHAOS_NOT_THROW(InizializableService::deinitImplementation(MetadataLoggingManager::getInstance(), "MetadataLoggingManager", __PRETTY_FUNCTION__););
-    LAPP_ << "!CHAOS Control Unit System Stopped";
-    
-    //deinit healt manager singleton
-    CHAOS_NOT_THROW(StartableService::deinitImplementation(HealtManager::getInstance(), "HealtManager", __PRETTY_FUNCTION__););
-    
-    
-    //forward the deinitialization to the common sublayer
+    CHAOS_NOT_THROW(StartableService::deinitImplementation(HealtManager::getInstance(), "HealtManager", __PRETTY_FUNCTION__););    
+    CHAOS_NOT_THROW(InizializableService::deinitImplementation(SharedManagedDirecIoDataDriver::getInstance(), "SharedManagedDirecIoDataDriver", __PRETTY_FUNCTION__););
     ChaosCommon<ChaosCUToolkit>::deinit();
-    
     LAPP_ << "-----------------------------------------";
     LAPP_ << "!CHAOS Control Unit System deinitialized  ";
     LAPP_ << "-----------------------------------------";

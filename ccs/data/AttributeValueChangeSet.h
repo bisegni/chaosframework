@@ -3,7 +3,6 @@
 #include <QObject>
 #include <QVariant>
 #include <QSharedPointer>
-#include <chaos/common/data/CDataWrapper.h>
 class AttributeValueChangeSet:
 public QObject {
     Q_OBJECT

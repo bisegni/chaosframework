@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 include(config/CMakeChaos.txt)
 project(chaosframework)
 include(ExternalProject)
-include(CTest)
+#include(CTest)
 #find git
 find_package(Git REQUIRED)
 
@@ -13,7 +13,6 @@ unset(CMAKE_CXX_COMPILER_WORKS)
 
 #specify option
 option(CHAOS_ONLY_DEPENDECY "Download all the dependency" OFF)
-option(CHAOS_MEMCACHE_TEST "Memcached test" OFF)
 option(CHAOS_ARCHITECTURE_TEST "Architecture tests" OFF)
 option(CHAOS_CDS "Chaos Data Service" ON)
 option(CHAOS_MDS "Chaos MetaData Service" ON)
@@ -22,7 +21,7 @@ option(CHAOS_AGENT "Chaos Agent Service" ON)
 option(CHAOS_DATA_EXPORT "Chaos Data Export" ON)
 option(CHAOS_EXAMPLES "Chaos Examples" ON)
 option(CHAOS_CCS "Chaos CCS Compile needs qt5.6-static-x86_64 installed" OFF)
-set(QMAKE_PATH "Default QT QMAKE PATH" CACHE STRING "/usr/local/chaos/qt-56/bin")
+set(QMAKE_PATH /usr/local/chaos/qt-56/bin)
 
 EXECUTE_PROCESS(
 COMMAND ./version.sh
@@ -46,6 +45,7 @@ CheckConfigureBuild(mongoclient mongo-cxx-driver:legacy-1.0.0-rc0 "--extralib=bo
 IF (CHAOS_ONLY_DEPENDECY OR
     CHAOS_ARCHITECTURE_TEST)
   #google test
+  MESG("Add google Test as external project")
   ExternalProject_Add(
      googletest
      GIT_REPOSITORY https://github.com/google/googletest.git
@@ -58,12 +58,29 @@ IF (CHAOS_ONLY_DEPENDECY OR
      LOG_DOWNLOAD ON
      LOG_CONFIGURE ON
      LOG_BUILD ON)
+
+
+     # Specify include dir
+     ExternalProject_Get_Property(googletest source_dir)
+     set(GTEST_INCLUDE_DIR ${source_dir}/include)
+
+     # Library
+     ExternalProject_Get_Property(googletest binary_dir)
+     set(GTEST_LIBRARY_DIR ${binary_dir})
+     ExternalProject_Get_Property(googletest binary_dir)
+     set(GTEST_LIBRARY_PATH ${binary_dir}/${CMAKE_FIND_LIBRARY_PREFIXES}gtest.a)
+
+     MESG("${GTEST_INCLUDE_DIR}")
+     MESG("${GTEST_LIBRARY_DIR}")
+     MESG("${GTEST_LIBRARY_PATH}")
+     MESG("${GTEST_LIBRARY}")
 ENDIF()
+
 
 SET( ${PROJECT_NAME}_MAJOR_VERSION 0 )
 SET( ${PROJECT_NAME}_MINOR_VERSION 1 )
 SET( ${PROJECT_NAME}_PATCH_LEVEL 0 )
-
+# ADD_DEFINITIONS(-Wno-ignored-attributes)
 INCLUDE_DIRECTORIES(. ../ ../../ ${CMAKE_INSTALL_PREFIX}/include)
 LINK_DIRECTORIES(${CMAKE_INSTALL_PREFIX}/lib)
 
@@ -100,9 +117,6 @@ IF(NOT CHAOS_ONLY_DEPENDECY)
   MESG("Configure Chaos Metadata Service Client Library Test Application")
   ADD_SUBDIRECTORY(ChaosMetadataServiceClientTest)
 
-  MESG("Configure Chaos Micro Unit Toolkit Test")
-  ADD_SUBDIRECTORY(ChaosMicroUnitToolkitTest)
-
   IF (CHAOS_WAN)
     MESG("Configure Chaos WAN Proxy")
     ADD_SUBDIRECTORY(ChaosWANProxy)
@@ -128,16 +142,20 @@ ENDIF()
 IF (CHAOS_ARCHITECTURE_TEST)
 #scan all subdirectory of test directory
     MESG("Configure infrastructure tests")
-    SET(CHAOS_TEST_DIRECTORY "CHAOSFrameworkTests")
-
-    SUBDIRLIST(TEST_SUBDIRS ${CHAOS_TEST_DIRECTORY})
-    FOREACH(_TEST_DIRECTORY ${TEST_SUBDIRS})
-        IF(EXISTS "${_TEST_DIRECTORY}/CMakeLists.txt")
-            get_filename_component(_TEST_DIR_NAME ${_TEST_DIRECTORY} NAME)
-            MESG("Configure ${_TEST_DIR_NAME} test")
-            ADD_SUBDIRECTORY(${_TEST_DIRECTORY})
-        ENDIF()
-    ENDFOREACH()
+    set_directory_properties(PROPERTIES GTEST_INCLUDE_DIR ${GTEST_INCLUDE_DIR}
+                                        GTEST_LIBRARY_DIR ${GTEST_LIBRARY_DIR}
+                                        GTEST_LIBRARY_PATH ${GTEST_LIBRARY_PATH})
+    ADD_SUBDIRECTORY(CHAOSFrameworkTests/FrameworkTest)
+#    SET(CHAOS_TEST_DIRECTORY "CHAOSFrameworkTests")
+#    SUBDIRLIST(TEST_SUBDIRS ${CHAOS_TEST_DIRECTORY})
+#    FOREACH(_TEST_DIRECTORY ${TEST_SUBDIRS})
+#        IF(EXISTS "${_TEST_DIRECTORY}/CMakeLists.txt")
+#            #set the external project variable in subdirectory
+#            get_filename_component(_TEST_DIR_NAME ${_TEST_DIRECTORY} NAME)
+#            MESG("Configure ${_TEST_DIR_NAME} test")
+#            ADD_SUBDIRECTORY(${_TEST_DIRECTORY})
+#        ENDIF()
+#    ENDFOREACH()
 ENDIF()
 
 MESG("Done")

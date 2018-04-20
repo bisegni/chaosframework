@@ -1,7 +1,6 @@
 #ifndef ccs_SystemControlUnitRunScheduleDelay
 #define ccs_SystemControlUnitRunScheduleDelay
 #include "../AbstractAttributeHandler.h"
-#include <chaos_metadata_service_client/monitor_system/AbstractQuantumKeyAttributeHandler.h>
 class SystemControlUnitRunScheduleDelay:
         public AbstractAttributeHandler,
         public chaos::metadata_service_client::monitor_system::QuantumKeyAttributeInt64Handler
