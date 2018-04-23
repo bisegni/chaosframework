@@ -71,6 +71,20 @@ namespace driver{
         int ChaosDatasetIO::setTimeo(uint64_t t){timeo=t;return 0;}
         
         ChaosDatasetIO::~ChaosDatasetIO(){
+            std::map<int,ChaosSharedPtr<chaos::common::data::CDataWrapper> >::iterator i;
+            for(i=datasets.begin();i!=datasets.end();i++){
+                DPD_LDBG<<" removing dataset:"<<i->first;
+                (i->second).reset();
+            }
+            
+            for(query_cursor_map_t::iterator i=query_cursor_map.begin();i!=query_cursor_map.end();){
+                DPD_LDBG<<" removing query ID:"<<i->first;
+                
+                ioLiveDataDriver->releaseQuery( (i->second).qc);
+                
+                query_cursor_map.erase(i++);
+            }
+            
             DEBUG_CODE(DPD_LDBG << "Destroy all resources");
             CHAOS_NOT_THROW(StartableService::stopImplementation(HealtManager::getInstance(), "HealtManager", __PRETTY_FUNCTION__););
             CHAOS_NOT_THROW(StartableService::deinitImplementation(HealtManager::getInstance(), "HealtManager", __PRETTY_FUNCTION__););
@@ -92,21 +106,6 @@ namespace driver{
              */
             
             chaos::common::async_central::AsyncCentralManager::getInstance()->removeTimer(this);
-            
-            std::map<int,ChaosSharedPtr<chaos::common::data::CDataWrapper> >::iterator i;
-            for(i=datasets.begin();i!=datasets.end();i++){
-                DPD_LDBG<<" removing dataset:"<<i->first;
-                (i->second).reset();
-            }
-            
-            for(query_cursor_map_t::iterator i=query_cursor_map.begin();i!=query_cursor_map.end();){
-                DPD_LDBG<<" removing query ID:"<<i->first;
-                
-                ioLiveDataDriver->releaseQuery( (i->second).qc);
-                
-                query_cursor_map.erase(i++);
-            }
-            
         }
         
         

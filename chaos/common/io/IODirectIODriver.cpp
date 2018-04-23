@@ -108,13 +108,14 @@ void IODirectIODriver::deinit() throw(CException) {
     shutting_down = true;
     IODirectIODriver_LINFO_ << "Remove active query";
     //lock all  internal resource that can be effetted by
-    ChaosWriteLock wmap_loc(map_query_future_mutex);
+    ChaosReadLock wmap_loc(map_query_future_mutex);
     
     //scan all remained query
     for(std::map<string, QueryCursor*>::iterator it = map_query_future.begin();
         it != map_query_future.end();
         it++) {
-        releaseQuery(it->second);
+        //erase query curor
+        delete(it->second);
     }
     map_query_future.clear();
     

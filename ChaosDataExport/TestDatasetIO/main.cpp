@@ -8,7 +8,7 @@
 #include <cstdlib>
 #include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
 
-#include <driver/misc/core/ChaosDatasetIO.h>
+#include "ChaosDatasetIO.h"
 using namespace std;
 using namespace ::driver::misc;
 using namespace chaos::metadata_service_client;
