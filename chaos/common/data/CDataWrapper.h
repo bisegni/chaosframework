@@ -289,19 +289,19 @@ public:
         switch(getValueType(key)){
 
         case chaos::DataType::TYPE_BOOLEAN:{
-            v = getBoolValue(key);
+            v = static_cast<T>(getBoolValue(key));
             break;
         }
         case chaos::DataType::TYPE_INT32:{
-            v = getInt32Value(key);
+            v = static_cast<T>(getInt32Value(key));
             break;
         }
         case chaos::DataType::TYPE_INT64:{
-            v = getInt64Value(key);
+            v = static_cast<T>(getInt64Value(key));
             break;
         }
         case chaos::DataType::TYPE_DOUBLE:{
-            v = getDoubleValue(key);
+            v = static_cast<T>(getDoubleValue(key));
             break;
         }
 
