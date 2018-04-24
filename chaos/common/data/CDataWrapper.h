@@ -446,6 +446,25 @@ public:
     bool isInt32ElementAtIndex(const int) const;
     bool isInt64ElementAtIndex(const int) const;
     bool isCDataWrapperElementAtIndex(const int) const;
+    template<class T>
+    T getElementAtIndex(const int pos) const{
+        if(values[pos].value_type == BSON_TYPE_DOUBLE){
+            return static_cast<T>(values[pos].value.v_double);
+        }
+        if(values[pos].value_type == BSON_TYPE_INT32){
+            return static_cast<T>(values[pos].value.v_int32);
+        }
+        if(values[pos].value_type == BSON_TYPE_INT64){
+            return static_cast<T>(values[pos].value.v_int64);
+        }
+        if(values[pos].value_type == BSON_TYPE_BOOL){
+            return static_cast<T>(values[pos].value.v_bool);
+        }
+        std::stringstream ss;
+        ss<<"type at index ["<<pos<<"] cannot convert, typeid:"<<values[pos].value_type;
+        throw CException(1, ss.str(), __PRETTY_FUNCTION__);
+        return 0;
+    }
     const char * getRawValueAtIndex(const int key,uint32_t& size) const;
 
     size_t size() const;
