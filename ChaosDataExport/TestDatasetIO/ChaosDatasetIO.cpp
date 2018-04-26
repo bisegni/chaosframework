@@ -406,7 +406,6 @@ namespace driver{
             }
             while(pnt->hasNext() ){
                 ChaosDataSet q_result(pnt->next());
-                std::cout<<"Retrieve: "<<q_result->getCompliantJSONString()<<std::endl;
                 ret.push_back(q_result);
             }
             ioLiveDataDriver->releaseQuery(pnt);

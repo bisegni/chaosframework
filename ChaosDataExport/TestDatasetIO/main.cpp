@@ -132,7 +132,6 @@ int main(int argc, char** argv) {
                 end_time=chaos::common::utility::TimingUtil::getLocalTimeStampInMicroseconds();
                 avg=cntt*1000000.0/(end_time-start_time);
                 std::cout<<"\t Average time for:"<<cntt<<" loops is:"<<avg<<" push/s, tot us: "<<(end_time-start_time)<<std::endl;
-
             }
         }
         end_time=chaos::common::utility::TimingUtil::getLocalTimeStampInMicroseconds();
