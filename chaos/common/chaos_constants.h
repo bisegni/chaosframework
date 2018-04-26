@@ -173,6 +173,14 @@ namespace chaos {
         	static const unsigned int CUTimersTimeoutinMSec                     = 5000;
         	static const unsigned int PerformanceManagerTimersTimeoutinMSec     = 5000;
             static const unsigned int ObjectStorageTimeoutinMSec                = 5000;
+            //!time to wait for queue can accept new data to push in object storage
+            /*!
+             Mds when receive a new dataset to store on history, it is push on hst sublayer
+             queue, that has a max number of element. This timeout is the max time waith by
+             mds to permit queue to can accept this new dataset. after that the new dataset
+             is nto accepted by sublayer.
+             */
+            static const unsigned int MDSHistoryQueuePushTimeoutinMSec          = 5000;
     	}
 
     };

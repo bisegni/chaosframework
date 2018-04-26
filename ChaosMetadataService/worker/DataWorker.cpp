@@ -47,7 +47,7 @@ DataWorker::~DataWorker() {}
 WorkerJobPtr DataWorker::getNextOrWait(boost::unique_lock<boost::mutex>& lock) {
     WorkerJobPtr new_job = NULL;
     while(!job_queue.pop(new_job) && work) {
-        job_condition.wait(lock);
+        consume_job_condition.wait(lock);
     }
     return new_job;
 }
@@ -56,14 +56,21 @@ void DataWorker::consumeJob(void *cookie) {
     WorkerJobPtr thread_job = NULL;
     boost::unique_lock<boost::mutex> lock(mutex_job);
     while(work) {
+        //wait for next thread
         thread_job = getNextOrWait(lock);
-        if(thread_job) executeJob(thread_job, cookie);
-        job_in_queue()--;
+        //decrease job in queue
+        job_in_queue--;
+        //unlock for next data
+        push_condition.notify_one();
+        //execute job
+        if(thread_job) {
+            executeJob(thread_job, cookie);
+        }
     }
 }
 
 void DataWorker::init(void *init_data) throw (chaos::CException) {
-    job_in_queue() = 0;
+    job_in_queue = 0;
     thread_cookie = (void**)calloc(1, sizeof(void*)*ChaosMetadataService::getInstance()->setting.worker_setting.thread_number);
     DCLAPP_ << " Using " << ChaosMetadataService::getInstance()->setting.worker_setting.thread_number << " thread for consuming job";
 }
@@ -77,7 +84,7 @@ void DataWorker::start() throw (chaos::CException) {
 
 void DataWorker::stop() throw (chaos::CException) {
     work = false;
-    job_condition.notify_all();
+    consume_job_condition.notify_all();
     job_thread_group.join_all();
 }
 
@@ -97,17 +104,24 @@ void DataWorker::deinit() throw (chaos::CException) {
     
 }
 
-int DataWorker::submitJobInfo(WorkerJobPtr job_info) {
-    LockableObjectWriteLock_t wl;
-    job_in_queue.getWriteLock(wl);
+void DataWorker::setMaxElement(uint64_t new_max_element) {
+    job_in_queue = new_max_element;
+}
+
+int DataWorker::submitJobInfo(WorkerJobPtr job_info, int64_t milliseconds_to_wait) {
+    boost::unique_lock<boost::mutex> lock(mutex_submit);
     //check if we are out of max element in queue, in other case go out
-    if(job_in_queue() > max_element) return -1000;
-    
+    if(job_in_queue > max_element) {
+        if(push_condition.wait_for(lock, boost::chrono::milliseconds(milliseconds_to_wait)) == boost::cv_status::timeout) {
+            DCLERR_ << "Datapack has gone in timeout waiting for queue free more space";
+            return -1;
+        }
+    }
     //ad this element
-    job_in_queue()++;
+    job_in_queue++;
     
     if( job_queue.push(job_info) ) {
-        job_condition.notify_one();
+        consume_job_condition.notify_one();
         return 0;
     }
     return -2;
