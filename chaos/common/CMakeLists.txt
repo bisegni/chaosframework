@@ -2,7 +2,7 @@ project(chaos_common)
 #### required libraries
 
 IF( NOT CHAOS_DISABLE_EVENTFD)
-  CheckConfigureBuild(event libevent "--disable-openssl;--enable-static" https://github.com/libevent )
+  CheckConfigureBuild(event libevent:release-2.1.8-stable "--disable-openssl;--enable-static" https://github.com/amichelotti )
 ELSE()
   SET(ZMQ_FLAGS "")
 ENDIF()

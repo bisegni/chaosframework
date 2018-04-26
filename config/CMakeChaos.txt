@@ -446,7 +446,7 @@ IF (NOT CACHE_DIR)
   SET(GITSOURCE https://github.com/amichelotti)
 
   SET (CHAOS_FRAMEWORK ${CMAKE_CURRENT_LIST_DIR}/..)
-  set (CHAOS_C_FLAGS "-Wno-deprecated -fPIC -std=c99")
+  set (CHAOS_C_FLAGS "-Wno-deprecated -fPIC")
   set (CHAOS_CXX_FLAGS "-Wno-deprecated -fPIC")
   set (CHAOS_LINKER_FLAGS "")
 
