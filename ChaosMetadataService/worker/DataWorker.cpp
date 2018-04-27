@@ -111,7 +111,9 @@ void DataWorker::setMaxElement(uint64_t new_max_element) {
 int DataWorker::submitJobInfo(WorkerJobPtr job_info, int64_t milliseconds_to_wait) {
     boost::unique_lock<boost::mutex> lock(mutex_submit);
     //check if we are out of max element in queue, in other case go out
-    if(job_in_queue > max_element) {
+    if(job_in_queue >= max_element) {
+        DCLDBG_ << "Fifo Full queue :"<<job_in_queue<<", waiting..";
+
         if(push_condition.wait_for(lock, boost::chrono::milliseconds(milliseconds_to_wait)) == boost::cv_status::timeout) {
             DCLERR_ << "Datapack has gone in timeout waiting for queue free more space";
             return -1;
