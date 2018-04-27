@@ -236,9 +236,9 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string& key,
         }
         
         if(reverse_order) {
-            q = q.sort(BSON(/*run_key<<-1<<*/counter_key<<-1/*<<chaos::DataPackCommonKey::DPCK_TIMESTAMP<<-1*/));
+            q = q.sort(BSON(run_key<<-1<<counter_key<<-1<<chaos::DataPackCommonKey::DPCK_TIMESTAMP<<-1));
         } else {
-            q = q.sort(BSON(/*run_key<<1<<*/counter_key<<1/*<<chaos::DataPackCommonKey::DPCK_TIMESTAMP<<1*/));
+            q = q.sort(BSON(run_key<<1<<counter_key<<1<<chaos::DataPackCommonKey::DPCK_TIMESTAMP<<1));
         }
         
         DEBUG_CODE(DBG<<log_message("findObject",
