@@ -19,7 +19,7 @@
  * permissions and limitations under the Licence.
  */
 #include "ProducerRegisterJsonApi.h"
-
+#include "ProducerInsertJsonApi.h"
 #include <algorithm>
 #include <string>
 

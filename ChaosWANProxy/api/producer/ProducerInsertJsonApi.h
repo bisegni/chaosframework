@@ -30,7 +30,11 @@ namespace chaos {
 				
 				class ProducerInsertJsonApi:
 				public AbstractApi {
+
+
+
 				public:
+
 					//! default constructor
 					ProducerInsertJsonApi(persistence::AbstractPersistenceDriver *_persistence_driver);
 					

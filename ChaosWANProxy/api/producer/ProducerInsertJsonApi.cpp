@@ -36,13 +36,17 @@ MAKE_API_ERR(where, "producer_insert_err", err, "producer_insert_err_msg", msg)
 #define PID_LDBG LDBG_ << "[ProducerInsertJsonApi] - "
 #define PID_LERR LERR_ << "[ProducerInsertJsonApi] - " << __PRETTY_FUNCTION__ << "(" << __LINE__ << ") - "
 static boost::posix_time::ptime const time_epoch(boost::gregorian::date(1970, 1, 1));
-static uint64_t pktid=1;
+
 //! default constructor
+//!
+
+
 ProducerInsertJsonApi::ProducerInsertJsonApi(persistence::AbstractPersistenceDriver *_persistence_driver):
 AbstractApi("jsoninsert",
             _persistence_driver){
     
 }
+
 
 //! default destructor
 ProducerInsertJsonApi::~ProducerInsertJsonApi() {
@@ -93,21 +97,11 @@ int ProducerInsertJsonApi::execute(std::vector<std::string>& api_tokens,
 	Json::StyledWriter				json_writer;
     std::string json_str=json_writer.write(input_data);
 
- //   PID_LDBG << "PROCESSING:"<<json_str.c_str();//json_writer.write(input_data).c_str();
+
+    //   PID_LDBG << "PROCESSING:"<<json_str.c_str();//json_writer.write(input_data).c_str();
     output_dataset->setSerializedJsonData(json_str.c_str()	);
 
-    if(!input_data.isMember(chaos::DataPackCommonKey::DPCK_TIMESTAMP)){
-        ts = chaos::common::utility::TimingUtil::getTimeStamp();
 
-    // add timestamp of the datapack
-    	output_dataset->addInt64Value(chaos::DataPackCommonKey::DPCK_TIMESTAMP, ts);
-    }
-    if(!input_data.isMember(chaos::DataPackCommonKey::DPCK_SEQ_ID)){
-    	output_dataset->addInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID,pktid++ );
-    }
-    if(!input_data.isMember(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_RUN_ID)){
-        output_dataset->addInt64Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_RUN_ID,(int64_t)0 );
-    }
     //scan other memebrs to create the datapack
     //call persistence api for insert the data
     if((err = persistence_driver->pushNewDataset(producer_name ,

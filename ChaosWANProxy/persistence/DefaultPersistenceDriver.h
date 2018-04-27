@@ -50,7 +50,7 @@ namespace chaos {
 			class DefaultPersistenceDriver:
 			public AbstractPersistenceDriver,
 			protected common::network::URLServiceFeederHandler,
-			protected chaos::common::direct_io::DirectIOClientConnectionEventHandler,
+            protected chaos::common::direct_io::DirectIOClientConnectionEventHandler,protected chaos::common::async_central::TimerHandler,
 			public chaos::common::utility::InizializableService {
 				
 				chaos::common::network::NetworkBroker		*network_broker;
@@ -59,6 +59,13 @@ namespace chaos {
 				
 				chaos::common::network::URLServiceFeeder	connection_feeder;
 				
+                typedef struct _cuids {
+                     uint64_t runid;
+                     uint64_t pckid;
+                     uint64_t last_pckid;
+                     uint64_t last_ts;
+            } cuids_t;
+                cuids_t& getCuid(const std::string& name){return m_cuid[name];}
 			protected:
 				//!inherited by @common::network::URLServiceFeederHandler
 				void  disposeService(void *service_ptr);
@@ -69,6 +76,10 @@ namespace chaos {
 				//! inherited by @chaos::common::direct_io::DirectIOClientConnectionEventHandler
 				void handleEvent(chaos_direct_io::DirectIOClientConnection *client_connection,
 								 chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event);
+
+                void timeout();
+                std::map<std::string, cuids_t> m_cuid;
+
 			public:
 				DefaultPersistenceDriver(chaos::common::network::NetworkBroker *_network_broker);
 				~DefaultPersistenceDriver();

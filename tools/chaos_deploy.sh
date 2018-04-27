@@ -158,7 +158,10 @@ else
 
 #    popd > /dev/null
     if [ $listupdate == "all" ] || [[ $listupdate =~ webui ]];then 
-	deployServer $WEBUI_SERVER
+	for i in $WEBUI_SERVER;do
+	    deployServer $i	
+	done
+
     fi
 
 
@@ -179,7 +182,11 @@ else
     fi
 
     if [ $listupdate == "all" ] || [[ $listupdate =~ wan ]];then 
-	deployServer $WAN_SERVER
+	for i in $WAN_SERVER;do
+	    deployServer $i	
+	done
+
+
     fi
 
 
@@ -504,7 +511,9 @@ fi
 
 if [ $listupdate == "all" ] || [[ $listupdate =~ webui ]];then 
     if [ -n "$WEBUI_SERVER" ]; then
-	deploy_install "$WEBUI_SERVER" webui
+	for i in $WEBUI_SERVER;do
+	    deploy_install "$i" webui
+	done
     fi
 fi
 
