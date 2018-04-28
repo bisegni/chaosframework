@@ -24,7 +24,10 @@ codequality:
     - docker run --env SOURCE_CODE="$PWD" --volume "$PWD"/chaos:/code --volume /var/run/docker.sock:/var/run/docker.sock "registry.gitlab.com/gitlab-org/security-products/codequality:$SP_VERSION" /code
   artifacts:
     paths: [codeclimate.json]
-
+  only:
+    - tags
+    - web
+    
 build_framework_x86_64:
   tags:
     - chaos
@@ -53,7 +56,8 @@ build_framework_x86_64:
         - 'chaos-distrib-x86_64-Linux'
     expire_in: 4 hour
   only:
-    - experimental
+    - tags
+    - web
 
 build_framework_x86_64_test:
   tags:
@@ -76,7 +80,8 @@ build_framework_x86_64_test:
     expire_in: 1 hour
   coverage: '/^TOTAL.*\s+(\d+\%)$/'
   only:
-    - experimental
+    - tags
+    - web
 
 build_framework_centos7:
   tags:
@@ -107,7 +112,8 @@ build_framework_centos7:
         - 'chaos-distrib-x86_64-centos7'
     expire_in: 4 hour
   only:
-    - experimental
+    - tags
+    - web
 
 execute_framework_centos7_test:
   tags:
@@ -125,7 +131,8 @@ execute_framework_centos7_test:
         - 'chaos-distrib-x86_64-centos7'
     expire_in: 4 hour
   only:
-    - experimental
+    - tags
+    - web
 
 execute_framework_centos7_deploy:
   tags:
@@ -139,7 +146,90 @@ execute_framework_centos7_deploy:
     - ls -la
     - scp chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/$CI_COMMIT_REF_NAME/x86_64/centos/7/chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz
   only:
+    - tags
+    - web
+
+build_framework_x86_64_c98:
+  tags:
+    - chaos
+    - docker
+    - linux
+    - fast
+  stage: build
+  image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
+  script:
+    - tools/chaos_clean.sh
+    - cmake -DCHAOS_ENABLE_C11=OFF -DCHAOS_ARCHITECTURE_TEST=ON -DCMAKE_BUILD_TYPE=PROFILE .
+    - make clean
+    - make  -j 4
+    - make install
+    - mv /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux-c98
+  cache:
+    key: x86_64_c98_$CI_BUILD_REF_NAME
+    paths:
+        - /builds/chaos-lnf-control/chaosframework/config/CACHE/
+  artifacts:
+    paths:
+        - 'chaos-distrib-x86_64-Linux-c98'
+    expire_in: 4 hour
+  only:
+    - tags
+    - web
+
+build_framework_x86_64_c98_test:
+  tags:
+    - chaos
+    - docker
+    - linux
+  stage: test
+  image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
+  script:
+    - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux-c98/lib
+    - chaos-distrib-x86_64-Linux-c98/bin/TestFramework
+  only:
     - experimental
+
+build_framework_arm:
+  tags:
+    - chaos
+    - docker
+    - linux
+    - fast
+  stage: build
+  image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
+  script:
+    - tools/chaos_clean.sh
+    - cmake -DCHAOS_TARGET=armhf .
+    - make clean
+    - make  -j 4
+    - make install
+  cache:
+    key: arm-compilation_$CI_BUILD_REF_NAME
+    paths:
+        - /builds/chaos-lnf-control/chaosframework/config/CACHE/
+  artifacts:
+    paths:
+        - 'chaos-distrib-armhf'
+    expire_in: 4 hour
+  only:
+    - tags
+    - web
+
+# build_framework_arm_test:
+#   tags:
+#     - chaos
+#     - docker
+#     - linux
+#   stage: test
+#   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
+#   script:
+#     - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-armhf
+#     - chaos-distrib-armhf/bin/FrameworkTest
+#   only:
+#     - development
+#     - master
+#     - schedules
+#     - web
 
 llvm_build_framework_x86_64:
   tags:
@@ -183,108 +273,30 @@ llvm_build_framework_x86_64_test:
   only:
     - web
 
-build_framework_x86_64_c98:
-  tags:
-    - chaos
-    - docker
-    - linux
-    - fast
-  stage: build
-  image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
-  script:
-    - tools/chaos_clean.sh
-    - cmake -DCHAOS_ENABLE_C11=OFF -DCHAOS_ARCHITECTURE_TEST=ON -DCMAKE_BUILD_TYPE=PROFILE .
-    - make clean
-    - make  -j 4
-    - make install
-    - mv /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux-c98
-  cache:
-    key: x86_64_c98_$CI_BUILD_REF_NAME
-    paths:
-        - /builds/chaos-lnf-control/chaosframework/config/CACHE/
-  artifacts:
-    paths:
-        - 'chaos-distrib-x86_64-Linux-c98'
-    expire_in: 4 hour
-  only:
-    - experimental
-
-build_framework_x86_64_c98_test:
-  tags:
-    - chaos
-    - docker
-    - linux
-  stage: test
-  image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
-  script:
-    - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux-c98/lib
-    - chaos-distrib-x86_64-Linux-c98/bin/TestFramework
-  only:
-    - experimental
-
-build_framework_arm:
-  tags:
-    - chaos
-    - docker
-    - linux
-    - fast
-  stage: build
-  image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
-  script:
-    - tools/chaos_clean.sh
-    - cmake -DCHAOS_TARGET=armhf .
-    - make clean
-    - make  -j 4
-    - make install
-  cache:
-    key: arm-compilation_$CI_BUILD_REF_NAME
-    paths:
-        - /builds/chaos-lnf-control/chaosframework/config/CACHE/
-  artifacts:
-    paths:
-        - 'chaos-distrib-armhf'
-    expire_in: 4 hour
-  only:
-    - experimental
-
-# build_framework_arm_test:
-#   tags:
-#     - chaos
-#     - docker
-#     - linux
-#   stage: test
-#   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
-#   script:
-#     - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-armhf
-#     - chaos-distrib-armhf/bin/FrameworkTest
-#   only:
-#     - development
-#     - master
-#     - schedules
-#     - web
-
-# exp_llvm_scan_coverity:
-#     tags:
-#       - chaos
-#       - docker
-#       - linux
-#     stage: build
-#     image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/llvm_coverity_u1710
-#     script:
-#       - mkdir -p /tmp/cov-int
-#       - cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCHAOS_ARCHITECTURE_TEST=ON .
-#       - make clean
-#       - /tmp/coverity/bin/cov-build --dir /tmp/cov-int make -j 4
-#       - cd /tmp
-#       - tar czvf chaos.tgz cov-int
-#       - curl --form token=i9B9MI9n53zWdx2iSS4Qvg --form email=bisegni@lnf.infn.it --form file=@/tmp/chaos.tgz --form version="1.0.0" --form description="Beta"  https://scan.coverity.com/builds?project=%21CHAOS+Control+System
-#     cache:
-#       key: scan_coverity_$CI_BUILD_REF_NAME
-#       paths:
-#           - /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/
-#           - /builds/chaos-lnf-control/chaosframework/config/CACHE/
-#     only:
-#       - web
+exp_llvm_scan_coverity:
+    tags:
+      - chaos
+      - docker
+      - linux
+    stage: build
+    image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/llvm_coverity_u1710
+    dependencies:
+      - llvm_build_framework_x86_64_test
+    script:
+      - mkdir -p /tmp/cov-int
+      - cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCHAOS_ARCHITECTURE_TEST=ON .
+      - make clean
+      - /tmp/coverity/bin/cov-build --dir /tmp/cov-int make -j 4
+      - cd /tmp
+      - tar czvf chaos.tgz cov-int
+      - curl --form token=i9B9MI9n53zWdx2iSS4Qvg --form email=bisegni@lnf.infn.it --form file=@/tmp/chaos.tgz --form version="1.0.0" --form description="Beta"  https://scan.coverity.com/builds?project=%21CHAOS+Control+System
+    cache:
+      key: scan_coverity_$CI_BUILD_REF_NAME
+      paths:
+          - /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/
+          - /builds/chaos-lnf-control/chaosframework/config/CACHE/
+    only:
+      - web
 
 pages:
   stage: publish
@@ -298,4 +310,5 @@ pages:
       - public
     expire_in: 7 days
   only:
-    - experimental
+    - tags
+    - web
