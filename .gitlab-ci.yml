@@ -39,7 +39,7 @@ build_framework_x86_64:
     - tools/chaos_clean.sh
     - cmake -DCHAOS_ARCHITECTURE_TEST=ON -DCMAKE_BUILD_TYPE=PROFILE .
     - make clean
-    - make  -j 4
+    - make  -j 3
     - make install
     - cd ccs
     - /Qt/5.9.3/gcc_64/bin/qmake
@@ -92,11 +92,11 @@ build_framework_centos7:
     - tools/chaos_clean.sh
     - cmake -DCHAOS_ARCHITECTURE_TEST=ON .
     - make clean
-    - make  -j 4
+    - make  -j 3
     - make install
     - cd ccs
     - /Qt/5.9.3/gcc_64/bin/qmake
-    - make -j 4
+    - make -j 3
     - mv /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-centos7
   cache:
     key: x86_64_centos7_$CI_BUILD_REF_NAME
@@ -155,7 +155,7 @@ build_framework_x86_64_c98:
     - tools/chaos_clean.sh
     - cmake -DCHAOS_ENABLE_C11=OFF -DCHAOS_ARCHITECTURE_TEST=ON -DCMAKE_BUILD_TYPE=PROFILE .
     - make clean
-    - make  -j 4
+    - make  -j 3
     - make install
     - mv /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux-c98
   cache:
@@ -194,7 +194,7 @@ build_framework_arm:
     - tools/chaos_clean.sh
     - cmake -DCHAOS_TARGET=armhf .
     - make clean
-    - make  -j 4
+    - make  -j 3
     - make install
   cache:
     key: arm-compilation_$CI_BUILD_REF_NAME
@@ -234,7 +234,7 @@ llvm_build_framework_x86_64:
     - tools/chaos_clean.sh
     - cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCHAOS_ARCHITECTURE_TEST=ON .
     - make clean
-    - make  -j 4
+    - make  -j 3
     - make install
     - mv /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux-llvm
   cache:
