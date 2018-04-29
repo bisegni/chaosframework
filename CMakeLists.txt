@@ -14,6 +14,7 @@ unset(CMAKE_CXX_COMPILER_WORKS)
 #specify option
 option(CHAOS_ONLY_DEPENDECY "Download all the dependency" OFF)
 option(CHAOS_ARCHITECTURE_TEST "Architecture tests" OFF)
+option(CLING_VIRTUAL_MACHINE "Enable cling for scripting" OFF)
 option(CHAOS_CDS "Chaos Data Service" ON)
 option(CHAOS_MDS "Chaos MetaData Service" ON)
 option(CHAOS_WAN "Chaos Wan Service" OFF)
@@ -76,6 +77,38 @@ IF (CHAOS_ONLY_DEPENDECY OR
      MESG("${GTEST_LIBRARY}")
 ENDIF()
 
+IF (CLING_VIRTUAL_MACHINE)
+  MESG("Create directory for cling download files")
+  EXECUTE_PROCESS(
+  COMMAND mkdir -p ${CMAKE_CURRENT_LIST_DIR}/ext_dep/cling-src;
+  RESULT_VARIABLE err
+      OUTPUT_VARIABLE out
+  )
+  
+  if(err)
+  	ERROR("CANNOT create ${CMAKE_CURRENT_LIST_DIR}/ext_dep/cling-src directory: ${out}")
+  ELSE()
+    MESG("Downloading cling")
+    EXECUTE_PROCESS(
+    COMMAND ${CMAKE_CURRENT_LIST_DIR}/config/cling_clone.sh ${CMAKE_CURRENT_LIST_DIR}/ext_dep/cling-src;
+    WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/ext_dep/cling-src
+    RESULT_VARIABLE err
+        OUTPUT_VARIABLE out
+    )
+
+    #cling
+    MESG("Add cling as external project")
+    ExternalProject_Add(
+       cling
+       PREFIX "${CMAKE_BINARY_DIR}/ext_dep/cling-prefix"
+       SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/cling-src"
+       BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/cling-build"
+       CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
+       LOG_DOWNLOAD ON
+       LOG_CONFIGURE ON
+       LOG_BUILD ON)
+  ENDIF()
+ENDIF()
 
 SET( ${PROJECT_NAME}_MAJOR_VERSION 0 )
 SET( ${PROJECT_NAME}_MINOR_VERSION 1 )
