@@ -50,6 +50,21 @@ namespace chaos {
 				//! register the dataset of ap roducer
 				virtual int registerDataset(const std::string& producer_key,
 											chaos::common::data::CDataWrapper& last_dataset) = 0;
+                /**
+                  * return a list of metrics, corresponding to CHAOS NODES
+                  * \param search_string initial search string
+                  * \param alive limit the search to alive nodes
+                  * \return an array of metrics in the form <NODE UID>/<METRICNAME>
+                */
+                virtual std::vector<std::string> searchMetrics(const std::string&search_string,bool alive)=0;
+                /**
+                  * query a list of metrics, in the time
+                  * \param start start time search
+                  * \param end end time search
+                  * \param metrics array of metric to search
+                  * \return a CDataWrapper unique pointer returning an array of answers.
+                */
+                virtual chaos::common::data::CDWUniquePtr queryMetrics(const std::string&start,const std::string&end,const std::vector<std::string>& metrics)=0;
 			};
 		}
 	}

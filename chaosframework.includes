@@ -4,3 +4,8 @@
 
 config
 chaos/common
+ChaosWANProxy/api/producer
+ChaosWANProxy/api/consumer
+ChaosWANProxy
+ChaosWANProxy/api
+ChaosWANProxy/api/grafana

@@ -314,3 +314,11 @@ void DefaultPersistenceDriver::timeout(){
     }
 
 }
+std::vector<std::string> DefaultPersistenceDriver::searchMetrics(const std::string&search_string,bool alive){
+std::vector<std::string> ret;
+return ret;
+}
+chaos::common::data::CDWUniquePtr DefaultPersistenceDriver::queryMetrics(const std::string&start,const std::string&end,const std::vector<std::string>& metrics){
+    chaos::common::data::CDWUniquePtr ret;
+    return ret;
+}
