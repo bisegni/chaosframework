@@ -581,6 +581,8 @@
 		32761A3C1B3157CA006C8719 /* GetCommandAndTemplateDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32761A3A1B3157CA006C8719 /* GetCommandAndTemplateDescription.cpp */; };
 		32761A401B37F202006C8719 /* SubmitBatchCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32761A3E1B37F202006C8719 /* SubmitBatchCommand.cpp */; };
 		327791E21B67728300FEDD52 /* ServiceApiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327791E01B67728300FEDD52 /* ServiceApiGroup.cpp */; };
+		3277A22E20973A0100FD7307 /* CPPScriptVM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3277A22C20973A0100FD7307 /* CPPScriptVM.cpp */; };
+		3277A22F20973A0100FD7307 /* CPPScriptVM.h in Headers */ = {isa = PBXBuildFile; fileRef = 3277A22D20973A0100FD7307 /* CPPScriptVM.h */; };
 		32788D7F1F277207009BBB1E /* OpcodeDriverWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 32788D7D1F277207009BBB1E /* OpcodeDriverWrapper.h */; };
 		32788D831F27766A009BBB1E /* OpcodeExternalCommandMapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 32788D811F27766A009BBB1E /* OpcodeExternalCommandMapper.h */; };
 		327967B515DF99FB0003C6DA /* RpcClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327967B415DF99FB0003C6DA /* RpcClient.cpp */; };
@@ -2006,6 +2008,8 @@
 		32761A3F1B37F202006C8719 /* SubmitBatchCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubmitBatchCommand.h; sourceTree = "<group>"; };
 		327791E01B67728300FEDD52 /* ServiceApiGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceApiGroup.cpp; sourceTree = "<group>"; };
 		327791E11B67728300FEDD52 /* ServiceApiGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceApiGroup.h; sourceTree = "<group>"; };
+		3277A22C20973A0100FD7307 /* CPPScriptVM.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CPPScriptVM.cpp; sourceTree = "<group>"; };
+		3277A22D20973A0100FD7307 /* CPPScriptVM.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CPPScriptVM.h; sourceTree = "<group>"; };
 		32788D7D1F277207009BBB1E /* OpcodeDriverWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpcodeDriverWrapper.h; sourceTree = "<group>"; };
 		32788D811F27766A009BBB1E /* OpcodeExternalCommandMapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpcodeExternalCommandMapper.h; sourceTree = "<group>"; };
 		327967B415DF99FB0003C6DA /* RpcClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = RpcClient.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
@@ -4615,6 +4619,15 @@
 			path = service;
 			sourceTree = "<group>";
 		};
+		3277A22B209739C500FD7307 /* cling */ = {
+			isa = PBXGroup;
+			children = (
+				3277A22C20973A0100FD7307 /* CPPScriptVM.cpp */,
+				3277A22D20973A0100FD7307 /* CPPScriptVM.h */,
+			);
+			path = cling;
+			sourceTree = "<group>";
+		};
 		327F39A41AEAA1EB0000C845 /* data_service */ = {
 			isa = PBXGroup;
 			children = (
@@ -5583,6 +5596,7 @@
 		32E727031CE200380094F826 /* script */ = {
 			isa = PBXGroup;
 			children = (
+				3277A22B209739C500FD7307 /* cling */,
 				32612AB41CE2053D00F3B8F3 /* lua */,
 				32612ABB1CE209BB00F3B8F3 /* ScriptManager.cpp */,
 				32612ABC1CE209BB00F3B8F3 /* ScriptManager.h */,
@@ -6021,6 +6035,7 @@
 				32FC2EA91D09864F00475B25 /* service_error.h in Headers */,
 				32A88BD21CF8228A001DBAF5 /* llimits.h in Headers */,
 				3255E72815EA87D2005C96CA /* AbstractEventDispatcher.h in Headers */,
+				3277A22F20973A0100FD7307 /* CPPScriptVM.h in Headers */,
 				32661C761AA867E100F1A721 /* MessageRequestFuture.h in Headers */,
 				325DE9F215EC031E00D6F34E /* EventChannel.h in Headers */,
 				32995C4B1BB2FF2600F68148 /* CheckList.h in Headers */,
@@ -7034,6 +7049,7 @@
 				3289F9A5168508460080D93F /* SQLiteEntityDB.cpp in Sources */,
 				32C0CC98168CC16400BC2DA7 /* Entity.cpp in Sources */,
 				32A88BEF1CF8228A001DBAF5 /* lundump.c in Sources */,
+				3277A22E20973A0100FD7307 /* CPPScriptVM.cpp in Sources */,
 				32B1378E189BEC4100B17CA4 /* ZMQDirectIOServer.cpp in Sources */,
 				32BFF912176C862A00D27A04 /* StartableService.cpp in Sources */,
 				3214EF1F1D467FE1004DB689 /* Dataset.cpp in Sources */,
@@ -7698,7 +7714,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_PREPROCESSOR_DEFINITIONS = "CLING_VIRTUAL_MACHINE=ON";
 				HEADER_SEARCH_PATHS = (
 					.,
 					usr/local/include,
@@ -7766,6 +7782,7 @@
 					"-lboost_log",
 					"-lboost_log_setup",
 					"-lzmq",
+					"-lcling",
 					"-ljsoncpp",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -7810,6 +7827,7 @@
 					"-lboost_log",
 					"-lboost_log_setup",
 					"-lzmq",
+					"-lcling",
 					"-ljsoncpp",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";

@@ -120,9 +120,9 @@ x = hasOption(y);
         MapStrKeyStrValue map_kv_param_script_vm;
         
         //fill the rpc
-        void fillKVParameter(std::map<std::string, std::string>& kvmap,
-                             const std::string& kv_string,
-                             const std::string& regex);
+//        void fillKVParameter(std::map<std::string, std::string>& kvmap,
+//                             const std::string& kv_string,
+//                             const std::string& regex);
     public:
         void loadStartupParameter(int, char* argv[]) throw (CException);
         void loadStreamParameter(std::istream &config_file) throw (CException);

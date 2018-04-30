@@ -75,8 +75,8 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException) {
         addOption(InitOption::OPT_DIRECT_IO_PRIORITY_SERVER_PORT, po::value<uint32_t>()->default_value(_DIRECT_IO_PRIORITY_PORT), "DirectIO priority server port");
         addOption(InitOption::OPT_DIRECT_IO_SERVICE_SERVER_PORT, po::value<uint32_t>()->default_value(_DIRECT_IO_SERVICE_PORT), "DirectIO service server port");
         addOption(InitOption::OPT_DIRECT_IO_SERVER_THREAD_NUMBER, po::value<uint32_t>()->default_value(2),"DirectIO server thread number");
-        addOption(InitOption::OPT_DIRECT_IO_SERVER_IMPL_KV_PARAM, po::value< std::vector<std::string> >(),"DirectIO implementation key value parameters[k|v]");
-        addOption(InitOption::OPT_DIRECT_IO_CLIENT_IMPL_KV_PARAM, po::value< std::vector<std::string> >(),"DirectIO implementation key value parameters[k|v]");
+        addOption(InitOption::OPT_DIRECT_IO_SERVER_IMPL_KV_PARAM, po::value< std::vector<std::string> >(),"DirectIO implementation key value parameters[k:v]");
+        addOption(InitOption::OPT_DIRECT_IO_CLIENT_IMPL_KV_PARAM, po::value< std::vector<std::string> >(),"DirectIO implementation key value parameters[k:v]");
         addOption(InitOption::OPT_DIRECT_IO_LOG_METRIC, po::value< bool >()->zero_tokens(), "Enable the logging of the DirectIO metric");
         addOption(InitOption::OPT_DIRECT_IO_LOG_METRIC_UPDATE_INTERVAL, po::value< uint64_t >()->default_value(5), "The time interval between metric samples");
         addOption(InitOption::OPT_DIRECT_IO_CLIENT_LOG_METRIC_MERGED_ENDPOINT, po::value< bool >()->default_value(true), "Merge the metric values(of all endpoint) together");
@@ -86,7 +86,7 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException) {
         addOption(InitOption::OPT_RPC_IMPLEMENTATION, po::value< string >()->default_value("ZMQ"), "Specify the rpc implementation");
         addOption(InitOption::OPT_RPC_SERVER_PORT, po::value<uint32_t>()->default_value(_RPC_PORT), "RPC server port");
         addOption(InitOption::OPT_RPC_SERVER_THREAD_NUMBER, po::value<uint32_t>()->default_value(2),"RPC server thread number");
-        addOption(InitOption::OPT_RPC_IMPL_KV_PARAM, po::value<string>(),"RPC implementation key value parameter[k|v]");
+        addOption(InitOption::OPT_RPC_IMPL_KV_PARAM, po::value< std::vector<std::string> >(),"RPC implementation key value parameter[k:v]");
         addOption(InitOption::OPT_RPC_DOMAIN_QUEUE_THREAD, po::value<uint32_t>()->default_value(1),"RPC domain scheduler queue's thread consumer number");
         addOption(InitOption::OPT_RPC_DOMAIN_SCHEDULER_TYPE, po::value<uint32_t>()->default_value(0),"RPC domain scheduler type[0-default, 1-shared]");
         addOption(InitOption::OPT_EVENT_DISABLE, po::value< bool >()->default_value(false), "Disable the event system [by default it is enable]");
@@ -99,7 +99,7 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException) {
         addOption(InitOption::OPT_PLUGIN_ENABLE, po::value< bool >()->zero_tokens(), "Enable the use of the plugin");
         addOption(InitOption::OPT_PLUGIN_DIRECTORY_PATH, po::value< std::string >()->default_value("."), "Specify the directory where are stored the plugin");
         
-        addOption(InitOption::OPT_SCRIPT_VM_KV_PARAM, po::value< std::vector<std::string> >(),"Script virtual machine key value parameter [k=v]");
+        addOption(InitOption::OPT_SCRIPT_VM_KV_PARAM, po::value< std::vector<std::string> >(),"Script virtual machine key value parameter [k:v]");
 
         addOption(InitOption::OPT_REST_POLL_TIME_US, po::value< uint32_t >()->default_value(10),"Rest poll time in us (less means more responsive, but more cpu intensive)");
 
@@ -291,7 +291,7 @@ void GlobalConfiguration::checkDefaultOption() throw (CException) {
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(uint64_t, rpc_enable_log_metric_update_sec, InitOption::OPT_RPC_LOG_METRIC_UPDATE_INTERVAL, 5);
     configuration->addInt64Value(InitOption::OPT_RPC_LOG_METRIC_UPDATE_INTERVAL, rpc_enable_log_metric_update_sec);
     
-    CHECK_AND_DEFINE_OPTION(string, rpc_impl_kv_param, InitOption::OPT_RPC_IMPL_KV_PARAM);
+    CHECK_AND_DEFINE_OPTION(std::vector<std::string>, rpc_impl_kv_param, InitOption::OPT_RPC_IMPL_KV_PARAM);
     
     //fill the key value list
     if(rpc_impl_kv_param.size()) {
@@ -414,36 +414,36 @@ void GlobalConfiguration::addOptionZeroTokens(const char* name,
 }
 
 
-void GlobalConfiguration::fillKVParameter(std::map<std::string, std::string>& kvmap,
-                                          const std::string& kv_string,
-                                          const std::string& regex) {
-    //no cache server provided
-    std::string tmp = kv_string;
-    if(regex.size() &&
-       !regex_match(tmp, boost::regex(regex.c_str()))) {
-        throw chaos::CException(-3, "Malformed kv parameter string", __PRETTY_FUNCTION__);
-    }
-    std::vector<std::string> kvtokens;
-    std::vector<std::string> kv_splitted;
-    algorithm::split(kvtokens,
-                     kv_string,
-                     algorithm::is_any_of("|"),
-                     algorithm::token_compress_on);
-    for (int idx = 0;
-         idx < kvtokens.size();
-         idx++) {
-        //clear previosly pair
-        kv_splitted.clear();
-        
-        //get new pair
-        algorithm::split(kv_splitted,
-                         kvtokens[idx],
-                         algorithm::is_any_of("="),
-                         algorithm::token_compress_on);
-        // add key/value pair
-        kvmap.insert(make_pair(kv_splitted[0], kv_splitted[1]));
-    }
-}
+//void GlobalConfiguration::fillKVParameter(std::map<std::string, std::string>& kvmap,
+//                                          const std::string& kv_string,
+//                                          const std::string& regex) {
+//    //no cache server provided
+//    std::string tmp = kv_string;
+//    if(regex.size() &&
+//       !regex_match(tmp, boost::regex(regex.c_str()))) {
+//        throw chaos::CException(-3, "Malformed kv parameter string", __PRETTY_FUNCTION__);
+//    }
+//    std::vector<std::string> kvtokens;
+//    std::vector<std::string> kv_splitted;
+//    algorithm::split(kvtokens,
+//                     kv_string,
+//                     algorithm::is_any_of("|"),
+//                     algorithm::token_compress_on);
+//    for (int idx = 0;
+//         idx < kvtokens.size();
+//         idx++) {
+//        //clear previosly pair
+//        kv_splitted.clear();
+//
+//        //get new pair
+//        algorithm::split(kv_splitted,
+//                         kvtokens[idx],
+//                         algorithm::is_any_of("="),
+//                         algorithm::token_compress_on);
+//        // add key/value pair
+//        kvmap.insert(make_pair(kv_splitted[0], kv_splitted[1]));
+//    }
+//}
 
 void GlobalConfiguration::fillKVParameter(std::map<std::string, std::string>& kvmap,
                                           const std::vector<std::string>& kv_vector,
