@@ -25,6 +25,7 @@
 #include <chaos/common/global.h>
 
 #include <boost/filesystem.hpp>
+
 #include <boost/dll.hpp>
 using namespace chaos::common::data;
 using namespace chaos::common::script;
@@ -38,6 +39,9 @@ using namespace boost::filesystem;
 
 DEFINE_CLASS_FACTORY(CPPScriptVM, AbstractScriptVM);
 
+using ScriptProcedurePrototype = int(const ScriptInParam& input_parameter);
+using ScriptFunctionPrototype = int(const ScriptInParam& input_parameter, ScriptOutParam& output_parameter);
+
 CPPScriptVM::CPPScriptVM(const std::string& name):
 AbstractScriptVM(name){}
 
@@ -46,7 +50,8 @@ CPPScriptVM::~CPPScriptVM() {}
 void CPPScriptVM::init(void *init_data) throw(chaos::CException) {
     path llvm_path;
     char *args[1];
-    args[0] = const_cast<char*>(boost::dll::program_location().c_str());
+    const std::string path = boost::dll::program_location().string();
+    args[0] = const_cast<char*>(path.c_str());
 
     if(GlobalConfiguration::getInstance()->getRpcImplKVParam().count("llvm_path")) {
         llvm_path = GlobalConfiguration::getInstance()->getRpcImplKVParam()["llvm_path"];
@@ -60,6 +65,12 @@ void CPPScriptVM::init(void *init_data) throw(chaos::CException) {
     }
     
     interpreter.reset(new ::cling::Interpreter(1, args, llvm_path.c_str()));
+    
+    //set the default include file
+    ::cling::Interpreter::CompilationResult cr = interpreter->declare("#include <chaos/common/data/CDataVariant.h>");
+    if(cr == ::cling::Interpreter::kFailure) {
+        ERR << "Error including default chaos files";
+    }
 }
 
 void CPPScriptVM::deinit() throw(chaos::CException) {
@@ -68,6 +79,12 @@ void CPPScriptVM::deinit() throw(chaos::CException) {
 
 int CPPScriptVM::loadScript(const std::string& loadable_script) {
     last_error = 0;
+    CHAOS_ASSERT(interpreter.get());
+    
+    if(interpreter->declare(loadable_script) != ::cling::Interpreter::kSuccess){
+        last_error = -1;
+        ERR << "Error processing script";
+    }
     return last_error;
 }
 
@@ -75,19 +92,32 @@ int CPPScriptVM::callFunction(const std::string& function_name,
                               const ScriptInParam& input_parameter,
                               ScriptOutParam& output_parameter) {
     last_error = 0;
-    return last_error;
+    void* function_addr = interpreter->getAddressOfGlobal(function_name);
+    if(function_addr == nullptr) {
+        last_error = -1;
+        ERR << CHAOS_FORMAT("Function %1% with %2% inpu tparamter and %3% output parameter has not benn found",%function_name%input_parameter.size()%output_parameter.size());
+    }
+    ScriptFunctionPrototype* s_func = ::cling::utils::VoidToFunctionPtr<ScriptFunctionPrototype*>(function_addr);
+    return (last_error = s_func(input_parameter,
+                                output_parameter));
 }
 
 int CPPScriptVM::callProcedure(const std::string& function_name,
                                const ScriptInParam& input_parameter) {
     last_error = 0;
-    return last_error;
+    void* procedure_addr = interpreter->getAddressOfGlobal(function_name);
+    if(procedure_addr == nullptr) {
+        last_error = -1;
+        ERR << CHAOS_FORMAT("Procedure %1% with %2% input paramter has not benn found",%function_name%input_parameter.size());
+    }
+    ScriptProcedurePrototype* s_proc = ::cling::utils::VoidToFunctionPtr<ScriptProcedurePrototype*>(procedure_addr);
+    return (last_error = s_proc(input_parameter));
 }
 
-int CPPScriptVM::functionExists(const std::string& name,
+int CPPScriptVM::functionExists(const std::string& function_name,
                                 bool& exists) {
     int err = 0;
-    exists = false;
+    exists = interpreter->getAddressOfGlobal(function_name) != nullptr;
     return err;
 }
 #endif /*CLING_VIRTUAL_MACHINE*/

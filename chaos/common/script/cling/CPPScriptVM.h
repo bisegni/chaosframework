@@ -54,7 +54,7 @@ namespace chaos {
                                      ScriptOutParam& output_parameter);
                     int callProcedure(const std::string& function_name,
                                       const ScriptInParam& input_parameter);
-                    int functionExists(const std::string& name,
+                    int functionExists(const std::string& function_name,
                                        bool& exists);
                 };
             }
