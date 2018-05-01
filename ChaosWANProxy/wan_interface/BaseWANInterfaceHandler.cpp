@@ -43,9 +43,15 @@ void ApiGroupVersionDomain::clearHashTableElement(const void *key,
 int ApiGroupVersionDomain::callGroupApi(std::vector<std::string>& api_tokens,
 										const Json::Value& input_data,
 										std::map<std::string, std::string>& output_header,
-										Json::Value& output_data) {
+                                        Json::Value& output_data) {
 	int err = 0;
 	//get the first tocken for the group name
+
+    if(api_tokens.empty()){
+        LERR_ << "not group specified:";
+
+        return -1;
+    }
 	const std::string& group_name = api_tokens.front();
 	AbstractApiGroup *api_group_selected = NULL;
 	if((err = getElement(group_name.c_str(), (uint32_t)group_name.size(), &api_group_selected)) ||

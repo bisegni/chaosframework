@@ -1,7 +1,5 @@
 .
-/usr/local/chaos/chaos-distrib/include
-
-
+./usr/local/include
 config
 chaos/common
 ChaosWANProxy/api/producer

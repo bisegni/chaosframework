@@ -104,7 +104,7 @@ namespace chaos {
 				int registerDataset(const std::string& producer_key,
 									chaos::common::data::CDataWrapper& last_dataset);
 
-                 std::vector<std::string> searchMetrics(const std::string&search_string,bool alive);
+                 chaos::common::data::CDWShrdPtr searchMetrics(const std::string&search_string,bool alive);
                 /**
                   * query a list of metrics, in the time
                   * \param start start time search
@@ -112,7 +112,7 @@ namespace chaos {
                   * \param metrics array of metric to search
                   * \return a CDataWrapper unique pointer returning an array of answers.
                 */
-                 chaos::common::data::CDWUniquePtr queryMetrics(const std::string&start,const std::string&end,const std::vector<std::string>& metrics);
+                 chaos::common::data::CDWShrdPtr queryMetrics(const std::string&start,const std::string&end,const std::vector<std::string>& metrics);
 
 
 			};
