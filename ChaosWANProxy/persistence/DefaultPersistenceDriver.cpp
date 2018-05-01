@@ -316,7 +316,7 @@ void DefaultPersistenceDriver::timeout(){
 }
 chaos::common::data::CDWShrdPtr DefaultPersistenceDriver::searchMetrics(const std::string&search_string,bool alive){
     chaos::common::data::CDWShrdPtr ret(new CDataWrapper());
-    int node_type=1; //CU
+    int node_type=2; //CU
     ChaosStringVector node_tmp;
     if(mds_message_channel->searchNode(search_string,
                                        node_type,
