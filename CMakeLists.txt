@@ -78,16 +78,14 @@ IF (CHAOS_ONLY_DEPENDECY OR
 ENDIF()
 
 IF (CLING_VIRTUAL_MACHINE)
-  MESG("Create directory for cling download files")
-  EXECUTE_PROCESS(
-  COMMAND mkdir -p ${CMAKE_CURRENT_LIST_DIR}/ext_dep/cling-src;
-  RESULT_VARIABLE err
+  IF(NOT EXISTS ${CMAKE_CURRENT_LIST_DIR}/ext_dep/cling-src)
+    MESG("Create directory for cling download files")
+    EXECUTE_PROCESS(
+      COMMAND mkdir -p ${CMAKE_CURRENT_LIST_DIR}/ext_dep/cling-src;
+      RESULT_VARIABLE err
       OUTPUT_VARIABLE out
-  )
-  
-  if(err)
-  	ERROR("CANNOT create ${CMAKE_CURRENT_LIST_DIR}/ext_dep/cling-src directory: ${out}")
-  ELSE()
+    )
+
     MESG("Downloading cling")
     EXECUTE_PROCESS(
     COMMAND ${CMAKE_CURRENT_LIST_DIR}/config/cling_clone.sh ${CMAKE_CURRENT_LIST_DIR}/ext_dep/cling-src;
@@ -95,7 +93,11 @@ IF (CLING_VIRTUAL_MACHINE)
     RESULT_VARIABLE err
         OUTPUT_VARIABLE out
     )
+  ENDIF()
 
+  IF(err)
+  	ERROR("CANNOT create ${CMAKE_CURRENT_LIST_DIR}/ext_dep/cling-src directory: ${out}")
+  ELSE()
     #cling
     MESG("Add cling as external project")
     ExternalProject_Add(

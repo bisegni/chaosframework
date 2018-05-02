@@ -70,7 +70,7 @@ function build {
     cd ..
 }
 
-if [ -d $source/.config ]; then
+if [ -d "$source/.config" ]; then
     # update mode
     update
 else

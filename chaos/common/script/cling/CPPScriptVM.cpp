@@ -65,11 +65,16 @@ void CPPScriptVM::init(void *init_data) throw(chaos::CException) {
     }
     
     interpreter.reset(new ::cling::Interpreter(1, args, llvm_path.c_str()));
-    
     //set the default include file
-    ::cling::Interpreter::CompilationResult cr = interpreter->declare("#include <chaos/common/data/CDataVariant.h>");
+    ::cling::Interpreter::CompilationResult cr = interpreter->declare("#include <chaos/common/data/CDataVariant.h>\n"
+                                                                      "#include <chaos/common/script/ScriptApiCaller.h>");
     if(cr == ::cling::Interpreter::kFailure) {
         ERR << "Error including default chaos files";
+    } else {
+        //add the caller to script core
+        std::ostringstream sstr;
+        sstr << "chaos::common::script::ScriptApiCaller &ref = *(chaos::common::script::ScriptApiCaller*)" << std::hex << std::showbase << (size_t)&script_caller << ';';
+        interpreter->process(sstr.str());
     }
 }
 
