@@ -332,12 +332,19 @@ chaos::common::data::CDWShrdPtr DefaultPersistenceDriver::searchMetrics(const st
             DEBUG_CODE(DPD_LDBG << "finding description of:"<<*i);
 
             if (mds_message_channel->getFullNodeDescription(*i, &out, MDS_TIMEOUT) == 0) {
-                if(out){
-                    DEBUG_CODE(DPD_LDBG << "found description"<<out->getJSONString());
-                }
+
                 if(out && (out->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION))&&(out->isCDataWrapperValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION))){
                     chaos::common::data::CDWUniquePtr ds(out->getCSDataValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
-                    out->addCSDataValue(*i,*(ds.get()));
+                    chaos::common::data::CMultiTypeDataArrayWrapper*w =ds->getVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION);
+                    for(int idx=0;idx<w->size();idx++){
+                        chaos::common::data::CDWUniquePtr ws(w->getCDataWrapperElementAtIndex(idx));
+                        ret->appendCDataWrapperToArray(*(ws.get()));
+                    }
+                    ret->finalizeArrayForKey(*i);
+                    if(w){
+                        delete w;
+                    }
+          //          DEBUG_CODE(DPD_LDBG << "adding:"<<ret->getCompliantJSONString());
 
                     /*if(ds->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION)&&ds->isVector(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION) ){
                         ChaosUniquePtr<CMultiTypeDataArrayWrapper> dw(ds->getVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));

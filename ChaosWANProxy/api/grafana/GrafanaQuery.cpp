@@ -25,7 +25,7 @@
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/ChaosCommon.h>
 #include <boost/algorithm/string.hpp>
-
+#include <chaos/common/utility/TimingUtil.h>
 using namespace chaos::common::data;
 using namespace chaos::wan_proxy::api::grafana;
 
@@ -65,27 +65,10 @@ int GrafanaQuery::execute(std::vector<std::string>& api_tokens,
     std::string producer_name;
     int cnt;
     uint64_t ts;
+    Json::Reader json_reader;
+
     try {
-    if(api_tokens.size() == 0) {
-        err_msg = "no producer name in the uri";
-        PID_LERR << err_msg;
-        PRODUCER_INSERT_ERR(output_data, -1, err_msg);
-        return err;
-    } /*else if(api_tokens.size() > 1) {
-       err_msg = "too many param in the uri";
-       PID_LERR << err_msg;
-       
-       PRODUCER_INSERT_ERR(output_data, -2, err_msg);
-       return err;
-       }*/
-    for(cnt = 0;cnt<api_tokens.size();cnt++){
-        
-        if(cnt<api_tokens.size()-1){
-            producer_name=producer_name + api_tokens[cnt] + "/";
-        } else {
-            producer_name=producer_name + api_tokens[cnt] ;
-        }
-    }
+
     
     
 
@@ -95,11 +78,54 @@ int GrafanaQuery::execute(std::vector<std::string>& api_tokens,
     
     // add the node unique id
 	Json::StyledWriter				json_writer;
-    std::string json_str=json_writer.write(input_data);
+    if(!input_data.empty()){
+        PID_LDBG << "PROCESSING:"<<json_writer.write(input_data).c_str();
+
+        std::map<std::string,std::vector<std::string> > accesses;
+        boost::regex expr("(.*)/(.*)$");
+        std::string start=input_data["range"]["from"].asString();
+        std::string end=input_data["range"]["to"].asString();
+        uint64_t start_t=chaos::common::utility::TimingUtil::getTimestampFromString(start);
+        uint64_t end_t=chaos::common::utility::TimingUtil::getTimestampFromString(end);
+        PID_LDBG << "Start:"<<start_t<<" End:"<<end_t;
+        const Json::Value targets = input_data["targets"];
+        // reduce accesses
+        for ( int index = 0; index < targets.size(); ++index ){
+            std::string tname=targets[index]["target"].asString();
+            PID_LDBG << "Target:"<<tname;
+
+            boost::cmatch what;
+            if(regex_match(tname.c_str(), what, expr)){
+                std::map<std::string,std::vector<std::string> >::iterator i=accesses.find(what[1]);
+                if(i!=accesses.end()){
+                    PID_LDBG << " variable:"<<what[2]<< " adding to access:"<<i->first;
+
+                    i->second.push_back(what[2]);
+                } else {
+                    PID_LDBG << " variable:"<<what[2]<< " to new access:"<<what[1];
+                    accesses[what[1]].push_back(what[2]);
+                }
+            }
+        }
+
+        // perform queries
+        for(std::map<std::string,std::vector<std::string> >::iterator i=accesses.begin();i!=accesses.end();i++){
+            boost::cmatch what;
+
+            if(regex_match(i->first.c_str(), what, expr)){
+                std::string cuname=what[1];
+                std::string dir=what[2];
+                PID_LDBG << " access CU:"<<cuname<<" channel:"<<dir<< " # vars:"<<i->second.size();
+
+            }
+        }
 
 
-    PID_LDBG << "PROCESSING:"<<json_str.c_str();//json_writer.write(input_data).c_str();
-    output_data["register_insert_err"] = 0;
+
+    }
+    std::string ss="[]";
+    json_reader.parse(ss,output_data);
+
     } catch(std::exception e){
         PID_LERR << "Exception:"<<e.what();
         err=-1;

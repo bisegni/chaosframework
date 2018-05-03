@@ -59,10 +59,13 @@ int AbstractApiGroup::callApi(std::vector<std::string>& api_tokens,
 							  std::map<std::string, std::string>& output_header,
 							  Json::Value& output_data) {
 	int err = 0;
-	
+    if(api_tokens.size()==0){
+        // call group.
+        return err;
+    }
 	//the first element is the api name (the group as benn deleted by the Handler
 	const std::string& api_name = api_tokens.front();
-	
+
 	AbstractApi *api_selected = NULL;
 	if((err = getElement(api_name.c_str(), (uint32_t)api_name.size(), &api_selected)) ||
 	   !api_selected) {

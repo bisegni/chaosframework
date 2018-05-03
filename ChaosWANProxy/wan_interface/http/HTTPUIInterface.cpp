@@ -303,7 +303,7 @@ int HTTPUIInterface::process(struct mg_connection *connection) {
         if(method == "GET"){
             if(connection->query_string== NULL){
                 HTTWAN_INTERFACE_ERR_<<LOG_CONNECTION<<"Bad query GET params";
-                response.setCode(400);
+                response.setCode(200);
                 flush_response(connection, &response);
                 return 1;
             }
@@ -545,7 +545,7 @@ int HTTPUIInterface::processRest(struct mg_connection *connection) {
             }else{
                 //return the infromation of api call success
                 response.setCode(200);
-                json_response["error"] = 0;
+             //   json_response["error"] = 0;
             }
             response << json_writer.write(json_response);
             flush_response(connection, &response);
@@ -582,7 +582,7 @@ int HTTPUIInterface::processRest(struct mg_connection *connection) {
                 }else{
                     //return the infromation of api call success
                     response.setCode(200);
-                    json_response["error"] = 0;
+                    //json_response["error"] = 0;
                 }
             }else{
                 response.setCode(400);
