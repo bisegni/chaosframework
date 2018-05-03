@@ -73,7 +73,7 @@ void CPPScriptVM::init(void *init_data) throw(chaos::CException) {
     } else {
         //add the caller to script core
         std::ostringstream sstr;
-        sstr << "chaos::common::script::ScriptApiCaller &ref = *(chaos::common::script::ScriptApiCaller*)" << std::hex << std::showbase << (size_t)&script_caller << ';';
+        sstr << "chaos::common::script::ScriptApiCaller *chaos_api = (chaos::common::script::ScriptApiCaller*)" << std::hex << std::showbase << (size_t)&script_caller << ';';
         interpreter->process(sstr.str());
     }
 }
@@ -100,7 +100,7 @@ int CPPScriptVM::callFunction(const std::string& function_name,
     void* function_addr = interpreter->getAddressOfGlobal(function_name);
     if(function_addr == nullptr) {
         last_error = -1;
-        ERR << CHAOS_FORMAT("Function %1% with %2% inpu tparamter and %3% output parameter has not benn found",%function_name%input_parameter.size()%output_parameter.size());
+        ERR << CHAOS_FORMAT("Function %1% with %2% input paramter and %3% output parameter has not been found",%function_name%input_parameter.size()%output_parameter.size());
     }
     ScriptFunctionPrototype* s_func = ::cling::utils::VoidToFunctionPtr<ScriptFunctionPrototype*>(function_addr);
     return (last_error = s_func(input_parameter,
@@ -113,7 +113,7 @@ int CPPScriptVM::callProcedure(const std::string& function_name,
     void* procedure_addr = interpreter->getAddressOfGlobal(function_name);
     if(procedure_addr == nullptr) {
         last_error = -1;
-        ERR << CHAOS_FORMAT("Procedure %1% with %2% input paramter has not benn found",%function_name%input_parameter.size());
+        ERR << CHAOS_FORMAT("Procedure %1% with %2% input paramter has not been found",%function_name%input_parameter.size());
     }
     ScriptProcedurePrototype* s_proc = ::cling::utils::VoidToFunctionPtr<ScriptProcedurePrototype*>(procedure_addr);
     return (last_error = s_proc(input_parameter));
