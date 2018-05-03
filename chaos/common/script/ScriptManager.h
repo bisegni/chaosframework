@@ -56,7 +56,7 @@ namespace chaos {
                 void init(void *init_data) throw(chaos::CException);
                 void deinit() throw(chaos::CException);
 
-                    //!entry point of the scirpting for call an exposed api
+                    //!entry point of the scripting for call an exposed api
                 int callScriptApi(const std::string& api_class,
                                   const std::string& api_name,
                                   const ScriptInParam& input_parameter,
