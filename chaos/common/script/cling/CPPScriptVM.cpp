@@ -73,7 +73,7 @@ void CPPScriptVM::init(void *init_data) throw(chaos::CException) {
     } else {
         //add the caller to script core
         std::ostringstream sstr;
-        sstr << "chaos::common::script::ScriptApiCaller *chaos_api = (chaos::common::script::ScriptApiCaller*)" << std::hex << std::showbase << (size_t)&script_caller << ';';
+        sstr << "chaos::common::script::ScriptApiCaller& chaos_api = *(chaos::common::script::ScriptApiCaller*)" << std::hex << std::showbase << (size_t)script_caller << ';';
         interpreter->process(sstr.str());
     }
 }

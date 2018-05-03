@@ -130,7 +130,7 @@ TEST(ScriptClingTest, ExecuteApi) {
     "std::cout << api_class << std::endl;\n"
     "const std::string& api_name  = i_var[1].asString();"
     "std::cout << api_name << std::endl;\n"
-    "return chaos_api->callScriptApi(api_class, api_name, i_var, o_var);\n"
+    "return chaos_api.callScriptApi(api_class, api_name, i_var, o_var);\n"
     "}";
     ASSERT_NO_THROW(script_manager->registerApiClass(test_api));
     ASSERT_EQ(script_manager->getVirtualMachine()->loadScript(code.str()), 0);
@@ -149,20 +149,28 @@ TEST(ScriptClingTest, ExecuteApi) {
     //check result
     ASSERT_EQ(in_param.size(), in_param.size());
     
-    ASSERT_EQ(out_param[0].getType(), chaos::DataType::TYPE_BOOLEAN);
-    ASSERT_EQ(in_param[0].asInt32(), out_param[0].asInt32());
+    ASSERT_EQ(out_param[0].getType(), chaos::DataType::TYPE_STRING);
+    ASSERT_STREQ(in_param[0].asString().c_str(), out_param[0].asString().c_str());
     
-    ASSERT_EQ(out_param[1].getType(), chaos::DataType::TYPE_INT32);
-    ASSERT_EQ(in_param[1].asInt64(), out_param[1].asInt64());
+    ASSERT_EQ(out_param[1].getType(), chaos::DataType::TYPE_STRING);
+    ASSERT_EQ(in_param[1].asString().c_str(), out_param[1].asString().c_str());
     
-    ASSERT_EQ(out_param[2].getType(), chaos::DataType::TYPE_INT64);
-    ASSERT_EQ(in_param[2].asInt64(), out_param[2].asInt64());
+    ASSERT_EQ(out_param[2].getType(), chaos::DataType::TYPE_BOOLEAN);
+    ASSERT_EQ(in_param[2].asInt32(), out_param[2].asInt32());
     
-    ASSERT_EQ(out_param[3].getType(), chaos::DataType::TYPE_DOUBLE);
-    ASSERT_DOUBLE_EQ(in_param[3].asDouble(), out_param[3].asDouble());
+    ASSERT_EQ(out_param[3].getType(), chaos::DataType::TYPE_INT32);
+    ASSERT_EQ(in_param[3].asInt64(), out_param[3].asInt64());
     
-    ASSERT_EQ(out_param[4].getType(), chaos::DataType::TYPE_STRING);
-    ASSERT_STREQ(in_param[4].asString().c_str(), out_param[4].asString().c_str());
+    ASSERT_EQ(out_param[4].getType(), chaos::DataType::TYPE_INT64);
+    ASSERT_EQ(in_param[4].asInt64(), out_param[4].asInt64());
+    
+    ASSERT_EQ(out_param[5].getType(), chaos::DataType::TYPE_DOUBLE);
+    ASSERT_DOUBLE_EQ(in_param[5].asDouble(), out_param[5].asDouble());
+    
+    ASSERT_EQ(out_param[6].getType(), chaos::DataType::TYPE_STRING);
+    ASSERT_STREQ(in_param[6].asString().c_str(), out_param[6].asString().c_str());
+    
+    
     
     InizializableService::deinitImplementation(script_manager.get(),
                                                "ScriptManager",
