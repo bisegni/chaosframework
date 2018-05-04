@@ -24,6 +24,10 @@
 #include <chaos/common/script/cling/ClingRootInterpreter.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
 
+#include <cling/Interpreter/Transaction.h>
+#include <clang/AST/Decl.h>
+#include <clang/AST/ASTContext.h>
+
 #include <chaos/common/global.h>
 
 #include <boost/filesystem.hpp>
@@ -51,9 +55,7 @@ CPPScriptVM::~CPPScriptVM() {}
 
 void CPPScriptVM::init(void *init_data) throw(chaos::CException) {
     path llvm_path;
-    char *args[1];
-    const std::string path = boost::dll::program_location().string();
-    args[0] = const_cast<char*>(path.c_str());
+    const char *args[1] = {(char*)"app"};
 
     if(GlobalConfiguration::getInstance()->getRpcImplKVParam().count("llvm_path")) {
         llvm_path = GlobalConfiguration::getInstance()->getRpcImplKVParam()["llvm_path"];
@@ -70,12 +72,30 @@ void CPPScriptVM::init(void *init_data) throw(chaos::CException) {
     //set the default include file
     ::cling::Interpreter::CompilationResult cr = interpreter->declare("#include <chaos/common/script/ScriptApiCaller.h>");
     if(cr == ::cling::Interpreter::kFailure) {
-        ERR << "Error including default chaos files";
+        LOG_AND_TROW(ERR, -1, "Error including default chaos files")
     } else {
         //add the caller to script core
         std::ostringstream sstr;
         sstr << "chaos::common::script::ScriptApiCaller& chaos_api = *(chaos::common::script::ScriptApiCaller*)" << std::hex << std::showbase << (size_t)script_caller << ';';
-        interpreter->process(sstr.str());
+        cr = interpreter->process(sstr.str());
+        if(cr == ::cling::Interpreter::kFailure) {
+            LOG_AND_TROW(ERR, -2, "Errore during api accessor registration")
+        }
+//        const ::cling::Transaction* t = interpreter->getLatestTransaction();
+//        ::clang::DeclGroupRef d = t->getCurrentLastDecl();
+//        ::clang::Decl* d2 = d.getSingleDecl();
+//        ::clang::TranslationUnitDecl* tu = d2->getTranslationUnitDecl();
+//        ::clang::SourceManager& sm = d2->getASTContext().getSourceManager();
+//        ::clang::DeclContext::decl_iterator it;
+//        for (it = tu->decls_begin();it != tu->decls_end(); ++it) {
+//            ::clang::SourceLocation sl = it->getLocation();
+//            if (const clang::VarDecl* vd = clang::dyn_cast<clang::VarDecl>(*it)) {
+//                std::cout << sl.printToString(sm) << "\t"
+//                << it->getDeclKindName() << "\t"
+//                << vd->getName().str() << "\t"
+//                << vd->getType().getAsString() << std::endl;
+//            }
+//        }
     }
 }
 

@@ -2,6 +2,7 @@
 #include "ui_ScriptDescriptionWidget.h"
 #include "../GlobalServices.h"
 #include "../language_editor/LuaHighlighter.h"
+#include "../language_editor/CppHighlighter.h"
 #include "../tree_group/TreeGroupManager.h"
 
 #include <QMap>
@@ -139,7 +140,7 @@ void ScriptDescriptionWidget::onApiDone(const QString& tag,
 }
 
 void ScriptDescriptionWidget::cmActionTrigger(const QString& cm_title,
-                                 const QVariant& cm_data) {
+                                              const QVariant& cm_data) {
     QTextCursor text_cursor = QTextCursor(ui->textEditSourceCode->document());
     int current_position = text_cursor.position();
     if(cm_title.compare(CM_ADD_CHAOS_WRAPPER) == 0) {
@@ -164,7 +165,7 @@ void ScriptDescriptionWidget::cmActionTrigger(const QString& cm_title,
         text_cursor.movePosition(QTextCursor::End);
         ui->textEditSourceCode->insertPlainText("function inputAttributeChanged(attribute_name)\n\tprint ( \"singla received for input dataset update\" );\nend");
     }
-     text_cursor.setPosition(current_position);
+    text_cursor.setPosition(current_position);
 }
 
 void ScriptDescriptionWidget::updateScripUI() {
@@ -227,6 +228,9 @@ void ScriptDescriptionWidget::updateTextEditorFeatures() {
         switch(index){
         case 0:
             current_highlighter = new LuaHighlighter(ui->textEditSourceCode->document());
+            break;
+        case 1:
+            current_highlighter = new CppHighlighter(ui->textEditSourceCode->document());
             break;
         }
     }
