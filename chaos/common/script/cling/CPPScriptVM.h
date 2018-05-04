@@ -19,48 +19,33 @@
  * permissions and limitations under the Licence.
  */
 
-#ifndef __CHAOSFramework__LuaScriptVM_h
-#define __CHAOSFramework__LuaScriptVM_h
+#ifndef CPPScriptVM_hpp
+#define CPPScriptVM_hpp
+#ifdef CLING_VIRTUAL_MACHINE
 
 #include <chaos/common/chaos_types.h>
-#include <chaos/common/script/lua/luna.h>
-#include <chaos/common/script/lua/core/lua.hpp>
 #include <chaos/common/script/AbstractScriptVM.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
+
+#include <cling/Interpreter/Interpreter.h>
+#include <cling/Interpreter/Value.h>
+#include <cling/Utils/Casting.h>
 
 namespace chaos {
     namespace common {
         namespace script {
-            namespace lua {
-                class LuaScriptVM;
-                
-                class ChaosLuaWrapperInterface {
-                    friend class LuaScriptVM;
-                    ScriptApiCaller *script_caller;
-                public:
-                    ChaosLuaWrapperInterface(lua_State *ls);
-                    ~ChaosLuaWrapperInterface();
+            namespace cling {
+                //!define the chaos script c++ implementation using cern cling
+                DECLARE_CLASS_FACTORY(CPPScriptVM, AbstractScriptVM) {
+                    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(CPPScriptVM)
+                    //cling interpreter
+                    ChaosUniquePtr<::cling::Interpreter> interpreter;
                     
-                    int callApi(lua_State *ls);
-                    
-                    static const char className[];
-                    static const Luna<ChaosLuaWrapperInterface>::RegType Register[];
-                };
-
-                //!define the chaos script lua implementation
-                DECLARE_CLASS_FACTORY(LuaScriptVM, AbstractScriptVM),
-                public LunaAllocationHandler<ChaosLuaWrapperInterface> {
-                    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(LuaScriptVM)
-                    friend class Luna<ChaosLuaWrapperInterface>;
-                    lua_State *ls;
-
-                    LuaScriptVM(const std::string& alias);
-                    ~LuaScriptVM();
+                    CPPScriptVM(const std::string& alias);
+                    ~CPPScriptVM();
                 protected:
                     void init(void *init_data) throw(chaos::CException);
                     void deinit() throw(chaos::CException);
-                    void allocationOf(ChaosLuaWrapperInterface *newAllocatedClass);
-                    void deallocationOf(ChaosLuaWrapperInterface *deallocatedClass);
                 public:
                     int loadScript(const std::string& loadable_script);
                     
@@ -69,11 +54,12 @@ namespace chaos {
                                      ScriptOutParam& output_parameter);
                     int callProcedure(const std::string& function_name,
                                       const ScriptInParam& input_parameter);
-                    int functionExists(const std::string& name,
+                    int functionExists(const std::string& function_name,
                                        bool& exists);
                 };
             }
         }
     }
 }
-#endif /* __CHAOSFramework__LuaScriptVM_h */
+#endif /*CLING_VIRTUAL_MACHINE*/
+#endif /* CPPScriptVM_hpp */

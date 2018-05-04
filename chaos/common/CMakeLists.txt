@@ -1,7 +1,7 @@
 project(chaos_common)
 #### required libraries
 
-IF( NOT CHAOS_DISABLE_EVENTFD)
+IF(NOT CHAOS_DISABLE_EVENTFD)
   CheckConfigureBuild(event libevent:release-2.1.8-stable "--disable-openssl;--enable-static" https://github.com/amichelotti )
 ELSE()
   SET(ZMQ_FLAGS "")
@@ -284,6 +284,12 @@ SET(common_lib_src ${common_lib_src}
 	script/lua/LuaScriptVM.cpp
     script/lua/LuaModuleManager.cpp
 	${LuaCoreSource})
+
+IF (CLING_VIRTUAL_MACHINE)
+    MESG("Add cling virtual machine compilation files")
+    SET(common_lib_src ${common_lib_src}
+        script/cling/CPPScriptVM.cpp)
+ENDIF()
 
 IF (NOT DEFINED BUILD_FORCE_STATIC)
 
