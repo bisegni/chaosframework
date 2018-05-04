@@ -74,7 +74,8 @@ TEST(ScriptClingTest, ExecuteFunction) {
                                                              "ScriptManager",
                                                              __PRETTY_FUNCTION__););
     bool exists = false;
-    code << "extern \"C\" int testFunction(const std::vector<chaos::common::data::CDataVariant>& i_var, std::vector<chaos::common::data::CDataVariant>& o_var) {"
+    code << "#include <queue>\n"
+    "extern \"C\" int testFunction(const std::vector<chaos::common::data::CDataVariant>& i_var, std::vector<chaos::common::data::CDataVariant>& o_var) {"
     "for(const chaos::common::data::CDataVariant& i : i_var) {o_var.push_back(i);}"
     "return 0;}";
     ASSERT_EQ(script_manager->getVirtualMachine()->loadScript(code.str()), 0);
@@ -92,10 +93,10 @@ TEST(ScriptClingTest, ExecuteFunction) {
     ASSERT_EQ(in_param.size(), in_param.size());
     
     ASSERT_EQ(out_param[0].getType(), chaos::DataType::TYPE_BOOLEAN);
-    ASSERT_EQ(in_param[0].asInt32(), out_param[0].asInt32());
+    ASSERT_EQ(in_param[0].asBool(), out_param[0].asBool());
     
     ASSERT_EQ(out_param[1].getType(), chaos::DataType::TYPE_INT32);
-    ASSERT_EQ(in_param[1].asInt64(), out_param[1].asInt64());
+    ASSERT_EQ(in_param[1].asInt32(), out_param[1].asInt32());
     
     ASSERT_EQ(out_param[2].getType(), chaos::DataType::TYPE_INT64);
     ASSERT_EQ(in_param[2].asInt64(), out_param[2].asInt64());
@@ -123,16 +124,16 @@ TEST(ScriptClingTest, ExecuteApi) {
                                                              __PRETTY_FUNCTION__););
     bool exists = false;
     code << "extern \"C\" int testApi(const std::vector<chaos::common::data::CDataVariant>& i_var, std::vector<chaos::common::data::CDataVariant>& o_var) {\n"
-    "std::cout << \"one\" << std::endl;\n"
     "if(i_var.size() < 3) return -1;\n"
-    "std::cout << \"two\" << std::endl;\n"
+//    "std::cout << \"two\" << std::endl;\n"
     "const std::string& api_class  = i_var[0].asString();"
-    "std::cout << api_class << std::endl;\n"
+//    "std::cout << api_class << std::endl;\n"
     "const std::string& api_name  = i_var[1].asString();"
-    "std::cout << api_name << std::endl;\n"
+//    "std::cout << api_name << std::endl;\n"
     "return chaos_api.callScriptApi(api_class, api_name, i_var, o_var);\n"
     "}";
     ASSERT_NO_THROW(script_manager->registerApiClass(test_api));
+//    ASSERT_EQ(script_manager->getVirtualMachine()->loadScript("#include<iostream>"), 0);
     ASSERT_EQ(script_manager->getVirtualMachine()->loadScript(code.str()), 0);
     ASSERT_EQ(script_manager->getVirtualMachine()->functionExists("testApi", exists), 0);
     ASSERT_TRUE(exists);
@@ -153,13 +154,13 @@ TEST(ScriptClingTest, ExecuteApi) {
     ASSERT_STREQ(in_param[0].asString().c_str(), out_param[0].asString().c_str());
     
     ASSERT_EQ(out_param[1].getType(), chaos::DataType::TYPE_STRING);
-    ASSERT_EQ(in_param[1].asString().c_str(), out_param[1].asString().c_str());
+    ASSERT_STREQ(in_param[1].asString().c_str(), out_param[1].asString().c_str());
     
     ASSERT_EQ(out_param[2].getType(), chaos::DataType::TYPE_BOOLEAN);
-    ASSERT_EQ(in_param[2].asInt32(), out_param[2].asInt32());
+    ASSERT_EQ(in_param[2].asBool(), out_param[2].asBool());
     
     ASSERT_EQ(out_param[3].getType(), chaos::DataType::TYPE_INT32);
-    ASSERT_EQ(in_param[3].asInt64(), out_param[3].asInt64());
+    ASSERT_EQ(in_param[3].asInt32(), out_param[3].asInt32());
     
     ASSERT_EQ(out_param[4].getType(), chaos::DataType::TYPE_INT64);
     ASSERT_EQ(in_param[4].asInt64(), out_param[4].asInt64());

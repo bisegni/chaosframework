@@ -19,7 +19,9 @@
  * permissions and limitations under the Licence.
  */
 #ifdef CLING_VIRTUAL_MACHINE
+
 #include <chaos/common/script/cling/CPPScriptVM.h>
+#include <chaos/common/script/cling/ClingRootInterpreter.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
 
 #include <chaos/common/global.h>
@@ -66,8 +68,7 @@ void CPPScriptVM::init(void *init_data) throw(chaos::CException) {
     
     interpreter.reset(new ::cling::Interpreter(1, args, llvm_path.c_str()));
     //set the default include file
-    ::cling::Interpreter::CompilationResult cr = interpreter->declare("#include <chaos/common/data/CDataVariant.h>\n"
-                                                                      "#include <chaos/common/script/ScriptApiCaller.h>");
+    ::cling::Interpreter::CompilationResult cr = interpreter->declare("#include <chaos/common/script/ScriptApiCaller.h>");
     if(cr == ::cling::Interpreter::kFailure) {
         ERR << "Error including default chaos files";
     } else {

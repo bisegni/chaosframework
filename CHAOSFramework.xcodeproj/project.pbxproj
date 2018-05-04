@@ -583,6 +583,8 @@
 		327791E21B67728300FEDD52 /* ServiceApiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327791E01B67728300FEDD52 /* ServiceApiGroup.cpp */; };
 		3277A22E20973A0100FD7307 /* CPPScriptVM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3277A22C20973A0100FD7307 /* CPPScriptVM.cpp */; };
 		3277A22F20973A0100FD7307 /* CPPScriptVM.h in Headers */ = {isa = PBXBuildFile; fileRef = 3277A22D20973A0100FD7307 /* CPPScriptVM.h */; };
+		3277A235209C4AFD00FD7307 /* ClingRootInterpreter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3277A233209C4AFD00FD7307 /* ClingRootInterpreter.cpp */; };
+		3277A236209C4AFD00FD7307 /* ClingRootInterpreter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3277A234209C4AFD00FD7307 /* ClingRootInterpreter.h */; };
 		32788D7F1F277207009BBB1E /* OpcodeDriverWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 32788D7D1F277207009BBB1E /* OpcodeDriverWrapper.h */; };
 		32788D831F27766A009BBB1E /* OpcodeExternalCommandMapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 32788D811F27766A009BBB1E /* OpcodeExternalCommandMapper.h */; };
 		327967B515DF99FB0003C6DA /* RpcClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327967B415DF99FB0003C6DA /* RpcClient.cpp */; };
@@ -2010,6 +2012,8 @@
 		327791E11B67728300FEDD52 /* ServiceApiGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceApiGroup.h; sourceTree = "<group>"; };
 		3277A22C20973A0100FD7307 /* CPPScriptVM.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CPPScriptVM.cpp; sourceTree = "<group>"; };
 		3277A22D20973A0100FD7307 /* CPPScriptVM.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CPPScriptVM.h; sourceTree = "<group>"; };
+		3277A233209C4AFD00FD7307 /* ClingRootInterpreter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ClingRootInterpreter.cpp; sourceTree = "<group>"; };
+		3277A234209C4AFD00FD7307 /* ClingRootInterpreter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ClingRootInterpreter.h; sourceTree = "<group>"; };
 		32788D7D1F277207009BBB1E /* OpcodeDriverWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpcodeDriverWrapper.h; sourceTree = "<group>"; };
 		32788D811F27766A009BBB1E /* OpcodeExternalCommandMapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpcodeExternalCommandMapper.h; sourceTree = "<group>"; };
 		327967B415DF99FB0003C6DA /* RpcClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = RpcClient.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
@@ -4624,6 +4628,8 @@
 			children = (
 				3277A22C20973A0100FD7307 /* CPPScriptVM.cpp */,
 				3277A22D20973A0100FD7307 /* CPPScriptVM.h */,
+				3277A233209C4AFD00FD7307 /* ClingRootInterpreter.cpp */,
+				3277A234209C4AFD00FD7307 /* ClingRootInterpreter.h */,
 			);
 			path = cling;
 			sourceTree = "<group>";
@@ -5931,6 +5937,7 @@
 				326DB48514B38BC00018A8D0 /* RpcServer.h in Headers */,
 				326DB48614B38BC00018A8D0 /* CNodeNetworkAddress.h in Headers */,
 				3206CE871FA767AC0059A4A4 /* bson-stdint-win32.h in Headers */,
+				3277A236209C4AFD00FD7307 /* ClingRootInterpreter.h in Headers */,
 				322EC1BC1D34F2E10012467C /* StateFlagCatalog.h in Headers */,
 				326DB48814B38BC00018A8D0 /* ChaosThread.h in Headers */,
 				32B159D618B38CA50096B58B /* DirectIODeviceServerChannel.h in Headers */,
@@ -7009,6 +7016,7 @@
 				32C9CD3C1D51F7D30048DB4A /* PropertyDescription.cpp in Sources */,
 				327F51DE1952E81D00BA3D01 /* DirectIOURLManagment.cpp in Sources */,
 				32A862181D58C79900A7D707 /* AbstractEvent.cpp in Sources */,
+				3277A235209C4AFD00FD7307 /* ClingRootInterpreter.cpp in Sources */,
 				32CB75081FCE9DE6006DF3D0 /* InetUtility.cpp in Sources */,
 				32A88BE61CF8228A001DBAF5 /* ltablib.c in Sources */,
 				328556A417F2E36000A64ED2 /* DirectIOServer.cpp in Sources */,
