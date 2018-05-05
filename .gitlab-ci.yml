@@ -26,6 +26,7 @@ codequality:
     paths: [codeclimate.json]
   only:
     - tags
+    - web
 
 build_framework_x86_64:
   tags:
@@ -56,6 +57,7 @@ build_framework_x86_64:
     expire_in: 4 hour
   only:
     - tags
+    - web
 
 build_framework_x86_64_test:
   tags:
@@ -79,6 +81,7 @@ build_framework_x86_64_test:
   coverage: '/^TOTAL.*\s+(\d+\%)$/'
   only:
     - tags
+    - web
 
 build_framework_centos7:
   tags:
@@ -110,6 +113,7 @@ build_framework_centos7:
     expire_in: 4 hour
   only:
     - tags
+    - web
 
 execute_framework_centos7_test:
   tags:
@@ -128,6 +132,7 @@ execute_framework_centos7_test:
     expire_in: 4 hour
   only:
     - tags
+    - web
 
 execute_framework_centos7_deploy:
   tags:
@@ -142,6 +147,7 @@ execute_framework_centos7_deploy:
     - scp chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/$CI_COMMIT_REF_NAME/x86_64/centos/7/chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz
   only:
     - tags
+    - web
 
 build_framework_x86_64_c98:
   tags:
@@ -168,6 +174,7 @@ build_framework_x86_64_c98:
     expire_in: 4 hour
   only:
     - tags
+    - web
 
 build_framework_x86_64_c98_test:
   tags:
@@ -181,6 +188,7 @@ build_framework_x86_64_c98_test:
     - chaos-distrib-x86_64-Linux-c98/bin/TestFramework
   only:
     - tags
+    - web
 
 build_framework_arm:
   tags:
@@ -206,6 +214,7 @@ build_framework_arm:
     expire_in: 4 hour
   only:
     - tags
+    - web
 
 # build_framework_arm_test:
 #   tags:
@@ -249,6 +258,7 @@ llvm_build_framework_x86_64:
     expire_in: 4 hour
   only:
     - tags
+    - web
 
 llvm_build_framework_x86_64_test:
   tags:
@@ -264,29 +274,31 @@ llvm_build_framework_x86_64_test:
     - chaos-distrib-x86_64-Linux-llvm/bin/TestFramework
   only:
     - tags
+    - web
 
 exp_llvm_scan_coverity:
-    tags:
-      - chaos
-      - docker
-      - linux
-    stage: build
-    image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/llvm_coverity_u1710
-    script:
-      - mkdir -p /tmp/cov-int
-      - cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCHAOS_ARCHITECTURE_TEST=ON .
-      - make clean
-      - /tmp/coverity/bin/cov-build --dir /tmp/cov-int make -j 4
-      - cd /tmp
-      - tar czvf chaos.tgz cov-int
-      - curl --form token=i9B9MI9n53zWdx2iSS4Qvg --form email=bisegni@lnf.infn.it --form file=@/tmp/chaos.tgz --form version="1.0.0" --form description="Beta"  https://scan.coverity.com/builds?project=%21CHAOS+Control+System
-    cache:
-      key: scan_coverity_$CI_BUILD_REF_NAME
-      paths:
-          - /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/
-          - /builds/chaos-lnf-control/chaosframework/config/CACHE/
-    only:
-      - web
+  tags:
+    - chaos
+    - docker
+    - linux
+  stage: build
+  image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/llvm_coverity_u1710
+  script:
+    - mkdir -p /tmp/cov-int
+    - cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCHAOS_ARCHITECTURE_TEST=ON .
+    - make clean
+    - /tmp/coverity/bin/cov-build --dir /tmp/cov-int make -j 4
+    - cd /tmp
+    - tar czvf chaos.tgz cov-int
+    - curl --form token=i9B9MI9n53zWdx2iSS4Qvg --form email=bisegni@lnf.infn.it --form file=@/tmp/chaos.tgz --form version="1.0.0" --form description="Beta"  https://scan.coverity.com/builds?project=%21CHAOS+Control+System
+  cache:
+    key: scan_coverity_$CI_BUILD_REF_NAME
+    paths:
+        - /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/
+        - /builds/chaos-lnf-control/chaosframework/config/CACHE/
+  only:
+    - tags
+    - web
 
 pages:
   stage: publish
@@ -301,3 +313,4 @@ pages:
     expire_in: 7 days
   only:
     - tags
+    - web
