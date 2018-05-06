@@ -33,7 +33,7 @@
 #include <chaos/common/utility/InizializableService.h>
 #include <chaos/common/direct_io/DirectIOClientConnection.h>
 #include <chaos/common/network/NetworkBroker.h>
-
+#include <chaos/common/io/IODirectIODriver.h>
 #include <boost/thread.hpp>
 
 namespace chaos {
@@ -56,7 +56,8 @@ namespace chaos {
 				chaos::common::network::NetworkBroker		*network_broker;
 				chaos::common::direct_io::DirectIOClient	*direct_io_client;
 				chaos::common::message::MDSMessageChannel	*mds_message_channel;
-				
+                chaos::common::io::IODataDriverShrdPtr ioLiveDataDriver;
+
 				chaos::common::network::URLServiceFeeder	connection_feeder;
 				
                 typedef struct _cuids {
@@ -105,15 +106,16 @@ namespace chaos {
 									chaos::common::data::CDataWrapper& last_dataset);
 
                  chaos::common::data::CDWShrdPtr searchMetrics(const std::string&search_string,bool alive);
-                /**
-                  * query a list of metrics, in the time
-                  * \param start start time search
-                  * \param end end time search
-                  * \param metrics array of metric to search
-                  * \return a CDataWrapper unique pointer returning an array of answers.
-                */
-                 chaos::common::data::CDWShrdPtr queryMetrics(const std::string&start,const std::string&end,const std::vector<std::string>& metrics);
-
+                 /**
+                   * query a list of metrics, in the time
+                   * \param start start time search
+                   * \param end end time search
+                   * \param metrics_name metrics to search
+                   * \param limit limits search to a number of items
+                   * \param res output results
+                   * \return zero if success.
+                 */
+                int queryMetrics(const std::string& start,const std::string& end,const std::vector<std::string>& metrics_name,metrics_results_t& res,int limit=1000);
 
 			};
 		}

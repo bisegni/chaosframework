@@ -20,6 +20,7 @@
  */
 #include "DefaultPersistenceDriver.h"
 #include <chaos/common/healt_system/HealtManager.h>
+#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
 
 #include <chaos/common/utility/UUIDUtil.h>
 #include <chaos/common/network/URL.h>
@@ -40,6 +41,7 @@ using namespace chaos::common::network;
 using namespace chaos::common::direct_io;
 using namespace chaos::common::direct_io::channel;
 using namespace chaos::common::healt_system;
+using namespace chaos::metadata_service_client;
 
 /*---------------------------------------------------------------------------------
 
@@ -50,6 +52,10 @@ DefaultPersistenceDriver::DefaultPersistenceDriver(NetworkBroker *_network_broke
     direct_io_client(NULL),
     mds_message_channel(NULL),
     connection_feeder("DefaultPersistenceDriver", this) {
+    ioLiveDataDriver=ChaosMetadataServiceClient::getInstance()->getDataProxyChannelNewInstance();
+        if(!ioLiveDataDriver){
+            throw chaos::CException(-1, "No LIVE Channel created", "DefaultPersistenceDriver()");
+        }
 }
 
 /*---------------------------------------------------------------------------------
@@ -256,7 +262,6 @@ int DefaultPersistenceDriver::getLastDataset(const std::string& producer_key,
     if(!next_client) return err;
 
     boost::shared_lock<boost::shared_mutex>(next_client->connection_mutex);
-
     next_client->device_client_channel->requestLastOutputData(producer_key, (void**)&result, size);
     *last_dataset = new CDataWrapper(result);
     return err;
@@ -363,7 +368,97 @@ chaos::common::data::CDWShrdPtr DefaultPersistenceDriver::searchMetrics(const st
     }
     return ret;
 }
-chaos::common::data::CDWShrdPtr DefaultPersistenceDriver::queryMetrics(const std::string&start,const std::string&end,const std::vector<std::string>& metrics){
-    chaos::common::data::CDWShrdPtr ret;
+
+int DefaultPersistenceDriver::queryMetrics(const std::string& start,const std::string& end,const std::vector<std::string>& metrics_name,metrics_results_t& res,int limit){
+    int ret=0;
+    boost::regex expr("(.*)/(.*)$");
+    uint64_t start_t=chaos::common::utility::TimingUtil::getTimestampFromString(start,true);
+    uint64_t end_t=chaos::common::utility::TimingUtil::getTimestampFromString(end,true);
+    std::map<std::string,std::vector<std::string> > accesses;
+    for ( int index = 0; index < metrics_name.size(); ++index ){
+        std::string tname=metrics_name[index];
+        DPD_LDBG << "Target:"<<tname;
+
+        boost::cmatch what;
+        if(regex_match(tname.c_str(), what, expr)){
+            std::map<std::string,std::vector<std::string> >::iterator i=accesses.find(what[1]);
+            if(i!=accesses.end()){
+                DPD_LDBG << " variable:"<<what[2]<< " adding to access:"<<i->first;
+
+                i->second.push_back(what[2]);
+            } else {
+                DPD_LDBG << " variable:"<<what[2]<< " to new access:"<<what[1];
+                accesses[what[1]].push_back(what[2]);
+            }
+        }
+    }
+
+    // perform queries
+    for(std::map<std::string,std::vector<std::string> >::iterator i=accesses.begin();i!=accesses.end();i++){
+        boost::cmatch what;
+
+        if(regex_match(i->first.c_str(), what, expr)){
+            std::string cuname=what[1];
+            std::string dir=what[2];
+            DPD_LDBG << " access CU:"<<cuname<<" channel:"<<dir<< " # vars:"<<i->second.size();
+            int type =HumanTodatasetType(dir);
+            std::string dst=cuname+chaos::datasetTypeToPostfix(type);
+            DPD_LDBG << " perform query to:"<<dst<<" start:"<<start_t<<" end:"<<end_t<<" page:"<<limit;
+
+            chaos::common::io::QueryCursor *pnt=ioLiveDataDriver->performQuery(dst,start_t,end_t,limit);
+            if(pnt ){
+                while(pnt->hasNext()){
+                   chaos::common::data::CDWShrdPtr ds(pnt->next());
+                   uint64_t ts=0;
+                   if(ds->hasKey(chaos::DataPackCommonKey::DPCK_TIMESTAMP)){
+                       ts=ds->getInt64Value(chaos::DataPackCommonKey::DPCK_TIMESTAMP);
+                   }
+                   // get all other variables.. if any
+                   for(std::vector<std::string>::iterator j=i->second.begin();j!=i->second.end();j++){
+                       if(ds->hasKey(*j)){
+                           metric_t tmp;
+                           tmp.milli_ts=ts;
+                           std::string metric_name=i->first+"/"+*j;
+                           if(ds->isVector(*j)){
+                               chaos::common::data::CMultiTypeDataArrayWrapper*w =ds->getVectorValue(*j);
+                               for(int cnt=0;cnt<w->size();cnt++){
+                                   tmp.idx=cnt;
+                                   if(w->isDoubleElementAtIndex(cnt)){
+                                       tmp.value=w->getDoubleElementAtIndex(cnt);
+                                       res[metric_name].push_back(tmp);
+                                   }
+                                   if(w->isInt32ElementAtIndex(cnt)){
+                                       tmp.value=w->getInt32ElementAtIndex(cnt);
+                                       res[metric_name].push_back(tmp);
+                                   }
+                                   if(w->isInt64ElementAtIndex(cnt)){
+                                       tmp.value=w->getInt64ElementAtIndex(cnt);
+                                       res[metric_name].push_back(tmp);
+                                   }
+                               }
+                           } else {
+                               tmp.idx=0;
+                               if(ds->isDoubleValue(*j)){
+                                   tmp.value=ds->getDoubleValue(*j);
+                                   res[metric_name].push_back(tmp);
+
+                               }
+                               if(ds->isInt32Value(*j)){
+                                   tmp.value=ds->getInt32Value(*j);
+                                   res[metric_name].push_back(tmp);
+                               }
+                               if(ds->isInt64Value(*j)){
+                                   tmp.value=ds->getInt64Value(*j);
+                                   res[metric_name].push_back(tmp);
+                               }
+                           }
+                       }
+                   }
+                }
+                ioLiveDataDriver->releaseQuery(pnt);
+            }
+        }
+    }
+
     return ret;
 }

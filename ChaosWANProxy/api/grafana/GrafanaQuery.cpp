@@ -78,53 +78,56 @@ int GrafanaQuery::execute(std::vector<std::string>& api_tokens,
     
     // add the node unique id
 	Json::StyledWriter				json_writer;
-    if(!input_data.empty()){
+    std::stringstream ss;
+
+    if(!input_data.empty() && !input_data["targets"].empty()){
         PID_LDBG << "PROCESSING:"<<json_writer.write(input_data).c_str();
 
         std::map<std::string,std::vector<std::string> > accesses;
         boost::regex expr("(.*)/(.*)$");
         std::string start=input_data["range"]["from"].asString();
         std::string end=input_data["range"]["to"].asString();
-        uint64_t start_t=chaos::common::utility::TimingUtil::getTimestampFromString(start);
-        uint64_t end_t=chaos::common::utility::TimingUtil::getTimestampFromString(end);
-        PID_LDBG << "Start:"<<start_t<<" End:"<<end_t;
         const Json::Value targets = input_data["targets"];
+
+        int maxDataPoints=input_data["maxDataPoints"].asInt();
+        if(maxDataPoints<=0){
+            maxDataPoints=1000;
+        }
+        std::vector<std::string> metrics;
         // reduce accesses
         for ( int index = 0; index < targets.size(); ++index ){
             std::string tname=targets[index]["target"].asString();
+            metrics.push_back(tname);
             PID_LDBG << "Target:"<<tname;
-
-            boost::cmatch what;
-            if(regex_match(tname.c_str(), what, expr)){
-                std::map<std::string,std::vector<std::string> >::iterator i=accesses.find(what[1]);
-                if(i!=accesses.end()){
-                    PID_LDBG << " variable:"<<what[2]<< " adding to access:"<<i->first;
-
-                    i->second.push_back(what[2]);
-                } else {
-                    PID_LDBG << " variable:"<<what[2]<< " to new access:"<<what[1];
-                    accesses[what[1]].push_back(what[2]);
+        }
+        chaos::wan_proxy::persistence::metrics_results_t res;
+        if(persistence_driver->queryMetrics(start,end,metrics,res,maxDataPoints)==0){
+            ss<<"[";
+            for(chaos::wan_proxy::persistence::metrics_results_t::iterator i=res.begin();i!=res.end();){
+                ss<<"{\"target\":\""<<i->first<<"\",\"datapoints\":[";
+                for(std::vector<chaos::wan_proxy::persistence::metric_t>::iterator j=i->second.begin();j!=i->second.end();j++){
+                    ss<<"["<<j->value<<","<<j->milli_ts+j->idx<<"]";
+                    if((j+1)!=i->second.end()){
+                        ss<<",";
+                    }
+                }
+                ss<<"]}";
+                if((++i)!=res.end()){
+                    ss<<",";
                 }
             }
+            ss<<"]";
         }
+        uint64_t diff_from_now_s=chaos::common::utility::TimingUtil::getTimeStamp()-chaos::common::utility::TimingUtil::getTimestampFromString(start,true);
+        uint64_t diff_from_now_e=chaos::common::utility::TimingUtil::getTimeStamp()-chaos::common::utility::TimingUtil::getTimestampFromString(end,true);
 
-        // perform queries
-        for(std::map<std::string,std::vector<std::string> >::iterator i=accesses.begin();i!=accesses.end();i++){
-            boost::cmatch what;
+        PID_LDBG << "ANSWER "<<start<<"("<< chaos::common::utility::TimingUtil::getTimestampFromString(start)<<" diff from now:"<<diff_from_now_s<<") - "<<end<<"("<<chaos::common::utility::TimingUtil::getTimestampFromString(end)<<" diff from now:"<<diff_from_now_e<<"):"<<ss.str();
 
-            if(regex_match(i->first.c_str(), what, expr)){
-                std::string cuname=what[1];
-                std::string dir=what[2];
-                PID_LDBG << " access CU:"<<cuname<<" channel:"<<dir<< " # vars:"<<i->second.size();
-
-            }
-        }
-
-
-
+    } else{
+        ss<<"[]";
     }
-    std::string ss="[]";
-    json_reader.parse(ss,output_data);
+
+    json_reader.parse(ss.str(),output_data);
 
     } catch(std::exception e){
         PID_LERR << "Exception:"<<e.what();

@@ -26,6 +26,14 @@ namespace chaos {
 	namespace wan_proxy {
 		namespace persistence {
 			
+        typedef struct _metric {
+            double value;
+            uint64_t milli_ts;
+            uint32_t idx; //in case of vectors
+        } metric_t;
+
+        typedef std::map<std::string, std::vector<metric_t> > metrics_results_t;
+
 			//! define the base class fro all persistence implementation
 			class AbstractPersistenceDriver:
 			public chaos::common::utility::NamedService {
@@ -61,10 +69,12 @@ namespace chaos {
                   * query a list of metrics, in the time
                   * \param start start time search
                   * \param end end time search
-                  * \param metrics array of metric to search
-                  * \return a CDataWrapper shared pointer returning an array of answers.
+                  * \param metrics_name metrics to search
+                  * \param limit limits search to a number of items
+                  * \param res output results
+                  * \return zero if success.
                 */
-                virtual chaos::common::data::CDWShrdPtr queryMetrics(const std::string&start,const std::string&end,const std::vector<std::string>& metrics)=0;
+                virtual int queryMetrics(const std::string& start,const std::string& end,const std::vector<std::string>& metrics_name,metrics_results_t& res,int limit=1000)=0;
 			};
 		}
 	}
