@@ -32,6 +32,10 @@ SET(wp_src ${wp_src}	api/AbstractApi.cpp
 						api/consumer/ConsumerGroup.cpp
 						api/consumer/ConsumerCUApi.cpp
 						api/consumer/ConsumerMDSApi.cpp
+                                                api/grafana/GrafanaSearch.cpp
+                                                api/grafana/GrafanaQuery.cpp
+                                                api/grafana/GrafanaAnnotations.cpp
+                                                api/grafana/GrafanaGroup.cpp
 						)
 
 SET(wp_src ${wp_src}	persistence/AbstractPersistenceDriver.cpp

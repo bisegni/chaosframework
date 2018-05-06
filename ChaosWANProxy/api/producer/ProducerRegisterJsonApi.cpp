@@ -75,7 +75,7 @@ int ProducerRegisterJsonApi::execute(std::vector<std::string>& api_tokens,
 	  } else {
 	    producer_name=producer_name + api_tokens[cnt] ;
 	  }
-	}
+    }
 
     if(producer_name.empty()){
             err_msg = "empty producer name";

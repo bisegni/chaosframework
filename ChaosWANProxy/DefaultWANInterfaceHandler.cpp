@@ -22,6 +22,7 @@
 
 #include "api/producer/ProducerGroup.h"
 #include "api/consumer/ConsumerGroup.h"
+#include "api/grafana/GrafanaGroup.h"
 
 using namespace chaos::wan_proxy;
 
@@ -38,4 +39,6 @@ void DefaultWANInterfaceHandler::registerGroup() {
 	//add group to the version 1
 	addGroupToVersion<api::producer::ProducerGroup>(1);
 	addGroupToVersion<api::consumer::ConsumerGroup>(1);
+    addGroupToVersion<api::grafana::GrafanaGroup>(1);
+
 }

@@ -26,6 +26,14 @@ namespace chaos {
 	namespace wan_proxy {
 		namespace persistence {
 			
+        typedef struct _metric {
+            double value;
+            uint64_t milli_ts;
+            uint32_t idx; //in case of vectors
+        } metric_t;
+
+        typedef std::map<std::string, std::vector<metric_t> > metrics_results_t;
+
 			//! define the base class fro all persistence implementation
 			class AbstractPersistenceDriver:
 			public chaos::common::utility::NamedService {
@@ -50,6 +58,23 @@ namespace chaos {
 				//! register the dataset of ap roducer
 				virtual int registerDataset(const std::string& producer_key,
 											chaos::common::data::CDataWrapper& last_dataset) = 0;
+                /**
+                  * return a list of metrics, corresponding to CHAOS NODES
+                  * \param search_string initial search string
+                  * \param alive limit the search to alive nodes
+                  * \return a CDataWrapper shared pointer returning an array of answers
+                */
+                virtual chaos::common::data::CDWShrdPtr searchMetrics(const std::string&search_string,bool alive)=0;
+                /**
+                  * query a list of metrics, in the time
+                  * \param start start time search
+                  * \param end end time search
+                  * \param metrics_name metrics to search
+                  * \param limit limits search to a number of items
+                  * \param res output results
+                  * \return zero if success.
+                */
+                virtual int queryMetrics(const std::string& start,const std::string& end,const std::vector<std::string>& metrics_name,metrics_results_t& res,int limit=1000)=0;
 			};
 		}
 	}
