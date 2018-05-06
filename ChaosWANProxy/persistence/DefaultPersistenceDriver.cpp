@@ -52,10 +52,8 @@ DefaultPersistenceDriver::DefaultPersistenceDriver(NetworkBroker *_network_broke
     direct_io_client(NULL),
     mds_message_channel(NULL),
     connection_feeder("DefaultPersistenceDriver", this) {
-    ioLiveDataDriver=ChaosMetadataServiceClient::getInstance()->getDataProxyChannelNewInstance();
-        if(!ioLiveDataDriver){
-            throw chaos::CException(-1, "No LIVE Channel created", "DefaultPersistenceDriver()");
-        }
+
+
 }
 
 /*---------------------------------------------------------------------------------
@@ -73,6 +71,18 @@ void DefaultPersistenceDriver::init(void *init_data) throw (chaos::CException) {
 
     //! get the direct io client
     direct_io_client = network_broker->getSharedDirectIOClientInstance();
+    ChaosMetadataServiceClient::getInstance()->init();
+    ChaosMetadataServiceClient::getInstance()->start();
+    ioLiveDataDriver=ChaosMetadataServiceClient::getInstance()->getDataProxyChannelNewInstance();
+    if(!ioLiveDataDriver){
+        throw chaos::CException(-1, "No LIVE Channel created", "DefaultPersistenceDriver()");
+    }
+    CDataWrapper *tmp_data_handler = NULL;
+
+    if(!mds_message_channel->getDataDriverBestConfiguration(&tmp_data_handler, 5000)){
+        ChaosUniquePtr<chaos::common::data::CDataWrapper> best_available_da_ptr(tmp_data_handler);
+        ioLiveDataDriver->updateConfiguration(best_available_da_ptr.get());
+    }
     //InizializableService::initImplementation(direct_io_client,
     //init_data,
     //direct_io_client->getName(),
@@ -349,7 +359,7 @@ chaos::common::data::CDWShrdPtr DefaultPersistenceDriver::searchMetrics(const st
                     if(w){
                         delete w;
                     }
-          //          DEBUG_CODE(DPD_LDBG << "adding:"<<ret->getCompliantJSONString());
+                    //          DEBUG_CODE(DPD_LDBG << "adding:"<<ret->getCompliantJSONString());
 
                     /*if(ds->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION)&&ds->isVector(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION) ){
                         ChaosUniquePtr<CMultiTypeDataArrayWrapper> dw(ds->getVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
@@ -403,57 +413,58 @@ int DefaultPersistenceDriver::queryMetrics(const std::string& start,const std::s
             DPD_LDBG << " access CU:"<<cuname<<" channel:"<<dir<< " # vars:"<<i->second.size();
             int type =HumanTodatasetType(dir);
             std::string dst=cuname+chaos::datasetTypeToPostfix(type);
-            DPD_LDBG << " perform query to:"<<dst<<" start:"<<start_t<<" end:"<<end_t<<" page:"<<limit;
+            DPD_LDBG << " perform query to:"<<dst<<" start:"<<start_t<<" end:"<<end_t<<" limit:"<<limit;
 
-            chaos::common::io::QueryCursor *pnt=ioLiveDataDriver->performQuery(dst,start_t,end_t,limit);
+            chaos::common::io::QueryCursor *pnt=ioLiveDataDriver->performQuery(dst,start_t,end_t,100);
             if(pnt ){
-                while(pnt->hasNext()){
-                   chaos::common::data::CDWShrdPtr ds(pnt->next());
-                   uint64_t ts=0;
-                   if(ds->hasKey(chaos::DataPackCommonKey::DPCK_TIMESTAMP)){
-                       ts=ds->getInt64Value(chaos::DataPackCommonKey::DPCK_TIMESTAMP);
-                   }
-                   // get all other variables.. if any
-                   for(std::vector<std::string>::iterator j=i->second.begin();j!=i->second.end();j++){
-                       if(ds->hasKey(*j)){
-                           metric_t tmp;
-                           tmp.milli_ts=ts;
-                           std::string metric_name=i->first+"/"+*j;
-                           if(ds->isVector(*j)){
-                               chaos::common::data::CMultiTypeDataArrayWrapper*w =ds->getVectorValue(*j);
-                               for(int cnt=0;cnt<w->size();cnt++){
-                                   tmp.idx=cnt;
-                                   if(w->isDoubleElementAtIndex(cnt)){
-                                       tmp.value=w->getDoubleElementAtIndex(cnt);
-                                       res[metric_name].push_back(tmp);
-                                   }
-                                   if(w->isInt32ElementAtIndex(cnt)){
-                                       tmp.value=w->getInt32ElementAtIndex(cnt);
-                                       res[metric_name].push_back(tmp);
-                                   }
-                                   if(w->isInt64ElementAtIndex(cnt)){
-                                       tmp.value=w->getInt64ElementAtIndex(cnt);
-                                       res[metric_name].push_back(tmp);
-                                   }
-                               }
-                           } else {
-                               tmp.idx=0;
-                               if(ds->isDoubleValue(*j)){
-                                   tmp.value=ds->getDoubleValue(*j);
-                                   res[metric_name].push_back(tmp);
+                int cnt=0;
+                while(pnt->hasNext()&& cnt++<limit){
+                    chaos::common::data::CDWShrdPtr ds(pnt->next());
+                    uint64_t ts=0;
+                    if(ds->hasKey(chaos::DataPackCommonKey::DPCK_TIMESTAMP)){
+                        ts=ds->getInt64Value(chaos::DataPackCommonKey::DPCK_TIMESTAMP);
+                    }
+                    // get all other variables.. if any
+                    for(std::vector<std::string>::iterator j=i->second.begin();j!=i->second.end();j++){
+                        if(ds->hasKey(*j)){
+                            metric_t tmp;
+                            tmp.milli_ts=ts;
+                            std::string metric_name=i->first+"/"+*j;
+                            if(ds->isVector(*j)){
+                                chaos::common::data::CMultiTypeDataArrayWrapper*w =ds->getVectorValue(*j);
+                                for(int cnt=0;cnt<w->size();cnt++){
+                                    tmp.idx=cnt;
+                                    if(w->isDoubleElementAtIndex(cnt)){
+                                        tmp.value=w->getDoubleElementAtIndex(cnt);
+                                        res[metric_name].push_back(tmp);
+                                    }
+                                    if(w->isInt32ElementAtIndex(cnt)){
+                                        tmp.value=w->getInt32ElementAtIndex(cnt);
+                                        res[metric_name].push_back(tmp);
+                                    }
+                                    if(w->isInt64ElementAtIndex(cnt)){
+                                        tmp.value=w->getInt64ElementAtIndex(cnt);
+                                        res[metric_name].push_back(tmp);
+                                    }
+                                }
+                            } else {
+                                tmp.idx=0;
+                                if(ds->isDoubleValue(*j)){
+                                    tmp.value=ds->getDoubleValue(*j);
+                                    res[metric_name].push_back(tmp);
 
-                               }
-                               if(ds->isInt32Value(*j)){
-                                   tmp.value=ds->getInt32Value(*j);
-                                   res[metric_name].push_back(tmp);
-                               }
-                               if(ds->isInt64Value(*j)){
-                                   tmp.value=ds->getInt64Value(*j);
-                                   res[metric_name].push_back(tmp);
-                               }
-                           }
-                       }
-                   }
+                                }
+                                if(ds->isInt32Value(*j)){
+                                    tmp.value=ds->getInt32Value(*j);
+                                    res[metric_name].push_back(tmp);
+                                }
+                                if(ds->isInt64Value(*j)){
+                                    tmp.value=ds->getInt64Value(*j);
+                                    res[metric_name].push_back(tmp);
+                                }
+                            }
+                        }
+                    }
                 }
                 ioLiveDataDriver->releaseQuery(pnt);
             }
