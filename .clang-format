@@ -5,6 +5,7 @@ IndentWidth: 4
 ---
 Language: Cpp
 AccessModifierOffset: -2
+AlignConsecutiveDeclarations: true
 AlignEscapedNewlinesLeft: false
 AlignTrailingComments: true
 AllowAllParametersOfDeclarationOnNextLine: true
