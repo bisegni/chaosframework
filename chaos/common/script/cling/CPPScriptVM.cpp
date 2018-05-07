@@ -55,6 +55,7 @@ CPPScriptVM::~CPPScriptVM() {}
 
 void CPPScriptVM::init(void *init_data) throw(chaos::CException) {
     path llvm_path;
+//    script_transaction = NULL;
     const char *args[1] = {(char*)"app"};
 
     if(GlobalConfiguration::getInstance()->getRpcImplKVParam().count("llvm_path")) {
@@ -107,8 +108,15 @@ int CPPScriptVM::loadScript(const std::string& loadable_script) {
     last_error = 0;
     CHAOS_ASSERT(interpreter.get());
     
-    if(interpreter->declare(loadable_script) != ::cling::Interpreter::kSuccess){
+//    if(script_transaction) {
+//        //remove old transaction
+//        interpreter->unload(*script_transaction);
+//        script_transaction = NULL;
+//    }
+    
+    if(interpreter->declare(loadable_script, &script_transaction) != ::cling::Interpreter::kSuccess){
         last_error = -1;
+//        script_transaction = NULL;
         ERR << "Error processing script";
     }
     return last_error;

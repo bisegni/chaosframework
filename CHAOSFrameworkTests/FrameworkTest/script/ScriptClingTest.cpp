@@ -79,6 +79,7 @@ TEST(ScriptClingTest, ExecuteFunction) {
     "for(const chaos::common::data::CDataVariant& i : i_var) {o_var.push_back(i);}"
     "return 0;}";
     ASSERT_EQ(script_manager->getVirtualMachine()->loadScript(code.str()), 0);
+//    ASSERT_EQ(script_manager->getVirtualMachine()->loadScript(code.str()), 0);
     ASSERT_EQ(script_manager->getVirtualMachine()->functionExists("testFunction", exists), 0);
     ASSERT_TRUE(exists);
     
