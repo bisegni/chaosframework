@@ -115,7 +115,6 @@ SOURCES += main.cpp\
     widget/CNodeHealthLabel.cpp \
     widget/CControlUnitDatasetLabel.cpp \
     widget/StateImageIndicatorWidget.cpp \
-    language_editor/LuaHighlighter.cpp \
     language_editor/ScriptEditor.cpp \
     script/ScriptManager.cpp \
     script/ScriptDescriptionWidget.cpp \
@@ -188,7 +187,6 @@ SOURCES += main.cpp\
     external_lib/QtNodeEditor/StyleCollection.cpp \
     node/connection_manager/ConnectionEditor.cpp \
     node/connection_manager/model/ControlUnitNodeDataModel.cpp \
-    language_editor/CppHighlighter.cpp \
     language_editor/LuaLanguageSupport.cpp \
     language_editor/CLINGLanguageSupport.cpp
 
@@ -284,7 +282,6 @@ HEADERS  += \
     widget/CNodeHealthLabel.h \
     widget/CControlUnitDatasetLabel.h \
     widget/StateImageIndicatorWidget.h \
-    language_editor/LuaHighlighter.h \
     language_editor/ScriptEditor.h \
     script/ScriptManager.h \
     script/ScriptDescriptionWidget.h \
@@ -366,7 +363,6 @@ HEADERS  += \
     external_lib/QtNodeEditor/StyleCollection.hpp \
     node/connection_manager/ConnectionEditor.h \
     node/connection_manager/model/ControlUnitNodeDataModel.h \
-    language_editor/CppHighlighter.h \
     language_editor/LanguageEditorSupport.h \
     language_editor/LuaLanguageSupport.h \
     language_editor/CLINGLanguageSupport.h

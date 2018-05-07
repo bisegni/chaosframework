@@ -10,19 +10,16 @@ CLINGLanguageSupport::Highlighter::Highlighter(QTextDocument *parent):
     keywordFormat.setForeground(QColor(187,125,215));
     keywordFormat.setFontWeight(QFont::Bold);
 
-    keywordPatterns << "\\bfunction\\b"     << "\\bend\\b"          << "\\bwhile\\b"
-                    << "\\bfor\\b"          << "\\buntil\\b"        << "\\band\\b"
-                    << "\\bbreak\\b"        << "\\bdo\\b"           << "\\belse\\b"
-                    << "\\bbelseif\\b"      << "\\bfalse\\b"        << "\\bif\\b"
-                    << "\\bin\\b"           << "\\blocal\\b"        << "\\bnil\\b"
-                    << "\\bnot\\b"          << "\\bor\\b"           << "\\breturn\\b"
-                    << "\\brepeat\\b"       << "\\bthen\\b"         << "\\btrue\\b"
-                    << "\\btonumber\\b"     << "\\btostring\\b"     << "\\bprint\\b"
-                    << "\\berror\\b"        << "\\bipairs\\b"       << "\\bpairs\\b"
-                    << "\\bsetmetatable\\b" << "\\bgetmetatable\\b" << "\\btype\\b"
-                    << "\\bselect\\b"       << "\\bloadstring\\b"   << "\\bloadfile\\b"
-                    << "\\barg\\b"          << "\\bmath\\b"         << "\\bstring\\b"
-                    << "\\bos\\b"           << "\\bio\\b"           << "\\belseif\\b";
+    keywordPatterns << "\\bchar\\b" << "\\bclass\\b" << "\\bconst\\b"
+                        << "\\bdouble\\b" << "\\benum\\b" << "\\bexplicit\\b"
+                        << "\\bfriend\\b" << "\\binline\\b" << "\\bint\\b"
+                        << "\\blong\\b" << "\\bnamespace\\b" << "\\boperator\\b"
+                        << "\\bprivate\\b" << "\\bprotected\\b" << "\\bpublic\\b"
+                        << "\\bshort\\b" << "\\bsignals\\b" << "\\bsigned\\b"
+                        << "\\bslots\\b" << "\\bstatic\\b" << "\\bstruct\\b"
+                        << "\\btemplate\\b" << "\\btypedef\\b" << "\\btypename\\b"
+                        << "\\bunion\\b" << "\\bunsigned\\b" << "\\bvirtual\\b"
+                        << "\\bvoid\\b" << "\\bvolatile\\b" << "\\bbool\\b";
     foreach (const QString &pattern, keywordPatterns)     {
         rule.pattern = QRegExp(pattern);
         rule.format = keywordFormat;
@@ -105,7 +102,31 @@ CLINGLanguageSupport::CLINGLanguageSupport():
 CLINGLanguageSupport::~CLINGLanguageSupport() {}
 
 QString CLINGLanguageSupport::getCodeForHandler(LanguageHandler handler_type) {
-
+    QString result;
+    switch(handler_type) {
+    case ChaosWrapper:
+        result = "";
+        break;
+    case LaunchHandler:
+        result = "int algorithmLaunch(const std::vector<chaos::common::data::CDataVariant>& in_args, std::vector<chaos::common::data::CDataVariant>& out_args){return 0;}";
+        break;
+    case StartHandler:
+        result = "int algorithmStart(const std::vector<chaos::common::data::CDataVariant>& in_args, std::vector<chaos::common::data::CDataVariant>& out_args){return 0;}";
+        break;
+    case  StepHandler:
+        result = "int algorithmStep(const std::vector<chaos::common::data::CDataVariant>& in_args, std::vector<chaos::common::data::CDataVariant>& out_args){return 0;}";
+        break;
+    case StopHandler:
+        result = "int algorithmStop(const std::vector<chaos::common::data::CDataVariant>& in_args, std::vector<chaos::common::data::CDataVariant>& out_args){return 0;}";
+        break;
+    case TerminateHandler:
+        result = "int algorithmEnd(const std::vector<chaos::common::data::CDataVariant>& in_args, std::vector<chaos::common::data::CDataVariant>& out_args){return 0;}";
+        break;
+    case AttributeChangedHHandler:
+        result = "int inputAttributeChanged(const std::vector<chaos::common::data::CDataVariant>& in_args, std::vector<chaos::common::data::CDataVariant>& out_args){return 0;}";
+        break;
+    }
+    return result;
 }
 
 QSyntaxHighlighter* CLINGLanguageSupport::getHiglighter(QTextDocument *parent) {

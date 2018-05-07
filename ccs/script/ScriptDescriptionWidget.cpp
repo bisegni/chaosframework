@@ -209,7 +209,7 @@ void ScriptDescriptionWidget::updateScripUI() {
 void ScriptDescriptionWidget::fillScriptWithGUIValues() {
     script_wrapper.dataWrapped().script_description.name = ui->lineEditScriptName->text().toStdString();
     script_wrapper.dataWrapped().script_description.description = ui->plainTextEditScriptDescirption->document()->toPlainText().toStdString();
-    script_wrapper.dataWrapped().script_description.language = ui->comboBoxsScirptLanguage->currentText().toStdString();
+    if(language_support.data()) {script_wrapper.dataWrapped().script_description.language = language_support->getVMPrefix().toStdString();}
     script_wrapper.dataWrapped().script_content = ui->textEditSourceCode->document()->toPlainText().toStdString();
     script_wrapper.dataWrapped().classification_list.clear();
     foreach (QString classification, classification_model.stringList()) {
