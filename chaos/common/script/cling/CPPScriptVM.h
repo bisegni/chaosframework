@@ -40,7 +40,6 @@ namespace chaos {
                     REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(CPPScriptVM)
                     //cling interpreter
                     ChaosUniquePtr<::cling::Interpreter> interpreter;
-//                    ::cling::Transaction *script_transaction;
                     CPPScriptVM(const std::string& alias);
                     ~CPPScriptVM();
                 protected:

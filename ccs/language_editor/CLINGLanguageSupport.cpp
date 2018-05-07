@@ -108,22 +108,22 @@ QString CLINGLanguageSupport::getCodeForHandler(LanguageHandler handler_type) {
         result = "";
         break;
     case LaunchHandler:
-        result = "int algorithmLaunch(const std::vector<chaos::common::data::CDataVariant>& in_args, std::vector<chaos::common::data::CDataVariant>& out_args){return 0;}";
+        result = "extern \"C\" int algorithmLaunch(const std::vector<chaos::common::data::CDataVariant>& in_args, std::vector<chaos::common::data::CDataVariant>& out_args){return 0;}";
         break;
     case StartHandler:
-        result = "int algorithmStart(const std::vector<chaos::common::data::CDataVariant>& in_args, std::vector<chaos::common::data::CDataVariant>& out_args){return 0;}";
+        result = "extern \"C\" int algorithmStart(const std::vector<chaos::common::data::CDataVariant>& in_args, std::vector<chaos::common::data::CDataVariant>& out_args){return 0;}";
         break;
     case  StepHandler:
-        result = "int algorithmStep(const std::vector<chaos::common::data::CDataVariant>& in_args, std::vector<chaos::common::data::CDataVariant>& out_args){return 0;}";
+        result = "extern \"C\" int algorithmStep(const std::vector<chaos::common::data::CDataVariant>& in_args, std::vector<chaos::common::data::CDataVariant>& out_args){return 0;}";
         break;
     case StopHandler:
-        result = "int algorithmStop(const std::vector<chaos::common::data::CDataVariant>& in_args, std::vector<chaos::common::data::CDataVariant>& out_args){return 0;}";
+        result = "extern \"C\" int algorithmStop(const std::vector<chaos::common::data::CDataVariant>& in_args, std::vector<chaos::common::data::CDataVariant>& out_args){return 0;}";
         break;
     case TerminateHandler:
-        result = "int algorithmEnd(const std::vector<chaos::common::data::CDataVariant>& in_args, std::vector<chaos::common::data::CDataVariant>& out_args){return 0;}";
+        result = "extern \"C\" int algorithmEnd(const std::vector<chaos::common::data::CDataVariant>& in_args, std::vector<chaos::common::data::CDataVariant>& out_args){return 0;}";
         break;
     case AttributeChangedHHandler:
-        result = "int inputAttributeChanged(const std::vector<chaos::common::data::CDataVariant>& in_args, std::vector<chaos::common::data::CDataVariant>& out_args){return 0;}";
+        result = "extern \"C\" int inputAttributeChanged(const std::vector<chaos::common::data::CDataVariant>& in_args, std::vector<chaos::common::data::CDataVariant>& out_args){return 0;}";
         break;
     }
     return result;
