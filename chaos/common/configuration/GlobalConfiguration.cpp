@@ -295,7 +295,7 @@ void GlobalConfiguration::checkDefaultOption() throw (CException) {
     
     //fill the key value list
     if(rpc_impl_kv_param.size()) {
-        fillKVParameter(map_kv_param_rpc_impl, rpc_impl_kv_param, std::string(RpcConfigurationKey::OPT_RPC_IMPL_KV_PARAM_STRING_REGEX));
+        fillKVParameter(map_kv_param_rpc_impl, rpc_impl_kv_param, "");
     }
     
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(uint32_t, rpc_domain_queue_thread_number, InitOption::OPT_RPC_DOMAIN_QUEUE_THREAD, 1);
