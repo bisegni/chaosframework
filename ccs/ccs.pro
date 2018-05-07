@@ -188,7 +188,9 @@ SOURCES += main.cpp\
     external_lib/QtNodeEditor/StyleCollection.cpp \
     node/connection_manager/ConnectionEditor.cpp \
     node/connection_manager/model/ControlUnitNodeDataModel.cpp \
-    language_editor/CppHighlighter.cpp
+    language_editor/CppHighlighter.cpp \
+    language_editor/LuaLanguageSupport.cpp \
+    language_editor/CLINGLanguageSupport.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -364,7 +366,10 @@ HEADERS  += \
     external_lib/QtNodeEditor/StyleCollection.hpp \
     node/connection_manager/ConnectionEditor.h \
     node/connection_manager/model/ControlUnitNodeDataModel.h \
-    language_editor/CppHighlighter.h
+    language_editor/CppHighlighter.h \
+    language_editor/LanguageEditorSupport.h \
+    language_editor/LuaLanguageSupport.h \
+    language_editor/CLINGLanguageSupport.h
 
 FORMS    += \
     search/searchnoderesult.ui \

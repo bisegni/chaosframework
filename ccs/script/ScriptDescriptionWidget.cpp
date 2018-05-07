@@ -1,8 +1,8 @@
 #include "ScriptDescriptionWidget.h"
 #include "ui_ScriptDescriptionWidget.h"
 #include "../GlobalServices.h"
-#include "../language_editor/LuaHighlighter.h"
-#include "../language_editor/CppHighlighter.h"
+#include "../language_editor/LuaLanguageSupport.h"
+#include "../language_editor/CLINGLanguageSupport.h"
 #include "../tree_group/TreeGroupManager.h"
 
 #include <QMap>
@@ -28,12 +28,15 @@ ScriptDescriptionWidget::ScriptDescriptionWidget(QWidget *parent) :
     QWidget(parent),
     widget_utility(this),
     ui(new Ui::ScriptDescriptionWidget),
-    current_highlighter(NULL),
     api_submitter(this){
     ui->setupUi(this);
     QList<int> sizes;
     sizes << (size().width()*1/5) << (size().width()*4/5);
     ui->splitter->setSizes(sizes);
+
+    languages.insert("Lua", QSharedPointer<LanguageEditorSupport>(new LuaLanguageSupport()));
+    languages.insert("C++ [CLING]", QSharedPointer<LanguageEditorSupport>(new CLINGLanguageSupport()));
+    updateLanguages();
 
     //set the model for the dataset managment
     ui->tableViewDataset->setModel(&editable_dataset_table_model);
@@ -55,13 +58,13 @@ ScriptDescriptionWidget::ScriptDescriptionWidget(QWidget *parent) :
             SLOT(handleModelSelectionChanged(QItemSelection,QItemSelection)));
 
     QVector< QPair<QString, QVariant> > cm_vec;
-    cm_vec.push_back(QPair<QString, QVariant>(CM_ADD_CHAOS_WRAPPER, QVariant()));
-    cm_vec.push_back(QPair<QString, QVariant>(CM_ADD_LAUNCH_PHASE, QVariant()));
-    cm_vec.push_back(QPair<QString, QVariant>(CM_ADD_START_PHASE, QVariant()));
-    cm_vec.push_back(QPair<QString, QVariant>(CM_ADD_STEP_PHASE, QVariant()));
-    cm_vec.push_back(QPair<QString, QVariant>(CM_ADD_STOP_PHASE, QVariant()));
-    cm_vec.push_back(QPair<QString, QVariant>(CM_ADD_DEINIT_PHASE, QVariant()));
-    cm_vec.push_back(QPair<QString, QVariant>(CM_ADD_IA_CHANGED_PHASE, QVariant()));
+    cm_vec.push_back(QPair<QString, QVariant>(CM_ADD_CHAOS_WRAPPER, QVariant(LanguageEditorSupport::ChaosWrapper)));
+    cm_vec.push_back(QPair<QString, QVariant>(CM_ADD_LAUNCH_PHASE, QVariant(LanguageEditorSupport::LaunchHandler)));
+    cm_vec.push_back(QPair<QString, QVariant>(CM_ADD_START_PHASE, QVariant(LanguageEditorSupport::StartHandler)));
+    cm_vec.push_back(QPair<QString, QVariant>(CM_ADD_STEP_PHASE, QVariant(LanguageEditorSupport::StepHandler)));
+    cm_vec.push_back(QPair<QString, QVariant>(CM_ADD_STOP_PHASE, QVariant(LanguageEditorSupport::StopHandler)));
+    cm_vec.push_back(QPair<QString, QVariant>(CM_ADD_DEINIT_PHASE, QVariant(LanguageEditorSupport::TerminateHandler)));
+    cm_vec.push_back(QPair<QString, QVariant>(CM_ADD_IA_CHANGED_PHASE, QVariant(LanguageEditorSupport::AttributeChangedHHandler)));
     ui->textEditSourceCode->setContextMenuPolicy(Qt::CustomContextMenu);
     widget_utility.cmRegisterActions(ui->textEditSourceCode,
                                      cm_vec);
@@ -76,13 +79,16 @@ ScriptDescriptionWidget::ScriptDescriptionWidget(const Script &_script,
     QWidget(parent),
     widget_utility(this),
     ui(new Ui::ScriptDescriptionWidget),
-    current_highlighter(NULL),
     api_submitter(this),
     script_wrapper(_script){
     ui->setupUi(this);
     QList<int> sizes;
     sizes << (size().width()*1/5) << (size().width()*4/5);
     ui->splitter->setSizes(sizes);
+
+    languages.insert("Lua", QSharedPointer<LanguageEditorSupport>(new LuaLanguageSupport()));
+    languages.insert("C++ [CLING]", QSharedPointer<LanguageEditorSupport>(new CLINGLanguageSupport()));
+    updateLanguages();
 
     //set the model for the dataset managment
     ui->tableViewDataset->setModel(&editable_dataset_table_model);
@@ -101,13 +107,13 @@ ScriptDescriptionWidget::ScriptDescriptionWidget(const Script &_script,
             SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
             SLOT(handleModelSelectionChanged(QItemSelection,QItemSelection)));
     QVector< QPair<QString, QVariant> > cm_vec;
-    cm_vec.push_back(QPair<QString, QVariant>(CM_ADD_CHAOS_WRAPPER, QVariant()));
-    cm_vec.push_back(QPair<QString, QVariant>(CM_ADD_LAUNCH_PHASE, QVariant()));
-    cm_vec.push_back(QPair<QString, QVariant>(CM_ADD_START_PHASE, QVariant()));
-    cm_vec.push_back(QPair<QString, QVariant>(CM_ADD_STEP_PHASE, QVariant()));
-    cm_vec.push_back(QPair<QString, QVariant>(CM_ADD_STOP_PHASE, QVariant()));
-    cm_vec.push_back(QPair<QString, QVariant>(CM_ADD_DEINIT_PHASE, QVariant()));
-    cm_vec.push_back(QPair<QString, QVariant>(CM_ADD_IA_CHANGED_PHASE, QVariant()));
+    cm_vec.push_back(QPair<QString, QVariant>(CM_ADD_CHAOS_WRAPPER, QVariant(LanguageEditorSupport::ChaosWrapper)));
+    cm_vec.push_back(QPair<QString, QVariant>(CM_ADD_LAUNCH_PHASE, QVariant(LanguageEditorSupport::LaunchHandler)));
+    cm_vec.push_back(QPair<QString, QVariant>(CM_ADD_START_PHASE, QVariant(LanguageEditorSupport::StartHandler)));
+    cm_vec.push_back(QPair<QString, QVariant>(CM_ADD_STEP_PHASE, QVariant(LanguageEditorSupport::StepHandler)));
+    cm_vec.push_back(QPair<QString, QVariant>(CM_ADD_STOP_PHASE, QVariant(LanguageEditorSupport::StopHandler)));
+    cm_vec.push_back(QPair<QString, QVariant>(CM_ADD_DEINIT_PHASE, QVariant(LanguageEditorSupport::TerminateHandler)));
+    cm_vec.push_back(QPair<QString, QVariant>(CM_ADD_IA_CHANGED_PHASE, QVariant(LanguageEditorSupport::AttributeChangedHHandler)));
     ui->textEditSourceCode->setContextMenuPolicy(Qt::CustomContextMenu);
     widget_utility.cmRegisterActions(ui->textEditSourceCode,
                                      cm_vec);
@@ -117,8 +123,17 @@ ScriptDescriptionWidget::ScriptDescriptionWidget(const Script &_script,
 }
 
 ScriptDescriptionWidget::~ScriptDescriptionWidget() {
-    if(current_highlighter) delete(current_highlighter);
     delete ui;
+}
+
+void ScriptDescriptionWidget::updateLanguages(){
+    ui->comboBoxsScirptLanguage->clear();
+    for(QMap< QString, QSharedPointer<LanguageEditorSupport> >::iterator liter = languages.begin(),
+        lend = languages.end();
+        liter != lend;
+        liter++) {
+            ui->comboBoxsScirptLanguage->addItem(liter.key());
+    }
 }
 
 QString ScriptDescriptionWidget::getScriptName() {
@@ -141,46 +156,31 @@ void ScriptDescriptionWidget::onApiDone(const QString& tag,
 
 void ScriptDescriptionWidget::cmActionTrigger(const QString& cm_title,
                                               const QVariant& cm_data) {
+    if(!language_support.data()) return;
     QTextCursor text_cursor = QTextCursor(ui->textEditSourceCode->document());
     int current_position = text_cursor.position();
-    if(cm_title.compare(CM_ADD_CHAOS_WRAPPER) == 0) {
+
+    LanguageEditorSupport::LanguageHandler handler_type = static_cast<LanguageEditorSupport::LanguageHandler>(cm_data.toUInt());
+    ui->textEditSourceCode->insertPlainText(language_support->getCodeForHandler(handler_type));
+    if(handler_type == LanguageEditorSupport::ChaosWrapper) {
         text_cursor.movePosition(QTextCursor::Start);
-        ui->textEditSourceCode->insertPlainText("local chaos = chaos()");
-    } else if(cm_title.compare(CM_ADD_LAUNCH_PHASE) == 0) {
+    } else  {
         text_cursor.movePosition(QTextCursor::End);
-        ui->textEditSourceCode->insertPlainText("function algorithmLaunch()\n\tprint ( \"executing algorithmLaunch\" );\nend");
-    } else if(cm_title.compare(CM_ADD_START_PHASE) == 0) {
-        text_cursor.movePosition(QTextCursor::End);
-        ui->textEditSourceCode->insertPlainText("function algorithmStart()\n\tprint ( \"executing algorithmStart\" );\nend");
-    } else if(cm_title.compare(CM_ADD_STEP_PHASE) == 0) {
-        text_cursor.movePosition(QTextCursor::End);
-        ui->textEditSourceCode->insertPlainText("function algorithmStep(delay_from_last_step) \n\tprint ( \"executing algorithmStep--->\"..tostring(delay_from_last_step) );\nend");
-    } else if(cm_title.compare(CM_ADD_STOP_PHASE) == 0) {
-        text_cursor.movePosition(QTextCursor::End);
-        ui->textEditSourceCode->insertPlainText("function algorithmStop()\n\tprint ( \"executing algorithmStop\" );\nend");
-    } else if(cm_title.compare(CM_ADD_DEINIT_PHASE) == 0) {
-        text_cursor.movePosition(QTextCursor::End);
-        ui->textEditSourceCode->insertPlainText("function algorithmEnd()\n\tprint ( \"executing algorithmEnd\" );\nend");
-    } else if(cm_title.compare(CM_ADD_IA_CHANGED_PHASE) == 0) {
-        text_cursor.movePosition(QTextCursor::End);
-        ui->textEditSourceCode->insertPlainText("function inputAttributeChanged(attribute_name)\n\tprint ( \"singla received for input dataset update\" );\nend");
     }
     text_cursor.setPosition(current_position);
 }
 
 void ScriptDescriptionWidget::updateScripUI() {
     QStringList string_list;
+    language_support.clear();
 
-    if(current_highlighter) {
-        delete(current_highlighter);
-        current_highlighter = NULL;
-    }
     ui->toolBox->setCurrentIndex(0);
+    ui->comboBoxsScirptLanguage->setCurrentIndex(ui->comboBoxsScirptLanguage->findText(QString::fromStdString(script_wrapper.dataWrapped().script_description.language)));
     ui->lineEditScriptName->setText(QString::fromStdString(script_wrapper.dataWrapped().script_description.name));
     ui->plainTextEditScriptDescirption->setPlainText(QString::fromStdString(script_wrapper.dataWrapped().script_description.description));
-    ui->comboBoxsScirptLanguage->setCurrentIndex(ui->comboBoxsScirptLanguage->findText(QString::fromStdString(script_wrapper.dataWrapped().script_description.language)));
     //ashow source code
     ui->textEditSourceCode->setPlainText(QString::fromStdString(script_wrapper.dataWrapped().script_content));
+    qDebug() << QString::fromStdString(script_wrapper.dataWrapped().script_content);
 
     updateTextEditorFeatures();
 
@@ -223,17 +223,12 @@ void ScriptDescriptionWidget::fillScriptWithGUIValues() {
 }
 
 void ScriptDescriptionWidget::updateTextEditorFeatures() {
-    int index = ui->comboBoxsScirptLanguage->currentIndex();
-    if ( index != -1 ) { // -1 for not found
-        switch(index){
-        case 0:
-            current_highlighter = new LuaHighlighter(ui->textEditSourceCode->document());
-            break;
-        case 1:
-            current_highlighter = new CppHighlighter(ui->textEditSourceCode->document());
-            break;
-        }
-    }
+    const QString language = ui->comboBoxsScirptLanguage->currentText();
+    QMap< QString, QSharedPointer<LanguageEditorSupport> >::iterator liter = languages.find(language);
+    if(liter == languages.end()) return;
+    language_support = liter.value();
+    language_support->getHiglighter(ui->textEditSourceCode->document());
+
 }
 
 void ScriptDescriptionWidget::on_comboBoxsScirptLanguage_currentIndexChanged(int index) {
