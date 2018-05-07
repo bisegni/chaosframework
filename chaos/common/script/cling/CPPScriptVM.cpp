@@ -114,7 +114,7 @@ int CPPScriptVM::loadScript(const std::string& loadable_script) {
 //        script_transaction = NULL;
 //    }
     
-    if(interpreter->declare(loadable_script, &script_transaction) != ::cling::Interpreter::kSuccess){
+    if(interpreter->declare(loadable_script/*, &script_transaction*/) != ::cling::Interpreter::kSuccess){
         last_error = -1;
 //        script_transaction = NULL;
         ERR << "Error processing script";
