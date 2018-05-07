@@ -95,13 +95,15 @@ int GrafanaSearch::execute(std::vector<std::string>& api_tokens,
 
             }
         }
-
-        chaos::common::data::CDWShrdPtr cd =persistence_driver->searchMetrics(target,false);
+        std::stringstream ss;
         Json::Reader json_reader;
+
+
+#if 0
+        chaos::common::data::CDWShrdPtr cd =persistence_driver->searchMetrics(target,false);
         chaos::common::data::CDataWrapper w;
         std::vector<std::string> keys;
         cd->getAllKey(keys);
-        std::stringstream ss;
         ss<<"[";
         for(std::vector<std::string>::iterator i=keys.begin();i!=keys.end();i++){
             ChaosUniquePtr<chaos::common::data::CMultiTypeDataArrayWrapper> w(cd->getVectorValue(*i));
@@ -133,6 +135,20 @@ int GrafanaSearch::execute(std::vector<std::string>& api_tokens,
 
         }
         ss<<"]";
+#else
+        ChaosStringVector metrics;
+        persistence_driver->searchMetrics(target,metrics,false);
+        ss<<"[";
+        for(ChaosStringVector::iterator i=metrics.begin();i!=metrics.end();++i){
+            ss<<"\""<<*i<<"\"";
+            if((i+1)!=metrics.end()){
+                ss<<",";
+            }
+        }
+        ss<<"]";
+
+
+#endif
         PID_LDBG << "RETURNING:"<<ss.str();
 
         json_reader.parse(ss.str(),output_data);

@@ -58,6 +58,8 @@ namespace chaos {
 				//! register the dataset of ap roducer
 				virtual int registerDataset(const std::string& producer_key,
 											chaos::common::data::CDataWrapper& last_dataset) = 0;
+                virtual void searchMetrics(const std::string&search_string,ChaosStringVector& metrics,bool alive)=0;
+
                 /**
                   * return a list of metrics, corresponding to CHAOS NODES
                   * \param search_string initial search string

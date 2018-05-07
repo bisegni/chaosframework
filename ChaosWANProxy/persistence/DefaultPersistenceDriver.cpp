@@ -329,6 +329,40 @@ void DefaultPersistenceDriver::timeout(){
     }
 
 }
+void DefaultPersistenceDriver::searchMetrics(const std::string&search_string,ChaosStringVector& metrics,bool alive){
+    int node_type=2; //CU
+    ChaosStringVector node_tmp;
+    metrics.clear();
+    if(mds_message_channel->searchNode(search_string,
+                                       node_type,
+                                       alive,
+                                       0,
+                                       10000,
+                                       node_tmp,
+                                       5000)==0){
+        for(ChaosStringVector::iterator i=node_tmp.begin();node_tmp.end()!=i;i++){
+            size_t value_len;
+            const int dt[]={
+                DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT,
+                DataPackCommonKey::DPCK_DATASET_TYPE_INPUT};
+            for(int cnt=0;cnt<sizeof(dt)/sizeof(int);cnt++){
+                std::string lkey=*i+chaos::datasetTypeToPostfix(dt[cnt]);
+                char *value = ioLiveDataDriver->retriveRawData(lkey,(size_t*)&value_len);
+                if(value){
+                    chaos::common::data::CDataWrapper *tmp = new CDataWrapper(value);
+                    ChaosStringVector ds;
+                    tmp->getAllKey(ds);
+                    for(ChaosStringVector::iterator ii=ds.begin();ds.end()!=ii;ii++){
+                        std::string metric=*i+"/"+chaos::datasetTypeToHuman(dt[cnt])+"/"+*ii;
+                        metrics.push_back(metric);
+                    }
+            }
+            }
+
+        }
+    }
+}
+
 chaos::common::data::CDWShrdPtr DefaultPersistenceDriver::searchMetrics(const std::string&search_string,bool alive){
     chaos::common::data::CDWShrdPtr ret(new CDataWrapper());
     int node_type=2; //CU

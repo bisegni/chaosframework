@@ -105,7 +105,9 @@ namespace chaos {
 				int registerDataset(const std::string& producer_key,
 									chaos::common::data::CDataWrapper& last_dataset);
 
-                 chaos::common::data::CDWShrdPtr searchMetrics(const std::string&search_string,bool alive);
+                void searchMetrics(const std::string&search_string,ChaosStringVector& metrics,bool alive);
+
+                chaos::common::data::CDWShrdPtr searchMetrics(const std::string&search_string,bool alive);
                  /**
                    * query a list of metrics, in the time
                    * \param start start time search
