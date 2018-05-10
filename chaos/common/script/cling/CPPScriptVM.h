@@ -38,6 +38,7 @@ namespace chaos {
                 //!define the chaos script c++ implementation using cern cling
                 DECLARE_CLASS_FACTORY(CPPScriptVM, AbstractScriptVM) {
                     REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(CPPScriptVM)
+                    bool script_loaded;
                     //cling interpreter
                     ChaosUniquePtr<::cling::Interpreter> interpreter;
                     CPPScriptVM(const std::string& alias);

@@ -20,7 +20,8 @@ SET(TestFrameworkSource main.cpp
                         templated_key_value_hash/TemplateKeyValueHashMap.cpp
                         trigger/TriggerTest.cpp
                         utility/FutureHelperTest.cpp)
-
+SET(TestFrameworkSource ${TestFrameworkSource}
+                        script/ScriptClingTest.cpp)
 INCLUDE_DIRECTORIES(. ../../usr/local/include)
 LINK_DIRECTORIES( ${LINK_DIRECTORIES} ${PROJECT_SOURCE_DIR}/../../usr/local/lib )
 if(UNIX AND NOT APPLE)
@@ -36,6 +37,6 @@ ENDIF()
 SET(LinkedLibrary $ENV{CHAOS_LINK_LIBRARY})
 separate_arguments(LinkedLibrary)
 
-TARGET_LINK_LIBRARIES(TestFramework gtest chaos_common ${LinkedLibrary})
+TARGET_LINK_LIBRARIES(TestFramework gtest clingInterpreter chaos_common ${LinkedLibrary})
 
 INSTALL_TARGETS(/bin TestFramework)

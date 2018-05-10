@@ -49,16 +49,18 @@ using ScriptProcedurePrototype = int(const ScriptInParam& input_parameter);
 using ScriptFunctionPrototype = int(const ScriptInParam& input_parameter, ScriptOutParam& output_parameter);
 
 CPPScriptVM::CPPScriptVM(const std::string& name):
-AbstractScriptVM(name){}
+AbstractScriptVM(name),
+script_loaded(false){}
 
 CPPScriptVM::~CPPScriptVM() {}
 
 void CPPScriptVM::init(void *init_data) throw(chaos::CException) {
     path llvm_path;
+    script_loaded = false;
 //    script_transaction = NULL;
     const char *args[1] = {(char*)"app"};
 
-    if(GlobalConfiguration::getInstance()->getRpcImplKVParam().count("llvm_path")) {
+    if(GlobalConfiguration::getInstance()->getScriptVMKVParam().count("llvm_path")) {
         llvm_path = GlobalConfiguration::getInstance()->getRpcImplKVParam()["llvm_path"];
     } else {
         //get local directory
@@ -68,7 +70,7 @@ void CPPScriptVM::init(void *init_data) throw(chaos::CException) {
             llvm_path = llvm_path.parent_path();
         }
     }
-    
+
     interpreter.reset(new ::cling::Interpreter(1, args, llvm_path.c_str()));
     //set the default include file
     ::cling::Interpreter::CompilationResult cr = interpreter->declare("#include <chaos/common/script/ScriptApiCaller.h>");
@@ -107,10 +109,13 @@ void CPPScriptVM::deinit() throw(chaos::CException) {
 int CPPScriptVM::loadScript(const std::string& loadable_script) {
     last_error = 0;
     CHAOS_ASSERT(interpreter.get());
+    if(script_loaded){interpreter->unload(1);}
     ::cling::Transaction *script_transaction = NULL;
     if(interpreter->declare(loadable_script, &script_transaction) != ::cling::Interpreter::kSuccess){
         last_error = -1;
         ERR << "Error processing script";
+    } else {
+        script_loaded = true;
     }
     return last_error;
 }

@@ -8,7 +8,11 @@ ELSE()
 ENDIF()
 CheckConfigureBuild(zmq zeromq4-1 "${ZMQ_FLAGS}" https://github.com/zeromq)
 
-####
+if(CLING_VIRTUAL_MACHINE)
+    set(CMAKE_MODULE_PATH "${CMAKE_INSTALL_PREFIX}/lib/cmake/cling;${CMAKE_MODULE_PATH}")
+    # This project needs cling.
+    find_package(Cling REQUIRED)
+ENDIF()
 
 SET(common_lib_src chaos_errors.cpp
                    log/LogManager.cpp
@@ -288,7 +292,8 @@ SET(common_lib_src ${common_lib_src}
 IF (CLING_VIRTUAL_MACHINE)
     MESG("Add cling virtual machine compilation files")
     SET(common_lib_src ${common_lib_src}
-        script/cling/CPPScriptVM.cpp)
+        script/cling/CPPScriptVM.cpp
+        script/cling/ClingRootInterpreter.cpp)
 ENDIF()
 
 IF (NOT DEFINED BUILD_FORCE_STATIC)
@@ -304,13 +309,16 @@ ELSE ()
   ADD_LIBRARY(${PROJECT_NAME} SHARED ${common_lib_src})
   set_target_properties(${PROJECT_NAME} PROPERTIES VERSION 1.0.0 SOVERSION 1)
 ENDIF ()
-#ADD_LIBRARY(${PROJECT_NAME} ${common_lib_src})
-#SET_TARGET_PROPERTIES(chaos_common_static PROPERTIES OUTPUT_NAME chaos_common)
+target_compile_definitions(${PROJECT_NAME} PRIVATE CLING_VIRTUAL_MACHINE=${CLING_VIRTUAL_MACHINE})
 
 IF(CERN_ROOT)
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${FrameworkLib} Tree Core)
+    TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${FrameworkLib} Tree Core)
 ELSE()
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${FrameworkLib})
+    IF(CLING_VIRTUAL_MACHINE)
+        TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${FrameworkLib} clingInterpreter)
+    ELSE()
+        TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${FrameworkLib})
+    ENDIF()
 ENDIF()
 
 
