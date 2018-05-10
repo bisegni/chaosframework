@@ -8,10 +8,46 @@ ELSE()
 ENDIF()
 CheckConfigureBuild(zmq zeromq4-1 "${ZMQ_FLAGS}" https://github.com/zeromq)
 
-if(CLING_VIRTUAL_MACHINE)
-    set(CMAKE_MODULE_PATH "${CMAKE_INSTALL_PREFIX}/lib/cmake/cling;${CMAKE_MODULE_PATH}")
-    # This project needs cling.
-    find_package(Cling REQUIRED)
+
+IF (CLING_VIRTUAL_MACHINE)
+  MESG("Using ${CMAKE_BINARY_DIR}/ext_dep/cling-src for download cling")
+  IF(NOT EXISTS ${CMAKE_BINARY_DIR}/ext_dep/cling-src)
+    MESG("Create directory for cling download files")
+    EXECUTE_PROCESS(
+      COMMAND mkdir -p ${CMAKE_BINARY_DIR}/ext_dep/cling-src;
+      RESULT_VARIABLE err
+      OUTPUT_VARIABLE out
+    )
+
+    MESG("Downloading cling")
+    EXECUTE_PROCESS(
+    COMMAND ${CMAKE_BINARY_DIR}/config/cling_clone.sh ${CMAKE_BINARY_DIR}/ext_dep/cling-src;
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/ext_dep/cling-src
+    RESULT_VARIABLE err
+        OUTPUT_VARIABLE out
+    )
+  ENDIF()
+
+  IF(err)
+  	ERROR("CANNOT create ${CMAKE_BINARY_DIR}/ext_dep/cling-src directory: ${out}")
+  ELSE()
+    #cling
+    MESG("Add cling as external project")
+    ExternalProject_Add(
+       cling
+       PREFIX "${CMAKE_BINARY_DIR}/ext_dep/cling-prefix"
+       SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/cling-src"
+       BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/cling-build"
+       CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
+       LOG_DOWNLOAD ON
+       LOG_CONFIGURE ON
+       LOG_BUILD ON)
+
+       set(CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR}/ext_dep/cling-src/tools/cling/cmake/modules/")
+       MESG("Searching cling cmake module in ${CMAKE_MODULE_PATH}")
+       # This project needs cling.
+       find_library(Cling REQUIRED)
+  ENDIF()
 ENDIF()
 
 SET(common_lib_src chaos_errors.cpp
@@ -309,6 +345,8 @@ ELSE ()
   ADD_LIBRARY(${PROJECT_NAME} SHARED ${common_lib_src})
   set_target_properties(${PROJECT_NAME} PROPERTIES VERSION 1.0.0 SOVERSION 1)
 ENDIF ()
+
+add_dependencies(${PROJECT_NAME} cling)
 target_compile_definitions(${PROJECT_NAME} PRIVATE CLING_VIRTUAL_MACHINE=${CLING_VIRTUAL_MACHINE})
 
 IF(CERN_ROOT)

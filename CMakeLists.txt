@@ -77,41 +77,6 @@ IF (CHAOS_ONLY_DEPENDECY OR
      MESG("${GTEST_LIBRARY}")
 ENDIF()
 
-IF (CLING_VIRTUAL_MACHINE)
-  IF(NOT EXISTS ${CMAKE_CURRENT_LIST_DIR}/ext_dep/cling-src)
-    MESG("Create directory for cling download files")
-    EXECUTE_PROCESS(
-      COMMAND mkdir -p ${CMAKE_CURRENT_LIST_DIR}/ext_dep/cling-src;
-      RESULT_VARIABLE err
-      OUTPUT_VARIABLE out
-    )
-
-    MESG("Downloading cling")
-    EXECUTE_PROCESS(
-    COMMAND ${CMAKE_CURRENT_LIST_DIR}/config/cling_clone.sh ${CMAKE_CURRENT_LIST_DIR}/ext_dep/cling-src;
-    WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/ext_dep/cling-src
-    RESULT_VARIABLE err
-        OUTPUT_VARIABLE out
-    )
-  ENDIF()
-
-  IF(err)
-  	ERROR("CANNOT create ${CMAKE_CURRENT_LIST_DIR}/ext_dep/cling-src directory: ${out}")
-  ELSE()
-    #cling
-    MESG("Add cling as external project")
-    ExternalProject_Add(
-       cling
-       PREFIX "${CMAKE_BINARY_DIR}/ext_dep/cling-prefix"
-       SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/cling-src"
-       BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/cling-build"
-       CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
-       LOG_DOWNLOAD ON
-       LOG_CONFIGURE ON
-       LOG_BUILD ON)
-  ENDIF()
-ENDIF()
-
 SET( ${PROJECT_NAME}_MAJOR_VERSION 0 )
 SET( ${PROJECT_NAME}_MINOR_VERSION 1 )
 SET( ${PROJECT_NAME}_PATCH_LEVEL 0 )
@@ -125,6 +90,7 @@ if(NOT CHAOS_ONLY_DEPENDECY)
   MESG("Configure Common Layer")
   ADD_SUBDIRECTORY(chaos/common)
   GET_DIRECTORY_PROPERTY(CLING_VIRTUAL_MACHINE DIRECTORY chaos/common VARIABLES CLING_VIRTUAL_MACHINE)
+  GET_DIRECTORY_PROPERTY(CMAKE_BINARY_DIR DIRECTORY chaos/common VARIABLES CMAKE_BINARY_DIR)
 
   MESG("Configure CUToolkit Layer")
   ADD_SUBDIRECTORY(chaos/cu_toolkit)
