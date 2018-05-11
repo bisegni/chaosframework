@@ -1164,8 +1164,8 @@ int CDataWrapper::setBson(const bson_iter_t *v ,const double& val){
     if(ITER_TYPE(v)==BSON_TYPE_DOUBLE){
         memcpy((void*)(v->raw + v->d1), (void*)&val,sizeof(double));
         return sizeof(double);
-    }
-    return -1;
+   }
+   return -1;
 }
 
 int CDataWrapper::setBson(const bson_iter_t *v ,const bool& val){

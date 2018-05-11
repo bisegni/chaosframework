@@ -254,7 +254,7 @@ throw chaos::CException(-2, ss.str(), __PRETTY_FUNCTION__);
                                 while(bson_iter_next(&iter)&& (cnt<size)) {
                                     int s;
                                     //const bson_value_t *v = bson_iter_value(&it);
-                                    if((s=setBson(&it,val[cnt]))>0){
+                                    if((s=setBson(&iter,val[cnt]))>0){
                                         ret+=s;
                                     } else {
                                         return -1;
