@@ -54,13 +54,11 @@ script_loaded(false){}
 
 CPPScriptVM::~CPPScriptVM() {}
 
-void CPPScriptVM::init(void *init_data) throw(chaos::CException) {
+void CPPScriptVM::initNewInterpreter() {
     path llvm_path;
-    script_loaded = false;
-//    script_transaction = NULL;
+    //    script_transaction = NULL;
     const char *args[1] = {(char*)"app"};
-
-    if(GlobalConfiguration::getInstance()->getScriptVMKVParam().count("llvm_path")) {
+    if(GlobalConfiguration::getInstance()->getRpcImplKVParam().count("llvm_path")) {
         llvm_path = GlobalConfiguration::getInstance()->getRpcImplKVParam()["llvm_path"];
     } else {
         //get local directory
@@ -72,34 +70,27 @@ void CPPScriptVM::init(void *init_data) throw(chaos::CException) {
     }
 
     interpreter.reset(new ::cling::Interpreter(1, args, llvm_path.c_str()));
+    if(interpreter.get() == NULL){
+        LOG_AND_TROW(ERR, -1, "Error during instantiation of ::cling::Interpreter");
+    }
+        
     //set the default include file
     ::cling::Interpreter::CompilationResult cr = interpreter->declare("#include <chaos/common/script/ScriptApiCaller.h>");
     if(cr == ::cling::Interpreter::kFailure) {
-        LOG_AND_TROW(ERR, -1, "Error including default chaos files")
+        LOG_AND_TROW(ERR, -2, "Error including default chaos files")
     } else {
         //add the caller to script core
         std::ostringstream sstr;
         sstr << "chaos::common::script::ScriptApiCaller& chaos_api = *(chaos::common::script::ScriptApiCaller*)" << std::hex << std::showbase << (size_t)script_caller << ';';
         cr = interpreter->process(sstr.str());
         if(cr == ::cling::Interpreter::kFailure) {
-            LOG_AND_TROW(ERR, -2, "Errore during api accessor registration")
+            LOG_AND_TROW(ERR, -3, "Errore during api accessor registration")
         }
-//        const ::cling::Transaction* t = interpreter->getLatestTransaction();
-//        ::clang::DeclGroupRef d = t->getCurrentLastDecl();
-//        ::clang::Decl* d2 = d.getSingleDecl();
-//        ::clang::TranslationUnitDecl* tu = d2->getTranslationUnitDecl();
-//        ::clang::SourceManager& sm = d2->getASTContext().getSourceManager();
-//        ::clang::DeclContext::decl_iterator it;
-//        for (it = tu->decls_begin();it != tu->decls_end(); ++it) {
-//            ::clang::SourceLocation sl = it->getLocation();
-//            if (const clang::VarDecl* vd = clang::dyn_cast<clang::VarDecl>(*it)) {
-//                std::cout << sl.printToString(sm) << "\t"
-//                << it->getDeclKindName() << "\t"
-//                << vd->getName().str() << "\t"
-//                << vd->getType().getAsString() << std::endl;
-//            }
-//        }
     }
+}
+
+void CPPScriptVM::init(void *init_data) throw(chaos::CException) {
+    
 }
 
 void CPPScriptVM::deinit() throw(chaos::CException) {
@@ -108,10 +99,10 @@ void CPPScriptVM::deinit() throw(chaos::CException) {
 
 int CPPScriptVM::loadScript(const std::string& loadable_script) {
     last_error = 0;
-    CHAOS_ASSERT(interpreter.get());
-    if(script_loaded){interpreter->unload(1);}
-    ::cling::Transaction *script_transaction = NULL;
-    if(interpreter->declare(loadable_script, &script_transaction) != ::cling::Interpreter::kSuccess){
+    //reallcoate interpter
+    initNewInterpreter();
+    //if(script_loaded){interpreter->unload(1);}
+    if(interpreter->declare(loadable_script) != ::cling::Interpreter::kSuccess){
         last_error = -1;
         ERR << "Error processing script";
     } else {

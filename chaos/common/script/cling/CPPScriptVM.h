@@ -43,6 +43,8 @@ namespace chaos {
                     ChaosUniquePtr<::cling::Interpreter> interpreter;
                     CPPScriptVM(const std::string& alias);
                     ~CPPScriptVM();
+                    
+                    void initNewInterpreter();
                 protected:
                     void init(void *init_data) throw(chaos::CException);
                     void deinit() throw(chaos::CException);
