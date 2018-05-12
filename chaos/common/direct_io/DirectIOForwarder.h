@@ -26,56 +26,54 @@
 #include <chaos/common/direct_io/DirectIODataPack.h>
 
 namespace chaos {
-	namespace common {
-		namespace direct_io {
-			namespace channel {
-				class DirectIOVirtualClientChannel;
-			}
-			
-			//! Public interface fo the direct io client
-			/*!
-				This class represent the public interface that need to used to abstract the direct io client implementation.
-			 */
-			class DirectIOForwarder {
-			public:
-				
-				//! comodity static method for deallocation managment
-				static void freeSentData(void *data, void *hint) {
-					DisposeSentMemoryInfo *free_info = static_cast<DisposeSentMemoryInfo*>(hint);
-					free_info->data_deallocator->freeSentData(data, free_info);
-					delete(free_info);
-				}
-				
-				//! send the data to the server layer on priority channel
-				/*!
-				 Forward the data throught the client sub layer for to be sent to the other side
-                 using hte priority channel. This channel is to be used for the fast data push.
-				 */
-				virtual int64_t sendPriorityData(DirectIODataPack *data_pack,
-												 DirectIODeallocationHandler *header_deallocation_handler,
-												 DirectIODeallocationHandler *data_deallocation_handler,
-												 DirectIODataPack **asynchronous_answer = NULL) = 0;
-
+    namespace common {
+        namespace direct_io {
+            namespace channel {
+                class DirectIOVirtualClientChannel;
+            }
+            
+            //! Public interface fo the direct io client
+            /*!
+             This class represent the public interface that need to used to abstract the direct io client implementation.
+             */
+            class DirectIOForwarder {
+            public:
                 
-                //! send the data to the server layer on the service channel
-				/*!
-				 Forward the data throught the client sub layer for to be sent to the other side
+                //! comodity static method for deallocation managment
+                static void freeSentData(void *data, void *hint) {
+                    ChaosUniquePtr<DisposeSentMemoryInfo> free_info(static_cast<DisposeSentMemoryInfo*>(hint));
+                    //free_info->data_deallocator->freeSentData(data, free_info);
+                }
+                
+                virtual int sendPriorityData(chaos::common::direct_io::DirectIODataPackUPtr data_pack) = 0;
+                
+                //! Send the data to the server layer on priority channel
+                /*!
+                 Forward the data throught the client sub layer for to be sent to the other side
+                 using hte priority channel. This channel is to be used for the fast data push.
+                 */
+                virtual int sendPriorityData(chaos::common::direct_io::DirectIODataPackUPtr data_pack,
+                                             chaos::common::direct_io::DirectIODataPackSPtr& asynchronous_answer) = 0;
+                
+                virtual int sendServiceData(chaos::common::direct_io::DirectIODataPackUPtr data_pack) = 0;
+                
+                //! Send the data to the server layer on the service channel
+                /*!
+                 Forward the data throught the client sub layer for to be sent to the other side
                  using the service channel. This channel is to be used for the data that doesn't need
                  to be fast and accurate.
-				 */
-				virtual int64_t sendServiceData(DirectIODataPack *data_pack,
-												DirectIODeallocationHandler *header_deallocation_handler,
-												DirectIODeallocationHandler *data_deallocation_handler,
-												DirectIODataPack **asynchronous_answer = NULL) = 0;
-			};
-			
-			typedef int64_t (chaos::common::direct_io::DirectIOForwarder::*DirectIOForwarderHandler)(chaos::common::direct_io::channel::DirectIOVirtualClientChannel *channel,
-																									 chaos::common::direct_io::DirectIODataPack *data_pack,
-																									 DirectIODataPack **asynchronous_answer);
-			
-			#define DirectIOForwarderHandlerCaller(instance,variable) ((*instance).*variable)
-		}
-	}
+                 */
+                virtual int sendServiceData(chaos::common::direct_io::DirectIODataPackUPtr data_pack,
+                                            chaos::common::direct_io::DirectIODataPackSPtr& asynchronous_answer) = 0;
+            };
+            
+            typedef int (chaos::common::direct_io::DirectIOForwarder::*DirectIOForwarderHandler)(chaos::common::direct_io::channel::DirectIOVirtualClientChannel *channel,
+                                                                                                 chaos::common::direct_io::DirectIODataPackUPtr data_pack,
+                                                                                                 chaos::common::direct_io::DirectIODataPackSPtr& asynchronous_answer);
+            
+#define DirectIOForwarderHandlerCaller(instance,variable) ((*instance).*variable)
+        }
+    }
 }
 
 #endif

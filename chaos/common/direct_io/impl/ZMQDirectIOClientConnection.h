@@ -36,65 +36,66 @@
 #include <zmq.h>
 
 namespace chaos {
-	namespace common {
-		namespace direct_io {
-			namespace channel{
-				class DirectIOVirtualClientChannel;
-			}
-			
+    namespace common {
+        namespace direct_io {
+            namespace channel{
+                class DirectIOVirtualClientChannel;
+            }
+            
             namespace impl {
-				//forward declaration
-				class ZMQDirectIOClient;
-				
-				typedef struct ConnectionMonitorInfo {
-					bool run;
-					std::string unique_identification;
+                //forward declaration
+                class ZMQDirectIOClient;
+                
+                typedef struct ConnectionMonitorInfo {
+                    bool run;
+                    std::string unique_identification;
                     ChaosUniquePtr<boost::thread> monitor_thread;
-					void *monitor_socket;
-					std::string monitor_url;
-				} ConnectionMonitorInfo;
-
-				/*!
-				 Class that represetn th eimplementation of one connection of the direct io
-				 connection implemented with zmq
-				 */
-				class ZMQDirectIOClientConnection :
-				protected ZMQBaseClass,
-				public chaos::common::direct_io::DirectIOClientConnection,
+                    void *monitor_socket;
+                    std::string monitor_url;
+                } ConnectionMonitorInfo;
+                
+                /*!
+                 Class that represetn th eimplementation of one connection of the direct io
+                 connection implemented with zmq
+                 */
+                class ZMQDirectIOClientConnection :
+                protected ZMQBaseClass,
+                public chaos::common::direct_io::DirectIOClientConnection,
                 public chaos::common::utility::InizializableService {
-					friend class ZMQDirectIOClient;
+                    friend class ZMQDirectIOClient;
                     void *zmq_context;
                     
                     boost::shared_mutex mutext_send_message;
                     std::string priority_endpoint;
                     std::string service_endpoint;
-					std::string priority_identity;
+                    std::string priority_identity;
                     std::string service_identity;
-					void *socket_priority;
-					void *socket_service;
-
+                    void *socket_priority;
+                    void *socket_service;
+                    
                     ConnectionMonitorInfo monitor_info;
                     
                     boost::shared_mutex mutex_socket_manipolation;
-					
-					ZMQDirectIOClientConnection(void *zmq_context,
+                    
+                    ZMQDirectIOClientConnection(void *zmq_context,
                                                 const std::string& server_description,
                                                 uint16_t endpoint);
-					~ZMQDirectIOClientConnection();
-					
+                    ~ZMQDirectIOClientConnection();
+                    
                     inline bool ensureSocket();
                     
-					inline int64_t writeToSocket(void *socket,
-												 std::string& identity,
-												 DirectIODataPack *data_pack,
-												 DirectIODeallocationHandler *header_deallocation_handler,
-												 DirectIODeallocationHandler *data_deallocation_handler,
-												 DirectIODataPack **synchronous_answer = NULL);
+                    inline int writeToSocket(void *socket,
+                                             std::string& identity,
+                                             chaos::common::direct_io::DirectIODataPackUPtr data_pack,
+                                             chaos::common::direct_io::DirectIODataPackSPtr& asynchronous_answer);
+                    inline int writeToSocket(void *socket,
+                                             std::string& identity,
+                                             chaos::common::direct_io::DirectIODataPackUPtr data_pack);
                     int readMonitorMesg(void *monitor,
                                         int *value,
                                         char *address,
                                         int address_max_size);
-					void monitorWorker();
+                    void monitorWorker();
                     
                     void socketMonitor();
                     
@@ -103,28 +104,28 @@ namespace chaos {
                     
                     //! release an instantiated connection
                     int releaseSocketPair();
-				protected:
-					
+                protected:
+                    
                     void init(void *init_data) throw(chaos::CException);
                     
                     void deinit() throw(chaos::CException);
                     
                     // send the data to the server layer on priority channel
-                    int64_t sendPriorityData(DirectIODataPack *data_pack,
-											 DirectIODeallocationHandler *header_deallocation_handler,
-											 DirectIODeallocationHandler *data_deallocation_handler,
-											 DirectIODataPack **synchronous_answer = NULL);
+                    int sendPriorityData(chaos::common::direct_io::DirectIODataPackUPtr data_pack);
+                    
+                    int sendPriorityData(chaos::common::direct_io::DirectIODataPackUPtr data_pack,
+                                         chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer);
                     
                     // send the data to the server layer on the service channel
-                    int64_t sendServiceData(DirectIODataPack *data_pack,
-											DirectIODeallocationHandler *header_deallocation_handler,
-											DirectIODeallocationHandler *data_deallocation_handler,
-											DirectIODataPack **synchronous_answer = NULL);
-				};
-				
-			}
-		}
-	}
+                    int sendServiceData(chaos::common::direct_io::DirectIODataPackUPtr data_pack);
+                    
+                    int sendServiceData(chaos::common::direct_io::DirectIODataPackUPtr data_pack,
+                                        chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer);
+                };
+                
+            }
+        }
+    }
 }
 
 #endif /* defined(__CHAOSFramework__ZMQDirectIOClientConnection__) */

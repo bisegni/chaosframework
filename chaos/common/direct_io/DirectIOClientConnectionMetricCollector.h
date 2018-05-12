@@ -52,17 +52,15 @@ namespace chaos {
                 ~DirectIOClientConnectionMetricCollector();
                 
                 //! inherited method
-                int64_t sendPriorityData(DirectIODataPack *data_pack,
-                                         DirectIODeallocationHandler *header_deallocation_handler,
-                                         DirectIODeallocationHandler *data_deallocation_handler,
-                                         DirectIODataPack **asynchronous_answer = NULL);
+                int sendPriorityData(chaos::common::direct_io::DirectIODataPackUPtr data_pack);
+                int sendPriorityData(chaos::common::direct_io::DirectIODataPackUPtr data_pack,
+                                     chaos::common::direct_io::DirectIODataPackSPtr& asynchronous_answer);
                 
                 
                 //! inherited method
-                int64_t sendServiceData(DirectIODataPack *data_pack,
-                                        DirectIODeallocationHandler *header_deallocation_handler,
-                                        DirectIODeallocationHandler *data_deallocation_handler,
-                                        DirectIODataPack **asynchronous_answer = NULL);
+                int sendServiceData(chaos::common::direct_io::DirectIODataPackUPtr data_pack);
+                int sendServiceData(chaos::common::direct_io::DirectIODataPackUPtr data_pack,
+                                    chaos::common::direct_io::DirectIODataPackSPtr& asynchronous_answer);
             };
         }
     }

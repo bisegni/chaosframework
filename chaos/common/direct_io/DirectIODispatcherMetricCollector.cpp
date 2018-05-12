@@ -73,39 +73,31 @@ void DirectIODispatcherMetricCollector::releaseEndpoint(DirectIOServerEndpoint *
 }
 
 // Event for a new data received
-int DirectIODispatcherMetricCollector::priorityDataReceived(DirectIODataPack *data_pack,
-                                                            DirectIODataPack *synchronous_answer,
-                                                            DirectIODeallocationHandler **answer_header_deallocation_handler,
-                                                            DirectIODeallocationHandler **answer_data_deallocation_handler) {
-    //inrement packec count
+int DirectIODispatcherMetricCollector::priorityDataReceived(chaos::common::direct_io::DirectIODataPackUPtr data_pack,
+                                                            chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer) {
+    //inrement packet count
     pack_count++;
     
     //increment packet size
-    bandwith+=data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPack::DirectIODataPackDispatchHeader);
+    bandwith+=data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader);
 
     //flow back to base class
-    return DirectIODispatcher::priorityDataReceived(data_pack,
-                                                    synchronous_answer,
-                                                    answer_header_deallocation_handler,
-                                                    answer_data_deallocation_handler);
+    return DirectIODispatcher::priorityDataReceived(ChaosMoveOperator(data_pack),
+                                                    synchronous_answer);
 }
 
 // Event for a new data received
-int DirectIODispatcherMetricCollector::serviceDataReceived(DirectIODataPack *data_pack,
-                                                           DirectIODataPack *synchronous_answer,
-                                                           DirectIODeallocationHandler **answer_header_deallocation_handler,
-                                                           DirectIODeallocationHandler **answer_data_deallocation_handler) {
+int DirectIODispatcherMetricCollector::serviceDataReceived(chaos::common::direct_io::DirectIODataPackUPtr data_pack,
+                                                           chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer) {
     //inrement packec count
     pack_count++;
     
     //increment packet size
-    bandwith+=data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPack::DirectIODataPackDispatchHeader);
+    bandwith+=data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader);
 
     //flow back to base class
-    return DirectIODispatcher::serviceDataReceived(data_pack,
-                                                   synchronous_answer,
-                                                   answer_header_deallocation_handler,
-                                                   answer_data_deallocation_handler);
+    return DirectIODispatcher::serviceDataReceived(ChaosMoveOperator(data_pack),
+                                                   synchronous_answer);
 }
 
 void DirectIODispatcherMetricCollector::fetchMetricForTimeDiff(uint64_t time_diff) {

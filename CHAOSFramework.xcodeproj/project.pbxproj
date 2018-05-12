@@ -1379,6 +1379,7 @@
 		3206CE611FA767AB0059A4A4 /* bson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bson.h; sourceTree = "<group>"; };
 		3206CE991FA772DF0059A4A4 /* base64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = base64.cpp; sourceTree = "<group>"; };
 		3206CE9A1FA772DF0059A4A4 /* base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = base64.h; sourceTree = "<group>"; };
+		3208312520A74D520032BA34 /* Buffer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Buffer.hpp; sourceTree = "<group>"; };
 		3208AAB71AC56A51000860D9 /* ApiProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ApiProxy.cpp; sourceTree = "<group>"; };
 		3208AAB81AC56A51000860D9 /* ApiProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApiProxy.h; sourceTree = "<group>"; };
 		3208AABB1AC56C1C000860D9 /* GetNodeDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetNodeDescription.cpp; sourceTree = "<group>"; };
@@ -4206,6 +4207,7 @@
 				3230BEC1181A6ADB00EA5793 /* DatasetDB.h */,
 				3289335B1D3648F000FBA95B /* TemplatedDataSDWrapper.h */,
 				32CFD5DE1B27097C0060AED5 /* CDataWrapperKeyValueSetter.h */,
+				3208312520A74D520032BA34 /* Buffer.hpp */,
 			);
 			path = data;
 			sourceTree = "<group>";

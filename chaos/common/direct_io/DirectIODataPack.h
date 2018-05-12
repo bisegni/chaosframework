@@ -21,6 +21,7 @@
 #ifndef CHAOSFramework_DirectIODataPack_h
 #define CHAOSFramework_DirectIODataPack_h
 #include <chaos/common/chaos_types.h>
+#include <chaos/common/data/Buffer.hpp>
 #include <chaos/common/utility/endianess.h>
 /*
  +-------+-------+-------+-------+
@@ -79,6 +80,45 @@ pack->header.channel_data_size = DIRECT_IO_SET_CHANNEL_DATA_SIZE(d_size);\
 pack->channel_data = d_ptr;
 
 			
+            //! define the length of pack
+            typedef struct DirectIODataPackDispatchHeader {
+                union {
+                    //!header raw data
+                    uint64_t    raw_data;
+                    
+                    //!field for semplify the dispatch header configuration
+                    struct dispatcher_header {
+                        //! destination routing address
+                        uint16_t    route_addr;
+                        //! api error
+                        int16_t    err;
+                        //! channel index
+                        uint16_t    channel_idx: 8;
+                        //! channel tag
+                        uint16_t    channel_part: 8;
+                        //! channel tag
+                        uint16_t    channel_opcode: 8;
+                        //! check when a request need a synchronous answer
+                        uint16_t    synchronous_answer:1;
+                        //! channel tag
+                        uint16_t    unused: 7;
+                    } fields;
+                    
+                    //!convenient struct for endianes conversion
+                    struct endian_header {
+                        uint16_t    field_1;
+                        int16_t     field_2;
+                        uint16_t    field_3;
+                        uint16_t    field_4;
+                    } endianes;
+                } dispatcher_header;
+                
+                //! channel header size (if present > 0)
+                uint32_t    channel_header_size;
+                //! channel data  (if present > 0)
+                uint32_t    channel_data_size;
+            } DirectIODataPackDispatchHeader_t;
+            
             //! DirectIO data pack structure. It is wrote in little endian
 			/*!
 			 This represent the data pack sent over direct io infrastructure
@@ -89,50 +129,23 @@ pack->channel_data = d_ptr;
 				Every channel can specify a custom header for custom purphose
 			 3) data size is th elenght of the channel data.
 			 */
-            typedef struct DirectIODataPack {
-                //! define the length of pack
-                struct DirectIODataPackDispatchHeader {
-					union {
-						//!header raw data
-						uint64_t    raw_data;
-						
-						//!field for semplify the dispatch header configuration
-						struct dispatcher_header {
-							//! destination routing address
-							uint16_t	route_addr;
-                            //! api error
-                            int16_t	err;
-							//! channel index
-							uint16_t	channel_idx: 8;
-							//! channel tag
-							uint16_t    channel_part: 8;
-							//! channel tag
-							uint16_t    channel_opcode: 8;
-                            //! check when a request need a synchronous answer
-                            uint16_t	synchronous_answer:1;
-                            //! channel tag
-                            uint16_t    unused: 7;
-						} fields;
-                        
-                        //!convenient struct for endianes conversion
-                        struct endian_header {
-                            uint16_t	field_1;
-                            int16_t     field_2;
-                            uint16_t    field_3;
-                            uint16_t    field_4;
-                        } endianes;
-					} dispatcher_header;
-					
-					//! channel header size (if present > 0)
-					uint32_t    channel_header_size;
-					//! channel data  (if present > 0)
-					uint32_t	channel_data_size;
-				} header;
+            struct DirectIODataPack {
+                DirectIODataPackDispatchHeader_t header;
 				//!ptr to channel header data
-                ChaosUniquePtr<void>    channel_header_data;
+                chaos::common::data::BufferSPtr channel_header_data;
 				//!ptr to channel data
-				ChaosUniquePtr<void>    channel_data;
-            } DirectIODataPack;
+                chaos::common::data::BufferSPtr channel_data;
+                
+                DirectIODataPack(){
+                    header.dispatcher_header.raw_data = 0;
+                    header.channel_header_size = 0;
+                    header.channel_data_size = 0;
+                }
+            };
+            
+            //! defin esmart pointer for DirectIODataPack
+            typedef ChaosUniquePtr<DirectIODataPack> DirectIODataPackUPtr;
+            typedef ChaosSharedPtr<DirectIODataPack> DirectIODataPackSPtr;
             
             //is a single element contained within channel data memory
             /*!

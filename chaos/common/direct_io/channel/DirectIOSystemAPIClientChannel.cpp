@@ -58,58 +58,59 @@ int64_t DirectIOSystemAPIClientChannel::getDatasetSnapshotForProducerKey(const s
                                                                          const std::string& producer_key,
                                                                          uint32_t channel_type,
                                                                          DirectIOSystemAPIGetDatasetSnapshotResult **api_result_handle) {
+    using ApiHeader = DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader;
+    using ShapshotRHeader = opcode_headers::DirectIOSystemAPISnapshotResultHeader;
     int64_t err = 0;
     if(snapshot_name.size() > 255) {
         //bad Snapshot name size
         return -1000;
     }
     //allocate the datapack
-    DirectIODataPack *answer = NULL;
-    DirectIODataPack *data_pack = (DirectIODataPack*)calloc(sizeof(DirectIODataPack), 1);
+    DirectIODataPackSPtr answer;
+    DirectIODataPackUPtr data_pack(new DirectIODataPack());
     
     //allocate the header
-    DirectIOSystemAPIChannelOpcodeNDGSnapshotHeaderPtr get_snapshot_opcode_header =
-    (DirectIOSystemAPIChannelOpcodeNDGSnapshotHeaderPtr)calloc(sizeof(DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader), 1);
+    BufferSPtr get_snapshot_opcode_header = ChaosMakeSharedPtr<Buffer>(sizeof(ApiHeader));
     
     //set opcode
     data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::SystemAPIChannelOpcodeGetSnapshotDatasetForAKey);
     
     //copy the snapshot name to the header
-    std::strncpy(get_snapshot_opcode_header->field.snap_name, snapshot_name.c_str(), 255);
-    get_snapshot_opcode_header->field.channel_type = channel_type;
+    std::strncpy(get_snapshot_opcode_header->data<ApiHeader>()->field.snap_name, snapshot_name.c_str(), 255);
+    get_snapshot_opcode_header->data<ApiHeader>()->field.channel_type = channel_type;
     if(api_result_handle){
         *api_result_handle=NULL;
     }
     
     //set header
-    DIRECT_IO_SET_CHANNEL_HEADER(data_pack, get_snapshot_opcode_header, sizeof(DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader))
+    DIRECT_IO_SET_CHANNEL_HEADER(data_pack, get_snapshot_opcode_header, sizeof(ApiHeader))
     if(producer_key.size()) {
         
         //set the header field for the producer concatenation string
-        get_snapshot_opcode_header->field.producer_key_set_len = TO_LITTEL_ENDNS_NUM(uint32_t, (uint32_t)producer_key.size());
+        get_snapshot_opcode_header->data<ApiHeader>()->field.producer_key_set_len = TO_LITTEL_ENDNS_NUM(uint32_t, (uint32_t)producer_key.size());
         
         //copy the memory for forwarding buffer
-        void * producer_key_send_buffer = malloc(producer_key.size());
-        std::memcpy(producer_key_send_buffer, producer_key.c_str(), producer_key.size());
+        BufferSPtr producer_key_send_buffer = ChaosMakeSharedPtr<Buffer>();
+        producer_key_send_buffer->append(producer_key.c_str(), producer_key.size());
         //set as data
         DIRECT_IO_SET_CHANNEL_DATA(data_pack, producer_key_send_buffer, (uint32_t)producer_key.size());
     }
     //send data with synchronous answer flag
-    if((err = (int)sendServiceData(data_pack, &answer))) {
+    if((err = (int)sendServiceData(ChaosMoveOperator(data_pack), answer))) {
         //error getting last value
         DIOSCC_ERR << "Error on sendServiceData execution with error:" <<err;
     } else {
         //we got answer
         if(answer) {
-            *api_result_handle = (DirectIOSystemAPIGetDatasetSnapshotResult*)calloc(sizeof(DirectIOSystemAPIGetDatasetSnapshotResult), 1);
+            
             //get the header
-            opcode_headers::DirectIOSystemAPISnapshotResultHeaderPtr result_header = static_cast<opcode_headers::DirectIOSystemAPISnapshotResultHeaderPtr>(answer->channel_header_data);
-            if(result_header){
-                result_header->channel_data_len = FROM_LITTLE_ENDNS_NUM(uint32_t, result_header->channel_data_len);
-                result_header->error = FROM_LITTLE_ENDNS_NUM(int32_t, result_header->error);
+            if(answer->channel_header_data){
+                *api_result_handle = (DirectIOSystemAPIGetDatasetSnapshotResult*)calloc(sizeof(DirectIOSystemAPIGetDatasetSnapshotResult), 1);
+                answer->channel_header_data->data<ShapshotRHeader>()->channel_data_len = FROM_LITTLE_ENDNS_NUM(uint32_t, answer->channel_header_data->data<ShapshotRHeader>()->channel_data_len);
+                answer->channel_header_data->data<ShapshotRHeader>()->error = FROM_LITTLE_ENDNS_NUM(int32_t, answer->channel_header_data->data<ShapshotRHeader>()->error);
                 
-                (*api_result_handle)->api_result = *result_header;
-                (*api_result_handle)->channel_data = answer->channel_data;
+                (*api_result_handle)->api_result = *answer->channel_header_data->data<ShapshotRHeader>();
+                (*api_result_handle)->channel_data = answer->channel_data->detach();
             } else {
                 err=-2;
                 DIOSCC_ERR << "## INTERNAL ERROR: NO RESULT HEADER";
@@ -118,15 +119,12 @@ int64_t DirectIOSystemAPIClientChannel::getDatasetSnapshotForProducerKey(const s
             
         }
     }
-    if(answer) {
-        if(answer->channel_header_data) free(answer->channel_header_data);
-        free(answer);
-    }
     return err;
 }
 
 int64_t DirectIOSystemAPIClientChannel::pushLogEntries(const std::string& node_name,
                                                        const ChaosStringVector& log_entries) {
+    using ApiHEader = DirectIOSystemAPIChannelOpcodePushLogEntryForANodeHeader;
     if(log_entries.size() == 0) {
         //bad node name
         return -1000;
@@ -137,16 +135,15 @@ int64_t DirectIOSystemAPIClientChannel::pushLogEntries(const std::string& node_n
     int32_t tmp_element_size = 0;
     
     //allocate the header
-    DirectIOSystemAPIChannelOpcodePushLogEntryForANodeHeaderPtr header =
-    (DirectIOSystemAPIChannelOpcodePushLogEntryForANodeHeaderPtr)calloc(sizeof(DirectIOSystemAPIChannelOpcodePushLogEntryForANodeHeaderPtr), 1);
+    BufferSPtr header = ChaosMakeSharedPtr<Buffer>(sizeof(ApiHEader));
     
     //allocate the datapack
-    DirectIODataPack *data_pack = (DirectIODataPack*)calloc(sizeof(DirectIODataPack), 1);
+    DirectIODataPackUPtr data_pack(new DirectIODataPack());
     //set opcode
     data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::SystemAPIChannelOpcodePushLogEntryForANode);
     
     //write the number of the entry in the header
-    header->field.data_entries_num = FROM_LITTLE_ENDNS_NUM(uint32_t, (uint32_t)log_entries.size());
+    header->data<ApiHEader>()->field.data_entries_num = FROM_LITTLE_ENDNS_NUM(uint32_t, (uint32_t)log_entries.size());
     
     //encode node name
     buffer.writeInt32(FROM_LITTLE_ENDNS_NUM(uint32_t, tmp_element_size = (uint32_t)node_name.size()));
@@ -162,14 +159,15 @@ int64_t DirectIOSystemAPIClientChannel::pushLogEntries(const std::string& node_n
         buffer.writeInt32(FROM_LITTLE_ENDNS_NUM(uint32_t, tmp_element_size = (uint32_t)entry.size()));
         buffer.writeByte((const char *)entry.c_str(), tmp_element_size);
     }
-    
-    //set header
-    DIRECT_IO_SET_CHANNEL_HEADER(data_pack, header, sizeof(DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader))
-    //set as data
     int32_t data_len = buffer.getCursorLocation();
-    DIRECT_IO_SET_CHANNEL_DATA(data_pack, buffer.release(), data_len);
+    BufferSPtr channel_data = ChaosMakeSharedPtr<Buffer>(buffer.release(), data_len, data_len, true);
+    //set header
+    DIRECT_IO_SET_CHANNEL_HEADER(data_pack, header, sizeof(ApiHEader))
+    //set as data
+   
+    DIRECT_IO_SET_CHANNEL_DATA(data_pack, channel_data, data_len);
     //send data with synchronous answer flag
-    if((err = (int)sendPriorityData(data_pack))) {
+    if((err = (int)sendPriorityData(ChaosMoveOperator(data_pack)))) {
         //error getting last value
         DIOSCC_ERR << "Error on sendServiceData execution with error:" <<err;
     }

@@ -108,9 +108,8 @@ namespace chaos {
 				void lowLevelManageEvent(DirectIOClientConnectionStateType::DirectIOClientConnectionStateType state_type);
                 
                 // prepare header for defaut connection data
-                inline DirectIODataPack *completeDataPack(DirectIODataPack *data_pack) {
-                    data_pack->header.dispatcher_header.fields.route_addr = endpoint;
-                    return data_pack;
+                inline void completeDataPack(chaos::common::direct_io::DirectIODataPack& data_pack) {
+                    data_pack.header.dispatcher_header.fields.route_addr = endpoint;
                 }
 				
             public:

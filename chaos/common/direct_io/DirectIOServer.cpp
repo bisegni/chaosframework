@@ -90,11 +90,14 @@ void DirectIOServer::deleteDataWithHandler(DirectIODeallocationHandler *_data_de
                                            DisposeSentMemoryInfo::SentPart _sent_part,
                                            uint16_t _sent_opcode,
                                            void *data) {
-    if(_data_deallocator && data) {
-        CLEAN_DIO_DATA_WITH_HANDLER(_data_deallocator,
-                                    _sent_part,
-                                    _sent_opcode,
-                                    data);
-        data = NULL;
-    }
+
+//            DisposeSentMemoryInfo minfo(hndlr, part, opcode);
+//
+//    if(_data_deallocator && data) {
+//        CLEAN_DIO_DATA_WITH_HANDLER(_data_deallocator,
+//                                    _sent_part,
+//                                    _sent_opcode,
+//                                    data);
+//        data = NULL;
+//    }
 }

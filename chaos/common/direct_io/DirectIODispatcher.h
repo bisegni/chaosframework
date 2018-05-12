@@ -77,16 +77,12 @@ namespace chaos {
 				void releaseEndpoint(DirectIOServerEndpoint *endpoint_to_release);
 				
 				// Event for a new data received
-				virtual int priorityDataReceived(DirectIODataPack *data_pack,
-                                                 DirectIODataPack *synchronous_answer,
-                                                 DirectIODeallocationHandler **answer_header_deallocation_handler,
-                                                 DirectIODeallocationHandler **answer_data_deallocation_handler);
+                virtual int priorityDataReceived(chaos::common::direct_io::DirectIODataPackUPtr data_pack,
+                                                 chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer);
                 
                 // Event for a new data received
-				virtual int serviceDataReceived(DirectIODataPack *data_pack,
-                                                DirectIODataPack *synchronous_answer,
-                                                DirectIODeallocationHandler **answer_header_deallocation_handler,
-                                                DirectIODeallocationHandler **answer_data_deallocation_handler);
+                virtual int serviceDataReceived(chaos::common::direct_io::DirectIODataPackUPtr data_pack,
+                                                chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer);
 			};
 		}
 	}

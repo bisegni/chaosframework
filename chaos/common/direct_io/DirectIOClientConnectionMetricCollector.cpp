@@ -48,36 +48,46 @@ DirectIOClientConnectionMetricCollector::~DirectIOClientConnectionMetricCollecto
 
 
 //! inherited method
-int64_t DirectIOClientConnectionMetricCollector::sendPriorityData(DirectIODataPack *data_pack,
-                                                                  DirectIODeallocationHandler *header_deallocation_handler,
-                                                                  DirectIODeallocationHandler *data_deallocation_handler,
-                                                                  DirectIODataPack **asynchronous_answer) {
+int DirectIOClientConnectionMetricCollector::sendPriorityData(DirectIODataPackUPtr data_pack) {
     CHAOS_ASSERT(wrapped_connection && shared_collector)
     //inrement packec count
     shared_collector->incrementPackCount();
     
     //increment packet size
-    shared_collector->incrementBandWidth(data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPack::DirectIODataPackDispatchHeader));
-    return wrapped_connection->sendPriorityData(data_pack,
-                                                header_deallocation_handler,
-                                                data_deallocation_handler,
+    shared_collector->incrementBandWidth(data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader));
+    return wrapped_connection->sendPriorityData(ChaosMoveOperator(data_pack));
+}
+int DirectIOClientConnectionMetricCollector::sendPriorityData(DirectIODataPackUPtr data_pack,
+                                                              DirectIODataPackSPtr& asynchronous_answer) {
+    CHAOS_ASSERT(wrapped_connection && shared_collector)
+    //inrement packec count
+    shared_collector->incrementPackCount();
+    
+    //increment packet size
+    shared_collector->incrementBandWidth(data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader));
+    return wrapped_connection->sendPriorityData(ChaosMoveOperator(data_pack),
                                                 asynchronous_answer);
 }
 
 
 //! inherited method
-int64_t DirectIOClientConnectionMetricCollector::sendServiceData(DirectIODataPack *data_pack,
-                                                                 DirectIODeallocationHandler *header_deallocation_handler,
-                                                                 DirectIODeallocationHandler *data_deallocation_handler,
-                                                                 DirectIODataPack **asynchronous_answer) {
+int DirectIOClientConnectionMetricCollector::sendServiceData(chaos::common::direct_io::DirectIODataPackUPtr data_pack) {
     CHAOS_ASSERT(wrapped_connection && shared_collector)
     //inrement packec count
     shared_collector->incrementPackCount();
     
     //increment packet size
-    shared_collector->incrementBandWidth(data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPack::DirectIODataPackDispatchHeader));
-    return wrapped_connection->sendServiceData(data_pack,
-                                               header_deallocation_handler,
-                                               data_deallocation_handler,
+    shared_collector->incrementBandWidth(data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader));
+    return wrapped_connection->sendServiceData(ChaosMoveOperator(data_pack));
+}
+int DirectIOClientConnectionMetricCollector::sendServiceData(chaos::common::direct_io::DirectIODataPackUPtr data_pack,
+                                                             chaos::common::direct_io::DirectIODataPackSPtr& asynchronous_answer) {
+    CHAOS_ASSERT(wrapped_connection && shared_collector)
+    //inrement packec count
+    shared_collector->incrementPackCount();
+    
+    //increment packet size
+    shared_collector->incrementBandWidth(data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader));
+    return wrapped_connection->sendServiceData(ChaosMoveOperator(data_pack),
                                                asynchronous_answer);
 }

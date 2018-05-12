@@ -62,9 +62,9 @@ namespace chaos {
                          \synchronous_answer possible async answer (not used for now)
                          */
                         virtual int consumePutEvent(opcode_headers::DirectIODeviceChannelHeaderPutOpcode *header,
-                                                    void *channel_data,
+                                                    data::BufferSPtr channel_data,
                                                     uint32_t channel_data_len)
-                        {DELETE_HEADER_DATA(header, channel_data) return -1;};
+                        {return -1;};
                         
                         //! Receive the CDataWrapper forwarded by the channel that contains the helath data
                         /*!
@@ -73,9 +73,9 @@ namespace chaos {
                          \param channel_data contains the health data
                          */
                         virtual int consumeHealthDataEvent(opcode_headers::DirectIODeviceChannelHeaderPutOpcode *header,
-                                                           void *channel_data,
+                                                           data::BufferSPtr channel_data,
                                                            uint32_t channel_data_len)
-                        {DELETE_HEADER_DATA(header, channel_data) return -1;};
+                        {return -1;};
                         
                         //! Receive the key of the live data channel to read
                         /*!
@@ -88,11 +88,11 @@ namespace chaos {
                          \param result_value
                          */
                         virtual int consumeGetEvent(opcode_headers::DirectIODeviceChannelHeaderGetOpcode *header,
-                                                    void *key_data,
+                                                    chaos::common::data::BufferSPtr key_data,
                                                     uint32_t key_len,
                                                     opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult *result_header,
-                                                    void **result_value)
-                        {DELETE_HEADER_DATA(header, key_data) return -1;};
+                                                    chaos::common::data::BufferSPtr& result_value)
+                        {return -1;};
                         
                         //! Receive the et of keys of the live data channel to read
                         /*!
@@ -109,7 +109,7 @@ namespace chaos {
                         virtual int consumeGetEvent(opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcode *header,
                                                     const ChaosStringVector& keys,
                                                     opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcodeResult *result_header,
-                                                    void **result_value,
+                                                    chaos::common::data::BufferSPtr& result_value,
                                                     uint32_t& result_value_len)
                         {DELETE_HEADER(header) return -1;};
                         
@@ -150,10 +150,8 @@ namespace chaos {
                     
                     DirectIODeviceServerChannel(std::string alias);
                     
-                    int consumeDataPack(DirectIODataPack *dataPack,
-                                        DirectIODataPack *synchronous_answer,
-                                        DirectIODeallocationHandler **answer_header_deallocation_handler,
-                                        DirectIODeallocationHandler **answer_data_deallocation_handler);
+                    int consumeDataPack(chaos::common::direct_io::DirectIODataPackUPtr data_pack,
+                                        chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer);
                 };
             }
         }

@@ -250,20 +250,24 @@ int ZMQDirectIOClientConnection::releaseSocketPair() {
     }
     return err;
 }
-
-// send the data to the server layer on priority channel
-int64_t ZMQDirectIOClientConnection::sendPriorityData(DirectIODataPack *data_pack,
-                                                      DirectIODeallocationHandler *header_deallocation_handler,
-                                                      DirectIODeallocationHandler *data_deallocation_handler,
-                                                      DirectIODataPack **synchronous_answer) {
-    int64_t err = 0;
+int ZMQDirectIOClientConnection::sendPriorityData(chaos::common::direct_io::DirectIODataPackUPtr data_pack) {
     CHAOS_ASSERT(data_pack);
     boost::unique_lock<boost::shared_mutex> wl(mutext_send_message);
+    completeDataPack(*data_pack);
+    return writeToSocket(socket_priority,
+                         priority_identity,
+                         ChaosMoveOperator(data_pack));
+}
+// send the data to the server layer on priority channel
+int ZMQDirectIOClientConnection::sendPriorityData(chaos::common::direct_io::DirectIODataPackUPtr data_pack,
+                                                  chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer) {
+    int err = 0;
+    CHAOS_ASSERT(data_pack);
+    boost::unique_lock<boost::shared_mutex> wl(mutext_send_message);
+    completeDataPack(*data_pack);
     err = writeToSocket(socket_priority,
                         priority_identity,
-                        completeDataPack(data_pack),
-                        header_deallocation_handler,
-                        data_deallocation_handler,
+                        ChaosMoveOperator(data_pack),
                         synchronous_answer);
     if(err > 0 /*resource not available*/) {
         //remove socket in case of delay on the answer
@@ -276,19 +280,25 @@ int64_t ZMQDirectIOClientConnection::sendPriorityData(DirectIODataPack *data_pac
     return err;
 }
 
-// send the data to the server layer on the service channel
-int64_t ZMQDirectIOClientConnection::sendServiceData(DirectIODataPack *data_pack,
-                                                     DirectIODeallocationHandler *header_deallocation_handler,
-                                                     DirectIODeallocationHandler *data_deallocation_handler,
-                                                     DirectIODataPack **synchronous_answer) {
-    int64_t err = 0;
+int ZMQDirectIOClientConnection::sendServiceData(chaos::common::direct_io::DirectIODataPackUPtr data_pack) {
     CHAOS_ASSERT(data_pack);
     boost::unique_lock<boost::shared_mutex> wl(mutext_send_message);
+    completeDataPack(*data_pack);
+    return writeToSocket(socket_service,
+                         service_identity,
+                         ChaosMoveOperator(data_pack));
+}
+
+// send the data to the server layer on the service channel
+int ZMQDirectIOClientConnection::sendServiceData(chaos::common::direct_io::DirectIODataPackUPtr data_pack,
+                                                 chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer) {
+    int err = 0;
+    CHAOS_ASSERT(data_pack);
+    boost::unique_lock<boost::shared_mutex> wl(mutext_send_message);
+    completeDataPack(*data_pack);
     err = writeToSocket(socket_service,
                         service_identity,
-                        completeDataPack(data_pack),
-                        header_deallocation_handler,
-                        data_deallocation_handler,
+                        ChaosMoveOperator(data_pack),
                         synchronous_answer);
     if(err > 0 /*resource not available*/) {
         //change id ofr socket
@@ -297,7 +307,6 @@ int64_t ZMQDirectIOClientConnection::sendServiceData(DirectIODataPack *data_pack
             ERR << "Error configuring new id for socker :" << service_endpoint;
         }
     }
-    
     return err;
 }
 
@@ -309,28 +318,36 @@ bool ZMQDirectIOClientConnection::ensureSocket() {
     }
     return err;
 }
-
 //send data with zmq tech
-int64_t ZMQDirectIOClientConnection::writeToSocket(void *socket,
-                                                   std::string& identity,
-                                                   DirectIODataPack *data_pack,
-                                                   DirectIODeallocationHandler *header_deallocation_handler,
-                                                   DirectIODeallocationHandler *data_deallocation_handler,
-                                                   DirectIODataPack **synchronous_answer) {
+int ZMQDirectIOClientConnection::writeToSocket(void *socket,
+                                               std::string& identity,
+                                               DirectIODataPackUPtr data_pack) {
     CHAOS_ASSERT(socket && data_pack);
+    CHAOS_ASSERT(data_pack->header.dispatcher_header.fields.synchronous_answer == false);
     int err = 0;
     if((err = sendDatapack(socket,
-                           data_pack,
-                           header_deallocation_handler,
-                           data_deallocation_handler))) {
+                           ChaosMoveOperator(data_pack)))) {
         ERR << "Error sending datapack with code:" << err;
-    } else if(data_pack->header.dispatcher_header.fields.synchronous_answer) {
+    }
+    return err;
+}
+//send data with zmq tech
+int ZMQDirectIOClientConnection::writeToSocket(void *socket,
+                                               std::string& identity,
+                                               DirectIODataPackUPtr data_pack,
+                                               DirectIODataPackSPtr& synchronous_answer) {
+    CHAOS_ASSERT(socket && data_pack);
+    CHAOS_ASSERT(data_pack->header.dispatcher_header.fields.synchronous_answer);
+    int err = 0;
+    if((err = sendDatapack(socket,
+                           ChaosMoveOperator(data_pack)))) {
+        ERR << "Error sending datapack with code:" << err;
+    } else {
         //we need an aswer
         if((err = reveiceDatapack(socket,
                                   synchronous_answer))) {
             ERR << "Error receiving answer datapack with code:" << err;
         }
     }
-    free(data_pack);
     return err;
 }

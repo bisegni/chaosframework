@@ -71,7 +71,7 @@ namespace chaos {
                      
                      */
                     inline int sendMessage(void *socket,
-                                           void **message_data,
+                                           void *message_data,
                                            size_t message_size,
                                            zmq_free_fn *ffn,
                                            void *hint,
@@ -128,27 +128,19 @@ namespace chaos {
                     //! receive Direct io datapack by socket
                     int reveiceDatapack(void *socket,
                                         std::string& identity,
-                                        DirectIODataPack **data_pack_handle);
+                                        chaos::common::direct_io::DirectIODataPackSPtr& data_pack_handle);
                     //! receive a datapack
                     int reveiceDatapack(void *socket,
-                                        DirectIODataPack **data_pack_handle);
+                                        chaos::common::direct_io::DirectIODataPackSPtr& data_pack_handle);
                     
                     //! send direct io datapack
                     int sendDatapack(void *socket,
                                      std::string identity,
-                                     DirectIODataPack *data_pack,
-                                     DirectIODeallocationHandler *header_deallocation_handler,
-                                     DirectIODeallocationHandler *data_deallocation_handler);
+                                     chaos::common::direct_io::DirectIODataPackUPtr data_pack);
                     
                     //! send dirrect io datapack
                     int sendDatapack(void *socket,
-                                     DirectIODataPack *data_pack,
-                                     DirectIODeallocationHandler *header_deallocation_handler,
-                                     DirectIODeallocationHandler *data_deallocation_handler);
-                    //!safe delete datapack content using asinc way
-                    int safeDeleteDataPack(DirectIODataPack *data_pack,
-                                           DirectIODeallocationHandler *header_deallocation_handler,
-                                           DirectIODeallocationHandler *data_deallocation_handler);
+                                     chaos::common::direct_io::DirectIODataPackUPtr data_pack);
                 };
                 
             }

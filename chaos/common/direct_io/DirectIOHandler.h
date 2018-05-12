@@ -44,10 +44,8 @@ namespace chaos {
 				 \param detach inform the server that hte memory buffed doesn't need to be deallocated.
                  \param synchronous_answer the datapacke for the sinchronous answer.
 				 */
-                virtual int priorityDataReceived(DirectIODataPack *data_pack,
-                                                 DirectIODataPack *synchronous_answer,
-                                                 DirectIODeallocationHandler **answer_header_deallocation_handler,
-                                                 DirectIODeallocationHandler **answer_data_deallocation_handler) = 0;
+                virtual int priorityDataReceived(chaos::common::direct_io::DirectIODataPackUPtr data_pack,
+                                                 chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer) = 0;
                 
                 //! Event for a new data received
 				/*!
@@ -57,16 +55,12 @@ namespace chaos {
 				 \param detach inform the server that hte memory buffed doesn't need to be deallocated.
                  \param synchronous_answer the datapacke for the sinchronous answer.
 				 */
-				virtual int serviceDataReceived(DirectIODataPack *data_pack,
-                                                DirectIODataPack *synchronous_answer,
-                                                DirectIODeallocationHandler **answer_header_deallocation_handler,
-                                                DirectIODeallocationHandler **answer_data_deallocation_handler) = 0;
+                virtual int serviceDataReceived(chaos::common::direct_io::DirectIODataPackUPtr data_pack,
+                                                chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer) = 0;
 			};
 			
-			typedef int (chaos::common::direct_io::DirectIOHandler::*DirectIOHandlerPtr)(chaos::common::direct_io::DirectIODataPack *data_pack,
-                                                                                         chaos::common::direct_io::DirectIODataPack *synchronous_answer,
-                                                                                         chaos::common::direct_io::DirectIODeallocationHandler **answer_header_deallocation_handler,
-                                                                                         chaos::common::direct_io::DirectIODeallocationHandler **answer_data_deallocation_handler);
+            typedef int (chaos::common::direct_io::DirectIOHandler::*DirectIOHandlerPtr)(chaos::common::direct_io::DirectIODataPackUPtr& data_pack,
+                                                                                         chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer);
 			
 			#define DirectIOHandlerPtrCaller(instance,variable) ((*instance).*variable)
 		}
