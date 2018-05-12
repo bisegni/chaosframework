@@ -20,7 +20,8 @@
  */
 #ifndef CHAOSFramework_DirectIODataPack_h
 #define CHAOSFramework_DirectIODataPack_h
-
+#include <chaos/common/chaos_types.h>
+#include <chaos/common/utility/endianess.h>
 /*
  +-------+-------+-------+-------+
  | route |  part | ch_id | ch_tag| 32
@@ -34,7 +35,7 @@
  |                               |
  +-------+-------+-------+-------+
  */
-#include <chaos/common/utility/endianess.h>
+
 namespace chaos {
     namespace common {
         namespace direct_io {
@@ -99,7 +100,7 @@ pack->channel_data = d_ptr;
 						struct dispatcher_header {
 							//! destination routing address
 							uint16_t	route_addr;
-                            //! unused padding data
+                            //! api error
                             int16_t	err;
 							//! channel index
 							uint16_t	channel_idx: 8;
@@ -128,10 +129,24 @@ pack->channel_data = d_ptr;
 					uint32_t	channel_data_size;
 				} header;
 				//!ptr to channel header data
-                void        *channel_header_data;
+                ChaosUniquePtr<void>    channel_header_data;
 				//!ptr to channel data
-				void        *channel_data;
+				ChaosUniquePtr<void>    channel_data;
             } DirectIODataPack;
+            
+            //is a single element contained within channel data memory
+            /*!
+                api that need ot return more single element fo data need to fille channel_data memory with
+                element of this type. in this way implementation layer of directio can stream single element
+                over network.
+             */
+            typedef struct DirectIODataPart {
+                //! the data included in this part
+                ChaosUniquePtr<char> part_data;
+                
+                //! the lenght of the data
+                uint16_t part_len;
+            } DirectIODataPart_t;
         }
     }
 }

@@ -7722,7 +7722,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_PREPROCESSOR_DEFINITIONS = "CLING_VIRTUAL_MACHINE=ON";
+				GCC_PREPROCESSOR_DEFINITIONS = "";
 				HEADER_SEARCH_PATHS = (
 					.,
 					usr/local/include,
@@ -7790,7 +7790,6 @@
 					"-lboost_log",
 					"-lboost_log_setup",
 					"-lzmq",
-					"-lcling",
 					"-ljsoncpp",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -7835,7 +7834,6 @@
 					"-lboost_log",
 					"-lboost_log_setup",
 					"-lzmq",
-					"-lcling",
 					"-ljsoncpp",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
