@@ -1188,7 +1188,7 @@ int CDataWrapper::setBson(const bson_iter_t *v ,const std::string& val){
 int CDataWrapper::setBson(const bson_iter_t *v ,const void* val){
     if(ITER_TYPE(v)== BSON_TYPE_BINARY){
         const bson_value_t *vv = bson_iter_value((bson_iter_t *)v);
-        memcpy((void*)(v->raw + v->d1), (void*)val,vv->value.v_binary.data_len);
+        memcpy((void*)(v->raw + v->d3), (void*)val,vv->value.v_binary.data_len);
         return vv->value.v_binary.data_len;
     }
     return -1;
