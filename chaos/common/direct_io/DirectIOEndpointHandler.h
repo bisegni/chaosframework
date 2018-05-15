@@ -28,7 +28,7 @@ namespace chaos {
 		namespace direct_io {
 			class DirectIOEndpointHandler {
 			public:
-                virtual int consumeDataPack(chaos::common::direct_io::DirectIODataPackUPtr data_pack,
+                virtual int consumeDataPack(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
                                             chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer) = 0;
 			};
 		}

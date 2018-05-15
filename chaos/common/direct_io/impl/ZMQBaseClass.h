@@ -136,11 +136,11 @@ namespace chaos {
                     //! send direct io datapack
                     int sendDatapack(void *socket,
                                      std::string identity,
-                                     chaos::common::direct_io::DirectIODataPackUPtr data_pack);
+                                     chaos::common::direct_io::DirectIODataPackSPtr data_pack);
                     
                     //! send dirrect io datapack
                     int sendDatapack(void *socket,
-                                     chaos::common::direct_io::DirectIODataPackUPtr data_pack);
+                                     chaos::common::direct_io::DirectIODataPackSPtr data_pack);
                 };
                 
             }

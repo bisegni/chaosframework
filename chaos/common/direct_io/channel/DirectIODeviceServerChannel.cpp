@@ -43,7 +43,7 @@ handler(NULL) {DirectIOVirtualServerChannel::setDelegate(this);}
 
 void DirectIODeviceServerChannel::setHandler(DirectIODeviceServerChannel::DirectIODeviceServerChannelHandler *_handler) {handler = _handler;}
 
-int DirectIODeviceServerChannel::consumeDataPack(chaos::common::direct_io::DirectIODataPackUPtr data_pack,
+int DirectIODeviceServerChannel::consumeDataPack(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
                                                  chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer) {
     CHAOS_ASSERT(handler)
     int err = -1;

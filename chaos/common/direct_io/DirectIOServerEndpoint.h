@@ -63,11 +63,11 @@ namespace chaos {
 				~DirectIOServerEndpoint();
 				
 				// Event for a new data received
-                int priorityDataReceived(chaos::common::direct_io::DirectIODataPackUPtr data_pack,
+                int priorityDataReceived(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
                                          chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer);
                 
                 // Event for a new data received
-                int serviceDataReceived(chaos::common::direct_io::DirectIODataPackUPtr data_pack,
+                int serviceDataReceived(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
                                         chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer);
 
 			public:

@@ -46,12 +46,12 @@ void DirectIOPerformanceServerChannel::setHandler(DirectIOPerformanceServerChann
 	handler = _handler;
 }
 
-int DirectIOPerformanceServerChannel::consumeDataPack(chaos::common::direct_io::DirectIODataPackUPtr data_pack,
+int DirectIOPerformanceServerChannel::consumeDataPack(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
                                                       chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer) {
 	CHAOS_ASSERT(handler)
     int err = -1;
 //    // the opcode
-//    opcode::PerformanceChannelOpcode  channel_opcode = static_cast<opcode::PerformanceChannelOpcode>(dataPack->header.dispatcher_header.fields.channel_opcode);
+//    opcode::PerformanceChannelOpcode  channel_opcode = static_cast<opcode::PerformanceChannelOpcode>(data_pack->header.dispatcher_header.fields.channel_opcode);
 //    
 //    switch (channel_opcode) {
 //        case opcode::PerformanceChannelOpcodeReqRoundTrip: {
@@ -70,9 +70,5 @@ int DirectIOPerformanceServerChannel::consumeDataPack(chaos::common::direct_io::
 //            err = 0;
 //            break;
 //    }
-//    
-//    //only data pack is deleted, header data and channel data are managed by handler
-//    free(dataPack);
-	
 	return err;
 }

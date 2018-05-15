@@ -37,30 +37,37 @@ DEFINE_CLASS_FACTORY(DirectIOSystemAPIClientChannel, DirectIOVirtualClientChanne
 #define DIOSCC_DBG DBG_LOG(DirectIOSystemAPIClientChannel)
 #define DIOSCC_ERR ERR_LOG(DirectIOSystemAPIClientChannel)
 
-//define the static deallocator class
-DirectIOSystemAPIClientChannel::DirectIOSystemAPIClientChannelDeallocator
-DirectIOSystemAPIClientChannel::STATIC_DirectIOSystemAPIClientChannelDeallocator;
-
 //base constructor
 DirectIOSystemAPIClientChannel::DirectIOSystemAPIClientChannel(std::string alias):
-DirectIOVirtualClientChannel(alias, DIOSystemAPI_Channel_Index) {
-    //associate the default static allocator
-    header_deallocator = &STATIC_DirectIOSystemAPIClientChannelDeallocator;
-}
+DirectIOVirtualClientChannel(alias, DIOSystemAPI_Channel_Index) {}
 
 //base destructor
-DirectIOSystemAPIClientChannel::~DirectIOSystemAPIClientChannel() {
-    
+DirectIOSystemAPIClientChannel::~DirectIOSystemAPIClientChannel() {}
+
+int DirectIOSystemAPIClientChannel::echo(chaos::common::data::BufferSPtr message,
+                                         chaos::common::data::BufferSPtr& echo_message) {
+    int err = 0;
+    DirectIODataPackSPtr answer;
+    DirectIODataPackUPtr data_pack(new DirectIODataPack());
+    data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::SystemAPIChannelOpcodeEcho);
+    DIRECT_IO_SET_CHANNEL_DATA(data_pack, message, (uint32_t)message->size());
+    if((err = (int)sendServiceData(ChaosMoveOperator(data_pack), answer))) {
+        //error getting last value
+        DIOSCC_ERR << "Error on echo api execution with error:" <<err;
+    } else if(answer) {
+        echo_message = answer->channel_header_data;
+    }
+    return err;
 }
 
 //! get the snapshot for one or more producer key
-int64_t DirectIOSystemAPIClientChannel::getDatasetSnapshotForProducerKey(const std::string& snapshot_name,
-                                                                         const std::string& producer_key,
-                                                                         uint32_t channel_type,
-                                                                         DirectIOSystemAPIGetDatasetSnapshotResult **api_result_handle) {
+int DirectIOSystemAPIClientChannel::getDatasetSnapshotForProducerKey(const std::string& snapshot_name,
+                                                                     const std::string& producer_key,
+                                                                     uint32_t channel_type,
+                                                                     DirectIOSystemAPIGetDatasetSnapshotResult **api_result_handle) {
     using ApiHeader = DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader;
     using ShapshotRHeader = opcode_headers::DirectIOSystemAPISnapshotResultHeader;
-    int64_t err = 0;
+    int err = 0;
     if(snapshot_name.size() > 255) {
         //bad Snapshot name size
         return -1000;
@@ -122,15 +129,15 @@ int64_t DirectIOSystemAPIClientChannel::getDatasetSnapshotForProducerKey(const s
     return err;
 }
 
-int64_t DirectIOSystemAPIClientChannel::pushLogEntries(const std::string& node_name,
-                                                       const ChaosStringVector& log_entries) {
+int DirectIOSystemAPIClientChannel::pushLogEntries(const std::string& node_name,
+                                                   const ChaosStringVector& log_entries) {
     using ApiHEader = DirectIOSystemAPIChannelOpcodePushLogEntryForANodeHeader;
     if(log_entries.size() == 0) {
         //bad node name
         return -1000;
     }
     
-    int64_t err = 0;
+    int err = 0;
     DataBuffer<> buffer;
     int32_t tmp_element_size = 0;
     
@@ -148,7 +155,7 @@ int64_t DirectIOSystemAPIClientChannel::pushLogEntries(const std::string& node_n
     //encode node name
     buffer.writeInt32(FROM_LITTLE_ENDNS_NUM(uint32_t, tmp_element_size = (uint32_t)node_name.size()));
     buffer.writeByte((const char *)node_name.c_str(), tmp_element_size);
-
+    
     //add the entry
     for(ChaosStringVectorConstIterator it = log_entries.begin(),
         end = log_entries.end();
@@ -164,7 +171,7 @@ int64_t DirectIOSystemAPIClientChannel::pushLogEntries(const std::string& node_n
     //set header
     DIRECT_IO_SET_CHANNEL_HEADER(data_pack, header, sizeof(ApiHEader))
     //set as data
-   
+    
     DIRECT_IO_SET_CHANNEL_DATA(data_pack, channel_data, data_len);
     //send data with synchronous answer flag
     if((err = (int)sendPriorityData(ChaosMoveOperator(data_pack)))) {
@@ -172,36 +179,4 @@ int64_t DirectIOSystemAPIClientChannel::pushLogEntries(const std::string& node_n
         DIOSCC_ERR << "Error on sendServiceData execution with error:" <<err;
     }
     return err;
-}
-
-//! default data deallocator implementation
-void DirectIOSystemAPIClientChannel::DirectIOSystemAPIClientChannelDeallocator::freeSentData(void* sent_data_ptr,
-                                                                                             DisposeSentMemoryInfo *free_info_ptr) {
-    switch(free_info_ptr->sent_part) {
-        case DisposeSentMemoryInfo::SentPartHeader:{
-            switch(static_cast<opcode::SystemAPIChannelOpcode>(free_info_ptr->sent_opcode)) {
-                case opcode::SystemAPIChannelOpcodeNewSnapshotDataset:
-                case opcode::SystemAPIChannelOpcodeDeleteSnapshotDataset:
-                case opcode::SystemAPIChannelOpcodeGetSnapshotDatasetForAKey:
-                case opcode::SystemAPIChannelOpcodePushLogEntryForANode:
-                    free(sent_data_ptr);
-                    break;
-                default:
-                    break;
-            }
-            break;
-        }
-        case DisposeSentMemoryInfo::SentPartData: {
-            switch(static_cast<opcode::SystemAPIChannelOpcode>(free_info_ptr->sent_opcode)) {
-                case opcode::SystemAPIChannelOpcodeNewSnapshotDataset:
-                case opcode::SystemAPIChannelOpcodeGetSnapshotDatasetForAKey:
-                case opcode::SystemAPIChannelOpcodePushLogEntryForANode:
-                    free(sent_data_ptr);
-                    break;
-                default:
-                    break;
-            }
-            break;
-        }
-    }
 }

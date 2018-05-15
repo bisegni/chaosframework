@@ -137,7 +137,7 @@ void DirectIODispatcher::releaseEndpoint(DirectIOServerEndpoint *endpoint_to_rel
 }
 
 // Event for a new data received
-int DirectIODispatcher::priorityDataReceived(DirectIODataPackUPtr data_pack,
+int DirectIODispatcher::priorityDataReceived(DirectIODataPackSPtr data_pack,
                                              DirectIODataPackSPtr& synchronous_answer) {
     int err = -1;
     CHAOS_ASSERT(data_pack.get());
@@ -170,7 +170,7 @@ int DirectIODispatcher::priorityDataReceived(DirectIODataPackUPtr data_pack,
 }
 
 // Event for a new data received
-int DirectIODispatcher::serviceDataReceived(DirectIODataPackUPtr data_pack,
+int DirectIODispatcher::serviceDataReceived(DirectIODataPackSPtr data_pack,
                                             DirectIODataPackSPtr& synchronous_answer) {
     int err = -1;
     CHAOS_ASSERT(data_pack.get());

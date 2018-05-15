@@ -470,7 +470,7 @@ int ZMQBaseClass::reveiceDatapack(void *socket,
 
 int ZMQBaseClass::sendDatapack(void *socket,
                                std::string identity,
-                               DirectIODataPackUPtr data_pack) {
+                               DirectIODataPackSPtr data_pack) {
     //send identity
     int err = 0;
     if((err = stringSendMore(socket, identity.c_str()))) {
@@ -482,7 +482,7 @@ int ZMQBaseClass::sendDatapack(void *socket,
 }
 
 int ZMQBaseClass::sendDatapack(void *socket,
-                               DirectIODataPackUPtr data_pack) {
+                               DirectIODataPackSPtr data_pack) {
     int err = 0;
     uint16_t sending_opcode = data_pack->header.dispatcher_header.fields.channel_opcode;
     

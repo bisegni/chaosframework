@@ -44,7 +44,7 @@ namespace chaos {
 				 \param detach inform the server that hte memory buffed doesn't need to be deallocated.
                  \param synchronous_answer the datapacke for the sinchronous answer.
 				 */
-                virtual int priorityDataReceived(chaos::common::direct_io::DirectIODataPackUPtr data_pack,
+                virtual int priorityDataReceived(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
                                                  chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer) = 0;
                 
                 //! Event for a new data received
@@ -55,11 +55,11 @@ namespace chaos {
 				 \param detach inform the server that hte memory buffed doesn't need to be deallocated.
                  \param synchronous_answer the datapacke for the sinchronous answer.
 				 */
-                virtual int serviceDataReceived(chaos::common::direct_io::DirectIODataPackUPtr data_pack,
+                virtual int serviceDataReceived(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
                                                 chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer) = 0;
 			};
 			
-            typedef int (chaos::common::direct_io::DirectIOHandler::*DirectIOHandlerPtr)(chaos::common::direct_io::DirectIODataPackUPtr& data_pack,
+            typedef int (chaos::common::direct_io::DirectIOHandler::*DirectIOHandlerPtr)(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
                                                                                          chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer);
 			
 			#define DirectIOHandlerPtrCaller(instance,variable) ((*instance).*variable)

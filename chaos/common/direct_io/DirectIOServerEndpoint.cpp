@@ -101,7 +101,7 @@ void DirectIOServerEndpoint::releaseChannelInstance(channel::DirectIOVirtualServ
 }
 
 // Event for a new data received
-int DirectIOServerEndpoint::priorityDataReceived(DirectIODataPackUPtr data_pack,
+int DirectIOServerEndpoint::priorityDataReceived(DirectIODataPackSPtr data_pack,
                                                  DirectIODataPackSPtr& synchronous_answer) {
     int err = 0;
     ChaosReadLock rl(shared_mutex);
@@ -114,7 +114,7 @@ int DirectIOServerEndpoint::priorityDataReceived(DirectIODataPackUPtr data_pack,
 }
 
 // Event for a new data received
-int DirectIOServerEndpoint::serviceDataReceived(DirectIODataPackUPtr data_pack,
+int DirectIOServerEndpoint::serviceDataReceived(DirectIODataPackSPtr data_pack,
                                                 DirectIODataPackSPtr& synchronous_answer) {
     int err = 0;
     ChaosReadLock rl(shared_mutex);

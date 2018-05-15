@@ -73,7 +73,7 @@ void DirectIODispatcherMetricCollector::releaseEndpoint(DirectIOServerEndpoint *
 }
 
 // Event for a new data received
-int DirectIODispatcherMetricCollector::priorityDataReceived(chaos::common::direct_io::DirectIODataPackUPtr data_pack,
+int DirectIODispatcherMetricCollector::priorityDataReceived(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
                                                             chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer) {
     //inrement packet count
     pack_count++;
@@ -87,7 +87,7 @@ int DirectIODispatcherMetricCollector::priorityDataReceived(chaos::common::direc
 }
 
 // Event for a new data received
-int DirectIODispatcherMetricCollector::serviceDataReceived(chaos::common::direct_io::DirectIODataPackUPtr data_pack,
+int DirectIODispatcherMetricCollector::serviceDataReceived(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
                                                            chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer) {
     //inrement packec count
     pack_count++;

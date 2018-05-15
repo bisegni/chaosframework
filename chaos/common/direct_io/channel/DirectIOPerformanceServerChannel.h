@@ -59,7 +59,7 @@ namespace chaos {
 					DirectIOPerformanceServerChannelHandler *handler;
 					
 					
-                    int consumeDataPack(chaos::common::direct_io::DirectIODataPackUPtr data_pack,
+                    int consumeDataPack(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
                                         chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer);
 				};
 			}

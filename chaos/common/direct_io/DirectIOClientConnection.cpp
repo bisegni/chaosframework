@@ -36,11 +36,11 @@ using namespace chaos::common::direct_io;
 #define DIOVCCLDBG_ DBG_LOG(DirectIOClientConnection)
 #define DIOVCCLERR_ ERR_LOG(DirectIOClientConnection)
 
-// current client ip in string form
-std::string DirectIOClientConnection::my_str_ip;
-
-// current client ip in 64 bit form
-uint64_t DirectIOClientConnection::my_i64_ip = 0;
+//// current client ip in string form
+//std::string DirectIOClientConnection::my_str_ip;
+//
+//// current client ip in 64 bit form
+//uint64_t DirectIOClientConnection::my_i64_ip = 0;
 
 DirectIOClientConnection::DirectIOClientConnection(const std::string& _server_description,
 												   uint16_t _endpoint):
@@ -62,13 +62,6 @@ const char * DirectIOClientConnection::getServerDescription() {
 
 std::string DirectIOClientConnection::getURL() {
 	return url;
-}
-
-std::string DirectIOClientConnection::getStrIp() {
-    return my_str_ip;
-}
-uint64_t DirectIOClientConnection::getI64Ip() {
-    return my_i64_ip;
 }
 
 std::string DirectIOClientConnection::getUniqueUUID() {

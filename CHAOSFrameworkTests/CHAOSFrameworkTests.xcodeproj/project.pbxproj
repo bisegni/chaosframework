@@ -23,6 +23,7 @@
 		32818B451F828FDB004A409E /* TestBatchCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327A286C1D71D73300DFDD2C /* TestBatchCommand.cpp */; };
 		328CFCA11F7CF366002FEB25 /* QueueTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328CFC9F1F7CF366002FEB25 /* QueueTest.cpp */; };
 		328CFCA41F7D4167002FEB25 /* QueuePriorityTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328CFCA21F7D4167002FEB25 /* QueuePriorityTest.cpp */; };
+		329BF99A20AAFF1B0068F8EB /* DirectIOTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329BF99820AAFF1B0068F8EB /* DirectIOTest.cpp */; };
 		32A735331F6C399E00008145 /* PropertyTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A735311F6C399E00008145 /* PropertyTest.cpp */; };
 		32C180EF1FAB33CD00AFCC15 /* TestPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C180EE1FAB33CD00AFCC15 /* TestPlugin.cpp */; };
 		32CBCB29205ECF11002FB95F /* ExternalUnitMulticlientTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CBCB28205ECF11002FB95F /* ExternalUnitMulticlientTest.cpp */; };
@@ -114,6 +115,8 @@
 		329943721D6B4911008DBAE9 /* TestStateFlagCatalog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestStateFlagCatalog.h; sourceTree = "<group>"; };
 		329943801D6B5469008DBAE9 /* TestURLFeeder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestURLFeeder.cpp; sourceTree = "<group>"; };
 		329943811D6B5469008DBAE9 /* TestURLFeeder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestURLFeeder.h; sourceTree = "<group>"; };
+		329BF99820AAFF1B0068F8EB /* DirectIOTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOTest.cpp; sourceTree = "<group>"; };
+		329BF99920AAFF1B0068F8EB /* DirectIOTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DirectIOTest.h; sourceTree = "<group>"; };
 		32A735311F6C399E00008145 /* PropertyTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PropertyTest.cpp; sourceTree = "<group>"; };
 		32A735321F6C399E00008145 /* PropertyTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PropertyTest.h; sourceTree = "<group>"; };
 		32C180EE1FAB33CD00AFCC15 /* TestPlugin.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestPlugin.cpp; sourceTree = "<group>"; };
@@ -210,6 +213,7 @@
 			children = (
 				32C180F01FAB439300AFCC15 /* CMakeLists.txt */,
 				32639FE81F6AAD990049089C /* main.cpp */,
+				329BF99720AAFF020068F8EB /* direct_io */,
 				32F8425B20162B32004D582D /* utility */,
 				32C180EC1FAB33A800AFCC15 /* plugin */,
 				32DA77751F94B0C400497349 /* script */,
@@ -301,6 +305,15 @@
 				32F842572010B315004D582D /* TestProperty */,
 				32F842582010B315004D582D /* FrameworkTest */,
 			);
+			sourceTree = "<group>";
+		};
+		329BF99720AAFF020068F8EB /* direct_io */ = {
+			isa = PBXGroup;
+			children = (
+				329BF99820AAFF1B0068F8EB /* DirectIOTest.cpp */,
+				329BF99920AAFF1B0068F8EB /* DirectIOTest.h */,
+			);
+			path = direct_io;
 			sourceTree = "<group>";
 		};
 		32C180EC1FAB33A800AFCC15 /* plugin */ = {
@@ -576,6 +589,7 @@
 				32818B441F828FDB004A409E /* TestBatchDefault.cpp in Sources */,
 				32A735331F6C399E00008145 /* PropertyTest.cpp in Sources */,
 				32F8425E20162B54004D582D /* FutureHelperTest.cpp in Sources */,
+				329BF99A20AAFF1B0068F8EB /* DirectIOTest.cpp in Sources */,
 				32818B421F828FBE004A409E /* BatchComandTest.cpp in Sources */,
 				32639FF31F6ABB980049089C /* TestStateFlagCatalog.cpp in Sources */,
 				3206CE281FA1DA9B0059A4A4 /* TestCDataWrapper.cpp in Sources */,
