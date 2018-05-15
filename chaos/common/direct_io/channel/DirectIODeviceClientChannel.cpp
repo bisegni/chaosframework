@@ -53,18 +53,9 @@ DEFINE_CLASS_FACTORY(DirectIODeviceClientChannel, DirectIOVirtualClientChannel);
 
 
 DirectIODeviceClientChannel::DirectIODeviceClientChannel(std::string alias):
-DirectIOVirtualClientChannel(alias, DIODataset_Channel_Index),
-answer_server_info(){}
+DirectIOVirtualClientChannel(alias, DIODataset_Channel_Index){}
 
 DirectIODeviceClientChannel::~DirectIODeviceClientChannel() {}
-
-void DirectIODeviceClientChannel::setAnswerServerInfo(uint16_t p_server_port, uint16_t s_server_port, uint16_t answer_endpoint) {
-    answer_server_info.p_server_port = p_server_port;
-    answer_server_info.s_server_port = s_server_port;
-    answer_server_info.endpoint = answer_endpoint;
-    //setEndpoint(endpoint);
-    answer_server_info.ip = ((DirectIOClientConnection*)client_instance())->getI64Ip();
-}
 
 int DirectIODeviceClientChannel::storeAndCacheDataOutputChannel(const std::string& key,
                                                                 void *buffer,
@@ -151,13 +142,6 @@ int DirectIODeviceClientChannel::requestLastOutputData(const std::string& key,
     //allocate memory for key
     BufferSPtr channel_data = ChaosMakeSharedPtr<Buffer>();
     channel_data->append(key.c_str(), key.size());
-    
-    get_opcode_header->data<ApiHeader>()->field.address = TO_LITTEL_ENDNS_NUM(uint64_t, answer_server_info.ip);
-    get_opcode_header->data<ApiHeader>()->field.p_port = TO_LITTEL_ENDNS_NUM(uint16_t, answer_server_info.p_server_port);
-    get_opcode_header->data<ApiHeader>()->field.s_port = TO_LITTEL_ENDNS_NUM(uint16_t, answer_server_info.s_server_port);
-    get_opcode_header->data<ApiHeader>()->field.endpoint = TO_LITTEL_ENDNS_NUM(uint16_t, answer_server_info.endpoint);
-    
-    
     
     //set opcode
     data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodeGetLastOutput);

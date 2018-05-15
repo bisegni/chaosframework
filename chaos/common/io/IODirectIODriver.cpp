@@ -360,9 +360,6 @@ void* IODirectIODriver::serviceForURL(const common::network::URL& url, uint32_t 
             clients_channel = NULL;
             return NULL;
         }
-        //set the answer information
-        clients_channel->device_client_channel->setAnswerServerInfo(current_endpoint_p_port, current_endpoint_s_port, current_endpoint_index);
-        
         //set this driver instance as event handler for connection
         clients_channel->connection->setEventHandler(this);
         clients_channel->connection->setCustomStringIdentification(boost::lexical_cast<std::string>(service_index));

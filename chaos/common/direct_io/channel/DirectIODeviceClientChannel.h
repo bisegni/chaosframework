@@ -34,15 +34,7 @@ namespace chaos {
     namespace common {
         namespace direct_io {
             namespace channel {
-                
-                typedef struct AnswerServerInfo {
-                    uint16_t p_server_port;
-                    uint16_t s_server_port;
-                    uint16_t endpoint;
-                    uint64_t ip;
-                    uint32_t hash;
-                } AnswerServerInfo;
-                
+        
                 CHAOS_DEFINE_SET_FOR_TYPE(chaos::common::utility::DataBuffer<>, SetDataBuffer);
                 
                 //! Class for the managment of pushing data for the device dataset
@@ -51,17 +43,8 @@ namespace chaos {
                  */
                 DECLARE_CLASS_FACTORY(DirectIODeviceClientChannel, DirectIOVirtualClientChannel) {
                     REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(DirectIODeviceClientChannel)
-//                    
-//                    class DirectIODeviceClientChannelDeallocator:
-//                    public DirectIODeallocationHandler {
-//                    protected:
-//                        void freeSentData(void* sent_data_ptr, DisposeSentMemoryInfo *free_info_ptr);
-//                    };
-                    
-                    AnswerServerInfo answer_server_info;
                 protected:
                     DirectIODeviceClientChannel(std::string alias);
-                    
                 public:
                     ~DirectIODeviceClientChannel();
                     
