@@ -52,6 +52,7 @@ namespace driver{
             double last_push_rate_grap_ts;
             void updateHealth();
             void timeout();
+            bool deinitialized;
         public:
             
             ChaosDatasetIO(const std::string& dataset_name,const std::string &group_name="DATASETIO");
@@ -97,6 +98,7 @@ namespace driver{
             uint64_t getRunID(){return runid;}
             void setRunID(uint64_t ru){runid=ru;}
             std::vector<ChaosDataSet> getNextPage(uint64_t uid);
+            void deinit();
             
         };
     }}

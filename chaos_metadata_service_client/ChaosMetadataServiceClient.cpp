@@ -137,7 +137,9 @@ void ChaosMetadataServiceClient::start()  throw(CException) {
 void ChaosMetadataServiceClient::stop()   throw(CException) {
     try {
         //stop monitor manager
-        CHAOS_NOT_THROW(monitor_manager.stop(__PRETTY_FUNCTION__);)
+        if(monitoringIsStarted()) {
+            CHAOS_NOT_THROW(monitor_manager.stop(__PRETTY_FUNCTION__);)
+        }
         //stop batch system
         CHAOS_NOT_THROW( ChaosCommon<ChaosMetadataServiceClient>::stop();)
     } catch (CException& ex) {

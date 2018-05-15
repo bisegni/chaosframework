@@ -107,7 +107,6 @@ int DirectIOServerEndpoint::priorityDataReceived(DirectIODataPack *data_pack,
                                                  DirectIODeallocationHandler **answer_data_deallocation_handler) {
     int err = 0;
     ChaosReadLock rl(shared_mutex);
-    //boost::shared_lock<boost::shared_mutex> Lock(mutex_channel_slot);
     if(channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]) {
         err =  channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]->server_channel_delegate->consumeDataPack(data_pack,
                                                                                                                               synchronous_answer,
@@ -124,7 +123,6 @@ int DirectIOServerEndpoint::serviceDataReceived(DirectIODataPack *data_pack,
                                                 DirectIODeallocationHandler **answer_data_deallocation_handler) {
     int err = 0;
     ChaosReadLock rl(shared_mutex);
-    //boost::shared_lock<boost::shared_mutex> Lock(mutex_channel_slot);
     if(channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]) {
         err = channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]->server_channel_delegate->consumeDataPack(data_pack,
                                                                                                                              synchronous_answer,

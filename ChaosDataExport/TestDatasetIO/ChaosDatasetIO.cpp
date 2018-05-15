@@ -47,7 +47,7 @@ namespace driver{
         query_index(0),
         defaultPage(30),
         last_seq(0),
-        last_push_rate_grap_ts(0) {
+        last_push_rate_grap_ts(0),deinitialized(false) {
             InizializableService::initImplementation(chaos::common::io::SharedManagedDirecIoDataDriver::getInstance(), NULL, "SharedManagedDirecIoDataDriver", __PRETTY_FUNCTION__);
             
             //ioLiveDataDriver =  chaos::metadata_service_client::ChaosMetadataServiceClient::getInstance()->getDataProxyChannelNewInstance();
@@ -59,6 +59,7 @@ namespace driver{
             
             
             StartableService::initImplementation(HealtManager::getInstance(), NULL, "HealtManager", __PRETTY_FUNCTION__);
+            StartableService::startImplementation(HealtManager::getInstance(), "HealtManager", __PRETTY_FUNCTION__);
             runid=time(NULL);
             for(int cnt=0;cnt<sizeof(pkids)/sizeof(uint64_t);cnt++){
                 pkids[cnt]=0;
@@ -71,41 +72,7 @@ namespace driver{
         int ChaosDatasetIO::setTimeo(uint64_t t){timeo=t;return 0;}
         
         ChaosDatasetIO::~ChaosDatasetIO(){
-            std::map<int,ChaosSharedPtr<chaos::common::data::CDataWrapper> >::iterator i;
-            for(i=datasets.begin();i!=datasets.end();i++){
-                DPD_LDBG<<" removing dataset:"<<i->first;
-                (i->second).reset();
-            }
-            
-            for(query_cursor_map_t::iterator i=query_cursor_map.begin();i!=query_cursor_map.end();){
-                DPD_LDBG<<" removing query ID:"<<i->first;
-                
-                ioLiveDataDriver->releaseQuery( (i->second).qc);
-                
-                query_cursor_map.erase(i++);
-            }
-            
-            DEBUG_CODE(DPD_LDBG << "Destroy all resources");
-            CHAOS_NOT_THROW(StartableService::stopImplementation(HealtManager::getInstance(), "HealtManager", __PRETTY_FUNCTION__););
-            CHAOS_NOT_THROW(StartableService::deinitImplementation(HealtManager::getInstance(), "HealtManager", __PRETTY_FUNCTION__););
-            //sleep(1);
-            CHAOS_NOT_THROW(InizializableService::deinitImplementation(chaos::common::io::SharedManagedDirecIoDataDriver::getInstance(), "SharedManagedDirecIoDataDriver", __PRETTY_FUNCTION__););
-            //sleep(1);
-            DEBUG_CODE(DPD_LDBG << "End");
-            
-            
-            // connection_feeder.clear();
-            /* if(direct_io_client) {
-             CHAOS_NOT_THROW(InizializableService::deinitImplementation(direct_io_client,
-             direct_io_client->getName(),
-             __PRETTY_FUNCTION__);)
-             delete(direct_io_client);
-             }
-             
-             if(mds_message_channel) network_broker->disposeMessageChannel(mds_message_channel);
-             */
-            
-            chaos::common::async_central::AsyncCentralManager::getInstance()->removeTimer(this);
+            deinit();
         }
         
         
@@ -295,6 +262,10 @@ namespace driver{
                 EXECUTE_CHAOS_API(api_proxy::control_unit::SetInstanceDescription,timeo,cud);
             }
             HealtManager::getInstance()->addNewNode(uid);
+            //add push rate metric
+            HealtManager::getInstance()->addNodeMetric(uid,
+                                                       chaos::ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_PUSH_RATE,
+                                                       chaos::DataType::TYPE_DOUBLE);
             
             HealtManager::getInstance()->addNodeMetricValue(uid,
                                                             chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS,
@@ -339,7 +310,6 @@ namespace driver{
                     ret = mds_message_channel->sendNodeLoadCompletion(mdsPack, true, 10000);
                     
                     chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this, chaos::common::constants::CUTimersTimeoutinMSec, chaos::common::constants::CUTimersTimeoutinMSec);
-                    CHAOS_NOT_THROW(StartableService::startImplementation(HealtManager::getInstance(), "HealtManager", __PRETTY_FUNCTION__););
                 } else {
                     DPD_LERR<<" cannot register dataset "<<i->first<<" registration pack:"<<mds_registration_pack.getCompliantJSONString();
                     return -1;
@@ -352,8 +322,14 @@ namespace driver{
         }
         
         uint64_t ChaosDatasetIO::queryHistoryDatasets(const std::string &dsname, uint64_t ms_start,uint64_t ms_end,uint32_t page,int type){
-            chaos::common::io::QueryCursor *pnt=ioLiveDataDriver->performQuery(dsname+chaos::datasetTypeToPostfix(type),ms_start,ms_end,page);
+            std::string dst=dsname+chaos::datasetTypeToPostfix(type);
+            
+            DPD_LDBG<<"Query To:"<<dst<<" start:"<< ms_start<<" end_ms:"<<ms_end<<" page:"<<page;
+            
+            chaos::common::io::QueryCursor *pnt=ioLiveDataDriver->performQuery(dst,ms_start,ms_end,page);
             if(pnt==NULL){
+                DPD_LERR<<"NO CURSOR";
+                
                 return 0;
             }
             query_index++;
@@ -362,16 +338,20 @@ namespace driver{
             q.qc=pnt;
             q.qt=query_index;
             query_cursor_map[query_index]=q;
-            return 0;
+            return query_index;
         }
         bool ChaosDatasetIO::queryHasNext(uint64_t uid){
+            bool ret;
             query_cursor_map_t::iterator i=query_cursor_map.find(uid);
             if(i==query_cursor_map.end()){
                 DPD_LERR<<"query ID:"<<uid<<" not exists";
                 return false;
             }
             chaos::common::io::QueryCursor *pnt=(i->second).qc;
-            return pnt->hasNext();
+            ret=pnt->hasNext();
+            DPD_LDBG<<"query ID:"<<uid<<" (0xx"<<std::hex<<pnt<<") has next: "<<std::dec<<ret;
+            
+            return ret;
             
         }
         std::vector<ChaosDataSet> ChaosDatasetIO::getNextPage(uint64_t uid){
@@ -384,13 +364,15 @@ namespace driver{
             chaos::common::io::QueryCursor *pnt=(i->second).qc;
             uint32_t len=(i->second).page_len;
             int cnt=0;
-            DPD_LDBG<<"query ID:"<<uid<<" page len "<<pnt->getPageLen();
+            DPD_LDBG<<"query ID:"<<uid<<" page len "<<pnt->getPageLen()<<" application page:"<<len;
             
             while(pnt->hasNext() && (cnt<len)){
                 ChaosDataSet q_result(pnt->next());
+                
                 ret.push_back(q_result);
                 cnt++;
             }
+            
             if(pnt->hasNext()==false){
                 DPD_LDBG<<"query ID:"<<uid<<" ENDED freeing resource";
                 ioLiveDataDriver->releaseQuery( pnt);
@@ -400,12 +382,17 @@ namespace driver{
         }
         std::vector<ChaosDataSet> ChaosDatasetIO::queryHistoryDatasets(const std::string &dsname, uint64_t ms_start,uint64_t ms_end,int type){
             std::vector<ChaosDataSet> ret;
-            chaos::common::io::QueryCursor *pnt=ioLiveDataDriver->performQuery(dsname+chaos::datasetTypeToPostfix(type),ms_start,ms_end,defaultPage);
+            std::string dst=dsname+chaos::datasetTypeToPostfix(type);
+            DPD_LDBG<<"Query To:"<<dst<<" start:"<< ms_start<<" end_ms:"<<ms_end<<"default page:"<<defaultPage;
+            
+            chaos::common::io::QueryCursor *pnt=ioLiveDataDriver->performQuery(dst,ms_start,ms_end,defaultPage);
             if(pnt==NULL){
+                DPD_LERR<<"NO CURSOR";
                 return ret;
             }
             while(pnt->hasNext() ){
                 ChaosDataSet q_result(pnt->next());
+                //   std::cout<<"Retrieve: "<<q_result->getCompliantJSONString()<<std::endl;
                 ret.push_back(q_result);
             }
             ioLiveDataDriver->releaseQuery(pnt);
@@ -418,6 +405,47 @@ namespace driver{
         void ChaosDatasetIO::timeout() {
             //update push metric
             updateHealth();
+        }
+        void ChaosDatasetIO::deinit(){
+            
+            if(deinitialized){
+                DEBUG_CODE(DPD_LDBG << "Already deinitialized");
+                return;
+            }
+            HealtManager::getInstance()->addNodeMetricValue(uid,
+                                                            chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS,
+                                                            chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_DEINIT,
+                                                            true);
+            
+            for( std::map<int,ChaosSharedPtr<chaos::common::data::CDataWrapper> >::iterator i=datasets.begin();i!=datasets.end();i++){
+                DPD_LDBG<<" removing dataset:"<<i->first;
+                (i->second).reset();
+            }
+            
+            for(query_cursor_map_t::iterator i=query_cursor_map.begin();i!=query_cursor_map.end();){
+                DPD_LDBG<<" removing query ID:"<<i->first;
+                
+                ioLiveDataDriver->releaseQuery( (i->second).qc);
+                
+                query_cursor_map.erase(i++);
+            }
+
+            DEBUG_CODE(DPD_LDBG << "Shared Manager deinitialized");
+            
+            DEBUG_CODE(DPD_LDBG << "Deinitialized");
+            
+            deinitialized=true;
+            DEBUG_CODE(DPD_LDBG << "Destroy all resources");
+            chaos::common::async_central::AsyncCentralManager::getInstance()->removeTimer(this);
+            DEBUG_CODE(DPD_LDBG << "Timer removed");
+            
+            CHAOS_NOT_THROW(StartableService::stopImplementation(HealtManager::getInstance(), "HealtManager", __PRETTY_FUNCTION__););
+            DEBUG_CODE(DPD_LDBG << "Health stopped");
+            
+            CHAOS_NOT_THROW(StartableService::deinitImplementation(HealtManager::getInstance(), "HealtManager", __PRETTY_FUNCTION__););
+            DEBUG_CODE(DPD_LDBG << "Health deinitialized");
+            
+            CHAOS_NOT_THROW(InizializableService::deinitImplementation(chaos::common::io::SharedManagedDirecIoDataDriver::getInstance(), "SharedManagedDirecIoDataDriver", __PRETTY_FUNCTION__););
         }
     }
 }
