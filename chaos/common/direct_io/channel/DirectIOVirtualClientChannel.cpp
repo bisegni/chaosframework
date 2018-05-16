@@ -29,7 +29,6 @@ DirectIOVirtualClientChannel::DirectIOVirtualClientChannel(std::string channel_n
                                                            uint8_t channel_route_index):
 DirectIOVirtualChannel(channel_name, channel_route_index),
 forward_handler(NULL),
-header_deallocator(this),
 client_instance(NULL){}
 
 DirectIOVirtualClientChannel::~DirectIOVirtualClientChannel() {}
@@ -41,7 +40,6 @@ int DirectIOVirtualClientChannel::sendPriorityData(chaos::common::direct_io::Dir
     data_pack->header.dispatcher_header.fields.channel_idx = channel_route_index;
     
     //convert default DirectIO hader to little endian
-    DIRECT_IO_DATAPACK_FROM_ENDIAN(data_pack)
     DirectIOForwarderPtrLOWriteLock wl = client_instance.getWriteLockObject();
     completeChannnelDataPack(data_pack.get(), false);
     //send pack
@@ -56,7 +54,6 @@ int DirectIOVirtualClientChannel::sendPriorityData(chaos::common::direct_io::Dir
     data_pack->header.dispatcher_header.fields.channel_idx = channel_route_index;
     
     //convert default DirectIO hader to little endian
-    DIRECT_IO_DATAPACK_FROM_ENDIAN(data_pack)
     DirectIOForwarderPtrLOWriteLock wl = client_instance.getWriteLockObject();
     completeChannnelDataPack(data_pack.get(), true);
     //send pack
@@ -66,7 +63,6 @@ int DirectIOVirtualClientChannel::sendPriorityData(chaos::common::direct_io::Dir
         if(synchronous_answer &&
            synchronous_answer->channel_data) {
             //convert default DirectIO hader to little endian
-            DIRECT_IO_DATAPACK_TO_ENDIAN(synchronous_answer)
             //report api error as function error
             err = synchronous_answer->header.dispatcher_header.fields.err;
         }
@@ -81,7 +77,6 @@ int DirectIOVirtualClientChannel::sendServiceData(chaos::common::direct_io::Dire
     data_pack->header.dispatcher_header.fields.channel_idx = channel_route_index;
     
     //convert default DirectIO hader to little endian
-    DIRECT_IO_DATAPACK_FROM_ENDIAN(data_pack)
     DirectIOForwarderPtrLOWriteLock wl = client_instance.getWriteLockObject();
     completeChannnelDataPack(data_pack.get(), false);
     //send pack
@@ -96,7 +91,6 @@ int DirectIOVirtualClientChannel::sendServiceData(chaos::common::direct_io::Dire
     data_pack->header.dispatcher_header.fields.channel_idx = channel_route_index;
     
     //convert default DirectIO hader to little endian
-    DIRECT_IO_DATAPACK_FROM_ENDIAN(data_pack)
     DirectIOForwarderPtrLOWriteLock wl = client_instance.getWriteLockObject();
     completeChannnelDataPack(data_pack.get(), true);
     //send pack
@@ -105,16 +99,9 @@ int DirectIOVirtualClientChannel::sendServiceData(chaos::common::direct_io::Dire
     if(!err){
         if(synchronous_answer &&
            synchronous_answer->channel_data) {
-            //convert default DirectIO hader to little endian
-            DIRECT_IO_DATAPACK_TO_ENDIAN(synchronous_answer)
             //report api error as function error
             err = synchronous_answer->header.dispatcher_header.fields.err;
         }
     }
     return err;
-}
-
-//! default header deallocator implementation
-void DirectIOVirtualClientChannel::freeSentData(void* sent_data_ptr, DisposeSentMemoryInfo *free_info_ptr) {
-    delete(sent_data_ptr);
 }

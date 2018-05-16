@@ -81,8 +81,8 @@ ZMQDIO_BASE_LAPP_ << SUCCESS_STRING_ON_CONTEXT(s);\
 return 0;\
 }
 
-#define SET_SOCKET_OPTION(x,s)\
-if((err = setSocketOption(socket, default_conf, startup_conf, x, s, domain))){return err;}
+#define SET_SOCKET_OPTION(s, x, p)\
+if((err = setSocketOption(s, default_conf, startup_conf, x, p, domain))){return err;}
 
 
 static void zqmFreeSentData(void *data,
@@ -90,10 +90,10 @@ static void zqmFreeSentData(void *data,
     ChaosUniquePtr<DisposeSentMemoryInfo> free_info(static_cast<DisposeSentMemoryInfo*>(hint));
 }
 
-inline bool hasZMQProperty(MapZMQConfiguration &default_conf,
-                           const MapZMQConfiguration &startup_conf,
-                           std::string prop_name,
-                           int& prop_value) {
+bool ZMQBaseClass::hasZMQProperty(MapZMQConfiguration &default_conf,
+                                  const MapZMQConfiguration &startup_conf,
+                                  const std::string& prop_name,
+                                  int& prop_value) {
     MapZMQConfigurationConstIterator it_def_conf = default_conf.find(prop_name);
     MapZMQConfigurationConstIterator it_str_conf = startup_conf.find(prop_name);
     
@@ -109,12 +109,12 @@ inline bool hasZMQProperty(MapZMQConfiguration &default_conf,
     return (def_conf_has || startup_conf_has);
 }
 
-inline int setSocketOption(void *socket,
-                           MapZMQConfiguration &default_conf,
-                           const MapZMQConfiguration &startup_conf,
-                           int socket_option,
-                           const std::string& socket_option_name,
-                           const std::string& domain) {
+int ZMQBaseClass::setSocketOption(void *socket,
+                                  MapZMQConfiguration &default_conf,
+                                  const MapZMQConfiguration &startup_conf,
+                                  int socket_option,
+                                  const std::string& socket_option_name,
+                                  const std::string& domain) {
     int err = 0;
     int prop_value = 0;
     if(hasZMQProperty(default_conf,
@@ -150,16 +150,33 @@ int ZMQBaseClass::configureSocketWithStartupParameter(void *socket,
                                                       const std::string& domain) {
     
     int err = 0;
-    SET_SOCKET_OPTION(ZMQ_LINGER,"ZMQ_LINGER");
-    SET_SOCKET_OPTION(ZMQ_RCVHWM,"ZMQ_RCVHWM");
-    SET_SOCKET_OPTION(ZMQ_SNDHWM,"ZMQ_SNDHWM");
-    SET_SOCKET_OPTION(ZMQ_RCVTIMEO,"ZMQ_RCVTIMEO");
-    SET_SOCKET_OPTION(ZMQ_SNDTIMEO,"ZMQ_SNDTIMEO");
-    SET_SOCKET_OPTION(ZMQ_SNDBUF,"ZMQ_SNDBUF");
-    SET_SOCKET_OPTION(ZMQ_RCVBUF,"ZMQ_RCVBUF");
-    SET_SOCKET_OPTION(ZMQ_RECONNECT_IVL,"ZMQ_RECONNECT_IVL");
-    SET_SOCKET_OPTION(ZMQ_RECONNECT_IVL_MAX,"ZMQ_RECONNECT_IVL_MAX");
+    SET_SOCKET_OPTION(socket, ZMQ_LINGER,"ZMQ_LINGER");
+    SET_SOCKET_OPTION(socket, ZMQ_RCVHWM,"ZMQ_RCVHWM");
+    SET_SOCKET_OPTION(socket, ZMQ_SNDHWM,"ZMQ_SNDHWM");
+    SET_SOCKET_OPTION(socket, ZMQ_RCVTIMEO,"ZMQ_RCVTIMEO");
+    SET_SOCKET_OPTION(socket, ZMQ_SNDTIMEO,"ZMQ_SNDTIMEO");
+    SET_SOCKET_OPTION(socket, ZMQ_SNDBUF,"ZMQ_SNDBUF");
+    SET_SOCKET_OPTION(socket, ZMQ_RCVBUF,"ZMQ_RCVBUF");
+    SET_SOCKET_OPTION(socket, ZMQ_RECONNECT_IVL,"ZMQ_RECONNECT_IVL");
+    SET_SOCKET_OPTION(socket, ZMQ_RECONNECT_IVL_MAX,"ZMQ_RECONNECT_IVL_MAX");
     return 0;
+}
+
+int ZMQBaseClass::resetOutputQueue(void *socket,
+                                   MapZMQConfiguration &default_conf,
+                                   const MapZMQConfiguration &startup_conf) {
+    int err = 0;
+    int prop_value = 0;
+    err = zmq_setsockopt(socket, ZMQ_RCVHWM, &prop_value, sizeof(int));
+    if(err == 0) {
+        err = setSocketOption(socket,
+                              default_conf,
+                              startup_conf,
+                              ZMQ_RCVHWM,
+                              "ZMQ_RCVHWM",
+                              "resetOutputQueue");
+    }
+    return err;
 }
 
 int ZMQBaseClass::connectSocket(void *socket,
@@ -218,7 +235,6 @@ int ZMQBaseClass::sendMessage(void *socket,
                               bool more_to_send) {
     int err = 0;
     zmq_msg_t message;
-    
     if((err = zmq_msg_init_data(&message,
                                 message_data,
                                 message_size,
@@ -324,7 +340,8 @@ int ZMQBaseClass::setID(void *socket) {
     return zmq_setsockopt (socket, ZMQ_IDENTITY, uid.c_str(), uid.size());
 }
 
-int ZMQBaseClass::setAndReturnID(void *socket, std::string& new_id) {
+int ZMQBaseClass::setAndReturnID(void *socket,
+                                 std::string& new_id) {
     new_id = UUIDUtil::generateUUIDLite();
     return zmq_setsockopt (socket, ZMQ_IDENTITY, new_id.c_str(), new_id.size());
 }
@@ -393,8 +410,11 @@ int ZMQBaseClass::reveiceDatapack(void *socket,
     //create new datapack
     data_pack_handle.reset(new DirectIODataPack());
     
-    //set dispatch header data
-    data_pack_handle->header.dispatcher_header.raw_data = DIRECT_IO_GET_DISPATCHER_DATA(header_buffer);
+    //manage little endina conversion for header
+    memcpy(&data_pack_handle->header, header_buffer, sizeof(DirectIODataPackDispatchHeader_t));
+    DIRECT_IO_DATAPACK_DISPATCH_HEADER_FROM_ENDIAN(data_pack_handle);
+    data_pack_handle->header.channel_data_size = DIRECT_IO_GET_CHANNEL_DATA_SIZE(header_buffer);
+    data_pack_handle->header.channel_header_size = DIRECT_IO_GET_CHANNEL_HEADER_SIZE(header_buffer);
     
     //check what i need to reice
     switch(data_pack_handle->header.dispatcher_header.fields.channel_part) {
@@ -406,7 +426,6 @@ int ZMQBaseClass::reveiceDatapack(void *socket,
             EXIT_IF_NO_MORE_MESSAGE(-13002, "No other message after header for DIRECT_IO_CHANNEL_PART_HEADER_ONLY");
             
             //init header data buffer
-            data_pack_handle->header.channel_header_size = DIRECT_IO_GET_CHANNEL_HEADER_SIZE(header_buffer);
             data_pack_handle->channel_header_data = ChaosMakeSharedPtr<Buffer>(data_pack_handle->header.channel_header_size);
             
             //read the channel header
@@ -423,7 +442,6 @@ int ZMQBaseClass::reveiceDatapack(void *socket,
             EXIT_IF_NO_MORE_MESSAGE(-13003, "No other message after header for DIRECT_IO_CHANNEL_PART_DATA_ONLY");
             
             //init data buffer
-            data_pack_handle->header.channel_data_size = DIRECT_IO_GET_CHANNEL_DATA_SIZE(header_buffer);
             data_pack_handle->channel_data = ChaosMakeSharedPtr<Buffer>(data_pack_handle->header.channel_data_size);
             
             //read data part
@@ -439,7 +457,6 @@ int ZMQBaseClass::reveiceDatapack(void *socket,
             EXIT_IF_NO_MORE_MESSAGE(-13004, "No other message after header for DIRECT_IO_CHANNEL_PART_HEADER_DATA");
             
             //allocate header buffer
-            data_pack_handle->header.channel_header_size = DIRECT_IO_GET_CHANNEL_HEADER_SIZE(header_buffer);
             data_pack_handle->channel_header_data = ChaosMakeSharedPtr<Buffer>(data_pack_handle->header.channel_header_size);
             
             if((err = readMessage(socket,
@@ -452,7 +469,6 @@ int ZMQBaseClass::reveiceDatapack(void *socket,
                 EXIT_IF_NO_MORE_MESSAGE(-13005, "No other message after header for DIRECT_IO_CHANNEL_PART_HEADER_DATA");
                 
                 //allocate data buffer
-                data_pack_handle->header.channel_data_size = DIRECT_IO_GET_CHANNEL_DATA_SIZE(header_buffer);
                 data_pack_handle->channel_data = ChaosMakeSharedPtr<Buffer>(data_pack_handle->header.channel_data_size);
                 
                 //read data part
@@ -486,8 +502,8 @@ int ZMQBaseClass::sendDatapack(void *socket,
     int err = 0;
     uint16_t sending_opcode = data_pack->header.dispatcher_header.fields.channel_opcode;
     
-    //send global header
-    data_pack->header.dispatcher_header.raw_data = DIRECT_IO_SET_DISPATCHER_DATA(data_pack->header.dispatcher_header.raw_data);
+    //manage little endian conversion
+    DIRECT_IO_DATAPACK_DISPATCH_HEADER_TO_ENDIAN(data_pack);
     data_pack->header.channel_header_size = DIRECT_IO_SET_CHANNEL_HEADER_SIZE(data_pack->header.channel_header_size);
     data_pack->header.channel_data_size = DIRECT_IO_SET_CHANNEL_DATA_SIZE(data_pack->header.channel_data_size);
     

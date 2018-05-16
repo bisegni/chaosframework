@@ -41,12 +41,12 @@ namespace chaos {
     namespace common {
         namespace direct_io {
 			
-#define DIRECT_IO_HEADER_SIZE					16
-#define DIRECT_IO_DISPATCHER_HEADER_SIZE		8
+#define DIRECT_IO_HEADER_SIZE					sizeof(chaos::common::direct_io::DirectIODataPackDispatchHeader_t)
+#define DIRECT_IO_DISPATCHER_HEADER_SIZE		10
 
 #define DIRECT_IO_GET_DISPATCHER_DATA(d)		chaos::common::utility::byte_swap<chaos::common::utility::little_endian, chaos::common::utility::host_endian, uint64_t>(*((uint64_t*)d));
-#define DIRECT_IO_GET_CHANNEL_HEADER_SIZE(d)    chaos::common::utility::byte_swap<chaos::common::utility::little_endian, chaos::common::utility::host_endian, uint32_t>(*((uint32_t*)((char*)d+8)));
-#define DIRECT_IO_GET_CHANNEL_DATA_SIZE(d)		chaos::common::utility::byte_swap<chaos::common::utility::little_endian, chaos::common::utility::host_endian, uint32_t>(*((uint32_t*)((char*)d+12)));
+#define DIRECT_IO_GET_CHANNEL_HEADER_SIZE(d)    chaos::common::utility::byte_swap<chaos::common::utility::little_endian, chaos::common::utility::host_endian, uint32_t>(*((uint32_t*)((char*)d+12)));
+#define DIRECT_IO_GET_CHANNEL_DATA_SIZE(d)		chaos::common::utility::byte_swap<chaos::common::utility::little_endian, chaos::common::utility::host_endian, uint32_t>(*((uint32_t*)((char*)d+16)));
 			
 #define DIRECT_IO_SET_DISPATCHER_DATA(d)		chaos::common::utility::byte_swap<chaos::common::utility::host_endian, chaos::common::utility::little_endian, uint64_t>(d);
 #define DIRECT_IO_SET_CHANNEL_HEADER_SIZE(d)    chaos::common::utility::byte_swap<chaos::common::utility::host_endian, chaos::common::utility::little_endian, uint32_t>(d);
@@ -57,18 +57,20 @@ namespace chaos {
 #define DIRECT_IO_CHANNEL_PART_DATA_ONLY		2
 #define DIRECT_IO_CHANNEL_PART_HEADER_DATA		3
 			
-#define DIRECT_IO_DATAPACK_FROM_ENDIAN(x)\
+#define DIRECT_IO_DATAPACK_DISPATCH_HEADER_FROM_ENDIAN(x)\
 x->header.dispatcher_header.endianes.field_1 = FROM_LITTLE_ENDNS_NUM(uint16_t, x->header.dispatcher_header.endianes.field_1);\
 x->header.dispatcher_header.endianes.field_2 = FROM_LITTLE_ENDNS_NUM(uint16_t, x->header.dispatcher_header.endianes.field_2);\
 x->header.dispatcher_header.endianes.field_3 = FROM_LITTLE_ENDNS_NUM(uint16_t, x->header.dispatcher_header.endianes.field_3);\
-x->header.dispatcher_header.endianes.field_4 = FROM_LITTLE_ENDNS_NUM(uint16_t, x->header.dispatcher_header.endianes.field_4);
+x->header.dispatcher_header.endianes.field_4 = FROM_LITTLE_ENDNS_NUM(uint16_t, x->header.dispatcher_header.endianes.field_4);\
+x->header.dispatcher_header.endianes.field_5 = FROM_LITTLE_ENDNS_NUM(uint16_t, x->header.dispatcher_header.endianes.field_5);
 
-#define DIRECT_IO_DATAPACK_TO_ENDIAN(x)\
+#define DIRECT_IO_DATAPACK_DISPATCH_HEADER_TO_ENDIAN(x)\
 x->header.dispatcher_header.endianes.field_1 = TO_LITTEL_ENDNS_NUM(uint16_t, x->header.dispatcher_header.endianes.field_1);\
 x->header.dispatcher_header.endianes.field_2 = TO_LITTEL_ENDNS_NUM(uint16_t, x->header.dispatcher_header.endianes.field_2);\
 x->header.dispatcher_header.endianes.field_3 = TO_LITTEL_ENDNS_NUM(uint16_t, x->header.dispatcher_header.endianes.field_3);\
-x->header.dispatcher_header.endianes.field_4 = TO_LITTEL_ENDNS_NUM(uint16_t, x->header.dispatcher_header.endianes.field_4);
-            
+x->header.dispatcher_header.endianes.field_4 = TO_LITTEL_ENDNS_NUM(uint16_t, x->header.dispatcher_header.endianes.field_4);\
+x->header.dispatcher_header.endianes.field_5 = TO_LITTEL_ENDNS_NUM(uint16_t, x->header.dispatcher_header.endianes.field_5);
+
 #define DIRECT_IO_SET_CHANNEL_HEADER(pack, h_ptr, h_size)\
 pack->header.dispatcher_header.fields.channel_part = pack->header.dispatcher_header.fields.channel_part+DIRECT_IO_CHANNEL_PART_HEADER_ONLY;\
 pack->header.channel_header_size = DIRECT_IO_SET_CHANNEL_HEADER_SIZE(h_size);\
@@ -84,7 +86,7 @@ pack->channel_data = d_ptr;
             typedef struct DirectIODataPackDispatchHeader {
                 union {
                     //!header raw data
-                    uint64_t    raw_data;
+                    char    raw_data[10];
                     
                     //!field for semplify the dispatch header configuration
                     struct dispatcher_header {
@@ -100,8 +102,10 @@ pack->channel_data = d_ptr;
                         uint16_t    channel_opcode: 8;
                         //! check when a request need a synchronous answer
                         uint16_t    synchronous_answer:1;
-                        //! channel tag
+                        //! cpadding
                         uint16_t    unused: 7;
+                        //!used for coutn the current message from client
+                        uint16_t    counter;
                     } fields;
                     
                     //!convenient struct for endianes conversion
@@ -110,6 +114,7 @@ pack->channel_data = d_ptr;
                         int16_t     field_2;
                         uint16_t    field_3;
                         uint16_t    field_4;
+                        uint16_t    field_5;
                     } endianes;
                 } dispatcher_header;
                 
@@ -137,7 +142,7 @@ pack->channel_data = d_ptr;
                 chaos::common::data::BufferSPtr channel_data;
                 
                 DirectIODataPack(){
-                    header.dispatcher_header.raw_data = 0;
+                    memset(header.dispatcher_header.raw_data, 0, DIRECT_IO_DISPATCHER_HEADER_SIZE);
                     header.channel_header_size = 0;
                     header.channel_data_size = 0;
                 }

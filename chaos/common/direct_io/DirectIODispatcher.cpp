@@ -143,8 +143,9 @@ int DirectIODispatcher::priorityDataReceived(DirectIODataPackSPtr data_pack,
     CHAOS_ASSERT(data_pack.get());
     uint8_t     opcode = data_pack->header.dispatcher_header.fields.channel_opcode;
     uint16_t    tmp_addr = data_pack->header.dispatcher_header.fields.route_addr;
+    uint16_t    message_counter = data_pack->header.dispatcher_header.fields.counter;
     //convert dispatch header to correct endianes
-    DIRECT_IO_DATAPACK_FROM_ENDIAN(data_pack.get());
+    DIRECT_IO_DATAPACK_DISPATCH_HEADER_FROM_ENDIAN(data_pack.get());
 
     CHAOS_ASSERT(tmp_addr == data_pack->header.dispatcher_header.fields.route_addr);
     if(data_pack->header.dispatcher_header.fields.route_addr>=MAX_ENDPOINT_NUMBER){
@@ -158,12 +159,12 @@ int DirectIODispatcher::priorityDataReceived(DirectIODataPackSPtr data_pack,
     if(synchronous_answer.get()) {
         //set opcode for the answer
         synchronous_answer->header.dispatcher_header.fields.channel_opcode = opcode;
-
+        //set counter for the answer
+        synchronous_answer->header.dispatcher_header.fields.counter = message_counter;
         //set error on result datapack
         synchronous_answer->header.dispatcher_header.fields.err = (int16_t)err;
-
         //convert dispatch header to correct endianes
-        DIRECT_IO_DATAPACK_TO_ENDIAN(synchronous_answer.get());
+        DIRECT_IO_DATAPACK_DISPATCH_HEADER_TO_ENDIAN(synchronous_answer.get());
     }
 
     return err;
@@ -177,8 +178,9 @@ int DirectIODispatcher::serviceDataReceived(DirectIODataPackSPtr data_pack,
 
     uint8_t     opcode = data_pack->header.dispatcher_header.fields.channel_opcode;
     uint16_t    tmp_addr = data_pack->header.dispatcher_header.fields.route_addr;
+    uint16_t    message_counter = data_pack->header.dispatcher_header.fields.counter;
     //convert dispatch header to correct endianes
-    DIRECT_IO_DATAPACK_FROM_ENDIAN(data_pack.get());
+    DIRECT_IO_DATAPACK_DISPATCH_HEADER_FROM_ENDIAN(data_pack.get());
 
     CHAOS_ASSERT(tmp_addr == data_pack->header.dispatcher_header.fields.route_addr);
 
@@ -193,11 +195,12 @@ int DirectIODispatcher::serviceDataReceived(DirectIODataPackSPtr data_pack,
     if(synchronous_answer.get()) {
         //set opcode for the answer
         synchronous_answer->header.dispatcher_header.fields.channel_opcode = opcode;
+        //set counter for the answer
+        synchronous_answer->header.dispatcher_header.fields.counter = message_counter;
         //set error on result datapack
         synchronous_answer->header.dispatcher_header.fields.err = (int16_t)err;
-
         //convert dispatch header to correct endianes
-        DIRECT_IO_DATAPACK_TO_ENDIAN(synchronous_answer.get());
+        DIRECT_IO_DATAPACK_DISPATCH_HEADER_TO_ENDIAN(synchronous_answer.get());
     }
     return err;
 }

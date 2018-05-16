@@ -20,6 +20,16 @@ protected:
                          chaos::common::data::BufferSPtr& output_data);
 };
 
+class DirectIOEchoDelayedHandler:
+public DirectIOEchoHandler {
+    unsigned int echo_received_number;
+protected:
+    //! endpoint entry method
+    int consumeEchoEvent(chaos::common::data::BufferSPtr input_data,
+                         chaos::common::data::BufferSPtr& output_data);
+public:
+    DirectIOEchoDelayedHandler();
+};
 
 class DirectIOTest:
 public testing::Test {

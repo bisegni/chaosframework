@@ -54,8 +54,23 @@ namespace chaos {
                                       const std::string& connect_url,
                                       const std::string& domain);
                     
+                    inline bool hasZMQProperty(MapZMQConfiguration &default_conf,
+                                               const MapZMQConfiguration &startup_conf,
+                                               const std::string& prop_name,
+                                               int& prop_value);
+                    
+                    inline int setSocketOption(void *socket,
+                                               MapZMQConfiguration &default_conf,
+                                               const MapZMQConfiguration &startup_conf,
+                                               int socket_option,
+                                               const std::string& socket_option_name,
+                                               const std::string& domain);
                     //!
                     int closeSocketNoWhait (void *socket);
+                    
+                    int resetOutputQueue(void *socket,
+                                         MapZMQConfiguration &default_conf,
+                                         const MapZMQConfiguration &startup_conf);
                     
                     //! read a new message from zmq socket
                     /*!

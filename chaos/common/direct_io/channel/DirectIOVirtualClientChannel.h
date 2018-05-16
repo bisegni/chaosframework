@@ -43,8 +43,7 @@ namespace chaos {
                 CHAOS_DEFINE_LOCKABLE_OBJECT(DirectIOForwarder*, DirectIOForwarderPtrLO);
                 
                 class DirectIOVirtualClientChannel :
-                protected DirectIOVirtualChannel,
-                protected DirectIODeallocationHandler {
+                protected DirectIOVirtualChannel{
                     friend class chaos::common::direct_io::DirectIOClientConnection;
                     DirectIOForwarderHandler  forward_handler;
                 protected:
@@ -73,9 +72,6 @@ namespace chaos {
                     
                     DirectIOVirtualClientChannel(std::string channel_name, uint8_t channel_route_index);
                     ~DirectIOVirtualClientChannel();
-                    
-                    //! default header deallocator implementation
-                    void freeSentData(void* sent_data_ptr, DisposeSentMemoryInfo *free_info_ptr);
                 public:
                     
                 };

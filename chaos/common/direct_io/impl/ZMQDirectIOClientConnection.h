@@ -64,7 +64,7 @@ namespace chaos {
                 public chaos::common::utility::InizializableService {
                     friend class ZMQDirectIOClient;
                     void *zmq_context;
-                    
+                    MapZMQConfiguration default_configuration;
                     boost::shared_mutex mutext_send_message;
                     std::string priority_endpoint;
                     std::string service_endpoint;
@@ -72,6 +72,7 @@ namespace chaos {
                     std::string service_identity;
                     void *socket_priority;
                     void *socket_service;
+                    uint16_t message_counter;
                     
                     ConnectionMonitorInfo monitor_info;
                     
