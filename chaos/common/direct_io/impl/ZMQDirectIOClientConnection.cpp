@@ -344,17 +344,20 @@ int ZMQDirectIOClientConnection::writeToSocket(void *socket,
                                                DirectIODataPackSPtr& synchronous_answer) {
     CHAOS_ASSERT(socket && data_pack);
     CHAOS_ASSERT(data_pack->header.dispatcher_header.fields.synchronous_answer);
-    data_pack->header.dispatcher_header.fields.counter = message_counter++;
+    uint16_t current_counter = data_pack->header.dispatcher_header.fields.counter = message_counter++;
     int err = 0;
     if((err = sendDatapack(socket,
                            ChaosMoveOperator(data_pack)))) {
         ERR << "Error sending datapack with code:" << err;
     } else {
         //we need an aswer
-        if((err = reveiceDatapack(socket,
-                                  synchronous_answer))) {
-            ERR << "Error receiving answer datapack with code:" << err;
-        }
+        do {
+            if((err = reveiceDatapack(socket,
+                                      synchronous_answer))) {
+                ERR << "Error receiving answer datapack with code:" << err;
+            }
+        } while (err == 0 &&
+                 synchronous_answer->header.dispatcher_header.fields.counter < current_counter);
     }
     return err;
 }

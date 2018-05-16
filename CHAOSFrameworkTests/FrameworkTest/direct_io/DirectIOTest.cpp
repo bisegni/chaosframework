@@ -154,7 +154,7 @@ TEST_F(DirectIOTest, DelayedAnswer) {
     BufferSPtr message_buffer = ChaosMakeSharedPtr<Buffer>();
     BufferSPtr message_buffer_echo;
     
-    for(int idx = 0; idx < 4; idx++) {
+    for(int idx = 0; idx < 3; idx++) {
         message_buffer_echo.reset();
         std::string message_string_echo = CHAOS_FORMAT("test_echo_%1%",%idx);
         message_buffer->assign(message_string_echo.c_str(), message_string_echo.size());
