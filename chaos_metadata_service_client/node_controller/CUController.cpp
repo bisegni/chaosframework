@@ -964,9 +964,17 @@ int CUController::getTimeStamp(uint64_t& live,bool hr){
     live =0;
     if(d){
       if(hr){
-	live = d->getInt64Value(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP);
+          if(d->hasKey(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP)) {
+            live = d->getInt64Value(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP);
+          } else if(d->hasKey(DataPackCommonKey::DPCK_TIMESTAMP)){
+              live= d->getInt64Value(DataPackCommonKey::DPCK_TIMESTAMP)*1000;
+          }
       } else {
-        live = d->getInt64Value(DataPackCommonKey::DPCK_TIMESTAMP);
+          if(d->hasKey(DataPackCommonKey::DPCK_TIMESTAMP)){
+            live = d->getInt64Value(DataPackCommonKey::DPCK_TIMESTAMP);
+          } else if(d->hasKey(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP)){
+              live= d->getInt64Value(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP)*1000;
+          }
       }
         return 0;
     }

@@ -44,7 +44,7 @@ using namespace chaos::common::data;
 #define ACCESS_BSON(x) static_cast<bson_t*>(x.get())
 #define CW_CAST_EXCEPTION(type){\
     std::stringstream ss;\
-    ss<<"cannot get or cast to '" #type  "' "<<key<<"'";\
+    ss<<"cannot get or cast to '" #type  "' "<<key<<"' ds:" << getJSONString();\
     throw CException(1, ss.str(), __PRETTY_FUNCTION__);}
 
 #define ENSURE_ARRAY(x) \
