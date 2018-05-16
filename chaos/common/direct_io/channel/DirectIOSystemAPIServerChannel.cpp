@@ -54,8 +54,17 @@ int DirectIOSystemAPIServerChannel::consumeDataPack(DirectIODataPackSPtr data_pa
     switch (channel_opcode) {
         case opcode::SystemAPIChannelOpcodeEcho: {
             synchronous_answer = ChaosMakeSharedPtr<DirectIODataPack>();
-            return handler->consumeEchoEvent(ChaosMoveOperator(data_pack->channel_data),
-                                             synchronous_answer->channel_data);
+            BufferSPtr answer_channel_data;
+            err =  handler->consumeEchoEvent(ChaosMoveOperator(data_pack->channel_data),
+                                             answer_channel_data);
+            
+            if(!err &&
+               answer_channel_data &&
+               answer_channel_data->size()){
+                DIRECT_IO_SET_CHANNEL_DATA(synchronous_answer, answer_channel_data, (uint32_t)answer_channel_data->size());
+            } else {
+                err = -2;
+            }
             break;
         }
         case opcode::SystemAPIChannelOpcodeNewSnapshotDataset: {

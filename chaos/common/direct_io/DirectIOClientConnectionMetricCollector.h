@@ -52,14 +52,14 @@ namespace chaos {
                 ~DirectIOClientConnectionMetricCollector();
                 
                 //! inherited method
-                int sendPriorityData(chaos::common::direct_io::DirectIODataPackUPtr data_pack);
-                int sendPriorityData(chaos::common::direct_io::DirectIODataPackUPtr data_pack,
+                int sendPriorityData(chaos::common::direct_io::DirectIODataPackSPtr data_pack);
+                int sendPriorityData(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
                                      chaos::common::direct_io::DirectIODataPackSPtr& asynchronous_answer);
                 
                 
                 //! inherited method
-                int sendServiceData(chaos::common::direct_io::DirectIODataPackUPtr data_pack);
-                int sendServiceData(chaos::common::direct_io::DirectIODataPackUPtr data_pack,
+                int sendServiceData(chaos::common::direct_io::DirectIODataPackSPtr data_pack);
+                int sendServiceData(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
                                     chaos::common::direct_io::DirectIODataPackSPtr& asynchronous_answer);
             };
         }

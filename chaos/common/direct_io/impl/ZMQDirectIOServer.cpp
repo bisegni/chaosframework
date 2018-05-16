@@ -310,7 +310,8 @@ void ZMQDirectIOServer::worker(unsigned int w_type,
                                       data_pack_received))) {
                 continue;
             } else {
-                
+                //keep track if the cleint want the answer
+                send_synchronous_answer = data_pack_received->header.dispatcher_header.fields.synchronous_answer;
                 //call handler
                 err = DirectIOHandlerPtrCaller(handler_impl, delegate)(ChaosMoveOperator(data_pack_received),
                                                                        data_pack_answer);

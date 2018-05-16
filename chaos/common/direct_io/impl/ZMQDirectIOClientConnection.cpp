@@ -250,7 +250,7 @@ int ZMQDirectIOClientConnection::releaseSocketPair() {
     }
     return err;
 }
-int ZMQDirectIOClientConnection::sendPriorityData(chaos::common::direct_io::DirectIODataPackUPtr data_pack) {
+int ZMQDirectIOClientConnection::sendPriorityData(chaos::common::direct_io::DirectIODataPackSPtr data_pack) {
     CHAOS_ASSERT(data_pack);
     boost::unique_lock<boost::shared_mutex> wl(mutext_send_message);
     completeDataPack(*data_pack);
@@ -259,7 +259,7 @@ int ZMQDirectIOClientConnection::sendPriorityData(chaos::common::direct_io::Dire
                          ChaosMoveOperator(data_pack));
 }
 // send the data to the server layer on priority channel
-int ZMQDirectIOClientConnection::sendPriorityData(chaos::common::direct_io::DirectIODataPackUPtr data_pack,
+int ZMQDirectIOClientConnection::sendPriorityData(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
                                                   chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer) {
     int err = 0;
     CHAOS_ASSERT(data_pack);
@@ -280,7 +280,7 @@ int ZMQDirectIOClientConnection::sendPriorityData(chaos::common::direct_io::Dire
     return err;
 }
 
-int ZMQDirectIOClientConnection::sendServiceData(chaos::common::direct_io::DirectIODataPackUPtr data_pack) {
+int ZMQDirectIOClientConnection::sendServiceData(chaos::common::direct_io::DirectIODataPackSPtr data_pack) {
     CHAOS_ASSERT(data_pack);
     boost::unique_lock<boost::shared_mutex> wl(mutext_send_message);
     completeDataPack(*data_pack);
@@ -290,7 +290,7 @@ int ZMQDirectIOClientConnection::sendServiceData(chaos::common::direct_io::Direc
 }
 
 // send the data to the server layer on the service channel
-int ZMQDirectIOClientConnection::sendServiceData(chaos::common::direct_io::DirectIODataPackUPtr data_pack,
+int ZMQDirectIOClientConnection::sendServiceData(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
                                                  chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer) {
     int err = 0;
     CHAOS_ASSERT(data_pack);
@@ -321,7 +321,7 @@ bool ZMQDirectIOClientConnection::ensureSocket() {
 //send data with zmq tech
 int ZMQDirectIOClientConnection::writeToSocket(void *socket,
                                                std::string& identity,
-                                               DirectIODataPackUPtr data_pack) {
+                                               DirectIODataPackSPtr data_pack) {
     CHAOS_ASSERT(socket && data_pack);
     CHAOS_ASSERT(data_pack->header.dispatcher_header.fields.synchronous_answer == false);
     int err = 0;
@@ -334,7 +334,7 @@ int ZMQDirectIOClientConnection::writeToSocket(void *socket,
 //send data with zmq tech
 int ZMQDirectIOClientConnection::writeToSocket(void *socket,
                                                std::string& identity,
-                                               DirectIODataPackUPtr data_pack,
+                                               DirectIODataPackSPtr data_pack,
                                                DirectIODataPackSPtr& synchronous_answer) {
     CHAOS_ASSERT(socket && data_pack);
     CHAOS_ASSERT(data_pack->header.dispatcher_header.fields.synchronous_answer);

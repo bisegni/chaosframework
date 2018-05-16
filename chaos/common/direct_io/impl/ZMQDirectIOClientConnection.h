@@ -86,11 +86,11 @@ namespace chaos {
                     
                     inline int writeToSocket(void *socket,
                                              std::string& identity,
-                                             chaos::common::direct_io::DirectIODataPackUPtr data_pack,
+                                             chaos::common::direct_io::DirectIODataPackSPtr data_pack,
                                              chaos::common::direct_io::DirectIODataPackSPtr& asynchronous_answer);
                     inline int writeToSocket(void *socket,
                                              std::string& identity,
-                                             chaos::common::direct_io::DirectIODataPackUPtr data_pack);
+                                             chaos::common::direct_io::DirectIODataPackSPtr data_pack);
                     int readMonitorMesg(void *monitor,
                                         int *value,
                                         char *address,
@@ -111,15 +111,15 @@ namespace chaos {
                     void deinit() throw(chaos::CException);
                     
                     // send the data to the server layer on priority channel
-                    int sendPriorityData(chaos::common::direct_io::DirectIODataPackUPtr data_pack);
+                    int sendPriorityData(chaos::common::direct_io::DirectIODataPackSPtr data_pack);
                     
-                    int sendPriorityData(chaos::common::direct_io::DirectIODataPackUPtr data_pack,
+                    int sendPriorityData(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
                                          chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer);
                     
                     // send the data to the server layer on the service channel
-                    int sendServiceData(chaos::common::direct_io::DirectIODataPackUPtr data_pack);
+                    int sendServiceData(chaos::common::direct_io::DirectIODataPackSPtr data_pack);
                     
-                    int sendServiceData(chaos::common::direct_io::DirectIODataPackUPtr data_pack,
+                    int sendServiceData(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
                                         chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer);
                 };
                 

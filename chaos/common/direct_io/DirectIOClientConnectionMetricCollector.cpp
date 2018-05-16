@@ -48,7 +48,7 @@ DirectIOClientConnectionMetricCollector::~DirectIOClientConnectionMetricCollecto
 
 
 //! inherited method
-int DirectIOClientConnectionMetricCollector::sendPriorityData(DirectIODataPackUPtr data_pack) {
+int DirectIOClientConnectionMetricCollector::sendPriorityData(DirectIODataPackSPtr data_pack) {
     CHAOS_ASSERT(wrapped_connection && shared_collector)
     //inrement packec count
     shared_collector->incrementPackCount();
@@ -57,7 +57,7 @@ int DirectIOClientConnectionMetricCollector::sendPriorityData(DirectIODataPackUP
     shared_collector->incrementBandWidth(data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader));
     return wrapped_connection->sendPriorityData(ChaosMoveOperator(data_pack));
 }
-int DirectIOClientConnectionMetricCollector::sendPriorityData(DirectIODataPackUPtr data_pack,
+int DirectIOClientConnectionMetricCollector::sendPriorityData(DirectIODataPackSPtr data_pack,
                                                               DirectIODataPackSPtr& asynchronous_answer) {
     CHAOS_ASSERT(wrapped_connection && shared_collector)
     //inrement packec count
@@ -71,7 +71,7 @@ int DirectIOClientConnectionMetricCollector::sendPriorityData(DirectIODataPackUP
 
 
 //! inherited method
-int DirectIOClientConnectionMetricCollector::sendServiceData(chaos::common::direct_io::DirectIODataPackUPtr data_pack) {
+int DirectIOClientConnectionMetricCollector::sendServiceData(chaos::common::direct_io::DirectIODataPackSPtr data_pack) {
     CHAOS_ASSERT(wrapped_connection && shared_collector)
     //inrement packec count
     shared_collector->incrementPackCount();
@@ -80,7 +80,7 @@ int DirectIOClientConnectionMetricCollector::sendServiceData(chaos::common::dire
     shared_collector->incrementBandWidth(data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader));
     return wrapped_connection->sendServiceData(ChaosMoveOperator(data_pack));
 }
-int DirectIOClientConnectionMetricCollector::sendServiceData(chaos::common::direct_io::DirectIODataPackUPtr data_pack,
+int DirectIOClientConnectionMetricCollector::sendServiceData(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
                                                              chaos::common::direct_io::DirectIODataPackSPtr& asynchronous_answer) {
     CHAOS_ASSERT(wrapped_connection && shared_collector)
     //inrement packec count

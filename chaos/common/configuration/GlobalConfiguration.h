@@ -137,7 +137,7 @@ x = hasOption(y);
         /*!
          Specialized option for startup c and cpp program main options parameter
          */
-        void parseStartupParameters(int, char* argv[]) throw (CException);
+        void parseStartupParameters(int, const char* argv[]) throw (CException);
         //!stringbuffer parser
         /*
          specialized option for string stream buffer with boost semantics

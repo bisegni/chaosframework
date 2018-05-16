@@ -144,7 +144,7 @@ pack->channel_data = d_ptr;
             };
             
             //! defin esmart pointer for DirectIODataPack
-            typedef ChaosUniquePtr<DirectIODataPack> DirectIODataPackUPtr;
+//            typedef ChaosUniquePtr<DirectIODataPack> DirectIODataPackSPtr;
             typedef ChaosSharedPtr<DirectIODataPack> DirectIODataPackSPtr;
             
             //is a single element contained within channel data memory

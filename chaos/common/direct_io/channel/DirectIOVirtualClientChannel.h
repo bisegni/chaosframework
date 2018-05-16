@@ -57,12 +57,12 @@ namespace chaos {
                     DirectIOForwarderPtrLO client_instance;
                     
                     //priority socket
-                    int sendPriorityData(chaos::common::direct_io::DirectIODataPackUPtr data_pack);
-                    int sendPriorityData(chaos::common::direct_io::DirectIODataPackUPtr data_pack,
+                    int sendPriorityData(chaos::common::direct_io::DirectIODataPackSPtr data_pack);
+                    int sendPriorityData(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
                                          chaos::common::direct_io::DirectIODataPackSPtr& asynchronous_answer);
                     //service socket
-                    int sendServiceData(chaos::common::direct_io::DirectIODataPackUPtr data_pack);
-                    int sendServiceData(chaos::common::direct_io::DirectIODataPackUPtr data_pack,
+                    int sendServiceData(chaos::common::direct_io::DirectIODataPackSPtr data_pack);
+                    int sendServiceData(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
                                         chaos::common::direct_io::DirectIODataPackSPtr& asynchronous_answer);
                     // prepare header for defaut connection data
                     void completeChannnelDataPack(DirectIODataPack *data_pack, bool synchronous_answer = false) {

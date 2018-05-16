@@ -14,12 +14,10 @@
 
 class DirectIOEchoHandler:
 public chaos::common::direct_io::channel::DirectIOSystemAPIServerChannel::DirectIOSystemAPIServerChannelHandler {
-    
 protected:
-    
     //! endpoint entry method
-    int consumeDataPack(chaos::common::direct_io::DirectIODataPackSPtr  data_pack,
-                        chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer);
+    int consumeEchoEvent(chaos::common::data::BufferSPtr input_data,
+                         chaos::common::data::BufferSPtr& output_data);
 };
 
 

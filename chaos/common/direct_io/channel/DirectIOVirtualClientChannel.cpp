@@ -34,7 +34,7 @@ client_instance(NULL){}
 
 DirectIOVirtualClientChannel::~DirectIOVirtualClientChannel() {}
 
-int DirectIOVirtualClientChannel::sendPriorityData(chaos::common::direct_io::DirectIODataPackUPtr data_pack) {
+int DirectIOVirtualClientChannel::sendPriorityData(chaos::common::direct_io::DirectIODataPackSPtr data_pack) {
     //set the endpoint that need the receive the pack on the other side
     //data_pack->header.dispatcher_header.fields.route_addr = endpoint;
     //set the channel route index within the endpoint
@@ -48,7 +48,7 @@ int DirectIOVirtualClientChannel::sendPriorityData(chaos::common::direct_io::Dir
     return client_instance()->sendPriorityData(ChaosMoveOperator(data_pack));
 }
 
-int DirectIOVirtualClientChannel::sendPriorityData(chaos::common::direct_io::DirectIODataPackUPtr data_pack,
+int DirectIOVirtualClientChannel::sendPriorityData(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
                                                    chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer) {
     //set the endpoint that need the receive the pack on the other side
     //data_pack->header.dispatcher_header.fields.route_addr = endpoint;
@@ -74,7 +74,7 @@ int DirectIOVirtualClientChannel::sendPriorityData(chaos::common::direct_io::Dir
     return err;
 }
 
-int DirectIOVirtualClientChannel::sendServiceData(chaos::common::direct_io::DirectIODataPackUPtr data_pack) {
+int DirectIOVirtualClientChannel::sendServiceData(chaos::common::direct_io::DirectIODataPackSPtr data_pack) {
     //set the endpoint that need the receive the pack on the other side
     //data_pack->header.dispatcher_header.fields.route_addr = endpoint;
     //set the channel route index within the endpoint
@@ -88,7 +88,7 @@ int DirectIOVirtualClientChannel::sendServiceData(chaos::common::direct_io::Dire
     return client_instance()->sendServiceData(ChaosMoveOperator(data_pack));
 }
 
-int DirectIOVirtualClientChannel::sendServiceData(chaos::common::direct_io::DirectIODataPackUPtr data_pack,
+int DirectIOVirtualClientChannel::sendServiceData(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
                                                   chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer) {
     //set the endpoint that need the receive the pack on the other side
     //data_pack->header.dispatcher_header.fields.route_addr = endpoint;

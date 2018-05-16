@@ -15,9 +15,14 @@ using namespace chaos::common::direct_io;
 using namespace chaos::common::direct_io::channel;
 
 #pragma mark DirectIOEchoHandler
-int DirectIOEchoHandler::consumeDataPack(DirectIODataPackSPtr data_pack,
-                                         DirectIODataPackSPtr& synchronous_answer) {
-    return -1;
+int DirectIOEchoHandler::consumeEchoEvent(chaos::common::data::BufferSPtr input_data,
+                                          chaos::common::data::BufferSPtr& output_data) {
+    output_data = ChaosMakeSharedPtr<Buffer>(*input_data);
+    if(output_data == NULL ||
+       output_data->data() == NULL) {
+        return -1;
+    }
+    return  0;
 }
 
 #pragma mark DirectIOTest
@@ -62,7 +67,7 @@ TEST_F(DirectIOTest, Echo) {
     client_channel = (DirectIOSystemAPIClientChannel*)connection->getNewChannelInstance("DirectIOSystemAPIClientChannel");
     ASSERT_TRUE(client_channel);
     
-    BufferSPtr message_buffer;
+    BufferSPtr message_buffer = ChaosMakeSharedPtr<Buffer>();
     BufferSPtr message_buffer_echo;
     
     message_buffer->append(message_string_echo.c_str(), message_string_echo.size());
@@ -71,5 +76,16 @@ TEST_F(DirectIOTest, Echo) {
     
     ASSERT_TRUE(message_buffer_echo);
     ASSERT_EQ(message_buffer_echo->size(), message_string_echo.size());
-    ASSERT_STREQ(message_buffer_echo->data(), message_string_echo.c_str());
+    
+    const std::string echo_message_string(message_buffer_echo->data(), message_buffer_echo->size());
+    ASSERT_STREQ(echo_message_string.c_str(), message_string_echo.c_str());
+    
+    if(client_channel){
+        ASSERT_NO_THROW(connection->releaseChannelInstance(client_channel););
+        client_channel = NULL;
+    }
+    if(connection) {
+        chaos::common::network::NetworkBroker::getInstance()->getSharedDirectIOClientInstance()->releaseConnection(connection);
+        connection = NULL;
+    }
 }
