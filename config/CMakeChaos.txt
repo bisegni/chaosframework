@@ -659,7 +659,8 @@ ENDIF()
     ENDIF()
 
     
-  SET(CHAOS_BOOST_FLAGS ${CHAOS_BOOST_FLAGS} cxxflags=\""${CHAOS_CXX_FLAGS} ${BOOST_CXX_ADDITIONAL_FLAGS}"\" --prefix=${CMAKE_INSTALL_PREFIX} --with-program_options --with-exception --with-chrono --with-filesystem --with-log --with-regex --with-random --with-system --with-thread --with-atomic --with-timer install "-j ${PROCESSOR_COUNT}" )
+#  SET(CHAOS_BOOST_FLAGS ${CHAOS_BOOST_FLAGS} cxxflags=\""${CHAOS_CXX_FLAGS} ${BOOST_CXX_ADDITIONAL_FLAGS}"\" --prefix=${CMAKE_INSTALL_PREFIX} --with-program_options --with-exception --with-chrono --with-filesystem --with-log --with-regex --with-random --with-system --with-thread --with-atomic --with-timer install "-j ${PROCESSOR_COUNT}" )
+  SET(CHAOS_BOOST_FLAGS ${CHAOS_BOOST_FLAGS} cxxflags=\""${CHAOS_CXX_FLAGS}"\" --prefix=${CMAKE_INSTALL_PREFIX} --with-program_options --with-exception --with-chrono --with-filesystem --with-log --with-regex --with-random --with-system --with-thread --with-atomic --with-timer install "-j ${PROCESSOR_COUNT}" )
 
 
 
