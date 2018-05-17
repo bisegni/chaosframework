@@ -148,25 +148,24 @@ void QueryDataConsumer::deinit() throw (chaos::CException) {
 }
 
 #pragma mark DirectIODeviceServerChannelHandler
-int QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *header,
-                                       void *channel_data,
+int QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode& header,
+                                       BufferSPtr channel_data,
                                        uint32_t channel_data_len) {
-    CHAOS_ASSERT(header)
     CHAOS_ASSERT(channel_data)
     int err = 0;
-    DataServiceNodeDefinitionType::DSStorageType storage_type = static_cast<DataServiceNodeDefinitionType::DSStorageType>(header->tag);
+    DataServiceNodeDefinitionType::DSStorageType storage_type = static_cast<DataServiceNodeDefinitionType::DSStorageType>(header.tag);
     //! if tag is == 1 the datapack is in liveonly
     bool send_to_storage_layer = (storage_type != DataServiceNodeDefinitionType::DSStorageTypeLive &&
                                   storage_type != DataServiceNodeDefinitionType::DSStorageTypeUndefined);
     switch(storage_type) {
         case DataServiceNodeDefinitionType::DSStorageTypeLiveHistory:
         case DataServiceNodeDefinitionType::DSStorageTypeLive:{
-            CacheData cache_data((char*)channel_data, ((char*)channel_data)+channel_data_len);
+            CacheData cache_data((char*)channel_data->data(), ((char*)channel_data->data())+channel_data_len);
             //protected access to cached driver
             CachePoolSlot *cache_slot = DriverPoolManager::getInstance()->getCacheDriverInstance();
             if(cache_slot) {
-                err = cache_slot->resource_pooled->putData(std::string((const char *)GET_PUT_OPCODE_KEY_PTR(header),
-                                                                       header->key_len),
+                err = cache_slot->resource_pooled->putData(std::string((const char *)GET_PUT_OPCODE_KEY_PTR(&header),
+                                                                       header.key_len),
                                                            cache_data);
                 DriverPoolManager::getInstance()->releaseCacheDriverInstance(cache_slot);
             } else {
@@ -179,7 +178,7 @@ int QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *hea
             break;
             
         default: {
-            ERR << "Bad storage tag: " << header->tag;
+            ERR << "Bad storage tag: " << header.tag;
             break;
         }
     }
@@ -196,23 +195,18 @@ int QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *hea
         if((err = device_data_worker[index_to_use]->submitJobInfo(job))) {
             DEBUG_CODE(DBG << "Error pushing data into worker queue");
             delete job;
-            free(header);
-            free(channel_data);
         }
-    } else {
-        free(header);
-        free(channel_data);
     }
     return err;
 }
 
-int QueryDataConsumer::consumeHealthDataEvent(DirectIODeviceChannelHeaderPutOpcode *header,
-                                              void *channel_data,
+int QueryDataConsumer::consumeHealthDataEvent(DirectIODeviceChannelHeaderPutOpcode& header,
+                                              BufferSPtr channel_data,
                                               uint32_t channel_data_len) {
     int err = 0;
     
-    CDataWrapper health_data_pack((char *)channel_data);
-    
+    CDataWrapper health_data_pack((char *)channel_data->data());
+
     NodeDataAccess *s_da = PersistenceManager::getInstance()->getDataAccess<NodeDataAccess>();
     
     HealthStatSDWrapper attribute_reference_wrapper;
@@ -226,7 +220,7 @@ int QueryDataConsumer::consumeHealthDataEvent(DirectIODeviceChannelHeaderPutOpco
                            channel_data_len);
 }
 
-int QueryDataConsumer::consumeDataCloudQuery(DirectIODeviceChannelHeaderOpcodeQueryDataCloud *query_header,
+int QueryDataConsumer::consumeDataCloudQuery(DirectIODeviceChannelHeaderOpcodeQueryDataCloud& query_header,
                                              const std::string& search_key,
                                              uint64_t search_start_ts,
                                              uint64_t search_end_ts,
@@ -239,7 +233,7 @@ int QueryDataConsumer::consumeDataCloudQuery(DirectIODeviceChannelHeaderOpcodeQu
     if((err = obj_storage_da->findObject(search_key,
                                          search_start_ts,
                                          search_end_ts,
-                                         query_header->field.record_for_page,
+                                         query_header.field.record_for_page,
                                          page_element_found,
                                          last_element_found_seq))) {
         ERR << CHAOS_FORMAT("Error performing cloud query with code %1%", %err);
@@ -247,11 +241,11 @@ int QueryDataConsumer::consumeDataCloudQuery(DirectIODeviceChannelHeaderOpcodeQu
     return err;
 }
 
-int QueryDataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *header,
-                                       void *channel_data,
+int QueryDataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode& header,
+                                       BufferSPtr channel_data,
                                        uint32_t channel_data_len,
-                                       opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult *result_header,
-                                       void **result_value) {
+                                       opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult& result_header,
+                                       BufferSPtr& result_value) {
     int err = 0;
     //debug check
     //protected access to cached driver
@@ -260,14 +254,14 @@ int QueryDataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *hea
         CacheData cache_data;
         if(cache_slot) {
             //get data
-            err = cache_slot->resource_pooled->getData(std::string((const char*)channel_data,
+            err = cache_slot->resource_pooled->getData(std::string((const char*)channel_data->data(),
                                                                    channel_data_len),
                                                        cache_data);
             if(cache_data.size()) {
-                result_header->value_len = (uint32_t)cache_data.size();
-                *result_value = malloc(result_header->value_len);
-                CHAOS_ASSERT(*result_value)
-                std::memcpy(*result_value, &cache_data[0], result_header->value_len);
+                result_header.value_len = (uint32_t)cache_data.size();
+                result_value = ChaosMakeSharedPtr<Buffer>();
+                CHAOS_ASSERT(result_value)
+                result_value->append(&cache_data[0], result_header.value_len);
             }
         } else {
             err = -1;
@@ -275,15 +269,13 @@ int QueryDataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *hea
         }
     } catch(...) {}
     DriverPoolManager::getInstance()->releaseCacheDriverInstance(cache_slot);
-    if(channel_data) free(channel_data);
-    if(header) free(header);
     return err;
 }
 
-int QueryDataConsumer::consumeGetEvent(opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcode *header,
+int QueryDataConsumer::consumeGetEvent(opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcode& header,
                                        const ChaosStringVector& keys,
-                                       opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcodeResult *result_header,
-                                       void **result_value,
+                                       opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcodeResult& result_header,
+                                       BufferSPtr& result_value,
                                        uint32_t& result_value_len) {
     int err = 0;
     //debug check
@@ -314,16 +306,15 @@ int QueryDataConsumer::consumeGetEvent(opcode_headers::DirectIODeviceChannelHead
                 }
             }
             
-            result_header->number_of_result = (uint32_t)multi_cached_data.size();
+            result_header.number_of_result = (uint32_t)multi_cached_data.size();
             result_value_len = data_buffer.getCursorLocation();
-            *result_value = data_buffer.release();
+            result_value = ChaosMakeSharedPtr<Buffer>(data_buffer.release(), result_value_len, result_value_len, true);
         } else {
             err = -1;
             ERR << "Error allocating cache slot";
         }
     } catch(...) {}
     DriverPoolManager::getInstance()->releaseCacheDriverInstance(cache_slot);
-    if(header) free(header);
     return err;
 }
 

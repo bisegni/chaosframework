@@ -67,27 +67,27 @@ namespace chaos{
             chaos::data_service::worker::DataWorker	**device_data_worker;
             
             //---------------- DirectIODeviceServerChannelHandler -----------------------
-            int consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *header,
-                                void *channel_data,
+            int consumePutEvent(DirectIODeviceChannelHeaderPutOpcode& header,
+                                chaos::common::data::BufferSPtr channel_data,
                                 uint32_t channel_data_len);
             
-            int consumeHealthDataEvent(DirectIODeviceChannelHeaderPutOpcode *header,
-                                       void *channel_data,
+            int consumeHealthDataEvent(DirectIODeviceChannelHeaderPutOpcode& header,
+                                       chaos::common::data::BufferSPtr channel_data,
                                        uint32_t channel_data_len);
             
-            int consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *header,
-                                void *channel_data,
+            int consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode& header,
+                                chaos::common::data::BufferSPtr channel_data,
                                 uint32_t channel_data_len,
-                                opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult *result_header,
-                                void **result_value);
+                                opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult& result_header,
+                                chaos::common::data::BufferSPtr& result_value);
             
-            int consumeGetEvent(opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcode *header,
+            int consumeGetEvent(opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcode& header,
                                 const ChaosStringVector& keys,
-                                opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcodeResult *result_header,
-                                void **result_value,
+                                opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcodeResult& result_header,
+                                chaos::common::data::BufferSPtr& result_value,
                                 uint32_t& result_value_len);
             
-            int consumeDataCloudQuery(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloud *query_header,
+            int consumeDataCloudQuery(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloud& query_header,
                                       const std::string& search_key,
                                       uint64_t search_start_ts,
                                       uint64_t search_end_ts,

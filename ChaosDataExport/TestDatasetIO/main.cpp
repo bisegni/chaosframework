@@ -67,7 +67,7 @@ static int checkData(ChaosDatasetIO& test, std::vector<ChaosDataSet> & res,uint6
     return reterr;
 }
 
-int main(int argc, char** argv) {
+int main(int argc, const char** argv) {
     int reterr=0;
     uint32_t loops;
     uint32_t waitloops,wait_retrive;

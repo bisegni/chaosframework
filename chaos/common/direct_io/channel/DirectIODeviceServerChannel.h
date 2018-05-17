@@ -61,7 +61,7 @@ namespace chaos {
                          \param channel_data the data sent by the device
                          \synchronous_answer possible async answer (not used for now)
                          */
-                        virtual int consumePutEvent(opcode_headers::DirectIODeviceChannelHeaderPutOpcode *header,
+                        virtual int consumePutEvent(opcode_headers::DirectIODeviceChannelHeaderPutOpcode& header,
                                                     data::BufferSPtr channel_data,
                                                     uint32_t channel_data_len)
                         {return -1;};
@@ -72,7 +72,7 @@ namespace chaos {
                          \param header the header of the channel api
                          \param channel_data contains the health data
                          */
-                        virtual int consumeHealthDataEvent(opcode_headers::DirectIODeviceChannelHeaderPutOpcode *header,
+                        virtual int consumeHealthDataEvent(opcode_headers::DirectIODeviceChannelHeaderPutOpcode& header,
                                                            data::BufferSPtr channel_data,
                                                            uint32_t channel_data_len)
                         {return -1;};
@@ -87,10 +87,10 @@ namespace chaos {
                          \param result_header
                          \param result_value
                          */
-                        virtual int consumeGetEvent(opcode_headers::DirectIODeviceChannelHeaderGetOpcode *header,
+                        virtual int consumeGetEvent(opcode_headers::DirectIODeviceChannelHeaderGetOpcode& header,
                                                     chaos::common::data::BufferSPtr key_data,
                                                     uint32_t key_len,
-                                                    opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult *result_header,
+                                                    opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult& result_header,
                                                     chaos::common::data::BufferSPtr& result_value)
                         {return -1;};
                         
@@ -106,12 +106,12 @@ namespace chaos {
                          \param result_value_size is the size of memory allocated into result_value pointer
                          if a key is not found in live an empy bson document is add.
                          */
-                        virtual int consumeGetEvent(opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcode *header,
+                        virtual int consumeGetEvent(opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcode& header,
                                                     const ChaosStringVector& keys,
-                                                    opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcodeResult *result_header,
+                                                    opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcodeResult& result_header,
                                                     chaos::common::data::BufferSPtr& result_value,
                                                     uint32_t& result_value_len)
-                        {DELETE_HEADER(header) return -1;};
+                        {return -1;};
                         
                         //! Execute a paged query into a time intervall
                         /*!
@@ -123,7 +123,7 @@ namespace chaos {
                          \param last_sequence_id is an in-out parameter, at in it specific the last found element, in output it need to be filled with the sequence information of the last item found
                          \param
                          */
-                        virtual int consumeDataCloudQuery(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloud *query_header,
+                        virtual int consumeDataCloudQuery(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloud& query_header,
                                                           const std::string& search_key,
                                                           uint64_t search_start_ts,
                                                           uint64_t search_end_ts,
