@@ -27,7 +27,7 @@
 
 using namespace chaos::metadata_service;
 
-int main(int argc, char * argv[]) {
+int main(int argc, const char * argv[]) {
     try {
         //archiver
         ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->addOptionZeroTokens(OPT_ARCHIVER_LOG_METRIC,

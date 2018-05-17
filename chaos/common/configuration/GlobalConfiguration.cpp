@@ -148,7 +148,7 @@ int32_t GlobalConfiguration::filterLogLevel(string& levelStr) throw (CException)
     return static_cast< int32_t >(level);
 }
 
-void GlobalConfiguration::loadStartupParameter(int argc, char* argv[]) throw (CException) {
+void GlobalConfiguration::loadStartupParameter(int argc, const char* argv[]) throw (CException) {
     try{
         //
         po::store(po::parse_command_line(argc, argv, desc), vm);

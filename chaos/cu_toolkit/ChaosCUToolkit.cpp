@@ -174,7 +174,7 @@ void ChaosCUToolkit::closeUIToolkit() {
 /*!
  Specialized option for startup c and cpp program main options parameter
  */
-void ChaosCUToolkit::init(int argc, char* argv[]) throw (CException) {
+void ChaosCUToolkit::init(int argc, const char* argv[]) throw (CException) {
     ChaosCommon<ChaosCUToolkit>::init(argc, argv);
 }
 //!stringbuffer parser

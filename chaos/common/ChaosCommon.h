@@ -242,7 +242,7 @@ namespace chaos {
         /*!
          parse a config file before initializzation
          */
-        void preparseCommandOption(int argc, char* argv[]) {
+        void preparseCommandOption(int argc, const char* argv[]) {
             GlobalConfiguration::getInstance()->loadStartupParameter( argc, argv);
             GlobalConfiguration::getInstance()->scanOption();
             
