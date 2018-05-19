@@ -59,13 +59,10 @@ int DirectIOVirtualClientChannel::sendPriorityData(chaos::common::direct_io::Dir
     //send pack
     int err = client_instance()->sendPriorityData(ChaosMoveOperator(data_pack),
                                                   synchronous_answer);
-    if(!err){
-        if(synchronous_answer &&
-           synchronous_answer->channel_data) {
-            //convert default DirectIO hader to little endian
+    if(!err &&
+       synchronous_answer) {
             //report api error as function error
             err = synchronous_answer->header.dispatcher_header.fields.err;
-        }
     }
     return err;
 }
@@ -96,9 +93,8 @@ int DirectIOVirtualClientChannel::sendServiceData(chaos::common::direct_io::Dire
     //send pack
     int err = client_instance()->sendServiceData(ChaosMoveOperator(data_pack),
                                                  synchronous_answer);
-    if(!err){
-        if(synchronous_answer &&
-           synchronous_answer->channel_data) {
+    if(!err &&
+       synchronous_answer)
             //report api error as function error
             err = synchronous_answer->header.dispatcher_header.fields.err;
         }

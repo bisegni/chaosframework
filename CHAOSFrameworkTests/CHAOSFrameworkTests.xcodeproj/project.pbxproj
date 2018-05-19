@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		3206CE281FA1DA9B0059A4A4 /* TestCDataWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3206CE271FA1DA9B0059A4A4 /* TestCDataWrapper.cpp */; };
+		322B16F920B054B3001E5B16 /* DirectIODeviceChannelTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322B16F820B054B3001E5B16 /* DirectIODeviceChannelTest.cpp */; };
 		322EE8811F825D8000D89824 /* MemcachedEmbedded.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322EE8801F825D8000D89824 /* MemcachedEmbedded.cpp */; };
 		32639FE91F6AAD990049089C /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32639FE81F6AAD990049089C /* main.cpp */; };
 		32639FEF1F6AB21E0049089C /* TemplateKeyValueHashMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329943621D6B468E008DBAE9 /* TemplateKeyValueHashMap.cpp */; };
@@ -88,6 +89,8 @@
 		3206CE271FA1DA9B0059A4A4 /* TestCDataWrapper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestCDataWrapper.cpp; sourceTree = "<group>"; };
 		321E59301D7457FF00365F57 /* TestBatchDefault.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestBatchDefault.cpp; sourceTree = "<group>"; };
 		321E59311D7457FF00365F57 /* TestBatchDefault.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestBatchDefault.h; sourceTree = "<group>"; };
+		322B16F820B054B3001E5B16 /* DirectIODeviceChannelTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIODeviceChannelTest.cpp; sourceTree = "<group>"; };
+		322B16FA20B07C43001E5B16 /* DirectIODeviceChannelTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DirectIODeviceChannelTest.h; sourceTree = "<group>"; };
 		322EE87F1F825D8000D89824 /* MemcachedEmbedded.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MemcachedEmbedded.h; sourceTree = "<group>"; };
 		322EE8801F825D8000D89824 /* MemcachedEmbedded.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MemcachedEmbedded.cpp; sourceTree = "<group>"; };
 		32639FE81F6AAD990049089C /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
@@ -312,6 +315,8 @@
 			children = (
 				329BF99820AAFF1B0068F8EB /* DirectIOTest.cpp */,
 				329BF99920AAFF1B0068F8EB /* DirectIOTest.h */,
+				322B16F820B054B3001E5B16 /* DirectIODeviceChannelTest.cpp */,
+				322B16FA20B07C43001E5B16 /* DirectIODeviceChannelTest.h */,
 			);
 			path = direct_io;
 			sourceTree = "<group>";
@@ -574,6 +579,7 @@
 				328CFCA11F7CF366002FEB25 /* QueueTest.cpp in Sources */,
 				32818B3E1F8265B3004A409E /* EmbeddedLFCacheTest.cpp in Sources */,
 				32639FE91F6AAD990049089C /* main.cpp in Sources */,
+				322B16F920B054B3001E5B16 /* DirectIODeviceChannelTest.cpp in Sources */,
 				32639FF01F6AB2230049089C /* TriggerTest.cpp in Sources */,
 				32DA77741F94AD6D00497349 /* TestVariant.cpp in Sources */,
 				3277A2322097586400FD7307 /* ScriptClingTest.cpp in Sources */,

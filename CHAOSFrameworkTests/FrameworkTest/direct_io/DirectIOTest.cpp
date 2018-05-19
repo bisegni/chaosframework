@@ -8,72 +8,57 @@
 
 #include "DirectIOTest.h"
 #include <chaos/common/global.h>
-#include <chaos/common/network/NetworkBroker.h>
+
 
 using namespace chaos::common::data;
 using namespace chaos::common::direct_io;
 using namespace chaos::common::direct_io::channel;
 
 #pragma mark DirectIOEchoHandler
-int DirectIOEchoHandler::consumeEchoEvent(chaos::common::data::BufferSPtr input_data,
-                                          chaos::common::data::BufferSPtr& output_data) {
-    output_data = ChaosMakeSharedPtr<Buffer>(*input_data);
-    if(output_data == NULL ||
-       output_data->data() == NULL) {
-        return -1;
+class DirectIOEchoHandler:
+public chaos::common::direct_io::channel::DirectIOSystemAPIServerChannel::DirectIOSystemAPIServerChannelHandler {
+protected:
+    //! endpoint entry method
+    int consumeEchoEvent(chaos::common::data::BufferSPtr input_data,
+                         chaos::common::data::BufferSPtr& output_data) {
+        output_data = ChaosMakeSharedPtr<Buffer>(*input_data);
+        if(output_data == NULL ||
+           output_data->data() == NULL) {
+            return -1;
+        }
+        return  0;
     }
-    return  0;
-}
+};
+
 #pragma mark DirectIOEchoDelayedHandler
-DirectIOEchoDelayedHandler::DirectIOEchoDelayedHandler():echo_received_number(0){}
-int DirectIOEchoDelayedHandler::consumeEchoEvent(chaos::common::data::BufferSPtr input_data,
-                                                 chaos::common::data::BufferSPtr& output_data) {
-    int err = DirectIOEchoHandler::consumeEchoEvent(input_data,
-                                                    output_data);
-    if((++echo_received_number % 2) == 0) {
-        sleep(6);
+class DirectIOEchoDelayedHandler:
+public DirectIOEchoHandler {
+    unsigned int echo_received_number;
+protected:
+    //! endpoint entry method
+    int consumeEchoEvent(chaos::common::data::BufferSPtr input_data,
+                         chaos::common::data::BufferSPtr& output_data) {
+        int err = DirectIOEchoHandler::consumeEchoEvent(input_data,
+                                                        output_data);
+        if((++echo_received_number % 2) == 0) {
+            sleep(6);
+        }
+        return  err;
     }
-    return  err;
-}
+public:
+    DirectIOEchoDelayedHandler():echo_received_number(0){}
+};
 
-
-#pragma mark DirectIOTest
-DirectIOTest::DirectIOTest():
-server_channel(NULL),
-endpoint(NULL){}
-DirectIOTest::~DirectIOTest(){}
-void DirectIOTest::SetUp(){
-    ASSERT_NO_THROW(chaos::common::utility::StartableService::initImplementation(chaos::common::network::NetworkBroker::getInstance(), NULL, "NetworkBroker", __PRETTY_FUNCTION__););
-    ASSERT_NO_THROW(chaos::common::utility::StartableService::startImplementation(chaos::common::network::NetworkBroker::getInstance(),  "NetworkBroker", __PRETTY_FUNCTION__););
-    
-    endpoint = NetworkBroker::getInstance()->getDirectIOServerEndpoint();
-    ASSERT_TRUE(endpoint);
-    server_channel = (DirectIOSystemAPIServerChannel*)endpoint->getNewChannelInstance("DirectIOSystemAPIServerChannel");
-    ASSERT_TRUE(server_channel);
-}
-void DirectIOTest::TearDown(){
-    if(server_channel){
-        ASSERT_NO_THROW(endpoint->deregisterChannelInstance(server_channel););
-    }
-    if(endpoint){
-        ASSERT_NO_THROW(NetworkBroker::getInstance()->releaseDirectIOServerEndpoint(endpoint));
-    }
-    ASSERT_NO_THROW(chaos::common::utility::StartableService::stopImplementation(chaos::common::network::NetworkBroker::getInstance(),  "NetworkBroker", __PRETTY_FUNCTION__););
-    ASSERT_NO_THROW(chaos::common::utility::StartableService::deinitImplementation(chaos::common::network::NetworkBroker::getInstance(), "NetworkBroker", __PRETTY_FUNCTION__););
-}
+#pragma mark Test
 
 TEST_F(DirectIOTest, Echo) {
     DirectIOEchoHandler handler;
-    DirectIOClientConnection *connection = NULL;
     DirectIOSystemAPIClientChannel *client_channel = NULL;
     
     std::string message_string_echo = "test_echo";
     
     //register echo handler
     server_channel->setHandler(&handler);
-    
-    connection = chaos::common::network::NetworkBroker::getInstance()->getSharedDirectIOClientInstance()->getNewConnection("localhost:1972:30175|0");
-    ASSERT_TRUE(connection);
     
     client_channel = (DirectIOSystemAPIClientChannel*)connection->getNewChannelInstance("DirectIOSystemAPIClientChannel");
     ASSERT_TRUE(client_channel);
@@ -95,23 +80,16 @@ TEST_F(DirectIOTest, Echo) {
         ASSERT_NO_THROW(connection->releaseChannelInstance(client_channel););
         client_channel = NULL;
     }
-    if(connection) {
-        chaos::common::network::NetworkBroker::getInstance()->getSharedDirectIOClientInstance()->releaseConnection(connection);
-        connection = NULL;
-    }
 }
 
 TEST_F(DirectIOTest, SendCicle) {
     DirectIOEchoHandler handler;
-    DirectIOClientConnection *connection = NULL;
     DirectIOSystemAPIClientChannel *client_channel = NULL;
     std::string message_string_echo = "test_echo";
     
     //register echo handler
     server_channel->setHandler(&handler);
     
-    connection = chaos::common::network::NetworkBroker::getInstance()->getSharedDirectIOClientInstance()->getNewConnection("localhost:1972:30175|0");
-    ASSERT_TRUE(connection);
     
     client_channel = (DirectIOSystemAPIClientChannel*)connection->getNewChannelInstance("DirectIOSystemAPIClientChannel");
     ASSERT_TRUE(client_channel);
@@ -132,21 +110,13 @@ TEST_F(DirectIOTest, SendCicle) {
         ASSERT_NO_THROW(connection->releaseChannelInstance(client_channel););
         client_channel = NULL;
     }
-    if(connection) {
-        chaos::common::network::NetworkBroker::getInstance()->getSharedDirectIOClientInstance()->releaseConnection(connection);
-        connection = NULL;
-    }
 }
 
 TEST_F(DirectIOTest, DelayedAnswer) {
     DirectIOEchoDelayedHandler handler;
-    DirectIOClientConnection *connection = NULL;
     DirectIOSystemAPIClientChannel *client_channel = NULL;
     //register echo handler
     server_channel->setHandler(&handler);
-    
-    connection = chaos::common::network::NetworkBroker::getInstance()->getSharedDirectIOClientInstance()->getNewConnection("localhost:1972:30175|0");
-    ASSERT_TRUE(connection);
     
     client_channel = (DirectIOSystemAPIClientChannel*)connection->getNewChannelInstance("DirectIOSystemAPIClientChannel");
     ASSERT_TRUE(client_channel);
@@ -169,9 +139,5 @@ TEST_F(DirectIOTest, DelayedAnswer) {
     if(client_channel){
         ASSERT_NO_THROW(connection->releaseChannelInstance(client_channel););
         client_channel = NULL;
-    }
-    if(connection) {
-        chaos::common::network::NetworkBroker::getInstance()->getSharedDirectIOClientInstance()->releaseConnection(connection);
-        connection = NULL;
     }
 }

@@ -74,16 +74,14 @@ int DirectIODeviceServerChannel::consumeDataPack(chaos::common::direct_io::Direc
         }
 
         case opcode::DeviceChannelOpcodeGetLastOutput: {
-            using ApiHeader = opcode_headers::DirectIODeviceChannelHeaderGetOpcode;
+            synchronous_answer = ChaosMakeSharedPtr<DirectIODataPack>();
             using ResultHeader = opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult;
             if(!data_pack->header.dispatcher_header.fields.synchronous_answer) return -1000;
             //allocate variable for result
             BufferSPtr result_data;
-            ApiHeader *header = data_pack->channel_header_data->data<ApiHeader>();
             BufferSPtr result_header = ChaosMakeSharedPtr<Buffer>(sizeof(ResultHeader));
 
-            err = handler->consumeGetEvent(*header,
-                                           data_pack->channel_data,
+            err = handler->consumeGetEvent(data_pack->channel_data,
                                            data_pack->header.channel_data_size,
                                            *result_header->data<ResultHeader>(),
                                            result_data);

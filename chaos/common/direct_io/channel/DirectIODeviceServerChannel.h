@@ -81,14 +81,12 @@ namespace chaos {
                         /*!
                          Receive the key to fetch from the live cache and fill the synchronous_answer to return
                          in synchronous way the ansert to the client
-                         \param header header containing the information where send the answer
                          \param key_data the data of the key
                          \param key_len the size of the key data
                          \param result_header
                          \param result_value
                          */
-                        virtual int consumeGetEvent(opcode_headers::DirectIODeviceChannelHeaderGetOpcode& header,
-                                                    chaos::common::data::BufferSPtr key_data,
+                        virtual int consumeGetEvent(chaos::common::data::BufferSPtr key_data,
                                                     uint32_t key_len,
                                                     opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult& result_header,
                                                     chaos::common::data::BufferSPtr& result_value)

@@ -131,13 +131,9 @@ int DirectIODeviceClientChannel::storeAndCacheHealthData(const std::string& key,
 int DirectIODeviceClientChannel::requestLastOutputData(const std::string& key,
                                                        void **result,
                                                        uint32_t &size) {
-    using ApiHeader = DirectIODeviceChannelHeaderGetOpcode;
     int err = 0;
     DirectIODataPackSPtr answer;
     DirectIODataPackSPtr data_pack(new DirectIODataPack());
-    
-    //the precomputed header for get last shared output channel
-    BufferSPtr get_opcode_header  = ChaosMakeSharedPtr<Buffer>(sizeof(ApiHeader));
     
     //allocate memory for key
     BufferSPtr channel_data = ChaosMakeSharedPtr<Buffer>();
@@ -146,8 +142,6 @@ int DirectIODeviceClientChannel::requestLastOutputData(const std::string& key,
     //set opcode
     data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodeGetLastOutput);
     
-    //set header
-    DIRECT_IO_SET_CHANNEL_HEADER(data_pack, get_opcode_header, sizeof(DirectIODeviceChannelHeaderGetOpcode));
     DIRECT_IO_SET_CHANNEL_DATA(data_pack, channel_data, (uint32_t)channel_data->size());
     //send data with synchronous answer flag
     if((err = sendPriorityData(ChaosMoveOperator(data_pack), answer))) {
@@ -159,9 +153,8 @@ int DirectIODeviceClientChannel::requestLastOutputData(const std::string& key,
         //we got answer
         if(answer) {
             using AnswerHeader = opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult;
-            answer->channel_header_data->data<AnswerHeader>()->value_len = FROM_LITTLE_ENDNS_NUM(uint32_t, answer->channel_header_data->data<AnswerHeader>()->value_len);
-            if(answer->channel_header_data->data<AnswerHeader>()->value_len > 0) {
-                size = answer->channel_header_data->data<AnswerHeader>()->value_len;
+            if(answer->channel_data) {
+                size = (uint32_t)answer->channel_data->size();
                 *result = answer->channel_data->detach();
             }
         } else {

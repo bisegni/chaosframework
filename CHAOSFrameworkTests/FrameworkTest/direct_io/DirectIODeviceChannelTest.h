@@ -1,31 +1,31 @@
 //
-//  DirectIOTest.hpp
-//  FrameworkTest
+//  DirectIOChannelTest.h
+//  CHAOSFrameworkTests
 //
-//  Created by bisegni on 15/05/2018.
+//  Created by Claudio Bisegni on 19/05/2018.
 //  Copyright © 2018 bisegni. All rights reserved.
 //
 
-#ifndef DirectIOTest_hpp
-#define DirectIOTest_hpp
+#ifndef DirectIOChannelTest_h
+#define DirectIOChannelTest_h
 
 #include <gtest/gtest.h>
 #include <chaos/common/direct_io/DirectIO.h>
 #include <chaos/common/network/NetworkBroker.h>
 
-class DirectIOTest:
+class DirectIODeviceChannelTest:
 public testing::Test {
 protected:
     chaos::common::direct_io::DirectIOServerEndpoint *endpoint;
-    chaos::common::direct_io::channel::DirectIOSystemAPIServerChannel *server_channel;
+    chaos::common::direct_io::channel::DirectIODeviceServerChannel *server_channel;
     chaos::common::direct_io::DirectIOClientConnection *connection;
 public:
-    DirectIOTest():
+    DirectIODeviceChannelTest():
     server_channel(NULL),
     endpoint(NULL),
     connection(NULL){}
     
-    ~DirectIOTest(){}
+    ~DirectIODeviceChannelTest(){}
     
     void SetUp() {
         ASSERT_NO_THROW(chaos::common::utility::StartableService::initImplementation(chaos::common::network::NetworkBroker::getInstance(), NULL, "NetworkBroker", __PRETTY_FUNCTION__););
@@ -33,7 +33,7 @@ public:
         
         endpoint = NetworkBroker::getInstance()->getDirectIOServerEndpoint();
         ASSERT_TRUE(endpoint);
-        server_channel = (chaos::common::direct_io::channel::DirectIOSystemAPIServerChannel*)endpoint->getNewChannelInstance("DirectIOSystemAPIServerChannel");
+        server_channel = (chaos::common::direct_io::channel::DirectIODeviceServerChannel*)endpoint->getNewChannelInstance("DirectIODeviceServerChannel");
         ASSERT_TRUE(server_channel);
         
         connection = chaos::common::network::NetworkBroker::getInstance()->getSharedDirectIOClientInstance()->getNewConnection("localhost:1672:30175|0");
@@ -56,4 +56,4 @@ public:
         ASSERT_NO_THROW(chaos::common::utility::StartableService::deinitImplementation(chaos::common::network::NetworkBroker::getInstance(), "NetworkBroker", __PRETTY_FUNCTION__););
     }
 };
-#endif /* DirectIOTest_hpp */
+#endif /* DirectIOChannelTest_h */
