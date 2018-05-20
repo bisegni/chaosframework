@@ -24,6 +24,7 @@
 
 
 using namespace chaos::common::data;
+using namespace chaos::common::utility;
 using namespace chaos::common::direct_io;
 using namespace chaos::common::direct_io::channel;
 
@@ -36,14 +37,27 @@ public:
     int consumePutEvent(opcode_headers::DirectIODeviceChannelHeaderPutOpcode& header,
                         BufferSPtr channel_data,
                         uint32_t channel_data_len) {
-        return -1;
+        int err = 0;
+        if((++req_counter % 2) == 0) {
+            //right result the data need to be savet
+        } else {
+            //error
+            err = -1;
+        }
+        return err;
     };
     
     int consumeHealthDataEvent(opcode_headers::DirectIODeviceChannelHeaderPutOpcode& header,
                                BufferSPtr channel_data,
                                uint32_t channel_data_len) {
-        return -1;
-        
+        int err = 0;
+        if((++req_counter % 2) == 0) {
+            //right result the data need to be savet
+        } else {
+            //error
+            err = -1;
+        }
+        return err;
     };
     
     int consumeGetEvent(BufferSPtr key_data,
@@ -70,8 +84,28 @@ public:
                         opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcodeResult& result_header,
                         BufferSPtr& result_value,
                         uint32_t& result_value_len) {
-        return -1;
-        
+        int err = 0;
+        if((++req_counter % 2) == 0) {
+            //right result
+            DataBuffer<> data_buffer;
+            for(ChaosStringVectorConstIterator it = keys.begin(),
+                end = keys.end();
+                it != end;
+                it++) {
+                CDWUniquePtr data(new CDataWrapper());
+                data->addStringValue("key", *it);
+                
+                data_buffer.writeByte(data->getBSONRawData(),
+                                      data->getBSONRawSize());
+            }
+            result_header.number_of_result = (uint32_t)keys.size();
+            result_value_len = data_buffer.getCursorLocation();
+            result_value = ChaosMakeSharedPtr<Buffer>(data_buffer.release(), result_value_len, result_value_len, true);
+        } else {
+            //error
+            err = -1;
+        }
+        return err;
     };
     
     int consumeDataCloudQuery(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloud& query_header,
@@ -94,18 +128,18 @@ public:
 TEST_F(DirectIODeviceChannelTest, DeviceChannelTest) {
     DeviceServerHandler handler;
     DirectIODeviceClientChannel *client_channel = NULL;
-
+    
     //register echo handler
     server_channel->setHandler(&handler);
     
-//    client_sys_channel  = (DirectIOSystemAPIClientChannel*)connection->getNewChannelInstance("DirectIOSystemAPIClientChannel");
-
+    //    client_sys_channel  = (DirectIOSystemAPIClientChannel*)connection->getNewChannelInstance("DirectIOSystemAPIClientChannel");
+    
     client_channel = (DirectIODeviceClientChannel*)connection->getNewChannelInstance("DirectIODeviceClientChannel");
     ASSERT_TRUE(client_channel);
     BufferSPtr message_buffer = ChaosMakeSharedPtr<Buffer>();
     BufferSPtr message_buffer_echo;
     
-//    client_sys_channel->echo(message_buffer, message_buffer_echo);
+    //    client_sys_channel->echo(message_buffer, message_buffer_echo);
     
     void *result = NULL;
     uint32_t size = 0;
