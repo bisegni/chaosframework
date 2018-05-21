@@ -202,18 +202,18 @@ int DirectIODeviceClientChannel::requestLastOutputData(const ChaosStringVector& 
         if(answer) {
             //get the header
             using ResultHeader = opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcodeResult;
-            
             ResultHeader *result_header = answer->channel_header_data->data<ResultHeader>();
             result_header->number_of_result = FROM_LITTLE_ENDNS_NUM(uint32_t, result_header->number_of_result);
             CHAOS_ASSERT(result_header->number_of_result > 0);
-            CHAOS_ASSERT(answer->channel_data);
+            CHAOS_ASSERT(answer->channel_data.get());
             
-            DataBuffer<> data_buffer(answer->channel_data->data(), answer->header.channel_data_size);
-            answer->channel_data = NULL;
+            DataBuffer<> data_buffer_answer(answer->channel_data->data(),
+                                            answer->header.channel_data_size,
+                                            false);
             for(int idx = 0;
                 idx < result_header->number_of_result;
                 idx++) {
-                results.push_back(data_buffer.readCDataWrapperAsShrdPtr());
+                results.push_back(data_buffer_answer.readCDataWrapperAsShrdPtr());
             }
         }
     }
@@ -246,11 +246,8 @@ int DirectIODeviceClientChannel::queryDataCloud(const std::string& key,
     //set opcode
     data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodeQueryDataCloud);
     
-    //get the buffer to send
-    ChaosUniquePtr<SerializationBuffer> buffer(query_description.getBSONData());
-    
-    //the frre of memeory is managed in this class in async way
-    BufferSPtr channel_data = ChaosMakeSharedPtr<Buffer>(sizeof(buffer->getBufferPtr(), buffer->getBufferLen(), buffer->getBufferLen()));
+    BufferSPtr channel_data = ChaosMakeSharedPtr<Buffer>(query_description.getBSONRawData(),
+                                                         query_description.getBSONRawSize());
     //set header and data for the query
     DIRECT_IO_SET_CHANNEL_HEADER(data_pack, query_data_cloud_header, sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloud))
     DIRECT_IO_SET_CHANNEL_DATA(data_pack, channel_data, (uint32_t)channel_data->size());
@@ -287,28 +284,29 @@ int DirectIODeviceClientChannel::deleteDataCloud(const std::string& key,
                                                  uint64_t start_ts,
                                                  uint64_t end_ts) {
     int err = 0;
-    CDataWrapper query_description;
+    DirectIODataPackSPtr answer;
+    BufferSPtr channel_data;
     //allcoate the data to send direct io pack
     DirectIODataPackSPtr data_pack(new DirectIODataPack());
-    
-    //fill the query CDataWrapper
-    query_description.addStringValue(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_KEY_STRING, key);
-    query_description.addInt64Value(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_STAR_TS_I64, (int64_t)start_ts);
-    query_description.addInt64Value(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_END_TS_I64, (int64_t)end_ts);
-    
-    //set opcode
-    data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodeDeleteDataCloud);
-    
-    //get the buffer to send
-    ChaosUniquePtr<SerializationBuffer> buffer(query_description.getBSONData());
-    
-    //the frre of memeory is managed in this class in async way
-    BufferSPtr channel_data = ChaosMakeSharedPtr<Buffer>(buffer->getBufferPtr(), buffer->getBufferLen(), buffer->getBufferLen());
+    {
+        CDataWrapper query_description;
+        
+        //fill the query CDataWrapper
+        query_description.addStringValue(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_KEY_STRING, key);
+        query_description.addInt64Value(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_STAR_TS_I64, (int64_t)start_ts);
+        query_description.addInt64Value(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_END_TS_I64, (int64_t)end_ts);
+        
+        //set opcode
+        data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodeDeleteDataCloud);
+        
+        channel_data = ChaosMakeSharedPtr<Buffer>(query_description.getBSONRawData(),
+                                                  query_description.getBSONRawSize());
+    }
     //set header and data for the query
     DIRECT_IO_SET_CHANNEL_DATA(data_pack, channel_data, (uint32_t)channel_data->size());
     if((err = sendServiceData(ChaosMoveOperator(data_pack)))) {
         //error getting last value
-        DIODCCLERR_ << CHAOS_FORMAT("Error executing deelte operation for key %1%",%key);
+        DIODCCLERR_ << CHAOS_FORMAT("Error executing delete operation for key %1%",%key);
     }
     return err;
 }

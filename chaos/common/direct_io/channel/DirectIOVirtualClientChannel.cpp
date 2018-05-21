@@ -61,8 +61,8 @@ int DirectIOVirtualClientChannel::sendPriorityData(chaos::common::direct_io::Dir
                                                   synchronous_answer);
     if(!err &&
        synchronous_answer) {
-            //report api error as function error
-            err = synchronous_answer->header.dispatcher_header.fields.err;
+        //report api error as function error
+        err = synchronous_answer->header.dispatcher_header.fields.err;
     }
     return err;
 }
@@ -94,10 +94,9 @@ int DirectIOVirtualClientChannel::sendServiceData(chaos::common::direct_io::Dire
     int err = client_instance()->sendServiceData(ChaosMoveOperator(data_pack),
                                                  synchronous_answer);
     if(!err &&
-       synchronous_answer)
-            //report api error as function error
-            err = synchronous_answer->header.dispatcher_header.fields.err;
-        }
+       synchronous_answer) {
+        //report api error as function error
+        err = synchronous_answer->header.dispatcher_header.fields.err;
     }
     return err;
 }

@@ -81,7 +81,7 @@ namespace chaos {
                 }SentPart;
                 
                 //!memory deallocation handler
-                ChaosSharedPtr<chaos::common::data::Buffer>& data_to_deallocate;
+                ChaosSharedPtr<chaos::common::data::Buffer> data_to_deallocate;
                 //! sent part type
                 SentPart	sent_part;
                 //! channel opcode

@@ -32,11 +32,6 @@ using namespace chaos::common::direct_io::channel::opcode_headers;
 
 DEFINE_CLASS_FACTORY(DirectIODeviceServerChannel, DirectIOVirtualServerChannel);
 
-
-//define the static deallocator class
-DirectIODeviceServerChannel::DirectIODeviceServerChannelDeallocator DirectIODeviceServerChannel::STATIC_DirectIODeviceServerChannelDeallocator;
-
-
 DirectIODeviceServerChannel::DirectIODeviceServerChannel(std::string alias):
 DirectIOVirtualServerChannel(alias, DIODataset_Channel_Index),
 handler(NULL) {DirectIOVirtualServerChannel::setDelegate(this);}
@@ -49,9 +44,11 @@ int DirectIODeviceServerChannel::consumeDataPack(chaos::common::direct_io::Direc
     int err = -1;
 
     // get the opcode
+    synchronous_answer = ChaosMakeSharedPtr<DirectIODataPack>();
     opcode::DeviceChannelOpcode  channel_opcode = static_cast<opcode::DeviceChannelOpcode>(data_pack->header.dispatcher_header.fields.channel_opcode);
     switch (channel_opcode) {
         case opcode::DeviceChannelOpcodePutOutput: {
+            
             using ApiHeader = opcode_headers::DirectIODeviceChannelHeaderPutOpcode;
             ApiHeader *header = data_pack->channel_header_data->data<ApiHeader>();
             //reallign the pointer to the start of the key
@@ -74,7 +71,6 @@ int DirectIODeviceServerChannel::consumeDataPack(chaos::common::direct_io::Direc
         }
 
         case opcode::DeviceChannelOpcodeGetLastOutput: {
-            synchronous_answer = ChaosMakeSharedPtr<DirectIODataPack>();
             using ResultHeader = opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult;
             if(!data_pack->header.dispatcher_header.fields.synchronous_answer) return -1000;
             //allocate variable for result
@@ -106,8 +102,8 @@ int DirectIODeviceServerChannel::consumeDataPack(chaos::common::direct_io::Direc
             
             //fetch the set of keys
             DataBuffer<> data_buffer(data_pack->channel_data->data(),
-                                     data_pack->header.channel_data_size);
-            data_pack->channel_data.reset();
+                                     data_pack->header.channel_data_size,
+                                     false);
 
             ChaosStringVector keys;
             for(int idx = 0;
@@ -207,7 +203,7 @@ int DirectIODeviceServerChannel::consumeDataPack(chaos::common::direct_io::Direc
             try {
                 if (data_pack &&
                     data_pack->channel_data) {
-                    chaos_data::CDataWrapper query((char *)data_pack->channel_data->data());
+                    chaos_data::CDataWrapper query(data_pack->channel_data->data());
 
                     //decode the endianes off the data
                     std::string key = CDW_GET_SRT_WITH_DEFAULT(&query, DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_KEY_STRING, "");
@@ -227,18 +223,4 @@ int DirectIODeviceServerChannel::consumeDataPack(chaos::common::direct_io::Direc
             break;
     }
     return err;
-}
-
-//! default data deallocator implementation
-void DirectIODeviceServerChannel::DirectIODeviceServerChannelDeallocator::freeSentData(void* sent_data_ptr, DisposeSentMemoryInfo *free_info_ptr) {
-    switch(free_info_ptr->sent_part) {
-        case DisposeSentMemoryInfo::SentPartHeader:{
-            free(sent_data_ptr);
-            break;
-        }
-        case DisposeSentMemoryInfo::SentPartData: {
-            free(sent_data_ptr);
-            break;
-        }
-    }
 }

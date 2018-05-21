@@ -40,16 +40,6 @@ namespace chaos {
                 DECLARE_CLASS_FACTORY(DirectIODeviceServerChannel, DirectIOVirtualServerChannel),
                 public chaos::common::direct_io::DirectIOEndpointHandler {
                     REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(DirectIODeviceServerChannel)
-                    
-                    class DirectIODeviceServerChannelDeallocator:
-                    public DirectIODeallocationHandler {
-                    protected:
-                        void freeSentData(void* sent_data_ptr, DisposeSentMemoryInfo *free_info_ptr);
-                    };
-                    //static deallocator forthis channel
-                    static DirectIODeviceServerChannelDeallocator STATIC_DirectIODeviceServerChannelDeallocator;
-                    
-                    
                 public:
                     //! Device handler definition
                     typedef class DirectIODeviceServerChannelHandler {

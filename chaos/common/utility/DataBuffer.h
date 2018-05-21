@@ -41,15 +41,18 @@ namespace chaos {
             class ChaosBuffer {
                 Allocator allocator;
             protected:
-                void *data;
+                bool own;
+                char *data;
                 uint32_t size;
             public:
                 //! init buffer will be managed by the instance of this class
-                ChaosBuffer(void *init_buffer,
-                            uint32_t init_buf_size):
+                explicit ChaosBuffer(char *init_buffer,
+                                     uint32_t init_buf_size,
+                                     bool _own = true):
+                own(_own),
                 data(init_buffer),
                 size(init_buf_size){}
-                
+
                 ChaosBuffer(int32_t init_size = 512):
                 size(init_size){
                     if ( size > 0 ) {
@@ -65,6 +68,7 @@ namespace chaos {
                 ~ChaosBuffer() { kill(); }
                 
                 bool grow(int32_t new_len) {
+                    CHAOS_ASSERT(own);
                     int a = CHAOS_BUFFER_ALLOCATION_BLOC;
                     while( a < new_len ) {
                         a = a * 2;
@@ -80,7 +84,7 @@ namespace chaos {
                 }
                 
                 virtual void kill() {
-                    if ( data ) {
+                    if ( data && own ) {
                         allocator.free(data);
                         data = NULL;
                     }
@@ -105,10 +109,12 @@ namespace chaos {
             public ChaosBuffer<Allocator> {
                 int32_t cursor;
             public:
-                DataBuffer(void *init_buffer,
-                           uint32_t init_buf_size):
+                explicit DataBuffer(char *init_buffer,
+                                    uint32_t init_buf_size,
+                                    bool _own = true):
                 ChaosBuffer<Allocator>(init_buffer,
-                                       init_buf_size),
+                                       init_buf_size,
+                                       _own),
                 cursor(0){}
                 
                 DataBuffer(int32_t init_size = 512):
@@ -179,7 +185,7 @@ namespace chaos {
                     cursor += result->getBSONRawSize();
                     return result;
                 }
-
+                
                 void setOffset(uint32_t offset) {
                     cursor = offset;
                 }

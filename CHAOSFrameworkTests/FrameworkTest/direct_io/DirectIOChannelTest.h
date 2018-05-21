@@ -13,19 +13,19 @@
 #include <chaos/common/direct_io/DirectIO.h>
 #include <chaos/common/network/NetworkBroker.h>
 
-class DirectIODeviceChannelTest:
+class DirectIOChannelTest:
 public testing::Test {
 protected:
     chaos::common::direct_io::DirectIOServerEndpoint *endpoint;
     chaos::common::direct_io::channel::DirectIODeviceServerChannel *server_channel;
     chaos::common::direct_io::DirectIOClientConnection *connection;
 public:
-    DirectIODeviceChannelTest():
+    DirectIOChannelTest():
     server_channel(NULL),
     endpoint(NULL),
     connection(NULL){}
     
-    ~DirectIODeviceChannelTest(){}
+    ~DirectIOChannelTest(){}
     
     void SetUp() {
         ASSERT_NO_THROW(chaos::common::utility::StartableService::initImplementation(chaos::common::network::NetworkBroker::getInstance(), NULL, "NetworkBroker", __PRETTY_FUNCTION__););
