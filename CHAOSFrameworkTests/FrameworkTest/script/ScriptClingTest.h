@@ -8,11 +8,9 @@
 
 #ifndef ScriptClingTest_h
 #define ScriptClingTest_h
-
 #include <chaos/common/script/AbstractScriptableClass.h>
-
 #include <chaos/common/chaos_types.h>
-
+#ifdef CLING_VIRTUAL_MACHINE
 class TestApi:
 public chaos::common::script::TemplatedAbstractScriptableClass<TestApi> {
     
@@ -24,5 +22,5 @@ protected:
              chaos::common::script::ScriptOutParam& output_parameter);
     
 };
-    
+#endif
 #endif /* ScriptClingTest_h */
