@@ -47,7 +47,7 @@ namespace chaos {
             static void signalHanlder(int signal_number);
         public:
             ChaosAgentSettings settings;
-            void init(int argc, char* argv[]) throw (CException);
+            void init(int argc, const char* argv[]) throw (CException);
             void init(istringstream &initStringStream) throw (CException);
             void init(void *init_data)  throw(CException);
             void start()throw(CException);
