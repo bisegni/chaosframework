@@ -155,7 +155,7 @@ chaos::common::data::SerializationBuffer *getCSVDecoding( DeviceController& cont
     return result;
 }
 
-int main(int argc, char* argv[]) {
+int main(int argc, const char* argv[]) {
     char buf[255];
     uint32_t timeout;
     string device_id;
