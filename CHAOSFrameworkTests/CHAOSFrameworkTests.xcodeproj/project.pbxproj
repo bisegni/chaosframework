@@ -8,8 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		3206CE281FA1DA9B0059A4A4 /* TestCDataWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3206CE271FA1DA9B0059A4A4 /* TestCDataWrapper.cpp */; };
-		322B16F920B054B3001E5B16 /* DirectIOChannelTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322B16F820B054B3001E5B16 /* DirectIOChannelTest.cpp */; };
+		322B16F920B054B3001E5B16 /* DirectIODeviceServerChannelTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322B16F820B054B3001E5B16 /* DirectIODeviceServerChannelTest.cpp */; };
 		322EE8811F825D8000D89824 /* MemcachedEmbedded.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322EE8801F825D8000D89824 /* MemcachedEmbedded.cpp */; };
+		326274AF20B421C800BB0C91 /* DirectIOSystemServerChannelTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326274AE20B421C800BB0C91 /* DirectIOSystemServerChannelTest.cpp */; };
 		32639FE91F6AAD990049089C /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32639FE81F6AAD990049089C /* main.cpp */; };
 		32639FEF1F6AB21E0049089C /* TemplateKeyValueHashMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329943621D6B468E008DBAE9 /* TemplateKeyValueHashMap.cpp */; };
 		32639FF01F6AB2230049089C /* TriggerTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329943531D6B3AB7008DBAE9 /* TriggerTest.cpp */; };
@@ -89,10 +90,11 @@
 		3206CE271FA1DA9B0059A4A4 /* TestCDataWrapper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestCDataWrapper.cpp; sourceTree = "<group>"; };
 		321E59301D7457FF00365F57 /* TestBatchDefault.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestBatchDefault.cpp; sourceTree = "<group>"; };
 		321E59311D7457FF00365F57 /* TestBatchDefault.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestBatchDefault.h; sourceTree = "<group>"; };
-		322B16F820B054B3001E5B16 /* DirectIOChannelTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOChannelTest.cpp; sourceTree = "<group>"; };
+		322B16F820B054B3001E5B16 /* DirectIODeviceServerChannelTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIODeviceServerChannelTest.cpp; sourceTree = "<group>"; };
 		322B16FA20B07C43001E5B16 /* DirectIOChannelTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DirectIOChannelTest.h; sourceTree = "<group>"; };
 		322EE87F1F825D8000D89824 /* MemcachedEmbedded.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MemcachedEmbedded.h; sourceTree = "<group>"; };
 		322EE8801F825D8000D89824 /* MemcachedEmbedded.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MemcachedEmbedded.cpp; sourceTree = "<group>"; };
+		326274AE20B421C800BB0C91 /* DirectIOSystemServerChannelTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOSystemServerChannelTest.cpp; sourceTree = "<group>"; };
 		32639FE81F6AAD990049089C /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		3270978C209B440E00599038 /* ScriptClingTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScriptClingTest.h; sourceTree = "<group>"; };
 		3277A2302097586400FD7307 /* ScriptClingTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptClingTest.cpp; sourceTree = "<group>"; };
@@ -315,7 +317,8 @@
 			children = (
 				329BF99820AAFF1B0068F8EB /* DirectIOTest.cpp */,
 				329BF99920AAFF1B0068F8EB /* DirectIOTest.h */,
-				322B16F820B054B3001E5B16 /* DirectIOChannelTest.cpp */,
+				322B16F820B054B3001E5B16 /* DirectIODeviceServerChannelTest.cpp */,
+				326274AE20B421C800BB0C91 /* DirectIOSystemServerChannelTest.cpp */,
 				322B16FA20B07C43001E5B16 /* DirectIOChannelTest.h */,
 			);
 			path = direct_io;
@@ -579,7 +582,7 @@
 				328CFCA11F7CF366002FEB25 /* QueueTest.cpp in Sources */,
 				32818B3E1F8265B3004A409E /* EmbeddedLFCacheTest.cpp in Sources */,
 				32639FE91F6AAD990049089C /* main.cpp in Sources */,
-				322B16F920B054B3001E5B16 /* DirectIOChannelTest.cpp in Sources */,
+				322B16F920B054B3001E5B16 /* DirectIODeviceServerChannelTest.cpp in Sources */,
 				32639FF01F6AB2230049089C /* TriggerTest.cpp in Sources */,
 				32DA77741F94AD6D00497349 /* TestVariant.cpp in Sources */,
 				3277A2322097586400FD7307 /* ScriptClingTest.cpp in Sources */,
@@ -599,6 +602,7 @@
 				32818B421F828FBE004A409E /* BatchComandTest.cpp in Sources */,
 				32639FF31F6ABB980049089C /* TestStateFlagCatalog.cpp in Sources */,
 				3206CE281FA1DA9B0059A4A4 /* TestCDataWrapper.cpp in Sources */,
+				326274AF20B421C800BB0C91 /* DirectIOSystemServerChannelTest.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

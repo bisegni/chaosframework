@@ -335,23 +335,20 @@ int QueryDataConsumer::consumeDataCloudDelete(const std::string& search_key,
 
 #pragma mark DirectIOSystemAPIServerChannelHandler
 // Return the dataset for a producerkey ona specific snapshot
-int QueryDataConsumer::consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,
+int QueryDataConsumer::consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader& header,
                                                       const std::string& producer_id,
                                                       void **channel_found_data,
                                                       uint32_t& channel_found_data_length,
                                                       DirectIOSystemAPISnapshotResultHeader& api_result) {
     int err = 0;
     std::string channel_type;
-    //debug check
-    CHAOS_ASSERT(header)
     //CHAOS_ASSERT(api_result)
     SnapshotDataAccess *s_da = PersistenceManager::getInstance()->getDataAccess<SnapshotDataAccess>();
     
     //trduce int to postfix channel type
-    switch(header->field.channel_type) {
+    switch(header.field.channel_type) {
         case 0:
-            channel_type = DataPackPrefixID::OUTPUT_DATASET_POSTFIX
-            ;
+            channel_type = DataPackPrefixID::OUTPUT_DATASET_POSTFIX;
             break;
         case 1:
             channel_type = DataPackPrefixID::INPUT_DATASET_POSTFIX;
@@ -365,14 +362,14 @@ int QueryDataConsumer::consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSy
             
     }
     
-    if((err = s_da->snapshotGetDatasetForProducerKey(header->field.snap_name,
+    if((err = s_da->snapshotGetDatasetForProducerKey(header.field.snap_name,
                                                      producer_id,
                                                      channel_type,
                                                      channel_found_data,
                                                      channel_found_data_length))) {
         api_result.error = err;
         std::strcpy(api_result.error_message, "Error retriving the snapshoted dataaset for producer key");
-        ERR << api_result.error_message << "[" << header->field.snap_name << "/" << producer_id<<"]";
+        ERR << api_result.error_message << "[" << header.field.snap_name << "/" << producer_id<<"]";
     } else {
         if(*channel_found_data) {
             api_result.error = 0;

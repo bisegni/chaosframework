@@ -99,7 +99,7 @@ namespace chaos{
                                        uint64_t end_ts);
             
             //---------------- DirectIOSystemAPIServerChannelHandler -----------------------
-            int consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,
+            int consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader& header,
                                                const std::string& producer_id,
                                                void **channel_found_data,
                                                uint32_t& channel_found_data_length,

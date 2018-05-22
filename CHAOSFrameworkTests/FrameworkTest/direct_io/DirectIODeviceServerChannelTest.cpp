@@ -177,6 +177,10 @@ public:
 TEST_F(DirectIOChannelTest, DeviceChannelTest) {
     DeviceServerHandler handler;
     DirectIODeviceClientChannel *client_channel = NULL;
+    NULL;
+    
+    DirectIODeviceServerChannel *server_channel = (DirectIODeviceServerChannel*)endpoint->getNewChannelInstance("DirectIODeviceServerChannel");
+    ASSERT_TRUE(server_channel);
     
     //register echo handler
     server_channel->setHandler(&handler);
@@ -332,5 +336,8 @@ TEST_F(DirectIOChannelTest, DeviceChannelTest) {
     if(client_channel){
         ASSERT_NO_THROW(connection->releaseChannelInstance(client_channel););
         client_channel = NULL;
+    }
+    if(server_channel){
+        ASSERT_NO_THROW(endpoint->deregisterChannelInstance(server_channel););
     }
 }

@@ -17,11 +17,9 @@ class DirectIOChannelTest:
 public testing::Test {
 protected:
     chaos::common::direct_io::DirectIOServerEndpoint *endpoint;
-    chaos::common::direct_io::channel::DirectIODeviceServerChannel *server_channel;
     chaos::common::direct_io::DirectIOClientConnection *connection;
 public:
     DirectIOChannelTest():
-    server_channel(NULL),
     endpoint(NULL),
     connection(NULL){}
     
@@ -33,16 +31,11 @@ public:
         
         endpoint = NetworkBroker::getInstance()->getDirectIOServerEndpoint();
         ASSERT_TRUE(endpoint);
-        server_channel = (chaos::common::direct_io::channel::DirectIODeviceServerChannel*)endpoint->getNewChannelInstance("DirectIODeviceServerChannel");
-        ASSERT_TRUE(server_channel);
         
         connection = chaos::common::network::NetworkBroker::getInstance()->getSharedDirectIOClientInstance()->getNewConnection("localhost:1672:30175|0");
         ASSERT_TRUE(connection);
     }
     void TearDown() {
-        if(server_channel){
-            ASSERT_NO_THROW(endpoint->deregisterChannelInstance(server_channel););
-        }
         if(endpoint){
             ASSERT_NO_THROW(NetworkBroker::getInstance()->releaseDirectIOServerEndpoint(endpoint));
         }
