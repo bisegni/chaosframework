@@ -27,6 +27,7 @@
 #include <chaos/common/utility/ChaosAllocator.h>
 
 #include <stdint.h>
+#include <cassert>      //assert
 
 namespace chaos {
     namespace common {
@@ -68,7 +69,7 @@ namespace chaos {
                 ~ChaosBuffer() { kill(); }
                 
                 bool grow(int32_t new_len) {
-                    CHAOS_ASSERT(own);
+                    assert(own);
                     int a = CHAOS_BUFFER_ALLOCATION_BLOC;
                     while( a < new_len ) {
                         a = a * 2;

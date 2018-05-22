@@ -13,10 +13,9 @@
 //  Simple memory buffer abstraction. Version 1.0.0.
 //
 
-#include <cstddef>   // std::size_t
-#include <cstring>   // std::memcpy, std::memcmp, std::memset, std::memchr
-#include <stdexcept> // std::out_of_range, std::invalid_argument
-
+#include <cstddef>      // std::size_t
+#include <cstring>      // std::memcpy, std::memcmp, std::memset, std::memchr
+#include <stdexcept>    // std::out_of_range, std::invalid_argument
 namespace chaos {
     namespace common {
         namespace data {
