@@ -75,9 +75,8 @@ namespace chaos{
                                        chaos::common::data::BufferSPtr channel_data,
                                        uint32_t channel_data_len);
             
-            int consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode& header,
-                                chaos::common::data::BufferSPtr channel_data,
-                                uint32_t channel_data_len,
+            int consumeGetEvent(chaos::common::data::BufferSPtr key_data,
+                                uint32_t key_len,
                                 opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult& result_header,
                                 chaos::common::data::BufferSPtr& result_value);
             

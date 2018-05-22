@@ -31,7 +31,7 @@ using namespace chaos::common::direct_io;
 using namespace chaos::common::direct_io::channel;
 
 unsigned int req_counter = 0;
-
+unsigned int get_counter = 0;
 class DeviceServerHandler:
 public DirectIODeviceServerChannel::DirectIODeviceServerChannelHandler {
 public:
@@ -82,12 +82,17 @@ public:
                         BufferSPtr& result_value) {
         int err = 0;
         if((++req_counter % 2) == 0) {
-            //right result
-            CDWUniquePtr data(new CDataWrapper());
-            data->addStringValue("key", "string");
-            result_value = ChaosMakeSharedPtr<Buffer>();
-            result_value->append(data->getBSONRawData(), data->getBSONRawSize());
-            result_header.value_len = data->getBSONRawSize();
+            if((++get_counter % 2) == 0) {
+                //null result
+                result_header.value_len = 0;
+            }else{
+                //right result
+                CDWUniquePtr data(new CDataWrapper());
+                data->addStringValue("key", "string");
+                result_value = ChaosMakeSharedPtr<Buffer>();
+                result_value->append(data->getBSONRawData(), data->getBSONRawSize());
+                result_header.value_len = data->getBSONRawSize();
+            }
         } else {
             //error
             err = -1;
@@ -284,6 +289,10 @@ TEST_F(DirectIOChannelTest, DeviceChannelTest) {
     {
         void *result = NULL;
         uint32_t size = 0;
+        ASSERT_TRUE(client_channel->requestLastOutputData("requestLastOutputData", &result, size));
+        ASSERT_FALSE(client_channel->requestLastOutputData("requestLastOutputData", &result, size));
+        ASSERT_TRUE(client_channel->requestLastOutputData("requestLastOutputData", &result, size));
+        ASSERT_FALSE(client_channel->requestLastOutputData("requestLastOutputData", &result, size));
         ASSERT_TRUE(client_channel->requestLastOutputData("requestLastOutputData", &result, size));
         ASSERT_FALSE(client_channel->requestLastOutputData("requestLastOutputData", &result, size));
         ASSERT_TRUE(result && size);

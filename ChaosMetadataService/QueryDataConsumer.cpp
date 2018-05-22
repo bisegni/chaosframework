@@ -241,11 +241,10 @@ int QueryDataConsumer::consumeDataCloudQuery(DirectIODeviceChannelHeaderOpcodeQu
     return err;
 }
 
-int QueryDataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode& header,
-                                       BufferSPtr channel_data,
-                                       uint32_t channel_data_len,
+int QueryDataConsumer::consumeGetEvent(chaos::common::data::BufferSPtr key_data,
+                                       uint32_t key_len,
                                        opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult& result_header,
-                                       BufferSPtr& result_value) {
+                                       chaos::common::data::BufferSPtr& result_value) {
     int err = 0;
     //debug check
     //protected access to cached driver
@@ -254,8 +253,8 @@ int QueryDataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode& hea
         CacheData cache_data;
         if(cache_slot) {
             //get data
-            err = cache_slot->resource_pooled->getData(std::string((const char*)channel_data->data(),
-                                                                   channel_data_len),
+            err = cache_slot->resource_pooled->getData(std::string(key_data->data(),
+                                                                   key_data->size()),
                                                        cache_data);
             if(cache_data.size()) {
                 result_header.value_len = (uint32_t)cache_data.size();
