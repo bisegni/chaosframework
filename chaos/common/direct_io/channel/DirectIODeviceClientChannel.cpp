@@ -150,7 +150,6 @@ int DirectIODeviceClientChannel::requestLastOutputData(const std::string& key,
     } else {
         //we got answer
         if(answer) {
-            using AnswerHeader = opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult;
             if(answer->channel_data) {
                 size = (uint32_t)answer->channel_data->size();
                 *result = answer->channel_data->detach();
@@ -198,8 +197,7 @@ int DirectIODeviceClientChannel::requestLastOutputData(const ChaosStringVector& 
         //we got answer
         if(answer) {
             //get the header
-            using ResultHeader = opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcodeResult;
-            ResultHeader *result_header = answer->channel_header_data->data<ResultHeader>();
+            DirectIODeviceChannelHeaderMultiGetOpcodeResult *result_header = answer->channel_header_data->data<DirectIODeviceChannelHeaderMultiGetOpcodeResult>();
             result_header->number_of_result = FROM_LITTLE_ENDNS_NUM(uint32_t, result_header->number_of_result);
             CHAOS_ASSERT(result_header->number_of_result > 0);
             CHAOS_ASSERT(answer->channel_data.get());
@@ -253,9 +251,8 @@ int DirectIODeviceClientChannel::queryDataCloud(const std::string& key,
     } else {
         //we got answer
         if(answer) {
-            using ResultHeader = opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult;
             //get the header
-            ResultHeader *result_header = answer->channel_header_data->data<ResultHeader>();
+            DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult *result_header = answer->channel_header_data->data<DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult>();
             uint32_t result_data_size = FROM_LITTLE_ENDNS_NUM(uint32_t, result_header->result_data_size);
             uint32_t numer_of_record_found = FROM_LITTLE_ENDNS_NUM(uint32_t, result_header->numer_of_record_found);
             last_sequence_id.run_id = FROM_LITTLE_ENDNS_NUM(uint64_t, result_header->last_found_sequence.run_id);

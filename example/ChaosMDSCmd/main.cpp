@@ -202,7 +202,7 @@ int initialize_from_old_mds(std::string conf){
 	return 0;
 }
 
-int main (int argc, char* argv[] )
+int main (int argc, const char* argv[] )
 {
 	std::string conf_file;
 	std::string mds;
