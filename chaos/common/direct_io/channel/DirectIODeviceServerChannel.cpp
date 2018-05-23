@@ -48,9 +48,7 @@ int DirectIODeviceServerChannel::consumeDataPack(chaos::common::direct_io::Direc
     opcode::DeviceChannelOpcode  channel_opcode = static_cast<opcode::DeviceChannelOpcode>(data_pack->header.dispatcher_header.fields.channel_opcode);
     switch (channel_opcode) {
         case opcode::DeviceChannelOpcodePutOutput: {
-            
-            using ApiHeader = opcode_headers::DirectIODeviceChannelHeaderPutOpcode;
-            ApiHeader *header = data_pack->channel_header_data->data<ApiHeader>();
+            DirectIODeviceChannelHeaderPutOpcode *header = data_pack->channel_header_data->data<DirectIODeviceChannelHeaderPutOpcode>();
             //reallign the pointer to the start of the key
             header->tag = FROM_LITTLE_ENDNS_NUM(uint32_t, header->tag);
             err = handler->consumePutEvent(*header,
@@ -60,8 +58,7 @@ int DirectIODeviceServerChannel::consumeDataPack(chaos::common::direct_io::Direc
         }
 
         case opcode::DeviceChannelOpcodePutHeathData: {
-            using ApiHeader = opcode_headers::DirectIODeviceChannelHeaderPutOpcode;
-            ApiHeader *header = data_pack->channel_header_data->data<ApiHeader>();
+            DirectIODeviceChannelHeaderPutOpcode *header = data_pack->channel_header_data->data<DirectIODeviceChannelHeaderPutOpcode>();
             //reallign the pointer to the start of the key
             header->tag = FROM_LITTLE_ENDNS_NUM(uint32_t, header->tag);
             err = handler->consumeHealthDataEvent(*header,
@@ -71,15 +68,14 @@ int DirectIODeviceServerChannel::consumeDataPack(chaos::common::direct_io::Direc
         }
 
         case opcode::DeviceChannelOpcodeGetLastOutput: {
-            using ResultHeader = opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult;
             if(!data_pack->header.dispatcher_header.fields.synchronous_answer) return -1000;
             //allocate variable for result
             BufferSPtr result_data;
-            BufferSPtr result_header = ChaosMakeSharedPtr<Buffer>(sizeof(ResultHeader));
+            BufferSPtr result_header = ChaosMakeSharedPtr<Buffer>(sizeof(DirectIODeviceChannelHeaderGetOpcodeResult));
 
             err = handler->consumeGetEvent(data_pack->channel_data,
                                            data_pack->header.channel_data_size,
-                                           *result_header->data<ResultHeader>(),
+                                           *result_header->data<DirectIODeviceChannelHeaderGetOpcodeResult>(),
                                            result_data);
             if(err == 0){
                 //set the result header and data
@@ -91,14 +87,12 @@ int DirectIODeviceServerChannel::consumeDataPack(chaos::common::direct_io::Direc
         }
 
         case opcode::DeviceChannelOpcodeMultiGetLastOutput: {
-            using ApiHeader = opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcode;
-            using ResultHeader = opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcodeResult;
             if(!data_pack->header.dispatcher_header.fields.synchronous_answer) return -1000;
             //allocate variable for result
             uint32_t result_data_size = 0;
             BufferSPtr result_data;
-            ApiHeader *header = data_pack->channel_header_data->data<ApiHeader>();
-            BufferSPtr result_header = ChaosMakeSharedPtr<Buffer>(sizeof(ResultHeader));
+            DirectIODeviceChannelHeaderMultiGetOpcode *header = data_pack->channel_header_data->data<DirectIODeviceChannelHeaderMultiGetOpcode>();
+            BufferSPtr result_header = ChaosMakeSharedPtr<Buffer>(sizeof(DirectIODeviceChannelHeaderMultiGetOpcodeResult));
             
             //fetch the set of keys
             DataBuffer<> data_buffer(data_pack->channel_data->data(),
@@ -113,7 +107,7 @@ int DirectIODeviceServerChannel::consumeDataPack(chaos::common::direct_io::Direc
             }
             err = handler->consumeGetEvent(*header,
                                            keys,
-                                           *result_header->data<ResultHeader>(),
+                                           *result_header->data<DirectIODeviceChannelHeaderMultiGetOpcodeResult>(),
                                            result_data,
                                            result_data_size);
             if(err == 0){
@@ -126,10 +120,8 @@ int DirectIODeviceServerChannel::consumeDataPack(chaos::common::direct_io::Direc
         }
 
         case opcode::DeviceChannelOpcodeQueryDataCloud: {
-            using ApiHeader = opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloud;
-            using ResultHeader = opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult;
             if(!data_pack->header.dispatcher_header.fields.synchronous_answer) return -1000;
-            ApiHeader *header = data_pack->channel_header_data->data<ApiHeader>();
+            DirectIODeviceChannelHeaderOpcodeQueryDataCloud *header = data_pack->channel_header_data->data<DirectIODeviceChannelHeaderOpcodeQueryDataCloud>();
 
             try {
                 if (data_pack &&
@@ -137,7 +129,7 @@ int DirectIODeviceServerChannel::consumeDataPack(chaos::common::direct_io::Direc
                     BufferSPtr result_data;
                     QueryResultPage result_page;
                     chaos_data::CDataWrapper query(data_pack->channel_data->data());
-                    BufferSPtr result_header = ChaosMakeSharedPtr<Buffer>(sizeof(ResultHeader));
+                    BufferSPtr result_header = ChaosMakeSharedPtr<Buffer>(sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult));
 
                     header->field.record_for_page = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.record_for_page);
 
@@ -156,10 +148,10 @@ int DirectIODeviceServerChannel::consumeDataPack(chaos::common::direct_io::Direc
                                                                                      result_page);}
                     if(err == 0){
                         //manage emory for retur data
-                        if((result_header->data<ResultHeader>()->numer_of_record_found = (uint32_t)result_page.size())){
+                        if((result_header->data<DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult>()->numer_of_record_found = (uint32_t)result_page.size())){
                             result_data = ChaosMakeSharedPtr<Buffer>();
                             //we successfully have perform query
-                            result_header->data<ResultHeader>()->result_data_size = 0;
+                            result_header->data<DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult>()->result_data_size = 0;
                             for(QueryResultPageIterator it = result_page.begin(),
                                 end = result_page.end();
                                 it != end;
@@ -167,29 +159,18 @@ int DirectIODeviceServerChannel::consumeDataPack(chaos::common::direct_io::Direc
                                 //write result into mresults memory
                                 int element_bson_size = 0;
                                 const char * element_bson_mem = (*it)->getBSONRawData(element_bson_size);
-
-                                //enlarge buffer
-//                                result_data.capacity((result_header->data<ResultHeader>()->result_data_size + element_bson_size));
-
-                                //copy bson elelment in memory location
                                 result_data->append(element_bson_mem, element_bson_size);
-//                                char *mem_start_copy = ((char*)result_data.data())+result_header->data<ResultHeader>()->result_data_size;
-
-                                //copy
-//                                std::memcpy(mem_start_copy, element_bson_mem, element_bson_size);
-
-                                //keep track of the full size of the result
-                                result_header->data<ResultHeader>()->result_data_size +=element_bson_size;
+                                result_header->data<DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult>()->result_data_size +=element_bson_size;
                             }
                         }
 
                         //set the result header and data
                         DIRECT_IO_SET_CHANNEL_HEADER(synchronous_answer, result_header, sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult));
-                        DIRECT_IO_SET_CHANNEL_DATA(synchronous_answer, result_data, result_header->data<ResultHeader>()->result_data_size);
-                        result_header->data<ResultHeader>()->result_data_size = TO_LITTEL_ENDNS_NUM(uint32_t, result_header->data<ResultHeader>()->result_data_size);
-                        result_header->data<ResultHeader>()->numer_of_record_found = TO_LITTEL_ENDNS_NUM(uint32_t, result_header->data<ResultHeader>()->numer_of_record_found);
-                        result_header->data<ResultHeader>()->last_found_sequence.run_id = TO_LITTEL_ENDNS_NUM(uint64_t, last_sequence_info.run_id);
-                        result_header->data<ResultHeader>()->last_found_sequence.datapack_counter = TO_LITTEL_ENDNS_NUM(uint64_t, last_sequence_info.datapack_counter);
+                        DIRECT_IO_SET_CHANNEL_DATA(synchronous_answer, result_data, result_header->data<DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult>()->result_data_size);
+                        result_header->data<DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult>()->result_data_size = TO_LITTEL_ENDNS_NUM(uint32_t, result_header->data<DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult>()->result_data_size);
+                        result_header->data<DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult>()->numer_of_record_found = TO_LITTEL_ENDNS_NUM(uint32_t, result_header->data<DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult>()->numer_of_record_found);
+                        result_header->data<DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult>()->last_found_sequence.run_id = TO_LITTEL_ENDNS_NUM(uint64_t, last_sequence_info.run_id);
+                        result_header->data<DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult>()->last_found_sequence.datapack_counter = TO_LITTEL_ENDNS_NUM(uint64_t, last_sequence_info.datapack_counter);
                     }
                 }
             } catch (...) {

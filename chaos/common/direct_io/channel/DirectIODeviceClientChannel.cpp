@@ -62,17 +62,16 @@ int DirectIODeviceClientChannel::storeAndCacheDataOutputChannel(const std::strin
                                                                 uint32_t buffer_len,
                                                                 DataServiceNodeDefinitionType::DSStorageType _put_mode,
                                                                 bool wait_result) {
-    using HeaderPO = opcode_headers::DirectIODeviceChannelHeaderPutOpcode;
     int err = 0;
     DirectIODataPackSPtr answer;
     DirectIODataPackSPtr data_pack(new DirectIODataPack());
-    BufferSPtr put_opcode_header = ChaosMakeSharedPtr<Buffer>(sizeof(HeaderPO));
+    BufferSPtr put_opcode_header = ChaosMakeSharedPtr<Buffer>(sizeof(DirectIODeviceChannelHeaderPutOpcode));
     BufferSPtr channel_data = ChaosMakeSharedPtr<Buffer>(buffer, buffer_len, buffer_len, true);
     
-    put_opcode_header->data<HeaderPO>()->tag = (uint8_t) _put_mode;
-    put_opcode_header->data<HeaderPO>()->key_len = key.size();
+    put_opcode_header->data<DirectIODeviceChannelHeaderPutOpcode>()->tag = (uint8_t) _put_mode;
+    put_opcode_header->data<DirectIODeviceChannelHeaderPutOpcode>()->key_len = key.size();
     //put_opcode_header->key_data
-    std::memcpy(GET_PUT_OPCODE_KEY_PTR(put_opcode_header->data<HeaderPO>()), key.c_str(), put_opcode_header->data<HeaderPO>()->key_len);
+    std::memcpy(GET_PUT_OPCODE_KEY_PTR(put_opcode_header->data<DirectIODeviceChannelHeaderPutOpcode>()), key.c_str(), put_opcode_header->data<DirectIODeviceChannelHeaderPutOpcode>()->key_len);
     
     //set opcode
     data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodePutOutput);
@@ -97,17 +96,16 @@ int DirectIODeviceClientChannel::storeAndCacheHealthData(const std::string& key,
                                                          uint32_t buffer_len,
                                                          DataServiceNodeDefinitionType::DSStorageType _put_mode,
                                                          bool wait_result) {
-    using ApiHeader = opcode_headers::DirectIODeviceChannelHeaderPutOpcode;
     int err = 0;
     DirectIODataPackSPtr answer;
     DirectIODataPackSPtr data_pack(new DirectIODataPack());
     BufferSPtr put_opcode_header = ChaosMakeSharedPtr<Buffer>((PUT_HEADER_LEN(key)+key.size()));
     BufferSPtr channel_data = ChaosMakeSharedPtr<Buffer>(buffer, buffer_len, buffer_len, true);
     
-    put_opcode_header->data<ApiHeader>()->tag = (uint8_t) _put_mode;
-    put_opcode_header->data<ApiHeader>()->key_len = key.size();
+    put_opcode_header->data<DirectIODeviceChannelHeaderPutOpcode>()->tag = (uint8_t) _put_mode;
+    put_opcode_header->data<DirectIODeviceChannelHeaderPutOpcode>()->key_len = key.size();
     //put_opcode_header->key_data
-    std::memcpy(GET_PUT_OPCODE_KEY_PTR(put_opcode_header->data()), key.c_str(), put_opcode_header->data<ApiHeader>()->key_len);
+    std::memcpy(GET_PUT_OPCODE_KEY_PTR(put_opcode_header->data()), key.c_str(), put_opcode_header->data<DirectIODeviceChannelHeaderPutOpcode>()->key_len);
     
     //set opcode
     data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodePutHeathData);
@@ -167,7 +165,6 @@ int DirectIODeviceClientChannel::requestLastOutputData(const std::string& key,
 
 int DirectIODeviceClientChannel::requestLastOutputData(const ChaosStringVector& keys,
                                                        VectorCDWShrdPtr& results) {
-    using ApiHeader = DirectIODeviceChannelHeaderMultiGetOpcode;
     if(keys.size() == 0) return -1;
     int err = 0;
     DataBuffer<> data_buffer;
@@ -176,8 +173,8 @@ int DirectIODeviceClientChannel::requestLastOutputData(const ChaosStringVector& 
     //set opcode
     data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodeMultiGetLastOutput);
     
-    BufferSPtr mget_opcode_header = ChaosMakeSharedPtr<Buffer>(sizeof(ApiHeader));
-    mget_opcode_header->data<ApiHeader>()->field.number_of_key = TO_LITTEL_ENDNS_NUM(uint16_t, keys.size());
+    BufferSPtr mget_opcode_header = ChaosMakeSharedPtr<Buffer>(sizeof(DirectIODeviceChannelHeaderMultiGetOpcode));
+    mget_opcode_header->data<DirectIODeviceChannelHeaderMultiGetOpcode>()->field.number_of_key = TO_LITTEL_ENDNS_NUM(uint16_t, keys.size());
     
     for(ChaosStringVectorConstIterator it = keys.begin(),
         end = keys.end();
@@ -190,7 +187,7 @@ int DirectIODeviceClientChannel::requestLastOutputData(const ChaosStringVector& 
     //set header
     uint32_t data_size = data_buffer.getCursorLocation();
     BufferSPtr channel_data = ChaosMakeSharedPtr<Buffer>(data_buffer.release(), data_size, data_size, true);
-    DIRECT_IO_SET_CHANNEL_HEADER(data_pack, mget_opcode_header, sizeof(ApiHeader))
+    DIRECT_IO_SET_CHANNEL_HEADER(data_pack, mget_opcode_header, sizeof(DirectIODeviceChannelHeaderMultiGetOpcode))
     DIRECT_IO_SET_CHANNEL_DATA(data_pack, channel_data, (uint32_t)channel_data->size());
     //send data with synchronous answer flag
     if((err = sendPriorityData(ChaosMoveOperator(data_pack), answer))) {
@@ -226,13 +223,12 @@ int DirectIODeviceClientChannel::queryDataCloud(const std::string& key,
                                                 uint32_t page_dimension,
                                                 SearchSequence& last_sequence_id,
                                                 QueryResultPage& found_element_page) {
-    using ApiHeader = DirectIODeviceChannelHeaderOpcodeQueryDataCloud;
     int err = 0;
     DirectIODataPackSPtr answer;
     CDataWrapper query_description;
     //allcoate the data to send direct io pack
     DirectIODataPackSPtr data_pack(new DirectIODataPack());
-    BufferSPtr query_data_cloud_header = ChaosMakeSharedPtr<Buffer>(sizeof(ApiHeader));
+    BufferSPtr query_data_cloud_header = ChaosMakeSharedPtr<Buffer>(sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloud));
     
     //fill the query CDataWrapper
     query_description.addStringValue(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_KEY_STRING, key);
@@ -242,7 +238,7 @@ int DirectIODeviceClientChannel::queryDataCloud(const std::string& key,
     query_description.addInt64Value(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_LAST_DP_COUNTER, last_sequence_id.datapack_counter);
     
     //copy the query id on header
-    query_data_cloud_header->data<ApiHeader>()->field.record_for_page = TO_LITTEL_ENDNS_NUM(uint32_t, page_dimension);
+    query_data_cloud_header->data<DirectIODeviceChannelHeaderOpcodeQueryDataCloud>()->field.record_for_page = TO_LITTEL_ENDNS_NUM(uint32_t, page_dimension);
     //set opcode
     data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodeQueryDataCloud);
     
