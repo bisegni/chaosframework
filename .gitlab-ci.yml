@@ -136,7 +136,10 @@ execute_framework_centos7_test:
 
 execute_framework_centos7_deploy:
   tags:
-    - lnf
+    - chaos
+    - docker
+    - linux
+    - fast
   stage: deploy
   image: baltig.infn.it:4567/chaos-lnf-control/chaos_bundle_compilation:lite
   dependencies:
@@ -181,6 +184,7 @@ build_framework_x86_64_c98_test:
     - chaos
     - docker
     - linux
+    - fast
   stage: test
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
   script:
@@ -237,6 +241,7 @@ llvm_build_framework_x86_64:
     - chaos
     - docker
     - linux
+    - fast
   stage: build
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/llvm_coverity_u1710
   script:
@@ -265,6 +270,7 @@ llvm_build_framework_x86_64_test:
     - chaos
     - docker
     - linux
+    - fast
   stage: test
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/llvm_coverity_u1710
   dependencies:
@@ -281,6 +287,7 @@ exp_llvm_scan_coverity:
     - chaos
     - docker
     - linux
+    - fast
   stage: build
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/llvm_coverity_u1710
   script:
