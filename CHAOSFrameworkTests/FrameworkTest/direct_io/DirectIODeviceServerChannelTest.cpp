@@ -304,7 +304,10 @@ TEST_F(DirectIOChannelTest, DeviceChannelTest) {
     }
     //consumeGetEvent multiple key
     {
-        ChaosStringVector keys={"key1", "key2", "key3"};
+        ChaosStringVector keys;
+        keys.push_back("key1");
+        keys.push_back("key2");
+        keys.push_back("key3");
         chaos::common::data::VectorCDWShrdPtr results;
         ASSERT_TRUE(client_channel->requestLastOutputData(keys, results));
         ASSERT_FALSE(client_channel->requestLastOutputData(keys, results));
