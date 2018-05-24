@@ -140,7 +140,19 @@ TEST_F(DirectIOChannelTest, SystemChannelTest) {
     }
     //log
     {
-        ChaosStringVector log_entries = {"log entry","log entry","log entry","log entry","log entry","log entry","log entry","log entry","log entry","log entry","log entry","log entry"};
+        ChaosStringVector log_entries;
+        log_entries.push_back("log entry");
+        log_entries.push_back("log entry");
+        log_entries.push_back("log entry");
+        log_entries.push_back("log entry");
+        log_entries.push_back("log entry");
+        log_entries.push_back("log entry");
+        log_entries.push_back("log entry");
+        log_entries.push_back("log entry");
+        log_entries.push_back("log entry");
+        log_entries.push_back("log entry");
+        log_entries.push_back("log entry");
+        log_entries.push_back("log entry");
         ASSERT_FALSE(client_channel->pushLogEntries("producer", log_entries));
         ASSERT_FALSE(client_channel->pushLogEntries("producer", log_entries));
     }
