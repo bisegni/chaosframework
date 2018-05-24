@@ -1070,6 +1070,20 @@ namespace chaos {
     }
     /** @} */ // end of CUStateKey
     
+    /** @defgroup MetadataServerApiKey list of key used specificately on api
+     *  @{
+     */
+    //! Name space for grupping the key for action published by the mds node
+    namespace MetadataServerApiKey {
+        //!scrip api consstants
+        namespace script {
+            namespace search_script {
+                static const char * const  FOUND_SCRIPT_LIST = "found_sript_list";
+            }
+        }
+    }
+    /** @} */ // end of MetadataServerApiKey
+    
     /** @defgroup MetadataServerNodeDefinitionKeyRPC List of mds node rpc action
      *  @{
      */

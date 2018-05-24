@@ -179,9 +179,9 @@ Subclass(copy_source, _data){}
             template<typename T,
             typename DW>
             class TemplatedDataListWrapper {
-                const std::string instance_serialization_key;
                 static const std::string master_serialization_key;
             public:
+                std::string instance_serialization_key;
                 typedef std::vector< T >                              WrapList;
                 typedef typename std::vector< T >::iterator           WrapListIterator;
                 typedef typename std::vector< T >::const_iterator     WrapListConstIterator;
@@ -286,7 +286,6 @@ Subclass(copy_source, _data){}
                     result->finalizeArrayForKey(instance_serialization_key);
                     return result;
                 }
-                
             };
             
             template<typename T, typename DW>
