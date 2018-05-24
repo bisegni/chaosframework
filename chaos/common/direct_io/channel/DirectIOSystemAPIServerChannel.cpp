@@ -78,16 +78,14 @@ int DirectIOSystemAPIServerChannel::consumeDataPack(DirectIODataPackSPtr data_pa
         }
             
         case opcode::SystemAPIChannelOpcodeGetSnapshotDatasetForAKey: {
-            using ApiHeader_t = opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader;
-            using ResultHeader_t = opcode_headers::DirectIOSystemAPISnapshotResultHeader;
             std::string producer_key;
             BufferSPtr channel_found_data;
             synchronous_answer = ChaosMakeSharedPtr<DirectIODataPack>();
             //allocate the answer header
-            BufferSPtr result_header = ChaosMakeSharedPtr<Buffer>(sizeof(ResultHeader_t));
+            BufferSPtr result_header = ChaosMakeSharedPtr<Buffer>(sizeof(DirectIOSystemAPISnapshotResultHeader));
             
             //read the request header
-            ApiHeader_t *header = data_pack->channel_header_data->data<ApiHeader_t>();
+            DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header = data_pack->channel_header_data->data<DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader>();
             header->field.producer_key_set_len = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.producer_key_set_len);
             
             //chec if a producere key has been forwarded
@@ -100,30 +98,29 @@ int DirectIOSystemAPIServerChannel::consumeDataPack(DirectIODataPackSPtr data_pa
             err = handler->consumeGetDatasetSnapshotEvent(*header,
                                                           producer_key,
                                                           channel_found_data,
-                                                          result_header->data<ResultHeader_t>()->channel_data_len,
-                                                          *result_header->data<ResultHeader_t>());
+                                                          result_header->data<DirectIOSystemAPISnapshotResultHeader>()->channel_data_len,
+                                                          *result_header->data<DirectIOSystemAPISnapshotResultHeader>());
             //whe have data to return
             if(err == 0){
                 //set the result header
-                result_header->data<ResultHeader_t>()->error = TO_LITTEL_ENDNS_NUM(int32_t, result_header->data<ResultHeader_t>()->error);
-                if(result_header->data<ResultHeader_t>()->channel_data_len) {
+                result_header->data<DirectIOSystemAPISnapshotResultHeader>()->error = TO_LITTEL_ENDNS_NUM(int32_t, result_header->data<DirectIOSystemAPISnapshotResultHeader>()->error);
+                if(result_header->data<DirectIOSystemAPISnapshotResultHeader>()->channel_data_len) {
                     //asosciate the pointer to the datapack to be returned
-                    DIRECT_IO_SET_CHANNEL_DATA(synchronous_answer, channel_found_data, result_header->data<ResultHeader_t>()->channel_data_len);
+                    DIRECT_IO_SET_CHANNEL_DATA(synchronous_answer, channel_found_data, result_header->data<DirectIOSystemAPISnapshotResultHeader>()->channel_data_len);
                 }
-                result_header->data<ResultHeader_t>()->channel_data_len = TO_LITTEL_ENDNS_NUM(uint32_t, result_header->data<ResultHeader_t>()->channel_data_len);
+                result_header->data<DirectIOSystemAPISnapshotResultHeader>()->channel_data_len = TO_LITTEL_ENDNS_NUM(uint32_t, result_header->data<DirectIOSystemAPISnapshotResultHeader>()->channel_data_len);
                 DIRECT_IO_SET_CHANNEL_HEADER(synchronous_answer, result_header, (uint32_t)result_header->size());
             }
             break;
         }
             
         case opcode::SystemAPIChannelOpcodePushLogEntryForANode: {
-            using ApiHeader_t = opcode_headers::DirectIOSystemAPIChannelOpcodePushLogEntryForANodeHeader;
             synchronous_answer = ChaosMakeSharedPtr<DirectIODataPack>();
             ChaosStringVector log_entry;
             DataBuffer<> buffer(data_pack->channel_data->detach(),
                                 data_pack->header.channel_data_size);
             //read the request header
-            ApiHeader_t *header = data_pack->channel_header_data->data<ApiHeader_t>();
+            DirectIOSystemAPIChannelOpcodePushLogEntryForANodeHeader *header = data_pack->channel_header_data->data<DirectIOSystemAPIChannelOpcodePushLogEntryForANodeHeader>();
             header->field.data_entries_num = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.data_entries_num);
             
             //now we can read data

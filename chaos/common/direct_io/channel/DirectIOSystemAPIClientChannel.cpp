@@ -65,8 +65,6 @@ int DirectIOSystemAPIClientChannel::getDatasetSnapshotForProducerKey(const std::
                                                                      const std::string& producer_key,
                                                                      uint32_t channel_type,
                                                                      DirectIOSystemAPIGetDatasetSnapshotResult **api_result_handle) {
-    using ApiHeader = DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader;
-    using ShapshotRHeader = opcode_headers::DirectIOSystemAPISnapshotResultHeader;
     int err = 0;
     if(snapshot_name.size() > 255) {
         //bad Snapshot name size
@@ -77,24 +75,24 @@ int DirectIOSystemAPIClientChannel::getDatasetSnapshotForProducerKey(const std::
     DirectIODataPackSPtr data_pack(new DirectIODataPack());
     
     //allocate the header
-    BufferSPtr get_snapshot_opcode_header = ChaosMakeSharedPtr<Buffer>(sizeof(ApiHeader));
+    BufferSPtr get_snapshot_opcode_header = ChaosMakeSharedPtr<Buffer>(sizeof(DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader));
     
     //set opcode
     data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::SystemAPIChannelOpcodeGetSnapshotDatasetForAKey);
     
     //copy the snapshot name to the header
-    std::strncpy(get_snapshot_opcode_header->data<ApiHeader>()->field.snap_name, snapshot_name.c_str(), 255);
-    get_snapshot_opcode_header->data<ApiHeader>()->field.channel_type = channel_type;
+    std::strncpy(get_snapshot_opcode_header->data<DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader>()->field.snap_name, snapshot_name.c_str(), 255);
+    get_snapshot_opcode_header->data<DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader>()->field.channel_type = channel_type;
     if(api_result_handle){
         *api_result_handle=NULL;
     }
     
     //set header
-    DIRECT_IO_SET_CHANNEL_HEADER(data_pack, get_snapshot_opcode_header, sizeof(ApiHeader))
+    DIRECT_IO_SET_CHANNEL_HEADER(data_pack, get_snapshot_opcode_header, sizeof(DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader))
     if(producer_key.size()) {
         
         //set the header field for the producer concatenation string
-        get_snapshot_opcode_header->data<ApiHeader>()->field.producer_key_set_len = TO_LITTEL_ENDNS_NUM(uint32_t, (uint32_t)producer_key.size());
+        get_snapshot_opcode_header->data<DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader>()->field.producer_key_set_len = TO_LITTEL_ENDNS_NUM(uint32_t, (uint32_t)producer_key.size());
         
         //copy the memory for forwarding buffer
         BufferSPtr producer_key_send_buffer = ChaosMakeSharedPtr<Buffer>();
@@ -113,10 +111,10 @@ int DirectIOSystemAPIClientChannel::getDatasetSnapshotForProducerKey(const std::
             //get the header
             if(answer->channel_header_data){
                 *api_result_handle = (DirectIOSystemAPIGetDatasetSnapshotResult*)calloc(sizeof(DirectIOSystemAPIGetDatasetSnapshotResult), 1);
-                answer->channel_header_data->data<ShapshotRHeader>()->channel_data_len = FROM_LITTLE_ENDNS_NUM(uint32_t, answer->channel_header_data->data<ShapshotRHeader>()->channel_data_len);
-                answer->channel_header_data->data<ShapshotRHeader>()->error = FROM_LITTLE_ENDNS_NUM(int32_t, answer->channel_header_data->data<ShapshotRHeader>()->error);
+                answer->channel_header_data->data<DirectIOSystemAPISnapshotResultHeader>()->channel_data_len = FROM_LITTLE_ENDNS_NUM(uint32_t, answer->channel_header_data->data<DirectIOSystemAPISnapshotResultHeader>()->channel_data_len);
+                answer->channel_header_data->data<DirectIOSystemAPISnapshotResultHeader>()->error = FROM_LITTLE_ENDNS_NUM(int32_t, answer->channel_header_data->data<DirectIOSystemAPISnapshotResultHeader>()->error);
                 
-                (*api_result_handle)->api_result = *answer->channel_header_data->data<ShapshotRHeader>();
+                (*api_result_handle)->api_result = *answer->channel_header_data->data<DirectIOSystemAPISnapshotResultHeader>();
                 (*api_result_handle)->channel_data = answer->channel_data->detach();
             } else {
                 err=-2;
@@ -131,7 +129,6 @@ int DirectIOSystemAPIClientChannel::getDatasetSnapshotForProducerKey(const std::
 
 int DirectIOSystemAPIClientChannel::pushLogEntries(const std::string& node_name,
                                                    const ChaosStringVector& log_entries) {
-    using ApiHEader = DirectIOSystemAPIChannelOpcodePushLogEntryForANodeHeader;
     if(log_entries.size() == 0) {
         //bad node name
         return -1000;
@@ -142,7 +139,7 @@ int DirectIOSystemAPIClientChannel::pushLogEntries(const std::string& node_name,
     int32_t tmp_element_size = 0;
     
     //allocate the header
-    BufferSPtr header = ChaosMakeSharedPtr<Buffer>(sizeof(ApiHEader));
+    BufferSPtr header = ChaosMakeSharedPtr<Buffer>(sizeof(DirectIOSystemAPIChannelOpcodePushLogEntryForANodeHeader));
     
     //allocate the datapack
     DirectIODataPackSPtr data_pack(new DirectIODataPack());
@@ -150,7 +147,7 @@ int DirectIOSystemAPIClientChannel::pushLogEntries(const std::string& node_name,
     data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::SystemAPIChannelOpcodePushLogEntryForANode);
     
     //write the number of the entry in the header
-    header->data<ApiHEader>()->field.data_entries_num = FROM_LITTLE_ENDNS_NUM(uint32_t, (uint32_t)log_entries.size());
+    header->data<DirectIOSystemAPIChannelOpcodePushLogEntryForANodeHeader>()->field.data_entries_num = FROM_LITTLE_ENDNS_NUM(uint32_t, (uint32_t)log_entries.size());
     
     //encode node name
     buffer.writeInt32(FROM_LITTLE_ENDNS_NUM(uint32_t, tmp_element_size = (uint32_t)node_name.size()));
@@ -169,7 +166,7 @@ int DirectIOSystemAPIClientChannel::pushLogEntries(const std::string& node_name,
     int32_t data_len = buffer.getCursorLocation();
     BufferSPtr channel_data = ChaosMakeSharedPtr<Buffer>(buffer.release(), data_len, data_len, true);
     //set header
-    DIRECT_IO_SET_CHANNEL_HEADER(data_pack, header, sizeof(ApiHEader))
+    DIRECT_IO_SET_CHANNEL_HEADER(data_pack, header, sizeof(DirectIOSystemAPIChannelOpcodePushLogEntryForANodeHeader))
     //set as data
     
     DIRECT_IO_SET_CHANNEL_DATA(data_pack, channel_data, data_len);
