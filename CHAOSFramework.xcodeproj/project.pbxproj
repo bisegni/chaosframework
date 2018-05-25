@@ -341,6 +341,7 @@
 		3258D4811DF0332300D9C8D0 /* GetSnapshotDatasetsForNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3258D47F1DF0332300D9C8D0 /* GetSnapshotDatasetsForNode.cpp */; };
 		325963981D216BD800D94853 /* LoadInstanceOnUnitServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325963961D216BD800D94853 /* LoadInstanceOnUnitServer.cpp */; };
 		325B421E1C8854820038E0C2 /* HandlerMonitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325B421C1C8854820038E0C2 /* HandlerMonitor.cpp */; };
+		325C285B20B800AB007D2971 /* ShardKeyManagement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325C285A20B800AB007D2971 /* ShardKeyManagement.cpp */; };
 		325CA6BB15EE10B3007FCC12 /* EventAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325CA6B915EE10B3007FCC12 /* EventAction.cpp */; };
 		325CA6BC15EE10B3007FCC12 /* EventAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 325CA6BA15EE10B3007FCC12 /* EventAction.h */; };
 		325D2FCD1AFA19E500B2A706 /* HealtManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325D2FCB1AFA19E500B2A706 /* HealtManager.cpp */; };
@@ -1698,6 +1699,8 @@
 		325963971D216BD800D94853 /* LoadInstanceOnUnitServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadInstanceOnUnitServer.h; sourceTree = "<group>"; };
 		325B421C1C8854820038E0C2 /* HandlerMonitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HandlerMonitor.cpp; sourceTree = "<group>"; };
 		325B421D1C8854820038E0C2 /* HandlerMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HandlerMonitor.h; sourceTree = "<group>"; };
+		325C285920B800AB007D2971 /* ShardKeyManagement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShardKeyManagement.h; sourceTree = "<group>"; };
+		325C285A20B800AB007D2971 /* ShardKeyManagement.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ShardKeyManagement.cpp; sourceTree = "<group>"; };
 		325CA6B915EE10B3007FCC12 /* EventAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventAction.cpp; sourceTree = "<group>"; };
 		325CA6BA15EE10B3007FCC12 /* EventAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventAction.h; sourceTree = "<group>"; };
 		325D2FCB1AFA19E500B2A706 /* HealtManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HealtManager.cpp; sourceTree = "<group>"; };
@@ -4068,6 +4071,8 @@
 				326ACF7C1E01525D00AD011E /* MongoDBObjectStorageDriver.h */,
 				326ACF791E01525D00AD011E /* MongoDBObjectStorageDataAccess.cpp */,
 				326ACF7A1E01525D00AD011E /* MongoDBObjectStorageDataAccess.h */,
+				325C285A20B800AB007D2971 /* ShardKeyManagement.cpp */,
+				325C285920B800AB007D2971 /* ShardKeyManagement.h */,
 			);
 			path = mongodb;
 			sourceTree = "<group>";
@@ -6706,6 +6711,7 @@
 				32FF2A761E68655A00117985 /* DeployApiGroup.cpp in Sources */,
 				32B1E8191B2FFCE500221E49 /* CommandCommonUtility.cpp in Sources */,
 				3243608320285AB000B03037 /* ForwardNodeRpcMessage.cpp in Sources */,
+				325C285B20B800AB007D2971 /* ShardKeyManagement.cpp in Sources */,
 				3270E0761C6CC05100105726 /* MongoDBLoggingDataAccess.cpp in Sources */,
 				32FC49A41E0807F70087D82C /* GetVariable.cpp in Sources */,
 				3235FDCA1A6FF45600EC83A9 /* GetDescription.cpp in Sources */,
