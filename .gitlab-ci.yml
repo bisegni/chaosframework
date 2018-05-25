@@ -11,22 +11,22 @@ before_script:
   - export SYS=`uname -s`
   - export CHAOS_LIB_HASH=`git log -n 1 --pretty="%h"`
 
-codequality:
-  image: docker:stable
-  stage: quality
-  variables:
-    DOCKER_DRIVER: overlay2
-  allow_failure: true
-  services:
-    - docker:stable-dind
-  script:
-    - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
-    - docker run --env SOURCE_CODE="$PWD" --volume "$PWD"/chaos:/code --volume /var/run/docker.sock:/var/run/docker.sock "registry.gitlab.com/gitlab-org/security-products/codequality:$SP_VERSION" /code
-  artifacts:
-    paths: [codeclimate.json]
-  only:
-    - tags
-    - web
+# codequality:
+#   image: docker:stable
+#   stage: quality
+#   variables:
+#     DOCKER_DRIVER: overlay2
+#   allow_failure: true
+#   services:
+#     - docker:stable-dind
+#   script:
+#     - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
+#     - docker run --env SOURCE_CODE="$PWD" --volume "$PWD"/chaos:/code --volume /var/run/docker.sock:/var/run/docker.sock "registry.gitlab.com/gitlab-org/security-products/codequality:$SP_VERSION" /code
+#   artifacts:
+#     paths: [codeclimate.json]
+#   only:
+#     - tags
+#     - web
 
 build_framework_x86_64:
   tags:
@@ -54,7 +54,7 @@ build_framework_x86_64:
         - chaos
         - CHAOSFrameworkTests
         - 'chaos-distrib-x86_64-Linux'
-    expire_in: 4 hour
+    expire_in: 8 hour
   only:
     - tags
     - web
@@ -110,7 +110,7 @@ build_framework_centos7:
         - chaos
         - CHAOSFrameworkTests
         - 'chaos-distrib-x86_64-centos7'
-    expire_in: 4 hour
+    expire_in: 8 hour
   only:
     - tags
     - web
@@ -129,7 +129,7 @@ execute_framework_centos7_test:
   artifacts:
     paths:
         - 'chaos-distrib-x86_64-centos7'
-    expire_in: 4 hour
+    expire_in: 8 hour
   only:
     - tags
     - web
@@ -174,7 +174,7 @@ build_framework_x86_64_c98:
   artifacts:
     paths:
         - 'chaos-distrib-x86_64-Linux-c98'
-    expire_in: 4 hour
+    expire_in: 8 hour
   only:
     - tags
     - web
@@ -215,7 +215,7 @@ build_framework_arm:
   artifacts:
     paths:
         - 'chaos-distrib-armhf'
-    expire_in: 4 hour
+    expire_in: 8 hour
   only:
     - tags
     - web
@@ -260,7 +260,7 @@ llvm_build_framework_x86_64:
         - chaos
         - CHAOSFrameworkTests
         - 'chaos-distrib-x86_64-Linux-llvm'
-    expire_in: 4 hour
+    expire_in: 8 hour
   only:
     - tags
     - web
@@ -282,29 +282,29 @@ llvm_build_framework_x86_64_test:
     - tags
     - web
 
-exp_llvm_scan_coverity:
-  tags:
-    - chaos
-    - docker
-    - linux
-    - fast
-  stage: build
-  image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/llvm_coverity_u1710
-  script:
-    - mkdir -p /tmp/cov-int
-    - cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCHAOS_ARCHITECTURE_TEST=ON .
-    - make clean
-    - /tmp/coverity/bin/cov-build --dir /tmp/cov-int make -j 4
-    - cd /tmp
-    - tar czvf chaos.tgz cov-int
-    - curl --form token=i9B9MI9n53zWdx2iSS4Qvg --form email=bisegni@lnf.infn.it --form file=@/tmp/chaos.tgz --form version="1.0.0" --form description="Beta"  https://scan.coverity.com/builds?project=%21CHAOS+Control+System
-  cache:
-    key: scan_coverity_$CI_BUILD_REF_NAME
-    paths:
-        - /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/
-        - /builds/chaos-lnf-control/chaosframework/config/CACHE/
-  only:
-    - tags
+# exp_llvm_scan_coverity:
+#   tags:
+#     - chaos
+#     - docker
+#     - linux
+#     - fast
+#   stage: build
+#   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/llvm_coverity_u1710
+#   script:
+#     - mkdir -p /tmp/cov-int
+#     - cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCHAOS_ARCHITECTURE_TEST=ON .
+#     - make clean
+#     - /tmp/coverity/bin/cov-build --dir /tmp/cov-int make -j 4
+#     - cd /tmp
+#     - tar czvf chaos.tgz cov-int
+#     - curl --form token=i9B9MI9n53zWdx2iSS4Qvg --form email=bisegni@lnf.infn.it --form file=@/tmp/chaos.tgz --form version="1.0.0" --form description="Beta"  https://scan.coverity.com/builds?project=%21CHAOS+Control+System
+#   cache:
+#     key: scan_coverity_$CI_BUILD_REF_NAME
+#     paths:
+#         - /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/
+#         - /builds/chaos-lnf-control/chaosframework/config/CACHE/
+#   only:
+#     - tags
     - web
 
 pages:
