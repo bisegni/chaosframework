@@ -30,8 +30,19 @@ using namespace chaos::common::utility;
 using namespace chaos::common::direct_io;
 using namespace chaos::common::direct_io::channel;
 
-unsigned int req_counter = 0;
+unsigned int consumePutEvent_counter = 0;
+
+unsigned int consumeHealthDataEvent_counter = 0;
+
+unsigned int consumeGetEvent_counter = 0;
 unsigned int get_counter = 0;
+
+unsigned int consumeGetEventMulti_counter = 0;
+
+unsigned int consumeDataCloudQuery_counter = 0;
+
+unsigned int consumeDataCloudDelete_counter = 0;
+
 class DeviceServerHandler:
 public DirectIODeviceServerChannel::DirectIODeviceServerChannelHandler {
 public:
@@ -40,7 +51,7 @@ public:
                         BufferSPtr channel_data,
                         uint32_t channel_data_len) {
         int err = 0;
-        if((++req_counter % 2) == 0) {
+        if((++consumePutEvent_counter % 2) == 0) {
             //right result the data need to be savet
             CDWUniquePtr push_data(new CDataWrapper(channel_data->data()));
             if(!push_data->hasKey("key") ||
@@ -60,7 +71,7 @@ public:
                                BufferSPtr channel_data,
                                uint32_t channel_data_len) {
         int err = 0;
-        if((++req_counter % 2) == 0) {
+        if((++consumeHealthDataEvent_counter % 2) == 0) {
             //right result the data need to be savet
             CDWUniquePtr push_data(new CDataWrapper(channel_data->data()));
             if(!push_data->hasKey("key") ||
@@ -81,7 +92,7 @@ public:
                         opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult& result_header,
                         BufferSPtr& result_value) {
         int err = 0;
-        if((++req_counter % 2) == 0) {
+        if((++consumeGetEvent_counter % 2) == 0) {
             if((++get_counter % 2) == 0) {
                 //null result
                 result_header.value_len = 0;
@@ -106,7 +117,7 @@ public:
                         BufferSPtr& result_value,
                         uint32_t& result_value_len) {
         int err = 0;
-        if((++req_counter % 2) == 0) {
+        if((++consumeGetEventMulti_counter % 2) == 0) {
             //right result
             DataBuffer<> data_buffer;
             for(ChaosStringVectorConstIterator it = keys.begin(),
@@ -136,7 +147,7 @@ public:
                               opcode_headers::SearchSequence& last_element_found_seq,
                               opcode_headers::QueryResultPage& result_page) {
         int err = 0;
-        if((++req_counter % 2) == 0) {
+        if((++consumeDataCloudQuery_counter % 2) == 0) {
             if(search_start_ts != std::numeric_limits<uint32_t>::min() ||
                search_end_ts != std::numeric_limits<uint32_t>::max()) {
                 err = -1;
@@ -164,7 +175,7 @@ public:
                                uint64_t start_ts,
                                uint64_t end_ts) {
         int err = 0;
-        if((++req_counter % 2) == 0) {
+        if((++consumeDataCloudDelete_counter % 2) == 0) {
             if(start_ts != std::numeric_limits<uint32_t>::min() ||
                end_ts != std::numeric_limits<uint32_t>::max()) {
                 err = -1;
