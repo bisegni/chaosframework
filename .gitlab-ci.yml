@@ -148,7 +148,7 @@ framework_centos7_deploy:
   stage: deploy
   image: baltig.infn.it:4567/chaos-lnf-control/chaos_bundle_compilation:lite
   dependencies:
-    - execute_framework_centos7_test
+    - build_framework_centos7_test
   script:
     - tar cfz chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz chaos-distrib-x86_64-centos7
     - ls -la
