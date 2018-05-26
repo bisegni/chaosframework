@@ -60,6 +60,8 @@ build_framework_x86_64:
     - web
 
 build_framework_x86_64_test:
+  build_framework_centos7:
+    - build_framework_x86_64
   tags:
     - chaos
     - docker
@@ -115,7 +117,9 @@ build_framework_centos7:
     - tags
     - web
 
-execute_framework_centos7_test:
+build_framework_centos7_test:
+  dependencies:
+    - build_framework_centos7
   tags:
     - chaos
     - docker
@@ -134,7 +138,7 @@ execute_framework_centos7_test:
     - tags
     - web
 
-execute_framework_centos7_deploy:
+framework_centos7_deploy:
   allow_failure: true
   tags:
     - chaos
@@ -181,6 +185,8 @@ build_framework_x86_64_c98:
     - web
 
 build_framework_x86_64_c98_test:
+  dependencies:
+    - build_framework_x86_64_c98
   tags:
     - chaos
     - docker
@@ -306,7 +312,7 @@ llvm_build_framework_x86_64_test:
 #         - /builds/chaos-lnf-control/chaosframework/config/CACHE/
 #   only:
 #     - tags
-    - web
+    # - web
 
 pages:
   stage: publish
