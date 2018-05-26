@@ -60,7 +60,7 @@ build_framework_x86_64:
     - web
 
 build_framework_x86_64_test:
-  build_framework_centos7:
+  dependencies:
     - build_framework_x86_64
   tags:
     - chaos
