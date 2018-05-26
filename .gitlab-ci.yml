@@ -135,6 +135,7 @@ execute_framework_centos7_test:
     - web
 
 execute_framework_centos7_deploy:
+  allow_failure: true
   tags:
     - chaos
     - docker
