@@ -78,7 +78,7 @@ namespace chaos {
             /*!
              Specialized option for startup c and cpp program main options parameter
              */
-            void init(int argc, char* argv[]) throw (CException);
+            void init(int argc, const char* argv[]) throw (CException);
 
             //! For common methods already initialized
             void init()  throw(CException);

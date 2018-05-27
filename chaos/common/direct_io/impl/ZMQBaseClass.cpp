@@ -20,13 +20,16 @@
  */
 
 #include <chaos/common/global.h>
+#include <chaos/common/chaos_types.h>
 #include <chaos/common/utility/UUIDUtil.h>
 #include <chaos/common/direct_io/impl/ZMQBaseClass.h>
 
 #include <boost/format.hpp>
 
 using namespace std;
+using namespace chaos::common::data;
 using namespace chaos::common::utility;
+using namespace chaos::common::direct_io;
 using namespace chaos::common::direct_io::impl;
 
 #define ZMQDIO_BASE_LAPP_ INFO_LOG(ZMQBaseClass)
@@ -78,13 +81,19 @@ ZMQDIO_BASE_LAPP_ << SUCCESS_STRING_ON_CONTEXT(s);\
 return 0;\
 }
 
-#define SET_SOCKET_OPTION(x,s)\
-if((err = setSocketOption(socket, default_conf, startup_conf, x, s, domain))){return err;}
+#define SET_SOCKET_OPTION(s, x, p)\
+if((err = setSocketOption(s, default_conf, startup_conf, x, p, domain))){return err;}
 
-inline bool hasZMQProperty(MapZMQConfiguration &default_conf,
-                           const MapZMQConfiguration &startup_conf,
-                           std::string prop_name,
-                           int& prop_value) {
+
+static void zqmFreeSentData(void *data,
+                            void *hint) {
+    ChaosUniquePtr<DisposeSentMemoryInfo> free_info(static_cast<DisposeSentMemoryInfo*>(hint));
+}
+
+bool ZMQBaseClass::hasZMQProperty(MapZMQConfiguration &default_conf,
+                                  const MapZMQConfiguration &startup_conf,
+                                  const std::string& prop_name,
+                                  int& prop_value) {
     MapZMQConfigurationConstIterator it_def_conf = default_conf.find(prop_name);
     MapZMQConfigurationConstIterator it_str_conf = startup_conf.find(prop_name);
     
@@ -100,12 +109,12 @@ inline bool hasZMQProperty(MapZMQConfiguration &default_conf,
     return (def_conf_has || startup_conf_has);
 }
 
-inline int setSocketOption(void *socket,
-                           MapZMQConfiguration &default_conf,
-                           const MapZMQConfiguration &startup_conf,
-                           int socket_option,
-                           const std::string& socket_option_name,
-                           const std::string& domain) {
+int ZMQBaseClass::setSocketOption(void *socket,
+                                  MapZMQConfiguration &default_conf,
+                                  const MapZMQConfiguration &startup_conf,
+                                  int socket_option,
+                                  const std::string& socket_option_name,
+                                  const std::string& domain) {
     int err = 0;
     int prop_value = 0;
     if(hasZMQProperty(default_conf,
@@ -141,16 +150,33 @@ int ZMQBaseClass::configureSocketWithStartupParameter(void *socket,
                                                       const std::string& domain) {
     
     int err = 0;
-    SET_SOCKET_OPTION(ZMQ_LINGER,"ZMQ_LINGER");
-    SET_SOCKET_OPTION(ZMQ_RCVHWM,"ZMQ_RCVHWM");
-    SET_SOCKET_OPTION(ZMQ_SNDHWM,"ZMQ_SNDHWM");
-    SET_SOCKET_OPTION(ZMQ_RCVTIMEO,"ZMQ_RCVTIMEO");
-    SET_SOCKET_OPTION(ZMQ_SNDTIMEO,"ZMQ_SNDTIMEO");
-    SET_SOCKET_OPTION(ZMQ_SNDBUF,"ZMQ_SNDBUF");
-    SET_SOCKET_OPTION(ZMQ_RCVBUF,"ZMQ_RCVBUF");
-    SET_SOCKET_OPTION(ZMQ_RECONNECT_IVL,"ZMQ_RECONNECT_IVL");
-    SET_SOCKET_OPTION(ZMQ_RECONNECT_IVL_MAX,"ZMQ_RECONNECT_IVL_MAX");
+    SET_SOCKET_OPTION(socket, ZMQ_LINGER,"ZMQ_LINGER");
+    SET_SOCKET_OPTION(socket, ZMQ_RCVHWM,"ZMQ_RCVHWM");
+    SET_SOCKET_OPTION(socket, ZMQ_SNDHWM,"ZMQ_SNDHWM");
+    SET_SOCKET_OPTION(socket, ZMQ_RCVTIMEO,"ZMQ_RCVTIMEO");
+    SET_SOCKET_OPTION(socket, ZMQ_SNDTIMEO,"ZMQ_SNDTIMEO");
+    SET_SOCKET_OPTION(socket, ZMQ_SNDBUF,"ZMQ_SNDBUF");
+    SET_SOCKET_OPTION(socket, ZMQ_RCVBUF,"ZMQ_RCVBUF");
+    SET_SOCKET_OPTION(socket, ZMQ_RECONNECT_IVL,"ZMQ_RECONNECT_IVL");
+    SET_SOCKET_OPTION(socket, ZMQ_RECONNECT_IVL_MAX,"ZMQ_RECONNECT_IVL_MAX");
     return 0;
+}
+
+int ZMQBaseClass::resetOutputQueue(void *socket,
+                                   MapZMQConfiguration &default_conf,
+                                   const MapZMQConfiguration &startup_conf) {
+    int err = 0;
+    int prop_value = 0;
+    err = zmq_setsockopt(socket, ZMQ_RCVHWM, &prop_value, sizeof(int));
+    if(err == 0) {
+        err = setSocketOption(socket,
+                              default_conf,
+                              startup_conf,
+                              ZMQ_RCVHWM,
+                              "ZMQ_RCVHWM",
+                              "resetOutputQueue");
+    }
+    return err;
 }
 
 int ZMQBaseClass::connectSocket(void *socket,
@@ -202,16 +228,15 @@ int ZMQBaseClass::readMessage(void * socket,
  
  */
 int ZMQBaseClass::sendMessage(void *socket,
-                              void **message_data,
+                              void *message_data,
                               size_t message_size,
                               zmq_free_fn *ffn,
                               void *hint,
                               bool more_to_send) {
     int err = 0;
     zmq_msg_t message;
-    
     if((err = zmq_msg_init_data(&message,
-                                *message_data,
+                                message_data,
                                 message_size,
                                 ffn,
                                 hint)) == -1){
@@ -219,8 +244,6 @@ int ZMQBaseClass::sendMessage(void *socket,
         err = zmq_errno();
         ZMQDIO_BASE_LERR_ << "Error initializing message with error:" << PRINT_ZMQ_ERR(err);
     } else {
-        //message can be forward so we reset the usse pointer
-        *message_data = NULL;
         //send data
         if((err = zmq_sendmsg(socket, &message, more_to_send?ZMQ_SNDMORE:ZMQ_DONTWAIT)) == -1){
             err = zmq_errno();
@@ -317,7 +340,8 @@ int ZMQBaseClass::setID(void *socket) {
     return zmq_setsockopt (socket, ZMQ_IDENTITY, uid.c_str(), uid.size());
 }
 
-int ZMQBaseClass::setAndReturnID(void *socket, std::string& new_id) {
+int ZMQBaseClass::setAndReturnID(void *socket,
+                                 std::string& new_id) {
     new_id = UUIDUtil::generateUUIDLite();
     return zmq_setsockopt (socket, ZMQ_IDENTITY, new_id.c_str(), new_id.size());
 }
@@ -340,7 +364,7 @@ int ZMQBaseClass::receiveStartEnvelop(void *socket) {
 
 int ZMQBaseClass::reveiceDatapack(void *socket,
                                   std::string& identity,
-                                  DirectIODataPack **data_pack_handle) {
+                                  DirectIODataPackSPtr& data_pack_handle) {
     //read first the identity
     int err = 0;
     if((err = stringReceive(socket, identity))) {
@@ -359,13 +383,12 @@ int ZMQBaseClass::reveiceDatapack(void *socket,
 }
 
 int ZMQBaseClass::reveiceDatapack(void *socket,
-                                  DirectIODataPack **data_pack_handle) {
+                                  DirectIODataPackSPtr& data_pack_handle) {
     int                     err = 0;
     std::string             empty_delimiter;
     bool                    have_more_message = false;
     size_t                  readed_byte;
     char					header_buffer[DIRECT_IO_HEADER_SIZE];
-    DirectIODataPack        *data_pack_ptr = NULL;
     //receive the zmq evenlop delimiter
     if((err = receiveStartEnvelop(socket))) {
         return err;
@@ -385,16 +408,16 @@ int ZMQBaseClass::reveiceDatapack(void *socket,
     }
     
     //create new datapack
-    data_pack_ptr = *data_pack_handle = (DirectIODataPack*)calloc(1, sizeof(DirectIODataPack));
+    data_pack_handle.reset(new DirectIODataPack());
     
-    //clear all memory
-    //std::memset(data_pack_ptr, 0, sizeof(DirectIODataPack));
-    
-    //set dispatch header data
-    data_pack_ptr->header.dispatcher_header.raw_data = DIRECT_IO_GET_DISPATCHER_DATA(header_buffer);
+    //manage little endina conversion for header
+    memcpy(&data_pack_handle->header, header_buffer, sizeof(DirectIODataPackDispatchHeader_t));
+    DIRECT_IO_DATAPACK_DISPATCH_HEADER_FROM_ENDIAN(data_pack_handle);
+    data_pack_handle->header.channel_data_size = DIRECT_IO_GET_CHANNEL_DATA_SIZE(header_buffer);
+    data_pack_handle->header.channel_header_size = DIRECT_IO_GET_CHANNEL_HEADER_SIZE(header_buffer);
     
     //check what i need to reice
-    switch(data_pack_ptr->header.dispatcher_header.fields.channel_part) {
+    switch(data_pack_handle->header.dispatcher_header.fields.channel_part) {
         case DIRECT_IO_CHANNEL_PART_EMPTY:
             break;
         case DIRECT_IO_CHANNEL_PART_HEADER_ONLY:
@@ -403,20 +426,14 @@ int ZMQBaseClass::reveiceDatapack(void *socket,
             EXIT_IF_NO_MORE_MESSAGE(-13002, "No other message after header for DIRECT_IO_CHANNEL_PART_HEADER_ONLY");
             
             //init header data buffer
-            data_pack_ptr->header.channel_header_size = DIRECT_IO_GET_CHANNEL_HEADER_SIZE(header_buffer);
-            data_pack_ptr->channel_header_data = malloc(data_pack_ptr->header.channel_header_size);
-            data_pack_ptr->channel_data = NULL;
+            data_pack_handle->channel_header_data = ChaosMakeSharedPtr<Buffer>(data_pack_handle->header.channel_header_size);
             
             //read the channel header
             if((err = readMessage(socket,
-                                  data_pack_ptr->channel_header_data,
-                                  data_pack_ptr->header.channel_header_size,
+                                  data_pack_handle->channel_header_data->data(),
+                                  data_pack_handle->header.channel_header_size,
                                   readed_byte))){
                 ZMQDIO_BASE_LERR_<< "Error reading the channel header with code:"<<err;
-                //free header memory
-                free(data_pack_ptr->channel_header_data);
-                //free datapack memory
-                free(data_pack_ptr);
             }
             break;
         case DIRECT_IO_CHANNEL_PART_DATA_ONLY:
@@ -425,20 +442,14 @@ int ZMQBaseClass::reveiceDatapack(void *socket,
             EXIT_IF_NO_MORE_MESSAGE(-13003, "No other message after header for DIRECT_IO_CHANNEL_PART_DATA_ONLY");
             
             //init data buffer
-            data_pack_ptr->header.channel_data_size = DIRECT_IO_GET_CHANNEL_DATA_SIZE(header_buffer);
-            data_pack_ptr->channel_data = malloc(data_pack_ptr->header.channel_data_size);
-            data_pack_ptr->channel_header_data = NULL;
+            data_pack_handle->channel_data = ChaosMakeSharedPtr<Buffer>(data_pack_handle->header.channel_data_size);
             
             //read data part
             if((err = readMessage(socket,
-                                  data_pack_ptr->channel_data,
-                                  data_pack_ptr->header.channel_data_size,
+                                  data_pack_handle->channel_data->data(),
+                                  data_pack_handle->header.channel_data_size,
                                   readed_byte))){
                 ZMQDIO_BASE_LERR_<< "Error reading the channel header with code:"<<err;
-                //free data memory
-                free(data_pack_ptr->channel_data);
-                //free datapack memory
-                free(data_pack_ptr);
             }
             break;
         case DIRECT_IO_CHANNEL_PART_HEADER_DATA:
@@ -446,38 +457,26 @@ int ZMQBaseClass::reveiceDatapack(void *socket,
             EXIT_IF_NO_MORE_MESSAGE(-13004, "No other message after header for DIRECT_IO_CHANNEL_PART_HEADER_DATA");
             
             //allocate header buffer
-            data_pack_ptr->header.channel_header_size = DIRECT_IO_GET_CHANNEL_HEADER_SIZE(header_buffer);
-            data_pack_ptr->channel_header_data = malloc(data_pack_ptr->header.channel_header_size);
+            data_pack_handle->channel_header_data = ChaosMakeSharedPtr<Buffer>(data_pack_handle->header.channel_header_size);
             
             if((err = readMessage(socket,
-                                  data_pack_ptr->channel_header_data,
-                                  data_pack_ptr->header.channel_header_size,
+                                  data_pack_handle->channel_header_data->data(),
+                                  data_pack_handle->header.channel_header_size,
                                   readed_byte))){
                 ZMQDIO_BASE_LERR_<< "Error reading the channel header with code:"<<err;
-                //free header memory
-                free(data_pack_ptr->channel_header_data);
-                //free datapack memory
-                free(data_pack_ptr);
             } else {
                 //check if we have data message
                 EXIT_IF_NO_MORE_MESSAGE(-13005, "No other message after header for DIRECT_IO_CHANNEL_PART_HEADER_DATA");
                 
                 //allocate data buffer
-                data_pack_ptr->header.channel_data_size = DIRECT_IO_GET_CHANNEL_DATA_SIZE(header_buffer);
-                data_pack_ptr->channel_data = malloc(data_pack_ptr->header.channel_data_size);
+                data_pack_handle->channel_data = ChaosMakeSharedPtr<Buffer>(data_pack_handle->header.channel_data_size);
                 
                 //read data part
                 if((err = readMessage(socket,
-                                      data_pack_ptr->channel_data,
-                                      data_pack_ptr->header.channel_data_size,
+                                      data_pack_handle->channel_data->data(),
+                                      data_pack_handle->header.channel_data_size,
                                       readed_byte))){
                     ZMQDIO_BASE_LERR_<< "Error reading the channel header with code:"<<err;
-                    //free header memory
-                    free(data_pack_ptr->channel_header_data);
-                    //free data memory
-                    free(data_pack_ptr->channel_data);
-                    //free datapack memory
-                    free(data_pack_ptr);
                 }
             }
             break;
@@ -487,9 +486,7 @@ int ZMQBaseClass::reveiceDatapack(void *socket,
 
 int ZMQBaseClass::sendDatapack(void *socket,
                                std::string identity,
-                               DirectIODataPack *data_pack,
-                               DirectIODeallocationHandler *header_deallocation_handler,
-                               DirectIODeallocationHandler *data_deallocation_handler) {
+                               DirectIODataPackSPtr data_pack) {
     //send identity
     int err = 0;
     if((err = stringSendMore(socket, identity.c_str()))) {
@@ -497,20 +494,16 @@ int ZMQBaseClass::sendDatapack(void *socket,
     }
     //read the direct io datapack with zmq messages
     return sendDatapack(socket,
-                        data_pack,
-                        header_deallocation_handler,
-                        data_deallocation_handler);
+                        ChaosMoveOperator(data_pack));
 }
 
 int ZMQBaseClass::sendDatapack(void *socket,
-                               DirectIODataPack *data_pack,
-                               DirectIODeallocationHandler *header_deallocation_handler,
-                               DirectIODeallocationHandler *data_deallocation_handler) {
+                               DirectIODataPackSPtr data_pack) {
     int err = 0;
     uint16_t sending_opcode = data_pack->header.dispatcher_header.fields.channel_opcode;
     
-    //send global header
-    data_pack->header.dispatcher_header.raw_data = DIRECT_IO_SET_DISPATCHER_DATA(data_pack->header.dispatcher_header.raw_data);
+    //manage little endian conversion
+    DIRECT_IO_DATAPACK_DISPATCH_HEADER_TO_ENDIAN(data_pack);
     data_pack->header.channel_header_size = DIRECT_IO_SET_CHANNEL_HEADER_SIZE(data_pack->header.channel_header_size);
     data_pack->header.channel_data_size = DIRECT_IO_SET_CHANNEL_DATA_SIZE(data_pack->header.channel_data_size);
     
@@ -530,10 +523,10 @@ int ZMQBaseClass::sendDatapack(void *socket,
                 if((err = sendMessage(socket, &data_pack->header, DIRECT_IO_HEADER_SIZE, true))) {
                     ZMQDIO_BASE_LERR_ << "Error sending header part:"<< PRINT_ZMQ_ERR(err);
                 } else if((err = sendMessage(socket,
-                                             &data_pack->channel_header_data,
+                                             (void*)data_pack->channel_header_data->data(),
                                              (size_t)data_pack->header.channel_header_size,
-                                             DirectIOForwarder::freeSentData,
-                                             new DisposeSentMemoryInfo(header_deallocation_handler,
+                                             zqmFreeSentData,
+                                             new DisposeSentMemoryInfo(data_pack->channel_header_data,
                                                                        DisposeSentMemoryInfo::SentPartHeader,
                                                                        sending_opcode),
                                              false))){
@@ -545,10 +538,10 @@ int ZMQBaseClass::sendDatapack(void *socket,
                 if((err = sendMessage(socket, &data_pack->header, DIRECT_IO_HEADER_SIZE, true))) {
                     ZMQDIO_BASE_LERR_ << "Error sending header part:"<< PRINT_ZMQ_ERR(err);
                 } else if((err = sendMessage(socket,
-                                             &data_pack->channel_data,
+                                             data_pack->channel_data->data(),
                                              (size_t)data_pack->header.channel_data_size,
-                                             DirectIOForwarder::freeSentData,
-                                             new DisposeSentMemoryInfo(data_deallocation_handler,
+                                             zqmFreeSentData,
+                                             new DisposeSentMemoryInfo(data_pack->channel_data,
                                                                        DisposeSentMemoryInfo::SentPartData,
                                                                        sending_opcode),
                                              false))){
@@ -560,82 +553,30 @@ int ZMQBaseClass::sendDatapack(void *socket,
                 if((err = sendMessage(socket, &data_pack->header, DIRECT_IO_HEADER_SIZE, true))) {
                     ZMQDIO_BASE_LERR_ << "Error sending header part:"<< PRINT_ZMQ_ERR(err);
                 } else if((err = sendMessage(socket,
-                                             &data_pack->channel_header_data,
+                                             data_pack->channel_header_data->data(),
                                              (size_t)data_pack->header.channel_header_size,
-                                             DirectIOForwarder::freeSentData,
-                                             new DisposeSentMemoryInfo(header_deallocation_handler,
+                                             zqmFreeSentData,
+                                             new DisposeSentMemoryInfo(data_pack->channel_header_data,
                                                                        DisposeSentMemoryInfo::SentPartHeader,
                                                                        sending_opcode),
                                              true))){
                     ZMQDIO_BASE_LERR_ << "Error sending channel header part:"<< PRINT_ZMQ_ERR(err);
                     //error sending header data
                 } else if((err = sendMessage(socket,
-                                             &data_pack->channel_data,
+                                             data_pack->channel_data->data(),
                                              (size_t)data_pack->header.channel_data_size,
-                                             DirectIOForwarder::freeSentData,
-                                             new DisposeSentMemoryInfo(data_deallocation_handler,
+                                             zqmFreeSentData,
+                                             new DisposeSentMemoryInfo(data_pack->channel_data,
                                                                        DisposeSentMemoryInfo::SentPartData,
                                                                        sending_opcode),
                                              false))){
                     ZMQDIO_BASE_LERR_ << "Error sending channel data part:"<< PRINT_ZMQ_ERR(err);
                     if(data_pack->channel_data != NULL) {
                         ZMQDIO_BASE_LERR_ << "Free the channel data memory";
-                        SYNC_DELETE_HEADER_AND_DATA(data_pack->channel_data,
-                                                    data_deallocation_handler,
-                                                    DisposeSentMemoryInfo::SentPartData,
-                                                    sending_opcode);
                     }
                 }
                 break;
         }
     }
-    
-    //clean header or data part in case of error
-    if(data_pack->channel_header_data != NULL) {
-        ZMQDIO_BASE_LAPP_ << "Free channel header memory";
-        SYNC_DELETE_HEADER_AND_DATA(data_pack->channel_header_data,
-                                    header_deallocation_handler,
-                                    DisposeSentMemoryInfo::SentPartHeader,
-                                    sending_opcode);
-    }
-    
-    if(data_pack->channel_data != NULL) {
-        ZMQDIO_BASE_LAPP_ << "Free the channel data memory";
-        SYNC_DELETE_HEADER_AND_DATA(data_pack->channel_data,
-                                    data_deallocation_handler,
-                                    DisposeSentMemoryInfo::SentPartData,
-                                    sending_opcode);
-    }
     return err;
-}
-
-int ZMQBaseClass::safeDeleteDataPack(DirectIODataPack *data_pack,
-                                     DirectIODeallocationHandler *header_deallocation_handler,
-                                     DirectIODeallocationHandler *data_deallocation_handler) {
-    if(data_pack == NULL) return 0;
-    uint16_t sending_opcode = data_pack->header.dispatcher_header.fields.channel_opcode;
-    
-    //send global header
-    data_pack->header.dispatcher_header.raw_data = DIRECT_IO_SET_DISPATCHER_DATA(data_pack->header.dispatcher_header.raw_data);
-    data_pack->header.channel_header_size = DIRECT_IO_SET_CHANNEL_HEADER_SIZE(data_pack->header.channel_header_size);
-    data_pack->header.channel_data_size = DIRECT_IO_SET_CHANNEL_DATA_SIZE(data_pack->header.channel_data_size);
-    
-    if(data_pack->channel_header_data != NULL) {
-        ZMQDIO_BASE_LAPP_ << "Free channel header memory";
-        SYNC_DELETE_HEADER_AND_DATA(data_pack->channel_header_data,
-                                    header_deallocation_handler,
-                                    DisposeSentMemoryInfo::SentPartHeader,
-                                    sending_opcode);
-    }
-    
-    if(data_pack->channel_data != NULL) {
-        ZMQDIO_BASE_LAPP_ << "Free the channel data memory";
-        SYNC_DELETE_HEADER_AND_DATA(data_pack->channel_data,
-                                    data_deallocation_handler,
-                                    DisposeSentMemoryInfo::SentPartData,
-                                    sending_opcode);
-    }
-    
-    free(data_pack);
-    return 0;
 }

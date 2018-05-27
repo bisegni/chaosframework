@@ -124,7 +124,7 @@ x = hasOption(y);
 //                             const std::string& kv_string,
 //                             const std::string& regex);
     public:
-        void loadStartupParameter(int, char* argv[]) throw (CException);
+        void loadStartupParameter(int, const char* argv[]) throw (CException);
         void loadStreamParameter(std::istream &config_file) throw (CException);
         void scanOption() throw (CException);
         void checkDefaultOption() throw (CException);
@@ -137,7 +137,7 @@ x = hasOption(y);
         /*!
          Specialized option for startup c and cpp program main options parameter
          */
-        void parseStartupParameters(int, char* argv[]) throw (CException);
+        void parseStartupParameters(int, const char* argv[]) throw (CException);
         //!stringbuffer parser
         /*
          specialized option for string stream buffer with boost semantics

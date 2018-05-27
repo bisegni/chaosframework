@@ -114,7 +114,7 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException) {
 /*!
  Specialized option for startup c and cpp program main options parameter
  */
-void GlobalConfiguration::parseStartupParameters(int argc, char* argv[]) throw (CException) {
+void GlobalConfiguration::parseStartupParameters(int argc, const char* argv[]) throw (CException) {
     parseParameter(po::parse_command_line(argc, argv, desc));
 }
 //!stringbuffer parser
@@ -148,7 +148,7 @@ int32_t GlobalConfiguration::filterLogLevel(string& levelStr) throw (CException)
     return static_cast< int32_t >(level);
 }
 
-void GlobalConfiguration::loadStartupParameter(int argc, char* argv[]) throw (CException) {
+void GlobalConfiguration::loadStartupParameter(int argc, const char* argv[]) throw (CException) {
     try{
         //
         po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -174,14 +174,11 @@ void GlobalConfiguration::loadStreamParameter(std::istream &config_file)  throw 
 }
 
 void GlobalConfiguration::scanOption()  throw (CException) {
-    try{
-        
-        
+    try {
         if (hasOption(InitOption::OPT_HELP)) {
             std::cout << desc;
             exit(0);
             return;
-            
         }
         if (hasOption(InitOption::OPT_VERSION)) {
             std::cout <<"Version:"<< CSLIB_VERSION_MAJOR<<"."<<CSLIB_VERSION_MINOR<<"."<<CSLIB_VERSION_NUMBER<< " BuildID:"<<CSLIB_BUILD_ID<< " BuildDate:"<<__DATE__ <<" " <<__TIME__<<"\n";
@@ -189,7 +186,7 @@ void GlobalConfiguration::scanOption()  throw (CException) {
             return;
             
         }
-    }catch (po::error &e) {
+    } catch (po::error &e) {
         //write error also on cerr
         std::cerr << e.what();
         throw CException(0, e.what(), __PRETTY_FUNCTION__);

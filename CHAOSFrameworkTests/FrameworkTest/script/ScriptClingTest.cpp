@@ -24,6 +24,7 @@
 
 #include "ScriptClingTest.h"
 
+#ifdef CLING_VIRTUAL_MACHINE
 using namespace chaos::common::data;
 using namespace chaos::common::script;
 using namespace chaos::common::utility;
@@ -178,3 +179,4 @@ TEST(ScriptClingTest, ExecuteApi) {
                                                "ScriptManager",
                                                __PRETTY_FUNCTION__);
 }
+#endif

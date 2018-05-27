@@ -41,7 +41,7 @@ ChaosAgent::ChaosAgent() {}
 
 ChaosAgent::~ChaosAgent() {}
 
-void ChaosAgent::init(int argc, char* argv[]) throw (CException) {
+void ChaosAgent::init(int argc, const char* argv[]) throw (CException) {
     ChaosCommon<ChaosAgent>::init(argc, argv);
 }
 

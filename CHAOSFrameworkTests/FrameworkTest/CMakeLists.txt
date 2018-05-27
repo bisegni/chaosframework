@@ -19,7 +19,10 @@ SET(TestFrameworkSource main.cpp
                         state_flag_catalog/TestStateFlagCatalog.cpp
                         templated_key_value_hash/TemplateKeyValueHashMap.cpp
                         trigger/TriggerTest.cpp
-                        utility/FutureHelperTest.cpp)
+                        utility/FutureHelperTest.cpp
+                        direct_io/DirectIOTest.cpp
+                        direct_io/DirectIODeviceServerChannelTest.cpp
+                        direct_io/DirectIOSystemServerChannelTest.cpp)
 
 INCLUDE_DIRECTORIES(. ../../usr/local/include)
 LINK_DIRECTORIES( ${LINK_DIRECTORIES} ${PROJECT_SOURCE_DIR}/../../usr/local/lib )

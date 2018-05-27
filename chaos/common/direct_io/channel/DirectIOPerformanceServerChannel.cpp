@@ -46,35 +46,29 @@ void DirectIOPerformanceServerChannel::setHandler(DirectIOPerformanceServerChann
 	handler = _handler;
 }
 
-int DirectIOPerformanceServerChannel::consumeDataPack(DirectIODataPack *dataPack,
-                                                      DirectIODataPack *synchronous_answer,
-                                                      DirectIODeallocationHandler **answer_header_deallocation_handler,
-                                                      DirectIODeallocationHandler **answer_data_deallocation_handler) {
+int DirectIOPerformanceServerChannel::consumeDataPack(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
+                                                      chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer) {
 	CHAOS_ASSERT(handler)
     int err = -1;
-    // the opcode
-	opcode::PerformanceChannelOpcode  channel_opcode = static_cast<opcode::PerformanceChannelOpcode>(dataPack->header.dispatcher_header.fields.channel_opcode);
-	
-	switch (channel_opcode) {
-		case opcode::PerformanceChannelOpcodeReqRoundTrip: {
-            opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTripPtr header = reinterpret_cast< opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTripPtr >(dataPack->channel_header_data);
-			//reallign the pointer to the start of the key
-			header->field.start_rt_ts = FROM_LITTLE_ENDNS_NUM(uint64_t, header->field.start_rt_ts);
-			handler->handleReqRoundTripRequest(header);
-            err = 0;
-            break;
-        }
-		case opcode::PerformanceChannelOpcodeRespRoundTrip:
-			opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTripPtr header = reinterpret_cast< opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTripPtr >(dataPack->channel_header_data);
-			//reallign the pointer to the start of the key
-			header->field.start_rt_ts = FROM_LITTLE_ENDNS_NUM(uint64_t, header->field.start_rt_ts);
-			handler->handleRespRoundTripRequest(header);
-            err = 0;
-			break;
-	}
-	
-	//only data pack is deleted, header data and channel data are managed by handler
-	free(dataPack);
-	
+//    // the opcode
+//    opcode::PerformanceChannelOpcode  channel_opcode = static_cast<opcode::PerformanceChannelOpcode>(data_pack->header.dispatcher_header.fields.channel_opcode);
+//    
+//    switch (channel_opcode) {
+//        case opcode::PerformanceChannelOpcodeReqRoundTrip: {
+//            opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTripPtr header = reinterpret_cast< opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTripPtr >(dataPack->channel_header_data);
+//            //reallign the pointer to the start of the key
+//            header->field.start_rt_ts = FROM_LITTLE_ENDNS_NUM(uint64_t, header->field.start_rt_ts);
+//            handler->handleReqRoundTripRequest(header);
+//            err = 0;
+//            break;
+//        }
+//        case opcode::PerformanceChannelOpcodeRespRoundTrip:
+//            opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTripPtr header = reinterpret_cast< opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTripPtr >(dataPack->channel_header_data);
+//            //reallign the pointer to the start of the key
+//            header->field.start_rt_ts = FROM_LITTLE_ENDNS_NUM(uint64_t, header->field.start_rt_ts);
+//            handler->handleRespRoundTripRequest(header);
+//            err = 0;
+//            break;
+//    }
 	return err;
 }

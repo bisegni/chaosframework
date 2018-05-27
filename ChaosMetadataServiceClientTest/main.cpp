@@ -54,7 +54,7 @@ public:
 };
 
 
-int main(int argc, char *argv[]){
+int main(int argc, const char *argv[]){
     uint32_t quantum_multiplier;
     uint32_t wait_seconds;
     uint32_t operation;

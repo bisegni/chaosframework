@@ -62,7 +62,7 @@ ChaosMetadataServiceClient::ChaosMetadataServiceClient(){
 
 ChaosMetadataServiceClient::~ChaosMetadataServiceClient() {}
 
-void ChaosMetadataServiceClient::init(int argc, char* argv[]) throw (CException) {
+void ChaosMetadataServiceClient::init(int argc, const char* argv[]) throw (CException) {
     ChaosCommon<ChaosMetadataServiceClient>::init(argc, argv);
 }
 

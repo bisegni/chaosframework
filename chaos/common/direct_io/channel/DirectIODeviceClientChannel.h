@@ -34,15 +34,7 @@ namespace chaos {
     namespace common {
         namespace direct_io {
             namespace channel {
-                
-                typedef struct AnswerServerInfo {
-                    uint16_t p_server_port;
-                    uint16_t s_server_port;
-                    uint16_t endpoint;
-                    uint64_t ip;
-                    uint32_t hash;
-                } AnswerServerInfo;
-                
+        
                 CHAOS_DEFINE_SET_FOR_TYPE(chaos::common::utility::DataBuffer<>, SetDataBuffer);
                 
                 //! Class for the managment of pushing data for the device dataset
@@ -51,19 +43,8 @@ namespace chaos {
                  */
                 DECLARE_CLASS_FACTORY(DirectIODeviceClientChannel, DirectIOVirtualClientChannel) {
                     REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(DirectIODeviceClientChannel)
-                    
-                    class DirectIODeviceClientChannelDeallocator:
-                    public DirectIODeallocationHandler {
-                    protected:
-                        void freeSentData(void* sent_data_ptr, DisposeSentMemoryInfo *free_info_ptr);
-                    };
-                    //static deallocator forthis channel
-                    static DirectIODeviceClientChannelDeallocator STATIC_DirectIODeviceClientChannelDeallocator;
-                    
-                    AnswerServerInfo answer_server_info;
                 protected:
                     DirectIODeviceClientChannel(std::string alias);
-                    
                 public:
                     ~DirectIODeviceClientChannel();
                     
@@ -71,26 +52,26 @@ namespace chaos {
                     void setAnswerServerInfo(uint16_t p_server_port, uint16_t s_server_port, uint16_t answer_enpoint);
                     
                     //! Send device serialization with priority
-                    int64_t storeAndCacheDataOutputChannel(const std::string& key,
-                                                           void *buffer,
-                                                           uint32_t buffer_len,
-                                                           DataServiceNodeDefinitionType::DSStorageType _put_mode,
-                                                           bool wait_result = true);
+                    int storeAndCacheDataOutputChannel(const std::string& key,
+                                                       void *buffer,
+                                                       uint32_t buffer_len,
+                                                       DataServiceNodeDefinitionType::DSStorageType _put_mode,
+                                                       bool wait_result = true);
                     
                     //! Send device serialization with priority
-                    int64_t storeAndCacheHealthData(const std::string& key,
-                                                    void *buffer,
-                                                    uint32_t buffer_len,
-                                                    DataServiceNodeDefinitionType::DSStorageType _put_mode,
-                                                    bool wait_result = true);
+                    int storeAndCacheHealthData(const std::string& key,
+                                                void *buffer,
+                                                uint32_t buffer_len,
+                                                DataServiceNodeDefinitionType::DSStorageType _put_mode,
+                                                bool wait_result = true);
                     
                     //! Send a request for the last output data
-                    int64_t requestLastOutputData(const std::string& key,
-                                                  void **result, uint32_t &size);
+                    int requestLastOutputData(const std::string& key,
+                                              void **result, uint32_t &size);
                     
                     //! Send a request for the last output data for a set of key
-                    int64_t requestLastOutputData(const ChaosStringVector& keys,
-                                                  chaos::common::data::VectorCDWShrdPtr& results);
+                    int requestLastOutputData(const ChaosStringVector& keys,
+                                              chaos::common::data::VectorCDWShrdPtr& results);
                     
                     //! Perform a temporal query on a key
                     /*!
@@ -99,16 +80,16 @@ namespace chaos {
                      \param start_ts start of timestamp to search
                      \param end_ts end of the timestamp where limit the search
                      \param last_sequence is an input-outpu field that permit to give sequence of the last found
-                            element and will be filled with last element's sequencefo the current found page
+                     element and will be filled with last element's sequencefo the current found page
                      \param result_handler has the found element page
                      \return error
                      */
-                    int64_t queryDataCloud(const std::string& key,
-                                           uint64_t start_ts,
-                                           uint64_t end_ts,
-                                           uint32_t page_dimension,
-                                           opcode_headers::SearchSequence& last_sequence,
-                                           opcode_headers::QueryResultPage& found_element_page);
+                    int queryDataCloud(const std::string& key,
+                                       uint64_t start_ts,
+                                       uint64_t end_ts,
+                                       uint32_t page_dimension,
+                                       opcode_headers::SearchSequence& last_sequence,
+                                       opcode_headers::QueryResultPage& found_element_page);
                     
                     //! Perform a temporal data delete operation on a key
                     /*!
@@ -117,9 +98,9 @@ namespace chaos {
                      \param end_ts end of the timestamp where limit the search
                      \return error
                      */
-                    int64_t deleteDataCloud(const std::string& key,
-                                            uint64_t start_ts,
-                                            uint64_t end_ts);
+                    int deleteDataCloud(const std::string& key,
+                                        uint64_t start_ts,
+                                        uint64_t end_ts);
                 };
                 
                 

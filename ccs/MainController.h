@@ -16,7 +16,7 @@ class MainController:
 public:
     MainController();
     ~MainController();
-    bool init(int argc, char **argv);
+    bool init(int argc, const char **argv);
     void deinit();
 private slots:
     void selectedNetworkDomain(const QString& selected_domain_network);

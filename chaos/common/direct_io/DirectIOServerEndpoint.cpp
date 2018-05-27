@@ -101,33 +101,25 @@ void DirectIOServerEndpoint::releaseChannelInstance(channel::DirectIOVirtualServ
 }
 
 // Event for a new data received
-int DirectIOServerEndpoint::priorityDataReceived(DirectIODataPack *data_pack,
-                                                 DirectIODataPack *synchronous_answer,
-                                                 DirectIODeallocationHandler **answer_header_deallocation_handler,
-                                                 DirectIODeallocationHandler **answer_data_deallocation_handler) {
+int DirectIOServerEndpoint::priorityDataReceived(DirectIODataPackSPtr data_pack,
+                                                 DirectIODataPackSPtr& synchronous_answer) {
     int err = 0;
     ChaosReadLock rl(shared_mutex);
     if(channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]) {
-        err =  channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]->server_channel_delegate->consumeDataPack(data_pack,
-                                                                                                                              synchronous_answer,
-                                                                                                                              answer_header_deallocation_handler,
-                                                                                                                              answer_data_deallocation_handler);
+        err =  channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]->server_channel_delegate->consumeDataPack(ChaosMoveOperator(data_pack),
+                                                                                                                              synchronous_answer);
     }
     return err;
 }
 
 // Event for a new data received
-int DirectIOServerEndpoint::serviceDataReceived(DirectIODataPack *data_pack,
-                                                DirectIODataPack *synchronous_answer,
-                                                DirectIODeallocationHandler **answer_header_deallocation_handler,
-                                                DirectIODeallocationHandler **answer_data_deallocation_handler) {
+int DirectIOServerEndpoint::serviceDataReceived(DirectIODataPackSPtr data_pack,
+                                                DirectIODataPackSPtr& synchronous_answer) {
     int err = 0;
     ChaosReadLock rl(shared_mutex);
     if(channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]) {
-        err = channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]->server_channel_delegate->consumeDataPack(data_pack,
-                                                                                                                             synchronous_answer,
-                                                                                                                             answer_header_deallocation_handler,
-                                                                                                                             answer_data_deallocation_handler);
+        err = channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]->server_channel_delegate->consumeDataPack(ChaosMoveOperator(data_pack),
+                                                                                                                             synchronous_answer);
     }
     return err;
 }

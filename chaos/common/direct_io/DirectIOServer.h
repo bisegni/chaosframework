@@ -52,10 +52,6 @@ namespace chaos {
                 int32_t service_port;
                 std::string service_url;
                 DirectIODispatcher *handler_impl;
-                void deleteDataWithHandler(DirectIODeallocationHandler *_data_deallocator,
-                                           DisposeSentMemoryInfo::SentPart _sent_part,
-                                           uint16_t _sent_opcode,
-                                           void *data);
             public:
                 DirectIOServer(const std::string& alias);
                 
