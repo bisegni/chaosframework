@@ -43,7 +43,6 @@ namespace chaos {
                      \param script_to_insert is a description of a new script
                      */
                     ApiProxyResult execute(chaos::service_common::data::script::ScriptBaseDescription& description);
-                    ApiProxyResult execute( chaos::common::data::CDataWrapper* data_pack);
 
                 };
                 

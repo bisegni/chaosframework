@@ -62,7 +62,7 @@ ChaosWANProxy::~ChaosWANProxy() {
 /*!
  Specialized option for startup c and cpp program main options parameter
  */
-void ChaosWANProxy::init(int argc, char* argv[]) throw (CException) {
+void ChaosWANProxy::init(int argc, const char* argv[]) throw (CException) {
 	ChaosCommon<ChaosWANProxy>::init(argc, argv);
 }
 //!stringbuffer parser

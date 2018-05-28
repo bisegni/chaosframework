@@ -294,7 +294,7 @@ for h in ${lista_hd[@]};do
 done
 lista_unica=`echo -e $listadep| $SED 's/ /\n/g'|tr '\n' ' '`
 
-echo -e "\n\nint main(int argc,char**argv){">>$project_dir/main.cpp
+echo -e "\n\nint main(int argc,const char**argv){">>$project_dir/main.cpp
 echo -e "\ttry{\n">>$project_dir/main.cpp
 echo -e "\t\tchaos::cu::ChaosCUToolkit::getInstance()->init(argc, argv);">>$project_dir/main.cpp
 arr=0

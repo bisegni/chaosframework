@@ -89,6 +89,7 @@ x::x(chaos::common::message::MultiAddressMessageChannel *_mn_message, int32_t ti
                  that permit to inspect the result or error
                  */
                 ApiProxyResult callApi(chaos::common::data::CDataWrapper *api_message = NULL);
+
                 //! default destructor
                 ~ApiProxy();
             };

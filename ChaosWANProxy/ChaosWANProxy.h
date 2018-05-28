@@ -76,7 +76,7 @@ namespace chaos {
 			/*!
 			 Specialized option for startup c and cpp program main options parameter
 			 */
-			void init(int argc, char* argv[]) throw (CException);
+            void init(int argc, const char* argv[]) throw (CException);
 			//!stringbuffer parser
 			/*
 			 specialized option for string stream buffer with boost semantics

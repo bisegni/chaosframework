@@ -26,7 +26,7 @@
 
 using namespace chaos::wan_proxy;
 
-int main(int argc, char * argv[]) {
+int main(int argc, const char * argv[]) {
 	try {
 		//custom start parameter
 		//cache parameter
