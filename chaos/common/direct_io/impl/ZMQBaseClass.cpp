@@ -494,7 +494,7 @@ int ZMQBaseClass::sendDatapack(void *socket,
     }
     //read the direct io datapack with zmq messages
     return sendDatapack(socket,
-                        ChaosMoveOperator(data_pack));
+                        data_pack);
 }
 
 int ZMQBaseClass::sendDatapack(void *socket,
