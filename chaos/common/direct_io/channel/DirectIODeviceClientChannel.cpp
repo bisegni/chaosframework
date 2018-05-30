@@ -65,7 +65,7 @@ int DirectIODeviceClientChannel::storeAndCacheDataOutputChannel(const std::strin
     int err = 0;
     DirectIODataPackSPtr answer;
     DirectIODataPackSPtr data_pack(new DirectIODataPack());
-    BufferSPtr put_opcode_header = ChaosMakeSharedPtr<Buffer>(sizeof(DirectIODeviceChannelHeaderPutOpcode));
+    BufferSPtr put_opcode_header = ChaosMakeSharedPtr<Buffer>(sizeof(DirectIODeviceChannelHeaderPutOpcode)+key.size());
     BufferSPtr channel_data = ChaosMakeSharedPtr<Buffer>(buffer, buffer_len, buffer_len, true);
     
     put_opcode_header->data<DirectIODeviceChannelHeaderPutOpcode>()->tag = (uint8_t) _put_mode;
