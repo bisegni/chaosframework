@@ -358,7 +358,10 @@ int ZMQBaseClass::receiveStartEnvelop(void *socket) {
         return err;
     }
     //assert on different delimiter size
-    CHAOS_ASSERT(empty_delimiter.size() == 0)
+    if(empty_delimiter.size() != 0) {
+        ZMQDIO_BASE_LERR_<<"invalid start envelop";
+        err = -10000;
+    }
     return err;
 }
 
