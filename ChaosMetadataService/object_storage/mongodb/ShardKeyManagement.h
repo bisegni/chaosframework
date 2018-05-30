@@ -22,19 +22,78 @@
 #ifndef __CHAOSFramework__B2D2009_02A2_468B_9C5C_1D184ECB470F_ShardKeyManagement_h
 #define __CHAOSFramework__B2D2009_02A2_468B_9C5C_1D184ECB470F_ShardKeyManagement_h
 
+#include <chaos/common/chaos_types.h>
+
+#include <chaos/common/data/CDataWrapper.h>
+
+#include <chaos/common/utility/Singleton.h>
+#include <chaos/common/utility/LockableObject.h>
+
+#include <boost/atomic.hpp>
+#include <boost/random.hpp>
+#include <boost/generator_iterator.hpp>
+
+#include <mongo/bson/bson.h>
+
 namespace chaos {
     namespace data_service {
         namespace object_storage {
             namespace mongodb {
                 
+                //!class for the managem of sharding random value for a single key
+                class KeyRNDShardInfo {
+                    //random generation deifnition
+                    typedef boost::mt19937_64 RNGType;
+                    RNGType rng;
+                    boost::uniform_int<int64_t> rnd_range;
+                    boost::variate_generator< RNGType, boost::uniform_int<int64_t> > rnd_gen;
+                    
+                    //shard info
+                    ChaosSharedMutex lock_mutex;
+                    
+                    const std::string key;
+                    const uint32_t storage_quota;
+                    int64_t next_check_ts;
+                    uint32_t stored_byte;
+                    boost::atomic<int64_t> shard_value;
+                public:
+                    KeyRNDShardInfo(const std::string& _key,
+                                    const uint32_t _storage_quota);
+                    ~KeyRNDShardInfo();
+                    //!return the value to use as shard key
+                    /*!
+                     the method after a determinated timeout check the quota of data managed by the
+                     key. If this quota exceed the preconfigurated one a new value for shard_value
+                     variable will be calculated
+                     */
+                    const int64_t getShardValue(const int64_t now_in_mds,
+                                                const uint32_t new_size_byte);
+                };
+                
+                //define map for key shard random information
+                CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ChaosSharedPtr<KeyRNDShardInfo>, MapKeyShardInfo);
+                CHAOS_DEFINE_LOCKABLE_OBJECT(MapKeyShardInfo, MapKeyShardInfo_L);
+                
                 //!Class for the managment of the rotating shared key.
                 /*!
                  
                  */
-                class ShardKeyManagement {
-                public:
+                class ShardKeyManagement:
+                public chaos::common::utility::Singleton<ShardKeyManagement> {
+                    friend chaos::common::utility::Singleton<ShardKeyManagement>;
+                    MapKeyShardInfo_L map_key_shard_info;
+                    std::string zone_alias;
                     ShardKeyManagement();
+                public:
                     ~ShardKeyManagement();
+                    
+                    //! set the new zone to manage
+                    void setZoneAlias(const std::string& new_zone_alias);
+                    
+                    //!return a new bson object for the managed zone
+                    mongo::BSONObj getNewDataPack(const std::string& key,
+                                                  const int64_t now_in_ms,
+                                                  const uint32_t new_size_byte);
                 };
             }
         }
