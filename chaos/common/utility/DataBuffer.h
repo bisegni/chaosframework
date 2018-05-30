@@ -55,7 +55,8 @@ namespace chaos {
                 size(init_buf_size){}
 
                 ChaosBuffer(int32_t init_size = 512):
-                size(init_size){
+                size(init_size),
+                own(true){
                     if ( size > 0 ) {
                         data = (char *) allocator.malloc(size);
                         if( data == NULL ) {
