@@ -37,6 +37,7 @@ using namespace chaos::data_service::object_storage::mongodb;
 
 #define MONGODB_DAQ_COLL_NAME       "daq"
 #define MONGODB_DAQ_DATA_FIELD      "data"
+#define DEFAULT_QUANTIZATION        100
 
 using namespace boost;
 using namespace chaos::common::data;
@@ -50,6 +51,7 @@ using namespace chaos::data_service::object_storage::abstraction;
 
 MongoDBObjectStorageDataAccess::MongoDBObjectStorageDataAccess(const ChaosSharedPtr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
 MongoDBAccessor(_connection),
+timestamp_quantization_ms(DEFAULT_QUANTIZATION),
 storage_write_concern(&mongo::WriteConcern::unacknowledged){
     obj_stoarge_kvp = metadata_service::ChaosMetadataService::getInstance()->setting.object_storage_setting.key_value_custom_param;
     if(obj_stoarge_kvp.count("mongodb_oswc")) {
@@ -77,10 +79,9 @@ int MongoDBObjectStorageDataAccess::pushObject(const std::string& key,
                                                const CDataWrapper& stored_object) {
     int err = 0;
     try {
-        const int64_t now_in_ms = TimingUtil::getTimeStamp();
         int buffer_size = 0;
-        const char *buffer = stored_object.getBSONRawData(buffer_size
-                                                          );
+        const int64_t now_in_ms = ((TimingUtil::getTimeStamp()/timestamp_quantization_ms)*timestamp_quantization_ms);
+        const char *buffer = stored_object.getBSONRawData(buffer_size);
         mongo::BSONObjBuilder insert_builder;
         insert_builder << chaos::DataPackCommonKey::DPCK_DEVICE_ID << key <<
                           chaos::DataPackCommonKey::DPCK_TIMESTAMP << mongo::Date_t(now_in_ms);

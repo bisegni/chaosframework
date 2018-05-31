@@ -41,7 +41,7 @@ namespace chaos {
                    
                     //object storage custom parameter
                     MapKVP obj_stoarge_kvp;
-                    
+                    unsigned int timestamp_quantization_ms;
                     const mongo::WriteConcern *storage_write_concern;
                     
                     inline void addTimeRange(mongo::BSONObjBuilder& builder,
