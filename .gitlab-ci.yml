@@ -153,6 +153,7 @@ framework_centos7_deploy:
     - tar cfz chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz chaos-distrib-x86_64-centos7
     - ls -la
     - scp chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/$CI_COMMIT_REF_NAME/x86_64/centos/7/chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz
+    - ssh chaosweb@opensource.lnf.infn.it "rm /var/www/html/binary/chaos/$CI_COMMIT_REF_NAME/x86_64/centos/7/latest"
     - ssh chaosweb@opensource.lnf.infn.it "ln -sf /var/www/html/binary/chaos/$CI_COMMIT_REF_NAME/x86_64/centos/7/chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz /var/www/html/binary/chaos/$CI_COMMIT_REF_NAME/x86_64/centos/7/latest"
     
   only:
