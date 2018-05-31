@@ -36,16 +36,13 @@ using namespace chaos::data_service::object_storage::mongodb;
 
 KeyRNDShardInfo::KeyRNDShardInfo(const std::string& _key,
                                  const uint32_t _storage_quota):
-rng(),
-rnd_range(std::numeric_limits<int64_t>::min(),
-          std::numeric_limits<int64_t>::max()),
-rnd_gen(rng,
-        rnd_range),
+rd(),
+rnd_gen_int64(),
 key(_key),
 storage_quota(_storage_quota),
 next_check_ts(0),
 stored_byte(0),
-shard_value(rnd_gen()){}
+shard_value(rnd_gen_int64(rd)){}
 
 KeyRNDShardInfo::~KeyRNDShardInfo(){}
 
@@ -58,7 +55,7 @@ const int64_t KeyRNDShardInfo::getShardValue(const int64_t now_in_mds,
         if(stored_byte >= storage_quota) {
             stored_byte = 0;
             //generate new value
-            shard_value = rnd_gen();
+            shard_value = rnd_gen_int64(rd);
             DEBUG_CODE(DBG << CHAOS_FORMAT("Generate new random shard key for %1%: -> %2%", %key%shard_value););
         }
     }

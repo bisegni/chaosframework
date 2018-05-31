@@ -32,6 +32,7 @@
 #include <boost/atomic.hpp>
 #include <boost/random.hpp>
 #include <boost/generator_iterator.hpp>
+#include <boost/random/random_device.hpp>
 
 #include <mongo/bson/bson.h>
 
@@ -43,10 +44,8 @@ namespace chaos {
                 //!class for the managem of sharding random value for a single key
                 class KeyRNDShardInfo {
                     //random generation deifnition
-                    typedef boost::mt19937_64 RNGType;
-                    RNGType rng;
-                    boost::uniform_int<int64_t> rnd_range;
-                    boost::variate_generator< RNGType, boost::uniform_int<int64_t> > rnd_gen;
+                    boost::random_device rd;
+                    boost::random::uniform_int_distribution<std::uint64_t> rnd_gen_int64;
                     
                     //shard info
                     ChaosSharedMutex lock_mutex;

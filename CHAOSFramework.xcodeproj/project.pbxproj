@@ -7567,6 +7567,7 @@
 					"-ljsoncpp",
 					"-levent",
 					"-lmongoclient",
+					"-lboost_random",
 					"-lcouchbase",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -7603,6 +7604,7 @@
 					"-ljsoncpp",
 					"-levent",
 					"-lmongoclient",
+					"-lboost_random",
 					"-lcouchbase",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
