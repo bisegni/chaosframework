@@ -200,6 +200,28 @@ int ZMQBaseClass::closeSocketNoWhait (void *socket) {
     return zmq_close (socket);
 }
 
+int ZMQBaseClass::readMessage(void *socket,
+                              BufferSPtr& msg_buffer) {
+    int err = 0;
+    /* Create an empty ØMQ message to hold the message part */
+    zmq_msg_t part;
+    if((err = zmq_msg_init(&part))) {
+        err = zmq_errno();
+        ZMQDIO_BASE_LERR_ << "Error initilizing message" << PRINT_ZMQ_ERR(err);
+        return err;
+    }
+    
+    /* Block until a message is available to be received from socket */
+    if((err = zmq_msg_recv(&part, socket, 0))) {
+        err = zmq_errno();
+        ZMQDIO_BASE_LERR_ << "Error receiving message" << PRINT_ZMQ_ERR(err);
+    }
+    msg_buffer = ChaosMakeSharedPtr<Buffer>();
+    msg_buffer->append(zmq_msg_data(&part), zmq_msg_size(&part));
+    zmq_msg_close(&part);
+    return err;
+}
+
 int ZMQBaseClass::readMessage(void * socket,
                               void *message_data,
                               size_t message_max_size,
@@ -296,14 +318,13 @@ int ZMQBaseClass::moreMessageToRead(void * socket,
     size_t size_int = sizeof(int);
     
     //we heva received the message now check the size aspected
-    if((err = zmq_getsockopt(socket, ZMQ_RCVMORE, &option_result, &size_int)) == -1) {
-        ZMQDIO_BASE_LERR_ << "Error checking the send more option on socket with error:" << PRINT_ZMQ_ERR(err);
+    if((err = zmq_getsockopt(socket, ZMQ_RCVMORE, &option_result, &size_int))) {
         err = zmq_errno();
-        return err;
+        ZMQDIO_BASE_LERR_ << "Error checking the send more option on socket with error:" << PRINT_ZMQ_ERR(err);
     } else {
         more_to_read = (bool)option_result;
     }
-    return 0;
+    return err;
 }
 
 //  Receive 0MQ string from socket and convert into C string
@@ -406,8 +427,22 @@ int ZMQBaseClass::reveiceDatapack(void *socket,
     }
     
     if(DIRECT_IO_HEADER_SIZE != readed_byte) {
-        ZMQDIO_BASE_LERR_<< "The header read phase has reported a different size of '"<<readed_byte<<"' bytes"; \
-        return -13001;
+        ZMQDIO_BASE_LERR_<< "The header read phase has reported a different size of '"<<readed_byte<<"' bytes";
+        //consume other messages if are present because the request is not conform to protobols
+        do {
+            have_more_message = false;
+            if((err = moreMessageToRead(socket, have_more_message))) {
+                ZMQDIO_BASE_LAPP_ << "Error reading if there are other mesages to read";
+                return -13001;
+            } else if(have_more_message) {
+                //!consume messages
+                BufferSPtr msg_buffer;
+                if((err = readMessage(socket, msg_buffer))) {
+                    ZMQDIO_BASE_LAPP_ << "Error consuming unrecognized messages";
+                }
+            }
+        }while(have_more_message);
+        return -13003;
     }
     
     //create new datapack
