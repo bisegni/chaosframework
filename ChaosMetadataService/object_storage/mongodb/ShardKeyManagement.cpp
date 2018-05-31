@@ -44,6 +44,7 @@ next_check_ts(0),
 stored_byte(0),
 shard_value(rnd_gen_int64(rd)){}
 
+
 KeyRNDShardInfo::~KeyRNDShardInfo(){}
 
 const int64_t KeyRNDShardInfo::getShardValue(const int64_t now_in_mds,
