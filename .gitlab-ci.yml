@@ -212,7 +212,7 @@ build_framework_arm:
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
   script:
     - tools/chaos_clean.sh
-    - cmake -DCHAOS_TARGET=armhf .
+    - cmake -DCHAOS_TARGET=armhf -DCHAOS_MDS=OFF .
     - make clean
     - make  -j $NPROC
     - make install
