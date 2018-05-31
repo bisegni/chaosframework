@@ -10,6 +10,7 @@ before_script:
   - export TAR_NAME_POSTFIX=$NOW
   - export SYS=`uname -s`
   - export CHAOS_LIB_HASH=`git log -n 1 --pretty="%h"`
+  - export NPROC=$(nproc --ignore 1)
 
 # codequality:
 #   image: docker:stable
@@ -40,11 +41,11 @@ build_framework_x86_64:
     - tools/chaos_clean.sh
     - cmake -DCHAOS_ARCHITECTURE_TEST=ON -DCMAKE_BUILD_TYPE=PROFILE .
     - make clean
-    - make  -j 3
+    - make  -j $NPROC
     - make install
     - cd ccs
     - /Qt/5.9.3/gcc_64/bin/qmake
-    - make -j 4
+    - make -j $NPROC
   cache:
     key: x86_64_$CI_BUILD_REF_NAME
     paths:
@@ -97,11 +98,11 @@ build_framework_centos7:
     - tools/chaos_clean.sh
     - cmake -DCHAOS_ARCHITECTURE_TEST=ON .
     - make clean
-    - make  -j 3
+    - make  -j $NPROC
     - make install
     - cd ccs
     - /Qt/5.9.3/gcc_64/bin/qmake
-    - make -j 3
+    - make -j $NPROC
     - mv /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-centos7
   cache:
     key: x86_64_centos7_$CI_BUILD_REF_NAME
@@ -169,9 +170,9 @@ build_framework_x86_64_c98:
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
   script:
     - tools/chaos_clean.sh
-    - cmake -DCHAOS_ENABLE_C11=OFF -DCHAOS_ARCHITECTURE_TEST=ON -DCMAKE_BUILD_TYPE=PROFILE .
+    - cmake -DCHAOS_ENABLE_C11=OFF -DCHAOS_MDS=OFF -DCHAOS_ARCHITECTURE_TEST=ON -DCMAKE_BUILD_TYPE=PROFILE .
     - make clean
-    - make  -j 3
+    - make  -j $NPROC
     - make install
     - mv /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux-c98
   cache:
@@ -213,9 +214,9 @@ build_framework_arm:
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
   script:
     - tools/chaos_clean.sh
-    - cmake -DCHAOS_TARGET=armhf .
+    - cmake -DCHAOS_TARGET=armhf -DCHAOS_MDS=OFF .
     - make clean
-    - make  -j 3
+    - make  -j $NPROC
     - make install
   cache:
     key: arm-compilation_$CI_BUILD_REF_NAME
@@ -257,7 +258,7 @@ llvm_build_framework_x86_64:
     - tools/chaos_clean.sh
     - cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCHAOS_ARCHITECTURE_TEST=ON .
     - make clean
-    - make  -j 3
+    - make  -j $NPROC
     - make install
     - mv /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux-llvm
   cache:
