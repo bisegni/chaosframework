@@ -261,7 +261,7 @@ void ZMQDirectIOServer::worker(unsigned int w_type,
     MapZMQConfiguration         worker_empty_default_configuration;
     MapZMQConfiguration         worker_socket_configuration;
     worker_socket_configuration["ZMQ_LINGER"] = "0";
-    worker_socket_configuration["ZMQ_RCVHWM"] = "6";
+    worker_socket_configuration["ZMQ_RCVHWM"] = "500";
     worker_socket_configuration["ZMQ_SNDHWM"] = "1000";
     worker_socket_configuration["ZMQ_RCVTIMEO"] = "-1";
     worker_socket_configuration["ZMQ_SNDTIMEO"] = "1000";
@@ -315,7 +315,8 @@ void ZMQDirectIOServer::worker(unsigned int w_type,
                 //call handler
                 err = DirectIOHandlerPtrCaller(handler_impl, delegate)(ChaosMoveOperator(data_pack_received),
                                                                        data_pack_answer);
-                if(send_synchronous_answer) {
+                if(send_synchronous_answer &&
+                   data_pack_answer) {
                     
                     if((err = sendDatapack(worker_socket,
                                            identity,

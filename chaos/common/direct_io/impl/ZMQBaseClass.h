@@ -22,6 +22,7 @@
 #ifndef CHAOSFramework_ZMQGlobalUtils_h
 #define CHAOSFramework_ZMQGlobalUtils_h
 
+#include <chaos/common/data/Buffer.hpp>
 #include <chaos/common/direct_io/DirectIODataPack.h>
 #include <chaos/common/direct_io/DirectIOForwarder.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
@@ -71,6 +72,9 @@ namespace chaos {
                     int resetOutputQueue(void *socket,
                                          MapZMQConfiguration &default_conf,
                                          const MapZMQConfiguration &startup_conf);
+                    
+                    inline int readMessage(void *socket,
+                                           chaos::common::data::BufferSPtr& msg_buffer);
                     
                     //! read a new message from zmq socket
                     /*!
