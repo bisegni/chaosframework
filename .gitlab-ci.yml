@@ -168,7 +168,7 @@ build_framework_x86_64_c98:
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
   script:
     - tools/chaos_clean.sh
-    - cmake -DCHAOS_ENABLE_C11=OFF -DCHAOS_ARCHITECTURE_TEST=ON -DCMAKE_BUILD_TYPE=PROFILE .
+    - cmake -DCHAOS_ENABLE_C11=OFF -DCHAOS_MDS=OFF -DCHAOS_ARCHITECTURE_TEST=ON -DCMAKE_BUILD_TYPE=PROFILE .
     - make clean
     - make  -j $NPROC
     - make install
