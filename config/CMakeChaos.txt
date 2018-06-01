@@ -165,8 +165,6 @@ ENDIF()
 	MESG("Cross compiling for ARM(soft float) platforms on linux 2.6")
 	CheckCompiler("CXX" arm-infn-linux-gnueabi-g++)
 	CheckCompiler("C" arm-infn-linux-gnueabi-gcc)
-
-	SET(CMAKE_C_COMPILER arm-infn-linux-gnueabi-gcc)
 	SET(CHAOS_CROSS_HOST arm-infn-linux-gnueabi)
 	SET(CHAOS_ENABLE_C11 "Enable C11" OFF)
 	SET(CHAOS_BOOST_VERSION 64)
