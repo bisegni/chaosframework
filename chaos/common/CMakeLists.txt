@@ -316,6 +316,10 @@ ENDIF()
 
 FILE(GLOB files "external_unit/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/external_unit)
+
+FILE(GLOB files "external_unit/http_adapter/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/common/external_unit/http_adapter)
+
 FILE(GLOB files "*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common)
 
