@@ -34,9 +34,10 @@ using namespace chaos::data_service::object_storage::mongodb;
 #define CHECK_TIMEOUT_IN_MS         30000 //(30 seconds)
 #define DEFAULT_KEY_STORAGE_QUOTA   1024000  //1 mbyte in kbyte
 
+boost::random_device KeyRNDShardInfo::rd;
+
 KeyRNDShardInfo::KeyRNDShardInfo(const std::string& _key,
                                  const uint32_t _storage_quota):
-rd(),
 rnd_gen_int64(),
 key(_key),
 storage_quota(_storage_quota),

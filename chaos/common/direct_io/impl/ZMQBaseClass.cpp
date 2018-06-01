@@ -446,7 +446,7 @@ int ZMQBaseClass::reveiceDatapack(void *socket,
     }
     
     //create new datapack
-    data_pack_handle.reset(new DirectIODataPack());
+    data_pack_handle = ChaosMakeSharedPtr<DirectIODataPack>();
     
     //manage little endina conversion for header
     memcpy(&data_pack_handle->header, header_buffer, sizeof(DirectIODataPackDispatchHeader_t));

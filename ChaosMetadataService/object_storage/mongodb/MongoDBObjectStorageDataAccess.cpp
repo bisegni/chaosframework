@@ -96,10 +96,6 @@ int MongoDBObjectStorageDataAccess::pushObject(const std::string& key,
         
         mongo::BSONObj i = insert_builder.obj();
         
-        DEBUG_CODE(DBG<<log_message("pushObject",
-                                    "insert",
-                                    DATA_ACCESS_LOG_1_ENTRY("Query",
-                                                            i.toString()));)
         //insert
         if((err = connection->insert(MONGO_DB_COLLECTION_NAME(MONGODB_DAQ_COLL_NAME),
                                      i,

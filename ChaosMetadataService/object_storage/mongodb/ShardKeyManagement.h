@@ -44,7 +44,7 @@ namespace chaos {
                 //!class for the managem of sharding random value for a single key
                 class KeyRNDShardInfo {
                     //random generation deifnition
-                    boost::random_device rd;
+                    static boost::random_device rd;
                     boost::random::uniform_int_distribution<std::uint64_t> rnd_gen_int64;
 
                     

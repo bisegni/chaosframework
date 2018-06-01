@@ -63,6 +63,7 @@ int DirectIODeviceClientChannel::storeAndCacheDataOutputChannel(const std::strin
                                                                 DataServiceNodeDefinitionType::DSStorageType _put_mode,
                                                                 bool wait_result) {
     int err = 0;
+    if(key.size() > 250) return -1;
     DirectIODataPackSPtr answer;
     DirectIODataPackSPtr data_pack(new DirectIODataPack());
     BufferSPtr put_opcode_header = ChaosMakeSharedPtr<Buffer>(sizeof(DirectIODeviceChannelHeaderPutOpcode)+key.size());
@@ -97,6 +98,7 @@ int DirectIODeviceClientChannel::storeAndCacheHealthData(const std::string& key,
                                                          DataServiceNodeDefinitionType::DSStorageType _put_mode,
                                                          bool wait_result) {
     int err = 0;
+    if(key.size() > 250) return -1;
     DirectIODataPackSPtr answer;
     DirectIODataPackSPtr data_pack(new DirectIODataPack());
     BufferSPtr put_opcode_header = ChaosMakeSharedPtr<Buffer>((PUT_HEADER_LEN(key)+key.size()));

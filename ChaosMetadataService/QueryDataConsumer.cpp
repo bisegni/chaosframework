@@ -153,7 +153,10 @@ int QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode& hea
                                        uint32_t channel_data_len) {
     CHAOS_ASSERT(channel_data)
     int err = 0;
-    DataServiceNodeDefinitionType::DSStorageType storage_type = static_cast<DataServiceNodeDefinitionType::DSStorageType>(header.tag);
+    const int8_t key_tag = header.tag;
+    const std::string key_to_store = std::string((const char *)GET_PUT_OPCODE_KEY_PTR(&header),
+                                                 header.key_len);
+    DataServiceNodeDefinitionType::DSStorageType storage_type = static_cast<DataServiceNodeDefinitionType::DSStorageType>(key_tag);
     //! if tag is == 1 the datapack is in liveonly
     bool send_to_storage_layer = (storage_type != DataServiceNodeDefinitionType::DSStorageTypeLive &&
                                   storage_type != DataServiceNodeDefinitionType::DSStorageTypeUndefined);
@@ -164,8 +167,7 @@ int QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode& hea
             //protected access to cached driver
             CachePoolSlot *cache_slot = DriverPoolManager::getInstance()->getCacheDriverInstance();
             if(cache_slot) {
-                err = cache_slot->resource_pooled->putData(std::string((const char *)GET_PUT_OPCODE_KEY_PTR(&header),
-                                                                       header.key_len),
+                err = cache_slot->resource_pooled->putData(key_to_store,
                                                            cache_data);
                 DriverPoolManager::getInstance()->releaseCacheDriverInstance(cache_slot);
             } else {
@@ -178,7 +180,7 @@ int QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode& hea
             break;
             
         default: {
-            ERR << "Bad storage tag: " << header.tag;
+            ERR << "Bad storage tag: " << key_tag;
             break;
         }
     }
@@ -189,7 +191,8 @@ int QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode& hea
         CHAOS_ASSERT(device_data_worker[index_to_use])
         //create storage job information
         chaos::data_service::worker::DeviceSharedWorkerJob *job = new chaos::data_service::worker::DeviceSharedWorkerJob();
-        job->request_header = header;
+        job->key = key_to_store;
+        job->key_tag = key_tag;
         job->data_pack = channel_data;
         job->data_pack_len = channel_data_len;
         if((err = device_data_worker[index_to_use]->submitJobInfo(job))) {

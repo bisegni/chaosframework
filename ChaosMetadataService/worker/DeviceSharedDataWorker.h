@@ -45,7 +45,8 @@ namespace chaos{
             //! worker information for the device live storage
             struct DeviceSharedWorkerJob :
             public WorkerJob {
-                common::direct_io::channel::opcode_headers::DirectIODeviceChannelHeaderPutOpcode request_header;
+                uint8_t key_tag;
+                std::string key;
                 int	put_operation; //0 -storicize only, 1-live only, 2-storicize and live
                 uint32_t data_pack_len;
                 chaos::common::data::BufferSPtr data_pack;
