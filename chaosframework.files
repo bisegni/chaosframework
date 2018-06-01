@@ -14028,6 +14028,7 @@ chaos/common/cronus_manager/CronusManager.cpp
 chaos/common/cronus_manager/CronusManager.h
 chaos/common/cronus_manager/cronous_manager.h
 chaos/common/curr_version.h
+chaos/common/data/Buffer.hpp
 chaos/common/data/CDataBuffer.cpp
 chaos/common/data/CDataBuffer.h
 chaos/common/data/CDataVariant.cpp
