@@ -19,7 +19,6 @@
 				3211C67E1C146252003B38BF /* PBXTargetDependency */,
 				3211C6801C146252003B38BF /* PBXTargetDependency */,
 				3211C6821C146252003B38BF /* PBXTargetDependency */,
-				3211C6841C146252003B38BF /* PBXTargetDependency */,
 			);
 			name = "Compile ALL";
 			productName = "Compile ALL";
@@ -27,9 +26,6 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		32033D6F1A651DCC004F1B7D /* HTTPWANInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32033D691A651DCC004F1B7D /* HTTPWANInterface.cpp */; };
-		32033D711A651DCC004F1B7D /* HTTPWANInterfaceStringResponse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32033D6D1A651DCC004F1B7D /* HTTPWANInterfaceStringResponse.cpp */; };
-		32033D741A6524BE004F1B7D /* HTTPWANInterfaceRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32033D721A6524BE004F1B7D /* HTTPWANInterfaceRequest.cpp */; };
 		320530D71AE924ED0064275B /* AssociationControlUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320530D51AE924ED0064275B /* AssociationControlUnit.cpp */; };
 		320530DA1AE92D770064275B /* DataServiceDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320530D81AE92D770064275B /* DataServiceDataAccess.cpp */; };
 		320530DD1AE930200064275B /* MongoDBDataServiceDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320530DB1AE930200064275B /* MongoDBDataServiceDataAccess.cpp */; };
@@ -123,9 +119,6 @@
 		3211CCDE1B03402800F9B80E /* QuantumKeyConsumer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3211CCDC1B03402800F9B80E /* QuantumKeyConsumer.h */; };
 		3211FD1D1698699D00424A3C /* LiveDataFetcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3211FD1B1698699D00424A3C /* LiveDataFetcher.cpp */; };
 		3211FD1E1698699D00424A3C /* LiveDataFetcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 3211FD1C1698699D00424A3C /* LiveDataFetcher.h */; };
-		321237231A657BA0002A2D63 /* AbstractWANInterfaceResponse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 321237211A657BA0002A2D63 /* AbstractWANInterfaceResponse.cpp */; };
-		321237261A658404002A2D63 /* DefaultWANInterfaceHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 321237241A658404002A2D63 /* DefaultWANInterfaceHandler.cpp */; };
-		3212372A1A658BA9002A2D63 /* BaseWANInterfaceHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 321237281A658BA9002A2D63 /* BaseWANInterfaceHandler.cpp */; };
 		3214E7401DC1081100A67414 /* AlarmDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3214E73E1DC1081100A67414 /* AlarmDescription.cpp */; };
 		3214E7411DC1081100A67414 /* AlarmDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 3214E73F1DC1081100A67414 /* AlarmDescription.h */; };
 		3214E7441DC10B9500A67414 /* MultiSeverityAlarm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3214E7421DC10B9500A67414 /* MultiSeverityAlarm.cpp */; };
@@ -739,8 +732,6 @@
 		329C1F0E1B568EA600A84D55 /* DirectIOClientConnectionSharedMetricIO.h in Headers */ = {isa = PBXBuildFile; fileRef = 329C1F0C1B568EA600A84D55 /* DirectIOClientConnectionSharedMetricIO.h */; };
 		329CFCF318CDEE2F002C37CF /* ObjectSlot.h in Headers */ = {isa = PBXBuildFile; fileRef = 329CFCF218CDEE2F002C37CF /* ObjectSlot.h */; };
 		329DEB731D2E457F0050E914 /* chaos_errors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329DEB721D2E457F0050E914 /* chaos_errors.cpp */; };
-		329F406C1A669B6300AC318A /* AbstractApiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329F406A1A669B6300AC318A /* AbstractApiGroup.cpp */; };
-		329F40701A669F6C00AC318A /* AbstractPersistenceDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329F406E1A669F6C00AC318A /* AbstractPersistenceDriver.cpp */; };
 		329FFFD1170712CE00D69CDE /* ManagedMemory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329FFFCF170712CE00D69CDE /* ManagedMemory.cpp */; };
 		329FFFD2170712CE00D69CDE /* ManagedMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 329FFFD0170712CE00D69CDE /* ManagedMemory.h */; };
 		32A116441D116F8C00FF44ED /* SearchInstancesForScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A116421D116F8C00FF44ED /* SearchInstancesForScript.cpp */; };
@@ -1001,9 +992,6 @@
 		32C4EF471D4F88ED0014F3D3 /* DatasetSubject.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C4EF451D4F88ED0014F3D3 /* DatasetSubject.h */; };
 		32C5A42718D9959800C0435C /* DirectIOPerformanceSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C5A42518D9959800C0435C /* DirectIOPerformanceSession.cpp */; };
 		32C5A42818D9959800C0435C /* DirectIOPerformanceSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C5A42618D9959800C0435C /* DirectIOPerformanceSession.h */; };
-		32C7EAD71A5D9E450008DFE8 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C7EAD61A5D9E450008DFE8 /* main.cpp */; };
-		32C7EADD1A5D9EE30008DFE8 /* ChaosWANProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C7EADB1A5D9EE30008DFE8 /* ChaosWANProxy.cpp */; };
-		32C7EAE71A5EC9980008DFE8 /* AbstractWANInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C7EAE51A5EC9980008DFE8 /* AbstractWANInterface.cpp */; };
 		32C7ED161B6F8E480038BD26 /* GetFullDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C7ED141B6F8E480038BD26 /* GetFullDescription.cpp */; };
 		32C9CD3C1D51F7D30048DB4A /* PropertyDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C9CD3A1D51F7D30048DB4A /* PropertyDescription.cpp */; };
 		32C9CD3D1D51F7D30048DB4A /* PropertyDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C9CD3B1D51F7D30048DB4A /* PropertyDescription.h */; };
@@ -1079,9 +1067,6 @@
 		32E0EF3818CDB37D00CD1808 /* ZMQDirectIOClientConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E0EF3618CDB37D00CD1808 /* ZMQDirectIOClientConnection.h */; };
 		32E2B1B41C32A60D00FCFB42 /* DeleteNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E2B1B21C32A60D00FCFB42 /* DeleteNode.cpp */; };
 		32E2B1B51C32A60D00FCFB42 /* DeleteNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E2B1B31C32A60D00FCFB42 /* DeleteNode.h */; };
-		32E6F4301E44DDBD0068320E /* ConsumerCUApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E6F42A1E44DDBD0068320E /* ConsumerCUApi.cpp */; };
-		32E6F4311E44DDBD0068320E /* ConsumerGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E6F42C1E44DDBD0068320E /* ConsumerGroup.cpp */; };
-		32E6F4321E44DDBD0068320E /* ConsumerMDSApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E6F42E1E44DDBD0068320E /* ConsumerMDSApi.cpp */; };
 		32E6F4391E48689E0068320E /* ProcessWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E6F4371E48689E0068320E /* ProcessWorker.cpp */; };
 		32E6F43C1E4869120068320E /* AbstractWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E6F43A1E4869120068320E /* AbstractWorker.cpp */; };
 		32E6F43F1E48B4260068320E /* AgentDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E6F43D1E48B4260068320E /* AgentDataAccess.cpp */; };
@@ -1096,13 +1081,6 @@
 		32E9781A2018E41000882958 /* GetAgentForNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E978192018E41000882958 /* GetAgentForNode.cpp */; };
 		32E9781D2018E6DF00882958 /* GetAgentForNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E9781B2018E6DF00882958 /* GetAgentForNode.h */; };
 		32E9781E2018E6DF00882958 /* GetAgentForNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9781C2018E6DF00882958 /* GetAgentForNode.cpp */; };
-		32E9A53E1A66A1B100545BB4 /* AbstractApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9A53C1A66A1B100545BB4 /* AbstractApi.cpp */; };
-		32E9A5461A67D02900545BB4 /* ProducerGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9A5441A67D02900545BB4 /* ProducerGroup.cpp */; };
-		32E9A5491A67D6D600545BB4 /* ProducerRegisterDatasetApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9A5471A67D6D600545BB4 /* ProducerRegisterDatasetApi.cpp */; };
-		32E9A54C1A6800E900545BB4 /* ProducerInsertDatasetApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9A54A1A6800E900545BB4 /* ProducerInsertDatasetApi.cpp */; };
-		32E9A5541A690AF600545BB4 /* ProducerGetLastDatasetApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9A5521A690AF600545BB4 /* ProducerGetLastDatasetApi.cpp */; };
-		32E9A5581A69151F00545BB4 /* PersistenceAccessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9A5571A69151F00545BB4 /* PersistenceAccessor.cpp */; };
-		32E9A55B1A691D2000545BB4 /* DefaultPersistenceDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9A5591A691D2000545BB4 /* DefaultPersistenceDriver.cpp */; };
 		32E9F48D16485012006EAF37 /* ChaosMetadataService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9F48B16485012006EAF37 /* ChaosMetadataService.cpp */; };
 		32EA501218A152BE00782435 /* DirectIOServerEndpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32EA501018A152BE00782435 /* DirectIOServerEndpoint.cpp */; };
 		32EA501318A152BE00782435 /* DirectIOServerEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 32EA501118A152BE00782435 /* DirectIOServerEndpoint.h */; };
@@ -1217,8 +1195,6 @@
 		32FFA3EC1B00D43900C57E07 /* QuantumSlot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FFA3EA1B00D43900C57E07 /* QuantumSlot.cpp */; };
 		32FFA3ED1B00D43900C57E07 /* QuantumSlot.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FFA3EB1B00D43900C57E07 /* QuantumSlot.h */; };
 		32FFA3EE1B00F95900C57E07 /* QuantumSlotScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FFA3E61B00CEE100C57E07 /* QuantumSlotScheduler.cpp */; };
-		533D1F8B1D86E85100FC7AA5 /* ProducerRegisterJsonApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 533D1F891D86E85100FC7AA5 /* ProducerRegisterJsonApi.cpp */; };
-		533D1F8C1D86E85100FC7AA5 /* ProducerInsertJsonApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 533D1F8A1D86E85100FC7AA5 /* ProducerInsertJsonApi.cpp */; };
 		53DADAAF19C8676C00E13DB2 /* SingletonOnArguments.h in Headers */ = {isa = PBXBuildFile; fileRef = 53DADAAE19C8676C00E13DB2 /* SingletonOnArguments.h */; };
 /* End PBXBuildFile section */
 
@@ -1265,13 +1241,6 @@
 			remoteGlobalIDString = 322085D91AC5A0E100F1B71A;
 			remoteInfo = ChaosMetadataServiceClientTest;
 		};
-		3211C6831C146252003B38BF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 32C7EAD31A5D9E450008DFE8;
-			remoteInfo = ChaosWANProxy;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -1293,27 +1262,9 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
-		32C7EAD21A5D9E450008DFE8 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		32033D5F1A64016A004F1B7D /* global_type.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = global_type.h; sourceTree = "<group>"; };
-		32033D601A6401B7004F1B7D /* global_constant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = global_constant.h; sourceTree = "<group>"; };
-		32033D611A6428E2004F1B7D /* wan_interface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = wan_interface.h; sourceTree = "<group>"; };
-		32033D691A651DCC004F1B7D /* HTTPWANInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPWANInterface.cpp; sourceTree = "<group>"; };
-		32033D6A1A651DCC004F1B7D /* HTTPWANInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPWANInterface.h; sourceTree = "<group>"; };
-		32033D6D1A651DCC004F1B7D /* HTTPWANInterfaceStringResponse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPWANInterfaceStringResponse.cpp; sourceTree = "<group>"; };
-		32033D6E1A651DCC004F1B7D /* HTTPWANInterfaceStringResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPWANInterfaceStringResponse.h; sourceTree = "<group>"; };
-		32033D721A6524BE004F1B7D /* HTTPWANInterfaceRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPWANInterfaceRequest.cpp; sourceTree = "<group>"; };
-		32033D731A6524BE004F1B7D /* HTTPWANInterfaceRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPWANInterfaceRequest.h; sourceTree = "<group>"; };
 		320530D51AE924ED0064275B /* AssociationControlUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AssociationControlUnit.cpp; sourceTree = "<group>"; };
 		320530D61AE924ED0064275B /* AssociationControlUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AssociationControlUnit.h; sourceTree = "<group>"; };
 		320530D81AE92D770064275B /* DataServiceDataAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataServiceDataAccess.cpp; sourceTree = "<group>"; };
@@ -1422,12 +1373,6 @@
 		3211CCDC1B03402800F9B80E /* QuantumKeyConsumer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuantumKeyConsumer.h; sourceTree = "<group>"; };
 		3211FD1B1698699D00424A3C /* LiveDataFetcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LiveDataFetcher.cpp; sourceTree = "<group>"; };
 		3211FD1C1698699D00424A3C /* LiveDataFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveDataFetcher.h; sourceTree = "<group>"; };
-		321237201A65788E002A2D63 /* BaseWANInterfaceHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseWANInterfaceHandler.h; sourceTree = "<group>"; };
-		321237211A657BA0002A2D63 /* AbstractWANInterfaceResponse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractWANInterfaceResponse.cpp; sourceTree = "<group>"; };
-		321237221A657BA0002A2D63 /* AbstractWANInterfaceResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractWANInterfaceResponse.h; sourceTree = "<group>"; };
-		321237241A658404002A2D63 /* DefaultWANInterfaceHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DefaultWANInterfaceHandler.cpp; sourceTree = "<group>"; };
-		321237251A658404002A2D63 /* DefaultWANInterfaceHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultWANInterfaceHandler.h; sourceTree = "<group>"; };
-		321237281A658BA9002A2D63 /* BaseWANInterfaceHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BaseWANInterfaceHandler.cpp; sourceTree = "<group>"; };
 		3214E73E1DC1081100A67414 /* AlarmDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = AlarmDescription.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		3214E73F1DC1081100A67414 /* AlarmDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AlarmDescription.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		3214E7421DC10B9500A67414 /* MultiSeverityAlarm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = MultiSeverityAlarm.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
@@ -2218,10 +2163,6 @@
 		329CFCF218CDEE2F002C37CF /* ObjectSlot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectSlot.h; sourceTree = "<group>"; };
 		329DEB721D2E457F0050E914 /* chaos_errors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = chaos_errors.cpp; sourceTree = "<group>"; };
 		329DEB741D2E899A0050E914 /* service_error.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = service_error.cpp; sourceTree = "<group>"; };
-		329F406A1A669B6300AC318A /* AbstractApiGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractApiGroup.cpp; sourceTree = "<group>"; };
-		329F406B1A669B6300AC318A /* AbstractApiGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractApiGroup.h; sourceTree = "<group>"; };
-		329F406E1A669F6C00AC318A /* AbstractPersistenceDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractPersistenceDriver.cpp; sourceTree = "<group>"; };
-		329F406F1A669F6C00AC318A /* AbstractPersistenceDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractPersistenceDriver.h; sourceTree = "<group>"; };
 		329FFFCF170712CE00D69CDE /* ManagedMemory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ManagedMemory.cpp; sourceTree = "<group>"; };
 		329FFFD0170712CE00D69CDE /* ManagedMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManagedMemory.h; sourceTree = "<group>"; };
 		32A116421D116F8C00FF44ED /* SearchInstancesForScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SearchInstancesForScript.cpp; sourceTree = "<group>"; };
@@ -2545,14 +2486,7 @@
 		32C4EF451D4F88ED0014F3D3 /* DatasetSubject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatasetSubject.h; sourceTree = "<group>"; };
 		32C5A42518D9959800C0435C /* DirectIOPerformanceSession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOPerformanceSession.cpp; sourceTree = "<group>"; };
 		32C5A42618D9959800C0435C /* DirectIOPerformanceSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOPerformanceSession.h; sourceTree = "<group>"; };
-		32C7EAD41A5D9E450008DFE8 /* ChaosWANProxy */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ChaosWANProxy; sourceTree = BUILT_PRODUCTS_DIR; };
-		32C7EAD61A5D9E450008DFE8 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		32C7EADB1A5D9EE30008DFE8 /* ChaosWANProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChaosWANProxy.cpp; sourceTree = "<group>"; };
-		32C7EADC1A5D9EE30008DFE8 /* ChaosWANProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChaosWANProxy.h; sourceTree = "<group>"; };
-		32C7EADE1A5D9FA30008DFE8 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		32C7EADF1A5E868C0008DFE8 /* UrlAccessibleService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UrlAccessibleService.h; sourceTree = "<group>"; };
-		32C7EAE51A5EC9980008DFE8 /* AbstractWANInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractWANInterface.cpp; sourceTree = "<group>"; };
-		32C7EAE61A5EC9980008DFE8 /* AbstractWANInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractWANInterface.h; sourceTree = "<group>"; };
 		32C7ED141B6F8E480038BD26 /* GetFullDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetFullDescription.cpp; sourceTree = "<group>"; };
 		32C7ED151B6F8E480038BD26 /* GetFullDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetFullDescription.h; sourceTree = "<group>"; };
 		32C9CD3A1D51F7D30048DB4A /* PropertyDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PropertyDescription.cpp; sourceTree = "<group>"; };
@@ -2655,12 +2589,6 @@
 		32E2B1B21C32A60D00FCFB42 /* DeleteNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeleteNode.cpp; sourceTree = "<group>"; };
 		32E2B1B31C32A60D00FCFB42 /* DeleteNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeleteNode.h; sourceTree = "<group>"; };
 		32E6F4281E44D7D30068320E /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
-		32E6F42A1E44DDBD0068320E /* ConsumerCUApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConsumerCUApi.cpp; sourceTree = "<group>"; };
-		32E6F42B1E44DDBD0068320E /* ConsumerCUApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConsumerCUApi.h; sourceTree = "<group>"; };
-		32E6F42C1E44DDBD0068320E /* ConsumerGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConsumerGroup.cpp; sourceTree = "<group>"; };
-		32E6F42D1E44DDBD0068320E /* ConsumerGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConsumerGroup.h; sourceTree = "<group>"; };
-		32E6F42E1E44DDBD0068320E /* ConsumerMDSApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConsumerMDSApi.cpp; sourceTree = "<group>"; };
-		32E6F42F1E44DDBD0068320E /* ConsumerMDSApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConsumerMDSApi.h; sourceTree = "<group>"; };
 		32E6F4371E48689E0068320E /* ProcessWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcessWorker.cpp; sourceTree = "<group>"; };
 		32E6F4381E48689E0068320E /* ProcessWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessWorker.h; sourceTree = "<group>"; };
 		32E6F43A1E4869120068320E /* AbstractWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractWorker.cpp; sourceTree = "<group>"; };
@@ -2682,27 +2610,10 @@
 		32E782E31EFC0F2800AD59F7 /* HTTPServerAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPServerAdapter.h; sourceTree = "<group>"; };
 		32E86E411CD8A75F0038DE76 /* MessageRequestDomain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageRequestDomain.cpp; sourceTree = "<group>"; };
 		32E86E421CD8A75F0038DE76 /* MessageRequestDomain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageRequestDomain.h; sourceTree = "<group>"; };
-		32E977561A6E65B800D89C15 /* api_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = api_types.h; sourceTree = "<group>"; };
 		32E978182018E41000882958 /* GetAgentForNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GetAgentForNode.h; sourceTree = "<group>"; };
 		32E978192018E41000882958 /* GetAgentForNode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GetAgentForNode.cpp; sourceTree = "<group>"; };
 		32E9781B2018E6DF00882958 /* GetAgentForNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GetAgentForNode.h; sourceTree = "<group>"; };
 		32E9781C2018E6DF00882958 /* GetAgentForNode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GetAgentForNode.cpp; sourceTree = "<group>"; };
-		32E9A53C1A66A1B100545BB4 /* AbstractApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractApi.cpp; sourceTree = "<group>"; };
-		32E9A53D1A66A1B100545BB4 /* AbstractApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractApi.h; sourceTree = "<group>"; };
-		32E9A53F1A66A1C300545BB4 /* api.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = api.h; sourceTree = "<group>"; };
-		32E9A5421A66C45E00545BB4 /* TypedConstrainedHashMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypedConstrainedHashMap.h; sourceTree = "<group>"; };
-		32E9A5441A67D02900545BB4 /* ProducerGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProducerGroup.cpp; sourceTree = "<group>"; };
-		32E9A5451A67D02900545BB4 /* ProducerGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProducerGroup.h; sourceTree = "<group>"; };
-		32E9A5471A67D6D600545BB4 /* ProducerRegisterDatasetApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProducerRegisterDatasetApi.cpp; sourceTree = "<group>"; };
-		32E9A5481A67D6D600545BB4 /* ProducerRegisterDatasetApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProducerRegisterDatasetApi.h; sourceTree = "<group>"; };
-		32E9A54A1A6800E900545BB4 /* ProducerInsertDatasetApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProducerInsertDatasetApi.cpp; sourceTree = "<group>"; };
-		32E9A54B1A6800E900545BB4 /* ProducerInsertDatasetApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProducerInsertDatasetApi.h; sourceTree = "<group>"; };
-		32E9A5521A690AF600545BB4 /* ProducerGetLastDatasetApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProducerGetLastDatasetApi.cpp; sourceTree = "<group>"; };
-		32E9A5531A690AF600545BB4 /* ProducerGetLastDatasetApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProducerGetLastDatasetApi.h; sourceTree = "<group>"; };
-		32E9A5561A69146C00545BB4 /* PersistenceAccessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PersistenceAccessor.h; sourceTree = "<group>"; };
-		32E9A5571A69151F00545BB4 /* PersistenceAccessor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PersistenceAccessor.cpp; sourceTree = "<group>"; };
-		32E9A5591A691D2000545BB4 /* DefaultPersistenceDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DefaultPersistenceDriver.cpp; sourceTree = "<group>"; };
-		32E9A55A1A691D2000545BB4 /* DefaultPersistenceDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultPersistenceDriver.h; sourceTree = "<group>"; };
 		32E9F48B16485012006EAF37 /* ChaosMetadataService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChaosMetadataService.cpp; sourceTree = "<group>"; };
 		32E9F48C16485012006EAF37 /* ChaosMetadataService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChaosMetadataService.h; sourceTree = "<group>"; };
 		32EA501018A152BE00782435 /* DirectIOServerEndpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOServerEndpoint.cpp; sourceTree = "<group>"; };
@@ -2851,10 +2762,6 @@
 		32FFA3E71B00CEE100C57E07 /* QuantumSlotScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuantumSlotScheduler.h; sourceTree = "<group>"; };
 		32FFA3EA1B00D43900C57E07 /* QuantumSlot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QuantumSlot.cpp; sourceTree = "<group>"; };
 		32FFA3EB1B00D43900C57E07 /* QuantumSlot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuantumSlot.h; sourceTree = "<group>"; };
-		533D1F891D86E85100FC7AA5 /* ProducerRegisterJsonApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProducerRegisterJsonApi.cpp; sourceTree = "<group>"; };
-		533D1F8A1D86E85100FC7AA5 /* ProducerInsertJsonApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProducerInsertJsonApi.cpp; sourceTree = "<group>"; };
-		533D1F8D1D8836C400FC7AA5 /* ProducerRegisterJsonApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProducerRegisterJsonApi.h; sourceTree = "<group>"; };
-		533D1F8E1D8836C400FC7AA5 /* ProducerInsertJsonApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProducerInsertJsonApi.h; sourceTree = "<group>"; };
 		53DADAAE19C8676C00E13DB2 /* SingletonOnArguments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SingletonOnArguments.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -2915,29 +2822,9 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		32C7EAD11A5D9E450008DFE8 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		32033D681A651D9E004F1B7D /* http */ = {
-			isa = PBXGroup;
-			children = (
-				32033D691A651DCC004F1B7D /* HTTPWANInterface.cpp */,
-				32033D6A1A651DCC004F1B7D /* HTTPWANInterface.h */,
-				32033D6D1A651DCC004F1B7D /* HTTPWANInterfaceStringResponse.cpp */,
-				32033D6E1A651DCC004F1B7D /* HTTPWANInterfaceStringResponse.h */,
-				32033D721A6524BE004F1B7D /* HTTPWANInterfaceRequest.cpp */,
-				32033D731A6524BE004F1B7D /* HTTPWANInterfaceRequest.h */,
-			);
-			path = http;
-			sourceTree = "<group>";
-		};
 		320642CE167CEA8A00D63D71 /* entity_db */ = {
 			isa = PBXGroup;
 			children = (
@@ -3114,23 +3001,6 @@
 				3211FD1C1698699D00424A3C /* LiveDataFetcher.h */,
 			);
 			path = caching;
-			sourceTree = "<group>";
-		};
-		321237271A658882002A2D63 /* api */ = {
-			isa = PBXGroup;
-			children = (
-				32E6F4291E44DDA60068320E /* consumer */,
-				32E9A5431A67D00A00545BB4 /* producer */,
-				329F406A1A669B6300AC318A /* AbstractApiGroup.cpp */,
-				329F406B1A669B6300AC318A /* AbstractApiGroup.h */,
-				32E9A53C1A66A1B100545BB4 /* AbstractApi.cpp */,
-				32E9A53D1A66A1B100545BB4 /* AbstractApi.h */,
-				32E9A5571A69151F00545BB4 /* PersistenceAccessor.cpp */,
-				32E9A5561A69146C00545BB4 /* PersistenceAccessor.h */,
-				32E9A53F1A66A1C300545BB4 /* api.h */,
-				32E977561A6E65B800D89C15 /* api_types.h */,
-			);
-			path = api;
 			sourceTree = "<group>";
 		};
 		3214EF0C1D466F41004DB689 /* manipulation */ = {
@@ -3728,13 +3598,11 @@
 				323236C9164573C60052CE06 /* ChaosMetadataService */,
 				3264139A1E44ACE60035E175 /* ChaosAgent */,
 				322085DB1AC5A0E200F1B71A /* ChaosMetadataServiceClientTest */,
-				32C7EAD51A5D9E450008DFE8 /* ChaosWANProxy */,
 				32F9C79A1E81943F00D4B250 /* CouchTest */,
 				3230BEBB1817A9E100EA5793 /* libchaos_common.dylib */,
 				3230BEBC1817A9E100EA5793 /* libchaos_cutoolkit.dylib */,
 				3230BEBD1817A9E100EA5793 /* libchaos_uitoolkit.dylib */,
 				3230BEBE1817A9E100EA5793 /* ChaosMetadataService */,
-				32C7EAD41A5D9E450008DFE8 /* ChaosWANProxy */,
 				32661C661AA73D5B00F1A721 /* libchaos_metadata_service_client.dylib */,
 				322085DA1AC5A0E100F1B71A /* ChaosMetadataServiceClientTest */,
 				326413991E44ACE60035E175 /* ChaosAgent */,
@@ -4864,17 +4732,6 @@
 			path = script;
 			sourceTree = "<group>";
 		};
-		329F406D1A669F0300AC318A /* persistence */ = {
-			isa = PBXGroup;
-			children = (
-				329F406E1A669F6C00AC318A /* AbstractPersistenceDriver.cpp */,
-				329F406F1A669F6C00AC318A /* AbstractPersistenceDriver.h */,
-				32E9A5591A691D2000545BB4 /* DefaultPersistenceDriver.cpp */,
-				32E9A55A1A691D2000545BB4 /* DefaultPersistenceDriver.h */,
-			);
-			path = persistence;
-			sourceTree = "<group>";
-		};
 		329FFFCE1707128600D69CDE /* memory */ = {
 			isa = PBXGroup;
 			children = (
@@ -5322,25 +5179,6 @@
 			path = api;
 			sourceTree = "<group>";
 		};
-		32C7EAD51A5D9E450008DFE8 /* ChaosWANProxy */ = {
-			isa = PBXGroup;
-			children = (
-				32C7EADE1A5D9FA30008DFE8 /* CMakeLists.txt */,
-				32C7EAD61A5D9E450008DFE8 /* main.cpp */,
-				32C7EADB1A5D9EE30008DFE8 /* ChaosWANProxy.cpp */,
-				32C7EADC1A5D9EE30008DFE8 /* ChaosWANProxy.h */,
-				32033D5F1A64016A004F1B7D /* global_type.h */,
-				32033D601A6401B7004F1B7D /* global_constant.h */,
-				321237241A658404002A2D63 /* DefaultWANInterfaceHandler.cpp */,
-				321237251A658404002A2D63 /* DefaultWANInterfaceHandler.h */,
-				32C7EAE41A5EC9590008DFE8 /* wan_interface */,
-				321237271A658882002A2D63 /* api */,
-				329F406D1A669F0300AC318A /* persistence */,
-				32E9A5411A66C41E00545BB4 /* utility */,
-			);
-			path = ChaosWANProxy;
-			sourceTree = "<group>";
-		};
 		32C7EAE01A5EC0D60008DFE8 /* persistence */ = {
 			isa = PBXGroup;
 			children = (
@@ -5352,21 +5190,6 @@
 				3235FDD01A6FF66100EC83A9 /* data_access */,
 			);
 			path = persistence;
-			sourceTree = "<group>";
-		};
-		32C7EAE41A5EC9590008DFE8 /* wan_interface */ = {
-			isa = PBXGroup;
-			children = (
-				32033D681A651D9E004F1B7D /* http */,
-				32C7EAE51A5EC9980008DFE8 /* AbstractWANInterface.cpp */,
-				32C7EAE61A5EC9980008DFE8 /* AbstractWANInterface.h */,
-				321237211A657BA0002A2D63 /* AbstractWANInterfaceResponse.cpp */,
-				321237221A657BA0002A2D63 /* AbstractWANInterfaceResponse.h */,
-				321237281A658BA9002A2D63 /* BaseWANInterfaceHandler.cpp */,
-				321237201A65788E002A2D63 /* BaseWANInterfaceHandler.h */,
-				32033D611A6428E2004F1B7D /* wan_interface.h */,
-			);
-			path = wan_interface;
 			sourceTree = "<group>";
 		};
 		32CB737116FE40F9008575F0 /* cache */ = {
@@ -5564,19 +5387,6 @@
 			path = script;
 			sourceTree = "<group>";
 		};
-		32E6F4291E44DDA60068320E /* consumer */ = {
-			isa = PBXGroup;
-			children = (
-				32E6F42A1E44DDBD0068320E /* ConsumerCUApi.cpp */,
-				32E6F42B1E44DDBD0068320E /* ConsumerCUApi.h */,
-				32E6F42C1E44DDBD0068320E /* ConsumerGroup.cpp */,
-				32E6F42D1E44DDBD0068320E /* ConsumerGroup.h */,
-				32E6F42E1E44DDBD0068320E /* ConsumerMDSApi.cpp */,
-				32E6F42F1E44DDBD0068320E /* ConsumerMDSApi.h */,
-			);
-			path = consumer;
-			sourceTree = "<group>";
-		};
 		32E6F4361E4868760068320E /* worker */ = {
 			isa = PBXGroup;
 			children = (
@@ -5676,33 +5486,6 @@
 				32E782D71EFC095500AD59F7 /* mongoose.h */,
 			);
 			path = additional_lib;
-			sourceTree = "<group>";
-		};
-		32E9A5411A66C41E00545BB4 /* utility */ = {
-			isa = PBXGroup;
-			children = (
-				32E9A5421A66C45E00545BB4 /* TypedConstrainedHashMap.h */,
-			);
-			path = utility;
-			sourceTree = "<group>";
-		};
-		32E9A5431A67D00A00545BB4 /* producer */ = {
-			isa = PBXGroup;
-			children = (
-				533D1F8D1D8836C400FC7AA5 /* ProducerRegisterJsonApi.h */,
-				533D1F8E1D8836C400FC7AA5 /* ProducerInsertJsonApi.h */,
-				533D1F891D86E85100FC7AA5 /* ProducerRegisterJsonApi.cpp */,
-				533D1F8A1D86E85100FC7AA5 /* ProducerInsertJsonApi.cpp */,
-				32E9A5441A67D02900545BB4 /* ProducerGroup.cpp */,
-				32E9A5451A67D02900545BB4 /* ProducerGroup.h */,
-				32E9A5471A67D6D600545BB4 /* ProducerRegisterDatasetApi.cpp */,
-				32E9A5481A67D6D600545BB4 /* ProducerRegisterDatasetApi.h */,
-				32E9A54A1A6800E900545BB4 /* ProducerInsertDatasetApi.cpp */,
-				32E9A54B1A6800E900545BB4 /* ProducerInsertDatasetApi.h */,
-				32E9A5521A690AF600545BB4 /* ProducerGetLastDatasetApi.cpp */,
-				32E9A5531A690AF600545BB4 /* ProducerGetLastDatasetApi.h */,
-			);
-			path = producer;
 			sourceTree = "<group>";
 		};
 		32EBDEF31B4E586000278C42 /* metric */ = {
@@ -6568,23 +6351,6 @@
 			productReference = 32661C661AA73D5B00F1A721 /* libchaos_metadata_service_client.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		32C7EAD31A5D9E450008DFE8 /* ChaosWANProxy */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 32C7EADA1A5D9E450008DFE8 /* Build configuration list for PBXNativeTarget "ChaosWANProxy" */;
-			buildPhases = (
-				32C7EAD01A5D9E450008DFE8 /* Sources */,
-				32C7EAD11A5D9E450008DFE8 /* Frameworks */,
-				32C7EAD21A5D9E450008DFE8 /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = ChaosWANProxy;
-			productName = ChaosWANProxy;
-			productReference = 32C7EAD41A5D9E450008DFE8 /* ChaosWANProxy */;
-			productType = "com.apple.product-type.tool";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -6613,9 +6379,6 @@
 					32661C651AA73D5B00F1A721 = {
 						CreatedOnToolsVersion = 6.1.1;
 					};
-					32C7EAD31A5D9E450008DFE8 = {
-						CreatedOnToolsVersion = 6.1;
-					};
 				};
 			};
 			buildConfigurationList = 3260261014B300FE00C906CE /* Build configuration list for PBXProject "CHAOSFramework" */;
@@ -6638,7 +6401,6 @@
 				323236C6164573C60052CE06 /* ChaosMetadataService */,
 				326413981E44ACE60035E175 /* ChaosAgent */,
 				322085D91AC5A0E100F1B71A /* ChaosMetadataServiceClientTest */,
-				32C7EAD31A5D9E450008DFE8 /* ChaosWANProxy */,
 				3211C65B1C146200003B38BF /* Compile ALL */,
 			);
 		};
@@ -7347,36 +7109,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		32C7EAD01A5D9E450008DFE8 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				329F40701A669F6C00AC318A /* AbstractPersistenceDriver.cpp in Sources */,
-				32E6F4311E44DDBD0068320E /* ConsumerGroup.cpp in Sources */,
-				3212372A1A658BA9002A2D63 /* BaseWANInterfaceHandler.cpp in Sources */,
-				32033D6F1A651DCC004F1B7D /* HTTPWANInterface.cpp in Sources */,
-				533D1F8B1D86E85100FC7AA5 /* ProducerRegisterJsonApi.cpp in Sources */,
-				32E6F4321E44DDBD0068320E /* ConsumerMDSApi.cpp in Sources */,
-				329F406C1A669B6300AC318A /* AbstractApiGroup.cpp in Sources */,
-				321237261A658404002A2D63 /* DefaultWANInterfaceHandler.cpp in Sources */,
-				32033D741A6524BE004F1B7D /* HTTPWANInterfaceRequest.cpp in Sources */,
-				32C7EAE71A5EC9980008DFE8 /* AbstractWANInterface.cpp in Sources */,
-				32E9A5541A690AF600545BB4 /* ProducerGetLastDatasetApi.cpp in Sources */,
-				32E9A5581A69151F00545BB4 /* PersistenceAccessor.cpp in Sources */,
-				32E9A5461A67D02900545BB4 /* ProducerGroup.cpp in Sources */,
-				32C7EADD1A5D9EE30008DFE8 /* ChaosWANProxy.cpp in Sources */,
-				32033D711A651DCC004F1B7D /* HTTPWANInterfaceStringResponse.cpp in Sources */,
-				321237231A657BA0002A2D63 /* AbstractWANInterfaceResponse.cpp in Sources */,
-				32E9A5491A67D6D600545BB4 /* ProducerRegisterDatasetApi.cpp in Sources */,
-				533D1F8C1D86E85100FC7AA5 /* ProducerInsertJsonApi.cpp in Sources */,
-				32E6F4301E44DDBD0068320E /* ConsumerCUApi.cpp in Sources */,
-				32E9A54C1A6800E900545BB4 /* ProducerInsertDatasetApi.cpp in Sources */,
-				32E9A53E1A66A1B100545BB4 /* AbstractApi.cpp in Sources */,
-				32C7EAD71A5D9E450008DFE8 /* main.cpp in Sources */,
-				32E9A55B1A691D2000545BB4 /* DefaultPersistenceDriver.cpp in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -7409,11 +7141,6 @@
 			isa = PBXTargetDependency;
 			target = 322085D91AC5A0E100F1B71A /* ChaosMetadataServiceClientTest */;
 			targetProxy = 3211C6811C146252003B38BF /* PBXContainerItemProxy */;
-		};
-		3211C6841C146252003B38BF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 32C7EAD31A5D9E450008DFE8 /* ChaosWANProxy */;
-			targetProxy = 3211C6831C146252003B38BF /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -8198,104 +7925,6 @@
 			};
 			name = Release;
 		};
-		32C7EAD81A5D9E450008DFE8 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/bin";
-				COPY_PHASE_STRIP = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					.,
-					usr/local/include,
-				);
-				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MTL_ENABLE_DEBUG_INFO = YES;
-				OTHER_LDFLAGS = (
-					"-lchaos_common",
-					"-lmongoose",
-					"-ljsoncpp",
-				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-			};
-			name = Debug;
-		};
-		32C7EAD91A5D9E450008DFE8 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/bin";
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_PREPROCESSOR_DEFINITIONS = BOOST_ALL_DYN_LINK;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					.,
-					usr/local/include,
-				);
-				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_LDFLAGS = (
-					"-lchaos_common",
-					"-lmongoose",
-					"-ljsoncpp",
-				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -8385,15 +8014,6 @@
 			buildConfigurations = (
 				32661C671AA73D5C00F1A721 /* Debug */,
 				32661C681AA73D5C00F1A721 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		32C7EADA1A5D9E450008DFE8 /* Build configuration list for PBXNativeTarget "ChaosWANProxy" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				32C7EAD81A5D9E450008DFE8 /* Debug */,
-				32C7EAD91A5D9E450008DFE8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
