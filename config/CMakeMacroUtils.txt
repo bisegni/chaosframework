@@ -438,7 +438,9 @@ IF (NOT CACHE_DIR)
 
   endmacro()
 
-  macro(InstallHeaders dd)
+
+ENDIF()
+	  macro(InstallHeaders dd)
     MESG("checking for headers in ${CMAKE_CURRENT_LIST_DIR}/${dd}")
     IF (EXISTS "${CMAKE_CURRENT_LIST_DIR}/${dd}")
       FILE(RELATIVE_PATH PROJECT_OUT_H ${TOP_DIRECTORY} "${CMAKE_CURRENT_LIST_DIR}/${dd}")
@@ -457,7 +459,5 @@ IF (NOT CACHE_DIR)
     ENDIF()
 
   endmacro()
-
-ENDIF()
   
 ##########
