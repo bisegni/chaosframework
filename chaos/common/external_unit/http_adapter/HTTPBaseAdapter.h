@@ -38,6 +38,30 @@ namespace chaos {
         namespace external_unit {
             namespace http_adapter {
                 
+                struct ServerWorkRequest {
+                    WorkRequestType r_type;
+                    mg_connection *nc;
+                    std::string uri;
+                    //!serialization type issuead on the beginning of the http request
+                    std::string s_type;
+                    ChaosUniquePtr<chaos::common::data::CDataBuffer> buffer;
+                    
+                    ServerWorkRequest():
+                    r_type(WorkRequestTypeUnspecified),
+                    nc(NULL),
+                    uri(),
+                    s_type(),
+                    buffer(){}
+                    
+                    ServerWorkRequest(const char *ptr,
+                                      uint32_t size):
+                    r_type(WorkRequestTypeUnspecified),
+                    nc(NULL),
+                    uri(),
+                    s_type(),
+                    buffer(new chaos::common::data::CDataBuffer(ptr, size, true)){}
+                };
+                
                 class HTTPBaseAdapter {
                     friend class ExternalUnitConnection;
                 protected:
