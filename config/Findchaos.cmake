@@ -1,6 +1,8 @@
 set(PREFIX ${CMAKE_CURRENT_LIST_DIR})
 set(chaos_INCLUDE_DIRS ${PREFIX}/include)
 FILE(GLOB boost_libs ${PREFIX}/lib/libboost*.a)
+ADD_DEFINITIONS(-DCHAOS)
 set(chaos_LIBRARIES ${PREFIX}/lib/libchaos_metadata_service_client.so ${PREFIX}/lib/libchaos_common.so ${PREFIX}/lib/libchaos_cutoolkit.so pthread dl)
 SET(CMAKE_INSTALL_RPATH "${PREFIX}/lib")
 link_directories(${PREFIX}/lib)
+SET(FrameworkLib ${chaos_LIBRARIES} ${boost_libs})

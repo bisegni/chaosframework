@@ -41,6 +41,7 @@ CHAOSFrameworkTests/PluginLibrary/PluginLibrary.h
 CHAOSFrameworkTests/TestTimer/TimerTask.cpp
 CHAOSFrameworkTests/TestTimer/TimerTask.h
 CHAOSFrameworkTests/TestTimer/main.cpp
+CMakeLists.txt
 ChaosAgent/AbstractWorker.cpp
 ChaosAgent/AbstractWorker.h
 ChaosAgent/AgentRegister.cpp
@@ -13891,6 +13892,7 @@ chaos-distrib-x86_64-Linux/tools/project_template/sccu.tmpl/source/__template_na
 chaos-distrib-x86_64-Linux/tools/project_template/sccu.tmpl/source/__template_name__Interface.h
 chaos-distrib-x86_64-Linux/tools/project_template/sccu.tmpl/source/main.cpp
 chaos-distrib-x86_64-Linux/tools/project_template/sccu.tmpl/test/__template_name__Client.cpp
+chaos/common/CMakeLists.txt
 chaos/common/ChaosCommon.h
 chaos/common/action/ActionDescriptor.cpp
 chaos/common/action/ActionDescriptor.h

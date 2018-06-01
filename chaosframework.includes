@@ -796,3 +796,4 @@ usr/local/tools/project_template/common.tmpl/source
 usr/local/tools/project_template/driver.tmpl/source
 usr/local/tools/project_template/rtcu.tmpl/source
 usr/local/tools/project_template/sccu.tmpl/source
+.

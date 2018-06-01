@@ -317,6 +317,9 @@ ENDIF()
 FILE(GLOB files "external_unit/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/external_unit)
 
+FILE(GLOB files "external_unit/serialization/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/common/external_unit/serialization)
+
 FILE(GLOB files "external_unit/http_adapter/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/external_unit/http_adapter)
 
