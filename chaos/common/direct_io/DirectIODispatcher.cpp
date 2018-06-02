@@ -151,10 +151,10 @@ int DirectIODispatcher::priorityDataReceived(DirectIODataPackSPtr data_pack,
     if(data_pack->header.dispatcher_header.fields.route_addr>=MAX_ENDPOINT_NUMBER){
         DIOD_LERR_ << "The endpoint address " << data_pack->header.dispatcher_header.fields.route_addr << "is invalid";
     } else if(endpoint_slot_array[data_pack->header.dispatcher_header.fields.route_addr]->enable) {
-        err = endpoint_slot_array[data_pack->header.dispatcher_header.fields.route_addr]->endpoint->priorityDataReceived(data_pack,
+        err = endpoint_slot_array[data_pack->header.dispatcher_header.fields.route_addr]->endpoint->priorityDataReceived(ChaosMoveOperator(data_pack),
                                                                                                                          synchronous_answer);
     } else {
-        DIOD_LERR_ << "The endpoint address " << data_pack->header.dispatcher_header.fields.route_addr << "is disable";
+        DIOD_LERR_ << "The endpoint address " << tmp_addr << "is disable";
     }
     if(synchronous_answer.get()) {
         //set opcode for the answer
@@ -190,7 +190,7 @@ int DirectIODispatcher::serviceDataReceived(DirectIODataPackSPtr data_pack,
         err = endpoint_slot_array[data_pack->header.dispatcher_header.fields.route_addr]->endpoint->serviceDataReceived(ChaosMoveOperator(data_pack),
                                                                                                                         synchronous_answer);
     } else {
-        DIOD_LERR_ << "The endpoint address " << data_pack->header.dispatcher_header.fields.route_addr << "is disable";
+        DIOD_LERR_ << "The endpoint address " << tmp_addr << "is disable";
     }
     if(synchronous_answer.get()) {
         //set opcode for the answer

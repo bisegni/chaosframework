@@ -79,7 +79,7 @@ int DirectIODeviceServerChannel::consumeDataPack(chaos::common::direct_io::Direc
                                            result_data);
             if(err == 0){
                 //set the result header and data
-                DIRECT_IO_SET_CHANNEL_HEADER(synchronous_answer, result_header, sizeof(DirectIODeviceChannelHeaderGetOpcodeResult))
+                DIRECT_IO_SET_CHANNEL_HEADER(synchronous_answer, result_header, (uint32_t)result_header->size())
                 DIRECT_IO_SET_CHANNEL_DATA(synchronous_answer, result_data, result_header->data<opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult>()->value_len)
                 result_header->data<opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult>()->value_len = TO_LITTEL_ENDNS_NUM(uint32_t, result_header->data<opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult>()->value_len);
             }
@@ -112,7 +112,7 @@ int DirectIODeviceServerChannel::consumeDataPack(chaos::common::direct_io::Direc
                                            result_data_size);
             if(err == 0){
                 //set the result header and data
-                DIRECT_IO_SET_CHANNEL_HEADER(synchronous_answer, result_header, sizeof(DirectIODeviceChannelHeaderMultiGetOpcodeResult));
+                DIRECT_IO_SET_CHANNEL_HEADER(synchronous_answer, result_header, (uint32_t)result_header->size());
                 DIRECT_IO_SET_CHANNEL_DATA(synchronous_answer, result_data, result_data_size);
                 result_header->data<opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcodeResult>()->number_of_result = TO_LITTEL_ENDNS_NUM(uint32_t, result_header->data<opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcodeResult>()->number_of_result);
             }

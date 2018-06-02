@@ -30,6 +30,8 @@ using namespace chaos::common::utility;
 using namespace chaos::common::direct_io;
 using namespace chaos::common::direct_io::channel;
 
+#define TEST_BUF_SIZE 10000
+
 unsigned int consumePutEvent_counter = 0;
 
 unsigned int consumeHealthDataEvent_counter = 0;
@@ -126,7 +128,10 @@ public:
                 it++) {
                 CDWUniquePtr data(new CDataWrapper());
                 data->addStringValue("key", *it);
-                
+                {
+                    BufferSPtr test_mem = ChaosMakeSharedPtr<Buffer>(TEST_BUF_SIZE);
+                    data->addBinaryValue("bin", test_mem->data(),(uint32_t)test_mem->size());
+                }
                 data_buffer.writeByte(data->getBSONRawData(),
                                       data->getBSONRawSize());
             }
@@ -159,6 +164,8 @@ public:
                     idx++) {
                     CDWUniquePtr data(new CDataWrapper());
                     data->addStringValue("key", CHAOS_FORMAT("%1%",%idx));
+                    BufferSPtr test_mem = ChaosMakeSharedPtr<Buffer>(TEST_BUF_SIZE);
+                    data->addBinaryValue("bin", test_mem->data(),(uint32_t)test_mem->size());
                     result_page.push_back(CDWShrdPtr(data.release()));
                 }
                 last_element_found_seq.datapack_counter++;
@@ -193,7 +200,6 @@ public:
 TEST_F(DirectIOChannelTest, DeviceChannelTest) {
     DeviceServerHandler handler;
     DirectIODeviceClientChannel *client_channel = NULL;
-    NULL;
     
     DirectIODeviceServerChannel *server_channel = (DirectIODeviceServerChannel*)endpoint->getNewChannelInstance("DirectIODeviceServerChannel");
     ASSERT_TRUE(server_channel);
@@ -206,98 +212,93 @@ TEST_F(DirectIOChannelTest, DeviceChannelTest) {
     client_channel = (DirectIODeviceClientChannel*)connection->getNewChannelInstance("DirectIODeviceClientChannel");
     ASSERT_TRUE(client_channel);
     //consumePutEvent
+    for(int idx=0; idx < 1000; idx++)
     {
         CDWUniquePtr push_data(new CDataWrapper());
         push_data->addInt32Value("key", chaos::DataServiceNodeDefinitionType::DSStorageTypeLive);
-        ChaosUniquePtr<SerializationBuffer> ser(push_data->getBSONData());
-        ser->disposeOnDelete = false;
-        ASSERT_TRUE(client_channel->storeAndCacheDataOutputChannel("key", (void*)ser->getBufferPtr(), (uint32_t)ser->getBufferLen(), chaos::DataServiceNodeDefinitionType::DSStorageTypeLive));
+        BufferSPtr test_mem = ChaosMakeSharedPtr<Buffer>(TEST_BUF_SIZE);
+        push_data->addBinaryValue("bin", test_mem->data(),(uint32_t)test_mem->size());
+        ChaosUniquePtr<SerializationBuffer> ser_1(push_data->getBSONData());
+        ser_1->disposeOnDelete = false;
+        ChaosUniquePtr<SerializationBuffer> ser_2(push_data->getBSONData());
+        ser_2->disposeOnDelete = false;
+        ASSERT_TRUE(client_channel->storeAndCacheDataOutputChannel("key", (void*)ser_1->getBufferPtr(), (uint32_t)ser_1->getBufferLen(), chaos::DataServiceNodeDefinitionType::DSStorageTypeLive));
+        ASSERT_FALSE(client_channel->storeAndCacheDataOutputChannel("key", (void*)ser_2->getBufferPtr(), (uint32_t)ser_2->getBufferLen(), chaos::DataServiceNodeDefinitionType::DSStorageTypeLive));
     }
+    
+    for(int idx=0; idx < 1000; idx++)
+    {
+        CDWUniquePtr push_data(new CDataWrapper());
+        push_data->addInt32Value("key", chaos::DataServiceNodeDefinitionType::DSStorageTypeHistory);
+        BufferSPtr test_mem = ChaosMakeSharedPtr<Buffer>(TEST_BUF_SIZE);
+        push_data->addBinaryValue("bin", test_mem->data(),(uint32_t)test_mem->size());
+        ChaosUniquePtr<SerializationBuffer> ser_1(push_data->getBSONData());
+        ser_1->disposeOnDelete = false;
+        ChaosUniquePtr<SerializationBuffer> ser_2(push_data->getBSONData());
+        ser_2->disposeOnDelete = false;
+        ASSERT_TRUE(client_channel->storeAndCacheDataOutputChannel("key", (void*)ser_1->getBufferPtr(), (uint32_t)ser_1->getBufferLen(), chaos::DataServiceNodeDefinitionType::DSStorageTypeHistory));
+        ASSERT_FALSE(client_channel->storeAndCacheDataOutputChannel("key", (void*)ser_2->getBufferPtr(), (uint32_t)ser_2->getBufferLen(), chaos::DataServiceNodeDefinitionType::DSStorageTypeHistory));
+    }
+    
+    for(int idx=0; idx < 1000; idx++)
+    {
+        CDWUniquePtr push_data(new CDataWrapper());
+        push_data->addInt32Value("key", chaos::DataServiceNodeDefinitionType::DSStorageTypeLiveHistory);
+        BufferSPtr test_mem = ChaosMakeSharedPtr<Buffer>(TEST_BUF_SIZE);
+        push_data->addBinaryValue("bin", test_mem->data(),(uint32_t)test_mem->size());
+        ChaosUniquePtr<SerializationBuffer> ser_1(push_data->getBSONData());
+        ser_1->disposeOnDelete = false;
+        ChaosUniquePtr<SerializationBuffer> ser_2(push_data->getBSONData());
+        ser_2->disposeOnDelete = false;
+        ASSERT_TRUE(client_channel->storeAndCacheDataOutputChannel("key", (void*)ser_1->getBufferPtr(), (uint32_t)ser_1->getBufferLen(), chaos::DataServiceNodeDefinitionType::DSStorageTypeLiveHistory));
+        ASSERT_FALSE(client_channel->storeAndCacheDataOutputChannel("key", (void*)ser_2->getBufferPtr(), (uint32_t)ser_2->getBufferLen(), chaos::DataServiceNodeDefinitionType::DSStorageTypeLiveHistory));
+    }
+    
+    for(int idx=0; idx < 1000; idx++)
     {
         CDWUniquePtr push_data(new CDataWrapper());
         push_data->addInt32Value("key", chaos::DataServiceNodeDefinitionType::DSStorageTypeLive);
-        ChaosUniquePtr<SerializationBuffer> ser(push_data->getBSONData());
-        ser->disposeOnDelete = false;
-        ASSERT_FALSE(client_channel->storeAndCacheDataOutputChannel("key", (void*)ser->getBufferPtr(), (uint32_t)ser->getBufferLen(), chaos::DataServiceNodeDefinitionType::DSStorageTypeLive));
+        BufferSPtr test_mem = ChaosMakeSharedPtr<Buffer>(TEST_BUF_SIZE);
+        push_data->addBinaryValue("bin", test_mem->data(),(uint32_t)test_mem->size());
+        ChaosUniquePtr<SerializationBuffer> ser_1(push_data->getBSONData());
+        ser_1->disposeOnDelete = false;
+        ChaosUniquePtr<SerializationBuffer> ser_2(push_data->getBSONData());
+        ser_2->disposeOnDelete = false;
+        ASSERT_TRUE(client_channel->storeAndCacheHealthData("key", (void*)ser_1->getBufferPtr(), (uint32_t)ser_1->getBufferLen(), chaos::DataServiceNodeDefinitionType::DSStorageTypeLive));
+        ASSERT_FALSE(client_channel->storeAndCacheHealthData("key", (void*)ser_2->getBufferPtr(), (uint32_t)ser_2->getBufferLen(), chaos::DataServiceNodeDefinitionType::DSStorageTypeLive));
     }
-    
+    for(int idx=0; idx < 1000; idx++)
     {
         CDWUniquePtr push_data(new CDataWrapper());
         push_data->addInt32Value("key", chaos::DataServiceNodeDefinitionType::DSStorageTypeHistory);
-        ChaosUniquePtr<SerializationBuffer> ser(push_data->getBSONData());
-        ser->disposeOnDelete = false;
-        ASSERT_TRUE(client_channel->storeAndCacheDataOutputChannel("key", (void*)ser->getBufferPtr(), (uint32_t)ser->getBufferLen(), chaos::DataServiceNodeDefinitionType::DSStorageTypeHistory));
-    }
-    {
-        CDWUniquePtr push_data(new CDataWrapper());
-        push_data->addInt32Value("key", chaos::DataServiceNodeDefinitionType::DSStorageTypeHistory);
-        ChaosUniquePtr<SerializationBuffer> ser(push_data->getBSONData());
-        ser->disposeOnDelete = false;
-        ASSERT_FALSE(client_channel->storeAndCacheDataOutputChannel("key", (void*)ser->getBufferPtr(), (uint32_t)ser->getBufferLen(), chaos::DataServiceNodeDefinitionType::DSStorageTypeHistory));
+        BufferSPtr test_mem = ChaosMakeSharedPtr<Buffer>(TEST_BUF_SIZE);
+        push_data->addBinaryValue("bin", test_mem->data(),(uint32_t)test_mem->size());
+        ChaosUniquePtr<SerializationBuffer> ser_1(push_data->getBSONData());
+        ser_1->disposeOnDelete = false;
+        ChaosUniquePtr<SerializationBuffer> ser_2(push_data->getBSONData());
+        ser_2->disposeOnDelete = false;
+        ASSERT_TRUE(client_channel->storeAndCacheHealthData("key", (void*)ser_1->getBufferPtr(), (uint32_t)ser_1->getBufferLen(), chaos::DataServiceNodeDefinitionType::DSStorageTypeHistory));
+        ASSERT_FALSE(client_channel->storeAndCacheHealthData("key", (void*)ser_2->getBufferPtr(), (uint32_t)ser_2->getBufferLen(), chaos::DataServiceNodeDefinitionType::DSStorageTypeHistory));
     }
     
+    for(int idx=0; idx < 1000; idx++)
     {
         CDWUniquePtr push_data(new CDataWrapper());
         push_data->addInt32Value("key", chaos::DataServiceNodeDefinitionType::DSStorageTypeLiveHistory);
-        ChaosUniquePtr<SerializationBuffer> ser(push_data->getBSONData());
-        ser->disposeOnDelete = false;
-        ASSERT_TRUE(client_channel->storeAndCacheDataOutputChannel("key", (void*)ser->getBufferPtr(), (uint32_t)ser->getBufferLen(), chaos::DataServiceNodeDefinitionType::DSStorageTypeLiveHistory));
-    }
-    {
-        CDWUniquePtr push_data(new CDataWrapper());
-        push_data->addInt32Value("key", chaos::DataServiceNodeDefinitionType::DSStorageTypeLiveHistory);
-        ChaosUniquePtr<SerializationBuffer> ser(push_data->getBSONData());
-        ser->disposeOnDelete = false;
-        ASSERT_FALSE(client_channel->storeAndCacheDataOutputChannel("key", (void*)ser->getBufferPtr(), (uint32_t)ser->getBufferLen(), chaos::DataServiceNodeDefinitionType::DSStorageTypeLiveHistory));
-    }
-    //consumeHealthDataEvent
-    {
-        CDWUniquePtr push_data(new CDataWrapper());
-        push_data->addInt32Value("key", chaos::DataServiceNodeDefinitionType::DSStorageTypeLive);
-        ChaosUniquePtr<SerializationBuffer> ser(push_data->getBSONData());
-        ser->disposeOnDelete = false;
-        ASSERT_TRUE(client_channel->storeAndCacheHealthData("key", (void*)ser->getBufferPtr(), (uint32_t)ser->getBufferLen(), chaos::DataServiceNodeDefinitionType::DSStorageTypeLive));
-    }
-    {
-        CDWUniquePtr push_data(new CDataWrapper());
-        push_data->addInt32Value("key", chaos::DataServiceNodeDefinitionType::DSStorageTypeLive);
-        ChaosUniquePtr<SerializationBuffer> ser(push_data->getBSONData());
-        ser->disposeOnDelete = false;
-        ASSERT_FALSE(client_channel->storeAndCacheHealthData("key", (void*)ser->getBufferPtr(), (uint32_t)ser->getBufferLen(), chaos::DataServiceNodeDefinitionType::DSStorageTypeLive));
+        BufferSPtr test_mem = ChaosMakeSharedPtr<Buffer>(TEST_BUF_SIZE);
+        push_data->addBinaryValue("bin", test_mem->data(),(uint32_t)test_mem->size());
+        ChaosUniquePtr<SerializationBuffer> ser_1(push_data->getBSONData());
+        ser_1->disposeOnDelete = false;
+        ChaosUniquePtr<SerializationBuffer> ser_2(push_data->getBSONData());
+        ser_2->disposeOnDelete = false;
+        ASSERT_TRUE(client_channel->storeAndCacheHealthData("key", (void*)ser_1->getBufferPtr(), (uint32_t)ser_1->getBufferLen(), chaos::DataServiceNodeDefinitionType::DSStorageTypeLiveHistory));
+        ASSERT_FALSE(client_channel->storeAndCacheHealthData("key", (void*)ser_2->getBufferPtr(), (uint32_t)ser_2->getBufferLen(), chaos::DataServiceNodeDefinitionType::DSStorageTypeLiveHistory));
     }
     
+    for(int idx=0; idx < 1000; idx++)
     {
-        CDWUniquePtr push_data(new CDataWrapper());
-        push_data->addInt32Value("key", chaos::DataServiceNodeDefinitionType::DSStorageTypeHistory);
-        ChaosUniquePtr<SerializationBuffer> ser(push_data->getBSONData());
-        ser->disposeOnDelete = false;
-        ASSERT_TRUE(client_channel->storeAndCacheHealthData("key", (void*)ser->getBufferPtr(), (uint32_t)ser->getBufferLen(), chaos::DataServiceNodeDefinitionType::DSStorageTypeHistory));
-    }
-    {
-        CDWUniquePtr push_data(new CDataWrapper());
-        push_data->addInt32Value("key", chaos::DataServiceNodeDefinitionType::DSStorageTypeHistory);
-        ChaosUniquePtr<SerializationBuffer> ser(push_data->getBSONData());
-        ser->disposeOnDelete = false;
-        ASSERT_FALSE(client_channel->storeAndCacheHealthData("key", (void*)ser->getBufferPtr(), (uint32_t)ser->getBufferLen(), chaos::DataServiceNodeDefinitionType::DSStorageTypeHistory));
-    }
-    
-    {
-        CDWUniquePtr push_data(new CDataWrapper());
-        push_data->addInt32Value("key", chaos::DataServiceNodeDefinitionType::DSStorageTypeLiveHistory);
-        ChaosUniquePtr<SerializationBuffer> ser(push_data->getBSONData());
-        ser->disposeOnDelete = false;
-        ASSERT_TRUE(client_channel->storeAndCacheHealthData("key", (void*)ser->getBufferPtr(), (uint32_t)ser->getBufferLen(), chaos::DataServiceNodeDefinitionType::DSStorageTypeLiveHistory));
-    }
-    {
-        CDWUniquePtr push_data(new CDataWrapper());
-        push_data->addInt32Value("key", chaos::DataServiceNodeDefinitionType::DSStorageTypeLiveHistory);
-        ChaosUniquePtr<SerializationBuffer> ser(push_data->getBSONData());
-        ser->disposeOnDelete = false;
-        ASSERT_FALSE(client_channel->storeAndCacheHealthData("key", (void*)ser->getBufferPtr(), (uint32_t)ser->getBufferLen(), chaos::DataServiceNodeDefinitionType::DSStorageTypeLiveHistory));
-    }
-    
-    //consumeGetEvent
-    {
+        get_counter = 0;
+        consumeGetEvent_counter = 0;
         void *result = NULL;
         uint32_t size = 0;
         ASSERT_TRUE(client_channel->requestLastOutputData("requestLastOutputData", &result, size));
@@ -313,8 +314,9 @@ TEST_F(DirectIOChannelTest, DeviceChannelTest) {
         ASSERT_STREQ(result_cdw->getStringValue("key").c_str(), "string");
         free(result);
     }
-    //consumeGetEvent multiple key
+    for(int idx=0; idx < 1000; idx++)
     {
+        consumeGetEventMulti_counter = 0;
         ChaosStringVector keys;
         keys.push_back("key1");
         keys.push_back("key2");
@@ -323,7 +325,7 @@ TEST_F(DirectIOChannelTest, DeviceChannelTest) {
         ASSERT_TRUE(client_channel->requestLastOutputData(keys, results));
         ASSERT_FALSE(client_channel->requestLastOutputData(keys, results));
         ASSERT_TRUE(keys.size() && results.size());
-        
+
         for(int idx = 0;
             idx < keys.size();
             idx++) {
@@ -332,12 +334,12 @@ TEST_F(DirectIOChannelTest, DeviceChannelTest) {
             ASSERT_STREQ(results[idx]->getStringValue("key").c_str(), keys[idx].c_str());
         }
     }
-    //consumeDataCloudDelete
+    for(int idx=0; idx < 1000; idx++)
     {
         ASSERT_FALSE(client_channel->deleteDataCloud("search", std::numeric_limits<uint32_t>::min(), std::numeric_limits<uint32_t>::max()));
         ASSERT_FALSE(client_channel->deleteDataCloud("search", std::numeric_limits<uint32_t>::min(), std::numeric_limits<uint32_t>::max()));
     }
-    //consumeDataCloudQuery
+    for(int idx=0; idx < 1000; idx++)
     {
         QueryResultPage results;
         SearchSequence sseq = {1,2};

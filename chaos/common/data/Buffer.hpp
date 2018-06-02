@@ -399,7 +399,7 @@ namespace chaos {
                 return !(a == b);
             }
             
-            typedef ChaosSharedPtr<chaos::common::data::Buffer> BufferUPtr;
+            typedef ChaosUniquePtr<chaos::common::data::Buffer> BufferUPtr;
             typedef ChaosSharedPtr<chaos::common::data::Buffer> BufferSPtr;
         }
     }
