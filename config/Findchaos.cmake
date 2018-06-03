@@ -6,3 +6,4 @@ set(chaos_LIBRARIES ${PREFIX}/lib/libchaos_metadata_service_client.so ${PREFIX}/
 SET(CMAKE_INSTALL_RPATH "${PREFIX}/lib")
 link_directories(${PREFIX}/lib)
 SET(FrameworkLib ${chaos_LIBRARIES} ${boost_libs})
+include(${PREFIX}/CMakeMacroUtils.txt)
