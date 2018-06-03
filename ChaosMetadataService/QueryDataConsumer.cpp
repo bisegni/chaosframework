@@ -38,6 +38,7 @@
 using namespace chaos::metadata_service;
 
 using namespace chaos::data_service;
+using namespace chaos::data_service::worker;
 using namespace chaos::data_service::cache_system;
 using namespace chaos::data_service::object_storage::abstraction;
 
@@ -190,14 +191,13 @@ int QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode& hea
         uint32_t index_to_use = device_data_worker_index++ % ChaosMetadataService::getInstance()->setting.worker_setting.instances;
         CHAOS_ASSERT(device_data_worker[index_to_use])
         //create storage job information
-        chaos::data_service::worker::DeviceSharedWorkerJob *job = new chaos::data_service::worker::DeviceSharedWorkerJob();
+        auto job = ChaosMakeSharedPtr<DeviceSharedWorkerJob>();
         job->key = key_to_store;
         job->key_tag = key_tag;
         job->data_pack = channel_data;
         job->data_pack_len = channel_data_len;
         if((err = device_data_worker[index_to_use]->submitJobInfo(job))) {
             DEBUG_CODE(DBG << "Error pushing data into worker queue");
-            delete job;
         }
     }
     return err;

@@ -83,7 +83,7 @@ int main(int argc, const char** argv) {
     ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption("dsgroup", po::value<std::string>(&group)->default_value("DATASETIO"),"name of the group (US)");
     ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption("page", po::value<uint32_t>(&pagelen)->default_value(0),"Page len to recover data");
     
-    ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption("loops", po::value<uint32_t>(&loops)->default_value(1000),"number of push/loop");
+    ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption("loops", po::value<uint32_t>(&loops)->default_value(500),"number of push/loop");
     ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption("waitloop", po::value<uint32_t>(&waitloops)->default_value(0),"us waits bewteen loops");
     ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption("wait", po::value<uint32_t>(&wait_retrive)->default_value(5),"seconds to wait to retrive data after pushing");
     ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption("points", po::value<uint32_t>(&npoints)->default_value(15000),"Number of sin points, 0 = no wave");

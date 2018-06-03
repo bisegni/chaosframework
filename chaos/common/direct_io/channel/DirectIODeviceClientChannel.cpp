@@ -65,7 +65,7 @@ int DirectIODeviceClientChannel::storeAndCacheDataOutputChannel(const std::strin
     int err = 0;
     if(key.size() > 250) return -1;
     DirectIODataPackSPtr answer;
-    DirectIODataPackSPtr data_pack(new DirectIODataPack());
+    DirectIODataPackSPtr data_pack = ChaosMakeSharedPtr<DirectIODataPack>();
     BufferSPtr put_opcode_header = ChaosMakeSharedPtr<Buffer>(sizeof(DirectIODeviceChannelHeaderPutOpcode)+key.size());
     BufferSPtr channel_data = ChaosMakeSharedPtr<Buffer>(buffer, buffer_len, buffer_len, true);
     
@@ -100,7 +100,7 @@ int DirectIODeviceClientChannel::storeAndCacheHealthData(const std::string& key,
     int err = 0;
     if(key.size() > 250) return -1;
     DirectIODataPackSPtr answer;
-    DirectIODataPackSPtr data_pack(new DirectIODataPack());
+    DirectIODataPackSPtr data_pack = ChaosMakeSharedPtr<DirectIODataPack>();
     BufferSPtr put_opcode_header = ChaosMakeSharedPtr<Buffer>((PUT_HEADER_LEN(key)+key.size()));
     BufferSPtr channel_data = ChaosMakeSharedPtr<Buffer>(buffer, buffer_len, buffer_len, true);
     
@@ -133,7 +133,7 @@ int DirectIODeviceClientChannel::requestLastOutputData(const std::string& key,
                                                        uint32_t &size) {
     int err = 0;
     DirectIODataPackSPtr answer;
-    DirectIODataPackSPtr data_pack(new DirectIODataPack());
+    DirectIODataPackSPtr data_pack = ChaosMakeSharedPtr<DirectIODataPack>();
     
     //allocate memory for key
     BufferSPtr channel_data = ChaosMakeSharedPtr<Buffer>();
@@ -170,7 +170,7 @@ int DirectIODeviceClientChannel::requestLastOutputData(const ChaosStringVector& 
     int err = 0;
     DataBuffer<> data_buffer;
     DirectIODataPackSPtr answer;
-    DirectIODataPackSPtr data_pack( new DirectIODataPack());
+    DirectIODataPackSPtr data_pack = ChaosMakeSharedPtr<DirectIODataPack>();
     //set opcode
     data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodeMultiGetLastOutput);
     
@@ -227,7 +227,7 @@ int DirectIODeviceClientChannel::queryDataCloud(const std::string& key,
     DirectIODataPackSPtr answer;
     CDataWrapper query_description;
     //allcoate the data to send direct io pack
-    DirectIODataPackSPtr data_pack(new DirectIODataPack());
+    DirectIODataPackSPtr data_pack = ChaosMakeSharedPtr<DirectIODataPack>();
     BufferSPtr query_data_cloud_header = ChaosMakeSharedPtr<Buffer>(sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloud));
     
     //fill the query CDataWrapper
@@ -263,7 +263,7 @@ int DirectIODeviceClientChannel::queryDataCloud(const std::string& key,
                 //scan all result
                 char *current_data_prt = (char*)answer->channel_data->data();
                 while(found_element_page.size() < numer_of_record_found) {
-                    ChaosSharedPtr<CDataWrapper> last_record(new CDataWrapper(current_data_prt));
+                    ChaosSharedPtr<CDataWrapper> last_record = ChaosMakeSharedPtr<CDataWrapper>(current_data_prt);
                     //!at this time cdata wrapper copy the data
                     found_element_page.push_back(last_record);
                     //clear current record
@@ -279,24 +279,22 @@ int DirectIODeviceClientChannel::deleteDataCloud(const std::string& key,
                                                  uint64_t start_ts,
                                                  uint64_t end_ts) {
     int err = 0;
+    CDataWrapper query_description;
     DirectIODataPackSPtr answer;
     BufferSPtr channel_data;
     //allcoate the data to send direct io pack
-    DirectIODataPackSPtr data_pack(new DirectIODataPack());
-    {
-        CDataWrapper query_description;
-        
-        //fill the query CDataWrapper
-        query_description.addStringValue(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_KEY_STRING, key);
-        query_description.addInt64Value(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_STAR_TS_I64, (int64_t)start_ts);
-        query_description.addInt64Value(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_END_TS_I64, (int64_t)end_ts);
-        
-        //set opcode
-        data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodeDeleteDataCloud);
-        
-        channel_data = ChaosMakeSharedPtr<Buffer>(query_description.getBSONRawData(),
-                                                  query_description.getBSONRawSize());
-    }
+    DirectIODataPackSPtr data_pack = ChaosMakeSharedPtr<DirectIODataPack>();
+    
+    //fill the query CDataWrapper
+    query_description.addStringValue(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_KEY_STRING, key);
+    query_description.addInt64Value(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_STAR_TS_I64, (int64_t)start_ts);
+    query_description.addInt64Value(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_END_TS_I64, (int64_t)end_ts);
+    
+    //set opcode
+    data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodeDeleteDataCloud);
+    
+    channel_data = ChaosMakeSharedPtr<Buffer>(query_description.getBSONRawData(),
+                                              query_description.getBSONRawSize());
     //set header and data for the query
     DIRECT_IO_SET_CHANNEL_DATA(data_pack, channel_data, (uint32_t)channel_data->size());
     if((err = sendServiceData(ChaosMoveOperator(data_pack)))) {

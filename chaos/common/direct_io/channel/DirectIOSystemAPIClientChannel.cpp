@@ -48,7 +48,7 @@ int DirectIOSystemAPIClientChannel::echo(chaos::common::data::BufferSPtr message
                                          chaos::common::data::BufferSPtr& echo_message) {
     int err = 0;
     DirectIODataPackSPtr answer;
-    DirectIODataPackSPtr data_pack(new DirectIODataPack());
+    DirectIODataPackSPtr data_pack = ChaosMakeSharedPtr<DirectIODataPack>();
     data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::SystemAPIChannelOpcodeEcho);
     DIRECT_IO_SET_CHANNEL_DATA(data_pack, message, (uint32_t)message->size());
     if((err = (int)sendServiceData(ChaosMoveOperator(data_pack), answer))) {
@@ -72,7 +72,7 @@ int DirectIOSystemAPIClientChannel::getDatasetSnapshotForProducerKey(const std::
     }
     //allocate the datapack
     DirectIODataPackSPtr answer;
-    DirectIODataPackSPtr data_pack(new DirectIODataPack());
+    DirectIODataPackSPtr data_pack = ChaosMakeSharedPtr<DirectIODataPack>();
     
     //allocate the header
     BufferSPtr get_snapshot_opcode_header = ChaosMakeSharedPtr<Buffer>(sizeof(DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader));
@@ -142,7 +142,7 @@ int DirectIOSystemAPIClientChannel::pushLogEntries(const std::string& node_name,
     BufferSPtr header = ChaosMakeSharedPtr<Buffer>(sizeof(DirectIOSystemAPIChannelOpcodePushLogEntryForANodeHeader));
     
     //allocate the datapack
-    DirectIODataPackSPtr data_pack(new DirectIODataPack());
+    DirectIODataPackSPtr data_pack = ChaosMakeSharedPtr<DirectIODataPack>();
     //set opcode
     data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::SystemAPIChannelOpcodePushLogEntryForANode);
     

@@ -25,12 +25,14 @@
 //#include "../dataservice_global.h"
 
 #include <chaos/common/chaos_constants.h>
+#include <chaos/common/chaos_types.h>
 #include <chaos/common/utility/LockableObject.h>
 #include <chaos/common/utility/StartableService.h>
 
 #include <boost/thread.hpp>
-#include <boost/lockfree/queue.hpp>
 #include <boost/atomic.hpp>
+
+#include <queue>
 
 #define DEFAULT_JOB_THREAD 1
 
@@ -41,7 +43,8 @@ namespace chaos {
 			typedef struct WorkerJob {
 				WorkerJob(){};
 				virtual ~WorkerJob(){};
-			} WorkerJob, *WorkerJobPtr;
+            } WorkerJob;
+            typedef ChaosSharedPtr<WorkerJob> WorkerJobPtr;
 			
 			typedef struct DataWorkerSetting {
                 unsigned int        instances;
@@ -53,7 +56,7 @@ namespace chaos {
 			class DataWorker:
 			public common::utility::StartableService  {
 				//job queue list
-				boost::lockfree::queue<WorkerJobPtr> job_queue;
+                std::queue<WorkerJobPtr> job_queue;
 				
 				//group thread
 				boost::thread_group job_thread_group;

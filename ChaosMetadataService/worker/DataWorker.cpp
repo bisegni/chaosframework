@@ -39,14 +39,14 @@ using namespace chaos::data_service::worker;
 
 DataWorker::DataWorker():
 work(false),
-job_queue(1000),
 max_element(1000){}
 
 DataWorker::~DataWorker() {}
 
 WorkerJobPtr DataWorker::getNextOrWait(boost::unique_lock<boost::mutex>& lock) {
-    WorkerJobPtr new_job = NULL;
-    while(!job_queue.pop(new_job) && work) {
+    WorkerJobPtr new_job;
+    while(!(new_job = job_queue.front()) &&
+          work) {
         consume_job_condition.wait(lock);
     }
     return new_job;
@@ -93,9 +93,9 @@ void DataWorker::deinit() throw (chaos::CException) {
     //empty the job queue deleting the non executed job
     if(job_queue.empty() == false) {
         DCLAPP_ << "delete all remaining job";
-        while(job_queue.pop(thread_job)) {
-            DCLAPP_ << "delete worker job";
-            delete(thread_job);
+        while (job_queue.empty()) {
+            thread_job = job_queue.front();
+            job_queue.pop();
         }
     } else {
         DCLAPP_ << "job queue is empty";
@@ -122,9 +122,7 @@ int DataWorker::submitJobInfo(WorkerJobPtr job_info, int64_t milliseconds_to_wai
     //ad this element
     job_in_queue++;
     
-    if( job_queue.push(job_info) ) {
-        consume_job_condition.notify_one();
-        return 0;
-    }
-    return -2;
+    job_queue.push(job_info);
+    consume_job_condition.notify_one();
+    return 0;
 }
