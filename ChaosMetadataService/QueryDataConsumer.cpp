@@ -164,12 +164,11 @@ int QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode& hea
     switch(storage_type) {
         case DataServiceNodeDefinitionType::DSStorageTypeLiveHistory:
         case DataServiceNodeDefinitionType::DSStorageTypeLive:{
-            CacheData cache_data((char*)channel_data->data(), ((char*)channel_data->data())+channel_data_len);
             //protected access to cached driver
             CachePoolSlot *cache_slot = DriverPoolManager::getInstance()->getCacheDriverInstance();
             if(cache_slot) {
                 err = cache_slot->resource_pooled->putData(key_to_store,
-                                                           cache_data);
+                                                           channel_data);
                 DriverPoolManager::getInstance()->releaseCacheDriverInstance(cache_slot);
             } else {
                 ERR << "Error allocating cache slot";
@@ -253,17 +252,14 @@ int QueryDataConsumer::consumeGetEvent(chaos::common::data::BufferSPtr key_data,
     //protected access to cached driver
     CachePoolSlot *cache_slot = DriverPoolManager::getInstance()->getCacheDriverInstance();
     try{
-        CacheData cache_data;
         if(cache_slot) {
             //get data
             err = cache_slot->resource_pooled->getData(std::string(key_data->data(),
                                                                    key_data->size()),
-                                                       cache_data);
-            if(cache_data.size()) {
-                result_header.value_len = (uint32_t)cache_data.size();
-                result_value = ChaosMakeSharedPtr<Buffer>();
-                CHAOS_ASSERT(result_value)
-                result_value->append(&cache_data[0], result_header.value_len);
+                                                       result_value);
+            if(result_value &&
+               result_value->size()) {
+                result_header.value_len = (uint32_t)result_value->size();
             }
         } else {
             err = -1;
@@ -295,7 +291,7 @@ int QueryDataConsumer::consumeGetEvent(opcode_headers::DirectIODeviceChannelHead
                 it != end;
                 it++) {
                 const CacheData& cached_element = multi_cached_data[*it];
-                if(cached_element.size() == 0) {
+                if(cached_element->size() == 0) {
                     //element has not been found so we need to create and empty cdata wrapper
                     CDataWrapper tmp;
                     int size = 0;
@@ -303,8 +299,8 @@ int QueryDataConsumer::consumeGetEvent(opcode_headers::DirectIODeviceChannelHead
                     data_buffer.writeByte(d_ptr,
                                           size);
                 } else {
-                    data_buffer.writeByte(&cached_element[0],
-                                          (int32_t)cached_element.size());
+                    data_buffer.writeByte(cached_element->data(),
+                                          (int32_t)cached_element->size());
                 }
             }
             
@@ -330,7 +326,7 @@ int QueryDataConsumer::consumeDataCloudDelete(const std::string& search_key,
     if((err = obj_storage_da->deleteObject(search_key,
                                            start_ts,
                                            end_ts))) {
-        ERR << CHAOS_FORMAT("Error performing lcoud query with code %1%", %err);
+        ERR << CHAOS_FORMAT("Error performing cloud query with code %1%", %err);
     }
     return err;
 }
