@@ -192,6 +192,9 @@ INSTALL(FILES ${files} DESTINATION include/chaos_metadata_service_client/node_co
 FILE(GLOB files "event/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos_metadata_service_client/event/)
 
+FILE(GLOB files "event/alert/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos_metadata_service_client/event/alert)
+
 INSTALL(TARGETS chaos_metadata_service_client
 DESTINATION "lib"
 PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
