@@ -262,7 +262,7 @@ void KeyDataStorage::pushDataSet(KeyDataStorageDomain domain,
 
 int KeyDataStorage::loadRestorePoint(const std::string& restore_point_tag) {
     int err = 0;
-    chaos_data::CDataWrapper *dataset = NULL;
+    CDWShrdPtr dataset;
     
     if(!restore_point_map.count(restore_point_tag)) {
         //allocate map for the restore tag
@@ -272,13 +272,13 @@ int KeyDataStorage::loadRestorePoint(const std::string& restore_point_tag) {
     if((err = io_data_driver->loadDatasetTypeFromSnapshotTag(restore_point_tag,
                                                              key,
                                                              KeyDataStorageDomainOutput,
-                                                             &dataset))) {
+                                                             dataset))) {
         KeyDataStorageLERR << " Error loading dataset of domain KeyDataStorageDomainOutput from restore point:" << restore_point_tag << " for the key:" << key;
         clearRestorePoint(restore_point_tag);
         return err;
     } else {
         if(dataset){
-            restore_point_map[restore_point_tag].insert(make_pair(output_key, ChaosSharedPtr<chaos_data::CDataWrapper>(dataset)));
+            restore_point_map[restore_point_tag].insert(make_pair(output_key, dataset));
             dataset = NULL;
         }
     }
@@ -286,13 +286,13 @@ int KeyDataStorage::loadRestorePoint(const std::string& restore_point_tag) {
     if((err = io_data_driver->loadDatasetTypeFromSnapshotTag(restore_point_tag,
                                                              key,
                                                              KeyDataStorageDomainInput,
-                                                             &dataset))) {
+                                                             dataset))) {
         KeyDataStorageLERR << " Error loading dataset of domain KeyDataStorageDomainInput from restore point:" << restore_point_tag << " for the key:" << key;
         clearRestorePoint(restore_point_tag);
         return err;
     } else {
         if(dataset){
-            restore_point_map[restore_point_tag].insert(make_pair(input_key, ChaosSharedPtr<chaos_data::CDataWrapper>(dataset)));
+            restore_point_map[restore_point_tag].insert(make_pair(input_key, dataset));
             dataset = NULL;
         }
     }
@@ -300,13 +300,13 @@ int KeyDataStorage::loadRestorePoint(const std::string& restore_point_tag) {
     if((err = io_data_driver->loadDatasetTypeFromSnapshotTag(restore_point_tag,
                                                              key,
                                                              KeyDataStorageDomainCustom,
-                                                             &dataset))) {
+                                                             dataset))) {
         KeyDataStorageLERR << " Error loading dataset of domain KeyDataStorageDomainCustom from restore point:" << restore_point_tag << " for the key:" << key;
         clearRestorePoint(restore_point_tag);
         return err;
     } else {
         if(dataset){
-            restore_point_map[restore_point_tag].insert(make_pair(custom_key, ChaosSharedPtr<chaos_data::CDataWrapper>(dataset)));
+            restore_point_map[restore_point_tag].insert(make_pair(custom_key, dataset));
             dataset = NULL;
         }
     }
@@ -314,13 +314,13 @@ int KeyDataStorage::loadRestorePoint(const std::string& restore_point_tag) {
     if((err = io_data_driver->loadDatasetTypeFromSnapshotTag(restore_point_tag,
                                                              key,
                                                              KeyDataStorageDomainSystem,
-                                                             &dataset))) {
+                                                             dataset))) {
         KeyDataStorageLERR << " Error loading dataset of domain KeyDataStorageDomainSystem from restore point:" << restore_point_tag << " for the key:" << key;
         clearRestorePoint(restore_point_tag);
         return err;
     } else {
         if(dataset){
-            restore_point_map[restore_point_tag].insert(make_pair(system_key, ChaosSharedPtr<chaos_data::CDataWrapper>(dataset)));
+            restore_point_map[restore_point_tag].insert(make_pair(system_key, dataset));
             dataset = NULL;
         }
     }

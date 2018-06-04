@@ -335,9 +335,8 @@ int QueryDataConsumer::consumeDataCloudDelete(const std::string& search_key,
 // Return the dataset for a producerkey ona specific snapshot
 int QueryDataConsumer::consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader& header,
                                                       const std::string& producer_id,
-                                                      void **channel_found_data,
-                                                      uint32_t& channel_found_data_length,
-                                                      DirectIOSystemAPISnapshotResultHeader& api_result) {
+                                                      chaos::common::data::BufferSPtr& channel_found_data,
+                                                      DirectIOSystemAPISnapshotResultHeader &result_header) {
     int err = 0;
     std::string channel_type;
     //CHAOS_ASSERT(api_result)
@@ -363,18 +362,17 @@ int QueryDataConsumer::consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSy
     if((err = s_da->snapshotGetDatasetForProducerKey(header.field.snap_name,
                                                      producer_id,
                                                      channel_type,
-                                                     channel_found_data,
-                                                     channel_found_data_length))) {
-        api_result.error = err;
-        std::strcpy(api_result.error_message, "Error retriving the snapshoted dataaset for producer key");
-        ERR << api_result.error_message << "[" << header.field.snap_name << "/" << producer_id<<"]";
+                                                     channel_found_data))) {
+        std::strcpy(result_header.error_message, "Error retriving the snapshoted dataaset for producer key");
+        ERR << result_header.error_message << "[" << header.field.snap_name << "/" << producer_id<<"]";
     } else {
-        if(*channel_found_data) {
-            api_result.error = 0;
-            std::strcpy(api_result.error_message, "Snapshot found");
+        if(channel_found_data &&
+           channel_found_data->size()) {
+            result_header.error = 0;
+            std::strcpy(result_header.error_message, "Snapshot found");
         } else {
-            api_result.error = -2;
-            std::strcpy(api_result.error_message, "Channel data not found in snapshot");
+            result_header.error = -2;
+            std::strcpy(result_header.error_message, "Channel data not found in snapshot");
             
         }
     }

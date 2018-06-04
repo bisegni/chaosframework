@@ -64,7 +64,7 @@ int DirectIOSystemAPIClientChannel::echo(chaos::common::data::BufferSPtr message
 int DirectIOSystemAPIClientChannel::getDatasetSnapshotForProducerKey(const std::string& snapshot_name,
                                                                      const std::string& producer_key,
                                                                      uint32_t channel_type,
-                                                                     DirectIOSystemAPIGetDatasetSnapshotResult **api_result_handle) {
+                                                                     DirectIOSystemAPIGetDatasetSnapshotResult& api_result_handle) {
     int err = 0;
     if(snapshot_name.size() > 255) {
         //bad Snapshot name size
@@ -83,9 +83,6 @@ int DirectIOSystemAPIClientChannel::getDatasetSnapshotForProducerKey(const std::
     //copy the snapshot name to the header
     std::strncpy(get_snapshot_opcode_header->data<DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader>()->field.snap_name, snapshot_name.c_str(), 255);
     get_snapshot_opcode_header->data<DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader>()->field.channel_type = channel_type;
-    if(api_result_handle){
-        *api_result_handle=NULL;
-    }
     
     //set header
     DIRECT_IO_SET_CHANNEL_HEADER(data_pack, get_snapshot_opcode_header, sizeof(DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader))
@@ -110,18 +107,15 @@ int DirectIOSystemAPIClientChannel::getDatasetSnapshotForProducerKey(const std::
             
             //get the header
             if(answer->channel_header_data){
-                *api_result_handle = (DirectIOSystemAPIGetDatasetSnapshotResult*)calloc(sizeof(DirectIOSystemAPIGetDatasetSnapshotResult), 1);
                 answer->channel_header_data->data<DirectIOSystemAPISnapshotResultHeader>()->channel_data_len = FROM_LITTLE_ENDNS_NUM(uint32_t, answer->channel_header_data->data<DirectIOSystemAPISnapshotResultHeader>()->channel_data_len);
                 answer->channel_header_data->data<DirectIOSystemAPISnapshotResultHeader>()->error = FROM_LITTLE_ENDNS_NUM(int32_t, answer->channel_header_data->data<DirectIOSystemAPISnapshotResultHeader>()->error);
                 
-                (*api_result_handle)->api_result = *answer->channel_header_data->data<DirectIOSystemAPISnapshotResultHeader>();
-                (*api_result_handle)->channel_data = answer->channel_data->detach();
+                api_result_handle.api_result = *answer->channel_header_data->data<DirectIOSystemAPISnapshotResultHeader>();
+                api_result_handle.channel_data = ChaosMakeSharedPtr<CDataWrapper>(answer->channel_data->data());
             } else {
                 err=-2;
                 DIOSCC_ERR << "## INTERNAL ERROR: NO RESULT HEADER";
-                
             }
-            
         }
     }
     return err;
