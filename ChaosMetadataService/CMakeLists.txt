@@ -246,6 +246,10 @@ SET(cnd_src  ${cnd_src}	batch/general/RestoreSnapshotBatch.cpp
 
 ADD_EXECUTABLE(${PROJECT_NAME} ${cnd_src})
 
+FILE(GLOB files "../chaos_service_common/data/node/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos_service_common/data/node/)
+
+
 CheckConfigureBuild(couchbaseS libcouchbase:chaos-0.1 "-DLCB_NO_SSL=true;-DLCB_NO_TESTS=true;-DLCB_NO_TOOLS=true;-DLCB_NO_PLUGINS=true" https://github.com/amichelotti)
 
 IF(BUILD_FORCE_STATIC)
