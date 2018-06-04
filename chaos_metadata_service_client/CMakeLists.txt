@@ -150,6 +150,9 @@ INSTALL(FILES ${files} DESTINATION include/chaos_service_common/data/dataset)
 FILE(GLOB files "../chaos_service_common/data/general/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos_service_common/data/general)
 
+FILE(GLOB files "../chaos_service_common/data/node/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos_service_common/data/node)
+
 #install lib header
 
 FILE(GLOB files "*.h")
