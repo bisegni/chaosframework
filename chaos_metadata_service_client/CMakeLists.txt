@@ -198,6 +198,8 @@ INSTALL(FILES ${files} DESTINATION include/chaos_metadata_service_client/monitor
 
 FILE(GLOB files "node_controller/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos_metadata_service_client/node_controller/)
+FILE(GLOB files "node_monitor/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos_metadata_service_client/node_monitor/)
 FILE(GLOB files "event/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos_metadata_service_client/event/)
 
