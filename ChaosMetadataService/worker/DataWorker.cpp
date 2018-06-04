@@ -54,10 +54,22 @@ WorkerJobPtr DataWorker::getNextOrWait(boost::unique_lock<boost::mutex>& lock) {
 
 void DataWorker::consumeJob(void *cookie) {
     WorkerJobPtr thread_job = NULL;
-    boost::unique_lock<boost::mutex> lock(mutex_job);
+    //create lock defering
+    boost::unique_lock<boost::mutex> lock(mutex_job, boost::defer_lock);
     while(work) {
+        lock.lock();
         //wait for next thread
-        thread_job = getNextOrWait(lock);
+        //thread_job = getNextOrWait(lock);
+        while(work &&
+              job_queue.empty()) {
+            consume_job_condition.wait(lock);
+        }
+        if(job_queue.empty()) {
+            continue;
+        }
+        thread_job = job_queue.front();
+        job_queue.pop();
+        lock.unlock();
         //decrease job in queue
         job_in_queue--;
         //unlock for next data
