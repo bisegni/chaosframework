@@ -158,7 +158,7 @@ framework_centos7_deploy:
     - scp chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/$CI_COMMIT_REF_NAME/x86_64/centos/7/chaos-distrib-$TAR_NAME_POSTFIX.tar.gz
     - ssh chaosweb@opensource.lnf.infn.it "rm -f /var/www/html/binary/chaos/$CI_COMMIT_REF_NAME/x86_64/centos/7/latest"
     - ssh chaosweb@opensource.lnf.infn.it "ln -sf /var/www/html/binary/chaos/$CI_COMMIT_REF_NAME/x86_64/centos/7/chaos-distrib-$TAR_NAME_POSTFIX.tar.gz /var/www/html/binary/chaos/$CI_COMMIT_REF_NAME/x86_64/centos/7/latest"
-
+    - curl -X POST -F token=d42ffdee47536fd7cfac5ec4df9af2 -F "ref=$CI_COMMIT_REF_NAME" https://baltig.infn.it/api/v4/projects/1328/trigger/pipeline
   only:
     - tags
     - web
