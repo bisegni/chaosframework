@@ -161,6 +161,9 @@ INSTALL(FILES ${files} DESTINATION include/chaos_metadata_service_client)
 FILE(GLOB files "api_proxy/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos_metadata_service_client/api_proxy)
 
+FILE(GLOB files "api_proxy/agent/logging/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos_metadata_service_client/api_proxy/agent/logging)
+
 FILE(GLOB files "api_proxy/logging/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos_metadata_service_client/api_proxy/logging)
 
