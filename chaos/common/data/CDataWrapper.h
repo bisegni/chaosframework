@@ -30,9 +30,6 @@
 #include <boost/scoped_ptr.hpp>
 
 #include <boost/shared_ptr.hpp>
-#ifdef CERN_ROOT
-class TTree;
-#endif
 #include <utility>
 
 namespace chaos {
@@ -161,17 +158,6 @@ namespace chaos {
                 void append(const std::string& key,const std::vector<bool>& val);
                 void append(const std::string& key,const std::vector<std::string>& val);
                 void append(const std::string& key,const std::vector<CDataWrapper>& val);
-#ifdef CERN_ROOT
-                void append(const std::string& key,const TTree* val);
-                /**
-                 export current CDataWrapper to Tree with the given name
-                 \param name name of the tree
-                 \param branch_name branch name
-                 \param multiple creates a branch for each key, otherwise creates just on branch with all keys
-                 \return NULL if error, an allocated and initialized Tree otherwise
-                 */
-                TTree*getTree(const std::string& name,const std::string& branch_name,bool multiple=true);
-#endif
                 
                 //add a integer value
                 void addInt32Value(const std::string&, uint32_t);
