@@ -76,6 +76,7 @@ build_framework_x86_64_test:
   script:
     - apt-get update
     - apt-get -y install lcov
+    - export PPROF_PATH=chaos-distrib-x86_64-Linux/bin/pprof
     - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/lib
     - chaos-distrib-x86_64-Linux/bin/TestFramework
     - lcov -c -d chaos --output-file coverage.info
@@ -132,6 +133,7 @@ build_framework_centos7_test:
   stage: test
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/centos7:latest
   script:
+    - export PPROF_PATH=chaos-distrib-x86_64-centos7/bin/pprof
     - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-centos7/lib
     - chaos-distrib-x86_64-centos7/bin/TestFramework
   artifacts:
@@ -204,6 +206,7 @@ build_framework_x86_64_c98_test:
   stage: test
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
   script:
+    - export PPROF_PATH=chaos-distrib-x86_64-Linux-c98/bin/pprof
     - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux-c98/lib
     - chaos-distrib-x86_64-Linux-c98/bin/TestFramework
   only:
@@ -292,6 +295,7 @@ llvm_build_framework_x86_64_test:
   dependencies:
     - llvm_build_framework_x86_64
   script:
+    - export PPROF_PATH=chaos-distrib-x86_64-Linux-llvm/bin/pprof
     - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux-llvm/lib
     - chaos-distrib-x86_64-Linux-llvm/bin/TestFramework
   only:
