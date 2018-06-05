@@ -55,7 +55,6 @@ public:
     int consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader& header,
                                        const std::string& producer_id,
                                        chaos::common::data::BufferSPtr& channel_found_data,
-                                       uint32_t& channel_found_data_length,
                                        DirectIOSystemAPISnapshotResultHeader &result_header) {
         int err = 0;
         if((++SystemApiServerHandler_req_counter % 2) == 0) {
@@ -64,7 +63,6 @@ public:
             
             channel_found_data = ChaosMakeSharedPtr<Buffer>();
             channel_found_data->append(snap_data.getBSONRawData(), snap_data.getBSONRawSize());
-            channel_found_data_length = result_header.channel_data_len = (uint32_t)channel_found_data->size();
         } else {
             //error
             err = -1;
@@ -111,7 +109,9 @@ TEST_F(DirectIOChannelTest, SystemChannelTest) {
     ASSERT_TRUE(client_channel);
     //--------------------perform test----------------------
     //echo
+    for(int idx = 0; idx < 1000; idx++)
     {
+        SystemApiServerHandler_req_counter = 0;
         BufferSPtr message_buffer_echo;
         const std::string message = "test_echo";
         BufferSPtr message_buffer = ChaosMakeSharedPtr<Buffer>();
@@ -125,21 +125,22 @@ TEST_F(DirectIOChannelTest, SystemChannelTest) {
         ASSERT_STREQ(message.c_str(), message_echo.c_str());
     }
     //snapshot data
+    for(int idx = 0; idx < 1000; idx++)
     {
-        DirectIOSystemAPIGetDatasetSnapshotResult *api_result_handle = NULL;
-        ASSERT_TRUE(client_channel->getDatasetSnapshotForProducerKey("snap_name", "producer_name", 0, &api_result_handle));
-        ASSERT_FALSE(api_result_handle);
-        ASSERT_FALSE(client_channel->getDatasetSnapshotForProducerKey("snap_name", "producer_name", 0, &api_result_handle));
-        ASSERT_TRUE(api_result_handle);
-        CDataWrapper result_snap((const char *)api_result_handle->channel_data);
-        ASSERT_EQ(result_snap.getBSONRawSize(), api_result_handle->api_result.channel_data_len);
-        ASSERT_TRUE(result_snap.hasKey("producer_name"));
-        ASSERT_TRUE(result_snap.isStringValue("producer_name"));
-        ASSERT_STREQ(result_snap.getStringValue("producer_name").c_str(), "snap_name");
-        free(api_result_handle);
+        SystemApiServerHandler_req_counter = 0;
+        DirectIOSystemAPIGetDatasetSnapshotResult api_result_handle;
+        ASSERT_TRUE(client_channel->getDatasetSnapshotForProducerKey("snap_name", "producer_name", 0, api_result_handle));
+        ASSERT_FALSE(client_channel->getDatasetSnapshotForProducerKey("snap_name", "producer_name", 0, api_result_handle));
+      
+        ASSERT_EQ(api_result_handle.channel_data->getBSONRawSize(), api_result_handle.api_result.channel_data_len);
+        ASSERT_TRUE(api_result_handle.channel_data->hasKey("producer_name"));
+        ASSERT_TRUE(api_result_handle.channel_data->isStringValue("producer_name"));
+        ASSERT_STREQ(api_result_handle.channel_data->getStringValue("producer_name").c_str(), "snap_name");
     }
     //log
+    for(int idx = 0; idx < 1000; idx++)
     {
+        SystemApiServerHandler_req_counter = 0;
         ChaosStringVector log_entries;
         log_entries.push_back("log entry");
         log_entries.push_back("log entry");

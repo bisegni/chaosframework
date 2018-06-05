@@ -35,8 +35,9 @@ DeviceSharedDataWorkerMetricCollector::~DeviceSharedDataWorkerMetricCollector() 
 
 void DeviceSharedDataWorkerMetricCollector::executeJob(WorkerJobPtr job_info,
                                                        void* cookie) {
-    int tag = reinterpret_cast<DeviceSharedWorkerJob*>(job_info)->key_tag;
-    uint32_t total_data = reinterpret_cast<DeviceSharedWorkerJob*>(job_info)->data_pack_len + reinterpret_cast<DeviceSharedWorkerJob*>(job_info)->key.size();
+    DeviceSharedWorkerJob& job = *reinterpret_cast<DeviceSharedWorkerJob*>(job_info.get());
+    int tag = job.key_tag;
+    uint32_t total_data = job.data_pack_len + (uint32_t)job.key.size();
     DeviceSharedDataWorker::executeJob(job_info, cookie);
     switch(tag) {
         case 0:// storicize only
@@ -55,8 +56,9 @@ void DeviceSharedDataWorkerMetricCollector::executeJob(WorkerJobPtr job_info,
 
 int DeviceSharedDataWorkerMetricCollector::submitJobInfo(WorkerJobPtr job_info) {
     int err = 0;
-    int tag = reinterpret_cast<DeviceSharedWorkerJob*>(job_info)->key_tag;
-    uint32_t total_data = reinterpret_cast<DeviceSharedWorkerJob*>(job_info)->data_pack_len + reinterpret_cast<DeviceSharedWorkerJob*>(job_info)->key.size();
+    DeviceSharedWorkerJob& job = *reinterpret_cast<DeviceSharedWorkerJob*>(job_info.get());
+    int tag = job.key_tag;
+    uint32_t total_data = job.data_pack_len + (uint32_t)job.key.size();
     data_worker_metric->incrementInputBandwith(total_data);
     
     switch(tag) {

@@ -239,36 +239,30 @@ int IODirectIODriver::removeData(const std::string& key,
 int IODirectIODriver::loadDatasetTypeFromSnapshotTag(const std::string& restore_point_tag_name,
                                                      const std::string& key,
                                                      uint32_t dataset_type,
-                                                     chaos_data::CDataWrapper **cdatawrapper_handler) {
+                                                     chaos_data::CDWShrdPtr& cdw_shrd_ptr) {
     int err = 0;
     ChaosReadLock rl(mutext_feeder);
     IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
-    *cdatawrapper_handler=NULL;
     if(!next_client) return 0;
-    chaos_dio_channel::DirectIOSystemAPIGetDatasetSnapshotResultPtr snapshot_result = NULL;
+    chaos_dio_channel::DirectIOSystemAPIGetDatasetSnapshotResult snapshot_result;
     if((err = (int)next_client->system_client_channel->getDatasetSnapshotForProducerKey(restore_point_tag_name,
                                                                                         key,
                                                                                         dataset_type,
-                                                                                        &snapshot_result))) {
+                                                                                        snapshot_result))) {
         IODirectIODriver_LERR_ << "Error loading the dataset type:"<<dataset_type<< " for key:" << key << " from restor point:" <<restore_point_tag_name;
     } else {
-        if(snapshot_result && snapshot_result->channel_data) {
+        if(snapshot_result.channel_data) {
             //we have the dataaset
             try {
-                *cdatawrapper_handler = new chaos_data::CDataWrapper((const char*)snapshot_result->channel_data);
+                cdw_shrd_ptr = snapshot_result.channel_data;
                 IODirectIODriver_LINFO_ << "Got dataset type:"<<dataset_type<< " for key:" << key << " from snapshot tag:" <<restore_point_tag_name;
-                
             } catch (std::exception& ex) {
                 IODirectIODriver_LERR_ << "Error deserializing the dataset type:"<<dataset_type<< " for key:" << key << " from snapshot tag:" <<restore_point_tag_name << " with error:" << ex.what();
             } catch (...) {
                 IODirectIODriver_LERR_ << "Error deserializing the dataset type:"<<dataset_type<< " for key:" << key << " from snapshot tag:" <<restore_point_tag_name;
             }
-            free(snapshot_result->channel_data);
         }
     }
-    
-    //delete the received result if there was one
-    if(snapshot_result) free(snapshot_result);
     return err;
 }
 

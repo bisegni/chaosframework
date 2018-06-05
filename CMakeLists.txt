@@ -14,6 +14,7 @@ unset(CMAKE_CXX_COMPILER_WORKS)
 #specify option
 option(CHAOS_ONLY_DEPENDECY "Download all the dependency" OFF)
 option(CHAOS_ARCHITECTURE_TEST "Architecture tests" OFF)
+option(USE_GPT "Uses Google Performance tool to perform analisys" OFF)
 option(CLING_VIRTUAL_MACHINE "Enable cling for scripting" OFF)
 option(CHAOS_CDS "Chaos Data Service" ON)
 option(CHAOS_MDS "Chaos MetaData Service" ON)
@@ -45,7 +46,7 @@ CheckConfigureBuild(mongoclient mongo-cxx-driver:legacy-1.0.0-rc0 "--extralib=bo
 IF (CHAOS_ONLY_DEPENDECY OR
     CHAOS_ARCHITECTURE_TEST)
   #google test
-  MESG("Add google Test as external project")
+  MESG("Add Google Test as external project")
   ExternalProject_Add(
      googletest
      GIT_REPOSITORY https://github.com/google/googletest.git
@@ -58,7 +59,6 @@ IF (CHAOS_ONLY_DEPENDECY OR
      LOG_DOWNLOAD ON
      LOG_CONFIGURE ON
      LOG_BUILD ON)
-
 
      # Specify include dir
      ExternalProject_Get_Property(googletest source_dir)
@@ -74,6 +74,33 @@ IF (CHAOS_ONLY_DEPENDECY OR
      MESG("${GTEST_LIBRARY_DIR}")
      MESG("${GTEST_LIBRARY_PATH}")
      MESG("${GTEST_LIBRARY}")
+ENDIF()
+
+IF (USE_GPT)
+    #google performance tools
+    MESG("Add Goolge Performance Tools as external project")
+    ExternalProject_Add(
+    google_pt
+    GIT_REPOSITORY https://github.com/gperftools/gperftools.git
+    GIT_TAG master
+    PREFIX "${CMAKE_BINARY_DIR}/ext_dep/gpt-prefix"
+    SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/gpt-src"
+    BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/gpt-src"
+    CONFIGURE_COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/ext_dep/gpt-src/./autogen.sh COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/ext_dep/gpt-src/./configure --prefix=${CMAKE_INSTALL_PREFIX}
+    LOG_DOWNLOAD ON
+    LOG_CONFIGURE ON
+    LOG_BUILD ON)
+
+    # Specify include dir
+    ExternalProject_Get_Property(google_pt source_dir)
+    set(GPT_INCLUDE_DIR ${google_pt_sdir}/include)
+
+    # Library
+    ExternalProject_Get_Property(google_pt binary_dir)
+    set(GPT_LIBRARY_DIR ${google_pt_bdir})
+
+    MESG("${GPT_INCLUDE_DIR}")
+    MESG("${GPT_LIBRARY_DIR}")
 ENDIF()
 
 IF (CLING_VIRTUAL_MACHINE)

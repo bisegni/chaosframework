@@ -65,7 +65,6 @@ namespace chaos {
                         virtual int consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader& header,
                                                                    const std::string& producer_id,
                                                                    chaos::common::data::BufferSPtr& channel_found_data,
-                                                                   uint32_t& channel_found_data_length,
                                                                    DirectIOSystemAPISnapshotResultHeader &result_header)
                         {return -1;};
                         

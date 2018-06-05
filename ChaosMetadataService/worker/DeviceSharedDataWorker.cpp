@@ -80,27 +80,25 @@ void DeviceSharedDataWorker::deinit() throw (chaos::CException) {
 
 void DeviceSharedDataWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
     int err = 0;
-    DeviceSharedWorkerJob *job_ptr = reinterpret_cast<DeviceSharedWorkerJob*>(job_info);
+    DeviceSharedWorkerJob &job = *reinterpret_cast<DeviceSharedWorkerJob*>(job_info.get());
     ThreadCookie *this_thread_cookie = reinterpret_cast<ThreadCookie *>(cookie);
     
-    CHAOS_ASSERT(job_ptr)
-    CHAOS_ASSERT(job_ptr->data_pack);
+    CHAOS_ASSERT(job.data_pack);
     CHAOS_ASSERT(this_thread_cookie)
     //CHAOS_ASSERT(this_thread_cookie->vfs_stage_file)
     
     //check what kind of push we have
     //read lock on mantainance mutex
-    switch(static_cast<DataServiceNodeDefinitionType::DSStorageType>(job_ptr->key_tag)) {
+    switch(static_cast<DataServiceNodeDefinitionType::DSStorageType>(job.key_tag)) {
         case DataServiceNodeDefinitionType::DSStorageTypeHistory:// storicize only
         case DataServiceNodeDefinitionType::DSStorageTypeLiveHistory:{// storicize and live
             //write data on object storage
-            CDataWrapper data_pack((char *)job_ptr->data_pack->data());
+            CDataWrapper data_pack((char *)job.data_pack->data());
             //push received datapack into object storage
-            if((err = this_thread_cookie->obj_storage_da->pushObject(job_ptr->key,
+            if((err = this_thread_cookie->obj_storage_da->pushObject(job.key,
                                                                      data_pack))) {
                 ERR << "Error pushing datapack into object storage driver";
             }
-            free(job_ptr);
             break;
         }
         case DataServiceNodeDefinitionType::DSStorageTypeLive:

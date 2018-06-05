@@ -320,7 +320,7 @@ void ZMQDirectIOServer::worker(unsigned int w_type,
                     
                     if((err = sendDatapack(worker_socket,
                                            identity,
-                                           data_pack_answer))){
+                                           ChaosMoveOperator(data_pack_answer)))){
                         ZMQDIO_SRV_LAPP_ << "Error sending answer with code:" << err;
                     }
                 }

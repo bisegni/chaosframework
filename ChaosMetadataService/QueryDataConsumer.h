@@ -100,9 +100,8 @@ namespace chaos{
             //---------------- DirectIOSystemAPIServerChannelHandler -----------------------
             int consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader& header,
                                                const std::string& producer_id,
-                                               void **channel_found_data,
-                                               uint32_t& channel_found_data_length,
-                                               DirectIOSystemAPISnapshotResultHeader& api_result);
+                                               chaos::common::data::BufferSPtr& channel_found_data,
+                                               DirectIOSystemAPISnapshotResultHeader &result_header);
             
             int consumeLogEntries(const std::string& node_name,
                                   const ChaosStringVector& log_entries);

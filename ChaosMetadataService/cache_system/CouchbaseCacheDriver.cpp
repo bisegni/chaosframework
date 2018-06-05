@@ -35,6 +35,7 @@
 #define CCDLDBG_ LDBG_ << CouchbaseCacheDriver_LOG_HEAD << __PRETTY_FUNCTION__ << " - "
 #define CCDLERR_ LERR_ << CouchbaseCacheDriver_LOG_HEAD
 
+using namespace chaos::common::data;
 using namespace chaos::common::utility;
 
 using namespace chaos::data_service::cache_system;
@@ -68,8 +69,7 @@ void CouchbaseCacheDriver::getCallback(lcb_t instance,
             if((result->err = error) != LCB_SUCCESS) {
                 result->err_str = lcb_strerror(instance, error);
             }else {
-                gr_ptr->cached_data.assign(((char*)resp->v.v0.bytes),
-                                           ((char*)resp->v.v0.bytes)+resp->v.v0.nbytes);
+                gr_ptr->cached_data = ChaosMakeSharedPtr<Buffer>(resp->v.v0.bytes, resp->v.v0.nbytes);
             }
             break;
         }
@@ -85,8 +85,7 @@ void CouchbaseCacheDriver::getCallback(lcb_t instance,
             }else {
                 gr_ptr->multi_cached_data.insert(MultiCacheDataPair(std::string((char*)resp->v.v0.key,
                                                                                 resp->v.v0.nkey),
-                                                                    CacheData(((char*)resp->v.v0.bytes),
-                                                                              ((char*)resp->v.v0.bytes)+resp->v.v0.nbytes)));
+                                                                    ChaosMakeSharedPtr<Buffer>(resp->v.v0.bytes, resp->v.v0.nbytes)));
             }
             break;
         }
@@ -165,7 +164,7 @@ void CouchbaseCacheDriver::deinit() throw (chaos::CException) {
 }
 
 int CouchbaseCacheDriver::putData(const std::string& key,
-                                  const CacheData& data) {
+                                  CacheData data_to_store) {
     CHAOS_ASSERT(getServiceState() == CUStateKey::INIT)
     StoreResult result_wrap;
     lcb_error_t err = LCB_SUCCESS;
@@ -174,8 +173,8 @@ int CouchbaseCacheDriver::putData(const std::string& key,
     memset(&cmd, 0, sizeof(cmd));
     cmd.v.v0.key = key.c_str();
     cmd.v.v0.nkey = key.size();
-    cmd.v.v0.bytes = &data[0];
-    cmd.v.v0.nbytes = data.size();
+    cmd.v.v0.bytes = data_to_store->data();
+    cmd.v.v0.nbytes = data_to_store->size();
     cmd.v.v0.operation = LCB_SET;
     err = lcb_store(instance, &result_wrap, 1, commands);
     err = lcb_wait(instance);
