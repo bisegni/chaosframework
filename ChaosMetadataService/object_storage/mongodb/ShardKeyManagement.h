@@ -26,6 +26,8 @@
 
 #include <chaos/common/data/CDataWrapper.h>
 
+#include <chaos/common/async_central/TimerHandler.h>
+
 #include <chaos/common/utility/Singleton.h>
 #include <chaos/common/utility/LockableObject.h>
 
@@ -53,8 +55,13 @@ namespace chaos {
                     
                     const std::string key;
                     const uint32_t storage_quota;
+                    //!next timesstamp after which the check for new rescheduling is done
                     int64_t next_check_ts;
+                    //! timestamp after which a new value is calculated laso if storage quota has not been exceeded
+                    int64_t next_timeout_ts;
+                    //!the quantity of data stored for key
                     uint32_t stored_byte;
+                    //!shard key
                     boost::atomic<int64_t> shard_value;
                 public:
                     KeyRNDShardInfo(const std::string& _key,
@@ -83,8 +90,8 @@ namespace chaos {
                     friend chaos::common::utility::Singleton<ShardKeyManagement>;
                     MapKeyShardInfo_L map_key_shard_info;
                     std::string zone_alias;
-                    ShardKeyManagement();
                 public:
+                    ShardKeyManagement();
                     ~ShardKeyManagement();
                     
                     //! set the new zone to manage

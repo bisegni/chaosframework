@@ -57,9 +57,10 @@ void MongoDBObjectStorageDriver::init(void *init_data) throw (chaos::CException)
 }
 
 void MongoDBObjectStorageDriver::deinit() throw (chaos::CException) {
-    connection.reset();
     //call sublcass
     AbstractPersistenceDriver::deinit();
+    
+    connection.reset();
 }
 
 void MongoDBObjectStorageDriver::deleteDataAccess(void *instance) {

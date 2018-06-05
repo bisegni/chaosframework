@@ -27,6 +27,8 @@
 #include <chaos/common/utility/ObjectInstancer.h>
 #include <chaos_service_common/persistence/mongodb/MongoDBAccessor.h>
 
+#include "ShardKeyManagement.h"
+
 namespace chaos {
     namespace data_service {
         namespace object_storage {
@@ -41,13 +43,13 @@ namespace chaos {
                    
                     //object storage custom parameter
                     MapKVP obj_stoarge_kvp;
-                    unsigned int timestamp_quantization_ms;
                     const mongo::WriteConcern *storage_write_concern;
                     
                     inline void addTimeRange(mongo::BSONObjBuilder& builder,
                                              const std::string& time_operator,
                                              uint64_t timestamp);
-                    
+                    //!manage the partiiton value for shard key for every managerd key
+                    ShardKeyManagement shrd_key_manager;
                 protected:
                     MongoDBObjectStorageDataAccess(const ChaosSharedPtr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
                     ~MongoDBObjectStorageDataAccess();
