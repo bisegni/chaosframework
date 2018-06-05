@@ -1081,7 +1081,8 @@ void CUController::releaseQuery(QueryCursor *query_cursor) {
 
 int CUController::loadDatasetTypeFromSnapshotTag(const std::string& snapshot_tag,
                                                  DatasetDomain dataset_type,
-                                                 chaos_data::CDataWrapper **cdatawrapper_handler) {
+                                                 chaos_data::CDWShrdPtr& cdatawrapper_handler) {
+    
     return ioLiveDataDriver->loadDatasetTypeFromSnapshotTag(snapshot_tag,
                                                             devId,
                                                             dataset_type,

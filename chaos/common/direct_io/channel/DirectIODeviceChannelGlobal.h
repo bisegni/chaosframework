@@ -308,7 +308,7 @@ namespace chaos {
                         DirectIOSystemAPISnapshotResultHeader api_result;
                         
                         //!channel data
-                        void* channel_data;
+                        chaos::common::data::CDWShrdPtr channel_data;
                     }DirectIOSystemAPIGetDatasetSnapshotResult,
                     *DirectIOSystemAPIGetDatasetSnapshotResultPtr;
                 }

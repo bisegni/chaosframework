@@ -470,7 +470,7 @@ namespace chaos {
                 //! restore from a tag a dataset associated to a key
                 int loadDatasetTypeFromSnapshotTag(const std::string& snapshot_tag,
                                                    DatasetDomain dataset_type,
-                                                   chaos_data::CDataWrapper **cdatawrapper_handler);
+                                                   chaos_data::CDWShrdPtr& cdatawrapper_handler);
                 //! restore from a tag a dataset associated to a key
                 int createNewSnapshot(const std::string& snapshot_tag,
                                       const std::vector<std::string>& other_snapped_device);

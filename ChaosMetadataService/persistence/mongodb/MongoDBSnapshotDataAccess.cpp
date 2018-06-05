@@ -192,8 +192,7 @@ int MongoDBSnapshotDataAccess::snapshotIncrementJobCounter(const std::string& wo
 int MongoDBSnapshotDataAccess::snapshotGetDatasetForProducerKey(const std::string& snapshot_name,
                                                                 const std::string& producer_unique_key,
                                                                 const std::string& dataset_type,
-                                                                void **channel_data,
-                                                                uint32_t& channel_data_size) {
+                                                                BufferSPtr& snapshot_data_found) {
     int err = 0;
     mongo::BSONObj			result;
     mongo::BSONObjBuilder	search_snapshot;
@@ -216,11 +215,9 @@ int MongoDBSnapshotDataAccess::snapshotGetDatasetForProducerKey(const std::strin
             if(result.hasField(channel_unique_key)) {
                 //! get data
                 mongo::BSONObj channel_data_obj = result.getObjectField(channel_unique_key);
-                if((channel_data_size = channel_data_obj.objsize())) {
-                    *channel_data = malloc(channel_data_size);
-                    if(*channel_data) {
-                        std::memcpy(*channel_data, (void*)channel_data_obj.objdata(), channel_data_size);
-                    }
+                if(channel_data_obj.isValid() &&
+                   !channel_data_obj.isEmpty()) {
+                    snapshot_data_found = ChaosMakeSharedPtr<Buffer>(channel_data_obj.objdata(), channel_data_obj.objsize());
                 }
             }
         }

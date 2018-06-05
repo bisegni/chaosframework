@@ -151,7 +151,7 @@ namespace chaos{
                 int loadDatasetTypeFromSnapshotTag(const std::string& restore_point_tag_name,
                                                    const std::string& key,
                                                    uint32_t dataset_type,
-                                                   chaos_data::CDataWrapper **cdatawrapper_handler);
+                                                   chaos_data::CDWShrdPtr& cdw_shrd_ptr);
                 
                 /*
                  * updateConfiguration

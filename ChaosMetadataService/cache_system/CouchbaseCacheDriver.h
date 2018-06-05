@@ -113,7 +113,7 @@ namespace chaos {
                 ~CouchbaseCacheDriver();
                 
                 int putData(const std::string& key,
-                            const CacheData& data);
+                            CacheData data);
                 
                 int getData(const std::string& key,
                             CacheData& data);

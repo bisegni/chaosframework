@@ -98,18 +98,19 @@ int DirectIOSystemAPIServerChannel::consumeDataPack(DirectIODataPackSPtr data_pa
             err = handler->consumeGetDatasetSnapshotEvent(*header,
                                                           producer_key,
                                                           channel_found_data,
-                                                          result_header->data<DirectIOSystemAPISnapshotResultHeader>()->channel_data_len,
                                                           *result_header->data<DirectIOSystemAPISnapshotResultHeader>());
             //whe have data to return
             if(err == 0){
+                DIRECT_IO_SET_CHANNEL_HEADER(synchronous_answer, result_header, (uint32_t)result_header->size());
                 //set the result header
                 result_header->data<DirectIOSystemAPISnapshotResultHeader>()->error = TO_LITTEL_ENDNS_NUM(int32_t, result_header->data<DirectIOSystemAPISnapshotResultHeader>()->error);
+                result_header->data<DirectIOSystemAPISnapshotResultHeader>()->channel_data_len = (uint32_t)channel_found_data->size();
                 if(result_header->data<DirectIOSystemAPISnapshotResultHeader>()->channel_data_len) {
                     //asosciate the pointer to the datapack to be returned
                     DIRECT_IO_SET_CHANNEL_DATA(synchronous_answer, channel_found_data, result_header->data<DirectIOSystemAPISnapshotResultHeader>()->channel_data_len);
                 }
                 result_header->data<DirectIOSystemAPISnapshotResultHeader>()->channel_data_len = TO_LITTEL_ENDNS_NUM(uint32_t, result_header->data<DirectIOSystemAPISnapshotResultHeader>()->channel_data_len);
-                DIRECT_IO_SET_CHANNEL_HEADER(synchronous_answer, result_header, (uint32_t)result_header->size());
+                
             }
             break;
         }

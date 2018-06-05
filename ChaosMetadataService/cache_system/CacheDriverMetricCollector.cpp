@@ -47,10 +47,10 @@ CacheDriverMetricCollector::~CacheDriverMetricCollector() {
 }
 
 int CacheDriverMetricCollector::putData(const std::string& key,
-                                        const CacheData& data) {
+                                        CacheData data) {
     CHAOS_ASSERT(wrapped_cache_driver)
-    if(data.size()) {
-        shared_collector->incrementSetBandWidth((uint32_t)data.size());
+    if(data->size()) {
+        shared_collector->incrementSetBandWidth((uint32_t)data->size());
     }
     int err =  wrapped_cache_driver->putData(key,
                                              data);
@@ -62,8 +62,8 @@ int CacheDriverMetricCollector::getData(const std::string& key,
     CHAOS_ASSERT(wrapped_cache_driver)
     int err =  wrapped_cache_driver->getData(key,
                                              data);
-    if(data.size()) {
-        shared_collector->incrementGetBandWidth((uint32_t)data.size());
+    if(data->size()) {
+        shared_collector->incrementGetBandWidth((uint32_t)data->size());
     }
     return err;
 }

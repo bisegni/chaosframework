@@ -38,6 +38,7 @@
 using namespace chaos::metadata_service;
 
 using namespace chaos::data_service;
+using namespace chaos::data_service::worker;
 using namespace chaos::data_service::cache_system;
 using namespace chaos::data_service::object_storage::abstraction;
 
@@ -163,12 +164,11 @@ int QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode& hea
     switch(storage_type) {
         case DataServiceNodeDefinitionType::DSStorageTypeLiveHistory:
         case DataServiceNodeDefinitionType::DSStorageTypeLive:{
-            CacheData cache_data((char*)channel_data->data(), ((char*)channel_data->data())+channel_data_len);
             //protected access to cached driver
             CachePoolSlot *cache_slot = DriverPoolManager::getInstance()->getCacheDriverInstance();
             if(cache_slot) {
                 err = cache_slot->resource_pooled->putData(key_to_store,
-                                                           cache_data);
+                                                           channel_data);
                 DriverPoolManager::getInstance()->releaseCacheDriverInstance(cache_slot);
             } else {
                 ERR << "Error allocating cache slot";
@@ -190,14 +190,13 @@ int QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode& hea
         uint32_t index_to_use = device_data_worker_index++ % ChaosMetadataService::getInstance()->setting.worker_setting.instances;
         CHAOS_ASSERT(device_data_worker[index_to_use])
         //create storage job information
-        chaos::data_service::worker::DeviceSharedWorkerJob *job = new chaos::data_service::worker::DeviceSharedWorkerJob();
+        auto job = ChaosMakeSharedPtr<DeviceSharedWorkerJob>();
         job->key = key_to_store;
         job->key_tag = key_tag;
         job->data_pack = channel_data;
         job->data_pack_len = channel_data_len;
         if((err = device_data_worker[index_to_use]->submitJobInfo(job))) {
             DEBUG_CODE(DBG << "Error pushing data into worker queue");
-            delete job;
         }
     }
     return err;
@@ -253,17 +252,14 @@ int QueryDataConsumer::consumeGetEvent(chaos::common::data::BufferSPtr key_data,
     //protected access to cached driver
     CachePoolSlot *cache_slot = DriverPoolManager::getInstance()->getCacheDriverInstance();
     try{
-        CacheData cache_data;
         if(cache_slot) {
             //get data
             err = cache_slot->resource_pooled->getData(std::string(key_data->data(),
                                                                    key_data->size()),
-                                                       cache_data);
-            if(cache_data.size()) {
-                result_header.value_len = (uint32_t)cache_data.size();
-                result_value = ChaosMakeSharedPtr<Buffer>();
-                CHAOS_ASSERT(result_value)
-                result_value->append(&cache_data[0], result_header.value_len);
+                                                       result_value);
+            if(result_value &&
+               result_value->size()) {
+                result_header.value_len = (uint32_t)result_value->size();
             }
         } else {
             err = -1;
@@ -295,7 +291,7 @@ int QueryDataConsumer::consumeGetEvent(opcode_headers::DirectIODeviceChannelHead
                 it != end;
                 it++) {
                 const CacheData& cached_element = multi_cached_data[*it];
-                if(cached_element.size() == 0) {
+                if(cached_element->size() == 0) {
                     //element has not been found so we need to create and empty cdata wrapper
                     CDataWrapper tmp;
                     int size = 0;
@@ -303,8 +299,8 @@ int QueryDataConsumer::consumeGetEvent(opcode_headers::DirectIODeviceChannelHead
                     data_buffer.writeByte(d_ptr,
                                           size);
                 } else {
-                    data_buffer.writeByte(&cached_element[0],
-                                          (int32_t)cached_element.size());
+                    data_buffer.writeByte(cached_element->data(),
+                                          (int32_t)cached_element->size());
                 }
             }
             
@@ -330,7 +326,7 @@ int QueryDataConsumer::consumeDataCloudDelete(const std::string& search_key,
     if((err = obj_storage_da->deleteObject(search_key,
                                            start_ts,
                                            end_ts))) {
-        ERR << CHAOS_FORMAT("Error performing lcoud query with code %1%", %err);
+        ERR << CHAOS_FORMAT("Error performing cloud query with code %1%", %err);
     }
     return err;
 }
@@ -339,9 +335,8 @@ int QueryDataConsumer::consumeDataCloudDelete(const std::string& search_key,
 // Return the dataset for a producerkey ona specific snapshot
 int QueryDataConsumer::consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader& header,
                                                       const std::string& producer_id,
-                                                      void **channel_found_data,
-                                                      uint32_t& channel_found_data_length,
-                                                      DirectIOSystemAPISnapshotResultHeader& api_result) {
+                                                      chaos::common::data::BufferSPtr& channel_found_data,
+                                                      DirectIOSystemAPISnapshotResultHeader &result_header) {
     int err = 0;
     std::string channel_type;
     //CHAOS_ASSERT(api_result)
@@ -367,18 +362,17 @@ int QueryDataConsumer::consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSy
     if((err = s_da->snapshotGetDatasetForProducerKey(header.field.snap_name,
                                                      producer_id,
                                                      channel_type,
-                                                     channel_found_data,
-                                                     channel_found_data_length))) {
-        api_result.error = err;
-        std::strcpy(api_result.error_message, "Error retriving the snapshoted dataaset for producer key");
-        ERR << api_result.error_message << "[" << header.field.snap_name << "/" << producer_id<<"]";
+                                                     channel_found_data))) {
+        std::strcpy(result_header.error_message, "Error retriving the snapshoted dataaset for producer key");
+        ERR << result_header.error_message << "[" << header.field.snap_name << "/" << producer_id<<"]";
     } else {
-        if(*channel_found_data) {
-            api_result.error = 0;
-            std::strcpy(api_result.error_message, "Snapshot found");
+        if(channel_found_data &&
+           channel_found_data->size()) {
+            result_header.error = 0;
+            std::strcpy(result_header.error_message, "Snapshot found");
         } else {
-            api_result.error = -2;
-            std::strcpy(api_result.error_message, "Channel data not found in snapshot");
+            result_header.error = -2;
+            std::strcpy(result_header.error_message, "Channel data not found in snapshot");
             
         }
     }
