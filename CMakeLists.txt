@@ -204,16 +204,7 @@ IF (CHAOS_ARCHITECTURE_TEST)
                                         GTEST_LIBRARY_DIR ${GTEST_LIBRARY_DIR}
                                         GTEST_LIBRARY_PATH ${GTEST_LIBRARY_PATH})
     ADD_SUBDIRECTORY(CHAOSFrameworkTests/FrameworkTest)
-#    SET(CHAOS_TEST_DIRECTORY "CHAOSFrameworkTests")
-#    SUBDIRLIST(TEST_SUBDIRS ${CHAOS_TEST_DIRECTORY})
-#    FOREACH(_TEST_DIRECTORY ${TEST_SUBDIRS})
-#        IF(EXISTS "${_TEST_DIRECTORY}/CMakeLists.txt")
-#            #set the external project variable in subdirectory
-#            get_filename_component(_TEST_DIR_NAME ${_TEST_DIRECTORY} NAME)
-#            MESG("Configure ${_TEST_DIR_NAME} test")
-#            ADD_SUBDIRECTORY(${_TEST_DIRECTORY})
-#        ENDIF()
-#    ENDFOREACH()
+    GET_DIRECTORY_PROPERTY(USE_GPT DIRECTORY CHAOSFrameworkTests/FrameworkTest VARIABLES USE_GPT)
 ENDIF()
 
 MESG("Done")
