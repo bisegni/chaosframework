@@ -126,17 +126,14 @@ TEST_F(DirectIOChannelTest, SystemChannelTest) {
     }
     //snapshot data
     {
-        DirectIOSystemAPIGetDatasetSnapshotResult *api_result_handle = NULL;
-        ASSERT_TRUE(client_channel->getDatasetSnapshotForProducerKey("snap_name", "producer_name", 0, &api_result_handle));
-        ASSERT_FALSE(api_result_handle);
-        ASSERT_FALSE(client_channel->getDatasetSnapshotForProducerKey("snap_name", "producer_name", 0, &api_result_handle));
-        ASSERT_TRUE(api_result_handle);
-        CDataWrapper result_snap((const char *)api_result_handle->channel_data);
-        ASSERT_EQ(result_snap.getBSONRawSize(), api_result_handle->api_result.channel_data_len);
-        ASSERT_TRUE(result_snap.hasKey("producer_name"));
-        ASSERT_TRUE(result_snap.isStringValue("producer_name"));
-        ASSERT_STREQ(result_snap.getStringValue("producer_name").c_str(), "snap_name");
-        free(api_result_handle);
+        DirectIOSystemAPIGetDatasetSnapshotResult api_result_handle;
+        ASSERT_TRUE(client_channel->getDatasetSnapshotForProducerKey("snap_name", "producer_name", 0, api_result_handle));
+        ASSERT_FALSE(client_channel->getDatasetSnapshotForProducerKey("snap_name", "producer_name", 0, api_result_handle));
+      
+        ASSERT_EQ(api_result_handle.channel_data->getBSONRawSize(), api_result_handle.api_result.channel_data_len);
+        ASSERT_TRUE(api_result_handle.channel_data->hasKey("producer_name"));
+        ASSERT_TRUE(api_result_handle.channel_data->isStringValue("producer_name"));
+        ASSERT_STREQ(api_result_handle.channel_data->getStringValue("producer_name").c_str(), "snap_name");
     }
     //log
     {
