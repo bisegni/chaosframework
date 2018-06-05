@@ -332,6 +332,9 @@ INSTALL(FILES ${files} DESTINATION include/chaos/common/alarm)
 FILE(GLOB files "state_flag/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/state_flag)
 
+FILE(GLOB files "healt_system/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/common/healt_system)
+
 FILE(GLOB files "metadata_logging/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/metadata_logging)
 FILE(GLOB files "async_central/*.h")
