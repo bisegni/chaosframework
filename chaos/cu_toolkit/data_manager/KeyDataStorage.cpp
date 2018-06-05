@@ -278,8 +278,7 @@ int KeyDataStorage::loadRestorePoint(const std::string& restore_point_tag) {
         return err;
     } else {
         if(dataset){
-            restore_point_map[restore_point_tag].insert(make_pair(output_key, dataset));
-            dataset = NULL;
+            restore_point_map[restore_point_tag].insert(make_pair(output_key, ChaosMoveOperator(dataset)));dataset.reset();
         }
     }
     
@@ -292,8 +291,8 @@ int KeyDataStorage::loadRestorePoint(const std::string& restore_point_tag) {
         return err;
     } else {
         if(dataset){
-            restore_point_map[restore_point_tag].insert(make_pair(input_key, dataset));
-            dataset = NULL;
+            restore_point_map[restore_point_tag].insert(make_pair(input_key, ChaosMoveOperator(dataset)));dataset.reset();
+
         }
     }
     
@@ -306,8 +305,7 @@ int KeyDataStorage::loadRestorePoint(const std::string& restore_point_tag) {
         return err;
     } else {
         if(dataset){
-            restore_point_map[restore_point_tag].insert(make_pair(custom_key, dataset));
-            dataset = NULL;
+            restore_point_map[restore_point_tag].insert(make_pair(custom_key, ChaosMoveOperator(dataset)));dataset.reset();
         }
     }
     
@@ -320,8 +318,7 @@ int KeyDataStorage::loadRestorePoint(const std::string& restore_point_tag) {
         return err;
     } else {
         if(dataset){
-            restore_point_map[restore_point_tag].insert(make_pair(system_key, dataset));
-            dataset = NULL;
+            restore_point_map[restore_point_tag].insert(make_pair(system_key, ChaosMoveOperator(dataset)));dataset.reset();
         }
     }
     
