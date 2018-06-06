@@ -68,30 +68,30 @@ void HTTPServerAdapter::init(void *init_data) throw (chaos::CException) {
     root_connection = mg_bind(&mgr, http_port_str.c_str(), HTTPServerAdapter::eventHandler);
     if(root_connection == NULL) {throw CException(-1, "Error creating http connection", __PRETTY_FUNCTION__);}
     root_connection->user_data = this;
-    
+
     mg_set_protocol_http_websocket(root_connection);
     s_http_server_opts.document_root = "";  // Serve current directory
     s_http_server_opts.enable_directory_listing = "no";
     //
     CObjectProcessingQueue<ServerWorkRequest>::init(setting.thread_number);
-    
+
     thread_poller.reset(new boost::thread(boost::bind(&HTTPServerAdapter::poller, this)));
 }
 
 void HTTPServerAdapter::deinit() throw (chaos::CException) {
     run = false;
+    thread_poller->join();
     CObjectProcessingQueue<ServerWorkRequest>::deinit();
     CObjectProcessingQueue<ServerWorkRequest>::clear();
-    thread_poller->join();
-    
     mg_mgr_free(&mgr);
+    map_connection().clear();
 }
 
 void HTTPServerAdapter::poller() {
     INFO << "Entering thread poller";
     while (run) {
         mg_mgr_poll(&mgr, 1);
-        
+
         //consume opcode queue
         {
             LOpcodeShrdPtrQueueReadLock wconnl = post_evt_op_queue.getReadLockObject();
@@ -111,11 +111,11 @@ void HTTPServerAdapter::poller() {
                             case EUCPhaseStartFragment:
                                 mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT|WEBSOCKET_DONT_FIN, op->data->getBuffer(), op->data->getBufferSize());
                                 break;
-                                
+
                             case EUCPhaseContinueFragment:
                                 mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT|WEBSOCKET_DONT_FIN, op->data->getBuffer(), op->data->getBufferSize());
                                 break;
-                                
+
                             case EUCPhaseEndFragment:
                                 mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT, op->data->getBuffer(), op->data->getBufferSize());
                                 break;
@@ -126,9 +126,6 @@ void HTTPServerAdapter::poller() {
                         LMapConnectionWriteLock wconnl = map_connection.getWriteLockObject();
                         if(!map_m_conn_ext_conn.hasRightKey(static_cast<std::string>(op->identifier))) break;
                         mg_connection *nc = reinterpret_cast<mg_connection*>(map_m_conn_ext_conn.findByRightKey(static_cast<std::string>(op->identifier)));
-//                        if((nc->flags & MG_F_LISTENING) && (nc->sock != INVALID_SOCKET)) {
-//                            mg_send_websocket_frame(nc, WEBSOCKET_OP_CLOSE, "", 0);
-//                        }
                         if(nc) {
                             nc->flags |= MG_F_CLOSE_IMMEDIATELY;
                         }
@@ -136,7 +133,7 @@ void HTTPServerAdapter::poller() {
                         map_m_conn_ext_conn.removebyLeftKey(reinterpret_cast<uintptr_t>(nc));
                         break;
                     }
-                        
+
                     case OpcodeInfoTypeCloseConnectionForEndpoint:{
                         LMapConnectionWriteLock wconnl = map_connection.getWriteLockObject();
                         for(MapConnectionIterator it = map_connection().begin(),
@@ -148,9 +145,6 @@ void HTTPServerAdapter::poller() {
                                     if(nc) {
                                         nc->flags |= MG_F_CLOSE_IMMEDIATELY;
                                     }
-//                                    if((nc->flags & MG_F_LISTENING) && (nc->sock != INVALID_SOCKET)) {
-//                                        mg_send_websocket_frame(nc, WEBSOCKET_OP_CLOSE, "", 0);
-//                                    }
                                     //remove connection
                                     map_connection().erase(it++);
                                 }
@@ -176,7 +170,7 @@ const std::string HTTPServerAdapter::getSerializationType(http_message *http_mes
         value = mg_get_http_header(http_message, "content-type");
         if(value == NULL) return "";
     }
-    
+
     std::string ser_type(value->p, value->len);
     std::transform(ser_type.begin(), ser_type.end(), ser_type.begin(), ::tolower);
     return ser_type;
@@ -199,7 +193,7 @@ void  HTTPServerAdapter::manageWSHandshake(ServerWorkRequest& wr) {
                                      true);
         return;
     }
-    
+
     //check if endpoint can accept more connection
     if(endpoint_it->second->canAcceptMoreConnection() == false) {
         //write error for no more connection accepted by endpoint
@@ -256,7 +250,6 @@ void HTTPServerAdapter::processBufferElement(ServerWorkRequest *request,
         }
         case WorkRequestTypeWSFrame: {
             int err = 0;
-            policy.elementHasBeenDetached = true;
             LMapConnectionReadLock wconnl = map_connection.getReadLockObject();
             if(map_connection().count(reinterpret_cast<uintptr_t>(request->nc))) {
                 if((err = sendDataToEndpoint(*map_connection()[reinterpret_cast<uintptr_t>(request->nc)],
@@ -274,7 +267,7 @@ void HTTPServerAdapter::processBufferElement(ServerWorkRequest *request,
             map_m_conn_ext_conn.removebyLeftKey(reinterpret_cast<uintptr_t>(request->nc));
             break;
         }
-            
+
         default:{break;}
     }
 }
@@ -283,6 +276,7 @@ void HTTPServerAdapter::eventHandler(mg_connection *nc, int ev, void *ev_data) {
     (void) nc;
     (void) ev_data;
     HTTPServerAdapter *adapter = static_cast<HTTPServerAdapter*>(nc->user_data);
+    if(!adapter->run) return;
     switch (ev) {
         case MG_EV_ACCEPT:{
             break;
@@ -369,7 +363,7 @@ int HTTPServerAdapter::deregisterEndpoint(ExternalUnitServerEndpoint& endpoint) 
     }
     //we need to wait that opcode has terminated
     op->wait_termination_semaphore.wait();
-    
+
     return 0;
 }
 

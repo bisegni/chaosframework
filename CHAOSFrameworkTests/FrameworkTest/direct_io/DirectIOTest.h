@@ -24,34 +24,34 @@ public:
     server_channel(NULL),
     endpoint(NULL),
     connection(NULL){}
-    
+
     ~DirectIOTest(){}
-    
+
     void SetUp() {
         ASSERT_NO_THROW(chaos::common::utility::StartableService::initImplementation(chaos::common::network::NetworkBroker::getInstance(), NULL, "NetworkBroker", __PRETTY_FUNCTION__););
         ASSERT_NO_THROW(chaos::common::utility::StartableService::startImplementation(chaos::common::network::NetworkBroker::getInstance(),  "NetworkBroker", __PRETTY_FUNCTION__););
-        
+
         endpoint = NetworkBroker::getInstance()->getDirectIOServerEndpoint();
         ASSERT_TRUE(endpoint);
         server_channel = (chaos::common::direct_io::channel::DirectIOSystemAPIServerChannel*)endpoint->getNewChannelInstance("DirectIOSystemAPIServerChannel");
         ASSERT_TRUE(server_channel);
-        
+
         connection = chaos::common::network::NetworkBroker::getInstance()->getSharedDirectIOClientInstance()->getNewConnection("localhost:1672:30175|0");
         ASSERT_TRUE(connection);
     }
     void TearDown() {
         if(server_channel){
-            ASSERT_NO_THROW(endpoint->deregisterChannelInstance(server_channel););
+            ASSERT_NO_THROW(endpoint->releaseChannelInstance(server_channel););
         }
         if(endpoint){
             ASSERT_NO_THROW(NetworkBroker::getInstance()->releaseDirectIOServerEndpoint(endpoint));
         }
-        
+
         if(connection) {
             chaos::common::network::NetworkBroker::getInstance()->getSharedDirectIOClientInstance()->releaseConnection(connection);
             connection = NULL;
         }
-        
+
         ASSERT_NO_THROW(chaos::common::utility::StartableService::stopImplementation(chaos::common::network::NetworkBroker::getInstance(),  "NetworkBroker", __PRETTY_FUNCTION__););
         ASSERT_NO_THROW(chaos::common::utility::StartableService::deinitImplementation(chaos::common::network::NetworkBroker::getInstance(), "NetworkBroker", __PRETTY_FUNCTION__););
     }

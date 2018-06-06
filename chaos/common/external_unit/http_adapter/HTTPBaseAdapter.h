@@ -37,7 +37,7 @@ namespace chaos {
     namespace common {
         namespace external_unit {
             namespace http_adapter {
-                
+
                 struct ServerWorkRequest {
                     WorkRequestType r_type;
                     mg_connection *nc;
@@ -45,14 +45,14 @@ namespace chaos {
                     //!serialization type issuead on the beginning of the http request
                     std::string s_type;
                     ChaosUniquePtr<chaos::common::data::CDataBuffer> buffer;
-                    
+
                     ServerWorkRequest():
                     r_type(WorkRequestTypeUnspecified),
                     nc(NULL),
                     uri(),
                     s_type(),
                     buffer(){}
-                    
+
                     ServerWorkRequest(const char *ptr,
                                       uint32_t size):
                     r_type(WorkRequestTypeUnspecified),
@@ -61,19 +61,21 @@ namespace chaos {
                     s_type(),
                     buffer(new chaos::common::data::CDataBuffer(ptr, size, true)){}
                 };
-                
+
+                typedef ChaosSharedPtr<ServerWorkRequest> ServerWorkRequestShrdPtr;
+
                 class HTTPBaseAdapter {
                     friend class ExternalUnitConnection;
                 protected:
                     //structure for manage command executed in other thread
-                    
+
                     //!opcode list
                     typedef enum {
                         OpcodeInfoTypeSend,
                         OpcodeInfoTypeCloseConnection,
                         OpcodeInfoTypeCloseConnectionForEndpoint
                     } OpcodeInfoType;
-                    
+
                     typedef struct Opcode {
                         //! context sensitive identifier associated to the operation
                         std::string identifier;
@@ -86,21 +88,21 @@ namespace chaos {
                         //some opcode need to notify the termination
                         chaos::WaitSemaphore wait_termination_semaphore;
                     } Opcode;
-                    
+
                     typedef ChaosSharedPtr<Opcode> OpcodeShrdPtr;
                     typedef std::queue<OpcodeShrdPtr> OpcodeShrdPtrQueue;
                     CHAOS_DEFINE_LOCKABLE_OBJECT(OpcodeShrdPtrQueue, LOpcodeShrdPtrQueue);
                     //!operation posted during poll execution to send with the nex one
                     LOpcodeShrdPtrQueue post_evt_op_queue;
-                    
+
                     ChaosUniquePtr<boost::thread> thread_poller;
-                    
+
                     virtual int sendDataToConnection(const std::string& connection_identifier,
                                                      const chaos::common::data::CDBufferUniquePtr data,
                                                      const EUCMessageOpcode opcode) = 0;
-                    
+
                     virtual int closeConnection(const std::string& connection_identifier) = 0;
-                    
+
                     void sendHTTPJSONError(mg_connection *nc,
                                            int status_code,
                                            const int error_code,
@@ -112,7 +114,7 @@ namespace chaos {
                         mg_send_head(nc, 400, 0, "Content-Type: application/json");
                         mg_printf(nc, "%s", json_error.c_str());
                     }
-                    
+
                     void sendWSJSONError(mg_connection *nc,
                                          const int error_code,
                                          const std::string& error_message,
@@ -124,7 +126,7 @@ namespace chaos {
                         mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT, json_error.c_str(), json_error.size());
                         if(close_connection){mg_send_websocket_frame(nc, WEBSOCKET_OP_CLOSE, NULL, 0);}
                     }
-                    
+
                 public:
                     HTTPBaseAdapter(){}
                     virtual ~HTTPBaseAdapter(){}
@@ -135,4 +137,3 @@ namespace chaos {
 }
 
 #endif /* chaos_common_external_unit_http_adapter_HTTPBaseAdapter_h */
-
