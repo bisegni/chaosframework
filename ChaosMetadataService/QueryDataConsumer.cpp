@@ -291,7 +291,8 @@ int QueryDataConsumer::consumeGetEvent(opcode_headers::DirectIODeviceChannelHead
                 it != end;
                 it++) {
                 const CacheData& cached_element = multi_cached_data[*it];
-                if(cached_element->size() == 0) {
+                if(!cached_element ||
+                   cached_element->size() == 0) {
                     //element has not been found so we need to create and empty cdata wrapper
                     CDataWrapper tmp;
                     int size = 0;

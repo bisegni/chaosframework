@@ -65,6 +65,20 @@ namespace driver{
                 pkids[cnt]=0;
             }
             uid=groupName+"/"+datasetName;
+            
+//            ChaosStringVector keys;
+//            keys.push_back("rt_sin_c_o");
+//            keys.push_back("rt_sin_l_o");
+//            keys.push_back("rt_sin_g_o");
+//            keys.push_back("rt_sin_f_o");
+//            keys.push_back("rt_sin_h_o");
+//            keys.push_back("rt_sin_d_o");
+//            chaos::common::data::VectorCDWShrdPtr keys_result;
+//            for(int idx = 0; idx < 10000000; idx++) {
+//                keys_result.clear();
+//                ioLiveDataDriver->retriveMultipleData(keys,
+//                                                      keys_result);
+//            }
         }
         
         int ChaosDatasetIO::setAgeing(uint64_t secs){ageing=secs;return 0;}
