@@ -160,10 +160,10 @@ int DirectIOSystemAPIClientChannel::pushLogEntries(const std::string& node_name,
     int32_t data_len = buffer.getCursorLocation();
     BufferSPtr channel_data = ChaosMakeSharedPtr<Buffer>(buffer.release(), data_len, data_len, true);
     //set header
-    DIRECT_IO_SET_CHANNEL_HEADER(data_pack, header, sizeof(DirectIOSystemAPIChannelOpcodePushLogEntryForANodeHeader))
+    DIRECT_IO_SET_CHANNEL_HEADER(data_pack, header, header->size())
     //set as data
     
-    DIRECT_IO_SET_CHANNEL_DATA(data_pack, channel_data, data_len);
+    DIRECT_IO_SET_CHANNEL_DATA(data_pack, channel_data, channel_data->size());
     //send data with synchronous answer flag
     if((err = (int)sendPriorityData(ChaosMoveOperator(data_pack)))) {
         //error getting last value

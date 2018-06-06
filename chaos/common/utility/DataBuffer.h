@@ -94,7 +94,7 @@ namespace chaos {
                 
                 virtual void* release() {
                     void * result = data;
-                    data = NULL;
+                    own = data = NULL;
                     return result;
                 }
                 

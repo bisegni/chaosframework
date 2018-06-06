@@ -140,7 +140,6 @@ int DirectIOSystemAPIServerChannel::consumeDataPack(DirectIODataPackSPtr data_pa
             //call the handler
             err = handler->consumeLogEntries(node_name,
                                              log_entry);
-            buffer.release();
             return err;
         }
         default:

@@ -308,6 +308,7 @@ void ZMQDirectIOServer::worker(unsigned int w_type,
             if((err = reveiceDatapack(worker_socket,
                                       identity,
                                       data_pack_received))) {
+                data_pack_received.reset();
                 continue;
             } else {
                 //keep track if the cleint want the answer

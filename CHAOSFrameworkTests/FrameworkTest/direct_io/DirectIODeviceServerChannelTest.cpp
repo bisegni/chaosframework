@@ -303,8 +303,10 @@ TEST_F(DirectIOChannelTest, DeviceChannelTest) {
         uint32_t size = 0;
         ASSERT_TRUE(client_channel->requestLastOutputData("requestLastOutputData", &result, size));
         ASSERT_FALSE(client_channel->requestLastOutputData("requestLastOutputData", &result, size));
+        free(result);
         ASSERT_TRUE(client_channel->requestLastOutputData("requestLastOutputData", &result, size));
         ASSERT_FALSE(client_channel->requestLastOutputData("requestLastOutputData", &result, size));
+        free(result);
         ASSERT_TRUE(client_channel->requestLastOutputData("requestLastOutputData", &result, size));
         ASSERT_FALSE(client_channel->requestLastOutputData("requestLastOutputData", &result, size));
         ASSERT_TRUE(result && size);
