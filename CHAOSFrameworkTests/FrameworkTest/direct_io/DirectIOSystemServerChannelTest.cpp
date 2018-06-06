@@ -156,7 +156,6 @@ TEST_F(DirectIOChannelTest, SystemChannelTest) {
         log_entries.push_back("log entry");
         ASSERT_FALSE(client_channel->pushLogEntries("producer", log_entries));
         ASSERT_FALSE(client_channel->pushLogEntries("producer", log_entries));
-        sleep(100000);
     }
     //--------------------perform test----------------------
     if(client_channel){
