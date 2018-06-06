@@ -164,6 +164,6 @@ TEST_F(DirectIOChannelTest, SystemChannelTest) {
     }
     
     if(server_channel){
-        ASSERT_NO_THROW(endpoint->deregisterChannelInstance(server_channel););
+        ASSERT_NO_THROW(endpoint->releaseChannelInstance(server_channel););
     }
 }

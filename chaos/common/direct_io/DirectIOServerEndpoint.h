@@ -69,14 +69,12 @@ namespace chaos {
                 // Event for a new data received
                 int serviceDataReceived(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
                                         chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer);
-
-			public:
-				//! Add a new channel instantiator
+                //! Add a new channel instantiator
                 channel::DirectIOVirtualServerChannel *registerChannelInstance(channel::DirectIOVirtualServerChannel *channel_instance);
                 
                 //! Dispose the channel
                 void deregisterChannelInstance(channel::DirectIOVirtualServerChannel *channel_instance);
-				
+			public:
 				uint16_t getRouteIndex();
 				DirectIOServerPublicInterface * getPublicServerInterface() const;
 				//! New channel allocation by name
