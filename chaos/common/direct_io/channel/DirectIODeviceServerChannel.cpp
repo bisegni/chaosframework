@@ -130,10 +130,7 @@ int DirectIODeviceServerChannel::consumeDataPack(chaos::common::direct_io::Direc
                     chaos_data::CDataWrapper query(data_pack->channel_data->data());
                     BufferSPtr result_header = ChaosMakeSharedPtr<Buffer>(sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult));
                     DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult  *result_header_t = result_header->data<DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult>();
-                    result_header_t->numer_of_record_found = 0;
-                    result_header_t->result_data_size = 0;
-                    result_header_t->last_found_sequence.run_id = 0;
-                    result_header_t->last_found_sequence.datapack_counter = 0;
+
                     
                     header->field.record_for_page = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.record_for_page);
 

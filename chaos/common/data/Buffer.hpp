@@ -94,6 +94,7 @@ namespace chaos {
             {
                 data_ = (s != 0 ? new char[s] : 0);
                 size_ = capacity_ = s;
+                fill(0);
             }
             
             inline Buffer::Buffer (size_type s, size_type c)
@@ -105,6 +106,7 @@ namespace chaos {
                 data_ = (c != 0 ? new char[c] : 0);
                 size_ = s;
                 capacity_ = c;
+                fill(0);
             }
             
             inline Buffer::Buffer (const void* d, size_type s)
