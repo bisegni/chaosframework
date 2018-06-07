@@ -122,7 +122,6 @@ int DirectIODeviceServerChannel::consumeDataPack(chaos::common::direct_io::Direc
         case opcode::DeviceChannelOpcodeQueryDataCloud: {
             if(!data_pack->header.dispatcher_header.fields.synchronous_answer) return -1000;
             DirectIODeviceChannelHeaderOpcodeQueryDataCloud *header = data_pack->channel_header_data->data<DirectIODeviceChannelHeaderOpcodeQueryDataCloud>();
-
             try {
                 if (data_pack &&
                     data_pack->channel_data) {
@@ -130,7 +129,12 @@ int DirectIODeviceServerChannel::consumeDataPack(chaos::common::direct_io::Direc
                     QueryResultPage result_page;
                     chaos_data::CDataWrapper query(data_pack->channel_data->data());
                     BufferSPtr result_header = ChaosMakeSharedPtr<Buffer>(sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult));
-
+                    DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult  *result_header_t = result_header->data<DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult>();
+                    result_header_t->numer_of_record_found = 0;
+                    result_header_t->result_data_size = 0;
+                    result_header_t->last_found_sequence.run_id = 0;
+                    result_header_t->last_found_sequence.datapack_counter = 0;
+                    
                     header->field.record_for_page = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.record_for_page);
 
                     //decode the endianes off the data
@@ -148,7 +152,7 @@ int DirectIODeviceServerChannel::consumeDataPack(chaos::common::direct_io::Direc
                                                                                      result_page);}
                     if(err == 0){
                         //manage emory for retur data
-                        if((result_header->data<DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult>()->numer_of_record_found = (uint32_t)result_page.size())){
+                        if((result_header_t->numer_of_record_found = (uint32_t)result_page.size())){
                             result_data = ChaosMakeSharedPtr<Buffer>();
                             //we successfully have perform query
                             result_header->data<DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult>()->result_data_size = 0;
@@ -165,12 +169,12 @@ int DirectIODeviceServerChannel::consumeDataPack(chaos::common::direct_io::Direc
                         }
 
                         //set the result header and data
-                        DIRECT_IO_SET_CHANNEL_HEADER(synchronous_answer, result_header, sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult));
-                        DIRECT_IO_SET_CHANNEL_DATA(synchronous_answer, result_data, result_header->data<DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult>()->result_data_size);
-                        result_header->data<DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult>()->result_data_size = TO_LITTEL_ENDNS_NUM(uint32_t, result_header->data<DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult>()->result_data_size);
-                        result_header->data<DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult>()->numer_of_record_found = TO_LITTEL_ENDNS_NUM(uint32_t, result_header->data<DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult>()->numer_of_record_found);
-                        result_header->data<DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult>()->last_found_sequence.run_id = TO_LITTEL_ENDNS_NUM(uint64_t, last_sequence_info.run_id);
-                        result_header->data<DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult>()->last_found_sequence.datapack_counter = TO_LITTEL_ENDNS_NUM(uint64_t, last_sequence_info.datapack_counter);
+                        DIRECT_IO_SET_CHANNEL_HEADER(synchronous_answer, result_header, result_header->size());
+                        DIRECT_IO_SET_CHANNEL_DATA(synchronous_answer, result_data, result_data->size());
+                        result_header_t->result_data_size = TO_LITTEL_ENDNS_NUM(uint32_t, result_header_t->result_data_size);
+                        result_header_t->numer_of_record_found = TO_LITTEL_ENDNS_NUM(uint32_t, result_header_t->numer_of_record_found);
+                        result_header_t->last_found_sequence.run_id = TO_LITTEL_ENDNS_NUM(uint64_t, last_sequence_info.run_id);
+                        result_header_t->last_found_sequence.datapack_counter = TO_LITTEL_ENDNS_NUM(uint64_t, last_sequence_info.datapack_counter);
                     }
                 }
             } catch (...) {

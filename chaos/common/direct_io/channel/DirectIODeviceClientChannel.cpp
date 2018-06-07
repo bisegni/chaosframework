@@ -259,7 +259,8 @@ int DirectIODeviceClientChannel::queryDataCloud(const std::string& key,
             uint32_t numer_of_record_found = FROM_LITTLE_ENDNS_NUM(uint32_t, result_header->numer_of_record_found);
             last_sequence_id.run_id = FROM_LITTLE_ENDNS_NUM(uint64_t, result_header->last_found_sequence.run_id);
             last_sequence_id.datapack_counter = FROM_LITTLE_ENDNS_NUM(uint64_t, result_header->last_found_sequence.datapack_counter);
-            if(result_data_size > 0) {
+            if(numer_of_record_found &&
+               result_data_size) {
                 //scan all result
                 char *current_data_prt = (char*)answer->channel_data->data();
                 while(found_element_page.size() < numer_of_record_found) {
