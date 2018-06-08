@@ -111,7 +111,7 @@ int DirectIOSystemAPIClientChannel::getDatasetSnapshotForProducerKey(const std::
                 answer->channel_header_data->data<DirectIOSystemAPISnapshotResultHeader>()->error = FROM_LITTLE_ENDNS_NUM(int32_t, answer->channel_header_data->data<DirectIOSystemAPISnapshotResultHeader>()->error);
                 
                 api_result_handle.api_result = *answer->channel_header_data->data<DirectIOSystemAPISnapshotResultHeader>();
-                api_result_handle.channel_data = ChaosMakeSharedPtr<CDataWrapper>(answer->channel_data->data());
+                if(answer->channel_data) {api_result_handle.channel_data = ChaosMakeSharedPtr<CDataWrapper>(answer->channel_data->data());}
             } else {
                 err=-2;
                 DIOSCC_ERR << "## INTERNAL ERROR: NO RESULT HEADER";
