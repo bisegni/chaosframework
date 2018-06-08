@@ -59,6 +59,12 @@ usage(){
     info_mesg "Usage :$0 {start|stop|status| start agent| start mds | start webui|start devel | stop webui|stop mds}"
 }
 start_mds(){
+    if [ -n "$CHAOS_MDS" ];then
+	if ! [[ "$CHAOS_MDS" =~ localhost ]];then
+	    echo "* Using $CHAOS_MDS"
+	    return 1
+	fi
+    fi
     backend_checks;
     mds_checks;
     info_mesg "starting MDS..." "($CHAOS_LIVE_SERVERS)($CHAOS_DB_SERVERS)"

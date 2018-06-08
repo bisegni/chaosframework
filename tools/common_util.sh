@@ -12,6 +12,7 @@ export LC_ALL="en_US.UTF-8"
 export CHAOS_OVERALL_OPT="--event-disable 1 --log-max-size 200"
 export CHAOS_MDS_OPT=""
 export CHAOS_DEBUG_CMD=""
+export CHAOS_EXTERNAL_MDS=""
 if [ -n "$CHAOS_DEBUG_CMD_TOOL" ];then
     CHAOS_DEBUG_CMD=$CHAOS_DEBUG_CMD_TOOL
 fi
@@ -20,6 +21,8 @@ if [ -n "$CHAOS_INTERFACE" ];then
 fi
 if [ -z "$CHAOS_MDS" ];then
     export CHAOS_MDS=localhost:5000
+else
+    export CHAOS_EXTERNAL_MDS=$CHAOS_MDS
 fi
 CHAOS_OVERALL_OPT="$CHAOS_OVERALL_OPT --metadata-server $CHAOS_MDS"
 if [ -n "$CHAOS_IP" ];then
