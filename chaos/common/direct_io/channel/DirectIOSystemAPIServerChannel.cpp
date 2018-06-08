@@ -104,7 +104,7 @@ int DirectIOSystemAPIServerChannel::consumeDataPack(DirectIODataPackSPtr data_pa
                 DIRECT_IO_SET_CHANNEL_HEADER(synchronous_answer, result_header, (uint32_t)result_header->size());
                 //set the result header
                 result_header->data<DirectIOSystemAPISnapshotResultHeader>()->error = TO_LITTEL_ENDNS_NUM(int32_t, result_header->data<DirectIOSystemAPISnapshotResultHeader>()->error);
-                result_header->data<DirectIOSystemAPISnapshotResultHeader>()->channel_data_len = (uint32_t)channel_found_data->size();
+                result_header->data<DirectIOSystemAPISnapshotResultHeader>()->channel_data_len = (channel_found_data ? (uint32_t)channel_found_data->size():0);
                 if(result_header->data<DirectIOSystemAPISnapshotResultHeader>()->channel_data_len) {
                     //asosciate the pointer to the datapack to be returned
                     DIRECT_IO_SET_CHANNEL_DATA(synchronous_answer, channel_found_data, result_header->data<DirectIOSystemAPISnapshotResultHeader>()->channel_data_len);
