@@ -239,22 +239,6 @@ build_framework_arm:
     - tags
     - web
 
-# build_framework_arm_test:
-#   tags:
-#     - chaos
-#     - docker
-#     - linux
-#   stage: test
-#   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
-#   script:
-#     - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-armhf
-#     - chaos-distrib-armhf/bin/FrameworkTest
-#   only:
-#     - development
-#     - master
-#     - schedules
-#     - web
-
 llvm_build_framework_x86_64:
   tags:
     - chaos
@@ -302,30 +286,29 @@ llvm_build_framework_x86_64_test:
     - tags
     - web
 
-# exp_llvm_scan_coverity:
-#   tags:
-#     - chaos
-#     - docker
-#     - linux
-#     - fast
-#   stage: build
-#   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/llvm_coverity_u1710
-#   script:
-#     - mkdir -p /tmp/cov-int
-#     - cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCHAOS_ARCHITECTURE_TEST=ON .
-#     - make clean
-#     - /tmp/coverity/bin/cov-build --dir /tmp/cov-int make -j 4
-#     - cd /tmp
-#     - tar czvf chaos.tgz cov-int
-#     - curl --form token=i9B9MI9n53zWdx2iSS4Qvg --form email=bisegni@lnf.infn.it --form file=@/tmp/chaos.tgz --form version="1.0.0" --form description="Beta"  https://scan.coverity.com/builds?project=%21CHAOS+Control+System
-#   cache:
-#     key: scan_coverity_$CI_BUILD_REF_NAME
-#     paths:
-#         - /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/
-#         - /builds/chaos-lnf-control/chaosframework/config/CACHE/
-#   only:
-#     - tags
-    # - web
+exp_llvm_scan_coverity:
+  tags:
+    - chaos
+    - docker
+    - linux
+    - fast
+  stage: build
+  image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/llvm_coverity_u1710
+  script:
+    - mkdir -p /tmp/cov-int
+    - cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCHAOS_ARCHITECTURE_TEST=ON .
+    - make clean
+    - /tmp/coverity/bin/cov-build --dir /tmp/cov-int make -j 4
+    - cd /tmp
+    - tar czvf chaos.tgz cov-int
+    - curl --form token=i9B9MI9n53zWdx2iSS4Qvg --form email=bisegni@lnf.infn.it --form file=@/tmp/chaos.tgz --form version="1.0.0" --form description="Beta"  https://scan.coverity.com/builds?project=%21CHAOS+Control+System
+  cache:
+    key: scan_coverity_$CI_BUILD_REF_NAME
+    paths:
+        - /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/
+        - /builds/chaos-lnf-control/chaosframework/config/CACHE/
+  only:
+    - schedules
 
 pages:
   stage: publish
