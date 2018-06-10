@@ -64,7 +64,6 @@ void DeviceSharedDataWorker::init(void *init_data) throw (chaos::CException) {
 
 void DeviceSharedDataWorker::deinit() throw (chaos::CException) {
     DataWorker::deinit();
-    std::memset(thread_cookie, 0, sizeof(void*)*ChaosMetadataService::getInstance()->setting.worker_setting.thread_number);
     global_object_storage_driver->deinit();
 }
 

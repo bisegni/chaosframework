@@ -113,7 +113,7 @@ void DataWorker::deinit() throw (chaos::CException) {
         DCLAPP_ << "job queue is empty";
     }
     if(thread_cookie) free(thread_cookie);
-    
+    thread_cookie = NULL;
 }
 
 void DataWorker::setMaxElement(uint64_t new_max_element) {
@@ -133,7 +133,7 @@ int DataWorker::submitJobInfo(WorkerJobPtr job_info, int64_t milliseconds_to_wai
     }
     //ad this element
     job_in_queue++;
-    
+
     job_queue.push(job_info);
     consume_job_condition.notify_one();
     return 0;
