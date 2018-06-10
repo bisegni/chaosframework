@@ -68,7 +68,7 @@ public:
         }
         return err;
     };
-    
+
     int consumeHealthDataEvent(opcode_headers::DirectIODeviceChannelHeaderPutOpcode& header,
                                BufferSPtr channel_data,
                                uint32_t channel_data_len) {
@@ -88,7 +88,7 @@ public:
         }
         return err;
     };
-    
+
     int consumeGetEvent(BufferSPtr key_data,
                         uint32_t key_len,
                         opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult& result_header,
@@ -112,7 +112,7 @@ public:
         }
         return err;
     };
-    
+
     int consumeGetEvent(opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcode& header,
                         const ChaosStringVector& keys,
                         opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcodeResult& result_header,
@@ -144,7 +144,7 @@ public:
         }
         return err;
     };
-    
+
     int consumeDataCloudQuery(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloud& query_header,
                               const std::string& search_key,
                               uint64_t search_start_ts,
@@ -177,7 +177,7 @@ public:
         }
         return err;
     };
-    
+
     int consumeDataCloudDelete(const std::string& search_key,
                                uint64_t start_ts,
                                uint64_t end_ts) {
@@ -200,15 +200,15 @@ public:
 TEST_F(DirectIOChannelTest, DeviceChannelTest) {
     DeviceServerHandler handler;
     DirectIODeviceClientChannel *client_channel = NULL;
-    
+
     DirectIODeviceServerChannel *server_channel = (DirectIODeviceServerChannel*)endpoint->getNewChannelInstance("DirectIODeviceServerChannel");
     ASSERT_TRUE(server_channel);
-    
+
     //register echo handler
     server_channel->setHandler(&handler);
-    
+
     //    client_sys_channel  = (DirectIOSystemAPIClientChannel*)connection->getNewChannelInstance("DirectIOSystemAPIClientChannel");
-    
+
     client_channel = (DirectIODeviceClientChannel*)connection->getNewChannelInstance("DirectIODeviceClientChannel");
     ASSERT_TRUE(client_channel);
     //consumePutEvent
@@ -225,7 +225,7 @@ TEST_F(DirectIOChannelTest, DeviceChannelTest) {
         ASSERT_TRUE(client_channel->storeAndCacheDataOutputChannel("key", (void*)ser_1->getBufferPtr(), (uint32_t)ser_1->getBufferLen(), chaos::DataServiceNodeDefinitionType::DSStorageTypeLive));
         ASSERT_FALSE(client_channel->storeAndCacheDataOutputChannel("key", (void*)ser_2->getBufferPtr(), (uint32_t)ser_2->getBufferLen(), chaos::DataServiceNodeDefinitionType::DSStorageTypeLive));
     }
-    
+
     for(int idx=0; idx < 1000; idx++)
     {
         CDWUniquePtr push_data(new CDataWrapper());
@@ -239,7 +239,7 @@ TEST_F(DirectIOChannelTest, DeviceChannelTest) {
         ASSERT_TRUE(client_channel->storeAndCacheDataOutputChannel("key", (void*)ser_1->getBufferPtr(), (uint32_t)ser_1->getBufferLen(), chaos::DataServiceNodeDefinitionType::DSStorageTypeHistory));
         ASSERT_FALSE(client_channel->storeAndCacheDataOutputChannel("key", (void*)ser_2->getBufferPtr(), (uint32_t)ser_2->getBufferLen(), chaos::DataServiceNodeDefinitionType::DSStorageTypeHistory));
     }
-    
+
     for(int idx=0; idx < 1000; idx++)
     {
         CDWUniquePtr push_data(new CDataWrapper());
@@ -253,7 +253,7 @@ TEST_F(DirectIOChannelTest, DeviceChannelTest) {
         ASSERT_TRUE(client_channel->storeAndCacheDataOutputChannel("key", (void*)ser_1->getBufferPtr(), (uint32_t)ser_1->getBufferLen(), chaos::DataServiceNodeDefinitionType::DSStorageTypeLiveHistory));
         ASSERT_FALSE(client_channel->storeAndCacheDataOutputChannel("key", (void*)ser_2->getBufferPtr(), (uint32_t)ser_2->getBufferLen(), chaos::DataServiceNodeDefinitionType::DSStorageTypeLiveHistory));
     }
-    
+
     for(int idx=0; idx < 1000; idx++)
     {
         CDWUniquePtr push_data(new CDataWrapper());
@@ -280,7 +280,7 @@ TEST_F(DirectIOChannelTest, DeviceChannelTest) {
         ASSERT_TRUE(client_channel->storeAndCacheHealthData("key", (void*)ser_1->getBufferPtr(), (uint32_t)ser_1->getBufferLen(), chaos::DataServiceNodeDefinitionType::DSStorageTypeHistory));
         ASSERT_FALSE(client_channel->storeAndCacheHealthData("key", (void*)ser_2->getBufferPtr(), (uint32_t)ser_2->getBufferLen(), chaos::DataServiceNodeDefinitionType::DSStorageTypeHistory));
     }
-    
+
     for(int idx=0; idx < 1000; idx++)
     {
         CDWUniquePtr push_data(new CDataWrapper());
@@ -294,7 +294,7 @@ TEST_F(DirectIOChannelTest, DeviceChannelTest) {
         ASSERT_TRUE(client_channel->storeAndCacheHealthData("key", (void*)ser_1->getBufferPtr(), (uint32_t)ser_1->getBufferLen(), chaos::DataServiceNodeDefinitionType::DSStorageTypeLiveHistory));
         ASSERT_FALSE(client_channel->storeAndCacheHealthData("key", (void*)ser_2->getBufferPtr(), (uint32_t)ser_2->getBufferLen(), chaos::DataServiceNodeDefinitionType::DSStorageTypeLiveHistory));
     }
-    
+
     for(int idx=0; idx < 1000; idx++)
     {
         get_counter = 0;
@@ -303,10 +303,10 @@ TEST_F(DirectIOChannelTest, DeviceChannelTest) {
         uint32_t size = 0;
         ASSERT_TRUE(client_channel->requestLastOutputData("requestLastOutputData", &result, size));
         ASSERT_FALSE(client_channel->requestLastOutputData("requestLastOutputData", &result, size));
-        free(result);
+        free(result);result=NULL;
         ASSERT_TRUE(client_channel->requestLastOutputData("requestLastOutputData", &result, size));
         ASSERT_FALSE(client_channel->requestLastOutputData("requestLastOutputData", &result, size));
-        free(result);
+        free(result);result=NULL;
         ASSERT_TRUE(client_channel->requestLastOutputData("requestLastOutputData", &result, size));
         ASSERT_FALSE(client_channel->requestLastOutputData("requestLastOutputData", &result, size));
         ASSERT_TRUE(result && size);
@@ -314,7 +314,7 @@ TEST_F(DirectIOChannelTest, DeviceChannelTest) {
         ASSERT_TRUE(result_cdw->hasKey("key"));
         ASSERT_TRUE(result_cdw->isStringValue("key"));
         ASSERT_STREQ(result_cdw->getStringValue("key").c_str(), "string");
-        free(result);
+        free(result);result=NULL;
     }
     for(int idx=0; idx < 1000; idx++)
     {
