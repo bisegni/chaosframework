@@ -52,7 +52,7 @@ DEFINE_CLASS_FACTORY(ZMQDirectIOServer, DirectIOServer);
 ZMQDirectIOServer::ZMQDirectIOServer(std::string alias):
 DirectIOServer(alias),
 zmq_context(NULL),
-run_server(NULL),
+run_server(false),
 direct_io_thread_number(2){};
 
 ZMQDirectIOServer::~ZMQDirectIOServer(){};
