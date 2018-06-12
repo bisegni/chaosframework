@@ -124,6 +124,7 @@ void HTTPClientAdapter::poller() {
 //                            }
                         }
                         //!remove from active connection map
+                        conn_it->second->conn->user_data = NULL;
                         map_connection().erase(conn_it);
                         break;
                     }
