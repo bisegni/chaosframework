@@ -319,10 +319,13 @@ void HTTPServerAdapter::eventHandler(mg_connection *nc, int ev, void *ev_data) {
             break;
         }
         case MG_EV_CLOSE:{
-            ServerWorkRequest *req = new ServerWorkRequest();
-            req->r_type = WorkRequestTypeWSCloseEvent;
-            req->nc = nc;
-            adapter->push(req);
+//            ServerWorkRequest *req = new ServerWorkRequest();
+//            req->r_type = WorkRequestTypeWSCloseEvent;
+//            req->nc = nc;
+//            adapter->push(req);
+            LMapConnectionWriteLock wconnl = adapter->map_connection.getWriteLockObject();
+            adapter->map_connection().erase(reinterpret_cast<uintptr_t>(nc));
+            adapter->map_m_conn_ext_conn.removebyLeftKey(reinterpret_cast<uintptr_t>(nc));
             break;
         }
     }
