@@ -161,6 +161,10 @@ namespace chaos{
                 QueryCursor *performQuery(const std::string& key,
                                           uint64_t start_ts,
                                           uint64_t end_ts,uint32_t page=DEFAULT_PAGE_LEN);
+
+                QueryCursor *performQuery(const std::string& key,
+                                          uint64_t start_ts,
+                                          uint64_t end_ts,uint64_t sequid,uint64_t runid,uint32_t page=DEFAULT_PAGE_LEN);
                 
                 void releaseQuery(QueryCursor *query_cursor);
             };

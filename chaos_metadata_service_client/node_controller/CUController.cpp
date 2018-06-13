@@ -1074,6 +1074,23 @@ void CUController::executeTimeIntervallQuery(DatasetDomain domain,
     }
 }
 
+void CUController::executeTimeIntervalQuery(DatasetDomain domain,
+                               uint64_t start_ts,
+                               uint64_t end_ts,
+                                uint64_t seqid,
+                               uint64_t runid,
+                               chaos::common::io::QueryCursor **query_cursor,
+                               uint32_t page_len){
+    if((domain>=0) && (domain<=DPCK_LAST_DATASET_INDEX)){
+        *query_cursor = ioLiveDataDriver->performQuery(channel_keys[domain],
+                                                       start_ts,
+                                                       end_ts,
+                                                       seqid,
+                                                       runid,
+                                                       page_len);
+    }
+
+}
 //! release a query
 void CUController::releaseQuery(QueryCursor *query_cursor) {
     ioLiveDataDriver->releaseQuery(query_cursor);

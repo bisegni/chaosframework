@@ -460,7 +460,14 @@ namespace chaos {
                                                uint64_t start_ts,
                                                uint64_t end_ts,
                                                chaos::common::io::QueryCursor **query_cursor,uint32_t page_len=DEFAULT_PAGE_LEN);
-                
+
+                void executeTimeIntervalQuery(DatasetDomain domain,
+                                               uint64_t start_ts,
+                                               uint64_t end_ts,
+                                               uint64_t seqid,
+                                               uint64_t runid,
+                                              chaos::common::io::QueryCursor **query_cursor,uint32_t page_len=DEFAULT_PAGE_LEN);
+
                 //! release a query
                 void releaseQuery(chaos::common::io::QueryCursor *query_cursor);
                 

@@ -62,6 +62,9 @@ namespace chaos {
                 const std::string node_id;
                 uint64_t start_ts;
                 uint64_t end_ts;
+                uint64_t start_seq;
+                uint64_t runid_seq;
+
                 //!is the reuslt page dimension
                 uint32_t page_len;
                 QueryPhase phase;
@@ -74,6 +77,16 @@ namespace chaos {
                             const std::string& _node_id,
                             uint64_t _start_ts,
                             uint64_t _end_ts,
+                            uint32_t page_len=DEFAULT_PAGE_LEN);
+
+                QueryCursor(const std::string& _query_id,
+                            chaos::common::network::URLServiceFeeder& _connection_feeder,
+                            const std::string& _node_id,
+                            uint64_t _start_ts,
+                            uint64_t _end_ts,
+                            uint64_t _sequid,
+                            uint64_t _runid,
+
                             uint32_t page_len=DEFAULT_PAGE_LEN);
                 ~QueryCursor();
                 
@@ -89,6 +102,7 @@ namespace chaos {
                 const uint32_t getPageLen() const;
                 
                 void setPageDimension(uint32_t new_page_len);
+                void getIndexes(uint64_t& runid,uint64_t& seqid);
             };
             
         }

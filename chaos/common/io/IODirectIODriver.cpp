@@ -407,6 +407,30 @@ QueryCursor *IODirectIODriver::performQuery(const std::string& key,
     }
     return q;
 }
+QueryCursor *IODirectIODriver::performQuery(const std::string& key,
+                                            uint64_t start_ts,
+                                            uint64_t end_ts,
+                                            uint64_t sequid,
+                                            uint64_t runid,
+
+                                            uint32_t page_len) {
+    QueryCursor *q = new QueryCursor(UUIDUtil::generateUUID(),
+                                     connectionFeeder,
+                                     key,
+                                     start_ts,
+                                     end_ts,
+                                     sequid,
+                                     runid,
+                                     page_len);
+    if(q) {
+        //add query to map
+        ChaosWriteLock wmap_loc(map_query_future_mutex);
+        map_query_future.insert(make_pair(q->queryID(), q));
+    } else {
+        releaseQuery(q);
+    }
+    return q;
+}
 
 void IODirectIODriver::releaseQuery(QueryCursor *query_cursor) {
     //acquire write lock
