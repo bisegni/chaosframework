@@ -1039,6 +1039,12 @@ double CMultiTypeDataArrayWrapper::getDoubleElementAtIndex(const int pos) const{
 int32_t CMultiTypeDataArrayWrapper::getInt32ElementAtIndex(const int pos) const{
     return values[pos].value.v_int32;
 }
+bool CMultiTypeDataArrayWrapper::getBoolElementAtIndex(const int pos) const{
+    return values[pos].value.v_bool;
+
+
+}
+
 int64_t CMultiTypeDataArrayWrapper::getInt64ElementAtIndex(const int pos) const{
     //CHAOS_ASSERT(values[pos].value_type == BSON_TYPE_INT64);
     if(values[pos].value_type != BSON_TYPE_INT64){
@@ -1061,7 +1067,9 @@ bool CMultiTypeDataArrayWrapper::isDoubleElementAtIndex(const int pos) const{
 bool CMultiTypeDataArrayWrapper::isInt32ElementAtIndex(const int pos) const{
     return values[pos].value_type == BSON_TYPE_INT32;
 }
-
+bool CMultiTypeDataArrayWrapper::isBoolElementAtIndex(const int pos) const{
+    return values[pos].value_type == BSON_TYPE_BOOL;
+}
 bool CMultiTypeDataArrayWrapper::isInt64ElementAtIndex(const int pos) const{
     return values[pos].value_type == BSON_TYPE_INT64;
 }

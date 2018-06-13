@@ -411,6 +411,8 @@ throw chaos::CException(-2, ss.str(), __PRETTY_FUNCTION__);
                 double getDoubleElementAtIndex(const int) const;
                 int32_t getInt32ElementAtIndex(const int) const;
                 int64_t getInt64ElementAtIndex(const int) const;
+                bool getBoolElementAtIndex(const int) const;
+
                 CDataWrapper* getCDataWrapperElementAtIndex(const int) const;
                 std::string getJSONString();
                 std::string getCanonicalJSONString();
@@ -418,6 +420,8 @@ throw chaos::CException(-2, ss.str(), __PRETTY_FUNCTION__);
                 bool isDoubleElementAtIndex(const int) const;
                 bool isInt32ElementAtIndex(const int) const;
                 bool isInt64ElementAtIndex(const int) const;
+                bool isBoolElementAtIndex(const int) const;
+
                 bool isCDataWrapperElementAtIndex(const int) const;
                 template<class T>
                 T getElementAtIndex(const int pos) const{
