@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
 project(ChaosMetadataService)
+
 option(COMPILE_HAZELCAST_LIVE_DRIVER "Compile hazelcast live data driver" OFF)
+option(COMPILE_NEW_MONGODB_DRIVER "Compile newongodb driver" OFF)
 
 IF (DEFINED ENV{CHAOS_BUNDLE} )
   include($ENV{CHAOS_BUNDLE}/tools/project_template/CMakeChaos.txt)
@@ -8,7 +10,7 @@ ENDIF()
 
 
 IF (COMPILE_HAZELCAST_LIVE_DRIVER)
-  MESG("Download hazelcast c++ client")
+  MESG("Install hazelcast c++ client")
   ExternalProject_Add(
      hazelcast
      GIT_REPOSITORY https://github.com/hazelcast/hazelcast-cpp-client.git
@@ -18,8 +20,8 @@ IF (COMPILE_HAZELCAST_LIVE_DRIVER)
      BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/hazelcast-build"
      CMAKE_ARGS
       -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
-      -DHZ_LIB_TYPE=STATIC 
-      -DHZ_BIT=64 
+      -DHZ_LIB_TYPE=STATIC
+      -DHZ_BIT=64
       -DCMAKE_BUILD_TYPE=Release
      LOG_DOWNLOAD ON
      LOG_CONFIGURE ON
@@ -37,6 +39,23 @@ IF (COMPILE_HAZELCAST_LIVE_DRIVER)
      MESG("${HAZELCAST_INCLUDE_DIR}")
      MESG("${HAZELCAST_LIBRARY_DIR}")
      MESG("${HAZELCAST_LIBRARY}")
+ENDIF()
+
+
+IF(COMPILE_NEW_MONGODB_DRIVER)
+  #install mongodb client
+    MESG("Install cxx mongodb driver")
+    ExternalProject_Add(
+       mongo-c-driver
+       GIT_REPOSITORY https://github.com/mongodb/mongo-cxx-driver
+       GIT_TAG r3.3.0
+       PREFIX "${CMAKE_BINARY_DIR}/ext_dep/mongo-c-driver-prefix"
+       SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/mongo-c-driver-src"
+       BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/mongo-c-driver-build"
+       CONFIGURE_COMMAND ${CMAKE_BINARY_DIR}/ext_dep/mongo-c-driver-src/autogen.sh COMMAND ${CMAKE_BINARY_DIR}/ext_dep/mongo-c-driver-src/configure --disable-automatic-init-and-cleanup --prefix=${CMAKE_INSTALL_PREFIX}
+       LOG_DOWNLOAD ON
+       LOG_CONFIGURE ON
+       LOG_BUILD ON)
 ENDIF()
 
 INCLUDE_DIRECTORIES(chaos/common ../)
