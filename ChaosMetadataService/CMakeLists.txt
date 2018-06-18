@@ -43,19 +43,38 @@ ENDIF()
 
 
 IF(COMPILE_NEW_MONGODB_DRIVER)
-  #install mongodb client
-    MESG("Install cxx mongodb driver")
-    ExternalProject_Add(
-       mongo-c-driver
-       GIT_REPOSITORY https://github.com/mongodb/mongo-cxx-driver
-       GIT_TAG r3.3.0
-       PREFIX "${CMAKE_BINARY_DIR}/ext_dep/mongo-c-driver-prefix"
-       SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/mongo-c-driver-src"
-       BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/mongo-c-driver-build"
-       CONFIGURE_COMMAND ${CMAKE_BINARY_DIR}/ext_dep/mongo-c-driver-src/autogen.sh COMMAND ${CMAKE_BINARY_DIR}/ext_dep/mongo-c-driver-src/configure --disable-automatic-init-and-cleanup --prefix=${CMAKE_INSTALL_PREFIX}
-       LOG_DOWNLOAD ON
-       LOG_CONFIGURE ON
-       LOG_BUILD ON)
+  MESG("Install c mongodb driver")
+  ExternalProject_Add(
+     mongo-c-driver
+     GIT_REPOSITORY https://github.com/mongodb/mongo-c-driver.git
+     GIT_TAG 1.10.2
+     PREFIX "${CMAKE_BINARY_DIR}/ext_dep/mongo-c-driver-prefix"
+     SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/mongo-c-driver-src"
+     BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/mongo-c-driver-build"
+     CMAKE_ARGS
+      -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
+     LOG_DOWNLOAD ON
+     LOG_CONFIGURE ON
+     LOG_BUILD ON)
+
+  MESG("Install cxx mongodb driver")
+  ExternalProject_Add(
+     mongo-cxx-driver
+     DEPENDS mongo-c-driver
+     GIT_REPOSITORY https://github.com/mongodb/mongo-cxx-driver
+     GIT_TAG r3.3.0
+     PREFIX "${CMAKE_BINARY_DIR}/ext_dep/mongo-cxx-driver-prefix"
+     SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/mongo-cxx-driver-src"
+     BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/mongo-cxx-driver-build"
+     CMAKE_ARGS
+      -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX} -DCMAKE_BUILD_TYPE=Release
+     LOG_DOWNLOAD ON
+     LOG_CONFIGURE ON
+     LOG_BUILD ON)
+
+     include_directories("${CMAKE_INSTALL_PREFIX}/include/mongocxx/v_noabi")
+     include_directories("${CMAKE_INSTALL_PREFIX}/include/bsoncxx/v_noabi")
+     include_directories("${CMAKE_INSTALL_PREFIX}/lib")
 ENDIF()
 
 INCLUDE_DIRECTORIES(chaos/common ../)
@@ -66,7 +85,8 @@ SET(cnd_src				main.cpp
                   QueryDataConsumer.cpp)
 
 SET(cnd_src  ${cnd_src} ../chaos_service_common/persistence/mongodb/MongoDBHAConnectionManager.cpp
-                        ../chaos_service_common/persistence/mongodb/MongoDBAccessor.cpp)
+                        ../chaos_service_common/persistence/mongodb/MongoDBAccessor.cpp
+                        ../chaos_service_common/persistence/mongodb/mongodb_cxx/MongoDBCXXDriver.cpp)
 
 SET(cnd_src  ${cnd_src} ../chaos_service_common/persistence/data_access/AbstractDataAccess.cpp
 						 ../chaos_service_common/persistence/data_access/AbstractPersistenceDriver.cpp)
@@ -138,7 +158,7 @@ SET(cnd_src  ${cnd_src}	api/control_unit/SetInputDatasetAttributeValues.cpp
                         api/control_unit/CopyInstance.cpp
                         api/control_unit/RecoverError.cpp
                         api/control_unit/GetCurrentDataset.cpp
-						api/control_unit/GetFullDescription.cpp
+						            api/control_unit/GetFullDescription.cpp
                         api/control_unit/SendStorageBurst.cpp)
 
 SET(cnd_src  ${cnd_src}	api/node/NodeGroup.cpp
@@ -163,7 +183,7 @@ SET(cnd_src  ${cnd_src}	api/node/NodeGroup.cpp
                         api/node/KillCurrentCommand.cpp
                         api/node/ClearCommandQueue.cpp
                         api/node/ForwardNodeRpcMessage.cpp
-			            api/node/GetPropertyDefaultValues.cpp
+			                  api/node/GetPropertyDefaultValues.cpp
                         api/node/GetCommandAndTemplateDescription.cpp)
 
 SET(cnd_src  ${cnd_src}	api/script/ScriptGroupApi.cpp
@@ -207,9 +227,9 @@ SET(cnd_src  ${cnd_src} persistence/PersistenceManager.cpp
                         persistence/data_access/ControlUnitDataAccess.cpp
                         persistence/data_access/DataServiceDataAccess.cpp
                         persistence/data_access/SnapshotDataAccess.cpp
-						persistence/data_access/TreeGroupDataAccess.cpp
+						            persistence/data_access/TreeGroupDataAccess.cpp
                         persistence/data_access/LoggingDataAccess.cpp
-						persistence/data_access/ScriptDataAccess.cpp
+						            persistence/data_access/ScriptDataAccess.cpp
                         persistence/data_access/AgentDataAccess.cpp)
 
 SET(cnd_src  ${cnd_src}	persistence/mongodb/MongoDBPersistenceDriver.cpp
@@ -221,7 +241,7 @@ SET(cnd_src  ${cnd_src}	persistence/mongodb/MongoDBPersistenceDriver.cpp
                         persistence/mongodb/MongoDBSnapshotDataAccess.cpp
                         persistence/mongodb/MongoDBTreeGroupDataAccess.cpp
                         persistence/mongodb/MongoDBLoggingDataAccess.cpp
-						persistence/mongodb/MongoDBScriptDataAccess.cpp
+						            persistence/mongodb/MongoDBScriptDataAccess.cpp
                         persistence/mongodb/MongoDBAgentDataAccess.cpp)
 #Caching
 SET(cnd_src  ${cnd_src}	cache_system/CacheDriver.cpp
@@ -236,6 +256,9 @@ SET(cnd_src  ${cnd_src}	object_storage/abstraction/ObjectStorageDataAccess.cpp)
 SET(cnd_src  ${cnd_src}	object_storage/mongodb/MongoDBObjectStorageDataAccess.cpp
                         object_storage/mongodb/MongoDBObjectStorageDriver.cpp
                         object_storage/mongodb/ShardKeyManagement.cpp)
+
+SET(cnd_src  ${cnd_src}	object_storage/mongodb_3/MongoDBObjectStorageDataAccess.cpp
+                        object_storage/mongodb_3/NewMongoDBObjectStorageDriver.cpp)
 
 SET(cnd_src  ${cnd_src}	batch/MDSBatchExecutor.cpp
                         batch/MDSBatchCommand.cpp)
@@ -276,5 +299,14 @@ IF(BUILD_FORCE_STATIC)
   SET(CMAKE_EXE_LINKER_FLAGS "-static -Wl,--whole-archive -lchaos_common -Wl,--no-whole-archive")
 ENDIF()
 
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} boost_random chaos_common mongoclient couchbaseS ${FrameworkLib})
+SET(BUILD_LIBRARY ${FrameworkLib})
+SET(BUILD_LIBRARY ${BUILD_LIBRARY} chaos_common)
+SET(BUILD_LIBRARY ${BUILD_LIBRARY} boost_random)
+SET(BUILD_LIBRARY ${BUILD_LIBRARY} couchbaseS)
+SET(BUILD_LIBRARY ${BUILD_LIBRARY} mongoclient)
+IF(COMPILE_NEW_MONGODB_DRIVER)
+  SET(BUILD_LIBRARY ${BUILD_LIBRARY} mongocxx)
+ENDIF()
+
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${BUILD_LIBRARY})
 INSTALL_TARGETS(/bin ${PROJECT_NAME})

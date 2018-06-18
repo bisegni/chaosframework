@@ -135,8 +135,8 @@ if(NOT CHAOS_ONLY_DEPENDECY)
 endif()
 
 IF (CHAOS_AGENT AND NOT CHAOS_ONLY_DEPENDECY)
-MESG("Configure Chaos Agent Service")
-ADD_SUBDIRECTORY(ChaosAgent)
+  MESG("Configure Chaos Agent Service")
+  ADD_SUBDIRECTORY(ChaosAgent)
 ENDIF()
 
 IF (CHAOS_MDS AND
@@ -167,9 +167,6 @@ ENDIF()
 IF (CHAOS_ARCHITECTURE_TEST)
 #scan all subdirectory of test directory
     MESG("Configure infrastructure tests")
-    set_directory_properties(PROPERTIES GTEST_INCLUDE_DIR ${GTEST_INCLUDE_DIR}
-                                        GTEST_LIBRARY_DIR ${GTEST_LIBRARY_DIR}
-                                        GTEST_LIBRARY_PATH ${GTEST_LIBRARY_PATH})
     ADD_SUBDIRECTORY(CHAOSFrameworkTests/FrameworkTest)
 #    SET(CHAOS_TEST_DIRECTORY "CHAOSFrameworkTests")
 #    SUBDIRLIST(TEST_SUBDIRS ${CHAOS_TEST_DIRECTORY})

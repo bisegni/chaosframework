@@ -1,5 +1,5 @@
 /*
- * Copyright 2012, 2017 INFN
+ * Copyright 2012, 18/06/2018 INFN
  *
  * Licensed under the EUPL, Version 1.2 or – as soon they
  * will be approved by the European Commission - subsequent
@@ -19,8 +19,8 @@
  * permissions and limitations under the Licence.
  */
 
-#ifndef __CHAOSFramework_E927A5B7_1CA0_402F_AA20_DD63646EA30A_MongoDBObjectStorageDriver_h
-#define __CHAOSFramework_E927A5B7_1CA0_402F_AA20_DD63646EA30A_MongoDBObjectStorageDriver_h
+#ifndef __CHAOSFramework_E927A5B7_1CA0_802F_AA20_DD63646EA30A_NewMongoDBObjectStorageDriver_h
+#define __CHAOSFramework_E927A5B7_1CA0_802F_AA20_DD63646EA30A_NewMongoDBObjectStorageDriver_h
 
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos_service_common/persistence/mongodb/MongoDBHAConnectionManager.h>
@@ -29,26 +29,21 @@
 namespace chaos {
     namespace data_service {
         namespace object_storage {
-            namespace mongodb {
-
-#define DB_NAME "db"
+            namespace mongodb_3 {
                 
-                //! mongodb implementation of persistence driver
+                //! new mongodb implementation of persistence driver
                 /*!
                  The driver is define as class in the object factor
                  */
-                DECLARE_CLASS_FACTORY(MongoDBObjectStorageDriver,
+                DECLARE_CLASS_FACTORY(NewMongoDBObjectStorageDriver,
                                       chaos::service_common::persistence::data_access::AbstractPersistenceDriver) {
-                    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(MongoDBObjectStorageDriver)
-                    
-                    //!keep track of the allocated connection
-                    ChaosSharedPtr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager> connection;
+                    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(NewMongoDBObjectStorageDriver)
                     
                     //! Construct the driver
-                    MongoDBObjectStorageDriver(const std::string& name);
+                    NewMongoDBObjectStorageDriver(const std::string& name);
                     
                     //!dispose the driver
-                    ~MongoDBObjectStorageDriver();
+                    ~NewMongoDBObjectStorageDriver();
                     
                     //!inherited by AbstractPersistenceDriver
                     void deleteDataAccess(void *instance);
@@ -64,4 +59,4 @@ namespace chaos {
     }
 }
 
-#endif /* __CHAOSFramework_E927A5B7_1CA0_402F_AA20_DD63646EA30A_MongoDBObjectStorageDriver_h */
+#endif /* __CHAOSFramework_E927A5B7_1CA0_802F_AA20_DD63646EA30A_NewMongoDBObjectStorageDriver_h */

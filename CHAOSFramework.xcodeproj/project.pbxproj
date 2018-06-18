@@ -568,6 +568,9 @@
 		3278855620EB91CE004D1A34 /* SendStorageBurst.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3278855520EB91CE004D1A34 /* SendStorageBurst.cpp */; };
 		3278855920EB97BC004D1A34 /* SendStorageBurst.h in Headers */ = {isa = PBXBuildFile; fileRef = 3278855720EB97BC004D1A34 /* SendStorageBurst.h */; };
 		3278855A20EB97BC004D1A34 /* SendStorageBurst.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3278855820EB97BC004D1A34 /* SendStorageBurst.cpp */; };
+		3278449820D7A1B200554408 /* NewMongoDBObjectStorageDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3278449720D7A1B200554408 /* NewMongoDBObjectStorageDriver.cpp */; };
+		3278449B20D7A2B800554408 /* MongoDBObjectStorageDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3278449A20D7A2B800554408 /* MongoDBObjectStorageDataAccess.cpp */; };
+		3278449F20D7CF2400554408 /* MongoDBCXXDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3278449E20D7CF2400554408 /* MongoDBCXXDriver.cpp */; };
 		32788D7F1F277207009BBB1E /* OpcodeDriverWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 32788D7D1F277207009BBB1E /* OpcodeDriverWrapper.h */; };
 		32788D831F27766A009BBB1E /* OpcodeExternalCommandMapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 32788D811F27766A009BBB1E /* OpcodeExternalCommandMapper.h */; };
 		327967B515DF99FB0003C6DA /* RpcClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327967B415DF99FB0003C6DA /* RpcClient.cpp */; };
@@ -1934,6 +1937,12 @@
 		3278855520EB91CE004D1A34 /* SendStorageBurst.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SendStorageBurst.cpp; sourceTree = "<group>"; };
 		3278855720EB97BC004D1A34 /* SendStorageBurst.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SendStorageBurst.h; sourceTree = "<group>"; };
 		3278855820EB97BC004D1A34 /* SendStorageBurst.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SendStorageBurst.cpp; sourceTree = "<group>"; };
+		3278449620D7A1B200554408 /* NewMongoDBObjectStorageDriver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewMongoDBObjectStorageDriver.h; sourceTree = "<group>"; };
+		3278449720D7A1B200554408 /* NewMongoDBObjectStorageDriver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NewMongoDBObjectStorageDriver.cpp; sourceTree = "<group>"; };
+		3278449920D7A2B800554408 /* MongoDBObjectStorageDataAccess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MongoDBObjectStorageDataAccess.h; sourceTree = "<group>"; };
+		3278449A20D7A2B800554408 /* MongoDBObjectStorageDataAccess.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MongoDBObjectStorageDataAccess.cpp; sourceTree = "<group>"; };
+		3278449D20D7CF2400554408 /* MongoDBCXXDriver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MongoDBCXXDriver.h; sourceTree = "<group>"; };
+		3278449E20D7CF2400554408 /* MongoDBCXXDriver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MongoDBCXXDriver.cpp; sourceTree = "<group>"; };
 		32788D7D1F277207009BBB1E /* OpcodeDriverWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpcodeDriverWrapper.h; sourceTree = "<group>"; };
 		32788D811F27766A009BBB1E /* OpcodeExternalCommandMapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpcodeExternalCommandMapper.h; sourceTree = "<group>"; };
 		327967B415DF99FB0003C6DA /* RpcClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = RpcClient.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
@@ -3874,6 +3883,7 @@
 			isa = PBXGroup;
 			children = (
 				326ACF751E01525D00AD011E /* abstraction */,
+				3278449520D7A16200554408 /* mongodb_3 */,
 				326ACF781E01525D00AD011E /* mongodb */,
 				326ACF7D1E01525D00AD011E /* object_storage.h */,
 				326ACF7E1E01525D00AD011E /* object_storage_types.h */,
@@ -4429,6 +4439,26 @@
 			path = cling;
 			sourceTree = "<group>";
 		};
+		3278449520D7A16200554408 /* mongodb_3 */ = {
+			isa = PBXGroup;
+			children = (
+				3278449720D7A1B200554408 /* NewMongoDBObjectStorageDriver.cpp */,
+				3278449620D7A1B200554408 /* NewMongoDBObjectStorageDriver.h */,
+				3278449A20D7A2B800554408 /* MongoDBObjectStorageDataAccess.cpp */,
+				3278449920D7A2B800554408 /* MongoDBObjectStorageDataAccess.h */,
+			);
+			path = mongodb_3;
+			sourceTree = "<group>";
+		};
+		3278449C20D7CF0200554408 /* mongodb_cxx */ = {
+			isa = PBXGroup;
+			children = (
+				3278449E20D7CF2400554408 /* MongoDBCXXDriver.cpp */,
+				3278449D20D7CF2400554408 /* MongoDBCXXDriver.h */,
+			);
+			path = mongodb_cxx;
+			sourceTree = "<group>";
+		};
 		327F39A41AEAA1EB0000C845 /* data_service */ = {
 			isa = PBXGroup;
 			children = (
@@ -4714,6 +4744,7 @@
 		32A40D441A9CD567000D9A35 /* mongodb */ = {
 			isa = PBXGroup;
 			children = (
+				3278449C20D7CF0200554408 /* mongodb_cxx */,
 				323386B31AD3C45E008863DC /* MongoDBAccessor.cpp */,
 				323386B41AD3C45E008863DC /* MongoDBAccessor.h */,
 				32A40D451A9CD751000D9A35 /* MongoDBHAConnectionManager.cpp */,
@@ -6437,8 +6468,10 @@
 				32D90D561CF4A4E500996F09 /* ScriptGroupApi.cpp in Sources */,
 				32FF2A791E686ABA00117985 /* UploadChunk.cpp in Sources */,
 				32809C821A9C84F900C02C12 /* MongoDBControlUnitDataAccess.cpp in Sources */,
+				3278449B20D7A2B800554408 /* MongoDBObjectStorageDataAccess.cpp in Sources */,
 				3235FDD61A6FF8A800EC83A9 /* MongoDBUnitServerDataAccess.cpp in Sources */,
 				32990B131E4CB74C00A4AF8F /* RemoveNodeAssociation.cpp in Sources */,
+				3278449820D7A1B200554408 /* NewMongoDBObjectStorageDriver.cpp in Sources */,
 				325D2FDE1AFB65DE00B2A706 /* HealtApiGroup.cpp in Sources */,
 				32BE0ACC1E4B44B90007764C /* AgentApiGroup.cpp in Sources */,
 				32B1E7EC1B297CF800221E49 /* CommandTemplateSearch.cpp in Sources */,
@@ -6497,6 +6530,7 @@
 				328E78091A7AAA070008C070 /* NodeDataAccess.cpp in Sources */,
 				32B299A71BE26933000D3716 /* RecoverError.cpp in Sources */,
 				326ACF801E01525D00AD011E /* CacheDriverMetricCollector.cpp in Sources */,
+				3278449F20D7CF2400554408 /* MongoDBCXXDriver.cpp in Sources */,
 				32BE0AD61E4B758D0007764C /* SaveNodeAssociation.cpp in Sources */,
 				32C7ED161B6F8E480038BD26 /* GetFullDescription.cpp in Sources */,
 				3235FDC71A6FF43000EC83A9 /* UnitServerApiGroup.cpp in Sources */,
@@ -7279,6 +7313,7 @@
 				HEADER_SEARCH_PATHS = (
 					.,
 					usr/local/include,
+					usr/local/include/mongocxx/v_noabi,
 				);
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
@@ -7288,6 +7323,7 @@
 					"-lchaos_common",
 					"-ljsoncpp",
 					"-levent",
+					"-lmongocxx",
 					"-lmongoclient",
 					"-lboost_random",
 					"-lcouchbase",
@@ -7540,6 +7576,7 @@
 				HEADER_SEARCH_PATHS = (
 					.,
 					usr/local/include,
+					usr/local/include/mongocxx/v_noabi,
 				);
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
@@ -7548,6 +7585,7 @@
 					"-lchaos_common",
 					"-ljsoncpp",
 					"-levent",
+					"-lmongocxx",
 					"-lmongoclient",
 					"-lboost_random",
 					"-lcouchbase",
@@ -7578,6 +7616,7 @@
 				HEADER_SEARCH_PATHS = (
 					.,
 					usr/local/include,
+					usr/local/include/mongocxx/v_noabi,
 				);
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
@@ -7585,6 +7624,7 @@
 					"-lchaos_common",
 					"-ljsoncpp",
 					"-levent",
+					"-lmongocxx",
 					"-lmongoclient",
 					"-lboost_random",
 					"-lcouchbase",
