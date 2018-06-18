@@ -7314,6 +7314,7 @@
 					.,
 					usr/local/include,
 					usr/local/include/mongocxx/v_noabi,
+					usr/local/include/bsoncxx/v_noabi,
 				);
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
@@ -7577,6 +7578,7 @@
 					.,
 					usr/local/include,
 					usr/local/include/mongocxx/v_noabi,
+					usr/local/include/bsoncxx/v_noabi,
 				);
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
@@ -7617,6 +7619,7 @@
 					.,
 					usr/local/include,
 					usr/local/include/mongocxx/v_noabi,
+					usr/local/include/bsoncxx/v_noabi,
 				);
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;

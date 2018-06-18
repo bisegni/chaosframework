@@ -48,9 +48,11 @@ NewMongoDBObjectStorageDriver::~NewMongoDBObjectStorageDriver() {}
 void NewMongoDBObjectStorageDriver::init(void *init_data) throw (chaos::CException) {
     //call sublcass
     AbstractPersistenceDriver::init(init_data);
-    ChaosMetadataService::getInstance()->setting.object_storage_setting.url_list;
-    ChaosMetadataService::getInstance()->setting.object_storage_setting.key_value_custom_param;
+    ChaosStringVector url_list = ChaosMetadataService::getInstance()->setting.object_storage_setting.url_list;
     MapKVP& obj_stoarge_kvp = metadata_service::ChaosMetadataService::getInstance()->setting.object_storage_setting.key_value_custom_param;
+
+    BaseMongoDBDiver::initPool(url_list);
+    
     if(obj_stoarge_kvp.count("mongodb_oswc")) {
         //set the custom write concern
         INFO << CHAOS_FORMAT("Set MongoDB object storage write concern to %1%", %obj_stoarge_kvp["mongodb_oswc"]);
@@ -63,7 +65,10 @@ void NewMongoDBObjectStorageDriver::init(void *init_data) throw (chaos::CExcepti
             ERR << CHAOS_FORMAT("Unrecognized value for parameter mongodb_oswc[%1%]", %obj_stoarge_kvp["mongodb_oswc"]);
         }
     }
-    
+    if(obj_stoarge_kvp.count("maxPoolSize")) {
+    }
+    if(obj_stoarge_kvp.count("minPoolSize")) {
+    }
     //register the data access implementations
     registerDataAccess<ObjectStorageDataAccess>(new MongoDBObjectStorageDataAccess());
 }

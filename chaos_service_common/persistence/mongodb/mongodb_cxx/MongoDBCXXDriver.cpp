@@ -20,6 +20,8 @@
  */
 #include <chaos_service_common/persistence/mongodb/mongodb_cxx/MongoDBCXXDriver.h>
 
+#include <chaos/common/global.h>
+
 using namespace chaos::service_common::persistence::mongodb::mongodb_cxx;
 
 mongocxx::instance BaseMongoDBDiver::drv_instance = {};
@@ -30,4 +32,25 @@ BaseMongoDBDiver::BaseMongoDBDiver() {
 
 BaseMongoDBDiver::~BaseMongoDBDiver() {
     
+}
+
+void BaseMongoDBDiver::initPool(const ChaosStringVector& url_list) {
+    std::string host_composed_url = "localhost:27017";
+    if(url_list.size()) {
+        for(ChaosStringVectorConstIterator it = url_list.begin(),
+            end = url_list.end();
+            it != end;
+            it++) {
+            host_composed_url.append(*it);
+            host_composed_url.append(",");
+        }
+        host_composed_url.resize(host_composed_url.size()-1);
+    }
+    mongocxx::uri uri{CHAOS_FORMAT("mongodb://%1%/?minPoolSize=%2%&maxPoolSize=%3%",%""%100%100)};
+    pool_unique_ptr.reset(new mongocxx::pool());
+}
+
+mongocxx::pool& BaseMongoDBDiver::getPool() {
+    CHAOS_ASSERT(pool_unique_ptr)
+    return *pool_unique_ptr;
 }

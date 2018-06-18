@@ -19,18 +19,24 @@
  * permissions and limitations under the Licence.
  */
 
-#ifndef _____PROJECTNAME_______UUIDASIDENTIFIER_______FILEBASENAMEASIDENTIFIER____h
-#define _____PROJECTNAME_______UUIDASIDENTIFIER_______FILEBASENAMEASIDENTIFIER____h
+#ifndef __CHAOSFramework__BaseMongoDBDiver__h
+#define __CHAOSFramework__BaseMongoDBDiver__h
 
+
+#include <mongocxx/pool.hpp>
 #include <mongocxx/instance.hpp>
-
+#include <chaos/common/chaos_types.h>
 namespace chaos {
     namespace service_common {
         namespace persistence {
             namespace mongodb {
                 namespace mongodb_cxx {
                     class BaseMongoDBDiver {
-                        static mongocxx::instance drv_instance;
+                        static mongocxx::instance       drv_instance;
+                        ChaosUniquePtr<mongocxx::pool>  pool_unique_ptr;
+                    protected:
+                        void initPool(const ChaosStringVector& url_list);
+                        mongocxx::pool& getPool();
                     public:
                         BaseMongoDBDiver();
                         virtual ~BaseMongoDBDiver();
@@ -41,4 +47,4 @@ namespace chaos {
     }
 }
 
-#endif /* _____PROJECTNAME_______UUIDASIDENTIFIER_______FILEBASENAMEASIDENTIFIER____h */
+#endif /* __CHAOSFramework__BaseMongoDBDiver__h */

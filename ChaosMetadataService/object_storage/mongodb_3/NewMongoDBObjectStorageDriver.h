@@ -23,6 +23,7 @@
 #define __CHAOSFramework_E927A5B7_1CA0_802F_AA20_DD63646EA30A_NewMongoDBObjectStorageDriver_h
 
 #include <chaos/common/utility/ObjectFactoryRegister.h>
+#include <chaos_service_common/persistence/mongodb/mongodb_cxx/MongoDBCXXDriver.h>
 #include <chaos_service_common/persistence/mongodb/MongoDBHAConnectionManager.h>
 #include <chaos_service_common/persistence/data_access/AbstractPersistenceDriver.h>
 
@@ -36,7 +37,8 @@ namespace chaos {
                  The driver is define as class in the object factor
                  */
                 DECLARE_CLASS_FACTORY(NewMongoDBObjectStorageDriver,
-                                      chaos::service_common::persistence::data_access::AbstractPersistenceDriver) {
+                                      chaos::service_common::persistence::data_access::AbstractPersistenceDriver),
+                public chaos::service_common::persistence::mongodb::mongodb_cxx::BaseMongoDBDiver {
                     REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(NewMongoDBObjectStorageDriver)
                     
                     //! Construct the driver
