@@ -27,6 +27,8 @@
 #include <chaos/common/utility/ObjectInstancer.h>
 #include <chaos_service_common/persistence/mongodb/MongoDBAccessor.h>
 
+#include <mongocxx/pool.hpp>
+
 //#include "ShardKeyManagement.h"
 
 namespace chaos {
@@ -39,10 +41,10 @@ namespace chaos {
                 class MongoDBObjectStorageDataAccess:
                 public data_service::object_storage::abstraction::ObjectStorageDataAccess {
                     friend class NewMongoDBObjectStorageDriver;
-                    
+                    mongocxx::pool& pool_ref;
                     //mongodb::ShardKeyManagementent shrd_key_manager;
                 protected:
-                    MongoDBObjectStorageDataAccess();
+                    MongoDBObjectStorageDataAccess(mongocxx::pool& _pool_ref);
                     ~MongoDBObjectStorageDataAccess();
                 public:
                     //inhertied method

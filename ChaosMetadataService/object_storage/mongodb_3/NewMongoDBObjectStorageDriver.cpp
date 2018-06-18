@@ -70,7 +70,7 @@ void NewMongoDBObjectStorageDriver::init(void *init_data) throw (chaos::CExcepti
     if(obj_stoarge_kvp.count("minPoolSize")) {
     }
     //register the data access implementations
-    registerDataAccess<ObjectStorageDataAccess>(new MongoDBObjectStorageDataAccess());
+    registerDataAccess<ObjectStorageDataAccess>(new MongoDBObjectStorageDataAccess(BaseMongoDBDiver::getPool()));
 }
 
 void NewMongoDBObjectStorageDriver::deinit() throw (chaos::CException) {

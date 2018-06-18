@@ -49,8 +49,8 @@ using namespace chaos::service_common::persistence::mongodb;
 using namespace chaos::data_service::object_storage::mongodb_3;
 using namespace chaos::data_service::object_storage::abstraction;
 
-MongoDBObjectStorageDataAccess::MongoDBObjectStorageDataAccess() {
-}
+MongoDBObjectStorageDataAccess::MongoDBObjectStorageDataAccess(mongocxx::pool& _pool_ref):
+pool_ref(_pool_ref){}
 
 MongoDBObjectStorageDataAccess::~MongoDBObjectStorageDataAccess() {}
 
