@@ -24,9 +24,11 @@ SET(TestFrameworkSource main.cpp
                         direct_io/DirectIOSystemServerChannelTest.cpp
                         utility/FutureHelperTest.cpp)
 
-SET(TestFrameworkSource ${TestFrameworkSource}
-                        script/ScriptTest.cpp
-                        script/ScriptClingTest.cpp)
+SET(TestFrameworkSource ${TestFrameworkSource} script/ScriptTest.cpp)
+
+IF (CLING_VIRTUAL_MACHINE_ENABLE)
+  SET(TestFrameworkSource ${TestFrameworkSource} script/ScriptClingTest.cpp)
+ENDIF()
 INCLUDE_DIRECTORIES(. ../../usr/local/include)
 LINK_DIRECTORIES( ${LINK_DIRECTORIES} ${PROJECT_SOURCE_DIR}/../../usr/local/lib )
 if(UNIX AND NOT APPLE)
@@ -46,7 +48,7 @@ IF (USE_GPT)
     MESG("Link google performance tools")
     SET(LinkedLibrary ${LinkedLibrary} tcmalloc)
 ENDIF()
-IF (CLING_VIRTUAL_MACHINE)
+IF(CLING_VIRTUAL_MACHINE_ENABLE)
     MESG("Link cling interpreter")
     SET(LinkedLibrary ${LinkedLibrary} clingInterpreter)
 ENDIF()
