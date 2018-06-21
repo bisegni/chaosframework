@@ -128,7 +128,8 @@ int initialize_from_old_mds(std::string conf){
         }
     }
 	 */
-    ChaosSharedPtr<CMultiTypeDataArrayWrapper> us=mdsconf.getVectorValue("us");
+
+	CMultiTypeDataArrayWrapperSPtr us = mdsconf.getVectorValue("us");
 	if(us.get()){
 		for(int cnt=0;(us.get()!=NULL)&&(cnt<us->size());cnt++){
 			std::auto_ptr<CDataWrapper> usw(us->getCDataWrapperElementAtIndex(cnt));
@@ -141,7 +142,7 @@ int initialize_from_old_mds(std::string conf){
 			} catch(CException e){
 				std::cout<<" warning:"<<" cannot create a new US:"<<unit_server_alias<<std::endl;
 			}
-            ChaosSharedPtr<CMultiTypeDataArrayWrapper> cu_l=usw->getVectorValue("cu_desc");
+			CMultiTypeDataArrayWrapperSPtr cu_l = usw->getVectorValue("cu_desc");
 			for(int cui=0;(cu_l.get() !=NULL) && (cui<cu_l->size());cui++){
 				api_proxy::control_unit::SetInstanceDescriptionHelper cud;
 				std::auto_ptr<CDataWrapper> cuw(cu_l->getCDataWrapperElementAtIndex(cui));
@@ -171,7 +172,9 @@ int initialize_from_old_mds(std::string conf){
 				EXECUTE_CHAOS_API(api_proxy::unit_server::ManageCUType,3000,unit_server_alias,cu_type,0);
 
 				// drivers
-                ChaosSharedPtr<CMultiTypeDataArrayWrapper> drv_l=cuw->getVectorValue("DriverDescription");
+
+				CMultiTypeDataArrayWrapperSPtr drv_l = cuw->getVectorValue("DriverDescription");
+
 				for(int drv=0;(drv_l.get() !=NULL) && (drv<drv_l->size());drv++){
 					std::auto_ptr<CDataWrapper> drv_w(drv_l->getCDataWrapperElementAtIndex(drv));
 
@@ -181,7 +184,8 @@ int initialize_from_old_mds(std::string conf){
 					cud.addDriverDescription(DriverDescriptionName,DriverDescriptionVersion,DriverDescriptionInitParam);
 				}
 				//attributes
-                ChaosSharedPtr<CMultiTypeDataArrayWrapper> attr_l=cuw->getVectorValue("AttrDesc");
+
+				CMultiTypeDataArrayWrapperSPtr attr_l = cuw->getVectorValue("AttrDesc");
 				for(int attr=0;(attr_l.get() !=NULL) && (attr<attr_l->size());attr++){
 					std::auto_ptr<CDataWrapper> attr_w(attr_l->getCDataWrapperElementAtIndex(attr));
 
