@@ -282,7 +282,7 @@ chaos::common::data::CDataWrapper* IODirectIODriver::updateConfiguration(chaos::
     ChaosWriteLock rl(mutext_feeder);
     //checkif someone has passed us the device indetification
     if(newConfigration->hasKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST)){
-        ChaosUniquePtr<chaos::common::data::CMultiTypeDataArrayWrapper> liveMemAddrConfig(newConfigration->getVectorValue(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST));
+        chaos_data::CMultiTypeDataArrayWrapperSPtr liveMemAddrConfig = newConfigration->getVectorValue(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST);
         size_t numerbOfserverAddressConfigured = liveMemAddrConfig->size();
         for ( int idx = 0; idx < numerbOfserverAddressConfigured; idx++ ){
             string serverDesc = liveMemAddrConfig->getStringElementAtIndex(idx);

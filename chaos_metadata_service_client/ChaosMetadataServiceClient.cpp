@@ -266,7 +266,7 @@ void ChaosMetadataServiceClient::reconfigureMonitor() throw(CException) {
     
     //get the endpoint array
     CMSC_LDBG<< "Scan the result for serverlist";
-    ChaosUniquePtr<CMultiTypeDataArrayWrapper> endpoint_array(available_enpoint_result->getResult()->getVectorValue(chaos::DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST));
+    CMultiTypeDataArrayWrapperSPtr endpoint_array = available_enpoint_result->getResult()->getVectorValue(chaos::DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST);
     CHAOS_LASSERT_EXCEPTION((endpoint_array->size()!=0),
                             CMSC_LERR,
                             -3,

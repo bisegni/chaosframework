@@ -56,7 +56,7 @@ CDataWrapper *RecoverError::execute(CDataWrapper *api_data,
     uint64_t                                    command_id          = 0;
     bool                                        presence            = false;
     std::string                                 temp_node_uid;
-    ChaosUniquePtr<CMultiTypeDataArrayWrapper>   control_unit_ids(api_data->getVectorValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID));
+    CMultiTypeDataArrayWrapperSPtr   control_unit_ids(api_data->getVectorValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID));
     std::vector<std::string>                    control_unit_to_recover;
     
     for(int idx = 0; idx < control_unit_ids->size(); idx++) {

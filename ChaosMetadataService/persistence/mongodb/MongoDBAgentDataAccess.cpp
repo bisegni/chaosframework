@@ -86,7 +86,7 @@ int MongoDBAgentDataAccess::insertUpdateAgentDescription(CDataWrapper& agent_des
         mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << agent_uid
                                     << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_AGENT);
         mongo::BSONArrayBuilder array_descirption_builder;
-        ChaosUniquePtr<CMultiTypeDataArrayWrapper> description_array(agent_description.getVectorValue(AgentNodeDefinitionKey::HOSTED_WORKER));
+        CMultiTypeDataArrayWrapperSPtr description_array = agent_description.getVectorValue(AgentNodeDefinitionKey::HOSTED_WORKER);
         for(int idx = 0;
             idx < description_array->size();
             idx++) {

@@ -500,7 +500,7 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
     std::vector<cu_driver_manager::driver::DrvRequestInfo> driver_params;
     if(message_data->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION)) {
         LCMDBG_ << "Driver param has been supplied";
-        boost::scoped_ptr<CMultiTypeDataArrayWrapper> driver_descriptions(message_data->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION));
+        CMultiTypeDataArrayWrapperSPtr driver_descriptions = message_data->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION);
         //scan all the driver description
         LCMDBG_ << "scan " << driver_descriptions->size() << " driver descriptions";
         for( int idx = 0; idx < driver_descriptions->size(); idx++) {
@@ -541,7 +541,7 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
         CHECK_KEY_THROW_AND_LOG(message_data, UnitServerNodeDomainAndActionRPC::PARAM_CONTROL_UNIT_STARTUP_COMMAND, LCMERR_, -8, "The startup command key need to be a vector of CDataWrapper");
         
         //get the vector value
-        ChaosUniquePtr<CMultiTypeDataArrayWrapper> vector_values(message_data->getVectorValue(UnitServerNodeDomainAndActionRPC::PARAM_CONTROL_UNIT_STARTUP_COMMAND));
+        CMultiTypeDataArrayWrapperSPtr vector_values = message_data->getVectorValue(UnitServerNodeDomainAndActionRPC::PARAM_CONTROL_UNIT_STARTUP_COMMAND);
         for(int idx = 0;
             idx < vector_values->size();
             idx++) {

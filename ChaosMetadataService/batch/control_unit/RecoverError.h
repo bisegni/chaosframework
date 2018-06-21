@@ -40,7 +40,7 @@ namespace chaos {
                     //array that contain all requests
                     std::vector< ChaosSharedPtr<RequestInfo> > requests;
                     
-                    ChaosUniquePtr<chaos::common::data::CMultiTypeDataArrayWrapper> cu_ids;
+                    chaos::common::data::CMultiTypeDataArrayWrapperSPtr cu_ids;
                 public:
                     RecoverError();
                     ~RecoverError();

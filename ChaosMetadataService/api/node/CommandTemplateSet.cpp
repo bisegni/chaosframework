@@ -54,7 +54,7 @@ CDataWrapper *CommandTemplateSet::execute(CDataWrapper *api_data,
     GET_DATA_ACCESS(NodeDataAccess, n_da, -3)
     GET_DATA_ACCESS(UtilityDataAccess, u_da, -4)
     
-    ChaosUniquePtr<CMultiTypeDataArrayWrapper> tempalte_list(api_data->getVectorValue("template_list"));
+    CMultiTypeDataArrayWrapperSPtr tempalte_list(api_data->getVectorValue("template_list"));
     for(int idx = 0;
         idx < tempalte_list->size();
         idx++) {

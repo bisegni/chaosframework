@@ -51,7 +51,7 @@ chaos::common::data::CDataWrapper *SetSnapshotDatasetsForNode::execute(chaos::co
     std::string working_job_unique_id;
     const std::string snapshot_name = api_data->getStringValue("snapshot_name");
     const std::string node_uid = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
-    ChaosUniquePtr<CMultiTypeDataArrayWrapper> dataset_vec_ptr(api_data->getVectorValue("dataset"));
+    CMultiTypeDataArrayWrapperSPtr dataset_vec_ptr(api_data->getVectorValue("dataset"));
     
     if(s_da->isSnapshotPresent(snapshot_name,
                                snap_presence)){

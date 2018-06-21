@@ -262,7 +262,7 @@ Subclass(copy_source, _data){}
                     }
                     
                     //we can deserialize data
-                    ChaosUniquePtr<chaos::common::data::CMultiTypeDataArrayWrapper> serialized_array(serialized_data->getVectorValue(instance_serialization_key));
+                    CMultiTypeDataArrayWrapperSPtr serialized_array = serialized_data->getVectorValue(instance_serialization_key);
                     for(int idx = 0;
                         idx < serialized_array->size();
                         idx++) {

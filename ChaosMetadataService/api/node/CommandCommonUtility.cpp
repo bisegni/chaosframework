@@ -52,7 +52,7 @@ void CommandCommonUtility::validateCommandTemplateToDescription(CDataWrapper *co
     const std::string template_name = command_template->getStringValue("template_name");
     if(command_description->hasKey(BatchCommandAndParameterDescriptionkey::BC_PARAMETERS)) {
         //check parameter for type and mandatory rule
-        ChaosUniquePtr<CMultiTypeDataArrayWrapper> parameter_list(command_description->getVectorValue(BatchCommandAndParameterDescriptionkey::BC_PARAMETERS));
+        CMultiTypeDataArrayWrapperSPtr parameter_list(command_description->getVectorValue(BatchCommandAndParameterDescriptionkey::BC_PARAMETERS));
         for(int idx = 0;
             idx < parameter_list->size();
             idx++) {

@@ -95,7 +95,7 @@ int DirectIODeviceServerChannel::consumeDataPack(chaos::common::direct_io::Direc
             BufferSPtr result_header = ChaosMakeSharedPtr<Buffer>(sizeof(DirectIODeviceChannelHeaderMultiGetOpcodeResult));
             
             //fetch the set of keys
-            DataBuffer<> data_buffer(data_pack->channel_data->data(),
+            DataBuffer data_buffer(data_pack->channel_data->data(),
                                      data_pack->header.channel_data_size,
                                      false);
 
@@ -166,8 +166,8 @@ int DirectIODeviceServerChannel::consumeDataPack(chaos::common::direct_io::Direc
                         }
 
                         //set the result header and data
-                        DIRECT_IO_SET_CHANNEL_HEADER(synchronous_answer, result_header, result_header->size());
-                        DIRECT_IO_SET_CHANNEL_DATA(synchronous_answer, result_data, result_data->size());
+                        DIRECT_IO_SET_CHANNEL_HEADER(synchronous_answer, result_header, (uint32_t)result_header->size());
+                        DIRECT_IO_SET_CHANNEL_DATA(synchronous_answer, result_data, (uint32_t)result_data->size());
                         result_header_t->result_data_size = TO_LITTEL_ENDNS_NUM(uint32_t, result_header_t->result_data_size);
                         result_header_t->numer_of_record_found = TO_LITTEL_ENDNS_NUM(uint32_t, result_header_t->numer_of_record_found);
                         result_header_t->last_found_sequence.run_id = TO_LITTEL_ENDNS_NUM(uint64_t, last_sequence_info.run_id);

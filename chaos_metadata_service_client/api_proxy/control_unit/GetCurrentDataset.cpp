@@ -45,7 +45,7 @@ void GetCurrentDataset::deserialize(chaos::common::data::CDataWrapper& cdw,
     if(!cdw.hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION) ||
        !cdw.isVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION)) return;
     
-    ChaosUniquePtr<CMultiTypeDataArrayWrapper> d_attr_vec(cdw.getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
+    CMultiTypeDataArrayWrapperSPtr d_attr_vec = cdw.getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION);
     for(int idx = 0;
         idx < d_attr_vec->size();
         idx++) {

@@ -98,7 +98,7 @@ CDataWrapper *GetSetFullUnitServer::execute(CDataWrapper *api_data,
         if(api_data->hasKey("us_desc")&& api_data->isCDataWrapperValue("us_desc")){
             ChaosUniquePtr<chaos::common::data::CDataWrapper> udesc(api_data->getCSDataValue("us_desc"));
             if(udesc->hasKey("cu_desc")&& udesc->isVector("cu_desc")){
-                ChaosUniquePtr<CMultiTypeDataArrayWrapper> cu_l(udesc->getVectorValue("cu_desc"));
+                CMultiTypeDataArrayWrapperSPtr cu_l(udesc->getVectorValue("cu_desc"));
                 for(int cui=0;
                     (cu_l.get() !=NULL) &&
                     (cui<cu_l->size());cui++){

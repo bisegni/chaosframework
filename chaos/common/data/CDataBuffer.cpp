@@ -36,7 +36,7 @@ CDataBuffer::CDataBuffer(const char *_buffer,
 own_buffer(copy) {
     buffer_size = _buffer_size;
     if(copy) {
-        buffer = (char*)malloc(_buffer_size);
+        buffer = new char[_buffer_size];
         memcpy(buffer, _buffer, buffer_size);
     } else {
         buffer = (char*)_buffer;
@@ -49,7 +49,7 @@ buffer(cdata_buffer.buffer),
 buffer_size(cdata_buffer.buffer_size){}
 
 CDataBuffer::~CDataBuffer() {
-    if(own_buffer) free(buffer);
+    if(own_buffer) delete(buffer);
 }
 
 const char *CDataBuffer::getBuffer() const {

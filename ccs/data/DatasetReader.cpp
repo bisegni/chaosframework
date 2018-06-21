@@ -10,7 +10,7 @@ DatasetReader::DatasetReader(QSharedPointer<chaos::common::data::CDataWrapper> _
     dataset_description(_dataset_description) {
     //we need to find and fill cache
     //add other output channels
-    QSharedPointer<CMultiTypeDataArrayWrapper> dataset_array(dataset_description->getVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
+    CMultiTypeDataArrayWrapperSPtr dataset_array = dataset_description->getVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION);
     for(int idx = 0;
         idx < dataset_array->size();
         idx++) {
