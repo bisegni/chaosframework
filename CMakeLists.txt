@@ -1,8 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
-
-include(config/CMakeChaos.txt)
 project(chaosframework)
-include(ExternalProject)
+include(config/CMakeChaos.txt)
+#include(ExternalProject)
 #include(CTest)
 #find git
 find_package(Git REQUIRED)
@@ -14,7 +13,6 @@ unset(CMAKE_CXX_COMPILER_WORKS)
 #specify option
 option(CHAOS_ONLY_DEPENDECY "Download all the dependency" OFF)
 option(CHAOS_ARCHITECTURE_TEST "Architecture tests" OFF)
-option(USE_GPT "Uses Google Performance tool to perform analisys" OFF)
 option(CLING_VIRTUAL_MACHINE_ENABLE "Enable cling for scripting" OFF)
 option(CHAOS_CDS "Chaos Data Service" ON)
 option(CHAOS_MDS "Chaos MetaData Service" ON)
