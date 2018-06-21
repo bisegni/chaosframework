@@ -73,6 +73,7 @@ namespace chaos {
                 
                 void writeByte(char byte) {
                     buffer.append(&byte, 1);
+                    cursor += 1;
                 }
                 
                 void writeInt32(const int32_t& number) {
