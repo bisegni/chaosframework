@@ -38,7 +38,7 @@ CLINGLanguageSupport::Highlighter::Highlighter(QTextDocument *parent):
     highlightingRules.append(rule);
 
     functionFormat.setFontItalic(true);
-    functionFormat.setForeground(Qt::blue);
+    functionFormat.setForeground(QColor(115,174,233));
     rule.pattern = QRegExp("\\b[A-Za-z0-9_]+(?=\\()");
     rule.format = functionFormat;
     highlightingRules.append(rule);

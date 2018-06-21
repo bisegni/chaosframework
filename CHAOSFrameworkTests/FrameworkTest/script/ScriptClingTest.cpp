@@ -77,10 +77,12 @@ TEST(ScriptClingTest, ExecuteFunction) {
     bool exists = false;
     code << "#include <queue>\n"
     "extern \"C\" int testFunction(const std::vector<chaos::common::data::CDataVariant>& i_var, std::vector<chaos::common::data::CDataVariant>& o_var) {"
-    "for(const chaos::common::data::CDataVariant& i : i_var) {o_var.push_back(i);}"
+    "std::vector<chaos::common::data::CDataVariant>::const_iterator it = i_var.begin();"
+    "std::vector<chaos::common::data::CDataVariant>::const_iterator end = i_var.end();"
+    "while(it != end) {o_var.push_back(*it);it++;}"
     "return 0;}";
     ASSERT_EQ(script_manager->getVirtualMachine()->loadScript(code.str()), 0);
-//    ASSERT_EQ(script_manager->getVirtualMachine()->loadScript(code.str()), 0);
+    ASSERT_EQ(script_manager->getVirtualMachine()->loadScript(code.str()), 0);
     ASSERT_EQ(script_manager->getVirtualMachine()->functionExists("testFunction", exists), 0);
     ASSERT_TRUE(exists);
     
