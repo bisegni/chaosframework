@@ -112,7 +112,7 @@ namespace chaos {
                    serialized_data->isVectorValue("property_g_plist")){
                     //we have properties
                     PropertyDescriptionSDWrapper property_wrapper;
-                    ChaosUniquePtr<chaos::common::data::CMultiTypeDataArrayWrapper> prop_array(serialized_data->getVectorValue("property_g_plist"));
+                    chaos::common::data::CMultiTypeDataArrayWrapperSPtr prop_array = serialized_data->getVectorValue("property_g_plist");
                     
                     for(unsigned int idx = 0;
                         idx < prop_array->size();
@@ -158,7 +158,7 @@ namespace chaos {
                 const std::string ser_key = (serialization_key.size()==0)?"std_vector_":serialization_key;
                 if(serialized_data->hasKey(ser_key) &&
                    serialized_data->isVectorValue(ser_key)) {
-                    ChaosUniquePtr<chaos::common::data::CMultiTypeDataArrayWrapper> serialized_array(serialized_data->getVectorValue(ser_key));
+                    chaos::common::data::CMultiTypeDataArrayWrapperSPtr serialized_array = serialized_data->getVectorValue(ser_key);
                     for(int idx = 0;
                         idx < serialized_array->size();
                         idx++) {

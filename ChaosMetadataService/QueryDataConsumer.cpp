@@ -281,7 +281,7 @@ int QueryDataConsumer::consumeGetEvent(opcode_headers::DirectIODeviceChannelHead
     CachePoolSlot *cache_slot = DriverPoolManager::getInstance()->getCacheDriverInstance();
     try{
         //get data
-        DataBuffer<> data_buffer;
+        DataBuffer data_buffer;
         MultiCacheData multi_cached_data;
         if(cache_slot) {
             err = cache_slot->resource_pooled->getData(keys,

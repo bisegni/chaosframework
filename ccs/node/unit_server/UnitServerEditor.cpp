@@ -223,7 +223,7 @@ void UnitServerEditor::onApiDone(const QString& tag,
         QStringList cy_type_list;
         if(api_result->hasKey(chaos::UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS)) {
             //get the vector of unit type
-            ChaosUniquePtr<CMultiTypeDataArrayWrapper> arr(api_result->getVectorValue(chaos::UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS));
+            CMultiTypeDataArrayWrapperSPtr arr = api_result->getVectorValue(chaos::UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS);
             for(int i = 0;
                 i < arr->size();
                 i++) {
@@ -240,7 +240,7 @@ void UnitServerEditor::onApiDone(const QString& tag,
         instance_list.clear();
 
         if(!api_result.isNull() && api_result->hasKey("node_search_result_page")) {
-            CMultiTypeDataArrayWrapper *arr =  api_result->getVectorValue("node_search_result_page");
+            CMultiTypeDataArrayWrapperSPtr arr = api_result->getVectorValue("node_search_result_page");
             for(int i = 0;
                 i < arr->size();
                 i++) {

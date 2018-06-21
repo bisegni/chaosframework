@@ -35,7 +35,7 @@ namespace chaos {
         namespace direct_io {
             namespace channel {
         
-                CHAOS_DEFINE_SET_FOR_TYPE(chaos::common::utility::DataBuffer<>, SetDataBuffer);
+                CHAOS_DEFINE_SET_FOR_TYPE(chaos::common::utility::DataBuffer, SetDataBuffer);
                 
                 //! Class for the managment of pushing data for the device dataset
                 /*!

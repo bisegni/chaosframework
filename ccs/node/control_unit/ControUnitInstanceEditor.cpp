@@ -189,7 +189,7 @@ void ControUnitInstanceEditor::fillUIFromInstanceInfo(QSharedPointer<chaos::comm
 
             //add driverdesc
             if(api_result->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION)) {
-        ChaosUniquePtr<CMultiTypeDataArrayWrapper> arr_drv(api_result->getVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION));
+        CMultiTypeDataArrayWrapperSPtr arr_drv = api_result->getVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION);
         for(int idx = 0;
             idx != arr_drv->size();
             idx++) {
@@ -212,7 +212,7 @@ void ControUnitInstanceEditor::fillUIFromInstanceInfo(QSharedPointer<chaos::comm
     }
     //add attribute desc
     if(api_result->hasKey("attribute_value_descriptions")) {
-        ChaosUniquePtr<CMultiTypeDataArrayWrapper> arr_attr(api_result->getVectorValue("attribute_value_descriptions"));
+        CMultiTypeDataArrayWrapperSPtr arr_attr = api_result->getVectorValue("attribute_value_descriptions");
         for(int idx = 0;
             idx != arr_attr->size();
             idx++) {
@@ -319,7 +319,7 @@ void ControUnitInstanceEditor::onApiDone(const QString& tag,
         //we have unit server description
         if(api_result->hasKey(chaos::UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS)) {
             //get the vector of unit type
-            ChaosUniquePtr<CMultiTypeDataArrayWrapper> arr(api_result->getVectorValue(chaos::UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS));
+            CMultiTypeDataArrayWrapperSPtr arr = api_result->getVectorValue(chaos::UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS);
             for(int i = 0;
                 i < arr->size();
                 i++) {

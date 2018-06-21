@@ -62,7 +62,7 @@ void NodeSearchTest::testSearch(const std::string& search_string){
                     if(search_result->getResult()->hasKey("node_search_result_page")&&
                        search_result->getResult()->isVectorValue("node_search_result_page")){
                         //we have result
-                        ChaosUniquePtr<CMultiTypeDataArrayWrapper> node_found_vec(search_result->getResult()->getVectorValue("node_search_result_page"));
+                        CMultiTypeDataArrayWrapperSPtr node_found_vec(search_result->getResult()->getVectorValue("node_search_result_page"));
                         if(node_found_vec->size() == 0) {
                             end=true;
                         } else{

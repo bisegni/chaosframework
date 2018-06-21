@@ -279,7 +279,7 @@ int  MDSMessageChannel::loadSnapshotNodeDataset(const std::string& snapname,
             err = request_future->getError();
             if(err==0){
                 
-                ChaosUniquePtr<CMultiTypeDataArrayWrapper> snapshot_list(request_future->getResult()->getVectorValue("dataset_list"));
+                CMultiTypeDataArrayWrapperSPtr snapshot_list = request_future->getResult()->getVectorValue("dataset_list");
                 if(snapshot_list->size()){
                     data_set.addStringValue("name",node_uid);
                     data_set.addInt64Value("timestamp",mapsnap_res.begin()->first);
@@ -431,7 +431,7 @@ int MDSMessageChannel::searchSnapshot(const std::string& query_filter,
                !request_future->getResult()->hasKey("snapshot_list_result") ||
                !request_future->getResult()->isVectorValue("snapshot_list_result")) return err;
             
-            ChaosUniquePtr<CMultiTypeDataArrayWrapper> snapshot_desc_list(request_future->getResult()->getVectorValue("snapshot_list_result"));
+            CMultiTypeDataArrayWrapperSPtr snapshot_desc_list = request_future->getResult()->getVectorValue("snapshot_list_result");
             for(int idx = 0;
                 idx < snapshot_desc_list->size();
                 idx++) {
@@ -495,7 +495,7 @@ int MDSMessageChannel::searchNodeForSnapshot(const std::string& snapshot_name,
                request_future->getResult()->hasKey("node_in_snapshot") &&
                request_future->getResult()->isVectorValue("node_in_snapshot")) {
                 //we have result
-                ChaosUniquePtr<CMultiTypeDataArrayWrapper> snapshot_desc_list(request_future->getResult()->getVectorValue("node_in_snapshot"));
+                CMultiTypeDataArrayWrapperSPtr snapshot_desc_list = request_future->getResult()->getVectorValue("node_in_snapshot");
                 for(int idx = 0;
                     idx < snapshot_desc_list->size();
                     idx++) {
@@ -530,7 +530,7 @@ int MDSMessageChannel::searchSnapshotForNode(const std::string& node_uid,
                request_future->getResult()->hasKey("snapshot_for_node") &&
                request_future->getResult()->isVectorValue("snapshot_for_node")) {
                 //we have result
-                ChaosUniquePtr<CMultiTypeDataArrayWrapper> snapshot_desc_list(request_future->getResult()->getVectorValue("snapshot_for_node"));
+                CMultiTypeDataArrayWrapperSPtr snapshot_desc_list = request_future->getResult()->getVectorValue("snapshot_for_node");
                 for(int idx = 0;
                     idx < snapshot_desc_list->size();
                     idx++) {
@@ -587,7 +587,7 @@ int MDSMessageChannel::searchVariable(const std::string& variable_name,ChaosStri
                request_future->getResult()->hasKey("varlist") &&
                request_future->getResult()->isVectorValue("varlist")) {
                 //we have result
-                ChaosUniquePtr<CMultiTypeDataArrayWrapper> snapshot_desc_list(request_future->getResult()->getVectorValue("varlist"));
+                CMultiTypeDataArrayWrapperSPtr snapshot_desc_list = request_future->getResult()->getVectorValue("varlist");
                 for(int idx = 0;
                     idx < snapshot_desc_list->size();
                     idx++) {
@@ -671,7 +671,7 @@ int MDSMessageChannel::searchNode(const std::string& unique_id_filter,
                request_future->getResult()->hasKey("node_search_result_page") &&
                request_future->getResult()->isVectorValue("node_search_result_page")) {
                 //we have result
-                ChaosUniquePtr<CMultiTypeDataArrayWrapper> snapshot_desc_list(request_future->getResult()->getVectorValue("node_search_result_page"));
+                CMultiTypeDataArrayWrapperSPtr snapshot_desc_list = request_future->getResult()->getVectorValue("node_search_result_page");
                 for(int idx = 0;
                     idx < snapshot_desc_list->size();
                     idx++) {

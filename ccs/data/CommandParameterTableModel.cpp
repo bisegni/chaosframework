@@ -28,7 +28,7 @@ void CommandParameterTableModel::updateAttribute(const QSharedPointer<chaos::com
     beginResetModel();
     //remove old attribute list
     attribute_changes.clear();
-    QSharedPointer<CMultiTypeDataArrayWrapper> attribute_array(command_description->getVectorValue(BatchCommandAndParameterDescriptionkey::BC_PARAMETERS));
+    CMultiTypeDataArrayWrapperSPtr attribute_array = command_description->getVectorValue(BatchCommandAndParameterDescriptionkey::BC_PARAMETERS);
     for(int idx = 0;
         idx < attribute_array->size();
         idx++) {

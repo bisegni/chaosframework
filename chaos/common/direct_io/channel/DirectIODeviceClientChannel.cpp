@@ -168,7 +168,7 @@ int DirectIODeviceClientChannel::requestLastOutputData(const ChaosStringVector& 
                                                        VectorCDWShrdPtr& results) {
     if(keys.size() == 0) return -1;
     int err = 0;
-    DataBuffer<> data_buffer;
+    DataBuffer data_buffer;
     DirectIODataPackSPtr answer;
     DirectIODataPackSPtr data_pack = ChaosMakeSharedPtr<DirectIODataPack>();
     //set opcode
@@ -204,9 +204,9 @@ int DirectIODeviceClientChannel::requestLastOutputData(const ChaosStringVector& 
             CHAOS_ASSERT(result_header->number_of_result > 0);
             CHAOS_ASSERT(answer->channel_data.get());
             
-            DataBuffer<> data_buffer_answer(answer->channel_data->data(),
-                                            answer->header.channel_data_size,
-                                            false);
+            DataBuffer data_buffer_answer(answer->channel_data->data(),
+                                          answer->header.channel_data_size,
+                                          false);
             for(int idx = 0;
                 idx < result_header->number_of_result;
                 idx++) {

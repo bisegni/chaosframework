@@ -524,9 +524,8 @@ void CUSchemaDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& attributeDat
     string attributeDeviceID;
     string attributeName;
     string attributeDescription;
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> elementDescription;
-    ChaosUniquePtr<CMultiTypeDataArrayWrapper> elementsDescriptions;
-    //LDBG_<<"["<<__PRETTY_FUNCTION__<<"] Dataset:"<<attributeDataWrapper.getJSONString();
+    CDWUniquePtr elementDescription;
+    CMultiTypeDataArrayWrapperSPtr elementsDescriptions;
     
     if(!attributeDataWrapper.hasKey(NodeDefinitionKey::NODE_UNIQUE_ID)) return;
     attributeDeviceID = attributeDataWrapper.getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
@@ -541,7 +540,7 @@ void CUSchemaDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& attributeDat
             
             //get the entity for device
             entity::Entity *deviceEntity = getDeviceEntity(attributeDeviceID);
-            elementsDescriptions.reset(dataset_object->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
+            elementsDescriptions = dataset_object->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION);
             
             for (int idx = 0; idx < elementsDescriptions->size(); idx++) {
                 
@@ -608,7 +607,7 @@ void CUSchemaDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& attributeDat
         clearAllAttributeForProperty(deviceEntity, mapDatasetKeyForID[DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST]);
         
         //in the package has been sent the address where fir the data for this device
-        ChaosUniquePtr<CMultiTypeDataArrayWrapper> serverVec(attributeDataWrapper.getVectorValue(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST));
+        CMultiTypeDataArrayWrapperSPtr serverVec = attributeDataWrapper.getVectorValue(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST);
         for (int idx = 0; idx < serverVec->size(); idx++) {
             //add new server
             deviceEntity->addProperty(mapDatasetKeyForID[DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST],  serverVec->getStringElementAtIndex(idx).c_str());

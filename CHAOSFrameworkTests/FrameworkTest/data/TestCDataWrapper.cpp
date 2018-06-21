@@ -71,7 +71,7 @@ TEST(CDataWrapperTest, MemoryLeaks) {
         ASSERT_TRUE(json_deserialized->isInt32Value("i32v"));
         ASSERT_TRUE(json_deserialized->isBoolValue("bv"));
         
-        ChaosUniquePtr<CMultiTypeDataArrayWrapper> array_ptr(json_deserialized->getVectorValue("array"));
+        CMultiTypeDataArrayWrapperSPtr array_ptr(json_deserialized->getVectorValue("array"));
         ASSERT_EQ(array_ptr->size(), 4);
         ASSERT_EQ(array_ptr->getInt32ElementAtIndex(0), 1);
         ASSERT_EQ(array_ptr->getInt64ElementAtIndex(1), 2);
@@ -101,7 +101,7 @@ TEST(CDataWrapperTest, TestJsonDouble) {
     CDWUniquePtr data = CDataWrapper::instanceFromJson(test_json_translation);
     ASSERT_TRUE(data->hasKey("double_key"));
     ASSERT_TRUE(data->isVectorValue("double_key"));
-    ChaosUniquePtr<CMultiTypeDataArrayWrapper> p(data->getVectorValue("double_key"));
+    CMultiTypeDataArrayWrapperSPtr p(data->getVectorValue("double_key"));
     ASSERT_TRUE(p.get());
     
     for(int cnt=0;cnt<p->size();cnt++){
@@ -169,7 +169,7 @@ TEST(CDataWrapperTest, TestConcatenation) {
     CDWUniquePtr t(dconcat.getCSDataValue("notempty"));
     ASSERT_TRUE(t->isVectorValue("double_key"));
     
-    ChaosUniquePtr<CMultiTypeDataArrayWrapper> p(t->getVectorValue("double_key"));
+    CMultiTypeDataArrayWrapperSPtr p(t->getVectorValue("double_key"));
     ASSERT_TRUE(p.get());
     
     for(int cnt=0;cnt<p->size();cnt++){

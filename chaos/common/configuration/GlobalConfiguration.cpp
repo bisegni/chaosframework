@@ -533,14 +533,14 @@ std::string GlobalConfiguration::getHostname() {
  return the address of metadataserver
  */
 string GlobalConfiguration::getMetadataServerAddress() {
-    ChaosUniquePtr<chaos::common::data::CMultiTypeDataArrayWrapper> server_array(configuration->getVectorValue(InitOption::OPT_METADATASERVER_ADDRESS));
+    CMultiTypeDataArrayWrapperSPtr server_array = configuration->getVectorValue(InitOption::OPT_METADATASERVER_ADDRESS);
     CHAOS_ASSERT(server_array->size());
     return server_array->getStringElementAtIndex(0);
 }
 
 VectorMetadatserver GlobalConfiguration::getMetadataServerAddressList() {
     std::vector<CNetworkAddress> result;
-    ChaosUniquePtr<chaos::common::data::CMultiTypeDataArrayWrapper> server_array(configuration->getVectorValue(InitOption::OPT_METADATASERVER_ADDRESS));
+    CMultiTypeDataArrayWrapperSPtr server_array = configuration->getVectorValue(InitOption::OPT_METADATASERVER_ADDRESS);
     for(int idx = 0;
         idx < server_array->size();
         idx++) {

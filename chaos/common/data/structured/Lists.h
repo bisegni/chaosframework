@@ -41,7 +41,7 @@ namespace chaos {
                     const std::string ser_key = (serialization_key.size()==0)?"std_vector_":serialization_key;
                     if(serialized_data->hasKey(ser_key) &&
                        serialized_data->isVectorValue(ser_key)) {
-                        ChaosUniquePtr<chaos::common::data::CMultiTypeDataArrayWrapper> serialized_array(serialized_data->getVectorValue(ser_key));
+                        chaos::common::data::CMultiTypeDataArrayWrapperSPtr serialized_array = serialized_data->getVectorValue(ser_key);
                         for(int idx = 0;
                             idx < serialized_array->size();
                             idx++) {
@@ -86,7 +86,7 @@ namespace chaos {
                         const std::string ser_key = (serialization_key.size()==0)?"std_vector_":serialization_key;
                         if(serialized_data->hasKey(ser_key) &&
                            serialized_data->isVectorValue(ser_key)) {
-                            ChaosUniquePtr<chaos::common::data::CMultiTypeDataArrayWrapper> serialized_array(serialized_data->getVectorValue(ser_key));
+                            chaos::common::data::CMultiTypeDataArrayWrapperSPtr serialized_array = serialized_data->getVectorValue(ser_key);
                             for(int idx = 0;
                                 idx < serialized_array->size();
                                 idx++) {

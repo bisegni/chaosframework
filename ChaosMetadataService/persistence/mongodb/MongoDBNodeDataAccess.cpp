@@ -176,13 +176,13 @@ int MongoDBNodeDataAccess::updateNode(chaos::common::data::CDataWrapper& node_de
             updated_field << chaos::NodeDefinitionKey::NODE_TIMESTAMP << mongo::Date_t(node_description.getUInt64Value(chaos::NodeDefinitionKey::NODE_TIMESTAMP));
         }
         if(node_description.hasKey(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC)) {
-            ChaosUniquePtr<CMultiTypeDataArrayWrapper> description_array(node_description.getVectorValue(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC));
+            CMultiTypeDataArrayWrapperSPtr description_array(node_description.getVectorValue(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC));
             for(int desc_idx = 0;
                 desc_idx < description_array->size();
                 desc_idx++) {
                 ChaosUniquePtr<CDataWrapper> desc_obj(description_array->getCDataWrapperElementAtIndex(desc_idx));
                 if(desc_obj->hasKey(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC)) {
-                    ChaosUniquePtr<CMultiTypeDataArrayWrapper> action_array(desc_obj->getVectorValue(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC));
+                    CMultiTypeDataArrayWrapperSPtr action_array(desc_obj->getVectorValue(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC));
                     for(int idx = 0;
                         idx < action_array->size();
                         idx++) {
@@ -203,7 +203,7 @@ int MongoDBNodeDataAccess::updateNode(chaos::common::data::CDataWrapper& node_de
                         }
                         //check if the action has parameter
                         if(element->hasKey(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PARAM)) {
-                            ChaosUniquePtr<CMultiTypeDataArrayWrapper> param_array(element->getVectorValue(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PARAM));
+                            CMultiTypeDataArrayWrapperSPtr param_array(element->getVectorValue(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PARAM));
                             for(int idx = 0;
                                 idx < param_array->size();
                                 idx++) {

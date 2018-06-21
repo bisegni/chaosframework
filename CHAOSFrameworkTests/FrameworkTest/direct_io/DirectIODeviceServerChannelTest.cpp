@@ -121,7 +121,7 @@ public:
         int err = 0;
         if((++consumeGetEventMulti_counter % 2) == 0) {
             //right result
-            DataBuffer<> data_buffer;
+            DataBuffer data_buffer;
             for(ChaosStringVectorConstIterator it = keys.begin(),
                 end = keys.end();
                 it != end;
@@ -158,7 +158,7 @@ public:
                 err = -1;
             } else {
                 //right result
-                DataBuffer<> data_buffer;
+                DataBuffer data_buffer;
                 for(int idx = 0;
                     idx < query_header.field.record_for_page;
                     idx++) {

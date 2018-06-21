@@ -118,8 +118,8 @@ int DirectIOSystemAPIServerChannel::consumeDataPack(DirectIODataPackSPtr data_pa
         case opcode::SystemAPIChannelOpcodePushLogEntryForANode: {
             synchronous_answer = ChaosMakeSharedPtr<DirectIODataPack>();
             ChaosStringVector log_entry;
-            DataBuffer<> buffer(data_pack->channel_data->detach(),
-                                data_pack->header.channel_data_size);
+            DataBuffer buffer(data_pack->channel_data->detach(),
+                              data_pack->header.channel_data_size);
             //read the request header
             DirectIOSystemAPIChannelOpcodePushLogEntryForANodeHeader *header = data_pack->channel_header_data->data<DirectIOSystemAPIChannelOpcodePushLogEntryForANodeHeader>();
             header->field.data_entries_num = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.data_entries_num);

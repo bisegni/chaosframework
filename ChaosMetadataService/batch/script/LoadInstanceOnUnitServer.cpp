@@ -56,7 +56,7 @@ void LoadInstanceOnUnitServer::setHandler(CDataWrapper *data) {
     CHAOS_LASSERT_EXCEPTION(data->isVectorValue(ExecutionUnitNodeDefinitionKey::EXECUTION_POOL_LIST), ERR, -5, "ep_pool_list key need to be a vector with the execution pool list");
     
     unit_server = data->getStringValue(chaos::NodeDefinitionKey::NODE_PARENT);
-    ChaosUniquePtr<CMultiTypeDataArrayWrapper> array(data->getVectorValue(ExecutionUnitNodeDefinitionKey::EXECUTION_POOL_LIST));
+    CMultiTypeDataArrayWrapperSPtr array(data->getVectorValue(ExecutionUnitNodeDefinitionKey::EXECUTION_POOL_LIST));
     for(int idx = 0;
         idx < array->size();
         idx++) {

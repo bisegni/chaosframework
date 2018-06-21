@@ -80,7 +80,7 @@ namespace chaos {
                 
                 if(serialized_data->hasKey(NodeStateFlagDefinitionKey::NODE_SF_LEVEL_SET) &&
                    serialized_data->isVectorValue(NodeStateFlagDefinitionKey::NODE_SF_LEVEL_SET)) {
-                    ChaosUniquePtr<chaos::common::data::CMultiTypeDataArrayWrapper> state_level_vec(serialized_data->getVectorValue(NodeStateFlagDefinitionKey::NODE_SF_LEVEL_SET));
+                    chaos::common::data::CMultiTypeDataArrayWrapperSPtr state_level_vec = serialized_data->getVectorValue(NodeStateFlagDefinitionKey::NODE_SF_LEVEL_SET);
                     for(int idx = 0;
                         idx < state_level_vec->size();
                         idx++) {
@@ -89,7 +89,6 @@ namespace chaos {
                         dataWrapped().addLevel(slsdw.dataWrapped());
                     }
                 }
-                
             }
             
             ChaosUniquePtr<chaos::common::data::CDataWrapper> serialize() {

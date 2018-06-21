@@ -49,7 +49,7 @@ void RecoverError::setHandler(CDataWrapper *data) {
     bool        presence    = false;
     
     //set cu id to the batch command datapack
-    cu_ids.reset(data->getVectorValue(NodeDefinitionKey::NODE_UNIQUE_ID));
+    cu_ids = data->getVectorValue(NodeDefinitionKey::NODE_UNIQUE_ID);
     
     for(int idx  = 0; idx < cu_ids->size(); idx++) {
         uid = cu_ids->getStringElementAtIndex(idx);

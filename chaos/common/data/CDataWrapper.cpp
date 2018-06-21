@@ -211,9 +211,8 @@ void CDataWrapper::finalizeArrayForKey(const std::string& key) {
 }
 
 //return a vectorvalue for a key
-CMultiTypeDataArrayWrapper* CDataWrapper::getVectorValue(const std::string& key)  const{
-    return new CMultiTypeDataArrayWrapper(bson,
-                                          key);
+CMultiTypeDataArrayWrapperSPtr CDataWrapper::getVectorValue(const std::string& key)  const{
+    return CMultiTypeDataArrayWrapperSPtr(new CMultiTypeDataArrayWrapper(bson, key));
 }
 
 void CDataWrapper::addNullValue(const std::string& key) {

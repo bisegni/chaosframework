@@ -121,7 +121,7 @@ void SearchNodeListModel::onApiDone(const QString& tag,
             api_result->hasKey("node_search_result_page") &&
             api_result->isVectorValue("node_search_result_page")) {
         //we have result
-        ChaosUniquePtr<CMultiTypeDataArrayWrapper> arr(api_result->getVectorValue("node_search_result_page"));
+        CMultiTypeDataArrayWrapperSPtr arr = api_result->getVectorValue("node_search_result_page");
         if(arr->size()) {
             //get first element seq
             for(int i = 0;

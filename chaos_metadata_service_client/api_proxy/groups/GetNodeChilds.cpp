@@ -50,7 +50,7 @@ GetNodeChildsHelper::GetNodeChildsHelper(CDataWrapper *api_result) {
     //SnapshotInformationPtr
     if(!api_result || !api_result->hasKey("node_child_list")) return;
     
-    ChaosUniquePtr<CMultiTypeDataArrayWrapper> vec(api_result->getVectorValue("node_child_list"));
+    CMultiTypeDataArrayWrapperSPtr vec = api_result->getVectorValue("node_child_list");
     for(int idx = 0;
         idx < vec->size();
         idx++) {

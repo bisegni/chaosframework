@@ -49,7 +49,7 @@ CDataWrapper *SetInputDatasetAttributeValues::execute(CDataWrapper *api_data,
     int err = 0;
     uint64_t command_id = 0;
     //get values array
-    ChaosUniquePtr<CMultiTypeDataArrayWrapper> value_set_array(api_data->getVectorValue("attribute_set_values"));
+    CMultiTypeDataArrayWrapperSPtr value_set_array(api_data->getVectorValue("attribute_set_values"));
     
     //get the data access
     GET_DATA_ACCESS(NodeDataAccess, n_da, -3)
@@ -96,7 +96,7 @@ CDataWrapper *SetInputDatasetAttributeValues::execute(CDataWrapper *api_data,
                                              cu_node_description->getStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN));
         
         CU_SIDAV_DBG << "Fetch changes_set for control unit:" << cu_uid;
-        ChaosUniquePtr<CMultiTypeDataArrayWrapper> change_set(cu_changes_set->getVectorValue("change_set"));
+        CMultiTypeDataArrayWrapperSPtr change_set(cu_changes_set->getVectorValue("change_set"));
         
         for(int idx_change = 0;
             idx_change < change_set->size();
