@@ -3,6 +3,7 @@ project(TestFramework)
 
 SET(TestFrameworkSource main.cpp
                         plugin/TestPlugin.cpp
+                        script/ScriptTest.cpp
                         data/TestVariant.cpp
                         data/TestCDataWrapper.cpp
                         external_unit/ExternalUnitTest.cpp
@@ -24,9 +25,12 @@ SET(TestFrameworkSource main.cpp
                         direct_io/DirectIOSystemServerChannelTest.cpp
                         utility/FutureHelperTest.cpp)
 
-SET(TestFrameworkSource ${TestFrameworkSource}
-                        script/ScriptTest.cpp
-                        script/ScriptClingTest.cpp)
+IF (CLING_VIRTUAL_MACHINE)
+  MESG("Add test for cling script")
+  SET(TestFrameworkSource ${TestFrameworkSource}
+                          script/ScriptClingTest.cpp)
+ENDIF()
+
 INCLUDE_DIRECTORIES(. ../../usr/local/include)
 LINK_DIRECTORIES( ${LINK_DIRECTORIES} ${PROJECT_SOURCE_DIR}/../../usr/local/lib )
 if(UNIX AND NOT APPLE)
