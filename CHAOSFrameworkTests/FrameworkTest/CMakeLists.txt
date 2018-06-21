@@ -3,7 +3,6 @@ project(TestFramework)
 
 SET(TestFrameworkSource main.cpp
                         plugin/TestPlugin.cpp
-                        script/ScriptTest.cpp
                         data/TestVariant.cpp
                         data/TestCDataWrapper.cpp
                         external_unit/ExternalUnitTest.cpp
@@ -22,9 +21,12 @@ SET(TestFrameworkSource main.cpp
                         utility/FutureHelperTest.cpp
                         direct_io/DirectIOTest.cpp
                         direct_io/DirectIODeviceServerChannelTest.cpp
-                        direct_io/DirectIOSystemServerChannelTest.cpp)
+                        direct_io/DirectIOSystemServerChannelTest.cpp
+                        utility/FutureHelperTest.cpp)
 
-
+SET(TestFrameworkSource ${TestFrameworkSource}
+                        script/ScriptTest.cpp
+                        script/ScriptClingTest.cpp)
 INCLUDE_DIRECTORIES(. ../../usr/local/include)
 LINK_DIRECTORIES( ${LINK_DIRECTORIES} ${PROJECT_SOURCE_DIR}/../../usr/local/lib )
 if(UNIX AND NOT APPLE)
@@ -39,12 +41,16 @@ ENDIF()
 
 SET(LinkedLibrary $ENV{CHAOS_LINK_LIBRARY})
 separate_arguments(LinkedLibrary)
+SET(LinkedLibrary ${LinkedLibrary} chaos_common gtest)
 IF (USE_GPT)
-    MESG("Use google performance tools for chaos framework tests")
-    TARGET_LINK_LIBRARIES(TestFramework gtest tcmalloc chaos_common ${LinkedLibrary})
-ELSE()
-    TARGET_LINK_LIBRARIES(TestFramework gtest chaos_common ${LinkedLibrary})
+    MESG("Link google performance tools")
+    SET(LinkedLibrary ${LinkedLibrary} tcmalloc)
+ENDIF()
+IF (CLING_VIRTUAL_MACHINE)
+    MESG("Link cling interpreter")
+    SET(LinkedLibrary ${LinkedLibrary} clingInterpreter)
 ENDIF()
 
+TARGET_LINK_LIBRARIES(TestFramework ${LinkedLibrary})
 
 INSTALL_TARGETS(/bin TestFramework)

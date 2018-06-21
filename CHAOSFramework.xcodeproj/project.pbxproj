@@ -7999,6 +7999,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_CODE_COVERAGE = YES;
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/lib";
 				COPY_PHASE_STRIP = NO;
 				DSTROOT = /;
@@ -8026,10 +8027,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
-				OTHER_LDFLAGS = (
-					"-lchaos_common",
-					"-ljsoncpp",
-				);
+				OTHER_LDFLAGS = "-lchaos_common";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -8039,6 +8037,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_CODE_COVERAGE = YES;
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/lib";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -8059,10 +8058,7 @@
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
-				OTHER_LDFLAGS = (
-					"-lchaos_common",
-					"-ljsoncpp",
-				);
+				OTHER_LDFLAGS = "-lchaos_common";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
