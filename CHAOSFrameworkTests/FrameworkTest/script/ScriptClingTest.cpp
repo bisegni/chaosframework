@@ -53,17 +53,17 @@ int TestApi::echo(const ScriptInParam& input_parameter,
 }
 
 #pragma mark Tests
-TEST(ScriptClingTest, InitDeinit) {
-    ChaosUniquePtr<ScriptManager> script_manager(new ScriptManager("CPP"));
-    ASSERT_NO_THROW(InizializableService::initImplementation(script_manager.get(),
-                                                             NULL,
-                                                             "ScriptManager",
-                                                             __PRETTY_FUNCTION__););
-    
-    InizializableService::deinitImplementation(script_manager.get(),
-                                               "ScriptManager",
-                                               __PRETTY_FUNCTION__);
-}
+//TEST(ScriptClingTest, InitDeinit) {
+//    ChaosUniquePtr<ScriptManager> script_manager(new ScriptManager("CPP"));
+//    ASSERT_NO_THROW(InizializableService::initImplementation(script_manager.get(),
+//                                                             NULL,
+//                                                             "ScriptManager",
+//                                                             __PRETTY_FUNCTION__););
+//    
+//    InizializableService::deinitImplementation(script_manager.get(),
+//                                               "ScriptManager",
+//                                               __PRETTY_FUNCTION__);
+//}
 
 TEST(ScriptClingTest, ExecuteFunction) {
     ScriptInParam in_param;
