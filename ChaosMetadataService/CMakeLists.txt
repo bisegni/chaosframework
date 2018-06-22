@@ -52,7 +52,7 @@ IF(COMPILE_NEW_MONGODB_DRIVER)
      SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/mongo-c-driver-src"
      BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/mongo-c-driver-build"
      CMAKE_ARGS
-      -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
+      -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX} -DCMAKE_BUILD_TYPE=Release
      LOG_DOWNLOAD ON
      LOG_CONFIGURE ON
      LOG_BUILD ON)
@@ -89,7 +89,7 @@ SET(cnd_src  ${cnd_src} ../chaos_service_common/persistence/mongodb/MongoDBHACon
                         ../chaos_service_common/persistence/mongodb/mongodb_cxx/MongoDBCXXDriver.cpp)
 
 SET(cnd_src  ${cnd_src} ../chaos_service_common/persistence/data_access/AbstractDataAccess.cpp
-						 ../chaos_service_common/persistence/data_access/AbstractPersistenceDriver.cpp)
+						../chaos_service_common/persistence/data_access/AbstractPersistenceDriver.cpp)
 
 SET(cnd_src  ${cnd_src}	cron_job/MDSCronusManager.cpp
                         cron_job/MDSCronJob.cpp
@@ -161,6 +161,7 @@ SET(cnd_src  ${cnd_src}	api/control_unit/SetInputDatasetAttributeValues.cpp
 						            api/control_unit/GetFullDescription.cpp
                         api/control_unit/SendStorageBurst.cpp)
 
+
 SET(cnd_src  ${cnd_src}	api/node/NodeGroup.cpp
                         api/node/NodeCreateUnitServer.cpp
                         api/node/NodeGetDescription.cpp
@@ -183,7 +184,7 @@ SET(cnd_src  ${cnd_src}	api/node/NodeGroup.cpp
                         api/node/KillCurrentCommand.cpp
                         api/node/ClearCommandQueue.cpp
                         api/node/ForwardNodeRpcMessage.cpp
-			                  api/node/GetPropertyDefaultValues.cpp
+			            api/node/GetPropertyDefaultValues.cpp
                         api/node/GetCommandAndTemplateDescription.cpp)
 
 SET(cnd_src  ${cnd_src}	api/script/ScriptGroupApi.cpp
@@ -227,9 +228,9 @@ SET(cnd_src  ${cnd_src} persistence/PersistenceManager.cpp
                         persistence/data_access/ControlUnitDataAccess.cpp
                         persistence/data_access/DataServiceDataAccess.cpp
                         persistence/data_access/SnapshotDataAccess.cpp
-						            persistence/data_access/TreeGroupDataAccess.cpp
+						persistence/data_access/TreeGroupDataAccess.cpp
                         persistence/data_access/LoggingDataAccess.cpp
-						            persistence/data_access/ScriptDataAccess.cpp
+						persistence/data_access/ScriptDataAccess.cpp
                         persistence/data_access/AgentDataAccess.cpp)
 
 SET(cnd_src  ${cnd_src}	persistence/mongodb/MongoDBPersistenceDriver.cpp
@@ -241,7 +242,7 @@ SET(cnd_src  ${cnd_src}	persistence/mongodb/MongoDBPersistenceDriver.cpp
                         persistence/mongodb/MongoDBSnapshotDataAccess.cpp
                         persistence/mongodb/MongoDBTreeGroupDataAccess.cpp
                         persistence/mongodb/MongoDBLoggingDataAccess.cpp
-						            persistence/mongodb/MongoDBScriptDataAccess.cpp
+						persistence/mongodb/MongoDBScriptDataAccess.cpp
                         persistence/mongodb/MongoDBAgentDataAccess.cpp)
 #Caching
 SET(cnd_src  ${cnd_src}	cache_system/CacheDriver.cpp
