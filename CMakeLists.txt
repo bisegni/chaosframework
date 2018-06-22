@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
-project(chaosframework)
+
 include(config/CMakeChaos.txt)
-#include(ExternalProject)
+project(chaosframework)
+include(ExternalProject)
 #include(CTest)
 #find git
 find_package(Git REQUIRED)
@@ -11,18 +12,18 @@ unset(CMAKE_CXX_COMPILER_WORKS CACHE)
 unset(CMAKE_CXX_COMPILER_WORKS)
 
 #specify option
+option(USE_GPT "Uses Google Performance tool to perform analisys" OFF)
+option(CLING_VIRTUAL_MACHINE_ENABLE "Enable cling for scripting" OFF)
 option(CHAOS_ONLY_DEPENDECY "Download all the dependency" OFF)
 option(CHAOS_ARCHITECTURE_TEST "Architecture tests" OFF)
-option(CLING_VIRTUAL_MACHINE_ENABLE "Enable cling for scripting" OFF)
 option(CHAOS_CDS "Chaos Data Service" ON)
 option(CHAOS_MDS "Chaos MetaData Service" ON)
+option(CHAOS_WAN "Chaos Wan Service" OFF)
 option(CHAOS_AGENT "Chaos Agent Service" ON)
 option(CHAOS_DATA_EXPORT "Chaos Data Export" ON)
 option(CHAOS_EXAMPLES "Chaos Examples" ON)
 option(CHAOS_CCS "Chaos CCS Compile needs qt5.6-static-x86_64 installed" OFF)
-IF(NOT QMAKE_PATH)
-  set(QMAKE_PATH /usr/local/chaos/qt-56/bin)
-ENDIF()
+set(QMAKE_PATH /usr/local/chaos/qt-56/bin)
 
 EXECUTE_PROCESS(
 COMMAND ./version.sh
@@ -42,11 +43,17 @@ CheckConfigureBuild(jsoncpp jsoncpp "-DJSONCPP_WITH_TESTS=OFF;-DJSONCPP_WITH_POS
 CheckConfigureBuild(mongoclient mongo-cxx-driver:legacy-1.0.0-rc0 "--extralib=boost_system;--disable-warnings-as-errors;install-mongoclient" https://github.com/mongodb)
 #########
 
+IF(CHAOS_ARCHITECTURE_TEST)
+    SET (CMAKE_BUILD_TYPE Debug)
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fprofile-arcs -ftest-coverage")
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -fprofile-arcs -ftest-coverage")
+    set (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
+ENDIF()
 
 IF (CHAOS_ONLY_DEPENDECY OR
     CHAOS_ARCHITECTURE_TEST)
   #google test
-  MESG("Add Google Test as external project")
+  MESG("Add google Test as external project")
   ExternalProject_Add(
      googletest
      GIT_REPOSITORY https://github.com/google/googletest.git
@@ -59,6 +66,7 @@ IF (CHAOS_ONLY_DEPENDECY OR
      LOG_DOWNLOAD ON
      LOG_CONFIGURE ON
      LOG_BUILD ON)
+
 
      # Specify include dir
      ExternalProject_Get_Property(googletest source_dir)
@@ -76,6 +84,33 @@ IF (CHAOS_ONLY_DEPENDECY OR
      MESG("${GTEST_LIBRARY}")
 ENDIF()
 
+IF (USE_GPT)
+    #google performance tools
+    MESG("Add Google Performance Tools as external project")
+    ExternalProject_Add(
+    google_pt
+    GIT_REPOSITORY https://github.com/gperftools/gperftools.git
+    GIT_TAG master
+    PREFIX "${CMAKE_BINARY_DIR}/ext_dep/gpt-prefix"
+    SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/gpt-src"
+    BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/gpt-src"
+    CONFIGURE_COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/ext_dep/gpt-src/./autogen.sh COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/ext_dep/gpt-src/./configure --prefix=${CMAKE_INSTALL_PREFIX}
+    LOG_DOWNLOAD ON
+    LOG_CONFIGURE ON
+    LOG_BUILD ON)
+
+    # Specify include dir
+    ExternalProject_Get_Property(google_pt source_dir)
+    set(GPT_INCLUDE_DIR ${google_pt_sdir}/include)
+
+    # Library
+    ExternalProject_Get_Property(google_pt binary_dir)
+    set(GPT_LIBRARY_DIR ${google_pt_bdir})
+
+    MESG("${GPT_INCLUDE_DIR}")
+    MESG("${GPT_LIBRARY_DIR}")
+ENDIF()
+
 SET( ${PROJECT_NAME}_MAJOR_VERSION 0 )
 SET( ${PROJECT_NAME}_MINOR_VERSION 1 )
 SET( ${PROJECT_NAME}_PATCH_LEVEL 0 )
@@ -88,8 +123,6 @@ SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
 if(NOT CHAOS_ONLY_DEPENDECY)
   MESG("Configure Common Layer")
   ADD_SUBDIRECTORY(chaos/common)
-  GET_DIRECTORY_PROPERTY(CLING_VIRTUAL_MACHINE DIRECTORY chaos/common VARIABLES CLING_VIRTUAL_MACHINE)
-  GET_DIRECTORY_PROPERTY(CMAKE_BINARY_DIR DIRECTORY chaos/common VARIABLES CMAKE_BINARY_DIR)
 
   MESG("Configure CUToolkit Layer")
   ADD_SUBDIRECTORY(chaos/cu_toolkit)
@@ -118,6 +151,10 @@ IF(NOT CHAOS_ONLY_DEPENDECY)
   MESG("Configure Chaos Metadata Service Client Library Test Application")
   ADD_SUBDIRECTORY(ChaosMetadataServiceClientTest)
 
+  IF (CHAOS_WAN)
+    MESG("Configure Chaos WAN Proxy")
+    ADD_SUBDIRECTORY(ChaosWANProxy)
+  ENDIF()
 
   IF (CHAOS_DATA_EXPORT)
     MESG("Configure Chaos Data Export ")
@@ -143,8 +180,16 @@ IF (CHAOS_ARCHITECTURE_TEST)
                                         GTEST_LIBRARY_DIR ${GTEST_LIBRARY_DIR}
                                         GTEST_LIBRARY_PATH ${GTEST_LIBRARY_PATH})
     ADD_SUBDIRECTORY(CHAOSFrameworkTests/FrameworkTest)
-    GET_DIRECTORY_PROPERTY(USE_GPT DIRECTORY CHAOSFrameworkTests/FrameworkTest VARIABLES USE_GPT)
-    GET_DIRECTORY_PROPERTY(CLING_VIRTUAL_MACHINE DIRECTORY CHAOSFrameworkTests/FrameworkTest VARIABLES CLING_VIRTUAL_MACHINE)
+#    SET(CHAOS_TEST_DIRECTORY "CHAOSFrameworkTests")
+#    SUBDIRLIST(TEST_SUBDIRS ${CHAOS_TEST_DIRECTORY})
+#    FOREACH(_TEST_DIRECTORY ${TEST_SUBDIRS})
+#        IF(EXISTS "${_TEST_DIRECTORY}/CMakeLists.txt")
+#            #set the external project variable in subdirectory
+#            get_filename_component(_TEST_DIR_NAME ${_TEST_DIRECTORY} NAME)
+#            MESG("Configure ${_TEST_DIR_NAME} test")
+#            ADD_SUBDIRECTORY(${_TEST_DIRECTORY})
+#        ENDIF()
+#    ENDFOREACH()
 ENDIF()
 
 MESG("Done")
