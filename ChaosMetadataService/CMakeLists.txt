@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 project(ChaosMetadataService)
 
 option(COMPILE_HAZELCAST_LIVE_DRIVER "Compile hazelcast live data driver" OFF)
-option(COMPILE_NEW_MONGODB_DRIVER "Compile newongodb driver" OFF)
+#option(COMPILE_NEW_MONGODB_DRIVER "Compile newongodb driver" OFF)
 
 IF (DEFINED ENV{CHAOS_BUNDLE} )
   include($ENV{CHAOS_BUNDLE}/tools/project_template/CMakeChaos.txt)
@@ -42,40 +42,40 @@ IF (COMPILE_HAZELCAST_LIVE_DRIVER)
 ENDIF()
 
 
-IF(COMPILE_NEW_MONGODB_DRIVER)
-  MESG("Install c mongodb driver")
-  ExternalProject_Add(
-     mongo-c-driver
-     GIT_REPOSITORY https://github.com/mongodb/mongo-c-driver.git
-     GIT_TAG 1.10.2
-     PREFIX "${CMAKE_BINARY_DIR}/ext_dep/mongo-c-driver-prefix"
-     SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/mongo-c-driver-src"
-     BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/mongo-c-driver-build"
-     CMAKE_ARGS
-      -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX} -DCMAKE_BUILD_TYPE=Release
-     LOG_DOWNLOAD ON
-     LOG_CONFIGURE ON
-     LOG_BUILD ON)
+# IF(COMPILE_NEW_MONGODB_DRIVER)
+MESG("Install c mongodb driver")
+ExternalProject_Add(
+   mongo-c-driver
+   GIT_REPOSITORY https://github.com/mongodb/mongo-c-driver.git
+   GIT_TAG 1.10.2
+   PREFIX "${CMAKE_BINARY_DIR}/ext_dep/mongo-c-driver-prefix"
+   SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/mongo-c-driver-src"
+   BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/mongo-c-driver-build"
+   CMAKE_ARGS
+    -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX} -DCMAKE_BUILD_TYPE=Release
+   LOG_DOWNLOAD ON
+   LOG_CONFIGURE ON
+   LOG_BUILD ON)
 
-  MESG("Install cxx mongodb driver")
-  ExternalProject_Add(
-     mongo-cxx-driver
-     DEPENDS mongo-c-driver
-     GIT_REPOSITORY https://github.com/mongodb/mongo-cxx-driver
-     GIT_TAG r3.3.0
-     PREFIX "${CMAKE_BINARY_DIR}/ext_dep/mongo-cxx-driver-prefix"
-     SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/mongo-cxx-driver-src"
-     BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/mongo-cxx-driver-build"
-     CMAKE_ARGS
-      -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX} -DCMAKE_BUILD_TYPE=Release
-     LOG_DOWNLOAD ON
-     LOG_CONFIGURE ON
-     LOG_BUILD ON)
+MESG("Install cxx mongodb driver")
+ExternalProject_Add(
+   mongo-cxx-driver
+   DEPENDS mongo-c-driver
+   GIT_REPOSITORY https://github.com/mongodb/mongo-cxx-driver
+   GIT_TAG r3.3.0
+   PREFIX "${CMAKE_BINARY_DIR}/ext_dep/mongo-cxx-driver-prefix"
+   SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/mongo-cxx-driver-src"
+   BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/mongo-cxx-driver-build"
+   CMAKE_ARGS
+    -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX} -DCMAKE_BUILD_TYPE=Release
+   LOG_DOWNLOAD ON
+   LOG_CONFIGURE ON
+   LOG_BUILD ON)
 
-     include_directories("${CMAKE_INSTALL_PREFIX}/include/mongocxx/v_noabi")
-     include_directories("${CMAKE_INSTALL_PREFIX}/include/bsoncxx/v_noabi")
-     include_directories("${CMAKE_INSTALL_PREFIX}/lib")
-ENDIF()
+   include_directories("${CMAKE_INSTALL_PREFIX}/include/mongocxx/v_noabi")
+   include_directories("${CMAKE_INSTALL_PREFIX}/include/bsoncxx/v_noabi")
+   include_directories("${CMAKE_INSTALL_PREFIX}/lib")
+# ENDIF()
 
 INCLUDE_DIRECTORIES(chaos/common ../)
 
