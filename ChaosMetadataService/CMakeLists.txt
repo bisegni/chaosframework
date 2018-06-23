@@ -184,7 +184,7 @@ SET(cnd_src  ${cnd_src}	api/node/NodeGroup.cpp
                         api/node/KillCurrentCommand.cpp
                         api/node/ClearCommandQueue.cpp
                         api/node/ForwardNodeRpcMessage.cpp
-			            api/node/GetPropertyDefaultValues.cpp
+			                  api/node/GetPropertyDefaultValues.cpp
                         api/node/GetCommandAndTemplateDescription.cpp)
 
 SET(cnd_src  ${cnd_src}	api/script/ScriptGroupApi.cpp
@@ -305,9 +305,7 @@ SET(BUILD_LIBRARY ${BUILD_LIBRARY} chaos_common)
 SET(BUILD_LIBRARY ${BUILD_LIBRARY} boost_random)
 SET(BUILD_LIBRARY ${BUILD_LIBRARY} couchbaseS)
 SET(BUILD_LIBRARY ${BUILD_LIBRARY} mongoclient)
-IF(COMPILE_NEW_MONGODB_DRIVER)
-  SET(BUILD_LIBRARY ${BUILD_LIBRARY} mongocxx)
-ENDIF()
+SET(BUILD_LIBRARY ${BUILD_LIBRARY} mongocxx)
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${BUILD_LIBRARY})
 INSTALL_TARGETS(/bin ${PROJECT_NAME})
