@@ -183,7 +183,8 @@ void ChaosMetadataService::start()  throw(CException) {
         
         //register this process on persistence database
         persistence::data_access::DataServiceDataAccess *ds_da = persistence::PersistenceManager::getInstance()->getDataAccess<persistence::data_access::DataServiceDataAccess>();
-        ds_da->registerNode(api_subsystem_accessor.network_broker_service->getRPCUrl(),
+        ds_da->registerNode(setting.ha_zone_name,
+                            api_subsystem_accessor.network_broker_service->getRPCUrl(),
                             api_subsystem_accessor.network_broker_service->getDirectIOUrl(),
                             0);
         

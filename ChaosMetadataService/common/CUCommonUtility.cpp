@@ -21,6 +21,7 @@
 
 #include "CUCommonUtility.h"
 #include "../DriverPoolManager.h"
+#include "../ChaosMetadataService.h"
 
 #include <chaos/common/global.h>
 
@@ -190,6 +191,7 @@ ChaosUniquePtr<chaos::common::data::CDataWrapper> CUCommonUtility::initDataPack(
     int64_t run_id = 0;
     CDataWrapper *result = NULL;
     PropertyGroup control_unit_property_group;
+    const std::string& ha_zone_name = ChaosMetadataService::getInstance()->setting.ha_zone_name;
     ChaosUniquePtr<chaos::common::data::CDataWrapper> cu_base_description;
     ChaosUniquePtr<chaos::common::data::CDataWrapper> dataset_description;
     ChaosUniquePtr<chaos::common::data::CDataWrapper> init_datapack(new CDataWrapper());
@@ -319,7 +321,8 @@ ChaosUniquePtr<chaos::common::data::CDataWrapper> CUCommonUtility::initDataPack(
     if(associated_ds.size() == 0) {
         CUCU_DBG << "No dataservice has been found for control unit:" << cu_uid <<" so we need to get the best tree of them";
         //no we need to get tbest tree available cds to retun publishable address
-        if((err = ds_da->getBestNDataService(associated_ds, 3))) {
+        if((err = ds_da->getBestNDataService(ha_zone_name,
+                                             associated_ds, 3))) {
             LOG_AND_TROW(CUCU_ERR, err, boost::str(boost::format("Error fetching %2% best available data service for inititializing the control unit:%1%") % cu_uid % 3));
         }
     }
