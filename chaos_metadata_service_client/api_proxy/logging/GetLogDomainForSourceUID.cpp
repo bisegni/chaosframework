@@ -61,7 +61,7 @@ GetLogDomainForSourceUIDHelper::GetLogDomainForSourceUIDHelper(CDataWrapper *api
     //now we have the result
     if(!api_result || !api_result->hasKey("result_list")) return;
     
-    ChaosUniquePtr<CMultiTypeDataArrayWrapper> vec(api_result->getVectorValue("result_list"));
+    CMultiTypeDataArrayWrapperSPtr vec = api_result->getVectorValue("result_list");
     for(int idx = 0;
         idx < vec->size();
         idx++) {

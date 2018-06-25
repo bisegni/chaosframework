@@ -54,7 +54,7 @@ CDataWrapper *RemoveNodeAssociation::execute(CDataWrapper *api_data, bool& detac
                              api_data->isVectorValue(AgentNodeDefinitionKey::NODE_ASSOCIATED)), ERR, -5, CHAOS_FORMAT("The key %1% need to be a string", %AgentNodeDefinitionKey::NODE_ASSOCIATED));
     //we can rpocessd
     GET_DATA_ACCESS(AgentDataAccess, a_da, -6);
-    int err = 0;
+//    int err = 0;
     detach_data = true;
     uint64_t cmd_id = getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::agent::AgentRemoveNodeSafety),
                                                         api_data,

@@ -49,10 +49,11 @@ namespace chaos {
                      and collect all API for system managment
                      */
                     typedef enum SystemAPIChannelOpcode {
-                        SystemAPIChannelOpcodeNewSnapshotDataset		= 1,	/**< start new datasets snapshot creation process*/
-                        SystemAPIChannelOpcodeDeleteSnapshotDataset		= 2,	/**< delete the snapshot associated to the input tag */
-                        SystemAPIChannelOpcodeGetSnapshotDatasetForAKey	= 3,    /**< return the snapshoted datasets for a determinated producer key*/
-                        SystemAPIChannelOpcodePushLogEntryForANode      = 4     /**< persist log entry for a node within chaos backend*/
+                        SystemAPIChannelOpcodeEcho                      = 1,    /**< perfome an echo for testin purphose*/
+                        SystemAPIChannelOpcodeNewSnapshotDataset		= 2,	/**< start new datasets snapshot creation process*/
+                        SystemAPIChannelOpcodeDeleteSnapshotDataset		= 3,	/**< delete the snapshot associated to the input tag */
+                        SystemAPIChannelOpcodeGetSnapshotDatasetForAKey	= 4,    /**< return the snapshoted datasets for a determinated producer key*/
+                        SystemAPIChannelOpcodePushLogEntryForANode      = 5     /**< persist log entry for a node within chaos backend*/
                     } SystemAPIChannelOpcode;
                 }
                 
@@ -181,8 +182,8 @@ namespace chaos {
                     
                     //structure for identificate the sequnce fo the found record
                     typedef struct SearchSequence {
-                        uint64_t run_id;
-                        uint64_t datapack_counter;
+                        int64_t run_id;
+                        int64_t datapack_counter;
                     }SearchSequence;
                     
                     //! Header for DirectIODeviceChannelHeaderGetOpcode asynchronous result
@@ -307,7 +308,7 @@ namespace chaos {
                         DirectIOSystemAPISnapshotResultHeader api_result;
                         
                         //!channel data
-                        void* channel_data;
+                        chaos::common::data::CDWShrdPtr channel_data;
                     }DirectIOSystemAPIGetDatasetSnapshotResult,
                     *DirectIOSystemAPIGetDatasetSnapshotResultPtr;
                 }

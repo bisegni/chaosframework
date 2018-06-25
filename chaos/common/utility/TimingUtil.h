@@ -140,10 +140,7 @@ namespace chaos {
                 }
                 
                 static inline std::locale getLocale(int i){
-                    boost::posix_time::time_input_facet* tf=new boost::posix_time::time_input_facet();
-                    tf->format(formats[i]);
-                    std::locale loc(std::locale::classic(),tf);
-                    return loc;
+                    return std::locale(std::locale::classic(), new boost::posix_time::time_input_facet(formats[i]));
                 }
                 //!chack if a string is well format for date representation
                 static bool dateWellFormat(const std::string& timestamp) {
@@ -161,7 +158,7 @@ namespace chaos {
                 }
                 
                 //!convert string timestamp to uint64 ["2012-02-20T00:26:39Z"]
-                static inline uint64_t getTimestampFromString(const std::string& timestamp) {
+                static inline uint64_t getTimestampFromString(const std::string& timestamp,bool isutc=false) {
                     boost::posix_time::ptime time;
                     size_t i=0;
                     for(; i<formats_n; ++i) {
@@ -172,6 +169,9 @@ namespace chaos {
                         if(time != boost::posix_time::ptime()) break;
                     }
                     if(i != formats_n) {
+                        if(isutc){
+                            return (time-EPOCH).total_milliseconds();
+                        }
                         return ((time-getUTCOffset())-EPOCH).total_milliseconds();
                     } else {
                         return 0;

@@ -49,28 +49,20 @@ void PreferenceDialog::updatePreverence() {
 void PreferenceDialog::loadAllPreference() {
     QStringList cy_type_list;
     settings.beginGroup(PREFERENCE_NETWORK_GROUP_NAME);
-    QString current_configuration;
     QStringList configurations = settings.childGroups();
     //write current configurations
     ui->comboBoxConfigurations->clear();
     ui->comboBoxConfigurations->addItems(configurations);
-    current_configuration = settings.value("active_configuration").toString();
-    ui->comboBoxConfigurations->setCurrentText(current_configuration);
     settings.endGroup();
 
-    loadMDSConfiguration(current_configuration);
+    loadMDSConfiguration(ui->comboBoxConfigurations->currentText());
 }
 
 void PreferenceDialog::saveAllPreference() {
-    settings.beginGroup(PREFERENCE_NETWORK_GROUP_NAME);
-    if(ui->comboBoxConfigurations->currentIndex()>= 0) {
-        settings.setValue("active_configuration", ui->comboBoxConfigurations->currentText());
-    } else {
-        settings.setValue("active_configuration", QVariant());
-    }
-    settings.sync();
-    //emit signal for changed preference
-    emit changedConfiguration();
+//    settings.beginGroup(PREFERENCE_NETWORK_GROUP_NAME);
+//    settings.sync();
+//    //emit signal for changed preference
+//    emit changedConfiguration();
 }
 
 void PreferenceDialog::loadMDSConfiguration(const QString& configuration_name) {
@@ -113,9 +105,7 @@ void PreferenceDialog::on_pushButtonAddNewMDSRpcEndpoint_clicked() {
                                                           tr("127.0.0.1:5000"),
                                                         &ok);
     if (ok && !new_mds_address.isEmpty()) {
-        list_model_mds_address.insertRow(list_model_mds_address.rowCount());
-        QModelIndex index = list_model_mds_address.index(list_model_mds_address.rowCount()-1);
-        list_model_mds_address.setData(index, new_mds_address);
+        list_model_mds_address.addMDSServer(new_mds_address);
         updateMDSConfiguration();
     }
 

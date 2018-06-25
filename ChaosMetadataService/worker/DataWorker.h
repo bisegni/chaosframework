@@ -24,12 +24,15 @@
 
 //#include "../dataservice_global.h"
 
+#include <chaos/common/chaos_constants.h>
+#include <chaos/common/chaos_types.h>
 #include <chaos/common/utility/LockableObject.h>
 #include <chaos/common/utility/StartableService.h>
 
 #include <boost/thread.hpp>
-#include <boost/lockfree/queue.hpp>
 #include <boost/atomic.hpp>
+
+#include <queue>
 
 #define DEFAULT_JOB_THREAD 1
 
@@ -40,36 +43,39 @@ namespace chaos {
 			typedef struct WorkerJob {
 				WorkerJob(){};
 				virtual ~WorkerJob(){};
-			} WorkerJob, *WorkerJobPtr;
+            } WorkerJob;
+            typedef ChaosSharedPtr<WorkerJob> WorkerJobPtr;
 			
 			typedef struct DataWorkerSetting {
-				unsigned int job_thread_number;
+                unsigned int        instances;
+				unsigned int        thread_number;
+                bool                log_metric;
+                uint32_t            log_metric_update_interval;
 			} DataWorkerSetting;
 			
 			class DataWorker:
 			public common::utility::StartableService  {
 				//job queue list
-				boost::lockfree::queue<WorkerJobPtr> job_queue;
+                std::queue<WorkerJobPtr> job_queue;
 				
 				//group thread
 				boost::thread_group job_thread_group;
 				
 				//muthex for condition variable
 				boost::mutex mutex_job;
-				
+				boost::mutex mutex_submit;
+                
 				//condition for the threads
-				boost::condition_variable job_condition;
-				
+				boost::condition_variable consume_job_condition;
+				boost::condition_variable push_condition;
+                
 				bool work;
 				
-                chaos::common::utility::LockableObject< boost::atomic<uint64_t> > job_in_queue;
+                boost::atomic<uint64_t> job_in_queue;
                 
                 unsigned int max_element;
 			protected:
 				void * * thread_cookie;
-				
-				DataWorkerSetting settings;
-				
 				void consumeJob(void *cookie);
 				WorkerJobPtr getNextOrWait(boost::unique_lock<boost::mutex>& lock);
 				
@@ -81,8 +87,8 @@ namespace chaos {
 				void start() throw (chaos::CException);
 				void stop() throw (chaos::CException);
 				void deinit() throw (chaos::CException);
-				virtual void mantain() throw (chaos::CException);
-				virtual int submitJobInfo(WorkerJobPtr job_info);
+                void setMaxElement(uint64_t new_max_element);
+                virtual int submitJobInfo(WorkerJobPtr job_info, int64_t milliseconds_to_wait = common::constants::MDSHistoryQueuePushTimeoutinMSec);
 			};
 			
 		}

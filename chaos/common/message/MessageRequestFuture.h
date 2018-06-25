@@ -22,7 +22,7 @@
 #define __CHAOSFramework__MessageRequestFuture__
 #include <chaos/common/global.h>
 #include <chaos/common/chaos_constants.h>
-
+#include <chaos/common/thread/FutureHelper.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/utility/Atomic.h>
 
@@ -45,6 +45,9 @@ namespace chaos {
     namespace common{
         namespace message {
             class MessageRequestDomain;
+            
+            typedef chaos::common::thread::FutureHelper<chaos::common::data::CDWShrdPtr> MessageRequestDomainFutureHelper;
+            
                 //! class that mange the fetch of the result for a request
             /*!
              When a request is forwarded, thi class can be requested to whait or poll whene a result
@@ -55,7 +58,7 @@ namespace chaos {
                 chaos::common::utility::atomic_int_type request_id;
 
                     //shared future for the answer
-                boost::shared_future< ChaosSharedPtr<chaos::common::data::CDataWrapper> > message_future;
+                MessageRequestDomainFutureHelper::Future message_future;
 
                     //! the result for the request
                 ChaosUniquePtr<chaos::common::data::CDataWrapper> request_result;
@@ -76,7 +79,7 @@ namespace chaos {
 
                     //!private constructor
                 MessageRequestFuture(chaos::common::utility::atomic_int_type _request_id,
-                                     boost::shared_future< ChaosSharedPtr<chaos::common::data::CDataWrapper> > _message_future);
+                                     MessageRequestDomainFutureHelper::Future& _message_future);
 
             public:
                 //!private destructor

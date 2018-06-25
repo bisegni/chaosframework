@@ -39,20 +39,24 @@ namespace chaos {
                 public OpcodeExecutor {
                     RemoteIODriverProtocol *driver_protocol;
                 protected:
-                    //!Send raw request to the remote driver
-                    /*!
-                     \param message_data is the raw data to be transmitted to the remote driver
-                     \param received_data si the raw data received from the driver
-                     */
+                    //!//!Wrap to @RemoteIODriverProtocol::sendRawRequest method
                     int sendRawRequest(chaos::common::data::CDWUniquePtr message_data,
                                        chaos::common::data::CDWShrdPtr& message_response,
-                                       uint32_t timeout = 5000);
-                    
-                    //!Send raw message to the remote driver
-                    /*!
-                     \param message_data is the raw data to be transmitted to the remote driver
-                     */
+                                       uint32_t timeout = REMOTE_DRIVER_DEFAULT_TIMEOUT);
+                    //!Wrap to @RemoteIODriverProtocol::sendOpcodeRequest method
+                    int sendOpcodeRequest(const std::string& opcode,
+                                          chaos::common::data::CDWUniquePtr opcode_parameter,
+                                          chaos::common::data::CDWShrdPtr& message_response,
+                                          uint32_t timeout = REMOTE_DRIVER_DEFAULT_TIMEOUT);
+                    //!Wrap to @RemoteIODriverProtocol::sendRawMessage method
                     int sendRawMessage(chaos::common::data::CDWUniquePtr message_data);
+                    //!Wrap to @RemoteIODriverProtocol::sendOpcodeMessage method
+                    int sendOpcodeMessage(const std::string& opcode,
+                                          chaos::common::data::CDWUniquePtr opcode_message);
+                    //!Wrap to @RemoteIODriverProtocol::sendInitRequest method
+                    int sendInitRequest();
+                    //!Wrap to @RemoteIODriverProtocol::sendDeinitRequest method
+                    int sendDeinitRequest();
                 public:
                     OpcodeExternalCommandMapper(RemoteIODriverProtocol *driver_protocol);
                     

@@ -23,6 +23,7 @@
 
 #include <chaos/common/utility/FSUtility.h>
 #include <chaos/common/healt_system/HealtManager.h>
+#include <chaos/common/io/SharedManagedDirecIoDataDriver.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
 
 #define INFO    INFO_LOG(ChaosAgent)
@@ -30,6 +31,7 @@
 #define DBG     DBG_LOG(ChaosAgent)
 
 using namespace chaos::agent;
+using namespace chaos::common::io;
 using namespace chaos::common::utility;
 using namespace chaos::common::healt_system;
 
@@ -39,7 +41,7 @@ ChaosAgent::ChaosAgent() {}
 
 ChaosAgent::~ChaosAgent() {}
 
-void ChaosAgent::init(int argc, char* argv[]) throw (CException) {
+void ChaosAgent::init(int argc, const char* argv[]) throw (CException) {
     ChaosCommon<ChaosAgent>::init(argc, argv);
 }
 
@@ -68,7 +70,7 @@ void ChaosAgent::init(void *init_data)  throw(CException) {
     
     settings.agent_uid = CHAOS_FORMAT("ChaosAgent_%1%",%chaos::GlobalConfiguration::getInstance()->getLocalServerAddressAnBasePort());
     
-    //init healt manager singleton
+    InizializableService::initImplementation(SharedManagedDirecIoDataDriver::getInstance(), NULL, "SharedManagedDirecIoDataDriver", __PRETTY_FUNCTION__);
     StartableService::initImplementation(HealtManager::getInstance(), NULL, "HealthManager", __PRETTY_FUNCTION__);
     agent_register.reset(new AgentRegister(), "AgentRegister");
     CHECK_ASSERTION_THROW_AND_LOG((agent_register.get() != NULL), ERROR, -1, "AgentRegister instantiation failed");
@@ -95,6 +97,7 @@ void ChaosAgent::stop()throw(CException) {
 void ChaosAgent::deinit()throw(CException) {
     CHAOS_NOT_THROW(external_cmd_executor.deinit(__PRETTY_FUNCTION__););
     CHAOS_NOT_THROW(StartableService::deinitImplementation(HealtManager::getInstance(), "HealthManager", __PRETTY_FUNCTION__););
+    InizializableService::deinitImplementation(SharedManagedDirecIoDataDriver::getInstance(), "SharedManagedDirecIoDataDriver", __PRETTY_FUNCTION__);
     agent_register.deinit(__PRETTY_FUNCTION__);
     CHAOS_NOT_THROW(ChaosCommon<ChaosAgent>::deinit(););
 }

@@ -46,7 +46,7 @@ GetDomainsHelper::GetDomainsHelper(CDataWrapper *api_result) {
     //SnapshotInformationPtr
     if(!api_result || !api_result->hasKey("domain_list")) return;
     
-    ChaosUniquePtr<CMultiTypeDataArrayWrapper> domains_vec(api_result->getVectorValue("domain_list"));
+    CMultiTypeDataArrayWrapperSPtr domains_vec = api_result->getVectorValue("domain_list");
     for(int idx = 0;
         idx < domains_vec->size();
         idx++) {

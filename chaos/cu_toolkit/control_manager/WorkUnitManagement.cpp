@@ -168,6 +168,17 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
                 
                 //define the contrl unit action and dataset
                 work_unit_instance->_defineActionAndDataset(mds_registration_message);
+                
+                std::vector<const chaos::DeclareAction * > cu_declare_actions_instance;
+                work_unit_instance->_getDeclareActionInstance(cu_declare_actions_instance);
+                for(std::vector<const chaos::DeclareAction * >::iterator it = cu_declare_actions_instance.begin(),
+                    end = cu_declare_actions_instance.end();
+                    it != end; it++) {
+                    CDWUniquePtr tmp(new CDataWrapper());
+                    (*it)->getActionDescrionsInDataWrapper(*tmp, true);
+                    mds_registration_message.appendCDataWrapperToArray(*tmp);
+                }
+                mds_registration_message.finalizeArrayForKey(RpcActionDefinitionKey::CS_CMDM_ACTION_DESC);
             }catch(chaos::CException& ex) {
                 MetadataLoggingCException logged_exception(work_unit_instance->getCUID(),
                                                            ex.errorCode,

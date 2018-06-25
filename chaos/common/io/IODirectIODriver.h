@@ -92,15 +92,16 @@ namespace chaos{
                 chaos_utility::ObjectSlot<IODirectIODriverClientChannels*>	channels_slot;
                 
                 WaitSemaphore wait_get_answer;
-                boost::shared_mutex mutext_feeder;
+                ChaosSharedMutex mutext_feeder;
                 
                 //query future management
-                boost::shared_mutex				map_query_future_mutex;
+                ChaosSharedMutex                    map_query_future_mutex;
                 std::map<std::string, QueryCursor*>	map_query_future;
                 
                 std::string uuid;
                 bool shutting_down;
             protected:
+                ChaosSharedMutex push_mutex;
                 chaos::common::network::URLServiceFeeder connectionFeeder;
                 void disposeService(void *service_ptr);
                 void* serviceForURL(const common::network::URL& url, uint32_t service_index);
@@ -150,7 +151,7 @@ namespace chaos{
                 int loadDatasetTypeFromSnapshotTag(const std::string& restore_point_tag_name,
                                                    const std::string& key,
                                                    uint32_t dataset_type,
-                                                   chaos_data::CDataWrapper **cdatawrapper_handler);
+                                                   chaos_data::CDWShrdPtr& cdw_shrd_ptr);
                 
                 /*
                  * updateConfiguration
@@ -160,6 +161,10 @@ namespace chaos{
                 QueryCursor *performQuery(const std::string& key,
                                           uint64_t start_ts,
                                           uint64_t end_ts,uint32_t page=DEFAULT_PAGE_LEN);
+
+                QueryCursor *performQuery(const std::string& key,
+                                          uint64_t start_ts,
+                                          uint64_t end_ts,uint64_t sequid,uint64_t runid,uint32_t page=DEFAULT_PAGE_LEN);
                 
                 void releaseQuery(QueryCursor *query_cursor);
             };

@@ -1,6 +1,5 @@
 #include "BufferPlot.h"
 #include "ui_BufferPlot.h"
-#include <chaos/common/global.h>
 
 #define RANDOM_COMPONENT() (qrand() % 256)
 

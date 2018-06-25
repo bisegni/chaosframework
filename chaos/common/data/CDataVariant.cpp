@@ -20,7 +20,6 @@
  */
 
 #include <chaos/common/data/CDataVariant.h>
-#include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/exception/CException.h>
 
 #include <sstream>

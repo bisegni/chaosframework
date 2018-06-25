@@ -189,7 +189,7 @@ void ControUnitInstanceEditor::fillUIFromInstanceInfo(QSharedPointer<chaos::comm
 
             //add driverdesc
             if(api_result->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION)) {
-        ChaosUniquePtr<CMultiTypeDataArrayWrapper> arr_drv(api_result->getVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION));
+        CMultiTypeDataArrayWrapperSPtr arr_drv = api_result->getVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION);
         for(int idx = 0;
             idx != arr_drv->size();
             idx++) {
@@ -212,7 +212,7 @@ void ControUnitInstanceEditor::fillUIFromInstanceInfo(QSharedPointer<chaos::comm
     }
     //add attribute desc
     if(api_result->hasKey("attribute_value_descriptions")) {
-        ChaosUniquePtr<CMultiTypeDataArrayWrapper> arr_attr(api_result->getVectorValue("attribute_value_descriptions"));
+        CMultiTypeDataArrayWrapperSPtr arr_attr = api_result->getVectorValue("attribute_value_descriptions");
         for(int idx = 0;
             idx != arr_attr->size();
             idx++) {
@@ -319,7 +319,7 @@ void ControUnitInstanceEditor::onApiDone(const QString& tag,
         //we have unit server description
         if(api_result->hasKey(chaos::UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS)) {
             //get the vector of unit type
-            ChaosUniquePtr<CMultiTypeDataArrayWrapper> arr(api_result->getVectorValue(chaos::UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS));
+            CMultiTypeDataArrayWrapperSPtr arr = api_result->getVectorValue(chaos::UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS);
             for(int i = 0;
                 i < arr->size();
                 i++) {
@@ -339,10 +339,10 @@ void ControUnitInstanceEditor::on_pushButtonSaveInstance_clicked() {
                     GET_CHAOS_API_PTR(node::UpdatePropertyDefaultValues)->execute(ui->lineEditControlUnitUniqueID->text().toStdString(), *preparePropertyGroup().data()));
 }
 
-void ControUnitInstanceEditor::on_pushButtonAddDriverDescription_clicked()
-{
+void ControUnitInstanceEditor::on_pushButtonAddDriverDescription_clicked() {
     //add new driver description
     DriverDescriptionInputDialog new_driver_dialog(this);
+    new_driver_dialog.setWindowModality(Qt::WindowModal);
     connect(&new_driver_dialog,
             SIGNAL(newDriverDescription(QString,QString,QString)),
             SLOT(addNewDriverDescription(QString,QString,QString)));
@@ -358,6 +358,7 @@ void ControUnitInstanceEditor::on_pushButtonEditDriverDescription_clicked()
                                                     table_model_driver_spec->item(current_index.row(), 1)->text(),
                                                     table_model_driver_spec->item(current_index.row(), 2)->text(),
                                                     this);
+    edit_driver_dialog.setWindowModality(Qt::WindowModal);
     connect(&edit_driver_dialog,
             SIGNAL(updateDriverDescription(int,QString,QString,QString)),
             SLOT(updateDriverDescription(int,QString,QString,QString)));

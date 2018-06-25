@@ -124,7 +124,7 @@ namespace chaos {
                     //we can deserialize data
                     if(serialized_data->hasKey(CHAOS_ALGO_BIN_SUB_TYPE) &&
                        serialized_data->isVectorValue(CHAOS_ALGO_BIN_SUB_TYPE)) {
-                        ChaosUniquePtr<chaos::common::data::CMultiTypeDataArrayWrapper> serialized_array(serialized_data->getVectorValue(CHAOS_ALGO_BIN_SUB_TYPE));
+                        chaos::common::data::CMultiTypeDataArrayWrapperSPtr serialized_array = serialized_data->getVectorValue(CHAOS_ALGO_BIN_SUB_TYPE);
                         for(int idx = 0;
                             idx < serialized_array->size();
                             idx++) {

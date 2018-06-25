@@ -64,7 +64,7 @@ void CreateSnapshotBatch::setHandler(CDataWrapper *data) {
     clearFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT);
     
     snapshot_name = data->getStringValue("snapshot_name");
-    ChaosUniquePtr<CMultiTypeDataArrayWrapper> _node_list(data->getVectorValue("node_list"));
+    CMultiTypeDataArrayWrapperSPtr _node_list(data->getVectorValue("node_list"));
     for(int idx =0;
         idx < _node_list->size();
         idx++) {
@@ -138,14 +138,15 @@ int CreateSnapshotBatch::storeDatasetTypeInSnapsnot(const std::string& job_work_
                                                                    dataset_to_fetch.size()),
                                                        stored_dataset))) {
             G_RS_ERR << "Error retrieving live data for " << dataset_to_fetch << " with error: " << err;
-        } else if(stored_dataset.size()) {
+        } else if(stored_dataset &&
+                  stored_dataset->size()) {
             G_RS_DBG << "Store data on snapshot for " << dataset_to_fetch;
             if((err = s_da->snapshotAddElementToSnapshot(job_work_code,
                                                          snapshot_name,
                                                          unique_id,
                                                          dataset_to_fetch,
-                                                         &stored_dataset[0],
-                                                         (uint32_t)stored_dataset.size()))) {
+                                                         stored_dataset->data(),
+                                                         (uint32_t)stored_dataset->size()))) {
                 G_RS_ERR<< "Error storign dataset type "<< dataset_type <<
                 " for " << unique_id <<
                 " in snapshot " << snapshot_name <<

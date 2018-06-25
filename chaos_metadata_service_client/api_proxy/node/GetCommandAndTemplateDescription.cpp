@@ -19,8 +19,7 @@
  * permissions and limitations under the Licence.
  */
 
-#include "GetCommandAndTemplateDescription.h"
-
+#include <chaos_metadata_service_client/api_proxy/node/GetCommandAndTemplateDescription.h>
 using namespace chaos::common::data;
 using namespace chaos::common::batch_command;
 using namespace chaos::metadata_service_client::api_proxy;

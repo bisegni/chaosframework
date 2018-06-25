@@ -581,7 +581,7 @@
           <item row="4" column="0" alignment="Qt::AlignRight">
            <widget class="QLabel" name="label_6">
             <property name="toolTip">
-             <string>Is the time in milliseconds betwheen a storicized packet and the next storicized one. Considered only if storage type is &quot;History&quot; or &quot;Live And History&quot; selected</string>
+             <string>Is the time in microseconds betwheen a storicized packet and the next storicized one. Considered only if storage type is &quot;History&quot; or &quot;Live And History&quot; selected</string>
             </property>
             <property name="statusTip">
              <string>Is the time in milliseconds betwheen a storicized packet  and next</string>
@@ -594,7 +594,7 @@
           <item row="3" column="0" alignment="Qt::AlignRight">
            <widget class="QLabel" name="label_8">
             <property name="toolTip">
-             <string>Is the time in milliseconds betwheen a live packet and the next live one. Considered only if storage type is &quot;Live&quot; or &quot;Live And History&quot; selected</string>
+             <string>Is the time in microseconds betwheen a live packet and the next live one. Considered only if storage type is &quot;Live&quot; or &quot;Live And History&quot; selected</string>
             </property>
             <property name="statusTip">
              <string>Is the time in milliseconds betwheen a live packet and the next live one</string>

@@ -5,8 +5,6 @@
 #include <QRunnable>
 #include <QThreadPool>
 
-#include <chaos/common/data/CDataWrapper.h>
-
 class ApiAsyncProcessor:
         public QObject
 {

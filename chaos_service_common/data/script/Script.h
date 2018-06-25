@@ -35,7 +35,7 @@ namespace chaos {
                 
 #define CHAOS_SBD_NAME          "script_name"
 #define CHAOS_SBD_DESCRIPTION   "script_description"
-                
+
                 //! The description of a script
                 struct ScriptBaseDescription {
                     uint64_t unique_id;
@@ -160,7 +160,7 @@ namespace chaos {
                         //deserialize classificaion list
                         if(serialized_data->hasKey("classification_list")) {
                             //encode classification list into array
-                            ChaosUniquePtr<chaos::common::data::CMultiTypeDataArrayWrapper> serialized_array(serialized_data->getVectorValue("classification_list"));
+                            chaos::common::data::CMultiTypeDataArrayWrapperSPtr serialized_array = serialized_data->getVectorValue("classification_list");
                             for(int idx = 0;
                                 idx < serialized_array->size();
                                 idx++) {
@@ -171,7 +171,7 @@ namespace chaos {
                         //deserialize pool list
                         if(serialized_data->hasKey("execution_pool_list")) {
                             //encode classification list into array
-                            ChaosUniquePtr<chaos::common::data::CMultiTypeDataArrayWrapper> serialized_array(serialized_data->getVectorValue("execution_pool_list"));
+                            chaos::common::data::CMultiTypeDataArrayWrapperSPtr serialized_array = serialized_data->getVectorValue("execution_pool_list");
                             for(int idx = 0;
                                 idx < serialized_array->size();
                                 idx++) {
@@ -182,7 +182,7 @@ namespace chaos {
                         //deserialize variable
                         if(serialized_data->hasKey(variable_ser_key) &&
                            serialized_data->isVectorValue(variable_ser_key)) {
-                            ChaosUniquePtr<chaos::common::data::CMultiTypeDataArrayWrapper> serialized_array(serialized_data->getVectorValue(variable_ser_key));
+                            chaos::common::data::CMultiTypeDataArrayWrapperSPtr serialized_array = serialized_data->getVectorValue(variable_ser_key);
                             for(int idx = 0;
                                 idx < serialized_array->size();
                                 idx++) {
@@ -195,7 +195,7 @@ namespace chaos {
                         //deserialize dataset attribute
                         if(serialized_data->hasKey(ds_attr_ser_key) &&
                            serialized_data->isVectorValue(ds_attr_ser_key)) {
-                            ChaosUniquePtr<chaos::common::data::CMultiTypeDataArrayWrapper> serialized_array(serialized_data->getVectorValue(ds_attr_ser_key));
+                            chaos::common::data::CMultiTypeDataArrayWrapperSPtr serialized_array = serialized_data->getVectorValue(ds_attr_ser_key);
                             for(int idx = 0;
                                 idx < serialized_array->size();
                                 idx++) {

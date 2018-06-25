@@ -25,7 +25,7 @@
 #include <chaos_micro_unit_toolkit/connection/connection_adapter/http/HTTPConnectionAdapter.h>
 
 //unit
-#include <chaos_micro_unit_toolkit/connection/unit_proxy/raw_driver/RawDriverUnitProxy.h>
+#include <chaos_micro_unit_toolkit/connection/unit_proxy/raw_driver/ExternalDriverUnitProxy.h>
 
 using namespace chaos::micro_unit_toolkit;
 using namespace chaos::micro_unit_toolkit::connection;
@@ -33,7 +33,7 @@ using namespace chaos::micro_unit_toolkit::connection::unit_proxy;
 using namespace chaos::micro_unit_toolkit::connection::connection_adapter;
 
 ConnectionManager::ConnectionManager() {
-    registerUnitProxy<raw_driver::RawDriverUnitProxy>();
+    registerUnitProxy<raw_driver::ExternalDriverUnitProxy>();
     registerProtocolAdapter<http::HTTPConnectionAdapter>();
 }
 
@@ -49,8 +49,9 @@ ChaosUniquePtr<AbstractConnectionAdapter> ConnectionManager::getProtocolAdapter(
 }
 
 ChaosUniquePtr<AbstractUnitProxy> ConnectionManager::getUnitProxy(ProxyType type,
+                                                                  const std::string& authorization_key,
                                                                   ChaosUniquePtr<connection_adapter::AbstractConnectionAdapter>& connection_adapter){
     if(map_proxy.count(type) == 0){ return ChaosUniquePtr<unit_proxy::AbstractUnitProxy>();}
     UnitProxyInstancer is = map_proxy[type];
-    return ChaosUniquePtr<unit_proxy::AbstractUnitProxy>(is->getInstance(connection_adapter));
+    return ChaosUniquePtr<unit_proxy::AbstractUnitProxy>(is->getInstance(authorization_key, connection_adapter));
 }

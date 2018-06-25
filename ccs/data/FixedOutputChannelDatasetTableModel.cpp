@@ -59,7 +59,7 @@ void FixedOutputChannelDatasetTableModel::updateData(const QSharedPointer<chaos:
     vector_doe.push_back(element);
 
     //add other output channels
-    QSharedPointer<CMultiTypeDataArrayWrapper> dataset_array(data_wrapped->getVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
+    CMultiTypeDataArrayWrapperSPtr dataset_array = data_wrapped->getVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION);
     for(int idx = 0;
         idx < dataset_array->size();
         idx++) {
@@ -234,7 +234,7 @@ QVariant FixedOutputChannelDatasetTableModel::getTooltipTextForData(int row, int
                     if(element->isVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE)) {
                         QString composed_subtype_desc;
                         //we a structure
-                        QSharedPointer<chaos::common::data::CMultiTypeDataArrayWrapper> sub_type_list(element->getVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE));
+                       CMultiTypeDataArrayWrapperSPtr sub_type_list = element->getVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE);
                         for(int idx = 0;
                             idx < sub_type_list->size();
                             idx++) {

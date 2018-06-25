@@ -86,7 +86,7 @@ int MongoDBAgentDataAccess::insertUpdateAgentDescription(CDataWrapper& agent_des
         mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << agent_uid
                                     << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_AGENT);
         mongo::BSONArrayBuilder array_descirption_builder;
-        ChaosUniquePtr<CMultiTypeDataArrayWrapper> description_array(agent_description.getVectorValue(AgentNodeDefinitionKey::HOSTED_WORKER));
+        CMultiTypeDataArrayWrapperSPtr description_array = agent_description.getVectorValue(AgentNodeDefinitionKey::HOSTED_WORKER);
         for(int idx = 0;
             idx < description_array->size();
             idx++) {
@@ -424,7 +424,8 @@ int MongoDBAgentDataAccess::pushLogEntry(const std::string& node_uid,
                                                             query.toString()));)
         
         if((err = connection->insert(MONGO_DB_COLLECTION_NAME(MONGO_DB_COLLECTION_AGENT_PROCESS_LOG),
-                                     query))){
+                                     query,
+                                     &mongo::WriteConcern::unacknowledged))){
             ERR << CHAOS_FORMAT("Error creating new elog entry for node %1% with error %2%", %node_uid%err);
         }
     } catch (const mongo::DBException &e) {

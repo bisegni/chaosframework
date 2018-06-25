@@ -24,6 +24,7 @@
 using namespace chaos::common::message;
 using namespace chaos::common::utility;
 using namespace chaos::common::data;
+#define MESSAGE_CHANNEL_FIRE_RECONNECT 60000
 
 #define DMCINFO INFO_LOG(DeviceMessageChannel)
 #define DMCDBG DBG_LOG(DeviceMessageChannel)
@@ -44,7 +45,8 @@ device_network_address(_device_network_address),
 local_mds_channel(NULL),
 online(OnlineStateUnknown),
 self_managed(_self_managed),
-auto_reconnection(_self_managed){}
+auto_reconnection(_self_managed),
+online_retry(0){}
 
 /*!
  Initialization phase of the channel
@@ -95,7 +97,7 @@ void DeviceMessageChannel::timeout() {
 bool DeviceMessageChannel::udpateNetworkAddress(int32_t millisec_to_wait) {
     int err = ErrorCode::EC_NO_ERROR;
     if(local_mds_channel == NULL || self_managed == false) return false;
-    DMCINFO << "Update netowrk address for device " <<device_network_address->device_id;
+    DMCINFO << "Update network address for device " <<device_network_address->device_id;
     CDeviceNetworkAddress *tmp_addr = NULL;
     //ask to mds the new network address of the node
     if((err = local_mds_channel->getNetworkAddressForDevice(device_network_address->device_id, &tmp_addr))){
@@ -143,9 +145,15 @@ void DeviceMessageChannel::setOnline(OnlineState new_online_state) {
     if(new_online_state == online) return;
     
     if(new_online_state == OnlineStateOffline) {
-        DMCINFO << CHAOS_FORMAT("Device %1% is offline",%device_network_address->device_id);
+        if(device_network_address&& device_network_address->device_id.size()){
+            DMCINFO << CHAOS_FORMAT("Device %1% is offline",%device_network_address->device_id);
+
+        } else {
+            DMCINFO << "Device NULL is offline";
+
+        }
         //enable auto reconnection if we need
-        if(auto_reconnection) {async_central::AsyncCentralManager::getInstance()->addTimer(this, 1000, 1000);}
+        if(auto_reconnection) {async_central::AsyncCentralManager::getInstance()->addTimer(this, 0, MESSAGE_CHANNEL_FIRE_RECONNECT);}
     } else {
         DMCINFO << CHAOS_FORMAT("Device %1% is respawned",%device_network_address->device_id);
         //disable auto reconnection
@@ -159,7 +167,7 @@ void DeviceMessageChannel::setOnline(OnlineState new_online_state) {
 
 void DeviceMessageChannel::tryToReconnect() {
     //!in this case we need to check on mds if somethig is changed
-    bool address_changed = udpateNetworkAddress(5000);
+    bool address_changed = udpateNetworkAddress(MESSAGE_CHANNEL_FIRE_RECONNECT);
     if(address_changed == false) {
         setOnline(OnlineStateOffline);
     }
@@ -178,12 +186,28 @@ void DeviceMessageChannel::tryToReconnect() {
             if(check_rpc_for_dev->getResult() &&
                check_rpc_for_dev->getResult()->hasKey("alive")) {
                 setOnline(check_rpc_for_dev->getResult()->getBoolValue("alive")?OnlineStateOnline:OnlineStateOffline);
+                online_retry=0;
+
+            } else if(check_rpc_for_dev->getResult()  == NULL){
+                DMCINFO << "check update failed, retry:"<<online_retry;
+                if(online_retry>3){
+                    setOnline(OnlineStateOffline);
+                    online_retry=0;
+                } else {
+                    online_retry++;
+                }
             } else {
                 setOnline(OnlineStateOffline);
+                online_retry=0;
+
             }
         } else {
-            setOnline(OnlineStateOffline);
-        }
+            if(online_retry>3){
+                setOnline(OnlineStateOffline);
+                online_retry=0;
+            } else {
+                online_retry++;
+            }        }
     }
 }
 
@@ -195,7 +219,7 @@ OnlineState DeviceMessageChannel::isOnline() {
 void DeviceMessageChannel::setAutoReconnection(bool _auto_reconnection) {
     if((auto_reconnection = _auto_reconnection)){
         if(online == OnlineStateOnline ||
-           online == OnlineStateUnknown) {async_central::AsyncCentralManager::getInstance()->addTimer(this, 1000, 1000);}
+           online == OnlineStateUnknown) {async_central::AsyncCentralManager::getInstance()->addTimer(this, 0, MESSAGE_CHANNEL_FIRE_RECONNECT);}
     } else {
         async_central::AsyncCentralManager::getInstance()->removeTimer(this);
     }

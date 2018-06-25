@@ -50,81 +50,48 @@ void DeviceSharedDataWorker::init(void *init_data) throw (chaos::CException) {
     DataWorker::init(init_data);
     
     const std::string object_impl_name = ChaosMetadataService::getInstance()->setting.object_storage_setting.driver_impl;
-    INFO << "allocating cache driver for every thread";
+    INFO << CHAOS_FORMAT("Allocating object storage driver '%1%' for every worker thread", %object_impl_name);
     
-    for(int idx = 0; idx < settings.job_thread_number; idx++) {
-        ThreadCookie *_tc_ptr = new ThreadCookie();
-        _tc_ptr->object_storage_driver.reset(ObjectFactoryRegister<AbstractPersistenceDriver>::getInstance()->getNewInstanceByName(object_impl_name+"ObjectStorageDriver"));
-        
-        //init the driver
-        _tc_ptr->object_storage_driver->init(init_data);
-        
-        //get the data access
-        _tc_ptr->obj_storage_da = _tc_ptr->object_storage_driver->getDataAccess<ObjectStorageDataAccess>();
-        
+    global_object_storage_driver.reset(ObjectFactoryRegister<AbstractPersistenceDriver>::getInstance()->getNewInstanceByName(object_impl_name+"ObjectStorageDriver"));
+    global_object_storage_driver->init(init_data);
+    ObjectStorageDataAccess *obj_storage_da  = global_object_storage_driver->getDataAccess<ObjectStorageDataAccess>();
+    
+    for(int idx = 0; idx < ChaosMetadataService::getInstance()->setting.worker_setting.thread_number; idx++) {
         //associate the thread cooky for the idx value
-        thread_cookie[idx] = _tc_ptr;
+        thread_cookie[idx] = (void*)obj_storage_da;
     }
 }
 
 void DeviceSharedDataWorker::deinit() throw (chaos::CException) {
-    
-    for(int idx = 0; idx < settings.job_thread_number; idx++) {
-        ThreadCookie *tmp_cookie = reinterpret_cast<ThreadCookie *>(thread_cookie[idx]);
-        delete(tmp_cookie);
-    }
-    
-    std::memset(thread_cookie, 0, sizeof(void*)*settings.job_thread_number);
     DataWorker::deinit();
+    global_object_storage_driver->deinit();
 }
 
 void DeviceSharedDataWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
     int err = 0;
-    DeviceSharedWorkerJob *job_ptr = reinterpret_cast<DeviceSharedWorkerJob*>(job_info);
-    ThreadCookie *this_thread_cookie = reinterpret_cast<ThreadCookie *>(cookie);
+    DeviceSharedWorkerJob &job = *reinterpret_cast<DeviceSharedWorkerJob*>(job_info.get());
+    ObjectStorageDataAccess *obj_storage_da = reinterpret_cast<ObjectStorageDataAccess *>(cookie);
     
-    CHAOS_ASSERT(job_ptr)
-    CHAOS_ASSERT(job_ptr->request_header);
-    CHAOS_ASSERT(job_ptr->data_pack);
-    CHAOS_ASSERT(this_thread_cookie)
-    //CHAOS_ASSERT(this_thread_cookie->vfs_stage_file)
+    CHAOS_ASSERT(job.data_pack);
+    CHAOS_ASSERT(obj_storage_da);
     
     //check what kind of push we have
     //read lock on mantainance mutex
-    switch(static_cast<DataServiceNodeDefinitionType::DSStorageType>(job_ptr->request_header->tag)) {
+    switch(static_cast<DataServiceNodeDefinitionType::DSStorageType>(job.key_tag)) {
         case DataServiceNodeDefinitionType::DSStorageTypeHistory:// storicize only
         case DataServiceNodeDefinitionType::DSStorageTypeLiveHistory:{// storicize and live
             //write data on object storage
-            CDataWrapper data_pack((char *)job_ptr->data_pack);
-            std::string storage_key((const char *)GET_PUT_OPCODE_KEY_PTR(job_ptr->request_header),
-                                    job_ptr->request_header->key_len);
+            CDataWrapper data_pack((char *)job.data_pack->data());
             //push received datapack into object storage
-            if((err = this_thread_cookie->obj_storage_da->pushObject(storage_key,
-                                                                     data_pack))) {
+            if((err = obj_storage_da->pushObject(job.key,
+                                                 data_pack))) {
                 ERR << "Error pushing datapack into object storage driver";
             }
-            free(job_ptr->request_header);
-            free(job_ptr->data_pack);
-            free(job_ptr);
             break;
         }
         case DataServiceNodeDefinitionType::DSStorageTypeLive:
         case DataServiceNodeDefinitionType::DSStorageTypeUndefined:{// live only
             break;
         }
-    }
-}
-
-//!
-void DeviceSharedDataWorker::mantain() throw (chaos::CException) {
-    // lock for mantains
-    for(int idx = 0; idx < settings.job_thread_number; idx++) {
-        //ThreadCookie *current_tread_cookie = reinterpret_cast<ThreadCookie *>(thread_cookie[idx]);
-        // CHAOS_ASSERT(current_tread_cookie)
-        //write lock on mantainance mutex
-        //boost::unique_lock<boost::shared_mutex> rl(current_tread_cookie->mantainance_mutex);
-        
-        //mantainance on virtual file
-        //current_tread_cookie->vfs_stage_file->mantain();
     }
 }

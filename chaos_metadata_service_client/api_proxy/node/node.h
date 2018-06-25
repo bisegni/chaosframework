@@ -26,12 +26,15 @@
 #include <chaos_metadata_service_client/api_proxy/node/CommandGet.h>
 #include <chaos_metadata_service_client/api_proxy/node/UpdateProperty.h>
 #include <chaos_metadata_service_client/api_proxy/node/ChangeNodeState.h>
+#include <chaos_metadata_service_client/api_proxy/node/ClearCommandQueue.h>
+#include <chaos_metadata_service_client/api_proxy/node/KillCurrentCommand.h>
 #include <chaos_metadata_service_client/api_proxy/node/GetNodeDescription.h>
 #include <chaos_metadata_service_client/api_proxy/node/CommandTemplateSet.h>
 #include <chaos_metadata_service_client/api_proxy/node/CommandTemplateGet.h>
 #include <chaos_metadata_service_client/api_proxy/node/CommandTemplateDelete.h>
 #include <chaos_metadata_service_client/api_proxy/node/CommandTemplateSearch.h>
 #include <chaos_metadata_service_client/api_proxy/node/CommandTemplateSubmit.h>
+#include <chaos_metadata_service_client/api_proxy/node/ForwardNodeRpcMessage.h>
 #include <chaos_metadata_service_client/api_proxy/node/GetPropertyDefaultValues.h>
 #include <chaos_metadata_service_client/api_proxy/node/UpdatePropertyDefaultValues.h>
 #include <chaos_metadata_service_client/api_proxy/node/GetCommandAndTemplateDescription.h>

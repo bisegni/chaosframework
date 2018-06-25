@@ -37,7 +37,7 @@ void FixedInputChannelDatasetTableModel::updateData(const QSharedPointer<chaos::
     attribute_set_value.clear();
     vector_doe.clear();
 
-    QSharedPointer<CMultiTypeDataArrayWrapper> dataset_array(data_wrapped->getVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
+    CMultiTypeDataArrayWrapperSPtr dataset_array = data_wrapped->getVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION);
     for(int idx = 0;
         idx < dataset_array->size();
         idx++) {
@@ -66,7 +66,7 @@ void FixedInputChannelDatasetTableModel::updateInstanceDescription(const QShared
     dataset_attribute_configuration.clear();
     if(_dataset_attribute_configuration.isNull() ||
             !_dataset_attribute_configuration->hasKey("attribute_value_descriptions")) return;
-    QSharedPointer<CMultiTypeDataArrayWrapper> attribute_configuration(_dataset_attribute_configuration->getVectorValue("attribute_value_descriptions"));
+    CMultiTypeDataArrayWrapperSPtr attribute_configuration = _dataset_attribute_configuration->getVectorValue("attribute_value_descriptions");
     for(int idx = 0;
         idx < attribute_configuration->size();
         idx++){

@@ -62,7 +62,7 @@ int ExternalIODriver<ExtDriverImpl>::getDeviceList(ChaosStringSet& hosted_device
     }
     
     //we can get the list
-    ChaosUniquePtr<CMultiTypeDataArrayWrapper> arr(answer->getVectorValue("device_list"));
+    CMultiTypeDataArrayWrapperSPtr arr = answer->getVectorValue("device_list");
     for(int idx = 0;
         idx < arr->size();
         idx++) {
@@ -239,7 +239,7 @@ int ExternalIODriver<ExtDriverImpl>::buildDeviceInfo(CDataWrapper& received_data
         
         CHECK_KEY_THROW_AND_LOG(device_structure, "variables", ERR, -5, "device need to be at least a variable");
         CHECK_ASSERTION_THROW_AND_LOG(device_structure->isVectorValue("variables"), ERR, -2, "variables key need to be a vector");
-        ChaosUniquePtr<CMultiTypeDataArrayWrapper> variable_array(device_structure->getVectorValue("variables"));
+        CMultiTypeDataArrayWrapperSPtr variable_array = device_structure->getVectorValue("variables");
         for(int idx = 0;
             idx < variable_array->size();
             idx++) {

@@ -15,6 +15,7 @@
 #include <QFile>
 #include <QMenu>
 #include <QResource>
+#include <QWindow>
 
 #include "error/ErrorManager.h"
 #include "node/unit_server/UnitServerEditor.h"
@@ -22,12 +23,14 @@
 #include "search/SearchNodeResult.h"
 #include "preference/PreferenceDialog.h"
 #include "preference/PreferenceManager.h"
+#include "preference/SelectNetworkDomain.h"
 #include "snapshot/SnapshotManager.h"
 #include "tree_group/TreeGroupManager.h"
 #include "log_browser/LogBrowser.h"
 #include "script/ScriptManager.h"
 #include "monitor/healt/HealtMonitorWidget.h"
 #include "node/agent/AgentSetting.h"
+#include "node/connection_manager/ConnectionEditor.h"
 #include "GlobalServices.h"
 
 #include "metatypes.h"
@@ -36,8 +39,8 @@ using namespace chaos::metadata_service_client;
 
 //declare metatype used in chaos
 MainController::MainController():
-    api_submitter(this),
-    application_error_widget(NULL){
+    application_error_widget(NULL),
+    api_submitter(this) {
     connect(&ErrorManager::getInstance()->signal_proxy,
             SIGNAL(errorEntryUpdated()),
             SLOT(actionApplicationLogBrowser()));
@@ -45,7 +48,26 @@ MainController::MainController():
 
 MainController::~MainController() {}
 
-void MainController::init(int argc, char **argv, QApplication& a) {
+bool MainController::init(int argc, const char **argv) {
+    //set application information
+    ((QApplication*)QApplication::instance())->setQuitOnLastWindowClosed(false);
+    QApplication::setApplicationName("ChaosControlStudio");
+    QApplication::setApplicationVersion("1.0.0-alpha");
+    QApplication::setOrganizationName("INFN-LNF");
+    QApplication::setOrganizationDomain("chaos.infn.it");
+
+    //keep segnal for last windows closed
+    connect(QApplication::instance(),
+            SIGNAL(lastWindowClosed()),
+            SLOT(lastWindowClosed()));
+
+    //show splash screen
+    QPixmap pixmap(":splash/main_splash.png");
+    splash.reset(new QSplashScreen(pixmap));
+    splash->show();
+    splash->showMessage(QObject::tr("Starting !CHAOS layer..."),
+                        Qt::AlignLeft | Qt::AlignBottom, Qt::lightGray);
+
     //register chaos metatype
     qRegisterMetaType<QSharedPointer<ChaosByteArray> >();
     qRegisterMetaType<QSharedPointer<CommandReader> >();
@@ -73,6 +95,7 @@ void MainController::init(int argc, char **argv, QApplication& a) {
     qRegisterMetaType<chaos::common::data::CDataVariant>("chaos::common::data::CDataVariant");
     qRegisterMetaType<QSharedPointer<TwoLineInformationItem> >("QSharedPointer<TwoLineInformationItem>");
 
+    //settin application style
     qApp->setStyle(QStyleFactory::create("Fusion"));
     if(true) {
         // modify palette to dark
@@ -123,67 +146,43 @@ void MainController::init(int argc, char **argv, QApplication& a) {
         darkPalette.setColor(QPalette::Disabled, QPalette::ButtonText, disable_color);
         darkPalette.setColor(QPalette::Disabled, QPalette::Text, disable_color);
 
-        a.setPalette(darkPalette);
+        ((QApplication*)QApplication::instance())->setPalette(darkPalette);
     }
 
 #ifdef Q_OS_LINUX
-    a.setStyleSheet("QWidget {font-family: Monospace; font-size: 9pt;}"
-                    "QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }");
+    ((QApplication*)QApplication::instance())->setStyleSheet("QWidget {font-family: Monospace; font-size: 9pt;}"
+                                                             "QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }");
 #elif defined(Q_OS_DARWIN)
     //    QFile style_files(":/dark_orange/style.qss");
     //    if (!style_files.open(QFile::ReadOnly | QFile::Text)) {
-    a.setStyleSheet("QWidget {font-size: 11pt;}"
-                    "QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }");
+    ((QApplication*)QApplication::instance())->setStyleSheet("QWidget {font-size: 11pt;}"
+                                                             "QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }");
     //    }else{
     //        QTextStream in(&style_files);
-    //        a.setStyleSheet(in.readAll());
+    //        QApplication::instance()->setStyleSheet(in.readAll());
     //    }
 #else
 
 #endif
-    //set application information
-    a.setQuitOnLastWindowClosed(false);
-    QApplication::setApplicationName("chaos_control_studio");
-    QApplication::setApplicationVersion("0.0.1-alpha");
-    QApplication::setOrganizationName("INFN-LNF");
-    QApplication::setOrganizationDomain("chaos.infn.it");
-
+    QApplication::instance()->processEvents();
     //initialize !CHAOS metadata service client
     ChaosMetadataServiceClient::getInstance()->init(argc, argv);
     ChaosMetadataServiceClient::getInstance()->start();
-
-    //init menu bar
-    initApplicationMenuBar();
-
-    //configure monitor
-    bool configured = reconfigure();
-
-    //show splash screen
-    QPixmap pixmap(":splash/main_splash.png");
-    splash.reset(new QSplashScreen(pixmap));
-    splash->show();
-    splash->showMessage(QObject::tr("Starting !CHAOS layer..."),
-                        Qt::AlignLeft | Qt::AlignBottom, Qt::lightGray);
-    a.processEvents();
-    //keep segnal for last windows closed
-    connect(&a,
-            SIGNAL(lastWindowClosed()),
-            SLOT(lastWindowClosed()));
+    QApplication::instance()->processEvents();
 
     splash->showMessage(QObject::tr("!CHAOS Control Studio Initilized!"),
                         Qt::AlignLeft | Qt::AlignBottom, Qt::lightGray);
-    a.processEvents();
+    QApplication::instance()->processEvents();
     //set thread pool thread size
     qDebug() << "Thread pool of size:" << QThreadPool::globalInstance()->maxThreadCount();
-
-
-    if(configured == false) {
-        splash->finish(NULL);
-        actionPreferences();
-    }
-    QWidget *w = new SearchNodeResult();
-    w->show();
-    splash->finish(w);
+    splash->close();
+    //start selection of the network domain
+    SelectNetworkDomain network_dmoain_selector;
+    connect(&network_dmoain_selector,
+            SIGNAL(networkDomainSelected(QString)),
+            SLOT(selectedNetworkDomain(QString)));
+    bool result = (network_dmoain_selector.exec() == QDialog::Accepted);
+    return result;
 }
 
 void MainController::deinit() {
@@ -198,19 +197,9 @@ void MainController::deinit() {
     qDebug() << "!CHAOS Control Studio closed!";
 }
 
-
-bool MainController::reconfigure() {
-    bool configured = true;
-    try{
-        configured = PreferenceManager::getInstance()->activerNetworkConfiguration(PreferenceManager::getInstance()->getActiveConfigurationName());
-    }catch(...) {
-        configured = false;
-    }
-    return configured;
-}
-
 void MainController::initApplicationMenuBar() {
     main_menu_bar.setNativeMenuBar(true);
+    main_menu_bar.clear();
     //node menu
     QMenu *menu = main_menu_bar.addMenu("&Node");
     menu->addAction("New Unit Server", this, SLOT(actionNewUnitServer()));
@@ -219,6 +208,7 @@ void MainController::initApplicationMenuBar() {
 
     //Data
     menu = main_menu_bar.addMenu("&Data");
+    menu->addAction("Connection Editor", this, SLOT(actionConnectionManager()),QKeySequence(Qt::CTRL + Qt::Key_M));
     menu->addAction("Snapshot manager", this, SLOT(actionSnaptshotManager()),QKeySequence(Qt::CTRL + Qt::Key_S));
     menu->addAction("Group manager", this, SLOT(actionTreeGroupManager()),QKeySequence(Qt::CTRL + Qt::Key_G));
     menu->addAction("Log Browser", this, SLOT(actionLogBrowser()),QKeySequence(Qt::CTRL + Qt::Key_L));
@@ -232,7 +222,7 @@ void MainController::initApplicationMenuBar() {
     menu = main_menu_bar.addMenu("&Tools");
     menu->addAction("Node Monitor", this, SLOT(actionNewNodeMonitor()),QKeySequence(Qt::CTRL + Qt::Key_T));
     menu->addSeparator();
-    initConfigurationsMenu(menu->addMenu("Network Configurations"));
+    menu->addAction("Switch Network Domain...", this, SLOT(actionSwitchNetworkConfiguration()));
     menu->addSeparator();
     menu->addAction("Agent Setting...", this, SLOT(actionAgentSetting()));
     menu->addSeparator();
@@ -243,8 +233,8 @@ void MainController::initApplicationMenuBar() {
 void MainController::initConfigurationsMenu(QMenu *menu_configurations) {
     QAction *action_configuration = NULL;
     QActionGroup* group_configuration = new QActionGroup(this);
-    QStringList networ_configurations = PreferenceManager::getInstance()->getNetowrkConfigurationsNames();
-    const QString current_setting = PreferenceManager::getInstance()->getActiveConfigurationName();
+    QStringList networ_configurations = PreferenceManager::getInstance()->getNetworkConfigurationNames();
+    const QString current_setting = PreferenceManager::getInstance()->getActiveNetworkConfigurationName();
     foreach (QString configuration, networ_configurations) {
         action_configuration = menu_configurations->addAction(configuration, this, SLOT(actionSwitchNetworkConfiguration()));
         action_configuration->setCheckable(true);
@@ -260,6 +250,13 @@ void MainController::openInWindow(QWidget *w) {
 
 void MainController::lastWindowClosed() {
 
+}
+
+void MainController::selectedNetworkDomain(const QString& selected_domain_network) {
+    //init menu bar
+    initApplicationMenuBar();
+
+    actionSearchNode();
 }
 
 void MainController::actionSearchNode() {
@@ -290,6 +287,10 @@ void MainController::actionNewNodeMonitor() {
     openInWindow(new HealtMonitorWidget());
 }
 
+void MainController::actionConnectionManager() {
+    openInWindow(new ConnectionEditor());
+}
+
 void MainController::actionApplicationLogBrowser() {
     if(application_error_widget == NULL) {
         openInWindow(application_error_widget = new ApplicationErrorLogging());
@@ -308,9 +309,18 @@ void MainController::actionCloseWidget(QObject *widget) {
 }
 
 void MainController::actionSwitchNetworkConfiguration() {
-    QAction* action_network_configuration = dynamic_cast<QAction*>(sender());
-    if(action_network_configuration == NULL) return;
-    PreferenceManager::getInstance()->activerNetworkConfiguration(action_network_configuration->text());
+    QWindowList opened_windows =  QGuiApplication::allWindows();
+    for (uint i = 0 ; i< opened_windows.size() ; i++) {
+        qDebug() << QString("Close window -> %1").arg(opened_windows.at(i)->title());
+        opened_windows.at(i)->close();
+    }
+
+    //start network domain selector
+    SelectNetworkDomain network_dmoain_selector;
+    connect(&network_dmoain_selector,
+            SIGNAL(networkDomainSelected(QString)),
+            SLOT(selectedNetworkDomain(QString)));
+    network_dmoain_selector.exec();
 }
 
 void MainController::actionNewUnitServer() {
@@ -328,9 +338,6 @@ void MainController::actionNewUnitServer() {
 
 void MainController::actionPreferences() {
     PreferenceDialog pref_dialog(NULL);
-    connect(&pref_dialog,
-            SIGNAL(changedConfiguration()),
-            SLOT(reconfigure()));
     pref_dialog.exec();
 }
 

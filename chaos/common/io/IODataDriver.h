@@ -123,10 +123,10 @@ namespace chaos{
                  \param dataset_type is the type of dataset to fetch
                  \param cdatawrapper_handler handler for the found dataset(the deallocation need to be managed by caller)
                  */
-                virtual int loadDatasetTypeFromSnapshotTag(const std::string& snapshot_tag_name,
+                virtual int loadDatasetTypeFromSnapshotTag(const std::string& restore_point_tag_name,
                                                            const std::string& key,
                                                            uint32_t dataset_type,
-                                                           chaos_data::CDataWrapper **cdatawrapper_handler) = 0;
+                                                           chaos_data::CDWShrdPtr& cdw_shrd_ptr) = 0;
                 /*!
                  Update the driver configuration
                  */
@@ -137,6 +137,10 @@ namespace chaos{
                 virtual QueryCursor *performQuery(const std::string& key,
                                                   uint64_t start_ts,
                                                   uint64_t end_ts,uint32_t page_len=DEFAULT_PAGE_LEN) = 0;
+
+                virtual QueryCursor *performQuery(const std::string& key,
+                                          uint64_t start_ts,
+                                          uint64_t end_ts,uint64_t sequid,uint64_t runid,uint32_t page=DEFAULT_PAGE_LEN)=0;
                 
                 virtual void releaseQuery(QueryCursor *query) = 0;
             };

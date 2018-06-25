@@ -68,13 +68,11 @@ typedef struct RttStat {
 void performRTTTest(chaos::common::direct_io::DirectIOPerformanceSession *session, uint32_t iteration, uint32_t timeout);
 void performRTTTestFetcher(chaos::common::direct_io::RttResultFetcher *fetcher, uint32_t iteration, RttStat *stat);
 
-int main (int argc, char* argv[] ) {
+int main (int argc, const char* argv[] ) {
 	uint32_t timeout = 0;
 	OpcodeSequence command_sequence;
 	CNetworkAddress *device_network_address = NULL;
     try {
-		
-		
         //! [UIToolkit Attribute Init]
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_NODE_ADDRESS, "The netwrok address of the remote node(ip:port of rpc server)");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_RT_TEST, "Perform the roundtrip test");

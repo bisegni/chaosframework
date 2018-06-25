@@ -42,9 +42,9 @@ namespace chaos {
                 friend class AbstractClientAdapter;
                 friend class ExternalUnitClientEndpoint;
                 friend class http_adapter::HTTPClientAdapter;
-            protected:
                 //!online and accepted state usend onli for client endpoint
                 bool online;
+            protected:
                 int accepted_state;
                 AbstractAdapter *adapter;
                 //!endpoint that own the connection

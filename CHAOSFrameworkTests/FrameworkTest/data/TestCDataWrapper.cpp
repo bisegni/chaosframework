@@ -19,6 +19,7 @@
  * permissions and limitations under the Licence.
  */
 #include <chaos/common/chaos_types.h>
+#include <chaos/common/exception/CException.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <gtest/gtest.h>
 #include <boost/lexical_cast.hpp>
@@ -70,7 +71,7 @@ TEST(CDataWrapperTest, MemoryLeaks) {
         ASSERT_TRUE(json_deserialized->isInt32Value("i32v"));
         ASSERT_TRUE(json_deserialized->isBoolValue("bv"));
         
-        ChaosUniquePtr<CMultiTypeDataArrayWrapper> array_ptr(json_deserialized->getVectorValue("array"));
+        CMultiTypeDataArrayWrapperSPtr array_ptr(json_deserialized->getVectorValue("array"));
         ASSERT_EQ(array_ptr->size(), 4);
         ASSERT_EQ(array_ptr->getInt32ElementAtIndex(0), 1);
         ASSERT_EQ(array_ptr->getInt64ElementAtIndex(1), 2);
@@ -100,9 +101,9 @@ TEST(CDataWrapperTest, TestJsonDouble) {
     CDWUniquePtr data = CDataWrapper::instanceFromJson(test_json_translation);
     ASSERT_TRUE(data->hasKey("double_key"));
     ASSERT_TRUE(data->isVectorValue("double_key"));
-    ChaosUniquePtr<CMultiTypeDataArrayWrapper> p(data->getVectorValue("double_key"));
+    CMultiTypeDataArrayWrapperSPtr p(data->getVectorValue("double_key"));
     ASSERT_TRUE(p.get());
-
+    
     for(int cnt=0;cnt<p->size();cnt++){
         ASSERT_EQ( test_var[cnt], p->getDoubleElementAtIndex(cnt));
     }
@@ -131,14 +132,13 @@ TEST(CDataWrapperTest, TestEmptyJSONToBSON) {
     ASSERT_STREQ(json_b.c_str(), "{ }");
     ASSERT_STREQ(can_json_b.c_str(), "{ }");
 }
-
 TEST(CDataWrapperTest, TestConcatenation) {
     const char* test_json_translation="{\"double_key\":[1.0,2.1,-1.0,-0.9],\"string_vector\":[\"ciao\",\"come stai\"]}";
     CDataWrapper dconcat,empty,pieno;
     CDWUniquePtr data = CDataWrapper::instanceFromJson(test_json_translation);
     dconcat.addCSDataValue("empty",empty);
     dconcat.addCSDataValue("notempty",*data.get());
-
+    
     dconcat.addCSDataValue("empty2",empty);
     pieno.addInt64Value("ts1",(int64_t)1LL);
     pieno.addInt64Value("ts2",(int64_t)2LL);
@@ -152,11 +152,11 @@ TEST(CDataWrapperTest, TestConcatenation) {
     pieno.addStringValue("string_key","this is a long text that try to do some space on bson");
     pieno.addBoolValue("bool_key",true);
     pieno.addBoolValue("bool_key1",false);
-
+    
     ASSERT_TRUE(pieno.getCompliantJSONString().size());
     dconcat.addCSDataValue("pieno",pieno);
-
-
+    
+    
     double test_var[]={1.0,2.1,-1.0,-0.9};
     ASSERT_TRUE(dconcat.hasKey("empty"));
     ASSERT_TRUE(dconcat.isCDataWrapperValue("empty2"));
@@ -165,15 +165,31 @@ TEST(CDataWrapperTest, TestConcatenation) {
     ASSERT_TRUE(dconcat.hasKey("notempty"));
     ASSERT_TRUE(dconcat.isCDataWrapperValue("notempty"));
     ASSERT_TRUE(dconcat.isCDataWrapperValue("pieno"));
-
+    
     CDWUniquePtr t(dconcat.getCSDataValue("notempty"));
     ASSERT_TRUE(t->isVectorValue("double_key"));
-
-    ChaosUniquePtr<CMultiTypeDataArrayWrapper> p(t->getVectorValue("double_key"));
+    
+    CMultiTypeDataArrayWrapperSPtr p(t->getVectorValue("double_key"));
     ASSERT_TRUE(p.get());
-
+    
     for(int cnt=0;cnt<p->size();cnt++){
         ASSERT_EQ( test_var[cnt], p->getDoubleElementAtIndex(cnt));
     }
     ASSERT_STREQ("{ \"empty\" : {  }, \"notempty\" : { \"double_key\" : [ 1.0, 2.1000000000000000888, -1.0, -0.9000000000000000222 ], \"string_vector\" : [ \"ciao\", \"come stai\" ] }, \"empty2\" : {  }, \"pieno\" : { \"ts1\" : 1, \"ts2\" : 2, \"ts3\" : 3, \"ts4\" : 4, \"double_key\" : -2.0, \"ts5\" : 5, \"ts6\" : 6, \"string_empty\" : \"\", \"int_key\" : 3, \"string_key\" : \"this is a long text that try to do some space on bson\", \"bool_key\" : true, \"bool_key1\" : false } }", dconcat.getCompliantJSONString().c_str());
+}
+TEST(CDataWrapperTest, DateToLong) {
+    const char * json = "{  \"ndk_heartbeat\" : { \"$date\" : { \"$numberLong\" : \"1511968737899\" } } }";
+    CDWUniquePtr data = CDataWrapper::instanceFromJson(json);
+    ASSERT_EQ(data->getInt64Value("ndk_heartbeat"), 1511968737899);
+}
+TEST(CDataWrapperTest, SimpleStringNoException) {
+    const char * json = "{\"powerOn\":\"true\"}";
+    CDataWrapper data;
+    ASSERT_NO_THROW(data.setSerializedJsonData(json));
+}
+
+TEST(CDataWrapperTest, SimpleStringException) {
+    const char * json = "{\"powerOn\"::true\"}";
+    CDataWrapper data;
+    ASSERT_THROW(data.setSerializedJsonData(json), chaos::CException);
 }

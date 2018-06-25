@@ -1,17 +1,58 @@
 project(chaos_common)
 #### required libraries
 
-IF( NOT CHAOS_DISABLE_EVENTFD)
-  CheckConfigureBuild(event libevent "--disable-openssl;--enable-static" https://github.com/libevent )
+IF(NOT CHAOS_DISABLE_EVENTFD)
+  CheckConfigureBuild(event libevent:release-2.1.8-stable "--disable-openssl;--enable-static" https://github.com/amichelotti )
 ELSE()
   SET(ZMQ_FLAGS "")
 ENDIF()
 CheckConfigureBuild(zmq zeromq4-1 "${ZMQ_FLAGS}" https://github.com/zeromq)
 
-####
+
+IF (CLING_VIRTUAL_MACHINE_ENABLE)
+  MESG("Using ${CMAKE_BINARY_DIR}/ext_dep/cling-src for download cling")
+  IF(NOT EXISTS ${CMAKE_BINARY_DIR}/ext_dep/cling-src)
+    MESG("Create directory for cling download files")
+    EXECUTE_PROCESS(
+      COMMAND mkdir -p ${CMAKE_BINARY_DIR}/ext_dep/cling-src;
+      RESULT_VARIABLE err
+      OUTPUT_VARIABLE out
+    )
+
+    MESG("Downloading cling")
+    EXECUTE_PROCESS(
+    COMMAND ${CMAKE_BINARY_DIR}/config/cling_clone.sh ${CMAKE_BINARY_DIR}/ext_dep/cling-src;
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/ext_dep/cling-src
+    RESULT_VARIABLE err
+        OUTPUT_VARIABLE out
+    )
+  ENDIF()
+
+  IF(err)
+  	ERROR("CANNOT create ${CMAKE_BINARY_DIR}/ext_dep/cling-src directory: ${out}")
+  ELSE()
+    #cling
+    MESG("Add cling as external project")
+    ExternalProject_Add(
+       cling
+       PREFIX "${CMAKE_BINARY_DIR}/ext_dep/cling-prefix"
+       SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/cling-src"
+       BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/cling-build"
+       CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
+       LOG_DOWNLOAD ON
+       LOG_CONFIGURE ON
+       LOG_BUILD ON)
+
+       set(CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR}/ext_dep/cling-src/tools/cling/cmake/modules/")
+       MESG("Searching cling cmake module in ${CMAKE_MODULE_PATH}")
+       # This project needs cling.
+       find_library(Cling REQUIRED)
+  ENDIF()
+ENDIF()
 
 SET(common_lib_src chaos_errors.cpp
-                   log/LogManager.cpp)
+                   log/LogManager.cpp
+                   log/ChaosLoggingBackend.cpp)
 
 SET(common_lib_src ${common_lib_src}
                     additional_lib/mongoose.c
@@ -27,251 +68,253 @@ SET(common_lib_src ${common_lib_src}
                     metadata_logging/BatchCommandLoggingChannel.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        async_central/AsyncCentralManager.cpp
-        async_central/AsyncPoolRunner.cpp
-        async_central/TimerHandler.cpp)
+                    async_central/AsyncCentralManager.cpp
+                    async_central/AsyncPoolRunner.cpp
+                    async_central/TimerHandler.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        healt_system/HealtManager.cpp
-        healt_system/HealtMetric.cpp)
+                    healt_system/HealtManager.cpp
+                    healt_system/HealtMetric.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        action/ActionExecutionSafetySystem.cpp
-        action/EventAction.cpp
-        action/ActionDescriptor.cpp
-        action/DeclareAction.cpp
-        action/DomainActions.cpp)
+                    action/ActionExecutionSafetySystem.cpp
+                    action/EventAction.cpp
+                    action/ActionDescriptor.cpp
+                    action/DeclareAction.cpp
+                    action/DomainActions.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        alarm/AlarmCatalog.cpp
-        alarm/AlarmDescription.cpp
-        alarm/MultiSeverityAlarm.cpp)
+                    alarm/AlarmCatalog.cpp
+                    alarm/AlarmDescription.cpp
+                    alarm/MultiSeverityAlarm.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        bson/bson/bcon.c
-        bson/bson/bson-atomic.c
-        bson/bson/bson-clock.c
-        bson/bson/bson-context.c
-        bson/bson/bson-decimal128.c
-        bson/bson/bson-error.c
-        bson/bson/bson-iso8601.c
-        bson/bson/bson-iter.c
-        bson/bson/bson-json.c
-        bson/bson/bson-keys.c
-        bson/bson/bson-md5.c
-        bson/bson/bson-memory.c
-        bson/bson/bson-oid.c
-        bson/bson/bson-reader.c
-        bson/bson/bson-string.c
-        bson/bson/bson-timegm.c
-        bson/bson/bson-utf8.c
-        bson/bson/bson-value.c
-        bson/bson/bson-writer.c
-        bson/bson/bson.c
-        bson/jsonsl/jsonsl.c)
+                    bson/bson/bcon.c
+                    bson/bson/bson-atomic.c
+                    bson/bson/bson-clock.c
+                    bson/bson/bson-context.c
+                    bson/bson/bson-decimal128.c
+                    bson/bson/bson-error.c
+                    bson/bson/bson-iso8601.c
+                    bson/bson/bson-iter.c
+                    bson/bson/bson-json.c
+                    bson/bson/bson-keys.c
+                    bson/bson/bson-md5.c
+                    bson/bson/bson-memory.c
+                    bson/bson/bson-oid.c
+                    bson/bson/bson-reader.c
+                    bson/bson/bson-string.c
+                    bson/bson/bson-timegm.c
+                    bson/bson/bson-utf8.c
+                    bson/bson/bson-value.c
+                    bson/bson/bson-writer.c
+                    bson/bson/bson.c
+                    bson/jsonsl/jsonsl.c)
 
 SET(common_lib_src ${common_lib_src}
-        configuration/GlobalConfiguration.cpp)
+                    configuration/GlobalConfiguration.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        cronus_manager/CronusManager.cpp
-        cronus_manager/CronJob.cpp)
+                    cronus_manager/CronusManager.cpp
+                    cronus_manager/CronJob.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        metric/MetricCollector.cpp
-        metric/MetricCollectorIO.cpp
-        metric/AbstractMetricBackend.cpp
-        metric/ConsoleMetricBackend.cpp
-        metric/FileMetricBackend.cpp
-        metric/CSVFileMetricBackend.cpp)
+                    metric/MetricCollector.cpp
+                    metric/MetricCollectorIO.cpp
+                    metric/AbstractMetricBackend.cpp
+                    metric/ConsoleMetricBackend.cpp
+                    metric/FileMetricBackend.cpp
+                    metric/CSVFileMetricBackend.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        data/CDataWrapper.cpp
-        data/CDataBuffer.cpp
-        data/CDataVariant.cpp
-        data/CUSchemaDB.cpp
-        data/DatasetDB.cpp
-        data/structured/Lists.cpp
-        data/structured/Dataset.cpp
-        data/structured/DatasetAttribute.cpp
-        data/entity_db/EntityDB.cpp
-        data/entity_db/sqlite_impl/SQLiteEntityDB.cpp
-        data/entity/Entity.cpp data/broker/DataBroker.cpp
-        data/broker/publisher/PublisherDataService.cpp
-        data/broker/reader/ReaderDataService.cpp
-        data/cache/FastHash.cpp
-        data/cache/DataCache.cpp
-        data/cache/LFDataCache.cpp)
+                    data/CDataWrapper.cpp
+                    data/CDataBuffer.cpp
+                    data/CDataVariant.cpp
+                    data/CUSchemaDB.cpp
+                    data/DatasetDB.cpp
+                    data/structured/Lists.cpp
+                    data/structured/Dataset.cpp
+                    data/structured/DatasetAttribute.cpp
+                    data/entity_db/EntityDB.cpp
+                    data/entity_db/sqlite_impl/SQLiteEntityDB.cpp
+                    data/entity/Entity.cpp data/broker/DataBroker.cpp
+                    data/broker/publisher/PublisherDataService.cpp
+                    data/broker/reader/ReaderDataService.cpp
+                    data/cache/FastHash.cpp
+                    data/cache/DataCache.cpp
+                    data/cache/LFDataCache.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        debug/tracey.cpp)
+                    debug/tracey.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        data/cache/ChannelValueAccessor.cpp
-        data/cache/KeyGroupCache.cpp
-        data/cache/AttributeValue.cpp
-        data/cache/AttributeCache.cpp
-        data/cache/AbstractSharedDomainCache.cpp
-        data/cache/AttributeValueSharedCache.cpp)
+                    data/cache/ChannelValueAccessor.cpp
+                    data/cache/KeyGroupCache.cpp
+                    data/cache/AttributeValue.cpp
+                    data/cache/AttributeCache.cpp
+                    data/cache/AbstractSharedDomainCache.cpp
+                    data/cache/AttributeValueSharedCache.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        memory/ManagedMemory.cpp)
+                    memory/ManagedMemory.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        dispatcher/DefaultEventDispatcher.cpp
-        dispatcher/EventTypeScheduler.cpp
-        dispatcher/AbstractEventDispatcher.cpp
-        dispatcher/AbstractCommandDispatcher.cpp
-        dispatcher/DefaultCommandDispatcher.cpp
-        dispatcher/DomainActionsScheduler.cpp
-        dispatcher/AbstractActionScheduler.cpp
-        dispatcher/SharedCommandDispatcher.cpp)
+                    dispatcher/DefaultEventDispatcher.cpp
+                    dispatcher/EventTypeScheduler.cpp
+                    dispatcher/AbstractEventDispatcher.cpp
+                    dispatcher/AbstractCommandDispatcher.cpp
+                    dispatcher/DefaultCommandDispatcher.cpp
+                    dispatcher/DomainActionsScheduler.cpp
+                    dispatcher/AbstractActionScheduler.cpp
+                    dispatcher/SharedCommandDispatcher.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        exception/CException.cpp
-        exception/MetadataLoggingCException.cpp)
+                    exception/CException.cpp
+                    exception/MetadataLoggingCException.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        external_unit/ExternalUnitManager.cpp
-        external_unit/AbstractServerAdapter.cpp
-        external_unit/AbstractClientAdapter.cpp
-        external_unit/ExternalUnitConnection.cpp
-        external_unit/ExternalUnitClientEndpoint.cpp
-        external_unit/ExternalUnitServerEndpoint.cpp
-        external_unit/ExternalEchoEndpoint.cpp
-        external_unit/ExternalUnitClientEndpoint.cpp
-        external_unit/ExternalUnitServerEndpoint.cpp)
+                    external_unit/ExternalUnitManager.cpp
+                    external_unit/AbstractServerAdapter.cpp
+                    external_unit/AbstractClientAdapter.cpp
+                    external_unit/ExternalUnitConnection.cpp
+                    external_unit/ExternalUnitClientEndpoint.cpp
+                    external_unit/ExternalUnitServerEndpoint.cpp
+                    external_unit/ExternalEchoEndpoint.cpp
+                    external_unit/ExternalUnitClientEndpoint.cpp
+                    external_unit/ExternalUnitServerEndpoint.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        external_unit/serialization/AbstractExternalSerialization.cpp
-        external_unit/serialization/ExternalBSONJsonSerialization.cpp
-        external_unit/serialization/ExternalBSONExtJsonSerialization.cpp)
+                    external_unit/serialization/AbstractExternalSerialization.cpp
+                    external_unit/serialization/ExternalBSONJsonSerialization.cpp
+                    external_unit/serialization/ExternalBSONExtJsonSerialization.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        external_unit/http_adapter/HTTPServerAdapter.cpp
-        external_unit/http_adapter/HTTPClientAdapter.cpp)
+                    external_unit/http_adapter/HTTPServerAdapter.cpp
+                    external_unit/http_adapter/HTTPClientAdapter.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        event/EventClient.cpp
-        event/AsioImplEventClient
-        event/AsioEventForwarder.cpp
-        event/EventServer.cpp
-        event/AsioImplEventServer.cpp
-        event/AsioEventHandler.cpp
-        event/evt_desc/EventDescriptor.cpp
-        event/evt_desc/AlertEventDescriptor.cpp
-        event/evt_desc/InstrumentEventDescriptor.cpp
-        event/evt_desc/CommandEventDescriptor.cpp
-        event/evt_desc/CustomEventDescriptor.cpp
-        event/channel/EventChannel.cpp
-        event/channel/AlertEventChannel.cpp
-        event/channel/InstrumentEventChannel.cpp)
+                    event/EventClient.cpp
+                    event/AsioImplEventClient
+                    event/AsioEventForwarder.cpp
+                    event/EventServer.cpp
+                    event/AsioImplEventServer.cpp
+                    event/AsioEventHandler.cpp
+                    event/evt_desc/EventDescriptor.cpp
+                    event/evt_desc/AlertEventDescriptor.cpp
+                    event/evt_desc/InstrumentEventDescriptor.cpp
+                    event/evt_desc/CommandEventDescriptor.cpp
+                    event/evt_desc/CustomEventDescriptor.cpp
+                    event/channel/EventChannel.cpp
+                    event/channel/AlertEventChannel.cpp
+                    event/channel/InstrumentEventChannel.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        direct_io/DirectIOClient.cpp
-        direct_io/DirectIOClientConnection.cpp
-        direct_io/DirectIOServer.cpp
-        direct_io/DirectIOURLManagment.cpp
-        direct_io/DirectIOServerEndpoint.cpp
-        direct_io/DirectIODispatcher.cpp
-        direct_io/DirectIOPerformanceSession.cpp
-        direct_io/impl/ZMQDirectIOClient.cpp
-        direct_io/impl/ZMQDirectIOServer.cpp
-        direct_io/impl/ZMQBaseClass.cpp
-        direct_io/impl/ZMQDirectIOClientConnection.cpp
-        direct_io/DirectIODispatcherMetricCollector.cpp
-        direct_io/DirectIOClientConnectionMetricCollector.cpp
-        direct_io/DirectIOClientConnectionSharedMetricIO.cpp
-        direct_io/channel/DirectIOVirtualChannel.cpp
-        direct_io/channel/DirectIOVirtualClientChannel.cpp
-        direct_io/channel/DirectIOVirtualServerChannel.cpp
-        direct_io/channel/DirectIODeviceClientChannel.cpp
-        direct_io/channel/DirectIODeviceServerChannel.cpp
-        direct_io/channel/DirectIOPerformanceServerChannel.cpp
-        direct_io/channel/DirectIOPerformanceClientChannel.cpp
-        direct_io/channel/DirectIOSystemAPIServerChannel.cpp
-        direct_io/channel/DirectIOSystemAPIClientChannel.cpp)
+                    direct_io/DirectIOClient.cpp
+                    direct_io/DirectIOClientConnection.cpp
+                    direct_io/DirectIOServer.cpp
+                    direct_io/DirectIOURLManagment.cpp
+                    direct_io/DirectIOServerEndpoint.cpp
+                    direct_io/DirectIODispatcher.cpp
+                    direct_io/DirectIOPerformanceSession.cpp
+                    direct_io/impl/ZMQDirectIOClient.cpp
+                    direct_io/impl/ZMQDirectIOServer.cpp
+                    direct_io/impl/ZMQBaseClass.cpp
+                    direct_io/impl/ZMQDirectIOClientConnection.cpp
+                    direct_io/DirectIODispatcherMetricCollector.cpp
+                    direct_io/DirectIOClientConnectionMetricCollector.cpp
+                    direct_io/DirectIOClientConnectionSharedMetricIO.cpp
+                    direct_io/channel/DirectIOVirtualChannel.cpp
+                    direct_io/channel/DirectIOVirtualClientChannel.cpp
+                    direct_io/channel/DirectIOVirtualServerChannel.cpp
+                    direct_io/channel/DirectIODeviceClientChannel.cpp
+                    direct_io/channel/DirectIODeviceServerChannel.cpp
+                    direct_io/channel/DirectIOPerformanceServerChannel.cpp
+                    direct_io/channel/DirectIOPerformanceClientChannel.cpp
+                    direct_io/channel/DirectIOSystemAPIServerChannel.cpp
+                    direct_io/channel/DirectIOSystemAPIClientChannel.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        io/IODataDriver.cpp
-        io/IODirectIODriver.cpp
-        io/ManagedDirectIODataDriver.cpp
-        io/QueryCursor.cpp)
+                    io/IODataDriver.cpp
+                    io/IODirectIODriver.cpp
+                    io/ManagedDirectIODataDriver.cpp
+                    io/QueryCursor.cpp
+                    io/SharedManagedDirecIoDataDriver.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        message/DeviceMessageChannel.cpp
-        message/MDSMessageChannel.cpp
-        message/MessageChannel.cpp
-        message/MessageRequestFuture.cpp
-        message/NodeMessageChannel.cpp
-        message/MultiAddressMessageChannel.cpp
-        message/MultiAddressMessageRequestFuture.cpp
-        message/PerformanceNodeChannel.cpp
-        message/MessageRequestDomain.cpp)
+                    message/DeviceMessageChannel.cpp
+                    message/MDSMessageChannel.cpp
+                    message/MessageChannel.cpp
+                    message/MessageRequestFuture.cpp
+                    message/NodeMessageChannel.cpp
+                    message/MultiAddressMessageChannel.cpp
+                    message/MultiAddressMessageRequestFuture.cpp
+                    message/PerformanceNodeChannel.cpp
+                    message/MessageRequestDomain.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        network/NetworkBroker.cpp
-        network/PerformanceManagment.cpp
-        network/URLServiceFeeder.cpp
-        network/URLHAServiceFeeder.cpp
-        network/URL.cpp)
+                    network/NetworkBroker.cpp
+                    network/PerformanceManagment.cpp
+                    network/URLServiceFeeder.cpp
+                    network/URLHAServiceFeeder.cpp
+                    network/URL.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        rpc/RpcClient.cpp
-        rpc/RpcServer.cpp
-        rpc/RpcClientMetricCollector.cpp
-        rpc/RpcServerMetricCollector.cpp
-        rpc/zmq/ZMQClient.cpp
-        rpc/zmq/ZMQServer.cpp)
+                    rpc/RpcClient.cpp
+                    rpc/RpcServer.cpp
+                    rpc/RpcClientMetricCollector.cpp
+                    rpc/RpcServerMetricCollector.cpp
+                    rpc/zmq/ZMQClient.cpp
+                    rpc/zmq/ZMQServer.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        utility/NamedService.cpp
-        utility/StartableService.cpp
-        utility/InizializableService.cpp
-        utility/SWEService.cpp
-        utility/CheckList.cpp
-        utility/AggregatedCheckList.cpp
-        utility/TimingUtil.cpp
-        utility/AbstractListener.cpp
-        utility/AbstractListenerContainer.cpp
-        utility/ProcStat.cpp
-        utility/FSUtility.cpp)
+                    utility/NamedService.cpp
+                    utility/StartableService.cpp
+                    utility/InizializableService.cpp
+                    utility/SWEService.cpp
+                    utility/CheckList.cpp
+                    utility/AggregatedCheckList.cpp
+                    utility/TimingUtil.cpp
+                    utility/AbstractListener.cpp
+                    utility/AbstractListenerContainer.cpp
+                    utility/ProcStat.cpp
+            	      utility/InetUtility.cpp
+                    utility/FSUtility.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        batch_command/BatchCommandExecutor.cpp
-        batch_command/BatchCommandSandbox.cpp
-        batch_command/BatchCommand.cpp
-        batch_command/BatchCommandDescription.cpp
-        batch_command/AbstractSandbox.cpp
-        batch_command/BatchCommandParallelSandbox.cpp)
+                    batch_command/BatchCommandExecutor.cpp
+                    batch_command/BatchCommandSandbox.cpp
+                    batch_command/BatchCommand.cpp
+                    batch_command/BatchCommandDescription.cpp
+                    batch_command/AbstractSandbox.cpp
+                    batch_command/BatchCommandParallelSandbox.cpp)
 
 SET(common_lib_src ${common_lib_src}
-  plugin/PluginLoader.cpp
-  plugin/PluginManager.cpp)
+                    plugin/PluginLoader.cpp
+                    plugin/PluginManager.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        property/PropertyGroup.cpp
-        property/PropertyCollector.cpp
-        property/PropertyDescription.cpp)
+                    property/PropertyGroup.cpp
+                    property/PropertyCollector.cpp
+                    property/PropertyDescription.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        script/ScriptManager.cpp
-        script/AbstractScriptVM.cpp
-        script/AbstractScriptableClass.cpp)
+                    script/ScriptManager.cpp
+                    script/AbstractScriptVM.cpp
+                    script/AbstractScriptableClass.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        state_flag/StateFlagCatalog.cpp
-        state_flag/StateFlag.cpp
-        state_flag/DeclareStateFlag.cpp
-        state_flag/StateFlagSDWrapper.cpp
-        state_flag/StateFlagCatalogSDWrapper.cpp)
+                    state_flag/StateFlagCatalog.cpp
+                    state_flag/StateFlag.cpp
+                    state_flag/DeclareStateFlag.cpp
+                    state_flag/StateFlagSDWrapper.cpp
+                    state_flag/StateFlagCatalogSDWrapper.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        trigger/AbstractConsumer.cpp
-        trigger/AbstractEvent.cpp
-        trigger/AbstractSubject.cpp
-        trigger/TriggerExecutionEnviroment.cpp
-        trigger/trigger_types.cpp)
+                    trigger/AbstractConsumer.cpp
+                    trigger/AbstractEvent.cpp
+                    trigger/AbstractSubject.cpp
+                    trigger/TriggerExecutionEnviroment.cpp
+                    trigger/trigger_types.cpp)
 
 
 #compile lua chaos vm and core files
@@ -281,6 +324,13 @@ SET(common_lib_src ${common_lib_src}
 	script/lua/LuaScriptVM.cpp
     script/lua/LuaModuleManager.cpp
 	${LuaCoreSource})
+
+IF (CLING_VIRTUAL_MACHINE)
+    MESG("Add cling virtual machine compilation files")
+    SET(common_lib_src ${common_lib_src}
+        script/cling/CPPScriptVM.cpp
+        script/cling/ClingRootInterpreter.cpp)
+ENDIF()
 
 IF (NOT DEFINED BUILD_FORCE_STATIC)
 
@@ -295,14 +345,32 @@ ELSE ()
   ADD_LIBRARY(${PROJECT_NAME} SHARED ${common_lib_src})
   set_target_properties(${PROJECT_NAME} PROPERTIES VERSION 1.0.0 SOVERSION 1)
 ENDIF ()
-#ADD_LIBRARY(${PROJECT_NAME} ${common_lib_src})
-#SET_TARGET_PROPERTIES(chaos_common_static PROPERTIES OUTPUT_NAME chaos_common)
+IF (CLING_VIRTUAL_MACHINE)
+  add_dependencies(${PROJECT_NAME} cling)
+ENDIF()
+target_compile_definitions(${PROJECT_NAME} PRIVATE CLING_VIRTUAL_MACHINE=${CLING_VIRTUAL_MACHINE})
 
+IF(CERN_ROOT)
+    TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${FrameworkLib} Tree Core)
+ELSE()
+  IF(CLING_VIRTUAL_MACHINE)
+    MESSAGE(STATUS "LINKING clingIntepreter")
+    TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${FrameworkLib} clingInterpreter)
+  ELSE()
+    TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${FrameworkLib})
+  ENDIF()
+ENDIF()
 
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${FrameworkLib})
 
 FILE(GLOB files "external_unit/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/external_unit)
+
+FILE(GLOB files "external_unit/serialization/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/common/external_unit/serialization)
+
+FILE(GLOB files "external_unit/http_adapter/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/common/external_unit/http_adapter)
+
 FILE(GLOB files "*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common)
 
@@ -311,6 +379,9 @@ INSTALL(FILES ${files} DESTINATION include/chaos/common/alarm)
 
 FILE(GLOB files "state_flag/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/state_flag)
+
+FILE(GLOB files "healt_system/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/common/healt_system)
 
 FILE(GLOB files "metadata_logging/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/metadata_logging)
@@ -326,6 +397,10 @@ FILE(GLOB files "log/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/log)
 FILE(GLOB files "bson/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/bson)
+FILE(GLOB files "additional_lib/*.h*")
+INSTALL(FILES ${files} DESTINATION include/chaos/common/additional_lib)
+FILE(GLOB files "bson/bson/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/common/bson/bson)
 FILE(GLOB files "bson/util/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/bson/util)
 FILE(GLOB files "bson/base/*.h")
@@ -336,7 +411,7 @@ FILE(GLOB files "configuration/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/configuration)
 FILE(GLOB files "memory/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/memory)
-FILE(GLOB files "data/*.h")
+FILE(GLOB files "data/*.h*")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/data)
 FILE(GLOB files "data/cache/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/data/cache)
@@ -344,6 +419,11 @@ FILE(GLOB files "data/entity/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/data/entity)
 FILE(GLOB files "data/entity_db/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/data/entity_db)
+FILE(GLOB files "data/structured/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/common/data/structured)
+FILE(GLOB files "data/node/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/common/data/node)
+
 FILE(GLOB files "property/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/property)
 FILE(GLOB files "dispatcher/*.h")

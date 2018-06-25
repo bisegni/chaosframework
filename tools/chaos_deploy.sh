@@ -18,13 +18,17 @@ rm -rf $TMPDIR
 mkdir -p $TMPDIR
 echo "" > $DEPLOY_FILE
 Usage(){
-	echo -e "$0 [-r <cu|mds|web|all>] [-l <"cu,mds,web,wan">] [-i <source dir>] [-u] -c <configuration>\n-r <cu|mds|cds|web|all>: restart\n-u: update MDS configuration\n-c <configuration>:configuration\n-i <source dir>: distribution dir\n-l:<command separated of servers type to update i.e \"cu,mds\" for cus and mds>"
+	echo -e "$0 [-r <cu|mds|web|all>] [-l <"cu,mds,web,wan">] [-i <source dir>] [-u] -c <configuration>\n-r <cu|mds|cds|web|all>: restart\n-s <cu|mds|cds|web|all>: stop\n-u: update MDS configuration\n-c <configuration>:configuration\n-i <source dir>: distribution dir\n-l:<command separated of servers type to update i.e \"cu,mds\" for cus and mds>"
 }
-while getopts r:hc:i:ul: opt; do
+while getopts s:r:hc:i:ul: opt; do
  case $opt in
 	r) 
 	    restart=$OPTARG
 	    ;;
+	s) 
+	    stop=$OPTARG
+	    ;;
+
 	i) 
 	    sourcedir=$OPTARG
 	    ;;
@@ -158,7 +162,10 @@ else
 
 #    popd > /dev/null
     if [ $listupdate == "all" ] || [[ $listupdate =~ webui ]];then 
-	deployServer $WEBUI_SERVER
+	for i in $WEBUI_SERVER;do
+	    deployServer $i	
+	done
+
     fi
 
 
@@ -179,7 +186,11 @@ else
     fi
 
     if [ $listupdate == "all" ] || [[ $listupdate =~ wan ]];then 
-	deployServer $WAN_SERVER
+	for i in $WAN_SERVER;do
+	    deployServer $i	
+	done
+
+
     fi
 
 
@@ -309,6 +320,20 @@ if [ -n "$restart" ];then
 	for i in $restart;do
 		info_mesg "starting all " "$i"
 		net_start_stop $i start
+		sleep 2
+	done
+
+	exit 0
+	
+fi
+if [ -n "$stop" ];then
+	if [ "$stop" == "all" ];then
+		stop="mds webui wan agent" 
+	fi
+	k=0
+	for i in $stop;do
+		info_mesg "stopping all " "$i"
+		net_start_stop $i stop
 	done
 
 	exit 0
@@ -504,7 +529,9 @@ fi
 
 if [ $listupdate == "all" ] || [[ $listupdate =~ webui ]];then 
     if [ -n "$WEBUI_SERVER" ]; then
-	deploy_install "$WEBUI_SERVER" webui
+	for i in $WEBUI_SERVER;do
+	    deploy_install "$i" webui
+	done
     fi
 fi
 

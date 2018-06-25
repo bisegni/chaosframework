@@ -52,6 +52,8 @@ CDataWrapper *GetSetFullUnitServer::execute(CDataWrapper *api_data,
     
     int err = 0;
     bool presence = false;
+    GET_DATA_ACCESS(ControlUnitDataAccess, cu_da, -3);
+    GET_DATA_ACCESS(NodeDataAccess, n_da, -4)
     GET_DATA_ACCESS(UnitServerDataAccess, us_da, -5)
     //get the parameter
     const std::string us_uid = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
@@ -96,23 +98,39 @@ CDataWrapper *GetSetFullUnitServer::execute(CDataWrapper *api_data,
         if(api_data->hasKey("us_desc")&& api_data->isCDataWrapperValue("us_desc")){
             ChaosUniquePtr<chaos::common::data::CDataWrapper> udesc(api_data->getCSDataValue("us_desc"));
             if(udesc->hasKey("cu_desc")&& udesc->isVector("cu_desc")){
-                ChaosUniquePtr<CMultiTypeDataArrayWrapper> cu_l(udesc->getVectorValue("cu_desc"));
+                CMultiTypeDataArrayWrapperSPtr cu_l(udesc->getVectorValue("cu_desc"));
                 for(int cui=0;
                     (cu_l.get() !=NULL) &&
                     (cui<cu_l->size());cui++){
                     ChaosUniquePtr<chaos::common::data::CDataWrapper> cuw(cu_l->getCDataWrapperElementAtIndex(cui));
-                    if(cuw->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID) && cuw->hasKey(UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS)){
+                    if(cuw->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID) && cuw->hasKey("control_unit_implementation")){
                         std::string cu_id= cuw->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
                         std::string cu_type= cuw->getStringValue("control_unit_implementation");
+                        cuw->addStringValue(chaos::NodeDefinitionKey::NODE_TYPE, chaos::NodeType::NODE_TYPE_CONTROL_UNIT);
+
                         US_ACT_DBG<< "adding cu :"<<cu_id<<"("<<cu_type<<") to "<<us_uid;
                         if((err = us_da->addCUType(us_uid, cu_type))) {
                             LOG_AND_TROW_FORMATTED(US_ACT_ERR, err, "Error adding cu '%1%' type: %2% to unit server: %3%", %cu_id%us_uid%cu_type);
                         }
-                        GET_DATA_ACCESS(ControlUnitDataAccess, cu_da, -3);
-                        GET_DATA_ACCESS(NodeDataAccess, n_da, -4)
+                        if((err = n_da->checkNodePresence(presence,
+                                                          cu_id))){
+                            LOG_AND_TROW(US_ACT_ERR, err, "Error checking node presence")
+                        }
+                        if (!presence) {
+                            ChaosUniquePtr<chaos::common::data::CDataWrapper> node_min_dec(new CDataWrapper());
+                            node_min_dec->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_id);
+                            node_min_dec->addStringValue(NodeDefinitionKey::NODE_TYPE, chaos::NodeType::NODE_TYPE_CONTROL_UNIT);
+                                //need to be create a new empty node
+                            if((err = cu_da->insertNewControlUnit(*node_min_dec.get()))) {
+                                LOG_AND_TROW(US_ACT_ERR, err, "Error during new node creation")
+                            }
+                        }
 
                         if((err = cu_da->setInstanceDescription(cu_id, *cuw.get()))) {
                                LOG_AND_TROW(US_ACT_ERR, err, boost::str(boost::format("Error creating control unit instance description for node:%1%") % cu_id));
+                        } else {
+                            US_ACT_DBG<< "setting instance cu :"<<cu_id<<"("<<cu_type<<") to:"<<cuw->getCompliantJSONString();
+
                         }
 
                         //for compativbility  update here the default porperty values

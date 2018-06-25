@@ -40,17 +40,24 @@ collector_name(_collector_name),
 current_slot_index(0),
 last_stat_call(0),
 stat_intervall(update_time_in_sec*1000){
-    
-    if(GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_LOG_METRIC_ON_CONSOLE)) {
+    bool on_console = GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_LOG_METRIC_ON_CONSOLE) &&
+    GlobalConfiguration::getInstance()->getConfiguration()->getVariantValue(InitOption::OPT_LOG_METRIC_ON_CONSOLE).asBool();
+    bool on_file = GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_LOG_METRIC_ON_FILE) &&
+    GlobalConfiguration::getInstance()->getConfiguration()->getVariantValue(InitOption::OPT_LOG_METRIC_ON_FILE).asBool();
+    if(on_console) {
         //set the metric manager to print metrics on console
         addBackend(metric::MetricBackendPointer(new metric::ConsoleMetricBackend(collector_name)));
     }
     
-    if(GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_LOG_METRIC_ON_FILE)) {
+    if(on_file) {
         const std::string file_path = GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_LOG_METRIC_ON_FILE_PATH);
         //set the time interval to one second of default
         addBackend(metric::MetricBackendPointer(new metric::CVSFileMetricBackend(collector_name,
                                                                                  file_path)));
+    }
+    if(!on_console &&
+       !on_file) {
+        throw CException(-1, "No metric backdend selected for collector", __PRETTY_FUNCTION__);
     }
 }
 

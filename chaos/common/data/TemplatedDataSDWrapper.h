@@ -179,9 +179,9 @@ Subclass(copy_source, _data){}
             template<typename T,
             typename DW>
             class TemplatedDataListWrapper {
-                const std::string instance_serialization_key;
                 static const std::string master_serialization_key;
             public:
+                std::string instance_serialization_key;
                 typedef std::vector< T >                              WrapList;
                 typedef typename std::vector< T >::iterator           WrapListIterator;
                 typedef typename std::vector< T >::const_iterator     WrapListConstIterator;
@@ -262,7 +262,7 @@ Subclass(copy_source, _data){}
                     }
                     
                     //we can deserialize data
-                    ChaosUniquePtr<chaos::common::data::CMultiTypeDataArrayWrapper> serialized_array(serialized_data->getVectorValue(instance_serialization_key));
+                    CMultiTypeDataArrayWrapperSPtr serialized_array = serialized_data->getVectorValue(instance_serialization_key);
                     for(int idx = 0;
                         idx < serialized_array->size();
                         idx++) {
@@ -286,7 +286,6 @@ Subclass(copy_source, _data){}
                     result->finalizeArrayForKey(instance_serialization_key);
                     return result;
                 }
-                
             };
             
             template<typename T, typename DW>

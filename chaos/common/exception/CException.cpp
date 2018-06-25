@@ -21,8 +21,7 @@
 
 #include <chaos/common/exception/CException.h>
 #include <boost/exception/all.hpp>
-using namespace chaos;
-
+namespace chaos{
 CException::CException(int eCode,
                        const std::string& eMessage,
                        const std::string& eDomain) throw():
@@ -47,6 +46,11 @@ const char* CException::what() const throw() {
     return msg.c_str();
 }
 
+std::ostream& operator<< (std::ostream& os,  const chaos::CException& dt){
+
+    os<<dt.what();
+    return os;
+}
 
 void CException::composeMsg() {
     std::stringstream ss;
@@ -67,3 +71,4 @@ CException(eCode,eMessage,eDomain) {
     ret<<"FATAL:\""+msg<<"\"";
     msg = ret.str();
 };
+}

@@ -90,7 +90,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Log on launch</string>
+        <string>Log on mds</string>
        </property>
       </widget>
      </item>

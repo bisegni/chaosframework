@@ -22,6 +22,8 @@
 #ifndef chaos_cu_toolkit_driver_manager_driver_AbstractClientRemoteIODriver_h
 #define chaos_cu_toolkit_driver_manager_driver_AbstractClientRemoteIODriver_h
 
+
+//as client we need to send authentication message
 #include <chaos/cu_toolkit/driver_manager/driver/AbstractRemoteIODriver.h>
 
 #include <chaos/common/external_unit/ExternalUnitClientEndpoint.h>
@@ -37,6 +39,7 @@ namespace chaos {
                     void driverInit(const char *initParameter) throw (chaos::CException);
                     void driverInit(const chaos::common::data::CDataWrapper& init_parameter) throw(chaos::CException);
                     void driverDeinit() throw (chaos::CException);
+                    void handleNewConnection(const std::string& connection_identifier);
                 public:
                     AbstractClientRemoteIODriver():
                     ClientARIODriver() {}

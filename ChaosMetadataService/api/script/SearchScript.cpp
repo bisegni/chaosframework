@@ -41,7 +41,7 @@ chaos::common::data::CDataWrapper *SearchScript::execute(CDataWrapper *api_data,
     ChaosUniquePtr<chaos::common::data::CDataWrapper> result;
     
     ScriptBaseDescriptionListWrapper found_page_element;
-   
+    found_page_element.instance_serialization_key = chaos::MetadataServerApiKey::script::search_script::FOUND_SCRIPT_LIST;
     //check for mandatory attributes
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found");
     const std::string search_string = CDW_GET_VALUE_WITH_DEFAULT(api_data, "search_string", getStringValue, "");

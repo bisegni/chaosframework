@@ -155,7 +155,7 @@ namespace chaos {
                     if(serialized_data->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_LIST) &&
                        serialized_data->isVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_LIST)) {
                         DatasetAttributeSDWrapper attribute_wrapper;
-                        ChaosUniquePtr<CMultiTypeDataArrayWrapper> attr_vec(serialized_data->getVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_LIST));
+                        CMultiTypeDataArrayWrapperSPtr attr_vec = serialized_data->getVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_LIST);
                         for(int idx = 0;
                             idx < attr_vec->size();
                             idx++) {

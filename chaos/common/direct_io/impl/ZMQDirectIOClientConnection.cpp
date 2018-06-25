@@ -34,14 +34,23 @@ DirectIOClientConnection(server_description,
                          endpoint),
 zmq_context(_zmq_context),
 socket_priority(NULL),
-socket_service(NULL){
+socket_service(NULL),
+message_counter(0) {
     monitor_info.monitor_socket = NULL;
+    default_configuration["ZMQ_LINGER"] = "0";
+    default_configuration["ZMQ_RCVHWM"] = "1";
+    default_configuration["ZMQ_SNDHWM"] = "1";
+    default_configuration["ZMQ_RCVTIMEO"] = boost::lexical_cast<std::string>(DirectIOConfigurationKey::GlobalDirectIOTimeoutinMSec);
+    default_configuration["ZMQ_SNDTIMEO"] = boost::lexical_cast<std::string>(DirectIOConfigurationKey::GlobalDirectIOTimeoutinMSec);
+    default_configuration["ZMQ_RECONNECT_IVL"] = "5000";
+    default_configuration["ZMQ_RECONNECT_IVL_MAX"] = "10000";
 }
 
 ZMQDirectIOClientConnection::~ZMQDirectIOClientConnection() {}
 
 void ZMQDirectIOClientConnection::init(void *init_data) throw(chaos::CException) {
-    if(ensureSocket() == false) throw CException(-1, "Error configuring socket", __PRETTY_FUNCTION__);
+    int err = 0;
+    if((err = ensureSocket()) != 0) throw CException(err, "Error configuring socket", __PRETTY_FUNCTION__);
 }
 
 void ZMQDirectIOClientConnection::deinit() throw(chaos::CException) {
@@ -145,15 +154,6 @@ int ZMQDirectIOClientConnection::getNewSocketPair() {
     std::string error_str;
     std::vector<std::string> resolved_ip;
     
-    MapZMQConfiguration default_configuration;
-    default_configuration["ZMQ_LINGER"] = "0";
-    default_configuration["ZMQ_RCVHWM"] = "3";
-    default_configuration["ZMQ_SNDHWM"] = "3";
-    default_configuration["ZMQ_RCVTIMEO"] = boost::lexical_cast<std::string>(DirectIOConfigurationKey::GlobalDirectIOTimeoutinMSec);
-    default_configuration["ZMQ_SNDTIMEO"] = boost::lexical_cast<std::string>(DirectIOConfigurationKey::GlobalDirectIOTimeoutinMSec);
-    default_configuration["ZMQ_RECONNECT_IVL"] = "5000";
-    default_configuration["ZMQ_RECONNECT_IVL_MAX"] = "10000";
-    
     try {
         
         DEBUG_CODE(DBG << "Allocating priority socket";)
@@ -217,6 +217,8 @@ int ZMQDirectIOClientConnection::getNewSocketPair() {
         }
     } catch(chaos::CException& ex) {
         releaseSocketPair();
+        err = ex.errorCode;
+        DECODE_CHAOS_EXCEPTION(ex);
     }
     return err;
 }
@@ -247,87 +249,115 @@ int ZMQDirectIOClientConnection::releaseSocketPair() {
     }
     return err;
 }
-
-// send the data to the server layer on priority channel
-int64_t ZMQDirectIOClientConnection::sendPriorityData(DirectIODataPack *data_pack,
-                                                      DirectIODeallocationHandler *header_deallocation_handler,
-                                                      DirectIODeallocationHandler *data_deallocation_handler,
-                                                      DirectIODataPack **synchronous_answer) {
-    int64_t err = 0;
+int ZMQDirectIOClientConnection::sendPriorityData(chaos::common::direct_io::DirectIODataPackSPtr data_pack) {
     CHAOS_ASSERT(data_pack);
     boost::unique_lock<boost::shared_mutex> wl(mutext_send_message);
+    completeDataPack(*data_pack);
+    return writeToSocket(socket_priority,
+                         priority_identity,
+                         ChaosMoveOperator(data_pack));
+}
+// send the data to the server layer on priority channel
+int ZMQDirectIOClientConnection::sendPriorityData(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
+                                                  chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer) {
+    int err = 0;
+    CHAOS_ASSERT(data_pack);
+    boost::unique_lock<boost::shared_mutex> wl(mutext_send_message);
+    completeDataPack(*data_pack);
     err = writeToSocket(socket_priority,
                         priority_identity,
-                        completeDataPack(data_pack),
-                        header_deallocation_handler,
-                        data_deallocation_handler,
+                        ChaosMoveOperator(data_pack),
                         synchronous_answer);
     if(err > 0 /*resource not available*/) {
-        //remove socket in case of delay on the answer
         //change id ofr socket
-        if((err = ZMQBaseClass::setAndReturnID(socket_priority,
-                                               priority_endpoint))) {
-            ERR << "Error configuring new id for socker :" << priority_endpoint;
+        if((ZMQBaseClass::setAndReturnID(socket_priority,
+                                         service_identity))) {
+            ERR << "Error configuring new id for socker :" << service_endpoint;
+        } else {
+            ZMQBaseClass::resetOutputQueue(socket_service,
+                                           default_configuration,
+                                           chaos::GlobalConfiguration::getInstance()->getDirectIOClientImplKVParam());
         }
     }
     return err;
 }
 
-// send the data to the server layer on the service channel
-int64_t ZMQDirectIOClientConnection::sendServiceData(DirectIODataPack *data_pack,
-                                                     DirectIODeallocationHandler *header_deallocation_handler,
-                                                     DirectIODeallocationHandler *data_deallocation_handler,
-                                                     DirectIODataPack **synchronous_answer) {
-    int64_t err = 0;
+int ZMQDirectIOClientConnection::sendServiceData(chaos::common::direct_io::DirectIODataPackSPtr data_pack) {
     CHAOS_ASSERT(data_pack);
     boost::unique_lock<boost::shared_mutex> wl(mutext_send_message);
+    completeDataPack(*data_pack);
+    return writeToSocket(socket_service,
+                         service_identity,
+                         ChaosMoveOperator(data_pack));
+}
+
+// send the data to the server layer on the service channel
+int ZMQDirectIOClientConnection::sendServiceData(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
+                                                 chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer) {
+    int err = 0;
+    CHAOS_ASSERT(data_pack);
+    boost::unique_lock<boost::shared_mutex> wl(mutext_send_message);
+    completeDataPack(*data_pack);
     err = writeToSocket(socket_service,
                         service_identity,
-                        completeDataPack(data_pack),
-                        header_deallocation_handler,
-                        data_deallocation_handler,
+                        ChaosMoveOperator(data_pack),
                         synchronous_answer);
     if(err > 0 /*resource not available*/) {
         //change id ofr socket
-        if((err = ZMQBaseClass::setAndReturnID(socket_service,
-                                               service_identity))) {
+        if((ZMQBaseClass::setAndReturnID(socket_service,
+                                         service_identity))) {
             ERR << "Error configuring new id for socker :" << service_endpoint;
+        } else {
+            ZMQBaseClass::resetOutputQueue(socket_service,
+                                           default_configuration,
+                                           chaos::GlobalConfiguration::getInstance()->getDirectIOClientImplKVParam());
         }
     }
-    
     return err;
 }
 
 bool ZMQDirectIOClientConnection::ensureSocket() {
+    int err = 0;
     if(socket_service == NULL ||
        socket_priority == NULL) {
-        getNewSocketPair();
+        err = getNewSocketPair();
     }
-    return (socket_service &&
-            socket_priority);
+    return err;
 }
-
 //send data with zmq tech
-int64_t ZMQDirectIOClientConnection::writeToSocket(void *socket,
-                                                   std::string& identity,
-                                                   DirectIODataPack *data_pack,
-                                                   DirectIODeallocationHandler *header_deallocation_handler,
-                                                   DirectIODeallocationHandler *data_deallocation_handler,
-                                                   DirectIODataPack **synchronous_answer) {
+int ZMQDirectIOClientConnection::writeToSocket(void *socket,
+                                               std::string& identity,
+                                               DirectIODataPackSPtr data_pack) {
     CHAOS_ASSERT(socket && data_pack);
+    CHAOS_ASSERT(data_pack->header.dispatcher_header.fields.synchronous_answer == false);
     int err = 0;
     if((err = sendDatapack(socket,
-                           data_pack,
-                           header_deallocation_handler,
-                           data_deallocation_handler))) {
+                           ChaosMoveOperator(data_pack)))) {
         ERR << "Error sending datapack with code:" << err;
-    } else if(data_pack->header.dispatcher_header.fields.synchronous_answer) {
-        //we need an aswer
-        if((err = reveiceDatapack(socket,
-                                  synchronous_answer))) {
-            ERR << "Error receiving answer datapack with code:" << err;
-        }
     }
-    free(data_pack);
+    return err;
+}
+//send data with zmq tech
+int ZMQDirectIOClientConnection::writeToSocket(void *socket,
+                                               std::string& identity,
+                                               DirectIODataPackSPtr data_pack,
+                                               DirectIODataPackSPtr& synchronous_answer) {
+    CHAOS_ASSERT(socket && data_pack);
+    CHAOS_ASSERT(data_pack->header.dispatcher_header.fields.synchronous_answer);
+    uint16_t current_counter = data_pack->header.dispatcher_header.fields.counter = message_counter++;
+    int err = 0;
+    if((err = sendDatapack(socket,
+                           ChaosMoveOperator(data_pack)))) {
+        ERR << "Error sending datapack with code:" << err;
+    } else {
+        //we need an aswer
+        do {
+            if((err = reveiceDatapack(socket,
+                                      synchronous_answer))) {
+                ERR << "Error receiving answer datapack with code:" << err;
+            }
+        } while (err == 0 &&
+                 synchronous_answer->header.dispatcher_header.fields.counter < current_counter);
+    }
     return err;
 }

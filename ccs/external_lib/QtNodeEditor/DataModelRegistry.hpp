@@ -1,0 +1,99 @@
+#pragma once
+
+#include <unordered_map>
+#include <memory>
+
+#include <QtCore/QString>
+
+#include "NodeDataModel.hpp"
+#include "QStringStdHash.hpp"
+
+
+namespace QtNodes
+{
+
+/// Class uses map for storing models (name, model)
+class DataModelRegistry
+{
+
+public:
+  
+  using RegistryItemPtr     = std::unique_ptr<NodeModel>;
+  using RegisteredModelsMap = std::unordered_map<QString, RegistryItemPtr>;
+
+  struct TypeConverterItem
+  {
+    RegistryItemPtr Model;
+    NodePortType    SourceType;
+    NodePortType    DestinationType;
+  };
+
+  using ConvertingTypesPair = std::pair<QString, QString>; //Source type ID, Destination type ID in this order
+  using TypeConverterItemPtr = std::unique_ptr<TypeConverterItem>;
+  using RegisteredTypeConvertersMap = std::map<ConvertingTypesPair, TypeConverterItemPtr>;
+
+  DataModelRegistry()  = default;
+  ~DataModelRegistry() = default;
+
+  DataModelRegistry(DataModelRegistry const &) = delete;
+  DataModelRegistry(DataModelRegistry &&)      = default;
+
+  DataModelRegistry&
+  operator=(DataModelRegistry const &) = delete;
+  DataModelRegistry&
+  operator=(DataModelRegistry &&) = default;
+
+public:
+
+  template<typename ModelType, bool TypeConverter = false>
+  void
+  registerModel(std::unique_ptr<ModelType> uniqueModel = cpp11::make_unique<ModelType>())
+  {
+    static_assert(std::is_base_of<NodeModel, ModelType>::value,
+                  "Must pass a subclass of NodeDataModel to registerModel");
+
+    QString const name = uniqueModel->name();
+
+    if (_registeredModels.count(name) == 0)
+    {
+      _registeredModels[name] = std::move(uniqueModel);
+    }
+
+    if (TypeConverter)
+    {
+      std::unique_ptr<NodeModel>& registeredModelRef = _registeredModels[name];
+
+      //Type converter node should have exactly one input and output ports, if thats not the case, we skip the registration.
+      //If the input and output type is the same, we also skip registration, because thats not a typecast node.
+      if (registeredModelRef->nPorts(PortType::In) != 1 || registeredModelRef->nPorts(PortType::Out) != 1 ||
+        registeredModelRef->dataType(PortType::In, 0).id == registeredModelRef->dataType(PortType::Out, 0).id)
+      {
+        return;
+      }
+
+      TypeConverterItemPtr converter = cpp11::make_unique<TypeConverterItem>();
+      converter->Model = registeredModelRef->clone();
+      converter->SourceType = converter->Model->dataType(PortType::In, 0);
+      converter->DestinationType = converter->Model->dataType(PortType::Out, 0);
+
+      auto typeConverterKey = std::make_pair(converter->SourceType.id, converter->DestinationType.id);
+	  _registeredTypeConverters[typeConverterKey] = std::move(converter);
+    }
+  }
+
+  std::unique_ptr<NodeModel>
+  create(QString const &modelName);
+
+  RegisteredModelsMap const &
+  registeredModels() const;
+
+  std::unique_ptr<NodeModel>
+  getTypeConverter(const QString & sourceTypeID, 
+                   const QString & destTypeID) const;
+
+private:
+
+  RegisteredModelsMap _registeredModels;
+  RegisteredTypeConvertersMap _registeredTypeConverters;
+};
+}

@@ -59,6 +59,12 @@ usage(){
     info_mesg "Usage :$0 {start|stop|status| start agent| start mds | start webui|start devel | stop webui|stop mds}"
 }
 start_mds(){
+    if [ -n "$CHAOS_MDS" ];then
+	if ! [[ "$CHAOS_MDS" =~ localhost ]];then
+	    echo "* Using $CHAOS_MDS"
+	    return 1
+	fi
+    fi
     backend_checks;
     mds_checks;
     info_mesg "starting MDS..." "($CHAOS_LIVE_SERVERS)($CHAOS_DB_SERVERS)"
@@ -76,6 +82,8 @@ start_mds(){
 	nok_mesg "checking publishing"
 	return 1
     fi
+    info_mesg "waiting " " 5 seconds"
+    sleep 5
 }
 
 # start_cds(){
@@ -97,12 +105,12 @@ start_agent(){
 
     info_mesg "starting " "agent"
     check_proc_then_kill "$CHAOS_PREFIX/bin/$AGENT_EXEC"
-    run_proc "$CHAOS_PREFIX/bin/$AGENT_EXEC --conf-file  $CHAOS_PREFIX/etc/wan.cfg $CHAOS_OVERALL_OPT --log-on-file --log-file $CHAOS_PREFIX/log/agent.$MYPID.log > $CHAOS_PREFIX/log/$AGENT_EXEC.$MYPID.std.out 2>&1 &" "$AGENT_EXEC"
+    run_proc "$CHAOS_PREFIX/bin/$AGENT_EXEC --conf-file  $CHAOS_PREFIX/etc/agent.cfg $CHAOS_OVERALL_OPT --log-on-file --log-file $CHAOS_PREFIX/log/agent.$MYPID.log > $CHAOS_PREFIX/log/$AGENT_EXEC.$MYPID.std.out 2>&1 &" "$AGENT_EXEC"
 }
 
 
 start_us(){
-    info_mesg "starting " "$US_EXEC"
+
     check_proc_then_kill "$CHAOS_PREFIX/bin/$US_EXEC"
     if [ ! -e "$CHAOS_PREFIX/etc/cu.cfg" ]; then
 	     warn_mesg "UnitServer configuration file not found in \"$CHAOS_PREFIX/etc/cu.cfg\" " "start skipped"
@@ -117,7 +125,9 @@ start_us(){
 	error_mesg "failed initialization of " "MDS"
 	exit 1
     fi
-    
+    info_mesg "wait 5s ..."
+    sleep 5
+    info_mesg "starting " "$US_EXEC"
     run_proc "$CHAOS_PREFIX/bin/$US_EXEC --conf-file $CHAOS_PREFIX/etc/cu.cfg $CHAOS_OVERALL_OPT --log-on-file 1 --log-file $CHAOS_PREFIX/log/$US_EXEC.$MYPID.log > $CHAOS_PREFIX/log/$US_EXEC.$MYPID.std.out 2>&1 &" "$US_EXEC"
 }
 
@@ -152,9 +162,8 @@ start_all(){
 #    status=$((status + $?))
     start_mds
     status=$((status + $?))
+    
     start_ui
-    status=$((status + $?))
-    start_agent
     status=$((status + $?))
 
     
@@ -211,6 +220,9 @@ case "$cmd" in
     start)
 	if [ -z "$2" ]; then
 	    start_all
+	    start_agent
+
+
 	else
 	    case "$2" in
 		mds)
@@ -229,6 +241,7 @@ case "$cmd" in
 	       devel)
 		   start_all
 		   start_us
+		   start_agent
 		    exit 0
 		    ;;
 		*)

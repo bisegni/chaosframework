@@ -48,5 +48,4 @@ namespace chaos {
         }
     }
 }
-
 #endif /* __CHAOSFramework_EFEDD110_E100_4081_8C2E_8D22E3C5C5E8_NodeOperation_h */

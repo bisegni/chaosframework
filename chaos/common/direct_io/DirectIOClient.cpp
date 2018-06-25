@@ -114,7 +114,6 @@ DirectIOClientConnection *DirectIOClient::getNewConnection(const std::string& se
         }
         
     }
-    
     return result;
 }
 

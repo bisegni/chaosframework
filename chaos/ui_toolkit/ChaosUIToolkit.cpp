@@ -46,7 +46,7 @@ ChaosUIToolkit::~ChaosUIToolkit(){
 /*!
  Specialized option for startup c and cpp program main options parameter
  */
-void ChaosUIToolkit::init(int argc, char* argv[]) throw (CException) {
+void ChaosUIToolkit::init(int argc, const char* argv[]) throw (CException) {
     ChaosCommon<ChaosUIToolkit>::init(argc, argv);
 }
     //!stringbuffer parser

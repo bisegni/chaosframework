@@ -11,11 +11,9 @@ class PreferenceManager:
 public chaos::common::utility::Singleton<PreferenceManager>{
     friend class chaos::common::utility::Singleton<PreferenceManager>;
 public:
-    bool activerNetworkConfiguration(const QString &configuration);
-    QStringList getNetowrkConfigurationsNames();
-    QString  getActiveConfigurationName();
-    void setDefaultNetworkConfiguration(const QString& configuration_name);
-    bool activeDefaultNetworkConfiguration();
+    bool activeNetworkConfiguration(const QString &configuration_name);
+    QStringList getNetworkConfigurationNames();
+    QString  getActiveNetworkConfigurationName();
 private:
     PreferenceManager();
     ~PreferenceManager();

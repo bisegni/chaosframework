@@ -1,3 +1,4 @@
+#define CS_NDEBUG
 #include "mongoose.h"
 #ifdef MG_MODULE_LINES
 #line 1 "mongoose/src/internal.h"

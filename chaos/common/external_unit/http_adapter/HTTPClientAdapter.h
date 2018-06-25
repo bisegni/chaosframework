@@ -63,7 +63,7 @@ namespace chaos {
                     bool run;
                     struct mg_mgr mgr;
                     uint32_t poll_counter;
-                    
+                    uint32_t rest_poll_time;
                     //!map that hold the connection to use
                     LMapReconnectionInfo map_connection;
                     
@@ -77,7 +77,7 @@ namespace chaos {
                                                     int& accept_result);
                 protected:
                     int sendDataToConnection(const std::string& connection_identifier,
-                                             const chaos::common::data::CDBufferUniquePtr data,
+                                             chaos::common::data::CDBufferUniquePtr data,
                                              const EUCMessageOpcode opcode);
                     int closeConnection(const std::string& connection_identifier);
                 public:

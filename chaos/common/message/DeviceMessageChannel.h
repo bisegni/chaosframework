@@ -69,7 +69,7 @@ namespace chaos {
                 
                 OnlineState online;
                 ChaosSharedMutex mutex_online_state;
-                
+                int online_retry;
                 MDSMessageChannel *local_mds_channel;
                 CDeviceNetworkAddress *device_network_address;
                 

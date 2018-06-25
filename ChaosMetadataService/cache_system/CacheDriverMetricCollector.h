@@ -46,7 +46,7 @@ namespace chaos {
                 ~CacheDriverMetricCollector();
                 //!inherited method
                 int putData(const std::string& key,
-                            const CacheData& data);
+                            CacheData data);
                 //!inherited method
                 int getData(const std::string& key,
                             CacheData& data);

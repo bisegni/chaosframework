@@ -9,6 +9,7 @@
 #include <chaos_service_common/persistence/mongodb/MongoDBHAConnectionManager.h>
 
 #include <chaos/common/utility/TimingUtil.h>
+#include <chaos/common/chaos_constants.h>
 
 #include <boost/format.hpp>
 
@@ -80,7 +81,7 @@ void MongoAuthHook::onHandedOut( mongo::DBClientBase * conn ) {
 }
 
 void MongoAuthHook::onDestroy( mongo::DBClientBase * conn ) {
-    MDBHAC_LAPP_ << "MongoDBHAConnectionManager::onDestroy - " << conn->getServerAddress();
+    MDBHAC_LDBG_ << "MongoDBHAConnectionManager::onDestroy - " << conn->getServerAddress();
 }
 
 const std::string& MongoAuthHook::getDatabaseName() {
@@ -144,8 +145,6 @@ void* MongoDBHAConnectionManager::serviceForURL(const URL& url,
                                                 uint32_t service_index) {
     std::string msg;
     ConnectionInfo *conn = new ConnectionInfo();
-    //conn->connect(mongo::HostAndPort(url.getURL()), msg);
-    //conn->auth(hook->db, hook->user, hook->pwd, msg);
     conn->conn_str = mongo::ConnectionString(mongo::HostAndPort(url.getURL()));
     conn->service_index = service_index;
     return (void*)conn;
@@ -177,7 +176,7 @@ ChaosUniquePtr<DriverScopedConnection> MongoDBHAConnectionManager::getConnection
     ConnectionInfo *conn = static_cast<ConnectionInfo*>(service_feeder.getService());
     if(conn) {
         try{
-            result.reset(new DriverScopedConnection(conn->conn_str, 1000));
+            result.reset(new DriverScopedConnection(conn->conn_str, common::constants::ObjectStorageTimeoutinMSec));
         } catch(mongo::UserException &ex) {
             MDBHAC_LERR_ << ex.what();
             result.reset(NULL);

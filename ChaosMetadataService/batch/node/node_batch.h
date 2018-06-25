@@ -21,8 +21,7 @@
 
 #ifndef CHAOSFramework_node_batch_h
 #define CHAOSFramework_node_batch_h
-
-#include "UpdatePropertyCommand.h"
+#include "SendRpcCommand.h"
 #include "SubmitBatchCommand.h"
-
+#include "UpdatePropertyCommand.h"
 #endif

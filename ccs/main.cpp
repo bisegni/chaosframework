@@ -1,10 +1,12 @@
 #include "MainController.h"
 #include <QApplication>
 int main(int argc, char *argv[]) {
+    int returnValue = 0;
     QApplication a(argc, argv);
     MainController m;
-    m.init(argc, argv, a);
-    int returnValue = a.exec();
+    if(m.init(argc, (const char **)argv)){
+        returnValue = a.exec();
+    }
     m.deinit();
     return returnValue;
 }

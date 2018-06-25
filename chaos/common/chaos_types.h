@@ -30,6 +30,7 @@
 
 #include <set>
 #include <map>
+#include <stack>
 #include <queue>
 #include <deque>
 #include <vector>
@@ -50,6 +51,8 @@ template<typename T>
 using ChaosPromise = std::promise<T>;
 template<typename T>
 using ChaosFuture = std::future<T>;
+template<typename T>
+using ChaosSharedFuture = std::shared_future<T>;
 typedef std::future_status ChaosFutureStatus;
 typedef std::chrono::seconds ChaosCronoSeconds;
 typedef std::chrono::milliseconds ChaosCronoMilliseconds;
@@ -70,7 +73,8 @@ using ChaosFunction = std::function< R >;
 #define ChaosWeakPtr boost::weak_ptr
 #define ChaosAtomic boost::atomic
 #define ChaosPromise boost::promise
-#define ChaosFuture boost::shared_future
+#define ChaosFuture boost::future
+#define ChaosSharedFuture boost::shared_future
 #define ChaosFutureStatus boost::future_status
 #define ChaosCronoSeconds boost::chrono::seconds
 #define ChaosCronoMilliseconds boost::chrono::milliseconds
@@ -94,7 +98,8 @@ using ChaosFunction = std::function< R >;
 #define ChaosMoveOperator(x) x
 #define ChaosAtomic boost::atomic
 #define ChaosPromise boost::promise
-#define ChaosFuture  boost::shared_future
+#define ChaosFuture  boost::future
+#define ChaosSharedFuture  boost::shared_future
 #define ChaosFutureStatus boost::future_status
 #define ChaosCronoSeconds boost::chrono::seconds
 #define ChaosCronoMilliseconds boost::chrono::milliseconds
@@ -103,6 +108,9 @@ using ChaosFunction = std::function< R >;
 #define ChaosBind boost::bind
 #define ChaosBindPlaceholder(x) x
 #endif
+
+#define  CHAOS_DEFINE_STACK_FOR_TYPE(t1, n)\
+typedef std::stack< t1 >                   n;
 
 #define  CHAOS_DEFINE_SET_FOR_TYPE(t1, n)\
 typedef std::set< t1 >                   n;\
@@ -126,8 +134,8 @@ typedef typename std::vector< t >::const_iterator   n ## ConstIterator;
 
 #define  CHAOS_DEFINE_QUEUE_FOR_TYPE(t, n)\
 typedef std::queue< t >                   n;\
-typedef std::queue< t >::iterator         n ## Iterator;\
-typedef std::queue< t >::const_iterator   n ## ConstIterator;
+typedef std::queue< t >::iterator         n ## Iterator;
+//typedef std::queue< t >::const_iterator   n ## ConstIterator;
 
 #define  CHAOS_DEFINE_DEQUE_FOR_TYPE(t, n)\
 typedef std::deque< t >                   n;\
@@ -177,6 +185,10 @@ to_execute \
 typedef boost::shared_mutex                     ChaosSharedMutex;
 typedef boost::shared_lock<boost::shared_mutex> ChaosReadLock;
 typedef boost::unique_lock<boost::shared_mutex> ChaosWriteLock;
+
+typedef struct boost::defer_lock_t     ChaosDeferLock_t;
+typedef struct boost::try_to_lock_t    ChaosTryToLock_t;
+typedef struct boost::adopt_lock_t     ChaosAdoptLock_t;
 
 typedef struct {
     float push_rate; // push rate

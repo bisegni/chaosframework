@@ -32,31 +32,20 @@ namespace chaos {
 			
 			//! index driver setting
 			typedef struct CacheDriverSetting {
-                //! true if we need to log metric
-                bool                        log_metric;
-                
-                //! determinate the update interval of the metric
-                uint32_t                    log_metric_update_interval;
-                
 				//! driver implementation
 				std::string					cache_driver_impl;
-				
-				//! list of the cache server
-				CacheServerList				startup_chache_servers;
-				
-                bool                        caching_worker_log_metric;
-                
-                uint32_t                    caching_worker_log_metric_update_interval;
-                
-                uint32_t                    caching_pool_min_instances_number;
-				//!number of cache worker
-				unsigned int				caching_worker_num;
-				
-				//!cache worker setting
-				worker::DataWorkerSetting	caching_worker_setting;
-				
+                //! list of the cache server
+                CacheServerList             startup_chache_servers;
 				//! kv param for the implementations of the driver
 				std::map<std::string, std::string> key_value_custom_param;
+                
+                //! true if we need to log metric
+                bool                log_metric;
+                
+                //! determinate the update interval of the metric
+                uint32_t            log_metric_update_interval;
+                
+                uint32_t            caching_pool_min_instances_number;
 			} CacheDriverSetting;
 		}
 	}

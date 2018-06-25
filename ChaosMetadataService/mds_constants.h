@@ -27,11 +27,10 @@ namespace chaos {
 #define OPT_CACHE_DRIVER_KVP                    "cache-driver-kvp"
 #define OPT_CACHE_DRIVER_POOL_MIN_INSTANCE      "cache-driver-pool-min-instance"
         
-#define OPT_DATA_WORKER_LOG_METRIC                  "data-worker-log-metric"
-#define OPT_DATA_WORKER_LOG_METRIC_UPDATE_INTERVAL  "data-worker-log-metric-update-interval"
-#define OPT_DATA_WORKER_NUM                         "data-worker-num"
-#define OPT_DATA_WORKER_THREAD                      "data-worker-thread"
-#define DATA_WORKER_NUMBER                          1
+#define OPT_ARCHIVER_LOG_METRIC                  "archiver-log-metric"
+#define OPT_ARCHIVER_LOG_METRIC_UPDATE_INTERVAL  "archiver-log-metric-update-interval"
+#define OPT_ARCHIVER_NUM                         "archiver-instances"
+#define OPT_ARCHIVER_THREAD                      "archiver-thread"
         
         //stage data indexer
 #define OPT_INDEXER_WORKER_NUM			"indexer-worker-num"

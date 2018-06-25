@@ -6,7 +6,8 @@
 #include <QTextEdit>
 #include <QItemSelection>
 #include <QStringListModel>
-#include "../language_editor/LuaHighlighter.h"
+#include <QSharedPointer>
+#include "../language_editor/LanguageEditorSupport.h"
 #include "../api_async_processor/ApiSubmitter.h"
 #include "../data/EditableDatasetTableModel.h"
 #include "../data/EditableScriptVariableTableModel.h"
@@ -23,6 +24,7 @@ class ScriptDescriptionWidget :
 
     void updateTextEditorFeatures();
     void fillScriptWithGUIValues();
+    void updateLanguages();
 public:
     explicit ScriptDescriptionWidget(QWidget *parent = 0);
     explicit ScriptDescriptionWidget(const chaos::service_common::data::script::Script& _script, QWidget *parent = 0);
@@ -69,7 +71,8 @@ private:
     QStringListModel execution_pool_model;
     QStringListModel classification_model;
     EditableDatasetTableModel editable_dataset_table_model;
-    QSyntaxHighlighter *current_highlighter;
+    QSharedPointer<LanguageEditorSupport> language_support;
+    QMap< QString, QSharedPointer<LanguageEditorSupport> > languages;
     ApiSubmitter api_submitter;
     //declre the script serialization wrapper
     chaos::service_common::data::script::ScriptSDWrapper script_wrapper;

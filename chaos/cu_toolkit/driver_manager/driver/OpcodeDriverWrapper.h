@@ -54,6 +54,7 @@ namespace chaos {
                     
                     void driverInit(const chaos::common::data::CDataWrapper& init_parameter) throw(chaos::CException) {
                         ExtDriverImpl::driverInit(init_parameter);
+                        /* cannot be called before the instance is created*/
                         opcode_ext_cmd_mapper->driverInit(init_parameter);
                     }
                     
@@ -62,25 +63,44 @@ namespace chaos {
                         ExtDriverImpl::driverDeinit();
                     }
                     
-                    //!Send raw request to the remote driver
-                    /*!
-                     \param message_data is the raw data to be transmitted to the remote driver
-                     \param received_data si the raw data received from the driver
-                     */
+                    //!Inherited by RemoteIODriverProtocol::sendRawRequest
                     int sendRawRequest(chaos::common::data::CDWUniquePtr message_data,
                                        chaos::common::data::CDWShrdPtr& message_response,
-                                       uint32_t timeout = 5000) {
+                                       uint32_t timeout = REMOTE_DRIVER_DEFAULT_TIMEOUT) {
                         return ExtDriverImpl::sendRawRequest(ChaosMoveOperator(message_data),
                                                              message_response,
                                                              timeout);
                     }
                     
-                    //!Send raw message to the remote driver
-                    /*!
-                     \param message_data is the raw data to be transmitted to the remote driver
-                     */
+                    //!Inherited by RemoteIODriverProtocol::sendOpcodeRequest
+                    int sendOpcodeRequest(const std::string& opcode,
+                                          chaos::common::data::CDWUniquePtr opcode_parameter,
+                                          chaos::common::data::CDWShrdPtr& message_response,uint32_t timeout=REMOTE_DRIVER_DEFAULT_TIMEOUT) {
+                        return ExtDriverImpl::sendOpcodeRequest(opcode,
+                                                                ChaosMoveOperator(opcode_parameter),
+                                                                message_response,
+                                                                timeout);
+                    }
+                    
+                    //!Inherited by RemoteIODriverProtocol::sendRawMessage
                     int sendRawMessage(chaos::common::data::CDWUniquePtr message_data) {
                         return ExtDriverImpl::sendRawMessage(ChaosMoveOperator(message_data));
+                    }
+                    
+                    //!Inherited by RemoteIODriverProtocol::sendOpcodeMessage
+                    int sendOpcodeMessage(const std::string opcode,
+                                          chaos::common::data::CDWUniquePtr opcode_message) {
+                        return ExtDriverImpl::sendOpcodeMessage(opcode,
+                                                                ChaosMoveOperator(opcode_message));
+                    }
+                    //!Inherited by RemoteIODriverProtocol::sendInitRequest
+                    int sendInitRequest() {
+                        return ExtDriverImpl::sendInitRequest();
+                    }
+                    
+                   //!Inherited by RemoteIODriverProtocol::sendDeinitRequest
+                    int sendDeinitRequest() {
+                        return ExtDriverImpl::sendDeinitRequest();
                     }
                 };
                 

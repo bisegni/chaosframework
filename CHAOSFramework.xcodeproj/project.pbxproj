@@ -19,7 +19,6 @@
 				3211C67E1C146252003B38BF /* PBXTargetDependency */,
 				3211C6801C146252003B38BF /* PBXTargetDependency */,
 				3211C6821C146252003B38BF /* PBXTargetDependency */,
-				3211C6841C146252003B38BF /* PBXTargetDependency */,
 			);
 			name = "Compile ALL";
 			productName = "Compile ALL";
@@ -27,9 +26,6 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		32033D6F1A651DCC004F1B7D /* HTTPWANInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32033D691A651DCC004F1B7D /* HTTPWANInterface.cpp */; };
-		32033D711A651DCC004F1B7D /* HTTPWANInterfaceStringResponse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32033D6D1A651DCC004F1B7D /* HTTPWANInterfaceStringResponse.cpp */; };
-		32033D741A6524BE004F1B7D /* HTTPWANInterfaceRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32033D721A6524BE004F1B7D /* HTTPWANInterfaceRequest.cpp */; };
 		320530D71AE924ED0064275B /* AssociationControlUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320530D51AE924ED0064275B /* AssociationControlUnit.cpp */; };
 		320530DA1AE92D770064275B /* DataServiceDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320530D81AE92D770064275B /* DataServiceDataAccess.cpp */; };
 		320530DD1AE930200064275B /* MongoDBDataServiceDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320530DB1AE930200064275B /* MongoDBDataServiceDataAccess.cpp */; };
@@ -123,9 +119,6 @@
 		3211CCDE1B03402800F9B80E /* QuantumKeyConsumer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3211CCDC1B03402800F9B80E /* QuantumKeyConsumer.h */; };
 		3211FD1D1698699D00424A3C /* LiveDataFetcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3211FD1B1698699D00424A3C /* LiveDataFetcher.cpp */; };
 		3211FD1E1698699D00424A3C /* LiveDataFetcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 3211FD1C1698699D00424A3C /* LiveDataFetcher.h */; };
-		321237231A657BA0002A2D63 /* AbstractWANInterfaceResponse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 321237211A657BA0002A2D63 /* AbstractWANInterfaceResponse.cpp */; };
-		321237261A658404002A2D63 /* DefaultWANInterfaceHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 321237241A658404002A2D63 /* DefaultWANInterfaceHandler.cpp */; };
-		3212372A1A658BA9002A2D63 /* BaseWANInterfaceHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 321237281A658BA9002A2D63 /* BaseWANInterfaceHandler.cpp */; };
 		3214E7401DC1081100A67414 /* AlarmDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3214E73E1DC1081100A67414 /* AlarmDescription.cpp */; };
 		3214E7411DC1081100A67414 /* AlarmDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 3214E73F1DC1081100A67414 /* AlarmDescription.h */; };
 		3214E7441DC10B9500A67414 /* MultiSeverityAlarm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3214E7421DC10B9500A67414 /* MultiSeverityAlarm.cpp */; };
@@ -228,6 +221,20 @@
 		32401CBD1C1AD7AA00E62866 /* TreeGroupDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32401CBB1C1AD7AA00E62866 /* TreeGroupDataAccess.cpp */; };
 		32414FD71DC1EEAD00830422 /* AlarmCatalog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32414FD51DC1EEAD00830422 /* AlarmCatalog.cpp */; };
 		32414FD81DC1EEAD00830422 /* AlarmCatalog.h in Headers */ = {isa = PBXBuildFile; fileRef = 32414FD61DC1EEAD00830422 /* AlarmCatalog.h */; };
+		3243606C201F5A9800B03037 /* ChaosLoggingBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3243606A201F5A9700B03037 /* ChaosLoggingBackend.cpp */; };
+		3243606D201F5A9800B03037 /* ChaosLoggingBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 3243606B201F5A9700B03037 /* ChaosLoggingBackend.h */; };
+		324360702021C21200B03037 /* SharedManagedDirecIoDataDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 3243606E2021C21200B03037 /* SharedManagedDirecIoDataDriver.h */; };
+		324360712021C21200B03037 /* SharedManagedDirecIoDataDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3243606F2021C21200B03037 /* SharedManagedDirecIoDataDriver.cpp */; };
+		324360802024A29800B03037 /* KillCurrentCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3243607F2024A29800B03037 /* KillCurrentCommand.cpp */; };
+		3243608320285AB000B03037 /* ForwardNodeRpcMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3243608220285AB000B03037 /* ForwardNodeRpcMessage.cpp */; };
+		3243608620285BCD00B03037 /* SendRpcCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3243608520285BCD00B03037 /* SendRpcCommand.cpp */; };
+		324360892028828A00B03037 /* ClearCommandQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324360882028828A00B03037 /* ClearCommandQueue.cpp */; };
+		3243608C20288BB500B03037 /* ForwardNodeRpcMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 3243608A20288BB500B03037 /* ForwardNodeRpcMessage.h */; };
+		3243608D20288BB500B03037 /* ForwardNodeRpcMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3243608B20288BB500B03037 /* ForwardNodeRpcMessage.cpp */; };
+		3243609020288BE900B03037 /* KillCurrentCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 3243608E20288BE900B03037 /* KillCurrentCommand.h */; };
+		3243609120288BE900B03037 /* KillCurrentCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3243608F20288BE900B03037 /* KillCurrentCommand.cpp */; };
+		3243609420288C0700B03037 /* ClearCommandQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 3243609220288C0700B03037 /* ClearCommandQueue.h */; };
+		3243609520288C0700B03037 /* ClearCommandQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3243609320288C0700B03037 /* ClearCommandQueue.cpp */; };
 		3244C0C6168CB96B007C802C /* Record.h in Headers */ = {isa = PBXBuildFile; fileRef = 3244C0C5168CB96B007C802C /* Record.h */; };
 		3244D11D15ECC25800FE2F86 /* AlertEventChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3244D11B15ECC25800FE2F86 /* AlertEventChannel.cpp */; };
 		3244D11E15ECC25800FE2F86 /* AlertEventChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3244D11C15ECC25800FE2F86 /* AlertEventChannel.h */; };
@@ -327,6 +334,7 @@
 		3258D4811DF0332300D9C8D0 /* GetSnapshotDatasetsForNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3258D47F1DF0332300D9C8D0 /* GetSnapshotDatasetsForNode.cpp */; };
 		325963981D216BD800D94853 /* LoadInstanceOnUnitServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325963961D216BD800D94853 /* LoadInstanceOnUnitServer.cpp */; };
 		325B421E1C8854820038E0C2 /* HandlerMonitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325B421C1C8854820038E0C2 /* HandlerMonitor.cpp */; };
+		325C285B20B800AB007D2971 /* ShardKeyManagement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325C285A20B800AB007D2971 /* ShardKeyManagement.cpp */; };
 		325CA6BB15EE10B3007FCC12 /* EventAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325CA6B915EE10B3007FCC12 /* EventAction.cpp */; };
 		325CA6BC15EE10B3007FCC12 /* EventAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 325CA6BA15EE10B3007FCC12 /* EventAction.h */; };
 		325D2FCD1AFA19E500B2A706 /* HealtManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325D2FCB1AFA19E500B2A706 /* HealtManager.cpp */; };
@@ -336,10 +344,10 @@
 		325D2FE21AFB9C2100B2A706 /* ProcessBye.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325D2FE01AFB9C2100B2A706 /* ProcessBye.cpp */; };
 		325DE9F115EC031E00D6F34E /* EventChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325DE9EF15EC031E00D6F34E /* EventChannel.cpp */; };
 		325DE9F215EC031E00D6F34E /* EventChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 325DE9F015EC031E00D6F34E /* EventChannel.h */; };
-		325F517A1F3C3DD2000B842F /* RawDriverUnitProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F51781F3C3DD2000B842F /* RawDriverUnitProxy.cpp */; };
-		325F517B1F3C3DD2000B842F /* RawDriverUnitProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 325F51791F3C3DD2000B842F /* RawDriverUnitProxy.h */; };
-		325F517E1F3C3E11000B842F /* RawDriverHandlerWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F517C1F3C3E11000B842F /* RawDriverHandlerWrapper.cpp */; };
-		325F517F1F3C3E11000B842F /* RawDriverHandlerWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 325F517D1F3C3E11000B842F /* RawDriverHandlerWrapper.h */; };
+		325F517A1F3C3DD2000B842F /* ExternalDriverUnitProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F51781F3C3DD2000B842F /* ExternalDriverUnitProxy.cpp */; };
+		325F517B1F3C3DD2000B842F /* ExternalDriverUnitProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 325F51791F3C3DD2000B842F /* ExternalDriverUnitProxy.h */; };
+		325F517E1F3C3E11000B842F /* ExternalDriverHandlerWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F517C1F3C3E11000B842F /* ExternalDriverHandlerWrapper.cpp */; };
+		325F517F1F3C3E11000B842F /* ExternalDriverHandlerWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 325F517D1F3C3E11000B842F /* ExternalDriverHandlerWrapper.h */; };
 		325F51821F3C3E4D000B842F /* UnitProxyHandlerWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F51801F3C3E4D000B842F /* UnitProxyHandlerWrapper.cpp */; };
 		325F51831F3C3E4D000B842F /* UnitProxyHandlerWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 325F51811F3C3E4D000B842F /* UnitProxyHandlerWrapper.h */; };
 		325F86EC14D9E59D00CDF35F /* InetUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = 325F86EB14D9E59D00CDF35F /* InetUtility.h */; };
@@ -567,6 +575,10 @@
 		32761A3C1B3157CA006C8719 /* GetCommandAndTemplateDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32761A3A1B3157CA006C8719 /* GetCommandAndTemplateDescription.cpp */; };
 		32761A401B37F202006C8719 /* SubmitBatchCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32761A3E1B37F202006C8719 /* SubmitBatchCommand.cpp */; };
 		327791E21B67728300FEDD52 /* ServiceApiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327791E01B67728300FEDD52 /* ServiceApiGroup.cpp */; };
+		3277A22E20973A0100FD7307 /* CPPScriptVM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3277A22C20973A0100FD7307 /* CPPScriptVM.cpp */; };
+		3277A22F20973A0100FD7307 /* CPPScriptVM.h in Headers */ = {isa = PBXBuildFile; fileRef = 3277A22D20973A0100FD7307 /* CPPScriptVM.h */; };
+		3277A235209C4AFD00FD7307 /* ClingRootInterpreter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3277A233209C4AFD00FD7307 /* ClingRootInterpreter.cpp */; };
+		3277A236209C4AFD00FD7307 /* ClingRootInterpreter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3277A234209C4AFD00FD7307 /* ClingRootInterpreter.h */; };
 		32788D7F1F277207009BBB1E /* OpcodeDriverWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 32788D7D1F277207009BBB1E /* OpcodeDriverWrapper.h */; };
 		32788D831F27766A009BBB1E /* OpcodeExternalCommandMapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 32788D811F27766A009BBB1E /* OpcodeExternalCommandMapper.h */; };
 		327967B515DF99FB0003C6DA /* RpcClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327967B415DF99FB0003C6DA /* RpcClient.cpp */; };
@@ -720,8 +732,6 @@
 		329C1F0E1B568EA600A84D55 /* DirectIOClientConnectionSharedMetricIO.h in Headers */ = {isa = PBXBuildFile; fileRef = 329C1F0C1B568EA600A84D55 /* DirectIOClientConnectionSharedMetricIO.h */; };
 		329CFCF318CDEE2F002C37CF /* ObjectSlot.h in Headers */ = {isa = PBXBuildFile; fileRef = 329CFCF218CDEE2F002C37CF /* ObjectSlot.h */; };
 		329DEB731D2E457F0050E914 /* chaos_errors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329DEB721D2E457F0050E914 /* chaos_errors.cpp */; };
-		329F406C1A669B6300AC318A /* AbstractApiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329F406A1A669B6300AC318A /* AbstractApiGroup.cpp */; };
-		329F40701A669F6C00AC318A /* AbstractPersistenceDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329F406E1A669F6C00AC318A /* AbstractPersistenceDriver.cpp */; };
 		329FFFD1170712CE00D69CDE /* ManagedMemory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329FFFCF170712CE00D69CDE /* ManagedMemory.cpp */; };
 		329FFFD2170712CE00D69CDE /* ManagedMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 329FFFD0170712CE00D69CDE /* ManagedMemory.h */; };
 		32A116441D116F8C00FF44ED /* SearchInstancesForScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A116421D116F8C00FF44ED /* SearchInstancesForScript.cpp */; };
@@ -982,9 +992,6 @@
 		32C4EF471D4F88ED0014F3D3 /* DatasetSubject.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C4EF451D4F88ED0014F3D3 /* DatasetSubject.h */; };
 		32C5A42718D9959800C0435C /* DirectIOPerformanceSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C5A42518D9959800C0435C /* DirectIOPerformanceSession.cpp */; };
 		32C5A42818D9959800C0435C /* DirectIOPerformanceSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C5A42618D9959800C0435C /* DirectIOPerformanceSession.h */; };
-		32C7EAD71A5D9E450008DFE8 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C7EAD61A5D9E450008DFE8 /* main.cpp */; };
-		32C7EADD1A5D9EE30008DFE8 /* ChaosWANProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C7EADB1A5D9EE30008DFE8 /* ChaosWANProxy.cpp */; };
-		32C7EAE71A5EC9980008DFE8 /* AbstractWANInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C7EAE51A5EC9980008DFE8 /* AbstractWANInterface.cpp */; };
 		32C7ED161B6F8E480038BD26 /* GetFullDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C7ED141B6F8E480038BD26 /* GetFullDescription.cpp */; };
 		32C9CD3C1D51F7D30048DB4A /* PropertyDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C9CD3A1D51F7D30048DB4A /* PropertyDescription.cpp */; };
 		32C9CD3D1D51F7D30048DB4A /* PropertyDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C9CD3B1D51F7D30048DB4A /* PropertyDescription.h */; };
@@ -993,6 +1000,7 @@
 		32CAC9E81AE69F4400DC6AAB /* LoadUnloadControlUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CAC9E51AE69F3D00DC6AAB /* LoadUnloadControlUnit.cpp */; };
 		32CB736F16FE3432008575F0 /* ReaderDataService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CB736D16FE3432008575F0 /* ReaderDataService.cpp */; };
 		32CB737016FE3432008575F0 /* ReaderDataService.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CB736E16FE3432008575F0 /* ReaderDataService.h */; };
+		32CB75081FCE9DE6006DF3D0 /* InetUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CB75071FCE9DE5006DF3D0 /* InetUtility.cpp */; };
 		32CB7CE017099C8D00767FC1 /* DataCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CB7CDE17099C8D00767FC1 /* DataCache.cpp */; };
 		32CB7CE117099C8D00767FC1 /* DataCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CB7CDF17099C8D00767FC1 /* DataCache.h */; };
 		32CE2DA81C328E99004AC2A3 /* DeleteNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CE2DA61C328E98004AC2A3 /* DeleteNode.cpp */; };
@@ -1059,9 +1067,6 @@
 		32E0EF3818CDB37D00CD1808 /* ZMQDirectIOClientConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E0EF3618CDB37D00CD1808 /* ZMQDirectIOClientConnection.h */; };
 		32E2B1B41C32A60D00FCFB42 /* DeleteNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E2B1B21C32A60D00FCFB42 /* DeleteNode.cpp */; };
 		32E2B1B51C32A60D00FCFB42 /* DeleteNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E2B1B31C32A60D00FCFB42 /* DeleteNode.h */; };
-		32E6F4301E44DDBD0068320E /* ConsumerCUApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E6F42A1E44DDBD0068320E /* ConsumerCUApi.cpp */; };
-		32E6F4311E44DDBD0068320E /* ConsumerGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E6F42C1E44DDBD0068320E /* ConsumerGroup.cpp */; };
-		32E6F4321E44DDBD0068320E /* ConsumerMDSApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E6F42E1E44DDBD0068320E /* ConsumerMDSApi.cpp */; };
 		32E6F4391E48689E0068320E /* ProcessWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E6F4371E48689E0068320E /* ProcessWorker.cpp */; };
 		32E6F43C1E4869120068320E /* AbstractWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E6F43A1E4869120068320E /* AbstractWorker.cpp */; };
 		32E6F43F1E48B4260068320E /* AgentDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E6F43D1E48B4260068320E /* AgentDataAccess.cpp */; };
@@ -1073,13 +1078,9 @@
 		32E782E51EFC0F2800AD59F7 /* HTTPServerAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E782E31EFC0F2800AD59F7 /* HTTPServerAdapter.h */; };
 		32E86E431CD8A75F0038DE76 /* MessageRequestDomain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E86E411CD8A75F0038DE76 /* MessageRequestDomain.cpp */; };
 		32E86E441CD8A75F0038DE76 /* MessageRequestDomain.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E86E421CD8A75F0038DE76 /* MessageRequestDomain.h */; };
-		32E9A53E1A66A1B100545BB4 /* AbstractApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9A53C1A66A1B100545BB4 /* AbstractApi.cpp */; };
-		32E9A5461A67D02900545BB4 /* ProducerGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9A5441A67D02900545BB4 /* ProducerGroup.cpp */; };
-		32E9A5491A67D6D600545BB4 /* ProducerRegisterDatasetApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9A5471A67D6D600545BB4 /* ProducerRegisterDatasetApi.cpp */; };
-		32E9A54C1A6800E900545BB4 /* ProducerInsertDatasetApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9A54A1A6800E900545BB4 /* ProducerInsertDatasetApi.cpp */; };
-		32E9A5541A690AF600545BB4 /* ProducerGetLastDatasetApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9A5521A690AF600545BB4 /* ProducerGetLastDatasetApi.cpp */; };
-		32E9A5581A69151F00545BB4 /* PersistenceAccessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9A5571A69151F00545BB4 /* PersistenceAccessor.cpp */; };
-		32E9A55B1A691D2000545BB4 /* DefaultPersistenceDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9A5591A691D2000545BB4 /* DefaultPersistenceDriver.cpp */; };
+		32E9781A2018E41000882958 /* GetAgentForNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E978192018E41000882958 /* GetAgentForNode.cpp */; };
+		32E9781D2018E6DF00882958 /* GetAgentForNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E9781B2018E6DF00882958 /* GetAgentForNode.h */; };
+		32E9781E2018E6DF00882958 /* GetAgentForNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9781C2018E6DF00882958 /* GetAgentForNode.cpp */; };
 		32E9F48D16485012006EAF37 /* ChaosMetadataService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9F48B16485012006EAF37 /* ChaosMetadataService.cpp */; };
 		32EA501218A152BE00782435 /* DirectIOServerEndpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32EA501018A152BE00782435 /* DirectIOServerEndpoint.cpp */; };
 		32EA501318A152BE00782435 /* DirectIOServerEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 32EA501118A152BE00782435 /* DirectIOServerEndpoint.h */; };
@@ -1186,7 +1187,6 @@
 		32FF2A931E6874FF00117985 /* MongoDBDeployDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A911E6874FF00117985 /* MongoDBDeployDataAccess.cpp */; };
 		32FF2AAA1E6D79EC00117985 /* DataBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FF2AA81E6D79EC00117985 /* DataBuffer.h */; };
 		32FF2AAE1E6D8B6400117985 /* ChaosAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FF2AAC1E6D8B6400117985 /* ChaosAllocator.h */; };
-		32FF2AB11E6DAC7F00117985 /* LogWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2AAF1E6DAC7F00117985 /* LogWorker.cpp */; };
 		32FF2ABA1E6EE70300117985 /* AgentLoggingNodeManagement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2AB81E6EE70300117985 /* AgentLoggingNodeManagement.cpp */; };
 		32FF2AC21E6F10A300117985 /* AgentLoggingApiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2AC01E6F10A300117985 /* AgentLoggingApiGroup.cpp */; };
 		32FF2AC51E6F10F400117985 /* ManageNodeLogging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2AC31E6F10F400117985 /* ManageNodeLogging.cpp */; };
@@ -1195,8 +1195,6 @@
 		32FFA3EC1B00D43900C57E07 /* QuantumSlot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FFA3EA1B00D43900C57E07 /* QuantumSlot.cpp */; };
 		32FFA3ED1B00D43900C57E07 /* QuantumSlot.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FFA3EB1B00D43900C57E07 /* QuantumSlot.h */; };
 		32FFA3EE1B00F95900C57E07 /* QuantumSlotScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FFA3E61B00CEE100C57E07 /* QuantumSlotScheduler.cpp */; };
-		533D1F8B1D86E85100FC7AA5 /* ProducerRegisterJsonApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 533D1F891D86E85100FC7AA5 /* ProducerRegisterJsonApi.cpp */; };
-		533D1F8C1D86E85100FC7AA5 /* ProducerInsertJsonApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 533D1F8A1D86E85100FC7AA5 /* ProducerInsertJsonApi.cpp */; };
 		53DADAAF19C8676C00E13DB2 /* SingletonOnArguments.h in Headers */ = {isa = PBXBuildFile; fileRef = 53DADAAE19C8676C00E13DB2 /* SingletonOnArguments.h */; };
 /* End PBXBuildFile section */
 
@@ -1243,13 +1241,6 @@
 			remoteGlobalIDString = 322085D91AC5A0E100F1B71A;
 			remoteInfo = ChaosMetadataServiceClientTest;
 		};
-		3211C6831C146252003B38BF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 32C7EAD31A5D9E450008DFE8;
-			remoteInfo = ChaosWANProxy;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -1271,27 +1262,9 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
-		32C7EAD21A5D9E450008DFE8 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		32033D5F1A64016A004F1B7D /* global_type.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = global_type.h; sourceTree = "<group>"; };
-		32033D601A6401B7004F1B7D /* global_constant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = global_constant.h; sourceTree = "<group>"; };
-		32033D611A6428E2004F1B7D /* wan_interface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = wan_interface.h; sourceTree = "<group>"; };
-		32033D691A651DCC004F1B7D /* HTTPWANInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPWANInterface.cpp; sourceTree = "<group>"; };
-		32033D6A1A651DCC004F1B7D /* HTTPWANInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPWANInterface.h; sourceTree = "<group>"; };
-		32033D6D1A651DCC004F1B7D /* HTTPWANInterfaceStringResponse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPWANInterfaceStringResponse.cpp; sourceTree = "<group>"; };
-		32033D6E1A651DCC004F1B7D /* HTTPWANInterfaceStringResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPWANInterfaceStringResponse.h; sourceTree = "<group>"; };
-		32033D721A6524BE004F1B7D /* HTTPWANInterfaceRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPWANInterfaceRequest.cpp; sourceTree = "<group>"; };
-		32033D731A6524BE004F1B7D /* HTTPWANInterfaceRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPWANInterfaceRequest.h; sourceTree = "<group>"; };
 		320530D51AE924ED0064275B /* AssociationControlUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AssociationControlUnit.cpp; sourceTree = "<group>"; };
 		320530D61AE924ED0064275B /* AssociationControlUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AssociationControlUnit.h; sourceTree = "<group>"; };
 		320530D81AE92D770064275B /* DataServiceDataAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataServiceDataAccess.cpp; sourceTree = "<group>"; };
@@ -1358,6 +1331,7 @@
 		3206CE611FA767AB0059A4A4 /* bson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bson.h; sourceTree = "<group>"; };
 		3206CE991FA772DF0059A4A4 /* base64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = base64.cpp; sourceTree = "<group>"; };
 		3206CE9A1FA772DF0059A4A4 /* base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = base64.h; sourceTree = "<group>"; };
+		3208312520A74D520032BA34 /* Buffer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Buffer.hpp; sourceTree = "<group>"; };
 		3208AAB71AC56A51000860D9 /* ApiProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ApiProxy.cpp; sourceTree = "<group>"; };
 		3208AAB81AC56A51000860D9 /* ApiProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApiProxy.h; sourceTree = "<group>"; };
 		3208AABB1AC56C1C000860D9 /* GetNodeDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetNodeDescription.cpp; sourceTree = "<group>"; };
@@ -1399,12 +1373,6 @@
 		3211CCDC1B03402800F9B80E /* QuantumKeyConsumer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuantumKeyConsumer.h; sourceTree = "<group>"; };
 		3211FD1B1698699D00424A3C /* LiveDataFetcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LiveDataFetcher.cpp; sourceTree = "<group>"; };
 		3211FD1C1698699D00424A3C /* LiveDataFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveDataFetcher.h; sourceTree = "<group>"; };
-		321237201A65788E002A2D63 /* BaseWANInterfaceHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseWANInterfaceHandler.h; sourceTree = "<group>"; };
-		321237211A657BA0002A2D63 /* AbstractWANInterfaceResponse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractWANInterfaceResponse.cpp; sourceTree = "<group>"; };
-		321237221A657BA0002A2D63 /* AbstractWANInterfaceResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractWANInterfaceResponse.h; sourceTree = "<group>"; };
-		321237241A658404002A2D63 /* DefaultWANInterfaceHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DefaultWANInterfaceHandler.cpp; sourceTree = "<group>"; };
-		321237251A658404002A2D63 /* DefaultWANInterfaceHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultWANInterfaceHandler.h; sourceTree = "<group>"; };
-		321237281A658BA9002A2D63 /* BaseWANInterfaceHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BaseWANInterfaceHandler.cpp; sourceTree = "<group>"; };
 		3214E73E1DC1081100A67414 /* AlarmDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = AlarmDescription.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		3214E73F1DC1081100A67414 /* AlarmDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AlarmDescription.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		3214E7421DC10B9500A67414 /* MultiSeverityAlarm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = MultiSeverityAlarm.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
@@ -1537,6 +1505,24 @@
 		32401CBC1C1AD7AA00E62866 /* TreeGroupDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeGroupDataAccess.h; sourceTree = "<group>"; };
 		32414FD51DC1EEAD00830422 /* AlarmCatalog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlarmCatalog.cpp; sourceTree = "<group>"; };
 		32414FD61DC1EEAD00830422 /* AlarmCatalog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlarmCatalog.h; sourceTree = "<group>"; };
+		3243606A201F5A9700B03037 /* ChaosLoggingBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChaosLoggingBackend.cpp; sourceTree = "<group>"; };
+		3243606B201F5A9700B03037 /* ChaosLoggingBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChaosLoggingBackend.h; sourceTree = "<group>"; };
+		3243606E2021C21200B03037 /* SharedManagedDirecIoDataDriver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SharedManagedDirecIoDataDriver.h; sourceTree = "<group>"; };
+		3243606F2021C21200B03037 /* SharedManagedDirecIoDataDriver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SharedManagedDirecIoDataDriver.cpp; sourceTree = "<group>"; };
+		3243607E2024A29800B03037 /* KillCurrentCommand.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KillCurrentCommand.h; sourceTree = "<group>"; };
+		3243607F2024A29800B03037 /* KillCurrentCommand.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = KillCurrentCommand.cpp; sourceTree = "<group>"; };
+		3243608120285AB000B03037 /* ForwardNodeRpcMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ForwardNodeRpcMessage.h; sourceTree = "<group>"; };
+		3243608220285AB000B03037 /* ForwardNodeRpcMessage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ForwardNodeRpcMessage.cpp; sourceTree = "<group>"; };
+		3243608420285BCD00B03037 /* SendRpcCommand.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SendRpcCommand.h; sourceTree = "<group>"; };
+		3243608520285BCD00B03037 /* SendRpcCommand.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SendRpcCommand.cpp; sourceTree = "<group>"; };
+		324360872028828A00B03037 /* ClearCommandQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ClearCommandQueue.h; sourceTree = "<group>"; };
+		324360882028828A00B03037 /* ClearCommandQueue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ClearCommandQueue.cpp; sourceTree = "<group>"; };
+		3243608A20288BB500B03037 /* ForwardNodeRpcMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ForwardNodeRpcMessage.h; sourceTree = "<group>"; };
+		3243608B20288BB500B03037 /* ForwardNodeRpcMessage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ForwardNodeRpcMessage.cpp; sourceTree = "<group>"; };
+		3243608E20288BE900B03037 /* KillCurrentCommand.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KillCurrentCommand.h; sourceTree = "<group>"; };
+		3243608F20288BE900B03037 /* KillCurrentCommand.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = KillCurrentCommand.cpp; sourceTree = "<group>"; };
+		3243609220288C0700B03037 /* ClearCommandQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ClearCommandQueue.h; sourceTree = "<group>"; };
+		3243609320288C0700B03037 /* ClearCommandQueue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ClearCommandQueue.cpp; sourceTree = "<group>"; };
 		3244C0C5168CB96B007C802C /* Record.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Record.h; sourceTree = "<group>"; };
 		3244D11B15ECC25800FE2F86 /* AlertEventChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlertEventChannel.cpp; sourceTree = "<group>"; };
 		3244D11C15ECC25800FE2F86 /* AlertEventChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlertEventChannel.h; sourceTree = "<group>"; };
@@ -1658,6 +1644,8 @@
 		325963971D216BD800D94853 /* LoadInstanceOnUnitServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadInstanceOnUnitServer.h; sourceTree = "<group>"; };
 		325B421C1C8854820038E0C2 /* HandlerMonitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HandlerMonitor.cpp; sourceTree = "<group>"; };
 		325B421D1C8854820038E0C2 /* HandlerMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HandlerMonitor.h; sourceTree = "<group>"; };
+		325C285920B800AB007D2971 /* ShardKeyManagement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShardKeyManagement.h; sourceTree = "<group>"; };
+		325C285A20B800AB007D2971 /* ShardKeyManagement.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ShardKeyManagement.cpp; sourceTree = "<group>"; };
 		325CA6B915EE10B3007FCC12 /* EventAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventAction.cpp; sourceTree = "<group>"; };
 		325CA6BA15EE10B3007FCC12 /* EventAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventAction.h; sourceTree = "<group>"; };
 		325D2FCB1AFA19E500B2A706 /* HealtManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HealtManager.cpp; sourceTree = "<group>"; };
@@ -1670,10 +1658,10 @@
 		325D2FE11AFB9C2100B2A706 /* ProcessBye.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessBye.h; sourceTree = "<group>"; };
 		325DE9EF15EC031E00D6F34E /* EventChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventChannel.cpp; sourceTree = "<group>"; };
 		325DE9F015EC031E00D6F34E /* EventChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventChannel.h; sourceTree = "<group>"; };
-		325F51781F3C3DD2000B842F /* RawDriverUnitProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RawDriverUnitProxy.cpp; sourceTree = "<group>"; };
-		325F51791F3C3DD2000B842F /* RawDriverUnitProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RawDriverUnitProxy.h; sourceTree = "<group>"; };
-		325F517C1F3C3E11000B842F /* RawDriverHandlerWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RawDriverHandlerWrapper.cpp; sourceTree = "<group>"; };
-		325F517D1F3C3E11000B842F /* RawDriverHandlerWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RawDriverHandlerWrapper.h; sourceTree = "<group>"; };
+		325F51781F3C3DD2000B842F /* ExternalDriverUnitProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExternalDriverUnitProxy.cpp; sourceTree = "<group>"; };
+		325F51791F3C3DD2000B842F /* ExternalDriverUnitProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExternalDriverUnitProxy.h; sourceTree = "<group>"; };
+		325F517C1F3C3E11000B842F /* ExternalDriverHandlerWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExternalDriverHandlerWrapper.cpp; sourceTree = "<group>"; };
+		325F517D1F3C3E11000B842F /* ExternalDriverHandlerWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExternalDriverHandlerWrapper.h; sourceTree = "<group>"; };
 		325F51801F3C3E4D000B842F /* UnitProxyHandlerWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnitProxyHandlerWrapper.cpp; sourceTree = "<group>"; };
 		325F51811F3C3E4D000B842F /* UnitProxyHandlerWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnitProxyHandlerWrapper.h; sourceTree = "<group>"; };
 		325F86EB14D9E59D00CDF35F /* InetUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InetUtility.h; sourceTree = "<group>"; };
@@ -1971,6 +1959,10 @@
 		32761A3F1B37F202006C8719 /* SubmitBatchCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubmitBatchCommand.h; sourceTree = "<group>"; };
 		327791E01B67728300FEDD52 /* ServiceApiGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceApiGroup.cpp; sourceTree = "<group>"; };
 		327791E11B67728300FEDD52 /* ServiceApiGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceApiGroup.h; sourceTree = "<group>"; };
+		3277A22C20973A0100FD7307 /* CPPScriptVM.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CPPScriptVM.cpp; sourceTree = "<group>"; };
+		3277A22D20973A0100FD7307 /* CPPScriptVM.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CPPScriptVM.h; sourceTree = "<group>"; };
+		3277A233209C4AFD00FD7307 /* ClingRootInterpreter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ClingRootInterpreter.cpp; sourceTree = "<group>"; };
+		3277A234209C4AFD00FD7307 /* ClingRootInterpreter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ClingRootInterpreter.h; sourceTree = "<group>"; };
 		32788D7D1F277207009BBB1E /* OpcodeDriverWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpcodeDriverWrapper.h; sourceTree = "<group>"; };
 		32788D811F27766A009BBB1E /* OpcodeExternalCommandMapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpcodeExternalCommandMapper.h; sourceTree = "<group>"; };
 		327967B415DF99FB0003C6DA /* RpcClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = RpcClient.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
@@ -2171,10 +2163,6 @@
 		329CFCF218CDEE2F002C37CF /* ObjectSlot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectSlot.h; sourceTree = "<group>"; };
 		329DEB721D2E457F0050E914 /* chaos_errors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = chaos_errors.cpp; sourceTree = "<group>"; };
 		329DEB741D2E899A0050E914 /* service_error.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = service_error.cpp; sourceTree = "<group>"; };
-		329F406A1A669B6300AC318A /* AbstractApiGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractApiGroup.cpp; sourceTree = "<group>"; };
-		329F406B1A669B6300AC318A /* AbstractApiGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractApiGroup.h; sourceTree = "<group>"; };
-		329F406E1A669F6C00AC318A /* AbstractPersistenceDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractPersistenceDriver.cpp; sourceTree = "<group>"; };
-		329F406F1A669F6C00AC318A /* AbstractPersistenceDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractPersistenceDriver.h; sourceTree = "<group>"; };
 		329FFFCF170712CE00D69CDE /* ManagedMemory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ManagedMemory.cpp; sourceTree = "<group>"; };
 		329FFFD0170712CE00D69CDE /* ManagedMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManagedMemory.h; sourceTree = "<group>"; };
 		32A116421D116F8C00FF44ED /* SearchInstancesForScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SearchInstancesForScript.cpp; sourceTree = "<group>"; };
@@ -2498,14 +2486,7 @@
 		32C4EF451D4F88ED0014F3D3 /* DatasetSubject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatasetSubject.h; sourceTree = "<group>"; };
 		32C5A42518D9959800C0435C /* DirectIOPerformanceSession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOPerformanceSession.cpp; sourceTree = "<group>"; };
 		32C5A42618D9959800C0435C /* DirectIOPerformanceSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOPerformanceSession.h; sourceTree = "<group>"; };
-		32C7EAD41A5D9E450008DFE8 /* ChaosWANProxy */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ChaosWANProxy; sourceTree = BUILT_PRODUCTS_DIR; };
-		32C7EAD61A5D9E450008DFE8 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		32C7EADB1A5D9EE30008DFE8 /* ChaosWANProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChaosWANProxy.cpp; sourceTree = "<group>"; };
-		32C7EADC1A5D9EE30008DFE8 /* ChaosWANProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChaosWANProxy.h; sourceTree = "<group>"; };
-		32C7EADE1A5D9FA30008DFE8 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		32C7EADF1A5E868C0008DFE8 /* UrlAccessibleService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UrlAccessibleService.h; sourceTree = "<group>"; };
-		32C7EAE51A5EC9980008DFE8 /* AbstractWANInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractWANInterface.cpp; sourceTree = "<group>"; };
-		32C7EAE61A5EC9980008DFE8 /* AbstractWANInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractWANInterface.h; sourceTree = "<group>"; };
 		32C7ED141B6F8E480038BD26 /* GetFullDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetFullDescription.cpp; sourceTree = "<group>"; };
 		32C7ED151B6F8E480038BD26 /* GetFullDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetFullDescription.h; sourceTree = "<group>"; };
 		32C9CD3A1D51F7D30048DB4A /* PropertyDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PropertyDescription.cpp; sourceTree = "<group>"; };
@@ -2518,6 +2499,7 @@
 		32CAC9E61AE69F3D00DC6AAB /* LoadUnloadControlUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadUnloadControlUnit.h; sourceTree = "<group>"; };
 		32CB736D16FE3432008575F0 /* ReaderDataService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReaderDataService.cpp; sourceTree = "<group>"; };
 		32CB736E16FE3432008575F0 /* ReaderDataService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReaderDataService.h; sourceTree = "<group>"; };
+		32CB75071FCE9DE5006DF3D0 /* InetUtility.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InetUtility.cpp; sourceTree = "<group>"; };
 		32CB7CDE17099C8D00767FC1 /* DataCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataCache.cpp; sourceTree = "<group>"; };
 		32CB7CDF17099C8D00767FC1 /* DataCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataCache.h; sourceTree = "<group>"; };
 		32CE2DA61C328E98004AC2A3 /* DeleteNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeleteNode.cpp; sourceTree = "<group>"; };
@@ -2607,12 +2589,6 @@
 		32E2B1B21C32A60D00FCFB42 /* DeleteNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeleteNode.cpp; sourceTree = "<group>"; };
 		32E2B1B31C32A60D00FCFB42 /* DeleteNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeleteNode.h; sourceTree = "<group>"; };
 		32E6F4281E44D7D30068320E /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
-		32E6F42A1E44DDBD0068320E /* ConsumerCUApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConsumerCUApi.cpp; sourceTree = "<group>"; };
-		32E6F42B1E44DDBD0068320E /* ConsumerCUApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConsumerCUApi.h; sourceTree = "<group>"; };
-		32E6F42C1E44DDBD0068320E /* ConsumerGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConsumerGroup.cpp; sourceTree = "<group>"; };
-		32E6F42D1E44DDBD0068320E /* ConsumerGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConsumerGroup.h; sourceTree = "<group>"; };
-		32E6F42E1E44DDBD0068320E /* ConsumerMDSApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConsumerMDSApi.cpp; sourceTree = "<group>"; };
-		32E6F42F1E44DDBD0068320E /* ConsumerMDSApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConsumerMDSApi.h; sourceTree = "<group>"; };
 		32E6F4371E48689E0068320E /* ProcessWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcessWorker.cpp; sourceTree = "<group>"; };
 		32E6F4381E48689E0068320E /* ProcessWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessWorker.h; sourceTree = "<group>"; };
 		32E6F43A1E4869120068320E /* AbstractWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractWorker.cpp; sourceTree = "<group>"; };
@@ -2634,23 +2610,10 @@
 		32E782E31EFC0F2800AD59F7 /* HTTPServerAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPServerAdapter.h; sourceTree = "<group>"; };
 		32E86E411CD8A75F0038DE76 /* MessageRequestDomain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageRequestDomain.cpp; sourceTree = "<group>"; };
 		32E86E421CD8A75F0038DE76 /* MessageRequestDomain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageRequestDomain.h; sourceTree = "<group>"; };
-		32E977561A6E65B800D89C15 /* api_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = api_types.h; sourceTree = "<group>"; };
-		32E9A53C1A66A1B100545BB4 /* AbstractApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractApi.cpp; sourceTree = "<group>"; };
-		32E9A53D1A66A1B100545BB4 /* AbstractApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractApi.h; sourceTree = "<group>"; };
-		32E9A53F1A66A1C300545BB4 /* api.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = api.h; sourceTree = "<group>"; };
-		32E9A5421A66C45E00545BB4 /* TypedConstrainedHashMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypedConstrainedHashMap.h; sourceTree = "<group>"; };
-		32E9A5441A67D02900545BB4 /* ProducerGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProducerGroup.cpp; sourceTree = "<group>"; };
-		32E9A5451A67D02900545BB4 /* ProducerGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProducerGroup.h; sourceTree = "<group>"; };
-		32E9A5471A67D6D600545BB4 /* ProducerRegisterDatasetApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProducerRegisterDatasetApi.cpp; sourceTree = "<group>"; };
-		32E9A5481A67D6D600545BB4 /* ProducerRegisterDatasetApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProducerRegisterDatasetApi.h; sourceTree = "<group>"; };
-		32E9A54A1A6800E900545BB4 /* ProducerInsertDatasetApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProducerInsertDatasetApi.cpp; sourceTree = "<group>"; };
-		32E9A54B1A6800E900545BB4 /* ProducerInsertDatasetApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProducerInsertDatasetApi.h; sourceTree = "<group>"; };
-		32E9A5521A690AF600545BB4 /* ProducerGetLastDatasetApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProducerGetLastDatasetApi.cpp; sourceTree = "<group>"; };
-		32E9A5531A690AF600545BB4 /* ProducerGetLastDatasetApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProducerGetLastDatasetApi.h; sourceTree = "<group>"; };
-		32E9A5561A69146C00545BB4 /* PersistenceAccessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PersistenceAccessor.h; sourceTree = "<group>"; };
-		32E9A5571A69151F00545BB4 /* PersistenceAccessor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PersistenceAccessor.cpp; sourceTree = "<group>"; };
-		32E9A5591A691D2000545BB4 /* DefaultPersistenceDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DefaultPersistenceDriver.cpp; sourceTree = "<group>"; };
-		32E9A55A1A691D2000545BB4 /* DefaultPersistenceDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultPersistenceDriver.h; sourceTree = "<group>"; };
+		32E978182018E41000882958 /* GetAgentForNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GetAgentForNode.h; sourceTree = "<group>"; };
+		32E978192018E41000882958 /* GetAgentForNode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GetAgentForNode.cpp; sourceTree = "<group>"; };
+		32E9781B2018E6DF00882958 /* GetAgentForNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GetAgentForNode.h; sourceTree = "<group>"; };
+		32E9781C2018E6DF00882958 /* GetAgentForNode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GetAgentForNode.cpp; sourceTree = "<group>"; };
 		32E9F48B16485012006EAF37 /* ChaosMetadataService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChaosMetadataService.cpp; sourceTree = "<group>"; };
 		32E9F48C16485012006EAF37 /* ChaosMetadataService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChaosMetadataService.h; sourceTree = "<group>"; };
 		32EA501018A152BE00782435 /* DirectIOServerEndpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOServerEndpoint.cpp; sourceTree = "<group>"; };
@@ -2787,8 +2750,6 @@
 		32FF2A921E6874FF00117985 /* MongoDBDeployDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MongoDBDeployDataAccess.h; sourceTree = "<group>"; };
 		32FF2AA81E6D79EC00117985 /* DataBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataBuffer.h; sourceTree = "<group>"; };
 		32FF2AAC1E6D8B6400117985 /* ChaosAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChaosAllocator.h; sourceTree = "<group>"; };
-		32FF2AAF1E6DAC7F00117985 /* LogWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LogWorker.cpp; sourceTree = "<group>"; };
-		32FF2AB01E6DAC7F00117985 /* LogWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogWorker.h; sourceTree = "<group>"; };
 		32FF2AB81E6EE70300117985 /* AgentLoggingNodeManagement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = AgentLoggingNodeManagement.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		32FF2AB91E6EE70300117985 /* AgentLoggingNodeManagement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AgentLoggingNodeManagement.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		32FF2AC01E6F10A300117985 /* AgentLoggingApiGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AgentLoggingApiGroup.cpp; sourceTree = "<group>"; };
@@ -2801,10 +2762,6 @@
 		32FFA3E71B00CEE100C57E07 /* QuantumSlotScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuantumSlotScheduler.h; sourceTree = "<group>"; };
 		32FFA3EA1B00D43900C57E07 /* QuantumSlot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QuantumSlot.cpp; sourceTree = "<group>"; };
 		32FFA3EB1B00D43900C57E07 /* QuantumSlot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuantumSlot.h; sourceTree = "<group>"; };
-		533D1F891D86E85100FC7AA5 /* ProducerRegisterJsonApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProducerRegisterJsonApi.cpp; sourceTree = "<group>"; };
-		533D1F8A1D86E85100FC7AA5 /* ProducerInsertJsonApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProducerInsertJsonApi.cpp; sourceTree = "<group>"; };
-		533D1F8D1D8836C400FC7AA5 /* ProducerRegisterJsonApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProducerRegisterJsonApi.h; sourceTree = "<group>"; };
-		533D1F8E1D8836C400FC7AA5 /* ProducerInsertJsonApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProducerInsertJsonApi.h; sourceTree = "<group>"; };
 		53DADAAE19C8676C00E13DB2 /* SingletonOnArguments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SingletonOnArguments.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -2865,29 +2822,9 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		32C7EAD11A5D9E450008DFE8 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		32033D681A651D9E004F1B7D /* http */ = {
-			isa = PBXGroup;
-			children = (
-				32033D691A651DCC004F1B7D /* HTTPWANInterface.cpp */,
-				32033D6A1A651DCC004F1B7D /* HTTPWANInterface.h */,
-				32033D6D1A651DCC004F1B7D /* HTTPWANInterfaceStringResponse.cpp */,
-				32033D6E1A651DCC004F1B7D /* HTTPWANInterfaceStringResponse.h */,
-				32033D721A6524BE004F1B7D /* HTTPWANInterfaceRequest.cpp */,
-				32033D731A6524BE004F1B7D /* HTTPWANInterfaceRequest.h */,
-			);
-			path = http;
-			sourceTree = "<group>";
-		};
 		320642CE167CEA8A00D63D71 /* entity_db */ = {
 			isa = PBXGroup;
 			children = (
@@ -2996,6 +2933,12 @@
 				32B1E80F1B2EDAE900221E49 /* CommandInstanceSubmit.h */,
 				32761A361B314697006C8719 /* GetCommandAndTemplateDescription.cpp */,
 				32761A371B314697006C8719 /* GetCommandAndTemplateDescription.h */,
+				3243608B20288BB500B03037 /* ForwardNodeRpcMessage.cpp */,
+				3243608A20288BB500B03037 /* ForwardNodeRpcMessage.h */,
+				3243608F20288BE900B03037 /* KillCurrentCommand.cpp */,
+				3243608E20288BE900B03037 /* KillCurrentCommand.h */,
+				3243609320288C0700B03037 /* ClearCommandQueue.cpp */,
+				3243609220288C0700B03037 /* ClearCommandQueue.h */,
 				3221D7321CF5F2BA001BE971 /* node.h */,
 			);
 			path = node;
@@ -3058,23 +3001,6 @@
 				3211FD1C1698699D00424A3C /* LiveDataFetcher.h */,
 			);
 			path = caching;
-			sourceTree = "<group>";
-		};
-		321237271A658882002A2D63 /* api */ = {
-			isa = PBXGroup;
-			children = (
-				32E6F4291E44DDA60068320E /* consumer */,
-				32E9A5431A67D00A00545BB4 /* producer */,
-				329F406A1A669B6300AC318A /* AbstractApiGroup.cpp */,
-				329F406B1A669B6300AC318A /* AbstractApiGroup.h */,
-				32E9A53C1A66A1B100545BB4 /* AbstractApi.cpp */,
-				32E9A53D1A66A1B100545BB4 /* AbstractApi.h */,
-				32E9A5571A69151F00545BB4 /* PersistenceAccessor.cpp */,
-				32E9A5561A69146C00545BB4 /* PersistenceAccessor.h */,
-				32E9A53F1A66A1C300545BB4 /* api.h */,
-				32E977561A6E65B800D89C15 /* api_types.h */,
-			);
-			path = api;
 			sourceTree = "<group>";
 		};
 		3214EF0C1D466F41004DB689 /* manipulation */ = {
@@ -3641,10 +3567,10 @@
 		325F51771F3C3D89000B842F /* raw_driver */ = {
 			isa = PBXGroup;
 			children = (
-				325F51781F3C3DD2000B842F /* RawDriverUnitProxy.cpp */,
-				325F51791F3C3DD2000B842F /* RawDriverUnitProxy.h */,
-				325F517C1F3C3E11000B842F /* RawDriverHandlerWrapper.cpp */,
-				325F517D1F3C3E11000B842F /* RawDriverHandlerWrapper.h */,
+				325F51781F3C3DD2000B842F /* ExternalDriverUnitProxy.cpp */,
+				325F51791F3C3DD2000B842F /* ExternalDriverUnitProxy.h */,
+				325F517C1F3C3E11000B842F /* ExternalDriverHandlerWrapper.cpp */,
+				325F517D1F3C3E11000B842F /* ExternalDriverHandlerWrapper.h */,
 			);
 			path = raw_driver;
 			sourceTree = "<group>";
@@ -3672,13 +3598,11 @@
 				323236C9164573C60052CE06 /* ChaosMetadataService */,
 				3264139A1E44ACE60035E175 /* ChaosAgent */,
 				322085DB1AC5A0E200F1B71A /* ChaosMetadataServiceClientTest */,
-				32C7EAD51A5D9E450008DFE8 /* ChaosWANProxy */,
 				32F9C79A1E81943F00D4B250 /* CouchTest */,
 				3230BEBB1817A9E100EA5793 /* libchaos_common.dylib */,
 				3230BEBC1817A9E100EA5793 /* libchaos_cutoolkit.dylib */,
 				3230BEBD1817A9E100EA5793 /* libchaos_uitoolkit.dylib */,
 				3230BEBE1817A9E100EA5793 /* ChaosMetadataService */,
-				32C7EAD41A5D9E450008DFE8 /* ChaosWANProxy */,
 				32661C661AA73D5B00F1A721 /* libchaos_metadata_service_client.dylib */,
 				322085DA1AC5A0E100F1B71A /* ChaosMetadataServiceClientTest */,
 				326413991E44ACE60035E175 /* ChaosAgent */,
@@ -4015,6 +3939,8 @@
 				326ACF7C1E01525D00AD011E /* MongoDBObjectStorageDriver.h */,
 				326ACF791E01525D00AD011E /* MongoDBObjectStorageDataAccess.cpp */,
 				326ACF7A1E01525D00AD011E /* MongoDBObjectStorageDataAccess.h */,
+				325C285A20B800AB007D2971 /* ShardKeyManagement.cpp */,
+				325C285920B800AB007D2971 /* ShardKeyManagement.h */,
 			);
 			path = mongodb;
 			sourceTree = "<group>";
@@ -4154,6 +4080,7 @@
 				3230BEC1181A6ADB00EA5793 /* DatasetDB.h */,
 				3289335B1D3648F000FBA95B /* TemplatedDataSDWrapper.h */,
 				32CFD5DE1B27097C0060AED5 /* CDataWrapperKeyValueSetter.h */,
+				3208312520A74D520032BA34 /* Buffer.hpp */,
 			);
 			path = data;
 			sourceTree = "<group>";
@@ -4213,6 +4140,8 @@
 				32EFCD6518BDE3A400B5EB77 /* IODirectIODriver.h */,
 				320E2FBD1D7EB9CB0077E8FE /* QueryCursor.cpp */,
 				320E2FBE1D7EB9CB0077E8FE /* QueryCursor.h */,
+				3243606F2021C21200B03037 /* SharedManagedDirecIoDataDriver.cpp */,
+				3243606E2021C21200B03037 /* SharedManagedDirecIoDataDriver.h */,
 			);
 			path = io;
 			sourceTree = "<group>";
@@ -4312,6 +4241,7 @@
 				326DB42C14B38BC00018A8D0 /* TimingUtil.h */,
 				326DB42D14B38BC00018A8D0 /* UUIDUtil.h */,
 				32AAD78D14CD95FD005A097C /* Atomic.h */,
+				32CB75071FCE9DE5006DF3D0 /* InetUtility.cpp */,
 				325F86EB14D9E59D00CDF35F /* InetUtility.h */,
 				32ED648D14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h */,
 				32DF603515E14C7700312C94 /* NamedService.cpp */,
@@ -4528,6 +4458,8 @@
 				32568C8A1B3D54650006988C /* UpdatePropertyCommand.h */,
 				32761A3E1B37F202006C8719 /* SubmitBatchCommand.cpp */,
 				32761A3F1B37F202006C8719 /* SubmitBatchCommand.h */,
+				3243608520285BCD00B03037 /* SendRpcCommand.cpp */,
+				3243608420285BCD00B03037 /* SendRpcCommand.h */,
 				32568C851B39A5180006988C /* node_batch.h */,
 			);
 			path = node;
@@ -4564,6 +4496,17 @@
 				32FC49A31E0807F70087D82C /* GetVariable.h */,
 			);
 			path = service;
+			sourceTree = "<group>";
+		};
+		3277A22B209739C500FD7307 /* cling */ = {
+			isa = PBXGroup;
+			children = (
+				3277A22C20973A0100FD7307 /* CPPScriptVM.cpp */,
+				3277A22D20973A0100FD7307 /* CPPScriptVM.h */,
+				3277A233209C4AFD00FD7307 /* ClingRootInterpreter.cpp */,
+				3277A234209C4AFD00FD7307 /* ClingRootInterpreter.h */,
+			);
+			path = cling;
 			sourceTree = "<group>";
 		};
 		327F39A41AEAA1EB0000C845 /* data_service */ = {
@@ -4734,6 +4677,12 @@
 				32761A3B1B3157CA006C8719 /* GetCommandAndTemplateDescription.h */,
 				32B1E8171B2FFCE500221E49 /* CommandCommonUtility.cpp */,
 				32B1E8181B2FFCE500221E49 /* CommandCommonUtility.h */,
+				3243608220285AB000B03037 /* ForwardNodeRpcMessage.cpp */,
+				3243608120285AB000B03037 /* ForwardNodeRpcMessage.h */,
+				3243607F2024A29800B03037 /* KillCurrentCommand.cpp */,
+				3243607E2024A29800B03037 /* KillCurrentCommand.h */,
+				324360882028828A00B03037 /* ClearCommandQueue.cpp */,
+				324360872028828A00B03037 /* ClearCommandQueue.h */,
 			);
 			path = node;
 			sourceTree = "<group>";
@@ -4781,17 +4730,6 @@
 				322A3BC71CEE1AA900FAD9DA /* ScriptableExecutionUnit.h */,
 			);
 			path = script;
-			sourceTree = "<group>";
-		};
-		329F406D1A669F0300AC318A /* persistence */ = {
-			isa = PBXGroup;
-			children = (
-				329F406E1A669F6C00AC318A /* AbstractPersistenceDriver.cpp */,
-				329F406F1A669F6C00AC318A /* AbstractPersistenceDriver.h */,
-				32E9A5591A691D2000545BB4 /* DefaultPersistenceDriver.cpp */,
-				32E9A55A1A691D2000545BB4 /* DefaultPersistenceDriver.h */,
-			);
-			path = persistence;
 			sourceTree = "<group>";
 		};
 		329FFFCE1707128600D69CDE /* memory */ = {
@@ -5080,6 +5018,8 @@
 				32BE0ACB1E4B44B90007764C /* AgentApiGroup.h */,
 				32FF2A591E6579A400117985 /* NodeOperation.cpp */,
 				32FF2A5A1E6579A400117985 /* NodeOperation.h */,
+				32E978192018E41000882958 /* GetAgentForNode.cpp */,
+				32E978182018E41000882958 /* GetAgentForNode.h */,
 				32990B231E521C8400A4AF8F /* LoadAgentDescription.cpp */,
 				32990B241E521C8400A4AF8F /* LoadAgentDescription.h */,
 				32BE0ACE1E4B45DB0007764C /* ListNodeForAgent.cpp */,
@@ -5122,6 +5062,8 @@
 				32AC6F191EC4AC1F00FCCD85 /* SetManagementConfiguration.h */,
 				32AC6F1C1EC4AC2B00FCCD85 /* GetManagementConfiguration.cpp */,
 				32AC6F1D1EC4AC2B00FCCD85 /* GetManagementConfiguration.h */,
+				32E9781C2018E6DF00882958 /* GetAgentForNode.cpp */,
+				32E9781B2018E6DF00882958 /* GetAgentForNode.h */,
 				32990B0E1E4C6F5000A4AF8F /* agent.h */,
 			);
 			path = agent;
@@ -5132,6 +5074,8 @@
 			children = (
 				32BE864515A0CEAF00818C39 /* LogManager.cpp */,
 				32BE864615A0CEAF00818C39 /* LogManager.h */,
+				3243606A201F5A9700B03037 /* ChaosLoggingBackend.cpp */,
+				3243606B201F5A9700B03037 /* ChaosLoggingBackend.h */,
 			);
 			path = log;
 			sourceTree = "<group>";
@@ -5235,25 +5179,6 @@
 			path = api;
 			sourceTree = "<group>";
 		};
-		32C7EAD51A5D9E450008DFE8 /* ChaosWANProxy */ = {
-			isa = PBXGroup;
-			children = (
-				32C7EADE1A5D9FA30008DFE8 /* CMakeLists.txt */,
-				32C7EAD61A5D9E450008DFE8 /* main.cpp */,
-				32C7EADB1A5D9EE30008DFE8 /* ChaosWANProxy.cpp */,
-				32C7EADC1A5D9EE30008DFE8 /* ChaosWANProxy.h */,
-				32033D5F1A64016A004F1B7D /* global_type.h */,
-				32033D601A6401B7004F1B7D /* global_constant.h */,
-				321237241A658404002A2D63 /* DefaultWANInterfaceHandler.cpp */,
-				321237251A658404002A2D63 /* DefaultWANInterfaceHandler.h */,
-				32C7EAE41A5EC9590008DFE8 /* wan_interface */,
-				321237271A658882002A2D63 /* api */,
-				329F406D1A669F0300AC318A /* persistence */,
-				32E9A5411A66C41E00545BB4 /* utility */,
-			);
-			path = ChaosWANProxy;
-			sourceTree = "<group>";
-		};
 		32C7EAE01A5EC0D60008DFE8 /* persistence */ = {
 			isa = PBXGroup;
 			children = (
@@ -5265,21 +5190,6 @@
 				3235FDD01A6FF66100EC83A9 /* data_access */,
 			);
 			path = persistence;
-			sourceTree = "<group>";
-		};
-		32C7EAE41A5EC9590008DFE8 /* wan_interface */ = {
-			isa = PBXGroup;
-			children = (
-				32033D681A651D9E004F1B7D /* http */,
-				32C7EAE51A5EC9980008DFE8 /* AbstractWANInterface.cpp */,
-				32C7EAE61A5EC9980008DFE8 /* AbstractWANInterface.h */,
-				321237211A657BA0002A2D63 /* AbstractWANInterfaceResponse.cpp */,
-				321237221A657BA0002A2D63 /* AbstractWANInterfaceResponse.h */,
-				321237281A658BA9002A2D63 /* BaseWANInterfaceHandler.cpp */,
-				321237201A65788E002A2D63 /* BaseWANInterfaceHandler.h */,
-				32033D611A6428E2004F1B7D /* wan_interface.h */,
-			);
-			path = wan_interface;
 			sourceTree = "<group>";
 		};
 		32CB737116FE40F9008575F0 /* cache */ = {
@@ -5477,19 +5387,6 @@
 			path = script;
 			sourceTree = "<group>";
 		};
-		32E6F4291E44DDA60068320E /* consumer */ = {
-			isa = PBXGroup;
-			children = (
-				32E6F42A1E44DDBD0068320E /* ConsumerCUApi.cpp */,
-				32E6F42B1E44DDBD0068320E /* ConsumerCUApi.h */,
-				32E6F42C1E44DDBD0068320E /* ConsumerGroup.cpp */,
-				32E6F42D1E44DDBD0068320E /* ConsumerGroup.h */,
-				32E6F42E1E44DDBD0068320E /* ConsumerMDSApi.cpp */,
-				32E6F42F1E44DDBD0068320E /* ConsumerMDSApi.h */,
-			);
-			path = consumer;
-			sourceTree = "<group>";
-		};
 		32E6F4361E4868760068320E /* worker */ = {
 			isa = PBXGroup;
 			children = (
@@ -5497,8 +5394,6 @@
 				32E6F4381E48689E0068320E /* ProcessWorker.h */,
 				32FF2A671E672CAA00117985 /* DeployWorker.cpp */,
 				32FF2A681E672CAA00117985 /* DeployWorker.h */,
-				32FF2AAF1E6DAC7F00117985 /* LogWorker.cpp */,
-				32FF2AB01E6DAC7F00117985 /* LogWorker.h */,
 			);
 			path = worker;
 			sourceTree = "<group>";
@@ -5524,6 +5419,7 @@
 		32E727031CE200380094F826 /* script */ = {
 			isa = PBXGroup;
 			children = (
+				3277A22B209739C500FD7307 /* cling */,
 				32612AB41CE2053D00F3B8F3 /* lua */,
 				32612ABB1CE209BB00F3B8F3 /* ScriptManager.cpp */,
 				32612ABC1CE209BB00F3B8F3 /* ScriptManager.h */,
@@ -5590,33 +5486,6 @@
 				32E782D71EFC095500AD59F7 /* mongoose.h */,
 			);
 			path = additional_lib;
-			sourceTree = "<group>";
-		};
-		32E9A5411A66C41E00545BB4 /* utility */ = {
-			isa = PBXGroup;
-			children = (
-				32E9A5421A66C45E00545BB4 /* TypedConstrainedHashMap.h */,
-			);
-			path = utility;
-			sourceTree = "<group>";
-		};
-		32E9A5431A67D00A00545BB4 /* producer */ = {
-			isa = PBXGroup;
-			children = (
-				533D1F8D1D8836C400FC7AA5 /* ProducerRegisterJsonApi.h */,
-				533D1F8E1D8836C400FC7AA5 /* ProducerInsertJsonApi.h */,
-				533D1F891D86E85100FC7AA5 /* ProducerRegisterJsonApi.cpp */,
-				533D1F8A1D86E85100FC7AA5 /* ProducerInsertJsonApi.cpp */,
-				32E9A5441A67D02900545BB4 /* ProducerGroup.cpp */,
-				32E9A5451A67D02900545BB4 /* ProducerGroup.h */,
-				32E9A5471A67D6D600545BB4 /* ProducerRegisterDatasetApi.cpp */,
-				32E9A5481A67D6D600545BB4 /* ProducerRegisterDatasetApi.h */,
-				32E9A54A1A6800E900545BB4 /* ProducerInsertDatasetApi.cpp */,
-				32E9A54B1A6800E900545BB4 /* ProducerInsertDatasetApi.h */,
-				32E9A5521A690AF600545BB4 /* ProducerGetLastDatasetApi.cpp */,
-				32E9A5531A690AF600545BB4 /* ProducerGetLastDatasetApi.h */,
-			);
-			path = producer;
 			sourceTree = "<group>";
 		};
 		32EBDEF31B4E586000278C42 /* metric */ = {
@@ -5774,13 +5643,13 @@
 			files = (
 				329065E41F34763F00356572 /* connection.h in Headers */,
 				324D08AC1F31D5EA00836E29 /* ConnectionManager.h in Headers */,
-				325F517B1F3C3DD2000B842F /* RawDriverUnitProxy.h in Headers */,
+				325F517B1F3C3DD2000B842F /* ExternalDriverUnitProxy.h in Headers */,
 				324D08B61F31D7F300836E29 /* AbstractUnitProxy.h in Headers */,
 				3229005F1F3477D800717A38 /* micro_unit_toolkit.h in Headers */,
 				324D08A21F30CE2B00836E29 /* ChaosMicroUnitToolkit.h in Headers */,
 				324D08B11F31D70600836E29 /* AbstractConnectionAdapter.h in Headers */,
 				324D08D51F31F5A000836E29 /* mongoose.h in Headers */,
-				325F517F1F3C3E11000B842F /* RawDriverHandlerWrapper.h in Headers */,
+				325F517F1F3C3E11000B842F /* ExternalDriverHandlerWrapper.h in Headers */,
 				325F51831F3C3E4D000B842F /* UnitProxyHandlerWrapper.h in Headers */,
 				324D08C61F31EC5000836E29 /* HTTPConnectionAdapter.h in Headers */,
 				324BE84C1F3CA31A00FFDA02 /* base64.h in Headers */,
@@ -5851,12 +5720,14 @@
 				3214E7451DC10B9500A67414 /* MultiSeverityAlarm.h in Headers */,
 				32C3546A178860EB009ED581 /* decl.hpp in Headers */,
 				32612ACA1CE210BC00F3B8F3 /* script_types.h in Headers */,
+				3243606D201F5A9800B03037 /* ChaosLoggingBackend.h in Headers */,
 				32A88BDE1CF8228A001DBAF5 /* lprefix.h in Headers */,
 				326DB47E14B38BC00018A8D0 /* CObjectProcessingQueueListener.h in Headers */,
 				326DB47F14B38BC00018A8D0 /* ChaosRpc.h in Headers */,
 				326DB48514B38BC00018A8D0 /* RpcServer.h in Headers */,
 				326DB48614B38BC00018A8D0 /* CNodeNetworkAddress.h in Headers */,
 				3206CE871FA767AC0059A4A4 /* bson-stdint-win32.h in Headers */,
+				3277A236209C4AFD00FD7307 /* ClingRootInterpreter.h in Headers */,
 				322EC1BC1D34F2E10012467C /* StateFlagCatalog.h in Headers */,
 				326DB48814B38BC00018A8D0 /* ChaosThread.h in Headers */,
 				32B159D618B38CA50096B58B /* DirectIODeviceServerChannel.h in Headers */,
@@ -5961,6 +5832,7 @@
 				32FC2EA91D09864F00475B25 /* service_error.h in Headers */,
 				32A88BD21CF8228A001DBAF5 /* llimits.h in Headers */,
 				3255E72815EA87D2005C96CA /* AbstractEventDispatcher.h in Headers */,
+				3277A22F20973A0100FD7307 /* CPPScriptVM.h in Headers */,
 				32661C761AA867E100F1A721 /* MessageRequestFuture.h in Headers */,
 				325DE9F215EC031E00D6F34E /* EventChannel.h in Headers */,
 				32995C4B1BB2FF2600F68148 /* CheckList.h in Headers */,
@@ -6040,6 +5912,7 @@
 				32FF2AAE1E6D8B6400117985 /* ChaosAllocator.h in Headers */,
 				32640A27169DCC5800450962 /* BufferTracker.h in Headers */,
 				329603241876B45000CDCADA /* BatchCommandConstants.h in Headers */,
+				324360702021C21200B03037 /* SharedManagedDirecIoDataDriver.h in Headers */,
 				3249282D1F5465CA00409E83 /* BaseBypassDriver.h in Headers */,
 				32640A28169DCC5800450962 /* GarbageThread.h in Headers */,
 				32A88BD51CF8228A001DBAF5 /* lmem.h in Headers */,
@@ -6239,6 +6112,7 @@
 				328C847B1ED47148008B5F7D /* UpdateBindType.h in Headers */,
 				32401CBA1C183E2600E62866 /* GetNodesForSnapshot.h in Headers */,
 				3283B8901C7F31D20019255B /* SearchLogEntry.h in Headers */,
+				32E9781D2018E6DF00882958 /* GetAgentForNode.h in Headers */,
 				3252F35D1C298755004436A8 /* GetNodeChilds.h in Headers */,
 				327C6A291C74E255002DA5A6 /* GetLogDomainForSourceUID.h in Headers */,
 				3239EF531C0EFEB20052BE61 /* DeleteSnapshot.h in Headers */,
@@ -6307,6 +6181,7 @@
 				32362C221ADD0C45000CA079 /* SetInstanceDescription.h in Headers */,
 				323386B21ACD731E008863DC /* NodeSearch.h in Headers */,
 				3221D72B1CF5EB22001BE971 /* SaveScript.h in Headers */,
+				3243609420288C0700B03037 /* ClearCommandQueue.h in Headers */,
 				32FF2A8D1E68726300117985 /* deploy.h in Headers */,
 				32D746011C73399900F4D719 /* AbstractEventHandler.h in Headers */,
 				325FC85E1AF7910300DB9D66 /* NewUS.h in Headers */,
@@ -6324,11 +6199,13 @@
 				32F7AB191C9964AE00E18D3E /* node_monitor.h in Headers */,
 				32990B171E4CBAA800A4AF8F /* RemoveNodeAssociation.h in Headers */,
 				32F7AB1D1C998E2500E18D3E /* node_monitor_types.h in Headers */,
+				3243609020288BE900B03037 /* KillCurrentCommand.h in Headers */,
 				3221D7301CF5F292001BE971 /* script.h in Headers */,
 				3211CCDA1B021B8D00F9B80E /* GetBestEndpoints.h in Headers */,
 				32661C6E1AA741D000F1A721 /* ChaosMetadataServiceClient.h in Headers */,
 				32B299AB1BE27945000D3716 /* RecoverError.h in Headers */,
 				326413941E40C72C0035E175 /* CUController.h in Headers */,
+				3243608C20288BB500B03037 /* ForwardNodeRpcMessage.h in Headers */,
 				32FC49B01E080FB80087D82C /* GetVariable.h in Headers */,
 				32A13EB91C2014170010F3FC /* Delete.h in Headers */,
 				32FC49A81E080F900087D82C /* SetVariable.h in Headers */,
@@ -6474,23 +6351,6 @@
 			productReference = 32661C661AA73D5B00F1A721 /* libchaos_metadata_service_client.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		32C7EAD31A5D9E450008DFE8 /* ChaosWANProxy */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 32C7EADA1A5D9E450008DFE8 /* Build configuration list for PBXNativeTarget "ChaosWANProxy" */;
-			buildPhases = (
-				32C7EAD01A5D9E450008DFE8 /* Sources */,
-				32C7EAD11A5D9E450008DFE8 /* Frameworks */,
-				32C7EAD21A5D9E450008DFE8 /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = ChaosWANProxy;
-			productName = ChaosWANProxy;
-			productReference = 32C7EAD41A5D9E450008DFE8 /* ChaosWANProxy */;
-			productType = "com.apple.product-type.tool";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -6519,9 +6379,6 @@
 					32661C651AA73D5B00F1A721 = {
 						CreatedOnToolsVersion = 6.1.1;
 					};
-					32C7EAD31A5D9E450008DFE8 = {
-						CreatedOnToolsVersion = 6.1;
-					};
 				};
 			};
 			buildConfigurationList = 3260261014B300FE00C906CE /* Build configuration list for PBXProject "CHAOSFramework" */;
@@ -6544,7 +6401,6 @@
 				323236C6164573C60052CE06 /* ChaosMetadataService */,
 				326413981E44ACE60035E175 /* ChaosAgent */,
 				322085D91AC5A0E100F1B71A /* ChaosMetadataServiceClientTest */,
-				32C7EAD31A5D9E450008DFE8 /* ChaosWANProxy */,
 				3211C65B1C146200003B38BF /* Compile ALL */,
 			);
 		};
@@ -6616,6 +6472,8 @@
 				3258D4811DF0332300D9C8D0 /* GetSnapshotDatasetsForNode.cpp in Sources */,
 				32FF2A761E68655A00117985 /* DeployApiGroup.cpp in Sources */,
 				32B1E8191B2FFCE500221E49 /* CommandCommonUtility.cpp in Sources */,
+				3243608320285AB000B03037 /* ForwardNodeRpcMessage.cpp in Sources */,
+				325C285B20B800AB007D2971 /* ShardKeyManagement.cpp in Sources */,
 				3270E0761C6CC05100105726 /* MongoDBLoggingDataAccess.cpp in Sources */,
 				32FC49A41E0807F70087D82C /* GetVariable.cpp in Sources */,
 				3235FDCA1A6FF45600EC83A9 /* GetDescription.cpp in Sources */,
@@ -6634,6 +6492,7 @@
 				326ACF9B1E01594C00AD011E /* DriverPoolManager.cpp in Sources */,
 				32610F961AE671AF00779B84 /* StartStop.cpp in Sources */,
 				32B9F3F41AC3E74C00380FE9 /* AbstractPersistenceDriver.cpp in Sources */,
+				324360802024A29800B03037 /* KillCurrentCommand.cpp in Sources */,
 				32E09CF71C0DED340069752F /* RestoreSnapshot.cpp in Sources */,
 				32B299991BD900F1000D3716 /* CopyInstance.cpp in Sources */,
 				326ACF841E01525D00AD011E /* ObjectStorageDataAccess.cpp in Sources */,
@@ -6663,8 +6522,10 @@
 				32B1E80A1B2EA77200221E49 /* GetNodeNetworkAddress.cpp in Sources */,
 				32FA1EF31A7A462200A46800 /* MDSBatchCommand.cpp in Sources */,
 				32809C7C1A9C7DDD00C02C12 /* MongoDBUtilityDataAccess.cpp in Sources */,
+				3243608620285BCD00B03037 /* SendRpcCommand.cpp in Sources */,
 				323386B71AD3C4C6008863DC /* MongoDBAccessor.cpp in Sources */,
 				32CAC9E41AE6991500DC6AAB /* LoadUnloadControlUnit.cpp in Sources */,
+				324360892028828A00B03037 /* ClearCommandQueue.cpp in Sources */,
 				3211CCD61B0205C700F9B80E /* GetBestEndpoints.cpp in Sources */,
 				325963981D216BD800D94853 /* LoadInstanceOnUnitServer.cpp in Sources */,
 				328C84771ED45FBE008B5F7D /* UpdateBindType.cpp in Sources */,
@@ -6709,6 +6570,7 @@
 				32E09CFE1C0E05E60069752F /* DeleteSnapshot.cpp in Sources */,
 				32AC6F141EC4A53400FCCD85 /* GetManagementConfiguration.cpp in Sources */,
 				3270E06D1C6CBB7200105726 /* LoggingApiGroup.cpp in Sources */,
+				32E9781A2018E41000882958 /* GetAgentForNode.cpp in Sources */,
 				32362C1A1ADC0FD2000CA079 /* SetInstanceDescription.cpp in Sources */,
 				32B9F3F71AC4186300380FE9 /* NodeCreateUnitServer.cpp in Sources */,
 				32514EF21EA8BA13001FF6B8 /* UpdateScriptOnNode.cpp in Sources */,
@@ -6767,7 +6629,7 @@
 				324D08B51F31D7F300836E29 /* AbstractUnitProxy.cpp in Sources */,
 				3265F9571FB89F6B00FEA246 /* bson-value.c in Sources */,
 				324D08C51F31EC5000836E29 /* HTTPConnectionAdapter.cpp in Sources */,
-				325F517E1F3C3E11000B842F /* RawDriverHandlerWrapper.cpp in Sources */,
+				325F517E1F3C3E11000B842F /* ExternalDriverHandlerWrapper.cpp in Sources */,
 				3265F9531FB89F6B00FEA246 /* bson-iso8601.c in Sources */,
 				3265F95C1FB89F6B00FEA246 /* bson-timegm.c in Sources */,
 				3265F94E1FB89F6B00FEA246 /* bson-error.c in Sources */,
@@ -6786,7 +6648,7 @@
 				324D08B01F31D70600836E29 /* AbstractConnectionAdapter.cpp in Sources */,
 				3265F9561FB89F6B00FEA246 /* bson-writer.c in Sources */,
 				3265F9541FB89F6B00FEA246 /* bson-md5.c in Sources */,
-				325F517A1F3C3DD2000B842F /* RawDriverUnitProxy.cpp in Sources */,
+				325F517A1F3C3DD2000B842F /* ExternalDriverUnitProxy.cpp in Sources */,
 				3265F9551FB89F6B00FEA246 /* bson-memory.c in Sources */,
 				3265F94D1FB89F6B00FEA246 /* bson-oid.c in Sources */,
 				3265F9581FB89F6B00FEA246 /* bson-json.c in Sources */,
@@ -6798,6 +6660,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3243606C201F5A9800B03037 /* ChaosLoggingBackend.cpp in Sources */,
 				326DB43014B38BC00018A8D0 /* ActionDescriptor.cpp in Sources */,
 				326DB43314B38BC00018A8D0 /* DeclareAction.cpp in Sources */,
 				326DB43514B38BC00018A8D0 /* DomainActions.cpp in Sources */,
@@ -6811,6 +6674,7 @@
 				3275B1731FC4316A00BB7C77 /* ExternalBSONJsonSerialization.cpp in Sources */,
 				329C1F011B5540F900A84D55 /* MetricCollectorIO.cpp in Sources */,
 				326DB45C14B38BC00018A8D0 /* CDataWrapper.cpp in Sources */,
+				324360712021C21200B03037 /* SharedManagedDirecIoDataDriver.cpp in Sources */,
 				32B5C9581C6B97590021159C /* ErrorLoggingChannel.cpp in Sources */,
 				3206CE851FA767AC0059A4A4 /* bcon.c in Sources */,
 				326DB45E14B38BC00018A8D0 /* CUSchemaDB.cpp in Sources */,
@@ -6922,6 +6786,8 @@
 				32C9CD3C1D51F7D30048DB4A /* PropertyDescription.cpp in Sources */,
 				327F51DE1952E81D00BA3D01 /* DirectIOURLManagment.cpp in Sources */,
 				32A862181D58C79900A7D707 /* AbstractEvent.cpp in Sources */,
+				3277A235209C4AFD00FD7307 /* ClingRootInterpreter.cpp in Sources */,
+				32CB75081FCE9DE6006DF3D0 /* InetUtility.cpp in Sources */,
 				32A88BE61CF8228A001DBAF5 /* ltablib.c in Sources */,
 				328556A417F2E36000A64ED2 /* DirectIOServer.cpp in Sources */,
 				32B159D118B38C980096B58B /* DirectIODeviceClientChannel.cpp in Sources */,
@@ -6961,6 +6827,7 @@
 				3289F9A5168508460080D93F /* SQLiteEntityDB.cpp in Sources */,
 				32C0CC98168CC16400BC2DA7 /* Entity.cpp in Sources */,
 				32A88BEF1CF8228A001DBAF5 /* lundump.c in Sources */,
+				3277A22E20973A0100FD7307 /* CPPScriptVM.cpp in Sources */,
 				32B1378E189BEC4100B17CA4 /* ZMQDirectIOServer.cpp in Sources */,
 				32BFF912176C862A00D27A04 /* StartableService.cpp in Sources */,
 				3214EF1F1D467FE1004DB689 /* Dataset.cpp in Sources */,
@@ -7127,7 +6994,6 @@
 				32DF7EFC1E7AF6B800B7FCDD /* PipeLineReader.cpp in Sources */,
 				329614A51E8527D900FE33B7 /* FileCommandOutputStream.cpp in Sources */,
 				329614991E851FCB00FE33B7 /* ProcUtil.cpp in Sources */,
-				32FF2AB11E6DAC7F00117985 /* LogWorker.cpp in Sources */,
 				32E6F43C1E4869120068320E /* AbstractWorker.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7173,6 +7039,7 @@
 				326413931E40C7280035E175 /* CUController.cpp in Sources */,
 				3239EF521C0EFEB20052BE61 /* DeleteSnapshot.cpp in Sources */,
 				32FC49AB1E080FA80087D82C /* RemoveVariable.cpp in Sources */,
+				3243608D20288BB500B03037 /* ForwardNodeRpcMessage.cpp in Sources */,
 				327C6A281C74E255002DA5A6 /* GetLogDomainForSourceUID.cpp in Sources */,
 				32BE0AE51E4C69910007764C /* LoadNodeAssociation.cpp in Sources */,
 				32EBDF0E1B53A32600278C42 /* ManageCUType.cpp in Sources */,
@@ -7197,6 +7064,7 @@
 				327F39A71AEAA2290000C845 /* NewDS.cpp in Sources */,
 				3239EF4E1C0EFEA60052BE61 /* CreateNewSnapshot.cpp in Sources */,
 				324FD0811B00ACEF003800BA /* MonitorManager.cpp in Sources */,
+				3243609120288BE900B03037 /* KillCurrentCommand.cpp in Sources */,
 				320CA9541C29D71A00894AAA /* DeleteUS.cpp in Sources */,
 				32B299AA1BE27945000D3716 /* RecoverError.cpp in Sources */,
 				32990B2D1E547D7000A4AF8F /* CheckAgentHostedProcess.cpp in Sources */,
@@ -7204,6 +7072,7 @@
 				3211CCDD1B03402800F9B80E /* QuantumKeyConsumer.cpp in Sources */,
 				32CAC9E81AE69F4400DC6AAB /* LoadUnloadControlUnit.cpp in Sources */,
 				32FC49A71E080F900087D82C /* SetVariable.cpp in Sources */,
+				32E9781E2018E6DF00882958 /* GetAgentForNode.cpp in Sources */,
 				32D746001C73399900F4D719 /* AbstractEventHandler.cpp in Sources */,
 				32F7AB281C9991B000E18D3E /* ControlUnitController.cpp in Sources */,
 				3221D74F1CF606BC001BE971 /* SearchScript.cpp in Sources */,
@@ -7222,6 +7091,7 @@
 				32AC6F1A1EC4AC1F00FCCD85 /* SetManagementConfiguration.cpp in Sources */,
 				328C87361ADFDD410047C79B /* GetInstance.cpp in Sources */,
 				32A51F701E71968B00209E92 /* GetProcessLogEntries.cpp in Sources */,
+				3243609520288C0700B03037 /* ClearCommandQueue.cpp in Sources */,
 				32AC6F051EB0BF3F00FCCD85 /* SetSnapshotDatasetsForNode.cpp in Sources */,
 				324928611F603EE300409E83 /* GetPropertyDefaultValues.cpp in Sources */,
 				32D745FC1C7338D100F4D719 /* AlertLogEventHandler.cpp in Sources */,
@@ -7236,36 +7106,6 @@
 				32FF2A841E68723F00117985 /* UploadChunk.cpp in Sources */,
 				32568C8E1B3D7FED0006988C /* UpdateProperty.cpp in Sources */,
 				32A51F741E7991B200209E92 /* GetSetFullUnitServer.cpp in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		32C7EAD01A5D9E450008DFE8 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				329F40701A669F6C00AC318A /* AbstractPersistenceDriver.cpp in Sources */,
-				32E6F4311E44DDBD0068320E /* ConsumerGroup.cpp in Sources */,
-				3212372A1A658BA9002A2D63 /* BaseWANInterfaceHandler.cpp in Sources */,
-				32033D6F1A651DCC004F1B7D /* HTTPWANInterface.cpp in Sources */,
-				533D1F8B1D86E85100FC7AA5 /* ProducerRegisterJsonApi.cpp in Sources */,
-				32E6F4321E44DDBD0068320E /* ConsumerMDSApi.cpp in Sources */,
-				329F406C1A669B6300AC318A /* AbstractApiGroup.cpp in Sources */,
-				321237261A658404002A2D63 /* DefaultWANInterfaceHandler.cpp in Sources */,
-				32033D741A6524BE004F1B7D /* HTTPWANInterfaceRequest.cpp in Sources */,
-				32C7EAE71A5EC9980008DFE8 /* AbstractWANInterface.cpp in Sources */,
-				32E9A5541A690AF600545BB4 /* ProducerGetLastDatasetApi.cpp in Sources */,
-				32E9A5581A69151F00545BB4 /* PersistenceAccessor.cpp in Sources */,
-				32E9A5461A67D02900545BB4 /* ProducerGroup.cpp in Sources */,
-				32C7EADD1A5D9EE30008DFE8 /* ChaosWANProxy.cpp in Sources */,
-				32033D711A651DCC004F1B7D /* HTTPWANInterfaceStringResponse.cpp in Sources */,
-				321237231A657BA0002A2D63 /* AbstractWANInterfaceResponse.cpp in Sources */,
-				32E9A5491A67D6D600545BB4 /* ProducerRegisterDatasetApi.cpp in Sources */,
-				533D1F8C1D86E85100FC7AA5 /* ProducerInsertJsonApi.cpp in Sources */,
-				32E6F4301E44DDBD0068320E /* ConsumerCUApi.cpp in Sources */,
-				32E9A54C1A6800E900545BB4 /* ProducerInsertDatasetApi.cpp in Sources */,
-				32E9A53E1A66A1B100545BB4 /* AbstractApi.cpp in Sources */,
-				32C7EAD71A5D9E450008DFE8 /* main.cpp in Sources */,
-				32E9A55B1A691D2000545BB4 /* DefaultPersistenceDriver.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7302,11 +7142,6 @@
 			target = 322085D91AC5A0E100F1B71A /* ChaosMetadataServiceClientTest */;
 			targetProxy = 3211C6811C146252003B38BF /* PBXContainerItemProxy */;
 		};
-		3211C6841C146252003B38BF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 32C7EAD31A5D9E450008DFE8 /* ChaosWANProxy */;
-			targetProxy = 3211C6831C146252003B38BF /* PBXContainerItemProxy */;
-		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
@@ -7325,6 +7160,423 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
+		};
+		3217816220C559AA00C079C9 /* [GPERF]Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
+				HEADER_SEARCH_PATHS = (
+					.,
+					usr/local/include,
+				);
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "-ltcmalloc";
+			};
+			name = "[GPERF]Debug";
+		};
+		3217816320C559AA00C079C9 /* [GPERF]Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/lib";
+				COPY_PHASE_STRIP = NO;
+				DSTROOT = /;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_LINK_WITH_DYNAMIC_LIBRARIES = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = "";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					.,
+					usr/local/include,
+				);
+				INSTALL_PATH = "$(SRCROOT)/usr/local/lib";
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
+				OTHER_LDFLAGS = (
+					"-lboost_chrono",
+					"-lboost_system",
+					"-lboost_thread",
+					"-lboost_program_options",
+					"-lboost_regex",
+					"-lboost_filesystem",
+					"-lboost_log",
+					"-lboost_log_setup",
+					"-lzmq",
+					"-ljsoncpp",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = "[GPERF]Debug";
+		};
+		3217816420C559AA00C079C9 /* [GPERF]Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/lib";
+				COPY_PHASE_STRIP = NO;
+				DSTROOT = /;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = "";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					.,
+					usr/local/include,
+				);
+				INSTALL_PATH = "$(SRCROOT)/usr/local/lib";
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
+				OTHER_LDFLAGS = (
+					"-lchaos_common",
+					"-ljsoncpp",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = "[GPERF]Debug";
+		};
+		3217816520C559AA00C079C9 /* [GPERF]Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/lib";
+				COPY_PHASE_STRIP = NO;
+				DSTROOT = /;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = "";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					.,
+					usr/local/include,
+				);
+				INSTALL_PATH = "$(SRCROOT)/usr/local/lib";
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "-lchaos_common";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = "[GPERF]Debug";
+		};
+		3217816620C559AA00C079C9 /* [GPERF]Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/lib";
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					.,
+					usr/local/include,
+				);
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-lchaos_common";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = "[GPERF]Debug";
+		};
+		3217816720C559AA00C079C9 /* [GPERF]Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/lib";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = ZZ5BMKV37Y;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_PREFIX = lib;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					.,
+					usr/local/include,
+				);
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-lboost_system";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = "[GPERF]Debug";
+		};
+		3217816820C559AA00C079C9 /* [GPERF]Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/bin";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = "";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					.,
+					usr/local/include,
+				);
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = (
+					"${inherited}",
+					"-lchaos_common",
+					"-ljsoncpp",
+					"-levent",
+					"-lmongoclient",
+					"-lboost_random",
+					"-lcouchbase",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = "[GPERF]Debug";
+		};
+		3217816920C559AA00C079C9 /* [GPERF]Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/bin";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = ZZ5BMKV37Y;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					.,
+					usr/local/include,
+				);
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = (
+					"-lchaos_common",
+					"-ljsoncpp",
+					"-levent",
+					"-lmongoclient",
+					"-lcouchbase",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = "[GPERF]Debug";
+		};
+		3217816A20C559AA00C079C9 /* [GPERF]Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/bin";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					.,
+					usr/local/include,
+				);
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = (
+					"-lchaos_metadata_service_client",
+					"-lchaos_common",
+					"-lboost_timer",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = "[GPERF]Debug";
+		};
+		3217816B20C559AA00C079C9 /* [GPERF]Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = "[GPERF]Debug";
 		};
 		322085DE1AC5A0E200F1B71A /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -7459,6 +7711,7 @@
 					"-ljsoncpp",
 					"-levent",
 					"-lmongoclient",
+					"-lboost_random",
 					"-lcouchbase",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -7495,6 +7748,7 @@
 					"-ljsoncpp",
 					"-levent",
 					"-lmongoclient",
+					"-lboost_random",
 					"-lcouchbase",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -7745,6 +7999,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_CODE_COVERAGE = YES;
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/lib";
 				COPY_PHASE_STRIP = NO;
 				DSTROOT = /;
@@ -7772,10 +8027,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
-				OTHER_LDFLAGS = (
-					"-lchaos_common",
-					"-ljsoncpp",
-				);
+				OTHER_LDFLAGS = "-lchaos_common";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -7785,6 +8037,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_CODE_COVERAGE = YES;
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/lib";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -7805,10 +8058,7 @@
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
-				OTHER_LDFLAGS = (
-					"-lchaos_common",
-					"-ljsoncpp",
-				);
+				OTHER_LDFLAGS = "-lchaos_common";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -8088,104 +8338,6 @@
 			};
 			name = Release;
 		};
-		32C7EAD81A5D9E450008DFE8 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/bin";
-				COPY_PHASE_STRIP = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					.,
-					usr/local/include,
-				);
-				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MTL_ENABLE_DEBUG_INFO = YES;
-				OTHER_LDFLAGS = (
-					"-lchaos_common",
-					"-lmongoose",
-					"-ljsoncpp",
-				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-			};
-			name = Debug;
-		};
-		32C7EAD91A5D9E450008DFE8 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/bin";
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_PREPROCESSOR_DEFINITIONS = BOOST_ALL_DYN_LINK;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					.,
-					usr/local/include,
-				);
-				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_LDFLAGS = (
-					"-lchaos_common",
-					"-lmongoose",
-					"-ljsoncpp",
-				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -8193,6 +8345,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3211C65C1C146200003B38BF /* Debug */,
+				3217816B20C559AA00C079C9 /* [GPERF]Debug */,
 				3211C65D1C146200003B38BF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8202,6 +8355,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				322085DE1AC5A0E200F1B71A /* Debug */,
+				3217816A20C559AA00C079C9 /* [GPERF]Debug */,
 				322085DF1AC5A0E200F1B71A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8211,6 +8365,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				323236CE164573C60052CE06 /* Debug */,
+				3217816820C559AA00C079C9 /* [GPERF]Debug */,
 				323236CF164573C60052CE06 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8220,6 +8375,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				324D089C1F30CD7A00836E29 /* Debug */,
+				3217816720C559AA00C079C9 /* [GPERF]Debug */,
 				324D089D1F30CD7A00836E29 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8229,6 +8385,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3260261214B300FE00C906CE /* Debug */,
+				3217816220C559AA00C079C9 /* [GPERF]Debug */,
 				3260261314B300FE00C906CE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8238,6 +8395,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				326026EC14B301F600C906CE /* Debug */,
+				3217816320C559AA00C079C9 /* [GPERF]Debug */,
 				326026ED14B301F600C906CE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8247,6 +8405,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3260276814B3068100C906CE /* Debug */,
+				3217816420C559AA00C079C9 /* [GPERF]Debug */,
 				3260276914B3068100C906CE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8256,6 +8415,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3260278914B307DA00C906CE /* Debug */,
+				3217816520C559AA00C079C9 /* [GPERF]Debug */,
 				3260278A14B307DA00C906CE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8265,6 +8425,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3264139E1E44ACE60035E175 /* Debug */,
+				3217816920C559AA00C079C9 /* [GPERF]Debug */,
 				3264139F1E44ACE60035E175 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8274,16 +8435,8 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				32661C671AA73D5C00F1A721 /* Debug */,
+				3217816620C559AA00C079C9 /* [GPERF]Debug */,
 				32661C681AA73D5C00F1A721 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		32C7EADA1A5D9E450008DFE8 /* Build configuration list for PBXNativeTarget "ChaosWANProxy" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				32C7EAD81A5D9E450008DFE8 /* Debug */,
-				32C7EAD91A5D9E450008DFE8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

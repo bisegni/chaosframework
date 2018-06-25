@@ -51,10 +51,10 @@ md5=`md5sum $source | cut -d ' ' -f 1`
 base_source=`basename $source`
 echo "* md5: $md5"
 for s in $list;do
-    if [ -n "$dest" ];then
-	rmd5=`ssh $user@$s "md5sum $dest/$base_source|cut -d ' ' -f 1"`
-    else
-	rmd5=`ssh $user@$s "md5sum $base_source|cut -d ' ' -f 1"`
+     if [ -n "$dest" ];then
+     	rmd5=`ssh $user@$s "md5sum $dest/$base_source|cut -d ' ' -f 1"`
+     else
+     	 rmd5=`ssh $user@$s "md5sum $base_source|cut -d ' ' -f 1"`
 
     fi
     if ! [ "$rmd5" == "$md5" ];then
@@ -70,7 +70,7 @@ for job in `jobs -p`;do
     echo "* waiting finishing id $job"
     wait $job || let "error+=1"
     if [ $error != "0" ] ;then
-	echo "## error copying $error"
+	echo "## error copying (job $job) $error"
 	
     fi
 done

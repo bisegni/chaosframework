@@ -1,8 +1,6 @@
 #include "AgentNodeAssociatedListModel.h"
 #include "delegate/TwoLineInformationItem.h"
 
-#include <chaos_service_common/data/data.h>
-
 #include <QDebug>
 #include <QMimeData>
 #include <QDateTime>

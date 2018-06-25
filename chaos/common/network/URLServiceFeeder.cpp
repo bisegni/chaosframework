@@ -19,8 +19,10 @@
  * permissions and limitations under the Licence.
  */
 #include <chaos/common/global.h>
+#include <chaos/common/exception/CException.h>
 #include <chaos/common/network/URLServiceFeeder.h>
 
+using namespace chaos;
 using namespace chaos::common::network;
 
 //size of every chunk of the list for sequential allocation
@@ -46,12 +48,18 @@ set_urls_rb_pos_index(boost::multi_index::get<rb_pos_index>(set_urls_online)){
 
 URLServiceFeeder::~URLServiceFeeder() {
 	clear();
+    if(service_list==NULL)
+        return;
     for(int idx = 0; idx < (list_size/sizeof(URLServiceFeeder::URLService)); idx++) {
 		//element with the list ar object and are allocated with with new
-        delete (service_list[idx]);
+            delete (service_list[idx]);
+
     }
     //all list was allocated with malloc
+    if(service_list){
 	free(service_list);
+        service_list=NULL;
+    }
 }
 
 URLServiceFeeder::URLService *URLServiceFeeder::getNextFromSetByRoundRobin() {
@@ -134,10 +142,12 @@ uint32_t URLServiceFeeder::addURL(const URL& new_url,
 	grow();
 
 	std::set<uint32_t>::iterator new_index = available_url.begin();
-	service_index = *new_index;
-
+    void *tmp_srv_ptr = handler->serviceForURL(new_url, (service_index = *new_index));
+    if(tmp_srv_ptr == NULL) {throw CException(-1 , "Error allocating service!", __PRETTY_FUNCTION__);}
+    
+    //service has been succesfully allocated
 	service_list[service_index]->url = new_url;
-	service_list[service_index]->service = handler->serviceForURL(new_url, service_index);
+	service_list[service_index]->service = tmp_srv_ptr;
 	service_list[service_index]->online = true;
 	service_list[service_index]->priority = priority;
 

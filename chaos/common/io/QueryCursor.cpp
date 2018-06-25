@@ -36,6 +36,7 @@ using namespace chaos::common::direct_io::channel::opcode_headers;
 #pragma mark QueryCursor
 QueryCursor::ResultPage::ResultPage():
 current_fetched(0){
+    //initlize last sequence number
     std::memset(&last_record_found_seq, 0, sizeof(direct_io::channel::opcode_headers::SearchSequence));
 }
 
@@ -66,7 +67,34 @@ start_ts(_start_ts),
 end_ts(_end_ts),
 page_len(default_page_len),
 phase(QueryPhaseNotStarted),
+start_seq(0),
+runid_seq(0),
 api_error(0){}
+QueryCursor::QueryCursor(const std::string& _query_id,
+                         URLServiceFeeder& _connection_feeder,
+                         const std::string& _node_id,
+                         uint64_t _start_ts,
+                         uint64_t _end_ts,
+                         uint64_t _sequid,
+                         uint64_t _runid,
+
+                         uint32_t default_page_len):
+query_id(_query_id),
+connection_feeder(_connection_feeder),
+node_id(_node_id),
+start_ts(_start_ts),
+end_ts(_end_ts),
+page_len(default_page_len),
+phase(QueryPhaseNotStarted),
+start_seq(_sequid),
+runid_seq(_runid),
+api_error(0){
+    if(_sequid>0){
+        phase = QueryPhaseStarted;
+        result_page.last_record_found_seq.run_id=_runid;
+        result_page.last_record_found_seq.datapack_counter=_sequid-1;
+    }
+}
 
 QueryCursor::~QueryCursor() {}
 
@@ -104,19 +132,23 @@ int64_t QueryCursor::fetchNewPage() {
     //fetch the new page
     switch(phase) {
         case QueryPhaseNotStarted:
-            DBG << "["<<node_id<<"] start search "<<start_ts<<"-"<<end_ts<<" page_len:"<<page_len;
+//            std::memset(&result_page.last_record_found_seq, 0, sizeof(direct_io::channel::opcode_headers::SearchSequence));
+//            result_page.last_record_found_seq.datapack_counter = -1;
+            DBG << "["<<node_id<<"] start search "<<start_ts<<"-"<<end_ts<<" page_len:"<<page_len<<" data pack counter:"<< result_page.last_record_found_seq.datapack_counter<<"run id:"<< result_page.last_record_found_seq.run_id ;
 
-            std::memset(&result_page.last_record_found_seq, 0, sizeof(direct_io::channel::opcode_headers::SearchSequence));
             //change to the next phase
             phase = QueryPhaseStarted;
             break;
         case QueryPhaseStarted:
-            DBG << "["<<node_id<<"] continue search  "<<start_ts<<"-"<<end_ts<<" page_len:"<<page_len;
+            //increase data pack count of last recod found that will be used has next counter id to fetch
+            result_page.last_record_found_seq.datapack_counter++;
+            DBG << "["<<node_id<<"] continue search  "<<start_ts<<"-"<<end_ts<<" page_len:"<<page_len<<" data pack counter:"<< result_page.last_record_found_seq.datapack_counter<<"run id:"<< result_page.last_record_found_seq.run_id ;
             break;
             
         case QueryPhaseEnded:
 
-            ERR << "["<<node_id<<"] end search "<<start_ts<<"-"<<end_ts<<" page_len:"<<page_len;
+            ERR << "["<<node_id<<"] end search "<<start_ts<<"-"<<end_ts<<" page_len:"<<page_len<<" data pack counter:"<< result_page.last_record_found_seq.datapack_counter<<"run id:"<< result_page.last_record_found_seq.run_id ;
+
 
             return 0;
     }
@@ -136,6 +168,10 @@ int64_t QueryCursor::fetchNewPage() {
         }
     }
     return api_error;
+}
+void QueryCursor::getIndexes(uint64_t& runid,uint64_t& seqid){
+    runid = result_page.last_record_found_seq.run_id;
+    seqid =result_page.last_record_found_seq.datapack_counter;
 }
 
 const uint32_t QueryCursor::getPageLen() const {

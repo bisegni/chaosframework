@@ -42,14 +42,6 @@ namespace chaos {
                 public chaos::common::direct_io::DirectIOEndpointHandler {
                     REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(DirectIOSystemAPIServerChannel)
                     
-                    class DirectIOSystemAPIServerChannelDeallocator:
-                    public DirectIODeallocationHandler {
-                    protected:
-                        void freeSentData(void* sent_data_ptr, DisposeSentMemoryInfo *free_info_ptr);
-                    };
-                    //static deallocator forthis channel
-                    static DirectIOSystemAPIServerChannelDeallocator STATIC_DirectIOSystemAPIServerChannelDeallocator;
-                    
                 public:
                     //! System API DirectIO server handler
                     typedef class DirectIOSystemAPIServerChannelHandler {
@@ -60,12 +52,21 @@ namespace chaos {
                          \param producer_id is the identification of the producre of the returning datasets
                          \return error on the forwading of the event
                          */
-                        virtual int consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,
+                        virtual int consumeEchoEvent(chaos::common::data::BufferSPtr input_data,
+                                                     chaos::common::data::BufferSPtr& output_data)
+                        {return -1;};
+                        
+                        //! Return the dataset for a producerkey ona specific snapshot
+                        /*!
+                         \param header of the snapshot where to fetch the dataasets
+                         \param producer_id is the identification of the producre of the returning datasets
+                         \return error on the forwading of the event
+                         */
+                        virtual int consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader& header,
                                                                    const std::string& producer_id,
-                                                                   void **channel_found_data,
-                                                                   uint32_t& channel_found_data_length,
+                                                                   chaos::common::data::BufferSPtr& channel_found_data,
                                                                    DirectIOSystemAPISnapshotResultHeader &result_header)
-                        {DELETE_HEADER(header) return 0;};
+                        {return -1;};
                         
                         //! Persist log entries for emitted by a node
                         /*!
@@ -75,7 +76,7 @@ namespace chaos {
                          */
                         virtual int consumeLogEntries(const std::string& node_name,
                                                       const ChaosStringVector& log_entries)
-                        {return 0;};
+                        {return -1;};
                     } DirectIOSystemAPIServerChannelHandler;
                     
                     void setHandler(DirectIOSystemAPIServerChannelHandler *_handler);
@@ -87,10 +88,8 @@ namespace chaos {
                     DirectIOSystemAPIServerChannel(std::string alias);
                     
                     //! endpoint entry method
-                    int consumeDataPack(DirectIODataPack *dataPack,
-                                        DirectIODataPack *synchronous_answer,
-                                        DirectIODeallocationHandler **answer_header_deallocation_handler,
-                                        DirectIODeallocationHandler **answer_data_deallocation_handler);
+                    int consumeDataPack(DirectIODataPackSPtr data_pack,
+                                        DirectIODataPackSPtr& synchronous_answer);
                 };
             }
         }

@@ -15,12 +15,13 @@ QMAKE_MAC_SDK = macosx10.12
 
 TARGET = ccs
 TEMPLATE = app
-RESOURCES = theme/theme.qrc
+RESOURCES = theme/theme.qrc \
+    resources.qrc
 
 INCLUDEPATH += $$PWD/../
 INCLUDEPATH += $$PWD/../usr/local/include
 
-LIBS += -L$$PWD/../usr/local/lib
+LIBS += -L$$PWD/../usr/local/lib -L"/usr/lib/x86_64-linux-gnu/mesa/"
 
 
 LIBS +=     -lchaos_metadata_service_client
@@ -114,7 +115,6 @@ SOURCES += main.cpp\
     widget/CNodeHealthLabel.cpp \
     widget/CControlUnitDatasetLabel.cpp \
     widget/StateImageIndicatorWidget.cpp \
-    language_editor/LuaHighlighter.cpp \
     language_editor/ScriptEditor.cpp \
     script/ScriptManager.cpp \
     script/ScriptDescriptionWidget.cpp \
@@ -161,7 +161,34 @@ SOURCES += main.cpp\
     widget/CQTableView.cpp \
     widget/CPropertyPushButton.cpp \
     widget/CPropertyTextEdit.cpp \
-    widget/CPopupWidgetContainer.cpp
+    widget/CPopupWidgetContainer.cpp \
+    preference/SelectNetworkDomain.cpp \
+    external_lib/QtNodeEditor/Connection.cpp \
+    external_lib/QtNodeEditor/ConnectionBlurEffect.cpp \
+    external_lib/QtNodeEditor/ConnectionGeometry.cpp \
+    external_lib/QtNodeEditor/ConnectionGraphicsObject.cpp \
+    external_lib/QtNodeEditor/ConnectionPainter.cpp \
+    external_lib/QtNodeEditor/ConnectionState.cpp \
+    external_lib/QtNodeEditor/ConnectionStyle.cpp \
+    external_lib/QtNodeEditor/DataModelRegistry.cpp \
+    external_lib/QtNodeEditor/FlowItemInterface.cpp \
+    external_lib/QtNodeEditor/FlowScene.cpp \
+    external_lib/QtNodeEditor/FlowView.cpp \
+    external_lib/QtNodeEditor/FlowViewStyle.cpp \
+    external_lib/QtNodeEditor/Node.cpp \
+    external_lib/QtNodeEditor/NodeConnectionInteraction.cpp \
+    external_lib/QtNodeEditor/NodeDataModel.cpp \
+    external_lib/QtNodeEditor/NodeGeometry.cpp \
+    external_lib/QtNodeEditor/NodeGraphicsObject.cpp \
+    external_lib/QtNodeEditor/NodePainter.cpp \
+    external_lib/QtNodeEditor/NodeState.cpp \
+    external_lib/QtNodeEditor/NodeStyle.cpp \
+    external_lib/QtNodeEditor/Properties.cpp \
+    external_lib/QtNodeEditor/StyleCollection.cpp \
+    node/connection_manager/ConnectionEditor.cpp \
+    node/connection_manager/model/ControlUnitNodeDataModel.cpp \
+    language_editor/LuaLanguageSupport.cpp \
+    language_editor/CLINGLanguageSupport.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -255,7 +282,6 @@ HEADERS  += \
     widget/CNodeHealthLabel.h \
     widget/CControlUnitDatasetLabel.h \
     widget/StateImageIndicatorWidget.h \
-    language_editor/LuaHighlighter.h \
     language_editor/ScriptEditor.h \
     script/ScriptManager.h \
     script/ScriptDescriptionWidget.h \
@@ -305,7 +331,41 @@ HEADERS  += \
     widget/CPropertyPushButton.h\
     precomp_header.h \
     widget/CPropertyTextEdit.h \
-    widget/CPopupWidgetContainer.h
+    widget/CPopupWidgetContainer.h \
+    preference/SelectNetworkDomain.h \
+    external_lib/QtNodeEditor/Connection.hpp \
+    external_lib/QtNodeEditor/ConnectionBlurEffect.hpp \
+    external_lib/QtNodeEditor/ConnectionGeometry.hpp \
+    external_lib/QtNodeEditor/ConnectionGraphicsObject.hpp \
+    external_lib/QtNodeEditor/ConnectionPainter.hpp \
+    external_lib/QtNodeEditor/ConnectionState.hpp \
+    external_lib/QtNodeEditor/ConnectionStyle.hpp \
+    external_lib/QtNodeEditor/DataModelRegistry.hpp \
+    external_lib/QtNodeEditor/FlowItemInterface.hpp \
+    external_lib/QtNodeEditor/FlowScene.hpp \
+    external_lib/QtNodeEditor/FlowView.hpp \
+    external_lib/QtNodeEditor/FlowViewStyle.hpp \
+    external_lib/QtNodeEditor/Node.hpp \
+    external_lib/QtNodeEditor/NodeConnectionInteraction.hpp \
+    external_lib/QtNodeEditor/NodeData.hpp \
+    external_lib/QtNodeEditor/NodeDataModel.hpp \
+    external_lib/QtNodeEditor/NodeGeometry.hpp \
+    external_lib/QtNodeEditor/NodeGraphicsObject.hpp \
+    external_lib/QtNodeEditor/NodePainter.hpp \
+    external_lib/QtNodeEditor/NodeState.hpp \
+    external_lib/QtNodeEditor/NodeStyle.hpp \
+    external_lib/QtNodeEditor/OperatingSystem.hpp \
+    external_lib/QtNodeEditor/PortType.hpp \
+    external_lib/QtNodeEditor/Properties.hpp \
+    external_lib/QtNodeEditor/QStringStdHash.hpp \
+    external_lib/QtNodeEditor/Serializable.hpp \
+    external_lib/QtNodeEditor/Style.hpp \
+    external_lib/QtNodeEditor/StyleCollection.hpp \
+    node/connection_manager/ConnectionEditor.h \
+    node/connection_manager/model/ControlUnitNodeDataModel.h \
+    language_editor/LanguageEditorSupport.h \
+    language_editor/LuaLanguageSupport.h \
+    language_editor/CLINGLanguageSupport.h
 
 FORMS    += \
     search/searchnoderesult.ui \
@@ -345,9 +405,10 @@ FORMS    += \
     language_editor/JsonEditor.ui \
     node/agent/AgentSetting.ui \
     widget/CPropertyTextEdit.ui \
-    widget/CPropertyTextEdit.ui \
     widget/CPopupWidgetContainer.ui \
-    widget/ChaosStorageTypeWidget.ui
+    widget/ChaosStorageTypeWidget.ui \
+    preference/SelectNetworkDomain.ui \
+    node/connection_manager/ConnectionEditor.ui
 
 DISTFILES += \
     dark_orange.stylesheet \

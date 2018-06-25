@@ -36,7 +36,7 @@ ChaosUniquePtr<connection::connection_adapter::AbstractConnectionAdapter> ChaosM
                                    protocol_option);
 }
 
-ChaosUniquePtr<raw_driver::RawDriverHandlerWrapper> ChaosMicroUnitToolkit::createNewRawDriverHandlerWrapper(connection::ConnectionType protocol_type,
+ChaosUniquePtr<raw_driver::ExternalDriverHandlerWrapper> ChaosMicroUnitToolkit::createNewExternalDriverHandlerWrapper(connection::ConnectionType protocol_type,
                                                                                                             const std::string& protocol_endpoint,
                                                                                                             const std::string& protocol_option,
                                                                                                             connection::unit_proxy::UnitProxyHandler handler,
@@ -45,11 +45,11 @@ ChaosUniquePtr<raw_driver::RawDriverHandlerWrapper> ChaosMicroUnitToolkit::creat
     ChaosUniquePtr<connection_adapter::AbstractConnectionAdapter> protocol_adater = cman.getProtocolAdapter(protocol_type,
                                                                                                         protocol_endpoint,
                                                                                                         protocol_option);
-    ChaosUniquePtr<raw_driver::RawDriverUnitProxy> unit_proxy = ChaosUniquePtr<raw_driver::RawDriverUnitProxy>(static_cast< raw_driver::RawDriverUnitProxy* >(cman.getUnitProxy(raw_driver::RawDriverUnitProxy::proxy_type,
+    ChaosUniquePtr<raw_driver::ExternalDriverUnitProxy> unit_proxy = ChaosUniquePtr<raw_driver::ExternalDriverUnitProxy>(static_cast< raw_driver::ExternalDriverUnitProxy* >(cman.getUnitProxy(raw_driver::ExternalDriverUnitProxy::proxy_type,
+                                                                                                                                                                                authorization_key,
                                                                                                                                                                                 protocol_adater).release()));
     
-    return ChaosUniquePtr<raw_driver::RawDriverHandlerWrapper>(new raw_driver::RawDriverHandlerWrapper(handler,
+    return ChaosUniquePtr<raw_driver::ExternalDriverHandlerWrapper>(new raw_driver::ExternalDriverHandlerWrapper(handler,
                                                                                                        user_data,
-                                                                                                       authorization_key,
                                                                                                        unit_proxy));
 }

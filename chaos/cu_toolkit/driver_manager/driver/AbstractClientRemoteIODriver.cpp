@@ -24,21 +24,33 @@
 #define DBG     DBG_LOG(AbstractClientRemoteIODriver)
 #define ERR     ERR_LOG(AbstractClientRemoteIODriver)
 
+using namespace chaos::common::data;
+using namespace chaos::common::async_central;
 using namespace chaos::cu::driver_manager::driver;
 
 void AbstractClientRemoteIODriver::driverInit(const char *initParameter) throw (chaos::CException) {
     LOG_AND_TROW(ERR, -1, "AbstractClientRemoteIODriver can be initilized only with json document");
 }
+
 void AbstractClientRemoteIODriver::driverInit(const chaos::common::data::CDataWrapper& init_parameter) throw(chaos::CException) {
+    int err = 0;
     std::string content_type = "application/json";
-    CHECK_ASSERTION_THROW_AND_LOG(init_parameter.hasKey("uri"), ERR, -2, "The hostname name is mandatory");
-    const std::string uri = init_parameter.getStringValue("uri");
-    CHECK_ASSERTION_THROW_AND_LOG(uri.size() != 0, ERR, -3, "The uri parameter can't be empty string");
+    CHECK_MANDATORY_KEY(const_cast<const CDataWrapper *>(&init_parameter) , "url", ERR, -2);
+    CHECK_TYPE_OF_KEY(const_cast<const CDataWrapper *>(&init_parameter), "url", String, ERR, -3);
+
+    const std::string url = init_parameter.getStringValue("url");
+    CHECK_ASSERTION_THROW_AND_LOG(url.size() != 0, ERR, -3, "The uri parameter can't be empty string");
     //! end point identifier & authorization key
     if(init_parameter.hasKey("endpoint_name")){
         ExternalUnitClientEndpoint::endpoint_identifier = init_parameter.getStringValue("endpoint_name");
     } else {
         ExternalUnitClientEndpoint::endpoint_identifier = init_parameter.getStringValue("uri");
+    }
+    
+    //check if a driver uri has been set
+    if(init_parameter.hasKey("uri") &&
+       init_parameter.isStringValue("uri")) {
+        setDriverUri(init_parameter.getStringValue("uri"));
     }
     
     if(init_parameter.hasKey("content_type") &&
@@ -47,18 +59,29 @@ void AbstractClientRemoteIODriver::driverInit(const chaos::common::data::CDataWr
     }
     
     CHECK_ASSERTION_THROW_AND_LOG((ExternalUnitClientEndpoint::endpoint_identifier.size() > 0), ERR, -4, "The endpoint name is empty");
-    //register this driver as external endpoint
-    chaos::common::external_unit::ExternalUnitManager::getInstance()->initilizeConnection(*this,
-                                                                                          "http",
-                                                                                          content_type,
-                                                                                          uri);
-    
     
     ClientARIODriver::driverInit(init_parameter);
+    DBG <<"Initialize connection...";
+    //register this driver as external endpoint
+    err = chaos::common::external_unit::ExternalUnitManager::getInstance()->initilizeConnection(*this,
+                                                                                                "http",
+                                                                                                content_type,
+                                                                                                url);
+    DBG <<"Connection initialized with error:"<<err;
+    CHECK_ASSERTION_THROW_AND_LOG(err == 0, ERR, -4, "Error creating connection");
 }
+
 void AbstractClientRemoteIODriver::driverDeinit() throw (chaos::CException) {
-    INFO << "Deinit driver";
+    //deinit driver  will send the deinitlization message to remote layer
+    DBG<<"deinitializing  remote driver";
+
+    CHAOS_NOT_THROW(ClientARIODriver::driverDeinit();)
+    DBG<<"deinitializing protocol";
     chaos::common::external_unit::ExternalUnitManager::getInstance()->releaseConnection(*this,
                                                                                         "http");
-    CHAOS_NOT_THROW(ClientARIODriver::driverDeinit();)
+}
+
+void AbstractClientRemoteIODriver::handleNewConnection(const std::string& connection_identifier) {
+    ClientARIODriver::handleNewConnection(connection_identifier);
+    conn_phase = RDConnectionPhaseManageAutorization;
 }

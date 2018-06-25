@@ -97,6 +97,8 @@ namespace chaos{
                 
                 void killCurrentCommand();
                 
+                void clearCommandQueue();
+                
                 void setCurrentCommandScheduerStepDelay(uint64_t scheduler_step_delay);
                 
                 void lockCurrentCommandFeature(bool lock);

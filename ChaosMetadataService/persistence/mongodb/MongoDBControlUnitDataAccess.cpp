@@ -35,7 +35,7 @@
 
 using namespace chaos;
 using namespace chaos::common::data;
-
+using namespace chaos::common::data::structured;
 using namespace chaos::common::utility;
 using namespace chaos::service_common::data::script;
 using namespace chaos::service_common::persistence::mongodb;
@@ -208,7 +208,7 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
         
         
         
-        ChaosUniquePtr<CMultiTypeDataArrayWrapper> ds_vec(dataset->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
+        CMultiTypeDataArrayWrapperSPtr ds_vec(dataset->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
         if(!ds_vec.get()) return -7;
         //cicle all dataset attribute
         mongo::BSONArrayBuilder dataset_bson_array;
@@ -244,7 +244,7 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
                         if(dataset_element->isVector(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE)) {
                             //we have multipler value for subtype
                             mongo::BSONArrayBuilder subtype_array_builder;
-                            ChaosUniquePtr<CMultiTypeDataArrayWrapper> sub_t_vec(dataset_element->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE));
+                            CMultiTypeDataArrayWrapperSPtr sub_t_vec(dataset_element->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE));
                             for(int idx = 0;
                                 idx < sub_t_vec->size();
                                 idx++) {
@@ -296,7 +296,7 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
         
         //check if we have bactch command in the dataset
         if(dataset_description.hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_COMMAND_DESCRIPTION)) {
-            ChaosUniquePtr<CMultiTypeDataArrayWrapper> bc_vec(dataset_description.getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_COMMAND_DESCRIPTION));
+            CMultiTypeDataArrayWrapperSPtr bc_vec(dataset_description.getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_COMMAND_DESCRIPTION));
             mongo::BSONArrayBuilder batch_command_bson_array;
             for(int idx = 0;
                 idx < bc_vec->size();
@@ -311,7 +311,7 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
                 //check for parameter
                 if(bc_element->hasKey(common::batch_command::BatchCommandAndParameterDescriptionkey::BC_PARAMETERS)){
                     mongo::BSONArrayBuilder batch_command_parameter_bson_array;
-                    ChaosUniquePtr<CMultiTypeDataArrayWrapper> bc_param_vec(bc_element->getVectorValue(common::batch_command::BatchCommandAndParameterDescriptionkey::BC_PARAMETERS));
+                    CMultiTypeDataArrayWrapperSPtr bc_param_vec(bc_element->getVectorValue(common::batch_command::BatchCommandAndParameterDescriptionkey::BC_PARAMETERS));
                     for(int idx_param = 0;
                         idx_param < bc_param_vec->size();
                         idx_param++) {
@@ -339,7 +339,7 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
             updated_field.appendArray(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_COMMAND_DESCRIPTION,
                                       batch_command_bson_array.arr());
         }
-
+        
         mongo::BSONObj query = bson_find.obj();
         mongo::BSONObj update = BSON("$set" << BSON(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION << updated_field.obj()));
         
@@ -467,6 +467,49 @@ int MongoDBControlUnitDataAccess::getDataset(const std::string& cu_unique_id,
     return err;
 }
 
+
+int MongoDBControlUnitDataAccess::getDataset(const std::string& cu_unique_id,
+                                             Dataset& dataset) {
+    int err = 0;
+    mongo::BSONObj result;
+    try {
+        mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << cu_unique_id
+                                    << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_CONTROL_UNIT
+                                    << ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION  << BSON("$exists" << true ));
+        mongo::BSONObj prj = BSON(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION  << 1 <<
+                                  ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_COMMAND_DESCRIPTION << 1);
+        
+        
+        DEBUG_CODE(MDBCUDA_DBG<<log_message("getDataset",
+                                            "findOne",
+                                            DATA_ACCESS_LOG_2_ENTRY("query",
+                                                                    "prj",
+                                                                    query.toString(),
+                                                                    prj.toString()));)
+        //remove the field of the document
+        if((err = connection->findOne(result,
+                                      MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                      query,
+                                      &prj))) {
+            MDBCUDA_ERR << "Error fetching dataset";
+        } else if(result.isEmpty()) {
+            MDBCUDA_ERR << "No element found";
+        } else {
+            //we have dataset so set it directly within the cdsta wrapper
+            CDWUniquePtr ds_in_cdw(new CDataWrapper(result.getObjectField(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION).objdata()));
+            DatasetSDWrapper reference_ser_wrap(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(Dataset, dataset));
+            reference_ser_wrap.deserialize(ds_in_cdw.get());
+        }
+    } catch (const mongo::DBException &e) {
+        MDBCUDA_ERR << e.what();
+        err = -1;
+    } catch (const CException &e) {
+        MDBCUDA_ERR << e.what();
+        err = e.errorCode;
+    }
+    return err;
+}
+
 int MongoDBControlUnitDataAccess::setCommandDescription(chaos::common::data::CDataWrapper& command_description) {
     return -1;
 }
@@ -527,7 +570,7 @@ int MongoDBControlUnitDataAccess::setInstanceDescription(const std::string& cu_u
         if(instance_description.hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION)) {
             //get the contained control unit type
             mongo::BSONArrayBuilder bab;
-            ChaosUniquePtr<CMultiTypeDataArrayWrapper> drv_array(instance_description.getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION));
+            CMultiTypeDataArrayWrapperSPtr drv_array(instance_description.getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION));
             for(int idx = 0;
                 idx < drv_array->size();
                 idx++) {
@@ -552,7 +595,7 @@ int MongoDBControlUnitDataAccess::setInstanceDescription(const std::string& cu_u
         if(instance_description.hasKey("attribute_value_descriptions")) {
             //get the contained control unit type
             mongo::BSONArrayBuilder bab;
-            ChaosUniquePtr<CMultiTypeDataArrayWrapper> attr_array(instance_description.getVectorValue("attribute_value_descriptions"));
+            CMultiTypeDataArrayWrapperSPtr attr_array(instance_description.getVectorValue("attribute_value_descriptions"));
             for(int idx = 0;
                 idx < attr_array->size();
                 idx++) {
@@ -1006,7 +1049,7 @@ int MongoDBControlUnitDataAccess::reserveControlUnitForAgeingManagement(uint64_t
         const std::string key_processing_ageing = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_PROCESSING_AGEING);
         const std::string key_last_checking_time = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_AGEING_LAST_CHECK_DATA);
         const std::string key_last_performed_time = CHAOS_FORMAT("%1%.%2%",%MONGODB_COLLECTION_NODES_AGEING_INFO%MONGODB_COLLECTION_NODES_PERFORMED_AGEING);
-         query_builder << "property_defaults" << BSON("$elemMatch" << BSON("property_g_plist" << BSON("$elemMatch" << BSON("property_name" << DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING << "property_value" << BSON("$gt" << 0)))));
+        query_builder << "property_defaults" << BSON("$elemMatch" << BSON("property_g_plist" << BSON("$elemMatch" << BSON("property_name" << DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING << "property_value" << BSON("$gt" << 0)))));
         
         //get all control unit
         query_builder << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_CONTROL_UNIT;
@@ -1048,18 +1091,34 @@ int MongoDBControlUnitDataAccess::reserveControlUnitForAgeingManagement(uint64_t
             MDBCUDA_ERR << CHAOS_FORMAT("Error %1% fetching the next cheable control unit for ageing", %err);
         } else if(result_found.isEmpty() == false && (result_found.hasField(NodeDefinitionKey::NODE_UNIQUE_ID) &&
                                                       result_found.hasField(MONGODB_COLLECTION_NODES_AGEING_INFO))) {
-            //we have control unit
-            last_sequence_id = (uint64_t)result_found.getField("seq").Long();
-            control_unit_found = result_found.getField(NodeDefinitionKey::NODE_UNIQUE_ID).String();
-            control_unit_ageing_time = (uint32_t)result_found.getFieldDotted(CHAOS_FORMAT("instance_description.%1%",%DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING)).numberInt();
-            last_ageing_perform_time = (uint64_t)result_found.getFieldDotted(key_last_performed_time).Date().asInt64();
-        } else {
             last_sequence_id = 0;
             control_unit_found.clear();
             last_ageing_perform_time = 0;
             control_unit_ageing_time = 0;
+            //find property
+            if(result_found.hasElement("property_defaults")) {
+                CDWUniquePtr prop_ser(new CDataWrapper(result_found.objdata()));
+                chaos::common::property::PropertyGroupVectorSDWrapper pg_sdw;
+                pg_sdw.serialization_key = "property_defaults";
+                pg_sdw.deserialize(prop_ser.get());
+                for(common::property::PropertyGroupVectorConstIterator it = pg_sdw().begin(),
+                    end = pg_sdw().end();
+                    it != end;
+                    it++) {
+                    const std::string& pg_name = it->getGroupName();
+                    if(pg_name.compare(ControlUnitPropertyKey::GROUP_NAME) == 0) {
+                        if(it->hasProperty(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING)){
+                            //we have ageing data
+                            control_unit_ageing_time = (uint32_t)it->getPropertyValue(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING).asInt32();
+                            last_sequence_id = (uint64_t)result_found.getField("seq").Long();
+                            control_unit_found = result_found.getField(NodeDefinitionKey::NODE_UNIQUE_ID).String();
+                            last_ageing_perform_time = (uint64_t)result_found.getFieldDotted(key_last_performed_time).Date().asInt64();
+                        }
+                        break;
+                    }
+                }
+            }
         }
-        
     } catch (const mongo::DBException &e) {
         MDBCUDA_ERR << e.what();
         err = -1;

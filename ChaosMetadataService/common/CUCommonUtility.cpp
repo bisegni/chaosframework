@@ -247,7 +247,7 @@ ChaosUniquePtr<chaos::common::data::CDataWrapper> CUCommonUtility::initDataPack(
             LOG_AND_TROW(CUCU_ERR, err, CHAOS_FORMAT("Error fetching defaults value for properti group %1% for control unit %2%", %chaos::ControlUnitPropertyKey::GROUP_NAME%cu_uid));
         }
         
-        ChaosUniquePtr<CMultiTypeDataArrayWrapper> dataset_element_vec(dataset_description->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
+        CMultiTypeDataArrayWrapperSPtr dataset_element_vec(dataset_description->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
         ChaosUniquePtr<chaos::common::data::CDataWrapper> init_dataset(new CDataWrapper());
         for(int idx = 0; idx <
             dataset_element_vec->size();
@@ -290,7 +290,7 @@ ChaosUniquePtr<chaos::common::data::CDataWrapper> CUCommonUtility::initDataPack(
             if(instance_description->hasKey("attribute_value_descriptions") &&
                instance_description->isVectorValue("attribute_value_descriptions")) {
                 //we have a configuration so we try to send it as dataset
-                ChaosUniquePtr<CMultiTypeDataArrayWrapper> instance_description_array(result->getVectorValue("attribute_value_descriptions"));
+                CMultiTypeDataArrayWrapperSPtr instance_description_array(result->getVectorValue("attribute_value_descriptions"));
                 for(int aai = 0;
                     aai < instance_description_array->size();
                     aai++) {

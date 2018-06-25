@@ -48,7 +48,7 @@ GetAllSnapshotHelper::GetAllSnapshotHelper(CDataWrapper *api_result) {
     //SnapshotInformationPtr
     if(!api_result || !api_result->hasKey("snapshot_list_result")) return;
     
-    ChaosUniquePtr<CMultiTypeDataArrayWrapper> snapshot_desc_list(api_result->getVectorValue("snapshot_list_result"));
+    CMultiTypeDataArrayWrapperSPtr snapshot_desc_list = api_result->getVectorValue("snapshot_list_result");
     for(int idx = 0;
         idx < snapshot_desc_list->size();
         idx++) {

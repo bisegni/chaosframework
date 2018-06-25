@@ -42,7 +42,7 @@ namespace chaos {
                    serialized_data->isVectorValue(NodeStateFlagDefinitionKey::NODE_SF_CATALOG_FLAG_SET) ) {
                     StateFlagSDWrapper sfsdw;
                     //we have element to deserialize
-                    ChaosUniquePtr<chaos::common::data::CMultiTypeDataArrayWrapper> flags_vec(serialized_data->getVectorValue(NodeStateFlagDefinitionKey::NODE_SF_CATALOG_FLAG_SET));
+                    chaos::common::data::CMultiTypeDataArrayWrapperSPtr flags_vec = serialized_data->getVectorValue(NodeStateFlagDefinitionKey::NODE_SF_CATALOG_FLAG_SET);
                     if(flags_vec->size()){
                         for (int idx = 0;
                              idx < flags_vec->size();

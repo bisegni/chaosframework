@@ -21,7 +21,6 @@
 
 #ifndef chaos_cu_toolkit_driver_manager_driver_AbstractServerRemoteIODriver_h
 #define chaos_cu_toolkit_driver_manager_driver_AbstractServerRemoteIODriver_h
-
 #include <chaos/cu_toolkit/driver_manager/driver/AbstractRemoteIODriver.h>
 
 #include <chaos/common/external_unit/ExternalUnitServerEndpoint.h>

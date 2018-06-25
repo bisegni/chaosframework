@@ -130,7 +130,7 @@ int checkSubmissionRule(std::string scSubmissionRule) {
     } else return -1;
 }
 
-int main (int argc, char* argv[] )
+int main (int argc, const char* argv[] )
 {
     try {
         int err = 0;

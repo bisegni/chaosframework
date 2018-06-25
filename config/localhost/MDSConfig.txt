@@ -3718,7 +3718,7 @@
 		    "cu_id": "BTF/MEDIPIX_IMPORT",
 		    "cu_type": "DataImport",
 		    "cu_param": "{\"dataset\": [{\"name\": \"image\",\"description\": \"medipix_image\",\"type\": \"binary\",\"offset\": 0,\"len\": 65536}]}",
-		    "auto_load": true,
+		    "auto_load": false,
 		    "auto_start": false,
 		    "auto_init": false,
 		    "storage_type": 2,
@@ -4195,7 +4195,7 @@
 		    "cu_id": "ACCUMULATOR/BPM/BPMSYNC",
 		    "cu_type": "SCDafneAccumulatorBPMSync",
 		    "cu_param": "",
-		    "auto_load": true,
+		    "auto_load": false,
 		    "auto_start": true,
 		    "auto_init": true,
 		    "storage_type": 2,
@@ -4268,7 +4268,7 @@
 		    "cu_id": "LUMINOMETER/CAEN775",
 		    "cu_type": "::driver::daq::caen::RTCAEN775",
 		    "cu_param": "",
-		    "auto_load": true,
+		    "auto_load": false,
 		    "auto_start": true,
 		    "auto_init": true,
 		    "storage_type": 2,
@@ -4325,7 +4325,7 @@
 		    "cu_id": "LUMINOMETER/CAEN965",
 		    "cu_type": "::driver::daq::caen::RTCAEN965",
 		    "cu_param": "",
-		    "auto_load": true,
+		    "auto_load": false,
 		    "auto_start": true,
 		    "auto_init": true,
 		    "storage_type": 2,
@@ -4373,9 +4373,9 @@
 		},{
 		    "unit_server_alias": "TEST",
 		    "cu_id": "ASTRA/CAEN775",
-		    "cu_type": "::driver::daq::RTCAEN775",
+		    "cu_type": "::driver::daq::caen::RTCAEN775",
 		    "cu_param": "",
-		    "auto_load": true,
+		    "auto_load": false,
 		    "auto_start": true,
 		    "auto_init": true,
 		    "storage_type": 2,
@@ -4424,9 +4424,9 @@
 		{
 		    "unit_server_alias": "TEST",
 		    "cu_id": "ASTRA/CAEN965",
-		    "cu_type": "::driver::daq::RTCAEN965",
+		    "cu_type": "::driver::daq::caen::RTCAEN965",
 		    "cu_param": "",
-		    "auto_load": true,
+		    "auto_load": false,
 		    "auto_start": true,
 		    "auto_init": true,
 		    "storage_type": 2,
@@ -4480,7 +4480,7 @@
 
 		},{
 		    "unit_server_alias": "TEST",
-		    "cu_id": "AULA_TOUSHECK/ZB_SENSOR_C0101",
+		    "cu_id": "AULA_TOUSHECK/TEMP/ZB_SENSOR_C0101",
 		    "cu_type": "BasicSensor",
 		    "cu_param": "",
 		    "auto_load": true,
@@ -4493,14 +4493,14 @@
 			{
 			    "DriverDescriptionName": "VTemperatureDriver",
 			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "/dev/ttyACM0:0x0101"
+			    "DriverDescriptionInitParam": "{\"temp\":25.0,\"err\":1.0,\"type\":1}"
 			}
 		    ],
 		    "AttrDesc": []
 		},
 		{
 		    "unit_server_alias": "TEST",
-		    "cu_id": "AULA_TOUSHECK/ZB_SENSOR_C0301",
+		    "cu_id": "AULA_TOUSHECK/TEMP/ZB_SENSOR_C0301",
 		    "cu_type": "BasicSensor",
 		    "cu_param": "",
 		    "auto_load": true,
@@ -4513,14 +4513,15 @@
 			{
 			    "DriverDescriptionName": "VTemperatureDriver",
 			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "/dev/ttyACM0:0x0301"
+			    "DriverDescriptionInitParam": "{\"temp\":30.0,\"err\":2.0,\"type\":0}"
+			    
 			}
 		    ],
 		    "AttrDesc": []
 		},
 		{
 		    "unit_server_alias": "TEST",
-		    "cu_id": "AULA_TOUSHECK/ZB_SENSOR_C0501",
+		    "cu_id": "AULA_TOUSHECK/TEMP/ZB_SENSOR_C0501",
 		    "cu_type": "BasicSensor",
 		    "cu_param": "",
 		    "auto_load": true,
@@ -4533,14 +4534,15 @@
 			{
 			    "DriverDescriptionName": "VTemperatureDriver",
 			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "/dev/ttyACM0:0x0501"
+			    "DriverDescriptionInitParam": "{\"temp\":50.0,\"err\":2.0,\"type\":2}"
+
 			}
 		    ],
 		    "AttrDesc": []
 		},
 		{
 		    "unit_server_alias": "TEST",
-		    "cu_id": "AULA_TOUSHECK/ZB_SENSOR_D0101",
+		    "cu_id": "AULA_TOUSHECK/TEMP/ZB_SENSOR_D0101",
 		    "cu_type": "BasicSensor",
 		    "cu_param": "",
 		    "auto_load": true,
@@ -4553,14 +4555,15 @@
 			{
 			    "DriverDescriptionName": "VTemperatureDriver",
 			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "/dev/ttyACM0:0x0101"
+			    "DriverDescriptionInitParam": "{\"temp\":20.0,\"err\":1.0,\"type\":0}"
+
 			}
 		    ],
 		    "AttrDesc": []
 		},
 		{
 		    "unit_server_alias": "TEST",
-		    "cu_id": "AULA_TOUSHECK/ZB_SENSOR_D0102",
+		    "cu_id": "AULA_TOUSHECK/TEMP/ZB_SENSOR_D0102",
 		    "cu_type": "BasicSensor",
 		    "cu_param": "",
 		    "auto_load": true,
@@ -4573,14 +4576,14 @@
 			{
 			    "DriverDescriptionName": "VTemperatureDriver",
 			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "/dev/ttyACM0:0x0102"
+			    "DriverDescriptionInitParam": "{\"temp\":22.0,\"err\":1.0,\"type\":1}"
 			}
 		    ],
 		    "AttrDesc": []
 		},
 		{
 		    "unit_server_alias": "TEST",
-		    "cu_id": "AULA_TOUSHECK/ZB_SENSOR_D0103",
+		    "cu_id": "AULA_TOUSHECK/TEMP/ZB_SENSOR_D0103",
 		    "cu_type": "BasicSensor",
 		    "cu_param": "",
 		    "auto_load": true,
@@ -4593,14 +4596,14 @@
 			{
 			    "DriverDescriptionName": "VTemperatureDriver",
 			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "/dev/ttyACM0:0x0103"
+			    "DriverDescriptionInitParam": "{\"temp\":23.0,\"err\":1.0,\"type\":0}"
 			}
 		    ],
 		    "AttrDesc": []
 		},
 		{
 		    "unit_server_alias": "TEST",
-		    "cu_id": "AULA_TOUSHECK/ZB_SENSOR_D0201",
+		    "cu_id": "AULA_TOUSHECK/TEMP/ZB_SENSOR_D0201",
 		    "cu_type": "BasicSensor",
 		    "cu_param": "",
 		    "auto_load": true,
@@ -4613,14 +4616,14 @@
 			{
 			    "DriverDescriptionName": "VTemperatureDriver",
 			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "/dev/ttyACM0:0x0201"
+			    "DriverDescriptionInitParam": "{\"temp\":25.0,\"err\":4.0,\"type\":1}"
 			}
 		    ],
 		    "AttrDesc": []
 		},
 		{
 		    "unit_server_alias": "TEST",
-		    "cu_id": "AULA_TOUSHECK/ZB_SENSOR_D0202",
+		    "cu_id": "AULA_TOUSHECK/TEMP/ZB_SENSOR_D0202",
 		    "cu_type": "BasicSensor",
 		    "cu_param": "",
 		    "auto_load": true,
@@ -4633,14 +4636,14 @@
 			{
 			    "DriverDescriptionName": "VTemperatureDriver",
 			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "/dev/ttyACM0:0x0202"
+			    "DriverDescriptionInitParam": "{\"temp\":22.5,\"err\":1.0,\"type\":1}"
 			}
 		    ],
 		    "AttrDesc": []
 		},
 		{
 		    "unit_server_alias": "TEST",
-		    "cu_id": "AULA_TOUSHECK/ZB_SENSOR_D0203",
+		    "cu_id": "AULA_TOUSHECK/TEMP/ZB_SENSOR_D0203",
 		    "cu_type": "BasicSensor",
 		    "cu_param": "",
 		    "auto_load": true,
@@ -4653,367 +4656,7 @@
 			{
 			    "DriverDescriptionName": "VTemperatureDriver",
 			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "/dev/ttyACM0:0x0203"
-			}
-		    ],
-		    "AttrDesc": []
-		},
-		{
-		    "unit_server_alias": "TEST",
-		    "cu_id": "AULA_TOUSHECK/ZB_SENSOR_D0301",
-		    "cu_type": "BasicSensor",
-		    "cu_param": "",
-		    "auto_load": true,
-		    "auto_start": true,
-		    "auto_init": true,
-		    "storage_type": 2,
-		    "storage_ageing": 3600,
-  		    "default_schedule_delay": 2000000,	
-		    "DriverDescription": [
-			{
-			    "DriverDescriptionName": "VTemperatureDriver",
-			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "/dev/ttyACM0:0x0301"
-			}
-		    ],
-		    "AttrDesc": []
-		},
-		{
-		    "unit_server_alias": "TEST",
-		    "cu_id": "AULA_TOUSHECK/ZB_SENSOR_D0302",
-		    "cu_type": "BasicSensor",
-		    "cu_param": "",
-		    "auto_load": true,
-		    "auto_start": true,
-		    "auto_init": true,
-		    "storage_type": 2,
-		    "storage_ageing": 3600,
-  		    "default_schedule_delay": 2000000,	
-		    "DriverDescription": [
-			{
-			    "DriverDescriptionName": "VTemperatureDriver",
-			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "/dev/ttyACM0:0x0302"
-			}
-		    ],
-		    "AttrDesc": []
-		},
-		{
-		    "unit_server_alias": "TEST",
-		    "cu_id": "AULA_TOUSHECK/ZB_SENSOR_D0303",
-		    "cu_type": "BasicSensor",
-		    "cu_param": "",
-		    "auto_load": true,
-		    "auto_start": true,
-		    "auto_init": true,
-		    "storage_type": 2,
-		    "storage_ageing": 3600,
-  		    "default_schedule_delay": 2000000,	
-		    "DriverDescription": [
-			{
-			    "DriverDescriptionName": "VTemperatureDriver",
-			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "/dev/ttyACM0:0x0303"
-			}
-		    ],
-		    "AttrDesc": []
-		},
-		{
-		    "unit_server_alias": "TEST",
-		    "cu_id": "AULA_TOUSHECK/ZB_SENSOR_D0304",
-		    "cu_type": "BasicSensor",
-		    "cu_param": "",
-		    "auto_load": true,
-		    "auto_start": true,
-		    "auto_init": true,
-		    "storage_type": 2,
-		    "storage_ageing": 3600,
-  		    "default_schedule_delay": 2000000,	
-		    "DriverDescription": [
-			{
-			    "DriverDescriptionName": "VTemperatureDriver",
-			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "/dev/ttyACM0:0x0304"
-			}
-		    ],
-		    "AttrDesc": []
-		},
-		{
-		    "unit_server_alias": "TEST",
-		    "cu_id": "AULA_TOUSHECK/ZB_SENSOR_D0401",
-		    "cu_type": "BasicSensor",
-		    "cu_param": "",
-		    "auto_start": true,
-		    "auto_init": true,
-		    "storage_type": 2,
-		    "storage_ageing": 3600,
-		    "auto_load": true,
-		    "default_schedule_delay": 2000000,	
-		    "DriverDescription": [
-			{
-			    "DriverDescriptionName": "VTemperatureDriver",
-			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "/dev/ttyACM0:0x0401"
-			}
-		    ],
-		    "AttrDesc": []
-		},
-		{
-		    "unit_server_alias": "TEST",
-		    "cu_id": "AULA_TOUSHECK/ZB_SENSOR_D0402",
-		    "cu_type": "BasicSensor",
-		    "cu_param": "",
-		    "auto_load": true,
-		    "auto_start": true,
-		    "auto_init": true,
-		    "storage_type": 2,
-		    "storage_ageing": 3600,
-  		    "default_schedule_delay": 2000000,	
-		    "DriverDescription": [
-			{
-			    "DriverDescriptionName": "VTemperatureDriver",
-			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "/dev/ttyACM0:0x0402"
-			}
-		    ],
-		    "AttrDesc": []
-		},
-		{
-		    "unit_server_alias": "TEST",
-		    "cu_id": "AULA_TOUSHECK/ZB_SENSOR_D0403",
-		    "cu_type": "BasicSensor",
-		    "cu_param": "",
-		    "auto_load": true,
-		    "auto_start": true,
-		    "auto_init": true,
-		    "storage_type": 2,
-		    "storage_ageing": 3600,
-  		    "default_schedule_delay": 2000000,	
-		    "DriverDescription": [
-			{
-			    "DriverDescriptionName": "VTemperatureDriver",
-			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "/dev/ttyACM0:0x0403"
-			}
-		    ],
-		    "AttrDesc": []
-		},
-		{
-		    "unit_server_alias": "TEST",
-		    "cu_id": "AULA_TOUSHECK/ZB_SENSOR_D0404",
-		    "cu_type": "BasicSensor",
-		    "cu_param": "",
-		    "auto_load": true,
-		    "auto_start": true,
-		    "auto_init": true,
-		    "storage_type": 2,
-		    "storage_ageing": 3600,
-  		    "default_schedule_delay": 2000000,	
-		    "DriverDescription": [
-			{
-			    "DriverDescriptionName": "VTemperatureDriver",
-			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "/dev/ttyACM0:0x0404"
-			}
-		    ],
-		    "AttrDesc": []
-		},
-		{
-		    "unit_server_alias": "TEST",
-		    "cu_id": "AULA_TOUSHECK/ZB_SENSOR_D0501",
-		    "cu_type": "BasicSensor",
-		    "cu_param": "",
-		    "auto_load": true,
-		    "auto_start": true,
-		    "auto_init": true,
-		    "storage_type": 2,
-		    "storage_ageing": 3600,
-  		    "default_schedule_delay": 2000000,	
-		    "DriverDescription": [
-			{
-			    "DriverDescriptionName": "VTemperatureDriver",
-			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "/dev/ttyACM0:0x0501"
-			}
-		    ],
-		    "AttrDesc": []
-		},
-		{
-		    "unit_server_alias": "TEST",
-		    "cu_id": "AULA_TOUSHECK/ZB_SENSOR_D0502",
-		    "cu_type": "BasicSensor",
-		    "cu_param": "",
-		    "auto_load": true,
-		    "auto_start": true,
-		    "auto_init": true,
-		    "storage_type": 2,
-		    "storage_ageing": 3600,
-  		    "default_schedule_delay": 2000000,	
-		    "DriverDescription": [
-			{
-			    "DriverDescriptionName": "VTemperatureDriver",
-			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "/dev/ttyACM0:0x0502"
-			}
-		    ],
-		    "AttrDesc": []
-		},
-		{
-		    "unit_server_alias": "TEST",
-		    "cu_id": "AULA_TOUSHECK/ZB_SENSOR_S0101",
-		    "cu_type": "BasicSensor",
-		    "cu_param": "",
-		    "auto_load": true,
-		    "auto_start": true,
-		    "auto_init": true,
-		    "storage_type": 2,
-		    "storage_ageing": 3600,
-  		    "default_schedule_delay": 2000000,	
-		    "DriverDescription": [
-			{
-			    "DriverDescriptionName": "VTemperatureDriver",
-			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "/dev/ttyACM0:0x0101"
-			}
-		    ],
-		    "AttrDesc": []
-		},
-		{
-		    "unit_server_alias": "TEST",
-		    "cu_id": "AULA_TOUSHECK/ZB_SENSOR_S0102",
-		    "cu_type": "BasicSensor",
-		    "cu_param": "",
-		    "auto_load": true,
-		    "auto_start": true,
-		    "auto_init": true,
-		    "storage_type": 2,
-		    "storage_ageing": 3600,
-  		    "default_schedule_delay": 2000000,	
-		    "DriverDescription": [
-			{
-			    "DriverDescriptionName": "VTemperatureDriver",
-			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "/dev/ttyACM0:0x0102"
-			}
-		    ],
-		    "AttrDesc": []
-		},
-		{
-		    "unit_server_alias": "TEST",
-		    "cu_id": "AULA_TOUSHECK/ZB_SENSOR_S0201",
-		    "cu_type": "BasicSensor",
-		    "cu_param": "",
-		    "auto_load": true,
-		    "auto_start": true,
-		    "auto_init": true,
-		    "storage_type": 2,
-		    "storage_ageing": 3600,
-  		    "default_schedule_delay": 2000000,	
-		    "DriverDescription": [
-			{
-			    "DriverDescriptionName": "VTemperatureDriver",
-			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "/dev/ttyACM0:0x0201"
-			}
-		    ],
-		    "AttrDesc": []
-		},
-		{
-		    "unit_server_alias": "TEST",
-		    "cu_id": "AULA_TOUSHECK/ZB_SENSOR_S0202",
-		    "cu_type": "BasicSensor",
-		    "cu_param": "",
-		    "auto_load": true,
-		    "auto_start": true,
-		    "auto_init": true,
-		    "storage_type": 2,
-		    "storage_ageing": 3600,
-  		    "default_schedule_delay": 2000000,	
-		    "DriverDescription": [
-			{
-			    "DriverDescriptionName": "VTemperatureDriver",
-			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "/dev/ttyACM0:0x0202"
-			}
-		    ],
-		    "AttrDesc": []
-		},
-		{
-		    "unit_server_alias": "TEST",
-		    "cu_id": "AULA_TOUSHECK/ZB_SENSOR_S0301",
-		    "cu_type": "BasicSensor",
-		    "cu_param": "",
-		    "auto_load": true,
-		    "auto_start": true,
-		    "auto_init": true,
-		    "storage_type": 2,
-		    "storage_ageing": 3600,
-  		    "default_schedule_delay": 2000000,	
-		    "DriverDescription": [
-			{
-			    "DriverDescriptionName": "VTemperatureDriver",
-			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "/dev/ttyACM0:0x0301"
-			}
-		    ],
-		    "AttrDesc": []
-		},
-		{
-		    "unit_server_alias": "TEST",
-		    "cu_id": "AULA_TOUSHECK/ZB_SENSOR_S0401",
-		    "cu_type": "BasicSensor",
-		    "cu_param": "",
-		    "auto_load": true,
-		    "auto_start": true,
-		    "auto_init": true,
-		    "storage_type": 2,
-		    "storage_ageing": 3600,
-  		    "default_schedule_delay": 2000000,	
-		    "DriverDescription": [
-			{
-			    "DriverDescriptionName": "VTemperatureDriver",
-			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "/dev/ttyACM0:0x0401"
-			}
-		    ],
-		    "AttrDesc": []
-		},
-		{
-		    "unit_server_alias": "TEST",
-		    "cu_id": "AULA_TOUSHECK/ZB_SENSOR_S0501",
-		    "cu_type": "BasicSensor",
-		    "cu_param": "",
-		    "auto_load": true,
-		    "auto_start": true,
-		    "auto_init": true,
-		    "storage_type": 2,
-		    "storage_ageing": 3600,
-  		    "default_schedule_delay": 2000000,	
-		    "DriverDescription": [
-			{
-			    "DriverDescriptionName": "VTemperatureDriver",
-			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "/dev/ttyACM0:0x0501"
-			}
-		    ],
-		    "AttrDesc": []
-		},
-		{
-		    "unit_server_alias": "TEST",
-		    "cu_id": "AULA_TOUSHECK/ZB_SENSOR_S0502",
-		    "cu_type": "BasicSensor",
-		    "cu_param": "",
-		    "auto_load": true,
-		    "auto_start": true,
-		    "auto_init": true,
-		    "storage_type": 2,
-		    "storage_ageing": 3600,
-  		    "default_schedule_delay": 2000000,	
-		    "DriverDescription": [
-			{
-			    "DriverDescriptionName": "VTemperatureDriver",
-			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "/dev/ttyACM0:0x0502"
+			    "DriverDescriptionInitParam": "{\"temp\":23.8,\"err\":1.0,\"type\":0}"
 			}
 		    ],
 		    "AttrDesc": []

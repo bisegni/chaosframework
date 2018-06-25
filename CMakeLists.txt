@@ -12,11 +12,12 @@ unset(CMAKE_CXX_COMPILER_WORKS CACHE)
 unset(CMAKE_CXX_COMPILER_WORKS)
 
 #specify option
+option(USE_GPT "Uses Google Performance tool to perform analisys" OFF)
+option(CLING_VIRTUAL_MACHINE_ENABLE "Enable cling for scripting" OFF)
 option(CHAOS_ONLY_DEPENDECY "Download all the dependency" OFF)
 option(CHAOS_ARCHITECTURE_TEST "Architecture tests" OFF)
 option(CHAOS_CDS "Chaos Data Service" ON)
 option(CHAOS_MDS "Chaos MetaData Service" ON)
-option(CHAOS_WAN "Chaos Wan Service" OFF)
 option(CHAOS_AGENT "Chaos Agent Service" ON)
 option(CHAOS_DATA_EXPORT "Chaos Data Export" ON)
 option(CHAOS_EXAMPLES "Chaos Examples" ON)
@@ -82,6 +83,32 @@ IF (CHAOS_ONLY_DEPENDECY OR
      MESG("${GTEST_LIBRARY}")
 ENDIF()
 
+IF (USE_GPT)
+    #google performance tools
+    MESG("Add Google Performance Tools as external project")
+    ExternalProject_Add(
+    google_pt
+    GIT_REPOSITORY https://github.com/gperftools/gperftools.git
+    GIT_TAG master
+    PREFIX "${CMAKE_BINARY_DIR}/ext_dep/gpt-prefix"
+    SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/gpt-src"
+    BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/gpt-src"
+    CONFIGURE_COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/ext_dep/gpt-src/./autogen.sh COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/ext_dep/gpt-src/./configure --prefix=${CMAKE_INSTALL_PREFIX}
+    LOG_DOWNLOAD ON
+    LOG_CONFIGURE ON
+    LOG_BUILD ON)
+
+    # Specify include dir
+    ExternalProject_Get_Property(google_pt source_dir)
+    set(GPT_INCLUDE_DIR ${google_pt_sdir}/include)
+
+    # Library
+    ExternalProject_Get_Property(google_pt binary_dir)
+    set(GPT_LIBRARY_DIR ${google_pt_bdir})
+
+    MESG("${GPT_INCLUDE_DIR}")
+    MESG("${GPT_LIBRARY_DIR}")
+ENDIF()
 
 SET( ${PROJECT_NAME}_MAJOR_VERSION 0 )
 SET( ${PROJECT_NAME}_MINOR_VERSION 1 )
@@ -123,10 +150,6 @@ IF(NOT CHAOS_ONLY_DEPENDECY)
   MESG("Configure Chaos Metadata Service Client Library Test Application")
   ADD_SUBDIRECTORY(ChaosMetadataServiceClientTest)
 
-  IF (CHAOS_WAN)
-    MESG("Configure Chaos WAN Proxy")
-    ADD_SUBDIRECTORY(ChaosWANProxy)
-  ENDIF()
 
   IF (CHAOS_DATA_EXPORT)
     MESG("Configure Chaos Data Export ")

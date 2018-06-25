@@ -7,9 +7,6 @@
 #include <QMargins>
 #include <QPen>
 
-#include <chaos/common/chaos_constants.h>
-#include <chaos/common/data/CDataWrapper.h>
-
 using namespace chaos::common::data;
 
 TwoLineInformationListItemDelegate::TwoLineInformationListItemDelegate(QWidget *parent):

@@ -32,9 +32,7 @@ DirectIOVirtualChannel(channel_name,
 endpoint_route_index(0){
 	clearDelegate();
 }
-DirectIOVirtualServerChannel::~DirectIOVirtualServerChannel() {
-	
-}
+DirectIOVirtualServerChannel::~DirectIOVirtualServerChannel() {}
 
 void DirectIOVirtualServerChannel::setDelegate(ServerChannelDelegate delegate_function) {
 	server_channel_delegate = delegate_function;

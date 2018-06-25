@@ -65,10 +65,9 @@ void HealtMonitorWidget::startMonitoringNode(const QString& node_key) {
 void HealtMonitorWidget::stopMonitoringNode(const QString& node_key) {
     if(!map_node_healt_wdg.contains(node_key)) return;
     QMap<QString, HealtPresenterWidget*>::iterator handler_it = map_node_healt_wdg.find(node_key);
-    map_node_healt_wdg.erase(handler_it);
-
     healt_list_presenter->removeHealtWidget(handler_it.value());
     delete(handler_it.value());
+    map_node_healt_wdg.erase(handler_it);
 }
 
 void HealtMonitorWidget::closeAllMonitor() {

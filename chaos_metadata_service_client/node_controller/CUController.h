@@ -32,6 +32,7 @@
 #include <chaos/common/utility/SingleBufferCircularBuffer.h>
 #include <chaos/cu_toolkit/data_manager/KeyDataStorage.h>
 #include <chaos/common/io/IODirectIODriver.h>
+#include <chaos/common/chaos_constants.h>
 
 //#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
 
@@ -80,7 +81,7 @@ namespace chaos {
                 //!point to the freashest live value for this device dataset
                 std::vector< ChaosSharedPtr<chaos::common::data::CDataWrapper> >current_dataset;
                 
-                
+                std::string devId;
                 //mutext for multi threading track operation
                 boost::mutex trackMutext;
                 
@@ -168,6 +169,12 @@ namespace chaos {
                  Set the control unit run method scheduling delay
                  */
                 int setScheduleDelay(uint64_t microsecondsDelay);
+
+                //! update the scudiling of device run method
+                /*!
+                 Set the control unit bypass
+                 */
+                int setBypass(bool onoff);
                 /*!
                  Get attribute name filtered by direction type
                  */
@@ -175,10 +182,18 @@ namespace chaos {
                 
                 /*!
                  Get time stamp of last packet
+                 * @param [in] hr high resolution (microseconds)
                  * @param [out] live output timestamp, set 0 on error
                  * @return 0 on success, negative otherwise
                  */
-                int getTimeStamp(uint64_t& live);
+                int getTimeStamp(uint64_t& live,bool hr=false);
+                /*!
+                 Get packet seq id 
+                 * @param [out] packet seq id, set 0 on error
+                 * @return 0 on success, negative otherwise
+                 */
+                int getPackSeq(uint64_t& seq);
+
                 /*!
                  Get description for attribute name
                  */
@@ -245,6 +260,7 @@ namespace chaos {
                  */
                 int deinitDevice();
                 
+
                 /**
                  * recover the device from an error (recoverable)
                  * @return 0 on success
@@ -394,7 +410,7 @@ namespace chaos {
                 
                 //!return the last fetched dataset for the domain
                 ChaosSharedPtr<chaos::common::data::CDataWrapper> getCurrentDatasetForDomain(DatasetDomain domain);
-                
+
                 //!return the last fetched dataset for the domain
                 int getCurrentDatasetForDomain(DatasetDomain domain,chaos::common::data::CDataWrapper* ret);
                 
@@ -444,7 +460,14 @@ namespace chaos {
                                                uint64_t start_ts,
                                                uint64_t end_ts,
                                                chaos::common::io::QueryCursor **query_cursor,uint32_t page_len=DEFAULT_PAGE_LEN);
-                
+
+                void executeTimeIntervalQuery(DatasetDomain domain,
+                                               uint64_t start_ts,
+                                               uint64_t end_ts,
+                                               uint64_t seqid,
+                                               uint64_t runid,
+                                              chaos::common::io::QueryCursor **query_cursor,uint32_t page_len=DEFAULT_PAGE_LEN);
+
                 //! release a query
                 void releaseQuery(chaos::common::io::QueryCursor *query_cursor);
                 
@@ -454,7 +477,7 @@ namespace chaos {
                 //! restore from a tag a dataset associated to a key
                 int loadDatasetTypeFromSnapshotTag(const std::string& snapshot_tag,
                                                    DatasetDomain dataset_type,
-                                                   chaos_data::CDataWrapper **cdatawrapper_handler);
+                                                   chaos_data::CDWShrdPtr& cdatawrapper_handler);
                 //! restore from a tag a dataset associated to a key
                 int createNewSnapshot(const std::string& snapshot_tag,
                                       const std::vector<std::string>& other_snapped_device);

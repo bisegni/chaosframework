@@ -1,4 +1,4 @@
-/*
+ /*
  * Copyright 2013 MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,7 +39,7 @@ BSON_BEGIN_DECLS
 #define BSON_BIG_ENDIAN 4321
 #define BSON_LITTLE_ENDIAN 1234
 
-
+#ifndef DISABLE_COMPARE_AND_SWAP
 #if defined(__sun)
 #define BSON_UINT16_SWAP_LE_BE(v) BSWAP_16 ((uint16_t) v)
 #define BSON_UINT32_SWAP_LE_BE(v) BSWAP_32 ((uint32_t) v)
@@ -65,7 +65,7 @@ BSON_BEGIN_DECLS
 #define BSON_UINT16_SWAP_LE_BE(v) __builtin_bswap16 ((uint32_t) v)
 #endif
 #endif
-
+#endif //DISABLE_COMPARE_AND_SWAP
 
 #ifndef BSON_UINT16_SWAP_LE_BE
 #define BSON_UINT16_SWAP_LE_BE(v) __bson_uint16_swap_slow ((uint16_t) v)

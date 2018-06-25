@@ -21,6 +21,9 @@
 
 #include <chaos_metadata_service_client/api_proxy/control_unit/GetCurrentDataset.h>
 
+using namespace chaos::common::data;
+using namespace chaos::common::data::structured;
+
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::api_proxy::control_unit;
 
@@ -29,10 +32,29 @@ API_PROXY_CD_DEFINITION(GetCurrentDataset,
                         "getCurrentDataset")
 
 /*!
-
+ 
  */
 ApiProxyResult GetCurrentDataset::execute(const std::string& cu_unique_id) {
     chaos::common::data::CDataWrapper *message = new chaos::common::data::CDataWrapper();
     message->addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, cu_unique_id);
     return callApi(message);
 }
+
+void GetCurrentDataset::deserialize(chaos::common::data::CDataWrapper& cdw,
+                                    chaos::common::data::structured::DatasetAttributeList& dataset_attribute_list) {
+    if(!cdw.hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION) ||
+       !cdw.isVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION)) return;
+    
+    CMultiTypeDataArrayWrapperSPtr d_attr_vec = cdw.getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION);
+    for(int idx = 0;
+        idx < d_attr_vec->size();
+        idx++) {
+        DatasetAttributeSDWrapper da_sdw;
+        
+        CDWUniquePtr attr(d_attr_vec->getCDataWrapperElementAtIndex(idx));
+        da_sdw.deserialize(attr.get());
+        dataset_attribute_list.push_back(da_sdw());
+    }
+    
+}
+

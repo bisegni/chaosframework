@@ -108,6 +108,8 @@ n->fault_description.domain = d;
                 
                 virtual void killCurrentCommand() = 0;
                 
+                virtual void clearCommandQueue() = 0;
+                
                 virtual void setCurrentCommandScheduerStepDelay(uint64_t scheduler_step_delay) = 0;
                 
                 virtual void lockCurrentCommandFeature(bool lock) = 0;

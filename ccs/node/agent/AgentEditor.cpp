@@ -4,6 +4,7 @@
 #include "../../data/delegate/TwoLineInformationListItemDelegate.h"
 #include "ui_AgentEditor.h"
 
+#include <QMessageBox>
 #include <QFontDatabase>
 
 #define START_NODE      "Launch Node"
@@ -122,6 +123,12 @@ void AgentEditor::on_pushButtonEditAssociatedNode_clicked() {
 }
 
 void AgentEditor::on_pushButtonRemoveAssociatedNode_clicked() {
+    QMessageBox::StandardButton reply = QMessageBox::question(this,
+                                                              "Unit server remove action",
+                                                                 QString("Removing selected association(s), all the configuration will be deleted from agent %1!").arg(agent_uid));
+    if(reply != QMessageBox::Yes){
+        return;
+    }
     QModelIndexList selected_index = ui->listViewNodeAssociated->selectionModel()->selectedIndexes();
     ChaosStringVector associated_node;
     foreach(QModelIndex index, selected_index){

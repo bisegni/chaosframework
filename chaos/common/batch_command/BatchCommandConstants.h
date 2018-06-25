@@ -79,12 +79,10 @@ namespace chaos {
                 static const char * const   RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI64	= "scf_sched_waith_time";
                 //! @The key represent the lock option for the features, value is and boolean
                 static const char * const   RPC_SET_COMMAND_FEATURES_LOCK_BOOL					= "scf_lock";
-                
                 //! @The key represent the rpc alias for BatchCommandExecutor::killCurrentCommand method
-                static const char * const   RPC_KILL_CURRENT_COMMAND = "killCurrentCommand";
-                
-                //! @The key represent the rpc alias for BatchCommandExecutor::flushCommandStates method
-                static const char * const   RPC_FLUSH_COMMAND_HISTORY = "flushCmdStateHst";
+                static const char * const   RPC_KILL_CURRENT_COMMAND                            = "killCurrentCommand";
+                //! @The key represent the rpc alias tha tpermit to clear the command queue erasing command that still are pending to be execute
+                static const char * const   RPC_CLEAR_COMMAND_QUEUE                             = "clearCommandQueue";
             }
             /** @} */ // end of API_Slow_Control Slow Control API
             

@@ -112,7 +112,12 @@ DirectIOClientConnection *ZMQDirectIOClient::_getNewConnectionImpl(std::string s
         //register client with the hash of the xzmq decoded endpoint address (tcp://ip:port)
         DEBUG_CODE(ZMQDIOLDBG_ << "Register client for " << server_description << " with zmq decoded hash " << connection->getUniqueUUID();)
         map_connections.registerElement(connection->getUniqueUUID(), connection);
-    } catch (...) {}
+    } catch (...) {
+        ZMQDIOLERR_ << CHAOS_FORMAT("We got error initilizing connection to %1%:%2% so we goning to deinitilize it an return NULL channel", %server_description%endpoint);
+        //in case of error
+        CHAOS_NOT_THROW(InizializableService::deinitImplementation(connection, "ZMQDirectIOClientConnection", __PRETTY_FUNCTION__););
+        connection = NULL;
+    }
     return connection;
 }
 
@@ -122,7 +127,7 @@ void ZMQDirectIOClient::_releaseConnectionImpl(DirectIOClientConnection *connect
     CHAOS_NOT_THROW(InizializableService::deinitImplementation(conn, "ZMQDirectIOClientConnection", __PRETTY_FUNCTION__););
     //CHAOS_ASSERT(conn->monitor_info)
     //stop the monitor
-    ZMQDIOLAPP_ << "Release the connection for: " << connection_to_release->getServerDescription();
+    DEBUG_CODE(ZMQDIOLDBG_ << "Release the connection for: " << connection_to_release->getServerDescription() <<" ptr:"<<std::hex<<(uint64_t)connection_to_release;)
     map_connections.deregisterElementKey(conn->getUniqueUUID());
     delete(connection_to_release);
     
@@ -132,6 +137,6 @@ void ZMQDirectIOClient::_releaseConnectionImpl(DirectIOClientConnection *connect
 void ZMQDirectIOClient::freeObject(const DCKeyObjectContainer::TKOCElement& element) {
     if(!element.element) return;
     DirectIOClientConnection *connection = element.element;
-    ZMQDIOLAPP_ << "Autorelease connection for " << connection->getServerDescription();
+    DEBUG_CODE(ZMQDIOLDBG_ << "Autorelease connection for " << connection->getServerDescription();)
     releaseConnection(connection);
 }

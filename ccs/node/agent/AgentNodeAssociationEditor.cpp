@@ -46,7 +46,7 @@ AgentNodeAssociationEditor::~AgentNodeAssociationEditor() {
 }
 
 void AgentNodeAssociationEditor::on_pushButtonSaveAssociation_clicked() {
-    association.log_at_laucnh = ui->checkBoxEnableRemoteLoggingAtLaunch->isChecked();
+    association.log_on_mds = ui->checkBoxEnableRemoteLoggingAtLaunch->isChecked();
     association.auto_start = ui->checkBoxAutoSave->isChecked();
     association.keep_alive = ui->checkBoxKeepAlive->isChecked();
     association.launch_cmd_line = ui->lineEditCMDLine->text().toStdString();
@@ -57,7 +57,7 @@ void AgentNodeAssociationEditor::on_pushButtonSaveAssociation_clicked() {
 }
 
 void AgentNodeAssociationEditor::updateUI() {
-    ui->checkBoxEnableRemoteLoggingAtLaunch->setChecked(association.log_at_laucnh);
+    ui->checkBoxEnableRemoteLoggingAtLaunch->setChecked(association.log_on_mds);
     ui->checkBoxAutoSave->setChecked(association.auto_start);
     ui->checkBoxKeepAlive->setChecked(association.keep_alive);
     ui->lineEditCMDLine->setText(QString::fromStdString(association.launch_cmd_line));

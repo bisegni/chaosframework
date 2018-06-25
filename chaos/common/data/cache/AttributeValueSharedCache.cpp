@@ -158,6 +158,12 @@ void AttributeValueSharedCache::addAttribute(SharedCacheDomain domain,
     getSharedDomain(domain).addAttribute(name, max_size, type);
 }
 
+void AttributeValueSharedCache::addAttribute(SharedCacheDomain domain,
+                                             const std::string&  name,
+                                             chaos::common::data::CDataVariant value) {
+    getSharedDomain(domain).addAttribute(name, value);
+}
+
 bool AttributeValueSharedCache::hasAttribute(SharedCacheDomain domain,
                                              const std::string&  name) {
     return getSharedDomain(domain).hasAttribute(name);
@@ -167,7 +173,7 @@ bool AttributeValueSharedCache::hasAttribute(SharedCacheDomain domain,
  
  ---------------------------------------------------------------------------------*/
 ChaosSharedPtr<SharedCacheLockDomain> AttributeValueSharedCache::getLockOnDomain(SharedCacheDomain domain,
-                                                                                    bool write_lock) {
+                                                                                 bool write_lock) {
     ChaosSharedPtr<SharedCacheLockDomain> result;
     if(write_lock) {
         result.reset(new WriteSharedCacheLockDomain(getSharedDomain(domain).mutex));

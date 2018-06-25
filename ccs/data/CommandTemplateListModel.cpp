@@ -12,7 +12,7 @@ void CommandTemplateListModel::updateSearchPage(const QSharedPointer<CDataWrappe
     if(template_result_page.isNull() ||
             !template_result_page->hasKey("cmd_tmpl_search_result_page")) return;
 
-    QSharedPointer<CMultiTypeDataArrayWrapper> result_page(template_result_page->getVectorValue("cmd_tmpl_search_result_page"));
+    CMultiTypeDataArrayWrapperSPtr result_page = template_result_page->getVectorValue("cmd_tmpl_search_result_page");
     for(int idx = 0;
         idx < result_page->size();
         idx++) {

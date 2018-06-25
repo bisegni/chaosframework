@@ -80,12 +80,16 @@ x::x(chaos::common::message::MultiAddressMessageChannel *_mn_message, int32_t ti
                                   chaos::common::message::MultiAddressMessageChannel *_mn_message,
                                   int32_t _timeout_in_milliseconds = 1000);
                     //! execute an api call
+
+            public:
                 /*!
                  preform an call of an api and return the opportune future
+                  To be used directly i.e rest call with json params
+
                  that permit to inspect the result or error
                  */
                 ApiProxyResult callApi(chaos::common::data::CDataWrapper *api_message = NULL);
-            public:
+
                 //! default destructor
                 ~ApiProxy();
             };

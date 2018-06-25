@@ -52,7 +52,7 @@ DEFINE_CLASS_FACTORY(ZMQDirectIOServer, DirectIOServer);
 ZMQDirectIOServer::ZMQDirectIOServer(std::string alias):
 DirectIOServer(alias),
 zmq_context(NULL),
-run_server(NULL),
+run_server(false),
 direct_io_thread_number(2){};
 
 ZMQDirectIOServer::~ZMQDirectIOServer(){};
@@ -62,7 +62,7 @@ void ZMQDirectIOServer::init(void *init_data) throw(chaos::CException) {
     
     chaos_data::CDataWrapper *init_cw = static_cast<chaos_data::CDataWrapper*>(init_data);
     if(!init_cw) throw chaos::CException(0, "No configration has been provided", __PRETTY_FUNCTION__);
-    
+    LDBG_<<"configuration:"<<init_cw->getCompliantJSONString();
     //get the port from configuration
     priority_port = init_cw->getInt32Value(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_PRIORITY_PORT);
     if(priority_port <= 0) throw chaos::CException(0, "Bad priority port configured", __PRETTY_FUNCTION__);
@@ -105,8 +105,7 @@ void ZMQDirectIOServer::start() throw(chaos::CException) {
     }
     
     //queue thread
-    ZMQDIO_SRV_LAPP_ << "Allocating and binding priority socket to "<< priority_socket_bind_str;
-    ZMQDIO_SRV_LAPP_ << "Allocating threads for manage the requests";
+    ZMQDIO_SRV_LAPP_ << CHAOS_FORMAT("Allocating and binding socket to %1%/%2%",%priority_socket_bind_str%service_socket_bind_str);
     try{
         //start the treads for the proxies
         server_threads_group.add_thread(new boost::thread(boost::bind(&ZMQDirectIOServer::poller,
@@ -126,7 +125,7 @@ void ZMQDirectIOServer::start() throw(chaos::CException) {
         server_threads_group.add_thread(new boost::thread(boost::bind(&ZMQDirectIOServer::worker,
                                                                       this,
                                                                       WorkerTypeService,
-                                                                      &DirectIOHandler::priorityDataReceived)));
+                                                                      &DirectIOHandler::serviceDataReceived)));
         //threads for priority worker
         for(int idx_thrd = 0;
             idx_thrd < direct_io_thread_number;
@@ -138,7 +137,7 @@ void ZMQDirectIOServer::start() throw(chaos::CException) {
             server_threads_group.add_thread(new boost::thread(boost::bind(&ZMQDirectIOServer::worker,
                                                                           this,
                                                                           WorkerTypeService,
-                                                                          &DirectIOHandler::priorityDataReceived)));
+                                                                          &DirectIOHandler::serviceDataReceived)));
         }
         ZMQDIO_SRV_LAPP_ << CHAOS_FORMAT("ZMQ high priority socket managed by %1% threads", %direct_io_thread_number);
     } catch(boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::lock_error> >& lock_error_exception) {
@@ -251,19 +250,18 @@ void ZMQDirectIOServer::poller(const std::string& public_url,
 void ZMQDirectIOServer::worker(unsigned int w_type,
                                DirectIOHandlerPtr delegate) {
     int err = 0;
+    
     std::string                 identity;
     void						*worker_socket          = NULL;
     bool						send_synchronous_answer = false;
-    DirectIODataPack			*data_pack			= NULL;
-    DirectIODataPack            *data_pack_answer   = NULL;
-    DirectIODataPack            data_pack_answer_stack_alloc;
-    DirectIODeallocationHandler *answer_header_deallocation_handler = NULL;
-    DirectIODeallocationHandler *answer_data_deallocation_handler   = NULL;
+    
+    DirectIODataPackSPtr        data_pack_received;
+    DirectIODataPackSPtr        data_pack_answer;
     
     MapZMQConfiguration         worker_empty_default_configuration;
     MapZMQConfiguration         worker_socket_configuration;
     worker_socket_configuration["ZMQ_LINGER"] = "0";
-    worker_socket_configuration["ZMQ_RCVHWM"] = "6";
+    worker_socket_configuration["ZMQ_RCVHWM"] = "500";
     worker_socket_configuration["ZMQ_SNDHWM"] = "1000";
     worker_socket_configuration["ZMQ_RCVTIMEO"] = "-1";
     worker_socket_configuration["ZMQ_SNDTIMEO"] = "1000";
@@ -288,16 +286,14 @@ void ZMQDirectIOServer::worker(unsigned int w_type,
         return;
     }
     
-    if((w_type & WorkerTypePriority) == 1) {
+    if(w_type == WorkerTypePriority) {
         if((err = ZMQBaseClass::connectSocket(worker_socket,
                                               INPROC_PRIORITY,
                                               "ZMQ Server Worker"))) {
             ZMQDIO_SRV_LAPP_ << CHAOS_FORMAT("Error connecting worker socket with error %1%",%err);
             return;
         }
-    }
-    
-    if((w_type & WorkerTypeService) == 1) {
+    } else if(w_type == WorkerTypeService) {
         if((err = ZMQBaseClass::connectSocket(worker_socket,
                                               INPROC_SERVICE,
                                               "ZMQ Server Worker"))) {
@@ -309,43 +305,27 @@ void ZMQDirectIOServer::worker(unsigned int w_type,
     ZMQDIO_SRV_LAPP_ << "Entering in the thread loop for worker socket";
     while (run_server) {
         try {
-            data_pack                           = NULL;
-            data_pack_answer                    = NULL;
-            answer_header_deallocation_handler  = NULL;
-            answer_data_deallocation_handler    = NULL;
-            
             if((err = reveiceDatapack(worker_socket,
                                       identity,
-                                      &data_pack))) {
-                DELETE_OBJ_POINTER(data_pack);
+                                      data_pack_received))) {
+                data_pack_received.reset();
                 continue;
             } else {
-                //check if we need to sen an answer
-                if((send_synchronous_answer = (bool)data_pack->header.dispatcher_header.fields.synchronous_answer)) {
-                    //associate to the pointer the stack allocated data
-                    data_pack_answer = &data_pack_answer_stack_alloc;
-                    memset(data_pack_answer, 0, sizeof(DirectIODataPack));
-                }
-                
+                //keep track if the cleint want the answer
+                send_synchronous_answer = data_pack_received->header.dispatcher_header.fields.synchronous_answer;
                 //call handler
-                err = DirectIOHandlerPtrCaller(handler_impl, delegate)(data_pack,
-                                                                       data_pack_answer,
-                                                                       &answer_header_deallocation_handler,
-                                                                       &answer_data_deallocation_handler);
-                if(send_synchronous_answer) {
+                err = DirectIOHandlerPtrCaller(handler_impl, delegate)(ChaosMoveOperator(data_pack_received),
+                                                                       data_pack_answer);
+                if(send_synchronous_answer &&
+                   data_pack_answer) {
                     
                     if((err = sendDatapack(worker_socket,
                                            identity,
-                                           data_pack_answer,
-                                           answer_header_deallocation_handler,
-                                           answer_data_deallocation_handler))){
+                                           ChaosMoveOperator(data_pack_answer)))){
                         ZMQDIO_SRV_LAPP_ << "Error sending answer with code:" << err;
-                    } else {
-                        //anser is sent well
                     }
                 }
             }
-            
         } catch (CException& ex) {
             DECODE_CHAOS_EXCEPTION(ex)
         }

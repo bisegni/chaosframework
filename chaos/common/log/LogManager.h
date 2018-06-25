@@ -22,14 +22,30 @@
 #ifndef __CHAOSFramework__LogManager__
 #define __CHAOSFramework__LogManager__
 
-#include <iostream>
+#include <chaos/common/chaos_types.h>
 #include <chaos/common/exception/exception.h>
 #include <chaos/common/utility/Singleton.h>
+
+#include <boost/log/core.hpp>
+#include <boost/log/trivial.hpp>
+#include <boost/log/sources/severity_logger.hpp>
+#include <boost/log/sources/severity_logger.hpp>
+#include <boost/log/utility/setup/common_attributes.hpp>
+#include <boost/log/utility/setup/console.hpp>
+#include <boost/log/utility/setup/file.hpp>
+#include <boost/log/sources/severity_logger.hpp>
+#include <boost/log/attributes/attribute_name.hpp>
+#include <boost/log/sinks/sync_frontend.hpp>
+#include <boost/log/sinks/syslog_backend.hpp>
+#include <boost/log/attributes.hpp>
+#include <boost/log/expressions.hpp>
+#include <boost/log/utility/setup/formatter_parser.hpp>
 
 namespace chaos {
     template<class T>
     class ChaosCommon;
-    namespace common{
+    
+    namespace common {
         //! Define the level of the log
         namespace log {
             
@@ -54,10 +70,14 @@ namespace chaos {
                 friend class Singleton<LogManager>;
                 template<class T>
                 friend class chaos::ChaosCommon;
-                
+                boost::shared_ptr< boost::log::sinks::synchronous_sink< boost::log::sinks::text_ostream_backend > >  console_sink;
+                boost::shared_ptr< boost::log::sinks::synchronous_sink< boost::log::sinks::text_file_backend > >  file_sink;
+                boost::shared_ptr< boost::log::sinks::synchronous_sink< boost::log::sinks::syslog_backend > > syslog_sink;
                 LogManager(){}
             public:
                 void init() throw(CException);
+                void deinit() throw(CException);
+                void addMDSLoggingBackend(const std::string& source);
             };
             
         }

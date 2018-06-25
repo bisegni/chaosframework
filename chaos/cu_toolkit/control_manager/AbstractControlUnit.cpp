@@ -334,8 +334,8 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configurat
     //grab dataset description
     DatasetDB::fillDataWrapperWithDataSetDescription(setup_configuration);
     
-    //get action description
-    getActionDescrionsInDataWrapper(setup_configuration);
+    //    //get action description
+    //    getActionDescrionsInDataWrapper(setup_configuration);
     
     //add property description
     PropertyCollector::fillDescription("property", setup_configuration);
@@ -510,6 +510,7 @@ void AbstractControlUnit::doStartRpCheckList() throw(CException) {
         }
         CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_start", START_RPC_PHASE_UNIT){
             unitStart();
+            break;
         }
         CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_start", START_RPC_PHASE_RESTORE_ON_FIRST_START) {
             try{
@@ -559,7 +560,6 @@ void AbstractControlUnit::redoInitRpCheckList(bool throw_exception) throw(CExcep
         CHAOS_CHECK_LIST_REDO(check_list_sub_service, "_init", INIT_RPC_PHASE_COMPLETE_INPUT_ATTRIBUTE){
             break;
         }
-        
         CHAOS_CHECK_LIST_REDO(check_list_sub_service, "_init", INIT_RPC_PHASE_INIT_SYSTEM_CACHE){
             break;
         }
@@ -940,37 +940,9 @@ void AbstractControlUnit::fillRestoreCacheWithDatasetFromTag(data_manager::KeyDa
     for(std::vector<std::string>::iterator it = dataset_key.begin();
         it != dataset_key.end();
         it++) {
-        //! fetch value size
-        value_size = dataset.getValueSize(*it);
-        
-        //! fetch raw data ptr address
-        raw_value_ptr = dataset.getRawValuePtr(*it);
-        if(value_size &&
-           raw_value_ptr) {
-            //add attribute for found key and value
-            restore_cache.addAttribute((SharedCacheDomain)domain,
-                                       *it,
-                                       value_size,
-                                       chaos::DataType::TYPE_BYTEARRAY);
-            
-            //get newly createdattribute from cache
-            cached_attribute_value = restore_cache.getAttributeValue((SharedCacheDomain)domain,
-                                                                     *it);
-            cached_attribute_value->sub_type.clear();
-            //            cached_attribute_value->sub_type.push_back(dataset.getBinarySubtype(*it));
-            if(!cached_attribute_value) {
-                ACULERR_ << "Error retriving attribute value from cache for:" << *it;
-                continue;
-            }
-            
-            //copy the found valu ein the cache
-            std::memcpy(cached_attribute_value->value_buffer,
-                        (const void *)raw_value_ptr,
-                        value_size);
-        }
-        
-        value_size = 0;
-        raw_value_ptr = NULL;
+        restore_cache.addAttribute((SharedCacheDomain)domain,
+                                   *it,
+                                   dataset.getVariantValue(*it));
     }
 }
 
@@ -1516,22 +1488,18 @@ void AbstractControlUnit::_setBypassState(bool bypass_stage,
 
 //!handler calledfor restor a control unit to a determinate point
 bool AbstractControlUnit::unitRestoreToSnapshot(AbstractSharedDomainCache * const snapshot_cache) throw(CException) {
-    return false;
+    return true;
 }
 
 //! this andler is called befor the input attribute will be updated
-void AbstractControlUnit::unitInputAttributePreChangeHandler() throw(CException) {
-    
-}
+void AbstractControlUnit::unitInputAttributePreChangeHandler() throw(CException) {}
 
 //! attribute change handler
 /*!
  the handle is fired after the input attribute cache as been update triggere
  by the rpc request for attribute change.
  */
-void AbstractControlUnit::unitInputAttributeChangedHandler() throw(CException) {
-    
-}
+void AbstractControlUnit::unitInputAttributeChangedHandler() throw(CException) {}
 
 
 #define CHECK_FOR_RANGE_VALUE(t, v, attr_name)\
@@ -1692,8 +1660,15 @@ void AbstractControlUnit::propertyUpdatedHandler(const std::string& group_name,
                                                  const CDataVariant& old_value,
                                                  const CDataVariant& new_value) {
     if(group_name.compare("property_abstract_control_unit") == 0) {
+        //update property on driver
         key_data_storage->updateConfiguration(property_name, new_value);
-        //is my group
+        
+        //TODO
+        //        if(attribute_value_shared_cache->hasAttribute(DOMAIN_SYSTEM, property_name)){
+        //            attribute_value_shared_cache->getAttributeValue(DOMAIN_SYSTEM, property_name)->setValue(new_value);
+        //        }
+        
+        //reflect modification on dataset
         if(property_name.compare(ControlUnitDatapackSystemKey::BYPASS_STATE) == 0) {
             _setBypassState(new_value.asBool());
         } else if(property_name.compare(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE) == 0) {
@@ -1767,10 +1742,12 @@ void AbstractControlUnit::pushOutputDataset() {
                 output_attribute_dataset->addStringValue(value_set->name, value_set->getValuePtr<const char>());
                 break;
             case DataType::TYPE_BYTEARRAY:
-                if(value_set->sub_type.size() == 1) {
-                    output_attribute_dataset->addBinaryValue(value_set->name, value_set->sub_type[0],value_set->getValuePtr<char>(), value_set->size);
-                } else {
-                    output_attribute_dataset->addBinaryValue(value_set->name,value_set->getValuePtr<char>(), value_set->size);
+                if(value_set->size) {
+                    if(value_set->sub_type.size() == 1) {
+                        output_attribute_dataset->addBinaryValue(value_set->name, value_set->sub_type[0],value_set->getValuePtr<char>(), value_set->size);
+                    } else {
+                        output_attribute_dataset->addBinaryValue(value_set->name,value_set->getValuePtr<char>(), value_set->size);
+                    }
                 }
                 break;
             default:

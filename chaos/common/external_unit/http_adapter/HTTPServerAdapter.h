@@ -29,7 +29,7 @@ namespace chaos{
     namespace common {
         namespace external_unit {
             namespace http_adapter {
-                
+
                 //!External gateway root class
                 class HTTPServerAdapter:
                 public AbstractServerAdapter,
@@ -38,18 +38,18 @@ namespace chaos{
                     friend class ExternalUnitConnection;
                     CHAOS_DEFINE_MAP_FOR_TYPE(uintptr_t, ChaosSharedPtr<ExternalUnitConnection>, MapConnection);
                     CHAOS_DEFINE_LOCKABLE_OBJECT(MapConnection, LMapConnection);
-                    
+
                     //!contains all connection
                     LMapConnection  map_connection;
                     chaos::common::utility::Bimap<uintptr_t, std::string> map_m_conn_ext_conn;
-                    
+
                     bool run;
                     HTTPServerAdapterSetting setting;
-                    
+
                     struct mg_mgr mgr;
                     struct mg_connection *root_connection;
                     struct mg_serve_http_opts s_http_server_opts;
-                    
+
                     void poller();
                     static const std::string getSerializationType(http_message *http_message);
                     static void eventHandler(mg_connection *nc,
@@ -62,7 +62,7 @@ namespace chaos{
                 protected:
                     void processBufferElement(ServerWorkRequest *request, ElementManagingPolicy& policy) throw(CException);
                     int sendDataToConnection(const std::string& connection_identifier,
-                                             const chaos::common::data::CDBufferUniquePtr data,
+                                             chaos::common::data::CDBufferUniquePtr data,
                                              const EUCMessageOpcode opcode);
                     int closeConnection(const std::string& connection_identifier);
                 public:
