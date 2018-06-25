@@ -63,24 +63,18 @@ namespace chaos {
 				~DirectIOServerEndpoint();
 				
 				// Event for a new data received
-				int priorityDataReceived(DirectIODataPack *data_pack,
-                                         DirectIODataPack *synchronous_answer,
-                                         DirectIODeallocationHandler **answer_header_deallocation_handler,
-                                         DirectIODeallocationHandler **answer_data_deallocation_handler);
+                int priorityDataReceived(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
+                                         chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer);
                 
                 // Event for a new data received
-				int serviceDataReceived(DirectIODataPack *data_pack,
-                                        DirectIODataPack *synchronous_answer,
-                                        DirectIODeallocationHandler **answer_header_deallocation_handler,
-                                        DirectIODeallocationHandler **answer_data_deallocation_handler);
-
-			public:
-				//! Add a new channel instantiator
+                int serviceDataReceived(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
+                                        chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer);
+                //! Add a new channel instantiator
                 channel::DirectIOVirtualServerChannel *registerChannelInstance(channel::DirectIOVirtualServerChannel *channel_instance);
                 
                 //! Dispose the channel
                 void deregisterChannelInstance(channel::DirectIOVirtualServerChannel *channel_instance);
-				
+			public:
 				uint16_t getRouteIndex();
 				DirectIOServerPublicInterface * getPublicServerInterface() const;
 				//! New channel allocation by name

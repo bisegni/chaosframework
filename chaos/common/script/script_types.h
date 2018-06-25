@@ -24,9 +24,11 @@
 
 #include <chaos/common/chaos_types.h>
 #include <chaos/common/data/CDataVariant.h>
-
 namespace chaos{
     namespace common {
+        namespace data {
+            class CDataVariant;
+        }
         namespace script {
             CHAOS_DEFINE_VECTOR_FOR_TYPE(chaos::common::data::CDataVariant, ScriptInParam);
             CHAOS_DEFINE_VECTOR_FOR_TYPE(chaos::common::data::CDataVariant, ScriptOutParam);

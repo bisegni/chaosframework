@@ -40,16 +40,6 @@ namespace chaos {
                 DECLARE_CLASS_FACTORY(DirectIODeviceServerChannel, DirectIOVirtualServerChannel),
                 public chaos::common::direct_io::DirectIOEndpointHandler {
                     REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(DirectIODeviceServerChannel)
-                    
-                    class DirectIODeviceServerChannelDeallocator:
-                    public DirectIODeallocationHandler {
-                    protected:
-                        void freeSentData(void* sent_data_ptr, DisposeSentMemoryInfo *free_info_ptr);
-                    };
-                    //static deallocator forthis channel
-                    static DirectIODeviceServerChannelDeallocator STATIC_DirectIODeviceServerChannelDeallocator;
-                    
-                    
                 public:
                     //! Device handler definition
                     typedef class DirectIODeviceServerChannelHandler {
@@ -61,10 +51,10 @@ namespace chaos {
                          \param channel_data the data sent by the device
                          \synchronous_answer possible async answer (not used for now)
                          */
-                        virtual int consumePutEvent(opcode_headers::DirectIODeviceChannelHeaderPutOpcode *header,
-                                                    void *channel_data,
+                        virtual int consumePutEvent(opcode_headers::DirectIODeviceChannelHeaderPutOpcode& header,
+                                                    data::BufferSPtr channel_data,
                                                     uint32_t channel_data_len)
-                        {DELETE_HEADER_DATA(header, channel_data) return -1;};
+                        {return -1;};
                         
                         //! Receive the CDataWrapper forwarded by the channel that contains the helath data
                         /*!
@@ -72,27 +62,25 @@ namespace chaos {
                          \param header the header of the channel api
                          \param channel_data contains the health data
                          */
-                        virtual int consumeHealthDataEvent(opcode_headers::DirectIODeviceChannelHeaderPutOpcode *header,
-                                                           void *channel_data,
+                        virtual int consumeHealthDataEvent(opcode_headers::DirectIODeviceChannelHeaderPutOpcode& header,
+                                                           data::BufferSPtr channel_data,
                                                            uint32_t channel_data_len)
-                        {DELETE_HEADER_DATA(header, channel_data) return -1;};
+                        {return -1;};
                         
                         //! Receive the key of the live data channel to read
                         /*!
                          Receive the key to fetch from the live cache and fill the synchronous_answer to return
                          in synchronous way the ansert to the client
-                         \param header header containing the information where send the answer
                          \param key_data the data of the key
                          \param key_len the size of the key data
                          \param result_header
                          \param result_value
                          */
-                        virtual int consumeGetEvent(opcode_headers::DirectIODeviceChannelHeaderGetOpcode *header,
-                                                    void *key_data,
+                        virtual int consumeGetEvent(chaos::common::data::BufferSPtr key_data,
                                                     uint32_t key_len,
-                                                    opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult *result_header,
-                                                    void **result_value)
-                        {DELETE_HEADER_DATA(header, key_data) return -1;};
+                                                    opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult& result_header,
+                                                    chaos::common::data::BufferSPtr& result_value)
+                        {return -1;};
                         
                         //! Receive the et of keys of the live data channel to read
                         /*!
@@ -106,12 +94,12 @@ namespace chaos {
                          \param result_value_size is the size of memory allocated into result_value pointer
                          if a key is not found in live an empy bson document is add.
                          */
-                        virtual int consumeGetEvent(opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcode *header,
+                        virtual int consumeGetEvent(opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcode& header,
                                                     const ChaosStringVector& keys,
-                                                    opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcodeResult *result_header,
-                                                    void **result_value,
+                                                    opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcodeResult& result_header,
+                                                    chaos::common::data::BufferSPtr& result_value,
                                                     uint32_t& result_value_len)
-                        {DELETE_HEADER(header) return -1;};
+                        {return -1;};
                         
                         //! Execute a paged query into a time intervall
                         /*!
@@ -123,7 +111,7 @@ namespace chaos {
                          \param last_sequence_id is an in-out parameter, at in it specific the last found element, in output it need to be filled with the sequence information of the last item found
                          \param
                          */
-                        virtual int consumeDataCloudQuery(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloud *query_header,
+                        virtual int consumeDataCloudQuery(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloud& query_header,
                                                           const std::string& search_key,
                                                           uint64_t search_start_ts,
                                                           uint64_t search_end_ts,
@@ -150,10 +138,8 @@ namespace chaos {
                     
                     DirectIODeviceServerChannel(std::string alias);
                     
-                    int consumeDataPack(DirectIODataPack *dataPack,
-                                        DirectIODataPack *synchronous_answer,
-                                        DirectIODeallocationHandler **answer_header_deallocation_handler,
-                                        DirectIODeallocationHandler **answer_data_deallocation_handler);
+                    int consumeDataPack(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
+                                        chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer);
                 };
             }
         }

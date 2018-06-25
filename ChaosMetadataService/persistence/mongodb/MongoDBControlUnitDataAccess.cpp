@@ -208,7 +208,7 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
         
         
         
-        ChaosUniquePtr<CMultiTypeDataArrayWrapper> ds_vec(dataset->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
+        CMultiTypeDataArrayWrapperSPtr ds_vec(dataset->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
         if(!ds_vec.get()) return -7;
         //cicle all dataset attribute
         mongo::BSONArrayBuilder dataset_bson_array;
@@ -244,7 +244,7 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
                         if(dataset_element->isVector(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE)) {
                             //we have multipler value for subtype
                             mongo::BSONArrayBuilder subtype_array_builder;
-                            ChaosUniquePtr<CMultiTypeDataArrayWrapper> sub_t_vec(dataset_element->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE));
+                            CMultiTypeDataArrayWrapperSPtr sub_t_vec(dataset_element->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE));
                             for(int idx = 0;
                                 idx < sub_t_vec->size();
                                 idx++) {
@@ -296,7 +296,7 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
         
         //check if we have bactch command in the dataset
         if(dataset_description.hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_COMMAND_DESCRIPTION)) {
-            ChaosUniquePtr<CMultiTypeDataArrayWrapper> bc_vec(dataset_description.getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_COMMAND_DESCRIPTION));
+            CMultiTypeDataArrayWrapperSPtr bc_vec(dataset_description.getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_COMMAND_DESCRIPTION));
             mongo::BSONArrayBuilder batch_command_bson_array;
             for(int idx = 0;
                 idx < bc_vec->size();
@@ -311,7 +311,7 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
                 //check for parameter
                 if(bc_element->hasKey(common::batch_command::BatchCommandAndParameterDescriptionkey::BC_PARAMETERS)){
                     mongo::BSONArrayBuilder batch_command_parameter_bson_array;
-                    ChaosUniquePtr<CMultiTypeDataArrayWrapper> bc_param_vec(bc_element->getVectorValue(common::batch_command::BatchCommandAndParameterDescriptionkey::BC_PARAMETERS));
+                    CMultiTypeDataArrayWrapperSPtr bc_param_vec(bc_element->getVectorValue(common::batch_command::BatchCommandAndParameterDescriptionkey::BC_PARAMETERS));
                     for(int idx_param = 0;
                         idx_param < bc_param_vec->size();
                         idx_param++) {
@@ -570,7 +570,7 @@ int MongoDBControlUnitDataAccess::setInstanceDescription(const std::string& cu_u
         if(instance_description.hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION)) {
             //get the contained control unit type
             mongo::BSONArrayBuilder bab;
-            ChaosUniquePtr<CMultiTypeDataArrayWrapper> drv_array(instance_description.getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION));
+            CMultiTypeDataArrayWrapperSPtr drv_array(instance_description.getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION));
             for(int idx = 0;
                 idx < drv_array->size();
                 idx++) {
@@ -595,7 +595,7 @@ int MongoDBControlUnitDataAccess::setInstanceDescription(const std::string& cu_u
         if(instance_description.hasKey("attribute_value_descriptions")) {
             //get the contained control unit type
             mongo::BSONArrayBuilder bab;
-            ChaosUniquePtr<CMultiTypeDataArrayWrapper> attr_array(instance_description.getVectorValue("attribute_value_descriptions"));
+            CMultiTypeDataArrayWrapperSPtr attr_array(instance_description.getVectorValue("attribute_value_descriptions"));
             for(int idx = 0;
                 idx < attr_array->size();
                 idx++) {

@@ -1,6 +1,5 @@
 #include "ScriptEditor.h"
 #include "ui_ScriptEditor.h"
-#include "LuaHighlighter.h"
 
 #include <QDebug>
 #include <QJsonObject>
@@ -89,7 +88,7 @@ void ScriptEditor::on_pushButtonCancelEditing_clicked() {
 void ScriptEditor::on_comboBoxLanguageType_currentIndexChanged(int index) {
     switch(index) {
     case 0:
-        current_highlighter = new LuaHighlighter(ui->scriptEditor->document());
+
         break;
 
     default:

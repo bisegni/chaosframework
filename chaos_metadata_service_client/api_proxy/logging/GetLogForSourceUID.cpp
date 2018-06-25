@@ -73,7 +73,7 @@ GetLogForSourceUIDHelper::GetLogForSourceUIDHelper(CDataWrapper *api_result) {
     if(!api_result || !api_result->hasKey("result_list")) return;
     
     std::vector<std::string> contained_key;
-    ChaosUniquePtr<CMultiTypeDataArrayWrapper> vec(api_result->getVectorValue("result_list"));
+    CMultiTypeDataArrayWrapperSPtr vec = api_result->getVectorValue("result_list");
     for(int idx = 0;
         idx < vec->size();
         idx++) {

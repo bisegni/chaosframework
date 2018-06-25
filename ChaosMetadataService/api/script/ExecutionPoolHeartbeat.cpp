@@ -67,7 +67,7 @@ chaos::common::data::CDataWrapper *ExecutionPoolHeartbeat::execute(CDataWrapper 
     /*if(api_data->hasKey(ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LIST)) {
         CHAOS_LASSERT_EXCEPTION(api_data->isVectorValue(ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LIST), ERR, -4, "The running instance list key need to be a vector");
         
-        ChaosUniquePtr<CMultiTypeDataArrayWrapper> array(api_data->getVectorValue(ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LIST));
+        CMultiTypeDataArrayWrapperSPtr array(api_data->getVectorValue(ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LIST));
         for(int idx = 0;
             idx < array->size();
             idx++) {
@@ -86,7 +86,7 @@ chaos::common::data::CDataWrapper *ExecutionPoolHeartbeat::execute(CDataWrapper 
         CHAOS_LASSERT_EXCEPTION(api_data->isVectorValue(ExecutionUnitNodeDefinitionKey::EXECUTION_POOL_LIST), ERR, -6, "The execution pool list key need to be a vector");
         std::vector<chaos::service_common::data::script::ScriptBaseDescription> current_script_page;
         
-        ChaosUniquePtr<CMultiTypeDataArrayWrapper> array(api_data->getVectorValue(ExecutionUnitNodeDefinitionKey::EXECUTION_POOL_LIST));
+        CMultiTypeDataArrayWrapperSPtr array(api_data->getVectorValue(ExecutionUnitNodeDefinitionKey::EXECUTION_POOL_LIST));
         for(int idx = 0;
             idx < array->size();
             idx++) {

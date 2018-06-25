@@ -12,7 +12,7 @@ CommandReader::CommandReader(QSharedPointer<chaos::common::data::CDataWrapper> _
             command_description->isVectorValue(BatchCommandAndParameterDescriptionkey::BC_PARAMETERS) ) {
 
         //fetch the description of the value
-        QSharedPointer<CMultiTypeDataArrayWrapper> param_vector(command_description->getVectorValue(BatchCommandAndParameterDescriptionkey::BC_PARAMETERS));
+        CMultiTypeDataArrayWrapperSPtr param_vector = command_description->getVectorValue(BatchCommandAndParameterDescriptionkey::BC_PARAMETERS);
         for(int idx = 0;
             idx < param_vector->size();
             idx++) {

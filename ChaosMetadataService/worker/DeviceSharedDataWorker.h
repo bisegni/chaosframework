@@ -27,6 +27,7 @@
 #include "../object_storage/object_storage.h"
 
 #include <string>
+#include <chaos/common/data/Buffer.hpp>
 #include <chaos/common/direct_io/DirectIODataPack.h>
 #include <chaos/common/direct_io/channel/DirectIODeviceChannelGlobal.h>
 
@@ -44,10 +45,11 @@ namespace chaos{
             //! worker information for the device live storage
             struct DeviceSharedWorkerJob :
             public WorkerJob {
-                common::direct_io::channel::opcode_headers::DirectIODeviceChannelHeaderPutOpcode *request_header;
+                uint8_t key_tag;
+                std::string key;
                 int	put_operation; //0 -storicize only, 1-live only, 2-storicize and live
                 uint32_t data_pack_len;
-                void * data_pack;
+                chaos::common::data::BufferSPtr data_pack;
             };
             
             struct ThreadCookie {
@@ -58,6 +60,7 @@ namespace chaos{
             //! worker for live device sharing
             class DeviceSharedDataWorker : public DataWorker {
                 friend class DeviceSharedDataWorkerMetricCollector;
+                ChaosUniquePtr<chaos::service_common::persistence::data_access::AbstractPersistenceDriver> global_object_storage_driver;
             protected:
                 void executeJob(WorkerJobPtr job_info,
                                 void* cookie);

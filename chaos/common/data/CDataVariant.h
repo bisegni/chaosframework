@@ -23,8 +23,8 @@
 #define __CHAOSFramework__CDataVariant_h
 
 #include <chaos/common/chaos_constants.h>
-#include <chaos/common/data/CDataBuffer.h>
 #include <chaos/common/data/CDataWrapper.h>
+#include <chaos/common/data/CDataBuffer.h>
 
 #include <boost/variant.hpp>
 #include <boost/shared_ptr.hpp>

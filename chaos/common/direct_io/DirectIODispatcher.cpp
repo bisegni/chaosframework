@@ -137,76 +137,70 @@ void DirectIODispatcher::releaseEndpoint(DirectIOServerEndpoint *endpoint_to_rel
 }
 
 // Event for a new data received
-int DirectIODispatcher::priorityDataReceived(DirectIODataPack *data_pack,
-                                             DirectIODataPack *synchronous_answer,
-                                             DirectIODeallocationHandler **answer_header_deallocation_handler,
-                                             DirectIODeallocationHandler **answer_data_deallocation_handler) {
+int DirectIODispatcher::priorityDataReceived(DirectIODataPackSPtr data_pack,
+                                             DirectIODataPackSPtr& synchronous_answer) {
     int err = -1;
-    CHAOS_ASSERT(data_pack);
+    CHAOS_ASSERT(data_pack.get());
     uint8_t     opcode = data_pack->header.dispatcher_header.fields.channel_opcode;
     uint16_t    tmp_addr = data_pack->header.dispatcher_header.fields.route_addr;
+    uint16_t    message_counter = data_pack->header.dispatcher_header.fields.counter;
     //convert dispatch header to correct endianes
-    DIRECT_IO_DATAPACK_FROM_ENDIAN(data_pack);
+    DIRECT_IO_DATAPACK_DISPATCH_HEADER_FROM_ENDIAN(data_pack.get());
 
     CHAOS_ASSERT(tmp_addr == data_pack->header.dispatcher_header.fields.route_addr);
     if(data_pack->header.dispatcher_header.fields.route_addr>=MAX_ENDPOINT_NUMBER){
         DIOD_LERR_ << "The endpoint address " << data_pack->header.dispatcher_header.fields.route_addr << "is invalid";
     } else if(endpoint_slot_array[data_pack->header.dispatcher_header.fields.route_addr]->enable) {
-        err = endpoint_slot_array[data_pack->header.dispatcher_header.fields.route_addr]->endpoint->priorityDataReceived(data_pack,
-                                                                                                                         synchronous_answer,
-                                                                                                                         answer_header_deallocation_handler,
-                                                                                                                         answer_data_deallocation_handler);
+        err = endpoint_slot_array[data_pack->header.dispatcher_header.fields.route_addr]->endpoint->priorityDataReceived(ChaosMoveOperator(data_pack),
+                                                                                                                         synchronous_answer);
     } else {
-        DIOD_LERR_ << "The endpoint address " << data_pack->header.dispatcher_header.fields.route_addr << "is disable";
+        DIOD_LERR_ << "The endpoint address " << tmp_addr << "is disable";
     }
-    if(synchronous_answer) {
+    if(synchronous_answer.get()) {
         //set opcode for the answer
         synchronous_answer->header.dispatcher_header.fields.channel_opcode = opcode;
-
+        //set counter for the answer
+        synchronous_answer->header.dispatcher_header.fields.counter = message_counter;
         //set error on result datapack
         synchronous_answer->header.dispatcher_header.fields.err = (int16_t)err;
-
         //convert dispatch header to correct endianes
-        DIRECT_IO_DATAPACK_TO_ENDIAN(synchronous_answer);
+        DIRECT_IO_DATAPACK_DISPATCH_HEADER_TO_ENDIAN(synchronous_answer.get());
     }
 
     return err;
 }
 
 // Event for a new data received
-int DirectIODispatcher::serviceDataReceived(DirectIODataPack *data_pack,
-                                            DirectIODataPack *synchronous_answer,
-                                            DirectIODeallocationHandler **answer_header_deallocation_handler,
-                                            DirectIODeallocationHandler **answer_data_deallocation_handler) {
+int DirectIODispatcher::serviceDataReceived(DirectIODataPackSPtr data_pack,
+                                            DirectIODataPackSPtr& synchronous_answer) {
     int err = -1;
-
-    CHAOS_ASSERT(data_pack);
+    CHAOS_ASSERT(data_pack.get());
 
     uint8_t     opcode = data_pack->header.dispatcher_header.fields.channel_opcode;
     uint16_t    tmp_addr = data_pack->header.dispatcher_header.fields.route_addr;
+    uint16_t    message_counter = data_pack->header.dispatcher_header.fields.counter;
     //convert dispatch header to correct endianes
-    DIRECT_IO_DATAPACK_FROM_ENDIAN(data_pack);
+    DIRECT_IO_DATAPACK_DISPATCH_HEADER_FROM_ENDIAN(data_pack.get());
 
     CHAOS_ASSERT(tmp_addr == data_pack->header.dispatcher_header.fields.route_addr);
 
     if(data_pack->header.dispatcher_header.fields.route_addr>=MAX_ENDPOINT_NUMBER){
         DIOD_LERR_ << "The endpoint address " << data_pack->header.dispatcher_header.fields.route_addr << "is invalid";
     } else if(endpoint_slot_array[data_pack->header.dispatcher_header.fields.route_addr]->enable) {
-        err = endpoint_slot_array[data_pack->header.dispatcher_header.fields.route_addr]->endpoint->serviceDataReceived(data_pack,
-                                                                                                                        synchronous_answer,
-                                                                                                                        answer_header_deallocation_handler,
-                                                                                                                        answer_data_deallocation_handler);
+        err = endpoint_slot_array[data_pack->header.dispatcher_header.fields.route_addr]->endpoint->serviceDataReceived(ChaosMoveOperator(data_pack),
+                                                                                                                        synchronous_answer);
     } else {
-        DIOD_LERR_ << "The endpoint address " << data_pack->header.dispatcher_header.fields.route_addr << "is disable";
+        DIOD_LERR_ << "The endpoint address " << tmp_addr << "is disable";
     }
-    if(synchronous_answer) {
+    if(synchronous_answer.get()) {
         //set opcode for the answer
         synchronous_answer->header.dispatcher_header.fields.channel_opcode = opcode;
+        //set counter for the answer
+        synchronous_answer->header.dispatcher_header.fields.counter = message_counter;
         //set error on result datapack
         synchronous_answer->header.dispatcher_header.fields.err = (int16_t)err;
-
         //convert dispatch header to correct endianes
-        DIRECT_IO_DATAPACK_TO_ENDIAN(synchronous_answer);
+        DIRECT_IO_DATAPACK_DISPATCH_HEADER_TO_ENDIAN(synchronous_answer.get());
     }
     return err;
 }

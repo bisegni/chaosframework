@@ -71,7 +71,7 @@ void UpdateScriptOnNode::setHandler(CDataWrapper *data) {
     if(data->isStringValue(NodeDefinitionKey::NODE_UNIQUE_ID)) {
         node_to_update_vec.push_back(data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID));
     } else if(data->isVectorValue(NodeDefinitionKey::NODE_UNIQUE_ID)) {
-        ChaosUniquePtr<CMultiTypeDataArrayWrapper> arr(data->getVectorValue(NodeDefinitionKey::NODE_UNIQUE_ID));
+        CMultiTypeDataArrayWrapperSPtr arr(data->getVectorValue(NodeDefinitionKey::NODE_UNIQUE_ID));
         for(int idx = 0;
             idx < arr->size();
             idx++) {

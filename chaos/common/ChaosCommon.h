@@ -242,7 +242,7 @@ namespace chaos {
         /*!
          parse a config file before initializzation
          */
-        void preparseCommandOption(int argc, char* argv[]) {
+        void preparseCommandOption(int argc, const char* argv[]) {
             GlobalConfiguration::getInstance()->loadStartupParameter( argc, argv);
             GlobalConfiguration::getInstance()->scanOption();
             
@@ -266,7 +266,7 @@ namespace chaos {
         /*!
          Specialized option for startup c and cpp program main options parameter
          */
-        void init(int argc, char* argv[]) throw (CException) {
+        void init(int argc, const char* argv[]) throw (CException) {
             preparseCommandOption(argc, argv);
             if(argv != NULL) {
                 GlobalConfiguration::getInstance()->parseStartupParameters(argc, argv);

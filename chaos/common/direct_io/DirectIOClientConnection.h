@@ -93,11 +93,11 @@ namespace chaos {
                 DICKeyObjectContainer map_client_channels;
 				DirectIOClientConnectionStateType::DirectIOClientConnectionStateType current_state;
 
-				//! current client ip in string form
-				static std::string my_str_ip;
-				
-				//! current client ip in 32 bit form
-				static uint64_t my_i64_ip;
+//                //! current client ip in string form
+//                static std::string my_str_ip;
+//                
+//                //! current client ip in 32 bit form
+//                static uint64_t my_i64_ip;
 
                 DirectIOClientConnectionEventHandler *event_handler;
 				
@@ -108,9 +108,8 @@ namespace chaos {
 				void lowLevelManageEvent(DirectIOClientConnectionStateType::DirectIOClientConnectionStateType state_type);
                 
                 // prepare header for defaut connection data
-                inline DirectIODataPack *completeDataPack(DirectIODataPack *data_pack) {
-                    data_pack->header.dispatcher_header.fields.route_addr = endpoint;
-                    return data_pack;
+                inline void completeDataPack(chaos::common::direct_io::DirectIODataPack& data_pack) {
+                    data_pack.header.dispatcher_header.fields.route_addr = endpoint;
                 }
 				
             public:
@@ -118,10 +117,6 @@ namespace chaos {
 				DirectIOClientConnection(const std::string& _server_description,
                                          uint16_t _endpoint);
                 virtual ~DirectIOClientConnection();
-				
-				//get client ip information
-                static std::string getStrIp();
-                static uint64_t getI64Ip();
 
 				std::string	getUniqueUUID();
 				

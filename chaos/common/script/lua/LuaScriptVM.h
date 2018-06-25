@@ -76,5 +76,4 @@ namespace chaos {
         }
     }
 }
-
 #endif /* __CHAOSFramework__LuaScriptVM_h */

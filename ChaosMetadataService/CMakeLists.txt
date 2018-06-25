@@ -50,7 +50,7 @@ SET(cnd_src  ${cnd_src} ../chaos_service_common/persistence/mongodb/MongoDBHACon
                         ../chaos_service_common/persistence/mongodb/MongoDBAccessor.cpp)
 
 SET(cnd_src  ${cnd_src} ../chaos_service_common/persistence/data_access/AbstractDataAccess.cpp
-						            ../chaos_service_common/persistence/data_access/AbstractPersistenceDriver.cpp)
+						 ../chaos_service_common/persistence/data_access/AbstractPersistenceDriver.cpp)
 
 SET(cnd_src  ${cnd_src}	cron_job/MDSCronusManager.cpp
                         cron_job/MDSCronJob.cpp
@@ -214,7 +214,8 @@ SET(cnd_src  ${cnd_src}	cache_system/CacheDriver.cpp
 SET(cnd_src  ${cnd_src}	object_storage/abstraction/ObjectStorageDataAccess.cpp)
 
 SET(cnd_src  ${cnd_src}	object_storage/mongodb/MongoDBObjectStorageDataAccess.cpp
-                        object_storage/mongodb/MongoDBObjectStorageDriver.cpp)
+                        object_storage/mongodb/MongoDBObjectStorageDriver.cpp
+                        object_storage/mongodb/ShardKeyManagement.cpp)
 
 SET(cnd_src  ${cnd_src}	batch/MDSBatchExecutor.cpp
                         batch/MDSBatchCommand.cpp)
@@ -245,11 +246,15 @@ SET(cnd_src  ${cnd_src}	batch/general/RestoreSnapshotBatch.cpp
 
 ADD_EXECUTABLE(${PROJECT_NAME} ${cnd_src})
 
+FILE(GLOB files "../chaos_service_common/data/node/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos_service_common/data/node/)
+
+
 CheckConfigureBuild(couchbaseS libcouchbase:chaos-0.1 "-DLCB_NO_SSL=true;-DLCB_NO_TESTS=true;-DLCB_NO_TOOLS=true;-DLCB_NO_PLUGINS=true" https://github.com/amichelotti)
 
 IF(BUILD_FORCE_STATIC)
   SET(CMAKE_EXE_LINKER_FLAGS "-static -Wl,--whole-archive -lchaos_common -Wl,--no-whole-archive")
 ENDIF()
 
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} chaos_common mongoclient couchbaseS ${FrameworkLib})
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} boost_random chaos_common mongoclient couchbaseS ${FrameworkLib})
 INSTALL_TARGETS(/bin ${PROJECT_NAME})

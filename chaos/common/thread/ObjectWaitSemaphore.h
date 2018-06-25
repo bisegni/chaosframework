@@ -88,8 +88,9 @@ namespace chaos {
             if(inWait) return NULL;
             inWait = true;
             answered = false;
-            while ( ! answered )
+            while ( ! answered ) {
                 wait_answer_condition.wait(lock);
+            }
             inWait = false;
             answered = false;
             T result = objecForWait;

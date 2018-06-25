@@ -23,6 +23,7 @@
 
 #include "MongoDBObjectStorageDataAccess.h"
 #include "../../ChaosMetadataService.h"
+
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/utility/TimingUtil.h>
 
@@ -35,6 +36,7 @@ using namespace chaos::data_service::object_storage::mongodb;
 
 #define MONGODB_DAQ_COLL_NAME       "daq"
 #define MONGODB_DAQ_DATA_FIELD      "data"
+#define DEFAULT_QUANTIZATION        100
 
 using namespace boost;
 using namespace chaos::common::data;
@@ -74,17 +76,27 @@ MongoDBObjectStorageDataAccess::~MongoDBObjectStorageDataAccess() {}
 int MongoDBObjectStorageDataAccess::pushObject(const std::string& key,
                                                const CDataWrapper& stored_object) {
     int err = 0;
-    int bson_raw_data_size = 0;
-    const char *bson_raw_data = NULL;
     try {
+        int buffer_size = 0;
+        const int64_t now_in_ms = TimingUtil::getTimeStamp() & 0xFFFFFFFFFFFFFF00;
+        const char *buffer = stored_object.getBSONRawData(buffer_size);
+        mongo::BSONObjBuilder insert_builder;
+        insert_builder << chaos::DataPackCommonKey::DPCK_DEVICE_ID << key <<
+        chaos::DataPackCommonKey::DPCK_TIMESTAMP << mongo::Date_t(now_in_ms);
+        //add zone sharding information
+        mongo::BSONObj zone_pack = shrd_key_manager.getNewDataPack(key,
+                                                                   now_in_ms,
+                                                                   buffer_size);
+        insert_builder.appendElements(zone_pack);
         
-        bson_raw_data = stored_object.getBSONRawData(bson_raw_data_size);
+        //add data;
+        insert_builder << MONGODB_DAQ_DATA_FIELD << mongo::BSONObj(buffer);
         
-        mongo::BSONObj q = BSON(chaos::DataPackCommonKey::DPCK_DEVICE_ID << key <<
-                                chaos::DataPackCommonKey::DPCK_TIMESTAMP << mongo::Date_t(TimingUtil::getTimeStamp()) <<
-                                MONGODB_DAQ_DATA_FIELD << mongo::BSONObj(bson_raw_data));
+        mongo::BSONObj i = insert_builder.obj();
+        
+        //insert
         if((err = connection->insert(MONGO_DB_COLLECTION_NAME(MONGODB_DAQ_COLL_NAME),
-                                     q,
+                                     i,
                                      storage_write_concern))){
             ERR << "Error pushing object";
         }
@@ -236,9 +248,9 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string& key,
         }
         
         if(reverse_order) {
-            q = q.sort(BSON(chaos::DataPackCommonKey::DPCK_TIMESTAMP<<-1<<run_key<<-1<<counter_key<<-1));
+            q = q.sort(BSON(run_key<<-1<<counter_key<<-1<<chaos::DataPackCommonKey::DPCK_TIMESTAMP<<-1));
         } else {
-            q = q.sort(BSON(chaos::DataPackCommonKey::DPCK_TIMESTAMP<<1<<run_key<<1<<counter_key<<1));
+            q = q.sort(BSON(run_key<<1<<counter_key<<1<<chaos::DataPackCommonKey::DPCK_TIMESTAMP<<1));
         }
         
         DEBUG_CODE(DBG<<log_message("findObject",

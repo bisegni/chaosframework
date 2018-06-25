@@ -964,9 +964,17 @@ int CUController::getTimeStamp(uint64_t& live,bool hr){
     live =0;
     if(d){
       if(hr){
-	live = d->getInt64Value(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP);
+          if(d->hasKey(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP)) {
+            live = d->getInt64Value(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP);
+          } else if(d->hasKey(DataPackCommonKey::DPCK_TIMESTAMP)){
+              live= d->getInt64Value(DataPackCommonKey::DPCK_TIMESTAMP)*1000;
+          }
       } else {
-        live = d->getInt64Value(DataPackCommonKey::DPCK_TIMESTAMP);
+          if(d->hasKey(DataPackCommonKey::DPCK_TIMESTAMP)){
+            live = d->getInt64Value(DataPackCommonKey::DPCK_TIMESTAMP);
+          } else if(d->hasKey(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP)){
+              live= d->getInt64Value(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP)*1000;
+          }
       }
         return 0;
     }
@@ -1066,6 +1074,23 @@ void CUController::executeTimeIntervallQuery(DatasetDomain domain,
     }
 }
 
+void CUController::executeTimeIntervalQuery(DatasetDomain domain,
+                               uint64_t start_ts,
+                               uint64_t end_ts,
+                                uint64_t seqid,
+                               uint64_t runid,
+                               chaos::common::io::QueryCursor **query_cursor,
+                               uint32_t page_len){
+    if((domain>=0) && (domain<=DPCK_LAST_DATASET_INDEX)){
+        *query_cursor = ioLiveDataDriver->performQuery(channel_keys[domain],
+                                                       start_ts,
+                                                       end_ts,
+                                                       seqid,
+                                                       runid,
+                                                       page_len);
+    }
+
+}
 //! release a query
 void CUController::releaseQuery(QueryCursor *query_cursor) {
     ioLiveDataDriver->releaseQuery(query_cursor);
@@ -1073,7 +1098,8 @@ void CUController::releaseQuery(QueryCursor *query_cursor) {
 
 int CUController::loadDatasetTypeFromSnapshotTag(const std::string& snapshot_tag,
                                                  DatasetDomain dataset_type,
-                                                 chaos_data::CDataWrapper **cdatawrapper_handler) {
+                                                 chaos_data::CDWShrdPtr& cdatawrapper_handler) {
+    
     return ioLiveDataDriver->loadDatasetTypeFromSnapshotTag(snapshot_tag,
                                                             devId,
                                                             dataset_type,

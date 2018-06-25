@@ -22,6 +22,7 @@
 #ifndef CHAOSFramework_ZMQGlobalUtils_h
 #define CHAOSFramework_ZMQGlobalUtils_h
 
+#include <chaos/common/data/Buffer.hpp>
 #include <chaos/common/direct_io/DirectIODataPack.h>
 #include <chaos/common/direct_io/DirectIOForwarder.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
@@ -54,8 +55,26 @@ namespace chaos {
                                       const std::string& connect_url,
                                       const std::string& domain);
                     
+                    inline bool hasZMQProperty(MapZMQConfiguration &default_conf,
+                                               const MapZMQConfiguration &startup_conf,
+                                               const std::string& prop_name,
+                                               int& prop_value);
+                    
+                    inline int setSocketOption(void *socket,
+                                               MapZMQConfiguration &default_conf,
+                                               const MapZMQConfiguration &startup_conf,
+                                               int socket_option,
+                                               const std::string& socket_option_name,
+                                               const std::string& domain);
                     //!
                     int closeSocketNoWhait (void *socket);
+                    
+                    int resetOutputQueue(void *socket,
+                                         MapZMQConfiguration &default_conf,
+                                         const MapZMQConfiguration &startup_conf);
+                    
+                    inline int readMessage(void *socket,
+                                           chaos::common::data::BufferSPtr& msg_buffer);
                     
                     //! read a new message from zmq socket
                     /*!
@@ -71,7 +90,7 @@ namespace chaos {
                      
                      */
                     inline int sendMessage(void *socket,
-                                           void **message_data,
+                                           void *message_data,
                                            size_t message_size,
                                            zmq_free_fn *ffn,
                                            void *hint,
@@ -128,27 +147,19 @@ namespace chaos {
                     //! receive Direct io datapack by socket
                     int reveiceDatapack(void *socket,
                                         std::string& identity,
-                                        DirectIODataPack **data_pack_handle);
+                                        chaos::common::direct_io::DirectIODataPackSPtr& data_pack_handle);
                     //! receive a datapack
                     int reveiceDatapack(void *socket,
-                                        DirectIODataPack **data_pack_handle);
+                                        chaos::common::direct_io::DirectIODataPackSPtr& data_pack_handle);
                     
                     //! send direct io datapack
                     int sendDatapack(void *socket,
                                      std::string identity,
-                                     DirectIODataPack *data_pack,
-                                     DirectIODeallocationHandler *header_deallocation_handler,
-                                     DirectIODeallocationHandler *data_deallocation_handler);
+                                     chaos::common::direct_io::DirectIODataPackSPtr data_pack);
                     
                     //! send dirrect io datapack
                     int sendDatapack(void *socket,
-                                     DirectIODataPack *data_pack,
-                                     DirectIODeallocationHandler *header_deallocation_handler,
-                                     DirectIODeallocationHandler *data_deallocation_handler);
-                    //!safe delete datapack content using asinc way
-                    int safeDeleteDataPack(DirectIODataPack *data_pack,
-                                           DirectIODeallocationHandler *header_deallocation_handler,
-                                           DirectIODeallocationHandler *data_deallocation_handler);
+                                     chaos::common::direct_io::DirectIODataPackSPtr data_pack);
                 };
                 
             }

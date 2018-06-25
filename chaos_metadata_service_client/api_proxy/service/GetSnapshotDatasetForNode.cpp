@@ -47,7 +47,7 @@ void GetSnapshotDatasetForNode::getAsMap(chaos::common::data::CDataWrapper& api_
     if(!api_result.hasKey("dataset_list")) return;
     if(!api_result.isVectorValue("dataset_list")) return;
     
-    ChaosUniquePtr<CMultiTypeDataArrayWrapper> snapshot_list(api_result.getVectorValue("dataset_list"));
+    CMultiTypeDataArrayWrapperSPtr snapshot_list = api_result.getVectorValue("dataset_list");
     for(int idx = 0;
         idx < snapshot_list->size();
         idx++) {

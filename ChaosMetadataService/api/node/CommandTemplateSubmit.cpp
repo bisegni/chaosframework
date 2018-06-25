@@ -58,7 +58,7 @@ CDataWrapper *CommandTemplateSubmit::execute(CDataWrapper *api_data,
     CommandInstanceList command_instance_list;
     
     N_CTS_DBG << "validate all command instance";
-    ChaosUniquePtr<CMultiTypeDataArrayWrapper> submission_task_list(api_data->getVectorValue("submission_task"));
+    CMultiTypeDataArrayWrapperSPtr submission_task_list(api_data->getVectorValue("submission_task"));
     for(int idx =0;
         idx < submission_task_list->size();
         idx++) {

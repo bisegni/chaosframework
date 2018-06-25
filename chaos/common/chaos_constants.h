@@ -137,7 +137,7 @@ namespace chaos {
     //! Name space for grupping the options used for the rpc system configuration
     namespace RpcConfigurationKey {
         //! the regular expression for check the wel format key/valuparameter list for CS_CMDM_OPT_RPC_IMPL_KV_PARAM
-        static const char * const OPT_RPC_IMPL_KV_PARAM_STRING_REGEX    = "([a-zA-Z0-9/_,.]+)=([a-zA-Z0-9/_,.]+)(\\|([a-zA-Z0-9/_,.]+)=([a-zA-Z0-9/_,.]+))*";
+        static const char * const OPT_RPC_IMPL_KV_PARAM_STRING_REGEX    = "([a-zA-Z0-9/_,.]+)=([a-zA-Z0-9/_,.]+)(\\|([a-zA-Z0-9/_,.]+):([a-zA-Z0-9/_,.]+))*";
         //! define the default time for rpc operation
         static const unsigned int GlobalRPCTimeoutinMSec                = 5000;
     }
@@ -173,6 +173,14 @@ namespace chaos {
         	static const unsigned int CUTimersTimeoutinMSec                     = 5000;
         	static const unsigned int PerformanceManagerTimersTimeoutinMSec     = 5000;
             static const unsigned int ObjectStorageTimeoutinMSec                = 5000;
+            //!time to wait for queue can accept new data to push in object storage
+            /*!
+             Mds when receive a new dataset to store on history, it is push on hst sublayer
+             queue, that has a max number of element. This timeout is the max time waith by
+             mds to permit queue to can accept this new dataset. after that the new dataset
+             is nto accepted by sublayer.
+             */
+            static const unsigned int MDSHistoryQueuePushTimeoutinMSec          = 5000;
     	}
 
     };
@@ -1061,6 +1069,20 @@ namespace chaos {
         } ControlUnitState;
     }
     /** @} */ // end of CUStateKey
+    
+    /** @defgroup MetadataServerApiKey list of key used specificately on api
+     *  @{
+     */
+    //! Name space for grupping the key for action published by the mds node
+    namespace MetadataServerApiKey {
+        //!scrip api consstants
+        namespace script {
+            namespace search_script {
+                static const char * const  FOUND_SCRIPT_LIST = "found_sript_list";
+            }
+        }
+    }
+    /** @} */ // end of MetadataServerApiKey
     
     /** @defgroup MetadataServerNodeDefinitionKeyRPC List of mds node rpc action
      *  @{

@@ -30,4 +30,6 @@
 //-------------------channels implementations---------------------
 #include <chaos/common/direct_io/channel/DirectIODeviceClientChannel.h>
 #include <chaos/common/direct_io/channel/DirectIODeviceServerChannel.h>
+#include <chaos/common/direct_io/channel/DirectIOSystemAPIClientChannel.h>
+#include <chaos/common/direct_io/channel/DirectIOSystemAPIServerChannel.h>
 #endif

@@ -150,6 +150,9 @@ INSTALL(FILES ${files} DESTINATION include/chaos_service_common/data/dataset)
 FILE(GLOB files "../chaos_service_common/data/general/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos_service_common/data/general)
 
+FILE(GLOB files "../chaos_service_common/data/node/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos_service_common/data/node)
+
 #install lib header
 
 FILE(GLOB files "*.h")
@@ -157,6 +160,9 @@ INSTALL(FILES ${files} DESTINATION include/chaos_metadata_service_client)
 
 FILE(GLOB files "api_proxy/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos_metadata_service_client/api_proxy)
+
+FILE(GLOB files "api_proxy/agent/logging/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos_metadata_service_client/api_proxy/agent/logging)
 
 FILE(GLOB files "api_proxy/logging/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos_metadata_service_client/api_proxy/logging)
@@ -181,6 +187,9 @@ INSTALL(FILES ${files} DESTINATION include/chaos_metadata_service_client/api_pro
 FILE(GLOB files "api_proxy/script/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos_metadata_service_client/api_proxy/script)
 
+FILE(GLOB files "api_proxy/agent/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos_metadata_service_client/api_proxy/agent)
+
 FILE(GLOB files "monitor_system/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos_metadata_service_client/monitor_system)
 
@@ -189,8 +198,13 @@ INSTALL(FILES ${files} DESTINATION include/chaos_metadata_service_client/monitor
 
 FILE(GLOB files "node_controller/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos_metadata_service_client/node_controller/)
+FILE(GLOB files "node_monitor/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos_metadata_service_client/node_monitor/)
 FILE(GLOB files "event/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos_metadata_service_client/event/)
+
+FILE(GLOB files "event/alert/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos_metadata_service_client/event/alert)
 
 INSTALL(TARGETS chaos_metadata_service_client
 DESTINATION "lib"

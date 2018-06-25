@@ -65,7 +65,7 @@ namespace chaos {
                 const std::string& getClassName(){return api_class_name;}
             };
 
-                //!defin e atype specific api with utility for add and remove it
+                //!define a type specific api with utility for add and remove it
             template<typename T>
             class TemplatedAbstractScriptableClass:
             public AbstractScriptableClass {

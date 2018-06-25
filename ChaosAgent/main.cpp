@@ -24,7 +24,7 @@
 
 using namespace chaos::agent;
 
-int main(int argc, char * argv[]) {
+int main(int argc, const char * argv[]) {
     try {
         //data worker
         ChaosAgent::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_WORKING_DIR,

@@ -113,7 +113,7 @@ void DataBrokerEditor::deserialize(CDataWrapper& serialization) {
        serialization.isVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION)) return;
     
     //get the datawrapper array
-    ChaosUniquePtr<CMultiTypeDataArrayWrapper> ser_ds_vec(serialization.getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION));
+    CMultiTypeDataArrayWrapperSPtr ser_ds_vec = serialization.getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION);
     if(ser_ds_vec->size() == 0) return;
     
     DatasetSDWrapper ds_wrapper;

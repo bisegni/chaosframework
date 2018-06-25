@@ -20,8 +20,10 @@
  */
 
 #include <chaos/common/global.h>
+
 #include <chaos/common/script/lua/LuaScriptVM.h>
 #include <chaos/common/script/lua/LuaModuleManager.h>
+
 //include lua modules
 #include <chaos/common/script/lua/lib/json.h>
 #include <chaos/common/script/lua/lib/base64.h>

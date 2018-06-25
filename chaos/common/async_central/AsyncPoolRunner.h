@@ -39,7 +39,7 @@ namespace chaos {
                 virtual void run() = 0;
             public:
                 AsyncRunnable(const std::string& _job_desc);
-                ~AsyncRunnable();
+                virtual ~AsyncRunnable();
             };
             
             typedef chaos::common::pqueue::CObjectProcessingPriorityQueue<AsyncRunnable> PriorityQueueRunnable;

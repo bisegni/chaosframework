@@ -29,85 +29,74 @@ DirectIOVirtualClientChannel::DirectIOVirtualClientChannel(std::string channel_n
                                                            uint8_t channel_route_index):
 DirectIOVirtualChannel(channel_name, channel_route_index),
 forward_handler(NULL),
-header_deallocator(this),
 client_instance(NULL){}
 
 DirectIOVirtualClientChannel::~DirectIOVirtualClientChannel() {}
 
-int64_t DirectIOVirtualClientChannel::sendPriorityData(chaos::common::direct_io::DirectIODataPack *data_pack,
-                                                       DirectIODataPack **synchronous_answer) {
-    //set the endpoint that need the receive the pack on the other side
-    //data_pack->header.dispatcher_header.fields.route_addr = endpoint;
-    //set the channel route index within the endpoint
-    data_pack->header.dispatcher_header.fields.channel_idx = channel_route_index;
-    
-    //send pack
-    //return DirectIOForwarderHandlerCaller(client_instance,forward_handler)(this, completeDataPack(data_pack, synchronous_answer != NULL ), synchronous_answer);
-    return sendPriorityData(data_pack, header_deallocator, synchronous_answer);
-}
-
-int64_t DirectIOVirtualClientChannel::sendPriorityData(chaos::common::direct_io::DirectIODataPack *data_pack,
-                                                       DirectIODeallocationHandler *data_deallocator,
-                                                       DirectIODataPack **synchronous_answer) {
+int DirectIOVirtualClientChannel::sendPriorityData(chaos::common::direct_io::DirectIODataPackSPtr data_pack) {
     //set the endpoint that need the receive the pack on the other side
     //data_pack->header.dispatcher_header.fields.route_addr = endpoint;
     //set the channel route index within the endpoint
     data_pack->header.dispatcher_header.fields.channel_idx = channel_route_index;
     
     //convert default DirectIO hader to little endian
-    DIRECT_IO_DATAPACK_FROM_ENDIAN(data_pack)
     DirectIOForwarderPtrLOWriteLock wl = client_instance.getWriteLockObject();
+    completeChannnelDataPack(data_pack.get(), false);
     //send pack
-    int64_t err = client_instance()->sendPriorityData(completeChannnelDataPack(data_pack, synchronous_answer!=NULL), header_deallocator, data_deallocator, synchronous_answer);
-    if(!err){
-        if(synchronous_answer &&
-           *synchronous_answer) {
-            //convert default DirectIO hader to little endian
-            DIRECT_IO_DATAPACK_TO_ENDIAN((*synchronous_answer))
-            //report api error as function error
-            err = (*synchronous_answer)->header.dispatcher_header.fields.err;
-        }
-    }
-    return err;
+    return client_instance()->sendPriorityData(ChaosMoveOperator(data_pack));
 }
 
-int64_t DirectIOVirtualClientChannel::sendServiceData(chaos::common::direct_io::DirectIODataPack *data_pack,
-                                                      DirectIODataPack **synchronous_answer) {
-    //set the endpoint that need the receive the pack on the other side
-    //data_pack->header.dispatcher_header.fields.route_addr = endpoint;
-    //set the channel route index within the endpoint
-    data_pack->header.dispatcher_header.fields.channel_idx = channel_route_index;
-    
-    //send pack
-    return sendServiceData(data_pack, header_deallocator, synchronous_answer);
-}
-
-int64_t DirectIOVirtualClientChannel::sendServiceData(chaos::common::direct_io::DirectIODataPack *data_pack,
-                                                      DirectIODeallocationHandler *data_deallocator,
-                                                      DirectIODataPack **synchronous_answer) {
+int DirectIOVirtualClientChannel::sendPriorityData(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
+                                                   chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer) {
     //set the endpoint that need the receive the pack on the other side
     //data_pack->header.dispatcher_header.fields.route_addr = endpoint;
     //set the channel route index within the endpoint
     data_pack->header.dispatcher_header.fields.channel_idx = channel_route_index;
     
     //convert default DirectIO hader to little endian
-    DIRECT_IO_DATAPACK_FROM_ENDIAN(data_pack)
     DirectIOForwarderPtrLOWriteLock wl = client_instance.getWriteLockObject();
+    completeChannnelDataPack(data_pack.get(), true);
     //send pack
-    int64_t err = client_instance()->sendServiceData(completeChannnelDataPack(data_pack, synchronous_answer!=NULL), header_deallocator, data_deallocator, synchronous_answer);
-    if(!err){
-        if(synchronous_answer &&
-           *synchronous_answer) {
-            //convert default DirectIO hader to little endian
-            DIRECT_IO_DATAPACK_TO_ENDIAN((*synchronous_answer))
-            //report api error as function error
-            err = (*synchronous_answer)->header.dispatcher_header.fields.err;
-        }
+    int err = client_instance()->sendPriorityData(ChaosMoveOperator(data_pack),
+                                                  synchronous_answer);
+    if(!err &&
+       synchronous_answer) {
+        //report api error as function error
+        err = synchronous_answer->header.dispatcher_header.fields.err;
     }
     return err;
 }
 
-//! default header deallocator implementation
-void DirectIOVirtualClientChannel::freeSentData(void* sent_data_ptr, DisposeSentMemoryInfo *free_info_ptr) {
-    free(sent_data_ptr);
+int DirectIOVirtualClientChannel::sendServiceData(chaos::common::direct_io::DirectIODataPackSPtr data_pack) {
+    //set the endpoint that need the receive the pack on the other side
+    //data_pack->header.dispatcher_header.fields.route_addr = endpoint;
+    //set the channel route index within the endpoint
+    data_pack->header.dispatcher_header.fields.channel_idx = channel_route_index;
+    
+    //convert default DirectIO hader to little endian
+    DirectIOForwarderPtrLOWriteLock wl = client_instance.getWriteLockObject();
+    completeChannnelDataPack(data_pack.get(), false);
+    //send pack
+    return client_instance()->sendServiceData(ChaosMoveOperator(data_pack));
+}
+
+int DirectIOVirtualClientChannel::sendServiceData(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
+                                                  chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer) {
+    //set the endpoint that need the receive the pack on the other side
+    //data_pack->header.dispatcher_header.fields.route_addr = endpoint;
+    //set the channel route index within the endpoint
+    data_pack->header.dispatcher_header.fields.channel_idx = channel_route_index;
+    
+    //convert default DirectIO hader to little endian
+    DirectIOForwarderPtrLOWriteLock wl = client_instance.getWriteLockObject();
+    completeChannnelDataPack(data_pack.get(), true);
+    //send pack
+    int err = client_instance()->sendServiceData(ChaosMoveOperator(data_pack),
+                                                 synchronous_answer);
+    if(!err &&
+       synchronous_answer) {
+        //report api error as function error
+        err = synchronous_answer->header.dispatcher_header.fields.err;
+    }
+    return err;
 }

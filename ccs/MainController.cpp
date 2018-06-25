@@ -48,7 +48,7 @@ MainController::MainController():
 
 MainController::~MainController() {}
 
-bool MainController::init(int argc, char **argv) {
+bool MainController::init(int argc, const char **argv) {
     //set application information
     ((QApplication*)QApplication::instance())->setQuitOnLastWindowClosed(false);
     QApplication::setApplicationName("ChaosControlStudio");

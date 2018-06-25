@@ -48,7 +48,8 @@ friend class Singleton<ClassName>;
              * Utility class for singleton find here: http://www.boostcookbook.com/Recipe:/1235044
              */
             template<class T>
-            class Singleton: private boost::noncopyable {
+            class Singleton:
+            private boost::noncopyable {
             public:
                 static T *getInstance() {
                     //static T singletonInstance;

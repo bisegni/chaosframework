@@ -50,7 +50,9 @@ buf_size(0),
 type(_type),
 sub_type(_sub_type),
 sharedBitmapChangedAttribute(NULL){
-    
+    if(_type == DataType::TYPE_STRING) {
+        size += 1;
+    }
     if(size) {
         //elarge memory buffer and clear it
         if(!setNewSize(size, true)) {
@@ -110,14 +112,14 @@ bool AttributeValue::setStringValue(const std::string& value,
                                     bool tag_has_changed,
                                     bool enlarge_memory) {
     if(enlarge_memory == true &&
-       !grow(value.size())) return false;
+       !grow((uint32_t)value.size()+1)) return false;
     
     if(value.size()==0)
         return true;
     CHAOS_ASSERT(value_buffer)
     std::strncpy(static_cast<char*>(value_buffer),
                  value.c_str(),
-                 size);
+                 size-1);
     return true;
 }
 

@@ -110,18 +110,9 @@ void HTTPClientAdapter::poller() {
                         MapReconnectionInfoIterator conn_it =  map_connection().find(op->identifier);
                         if(conn_it == map_connection().end()) {break;};
                         if(conn_it->second->conn) {
-//                            if(conn_it->second->ext_unit_conn.get() &&
-//                               conn_it->second->ext_unit_conn->online == false){
-//                                DBG<<" HTTPClientAdapter Close Connection";
-//                                break;
-//                            };
                             DBG<<" HTTPClientAdapter Close Connection";
-                            if(conn_it->second->conn) {
-                                conn_it->second->conn->flags |= MG_F_CLOSE_IMMEDIATELY;
-                            }
-//                            if((conn_it->second->conn->sock != INVALID_SOCKET)) {
-//                                mg_send_websocket_frame(conn_it->second->conn, WEBSOCKET_OP_CLOSE, "", 0);
-//                            }
+                            conn_it->second->conn->flags |= MG_F_CLOSE_IMMEDIATELY;
+                            conn_it->second->conn->user_data = NULL;
                         }
                         //!remove from active connection map
                         map_connection().erase(conn_it);

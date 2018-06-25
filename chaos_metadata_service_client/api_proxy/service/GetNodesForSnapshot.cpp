@@ -49,7 +49,7 @@ GetNodesForSnapshotHelper::GetNodesForSnapshotHelper(CDataWrapper *api_result) {
     if(!api_result || !api_result->hasKey("node_in_snapshot")) return;
     if(!api_result->isVectorValue("node_in_snapshot")) return;
     
-    ChaosUniquePtr<CMultiTypeDataArrayWrapper> snapshot_desc_list(api_result->getVectorValue("node_in_snapshot"));
+    CMultiTypeDataArrayWrapperSPtr snapshot_desc_list = api_result->getVectorValue("node_in_snapshot");
     for(int idx = 0;
         idx < snapshot_desc_list->size();
         idx++) {

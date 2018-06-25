@@ -82,8 +82,8 @@ void ScriptManager::init(void *init_data) throw(chaos::CException) {
     SCRTMAN_INFO << "Try to load " << vm_name << " virtual machine";
     script_vm = ObjectFactoryRegister<AbstractScriptVM>::getInstance()->getNewInstanceByName(vm_name);
     CHAOS_LASSERT_EXCEPTION(script_vm, SCRPTMAN_ERR, -1, CHAOS_FORMAT("Virtual machine '%1%' has not been instantiated", %vm_name));
-    InizializableService::initImplementation(script_vm, NULL, vm_name, __PRETTY_FUNCTION__);
     script_vm->setCaller(this);
+    InizializableService::initImplementation(script_vm, NULL, vm_name, __PRETTY_FUNCTION__);
 }
 
 void ScriptManager::deinit() throw(chaos::CException) {

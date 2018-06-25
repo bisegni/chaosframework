@@ -8,12 +8,15 @@
 
 /* Begin PBXBuildFile section */
 		3206CE281FA1DA9B0059A4A4 /* TestCDataWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3206CE271FA1DA9B0059A4A4 /* TestCDataWrapper.cpp */; };
+		322B16F920B054B3001E5B16 /* DirectIODeviceServerChannelTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322B16F820B054B3001E5B16 /* DirectIODeviceServerChannelTest.cpp */; };
 		322EE8811F825D8000D89824 /* MemcachedEmbedded.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322EE8801F825D8000D89824 /* MemcachedEmbedded.cpp */; };
+		326274AF20B421C800BB0C91 /* DirectIOSystemServerChannelTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326274AE20B421C800BB0C91 /* DirectIOSystemServerChannelTest.cpp */; };
 		32639FE91F6AAD990049089C /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32639FE81F6AAD990049089C /* main.cpp */; };
 		32639FEF1F6AB21E0049089C /* TemplateKeyValueHashMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329943621D6B468E008DBAE9 /* TemplateKeyValueHashMap.cpp */; };
 		32639FF01F6AB2230049089C /* TriggerTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329943531D6B3AB7008DBAE9 /* TriggerTest.cpp */; };
 		32639FF31F6ABB980049089C /* TestStateFlagCatalog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329943711D6B4911008DBAE9 /* TestStateFlagCatalog.cpp */; };
 		32639FF51F6ACAC70049089C /* TestURLFeeder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329943801D6B5469008DBAE9 /* TestURLFeeder.cpp */; };
+		3277A2322097586400FD7307 /* ScriptClingTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3277A2302097586400FD7307 /* ScriptClingTest.cpp */; };
 		327A4D241F90CB3200DA800C /* ExternalUnitTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327A4D231F90CB3200DA800C /* ExternalUnitTest.cpp */; };
 		32818B3E1F8265B3004A409E /* EmbeddedLFCacheTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32818B3D1F8265B3004A409E /* EmbeddedLFCacheTest.cpp */; };
 		32818B421F828FBE004A409E /* BatchComandTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32818B411F828FBE004A409E /* BatchComandTest.cpp */; };
@@ -22,6 +25,7 @@
 		32818B451F828FDB004A409E /* TestBatchCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327A286C1D71D73300DFDD2C /* TestBatchCommand.cpp */; };
 		328CFCA11F7CF366002FEB25 /* QueueTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328CFC9F1F7CF366002FEB25 /* QueueTest.cpp */; };
 		328CFCA41F7D4167002FEB25 /* QueuePriorityTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328CFCA21F7D4167002FEB25 /* QueuePriorityTest.cpp */; };
+		329BF99A20AAFF1B0068F8EB /* DirectIOTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329BF99820AAFF1B0068F8EB /* DirectIOTest.cpp */; };
 		32A735331F6C399E00008145 /* PropertyTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A735311F6C399E00008145 /* PropertyTest.cpp */; };
 		32C180EF1FAB33CD00AFCC15 /* TestPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C180EE1FAB33CD00AFCC15 /* TestPlugin.cpp */; };
 		32CBCB29205ECF11002FB95F /* ExternalUnitMulticlientTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CBCB28205ECF11002FB95F /* ExternalUnitMulticlientTest.cpp */; };
@@ -86,9 +90,14 @@
 		3206CE271FA1DA9B0059A4A4 /* TestCDataWrapper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestCDataWrapper.cpp; sourceTree = "<group>"; };
 		321E59301D7457FF00365F57 /* TestBatchDefault.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestBatchDefault.cpp; sourceTree = "<group>"; };
 		321E59311D7457FF00365F57 /* TestBatchDefault.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestBatchDefault.h; sourceTree = "<group>"; };
+		322B16F820B054B3001E5B16 /* DirectIODeviceServerChannelTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIODeviceServerChannelTest.cpp; sourceTree = "<group>"; };
+		322B16FA20B07C43001E5B16 /* DirectIOChannelTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DirectIOChannelTest.h; sourceTree = "<group>"; };
 		322EE87F1F825D8000D89824 /* MemcachedEmbedded.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MemcachedEmbedded.h; sourceTree = "<group>"; };
 		322EE8801F825D8000D89824 /* MemcachedEmbedded.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MemcachedEmbedded.cpp; sourceTree = "<group>"; };
+		326274AE20B421C800BB0C91 /* DirectIOSystemServerChannelTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOSystemServerChannelTest.cpp; sourceTree = "<group>"; };
 		32639FE81F6AAD990049089C /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		3270978C209B440E00599038 /* ScriptClingTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScriptClingTest.h; sourceTree = "<group>"; };
+		3277A2302097586400FD7307 /* ScriptClingTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptClingTest.cpp; sourceTree = "<group>"; };
 		327A28691D71D72700DFDD2C /* TestCommandExecutor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestCommandExecutor.cpp; sourceTree = "<group>"; };
 		327A286A1D71D72700DFDD2C /* TestCommandExecutor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestCommandExecutor.h; sourceTree = "<group>"; };
 		327A286C1D71D73300DFDD2C /* TestBatchCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestBatchCommand.cpp; sourceTree = "<group>"; };
@@ -111,6 +120,8 @@
 		329943721D6B4911008DBAE9 /* TestStateFlagCatalog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestStateFlagCatalog.h; sourceTree = "<group>"; };
 		329943801D6B5469008DBAE9 /* TestURLFeeder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestURLFeeder.cpp; sourceTree = "<group>"; };
 		329943811D6B5469008DBAE9 /* TestURLFeeder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestURLFeeder.h; sourceTree = "<group>"; };
+		329BF99820AAFF1B0068F8EB /* DirectIOTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOTest.cpp; sourceTree = "<group>"; };
+		329BF99920AAFF1B0068F8EB /* DirectIOTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DirectIOTest.h; sourceTree = "<group>"; };
 		32A735311F6C399E00008145 /* PropertyTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PropertyTest.cpp; sourceTree = "<group>"; };
 		32A735321F6C399E00008145 /* PropertyTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PropertyTest.h; sourceTree = "<group>"; };
 		32C180EE1FAB33CD00AFCC15 /* TestPlugin.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestPlugin.cpp; sourceTree = "<group>"; };
@@ -207,6 +218,7 @@
 			children = (
 				32C180F01FAB439300AFCC15 /* CMakeLists.txt */,
 				32639FE81F6AAD990049089C /* main.cpp */,
+				329BF99720AAFF020068F8EB /* direct_io */,
 				32F8425B20162B32004D582D /* utility */,
 				32C180EC1FAB33A800AFCC15 /* plugin */,
 				32DA77751F94B0C400497349 /* script */,
@@ -300,6 +312,18 @@
 			);
 			sourceTree = "<group>";
 		};
+		329BF99720AAFF020068F8EB /* direct_io */ = {
+			isa = PBXGroup;
+			children = (
+				329BF99820AAFF1B0068F8EB /* DirectIOTest.cpp */,
+				329BF99920AAFF1B0068F8EB /* DirectIOTest.h */,
+				322B16F820B054B3001E5B16 /* DirectIODeviceServerChannelTest.cpp */,
+				326274AE20B421C800BB0C91 /* DirectIOSystemServerChannelTest.cpp */,
+				322B16FA20B07C43001E5B16 /* DirectIOChannelTest.h */,
+			);
+			path = direct_io;
+			sourceTree = "<group>";
+		};
 		32C180EC1FAB33A800AFCC15 /* plugin */ = {
 			isa = PBXGroup;
 			children = (
@@ -330,6 +354,8 @@
 			isa = PBXGroup;
 			children = (
 				32DA77771F94B0D300497349 /* ScriptTest.cpp */,
+				3277A2302097586400FD7307 /* ScriptClingTest.cpp */,
+				3270978C209B440E00599038 /* ScriptClingTest.h */,
 			);
 			path = script;
 			sourceTree = "<group>";
@@ -556,8 +582,10 @@
 				328CFCA11F7CF366002FEB25 /* QueueTest.cpp in Sources */,
 				32818B3E1F8265B3004A409E /* EmbeddedLFCacheTest.cpp in Sources */,
 				32639FE91F6AAD990049089C /* main.cpp in Sources */,
+				322B16F920B054B3001E5B16 /* DirectIODeviceServerChannelTest.cpp in Sources */,
 				32639FF01F6AB2230049089C /* TriggerTest.cpp in Sources */,
 				32DA77741F94AD6D00497349 /* TestVariant.cpp in Sources */,
+				3277A2322097586400FD7307 /* ScriptClingTest.cpp in Sources */,
 				32C180EF1FAB33CD00AFCC15 /* TestPlugin.cpp in Sources */,
 				32639FF51F6ACAC70049089C /* TestURLFeeder.cpp in Sources */,
 				32818B451F828FDB004A409E /* TestBatchCommand.cpp in Sources */,
@@ -570,9 +598,11 @@
 				32818B441F828FDB004A409E /* TestBatchDefault.cpp in Sources */,
 				32A735331F6C399E00008145 /* PropertyTest.cpp in Sources */,
 				32F8425E20162B54004D582D /* FutureHelperTest.cpp in Sources */,
+				329BF99A20AAFF1B0068F8EB /* DirectIOTest.cpp in Sources */,
 				32818B421F828FBE004A409E /* BatchComandTest.cpp in Sources */,
 				32639FF31F6ABB980049089C /* TestStateFlagCatalog.cpp in Sources */,
 				3206CE281FA1DA9B0059A4A4 /* TestCDataWrapper.cpp in Sources */,
+				326274AF20B421C800BB0C91 /* DirectIOSystemServerChannelTest.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -638,7 +668,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
@@ -654,6 +684,7 @@
 				OTHER_LDFLAGS = (
 					$inherited,
 					"-lgtest",
+					"-ltcmalloc",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -664,7 +695,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
@@ -680,6 +711,7 @@
 				OTHER_LDFLAGS = (
 					$inherited,
 					"-lgtest",
+					"-ltcmalloc",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -812,7 +844,7 @@
 		32DAABD01D6C7A1F00464F7A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++98";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../usr/local/bin";
 				DEVELOPMENT_TEAM = ZZ5BMKV37Y;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -831,7 +863,7 @@
 		32DAABD11D6C7A1F00464F7A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++98";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../usr/local/bin";
 				DEVELOPMENT_TEAM = ZZ5BMKV37Y;
 				DYLIB_COMPATIBILITY_VERSION = 1;

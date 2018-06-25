@@ -69,8 +69,7 @@ namespace chaos {
                     int snapshotGetDatasetForProducerKey(const std::string& snapshot_name,
                                                          const std::string& producer_unique_key,
                                                          const std::string& dataset_type,
-                                                         void **channel_data,
-                                                         uint32_t& channel_data_size);
+                                                         chaos::common::data::BufferSPtr& snapshot_data_found);
                     
                     //! Delete a snapshot where no job is working
                     int snapshotDeleteWithName(const std::string& snapshot_name);

@@ -108,8 +108,10 @@ chaos::common::data::SerializationBuffer *getCSVDecoding( DeviceController& cont
                 uint32_t len;
                 std::string binary_field;
                 const char * base_addr = data_pack.getBinaryValue((*it).c_str(), len);
-                binary_field = base64_encode( (unsigned char const* ) base_addr , len );
-                csv_lin << binary_field;
+                if(base_addr) {
+                    binary_field = base64_encode( (unsigned char const* ) base_addr , len );
+                    csv_lin << binary_field;
+                }
                 break;
             }
                 
@@ -155,7 +157,7 @@ chaos::common::data::SerializationBuffer *getCSVDecoding( DeviceController& cont
     return result;
 }
 
-int main(int argc, char* argv[]) {
+int main(int argc, const char* argv[]) {
     char buf[255];
     uint32_t timeout;
     string device_id;

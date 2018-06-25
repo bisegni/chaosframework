@@ -28,6 +28,7 @@
 #include <string>
 
 #include <chaos/common/chaos_types.h>
+#include <chaos/common/data/Buffer.hpp>
 #include <chaos/common/utility/NamedService.h>
 #include <chaos/common/utility/InizializableService.h>
 
@@ -37,7 +38,7 @@ namespace chaos {
     namespace data_service {
         namespace cache_system {
             
-            CHAOS_DEFINE_VECTOR_FOR_TYPE(char, CacheData);
+            typedef chaos::common::data::BufferSPtr CacheData;
             
             CHAOS_DEFINE_MAP_FOR_TYPE(std::string, CacheData, MultiCacheData);
             
@@ -57,10 +58,10 @@ namespace chaos {
 				virtual ~CacheDriver();
 				
                 virtual int putData(const std::string& key,
-									const CacheData& data) = 0;
+									CacheData data_to_store) = 0;
                 
                 virtual int getData(const std::string& key,
-									CacheData& data) = 0;
+									CacheData& cached_data) = 0;
                 
                 virtual int getData(const ChaosStringVector&    keys,
                                     MultiCacheData&             multi_data) = 0;

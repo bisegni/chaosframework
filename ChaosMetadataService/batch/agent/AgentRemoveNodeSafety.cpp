@@ -63,7 +63,7 @@ void AgentRemoveNodeSafety::setHandler(CDataWrapper *data) {
     std::string agent_host;
     agent_uid = data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
     if(data->isVectorValue(AgentNodeDefinitionKey::NODE_ASSOCIATED)) {
-        ChaosUniquePtr<CMultiTypeDataArrayWrapper> nodes_array(data->getVectorValue(AgentNodeDefinitionKey::NODE_ASSOCIATED));
+        CMultiTypeDataArrayWrapperSPtr nodes_array(data->getVectorValue(AgentNodeDefinitionKey::NODE_ASSOCIATED));
         for(int idx = 0; idx < nodes_array->size(); idx++) {
             associated_nodes.push_back(nodes_array->getStringElementAtIndex(idx));
             association_list.push_back(AgentAssociation(nodes_array->getStringElementAtIndex(idx), "", ""));

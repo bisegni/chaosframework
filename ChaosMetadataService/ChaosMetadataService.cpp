@@ -51,7 +51,7 @@ WaitSemaphore ChaosMetadataService::waitCloseSemaphore;
 /*!
  Specialized option for startup c and cpp program main options parameter
  */
-void ChaosMetadataService::init(int argc, char* argv[]) throw (CException) {
+void ChaosMetadataService::init(int argc, const char* argv[]) throw (CException) {
     ChaosCommon<ChaosMetadataService>::init(argc, argv);
 }
 //!stringbuffer parser

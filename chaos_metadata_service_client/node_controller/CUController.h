@@ -460,7 +460,14 @@ namespace chaos {
                                                uint64_t start_ts,
                                                uint64_t end_ts,
                                                chaos::common::io::QueryCursor **query_cursor,uint32_t page_len=DEFAULT_PAGE_LEN);
-                
+
+                void executeTimeIntervalQuery(DatasetDomain domain,
+                                               uint64_t start_ts,
+                                               uint64_t end_ts,
+                                               uint64_t seqid,
+                                               uint64_t runid,
+                                              chaos::common::io::QueryCursor **query_cursor,uint32_t page_len=DEFAULT_PAGE_LEN);
+
                 //! release a query
                 void releaseQuery(chaos::common::io::QueryCursor *query_cursor);
                 
@@ -470,7 +477,7 @@ namespace chaos {
                 //! restore from a tag a dataset associated to a key
                 int loadDatasetTypeFromSnapshotTag(const std::string& snapshot_tag,
                                                    DatasetDomain dataset_type,
-                                                   chaos_data::CDataWrapper **cdatawrapper_handler);
+                                                   chaos_data::CDWShrdPtr& cdatawrapper_handler);
                 //! restore from a tag a dataset associated to a key
                 int createNewSnapshot(const std::string& snapshot_tag,
                                       const std::vector<std::string>& other_snapped_device);

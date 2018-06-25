@@ -7,7 +7,9 @@ ScriptListModel::ScriptListModel(QObject *parent):
     ChaosAbstractListModel(parent),
     ApiHandler(),
     api_submitter(this),
-    last_sequence_id(0){}
+    last_sequence_id(0){
+    script_base_list_wrapper.instance_serialization_key = chaos::MetadataServerApiKey::script::search_script::FOUND_SCRIPT_LIST;
+}
 
 int ScriptListModel::getRowCount() const {
     return script_base_list_wrapper.size();
