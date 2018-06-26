@@ -350,16 +350,13 @@ IF (CLING_VIRTUAL_MACHINE)
 ENDIF()
 target_compile_definitions(${PROJECT_NAME} PRIVATE CLING_VIRTUAL_MACHINE=${CLING_VIRTUAL_MACHINE})
 
-IF(CERN_ROOT)
-    TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${FrameworkLib} Tree Core)
+IF(CLING_VIRTUAL_MACHINE)
+  MESSAGE(STATUS "LINKING clingIntepreter")
+  TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${FrameworkLib} clingInterpreter libzmq.a)
 ELSE()
-  IF(CLING_VIRTUAL_MACHINE)
-    MESSAGE(STATUS "LINKING clingIntepreter")
-    TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${FrameworkLib} clingInterpreter)
-  ELSE()
-    TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${FrameworkLib})
-  ENDIF()
+  TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${FrameworkLib} libzmq.a)
 ENDIF()
+
 
 
 FILE(GLOB files "external_unit/*.h")
