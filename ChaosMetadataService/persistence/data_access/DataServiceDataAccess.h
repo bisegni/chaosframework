@@ -50,7 +50,8 @@ namespace chaos {
                     virtual int getDescription(const std::string& ds_unique_id,
                                                chaos::common::data::CDataWrapper **node_description) = 0;
                     
-                    virtual int registerNode(const std::string& ds_unique_id,
+                    virtual int registerNode(const std::string& ds_zone,
+                                             const std::string& ds_unique_id,
                                              const std::string& ds_direct_io_addr,
                                              uint32_t endpoint) = 0;
                     
@@ -74,13 +75,16 @@ namespace chaos {
                                                     uint32_t last_unique_id,
                                                     uint32_t page_length) = 0;
                     
-                    virtual int getBestNDataService(std::vector<ChaosSharedPtr<common::data::CDataWrapper> >&  best_available_data_service,
+                    virtual int getBestNDataService(const std::string& ds_zone,
+                                                    std::vector<ChaosSharedPtr<common::data::CDataWrapper> >&  best_available_data_service,
                                                     unsigned int numerb_of_result = 3) = 0;
                     
-                    virtual int getBestNDataService(std::vector<std::string >&  best_available_data_service,
+                    virtual int getBestNDataService(const std::string& ds_zone,
+                                                    std::vector<std::string >&  best_available_data_service,
                                                     unsigned int numerb_of_result = 3) = 0;
                     
-                    virtual int getBestNDataServiceEndpoint(std::vector<std::string >&  best_available_data_service_endpoint,
+                    virtual int getBestNDataServiceEndpoint(const std::string& ds_zone,
+                                                            std::vector<std::string >&  best_available_data_service_endpoint,
                                                             unsigned int numerb_of_result = 3) = 0;
                     
                     

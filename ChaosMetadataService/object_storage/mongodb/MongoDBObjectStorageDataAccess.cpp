@@ -50,7 +50,8 @@ using namespace chaos::data_service::object_storage::abstraction;
 
 MongoDBObjectStorageDataAccess::MongoDBObjectStorageDataAccess(const ChaosSharedPtr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
 MongoDBAccessor(_connection),
-storage_write_concern(&mongo::WriteConcern::unacknowledged){
+storage_write_concern(&mongo::WriteConcern::unacknowledged) {
+    shrd_key_manager.setZoneAlias(metadata_service::ChaosMetadataService::getInstance()->setting.ha_zone_name);
     obj_stoarge_kvp = metadata_service::ChaosMetadataService::getInstance()->setting.object_storage_setting.key_value_custom_param;
     if(obj_stoarge_kvp.count("mongodb_oswc")) {
         //set the custom write concern

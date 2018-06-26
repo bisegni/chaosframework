@@ -603,6 +603,7 @@ namespace chaos {
      */
     //! This is the collection of the key to configura history and live channel
     namespace DataServiceNodeDefinitionKey {
+        static const char * const DS_HA_ZONE                                        = "dsndk_ha_zone";
         static const char * const DS_DIRECT_IO_FULL_ADDRESS_LIST                    = "dsndk_direct_io_full";
         //!lis the endpoitwhere is published the direct io[uint32_t]
         static const char * const DS_DIRECT_IO_ENDPOINT                             = "dsndk_direct_io_ep";

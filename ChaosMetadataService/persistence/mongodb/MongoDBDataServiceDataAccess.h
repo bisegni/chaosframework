@@ -53,7 +53,8 @@ namespace chaos {
                                        chaos::common::data::CDataWrapper **node_description);
                     
                     //inherited method
-                    int registerNode(const std::string& ds_unique_id,
+                    int registerNode(const std::string& ds_zone,
+                                     const std::string& ds_unique_id,
                                      const std::string& ds_direct_io_addr,
                                      uint32_t endpoint);
                     
@@ -82,13 +83,16 @@ namespace chaos {
                                             uint32_t last_unique_id,
                                             uint32_t page_length);
                     
-                    int getBestNDataService(std::vector<ChaosSharedPtr<common::data::CDataWrapper> >&  best_available_data_service,
+                    int getBestNDataService(const std::string& ha_zone,
+                                            std::vector<ChaosSharedPtr<common::data::CDataWrapper> >&  best_available_data_service,
                                             unsigned int number_of_result = 3);
                     
-                    int getBestNDataService(std::vector<std::string >&  best_available_data_service,
+                    int getBestNDataService(const std::string& ha_zone,
+                                            std::vector<std::string >&  best_available_data_service,
                                             unsigned int number_of_result = 3);
                     
-                    int getBestNDataServiceEndpoint(std::vector<std::string >&  best_available_data_service_endpoint,
+                    int getBestNDataServiceEndpoint(const std::string& ha_zone,
+                                                    std::vector<std::string >&  best_available_data_service_endpoint,
                                                     unsigned int number_of_result =3);
                 };
                 
