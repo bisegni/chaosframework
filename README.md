@@ -25,9 +25,9 @@ This distribution merely rips it out of the bson repository into its own.
 
 For further documentation please visit:
 
-* http://chaos.infn.it                                                                                  - public information site
-* https://chaos-lnf-control.baltig-pages.infn.it/chaosframework-doc      - public user and developer site
-* https://chaos-lnf-control.baltig-pages.infn.it/chaosframework             - public source code usefull to collaborate with us
+* http://chaos.infn.it                                                     - public information site
+* https://chaos-lnf-control.baltig-pages.infn.it/chaosframework-doc        - public user and developer site
+* https://chaos-lnf-control.baltig-pages.infn.it/chaosframework            - public source code usefull to collaborate with us
 
 ### Compilation report
 branch name   |  build status  
@@ -42,4 +42,4 @@ Experimental  | [![pipeline status](https://baltig.infn.it/chaos-lnf-control/cha
 
 [4416b59a]: https://chaos-lnf-control.baltig-pages.infn.it/chaosframework/ "Experimental Code Coverage"
 
-*release 1.0.0 (alpha 1 build 5)*
+*release 1.0.0 (beta 1)*
