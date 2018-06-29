@@ -58,7 +58,7 @@ namespace chaos {
                     virtual int updateNodeStatistic(const std::string& ds_unique_id,
                                                     const std::string& ds_direct_io_addr,
                                                     const uint32_t endpoint,
-                                                    const chaos::common::utility::ProcStat& process_resuorce_usage) = 0;
+                                                    const chaos::common::utility::ProcStat& process_resuorce_usage,const std::string&zone) = 0;
                     
                     virtual int deleteDataService(const std::string& ds_unique_id) = 0;
                     

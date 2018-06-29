@@ -52,9 +52,14 @@ void ManagedDirectIODataDriver::init(void *init_parameter) throw(CException) {
         mds_channel = NULL;
         throw CException(err, "Error fetching best endpoint from mds channel", __PRETTY_FUNCTION__);
     }
-    
+    if(!conf->hasKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST)){
+        throw CException(err, "No valid DS returned: "+conf->getJSONString(), __PRETTY_FUNCTION__);
+
+    }
     ChaosUniquePtr<chaos::common::data::CDataWrapper> auto_conf(conf);
     updateConfiguration(auto_conf.get());
+
+
 }
 
 

@@ -155,7 +155,7 @@ void IODirectIODriver::storeRawData(const std::string& key,
             IODirectIODriver_LERR_ << "Error storing data into data service "<<next_client->connection->getServerDescription()<<" with code:" << err;
         }
     } else {
-        DEBUG_CODE(IODirectIODriver_DLDBG_ << "No available socket->loose packet");
+        DEBUG_CODE(IODirectIODriver_DLDBG_ << "No available socket->loose packet, key '"<<key<<"' storage_type:"<<storage_type<<" buffer len:"<<serialization->getBufferLen());
     }
     delete(serialization);
 }
@@ -181,7 +181,7 @@ void IODirectIODriver::storeHealthData(const std::string& key,
                 IODirectIODriver_LERR_ << "Error storing health data into data service "<<next_client->connection->getServerDescription()<<" with code:" << err;
             }
         } else {
-            DEBUG_CODE(IODirectIODriver_DLDBG_ << "No available socket->loose packet");
+            DEBUG_CODE(IODirectIODriver_DLDBG_ << "No available socket->loose packet, key '"<<key<<"' storage_type:"<<storage_type<<" buffer len:"<<serialization->getBufferLen());
         }
     }catch(...){
         IODirectIODriver_LERR_ << "Generic exception error";
@@ -279,6 +279,7 @@ void IODirectIODriver::addServerURL(const std::string& url) {
 
 chaos::common::data::CDataWrapper* IODirectIODriver::updateConfiguration(chaos::common::data::CDataWrapper* newConfigration) {
     //lock the feeder access
+    chaos::common::data::CDataWrapper*ret=NULL;
     ChaosWriteLock rl(mutext_feeder);
     //checkif someone has passed us the device indetification
     if(newConfigration->hasKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST)){
@@ -299,8 +300,13 @@ chaos::common::data::CDataWrapper* IODirectIODriver::updateConfiguration(chaos::
             //add new url to connection feeder, thi method in case of failure to allocate service will throw an eception
             connectionFeeder.addURL(chaos::common::network::URL(serverDesc));
         }
+        if(numerbOfserverAddressConfigured>0){
+            ret=newConfigration;
+        }
+    } else {
+         IODirectIODriver_LERR_<<"DS list not present:"<<newConfigration->getJSONString();
     }
-    return NULL;
+    return ret;
 }
 
 void IODirectIODriver::disposeService(void *service_ptr) {

@@ -352,9 +352,9 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE CLING_VIRTUAL_MACHINE=${CLING
 
 IF(CLING_VIRTUAL_MACHINE)
   MESSAGE(STATUS "LINKING clingIntepreter")
-  TARGET_LINK_LIBRARIES(${PROJECT_NAME} libzmq.a ${FrameworkLib} clingInterpreter )
+  TARGET_LINK_LIBRARIES(${PROJECT_NAME} zmq ${FrameworkLib} clingInterpreter )
 ELSE()
-  TARGET_LINK_LIBRARIES(${PROJECT_NAME} libzmq.a ${FrameworkLib})
+  TARGET_LINK_LIBRARIES(${PROJECT_NAME} zmq ${FrameworkLib})
 ENDIF()
 
 
