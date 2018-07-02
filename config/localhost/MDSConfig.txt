@@ -4708,6 +4708,45 @@
 					    "ds_default_value": "0"
 					}
 				    ]
+		},
+		{
+		    "unit_server_alias": "TEST",
+		    "cu_id": "FLAME/CAMERA/LASER001",
+		    "cu_type": "RTCameraBase",
+		    "cu_param": "",
+		    "auto_load": true,
+		    "auto_start": true,
+		    "auto_init": true,
+		    "storage_type": 2,
+		    "storage_ageing": 3600,
+  		    "default_schedule_delay": 2000000,	
+		    "DriverDescription": [
+			{
+			    "DriverDescriptionName": "ShapeSim",
+			    "DriverDescriptionVersion": "1.0.0",
+			    "DriverDescriptionInitParam": "SHAPE:{\"type\":\"ellipse\",\"err_centerx\":10,\"err_centery\":10,\"err_rotangle\":2}"
+			}
+		    ],
+		    "AttrDesc": [
+		    		{	  "ds_attr_name": "WIDTH",
+					    "ds_max_range": "1024",
+					    "ds_min_range": "0",
+					    "ds_default_value": "640"
+					},
+		    		{	  "ds_attr_name": "HEIGHT",
+					    "ds_max_range": "1024",
+					    "ds_min_range": "0",
+					    "ds_default_value": "480"
+					},{	  "ds_attr_name": "OFFSETX",
+					    "ds_max_range": "1024",
+					    "ds_min_range": "0",
+					    "ds_default_value": "0"
+					},	{	  "ds_attr_name": "OFFSETY",
+					    "ds_max_range": "1024",
+					    "ds_min_range": "0",
+					    "ds_default_value": "480"
+					}
+		    ]
 		}
 	    ]   
 	},{

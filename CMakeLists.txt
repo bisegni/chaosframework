@@ -22,7 +22,9 @@ option(CHAOS_AGENT "Chaos Agent Service" ON)
 option(CHAOS_DATA_EXPORT "Chaos Data Export" ON)
 option(CHAOS_EXAMPLES "Chaos Examples" ON)
 option(CHAOS_CCS "Chaos CCS Compile needs qt5.6-static-x86_64 installed" OFF)
-set(QMAKE_PATH /usr/local/chaos/qt-56/bin)
+if(NOT QMAKE_PATH)
+  set(QMAKE_PATH /usr/local/chaos/qt-56/bin)
+ENDIF()
 
 EXECUTE_PROCESS(
 COMMAND ./version.sh
