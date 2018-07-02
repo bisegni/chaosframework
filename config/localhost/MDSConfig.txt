@@ -4724,10 +4724,16 @@
 			{
 			    "DriverDescriptionName": "ShapeSim",
 			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "SHAPE:{\"type\":\"ellipse\",\"err_centerx\":10,\"err_centery\":10,\"err_rotangle\":2}"
+			    "DriverDescriptionInitParam": "{\"SHAPE\":{\"type\":\"ellipse\",\"err_centerx\":10,\"err_centery\":10,\"err_rotangle\":2}}"
 			}
 		    ],
 		    "AttrDesc": [
+		    		    		{	  "ds_attr_name": "TRIGGER_MODE",
+					    "ds_max_range": "1024",
+					    "ds_min_range": "0",
+					    "ds_default_value": "0"
+					},
+
 		    		{	  "ds_attr_name": "WIDTH",
 					    "ds_max_range": "1024",
 					    "ds_min_range": "0",
