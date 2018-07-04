@@ -4713,7 +4713,7 @@
 		    "unit_server_alias": "TEST",
 		    "cu_id": "FLAME/CAMERA/LASER001",
 		    "cu_type": "RTCameraBase",
-		    "cu_param": "",
+		    "cu_param": "{\"FRAMEBUFFER_ENCODING\":\"CV_8UC3\"}",
 		    "auto_load": true,
 		    "auto_start": true,
 		    "auto_init": true,
@@ -4724,7 +4724,7 @@
 			{
 			    "DriverDescriptionName": "ShapeSim",
 			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "{\"SHAPE\":{\"type\":\"ellipse\",\"err_centerx\":10,\"err_centery\":10,\"err_rotangle\":2}}"
+			    "DriverDescriptionInitParam": "{\"SHAPE\":{\"type\":\"ellipse\",\"err_centerx\":10.0,\"err_centery\":10.0,\"err_rotangle\":2.0,\"tickness\":-1,\"linetype\":8,\"err_tickness\":100.0}}"
 			}
 		    ],
 		    "AttrDesc": [
