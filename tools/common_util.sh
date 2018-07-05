@@ -435,11 +435,11 @@ check_proc(){
 		mem="\x1B[1m$mem%\x1B[22m"
 	    fi
 
-	    ok_mesg "process \x1B[1m$1\x1B[22m is running with pid \x1B[1m$p\x1B[22m cpu $cpu, mem $mem"
+	    ok_mesg "process $1 is running with pid $p cpu $cpu, mem $mem"
 
 	    proc_list+=($p)
 	else
-	    nok_mesg "process \x1B[1m$1\x1B[22m is not running"
+	    nok_mesg "process $1 is not running"
 	    ((xstatus++))
 	fi
     done
@@ -465,7 +465,10 @@ run_proc(){
     fi
     cmdline=""
     debug=""
-    if [ -n "$CHAOS_DEBUG_CMD" ];then
+    if [ -n "$GOOGLE_PROFILE" ];then
+	debug="$GOOGLE_PROFILE "
+	info_mesg "google heap check " "enabled" 
+    elif [ -n "$CHAOS_DEBUG_CMD" ];then
 	echo "set disable-randomization off" > /tmp/gdbbatch
 	echo "run" >> /tmp/gdbbatch
 	echo "info threads" >> /tmp/gdbbatch
@@ -497,7 +500,7 @@ run_proc(){
 	if [ -n $pid ];then
 #	    local p=${pidl[$((${#pidl[@]} -1))]}
 	    p=$pid
-	    ok_mesg "process \x1B[32m\x1B[1m$process_name\x1B[21m\x1B[39m with pid \"$p\", started"
+	    ok_mesg "process $process_name with pid \"$p\", started"
 	    proc_pid=$p
 	    echo "$cmdline" > $CHAOS_PREFIX/log/$process_name.cmdline.$pid.log
 	    return 0
