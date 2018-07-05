@@ -365,12 +365,17 @@ stop_proc(){
     pid=`get_pid "$1"`
     for p in $pid;do
 	if [ -n "$p" ]; then
-	    if ! kill -9 $p ; then
-		error_mesg "cannot kill process $p"
-		exit 1
-	    else
-		ok_mesg "process $1 ($p) killed"
+	    ## kill gently
+	    kill -SIGQUIT $p
+	    sleep 1
+	    pid=`get_pid "$p"`
+	    if [ -n "$pid" ]; then
+		if ! kill -9 $p ; then
+		    error_mesg "cannot kill process $p"
+		    exit 1
+		fi
 	    fi
+	    ok_mesg "process $1 ($p) killed"
 
 	else
 	    warn_mesg "process $1 ($p) " "not running"
@@ -467,7 +472,7 @@ run_proc(){
     debug=""
     if [ -n "$GOOGLE_PROFILE" ];then
 	debug="$GOOGLE_PROFILE "
-	info_mesg "google heap check " "enabled" 
+	info_mesg "google heap check for '$process_name' " "enabled" 
     elif [ -n "$CHAOS_DEBUG_CMD" ];then
 	echo "set disable-randomization off" > /tmp/gdbbatch
 	echo "run" >> /tmp/gdbbatch
@@ -487,7 +492,10 @@ run_proc(){
 	cmdline="$debug $run_prefix $command_line"
 	
     fi
-   eval $cmdline
+    eval $cmdline
+    if [ -n "$GOOGLE_PROFILE" ];then
+	sleep 1
+    fi
    if [ $? -eq 0 ]; then
 	pid=$!
 	sleep 1
@@ -512,7 +520,7 @@ run_proc(){
 
    else
        echo "$cmdline" > $CHAOS_PREFIX/log/$process_name.cmdline.errlaunch.log
-	error_mesg "error lunching $process_name"
+	error_mesg "error lunching $process_name cmdline: '$cmdline'"
 	exit 1
     fi
     return 0
