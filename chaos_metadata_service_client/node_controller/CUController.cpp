@@ -1063,6 +1063,19 @@ cu_prof_t CUController::getProfileInfo(){
 
 //! get datapack between time itervall
 void CUController::executeTimeIntervallQuery(DatasetDomain domain,
+                                             uint64_t      start_ts,
+                                             uint64_t      end_ts,
+                                             QueryCursor** query_cursor,
+                                             uint32_t      page) {
+  executeTimeIntervallQuery(
+      domain,
+      start_ts,
+      end_ts,
+      ChaosStringSet(),
+      query_cursor,
+      page);
+}
+void CUController::executeTimeIntervallQuery(DatasetDomain domain,
                                              uint64_t start_ts,
                                              uint64_t end_ts,
                                              const ChaosStringSet& meta_tags,
@@ -1075,6 +1088,24 @@ void CUController::executeTimeIntervallQuery(DatasetDomain domain,
                                                        meta_tags,
                                                        page);
     }
+}
+
+void CUController::executeTimeIntervalQuery(const DatasetDomain domain,
+                                            const uint64_t start_ts,
+                                            const uint64_t end_ts,
+                                            const uint64_t seqid,
+                                            const uint64_t runid,
+                                            chaos::common::io::QueryCursor **query_cursor,
+                                            const uint32_t page_len){
+executeTimeIntervalQuery(
+    domain,
+    start_ts,
+    end_ts,
+    seqid,
+    runid,
+    ChaosStringSet(),
+    query_cursor,
+    page_len);
 }
 
 void CUController::executeTimeIntervalQuery(const DatasetDomain domain,

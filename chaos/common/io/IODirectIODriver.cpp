@@ -396,6 +396,17 @@ void IODirectIODriver::handleEvent(chaos_direct_io::DirectIOClientConnection *cl
 QueryCursor *IODirectIODriver::performQuery(const std::string& key,
                                             const uint64_t start_ts,
                                             const uint64_t end_ts,
+                                            const uint32_t page_len) {
+  return performQuery(key,
+                      start_ts,
+                      end_ts,
+                      ChaosStringSet(),
+                      page_len);
+}
+
+QueryCursor *IODirectIODriver::performQuery(const std::string& key,
+                                            const uint64_t start_ts,
+                                            const uint64_t end_ts,
                                             const ChaosStringSet& meta_tags,
                                             const uint32_t page_len) {
     QueryCursor *q = new QueryCursor(UUIDUtil::generateUUID(),
@@ -414,6 +425,22 @@ QueryCursor *IODirectIODriver::performQuery(const std::string& key,
     }
     return q;
 }
+
+QueryCursor *IODirectIODriver::performQuery(const std::string& key,
+                                            const uint64_t start_ts,
+                                            const uint64_t end_ts,
+                                            const uint64_t sequid,
+                                            const uint64_t runid,
+                                            uint32_t page_len) {
+  return performQuery(key,
+                      start_ts,
+                      end_ts,
+                      sequid,
+                      runid,
+                      ChaosStringSet(),
+                      page_len);
+}
+
 QueryCursor *IODirectIODriver::performQuery(const std::string& key,
                                             const uint64_t start_ts,
                                             const uint64_t end_ts,

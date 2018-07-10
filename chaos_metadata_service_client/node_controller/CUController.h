@@ -456,22 +456,36 @@ namespace chaos {
                              uint32_t timeout = RpcConfigurationKey::GlobalRPCTimeoutinMSec);
                 
                 //! get datapack between time itervall
-                void executeTimeIntervallQuery(const DatasetDomain domain,
-                                               const uint64_t start_ts,
-                                               const uint64_t end_ts,
-                                               const ChaosStringSet& meta_tags,
-                                               chaos::common::io::QueryCursor **query_cursor,
-                                               const uint32_t page_len=DEFAULT_PAGE_LEN);
-                
-                void executeTimeIntervalQuery(const DatasetDomain domain,
-                                              const uint64_t start_ts,
-                                              const uint64_t end_ts,
-                                              const uint64_t seqid,
-                                              const  uint64_t runid,
-                                              const ChaosStringSet& meta_tags,
-                                              chaos::common::io::QueryCursor **query_cursor,
-                                              const uint32_t page_len=DEFAULT_PAGE_LEN);
-                
+                void executeTimeIntervallQuery(const DatasetDomain              domain,
+                                               const uint64_t                   start_ts,
+                                               const uint64_t                   end_ts,
+                                               chaos::common::io::QueryCursor** query_cursor,
+                                               const uint32_t                   page_len = DEFAULT_PAGE_LEN);
+
+                void executeTimeIntervallQuery(const DatasetDomain              domain,
+                                               const uint64_t                   start_ts,
+                                               const uint64_t                   end_ts,
+                                               const ChaosStringSet&            meta_tags,
+                                               chaos::common::io::QueryCursor** query_cursor,
+                                               const uint32_t                   page_len = DEFAULT_PAGE_LEN);
+
+                void executeTimeIntervalQuery(const DatasetDomain              domain,
+                                              const uint64_t                   start_ts,
+                                              const uint64_t                   end_ts,
+                                              const uint64_t                   seqid,
+                                              const uint64_t                   runid,
+                                              chaos::common::io::QueryCursor** query_cursor,
+                                              const uint32_t                   page_len = DEFAULT_PAGE_LEN);
+
+                void executeTimeIntervalQuery(const DatasetDomain              domain,
+                                              const uint64_t                   start_ts,
+                                              const uint64_t                   end_ts,
+                                              const uint64_t                   seqid,
+                                              const uint64_t                   runid,
+                                              const ChaosStringSet&            meta_tags,
+                                              chaos::common::io::QueryCursor** query_cursor,
+                                              const uint32_t                   page_len = DEFAULT_PAGE_LEN);
+
                 //! release a query
                 void releaseQuery(chaos::common::io::QueryCursor *query_cursor);
                 
